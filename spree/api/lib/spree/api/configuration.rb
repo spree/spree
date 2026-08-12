@@ -15,7 +15,8 @@ module Spree
       preference :refresh_token_expiry, :integer, default: 2_592_000 # 30 days in seconds
 
       # Rate limiting
-      preference :rate_limit_per_key, :integer, default: 300 # per publishable API key
+      preference :rate_limit_per_key, :integer, default: 300 # per publishable API key + client IP (per visitor)
+      preference :rate_limit_per_secret_key, :integer, default: 600 # per secret API key, across the whole API
       preference :rate_limit_window, :integer, default: 60 # window in seconds
       preference :rate_limit_login, :integer, default: 5 # per IP
       preference :rate_limit_register, :integer, default: 3 # per IP

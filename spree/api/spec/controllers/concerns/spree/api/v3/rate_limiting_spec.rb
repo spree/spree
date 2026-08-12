@@ -1,31 +1,111 @@
 require 'spec_helper'
 
 RSpec.describe 'Rate Limiting', type: :controller do
-  describe Spree::Api::V3::Store::CountriesController do
-    controller(Spree::Api::V3::Store::CountriesController) {}
+  describe 'secret API keys' do
+    describe Spree::Api::V3::Admin::CountriesController do
+      controller(Spree::Api::V3::Admin::CountriesController) {}
 
-    render_views
+      render_views
 
-    include_context 'API v3 Store'
+      include_context 'API v3 Admin'
 
-    before do
-      request.headers['X-Spree-Api-Key'] = api_key.token
+      before do
+        request.headers['X-Spree-Api-Key'] = secret_api_key.plaintext_token
+      end
+
+      it 'counts against one API-wide bucket keyed by the digested secret key' do
+        allow(Rails.cache).to receive(:increment).and_return(1)
+
+        get :index
+
+        digest = Spree::ApiKey.compute_token_digest(secret_api_key.plaintext_token)
+        expect(Rails.cache).to have_received(:increment)
+          .with("rate-limit:api_v3:#{digest}", 1, expires_in: 60.seconds)
+      end
+
+      it 'never uses the plaintext secret token as a cache key' do
+        allow(Rails.cache).to receive(:increment).and_return(1)
+
+        get :index
+
+        expect(Rails.cache).not_to have_received(:increment)
+          .with(a_string_including(secret_api_key.plaintext_token), anything, anything)
+      end
+
+      it 'refuses the request with a 429 once the limit is exceeded' do
+        allow(Rails.cache).to receive(:increment)
+          .and_return(Spree::Api::Config[:rate_limit_per_secret_key] + 1)
+
+        get :index
+
+        expect(response).to have_http_status(:too_many_requests)
+        expect(json_response[:error][:code]).to eq('rate_limit_exceeded')
+        expect(response.headers['Retry-After']).to eq(Spree::Api::Config[:rate_limit_window].to_s)
+        expect(response.headers['X-RateLimit-Limit']).to eq(Spree::Api::Config[:rate_limit_per_secret_key].to_s)
+        expect(response.headers['X-RateLimit-Remaining']).to eq('0')
+      end
+
+      it 'does not refuse requests at or under the limit' do
+        allow(Rails.cache).to receive(:increment)
+          .and_return(Spree::Api::Config[:rate_limit_per_secret_key])
+
+        get :index
+
+        expect(response).not_to have_http_status(:too_many_requests)
+      end
     end
+  end
 
-    describe 'rate limit response format' do
-      it 'returns JSON error with rate_limit_exceeded code' do
-        response_proc = Spree::Api::V3::BaseController::RATE_LIMIT_RESPONSE
-        status, headers, body = response_proc.call
+  describe 'publishable API keys' do
+    describe Spree::Api::V3::Store::CountriesController do
+      controller(Spree::Api::V3::Store::CountriesController) {}
 
-        expect(status).to eq(429)
-        expect(headers['Content-Type']).to eq('application/json')
-        expect(headers['Retry-After']).to eq(Spree::Api::Config[:rate_limit_window].to_s)
-        expect(headers['X-RateLimit-Limit']).to eq(Spree::Api::Config[:rate_limit_per_key].to_s)
-        expect(headers['X-RateLimit-Remaining']).to eq('0')
+      render_views
 
-        parsed = JSON.parse(body.first)
-        expect(parsed['error']['code']).to eq('rate_limit_exceeded')
-        expect(parsed['error']['message']).to be_present
+      include_context 'API v3 Store'
+
+      before do
+        request.headers['X-Spree-Api-Key'] = api_key.token
+      end
+
+      it 'counts against a per-visitor bucket keyed by the key and client IP' do
+        allow(Rails.cache).to receive(:increment).and_return(1)
+
+        get :index
+
+        expect(Rails.cache).to have_received(:increment)
+          .with("rate-limit:api_v3:#{api_key.token}:0.0.0.0", 1, expires_in: 60.seconds)
+      end
+
+      it 'refuses the request with a 429 once the limit is exceeded' do
+        allow(Rails.cache).to receive(:increment)
+          .and_return(Spree::Api::Config[:rate_limit_per_key] + 1)
+
+        get :index
+
+        expect(response).to have_http_status(:too_many_requests)
+        expect(json_response[:error][:code]).to eq('rate_limit_exceeded')
+        expect(response.headers['X-RateLimit-Limit']).to eq(Spree::Api::Config[:rate_limit_per_key].to_s)
+      end
+    end
+  end
+
+  describe 'keyless requests (admin JWT traffic)' do
+    describe Spree::Api::V3::Admin::CountriesController do
+      controller(Spree::Api::V3::Admin::CountriesController) {}
+
+      render_views
+
+      include_context 'API v3 Admin'
+
+      it 'counts against a per-IP bucket when no API key is present' do
+        request.headers['Authorization'] = "Bearer #{admin_jwt_token}"
+        allow(Rails.cache).to receive(:increment).and_return(1)
+
+        get :index
+
+        expect(Rails.cache).to have_received(:increment)
+          .with('rate-limit:api_v3:0.0.0.0', 1, expires_in: 60.seconds)
       end
     end
   end
@@ -33,6 +113,10 @@ RSpec.describe 'Rate Limiting', type: :controller do
   describe 'rate limit configuration' do
     it 'exposes rate_limit_per_key as a configurable preference' do
       expect(Spree::Api::Config[:rate_limit_per_key]).to eq(300)
+    end
+
+    it 'exposes rate_limit_per_secret_key as a configurable preference' do
+      expect(Spree::Api::Config[:rate_limit_per_secret_key]).to eq(600)
     end
 
     it 'exposes rate_limit_login as a configurable preference' do
@@ -66,6 +150,8 @@ RSpec.describe Spree::Api::V3::Store::CountriesController, 'rate limit headers',
 
   include_context 'API v3 Store'
 
+  let(:bucket_cache_key) { "rate-limit:api_v3:#{api_key.token}:0.0.0.0" }
+
   before do
     request.headers['X-Spree-Api-Key'] = api_key.token
   end
@@ -80,9 +166,7 @@ RSpec.describe Spree::Api::V3::Store::CountriesController, 'rate limit headers',
 
   it 'sets X-RateLimit-Limit and X-RateLimit-Remaining headers' do
     allow(Rails.cache).to receive(:read).and_call_original
-    allow(Rails.cache).to receive(:read)
-      .with("rate-limit:spree/api/v3/store/countries:#{api_key.token}")
-      .and_return(5)
+    allow(Rails.cache).to receive(:read).with(bucket_cache_key).and_return(5)
 
     get :index
 
@@ -92,9 +176,7 @@ RSpec.describe Spree::Api::V3::Store::CountriesController, 'rate limit headers',
 
   it 'does not set Retry-After header when under the limit' do
     allow(Rails.cache).to receive(:read).and_call_original
-    allow(Rails.cache).to receive(:read)
-      .with("rate-limit:spree/api/v3/store/countries:#{api_key.token}")
-      .and_return(5)
+    allow(Rails.cache).to receive(:read).with(bucket_cache_key).and_return(5)
 
     get :index
 
@@ -103,9 +185,7 @@ RSpec.describe Spree::Api::V3::Store::CountriesController, 'rate limit headers',
 
   it 'decreases X-RateLimit-Remaining based on request count' do
     allow(Rails.cache).to receive(:read).and_call_original
-    allow(Rails.cache).to receive(:read)
-      .with("rate-limit:spree/api/v3/store/countries:#{api_key.token}")
-      .and_return(10)
+    allow(Rails.cache).to receive(:read).with(bucket_cache_key).and_return(10)
 
     get :index
 
@@ -115,9 +195,7 @@ RSpec.describe Spree::Api::V3::Store::CountriesController, 'rate limit headers',
   it 'sets Retry-After when limit is reached' do
     limit = Spree::Api::Config[:rate_limit_per_key]
     allow(Rails.cache).to receive(:read).and_call_original
-    allow(Rails.cache).to receive(:read)
-      .with("rate-limit:spree/api/v3/store/countries:#{api_key.token}")
-      .and_return(limit)
+    allow(Rails.cache).to receive(:read).with(bucket_cache_key).and_return(limit)
 
     get :index
 
