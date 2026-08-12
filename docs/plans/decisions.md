@@ -1,3 +1,51 @@
+## 2026-08-11: Cross-border tax-inclusive pricing derives net-fixed, except where the merchant priced that geography
+
+A live pass against a running server found three defects in one seam — what a customer is charged
+when the destination's VAT rate differs from the home zone's. `6.0-tax-provider.md` gains Phase 8 to
+fix them (the 6.1 cleanup renumbers to Phase 9).
+
+**The rule, which is Shopify's:** a price from a price list whose rules include a geographic one
+(`MarketRule`, `ZoneRule`) is **final** — charged exactly as entered, never restated. Everything else
+**derives net-fixed**: home rate out, destination rate on, via `VatPriceCalculation`. The merchant's
+net is preserved and the gross moves.
+
+**Why this matters beyond tax.** Two of the three defects are pricing defects, not tax defects:
+
+1. `Pricing::Context.from_order` never carried the owner's `market`, so cart line pricing followed
+   the request's `x-spree-country` hint (or the store default) instead of the cart's own market.
+   Measured: a catalogue request with the hint served a French price list at 99.00 while the cart on
+   that same French market priced at 100.00, and the wrong figure persisted. **Market-scoped price
+   lists were therefore unreachable from a cart** — they work for the catalogue only.
+2. `Cart#recalculate_for_address_change!` called `LineItem#update_price`, which assigns without
+   saving, where `recalculate_price` persists. A destination change computed the restated price and
+   discarded it; a later quantity change wrote it. So what a cross-border customer paid depended on
+   the order of operations.
+
+**Constraints this places on other work:** cart-stage pricing must read the cart's own market, never
+`Spree::Current` (catalogue requests keep that fallback, having no owner); any new `PriceRule`
+subclass must answer `geographic?`, since that predicate now decides whether its list's prices are
+exempt from restatement; and re-pricing paths must stay behind
+`Carts::Complete#verify_expected_total`, whose `cart_changed` failure is what makes a mid-checkout
+price movement disclosable instead of silent.
+
+**Restatement is a capability of the Internal provider, not of the platform.** `VatPriceCalculation`
+derives both the home and destination rate from `TaxRate` rows, so it only works where those rows are
+the whole truth. An absent row is ambiguous — *no tax is due here* or *tax is computed by an engine* —
+and the code reads it as the former. Measured: German home zone, Japanese destination, no Japanese
+rates, and 100.00 is charged as **84.03**. Correct for a genuine zero-rated export; wrong for a market
+whose engine simply has no rows in that table, where it makes every foreign destination look like an
+export. So restatement runs for Internal and is skipped elsewhere, with a geo-scoped price list as the
+external-provider merchant's way to state destination prices. Shopify arrived at the same separation:
+dynamic tax-inclusive pricing reads a standard-rate table and is explicitly unsupported alongside
+AvaTax. A
+read-only `rate_for` on the provider contract would dissolve the limitation and stays deferred with
+the delivery-option quote question, which is the same problem for a different surface.
+
+Surveyed for this: Shopify, WooCommerce, Magento/Adobe Commerce, BigCommerce, Saleor, Medusa,
+Vendure, commercetools. Net-fixed is the majority default (WooCommerce, Magento, Shopify, Vendure);
+the headless platforms (Saleor, commercetools, Medusa) refuse to derive at all and require a price
+per channel/region.
+
 ## 2026-08-09: Metadata consolidated to one column — `public_metadata` dropped, `private_metadata` renamed
 
 Implements the 2026-03-16 consolidation decision. All thirty metadata-carrying
