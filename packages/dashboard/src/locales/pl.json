@@ -857,6 +857,7 @@
       "delete_title": "Usunąć ten plik?",
       "description": "Pliki, które kupujący mogą pobrać po zakupie. Dołącz je do produktu cyfrowego lub do fizycznego, aby dostarczyć instrukcję albo gwarancję.",
       "download": "Pobierz",
+      "drop_hint": "Przeciągnij i upuść pliki tutaj lub kliknij, aby wybrać",
       "empty": "Brak plików",
       "limit_invalid": "Limity muszą być liczbami całkowitymi od 1 lub puste.",
       "limits_help": "Pozostaw limity pobrań i dni puste, aby użyć ustawień sklepu.",

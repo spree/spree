@@ -839,6 +839,7 @@
       "delete_title": "Diese Datei löschen?",
       "description": "Dateien, die Käufer nach dem Kauf herunterladen können. Fügen Sie sie einem digitalen Produkt hinzu oder einem physischen, um eine Anleitung oder Garantie mitzuliefern.",
       "download": "Herunterladen",
+      "drop_hint": "Dateien hierher ziehen und ablegen oder zum Durchsuchen klicken",
       "empty": "Noch keine Dateien",
       "limit_invalid": "Limits müssen ganze Zahlen ab 1 sein oder leer bleiben.",
       "limits_help": "Lassen Sie die Download- und Tageslimits leer, um die Einstellungen des Shops zu verwenden.",

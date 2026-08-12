@@ -839,6 +839,7 @@
       "delete_title": "Delete this file?",
       "description": "Files buyers can download after purchase. Attach them to a digital product, or to a physical one to deliver a manual or warranty alongside the goods.",
       "download": "Download",
+      "drop_hint": "Drag & drop files here, or click to browse",
       "empty": "No files yet",
       "limit_invalid": "Limits must be whole numbers of 1 or more, or blank.",
       "limits_help": "Leave the download and day limits blank to use the store's settings.",

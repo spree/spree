@@ -65,19 +65,31 @@ export function DigitalAssetsCard({
   // keeps its today behaviour — a single "Add file" button.
   const sourceProviders = providers.filter((p) => !p.requires_attachment)
 
-  async function handleFileSelected(event: React.ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0]
-    event.target.value = ''
-    if (!file || !productId) return
+  async function handleFiles(files: FileList | File[]) {
+    const list = Array.from(files)
+    if (list.length === 0 || !productId) return
 
     setUploading(true)
     try {
-      const { signedId } = await directUpload.mutateAsync(file)
-      await createAsset.mutateAsync({ signed_id: signedId })
+      for (const file of list) {
+        const { signedId } = await directUpload.mutateAsync(file)
+        await createAsset.mutateAsync({ signed_id: signedId })
+      }
       setPage(1)
     } finally {
       setUploading(false)
     }
+  }
+
+  function handleFileInput(event: React.ChangeEvent<HTMLInputElement>) {
+    const files = event.target.files
+    event.target.value = ''
+    if (files) void handleFiles(files)
+  }
+
+  function handleDrop(event: React.DragEvent) {
+    event.preventDefault()
+    if (event.dataTransfer.files.length > 0) void handleFiles(event.dataTransfer.files)
   }
 
   async function handleAddProvider(providerType: string) {
@@ -108,61 +120,83 @@ export function DigitalAssetsCard({
     <Card>
       <CardHeader>
         <CardTitle>{t('admin.digital_assets.title')}</CardTitle>
-        <CardAction>
-          {sourceProviders.length === 0 ? (
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={uploading}
-              onClick={() => fileInputRef.current?.click()}
-            >
-              <UploadIcon className="mr-2 size-4" />
-              {uploading
-                ? t('admin.digital_assets.uploading_short')
-                : t('admin.digital_assets.upload')}
-            </Button>
-          ) : (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button type="button" variant="outline" size="sm" disabled={uploading}>
-                  <PlusIcon className="mr-2 size-4" />
-                  {uploading
-                    ? t('admin.digital_assets.uploading_short')
-                    : t('admin.digital_assets.add')}
-                  <ChevronDownIcon className="ml-2 size-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => fileInputRef.current?.click()}>
-                  <UploadIcon className="mr-2 size-4" />
-                  {t('admin.digital_assets.source.upload')}
-                </DropdownMenuItem>
-                {sourceProviders.map((provider) => (
-                  <DropdownMenuItem
-                    key={provider.type}
-                    onClick={() => handleAddProvider(provider.type)}
-                  >
-                    {provider.name}
+        {/* The header action only appears once files exist — an empty card
+            invites the first upload through its dropzone, not a button. */}
+        {assets.length > 0 && (
+          <CardAction>
+            {sourceProviders.length === 0 ? (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={uploading}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <UploadIcon className="mr-2 size-4" />
+                {uploading
+                  ? t('admin.digital_assets.uploading_short')
+                  : t('admin.digital_assets.upload')}
+              </Button>
+            ) : (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button type="button" variant="outline" size="sm" disabled={uploading}>
+                    <PlusIcon className="mr-2 size-4" />
+                    {uploading
+                      ? t('admin.digital_assets.uploading_short')
+                      : t('admin.digital_assets.add')}
+                    <ChevronDownIcon className="ml-2 size-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => fileInputRef.current?.click()}>
+                    <UploadIcon className="mr-2 size-4" />
+                    {t('admin.digital_assets.source.upload')}
                   </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
-          <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileSelected} />
-        </CardAction>
+                  {sourceProviders.map((provider) => (
+                    <DropdownMenuItem
+                      key={provider.type}
+                      onClick={() => handleAddProvider(provider.type)}
+                    >
+                      {provider.name}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+          </CardAction>
+        )}
       </CardHeader>
 
       <CardContent className="flex flex-col gap-4">
         <p className="text-muted-foreground text-sm">{t('admin.digital_assets.description')}</p>
 
+        <input
+          ref={fileInputRef}
+          type="file"
+          multiple
+          className="hidden"
+          onChange={handleFileInput}
+        />
+
         {isLoading ? (
           <Skeleton className="h-24 w-full" />
         ) : assets.length === 0 ? (
-          <div className="flex flex-col items-center gap-2 rounded-md border border-dashed p-6 text-center">
-            <FileIcon className="text-muted-foreground size-6" />
-            <p className="text-muted-foreground text-sm">{t('admin.digital_assets.empty')}</p>
-          </div>
+          <button
+            type="button"
+            onDrop={handleDrop}
+            onDragOver={(e) => e.preventDefault()}
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            className="flex w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border p-6 text-center transition-colors hover:border-foreground/30 disabled:pointer-events-none disabled:opacity-60"
+          >
+            <FileIcon className="size-8 text-muted-foreground" />
+            <p className="text-muted-foreground text-sm">
+              {uploading
+                ? t('admin.digital_assets.uploading_short')
+                : t('admin.digital_assets.drop_hint')}
+            </p>
+          </button>
         ) : (
           <div className="overflow-hidden rounded-md border border-border">
             <Table className="border-collapse [&_td]:rounded-none [&_td]:border [&_th]:border [&_td]:border-border [&_th]:border-border">
