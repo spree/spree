@@ -66,7 +66,7 @@ module Spree
       # @return [Integer]
       def reserved_quantity
         return @reserved_quantity if defined?(@reserved_quantity)
-        return @reserved_quantity = 0 unless Spree::Config[:stock_reservations_enabled]
+        return @reserved_quantity = 0 unless reservations_enabled?
         return @reserved_quantity = 0 if stock_items.blank?
 
         excluded_owner_key = excluded_order.is_a?(Spree::Cart) ? :cart_id : :order_id
@@ -130,6 +130,14 @@ module Spree
       end
 
       private
+
+      # The stock location owns a store directly; otherwise the variant's
+      # product does. Both can be absent, in which case the declared default
+      # applies.
+      def reservations_enabled?
+        store = stock_location&.store || variant&.product&.store
+        Spree::StorePreferences.read(store, :stock_reservations_enabled)
+      end
 
       def association_loaded?
         variant.association(:stock_items).loaded?

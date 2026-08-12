@@ -96,6 +96,15 @@ function storeToFormValues(store: Store): StoreSettingsFormValues {
     preferred_guest_checkout: store.preferred_guest_checkout ?? true,
     preferred_company_field_enabled: store.preferred_company_field_enabled ?? false,
     preferred_address_requires_phone: store.preferred_address_requires_phone ?? false,
+    preferred_auto_capture: store.preferred_auto_capture ?? true,
+    preferred_auto_capture_on_dispatch: store.preferred_auto_capture_on_dispatch ?? false,
+    preferred_allow_checkout_on_gateway_error:
+      store.preferred_allow_checkout_on_gateway_error ?? false,
+    preferred_track_inventory_levels: store.preferred_track_inventory_levels ?? true,
+    preferred_stock_reservations_enabled: store.preferred_stock_reservations_enabled ?? true,
+    preferred_track_price_history: store.preferred_track_price_history ?? true,
+    preferred_show_products_without_price: store.preferred_show_products_without_price ?? false,
+    preferred_disable_sku_validation: store.preferred_disable_sku_validation ?? false,
   }
 }
 
@@ -182,6 +191,14 @@ function StoreSettingsForm({ store }: { store: Store }) {
         preferred_guest_checkout: values.preferred_guest_checkout,
         preferred_company_field_enabled: values.preferred_company_field_enabled,
         preferred_address_requires_phone: values.preferred_address_requires_phone,
+        preferred_auto_capture: values.preferred_auto_capture,
+        preferred_auto_capture_on_dispatch: values.preferred_auto_capture_on_dispatch,
+        preferred_allow_checkout_on_gateway_error: values.preferred_allow_checkout_on_gateway_error,
+        preferred_track_inventory_levels: values.preferred_track_inventory_levels,
+        preferred_stock_reservations_enabled: values.preferred_stock_reservations_enabled,
+        preferred_track_price_history: values.preferred_track_price_history,
+        preferred_show_products_without_price: values.preferred_show_products_without_price,
+        preferred_disable_sku_validation: values.preferred_disable_sku_validation,
         ...extensionValues,
       })
       toast.success(t('admin.messages.store_settings_updated'))
@@ -446,58 +463,103 @@ function StoreSettingsForm({ store }: { store: Store }) {
                 </CardHeader>
                 <CardContent>
                   <FieldGroup>
-                    <Field>
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex flex-col">
-                          <FieldLabel
-                            htmlFor="store-company-field-enabled"
-                            className="cursor-pointer"
-                          >
-                            {t('admin.fields.store.company_field_enabled.label')}
-                          </FieldLabel>
-                          <span className="text-xs text-muted-foreground">
-                            {t('admin.fields.store.company_field_enabled.help')}
-                          </span>
-                        </div>
-                        <Controller
-                          name="preferred_company_field_enabled"
-                          control={form.control}
-                          render={({ field }) => (
-                            <Switch
-                              id="store-company-field-enabled"
-                              checked={!!field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          )}
-                        />
-                      </div>
-                    </Field>
-                    <Field>
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex flex-col">
-                          <FieldLabel
-                            htmlFor="store-address-requires-phone"
-                            className="cursor-pointer"
-                          >
-                            {t('admin.fields.store.address_requires_phone.label')}
-                          </FieldLabel>
-                          <span className="text-xs text-muted-foreground">
-                            {t('admin.fields.store.address_requires_phone.help')}
-                          </span>
-                        </div>
-                        <Controller
-                          name="preferred_address_requires_phone"
-                          control={form.control}
-                          render={({ field }) => (
-                            <Switch
-                              id="store-address-requires-phone"
-                              checked={!!field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          )}
-                        />
-                      </div>
-                    </Field>
+                    <SwitchField
+                      id="store-company-field-enabled"
+                      label={t('admin.fields.store.company_field_enabled.label')}
+                      help={t('admin.fields.store.company_field_enabled.help')}
+                      name="preferred_company_field_enabled"
+                      control={form.control}
+                    />
+                    <SwitchField
+                      id="store-address-requires-phone"
+                      label={t('admin.fields.store.address_requires_phone.label')}
+                      help={t('admin.fields.store.address_requires_phone.help')}
+                      name="preferred_address_requires_phone"
+                      control={form.control}
+                    />
+                  </FieldGroup>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('admin.pages.settings.store.tab_payments')}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <FieldGroup>
+                    <SwitchField
+                      id="store-auto-capture"
+                      label={t('admin.fields.store.auto_capture.label')}
+                      help={t('admin.fields.store.auto_capture.help')}
+                      name="preferred_auto_capture"
+                      control={form.control}
+                    />
+                    <SwitchField
+                      id="store-auto-capture-on-dispatch"
+                      label={t('admin.fields.store.auto_capture_on_dispatch.label')}
+                      help={t('admin.fields.store.auto_capture_on_dispatch.help')}
+                      name="preferred_auto_capture_on_dispatch"
+                      control={form.control}
+                    />
+                    <SwitchField
+                      id="store-allow-checkout-on-gateway-error"
+                      label={t('admin.fields.store.allow_checkout_on_gateway_error.label')}
+                      help={t('admin.fields.store.allow_checkout_on_gateway_error.help')}
+                      name="preferred_allow_checkout_on_gateway_error"
+                      control={form.control}
+                    />
+                  </FieldGroup>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('admin.pages.settings.store.tab_inventory')}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <FieldGroup>
+                    <SwitchField
+                      id="store-track-inventory-levels"
+                      label={t('admin.fields.store.track_inventory_levels.label')}
+                      help={t('admin.fields.store.track_inventory_levels.help')}
+                      name="preferred_track_inventory_levels"
+                      control={form.control}
+                    />
+                    <SwitchField
+                      id="store-stock-reservations-enabled"
+                      label={t('admin.fields.store.stock_reservations_enabled.label')}
+                      help={t('admin.fields.store.stock_reservations_enabled.help')}
+                      name="preferred_stock_reservations_enabled"
+                      control={form.control}
+                    />
+                  </FieldGroup>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('admin.pages.settings.store.tab_catalog')}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <FieldGroup>
+                    <SwitchField
+                      id="store-show-products-without-price"
+                      label={t('admin.fields.store.show_products_without_price.label')}
+                      help={t('admin.fields.store.show_products_without_price.help')}
+                      name="preferred_show_products_without_price"
+                      control={form.control}
+                    />
+                    <SwitchField
+                      id="store-track-price-history"
+                      label={t('admin.fields.store.track_price_history.label')}
+                      help={t('admin.fields.store.track_price_history.help')}
+                      name="preferred_track_price_history"
+                      control={form.control}
+                    />
+                    <SwitchField
+                      id="store-disable-sku-validation"
+                      label={t('admin.fields.store.disable_sku_validation.label')}
+                      help={t('admin.fields.store.disable_sku_validation.help')}
+                      name="preferred_disable_sku_validation"
+                      control={form.control}
+                    />
                   </FieldGroup>
                 </CardContent>
               </Card>
@@ -553,5 +615,41 @@ function SelectField<TValues extends FieldValues>({
         </Field>
       )}
     />
+  )
+}
+
+interface SwitchFieldProps<TValues extends FieldValues> {
+  id: string
+  label: string
+  help?: string
+  name: FieldPath<TValues>
+  control: Control<TValues>
+}
+
+function SwitchField<TValues extends FieldValues>({
+  id,
+  label,
+  help,
+  name,
+  control,
+}: SwitchFieldProps<TValues>) {
+  return (
+    <Field>
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col">
+          <FieldLabel htmlFor={id} className="cursor-pointer">
+            {label}
+          </FieldLabel>
+          {help && <span className="text-xs text-muted-foreground">{help}</span>}
+        </div>
+        <Controller
+          name={name}
+          control={control}
+          render={({ field }) => (
+            <Switch id={id} checked={!!field.value} onCheckedChange={field.onChange} />
+          )}
+        />
+      </div>
+    </Field>
   )
 }

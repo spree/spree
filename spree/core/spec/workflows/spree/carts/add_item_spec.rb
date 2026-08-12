@@ -311,8 +311,7 @@ module Spree
       context 'when stock_reservations_enabled is false' do
         let(:cart) { create(:cart, email: 'buyer@example.com') }
 
-        before { Spree::Config[:stock_reservations_enabled] = false }
-        after { Spree::Config[:stock_reservations_enabled] = true }
+        before { set_store_preferences(stock_reservations_enabled: false) }
 
         it 'does not create a reservation' do
           expect { execute }.not_to change { Spree::StockReservation.count }

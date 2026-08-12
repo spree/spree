@@ -3,6 +3,7 @@ module Spree
     has_prefix_id :price
 
     include Spree::VatPriceCalculation
+    include Spree::StorePreferences
 
     publishes_lifecycle_events
 
@@ -180,13 +181,19 @@ module Spree
       price_histories.where(recorded_at: 30.days.ago..).order(:amount).first
     end
 
+    # Prices carry no store of their own; the variant's product owns it.
+    # @return [Spree::Store, nil]
+    def preference_store
+      variant&.product&.store
+    end
+
     private
 
     def should_record_price_history?
       price_list_id.nil? &&
         amount.present? &&
         saved_change_to_amount? &&
-        Spree::Config[:track_price_history]
+        store_preference(:track_price_history)
     end
 
     def record_price_history

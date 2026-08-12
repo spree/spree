@@ -1241,6 +1241,18 @@
           "help": "Eine Telefonnummer in Kundenadressen zur Pflicht machen.",
           "label": "Telefonnummer erforderlich"
         },
+        "allow_checkout_on_gateway_error": {
+          "help": "Kunden den Kauf abschließen lassen, auch wenn der Zahlungsanbieter einen Fehler meldet.",
+          "label": "Bezahlen nach Zahlungsfehler erlauben"
+        },
+        "auto_capture": {
+          "help": "Den Betrag sofort einziehen statt ihn nur zu reservieren. Eine Zahlungsart kann dies überschreiben.",
+          "label": "Karten beim Bezahlen belasten"
+        },
+        "auto_capture_on_dispatch": {
+          "help": "Erst abbuchen, wenn die Ware tatsächlich rausgeht.",
+          "label": "Bei Versand belasten"
+        },
         "company_field_enabled": {
           "help": "Ein Firmenfeld in den Adressformularen an der Kasse anzeigen.",
           "label": "Firmenfeld"
@@ -1249,6 +1261,10 @@
           "help": "Antwortadresse, die Kunden in Storefront-E-Mails angezeigt wird.",
           "label": "E-Mail des Kundensupports",
           "placeholder": "support@yourstore.com"
+        },
+        "disable_sku_validation": {
+          "help": "Mehrere Varianten dürfen dieselbe SKU verwenden.",
+          "label": "Doppelte SKUs erlauben"
         },
         "guest_checkout": {
           "help": "Store-weite Vorgabe dafür, ob Kunden ohne Konto zur Kasse gehen können. Vertriebskanäle können dies überschreiben.",
@@ -1300,6 +1316,14 @@
         "preferred_weight_unit": {
           "label": "Gewichtseinheit"
         },
+        "show_products_without_price": {
+          "help": "Produkte listen, die in der Währung des Kunden keinen Preis haben.",
+          "label": "Produkte ohne Preis anzeigen"
+        },
+        "stock_reservations_enabled": {
+          "help": "Artikel während des Bezahlvorgangs reservieren, damit sie nicht doppelt verkauft werden.",
+          "label": "Bestand während des Bezahlens reservieren"
+        },
         "storefront_access": {
           "help": "Store-weite Vorgabe dafür, was anonyme Besucher sehen. Vertriebskanäle können dies überschreiben. Wenn Preise verborgen sind, müssen Gäste sich zum Bezahlen anmelden.",
           "label": "Storefront-Zugriff",
@@ -1308,6 +1332,14 @@
             "prices_hidden": "Preise verborgen – Besucher müssen sich anmelden, um Preise zu sehen",
             "public": "Öffentlich – alle können stöbern und Preise sehen"
           }
+        },
+        "track_inventory_levels": {
+          "help": "Bestände zählen. Ausschalten, um jedes Produkt als immer verfügbar zu behandeln.",
+          "label": "Lagerbestand verfolgen"
+        },
+        "track_price_history": {
+          "help": "Frühere Preise speichern, damit der Shop den niedrigsten Preis der letzten 30 Tage anzeigen kann, wie es EU-Regeln verlangen.",
+          "label": "Preisverlauf aufzeichnen"
         }
       },
       "store_credit": {
@@ -2628,8 +2660,11 @@
           "default_package_description": "Der Karton, in dem Sie üblicherweise versenden. Carrier-Tarifanbieter addieren sein Gewicht zu jedem Paket und nutzen seine Abmessungen für Volumengewicht-Preise.",
           "subtitle": "Allgemeine Konfiguration und shopweite Standardwerte.",
           "tab_addresses": "Adressen",
+          "tab_catalog": "Katalog",
           "tab_default_package": "Standardpaket",
           "tab_general": "Allgemein",
+          "tab_inventory": "Lagerbestand",
+          "tab_payments": "Zahlungen",
           "tab_standards": "Standards und Formate",
           "tab_storefront_access": "Storefront-Zugriff",
           "title": "Shop-Einstellungen"

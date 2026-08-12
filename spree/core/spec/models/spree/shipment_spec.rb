@@ -618,7 +618,6 @@ describe Spree::Shipment, type: :model do
   end
 
   context 'when order is completed' do
-    after { Spree::Config.set track_inventory_levels: true }
 
     before do
       allow(order).to receive_messages completed?: true
@@ -626,7 +625,7 @@ describe Spree::Shipment, type: :model do
     end
 
     context 'with inventory tracking' do
-      before { Spree::Config.set track_inventory_levels: true }
+      before { set_store_preferences(track_inventory_levels: true) }
 
       it 'validates with inventory' do
         shipment.inventory_units = [create(:inventory_unit)]
@@ -635,7 +634,7 @@ describe Spree::Shipment, type: :model do
     end
 
     context 'without inventory tracking' do
-      before { Spree::Config.set track_inventory_levels: false }
+      before { set_store_preferences(track_inventory_levels: false) }
 
       it 'validates with no inventory' do
         expect(shipment.valid?).to be true

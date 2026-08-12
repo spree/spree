@@ -1238,6 +1238,18 @@
           "help": "将电话号码设为客户地址的必填项。",
           "label": "要求填写电话号码"
         },
+        "allow_checkout_on_gateway_error": {
+          "help": "即使支付服务商返回错误，也让顾客完成结账。",
+          "label": "支付出错后仍允许结账"
+        },
+        "auto_capture": {
+          "help": "立即收取款项，而不是仅预授权。支付方式可覆盖此设置。",
+          "label": "结账时扣款"
+        },
+        "auto_capture_on_dispatch": {
+          "help": "等到商品实际发出后再收款。",
+          "label": "发货时扣款"
+        },
         "company_field_enabled": {
           "help": "在结账时的地址表单中显示公司字段。",
           "label": "公司字段"
@@ -1246,6 +1258,10 @@
           "help": "在店面邮件中向客户显示的回复（Reply-to）地址。",
           "label": "客户支持邮箱",
           "placeholder": "support@yourstore.com"
+        },
+        "disable_sku_validation": {
+          "help": "允许多个变体使用相同的 SKU。",
+          "label": "允许重复 SKU"
         },
         "guest_checkout": {
           "help": "店铺范围内的默认设置，控制顾客是否可以无需账户即可结账。渠道可以覆盖此设置。",
@@ -1297,6 +1313,14 @@
         "preferred_weight_unit": {
           "label": "重量单位"
         },
+        "show_products_without_price": {
+          "help": "列出在顾客币种下没有价格的商品。",
+          "label": "显示无价格的商品"
+        },
+        "stock_reservations_enabled": {
+          "help": "顾客结账时预留商品，避免同一件商品被重复售出。",
+          "label": "结账期间锁定库存"
+        },
         "storefront_access": {
           "help": "店铺范围内的默认设置，控制匿名访客可以看到的内容。渠道可以覆盖此设置。隐藏价格时，访客须登录后才能结账。",
           "label": "店铺访问权限",
@@ -1305,6 +1329,14 @@
             "prices_hidden": "隐藏价格 — 访客须登录后才能查看价格",
             "public": "公开 — 任何人都可以浏览并查看价格"
           }
+        },
+        "track_inventory_levels": {
+          "help": "统计现有库存。关闭后，所有商品都视为始终有货。",
+          "label": "跟踪库存数量"
+        },
+        "track_price_history": {
+          "help": "保留历史价格，以便店铺按欧盟规定显示最近 30 天的最低价。",
+          "label": "记录价格历史"
         }
       },
       "store_credit": {
@@ -2624,8 +2656,11 @@
           "default_package_description": "常用的发货纸箱。承运商费率提供方会将其重量加到每个包裹上,并使用其尺寸计算体积重量。",
           "subtitle": "通用配置与店铺级默认设置。",
           "tab_addresses": "地址",
+          "tab_catalog": "商品目录",
           "tab_default_package": "默认包裹",
           "tab_general": "通用",
+          "tab_inventory": "库存",
+          "tab_payments": "支付",
           "tab_standards": "标准与格式",
           "tab_storefront_access": "店铺访问权限",
           "title": "店铺设置"

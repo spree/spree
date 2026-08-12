@@ -1255,6 +1255,18 @@
           "help": "Uczyń numer telefonu obowiązkowym w adresach klientów.",
           "label": "Wymagaj numeru telefonu"
         },
+        "allow_checkout_on_gateway_error": {
+          "help": "Pozwól klientom dokończyć zamówienie, nawet gdy operator płatności zwróci błąd.",
+          "label": "Pozwól dokończyć zamówienie po błędzie płatności"
+        },
+        "auto_capture": {
+          "help": "Pobieraj płatność od razu, zamiast tylko rezerwować kwotę. Metoda płatności może to nadpisać.",
+          "label": "Obciążaj karty przy zamówieniu"
+        },
+        "auto_capture_on_dispatch": {
+          "help": "Pobieraj pieniądze dopiero wtedy, gdy towar faktycznie wyjeżdża.",
+          "label": "Obciążaj przy wysyłce"
+        },
         "company_field_enabled": {
           "help": "Pokaż pole firmy w formularzach adresowych podczas składania zamówienia.",
           "label": "Pole firmy"
@@ -1263,6 +1275,10 @@
           "help": "Adres zwrotny pokazywany klientom w wiadomościach ze sklepu.",
           "label": "E-mail obsługi klienta",
           "placeholder": "support@twojsklep.com"
+        },
+        "disable_sku_validation": {
+          "help": "Pozwól, aby kilka wariantów miało ten sam SKU.",
+          "label": "Zezwalaj na powtórzone SKU"
         },
         "guest_checkout": {
           "help": "Domyślne ustawienie dla całego sklepu określające, czy klienci mogą składać zamówienia bez konta. Kanały mogą je nadpisać.",
@@ -1314,6 +1330,14 @@
         "preferred_weight_unit": {
           "label": "Jednostka wagi"
         },
+        "show_products_without_price": {
+          "help": "Wyświetlaj produkty, które nie mają ceny w walucie klienta.",
+          "label": "Pokazuj produkty bez ceny"
+        },
+        "stock_reservations_enabled": {
+          "help": "Rezerwuj produkty na czas składania zamówienia, aby ten sam nie został sprzedany dwa razy.",
+          "label": "Rezerwuj towar podczas zamawiania"
+        },
         "storefront_access": {
           "help": "Domyślne ustawienie dla całego sklepu określające, co widzą anonimowi odwiedzający. Kanały mogą je nadpisać. Gdy ceny są ukryte, goście muszą się zalogować, aby sfinalizować zakup.",
           "label": "Dostęp do sklepu",
@@ -1322,6 +1346,14 @@
             "prices_hidden": "Ceny ukryte — odwiedzający muszą się zalogować, aby zobaczyć ceny",
             "public": "Publiczny — każdy może przeglądać i widzieć ceny"
           }
+        },
+        "track_inventory_levels": {
+          "help": "Licz dostępne ilości. Wyłącz, aby traktować każdy produkt jako zawsze dostępny.",
+          "label": "Śledź stany magazynowe"
+        },
+        "track_price_history": {
+          "help": "Przechowuj poprzednie ceny, aby sklep mógł pokazać najniższą cenę z ostatnich 30 dni, zgodnie z przepisami UE.",
+          "label": "Zapisuj historię cen"
         }
       },
       "store_credit": {
@@ -2666,8 +2698,11 @@
           "default_package_description": "Karton, w którym zwykle wysyłasz. Dostawcy stawek przewoźników dodają jego wagę do każdej paczki i używają wymiarów do wyceny wagi wymiarowej.",
           "subtitle": "Ogólna konfiguracja i domyślne ustawienia dla całego sklepu.",
           "tab_addresses": "Adresy",
+          "tab_catalog": "Katalog",
           "tab_default_package": "Domyślna paczka",
           "tab_general": "Ogólne",
+          "tab_inventory": "Stan magazynowy",
+          "tab_payments": "Płatności",
           "tab_standards": "Standardy i formaty",
           "tab_storefront_access": "Dostęp do sklepu",
           "title": "Ustawienia sklepu"

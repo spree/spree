@@ -84,11 +84,8 @@ describe Spree::StockReservation, type: :model do
       expect(described_class.ttl_for(order)).to eq(15.minutes)
     end
 
-    it 'falls back to the global default_stock_reservation_ttl_minutes' do
-      Spree::Config[:default_stock_reservation_ttl_minutes] = 7
-      expect(described_class.ttl_for(nil)).to eq(7.minutes)
-    ensure
-      Spree::Config[:default_stock_reservation_ttl_minutes] = 10
+    it 'falls back to ten minutes without a store to ask' do
+      expect(described_class.ttl_for(nil)).to eq(10.minutes)
     end
   end
 

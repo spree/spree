@@ -76,6 +76,10 @@ RSpec.configure do |config|
   config.include Spree::TestingSupport::Preferences
   config.include Spree::TestingSupport::ImageHelpers
 
+  # The default store is shared across the whole suite, so a setting one example
+  # changes would otherwise still be set for the next one.
+  config.after { restore_store_preferences }
+
   config.before(:suite) do
     Spree::Events.disable!
     # Clean out the database state before the tests run

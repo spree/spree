@@ -8,6 +8,7 @@ module Spree
     include Spree::NumberIdentifier
     include Spree::HasCustomFields
     include Spree::Metadata
+    include Spree::StorePreferences
     if defined?(Spree::Security::Shipments)
       include Spree::Security::Shipments
     end
@@ -85,6 +86,13 @@ module Spree
     # @return [Spree::Cart, Spree::Order, nil]
     def owner
       order || cart
+    end
+
+    # `store` is delegated to the owner, which raises when a fulfillment has
+    # neither an order nor a cart yet.
+    # @return [Spree::Store, nil]
+    def preference_store
+      owner&.store
     end
 
     # Bridge for legacy callers assigning +current_order+ (now a Spree::Cart)
@@ -697,7 +705,7 @@ module Spree
     # type-specific mechanics in the provider wave.
     def after_fulfill
       fulfillment_items.each(&:ship!)
-      process_order_payments if Spree::Config[:auto_capture_on_dispatch]
+      process_order_payments if store_preference(:auto_capture_on_dispatch)
       touch :fulfilled_at
       run_provider_create_fulfillment
       update_order_fulfillment_status

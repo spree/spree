@@ -32,6 +32,7 @@ module Spree
     include Spree::Product::Slugs
     include Spree::Product::Channels
     include Spree::SearchIndexable
+    include Spree::StorePreferences
     if defined?(Spree::VendorConcern)
       include Spree::VendorConcern
     end
@@ -884,7 +885,7 @@ module Spree
     end
 
     def any_variants_not_track_inventory?
-      return true unless Spree::Config.track_inventory_levels
+      return true unless store_preference(:track_inventory_levels)
 
       if variants.loaded?
         variants.any? { |v| !v.track_inventory? }

@@ -61,11 +61,11 @@ describe Spree::Variant, type: :model do
 
       context 'disabled validation' do
         before do
-          Spree::Config[:disable_sku_validation] = true
+          set_store_preferences(disable_sku_validation: true)
         end
 
         after do
-          Spree::Config[:disable_sku_validation] = false
+          set_store_preferences(disable_sku_validation: false)
         end
 
         context 'valid' do
@@ -874,7 +874,7 @@ describe Spree::Variant, type: :model do
 
   describe '#in_stock?' do
     before do
-      Spree::Config.track_inventory_levels = true
+      set_store_preferences(track_inventory_levels: true)
     end
 
     context 'when stock_items are not backorderable' do
@@ -1002,7 +1002,7 @@ describe Spree::Variant, type: :model do
 
   describe '#total_on_hand' do
     it 'is infinite if track_inventory_levels is false' do
-      Spree::Config[:track_inventory_levels] = false
+      set_store_preferences(track_inventory_levels: false)
       expect(build(:variant).total_on_hand).to eql(Float::INFINITY)
     end
 
@@ -1103,19 +1103,19 @@ describe Spree::Variant, type: :model do
 
   describe '#should_track_inventory?' do
     it 'does not track inventory when global setting is off' do
-      Spree::Config[:track_inventory_levels] = false
+      set_store_preferences(track_inventory_levels: false)
 
       expect(build(:variant).should_track_inventory?).to eq(false)
     end
 
     it 'does not track inventory when variant is turned off' do
-      Spree::Config[:track_inventory_levels] = true
+      set_store_preferences(track_inventory_levels: true)
 
       expect(build(:on_demand_variant).should_track_inventory?).to eq(false)
     end
 
     it 'tracks inventory when global and variant are on' do
-      Spree::Config[:track_inventory_levels] = true
+      set_store_preferences(track_inventory_levels: true)
 
       expect(build(:variant).should_track_inventory?).to eq(true)
     end

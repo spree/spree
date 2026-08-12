@@ -64,7 +64,7 @@ module Spree
           payment.public_send(method)
         end
       rescue Spree::Core::GatewayError => e
-        result = !!Spree::Config[:allow_checkout_on_gateway_error]
+        result = !!Spree::StorePreferences.read(store, :allow_checkout_on_gateway_error)
         errors.add(:base, e.message) && (return result)
       end
     end

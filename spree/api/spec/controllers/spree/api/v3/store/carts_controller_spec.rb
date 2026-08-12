@@ -766,8 +766,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       end
 
       context 'when stock_reservations_enabled is false' do
-        before { Spree::Config[:stock_reservations_enabled] = false }
-        after { Spree::Config[:stock_reservations_enabled] = true }
+        before { set_store_preferences(stock_reservations_enabled: false) }
 
         it 'does not create reservations' do
           order.update!(email: 'customer@example.com')

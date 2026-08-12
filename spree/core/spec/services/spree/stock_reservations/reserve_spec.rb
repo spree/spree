@@ -11,8 +11,7 @@ describe Spree::StockReservations::Reserve do
   subject(:result) { described_class.call(order: order) }
 
   context 'when stock_reservations_enabled is true' do
-    before { Spree::Config[:stock_reservations_enabled] = true }
-    after { Spree::Config[:stock_reservations_enabled] = true }
+    before { set_store_preferences(store, stock_reservations_enabled: true) }
 
     it 'creates a reservation for each tracked line item' do
       expect { result }.to change(Spree::StockReservation, :count).by(1)
@@ -85,8 +84,7 @@ describe Spree::StockReservations::Reserve do
   end
 
   context 'when stock_reservations_enabled is false' do
-    before { Spree::Config[:stock_reservations_enabled] = false }
-    after { Spree::Config[:stock_reservations_enabled] = true }
+    before { set_store_preferences(store, stock_reservations_enabled: false) }
 
     it 'is a no-op' do
       expect { result }.not_to change(Spree::StockReservation, :count)

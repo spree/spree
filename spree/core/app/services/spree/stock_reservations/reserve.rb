@@ -8,7 +8,7 @@ module Spree
           Spree::Deprecation.warn('Calling Spree::StockReservations::Reserve with order: is deprecated and will be removed in Spree 6.1. Pass cart: instead.')
           cart ||= order
         end
-        return success(cart) unless Spree::Config[:stock_reservations_enabled]
+        return success(cart) unless Spree::StorePreferences.read(cart&.store, :stock_reservations_enabled)
 
         expires_at = Time.current + Spree::StockReservation.ttl_for(cart)
 

@@ -84,7 +84,7 @@ describe Spree::StockMovement, type: :model do
     describe '#update_stock_item_quantity' do
       context 'when track inventory levels is false' do
         before do
-          Spree::Config[:track_inventory_levels] = false
+          set_store_preferences(track_inventory_levels: false)
           stock_movement.quantity = 1
           stock_movement.save
           stock_item.reload

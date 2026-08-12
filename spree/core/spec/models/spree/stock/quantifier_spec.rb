@@ -32,7 +32,7 @@ module Spree
           end
 
           context 'when track_inventory_levels is false' do
-            before { configure_spree_preferences { |config| config.track_inventory_levels = false } }
+            before { set_store_preferences(track_inventory_levels: false) }
 
             specify { expect(subject.total_on_hand).to eq(Float::INFINITY) }
 
@@ -129,7 +129,7 @@ module Spree
         let(:other_line_item) { create(:line_item, order: other_order, variant: stock_item.variant) }
 
         context 'when stock_reservations_enabled is true' do
-          before { Spree::Config[:stock_reservations_enabled] = true }
+          before { set_store_preferences(stock_reservations_enabled: true) }
 
           it 'subtracts active reservations from total_on_hand' do
             create(
@@ -238,8 +238,7 @@ module Spree
         end
 
         context 'when stock_reservations_enabled is false' do
-          before { Spree::Config[:stock_reservations_enabled] = false }
-          after { Spree::Config[:stock_reservations_enabled] = true }
+          before { set_store_preferences(stock_reservations_enabled: false) }
 
           it 'returns raw count_on_hand even when reservations exist' do
             create(

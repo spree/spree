@@ -27,6 +27,14 @@ module Spree
                    preferred_guest_checkout: :boolean,
                    preferred_company_field_enabled: :boolean,
                    preferred_address_requires_phone: :boolean,
+                   preferred_auto_capture: :boolean,
+                   preferred_auto_capture_on_dispatch: :boolean,
+                   preferred_allow_checkout_on_gateway_error: :boolean,
+                   preferred_track_inventory_levels: :boolean,
+                   preferred_stock_reservations_enabled: :boolean,
+                   preferred_track_price_history: :boolean,
+                   preferred_show_products_without_price: :boolean,
+                   preferred_disable_sku_validation: :boolean,
                    preferred_order_routing_strategy: :string,
                    metadata: 'Record<string, unknown>'
 
@@ -52,6 +60,14 @@ module Spree
                      :preferred_guest_checkout,
                      :preferred_company_field_enabled,
                      :preferred_address_requires_phone,
+                     :preferred_auto_capture,
+                     :preferred_auto_capture_on_dispatch,
+                     :preferred_allow_checkout_on_gateway_error,
+                     :preferred_track_inventory_levels,
+                     :preferred_stock_reservations_enabled,
+                     :preferred_track_price_history,
+                     :preferred_show_products_without_price,
+                     :preferred_disable_sku_validation,
                      :preferred_order_routing_strategy,
                      created_at: :iso8601, updated_at: :iso8601
 

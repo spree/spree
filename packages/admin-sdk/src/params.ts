@@ -26,6 +26,22 @@ export interface StoreUpdateParams {
   preferred_company_field_enabled?: boolean
   /** Makes a phone number mandatory on customer addresses. */
   preferred_address_requires_phone?: boolean
+  /** Store-wide default for charging cards at checkout rather than only authorizing them. A payment method's own setting wins when set. */
+  preferred_auto_capture?: boolean
+  /** Takes payment when goods are dispatched rather than at checkout. */
+  preferred_auto_capture_on_dispatch?: boolean
+  /** Lets a customer finish checkout even when the payment gateway errors. */
+  preferred_allow_checkout_on_gateway_error?: boolean
+  /** Counts on-hand quantities. Off means everything is treated as always available. */
+  preferred_track_inventory_levels?: boolean
+  /** Holds stock for shoppers while they check out, so the same item can't be sold twice. */
+  preferred_stock_reservations_enabled?: boolean
+  /** Records price changes for the EU Omnibus lowest-price-in-30-days display. */
+  preferred_track_price_history?: boolean
+  /** Whether products with no price in the shopper's currency still appear in listings. */
+  preferred_show_products_without_price?: boolean
+  /** Lets more than one variant share the same SKU. */
+  preferred_disable_sku_validation?: boolean
   /** Sender address used on all transactional emails (required by the model). */
   mail_from_address?: string
   /** Customer-facing reply-to address shown in the storefront/email footer. */

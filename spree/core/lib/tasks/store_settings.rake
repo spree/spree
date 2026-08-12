@@ -3,7 +3,17 @@ namespace :spree do
     # Settings that moved from Spree::Config to Spree::Store preferences in
     # Spree 6.0, mapped to the default they carried as globals. A global still
     # at its default says nothing about intent and is never copied.
-    MOVED_SETTINGS = { address_requires_phone: false }.freeze
+    MOVED_SETTINGS = {
+      address_requires_phone: false,
+      allow_checkout_on_gateway_error: false,
+      auto_capture: true,
+      auto_capture_on_dispatch: false,
+      disable_sku_validation: false,
+      show_products_without_price: false,
+      stock_reservations_enabled: true,
+      track_inventory_levels: true,
+      track_price_history: true
+    }.freeze
 
     # Marks a store the backfill has already visited. Preferences seed their
     # declared defaults on create, so a stored value that equals the default is
