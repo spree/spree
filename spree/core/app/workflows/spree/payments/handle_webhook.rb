@@ -49,10 +49,12 @@ module Spree
         payment_session.prepare_for_settlement!
 
         order.with_lock do
-          # Idempotency: the API endpoint or an earlier delivery may have
-          # already settled this session. Not halt! — that is forbidden
-          # inside a transaction (there is nothing committed to halt with).
-          next if payment_session.reload.completed?
+          # Idempotency keys off the payment, not the session: an authorized
+          # session is already completed (manual capture, delayed-notification
+          # banks), and the capture webhook that follows must still be able to
+          # complete its payment. Not halt! — that is forbidden inside a
+          # transaction (there is nothing committed to halt with).
+          next if payment_session.reload.payment&.completed?
 
           step :ensure_payment
           step :complete_session

@@ -85,19 +85,27 @@ module Spree
     # @param metadata [Hash] gateway-specific metadata
     # @return [Spree::Payment] the payment record
     def find_or_create_payment!(metadata = {})
-      return payment if payment.present?
+      # Session payments carry no Spree-side source (the gateway holds the
+      # instrument), so the requirement is skipped on every load, not just at
+      # creation — a later capture webhook transitions the same row and would
+      # otherwise fail source validation.
+      return skip_source_requirement(payment) if payment.present?
 
-      owner.payments.find_or_create_by!(
-        payment_method: payment_method,
-        response_code: external_id,
-      ) do |p|
-        p.amount = amount
-        p.skip_source_requirement = true
-      end
+      skip_source_requirement(
+        owner.payments.find_or_create_by!(
+          payment_method: payment_method,
+          response_code: external_id,
+        ) do |p|
+          p.amount = amount
+          p.skip_source_requirement = true
+        end
+      )
     rescue ActiveRecord::RecordNotUnique
-      owner.payments.find_by!(
-        payment_method: payment_method,
-        response_code: external_id
+      skip_source_requirement(
+        owner.payments.find_by!(
+          payment_method: payment_method,
+          response_code: external_id
+        )
       )
     end
 
@@ -176,6 +184,13 @@ module Spree
     end
 
     private
+
+    # Only for payments with no Spree-side source — a gateway that does record
+    # one (Stripe's card sources) leaves it untouched.
+    def skip_source_requirement(payment_record)
+      payment_record.skip_source_requirement = true if payment_record&.source.blank?
+      payment_record
+    end
 
     def exactly_one_owner
       errors.add(:base, Spree.t('errors.messages.exactly_one_of_cart_or_order')) unless [order, cart].compact.one?

@@ -13,6 +13,36 @@ RSpec.describe Spree::Payments::HandleWebhook do
   end
 
   describe '#call' do
+    # Manual capture and delayed-notification banks complete the session while
+    # the payment is only authorized; the capture webhook that follows must
+    # still settle it.
+    context 'when a capture follows an authorization on the same session' do
+      before do
+        subject.call(payment_method: payment_method, action: :authorized, payment_session: payment_session)
+      end
+
+      it 'leaves the session completed with the payment pending' do
+        expect(payment_session.reload).to be_completed
+        expect(order.payments.last).to be_pending
+      end
+
+      it 'completes the payment when the capture arrives' do
+        subject.call(payment_method: payment_method, action: :captured, payment_session: payment_session.reload)
+
+        payment = order.payments.reload.last
+        expect(payment).to be_completed
+        expect(payment.capture_events.sum(:amount)).to eq(payment.amount)
+      end
+
+      it 'does not record a second capture on a replayed capture webhook' do
+        subject.call(payment_method: payment_method, action: :captured, payment_session: payment_session.reload)
+
+        expect {
+          subject.call(payment_method: payment_method, action: :captured, payment_session: payment_session.reload)
+        }.not_to change { order.payments.reload.last.capture_events.count }
+      end
+    end
+
     context 'with :captured action' do
       it 'fetches provider data before taking the order lock' do
         expect(payment_session).to receive(:prepare_for_settlement!).and_call_original
@@ -132,21 +162,37 @@ RSpec.describe Spree::Payments::HandleWebhook do
       end
     end
 
-    context 'when payment session is already completed' do
+    # Replay protection keys off the payment, not the session: an authorized
+    # session is completed while its payment is still pending, and the capture
+    # webhook that follows must be able to settle it.
+    context 'when the payment is already completed' do
       before do
-        payment_session.update_column(:status, 'completed')
+        subject.call(payment_method: payment_method, action: :captured, payment_session: payment_session)
       end
 
       it 'does not fail on duplicate webhook' do
-        result = subject.call(payment_method: payment_method, action: :captured, payment_session: payment_session)
+        result = subject.call(payment_method: payment_method, action: :captured, payment_session: payment_session.reload)
 
         expect(result).to be_success
       end
 
       it 'does not create a duplicate payment' do
         expect {
+          subject.call(payment_method: payment_method, action: :captured, payment_session: payment_session.reload)
+        }.not_to change { order.payments.reload.count }
+      end
+    end
+
+    context 'when the session was completed without a payment' do
+      before do
+        payment_session.update_column(:status, 'completed')
+      end
+
+      # The session-status guard used to strand these — settlement never ran.
+      it 'still settles the payment' do
+        expect {
           subject.call(payment_method: payment_method, action: :captured, payment_session: payment_session)
-        }.not_to change { order.payments.count }
+        }.to change { order.payments.reload.count }.by(1)
       end
     end
   end
