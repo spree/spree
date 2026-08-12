@@ -67,7 +67,7 @@ module Spree
               @resource.canceled_by(
                 try_spree_current_user,
                 nil,
-                ActiveModel::Type::Boolean.new.cast(params[:notify_customer]).to_b
+                params[:notify_customer].to_b
               )
               render json: serialize_resource(@resource.reload)
             end
