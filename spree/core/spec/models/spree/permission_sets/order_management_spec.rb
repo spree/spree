@@ -79,5 +79,38 @@ RSpec.describe Spree::PermissionSets::OrderManagement do
         expect(ability.can?(:destroy, non_deletable_order)).to be false
       end
     end
+
+    context 'order-owned record restrictions on canceled orders' do
+      let(:canceled_order) { build(:order) }
+      let(:active_order) { build(:order) }
+
+      before do
+        ability.can :manage, Spree::OrderPromotion
+        permission_set.activate!
+        allow(canceled_order).to receive(:canceled?).and_return(true)
+        allow(active_order).to receive(:canceled?).and_return(false)
+      end
+
+      described_class::RESTRICTED_MODELS.each do |klass|
+        context klass.name do
+          let(:record_on_canceled_order) { klass.new.tap { |r| allow(r).to receive(:order).and_return(canceled_order) } }
+          let(:record_on_active_order) { klass.new.tap { |r| allow(r).to receive(:order).and_return(active_order) } }
+
+          it 'prevents managing records on canceled orders' do
+            expect(ability.can?(:create, record_on_canceled_order)).to be false
+            expect(ability.can?(:edit, record_on_canceled_order)).to be false
+            expect(ability.can?(:update, record_on_canceled_order)).to be false
+            expect(ability.can?(:destroy, record_on_canceled_order)).to be false
+          end
+
+          it 'allows managing records on non-canceled orders' do
+            expect(ability.can?(:create, record_on_active_order)).to be true
+            expect(ability.can?(:edit, record_on_active_order)).to be true
+            expect(ability.can?(:update, record_on_active_order)).to be true
+            expect(ability.can?(:destroy, record_on_active_order)).to be true
+          end
+        end
+      end
+    end
   end
 end

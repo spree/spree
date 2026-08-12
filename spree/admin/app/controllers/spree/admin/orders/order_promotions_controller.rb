@@ -15,6 +15,7 @@ module Spree
         # POST /admin/orders/:order_id/order_promotions
         def create
           authorize! :update, @order
+          authorize! :create, @order.order_promotions.new(order: @order)
 
           @order.coupon_code = params[:coupon_code]
 
@@ -33,6 +34,7 @@ module Spree
         # DELETE /admin/orders/:order_id/promotions/:id
         def destroy
           authorize! :update, @order
+          authorize! :destroy, @order_promotion
 
           coupon_code = @order_promotion.code.presence || @order_promotion.name
 

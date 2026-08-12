@@ -22,6 +22,8 @@ module Spree
 
         # Protect the admin role from modification
         cannot [:update, :destroy], Spree::Role, name: ['admin']
+
+        restrict_cancelled_order_management!
       end
     end
   end
