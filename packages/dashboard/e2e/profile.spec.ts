@@ -91,13 +91,21 @@ test.describe('profile', () => {
     await page.getByRole('button', { name: /user menu/i }).click()
     await page.getByRole('combobox', { name: /^language$/i }).selectOption({ label: 'Polski' })
 
-    // The switch persists to the account (PATCH /me) so it survives the reload
-    // instead of being reverted by the auth provider. Nav renders in Polish.
     await expect(page.getByRole('link', { name: /produkty/i })).toBeVisible({ timeout: 15_000 })
 
-    // Reset to English via the top-bar menu (the picker is now "Język").
+    // The switch is saved to the account (PATCH /me), so it has to survive a
+    // reload rather than be reverted by the auth provider. Reloading is also
+    // what proves the save landed: nothing else here waits on that request.
+    await page.reload()
+    await expect(page.getByRole('link', { name: /produkty/i })).toBeVisible({ timeout: 15_000 })
+
+    // Reset to English via the top-bar menu (the picker is now "Język"), and
+    // confirm that save landed too — later specs in this serial run expect
+    // English, and this user is shared across them.
     await page.getByRole('button', { name: /menu użytkownika/i }).click()
     await page.getByRole('combobox', { name: /^język$/i }).selectOption({ label: 'English' })
+    await expect(page.getByRole('link', { name: /^products$/i })).toBeVisible({ timeout: 15_000 })
+    await page.reload()
     await expect(page.getByRole('link', { name: /^products$/i })).toBeVisible({ timeout: 15_000 })
   })
 })
