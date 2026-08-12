@@ -6,6 +6,8 @@ module Spree
           class TaxIdentifiersController < BaseController
             scoped_resource :customers
 
+            include Spree::Api::V3::Admin::Concerns::TaxIdentifierValidation
+
             # Re-declaring the filter replaces the inherited options, so the
             # standard actions have to be listed alongside the custom one.
             before_action :set_resource, only: [:show, :update, :destroy, :validate]
@@ -15,23 +17,6 @@ module Spree
             # Re-asks the registry. Manual because a registry answers only "valid
             # now": a number verified last year may have been deregistered since,
             # and staff need a way to check without editing the row.
-            def validate
-              authorize_resource!(@resource, :update)
-
-              unless @resource.validatable?
-                render_error(
-                  code: 'tax_id_not_validatable',
-                  message: "No validator is registered for tax identifier kind '#{@resource.kind}'",
-                  status: :unprocessable_content
-                )
-                return
-              end
-
-              Spree::TaxIdentifiers::ValidateJob.perform_later(@resource.id)
-              @resource.update_columns(validation_status: 'pending', validated_at: nil, updated_at: Time.current)
-
-              render json: serialize_resource(@resource.reload), status: :accepted
-            end
 
             protected
 
