@@ -11,13 +11,12 @@ module Spree
 
         # GET /admin/orders/:order_id/adjustments/new
         def new
-          @adjustment = @order.adjustments.new
+          @adjustment = build_adjustment
         end
 
         # POST /admin/orders/:order_id/adjustments
         def create
-          @adjustment = @order.adjustments.new(permitted_resource_params)
-          @adjustment.order = @order
+          @adjustment = build_adjustment(permitted_resource_params)
           @adjustment.label = params.dig(:adjustment, :label).presence || Spree.t(:manual_adjustment)
           @adjustment.state = 'closed'
 
@@ -109,6 +108,13 @@ module Spree
         def load_adjustment
           @adjustment = @order.all_adjustments.find_by_prefix_id!(params[:id])
           authorize! action, @adjustment
+        end
+
+        def build_adjustment(attributes = {})
+          @order.adjustments.new(attributes).tap do |adjustment|
+            adjustment.order = @order
+            authorize! :create, adjustment
+          end
         end
 
         def permitted_resource_params

@@ -15,6 +15,15 @@ RSpec.describe Spree::Admin::Orders::AdjustmentsController do
       expect(response).to be_successful
       expect(response).to render_template(:new)
     end
+
+    context 'for a canceled order' do
+      let(:order) { create(:order_with_line_items, store: store, state: 'canceled') }
+
+      it 'denies access' do
+        subject
+        expect(response).to redirect_to spree.admin_forbidden_path
+      end
+    end
   end
 
   describe '#create' do
@@ -30,6 +39,19 @@ RSpec.describe Spree::Admin::Orders::AdjustmentsController do
       it 'responds with turbo_stream' do
         subject
         expect(response.media_type).to eq('text/vnd.turbo-stream.html')
+      end
+    end
+
+    context 'for a canceled order' do
+      subject { post :create, params: { order_id: order.to_param, adjustment: adjustment_params } }
+
+      let(:order) { create(:order_with_line_items, store: store, state: 'canceled') }
+
+      it 'does not create an adjustment' do
+        expect { subject }.not_to change(Spree::Adjustment, :count)
+
+        expect(flash[:error]).to eq Spree.t(:authorization_failure)
+        expect(response).to redirect_to spree.admin_forbidden_path
       end
     end
   end
