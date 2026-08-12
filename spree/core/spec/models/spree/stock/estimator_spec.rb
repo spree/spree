@@ -195,7 +195,7 @@ module Spree
         end
 
         context 'includes tax adjustments if applicable' do
-          let!(:tax_rate) { create(:tax_rate, country: order.tax_address.country) }
+          let!(:tax_rate) { create(:tax_rate, country_iso: order.tax_address.country&.iso) }
 
           before do
             Spree::ShippingMethod.all.each do |sm|
@@ -220,7 +220,7 @@ module Spree
           let!(:default_vat) do
             create :tax_rate,
                    included_in_price: true,
-                   country: home_country,
+                   country_iso: home_country&.iso,
                    amount: 0.2,
                    tax_category: shipping_method.tax_category
           end
@@ -258,7 +258,7 @@ module Spree
             let!(:other_vat) do
               create :tax_rate,
                      included_in_price: true,
-                     country: other_country,
+                     country_iso: other_country&.iso,
                      amount: 0.3,
                      tax_category: shipping_method.tax_category
             end

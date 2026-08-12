@@ -56,9 +56,9 @@ module Spree
 
         context 'and the destination is elsewhere' do
           it 'takes the home VAT out and puts the destination VAT on' do
-            create(:tax_rate, country: home_country, tax_category: tax_category, amount: 0.19,
+            create(:tax_rate, country_iso: home_country&.iso, tax_category: tax_category, amount: 0.19,
                               included_in_price: true)
-            create(:tax_rate, country: destination, tax_category: tax_category, amount: 0.25,
+            create(:tax_rate, country_iso: destination&.iso, tax_category: tax_category, amount: 0.25,
                               included_in_price: true)
 
             # 100 gross at 19% is 84.03 net, which is 105.04 gross at 25%.

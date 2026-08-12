@@ -1,13 +1,13 @@
 FactoryBot.define do
   factory :tax_rate, class: Spree::TaxRate do
     name { "TaxRate - #{rand(999_999)}" }
-    country { Spree::Country.find_by(iso: 'US') || association(:country) }
+    country_iso { 'US' }
     tax_category
     amount { 0.1 }
 
     # Taxes every country — what a single-market store configures.
     trait :worldwide do
-      country { nil }
+      country_iso { nil }
     end
   end
 end

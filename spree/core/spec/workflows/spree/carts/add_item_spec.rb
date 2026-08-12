@@ -89,7 +89,7 @@ module Spree
             amount: 0.25,
             included_in_price: true,
             tax_category: category,
-            country: @default_country
+            country_iso: @default_country&.iso
           )
         end
         let(:variant) { create(:variant, price: 1000) }

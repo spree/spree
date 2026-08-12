@@ -1,3 +1,26 @@
+## 2026-08-12: A tax rate names its jurisdiction by code, not by foreign key
+
+Amends 2026-08-06 ("Converted-away columns outlive the release that converts
+them"), which had tax rates gaining `country_id`/`state_id`. They gain
+`country_iso` and `state_code` instead — plain strings, upcased on write. The
+reason is that `Spree::Country` and `Spree::State` are themselves on the way out,
+so a rate pointing at their rows would need converting a second time; and "DE"
+is what a merchant recognises, where a row id is not. It also matches the
+jurisdiction snapshot `spree_tax_lines` already carries, so a rate and the line
+it produced now speak in the same terms.
+
+Everything else in that entry stands: `spree_tax_rates.zone_id` still survives
+through 6.0 as `spree:migrate_tax_zones`'s input, and the task now writes codes.
+
+**The cost, accepted:** the `state_belongs_to_country` validation is gone. With
+codes there is no country row to check a state against, and keeping the guard
+would mean keeping the `Spree::State` lookup this removes. A mismatched pair is
+simply a rate that never matches an address — which is what the mismatch always
+meant in practice, minus the early warning.
+
+Because the columns had not shipped, the original migration was amended rather
+than followed by a second one.
+
 ## 2026-08-12: The label leads, fulfilled follows (amends the Phase 7 fulfill flow)
 
 A warehouse prints the label, sticks it on the box, hands the box over — and
@@ -2305,7 +2328,8 @@ generalizes: a data task named in the upgrade manifest runs *after*
 `db:migrate`, so a migration that removes the task's input column in the
 same release destroys the data the task exists to convert — and leaves a
 merchant no source to re-run from if the conversion needs repeating.
-Tax rates therefore gain `country_id`/`state_id`, every `zone_id` reader
+Tax rates therefore gain a jurisdiction of their own (`country_id`/`state_id`
+here; changed to `country_iso`/`state_code` on 2026-08-12, see above), every `zone_id` reader
 is severed (the association, the zone scopes, and `Zone#has_many
 :tax_rates`, whose `dependent: :destroy` would otherwise delete live
 rates when a shipping zone is destroyed), and the column is left in

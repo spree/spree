@@ -12,9 +12,7 @@ module Spree
                    show_rate_in_label: :boolean,
                    tax_category_id: [:string, nullable: true],
                    store_id: [:string, nullable: true],
-                   country_id: [:number, nullable: true],
                    country_iso: [:string, nullable: true],
-                   state_id: [:number, nullable: true],
                    state_code: [:string, nullable: true],
                    metadata: ['Record<string, unknown>', nullable: true],
                    deleted_at: [:string, nullable: true]
@@ -40,19 +38,10 @@ module Spree
             tax_rate.store&.prefixed_id
           end
 
-          # The jurisdiction the rate taxes. A null country means every country,
-          # and a country with no state means the whole country. Countries and
-          # states are the two models without prefixed ids, so these are raw —
-          # write with `country_iso`/`state_code` instead.
-          attributes :country_id, :state_id
-
-          attribute :country_iso do |tax_rate|
-            tax_rate.country&.iso
-          end
-
-          attribute :state_code do |tax_rate|
-            tax_rate.state&.abbr
-          end
+          # The jurisdiction the rate taxes, as codes: a null country means every
+          # country, and a country with no state means the whole country. Read
+          # and written under the same two names.
+          attributes :country_iso, :state_code
         end
       end
     end

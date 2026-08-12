@@ -23,7 +23,7 @@ module Spree
         items ||= owner.line_items.to_a + owner.fulfillments.to_a + owner.fees.to_a
         return if items.empty?
 
-        rates = Spree::TaxRate.for_store(owner.store).for_jurisdiction(owner.tax_country, owner.tax_address&.state).to_a
+        rates = Spree::TaxRate.for_store(owner.store).for_jurisdiction(owner.tax_country&.iso, owner.tax_address&.state_abbr).to_a
 
         items.group_by(&:class).each do |klass, group|
           # Replace-all set semantics per estimate: stale lines die with the
@@ -127,8 +127,8 @@ module Spree
       # still say where the sale was taxed.
       def jurisdiction_for(rate, owner)
         {
-          country_iso: (rate.country || owner.tax_country)&.iso,
-          state_code: (rate.state || owner.tax_address&.state)&.abbr
+          country_iso: rate.country_iso.presence || owner.tax_country&.iso,
+          state_code: rate.state_code.presence || owner.tax_address&.state_abbr
         }
       end
 

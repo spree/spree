@@ -77,7 +77,7 @@ RSpec.describe Spree::Api::V3::DeliveryRateSerializer do
   end
 
   context 'with included tax' do
-    let(:tax_rate) { create(:tax_rate, amount: 0.1, included_in_price: true, country: @default_country) }
+    let(:tax_rate) { create(:tax_rate, amount: 0.1, included_in_price: true, country_iso: @default_country&.iso) }
 
     before { shipping_rate.update!(tax_rate: tax_rate) }
 

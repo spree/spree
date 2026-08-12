@@ -224,7 +224,7 @@ describe '6.0 data migration tasks' do
 
     def unconverted_rate(zone, **attributes)
       create(:tax_rate, **attributes).tap do |rate|
-        rate.update_columns(country_id: nil, state_id: nil, zone_id: zone.id)
+        rate.update_columns(country_iso: nil, state_code: nil, zone_id: zone.id)
       end
     end
 
@@ -233,8 +233,8 @@ describe '6.0 data migration tasks' do
 
       run_task('spree:migrate_tax_zones')
 
-      expect(rate.reload.country).to eq(germany)
-      expect(rate.state).to be_nil
+      expect(rate.reload.country_iso).to eq(germany.iso)
+      expect(rate.state_code).to be_nil
     end
 
     it 'splits a multi-country zone into one rate per country' do
@@ -242,8 +242,8 @@ describe '6.0 data migration tasks' do
 
       expect { run_task('spree:migrate_tax_zones') }.to change(Spree::TaxRate, :count).by(1)
 
-      countries = Spree::TaxRate.where(name: rate.name).map(&:country)
-      expect(countries).to contain_exactly(germany, france)
+      countries = Spree::TaxRate.where(name: rate.name).map(&:country_iso)
+      expect(countries).to contain_exactly(germany.iso, france.iso)
       expect(Spree::TaxRate.where(name: rate.name).map(&:amount).uniq).to eq([0.19])
     end
 
@@ -253,8 +253,8 @@ describe '6.0 data migration tasks' do
 
       run_task('spree:migrate_tax_zones')
 
-      expect(rate.reload.country).to eq(germany)
-      expect(rate.state).to eq(state)
+      expect(rate.reload.country_iso).to eq(germany.iso)
+      expect(rate.state_code).to eq(state.abbr)
     end
 
     it 'leaves a memberless zone as an every-country rate' do
@@ -262,7 +262,7 @@ describe '6.0 data migration tasks' do
 
       run_task('spree:migrate_tax_zones')
 
-      expect(rate.reload.country).to be_nil
+      expect(rate.reload.country_iso).to be_nil
     end
 
     it 'is idempotent' do

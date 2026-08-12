@@ -1,8 +1,8 @@
 namespace :spree do
   desc <<~DESC
-    Converts the zones tax rates were configured against into direct
-    country/state references (Spree 6.0). A zone spanning several countries
-    becomes one rate per country, since a rate can now name only one
+    Converts the zones tax rates were configured against into the country and
+    state codes a rate now carries (Spree 6.0). A zone spanning several
+    countries becomes one rate per country, since a rate can name only one
     jurisdiction — which is what lets a tax line report the country that taxed
     it. Idempotent: rates that already carry a country or state are skipped, and
     so are rates whose zone had no members, which stay as "everywhere" rates.
@@ -14,10 +14,11 @@ namespace :spree do
       zone.zone_members.filter_map do |member|
         case member.zoneable_type
         when 'Spree::Country'
-          { country_id: member.zoneable_id, state_id: nil }
+          country = Spree::Country.find_by(id: member.zoneable_id)
+          { country_iso: country.iso, state_code: nil } if country
         when 'Spree::State'
           state = Spree::State.find_by(id: member.zoneable_id)
-          { country_id: state.country_id, state_id: state.id } if state
+          { country_iso: state.country&.iso, state_code: state.abbr } if state&.country
         end
       end.uniq
     end
@@ -27,7 +28,7 @@ namespace :spree do
     skipped = 0
 
     Spree::TaxRate.with_deleted.
-      where(country_id: nil, state_id: nil).where.not(zone_id: nil).find_each do |rate|
+      where(country_iso: nil, state_code: nil).where.not(zone_id: nil).find_each do |rate|
       zone = Spree::Zone.find_by(id: rate.zone_id)
       jurisdictions = zone ? jurisdictions_for.call(zone) : []
 
@@ -37,14 +38,14 @@ namespace :spree do
       end
 
       first, *rest = jurisdictions
-      rate.update_columns(country_id: first[:country_id], state_id: first[:state_id], updated_at: Time.current)
+      rate.update_columns(country_iso: first[:country_iso], state_code: first[:state_code], updated_at: Time.current)
       converted += 1
 
       rest.each do |jurisdiction|
         Spree::TaxRate.insert(
           rate.attributes.slice(*Spree::TaxRate.column_names).except('id', 'created_at', 'updated_at').merge(
-            'country_id' => jurisdiction[:country_id],
-            'state_id' => jurisdiction[:state_id],
+            'country_iso' => jurisdiction[:country_iso],
+            'state_code' => jurisdiction[:state_code],
             'created_at' => Time.current,
             'updated_at' => Time.current
           )

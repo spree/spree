@@ -17,7 +17,7 @@ describe Spree::VatPriceCalculation, type: :model do
   before do
     home_market.update!(countries: [germany])
     create(:tax_rate, name: 'DE 19% incl', amount: 0.19, tax_category: category,
-                      country: germany, included_in_price: true, store: store)
+                      country_iso: germany&.iso, included_in_price: true, store: store)
   end
 
   let(:variant) { create(:variant, price: 100, product: create(:product, tax_category: category)) }
@@ -33,7 +33,7 @@ describe Spree::VatPriceCalculation, type: :model do
 
   it 'restates for a destination with its own rate, preserving the net' do
     create(:tax_rate, name: 'FR 20% incl', amount: 0.20, tax_category: category,
-                      country: france, included_in_price: true, store: store)
+                      country_iso: france&.iso, included_in_price: true, store: store)
 
     # net 100 / 1.19 = 84.0336, grossed by 1.20
     expect(gross_for(france)).to eq(100.84)
@@ -62,7 +62,7 @@ describe Spree::VatPriceCalculation, type: :model do
 
     it 'does not restate at all' do
       create(:tax_rate, name: 'FR 20% incl', amount: 0.20, tax_category: category,
-                        country: france, included_in_price: true, store: store)
+                        country_iso: france&.iso, included_in_price: true, store: store)
 
       expect(gross_for(france, market: external_market)).to eq(100.00)
     end
@@ -83,7 +83,7 @@ describe Spree::VatPriceCalculation, type: :model do
 
     before do
       create(:tax_rate, name: 'FR 20% incl', amount: 0.20, tax_category: category,
-                        country: france, included_in_price: true, store: store)
+                        country_iso: france&.iso, included_in_price: true, store: store)
     end
 
     it 'restates from the market country, keeping the net intact' do
@@ -116,7 +116,7 @@ describe Spree::VatPriceCalculation, type: :model do
 
     before do
       create(:tax_rate, name: 'FR 20% incl', amount: 0.20, tax_category: category,
-                        country: france, included_in_price: true, store: store)
+                        country_iso: france&.iso, included_in_price: true, store: store)
     end
 
     it 'is charged exactly as entered' do
@@ -142,7 +142,7 @@ describe Spree::VatPriceCalculation, type: :model do
 
     before do
       create(:tax_rate, name: 'FR 20% incl', amount: 0.20, tax_category: category,
-                        country: france, included_in_price: true, store: store)
+                        country_iso: france&.iso, included_in_price: true, store: store)
     end
 
     # A market rule with nothing selected matches everyone, which is the state the

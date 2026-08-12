@@ -10,7 +10,7 @@ describe Spree::TaxProvider::Internal, type: :model do
 
   describe '#estimate' do
     context 'with an additional rate' do
-      let!(:rate) { create(:tax_rate, country: country, amount: 0.1, tax_category: line_item.tax_category, included_in_price: false) }
+      let!(:rate) { create(:tax_rate, country_iso: country&.iso, amount: 0.1, tax_category: line_item.tax_category, included_in_price: false) }
 
       it 'writes a tax line with snapshots' do
         provider.estimate(order)
@@ -51,7 +51,7 @@ describe Spree::TaxProvider::Internal, type: :model do
         provider.estimate(order)
         expect(order.tax_lines.reload.count).to eq(1)
 
-        rate.update!(country: create(:country, iso: 'JP', name: 'Japan'))
+        rate.update!(country_iso: 'JP')
         provider.estimate(order)
         expect(order.tax_lines.reload).to be_empty
       end
@@ -66,7 +66,7 @@ describe Spree::TaxProvider::Internal, type: :model do
     end
 
     context 'with an included (VAT) rate' do
-      let!(:rate) { create(:tax_rate, country: country, amount: 0.2, tax_category: line_item.tax_category, included_in_price: true) }
+      let!(:rate) { create(:tax_rate, country_iso: country&.iso, amount: 0.2, tax_category: line_item.tax_category, included_in_price: true) }
 
       it 'backs the tax out of the gross basis' do
         provider.estimate(order)
@@ -79,7 +79,7 @@ describe Spree::TaxProvider::Internal, type: :model do
     end
 
     context 'with a matched zero rate' do
-      let!(:rate) { create(:tax_rate, country: country, amount: 0, tax_category: line_item.tax_category, included_in_price: false) }
+      let!(:rate) { create(:tax_rate, country_iso: country&.iso, amount: 0, tax_category: line_item.tax_category, included_in_price: false) }
 
       it 'still writes a row, marked zero-rated' do
         provider.estimate(order)
@@ -92,7 +92,7 @@ describe Spree::TaxProvider::Internal, type: :model do
     end
 
     context 'with no matching rate' do
-      let!(:rate) { create(:tax_rate, country: country, amount: 0.1, tax_category: create(:tax_category), included_in_price: false) }
+      let!(:rate) { create(:tax_rate, country_iso: country&.iso, amount: 0.1, tax_category: create(:tax_category), included_in_price: false) }
 
       it 'writes nothing, having formed no opinion' do
         provider.estimate(order)
@@ -106,7 +106,7 @@ describe Spree::TaxProvider::Internal, type: :model do
       let(:cart_line_item) { cart.line_items.first }
       let(:cart_country) { cart.tax_address.country }
       let!(:rate) do
-        create(:tax_rate, country: cart_country, amount: 0.1, tax_category: cart_line_item.tax_category, included_in_price: false)
+        create(:tax_rate, country_iso: cart_country&.iso, amount: 0.1, tax_category: cart_line_item.tax_category, included_in_price: false)
       end
 
       it 'owns the row through the cart FK' do
@@ -120,7 +120,7 @@ describe Spree::TaxProvider::Internal, type: :model do
     end
 
     context 'with an exemption covering the sale' do
-      let!(:rate) { create(:tax_rate, country: country, amount: 0.1, tax_category: line_item.tax_category, included_in_price: false) }
+      let!(:rate) { create(:tax_rate, country_iso: country&.iso, amount: 0.1, tax_category: line_item.tax_category, included_in_price: false) }
       let(:exemption) { Spree::TaxExemption.new(reason_code: 'resale', certificate_number: 'CERT-1') }
 
       it 'writes a zero row recording the claim' do
@@ -155,7 +155,7 @@ describe Spree::TaxProvider::Internal, type: :model do
     # The whole chain: a certificate the company holds, resolved by the real
     # service, reaching the provider as a claim.
     context 'with a certificate the buyer company holds' do
-      let!(:rate) { create(:tax_rate, country: country, amount: 0.1, tax_category: line_item.tax_category, included_in_price: false) }
+      let!(:rate) { create(:tax_rate, country_iso: country&.iso, amount: 0.1, tax_category: line_item.tax_category, included_in_price: false) }
       let(:company) { create(:company, store: @default_store) }
       let(:location) { create(:company_location, company: company) }
 
@@ -188,7 +188,7 @@ describe Spree::TaxProvider::Internal, type: :model do
     end
 
     context 'with an exemption against an included (VAT) rate' do
-      let!(:rate) { create(:tax_rate, country: country, amount: 0.2, tax_category: line_item.tax_category, included_in_price: true) }
+      let!(:rate) { create(:tax_rate, country_iso: country&.iso, amount: 0.2, tax_category: line_item.tax_category, included_in_price: true) }
 
       it 'leaves the whole basis pre-tax, having no tax to back out' do
         provider.estimate(order, exemptions: [Spree::TaxExemption.new(reason_code: 'government')])
@@ -200,7 +200,7 @@ describe Spree::TaxProvider::Internal, type: :model do
 
     context 'when another store holds the default tax category' do
       let!(:rate) do
-        create(:tax_rate, country: country, amount: 0.1,
+        create(:tax_rate, country_iso: country&.iso, amount: 0.1,
                           tax_category: create(:tax_category, is_default: true), included_in_price: false)
       end
       let!(:fee) { create(:fee, order: order, amount: 5, kind: 'surcharge', label: 'Handling') }
@@ -229,13 +229,13 @@ describe Spree::TaxProvider::Internal, type: :model do
         # recalculate the order and estimate tax a second time.
         fulfillment.update_columns(cost: 10)
         # A store default exists, so falling back to it is a visible wrong answer.
-        create(:tax_rate, country: country, amount: 0.2, included_in_price: false,
+        create(:tax_rate, country_iso: country&.iso, amount: 0.2, included_in_price: false,
                           tax_category: create(:tax_category, is_default: true))
         fulfillment.reload
       end
 
       it "taxes delivery at its delivery method's category" do
-        reduced_rate = create(:tax_rate, country: country, amount: 0.05, included_in_price: false,
+        reduced_rate = create(:tax_rate, country_iso: country&.iso, amount: 0.05, included_in_price: false,
                                          tax_category: reduced_rate_category)
 
         provider.estimate(order, [fulfillment])
@@ -258,7 +258,7 @@ describe Spree::TaxProvider::Internal, type: :model do
 
     context 'with a taxable fee' do
       let!(:rate) do
-        create(:tax_rate, country: country, amount: 0.1, tax_category: create(:tax_category, is_default: true), included_in_price: false)
+        create(:tax_rate, country_iso: country&.iso, amount: 0.1, tax_category: create(:tax_category, is_default: true), included_in_price: false)
       end
       let!(:fee) { create(:fee, order: order, amount: 5, kind: 'surcharge', label: 'Handling') }
 
