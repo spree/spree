@@ -51,9 +51,10 @@ module Spree
     # produces it itself.
     normalizes :value, with: ->(value) { value&.to_s&.gsub(/\s+/, '')&.upcase }
 
-    # The verdict resets as part of the write, not afterwards: the response to
-    # the request that changed the number has to say "we're checking this"
-    # rather than report a stale verdict or a blank one.
+    # A verdict belongs to the number it answered about, so changing the number
+    # ends it. Reset as part of the write, not afterwards: the response to the
+    # request that made the change has to report the new state, not a stale
+    # verdict or a blank one.
     before_save :reset_validation_verdict, if: :number_changing?
     after_commit :publish_number_changed, on: %i[create update]
 
@@ -113,12 +114,22 @@ module Spree
     end
 
     def number_changing?
-      validatable? && (will_save_change_to_value? || will_save_change_to_kind?)
+      order_id.nil? && (will_save_change_to_value? || will_save_change_to_kind?)
     end
 
+    # `pending` when something here can answer for the new number, and nothing at
+    # all when nothing can — a kind with no validator gets no promise, and the old
+    # answer cannot stay: Purchase::Taxation#best_of prefers a verified row, so a
+    # stale `verified` would be actively chosen to decide tax.
+    #
+    # A new row has no earlier verdict to invalidate, so a number imported with one
+    # already recorded keeps it.
     def reset_validation_verdict
-      self.validation_status = 'pending'
+      return if new_record? && !validatable?
+
+      self.validation_status = validatable? ? 'pending' : nil
       self.validated_at = nil
+      self.validation_evidence = nil unless validatable?
     end
 
     # Announces the fact; Spree::TaxIdentifierValidationSubscriber decides what

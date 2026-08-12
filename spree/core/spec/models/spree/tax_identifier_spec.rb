@@ -124,6 +124,20 @@ describe Spree::TaxIdentifier, type: :model do
       expect(identifier.validated_at).to be_nil
     end
 
+    # Purchase::Taxation#best_of prefers a verified row, so a verdict left behind
+    # on a kind nothing can check would be actively chosen to decide tax.
+    it 'clears the verdict when the kind becomes one nothing can check' do
+      identifier = create(:tax_identifier, customer: customer, kind: 'eu_vat')
+      identifier.update_columns(validation_status: 'verified', validated_at: Time.current)
+
+      identifier.update!(kind: 'au_abn', value: '51824753556')
+
+      expect(identifier).not_to be_validatable
+      expect(identifier.validation_status).to be_nil
+      expect(identifier.validated_at).to be_nil
+      expect(identifier).not_to be_verified
+    end
+
     it 'clears an earlier verdict when the number changes' do
       identifier = create(:tax_identifier, customer: customer, kind: 'eu_vat')
       identifier.update_columns(validation_status: 'verified', validated_at: Time.current)
