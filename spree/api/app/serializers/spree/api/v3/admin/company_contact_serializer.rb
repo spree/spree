@@ -8,18 +8,21 @@ module Spree
 
           attributes :role, created_at: :iso8601, updated_at: :iso8601
 
+          # Both associations are required, so these are never null and the
+          # types above say so. Safe navigation here would have promised a null
+          # the schema cannot produce.
           attribute :company_location_id do |contact|
-            contact.company_location&.prefixed_id
+            contact.company_location.prefixed_id
           end
 
           attribute :customer_id do |contact|
-            contact.customer&.prefixed_id
+            contact.customer.prefixed_id
           end
 
           # The dashboard lists contacts by who they are, and would otherwise
           # need a customer request per row.
           attribute :email do |contact|
-            contact.customer&.email
+            contact.customer.email
           end
         end
       end

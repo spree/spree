@@ -15,8 +15,9 @@ module Spree
           attributes :name, :external_id, :metadata,
                      created_at: :iso8601, updated_at: :iso8601
 
+          # A branch always belongs to a company, so this is never null.
           attribute :company_id do |location|
-            location.company&.prefixed_id
+            location.company.prefixed_id
           end
 
           attribute :contacts_count do |location|
