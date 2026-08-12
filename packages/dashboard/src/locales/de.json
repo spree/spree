@@ -1835,7 +1835,12 @@
           "add_tracking_title": "Sendungsverfolgung hinzufügen",
           "tracking_description": "Die Sendungsnummer des Zustellers oder ein vollständiger Tracking-Link.",
           "carrier_label": "Versanddienstleister",
-          "carrier_auto": "Automatisch erkennen"
+          "carrier_auto": "Automatisch erkennen",
+          "buy_label": "Label kaufen",
+          "print_label": "Label drucken",
+          "print_packing_slip": "Lieferschein drucken",
+          "packing_slip_title": "Lieferschein — Bestellung {{number}}",
+          "ship_to": "Lieferadresse"
         },
         "gift_card_section": {
           "applied_suffix": "angewendet",

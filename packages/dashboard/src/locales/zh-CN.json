@@ -1831,7 +1831,12 @@
           "add_tracking_title": "添加物流跟踪",
           "tracking_description": "承运商的物流单号，或完整的跟踪链接。",
           "carrier_label": "承运商",
-          "carrier_auto": "自动识别"
+          "carrier_auto": "自动识别",
+          "buy_label": "购买面单",
+          "print_label": "打印面单",
+          "print_packing_slip": "打印装箱单",
+          "packing_slip_title": "装箱单 — 订单 {{number}}",
+          "ship_to": "收货地址"
         },
         "gift_card_section": {
           "applied_suffix": "已应用",

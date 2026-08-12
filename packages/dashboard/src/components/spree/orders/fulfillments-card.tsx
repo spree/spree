@@ -40,8 +40,10 @@ import {
   PackageIcon,
   PencilIcon,
   PlusIcon,
+  PrinterIcon,
   RotateCcwIcon,
   SplitIcon,
+  TagIcon,
   TruckIcon,
   XCircleIcon,
 } from 'lucide-react'
@@ -54,6 +56,7 @@ import {
   fulfillmentItemRows,
   unfulfilledItemRows,
 } from '../../../lib/fulfillment-items'
+import { printPackingSlip } from '../../../lib/packing-slip'
 import { FulfillmentEditDialog } from './fulfillment-edit-dialog'
 import { FulfillmentFulfillForm } from './fulfillment-fulfill-form'
 import { FulfillmentItemList } from './fulfillment-item-list'
@@ -396,7 +399,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
   const { t } = useTranslation()
   const confirm = useConfirm()
   const orderId = order.id
-  const { cancel, resume, markDelivered } = useFulfillmentActions(orderId)
+  const { cancel, resume, markDelivered, purchaseLabel } = useFulfillmentActions(orderId)
 
   const [editOpen, setEditOpen] = useState(false)
   const [splitOpen, setSplitOpen] = useState(false)
@@ -415,6 +418,10 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
     (rate) => rate.id === fulfillment.selected_delivery_rate_id,
   )
   const deliverable = CAN_MARK_DELIVERED.includes(fulfillment.status)
+  // The label leads, fulfilled follows: print the label, pack the box, hand
+  // it over — so buying the label is offered before the parcel ships.
+  const labelDocument = (fulfillment.documents ?? []).find((doc) => doc.kind === 'label')
+  const canBuyLabel = shippable && fulfillment.provider_generates_labels && !labelDocument
   const trackable = deliverable && !fulfillment.tracking
 
   return (
@@ -459,6 +466,11 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
                 {t('admin.orders.detail.fulfillments.split')}
               </DropdownMenuItem>
             )}
+
+            <DropdownMenuItem onClick={() => printPackingSlip(order, fulfillment, t)}>
+              <PrinterIcon className="size-4" />
+              {t('admin.orders.detail.fulfillments.print_packing_slip')}
+            </DropdownMenuItem>
 
             {deliverable && fulfillment.tracking && (
               <DropdownMenuItem onClick={() => setTrackingOpen(true)}>
@@ -546,10 +558,45 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
           <FulfillmentItemList rows={fulfillmentItemRows(fulfillment, order.items ?? [])} />
 
           {shippable && (
-            <div className="flex justify-end p-3 border-t">
+            <div className="flex justify-end gap-2 p-3 border-t">
+              {canBuyLabel && (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  disabled={purchaseLabel.isPending}
+                  onClick={() => purchaseLabel.mutate(fulfillment.id)}
+                >
+                  <TagIcon data-icon="inline-start" />
+                  {purchaseLabel.isPending
+                    ? t('admin.actions.saving')
+                    : t('admin.orders.detail.fulfillments.buy_label')}
+                </Button>
+              )}
+
+              {labelDocument && (
+                <Button type="button" size="sm" variant="outline" asChild>
+                  <a href={labelDocument.url} target="_blank" rel="noopener noreferrer">
+                    <PrinterIcon data-icon="inline-start" />
+                    {t('admin.orders.detail.fulfillments.print_label')}
+                  </a>
+                </Button>
+              )}
+
               <Button type="button" size="sm" onClick={() => setFulfilling(true)}>
                 <TruckIcon data-icon="inline-start" />
                 {t('admin.orders.fulfill.action')}
+              </Button>
+            </div>
+          )}
+
+          {!shippable && labelDocument && (
+            <div className="flex justify-end p-3 border-t">
+              <Button type="button" size="sm" variant="outline" asChild>
+                <a href={labelDocument.url} target="_blank" rel="noopener noreferrer">
+                  <PrinterIcon data-icon="inline-start" />
+                  {t('admin.orders.detail.fulfillments.print_label')}
+                </a>
               </Button>
             </div>
           )}

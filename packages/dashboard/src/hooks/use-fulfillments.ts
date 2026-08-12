@@ -92,5 +92,9 @@ export function useFulfillmentActions(orderId: string) {
     adminClient.orders.fulfillments.markDelivered(orderId, fulfillmentId),
   )
 
-  return { create, update, split, fulfill, cancel, resume, markDelivered }
+  const purchaseLabel = useFulfillmentMutation(orderId, (fulfillmentId: string) =>
+    adminClient.orders.fulfillments.purchaseLabel(orderId, fulfillmentId),
+  )
+
+  return { create, update, split, fulfill, cancel, resume, markDelivered, purchaseLabel }
 }

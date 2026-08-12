@@ -1,3 +1,34 @@
+## 2026-08-12: The label leads, fulfilled follows (amends the Phase 7 fulfill flow)
+
+A warehouse prints the label, sticks it on the box, hands the box over — and
+only then is the parcel fulfilled. The fulfill workflow used to invert that:
+status flipped and the shipped email queued first, the label bought after,
+which meant the merchant could not print a label without telling the customer
+the parcel had shipped, the email raced the label purchase for its tracking
+number, and a failed purchase surfaced only after the customer heard.
+
+Two changes. `Fulfillments::PurchaseLabel` is the explicit pre-ship step:
+buys the checkout-quoted rate through the provider, attaches tracking and the
+label document, leaves the status untouched and sends nothing — and fails
+loudly, because nothing has left the building yet. And `Fulfillments::Fulfill`
+reordered its internals to split → buy label (external step) → mark fulfilled,
+so the fulfilled event always sees the provider's tracking number; a label
+failure there still degrades to "no label yet" per the provider doctrine,
+since a carrier outage must never stop a merchant recording a parcel that
+physically left.
+
+Two contracts changed with it: providers must make `create_fulfillment`
+idempotent (a label bought in the explicit step is returned, not re-bought,
+when fulfill later runs), declared via `FulfillmentProvider.generates_labels?`;
+and a failure after a partial-fulfillment split no longer rolls the split
+back — a label may already be bought for the split parcel, and rolling the
+parcel away would orphan a paid label. The split survives unfulfilled and a
+retry picks it up.
+
+Packing slips are the platform's document, not the carrier's — generated
+client-side from data the order screen already holds, no prices, no admin
+shell around them. Plan: `6.0-fulfillment-and-delivery.md`.
+
 ## 2026-08-11: One tracking number per fulfillment; multiple trackings deferred to 6.1
 
 A fulfillment carries exactly one tracking number, one carrier and one carrier

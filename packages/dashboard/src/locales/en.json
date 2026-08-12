@@ -1835,7 +1835,12 @@
           "add_tracking_title": "Add tracking",
           "tracking_description": "The carrier tracking number, or a full tracking link.",
           "carrier_label": "Shipping carrier",
-          "carrier_auto": "Detect automatically"
+          "carrier_auto": "Detect automatically",
+          "buy_label": "Buy label",
+          "print_label": "Print label",
+          "print_packing_slip": "Print packing slip",
+          "packing_slip_title": "Packing slip — order {{number}}",
+          "ship_to": "Ship to"
         },
         "gift_card_section": {
           "applied_suffix": "applied",

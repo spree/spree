@@ -1853,7 +1853,12 @@
           "add_tracking_title": "Dodaj śledzenie",
           "tracking_description": "Numer przesyłki od przewoźnika lub pełny link do śledzenia.",
           "carrier_label": "Przewoźnik",
-          "carrier_auto": "Wykryj automatycznie"
+          "carrier_auto": "Wykryj automatycznie",
+          "buy_label": "Kup etykietę",
+          "print_label": "Drukuj etykietę",
+          "print_packing_slip": "Drukuj list przewozowy",
+          "packing_slip_title": "List przewozowy — zamówienie {{number}}",
+          "ship_to": "Adres dostawy"
         },
         "gift_card_section": {
           "applied_suffix": "zastosowano",

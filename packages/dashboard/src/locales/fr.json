@@ -1835,7 +1835,12 @@
           "add_tracking_title": "Ajouter un suivi",
           "tracking_description": "Le numéro de suivi du transporteur, ou un lien de suivi complet.",
           "carrier_label": "Transporteur",
-          "carrier_auto": "Détecter automatiquement"
+          "carrier_auto": "Détecter automatiquement",
+          "buy_label": "Acheter l'étiquette",
+          "print_label": "Imprimer l'étiquette",
+          "print_packing_slip": "Imprimer le bordereau de colisage",
+          "packing_slip_title": "Bordereau de colisage — commande {{number}}",
+          "ship_to": "Livrer à"
         },
         "gift_card_section": {
           "applied_suffix": "appliqué",

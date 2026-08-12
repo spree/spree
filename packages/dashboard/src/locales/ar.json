@@ -1845,7 +1845,12 @@
           "add_tracking_title": "إضافة تتبع",
           "tracking_description": "رقم تتبع شركة الشحن، أو رابط تتبع كامل.",
           "carrier_label": "شركة الشحن",
-          "carrier_auto": "اكتشاف تلقائي"
+          "carrier_auto": "اكتشاف تلقائي",
+          "buy_label": "شراء الملصق",
+          "print_label": "طباعة الملصق",
+          "print_packing_slip": "طباعة قائمة التعبئة",
+          "packing_slip_title": "قائمة التعبئة — الطلب {{number}}",
+          "ship_to": "الشحن إلى"
         },
         "gift_card_section": {
           "applied_suffix": "مُطبَّق",
