@@ -173,6 +173,31 @@ module SpreeStripe
       end
     end
 
+    # Stripe reports address and CVC checks as pass/fail/unchecked on the
+    # payment method; CreateSource stores them in the source's metadata. This
+    # translates them to the AVS/CVV response codes core's risk analysis reads.
+    AVS_CODES = {
+      'pass' => { 'pass' => 'Y', 'fail' => 'A', 'unchecked' => 'B' },
+      'fail' => { 'pass' => 'Z', 'fail' => 'N' },
+      'unchecked' => { 'pass' => 'P', 'unchecked' => 'I' }
+    }.freeze
+
+    CVV_CODES = { 'pass' => 'M', 'fail' => 'N', 'unchecked' => 'P' }.freeze
+
+    # @param source [Spree::PaymentSource, Spree::CreditCard]
+    # @return [Hash, nil]
+    def risk_codes_for(source)
+      return unless source.is_a?(Spree::CreditCard)
+
+      checks = source.metadata[:checks]
+      return if checks.blank?
+
+      {
+        avs_response: AVS_CODES.dig(checks[:address_line1_check], checks[:address_postal_code_check]),
+        cvv_response_code: CVV_CODES[checks[:cvc_check]]
+      }
+    end
+
     def create_profile(payment)
       gateway_customer = fetch_or_create_customer(order: payment.order)
       return if payment.source.blank? || gateway_customer.blank?

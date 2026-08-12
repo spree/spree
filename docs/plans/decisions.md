@@ -330,6 +330,38 @@ ships in the OSS Admin API; first-run configures the one store.
 Consequences: Admin API code must never assume `current_store` is the default
 store, and store-touching cache keys must carry the store id by construction.
 Plan: `6.0-store-context-and-first-run-setup.md`.
+## 2026-08-12 — Providers never decorate core models; risk codes become a gateway interface
+
+The Stripe provider shipped with three decorators on core models, and all three
+are gone. A decorator is the extension mechanism of last resort — a first-party
+provider using them licenses every third-party gateway to do the same, and a
+`before_save` on `Spree::Payment` firing forever for one provider's bookkeeping
+is exactly the shape that rots.
+
+What replaced them decides the pattern for Adyen and every gateway after it:
+
+- **AVS/CVV risk codes are a core interface.** The session flow never passes
+  through the gateway response path that normally sets
+  `avs_response`/`cvv_response_code` — the check results live on the payment
+  source, in whatever shape the provider recorded them. Core now asks:
+  `PaymentMethod#risk_codes_for(source)` (nil by default), called by `Payment`
+  once at creation, response-path codes winning. Stripe's implementation
+  translates its pass/fail/unchecked checks from the source's metadata. Core
+  owns when to ask; the gateway owns how to answer. The old callback re-ran on
+  every save; the hook runs at creation only — the sole lost case is a payment
+  gaining a Stripe card source after creation, which nothing does.
+- **Provider-scoped gateway customers are a core scope.**
+  `GatewayCustomer.for_provider(SpreeStripe::Gateway)` replaces the decorated
+  `.stripe` scope; every gateway needs exactly this filter.
+- **The rest was dead or sugar.** The `.stripe`/`stripe?` payment-method
+  decorator had no callers left. `store_accessor :metadata, :stripe_charge_id`
+  was sugar over a hash write, so the service writes
+  `payment.metadata['stripe_charge_id']` directly.
+
+**Consequences:** the provider ships zero decorators and the engine's
+`to_prepare` decorator glob is gone. A provider needing something from a core
+model proposes a core interface, mirroring how delivery providers already work
+(`Spree.delivery_rate_providers`, `Spree.fulfillment_providers`).
 
 ## 2026-08-13: Validate hooks are the validation extension surface; no generic model-validation registry
 

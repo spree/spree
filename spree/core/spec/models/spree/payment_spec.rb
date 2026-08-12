@@ -565,6 +565,37 @@ describe Spree::Payment, type: :model do
       end
     end
 
+    describe 'risk codes from the source (before_create)' do
+      before do
+        allow(gateway).to receive(:risk_codes_for).with(card).and_return(
+          avs_response: 'A', cvv_response_code: 'N'
+        )
+      end
+
+      it 'asks the payment method for risk codes at creation' do
+        payment.save!
+
+        expect(payment.avs_response).to eq('A')
+        expect(payment.cvv_response_code).to eq('N')
+      end
+
+      it 'never overwrites codes the gateway response already set' do
+        payment.avs_response = 'Y'
+        payment.cvv_response_code = 'M'
+        payment.save!
+
+        expect(payment.avs_response).to eq('Y')
+        expect(payment.cvv_response_code).to eq('M')
+      end
+
+      it 'does not ask again on later saves' do
+        payment.save!
+        expect(gateway).not_to receive(:risk_codes_for)
+
+        payment.update!(amount: 4)
+      end
+    end
+
     describe '#capture!' do
       context 'when payment is pending' do
         before do

@@ -17,11 +17,5 @@ module SpreeStripe
       Rails.application.config.spree.payment_methods << SpreeStripe::Gateway
       Spree.subscribers << SpreeStripe::CustomerUpdatedSubscriber
     end
-
-    config.to_prepare do
-      Dir.glob(Engine.root.join('app/**/*_decorator*.rb')) do |decorator|
-        require_dependency(decorator)
-      end
-    end
   end
 end

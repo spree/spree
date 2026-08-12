@@ -51,6 +51,7 @@ module Spree
 
     #
     # Callbacks
+    before_create :assign_risk_codes_from_source
     after_save :create_payment_profile, if: :profiles_supported?
     # update the order totals, etc.
     after_save :update_order, unless: -> { capture_on_dispatch }
@@ -297,6 +298,20 @@ module Spree
     end
 
     private
+
+    # Session-created payments never pass through the gateway response path
+    # that normally sets these codes, so the gateway gets asked at creation.
+    # Codes already assigned (the response path runs before save) win.
+    def assign_risk_codes_from_source
+      return if source.blank?
+      return if avs_response.present? && cvv_response_code.present?
+
+      codes = payment_method&.risk_codes_for(source)
+      return if codes.blank?
+
+      self.avs_response ||= codes[:avs_response]
+      self.cvv_response_code ||= codes[:cvv_response_code]
+    end
 
     def exactly_one_owner
       errors.add(:base, Spree.t('errors.messages.exactly_one_of_cart_or_order')) unless [order, cart].compact.one?

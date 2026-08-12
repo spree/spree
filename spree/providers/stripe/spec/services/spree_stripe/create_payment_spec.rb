@@ -31,7 +31,7 @@ RSpec.describe SpreeStripe::CreatePayment do
     expect(payment.payment_method).to eq gateway
     expect(payment.amount).to eq order.total_minus_store_credits
     expect(payment.response_code).to eq(payment_intent_id)
-    expect(payment.stripe_charge_id).to eq('ch_3QY76s2ESifGlJez0gG0FoF1')
+    expect(payment.metadata['stripe_charge_id']).to eq('ch_3QY76s2ESifGlJez0gG0FoF1')
 
     expect(payment.source).to be_a Spree::CreditCard
     expect(payment.source.gateway_payment_profile_id).to eq(payment_method_id)
@@ -66,7 +66,7 @@ RSpec.describe SpreeStripe::CreatePayment do
       expect(payment.payment_method).to eq(gateway)
       expect(payment.amount).to eq(order.total_minus_store_credits)
       expect(payment.response_code).to eq(payment_intent_id)
-      expect(payment.stripe_charge_id).to be_nil
+      expect(payment.metadata['stripe_charge_id']).to be_nil
 
       expect(payment.source).to be_a SpreeStripe::PaymentSources::BankTransfer
       expect(payment.source.gateway_payment_profile_id).to eq(payment_method_id)

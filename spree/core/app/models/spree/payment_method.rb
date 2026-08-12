@@ -83,6 +83,20 @@ module Spree
       nil
     end
 
+    # Risk codes the gateway can derive from a payment source — the address and
+    # card-verification check results the provider recorded when the source was
+    # created. Payment assigns them at creation when the gateway response path
+    # did not supply any, so session-created payments still feed
+    # +Spree::Payment.risky+ and order risk analysis.
+    #
+    # Override in gateway subclasses that store check results on their sources.
+    #
+    # @param _source [Spree::PaymentSource, Spree::CreditCard]
+    # @return [Hash, nil] +{ avs_response:, cvv_response_code: }+ or nil
+    def risk_codes_for(_source)
+      nil
+    end
+
     # Creates a payment session via the provider.
     # Override in gateway subclasses to implement provider-specific session creation.
     def create_payment_session(order:, amount: nil, external_data: {})

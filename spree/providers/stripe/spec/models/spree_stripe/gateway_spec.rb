@@ -666,7 +666,7 @@ RSpec.describe SpreeStripe::Gateway do
     let(:california_state) { usa_country.states.find_by(abbr: 'CA') || create(:state, name: 'California', abbr: 'CA', country: usa_country) }
     let(:new_york_state) { usa_country.states.find_by(abbr: 'NY') || create(:state, name: 'New York', abbr: 'NY', country: usa_country) }
 
-    let(:gateway_customer) { Spree::GatewayCustomer.stripe.last }
+    let(:gateway_customer) { Spree::GatewayCustomer.for_provider(SpreeStripe::Gateway).last }
 
     it 'creates a new Stripe customer and gateway customer record' do
       VCR.use_cassette('create_customer') do
@@ -802,6 +802,38 @@ RSpec.describe SpreeStripe::Gateway do
           expect(subject.id).to eq(customer_id)
         end
       end
+    end
+  end
+
+  describe '#risk_codes_for' do
+    subject { gateway.risk_codes_for(source) }
+
+    context 'with a credit card carrying Stripe checks' do
+      let(:source) do
+        build(:credit_card, metadata: {
+                checks: {
+                  address_line1_check: 'pass',
+                  address_postal_code_check: 'fail',
+                  cvc_check: 'pass'
+                }
+              })
+      end
+
+      it 'translates them to AVS and CVV response codes' do
+        expect(subject).to eq(avs_response: 'A', cvv_response_code: 'M')
+      end
+    end
+
+    context 'with a credit card without checks' do
+      let(:source) { build(:credit_card) }
+
+      it { is_expected.to be_nil }
+    end
+
+    context 'with a non-card source' do
+      let(:source) { SpreeStripe::PaymentSources::Klarna.new }
+
+      it { is_expected.to be_nil }
     end
   end
 

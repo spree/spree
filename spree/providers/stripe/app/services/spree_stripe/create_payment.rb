@@ -25,7 +25,7 @@ module SpreeStripe
       )
 
       payment.source = source if source.present?
-      payment.stripe_charge_id = stripe_charge&.id
+      payment.metadata['stripe_charge_id'] = stripe_charge.id if stripe_charge.present?
       payment.save!
       payment
     end
