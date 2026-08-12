@@ -116,7 +116,12 @@ function Table({ className, children, stickyHeader = false, ...props }: TablePro
           horizontal overhang the translateX mirror produces. */}
       <div className="sticky top-header-height z-20 h-0">
         <div className="overflow-hidden">
-          <table ref={pinnedTableRef} className={tableClasses}>
+          {/* `presentation`: this table exists to paint a header that stays put
+              and to host its controls. Announcing it as a second table — one
+              with column headers but no rows — would just duplicate the header
+              names the real table below already provides. The controls inside
+              keep their own roles and stay reachable. */}
+          <table ref={pinnedTableRef} className={tableClasses} role="presentation">
             {headerElement}
           </table>
         </div>
@@ -124,12 +129,25 @@ function Table({ className, children, stickyHeader = false, ...props }: TablePro
       <div ref={scrollRef} className="themed-scrollbar overflow-x-auto">
         <table ref={bodyTableRef} className={tableClasses} {...props}>
           {cloneElement(headerElement, {
-            // The sizer: reserves the header row and drives column widths.
-            // `invisible` (visibility: hidden) keeps its layout while removing
-            // it from painting, hit-testing, tab order and assistive tech —
-            // the pinned copy above is the one real header.
-            'aria-hidden': true,
-            className: cn(headerElement.props.className, 'invisible'),
+            // The sizer: reserves the header row and drives column widths. It
+            // stays in the accessibility tree, because this is the table that
+            // holds the data rows — hiding it would leave every cell with no
+            // column header to resolve against. So rather than hiding the row,
+            // hide what it draws: `text-transparent` for the labels (which are
+            // bare text nodes on the cells) and `invisible` for any control
+            // inside a cell, which also takes those out of hit-testing and the
+            // tab order. The `th` cells keep announcing their names, and the
+            // pinned copy above is the one the user sees and clicks.
+            // `[&_th]:` so this beats the colour `TableHead` sets on the cell
+            // itself; a bare `text-transparent` here loses to it and the sizer
+            // labels show through under the pinned copy. `[&>tr]:!static`
+            // cancels the sticky positioning the header row carries for the
+            // plain table — here it would lift this row out of flow and let the
+            // first data row slide underneath the pinned header.
+            className: cn(
+              headerElement.props.className,
+              'select-none [&>tr]:!static [&_th]:text-transparent [&_th>*]:invisible',
+            ),
           })}
           {kids.filter((kid) => kid !== headerElement)}
         </table>

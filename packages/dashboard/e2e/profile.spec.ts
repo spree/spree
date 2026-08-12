@@ -86,21 +86,18 @@ test.describe('profile', () => {
   test('switches the language from the top-bar menu and persists it', async ({ page }) => {
     await login(page)
 
-    // Switch to Polish via the top-bar user menu → Language submenu. The
-    // submenu trigger's accessible name is "Language <current>", so match by
-    // prefix and hover to open the nested content.
+    // Switch to Polish via the top-bar user menu. The picker is a native
+    // <select> labelled "Language", so pick the option by its visible name.
     await page.getByRole('button', { name: /user menu/i }).click()
-    await page.getByRole('menuitem', { name: /^language/i }).hover()
-    await page.getByRole('menuitem', { name: /polski/i }).click()
+    await page.getByRole('combobox', { name: /^language$/i }).selectOption({ label: 'Polski' })
 
     // The switch persists to the account (PATCH /me) so it survives the reload
     // instead of being reverted by the auth provider. Nav renders in Polish.
     await expect(page.getByRole('link', { name: /produkty/i })).toBeVisible({ timeout: 15_000 })
 
-    // Reset to English via the top-bar menu (the submenu is now "Język …").
+    // Reset to English via the top-bar menu (the picker is now "Język").
     await page.getByRole('button', { name: /menu użytkownika/i }).click()
-    await page.getByRole('menuitem', { name: /^język/i }).hover()
-    await page.getByRole('menuitem', { name: /english/i }).click()
+    await page.getByRole('combobox', { name: /^język$/i }).selectOption({ label: 'English' })
     await expect(page.getByRole('link', { name: /^products$/i })).toBeVisible({ timeout: 15_000 })
   })
 })

@@ -33,25 +33,29 @@ export function LanguageMenuItems({ label, locales, value, onSelect }: LanguageM
   return (
     // Not a DropdownMenuItem: the row is a container for the select, and menu
     // items steal the pointer and close the menu on click.
-    <div className="relative flex items-center justify-between gap-2 rounded-lg px-2 py-1.5">
+    <div className="flex items-center justify-between gap-2 rounded-lg px-2 py-1.5">
       <span className="text-sm text-foreground">{label}</span>
-      <span className="pointer-events-none inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2 py-1 text-xs font-normal text-foreground">
-        {current?.name ?? value}
-        <ChevronsUpDownIcon className="size-3 text-muted-foreground" />
+      {/* The select is transparent and stretched over the pill, so the hit area
+          tracks the pill's width whatever the locale name is. `focus-within`
+          carries the focus ring, since `opacity-0` hides the native one. */}
+      <span className="relative inline-flex rounded-lg focus-within:ring-2 focus-within:ring-ring">
+        <span className="pointer-events-none inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2 py-1 text-xs font-normal text-foreground">
+          {current?.name ?? value}
+          <ChevronsUpDownIcon className="size-3 text-muted-foreground" />
+        </span>
+        <select
+          aria-label={label}
+          value={value}
+          onChange={(event) => onSelect(event.target.value)}
+          className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+        >
+          {locales.map((locale) => (
+            <option key={locale.code} value={locale.code}>
+              {locale.name}
+            </option>
+          ))}
+        </select>
       </span>
-      {/* Invisible but hit-testable, sized to the pill it covers. */}
-      <select
-        aria-label={label}
-        value={value}
-        onChange={(event) => onSelect(event.target.value)}
-        className="absolute inset-y-0 end-2 w-32 cursor-pointer opacity-0"
-      >
-        {locales.map((locale) => (
-          <option key={locale.code} value={locale.code}>
-            {locale.name}
-          </option>
-        ))}
-      </select>
     </div>
   )
 }

@@ -10,7 +10,7 @@ import type { QueryKey } from '@tanstack/react-query'
 import { useQueryClient } from '@tanstack/react-query'
 import { MoreHorizontalIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { usePermissions } from '../providers/permission-provider'
@@ -110,12 +110,18 @@ export function BulkActionBar({ selectedIds, actions, onDone }: BulkActionBarPro
     if (count === 0) setPendingForm(null)
   }, [count])
 
-  if (count === 0) return null
-
-  // Filter by CanCanCan when subject is declared.
-  const visibleActions = actions.filter((a) =>
-    a.subject ? permissions.can(a.action ?? 'update', a.subject) : true,
+  // Filter by CanCanCan when subject is declared. Memoized so the layout below
+  // can treat a change here as a real change: it re-measures the overflow
+  // whenever the action set does, and a fresh array every render would make
+  // that run on every render instead. Must stay above the early return —
+  // hooks cannot be called conditionally.
+  const visibleActions = useMemo(
+    () =>
+      actions.filter((a) => (a.subject ? permissions.can(a.action ?? 'update', a.subject) : true)),
+    [actions, permissions],
   )
+
+  if (count === 0) return null
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async function execute(action: BulkAction<any>, formValues?: unknown) {
@@ -239,7 +245,8 @@ function BulkActionBarLayout({
       const available = container.clientWidth - leading.offsetWidth
       // +⋯+ button (icon-sm = 28px) + gap on each side + safety margin.
       const moreWidth = 64
-      const children = Array.from(measure.children) as HTMLElement[]
+      // One measured child per action, in order.
+      const children = Array.from(measure.children).slice(0, actions.length) as HTMLElement[]
       const widths = children.map((el) => el.offsetWidth)
 
       let used = 0
@@ -265,7 +272,12 @@ function BulkActionBarLayout({
       ro.disconnect()
       window.removeEventListener('resize', recompute)
     }
-  }, [])
+    // Re-measure when the action set changes, not only when the container
+    // resizes: the list is filtered by permission, so it can gain or lose
+    // buttons — and a language switch relabels them — with the bar's own width
+    // unchanged. The measuring row is zero-width by design, so observing it
+    // would not catch either case.
+  }, [actions])
 
   const visible = actions.slice(0, visibleCount)
   const overflow = actions.slice(visibleCount)
