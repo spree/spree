@@ -17,8 +17,30 @@ RSpec.describe Spree::Api::V3::DeliveryRateSerializer do
         additional_tax_total display_additional_tax_total
         included_tax_total display_included_tax_total
         tax_total display_tax_total
+        carrier service_level estimated_delivery_date
         delivery_method
       ])
+    end
+
+    # Carrier fields are populated by rate providers; calculator-priced
+    # methods leave them nil rather than omitting the keys.
+    it 'exposes carrier fields as null when the rate has none' do
+      expect(subject['carrier']).to be_nil
+      expect(subject['service_level']).to be_nil
+      expect(subject['estimated_delivery_date']).to be_nil
+    end
+
+    it 'exposes carrier fields set by a provider' do
+      shipping_rate.update!(carrier: 'UPS', service_level: 'Ground', estimated_delivery_date: Date.new(2026, 8, 20))
+
+      expect(subject['carrier']).to eq('UPS')
+      expect(subject['service_level']).to eq('Ground')
+      expect(subject['estimated_delivery_date']).to eq(Date.new(2026, 8, 20))
+    end
+
+    # Provider payload is operational detail; customers must never see it.
+    it 'does not expose provider metadata' do
+      expect(subject.keys).not_to include('metadata')
     end
 
     it 'returns cost and total' do

@@ -74,7 +74,7 @@ module Spree
     has_many :tax_lines, class_name: 'Spree::TaxLine', dependent: :destroy, inverse_of: :cart
     has_many :discounts, class_name: 'Spree::Discount', dependent: :destroy, inverse_of: :cart
     has_many :fees, class_name: 'Spree::Fee', dependent: :destroy, inverse_of: :cart
-    has_many :fulfillments, class_name: 'Spree::Fulfillment', dependent: :destroy, inverse_of: :cart do
+    has_many :fulfillments, -> { order(:created_at, :id) }, class_name: 'Spree::Fulfillment', dependent: :destroy, inverse_of: :cart do
       def states
         pluck(:status).uniq
       end

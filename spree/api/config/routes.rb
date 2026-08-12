@@ -325,9 +325,11 @@ Spree::Core::Engine.add_routes do
           collection do
             get :calculators
             get :fulfillment_providers
+            get :rate_providers
           end
           resources :rules, controller: 'delivery_methods/rules', only: [:index, :show, :create, :update, :destroy]
         end
+        resources :tracking_carriers, only: [:index]
         resources :delivery_method_rules, only: [] do
           collection do
             get :types
@@ -335,9 +337,26 @@ Spree::Core::Engine.add_routes do
         end
         resources :delivery_zones
 
+        resources :delivery_profiles do
+          collection do
+            get :kinds
+          end
+          resources :origin_groups, controller: 'delivery_profiles/origin_groups',
+                                    only: [:index, :show, :create, :update, :destroy]
+        end
+
         resources :payment_methods do
           collection do
             get :types
+          end
+        end
+
+        resources :integrations do
+          collection do
+            get :types
+          end
+          member do
+            post :test
           end
         end
 
@@ -446,6 +465,8 @@ Spree::Core::Engine.add_routes do
           resources :fulfillments, controller: 'orders/fulfillments', only: [:index, :show, :create, :update] do
             member do
               patch :fulfill
+              patch :purchase_label
+              patch :mark_delivered
               patch :cancel
               patch :resume
               patch :split
@@ -494,6 +515,7 @@ Spree::Core::Engine.add_routes do
       # Webhooks (outside of store namespace — no API key authentication)
       namespace :webhooks do
         post 'payments/:payment_method_id', to: 'payments#create', as: :payment_webhook
+        post 'fulfillments/:integration_id', to: 'fulfillments#create', as: :fulfillment_webhook
       end
     end
   end

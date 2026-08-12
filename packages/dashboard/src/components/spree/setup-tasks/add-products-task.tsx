@@ -25,6 +25,7 @@ export function AddProductsTask({ task, storeId }: SetupTaskSlotContext) {
         </Button>
         <ImportButton
           type="products"
+          size="default"
           subject={Subject.Product}
           label={t('admin.pages.getting_started.tasks.add_products.import_cta')}
           onCreated={(imp) =>

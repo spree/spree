@@ -28,27 +28,76 @@ module Spree
 
       private
 
+      # Shipping is what "delivery" means unless someone chooses otherwise, so
+      # the cheapest *shipped* rate wins by default. Picking the cheapest of
+      # all rates handed every order to free store pickup the moment a pickup
+      # method existed. Profiles offering nothing shipped (pickup-only,
+      # digital) still get their cheapest rate.
       def choose_default_delivery_rate(delivery_rates)
-        unless delivery_rates.empty?
-          delivery_rates.min_by(&:cost).selected = true
-        end
+        return if delivery_rates.empty?
+
+        shipped = delivery_rates.select { |rate| rate.delivery_method&.requires_address? }
+        (shipped.presence || delivery_rates).min_by(&:cost).selected = true
       end
 
       def sort_delivery_rates(delivery_rates)
         delivery_rates.sort_by!(&:cost)
       end
 
+      # Quoting runs through the method's rate provider — Internal prices
+      # through the calculator, carrier providers call their API and may
+      # return several estimates (one per carrier service). An empty result
+      # suppresses the method, matching the calculator contract. Service
+      # filtering, markup, naming, VAT gross-up, tax resolution and sorting
+      # stay here so every provider gets them identically.
       def calculate_delivery_rates(package, audience)
-        delivery_methods(package, audience).map do |delivery_method|
-          cost = delivery_method.calculator.compute(package)
+        delivery_methods(package, audience).flat_map do |delivery_method|
+          provider = delivery_method.rate_provider_instance
 
-          next unless cost
+          provider.estimates(package).filter_map do |estimate|
+            next unless delivery_method.offers_service?(estimate)
+            # A quote in another currency (a USD carrier account under a EUR
+            # cart) is unusable — mislabeling it would misprice checkout.
+            if estimate.currency.present? && estimate.currency.casecmp(currency) != 0
+              Rails.logger.debug { "Spree::Stock::Estimator: dropping #{delivery_method.name} estimate quoted in #{estimate.currency} for a #{currency} order" }
+              next
+            end
 
-          delivery_method.delivery_rates.new(
-            cost: gross_amount(cost, taxation_options_for(delivery_method)),
-            tax_rate: first_tax_rate_for(delivery_method.tax_category)
-          )
-        end.compact
+            service_row = delivery_method.service_for(estimate)
+            cost = apply_markup(estimate.cost, delivery_method, service_row, provider)
+
+            delivery_method.delivery_rates.new(
+              cost: gross_amount(cost, taxation_options_for(delivery_method)),
+              tax_rate: first_tax_rate_for(delivery_method.tax_category),
+              name: rate_name(estimate, service_row),
+              carrier: estimate.carrier,
+              service_level: estimate.service_level,
+              estimated_delivery_date: estimate.estimated_delivery_date,
+              # presence: rates are rewritten on every refresh, so calculator-
+              # priced methods store NULL rather than an empty hash each time.
+              metadata: estimate.metadata.presence
+            )
+          end
+        end
+      end
+
+      # Handling fee on top of provider quotes: the service row's values when
+      # set, else the method-level defaults. Calculator-priced methods are
+      # exempt — their calculator IS the price.
+      def apply_markup(cost, delivery_method, service_row, provider)
+        return cost if provider.class.uses_calculator?
+
+        percent = service_row&.markup_percent || delivery_method.markup_percent || 0
+        flat = service_row&.markup_flat || delivery_method.markup_flat || 0
+        (cost * (1 + (percent / 100)) + flat).round(2)
+      end
+
+      # Display name for provider-priced rates: the merchant's label override,
+      # else carrier + service from the quote. Nil for calculator rates —
+      # DeliveryRate#name falls back to the method name.
+      def rate_name(estimate, service_row)
+        service_row&.label.presence || estimate.name.presence ||
+          [estimate.carrier, estimate.service_level].compact.join(' ').presence
       end
 
       # Override this if you need the prices for delivery methods to be handled just like the
@@ -103,8 +152,7 @@ module Spree
             delivery_method.serves_location?(package.stock_location) &&
             delivery_method.eligible_for_package?(package) &&
             calculator.available?(package) &&
-            (calculator.preferences[:currency].blank? ||
-             calculator.preferences[:currency] == currency)
+            calculator.supports_currency?(currency)
         end
       end
 

@@ -7,8 +7,8 @@ RSpec.describe Spree::Seeds::ProductTypes do
     subject
 
     types = Spree::ProductType.where(store: @default_store)
-    expect(types.find_by(name: 'Default').fulfillment_types).to eq(['shipping'])
-    expect(types.find_by(name: 'Digital').fulfillment_types).to eq(['digital'])
+    expect(types.find_by(name: 'Default').delivery_profile).to be_nil
+    expect(types.find_by(name: 'Digital').delivery_profile).to be_a(Spree::DeliveryProfiles::Digital)
   end
 
   it 'is idempotent' do

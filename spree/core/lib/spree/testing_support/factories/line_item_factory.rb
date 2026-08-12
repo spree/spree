@@ -9,7 +9,11 @@ FactoryBot.define do
     price    { BigDecimal('10.00') }
     currency { (order || cart)&.currency }
     variant do
-      resolved_product = product || create(:product)
+      # The product must live in the owning cart/order's store — a cart can
+      # only sell its own store's catalog, and delivery eligibility resolves
+      # through the product's store-scoped delivery profile.
+      owner_store = (order || cart)&.store
+      resolved_product = product || create(:product, store: owner_store || Spree::Store.default)
       resolved_product.default_variant
     end
   end

@@ -109,7 +109,7 @@ FactoryBot.define do
 
         factory :order_ready_to_ship do
           payment_state  { 'paid' }
-          shipment_state { 'ready' }
+          shipment_state { 'unfulfilled' }
 
           transient do
             with_payment { true }
@@ -120,7 +120,7 @@ FactoryBot.define do
 
             order.fulfillments.each do |shipment|
               shipment.fulfillment_items.update_all state: 'on_hand'
-              shipment.update_column(:status, 'ready')
+              shipment.update_column(:status, 'unfulfilled')
             end
             order.reload
           end

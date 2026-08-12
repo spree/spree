@@ -152,7 +152,13 @@ searchRegistry.add(
   }),
 )
 
-/** A result row's thumbnail, falling back to the resource's own icon. */
+/**
+ * A result row's thumbnail, falling back to the resource's own icon.
+ *
+ * Deliberately not `Thumbnail`: search results without an image show a bare
+ * glyph rather than an empty framed box, so a category or a page does not look
+ * like a product whose photo failed to load.
+ */
 function IconOrThumbnail({ thumbnailUrl, icon }: { thumbnailUrl: string | null; icon: ReactNode }) {
   if (!thumbnailUrl) return icon
   return (

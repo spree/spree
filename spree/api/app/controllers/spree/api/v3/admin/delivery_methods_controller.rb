@@ -23,10 +23,9 @@ module Spree
           end
 
           # GET /api/v3/admin/delivery_methods/fulfillment_providers
-          # Registered FulfillmentProvider strategies plus the registered
-          # fulfillment-type vocabulary (Spree.fulfillment_types — the strict
-          # set both DeliveryMethod and ProductType validate against), so
-          # admin UIs render both lists from the registry, not JS constants.
+          # Registered FulfillmentProvider strategies with their class
+          # predicates, so admin UIs render capability hints from the
+          # registry, not JS constants.
           def fulfillment_providers
             authorize! :create, model_class
 
@@ -34,12 +33,50 @@ module Spree
               {
                 type: provider_class.to_s,
                 name: provider_class.provider_name,
-                fulfillment_types: provider_class.fulfillment_types,
+                integration_class: provider_class.integration_class,
+                integration_type: integration_api_type(provider_class),
+                available: provider_class.available_for_store?(current_store),
+                digital: provider_class.digital?,
+                pickup: provider_class.pickup?,
+                pickup_point: provider_class.pickup_point?,
                 requires_address: provider_class.new.requires_address?
               }
             end
 
-            render json: { data: data, fulfillment_types: Spree.fulfillment_types }
+            render json: { data: data }
+          end
+
+          # GET /api/v3/admin/delivery_methods/rate_providers
+          # Registered DeliveryRateProvider strategies. Providers whose
+          # integration isn't connected come back with `available: false` so
+          # the dashboard can offer connecting it inline — DeliveryMethod
+          # still rejects an unavailable provider on save. `service_catalog`
+          # feeds the carrier-services picker (empty = free-form).
+          def rate_providers
+            authorize! :create, model_class
+
+            data = Spree.delivery_rate_providers.map do |provider_class|
+              integration = provider_class.integration_class.presence &&
+                current_store.integrations.active.find_by(type: provider_class.integration_class)
+              catalog = provider_class.service_catalog(integration)
+
+              {
+                type: provider_class.to_s,
+                name: provider_class.provider_name,
+                integration_class: provider_class.integration_class,
+                integration_type: integration_api_type(provider_class),
+                available: provider_class.available_for_store?(current_store),
+                requires_address: provider_class.requires_address?,
+                uses_calculator: provider_class.uses_calculator?,
+                service_catalog: catalog.services,
+                # Present when the provider could not list services (e.g. a
+                # credential tier without access) — the picker shows it
+                # instead of an empty list.
+                service_catalog_error: catalog.error_message
+              }
+            end
+
+            render json: { data: data, default: Spree::DeliveryMethod::DEFAULT_RATE_PROVIDER }
           end
 
           def create
@@ -67,6 +104,14 @@ module Spree
 
           protected
 
+          # Wire shorthand of the provider's integration (`easy_post`), so the
+          # dashboard can tie a provider to the integration it needs without
+          # translating Ruby class names client-side.
+          def integration_api_type(provider_class)
+            klass = provider_class.integration_class.presence&.safe_constantize
+            klass&.api_type
+          end
+
           def model_class
             Spree::DeliveryMethod
           end
@@ -75,17 +120,20 @@ module Spree
             Spree.api.admin_delivery_method_serializer
           end
 
-          # A single POST/PATCH can ship eligibility rules alongside the
-          # basics; `DeliveryMethod#rules=` reconciles to the desired set, so
-          # the dashboard saves the whole sheet in one round-trip.
+          # A single POST/PATCH can ship eligibility rules and carrier service
+          # rows alongside the basics; `DeliveryMethod#rules=` / `#services=`
+          # reconcile to the desired set, so the dashboard saves the whole
+          # sheet in one round-trip.
           def permitted_params
             params.permit(
-              :name, :admin_name, :code, :fulfillment_type, :fulfillment_provider,
-              :pickup_point_provider, :storefront_visible, :tracking_url,
+              :name, :admin_name, :code, :fulfillment_provider,
+              :pickup_point_provider, :rate_provider, :storefront_visible, :tracking_url,
               :estimated_transit_business_days_min, :estimated_transit_business_days_max,
-              :tax_category_id, :calculator_type,
-              delivery_zone_ids: [], stock_location_ids: [], calculator_preferences: {},
-              rules: rule_attributes
+              :tax_category_id, :calculator_type, :markup_flat, :markup_percent,
+              :delivery_profile_id, :delivery_origin_group_id, :delivery_zone_id,
+              stock_location_ids: [], calculator_preferences: {},
+              rules: rule_attributes,
+              services: [:id, :carrier, :service, :label, :markup_flat, :markup_percent, :position]
             )
           end
 
@@ -103,19 +151,25 @@ module Spree
           end
 
           def collection_includes
-            [:calculator, :tax_category, :delivery_zones]
+            [:calculator, :tax_category, :delivery_zone, :delivery_profile, :delivery_method_rules]
           end
 
           private
 
           # Resolves prefixed-ID params to records; calculator handled separately.
           def assignable_params
-            attributes = permitted_params.except(:tax_category_id, :delivery_zone_ids, :stock_location_ids, :calculator_type, :calculator_preferences)
+            attributes = permitted_params.except(:tax_category_id, :delivery_profile_id, :delivery_origin_group_id, :delivery_zone_id, :stock_location_ids, :calculator_type, :calculator_preferences)
             if params.key?(:tax_category_id)
               attributes[:tax_category] = params[:tax_category_id].present? ? Spree::TaxCategory.accessible_by(current_ability, :show).find_by_prefix_id!(params[:tax_category_id]) : nil
             end
-            if params.key?(:delivery_zone_ids)
-              attributes[:delivery_zones] = Array(params[:delivery_zone_ids]).map { |id| current_store.delivery_zones.accessible_by(current_ability, :show).find_by_prefix_id!(id) }
+            if params.key?(:delivery_profile_id)
+              attributes[:delivery_profile] = current_store.delivery_profiles.accessible_by(current_ability, :show).find_by_prefix_id!(params[:delivery_profile_id])
+            end
+            if params.key?(:delivery_origin_group_id) && params[:delivery_origin_group_id].present?
+              attributes[:delivery_origin_group] = current_store.delivery_origin_groups.accessible_by(current_ability, :show).find_by_prefix_id!(params[:delivery_origin_group_id])
+            end
+            if params.key?(:delivery_zone_id)
+              attributes[:delivery_zone] = params[:delivery_zone_id].present? ? current_store.delivery_zones.accessible_by(current_ability, :show).find_by_prefix_id!(params[:delivery_zone_id]) : nil
             end
             if params.key?(:stock_location_ids)
               attributes[:pickup_locations] = Array(params[:stock_location_ids]).map { |id| current_store.stock_locations.accessible_by(current_ability, :show).find_by_prefix_id!(id) }

@@ -97,7 +97,10 @@ FactoryBot.define do
 
       factory :digital_product do
         track_inventory { false }
-        product_type { create(:product_type, name: "Digital #{SecureRandom.hex(4)}", fulfillment_types: ['digital']) }
+        delivery_profile do
+          Spree::DeliveryProfiles::Digital.find_by(store: store) ||
+            create(:digital_delivery_profile, store: store)
+        end
       end
     end
   end

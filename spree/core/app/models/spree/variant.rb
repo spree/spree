@@ -685,18 +685,6 @@ module Spree
       digitals.any?
     end
 
-    # @deprecated Delivery eligibility comes from {#product_type}; removed in 6.1.
-    def shipping_category
-      Spree::Deprecation.warn('Spree::Variant#shipping_category is deprecated and will be removed in Spree 6.1. Use #product_type instead.')
-      product.shipping_category
-    end
-
-    # @deprecated Delivery eligibility comes from {#product_type_id}; removed in 6.1.
-    def shipping_category_id
-      Spree::Deprecation.warn('Spree::Variant#shipping_category_id is deprecated and will be removed in Spree 6.1. Use #product_type_id instead.')
-      product.shipping_category_id
-    end
-
     private
 
     def pending_options?

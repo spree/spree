@@ -39,4 +39,20 @@ RSpec.describe Spree::OrderStatusSubscriber do
 
     expect { described_class.new.handle(event) }.not_to raise_error
   end
+
+  # End to end through the event bus, not by calling handle() by hand: the
+  # admin capture endpoint drives the payment machine directly, so the
+  # after_transition publish is the only thing keeping the order's rollup
+  # fresh — this is the wire that broke when a draft's payment settled but
+  # the order kept saying none.
+  it 'rolls the order up when a payment is captured through the machine', events: true do
+    order = create(:order_with_line_items, store: @default_store)
+    order.update_columns(status: 'draft', completed_at: nil)
+    payment = create(:payment, order: order, cart: nil, amount: order.total, state: 'pending')
+    order.update_columns(payment_status: 'none')
+
+    payment.capture!
+
+    expect(order.reload.payment_status).to eq('paid')
+  end
 end

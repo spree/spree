@@ -26,10 +26,21 @@ export const DELIVERY_ZONE_DEFAULTS: DeliveryZoneFormValues = {
   members: [],
 }
 
-export function deliveryZoneValuesToParams(values: DeliveryZoneFormValues) {
+/**
+ * A zone belongs to the profile it was created in, and to one origin group
+ * within it; both ids are only sent on create, since a zone never moves
+ * between profiles or groups.
+ */
+export function deliveryZoneValuesToParams(
+  values: DeliveryZoneFormValues,
+  deliveryProfileId?: string,
+  deliveryOriginGroupId?: string,
+) {
   return {
     name: values.name,
     description: values.description || null,
+    ...(deliveryProfileId ? { delivery_profile_id: deliveryProfileId } : {}),
+    ...(deliveryOriginGroupId ? { delivery_origin_group_id: deliveryOriginGroupId } : {}),
     members: values.members.map((member) => ({
       member_type: member.member_type,
       ...(member.country_iso ? { country_iso: member.country_iso } : {}),

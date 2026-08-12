@@ -90,7 +90,7 @@ module Spree
         end
       end
 
-      context 'with quantity zero' do
+      context 'with quantity zero and nothing to remove' do
         let(:items) { [{ variant_id: variant.prefixed_id, quantity: 0 }] }
 
         it 'skips the entry' do
@@ -105,6 +105,48 @@ module Spree
         it 'skips the entry' do
           expect(subject).to be_success
           expect(order.line_items.count).to eq(0)
+        end
+      end
+
+      # Zero is how an edited order says "this row is gone", so a whole order
+      # can be submitted in one request rather than a delete per removed row.
+      context 'with quantity zero on an existing line item' do
+        let!(:existing_line_item) { create(:line_item, order: order, variant: variant, quantity: 5) }
+        let(:items) { [{ variant_id: variant.prefixed_id, quantity: 0 }] }
+
+        it 'removes the line item' do
+          expect(subject).to be_success
+          expect(order.line_items.reload).to be_empty
+        end
+      end
+
+      context 'removing one line item while changing another' do
+        let!(:kept) { create(:line_item, order: order, variant: variant2, quantity: 1) }
+        let!(:removed) { create(:line_item, order: order, variant: variant, quantity: 5) }
+
+        let(:items) do
+          [
+            { variant_id: variant.prefixed_id, quantity: 0 },
+            { variant_id: variant2.prefixed_id, quantity: 4 }
+          ]
+        end
+
+        it 'applies both in one pass' do
+          expect(subject).to be_success
+          expect(order.line_items.reload).to contain_exactly(kept)
+          expect(kept.reload.quantity).to eq(4)
+        end
+      end
+
+      # An upsert only touches what it is given — the screen sends every row,
+      # so an omitted variant is not an instruction to delete it.
+      context 'with a line item omitted from the payload' do
+        let!(:untouched) { create(:line_item, order: order, variant: variant2, quantity: 2) }
+        let(:items) { [{ variant_id: variant.prefixed_id, quantity: 1 }] }
+
+        it 'leaves it alone' do
+          expect(subject).to be_success
+          expect(untouched.reload.quantity).to eq(2)
         end
       end
 

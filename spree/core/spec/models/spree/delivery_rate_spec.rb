@@ -1,6 +1,20 @@
 require 'spec_helper'
 
 describe Spree::DeliveryRate, type: :model do
+
+  describe '#name' do
+    it 'prefers the rate-level name set by the estimator' do
+      rate = build(:delivery_rate, delivery_method: delivery_method, name: 'UPS Ground')
+
+      expect(rate.name).to eq('UPS Ground')
+    end
+
+    it 'falls back to the delivery method name for calculator rates' do
+      rate = build(:delivery_rate, delivery_method: delivery_method, name: nil)
+
+      expect(rate.name).to eq(delivery_method.name)
+    end
+  end
   let(:shipment) { create(:shipment) }
   let(:delivery_method) { create(:delivery_method) }
   let(:shipping_rate) do

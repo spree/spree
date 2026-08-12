@@ -12,6 +12,8 @@ export function useOrder(orderId: string) {
           'fulfillments.fulfillment_items',
           'fulfillments.delivery_method',
           'fulfillments.stock_location',
+          'fulfillments.delivery_rates',
+          'fulfillments.delivery_rates.delivery_method',
           'payments',
           'payments.payment_method',
           'billing_address',

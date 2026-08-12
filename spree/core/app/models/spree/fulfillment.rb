@@ -39,6 +39,7 @@ module Spree
     after_save :update_adjustments
 
     before_validation :set_cost_zero_when_nil
+    before_save :detect_tracking_carrier, if: -> { will_save_change_to_tracking? && tracking_carrier.blank? }
 
     validates :stock_location, presence: true
     validate :exactly_one_owner
@@ -48,18 +49,23 @@ module Spree
     accepts_nested_attributes_for :address
     accepts_nested_attributes_for :fulfillment_items
 
-    scope :pending, -> { with_state('pending') }
-    scope :ready,   -> { with_state('ready') }
-    scope :fulfilled, -> { with_state('fulfilled') }
-    # @deprecated legacy name — remove in 6.1
+    # unfulfilled/fulfilled/delivered/canceled scopes + predicates come from
+    # has_status below. These are the ones it cannot generate.
+    #
+    # @deprecated legacy names — removed in 6.1
     scope :shipped, -> { fulfilled }
-    scope :ready_or_pending, -> { where(status: %w(ready pending)) }
+    scope :pending, -> { unfulfilled }
+    scope :ready, -> { unfulfilled }
+    scope :ready_or_pending, -> { unfulfilled }
+    # Everything that has left the merchant's hands, whether or not the carrier
+    # has confirmed receipt — the natural set for reporting and for skipping
+    # work that only applies to packages still on the shelf.
+    scope :fulfilled_or_delivered, -> { where(status: %w(fulfilled delivered)) }
     scope :trackable, -> { where("tracking IS NOT NULL AND tracking != ''") }
     scope :with_state, ->(*s) { where(status: s) }
     # sort by most recent fulfilled_at, falling back to created_at. add "id desc" to make specs that involve this scope more deterministic.
     scope :reverse_chronological, -> { order(Arel.sql("coalesce(#{table_name}.fulfilled_at, #{table_name}.created_at) desc"), id: :desc) }
     scope :valid, -> { where.not(status: :canceled) }
-    scope :canceled, -> { with_state('canceled') }
     scope :not_canceled, -> { where.not(status: 'canceled') }
     scope :shipped_but_canceled, -> { canceled.where.not(fulfilled_at: nil) }
     # This scope will select the delivery_method_id from the fulfillments' selected delivery rate
@@ -93,53 +99,37 @@ module Spree
     end
     delegate :amount_in_cents, to: :display_cost
 
-    state_machine :status, initial: :pending, use_transactions: false do
-      event :ready do
-        transition from: :pending, to: :ready, if: lambda { |fulfillment|
-          # Fix for #2040
-          fulfillment.determine_state(fulfillment.owner) == 'ready'
-        }
-      end
+    # Statuses describe what the merchant did with the package — nothing else.
+    # Payment and stock readiness used to be encoded here as pending/ready and
+    # re-derived from the order on every recalculation, so a refund could move a
+    # fulfillment backwards with no physical change. That gate now lives in
+    # Spree::Fulfillments::Fulfill, where it can explain itself and be
+    # overridden. Transitions belong to the workflows in
+    # app/workflows/spree/fulfillments (docs/plans/6.0-fulfillment-and-delivery.md).
+    include Spree::HasStatus
+    has_status :unfulfilled, :fulfilled, :delivered, :canceled, default: :unfulfilled
 
-      event :pend do
-        transition from: :ready, to: :pending
-      end
+    # Unlike returns and claims, fulfillments are built directly — by the stock
+    # coordinator, by cart completion, by transfers — rather than always through
+    # a creating workflow, so the default is applied here instead of being left
+    # to each caller. This is what the machine's `initial:` used to do.
+    after_initialize :apply_default_status, if: :new_record?
 
-      event :mark_ready_for_pickup do
-        transition from: :ready, to: :ready_for_pickup
-      end
+    # What the carrier reports, kept apart from the merchant lifecycle: a bounced
+    # or damaged package changes this, never #status.
+    TRACKING_STATUSES = %w(
+      pre_transit in_transit out_for_delivery available_for_pickup
+      delivered return_to_sender failure unknown
+    ).freeze
 
-      event :fulfill do
-        transition from: %i(ready ready_for_pickup canceled), to: :fulfilled, if: ->(fulfillment) { fulfillment.provider.can_fulfill?(fulfillment) }
-      end
-      after_transition to: :ready, do: :publish_fulfillment_ready_event
-      after_transition to: :fulfilled, do: [:after_fulfill, :publish_fulfillment_fulfilled_event]
+    validates :tracking_status, inclusion: { in: TRACKING_STATUSES }, allow_blank: true
 
-      event :cancel do
-        transition to: :canceled, from: %i(pending ready ready_for_pickup)
-      end
-      after_transition to: :canceled, do: [:after_cancel, :publish_fulfillment_canceled_event]
-
-      event :resume do
-        transition from: :canceled, to: :ready, if: lambda { |fulfillment|
-          fulfillment.determine_state(fulfillment.owner) == 'ready'
-        }
-        transition from: :canceled, to: :pending
-      end
-      after_transition from: :canceled, to: %i(pending ready fulfilled), do: [:after_resume, :publish_fulfillment_resumed_event]
-    end
-
-    # @deprecated Use {#fulfill}; removed in 6.1.
+    # @deprecated Use {Spree::Fulfillments::Fulfill}; removed in 6.1.
     def ship(*args)
-      Spree::Deprecation.warn('Spree::Fulfillment#ship is deprecated and will be removed in Spree 6.1. Use #fulfill instead.')
-      fulfill(*args)
+      Spree::Deprecation.warn('Spree::Fulfillment#ship is deprecated and will be removed in Spree 6.1. Use Spree::Fulfillments::Fulfill instead.')
+      Spree.fulfillment_fulfill_workflow.call(fulfillment: self, **args.first.to_h)
     end
-
-    # @deprecated Use {#fulfill!}; removed in 6.1.
-    def ship!(*args)
-      Spree::Deprecation.warn('Spree::Fulfillment#ship! is deprecated and will be removed in Spree 6.1. Use #fulfill! instead.')
-      fulfill!(*args)
-    end
+    alias ship! ship
 
     # @deprecated Use {#can_fulfill?}; removed in 6.1.
     def can_ship?
@@ -152,9 +142,52 @@ module Spree
       Spree::Deprecation.warn('Spree::Fulfillment#shipped? is deprecated and will be removed in Spree 6.1. Use #fulfilled? instead.')
       fulfilled?
     end
+
+    # Whether this fulfillment may still be handed over. Composes the status
+    # rule with the provider's own veto; the payment and stock side of the
+    # question belongs to Spree::Fulfillments::Fulfill, which can report why.
+    #
+    # Stated negatively — anything that has not already gone out can go out —
+    # so a status an extension adds before `fulfilled` (an `in_production`
+    # stage, say) is fulfillable without overriding anything. Whether it
+    # SHOULD go out yet is the fulfill workflow's validate hook's question.
+    #
+    # @return [Boolean]
+    def can_fulfill?
+      !fulfilled_or_delivered? && provider.can_fulfill?(self)
+    end
+
+    # Whether the package can still be recalled: anything that has neither
+    # gone out nor already been recalled. Negative for the same reason as
+    # {#can_fulfill?} — custom pre-handover statuses stay cancelable.
+    #
+    # @return [Boolean]
+    def can_cancel?
+      !fulfilled_or_delivered? && !canceled?
+    end
+
+    # @return [Boolean] whether a canceled fulfillment can be reinstated
+    def can_resume?
+      canceled?
+    end
+
+    # @return [Boolean] whether receipt can still be confirmed
+    def can_mark_delivered?
+      fulfilled?
+    end
+
+    # Everything that has left the merchant's hands. Reads better than
+    # `fulfilled? || delivered?` at call sites that only care that the package
+    # is gone.
+    #
+    # @return [Boolean]
+    def fulfilled_or_delivered?
+      fulfilled? || delivered?
+    end
     # @deprecated the column is +status+ since 6.0
     alias_attribute :state, :status
     alias_attribute :shipped_at, :fulfilled_at
+    after_save { @tracking_url = nil }
     # Legacy association names — removed in 6.1.
     has_many :inventory_units, class_name: 'Spree::FulfillmentItem', foreign_key: :fulfillment_id, inverse_of: :fulfillment, deprecated: true
     has_many :shipping_rates, -> { order(:cost) }, class_name: 'Spree::DeliveryRate', foreign_key: :fulfillment_id, deprecated: true
@@ -213,12 +246,19 @@ module Spree
       add_delivery_method(delivery_method, selected)
     end
 
+    # @deprecated Cancel through {Spree::Fulfillments::Cancel}; removed in 6.1.
+    #   Restocking and the provider call are workflow steps now, so this no
+    #   longer runs as a transition callback. Kept only so a host app that
+    #   called it directly keeps working for one release.
     def after_cancel
+      Spree::Deprecation.warn('Spree::Fulfillment#after_cancel is deprecated and will be removed in Spree 6.1. Cancel through Spree::Fulfillments::Cancel instead.')
       manifest.each { |item| manifest_restock(item) }
       provider.cancel_fulfillment(self)
     end
 
+    # @deprecated Resume through {Spree::Fulfillments::Resume}; removed in 6.1.
     def after_resume
+      Spree::Deprecation.warn('Spree::Fulfillment#after_resume is deprecated and will be removed in Spree 6.1. Resume through Spree::Fulfillments::Resume instead.')
       manifest.each { |item| manifest_unstock(item) }
     end
 
@@ -251,24 +291,6 @@ module Spree
         line_item = manifest_item.line_item
         line_item.quantity > manifest_item.quantity
       end
-    end
-
-    # Determines the appropriate +state+ according to the following logic:
-    #
-    # pending    unless order is complete and +order.payment_state+ is +paid+
-    # shipped    if already shipped (ie. does not change the state)
-    # ready      all other cases
-    # @param [Spree::Cart, Spree::Order]
-    def determine_state(order_or_cart)
-      return 'pending' if order_or_cart.is_a?(Spree::Cart)
-
-      return 'canceled' if canceled? || order_or_cart.canceled?
-      # Fulfillment is a fact — payment coverage can never un-fulfill it.
-      return 'fulfilled' if fulfilled?
-      return 'pending' unless order_or_cart.can_ship?
-      return 'pending' if fulfillment_items.any?(&:backordered?)
-
-      order_or_cart.paid? || Spree::Config[:auto_capture_on_dispatch] ? 'ready' : 'pending'
     end
 
     def discounted_cost
@@ -405,8 +427,25 @@ module Spree
       end
     end
 
+    # @deprecated Use {#unfulfilled?}; removed in 6.1.
     def ready_or_pending?
-      ready? || pending?
+      unfulfilled?
+    end
+
+    # @deprecated Use {#unfulfilled?}; removed in 6.1.
+    def pending?
+      unfulfilled?
+    end
+
+    # @deprecated Use {#unfulfilled?}; removed in 6.1.
+    def ready?
+      unfulfilled?
+    end
+
+    # @deprecated `ready_for_pickup` is not a status since 6.0 — for pickup
+    # fulfillments `fulfilled` means "waiting at the counter". Removed in 6.1.
+    def ready_for_pickup?
+      fulfilled? && provider.class.pickup?
     end
 
     # @param audience [Symbol] {Spree::DeliveryMethod::STOREFRONT} (default)
@@ -418,15 +457,30 @@ module Spree
 
       # StockEstimator.new assignment below will replace the current delivery_method
       original_shipping_method_id = delivery_method.try(:id)
+      # A carrier method quotes several rates (one per service), so the
+      # method id alone no longer identifies the customer's choice — capture
+      # the selected rate's carrier service too.
+      original_selection = selected_delivery_rate
+      original_carrier = original_selection&.carrier
+      original_service_level = original_selection&.service_level
 
       self.delivery_rates = Stock::Estimator.new(owner).
                             delivery_rates(to_package, audience)
 
       if delivery_method
-        # Keep the previously chosen method when it is still quoted; otherwise
-        # fall back to the estimator's own pick (the cheapest rate, already
-        # flagged selected) rather than leaving the fulfillment unselected.
+        # Keep the previously chosen carrier service when it is still quoted,
+        # then the previously chosen method, then the estimator's own pick
+        # (the cheapest rate, already flagged selected) rather than leaving
+        # the fulfillment unselected.
         selected_rate =
+          if original_shipping_method_id && original_carrier
+            delivery_rates.detect do |rate|
+              rate.delivery_method_id == original_shipping_method_id &&
+                rate.carrier == original_carrier &&
+                rate.service_level == original_service_level
+            end
+          end
+        selected_rate ||=
           if original_shipping_method_id
             delivery_rates.detect { |rate| rate.delivery_method_id == original_shipping_method_id }
           end
@@ -478,13 +532,18 @@ module Spree
       owner.set_fulfillments_cost
     end
 
-    def set_up_inventory(status, variant, order, line_item, quantity = 1)
+    # +owner+ is the cart or order the units belong to. The item's order_id is
+    # a completion-time denormalization (backorder processing joins through
+    # it): during checkout it stays nil — writing a cart's id into an order
+    # foreign key would silently link the item to whatever order shares that
+    # id. Carts::Complete stamps the real order onto the copied items.
+    def set_up_inventory(status, variant, owner, line_item, quantity = 1)
       return if quantity <= 0
 
       fulfillment_items.create(
         status: status,
         variant_id: variant.id,
-        order_id: order.id,
+        order_id: owner.is_a?(Spree::Order) ? owner.id : nil,
         line_item_id: line_item.id,
         quantity: quantity
       )
@@ -543,6 +602,7 @@ module Spree
 
     def to_package
       package = Stock::Package.new(stock_location)
+      package.owner = owner
       fulfillment_items.includes(:variant).joins(:variant).group_by(&:status).each do |status, units|
         package.add_multiple units, status.to_sym
       end
@@ -554,12 +614,38 @@ module Spree
     # instead of being templated into the delivery method's tracking URL.
     #
     # @return [String, nil]
+    # The public page where this parcel can be followed, best answer first:
+    #
+    # 1. The tracking value is already a link — pasted in whole.
+    # 2. The provider that bought the label knows its own tracker page.
+    # 3. The carrier pinned on this fulfillment (picked or detected) has a
+    #    registered tracking page.
+    # 4. The delivery method's configured format string, or detection from the
+    #    number's format — the legacy path, still right for single-carrier
+    #    methods.
+    #
+    # @return [String, nil]
     def tracking_url
-      @tracking_url ||= if tracking&.start_with?('https://')
+      return if tracking.blank?
+
+      @tracking_url ||= if tracking.start_with?('https://', 'http://')
                           tracking
                         else
-                          delivery_method&.build_tracking_url(tracking)
+                          provider.tracking_url(self).presence ||
+                            carrier_tracking_url.presence ||
+                            delivery_method&.build_tracking_url(tracking).presence ||
+                            detected_tracking_url
                         end
+    end
+
+    # The pinned carrier's display name, for storefronts and admin UIs
+    # showing "InPost: 421432" rather than a bare number.
+    #
+    # @return [String, nil]
+    def tracking_carrier_name
+      return if tracking_carrier.blank?
+
+      Spree.tracking_carriers.dig(tracking_carrier, :name) || tracking_carrier.titleize
     end
 
     def update_amounts
@@ -569,17 +655,20 @@ module Spree
       end
     end
 
-    # Updates various aspects of the Shipment while bypassing any callbacks.  Note that this method takes an explicit reference to the
-    # Order object.  This is necessary because the association actually has a stale (and unsaved) copy of the Order and so it will not
-    # yield the correct results.
-    def update!(order)
-      old_status = status
-      new_status = determine_state(order)
-      update_columns(
-        status: new_status,
-        updated_at: Time.current
-      )
-      after_fulfill if new_status == 'fulfilled' && old_status != 'fulfilled'
+    # @deprecated No-op since 6.0; removed in 6.1.
+    #
+    # This re-derived the status from the order's payment state on every order
+    # recalculation, which is what made a fulfillment move backwards when a
+    # refund landed. A fulfillment's status now only changes when a workflow
+    # changes it, so there is nothing left to refresh.
+    def update!(*args)
+      # Only the legacy `update!(order)` form is dead. Anything else is
+      # ActiveRecord's own update! — a Hash of attributes — which workflows
+      # rely on to write the status.
+      return super unless args.one? && (args.first.is_a?(Spree::Order) || args.first.is_a?(Spree::Cart))
+
+      Spree::Deprecation.warn('Spree::Fulfillment#update!(order) is a no-op since Spree 6.0 and will be removed in 6.1. Fulfillment statuses change through Spree::Fulfillments workflows.')
+      true
     end
 
     def transfer_to_location(variant, quantity, stock_location)
@@ -655,6 +744,31 @@ module Spree
 
     def set_cost_zero_when_nil
       self.cost = 0 unless cost
+    end
+
+    def apply_default_status
+      self.status ||= self.class.default_status
+    end
+
+    def carrier_tracking_url
+      template = Spree.tracking_carriers.dig(tracking_carrier.to_s, :url)
+      template&.gsub(':tracking', ERB::Util.url_encode(tracking))
+    end
+
+    def detected_tracking_url
+      service = Spree.tracking_number_service.new(tracking.upcase)
+      service.tracking_url if service.valid?
+    end
+
+    # Numbers from the big carriers encode who they belong to; pinning the
+    # detected carrier means the badge and the URL survive even when the
+    # merchant only pasted a number. Only fills a blank — a merchant's
+    # explicit pick, or a provider's, is never second-guessed.
+    def detect_tracking_carrier
+      return if tracking.blank? || tracking.start_with?('https://', 'http://')
+
+      service = Spree.tracking_number_service.new(tracking.upcase)
+      self.tracking_carrier = service.tracking.courier_code.to_s if service.valid?
     end
 
     def exactly_one_owner

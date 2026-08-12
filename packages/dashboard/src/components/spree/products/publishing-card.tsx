@@ -82,12 +82,18 @@ export function PublishingCard({
   //   diffing current values against defaults — so the seeded array
   //   still reads as dirty unless we update defaults too.
   //
-  // Solution: `form.reset` with the new publications merged into the
-  // CURRENT defaults (not current values). `keepDirtyValues: true`
-  // preserves anything the merchant typed in the brief render window
-  // before channels resolved, and keeps those fields marked dirty
-  // against the new baseline. useFieldArray's array subscription picks
-  // up the reset and updates its internal `fields` list correctly.
+  // Solution: `form.reset` with the seed merged into the form's pristine
+  // defaults, snapshotted via `getValues()` on FIRST render — at that
+  // moment values ARE the defaults, and `getValues()` is synchronously
+  // complete. `keepDirtyValues: true` preserves anything the merchant
+  // typed before channels resolved, dirty flags included. Do NOT source
+  // the reset from `formState.defaultValues`: it sits behind RHF's lazy
+  // proxy and can read back empty inside an effect, and resetting with
+  // that object silently wipes the rest of the form (the new-product page
+  // lost its seeded default variant whenever the channels query resolved
+  // from a warm cache). `resetField`/`setValue` pairs don't work either —
+  // an array root isn't a registered field, so they miss values or
+  // defaults.
   //
   // Guard with a ref so the merchant unticking the seeded channel doesn't
   // re-add it on the next render.
@@ -98,24 +104,23 @@ export function PublishingCard({
   // filters out — invisible products without a warning in the admin.
   const defaultChannelId = channelsResponse?.data.find((c) => c.default && c.active)?.id
   const seededRef = useRef(false)
+  const pristineDefaultsRef = useRef<ProductFormValues | null>(null)
+  if (seedDefaultChannel && pristineDefaultsRef.current === null) {
+    pristineDefaultsRef.current = form.getValues()
+  }
   useEffect(() => {
     if (!seedDefaultChannel) return
     if (seededRef.current) return
     if (!defaultChannelId) return
     seededRef.current = true
     if (publicationsArray.fields.length > 0) return
-    const currentDefaults = form.formState.defaultValues ?? {}
     form.reset(
       {
-        ...currentDefaults,
+        ...(pristineDefaultsRef.current as ProductFormValues),
         product_publications: [
-          {
-            channel_id: defaultChannelId,
-            published_at: null,
-            unpublished_at: null,
-          },
+          { channel_id: defaultChannelId, published_at: null, unpublished_at: null },
         ],
-      } as ProductFormValues,
+      },
       { keepDirtyValues: true },
     )
   }, [seedDefaultChannel, defaultChannelId, publicationsArray, form])

@@ -468,70 +468,128 @@
       }
     },
     "delivery_methods": {
-      "add_cta": "Add delivery method",
       "add_sheet_title": "New delivery method",
+      "cards": {
+        "estimate": "Delivery estimate"
+      },
+      "carrier_services": {
+        "add_service": "Add service",
+        "all_hint": "Every service the carrier returns is offered, named by the carrier.",
+        "carrier": "Carrier",
+        "catalog_unavailable": "Could not list this carrier’s services ({{message}}). Enter carrier and service identifiers manually, or leave empty to offer everything the carrier quotes.",
+        "choose_specific": "Choose specific services",
+        "edit_service": "Edit {{service}}",
+        "label": "Carrier services",
+        "narrowed_hint": "Only the {{count}} selected services are offered.",
+        "offer_all": "Offer all services",
+        "service": "Service"
+      },
+      "collection_locations": {
+        "all": "All pickup-enabled locations",
+        "none_enabled": "No location accepts pickup yet — enable one on the delivery profile.",
+        "specific": "Specific locations",
+        "title": "Collection locations"
+      },
       "conditions": {
         "add": "Add condition",
-        "empty": "No conditions — this method is offered whenever its zones match.",
+        "empty": "No conditions — this method is offered wherever it applies.",
         "title": "Conditions"
       },
-      "create_description": "Configure how orders reach customers: shipping, digital delivery or pickup.",
+      "connect_provider_hint": "{{name}} can quote live carrier rates — connect it to enable.",
       "create_label": "Create delivery method",
       "delete_confirm": {
         "message": "Delete \"{{name}}\"? Storefronts will stop offering it immediately.",
         "title": "Delete delivery method"
       },
-      "edit_description": "Update this delivery method’s configuration.",
+      "detail": {},
       "edit_sheet_title": "Edit delivery method",
-      "empty": "No delivery methods yet.",
-      "fulfillment_types": {
-        "digital": "Digital",
-        "local_delivery": "Local delivery",
-        "pickup": "Pickup",
-        "pickup_point": "Pickup point",
-        "shipping": "Shipping"
-      },
+      "free": "Free",
       "messages": {
         "created": "Delivery method created",
         "deleted": "Delivery method deleted",
         "updated": "Delivery method updated"
       },
-      "no_zones_hint": "No delivery zones defined yet — the method applies everywhere.",
-      "pickup_locations_hint": "No selection means every pickup-enabled stock location is offered.",
-      "search_placeholder": "Search delivery methods…"
+      "no_zone_restriction": "No restriction",
+      "pricing": {
+        "amount_in_currency": "Amount in {{currency}}",
+        "currency_amounts_help": "Currencies left blank are not offered this delivery method."
+      },
+      "carrier_rates": "Carrier rates",
+      "provider_unavailable": "{{name}} (unavailable)",
+      "provider_needs_connection": "Connect {{name}} to use it",
+      "rule_summary": {
+        "separator": " · ",
+        "total_between": "{{min}}–{{max}}",
+        "total_max": "Under {{max}}",
+        "total_min": "{{min}} and up",
+        "weight_between": "{{min}}–{{max}}{{unit}}",
+        "weight_max": "Under {{max}}{{unit}}",
+        "weight_min": "{{min}}{{unit}} and up"
+      },
+      "carrier_rates_hint": "Prices come from {{name}} at checkout, quoted live for each order."
+    },
+    "delivery_origin_groups": {
+      "delete_confirm": {
+        "message": "Delete \"{{name}}\"? Its zones and delivery methods go with it.",
+        "title": "Delete origin group"
+      },
+      "edit_description": "Rename this group or change which locations it ships from.",
+      "edit_title": "Edit origin group",
+      "messages": {
+        "created": "Origin group created",
+        "deleted": "Origin group deleted",
+        "updated": "Origin group updated"
+      },
+      "no_locations_hint": "Select at least one location, or choose all locations.",
+      "ships_from": "Ships from: {{locations}}",
+      "ships_from_all": "Ships from all locations",
+      "ships_from_label": "Ships from",
+      "split_cta": "Split shipping origins",
+      "split_description": "Ship the same products from a second warehouse with its own zones and rates.",
+      "split_title": "Split shipping origins"
     },
     "delivery_zones": {
+      "add_countries_in_markets": "Add more countries in Markets",
       "add_cta": "Add delivery zone",
-      "add_member": "Add member",
+      "add_postal_rule": "Add rule",
       "add_sheet_title": "New delivery zone",
+      "all_states": "All states",
       "create_description": "Group countries, states or postal codes into an area served by delivery methods.",
       "create_label": "Create delivery zone",
       "delete_confirm": {
-        "message": "Delete \"{{name}}\"? Delivery methods using it will stop matching these areas.",
+        "message": "Delete \"{{name}}\"? Its delivery methods are deleted with it.",
         "title": "Delete delivery zone"
       },
       "edit_description": "Members below replace the zone’s full member list on save.",
       "edit_sheet_title": "Edit delivery zone",
-      "empty": "No delivery zones yet.",
       "from_placeholder": "From",
-      "member_types": {
-        "country": "Country",
-        "postal_code": "Postal code",
-        "state": "State"
-      },
-      "members_column": "Members",
-      "members_count": "{{count}} members",
+      "in_another_zone": "In another zone",
+      "member_separator": ", ",
+      "members_more_one": "{{count}} more",
+      "members_more_other": "{{count}} more",
       "messages": {
         "created": "Delivery zone created",
         "deleted": "Delivery zone deleted",
         "updated": "Delivery zone updated"
       },
-      "no_members_hint": "No members yet — add countries, states or postal code rules.",
+      "no_postal_rules_hint": "No postal code rules yet.",
+      "no_regions_found": "No countries match your search.",
+      "no_states": "This country has no states.",
+      "not_in_any_market": "Not in any market",
+      "postal_rules_count_one": "{{count}} rule",
+      "postal_rules_count_other": "{{count}} rules",
+      "postal_rules_title": "Postal code rules",
       "prefix_placeholder": "Prefix",
-      "search_placeholder": "Search delivery zones…",
+      "region_search_placeholder": "Search countries and regions to ship to",
+      "regions_title": "Countries and regions",
+      "remove_postal_rule": "Remove rule",
       "select_country": "Select country",
-      "state_placeholder": "State code or name",
-      "to_placeholder": "To"
+      "selection_summary": "{{countries}} countries, {{states}} states, {{rules}} postal code rules",
+      "states_selected_one": "{{count}} state",
+      "states_selected_other": "{{count}} states",
+      "states_summary": "{{selected}} of {{total}} states",
+      "to_placeholder": "To",
+      "toggle_states": "Show states of {{country}}"
     },
     "errors": {
       "forbidden_description": "You don’t have permission to view this page.",
@@ -579,6 +637,13 @@
         "default": {
           "help": "Exactly one channel per store is the default. Used as the fallback when no channel is selected and as the auto-publish target for new products.",
           "label": "Default channel"
+        },
+        "fulfillment_locations": {
+          "all": "All locations",
+          "help": "Which warehouses and pickup counters fulfill orders placed on this sales channel.",
+          "label": "Fulfillment locations",
+          "none_selected_hint": "Pick at least one location, or choose \"All locations\".",
+          "selected": "Selected locations"
         },
         "guest_checkout": {
           "help": "Whether shoppers can check out without an account on this channel. Leave blank to inherit the store setting.",
@@ -699,18 +764,27 @@
         "code": {
           "label": "Code"
         },
-        "delivery_zones": {
-          "label": "Delivery zones"
+        "delivery_zone": {
+          "help": "Where this method is offered. Without a zone it applies wherever the profile reaches.",
+          "label": "Delivery zone"
         },
         "fulfillment_provider": {
           "help": "How fulfillments for this method are dispatched and tracked.",
           "label": "Fulfillment provider"
         },
-        "fulfillment_type": {
-          "label": "Fulfillment type"
+        "markup_flat": {
+          "label": "Markup (flat)"
         },
-        "pickup_locations": {
-          "label": "Pickup locations"
+        "markup_percent": {
+          "help": "Handling fee added on top of carrier rates. Per-service values override these defaults.",
+          "label": "Markup %"
+        },
+        "rate_provider": {
+          "help": "Where this method's prices come from. The built-in provider prices with the calculator below; carrier providers quote live rates.",
+          "label": "Rate provider"
+        },
+        "service_label": {
+          "label": "Custom label"
         },
         "storefront_visible": {
           "help": "Customers can select this method at checkout."
@@ -726,6 +800,33 @@
         },
         "transit_days_min": {
           "label": "Transit days (min)"
+        }
+      },
+      "delivery_origin_group": {
+        "name": {
+          "help": "Leave blank to call this group \"All locations\".",
+          "label": "Name"
+        }
+      },
+      "delivery_profile": {
+        "capabilities": {
+          "label": "Capabilities"
+        },
+        "kind": {
+          "help": "Decides which fulfillment providers this profile’s methods can use.",
+          "label": "Kind"
+        },
+        "methods_count": {
+          "label": "Methods"
+        },
+        "origins": {
+          "label": "Ships from"
+        },
+        "products_count": {
+          "label": "Products"
+        },
+        "zones_count": {
+          "label": "Zones"
         }
       },
       "gift_card": {
@@ -958,6 +1059,10 @@
         "discontinue_on": {
           "label": "Discontinue on"
         },
+        "delivery_profile_id": {
+          "help": "Decides which zones and delivery methods reach this product.",
+          "label": "Shipping profile"
+        },
         "make_active_at": {
           "label": "Make active at"
         },
@@ -995,9 +1100,9 @@
           "label": "Custom fields",
           "required": "Required"
         },
-        "fulfillment_types": {
-          "help": "How products of this type can be delivered — shipping, store pickup, pickup point, or digital.",
-          "label": "Fulfillment types"
+        "delivery_profile_id": {
+          "help": "Stamped onto products created with this type. Changing it never moves products that already carry the type.",
+          "label": "Shipping profile template"
         },
         "name": {
           "placeholder": "e.g. T-Shirt"
@@ -1162,6 +1267,17 @@
           "label": "Admin language",
           "placeholder": "Use the default language"
         },
+        "preferred_default_package_dimensions": {
+          "height": "Height",
+          "help": "The box you usually ship in, used by carrier rate providers for dimensional-weight pricing — inches for imperial, centimeters for metric. All three are needed to take effect.",
+          "label": "Default package dimensions",
+          "length": "Length",
+          "width": "Width"
+        },
+        "preferred_default_package_weight": {
+          "help": "Packaging weight (box and filler) added to every package's contents when calculating delivery rates. Set to 0 to disable.",
+          "label": "Default package weight"
+        },
         "preferred_send_consumer_transactional_emails": {
           "help": "When off, no order confirmation, shipping, or refund emails are sent.",
           "label": "Send transactional emails to customers"
@@ -1284,6 +1400,67 @@
         }
       }
     },
+    "delivery_profiles": {
+      "add_cta": "Add profile",
+      "add_dialog_title": "New delivery profile",
+      "all_locations": "All locations",
+      "capabilities": {
+        "digital": "Digital",
+        "pickup": "Pickup",
+        "ships": "Ships"
+      },
+      "create_description": "Group products that ship the same way, with their own locations, zones and delivery methods.",
+      "create_label": "Create profile",
+      "default_badge": "Default",
+      "default_confirm": {
+        "message": "Products without a profile of their own will start shipping on “{{name}}”.",
+        "title": "Make this the default profile"
+      },
+      "delete_confirm": {
+        "message": "Delete “{{name}}”? Its zones and delivery methods go with it.",
+        "title": "Delete shipping profile"
+      },
+      "detail": {
+        "add_digital_method": "Add digital method",
+        "add_method": "Add method",
+        "collect_from": "Collect from",
+        "collect_from_hint": "Locations customers can collect from. Changes take effect immediately.",
+        "delete_label": "Delete profile",
+        "digital_empty": "No digital delivery method yet.",
+        "digital_hint": "Delivered without shipping or collection.",
+        "digital_title": "Digital delivery",
+        "general_title": "General",
+        "hidden_badge": "Hidden",
+        "load_failed_title": "Could not load this shipping profile",
+        "no_methods": "No delivery methods here yet.",
+        "no_stock_locations": "No locations yet — add one under Settings → Locations.",
+        "no_zone_hint": "These methods are offered wherever this profile reaches.",
+        "no_zone_title": "No zone restriction",
+        "no_zones": "No zones yet — add one to start offering delivery methods.",
+        "offer_pickup": "Offer pickup",
+        "origins_title": "Ships from",
+        "pickup_empty": "No pickup method yet — customers cannot collect orders on this profile.",
+        "pickup_hint": "Customers collect these orders in person. Pickup has no destination, so zones do not apply.",
+        "pickup_title": "Pickup",
+        "zones_title": "Zones and delivery methods"
+      },
+      "empty": "No delivery profiles yet.",
+      "is_default_hint": "Products without a profile of their own ship on this one.",
+      "kind_immutable_hint": "The kind is fixed when the profile is created.",
+      "kinds": {
+        "digital": "Digital",
+        "shipping": "Shipping"
+      },
+      "locations_count": "{{count}} locations",
+      "make_default": "Make default",
+      "messages": {
+        "created": "Shipping profile created",
+        "deleted": "Shipping profile deleted",
+        "updated": "Shipping profile updated"
+      },
+      "search_placeholder": "Search delivery profiles…",
+      "selected_locations": "Selected locations"
+    },
     "gift_cards": {
       "batch_autocomplete": {
         "empty": "No batches match",
@@ -1380,6 +1557,50 @@
         "products": "Products"
       },
       "wizard_title": "Import"
+    },
+    "integrations": {
+      "active_toggle": {
+        "help": "Activation verifies the connection and makes the integration available to providers.",
+        "label": "Active"
+      },
+      "configure_cta": "Configure",
+      "connect_cta": "Connect",
+      "connect_description": "Enter the credentials for this provider. Saving stores them; switching it active verifies the connection.",
+      "description": "Connect provider services to this store. Credentials are stored per store and used by delivery, tax and other providers.",
+      "disconnect": "Disconnect",
+      "disconnect_confirm": {
+        "message": "Disconnect {{name}}? Its stored credentials are deleted and providers using it stop working.",
+        "title": "Disconnect integration"
+      },
+      "edit_description": "Update credentials or activation. Secret values are masked; leave them unchanged to keep the stored secret.",
+      "empty": {
+        "description": "Integrations ship with provider extensions. Install a provider gem and its integrations appear here.",
+        "title": "No integrations installed"
+      },
+      "groups": {
+        "other": "Other",
+        "shipping": "Shipping",
+        "tax": "Tax"
+      },
+      "messages": {
+        "connected": "Integration connected",
+        "disconnected": "Integration disconnected",
+        "updated": "Integration updated"
+      },
+      "status": {
+        "active": "Active",
+        "connected_inactive": "Connected (inactive)",
+        "not_connected": "Not connected"
+      },
+      "test": {
+        "failure": "Connection failed.",
+        "label": "Connection",
+        "run": "Test connection",
+        "success": "Connection successful.",
+        "testing": "Testing…"
+      },
+      "title": "Integrations",
+      "view_cta": "View"
     },
     "invitation": {
       "accepting": "Accepting…",
@@ -1578,16 +1799,50 @@
           "resend_confirmation": "Resend Confirmation",
           "void_payment": "Void Payment"
         },
-        "edit_quantity": {
-          "description": "Set the quantity for this line item.",
-          "title": "Edit Quantity"
-        },
         "errors": {
           "approve_failed": "Failed to approve order",
           "cancel_failed": "Failed to cancel order",
           "complete_failed": "Failed to complete order",
           "confirmation_send_failed": "Failed to send confirmation",
           "resume_failed": "Failed to resume order"
+        },
+        "fulfillments": {
+          "confirm_split": "Move these units into a new fulfillment? This takes effect immediately.",
+          "create_description": "Creates a fulfillment and moves the chosen quantities into it.",
+          "create_items": "Items",
+          "create_title": "Add fulfillment",
+          "delivery_method": "Delivery method",
+          "edit_description": "Change where this fulfillment ships from and which delivery method carries it.",
+          "edit_title": "Edit fulfillment",
+          "empty": "No fulfillments on this order yet.",
+          "free": "Free",
+          "move_and_requote": "Move and re-quote",
+          "no_rates": "No delivery methods are quoted for this fulfillment.",
+          "out_of_stock": "Out of stock",
+          "rates_pending_origin": "Save the new origin to see the delivery methods it offers.",
+          "ships_from": "Ships from",
+          "split": "Split",
+          "split_description": "Move some units into a new fulfillment. One product at a time.",
+          "split_item": "Product",
+          "split_quantity": "Quantity to move",
+          "split_title": "Split fulfillment",
+          "split_would_empty": "Leave at least one unit behind, or change the origin of the whole fulfillment instead.",
+          "unfulfilled_one": "Unfulfilled ({{count}})",
+          "unfulfilled_other": "Unfulfilled ({{count}})",
+          "mark_delivered": "Mark as delivered",
+          "add_tracking": "Add tracking",
+          "edit_tracking_title": "Edit tracking",
+          "add_tracking_title": "Add tracking",
+          "tracking_description": "The carrier tracking number, or a full tracking link.",
+          "carrier_label": "Shipping carrier",
+          "carrier_auto": "Detect automatically",
+          "buy_label_confirm": "Buy a shipping label for this fulfillment? Your carrier account is charged as soon as the label is issued.",
+          "buy_label_confirm_rate": "Buy a {{rate}} label for {{cost}}? Your carrier account is charged as soon as the label is issued.",
+          "buy_label": "Buy label",
+          "print_label": "Print label",
+          "print_packing_slip": "Print packing slip",
+          "packing_slip_title": "Packing slip — order {{number}}",
+          "ship_to": "Ship to"
         },
         "gift_card_section": {
           "applied_suffix": "applied",
@@ -1601,11 +1856,6 @@
           "store_credit_label": "Store credit",
           "title": "Discounts & Credit"
         },
-        "items_table": {
-          "item": "Item",
-          "price": "Price",
-          "qty": "Qty"
-        },
         "load_failed_message": "We couldn't load order {{orderId}}.",
         "messages": {
           "approved": "Order approved",
@@ -1618,7 +1868,6 @@
           "voided": "Payment voided"
         },
         "no_customer": "No customer information",
-        "no_line_items": "No line items",
         "payment_form": {
           "amount_help": "Leave blank to default to the outstanding balance.",
           "capture_immediately": "Capture immediately",
@@ -1650,10 +1899,6 @@
           "tax_included": "Tax (included)"
         },
         "tracking": {
-          "add_title": "Add Tracking",
-          "description": "Update the tracking number for this shipment.",
-          "edit_title": "Edit Tracking",
-          "label": "Tracking Number",
           "prefix": "Tracking",
           "shipped_prefix": "Shipped"
         },
@@ -1665,13 +1910,62 @@
           "sku_prefix": "SKU"
         }
       },
+      "edit": {
+        "action_label": "Edit order",
+        "actions": {
+          "add_product": "Add product",
+          "remove_item": "Remove {{name}}",
+          "quantity_for": "Quantity of {{name}}",
+          "restore_item": "Keep {{name}}"
+        },
+        "columns": {
+          "line_total": "Line total",
+          "product": "Product",
+          "unit_price": "Unit price"
+        },
+        "empty": "This order has no items.",
+        "items_title": "Items",
+        "subtitle": "Order {{number}}",
+        "title": "Edit order",
+        "totals_hint": "Totals are recalculated by the server after you save.",
+        "totals_title": "Totals",
+        "badges": {
+          "pending": "Not saved",
+          "removed": "Removing",
+          "fulfilled_count_one": "{{count}} fulfilled",
+          "fulfilled_count_other": "{{count}} fulfilled"
+        },
+        "validation": {
+          "below_fulfilled_one": "Can't go below {{count}} fulfilled unit",
+          "below_fulfilled_other": "Can't go below {{count}} fulfilled units"
+        },
+        "fully_fulfilled": "This order is fully fulfilled and can no longer be edited."
+      },
+      "fulfill": {
+        "action": "Mark as fulfilled",
+        "empty": "This fulfillment holds no items that can be shipped.",
+        "include_item": "Ship {{name}}",
+        "notify_customer": "Send shipment notification to customer",
+        "of_units": "of {{count}}",
+        "partial_hint": "The units you picked move into a new fulfillment that ships now. The rest stay on this one, still open.",
+        "quantity_for": "Quantity to ship of {{name}}",
+        "submit": "Fulfill items",
+        "tracking_label": "Tracking number",
+        "tracking_placeholder": "Tracking number or link",
+        "units_selected": "Units to ship",
+        "validation": {
+          "quantity_invalid": "Enter a whole number of units."
+        }
+      },
       "fulfillment_statuses": {
         "backorder": "Backorder",
         "canceled": "Canceled",
         "fulfilled": "Fulfilled",
         "partial": "Partial",
         "pending": "Pending",
-        "ready": "Ready"
+        "ready": "Ready",
+        "unfulfilled": "Unfulfilled",
+        "delivered": "Delivered"
       },
       "item_count_one": "{{count}} item",
       "item_count_other": "{{count}} items",
@@ -1926,7 +2220,6 @@
           "section_fulfillments": "Fulfillments",
           "section_history": "History",
           "section_internal_note": "Internal note",
-          "section_items": "Items",
           "section_payments": "Payments",
           "section_returns": "Returns",
           "section_shipping_address": "Shipping address",
@@ -2323,7 +2616,9 @@
           "search_placeholder": "Search stock locations…"
         },
         "store": {
+          "default_package_description": "The box you usually ship in. Carrier rate providers add its weight to every package and use its dimensions for dimensional-weight pricing.",
           "subtitle": "General configuration and store-wide defaults.",
+          "tab_default_package": "Default package",
           "tab_general": "General",
           "tab_standards": "Standards and formats",
           "tab_storefront_access": "Storefront access",
@@ -2533,6 +2828,7 @@
         "dashboard": "Sales and performance analytics",
         "fulfillments": "Pack, ship and track order fulfillments",
         "gift_cards": "Gift cards and gift card batches",
+        "integrations": "Provider credentials and connections",
         "orders": "Orders, line items, returns, exchanges and claims",
         "payments": "Order payments and payment capture",
         "products": "Products, variants, options, prices and media",
@@ -2572,6 +2868,7 @@
         "dashboard": "Dashboard",
         "fulfillments": "Fulfillments",
         "gift_cards": "Gift cards",
+        "integrations": "Integrations",
         "orders": "Orders",
         "payments": "Payments",
         "products": "Products",
@@ -2640,6 +2937,8 @@
       },
       "create_description": "Group products and define how they can be delivered.",
       "create_label": "Create product type",
+      "custom_delivery_profile": "Custom",
+      "default_delivery_profile": "Store default profile",
       "delete_confirm": {
         "message": "Are you sure you want to delete “{{name}}”? Types still used by products cannot be deleted.",
         "title": "Delete product type"
@@ -2782,6 +3081,11 @@
       },
       "variants": {
         "add_option": "Add option",
+        "bulk_edit": {
+          "grid_aria": "Variant bulk edit spreadsheet",
+          "title": "Bulk edit variants",
+          "trigger": "Bulk edit"
+        },
         "create_option_type": "Create new option type",
         "create_option_type_title": "New option type",
         "create_value": "New value",
@@ -3157,10 +3461,10 @@
         "api_keys": "API keys",
         "channels": "Sales channels",
         "custom_field_definitions": "Custom fields",
-        "delivery_methods": "Delivery methods",
-        "delivery_zones": "Delivery zones",
+        "delivery_profiles": "Delivery profiles",
         "emails": "Emails",
         "imports": "Imports",
+        "integrations": "Integrations",
         "markets": "Markets",
         "payment_methods": "Payment methods",
         "product_types": "Product types",

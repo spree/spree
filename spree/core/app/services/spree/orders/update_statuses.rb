@@ -8,10 +8,9 @@ module Spree
     class UpdateStatuses
       prepend Spree::ServiceModule::Base
 
-      PAYMENT_STATUSES = %w[none authorized partially_paid paid partially_refunded refunded overcharged voided].freeze
+      PAYMENT_STATUSES = Spree::Order::PAYMENT_STATUSES
 
       def call(order:)
-        refresh_fulfillment_states(order)
         order.update_columns(
           payment_status: payment_status_for(order),
           fulfillment_status: fulfillment_status_for(order),
@@ -21,16 +20,6 @@ module Spree
       end
 
       private
-
-      # A fulfillment's own state depends on payment coverage
-      # (Fulfillment#determine_state) — refresh each before rolling up.
-      # Reloaded so a stale association cache never writes an outdated
-      # status back over a transition that already persisted.
-      def refresh_fulfillment_states(order)
-        order.fulfillments.reload.each do |fulfillment|
-          fulfillment.update!(order) if fulfillment.persisted?
-        end
-      end
 
       # Money is quantized to currency precision before comparing, and
       # granted refunds are subtracted from the target total — the two rules
@@ -64,27 +53,23 @@ module Spree
         end
       end
 
-      # fulfilled when all fulfillments fulfilled; partial when mixed with
-      # fulfilled; ready when all ready (ready_for_pickup rolls up as
-      # ready); backorder when backordered inventory exists; pending when
-      # all pending.
+      # Rolls the fulfillments up into one word for filtering and display.
+      #
+      # Canceled fulfillments are ignored unless they are all there is: an
+      # order whose second parcel was recalled is still described by the first.
+      # A mix that includes anything handed over reads as `partial`; otherwise
+      # the shared status stands. `delivered` only when every parcel arrived.
       def fulfillment_status_for(order)
         return 'backorder' if order.backordered?
 
-        statuses = order.fulfillments.states.map { |status| status == 'ready_for_pickup' ? 'ready' : status }.uniq
+        statuses = order.fulfillments.reload.pluck(:status).uniq
+        return if statuses.empty?
 
-        if statuses.size > 1
-          if statuses.include?('fulfilled')
-            'partial'
-          elsif statuses.include?('pending')
-            'pending'
-          else
-            'ready'
-          end
-        else
-          # nil when there are no fulfillments
-          statuses.first
-        end
+        live = statuses - ['canceled']
+        return 'canceled' if live.empty?
+        return live.first if live.size == 1
+
+        live.intersect?(%w[fulfilled delivered]) ? 'partial' : 'unfulfilled'
       end
 
       def quantize(amount, precision)

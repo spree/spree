@@ -35,17 +35,19 @@ import {
 } from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon } from 'lucide-react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { OrderRoutingRulesSection } from '../../../../components/spree/order-routing-rules-section'
+import { StockLocationScopeField } from '../../../../components/spree/shipping/stock-location-scope-field'
 import {
   useChannel,
   useCreateChannel,
   useDeleteChannel,
   useUpdateChannel,
 } from '../../../../hooks/use-channels'
+import { useStockLocations } from '../../../../hooks/use-stock-locations'
 import {
   CHANNEL_DEFAULTS,
   type ChannelFormValues,
@@ -266,6 +268,7 @@ function EditChannelSheet({
         preferred_storefront_access: channel.preferred_storefront_access ?? '',
         preferred_guest_checkout:
           channel.preferred_guest_checkout == null ? '' : String(channel.preferred_guest_checkout),
+        stock_location_ids: channel.stock_location_ids ?? [],
       })
     }
   }, [channel, form])
@@ -478,6 +481,67 @@ function ChannelFormFields({ form }: { form: UseFormReturn<ChannelFormValues> })
         scope="admin.fields.channel.guest_checkout"
         values={GUEST_CHECKOUT_VALUES}
       />
+
+      <FulfillmentLocationsField form={form} />
     </FieldGroup>
+  )
+}
+
+/**
+ * Which warehouses and counters fulfill this channel's orders. Narrowing is
+ * the exception — a channel serves every location of the store until the
+ * merchant says otherwise, which is how the API reads an empty array.
+ */
+function FulfillmentLocationsField({ form }: { form: UseFormReturn<ChannelFormValues> }) {
+  const { t } = useTranslation()
+  const { data: stockLocations } = useStockLocations()
+
+  const selectedIds = form.watch('stock_location_ids') ?? []
+  const locations = stockLocations?.data ?? []
+
+  // The radio reads the field rather than holding a second source of truth, so
+  // a saved channel reopens on the branch it was left in.
+  const [scope, setScope] = useState<'all' | 'selected'>(
+    selectedIds.length > 0 ? 'selected' : 'all',
+  )
+  useEffect(() => {
+    if (selectedIds.length > 0) setScope('selected')
+  }, [selectedIds.length])
+
+  return (
+    <>
+      <Field>
+        <FieldLabel>{t('admin.fields.channel.fulfillment_locations.label')}</FieldLabel>
+        <span className="text-xs text-muted-foreground">
+          {t('admin.fields.channel.fulfillment_locations.help')}
+        </span>
+        <Controller
+          name="stock_location_ids"
+          control={form.control}
+          render={({ field }) => (
+            <StockLocationScopeField
+              idPrefix="channel-locations"
+              scope={scope}
+              onScopeChange={(next) => {
+                setScope(next)
+                if (next === 'all') field.onChange([])
+              }}
+              locations={locations}
+              selectedIds={field.value ?? []}
+              onSelectedIdsChange={field.onChange}
+              allLabel={t('admin.fields.channel.fulfillment_locations.all')}
+              selectedLabel={t('admin.fields.channel.fulfillment_locations.selected')}
+              emptyLabel={t('admin.delivery_profiles.detail.no_stock_locations')}
+            />
+          )}
+        />
+      </Field>
+
+      {scope === 'selected' && selectedIds.length === 0 && (
+        <p className="text-muted-foreground text-xs">
+          {t('admin.fields.channel.fulfillment_locations.none_selected_hint')}
+        </p>
+      )}
+    </>
   )
 }

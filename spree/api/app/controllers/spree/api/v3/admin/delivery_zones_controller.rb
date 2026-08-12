@@ -51,7 +51,7 @@ module Spree
 
           def permitted_params
             params.permit(
-              :name, :description,
+              :name, :description, :delivery_profile_id, :delivery_origin_group_id,
               members: [:member_type, :country_iso, :state_abbr, :postal_code_prefix, :postal_code_from, :postal_code_to]
             )
           end
@@ -62,8 +62,17 @@ module Spree
 
           private
 
+          # A zone always lives inside a profile; absent an explicit one it
+          # joins the store default.
           def zone_params
-            permitted_params.except(:members)
+            attributes = permitted_params.except(:members, :delivery_profile_id, :delivery_origin_group_id)
+            if params.key?(:delivery_profile_id) && params[:delivery_profile_id].present?
+              attributes[:delivery_profile] = current_store.delivery_profiles.accessible_by(current_ability, :show).find_by_prefix_id!(params[:delivery_profile_id])
+            end
+            if params.key?(:delivery_origin_group_id) && params[:delivery_origin_group_id].present?
+              attributes[:delivery_origin_group] = current_store.delivery_origin_groups.accessible_by(current_ability, :show).find_by_prefix_id!(params[:delivery_origin_group_id])
+            end
+            attributes
           end
 
           def build_members(zone)

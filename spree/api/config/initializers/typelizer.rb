@@ -23,7 +23,7 @@ Rails.application.config.after_initialize do
     # Serializers that exist only for Admin API or events — no Store API controller
     store_excluded = %w[
       Asset CartPromotion OrderPromotion
-      StockItem StockMovement StockTransfer ShippingCategory
+      StockItem StockMovement StockTransfer
       Report Export Import ImportRow
       TaxCategory Exchange ExchangeLineItem
     ].to_set

@@ -57,13 +57,21 @@ module Spree
       end
 
       # Storefront pickup selection: resolves the public prefixed ID (or raw
-      # ID) against the store's pickup-enabled locations — the eligibility
-      # rule is enforced here at the API seam, mirroring Orders::Create.
+      # ID) against the store's pickup-enabled locations, intersected with
+      # the channel's served set — a counter the channel cannot fulfill from
+      # 404s exactly like a non-pickup one. Enforced here at the API boundary,
+      # mirroring Orders::Create.
       def assign_preferred_stock_location
         value = params[:preferred_stock_location_id]
 
-        cart.preferred_stock_location_id =
-          value.blank? ? nil : cart.store.stock_locations.pickup_enabled.find_by_param!(value).id
+        if value.blank?
+          cart.preferred_stock_location_id = nil
+          return
+        end
+
+        eligible = cart.store.stock_locations.pickup_enabled
+        eligible = eligible.merge(cart.channel.served_stock_locations) if cart.channel
+        cart.preferred_stock_location_id = eligible.find_by_param!(value).id
       end
 
       def assign_address(address_type)

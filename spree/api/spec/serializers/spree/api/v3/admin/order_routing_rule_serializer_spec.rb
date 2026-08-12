@@ -37,7 +37,7 @@ RSpec.describe Spree::Api::V3::Admin::OrderRoutingRuleSerializer do
     end
 
     it 'masks `:password` preferences and never leaks the plaintext' do
-      expect(payload['preferences']['api_secret']).to eq("#{Spree::Preferences::Masking::TOKEN}alue")
+      expect(payload['preferences']['api_secret']).to eq(Spree::Preferences::Masking.mask('sk_live_extremely_secret_value'))
       expect(payload.to_json).not_to include('sk_rule_super_secret_value')
     end
   end

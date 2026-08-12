@@ -30,9 +30,11 @@ export const Subject = {
   ClaimReason: 'Spree::ClaimReason',
   RefundReason: 'Spree::RefundReason',
   CustomFieldDefinition: 'Spree::CustomFieldDefinition',
+  Integration: 'Spree::Integration',
   PaymentMethod: 'Spree::PaymentMethod',
   DeliveryMethod: 'Spree::DeliveryMethod',
   DeliveryZone: 'Spree::DeliveryZone',
+  DeliveryProfile: 'Spree::DeliveryProfile',
   /** @deprecated Use Subject.DeliveryMethod — removed in Spree 6.1. */
   ShippingMethod: 'Spree::ShippingMethod',
   StockLocation: 'Spree::StockLocation',

@@ -5,6 +5,8 @@ module Spree
     subscribes_to 'fulfillment.fulfilled'
 
     def handle(event)
+      return unless notify_customer?(event)
+
       fulfillment = find_fulfillment(event)
       return unless fulfillment
 
@@ -15,6 +17,14 @@ module Spree
     end
 
     private
+
+    # An admin shipping from the backoffice can suppress the shipment email for
+    # this one dispatch (a correction, a re-ship, goods handed over in person).
+    # Absent metadata means send, so events published by anything unaware of
+    # the flag keep the historic behavior.
+    def notify_customer?(event)
+      event.metadata.fetch('notify_customer', true) != false
+    end
 
     def find_fulfillment(event)
       fulfillment_id = event.payload['id']

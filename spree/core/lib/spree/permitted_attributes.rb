@@ -219,9 +219,9 @@ module Spree
                             :preferred_storefront_access, :preferred_guest_checkout]
 
     @@shipping_method_attributes = [:name, :admin_name, :code, :tracking_url, :tax_category_id, :storefront_visible,
-                                    :fulfillment_type, :fulfillment_provider,
+                                    :fulfillment_provider, :delivery_profile_id, :delivery_zone_id,
                                     :estimated_transit_business_days_min, :estimated_transit_business_days_max,
-                                    :calculator_type, :preferences, delivery_zone_ids: [], calculator_attributes: {}]
+                                    :calculator_type, :preferences, calculator_attributes: {}]
 
     # month / year may be provided by some sources, or others may elect to use one field
     @@source_attributes = [

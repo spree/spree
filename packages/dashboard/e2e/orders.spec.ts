@@ -105,3 +105,34 @@ test.describe('new order', () => {
     await expect(page.getByText(`#${number}`)).toBeVisible({ timeout: 15_000 })
   })
 })
+
+test.describe('order editing', () => {
+  // Editing is a detour from the order, so saving hands the merchant back the
+  // view that shows what the edit did rather than leaving them on the form.
+  test('returns to the order view after saving', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(NEW_ORDER_PATH(creds.store_id))
+    await expect(page.getByRole('heading', { name: CTA })).toBeVisible({ timeout: 15_000 })
+
+    await fillNewOrderForm(page, `e2e-order-edit-${Date.now()}@example.com`)
+    await page.locator('button[type="submit"]').click()
+    await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/orders/or_[^/]+$`), {
+      timeout: 15_000,
+    })
+
+    const orderUrl = page.url()
+    await page.goto(`${orderUrl}/edit`)
+    await expect(page.getByRole('heading', { name: /edit order/i })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    // Changing a quantity is the smallest edit that dirties the form.
+    const quantity = page.locator('input[type="number"]').first()
+    await expect(quantity).toBeVisible({ timeout: 15_000 })
+    await quantity.fill('2')
+
+    await page.getByRole('button', { name: /^save$/i }).click()
+
+    await expect(page).toHaveURL(orderUrl, { timeout: 15_000 })
+  })
+})

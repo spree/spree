@@ -12,6 +12,13 @@ module Spree
       true
     end
 
+    # Whether this calculator can quote the given currency. Amount-based
+    # calculators override via Calculator::CurrencyAmounts; percent and
+    # per-weight math is currency-agnostic and quotes anything.
+    def supports_currency?(_currency)
+      true
+    end
+
     private
 
     def total(content_items)
