@@ -1,4 +1,4 @@
-import type { DigitalAsset, Variant } from '@spree/admin-sdk'
+import type { DigitalAsset, DigitalAssetProviderSettingField, Variant } from '@spree/admin-sdk'
 import {
   Button,
   Field,
@@ -18,11 +18,14 @@ import {
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useUpdateDigitalAsset } from '../../../hooks/use-digital-assets'
+import { ProviderSettingsFields } from './provider-settings-fields'
 
 interface Props {
   productId: string
   asset: DigitalAsset | null
   variants?: Variant[]
+  /** Fields for a provider-backed asset; empty for an uploaded file. */
+  settingsSchema?: DigitalAssetProviderSettingField[]
   open: boolean
   onOpenChange: (open: boolean) => void
 }
@@ -38,13 +41,21 @@ function parseLimit(raw: string): number | null | undefined {
   return Number.isInteger(parsed) && parsed >= 1 ? parsed : undefined
 }
 
-export function DigitalAssetEditSheet({ productId, asset, variants, open, onOpenChange }: Props) {
+export function DigitalAssetEditSheet({
+  productId,
+  asset,
+  variants,
+  settingsSchema = [],
+  open,
+  onOpenChange,
+}: Props) {
   const { t } = useTranslation()
   const updateAsset = useUpdateDigitalAsset(productId)
 
   const [clicks, setClicks] = useState('')
   const [days, setDays] = useState('')
   const [variantId, setVariantId] = useState('')
+  const [settings, setSettings] = useState<Record<string, unknown>>({})
   const [error, setError] = useState<string | null>(null)
 
   // Re-seed whenever a different file is opened, so the sheet never shows the
@@ -54,6 +65,7 @@ export function DigitalAssetEditSheet({ productId, asset, variants, open, onOpen
     setClicks(toInput(asset.authorized_clicks))
     setDays(toInput(asset.authorized_days))
     setVariantId(asset.variant_id ?? '')
+    setSettings(asset.provider_settings ?? {})
     setError(null)
   }, [asset])
 
@@ -75,6 +87,7 @@ export function DigitalAssetEditSheet({ productId, asset, variants, open, onOpen
       authorized_clicks: parsedClicks,
       authorized_days: parsedDays,
       ...(hasVariants && variantId ? { variant_id: variantId } : {}),
+      ...(settingsSchema.length > 0 ? { provider_settings: settings } : {}),
     })
     onOpenChange(false)
   }
@@ -83,10 +96,18 @@ export function DigitalAssetEditSheet({ productId, asset, variants, open, onOpen
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="flex flex-col">
         <SheetHeader>
-          <SheetTitle>{asset.filename ?? t('admin.digital_assets.untitled')}</SheetTitle>
+          <SheetTitle>
+            {asset.filename ?? asset.provider_name ?? t('admin.digital_assets.untitled')}
+          </SheetTitle>
         </SheetHeader>
 
         <div className="flex flex-1 flex-col gap-6 overflow-y-auto p-4">
+          <ProviderSettingsFields
+            schema={settingsSchema}
+            values={settings}
+            onChange={setSettings}
+          />
+
           {hasVariants && (
             <Field>
               <FieldLabel htmlFor="digital-asset-variant">
