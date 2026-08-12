@@ -85,5 +85,47 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryZonesController, type: :controller
       expect(response).to have_http_status(:no_content)
       expect(Spree::DeliveryZone.exists?(zone.id)).to be(false)
     end
+
+    # The confirm dialog promises the methods go with the zone — hold the API
+    # to it, since a nullify regression would silently widen them to worldwide.
+    it 'deletes the zone methods with it' do
+      method = create(:delivery_method, store: store, delivery_zone: zone,
+                                        delivery_profile: zone.delivery_profile,
+                                        delivery_origin_group: zone.delivery_origin_group)
+
+      delete :destroy, params: { id: zone.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:no_content)
+      expect(Spree::DeliveryMethod.exists?(method.id)).to be(false)
+      expect(Spree::DeliveryMethod.with_deleted.find(method.id).delivery_zone_id).to eq(zone.id)
+    end
   end
+
+  # The edit form replaces the full member set on save, so a GET that omits
+  # members would make the very next save wipe them (dashboard bug, 2026-08-09:
+  # the edit sheet fetched without expand and Save emptied the zone).
+  describe 'member round-trip' do
+    it 'returns members on show when expanded, and preserves them when echoed back' do
+      zone = create(:delivery_zone, store: store)
+      us = Spree::Country.find_by(iso: 'US') || create(:country_us)
+      de = Spree::Country.find_by(iso: 'DE') || create(:country, iso: 'DE', name: 'Germany')
+      zone.members.create!(member_type: 'country', country: us)
+      zone.members.create!(member_type: 'country', country: de)
+
+      get :show, params: { id: zone.prefixed_id, expand: 'members' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      members = json_response['members']
+      expect(members.map { |member| member['country_iso'] }).to match_array(%w[US DE])
+
+      patch :update, params: {
+        id: zone.prefixed_id,
+        members: members.map { |member| { member_type: member['member_type'], country_iso: member['country_iso'] } }
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(zone.reload.members.count).to eq(2)
+    end
+  end
+
 end

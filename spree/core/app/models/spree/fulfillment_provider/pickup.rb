@@ -3,8 +3,8 @@ module Spree
     # Merchant-location pickup: hand-over is confirmed by staff, no
     # provider-side mechanics.
     class Pickup < Base
-      def self.fulfillment_types
-        ['pickup']
+      def self.pickup?
+        true
       end
 
       def requires_address?

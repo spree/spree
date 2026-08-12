@@ -5,6 +5,11 @@ module Spree
         typelize number: :string, status: :string, fulfillment_type: :string,
                  tracking: [:string, nullable: true],
                  tracking_url: [:string, nullable: true], fulfilled_at: [:string, nullable: true],
+                 tracking_status: [:string, nullable: true],
+                 tracking_carrier: [:string, nullable: true],
+                 tracking_carrier_name: [:string, nullable: true],
+                 estimated_delivery_at: [:string, nullable: true],
+                 delivered_at: [:string, nullable: true],
                  cost: [:string, nullable: true], display_cost: [:string, nullable: true],
                  total: [:string, nullable: true], display_total: [:string, nullable: true],
                  discount_total: [:string, nullable: true], display_discount_total: [:string, nullable: true],
@@ -15,7 +20,8 @@ module Spree
                  pickup_point_data: ['Record<string, unknown>', nullable: true],
                  selected_delivery_rate_id: [:string, nullable: true]
 
-        attributes :number, :tracking, :tracking_url, :pickup_point_data, :selected_delivery_rate_id
+        attributes :number, :tracking, :tracking_url, :tracking_carrier, :tracking_carrier_name,
+                   :pickup_point_data, :selected_delivery_rate_id
 
         # Nulled for gated (prices_hidden) guests so a fulfillment can't leak the
         # shipping/tax amounts the cart/order totals already withhold.
@@ -34,9 +40,12 @@ module Spree
           fulfillment.fulfillment_type.presence || (fulfillment.digital? ? 'digital' : 'shipping')
         end
 
-        attribute :fulfilled_at do |fulfillment|
-          fulfillment.fulfilled_at&.iso8601
-        end
+        attributes fulfilled_at: :iso8601
+
+        # Where the parcel is, as the carrier last reported it — the customer's
+        # question, so it belongs on the public serializer alongside tracking.
+        attributes :tracking_status
+        attributes estimated_delivery_at: :iso8601, delivered_at: :iso8601
 
         # Which items (and how many) are in this fulfillment.
         # A line item can be split across fulfillments with different quantities.

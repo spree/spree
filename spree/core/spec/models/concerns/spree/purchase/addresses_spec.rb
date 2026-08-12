@@ -168,9 +168,8 @@ RSpec.shared_examples 'an addresses host' do
         expect(record.shipping_address_required?).to be false
       end
 
-      it 'is false when every item is deliverable only by address-free types' do
-        digital_type = create(:product_type, fulfillment_types: ['digital'])
-        product = create(:product, product_type: digital_type, store: store)
+      it 'is false when every item belongs to an address-free profile' do
+        product = create(:digital_product, store: store)
         create(:line_item, "#{record.model_name.element}": record, variant: product.default_variant)
 
         expect(record.reload.shipping_address_required?).to be false

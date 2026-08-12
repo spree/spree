@@ -9,16 +9,33 @@ RSpec.describe Spree::Preferences::Masking do
       expect(described_class.mask('')).to be_nil
     end
 
-    it 'masks long secrets, preserving only the last 4 characters' do
-      expect(described_class.mask('sk_test_abcdef1234')).to eq('••••1234')
+    # One dot per hidden character, so the field reads like the credential
+    # it stands for instead of a fixed stub.
+    it 'masks all but the last 4 characters, keeping the hidden length' do
+      expect(described_class.mask('sk_test_abcdef1234')).to eq('••••••••••••••1234')
     end
 
-    it 'masks short secrets without exposing the whole value when shorter than 4' do
-      expect(described_class.mask('abc')).to eq('••••abc')
+    it 'caps the dots so a long key stays readable and its exact size stays private' do
+      masked = described_class.mask("EZTK#{'x' * 60}abcd")
+
+      expect(masked).to eq("#{'•' * described_class::MAX_MASK_LENGTH}abcd")
+    end
+
+    # Showing "the last four" of a five-character value would expose most
+    # of it, so short values are hidden entirely.
+    it 'reveals nothing for values of 4 characters or fewer' do
+      expect(described_class.mask('abc')).to eq('••••')
+      expect(described_class.mask('abcd')).to eq('••••')
+    end
+
+    it 'never emits fewer dots than the round-trip guard recognizes' do
+      %w[a ab abc abcd abcde].each do |value|
+        expect(described_class.masked?(described_class.mask(value))).to be(true), "#{value.inspect} produced an unrecognizable mask"
+      end
     end
 
     it 'coerces non-string values to a string before masking' do
-      expect(described_class.mask(1234567890)).to eq('••••7890')
+      expect(described_class.mask(1234567890)).to eq('••••••7890')
     end
   end
 
@@ -85,7 +102,7 @@ RSpec.describe Spree::Preferences::Masking do
     it 'masks password-typed preferences' do
       preferable.set_preference(:api_secret, 'sk_live_extremely_secret_value')
 
-      expect(described_class.serialize(preferable)['api_secret']).to eq('••••alue')
+      expect(described_class.serialize(preferable)['api_secret']).to eq("#{'•' * 16}alue")
     end
 
     it 'returns nil for unset password preferences (no default leakage)' do

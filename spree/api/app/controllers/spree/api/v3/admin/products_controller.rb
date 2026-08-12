@@ -168,8 +168,8 @@ module Spree
             params.permit(
               :name, :description, :slug, :status,
               :meta_title, :meta_description, :meta_keywords,
-              :tax_category_id, :product_type_id,
-              :promotionable, :digital,
+              :tax_category_id, :product_type_id, :delivery_profile_id,
+              :promotionable,
               tags: [],
               category_ids: [],
               # Manual collection membership only — the model setter ignores

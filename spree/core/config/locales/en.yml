@@ -145,7 +145,6 @@ en:
         more_than: More than
         name: Name
         on_hand: On Hand
-        shipping_category: Shipping Category
         tax_category: Tax Category
       spree/product_type:
         name: Name
@@ -236,7 +235,6 @@ en:
       messages:
         blank: can't be blank
         must_apply_to_products: must be a custom field definition for products
-        unregistered_fulfillment_types: 'contains unregistered fulfillment types: %{types}'
       models:
         spree/allowed_origin:
           attributes:
@@ -343,10 +341,6 @@ en:
           attributes:
             amount:
               greater_than_allowed: is greater than the allowed amount.
-        spree/shipping_method:
-          attributes:
-            base:
-              required_shipping_category: You must select at least one shipping category
         spree/store:
           attributes:
             base:
@@ -492,9 +486,6 @@ en:
       spree/shipment:
         one: Shipment
         other: Shipments
-      spree/shipping_category:
-        one: Shipping Category
-        other: Shipping Categories
       spree/shipping_method:
         one: Shipping Method
         other: Shipping Methods
@@ -809,6 +800,9 @@ en:
     deleted: Deleted
     delivery: Delivery
     delivery_method_rule_types:
+      channel_rule:
+        description: Offers the delivery method only on the selected channels
+        name: Channel
       excluded_products_rule:
         description: Blocks the delivery method for packages containing the selected products
         name: Excluded products
@@ -878,6 +872,8 @@ en:
         cart_currency_mismatch: carts in different currencies cannot be merged
         channel_store_mismatch: must belong to the same store
         coupon_code_frozen_after_completion: coupon codes cannot be changed on a completed order — add a manual discount instead
+        delivery_zone_not_in_origin_group: must belong to the delivery method's origin group
+        delivery_zone_not_in_profile: must belong to the delivery method's delivery profile
         delivery_zone_postal_definition_required: postal code member requires a prefix or a from/to range
         delivery_zone_prefix_and_range_exclusive: cannot be combined with a from/to range
         delivery_zone_range_inverted: must be greater than or equal to postal_code_from
@@ -888,6 +884,8 @@ en:
         exactly_one_adjustable: must be attached to exactly one adjustable
         exactly_one_of_cart_or_order: must belong to exactly one of cart or order
         exactly_one_tax_identifier_owner: must belong to exactly one of customer, cart or order
+        integration_connection_failed: could not connect with the saved credentials
+        integration_type_not_registered: is not a registered integration
         invalid_delivery_method_rule: is not a registered delivery method rule
         invalid_oauth_state: Invalid or expired authentication state. Please start the sign-in again.
         invalid_order_routing_rule: is not a registered order routing rule
@@ -901,7 +899,10 @@ en:
         oidc_missing_code: The identity provider did not return an authorization code.
         oidc_requires_redirect: This provider requires signing in through its own login page.
         pickup_point_not_found: pickup point could not be found with this provider
+        profile_does_not_accept_provider: "%{provider} deliveries cannot join the %{profile} profile"
         promotion_discount_not_editable: promotion discounts are managed by recalculation and cannot be edited
+        rate_provider_requires_shipping: "%{provider} quotes shipments, so this method must ship to an address"
+        rate_provider_unavailable: is not available for this store — connect its integration first
         store_association_can_not_be_changed: The store association can not be changed
         store_is_already_set: Store is already set
       services:
@@ -958,13 +959,25 @@ en:
         track_link: 'Tracking Link: %{url}'
     fulfillments:
       errors:
+        backordered_units: This fulfillment holds backordered units and cannot be handed over yet
+        cannot_cancel: This fulfillment cannot be canceled in its current status
+        cannot_fulfill: This fulfillment cannot be fulfilled in its current status
+        cannot_mark_delivered: Only a fulfilled shipment can be marked delivered
+        cannot_purchase_label: Labels can only be bought before the fulfillment ships
+        cannot_resume: This fulfillment cannot be resumed in its current status
         insufficient_quantity: Requested quantity (%{requested}) for item %{item} exceeds its unfulfilled quantity (%{available})
         invalid_cost: cost must be a non-negative number
         invalid_quantity: Quantity for item %{item} must be a positive integer
         invalid_status: status must be 'shipped' when provided
+        label_purchase_failed: The label could not be purchased — check the carrier connection and try again
         no_items_to_fulfill: Order has no unfulfilled items
+        not_in_fulfillment: Requested quantity (%{requested}) for item %{item} exceeds the %{available} held by this fulfillment
         order_canceled: Fulfillments cannot be created on a canceled order
+        order_draft: Draft orders cannot be fulfilled — complete the order first
         order_not_completed: Fulfillments can only be created manually on completed orders
+        order_not_paid: This order is not paid for yet
+        provider_has_no_labels: This delivery method's provider does not produce labels
+        unknown_tracking_status: "%{status} is not a known tracking status"
     gateway: Gateway
     gateway_error: Gateway Error
     general: General
@@ -1276,6 +1289,8 @@ en:
           description: Webhook endpoints and deliveries
           label: Webhooks
     phone: Phone
+    pickup:
+      store_pickup: Store Pickup
     policies: Policies
     powered_by: Powered by
     pre_tax_amount: Pre-Tax Amount
@@ -1452,6 +1467,8 @@ en:
     search_by: 'Search by:'
     security: Security
     seed:
+      delivery_profiles:
+        digital: Digital
       product_types:
         default: Default
         digital: Digital
@@ -1485,8 +1502,6 @@ en:
     shipped: Shipped
     shipping: Shipping
     shipping_address: Shipping Address
-    shipping_categories: Shipping Categories
-    shipping_category: Shipping Category
     shipping_flat_rate_per_item: Flat rate per package item
     shipping_flat_rate_per_order: Flat rate
     shipping_flexible_rate: Flexible Rate per package item

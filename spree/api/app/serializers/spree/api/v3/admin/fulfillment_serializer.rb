@@ -13,12 +13,17 @@ module Spree
                    tax_total: [:string, nullable: false], display_tax_total: [:string, nullable: false]
 
           typelize metadata: 'Record<string, unknown>',
+                   tracking_details: ['Record<string, unknown>', nullable: true],
+                   documents: "Array<{ kind: string; url: string }>",
+                   provider_generates_labels: :boolean,
                    order_id: [:string, nullable: true],
                    stock_location_id: [:string, nullable: true],
                    adjustment_total: :string,
                    pre_tax_amount: :string
 
-          attributes :metadata, :adjustment_total, :pre_tax_amount,
+          # The raw carrier payload — scan history, signature, failure reason.
+          # Operational detail, so admin-only.
+          attributes :metadata, :tracking_details, :adjustment_total, :pre_tax_amount,
                      created_at: :iso8601, updated_at: :iso8601
 
           attribute :order_id do |fulfillment|
@@ -27,6 +32,16 @@ module Spree
 
           attribute :stock_location_id do |fulfillment|
             fulfillment.stock_location&.prefixed_id
+          end
+
+          # Label PDFs and customs forms the provider produced for this parcel.
+          attribute :documents do |fulfillment|
+            fulfillment.provider.documents(fulfillment)
+          end
+
+          # Whether the buy-label step applies to this parcel's provider.
+          attribute :provider_generates_labels do |fulfillment|
+            fulfillment.provider.class.generates_labels?
           end
 
           # Override inherited associations to use admin serializers

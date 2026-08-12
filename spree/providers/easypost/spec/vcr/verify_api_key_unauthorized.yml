@@ -1,0 +1,67 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.easypost.com/v2/addresses
+    body:
+      encoding: UTF-8
+      string: '{"street1":"417 Montgomery Street","city":"San Francisco","state":"CA","zip":"94104","country":"US"}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - EasyPost/v2 RubyClient/7.7.0 Ruby/4.0.1-p0 OS/Darwin OSVersion/23 OSArch/arm64
+      Host:
+      - api.easypost.com
+      Content-Type:
+      - application/json
+      Authorization:
+      - "<FILTERED>"
+  response:
+    status:
+      code: 403
+      message: Forbidden
+    headers:
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      X-Download-Options:
+      - noopen
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      Easypost-Api-Version:
+      - '2015-01-01'
+      Vary:
+      - EasyPost-Api-Version
+      X-Ep-Request-Uuid:
+      - da774daf6a75ae2dff0de6790189dc1a
+      Content-Type:
+      - application/json; charset=utf-8
+      X-Runtime:
+      - '0.012739'
+      Transfer-Encoding:
+      - chunked
+      X-Node:
+      - bigweb42nuq
+      X-Version-Label:
+      - easypost-202608061828-a3cb37e702-main
+      X-Backend:
+      - easypost
+      X-Proxied:
+      - extlb2nuq 1318c68dc0
+      - intlb6nuq d4a20a271b
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+    body:
+      encoding: ASCII-8BIT
+      string: '{"error":{"code":"APIKEY.INACTIVE","message":"This api key is no longer
+        active. Please use a different api key or reactivate this key.","errors":[]}}'
+  recorded_at: Fri, 07 Aug 2026 10:06:37 GMT
+recorded_with: VCR 6.4.0

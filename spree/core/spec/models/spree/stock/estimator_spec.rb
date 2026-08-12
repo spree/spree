@@ -11,11 +11,48 @@ module Spree
       let(:order)            { build(:order_with_line_items, ship_address: ship_address) }
       let(:inventory_units)  { order.inventory_units }
 
+      # A free pickup option must not silently become every order's delivery
+      # method — "delivery" means shipping unless the buyer says otherwise.
+      describe 'default rate selection' do
+        # Pickup only quotes from a counter customers may collect at, and the
+        # package's location must be the persisted one the method serves.
+        let(:counter) { create(:stock_location, pickup_enabled: true) }
+        let(:package) do
+          build(:stock_package, stock_location: counter,
+                                contents: inventory_units.map { |_i| ContentItem.new(inventory_unit) })
+        end
+        let(:pickup) { create(:pickup_delivery_method, name: 'Store Pickup') }
+
+        before do
+          pickup.calculator.update!(preferences: { amount: 0, currency: 'USD' })
+          shipping_method.calculator.update!(preferences: { amount: 5, currency: 'USD' })
+        end
+
+        it 'selects the cheapest rate that ships, not a cheaper pickup rate' do
+          allow(package).to receive_messages(eligible_delivery_methods: [pickup, shipping_method])
+
+          rates = subject.delivery_rates(package)
+
+          # Pickup is free and therefore sorts first, but shipping is default.
+          expect(rates.first.delivery_method).to eq(pickup)
+          expect(rates.detect(&:selected).delivery_method).to eq(shipping_method)
+        end
+
+        it 'falls back to the cheapest rate when nothing ships' do
+          allow(package).to receive_messages(eligible_delivery_methods: [pickup])
+
+          rates = subject.delivery_rates(package)
+
+          expect(rates.detect(&:selected).delivery_method).to eq(pickup)
+        end
+      end
+
       context '#shipping rates' do
         before do
           allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :available?).and_return(true)
           allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :compute).and_return(4.00)
           allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :preferences).and_return(currency: currency)
+          allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :supports_currency?) { |quoted| currency.blank? || quoted == currency }
           allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :marked_for_destruction?)
 
           allow(package).to receive_messages(eligible_delivery_methods: [shipping_method])
@@ -46,7 +83,7 @@ module Spree
             other_country = create(:country, iso: 'XZ', iso3: 'XZZ', name: 'Elsewhere', iso_name: 'ELSEWHERE')
             zone = create(:delivery_zone)
             zone.members.create!(member_type: 'country', country: other_country)
-            shipping_method.delivery_zones = [zone]
+            shipping_method.update!(delivery_zone: zone)
           end
 
           it_behaves_like "shipping rate doesn't match"
@@ -243,6 +280,30 @@ module Spree
         end
       end
 
+      # Per-channel rates: one profile, one warehouse, different prices for
+      # different buyers (docs/plans/6.0-channel-delivery.md).
+      describe 'channel-restricted methods' do
+        it 'quotes a channel-restricted method only to that channel' do
+          wholesale = create(:channel, store: @default_store, name: "Wholesale #{SecureRandom.hex(3)}")
+          retail = create(:channel, store: @default_store, name: "Retail #{SecureRandom.hex(3)}")
+
+          wholesale_rate = create(:delivery_method, store: @default_store, name: 'Wholesale Rate')
+          wholesale_rate.rules = [{ type: 'channel_rule', preferences: { channel_ids: [wholesale.id] } }]
+          wholesale_rate.save!
+
+          wholesale_order = create(:order_with_line_items, store: @default_store, channel: wholesale)
+          retail_order = create(:order_with_line_items, store: @default_store, channel: retail)
+
+          wholesale_names = Spree::Stock::Coordinator.new(wholesale_order).packages.
+            flat_map { |package| package.delivery_rates.map(&:name) }
+          retail_names = Spree::Stock::Coordinator.new(retail_order).packages.
+            flat_map { |package| package.delivery_rates.map(&:name) }
+
+          expect(wholesale_names).to include('Wholesale Rate')
+          expect(retail_names).not_to include('Wholesale Rate')
+        end
+      end
+
       # Host apps override the eligibility seam to add their own rules. The
       # 6.0 rename must not silently skip overrides written against the old
       # name — that would quote rates the host meant to filter out.
@@ -267,6 +328,155 @@ module Spree
 
           estimator.delivery_rates(package)
           expect(called).to be true
+        end
+      end
+
+      # Quoting dispatches through the method's rate provider, so a carrier
+      # provider replaces calculator pricing while the surrounding filtering,
+      # tax and sorting behavior stays identical.
+      describe 'rate provider dispatch' do
+        let(:delivery_method) { create(:delivery_method) }
+        let(:package) { build(:stock_package, contents: inventory_units.map { |_i| ContentItem.new(inventory_unit) }) }
+
+        before do
+          allow(package).to receive_messages(eligible_delivery_methods: [delivery_method])
+        end
+
+        it 'defaults to the Internal provider, pricing through the calculator' do
+          expect(delivery_method.rate_provider_instance).to be_a(Spree::DeliveryRateProvider::Internal)
+
+          allow(delivery_method.calculator).to receive(:compute).and_return(7.00)
+
+          expect(subject.delivery_rates(package).first.cost).to eq(7.00)
+        end
+
+        it 'prices through a configured external provider instead of the calculator' do
+          provider_class = Class.new(Spree::DeliveryRateProvider::Base) do
+            def estimate(_package)
+              Spree::DeliveryRateProvider::Estimate.new(cost: BigDecimal('9.99'), carrier: 'UPS')
+            end
+          end
+          stub_const('CarrierRateProvider', provider_class)
+
+          allow(delivery_method).to receive(:rate_provider_instance).and_return(provider_class.new(delivery_method))
+          expect(delivery_method.calculator).not_to receive(:compute)
+
+          expect(subject.delivery_rates(package).first.cost).to eq(BigDecimal('9.99'))
+        end
+
+        it 'carries the carrier metadata from the estimate onto the rate' do
+          provider_class = Class.new(Spree::DeliveryRateProvider::Base) do
+            def estimate(_package)
+              Spree::DeliveryRateProvider::Estimate.new(
+                cost: BigDecimal('9.99'),
+                carrier: 'UPS',
+                service_level: 'Ground',
+                estimated_delivery_date: Date.new(2026, 8, 20),
+                metadata: { 'quote_id' => 'rate_123' }
+              )
+            end
+          end
+          stub_const('EnrichedRateProvider', provider_class)
+
+          allow(delivery_method).to receive(:rate_provider_instance).and_return(provider_class.new(delivery_method))
+
+          rate = subject.delivery_rates(package).first
+          expect(rate.carrier).to eq('UPS')
+          expect(rate.service_level).to eq('Ground')
+          expect(rate.estimated_delivery_date).to eq(Date.new(2026, 8, 20))
+          expect(rate.metadata['quote_id']).to eq('rate_123')
+        end
+
+        # One carrier method now yields one rate per service (decisions.md
+        # 2026-08-09) — the provider returns several estimates and the
+        # estimator fans them out, names them, and applies merchant controls.
+        describe 'multi-rate providers' do
+          let(:multi_rate_provider_class) do
+            Class.new(Spree::DeliveryRateProvider::Base) do
+              def estimates(_package)
+                [
+                  Spree::DeliveryRateProvider::Estimate.new(
+                    cost: BigDecimal('9.40'), carrier: 'UPS', service_level: 'Ground'
+                  ),
+                  Spree::DeliveryRateProvider::Estimate.new(
+                    cost: BigDecimal('28.10'), carrier: 'UPS', service_level: 'NextDayAir'
+                  )
+                ]
+              end
+            end
+          end
+
+          before do
+            stub_const('MultiRateProvider', multi_rate_provider_class)
+            allow(delivery_method).to receive(:rate_provider_instance).and_return(MultiRateProvider.new(delivery_method))
+          end
+
+          it 'builds one named rate per estimate from a single method' do
+            rates = subject.delivery_rates(package)
+
+            expect(rates.map(&:name)).to contain_exactly('UPS Ground', 'UPS NextDayAir')
+            expect(rates.map(&:delivery_method_id).uniq).to eq([delivery_method.id])
+            expect(rates.map(&:cost)).to contain_exactly(BigDecimal('9.40'), BigDecimal('28.10'))
+          end
+
+          it 'offers only the services with rows when the method narrows them' do
+            delivery_method.services.create!(carrier: 'UPS', service: 'Ground')
+
+            rates = subject.delivery_rates(package)
+
+            expect(rates.map(&:name)).to eq(['UPS Ground'])
+          end
+
+          it 'renames a service through its row label' do
+            delivery_method.services.create!(carrier: 'UPS', service: 'NextDayAir', label: 'UPS 1 day')
+
+            rates = subject.delivery_rates(package)
+
+            expect(rates.map(&:name)).to eq(['UPS 1 day'])
+          end
+
+          it 'applies the method-level markup to every service' do
+            delivery_method.update!(markup_percent: 10, markup_flat: 1)
+
+            rates = subject.delivery_rates(package)
+
+            expect(rates.map(&:cost)).to contain_exactly(BigDecimal('11.34'), BigDecimal('31.91'))
+          end
+
+          it 'lets a service row override the method markup' do
+            delivery_method.update!(markup_percent: 10)
+            delivery_method.services.create!(carrier: 'UPS', service: 'Ground', markup_percent: 0, markup_flat: 2)
+            delivery_method.services.create!(carrier: 'UPS', service: 'NextDayAir')
+
+            rates = subject.delivery_rates(package)
+
+            ground = rates.detect { |rate| rate.service_level == 'Ground' }
+            express = rates.detect { |rate| rate.service_level == 'NextDayAir' }
+            expect(ground.cost).to eq(BigDecimal('11.40'))
+            expect(express.cost).to eq(BigDecimal('30.91'))
+          end
+        end
+
+        it 'never applies markup to calculator-priced methods' do
+          delivery_method.update!(markup_percent: 50, markup_flat: 10)
+          allow(delivery_method.calculator).to receive(:compute).and_return(7.00)
+
+          rate = subject.delivery_rates(package).first
+
+          expect(rate.cost).to eq(7.00)
+          expect(rate[:name]).to be_nil
+          expect(rate.name).to eq(delivery_method.name)
+        end
+
+        it 'suppresses the method when the provider returns no estimate' do
+          provider_class = Class.new(Spree::DeliveryRateProvider::Base) do
+            def estimate(_package) = nil
+          end
+          stub_const('EmptyRateProvider', provider_class)
+
+          allow(delivery_method).to receive(:rate_provider_instance).and_return(provider_class.new(delivery_method))
+
+          expect(subject.delivery_rates(package)).to be_empty
         end
       end
     end

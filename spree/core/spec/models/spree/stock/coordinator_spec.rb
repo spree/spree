@@ -17,6 +17,51 @@ module Spree
         end
       end
 
+      # Allocation asks each profile (and the order's channel) about every
+      # candidate location, so membership must be read from loaded rows —
+      # re-querying per question multiplied with items × locations.
+      describe 'query cost' do
+        it 'does not re-query origin-group membership per unit and location' do
+          4.times do |index|
+            create(:stock_location, store: store, name: "Warehouse #{index} #{SecureRandom.hex(3)}",
+                                    propagate_all_variants: true, backorderable_default: true)
+          end
+          big_order = create(:order_with_line_items, store: store, line_items_count: 4)
+
+          membership_queries = 0
+          subscription = ActiveSupport::Notifications.subscribe('sql.active_record') do |*, payload|
+            next if payload[:name].to_s.match?(/SCHEMA|TRANSACTION/)
+
+            membership_queries += 1 if payload[:sql].include?('spree_delivery_origin_group_locations')
+          end
+
+          Coordinator.new(big_order.reload).packages
+          ActiveSupport::Notifications.unsubscribe(subscription)
+
+          # One read per profile is fine; per unit per location is the bug.
+          expect(membership_queries).to be < 10
+        end
+      end
+
+      describe 'channel-scoped allocation' do
+        let!(:warehouse) { create(:stock_location, store: store, name: "Warehouse #{SecureRandom.hex(3)}", backorderable_default: true, propagate_all_variants: true) }
+        let(:channel) { create(:channel, store: store) }
+
+        it 'never allocates from a location the order channel is not served by' do
+          channel.stock_locations = [create(:stock_location, store: store, name: "Other #{SecureRandom.hex(3)}")]
+          order.update!(channel: channel)
+
+          packages = subject.packages
+          expect(packages.map { |package| package.stock_location.id }).not_to include(warehouse.id)
+        end
+
+        it 'allocates normally when the channel has no allowlist' do
+          order.update!(channel: channel)
+
+          expect(subject.packages).to be_present
+        end
+      end
+
       describe '#shipments' do
         let(:packages) { [build(:stock_package_fulfilled), build(:stock_package_fulfilled)] }
 

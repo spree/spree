@@ -7,6 +7,11 @@ module Spree
     # For each entry in +items+:
     # - If a line item for the variant already exists -> sets its quantity
     # - If no line item exists -> creates one with the given quantity
+    # - Quantity zero (or less) removes the line item when one exists, and is
+    #   ignored otherwise. That is what lets an admin submit a whole edited
+    #   order in one request: the rows the merchant struck out arrive as zeros
+    #   alongside the ones they changed, and the caller's transaction applies
+    #   the lot or none of it.
     #
     # Order totals are NOT recalculated here. Callers (Spree::Orders::Create
     # and Spree::Orders::Update) are responsible for running shipment
@@ -28,11 +33,18 @@ module Spree
             next unless variant
 
             quantity = (item_params[:quantity] || 1).to_i
-            next if quantity <= 0
+            line_item = Spree.line_item_by_variant_finder.new.execute(owner: order, variant: variant)
+
+            if quantity <= 0
+              # Zero removes what is there and means nothing when there is
+              # not, so an order arriving with its struck-out rows as zeros
+              # settles in one pass while a create with a zero still adds
+              # nothing.
+              line_item&.destroy!
+              next
+            end
 
             return failure(variant, "#{variant.name} is not available in #{order.currency}") if variant.amount_in(order.currency).nil?
-
-            line_item = Spree.line_item_by_variant_finder.new.execute(owner: order, variant: variant)
 
             if line_item
               line_item.quantity = quantity

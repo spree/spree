@@ -1,0 +1,75 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.easypost.com/v2/addresses
+    body:
+      encoding: UTF-8
+      string: '{"street1":"417 Montgomery Street","city":"San Francisco","state":"CA","zip":"94104","country":"US"}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - EasyPost/v2 RubyClient/7.7.0 Ruby/4.0.1-p0 OS/Darwin OSVersion/23 OSArch/arm64
+      Host:
+      - api.easypost.com
+      Content-Type:
+      - application/json
+      Authorization:
+      - "<FILTERED>"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      X-Download-Options:
+      - noopen
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      Easypost-Api-Version:
+      - '2015-01-01'
+      Vary:
+      - EasyPost-Api-Version
+      X-Ep-Request-Uuid:
+      - da774db16a75adadff0de5980188cd8f
+      Cache-Control:
+      - private, no-cache, no-store
+      Pragma:
+      - no-cache
+      Expires:
+      - '0'
+      Location:
+      - "/api/v2/addresses/adr_6154c924924711f1b3710022480b361d"
+      Content-Type:
+      - application/json; charset=utf-8
+      X-Runtime:
+      - '0.053561'
+      Transfer-Encoding:
+      - chunked
+      X-Node:
+      - bigweb67nuq
+      X-Version-Label:
+      - easypost-202608061828-a3cb37e702-main
+      X-Backend:
+      - easypost
+      X-Proxied:
+      - extlb2nuq 1318c68dc0
+      - intlb3nuq d4a20a271b
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"adr_6154c924924711f1b3710022480b361d","object":"Address","created_at":"2026-08-07T10:04:29Z","updated_at":"2026-08-07T10:04:29Z","name":null,"company":null,"street1":"417
+        Montgomery Street","street2":null,"city":"San Francisco","state":"CA","zip":"94104","country":"US","phone":null,"email":null,"mode":"test","carrier_facility":null,"residential":null,"federal_tax_id":null,"state_tax_id":null,"verifications":{}}'
+  recorded_at: Fri, 07 Aug 2026 10:04:29 GMT
+recorded_with: VCR 6.4.0

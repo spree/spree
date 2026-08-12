@@ -3,11 +3,28 @@ module Spree
     class Package
       attr_reader :stock_location, :contents
       attr_accessor :delivery_rates
+      # The cart or order this package is being quoted for. Set when a
+      # fulfillment builds the package; nil for proposed packages the
+      # coordinator builds before anything is persisted.
+      attr_writer :owner
 
       def initialize(stock_location, contents = [])
         @stock_location = stock_location
         @contents = contents
         @delivery_rates = []
+      end
+
+      # Who this package is for.
+      #
+      # Prefers the owner the fulfillment supplied over walking to
+      # `inventory_unit.order`: during checkout a fulfillment belongs to a
+      # Cart, while its units can still carry an order_id from elsewhere, and
+      # following that returns a stranger's order — whose ship address would
+      # then stand in for the customer's.
+      #
+      # @return [Spree::Cart, Spree::Order, nil]
+      def owner
+        @owner || order
       end
 
       # @deprecated Use {#delivery_rates}; removed in 6.1.
@@ -50,8 +67,34 @@ module Spree
         contents.sum(&:amount)
       end
 
+      # Content weight plus the store's default package weight (packaging
+      # tare). This is the single seam every weight consumer reads —
+      # calculators, rate providers, weight rules and the weight splitter —
+      # so the tare applies everywhere without any of them knowing about it.
       def weight
-        contents.sum(&:weight)
+        contents_weight = contents.sum(&:weight)
+        tare = owner&.store&.preferred_default_package_weight.to_f
+
+        contents_weight + tare
+      end
+
+      # The store's default package dimensions (the box this package ships
+      # in), used verbatim by carrier rate providers for dimensional-weight
+      # pricing. Item dimensions are deliberately not summed — items don't
+      # stack into a box shape. Nil until the store configures all three,
+      # in the unit implied by the store's unit system (in/cm).
+      #
+      # @return [Hash{Symbol => Float}, nil]
+      def dimensions
+        store = owner&.store
+        return if store.nil?
+
+        length = store.preferred_default_package_length.to_f
+        width = store.preferred_default_package_width.to_f
+        height = store.preferred_default_package_height.to_f
+        return if [length, width, height].any?(&:zero?)
+
+        { length: length, width: width, height: height }
       end
 
       def on_hand
@@ -79,30 +122,31 @@ module Spree
       end
 
       def currency
-        order.currency
+        owner&.currency ||
+          contents.filter_map { |item| item.try(:inventory_unit)&.line_item&.currency }.first ||
+          Spree::Current.currency
       end
 
-      # The fulfillment types every item in this package supports — the
-      # intersection across products (splitters keep packages homogeneous,
-      # so this is normally one product-type's set).
+      # The delivery profile every item in this package belongs to.
+      # Splitters keep packages profile-homogeneous, so the first item's
+      # profile is the package's.
       #
-      # @return [Array<String>]
-      def fulfillment_types
-        contents.map { |item| item.variant.product.fulfillment_types }.reduce(:&) || []
+      # @return [Spree::DeliveryProfile, nil]
+      def delivery_profile
+        contents.first&.variant&.product&.resolved_delivery_profile
       end
 
-      # Delivery methods eligible to serve this package: the method's
-      # fulfillment_type must be supported by every item. Replaces the
-      # ShippingCategory-based Package#shipping_methods. Per-product
-      # exclusions are DeliveryMethodRules::ExcludedProductsRule, enforced
-      # with the other rules in the Estimator's method filter.
+      # Delivery methods eligible to serve this package: exactly the
+      # package's profile's methods. Per-product exclusions are
+      # DeliveryMethodRules::ExcludedProductsRule, enforced with the other
+      # rules in the Estimator's method filter.
       #
       # @return [ActiveRecord::Relation<Spree::DeliveryMethod>]
       def eligible_delivery_methods
-        types = fulfillment_types
-        return Spree::DeliveryMethod.none if types.empty?
+        profile = delivery_profile
+        return Spree::DeliveryMethod.none if profile.nil?
 
-        Spree::DeliveryMethod.by_fulfillment_type(types)
+        profile.delivery_methods
       end
 
       # @deprecated Use {#eligible_delivery_methods}; removed in 6.1.

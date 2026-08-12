@@ -7,7 +7,7 @@ describe Spree::Shipment, type: :model do
   let(:variant) { line_item.variant }
   let!(:line_item) { create(:line_item) }
   let(:shipment) do
-    create(:shipment, number: 'H21265865494', cost: 1, state: 'pending', stock_location: create(:stock_location)).tap do |shipment|
+    create(:shipment, number: 'H21265865494', cost: 1, state: 'unfulfilled', stock_location: create(:stock_location)).tap do |shipment|
       allow(shipment).to receive_messages order: order
       allow(shipment).to receive_messages(delivery_method: shipping_method, shipping_method: shipping_method)
     end
@@ -36,7 +36,7 @@ describe Spree::Shipment, type: :model do
 
   describe '#digital?' do
     it 'returns true if the delivery method is digital' do
-      shipment.delivery_method.fulfillment_type = 'digital'
+      shipment.delivery_method.fulfillment_provider = 'Spree::FulfillmentProvider::Digital'
       expect(shipment.digital?).to eq(true)
     end
 
@@ -114,48 +114,80 @@ describe Spree::Shipment, type: :model do
     expect(shipment).to be_backordered
   end
 
-  describe '#determine_state' do
-    let(:inventory_units) { create_list(:inventory_unit, 1) }
-
-    before { allow(inventory_units.first).to receive_messages backordered: true }
-
-    it 'returns canceled if order is canceled?' do
-      allow(order).to receive_messages canceled?: true
-      expect(shipment.determine_state(order)).to eq 'canceled'
+  describe 'status' do
+    it 'starts unfulfilled' do
+      expect(create(:shipment).status).to eq('unfulfilled')
     end
 
-    it 'returns canceled when shipment is canceled' do
-      allow(shipment).to receive_messages canceled?: true
-      expect(shipment.determine_state(order)).to eq 'canceled'
+    it 'rejects a status outside the vocabulary' do
+      shipment.status = 'ready'
+      expect(shipment).not_to be_valid
     end
 
-    it 'returns pending unless order.can_ship?' do
-      allow(order).to receive_messages can_ship?: false
-      expect(shipment.determine_state(order)).to eq 'pending'
+    # The payment-derived pending/ready split is gone: whether the order is
+    # paid is asked when someone tries to hand the goods over, not baked into
+    # the fulfillment's own status where a refund could move it backwards.
+    it 'does not change when the order is unpaid' do
+      shipment
+      allow(order).to receive_messages(paid?: false)
+
+      expect { order.update_statuses! }.not_to change { shipment.reload.status }
+    end
+  end
+
+  # The guards are stated negatively — anything not yet handed over can be
+  # fulfilled or canceled — precisely so a status an extension inserts before
+  # `fulfilled` works with the core workflows out of the box.
+  describe 'an added custom status' do
+    around do |example|
+      original = Spree::Fulfillment.statuses
+      Spree::Fulfillment.add_status('in_production', after: 'unfulfilled')
+      example.run
+    ensure
+      Spree::Fulfillment.statuses = original
     end
 
-    it 'returns pending if backordered' do
-      allow(shipment).to receive_messages inventory_units: inventory_units
-      expect(shipment.determine_state(order)).to eq 'pending'
+    it 'is valid, with a predicate and a scope' do
+      shipment.status = 'in_production'
+
+      expect(shipment).to be_valid
+      expect(shipment).to be_in_production
+      expect(Spree::Fulfillment.statuses).to include('in_production')
     end
 
-    it 'returns fulfilled when already fulfilled' do
-      allow(shipment).to receive_messages fulfilled?: true
-      expect(shipment.determine_state(order)).to eq 'fulfilled'
+    it 'can still be handed over' do
+      shipment.update!(status: 'in_production')
+
+      expect(shipment.can_fulfill?).to be true
     end
 
-    it 'returns pending when unpaid' do
-      expect(shipment.determine_state(order)).to eq 'pending'
+    it 'can still be recalled' do
+      shipment.update!(status: 'in_production')
+
+      expect(shipment.can_cancel?).to be true
     end
 
-    it 'returns ready when paid' do
-      allow(order).to receive_messages paid?: true
-      expect(shipment.determine_state(order)).to eq 'ready'
+    it 'cannot skip straight to confirmed receipt' do
+      shipment.update!(status: 'in_production')
+
+      expect(shipment.can_mark_delivered?).to be false
+    end
+  end
+
+  describe 'tracking_status' do
+    it 'accepts a carrier status' do
+      shipment.tracking_status = 'in_transit'
+      expect(shipment).to be_valid
     end
 
-    it 'returns ready when Config.auto_capture_on_dispatch' do
-      Spree::Config.auto_capture_on_dispatch = true
-      expect(shipment.determine_state(order)).to eq 'ready'
+    it 'rejects one outside the carrier vocabulary' do
+      shipment.tracking_status = 'lost_in_space'
+      expect(shipment).not_to be_valid
+    end
+
+    it 'is optional' do
+      shipment.tracking_status = nil
+      expect(shipment).to be_valid
     end
   end
 
@@ -515,6 +547,30 @@ describe Spree::Shipment, type: :model do
         expect(shipment.selected_shipping_rate.shipping_method_id).to eq(shipping_method1.id)
       end
 
+      # A carrier method yields one rate per service, so re-quoting must keep
+      # the customer's chosen SERVICE, not just any rate from the same method.
+      it 'keeps the previously selected carrier service across a re-quote' do
+        shipment.shipping_rates.delete_all
+        shipment.delivery_rates.create!(delivery_method: shipping_method1, cost: 9.40,
+                                        carrier: 'UPS', service_level: 'Ground', name: 'UPS Ground')
+        shipment.delivery_rates.create!(delivery_method: shipping_method1, cost: 28.10, selected: true,
+                                        carrier: 'UPS', service_level: 'NextDayAir', name: 'UPS NextDayAir')
+
+        fresh_ground = Spree::DeliveryRate.new(delivery_method: shipping_method1, cost: 9.90,
+                                               carrier: 'UPS', service_level: 'Ground', name: 'UPS Ground')
+        fresh_express = Spree::DeliveryRate.new(delivery_method: shipping_method1, cost: 29.00,
+                                                carrier: 'UPS', service_level: 'NextDayAir', name: 'UPS NextDayAir')
+        fresh_estimator = double('estimator', delivery_rates: [fresh_ground, fresh_express])
+        expect(Spree::Stock::Estimator).to receive(:new).with(shipment.order).and_return(fresh_estimator)
+        allow(shipment).to receive_messages(delivery_method: shipping_method1)
+
+        shipment.refresh_rates
+
+        selected = shipment.reload.selected_delivery_rate
+        expect(selected.service_level).to eq('NextDayAir')
+        expect(selected.cost).to eq(29.00)
+      end
+
       it 'does not refresh if shipment is shipped' do
         expect(Spree::Stock::Estimator).not_to receive(:new)
         shipment.shipping_rates.delete_all
@@ -548,101 +604,16 @@ describe Spree::Shipment, type: :model do
   end
 
   describe '#update!' do
-    shared_examples_for 'immutable once fulfilled' do
-      it 'remains in fulfilled status once fulfilled' do
-        shipment.status = 'fulfilled'
-        expect(shipment).to receive(:update_columns).with(status: 'fulfilled', updated_at: kind_of(Time))
-        shipment.update!(order)
-      end
+    it 'no longer recomputes the status from the order' do
+      shipment.update_column(:status, 'fulfilled')
+      allow(Spree::Deprecation).to receive(:warn)
+
+      expect { shipment.update!(order) }.not_to change { shipment.reload.status }
     end
 
-    shared_examples_for 'pending if backordered' do
-      it 'has a status of pending if backordered' do
-        allow(shipment).to receive_messages(fulfillment_items: inventory_units)
-        expect(shipment).to receive(:update_columns).with(status: 'pending', updated_at: kind_of(Time))
-        shipment.update!(order)
-      end
-    end
-
-    context 'when order cannot ship' do
-      before { allow(order).to receive_messages can_ship?: false }
-
-      it "results in a 'pending' state" do
-        expect(shipment).to receive(:update_columns).with(status: 'pending', updated_at: kind_of(Time))
-        shipment.update!(order)
-      end
-    end
-
-    context 'when order is paid' do
-      before { allow(order).to receive_messages paid?: true }
-
-      it "results in a 'ready' state" do
-        expect(shipment).to receive(:update_columns).with(status: 'ready', updated_at: kind_of(Time))
-        shipment.update!(order)
-      end
-
-      it_behaves_like 'immutable once fulfilled'
-      it_behaves_like 'pending if backordered'
-    end
-
-    context 'when order has balance due' do
-      before { allow(order).to receive_messages paid?: false }
-
-      it "results in a 'pending' state" do
-        shipment.status = 'ready'
-        expect(shipment).to receive(:update_columns).with(status: 'pending', updated_at: kind_of(Time))
-        shipment.update!(order)
-      end
-
-      it_behaves_like 'immutable once fulfilled'
-      it_behaves_like 'pending if backordered'
-    end
-
-    context 'when order has a credit owed' do
-      before { allow(order).to receive_messages payment_state: 'credit_owed', paid?: true }
-
-      it "results in a 'ready' state" do
-        shipment.status = 'pending'
-        expect(shipment).to receive(:update_columns).with(status: 'ready', updated_at: kind_of(Time))
-        shipment.update!(order)
-      end
-
-      it_behaves_like 'immutable once fulfilled'
-      it_behaves_like 'pending if backordered'
-    end
-
-    context 'when fulfillment status changes to fulfilled' do
-      it 'calls after_fulfill' do
-        shipment.status = 'pending'
-        expect(shipment).to receive :after_fulfill
-        allow(shipment).to receive_messages determine_state: 'fulfilled'
-        expect(shipment).to receive(:update_columns).with(status: 'fulfilled', updated_at: kind_of(Time))
-        shipment.update!(order)
-      end
-
-      # ShipmentHandler was removed in 6.0 — after_fulfill owns the mechanics
-      # until FulfillmentProvider takes over type-specific behavior.
-      it 'ships the items and stamps fulfilled_at' do
-        shipment.status = 'pending'
-        allow(shipment).to receive_messages determine_state: 'fulfilled'
-
-        shipment.update!(order)
-
-        expect(shipment.reload.fulfilled_at).to be_present
-        expect(shipment.fulfillment_items.reload).to all(be_shipped)
-      end
-
-      # Regression test for #4347
-      context 'with fees' do
-        before do
-          create(:fee, order: order, fulfillment: shipment, label: 'Label', amount: 5)
-        end
-
-        it 'transitions to shipped' do
-          shipment.update_column(:status, 'ready')
-          expect { shipment.fulfill! }.not_to raise_error
-        end
-      end
+    it 'still writes attributes through ActiveRecord' do
+      shipment.update!(tracking: 'XYZ')
+      expect(shipment.reload.tracking).to eq('XYZ')
     end
   end
 
@@ -675,17 +646,22 @@ describe Spree::Shipment, type: :model do
   describe '#cancel' do
     let(:inventory_unit) { create(:inventory_unit, state: 'on_hand', line_item: line_item, variant: variant, quantity: 1) }
 
+    # Restocking is no longer a transition callback — it belongs to
+    # Spree::Fulfillments::Cancel, so the event only moves the status.
     it 'cancels the shipment' do
       allow(shipment.order).to receive(:recalculate_totals!)
 
-      shipment.state = 'pending'
-      expect(shipment).to receive(:after_cancel)
-      shipment.cancel!
-      expect(shipment.state).to eq 'canceled'
+      shipment.status = 'unfulfilled'
+      described_class.transaction { shipment.update!(status: 'canceled') }
+      expect(shipment.status).to eq 'canceled'
     end
 
-    it 'restocks the items' do
+    # Restocking belongs to Spree::Fulfillments::Cancel now; the deprecated
+    # shell is all that survives on the model. Covered by
+    # spec/workflows/spree/fulfillments/cancel_spec.rb.
+    it 'restocks the items through the deprecated shell' do
       allow(shipment).to receive(:fulfillment_items).and_return([inventory_unit])
+      allow(shipment).to receive(:provider).and_return(instance_double(Spree::FulfillmentProvider::Manual, cancel_fulfillment: true))
       shipment.stock_location = create(:stock_location)
       expect(shipment.stock_location).to receive(:restock).with(variant, 1, shipment)
       shipment.after_cancel
@@ -714,7 +690,7 @@ describe Spree::Shipment, type: :model do
         expect(other_shipment.inventory_units.first).to be_backordered
 
         expect do
-          shipment.cancel!
+          Spree.fulfillment_cancel_workflow.call(fulfillment: shipment)
         end.not_to change { other_shipment.inventory_units.first.state }
       end
     end
@@ -723,25 +699,15 @@ describe Spree::Shipment, type: :model do
   describe '#resume' do
     let(:inventory_unit) { create(:inventory_unit, quantity: 1, line_item: line_item, variant: variant) }
 
-    it 'transitions state to ready if the order is ready' do
+    # One target now: the old machine asked the order's payment state to choose
+    # between pending and ready, which is exactly the coupling that was removed.
+    it 'returns a canceled shipment to unfulfilled regardless of payment' do
       allow(shipment.order).to receive(:recalculate_totals!)
+      shipment.update_column(:status, 'canceled')
 
-      shipment.state = 'canceled'
-      expect(shipment).to receive(:determine_state).and_return('ready')
-      expect(shipment).to receive(:after_resume)
-      shipment.resume!
-      expect(shipment.state).to eq 'ready'
-    end
+      Spree.fulfillment_resume_workflow.call(fulfillment: shipment)
 
-    it 'transitions state to pending if the order is not ready' do
-      allow(shipment.order).to receive(:recalculate_totals!)
-
-      shipment.state = 'canceled'
-      expect(shipment).to receive(:determine_state).and_return('pending')
-      expect(shipment).to receive(:after_resume)
-      shipment.resume!
-      # Shipment is pending because order is already paid
-      expect(shipment.state).to eq 'pending'
+      expect(shipment.reload.status).to eq 'unfulfilled'
     end
 
     it 'unstocks them items' do
@@ -766,99 +732,38 @@ describe Spree::Shipment, type: :model do
   describe '#ship' do
     context 'when the shipment is canceled' do
       let(:shipment_with_inventory_units) { create(:shipment, order: create(:order_with_line_items), state: 'canceled') }
-      let(:subject) { shipment_with_inventory_units.ship! }
+      let(:subject) { shipment_with_inventory_units.update!(status: 'fulfilled') }
 
       before do
         allow(order).to receive(:recalculate_totals!)
         allow(shipment_with_inventory_units).to receive_messages(require_inventory: false, update_order: true)
       end
 
-      it 'unstocks them items' do
-
-        expect(shipment_with_inventory_units.stock_location).to receive(:unstock)
+      # Taking the units back off the shelf moved to
+      # Spree::Fulfillments::Fulfill, so the bare transition no longer does it.
+      # See spec/workflows/spree/fulfillments/fulfill_spec.rb for the behavior.
+      it 'does not unstock on the bare transition' do
+        expect(shipment_with_inventory_units.stock_location).not_to receive(:unstock)
         subject
       end
     end
 
-    ['ready', 'canceled'].each do |status|
+    ['unfulfilled', 'canceled'].each do |status|
       context "from #{status}" do
-        before do
-          allow(order).to receive(:recalculate_totals!)
-          allow(shipment).to receive_messages(require_inventory: false, update_order: true, status: status)
-        end
+        let(:paid_order) { create(:order_ready_to_ship) }
+        let(:fulfillment) { paid_order.fulfillments.first }
+
+        before { fulfillment.update_column(:status, status) }
 
         it 'updates fulfilled_at timestamp' do
+          Spree.fulfillment_fulfill_workflow.call(fulfillment: fulfillment)
 
-          shipment.fulfill!
-          expect(shipment.fulfilled_at).not_to be_nil
-          # Ensure value is persisted
-          shipment.reload
-          expect(shipment.fulfilled_at).not_to be_nil
-        end
-
-      end
-    end
-  end
-
-  describe '#ready' do
-    context 'with Config.auto_capture_on_dispatch == false' do
-      # Regression test for #2040
-      it 'cannot ready a shipment for an order if the order is unpaid' do
-        allow(order).to receive_messages(paid?: false)
-        assert !shipment.can_ready?
-      end
-    end
-
-    context 'with Config.auto_capture_on_dispatch == true' do
-      before do
-        Spree::Config[:auto_capture_on_dispatch] = true
-        @order = create :completed_order_with_pending_payment
-        @shipment = @order.fulfillments.first
-        @shipment.cost = @order.ship_total
-      end
-
-      it 'shipments ready for an order if the order is unpaid' do
-        expect(@shipment.ready?).to be true
-      end
-
-      it 'tells the order to process payment in #after_ship' do
-        expect(@shipment).to receive(:process_order_payments)
-        @shipment.ship!
-      end
-
-      context 'order has pending payments' do
-        let(:payment) do
-          payment = @order.payments.first
-          payment.update_attribute :state, 'pending'
-          payment
-        end
-
-        before do
-          calculator = @shipment.delivery_method.calculator
-          calculator.set_preference(:amount, @shipment.cost)
-          calculator.save!
-        end
-
-        it 'can fully capture an authorized payment' do
-          payment.update_attribute(:amount, @order.total)
-
-          expect(payment.amount).to eq payment.uncaptured_amount
-          @shipment.ship!
-          expect(payment.reload.uncaptured_amount.to_f).to eq 0
-        end
-
-        it 'can partially capture an authorized payment' do
-          payment.update_attribute(:amount, @order.total + 50)
-
-          expect(payment.amount).to eq payment.uncaptured_amount
-          @shipment.ship!
-          expect(payment.captured_amount).to eq @order.total
-          expect(payment.captured_amount).to eq payment.amount - 50
-          expect(payment.order.payments.pending.first.amount).to eq 50
+          expect(fulfillment.reload.fulfilled_at).not_to be_nil
         end
       end
     end
   end
+
 
   context 'updates cost when selected shipping rate is present' do
     let(:shipment) { create(:shipment) }
@@ -896,7 +801,7 @@ describe Spree::Shipment, type: :model do
 
     it 'updates everything around order shipment total and state' do
       expect(shipment.cost.to_f).to eq 10
-      expect(shipment.state).to eq 'pending'
+      expect(shipment.state).to eq 'unfulfilled'
       # The full recalculation derives item_total from real line items
       # (fabricated column values don't survive it) and statuses come from
       # the payment records via UpdateStatuses.
@@ -1066,23 +971,75 @@ describe Spree::Shipment, type: :model do
 
   describe '#tracking_url' do
     it 'uses shipping method to determine url' do
-      expect(shipping_method).to receive(:build_tracking_url).with('1Z12345').and_return(:some_url)
+      allow(shipping_method).to receive(:build_tracking_url).with('1Z12345').and_return(:some_url)
       shipment.tracking = '1Z12345'
 
       expect(shipment.tracking_url).to eq(:some_url)
     end
 
     it 'returns the tracking value as-is when it is already a full URL' do
-      expect(shipping_method).not_to receive(:build_tracking_url)
-      shipment.tracking = 'https://tracking.example.com/parcels/1Z12345'
+      shipment.tracking = 'https://carrier.example/track/ABC'
 
-      expect(shipment.tracking_url).to eq('https://tracking.example.com/parcels/1Z12345')
+      expect(shipment.tracking_url).to eq('https://carrier.example/track/ABC')
     end
 
-    it 'returns a full-URL tracking value without a shipping method' do
-      shipment = described_class.new(tracking: 'https://tracking.example.com/parcels/1Z12345')
+    it 'is nil without a tracking number' do
+      shipment.tracking = nil
 
-      expect(shipment.tracking_url).to eq('https://tracking.example.com/parcels/1Z12345')
+      expect(shipment.tracking_url).to be_nil
+    end
+
+    # The provider bought the label, so its tracker page wins over anything
+    # derived — it is the one link guaranteed to show this parcel.
+    it 'prefers the fulfillment provider answer' do
+      allow(shipment.provider).to receive(:tracking_url).with(shipment).and_return('https://provider.example/t/1')
+      shipment.tracking = 'RANDOM123'
+
+      expect(shipment.tracking_url).to eq('https://provider.example/t/1')
+    end
+
+    it 'builds from the pinned carrier registry entry' do
+      shipment.tracking = '421432'
+      shipment.tracking_carrier = 'inpost'
+
+      expect(shipment.tracking_url).to eq('https://inpost.pl/sledzenie-przesylek?number=421432')
+    end
+
+    # No method, no carrier, no provider — a recognisable number still yields
+    # its carrier's page through the tracking_number gem.
+    it 'falls back to detection from the number format' do
+      allow(shipment).to receive(:delivery_method).and_return(nil)
+      shipment.tracking = '1Z879E930346834440'
+
+      expect(shipment.tracking_url).to include('ups.com')
+    end
+  end
+
+  describe 'tracking carrier detection' do
+    it 'pins the detected carrier when a recognisable number is saved' do
+      shipment.update!(tracking: '1Z879E930346834440')
+
+      expect(shipment.tracking_carrier).to eq('ups')
+      expect(shipment.tracking_carrier_name).to eq('UPS')
+    end
+
+    it 'leaves an explicit pick alone' do
+      shipment.update!(tracking: '1Z879E930346834440', tracking_carrier: 'inpost')
+
+      expect(shipment.tracking_carrier).to eq('inpost')
+      expect(shipment.tracking_carrier_name).to eq('InPost')
+    end
+
+    it 'pins nothing for an unrecognisable number' do
+      shipment.update!(tracking: '421432')
+
+      expect(shipment.tracking_carrier).to be_nil
+    end
+
+    it 'titleizes a carrier the registry does not know' do
+      shipment.tracking_carrier = 'some_courier'
+
+      expect(shipment.tracking_carrier_name).to eq('Some Courier')
     end
   end
 
@@ -1146,6 +1103,17 @@ describe Spree::Shipment, type: :model do
       expect(inventory_units).to receive(:create).with(params)
       shipment.set_up_inventory('on_hand', variant, order, line_item)
     end
+
+    # A cart's id written into order_id dereferences as whatever ORDER shares
+    # that id — during checkout the item silently linked itself to a stranger's
+    # order, whose ship address then stood in for the customer's at rating,
+    # and whose backorder queue could swallow the cart's units.
+    it 'leaves order_id nil when the owner is a cart' do
+      cart = create(:cart, store: @default_store)
+
+      expect(inventory_units).to receive(:create).with(params.merge(order_id: nil))
+      shipment.set_up_inventory('on_hand', variant, cart, line_item)
+    end
   end
 
   # Regression test for #3349
@@ -1156,17 +1124,21 @@ describe Spree::Shipment, type: :model do
     end
   end
 
-  describe '.ready_or_pending' do
-    subject { described_class.ready_or_pending }
+  describe '.unfulfilled' do
+    subject { described_class.unfulfilled }
 
-    let!(:ready_shipments) { create_list(:shipment, 2, state: 'ready') }
-    let!(:pending_shipments) { create_list(:shipment, 2, state: 'pending') }
-    let!(:shipped_shipments) { create_list(:shipment, 2, status: 'fulfilled') }
+    let!(:unfulfilled_shipments) { create_list(:shipment, 2, status: 'unfulfilled') }
+    let!(:fulfilled_shipments) { create_list(:shipment, 2, status: 'fulfilled') }
 
-    it 'returns shipments with state ready or pending' do
-      expect(subject.pluck(:state).uniq).to contain_exactly('ready', 'pending')
-      expect(subject).to include(*ready_shipments, *pending_shipments)
-      expect(subject).not_to include(*shipped_shipments)
+    it 'returns shipments nobody has handed over yet' do
+      expect(subject).to include(*unfulfilled_shipments)
+      expect(subject).not_to include(*fulfilled_shipments)
+    end
+
+    # ready_or_pending survives one release as an alias, since the two statuses
+    # it named both became unfulfilled.
+    it 'is what the deprecated ready_or_pending scope returns' do
+      expect(described_class.ready_or_pending).to match_array(subject)
     end
   end
 
@@ -1177,11 +1149,14 @@ describe Spree::Shipment, type: :model do
     describe 'shipped state transition' do
       before { shipment.update_column(:tracking, 'TRACK123') }
 
+      # The fulfilled event carries notify_customer metadata so an admin can
+      # suppress the shipment email for one dispatch.
       it 'publishes shipment.shipped event' do
-        expect(shipment).to receive(:publish_event).with('shipment.shipped')
-        allow(shipment).to receive(:publish_event).with(anything)
+        expect(shipment).to receive(:publish_event).
+          with('shipment.shipped', nil, hash_including(notify_customer: true))
+        allow(shipment).to receive(:publish_event).with(any_args)
 
-        shipment.ship!
+        shipment.publish_fulfillment_fulfilled_event
       end
     end
 
@@ -1190,18 +1165,18 @@ describe Spree::Shipment, type: :model do
         expect(shipment).to receive(:publish_event).with('shipment.canceled')
         allow(shipment).to receive(:publish_event).with(anything)
 
-        shipment.cancel!
+        shipment.publish_fulfillment_canceled_event
       end
     end
 
     describe 'resumed state transition' do
-      before { shipment.cancel! }
+      before { shipment.update!(status: 'canceled') }
 
       it 'publishes shipment.resumed event' do
         expect(shipment).to receive(:publish_event).with('shipment.resumed')
         allow(shipment).to receive(:publish_event).with(anything)
 
-        shipment.resume!
+        shipment.publish_fulfillment_resumed_event
       end
     end
   end

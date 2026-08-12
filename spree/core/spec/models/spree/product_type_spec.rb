@@ -3,53 +3,17 @@ require 'spec_helper'
 describe Spree::ProductType, type: :model do
   it_behaves_like 'metadata'
 
-  describe 'fulfillment_types' do
-    it 'defaults to shipping' do
-      expect(described_class.new.fulfillment_types).to eq(['shipping'])
+  describe 'delivery profile template' do
+    it 'is optional — a type without one leaves products on the store default' do
+      expect(build(:product_type).delivery_profile).to be_nil
     end
 
-    it 'persists an explicit value' do
-      product_type = create(:product_type, fulfillment_types: %w[shipping pickup])
+    it 'stamps its profile onto products at creation' do
+      profile = create(:delivery_profile)
+      product_type = create(:product_type, delivery_profile: profile)
+      product = create(:product, store: profile.store, product_type: product_type)
 
-      expect(product_type.reload.fulfillment_types).to eq(%w[shipping pickup])
-    end
-
-    it 'rejects types outside the Spree.fulfillment_types registry' do
-      product_type = build(:product_type, fulfillment_types: %w[shipping freigt])
-
-      expect(product_type).not_to be_valid
-      expect(product_type.errors[:fulfillment_types].first).to include('freigt')
-    end
-
-    it 'accepts a custom type once registered' do
-      Spree.fulfillment_types << 'freight'
-
-      expect(build(:product_type, fulfillment_types: ['freight'])).to be_valid
-    ensure
-      Spree.fulfillment_types.delete('freight')
-    end
-
-    it 'leaves persisted rows with unregistered types savable when untouched' do
-      product_type = create(:product_type)
-      product_type.update_column(:fulfillment_types, ['legacy_freight'])
-
-      product_type.reload.name = 'Renamed'
-      expect(product_type.save).to be true
-    end
-  end
-
-  describe '#digital?' do
-    it 'is true only when digital is the sole fulfillment type' do
-      expect(build(:product_type, fulfillment_types: ['digital'])).to be_digital
-      expect(build(:product_type, fulfillment_types: %w[digital shipping])).not_to be_digital
-      expect(build(:product_type)).not_to be_digital
-    end
-  end
-
-  describe '#requires_shipping?' do
-    it 'is true when shipping is among the fulfillment types' do
-      expect(build(:product_type)).to be_requires_shipping
-      expect(build(:product_type, fulfillment_types: ['digital'])).not_to be_requires_shipping
+      expect(product.delivery_profile).to eq(profile)
     end
   end
 

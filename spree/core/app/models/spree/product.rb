@@ -130,10 +130,17 @@ module Spree
     belongs_to :tax_category, class_name: 'Spree::TaxCategory'
     belongs_to :product_type, class_name: 'Spree::ProductType', optional: true, counter_cache: :products_count
 
-    # Delivery eligibility moved to ProductType#fulfillment_types in 6.0;
-    # both of these die with spree_shipping_categories in 6.1.
-    belongs_to :shipping_category, class_name: 'Spree::ShippingCategory', inverse_of: :products, optional: true, deprecated: true
-    has_many :shipping_methods, through: :shipping_category, class_name: 'Spree::DeliveryMethod', deprecated: true
+    # How this product ships: origins, zones and methods all hang off the
+    # profile. Required — a product without one could not be fulfilled at
+    # all — and auto-assigned on create (type template, else the store's
+    # default profile), so callers never have to think about it. The FK is
+    # the renamed 5.x shipping_category_id, so migrated catalogs arrive
+    # already assigned.
+    belongs_to :delivery_profile, class_name: 'Spree::DeliveryProfile', inverse_of: :products
+
+    # Guards every write path (including raw prefixed-id assignment) against
+    # linking another store's profile.
+    validate :delivery_profile_must_belong_to_store, if: :delivery_profile_id_changed?
 
     # Every product has at least one variant. `default_variant` is the "face" of
     # the product (price display, default add-to-cart, property delegation).
@@ -165,6 +172,11 @@ module Spree
     has_many :digitals, through: :variants
 
     after_initialize :assign_default_tax_category
+    # The type's profile is a creation-time template: stamped here, never
+    # synced afterwards — reassigning the type later leaves the product's
+    # profile alone. Falls back to the store's default profile, keeping the
+    # required association satisfiable without the caller naming one.
+    before_validation :stamp_template_delivery_profile, on: :create
 
     after_create :sync_associations_from_product_type
     after_update :sync_associations_from_product_type, if: :saved_change_to_product_type_id?
@@ -642,19 +654,24 @@ module Spree
 
     # Check if the product is digital by checking if any of its shipping methods are digital delivery
     # This is used to determine if the product is digital and should have a digital delivery price
-    # instead of a physical shipping price
+    # instead of a physical shipping price. The profile kind declares it —
+    # capabilities are never stated twice.
     #
     # @return [Boolean]
     def digital?
-      @digital ||= fulfillment_types == ['digital']
+      # Memoized via nil-check: MemoizedData resets caches by assigning nil.
+      return @digital unless @digital.nil?
+
+      @digital = !!resolved_delivery_profile&.digital?
     end
 
-    # The fulfillment types this product may be delivered by, from its
-    # ProductType; typeless products default to physical shipping.
+    # The profile that governs this product. The association is required for
+    # new records; the store-default fallback covers rows predating the
+    # backfill (never expected in practice, cheap to be safe about).
     #
-    # @return [Array<String>]
-    def fulfillment_types
-      product_type&.fulfillment_types.presence || ['shipping']
+    # @return [Spree::DeliveryProfile, nil]
+    def resolved_delivery_profile
+      delivery_profile || (store && Spree::DeliveryProfile.default_for(store))
     end
 
     def auto_match_collections
@@ -901,6 +918,20 @@ module Spree
 
     def assign_default_tax_category
       self.tax_category = Spree::TaxCategory.default(assignable_store) if new_record? && self[:tax_category_id].blank?
+    end
+
+    def stamp_template_delivery_profile
+      return if delivery_profile_id.present?
+
+      self.delivery_profile_id = product_type&.delivery_profile_id ||
+        (store && Spree::DeliveryProfile.default_for(store)&.id)
+    end
+
+    def delivery_profile_must_belong_to_store
+      return if delivery_profile.nil? || store.nil?
+      return if delivery_profile.store_id == store_id
+
+      errors.add(:delivery_profile, :invalid)
     end
 
     def run_touch_callbacks

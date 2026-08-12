@@ -16,12 +16,17 @@ module Spree
 
             # additional data
             StoreCreditCategories.call
-            DigitalDelivery.call
+            TaxCategories.call
 
             # store & stock location
             Stores.call
             Channels.call
             StockLocations.call
+            DeliveryZones.call
+            # Store-scoped, so they can only run once a store and its
+            # locations exist.
+            DigitalDelivery.call
+            PickupDelivery.call
             AdminUser.call
 
             # add store resources

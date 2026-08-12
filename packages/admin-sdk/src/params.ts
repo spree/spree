@@ -6,6 +6,12 @@ export interface StoreUpdateParams {
   preferred_admin_locale?: string
   preferred_timezone?: string
   preferred_weight_unit?: string
+  /** Packaging tare added to every package's content weight for rate calculation, in the store's weight unit. */
+  preferred_default_package_weight?: number
+  /** Default package (box) dimensions for carrier dimensional-weight pricing — inches when imperial, centimeters when metric. All three required to take effect. */
+  preferred_default_package_length?: number
+  preferred_default_package_width?: number
+  preferred_default_package_height?: number
   preferred_unit_system?: string
   /**
    * Store-wide default storefront posture: `public`, `prices_hidden`, or
@@ -123,10 +129,83 @@ export interface FulfillmentCreateParams {
   metadata?: Record<string, unknown>
 }
 
+/** One entry from `trackingCarriers.list()`. */
+export interface TrackingCarrierOption {
+  /** Registry slug — what `tracking_carrier` stores */
+  id: string
+  /** Carrier display name */
+  name: string
+}
+
 export interface FulfillmentUpdateParams {
   /** Carrier tracking number or a full `https://` tracking link; see {@link FulfillmentCreateParams.tracking} */
   tracking?: string
+  /**
+   * Which carrier the tracking number belongs to — a slug from
+   * `trackingCarriers.list()`. Left blank, Spree detects it from the number's
+   * format where it can.
+   */
+  tracking_carrier?: string
   selected_delivery_rate_id?: string
+  /** Move the fulfillment to another origin (sloc_...); re-prices it against that location's rates. */
+  stock_location_id?: string
+}
+
+/**
+ * Ships some or all of a fulfillment. A fulfillment has one origin, one
+ * carrier and one tracking number, so shipping a subset splits it first: the
+ * chosen quantities move into a new fulfillment which is the one that ships,
+ * and the remainder stays behind, still open.
+ */
+export interface FulfillmentFulfillParams {
+  /** Line item quantities to ship; omit to ship everything the fulfillment holds */
+  items?: Array<{ item_id: string; quantity: number }>
+  /** Carrier tracking number or a full `https://` tracking link, stored on the fulfillment that ships */
+  tracking?: string
+  /** Which carrier the number belongs to (a `trackingCarriers.list()` slug); detected from the number when omitted */
+  tracking_carrier?: string
+  /**
+   * Whether the customer gets the shipment email. Defaults to true; pass false
+   * to suppress it for this dispatch only (a correction, a re-ship, goods
+   * handed over in person). The store's own transactional-email preference
+   * still applies on top.
+   */
+  notify_customer?: boolean
+  /**
+   * Hand the goods over even though the order is unpaid or holds backordered
+   * units. Shipping against an invoice is ordinary trade, so this is the
+   * merchant's call rather than something the API decides for them.
+   */
+  force?: boolean
+}
+
+/**
+ * Records that the customer received the goods — the end of the fulfillment
+ * lifecycle. Reached by a carrier reporting delivery, by staff who know the
+ * parcel arrived, or by a customer collecting a pickup order.
+ */
+export interface FulfillmentMarkDeliveredParams {
+  /**
+   * When it arrived, as an ISO 8601 string. Defaults to now. Carriers report a
+   * delivery time that is usually earlier than the webhook announcing it, and
+   * return windows run from the real one.
+   */
+  delivered_at?: string
+  /** Whether the customer gets a delivery notification. Defaults to true. */
+  notify_customer?: boolean
+}
+
+/**
+ * Moves `quantity` units of one variant out of a fulfillment into a new one.
+ * Splitting is per variant — a fulfillment holding several variants needs one
+ * call each.
+ */
+export interface FulfillmentSplitParams {
+  /** The variant being moved out (variant_...) */
+  variant_id: string
+  quantity: number
+  /** Origin of the new fulfillment (sloc_...); defaults to the source fulfillment's location. */
+  stock_location_id?: string
 }
 
 export interface ReturnCreateParams {
@@ -293,9 +372,17 @@ export interface OrderUpdateParams {
   internal_note?: string
   ship_address?: AddressInputParams
   bill_address?: AddressInputParams
-  line_items?: Array<{
-    variant_id?: string
-    quantity?: number
+  /**
+   * Line items to upsert, keyed by variant. An entry sets that variant's
+   * quantity, creating the line item when the order has none; `quantity: 0`
+   * removes it. Only the variants you send are touched — omitting one leaves
+   * it alone — so a whole edited order can be submitted in a single request
+   * and applied in one transaction.
+   */
+  items?: Array<{
+    variant_id: string
+    quantity: number
+    metadata?: Record<string, unknown>
   }>
 }
 
@@ -466,6 +553,8 @@ export interface ProductCreateParams {
   slug?: string
   status?: 'draft' | 'active' | 'archived'
   tax_category_id?: string
+  /** Fulfillment profile deciding how this product ships (fp_...); null falls back to the store default. */
+  delivery_profile_id?: string | null
   category_ids?: Array<string>
   /**
    * Collections this product belongs to. Assigning an automatic collection
@@ -492,6 +581,8 @@ export interface ProductUpdateParams {
   slug?: string
   status?: 'draft' | 'active' | 'archived'
   tax_category_id?: string
+  /** See `ProductCreateParams.delivery_profile_id`. */
+  delivery_profile_id?: string | null
   category_ids?: Array<string>
   /** See `ProductCreateParams.collection_ids`. */
   collection_ids?: Array<string>
@@ -1025,8 +1116,8 @@ export interface ProductTypeCustomFieldDefinitionParams {
  */
 export interface ProductTypeCreateParams {
   name: string
-  /** Fulfillment types products of this type support (e.g. ['shipping', 'pickup']). */
-  fulfillment_types?: string[]
+  /** Fulfillment profile stamped onto products created with this type (fp_...); null leaves them on the store default. */
+  delivery_profile_id?: string | null
   /**
    * Option types seeded onto products that get this type. Editing them never
    * changes existing products — use `applyToProducts` for that.
@@ -1046,7 +1137,7 @@ export interface ProductTypeCreateParams {
  */
 export interface ProductTypeUpdateParams {
   name?: string
-  fulfillment_types?: string[]
+  delivery_profile_id?: string | null
   option_type_ids?: string[]
   category_ids?: string[]
   custom_field_definitions?: ProductTypeCustomFieldDefinitionParams[]
@@ -1145,6 +1236,8 @@ export interface ChannelCreateParams {
    * store-level preference.
    */
   preferred_guest_checkout?: boolean | null
+  /** Fulfillment-origin allowlist (sloc_...); replaces the full set. Empty means every store location serves this channel. */
+  stock_location_ids?: string[]
 }
 
 export interface ChannelUpdateParams {
@@ -1163,6 +1256,8 @@ export interface ChannelUpdateParams {
    * store-level preference.
    */
   preferred_guest_checkout?: boolean | null
+  /** Fulfillment-origin allowlist (sloc_...); replaces the full set. Empty means every store location serves this channel. */
+  stock_location_ids?: string[]
 }
 
 export interface CustomerGroupUpdateParams {
@@ -1396,6 +1491,41 @@ export interface PaymentMethodUpdateParams {
  * naming-symmetry with the controller. They are structurally identical.
  */
 export type PaymentMethodType = ResourceTypeDefinition
+
+/**
+ * One entry returned by `GET /integrations/types` — every registered
+ * integration with its gallery metadata and configuration schema. Pure
+ * registry discovery: read live connection state from `integrations.list()`.
+ */
+export interface IntegrationTypeDefinition {
+  /** Wire shorthand (`Spree::Integration.api_type`), not the Ruby class name. */
+  type: string
+  name: string
+  /** Display grouping, e.g. `shipping`, `tax`; null for ungrouped. */
+  group: string | null
+  /** One-line description, localized server-side from the gem's translations. */
+  description: string | null
+  /** Gallery logo: an absolute URL to hosted brand assets, or a `data:` URI for self-contained gems. Render with a fallback — hosted logos are a courtesy, not a guarantee. */
+  logo_url: string | null
+  preference_schema: { key: string; type: string; default: unknown }[]
+}
+
+export interface IntegrationCreateParams {
+  /** Wire shorthand from `integrations.types()`. */
+  type: string
+  /** Activation runs the connection check server-side and 422s on failure. */
+  active?: boolean
+  /**
+   * Credential values; secret (`password`-typed) preferences come back
+   * masked, and submitting a masked value back keeps the stored secret.
+   */
+  preferences?: Record<string, unknown>
+}
+
+export interface IntegrationUpdateParams {
+  active?: boolean
+  preferences?: Record<string, unknown>
+}
 
 /**
  * API shorthand for an export type (`Spree::Export.api_type`), not the Ruby
@@ -1670,27 +1800,92 @@ export interface PromotionRuleUpdateParams {
   customer_ids?: string[]
 }
 
+/**
+ * Creates or updates a delivery profile — the grouping that decides how a
+ * set of products ships (origins, zones, methods). `stock_location_ids` is a
+ * replace-set; empty means every store location.
+ */
+export interface DeliveryProfileParams {
+  name?: string
+  /** Registered profile kind (`shipping`, `digital`, extension kinds); create-only, defaults to shipping. */
+  kind?: string
+  /** Promotes this profile to the store default; the previous default is demoted. */
+  default?: boolean
+  position?: number
+  /** Prefixed stock location IDs (`sloc_...`); replaces the full set. Empty means every store location. */
+  stock_location_ids?: string[]
+}
+
+/**
+ * Creates or updates an origin group — the partition of a profile's
+ * fulfillment origins that its zones and methods hang off. `stock_location_ids`
+ * is a replace-set; empty means every store location.
+ */
+export interface DeliveryOriginGroupParams {
+  name?: string | null
+  position?: number
+  /** Prefixed stock location IDs (`sloc_...`); replaces the full set. Empty means every store location. */
+  stock_location_ids?: string[]
+}
+
 export interface DeliveryMethodParams {
   name?: string
   admin_name?: string | null
   code?: string | null
-  /** One of `shipping`, `digital`, `pickup`, `pickup_point`. */
-  fulfillment_type?: string
   fulfillment_provider?: string
+  /** Delivery profile this method belongs to (fp_...); defaults to the store default profile. */
+  delivery_profile_id?: string
+  /** Origin group offering this method (og_...); defaults to the zone's group, else the profile's default group. */
+  delivery_origin_group_id?: string
   pickup_point_provider?: string | null
+  /**
+   * Quoting strategy class name (see `deliveryMethods.rateProviders()`).
+   * Omit or send null for the built-in Internal provider, which prices
+   * through the method's calculator.
+   */
+  rate_provider?: string | null
   storefront_visible?: boolean
   tracking_url?: string | null
   estimated_transit_business_days_min?: number | null
   estimated_transit_business_days_max?: number | null
   /** Prefixed tax category ID (`taxcat_...`), or null to clear. */
   tax_category_id?: string | null
-  /** Product type prefixed ID (pt_...); drives fulfillment eligibility. */
-  product_type_id?: string | null
   /** Delivery calculator class name (see `deliveryMethods.calculators()`). */
   calculator_type?: string
   calculator_preferences?: Record<string, unknown>
-  /** Prefixed delivery zone IDs (`dz_...`); replaces the full set. */
-  delivery_zone_ids?: string[]
+  /** Prefixed delivery zone ID (`dz_...`) narrowing destinations, or null for no restriction. Must belong to the method's profile. */
+  delivery_zone_id?: string | null
+  /**
+   * Method-level percentage handling fee added on top of provider-quoted
+   * rates. Ignored for calculator-priced methods.
+   */
+  markup_percent?: number | string | null
+  /** Method-level flat handling fee added on top of provider-quoted rates. */
+  markup_flat?: number | string | null
+  /**
+   * Carrier service rows: which provider services this method offers, each
+   * with an optional display label and markup override. Replaces the full
+   * set — omitted rows are removed; no rows means every service the
+   * provider returns is offered.
+   */
+  services?: DeliveryMethodServiceParams[]
+}
+
+/** One carrier service row on a delivery method. */
+export interface DeliveryMethodServiceParams {
+  /** Prefixed row ID (`dms_...`) when updating an existing row. */
+  id?: string
+  /** Carrier identifier as the provider's API knows it, e.g. `UPS`. */
+  carrier: string
+  /** Service identifier as the provider's API knows it, e.g. `Ground`. */
+  service: string
+  /** Display label shown to customers instead of the carrier-derived name. */
+  label?: string | null
+  /** Overrides the method-level flat markup for this service. */
+  markup_flat?: number | string | null
+  /** Overrides the method-level percentage markup for this service. */
+  markup_percent?: number | string | null
+  position?: number
 }
 
 export interface DeliveryZoneMemberParams {
@@ -1705,6 +1900,8 @@ export interface DeliveryZoneMemberParams {
 export interface DeliveryZoneParams {
   name?: string
   description?: string | null
+  /** Fulfillment profile this zone belongs to (fp_...); create-only, defaults to the store default profile. */
+  delivery_profile_id?: string
   /** Replaces the zone's full member set atomically. */
   members?: DeliveryZoneMemberParams[]
 }

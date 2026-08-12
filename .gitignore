@@ -20,6 +20,7 @@ db/*.sqlite3*
 doc/**/*
 spree/Gemfile.lock
 spree/*/Gemfile.lock
+spree/providers/*/Gemfile.lock
 log/*.log
 pkg
 public/assets

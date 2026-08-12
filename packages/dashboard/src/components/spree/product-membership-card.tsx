@@ -37,10 +37,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  Thumbnail,
   useConfirm,
 } from '@spree/dashboard-ui'
 import { Link } from '@tanstack/react-router'
-import { ImageIcon, PlusIcon, SearchIcon, Trash2Icon, XIcon } from 'lucide-react'
+import { PlusIcon, SearchIcon, Trash2Icon, XIcon } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -415,13 +416,7 @@ function ProductRow({
           params={{ storeId, productId: product.id }}
           className="flex items-center gap-3 hover:underline"
         >
-          <span className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded border border-border bg-muted">
-            {product.thumbnail_url ? (
-              <img src={product.thumbnail_url} alt="" className="size-full object-cover" />
-            ) : (
-              <ImageIcon className="size-4 text-muted-foreground" />
-            )}
-          </span>
+          <Thumbnail src={product.thumbnail_url} size="sm" />
           <span className="truncate text-sm">{product.name}</span>
         </Link>
       </TableCell>

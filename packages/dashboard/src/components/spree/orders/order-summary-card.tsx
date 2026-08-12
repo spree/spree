@@ -1,0 +1,194 @@
+import type { Order } from '@spree/admin-sdk'
+import { LocaleLabel, useStore } from '@spree/dashboard-core'
+import { Card, CardHeader, CardTitle, cn, Separator } from '@spree/dashboard-ui'
+import { Link } from '@tanstack/react-router'
+import i18n from 'i18next'
+import type { ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
+
+function formatDate(iso: string | null) {
+  if (!iso) return '—'
+  return new Date(iso).toLocaleDateString(i18n.language, {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  })
+}
+
+function SummaryRow({
+  label,
+  value,
+  bold,
+  danger,
+  highlight,
+}: {
+  label: string
+  value: ReactNode
+  bold?: boolean
+  danger?: boolean
+  highlight?: boolean
+}) {
+  return (
+    <div
+      className={cn('flex items-center justify-between px-5 py-2.5', highlight && 'bg-muted/50')}
+    >
+      <span className="text-sm">{label}</span>
+      <span className={cn('text-sm', bold && 'font-bold', danger && 'text-destructive')}>
+        {value}
+      </span>
+    </div>
+  )
+}
+
+export function OrderSummaryCard({ order }: { order: Order }) {
+  const { t } = useTranslation()
+  const { storeId } = useStore()
+  const outstandingBalance = Number.parseFloat(order.amount_due)
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('admin.pages.orders.detail.section_summary')}</CardTitle>
+      </CardHeader>
+      <div className="py-1">
+        {order.created_by && (
+          <SummaryRow
+            label={t('admin.pages.orders.detail.summary.created_by')}
+            value={order.created_by.full_name || order.created_by.email}
+          />
+        )}
+        <SummaryRow
+          label={t('admin.fields.created_at.label')}
+          value={formatDate(order.created_at)}
+        />
+
+        {order.completed_at && (
+          <SummaryRow
+            label={t('admin.fields.completed_at.label')}
+            value={formatDate(order.completed_at)}
+          />
+        )}
+
+        {order.canceled_at && (
+          <>
+            <SummaryRow
+              label={t('admin.orders.detail.summary.canceled_at')}
+              value={formatDate(order.canceled_at)}
+            />
+            {order.canceler && (
+              <SummaryRow
+                label={t('admin.orders.detail.summary.canceler')}
+                value={order.canceler.full_name || order.canceler.email}
+              />
+            )}
+          </>
+        )}
+
+        {order.approved_at && order.approver && (
+          <SummaryRow
+            label={t('admin.orders.detail.summary.approved_by')}
+            value={order.approver.full_name || order.approver.email}
+          />
+        )}
+
+        <Separator />
+
+        {order.channel && (
+          <SummaryRow
+            label={t('admin.pages.orders.detail.summary.channel')}
+            value={
+              <Link
+                to="/$storeId/settings/channels"
+                params={{ storeId }}
+                search={{ edit: order.channel.id }}
+                className="text-foreground hover:underline"
+              >
+                {order.channel.name}
+              </Link>
+            }
+          />
+        )}
+
+        {order.market && (
+          <SummaryRow
+            label={t('admin.pages.orders.detail.summary.market')}
+            value={
+              <Link
+                to="/$storeId/settings/markets"
+                params={{ storeId }}
+                search={{ edit: order.market.id }}
+                className="text-foreground hover:underline"
+              >
+                {order.market.name}
+              </Link>
+            }
+          />
+        )}
+        <SummaryRow
+          label={t('admin.pages.orders.detail.summary.locale')}
+          value={order.locale ? <LocaleLabel code={order.locale} /> : '—'}
+        />
+        <SummaryRow label={t('admin.fields.currency.label')} value={order.currency} />
+
+        <Separator />
+
+        <SummaryRow label={t('admin.fields.subtotal.label')} value={order.display_item_total} />
+
+        {Number.parseFloat(order.delivery_total) > 0 && (
+          <SummaryRow
+            label={t('admin.fields.shipping.label')}
+            value={order.display_delivery_total}
+          />
+        )}
+
+        {Number.parseFloat(order.discount_total) !== 0 && (
+          <SummaryRow
+            label={t('admin.orders.detail.summary.promotions')}
+            value={order.display_discount_total}
+          />
+        )}
+
+        {Number.parseFloat(order.adjustment_total) !== 0 && (
+          <SummaryRow
+            label={t('admin.orders.detail.summary.adjustments')}
+            value={order.display_adjustment_total}
+          />
+        )}
+
+        {Number.parseFloat(order.included_tax_total) > 0 && (
+          <SummaryRow
+            label={t('admin.orders.detail.summary.tax_included')}
+            value={order.display_included_tax_total}
+          />
+        )}
+
+        {Number.parseFloat(order.additional_tax_total) > 0 && (
+          <SummaryRow
+            label={t('admin.orders.detail.summary.tax_additional')}
+            value={order.display_additional_tax_total}
+          />
+        )}
+
+        <Separator />
+
+        <SummaryRow label={t('admin.fields.total.label')} value={order.display_total} bold />
+
+        <Separator />
+
+        <SummaryRow
+          label={t('admin.orders.detail.summary.payment_total')}
+          value={order.display_payment_total}
+          highlight
+        />
+        <SummaryRow
+          label={t('admin.orders.detail.summary.outstanding_balance')}
+          value={order.display_amount_due}
+          highlight
+          danger={outstandingBalance > 0}
+        />
+      </div>
+    </Card>
+  )
+}

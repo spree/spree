@@ -18,7 +18,7 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodSerializer do
     subject(:payload) { described_class.new(payment_method, params: base_params).to_h }
 
     it 'masks `:password` preferences in the serialized payload' do
-      expect(payload['preferences']['dummy_secret_key']).to eq("#{Spree::Preferences::Masking::TOKEN}alue")
+      expect(payload['preferences']['dummy_secret_key']).to eq(Spree::Preferences::Masking.mask('sk_live_super_secret_value'))
     end
 
     it 'never includes the plaintext secret anywhere in the payload' do

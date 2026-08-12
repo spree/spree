@@ -1,0 +1,6 @@
+---
+en:
+  spree:
+    integrations:
+      easy_post:
+        description: Live multi-carrier delivery rates at checkout through your EasyPost account, including your own negotiated carrier contracts.

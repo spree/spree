@@ -809,7 +809,8 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     let(:product) { subject.process! }
 
     context 'when the product type exists' do
-      let!(:digital_type) { create(:product_type, name: 'Digital', store: store, fulfillment_types: ['digital']) }
+      let!(:digital_profile) { create(:digital_delivery_profile, store: store) }
+      let!(:digital_type) { create(:product_type, name: 'Digital', store: store, delivery_profile: digital_profile) }
 
       let(:row_data) do
         csv_row_hash(
@@ -822,9 +823,9 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
         )
       end
 
-      it 'assigns it and inherits its fulfillment types' do
+      it 'assigns it and stamps its template delivery profile' do
         expect(product.product_type).to eq digital_type
-        expect(product.fulfillment_types).to eq ['digital']
+        expect(product.delivery_profile).to eq digital_profile
       end
     end
 
@@ -840,16 +841,16 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
         )
       end
 
-      it 'creates it in the store, defaulting to physical shipping' do
+      it 'creates it in the store, defaulting to the store default profile' do
         expect(product.product_type.name).to eq 'Apparel'
         expect(product.product_type.store).to eq store
-        expect(product.fulfillment_types).to eq ['shipping']
+        expect(product.delivery_profile).to eq store.default_delivery_profile
       end
     end
 
     context 'when updating a product with a different product_type' do
       let!(:apparel_type) { create(:product_type, name: 'Apparel', store: store) }
-      let!(:digital_type) { create(:product_type, name: 'Digital', store: store, fulfillment_types: ['digital']) }
+      let!(:digital_type) { create(:product_type, name: 'Digital', store: store) }
       let!(:existing_product) do
         create(:product, slug: 'product-to-update', name: 'Product', store: store, product_type: apparel_type)
       end
@@ -882,9 +883,9 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
         )
       end
 
-      it 'leaves it unset and rides the physical shipping default' do
+      it 'leaves it unset and rides the store default profile' do
         expect(product.product_type).to be_nil
-        expect(product.fulfillment_types).to eq ['shipping']
+        expect(product.delivery_profile).to eq store.default_delivery_profile
       end
     end
   end

@@ -1,3 +1,139 @@
+## 2026-08-12: The label leads, fulfilled follows (amends the Phase 7 fulfill flow)
+
+A warehouse prints the label, sticks it on the box, hands the box over — and
+only then is the parcel fulfilled. The fulfill workflow used to invert that:
+status flipped and the shipped email queued first, the label bought after,
+which meant the merchant could not print a label without telling the customer
+the parcel had shipped, the email raced the label purchase for its tracking
+number, and a failed purchase surfaced only after the customer heard.
+
+Two changes. `Fulfillments::PurchaseLabel` is the explicit pre-ship step:
+buys the checkout-quoted rate through the provider, attaches tracking and the
+label document, leaves the status untouched and sends nothing — and fails
+loudly, because nothing has left the building yet. And `Fulfillments::Fulfill`
+reordered its internals to split → buy label (external step) → mark fulfilled,
+so the fulfilled event always sees the provider's tracking number; a label
+failure there still degrades to "no label yet" per the provider doctrine,
+since a carrier outage must never stop a merchant recording a parcel that
+physically left.
+
+Two contracts changed with it: providers must make `create_fulfillment`
+idempotent (a label bought in the explicit step is returned, not re-bought,
+when fulfill later runs), declared via `FulfillmentProvider.generates_labels?`;
+and a failure after a partial-fulfillment split no longer rolls the split
+back — a label may already be bought for the split parcel, and rolling the
+parcel away would orphan a paid label. The split survives unfulfilled and a
+retry picks it up.
+
+Packing slips are the platform's document, not the carrier's — generated
+client-side from data the order screen already holds, no prices, no admin
+shell around them. Plan: `6.0-fulfillment-and-delivery.md`.
+
+## 2026-08-11: One tracking number per fulfillment; multiple trackings deferred to 6.1
+
+A fulfillment carries exactly one tracking number, one carrier and one carrier
+lifecycle. When a shipment physically diverges into parcels, the answer is the
+split flow the partial-fulfillment work already provides: each parcel becomes
+its own fulfillment with its own items, status, tracking and `delivered_at`.
+That is strictly more expressive than a list of tracking numbers on one
+record — a bare list cannot say which items are in the box that bounced, and
+delivery becomes all-or-nothing across the list.
+
+What a separate tracking model would add is the narrower case: one logical
+shipment in several boxes the merchant does not want to manage as separate
+fulfillments (furniture in three cartons, a pallet of mixed packages).
+Deferred to 6.1, deliberately after the carrier-axis work landed, because the
+cost is now clear: `tracking_status`, `estimated_delivery_at`, `delivered_at`
+and webhook matching all live on the fulfillment, and a
+`spree_fulfillment_trackings` row would have to absorb that whole axis —
+per-parcel carrier status, webhooks matched to a row, the fulfillment
+delivered only when every row is — plus deprecation bridges for the
+fulfillment-level columns that are public API since 6.0.
+
+Design constraint recorded for whoever builds it: the tracking row takes the
+entire carrier axis with it. Splitting the axis across fulfillment and
+tracking rows — status here, delivered_at there — recreates the two-sources
+problem the 6.0 status rework just removed.
+Plan: `6.0-fulfillment-and-delivery.md` (Phase 6, resolved question 15).
+
+## 2026-08-11: Fulfillment status model — two axes, `delivered` first-class, machine removed (supersedes part of 2026-08-10)
+
+`Fulfillment#status` collapses to `unfulfilled → fulfilled → delivered` plus
+`canceled`, plain string via `HasStatus`, state machine deleted. `pending` and
+`ready` were payment and stock facts wearing a fulfillment costume —
+`determine_state` re-derived them from `order.paid?` on every recalculation, so
+a refund flipped a fulfillment's status with no physical change, and merchants
+never understood them. That gating becomes a validate guard in
+`Fulfillments::Fulfill` (rejects with a reason, staff-overridable).
+`ready_for_pickup` dies as a status: pickup `fulfilled` means "ready at the
+counter", `delivered` means picked up, presentation is modality-aware.
+
+`delivered` is the new terminal state — confirmed receipt, the thing merchants
+kept asking for (the lifecycle used to end at handover). Set by carrier
+tracking, a staff button, or later customer confirmation, via
+`Fulfillments::MarkDelivered` (`delivered_at`, `fulfillment.delivered` event).
+The returns eligibility window and the EU 14-day withdrawal period anchor on
+`delivered_at`.
+
+Carrier truth is a second axis, data not a machine: `tracking_status` +
+`tracking_details` + `estimated_delivery_at`, overwritten per update
+(`pre_transit … delivered, return_to_sender, failure`), written by
+`Fulfillments::UpdateTracking`. Bounces and failed attempts surface there
+without mutating `status`. The EasyPost gem feeds it from tracker webhooks —
+every purchased label already has a tracker whose updates were being thrown
+away; trackers for hand-entered numbers cost money each, so opt-in.
+
+This supersedes the 2026-08-10 "the dangerous callbacks move, the machine
+stays" conclusion: with `pending`/`ready` gone the machine held two transitions
+and its event publishes, which is what `HasStatus` + workflows already do for
+Return/Exchange/Claim. The side-effect relocation stands and made removal
+cheap. The FulfillmentItem machine and the other machines (Payment,
+ReturnAuthorization, GiftCard) are unaffected. Status mapping for existing
+rows: `pending|ready → unfulfilled`, `ready_for_pickup → fulfilled`,
+pickup-modality `fulfilled → delivered`, shipping-modality `fulfilled` stays.
+Plan: `6.0-fulfillment-and-delivery.md` (Key Decisions → "Status model — two
+axes", Resolved Question 14, Phase 7).
+
+## 2026-08-11: The order edit screen stages edits and saves in bulk (reverses 2026-08-10)
+
+The 6.0 admin order edit screen was specified to write immediately — one
+interaction, one request — and shipped that way: a dialog per quantity change, a
+confirm dialog per removal. That is the wrong shape for an order editor and the
+constraint behind it was wrong.
+
+It now works as a form. Quantities are inputs, a row's `x` marks it removed
+(struck through, reversible), Save applies the batch and Discard drops it.
+
+**Why the original constraint was wrong.** It existed to forbid a *persisted*
+per-domain draft: a shadow order in the database that
+`6.1-order-change-substrate.md` Phase 3 would have to migrate onto `OrderChange`.
+That reasoning holds. But it was extended to cover transient React form state,
+which is a different thing entirely — a form holding "quantity 2 -> 3, line 4
+removed" until submit persists nothing, so there is nothing to unpick later. It
+is the same dirty-tracked form pattern the dashboard uses everywhere else.
+
+**Staged edits fit the substrate better, not worse.** `OrderChange` is
+`begin -> request -> confirm -> cancel`: accumulate actions, then confirm. A
+screen that already batches behind Save maps onto that directly, and Phase 3
+becomes additive (a totals delta, `begin` on entry). The immediate-write version
+is the one that would have needed reshaping, having no confirm moment at all.
+
+**Immediate writes were also worse on their own terms.** Every keystroke in a
+quantity field fired a request and re-summed the order server-side, and removing
+a line was irreversible with only a confirm dialog in the way. Staging gives the
+merchant a Discard.
+
+**Accepted limitation.** There is no bulk line-item endpoint, so Save issues N
+calls against the existing per-item routes and a mid-batch failure leaves
+earlier writes applied. The screen reports what succeeded and keeps the rest
+staged. Deliberately not fixed with a new bulk endpoint: Phase 3's
+`OrderChanges::Confirm` applies every action in one transaction, so building one
+now would be work thrown away.
+
+**What stays forbidden:** persisting pending edits in any schema, and computing
+a projected total client-side to fake a preview — 6.0 cannot project totals, and
+an approximation would disagree with the server.
+
 ## 2026-08-11: Cross-border tax-inclusive pricing derives net-fixed, except where the merchant priced that geography
 
 A live pass against a running server found three defects in one seam — what a customer is charged
@@ -45,6 +181,102 @@ Surveyed for this: Shopify, WooCommerce, Magento/Adobe Commerce, BigCommerce, Sa
 Vendure, commercetools. Net-fixed is the majority default (WooCommerce, Magento, Shopify, Vendure);
 the headless platforms (Saleor, commercetools, Medusa) refuse to derive at all and require a price
 per channel/region.
+## 2026-08-10: Fulfillment side effects move to workflows; the state machine keeps the status column
+
+Answers "should Fulfillment follow Order and lose its state machine?" with
+**partly, deliberately**. The side effects move; the machine stays.
+
+`Fulfillment#after_cancel` restocked every unit **and** called
+`provider.cancel_fulfillment` — network I/O (an EasyPost label refund, a 3PL
+stand-down) running inside the save transaction that held the stock movements.
+That is precisely the failure `6.0-service-workflows.md` cites as the reason
+transition callbacks are the wrong place for side effects: a slow carrier holds
+row locks, and a failing one rolls back a restock that already happened at the
+warehouse.
+
+`Spree::Fulfillments::Cancel` and `::Resume` now own that work — restock and
+status inside one transaction, the provider call as an `external_step` after it
+commits. `Fulfillments::Fulfill` (added the same day for partial shipments)
+gained an explicit unstock for the `canceled -> fulfilled` path the resume
+callback used to cover; missing it would have shipped goods without taking them
+off the shelf.
+
+**What the machine keeps:** the status column, the transition graph and its
+guards, and the `publish_*_event` callbacks. Publishing an event *describes* the
+status change rather than being a side effect of it, so it belongs where the
+transition is. The graph is real validation work — the narrow exception
+`6.0-service-workflows.md` already allows.
+
+**Why not remove the machine outright.** Four other models still carry machines
+(Payment, InventoryUnit, ReturnAuthorization, GiftCard). Removing one at a time
+means re-litigating the same design in five separate rounds, and Fulfillment's
+`ready`/`resume` guards are conditional on `determine_state`, so replacing them
+is not mechanical. A full removal is a planned wave with its own document, not a
+refactor folded into fulfillment UI work. This also amends
+`6.0-fulfillment-and-delivery.md` resolved question 1, which had promised all
+transition hooks were preserved.
+
+**Composition constraint, and the wrong turn taken first.** `Orders::Cancel`
+and `Orders::Resume` cancel or resume every fulfillment from inside the order's
+own transaction, and a nested `external_step` raises `ContractError` by design.
+The first attempt worked around this by putting the restock bodies on the model
+as public `#restock_units`/`#unstock_units` and having both layers call them.
+That was wrong twice over: it violates the rule that workflows write behavior
+inline as named steps rather than delegating to model business methods, and it
+plants new public model surface that would have to be torn out again when the
+machine is eventually removed — the opposite of the direction the model is
+moving.
+
+The right shape: the stock movements are written inline in the workflow steps,
+and `Fulfillments::Cancel` takes a `notify_provider:` flag so a caller that
+already holds a transaction can suppress the external step and batch the
+carrier calls into its own. `Orders::Cancel` passes `notify_provider: false`
+and notifies after commit; `Orders::Resume` nests cleanly because Resume has no
+external step. **The general rule: when a workflow with an `external_step` must
+run inside another's transaction, give it a flag to defer the external half —
+do not push the shared behavior down onto the model.**
+
+## 2026-08-10: Order editing splits from fulfillment management; two OrderChange questions resolved
+
+The 6.0 admin order detail page grows a **separate edit screen** at
+`/orders/$orderId/edit` owning post-placement line-item mutation — add, remove,
+change quantity. The order detail page keeps fulfillment management (what ships,
+from where, under which delivery method); it no longer offers line-item editing.
+The split follows the reference layout and, more importantly, matches how
+`6.1-order-change-substrate.md` Phase 3 wants to wrap the edit surface in a
+change set without disturbing fulfillment UI.
+
+The 6.0 screen **writes immediately and shows no totals delta**. Projecting
+totals without writing rows is impossible before the OrderChange substrate
+lands, and the alternative — buffering edits in React state so the UI can fake a
+preview — is a per-domain draft living in the browser, which the substrate plan
+explicitly forbids. The money math still goes through a value-object-returning
+service so Phase 3 re-points it at `OrderChanges::Preview` without touching
+callers.
+
+Two of that plan's open questions are settled as a consequence:
+
+*A change set belongs to one `Order`, never to an `OrderGroup`.* Multi-vendor
+fans a cart into N child orders under one group, and the marketplace plan's
+Decision 8 keeps line items, fulfillments and totals on the children — the group
+holds only customer, payment and addresses. Change sets mutate child-owned rows,
+so they bind to the child. Cross-vendor edits are N change sets, which is also
+where the money belongs: each vendor settles against its own order.
+
+*A pending change set does not hold stock.* Stock reservations are scoped to
+checkout — held against a cart, extended by customer activity, expired by a job.
+An admin editing a placed order is neither, so reusing that machinery would
+create reservations with no expiry trigger. `add_item` takes stock at confirm,
+and confirm is where an out-of-stock action fails.
+
+Also settled for the backend: **partial fulfillment ships as a
+`Spree::Fulfillments::Fulfill` workflow**, not by extending the state machine.
+`Spree::Fulfillment` keeps its machine (preserved deliberately per
+`6.0-fulfillment-and-delivery.md` resolved question 1), but shipping a *subset*
+means splitting first, and split-then-ship inside an `after_transition` callback
+is exactly the shape `6.0-service-workflows.md` prohibits. The workflow wraps the
+machine as a low-level mechanic, mirroring how `Fulfillments::Create` already
+wraps `mark_shipped`.
 
 ## 2026-08-09: Metadata consolidated to one column — `public_metadata` dropped, `private_metadata` renamed
 
@@ -180,6 +412,128 @@ was also scope creep: the 6.0 data tasks are steps in the upgrade manifest, so
 behaviour for it adds a permanent branch to a hot path to cover a transient.
 Don't design for half-upgraded installs; make the task correct and say what it
 did.
+## 2026-08-09: Origin groups and per-currency delivery pricing in 6.0
+
+Two same-day additions to the delivery-profiles model, both Damian-approved
+mid-review of PR #14404.
+
+**`Spree::DeliveryOriginGroup` (pulled forward from the 6.1 open
+question).** Zones are per-profile (the profile-based platforms' shape;
+sharing across profiles was considered and rejected — editing a shared zone
+would silently change other profiles' coverage). Within a profile, origin
+groups partition the fulfillment origins: every zone and method belongs to
+one group, so "same products, different warehouse, different rates" is one
+profile with two groups instead of hand-narrowed method duplicates. The
+auto-created nameless default group (no members = all locations) keeps the
+layer invisible for single-origin stores. The profile ↔ stock-location join
+is replaced by group membership (profile coverage = union of its groups);
+per-method ships-from narrowing retires for shipping methods, and
+`DeliveryMethodStockLocation` stays pickup-only (collection counters).
+Admin API: nested origin_groups CRUD under delivery_profiles; the
+profile-level `stock_location_ids` shorthand reads/writes the default
+group.
+
+**Per-currency delivery pricing (kills method-per-currency).** Amount-based
+shipping calculators (FlatRate, PerItem, DigitalDelivery) gain an `amounts`
+hash — one explicit amount per currency, no FX, mirroring product prices;
+a currency without an amount hides the method for those carts. The legacy
+single `amount`+`currency` pair stays as the fallback for its own currency,
+so upgraded 5.x stores quote unchanged. Percent calculators are
+currency-agnostic and drop the currency gate; PriceSack/FlexiRate keep
+strict single-currency matching. The Estimator consults
+`calculator.supports_currency?` instead of exact-matching the currency
+preference. Carrier quotes: `DeliveryRateProvider::Estimate` gains
+`currency`, EasyPost passes the carrier's `rate.currency` through, and the
+Estimator drops estimates quoted in another currency than the cart's — a
+number in the wrong currency must never reach checkout (EasyPost has no
+quote-currency parameter; multi-currency carrier setups use
+per-currency carrier accounts). The pricing card renders one amount per
+supported store currency; the default currency maps to the legacy amount
+preference.
+
+## 2026-08-09: Fulfillment profiles — ShippingCategory promoted, not removed
+
+Reverses three recorded decisions inside the 6.0 window: "fulfillment types
+are NOT a model", "named delivery groups are the 6.1-if-needed successor to
+profiles" (both `6.0-fulfillment-and-delivery.md`), and live-by-reference
+`fulfillment_types` on ProductType (`6.0-product-types.md`). Full design in
+`6.0-delivery-profiles.md`.
+
+**The model.** `Spree::DeliveryProfile` — store-scoped STI, one default
+per store, kinds registered via `Spree.delivery_profile_types`
+(`DeliveryProfiles::Shipping` default, `::Digital`) — groups products
+for delivery: profile ↔ stock locations (origins, empty = all), profile →
+delivery zones (destinations), profile → delivery methods (each with an
+optional single zone and optional ships-from narrowing via the generalized
+method↔location join). Products carry `delivery_profile_id` directly;
+ProductType stamps its template profile at creation and never manages it
+afterwards. Carts split per profile. **Classes only, no string
+vocabularies (refined same day):** the method's `fulfillment_type` column
+is dropped (not renamed to modality), `Spree.fulfillment_types` and the
+ProductType array are deleted; behavior routes through class predicates —
+`FulfillmentProvider` subclasses answer `digital?`/`pickup?`/
+`pickup_point?`/`requires_address?`, rate providers declare
+`requires_address?` instead of type lists, and the profile kind declares
+`digital?`/`requires_shipping_address?` and validates composition (a
+Digital profile accepts only digital-provider methods; a carrier rate
+provider only prices methods that ship to an address). A location-group
+layer was considered and dropped — per-method narrowing covers
+multi-origin stores, and groups can arrive additively later.
+
+**Why reverse now.** No rewrite window after 6.0; custom string types were
+second-class (provider declarations could never include them, so a custom
+type could not use carrier rate providers); the origin axis simply did not
+exist for shipping methods; and the fulfillment_types array was the sole
+live-by-reference exception to the product-type template doctrine.
+
+**Migration by rename.** `spree_shipping_categories` →
+`spree_delivery_profiles` and `spree_products.shipping_category_id` →
+`delivery_profile_id`: 5.x products arrive assigned, the 5.x Digital
+category becomes the Digital profile. `spree:migrate_delivery_profiles`
+(5.6→6.0 manifest) handles what a rename cannot: store assignment for the
+formerly-global categories (duplicate + remap when shared), folding
+non-narrowing categories into the store default profile, digital-kind
+detection, and collapsing the method m:n
+(`spree_shipping_method_categories`, kept to 6.1 as source) into the
+single method FK — loud warnings wherever flattening loses information.
+
+
+## 2026-08-09: Dynamic carrier rates — one delivery method, many named rates
+
+Supersedes the one-rate-per-method model in `6.0-delivery-rate-provider.md`
+(its unique-index gate is hereby exercised): a carrier-backed DeliveryMethod
+is the carrier connection, `DeliveryRateProvider::Base#estimates(package)`
+returns one Estimate per service, and every service becomes its own named
+`DeliveryRate` at checkout ("UPS Ground", "USPS Priority Mail"). This also
+finally delivers the "one Carrier shipping method per market, the provider
+returns whatever serves the address" aspiration recorded in the 2026-07-29
+aggregator survey, which the previous schema could not.
+
+**Merchant controls** (Shopify's knob set plus label overrides, which
+Shopify lacks): a new `Spree::DeliveryMethodService` row model — one row per
+carrier service, unique on (method, carrier, service) — narrows which
+services are offered (no rows = everything, current and future) and carries
+per-service `label`, `markup_flat`, `markup_percent`; method-level markup
+columns are the fallback. Rows, not preferences: independent per-service
+controls need a real model with real validation and API round-tripping.
+
+**Consequences.** `spree_delivery_rates` lost its unique
+(fulfillment, delivery_method) index and gained `name` (nil for calculator
+rates — `DeliveryRate#name` falls back to the method name, preserving the
+old delegate behavior). Selection across re-quotes and EasyPost label
+purchase key off the selected rate's carrier/service, not method config.
+The EasyPost method-metadata carrier/service binding is deleted. Seeds and
+sample data reshaped Shopify-style: Domestic + International delivery zones
+per store with basic flat-rate methods, replacing the continental sprawl.
+
+**Competitive grounding** (researched 2026-08-09): Shopify persists service
+selection + handling fee on the zone's carrier-rate entry and quotes live
+(labels not renamable); Medusa materializes one ShippingOption per service
+from the provider catalog; Saleor delegates everything to apps; Vendure is
+one-method-one-quote. The two-entity method→services shape is the
+normalized version of what Shopify/Woo store as config blobs, and Spree
+ends up expressing all four models.
+
 ## 2026-08-07: `Claim#claim_type` dropped — the reason vocabulary is the only "what went wrong" axis
 
 Reverses the two-axis design in `6.0-returns-exchanges-claims.md`, which
@@ -360,6 +714,120 @@ when there is a real implementation behind it, never a speculative column
 plus a provider key nobody declares.
 
 
+## 2026-08-07: Provider gems live under spree/providers/
+
+Established with the easypost move (`spree/easypost` →
+`spree/providers/easypost`) while exactly one provider gem existed and
+none had published. Rationale: the provider roster (easypost, stripe,
+adyen, avalara, inpost, possibly meilisearch) will outnumber the four
+platform gems (core/api/emails/dashboard), and a flat `spree/` stops
+communicating what is load-bearing versus optional — Medusa's monorepo
+draws the same line. Kept under `spree/` (not top-level) so the
+`spree/**` CI path filters, gem-cache keys and starter globs keep
+working. Gem names stay flat (`spree_easypost`, never
+`spree_provider_easypost`) — the directory groups, the gem name is the
+public identity. Mechanical consequences: CI matrix entries carry a
+`dir:` field when it differs from the project name, and Bundler path
+blocks need `glob: '{,*,*/*,*/*/*}.gemspec'` to reach the third level
+(applied in the worktree server Gemfile; spree-starter needs the same
+line when providers ship). `6.0-payment-gateways-monorepo.md` retargeted
+to `spree/providers/stripe` / `spree/providers/adyen`.
+
+## 2026-08-06: Integrations become the admin-managed credential surface; verify-before-activate
+
+`Spree::Integration` (shipped 5.x, previously zero subclasses, no API,
+no UI) becomes the single credential home for every provider seam —
+delivery rates, tax, fulfillment, pickup point networks. New plan:
+`6.0-integrations-admin.md`. Explicit `Spree.integrations` registry
+(house pattern, no descendants-scanning); Admin API v3 CRUD + types
+discovery reusing the `PreferenceSchema`/`Masking` machinery from
+payment methods (secrets are `:password`-typed preferences, masked on
+read, round-trip-guarded on write); dashboard `/settings/integrations`
+gallery grouped by `integration_group` — the one page showing what is
+connected to the current store. Semantics settled interactively:
+**verify before activate** (saving credentials never makes a network
+call; flipping `active: true` runs `can_connect?` and 422s on failure;
+`POST /:id/test` for diagnostics) and **ephemeral connection status**
+(no `last_checked_at`/`last_error` columns). Constraints now: new
+provider gems ship an Integration subclass — no env-var credential
+contracts for per-store providers; no per-provider credential UIs —
+provider pickers deep-link to the integrations page.
+
+## 2026-08-06: Pickup point provider contract hardened; no reference network gem in 6.0
+
+Decided before any concrete `PickupPointProvider` exists, precisely
+because none does: (1) providers are constructed with
+`new(delivery_method)` — the current zero-arg construction leaves no
+path to `store.integrations` for credentials; (2) `find_nearby` accepts
+`zipcode:`/`query:` alongside `latitude:`/`longitude:` (postcode/city
+search is the standard EU checkout pattern; map-widget storefronts skip
+`find_nearby` and only use server-side `find_by_external_id`
+validation). Both are free now and breaking later. **No reference
+network provider (InPost/Sendcloud) ships in 6.0** — community/later,
+with a how-to guide. The checkout flow itself is confirmed as
+shipped: point selected during checkout at the delivery step
+(`pickup_point_external_id` on rate selection, server-validated, frozen
+into `fulfillment.pickup_point_data`).
+
+**Amended 2026-08-06 (same day, Damian):** all pickup work beyond
+already-shipped code — including the contract hardening above — is
+**deferred to 6.1**; 6.0 is packed. The pickup point provider
+interface is **not documented in 6.0 at all** — the v6 developer docs
+cover only the delivery rate provider interface; a class-level comment
+on `PickupPointProvider::Base` notes the constructor and `find_nearby`
+signature change in 6.1, so the change breaks no sanctioned contract.
+Accepted trade-off, recorded in `6.0-fulfillment-and-delivery.md`
+(Implementation status + Phase 6). Constraint: no 6.0 doc or guide may
+cover the pickup point provider interface.
+
+**Second amendment 2026-08-06 (Damian):** `pickup_point` is also
+removed from the `Spree.fulfillment_types` registry and the dashboard
+`FULFILLMENT_TYPES` const — not selectable anywhere in 6.0; existing
+rows stay loadable (inclusion validates on change only) and the shipped
+endpoints still serve them; one-word re-registration in 6.1 restores
+the surface. `local_delivery` is removed the same way, but as a **cut,
+not a deferral**: it fails the plan's own modality-vs-segment test —
+identical address/zone/provider/lifecycle semantics to `shipping`; the
+local-delivery use case is a `shipping` method with a postal-code
+DeliveryZone. It returns only alongside real provider behavior
+(delivery windows, courier assignment). 6.0 built-in types:
+`shipping`, `pickup`, `digital`.
+
+## 2026-08-06: EasyPost is the reference delivery rate provider (Shippo pick reversed same day)
+
+Resolves the EasyPost-or-Shippo pick left open on 2026-07-29/30. The
+monorepo's reference `DeliveryRateProvider` (`6.0-delivery-rate-provider.md`
+Phase 5) is built on **Shippo**. Competitor survey: no platform ships
+direct per-carrier integrations in core — Shopify and WooCommerce built
+their in-house label services on an aggregator (both historically
+EasyPost-backed), BigCommerce leans on ShipperHQ, and the OSS field
+(Medusa, Saleor, Vendure) ships a provider interface with aggregator
+plugins, Medusa's ecosystem having standardized on Shippo. A direct
+UPS/USPS/FedEx trio was rejected: three churning carrier APIs to
+maintain, US-only coverage against Spree's heavily European base, and
+worse merchant onboarding than one aggregator account. Between the two
+aggregators, Shippo fits the reference provider's audience (default OSS
+install, SMB merchant): simpler API surface, pay-as-you-go pricing with
+no monthly fee, solid EU carrier set. The `spree_easypost` lineage
+carries no weight — it targets the pre-6.0 architecture and would be a
+rewrite regardless. The interface stays aggregator-agnostic; EasyPost,
+Sendcloud (EU-first, strong service-point coverage) or direct-carrier
+providers remain buildable as third-party gems on the same base class.
+
+**Reversed 2026-08-06 (same day, Damian): EasyPost.** Two factors the
+Shippo lean under-weighted: (1) **Spree's merchant profile skews
+larger** — merchants with negotiated UPS/FedEx contracts who want to
+connect their own carrier accounts, which is EasyPost's core BYOCA
+(bring-your-own-carrier-account) model, not Shippo's SMB
+default-account posture; (2) **Ruby SDK reality**: EasyPost maintains
+its official `easypost` gem (7.6.0, Feb 2026), while Shippo's official
+Ruby client last released in April 2020 and signals deprecation — for
+a Ruby-first reference implementation that difference is decisive (the
+Shippo path would mean hand-rolling and maintaining an HTTP client in
+the provider gem). Everything else in the original entry stands:
+aggregator over direct-carrier trio, aggregator-agnostic interface,
+third-party gems welcome on the same base class.
+
 ## 2026-08-05: Dashboard form values must not embed SDK entity types
 
 The returns rework regenerated the admin SDK types, and the new `Order`
@@ -482,7 +950,6 @@ dashboard pages. Reviewing what remains settled four things:
   legacy tables (except `spree_return_items`, kept under its original
   name for historical reference until 6.1). `Spree::Metafields` lands on
   the three entities on the same branch.
-
 
 ## 2026-08-05: v5 developer docs are frozen until the 6.0 release; 6.0 docs land under docs/v6
 
@@ -938,7 +1405,7 @@ certain markets) plus a four-platform review (OSS platform C channel-scoped
 PaymentMethods + `PaymentMethodEligibilityChecker`, OSS platform A region-scoped
 payment providers, OSS platform B per-channel payment apps, the hosted leader's Payment Customization Functions + the May-2026 per-market multi-entity payments product) settled three things:
 
-1. **`5.7-payment-method-rules.md`** — `Spree::PaymentMethodRule` STI
+1. **`6.0-payment-method-rules.md`** — `Spree::PaymentMethodRule` STI
    (Channel / Market / OrderTotal / CustomerGroup rules), mirroring the
    PromotionRule/PriceRule/OrderRoutingRule house pattern; enforced through
    the single `Order#collect_frontend_payment_methods` seam; storefront-only
@@ -946,7 +1413,7 @@ payment providers, OSS platform B per-channel payment apps, the hosted leader's 
    distribution concept" rationale in
    `5.6-6.0-single-store-promotions-payment-methods.md` — the single-store FK
    stands, eligibility is layered on via rules.
-2. **`5.7-channel-markets.md`** — optional Channel→Markets allowlist
+2. **`6.0-channel-markets.md`** — optional Channel→Markets allowlist
    (`spree_channel_markets`, empty = all markets), enforced in market
    resolution, the Store API markets reference endpoints, and order
    validation. Composes with `MarketRule` above.
@@ -1550,7 +2017,7 @@ maps naturally onto several delivery zones — standard / remote / oversized).
 Spree already carries a stronger coordination guardrail than the disjoint
 camp: `MarketCountry#country_covered_by_shipping_zone` refuses market
 countries the store cannot deliver to. The channel axis heads the Saleor
-direction separately via `5.7-channel-markets.md`. If more convenience is
+direction separately via `6.0-channel-markets.md`. If more convenience is
 ever wanted, it is a dashboard affordance ("create delivery zone from this
 market's countries"), never a schema link.
 
@@ -1592,7 +2059,7 @@ ShippingMethod an eligibility-checker strategy parallel to its calculator.
 
 **Decision:** `Spree::DeliveryMethodRule` STI on DeliveryMethod — the fifth
 instance of the house rule pattern and the symmetric sibling of
-`5.7-payment-method-rules.md` (ItemTotal + Weight first; Channel/Market/
+`6.0-payment-method-rules.md` (ItemTotal + Weight first; Channel/Market/
 CustomerGroup later, in lockstep with the payment set). One enforcement
 seam: the Estimator's method filter, so calculator- and provider-priced
 methods obey the same eligibility; no admin-bypass concept (the Estimator is
@@ -1723,7 +2190,7 @@ domains are deliberately opposite:
   store.** Two Stripe accounts are two merchants of record (separate
   settlement and liability), selected per market at checkout — exactly
   what PaymentMethod rows model, gated by MarketRule once
-  `5.7-payment-method-rules.md` lands. Credentials stay on the method
+  `6.0-payment-method-rules.md` lands. Credentials stay on the method
   row; converging them onto Integration would fight its store+type
   uniqueness and is explicitly NOT planned.
 
@@ -1804,7 +2271,7 @@ registered subclasses by matching two hardcoded class names
 returning `[]`. Four families had each worked around that with a private
 per-class override in three different idioms (`PriceRule`,
 `OrderRoutingRule`, `CollectionRule`, `DeliveryMethodRule`), and
-`5.7-payment-method-rules.md` specced a fifth. The empty-list fallback
+`6.0-payment-method-rules.md` specced a fifth. The empty-list fallback
 failed **silently**: `find_by_api_type` returned nil, so
 `TypedAssociations` dropped typed rows from a payload with no error and
 `subclasses_with_preference_schema` rendered empty admin pickers — the
@@ -1822,7 +2289,7 @@ PromotionRule, PromotionAction, PriceRule, OrderRoutingRule,
 CollectionRule, DeliveryMethodRule, and **PaymentMethod** — gateways
 declare `registers_subclasses_via { providers }` rather than being a
 special case in the resolver, so there is exactly one resolution rule.
-`5.7-payment-method-rules.md` updated to the new form.
+`6.0-payment-method-rules.md` updated to the new form.
 
 Known debt: the registry is a lodger inside `PreferenceSchema` (which
 `Spree::Base` includes, so ~200 models carry class methods only six use),

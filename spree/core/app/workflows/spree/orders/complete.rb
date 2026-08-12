@@ -58,10 +58,7 @@ module Spree
       # recalculation only re-sums them, never regenerates (see
       # Spree::Carts::RecalculateTotals) — so no per-row locking is needed.
       def finalize_fulfillments
-        order.fulfillments.each do |fulfillment|
-          fulfillment.update!(order)
-          fulfillment.finalize!
-        end
+        order.fulfillments.each(&:finalize!)
       end
 
       def place_order
@@ -88,8 +85,9 @@ module Spree
           next unless fulfillment.provider.auto_fulfill?
           next if fulfillment.fulfilled? || fulfillment.canceled?
 
-          fulfillment.update_columns(status: 'ready', updated_at: Time.current) unless fulfillment.ready?
-          fulfillment.fulfill!
+          # Digital goods go out the moment the order is placed; the payment
+          # gate does not apply, hence force.
+          Spree.fulfillment_fulfill_workflow.call(fulfillment: fulfillment, force: true)
           @auto_fulfilled_line_item_ids.concat(fulfillment.line_items.map(&:id))
         end
       end

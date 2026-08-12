@@ -10,6 +10,19 @@
 # Orders holding payment sessions convert last so an interrupted run leaves
 # the riskiest rows for the retry. Idempotent — converted orders are gone.
 namespace :spree do
+  desc 'Detach cart-phase fulfillment items from orders they never belonged to'
+  # Early 6.0 builds wrote the cart's id into fulfillment_items.order_id during
+  # checkout, silently linking the item to whichever order shared that id.
+  # Cart-phase items carry no order — completion stamps the real one onto the
+  # copied rows. Idempotent.
+  task repair_cart_fulfillment_item_orders: :environment do
+    count = Spree::FulfillmentItem.
+            where.not(order_id: nil).
+            where(fulfillment_id: Spree::Fulfillment.where.not(cart_id: nil).select(:id)).
+            update_all(order_id: nil)
+    puts "spree_fulfillment_items: #{count} cart-phase rows detached from orders"
+  end
+
   desc 'Convert incomplete legacy orders into Spree::Cart rows'
   task migrate_incomplete_orders_to_carts: :environment do
     batch_size = ENV.fetch('BATCH_SIZE', 250).to_i

@@ -207,7 +207,7 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
 
   describe 'product_type' do
     context 'when the product has a product type' do
-      let(:product_type) { create(:product_type, name: 'Digital', fulfillment_types: ['digital']) }
+      let(:product_type) { create(:product_type, name: 'Digital') }
       let(:product) { create(:product, product_type: product_type) }
 
       it 'exports the product type name' do

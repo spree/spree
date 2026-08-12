@@ -2,6 +2,11 @@ module Spree
   class DeliveryRate < Spree.base_class
     has_prefix_id :dr
 
+    # Carrier payload from the rate provider (quote ids, service codes) —
+    # a plain single column per the house rule for new columns, not the
+    # legacy public/private Metadata pair.
+    serialize :metadata, coder: Spree::Metadata::HashSerializer
+
     belongs_to :fulfillment, class_name: 'Spree::Fulfillment'
     belongs_to :tax_rate, -> { with_deleted }, class_name: 'Spree::TaxRate'
     belongs_to :delivery_method, -> { with_deleted }, class_name: 'Spree::DeliveryMethod', inverse_of: :delivery_rates
@@ -16,8 +21,17 @@ module Spree
     money_methods :base_price, :final_price, :tax_amount, :additional_tax_total, :included_tax_total, :tax_total
 
     delegate :order, :currency, :with_free_shipping_promotion?, to: :fulfillment
-    delegate :name, to: :delivery_method
     delegate :code, to: :delivery_method, prefix: true
+
+    # Provider-priced rates carry their own display name ("UPS Ground", or a
+    # merchant label override) set by the Estimator; calculator rates store
+    # nil and read as the delivery method's name, preserving the historic
+    # delegate behavior.
+    #
+    # @return [String]
+    def name
+      self[:name].presence || delivery_method.name
+    end
 
     def display_price
       price = display_base_price.to_s

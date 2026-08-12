@@ -130,6 +130,8 @@ import type {
   CustomFieldOwnerType,
   CustomFieldUpdateParams,
   DeliveryMethodParams,
+  DeliveryOriginGroupParams,
+  DeliveryProfileParams,
   DeliveryZoneParams,
   DirectUploadCreateParams,
   ExchangeCreateParams,
@@ -138,6 +140,9 @@ import type {
   ExchangeUpdateParams,
   ExportCreateParams,
   FulfillmentCreateParams,
+  FulfillmentFulfillParams,
+  FulfillmentMarkDeliveredParams,
+  FulfillmentSplitParams,
   FulfillmentUpdateParams,
   GiftCardApplyParams,
   GiftCardBatchCreateParams,
@@ -145,6 +150,9 @@ import type {
   GiftCardUpdateParams,
   ImportCompleteMappingParams,
   ImportCreateParams,
+  IntegrationCreateParams,
+  IntegrationTypeDefinition,
+  IntegrationUpdateParams,
   InvitationAcceptParams,
   InvitationCreateParams,
   LineItemCreateParams,
@@ -207,6 +215,7 @@ import type {
   TaxExemptionCertificateParams,
   TaxIdentifierParams,
   TaxRateParams,
+  TrackingCarrierOption,
   VariantCreateParams,
   VariantUpdateParams,
   WebhookEndpointCreateParams,
@@ -235,6 +244,9 @@ import type {
   CustomFieldDefinition,
   DeliveryMethod,
   DeliveryMethodRule,
+  DeliveryOriginGroup,
+  DeliveryProfile,
+  DeliveryRateProviderOption,
   DeliveryZone,
   Discount,
   Exchange,
@@ -246,6 +258,7 @@ import type {
   GiftCardBatch,
   Import,
   ImportRow,
+  Integration,
   Invitation,
   LineItem,
   Locale,
@@ -1057,12 +1070,48 @@ export class AdminClient {
           body: params,
         }),
 
-      fulfill: (orderId: string, id: string, options?: RequestOptions): Promise<Fulfillment> =>
+      // Passing `items` ships only those quantities: they are split into a new
+      // fulfillment, which is what comes back — the addressed fulfillment keeps
+      // the remainder and stays open.
+      fulfill: (
+        orderId: string,
+        id: string,
+        params?: FulfillmentFulfillParams,
+        options?: RequestOptions,
+      ): Promise<Fulfillment> =>
+        this.request<Fulfillment>('PATCH', `/orders/${orderId}/fulfillments/${id}/fulfill`, {
+          ...options,
+          body: params,
+        }),
+
+      // Buys the shipping label for a parcel that has not shipped yet, so the
+      // merchant prints it and packs before anything tells the customer it
+      // shipped. Only providers that produce labels accept this; failures are
+      // loud (422), unlike fulfill's degrade-to-no-label path.
+      purchaseLabel: (
+        orderId: string,
+        id: string,
+        options?: RequestOptions,
+      ): Promise<Fulfillment> =>
         this.request<Fulfillment>(
           'PATCH',
-          `/orders/${orderId}/fulfillments/${id}/fulfill`,
+          `/orders/${orderId}/fulfillments/${id}/purchase_label`,
           options,
         ),
+
+      // Confirms the customer received the goods. Staff can record this by
+      // hand — a merchant with no carrier integration still needs a delivered
+      // state — and carriers reach the same endpoint through their webhooks.
+      markDelivered: (
+        orderId: string,
+        id: string,
+        params?: FulfillmentMarkDeliveredParams,
+        options?: RequestOptions,
+      ): Promise<Fulfillment> =>
+        this.request<Fulfillment>('PATCH', `/orders/${orderId}/fulfillments/${id}/mark_delivered`, {
+          ...options,
+          body: params,
+        }),
 
       cancel: (orderId: string, id: string, options?: RequestOptions): Promise<Fulfillment> =>
         this.request<Fulfillment>('PATCH', `/orders/${orderId}/fulfillments/${id}/cancel`, options),
@@ -1070,16 +1119,23 @@ export class AdminClient {
       resume: (orderId: string, id: string, options?: RequestOptions): Promise<Fulfillment> =>
         this.request<Fulfillment>('PATCH', `/orders/${orderId}/fulfillments/${id}/resume`, options),
 
+      // Returns every fulfillment on the order, since a split re-shapes the
+      // source as well as creating the new one (and destroys the source when
+      // it is fully drained).
       split: (
         orderId: string,
         id: string,
-        params: { quantity: number; line_item_id?: string },
+        params: FulfillmentSplitParams,
         options?: RequestOptions,
-      ): Promise<Fulfillment> =>
-        this.request<Fulfillment>('PATCH', `/orders/${orderId}/fulfillments/${id}/split`, {
-          ...options,
-          body: params,
-        }),
+      ): Promise<{ data: Fulfillment[] }> =>
+        this.request<{ data: Fulfillment[] }>(
+          'PATCH',
+          `/orders/${orderId}/fulfillments/${id}/split`,
+          {
+            ...options,
+            body: params,
+          },
+        ),
     },
 
     returns: {
@@ -1609,10 +1665,20 @@ export class AdminClient {
      */
     fulfillmentProviders: (
       options?: RequestOptions,
-    ): Promise<{ data: FulfillmentProviderOption[]; fulfillment_types: string[] }> =>
-      this.request<{ data: FulfillmentProviderOption[]; fulfillment_types: string[] }>(
+    ): Promise<{ data: FulfillmentProviderOption[] }> =>
+      this.request<{ data: FulfillmentProviderOption[] }>(
         'GET',
         '/delivery_methods/fulfillment_providers',
+        options,
+      ),
+
+    /** Rate providers available to this store, plus the default when none is chosen. */
+    rateProviders: (
+      options?: RequestOptions,
+    ): Promise<{ data: DeliveryRateProviderOption[]; default: string }> =>
+      this.request<{ data: DeliveryRateProviderOption[]; default: string }>(
+        'GET',
+        '/delivery_methods/rate_providers',
         options,
       ),
 
@@ -1689,6 +1755,106 @@ export class AdminClient {
       }>('GET', '/delivery_method_rules/types', options),
   }
 
+  readonly deliveryProfiles = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<DeliveryProfile>> =>
+      this.request<PaginatedResponse<DeliveryProfile>>('GET', '/delivery_profiles', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<DeliveryProfile> =>
+      this.request<DeliveryProfile>('GET', `/delivery_profiles/${id}`, options),
+
+    create: (
+      params: DeliveryProfileParams & { name: string },
+      options?: RequestOptions,
+    ): Promise<DeliveryProfile> =>
+      this.request<DeliveryProfile>('POST', '/delivery_profiles', {
+        ...options,
+        body: params,
+      }),
+
+    /** `stock_location_ids` replaces the profile's full location set. */
+    update: (
+      id: string,
+      params: DeliveryProfileParams,
+      options?: RequestOptions,
+    ): Promise<DeliveryProfile> =>
+      this.request<DeliveryProfile>('PATCH', `/delivery_profiles/${id}`, {
+        ...options,
+        body: params,
+      }),
+
+    /** The default profile and profiles still referenced by products cannot be deleted. */
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/delivery_profiles/${id}`, options),
+
+    /** Registered profile kinds (shipping, digital, extension kinds). */
+    kinds: (options?: RequestOptions): Promise<{ data: Array<{ type: string; kind: string }> }> =>
+      this.request<{ data: Array<{ type: string; kind: string }> }>(
+        'GET',
+        '/delivery_profiles/kinds',
+        options,
+      ),
+
+    /** Origin groups partition a profile's fulfillment origins; its zones and methods each belong to one. */
+    originGroups: {
+      list: (
+        deliveryProfileId: string,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<DeliveryOriginGroup>> =>
+        this.request<PaginatedResponse<DeliveryOriginGroup>>(
+          'GET',
+          `/delivery_profiles/${deliveryProfileId}/origin_groups`,
+          options,
+        ),
+
+      create: (
+        deliveryProfileId: string,
+        params: DeliveryOriginGroupParams,
+        options?: RequestOptions,
+      ): Promise<DeliveryOriginGroup> =>
+        this.request<DeliveryOriginGroup>(
+          'POST',
+          `/delivery_profiles/${deliveryProfileId}/origin_groups`,
+          { ...options, body: params },
+        ),
+
+      update: (
+        deliveryProfileId: string,
+        id: string,
+        params: DeliveryOriginGroupParams,
+        options?: RequestOptions,
+      ): Promise<DeliveryOriginGroup> =>
+        this.request<DeliveryOriginGroup>(
+          'PATCH',
+          `/delivery_profiles/${deliveryProfileId}/origin_groups/${id}`,
+          { ...options, body: params },
+        ),
+
+      /** The last group, or one still holding zones or methods, cannot be deleted. */
+      delete: (deliveryProfileId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>(
+          'DELETE',
+          `/delivery_profiles/${deliveryProfileId}/origin_groups/${id}`,
+          options,
+        ),
+    },
+  }
+
+  readonly trackingCarriers = {
+    /**
+     * Registered tracking carriers (Spree.tracking_carriers) a tracking
+     * number can be pinned to — the source for carrier pickers. Extensions
+     * that register carriers appear here without a client change.
+     */
+    list: (options?: RequestOptions): Promise<{ data: TrackingCarrierOption[] }> =>
+      this.request<{ data: TrackingCarrierOption[] }>('GET', '/tracking_carriers', options),
+  }
+
   readonly deliveryZones = {
     list: (
       params?: ListParams & Record<string, unknown>,
@@ -1699,8 +1865,16 @@ export class AdminClient {
         params: params ? transformListParams(params) : undefined,
       }),
 
-    get: (id: string, options?: RequestOptions): Promise<DeliveryZone> =>
-      this.request<DeliveryZone>('GET', `/delivery_zones/${id}`, options),
+    /** Members are expand-gated; pass `{ expand: ['members'] }` to edit a zone. */
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<DeliveryZone> =>
+      this.request<DeliveryZone>('GET', `/delivery_zones/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
 
     create: (params: DeliveryZoneParams, options?: RequestOptions): Promise<DeliveryZone> =>
       this.request<DeliveryZone>('POST', '/delivery_zones', { ...options, body: params }),
@@ -1752,6 +1926,52 @@ export class AdminClient {
 
     types: (options?: RequestOptions): Promise<{ data: PaymentMethodType[] }> =>
       this.request<{ data: PaymentMethodType[] }>('GET', '/payment_methods/types', options),
+  }
+
+  // ============================================
+  // Integrations (admin-only — provider credentials per store)
+  // ============================================
+
+  readonly integrations = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Integration>> =>
+      this.request<PaginatedResponse<Integration>>('GET', '/integrations', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<Integration> =>
+      this.request<Integration>('GET', `/integrations/${id}`, options),
+
+    create: (params: IntegrationCreateParams, options?: RequestOptions): Promise<Integration> =>
+      this.request<Integration>('POST', '/integrations', { ...options, body: params }),
+
+    update: (
+      id: string,
+      params: IntegrationUpdateParams,
+      options?: RequestOptions,
+    ): Promise<Integration> =>
+      this.request<Integration>('PATCH', `/integrations/${id}`, { ...options, body: params }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/integrations/${id}`, options),
+
+    /** Registered integration types with schemas and per-store connected state. */
+    types: (options?: RequestOptions): Promise<{ data: IntegrationTypeDefinition[] }> =>
+      this.request<{ data: IntegrationTypeDefinition[] }>('GET', '/integrations/types', options),
+
+    /** Live connection check; nothing is persisted. */
+    test: (
+      id: string,
+      options?: RequestOptions,
+    ): Promise<{ connected: boolean; error_message: string | null }> =>
+      this.request<{ connected: boolean; error_message: string | null }>(
+        'POST',
+        `/integrations/${id}/test`,
+        options,
+      ),
   }
 
   // ============================================

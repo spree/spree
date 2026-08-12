@@ -8,6 +8,7 @@ export const DeliveryZoneMemberSchema = z.object({
   postal_code_from: z.string().nullable(),
   postal_code_to: z.string().nullable(),
   country_iso: z.string().nullable(),
+  country_name: z.string().nullable(),
   state_abbr: z.string().nullable(),
   state_name: z.string().nullable(),
 });

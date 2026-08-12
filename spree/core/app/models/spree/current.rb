@@ -4,7 +4,18 @@ module Spree
   # All attributes are automatically reset between requests by Rails.
   # Fallback chains ensure sensible defaults when attributes are not explicitly set.
   class Current < ::ActiveSupport::CurrentAttributes
-    attribute :store, :channel, :market, :currency, :locale, :content_locale, :tax_country, :price_lists, :global_pricing_context
+    attribute :store, :channel, :market, :currency, :locale, :content_locale, :tax_country, :price_lists, :global_pricing_context, :provider_cache
+
+    # Scratch space for provider strategies to memoize a call across the
+    # request — part of the delivery rate provider contract (nothing in core
+    # writes to it): a carrier gem keys its quote here so several delivery
+    # methods sharing one carrier cost a single API round-trip rather than
+    # one each. Keys must be namespaced by the provider (see the custom
+    # delivery rate provider guide).
+    # @return [Hash]
+    def provider_cache
+      super || (self.provider_cache = {})
+    end
 
     # Returns the current store, falling back to the default store.
     # @return [Spree::Store]

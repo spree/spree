@@ -92,7 +92,7 @@ module Spree
       before { order.fulfillments.destroy_all }
 
       it 'is backordered' do
-        create(:fulfillment, order: order, status: 'pending')
+        create(:fulfillment, order: order, status: 'unfulfilled')
         allow(order).to receive(:backordered?).and_return(true)
 
         updater.update_shipment_state
@@ -106,7 +106,7 @@ module Spree
         expect(order.fulfillment_status).to be_nil
       end
 
-      ['fulfilled', 'pending'].each do |status|
+      %w(unfulfilled fulfilled delivered).each do |status|
         it "is #{status}" do
           create(:fulfillment, order: order, status: status)
 
@@ -116,34 +116,52 @@ module Spree
         end
       end
 
-      # Fulfillment#determine_state only yields 'ready' once the order is paid.
-      context 'when the order is paid' do
-        before { allow(order).to receive(:paid?).and_return(true) }
+      # Payment no longer enters into it: an unpaid order's fulfillment reads
+      # unfulfilled, exactly like a paid one's.
+      it 'does not depend on whether the order is paid' do
+        create(:fulfillment, order: order, status: 'unfulfilled')
+        allow(order).to receive(:paid?).and_return(false)
 
-        it 'is ready' do
-          create(:fulfillment, order: order, status: 'ready')
+        updater.update_shipment_state
 
-          updater.update_shipment_state
-
-          expect(order.fulfillment_status).to eq('ready')
-        end
-
-        it 'rolls ready_for_pickup up as ready' do
-          create(:fulfillment, order: order, status: 'ready_for_pickup')
-
-          updater.update_shipment_state
-
-          expect(order.fulfillment_status).to eq('ready')
-        end
+        expect(order.fulfillment_status).to eq('unfulfilled')
       end
 
-      it 'is partial' do
-        create(:fulfillment, order: order, status: 'pending')
+      it 'is partial when some parcels went out and others did not' do
+        create(:fulfillment, order: order, status: 'unfulfilled')
         create(:fulfillment, order: order, status: 'fulfilled')
 
         updater.update_shipment_state
 
         expect(order.fulfillment_status).to eq('partial')
+      end
+
+      it 'is partial while some parcels are delivered and others are not' do
+        create(:fulfillment, order: order, status: 'delivered')
+        create(:fulfillment, order: order, status: 'unfulfilled')
+
+        updater.update_shipment_state
+
+        expect(order.fulfillment_status).to eq('partial')
+      end
+
+      # A recalled parcel should not describe an order whose other parcel is
+      # still on its way.
+      it 'ignores canceled fulfillments when others are live' do
+        create(:fulfillment, order: order, status: 'canceled')
+        create(:fulfillment, order: order, status: 'unfulfilled')
+
+        updater.update_shipment_state
+
+        expect(order.fulfillment_status).to eq('unfulfilled')
+      end
+
+      it 'is canceled when every fulfillment is' do
+        create(:fulfillment, order: order, status: 'canceled')
+
+        updater.update_shipment_state
+
+        expect(order.fulfillment_status).to eq('canceled')
       end
     end
 

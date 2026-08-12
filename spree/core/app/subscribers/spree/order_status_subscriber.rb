@@ -7,7 +7,7 @@ module Spree
   # records are skipped — carts have no status columns.
   class OrderStatusSubscriber < Spree::Subscriber
     subscribes_to 'payment.created', 'payment.updated', 'payment.deleted',
-                  'payment.completed', 'payment.voided',
+                  'payment.completed', 'payment.captured', 'payment.voided',
                   'refund.created', 'refund.updated',
                   'fulfillment.created', 'fulfillment.updated', 'fulfillment.deleted',
                   'return.received', 'return.refunded', 'return.canceled',

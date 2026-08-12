@@ -455,6 +455,25 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
 
         expect(response).to have_http_status(:ok)
         expect(order.reload.company_location_id).to be_nil
+    # The admin order edit screen submits every row it shows in one request:
+    # changed quantities as their new value, struck-out rows as zero.
+    context 'with a whole edited order in one request' do
+      let(:order) { create(:order_with_line_items, store: store, line_items_count: 2) }
+      let(:kept) { order.line_items.first }
+      let(:removed) { order.line_items.last }
+
+      it 'applies the quantity changes and the removals together' do
+        patch :update, params: {
+          id: order.prefixed_id,
+          items: [
+            { variant_id: kept.variant.prefixed_id, quantity: 3 },
+            { variant_id: removed.variant.prefixed_id, quantity: 0 }
+          ]
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(order.reload.line_items).to contain_exactly(kept)
+        expect(kept.reload.quantity).to eq(3)
       end
     end
 

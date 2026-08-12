@@ -5,14 +5,19 @@ module Spree
 
       def call
         Spree::Store.all.find_each do |store|
-          Spree::StockLocation.find_or_create_by!(
+          # Match on identity alone. Folding the other attributes into the
+          # finder made re-seeding fail once anything edited them (the pickup
+          # seed enabling collection, a merchant flipping a flag): the lookup
+          # missed the existing row and tried to create a duplicate name.
+          Spree::StockLocation.where(
             store: store,
-            name: Spree.t(:default_stock_location_name),
-            propagate_all_variants: false,
-            country: store.default_country,
-            active: true,
-            default: true
-          )
+            name: Spree.t(:default_stock_location_name)
+          ).first_or_create! do |stock_location|
+            stock_location.propagate_all_variants = false
+            stock_location.country = store.default_country
+            stock_location.active = true
+            stock_location.default = true
+          end
         end
       end
     end

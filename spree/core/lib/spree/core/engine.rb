@@ -14,9 +14,11 @@ module Spree
                                :tax_providers,
                                :password_validator,
                                :fulfillment_providers,
-                               :fulfillment_types,
+                               :tracking_carriers,
                                :stock_splitters,
                                :delivery_method_rules,
+                               :delivery_rate_providers,
+                               :delivery_profile_types,
                                :order_routing,
                                :promotions,
                                :pricing,
@@ -121,6 +123,14 @@ module Spree
         app.config.spree.delivery_method_rules = []
       end
 
+      initializer 'spree.register.delivery_rate_providers', before: :load_config_initializers do |app|
+        app.config.spree.delivery_rate_providers = []
+      end
+
+      initializer 'spree.register.delivery_profile_types', before: :load_config_initializers do |app|
+        app.config.spree.delivery_profile_types = []
+      end
+
       initializer 'spree.register.custom_fields' do |app|
         app.config.spree.custom_fields = CustomFieldsEnvironment.new
         app.config.spree.custom_fields.types = []
@@ -158,7 +168,7 @@ module Spree
         ]
 
         Rails.application.config.spree.stock_splitters = [
-          Spree::Stock::Splitter::FulfillmentType,
+          Spree::Stock::Splitter::DeliveryProfile,
           Spree::Stock::Splitter::Backordered
         ]
 
@@ -190,9 +200,45 @@ module Spree
           Spree::FulfillmentProvider::PickupPoint
         ]
 
-        # Open strings, no inclusion validation — extensions append their own
-        # (e.g. 'same_day_courier').
-        Rails.application.config.spree.fulfillment_types = %w[shipping pickup pickup_point digital local_delivery]
+        # Carriers a merchant can pin a tracking number to, with the public
+        # tracking page each one offers (`:tracking` is the placeholder).
+        # Hosts and extensions add their own:
+        #   Spree.tracking_carriers['my_courier'] = { name: '...', url: '...' }
+        # Slugs match the tracking_number gem's courier codes where both know
+        # the carrier, so a number auto-detected from its format lands on the
+        # same entry a merchant would have picked by hand.
+        Rails.application.config.spree.tracking_carriers = {
+          'ups' => { name: 'UPS', url: 'https://www.ups.com/track?tracknum=:tracking' },
+          'usps' => { name: 'USPS', url: 'https://tools.usps.com/go/TrackConfirmAction?tLabels=:tracking' },
+          'fedex' => { name: 'FedEx', url: 'https://www.fedex.com/fedextrack/?trknbr=:tracking' },
+          'dhl' => { name: 'DHL Express', url: 'https://www.dhl.com/global-en/home/tracking.html?tracking-id=:tracking' },
+          'dpd' => { name: 'DPD', url: 'https://tracking.dpd.de/status/en_US/parcel/:tracking' },
+          'gls' => { name: 'GLS', url: 'https://gls-group.eu/EU/en/parcel-tracking?match=:tracking' },
+          'inpost' => { name: 'InPost', url: 'https://inpost.pl/sledzenie-przesylek?number=:tracking' },
+          'royal_mail' => { name: 'Royal Mail', url: 'https://www.royalmail.com/track-your-item#/tracking-results/:tracking' },
+          'evri' => { name: 'Evri', url: 'https://www.evri.com/track/parcel/:tracking' },
+          'canada_post' => { name: 'Canada Post', url: 'https://www.canadapost-postescanada.ca/track-reperage/en#/search?searchFor=:tracking' },
+          'australia_post' => { name: 'Australia Post', url: 'https://auspost.com.au/mypost/track/#/details/:tracking' },
+          'postnl' => { name: 'PostNL', url: 'https://jouw.postnl.nl/track-and-trace/:tracking' },
+          'colissimo' => { name: 'Colissimo', url: 'https://www.laposte.fr/outils/suivre-vos-envois?code=:tracking' },
+          'chronopost' => { name: 'Chronopost', url: 'https://www.chronopost.fr/tracking-no-cms/suivi-page?listeNumerosLT=:tracking' },
+          'poczta_polska' => { name: 'Poczta Polska', url: 'https://emonitoring.poczta-polska.pl/?numer=:tracking' },
+          'deutsche_post' => { name: 'Deutsche Post DHL', url: 'https://www.dhl.de/de/privatkunden/pakete-empfangen/verfolgen.html?piececode=:tracking' }
+        }
+
+
+        # Quoting strategies selectable on a delivery method. Internal prices
+        # through the method's calculator; carrier gems append theirs.
+        Rails.application.config.spree.delivery_rate_providers.concat [
+          Spree::DeliveryRateProvider::Internal
+        ]
+
+        # Profile kinds selectable when creating a delivery profile;
+        # extension kinds append theirs.
+        Rails.application.config.spree.delivery_profile_types.concat [
+          Spree::DeliveryProfiles::Shipping,
+          Spree::DeliveryProfiles::Digital
+        ]
 
         # Selectable order routing strategies. The internal Reducer collaborator
         # is intentionally NOT listed — it is not a Strategy::Base. Plugins add
@@ -214,7 +260,8 @@ module Spree
         Rails.application.config.spree.delivery_method_rules.concat [
           Spree::DeliveryMethodRules::ItemTotalRule,
           Spree::DeliveryMethodRules::WeightRule,
-          Spree::DeliveryMethodRules::ExcludedProductsRule
+          Spree::DeliveryMethodRules::ExcludedProductsRule,
+          Spree::DeliveryMethodRules::ChannelRule
         ]
 
         Rails.application.config.spree.calculators.promotion_actions_create_adjustments = [
@@ -420,6 +467,7 @@ module Spree
         # survives Zeitwerk code reloads in development.
         Spree.subscribers.concat [
           Spree::OrderPlacedSubscriber,
+          Spree::OrderStatusSubscriber,
           Spree::ExportSubscriber,
           Spree::ReportSubscriber,
           Spree::InvitationEmailSubscriber,

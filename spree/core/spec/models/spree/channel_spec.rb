@@ -270,4 +270,24 @@ RSpec.describe Spree::Channel, type: :model do
       expect(channel.reload.updated_at).to eq(old_updated_at)
     end
   end
+  describe 'fulfillment-origin allowlist' do
+    let(:store) { @default_store }
+    let(:channel) { create(:channel, store: store) }
+    let(:warehouse) { create(:stock_location, store: store, name: "Warehouse #{SecureRandom.hex(3)}") }
+    let(:shop) { create(:stock_location, store: store, name: "Shop #{SecureRandom.hex(3)}") }
+
+    it 'serves every location when no allowlist is set' do
+      expect(channel.serves_location?(warehouse)).to be true
+      expect(channel.served_stock_locations).to include(warehouse, shop)
+    end
+
+    it 'serves only allowlisted locations otherwise' do
+      channel.stock_locations = [warehouse]
+
+      expect(channel.serves_location?(warehouse)).to be true
+      expect(channel.serves_location?(shop)).to be false
+      expect(channel.served_stock_locations).to eq([warehouse])
+    end
+  end
+
 end

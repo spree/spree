@@ -52,6 +52,23 @@ export function useUpdateStockLocation(id: string) {
   })
 }
 
+/**
+ * Update variant that takes the id per call, for lists where every row writes
+ * to a different location (the pickup toggles on a delivery profile).
+ */
+export function useUpdateStockLocationById() {
+  return useResourceMutation<
+    StockLocation,
+    Error,
+    { id: string; params: StockLocationUpdateParams }
+  >({
+    mutationFn: ({ id, params }) => adminClient.stockLocations.update(id, params),
+    invalidate: [['stock-locations']],
+    successMessage: i18n.t('admin.messages.updated'),
+    errorMessage: i18n.t('admin.errors.failed_to_update'),
+  })
+}
+
 export function useDeleteStockLocation() {
   const queryClient = useQueryClient()
   const buildKey = useResourceKeyBuilder()

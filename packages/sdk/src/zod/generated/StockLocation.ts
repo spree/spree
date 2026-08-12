@@ -11,6 +11,8 @@ export const StockLocationSchema = z.object({
   country_iso: z.string().nullable(),
   country_name: z.string().nullable(),
   state_text: z.string().nullable(),
+  pickup_ready_in_minutes: z.number().nullable(),
+  pickup_instructions: z.string().nullable(),
 });
 
 export type StockLocation = z.infer<typeof StockLocationSchema>;
