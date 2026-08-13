@@ -37,10 +37,19 @@ RSpec.describe Spree::StoreScopeGuard do
       end
     end
 
-    it 'does not count a store_id null check as store scoping' do
-      sql = 'SELECT * FROM "spree_products" WHERE "spree_products"."store_id" IS NOT NULL'
-
-      expect(described_class.send(:scoped?, sql)).to be(false)
+    # Same reasoning as above, from the other side: a null check matches
+    # storeless or all-store rows rather than a store, under any quoting.
+    it 'does not count store_id null checks as store scoping' do
+      [
+        %(SELECT * FROM "spree_products" WHERE "spree_products"."store_id" IS NULL),
+        %(SELECT * FROM "spree_products" WHERE "spree_products"."store_id" IS NOT NULL),
+        %(SELECT * FROM `spree_products` WHERE `spree_products`.`store_id` IS NULL),
+        %(SELECT * FROM `spree_products` WHERE `spree_products`.`store_id` IS NOT NULL),
+        %(SELECT * FROM spree_products WHERE store_id IS NULL),
+        %(SELECT * FROM spree_products WHERE store_id IS NOT NULL),
+      ].each do |sql|
+        expect(described_class.send(:scoped?, sql)).to be(false), "incorrectly recognized: #{sql}"
+      end
     end
 
     it 'passes id and foreign-key filters (ids in hand came from scoped rows)' do
