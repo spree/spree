@@ -47,7 +47,7 @@ module Spree
         message = <<~MSG
 
           ==> No admin account yet. Finish setup in the dashboard:
-              #{setup_url(store.setup_token)}
+              #{store.setup_url}
 
               (Run `bin/rails spree:setup:token` to print this link again.)
 
@@ -55,11 +55,6 @@ module Spree
 
         puts message unless Rails.env.test?
         Rails.logger&.info(message)
-      end
-
-      def setup_url(token)
-        base = Spree::Config[:admin_url].presence || 'http://localhost:5173'
-        "#{base.chomp('/')}/setup?token=#{token}"
       end
     end
   end

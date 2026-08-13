@@ -34,9 +34,17 @@ module Spree
             return render_setup_unavailable unless setup_token_usable?
 
             user = nil
-            ApplicationRecord.transaction do
+            store = Spree::Store.default
+
+            # The token is one-time, so the guard above must not be a bare
+            # check-then-act: two requests carrying the same token can both
+            # pass it and each create an admin. Re-checking under a row lock
+            # on the store serializes them — the loser sees a spent token.
+            store.with_lock do
+              return render_setup_unavailable unless setup_token_usable?(store.reload)
+
               user = Spree.admin_user_class.create!(admin_user_params)
-              adopt_default_store(user)
+              adopt_default_store(user, store)
             end
 
             refresh_token = Spree::RefreshToken.create_for(user, request_env: request_env_for_token)
@@ -54,11 +62,11 @@ module Spree
 
           # The token lives on the default store (has_secure_token) and only
           # authorizes setup while no admin user exists.
-          def setup_token_usable?
+          def setup_token_usable?(store = Spree::Store.default)
             return false unless setup_required?
 
             provided = params[:setup_token].to_s
-            stored = Spree::Store.default&.setup_token
+            stored = store&.setup_token
 
             provided.present? && stored.present? &&
               ActiveSupport::SecurityUtils.secure_compare(stored, provided)
@@ -81,12 +89,14 @@ module Spree
           # The seed already created the default store (every downstream seed
           # depends on it existing) — setup claims and renames it rather than
           # creating a second one, and spends the token.
-          def adopt_default_store(user)
-            store = Spree::Store.default
+          def adopt_default_store(user, store)
             store.update!(store_params.merge(setup_token: nil))
             store.add_user(user)
           end
 
+          # `store_name` is optional: an API client may claim the installation
+          # without renaming the seeded store (the dashboard's form requires
+          # it, but the endpoint is the documented surface).
           def store_params
             @store_params ||= begin
               permitted = {}

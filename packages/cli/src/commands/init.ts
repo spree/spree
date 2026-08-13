@@ -83,12 +83,19 @@ export async function runFirstRunSetup(flags: {
   s.stop('Spree is ready.')
 
   s.start('Seeding database...')
-  await rakeTask('db:seed', ctx.projectDir, {
-    ADMIN_EMAIL: adminEmail,
-    ADMIN_PASSWORD: adminPassword,
-  })
+  // Omitted entirely when unresolved — the seed treats blank values as "no
+  // admin" and prints a setup link instead, which we surface on the card
+  // below (rakeTask captures stdout rather than streaming it).
+  const seedOutput = await rakeTask(
+    'db:seed',
+    ctx.projectDir,
+    adminEmail && adminPassword
+      ? { ADMIN_EMAIL: adminEmail, ADMIN_PASSWORD: adminPassword }
+      : undefined,
+  )
+  const setupUrl = seedOutput.match(/https?:\/\/\S+\/setup\?token=\S+/)?.[0]
   s.stop('Database seeded.')
-  writeAdminEmail(ctx.projectDir, adminEmail)
+  if (adminEmail) writeAdminEmail(ctx.projectDir, adminEmail)
 
   s.start('Configuring API keys...')
   // Sequential, not Promise.all: finish the publishable key (and its
@@ -128,19 +135,27 @@ export async function runFirstRunSetup(flags: {
   if (hasDashboardApp(ctx.projectDir) && !dashboardRunnable) {
     warnDashboardNotRunnable(ctx.projectDir)
   }
+  // No credentials means no admin was seeded — the operator creates one in
+  // the browser through the seed's one-time setup link.
+  const credentialLines =
+    adminEmail && adminPassword
+      ? [`  Email:    ${adminEmail}`, `  Password: ${adminPassword}`]
+      : [
+          `  ${pc.dim('Create your admin account:')}`,
+          `  ${pc.cyan(setupUrl ?? 'run `spree run bin/rails spree:setup:token` for the setup link')}`,
+        ]
+
   const adminBlock = dashboardRunnable
     ? [
         pc.bold('Admin Dashboard (React, Developer Preview)'),
         `  ${pc.cyan(`http://localhost:${DASHBOARD_PORT}`)}`,
-        `  Email:    ${adminEmail}`,
-        `  Password: ${adminPassword}`,
+        ...credentialLines,
         `  ${pc.dim('Live-reloading from apps/dashboard/')}`,
       ]
     : [
         pc.bold('Admin Dashboard'),
         `  ${pc.dim(`Not installed — add it with ${pc.bold('spree add dashboard')}`)}`,
-        `  Email:    ${adminEmail}`,
-        `  Password: ${adminPassword}`,
+        ...credentialLines,
       ]
 
   // The wholesale demo needs both the storefront env opt-in and the seeded
@@ -294,15 +309,15 @@ export function updateStorefrontEnv(projectDir: string, apiKey: string): void {
 }
 
 /**
- * Flags win; otherwise an interactive terminal prompts (Medusa-style), and a
- * non-interactive run falls back to the historical dev credentials — passed
- * explicitly to the seed either way, since the server no longer ships dummy
- * defaults.
+ * Flags win; otherwise an interactive terminal prompts (Medusa-style). A
+ * non-interactive run with no flags seeds no admin at all — the setup link
+ * printed by the seed claims the installation instead, so an automated
+ * install never mints a well-known password.
  */
 async function resolveAdminCredentials(flags: {
   adminEmail?: string
   adminPassword?: string
-}): Promise<{ adminEmail: string; adminPassword: string }> {
+}): Promise<{ adminEmail?: string; adminPassword?: string }> {
   let adminEmail = flags.adminEmail
   let adminPassword = flags.adminPassword
 
@@ -335,10 +350,7 @@ async function resolveAdminCredentials(flags: {
     }
   }
 
-  return {
-    adminEmail: adminEmail || 'spree@example.com',
-    adminPassword: adminPassword || 'spree123',
-  }
+  return { adminEmail, adminPassword }
 }
 
 async function openBrowser(url: string): Promise<void> {

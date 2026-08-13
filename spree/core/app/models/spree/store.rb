@@ -220,6 +220,22 @@ module Spree
     # database holds nothing but seed data.
     has_secure_token :setup_token
 
+    # Link that claims this installation: the dashboard's first-run setup
+    # screen with the store's token. Resolves the dashboard origin the same
+    # way the SSO callback does — configured origin, the Vite dev server in
+    # development, then the store's own URL — so a production install without
+    # `dashboard_url` set never advertises a localhost port.
+    # @return [String, nil] nil when no token is outstanding
+    def setup_url
+      return if setup_token.blank?
+
+      base = Spree::Config[:dashboard_url].presence ||
+             (Rails.env.development? ? 'http://localhost:5173' : nil) ||
+             formatted_url
+
+      "#{base.to_s.chomp('/')}/setup?token=#{setup_token}"
+    end
+
     #
     # Callbacks
     before_validation :set_default_code, on: :create

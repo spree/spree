@@ -65,6 +65,10 @@ function SetupRequiredNotice() {
     queryKey: ['setup-status'],
     queryFn: () => adminClient.auth.setupStatus(),
     retry: false,
+    // See the /setup route: never offer setup from a cached `true`.
+    gcTime: 0,
+    staleTime: 0,
+    refetchOnMount: 'always',
   })
 
   if (!status.data?.setup_required) return null

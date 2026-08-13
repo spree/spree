@@ -105,6 +105,23 @@ RSpec.describe Spree::Api::V3::Admin::SetupController, type: :controller do
       end
     end
 
+    context 'when the token is spent between the guard and the write' do
+      # Simulates the concurrent-submit race: the pre-lock check passes, then
+      # another request completes setup before this one takes the lock.
+      it 'returns 404 and creates no second admin' do
+        call_count = 0
+        allow_any_instance_of(described_class).to receive(:setup_token_usable?).and_wrap_original do |original, *args|
+          call_count += 1
+          call_count == 1 ? original.call(*args) : false
+        end
+
+        post :create, params: valid_params, as: :json
+
+        expect(response).to have_http_status(:not_found)
+        expect(Spree.admin_user_class.count).to eq(0)
+      end
+    end
+
     context 'when the store has no token' do
       before { @default_store.update_column(:setup_token, nil) }
 

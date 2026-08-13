@@ -22,9 +22,17 @@ function IndexRedirect() {
     }
 
     let cancelled = false
-    adminClient.store.get().then((store) => {
-      if (!cancelled) navigate({ to: '/$storeId', params: { storeId: store.id }, replace: true })
-    })
+    adminClient.store
+      .get()
+      .then((store) => {
+        if (!cancelled) navigate({ to: '/$storeId', params: { storeId: store.id }, replace: true })
+      })
+      .catch(() => {
+        // Nothing resolved a store — send them to login rather than leaving
+        // them on a blank page with no way out. A live session that merely hit
+        // a network blip lands back here after the redirect.
+        if (!cancelled) navigate({ to: '/login', replace: true })
+      })
     return () => {
       cancelled = true
     }

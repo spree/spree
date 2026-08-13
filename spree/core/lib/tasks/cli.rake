@@ -40,8 +40,9 @@ namespace :spree do
       email = ENV.fetch('EMAIL')
       password = ENV.fetch('PASSWORD')
 
+      # Creates the role row if the database predates it, so this works on a
+      # freshly migrated app that has not been seeded.
       admin_role = Spree::Role.default_admin_role
-      abort "The 'admin' role does not exist — run `bin/rails db:seed` first." if admin_role.nil?
 
       admin = Spree.admin_user_class.find_or_create_by!(email: email) do |user|
         user.password = password

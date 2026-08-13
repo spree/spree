@@ -306,6 +306,30 @@ describe Spree::Store, type: :model, without_global_store: true do
 
   end
 
+  describe '#setup_url' do
+    let(:store) { create(:store, url: 'shop.example.com') }
+
+    it 'points at the configured dashboard origin' do
+      allow(Spree::Config).to receive(:[]).with(:dashboard_url).and_return('https://admin.example.com')
+
+      expect(store.setup_url).to eq("https://admin.example.com/setup?token=#{store.setup_token}")
+    end
+
+    it "falls back to the store's own URL rather than a dev port" do
+      allow(Spree::Config).to receive(:[]).with(:dashboard_url).and_return(nil)
+      allow(Rails.env).to receive(:development?).and_return(false)
+
+      expect(store.setup_url).to start_with(store.formatted_url)
+      expect(store.setup_url).not_to include('localhost:5173')
+    end
+
+    it 'is nil once the token is spent' do
+      store.update!(setup_token: nil)
+
+      expect(store.setup_url).to be_nil
+    end
+  end
+
   context 'Validations' do
     describe '#code' do
       it 'generates a code when blank' do

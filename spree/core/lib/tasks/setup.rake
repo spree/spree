@@ -10,10 +10,9 @@ namespace :spree do
       abort 'No store yet — run `bin/rails db:seed` first.' if store.nil?
 
       store.regenerate_setup_token if store.setup_token.blank? || ENV['ROTATE'].present?
-      base = Spree::Config[:admin_url].presence || 'http://localhost:5173'
 
       puts 'Finish setup in the dashboard:'
-      puts "  #{base.chomp('/')}/setup?token=#{store.setup_token}"
+      puts "  #{store.setup_url}"
     end
   end
 end

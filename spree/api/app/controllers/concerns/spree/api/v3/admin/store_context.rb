@@ -47,7 +47,11 @@ module Spree
               return
             end
 
-            Spree::Current.store = current_store if current_store
+            # Assigned even when nil: an unknown store id renders 404 further
+            # down the chain, and leaving Spree::Current.store holding the
+            # previous request's value on this thread would expose another
+            # store to anything reading it before that 404 lands.
+            Spree::Current.store = current_store
           end
 
           def resolve_admin_store

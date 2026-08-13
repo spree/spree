@@ -50,6 +50,12 @@ function SetupLoader({ token }: { token: string }) {
     queryKey: ['setup-status'],
     queryFn: () => adminClient.auth.setupStatus(),
     retry: false,
+    // Availability flips exactly once, and a cached `true` would re-render
+    // the form after setup completed (browser back, or the login page's
+    // link) — a form that can no longer succeed. Always ask.
+    gcTime: 0,
+    staleTime: 0,
+    refetchOnMount: 'always',
   })
 
   if (status.isPending) {
