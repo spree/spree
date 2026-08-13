@@ -167,16 +167,15 @@ module Spree
 
         # Resolves the request's secret API key into `@current_api_key` if a
         # secret-key token is present and it hasn't been resolved yet, so the scope
-        # check does not depend on `authenticate_admin!` having already run. Mirrors
-        # the secret-key resolution + store binding in AdminAuthentication, and is
-        # idempotent: when the key is already loaded (guard runs after auth) it does
-        # nothing.
+        # check does not depend on `authenticate_admin!` having already run. Uses
+        # the same memoized lookup as AdminAuthentication (the key selects the
+        # request's store — see Admin::StoreContext), and is idempotent: when the
+        # key is already loaded (guard runs after auth) it does nothing.
         def resolve_current_api_key_for_scope_check!
           return if @current_api_key
           return unless secret_key_request?
 
-          key = Spree::ApiKey.find_by_secret_token(extract_api_key)
-          @current_api_key = key if key && key.store_id == current_store.id
+          @current_api_key = secret_api_key
         end
 
         # The resource name used in scope strings (`read_<name>` / `write_<name>`).

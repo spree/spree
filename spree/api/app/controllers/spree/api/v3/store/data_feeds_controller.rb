@@ -13,6 +13,17 @@ module Spree
 
             render xml: presenter.call
           end
+
+          protected
+
+          # Feed URLs carry only a slug (unique per store, not globally), and
+          # no credential accompanies the request — so feeds are served for
+          # the default store. This matches the pre-6.0 behavior in practice:
+          # the old finder resolved every host to the default store too. A
+          # store-carrying feed URL shape is future work.
+          def current_store
+            @current_store ||= Spree::Store.default
+          end
         end
       end
     end

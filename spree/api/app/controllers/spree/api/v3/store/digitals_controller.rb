@@ -24,12 +24,21 @@ module Spree
 
           private
 
+          # The download token is the request's credential and selects the
+          # store (tokens are globally unique via has_secure_token) — no
+          # publishable key accompanies emailed download links, so there is
+          # no other credential to derive store context from.
           def set_resource
             @resource = digital_link_scope.find_by!(token: params[:token])
+            Spree::Current.store = current_store
           end
 
           def digital_link_scope
-            current_store.digital_links
+            Spree::DigitalLink
+          end
+
+          def current_store
+            @current_store ||= @resource&.order&.store || super
           end
         end
       end

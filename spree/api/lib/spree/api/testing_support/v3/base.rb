@@ -34,7 +34,13 @@ shared_context 'API v3 Store' do
   let(:bearer_headers) { api_key_headers.merge('Authorization' => "Bearer #{jwt_token}") }
 
   before do
+    # Stubbed on both branch anchors, not just the shared base — the anchors
+    # define their own `current_store` (KeyStoreContext), which would shadow
+    # a stub installed on the base class. Specs stub methods on this exact
+    # `store` instance, so resolution must return it by identity.
     allow_any_instance_of(Spree::Api::V3::BaseController).to receive(:current_store).and_return(store)
+    allow_any_instance_of(Spree::Api::V3::Store::BaseController).to receive(:current_store).and_return(store)
+    allow_any_instance_of(Spree::Api::V3::Store::ResourceController).to receive(:current_store).and_return(store)
   end
 end
 
@@ -60,7 +66,11 @@ shared_context 'API v3 Admin' do
   let(:bearer_headers) { api_key_headers.merge('Authorization' => "Bearer #{admin_jwt_token}") }
 
   before do
+    # See the 'API v3 Store' context — the admin anchors define their own
+    # `current_store` (Admin::StoreContext), which shadows a base-class stub.
     allow_any_instance_of(Spree::Api::V3::BaseController).to receive(:current_store).and_return(store)
+    allow_any_instance_of(Spree::Api::V3::Admin::BaseController).to receive(:current_store).and_return(store)
+    allow_any_instance_of(Spree::Api::V3::Admin::ResourceController).to receive(:current_store).and_return(store)
   end
 end
 

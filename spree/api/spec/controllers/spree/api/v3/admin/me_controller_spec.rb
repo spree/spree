@@ -105,7 +105,7 @@ RSpec.describe Spree::Api::V3::Admin::MeController, type: :controller do
       end
 
       it 'returns the other store keys under that store context' do
-        allow_any_instance_of(Spree::Api::V3::BaseController).to receive(:current_store).and_return(store_b)
+        allow_any_instance_of(Spree::Api::V3::Admin::BaseController).to receive(:current_store).and_return(store_b)
 
         subject
         expect(json_response['permission_keys']).to eq(%w[read_products])
