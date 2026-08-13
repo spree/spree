@@ -89,6 +89,44 @@
   --sidebar-accent-foreground: oklch(0.2136 0.0555 255.9);
   --sidebar-border: oklch(0.928 0.0075 87.5);
   --sidebar-ring: var(--brand-blue);
+
+  /* Status ramps, following Vercel's Geist colour system.
+   *
+   * Geist gives each step of a ramp a fixed job: low steps are component
+   * backgrounds, mid steps borders, high steps text and icons. Its badges pair
+   * a light tint with a dark reading colour from the same hue, which is what
+   * these trios reproduce — a fill light enough to sit on a white card, under
+   * text that is a true text colour rather than the fill darkened.
+   *
+   * The values come from Tailwind's own palette rather than Geist's raw
+   * numbers: each step below is the closest match in oklch to its Geist
+   * counterpart, so the result reads the same while staying on the palette the
+   * rest of the dashboard is built from.
+   *
+   * Text lands on step 700 in every ramp, over a step-100 fill. Green is the
+   * one exception: Tailwind's green-700 is lighter than its siblings and lands
+   * at 4.497:1 on green-100, a hair under the 4.5:1 that 12px badge text
+   * needs, so green's fill drops one step to clear it. The difference is
+   * invisible beside the other three but keeps the whole set measurably legible
+   * rather than passing only by eye. */
+  --status-green-bg: var(--color-green-50);
+  --status-green-border: var(--color-green-100);
+  --status-green-fg: var(--color-green-700);
+
+  --status-amber-bg: var(--color-amber-100);
+  --status-amber-border: var(--color-amber-200);
+  --status-amber-fg: var(--color-amber-700);
+
+  --status-red-bg: var(--color-red-100);
+  --status-red-border: var(--color-red-200);
+  --status-red-fg: var(--color-red-700);
+
+  /* Blue reads off the sky ramp rather than Tailwind's blue: `--color-blue-500`
+     and `-600` are remapped to the brand accent further down, so a badge built
+     on those steps would read as a brand mark rather than a neutral status. */
+  --status-blue-bg: var(--color-sky-100);
+  --status-blue-border: var(--color-sky-200);
+  --status-blue-fg: var(--color-sky-700);
 }
 
 .dark {
@@ -131,6 +169,33 @@
   --sidebar-accent-foreground: oklch(0.95 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* Geist's dark ramps are not the light ones dimmed — the fill becomes a deep
+     shade of the hue and the text becomes brighter than its light-mode
+     counterpart. That inversion is why a tint expressed as an opacity over
+     black goes muddy: these are separate colours, not one hue at lower alpha.
+     Border and fill share a step here, since a deep fill already separates
+     from a black card and a lighter rule around it would draw more attention
+     than the badge itself.
+
+     Text sits on step 300 across all four ramps — the brightest of the steps
+     Geist treats as text, and the only one that clears 4.5:1 on a 900 fill for
+     every hue (red and sky fall under it by step 400). */
+  --status-green-bg: var(--color-green-900);
+  --status-green-border: var(--color-green-900);
+  --status-green-fg: var(--color-green-300);
+
+  --status-amber-bg: var(--color-amber-900);
+  --status-amber-border: var(--color-amber-900);
+  --status-amber-fg: var(--color-amber-300);
+
+  --status-red-bg: var(--color-red-900);
+  --status-red-border: var(--color-red-900);
+  --status-red-fg: var(--color-red-300);
+
+  --status-blue-bg: var(--color-sky-900);
+  --status-blue-border: var(--color-sky-900);
+  --status-blue-fg: var(--color-sky-300);
 }
 
 @theme inline {
@@ -200,11 +265,27 @@
   --color-foreground: var(--foreground);
   --color-background: var(--background);
 
-  /* Spree status colors — for badges & alerts */
-  --color-success: var(--color-lime-500);
-  --color-warning: var(--color-yellow-500);
-  --color-info: var(--color-sky-500);
-  --color-danger: var(--color-rose-500);
+  /* Status colours — badges, alerts and any other success/warning/error mark.
+     Each is a background/border/foreground trio rather than a single hue, so a
+     component states which role it wants instead of picking an opacity and
+     hoping it lands. This replaces the older single-value `--color-success`
+     family, which had to be re-tinted at every call site and was bypassed by
+     most of them for exactly that reason. */
+  --color-success: var(--status-green-fg);
+  --color-success-bg: var(--status-green-bg);
+  --color-success-border: var(--status-green-border);
+
+  --color-warning: var(--status-amber-fg);
+  --color-warning-bg: var(--status-amber-bg);
+  --color-warning-border: var(--status-amber-border);
+
+  --color-danger: var(--status-red-fg);
+  --color-danger-bg: var(--status-red-bg);
+  --color-danger-border: var(--status-red-border);
+
+  --color-info: var(--status-blue-fg);
+  --color-info-bg: var(--status-blue-bg);
+  --color-info-border: var(--status-blue-border);
 
   /* Re-point Tailwind's blue ramp at the brand accent. Interactive blue is
      used throughout the component layer for focus borders, checked states and

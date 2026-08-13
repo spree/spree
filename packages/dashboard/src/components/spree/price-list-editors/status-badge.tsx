@@ -6,8 +6,8 @@ import { useTranslation } from 'react-i18next'
 // range puts it live now — mirrors the legacy admin's
 // `price_list_status_badge` helper.
 const STATUS_STYLES = {
-  active: { className: 'bg-emerald-100 text-emerald-900 hover:bg-emerald-100' },
-  scheduled: { className: 'bg-sky-100 text-sky-900 hover:bg-sky-100' },
+  active: { variant: 'success' as const },
+  scheduled: { variant: 'info' as const },
   inactive: { variant: 'secondary' as const },
   draft: { variant: 'outline' as const },
 } as const
@@ -26,8 +26,9 @@ export function PriceListStatusBadge({ priceList }: { priceList: PriceList }) {
   // reports a stale `currently_active: true`.
   const status: PriceListStatus = priceList.currently_active && raw !== 'inactive' ? 'active' : raw
 
-  const style = STATUS_STYLES[status]
-  const label = t(`admin.fields.price_list.status.${status}`)
-  if ('variant' in style) return <Badge variant={style.variant}>{label}</Badge>
-  return <Badge className={style.className}>{label}</Badge>
+  return (
+    <Badge variant={STATUS_STYLES[status].variant}>
+      {t(`admin.fields.price_list.status.${status}`)}
+    </Badge>
+  )
 }
