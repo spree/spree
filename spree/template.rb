@@ -1,3 +1,5 @@
+require 'shellwords'
+
 # Spree Commerce Rails Application Template
 # Sets up a new headless Rails application (Spree core + API) using the gem-owned
 # Spree::Customer / Spree::AdminUser auth models (has_secure_password). The admin
@@ -67,7 +69,9 @@ def seed_database
   say 'Loading seed data...', :blue
 
   if ADMIN_EMAIL.present? && ADMIN_PASSWORD.present?
-    rails_command "db:seed AUTO_ACCEPT=1 ADMIN_EMAIL=#{ADMIN_EMAIL} ADMIN_PASSWORD=#{ADMIN_PASSWORD}"
+    # rails_command interpolates into a shell command line, so a password
+    # containing shell metacharacters would otherwise be mangled or executed.
+    rails_command "db:seed AUTO_ACCEPT=1 ADMIN_EMAIL=#{Shellwords.escape(ADMIN_EMAIL)} ADMIN_PASSWORD=#{Shellwords.escape(ADMIN_PASSWORD)}"
   else
     rails_command 'db:seed AUTO_ACCEPT=1'
   end

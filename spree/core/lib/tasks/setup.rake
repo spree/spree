@@ -9,7 +9,7 @@ namespace :spree do
       store = Spree::Store.default
       abort 'No store yet — run `bin/rails db:seed` first.' if store.nil?
 
-      store.regenerate_setup_token if store.setup_token.blank? || ENV['ROTATE'].present?
+      store.regenerate_setup_token if store.setup_token.blank? || ENV['ROTATE'] == '1'
 
       puts 'Open this link (with your app running) to create the first admin account:'
       puts "  #{store.setup_url}"

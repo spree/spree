@@ -78,7 +78,8 @@ ${pm} run dev
 \`\`\`
 
 Open http://localhost:${DASHBOARD_PORT} and sign in with the admin email and
-password above. The classic admin remains at http://localhost:${port}/admin.
+password you chose during the first run. The classic admin remains at
+http://localhost:${port}/admin.
 
 When you deploy, the production image builds your dashboard and serves it at
 \`/dashboard\` on the same origin as the API (\`${run} spree build --production\`).

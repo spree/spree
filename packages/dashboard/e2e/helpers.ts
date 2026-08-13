@@ -169,8 +169,12 @@ export function rowButton(page: Page, name: string) {
   return page.getByRole('button', { name: new RegExp(`^${escapeRegex(name)}(\\s|$)`) })
 }
 
-export function escapeRegex(s: string) {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+/**
+ * Escapes regex metacharacters so a dynamic value (a generated name, an email
+ * address) matches literally inside a `RegExp` locator.
+ */
+export function escapeRegex(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
 export interface AddressInput {

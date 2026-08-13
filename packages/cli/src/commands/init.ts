@@ -98,7 +98,10 @@ export async function runFirstRunSetup(flags: {
   // link against whichever dashboard it is about to point the user at.
   const setupToken = seedOutput.match(/\/setup\?token=(\S+)/)?.[1]
   s.stop('Database seeded.')
-  if (adminEmail) writeAdminEmail(ctx.projectDir, adminEmail)
+  // Recorded only when an admin was actually seeded — `spree dev` reads this
+  // to name the sign-in email, and an address for an account that does not
+  // exist would be worse than saying nothing.
+  if (adminEmail && adminPassword) writeAdminEmail(ctx.projectDir, adminEmail)
 
   s.start('Configuring API keys...')
   // Sequential, not Promise.all: finish the publishable key (and its
@@ -230,7 +233,15 @@ export async function runFirstRunSetup(flags: {
       // port when 5173 is taken) so the browser opens the real URL. Without
       // one there's no admin to open in development, so fall back to the
       // store itself.
-      await openBrowser(dashboard ? await dashboard.url : `http://localhost:${ctx.port}`)
+      const dashboardUrl = dashboard ? await dashboard.url : null
+      // No admin was seeded, so the dashboard would only show a login form
+      // nobody can pass — open first-run setup instead and land the operator
+      // on the account form directly.
+      const target =
+        setupToken && dashboardUrl
+          ? `${dashboardUrl.replace(/\/$/, '')}/setup?token=${setupToken}`
+          : (dashboardUrl ?? `http://localhost:${ctx.port}`)
+      await openBrowser(target)
     }
 
     p.log.info('Streaming logs (Ctrl+C to stop)...\n')
@@ -369,6 +380,23 @@ async function resolveAdminCredentials(flags: {
       }
       adminPassword = answer
     }
+  }
+
+  // Flag values skip the prompt validators, so check them here too — the
+  // alternative is failing after Docker start and seeding, minutes later.
+  if (adminEmail && !adminEmail.includes('@')) {
+    p.cancel(`Invalid --admin-email: ${adminEmail}`)
+    process.exit(1)
+  }
+  if (adminPassword && adminPassword.length < 8) {
+    p.cancel('Invalid --admin-password: use at least 8 characters.')
+    process.exit(1)
+  }
+  // One without the other cannot seed an admin; say so rather than silently
+  // falling through to the setup-link path the operator did not ask for.
+  if (Boolean(adminEmail) !== Boolean(adminPassword)) {
+    p.cancel('Pass both --admin-email and --admin-password, or neither.')
+    process.exit(1)
   }
 
   return { adminEmail, adminPassword }

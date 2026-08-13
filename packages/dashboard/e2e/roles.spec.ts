@@ -136,6 +136,8 @@ test.describe('roles', () => {
   test('blocks deleting a role while staff hold it, allows after unassign', async ({ page }) => {
     const creds = await login(page)
     const name = `e2e-held-${Date.now()}`
+    // Escaped so a name with regex characters matches literally.
+    const roleName = new RegExp(escapeRegex(name), 'i')
 
     // Create the role.
     await gotoRoles(page, creds.store_id)
@@ -147,7 +149,7 @@ test.describe('roles', () => {
     await sheet(page)
       .getByRole('button', { name: /^save$/i })
       .click()
-    await expect(page.getByRole('cell', { name: new RegExp(name, 'i') })).toBeVisible({
+    await expect(page.getByRole('cell', { name: roleName })).toBeVisible({
       timeout: 15_000,
     })
 
@@ -158,13 +160,13 @@ test.describe('roles', () => {
     await page.goto(`/${creds.store_id}/settings/staff`)
     await page.getByRole('row', { name: adminRow }).getByRole('button').last().click()
     await page.getByRole('menuitem', { name: /edit/i }).click()
-    await page.getByRole('checkbox', { name: new RegExp(name, 'i') }).check()
+    await page.getByRole('checkbox', { name: roleName }).check()
     await page.getByRole('button', { name: /^save$/i }).click()
-    await expect(page.getByText(new RegExp(name, 'i')).first()).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByText(roleName).first()).toBeVisible({ timeout: 15_000 })
 
     // Delete is disabled while the role is held.
     await gotoRoles(page, creds.store_id)
-    const row = page.getByRole('row', { name: new RegExp(name, 'i') })
+    const row = page.getByRole('row', { name: roleName })
     await row.getByRole('button').last().click()
     await expect(page.getByRole('menuitem', { name: /delete/i })).toBeDisabled()
     await page.keyboard.press('Escape')
@@ -173,11 +175,11 @@ test.describe('roles', () => {
     await page.goto(`/${creds.store_id}/settings/staff`)
     await page.getByRole('row', { name: adminRow }).getByRole('button').last().click()
     await page.getByRole('menuitem', { name: /edit/i }).click()
-    await page.getByRole('checkbox', { name: new RegExp(name, 'i') }).uncheck()
+    await page.getByRole('checkbox', { name: roleName }).uncheck()
     await page.getByRole('button', { name: /^save$/i }).click()
-    await expect(
-      page.getByRole('row', { name: adminRow }).getByText(new RegExp(name, 'i')),
-    ).toHaveCount(0, { timeout: 15_000 })
+    await expect(page.getByRole('row', { name: adminRow }).getByText(roleName)).toHaveCount(0, {
+      timeout: 15_000,
+    })
 
     await gotoRoles(page, creds.store_id)
     await row.getByRole('button').last().click()
@@ -186,7 +188,7 @@ test.describe('roles', () => {
       .getByRole('dialog')
       .getByRole('button', { name: /^delete$/i })
       .click()
-    await expect(page.getByRole('cell', { name: new RegExp(name, 'i') })).toHaveCount(0, {
+    await expect(page.getByRole('cell', { name: roleName })).toHaveCount(0, {
       timeout: 15_000,
     })
   })
