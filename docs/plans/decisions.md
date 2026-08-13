@@ -131,9 +131,11 @@ What ships instead is the work that makes the hook recommendation honest:
   quantity `0` removes). It fires `validate` per item with `AddItem`-compatible
   readers, shares the item-application steps with `AddItem` (whose per-item
   full recalculate is what made N-item adds slow — the batch recalculates
-  once), and is **partial-success**: a per-item rejection skips the item into
-  a `warnings` array (`item_index`, `code`, `message`) on a 2xx response
-  rather than rolling back the batch. No whole-batch veto in 6.0.
+  once), and is **partial-success on the storefront**: a per-item rejection
+  skips the item onto the cart's existing `warnings` array on a 2xx response
+  rather than rolling back the batch. The **order-side twin fails the whole
+  batch** — a merchant's struck-out row silently not applying is worse than a
+  failed request. No whole-batch veto in 6.0.
   `SetQuantity`/`RemoveLineItem` become deprecated shells.
 - **`Products::Create`/`Update`/`Destroy` become workflows** (real
   orchestration, not the plain CRUD the doctrine rejects) with all write paths
