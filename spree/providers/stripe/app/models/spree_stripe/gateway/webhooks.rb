@@ -71,6 +71,11 @@ module SpreeStripe
           return Stripe::Webhook.construct_event(raw_body, signature, secret)
         rescue Stripe::SignatureVerificationError
           next
+        rescue JSON::ParserError
+          # construct_event parses before it verifies, so a malformed body
+          # never reaches the signature check. Unauthenticated garbage is a
+          # rejected webhook, not a server error to retry.
+          raise Spree::PaymentMethod::WebhookSignatureError, 'Malformed webhook payload'
         end
 
         raise Spree::PaymentMethod::WebhookSignatureError, 'Invalid webhook signature'

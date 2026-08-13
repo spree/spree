@@ -1042,6 +1042,21 @@ RSpec.describe SpreeStripe::Gateway do
         expect { result }.to raise_error(Spree::PaymentMethod::WebhookSignatureError)
       end
     end
+
+    # construct_event parses the body before verifying it, so malformed input
+    # never reaches the signature check — it must still be rejected, not
+    # acknowledged as a server error.
+    context 'when the payload is not valid JSON' do
+      let(:gateway) { create(:stripe_gateway, :with_webhook_signing_secret, store: store) }
+
+      before do
+        allow(Stripe::Webhook).to receive(:construct_event).and_raise(JSON::ParserError.new('unexpected token'))
+      end
+
+      it 'raises a WebhookSignatureError' do
+        expect { result }.to raise_error(Spree::PaymentMethod::WebhookSignatureError, /Malformed/)
+      end
+    end
   end
 
   describe 'webhook endpoint registration' do
