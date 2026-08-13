@@ -222,15 +222,16 @@ module SpreeStripe
     private
 
     def handle_authorize_or_purchase(amount_in_cents, _payment_source, gateway_options)
-      order_number, payment_number = gateway_options[:order_id].to_s.split('-')
-
-      return failure('Order number is invalid') if order_number.blank?
+      # payment_id is the payment's own number, which already names its order
+      # (`R1001-P1`). Looked up through the store's payments so a number from
+      # another tenant cannot resolve.
+      payment_number = gateway_options[:payment_id].presence || gateway_options[:order_id]
       return failure('Payment number is invalid') if payment_number.blank?
 
-      order = store.orders.find_by(number: order_number)
-      return failure('Order not found') if order.blank?
-
-      payment = order.payments.find_by(number: payment_number)
+      # Scoped through this gateway's own payments — a cart-owned payment
+      # (checkout is still in flight) has no order to join through, and the
+      # payment method already belongs to exactly one store.
+      payment = payments.find_by(number: payment_number)
       return failure('Payment not found') if payment.blank?
       return failure('Payment is missing a payment intent') if payment.response_code.blank?
 

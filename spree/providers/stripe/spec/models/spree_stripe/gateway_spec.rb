@@ -571,10 +571,12 @@ RSpec.describe SpreeStripe::Gateway do
   end
 
   describe '#purchase' do
-    subject { gateway.purchase(amount_in_cents, credit_card, { order_id: order_id }) }
+    subject { gateway.purchase(amount_in_cents, credit_card, gateway_options) }
 
     let(:amount_in_cents) { 1000 }
-    let(:order_id) { "#{order.number}-#{payment.number}" }
+    # What Spree::Payment::GatewayOptions actually sends: the payment's own
+    # number, which already names its order.
+    let(:gateway_options) { { order_id: payment.number, payment_id: payment.number } }
 
     let!(:order) { create(:order_with_line_items, store: store, number: 'R111098765', customer: create(:customer)) }
     let!(:gateway_customer) { create(:gateway_customer, customer: order.customer, payment_method: gateway) }
@@ -597,12 +599,53 @@ RSpec.describe SpreeStripe::Gateway do
       end
     end
 
-    context 'when the order id is malformed' do
-      let(:order_id) { 'missing' }
+    context 'when no payment number is supplied' do
+      let(:gateway_options) { { order_id: nil, payment_id: nil } }
 
       it 'returns failure' do
         expect(subject.success?).to be(false)
         expect(subject.message).to eq('Payment number is invalid')
+      end
+    end
+
+    context 'when the payment number does not resolve' do
+      let(:gateway_options) { { order_id: 'missing', payment_id: 'missing' } }
+
+      it 'returns failure' do
+        expect(subject.success?).to be(false)
+        expect(subject.message).to eq('Payment not found')
+      end
+    end
+
+    # Derived numbers contain the order number and a hyphen (`R1001-P1`), so a
+    # gateway that splits on the hyphen looks up the wrong record entirely.
+    context 'when the payment carries a derived, hyphenated number' do
+      let!(:payment) do
+        create(:payment, number: "#{order.number}-P1", amount: order.total, payment_method: gateway,
+                         order: order, source: credit_card, response_code: payment_intent_id)
+      end
+
+      it 'resolves the payment' do
+        VCR.use_cassette('create_payment_intent_with_payment_method') do
+          expect(subject.success?).to be(true)
+        end
+      end
+    end
+
+    # Core already refuses to attach another store's payment method to an
+    # order, so the lookup is scoped to this gateway's own payments as defence
+    # in depth rather than the only guard.
+    context 'when the number belongs to another gateway' do
+      let(:other_gateway) { create(:stripe_gateway, store: store) }
+      let!(:other_payment) do
+        create(:payment, number: 'OTHER123', amount: order.total, payment_method: other_gateway,
+                         order: order, source: credit_card, response_code: payment_intent_id)
+      end
+      let(:gateway_options) { { order_id: other_payment.number, payment_id: other_payment.number } }
+
+      it 'does not resolve it' do
+        expect(subject.success?).to be(false)
+        expect(subject.message).to eq('Payment not found')
       end
     end
 
