@@ -644,6 +644,7 @@ require 'spree/service_module'
 require 'spree/workflow'
 require 'spree/analytics'
 require 'spree/events'
+require 'spree/store_scope_guard'
 
 require 'spree/core/partials'
 require 'spree/core/controller_helpers/auth'

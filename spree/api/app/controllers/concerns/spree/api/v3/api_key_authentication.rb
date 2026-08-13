@@ -66,8 +66,9 @@ module Spree
         def publishable_api_key
           return @publishable_api_key if defined?(@publishable_api_key)
 
-          @publishable_api_key =
+          @publishable_api_key = Spree::StoreScopeGuard.skip do
             extract_api_key ? Spree::ApiKey.active.publishable.find_by(token: extract_api_key) : nil
+          end
         end
 
         # Memoized global secret-key lookup (digest-based, active keys only).
@@ -76,7 +77,9 @@ module Spree
         def secret_api_key
           return @secret_api_key if defined?(@secret_api_key)
 
-          @secret_api_key = Spree::ApiKey.find_by_secret_token(extract_api_key)
+          @secret_api_key = Spree::StoreScopeGuard.skip do
+            Spree::ApiKey.find_by_secret_token(extract_api_key)
+          end
         end
 
         # Marks the API key as used at most once per hour

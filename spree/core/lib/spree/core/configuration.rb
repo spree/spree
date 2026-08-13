@@ -97,6 +97,11 @@ module Spree
       preference :reserve_stock_on, :string, default: 'checkout', deprecated: 'Nothing reads this in Spree 6 — see the stock_reservations_enabled preference on the store'
       preference :stock_reservations_enabled, :boolean, default: true, deprecated: 'Set it on the store instead' # Hold stock during checkout to prevent overselling
       preference :default_stock_reservation_ttl_minutes, :integer, default: 10, deprecated: 'Use the stock_reservation_ttl_minutes preference on the store'
+      # Cross-store leak tripwire for development and test (never active in
+      # production) — see Spree::StoreScopeGuard. 'log' warns about store-less
+      # queries on store-owned tables inside API requests; 'raise' turns them
+      # into failures (what this repo's API test suite runs); 'off' disables.
+      preference :store_scope_guard, :string, default: 'log', env: 'SPREE_STORE_SCOPE_GUARD'
       # Tiered cart-expiry reaper (docs/plans/6.0-cart-order-split.md Decision 5)
       preference :guest_cart_expiry_days, :integer, default: 30
       preference :customer_cart_expiry_days, :integer, default: 90

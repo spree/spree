@@ -80,8 +80,12 @@ module Spree
           attr_writer name
 
           if env
+            # The ivar symbol is built once here — interpolating it inside
+            # the reader would allocate a String on every read of an
+            # env-backed setting, some of which sit on the request path.
+            ivar = :"@#{name}"
             define_method(name) do
-              value = instance_variable_get("@#{name}")
+              value = instance_variable_get(ivar)
               return value unless value.nil?
 
               ENV[env].presence || default
