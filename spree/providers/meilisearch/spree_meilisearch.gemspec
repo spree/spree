@@ -26,5 +26,5 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
 
   s.add_dependency 'meilisearch', '>= 0.28'
-  s.add_dependency 'spree_core', ">= #{s.version}"
+  s.add_dependency 'spree_core', s.version
 end
