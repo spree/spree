@@ -11,7 +11,7 @@ namespace :spree do
 
       store.regenerate_setup_token if store.setup_token.blank? || ENV['ROTATE'].present?
 
-      puts 'Finish setup in the dashboard:'
+      puts 'Open this link (with your app running) to create the first admin account:'
       puts "  #{store.setup_url}"
     end
   end

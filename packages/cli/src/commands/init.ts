@@ -93,7 +93,10 @@ export async function runFirstRunSetup(flags: {
       ? { ADMIN_EMAIL: adminEmail, ADMIN_PASSWORD: adminPassword }
       : undefined,
   )
-  const setupUrl = seedOutput.match(/https?:\/\/\S+\/setup\?token=\S+/)?.[0]
+  // Only the token travels: the seed resolves the URL inside the container,
+  // where the dashboard's host and port are unknowable. The card rebuilds the
+  // link against whichever dashboard it is about to point the user at.
+  const setupToken = seedOutput.match(/\/setup\?token=(\S+)/)?.[1]
   s.stop('Database seeded.')
   if (adminEmail) writeAdminEmail(ctx.projectDir, adminEmail)
 
@@ -144,13 +147,23 @@ export async function runFirstRunSetup(flags: {
     warnDashboardNotRunnable(ctx.projectDir)
   }
   // No credentials means no admin was seeded — the operator creates one in
-  // the browser through the seed's one-time setup link.
+  // the browser through the seed's one-time setup link. Built against the
+  // dashboard this card is advertising (the dev server `spree dev` starts, or
+  // the bundled dashboard the API serves when there is no dev server), since
+  // the URL the seed printed used the container's own idea of the host.
+  const setupBase = dashboardRunnable
+    ? `http://localhost:${DASHBOARD_PORT}`
+    : `http://localhost:${ctx.port}/dashboard`
   const credentialLines =
     adminEmail && adminPassword
       ? [`  Email:    ${adminEmail}`, `  Password: ${adminPassword}`]
       : [
           `  ${pc.dim('Create your admin account:')}`,
-          `  ${pc.cyan(setupUrl ?? 'run `spree run bin/rails spree:setup:token` for the setup link')}`,
+          `  ${pc.cyan(
+            setupToken
+              ? `${setupBase}/setup?token=${setupToken}`
+              : 'run `spree run bin/rails spree:setup:token` for the setup link',
+          )}`,
         ]
 
   const adminBlock = dashboardRunnable

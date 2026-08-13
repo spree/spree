@@ -46,10 +46,12 @@ module Spree
 
         message = <<~MSG
 
-          ==> No admin account yet. Finish setup in the dashboard:
+          ==> No admin account yet. Start your app, then open this link to
+              create the first admin account:
+
               #{store.setup_url}
 
-              (Run `bin/rails spree:setup:token` to print this link again.)
+              (Run `bin/rails spree:setup:token` to print it again.)
 
         MSG
 

@@ -4,17 +4,28 @@ module Spree
     # someone into it: invitation emails, the SSO callback, the first-run
     # setup link.
     #
-    # Configure it with the SPREE_DASHBOARD_URL environment variable (read
-    # through the `dashboard_url` preference). The fallbacks exist so links
-    # still work in dev and on installs that never set it — the Vite dev
-    # server in development, then the store's own URL — but neither is a
-    # substitute for configuring the real origin in production.
+    # Resolution order, most authoritative first:
+    #
+    # 1. the `dashboard_url` preference / SPREE_DASHBOARD_URL — an explicit
+    #    answer always wins
+    # 2. the deprecated `admin_url` preference
+    # 3. the dashboard this app serves itself, when `spree_dashboard` is
+    #    installed and has a build to serve (`/dashboard` on the app's own
+    #    host) — a fact about this deployment, so it beats the guess below
+    # 4. the Vite dev server in development, for the monorepo/CLI workflow
+    #    where the dashboard runs as a separate process
+    # 5. the store's own URL
+    #
+    # Steps 3-5 keep links working on installs that never configured an
+    # origin; none is a substitute for setting SPREE_DASHBOARD_URL in
+    # production, where the app's own host is rarely where admins go.
     class DashboardUrl
       # @param store [Spree::Store, nil] store whose URL ends the fallback chain
       # @return [String] origin without a trailing slash, e.g. +https://admin.shop.com+
       def self.call(store: nil)
         base = Spree::Config[:dashboard_url].presence ||
                legacy_admin_url ||
+               mounted_dashboard_url(store) ||
                (Rails.env.development? ? 'http://localhost:5173' : nil) ||
                store&.formatted_url
 
@@ -29,6 +40,35 @@ module Spree
         Spree::Config.admin_url.presence
       end
       private_class_method :legacy_admin_url
+
+      # The `/dashboard` mount served by this app, when `spree_dashboard` is
+      # installed AND pointed at a build. Without a build the route 404s, so
+      # linking there would be worse than the dev-server guess.
+      # @return [String, nil]
+      def self.mounted_dashboard_url(store)
+        return unless defined?(Spree::Dashboard) && Spree::Dashboard.dist_path.present?
+
+        host = app_host(store)
+        return if host.blank?
+
+        "#{host.chomp('/')}/dashboard"
+      end
+      private_class_method :mounted_dashboard_url
+
+      # Where this Rails app answers. `default_url_options` is what mailers
+      # already rely on, so a deployment that gets email links right gets this
+      # right too; the store URL is the last resort.
+      # @return [String, nil]
+      def self.app_host(store)
+        options = Rails.application.routes.default_url_options
+        return store&.formatted_url if options[:host].blank?
+
+        protocol = options[:protocol].presence || 'http'
+        port = options[:port]
+        host = "#{protocol}://#{options[:host]}"
+        port.present? ? "#{host}:#{port}" : host
+      end
+      private_class_method :app_host
     end
   end
 end
