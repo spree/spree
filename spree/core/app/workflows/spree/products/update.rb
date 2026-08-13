@@ -1,9 +1,11 @@
 module Spree
   module Products
-    # Updates a product. Handlers reading `product.changes` in :validate see
-    # the pending edit before it is written, which is what makes rules like
-    # "price may not drop below cost" or "an active product needs an image"
-    # expressible without a model validation.
+    # Updates a product. Nested data is assigned by the model's own setters
+    # (see Spree::Products::Create); this exists for the veto point.
+    #
+    # Handlers reading `product.changes` in :validate see the pending edit
+    # before it is written, which is what makes rules like "price may not
+    # drop below cost" expressible without a model validation.
     class Update < Spree::Workflow
       hooks :validate, :after_update
 

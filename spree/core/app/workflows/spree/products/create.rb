@@ -5,10 +5,14 @@ module Spree
     # handler sees every product a store gains rather than only the ones
     # typed into the dashboard.
     #
-    # Product writes earn a workflow (rather than the plain CRUD the services
-    # doctrine leaves alone) because creation is already orchestration:
-    # nested variants, a delivery profile stamped from the product type, and
-    # custom-field values that can only be written after the product exists.
+    # Deliberately thin. Assigning a product's nested data — variants, media,
+    # prices, custom fields, categories — belongs to the model's setters and
+    # its after_create/after_save callbacks, and stays there: every caller
+    # gets that behavior, workflow or not. What the workflow adds is the veto
+    # point, and where it sits matters. Those setters stash their input and
+    # replay it once the product exists, so :validate runs before the insert
+    # and therefore before any variant, image or custom field is written —
+    # a rejection leaves nothing behind to clean up.
     class Create < Spree::Workflow
       hooks :validate, :after_create
 

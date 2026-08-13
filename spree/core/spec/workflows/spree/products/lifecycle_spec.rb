@@ -45,6 +45,34 @@ RSpec.describe 'product workflows' do
       expect(result.error.to_s).to include("Name can't be blank")
     end
 
+    # Nested data is written by the model's after_create callbacks, so a
+    # rejection before the insert leaves no half-built product behind.
+    it 'writes no nested data when a handler rejects' do
+      Spree.hooks.register('products.create.validate') { |flow| flow.reject!('not allowed') }
+
+      result = nil
+      expect do
+        result = described_class.call(
+          store: store,
+          attributes: { name: 'Rejected', variants: [{ sku: 'REJ-1' }] }
+        )
+      end.not_to change(Spree::Variant, :count)
+
+      expect(result).to be_failure
+      expect(Spree::Product.find_by(name: 'Rejected')).to be_nil
+    end
+
+    # The setters live on the model, so a workflow create gets them too.
+    it 'applies nested variants through the model setters' do
+      result = described_class.call(
+        store: store,
+        attributes: { name: 'With variants', variants: [{ sku: 'WV-1' }] }
+      )
+
+      expect(result).to be_success
+      expect(result.value.variants.map(&:sku)).to include('WV-1')
+    end
+
     # The CSV importer assigns attributes across several steps and hands over
     # the record rather than a hash.
     it 'accepts an already-built product' do
