@@ -16,6 +16,14 @@ end
 Restart your Rails server after editing the initializer.
 </Note>
 
+## Deployment settings read the environment
+
+Settings that describe the deployment rather than commerce behavior can be set with an environment variable — no Ruby, no code change, no restart-after-edit dance. An explicitly configured value always wins over the environment.
+
+| Setting | Environment variable | What it configures |
+|---|---|---|
+| `dashboard_url` | `SPREE_DASHBOARD_URL` | Origin where the admin dashboard is hosted (e.g. `https://admin.my-shop.com`). Used for every link that sends someone into the dashboard: invitation emails, SSO redirects, and the first-run setup link printed by `db:seed`. |
+
 This page lists only settings Spree 6 actually reads. Settings that exist for backwards compatibility are listed under [Deprecated settings](#deprecated-settings) rather than mixed in with the rest.
 
 ## Settings that belong to a store

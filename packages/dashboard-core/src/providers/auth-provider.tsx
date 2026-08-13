@@ -3,6 +3,7 @@ import type {
   AuthTokens,
   InvitationAcceptParams,
   PasswordResetParams,
+  SetupParams,
 } from '@spree/admin-sdk'
 import { createContext, type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { adminClient } from '../client'
@@ -17,6 +18,12 @@ interface AuthContextValue {
   login: (email: string, password: string) => Promise<void>
   logout: () => Promise<void>
   acceptInvitation: (id: string, token: string, params: InvitationAcceptParams) => Promise<void>
+  /**
+   * Complete first-run setup (create the first admin account) and sign in —
+   * the endpoint issues a session just like login. `setupStatus` (the
+   * availability check) is unauthenticated and lives on `adminClient`.
+   */
+  completeSetup: (params: SetupParams) => Promise<void>
   /**
    * Consume a password reset token, set the new password, and sign in — the
    * endpoint issues a session just like login. `requestPasswordReset` (the
@@ -74,6 +81,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const clearSession = useCallback(() => {
     adminClient.setToken('')
+    // The store header is session state too — left set, it would ride into
+    // the next admin's first requests (permissions, the index redirect) and
+    // 403 them against a store they may hold no role on.
+    adminClient.setStore('')
     setToken(null)
     setUser(null)
     clearRefreshTimer()
@@ -138,6 +149,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [establish],
   )
 
+  const completeSetup = useCallback(
+    (params: SetupParams) => establish(adminClient.auth.completeSetup(params)),
+    [establish],
+  )
+
   const logout = useCallback(async () => {
     try {
       await adminClient.auth.logout()
@@ -178,6 +194,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login,
         logout,
         acceptInvitation,
+        completeSetup,
         resetPassword,
         updateUser,
       }}

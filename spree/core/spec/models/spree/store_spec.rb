@@ -111,11 +111,59 @@ describe Spree::Store, type: :model, without_global_store: true do
   end
 
   context 'Callbacks' do
-    describe '#set_default_code' do
-      let(:store) { build(:store, name: 'Store', code: nil) }
+    # Pinned: store provisioning (first-run setup, enterprise multi-tenant)
+    # leans on the single-default invariant this callback maintains.
+    describe '#ensure_default_exists_and_is_unique' do
+      it 'demotes every other store when one is saved as default' do
+        default_store = create(:store, default: true)
+        other_store = create(:store)
 
-      it 'sets the code to default when blank' do
-        expect { store.valid? }.to change(store, :code).from(nil).to('default')
+        other_store.update!(default: true)
+
+        expect(other_store.reload).to be_default
+        expect(default_store.reload).not_to be_default
+      end
+
+      it 'makes the first created store the default automatically' do
+        # Rows created in other files' before(:all) blocks survive into this
+        # example's transaction — clear them so "first store" is really first.
+        Spree::Store.with_deleted.delete_all
+
+        store = create(:store)
+
+        expect(store.reload).to be_default
+      end
+    end
+
+    describe '#set_default_code' do
+      context 'when no store exists yet' do
+        before { Spree::Store.with_deleted.delete_all }
+
+        it "sets the very first store's code to 'default'" do
+          store = build(:store, name: 'Store', code: nil)
+
+          expect { store.valid? }.to change(store, :code).from(nil).to('default')
+        end
+      end
+
+      context 'when other stores exist' do
+        before { create(:store) }
+
+        it 'derives the code from the name' do
+          store = build(:store, name: 'Fancy Shop', code: nil)
+
+          expect { store.valid? }.to change(store, :code).from(nil).to('fancy-shop')
+        end
+
+        it 'suffixes the code until unique, counting soft-deleted stores' do
+          create(:store, name: 'Fancy Shop', code: 'fancy-shop')
+          create(:store, name: 'Fancy Shop', code: 'fancy-shop-2').destroy
+
+          store = build(:store, name: 'Fancy Shop', code: nil)
+          store.valid?
+
+          expect(store.code).to eq('fancy-shop-3')
+        end
       end
 
       context 'when code is already set' do
@@ -258,13 +306,30 @@ describe Spree::Store, type: :model, without_global_store: true do
 
   end
 
+  describe '#setup_url' do
+    let(:store) { create(:store, url: 'shop.example.com') }
+
+    it 'points at the configured dashboard origin' do
+      allow(Spree::Stores::DashboardUrl).to receive(:call).and_return('https://admin.example.com')
+
+      expect(store.setup_url).to eq("https://admin.example.com/setup?token=#{store.setup_token}")
+    end
+
+    it 'is nil once the token is spent' do
+      store.update!(setup_token: nil)
+
+      expect(store.setup_url).to be_nil
+    end
+  end
+
   context 'Validations' do
     describe '#code' do
-      it 'requires code to be present' do
+      it 'generates a code when blank' do
         store = build(:store, code: nil, name: nil)
         store.valid?
-        # set_default_code sets it to 'default' if blank, so it should be valid
-        expect(store.code).to eq('default')
+        # set_default_code generates a code if blank, so it should be valid
+        expect(store.code).to be_present
+        expect(store.errors[:code]).to be_empty
       end
     end
 

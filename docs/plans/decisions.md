@@ -1,3 +1,33 @@
+## 2026-08-13: Store context is credential-derived — hostname resolution retired; first-run setup replaces the dummy admin
+
+Every v3 API request resolved to `Spree::Store.default`: the configured finder
+discarded the hostname it was handed, and no server code read the
+`X-Spree-Store-Id` header the admin SDK sends on every request — so the
+dashboard's store switcher silently lied, and API keys were validated
+*against* the default store instead of *selecting* their own.
+
+Decision: store context is explicit and comes from the credential, never the
+hostname. The publishable key selects the store on the Store API (the key
+already `belongs_to :store`); a secret key is bound to its store; JWT staff
+sessions select via `X-Spree-Store-Id`, membership-checked against the
+*requested* store (header-less JWT requests fall back to the default store
+with a deprecation warning through 6.0, required at 6.1). Hostname-based
+store resolution was a requirement of the server-rendered per-subdomain era
+and is gone with it — never read `request.host` to pick a store.
+`Spree.current_store_finder` stays as the override point.
+
+With it, installation stops minting `spree@example.com` / `spree123`: the
+seed creates an admin only when `ADMIN_EMAIL`/`ADMIN_PASSWORD` are explicitly
+set, and otherwise a one-time, token-guarded first-run setup flow (dashboard
+`/setup` + `auth/setup` endpoints, invitation-acceptance shape) creates the
+first admin and adopts/renames the seeded store. The token is required in
+every environment — no env-based security branches. No general store CRUD
+ships in the OSS Admin API; first-run configures the one store.
+
+Consequences: Admin API code must never assume `current_store` is the default
+store, and store-touching cache keys must carry the store id by construction.
+Plan: `6.0-store-context-and-first-run-setup.md`.
+
 ## 2026-08-12: The label leads, fulfilled follows (amends the Phase 7 fulfill flow)
 
 A warehouse prints the label, sticks it on the box, hands the box over — and

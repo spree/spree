@@ -34,10 +34,10 @@ module Spree
             invitation.inviter.email
           end
 
-          # Absolute URL when `Spree::Config[:admin_url]` is set, otherwise
-          # the path so the SPA can prepend `window.location.origin`.
+          # Absolute URL when a dashboard origin is configured, otherwise the
+          # path so the SPA can prepend `window.location.origin`.
           attribute :acceptance_url do |invitation|
-            if Spree::Config[:admin_url].present?
+            if Spree::Config[:dashboard_url].present?
               Rails.application.routes.url_helpers.admin_invitation_acceptance_url(invitation)
             else
               "/accept-invitation/#{invitation.prefixed_id}?token=#{invitation.token}"

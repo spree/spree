@@ -1,8 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { AuthProvider } from '@spree/admin-sdk'
 import { SpreeError } from '@spree/admin-sdk'
-import { useAuth } from '@spree/dashboard-core'
+import { adminClient, useAuth } from '@spree/dashboard-core'
 import { Button, Input, Label, Skeleton } from '@spree/dashboard-ui'
+import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, Navigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -41,6 +42,8 @@ function LoginPage() {
 
       {callbackError && <CallbackError code={callbackError} />}
 
+      <SetupRequiredNotice />
+
       <ProviderOptions
         passwordProvider={passwordProvider}
         redirectProviders={redirectProviders}
@@ -48,6 +51,36 @@ function LoginPage() {
         failed={providersFailed}
       />
     </AuthShell>
+  )
+}
+
+/**
+ * A fresh install has no admin account to sign in with — point at the
+ * first-run setup screen instead (the setup token from the install output is
+ * still required there). Renders nothing on an already-claimed installation.
+ */
+function SetupRequiredNotice() {
+  const { t } = useTranslation()
+  const status = useQuery({
+    queryKey: ['setup-status'],
+    queryFn: () => adminClient.auth.setupStatus(),
+    retry: false,
+    // See the /setup route: never offer setup from a cached `true`.
+    gcTime: 0,
+    staleTime: 0,
+    refetchOnMount: 'always',
+  })
+
+  if (!status.data?.setup_required) return null
+
+  return (
+    <div className="grid gap-2 rounded-md border p-4">
+      <p className="font-medium text-sm">{t('admin.setup.required_notice_title')}</p>
+      <p className="text-sm text-muted-foreground">{t('admin.setup.required_notice_message')}</p>
+      <Link to="/setup" className="text-sm underline underline-offset-4">
+        {t('admin.setup.required_notice_link')}
+      </Link>
+    </div>
   )
 }
 

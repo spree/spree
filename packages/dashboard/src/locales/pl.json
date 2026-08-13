@@ -1207,6 +1207,14 @@
       "role_ids": {
         "label": "Role"
       },
+      "setup": {
+        "password_confirmation": {
+          "label": "Potwierdź hasło"
+        },
+        "store_name": {
+          "label": "Nazwa sklepu"
+        }
+      },
       "stock_location": {
         "active": {
           "help": "Nieaktywne lokalizacje nie pojawiają się w wyborze realizacji zamówień.",
@@ -3572,6 +3580,22 @@
         "tax_categories": "Kategorie podatkowe",
         "webhooks": "Webhooki"
       }
+    },
+    "setup": {
+      "title": "Skonfiguruj Spree",
+      "subtitle": "Utwórz konto administratora i nazwij swój sklep, aby zakończyć instalację.",
+      "loading": "Sprawdzanie stanu konfiguracji…",
+      "missing_token_title": "Wymagany link konfiguracyjny",
+      "missing_token_message": "Otwórz link konfiguracyjny wyświetlony podczas instalacji — zawiera jednorazowy token. Uruchom \"bin/rails spree:setup:token\", aby wygenerować nowy.",
+      "not_available_title": "Konfiguracja niedostępna",
+      "not_available_message": "Ta instalacja jest już skonfigurowana. Zaloguj się na konto administratora.",
+      "could_not_complete": "Nie udało się ukończyć konfiguracji",
+      "completing": "Konfigurowanie…",
+      "complete": "Zakończ konfigurację",
+      "back_to_login": "Wróć do logowania",
+      "required_notice_title": "Ta instalacja nie została jeszcze skonfigurowana",
+      "required_notice_message": "Nie istnieje żadne konto administratora. Użyj linku konfiguracyjnego z wyniku instalacji, aby je utworzyć.",
+      "required_notice_link": "Przejdź do konfiguracji"
     },
     "staff": {
       "actions": {

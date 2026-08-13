@@ -46,10 +46,11 @@ RSpec.describe Spree::Api::V3::Admin::TaxCategoriesController, type: :controller
 
       before { request.headers['X-Spree-Api-Key'] = foreign_key.plaintext_token }
 
-      it 'returns 401 (cross-store keys are rejected)' do
+      it 'authenticates — the key selects its own store (see Admin::StoreContext)' do
         get :index, as: :json
 
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to have_http_status(:ok)
+        expect(controller.send(:current_api_key)).to eq(foreign_key)
       end
     end
   end

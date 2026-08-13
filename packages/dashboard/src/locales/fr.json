@@ -1193,6 +1193,14 @@
       "role_ids": {
         "label": "Rôles"
       },
+      "setup": {
+        "password_confirmation": {
+          "label": "Confirmer le mot de passe"
+        },
+        "store_name": {
+          "label": "Nom de la boutique"
+        }
+      },
       "stock_location": {
         "active": {
           "help": "Les emplacements inactifs n'apparaissent pas dans la sélection d'expédition.",
@@ -3518,6 +3526,22 @@
         "tax_categories": "Catégories de taxe",
         "webhooks": "Webhooks"
       }
+    },
+    "setup": {
+      "title": "Configurer Spree",
+      "subtitle": "Créez votre compte administrateur et nommez votre boutique pour terminer l'installation.",
+      "loading": "Vérification de l'état de la configuration…",
+      "missing_token_title": "Lien de configuration requis",
+      "missing_token_message": "Ouvrez le lien de configuration affiché lors de l'installation — il contient le jeton unique. Exécutez \"bin/rails spree:setup:token\" pour en générer un nouveau.",
+      "not_available_title": "Configuration indisponible",
+      "not_available_message": "Cette installation est déjà configurée. Connectez-vous avec votre compte administrateur.",
+      "could_not_complete": "Impossible de terminer la configuration",
+      "completing": "Configuration…",
+      "complete": "Terminer la configuration",
+      "back_to_login": "Retour à la connexion",
+      "required_notice_title": "Cette installation n'est pas encore configurée",
+      "required_notice_message": "Aucun compte administrateur n'existe. Utilisez le lien de configuration affiché lors de l'installation pour en créer un.",
+      "required_notice_link": "Aller à la configuration"
     },
     "staff": {
       "actions": {

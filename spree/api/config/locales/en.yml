@@ -14,6 +14,7 @@ en:
         channel_inactive: The channel this API key is bound to is not active.
         channel_mismatch: The requested channel does not match the channel this API key is bound to.
         guest_checkout_not_allowed: You must be signed in to complete checkout.
+        store_mismatch: The requested store does not match the store this API key belongs to.
         storefront_login_required: Authentication required to access this store.
       negative_quantity: quantity is negative
       newsletter_unsubscribe_token_invalid: Newsletter unsubscribe token is invalid or has expired.

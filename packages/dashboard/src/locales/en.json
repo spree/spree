@@ -1193,6 +1193,14 @@
       "role_ids": {
         "label": "Roles"
       },
+      "setup": {
+        "password_confirmation": {
+          "label": "Confirm password"
+        },
+        "store_name": {
+          "label": "Store name"
+        }
+      },
       "stock_location": {
         "active": {
           "help": "Inactive locations don't appear in fulfillment selection.",
@@ -3518,6 +3526,22 @@
         "tax_categories": "Tax categories",
         "webhooks": "Webhooks"
       }
+    },
+    "setup": {
+      "title": "Set up Spree",
+      "subtitle": "Create your admin account and name your store to finish installation.",
+      "loading": "Checking setup status…",
+      "missing_token_title": "Setup link required",
+      "missing_token_message": "Open the setup link printed during installation — it contains the one-time setup token. Run \"bin/rails spree:setup:token\" to print a fresh one.",
+      "not_available_title": "Setup is not available",
+      "not_available_message": "This installation is already set up. Sign in with your admin account instead.",
+      "could_not_complete": "Could not complete setup",
+      "completing": "Setting up…",
+      "complete": "Complete setup",
+      "back_to_login": "Back to sign in",
+      "required_notice_title": "This installation isn't set up yet",
+      "required_notice_message": "No admin account exists. Use the setup link from the install output to create one.",
+      "required_notice_link": "Go to setup"
     },
     "staff": {
       "actions": {

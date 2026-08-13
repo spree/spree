@@ -6,6 +6,7 @@ module Spree
         # inheritance branches (V3::BaseController vs V3::ResourceController);
         # any concern added here MUST also be added to Store::BaseController.
         class ResourceController < Spree::Api::V3::ResourceController
+          include Spree::Api::V3::KeyStoreContext
           include Spree::Api::V3::ChannelResolution
           include Spree::Api::V3::StorefrontGating
           include Spree::Api::V3::StorefrontAccess

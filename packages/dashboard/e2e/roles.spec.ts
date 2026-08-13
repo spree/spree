@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test'
-import { login } from './helpers'
+import { escapeRegex, login } from './helpers'
 
 const ROLES_PATH = (storeId: string) => `/${storeId}/settings/roles`
 
@@ -136,6 +136,8 @@ test.describe('roles', () => {
   test('blocks deleting a role while staff hold it, allows after unassign', async ({ page }) => {
     const creds = await login(page)
     const name = `e2e-held-${Date.now()}`
+    // Escaped so a name with regex characters matches literally.
+    const roleName = new RegExp(escapeRegex(name), 'i')
 
     // Create the role.
     await gotoRoles(page, creds.store_id)
@@ -147,42 +149,37 @@ test.describe('roles', () => {
     await sheet(page)
       .getByRole('button', { name: /^save$/i })
       .click()
-    await expect(page.getByRole('cell', { name: new RegExp(name, 'i') })).toBeVisible({
+    await expect(page.getByRole('cell', { name: roleName })).toBeVisible({
       timeout: 15_000,
     })
 
-    // Assign it to the seed admin from the staff page.
+    // Assign it to the signed-in admin from the staff page. The email comes
+    // from the fixtures rather than a literal — seeds no longer mint a
+    // well-known admin, so global-setup creates one and reports its address.
+    const adminRow = new RegExp(escapeRegex(creds.admin_email), 'i')
     await page.goto(`/${creds.store_id}/settings/staff`)
-    await page
-      .getByRole('row', { name: /spree@example\.com/i })
-      .getByRole('button')
-      .last()
-      .click()
+    await page.getByRole('row', { name: adminRow }).getByRole('button').last().click()
     await page.getByRole('menuitem', { name: /edit/i }).click()
-    await page.getByRole('checkbox', { name: new RegExp(name, 'i') }).check()
+    await page.getByRole('checkbox', { name: roleName }).check()
     await page.getByRole('button', { name: /^save$/i }).click()
-    await expect(page.getByText(new RegExp(name, 'i')).first()).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByText(roleName).first()).toBeVisible({ timeout: 15_000 })
 
     // Delete is disabled while the role is held.
     await gotoRoles(page, creds.store_id)
-    const row = page.getByRole('row', { name: new RegExp(name, 'i') })
+    const row = page.getByRole('row', { name: roleName })
     await row.getByRole('button').last().click()
     await expect(page.getByRole('menuitem', { name: /delete/i })).toBeDisabled()
     await page.keyboard.press('Escape')
 
     // Unassign, then delete goes through.
     await page.goto(`/${creds.store_id}/settings/staff`)
-    await page
-      .getByRole('row', { name: /spree@example\.com/i })
-      .getByRole('button')
-      .last()
-      .click()
+    await page.getByRole('row', { name: adminRow }).getByRole('button').last().click()
     await page.getByRole('menuitem', { name: /edit/i }).click()
-    await page.getByRole('checkbox', { name: new RegExp(name, 'i') }).uncheck()
+    await page.getByRole('checkbox', { name: roleName }).uncheck()
     await page.getByRole('button', { name: /^save$/i }).click()
-    await expect(
-      page.getByRole('row', { name: /spree@example\.com/i }).getByText(new RegExp(name, 'i')),
-    ).toHaveCount(0, { timeout: 15_000 })
+    await expect(page.getByRole('row', { name: adminRow }).getByText(roleName)).toHaveCount(0, {
+      timeout: 15_000,
+    })
 
     await gotoRoles(page, creds.store_id)
     await row.getByRole('button').last().click()
@@ -191,7 +188,7 @@ test.describe('roles', () => {
       .getByRole('dialog')
       .getByRole('button', { name: /^delete$/i })
       .click()
-    await expect(page.getByRole('cell', { name: new RegExp(name, 'i') })).toHaveCount(0, {
+    await expect(page.getByRole('cell', { name: roleName })).toHaveCount(0, {
       timeout: 15_000,
     })
   })

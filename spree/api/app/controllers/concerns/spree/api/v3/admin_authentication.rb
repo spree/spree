@@ -30,9 +30,9 @@ module Spree
         # Secret keys are checked first (server-to-server integrations),
         # then JWT tokens (admin SPA sessions).
         def authenticate_admin!
-          # Try secret API key first
-          @current_api_key = Spree::ApiKey.find_by_secret_token(extract_api_key)
-          @current_api_key = nil if @current_api_key && @current_api_key.store_id != current_store.id
+          # Try secret API key first — the key selects the request's store
+          # (Admin::StoreContext), so there is no store check to make here.
+          @current_api_key = secret_api_key
 
           if @current_api_key
             touch_api_key_if_needed(@current_api_key)
