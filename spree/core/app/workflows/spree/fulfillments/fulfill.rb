@@ -132,10 +132,16 @@ module Spree
         end
 
         return if order.paid?
+
         # Charging later is a deliberate choice, so an authorized-but-uncaptured
         # order is ready to hand over: on dispatch the money is taken below,
         # and manual means staff have taken charge of collecting it.
-        return if order.pending_payments.any? { |payment| payment.payment_method&.capture_at_checkout? == false }
+        #
+        # Every pending payment has to defer, not just one — on a mixed-tender
+        # order a single deferred payment must not wave through a sibling that
+        # should have been collected at checkout.
+        pending = order.pending_payments
+        return if pending.any? && pending.all? { |payment| payment.payment_method&.capture_at_checkout? == false }
 
         failure(@source, Spree.t('fulfillments.errors.order_not_paid'))
       end

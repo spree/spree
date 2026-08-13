@@ -28,6 +28,10 @@ export interface StoreUpdateParams {
   preferred_address_requires_phone?: boolean
   /** Store-wide default for when a customer is charged rather than only authorized. A payment method's own setting wins when set. */
   preferred_capture_method?: 'checkout' | 'on_dispatch' | 'manual'
+  /** @deprecated Use `preferred_capture_method`; removed in 6.1. */
+  preferred_auto_capture?: boolean
+  /** @deprecated Use `preferred_capture_method`; removed in 6.1. */
+  preferred_auto_capture_on_dispatch?: boolean
   /** Counts on-hand quantities. Off means everything is treated as always available. */
   preferred_track_inventory_levels?: boolean
   /** Holds stock for shoppers while they check out, so the same item can't be sold twice. */

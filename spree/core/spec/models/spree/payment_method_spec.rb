@@ -129,9 +129,11 @@ describe Spree::PaymentMethod, type: :model do
         expect(subject).to be true
       end
 
-      it 'is false when the column is false' do
+      # False only ever meant "not at checkout", so the store still decides.
+      it 'defers to the store when the column is false' do
         gateway.auto_capture = false
         expect(subject).to be false
+        expect(gateway.resolved_capture_method).to eq('on_dispatch')
       end
     end
   end
@@ -175,6 +177,18 @@ describe Spree::PaymentMethod, type: :model do
       create(:payment_method, store: store, capture_method: 'on_dispatch')
 
       expect(Spree::PaymentMethod.where(capture_method: 'on_dispatch')).to be_present
+    end
+
+    # The migration leaves auto_capture-false rows empty on purpose so they
+    # keep inheriting. Reading them as manual here would take them out of
+    # dispatch capture while the goods still went out.
+    context 'when a legacy row was left for the store to decide' do
+      it 'inherits the store setting rather than charging manually' do
+        gateway.auto_capture = false
+
+        expect(gateway.resolved_capture_method).to eq('on_dispatch')
+        expect(gateway).to be_capture_on_dispatch
+      end
     end
   end
 

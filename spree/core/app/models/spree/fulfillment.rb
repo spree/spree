@@ -412,9 +412,12 @@ module Spree
     # manually is never swept up by a dispatch — that is the whole point of
     # choosing it — so it is left for staff to capture.
     #
+    # Read through +owner+ rather than +order+: a fulfillment can still belong
+    # to a cart, and both carry pending_payments.
+    #
     # @return [Array<Spree::Payment>]
     def payments_to_capture_on_dispatch
-      order.pending_payments.select { |payment| payment.payment_method&.capture_on_dispatch? }
+      Array(owner&.pending_payments).select { |payment| payment.payment_method&.capture_on_dispatch? }
     end
 
     def process_order_payments

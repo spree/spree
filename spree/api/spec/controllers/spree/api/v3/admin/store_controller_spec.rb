@@ -338,6 +338,18 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
       end
     end
 
+    # Existing API clients keep working for one release; the model maps the
+    # old names onto capture_method.
+    context 'with the deprecated capture params' do
+      let(:params) { { preferred_auto_capture_on_dispatch: true } }
+
+      it 'maps them onto the capture method' do
+        subject
+        expect(response).to have_http_status(:ok)
+        expect(store.reload.preferred_capture_method).to eq('on_dispatch')
+      end
+    end
+
     context 'with an invalid storefront_access value' do
       let(:params) { { preferred_storefront_access: 'nonsense' } }
 

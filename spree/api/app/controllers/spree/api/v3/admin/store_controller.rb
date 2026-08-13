@@ -58,6 +58,10 @@ module Spree
               :preferred_company_field_enabled,
               :preferred_address_requires_phone,
               :preferred_capture_method,
+              # @deprecated Superseded by preferred_capture_method; the model
+              #   maps them onto it. Removed in 6.1.
+              :preferred_auto_capture,
+              :preferred_auto_capture_on_dispatch,
               :preferred_track_inventory_levels,
               :preferred_stock_reservations_enabled,
               :preferred_track_price_history,

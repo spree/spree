@@ -186,14 +186,20 @@ module Spree
       []
     end
 
-    # The method's own choice when it has one, otherwise the store's. The
-    # legacy auto_capture column is still honored for installs that set it
-    # before capture_method existed and have not run the migration task.
+    # The method's own choice when it has one, otherwise the store's. A legacy
+    # auto_capture of true is still honored for installs that set it before
+    # capture_method existed and have not run the migration task.
+    #
+    # auto_capture false is NOT read as manual: it only ever recorded "not at
+    # checkout" and could not distinguish dispatch from staff collection, so
+    # the store decides — the same rows the migration deliberately leaves
+    # empty. Reading it as manual would exclude those payments from dispatch
+    # capture while still letting the goods go out.
     #
     # @return [String] one of Spree::CaptureMethod::CAPTURE_METHODS
     def resolved_capture_method
       return capture_method if capture_method.present?
-      return auto_capture ? 'checkout' : 'manual' unless auto_capture.nil?
+      return 'checkout' if auto_capture
 
       store_preference(:capture_method).presence || Spree::CaptureMethod::DEFAULT_CAPTURE_METHOD
     end

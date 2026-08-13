@@ -47,8 +47,8 @@ store.update!(preferred_track_inventory_levels: false)
 | Value | What happens |
 |---|---|
 | `checkout` | The money is taken as soon as the order is placed. This is the default. |
-| `on_dispatch` | The amount is reserved at checkout and taken when the goods are dispatched. |
-| `manual` | The amount is reserved at checkout and staff take it when they choose. |
+| `on_dispatch` | The amount is authorized at checkout and captured when the goods are dispatched. |
+| `manual` | The amount is authorized at checkout and staff capture it when they choose. |
 
 A payment method can override the store for its own payments by setting the same three values; leaving it blank inherits the store's choice. Ask a payment method what applies with `resolved_capture_method`, or use the `capture_at_checkout?`, `capture_on_dispatch?` and `capture_manually?` questions.
 
@@ -60,7 +60,7 @@ payment_method.update!(capture_method: nil)   # back to inheriting
 payment_method.resolved_capture_method        # => "checkout"
 ```
 
-Before Spree 6 this was two separate booleans, `auto_capture` and `auto_capture_on_dispatch`, which could contradict each other. The upgrade task maps them onto the new setting.
+Before Spree 6 this was two separate booleans, `auto_capture` and `auto_capture_on_dispatch`, which could contradict each other. Two upgrade tasks carry existing installs over: `spree:store_settings:backfill_from_config` maps the old globals onto each store's `capture_method`, and `spree:migrate_capture_methods` converts the per-payment-method `auto_capture` column. A method left without a value inherits its store.
 
 ## Checkout and payments
 
