@@ -57,7 +57,7 @@ RSpec.describe Spree::Carts::Merge do
       result = described_class.call(cart: cart, other_cart: other_cart)
 
       expect(result).to be_failure
-      expect(result.error.value).to eq('merging is disabled')
+      expect(result.error.to_s).to eq('merging is disabled')
       expect(cart.reload.line_items).to be_empty
       expect(other_cart.reload.line_items.count).to eq(1)
     end

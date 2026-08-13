@@ -383,7 +383,46 @@ RSpec.describe Spree::Workflow do
         result = workflow.call(subject: 1)
 
         expect(result).to be_failure
-        expect(result.error.value).to eq('outside the return window')
+        expect(result.error.to_s).to eq('outside the return window')
+      end
+
+      it 'carries field-scoped symbolic errors a handler added' do
+        workflow = build_workflow do
+          hooks :validate
+
+          def perform(subject:)
+            super
+            run_hooks :validate
+            success(subject)
+          end
+        end
+
+        Spree.hooks.register('testing.sample_workflow.validate') do |flow|
+          flow.errors.add(:quantity, :purchase_limit_exceeded, message: 'at most 10 per order')
+          flow.reject!
+        end
+
+        errors = workflow.call(subject: 1).error.value
+
+        expect(errors).to be_a(ActiveModel::Errors)
+        expect(errors.messages[:quantity]).to eq(['at most 10 per order'])
+        expect(errors.details[:quantity].first[:error]).to eq(:purchase_limit_exceeded)
+      end
+
+      it 'records a legacy flat message on :base' do
+        workflow = build_workflow do
+          hooks :validate
+
+          def perform(subject:)
+            super
+            run_hooks :validate
+            success(subject)
+          end
+        end
+
+        Spree.hooks.register('testing.sample_workflow.validate') { |flow| flow.reject!('nope') }
+
+        expect(workflow.call(subject: 1).error.value.messages[:base]).to eq(['nope'])
       end
 
       it 'rolls back work committed by earlier steps in the same transaction' do

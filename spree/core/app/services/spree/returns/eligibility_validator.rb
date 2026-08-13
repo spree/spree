@@ -29,9 +29,12 @@ module Spree
         # same way. The override is attributable through `created_by`.
         return if workflow.created_by.present?
 
-        workflow.reject!(
-          Spree.t('return_errors.outside_window', days: window)
+        workflow.errors.add(
+          :base,
+          :outside_return_window,
+          message: Spree.t('return_errors.outside_window', days: window)
         )
+        workflow.reject!
       end
 
       private

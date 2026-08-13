@@ -62,7 +62,7 @@ RSpec.describe 'Spree::Returns workflows' do
       result = create_return
 
       expect(result).to be_failure
-      expect(result.error.value).to eq('outside the return window')
+      expect(result.error.to_s).to eq('outside the return window')
       expect(order.reload.returns).to be_empty
     end
   end
