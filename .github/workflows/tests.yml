@@ -129,11 +129,11 @@ jobs:
           - { project: api, shard: 1, total_shards: 1, procs: 4 }
           # emails: 1 runner × 2 procs (tiny suite)
           - { project: emails, shard: 1, total_shards: 1, procs: 2 }
-          # easypost: 1 runner × 2 procs (tiny suite — provider gem)
-          - { project: easypost, dir: providers/easypost, shard: 1, total_shards: 1, procs: 2 }
-          # meilisearch: 1 runner × 2 procs (tiny suite — provider gem; the only
-          # job with the Meilisearch service, so its integration spec runs here)
-          - { project: meilisearch, dir: providers/meilisearch, shard: 1, total_shards: 1, procs: 2 }
+          # providers: 1 runner × 2 procs — every provider gem shares a lane.
+          # The suites are small, so a runner each cost more in queue time than
+          # they saved. This is also the only job with the Meilisearch service,
+          # so spree_meilisearch's integration spec runs here.
+          - { project: providers, dirs: "providers/easypost providers/meilisearch", shard: 1, total_shards: 1, procs: 2 }
           # dashboard: 1 runner × 2 procs (tiny suite — SPA host)
           - { project: dashboard, shard: 1, total_shards: 1, procs: 2 }
     services:
@@ -196,42 +196,54 @@ jobs:
           version: 1
 
       - name: Install dependencies
+        env:
+          SUITE_DIRS: ${{ matrix.dirs || matrix.dir || matrix.project }}
         run: |
           cd spree
           bundle config set --local path ${{ github.workspace }}/vendor/bundle
           bundle install
-          cd ${{ matrix.dir || matrix.project }}
-          bundle config set --local path ${{ github.workspace }}/vendor/bundle
-          bundle install
+          for suite_dir in $SUITE_DIRS; do
+            (cd "$suite_dir" \
+              && bundle config set --local path ${{ github.workspace }}/vendor/bundle \
+              && bundle install)
+          done
 
       - name: Setup test app
-        working-directory: spree/${{ matrix.dir || matrix.project }}
+        working-directory: spree
+        env:
+          SUITE_DIRS: ${{ matrix.dirs || matrix.dir || matrix.project }}
         run: |
-          if [[ "${{ matrix.project }}" == "core" || "${{ matrix.project }}" == "api" ]]; then
-            bundle exec --gemfile=${{ github.workspace }}/spree/Gemfile rake test_app
-          else
-            bundle exec rake test_app
-          fi
+          for suite_dir in $SUITE_DIRS; do
+            if [[ "${{ matrix.project }}" == "core" || "${{ matrix.project }}" == "api" ]]; then
+              (cd "$suite_dir" && bundle exec --gemfile=${{ github.workspace }}/spree/Gemfile rake test_app)
+            else
+              (cd "$suite_dir" && bundle exec rake test_app)
+            fi
+          done
 
       - name: Setup parallel databases
-        working-directory: spree/${{ matrix.dir || matrix.project }}
-        run: bundle exec rake parallel_setup[${{ matrix.procs }}]
+        working-directory: spree
+        env:
+          SUITE_DIRS: ${{ matrix.dirs || matrix.dir || matrix.project }}
+        run: |
+          for suite_dir in $SUITE_DIRS; do
+            (cd "$suite_dir" && bundle exec rake parallel_setup[${{ matrix.procs }}])
+          done
 
       - name: Run tests
-        working-directory: spree/${{ matrix.dir || matrix.project }}
+        working-directory: spree
         env:
           SHARD: ${{ matrix.shard }}
           TOTAL_SHARDS: ${{ matrix.total_shards }}
           PROCS: ${{ matrix.procs }}
-          RSPEC_OPTS: >-
-            --order random
-            --format progress
-            -r rspec_junit_formatter
-            --format RspecJunitFormatter
-            -o ${{ github.workspace }}/tmp/test-results/rspec/${{ matrix.project }}-${{ matrix.shard }}-$TEST_ENV_NUMBER.xml
+          SUITE_DIRS: ${{ matrix.dirs || matrix.dir || matrix.project }}
         run: |
           mkdir -p ${{ github.workspace }}/tmp/test-results/rspec
-          bundle exec rake parallel_shard
+          for suite_dir in $SUITE_DIRS; do
+            suite_name=$(basename "$suite_dir")
+            RSPEC_OPTS="--order random --format progress -r rspec_junit_formatter --format RspecJunitFormatter -o ${{ github.workspace }}/tmp/test-results/rspec/${suite_name}-${{ matrix.shard }}-\$TEST_ENV_NUMBER.xml" \
+              bash -c "cd '$suite_dir' && bundle exec rake parallel_shard"
+          done
 
       - name: Upload coverage to Codecov
         if: always() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
@@ -276,8 +288,10 @@ jobs:
           - { project: api, shard: 1, total_shards: 1, procs: 4 }
           # emails: 1 runner × 2 procs
           - { project: emails, shard: 1, total_shards: 1, procs: 2 }
-          # easypost: 1 runner × 2 procs (tiny suite — provider gem)
-          - { project: easypost, dir: providers/easypost, shard: 1, total_shards: 1, procs: 2 }
+          # providers: 1 runner × 2 procs — every provider gem shares a lane.
+          # No Meilisearch service here, so spree_meilisearch's integration spec
+          # skips itself; its unit specs still run against MySQL.
+          - { project: providers, dirs: "providers/easypost providers/meilisearch", shard: 1, total_shards: 1, procs: 2 }
           # dashboard: 1 runner × 2 procs (tiny suite — SPA host)
           - { project: dashboard, shard: 1, total_shards: 1, procs: 2 }
     services:
@@ -323,42 +337,54 @@ jobs:
           version: 1
 
       - name: Install dependencies
+        env:
+          SUITE_DIRS: ${{ matrix.dirs || matrix.dir || matrix.project }}
         run: |
           cd spree
           bundle config set --local path ${{ github.workspace }}/vendor/bundle
           bundle install
-          cd ${{ matrix.dir || matrix.project }}
-          bundle config set --local path ${{ github.workspace }}/vendor/bundle
-          bundle install
+          for suite_dir in $SUITE_DIRS; do
+            (cd "$suite_dir" \
+              && bundle config set --local path ${{ github.workspace }}/vendor/bundle \
+              && bundle install)
+          done
 
       - name: Setup test app
-        working-directory: spree/${{ matrix.dir || matrix.project }}
+        working-directory: spree
+        env:
+          SUITE_DIRS: ${{ matrix.dirs || matrix.dir || matrix.project }}
         run: |
-          if [[ "${{ matrix.project }}" == "core" || "${{ matrix.project }}" == "api" ]]; then
-            bundle exec --gemfile=${{ github.workspace }}/spree/Gemfile rake test_app
-          else
-            bundle exec rake test_app
-          fi
+          for suite_dir in $SUITE_DIRS; do
+            if [[ "${{ matrix.project }}" == "core" || "${{ matrix.project }}" == "api" ]]; then
+              (cd "$suite_dir" && bundle exec --gemfile=${{ github.workspace }}/spree/Gemfile rake test_app)
+            else
+              (cd "$suite_dir" && bundle exec rake test_app)
+            fi
+          done
 
       - name: Setup parallel databases
-        working-directory: spree/${{ matrix.dir || matrix.project }}
-        run: bundle exec rake parallel_setup[${{ matrix.procs }}]
+        working-directory: spree
+        env:
+          SUITE_DIRS: ${{ matrix.dirs || matrix.dir || matrix.project }}
+        run: |
+          for suite_dir in $SUITE_DIRS; do
+            (cd "$suite_dir" && bundle exec rake parallel_setup[${{ matrix.procs }}])
+          done
 
       - name: Run tests
-        working-directory: spree/${{ matrix.dir || matrix.project }}
+        working-directory: spree
         env:
           SHARD: ${{ matrix.shard }}
           TOTAL_SHARDS: ${{ matrix.total_shards }}
           PROCS: ${{ matrix.procs }}
-          RSPEC_OPTS: >-
-            --order random
-            --format progress
-            -r rspec_junit_formatter
-            --format RspecJunitFormatter
-            -o ${{ github.workspace }}/tmp/test-results/rspec/${{ matrix.project }}-${{ matrix.shard }}-$TEST_ENV_NUMBER.xml
+          SUITE_DIRS: ${{ matrix.dirs || matrix.dir || matrix.project }}
         run: |
           mkdir -p ${{ github.workspace }}/tmp/test-results/rspec
-          bundle exec rake parallel_shard
+          for suite_dir in $SUITE_DIRS; do
+            suite_name=$(basename "$suite_dir")
+            RSPEC_OPTS="--order random --format progress -r rspec_junit_formatter --format RspecJunitFormatter -o ${{ github.workspace }}/tmp/test-results/rspec/${suite_name}-${{ matrix.shard }}-\$TEST_ENV_NUMBER.xml" \
+              bash -c "cd '$suite_dir' && bundle exec rake parallel_shard"
+          done
 
       - name: Upload test results
         if: always()
