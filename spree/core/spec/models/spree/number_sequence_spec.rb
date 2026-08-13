@@ -35,19 +35,35 @@ RSpec.describe Spree::NumberSequence do
       expect(described_class.next_value(store: store, resource_type: 'order', start_at: 500)).to eq(2)
     end
 
-    it 'never hands out the same value twice under concurrency' do
+  end
+
+  describe 'concurrency' do
+    # Transactional tests pin one shared connection, and a transaction never
+    # blocks on its own FOR UPDATE — threads interleave freely and the test
+    # both proves nothing and flakes. Real parallel connections need the
+    # transaction wrapper off, so this group creates and removes its own rows.
+    self.use_transactional_tests = false
+
+    let!(:concurrent_store) { create(:store) }
+
+    after do
+      described_class.where(store: concurrent_store).delete_all
+      concurrent_store.really_destroy!
+    end
+
+    it 'never hands out the same value twice' do
       values = Concurrent::Array.new
 
       threads = 4.times.map do
         Thread.new do
           ActiveRecord::Base.connection_pool.with_connection do
-            values << described_class.next_value(store: store, resource_type: 'order', start_at: 1)
+            values << described_class.next_value(store: concurrent_store, resource_type: 'order', start_at: 1)
           end
         end
       end
       threads.each(&:join)
 
-      expect(values.uniq.size).to eq(4)
+      expect(values.sort).to eq([1, 2, 3, 4])
     end
   end
 
