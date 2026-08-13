@@ -126,6 +126,12 @@ module Spree
 
       # Public readers for #perform's parameters, memoized per class. An
       # author-defined method of the same name wins.
+      #
+      # Note for workflow authors: inside #perform, a parameter name is a
+      # local variable and shadows the reader, so a step that reassigns the
+      # ivar (`@product = ...`) is invisible to `success(product)` further
+      # down. Name derived state differently from the parameter that seeded
+      # it — Carts::AddItem takes `variant` and exposes `line_item`.
       def define_argument_readers(names)
         @argument_readers ||= {}
         names.each do |name|

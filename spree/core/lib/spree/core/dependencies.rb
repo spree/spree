@@ -101,6 +101,12 @@ module Spree
         # customers
         customer_create_workflow: 'Spree::Customers::Create',
 
+        # products — every server-side write path runs through these, so a
+        # :validate handler sees dashboard edits, CSV imports and seeds alike
+        product_create_workflow: 'Spree::Products::Create',
+        product_update_workflow: 'Spree::Products::Update',
+        product_destroy_workflow: 'Spree::Products::Destroy',
+
         # tracking numbers
         tracking_number_service: 'Spree::TrackingNumbers::BaseService',
 

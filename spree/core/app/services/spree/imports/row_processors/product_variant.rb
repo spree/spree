@@ -85,7 +85,7 @@ module Spree
             # Store is touched when the import completes
             Spree::Store.no_touching do
               product = assign_attributes_to_product(product)
-              product.save!
+              save_through_workflow!(product)
             end
 
             handle_tags(product) if attributes['tags'].present?
@@ -107,6 +107,23 @@ module Spree
 
         def product_scope
           Spree::Product.accessible_by(import.current_ability, :manage)
+        end
+
+        # Imported rows pass the same :validate hook dashboard edits do — one
+        # gate, so a store's product rules can't be sidestepped by uploading
+        # a CSV. Attributes are already assigned, so the workflow gets the
+        # dirty record and nothing more.
+        def save_through_workflow!(product)
+          result =
+            if product.new_record?
+              Spree.product_create_workflow.call(store: product.store, record: product)
+            else
+              Spree.product_update_workflow.call(product: product)
+            end
+
+          raise ActiveRecord::RecordInvalid, product if result.failure?
+
+          product
         end
 
         def assign_attributes_to_product(product)
