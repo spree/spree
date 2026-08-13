@@ -320,6 +320,22 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
       expect(price_filter[:max]).to eq(29.99)
     end
 
+    context 'when Meilisearch reports facet stats' do
+      # facetDistribution is capped at maxValuesPerFacet, so on a large result
+      # set its keys are a truncated sample. facetStats covers every match.
+      let(:ms_response) do
+        super().merge('facetStats' => { 'price' => { 'min' => 4.99, 'max' => 199.0 } })
+      end
+
+      it 'takes the price range from the stats rather than the truncated distribution' do
+        result = provider.filters(scope: store.products, query: 'shirt')
+
+        price_filter = result.filters.find { |f| f[:type] == 'price_range' }
+        expect(price_filter[:min]).to eq(4.99)
+        expect(price_filter[:max]).to eq(199.0)
+      end
+    end
+
     it 'returns sort options as objects' do
       result = provider.filters(scope: store.products, query: 'shirt')
       ids = result.sort_options.map { |o| o[:id] }
@@ -569,7 +585,7 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
     end
 
     it 'passes custom_field conditions through to the Meilisearch query' do
-      ms_response = { 'hits' => [], 'estimatedTotalHits' => 0, 'facetDistribution' => {} }
+      ms_response = { 'hits' => [], 'totalHits' => 0, 'facetDistribution' => {} }
       expect(mock_index).to receive(:search).with(anything, hash_including(
         filter: include('cf_custom_weight >= 3.5')
       )).and_return(ms_response)

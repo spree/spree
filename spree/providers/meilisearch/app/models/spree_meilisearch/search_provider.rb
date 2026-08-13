@@ -61,7 +61,7 @@ module SpreeMeilisearch
       end
 
       Spree::SearchProvider::FiltersResult.new(
-        filters: build_facet_response(facet_distribution),
+        filters: build_facet_response(facet_distribution, ms_result['facetStats'] || {}),
         sort_options: built_in_and_custom_field_sort_options,
         default_sort: default_sort,
         total_count: ms_result['totalHits'] || 0
@@ -499,22 +499,26 @@ module SpreeMeilisearch
 
     # Transform Meilisearch facetDistribution into standard filter response format.
     # Override in subclasses to add custom facets — call super and append.
-    def build_facet_response(facet_distribution)
+    def build_facet_response(facet_distribution, facet_stats = {})
       facets = []
-      facets << build_price_facet(facet_distribution['price']) if facet_distribution['price'].present?
+      facets << build_price_facet(facet_distribution['price'], facet_stats['price']) if facet_distribution['price'].present?
       facets << build_availability_facet(facet_distribution['in_stock']) if facet_distribution['in_stock'].present?
       facets.concat(build_option_facets(facet_distribution['option_value_ids'])) if facet_distribution['option_value_ids'].present?
       facets << build_category_facet(facet_distribution['category_ids']) if facet_distribution['category_ids'].present?
       facets.compact
     end
 
-    def build_price_facet(distribution)
+    # Bounds come from facetStats, which Meilisearch computes across every
+    # matching document. The distribution is capped at maxValuesPerFacet (100
+    # by default), so deriving min/max from its keys understates the range on
+    # any result set with more distinct prices than that.
+    def build_price_facet(distribution, stats = nil)
       amounts = distribution.keys.map(&:to_f)
       {
         id: 'price',
         type: 'price_range',
-        min: amounts.min,
-        max: amounts.max,
+        min: stats ? stats['min'].to_f : amounts.min,
+        max: stats ? stats['max'].to_f : amounts.max,
         currency: currency
       }
     end
