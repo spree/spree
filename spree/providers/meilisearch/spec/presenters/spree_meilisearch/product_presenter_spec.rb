@@ -84,7 +84,7 @@ RSpec.describe SpreeMeilisearch::ProductPresenter do
     context 'with collections' do
       let(:collection) { create(:collection, store: store) }
 
-      before { Spree::ProductCollection.create!(collection: collection, product: product) }
+      before { create(:product_collection, collection: collection, product: product) }
 
       it 'indexes collection_ids as flat prefixed IDs (no ancestors)' do
         doc = documents.first
@@ -96,7 +96,7 @@ RSpec.describe SpreeMeilisearch::ProductPresenter do
     context 'membership documents (manual sort)' do
       let(:collection) { create(:collection, store: store) }
 
-      before { Spree::ProductCollection.create!(collection: collection, product: product, position: 4) }
+      before { create(:product_collection, collection: collection, product: product, position: 4) }
 
       it 'emits a collection membership doc carrying position + full base payload' do
         member = documents.find { |d| d[:grouping_id] == collection.prefixed_id }
