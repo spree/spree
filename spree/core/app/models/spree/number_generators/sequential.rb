@@ -14,20 +14,58 @@ module Spree
     # a rolled-back transaction consumes a value. Never present this as legal
     # invoice numbering.
     class Sequential < Base
+      # Candidate values checked per query when jumping a stretch of numbers
+      # another store already owns.
+      SCAN_BATCH_SIZE = 100
+
       def generate(record)
         store = record.number_store
         raise_missing_store(record) if store.nil?
 
+        resource_type = record.number_key.to_s
         value = Spree::NumberSequence.next_value(
           store: store,
-          resource_type: record.number_key.to_s,
+          resource_type: resource_type,
           start_at: start_at_for(record)
         )
 
-        "#{prefix_for(record)}#{value}#{suffix_for(record)}"
+        candidate = compose(record, value)
+        return candidate unless taken?(record, candidate)
+
+        # The unique index is global, so a sibling store with the same format
+        # can own a whole stretch of numbers — and stepping through it one
+        # save attempt at a time would exhaust the concern's retry budget and
+        # fail the save. Find the first free value in batches and jump the
+        # counter past the stretch in one move instead.
+        free_value = next_free_value(record, value)
+        Spree::NumberSequence.advance_to(store: store, resource_type: resource_type, value: free_value)
+
+        compose(record, free_value)
       end
 
       private
+
+      def compose(record, value)
+        "#{prefix_for(record)}#{value}#{suffix_for(record)}"
+      end
+
+      def taken?(record, candidate)
+        record.class.unscoped.exists?(number: candidate)
+      end
+
+      def next_free_value(record, from)
+        value = from
+
+        loop do
+          candidates = (value + 1..value + SCAN_BATCH_SIZE).index_by { |v| compose(record, v) }
+          taken = record.class.unscoped.where(number: candidates.keys).pluck(:number)
+          free = (candidates.keys - taken).first
+
+          return candidates.fetch(free) if free
+
+          value += SCAN_BATCH_SIZE
+        end
+      end
 
       # Says which setting is missing rather than letting the concern report
       # ten failed attempts and blame collisions.
@@ -37,10 +75,11 @@ module Spree
               'define #number_store on the model or set Spree::Current.store'
       end
 
-      # Orders honour the merchant's configured starting value; other
-      # documents start at the same default so a store's numbers look
-      # consistent across document types.
+      # The starting value is part of the order-numbers settings card, so only
+      # orders honour it; every other document type counts from the default.
       def start_at_for(record)
+        return Spree::NumberSequence::DEFAULT_START unless record.number_key == :order
+
         store_preference(record, :order_number_sequence_start).to_i.nonzero? ||
           Spree::NumberSequence::DEFAULT_START
       end

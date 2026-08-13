@@ -228,10 +228,21 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
         expect(json_response['order_number_sequence_started']).to be(false)
       end
 
-      it 'reports once the counter has issued a number' do
-        Spree::NumberSequence.next_value(store: store, resource_type: 'order')
-        subject
-        expect(json_response['order_number_sequence_started']).to be(true)
+      context 'once the counter has issued a number' do
+        before { Spree::NumberSequence.next_value(store: store, resource_type: 'order') }
+
+        it 'reports the started flag' do
+          # Prefix stays editable after numbering starts — only the start locks.
+          patch :update, params: { preferred_order_number_prefix: 'INV' }, as: :json
+          expect(response).to have_http_status(:ok)
+          expect(json_response['order_number_sequence_started']).to be(true)
+        end
+
+        it 'rejects a changed starting value' do
+          subject
+          expect(response).to have_http_status(:unprocessable_content)
+          expect(json_response['error']['details']).to have_key('preferred_order_number_sequence_start')
+        end
       end
     end
 

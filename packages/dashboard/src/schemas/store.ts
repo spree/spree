@@ -17,10 +17,12 @@ const ALL_WEIGHT_UNITS = [...WEIGHT_UNITS.metric, ...WEIGHT_UNITS.imperial] as c
 // `admin.fields.store.storefront_access.options.*`.
 export const STOREFRONT_ACCESS_LEVELS = ['public', 'prices_hidden', 'login_required'] as const
 
-// How document numbers are produced. `sequential` counts up from a starting
-// value; `random` is the pre-6.0 behaviour, opted into by merchants who would
-// rather not disclose order volume. Labels live in `en.json` under
-// `admin.fields.store.document_number_format.options.*`.
+/**
+ * How document numbers are produced. `sequential` counts up from a starting
+ * value; `random` is the pre-6.0 behaviour, opted into by merchants who would
+ * rather not disclose order volume. Labels live in `en.json` under
+ * `admin.fields.store.document_number_format.options.*`.
+ */
 export const DOCUMENT_NUMBER_FORMATS = ['sequential', 'random'] as const
 
 // Prefix/suffix accept the characters that read cleanly on an invoice and

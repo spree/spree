@@ -8,6 +8,7 @@ RSpec.describe Spree::Payment::GatewayOptions, type: :model do
       Spree::Payment,
       owner: order,
       number: 'P1566',
+      prefixed_id: 'py_k5nR8xLq',
       currency: 'EUR',
       payment_method: payment_method
     )
@@ -97,7 +98,10 @@ RSpec.describe Spree::Payment::GatewayOptions, type: :model do
   describe '#idempotency_key' do
     subject { options.idempotency_key }
 
-    it { is_expected.to eq 'spree-P1566' }
+    # The prefixed ID, not the number — a derived number can shift if an
+    # earlier sibling payment is destroyed, and a shifted key could collide
+    # with one already used at the gateway.
+    it { is_expected.to eq 'spree-py_k5nR8xLq' }
   end
 
   describe '#shipping' do
@@ -153,7 +157,7 @@ RSpec.describe Spree::Payment::GatewayOptions, type: :model do
         ip: '0.0.0.0',
         order_id: 'P1566',
         payment_id: 'P1566',
-        idempotency_key: 'spree-P1566',
+        idempotency_key: 'spree-py_k5nR8xLq',
         shipping: '1244'.to_d,
         tax: '153'.to_d,
         subtotal: '1511'.to_d,

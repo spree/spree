@@ -64,8 +64,20 @@ RSpec.describe Spree::DerivedNumber do
       expect(payment.gateway_options[:order_id]).to eq(payment.number)
     end
 
-    it 'derives the idempotency key from the payment number' do
-      expect(payment.gateway_options[:idempotency_key]).to eq("spree-#{payment.number}")
+    it 'builds the idempotency key from the immutable prefixed id' do
+      expect(payment.gateway_options[:idempotency_key]).to eq("spree-#{payment.prefixed_id}")
+    end
+
+    it 'keeps the idempotency key stable when an earlier sibling is destroyed' do
+      paid_order = create(:order, total: 45.75)
+      first = create(:payment, order: paid_order)
+      second = create(:payment, order: paid_order, amount: 0)
+      key_before = second.gateway_options[:idempotency_key]
+
+      first.destroy!
+
+      # The display number shifts (accepted trade-off); the gateway key must not.
+      expect(second.reload.gateway_options[:idempotency_key]).to eq(key_before)
     end
   end
 end

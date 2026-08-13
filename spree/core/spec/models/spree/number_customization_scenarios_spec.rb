@@ -46,7 +46,7 @@ RSpec.describe 'document number customization scenarios' do
         def generate(record)
           sequence = Spree::NumberSequence.next_value(
             store: record.number_store,
-            resource_type: 'order',
+            resource_type: record.number_key.to_s,
             start_at: 1
           )
 
@@ -83,11 +83,43 @@ RSpec.describe 'document number customization scenarios' do
       expect(create(:stock_transfer).number).to start_with('T')
     end
 
-    it 'can be registered for several document types at once' do
+    it 'can be registered for several document types, each on its own counter' do
       Spree.number_generators[:order] = 'MyApp::YearScopedNumbers'
       Spree.number_generators[:stock_transfer] = 'MyApp::YearScopedNumbers'
+      create(:order)
 
-      expect(create(:stock_transfer).number).to start_with('T-2026-')
+      # 00001, not 00002 — the transfer does not share the order counter.
+      expect(create(:stock_transfer).number).to eq('T-2026-00001')
+    end
+  end
+
+  describe 'the starting value is an order setting only' do
+    it 'does not leak into other document types' do
+      stub_store_preferences(order_number_sequence_start: 5001)
+
+      expect(create(:order).number).to eq('R5001')
+      expect(create(:stock_transfer).number).to eq('T1001')
+    end
+  end
+
+  describe 'two stores with identical formats' do
+    it 'jumps a new store past numbers the first store already owns' do
+      5.times { create(:order) }                     # default store: R1001..R1005
+
+      other_store = create(:store)
+      order = create(:order, store: other_store)
+
+      expect(order.number).to eq('R1006')
+    end
+
+    it 'continues the new store from its own counter afterwards' do
+      3.times { create(:order) }                     # R1001..R1003
+
+      other_store = create(:store)
+      first = create(:order, store: other_store)     # jumps to R1004
+      second = create(:order, store: other_store)
+
+      expect([first.number, second.number]).to eq(%w[R1004 R1005])
     end
   end
 end

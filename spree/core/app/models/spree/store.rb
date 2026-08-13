@@ -213,6 +213,7 @@ module Spree
               format: { with: /\A[A-Z0-9#-]*\z/,
                         message: :invalid_document_number_affix }
     validate :preferred_storefront_url_is_an_origin
+    validate :order_number_sequence_start_unchanged_after_first_number, on: :update
     validates :mail_from_address, email: { allow_blank: false }
     validates :customer_support_email, email: { allow_blank: true }
     # FIXME: we should remove this condition in v5
@@ -481,6 +482,23 @@ module Spree
       return if Spree::AllowedOrigin.normalize_origin(raw)
 
       errors.add(:preferred_storefront_url, :invalid)
+    end
+
+    # The starting value only shapes a counter that does not exist yet — once
+    # the first number is issued the counter owns the value, so accepting a
+    # change here would persist a setting that can never apply again. The
+    # dashboard disables the field; this backs it for API clients.
+    def order_number_sequence_start_unchanged_after_first_number
+      return unless preferences_changed?
+
+      default = preference_default(:order_number_sequence_start)
+      old_value, new_value = changes['preferences'].map do |preferences_hash|
+        ((preferences_hash || {})[:order_number_sequence_start] || default).to_i
+      end
+      return if old_value == new_value
+      return unless Spree::NumberSequence.started?(store: self)
+
+      errors.add(:preferred_order_number_sequence_start, :locked_after_first_number)
     end
   end
 end

@@ -38,8 +38,11 @@ module Spree
         payment.number
       end
 
+      # Built on the prefixed ID, not the number: a derived number shifts if
+      # an earlier sibling payment is destroyed, and a shifted idempotency
+      # key could collide with one already used at the gateway.
       def idempotency_key
-        "spree-#{payment.number}"
+        "spree-#{payment.prefixed_id}"
       end
 
       def shipping

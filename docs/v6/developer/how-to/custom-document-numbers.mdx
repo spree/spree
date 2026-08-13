@@ -116,9 +116,10 @@ class MyApp::Consignment < Spree.base_class
 end
 ```
 
-The record is numbered before validation on create, and the number follows the store's format setting like everything else. Add a unique index on the column:
+The record is numbered before validation on create, and the number follows the store's format setting like everything else. The model needs a `number` column with a unique index:
 
 ```ruby
+add_column :my_app_consignments, :number, :string, null: false
 add_index :my_app_consignments, :number, unique: true
 ```
 

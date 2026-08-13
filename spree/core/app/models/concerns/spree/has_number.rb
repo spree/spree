@@ -72,7 +72,10 @@ module Spree
         candidate = generator.generate(self)
         next if candidate.blank?
 
-        return self.number = candidate unless number_taken?(candidate)
+        unless number_taken?(candidate)
+          @number_generated = true
+          return self.number = candidate
+        end
       end
 
       raise GenerationError,
@@ -104,17 +107,29 @@ module Spree
     # Last line of defence. The pre-check and the uniqueness validation both
     # read committed rows, so neither can see a number another writer commits
     # in the instant between the check and this insert — only the index can.
+    #
+    # The insert runs in a savepoint because a constraint violation poisons
+    # the surrounding PostgreSQL transaction: without one, the regenerate
+    # queries below would themselves die with PG::InFailedSqlTransaction
+    # instead of recovering. Only creates whose number this concern generated
+    # pay for the savepoint — caller-supplied numbers should surface their
+    # collision, and updates never touch the number.
+    #
     # Regenerate and retry once; a second collision is a real problem worth
     # surfacing rather than looping on.
     def create_or_update(**, &block)
-      super
-    rescue ActiveRecord::RecordNotUnique => error
-      raise error if @number_regenerated || !number_collision?(error)
+      return super unless new_record? && @number_generated
 
-      @number_regenerated = true
-      self.number = nil
-      generate_number
-      retry
+      begin
+        self.class.transaction(requires_new: true) { super }
+      rescue ActiveRecord::RecordNotUnique => error
+        raise error if @number_regenerated || !number_collision?(error)
+
+        @number_regenerated = true
+        self.number = nil
+        generate_number
+        retry
+      end
     end
 
     def number_collision?(error)

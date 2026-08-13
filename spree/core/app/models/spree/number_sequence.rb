@@ -40,6 +40,20 @@ module Spree
         exists?(store: store, resource_type: resource_type)
       end
 
+      # Moves the counter forward to +value+ — never backward — so numbering
+      # continues past a stretch of numbers that turned out to be taken.
+      #
+      # @param store [Spree::Store]
+      # @param resource_type [String]
+      # @param value [Integer] the value the counter should stand at
+      def advance_to(store:, resource_type:, value:)
+        sequence = find_or_create_sequence(store, resource_type, value)
+
+        sequence.with_lock do
+          sequence.update!(value: value) if sequence.value < value
+        end
+      end
+
       def next_value(store:, resource_type:, start_at: DEFAULT_START)
         sequence = find_or_create_sequence(store, resource_type, start_at)
 
