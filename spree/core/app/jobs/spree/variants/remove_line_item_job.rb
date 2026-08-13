@@ -4,16 +4,24 @@ module Spree
       queue_as Spree.queues.variants
 
       def perform(line_item:)
-        workflow = Spree.cart_upsert_items_workflow.new
+        owner = line_item.owner
+        return if owner.nil?
+
+        # Carts and draft orders have different contracts: the cart side turns
+        # a vetoed removal into a warning and still succeeds, the order side
+        # fails outright. Routing an order-owned line through the cart
+        # workflow would apply cart semantics to an admin edit.
+        cart_owned = owner.is_a?(Spree::Cart)
+        workflow = (cart_owned ? Spree.cart_upsert_items_workflow : Spree.order_upsert_items_workflow).new
+
         result = workflow.call(
-          cart: line_item.owner,
+          **(cart_owned ? { cart: owner } : { order: owner }),
           items: [{ variant_id: line_item.variant_id, quantity: 0 }]
         )
 
-        # The cart-side contract turns a vetoed removal into a warning and
-        # still succeeds, so the job has to look at the warnings to know the
-        # line survived — otherwise a discontinued variant silently stays in
-        # the cart with nothing to show for it.
+        # A cart-side veto surfaces as a warning rather than a failed result,
+        # so both have to be checked — otherwise a discontinued variant stays
+        # in the cart with nothing to show for it.
         rejection = workflow.warnings.first
         return if result.success? && rejection.nil?
 

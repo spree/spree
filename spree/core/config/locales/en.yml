@@ -678,10 +678,10 @@ en:
     cart_already_updated: The cart has already been updated.
     cart_line_item:
       currency_unavailable: "%{li_name} is not available in %{currency}"
-      quantity_must_be_positive: Quantity must be at least 1. Use DELETE to remove the item.
       delivery_unavailable: "%{li_name} cannot be delivered to the selected address"
       discontinued: "%{li_name} was removed because it was discontinued"
       out_of_stock: "%{li_name} was removed because it was sold out"
+      quantity_must_be_positive: Quantity must be at least 1. Use DELETE to remove the item.
     categories: Categories
     category: Category
     change: Change

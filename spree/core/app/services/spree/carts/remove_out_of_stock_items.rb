@@ -15,6 +15,8 @@ module Spree
 
         line_items = cart.line_items.includes(variant: [:product, :stock_locations, { stock_items: [:stock_location, :active_stock_reservations] }])
 
+        removal_error = nil
+
         ActiveRecord::Base.transaction do
           # The predicates record a message per candidate as they run, so the
           # messages exist before the removal is attempted.
@@ -22,10 +24,19 @@ module Spree
 
           if removals.any?
             workflow = Spree.cart_upsert_items_workflow.new
-            workflow.call(
+            result = workflow.call(
               cart: cart,
               items: removals.map { |line_item| { variant_id: line_item.variant_id, quantity: 0 } }
             )
+
+            # Nothing was removed — reporting the candidates as removed would
+            # tell the customer their cart changed when it did not. Raise
+            # rather than return so the transaction rolls back; a bare return
+            # would commit it.
+            if result.failure?
+              removal_error = result.error
+              raise ActiveRecord::Rollback
+            end
 
             # A :validate handler can veto a removal, leaving the line in the
             # cart. Telling the customer it was removed would be a lie, so
@@ -33,6 +44,8 @@ module Spree
             discard_messages_for(workflow.warnings)
           end
         end
+
+        return failure(cart, removal_error) if removal_error
 
         if @messages.any? # If any line item was removed, reload the cart
           success([cart.reload, @messages, @warnings])
