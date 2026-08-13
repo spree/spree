@@ -78,6 +78,38 @@ RSpec.describe 'Cart Items API', type: :request, swagger_doc: 'api-reference/sto
 
         run_test!
       end
+
+      # A store rule registered on 'carts.add_item.validate' — a purchase
+      # limit, a B2B eligibility check — rejects the add. The field name and
+      # symbolic code come from the handler, so clients read it exactly like a
+      # model validation failure.
+      response '422', 'rejected by a store rule' do
+        let(:new_product) { create(:product) }
+        let(:new_variant) { new_product.default_variant }
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let(:body) { { variant_id: new_variant.prefixed_id, quantity: 99 } }
+
+        before do
+          Spree.hooks.register('carts.add_item.validate') do |workflow|
+            next if workflow.quantity <= 10
+
+            workflow.errors.add(:quantity, :purchase_limit_exceeded,
+                                message: 'You can order at most 10 of this item.')
+            workflow.reject!
+          end
+        end
+
+        after { Spree.hooks.clear! }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['error']['details']['quantity']).to eq(['You can order at most 10 of this item.'])
+          expect(order.reload.line_items.count).to eq(1)
+        end
+      end
     end
   end
 
@@ -128,6 +160,37 @@ RSpec.describe 'Cart Items API', type: :request, swagger_doc: 'api-reference/sto
 
         run_test! do |_response|
           expect(line_item.reload.metadata).to include('engraving' => 'J.D.')
+        end
+      end
+
+      # Quantity changes run the same rules as adding, but a rejection here is
+      # NOT an error: the item keeps its previous quantity and the reason comes
+      # back in the cart's warnings, so a client updating several lines still
+      # gets the ones that were allowed.
+      response '200', 'quantity change rejected, reported in warnings' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let(:id) { line_item.to_param }
+        let(:body) { { quantity: 99 } }
+
+        before do
+          Spree.hooks.register('carts.upsert_items.validate') do |workflow|
+            next if workflow.quantity <= 10
+
+            workflow.errors.add(:quantity, :purchase_limit_exceeded,
+                                message: 'You can order at most 10 of this item.')
+            workflow.reject!
+          end
+        end
+
+        after { Spree.hooks.clear! }
+
+        schema '$ref' => '#/components/schemas/Cart'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['warnings'].first['code']).to eq('purchase_limit_exceeded')
+          expect(line_item.reload.quantity).to eq(1)
         end
       end
     end

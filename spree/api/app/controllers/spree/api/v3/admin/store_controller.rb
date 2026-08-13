@@ -56,6 +56,7 @@ module Spree
               :preferred_storefront_url,
               :preferred_guest_checkout,
               :preferred_company_field_enabled,
+              :preferred_address_requires_company,
               :preferred_address_requires_phone,
               :preferred_capture_method,
               # @deprecated Superseded by preferred_capture_method; the model

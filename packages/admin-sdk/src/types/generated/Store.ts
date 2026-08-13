@@ -26,6 +26,7 @@ interface Store {
   preferred_storefront_access: string;
   preferred_guest_checkout: boolean;
   preferred_company_field_enabled: boolean;
+  preferred_address_requires_company: boolean;
   preferred_address_requires_phone: boolean;
   preferred_capture_method: string;
   preferred_track_inventory_levels: boolean;
