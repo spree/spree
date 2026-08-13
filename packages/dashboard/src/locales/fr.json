@@ -1237,10 +1237,30 @@
         }
       },
       "store": {
+        "address_requires_phone": {
+          "help": "Rendre le numéro de téléphone obligatoire dans les adresses des clients.",
+          "label": "Numéro de téléphone obligatoire"
+        },
+        "auto_capture": {
+          "help": "Encaisser immédiatement au lieu de simplement réserver le montant. Un moyen de paiement peut modifier ce réglage.",
+          "label": "Débiter les cartes au paiement"
+        },
+        "auto_capture_on_dispatch": {
+          "help": "Attendre l’expédition réelle des marchandises avant d’encaisser.",
+          "label": "Débiter à l’expédition"
+        },
+        "company_field_enabled": {
+          "help": "Afficher un champ société dans les formulaires d’adresse lors du paiement.",
+          "label": "Champ société"
+        },
         "customer_support_email": {
           "help": "Adresse de réponse affichée aux clients dans les e-mails de la boutique.",
           "label": "E-mail du support client",
           "placeholder": "support@votreboutique.com"
+        },
+        "disable_sku_validation": {
+          "help": "Permettre à plusieurs déclinaisons de partager la même UGS.",
+          "label": "Autoriser les UGS en double"
         },
         "guest_checkout": {
           "help": "Valeur par défaut à l'échelle de la boutique pour la possibilité de commander sans compte. Les canaux peuvent la remplacer.",
@@ -1292,6 +1312,14 @@
         "preferred_weight_unit": {
           "label": "Unité de poids"
         },
+        "show_products_without_price": {
+          "help": "Lister les produits sans prix dans la devise du client.",
+          "label": "Afficher les produits sans prix"
+        },
+        "stock_reservations_enabled": {
+          "help": "Réserver les articles pendant le paiement pour éviter de vendre deux fois le même.",
+          "label": "Réserver le stock pendant le paiement"
+        },
         "storefront_access": {
           "help": "Valeur par défaut à l'échelle de la boutique pour ce que les visiteurs anonymes peuvent voir. Les canaux peuvent la remplacer. Lorsque les prix sont masqués, les invités doivent se connecter pour passer à la caisse.",
           "label": "Accès à la vitrine",
@@ -1300,6 +1328,14 @@
             "prices_hidden": "Prix masqués — les visiteurs doivent se connecter pour voir les prix",
             "public": "Public — tout le monde peut parcourir et voir les prix"
           }
+        },
+        "track_inventory_levels": {
+          "help": "Compter les quantités disponibles. Désactivez pour traiter chaque produit comme toujours disponible.",
+          "label": "Suivre les niveaux de stock"
+        },
+        "track_price_history": {
+          "help": "Conserver les anciens prix afin d’afficher le prix le plus bas des 30 derniers jours, comme l’exige la réglementation européenne.",
+          "label": "Enregistrer l’historique des prix"
         }
       },
       "store_credit": {
@@ -2311,6 +2347,7 @@
         },
         "inventory": {
           "in_stock": "{{count}} en stock",
+          "in_stock_short": "En stock",
           "on_backorder": "En réapprovisionnement",
           "out_of_stock": "En rupture de stock"
         },
@@ -2618,8 +2655,12 @@
         "store": {
           "default_package_description": "Le carton habituel d'expédition. Les transporteurs ajoutent son poids à chaque colis et utilisent ses dimensions pour le poids volumétrique.",
           "subtitle": "Configuration générale et valeurs par défaut à l'échelle de la boutique.",
+          "tab_addresses": "Adresses",
+          "tab_catalog": "Catalogue",
           "tab_default_package": "Colis par défaut",
           "tab_general": "Général",
+          "tab_inventory": "Stock",
+          "tab_payments": "Paiements",
           "tab_standards": "Normes et formats",
           "tab_storefront_access": "Accès à la vitrine",
           "title": "Paramètres de la boutique"

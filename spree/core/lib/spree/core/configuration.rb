@@ -23,8 +23,8 @@ module Spree
   module Core
     class Configuration < Preferences::RuntimeConfiguration
       # Alphabetized to more easily lookup particular preferences
-      preference :address_requires_state, :boolean, default: true, deprecated: true # should state/state_name be required
-      preference :address_requires_phone, :boolean, default: false # Determines whether we require phone in address
+      preference :address_requires_state, :boolean, default: true, deprecated: 'State requirements now come from the address country - see Spree::Country#states_required'
+      preference :address_requires_phone, :boolean, default: false, deprecated: 'Use the address_requires_phone preference in the Spree::Store model'
       # Origin where the admin SPA is hosted (e.g. `https://admin.shop.com`).
       # Used by admin mailers; falls back to `http://localhost:5173` in dev
       # and the store's storefront URL otherwise. Set this in production.
@@ -33,22 +33,22 @@ module Spree
       # Where the SSO callback returns the browser after an identity provider
       # redirect. Distinct from `admin_url`, which points at the legacy admin.
       preference :dashboard_url, :string, default: nil
-      preference :allow_checkout_on_gateway_error, :boolean, default: false
+      preference :allow_checkout_on_gateway_error, :boolean, default: false, deprecated: 'Nothing reads this in Spree 6 — completion checks whether payments cover the total, so a failed gateway call never completes an order'
       preference :allow_empty_price_amount, :boolean, default: false
       preference :allow_guest_checkout, :boolean, default: true, deprecated: true # this is only used in the rails frontend, and is not implemented in API
-      preference :alternative_shipping_phone, :boolean, default: false # Request extra phone for ship addr
+      preference :alternative_shipping_phone, :boolean, default: false, deprecated: 'Nothing reads this in Spree 6'
       preference :always_include_confirm_step, :boolean, default: false # Ensures confirmation step is always in checkout_progress bar, but does not force a confirm step if your payment methods do not support it.
       preference :always_put_site_name_in_title, :boolean, deprecated: true
       preference :always_use_translations, :boolean, default: false
-      preference :auto_capture, :boolean, default: true # automatically capture the credit card (as opposed to just authorize and capture later)
-      preference :auto_capture_on_dispatch, :boolean, default: false # Captures payment for each shipment in Shipment#after_ship callback, and makes Shipment.ready when payment authorized.
+      preference :auto_capture, :boolean, default: true, deprecated: 'Set it on the store instead' # automatically capture the credit card (as opposed to just authorize and capture later)
+      preference :auto_capture_on_dispatch, :boolean, default: false, deprecated: 'Set it on the store instead' # Captures payment on dispatch rather than at checkout.
       preference :binary_inventory_cache, :boolean, default: false, deprecated: true # only invalidate product cache when a stock item changes whether it is in_stock
       preference :checkout_zone, :string, default: nil, deprecated: true # replace with the name of a zone if you would like to limit the countries
       preference :company, :boolean, default: false, deprecated: 'Use the company_field_enabled preference in the Spree::Store model' # Request company field for billing and shipping addr
       preference :currency, :string, default: 'USD', deprecated: true
       preference :credit_to_new_allocation, :boolean, default: false
       preference :disable_migration_check, :boolean, default: false # when turned on disables the startup warning about missing engine migrations
-      preference :disable_sku_validation, :boolean, default: false # when turned off disables the built-in SKU uniqueness validation
+      preference :disable_sku_validation, :boolean, default: false, deprecated: 'Set it on the store instead' # when turned on disables the built-in SKU uniqueness validation
       preference :disable_store_presence_validation, :boolean, default: false, deprecated: true # when turned off disables Store presence validation for Products and Payment Methods
       preference :events_log_enabled, :boolean, default: true # Log all Spree events to Rails logger
       preference :expedited_exchanges, :boolean, default: false, deprecated: 'Exchanges are their own record in Spree 6 — see Spree::Exchange and the Exchanges::Fulfill workflow'
@@ -91,12 +91,12 @@ module Spree
       preference :mailer_logo, :string, deprecated: true
       preference :max_level_in_taxons_menu, :integer, deprecated: true
       preference :non_expiring_credit_types, :array, default: []
-      preference :products_per_page, :integer, default: 12
+      preference :products_per_page, :integer, default: 12, deprecated: 'Nothing reads this in Spree 6 — pass per_page to the API instead'
       preference :restock_inventory, :boolean, default: true, deprecated: 'Restocking is decided per line item by Spree::ReturnLineItem#resellable'
       preference :return_eligibility_number_of_days, :integer, default: 365, deprecated: 'Use the return_window_days preference on Spree::Market, or a returns.create.validate hook'
-      preference :reserve_stock_on, :string, default: 'checkout' # 'checkout' (default) or 'cart' — landing in 6.0 alongside Cart/Order split
-      preference :stock_reservations_enabled, :boolean, default: true # Hold stock during checkout to prevent overselling
-      preference :default_stock_reservation_ttl_minutes, :integer, default: 10 # Fallback TTL when a Store doesn't override
+      preference :reserve_stock_on, :string, default: 'checkout', deprecated: 'Nothing reads this in Spree 6 — see the stock_reservations_enabled preference on the store'
+      preference :stock_reservations_enabled, :boolean, default: true, deprecated: 'Set it on the store instead' # Hold stock during checkout to prevent overselling
+      preference :default_stock_reservation_ttl_minutes, :integer, default: 10, deprecated: 'Use the stock_reservation_ttl_minutes preference on the store'
       # Tiered cart-expiry reaper (docs/plans/6.0-cart-order-split.md Decision 5)
       preference :guest_cart_expiry_days, :integer, default: 30
       preference :customer_cart_expiry_days, :integer, default: 90
@@ -104,20 +104,20 @@ module Spree
       preference :send_core_emails, :boolean, default: true, deprecated: true # Default mail headers settings
       preference :shipping_instructions, :boolean, deprecated: true
       preference :show_only_complete_orders_by_default, :boolean, deprecated: true
-      preference :show_variant_full_price, :boolean, default: false # Displays variant full price or difference with product price. Default false to be compatible with older behavior
-      preference :show_products_without_price, :boolean, default: false
+      preference :show_variant_full_price, :boolean, default: false, deprecated: 'Nothing reads this in Spree 6 — a storefront decides how it renders prices'
+      preference :show_products_without_price, :boolean, default: false, deprecated: 'Set it on the store instead'
       preference :show_raw_product_description, :boolean, deprecated: true
       preference :tax_using_ship_address, :boolean, default: true
       preference :title_site_name_separator, :string, deprecated: true
-      preference :track_inventory_levels, :boolean, default: true # Determines whether to track on_hand values for variants / products.
-      preference :track_price_history, :boolean, default: true # Records price changes for Omnibus Directive compliance. Disable for non-EU stores.
+      preference :track_inventory_levels, :boolean, default: true, deprecated: 'Set it on the store instead' # Determines whether to track on_hand values for variants / products.
+      preference :track_price_history, :boolean, default: true, deprecated: 'Set it on the store instead' # Records price changes for Omnibus Directive compliance. Disable for non-EU stores.
       preference :price_history_retention_days, :integer, default: 30 # Days to retain price history records. Used by spree:price_history:prune rake task.
       preference :use_user_locale, :boolean, default: true
 
       # Sets the path used for products, taxons and pages.
-      preference :storefront_products_path, :string, default: 'products'
-      preference :storefront_taxons_path, :string, default: 't'
-      preference :storefront_pages_path, :string, default: 'pages'
+      preference :storefront_products_path, :string, default: 'products', deprecated: 'Nothing reads this in Spree 6 — storefront routes are owned by the storefront'
+      preference :storefront_taxons_path, :string, default: 't', deprecated: 'Nothing reads this in Spree 6 — storefront routes are owned by the storefront'
+      preference :storefront_pages_path, :string, default: 'pages', deprecated: 'Nothing reads this in Spree 6 — storefront routes are owned by the storefront'
 
       # coupon codes
       preference :coupon_codes_web_limit, :integer, default: 500 # number of coupon codes to be generated in the web process, more than this will be generated in a background job

@@ -357,9 +357,14 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
   path '/api/v3/admin/orders/{id}/cancel' do
     patch 'Cancel an order' do
       tags 'Orders'
+      consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Cancels a completed order.'
+      description <<~DESC
+        Cancels a completed order.
+
+        Set `notify_customer: true` to send the order cancellation email.
+      DESC
       admin_scope :write, :orders
 
       admin_sdk_example 'orders/cancel'
@@ -369,6 +374,12 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
                 description: 'Bearer token for admin authentication'
       parameter name: :id, in: :path, type: :string, required: true,
                 description: 'Order ID'
+      parameter name: :body, in: :body, required: false, schema: {
+        type: :object,
+        properties: {
+          notify_customer: { type: :boolean, description: 'Send the order cancellation email after canceling.' }
+        }
+      }
 
       response '200', 'order canceled' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -431,7 +442,7 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
         let(:id) { order.prefixed_id }
 
         before do
-          order.canceled_by(admin_user)
+          Spree.order_cancel_workflow.call(order: order, canceler: admin_user)
         end
 
         run_test!

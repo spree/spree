@@ -66,8 +66,21 @@ module Spree
     preference :storefront_url, :string
     preference :special_instructions_enabled, :boolean, default: false
     preference :stock_reservation_ttl_minutes, :integer, default: 10
+    # Store-wide default for charging cards at checkout rather than only
+    # authorizing them. A payment method's own auto_capture column wins when set.
+    preference :auto_capture, :boolean, default: true
+    preference :auto_capture_on_dispatch, :boolean, default: false
+    preference :stock_reservations_enabled, :boolean, default: true
+    # Catalog preferences
+    preference :track_inventory_levels, :boolean, default: true
+    preference :show_products_without_price, :boolean, default: false
+    preference :disable_sku_validation, :boolean, default: false
+    # Records price changes so the storefront can show the lowest price of the
+    # last 30 days, as the EU Omnibus Directive requires.
+    preference :track_price_history, :boolean, default: true
     # Address preferences
     preference :company_field_enabled, :boolean, default: false
+    preference :address_requires_phone, :boolean, default: false
     # digital assets preferences
     preference :limit_digital_download_count, :boolean, default: true
     preference :limit_digital_download_days, :boolean, default: true

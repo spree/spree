@@ -1237,10 +1237,30 @@
         }
       },
       "store": {
+        "address_requires_phone": {
+          "help": "Make a phone number mandatory on customer addresses.",
+          "label": "Require phone number"
+        },
+        "auto_capture": {
+          "help": "Take payment straight away instead of only reserving the amount. A payment method can override this.",
+          "label": "Charge cards at checkout"
+        },
+        "auto_capture_on_dispatch": {
+          "help": "Wait until goods actually go out before taking the money.",
+          "label": "Charge on dispatch"
+        },
+        "company_field_enabled": {
+          "help": "Show a company field on address forms during checkout.",
+          "label": "Company field"
+        },
         "customer_support_email": {
           "help": "Reply-to address shown to customers in storefront emails.",
           "label": "Customer support email",
           "placeholder": "support@yourstore.com"
+        },
+        "disable_sku_validation": {
+          "help": "Let more than one variant share the same SKU.",
+          "label": "Allow duplicate SKUs"
         },
         "guest_checkout": {
           "help": "Store-wide default for whether shoppers can check out without an account. Channels can override this.",
@@ -1292,6 +1312,14 @@
         "preferred_weight_unit": {
           "label": "Weight unit"
         },
+        "show_products_without_price": {
+          "help": "List products that have no price in the shopper’s currency.",
+          "label": "Show products without a price"
+        },
+        "stock_reservations_enabled": {
+          "help": "Reserve items while a shopper checks out so the same one cannot be sold twice.",
+          "label": "Hold stock during checkout"
+        },
         "storefront_access": {
           "help": "Store-wide default for what anonymous visitors can see. Channels can override this. When prices are hidden, guests must sign in to check out.",
           "label": "Storefront access",
@@ -1300,6 +1328,14 @@
             "prices_hidden": "Prices hidden — visitors must sign in to see prices",
             "public": "Public — anyone can browse and see prices"
           }
+        },
+        "track_inventory_levels": {
+          "help": "Count on-hand quantities. Turn off to treat every product as always available.",
+          "label": "Track stock levels"
+        },
+        "track_price_history": {
+          "help": "Keep past prices so the storefront can show the lowest price of the last 30 days, as EU rules require.",
+          "label": "Record price history"
         }
       },
       "store_credit": {
@@ -2311,6 +2347,7 @@
         },
         "inventory": {
           "in_stock": "{{count}} in stock",
+          "in_stock_short": "In stock",
           "on_backorder": "On backorder",
           "out_of_stock": "Out of stock"
         },
@@ -2618,8 +2655,12 @@
         "store": {
           "default_package_description": "The box you usually ship in. Carrier rate providers add its weight to every package and use its dimensions for dimensional-weight pricing.",
           "subtitle": "General configuration and store-wide defaults.",
+          "tab_addresses": "Addresses",
+          "tab_catalog": "Catalog",
           "tab_default_package": "Default package",
           "tab_general": "General",
+          "tab_inventory": "Inventory",
+          "tab_payments": "Payments",
           "tab_standards": "Standards and formats",
           "tab_storefront_access": "Storefront access",
           "title": "Store settings"

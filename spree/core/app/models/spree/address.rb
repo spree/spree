@@ -197,7 +197,7 @@ module Spree
     def require_phone?
       # We want to collect phone number for quick checkout but not to validate it
       # as it's not available before payment by browser.
-      !quick_checkout && Spree::Config[:address_requires_phone]
+      !quick_checkout && store_preference(:address_requires_phone, false)
     end
 
     def require_zipcode?
@@ -217,7 +217,7 @@ module Spree
     end
 
     def show_company_address_field?
-      Spree::Store.current.prefers_company_field_enabled?
+      store_preference(:company_field_enabled, false)
     end
 
     def editable?
@@ -254,6 +254,17 @@ module Spree
     end
 
     private
+
+    # Addresses carry no store association, so store-scoped settings resolve
+    # through the ambient store. Outside a request (console, seeds, a job that
+    # forgets to set the store) there may be none, so callers pass the
+    # preference default explicitly.
+    def store_preference(name, fallback)
+      store = Spree::Current.store
+      return fallback if store.nil?
+
+      store.get_preference(name)
+    end
 
     def should_geocode?
       Spree::Config[:geocode_addresses] && (
@@ -310,9 +321,9 @@ module Spree
     end
 
     def state_validate
-      # Skip state validation without country (also required)
-      # or when disabled by preference
-      return if country.blank? || !Spree::Config[:address_requires_state]
+      # Skip state validation without country (also required).
+      # Whether a state is required is the country's call.
+      return if country.blank?
       return unless country.states_required
 
       # ensure associated state belongs to country

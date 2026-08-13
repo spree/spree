@@ -3,23 +3,23 @@ title: "Tax"
 description: "Learn how to configure tax rates and categories for your Spree store."
 ---
 
-Tax management is critical in eCommerce to ensure legal compliance, avoid costly penalties, and provide accurate pricing for customers across different regions. 
+Tax management is critical in eCommerce to ensure legal compliance, avoid costly penalties, and provide accurate pricing for customers across different regions.
 
 Spree gives you a clear and customizable way to set up and manage taxes for any region, product type, or pricing style, whether you include tax in your prices (like VAT) or apply it at checkout (like U.S. sales tax).
 
-To manage Tax configurations, navigate to the Tax tab of the Settings menu.
+To manage tax configurations, navigate to **Settings → Tax** in the admin dashboard.
 
-![](/images/user/settings/tax/1.tax.png)
+![The Tax tab in the Spree admin Settings menu](/docs/images/user/settings/tax/1-tax-settings-tab.png)
 
-You’ll notice two separate subtabs here for managing Tax Rates and Tax Categories.
+You'll see two subtabs here — **Tax Rates** and **Tax Categories** — for managing each.
 
-![](/images/user/settings/tax/2.tax_subtabs.png)
+![The Tax Rates and Tax Categories subtabs on the Tax settings page](/docs/images/user/settings/tax/2-tax-subtabs.png)
 
-Let’s take a look at each in more detail:
+Let's look at each in more detail:
 
 ## Tax Rates
 
-![](/images/user/settings/tax/3.tax_rates.png)
+![The Tax Rates overview page listing all configured tax rates](/docs/images/user/settings/tax/3-tax-rates-overview.png)
 
 The Tax Rates overview displays all existing tax rates with key information such as:
 
@@ -28,61 +28,67 @@ The Tax Rates overview displays all existing tax rates with key information such
 - **Zone**: Where the tax applies (configured separately in the Zones section)
 - **Amount**: The tax percentage (e.g., 20%)
 - **Included in Price**: Whether this tax is part of the listed price
-- **Show rate in label**: Whether this tax rate appears as part of the price label on the storefront
+- **Show Rate in Label**: Whether this tax rate appears as part of the price label on the storefront
 
-From here, you can:
+From here, you can add new tax rates or edit existing ones.
 
-- Add new tax rates
-- Edit existing tax rates
-
-<Note>
-  Tax rates in Spree rely on the Zones feature to determine where each rate applies. Zones define geographic regions (like countries or states), allowing you to target specific tax rules based on a customer's shipping address.
-</Note>
+<Note>Tax rates in Spree rely on the Zones feature to determine where each rate applies. Zones define geographic regions (like countries or states), allowing you to target specific tax rules based on a customer's shipping address. See [<u>Settings → Zones</u>](/user/settings/zones) for more.</Note>
 
 ### Add a New Tax Rate
 
-To add a new tax rate click New Tax Rate in the top right corner, and you’ll be directed to a tax rate creation form.
+To add a new tax rate, click **New Tax Rate** in the top-right corner. You'll be taken to the tax rate creation form.
 
-![](/images/user/settings/tax/4.add_new_rate.png)
+![The New Tax Rate creation form](/docs/images/user/settings/tax/4-new-tax-rate-form.png)
 
-Simply fill in the form with the relevant information:
+Fill in the form with the relevant information:
 
-- Name
-- Zone (select from existing zones)
-- Tax Category (select from existing Tax Categories)
-- Amount (e.g., for 5% enter 0.05)
-- Included in Price (Yes/No)
-- Show Rate in Label (Yes/No)
+- **Name** — A label for this tax rate, shown internally and, if enabled, on the storefront.
+- **Zone** — The geographic region this rate applies to, selected from your existing zones.
+- **Tax Category** — The group of products this rate applies to, selected from your existing tax categories.
+- **Calculator** — Determines how tax is calculated for this rate — see Calculators below.
+- **Amount** — The tax rate as a decimal (e.g., enter `0.05` for 5%).
+- **Included in Price** — Whether this tax is already built into the listed price (Yes) or added at checkout (No).
+- **Show Rate in Label** — Whether this rate's percentage appears alongside the price on the storefront.
 
-Once the data has been entered, click Create to save the new tax rate.
+Once the data has been entered, click **Create** to save the new tax rate.
 
 This tax rate can now be applied to products with the matching category and shipping to the selected zone.
 
+#### Calculators
+
+Spree offers three calculators for determining how tax is calculated on a tax rate:
+
+- **Default Tax Calculator** — A simple calculator that applies the tax rate's **Amount** directly to any product assigned to the associated tax category.
+- **Stripe Tax Calculator** — Automatically calculates tax at checkout based on the customer's shipping address. Only works if you're using Stripe as your payment gateway, and requires tax nexus to be set up in your Stripe dashboard. See the [<u>Stripe integration guide</u>](/integrations/payments/stripe) for setup details.
+- **AvaTax Transaction Calculator** — Automatically calculates tax at checkout based on the customer's shipping address. Requires an Avalara account, with the AvaTax integration installed and configured in Spree. See the [<u>Avalara AvaTax integration guide</u>](/integrations/tax/avalara) for setup details.
+
+<Note>If you're using the AvaTax Transaction Calculator, you don't need to manually create tax rates here — it's enough to set up your tax categories and assign them to products. Spree creates the matching tax rates automatically as orders are placed.</Note>
+
 ### Edit a Tax Rate
 
-To edit a tax rate, simply click on the tax rate’s row in the Tax Rates overview.
+To edit a tax rate, click its row in the Tax Rates overview.
 
-![](/images/user/settings/tax/5.edit_tax_rate.png)
+![The Edit Tax Rate form, pre-filled with an existing rate's data](/docs/images/user/settings/tax/5-edit-tax-rate-form.png)
 
-The edit form looks more or less identical to the New Tax Rate form, but with pre-filled data, and Update buttons rather than Create buttons.
+The edit form looks the same as the New Tax Rate form, but pre-filled with the existing data, and with an **Update** button instead of **Create**.
 
-Simply update fields as needed and then click Update to save changes.
+Update the fields as needed, then click **Update** to save your changes.
 
-<Note>
-  Changing a tax rate will affect all future orders using that rate, but not past orders.
-</Note>
+<Note>Changing a tax rate will affect all future orders using that rate, but not past orders.</Note>
 
 ### Delete a Tax Rate
 
-To delete a Tax Rate, simply navigate to the edit form for the Tax Rate you wish to delete, and click the ‘Delete’ button on the lower righthand side.
+To delete a tax rate, open its edit form and click **Delete** in the lower-right corner.
 
 ## Tax Categories
 
-![](/images/user/settings/tax/6.tax_categories.png)
+![The Tax Categories overview page listing all configured tax categories](/docs/images/user/settings/tax/6-tax-categories-overview.png)
 
-Tax categories are used to organize products based on how they’re taxed. 
+Tax categories organize your products based on how they're taxed.
 
-Note: A product variant can be assigned one tax category at a time.
+For example, if you sell both clothing and electronics, you might create a **Clothing** category taxed at a reduced or exempt rate (common in regions where apparel gets special tax treatment) and a **Standard** category for electronics taxed at the full rate — each product is then assigned to whichever category matches how it should be taxed.
+
+<Note>A product variant can only be assigned one tax category at a time.</Note>
 
 The Tax Categories overview displays all existing tax categories with key information such as:
 
@@ -91,52 +97,43 @@ The Tax Categories overview displays all existing tax categories with key inform
 - **Description**: Internal notes on what this category covers
 - **Default**: Whether this is the default category for new products
 
-From here, you can:
-
-- Add new tax categories
-- Edit existing tax categories
+From here, you can add new tax categories or edit existing ones.
 
 ### Add a New Tax Category
 
-To add a new tax category click New Tax Category in the top right corner, and you’ll be directed to a tax category creation form.
+To add a new tax category, click **New Tax Category** in the top-right corner. You'll be taken to the tax category creation form.
 
-![](/images/user/settings/tax/7.new_tax_category.png)
+![The New Tax Category creation form](/docs/images/user/settings/tax/7-new-tax-category-form.png)
 
-Simply fill in the form with the relevant information:
+Fill in the form with the relevant information:
 
-- Name
-- Tax Code (optional)
-- Description (optional)
-- Default (Yes/No)
+- **Name** — A label for this tax category, e.g., Standard, Reduced, or Exempt.
+- **Tax Code** — An optional code used by integrations or your accounting system to classify this category.
+- **Description** — Optional internal notes on what this category covers.
+- **Default** — Whether new products should automatically be assigned this tax category.
 
-Once the data has been entered, click Create to save the new tax category.
+Once the data has been entered, click **Create** to save the new tax category.
 
 This category will now be available for assignment to products and tax rates.
 
 ### Edit a Tax Category
 
-To edit a tax category, simply click on the tax category’s row in the Tax Categories overview.
+To edit a tax category, click its row in the Tax Categories overview, update the fields as needed, then click **Update** to save your changes.
 
-![](/images/user/settings/tax/8.edit_tax_category.png)
-
-The edit form looks more or less identical to the New Tax Category form, but with pre-filled data, and Update buttons rather than Create buttons.
-
-Simply update fields as needed and then click Update to save changes.
-
-<Note>
-  You can switch the default tax category if needed, but only one can be default at a time.
-</Note>
+<Note>You can switch the default tax category if needed, but only one can be default at a time.</Note>
 
 ### Delete a Tax Category
 
-To delete a tax category, simply navigate to the edit form for the tax category you wish to delete, and click the ‘Delete’ button on the lower righthand side.
+To delete a tax category, open its edit form and click **Delete** in the lower-right corner.
 
-## Complex Tax Rules & Integrations
+## Other Tax Integrations
 
-Spree supports tax extensions and API integrations with services like:
+In addition to the Stripe Tax and AvaTax calculators covered above, Spree's tax system is extensible — developers can build custom calculators to connect with other tax services (such as TaxJar) or implement custom tax logic specific to your business.
 
-- TaxJar
-- Avalara
-- Custom logic via Spree's extensible tax calculator system
+Get in touch with us if you'd like help implementing a custom tax integration.
 
-Get in touch with us if you'd like help implementing advanced tax solutions tailored to your business.
+## Related
+
+- [<u>Settings → Zones</u>](/user/settings/zones)
+- [<u>Stripe integration guide</u>](/integrations/payments/stripe)
+- [<u>Avalara AvaTax integration guide</u>](/integrations/tax/avalara)

@@ -6,9 +6,12 @@ module Spree
           include ActionController::RateLimiting
           include Spree::Core::ControllerHelpers::Store
 
+          # Must render — instance_exec'd in a before_action, where only
+          # render/redirect halts the chain.
           RATE_LIMIT_RESPONSE = -> {
-            [429, { 'Content-Type' => 'application/json', 'Retry-After' => '60' },
-             [{ error: { code: 'rate_limit_exceeded', message: 'Too many requests' } }.to_json]]
+            response.headers['Retry-After'] = '60'
+            render json: { error: { code: 'rate_limit_exceeded', message: 'Too many requests' } },
+                   status: :too_many_requests
           }
 
           rate_limit to: 120, within: 1.minute,

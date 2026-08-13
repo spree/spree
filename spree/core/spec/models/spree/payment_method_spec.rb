@@ -83,14 +83,12 @@ describe Spree::PaymentMethod, type: :model do
 
     subject { gateway.auto_capture? }
 
-    let(:gateway) { TestGateway.new }
+    let(:gateway) { TestGateway.new(store: store) }
 
     context 'when auto_capture is nil' do
-      before do
-        expect(Spree::Config).to receive('[]').with(:auto_capture).and_return(auto_capture)
-      end
+      before { stub_store_preferences(store, auto_capture: auto_capture) }
 
-      context 'and when Spree::Config[:auto_capture] is false' do
+      context "and when the store's auto_capture is false" do
         let(:auto_capture) { false }
 
         it 'is false' do
@@ -99,7 +97,7 @@ describe Spree::PaymentMethod, type: :model do
         end
       end
 
-      context 'and when Spree::Config[:auto_capture] is true' do
+      context "and when the store's auto_capture is true" do
         let(:auto_capture) { true }
 
         it 'is true' do

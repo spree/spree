@@ -133,7 +133,7 @@ module Spree
                 {
                   return_line_item: @resource.return_line_items.find_by_prefix_id!(item[:return_line_item_id]),
                   quantity: item[:quantity].to_i,
-                  resellable: item.key?(:resellable) ? ActiveModel::Type::Boolean.new.cast(item[:resellable]) : true
+                  resellable: item.key?(:resellable) ? item[:resellable].to_b : true
                 }
               end
             end

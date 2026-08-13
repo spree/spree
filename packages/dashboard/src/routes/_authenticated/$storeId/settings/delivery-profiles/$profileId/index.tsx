@@ -106,12 +106,21 @@ export const Route = createFileRoute(
   component: DeliveryProfileDetailPage,
 })
 
-/** Opens the method sheet for an existing method, or for a new one. */
+/**
+ * Opens the method sheet for an existing method, or for a new one.
+ *
+ * Every move replaces the history entry rather than pushing one. The sheet
+ * lives in the URL so a deep link reopens it, but opening and closing one is
+ * not a place a merchant navigated to — pushing would leave the page's back
+ * arrow walking through sheets they already dismissed instead of returning to
+ * the profile list.
+ */
 function useMethodSheetNavigation() {
   const navigate = useNavigate()
 
   const openMethod = (methodId: string) =>
     navigate({
+      replace: true,
       search: (prev: Record<string, unknown>) => {
         const { zone: _z, group: _g, provider: _p, ...rest } = prev
         return { ...rest, method: methodId } as never
@@ -120,6 +129,7 @@ function useMethodSheetNavigation() {
 
   const openNewMethod = (options: { zone?: string; group?: string; provider?: string } = {}) =>
     navigate({
+      replace: true,
       search: (prev: Record<string, unknown>) =>
         ({
           ...prev,
@@ -132,6 +142,7 @@ function useMethodSheetNavigation() {
 
   const closeMethodSheet = () =>
     navigate({
+      replace: true,
       search: (prev: Record<string, unknown>) => {
         const { method: _m, zone: _z, group: _g, provider: _p, ...rest } = prev
         return rest as never

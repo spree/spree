@@ -4,12 +4,11 @@ import { cn } from '../lib/utils'
 import { Slot } from './slot'
 
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-transparent text-sm font-medium whitespace-nowrap cursor-pointer select-none no-underline transition-[color,background-color,border-color,box-shadow,transform,translate,scale] duration-100 ease-out outline-none active:scale-[0.98] motion-reduce:active:scale-100 focus-visible:border-blue-500 focus-visible:shadow-[0_0_0_3px_rgba(59,130,246,0.15)] disabled:pointer-events-none disabled:opacity-70 disabled:cursor-not-allowed aria-invalid:border-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-transparent text-sm font-medium whitespace-nowrap cursor-pointer select-none no-underline transition-[color,background-color,border-color,box-shadow,transform,translate,scale] duration-100 ease-out outline-none active:scale-[0.98] motion-reduce:active:scale-100 focus-visible:border-blue-500 focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] disabled:pointer-events-none disabled:opacity-70 disabled:cursor-not-allowed aria-invalid:border-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
-        default:
-          'bg-primary text-primary-foreground shadow-xs hover:bg-primary/85 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-500',
+        default: 'bg-primary text-primary-foreground shadow-xs hover:bg-primary/85',
         outline:
           'border-border bg-muted text-foreground shadow-xs hover:bg-accent hover:text-foreground aria-expanded:bg-accent',
         ghost: 'hover:bg-accent hover:text-accent-foreground aria-expanded:bg-accent',

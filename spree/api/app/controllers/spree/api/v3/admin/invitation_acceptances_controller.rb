@@ -14,7 +14,7 @@ module Spree
                      within: Spree::Api::Config[:rate_limit_window].seconds,
                      store: Rails.cache,
                      only: [:lookup, :accept],
-                     with: RATE_LIMIT_RESPONSE
+                     with: -> { render_rate_limited(limit: Spree::Api::Config[:rate_limit_login]) }
 
           # GET /api/v3/admin/auth/invitations/:id/lookup?token=:token
           def lookup

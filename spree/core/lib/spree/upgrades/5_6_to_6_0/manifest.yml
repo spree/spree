@@ -319,6 +319,30 @@ steps:
       preferences so they aren't double-enforced. Run after
       migrate_shipping_to_delivery. Idempotent.
 
+  - id: store_settings_backfill_from_config
+    name: "Copy moved commerce settings onto every store"
+    task: "spree:store_settings:backfill_from_config"
+    notes: |
+      Settings that describe how a shop sells moved from Spree::Config onto
+      Spree::Store in 6.0: auto_capture, auto_capture_on_dispatch,
+      track_inventory_levels, stock_reservations_enabled, track_price_history,
+      show_products_without_price, disable_sku_validation and
+      address_requires_phone. Two more were renamed on the way over — company
+      became company_field_enabled, and default_stock_reservation_ttl_minutes
+      became stock_reservation_ttl_minutes.
+
+      Core reads the store with no fallback to the global, so an install that
+      set any of these in an initializer needs this step to keep its behavior.
+      A global left at its default is skipped, as is any store already carrying
+      a non-default value of its own.
+
+      Remove the settings from your initializer afterwards — the globals are
+      deprecated and are deleted in 6.1.
+
+      Idempotent: each store is visited at most once, recorded in its metadata,
+      so a later run never undoes a change made in the dashboard after the
+      upgrade.
+
   - id: product_types_backfill
     name: "Backfill product type store ownership"
     task: "spree:product_types:backfill"

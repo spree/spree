@@ -34,6 +34,7 @@ import {
   TableEmpty,
   TableHead,
   TableHeader,
+  TableHeaderRow,
   TableRow,
 } from '@spree/dashboard-ui'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
@@ -45,7 +46,6 @@ import {
   useDeferredValue,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -218,9 +218,8 @@ export function ResourceTable<T extends Record<string, any>>({
   const selectionEnabled = !!bulkActions?.length && !reorder
   const rowActionsEnabled = !!rowActions
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set())
-  // Used by +BulkActionBar+ to anchor itself within the table card on
-  // desktop (instead of free-floating at the viewport bottom).
-  const cardRef = useRef<HTMLDivElement | null>(null)
+  // Whether the bulk bar is covering the column labels.
+  const bulkActive = selectionEnabled && selectedIds.size > 0
 
   const {
     page,
@@ -457,7 +456,7 @@ export function ResourceTable<T extends Record<string, any>>({
       : actions
 
   return (
-    <Card ref={cardRef} className="rounded-xl">
+    <Card className="rounded-xl">
       <TableToolbar
         columns={displayableColumns}
         visibleColumns={visibleColumnKeys}
@@ -485,9 +484,9 @@ export function ResourceTable<T extends Record<string, any>>({
               items={rows.map((r) => (r as any).id)}
               strategy={verticalListSortingStrategy}
             >
-              <Table>
+              <Table stickyHeader>
                 <TableHeader>
-                  <tr>
+                  <TableHeaderRow>
                     <TableHead className="w-8" />
                     {headerColumns.map((col) => (
                       <TableHead key={col.key} className={col.headerClassName}>
@@ -499,7 +498,7 @@ export function ResourceTable<T extends Record<string, any>>({
                         <span className="sr-only">{t('admin.row_actions.menu_label')}</span>
                       </TableHead>
                     )}
-                  </tr>
+                  </TableHeaderRow>
                 </TableHeader>
                 <TableBody>
                   {isLoading ? (
@@ -539,108 +538,151 @@ export function ResourceTable<T extends Record<string, any>>({
             </SortableContext>
           </DndContext>
         ) : (
-          <Table>
-            <TableHeader>
-              <tr>
-                {selectionEnabled && (
-                  <TableHead className="w-8">
-                    <Checkbox
-                      checked={allPageSelected}
-                      indeterminate={somePageSelected}
-                      onCheckedChange={togglePage}
-                      aria-label={t('admin.a11y.select_all_rows')}
+          <>
+            {/* The bulk actions overlay the header row but live OUTSIDE the
+                table's horizontal scroller: out there their width is the
+                visible card rather than the table's full scroll width, so the
+                overflow-into-⋯ budget is right and the controls hold still
+                while the columns scroll sideways. A zero-height wrapper with
+                the same sticky offset as the pinned header keeps the two
+                travelling together; the start padding clears the select-all
+                checkbox, which stays visible and interactive underneath. */}
+            {bulkActive && (
+              // `pointer-events-none` on the overlay, re-enabled only on the
+              // bar itself: the start-padding gutter is part of this div and
+              // would otherwise swallow every click aimed at the select-all
+              // checkbox sitting beneath it — checking once, then never
+              // unchecking.
+              <div className="pointer-events-none sticky top-header-height z-30 h-0">
+                <div className="flex h-[2.1875rem] items-center ps-10 pe-4">
+                  <div className="pointer-events-auto min-w-0 flex-1">
+                    <BulkActionBar
+                      selectedIds={Array.from(selectedIds)}
+                      actions={bulkActions!}
+                      onDone={() => {
+                        setSelectedIds(new Set())
+                        queryClient.invalidateQueries({ queryKey: queryKeyPrefix })
+                      }}
                     />
-                  </TableHead>
-                )}
-                {headerColumns.map((col) => (
-                  <TableHead key={col.key} className={col.headerClassName}>
-                    {col.label}
-                  </TableHead>
-                ))}
-                {rowActionsEnabled && (
-                  <TableHead className="w-12">
-                    <span className="sr-only">{t('admin.row_actions.menu_label')}</span>
-                  </TableHead>
-                )}
-              </tr>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                <TableEmpty
-                  colSpan={
-                    visibleColumns.length + (selectionEnabled ? 1 : 0) + (rowActionsEnabled ? 1 : 0)
-                  }
-                >
-                  {t('admin.common.loading')}
-                </TableEmpty>
-              ) : rows.length === 0 ? (
-                <TableEmpty
-                  colSpan={
-                    visibleColumns.length + (selectionEnabled ? 1 : 0) + (rowActionsEnabled ? 1 : 0)
-                  }
-                >
-                  <Empty className="border-0 p-0">
-                    <EmptyHeader>
-                      {table.emptyIcon && <EmptyMedia variant="icon">{table.emptyIcon}</EmptyMedia>}
-                      <EmptyTitle>{table.emptyMessage ?? t('admin.common.no_results')}</EmptyTitle>
-                      {(deferredSearch || (filters as FilterRule[]).length > 0) && (
-                        <EmptyDescription>
-                          {t('admin.common.adjust_search_or_filters')}
-                        </EmptyDescription>
+                  </div>
+                </div>
+              </div>
+            )}
+            <Table stickyHeader>
+              <TableHeader>
+                {/* Column headers stay mounted with rows selected, and the bulk
+                    bar is laid over them. Swapping them for one `colSpan` cell
+                    instead would drop the width constraints they impose on an
+                    auto-layout table, and every column would resize the moment a
+                    row was ticked. `bulkActive` only hides the labels. */}
+                <TableHeaderRow>
+                  {selectionEnabled && (
+                    <TableHead className="w-8">
+                      <Checkbox
+                        checked={allPageSelected}
+                        indeterminate={somePageSelected}
+                        onCheckedChange={togglePage}
+                        aria-label={t('admin.a11y.select_all_rows')}
+                      />
+                    </TableHead>
+                  )}
+                  {headerColumns.map((col) => (
+                    <TableHead
+                      key={col.key}
+                      className={cn(
+                        col.headerClassName,
+                        'transition-colors duration-150 ease-out',
+                        // Hide the text, not the cell: `opacity-0` would erase
+                        // the cell's muted background and bottom rule too,
+                        // leaving rows visible through the band behind the
+                        // bulk actions overlay.
+                        bulkActive && 'text-transparent select-none',
                       )}
-                    </EmptyHeader>
-                  </Empty>
-                </TableEmpty>
-              ) : (
-                rows.map((row, i) => {
-                  const rowId = String((row as any).id ?? i)
-                  const isSelected = selectionEnabled && selectedIds.has(rowId)
-                  return (
-                    <TableRow
-                      key={(row as any).id ?? i}
-                      className={isSelected ? 'bg-muted/40' : undefined}
                     >
-                      {selectionEnabled && (
-                        <TableCell className="w-8">
-                          <Checkbox
-                            checked={isSelected}
-                            onCheckedChange={() => toggleRow(rowId)}
-                            aria-label={t('admin.a11y.select_row')}
-                          />
-                        </TableCell>
-                      )}
-                      {visibleColumns.map((col) => (
-                        <TableCell key={col.key} className={col.className}>
-                          {col.render ? col.render(row) : String((row as any)[col.key] ?? '—')}
-                        </TableCell>
-                      ))}
-                      {rowActionsEnabled && (
-                        <TableCell className="w-12 text-right">{rowActions?.(row)}</TableCell>
-                      )}
-                    </TableRow>
-                  )
-                })
-              )}
-            </TableBody>
-          </Table>
+                      {col.label}
+                    </TableHead>
+                  ))}
+                  {rowActionsEnabled && (
+                    <TableHead className="w-12">
+                      <span className="sr-only">{t('admin.row_actions.menu_label')}</span>
+                    </TableHead>
+                  )}
+                </TableHeaderRow>
+              </TableHeader>
+              <TableBody>
+                {isLoading ? (
+                  <TableEmpty
+                    colSpan={
+                      visibleColumns.length +
+                      (selectionEnabled ? 1 : 0) +
+                      (rowActionsEnabled ? 1 : 0)
+                    }
+                  >
+                    {t('admin.common.loading')}
+                  </TableEmpty>
+                ) : rows.length === 0 ? (
+                  <TableEmpty
+                    colSpan={
+                      visibleColumns.length +
+                      (selectionEnabled ? 1 : 0) +
+                      (rowActionsEnabled ? 1 : 0)
+                    }
+                  >
+                    <Empty className="border-0 p-0">
+                      <EmptyHeader>
+                        {table.emptyIcon && (
+                          <EmptyMedia variant="icon">{table.emptyIcon}</EmptyMedia>
+                        )}
+                        <EmptyTitle>
+                          {table.emptyMessage ?? t('admin.common.no_results')}
+                        </EmptyTitle>
+                        {(deferredSearch || (filters as FilterRule[]).length > 0) && (
+                          <EmptyDescription>
+                            {t('admin.common.adjust_search_or_filters')}
+                          </EmptyDescription>
+                        )}
+                      </EmptyHeader>
+                    </Empty>
+                  </TableEmpty>
+                ) : (
+                  rows.map((row, i) => {
+                    const rowId = String((row as any).id ?? i)
+                    const isSelected = selectionEnabled && selectedIds.has(rowId)
+                    return (
+                      <TableRow
+                        key={(row as any).id ?? i}
+                        className={isSelected ? 'bg-muted/40' : undefined}
+                      >
+                        {selectionEnabled && (
+                          <TableCell className="w-8">
+                            <Checkbox
+                              checked={isSelected}
+                              onCheckedChange={() => toggleRow(rowId)}
+                              aria-label={t('admin.a11y.select_row')}
+                            />
+                          </TableCell>
+                        )}
+                        {visibleColumns.map((col) => (
+                          <TableCell key={col.key} className={col.className}>
+                            {col.render ? col.render(row) : String((row as any)[col.key] ?? '—')}
+                          </TableCell>
+                        ))}
+                        {rowActionsEnabled && (
+                          <TableCell className="w-12 text-right">{rowActions?.(row)}</TableCell>
+                        )}
+                      </TableRow>
+                    )
+                  })
+                )}
+              </TableBody>
+            </Table>
+          </>
         )}
         {meta && (
           <Pagination
             meta={meta}
             onPageChange={(p) => updateSearch({ page: p })}
             onPageSizeChange={(size) => updateSearch({ limit: size, page: 1 })}
-          />
-        )}
-        {selectionEnabled && (
-          <BulkActionBar
-            selectedIds={Array.from(selectedIds)}
-            actions={bulkActions!}
-            anchorRef={cardRef}
-            onClear={() => setSelectedIds(new Set())}
-            onDone={() => {
-              setSelectedIds(new Set())
-              queryClient.invalidateQueries({ queryKey: queryKeyPrefix })
-            }}
           />
         )}
       </CardContent>

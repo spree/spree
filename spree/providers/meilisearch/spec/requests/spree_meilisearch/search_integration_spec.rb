@@ -6,7 +6,7 @@ require 'meilisearch'
 # In CI, Meilisearch runs as a service container.
 # Locally: `brew install meilisearch && meilisearch`
 #
-# Run with: bundle exec rspec spec/controllers/spree/api/v3/store/products/meilisearch_integration_spec.rb
+# Run with: bundle exec rspec spec/requests/spree_meilisearch/search_integration_spec.rb
 RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARCH_URL'].present? do
   controller(Spree::Api::V3::Store::ProductsController) {}
 
@@ -15,7 +15,7 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
   before(:all) { WebMock.allow_net_connect!(allow_localhost: true) }
   after(:all) { WebMock.disable_net_connect! }
 
-  let(:provider) { Spree::SearchProvider::Meilisearch.new(store) }
+  let(:provider) { SpreeMeilisearch::SearchProvider.new(store) }
   let(:index_name) { "#{store.code}_products" }
 
   # Categories
@@ -82,7 +82,7 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
 
   before do
     request.headers['X-Spree-Api-Key'] = api_key.token
-    allow(Spree).to receive(:search_provider).and_return('Spree::SearchProvider::Meilisearch')
+    allow(Spree).to receive(:search_provider).and_return('SpreeMeilisearch::SearchProvider')
 
     provider.reindex(store.products)
     wait_for_meilisearch_indexing!

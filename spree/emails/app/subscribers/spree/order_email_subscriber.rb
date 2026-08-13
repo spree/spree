@@ -41,6 +41,9 @@ module Spree
       return unless order
       return if event.payload['notify_customer'] == false
 
+      store = order.store
+      return unless store.prefers_send_consumer_transactional_emails?
+
       OrderMailer.cancel_email(order.id).deliver_later
     end
 

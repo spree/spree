@@ -126,6 +126,24 @@ RSpec.describe Spree::OrderEmailSubscriber do
       subscriber.send(:send_cancel_email, mock_event(order))
     end
 
+    context 'when store does not prefer transactional emails' do
+      before do
+        store.update!(preferences: store.preferences.merge(send_consumer_transactional_emails: false))
+      end
+
+      it 'does not send cancel email' do
+        expect(Spree::OrderMailer).not_to receive(:cancel_email)
+
+        subscriber.send(:send_cancel_email, mock_event(order))
+      end
+
+      it 'does not send cancel email even when notify_customer is true in payload' do
+        expect(Spree::OrderMailer).not_to receive(:cancel_email)
+
+        subscriber.send(:send_cancel_email, mock_event(order, notify_customer: true))
+      end
+    end
+
     context 'when order not found' do
       it 'does not raise an error' do
         order.destroy

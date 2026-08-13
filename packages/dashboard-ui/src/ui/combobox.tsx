@@ -209,7 +209,7 @@ function ComboboxChips({
         // resize lets the positioner follow the anchor smoothly; making it
         // instant jumps the open popup out from under the pointer, so the next
         // option click lands on nothing.
-        'flex flex-wrap items-center gap-1 rounded-lg border border-border bg-card text-foreground shadow-xs px-2.5 py-1.5 text-base transition-all duration-100 ease-out focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_rgba(59,130,246,0.15)] has-aria-invalid:border-destructive has-data-[slot=combobox-chip]:px-1',
+        'flex flex-wrap items-center gap-1 rounded-lg border border-border bg-card text-foreground shadow-xs px-2.5 py-1.5 text-base transition-all duration-100 ease-out focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] has-aria-invalid:border-destructive has-data-[slot=combobox-chip]:px-1',
         className,
       )}
       {...props}

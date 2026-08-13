@@ -8,7 +8,7 @@ Global settings live in `config/initializers/spree.rb` and apply to the whole ap
 ```ruby config/initializers/spree.rb
 Spree.config do |config|
   config.minimum_password_length = 10
-  config.track_inventory_levels = false
+  config.allow_empty_price_amount = true
 end
 ```
 
@@ -18,13 +18,24 @@ Restart your Rails server after editing the initializer.
 
 This page lists only settings Spree 6 actually reads. Settings that exist for backwards compatibility are listed under [Deprecated settings](#deprecated-settings) rather than mixed in with the rest.
 
+## Settings that belong to a store
+
+Settings that shape how a shop sells — when cards are charged, whether stock is counted, which products appear without a price — are properties of a store, not of the installation, so they live on `Spree::Store` and are edited in the dashboard under **Settings → Store**:
+
+`auto_capture`, `auto_capture_on_dispatch`, `track_inventory_levels`, `stock_reservations_enabled`, `stock_reservation_ttl_minutes`, `track_price_history`, `show_products_without_price`, `disable_sku_validation`, `address_requires_phone`, `company_field_enabled`, plus `guest_checkout` and `storefront_access` — those last two are owned by the channel, and the store's value is what a channel falls back to.
+
+They were global before Spree 6. The global versions still exist for one release but are no longer read, so setting one in the initializer changes nothing — run `bin/rake spree:store_settings:backfill_from_config` during the upgrade to copy your values onto every store.
+
+```ruby
+store = Spree::Current.store
+store.preferred_auto_capture                  # => true
+store.update!(preferred_track_inventory_levels: false)
+```
+
 ## Checkout and payments
 
 | Setting | Default | What it does |
 |---|---|---|
-| `auto_capture` | `true` | Store-wide default for whether cards are charged immediately at checkout, or only authorized and captured later. Individual payment methods override it. |
-| `auto_capture_on_dispatch` | `false` | Delays charging until goods actually go out. A parcel becomes ready to send once payment is authorized, and money is taken on dispatch. |
-| `allow_checkout_on_gateway_error` | `false` | Lets a customer finish checkout even when the payment gateway returns an error. |
 | `always_include_confirm_step` | `false` | Always shows a confirmation step, even when the payment method doesn't need one. |
 | `tax_using_ship_address` | `true` | Calculates tax from the shipping address rather than the billing address. |
 | `credit_to_new_allocation` | `false` | Records refunded store credit as a new entry each time instead of topping the original credit back up. |
@@ -34,26 +45,15 @@ This page lists only settings Spree 6 actually reads. Settings that exist for ba
 
 | Setting | Default | What it does |
 |---|---|---|
-| `stock_reservations_enabled` | `true` | Holds stock for shoppers while they check out, so the same item can't be sold twice. |
-| `default_stock_reservation_ttl_minutes` | `10` | How long a stock hold lasts, for stores that haven't set their own value. |
 | `guest_cart_expiry_days` | `30` | How long an abandoned guest cart is kept before deletion. |
 | `customer_cart_expiry_days` | `90` | How long a signed-in customer's abandoned cart is kept. |
 | `empty_cart_expiry_hours` | `48` | How long a cart with no items is kept. |
-
-## Inventory
-
-| Setting | Default | What it does |
-|---|---|---|
-| `track_inventory_levels` | `true` | Global switch for stock tracking. Turn it off and the store stops counting on-hand quantities and treats everything as always available. |
 
 ## Products and pricing
 
 | Setting | Default | What it does |
 |---|---|---|
-| `show_products_without_price` | `false` | Whether products with no price in the shopper's currency still appear in listings and search. |
 | `allow_empty_price_amount` | `false` | Allows a price to be left blank instead of requiring an amount. Prices in a price list already allow blank. |
-| `disable_sku_validation` | `false` | Set to `true` to let more than one variant share the same SKU. |
-| `track_price_history` | `true` | Records price changes so the store can show the lowest price of the last 30 days, as the EU Omnibus Directive requires. Turn off for non-EU stores. |
 | `price_history_retention_days` | `30` | How many days of price history the `spree:price_history:prune` task keeps. |
 | `always_use_translations` | `false` | Always read product, category and collection names from the translation tables, even in the store's own default language. |
 
@@ -61,7 +61,6 @@ This page lists only settings Spree 6 actually reads. Settings that exist for ba
 
 | Setting | Default | What it does |
 |---|---|---|
-| `address_requires_phone` | `false` | Makes a phone number mandatory on customer addresses. |
 | `geocode_addresses` | `true` | Looks up latitude and longitude for saved addresses. |
 
 ## Media
@@ -128,7 +127,8 @@ Spree::Api::Config.jwt_expiration = 1800
 | Setting | Default | What it does |
 |---|---|---|
 | `rate_limit_window` | `60` | Length of the rate-limit window, in seconds. |
-| `rate_limit_per_key` | `300` | Requests allowed per publishable API key per window. |
+| `rate_limit_per_key` | `300` | Requests allowed per window for each publishable API key + client IP pair (per visitor), and for keyless traffic per IP. Applies across the whole API, not per endpoint. |
+| `rate_limit_per_secret_key` | `600` | Requests allowed per secret API key per window, across the whole API. |
 | `rate_limit_login` | `5` | Sign-in attempts allowed per IP per window. |
 | `rate_limit_register` | `3` | Registration attempts per IP. |
 | `rate_limit_refresh` | `10` | Token refresh attempts per IP. |
@@ -145,7 +145,7 @@ Spree::Api::Config.jwt_expiration = 1800
 ## Reading a setting
 
 ```ruby
-Spree::Config.track_inventory_levels   # => true
+Spree::Config.minimum_password_length  # => 8
 Spree::Api::Config.jwt_expiration      # => 3600
 ```
 
@@ -165,13 +165,22 @@ These still exist so upgrades don't break, but Spree 6 either ignores them or re
 | `use_user_locale` | Locale comes from the `x-spree-locale` header or the `locale` parameter |
 | `allow_guest_checkout` | The `guest_checkout` setting on the store or channel |
 | `company` | The `company_field_enabled` setting on the store |
+| `address_requires_phone` | The `address_requires_phone` setting on the store |
+| `default_stock_reservation_ttl_minutes` | The `stock_reservation_ttl_minutes` setting on the store |
+| `auto_capture` | The `auto_capture` setting on the store |
+| `auto_capture_on_dispatch` | The `auto_capture_on_dispatch` setting on the store |
+| `stock_reservations_enabled` | The `stock_reservations_enabled` setting on the store |
+| `track_inventory_levels` | The `track_inventory_levels` setting on the store |
+| `show_products_without_price` | The `show_products_without_price` setting on the store |
+| `disable_sku_validation` | The `disable_sku_validation` setting on the store |
+| `track_price_history` | The `track_price_history` setting on the store |
 | `address_requires_state` | State requirements come from the country |
 | `checkout_zone` | [Delivery zones](/v6/developer/core-concepts/fulfillments#delivery-methods-and-zones) |
 | `currency` | Store and market currencies |
 | `disable_store_presence_validation` | Every store-owned record now requires a store |
 
 <Warning>
-These settings have no effect at all in Spree 6, and are scheduled for removal: `products_per_page`, `alternative_shipping_phone`, `show_variant_full_price`, `reserve_stock_on`, `storefront_products_path`, `storefront_taxons_path`, `storefront_pages_path`. Setting them changes nothing.
+These settings have no effect at all in Spree 6, and are scheduled for removal: `allow_checkout_on_gateway_error` (completion checks whether payments cover the total, so a failed gateway call never completes an order), `products_per_page`, `alternative_shipping_phone`, `show_variant_full_price`, `reserve_stock_on`, `storefront_products_path`, `storefront_taxons_path`, `storefront_pages_path`. Setting them changes nothing.
 </Warning>
 
 ## Related

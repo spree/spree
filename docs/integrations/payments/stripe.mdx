@@ -6,9 +6,7 @@ description: "Set up Spree's native Stripe integration to accept cards and alter
 
 Stripe is a widely used payment processor that enables secure and seamless transactions for online businesses. It supports multiple payment methods, automates payouts, and ensures a smooth checkout experience for customers.
 
-<Tip>
-  In [Spree Enterprise Edition](https://spreecommerce.org/pricing/), Stripe can also be used to power marketplace payments, enabling automated vendor payouts, split payments, and secure transaction handling.
-</Tip>
+<Tip>In [Spree Enterprise Edition](https://spreecommerce.org/pricing/), Stripe can also be used to power marketplace payments, enabling automated vendor payouts, split payments, and secure transaction handling.</Tip>
 
 ## Installation
 
@@ -93,6 +91,7 @@ Spree’s native Stripe integration supports a wide range of features and paymen
 - Accept Alipay payments
 - Accept WeChat Pay payments
 - Accept Afterpay, Klarna, Affirm, and more
+- Automatic tax calculation at checkout with Stripe Tax
 
 ### Storefront Display
 
@@ -106,6 +105,21 @@ Spree’s Stripe integration enhances the customer experience with dynamic, cont
   ![Apple_Pay_Google_Pay_Link\_-\_Quick_payments_bypassing_checkout](https://vendo-production-res.cloudinary.com/image/upload/w_2000/q_auto/v1742930027/docs/github/Spree_x_Stripe_-_Apple_Pay_Google_Pay_Link_-_Quick_payments_bypassing_checkout_on_Cart_n6gbh6.jpg)
 - Various payment options on the payment step (cards, BNPL, Apple Pay, Google Pay, Link)
   ![Quick payments bypassing checkout 1st step (Apple Pay, Google_Pay, Link)](https://vendo-production-res.cloudinary.com/image/upload/w_2000/q_auto/v1742930027/docs/github/Spree_x_Stripe_-_Apple_Pay_Google_Pay_Link_-_Checkout_payment_step_rxxnr9.jpg)
+
+## Stripe Tax
+
+Stripe Tax lets Spree calculate tax automatically at checkout based on the customer's shipping address, so you don't need to maintain manual rates for every region you sell into. It's only available if Stripe is connected as your payment gateway.
+
+<Note>Before using Stripe Tax, you need to configure your tax nexus (the regions where you're registered to collect tax) in your Stripe dashboard.</Note>
+
+To enable it in Spree:
+
+1. Navigate to **Settings → Tax → Tax Rates** and add a new tax rate.
+2. Set the **Calculator** field to **Stripe Tax Calculator**.
+3. Make sure any products you want Stripe to calculate tax on are assigned the tax category associated with that rate. You can assign a tax category from the **Tax** section of the product editor.
+
+See [<u>Settings → Tax</u>](/user/settings/tax) for more on configuring tax rates and categories, and [<u>Create a Product</u>](/user/products/creating-products) for details on assigning tax categories.
+
 
 ## Stripe Connect for Marketplaces
 
