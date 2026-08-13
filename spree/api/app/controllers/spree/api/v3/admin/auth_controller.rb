@@ -179,14 +179,9 @@ module Spree
             redirect_to target, allow_other_host: true
           end
 
-          # Where the React dashboard is hosted. Falls back to the Vite dev server
-          # in development, then to the store's own URL.
+          # Where the React dashboard is hosted.
           def dashboard_url
-            base = Spree::Config[:dashboard_url].presence ||
-                   (Rails.env.development? ? 'http://localhost:5173' : nil) ||
-                   current_store&.formatted_url
-
-            base.to_s.chomp('/')
+            Spree::Stores::DashboardUrl.call(store: current_store)
           end
 
           # A technical SSO failure (missing code, token verification) must not be

@@ -25,14 +25,14 @@ module Spree
       # Alphabetized to more easily lookup particular preferences
       preference :address_requires_state, :boolean, default: true, deprecated: 'State requirements now come from the address country - see Spree::Country#states_required'
       preference :address_requires_phone, :boolean, default: false, deprecated: 'Use the address_requires_phone preference in the Spree::Store model'
-      # Origin where the admin SPA is hosted (e.g. `https://admin.shop.com`).
-      # Used by admin mailers; falls back to `http://localhost:5173` in dev
-      # and the store's storefront URL otherwise. Set this in production.
-      preference :admin_url, :string, default: nil
-      # Origin where the React dashboard is hosted (e.g. `https://dashboard.shop.com`).
-      # Where the SSO callback returns the browser after an identity provider
-      # redirect. Distinct from `admin_url`, which points at the legacy admin.
-      preference :dashboard_url, :string, default: nil
+      preference :admin_url, :string, default: nil, deprecated: 'Use dashboard_url (or the SPREE_DASHBOARD_URL environment variable) instead — both name the origin where the dashboard is hosted.'
+      # Origin where the React dashboard is hosted (e.g. `https://dashboard.shop.com`),
+      # used for every link that sends someone into the dashboard: invitation
+      # emails, the SSO callback, and the first-run setup link. Set
+      # SPREE_DASHBOARD_URL in the environment rather than editing an
+      # initializer — the setup link is printed by `db:seed`, before there is
+      # any way to configure a running app.
+      preference :dashboard_url, :string, default: nil, env: 'SPREE_DASHBOARD_URL'
       preference :allow_checkout_on_gateway_error, :boolean, default: false, deprecated: 'Nothing reads this in Spree 6 — completion checks whether payments cover the total, so a failed gateway call never completes an order'
       preference :allow_empty_price_amount, :boolean, default: false
       preference :allow_guest_checkout, :boolean, default: true, deprecated: true # this is only used in the rails frontend, and is not implemented in API

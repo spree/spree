@@ -23,7 +23,14 @@ SPREE_PATH=$(pwd)
 SECRET_KEY_BASE=$(openssl rand -hex 64)
 DATABASE_NAME=$(db_name)
 DATABASE_NAME_TEST=$(test_db_name)
+SPREE_DASHBOARD_URL=$(dashboard_url)
 EOF
+fi
+
+# Backfill for worktrees provisioned before this line existed — the seed's
+# first-run setup link is built from it.
+if ! grep -q '^SPREE_DASHBOARD_URL=' server/.env; then
+  printf 'SPREE_DASHBOARD_URL=%s\n' "$(dashboard_url)" >> server/.env
 fi
 
 require_current_starter
