@@ -1204,6 +1204,14 @@
       "role_ids": {
         "label": "الأدوار"
       },
+      "setup": {
+        "password_confirmation": {
+          "label": "تأكيد كلمة المرور"
+        },
+        "store_name": {
+          "label": "اسم المتجر"
+        }
+      },
       "stock_location": {
         "active": {
           "help": "المواقع غير النشطة لا تظهر في اختيار التنفيذ.",
@@ -3534,6 +3542,22 @@
         "tax_categories": "فئات الضريبة",
         "webhooks": "Webhooks"
       }
+    },
+    "setup": {
+      "title": "إعداد Spree",
+      "subtitle": "أنشئ حساب المسؤول وسمِّ متجرك لإكمال التثبيت.",
+      "loading": "جارٍ التحقق من حالة الإعداد…",
+      "missing_token_title": "رابط الإعداد مطلوب",
+      "missing_token_message": "افتح رابط الإعداد الذي ظهر أثناء التثبيت — فهو يحتوي على رمز الإعداد لمرة واحدة. شغّل \"bin/rails spree:setup:token\" لطباعة رابط جديد.",
+      "not_available_title": "الإعداد غير متاح",
+      "not_available_message": "تم إعداد هذا التثبيت بالفعل. سجّل الدخول بحساب المسؤول بدلاً من ذلك.",
+      "could_not_complete": "تعذّر إكمال الإعداد",
+      "completing": "جارٍ الإعداد…",
+      "complete": "إكمال الإعداد",
+      "back_to_login": "العودة إلى تسجيل الدخول",
+      "required_notice_title": "لم يتم إعداد هذا التثبيت بعد",
+      "required_notice_message": "لا يوجد حساب مسؤول. استخدم رابط الإعداد من مخرجات التثبيت لإنشاء حساب.",
+      "required_notice_link": "الانتقال إلى الإعداد"
     },
     "staff": {
       "actions": {

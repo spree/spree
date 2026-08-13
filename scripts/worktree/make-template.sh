@@ -34,7 +34,10 @@ echo "▸ Rebuilding $TEMPLATE_DB (migrations + seeds, ~2-3 min)"
 # db:drop/db:create rather than dropdb/createdb: Rails connects using the config
 # just verified, so the destructive step cannot reach a different host or port
 # than the name check covered.
+# ADMIN_EMAIL/ADMIN_PASSWORD are required explicitly since 6.0 — the seed no
+# longer ships dummy defaults. These are the documented worktree credentials.
 (cd server && DATABASE_NAME="$TEMPLATE_DB" DATABASE_NAME_TEST="$TEMPLATE_DB" \
+  ADMIN_EMAIL="spree@example.com" ADMIN_PASSWORD="spree123" \
   bin/rails db:drop db:create spree:install:migrations db:prepare)
 
 echo "✓ $TEMPLATE_DB ready — new worktrees copy it via createdb -T"

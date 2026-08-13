@@ -1,9 +1,4 @@
-import {
-  DASHBOARD_PORT,
-  DEFAULT_ADMIN_EMAIL,
-  DEFAULT_ADMIN_PASSWORD,
-  STOREFRONT_PORT,
-} from '../constants.js'
+import { DASHBOARD_PORT, STOREFRONT_PORT } from '../constants.js'
 import type { PackageManager } from '../types.js'
 import { globalAddCommand, runCommand, storefrontPm } from '../utils.js'
 
@@ -46,12 +41,10 @@ Wait for the services to be healthy, then open:
 ${
   hasDashboard
     ? `- **Admin Dashboard (React, Developer Preview):** http://localhost:${DASHBOARD_PORT} — started automatically by \`spree dev\`
-  - Email: \`${DEFAULT_ADMIN_EMAIL}\`
-  - Password: \`${DEFAULT_ADMIN_PASSWORD}\`
+  - You choose the admin email and password during the first run
   - Classic admin: http://localhost:${port}/admin (same credentials)`
     : `- **Admin Dashboard:** http://localhost:${port}/admin
-  - Email: \`${DEFAULT_ADMIN_EMAIL}\`
-  - Password: \`${DEFAULT_ADMIN_PASSWORD}\``
+  - You choose the admin email and password during the first run`
 }
 - **Store API:** http://localhost:${port}/api/v3/store
 `

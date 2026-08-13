@@ -11,7 +11,7 @@ module Spree
         # different store entirely.
         user ||= store.users.first
 
-        raise 'No admin user found. Please run seeds first.' unless user
+        raise 'No admin user found for the store. Complete first-run setup, or seed with ADMIN_EMAIL/ADMIN_PASSWORD set.' unless user
 
         import = import_class.new(owner: store, user: user)
         # Persisted before save: the processing jobs reload the record, so these

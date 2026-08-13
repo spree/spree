@@ -2,8 +2,8 @@ import fs from 'node:fs'
 import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import pc from 'picocolors'
-import { projectCredentialsPath, projectSetupMarkerPath } from '../config.js'
-import { DASHBOARD_PORT, DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from '../constants.js'
+import { projectCredentialsPath, projectSetupMarkerPath, readAdminEmail } from '../config.js'
+import { DASHBOARD_PORT } from '../constants.js'
 import {
   detectProject,
   hasMonorepoSpreePath,
@@ -97,15 +97,15 @@ export function registerDevCommand(program: Command): void {
             ? [
                 pc.bold('Admin Dashboard (React, Developer Preview)'),
                 `  ${pc.cyan(`http://localhost:${DASHBOARD_PORT}`)}`,
-                `  Email:    ${DEFAULT_ADMIN_EMAIL}`,
-                `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
+                `  Email:    ${readAdminEmail(ctx.projectDir) ?? 'spree@example.com'}`,
+                `  Password: ${pc.dim('chosen during spree init')}`,
                 `  ${pc.dim('Live-reloading from apps/dashboard/')}`,
               ]
             : [
                 pc.bold('Admin Dashboard'),
                 `  ${pc.dim(`Not installed — add it with ${pc.bold('spree add dashboard')}`)}`,
-                `  Email:    ${DEFAULT_ADMIN_EMAIL}`,
-                `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
+                `  Email:    ${readAdminEmail(ctx.projectDir) ?? 'spree@example.com'}`,
+                `  Password: ${pc.dim('chosen during spree init')}`,
               ]),
           '',
           pc.bold('Store API'),

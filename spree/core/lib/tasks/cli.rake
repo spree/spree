@@ -39,12 +39,15 @@ namespace :spree do
     task create_admin: :environment do
       email = ENV.fetch('EMAIL')
       password = ENV.fetch('PASSWORD')
-      admin = Spree.admin_user_class.create!(
-        email: email,
-        password: password,
-        password_confirmation: password
-      )
-      admin.add_role('admin', Spree::Store.default)
+
+      admin_role = Spree::Role.default_admin_role
+      abort "The 'admin' role does not exist — run `bin/rails db:seed` first." if admin_role.nil?
+
+      admin = Spree.admin_user_class.find_or_create_by!(email: email) do |user|
+        user.password = password
+        user.password_confirmation = password
+      end
+      admin.add_role(admin_role.name, Spree::Store.default)
       print admin.email
     end
   end

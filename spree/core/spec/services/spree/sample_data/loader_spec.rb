@@ -3,7 +3,14 @@ require 'spec_helper'
 RSpec.describe Spree::SampleData::Loader, type: :service, without_global_store: true do
   before(:all) do
     DatabaseCleaner.clean_with(:truncation)
+    # The seed only mints an admin with explicit credentials (no dummy
+    # defaults since 6.0), and the sample-data imports need one as owner.
+    ENV['ADMIN_EMAIL'] = 'sample-admin@example.com'
+    ENV['ADMIN_PASSWORD'] = 'Secret123!'
     described_class.call
+  ensure
+    ENV.delete('ADMIN_EMAIL')
+    ENV.delete('ADMIN_PASSWORD')
   end
 
   after(:all) do

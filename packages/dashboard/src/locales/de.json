@@ -1193,6 +1193,14 @@
       "role_ids": {
         "label": "Rollen"
       },
+      "setup": {
+        "password_confirmation": {
+          "label": "Passwort bestätigen"
+        },
+        "store_name": {
+          "label": "Shopname"
+        }
+      },
       "stock_location": {
         "active": {
           "help": "Inaktive Standorte erscheinen nicht in der Fulfillment-Auswahl.",
@@ -3518,6 +3526,22 @@
         "tax_categories": "Steuerkategorien",
         "webhooks": "Webhooks"
       }
+    },
+    "setup": {
+      "title": "Spree einrichten",
+      "subtitle": "Erstellen Sie Ihr Administratorkonto und benennen Sie Ihren Shop, um die Installation abzuschließen.",
+      "loading": "Setup-Status wird geprüft…",
+      "missing_token_title": "Setup-Link erforderlich",
+      "missing_token_message": "Öffnen Sie den bei der Installation ausgegebenen Setup-Link — er enthält das einmalige Setup-Token. Mit \"bin/rails spree:setup:token\" können Sie einen neuen ausgeben.",
+      "not_available_title": "Setup ist nicht verfügbar",
+      "not_available_message": "Diese Installation ist bereits eingerichtet. Melden Sie sich stattdessen mit Ihrem Administratorkonto an.",
+      "could_not_complete": "Setup konnte nicht abgeschlossen werden",
+      "completing": "Wird eingerichtet…",
+      "complete": "Setup abschließen",
+      "back_to_login": "Zurück zur Anmeldung",
+      "required_notice_title": "Diese Installation ist noch nicht eingerichtet",
+      "required_notice_message": "Es existiert noch kein Administratorkonto. Verwenden Sie den Setup-Link aus der Installationsausgabe, um eines zu erstellen.",
+      "required_notice_link": "Zum Setup"
     },
     "staff": {
       "actions": {

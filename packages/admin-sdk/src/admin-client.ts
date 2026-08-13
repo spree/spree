@@ -201,6 +201,8 @@ import type {
   ReturnUpdateParams,
   RoleCreateParams,
   RoleUpdateParams,
+  SetupParams,
+  SetupStatus,
   StockItemUpdateParams,
   StockLocationCreateParams,
   StockLocationUpdateParams,
@@ -540,6 +542,23 @@ export class AdminClient {
         params: { token },
         body: params,
       }),
+
+    /**
+     * Public (unauthenticated) first-run setup availability check. True only
+     * while the installation has no admin user — the login page uses it to
+     * offer the setup screen.
+     */
+    setupStatus: (options?: RequestOptions): Promise<SetupStatus> =>
+      this.request<SetupStatus>('GET', '/auth/setup', options),
+
+    /**
+     * Public (unauthenticated) first-run setup: creates the first admin
+     * account and names the store, authorized by the one-time setup token
+     * printed at install time. Issues a JWT + refresh-token cookie identical
+     * to `login`. Returns 404 once any admin user exists.
+     */
+    completeSetup: (params: SetupParams, options?: RequestOptions): Promise<AuthTokens> =>
+      this.request<AuthTokens>('POST', '/auth/setup', { ...options, body: params }),
 
     /**
      * Public (unauthenticated) request for a password reset email. Always

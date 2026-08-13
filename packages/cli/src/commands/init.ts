@@ -5,13 +5,8 @@ import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import { execa, execaCommand } from 'execa'
 import pc from 'picocolors'
-import { mintProjectCredentials, writeProjectSetupMarker } from '../config.js'
-import {
-  DASHBOARD_PORT,
-  DEFAULT_ADMIN_EMAIL,
-  DEFAULT_ADMIN_PASSWORD,
-  STOREFRONT_PORT,
-} from '../constants.js'
+import { mintProjectCredentials, writeAdminEmail, writeProjectSetupMarker } from '../config.js'
+import { DASHBOARD_PORT, STOREFRONT_PORT } from '../constants.js'
 import { detectProject, readSampleDataFromEnv } from '../context.js'
 import {
   dashboardDevRunnable,
@@ -31,9 +26,18 @@ export function registerInitCommand(program: Command): void {
     .description('First-run setup: start services, configure API key, load sample data')
     .option('--no-sample-data', 'skip loading sample data')
     .option('--no-open', 'skip opening browser')
-    .action(async (flags: { sampleData: boolean; open: boolean }) => {
-      await runFirstRunSetup(flags)
-    })
+    .option('--admin-email <email>', 'email for the admin account created during setup')
+    .option('--admin-password <password>', 'password for the admin account created during setup')
+    .action(
+      async (flags: {
+        sampleData: boolean
+        open: boolean
+        adminEmail?: string
+        adminPassword?: string
+      }) => {
+        await runFirstRunSetup(flags)
+      },
+    )
 }
 
 /**
@@ -46,8 +50,15 @@ export function registerInitCommand(program: Command): void {
 export async function runFirstRunSetup(flags: {
   sampleData: boolean
   open: boolean
+  adminEmail?: string
+  adminPassword?: string
 }): Promise<void> {
   const ctx = detectProject()
+
+  // Resolved before any slow work so the operator isn't ambushed by a prompt
+  // minutes into the run. Seeds only mint an admin when the credentials are
+  // passed explicitly — there are no server-side dummy defaults anymore.
+  const { adminEmail, adminPassword } = await resolveAdminCredentials(flags)
 
   // `--no-sample-data` always wins; otherwise the choice create-spree-app
   // persisted in .env decides, so a deferred first run keeps the answer the
@@ -72,8 +83,12 @@ export async function runFirstRunSetup(flags: {
   s.stop('Spree is ready.')
 
   s.start('Seeding database...')
-  await rakeTask('db:seed', ctx.projectDir)
+  await rakeTask('db:seed', ctx.projectDir, {
+    ADMIN_EMAIL: adminEmail,
+    ADMIN_PASSWORD: adminPassword,
+  })
   s.stop('Database seeded.')
+  writeAdminEmail(ctx.projectDir, adminEmail)
 
   s.start('Configuring API keys...')
   // Sequential, not Promise.all: finish the publishable key (and its
@@ -117,15 +132,15 @@ export async function runFirstRunSetup(flags: {
     ? [
         pc.bold('Admin Dashboard (React, Developer Preview)'),
         `  ${pc.cyan(`http://localhost:${DASHBOARD_PORT}`)}`,
-        `  Email:    ${DEFAULT_ADMIN_EMAIL}`,
-        `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
+        `  Email:    ${adminEmail}`,
+        `  Password: ${adminPassword}`,
         `  ${pc.dim('Live-reloading from apps/dashboard/')}`,
       ]
     : [
         pc.bold('Admin Dashboard'),
         `  ${pc.dim(`Not installed — add it with ${pc.bold('spree add dashboard')}`)}`,
-        `  Email:    ${DEFAULT_ADMIN_EMAIL}`,
-        `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
+        `  Email:    ${adminEmail}`,
+        `  Password: ${adminPassword}`,
       ]
 
   // The wholesale demo needs both the storefront env opt-in and the seeded
@@ -276,6 +291,54 @@ export function updateStorefrontEnv(projectDir: string, apiKey: string): void {
     envPath,
     content.replace(/^SPREE_PUBLISHABLE_KEY=.*/m, `SPREE_PUBLISHABLE_KEY=${apiKey}`),
   )
+}
+
+/**
+ * Flags win; otherwise an interactive terminal prompts (Medusa-style), and a
+ * non-interactive run falls back to the historical dev credentials — passed
+ * explicitly to the seed either way, since the server no longer ships dummy
+ * defaults.
+ */
+async function resolveAdminCredentials(flags: {
+  adminEmail?: string
+  adminPassword?: string
+}): Promise<{ adminEmail: string; adminPassword: string }> {
+  let adminEmail = flags.adminEmail
+  let adminPassword = flags.adminPassword
+
+  if ((!adminEmail || !adminPassword) && process.stdin.isTTY) {
+    p.log.step('Create your admin account')
+
+    if (!adminEmail) {
+      const answer = await p.text({
+        message: 'Admin email',
+        initialValue: 'spree@example.com',
+        validate: (value) => (value?.includes('@') ? undefined : 'Enter a valid email address'),
+      })
+      if (p.isCancel(answer)) {
+        p.cancel('Setup cancelled.')
+        process.exit(1)
+      }
+      adminEmail = answer
+    }
+
+    if (!adminPassword) {
+      const answer = await p.password({
+        message: 'Admin password (min. 8 characters)',
+        validate: (value) => ((value ?? '').length >= 8 ? undefined : 'Use at least 8 characters'),
+      })
+      if (p.isCancel(answer)) {
+        p.cancel('Setup cancelled.')
+        process.exit(1)
+      }
+      adminPassword = answer
+    }
+  }
+
+  return {
+    adminEmail: adminEmail || 'spree@example.com',
+    adminPassword: adminPassword || 'spree123',
+  }
 }
 
 async function openBrowser(url: string): Promise<void> {

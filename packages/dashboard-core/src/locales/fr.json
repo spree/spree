@@ -596,7 +596,8 @@
       "invalid_password": "Mot de passe invalide",
       "password_required": "Le mot de passe est obligatoire",
       "first_name_required": "Le prénom est obligatoire",
-      "last_name_required": "Le nom est obligatoire"
+      "last_name_required": "Le nom est obligatoire",
+      "store_name_required": "Le nom de la boutique est requis"
     },
     "account": {
       "edit_profile": "Modifier le profil",
