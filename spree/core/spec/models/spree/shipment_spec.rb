@@ -102,10 +102,8 @@ describe Spree::Shipment, type: :model do
       allow(order).to receive :recalculate_totals!
     end
 
-    it 'generates a number containing a letter + 11 numbers' do
-      expect(shipment.number[0]).to eq('F')
-      expect(/\d{11}/.match(shipment.number)).not_to be_nil
-      expect(shipment.number.length).to eq(12)
+    it 'derives the number from the order it belongs to' do
+      expect(shipment.number).to eq("#{shipment.order.number}-F1")
     end
   end
 

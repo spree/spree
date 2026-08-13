@@ -4,8 +4,8 @@ module Spree
   class Fulfillment < Spree.base_class
     has_prefix_id :ful
 
-    include Spree::Core::NumberGenerator.new(prefix: 'F', length: 11)
-    include Spree::NumberIdentifier
+    include Spree::DerivedNumber
+    derives_number infix: 'F'
     include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::StorePreferences

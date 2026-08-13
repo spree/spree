@@ -10,7 +10,7 @@ module Spree
     include Spree::NumberIdentifier
     include Spree::VendorConcern if defined?(Spree::VendorConcern)
 
-    include Spree::Core::NumberGenerator.new(prefix: 'EF')
+    has_spree_number prefix: 'EF'
 
     publishes_lifecycle_events
 

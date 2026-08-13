@@ -198,6 +198,72 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
       end
     end
 
+    context 'with order-numbering params' do
+      let(:params) do
+        {
+          preferred_document_number_format: 'random',
+          preferred_order_number_prefix: 'INV',
+          preferred_order_number_suffix: '-EU',
+          preferred_order_number_sequence_start: 5001
+        }
+      end
+
+      it 'updates the numbering preferences' do
+        subject
+        expect(response).to have_http_status(:ok)
+        store.reload
+        expect(store.preferred_document_number_format).to eq('random')
+        expect(store.preferred_order_number_prefix).to eq('INV')
+        expect(store.preferred_order_number_suffix).to eq('-EU')
+        expect(store.preferred_order_number_sequence_start).to eq(5001)
+      end
+
+      it 'exposes them in the response' do
+        subject
+        expect(json_response['preferred_order_number_prefix']).to eq('INV')
+      end
+
+      it 'reports that numbering has not started yet' do
+        subject
+        expect(json_response['order_number_sequence_started']).to be(false)
+      end
+
+      context 'once the counter has issued a number' do
+        before { Spree::NumberSequence.next_value(store: store, resource_type: 'order') }
+
+        it 'reports the started flag' do
+          # Prefix stays editable after numbering starts — only the start locks.
+          patch :update, params: { preferred_order_number_prefix: 'INV' }, as: :json
+          expect(response).to have_http_status(:ok)
+          expect(json_response['order_number_sequence_started']).to be(true)
+        end
+
+        it 'rejects a changed starting value' do
+          subject
+          expect(response).to have_http_status(:unprocessable_content)
+          expect(json_response['error']['details']).to have_key('preferred_order_number_sequence_start')
+        end
+      end
+    end
+
+    context 'with an unsupported numbering format' do
+      let(:params) { { preferred_document_number_format: 'roman_numerals' } }
+
+      it 'returns a validation error' do
+        subject
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+    end
+
+    context 'with a prefix containing unsupported characters' do
+      let(:params) { { preferred_order_number_prefix: 'inv/2026' } }
+
+      it 'returns a validation error' do
+        subject
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+    end
+
     context 'with email-section params' do
       let(:params) do
         {

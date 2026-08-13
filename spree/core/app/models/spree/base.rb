@@ -6,6 +6,7 @@ class Spree::Base < ApplicationRecord
   include Spree::IntegrationsConcern
   include Spree::Publishable
   include Spree::PrefixedId
+  include Spree::HasNumber
   include Spree::TypedAssociations
 
   after_initialize do

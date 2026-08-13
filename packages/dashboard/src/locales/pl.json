@@ -1284,6 +1284,14 @@
           "help": "Pozwól, aby kilka wariantów miało ten sam SKU.",
           "label": "Zezwalaj na powtórzone SKU"
         },
+        "document_number_format": {
+          "label": "Format numeracji",
+          "help": "Dotyczy wszystkich numerowanych dokumentów. Numery kolejne rosną i łatwiej je podyktować; numery losowe nie zdradzają, ile zamówień otrzymał sklep.",
+          "options": {
+            "sequential": "Kolejny — liczony od wartości początkowej",
+            "random": "Losowy — nieprzewidywalne cyfry"
+          }
+        },
         "guest_checkout": {
           "help": "Domyślne ustawienie dla całego sklepu określające, czy klienci mogą składać zamówienia bez konta. Kanały mogą je nadpisać.",
           "label": "Zakupy jako gość"
@@ -1304,6 +1312,25 @@
           "help": "Odbiorca powiadomień „złożono nowe zamówienie”. Pozostaw puste, aby wyłączyć.",
           "label": "Powiadomienia o nowych zamówieniach",
           "placeholder": "ops@twojsklep.com"
+        },
+        "order_number_prefix": {
+          "label": "Prefiks",
+          "help": "Poprzedza każdy numer zamówienia.",
+          "invalid": "Używaj tylko wielkich liter, cyfr, myślników i #."
+        },
+        "order_number_preview": {
+          "label": "Podgląd",
+          "help": "Zmiany dotyczą wyłącznie przyszłych zamówień. Już nadane numery nigdy się nie zmieniają."
+        },
+        "order_number_sequence_start": {
+          "label": "Zacznij numerację od",
+          "help": "Dotyczy tylko okresu przed pierwszym zamówieniem. Późniejsza zmiana nie przenumeruje istniejących zamówień.",
+          "locked": "Numeracja już się rozpoczęła, więc to ustawienie nie ma już zastosowania. Istniejące numery zamówień nigdy się nie zmieniają."
+        },
+        "order_number_suffix": {
+          "label": "Sufiks",
+          "help": "Kończy każdy numer zamówienia.",
+          "invalid": "Używaj tylko wielkich liter, cyfr, myślników i #."
         },
         "preferred_admin_locale": {
           "label": "Język panelu administracyjnego",
@@ -2706,6 +2733,7 @@
           "tab_default_package": "Domyślna paczka",
           "tab_general": "Ogólne",
           "tab_inventory": "Stan magazynowy",
+          "tab_order_numbers": "Numery zamówień",
           "tab_payments": "Płatności",
           "tab_standards": "Standardy i formaty",
           "tab_storefront_access": "Dostęp do sklepu",

@@ -5,6 +5,31 @@ describe Spree::Store, type: :model, without_global_store: true do
     Spree::Country.find_by(iso: 'US') || create(:country_us)
   end
 
+  describe 'order number sequence start' do
+    let(:store) { create(:store) }
+
+    it 'can change while no number has been issued' do
+      store.preferred_order_number_sequence_start = 10_001
+
+      expect(store).to be_valid
+    end
+
+    it 'locks once the counter has issued a number' do
+      Spree::NumberSequence.next_value(store: store, resource_type: 'order')
+      store.preferred_order_number_sequence_start = 10_001
+
+      expect(store).not_to be_valid
+      expect(store.errors[:preferred_order_number_sequence_start]).to be_present
+    end
+
+    it 'accepts a save that does not change the start after numbering began' do
+      Spree::NumberSequence.next_value(store: store, resource_type: 'order')
+      store.name = 'Renamed'
+
+      expect(store).to be_valid
+    end
+  end
+
   context 'Associations' do
     subject { create(:store) }
 

@@ -9,7 +9,7 @@ module Spree
   class Claim < Spree.base_class
     has_prefix_id :claim
 
-    include Spree::Core::NumberGenerator.new(prefix: 'CLM', length: 9)
+    has_spree_number prefix: 'CLM'
     include Spree::NumberIdentifier
     include Spree::SingleStoreResource
     include Spree::HasStatus

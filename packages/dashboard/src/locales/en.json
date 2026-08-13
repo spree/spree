@@ -1270,6 +1270,14 @@
           "help": "Let more than one variant share the same SKU.",
           "label": "Allow duplicate SKUs"
         },
+        "document_number_format": {
+          "label": "Numbering format",
+          "help": "Applies to every numbered document. Sequential numbers count up and are easier to read back; random numbers do not reveal how many orders your store has taken.",
+          "options": {
+            "sequential": "Sequential — count up from a starting number",
+            "random": "Random — unpredictable digits"
+          }
+        },
         "guest_checkout": {
           "help": "Store-wide default for whether shoppers can check out without an account. Channels can override this.",
           "label": "Guest checkout"
@@ -1290,6 +1298,25 @@
           "help": "Recipient of \"new order placed\" notifications. Leave blank to disable.",
           "label": "New order notifications",
           "placeholder": "ops@yourstore.com"
+        },
+        "order_number_prefix": {
+          "label": "Prefix",
+          "help": "Leads every order number.",
+          "invalid": "Use only uppercase letters, digits, dashes and #."
+        },
+        "order_number_preview": {
+          "label": "Preview",
+          "help": "Changes apply to future orders only. Numbers already issued never change."
+        },
+        "order_number_sequence_start": {
+          "label": "Start numbering at",
+          "help": "Only applies before your first order. Changing it later does not renumber existing orders.",
+          "locked": "Numbering has already started, so this no longer applies. Existing order numbers never change."
+        },
+        "order_number_suffix": {
+          "label": "Suffix",
+          "help": "Ends every order number.",
+          "invalid": "Use only uppercase letters, digits, dashes and #."
         },
         "preferred_admin_locale": {
           "label": "Admin language",
@@ -2668,6 +2695,7 @@
           "tab_default_package": "Default package",
           "tab_general": "General",
           "tab_inventory": "Inventory",
+          "tab_order_numbers": "Order numbers",
           "tab_payments": "Payments",
           "tab_standards": "Standards and formats",
           "tab_storefront_access": "Storefront access",

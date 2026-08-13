@@ -35,11 +35,14 @@ shipping_address = Spree::Address.find_or_create_by!(
   phone: '555-0199'
 )
 
-# Create orders
+# Create orders. Numbers are fixed rather than generated — the number is the
+# `first_or_create!` key that makes a re-run idempotent — and match the 6.0
+# sequential default so a sample store looks like a real one. Real orders
+# created afterwards skip past taken values on their own.
 orders = []
 
 orders << store.orders.where(
-  number: 'R123456789',
+  number: 'R1001',
   email: 'spree@example.com',
   currency: 'USD'
 ).first_or_create! do |order|
@@ -49,7 +52,7 @@ orders << store.orders.where(
 end
 
 orders << store.orders.where(
-  number: 'R987654321',
+  number: 'R1002',
   email: 'spree@example.com',
   currency: 'USD'
 ).first_or_create! do |order|

@@ -18,7 +18,9 @@ module Spree
         # have to travel with it rather than live on the instance.
         import.preferred_inline = inline
         import.preferred_skip_events = skip_events
-        import.number = import.generate_permalink(import_class)
+        # Saved with `validate: false` below, which skips the before_validation
+        # that normally numbers the record.
+        import.generate_number
         import.attachment.attach(
           io: File.open(csv_path),
           filename: File.basename(csv_path),

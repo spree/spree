@@ -1267,6 +1267,14 @@
           "help": "允许多个变体使用相同的 SKU。",
           "label": "允许重复 SKU"
         },
+        "document_number_format": {
+          "label": "编号格式",
+          "help": "适用于所有带编号的单据。顺序编号依次递增、更便于口头核对；随机编号则不会透露店铺的订单量。",
+          "options": {
+            "sequential": "顺序编号 — 从起始号依次递增",
+            "random": "随机编号 — 不可预测的数字"
+          }
+        },
         "guest_checkout": {
           "help": "店铺范围内的默认设置，控制顾客是否可以无需账户即可结账。渠道可以覆盖此设置。",
           "label": "访客结账"
@@ -1287,6 +1295,25 @@
           "help": "“新订单已下单”通知的接收人。留空则禁用。",
           "label": "新订单通知",
           "placeholder": "ops@yourstore.com"
+        },
+        "order_number_prefix": {
+          "label": "前缀",
+          "help": "位于每个订单编号的开头。",
+          "invalid": "只能使用大写字母、数字、连字符和 #。"
+        },
+        "order_number_preview": {
+          "label": "预览",
+          "help": "更改仅影响后续订单。已生成的编号永远不会改变。"
+        },
+        "order_number_sequence_start": {
+          "label": "起始编号",
+          "help": "仅在首个订单之前生效。之后修改不会为已有订单重新编号。",
+          "locked": "编号已经开始，因此该设置不再生效。已有订单编号永远不会改变。"
+        },
+        "order_number_suffix": {
+          "label": "后缀",
+          "help": "位于每个订单编号的末尾。",
+          "invalid": "只能使用大写字母、数字、连字符和 #。"
         },
         "preferred_admin_locale": {
           "label": "后台语言",
@@ -2664,6 +2691,7 @@
           "tab_default_package": "默认包裹",
           "tab_general": "通用",
           "tab_inventory": "库存",
+          "tab_order_numbers": "订单编号",
           "tab_payments": "支付",
           "tab_standards": "标准与格式",
           "tab_storefront_access": "店铺访问权限",

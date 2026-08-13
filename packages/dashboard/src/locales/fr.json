@@ -1270,6 +1270,14 @@
           "help": "Permettre à plusieurs déclinaisons de partager la même UGS.",
           "label": "Autoriser les UGS en double"
         },
+        "document_number_format": {
+          "label": "Format de numérotation",
+          "help": "S'applique à tous les documents numérotés. Les numéros séquentiels se suivent et sont plus faciles à lire à voix haute ; les numéros aléatoires ne révèlent pas le nombre de commandes reçues.",
+          "options": {
+            "sequential": "Séquentiel — incrémenté à partir d’un numéro de départ",
+            "random": "Aléatoire — chiffres imprévisibles"
+          }
+        },
         "guest_checkout": {
           "help": "Valeur par défaut à l'échelle de la boutique pour la possibilité de commander sans compte. Les canaux peuvent la remplacer.",
           "label": "Commande invité"
@@ -1290,6 +1298,25 @@
           "help": "Destinataire des notifications « nouvelle commande passée ». Laissez vide pour désactiver.",
           "label": "Notifications de nouvelles commandes",
           "placeholder": "ops@votreboutique.com"
+        },
+        "order_number_prefix": {
+          "label": "Préfixe",
+          "help": "Placé au début de chaque numéro de commande.",
+          "invalid": "Utilisez uniquement des majuscules, des chiffres, des tirets et #."
+        },
+        "order_number_preview": {
+          "label": "Aperçu",
+          "help": "Les modifications ne s'appliquent qu'aux commandes futures. Les numéros déjà attribués ne changent jamais."
+        },
+        "order_number_sequence_start": {
+          "label": "Commencer la numérotation à",
+          "help": "S'applique uniquement avant votre première commande. Une modification ultérieure ne renumérote pas les commandes existantes.",
+          "locked": "La numérotation a déjà commencé, ce réglage ne s'applique donc plus. Les numéros de commande existants ne changent jamais."
+        },
+        "order_number_suffix": {
+          "label": "Suffixe",
+          "help": "Placé à la fin de chaque numéro de commande.",
+          "invalid": "Utilisez uniquement des majuscules, des chiffres, des tirets et #."
         },
         "preferred_admin_locale": {
           "label": "Langue de l'administration",
@@ -2668,6 +2695,7 @@
           "tab_default_package": "Colis par défaut",
           "tab_general": "Général",
           "tab_inventory": "Stock",
+          "tab_order_numbers": "Numéros de commande",
           "tab_payments": "Paiements",
           "tab_standards": "Normes et formats",
           "tab_storefront_access": "Accès à la vitrine",
