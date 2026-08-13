@@ -3,6 +3,7 @@ module Spree
     module V3
       module Admin
         class BaseController < Spree::Api::V3::BaseController
+          include Spree::Api::V3::Admin::StoreContext
           include Spree::Api::V3::AdminAuthentication
 
           # Must be registered before ScopedAuthorization so authenticate_admin!

@@ -12,11 +12,13 @@ module Spree
         end
 
         # Authenticates a publishable API key (pk_*) for Store API requests.
-        # Looks up the key by plaintext token scoped to the current store.
+        # The key SELECTS the store — lookup is global by token and
+        # +current_store+ derives from the key (see KeyStoreContext); the key
+        # is never validated against a host-resolved store.
         #
         # @return [Boolean] true if authentication succeeded, false otherwise
         def authenticate_api_key!
-          @current_api_key = current_store.api_keys.active.publishable.find_by(token: extract_api_key)
+          @current_api_key = publishable_api_key
 
           unless @current_api_key
             render_error(
@@ -33,12 +35,12 @@ module Spree
 
         # Authenticates a secret API key (sk_*) for Admin API requests.
         # Computes the HMAC-SHA256 digest of the provided token and looks up
-        # by +token_digest+, then verifies it belongs to the current store.
+        # by +token_digest+. The key is store-bound and selects the request's
+        # store (see Admin::StoreContext).
         #
         # @return [Boolean] true if authentication succeeded, false otherwise
         def authenticate_secret_key!
-          @current_api_key = Spree::ApiKey.find_by_secret_token(extract_api_key)
-          @current_api_key = nil if @current_api_key && @current_api_key.store_id != current_store.id
+          @current_api_key = secret_api_key
 
           unless @current_api_key
             render_error(
@@ -54,6 +56,28 @@ module Spree
         end
 
         private
+
+        # Memoized global publishable-key lookup. Deliberately NOT scoped to
+        # +current_store+ — the store derives from the key, not the other way
+        # around. Memoizes misses too, so pre-authentication callers (store
+        # resolution) don't re-query.
+        #
+        # @return [Spree::ApiKey, nil]
+        def publishable_api_key
+          return @publishable_api_key if defined?(@publishable_api_key)
+
+          @publishable_api_key =
+            extract_api_key ? Spree::ApiKey.active.publishable.find_by(token: extract_api_key) : nil
+        end
+
+        # Memoized global secret-key lookup (digest-based, active keys only).
+        #
+        # @return [Spree::ApiKey, nil]
+        def secret_api_key
+          return @secret_api_key if defined?(@secret_api_key)
+
+          @secret_api_key = Spree::ApiKey.find_by_secret_token(extract_api_key)
+        end
 
         # Marks the API key as used at most once per hour
         # to avoid unnecessary DB writes and job queue pressure on every request.

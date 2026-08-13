@@ -82,10 +82,10 @@ RSpec.describe Spree::Api::V3::Admin::BaseController, type: :controller do
 
       before { request.headers['X-Spree-Api-Key'] = other_secret_key.plaintext_token }
 
-      it 'returns 401 unauthorized' do
+      it 'authenticates — the key selects its own store (see Admin::StoreContext)' do
         get :index
 
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to have_http_status(:ok)
       end
     end
   end

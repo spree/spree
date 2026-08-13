@@ -150,6 +150,30 @@ export function writeProjectSetupMarker(projectDir: string): void {
   fs.writeFileSync(file, `${new Date().toISOString()}\n`)
 }
 
+function adminEmailPath(projectDir: string): string {
+  return path.join(projectDir, '.spree', 'admin-email')
+}
+
+/**
+ * Remembers which admin email was seeded at init so `spree dev` can show it
+ * on the summary card. The password is never persisted.
+ */
+export function writeAdminEmail(projectDir: string, email: string): void {
+  const file = adminEmailPath(projectDir)
+  fs.mkdirSync(path.dirname(file), { recursive: true, mode: 0o700 })
+  ensureGitignoreCatchAll(path.join(path.dirname(file), '.gitignore'))
+  fs.writeFileSync(file, `${email}\n`)
+}
+
+export function readAdminEmail(projectDir: string): string | null {
+  try {
+    return fs.readFileSync(adminEmailPath(projectDir), 'utf-8').trim() || null
+  } catch (error) {
+    if (isNotFound(error)) return null
+    throw error
+  }
+}
+
 export function readProjectCredentials(projectDir: string): ProjectCredentials | null {
   let raw: string
   try {

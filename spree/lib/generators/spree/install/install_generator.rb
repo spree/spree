@@ -110,8 +110,15 @@ module Spree
       return unless Spree::Core::Engine.sample_available?
 
       if @load_sample_data
-        say_status :loading, 'sample data'
-        rake 'spree_sample:load'
+        # Sample-data imports need an admin as their owner. Without explicit
+        # credentials the seed mints none (first-run setup does), so loading
+        # now would raise mid-install.
+        if admin_account_available?
+          say_status :loading, 'sample data'
+          rake 'spree_sample:load'
+        else
+          say_status :skipping, 'sample data (needs an admin account — finish setup, then run bin/rails spree:load_sample_data)'
+        end
       else
         say_status :skipping, 'sample data (you can always run rake spree_sample:load)'
       end
@@ -145,12 +152,30 @@ module Spree
       unless options[:quiet]
         puts '*' * 50
         puts "Spree has been installed successfully. You're all ready to go!"
+        unless admin_account_available?
+          puts ' '
+          puts 'No admin account was created — finish setup in the dashboard using the'
+          puts 'link printed by the seed (reprint it with: bin/rails spree:setup:token).'
+        end
         puts ' '
         puts 'Enjoy!'
       end
     end
 
     private
+
+    # Whether this install ends up with an admin account: explicit credentials
+    # were passed to the seed, or one already exists (re-install into a
+    # configured app). Drives the sample-data guard and the completion notes.
+    def admin_account_available?
+      credentials = (options[:admin_email].presence || ENV['ADMIN_EMAIL'].presence) &&
+        (options[:admin_password].presence || ENV['ADMIN_PASSWORD'].presence)
+      return true if credentials
+
+      Spree.admin_user_class.present? && Spree.admin_user_class.exists?
+    rescue StandardError
+      false
+    end
 
     def silence_stream(stream)
       old_stream = stream.dup

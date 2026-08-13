@@ -20,6 +20,13 @@ import { getAvailableUiLocales } from '../../i18n-setup'
 const UI_LOCALES = getAvailableUiLocales()
 
 export const Route = createFileRoute('/_authenticated/$storeId')({
+  // The X-Spree-Store-Id header must be set before ANY query under this route
+  // fires — child effects (where React Query starts fetches) run before a
+  // parent effect would, so an effect here is too late and the first fetch
+  // after a store switch would carry the previous store's header.
+  beforeLoad: ({ params }) => {
+    adminClient.setStore(params.storeId)
+  },
   component: StoreLayout,
 })
 
@@ -30,11 +37,12 @@ function StoreLayout() {
   const { refresh: refreshPermissions } = usePermissions()
   const isFirstStore = useRef(true)
 
+  // Permissions are store-scoped (roles are held per store). The provider
+  // already loaded them for the initial store on login; reload only when the
+  // admin switches to a different store — `storeId` is in the deps for
+  // exactly that re-run, even though the body doesn't read it.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: storeId drives the store-switch re-run
   useEffect(() => {
-    adminClient.setStore(storeId)
-    // Permissions are store-scoped (roles are held per store). The provider
-    // already loaded them for the initial store on login; reload only when
-    // the admin switches to a different store.
     if (isFirstStore.current) {
       isFirstStore.current = false
       return

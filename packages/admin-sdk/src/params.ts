@@ -966,6 +966,31 @@ export interface InvitationAcceptParams {
   last_name?: string
 }
 
+/** Response of the public first-run setup availability check. */
+export interface SetupStatus {
+  /** True only while the installation has no admin user. */
+  setup_required: boolean
+}
+
+/**
+ * Body for completing first-run setup: creates the first admin account and
+ * names the store, authorized by the one-time setup token printed at install
+ * time.
+ */
+export interface SetupParams {
+  setup_token: string
+  email: string
+  password: string
+  password_confirmation?: string
+  first_name?: string
+  last_name?: string
+  store_name?: string
+  /** ISO currency code for the store, e.g. `USD`. */
+  currency?: string
+  /** ISO 3166-1 alpha-2 country code for the store, e.g. `US`. */
+  country_iso?: string
+}
+
 /** Body for requesting a password reset email. */
 export interface PasswordResetRequestParams {
   email: string

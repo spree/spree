@@ -231,6 +231,22 @@ module Spree
     has_one_attached :logo, service: Spree.public_storage_service_name
     has_one_attached :mailer_logo, service: Spree.public_storage_service_name
 
+    # First-run setup credential (docs/plans/6.0-store-context-and-first-run-setup.md):
+    # printed by the installer, only consulted by the setup endpoint while no
+    # admin user exists, cleared when setup completes. Plaintext at rest —
+    # same posture as invitation tokens, and only meaningful while the
+    # database holds nothing but seed data.
+    has_secure_token :setup_token
+
+    # Link that claims this installation: the dashboard's first-run setup
+    # screen with the store's token.
+    # @return [String, nil] nil when no token is outstanding
+    def setup_url
+      return if setup_token.blank?
+
+      "#{Spree::Stores::DashboardUrl.call(store: self)}/setup?token=#{setup_token}"
+    end
+
     #
     # Callbacks
     before_validation :set_default_code, on: :create
@@ -459,8 +475,28 @@ module Spree
       false
     end
 
+    # The very first store keeps the well-known 'default' code (tooling and
+    # seeds reference it); every later store derives its code from the name,
+    # suffixed until unique — a literal 'default' fallback would collide with
+    # the unique index the moment a second store is created. Soft-deleted
+    # stores still occupy their code (the unique index has no deleted_at
+    # scope), so generation checks with_deleted.
     def set_default_code
-      self.code = 'default' if code.blank?
+      return if code.present?
+
+      self.code =
+        if Spree::Store.with_deleted.none?
+          'default'
+        else
+          base = name.to_s.parameterize.presence || 'store'
+          candidate = base
+          sequence = 2
+          while Spree::Store.with_deleted.exists?(code: candidate)
+            candidate = "#{base}-#{sequence}"
+            sequence += 1
+          end
+          candidate
+        end
     end
 
     # The storefront URL preference must always hold a canonical origin — it

@@ -596,7 +596,8 @@
       "invalid_password": "Ungültiges Passwort",
       "password_required": "Passwort ist erforderlich",
       "first_name_required": "Vorname ist erforderlich",
-      "last_name_required": "Nachname ist erforderlich"
+      "last_name_required": "Nachname ist erforderlich",
+      "store_name_required": "Shopname ist erforderlich"
     },
     "account": {
       "edit_profile": "Profil bearbeiten",
