@@ -295,12 +295,18 @@ steps:
     task: "spree:store_settings:backfill_from_config"
     notes: |
       Settings that describe how a shop sells moved from Spree::Config onto
-      Spree::Store in 6.0: auto_capture, auto_capture_on_dispatch,
-      track_inventory_levels, stock_reservations_enabled, track_price_history,
-      show_products_without_price, disable_sku_validation and
-      address_requires_phone. Two more were renamed on the way over — company
-      became company_field_enabled, and default_stock_reservation_ttl_minutes
-      became stock_reservation_ttl_minutes.
+      Spree::Store in 6.0: track_inventory_levels, stock_reservations_enabled,
+      track_price_history, show_products_without_price, disable_sku_validation
+      and address_requires_phone. Two more were renamed on the way over —
+      company became company_field_enabled, and
+      default_stock_reservation_ttl_minutes became
+      stock_reservation_ttl_minutes.
+
+      The auto_capture and auto_capture_on_dispatch pair became a single
+      capture_method string, since the two booleans could contradict each
+      other. Both globals are read together: capturing at checkout wins when
+      both were set, which is what the old code did — money taken at checkout
+      left the dispatch capture with nothing to do.
 
       Core reads the store with no fallback to the global, so an install that
       set any of these in an initializer needs this step to keep its behavior.
@@ -313,6 +319,25 @@ steps:
       Idempotent: each store is visited at most once, recorded in its metadata,
       so a later run never undoes a change made in the dashboard after the
       upgrade.
+
+  - id: migrate_capture_methods
+    name: "Convert payment method auto_capture into capture_method"
+    task: "spree:migrate_capture_methods"
+    notes: |
+      Payment methods say when they charge with a capture_method string
+      (checkout, on_dispatch or manual) rather than an auto_capture boolean,
+      which could not express "charge this method on dispatch".
+
+      Methods that captured on authorization become 'checkout'. Methods with
+      auto_capture false are left empty on purpose: the old column only
+      recorded "not at checkout" and could not say whether dispatch or staff
+      was meant to take the money, so those rows keep inheriting the store's
+      own setting. Run after store_settings_backfill_from_config so the store
+      they inherit from already holds the right value.
+
+      The auto_capture column stays readable as a fallback for one release and
+      is dropped in 6.1. Idempotent — only rows without a capture_method are
+      written.
 
   - id: product_types_backfill
     name: "Backfill product type store ownership"

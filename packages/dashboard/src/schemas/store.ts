@@ -29,6 +29,12 @@ export const DOCUMENT_NUMBER_FORMATS = ['sequential', 'random'] as const
 // survive a phone call: uppercase letters, digits, dash and hash.
 const NUMBER_AFFIX_PATTERN = /^[A-Z0-9#-]*$/
 
+// When customers are charged rather than only authorized. A payment method may
+// override this; the store is the terminal fallback, so it always holds a
+// concrete value. Labels live in `en.json` under
+// `admin.fields.store.capture_method.options.*`.
+export const CAPTURE_METHODS = ['checkout', 'on_dispatch', 'manual'] as const
+
 export const storeSettingsFormSchema = z.object({
   name: z.string().min(1, { error: requiredMessage('store.name') }),
   preferred_admin_locale: z.string().nullable().optional(),
@@ -43,8 +49,7 @@ export const storeSettingsFormSchema = z.object({
   preferred_guest_checkout: z.boolean(),
   preferred_company_field_enabled: z.boolean(),
   preferred_address_requires_phone: z.boolean(),
-  preferred_auto_capture: z.boolean(),
-  preferred_auto_capture_on_dispatch: z.boolean(),
+  preferred_capture_method: z.enum(CAPTURE_METHODS),
   preferred_track_inventory_levels: z.boolean(),
   preferred_stock_reservations_enabled: z.boolean(),
   preferred_track_price_history: z.boolean(),

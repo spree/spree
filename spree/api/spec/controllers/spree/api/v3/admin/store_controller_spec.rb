@@ -322,7 +322,7 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
     context 'with commerce behavior params' do
       let(:params) do
         {
-          preferred_auto_capture: false,
+          preferred_capture_method: 'on_dispatch',
           preferred_track_inventory_levels: false,
           preferred_show_products_without_price: true
         }
@@ -332,7 +332,7 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
         subject
         expect(response).to have_http_status(:ok)
         store.reload
-        expect(store.preferred_auto_capture).to eq(false)
+        expect(store.preferred_capture_method).to eq('on_dispatch')
         expect(store.preferred_track_inventory_levels).to eq(false)
         expect(store.preferred_show_products_without_price).to eq(true)
       end

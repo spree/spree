@@ -408,8 +408,17 @@ module Spree
       end
     end
 
+    # Payments whose method charges on dispatch. A method set to charge
+    # manually is never swept up by a dispatch — that is the whole point of
+    # choosing it — so it is left for staff to capture.
+    #
+    # @return [Array<Spree::Payment>]
+    def payments_to_capture_on_dispatch
+      order.pending_payments.select { |payment| payment.payment_method&.capture_on_dispatch? }
+    end
+
     def process_order_payments
-      pending_payments = order.pending_payments.
+      pending_payments = payments_to_capture_on_dispatch.
                          sort_by(&:uncaptured_amount).reverse
 
       shipment_to_pay = final_price_with_items
@@ -705,7 +714,7 @@ module Spree
     # type-specific mechanics in the provider wave.
     def after_fulfill
       fulfillment_items.each(&:ship!)
-      process_order_payments if store_preference(:auto_capture_on_dispatch)
+      process_order_payments
       touch :fulfilled_at
       run_provider_create_fulfillment
       update_order_fulfillment_status

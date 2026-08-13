@@ -298,8 +298,17 @@ module Spree
         order.update_columns(payment_total: 0, payment_state: 'balance_due')
       end
 
-      it 'captures the authorized payment when the store charges on dispatch' do
-        stub_store_preferences(store, auto_capture_on_dispatch: true)
+      # The resolution chain runs per payment, so the method's own setting is
+      # what decides. Clearing the legacy column lets the store's choice through.
+      def set_capture_method(value)
+        payment_method = order.payments.first.payment_method
+        payment_method.update_columns(auto_capture: nil)
+        payment_method.capture_method = value
+        payment_method.save!
+      end
+
+      it 'captures the authorized payment when the method charges on dispatch' do
+        set_capture_method('on_dispatch')
 
         subject.call(fulfillment: fulfillment)
 
@@ -309,14 +318,36 @@ module Spree
         expect(order.reload.payment_state).to eq('paid')
       end
 
-      it 'leaves the payment authorized when it does not' do
-        stub_store_preferences(store, auto_capture_on_dispatch: false)
+      it 'inherits the store setting when the method sets nothing' do
+        set_capture_method(nil)
+        stub_store_preferences(store, capture_method: 'on_dispatch')
+
+        subject.call(fulfillment: fulfillment)
+
+        payment = order.payments.first.reload
+        expect(payment).to be_completed
+        expect(payment.captured_amount).to eq(payment.amount)
+      end
+
+      it 'leaves the payment authorized when charging is manual' do
+        set_capture_method('manual')
 
         subject.call(fulfillment: fulfillment)
 
         payment = order.payments.first.reload
         expect(payment).to be_pending
         expect(payment.captured_amount).to eq(0)
+      end
+
+      # The whole point of picking manual is that staff decide when to charge;
+      # a dispatch must not quietly do it for them.
+      it 'does not capture a manual payment even when the store charges on dispatch' do
+        set_capture_method('manual')
+        stub_store_preferences(store, capture_method: 'on_dispatch')
+
+        subject.call(fulfillment: fulfillment)
+
+        expect(order.payments.first.reload).to be_pending
       end
     end
 

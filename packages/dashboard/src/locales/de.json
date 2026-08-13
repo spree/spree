@@ -960,9 +960,11 @@
           "help": "Inaktive Methoden werden beim Checkout ausgeblendet.",
           "label": "Aktiv"
         },
-        "auto_capture": {
-          "help": "Bei Autorisierung automatisch einziehen. Wenn deaktiviert, müssen Sie manuell einziehen.",
-          "label": "Automatischer Einzug"
+        "capture_method": {
+          "label": "Wann Kunden belastet werden",
+          "help": "Überschreibt die Store-Einstellung nur für diese Zahlungsart.",
+          "inherit": "Store-Einstellung verwenden",
+          "inherited": "Store-Einstellung verwenden ({{value}})"
         },
         "description": {
           "placeholder": "Kundenseitige Beschreibung, die beim Checkout angezeigt wird"
@@ -1249,13 +1251,23 @@
           "help": "Eine Telefonnummer in Kundenadressen zur Pflicht machen.",
           "label": "Telefonnummer erforderlich"
         },
-        "auto_capture": {
-          "help": "Den Betrag sofort einziehen statt ihn nur zu reservieren. Eine Zahlungsart kann dies überschreiben.",
-          "label": "Karten beim Bezahlen belasten"
-        },
-        "auto_capture_on_dispatch": {
-          "help": "Erst abbuchen, wenn die Ware tatsächlich rausgeht.",
-          "label": "Bei Versand belasten"
+        "capture_method": {
+          "label": "Wann Kunden belastet werden",
+          "help": "Die Vorgabe für jede Zahlungsart. Eine einzelne Zahlungsart kann sie überschreiben.",
+          "options": {
+            "checkout": {
+              "label": "Beim Bezahlen",
+              "description": "Den Betrag einziehen, sobald die Bestellung aufgegeben wird."
+            },
+            "on_dispatch": {
+              "label": "Bei Versand",
+              "description": "Den Betrag beim Bezahlen reservieren und einziehen, wenn die Ware rausgeht."
+            },
+            "manual": {
+              "label": "Manuell",
+              "description": "Den Betrag beim Bezahlen reservieren und später vom Team einziehen lassen."
+            }
+          }
         },
         "company_field_enabled": {
           "help": "Ein Firmenfeld in den Adressformularen an der Kasse anzeigen.",

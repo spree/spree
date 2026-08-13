@@ -957,9 +957,11 @@
           "help": "未启用的方式将在结账时隐藏。",
           "label": "启用"
         },
-        "auto_capture": {
-          "help": "授权后自动收取款项。关闭时，需手动收款。",
-          "label": "自动收款"
+        "capture_method": {
+          "label": "何时向客户收款",
+          "help": "仅针对此支付方式覆盖店铺设置。",
+          "inherit": "使用店铺设置",
+          "inherited": "使用店铺设置（{{value}}）"
         },
         "description": {
           "placeholder": "结账时向客户展示的描述"
@@ -1246,13 +1248,23 @@
           "help": "将电话号码设为客户地址的必填项。",
           "label": "要求填写电话号码"
         },
-        "auto_capture": {
-          "help": "立即收取款项，而不是仅预授权。支付方式可覆盖此设置。",
-          "label": "结账时扣款"
-        },
-        "auto_capture_on_dispatch": {
-          "help": "等到商品实际发出后再收款。",
-          "label": "发货时扣款"
+        "capture_method": {
+          "label": "何时向客户收款",
+          "help": "所有支付方式的默认设置。单个支付方式可覆盖此设置。",
+          "options": {
+            "checkout": {
+              "label": "结账时",
+              "description": "下单后立即收取款项。"
+            },
+            "on_dispatch": {
+              "label": "发货时",
+              "description": "结账时预授权金额，发货时收取。"
+            },
+            "manual": {
+              "label": "手动",
+              "description": "结账时预授权金额，由员工稍后收取。"
+            }
+          }
         },
         "company_field_enabled": {
           "help": "在结账时的地址表单中显示公司字段。",

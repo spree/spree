@@ -16,6 +16,7 @@ module Spree
     include Spree::Security::Stores if defined?(Spree::Security::Stores)
     include Spree::UserManagement
     include Spree::OrderRouting::HasStrategyPreference
+    include Spree::CaptureMethod
 
     #
     # Magic methods
@@ -66,10 +67,10 @@ module Spree
     preference :storefront_url, :string
     preference :special_instructions_enabled, :boolean, default: false
     preference :stock_reservation_ttl_minutes, :integer, default: 10
-    # Store-wide default for charging cards at checkout rather than only
-    # authorizing them. A payment method's own auto_capture column wins when set.
-    preference :auto_capture, :boolean, default: true
-    preference :auto_capture_on_dispatch, :boolean, default: false
+    # Store-wide default for when a customer is charged rather than only
+    # authorized. A payment method's own capture_method wins when set.
+    # See Spree::CaptureMethod.
+    preference :capture_method, :string, default: Spree::CaptureMethod::DEFAULT_CAPTURE_METHOD
     preference :stock_reservations_enabled, :boolean, default: true
     # Catalog preferences
     preference :track_inventory_levels, :boolean, default: true
@@ -212,6 +213,7 @@ module Spree
               length: { maximum: 10 },
               format: { with: /\A[A-Z0-9#-]*\z/,
                         message: :invalid_document_number_affix }
+    validates :preferred_capture_method, inclusion: { in: Spree::CaptureMethod::CAPTURE_METHODS }
     validate :preferred_storefront_url_is_an_origin
     validate :order_number_sequence_start_unchanged_after_first_number, on: :update
     validates :mail_from_address, email: { allow_blank: false }
@@ -431,6 +433,52 @@ module Spree
 
     def metric_unit_system?
       preferred_unit_system == 'metric'
+    end
+
+    # A store is where capture settings bottom out, so it resolves to its own
+    # preference. Payment methods layer their override on top of this.
+    #
+    # @return [String] one of Spree::CaptureMethod::CAPTURE_METHODS
+    def resolved_capture_method
+      preferred_capture_method.presence || Spree::CaptureMethod::DEFAULT_CAPTURE_METHOD
+    end
+
+    # @deprecated Use #preferred_capture_method; removed in 6.1.
+    def preferred_auto_capture
+      Spree::Deprecation.warn('Store#preferred_auto_capture is deprecated and will be removed in Spree 6.1. Use #preferred_capture_method instead.')
+      capture_at_checkout?
+    end
+
+    # @deprecated Use #preferred_capture_method=; removed in 6.1.
+    def preferred_auto_capture=(value)
+      Spree::Deprecation.warn('Store#preferred_auto_capture= is deprecated and will be removed in Spree 6.1. Use #preferred_capture_method= instead.')
+      # Turning it off only says "not at checkout" — it cannot distinguish
+      # dispatch from manual, so an existing on_dispatch choice is preserved.
+      self.preferred_capture_method = if value.to_b
+                                        'checkout'
+                                      elsif capture_at_checkout?
+                                        'manual'
+                                      else
+                                        preferred_capture_method
+                                      end
+    end
+
+    # @deprecated Use #preferred_capture_method; removed in 6.1.
+    def preferred_auto_capture_on_dispatch
+      Spree::Deprecation.warn('Store#preferred_auto_capture_on_dispatch is deprecated and will be removed in Spree 6.1. Use #preferred_capture_method instead.')
+      capture_on_dispatch?
+    end
+
+    # @deprecated Use #preferred_capture_method=; removed in 6.1.
+    def preferred_auto_capture_on_dispatch=(value)
+      Spree::Deprecation.warn('Store#preferred_auto_capture_on_dispatch= is deprecated and will be removed in Spree 6.1. Use #preferred_capture_method= instead.')
+      self.preferred_capture_method = if value.to_b
+                                        'on_dispatch'
+                                      elsif capture_on_dispatch?
+                                        'manual'
+                                      else
+                                        preferred_capture_method
+                                      end
     end
 
     private

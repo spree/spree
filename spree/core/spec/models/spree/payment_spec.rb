@@ -276,14 +276,14 @@ describe Spree::Payment, type: :model do
 
   context 'processing' do
     describe '#process!' do
-      it 'purchases if with auto_capture' do
-        expect(payment.payment_method).to receive(:auto_capture?).and_return(true)
+      it 'purchases when the method charges at checkout' do
+        payment.payment_method.capture_method = 'checkout'
         payment.process!
         expect(payment).to be_completed
       end
 
-      it 'authorizes without auto_capture' do
-        expect(payment.payment_method).to receive(:auto_capture?).and_return(false)
+      it 'authorizes when the method charges later' do
+        payment.payment_method.capture_method = 'on_dispatch'
         payment.process!
         expect(payment).to be_pending
       end

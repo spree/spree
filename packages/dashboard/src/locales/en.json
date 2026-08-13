@@ -960,9 +960,11 @@
           "help": "Inactive methods are hidden from checkout.",
           "label": "Active"
         },
-        "auto_capture": {
-          "help": "Capture funds automatically on authorization. When off, you must capture manually.",
-          "label": "Auto-capture"
+        "capture_method": {
+          "label": "When to charge customers",
+          "help": "Overrides the store setting for this payment method only.",
+          "inherit": "Use the store setting",
+          "inherited": "Use the store setting ({{value}})"
         },
         "description": {
           "placeholder": "Customer-facing description shown at checkout"
@@ -1249,13 +1251,23 @@
           "help": "Make a phone number mandatory on customer addresses.",
           "label": "Require phone number"
         },
-        "auto_capture": {
-          "help": "Take payment straight away instead of only reserving the amount. A payment method can override this.",
-          "label": "Charge cards at checkout"
-        },
-        "auto_capture_on_dispatch": {
-          "help": "Wait until goods actually go out before taking the money.",
-          "label": "Charge on dispatch"
+        "capture_method": {
+          "label": "When to charge customers",
+          "help": "The default for every payment method. An individual payment method can override it.",
+          "options": {
+            "checkout": {
+              "label": "At checkout",
+              "description": "Take the money as soon as the order is placed."
+            },
+            "on_dispatch": {
+              "label": "On dispatch",
+              "description": "Reserve the amount at checkout and take it when the goods go out."
+            },
+            "manual": {
+              "label": "Manually",
+              "description": "Reserve the amount at checkout and let staff take it later."
+            }
+          }
         },
         "company_field_enabled": {
           "help": "Show a company field on address forms during checkout.",

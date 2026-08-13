@@ -17,6 +17,7 @@ import {
 } from '@spree/dashboard-ui'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { CAPTURE_METHODS } from '../../../schemas/store'
 import {
   type PaymentMethodEditorContext,
   type PaymentMethodFormMode,
@@ -73,6 +74,11 @@ export function PaymentMethodForm({
   // always additive.
   const formSlotEntries = useSlotEntries(paymentMethodFormSlot(providerType))
   const customFormRegistered = formSlotEntries.length > 0
+  // Only meaningful while the method has no override of its own — that is
+  // exactly when resolved_capture_method reports the store's choice.
+  const storeCaptureMethod = paymentMethod?.capture_method
+    ? null
+    : paymentMethod?.resolved_capture_method
 
   const slotContext: PaymentMethodEditorContext = {
     mode,
@@ -134,7 +140,7 @@ export function PaymentMethodForm({
         </Field>
       )}
 
-      <PaymentMethodTopFields form={form} />
+      <PaymentMethodTopFields form={form} storeCaptureMethod={storeCaptureMethod} />
 
       {providerType && <Slot name={paymentMethodGuideSlot(providerType)} context={slotContext} />}
 
@@ -164,9 +170,21 @@ export function PaymentMethodForm({
   )
 }
 
-function PaymentMethodTopFields({ form }: { form: UseFormReturn<PaymentMethodFormValues> }) {
+function PaymentMethodTopFields({
+  form,
+  storeCaptureMethod,
+}: {
+  form: UseFormReturn<PaymentMethodFormValues>
+  /** What the store would apply — names the inherited value in the picker. */
+  storeCaptureMethod?: string | null
+}) {
   const { t } = useTranslation()
   const { errors } = form.formState
+  const inheritedLabel = storeCaptureMethod
+    ? t('admin.fields.payment_method.capture_method.inherited', {
+        value: t(`admin.fields.store.capture_method.options.${storeCaptureMethod}.label`),
+      })
+    : t('admin.fields.payment_method.capture_method.inherit')
   return (
     <FieldGroup>
       <Field>
@@ -211,23 +229,37 @@ function PaymentMethodTopFields({ form }: { form: UseFormReturn<PaymentMethodFor
         </div>
       </Field>
       <Field>
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex flex-col">
-            <FieldLabel htmlFor="auto_capture" className="cursor-pointer">
-              {t('admin.fields.payment_method.auto_capture.label')}
-            </FieldLabel>
-            <span className="text-xs text-muted-foreground">
-              {t('admin.fields.payment_method.auto_capture.help')}
-            </span>
-          </div>
-          <Controller
-            name="auto_capture"
-            control={form.control}
-            render={({ field }) => (
-              <Switch id="auto_capture" checked={!!field.value} onCheckedChange={field.onChange} />
-            )}
-          />
-        </div>
+        <FieldLabel htmlFor="capture_method">
+          {t('admin.fields.payment_method.capture_method.label')}
+        </FieldLabel>
+        <Controller
+          name="capture_method"
+          control={form.control}
+          render={({ field }) => (
+            <Select value={field.value ?? ''} onValueChange={field.onChange}>
+              <SelectTrigger id="capture_method">
+                <SelectValue>
+                  {(value) =>
+                    value
+                      ? t(`admin.fields.store.capture_method.options.${value}.label`)
+                      : inheritedLabel
+                  }
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">{inheritedLabel}</SelectItem>
+                {CAPTURE_METHODS.map((value) => (
+                  <SelectItem key={value} value={value}>
+                    {t(`admin.fields.store.capture_method.options.${value}.label`)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        />
+        <span className="text-xs text-muted-foreground">
+          {t('admin.fields.payment_method.capture_method.help')}
+        </span>
       </Field>
     </FieldGroup>
   )

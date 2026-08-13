@@ -1058,6 +1058,71 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
   end
 
+  describe 'capture method' do
+    let(:store) { create(:store) }
+
+    it 'charges at checkout unless told otherwise' do
+      expect(store.resolved_capture_method).to eq('checkout')
+      expect(store).to be_capture_at_checkout
+    end
+
+    it 'answers the matching question for each value' do
+      store.preferred_capture_method = 'on_dispatch'
+      expect(store).to be_capture_on_dispatch
+      expect(store).not_to be_capture_at_checkout
+
+      store.preferred_capture_method = 'manual'
+      expect(store).to be_capture_manually
+    end
+
+    it 'rejects a value outside the vocabulary' do
+      store.preferred_capture_method = 'whenever'
+
+      expect(store).not_to be_valid
+      expect(store.errors[:preferred_capture_method]).to be_present
+    end
+
+    describe 'deprecated accessors' do
+      before { allow(Spree::Deprecation).to receive(:warn) }
+
+      it 'reads the old names off the new preference' do
+        store.preferred_capture_method = 'on_dispatch'
+
+        expect(store.preferred_auto_capture).to be false
+        expect(store.preferred_auto_capture_on_dispatch).to be true
+      end
+
+      it 'writes charging at checkout through the old name' do
+        store.preferred_capture_method = 'manual'
+        store.preferred_auto_capture = true
+
+        expect(store.preferred_capture_method).to eq('checkout')
+      end
+
+      it 'writes charging on dispatch through the old name' do
+        store.preferred_auto_capture_on_dispatch = true
+
+        expect(store.preferred_capture_method).to eq('on_dispatch')
+      end
+
+      # Turning the old flag off says only "not at checkout", so a store
+      # already charging on dispatch must keep doing that.
+      it 'keeps an existing dispatch choice when the old flag is turned off' do
+        store.preferred_capture_method = 'on_dispatch'
+        store.preferred_auto_capture = false
+
+        expect(store.preferred_capture_method).to eq('on_dispatch')
+      end
+
+      it 'falls back to charging manually when the old flag is turned off at checkout' do
+        store.preferred_capture_method = 'checkout'
+        store.preferred_auto_capture = false
+
+        expect(store.preferred_capture_method).to eq('manual')
+      end
+    end
+  end
+
   describe 'storefront setup task' do
     let(:store) { create(:store) }
 
