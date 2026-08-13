@@ -1262,6 +1262,14 @@
           "help": "Mehrere Varianten dürfen dieselbe SKU verwenden.",
           "label": "Doppelte SKUs erlauben"
         },
+        "document_number_format": {
+          "label": "Nummerierungsformat",
+          "help": "Gilt für alle nummerierten Dokumente. Fortlaufende Nummern zählen hoch und lassen sich leichter vorlesen; zufällige Nummern verraten nicht, wie viele Bestellungen Ihr Shop erhalten hat.",
+          "options": {
+            "sequential": "Fortlaufend — zählt von einem Startwert hoch",
+            "random": "Zufällig — unvorhersehbare Ziffern"
+          }
+        },
         "guest_checkout": {
           "help": "Store-weite Vorgabe dafür, ob Kunden ohne Konto zur Kasse gehen können. Vertriebskanäle können dies überschreiben.",
           "label": "Gast-Checkout"
@@ -1282,6 +1290,25 @@
           "help": "Empfänger von Benachrichtigungen über „neue Bestellung aufgegeben“. Leer lassen, um zu deaktivieren.",
           "label": "Benachrichtigungen über neue Bestellungen",
           "placeholder": "ops@yourstore.com"
+        },
+        "order_number_prefix": {
+          "label": "Präfix",
+          "help": "Steht vor jeder Bestellnummer.",
+          "invalid": "Nur Großbuchstaben, Ziffern, Bindestriche und # verwenden."
+        },
+        "order_number_preview": {
+          "label": "Vorschau",
+          "help": "Änderungen gelten nur für künftige Bestellungen. Bereits vergebene Nummern ändern sich nie."
+        },
+        "order_number_sequence_start": {
+          "label": "Nummerierung beginnen bei",
+          "help": "Gilt nur vor Ihrer ersten Bestellung. Eine spätere Änderung nummeriert bestehende Bestellungen nicht neu.",
+          "locked": "Die Nummerierung hat bereits begonnen, daher gilt dies nicht mehr. Bestehende Bestellnummern ändern sich nie."
+        },
+        "order_number_suffix": {
+          "label": "Suffix",
+          "help": "Steht am Ende jeder Bestellnummer.",
+          "invalid": "Nur Großbuchstaben, Ziffern, Bindestriche und # verwenden."
         },
         "preferred_admin_locale": {
           "label": "Admin-Sprache",
@@ -2660,6 +2687,7 @@
           "tab_default_package": "Standardpaket",
           "tab_general": "Allgemein",
           "tab_inventory": "Lagerbestand",
+          "tab_order_numbers": "Bestellnummern",
           "tab_payments": "Zahlungen",
           "tab_standards": "Standards und Formate",
           "tab_storefront_access": "Storefront-Zugriff",

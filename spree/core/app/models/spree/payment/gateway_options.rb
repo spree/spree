@@ -28,8 +28,10 @@ module Spree
         order.last_ip_address
       end
 
+      # The payment number already names its order (`R1001-P1`), so this is
+      # the payment number alone rather than the two concatenated.
       def order_id
-        "#{order.number}-#{payment.number}"
+        payment.number
       end
 
       def payment_id

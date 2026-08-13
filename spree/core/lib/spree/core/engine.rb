@@ -40,6 +40,7 @@ module Spree
                                :analytics_events,
                                :analytics_event_handlers,
                                :integrations,
+                               :number_generators,
                                :subscribers,
                                :store_authentication_strategies,
                                :admin_authentication_strategies)
@@ -452,6 +453,8 @@ module Spree
         Rails.application.config.spree.analytics_event_handlers = []
 
         Rails.application.config.spree.integrations = []
+
+        Rails.application.config.spree.number_generators = Spree::NumberGenerators::Registry.new
 
         Rails.application.config.spree.validators.addresses = [
           Spree::Addresses::PhoneValidator

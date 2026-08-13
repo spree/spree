@@ -10,7 +10,7 @@ module Spree
   class Exchange < Spree.base_class
     has_prefix_id :exch
 
-    include Spree::Core::NumberGenerator.new(prefix: 'EX', length: 9)
+    has_spree_number prefix: 'EX'
     include Spree::NumberIdentifier
     include Spree::SingleStoreResource
     include Spree::HasStatus

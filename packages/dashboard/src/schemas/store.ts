@@ -17,6 +17,16 @@ const ALL_WEIGHT_UNITS = [...WEIGHT_UNITS.metric, ...WEIGHT_UNITS.imperial] as c
 // `admin.fields.store.storefront_access.options.*`.
 export const STOREFRONT_ACCESS_LEVELS = ['public', 'prices_hidden', 'login_required'] as const
 
+// How document numbers are produced. `sequential` counts up from a starting
+// value; `random` is the pre-6.0 behaviour, opted into by merchants who would
+// rather not disclose order volume. Labels live in `en.json` under
+// `admin.fields.store.document_number_format.options.*`.
+export const DOCUMENT_NUMBER_FORMATS = ['sequential', 'random'] as const
+
+// Prefix/suffix accept the characters that read cleanly on an invoice and
+// survive a phone call: uppercase letters, digits, dash and hash.
+const NUMBER_AFFIX_PATTERN = /^[A-Z0-9#-]*$/
+
 export const storeSettingsFormSchema = z.object({
   name: z.string().min(1, { error: requiredMessage('store.name') }),
   preferred_admin_locale: z.string().nullable().optional(),
@@ -38,6 +48,16 @@ export const storeSettingsFormSchema = z.object({
   preferred_track_price_history: z.boolean(),
   preferred_show_products_without_price: z.boolean(),
   preferred_disable_sku_validation: z.boolean(),
+  preferred_document_number_format: z.enum(DOCUMENT_NUMBER_FORMATS),
+  preferred_order_number_prefix: z
+    .string()
+    .max(10)
+    .regex(NUMBER_AFFIX_PATTERN, { error: 'admin.fields.store.order_number_prefix.invalid' }),
+  preferred_order_number_suffix: z
+    .string()
+    .max(10)
+    .regex(NUMBER_AFFIX_PATTERN, { error: 'admin.fields.store.order_number_suffix.invalid' }),
+  preferred_order_number_sequence_start: z.coerce.number().int().min(1),
 })
 
 export type StoreSettingsFormValues = z.infer<typeof storeSettingsFormSchema>

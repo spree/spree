@@ -5,7 +5,7 @@ module Spree
     has_prefix_id :imp
 
     include Spree::NumberIdentifier
-    include Spree::Core::NumberGenerator.new(prefix: 'IM')
+    has_spree_number prefix: 'IM'
 
     # Where the downloadable example CSVs are served from — see `sample_csv_url`.
     #

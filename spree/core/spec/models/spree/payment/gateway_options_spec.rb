@@ -89,7 +89,9 @@ RSpec.describe Spree::Payment::GatewayOptions, type: :model do
   describe '#order_id' do
     subject { options.order_id }
 
-    it { is_expected.to eq 'R1444-P1566' }
+    # The payment number already names its order, so this is no longer the
+    # order number and the payment number concatenated.
+    it { is_expected.to eq 'P1566' }
   end
 
   describe '#idempotency_key' do
@@ -149,7 +151,7 @@ RSpec.describe Spree::Payment::GatewayOptions, type: :model do
         customer: 'test@email.com',
         customer_id: 144,
         ip: '0.0.0.0',
-        order_id: 'R1444-P1566',
+        order_id: 'P1566',
         payment_id: 'P1566',
         idempotency_key: 'spree-P1566',
         shipping: '1244'.to_d,

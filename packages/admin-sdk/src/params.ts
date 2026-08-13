@@ -40,6 +40,14 @@ export interface StoreUpdateParams {
   preferred_show_products_without_price?: boolean
   /** Lets more than one variant share the same SKU. */
   preferred_disable_sku_validation?: boolean
+  /** How document numbers are produced: `sequential` or `random`. Applies to every numbered document. */
+  preferred_document_number_format?: string
+  /** Leads every order number, e.g. `R`. Uppercase letters, digits, dashes and # only. */
+  preferred_order_number_prefix?: string
+  /** Ends every order number. Uppercase letters, digits, dashes and # only. */
+  preferred_order_number_suffix?: string
+  /** First sequential order number. Only applies before the store's first order. */
+  preferred_order_number_sequence_start?: number
   /** Sender address used on all transactional emails (required by the model). */
   mail_from_address?: string
   /** Customer-facing reply-to address shown in the storefront/email footer. */

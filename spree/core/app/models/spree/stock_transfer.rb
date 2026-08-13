@@ -2,7 +2,7 @@ module Spree
   class StockTransfer < Spree.base_class
     has_prefix_id :st
 
-    include Spree::Core::NumberGenerator.new(prefix: 'T')
+    has_spree_number prefix: 'T'
     include Spree::NumberIdentifier
     include Spree::HasCustomFields
     include Spree::Metadata
@@ -23,6 +23,15 @@ module Spree
     validate :source_location_is_not_destination_location
     validate :stock_movements_not_empty
     validates :destination_location, presence: true
+
+    # Transfers have no store of their own — they belong to the warehouses
+    # they move stock between, and those are store-scoped. Used by
+    # {Spree::HasNumber} to pick up the store's numbering settings.
+    #
+    # @return [Spree::Store, nil]
+    def number_store
+      destination_location&.store || source_location&.store || super
+    end
 
     def source_movements
       find_stock_location_with_location_id(source_location_id)

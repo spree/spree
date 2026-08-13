@@ -1,3 +1,43 @@
+## 2026-08-13: Document numbers — sequential by default, store-configurable orders, derived child numbers
+
+`Spree::Core::NumberGenerator` (the boot-frozen `Module` factory) is replaced
+at 6.0 by a `has_spree_number prefix: 'R'` macro (`Spree::HasNumber`, included
+into `Spree::Base` so no model needs its own include) plus runtime-resolved
+strategy classes
+(`Spree.number_generators` registry, `NumberGenerators::Sequential` |
+`::Random`). Sequential is the new default — invoice-like `R1001, R1002` with
+a per-`(store, resource_type)` counter table (`spree_number_sequences`,
+`with_lock` increment, portable across all three databases); random becomes
+opt-in. Merchants get exactly one dashboard surface: an "Order numbers" card
+(prefix, suffix, format, starting value — default 1001) stored as
+`Spree::Store` preferences. Other document types keep code defaults;
+developers swap generators via the registry.
+
+The numbered-model census shrank. Numbers predate prefixed IDs as the
+human-readable identifier, so each model was audited for who actually reads
+its number: **Order** keeps the flagship stored number; **Return / Exchange /
+Claim** keep stored numbers (customer-visible, dashboard cards, and the
+`migrate_returns` resume cursor); **Fulfillment and Payment numbers become
+derived methods** — stored value honored on legacy rows, new rows compute
+`"#{order.number}-F1"` / `"-P1"` from parent + sibling position, generation
+and counters gone (gateway `order_id` simplifies to `payment.number`;
+idempotency to `"spree-#{payment.number}"`). Every other numbered model keeps
+its stored number. The dividing line is *document handled outside the
+dashboard* versus *row in an admin table* — which on inspection kept more
+than the draft expected: transfer slips travel on boxes, POs are quoted to
+suppliers, and **imports and exports mail their number in a subject line**
+(`Your export EF1001 was successfully processed!`), so the planned removal of
+back-office numbers was dropped during implementation.
+
+Consequences: never parse or regex a `number` (format is merchant data now);
+never write `spree_fulfillments.number` / `spree_payments.number` (frozen
+until the 6.1 column drop); the global unique index stays, so sequential is
+mostly-gapless and must never be sold as legal invoice numbering; settings
+changes only affect future numbers; and code saving a numbered record with
+`validate: false` must call `generate_number` itself, since the hook that
+normally assigns one is `before_validation`. Plan:
+`6.0-document-numbers.md`.
+
 ## 2026-08-12: The label leads, fulfilled follows (amends the Phase 7 fulfill flow)
 
 A warehouse prints the label, sticks it on the box, hands the box over — and

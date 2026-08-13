@@ -91,6 +91,15 @@ module Spree
     # decides which StockLocation fulfills which items.
     preference :order_routing_strategy, :string, default: 'Spree::OrderRouting::Strategy::Rules'
 
+    # Document numbering (docs/plans/6.0-document-numbers.md). The format
+    # applies to every numbered document; prefix, suffix and starting value
+    # are order-only — other document types keep their code-level prefixes.
+    # Changes affect future numbers only; existing numbers are permanent.
+    preference :document_number_format, :string, default: 'sequential'
+    preference :order_number_prefix, :string, default: 'R'
+    preference :order_number_suffix, :string, default: ''
+    preference :order_number_sequence_start, :integer, default: 1001
+
     #
     # Associations
     #
@@ -195,6 +204,14 @@ module Spree
     validates :preferred_digital_asset_authorized_days, numericality: { only_integer: true, greater_than: 0 }
     validates :preferred_stock_reservation_ttl_minutes, numericality: { only_integer: true, greater_than: 0 }
     validates :preferred_storefront_access, inclusion: { in: Spree::Channel::Gating::STOREFRONT_ACCESS }
+    validates :preferred_document_number_format,
+              inclusion: { in: Spree::NumberGenerators::Registry::FORMATS.keys }
+    validates :preferred_order_number_sequence_start,
+              numericality: { only_integer: true, greater_than: 0 }
+    validates :preferred_order_number_prefix, :preferred_order_number_suffix,
+              length: { maximum: 10 },
+              format: { with: /\A[A-Z0-9#-]*\z/,
+                        message: :invalid_document_number_affix }
     validate :preferred_storefront_url_is_an_origin
     validates :mail_from_address, email: { allow_blank: false }
     validates :customer_support_email, email: { allow_blank: true }

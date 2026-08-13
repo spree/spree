@@ -472,6 +472,17 @@ module Spree
     Rails.application.config.spree.integrations = value
   end
 
+  # Registry mapping a numbered resource to the generator that produces its
+  # document numbers. With no entry, the store's `document_number_format`
+  # preference picks between the sequential and random strategies.
+  #
+  # @return [Spree::NumberGenerators::Registry]
+  # @example Custom order numbers
+  #   Spree.number_generators[:order] = 'MyApp::BranchOrderNumbers'
+  def self.number_generators
+    Rails.application.config.spree.number_generators
+  end
+
   # Event subscribers that handle lifecycle and custom events
   # @example Adding a custom subscriber
   #   Spree.subscribers << MyApp::OrderNotificationSubscriber
@@ -619,6 +630,7 @@ end
 require 'spree/core/version'
 
 require 'spree/core/number_generator'
+require 'spree/number_generators/registry'
 require 'spree/migrations'
 require 'spree/translation_migrations'
 require 'spree/core/engine'
