@@ -19,8 +19,11 @@ module Spree
 
         # Delegate all attribute/address/item processing to Carts::Update
         if @params.present?
-          result = Spree::Carts::Update.call(cart: cart, params: @params)
+          update = Spree::Carts::Update.new
+          result = update.call(cart: cart, params: @params)
           return result if result.failure?
+
+          @item_warnings = update.item_warnings
         end
 
         success(cart.reload)
@@ -28,6 +31,13 @@ module Spree
         raise
       rescue StandardError => e
         failure(nil, e.message)
+      end
+
+      # Items the batch did not apply — see Spree::Carts::Update#item_warnings.
+      #
+      # @return [Array<Spree::Carts::ItemWarning>]
+      def item_warnings
+        @item_warnings ||= []
       end
     end
   end

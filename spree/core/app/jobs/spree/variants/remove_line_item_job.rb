@@ -4,7 +4,10 @@ module Spree
       queue_as Spree.queues.variants
 
       def perform(line_item:)
-        Spree.cart_remove_line_item_service.call(order: line_item.order, line_item: line_item)
+        Spree.cart_upsert_items_workflow.call(
+          cart: line_item.owner,
+          items: [{ variant_id: line_item.variant_id, quantity: 0 }]
+        )
       end
     end
   end

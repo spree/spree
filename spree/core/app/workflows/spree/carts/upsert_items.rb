@@ -1,0 +1,190 @@
+module Spree
+  module Carts
+    # Applies a batch of item changes to a cart in one pass — the single gate
+    # for every item mutation that is not a plain add-increment (bulk
+    # payloads, a quantity edit, a removal). AddItem stays the increment
+    # ("add 2 more"); this workflow SETS quantity, and quantity zero removes.
+    #
+    # Two things make it worth a workflow rather than a loop over AddItem.
+    # Extensions get one veto point covering every non-increment path, and
+    # the cart recalculates ONCE for the whole batch instead of once per
+    # item — the money math is the expensive part, so a dozen items cost
+    # roughly one item's work.
+    #
+    # Rejections are per item, not per batch: a validate handler that vetoes
+    # one line skips that line and the rest still apply, so a customer
+    # restoring a saved cart keeps everything still purchasable and hears
+    # about what was dropped. The skipped items come back as +warnings+
+    # (see Spree::Carts::ItemWarning) beside a successful result.
+    class UpsertItems < Spree::Workflow
+      hooks :validate, :after_items_upserted
+
+      # Readers a :validate handler uses. variant/quantity/metadata describe
+      # the item currently being validated — the same reader names AddItem
+      # exposes, so one handler class registers on both keys unchanged.
+      # +items+ is the whole resolved batch, for rules that need to see it
+      # (a per-order unit cap, a mixed-category restriction).
+      attr_reader :variant, :quantity, :metadata, :items, :warnings
+
+      # @param cart [Spree::Cart, Spree::Order]
+      # @param items [Array<Hash>] :variant_id (prefixed or raw), :quantity,
+      #   :metadata. Quantity defaults to 1; zero or less removes.
+      # @return [Spree::ServiceModule::Result] value is the cart
+      def perform(cart:, items:)
+        super
+        @warnings = []
+
+        step :resolve_items
+        return success(cart) if resolved_items.empty?
+
+        ApplicationRecord.transaction do
+          step :apply_items
+          step :handle_stock_reservations if cart.in_checkout?
+          step :recalculate, with: -> { Spree.cart_recalculate_workflow } if recalculate?
+          run_hooks :after_items_upserted
+        end
+
+        success(cart.reload)
+      end
+
+      private
+
+      attr_reader :resolved_items
+
+      # The cart side recalculates here because nothing else will. The order
+      # side overrides this: admin edits run items, fulfillments and coupons
+      # as one pipeline and recalculate once at the end of it.
+      def recalculate?
+        true
+      end
+
+      # A customer restoring a saved cart should keep whatever is still
+      # purchasable, so a bad line becomes a warning. A merchant editing an
+      # order should not: a struck-out or repriced row silently not applying
+      # is worse than the edit failing, so the order twin turns this off.
+      def partial_success?
+        true
+      end
+
+      # One pass for lookup and currency checks, before anything is written,
+      # so a batch naming an unknown variant fails before it has half
+      # applied.
+      def resolve_items
+        store = cart.store || Spree::Current.store
+
+        @resolved_items = Array(items).filter_map do |item_params|
+          item_params = item_params.to_h.deep_symbolize_keys
+          quantity = (item_params[:quantity] || 1).to_i
+          variant = resolve_variant(store, item_params[:variant_id], removing: quantity <= 0)
+          next if variant.nil?
+
+          Spree::Carts::ResolvedItem.new(
+            variant: variant,
+            quantity: quantity,
+            metadata: item_params[:metadata].to_h
+          )
+        end
+      end
+
+      def apply_items
+        resolved_items.each_with_index do |item, index|
+          next unless validated?(item, index)
+
+          line_item = Spree.line_item_by_variant_finder.new.execute(owner: cart, variant: item.variant)
+
+          if item.remove?
+            line_item&.destroy!
+            next
+          end
+
+          if item.variant.amount_in(cart.currency).nil?
+            message = Spree.t('cart_line_item.currency_unavailable', li_name: item.variant.name, currency: cart.currency)
+            failure(item.variant, message) unless partial_success?
+
+            warn(index, item, :currency_unavailable, message)
+            next
+          end
+
+          apply_item(item, line_item)
+        end
+      end
+
+      # Dispatches :validate for one item with that item's readers bound, and
+      # converts a handler's rejection into a warning instead of failing the
+      # batch. FailureSignal is what reject! raises; catching it here is the
+      # deliberate difference between this workflow and every other one.
+      def validated?(item, index)
+        bind_current_item(item)
+        run_hooks :validate
+        true
+      rescue Spree::Workflow::FailureSignal
+        raise unless partial_success?
+
+        rejection = errors
+        @errors = nil
+        warnings << Spree::Carts::ItemWarning.new(
+          item_index: index,
+          variant: item.variant,
+          code: rejection.details.values.flatten.first&.dig(:error) || :rejected,
+          message: rejection.full_messages.to_sentence
+        )
+        false
+      ensure
+        bind_current_item(nil)
+      end
+
+      def bind_current_item(item)
+        @variant = item&.variant
+        @quantity = item&.quantity
+        @metadata = item&.metadata || {}
+      end
+
+      def apply_item(item, line_item)
+        if line_item
+          line_item.quantity = item.quantity
+          line_item.metadata = line_item.metadata.merge(item.metadata) if item.metadata.present?
+        else
+          line_item = cart.line_items.new(
+            quantity: item.quantity,
+            variant: item.variant,
+            options: { currency: cart.currency }
+          )
+          line_item.metadata = item.metadata if item.metadata.present?
+        end
+
+        created = line_item.new_record?
+        failure(line_item) unless line_item.save
+
+        line_item.reload.recalculate_price
+        ::Spree.tax_provider.estimate(line_item.owner, [line_item]) if created
+      end
+
+      def handle_stock_reservations
+        result = Spree::StockReservations::Reserve.call(cart: cart)
+        failure(cart, result.error) if result.failure?
+      end
+
+      # Adds resolve through the store, so a variant belonging to another
+      # tenant is a 404 rather than a cross-store add. Removals resolve
+      # through the cart's own items instead: the line is already there, and
+      # a product that has since been deleted or unpublished has left
+      # store.variants — refusing to remove it would strand the customer
+      # with a line they cannot get rid of.
+      def resolve_variant(store, variant_id, removing: false)
+        return nil if variant_id.blank?
+
+        if removing
+          cart.line_items.detect { |line_item| line_item.variant_id.to_s == variant_id.to_s }&.variant ||
+            Spree::Variant.with_deleted.find_by_param(variant_id)
+        else
+          store.variants.find_by_param(variant_id) ||
+            raise(ActiveRecord::RecordNotFound.new("Variant '#{variant_id}' not found in this store", 'Spree::Variant', 'id', variant_id))
+        end
+      end
+
+      def warn(index, item, code, message)
+        warnings << Spree::Carts::ItemWarning.new(item_index: index, variant: item.variant, code: code, message: message)
+      end
+    end
+  end
+end

@@ -149,9 +149,16 @@ module Spree
         let(:cart) { create(:cart, customer: user, store: store, currency: 'GBP') }
         let(:items) { [{ variant_id: variant.prefixed_id, quantity: 1 }] }
 
-        it 'returns failure with message' do
-          expect(subject).to be_failure
-          expect(subject.error.to_s).to include('is not available in GBP')
+        # Partial success: one unpriceable line must not cost the customer the
+        # rest of the batch, so it comes back as a warning instead.
+        it 'skips the item and reports it as a warning' do
+          workflow = described_class.new
+          result = workflow.call(cart: cart, items: items)
+
+          expect(result).to be_success
+          expect(cart.items.count).to eq(0)
+          expect(workflow.warnings.first.code).to eq('currency_unavailable')
+          expect(workflow.warnings.first.message).to include('is not available in GBP')
         end
       end
 
@@ -252,6 +259,95 @@ module Spree
           expect(unrelated_line_item.reload.quantity).to eq(3)
         end
       end
+    end
+
+    describe 'the validate hook' do
+      after { Spree.hooks.clear! }
+
+      let(:items) do
+        [
+          { variant_id: variant.prefixed_id, quantity: 1 },
+          { variant_id: variant2.prefixed_id, quantity: 99 }
+        ]
+      end
+
+      it 'skips a rejected item and applies the rest' do
+        Spree.hooks.register('carts.upsert_items.validate') do |flow|
+          next if flow.quantity <= 10
+
+          flow.errors.add(:quantity, :purchase_limit_exceeded, message: 'at most 10 per item')
+          flow.reject!
+        end
+
+        workflow = described_class.new
+        result = workflow.call(cart: cart, items: items)
+
+        expect(result).to be_success
+        expect(cart.items.map(&:variant)).to eq([variant])
+
+        warning = workflow.warnings.sole
+        expect(warning.item_index).to eq(1)
+        expect(warning.variant).to eq(variant2)
+        expect(warning.code).to eq('purchase_limit_exceeded')
+        expect(warning.message).to eq('Quantity at most 10 per item')
+      end
+
+      # Each item is judged on its own — a rejection must not leak errors
+      # into the next item's dispatch.
+      it 'validates every item independently' do
+        seen = []
+        Spree.hooks.register('carts.upsert_items.validate') do |flow|
+          seen << [flow.variant, flow.quantity]
+          flow.reject!('nope') if flow.quantity == 99
+        end
+
+        described_class.call(cart: cart, items: items)
+
+        expect(seen).to eq([[variant, 1], [variant2, 99]])
+      end
+
+      it 'exposes the whole batch for cross-item rules' do
+        batch_size = nil
+        Spree.hooks.register('carts.upsert_items.validate') { |flow| batch_size = flow.items.size }
+
+        described_class.call(cart: cart, items: items)
+
+        expect(batch_size).to eq(2)
+      end
+    end
+
+    describe 'removals' do
+      let!(:line_item) { create(:line_item, cart: cart, order: nil, variant: variant, quantity: 2) }
+
+      it 'removes the line item when quantity is zero' do
+        result = described_class.call(cart: cart, items: [{ variant_id: variant.prefixed_id, quantity: 0 }])
+
+        expect(result).to be_success
+        expect(cart.reload.items).to be_empty
+      end
+
+      it 'applies edits and removals in one pass' do
+        result = described_class.call(cart: cart, items: [
+          { variant_id: variant.prefixed_id, quantity: 0 },
+          { variant_id: variant2.prefixed_id, quantity: 3 }
+        ])
+
+        expect(result).to be_success
+        expect(cart.reload.items.map(&:variant)).to eq([variant2])
+        expect(cart.items.sole.quantity).to eq(3)
+      end
+    end
+
+    # The reason this is a batch workflow rather than a loop over AddItem:
+    # the money math runs once no matter how many items arrive.
+    it 'recalculates the cart once for the whole batch' do
+      recalculate = Spree.cart_recalculate_workflow
+      expect(recalculate).to receive(:new).once.and_call_original
+
+      described_class.call(cart: cart, items: [
+        { variant_id: variant.prefixed_id, quantity: 1 },
+        { variant_id: variant2.prefixed_id, quantity: 2 }
+      ])
     end
   end
 end

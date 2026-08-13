@@ -21,8 +21,6 @@ module Spree
         cart_recalculate_totals_workflow: 'Spree::Carts::RecalculateTotals',
         order_recalculate_totals_workflow: 'Spree::Orders::RecalculateTotals',
         cart_remove_item_service: 'Spree::Carts::RemoveItem',
-        cart_remove_line_item_service: 'Spree::Carts::RemoveLineItem',
-        cart_set_item_quantity_service: 'Spree::Carts::SetQuantity',
 
         # draft orders (admin item editing) — cart twins split so the two
         # sides can diverge; see Spree::Orders::AddItem
@@ -39,7 +37,8 @@ module Spree
         carts_complete_workflow: 'Spree::Carts::Complete',
         carts_create_service: 'Spree::Carts::Create',
         carts_update_service: 'Spree::Carts::Update',
-        carts_upsert_items_service: 'Spree::Carts::UpsertItems',
+        cart_upsert_items_workflow: 'Spree::Carts::UpsertItems',
+        order_upsert_items_workflow: 'Spree::Orders::UpsertItems',
         cart_merge_workflow: 'Spree::Carts::Merge',
 
         # checkout
@@ -143,6 +142,9 @@ module Spree
         cart_recalculate_service: :cart_recalculate_workflow,
         cart_merge_strategy: :cart_merge_workflow,
         carts_complete_service: :carts_complete_workflow,
+        carts_upsert_items_service: :cart_upsert_items_workflow,
+        cart_set_item_quantity_service: :cart_upsert_items_workflow,
+        cart_remove_line_item_service: :cart_upsert_items_workflow,
         payments_handle_webhook_service: :payments_handle_webhook_workflow,
         fulfillment_create_service: :fulfillment_create_workflow,
         order_cancel_service: :order_cancel_workflow,

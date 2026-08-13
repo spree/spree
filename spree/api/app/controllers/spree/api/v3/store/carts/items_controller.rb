@@ -23,7 +23,7 @@ module Spree
                 if result.success?
                   render_cart(status: :created)
                 else
-                  render_service_error(result.error, code: ERROR_CODES[:insufficient_stock])
+                  render_result_error(result)
                 end
               end
             end
@@ -36,16 +36,16 @@ module Spree
                 @line_item.metadata = @line_item.metadata.merge(permitted_params[:metadata].to_h) if permitted_params[:metadata].present?
 
                 if permitted_params[:quantity].present?
-                  result = Spree.cart_set_item_quantity_service.call(
+                  workflow = Spree.cart_upsert_items_workflow.new
+                  result = workflow.call(
                     cart: @cart,
-                    line_item: @line_item,
-                    quantity: permitted_params[:quantity]
+                    items: [{ variant_id: @line_item.variant_id, quantity: permitted_params[:quantity] }]
                   )
 
                   if result.success?
-                    render_cart
+                    render_cart(warnings: workflow.warnings)
                   else
-                    render_service_error(result.error, code: ERROR_CODES[:invalid_quantity])
+                    render_result_error(result)
                   end
                 elsif @line_item.changed?
                   @line_item.save!
@@ -61,12 +61,17 @@ module Spree
               with_order_lock do
                 @line_item = @cart.line_items.find_by_prefix_id!(params[:id])
 
-                Spree.cart_remove_line_item_service.call(
+                workflow = Spree.cart_upsert_items_workflow.new
+                result = workflow.call(
                   cart: @cart,
-                  line_item: @line_item
+                  items: [{ variant_id: @line_item.variant_id, quantity: 0 }]
                 )
 
-                render_cart
+                if result.success?
+                  render_cart(warnings: workflow.warnings)
+                else
+                  render_result_error(result)
+                end
               end
             end
 

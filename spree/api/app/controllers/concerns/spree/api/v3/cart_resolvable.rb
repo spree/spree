@@ -40,9 +40,15 @@ module Spree
         end
 
         # Render the cart as JSON using the cart serializer.
-        def render_cart(status: :ok)
+        # @param warnings [Array<Spree::Carts::ItemWarning>] items a batch
+        #   upsert did not apply. Present only when something was dropped, so
+        #   a client that ignores the key sees an unchanged payload.
+        def render_cart(status: :ok, warnings: [])
           @cart = @cart.remove_out_of_stock_items!
-          render json: Spree.api.cart_serializer.new(@cart, params: serializer_params).to_h, status: status
+          payload = Spree.api.cart_serializer.new(@cart, params: serializer_params).to_h
+          payload[:warnings] = warnings.map(&:to_h) if warnings.present?
+
+          render json: payload, status: status
         end
 
         # Render the order as JSON using the order serializer (for complete action).

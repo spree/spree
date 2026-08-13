@@ -31,6 +31,15 @@ module Spree
         failure(cart, e.message)
       end
 
+      # Items the batch did not apply (vetoed by a :validate handler, or
+      # unavailable in the cart's currency). The update still succeeds — the
+      # caller surfaces these so the customer learns what was dropped.
+      #
+      # @return [Array<Spree::Carts::ItemWarning>]
+      def item_warnings
+        @item_warnings ||= []
+      end
+
       private
 
       attr_reader :cart, :params
@@ -115,12 +124,12 @@ module Spree
       def process_items
         return unless params[:items].is_a?(Array)
 
-        result = Spree::Carts::UpsertItems.call(
-          cart: cart,
-          items: params[:items]
-        )
+        workflow = Spree.cart_upsert_items_workflow.new
+        result = workflow.call(cart: cart, items: params[:items])
 
         raise StandardError, result.error.to_s if result.failure?
+
+        @item_warnings = workflow.warnings
       end
 
       # Legacy `before_transition to: :address` parity: once a signed-in

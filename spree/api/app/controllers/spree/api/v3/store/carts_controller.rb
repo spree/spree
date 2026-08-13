@@ -30,7 +30,8 @@ module Spree
           # Creates a new shopping cart (order)
           # Can be created by guests or authenticated customers
           def create
-            result = Spree::Carts::Create.call(
+            service = Spree::Carts::Create.new
+            result = service.call(
               params: permitted_params.merge(
                 user: current_user,
                 store: current_store,
@@ -42,7 +43,7 @@ module Spree
 
             if result.success?
               @cart = result.value
-              render_cart(status: :created)
+              render_cart(status: :created, warnings: service.item_warnings)
             else
               render_service_error(result.error.to_s)
             end
@@ -55,13 +56,14 @@ module Spree
             find_cart!
 
             with_order_lock do
-              result = Spree::Carts::Update.call(
+              service = Spree::Carts::Update.new
+              result = service.call(
                 cart: @cart,
                 params: permitted_params
               )
 
               if result.success?
-                render_cart
+                render_cart(warnings: service.item_warnings)
               else
                 render_service_error(result.error, code: ERROR_CODES[:validation_error])
               end

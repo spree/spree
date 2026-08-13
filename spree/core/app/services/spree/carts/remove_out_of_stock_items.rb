@@ -16,8 +16,13 @@ module Spree
         line_items = cart.line_items.includes(variant: [:product, :stock_locations, { stock_items: [:stock_location, :active_stock_reservations] }])
 
         ActiveRecord::Base.transaction do
-          line_items.each do |line_item|
-            cart_remove_line_item_service.call(cart: cart, line_item: line_item) if !valid_status?(line_item) || !stock_available?(line_item)
+          removals = line_items.reject { |line_item| valid_status?(line_item) && stock_available?(line_item) }
+
+          if removals.any?
+            Spree.cart_upsert_items_workflow.call(
+              cart: cart,
+              items: removals.map { |line_item| { variant_id: line_item.variant_id, quantity: 0 } }
+            )
           end
         end
 
@@ -59,10 +64,6 @@ module Spree
           return false
         end
         true
-      end
-
-      def cart_remove_line_item_service
-        Spree.cart_remove_line_item_service
       end
     end
   end
