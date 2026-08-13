@@ -81,6 +81,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const clearSession = useCallback(() => {
     adminClient.setToken('')
+    // The store header is session state too — left set, it would ride into
+    // the next admin's first requests (permissions, the index redirect) and
+    // 403 them against a store they may hold no role on.
+    adminClient.setStore('')
     setToken(null)
     setUser(null)
     clearRefreshTimer()

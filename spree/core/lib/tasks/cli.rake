@@ -44,10 +44,18 @@ namespace :spree do
       # freshly migrated app that has not been seeded.
       admin_role = Spree::Role.default_admin_role
 
-      admin = Spree.admin_user_class.find_or_create_by!(email: email) do |user|
-        user.password = password
-        user.password_confirmation = password
+      # Never silently ignore the supplied password: an operator rerunning
+      # this to "reset" a password would otherwise get a success exit while
+      # nothing changed.
+      if Spree.admin_user_class.exists?(email: email)
+        abort "An admin with email #{email} already exists — password NOT changed. Use a password reset to change it."
       end
+
+      admin = Spree.admin_user_class.create!(
+        email: email,
+        password: password,
+        password_confirmation: password
+      )
       admin.add_role(admin_role.name, Spree::Store.default)
       print admin.email
     end

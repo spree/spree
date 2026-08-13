@@ -53,8 +53,11 @@ module Spree
 
         MSG
 
+        # The URL goes to stdout only — the token is a claim-this-installation
+        # credential, and Rails.logger typically feeds a log aggregator with a
+        # far wider audience than the person running the seed.
         puts message unless Rails.env.test?
-        Rails.logger&.info(message)
+        Rails.logger&.info('No admin account yet — run `bin/rails spree:setup:token` to print the setup link.')
       end
     end
   end

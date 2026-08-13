@@ -77,10 +77,14 @@ RSpec.describe Spree::Api::V3::Store::DigitalsController, type: :controller do
       # The globally unique token is the credential and selects the store —
       # download links arrive by email with no API key, so there is no other
       # credential to scope by (see KeyStoreContext).
-      it 'downloads the file' do
+      it "downloads the file under the link's own store context" do
         get :show, params: { token: other_digital_link.token }
 
         expect(response).to have_http_status(:ok)
+        # Even when a publishable key of another store accompanies the
+        # request, the link's store wins for the download context. Asserted
+        # via the ivar because the shared context stubs current_store itself.
+        expect(controller.instance_variable_get(:@current_store)).to eq(other_store)
       end
     end
 

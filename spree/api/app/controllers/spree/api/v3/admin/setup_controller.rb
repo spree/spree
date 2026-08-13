@@ -96,12 +96,19 @@ module Spree
 
           # `store_name` is optional: an API client may claim the installation
           # without renaming the seeded store (the dashboard's form requires
-          # it, but the endpoint is the documented surface).
+          # it, but the endpoint is the documented surface). `currency` and
+          # `country_iso` are applied only when they resolve to something real
+          # — the token is spent in the same request, so persisting a typo
+          # here would be unrecoverable in-band.
           def store_params
             @store_params ||= begin
               permitted = {}
               permitted[:name] = params[:store_name] if params[:store_name].present?
-              permitted[:default_currency] = params[:currency] if params[:currency].present?
+
+              if params[:currency].present?
+                currency = ::Money::Currency.find(params[:currency].to_s.strip)
+                permitted[:default_currency] = currency.iso_code if currency
+              end
 
               if params[:country_iso].present?
                 country = Spree::Country.find_by(iso: params[:country_iso].to_s.upcase)

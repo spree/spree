@@ -10,8 +10,12 @@ USE_LOCAL_SPREE = ENV['USE_LOCAL_SPREE'] == 'true'
 # gemspec (spree, spree_core, spree_api, spree_emails, …) via Bundler's default
 # glob, resolving the whole stack locally.
 SPREE_LOCAL_PATH = ENV['SPREE_LOCAL_PATH'] || '.'
-ADMIN_EMAIL = ENV['ADMIN_EMAIL'] || 'spree@example.com'
-ADMIN_PASSWORD = ENV['ADMIN_PASSWORD'] || 'spree123'
+# No defaults: without explicit credentials the seed mints no admin and
+# prints a one-time setup link instead — the dashboard's first-run screen
+# creates the account. This keeps well-known credentials out of every app
+# scaffolded from this template.
+ADMIN_EMAIL = ENV['ADMIN_EMAIL']
+ADMIN_PASSWORD = ENV['ADMIN_PASSWORD']
 SPREE_VERSION = ENV['SPREE_VERSION'] || '>= 5.4.2'
 
 def add_gems
@@ -62,13 +66,22 @@ end
 def seed_database
   say 'Loading seed data...', :blue
 
-  rails_command "db:seed AUTO_ACCEPT=1 ADMIN_EMAIL=#{ADMIN_EMAIL} ADMIN_PASSWORD=#{ADMIN_PASSWORD}"
+  if ADMIN_EMAIL.present? && ADMIN_PASSWORD.present?
+    rails_command "db:seed AUTO_ACCEPT=1 ADMIN_EMAIL=#{ADMIN_EMAIL} ADMIN_PASSWORD=#{ADMIN_PASSWORD}"
+  else
+    rails_command 'db:seed AUTO_ACCEPT=1'
+  end
 end
 
 def load_sample_data
   if LOAD_SAMPLE_DATA
-    say 'Loading sample data...', :blue
-    rails_command 'spree:load_sample_data'
+    if ADMIN_EMAIL.present? && ADMIN_PASSWORD.present?
+      say 'Loading sample data...', :blue
+      rails_command 'spree:load_sample_data'
+    else
+      # Sample-data imports need an admin as their owner, and none was seeded.
+      say 'Skipping sample data — it needs an admin account. Load it after first-run setup with: bin/rails spree:load_sample_data', :yellow
+    end
   end
 end
 
@@ -85,9 +98,15 @@ def show_success_message
   say '  Store API: http://localhost:3000/api/v3/store', :bold
   say '  Admin API: http://localhost:3000/api/v3/admin', :bold
   say
-  say 'Admin account (sign in via the Admin API / React dashboard):', :yellow
-  say "  Email: #{ADMIN_EMAIL}", :bold
-  say "  Password: #{ADMIN_PASSWORD}", :bold
+  if ADMIN_EMAIL.present? && ADMIN_PASSWORD.present?
+    say 'Admin account (sign in via the Admin API / React dashboard):', :yellow
+    say "  Email: #{ADMIN_EMAIL}", :bold
+    say "  Password: #{ADMIN_PASSWORD}", :bold
+  else
+    say 'Admin account:', :yellow
+    say '  Use the setup link printed by the seed above to create it.', :bold
+    say '  (Reprint it any time with: bin/rails spree:setup:token)'
+  end
   say
   say 'Useful commands:', :yellow
   say '  bin/rails console                # Rails console'

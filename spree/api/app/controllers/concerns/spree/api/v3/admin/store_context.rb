@@ -22,6 +22,9 @@ module Spree
             # lookups) reads it. The store-presence guard 404s an unknown
             # header ID right after this runs.
             prepend_before_action :set_current_store_context
+
+            # Once-per-process latch for the missing-header notice.
+            class_attribute :missing_store_header_warned, default: false, instance_accessor: false
           end
 
           # Resolution order: the secret key's bound store, then the header,
@@ -72,12 +75,19 @@ module Spree
             request.headers[STORE_HEADER].presence
           end
 
+          # A plain once-per-process log line, deliberately NOT
+          # Spree::Deprecation: some endpoints structurally cannot carry the
+          # header (`/me` runs before any store is selected — it is how the
+          # dashboard discovers the user's stores), so a per-request
+          # deprecation would be pure noise and would 500 every login
+          # bootstrap for apps running deprecations-as-errors.
           def warn_missing_store_header
-            return unless defined?(Spree::Deprecation)
+            return if self.class.missing_store_header_warned
+            self.class.missing_store_header_warned = true
 
-            Spree::Deprecation.warn(
+            Rails.logger&.info(
               "Admin API v3 requests without an #{STORE_HEADER} header fall back to the default store. " \
-              'The header becomes required for JWT requests in Spree 6.1.'
+              'Multi-store clients should send the header; store-agnostic endpoints (/me, auth) are exempt.'
             )
           end
         end

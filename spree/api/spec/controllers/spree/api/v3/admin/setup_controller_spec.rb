@@ -61,11 +61,23 @@ RSpec.describe Spree::Api::V3::Admin::SetupController, type: :controller do
       it 'applies optional currency and country' do
         create(:country_us) unless Spree::Country.find_by(iso: 'US')
 
-        post :create, params: valid_params.merge(currency: 'EUR', country_iso: 'us'), as: :json
+        post :create, params: valid_params.merge(currency: 'eur', country_iso: 'us'), as: :json
 
         expect(response).to have_http_status(:ok)
         expect(@default_store.reload.default_currency).to eq('EUR')
         expect(@default_store.default_country&.iso).to eq('US')
+      end
+
+      # The token is spent in the same request, so persisting garbage here
+      # would be unrecoverable in-band — unknown codes are ignored, mirroring
+      # country_iso.
+      it 'ignores an unknown currency' do
+        original_currency = @default_store.default_currency
+
+        post :create, params: valid_params.merge(currency: 'NOTACURRENCY'), as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(@default_store.reload.default_currency).to eq(original_currency)
       end
 
       it 'returns 422 with field errors on invalid input' do

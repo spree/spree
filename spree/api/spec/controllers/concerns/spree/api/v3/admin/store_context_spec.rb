@@ -56,8 +56,12 @@ RSpec.describe Spree::Api::V3::Admin::TaxCategoriesController, type: :controller
     end
 
     context 'without the header' do
-      it 'falls back to the default store with a deprecation warning' do
-        expect(Spree::Deprecation).to receive(:warn).with(/X-Spree-Store-Id/)
+      # No Spree::Deprecation here by design: /me and the auth endpoints
+      # structurally cannot send the header, and deprecations-as-errors would
+      # turn every login bootstrap into a 500. A once-per-process log line
+      # covers the multi-store-client nudge instead.
+      it 'falls back to the default store without raising deprecations' do
+        expect(Spree::Deprecation).not_to receive(:warn)
 
         get :index, as: :json
 

@@ -112,9 +112,17 @@ export async function runFirstRunSetup(flags: {
   ensureDashboardDevEnv(ctx.projectDir, ctx.port)
 
   if (sampleData) {
-    s.start('Loading sample data...')
-    await rakeTask('spree:load_sample_data', ctx.projectDir)
-    s.stop('Sample data loaded.')
+    // Sample-data imports need an admin as their owner; without credentials
+    // the seed minted none and the loader would raise mid-init.
+    if (adminEmail && adminPassword) {
+      s.start('Loading sample data...')
+      await rakeTask('spree:load_sample_data', ctx.projectDir)
+      s.stop('Sample data loaded.')
+    } else {
+      p.log.warn(
+        'Skipping sample data — it needs an admin account. Finish setup, then run `spree sample-data`.',
+      )
+    }
   }
 
   s.start('Indexing products for search...')
