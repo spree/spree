@@ -69,7 +69,9 @@ token) or unscoped scan on a store-owned table inside an API request is a
 test failure, not a review comment — wrap genuinely global lookups in
 `skip`. Honest limits: id/foreign-key filters and `SELECT 1 AS one`
 existence checks are exempt (they are dominated by loads from already-scoped
-rows and uniqueness validations), and only the v3 controller surface is
+rows and uniqueness validations) — exemption is NOT proof of scoping, so a
+lookup fed a request-derived id still requires `current_store` fetching even
+though the guard stays silent on it; and only the v3 controller surface is
 watched — jobs, webhooks and callbacks are a future extension, ideally keyed
 off `Spree::Current.store` assignment rather than per-entry-point
 registration. A new `Rails.cache` call without a store-scoped key fails the

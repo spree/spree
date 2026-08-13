@@ -135,7 +135,9 @@ module Spree
       # cover: secondary-key lookups (slug, number, code, email, token) and
       # unscoped scans.
       def scoped?(sql)
-        sql.include?('store_id') ||
+        # A store_id PREDICATE, not a mention — a projected column
+        # (`select(:store_id)`) or a literal in a comment must not count.
+        sql.match?(/\bstore_id"?\s+(=|!=|IN|IS)\s/) ||
           sql.start_with?('SELECT 1 AS one') ||
           sql.match?(/\b(id|[a-z_]+_id)"?\s+(=|!=|IN)\s/)
       end

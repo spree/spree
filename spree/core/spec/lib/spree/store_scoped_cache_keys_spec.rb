@@ -18,25 +18,25 @@ RSpec.describe 'Store-scoped cache keys' do
   # unique ids, so they cannot collide across stores).
   SCOPED_HINT = /cache_key_with_version|current_store|store\.id|store_id/
 
-  # path (relative to the spree/ directory) => justification. Reviewed
-  # entries only — every reason must say why the cached data is safe to
-  # share across stores. Note the granularity: an entry covers its whole
-  # file, so a NEW cache call added to an allowlisted file passes silently —
-  # when touching one of these files, re-review its calls.
+  # path (relative to the spree/ directory) => [reviewed call count,
+  # justification]. Every reason must say why the cached data is safe to
+  # share across stores. The count pins the review: adding a cache call to
+  # an allowlisted file fails the audit until the new call is reviewed and
+  # the count bumped.
   ALLOWLIST = {
-    'core/app/models/spree/authentication/strategies/oidc_strategy.rb' =>
+    'core/app/models/spree/authentication/strategies/oidc_strategy.rb' => [3,
       'JWKS + discovery documents are per identity provider, keyed by the ' \
       'provider\'s configured cache_key_prefix; providers are application-level ' \
-      'configuration, not store data.',
-    'api/app/controllers/spree/api/v3/store/products/filters_controller.rb' =>
+      'configuration, not store data.'],
+    'api/app/controllers/spree/api/v3/store/products/filters_controller.rb' => [1,
       'filters_cache_key embeds current_store.id, currency, locale and the ' \
-      'catalog fingerprint — scoped, just built outside the call line.',
-    'api/app/controllers/concerns/spree/api/v3/rate_limit_headers.rb' =>
+      'catalog fingerprint — scoped, just built outside the call line.'],
+    'api/app/controllers/concerns/spree/api/v3/rate_limit_headers.rb' => [1,
       'Rate-limit budgets are per credential by design: API keys are ' \
-      'store-bound, and a staff JWT\'s budget deliberately spans stores.',
-    'api/app/controllers/concerns/spree/api/v3/idempotent.rb' =>
+      'store-bound, and a staff JWT\'s budget deliberately spans stores.'],
+    'api/app/controllers/concerns/spree/api/v3/idempotent.rb' => [2,
       'idempotency_cache_key partitions by credential AND the resolved ' \
-      'store, so replays cannot cross stores.',
+      'store, so replays cannot cross stores.'],
   }.freeze
 
   SPREE_ROOT = File.expand_path('../../../../..', __dir__)
@@ -72,11 +72,18 @@ RSpec.describe 'Store-scoped cache keys' do
     }
   end
 
-  it 'carries no stale allowlist entries' do
-    files_with_calls = call_sites.map { |site| site[:file] }.uniq
+  it 'allowlisted files carry exactly their reviewed number of cache calls' do
+    actual_counts = call_sites.group_by { |site| site[:file] }.transform_values(&:size)
 
-    stale = ALLOWLIST.keys - files_with_calls
-    expect(stale).to be_empty,
-                     "Allowlisted files no longer contain cache calls — remove them: #{stale.join(', ')}"
+    mismatched = ALLOWLIST.filter_map do |file, (expected, _reason)|
+      actual = actual_counts[file] || 0
+      "#{file}: reviewed #{expected}, found #{actual}" if actual != expected
+    end
+
+    expect(mismatched).to be_empty, lambda {
+      "Allowlisted files changed their cache calls — re-review and update the count:\n" \
+        "  #{mismatched.join("\n  ")}\n" \
+        '(A count of 0 means the entry is stale — remove it.)'
+    }
   end
 end

@@ -15,17 +15,21 @@ RSpec.describe 'Store-scoped list positions' do
       next false unless model.column_names.include?('store_id')
       next false unless model.include?(ActiveRecord::Acts::List::InstanceMethods)
 
-      # acts_as_list encodes its scope in the generated scope_condition: a
-      # scoped list yields a Hash ({store_id: …} or a parent foreign key,
-      # which is transitively store-scoped); an unscoped one the literal
-      # SQL fragment '1 = 1'.
-      model.new.send(:scope_condition) == '1 = 1'
+      # acts_as_list encodes its scope in the generated scope_condition. A
+      # Hash with store_id or a foreign key counts as scoped (a parent FK is
+      # transitively store-scoped); anything else — the unscoped '1 = 1'
+      # sentinel, a raw SQL string, or a Hash of non-FK columns like
+      # {deleted_at: nil} — is unverifiable here and must be reviewed.
+      condition = model.new.send(:scope_condition)
+      !(condition.is_a?(Hash) &&
+        condition.keys.any? { |key| key.to_s == 'store_id' || key.to_s.end_with?('_id') })
     end
 
     expect(offenders).to be_empty, lambda {
-      "Store-owned models with an unscoped acts_as_list (positions bleed across stores):\n" \
+      "Store-owned models whose acts_as_list scope is missing or not verifiably store-derived " \
+        "(positions bleed across stores):\n" \
         "#{offenders.map(&:name).join(', ')}\n" \
-        'Declare acts_as_list scope: :store_id (see Spree::Collection, Spree::Market, Spree::PriceList).'
+        'Declare acts_as_list scope: :store_id or a parent association (see Spree::Collection, Spree::Market, Spree::PriceList).'
     }
   end
 end

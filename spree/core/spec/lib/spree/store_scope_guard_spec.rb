@@ -18,6 +18,12 @@ RSpec.describe Spree::StoreScopeGuard do
       }.not_to raise_error
     end
 
+    it 'is not fooled by a projected store_id column without a predicate' do
+      expect {
+        described_class.watch { Spree::Product.select(:store_id, :name).where(name: 'x').to_a }
+      }.to raise_error(described_class::UnscopedQueryError, /spree_products/)
+    end
+
     it 'passes id and foreign-key filters (ids in hand came from scoped rows)' do
       expect {
         described_class.watch { Spree::Order.where(customer_id: 1).to_a }
