@@ -4,12 +4,12 @@ require_relative '../../core/lib/spree/core/version.rb'
 
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
-  s.name        = 'spree_easypost'
+  s.name        = 'spree_meilisearch'
   s.version     = Spree.version
   s.authors     = ['Spark Solutions Sp. z o.o.', 'Vendo Connect Inc.']
   s.email       = 'hello@spreecommerce.org'
-  s.summary     = 'EasyPost delivery rates for Spree eCommerce platform'
-  s.description = 'Live multi-carrier delivery rates for Spree via EasyPost — the reference DeliveryRateProvider implementation'
+  s.summary     = 'Meilisearch product search for Spree eCommerce platform'
+  s.description = 'Instant product search, filtering and faceted navigation for Spree via Meilisearch'
   s.homepage    = 'https://spreecommerce.org'
   s.license     = 'BSD-3-Clause'
 
@@ -25,8 +25,6 @@ Gem::Specification.new do |s|
   s.files        = Dir["{app,config,db,lib,vendor}/**/*", "Rakefile", "README.md"].reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.require_path = 'lib'
 
-  s.add_dependency 'easypost', '~> 7.0'
+  s.add_dependency 'meilisearch', '>= 0.28'
   s.add_dependency 'spree_core', s.version
-
-  s.add_development_dependency 'vcr'
 end

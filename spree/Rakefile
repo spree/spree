@@ -9,6 +9,12 @@ end
 
 SPREE_CORE_GEMS = %w(core api).freeze
 SPREE_OPTIONAL_GEMS = %w(emails dashboard).freeze
+# Provider gems sit one directory deeper and their gem name doesn't match the
+# directory, so they carry the path explicitly.
+SPREE_PROVIDER_GEMS = {
+  'spree_easypost' => 'providers/easypost',
+  'spree_meilisearch' => 'providers/meilisearch'
+}.freeze
 
 task default: :test
 
@@ -24,6 +30,11 @@ task test: :test_app do
       sh 'rspec'
     end
   end
+  SPREE_PROVIDER_GEMS.each_value do |path|
+    Dir.chdir("#{File.dirname(__FILE__)}/#{path}") do
+      sh 'rspec'
+    end
+  end
 end
 
 desc "Generates a dummy app for testing for every Spree engine"
@@ -35,6 +46,11 @@ task :test_app do
   end
   SPREE_OPTIONAL_GEMS.each do |gem_name|
     Dir.chdir("#{File.dirname(__FILE__)}/#{gem_name}") do
+      sh 'rake test_app'
+    end
+  end
+  SPREE_PROVIDER_GEMS.each_value do |path|
+    Dir.chdir("#{File.dirname(__FILE__)}/#{path}") do
       sh 'rake test_app'
     end
   end
@@ -55,6 +71,11 @@ task :clean do
     rm_f  "#{gem_name}/Gemfile.lock"
     rm_rf "#{gem_name}/pkg"
     rm_rf "#{gem_name}/spec/dummy"
+  end
+  SPREE_PROVIDER_GEMS.each_value do |path|
+    rm_f  "#{path}/Gemfile.lock"
+    rm_rf "#{path}/pkg"
+    rm_rf "#{path}/spec/dummy"
   end
 end
 
@@ -86,6 +107,13 @@ namespace :gem do
         mv "spree_#{gem_name}-#{version}.gem", pkgdir
       end
     end
+
+    SPREE_PROVIDER_GEMS.each do |gem_name, path|
+      Dir.chdir(path) do
+        sh "gem build #{gem_name}.gemspec"
+        mv "#{gem_name}-#{version}.gem", pkgdir
+      end
+    end
   end
 
   desc "Install all spree gems"
@@ -103,6 +131,10 @@ namespace :gem do
       SPREE_OPTIONAL_GEMS.each do |gem_name|
         sh "gem install spree_#{gem_name}-#{version}.gem"
       end
+
+      SPREE_PROVIDER_GEMS.each_key do |gem_name|
+        sh "gem install #{gem_name}-#{version}.gem"
+      end
     end
   end
 
@@ -118,6 +150,10 @@ namespace :gem do
 
       SPREE_OPTIONAL_GEMS.each do |gem_name|
         sh "gem push spree_#{gem_name}-#{version}.gem"
+      end
+
+      SPREE_PROVIDER_GEMS.each_key do |gem_name|
+        sh "gem push #{gem_name}-#{version}.gem"
       end
     end
   end

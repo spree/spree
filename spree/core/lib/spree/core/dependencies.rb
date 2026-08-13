@@ -122,8 +122,9 @@ module Spree
         current_store_finder: 'Spree::Stores::FindDefault',
         line_item_by_variant_finder: 'Spree::LineItems::FindByVariant',
 
-        # search
-        search_product_presenter: 'Spree::SearchProvider::ProductPresenter'
+        # search — the document shape belongs to whichever indexing provider is
+        # installed (spree_meilisearch registers its own), so core ships no default.
+        search_product_presenter: nil
       }.freeze
 
       include Spree::DependenciesHelper

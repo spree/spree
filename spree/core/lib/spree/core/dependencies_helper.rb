@@ -42,6 +42,10 @@ module Spree
                      when Proc then value.call.then { |v| v.is_a?(String) ? v.constantize : v }
                      else value
                      end
+          # An injection point may legitimately have no default — the class is
+          # supplied by an optional gem (search_product_presenter). Leave it
+          # unmemoized so installing the gem later still takes effect.
+          return nil if resolved.nil?
           instance_variable_set("@#{point}_resolved", resolved)
           resolved
         end

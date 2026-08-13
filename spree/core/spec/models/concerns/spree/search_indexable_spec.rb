@@ -6,12 +6,34 @@ RSpec.describe Spree::SearchIndexable, type: :concern do
   let(:store) { @default_store }
   let(:product) { create(:product) }
 
+  # Stands in for a provider gem (spree_meilisearch): indexing is required, so
+  # the concern enqueues jobs and calls through synchronously.
+  let(:indexing_provider_class) do
+    Class.new(Spree::SearchProvider::Base) do
+      def self.indexing_required?
+        true
+      end
+
+      def self.name
+        'SearchIndexableSpec::IndexingProvider'
+      end
+    end
+  end
+
   describe '#search_presentation' do
-    it 'returns an array of document hashes (one per market × locale)' do
-      result = product.search_presentation(store)
-      expect(result).to be_an(Array)
-      expect(result.first[:product_id]).to eq(product.prefixed_id)
-      expect(result.first[:name]).to eq(product.name)
+    it 'raises when no provider gem supplied a presenter' do
+      expect { product.search_presentation(store) }.to raise_error(Spree::DependencyError, /search product presenter/)
+    end
+
+    it 'delegates to the configured presenter' do
+      documents = [{ product_id: product.prefixed_id, name: product.name }]
+      presenter_class = Class.new do
+        def initialize(product, store); end
+      end
+      allow(Spree::Dependencies).to receive(:search_product_presenter_class).and_return(presenter_class)
+      allow_any_instance_of(presenter_class).to receive(:call).and_return(documents)
+
+      expect(product.search_presentation(store)).to eq(documents)
     end
   end
 
@@ -45,7 +67,8 @@ RSpec.describe Spree::SearchIndexable, type: :concern do
 
   context 'with external search provider' do
     before do
-      allow(Spree).to receive(:search_provider).and_return('Spree::SearchProvider::Meilisearch')
+      stub_const(indexing_provider_class.name, indexing_provider_class)
+      allow(Spree).to receive(:search_provider).and_return(indexing_provider_class.name)
     end
 
     after do
@@ -82,15 +105,15 @@ RSpec.describe Spree::SearchIndexable, type: :concern do
 
     describe '#add_to_search_index' do
       it 'calls provider.index synchronously' do
-        provider = instance_double(Spree::SearchProvider::Meilisearch)
-        allow(Spree::SearchProvider::Meilisearch).to receive(:new).with(store).and_return(provider)
+        provider = instance_double(indexing_provider_class)
+        allow(indexing_provider_class).to receive(:new).with(store).and_return(provider)
         expect(provider).to receive(:index).with(product)
 
         product.add_to_search_index
       end
 
       it 'does not enqueue a job' do
-        allow_any_instance_of(Spree::SearchProvider::Meilisearch).to receive(:index)
+        allow_any_instance_of(indexing_provider_class).to receive(:index)
         product # trigger create jobs
         clear_enqueued_jobs
 
@@ -102,15 +125,15 @@ RSpec.describe Spree::SearchIndexable, type: :concern do
 
     describe '#remove_from_search_index' do
       it 'calls provider.remove synchronously' do
-        provider = instance_double(Spree::SearchProvider::Meilisearch)
-        allow(Spree::SearchProvider::Meilisearch).to receive(:new).with(store).and_return(provider)
+        provider = instance_double(indexing_provider_class)
+        allow(indexing_provider_class).to receive(:new).with(store).and_return(provider)
         expect(provider).to receive(:remove).with(product)
 
         product.remove_from_search_index
       end
 
       it 'does not enqueue a job' do
-        allow_any_instance_of(Spree::SearchProvider::Meilisearch).to receive(:remove)
+        allow_any_instance_of(indexing_provider_class).to receive(:remove)
         product # trigger create jobs
         clear_enqueued_jobs
 

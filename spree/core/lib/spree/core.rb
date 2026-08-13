@@ -139,7 +139,7 @@ module Spree
 
   # Search provider class name. Controls product search, filtering, and faceted navigation.
   #
-  #   Spree.search_provider = 'Spree::SearchProvider::Meilisearch'
+  #   Spree.search_provider = 'SpreeMeilisearch::SearchProvider'
   #
   def self.search_provider
     @@search_provider ||= 'Spree::SearchProvider::Database'
