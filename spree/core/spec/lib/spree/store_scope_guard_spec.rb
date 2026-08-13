@@ -24,6 +24,25 @@ RSpec.describe Spree::StoreScopeGuard do
       }.to raise_error(described_class::UnscopedQueryError, /spree_products/)
     end
 
+    # The suite runs on one adapter at a time, so pin the predicate matching
+    # against every adapter's quoting directly — MySQL's backticks broke it
+    # once while PostgreSQL and SQLite passed.
+    it 'recognizes predicates under every identifier quoting style' do
+      [
+        %(SELECT * FROM "spree_products" WHERE "spree_products"."store_id" = 1),
+        %(SELECT * FROM `spree_products` WHERE `spree_products`.`store_id` = 1),
+        %(SELECT * FROM spree_products WHERE store_id = 1),
+      ].each do |sql|
+        expect(described_class.send(:scoped?, sql)).to be(true), "not recognized: #{sql}"
+      end
+    end
+
+    it 'does not count a store_id null check as store scoping' do
+      sql = 'SELECT * FROM "spree_products" WHERE "spree_products"."store_id" IS NOT NULL'
+
+      expect(described_class.send(:scoped?, sql)).to be(false)
+    end
+
     it 'passes id and foreign-key filters (ids in hand came from scoped rows)' do
       expect {
         described_class.watch { Spree::Order.where(customer_id: 1).to_a }

@@ -135,11 +135,15 @@ module Spree
       # cover: secondary-key lookups (slug, number, code, email, token) and
       # unscoped scans.
       def scoped?(sql)
-        # A store_id PREDICATE, not a mention — a projected column
-        # (`select(:store_id)`) or a literal in a comment must not count.
-        sql.match?(/\bstore_id"?\s+(=|!=|IN|IS)\s/) ||
+        # A store_id COMPARISON, not a mention — a projected column
+        # (`select(:store_id)`) must not count, and neither does
+        # `store_id IS [NOT] NULL`, which matches storeless or all-store rows
+        # rather than a store. The optional closing quote covers every
+        # adapter: PostgreSQL/SQLite double-quote identifiers, MySQL
+        # backticks them.
+        sql.match?(/\bstore_id["'`]?\s+(=|!=|IN)\s/) ||
           sql.start_with?('SELECT 1 AS one') ||
-          sql.match?(/\b(id|[a-z_]+_id)"?\s+(=|!=|IN)\s/)
+          sql.match?(/\b(id|[a-z_]+_id)["'`]?\s+(=|!=|IN)\s/)
       end
 
       # Store-owned tables, derived from the live schema so new store-scoped
