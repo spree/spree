@@ -34,6 +34,18 @@ module Spree
                 @line_item = @cart.line_items.find_by_prefix_id!(params[:id])
 
                 if permitted_params[:quantity].present?
+                  # Zero and negatives remove the row in the upsert vocabulary,
+                  # but this endpoint documents `quantity >= 1` and DELETE is
+                  # how a client removes an item. Deleting on a PATCH the
+                  # schema forbids would be a surprising 200.
+                  if permitted_params[:quantity].to_i < 1
+                    return render_error(
+                      code: ERROR_CODES[:invalid_quantity],
+                      message: Spree.t('cart_line_item.quantity_must_be_positive'),
+                      status: :unprocessable_content
+                    )
+                  end
+
                   result = Spree.cart_upsert_items_workflow.call(
                     cart: @cart,
                     items: [{

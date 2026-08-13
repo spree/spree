@@ -46,6 +46,11 @@ module Spree
 
       def build_product
         @product = record || store.products.new
+        # A supplied record must belong to the store the caller named — a
+        # product resolved outside that scope would otherwise be persisted
+        # against the wrong tenant, and every :validate handler reading
+        # `store` would be told the wrong thing.
+        @product.store = store
         @product.assign_attributes(attributes) if attributes.present?
       end
 

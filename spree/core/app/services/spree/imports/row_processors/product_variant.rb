@@ -121,7 +121,17 @@ module Spree
               Spree.product_update_workflow.call(product: product)
             end
 
-          raise ActiveRecord::RecordInvalid, product if result.failure?
+          if result.failure?
+            # A hook rejection carries its own errors, not the product's, so
+            # copy them across — otherwise the failed row records an empty
+            # validation_errors and the merchant sees no reason.
+            rejection = result.error&.value
+            if rejection.is_a?(ActiveModel::Errors) && product.errors.empty?
+              rejection.each { |error| product.errors.add(error.attribute, error.message) }
+            end
+
+            raise ActiveRecord::RecordInvalid, product
+          end
 
           product
         end

@@ -14,12 +14,22 @@ module Spree
         )
         cart ||= order
 
-        result = Spree.cart_upsert_items_workflow.call(
+        workflow = Spree.cart_upsert_items_workflow.new
+        result = workflow.call(
           cart: cart,
           items: [{ variant_id: line_item.variant_id, quantity: quantity }]
         )
 
-        result.success? ? success(line_item.reload) : failure(line_item, result.error)
+        return failure(line_item, result.error) if result.failure?
+
+        # The workflow succeeds on the cart side even when a :validate handler
+        # skipped this item — that is the batch contract. This service's
+        # callers predate it and expect a failure, so translate the warning.
+        rejection = workflow.warnings.first
+        return failure(line_item, rejection.message) if rejection
+
+        # Zero removed the row, so there is nothing to reload.
+        line_item.destroyed? || quantity.to_i <= 0 ? success(line_item) : success(line_item.reload)
       end
     end
   end

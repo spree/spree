@@ -7,19 +7,32 @@ module Spree
     class RemoveLineItem
       prepend Spree::ServiceModule::Base
 
+      # @param options [Hash] accepted for signature compatibility and ignored —
+      #   the upsert path identifies the row by variant, not by line-item options.
       def call(cart: nil, order: nil, line_item: nil, options: nil)
         Spree::Deprecation.warn(
           'Spree::Carts::RemoveLineItem is deprecated and will be removed in Spree 6.1. ' \
-          'Use Spree::Carts::UpsertItems with quantity: 0 instead.'
+          'Use Spree::Carts::UpsertItems with quantity: 0 instead. Note it removes the ' \
+          'cart\'s line item for the variant, which is this one unless the cart holds ' \
+          'several rows of the same variant.'
         )
         cart ||= order
 
-        result = Spree.cart_upsert_items_workflow.call(
+        workflow = Spree.cart_upsert_items_workflow.new
+        result = workflow.call(
           cart: cart,
           items: [{ variant_id: line_item.variant_id, quantity: 0 }]
         )
 
-        result.success? ? success(line_item) : failure(line_item, result.error)
+        return failure(line_item, result.error) if result.failure?
+
+        # A :validate handler may have vetoed the removal; on the cart side
+        # that is a warning rather than a failed result, but this service's
+        # callers expect a failure.
+        rejection = workflow.warnings.first
+        return failure(line_item, rejection.message) if rejection
+
+        success(line_item)
       end
     end
   end

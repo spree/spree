@@ -202,9 +202,10 @@ The caller receives a normal failure result — no exception reaches your
 controller:
 
 ```ruby
-result = Spree.cart_add_item_workflow.call(cart: cart, variant: variant)
+result = Spree.return_create_workflow.call(order: order, items: items)
 result.success?    # => false
-result.error.value # => "You can order at most 10 of this item."
+result.error.to_s  # => "This order is outside the 30-day return window."
+result.error.value # => ActiveModel::Errors — the rejection, field by field
 ```
 
 <Warning>
@@ -252,7 +253,7 @@ is reported through `Rails.error` so it's visible rather than mysterious.
 |---|---|---|---|
 | `carts.add_item` | `validate` | validate | Before the line item is built |
 | `carts.add_item` | `after_item_added` | lifecycle | After the item is saved and totals recalculated (in transaction) |
-| `carts.upsert_items` | `validate` | validate | Once per item, before anything is written — quantity edits, removals and bulk payloads |
+| `carts.upsert_items` | `validate` | validate | Once per item, immediately before that item is applied — quantity edits, removals and bulk payloads. Earlier items in the batch may already be written |
 | `carts.upsert_items` | `after_items_upserted` | lifecycle | After the batch is applied and the cart recalculated once (in transaction) |
 | `carts.complete` | `validate` | validate | After checkout requirements pass, before the order is created |
 | `carts.complete` | `before_finalize` | lifecycle | After payment, before the order is placed |

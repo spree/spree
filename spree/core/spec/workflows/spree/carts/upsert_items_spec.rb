@@ -316,6 +316,28 @@ module Spree
       end
     end
 
+    # A line that cannot be saved is that line's problem. Failing the batch
+    # would throw away every other item the customer still wants.
+    describe 'a line item that will not save' do
+      let(:items) do
+        [
+          { variant_id: variant.prefixed_id, quantity: 1 },
+          { variant_id: variant2.prefixed_id, quantity: 999 }
+        ]
+      end
+
+      before { variant2.stock_items.first.update!(count_on_hand: 1, backorderable: false) }
+
+      it 'warns and keeps the rest of the batch' do
+        workflow = described_class.new
+        result = workflow.call(cart: cart, items: items)
+
+        expect(result).to be_success
+        expect(cart.reload.items.map(&:variant)).to eq([variant])
+        expect(workflow.warnings.sole.item_index).to eq(1)
+      end
+    end
+
     describe 'removals' do
       let!(:line_item) { create(:line_item, cart: cart, order: nil, variant: variant, quantity: 2) }
 

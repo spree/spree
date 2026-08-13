@@ -327,6 +327,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
 
     delete 'Delete a product' do
       tags 'Products'
+      produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Soft-deletes a product.'
       admin_scope :write, :products

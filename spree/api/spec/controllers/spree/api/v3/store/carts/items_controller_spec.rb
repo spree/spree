@@ -132,6 +132,19 @@ RSpec.describe Spree::Api::V3::Store::Carts::ItemsController, type: :controller 
 
         expect(response).to have_http_status(:not_found)
       end
+
+      # Zero removes the row in the upsert vocabulary, but this endpoint
+      # documents quantity >= 1 and DELETE is how a client removes an item.
+      [0, -1].each do |quantity|
+        it "rejects a quantity of #{quantity} instead of deleting the item" do
+          expect do
+            patch :update, params: { cart_id: order.prefixed_id, id: line_item.prefixed_id, quantity: quantity }
+          end.not_to change(Spree::LineItem, :count)
+
+          expect(response).to have_http_status(:unprocessable_content)
+          expect(json_response['error']['code']).to eq('invalid_quantity')
+        end
+      end
     end
   end
 

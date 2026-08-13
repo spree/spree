@@ -112,7 +112,7 @@ module Spree
             next
           end
 
-          apply_item(item, line_item)
+          apply_item(item, line_item, index)
         end
       end
 
@@ -146,7 +146,7 @@ module Spree
         @metadata = item&.metadata || {}
       end
 
-      def apply_item(item, line_item)
+      def apply_item(item, line_item, index)
         if line_item
           line_item.quantity = item.quantity
           line_item.metadata = line_item.metadata.merge(item.metadata) if item.metadata.present?
@@ -160,7 +160,18 @@ module Spree
         end
 
         created = line_item.new_record?
-        failure(line_item) unless line_item.save
+
+        # A line that won't save — most often the stock availability
+        # validator — is this item's problem, not the batch's. Failing here
+        # would roll back every other line, which is exactly what a customer
+        # restoring a saved cart must not lose.
+        unless line_item.save
+          failure(line_item) unless partial_success?
+
+          warn(index, item, line_item.errors.details.values.flatten.first&.dig(:error) || :invalid,
+               line_item.errors.full_messages.to_sentence)
+          return
+        end
 
         line_item.reload.recalculate_price
         ::Spree.tax_provider.estimate(line_item.owner, [line_item]) if created
