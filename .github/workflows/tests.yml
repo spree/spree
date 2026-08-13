@@ -56,7 +56,7 @@ jobs:
 
       - name: Install all project dependencies
         run: |
-          for project in core api emails providers/easypost dashboard; do
+          for project in core api emails providers/easypost providers/meilisearch dashboard; do
             echo "--- Installing gems for $project ---"
             cd spree/$project
             bundle config set --local path ${{ github.workspace }}/vendor/bundle
@@ -101,7 +101,7 @@ jobs:
 
       - name: Install all project dependencies
         run: |
-          for project in core api emails providers/easypost dashboard; do
+          for project in core api emails providers/easypost providers/meilisearch dashboard; do
             echo "--- Installing gems for $project ---"
             cd spree/$project
             bundle config set --local path ${{ github.workspace }}/vendor/bundle
@@ -197,7 +197,7 @@ jobs:
 
       - name: Install dependencies
         env:
-          SUITE_DIRS: ${{ matrix.dirs || matrix.dir || matrix.project }}
+          SUITE_DIRS: ${{ matrix.dirs || matrix.project }}
         run: |
           cd spree
           bundle config set --local path ${{ github.workspace }}/vendor/bundle
@@ -211,7 +211,7 @@ jobs:
       - name: Setup test app
         working-directory: spree
         env:
-          SUITE_DIRS: ${{ matrix.dirs || matrix.dir || matrix.project }}
+          SUITE_DIRS: ${{ matrix.dirs || matrix.project }}
         run: |
           for suite_dir in $SUITE_DIRS; do
             if [[ "${{ matrix.project }}" == "core" || "${{ matrix.project }}" == "api" ]]; then
@@ -224,7 +224,7 @@ jobs:
       - name: Setup parallel databases
         working-directory: spree
         env:
-          SUITE_DIRS: ${{ matrix.dirs || matrix.dir || matrix.project }}
+          SUITE_DIRS: ${{ matrix.dirs || matrix.project }}
         run: |
           for suite_dir in $SUITE_DIRS; do
             (cd "$suite_dir" && bundle exec rake parallel_setup[${{ matrix.procs }}])
@@ -236,7 +236,7 @@ jobs:
           SHARD: ${{ matrix.shard }}
           TOTAL_SHARDS: ${{ matrix.total_shards }}
           PROCS: ${{ matrix.procs }}
-          SUITE_DIRS: ${{ matrix.dirs || matrix.dir || matrix.project }}
+          SUITE_DIRS: ${{ matrix.dirs || matrix.project }}
         run: |
           mkdir -p ${{ github.workspace }}/tmp/test-results/rspec
           for suite_dir in $SUITE_DIRS; do
@@ -338,7 +338,7 @@ jobs:
 
       - name: Install dependencies
         env:
-          SUITE_DIRS: ${{ matrix.dirs || matrix.dir || matrix.project }}
+          SUITE_DIRS: ${{ matrix.dirs || matrix.project }}
         run: |
           cd spree
           bundle config set --local path ${{ github.workspace }}/vendor/bundle
@@ -352,7 +352,7 @@ jobs:
       - name: Setup test app
         working-directory: spree
         env:
-          SUITE_DIRS: ${{ matrix.dirs || matrix.dir || matrix.project }}
+          SUITE_DIRS: ${{ matrix.dirs || matrix.project }}
         run: |
           for suite_dir in $SUITE_DIRS; do
             if [[ "${{ matrix.project }}" == "core" || "${{ matrix.project }}" == "api" ]]; then
@@ -365,7 +365,7 @@ jobs:
       - name: Setup parallel databases
         working-directory: spree
         env:
-          SUITE_DIRS: ${{ matrix.dirs || matrix.dir || matrix.project }}
+          SUITE_DIRS: ${{ matrix.dirs || matrix.project }}
         run: |
           for suite_dir in $SUITE_DIRS; do
             (cd "$suite_dir" && bundle exec rake parallel_setup[${{ matrix.procs }}])
@@ -377,7 +377,7 @@ jobs:
           SHARD: ${{ matrix.shard }}
           TOTAL_SHARDS: ${{ matrix.total_shards }}
           PROCS: ${{ matrix.procs }}
-          SUITE_DIRS: ${{ matrix.dirs || matrix.dir || matrix.project }}
+          SUITE_DIRS: ${{ matrix.dirs || matrix.project }}
         run: |
           mkdir -p ${{ github.workspace }}/tmp/test-results/rspec
           for suite_dir in $SUITE_DIRS; do
