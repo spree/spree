@@ -16,11 +16,14 @@ module Spree
           'cart\'s line item for the variant, which is this one unless the cart holds ' \
           'several rows of the same variant.'
         )
-        cart ||= order
+        owner = cart || order
 
-        workflow = Spree.cart_upsert_items_workflow.new
+        # Draft orders keep the order workflow's all-or-nothing contract;
+        # only carts get the warn-and-skip one.
+        cart_owned = owner.is_a?(Spree::Cart)
+        workflow = (cart_owned ? Spree.cart_upsert_items_workflow : Spree.order_upsert_items_workflow).new
         result = workflow.call(
-          cart: cart,
+          **(cart_owned ? { cart: owner } : { order: owner }),
           items: [{ variant_id: line_item.variant_id, quantity: 0 }]
         )
 
