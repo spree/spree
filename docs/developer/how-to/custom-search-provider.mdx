@@ -109,13 +109,11 @@ Always filter by `locale`, `currency`, `store_ids`, `status='active'`, and `disc
 
 ## Step 3: Implement Indexing
 
-Products are indexed as **one document per market × locale** combination. Your provider decides its own document shape — write a presenter that returns the fields your engine needs, and point `Spree::Dependencies.search_product_presenter` at it.
-
-If the `spree_meilisearch` gem is installed, its presenter is a working starting point you can reuse or subclass:
+Products are indexed as **one document per market × locale** combination. The `ProductPresenter` handles this automatically:
 
 ```ruby app/models/my_app/search_provider/typesense.rb
 def index(product)
-  documents = SpreeMeilisearch::ProductPresenter.new(product, store).call
+  documents = Spree::SearchProvider::ProductPresenter.new(product, store).call
   documents.each do |doc|
     client.collections[index_name].documents.upsert(doc)
   end
@@ -205,10 +203,8 @@ Spree::SearchProvider::SearchResult.new(
 
 ### ProductPresenter
 
-Provided by the `spree_meilisearch` gem; your own provider may define its own shape instead.
-
 ```ruby
-documents = SpreeMeilisearch::ProductPresenter.new(product, store).call
+documents = Spree::SearchProvider::ProductPresenter.new(product, store).call
 # => [
 #   { prefixed_id: "prod_abc_en_USD", product_id: "prod_abc", locale: "en",
 #     currency: "USD", name: "Blue Shirt", price: 29.99, ... },

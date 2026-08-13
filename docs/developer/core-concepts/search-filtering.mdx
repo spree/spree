@@ -300,7 +300,7 @@ Spree uses a pluggable search provider architecture. The default provider uses S
 
 ```ruby
 # config/initializers/spree.rb
-Spree.search_provider = 'SpreeMeilisearch::SearchProvider'
+Spree.search_provider = 'Spree::SearchProvider::Meilisearch'
 ```
 
 No client-side or API changes are needed — the same `q[search]`, filter params, and sort options work with any provider.
