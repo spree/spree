@@ -270,6 +270,7 @@ describe Spree::PaymentMethod, type: :model do
       expect(credit_card.reload.deleted_at).not_to be_nil
     end
   end
+
   describe 'position scoping' do
     it 'numbers positions per store, not across the whole table' do
       create(:payment_method, store: @default_store)
@@ -278,6 +279,34 @@ describe Spree::PaymentMethod, type: :model do
       first_in_other_store = create(:payment_method, store: other_store)
 
       expect(first_in_other_store.position).to eq(1)
+    end
+  end
+
+  describe 'payment session instrumentation' do
+    it 'instruments provider-implemented session methods as gateway.spree_payments, once per call' do
+      gateway_class = Class.new(Spree::Gateway) do
+        def self.name = 'Spree::Testing::SessionGateway'
+
+        def create_payment_session(order:, amount: nil, external_data: {})
+          :session
+        end
+      end
+      stub_const('Spree::Testing::SessionGateway', gateway_class)
+
+      notifications = []
+      subscription = ActiveSupport::Notifications.subscribe('gateway.spree_payments') do |*, payload|
+        notifications << payload
+      end
+
+      result = gateway_class.new.create_payment_session(order: nil)
+
+      expect(result).to eq(:session)
+      expect(notifications.sole).to include(
+        action: 'create_payment_session',
+        payment_method_type: 'Spree::Testing::SessionGateway'
+      )
+    ensure
+      ActiveSupport::Notifications.unsubscribe(subscription)
     end
   end
 end

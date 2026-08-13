@@ -221,6 +221,62 @@ module Spree
           end
         end
 
+        context 'instrumentation' do
+          def capture_delivery_notifications
+            events = []
+            subscriber = ActiveSupport::Notifications.subscribe('deliver.spree_webhooks') do |*, payload|
+              events << payload
+            end
+            yield
+            events
+          ensure
+            ActiveSupport::Notifications.unsubscribe(subscriber)
+          end
+
+          it 'instruments the delivery as deliver.spree_webhooks with the response code' do
+            stub_request(:post, delivery.url).to_return(status: 200, body: '{}')
+
+            notifications = capture_delivery_notifications do
+              described_class.call(delivery: delivery, secret_key: secret_key)
+            end
+
+            expect(notifications.sole).to include(
+              event_name: delivery.event_name,
+              url_host: URI.parse(delivery.url).host,
+              response_code: 200
+            )
+          end
+
+          it 'records the error type instead of a response code on timeout' do
+            stub_request(:post, delivery.url).to_timeout
+            allow(Rails.error).to receive(:report)
+
+            notifications = capture_delivery_notifications do
+              described_class.call(delivery: delivery, secret_key: secret_key)
+            end
+
+            expect(notifications.sole).to include(error_type: 'timeout')
+            expect(notifications.sole).not_to include(:response_code)
+          end
+        end
+
+        context 'header decorators' do
+          after { described_class.header_decorators.clear }
+
+          it 'lets registered decorators add outbound headers' do
+            described_class.header_decorators << lambda { |headers, decorated_delivery|
+              headers['traceparent'] = "00-trace-#{decorated_delivery.id}-01"
+            }
+            stub_request(:post, delivery.url).to_return(status: 200, body: '{}')
+
+            described_class.call(delivery: delivery, secret_key: secret_key)
+
+            expect(WebMock).to have_requested(:post, delivery.url).with(
+              headers: { 'traceparent' => "00-trace-#{delivery.id}-01" }
+            )
+          end
+        end
+
         context 'when URL resolves to private IP (SSRF)' do
           before do
             delivery

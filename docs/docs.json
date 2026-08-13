@@ -1252,7 +1252,8 @@
                       "developer/deployment/cdn",
                       "developer/deployment/background_jobs",
                       "developer/deployment/caching",
-                      "developer/deployment/database"
+                      "developer/deployment/database",
+                      "developer/deployment/telemetry"
                     ]
                   },
                   {
@@ -2087,7 +2088,8 @@
                   "developer/deployment/cdn",
                   "developer/deployment/background_jobs",
                   "developer/deployment/caching",
-                  "developer/deployment/database"
+                  "developer/deployment/database",
+                  "developer/deployment/telemetry"
                 ]
               },
               {

@@ -56,7 +56,7 @@ jobs:
 
       - name: Install all project dependencies
         run: |
-          for project in core api emails providers/easypost providers/meilisearch dashboard; do
+          for project in core api emails providers/easypost providers/meilisearch dashboard opentelemetry; do
             echo "--- Installing gems for $project ---"
             cd spree/$project
             bundle config set --local path ${{ github.workspace }}/vendor/bundle
@@ -101,7 +101,7 @@ jobs:
 
       - name: Install all project dependencies
         run: |
-          for project in core api emails providers/easypost providers/meilisearch dashboard; do
+          for project in core api emails providers/easypost providers/meilisearch dashboard opentelemetry; do
             echo "--- Installing gems for $project ---"
             cd spree/$project
             bundle config set --local path ${{ github.workspace }}/vendor/bundle
@@ -136,6 +136,8 @@ jobs:
           - { project: providers, dirs: "providers/easypost providers/meilisearch", shard: 1, total_shards: 1, procs: 2 }
           # dashboard: 1 runner × 2 procs (tiny suite — SPA host)
           - { project: dashboard, shard: 1, total_shards: 1, procs: 2 }
+          # opentelemetry: 1 runner × 2 procs (tiny suite — optional tracing gem)
+          - { project: opentelemetry, shard: 1, total_shards: 1, procs: 2 }
     services:
       postgres:
         image: postgres:16
@@ -294,6 +296,8 @@ jobs:
           - { project: providers, dirs: "providers/easypost providers/meilisearch", shard: 1, total_shards: 1, procs: 2 }
           # dashboard: 1 runner × 2 procs (tiny suite — SPA host)
           - { project: dashboard, shard: 1, total_shards: 1, procs: 2 }
+          # opentelemetry: 1 runner × 2 procs (tiny suite — optional tracing gem)
+          - { project: opentelemetry, shard: 1, total_shards: 1, procs: 2 }
     services:
       mysql:
         image: mysql:8.0

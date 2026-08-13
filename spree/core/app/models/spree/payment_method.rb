@@ -24,6 +24,14 @@ module Spree
 
     validates :capture_method, inclusion: { in: Spree::CaptureMethod::CAPTURE_METHODS }, allow_nil: true
 
+    # Provider subclasses override the payment-session methods wholesale, so
+    # tracing instrumentation must be prepended to each subclass — prepended
+    # to this base class it would sit below the override and never run.
+    def self.inherited(subclass)
+      super
+      subclass.prepend(Spree::PaymentMethod::SessionInstrumentation)
+    end
+
     scope :active,    -> { where(active: true).order(position: :asc) }
     scope :available, -> { active.where(display_on: [:front_end, :back_end, :both]) }
     scope :store_credit, -> { where(type: 'Spree::PaymentMethod::StoreCredit') }

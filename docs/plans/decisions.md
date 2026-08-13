@@ -2697,3 +2697,66 @@ newsletter subscriptions and any new resource route through the same seam
 with no wiring; `/customers/me/*` endpoints stay owner-scoped by definition.
 Full B2B architecture: `6.1-channels-catalogs-b2b.md` → "Company roles and
 approvals".
+
+## 2026-08-12 — OpenTelemetry: notifications in core, spans in an optional gem, traces only
+
+**Decision:** Spree ships first-class OpenTelemetry support
+(`docs/plans/6.0-opentelemetry.md`) as two layers. Core's instrumentation
+contract is `ActiveSupport::Notifications` — core takes **no** OpenTelemetry
+dependency, and the notification catalog (workflow `perform`/`step`/`hooks`,
+events dispatch, webhook delivery, payment gateway boundary) becomes public
+API with the same additive-only rule as workflow hook keys. A new optional
+top-level engine `spree/opentelemetry` (gem `spree_opentelemetry`, beside
+core/api/emails — NOT under `spree/providers/`, which means commerce
+providers with an `Integration` credential surface) boots the OpenTelemetry
+SDK purely from standard `OTEL_*` env vars (Saleor-style; no host
+initializer; `OTEL_SDK_DISABLED` honored), installs the Rails
+auto-instrumentation umbrella, and translates Spree notifications into spans
+via hand-rolled subscribers following the `Spree::EventLogSubscriber`
+reload-safety pattern. 6.0 ships the trace signal only — the Ruby metrics and
+logs SDKs are experimental, so RED metrics are collector-derived
+(spanmetrics) and log correlation is trace IDs in log tags, never the logs
+SDK.
+
+**Consequences for other work:**
+- An outbound network call inside a workflow is always an `external_step`,
+  never a plain `step` — `external_step` now also marks the span as CLIENT
+  (`external: true` in the `step.spree_workflow` payload), so the
+  distinction is a tracing contract on top of the transaction guard.
+- Never `rescue StandardError` around workflow execution in instrumentation
+  or middleware: `FailureSignal`/`Halted` inherit `Exception` and would be
+  silently missed.
+- Anything added to an instrumented notification payload must be PII-safe
+  (prefixed IDs, names, counts — never payloads, emails, addresses,
+  credentials); assume every payload key ends up on someone's dashboard.
+- Telemetry configuration is process-level deployment config (env vars) —
+  never a `Spree::Config` preference, store preference, or admin UI surface.
+
+## 2026-08-12 — spree-starter bundles spree_opentelemetry by default; Sentry keeps errors
+
+**Decision:** spree-starter adds `spree_opentelemetry` to its Gemfile
+installed, not commented out (amends the plan's original "commented in the
+Gemfile"). The official Docker image is built from the starter, so image
+users cannot edit the Gemfile — and since the gem is dormant until a standard
+`OTEL_*` exporter variable is set, bundling it makes tracing a pure
+environment-variable opt-in for container deployments. Sentry (already in the
+starter) and OpenTelemetry divide cleanly: Sentry keeps error capture, the
+OpenTelemetry stack owns tracing. The starter must NOT set Sentry's
+`traces_sample_rate` — that would double-instrument every request into two
+disconnected trace systems. Teams that want traces in Sentry use the
+`sentry-opentelemetry` OTLP integration, and **ordering is load-bearing**
+(2026-08-12 code review): Sentry registers its span processor synchronously
+inside `Sentry.init` (`after(:configured)`), which requires the OpenTelemetry
+SDK to already be installed — so the recipe is `SpreeOpenTelemetry.configure
+{ |c| c.enabled = true }` + `SpreeOpenTelemetry.install!` at the top of the
+Sentry initializer, before `Sentry.init` with `config.otlp.enabled = true`,
+plus `OTEL_TRACES_EXPORTER=none` so the SDK wires no competing default
+exporter (Sentry derives its endpoint from the DSN). Auto-detecting Sentry's
+OTLP mode from `spree_opentelemetry` was tried and reverted — the gem
+installs after `load_config_initializers` by design, so detection can never
+run early enough. A bare SENTRY_DSN deliberately does NOT activate tracing:
+Sentry bills for ingested spans, so error capture must never silently become
+span ingestion. The starter's own sentry initializer encapsulates the whole
+recipe behind an env var (e.g. `SENTRY_OTLP_ENABLED=true`) so container
+users still flip it without code. Docs:
+`docs/developer/deployment/telemetry.mdx`.

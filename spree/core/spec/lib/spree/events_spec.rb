@@ -98,6 +98,54 @@ RSpec.describe Spree::Events, events: true do
     end
   end
 
+  describe 'dispatch instrumentation' do
+    def capture_dispatch_notifications
+      events = []
+      subscriber = ActiveSupport::Notifications.subscribe('dispatch.spree_events') do |*, payload|
+        events << payload
+      end
+      yield
+      events
+    ensure
+      ActiveSupport::Notifications.unsubscribe(subscriber)
+    end
+
+    it 'instruments every subscriber dispatch as dispatch.spree_events' do
+      handler_class = Class.new do
+        def self.name = 'Spree::Testing::DispatchHandler'
+        def self.call(_event) = nil
+      end
+      stub_const('Spree::Testing::DispatchHandler', handler_class)
+
+      described_class.subscribe('order.placed', handler_class, async: false)
+      described_class.activate!
+
+      notifications = capture_dispatch_notifications do
+        described_class.publish('order.placed', { id: 1 })
+      end
+
+      expect(notifications.sole).to include(
+        event_name: 'order.placed',
+        subscriber: 'Spree::Testing::DispatchHandler',
+        async: false
+      )
+    end
+
+    it 'labels block subscribers without leaking memory addresses' do
+      # Options must be positional — subscribe has no keyword parameters, so
+      # trailing keywords would land in (and be discarded from) the
+      # subscriber slot when a block is given.
+      described_class.subscribe('order.placed', nil, { async: false }) { |_event| nil }
+      described_class.activate!
+
+      notifications = capture_dispatch_notifications do
+        described_class.publish('order.placed', {})
+      end
+
+      expect(notifications.sole).to include(subscriber: 'Proc', async: false)
+    end
+  end
+
   describe '.unsubscribe' do
     it 'removes a subscriber' do
       received_events = []

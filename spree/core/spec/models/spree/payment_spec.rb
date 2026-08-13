@@ -380,6 +380,37 @@ describe Spree::Payment, type: :model do
       end
     end
 
+    describe 'gateway instrumentation' do
+      def capture_gateway_notifications
+        events = []
+        subscriber = ActiveSupport::Notifications.subscribe('gateway.spree_payments') do |*, payload|
+          events << payload
+        end
+        yield
+        events
+      ensure
+        ActiveSupport::Notifications.unsubscribe(subscriber)
+      end
+
+      it 'instruments the purchase gateway call as gateway.spree_payments' do
+        allow(gateway).to receive(:purchase).and_return(success_response)
+
+        notifications = capture_gateway_notifications { payment.purchase! }
+
+        expect(notifications.sole).to include(action: 'purchase', payment_method_type: 'Spree::Gateway::Bogus')
+      end
+
+      it 'instruments the capture gateway call' do
+        payment.state = 'pending'
+        payment.response_code = "BGS-#{SecureRandom.hex(6)}"
+        allow(gateway).to receive(:capture).and_return(success_response)
+
+        notifications = capture_gateway_notifications { payment.capture! }
+
+        expect(notifications.sole).to include(action: 'capture', payment_method_type: 'Spree::Gateway::Bogus')
+      end
+    end
+
     describe '#purchase!' do
       it 'calls purchase on the gateway with the payment amount' do
         expect(gateway).to receive(:purchase).with(amount_in_cents, card, anything).and_return(success_response)
