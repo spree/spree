@@ -391,4 +391,14 @@ describe Spree::DeliveryMethod, type: :model do
       it { expect(delivery_method.display_estimated_price).to eq('Flat rate: Free') }
     end
   end
+  describe '#available_pickup_locations' do
+    let(:delivery_method) { create(:delivery_method, store: @default_store) }
+
+    it "falls back to the method's own store's pickup counters, never another store's" do
+      own_location = create(:stock_location, store: @default_store, active: true, pickup_enabled: true)
+      create(:stock_location, store: create(:store), active: true, pickup_enabled: true)
+
+      expect(delivery_method.available_pickup_locations).to contain_exactly(own_location)
+    end
+  end
 end

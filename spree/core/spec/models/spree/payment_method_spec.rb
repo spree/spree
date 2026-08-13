@@ -208,4 +208,14 @@ describe Spree::PaymentMethod, type: :model do
       expect(credit_card.reload.deleted_at).not_to be_nil
     end
   end
+  describe 'position scoping' do
+    it 'numbers positions per store, not across the whole table' do
+      create(:payment_method, store: @default_store)
+      other_store = create(:store)
+
+      first_in_other_store = create(:payment_method, store: other_store)
+
+      expect(first_in_other_store.position).to eq(1)
+    end
+  end
 end
