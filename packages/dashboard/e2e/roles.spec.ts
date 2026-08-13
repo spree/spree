@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test'
-import { login } from './helpers'
+import { escapeRegex, login } from './helpers'
 
 const ROLES_PATH = (storeId: string) => `/${storeId}/settings/roles`
 
@@ -151,13 +151,12 @@ test.describe('roles', () => {
       timeout: 15_000,
     })
 
-    // Assign it to the seed admin from the staff page.
+    // Assign it to the signed-in admin from the staff page. The email comes
+    // from the fixtures rather than a literal — seeds no longer mint a
+    // well-known admin, so global-setup creates one and reports its address.
+    const adminRow = new RegExp(escapeRegex(creds.admin_email), 'i')
     await page.goto(`/${creds.store_id}/settings/staff`)
-    await page
-      .getByRole('row', { name: /spree@example\.com/i })
-      .getByRole('button')
-      .last()
-      .click()
+    await page.getByRole('row', { name: adminRow }).getByRole('button').last().click()
     await page.getByRole('menuitem', { name: /edit/i }).click()
     await page.getByRole('checkbox', { name: new RegExp(name, 'i') }).check()
     await page.getByRole('button', { name: /^save$/i }).click()
@@ -172,16 +171,12 @@ test.describe('roles', () => {
 
     // Unassign, then delete goes through.
     await page.goto(`/${creds.store_id}/settings/staff`)
-    await page
-      .getByRole('row', { name: /spree@example\.com/i })
-      .getByRole('button')
-      .last()
-      .click()
+    await page.getByRole('row', { name: adminRow }).getByRole('button').last().click()
     await page.getByRole('menuitem', { name: /edit/i }).click()
     await page.getByRole('checkbox', { name: new RegExp(name, 'i') }).uncheck()
     await page.getByRole('button', { name: /^save$/i }).click()
     await expect(
-      page.getByRole('row', { name: /spree@example\.com/i }).getByText(new RegExp(name, 'i')),
+      page.getByRole('row', { name: adminRow }).getByText(new RegExp(name, 'i')),
     ).toHaveCount(0, { timeout: 15_000 })
 
     await gotoRoles(page, creds.store_id)

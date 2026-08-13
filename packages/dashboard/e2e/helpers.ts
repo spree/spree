@@ -169,7 +169,7 @@ export function rowButton(page: Page, name: string) {
   return page.getByRole('button', { name: new RegExp(`^${escapeRegex(name)}(\\s|$)`) })
 }
 
-function escapeRegex(s: string) {
+export function escapeRegex(s: string) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 

@@ -16,7 +16,16 @@ const execOpts = {
   encoding: 'utf-8' as const,
   timeout: 120_000,
   maxBuffer: 10 * 1024 * 1024,
-  env: { ...process.env, RAILS_ENV: 'test', PORT },
+  // Seeds only create an admin when both are set — sample data needs one as
+  // the import owner, so the harness asks for it explicitly rather than
+  // relying on defaults the seed no longer ships.
+  env: {
+    ...process.env,
+    RAILS_ENV: 'test',
+    PORT,
+    ADMIN_EMAIL: 'admin@example.com',
+    ADMIN_PASSWORD: 'spree123',
+  },
 }
 
 const CREDENTIALS_RUBY = [
