@@ -48,7 +48,9 @@ module Spree
       PromoEnvironment = Struct.new(:rules, :actions)
       PricingEnvironment = Struct.new(:rules)
       OrderRoutingEnvironment = Struct.new(:strategies, :rules)
-      SpreeValidators = Struct.new(:addresses)
+      # Spree::Validators, not a Struct: the sets carry register/unregister so
+      # a host can drop a core rule (see Spree.validators.addresses).
+      SpreeValidators = Spree::Validators
       CustomFieldsEnvironment = Struct.new(:types, :enabled_resources)
       isolate_namespace Spree
       engine_name 'spree'
