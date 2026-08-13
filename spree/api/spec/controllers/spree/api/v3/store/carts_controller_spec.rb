@@ -511,7 +511,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       let(:cart) { create(:cart_with_line_items, store: store, customer: user) }
       let(:country) { Spree::Country.by_iso('US') }
       let!(:us_state) { Spree::State.resolve(country.iso, 'NY') }
-      let!(:zone) { create(:zone, zone_members: [Spree::ZoneMember.new(zoneable: country)]) }
+      let!(:zone) { create(:zone) }
       let!(:shipping_method) { create(:shipping_method) }
 
       before do
@@ -597,7 +597,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
     let!(:order) { create(:cart_with_line_items, store: store, customer: user) }
     let(:country) { Spree::Country.by_iso('US') }
     let!(:us_state) { Spree::State.resolve(country.iso, 'NY') }
-    let!(:zone) { create(:zone, zone_members: [Spree::ZoneMember.new(zoneable: country)]) }
+    let!(:zone) { create(:zone) }
     let!(:shipping_method) { create(:shipping_method) }
 
     before do

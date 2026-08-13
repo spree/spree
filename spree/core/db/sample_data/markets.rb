@@ -1,7 +1,7 @@
 store = Spree::Store.default
 
-us = Spree::Country.find_by(iso: 'US')
-ca = Spree::Country.find_by(iso: 'CA')
+us = Spree::Country.by_iso('US')
+ca = Spree::Country.by_iso('CA')
 
 if us
   # Store auto-creates a default market on creation — update it rather than creating a new one

@@ -98,10 +98,13 @@ module Spree
       #
       # @param iso [String] alpha-2 country code
       # @return [Hash{String => String}]
+      # Keyed by locale as well as country: the names are localized, and this
+      # cache outlives a request, so keying on the country alone would serve
+      # whichever locale happened to warm it to everyone else.
       def subdivisions(iso)
         iso = iso.to_s.upcase
         @subdivisions ||= {}
-        @subdivisions[iso] ||= build_subdivisions(iso).freeze
+        @subdivisions[[I18n.locale, iso]] ||= build_subdivisions(iso).freeze
       end
 
       # Resolves whatever handle a caller has — a current code, a retired one,

@@ -16,8 +16,13 @@ module Spree
     # Countries are reference data, so this reads the join rows' codes back
     # through the registry rather than being a has_many :through.
     # @return [Array<Spree::Country>]
+    # Skips rows already marked for destruction, so `validates :countries,
+    # presence: true` sees what the market will hold after save rather than
+    # what it holds mid-assignment — otherwise emptying a market would pass
+    # validation and then delete every join row.
     def countries
-      market_countries.filter_map { |join| Spree::Country.by_iso(join.country_iso) }.sort_by(&:name)
+      market_countries.reject(&:marked_for_destruction?).
+        filter_map { |join| Spree::Country.by_iso(join.country_iso) }.sort_by(&:name)
     end
 
     # @param values [Array<Spree::Country>]

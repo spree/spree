@@ -62,11 +62,14 @@ module Spree
     def backfill_delivery_zone_members
       table = Spree::DeliveryZoneMember.table_name
       filled = backfill_country_iso(table)
-      filled += backfill_state_abbr(table)
+      filled += copy_state_abbr(table)
       # A state member records no country of its own, so its country comes from
       # the state's — without it, coverage queries could not tell which country
-      # an abbreviation belongs to.
-      filled + backfill_country_iso_from_state(table)
+      # an abbreviation belongs to. Runs before normalization, which needs both
+      # halves to resolve a code.
+      filled += backfill_country_iso_from_state(table)
+      normalize_state_abbrs(table)
+      filled
     end
 
     def backfill_market_countries
@@ -86,7 +89,22 @@ module Spree
       )
     end
 
+    # Copies the code across, then normalizes it: the pre-6.0 seed wrote codes
+    # ISO has since retired (Odisha as OR, Gauteng as GT) and occasionally in
+    # lower case, while matching compares stored codes verbatim. Left as-is,
+    # a backfilled address would silently stop matching zones written with the
+    # successor code.
     def backfill_state_abbr(table)
+      return 0 unless connection.column_exists?(table, 'state_abbr')
+
+      filled = copy_state_abbr(table)
+      normalize_state_abbrs(table)
+      filled
+    end
+
+    # The verbatim copy, split out so callers that still have to derive the
+    # country can normalize afterwards rather than before.
+    def copy_state_abbr(table)
       return 0 unless connection.column_exists?(table, 'state_abbr')
 
       update_from(
@@ -96,6 +114,26 @@ module Spree
         foreign_key: 'state_id',
         guard: 'state_abbr'
       )
+    end
+
+    # Rewrites any code that isn't already the canonical one for its country.
+    def normalize_state_abbrs(table)
+      quoted_table = quote(table)
+      rows = connection.select_rows(<<~SQL.squish)
+        SELECT DISTINCT country_iso, state_abbr FROM #{quoted_table}
+        WHERE state_abbr IS NOT NULL AND country_iso IS NOT NULL
+      SQL
+
+      rows.each do |country_iso, state_abbr|
+        canonical = Spree::IsoData.subdivision_code(country_iso, state_abbr)
+        next if canonical.blank? || canonical == state_abbr
+
+        connection.update(<<~SQL.squish)
+          UPDATE #{quoted_table} SET state_abbr = #{connection.quote(canonical)}
+          WHERE country_iso = #{connection.quote(country_iso)}
+            AND state_abbr = #{connection.quote(state_abbr)}
+        SQL
+      end
     end
 
     # Country ISO for state members, resolved through the state's own country.

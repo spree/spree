@@ -1,12 +1,12 @@
 module Spree
   module Seeds
-    # Seeds the legacy zones by name only.
+    # Seeds the legacy tax zones by name only.
     #
     # Zone members addressed countries by row id, and countries are reference
-    # data rather than records in 6.0 — so the zones are created empty and
-    # match nothing. Shipping geography is seeded as delivery zones instead;
-    # this exists only until the tax provider retires Spree::Zone entirely
-    # (docs/plans/6.0-tax-provider.md Phase 5).
+    # data rather than records in 6.0, so there are no ids to point at. The
+    # zones are created empty and match nothing until the tax provider replaces
+    # them (docs/plans/6.0-tax-provider.md Phase 5). Shipping geography is
+    # seeded as delivery zones instead — see Spree::Seeds::DeliveryZones.
     class Zones
       prepend Spree::ServiceModule::Base
 

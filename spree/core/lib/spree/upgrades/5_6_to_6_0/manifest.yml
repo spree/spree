@@ -188,6 +188,10 @@ steps:
       shipping zones are logged and skipped. Idempotent via a
       migrated_from_zone_id marker.
 
+      Members are written as ISO codes, resolved by reading spree_countries
+      and spree_states directly — countries and states are reference data in
+      6.0, so their models can no longer look the rows up.
+
   - id: migrate_country_state_isos
     name: "Name countries and states by ISO code"
     task: "spree:upgrade:migrate_country_state_isos"

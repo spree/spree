@@ -225,7 +225,7 @@ module Spree
         end
 
         context 'when shipping address country is not in the new market' do
-          let!(:us_state) { us_Spree::State.resolve(country.iso, 'NY') }
+          let!(:us_state) { Spree::State.resolve(us_country.iso, 'NY') }
           let(:us_address) { create(:address, country: us_country, state: us_state) }
           let(:cart) { create(:cart_with_line_items, customer: user, store: store, market: us_market, ship_address: us_address, email: 'buyer@example.com') }
           let(:params) { { market_id: eu_market.prefixed_id } }
@@ -746,7 +746,7 @@ module Spree
         let(:cart) { create(:cart_with_line_items, store: store) }
         let(:country) { Spree::Country.by_iso('US') }
         let!(:us_state) { Spree::State.resolve(country.iso, 'NY') }
-        let!(:zone) { create(:zone, zone_members: [Spree::ZoneMember.new(zoneable: country)]) }
+        let!(:zone) { create(:zone) }
         let!(:shipping_method) { create(:shipping_method) }
         let(:address_params) do
           {

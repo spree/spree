@@ -69,8 +69,11 @@ module Spree
     end
 
     # @return [Array<Spree::State>] the country's subdivisions, ordered by name
+    # Not memoized: .all hands out process-lifetime instances, and the names
+    # are localized — caching here would pin one request's locale onto every
+    # later one. IsoData holds the per-locale cache this reads from.
     def states
-      @states ||= Spree::IsoData.subdivisions(iso).map do |abbr, subdivision_name|
+      Spree::IsoData.subdivisions(iso).map do |abbr, subdivision_name|
         Spree::State.new(abbr: abbr, name: subdivision_name, country_iso: iso)
       end.freeze
     end
@@ -96,8 +99,11 @@ module Spree
 
     # Looks up the Market covering this country for the current Store.
     # @return [Spree::Market, nil]
+    # Not memoized, for the same reason as #states: these instances are shared
+    # across the process, so caching a market here would serve one store's
+    # market to every other store — and would never notice a market edit.
     def current_market
-      @current_market ||= Spree::Current.store&.market_for_country(self)
+      Spree::Current.store&.market_for_country(self)
     end
 
     # Display name for +locale+, falling back to the ISO's own name when the

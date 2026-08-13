@@ -230,7 +230,6 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       let(:country) { @default_country }
       let(:state)   { country.states.first || create(:state, country: country) }
       let!(:zone)   { create(:zone) }
-      let!(:zone_member) { create(:zone_member, zone: zone, zoneable: country) }
       let!(:shipping_method) do
         create(:shipping_method).tap do |sm|
           sm.calculator.preferred_amount = 5
@@ -326,7 +325,6 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       let(:country) { @default_country }
       let(:state)   { country.states.first || create(:state, country: country) }
       let!(:zone)   { create(:zone) }
-      let!(:zone_member) { create(:zone_member, zone: zone, zoneable: country) }
       let!(:shipping_method) do
         create(:shipping_method).tap do |sm|
           sm.calculator.preferred_amount = 5
@@ -543,7 +541,6 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       let(:country) { @default_country }
       let(:state)   { country.states.first || create(:state, country: country) }
       let!(:zone)   { create(:zone) }
-      let!(:zone_member) { create(:zone_member, zone: zone, zoneable: country) }
       let!(:shipping_method) do
         create(:shipping_method).tap do |sm|
           sm.calculator.preferred_amount = 5

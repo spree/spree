@@ -10,7 +10,7 @@ module Spree
       INTERNATIONAL_AMOUNT = 20
 
       def call
-        Spree::Store.includes(:default_country).find_each do |store|
+        Spree::Store.find_each do |store|
           domestic_country = store.default_country
           next if domestic_country.nil?
 
@@ -20,13 +20,13 @@ module Spree
             zone.description = domestic_country.name
             zone.delivery_profile = profile
           end
-          domestic.members.where(member_type: 'country', country: domestic_country).first_or_create!
+          domestic.members.where(member_type: 'country', country_iso: domestic_country.iso).first_or_create!
 
           international = store.delivery_zones.where(name: 'International').first_or_create! do |zone|
             zone.description = 'Everywhere else'
             zone.delivery_profile = profile
           end
-          add_country_members(international, Spree::Country.where.not(id: domestic_country.id))
+          add_country_members(international, Spree::Country.all.reject { |country| country.iso == domestic_country.iso })
 
           create_method(store, 'Standard', domestic, DOMESTIC_AMOUNT)
           create_method(store, 'International Shipping', international, INTERNATIONAL_AMOUNT)
@@ -36,17 +36,18 @@ module Spree
       private
 
       def add_country_members(zone, countries)
-        existing_ids = zone.members.where(member_type: 'country').pluck(:country_id)
-        new_ids = countries.ids - existing_ids
-        return if new_ids.empty?
+        existing_isos = zone.members.where(member_type: 'country').pluck(:country_iso)
+        new_isos = countries.map(&:iso) - existing_isos
+        return if new_isos.empty?
 
-        rows = new_ids.map do |country_id|
+        now = Time.current
+        rows = new_isos.map do |iso|
           {
             delivery_zone_id: zone.id,
             member_type: 'country',
-            country_id: country_id,
-            created_at: Time.current,
-            updated_at: Time.current
+            country_iso: iso,
+            created_at: now,
+            updated_at: now
           }
         end
         Spree::DeliveryZoneMember.insert_all(rows)

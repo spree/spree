@@ -191,13 +191,15 @@ describe Spree::Address, type: :model do
     end
 
     it 'does not require a state when the country does not require one' do
-      address.country = create(:country, states_required: false)
+      address.country = stateless_country
+      address.zipcode = Spree::TestingSupport::CountryPool.postal_code_for(stateless_country.iso)
       address.state = nil
       address.state_name = nil
       expect(address).to be_valid
     end
 
     it 'does not require phone' do
+      address.state = state
       address.phone = ''
       expect(address).to be_valid
     end

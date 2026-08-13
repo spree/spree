@@ -133,6 +133,33 @@ RSpec.describe Spree::CountryStateIsoMigrator do
     end
   end
 
+  # The pre-6.0 seed wrote codes ISO has since retired. Matching compares
+  # stored codes verbatim, so a backfilled address carrying the old code would
+  # silently stop matching zones written with the successor.
+  describe 'retired subdivision codes' do
+    let(:za_id) { insert_country(iso: 'ZA', iso3: 'ZAF', name: 'South Africa') }
+
+    it 'rewrites them to the code the gem now uses' do
+      gauteng = insert_state(country_id: za_id, abbr: 'GT', name: 'Gauteng')
+      address = create(:address)
+      as_legacy_row(address, country_id: za_id, state_id: gauteng)
+
+      migrate
+
+      expect(address.reload.state_abbr).to eq('GP')
+    end
+
+    it 'upcases a lower-case legacy code' do
+      lower = insert_state(country_id: za_id, abbr: 'wc', name: 'Western Cape')
+      address = create(:address)
+      as_legacy_row(address, country_id: za_id, state_id: lower)
+
+      migrate
+
+      expect(address.reload.state_abbr).to eq('WC')
+    end
+  end
+
   describe 'resumability' do
     let!(:address) { create(:address) }
 

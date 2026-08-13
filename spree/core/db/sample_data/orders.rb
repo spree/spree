@@ -10,17 +10,17 @@ unless product_1 && product_2
 end
 
 # Build addresses for orders
-us = Spree::Country.find_by!(iso: 'US')
-ny = us.states.find_by(abbr: 'NY')
+us_iso = 'US'
+ny_abbr = 'NY'
 
 billing_address = Spree::Address.find_or_create_by!(
   firstname: 'John',
   lastname: 'Doe',
   address1: '7735 Old Georgetown Rd',
   city: 'Bethesda',
-  state: ny,
+  state_abbr: ny_abbr,
   zipcode: '20814',
-  country: us,
+  country_iso: us_iso,
   phone: '555-0199'
 )
 
@@ -29,9 +29,9 @@ shipping_address = Spree::Address.find_or_create_by!(
   lastname: 'Doe',
   address1: '1600 Pennsylvania Ave NW',
   city: 'Washington',
-  state: ny,
+  state_abbr: ny_abbr,
   zipcode: '20500',
-  country: us,
+  country_iso: us_iso,
   phone: '555-0199'
 )
 
