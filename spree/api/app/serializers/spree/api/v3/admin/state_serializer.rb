@@ -2,8 +2,8 @@ module Spree
   module Api
     module V3
       module Admin
+        # No timestamps — see Admin::CountrySerializer.
         class StateSerializer < V3::StateSerializer
-          attributes created_at: :iso8601, updated_at: :iso8601
         end
       end
     end

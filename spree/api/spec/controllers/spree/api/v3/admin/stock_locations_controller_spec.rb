@@ -113,8 +113,8 @@ RSpec.describe Spree::Api::V3::Admin::StockLocationsController, type: :controlle
 
       expect(response).to have_http_status(:created)
       created = Spree::StockLocation.find_by_prefix_id!(json_response['id'])
-      expect(created.country_id).to eq(country.id)
-      expect(created.state_id).to eq(state.id)
+      expect(created.country_iso).to eq(country.iso)
+      expect(created.state_abbr).to eq(state.abbr)
     end
 
     context 'with invalid params' do

@@ -6,7 +6,7 @@ RSpec.describe 'Markets API', type: :request, swagger_doc: 'api-reference/store.
   include_context 'API v3 Store'
 
   let!(:usa) { Spree::Country.by_iso('US') }
-  let!(:california) { Spree::State.find_by(abbr: 'CA', country: usa) || create(:state, country: usa, name: 'California', abbr: 'CA') }
+  let!(:california) { Spree::State.resolve(usa.iso, 'CA') }
   let!(:germany) { Spree::Country.by_iso('DE') }
   let!(:france) { Spree::Country.by_iso('FR') }
 

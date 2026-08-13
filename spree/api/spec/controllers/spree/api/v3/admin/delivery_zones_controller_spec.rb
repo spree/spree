@@ -107,8 +107,8 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryZonesController, type: :controller
   describe 'member round-trip' do
     it 'returns members on show when expanded, and preserves them when echoed back' do
       zone = create(:delivery_zone, store: store)
-      us = Spree::Country.find_by(iso: 'US') || create(:country_us)
-      de = Spree::Country.find_by(iso: 'DE') || create(:country, iso: 'DE', name: 'Germany')
+      us = Spree::Country.by_iso('US')
+      de = Spree::Country.by_iso('DE')
       zone.members.create!(member_type: 'country', country: us)
       zone.members.create!(member_type: 'country', country: de)
 

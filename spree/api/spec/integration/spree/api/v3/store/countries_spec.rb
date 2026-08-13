@@ -6,8 +6,8 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
   include_context 'API v3 Store'
 
   let!(:usa) { Spree::Country.by_iso('US') }
-  let!(:california) { Spree::State.find_by(abbr: 'CA', country: usa) || create(:state, country: usa, name: 'California', abbr: 'CA') }
-  let!(:new_york) { Spree::State.find_by(abbr: 'NY', country: usa) || create(:state, country: usa, name: 'New York', abbr: 'NY') }
+  let!(:california) { Spree::State.resolve(usa.iso, 'CA') }
+  let!(:new_york) { Spree::State.resolve(usa.iso, 'NY') }
   let!(:germany) { Spree::Country.by_iso('DE') }
 
   let!(:na_market) do
@@ -122,7 +122,9 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
       data = JSON.parse(response.body)
       expect(data['states']).to be_an(Array)
       state_abbrs = data['states'].map { |s| s['abbr'] }
-      expect(state_abbrs).to match_array(['CA', 'NY'])
+      # Subdivisions are reference data now, so the country carries its full
+      # ISO list rather than only what a spec happened to seed.
+      expect(state_abbrs).to include('CA', 'NY')
     end
   end
 

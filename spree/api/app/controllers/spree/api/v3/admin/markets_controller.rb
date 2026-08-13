@@ -24,7 +24,7 @@ module Spree
           end
 
           def collection_includes
-            [:countries]
+            [:market_countries]
           end
 
           def permitted_params
