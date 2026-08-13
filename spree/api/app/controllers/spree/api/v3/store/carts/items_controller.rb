@@ -33,24 +33,28 @@ module Spree
               with_order_lock do
                 @line_item = @cart.line_items.find_by_prefix_id!(params[:id])
 
-                @line_item.metadata = @line_item.metadata.merge(permitted_params[:metadata].to_h) if permitted_params[:metadata].present?
-
                 if permitted_params[:quantity].present?
-                  workflow = Spree.cart_upsert_items_workflow.new
-                  result = workflow.call(
+                  result = Spree.cart_upsert_items_workflow.call(
                     cart: @cart,
-                    items: [{ variant_id: @line_item.variant_id, quantity: permitted_params[:quantity] }]
+                    items: [{
+                      variant_id: @line_item.variant_id,
+                      quantity: permitted_params[:quantity],
+                      metadata: permitted_params[:metadata]
+                    }]
                   )
 
                   if result.success?
-                    render_cart(warnings: workflow.warnings)
+                    render_cart
                   else
                     render_result_error(result)
                   end
-                elsif @line_item.changed?
-                  @line_item.save!
-                  render_cart
                 else
+                  # Metadata-only edit — no quantity change, so no item rules
+                  # to run and nothing for the cart to recalculate.
+                  if permitted_params[:metadata].present?
+                    @line_item.update!(metadata: @line_item.metadata.merge(permitted_params[:metadata].to_h))
+                  end
+
                   render_cart
                 end
               end
@@ -61,14 +65,13 @@ module Spree
               with_order_lock do
                 @line_item = @cart.line_items.find_by_prefix_id!(params[:id])
 
-                workflow = Spree.cart_upsert_items_workflow.new
-                result = workflow.call(
+                result = Spree.cart_upsert_items_workflow.call(
                   cart: @cart,
                   items: [{ variant_id: @line_item.variant_id, quantity: 0 }]
                 )
 
                 if result.success?
-                  render_cart(warnings: workflow.warnings)
+                  render_cart
                 else
                   render_result_error(result)
                 end

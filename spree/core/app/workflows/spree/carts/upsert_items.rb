@@ -44,7 +44,14 @@ module Spree
           run_hooks :after_items_upserted
         end
 
-        success(cart.reload)
+        # Warnings ride on the cart itself — the same channel the
+        # out-of-stock sweep uses — so they reach the serializer without
+        # every caller forwarding them by hand. Set after the reload, which
+        # would otherwise drop them.
+        cart.reload
+        cart.warnings |= warnings.map(&:to_h) if warnings.any?
+
+        success(cart)
       end
 
       private
