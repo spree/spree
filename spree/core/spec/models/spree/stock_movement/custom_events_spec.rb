@@ -23,13 +23,13 @@ RSpec.describe Spree::StockMovement::CustomEvents do
     end
 
     it 'publishes product.out_of_stock when product goes out of stock' do
-      stock_level.stock_movements.create!(quantity: -10)
+      stock_level.stock_movements.create!(quantity: -10, kind: 'received')
 
       expect(Spree::Events).to have_received(:publish).with('product.out_of_stock', anything, anything)
     end
 
     it 'does not publish when product still has stock' do
-      stock_level.stock_movements.create!(quantity: -5)
+      stock_level.stock_movements.create!(quantity: -5, kind: 'received')
 
       expect(Spree::Events).not_to have_received(:publish).with('product.out_of_stock', anything, anything)
     end
@@ -45,7 +45,7 @@ RSpec.describe Spree::StockMovement::CustomEvents do
       allow(Spree::Events).to receive(:publish)
 
       # Add some stock (this triggers back_in_stock, not out_of_stock)
-      stock_level.stock_movements.create!(quantity: 1)
+      stock_level.stock_movements.create!(quantity: 1, kind: 'received')
 
       expect(Spree::Events).not_to have_received(:publish).with('product.out_of_stock', anything, anything)
     end
@@ -57,7 +57,7 @@ RSpec.describe Spree::StockMovement::CustomEvents do
     end
 
     it 'publishes product.back_in_stock when product comes back in stock' do
-      stock_level.stock_movements.create!(quantity: 10)
+      stock_level.stock_movements.create!(quantity: 10, kind: 'received')
 
       expect(Spree::Events).to have_received(:publish).with('product.back_in_stock', anything, anything)
     end
@@ -65,7 +65,7 @@ RSpec.describe Spree::StockMovement::CustomEvents do
     it 'does not publish when product was already in stock' do
       stock_level.set_count_on_hand(5)
 
-      stock_level.stock_movements.create!(quantity: 10)
+      stock_level.stock_movements.create!(quantity: 10, kind: 'received')
 
       expect(Spree::Events).not_to have_received(:publish).with('product.back_in_stock', anything, anything)
     end
@@ -78,7 +78,7 @@ RSpec.describe Spree::StockMovement::CustomEvents do
     end
 
     it 'does not publish any events' do
-      stock_level.stock_movements.create!(quantity: -10)
+      stock_level.stock_movements.create!(quantity: -10, kind: 'received')
 
       expect(Spree::Events).not_to have_received(:publish).with('product.out_of_stock', anything, anything)
     end

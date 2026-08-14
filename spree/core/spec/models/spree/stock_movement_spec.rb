@@ -15,6 +15,12 @@ describe Spree::StockMovement, type: :model do
   end
 
   describe 'Constants' do
+    describe 'KINDS' do
+      it 'names every movement kind' do
+        expect(described_class::KINDS).to eq(%w[received allocated shipped released adjusted])
+      end
+    end
+
     describe 'QUANTITY_LIMITS[:max]' do
       it 'return 2**31 - 1' do
         expect(Spree::StockMovement::QUANTITY_LIMITS[:max]).to eq(2**31 - 1)
@@ -29,19 +35,47 @@ describe Spree::StockMovement, type: :model do
   end
 
   describe 'validations' do
-    it "does not allow quantity that is less than the stock item's count on hand" do
-      stock_level = create(:stock_level, backorderable: false)
-      stock_movement = build(:stock_movement, quantity: -11, stock_level: stock_level)
+    let(:stock_level) { create(:stock_level, backorderable: false) }
 
-      expect(stock_movement).to be_invalid
-      expect(stock_movement.errors[:quantity]).to include('must be greater than or equal to -10')
+    it 'requires a kind' do
+      movement = build(:stock_movement, kind: nil, stock_level: stock_level)
+
+      expect(movement).to be_invalid
+      expect(movement.errors[:kind]).to be_present
     end
 
-    it 'allows the negative quantity for a backorderable stock item' do
-      stock_level = create(:stock_level, adjust_count_on_hand: false, backorderable: true)
-      stock_movement = build(:stock_movement, quantity: -1, stock_level: stock_level)
+    it 'rejects an unknown kind' do
+      movement = build(:stock_movement, kind: 'sold', stock_level: stock_level)
 
-      expect(stock_movement).to be_valid
+      expect(movement).to be_invalid
+      expect(movement.errors[:kind]).to be_present
+    end
+
+    it 'rejects a zero quantity' do
+      movement = build(:stock_movement, quantity: 0, stock_level: stock_level)
+
+      expect(movement).to be_invalid
+      expect(movement.errors[:quantity]).to be_present
+    end
+
+    it 'requires a reason for an adjustment' do
+      movement = build(:stock_movement, kind: 'adjusted', reason: nil, stock_level: stock_level)
+
+      expect(movement).to be_invalid
+      expect(movement.errors[:reason]).to be_present
+
+      movement.reason = 'Cycle count'
+      expect(movement).to be_valid
+    end
+
+    it 'does not require a reason for any other kind' do
+      expect(build(:stock_movement, kind: 'received', reason: nil, stock_level: stock_level)).to be_valid
+    end
+
+    # The old min_quantity guard is gone: how far below zero a level may go is
+    # decided by the kind applying the change, not by the movement's size.
+    it 'allows a quantity larger than the count on hand' do
+      expect(build(:stock_movement, quantity: -11, stock_level: stock_level)).to be_valid
     end
   end
 
@@ -52,11 +86,39 @@ describe Spree::StockMovement, type: :model do
           to eq Spree::StockMovement.unscoped.order(created_at: :desc).to_sql
       end
     end
+
+    describe 'kind scopes' do
+      let(:stock_level) { create(:stock_level) }
+      let!(:received) { create(:stock_movement, kind: 'received', quantity: 1, stock_level: stock_level) }
+      let!(:allocated) { create(:stock_movement, kind: 'allocated', quantity: 1, stock_level: stock_level) }
+
+      it 'filters by kind' do
+        expect(described_class.received).to contain_exactly(received)
+        expect(described_class.allocated).to contain_exactly(allocated)
+        expect(described_class.shipped).to be_empty
+      end
+
+      it 'answers the matching predicate' do
+        expect(received).to be_received
+        expect(received).not_to be_allocated
+      end
+    end
   end
 
   describe 'whitelisted ransackable attributes' do
-    it 'returns amount attribute' do
-      expect(Spree::StockMovement.whitelisted_ransackable_attributes).to eq(%w[quantity action created_at stock_level_id originator_type])
+    it 'exposes the kind and every cause key' do
+      expect(Spree::StockMovement.whitelisted_ransackable_attributes).to eq(
+        %w[quantity kind reason created_at stock_level_id order_id fulfillment_id return_id
+           exchange_id stock_transfer_id]
+      )
+    end
+  end
+
+  describe '.default_adjustment_reason' do
+    it 'resolves in English whatever locale is active' do
+      I18n.with_locale(:de) do
+        expect(described_class.default_adjustment_reason).to eq('Manual adjustment')
+      end
     end
   end
 
@@ -81,7 +143,7 @@ describe Spree::StockMovement, type: :model do
       end
     end
 
-    describe '#update_stock_level_quantity' do
+    describe '#apply_to_stock_level' do
       context 'when track inventory levels is false' do
         before do
           stub_store_preferences(track_inventory_levels: false)
@@ -115,7 +177,7 @@ describe Spree::StockMovement, type: :model do
           stock_level.reload
         end
 
-        it 'decrements the stock item count on hand' do
+        it 'decrements the stock level count on hand' do
           expect(stock_level.count_on_hand).to eq(9)
         end
       end
@@ -127,8 +189,80 @@ describe Spree::StockMovement, type: :model do
           stock_level.reload
         end
 
-        it 'increments the stock item count on hand' do
+        it 'increments the stock level count on hand' do
           expect(stock_level.count_on_hand).to eq(11)
+        end
+      end
+
+      context 'allocated' do
+        it 'raises allocated_count and leaves count_on_hand alone' do
+          create(:stock_movement, kind: 'allocated', quantity: 3, stock_level: stock_level)
+          stock_level.reload
+
+          expect(stock_level.count_on_hand).to eq(10)
+          expect(stock_level.allocated_count).to eq(3)
+          expect(stock_level.available_count).to eq(7)
+        end
+      end
+
+      context 'released' do
+        it 'gives the promise back' do
+          create(:stock_movement, kind: 'allocated', quantity: 3, stock_level: stock_level)
+          create(:stock_movement, kind: 'released', quantity: 2, stock_level: stock_level)
+          stock_level.reload
+
+          expect(stock_level.count_on_hand).to eq(10)
+          expect(stock_level.allocated_count).to eq(1)
+        end
+
+        it 'never drives allocated_count below zero' do
+          create(:stock_movement, kind: 'released', quantity: 5, stock_level: stock_level)
+
+          expect(stock_level.reload.allocated_count).to eq(0)
+        end
+      end
+
+      context 'shipped' do
+        it 'takes the units off the shelf and retires their allocation' do
+          create(:stock_movement, kind: 'allocated', quantity: 3, stock_level: stock_level)
+          create(:stock_movement, kind: 'shipped', quantity: 3, stock_level: stock_level)
+          stock_level.reload
+
+          expect(stock_level.count_on_hand).to eq(7)
+          expect(stock_level.allocated_count).to eq(0)
+        end
+
+        it 'ships unallocated stock without inventing a negative allocation' do
+          create(:stock_movement, kind: 'shipped', quantity: 2, stock_level: stock_level)
+          stock_level.reload
+
+          expect(stock_level.count_on_hand).to eq(8)
+          expect(stock_level.allocated_count).to eq(0)
+        end
+
+        it 'may leave the shelf negative' do
+          stock_level.update_column(:count_on_hand, 0)
+
+          create(:stock_movement, kind: 'shipped', quantity: 1, stock_level: stock_level)
+
+          expect(stock_level.reload.count_on_hand).to eq(-1)
+        end
+      end
+
+      context 'adjusted' do
+        it 'applies even when the variant stopped tracking inventory' do
+          stock_level.variant.update!(track_inventory: false)
+          stock_level.reload.update_column(:count_on_hand, 10)
+
+          create(:stock_movement, kind: 'adjusted', quantity: -4, reason: 'Cycle count', stock_level: stock_level)
+
+          expect(stock_level.reload.count_on_hand).to eq(6)
+        end
+
+        it 'refuses to drive the shelf below zero' do
+          expect do
+            create(:stock_movement, kind: 'adjusted', quantity: -11, reason: 'Cycle count', stock_level: stock_level)
+          end.to raise_error(ActiveRecord::RecordInvalid)
         end
       end
     end

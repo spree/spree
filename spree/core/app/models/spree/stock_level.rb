@@ -32,11 +32,16 @@ module Spree
     delegate :name, to: :variant, prefix: true
     delegate :product, to: :variant
 
+    # Which movement kind is currently writing count_on_hand, set by
+    # {Spree::StockMovement#apply_to_stock_level} so the non-negative guard
+    # can key off the kind rather than off the variant's backorder settings.
+    attr_accessor :applying_movement_kind
+
     after_save :conditional_variant_touch, if: :saved_changes?
     after_touch { variant.touch }
     after_destroy { variant.touch }
 
-    self.whitelisted_ransackable_attributes = %w[count_on_hand stock_location_id variant_id]
+    self.whitelisted_ransackable_attributes = %w[count_on_hand allocated_count stock_location_id variant_id]
     self.whitelisted_ransackable_associations = %w[variant stock_location]
 
     scope :with_active_stock_location, -> { joins(:stock_location).merge(Spree::StockLocation.active) }
@@ -56,6 +61,11 @@ module Spree
       Spree::InventoryUnit.backordered_for_stock_level(self)
     end
 
+    # @api private
+    # Physical stock changes through movements only — call a
+    # {Spree::StockLocation} verb rather than this, so the change leaves an
+    # audit row. Keeps the locked read-modify-write that
+    # {#process_backorders} needs the delta for.
     def adjust_count_on_hand(value)
       with_lock do
         set_count_on_hand(count_on_hand + value)
@@ -69,8 +79,10 @@ module Spree
       save!
     end
 
+    # Units that are physically here and not already promised to a placed
+    # order — what a customer can still buy from this level.
     def in_stock?
-      count_on_hand > 0
+      available_count.positive?
     end
 
     # Tells whether it's available to be included in a shipment
@@ -78,22 +90,35 @@ module Spree
       in_stock? || backorderable?
     end
 
-    # Units already allocated to pending shipments at this stock item.
+    # Promised units go up and down atomically: two fulfillments allocating
+    # the same level concurrently must not read each other's value first, and
+    # neither counter update needs the delta that count_on_hand's locked path
+    # exists for.
     #
-    # Always returns 0 in Spree 5.5. The 6.0 Typed Stock Movements plan
-    # (see docs/plans/6.0-typed-stock-movements.md) adds an indexed
-    # `allocated_count` column updated by typed movements (`allocated`,
-    # `released`, `shipped`); the Rails column accessor then takes
-    # precedence over this method automatically.
-    #
-    # @return [Integer]
-    def allocated_count
-      0
+    # @param value [Integer] signed change
+    # @return [void]
+    def adjust_allocated_count(value)
+      value.negative? ? decrement!(:allocated_count, value.abs) : increment!(:allocated_count, value)
     end
 
-    # Physical stock minus allocated units at this stock item. Distinct from
+    # Withdraws up to +units+ of promise. Only a promise that exists can be
+    # withdrawn — stock that leaves without ever having been allocated (a
+    # stock transfer, or a fulfillment created before typed movements) must
+    # not drive the counter below zero, which would make the level look more
+    # available than it is.
+    #
+    # @param units [Integer]
+    # @return [void]
+    def release_allocated_count(units)
+      withdrawn = [units.abs, allocated_count].min
+      return if withdrawn.zero?
+
+      adjust_allocated_count(-withdrawn)
+    end
+
+    # Physical stock minus allocated units at this stock level. Distinct from
     # {Spree::Stock::Quantifier#available_stock}, which sums this across all
-    # stock items belonging to a variant.
+    # stock levels belonging to a variant.
     #
     # @return [Integer]
     def available_count
@@ -106,9 +131,14 @@ module Spree
 
     private
 
+    # A shelf can only be driven below zero by goods physically leaving, and
+    # then it means Spree never saw those goods arrive — a receiving gap that
+    # heals itself when the missing `received` movement lands. Every other
+    # writer, a correction above all, is stopped: a hand-typed count below
+    # zero is a typo, not a fact.
     def verify_count_on_hand?
-      count_on_hand_changed? && !backorderable? && !variant.preorder? &&
-        (count_on_hand < count_on_hand_was) && (count_on_hand < 0)
+      count_on_hand_changed? && count_on_hand.negative? &&
+        count_on_hand < count_on_hand_was && applying_movement_kind != 'shipped'
     end
 
     # Process backorders based on amount of stock received

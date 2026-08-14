@@ -1554,6 +1554,9 @@ en:
     stock_levels: Stock Levels
     stock_location: Stock Location
     stock_locations: Stock Locations
+    stock_movement:
+      reasons:
+        manual_adjustment: Manual adjustment
     stock_movements: Stock Movements
     stock_transfer:
       errors:
