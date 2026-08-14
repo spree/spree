@@ -39,6 +39,31 @@ RSpec.describe Spree::Api::V3::Admin::StockLevelsController, type: :controller d
       expect(stock_level.reload.count_on_hand).to eq(42)
     end
 
+    # The correction goes in the stock history like every other change, and
+    # what it records is the delta — the column follows from it.
+    it 'records the edit as an adjustment carrying the delta' do
+      count_before = stock_level.count_on_hand
+
+      patch :update, params: { id: stock_level.prefixed_id, count_on_hand: 42 }, as: :json
+
+      movement = stock_level.stock_movements.adjusted.last
+      expect(movement.kind).to eq('adjusted')
+      expect(movement.quantity).to eq(42 - count_before)
+    end
+
+    it 'labels an unlabelled correction in English' do
+      patch :update, params: { id: stock_level.prefixed_id, count_on_hand: 42 }, as: :json
+
+      expect(stock_level.stock_movements.adjusted.last.reason).to eq('Manual adjustment')
+    end
+
+    it 'rejects a negative count' do
+      patch :update, params: { id: stock_level.prefixed_id, count_on_hand: -1 }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(stock_level.reload.count_on_hand).not_to eq(-1)
+    end
+
     it 'toggles backorderable' do
       patch :update, params: { id: stock_level.prefixed_id, backorderable: true }, as: :json
 

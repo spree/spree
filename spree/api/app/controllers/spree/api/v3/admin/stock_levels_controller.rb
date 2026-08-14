@@ -8,7 +8,37 @@ module Spree
         class StockLevelsController < ResourceController
           scoped_resource :stock
 
+          # PATCH /api/v3/admin/stock_levels/:id
+          #
+          # A count edit is a correction, so it is written as an `adjusted`
+          # movement rather than straight onto the column — that is what puts
+          # it in the stock history beside every other change. The rest of the
+          # payload updates normally.
+          def update
+            attributes = permitted_params.to_h
+            new_count = attributes.delete('count_on_hand')
+            reason = attributes.delete('reason').presence || Spree::StockMovement.default_adjustment_reason
+
+            ActiveRecord::Base.transaction do
+              @resource.update!(attributes) if attributes.any?
+              adjust_count_on_hand(new_count, reason) unless new_count.nil?
+            end
+
+            render json: serialize_resource(@resource.reload)
+          rescue ActiveRecord::RecordInvalid => e
+            render_errors(e.record.errors)
+          end
+
           protected
+
+          # The movement carries the delta, not the new count — it records what
+          # changed, and the column follows from it.
+          def adjust_count_on_hand(new_count, reason)
+            delta = new_count.to_i - @resource.count_on_hand
+            return if delta.zero?
+
+            @resource.stock_location.adjust(@resource.variant, delta, reason: reason)
+          end
 
           def model_class
             Spree::StockLevel

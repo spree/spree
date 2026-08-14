@@ -612,12 +612,31 @@ module Spree
     # @param backorderable [Boolean] the backorderable flag
     # @param stock_location [Spree::StockLocation] the stock location (defaults to store default)
     # @return [void]
+    # Sets the count at a location. The correction goes through an `adjusted`
+    # movement so it shows up in the stock history like every other change.
+    #
+    # @param count_on_hand [Integer] the count the level should end up at
+    # @param backorderable [Boolean, nil]
+    # @param stock_location [Spree::StockLocation, nil] defaults to the store's
+    # @return [void]
     def set_stock(count_on_hand, backorderable = nil, stock_location = nil)
       stock_location ||= default_stock_location
       stock_level = stock_levels.find_or_initialize_by(stock_location: stock_location)
-      stock_level.count_on_hand = count_on_hand
       stock_level.backorderable = backorderable if backorderable.present?
-      stock_level.save! if persisted?
+
+      # Nothing is saved yet, so the count rides on the in-memory record and
+      # the autosave association persists it with the variant.
+      unless persisted?
+        stock_level.count_on_hand = count_on_hand
+        return
+      end
+
+      stock_level.save! if stock_level.changed?
+
+      delta = count_on_hand.to_i - stock_level.count_on_hand.to_i
+      return if delta.zero?
+
+      stock_location.adjust(self, delta, reason: Spree::StockMovement.default_adjustment_reason)
     end
 
     def default_stock_location
@@ -805,11 +824,20 @@ module Spree
       Spree::Store.current.default_stock_location.set_up_stock_level(self)
     end
 
+    # Turning tracking off writes the remaining stock away. That is a stock
+    # decision, so it goes in the log like any other correction rather than
+    # disappearing through update_all.
     def handle_track_inventory_change
       return unless track_inventory_previously_changed?
       return if track_inventory
 
-      stock_levels.update_all(count_on_hand: 0, updated_at: Time.current)
+      stock_levels.reload.each do |stock_level|
+        next if stock_level.count_on_hand.zero?
+
+        stock_level.stock_location.adjust(
+          self, -stock_level.count_on_hand, reason: Spree::StockMovement.default_adjustment_reason
+        )
+      end
     end
 
     def increment_product_variant_count

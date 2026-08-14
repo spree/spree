@@ -188,6 +188,31 @@ describe Spree::Variant, type: :model do
     end
   end
 
+  describe '#set_stock' do
+    let!(:variant) { create(:variant) }
+    let(:stock_location) { variant.stock_levels.first.stock_location }
+    let(:stock_level) { variant.stock_levels.first }
+
+    it 'writes the difference as an adjustment with the default reason' do
+      count_before = stock_level.count_on_hand
+
+      expect { variant.set_stock(25, nil, stock_location) }.
+        to change { stock_level.reload.count_on_hand }.to(25)
+
+      movement = stock_level.stock_movements.adjusted.last
+      expect(movement).to have_attributes(kind: 'adjusted', quantity: 25 - count_before, reason: 'Manual adjustment')
+    end
+
+    it 'writes nothing when the count is unchanged' do
+      expect { variant.set_stock(stock_level.count_on_hand, nil, stock_location) }.
+        not_to change { stock_level.stock_movements.count }
+    end
+
+    it 'refuses a negative count' do
+      expect { variant.set_stock(-1, nil, stock_location) }.to raise_error(ActiveRecord::RecordInvalid)
+    end
+  end
+
   describe 'after_update_commit :handle_track_inventory_change' do
     let!(:product) { create(:product) }
 
@@ -197,8 +222,17 @@ describe Spree::Variant, type: :model do
       let!(:variant) { create(:variant, product: product, track_inventory: true) }
       let!(:stock_level) { create(:stock_level, variant: variant, count_on_hand: 100) }
 
-      it 'updates stock item count on hand to 0' do
+      it 'updates stock level count on hand to 0' do
         expect { subject }.to change { stock_level.reload.count_on_hand }.from(110).to(0)
+      end
+
+      # Writing the stock away is a stock decision, so it belongs in the log
+      # rather than disappearing through a bulk column update.
+      it 'records the write-off as an adjustment' do
+        subject
+
+        movement = stock_level.stock_movements.adjusted.last
+        expect(movement).to have_attributes(quantity: -110, reason: 'Manual adjustment')
       end
     end
 
