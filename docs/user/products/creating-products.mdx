@@ -168,24 +168,11 @@ If your shipping methods rely on product size or weight, this section is critica
   You can change the default unit system (metric vs imperial) in **Settings → Store Details → Standards & Formats**.
 </Note>
 
-## Properties
+## Product Metafields
 
-![](/docs/images/user/products/create-a-product/20.properties.png)
+Product Metafields let you add custom data fields to a product beyond Spree's built-in fields — useful for technical specs, care instructions, supplier notes, or anything else specific to your catalog. For example, a clothing product might have a **Material** metafield set to "100% Organic Cotton," or an electronics product might have a **Voltage** metafield set to "110–240V."
 
-Use properties to highlight key details about the product. These appear on the PDP and are often used to help shoppers compare items.
-
-Common property examples:
-
-- **Material:** 100% Organic Cotton
-- **Fit:** Regular
-- **Care:** Machine wash cold
-- **Allergens:** Contains nuts
-
-These are optional, but recommended for apparel, food, and beauty products especially.
-
-<Note>
-  You can add or manage properties under **Products → Properties**.
-</Note>
+See [<u>Product Metafields</u>](/user/manage-products/product-metafields) to learn how to create metafield definitions and add values to your products.
 
 ## Tax
 
@@ -211,18 +198,23 @@ Click **Edit** to modify:
 
 ## Digital Products
 
-If you're selling a downloadable file (PDF, ZIP, audio, video, software, license key, etc.), configure the product as digital so the storefront can deliver the file after purchase and skip the shipping step at checkout.
+If you assign the **Digital** shipping category to a product, no physical fulfilment is required — but you'll also need to upload the file customers will receive after purchase.
 
-To create a digital product:
+Digital assets can be any downloadable file, most commonly:
 
-1. Create the product as described above and fill in the **Name**, **Description**, **Media**, and **Pricing** sections.
-2. In the **Shipping** section, set **Shipping Category** to a digital category (for example, **Digital** or **Digital Delivery**). When a cart contains only items in a digital shipping category, checkout skips the shipping step.
-3. In the **Tax** section, assign a tax category appropriate for digital goods (for example, **Downloadable Goods**).
-4. Save the product, then open its variant (or the master variant if the product has no options) and upload the file(s) to attach to that variant. Each digital file is associated with a specific variant.
+- **PDFs** — ebooks, guides, certificates
+- **ZIP archives** — software, templates, sample packs
+- **Audio and video files** — courses, music, video content
+- **License or activation keys** — delivered as a text file
 
-<Note>
-  Shipping and tax categories are managed in **Settings → Shipping** and **Settings → Tax**. If a "Digital" or "Downloadable Goods" category isn't listed yet, create it there first.
-</Note>
+Once purchased, customers can access their digital files from the order confirmation page, a link in their confirmation email, or their **My Account** dashboard.
+
+To upload a digital asset:
+
+1. In the product editor, click the *three-dot** menu in the top-right corner.
+2. Select **Digital Assets** to open the digital assets management screen.
+3. Click **New Digital Asset** to open the upload form.
+4. Upload the file. If the product has multiple variants, also select which variant the asset should attach to.
 
 ### Download access and limits
 
