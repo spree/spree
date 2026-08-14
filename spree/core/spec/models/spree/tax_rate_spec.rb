@@ -71,11 +71,12 @@ describe Spree::TaxRate, type: :model do
       end
     end
 
-    # A state code that belongs to another country is no longer rejected on
-    # write — with codes there is no Country row to check it against. It simply
-    # never matches an address, which is what the mismatch always meant.
+    # Writes reject a state code from another country; a stored one — left by
+    # registry drift — simply never matches an address, which is what the
+    # mismatch always meant.
     it 'never matches when the state code belongs to another country' do
-      create(:tax_rate, country_iso: 'FR', state_code: berlin&.abbr, tax_category: tax_category)
+      rate = create(:tax_rate, country_iso: 'FR', tax_category: tax_category)
+      rate.update_columns(state_code: berlin&.abbr)
 
       expect(described_class.for_address(german_address)).to be_empty
     end

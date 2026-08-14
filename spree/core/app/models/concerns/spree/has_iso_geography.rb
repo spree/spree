@@ -30,6 +30,18 @@ module Spree
           Spree::Country.by_iso(country_iso) if country_iso.present?
         end
 
+        # A code nothing recognises is rejected rather than stored: every
+        # consumer matches codes verbatim, so a bad one silently matches
+        # nothing. Gated on change so historical rows stay updatable even if
+        # the registry's curation shifts under them.
+        validate :country_iso_must_resolve, if: -> { new_record? || will_save_change_to_country_iso? }
+        define_method(:country_iso_must_resolve) do
+          return if country_iso.blank?
+
+          errors.add(:country_iso, :invalid) if Spree::Country.by_iso(country_iso).nil?
+        end
+        private :country_iso_must_resolve
+
         return unless state
 
         normalizes :state_code, with: UPCASE
@@ -42,6 +54,21 @@ module Spree
         define_method(:state) do
           Spree::State.resolve(country_iso, state_code) if country_iso.present? && state_code.present?
         end
+
+        # A subdivision code is only meaningful within its country, so it is
+        # checked against the country's own list (retired codes resolve
+        # through their successors). Without a country there is nothing to
+        # check against — the code is left alone.
+        validate :state_code_must_resolve,
+                 if: -> { new_record? || will_save_change_to_state_code? || will_save_change_to_country_iso? }
+        define_method(:state_code_must_resolve) do
+          return if state_code.blank? || country_iso.blank?
+          # An unresolvable country already got its own error.
+          return if Spree::Country.by_iso(country_iso).nil?
+
+          errors.add(:state_code, :invalid) if Spree::IsoData.subdivision_code(country_iso, state_code).nil?
+        end
+        private :state_code_must_resolve
       end
     end
   end

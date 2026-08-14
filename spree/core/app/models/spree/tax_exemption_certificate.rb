@@ -37,9 +37,8 @@ module Spree
 
     # Where the certificate holds, as codes: a blank country_iso claims every
     # country, and a country with no state_code claims all of its states.
-    # Upcased on the way in, and unknown codes are kept as entered — a code
-    # nothing recognises must narrow the certificate to nothing, never widen it
-    # to everywhere, which is what resolving it to a nil country used to do.
+    # New writes reject unknown codes; a stored one that stops resolving still
+    # narrows the certificate to nothing, never widens it to everywhere.
     has_iso_geography
 
     # Expiry is decided here rather than persisted: the date is the fact, and a

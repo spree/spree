@@ -30,7 +30,6 @@ module Spree
     validates :country_iso, presence: true, if: -> { member_type.in?(MEMBER_TYPES) }
     validates :state_code, presence: true, if: -> { member_type == 'state' }
     validate :postal_definition, if: -> { member_type == 'postal_code' }
-    validate :geography_resolvable
 
     # @param address [Spree::Address]
     # @return [Boolean] whether the address falls inside this member
@@ -58,16 +57,13 @@ module Spree
       country_iso.present? && address.country_iso == country_iso
     end
 
+    # An unresolvable code is left in place for the geography validation to
+    # report, rather than nilled into a less telling presence error.
     def resolve_geography
       return if state_code.blank? || country_iso.blank?
 
-      self.state_code = Spree::IsoData.subdivision_code(country_iso, state_code)
-    end
-
-    # Stored values are normalized on assignment, so matching compares
-    # normalized against normalized.
-    def geography_resolvable
-      errors.add(:country_iso, :invalid) if country_iso.present? && Spree::Country.by_iso(country_iso).nil?
+      resolved = Spree::IsoData.subdivision_code(country_iso, state_code)
+      self.state_code = resolved if resolved
     end
 
     def postal_match?(zipcode)
