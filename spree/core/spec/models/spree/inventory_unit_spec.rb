@@ -56,8 +56,10 @@ describe Spree::InventoryUnit, type: :model do
       unit.tap(&:save!)
     end
 
+    # A shelf below zero is legacy fixture state now — only a departure may
+    # write one — so it is set on the column directly.
     before do
-      stock_level.set_count_on_hand(-2)
+      stock_level.update_column(:count_on_hand, -2)
     end
 
     # Regression for #3066

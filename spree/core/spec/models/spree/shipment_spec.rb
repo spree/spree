@@ -653,14 +653,14 @@ describe Spree::Shipment, type: :model do
       expect(shipment.status).to eq 'canceled'
     end
 
-    # Restocking belongs to Spree::Fulfillments::Cancel now; the deprecated
-    # shell is all that survives on the model. Covered by
+    # Withdrawing the promise belongs to Spree::Fulfillments::Cancel now; the
+    # deprecated shell is all that survives on the model. Covered by
     # spec/workflows/spree/fulfillments/cancel_spec.rb.
-    it 'restocks the items through the deprecated shell' do
+    it 'releases the items through the deprecated shell' do
       allow(shipment).to receive(:fulfillment_items).and_return([inventory_unit])
       allow(shipment).to receive(:provider).and_return(instance_double(Spree::FulfillmentProvider::Manual, cancel_fulfillment: true))
       shipment.stock_location = create(:stock_location)
-      expect(shipment.stock_location).to receive(:restock).with(variant, 1, shipment)
+      expect(shipment.stock_location).to receive(:release).with(variant, 1, shipment)
       shipment.after_cancel
     end
 
@@ -707,20 +707,20 @@ describe Spree::Shipment, type: :model do
       expect(shipment.reload.status).to eq 'unfulfilled'
     end
 
-    it 'unstocks them items' do
+    it 're-promises the items' do
       allow(shipment).to receive(:fulfillment_items).and_return([inventory_unit])
       shipment.stock_location = create(:stock_location)
-      expect(shipment.stock_location).to receive(:unstock).with(variant, 1, shipment)
+      expect(shipment.stock_location).to receive(:allocate).with(variant, 1, shipment)
       shipment.after_resume
     end
 
     context 'for a shipment item that does not track inventory' do
       before { variant.update(track_inventory: false) }
 
-      it 'skips unstocking the shipment item' do
+      it 'skips allocating the shipment item' do
         allow(shipment).to receive(:fulfillment_items).and_return([inventory_unit])
         shipment.stock_location = create(:stock_location)
-        expect(shipment.stock_location).not_to receive(:unstock)
+        expect(shipment.stock_location).not_to receive(:allocate)
         shipment.after_resume
       end
     end

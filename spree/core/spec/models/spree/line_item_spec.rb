@@ -164,7 +164,9 @@ describe Spree::LineItem, type: :model do
       expect(line_item.reload.inventory_units.sum(&:quantity)).to eq(2)
     end
 
-    it 'decrements stock for a tracked digital variant' do
+    # Adding to a placed order promises stock rather than moving it; the
+    # shelf empties when the parcel does.
+    it 'allocates stock for a tracked digital variant' do
       second_licence = create(:product, delivery_profile: digital_profile, store: store).default_variant
       second_licence.update!(track_inventory: true)
       stock_level = second_licence.stock_levels.first
@@ -172,7 +174,9 @@ describe Spree::LineItem, type: :model do
 
       expect {
         create(:line_item, order: order, variant: second_licence, quantity: 2)
-      }.to change { stock_level.reload.count_on_hand }.from(5).to(3)
+      }.to change { stock_level.reload.allocated_count }.from(0).to(2)
+
+      expect(stock_level.reload.count_on_hand).to eq(5)
     end
   end
 

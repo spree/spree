@@ -96,7 +96,10 @@ RSpec.describe 'Pre-order', type: :model do
       end
 
       it 'is not purchasable once the limit is used up' do
-        stock_level.set_count_on_hand(-5) # 5 units already oversold
+        # An oversell lives in allocated_count now, not in a negative shelf.
+        # The signed arithmetic is identical: on hand minus allocated is -5
+        # either way.
+        stock_level.update_columns(count_on_hand: 0, allocated_count: 5)
         expect(quantifier.can_supply?(1)).to be false
         expect(variant.purchasable?).to be false
       end
