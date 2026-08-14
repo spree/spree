@@ -302,7 +302,7 @@ module Spree
         [Spree::Collection, Spree::ProductCollection, Spree::CollectionRule]
       })
       register_resource(:stock, group: :catalog, audiences: %i[vendor], subjects: -> {
-        [Spree::StockItem, Spree::StockLocation, Spree::StockMovement,
+        [Spree::StockLevel, Spree::StockLocation, Spree::StockMovement,
          Spree::StockTransfer, Spree::StockReservation]
       })
 

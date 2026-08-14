@@ -1047,7 +1047,7 @@ describe Spree::Shipment, type: :model do
     let(:variant) { order.line_items.first.variant }
 
     before do
-      perform_enqueued_jobs(only: Spree::StockLocations::StockItems::CreateJob)
+      perform_enqueued_jobs(only: Spree::StockLocations::StockLevels::CreateJob)
       shipping_method = order.fulfillments.first.shipping_method
       shipping_method.calculator.preferences[:amount] = order.fulfillments.first.cost
       shipping_method.calculator.save!

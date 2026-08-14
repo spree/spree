@@ -28,7 +28,7 @@ FactoryBot.define do
 
     after(:create) do |variant, evaluator|
       if evaluator.create_stock
-        existing_location_ids = variant.stock_items.pluck(:stock_location_id)
+        existing_location_ids = variant.stock_levels.pluck(:stock_location_id)
         Spree::StockLocation.where.not(id: existing_location_ids).find_each do |stock_location|
           stock_location.propagate_variant(variant)
         end

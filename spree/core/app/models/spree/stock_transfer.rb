@@ -12,7 +12,7 @@ module Spree
     has_many :stock_movements, as: :originator
     accepts_nested_attributes_for :stock_movements, reject_if: proc { |attributes|
       attributes[:quantity] = attributes[:quantity].to_i
-      attributes[:quantity].blank? || attributes[:quantity].zero? || attributes[:stock_item_id].blank?
+      attributes[:quantity].blank? || attributes[:quantity].zero? || attributes[:stock_level_id].blank?
     }
 
     belongs_to :source_location, class_name: 'StockLocation', optional: true
@@ -74,7 +74,7 @@ module Spree
     private
 
     def find_stock_location_with_location_id(location_id)
-      stock_movements.joins(:stock_item).where('spree_stock_items.stock_location_id' => location_id)
+      stock_movements.joins(:stock_level).where('spree_stock_levels.stock_location_id' => location_id)
     end
 
     def source_location_is_not_destination_location
@@ -92,7 +92,7 @@ module Spree
     def variants_available_in_source_location?(source_location, variants)
       return true if source_location.nil?
 
-      source_location.stock_items.where(variant: variants.keys).where(Spree::StockItem.arel_table[:count_on_hand].gt(0)).size == variants.keys.size
+      source_location.stock_levels.where(variant: variants.keys).where(Spree::StockLevel.arel_table[:count_on_hand].gt(0)).size == variants.keys.size
     end
   end
 end

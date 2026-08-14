@@ -30,16 +30,16 @@ describe Spree::StockMovement, type: :model do
 
   describe 'validations' do
     it "does not allow quantity that is less than the stock item's count on hand" do
-      stock_item = create(:stock_item, backorderable: false)
-      stock_movement = build(:stock_movement, quantity: -11, stock_item: stock_item)
+      stock_level = create(:stock_level, backorderable: false)
+      stock_movement = build(:stock_movement, quantity: -11, stock_level: stock_level)
 
       expect(stock_movement).to be_invalid
       expect(stock_movement.errors[:quantity]).to include('must be greater than or equal to -10')
     end
 
     it 'allows the negative quantity for a backorderable stock item' do
-      stock_item = create(:stock_item, adjust_count_on_hand: false, backorderable: true)
-      stock_movement = build(:stock_movement, quantity: -1, stock_item: stock_item)
+      stock_level = create(:stock_level, adjust_count_on_hand: false, backorderable: true)
+      stock_movement = build(:stock_movement, quantity: -1, stock_level: stock_level)
 
       expect(stock_movement).to be_valid
     end
@@ -62,19 +62,19 @@ describe Spree::StockMovement, type: :model do
 
   describe 'Instance Methods' do
     let(:stock_location) { create(:stock_location_with_items) }
-    let(:stock_item) { stock_location.stock_items.order(:id).first }
-    let(:stock_movement) { build(:stock_movement, stock_item: stock_item) }
+    let(:stock_level) { stock_location.stock_levels.order(:id).first }
+    let(:stock_movement) { build(:stock_movement, stock_level: stock_level) }
 
     describe '.product' do
-      it { expect(stock_movement.product).to eq(stock_item.variant.product) }
+      it { expect(stock_movement.product).to eq(stock_level.variant.product) }
     end
 
     describe '.variant' do
-      it { expect(stock_movement.variant).to eq(stock_item.variant) }
+      it { expect(stock_movement.variant).to eq(stock_level.variant) }
     end
 
     describe '#readonly?' do
-      let(:stock_movement) { create(:stock_movement, stock_item: stock_item) }
+      let(:stock_movement) { create(:stock_movement, stock_level: stock_level) }
 
       it 'does not update a persisted record' do
         expect { stock_movement.save }.to raise_error(ActiveRecord::ReadOnlyRecord)
@@ -87,24 +87,24 @@ describe Spree::StockMovement, type: :model do
           stub_store_preferences(track_inventory_levels: false)
           stock_movement.quantity = 1
           stock_movement.save
-          stock_item.reload
+          stock_level.reload
         end
 
         it 'does not update count on hand' do
-          expect(stock_item.count_on_hand).to eq(10)
+          expect(stock_level.count_on_hand).to eq(10)
         end
       end
 
       context 'when track inventory tracking is off' do
         before do
-          stock_item.variant.track_inventory = false
+          stock_level.variant.track_inventory = false
           stock_movement.quantity = 1
           stock_movement.save
-          stock_item.reload
+          stock_level.reload
         end
 
         it 'does not update count on hand' do
-          expect(stock_item.count_on_hand).to eq(10)
+          expect(stock_level.count_on_hand).to eq(10)
         end
       end
 
@@ -112,11 +112,11 @@ describe Spree::StockMovement, type: :model do
         before do
           stock_movement.quantity = -1
           stock_movement.save
-          stock_item.reload
+          stock_level.reload
         end
 
         it 'decrements the stock item count on hand' do
-          expect(stock_item.count_on_hand).to eq(9)
+          expect(stock_level.count_on_hand).to eq(9)
         end
       end
 
@@ -124,11 +124,11 @@ describe Spree::StockMovement, type: :model do
         before do
           stock_movement.quantity = 1
           stock_movement.save
-          stock_item.reload
+          stock_level.reload
         end
 
         it 'increments the stock item count on hand' do
-          expect(stock_item.count_on_hand).to eq(11)
+          expect(stock_level.count_on_hand).to eq(11)
         end
       end
     end

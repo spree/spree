@@ -17,9 +17,9 @@ module Spree
 
     it 'puts the units back on the shelf' do
       variant = fulfillment.fulfillment_items.first.variant
-      stock_item = fulfillment.stock_location.stock_item(variant)
+      stock_level = fulfillment.stock_location.stock_level(variant)
 
-      expect { execute }.to change { stock_item.reload.count_on_hand }.by(
+      expect { execute }.to change { stock_level.reload.count_on_hand }.by(
         fulfillment.fulfillment_items.where(variant_id: variant.id).sum(:quantity)
       )
     end

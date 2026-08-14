@@ -2064,13 +2064,13 @@ describe Spree::Order, type: :model do
 
     before do
       create(:line_item, order: order, variant: variant, quantity: 1)
-      variant.stock_items.first.update(count_on_hand: 0, backorderable: true)
+      variant.stock_levels.first.update(count_on_hand: 0, backorderable: true)
 
       create(:line_item, order: order, variant: variant_2, quantity: 1)
-      variant_2.stock_items.first.update(count_on_hand: 1, backorderable: true)
+      variant_2.stock_levels.first.update(count_on_hand: 1, backorderable: true)
 
       create(:line_item, order: order, variant: variant_3, quantity: 1)
-      variant_3.stock_items.first.update(count_on_hand: 0, backorderable: true)
+      variant_3.stock_levels.first.update(count_on_hand: 0, backorderable: true)
     end
 
     it 'returns the backordered variants' do
@@ -2310,7 +2310,7 @@ describe Spree::Order, type: :model do
 
     context 'when an item is out of stock' do
       before do
-        order.line_items.first.variant.stock_items.update_all(count_on_hand: 0, backorderable: false)
+        order.line_items.first.variant.stock_levels.update_all(count_on_hand: 0, backorderable: false)
       end
 
       it 'removes the out of stock item' do

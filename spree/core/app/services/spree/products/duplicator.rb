@@ -46,7 +46,7 @@ module Spree
         new_variant.deleted_at = nil
         new_variant.option_values = variant.option_values.map { |option_value| option_value }
         new_variant.prices = duplicate_prices(variant.prices)
-        new_variant.stock_items = duplicate_stock_items(variant.stock_items)
+        new_variant.stock_levels = duplicate_stock_levels(variant.stock_levels)
 
         variant.images.each { |image| duplicate_image(image, new_variant) } if include_images
 
@@ -62,11 +62,11 @@ module Spree
         end
       end
 
-      def duplicate_stock_items(stock_items)
-        stock_items.map do |stock_item|
-          new_stock_item = stock_item.dup
-          new_stock_item.count_on_hand = 0
-          new_stock_item
+      def duplicate_stock_levels(stock_levels)
+        stock_levels.map do |stock_level|
+          new_stock_level = stock_level.dup
+          new_stock_level.count_on_hand = 0
+          new_stock_level
         end
       end
 

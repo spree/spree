@@ -52,8 +52,8 @@ module Spree
 
       before do
         cart.line_items.each do |cart_line_item|
-          cart_line_item.variant.stock_items.first.update!(backorderable: false)
-          cart_line_item.variant.stock_items.first.set_count_on_hand(10)
+          cart_line_item.variant.stock_levels.first.update!(backorderable: false)
+          cart_line_item.variant.stock_levels.first.set_count_on_hand(10)
         end
       end
 
@@ -63,7 +63,7 @@ module Spree
         it 'reservation for the removed line item is destroyed via dependent: :destroy' do
           create(
             :stock_reservation,
-            stock_item: line_item.variant.stock_items.first,
+            stock_level: line_item.variant.stock_levels.first,
             line_item: line_item,
             cart: cart,
             quantity: line_item.quantity,
@@ -78,7 +78,7 @@ module Spree
         it 'remaining line items get a fresh reservation pass' do
           create(
             :stock_reservation,
-            stock_item: other_line_item.variant.stock_items.first,
+            stock_level: other_line_item.variant.stock_levels.first,
             line_item: other_line_item,
             cart: cart,
             quantity: other_line_item.quantity,
@@ -106,10 +106,10 @@ module Spree
 
         it 'returns failure and rolls back the destroy when re-reservation fails' do
           # Bump the remaining item's quantity above its stock so re-reservation
-          # after the destroy fails. count_on_hand stays > 0 so select_stock_item
+          # after the destroy fails. count_on_hand stays > 0 so select_stock_level
           # still picks the row.
           other_line_item.update_column(:quantity, 5)
-          other_line_item.variant.stock_items.first.set_count_on_hand(2)
+          other_line_item.variant.stock_levels.first.set_count_on_hand(2)
           line_item_count_before = cart.line_items.count
 
           result = subject.call(cart: cart, line_item: line_item)

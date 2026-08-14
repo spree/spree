@@ -10,7 +10,7 @@ module Spree
 
     before do
       [variant, variant2].each do |v|
-        v.stock_items.first.update!(count_on_hand: 10)
+        v.stock_levels.first.update!(count_on_hand: 10)
         store.products << v.product unless store.products.include?(v.product)
       end
     end
@@ -167,7 +167,7 @@ module Spree
         let(:other_variant) { create(:variant) }
 
         before do
-          other_variant.stock_items.first.update!(count_on_hand: 10)
+          other_variant.stock_levels.first.update!(count_on_hand: 10)
           other_store.products << other_variant.product
         end
 
@@ -326,7 +326,7 @@ module Spree
         ]
       end
 
-      before { variant2.stock_items.first.update!(count_on_hand: 1, backorderable: false) }
+      before { variant2.stock_levels.first.update!(count_on_hand: 1, backorderable: false) }
 
       it 'warns and keeps the rest of the batch' do
         workflow = described_class.new

@@ -118,7 +118,7 @@ module Spree
       variants: :default,
       categories: :default,
       collections: :default,
-      stock_location_stock_items: :default,
+      stock_location_stock_levels: :default,
       coupon_codes: :default,
       themes: :default,
       addresses: :default,

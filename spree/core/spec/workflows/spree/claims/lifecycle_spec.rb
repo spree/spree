@@ -78,7 +78,7 @@ RSpec.describe 'Spree::Claims workflows' do
 
     it 'ignores the refund method when the resolution moves no money' do
       replacing = create(:approved_claim, store: store, order: order, send_replacement: true)
-      replacing.claim_line_items.each { |line| line.variant.stock_items.first&.set_count_on_hand(10) }
+      replacing.claim_line_items.each { |line| line.variant.stock_levels.first&.set_count_on_hand(10) }
 
       result = Spree::Claims::Resolve.call(claim: replacing, resolution: 'replacement', refund_method: 'crypto')
 
@@ -103,7 +103,7 @@ RSpec.describe 'Spree::Claims workflows' do
 
     it 'ships a replacement' do
       claim = create(:approved_claim, store: store, order: order, send_replacement: true)
-      claim.claim_line_items.each { |line| line.variant.stock_items.first&.set_count_on_hand(10) }
+      claim.claim_line_items.each { |line| line.variant.stock_levels.first&.set_count_on_hand(10) }
 
       result = Spree::Claims::Resolve.call(claim: claim, resolution: 'replacement')
 

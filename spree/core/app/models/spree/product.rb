@@ -160,7 +160,7 @@ module Spree
 
     has_many :prices, through: :variants
 
-    has_many :stock_items, through: :variants
+    has_many :stock_levels, through: :variants
 
     has_many :line_items, through: :variants
     has_many :orders, through: :line_items
@@ -258,7 +258,7 @@ module Spree
       :variants,
       allow_destroy: true,
       reject_if: lambda do |v|
-        v[:option_value_variants_attributes].blank? && v[:stock_items_attributes].blank? && v[:prices_attributes].blank?
+        v[:option_value_variants_attributes].blank? && v[:stock_levels_attributes].blank? && v[:prices_attributes].blank?
       end
     )
     accepts_nested_attributes_for(
@@ -614,9 +614,15 @@ module Spree
                            if variants.loaded?
                              variants.sum(&:total_on_hand)
                            else
-                             stock_items.loaded? ? stock_items.sum(&:count_on_hand) : stock_items.sum(:count_on_hand)
+                             stock_levels.loaded? ? stock_levels.sum(&:count_on_hand) : stock_levels.sum(:count_on_hand)
                            end
                          end
+    end
+
+    # @deprecated Use {#stock_levels}; removed in 6.1.
+    def stock_items
+      Spree::Deprecation.warn('Spree::Product#stock_items is deprecated and will be removed in Spree 6.1. Use #stock_levels instead.')
+      stock_levels
     end
 
     # @deprecated Use #default_variant — the master variant is being removed in Spree 6.1.

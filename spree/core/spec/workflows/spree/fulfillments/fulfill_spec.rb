@@ -155,10 +155,10 @@ module Spree
 
       it 'takes the units back off the shelf' do
         variant = fulfillment.fulfillment_items.first.variant
-        stock_item = fulfillment.stock_location.stock_item(variant)
+        stock_level = fulfillment.stock_location.stock_level(variant)
 
         expect { subject.call(fulfillment: fulfillment) }.
-          to change { stock_item.reload.count_on_hand }.by(
+          to change { stock_level.reload.count_on_hand }.by(
             -fulfillment.fulfillment_items.where(variant_id: variant.id).sum(:quantity)
           )
         expect(fulfillment.reload).to be_fulfilled
@@ -167,10 +167,10 @@ module Spree
       it 'does not unstock when the fulfillment was open' do
         Spree.fulfillment_resume_workflow.call(fulfillment: fulfillment)
         variant = fulfillment.fulfillment_items.first.variant
-        stock_item = fulfillment.stock_location.stock_item(variant)
+        stock_level = fulfillment.stock_location.stock_level(variant)
 
         expect { subject.call(fulfillment: fulfillment) }.
-          not_to change { stock_item.reload.count_on_hand }
+          not_to change { stock_level.reload.count_on_hand }
       end
     end
 

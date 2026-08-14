@@ -35,7 +35,7 @@ describe Spree::FulfilmentChanger do
 
   before do
     order && desired_shipment
-    variant.stock_items.first.update_column(:count_on_hand, 100)
+    variant.stock_levels.first.update_column(:count_on_hand, 100)
   end
 
   context 'when the order has multiple line items' do
@@ -113,11 +113,11 @@ describe Spree::FulfilmentChanger do
 
     context 'when transferring to another stock location' do
       let(:desired_stock_location) { create(:stock_location) }
-      let!(:stock_item) { desired_stock_location.stock_item_or_create(variant) }
+      let!(:stock_level) { desired_stock_location.stock_level_or_create(variant) }
 
       before do
-        stock_item.set_count_on_hand(desired_count_on_hand)
-        stock_item.update(backorderable: false)
+        stock_level.set_count_on_hand(desired_count_on_hand)
+        stock_level.update(backorderable: false)
       end
 
       context 'when the other stock location has enough stock' do
@@ -145,7 +145,7 @@ describe Spree::FulfilmentChanger do
           end
 
           it 'does not unstock the desired location' do
-            expect { subject }.not_to change(stock_item, :count_on_hand)
+            expect { subject }.not_to change(stock_level, :count_on_hand)
           end
         end
       end
@@ -156,7 +156,7 @@ describe Spree::FulfilmentChanger do
         let(:desired_count_on_hand) { 5 }
 
         before do
-          stock_item.update(backorderable: true)
+          stock_level.update(backorderable: true)
         end
 
         it 'restocks seven at the original stock location' do
@@ -241,21 +241,21 @@ describe Spree::FulfilmentChanger do
         end
 
         context 'when the original shipment had some backordered units' do
-          let(:current_stock_item) { current_shipment.stock_location.stock_item_or_create(variant) }
-          let(:desired_stock_item) { desired_shipment.stock_location.stock_items.find_by(variant: variant) }
+          let(:current_stock_level) { current_shipment.stock_location.stock_level_or_create(variant) }
+          let(:desired_stock_level) { desired_shipment.stock_location.stock_levels.find_by(variant: variant) }
           let(:backordered_units)  { 6 }
 
           before do
             current_shipment.inventory_units.limit(backordered_units).update_all(state: :backordered)
-            current_stock_item.set_count_on_hand(-backordered_units)
+            current_stock_level.set_count_on_hand(-backordered_units)
           end
 
           it 'restocks four at the original stock location' do
-            expect { subject }.to change { current_stock_item.reload.count_on_hand }.from(-backordered_units).to(1)
+            expect { subject }.to change { current_stock_level.reload.count_on_hand }.from(-backordered_units).to(1)
           end
 
           it 'unstocks five at the desired stock location' do
-            expect { subject }.to change { desired_stock_item.reload.count_on_hand }.from(5).to(-2)
+            expect { subject }.to change { desired_stock_level.reload.count_on_hand }.from(5).to(-2)
           end
 
           it 'creates a shipment with the correct number of on hand and backordered units' do
@@ -404,9 +404,9 @@ describe Spree::FulfilmentChanger do
     end
   end
 
-  context 'when stock_item is last on_hand' do
+  context 'when stock_level is last on_hand' do
     before do
-      variant.stock_items.first.update_column(:count_on_hand, 1)
+      variant.stock_levels.first.update_column(:count_on_hand, 1)
     end
 
     let(:current_shipment_inventory_unit_count) { 1 }

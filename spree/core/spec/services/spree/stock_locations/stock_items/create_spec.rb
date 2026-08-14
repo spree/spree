@@ -5,75 +5,21 @@ module Spree
     subject { described_class }
 
     let!(:stock_location) { create(:stock_location_with_items) }
-    let!(:unrelated_variant) { create(:variant) }
-    let(:result) { subject.call(stock_location: stock_location) }
-    let(:stock_location_class) { stock_location.class }
 
-    describe '#call' do
-      let(:time_current) { Time.local(1990) }
+    it 'warns that it has been renamed' do
+      expect(Spree::Deprecation).to receive(:warn).with(/StockLevels::Create/)
 
-      context 'with prepared stock items' do
-        context 'with stock items in the db' do
-          before { Spree::StockItem.find(Spree::StockItem.ids.sample).delete }
+      subject.call(stock_location: stock_location)
+    end
 
-          it 'inserts stock items without duplicates' do
-            expect { result }.to change { stock_location.stock_items.count }.by(1)
-            expect(stock_location.stock_items.count).to eq(Spree::Variant.count)
-          end
-        end
+    # The work itself only happens in the renamed service, so seeing the levels
+    # appear is what proves the shim delegates.
+    it 'still creates the missing stock levels' do
+      allow(Spree::Deprecation).to receive(:warn)
+      stock_location.stock_levels.unscope(:where).delete_all
 
-        context 'without stock items in the db' do
-          before do
-            # Delete all stock_location.stock_items to start counting from 0.
-            stock_location.stock_items.unscope(:where).delete_all
-          end
-
-          let(:created_stock_item) { stock_location.stock_items.find_by(variant_id: unrelated_variant.id) }
-          let(:created_stock_item_attrs) do
-            created_stock_item.attributes.values_at(
-              'stock_location_id', 'variant_id', 'backorderable', 'created_at', 'updated_at'
-            )
-          end
-
-          it 'inserts the stock location stock items' do
-            expect { result }.to change { stock_location.stock_items.count }.from(0).to(4)
-          end
-
-          it 'sets the stock location data necessary for the inserted stock items' do
-            Timecop.freeze(time_current) do
-              result
-              expect(created_stock_item_attrs).to(
-                eq([
-                     stock_location.id,
-                     unrelated_variant.id,
-                     stock_location.backorderable_default,
-                     time_current,
-                     time_current
-                   ])
-              )
-            end
-          end
-
-          it 'invalidates the Variant cache' do
-            expect(Spree::Variant).to receive(:touch_all).once
-            result
-          end
-        end
-      end
-
-      context 'without prepared stock items' do
-        before { Spree::Variant.delete_all }
-
-        it 'does not insert stock items' do
-          expect(stock_location.stock_items).not_to receive(:insert_all)
-          result
-        end
-
-        it 'does not invalidates the Variant cache' do
-          expect(Spree::Variant).not_to receive(:touch_all)
-          result
-        end
-      end
+      expect { subject.call(stock_location: stock_location) }.
+        to change { stock_location.stock_levels.count }.from(0).to(Spree::Variant.count)
     end
   end
 end

@@ -24,7 +24,7 @@ RSpec.describe Spree::Products::Duplicator do
     new_image.save!
 
     product.default_variant.update!(barcode: '1234567890')
-    product.default_variant.stock_items.last.update!(count_on_hand: 100, backorderable: true)
+    product.default_variant.stock_levels.last.update!(count_on_hand: 100, backorderable: true)
   end
 
   it { is_expected.to be_success }
@@ -120,8 +120,8 @@ RSpec.describe Spree::Products::Duplicator do
     let(:new_product) { duplicate.value }
 
     before do
-      variant1.stock_items.last.update!(count_on_hand: 100, backorderable: true)
-      variant2.stock_items.last.update!(count_on_hand: 200, backorderable: false)
+      variant1.stock_levels.last.update!(count_on_hand: 100, backorderable: true)
+      variant2.stock_levels.last.update!(count_on_hand: 200, backorderable: false)
     end
 
     it 'duplicates the variants' do

@@ -47,13 +47,13 @@ describe Spree::Store, type: :model, without_global_store: true do
 
         it { expect(subject.variants).to eq([product.default_variant, variant]) }
 
-        describe '#stock_items' do
-          let!(:stock_items) { product.stock_items }
-          let!(:stock_items_2) { product_2.stock_items }
+        describe '#stock_levels' do
+          let!(:stock_levels) { product.stock_levels }
+          let!(:stock_levels_2) { product_2.stock_levels }
 
-          it { expect(stock_items).not_to be_empty }
-          it { expect(stock_items_2).not_to be_empty }
-          it { expect(subject.stock_items).to eq(stock_items) }
+          it { expect(stock_levels).not_to be_empty }
+          it { expect(stock_levels_2).not_to be_empty }
+          it { expect(subject.stock_levels).to eq(stock_levels) }
         end
       end
     end

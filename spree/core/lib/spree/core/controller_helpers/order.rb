@@ -166,10 +166,10 @@ module Spree
           variant_includes = [
             :images,
             :prices,
-            :stock_items,
+            :stock_levels,
             :stock_locations,
             { option_values: :option_type },
-            { stock_items: :stock_location },
+            { stock_levels: :stock_location },
             { product: :default_variant }
           ]
 

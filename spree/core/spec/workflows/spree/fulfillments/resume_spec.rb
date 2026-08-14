@@ -19,9 +19,9 @@ module Spree
 
     it 'takes the units back off the shelf' do
       variant = fulfillment.fulfillment_items.first.variant
-      stock_item = fulfillment.stock_location.stock_item(variant)
+      stock_level = fulfillment.stock_location.stock_level(variant)
 
-      expect { execute }.to change { stock_item.reload.count_on_hand }.by(
+      expect { execute }.to change { stock_level.reload.count_on_hand }.by(
         -fulfillment.fulfillment_items.where(variant_id: variant.id).sum(:quantity)
       )
     end
@@ -43,9 +43,9 @@ module Spree
         Spree.hooks.register('fulfillments.resume.validate') { |flow| flow.reject!('stock sold on') }
 
         variant = fulfillment.fulfillment_items.first.variant
-        stock_item = fulfillment.stock_location.stock_item(variant)
+        stock_level = fulfillment.stock_location.stock_level(variant)
 
-        expect { execute }.not_to change { stock_item.reload.count_on_hand }
+        expect { execute }.not_to change { stock_level.reload.count_on_hand }
         expect(fulfillment.reload).to be_canceled
       end
 

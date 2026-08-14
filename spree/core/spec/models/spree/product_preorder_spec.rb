@@ -8,7 +8,7 @@ RSpec.describe 'Pre-order', type: :model do
   let(:store) { @default_store }
   let(:product) { create(:product, status: 'active') }
   let(:variant) { create(:variant, product: product, price: 20) }
-  let(:stock_item) { variant.stock_items.first }
+  let(:stock_level) { variant.stock_levels.first }
 
   def quantifier
     Spree::Stock::Quantifier.new(variant)
@@ -51,7 +51,7 @@ RSpec.describe 'Pre-order', type: :model do
   describe 'pre-order does not bypass the product status' do
     it 'cannot supply an archived product even when the variant is preorderable' do
       variant.update!(preorderable: true)
-      stock_item.set_count_on_hand(5)
+      stock_level.set_count_on_hand(5)
       product.update!(status: 'archived')
       expect(quantifier.can_supply?(1)).to be false
     end
@@ -61,8 +61,8 @@ RSpec.describe 'Pre-order', type: :model do
   # variant may sell, whether the oversell is a backorder or a pre-order.
   describe 'backorder_limit' do
     before do
-      stock_item.update!(backorderable: false)
-      stock_item.set_count_on_hand(0)
+      stock_level.update!(backorderable: false)
+      stock_level.set_count_on_hand(0)
     end
 
     context 'pre-order with no backorder_limit (empty = unlimited)' do
@@ -90,13 +90,13 @@ RSpec.describe 'Pre-order', type: :model do
       end
 
       it 'combines on-hand stock with the limit' do
-        stock_item.set_count_on_hand(2)
+        stock_level.set_count_on_hand(2)
         expect(quantifier.can_supply?(7)).to be true
         expect(quantifier.can_supply?(8)).to be false
       end
 
       it 'is not purchasable once the limit is used up' do
-        stock_item.set_count_on_hand(-5) # 5 units already oversold
+        stock_level.set_count_on_hand(-5) # 5 units already oversold
         expect(quantifier.can_supply?(1)).to be false
         expect(variant.purchasable?).to be false
       end
@@ -104,7 +104,7 @@ RSpec.describe 'Pre-order', type: :model do
 
     # The limit is universal — it caps a plain backorder too, not just pre-orders.
     context 'plain backorder (not a pre-order)' do
-      before { stock_item.update!(backorderable: true) }
+      before { stock_level.update!(backorderable: true) }
 
       it 'caps the backorder at the limit' do
         variant.update!(backorder_limit: 3)
@@ -141,12 +141,12 @@ RSpec.describe 'Pre-order', type: :model do
   # units, exactly like backorders, so process_backorders can fill them when
   # stock arrives.
   describe 'fulfillment (StockLocation#fill_status)' do
-    let(:stock_location) { stock_item.stock_location }
+    let(:stock_location) { stock_level.stock_location }
 
     before do
       variant.update!(preorderable: true, backorder_limit: 5)
-      stock_item.update!(backorderable: false)
-      stock_item.set_count_on_hand(2)
+      stock_level.update!(backorderable: false)
+      stock_level.set_count_on_hand(2)
     end
 
     it 'backorders the shortfall for a pre-order variant' do
@@ -167,8 +167,8 @@ RSpec.describe 'Pre-order', type: :model do
 
     before do
       variant.update!(preorderable: true, backorder_limit: 5)
-      stock_item.update!(backorderable: false)
-      stock_item.set_count_on_hand(0)
+      stock_level.update!(backorderable: false)
+      stock_level.set_count_on_hand(0)
       publication.update!(published_at: 2.months.from_now) # not yet published
       product.product_publications.reset
     end

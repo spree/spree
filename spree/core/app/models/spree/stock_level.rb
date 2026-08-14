@@ -11,7 +11,7 @@ module Spree
 
     publishes_lifecycle_events
 
-    with_options inverse_of: :stock_items do
+    with_options inverse_of: :stock_levels do
       belongs_to :stock_location, class_name: 'Spree::StockLocation'
       belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant'
     end
@@ -53,7 +53,7 @@ module Spree
     }
 
     def backordered_inventory_units
-      Spree::InventoryUnit.backordered_for_stock_item(self)
+      Spree::InventoryUnit.backordered_for_stock_level(self)
     end
 
     def adjust_count_on_hand(value)

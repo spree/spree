@@ -8,8 +8,8 @@ FactoryBot.define do
     end
 
     # Build the order first (with at least one line_item), then derive
-    # stock_item from that line_item's variant so the three FKs reference the
-    # same variant. Callers can override stock_item:/line_item:/order: to wire
+    # stock_level from that line_item's variant so the three FKs reference the
+    # same variant. Callers can override stock_level:/line_item:/order: to wire
     # up a specific scenario.
     after(:build) do |reservation, evaluator|
       if reservation.owner.nil?
@@ -23,8 +23,8 @@ FactoryBot.define do
         owner.line_items.reload
       end
 
-      reservation.stock_item ||= reservation.line_item.variant.stock_items.first ||
-                                 create(:stock_item, variant: reservation.line_item.variant)
+      reservation.stock_level ||= reservation.line_item.variant.stock_levels.first ||
+                                 create(:stock_level, variant: reservation.line_item.variant)
     end
 
     trait :expired do

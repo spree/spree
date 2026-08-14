@@ -173,7 +173,7 @@ module Spree
       context 'variant does not have the desired quantity' do
         let(:execute) { subject.call(cart: cart, variant: variant, quantity: 10) }
 
-        before { variant.stock_items.first.update backorderable: false }
+        before { variant.stock_levels.first.update backorderable: false }
 
         it 'fails without adding a line item' do
           expect(execute).to be_failure
@@ -201,8 +201,8 @@ module Spree
 
       before do
         # No stock; the backorder_limit is the cap (not backorderable).
-        variant.stock_items.first.update!(backorderable: false)
-        variant.stock_items.first.set_count_on_hand(0)
+        variant.stock_levels.first.update!(backorderable: false)
+        variant.stock_levels.first.set_count_on_hand(0)
         variant.update!(preorderable: true, backorder_limit: 5)
 
         # Scheduled to publish later — embargoed unless preorderable.
@@ -236,7 +236,7 @@ module Spree
         before do
           # Plenty of stock so the publish embargo is the only rejection cause.
           variant.update!(preorderable: false)
-          variant.stock_items.first.set_count_on_hand(10)
+          variant.stock_levels.first.set_count_on_hand(10)
         end
 
         it 'is rejected because the product is not yet published' do
@@ -277,8 +277,8 @@ module Spree
       let(:variant) { create(:variant, price: 20) }
 
       before do
-        variant.stock_items.first.update!(backorderable: false)
-        variant.stock_items.first.set_count_on_hand(10)
+        variant.stock_levels.first.update!(backorderable: false)
+        variant.stock_levels.first.set_count_on_hand(10)
       end
 
       context 'when the cart is mid-checkout' do
@@ -290,7 +290,7 @@ module Spree
         end
 
         it 'fails when adding more than available and rolls back the line item' do
-          variant.stock_items.first.set_count_on_hand(0)
+          variant.stock_levels.first.set_count_on_hand(0)
 
           result = subject.call(cart: cart, variant: variant, quantity: 1)
 
@@ -324,7 +324,7 @@ module Spree
 
         before do
           variant.update!(preorderable: true, backorder_limit: 5)
-          variant.stock_items.first.set_count_on_hand(2)
+          variant.stock_levels.first.set_count_on_hand(2)
         end
 
         it 'skips reservation and accepts quantities beyond on-hand stock' do

@@ -109,8 +109,8 @@ module Spree
       let(:variant2) { create(:variant) }
 
       before do
-        variant.stock_items.first.update!(count_on_hand: 10)
-        variant2.stock_items.first.update!(count_on_hand: 10)
+        variant.stock_levels.first.update!(count_on_hand: 10)
+        variant2.stock_levels.first.update!(count_on_hand: 10)
         store.products << variant.product unless store.products.include?(variant.product)
         store.products << variant2.product unless store.products.include?(variant2.product)
       end
@@ -137,7 +137,7 @@ module Spree
       let(:variant) { create(:variant) }
 
       before do
-        variant.stock_items.first.update!(count_on_hand: 10)
+        variant.stock_levels.first.update!(count_on_hand: 10)
         store.products << variant.product unless store.products.include?(variant.product)
       end
 

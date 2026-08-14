@@ -64,24 +64,24 @@ RSpec.describe 'Spree::Exchanges workflows' do
 
     it 'receives and restocks the returned variant' do
       line = exchange.exchange_line_items.first
-      stock_item = exchange.stock_location.stock_item_or_create(line.original_variant)
+      stock_level = exchange.stock_location.stock_level_or_create(line.original_variant)
 
       expect { Spree::Exchanges::Receive.call(exchange: exchange) }.
-        to change { stock_item.reload.count_on_hand }.by(line.quantity)
+        to change { stock_level.reload.count_on_hand }.by(line.quantity)
 
       expect(exchange.reload).to be_received
     end
 
     it 'does not restock what came back damaged' do
       line = exchange.exchange_line_items.first
-      stock_item = exchange.stock_location.stock_item_or_create(line.original_variant)
+      stock_level = exchange.stock_location.stock_level_or_create(line.original_variant)
 
       Spree::Exchanges::Receive.call(
         exchange: exchange,
         items: [{ exchange_line_item: line, quantity: 1, resellable: false }]
       )
 
-      expect(stock_item.reload.count_on_hand).to eq(stock_item.count_on_hand)
+      expect(stock_level.reload.count_on_hand).to eq(stock_level.count_on_hand)
       expect(line.reload.resellable).to be(false)
     end
   end
@@ -97,7 +97,7 @@ RSpec.describe 'Spree::Exchanges workflows' do
 
     it 'creates a replacement fulfillment and marks it fulfilled' do
       exchange.exchange_line_items.each do |line|
-        line.new_variant.stock_items.first&.set_count_on_hand(10)
+        line.new_variant.stock_levels.first&.set_count_on_hand(10)
       end
 
       result = Spree::Exchanges::Fulfill.call(exchange: exchange)
@@ -112,7 +112,7 @@ RSpec.describe 'Spree::Exchanges workflows' do
     context 'when the replacement is cheaper, so a credit is due' do
       let(:cheap_exchange) do
         exchange.exchange_line_items.each do |line|
-          line.new_variant.stock_items.first&.set_count_on_hand(10)
+          line.new_variant.stock_levels.first&.set_count_on_hand(10)
           line.new_variant.prices.first&.update!(amount: 1)
         end
         exchange

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::StockLevel, type: :model do
-  subject { stock_location.stock_items.order(:id).first }
+  subject { stock_location.stock_levels.order(:id).first }
 
   let(:stock_location) { create(:stock_location_with_items) }
 
@@ -273,15 +273,15 @@ describe Spree::StockLevel, type: :model do
 
     it 'recreates stock item just fine' do
       expect do
-        stock_location.stock_items.create!(variant: subject.variant)
+        stock_location.stock_levels.create!(variant: subject.variant)
       end.not_to raise_error
     end
 
     it 'doesnt allow recreating more than one stock item at once' do
-      stock_location.stock_items.create!(variant: subject.variant)
+      stock_location.stock_levels.create!(variant: subject.variant)
 
       expect do
-        stock_location.stock_items.create!(variant: subject.variant)
+        stock_location.stock_levels.create!(variant: subject.variant)
       end.to raise_error(StandardError)
     end
   end
@@ -540,18 +540,18 @@ describe Spree::StockLevel, type: :model do
 
   describe 'scopes' do
     context '.with_active_stock_location' do
-      let(:stock_items_with_active_location) { Spree::StockLevel.with_active_stock_location }
+      let(:stock_levels_with_active_location) { Spree::StockLevel.with_active_stock_location }
 
       context 'when stock location is active' do
         before { stock_location.update_column(:active, true) }
 
-        it { expect(stock_items_with_active_location).to include(subject) }
+        it { expect(stock_levels_with_active_location).to include(subject) }
       end
 
       context 'when stock location is inactive' do
         before { stock_location.update_column(:active, false) }
 
-        it { expect(stock_items_with_active_location).not_to include(subject) }
+        it { expect(stock_levels_with_active_location).not_to include(subject) }
       end
     end
 
@@ -562,10 +562,10 @@ describe Spree::StockLevel, type: :model do
       let(:product_in_other_store) { create(:product, store: other_store) }
 
       let!(:in_store_item) do
-        create(:stock_item, variant: product_in_store.default_variant, stock_location: stock_location)
+        create(:stock_level, variant: product_in_store.default_variant, stock_location: stock_location)
       end
       let!(:other_store_item) do
-        create(:stock_item, variant: product_in_other_store.default_variant, stock_location: stock_location)
+        create(:stock_level, variant: product_in_other_store.default_variant, stock_location: stock_location)
       end
 
       it 'returns stock items for variants of products owned by the store' do

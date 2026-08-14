@@ -28,8 +28,8 @@ FactoryBot.define do
         product_1 = create(:product)
         product_2 = create(:product)
 
-        stock_location.stock_item_or_create(product_1.default_variant).adjust_count_on_hand(10)
-        stock_location.stock_item_or_create(product_2.default_variant).adjust_count_on_hand(20)
+        stock_location.stock_level_or_create(product_1.default_variant).adjust_count_on_hand(10)
+        stock_location.stock_level_or_create(product_2.default_variant).adjust_count_on_hand(20)
       end
     end
   end

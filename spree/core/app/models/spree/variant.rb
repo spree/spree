@@ -36,12 +36,12 @@ module Spree
     with_options inverse_of: :variant do
       has_many :fulfillment_items, class_name: 'Spree::FulfillmentItem'
       has_many :line_items
-      has_many :stock_items, class_name: 'Spree::StockLevel', dependent: :destroy, autosave: true
+      has_many :stock_levels, class_name: 'Spree::StockLevel', dependent: :destroy, autosave: true
     end
     has_many :inventory_units, class_name: 'Spree::FulfillmentItem', inverse_of: :variant, deprecated: true
 
     has_many :orders, through: :line_items
-    with_options through: :stock_items do
+    with_options through: :stock_levels do
       has_many :stock_locations
       has_many :stock_movements
       has_many :stock_reservations
@@ -91,17 +91,17 @@ module Spree
     validates :hs_code, format: { with: /\A\d{6,13}\z/ }, allow_blank: true
     validates :country_of_origin, format: { with: /\A[A-Z]{2}\z/ }, allow_blank: true
 
-    after_create :create_stock_items
+    after_create :create_stock_levels
     after_commit :clear_line_items_cache, on: :update
 
-    after_save :create_default_stock_item, unless: :track_inventory?
+    after_save :create_default_stock_level, unless: :track_inventory?
     after_update_commit :handle_track_inventory_change
 
     after_create :increment_product_variant_count
     after_destroy :decrement_product_variant_count
 
-    scope :in_stock, -> { left_joins(:stock_items).where("#{Spree::Variant.table_name}.track_inventory = ? OR #{Spree::StockLevel.table_name}.count_on_hand > ?", false, 0) }
-    scope :backorderable, -> { left_joins(:stock_items).where(Spree::StockLevel.table_name => { backorderable: true }) }
+    scope :in_stock, -> { left_joins(:stock_levels).where("#{Spree::Variant.table_name}.track_inventory = ? OR #{Spree::StockLevel.table_name}.count_on_hand > ?", false, 0) }
+    scope :backorderable, -> { left_joins(:stock_levels).where(Spree::StockLevel.table_name => { backorderable: true }) }
     scope :in_stock_or_backorderable, -> { in_stock.or(backorderable) }
 
     scope :eligible, -> { all }
@@ -172,7 +172,7 @@ module Spree
     end
 
     accepts_nested_attributes_for(
-      :stock_items,
+      :stock_levels,
       reject_if: ->(attributes) { attributes['stock_location_id'].blank? || attributes['count_on_hand'].blank? },
       allow_destroy: false
     )
@@ -513,22 +513,40 @@ module Spree
     # Syncs stock items from an array of hashes.
     # Upserts stock for listed locations, soft-deletes stock items for unlisted locations.
     # On new records, defers to after_create callback.
-    # @param stock_items_params [Array<Hash>] array of { stock_location_id:, count_on_hand:, backorderable: }
+    # @param stock_levels_params [Array<Hash>] array of { stock_location_id:, count_on_hand:, backorderable: }
     # @return [void]
-    def stock_items=(stock_items_params)
-      return super if stock_items_params.blank? || stock_items_params.first.is_a?(Spree::StockItem)
+    def stock_levels=(stock_levels_params)
+      return super if stock_levels_params.blank? || stock_levels_params.first.is_a?(Spree::StockLevel)
 
       location_ids_in_payload = []
 
-      stock_items_params.each do |stock_data|
+      stock_levels_params.each do |stock_data|
         stock_data = stock_data.to_h.with_indifferent_access
         location = Spree::StockLocation.find_by_param(stock_data[:stock_location_id])
         location_ids_in_payload << location.id
         set_stock(stock_data[:count_on_hand], stock_data[:backorderable], location)
       end
 
-      # Soft-delete stock items for locations not in the payload
-      stock_items.where.not(stock_location_id: location_ids_in_payload).destroy_all if persisted?
+      # Soft-delete stock levels for locations not in the payload
+      stock_levels.where.not(stock_location_id: location_ids_in_payload).destroy_all if persisted?
+    end
+
+    # @deprecated Use {#stock_levels}; removed in 6.1.
+    def stock_items
+      Spree::Deprecation.warn('Spree::Variant#stock_items is deprecated and will be removed in Spree 6.1. Use #stock_levels instead.')
+      stock_levels
+    end
+
+    # @deprecated Use {#stock_levels=}; removed in 6.1.
+    def stock_items=(value)
+      Spree::Deprecation.warn('Spree::Variant#stock_items= is deprecated and will be removed in Spree 6.1. Use #stock_levels= instead.')
+      self.stock_levels = value
+    end
+
+    # @deprecated Use +stock_levels_attributes=+; removed in 6.1.
+    def stock_items_attributes=(value)
+      Spree::Deprecation.warn('Spree::Variant#stock_items_attributes= is deprecated and will be removed in Spree 6.1. Use #stock_levels_attributes= instead.')
+      self.stock_levels_attributes = value
     end
 
     # Sets the base price (global price, not for a price list) for the given currency.
@@ -596,10 +614,10 @@ module Spree
     # @return [void]
     def set_stock(count_on_hand, backorderable = nil, stock_location = nil)
       stock_location ||= default_stock_location
-      stock_item = stock_items.find_or_initialize_by(stock_location: stock_location)
-      stock_item.count_on_hand = count_on_hand
-      stock_item.backorderable = backorderable if backorderable.present?
-      stock_item.save! if persisted?
+      stock_level = stock_levels.find_or_initialize_by(stock_location: stock_location)
+      stock_level.count_on_hand = count_on_hand
+      stock_level.backorderable = backorderable if backorderable.present?
+      stock_level.save! if persisted?
     end
 
     def default_stock_location
@@ -712,7 +730,7 @@ module Spree
     end
 
     def backordered?
-      @backordered ||= !in_stock? && stock_items.exists?(backorderable: true)
+      @backordered ||= !in_stock? && stock_levels.exists?(backorderable: true)
     end
 
     # Is this variant purely digital? (no physical product)
@@ -766,7 +784,7 @@ module Spree
 
     # Only the product's own store's locations — a new variant must not grow
     # stock items in every other store's warehouses.
-    def create_stock_items
+    def create_stock_levels
       locations = product&.store ? product.store.stock_locations : StockLocation.all
       locations.where(propagate_all_variants: true).each do |stock_location|
         stock_location.propagate_variant(self)
@@ -781,17 +799,17 @@ module Spree
       line_items.update_all(updated_at: Time.current)
     end
 
-    def create_default_stock_item
-      return if stock_items.any?
+    def create_default_stock_level
+      return if stock_levels.any?
 
-      Spree::Store.current.default_stock_location.set_up_stock_item(self)
+      Spree::Store.current.default_stock_location.set_up_stock_level(self)
     end
 
     def handle_track_inventory_change
       return unless track_inventory_previously_changed?
       return if track_inventory
 
-      stock_items.update_all(count_on_hand: 0, updated_at: Time.current)
+      stock_levels.update_all(count_on_hand: 0, updated_at: Time.current)
     end
 
     def increment_product_variant_count

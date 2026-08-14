@@ -167,12 +167,12 @@ describe Spree::LineItem, type: :model do
     it 'decrements stock for a tracked digital variant' do
       second_licence = create(:product, delivery_profile: digital_profile, store: store).default_variant
       second_licence.update!(track_inventory: true)
-      stock_item = second_licence.stock_items.first
-      stock_item.set_count_on_hand(5)
+      stock_level = second_licence.stock_levels.first
+      stock_level.set_count_on_hand(5)
 
       expect {
         create(:line_item, order: order, variant: second_licence, quantity: 2)
-      }.to change { stock_item.reload.count_on_hand }.from(5).to(3)
+      }.to change { stock_level.reload.count_on_hand }.from(5).to(3)
     end
   end
 
@@ -411,7 +411,7 @@ describe Spree::LineItem, type: :model do
 
     context 'nothing left on stock' do
       before do
-        variant.stock_items.update_all count_on_hand: 5, backorderable: false
+        variant.stock_levels.update_all count_on_hand: 5, backorderable: false
         Spree::Orders::AddItem.call(order: order, variant: variant, quantity: 5)
         order.rebuild_fulfillments!
         order.finalize!
@@ -440,7 +440,7 @@ describe Spree::LineItem, type: :model do
 
     context '2 items left on stock' do
       before do
-        variant.stock_items.update_all count_on_hand: 7, backorderable: false
+        variant.stock_levels.update_all count_on_hand: 7, backorderable: false
         Spree::Orders::AddItem.call(order: order, variant: variant, quantity: 5)
         order.rebuild_fulfillments!
         order.finalize!

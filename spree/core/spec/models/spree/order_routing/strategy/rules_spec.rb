@@ -17,7 +17,7 @@ RSpec.describe Spree::OrderRouting::Strategy::Rules, type: :model do
 
   before do
     [default_loc, preferred_loc].each do |loc|
-      loc.stock_item_or_create(variant).update!(count_on_hand: 10)
+      loc.stock_level_or_create(variant).update!(count_on_hand: 10)
     end
   end
 

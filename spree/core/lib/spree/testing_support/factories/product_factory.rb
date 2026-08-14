@@ -44,7 +44,7 @@ FactoryBot.define do
       create(:stock_location) unless Spree::StockLocation.any?
     end
     after(:create) do |product, evaluator|
-      existing_location_ids = product.default_variant.stock_items.pluck(:stock_location_id)
+      existing_location_ids = product.default_variant.stock_levels.pluck(:stock_location_id)
       Spree::StockLocation.where.not(id: existing_location_ids).find_each do |stock_location|
         stock_location.propagate_variant(product.default_variant)
       end
@@ -81,12 +81,12 @@ FactoryBot.define do
 
       factory :product_in_stock do
         after :create do |product|
-          product.default_variant.stock_items.first.adjust_count_on_hand(10)
+          product.default_variant.stock_levels.first.adjust_count_on_hand(10)
         end
 
         trait :without_backorder do
           after :create do |product|
-            product.default_variant.stock_items.update_all(backorderable: false)
+            product.default_variant.stock_levels.update_all(backorderable: false)
           end
         end
       end

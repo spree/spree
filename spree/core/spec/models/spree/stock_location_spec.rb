@@ -4,24 +4,24 @@ module Spree
   describe StockLocation, type: :model do
     subject { create(:stock_location_with_items, backorderable_default: true) }
 
-    let(:stock_item) { subject.stock_items.order(:id).first }
-    let(:variant) { stock_item.variant }
+    let(:stock_level) { subject.stock_levels.order(:id).first }
+    let(:variant) { stock_level.variant }
 
     context 'handling the stock items creation after create' do
       let!(:variant) { create(:variant) }
 
       before do
-        Spree::StockItem.delete_all
+        Spree::StockLevel.delete_all
         described_class.delete_all
       end
 
-      it 'creates stock_items for all variants' do
+      it 'creates stock_levels for all variants' do
         expect do
           perform_enqueued_jobs { create(:stock_location, propagate_all_variants: true) }
         end.to(
           change { Variant.count }.by(0).and(
             change { described_class.count }.from(0).to(1).and(
-              change { StockItem.count }.from(0).to(2)
+              change { StockLevel.count }.from(0).to(2)
             )
           )
         )
@@ -42,38 +42,38 @@ module Spree
         context 'set up' do
           it 'creates stock item' do
             expect(subject).to receive(:propagate_variant)
-            subject.set_up_stock_item(variant)
+            subject.set_up_stock_level(variant)
           end
 
           context 'stock item exists' do
-            let!(:stock_item) { subject.propagate_variant(variant) }
+            let!(:stock_level) { subject.propagate_variant(variant) }
 
             it 'returns existing stock item' do
-              expect(subject.set_up_stock_item(variant)).to eq(stock_item)
+              expect(subject.set_up_stock_level(variant)).to eq(stock_level)
             end
           end
         end
 
         context 'propagate variants' do
-          let(:stock_item) { subject.propagate_variant(variant) }
+          let(:stock_level) { subject.propagate_variant(variant) }
 
           it 'creates a new stock item' do
             expect do
               subject.propagate_variant(variant)
-            end.to change(StockItem, :count).by(1)
+            end.to change(StockLevel, :count).by(1)
           end
 
           context 'passes backorderable default config' do
             context 'true' do
               before { subject.backorderable_default = true }
 
-              it { expect(stock_item.backorderable).to be true }
+              it { expect(stock_level.backorderable).to be true }
             end
 
             context 'false' do
               before { subject.backorderable_default = false }
 
-              it { expect(stock_item.backorderable).to be false }
+              it { expect(stock_level.backorderable).to be false }
             end
           end
         end
@@ -85,8 +85,8 @@ module Spree
             before { subject.propagate_all_variants = true }
 
             specify do
-              expect(subject).to receive(:create_stock_items).and_call_original
-              expect(Spree::StockLocations::StockItems::CreateJob).to(
+              expect(subject).to receive(:create_stock_levels).and_call_original
+              expect(Spree::StockLocations::StockLevels::CreateJob).to(
                 receive(:perform_later).once.with(subject)
               )
               subject.save!
@@ -97,7 +97,7 @@ module Spree
             before { subject.propagate_all_variants = false }
 
             specify do
-              expect(subject).not_to receive(:create_stock_items)
+              expect(subject).not_to receive(:create_stock_levels)
               subject.save!
             end
           end
@@ -105,59 +105,59 @@ module Spree
       end
     end
 
-    it 'finds a stock_item for a variant' do
-      stock_item = subject.stock_item(variant)
-      expect(stock_item.count_on_hand).to eq 10
+    it 'finds a stock_level for a variant' do
+      stock_level = subject.stock_level(variant)
+      expect(stock_level.count_on_hand).to eq 10
     end
 
-    it 'finds a stock_item for a variant by id' do
-      stock_item = subject.stock_item(variant.id)
-      expect(stock_item.variant).to eq variant
+    it 'finds a stock_level for a variant by id' do
+      stock_level = subject.stock_level(variant.id)
+      expect(stock_level.variant).to eq variant
     end
 
-    it 'returns nil when stock_item is not found for variant' do
+    it 'returns nil when stock_level is not found for variant' do
       variant_id = variant.id + 1000
-      stock_item = subject.stock_item(variant_id)
-      expect(stock_item).to be_nil
+      stock_level = subject.stock_level(variant_id)
+      expect(stock_level).to be_nil
     end
 
-    describe '#stock_item_or_create' do
+    describe '#stock_level_or_create' do
       context 'without stock item' do
         let!(:variant) { create(:variant) }
 
-        before { variant.stock_items.delete_all }
+        before { variant.stock_levels.delete_all }
 
         context 'variant instance passed' do
-          it 'creates a stock_item if not found for a variant' do
-            stock_item = subject.stock_item_or_create(variant)
-            expect(stock_item.variant).to eq variant
+          it 'creates a stock_level if not found for a variant' do
+            stock_level = subject.stock_level_or_create(variant)
+            expect(stock_level.variant).to eq variant
           end
 
-          it { expect { subject.stock_item_or_create(variant) }.to change(Spree::StockItem, :count) }
+          it { expect { subject.stock_level_or_create(variant) }.to change(Spree::StockLevel, :count) }
         end
 
         context 'variant ID passed' do
-          it 'creates a stock_item if not found for a variant' do
-            stock_item = subject.stock_item_or_create(variant.id)
-            expect(stock_item.variant).to eq variant
+          it 'creates a stock_level if not found for a variant' do
+            stock_level = subject.stock_level_or_create(variant.id)
+            expect(stock_level.variant).to eq variant
           end
 
-          it { expect { subject.stock_item_or_create(variant.id) }.to change(Spree::StockItem, :count) }
+          it { expect { subject.stock_level_or_create(variant.id) }.to change(Spree::StockLevel, :count) }
         end
       end
 
       context 'with stock item' do
         let!(:variant) { create(:variant) }
-        let!(:stock_item) { create(:stock_item, variant: variant, stock_location: subject) }
+        let!(:stock_level) { create(:stock_level, variant: variant, stock_location: subject) }
 
         context 'variant instance passed' do
-          it { expect { subject.stock_item_or_create(variant) }.not_to change(Spree::StockItem, :count) }
-          it { expect(subject.stock_item_or_create(variant)).to eq(stock_item) }
+          it { expect { subject.stock_level_or_create(variant) }.not_to change(Spree::StockLevel, :count) }
+          it { expect(subject.stock_level_or_create(variant)).to eq(stock_level) }
         end
 
         context 'variant ID passed' do
-          it { expect { subject.stock_item_or_create(variant.id) }.not_to change(Spree::StockItem, :count) }
-          it { expect(subject.stock_item_or_create(variant.id)).to eq(stock_item) }
+          it { expect { subject.stock_level_or_create(variant.id) }.not_to change(Spree::StockLevel, :count) }
+          it { expect(subject.stock_level_or_create(variant.id)).to eq(stock_level) }
         end
       end
     end
@@ -185,7 +185,7 @@ module Spree
     it 'creates a stock_movement' do
       expect do
         subject.move variant, 5
-      end.to change { subject.stock_movements.where(stock_item_id: stock_item).count }.by(1)
+      end.to change { subject.stock_movements.where(stock_level_id: stock_level).count }.by(1)
     end
 
     it 'can be deactivated' do
@@ -209,9 +209,9 @@ module Spree
     end
 
     context 'fill_status' do
-      let(:zero_stock_item) { subject.stock_items.order(:id).second }
+      let(:zero_stock_level) { subject.stock_levels.order(:id).second }
 
-      before { allow(zero_stock_item).to receive_messages(backorderable?: true, count_on_hand: 0) }
+      before { allow(zero_stock_level).to receive_messages(backorderable?: true, count_on_hand: 0) }
 
       it 'all on_hand with no backordered' do
         on_hand, backordered = subject.fill_status(variant, 5)
@@ -226,7 +226,7 @@ module Spree
       end
 
       it 'zero on_hand with all backordered' do
-        expect(subject).to receive(:stock_item_or_create).with(variant).and_return(zero_stock_item)
+        expect(subject).to receive(:stock_level_or_create).with(variant).and_return(zero_stock_level)
 
         on_hand, backordered = subject.fill_status(variant, 20)
         expect(on_hand).to eq 0
@@ -235,12 +235,12 @@ module Spree
 
       context 'when backordering is not allowed' do
         before do
-          allow(stock_item).to receive_messages backorderable?: false
-          expect(subject).to receive(:stock_item_or_create).with(variant).and_return(stock_item)
+          allow(stock_level).to receive_messages backorderable?: false
+          expect(subject).to receive(:stock_level_or_create).with(variant).and_return(stock_level)
         end
 
         it 'all on_hand' do
-          allow(stock_item).to receive_messages(count_on_hand: 10)
+          allow(stock_level).to receive_messages(count_on_hand: 10)
 
           on_hand, backordered = subject.fill_status(variant, 5)
           expect(on_hand).to eq 5
@@ -248,7 +248,7 @@ module Spree
         end
 
         it 'some on_hand' do
-          allow(stock_item).to receive_messages(count_on_hand: 10)
+          allow(stock_level).to receive_messages(count_on_hand: 10)
 
           on_hand, backordered = subject.fill_status(variant, 20)
           expect(on_hand).to eq 10
@@ -256,7 +256,7 @@ module Spree
         end
 
         it 'zero on_hand' do
-          allow(stock_item).to receive_messages(count_on_hand: 0)
+          allow(stock_level).to receive_messages(count_on_hand: 0)
 
           on_hand, backordered = subject.fill_status(variant, 20)
           expect(on_hand).to eq 0
@@ -264,14 +264,14 @@ module Spree
         end
       end
 
-      context 'without stock_items' do
+      context 'without stock_levels' do
         subject { create(:stock_location) }
 
         let(:variant) { create(:base_variant) }
 
         it 'zero on_hand and one backordered' do
           subject
-          variant.stock_items.delete_all
+          variant.stock_levels.delete_all
           on_hand, backordered = subject.fill_status(variant, 1)
           expect(on_hand).to eq 0
           expect(backordered).to eq 1

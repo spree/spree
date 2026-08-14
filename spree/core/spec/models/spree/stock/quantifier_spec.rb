@@ -11,19 +11,19 @@ end
 module Spree
   module Stock
     describe Quantifier, type: :model do
-      subject { described_class.new(stock_item.variant) }
+      subject { described_class.new(stock_level.variant) }
 
       before(:all) { Spree::StockLocation.delete_all } # FIXME: leaky database
 
       let!(:stock_location) { create :stock_location_with_items }
-      let!(:stock_item) { stock_location.stock_items.order(:id).first }
+      let!(:stock_level) { stock_location.stock_levels.order(:id).first }
 
-      specify { expect(subject.stock_items).to eq([stock_item]) }
-      specify { expect(subject.variant).to eq(stock_item.variant) }
+      specify { expect(subject.stock_levels).to eq([stock_level]) }
+      specify { expect(subject.variant).to eq(stock_level.variant) }
 
       context 'with a single stock location/item' do
-        it 'total_on_hand should match stock_item' do
-          expect(subject.total_on_hand).to eq(stock_item.count_on_hand)
+        it 'total_on_hand should match stock_level' do
+          expect(subject.total_on_hand).to eq(stock_level.count_on_hand)
         end
 
         context 'when variant is available' do
@@ -40,7 +40,7 @@ module Spree
           end
 
           context 'when variant inventory tracking is off' do
-            before { stock_item.variant.track_inventory = false }
+            before { stock_level.variant.track_inventory = false }
 
             specify { expect(subject.total_on_hand).to eq(Float::INFINITY) }
 
@@ -54,7 +54,7 @@ module Spree
           end
 
           context 'when stock item prevents backordering' do
-            before { stock_item.update(backorderable: false) }
+            before { stock_level.update(backorderable: false) }
 
             specify { expect(subject.backorderable?).to be false }
 
@@ -80,12 +80,12 @@ module Spree
         let!(:stock_location_3) { create :stock_location, active: false, propagate_all_variants: true }
 
         before do
-          perform_enqueued_jobs(only: Spree::StockLocations::StockItems::CreateJob)
-          stock_location_2.stock_items.where(variant_id: stock_item.variant).update_all(count_on_hand: 5, backorderable: false)
-          stock_location_3.stock_items.where(variant_id: stock_item.variant).update_all(count_on_hand: 5, backorderable: false)
+          perform_enqueued_jobs(only: Spree::StockLocations::StockLevels::CreateJob)
+          stock_location_2.stock_levels.where(variant_id: stock_level.variant).update_all(count_on_hand: 5, backorderable: false)
+          stock_location_3.stock_levels.where(variant_id: stock_level.variant).update_all(count_on_hand: 5, backorderable: false)
         end
 
-        it 'total_on_hand should total all active stock_items' do
+        it 'total_on_hand should total all active stock_levels' do
           expect(subject.total_on_hand).to eq(15)
         end
 
@@ -101,7 +101,7 @@ module Spree
           end
 
           context 'when all stock items prevent backordering' do
-            before { stock_item.update(backorderable: false) }
+            before { stock_level.update(backorderable: false) }
 
             specify { expect(subject.backorderable?).to be false }
 
@@ -123,10 +123,10 @@ module Spree
       end
 
       context 'with active stock reservations' do
-        before { stock_item.update(backorderable: false) }
+        before { stock_level.update(backorderable: false) }
 
         let(:other_order) { create(:order) }
-        let(:other_line_item) { create(:line_item, order: other_order, variant: stock_item.variant) }
+        let(:other_line_item) { create(:line_item, order: other_order, variant: stock_level.variant) }
 
         context 'when stock_reservations_enabled is true' do
           before { stub_store_preferences(stock_reservations_enabled: true) }
@@ -134,32 +134,32 @@ module Spree
           it 'subtracts active reservations from total_on_hand' do
             create(
               :stock_reservation,
-              stock_item: stock_item,
+              stock_level: stock_level,
               line_item: other_line_item,
               order: other_order,
               quantity: 4,
               expires_at: 5.minutes.from_now
             )
-            expect(subject.total_on_hand).to eq(stock_item.count_on_hand - 4)
+            expect(subject.total_on_hand).to eq(stock_level.count_on_hand - 4)
           end
 
           it 'ignores expired reservations' do
             create(
               :stock_reservation,
               :expired,
-              stock_item: stock_item,
+              stock_level: stock_level,
               line_item: other_line_item,
               order: other_order,
               quantity: 4
             )
-            expect(subject.total_on_hand).to eq(stock_item.count_on_hand)
+            expect(subject.total_on_hand).to eq(stock_level.count_on_hand)
           end
 
           it 'clamps total_on_hand at zero when reservations exceed physical stock' do
-            stock_item.set_count_on_hand(2)
+            stock_level.set_count_on_hand(2)
             create(
               :stock_reservation,
-              stock_item: stock_item,
+              stock_level: stock_level,
               line_item: other_line_item,
               order: other_order,
               quantity: 5,
@@ -171,7 +171,7 @@ module Spree
           it 'reserved_quantity returns the sum of active reservations' do
             create(
               :stock_reservation,
-              stock_item: stock_item,
+              stock_level: stock_level,
               line_item: other_line_item,
               order: other_order,
               quantity: 3,
@@ -181,28 +181,28 @@ module Spree
           end
 
           context 'with an excluded order' do
-            subject { described_class.new(stock_item.variant, excluded_order: own_order) }
+            subject { described_class.new(stock_level.variant, excluded_order: own_order) }
 
             let(:own_order) { create(:order) }
-            let(:own_line_item) { create(:line_item, order: own_order, variant: stock_item.variant) }
+            let(:own_line_item) { create(:line_item, order: own_order, variant: stock_level.variant) }
 
             it "does not count the excluded order's own reservations" do
               create(
                 :stock_reservation,
-                stock_item: stock_item,
+                stock_level: stock_level,
                 line_item: own_line_item,
                 order: own_order,
                 quantity: 4,
                 expires_at: 5.minutes.from_now
               )
               expect(subject.reserved_quantity).to eq(0)
-              expect(subject.total_on_hand).to eq(stock_item.count_on_hand)
+              expect(subject.total_on_hand).to eq(stock_level.count_on_hand)
             end
 
             it "still counts other orders' reservations" do
               create(
                 :stock_reservation,
-                stock_item: stock_item,
+                stock_level: stock_level,
                 line_item: own_line_item,
                 order: own_order,
                 quantity: 4,
@@ -210,7 +210,7 @@ module Spree
               )
               create(
                 :stock_reservation,
-                stock_item: stock_item,
+                stock_level: stock_level,
                 line_item: other_line_item,
                 order: other_order,
                 quantity: 2,
@@ -220,12 +220,12 @@ module Spree
             end
 
             context 'when the excluded order is not yet persisted' do
-              subject { described_class.new(stock_item.variant, excluded_order: Spree::Order.new) }
+              subject { described_class.new(stock_level.variant, excluded_order: Spree::Order.new) }
 
               it 'counts all reservations rather than excluding everything' do
                 create(
                   :stock_reservation,
-                  stock_item: stock_item,
+                  stock_level: stock_level,
                   line_item: other_line_item,
                   order: other_order,
                   quantity: 2,
@@ -243,13 +243,13 @@ module Spree
           it 'returns raw count_on_hand even when reservations exist' do
             create(
               :stock_reservation,
-              stock_item: stock_item,
+              stock_level: stock_level,
               line_item: other_line_item,
               order: other_order,
               quantity: 4,
               expires_at: 5.minutes.from_now
             )
-            expect(subject.total_on_hand).to eq(stock_item.count_on_hand)
+            expect(subject.total_on_hand).to eq(stock_level.count_on_hand)
             expect(subject.reserved_quantity).to eq(0)
           end
         end

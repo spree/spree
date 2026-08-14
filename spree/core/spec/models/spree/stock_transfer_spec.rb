@@ -13,8 +13,8 @@ module Spree
 
     let(:destination_location) { create(:stock_location_with_items) }
     let(:source_location) { create(:stock_location_with_items) }
-    let(:stock_item) { source_location.stock_items.order(:id).first }
-    let(:variant) { stock_item.variant }
+    let(:stock_level) { source_location.stock_levels.order(:id).first }
+    let(:variant) { stock_level.variant }
 
     it_behaves_like 'metadata'
     it_behaves_like 'lifecycle events'

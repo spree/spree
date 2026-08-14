@@ -47,7 +47,7 @@ describe Spree::OrderInventory, type: :model do
       before { stub_store_preferences(track_inventory_levels: false) }
 
       it 'creates only on hand inventory units' do
-        variant.stock_items.delete_all
+        variant.stock_levels.delete_all
 
         expect_any_instance_of(Spree::StockLocation).not_to receive(:unstock)
 
@@ -66,7 +66,7 @@ describe Spree::OrderInventory, type: :model do
       before { variant.update(track_inventory: false) }
 
       it 'creates only on hand inventory units' do
-        variant.stock_items.delete_all
+        variant.stock_levels.delete_all
 
         expect_any_instance_of(Spree::StockLocation).not_to receive(:unstock)
 
@@ -82,8 +82,8 @@ describe Spree::OrderInventory, type: :model do
     it 'creates stock_movement' do
       expect(subject.send(:add_to_shipment, shipment, 5)).to eq(5)
 
-      stock_item = shipment.stock_location.stock_item(subject.variant)
-      movement = stock_item.stock_movements.last
+      stock_level = shipment.stock_location.stock_level(subject.variant)
+      movement = stock_level.stock_movements.last
       # movement.originator.should == shipment
       expect(movement.quantity).to eq(-5)
     end
@@ -234,7 +234,7 @@ describe Spree::OrderInventory, type: :model do
         it 'doesn\'t create on_hand items from backordered items' do
           shipment.set_up_inventory('backordered', variant, order, line_item)
 
-          expect { subject.send(:remove_from_shipment, shipment, 3) }.to change { line_item.variant.stock_items.sum(:count_on_hand) }.from(-2).to(0)
+          expect { subject.send(:remove_from_shipment, shipment, 3) }.to change { line_item.variant.stock_levels.sum(:count_on_hand) }.from(-2).to(0)
         end
       end
     end

@@ -16,9 +16,9 @@ RSpec.describe Spree::OrderRouting::Rules::MinimizeSplits, type: :model do
   let(:half_coverage) { create(:stock_location) }
 
   before do
-    full_coverage.stock_item_or_create(variant_a).update!(count_on_hand: 10)
-    full_coverage.stock_item_or_create(variant_b).update!(count_on_hand: 10)
-    half_coverage.stock_item_or_create(variant_a).update!(count_on_hand: 10)
+    full_coverage.stock_level_or_create(variant_a).update!(count_on_hand: 10)
+    full_coverage.stock_level_or_create(variant_b).update!(count_on_hand: 10)
+    half_coverage.stock_level_or_create(variant_a).update!(count_on_hand: 10)
     # variant_b: no stock item / 0 count at half_coverage so coverage is 1.
   end
 

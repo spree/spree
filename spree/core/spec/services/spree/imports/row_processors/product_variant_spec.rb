@@ -51,9 +51,9 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       expect(default_variant.sku).to be_blank
       expect(default_variant.price_in('USD').amount.to_f).to eq 62.99
       expect(default_variant.weight.to_f).to eq 0.0
-      expect(default_variant.stock_items.first.count_on_hand).to eq 100
-      expect(default_variant.stock_items.first.backorderable).to eq true
-      expect(default_variant.stock_items.first.stock_location).to eq store.default_stock_location
+      expect(default_variant.stock_levels.first.count_on_hand).to eq 100
+      expect(default_variant.stock_levels.first.backorderable).to eq true
+      expect(default_variant.stock_levels.first.stock_location).to eq store.default_stock_location
     end
 
     it 'enqueues AssignTagsJob' do
@@ -92,22 +92,22 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       let!(:existing_product) { create(:product, slug: 'denim-shirt', name: 'Old Name') }
 
       before do
-        stock_item = existing_product.default_variant.stock_items.find_or_initialize_by(stock_location: store.default_stock_location)
-        stock_item.count_on_hand = 50
-        stock_item.backorderable = false
-        stock_item.save!
+        stock_level = existing_product.default_variant.stock_levels.find_or_initialize_by(stock_location: store.default_stock_location)
+        stock_level.count_on_hand = 50
+        stock_level.backorderable = false
+        stock_level.save!
       end
 
       it 'updates inventory_count and inventory_backorderable' do
-        stock_item = existing_product.default_variant.stock_items.find_by(stock_location: store.default_stock_location)
-        expect(stock_item.count_on_hand).to eq 50
-        expect(stock_item.backorderable).to eq false
+        stock_level = existing_product.default_variant.stock_levels.find_by(stock_location: store.default_stock_location)
+        expect(stock_level.count_on_hand).to eq 50
+        expect(stock_level.backorderable).to eq false
 
         subject.process!
 
-        stock_item.reload
-        expect(stock_item.count_on_hand).to eq 100
-        expect(stock_item.backorderable).to eq true
+        stock_level.reload
+        expect(stock_level.count_on_hand).to eq 100
+        expect(stock_level.backorderable).to eq true
         expect(existing_product.reload.name).to eq 'Denim Shirt'
       end
 
@@ -242,22 +242,22 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
 
       context 'when updating inventory values' do
         before do
-          stock_item = variant.stock_items.find_or_initialize_by(stock_location: store.default_stock_location)
-          stock_item.count_on_hand = 50
-          stock_item.backorderable = false
-          stock_item.save!
+          stock_level = variant.stock_levels.find_or_initialize_by(stock_location: store.default_stock_location)
+          stock_level.count_on_hand = 50
+          stock_level.backorderable = false
+          stock_level.save!
         end
 
         it 'updates inventory_count and inventory_backorderable' do
-          stock_item = variant.stock_items.find_by(stock_location: store.default_stock_location)
-          expect(stock_item.count_on_hand).to eq 50
-          expect(stock_item.backorderable).to eq false
+          stock_level = variant.stock_levels.find_by(stock_location: store.default_stock_location)
+          expect(stock_level.count_on_hand).to eq 50
+          expect(stock_level.backorderable).to eq false
 
           subject.process!
 
-          stock_item.reload
-          expect(stock_item.count_on_hand).to eq 100
-          expect(stock_item.backorderable).to eq true
+          stock_level.reload
+          expect(stock_level.count_on_hand).to eq 100
+          expect(stock_level.backorderable).to eq true
         end
       end
     end

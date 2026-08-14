@@ -42,7 +42,7 @@ RSpec.describe 'OrderRouting strategy parity', type: :model do
         o.reload
       end
 
-      before { nyc.stock_item_or_create(variant_a).update!(count_on_hand: 10) }
+      before { nyc.stock_level_or_create(variant_a).update!(count_on_hand: 10) }
 
       it 'allocates from NYC, no backorder' do
         units = location_units(strategy.for_allocation)
@@ -63,8 +63,8 @@ RSpec.describe 'OrderRouting strategy parity', type: :model do
       end
 
       before do
-        nyc.stock_item_or_create(variant_a).update!(count_on_hand: 10)
-        nyc.stock_item_or_create(variant_b).update!(count_on_hand: 10)
+        nyc.stock_level_or_create(variant_a).update!(count_on_hand: 10)
+        nyc.stock_level_or_create(variant_b).update!(count_on_hand: 10)
       end
 
       it 'NYC covers everything, LA never engaged' do
@@ -87,8 +87,8 @@ RSpec.describe 'OrderRouting strategy parity', type: :model do
       end
 
       before do
-        nyc.stock_item_or_create(variant_a).update!(count_on_hand: 10)
-        la.stock_item_or_create(variant_b).update!(count_on_hand: 10)
+        nyc.stock_level_or_create(variant_a).update!(count_on_hand: 10)
+        la.stock_level_or_create(variant_b).update!(count_on_hand: 10)
       end
 
       it 'splits variant_a → NYC, variant_b → LA' do
@@ -111,9 +111,9 @@ RSpec.describe 'OrderRouting strategy parity', type: :model do
       end
 
       before do
-        nyc.stock_item_or_create(variant_a).update!(count_on_hand: 10)
-        la.stock_item_or_create(variant_b).update!(count_on_hand: 10)
-        berlin.stock_item_or_create(variant_c).update!(count_on_hand: 10)
+        nyc.stock_level_or_create(variant_a).update!(count_on_hand: 10)
+        la.stock_level_or_create(variant_b).update!(count_on_hand: 10)
+        berlin.stock_level_or_create(variant_c).update!(count_on_hand: 10)
       end
 
       it 'splits across all three' do
@@ -136,8 +136,8 @@ RSpec.describe 'OrderRouting strategy parity', type: :model do
       end
 
       before do
-        nyc.stock_item_or_create(variant_a).update!(count_on_hand: 2)
-        la.stock_item_or_create(variant_a).update!(count_on_hand: 10)
+        nyc.stock_level_or_create(variant_a).update!(count_on_hand: 2)
+        la.stock_level_or_create(variant_a).update!(count_on_hand: 10)
       end
 
       # Coordinator (Legacy) packs every location and splits NYC: 2 / LA: 3.
@@ -160,8 +160,8 @@ RSpec.describe 'OrderRouting strategy parity', type: :model do
       end
 
       before do
-        nyc.stock_item_or_create(variant_a).update!(count_on_hand: 5)
-        la.stock_item_or_create(variant_a).update!(count_on_hand: 5)
+        nyc.stock_level_or_create(variant_a).update!(count_on_hand: 5)
+        la.stock_level_or_create(variant_a).update!(count_on_hand: 5)
       end
 
       it 'must split across both locations to avoid backorder' do
@@ -183,8 +183,8 @@ RSpec.describe 'OrderRouting strategy parity', type: :model do
       end
 
       before do
-        nyc.stock_item_or_create(variant_a).update!(count_on_hand: 2, backorderable: true)
-        la.stock_item_or_create(variant_a).update!(count_on_hand: 3, backorderable: true)
+        nyc.stock_level_or_create(variant_a).update!(count_on_hand: 2, backorderable: true)
+        la.stock_level_or_create(variant_a).update!(count_on_hand: 3, backorderable: true)
       end
 
       it 'allocates available stock plus backorders the rest' do
@@ -207,9 +207,9 @@ RSpec.describe 'OrderRouting strategy parity', type: :model do
       end
 
       before do
-        nyc.stock_item_or_create(variant_a).update!(count_on_hand: 10)
-        nyc.stock_item_or_create(variant_b).update!(count_on_hand: 1)
-        la.stock_item_or_create(variant_b).update!(count_on_hand: 10)
+        nyc.stock_level_or_create(variant_a).update!(count_on_hand: 10)
+        nyc.stock_level_or_create(variant_b).update!(count_on_hand: 1)
+        la.stock_level_or_create(variant_b).update!(count_on_hand: 10)
       end
 
       it 'allocates 2 of variant_a and 1 of variant_b at NYC, 3 of variant_b at LA' do
@@ -231,7 +231,7 @@ RSpec.describe 'OrderRouting strategy parity', type: :model do
       end
 
       before do
-        nyc.stock_item_or_create(variant_a).update!(count_on_hand: 0, backorderable: true)
+        nyc.stock_level_or_create(variant_a).update!(count_on_hand: 0, backorderable: true)
       end
 
       it 'returns a single backordered package' do
@@ -241,7 +241,7 @@ RSpec.describe 'OrderRouting strategy parity', type: :model do
       end
     end
 
-    context 'variant has stock_items but zero count, backorderable everywhere' do
+    context 'variant has stock_levels but zero count, backorderable everywhere' do
       let(:variant_unstocked) { create(:variant) }
 
       let(:order) do
@@ -251,7 +251,7 @@ RSpec.describe 'OrderRouting strategy parity', type: :model do
       end
 
       before do
-        Spree::StockItem.where(variant_id: variant_unstocked.id).update_all(backorderable: true)
+        Spree::StockLevel.where(variant_id: variant_unstocked.id).update_all(backorderable: true)
       end
 
       it 'returns a single backordered package' do
@@ -305,13 +305,13 @@ RSpec.describe 'OrderRouting strategy parity', type: :model do
         end
 
         before do
-          nyc.stock_item_or_create(variant_a).update!(count_on_hand: 1)
-          la.stock_item_or_create(variant_a).update!(count_on_hand: 10)
+          nyc.stock_level_or_create(variant_a).update!(count_on_hand: 1)
+          la.stock_level_or_create(variant_a).update!(count_on_hand: 10)
 
           # Other cart reserves the only NYC unit.
-          stock_item = nyc.stock_item(variant_a)
+          stock_level = nyc.stock_level(variant_a)
           create(:stock_reservation,
-                 stock_item: stock_item,
+                 stock_level: stock_level,
                  line_item: other_order.line_items.first,
                  order: other_order,
                  quantity: 1,
@@ -336,12 +336,12 @@ RSpec.describe 'OrderRouting strategy parity', type: :model do
         end
 
         before do
-          nyc.stock_item_or_create(variant_a).update!(count_on_hand: 5)
-          la.stock_item_or_create(variant_a).update!(count_on_hand: 5)
+          nyc.stock_level_or_create(variant_a).update!(count_on_hand: 5)
+          la.stock_level_or_create(variant_a).update!(count_on_hand: 5)
 
-          stock_item = nyc.stock_item(variant_a)
+          stock_level = nyc.stock_level(variant_a)
           create(:stock_reservation,
-                 stock_item: stock_item,
+                 stock_level: stock_level,
                  line_item: order.line_items.first,
                  order: order,
                  quantity: 1,
@@ -369,12 +369,12 @@ RSpec.describe 'OrderRouting strategy parity', type: :model do
         end
 
         before do
-          nyc.stock_item_or_create(variant_a).update!(count_on_hand: 1)
-          la.stock_item_or_create(variant_a).update!(count_on_hand: 10)
+          nyc.stock_level_or_create(variant_a).update!(count_on_hand: 1)
+          la.stock_level_or_create(variant_a).update!(count_on_hand: 10)
 
-          stock_item = nyc.stock_item(variant_a)
+          stock_level = nyc.stock_level(variant_a)
           create(:stock_reservation,
-                 stock_item: stock_item,
+                 stock_level: stock_level,
                  line_item: other_order.line_items.first,
                  order: other_order,
                  quantity: 1,
@@ -398,7 +398,7 @@ RSpec.describe 'OrderRouting strategy parity', type: :model do
         o.reload
       end
 
-      before { nyc.stock_item_or_create(variant_a).update!(count_on_hand: 5) }
+      before { nyc.stock_level_or_create(variant_a).update!(count_on_hand: 5) }
 
       it 'allocates unaffected by reservation feature flag' do
         packages = strategy.for_allocation
@@ -422,8 +422,8 @@ RSpec.describe 'OrderRouting strategy parity', type: :model do
       end
 
       before do
-        nyc.stock_item_or_create(variant_shipping).update!(count_on_hand: 10)
-        nyc.stock_item_or_create(variant_digital).update!(count_on_hand: 10)
+        nyc.stock_level_or_create(variant_shipping).update!(count_on_hand: 10)
+        nyc.stock_level_or_create(variant_digital).update!(count_on_hand: 10)
       end
 
       # The DeliveryProfile splitter is in the default Spree.stock_splitters
@@ -448,9 +448,9 @@ RSpec.describe 'OrderRouting strategy parity', type: :model do
     context 'one location inactive, the other active' do
       before do
         # Mark NYC inactive after the variant's after(:create) hook has
-        # propagated stock_items to it.
-        nyc.stock_item_or_create(variant_a).update!(count_on_hand: 10)
-        la.stock_item_or_create(variant_a).update!(count_on_hand: 10)
+        # propagated stock_levels to it.
+        nyc.stock_level_or_create(variant_a).update!(count_on_hand: 10)
+        la.stock_level_or_create(variant_a).update!(count_on_hand: 10)
         nyc.update!(active: false)
       end
 
@@ -473,7 +473,7 @@ RSpec.describe 'OrderRouting strategy parity', type: :model do
     # Asymmetric stocking: variant present at only one location
     # ---------------------------------------------------------------
 
-    context 'variant only stocked at LA, NYC has no stock_item for it' do
+    context 'variant only stocked at LA, NYC has no stock_level for it' do
       let(:order) do
         o = create(:order, store: store, ship_address: create(:ship_address))
         create(:line_item, order: o, variant: variant_a, quantity: 2)
@@ -481,11 +481,11 @@ RSpec.describe 'OrderRouting strategy parity', type: :model do
       end
 
       before do
-        # Drop the auto-propagated NYC stock_item entirely so NYC truly
+        # Drop the auto-propagated NYC stock_level entirely so NYC truly
         # doesn't stock variant_a (Coordinator's eligible-locations join
-        # filters by stock_item presence; we want to exercise that path).
-        nyc.stock_items.where(variant_id: variant_a.id).destroy_all
-        la.stock_item_or_create(variant_a).update!(count_on_hand: 10)
+        # filters by stock_level presence; we want to exercise that path).
+        nyc.stock_levels.where(variant_id: variant_a.id).destroy_all
+        la.stock_level_or_create(variant_a).update!(count_on_hand: 10)
       end
 
       it 'routes everything to LA' do
@@ -504,13 +504,13 @@ RSpec.describe 'OrderRouting strategy parity', type: :model do
         # Stock available during line-item creation (so AvailabilityValidator
         # passes), then dropped to 0 + non-backorderable to model the
         # "no eligible inventory" routing scenario.
-        nyc.stock_item_or_create(variant_a).update!(count_on_hand: 10, backorderable: false)
-        la.stock_item_or_create(variant_a).update!(count_on_hand: 10, backorderable: false)
+        nyc.stock_level_or_create(variant_a).update!(count_on_hand: 10, backorderable: false)
+        la.stock_level_or_create(variant_a).update!(count_on_hand: 10, backorderable: false)
 
         o = create(:order, store: store, ship_address: create(:ship_address))
         create(:line_item, order: o, variant: variant_a, quantity: 1)
-        nyc.stock_item(variant_a).update!(count_on_hand: 0)
-        la.stock_item(variant_a).update!(count_on_hand: 0)
+        nyc.stock_level(variant_a).update!(count_on_hand: 0)
+        la.stock_level(variant_a).update!(count_on_hand: 0)
         o.reload
       end
 
@@ -536,7 +536,7 @@ RSpec.describe 'OrderRouting strategy parity', type: :model do
       end
 
       before do
-        nyc.stock_item_or_create(variant_a).update!(count_on_hand: 10)
+        nyc.stock_level_or_create(variant_a).update!(count_on_hand: 10)
         # variant_b has no on_hand anywhere — but track_inventory: false
         # means Packer adds it directly without consulting fill_status.
       end
@@ -563,8 +563,8 @@ RSpec.describe 'OrderRouting strategy parity', type: :model do
       end
 
       before do
-        nyc.stock_item_or_create(variant_a).update!(count_on_hand: 1, backorderable: false)
-        la.stock_item_or_create(variant_a).update!(count_on_hand: 0, backorderable: true)
+        nyc.stock_level_or_create(variant_a).update!(count_on_hand: 1, backorderable: false)
+        la.stock_level_or_create(variant_a).update!(count_on_hand: 0, backorderable: true)
       end
 
       # The Adjuster's update_backorder only shrinks a captured backorder
@@ -597,8 +597,8 @@ RSpec.describe 'OrderRouting strategy parity', type: :model do
       end
 
       before do
-        nyc.stock_item_or_create(variant_a).update!(count_on_hand: 0, backorderable: true)
-        la.stock_item_or_create(variant_a).update!(count_on_hand: 0, backorderable: true)
+        nyc.stock_level_or_create(variant_a).update!(count_on_hand: 0, backorderable: true)
+        la.stock_level_or_create(variant_a).update!(count_on_hand: 0, backorderable: true)
       end
 
       it 'backorders all units at a single location' do

@@ -10,7 +10,7 @@ module Spree
 
     before do
       [variant, variant2].each do |v|
-        v.stock_items.first.update!(count_on_hand: 10)
+        v.stock_levels.first.update!(count_on_hand: 10)
         store.products << v.product unless store.products.include?(v.product)
       end
     end
@@ -218,7 +218,7 @@ module Spree
         let(:other_variant) { create(:variant) }
 
         before do
-          other_variant.stock_items.first.update!(count_on_hand: 10)
+          other_variant.stock_levels.first.update!(count_on_hand: 10)
           other_store.products << other_variant.product
         end
 
