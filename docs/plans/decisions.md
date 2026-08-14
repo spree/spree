@@ -217,6 +217,43 @@ permission-catalog entries, Country/State's zone associations, and Store's
 releases overdue). `6.0-delivery-zones.md` still owns dropping the classes
 and tables in 6.1; what remains for it is deletion, not untangling.
 
+## 2026-08-13: Stock leaves the shelf at fulfillment, not at order placement
+
+Spree has always decremented `count_on_hand` when an order is placed, so a
+warehouse's on-hand number in Spree never matched what a picker could count,
+and the one event a warehouse cares about — the parcel leaving — wrote nothing
+to the stock ledger at all. Typed Stock Movements splits the two: placement
+writes an `allocated` movement that raises `allocated_count` and leaves
+`count_on_hand` untouched, and dispatch writes a `shipped` movement that
+decrements `count_on_hand` and retires the allocation with it. On-hand becomes what is on the shelf and
+`StockItem#allocated_count` carries what is promised, which is the model every
+other commerce platform ships.
+
+Three consequences worth naming, because they change existing behavior rather
+than adding to it. Oversell is now `allocated_count > count_on_hand` instead of
+a negative `count_on_hand` — the same signed arithmetic, so `backorder_limit`
+and pre-orders are untouched, but `restock_backordered` and the movement's
+`min_quantity` guard both existed only to service the negative representation
+and are deleted with it. Availability must be read through
+`Stock::Quantifier` / `available_count` everywhere, since a raw `count_on_hand`
+read now offers units already promised to another customer. And allocation is
+keyed to the **fulfillment**, not the line item: the fulfillment already owns
+the origin location and the on-hand/backordered split, so allocating anywhere
+else would re-decide what the Coordinator already decided.
+
+Shipping only ever converts an allocation, which is also how the upgrade stays
+safe: a fulfillment carrying no allocation is one created before the upgrade,
+whose units already left under the old rules, so it ships without a movement
+and its stock is never decremented twice. The manifest task reconciles the open
+fulfillments it finds — on-hand and `allocated_count` move up together, leaving
+availability unchanged by construction.
+
+Plan: `6.0-typed-stock-movements.md` (phases reordered the same day: model
+update before the data task, and the polymorphic `originator` drop held to 6.1
+like every other 6.0 cleanup, since the task reads those columns). Consumers:
+`6.0-stock-reservations.md` (the reservation term in the same formula),
+`6.0-inventory-operations.md` (transfers, purchase orders, history screens).
+
 ## 2026-08-13: Document numbers — sequential by default, store-configurable orders, derived child numbers
 
 `Spree::Core::NumberGenerator` (the boot-frozen `Module` factory) is replaced
@@ -2020,6 +2057,12 @@ sales-channel apps, and the category mapper. New plan:
 rebuilt as native core models on top of the 6.0 Cart/Order split.
 
 ## 2026-03-17: Rename StockItem → StockLevel
+**Owned by `6.0-typed-stock-movements.md` as of 2026-08-13** — it ships as that
+plan's Phase 0, ahead of the new movement columns, so they are born beside a
+final name. Bridges: constant, association and column aliases plus dual-emitted
+`stock_item.*` events for one release; the prefix change and the endpoint rename
+take the break.
+
 `Spree::StockItem` → `Spree::StockLevel`, `spree_stock_items` → `spree_stock_levels`.
 Prefix ID: `si_` → `sl_`.
 
