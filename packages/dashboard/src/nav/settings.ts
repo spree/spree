@@ -8,6 +8,7 @@ import {
   PercentIcon,
   PlugIcon,
   RadioTowerIcon,
+  ReceiptTextIcon,
   RotateCcwIcon,
   ShapesIcon,
   ShieldCheckIcon,
@@ -90,6 +91,16 @@ settingsNav.add({
   group: 'payments',
   position: 200,
   subject: Subject.TaxCategory,
+})
+
+settingsNav.add({
+  key: 'settings.tax-rates',
+  labelKey: 'admin.settings_nav.items.tax_rates',
+  path: '/tax-rates',
+  icon: ReceiptTextIcon,
+  group: 'payments',
+  position: 250,
+  subject: Subject.TaxRate,
 })
 
 settingsNav.add({

@@ -39,6 +39,7 @@ import { useEffect, useMemo } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
+import { TaxProviderField } from '../../../../components/spree/tax-provider-field'
 import {
   useCreateMarket,
   useDeleteMarket,
@@ -251,6 +252,7 @@ function EditMarketSheet({
         tax_inclusive: market.tax_inclusive,
         default: market.default,
         country_isos: market.country_isos,
+        tax_provider: market.tax_provider ?? '',
       })
     }
   }, [market, form])
@@ -415,6 +417,8 @@ function MarketFormFields({ form }: { form: UseFormReturn<MarketFormValues> }) {
         </span>
         <FieldError errors={[errors.country_isos]} />
       </Field>
+
+      <TaxProviderField form={form} />
 
       <Field>
         <div className="flex items-start justify-between gap-4">

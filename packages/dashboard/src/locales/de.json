@@ -739,6 +739,7 @@
           "label": "Interne Notiz",
           "placeholder": "Nur für Mitarbeiter sichtbare Hinweise zu diesem Kunden…"
         },
+        "label": "Kunde",
         "tags": {
           "label": "Tags"
         }
@@ -887,6 +888,10 @@
         "tax_inclusive": {
           "help": "Preise mit enthaltener Steuer anzeigen. In EU-Märkten üblich.",
           "label": "Preise inklusive Steuer"
+        },
+        "tax_provider": {
+          "help": "Womit die Steuer für Bestellungen in diesem Markt berechnet wird.",
+          "label": "Steuerberechnung"
         }
       },
       "match_policy": {
@@ -1481,6 +1486,106 @@
           "label": "Ziel-URL",
           "placeholder": "https://example.com/webhooks"
         }
+      },
+      "external_id": {
+        "label": "Referenz"
+      },
+      "country": {
+        "label": "Land"
+      },
+      "state": {
+        "label": "Bundesland"
+      },
+      "postal_code": {
+        "label": "Postleitzahl"
+      },
+      "certificate_number": {
+        "label": "Bescheinigungsnummer"
+      },
+      "reason_code": {
+        "help": "Wird als Verwendungszweck an die Steuerberechnung übergeben.",
+        "label": "Grund"
+      },
+      "issued_at": {
+        "label": "Ausgestellt am"
+      },
+      "issuing_authority": {
+        "label": "Ausstellende Behörde"
+      },
+      "certificate_document": {
+        "help": "PDF oder Bild, bis 10 MB. Nur Mitarbeiter können es herunterladen.",
+        "label": "Dokument"
+      },
+      "company": {
+        "name": {
+          "placeholder": "Acme Industries"
+        },
+        "external_id": {
+          "help": "Ihre eigene Referenz für diese Firma, eindeutig innerhalb des Shops.",
+          "placeholder": "ACME-001"
+        }
+      },
+      "company_location": {
+        "name": {
+          "placeholder": "Hauptsitz"
+        },
+        "external_id": {
+          "help": "Ihre eigene Referenz für diese Niederlassung."
+        }
+      },
+      "company_contact": {
+        "role": {
+          "label": "Rolle"
+        }
+      },
+      "tax_identifier": {
+        "kind": {
+          "help": "Um welche Nummer es sich handelt. Sie muss zur eingerichteten Prüfung passen, die Schreibweise ist also wichtig.",
+          "label": "Art"
+        },
+        "value": {
+          "label": "Nummer",
+          "placeholder": "DE123456789"
+        }
+      },
+      "tax_rate": {
+        "name": {
+          "placeholder": "Regelsteuersatz"
+        },
+        "amount": {
+          "help": "In Prozent. Für 20 % geben Sie 20 ein.",
+          "label": "Satz"
+        },
+        "jurisdiction": {
+          "label": "Gilt für"
+        },
+        "country_iso": {
+          "help": "Leer lassen, um jedes Land zu besteuern."
+        },
+        "state_code": {
+          "help": "Leer lassen, um das ganze Land zu besteuern."
+        },
+        "tax_category_id": {
+          "help": "Welche Produkte dieser Satz besteuert.",
+          "label": "Steuerkategorie"
+        },
+        "included_in_price": {
+          "help": "Die Preise enthalten diese Steuer bereits, sie wird herausgerechnet statt aufgeschlagen.",
+          "label": "Im Preis enthalten",
+          "short": "Enthalten"
+        },
+        "show_rate_in_label": {
+          "help": "Ergänzt die Steuerzeile für den Kunden um den Prozentsatz.",
+          "label": "Satz in der Steuerbezeichnung anzeigen"
+        }
+      },
+      "tax_exemption_certificate": {
+        "country_iso": {
+          "help": "Leer lassen für eine Bescheinigung, die überall gilt."
+        },
+        "expires_at": {
+          "help": "Leer lassen für eine Bescheinigung ohne Ablaufdatum."
+        }
       }
     },
     "delivery_profiles": {
@@ -1736,6 +1841,7 @@
       "categories": "Kategorien",
       "claims": "Reklamationen",
       "collections": "Kollektionen",
+      "companies": "Firmen",
       "customer_groups": "Gruppen",
       "customers": "Kunden",
       "draft_orders": "Bestellentwürfe",
@@ -2846,6 +2952,10 @@
             "url": "URL"
           },
           "title": "Webhooks"
+        },
+        "tax_rates": {
+          "add_sheet_title": "Neuer Steuersatz",
+          "edit_sheet_title": "Steuersatz bearbeiten"
         }
       },
       "staff": {
@@ -3564,6 +3674,7 @@
         "stock_locations": "Lagerstandorte",
         "store": "Shop",
         "tax_categories": "Steuerkategorien",
+        "tax_rates": "Steuersätze",
         "webhooks": "Webhooks"
       }
     },
@@ -3746,6 +3857,186 @@
       "saved": "Übersetzungen gespeichert",
       "source": "Quelle",
       "title": "Übersetzungen"
+    },
+    "jurisdiction": {
+      "everywhere": "Überall"
+    },
+    "companies": {
+      "add_cta": "Firma hinzufügen",
+      "add_sheet_title": "Neue Firma",
+      "create_description": "Geschäftskunden kaufen über Niederlassungen ein. Niederlassungen, Steuernummer und Freistellungsbescheinigungen können Sie hinzufügen, sobald die Firma angelegt ist.",
+      "create_label": "Firma anlegen",
+      "delete_confirm": {
+        "message": "Damit werden {{name}} sowie alle Niederlassungen, Einkäufer und Bescheinigungen gelöscht. Das lässt sich nicht rückgängig machen.",
+        "title": "Firma löschen?"
+      },
+      "detail": {
+        "delete_label": "Firma löschen",
+        "load_error": "Diese Firma konnte nicht geladen werden",
+        "profile": "Firma"
+      },
+      "empty": "Noch keine Firmen",
+      "locations_column": "Niederlassungen",
+      "messages": {
+        "created": "Firma angelegt",
+        "deleted": "Firma gelöscht",
+        "updated": "Firma aktualisiert"
+      },
+      "search_placeholder": "Firmen suchen"
+    },
+    "company_locations": {
+      "add_cta": "Niederlassung hinzufügen",
+      "add_title": "Neue Niederlassung",
+      "addresses": "Adressen",
+      "billing_address": "Rechnungsadresse",
+      "contacts_count_one": "{{count}} Einkäufer",
+      "contacts_count_other": "{{count}} Einkäufer",
+      "detail": {
+        "delete_label": "Niederlassung löschen",
+        "load_error": "Diese Niederlassung konnte nicht geladen werden"
+      },
+      "dialog_description": "Eine Niederlassung ist der Ort, an den die Rechnung geht und an den geliefert wird. Adressen sind optional, benötigen aber Name und Land, sobald sie ausgefüllt werden.",
+      "edit_title": "Niederlassung bearbeiten",
+      "empty": "Noch keine Niederlassungen",
+      "messages": {
+        "created": "Niederlassung angelegt",
+        "deleted": "Niederlassung gelöscht",
+        "updated": "Niederlassung aktualisiert"
+      },
+      "shipping_address": "Lieferadresse",
+      "shipping_same_as_billing": "Lieferadresse entspricht der Rechnungsadresse",
+      "title": "Niederlassungen"
+    },
+    "company_contacts": {
+      "add_cta": "Einkäufer hinzufügen",
+      "add_title": "Einkäufer berechtigen",
+      "dialog_description": "Ein Kunde, der für diese Niederlassung einkauft. Wer für genau eine Niederlassung einkauft, dessen Bestellungen werden ihr automatisch zugeordnet.",
+      "empty": "Noch keine Einkäufer berechtigt",
+      "messages": {
+        "created": "Einkäufer hinzugefügt",
+        "deleted": "Einkäufer entfernt"
+      },
+      "remove_action": "Einkäufer entfernen",
+      "remove_confirm": {
+        "message": "{{email}} kauft dann nicht mehr für diese Niederlassung ein. Das Kundenkonto bleibt bestehen.",
+        "title": "Diesen Einkäufer entfernen?"
+      },
+      "roles_enterprise_help": "Hier hinzugefügte Einkäufer können für diese Niederlassung bestellen. Rollen, Freigabeprozesse und Ausgabenlimits gehören zu Spree Enterprise.",
+      "roles_enterprise_title": "Rollen und Freigaben sind eine Enterprise-Funktion",
+      "title": "Einkäufer"
+    },
+    "tax_identifiers": {
+      "add_cta": "Nummer hinzufügen",
+      "add_title": "Steuernummer hinzufügen",
+      "checked_prefix": "Geprüft",
+      "delete_confirm": {
+        "message": "{{value}} wird entfernt. Bereits abgeschlossene Bestellungen behalten die Nummer, mit der sie abgerechnet wurden.",
+        "title": "Diese Nummer löschen?"
+      },
+      "dialog_description": "Die Umsatzsteuer-Identifikationsnummer, die auf Rechnungen erscheint. Sie macht das Reverse-Charge-Verfahren im EU-B2B-Handel möglich.",
+      "edit_title": "Steuernummer bearbeiten",
+      "empty": "Keine Steuernummer hinterlegt",
+      "kinds": {
+        "au_abn": "Australische Unternehmensnummer",
+        "ch_vat": "Schweizer MWST-Nr.",
+        "eu_vat": "EU-USt-IdNr.",
+        "gb_vat": "UK-USt-IdNr.",
+        "us_ein": "US-EIN"
+      },
+      "messages": {
+        "created": "Nummer hinzugefügt",
+        "deleted": "Nummer gelöscht",
+        "updated": "Nummer aktualisiert",
+        "validation_failed": "Die Nummer konnte nicht geprüft werden",
+        "validation_requested": "Die Nummer wird beim Register geprüft"
+      },
+      "not_validatable": "Für diese Art ist keine Prüfung eingerichtet, die Nummer wird wie eingegeben verwendet.",
+      "select_kind": "Art wählen",
+      "title": "Steuernummer",
+      "validate_action": "Beim Register prüfen",
+      "validation_status": {
+        "not_checked": "Nicht geprüft",
+        "pending": "Wird geprüft",
+        "unavailable": "Register nicht erreichbar",
+        "unsupported": "Nicht prüfbar",
+        "unverified": "Ungültig",
+        "verified": "Bestätigt"
+      }
+    },
+    "tax_exemption_certificates": {
+      "add_cta": "Bescheinigung hinzufügen",
+      "add_title": "Freistellungsbescheinigung hinzufügen",
+      "delete_confirm": {
+        "message": "Bescheinigung {{number}} wird entfernt. Das lässt sich nicht rückgängig machen.",
+        "title": "Diese Bescheinigung löschen?"
+      },
+      "dialog_description": "Der Nachweis, dass die Einkäufe dieser Firma steuerfrei sind. Eine neue Bescheinigung gilt erst, wenn Sie sie angenommen haben.",
+      "download_action": "Dokument herunterladen",
+      "empty": "Keine Bescheinigungen hinterlegt",
+      "expires_prefix": "Gültig bis",
+      "lapsed": "Abgelaufen",
+      "messages": {
+        "created": "Bescheinigung hinzugefügt",
+        "deleted": "Bescheinigung gelöscht",
+        "revoked": "Bescheinigung widerrufen",
+        "updated": "Bescheinigung aktualisiert",
+        "verified": "Bescheinigung angenommen"
+      },
+      "never_expires": "Läuft nicht ab",
+      "no_document": "Kein Dokument hinterlegt",
+      "reason_codes": {
+        "agricultural": "Landwirtschaft",
+        "charitable": "Gemeinnützig",
+        "educational": "Bildung",
+        "government": "Behörde",
+        "manufacturing": "Produktion",
+        "resale": "Wiederverkauf"
+      },
+      "revoke_action": "Widerrufen",
+      "revoke_confirm": {
+        "message": "Bescheinigung {{number}} gilt dann nicht mehr für neue Bestellungen. Sie bleibt als Nachweis erhalten.",
+        "title": "Diese Bescheinigung widerrufen?"
+      },
+      "select_reason": "Grund wählen",
+      "status": {
+        "expired": "Abgelaufen",
+        "pending": "Wartet auf Prüfung",
+        "revoked": "Widerrufen",
+        "verified": "Angenommen"
+      },
+      "title": "Freistellungsbescheinigungen",
+      "verified_at": "Angenommen am",
+      "verify_action": "Annehmen"
+    },
+    "tax_rates": {
+      "add_cta": "Steuersatz hinzufügen",
+      "all_categories": "Alle Kategorien",
+      "create_description": "Steuersätze konfigurieren die eingebaute Steuerberechnung. Ein Satz ohne Land gilt überall.",
+      "create_label": "Steuersatz anlegen",
+      "delete_confirm": {
+        "message": "{{name}} wird nicht mehr angewendet. Abgeschlossene Bestellungen behalten die berechnete Steuer.",
+        "title": "Steuersatz löschen?"
+      },
+      "edit_description": "Änderungen gelten für neue Berechnungen. Abgeschlossene Bestellungen behalten die berechnete Steuer.",
+      "empty": "Noch keine Steuersätze",
+      "every_country": "Jedes Land",
+      "every_state": "Jedes Bundesland",
+      "messages": {
+        "created": "Steuersatz angelegt",
+        "deleted": "Steuersatz gelöscht",
+        "updated": "Steuersatz aktualisiert"
+      },
+      "search_placeholder": "Steuersätze suchen",
+      "select_category": "Kategorie wählen"
+    },
+    "tax_providers": {
+      "limitations_title": "{{name}} deckt Folgendes nicht ab",
+      "unavailable_option": "{{name}} (nicht eingerichtet)",
+      "use_default": "Standardberechnung verwenden",
+      "use_default_named": "Standard ({{name}})"
+    },
+    "enterprise": {
+      "learn_more": "Mehr über Spree Enterprise erfahren"
     }
   }
 }

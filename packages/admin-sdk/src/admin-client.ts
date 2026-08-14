@@ -3051,6 +3051,70 @@ export class AdminClient {
         this.request<void>('DELETE', `/customers/${customerId}/addresses/${id}`, options),
     },
 
+    /**
+     * The customer's own tax registrations — the durable profile value, as
+     * opposed to the override entered during a single checkout. A company's
+     * registration outranks these when the buyer purchases for a business.
+     */
+    taxIdentifiers: {
+      list: (
+        customerId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<TaxIdentifier>> =>
+        this.request<PaginatedResponse<TaxIdentifier>>(
+          'GET',
+          `/customers/${customerId}/tax_identifiers`,
+          { ...options, params: params ? transformListParams(params) : undefined },
+        ),
+
+      get: (customerId: string, id: string, options?: RequestOptions): Promise<TaxIdentifier> =>
+        this.request<TaxIdentifier>(
+          'GET',
+          `/customers/${customerId}/tax_identifiers/${id}`,
+          options,
+        ),
+
+      create: (
+        customerId: string,
+        params: TaxIdentifierParams,
+        options?: RequestOptions,
+      ): Promise<TaxIdentifier> =>
+        this.request<TaxIdentifier>('POST', `/customers/${customerId}/tax_identifiers`, {
+          ...options,
+          body: params,
+        }),
+
+      update: (
+        customerId: string,
+        id: string,
+        params: TaxIdentifierParams,
+        options?: RequestOptions,
+      ): Promise<TaxIdentifier> =>
+        this.request<TaxIdentifier>('PATCH', `/customers/${customerId}/tax_identifiers/${id}`, {
+          ...options,
+          body: params,
+        }),
+
+      delete: (customerId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/customers/${customerId}/tax_identifiers/${id}`, options),
+
+      /**
+       * Re-asks the registry. Manual because a registry answers only "valid
+       * now" — a number verified last year may have been deregistered since.
+       */
+      validate: (
+        customerId: string,
+        id: string,
+        options?: RequestOptions,
+      ): Promise<TaxIdentifier> =>
+        this.request<TaxIdentifier>(
+          'POST',
+          `/customers/${customerId}/tax_identifiers/${id}/validate`,
+          options,
+        ),
+    },
+
     storeCredits: {
       list: (
         customerId: string,

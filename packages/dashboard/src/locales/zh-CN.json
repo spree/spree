@@ -736,6 +736,7 @@
           "label": "内部备注",
           "placeholder": "仅员工可见的客户相关备注…"
         },
+        "label": "客户",
         "tags": {
           "label": "标签"
         }
@@ -884,6 +885,10 @@
         "tax_inclusive": {
           "help": "显示含税价格。在欧盟市场较为常见。",
           "label": "含税定价"
+        },
+        "tax_provider": {
+          "help": "用于计算该市场订单税费的引擎。",
+          "label": "税费计算引擎"
         }
       },
       "match_policy": {
@@ -1478,6 +1483,106 @@
           "label": "目标 URL",
           "placeholder": "https://example.com/webhooks"
         }
+      },
+      "external_id": {
+        "label": "外部编号"
+      },
+      "country": {
+        "label": "国家/地区"
+      },
+      "state": {
+        "label": "省/州"
+      },
+      "postal_code": {
+        "label": "邮政编码"
+      },
+      "certificate_number": {
+        "label": "证明编号"
+      },
+      "reason_code": {
+        "help": "作为用途代码传递给税费计算引擎。",
+        "label": "事由"
+      },
+      "issued_at": {
+        "label": "签发日期"
+      },
+      "issuing_authority": {
+        "label": "签发机构"
+      },
+      "certificate_document": {
+        "help": "PDF 或图片，最大 10 MB。仅员工可下载。",
+        "label": "证明文件"
+      },
+      "company": {
+        "name": {
+          "placeholder": "Acme Industries"
+        },
+        "external_id": {
+          "help": "您为该企业设定的编号，在本店内唯一。",
+          "placeholder": "ACME-001"
+        }
+      },
+      "company_location": {
+        "name": {
+          "placeholder": "总部"
+        },
+        "external_id": {
+          "help": "您为该分支机构设定的编号。"
+        }
+      },
+      "company_contact": {
+        "role": {
+          "label": "职务"
+        }
+      },
+      "tax_identifier": {
+        "kind": {
+          "help": "该号码的类型。必须与配置的校验方式一致，因此拼写很重要。",
+          "label": "类型"
+        },
+        "value": {
+          "label": "号码",
+          "placeholder": "DE123456789"
+        }
+      },
+      "tax_rate": {
+        "name": {
+          "placeholder": "标准增值税"
+        },
+        "amount": {
+          "help": "按百分比填写。20% 请填 20。",
+          "label": "税率"
+        },
+        "jurisdiction": {
+          "label": "适用范围"
+        },
+        "country_iso": {
+          "help": "留空表示对所有国家征税。"
+        },
+        "state_code": {
+          "help": "留空表示对整个国家征税。"
+        },
+        "tax_category_id": {
+          "help": "该税率适用于哪些商品。",
+          "label": "税务类别"
+        },
+        "included_in_price": {
+          "help": "价格已包含该税费，因此从价格中拆分而非另行加收。",
+          "label": "价格含税",
+          "short": "含税"
+        },
+        "show_rate_in_label": {
+          "help": "在客户看到的税费行中加上百分比。",
+          "label": "在税费名称中显示税率"
+        }
+      },
+      "tax_exemption_certificate": {
+        "country_iso": {
+          "help": "留空表示该证明在所有地区有效。"
+        },
+        "expires_at": {
+          "help": "留空表示该证明长期有效。"
+        }
       }
     },
     "delivery_profiles": {
@@ -1733,6 +1838,7 @@
       "categories": "分类",
       "claims": "索赔",
       "collections": "系列",
+      "companies": "企业",
       "customer_groups": "分组",
       "customers": "客户",
       "draft_orders": "草稿订单",
@@ -2842,6 +2948,10 @@
             "url": "URL"
           },
           "title": "Webhooks"
+        },
+        "tax_rates": {
+          "add_sheet_title": "新建税率",
+          "edit_sheet_title": "编辑税率"
         }
       },
       "staff": {
@@ -3560,6 +3670,7 @@
         "stock_locations": "库存地点",
         "store": "店铺",
         "tax_categories": "税收类别",
+        "tax_rates": "税率",
         "webhooks": "Webhooks"
       }
     },
@@ -3742,6 +3853,186 @@
       "saved": "翻译已保存",
       "source": "源",
       "title": "翻译"
+    },
+    "jurisdiction": {
+      "everywhere": "所有地区"
+    },
+    "companies": {
+      "add_cta": "添加企业",
+      "add_sheet_title": "新建企业",
+      "create_description": "企业客户通过分支机构下单。创建企业后即可添加分支机构、税务登记号和免税证明。",
+      "create_label": "创建企业",
+      "delete_confirm": {
+        "message": "将删除 {{name}} 及其所有分支机构、采购人和证明。此操作无法撤销。",
+        "title": "删除企业？"
+      },
+      "detail": {
+        "delete_label": "删除企业",
+        "load_error": "无法加载该企业",
+        "profile": "企业"
+      },
+      "empty": "暂无企业",
+      "locations_column": "分支机构",
+      "messages": {
+        "created": "企业已创建",
+        "deleted": "企业已删除",
+        "updated": "企业已更新"
+      },
+      "search_placeholder": "搜索企业"
+    },
+    "company_locations": {
+      "add_cta": "添加分支机构",
+      "add_title": "新建分支机构",
+      "addresses": "地址",
+      "billing_address": "账单地址",
+      "contacts_count_one": "{{count}} 位采购人",
+      "contacts_count_other": "{{count}} 位采购人",
+      "detail": {
+        "delete_label": "删除分支机构",
+        "load_error": "无法加载该分支机构"
+      },
+      "dialog_description": "分支机构是开具发票和收货的地点。地址为选填，但一旦填写则需要姓名和国家/地区。",
+      "edit_title": "编辑分支机构",
+      "empty": "暂无分支机构",
+      "messages": {
+        "created": "分支机构已创建",
+        "deleted": "分支机构已删除",
+        "updated": "分支机构已更新"
+      },
+      "shipping_address": "收货地址",
+      "shipping_same_as_billing": "收货地址与账单地址相同",
+      "title": "分支机构"
+    },
+    "company_contacts": {
+      "add_cta": "添加采购人",
+      "add_title": "授权采购人",
+      "dialog_description": "为该分支机构下单的客户。若客户只为一个分支机构采购，其订单会自动归属该机构。",
+      "empty": "尚未授权任何采购人",
+      "messages": {
+        "created": "采购人已添加",
+        "deleted": "采购人已移除"
+      },
+      "remove_action": "移除采购人",
+      "remove_confirm": {
+        "message": "{{email}} 将不再为该分支机构采购。其客户账户不受影响。",
+        "title": "移除该采购人？"
+      },
+      "roles_enterprise_help": "在此添加的采购人可为该分支机构下单。角色、审批流程和支出限额由 Spree Enterprise 提供。",
+      "roles_enterprise_title": "角色与审批为 Enterprise 功能",
+      "title": "采购人"
+    },
+    "tax_identifiers": {
+      "add_cta": "添加登记号",
+      "add_title": "添加税务登记号",
+      "checked_prefix": "核验于",
+      "delete_confirm": {
+        "message": "将移除 {{value}}。已完成的订单仍保留开票时使用的号码。",
+        "title": "删除该登记号？"
+      },
+      "dialog_description": "发票上显示的增值税号或企业税号。欧盟企业间交易的反向征收机制依赖于它。",
+      "edit_title": "编辑税务登记号",
+      "empty": "尚未填写税务登记号",
+      "kinds": {
+        "au_abn": "澳大利亚企业号",
+        "ch_vat": "瑞士增值税号",
+        "eu_vat": "欧盟增值税号",
+        "gb_vat": "英国增值税号",
+        "us_ein": "美国雇主识别号"
+      },
+      "messages": {
+        "created": "登记号已添加",
+        "deleted": "登记号已删除",
+        "updated": "登记号已更新",
+        "validation_failed": "无法核验该号码",
+        "validation_requested": "正在向登记机构核验该号码"
+      },
+      "not_validatable": "该类型未配置校验方式，将按填写的内容直接使用。",
+      "select_kind": "选择类型",
+      "title": "税务登记号",
+      "validate_action": "向登记机构核验",
+      "validation_status": {
+        "not_checked": "未核验",
+        "pending": "核验中",
+        "unavailable": "登记机构不可用",
+        "unsupported": "无法核验",
+        "unverified": "无效",
+        "verified": "已核验"
+      }
+    },
+    "tax_exemption_certificates": {
+      "add_cta": "添加证明",
+      "add_title": "添加免税证明",
+      "delete_confirm": {
+        "message": "将移除证明 {{number}}。此操作无法撤销。",
+        "title": "删除该证明？"
+      },
+      "dialog_description": "证明该企业的采购无需征税。新证明需经您接受后才会生效。",
+      "download_action": "下载文件",
+      "empty": "暂无证明",
+      "expires_prefix": "有效期至",
+      "lapsed": "已失效",
+      "messages": {
+        "created": "证明已添加",
+        "deleted": "证明已删除",
+        "revoked": "证明已撤销",
+        "updated": "证明已更新",
+        "verified": "证明已接受"
+      },
+      "never_expires": "长期有效",
+      "no_document": "未附文件",
+      "reason_codes": {
+        "agricultural": "农业",
+        "charitable": "慈善机构",
+        "educational": "教育机构",
+        "government": "政府机构",
+        "manufacturing": "生产制造",
+        "resale": "转售"
+      },
+      "revoke_action": "撤销",
+      "revoke_confirm": {
+        "message": "证明 {{number}} 将不再适用于新订单，但会作为记录保留。",
+        "title": "撤销该证明？"
+      },
+      "select_reason": "选择事由",
+      "status": {
+        "expired": "已过期",
+        "pending": "待审核",
+        "revoked": "已撤销",
+        "verified": "已接受"
+      },
+      "title": "免税证明",
+      "verified_at": "接受日期",
+      "verify_action": "接受"
+    },
+    "tax_rates": {
+      "add_cta": "添加税率",
+      "all_categories": "所有类别",
+      "create_description": "税率用于配置内置的税费计算。未指定国家的税率适用于所有地区。",
+      "create_label": "创建税率",
+      "delete_confirm": {
+        "message": "{{name}} 将不再适用。已完成的订单保留原先收取的税费。",
+        "title": "删除税率？"
+      },
+      "edit_description": "修改仅影响新的计算。已完成的订单保留原先收取的税费。",
+      "empty": "暂无税率",
+      "every_country": "所有国家",
+      "every_state": "所有省/州",
+      "messages": {
+        "created": "税率已创建",
+        "deleted": "税率已删除",
+        "updated": "税率已更新"
+      },
+      "search_placeholder": "搜索税率",
+      "select_category": "选择类别"
+    },
+    "tax_providers": {
+      "limitations_title": "{{name}} 不支持",
+      "unavailable_option": "{{name}}（未配置）",
+      "use_default": "使用默认计算引擎",
+      "use_default_named": "默认（{{name}}）"
+    },
+    "enterprise": {
+      "learn_more": "了解 Spree Enterprise"
     }
   }
 }

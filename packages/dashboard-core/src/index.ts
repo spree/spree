@@ -67,6 +67,7 @@ export * from './lib/custom-field-components'
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
+export * from './lib/download'
 export * from './lib/filters-to-ransack'
 export * from './lib/form-errors'
 export * from './lib/form-fields-registry'

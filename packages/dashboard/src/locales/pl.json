@@ -753,6 +753,7 @@
           "label": "Notatka wewnętrzna",
           "placeholder": "Kontekst dotyczący tego klienta tylko dla personelu…"
         },
+        "label": "Klient",
         "tags": {
           "label": "Tagi"
         }
@@ -901,6 +902,10 @@
         "tax_inclusive": {
           "help": "Wyświetlaj ceny z uwzględnionym podatkiem. Powszechne na rynkach UE.",
           "label": "Ceny z podatkiem"
+        },
+        "tax_provider": {
+          "help": "Co nalicza podatek dla zamówień na tym rynku.",
+          "label": "Mechanizm podatkowy"
         }
       },
       "match_policy": {
@@ -1495,6 +1500,106 @@
           "label": "Docelowy adres URL",
           "placeholder": "https://example.com/webhooks"
         }
+      },
+      "external_id": {
+        "label": "Identyfikator"
+      },
+      "country": {
+        "label": "Kraj"
+      },
+      "state": {
+        "label": "Region"
+      },
+      "postal_code": {
+        "label": "Kod pocztowy"
+      },
+      "certificate_number": {
+        "label": "Numer certyfikatu"
+      },
+      "reason_code": {
+        "help": "Przekazywany do naliczania podatku jako kod przeznaczenia.",
+        "label": "Powód"
+      },
+      "issued_at": {
+        "label": "Data wydania"
+      },
+      "issuing_authority": {
+        "label": "Organ wydający"
+      },
+      "certificate_document": {
+        "help": "PDF lub obraz, do 10 MB. Pobrać go mogą tylko pracownicy.",
+        "label": "Dokument"
+      },
+      "company": {
+        "name": {
+          "placeholder": "Acme Industries"
+        },
+        "external_id": {
+          "help": "Twój własny identyfikator tej firmy, unikalny w sklepie.",
+          "placeholder": "ACME-001"
+        }
+      },
+      "company_location": {
+        "name": {
+          "placeholder": "Siedziba główna"
+        },
+        "external_id": {
+          "help": "Twój własny identyfikator tego oddziału."
+        }
+      },
+      "company_contact": {
+        "role": {
+          "label": "Rola"
+        }
+      },
+      "tax_identifier": {
+        "kind": {
+          "help": "Jaki to numer. Musi odpowiadać skonfigurowanej weryfikacji, więc pisownia ma znaczenie.",
+          "label": "Rodzaj"
+        },
+        "value": {
+          "label": "Numer",
+          "placeholder": "PL1234567890"
+        }
+      },
+      "tax_rate": {
+        "name": {
+          "placeholder": "VAT stawka podstawowa"
+        },
+        "amount": {
+          "help": "W procentach. Dla 20% wpisz 20.",
+          "label": "Stawka"
+        },
+        "jurisdiction": {
+          "label": "Obowiązuje dla"
+        },
+        "country_iso": {
+          "help": "Zostaw puste, aby opodatkować każdy kraj."
+        },
+        "state_code": {
+          "help": "Zostaw puste, aby opodatkować cały kraj."
+        },
+        "tax_category_id": {
+          "help": "Które produkty obejmuje ta stawka.",
+          "label": "Kategoria podatkowa"
+        },
+        "included_in_price": {
+          "help": "Ceny już zawierają ten podatek, więc jest on wyliczany z ceny, a nie doliczany.",
+          "label": "Wliczony w cenę",
+          "short": "Wliczony"
+        },
+        "show_rate_in_label": {
+          "help": "Dodaje procent do pozycji podatku widocznej dla klienta.",
+          "label": "Pokaż stawkę w opisie podatku"
+        }
+      },
+      "tax_exemption_certificate": {
+        "country_iso": {
+          "help": "Zostaw puste, aby certyfikat obowiązywał wszędzie."
+        },
+        "expires_at": {
+          "help": "Zostaw puste, aby certyfikat nie wygasał."
+        }
       }
     },
     "delivery_profiles": {
@@ -1750,6 +1855,7 @@
       "categories": "Kategorie",
       "claims": "Reklamacje",
       "collections": "Kolekcje",
+      "companies": "Firmy",
       "customer_groups": "Grupy",
       "customers": "Klienci",
       "draft_orders": "Zamówienia robocze",
@@ -2890,6 +2996,10 @@
             "url": "URL"
           },
           "title": "Webhooki"
+        },
+        "tax_rates": {
+          "add_sheet_title": "Nowa stawka podatku",
+          "edit_sheet_title": "Edytuj stawkę podatku"
         }
       },
       "staff": {
@@ -3618,6 +3728,7 @@
         "stock_locations": "Lokalizacje magazynowe",
         "store": "Sklep",
         "tax_categories": "Kategorie podatkowe",
+        "tax_rates": "Stawki podatku",
         "webhooks": "Webhooki"
       }
     },
@@ -3800,6 +3911,188 @@
       "saved": "Tłumaczenia zapisane",
       "source": "Źródło",
       "title": "Tłumaczenia"
+    },
+    "jurisdiction": {
+      "everywhere": "Wszędzie"
+    },
+    "companies": {
+      "add_cta": "Dodaj firmę",
+      "add_sheet_title": "Nowa firma",
+      "create_description": "Klienci biznesowi kupują przez oddziały. Oddziały, numer podatkowy i certyfikaty zwolnienia dodasz po utworzeniu firmy.",
+      "create_label": "Utwórz firmę",
+      "delete_confirm": {
+        "message": "Spowoduje to usunięcie {{name}} wraz z oddziałami, kupującymi i certyfikatami. Tej operacji nie można cofnąć.",
+        "title": "Usunąć firmę?"
+      },
+      "detail": {
+        "delete_label": "Usuń firmę",
+        "load_error": "Nie udało się wczytać tej firmy",
+        "profile": "Firma"
+      },
+      "empty": "Nie ma jeszcze żadnych firm",
+      "locations_column": "Oddziały",
+      "messages": {
+        "created": "Firma utworzona",
+        "deleted": "Firma usunięta",
+        "updated": "Firma zaktualizowana"
+      },
+      "search_placeholder": "Szukaj firm"
+    },
+    "company_locations": {
+      "add_cta": "Dodaj oddział",
+      "add_title": "Nowy oddział",
+      "addresses": "Adresy",
+      "billing_address": "Adres rozliczeniowy",
+      "contacts_count_few": "{{count}} kupujących",
+      "contacts_count_many": "{{count}} kupujących",
+      "contacts_count_one": "{{count}} kupujący",
+      "contacts_count_other": "{{count}} kupujących",
+      "detail": {
+        "delete_label": "Usuń oddział",
+        "load_error": "Nie udało się wczytać tego oddziału"
+      },
+      "dialog_description": "Oddział to miejsce, na które wystawiana jest faktura i pod które trafia dostawa. Adresy są opcjonalne, ale wypełniony adres wymaga imienia, nazwiska i kraju.",
+      "edit_title": "Edytuj oddział",
+      "empty": "Nie ma jeszcze żadnych oddziałów",
+      "messages": {
+        "created": "Oddział utworzony",
+        "deleted": "Oddział usunięty",
+        "updated": "Oddział zaktualizowany"
+      },
+      "shipping_address": "Adres dostawy",
+      "shipping_same_as_billing": "Adres dostawy taki sam jak rozliczeniowy",
+      "title": "Oddziały"
+    },
+    "company_contacts": {
+      "add_cta": "Dodaj kupującego",
+      "add_title": "Uprawnij kupującego",
+      "dialog_description": "Klient, który kupuje dla tego oddziału. Jeśli kupuje tylko dla jednego oddziału, jego zamówienia trafiają do niego automatycznie.",
+      "empty": "Nie uprawniono jeszcze żadnych kupujących",
+      "messages": {
+        "created": "Kupujący dodany",
+        "deleted": "Kupujący usunięty"
+      },
+      "remove_action": "Usuń kupującego",
+      "remove_confirm": {
+        "message": "{{email}} nie będzie już kupować dla tego oddziału. Konto klienta pozostaje bez zmian.",
+        "title": "Usunąć tego kupującego?"
+      },
+      "roles_enterprise_help": "Dodani tutaj kupujący mogą składać zamówienia dla tego oddziału. Role, procesy akceptacji i limity wydatków są częścią Spree Enterprise.",
+      "roles_enterprise_title": "Role i akceptacje to funkcja Enterprise",
+      "title": "Kupujący"
+    },
+    "tax_identifiers": {
+      "add_cta": "Dodaj numer",
+      "add_title": "Dodaj numer podatkowy",
+      "checked_prefix": "Sprawdzono",
+      "delete_confirm": {
+        "message": "{{value}} zostanie usunięty. Złożone już zamówienia zachowują numer, którym je zafakturowano.",
+        "title": "Usunąć ten numer?"
+      },
+      "dialog_description": "Numer VAT lub firmowy, który pojawia się na fakturach. To on umożliwia odwrotne obciążenie w handlu B2B w UE.",
+      "edit_title": "Edytuj numer podatkowy",
+      "empty": "Brak zapisanego numeru podatkowego",
+      "kinds": {
+        "au_abn": "Australijski numer firmy",
+        "ch_vat": "VAT Szwajcaria",
+        "eu_vat": "VAT UE",
+        "gb_vat": "VAT Wielka Brytania",
+        "us_ein": "EIN (USA)"
+      },
+      "messages": {
+        "created": "Numer dodany",
+        "deleted": "Numer usunięty",
+        "updated": "Numer zaktualizowany",
+        "validation_failed": "Nie udało się sprawdzić numeru",
+        "validation_requested": "Trwa sprawdzanie numeru w rejestrze"
+      },
+      "not_validatable": "Dla tego rodzaju nie skonfigurowano weryfikacji, numer jest używany tak, jak go wpisano.",
+      "select_kind": "Wybierz rodzaj",
+      "title": "Numer podatkowy",
+      "validate_action": "Sprawdź w rejestrze",
+      "validation_status": {
+        "not_checked": "Niesprawdzony",
+        "pending": "Sprawdzanie",
+        "unavailable": "Rejestr niedostępny",
+        "unsupported": "Nie można sprawdzić",
+        "unverified": "Nieprawidłowy",
+        "verified": "Potwierdzony"
+      }
+    },
+    "tax_exemption_certificates": {
+      "add_cta": "Dodaj certyfikat",
+      "add_title": "Dodaj certyfikat zwolnienia",
+      "delete_confirm": {
+        "message": "Certyfikat {{number}} zostanie usunięty. Tej operacji nie można cofnąć.",
+        "title": "Usunąć ten certyfikat?"
+      },
+      "dialog_description": "Dowód, że zakupy tej firmy nie są opodatkowane. Nowy certyfikat zaczyna obowiązywać dopiero po zaakceptowaniu.",
+      "download_action": "Pobierz dokument",
+      "empty": "Brak zapisanych certyfikatów",
+      "expires_prefix": "Wygasa",
+      "lapsed": "Nieważny",
+      "messages": {
+        "created": "Certyfikat dodany",
+        "deleted": "Certyfikat usunięty",
+        "revoked": "Certyfikat unieważniony",
+        "updated": "Certyfikat zaktualizowany",
+        "verified": "Certyfikat zaakceptowany"
+      },
+      "never_expires": "Bez daty wygaśnięcia",
+      "no_document": "Brak załączonego dokumentu",
+      "reason_codes": {
+        "agricultural": "Rolnictwo",
+        "charitable": "Organizacja charytatywna",
+        "educational": "Edukacja",
+        "government": "Instytucja publiczna",
+        "manufacturing": "Produkcja",
+        "resale": "Odsprzedaż"
+      },
+      "revoke_action": "Unieważnij",
+      "revoke_confirm": {
+        "message": "Certyfikat {{number}} przestanie obowiązywać dla nowych zamówień. Pozostanie zapisany jako dokumentacja.",
+        "title": "Unieważnić ten certyfikat?"
+      },
+      "select_reason": "Wybierz powód",
+      "status": {
+        "expired": "Wygasł",
+        "pending": "Oczekuje na weryfikację",
+        "revoked": "Unieważniony",
+        "verified": "Zaakceptowany"
+      },
+      "title": "Certyfikaty zwolnienia",
+      "verified_at": "Zaakceptowano",
+      "verify_action": "Zaakceptuj"
+    },
+    "tax_rates": {
+      "add_cta": "Dodaj stawkę",
+      "all_categories": "Wszystkie kategorie",
+      "create_description": "Stawki podatku konfigurują wbudowane naliczanie podatku. Stawka bez kraju obowiązuje wszędzie.",
+      "create_label": "Utwórz stawkę",
+      "delete_confirm": {
+        "message": "{{name}} nie będzie już stosowana. Złożone już zamówienia zachowują naliczony podatek.",
+        "title": "Usunąć stawkę?"
+      },
+      "edit_description": "Zmiany dotyczą nowych obliczeń. Złożone już zamówienia zachowują naliczony podatek.",
+      "empty": "Nie ma jeszcze żadnych stawek",
+      "every_country": "Każdy kraj",
+      "every_state": "Każdy region",
+      "messages": {
+        "created": "Stawka utworzona",
+        "deleted": "Stawka usunięta",
+        "updated": "Stawka zaktualizowana"
+      },
+      "search_placeholder": "Szukaj stawek",
+      "select_category": "Wybierz kategorię"
+    },
+    "tax_providers": {
+      "limitations_title": "{{name}} nie obsługuje",
+      "unavailable_option": "{{name}} (nieskonfigurowany)",
+      "use_default": "Użyj domyślnego mechanizmu",
+      "use_default_named": "Domyślny ({{name}})"
+    },
+    "enterprise": {
+      "learn_more": "Dowiedz się więcej o Spree Enterprise"
     }
   }
 }

@@ -1246,6 +1246,11 @@ export interface MarketCreateParams {
   position?: number
   /** 2-letter ISO country codes assigned to this market. At least one is required. */
   country_isos: string[]
+  /**
+   * Class name of the tax engine that prices this market, from
+   * `taxProviders.list()`. `null` uses the installation default.
+   */
+  tax_provider?: string | null
 }
 
 export interface MarketUpdateParams {
@@ -1257,6 +1262,7 @@ export interface MarketUpdateParams {
   default?: boolean
   position?: number
   country_isos?: string[]
+  tax_provider?: string | null
 }
 
 export interface CustomerGroupCreateParams {

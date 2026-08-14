@@ -10,6 +10,8 @@ export const marketFormSchema = z.object({
   tax_inclusive: z.boolean(),
   default: z.boolean(),
   country_isos: z.array(z.string()).min(1, { error: requiredMessage('market.country_isos') }),
+  // Empty means the installation default rather than "no tax".
+  tax_provider: z.string().optional(),
 })
 
 export type MarketFormValues = z.infer<typeof marketFormSchema>
@@ -22,6 +24,7 @@ export const MARKET_DEFAULTS: MarketFormValues = {
   tax_inclusive: false,
   default: false,
   country_isos: [],
+  tax_provider: '',
 }
 
 export function marketValuesToParams(v: MarketFormValues): MarketCreateParams & MarketUpdateParams {
@@ -35,5 +38,6 @@ export function marketValuesToParams(v: MarketFormValues): MarketCreateParams & 
     tax_inclusive: v.tax_inclusive,
     default: v.default,
     country_isos: v.country_isos,
+    tax_provider: v.tax_provider || null,
   }
 }
