@@ -10,7 +10,7 @@ module Spree
     include ActiveModel::Model
     include ActiveModel::Attributes
 
-    attribute :abbr, :string
+    attribute :abbr, :string # the ISO 3166-2 code without the country prefix
     attribute :name, :string
     attribute :country_iso, :string
 
@@ -43,6 +43,8 @@ module Spree
         Array(resolve(country_iso, name_or_abbr))
       end
     end
+
+    alias_method :code, :abbr
 
     # @return [Spree::Country, nil]
     def country

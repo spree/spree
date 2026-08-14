@@ -6,7 +6,7 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
   include_context 'API v3 Admin'
 
   let!(:tax_category) { create(:tax_category) }
-  let!(:germany) { Spree::Country.find_by(iso: 'DE') || create(:country, iso: 'DE', name: 'Germany') }
+  let!(:germany) { Spree::Country.by_iso('DE') }
   let!(:tax_rate) { create(:tax_rate, tax_category: tax_category, country_iso: germany&.iso, amount: 0.19, included_in_price: true) }
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
 

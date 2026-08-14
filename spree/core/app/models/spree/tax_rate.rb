@@ -46,7 +46,7 @@ module Spree
       where(country_iso: [country_iso.presence, nil].uniq).where(state_code: [state_code.presence, nil].uniq)
     }
     # The same question asked with an address in hand.
-    scope :for_address, ->(address) { for_jurisdiction(address&.country_iso, address&.state_abbr) }
+    scope :for_address, ->(address) { for_jurisdiction(address&.country_iso, address&.state_code) }
     # Country-wide: unlike for_jurisdiction(country_iso, nil) this leaves the
     # state unconstrained, so it sums a country's state-level rates too. Used
     # where the state is irrelevant — backing VAT out of a gross price.

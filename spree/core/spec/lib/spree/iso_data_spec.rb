@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'carmen'
 
 RSpec.describe Spree::IsoData do
   describe '.countries' do
@@ -111,32 +110,34 @@ RSpec.describe Spree::IsoData do
   end
 
   # The guard that keeps the curation honest. Spree seeded states from Carmen
-  # before 6.0; every code that seed could produce must still resolve, otherwise
+  # before 6.0; every code that seed could produce must still resolve, or
   # upgrading silently invalidates addresses that were valid when entered.
+  #
+  # The list is frozen rather than regenerated from Carmen: the gem is gone in
+  # 6.0, and what matters is the data real stores were seeded with, which no
+  # longer changes.
   describe 'compatibility with the pre-6.0 seeded data' do
-    excluded_us_states = %w[UM AS MP VI PR GU].freeze
-    excluded_cn_states = %w[HK MO TW].freeze
+    SEEDED_STATE_CODES = {
+      "AU" => %w[ACT NSW NT QLD SA TAS VIC WA],
+      "AE" => %w[AJ AZ DU FU RK SH UQ],
+      "BR" => %w[AC AL AM AP BA CE DF ES GO MA MG MS MT PA PB PE PI PR RJ RN RO RR RS SC SE SP TO],
+      "CA" => %w[AB BC MB NB NL NS NT NU ON PE QC SK YT],
+      "CN" => %w[AH BJ CQ FJ GD GS GX GZ HA HB HE HI HL HN JL JS JX LN NM NX QH SC SD SH SN SX TJ XJ XZ YN ZJ],
+      "ES" => %w[A AB AL AV B BA BI BU C CA CC CE CO CR CS CU GC GI GR GU H HU J L LE LO LU M MA ML MU NA O OR P PM PO S SA SE SG SO SS T TE TF TO V VA VI Z ZA],
+      "IE" => %w[CE CN CO CW D DL G KE KK KY LD LH LK LM LS MH MN MO OY RN SO TA WD WH WW WX],
+      "IN" => %w[AN AP AR AS BR CH CT DD DL DN GA GJ HP HR JH JK KA KL LD MH ML MN MP MZ NL OR PB PY RJ SK TG TN TR UP UT WB],
+      "IT" => %w[AG AL AN AO AP AQ AR AT AV BA BG BI BL BN BO BR BS BT BZ CA CB CE CH CI CL CN CO CR CS CT CZ EN FC FE FG FI FM FR GE GO GR IM IS KR LC LE LI LO LT LU MB MC ME MI MN MO MS MT NA NO NU OG OR OT PA PC PD PE PG PI PN PO PR PT PU PV PZ RA RC RE RG RI RM RN RO SA SI SO SP SR SS SV TA TE TN TO TP TR TS TV UD VA VB VC VE VI VR VS VT VV],
+      "MY" => %w[01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16],
+      "MX" => %w[AGU BCN BCS CAM CHH CHP CMX COA COL DUR GRO GUA HID JAL MEX MIC MOR NAY NLE OAX PUE QUE ROO SIN SLP SON TAB TAM TLA VER YUC ZAC],
+      "NZ" => %w[AUK BOP CAN CIT GIS HKB MBH MWT NSN NTL OTA STL TAS TKI WGN WKO WTC],
+      "PT" => %w[01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 20 30],
+      "RO" => %w[AB AG AR B BC BH BN BR BT BV BZ CJ CL CS CT CV DB DJ GJ GL GR HD HR IF IL IS MH MM MS NT OT PH SB SJ SM SV TL TM TR VL VN VS],
+      "TH" => %w[10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 30 31 32 33 34 35 36 37 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 60 61 62 63 64 65 66 67 70 71 72 73 74 75 76 77 80 81 82 83 84 85 86 90 91 92 93 94 95 96 S],
+      "US" => %w[AA AE AK AL AP AR AZ CA CO CT DC DE FL GA HI IA ID IL IN KS KY LA MA MD ME MI MN MO MS MT NC ND NE NH NJ NM NV NY OH OK OR PA RI SC SD TN TX UT VA VT WA WI WV WY],
+      "ZA" => %w[EC FS GT LP MP NC NL NW WC],
+    }.freeze
 
-    # Mirrors the old Spree::Seeds::States branching exactly.
-    def self.seeded_codes_for(iso, excluded_us, excluded_cn)
-      carmen_country = Carmen::Country.coded(iso)
-      return [] unless carmen_country
-
-      carmen_country.subregions.flat_map do |subregion|
-        case iso
-        when 'US' then excluded_us.include?(subregion.code) ? [] : [subregion.code]
-        when 'CA', 'MX' then [subregion.code]
-        when 'CN' then excluded_cn.include?(subregion.code) ? [] : [subregion.code]
-        else
-          subregion.subregions? && subregion.subregions.size.positive? ? subregion.subregions.map(&:code) : [subregion.code]
-        end
-      end.reject { |code| code.nil? || code.empty? }.uniq
-    end
-
-    Spree::Address::STATES_REQUIRED.each do |iso|
-      codes = seeded_codes_for(iso, excluded_us_states, excluded_cn_states)
-      next if codes.empty?
-
+    SEEDED_STATE_CODES.each do |iso, codes|
       it "resolves every state code the seed produced for #{iso}" do
         unresolved = codes.reject { |code| described_class.subdivision_code(iso, code) }
 

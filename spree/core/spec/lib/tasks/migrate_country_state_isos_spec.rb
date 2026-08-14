@@ -43,7 +43,7 @@ RSpec.describe Spree::CountryStateIsoMigrator do
     updates[:country_id] = country_id if connection.column_exists?(record.class.table_name, :country_id)
     if connection.column_exists?(record.class.table_name, :state_id)
       updates[:state_id] = state_id
-      updates[:state_abbr] = nil
+      updates[:state_code] = nil
     end
 
     record.update_columns(updates)
@@ -59,7 +59,7 @@ RSpec.describe Spree::CountryStateIsoMigrator do
       migrate
 
       expect(address.reload.country_iso).to eq('PL')
-      expect(address.state_abbr).to eq('DS')
+      expect(address.state_code).to eq('DS')
     end
 
     it 'leaves an address with no state alone' do
@@ -69,7 +69,7 @@ RSpec.describe Spree::CountryStateIsoMigrator do
       migrate
 
       expect(address.reload.country_iso).to eq('PL')
-      expect(address.state_abbr).to be_nil
+      expect(address.state_code).to be_nil
     end
   end
 
@@ -88,12 +88,12 @@ RSpec.describe Spree::CountryStateIsoMigrator do
     # A subdivision code is only unique within its country, so a state member
     # has to record both halves or it cannot be resolved on its own.
     it 'gives a state member its country as well' do
-      member = delivery_zone.members.create!(member_type: 'state', country_iso: 'US', state_abbr: 'NY')
+      member = delivery_zone.members.create!(member_type: 'state', country_iso: 'US', state_code: 'NY')
       as_legacy_row(member, country_id: nil, state_id: state_id)
 
       migrate
 
-      expect(member.reload.state_abbr).to eq('DS')
+      expect(member.reload.state_code).to eq('DS')
       expect(member.country_iso).to eq('PL')
     end
   end
@@ -117,7 +117,7 @@ RSpec.describe Spree::CountryStateIsoMigrator do
       migrate
 
       expect(stock_location.reload.country_iso).to eq('PL')
-      expect(stock_location.state_abbr).to eq('DS')
+      expect(stock_location.state_code).to eq('DS')
     end
 
     it 'names a store default country by code' do
@@ -146,7 +146,7 @@ RSpec.describe Spree::CountryStateIsoMigrator do
 
       migrate
 
-      expect(address.reload.state_abbr).to eq('GP')
+      expect(address.reload.state_code).to eq('GP')
     end
 
     it 'upcases a lower-case legacy code' do
@@ -156,7 +156,7 @@ RSpec.describe Spree::CountryStateIsoMigrator do
 
       migrate
 
-      expect(address.reload.state_abbr).to eq('WC')
+      expect(address.reload.state_code).to eq('WC')
     end
   end
 

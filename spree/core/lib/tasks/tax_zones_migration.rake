@@ -10,15 +10,32 @@ namespace :spree do
   task migrate_tax_zones: :environment do
     # One entry per taxing jurisdiction in the zone. State members carry their
     # own country, so a mixed zone still yields complete pairs.
+    #
+    # Reads spree_countries and spree_states directly: countries and states are
+    # reference data rather than records in 6.0, so the ids the members hold
+    # can only be resolved against the tables the upgrade keeps.
+    connection = ActiveRecord::Base.connection
+    country_iso_by_id = lambda do |id|
+      connection.select_value("SELECT iso FROM spree_countries WHERE id = #{connection.quote(id)}")
+    end
+    state_pair_by_id = lambda do |id|
+      row = connection.select_one(<<~SQL.squish)
+        SELECT spree_states.abbr AS abbr, spree_countries.iso AS iso
+        FROM spree_states
+        INNER JOIN spree_countries ON spree_countries.id = spree_states.country_id
+        WHERE spree_states.id = #{connection.quote(id)}
+      SQL
+      row && { country_iso: row['iso'], state_code: row['abbr'] }
+    end
+
     jurisdictions_for = lambda do |zone|
       zone.zone_members.filter_map do |member|
         case member.zoneable_type
         when 'Spree::Country'
-          country = Spree::Country.find_by(id: member.zoneable_id)
-          { country_iso: country.iso, state_code: nil } if country
+          iso = country_iso_by_id.call(member.zoneable_id)
+          { country_iso: iso, state_code: nil } if iso
         when 'Spree::State'
-          state = Spree::State.find_by(id: member.zoneable_id)
-          { country_iso: state.country&.iso, state_code: state.abbr } if state&.country
+          state_pair_by_id.call(member.zoneable_id)
         end
       end.uniq
     end
@@ -74,18 +91,14 @@ namespace :spree do
     # re-scoping who pays what, so its price list is deactivated instead and
     # reported with the countries it named, for the merchant to rebuild as a
     # market. Zones naming states resolve to those states' countries.
-    zone_country_ids = lambda do |zone_ids|
+    zone_country_isos = lambda do |zone_ids|
       members = Spree::ZoneMember.where(zone_id: zone_ids)
-      country_ids = Spree::Country.where(
-        id: members.where(zoneable_type: 'Spree::Country').select(:zoneable_id)
-      ).ids
-      state_country_ids = Spree::Country.where(
-        id: Spree::State.where(
-          id: members.where(zoneable_type: 'Spree::State').select(:zoneable_id)
-        ).select(:country_id)
-      ).ids
+      country_ids = members.where(zoneable_type: 'Spree::Country').pluck(:zoneable_id)
+      state_ids = members.where(zoneable_type: 'Spree::State').pluck(:zoneable_id)
 
-      (country_ids + state_country_ids).uniq.sort
+      isos = country_ids.filter_map { |id| country_iso_by_id.call(id) }
+      isos += state_ids.filter_map { |id| state_pair_by_id.call(id)&.fetch(:country_iso) }
+      isos.uniq.sort
     end
 
     rules_matched = 0
@@ -94,13 +107,11 @@ namespace :spree do
     Spree::PriceRule.where(type: 'Spree::PriceRules::ZoneRule').find_each do |rule|
       stored = rule.preferences.with_indifferent_access
       zone_ids = Array(stored[:zone_ids]).reject(&:blank?)
-      country_ids = zone_country_ids.call(zone_ids)
+      isos = zone_country_isos.call(zone_ids)
 
       price_list = Spree::PriceList.with_deleted.find_by(id: rule.price_list_id)
-      market = if price_list && country_ids.any?
-                 price_list.store.markets.find do |candidate|
-                   candidate.market_countries.pluck(:country_id).uniq.sort == country_ids
-                 end
+      market = if price_list && isos.any?
+                 price_list.store.markets.find { |candidate| candidate.country_isos == isos }
                end
 
       if market
@@ -118,7 +129,6 @@ namespace :spree do
         if price_list && !price_list.deleted? && price_list.status != 'inactive'
           price_list.update_columns(status: 'inactive', updated_at: Time.current)
         end
-        isos = Spree::Country.where(id: country_ids).pluck(:iso).sort
         lists_deactivated << [price_list, isos]
         rule.delete
       end

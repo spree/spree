@@ -27,22 +27,32 @@ module Spree
     end
 
     def state
-      Spree::State.resolve(country_iso, state_abbr) if country_iso.present? && state_abbr.present?
+      Spree::State.resolve(country_iso, state_code) if country_iso.present? && state_code.present?
     end
 
     def state=(value)
-      self.state_abbr = value&.abbr
+      self.state_code = value&.abbr
       self.country_iso ||= value.country_iso if value
     end
 
     normalizes :postal_code_prefix, :postal_code_from, :postal_code_to,
                with: ->(value) { Spree::Address.normalize_zipcode(value).presence }
 
-    before_validation :normalize_iso_codes
+    # Matching compares stored codes verbatim, so 'us' has to become 'US'
+    # before it is written.
+    normalizes :country_iso, :state_code, with: ->(value) { value.presence&.to_s&.upcase }
+
+    # Canonical name is state_code (matching the tax tables); the v3 API
+    # shipped state_abbr, kept as an alias.
+    alias_attribute :state_abbr, :state_code
+
+    # Resolving a subdivision needs both halves, which normalizes can't see —
+    # it runs per attribute — so that part stays a callback.
+    before_validation :resolve_geography
 
     validates :member_type, presence: true, inclusion: { in: MEMBER_TYPES }
     validates :country_iso, presence: true, if: -> { member_type.in?(MEMBER_TYPES) }
-    validates :state_abbr, presence: true, if: -> { member_type == 'state' }
+    validates :state_code, presence: true, if: -> { member_type == 'state' }
     validate :postal_definition, if: -> { member_type == 'postal_code' }
     validate :geography_resolvable
 
@@ -55,7 +65,7 @@ module Spree
     def match?(address)
       case member_type
       when 'country' then same_country?(address)
-      when 'state' then same_country?(address) && address.state_abbr.present? && address.state_abbr == state_abbr
+      when 'state' then same_country?(address) && address.state_code.present? && address.state_code == state_code
       when 'postal_code' then same_country?(address) && postal_match?(address.normalized_zipcode)
       else false
       end
@@ -74,32 +84,29 @@ module Spree
 
     # Members can still be built from country/state records, so the codes are
     # filled from them until those associations go in 6.1. A state supplies its
-    # country as well — see +match?+.
-    def normalize_iso_codes
+    # country as well — see +match?+. A retired subdivision code is mapped to
+    # its successor, which needs the country, so it happens here rather than in
+    # a per-attribute normalizer.
+    def resolve_geography
       self.country_iso = country.iso if country_iso.blank? && country.present?
 
       if state.present?
-        self.state_abbr = state.abbr if state_abbr.blank?
+        self.state_code = state.abbr if state_code.blank?
         self.country_iso = state.country&.iso if country_iso.blank?
       end
 
-      # Matching compares stored codes verbatim, so what is stored has to be
-      # the canonical form — otherwise 'us' or a retired subdivision code
-      # would sit in the column and match nothing for the row's whole life.
-      self.country_iso = country_iso.to_s.strip.upcase.presence
+      return if state_code.blank? || country_iso.blank?
 
-      return if state_abbr.blank? || country_iso.blank?
-
-      self.state_abbr = Spree::IsoData.subdivision_code(country_iso, state_abbr)
+      self.state_code = Spree::IsoData.subdivision_code(country_iso, state_code)
     end
 
     # Stored values are normalized on assignment (see +normalizes+ above), so
     # matching compares normalized against normalized.
-    # normalize_iso_codes nils anything the registry can't resolve, so a blank
+    # resolve_geography nils anything the registry can't resolve, so a blank
     # column here means the caller supplied something invalid.
     def geography_resolvable
       errors.add(:country_iso, :invalid) if country_iso.present? && Spree::Country.by_iso(country_iso).nil?
-      errors.add(:state_abbr, :invalid) if member_type == 'state' && state_abbr.blank? && state.present?
+      errors.add(:state_code, :invalid) if member_type == 'state' && state_code.blank? && state.present?
     end
 
     def postal_match?(zipcode)

@@ -17,7 +17,7 @@ module Spree
         if has_markets?
           default_market&.default_country
         else
-          super
+          Spree::Country.by_iso(read_attribute(:default_country_iso_code))
         end
       end
 

@@ -166,7 +166,7 @@ namespace :spree do
           abbr, iso = pair
           # A state member carries its country too: a subdivision code is only
           # unique within its country.
-          delivery_zone.members.create!(member_type: 'state', state_abbr: abbr, country_iso: iso)
+          delivery_zone.members.create!(member_type: 'state', state_code: abbr, country_iso: iso)
         end
       end
     end

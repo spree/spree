@@ -54,7 +54,7 @@ describe Spree::Address, type: :model do
                         lastname: FFaker::Name.last_name,
                         company: FFaker::Company.name,
                         phone: FFaker::PhoneNumber.short_phone_number,
-                        state_id: state.id,
+                        state: state,
                         state_name: state.name,
                         zipcode: Spree::TestingSupport::CountryPool.postal_code_for('US'))
 
@@ -64,12 +64,12 @@ describe Spree::Address, type: :model do
       expect(cloned.address2).to eq(original.address2)
       expect(cloned.alternative_phone).to eq(original.alternative_phone)
       expect(cloned.city).to eq(original.city)
-      expect(cloned.country_id).to eq(original.country_id)
+      expect(cloned.country_iso).to eq(original.country_iso)
       expect(cloned.firstname).to eq(original.firstname)
       expect(cloned.lastname).to eq(original.lastname)
       expect(cloned.company).to eq(original.company)
       expect(cloned.phone).to eq(original.phone)
-      expect(cloned.state_id).to eq(original.state_id)
+      expect(cloned.state_abbr).to eq(original.state_abbr)
       expect(cloned.state_name).to eq(original.state_name)
       expect(cloned.zipcode).to eq(original.zipcode)
 
@@ -89,7 +89,7 @@ describe Spree::Address, type: :model do
 
       context '#country_name' do
         it 'return proper country_iso_name' do
-          expect(address.country_name).to eq 'United States of America'
+          expect(address.country_name).to eq 'United States'
         end
       end
 
@@ -228,6 +228,7 @@ describe Spree::Address, type: :model do
       # Requiring a field the customer is never shown would make checkout
       # unfinishable, so the requirement follows the field being on the form.
       it 'stays optional while the company field is hidden' do
+      address.state = state
         stub_store_preferences(company_field_enabled: false, address_requires_company: true)
 
         address.company = ''
@@ -269,7 +270,7 @@ describe Spree::Address, type: :model do
       end
 
       it 'accepts an unformatted zip code' do
-        allow(address.country).to receive(:iso).and_return('GB')
+        address.country_iso = 'GB'
         address.zipcode = '	AL38QE'
         address.valid?
         expect(address.errors['zipcode']).not_to include('is invalid')
@@ -368,9 +369,9 @@ describe Spree::Address, type: :model do
 
     context 'state is blank' do
       # A country that requires no subdivision keeps free text as-is.
-      let(:address) { create(:address, country: Spree::Country.by_iso('PL'), zipcode: '00-001', state: nil, state_name: 'Mazovia') }
+      let(:address) { create(:address, country: Spree::Country.by_iso('PL'), zipcode: '00-001', state: nil, state_name: 'Somewhere Else') }
 
-      specify { expect(address.state_text).to eq('Mazovia') }
+      specify { expect(address.state_text).to eq('Somewhere Else') }
     end
 
     context 'the subdivision is known' do
@@ -390,9 +391,9 @@ describe Spree::Address, type: :model do
     end
 
     context 'state is blank' do
-      let(:address) { create(:address, country: Spree::Country.by_iso('PL'), zipcode: '00-001', state: nil, state_name: 'Mazovia') }
+      let(:address) { create(:address, country: Spree::Country.by_iso('PL'), zipcode: '00-001', state: nil, state_name: 'Somewhere Else') }
 
-      specify { expect(address.state_name_text).to eq('Mazovia') }
+      specify { expect(address.state_name_text).to eq('Somewhere Else') }
     end
   end
 
@@ -430,7 +431,7 @@ describe Spree::Address, type: :model do
 
     before { address.state_name = 'maryland' }
 
-    it { expect { address.send(:clear_state_name) }.not_to change(address, :state_id) }
+    it { expect { address.send(:clear_state_name) }.not_to change(address, :state_abbr) }
     it { expect { address.send(:clear_state_name) }.to change(address, :state_name).to(nil).from('maryland') }
   end
 
@@ -462,7 +463,10 @@ describe Spree::Address, type: :model do
 
       context 'state belongs to a different country than to which address is associated' do
         before do
-          address.country = create(:country)
+          # Japan's subdivision codes are numeric, so a US code cannot
+          # coincidentally be valid there.
+          address.country = Spree::Country.by_iso('JP')
+          address.zipcode = Spree::TestingSupport::CountryPool.postal_code_for('JP')
           clear_state_entities
         end
 
@@ -506,13 +510,16 @@ describe Spree::Address, type: :model do
 
       context 'when country has no states and state is not required' do
         before do
-          address.country = Spree::Country.by_iso('PL')
+          # Hong Kong genuinely has no subdivisions in the ISO data.
+          address.country = Spree::Country.by_iso('HK')
           address.state_name = state.name
           clear_state_entities
         end
 
         it { expect(address.state).to be_nil }
-        it { expect(address.state_name).to be_nil }
+        # A country with no subdivisions has nothing to match the text
+        # against, so it stays as the customer typed it.
+        it { expect(address.state_name).to eq(state.name) }
       end
     end
   end

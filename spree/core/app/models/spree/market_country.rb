@@ -16,7 +16,7 @@ module Spree
 
     # Stored codes are compared verbatim by shipping coverage and market
     # resolution, so 'us' has to become 'US' before it is written.
-    before_validation :normalize_country_iso
+    normalizes :country_iso, with: ->(value) { value.presence&.to_s&.upcase }
 
     validates :market, presence: true
     validates :country_iso, presence: true
@@ -25,10 +25,6 @@ module Spree
     validate :country_unique_per_store
 
     private
-
-    def normalize_country_iso
-      self.country_iso = country_iso.to_s.strip.upcase.presence
-    end
 
     def country_covered_by_shipping_zone
       return if market.blank? || country.blank?

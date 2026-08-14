@@ -33,7 +33,7 @@ namespace :spree do
           currency: iso_country&.currency_code || store.read_attribute(:default_currency) || 'USD',
           default_locale: iso_country&.languages_official&.first || store.read_attribute(:default_locale) || 'en',
           default: true,
-          country_ids: countries.map(&:id)
+          countries: countries
         )
 
         store.update_column(:checkout_zone_id, nil) if checkout_zone_id

@@ -28,7 +28,6 @@ Gem::Specification.new do |s|
 
   # Only used by the spec that replays the pre-6.0 seeded state list and fails
   # if any code it produced stops resolving through Spree::IsoData.
-  s.add_development_dependency 'carmen', '>= 1.0'
   s.add_development_dependency 'i18n-tasks'
 
   s.add_dependency 'rails', '>= 8.1', '< 8.2'

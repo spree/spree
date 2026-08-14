@@ -71,7 +71,8 @@ module Spree
           variant.id,
           currency,
           store&.id,
-          country&.id,
+          # Countries are reference data with no id; the ISO code is the identity.
+          country&.iso,
           market&.id,
           channel&.id,
           user&.id,

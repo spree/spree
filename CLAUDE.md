@@ -193,6 +193,7 @@ Per-request context available in models, controllers, jobs, and services:
 - For configuration / options always use [Model Preferences](docs/developer/customization/model-preferences.mdx)
 - NEVER hardcode table names, always use `Model.table_name` in models, queries, scopes, etc.
 - ALWAYS use Arel, scopes and ActiveRecord helpers to build queries, only use raw SQL if cannot use Arel
+- ALWAYS use normalizes for normalization of attributes, DON'T use custom before_action callbacks
 
 ```ruby
 class Spree::Product < Spree.base_class

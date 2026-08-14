@@ -479,8 +479,10 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
 
     context 'without markets' do
+      before { allow(subject).to receive(:has_markets?).and_return(false) }
+
       it 'returns list of all countries' do
-        checkout_available_countries_ids = subject.countries_available_for_checkout.pluck(:id)
+        checkout_available_countries_ids = subject.countries_available_for_checkout.map(&:iso)
         all_countries_ids                = Spree::Country.all.map(&:iso)
 
         expect(checkout_available_countries_ids).to eq(all_countries_ids)
@@ -498,8 +500,8 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
 
     it 'returns list of states associated to country' do
-      checkout_available_states_ids = subject.states_available_for_checkout(country_with_states).pluck(:id)
-      all_state_ids                 = country_with_states.states.pluck(:id)
+      checkout_available_states_ids = subject.states_available_for_checkout(country_with_states).map(&:abbr)
+      all_state_ids                 = country_with_states.states.map(&:abbr)
 
       expect(checkout_available_states_ids).to eq(all_state_ids)
     end
@@ -535,32 +537,17 @@ describe Spree::Store, type: :model, without_global_store: true do
   describe '#default_country_iso=' do
     let(:store) { build(:store) }
 
-    context 'when country is not found in the database' do
-      it 'creates the country from ISO3166 data' do
-        expect(Spree::Country.by_iso('GB')).to be_nil
-        expect { store.default_country_iso = 'GB' }.to change(Spree::Country, :count).by(1)
+    it 'names the country the store defaults to' do
+      store.default_country_iso = 'GB'
 
-        gb_country = Spree::Country.by_iso('GB')
-        expect(gb_country).to be_present
-        expect(gb_country.numcode.to_s).to eq(::Country['GB'].number)
-        expect(store.default_country_iso).to eq('GB')
-      end
+      expect(store.default_country_iso).to eq('GB')
+      expect(store.default_country.iso).to eq('GB')
     end
 
-    context 'when country exists in the database' do
-      let!(:country) { create(:country, iso: 'GB') }
+    it 'ignores a code no country has' do
+      store.default_country_iso = 'ZZ'
 
-      it 'uses the existing country' do
-        expect { store.default_country_iso = 'GB' }.not_to change(Spree::Country, :count)
-        expect(store.default_country_iso).to eq('GB')
-      end
-    end
-
-    context 'when iso is blank' do
-      it 'does nothing' do
-        store.default_country_iso = ''
-        expect(store.instance_variable_get(:@default_country_for_market)).to be_nil
-      end
+      expect(store.default_country).to be_nil
     end
   end
 
@@ -805,7 +792,7 @@ describe Spree::Store, type: :model, without_global_store: true do
 
       it 'does not duplicate countries shared across markets' do
         store.markets.last.countries << country_a rescue nil
-        expect(store.countries_from_markets.where(iso: country_a.iso).count).to eq(1)
+        expect(store.countries_from_markets.count { |c| c.iso == country_a.iso }).to eq(1)
       end
     end
 

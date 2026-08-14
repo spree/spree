@@ -205,9 +205,16 @@ module Spree
       end
 
       def find_existing_address(attributes)
-        # Exclude virtual attributes that are handled by Address model callbacks
-        address_attributes = attributes.except(:state_name, :country_iso, :state_abbr)
+        # Geography is matched by code, so a country or state object passed in
+        # has to become one before it reaches the query.
+        attributes = Spree::Address.resolve_geo_params(attributes)
+        attributes[:country_iso] ||= attributes.delete(:country)&.iso
+        attributes[:state_code] ||= attributes.delete(:state)&.code
+        attributes.delete(:country)
+        attributes.delete(:state)
+
         state_name = attributes[:state_name]
+        address_attributes = attributes.except(:state_name)
 
         scope = Spree::Address.not_deleted.where(address_attributes)
         scope = scope.by_state_name_or_abbr(state_name) if state_name.present?

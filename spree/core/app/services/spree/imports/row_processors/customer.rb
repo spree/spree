@@ -52,7 +52,7 @@ module Spree
           end
 
           if attributes['province_code'].present? && address.country_iso.present?
-            address.state_abbr = attributes['province_code'].strip
+            address.state_code = attributes['province_code'].strip
           end
 
           address.save!

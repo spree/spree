@@ -32,6 +32,41 @@ describe '6.0 data migration tasks' do
     stream.reopen(old)
   end
 
+  # Countries and states are reference data in 6.0, so the ids legacy zone
+  # members hold can only resolve against the tables an upgrading store still
+  # carries — seeded here by hand, the way the tasks read them.
+  def legacy_country_id(country)
+    connection = ActiveRecord::Base.connection
+    existing = connection.select_value("SELECT id FROM spree_countries WHERE iso = #{connection.quote(country.iso)}")
+    return existing if existing
+
+    now = connection.quote(Time.current)
+    connection.insert(<<~SQL.squish)
+      INSERT INTO spree_countries (iso, iso3, iso_name, name, created_at, updated_at)
+      VALUES (#{connection.quote(country.iso)}, #{connection.quote(country.iso3)},
+              #{connection.quote(country.name.upcase)}, #{connection.quote(country.name)}, #{now}, #{now})
+    SQL
+  end
+
+  def legacy_state_id(state)
+    connection = ActiveRecord::Base.connection
+    country_id = legacy_country_id(state.country)
+    now = connection.quote(Time.current)
+    connection.insert(<<~SQL.squish)
+      INSERT INTO spree_states (country_id, abbr, name, created_at, updated_at)
+      VALUES (#{country_id}, #{connection.quote(state.abbr)}, #{connection.quote(state.name)}, #{now}, #{now})
+    SQL
+  end
+
+  def legacy_zone_member(zone, zoneable)
+    case zoneable
+    when Spree::Country
+      create(:zone_member, zone: zone, zoneable_type: 'Spree::Country', zoneable_id: legacy_country_id(zoneable))
+    when Spree::State
+      create(:zone_member, zone: zone, zoneable_type: 'Spree::State', zoneable_id: legacy_state_id(zoneable))
+    end
+  end
+
   describe 'spree:migrate_shipping_to_delivery' do
     let!(:order) { create(:order_with_line_items, store: store) }
     let(:fulfillment) { order.fulfillments.first }
@@ -214,12 +249,12 @@ describe '6.0 data migration tasks' do
   end
 
   describe 'spree:migrate_tax_zones' do
-    let(:germany) { Spree::Country.find_by(iso: 'DE') || create(:country, iso: 'DE', name: 'Germany') }
-    let(:france) { Spree::Country.find_by(iso: 'FR') || create(:country, iso: 'FR', name: 'France') }
+    let(:germany) { Spree::Country.by_iso('DE') }
+    let(:france) { Spree::Country.by_iso('FR') }
 
     def zone_with(*zoneables)
       zone = create(:zone, name: "Tax Zone #{Time.current.to_f}#{rand(1000)}", kind: 'country')
-      zoneables.each { |zoneable| create(:zone_member, zone: zone, zoneable: zoneable) }
+      zoneables.each { |zoneable| legacy_zone_member(zone, zoneable) }
       zone
     end
 
@@ -362,7 +397,7 @@ describe '6.0 data migration tasks' do
     let!(:country) { Spree::Country.by_iso('US') }
     let!(:zone) do
       create(:zone, name: "Legacy Ship Zone #{Time.current.to_f}", kind: 'shipping').tap do |zone|
-        create(:zone_member, zone: zone, zoneable: country)
+        legacy_zone_member(zone, country)
       end
     end
     let!(:delivery_method) { create(:shipping_method) }
@@ -379,7 +414,7 @@ describe '6.0 data migration tasks' do
       expect(delivery_zone.metadata['migrated_from_zone_id']).to eq(zone.id)
       expect(delivery_zone.store_id).to eq(delivery_method.store_id)
       expect(delivery_zone.delivery_profile_id).to eq(delivery_method.delivery_profile_id)
-      expect(delivery_zone.members.pluck(:member_type, :country_id)).to eq([['country', country.id]])
+      expect(delivery_zone.members.pluck(:member_type, :country_iso)).to eq([['country', country.iso]])
       expect(delivery_method.reload.delivery_zone_id).to eq(delivery_zone.id)
     end
 

@@ -56,19 +56,19 @@ module Spree
 
     def backfill_addresses
       filled = backfill_country_iso(Spree::Address.table_name)
-      filled + backfill_state_abbr(Spree::Address.table_name)
+      filled + backfill_state_code(Spree::Address.table_name)
     end
 
     def backfill_delivery_zone_members
       table = Spree::DeliveryZoneMember.table_name
       filled = backfill_country_iso(table)
-      filled += copy_state_abbr(table)
+      filled += copy_state_code(table)
       # A state member records no country of its own, so its country comes from
       # the state's — without it, coverage queries could not tell which country
       # an abbreviation belongs to. Runs before normalization, which needs both
       # halves to resolve a code.
       filled += backfill_country_iso_from_state(table)
-      normalize_state_abbrs(table)
+      normalize_state_codes(table)
       filled
     end
 
@@ -78,7 +78,7 @@ module Spree
 
     def backfill_stock_locations
       table = Spree::StockLocation.table_name
-      backfill_country_iso(table) + backfill_state_abbr(table)
+      backfill_country_iso(table) + backfill_state_code(table)
     end
 
     def backfill_stores
@@ -94,44 +94,44 @@ module Spree
     # lower case, while matching compares stored codes verbatim. Left as-is,
     # a backfilled address would silently stop matching zones written with the
     # successor code.
-    def backfill_state_abbr(table)
-      return 0 unless connection.column_exists?(table, 'state_abbr')
+    def backfill_state_code(table)
+      return 0 unless connection.column_exists?(table, 'state_code')
 
-      filled = copy_state_abbr(table)
-      normalize_state_abbrs(table)
+      filled = copy_state_code(table)
+      normalize_state_codes(table)
       filled
     end
 
     # The verbatim copy, split out so callers that still have to derive the
     # country can normalize afterwards rather than before.
-    def copy_state_abbr(table)
-      return 0 unless connection.column_exists?(table, 'state_abbr')
+    def copy_state_code(table)
+      return 0 unless connection.column_exists?(table, 'state_code')
 
       update_from(
         table: table,
         source: STATES_TABLE,
-        assignments: { 'state_abbr' => 'abbr' },
+        assignments: { 'state_code' => 'abbr' },
         foreign_key: 'state_id',
-        guard: 'state_abbr'
+        guard: 'state_code'
       )
     end
 
     # Rewrites any code that isn't already the canonical one for its country.
-    def normalize_state_abbrs(table)
+    def normalize_state_codes(table)
       quoted_table = quote(table)
       rows = connection.select_rows(<<~SQL.squish)
-        SELECT DISTINCT country_iso, state_abbr FROM #{quoted_table}
-        WHERE state_abbr IS NOT NULL AND country_iso IS NOT NULL
+        SELECT DISTINCT country_iso, state_code FROM #{quoted_table}
+        WHERE state_code IS NOT NULL AND country_iso IS NOT NULL
       SQL
 
-      rows.each do |country_iso, state_abbr|
-        canonical = Spree::IsoData.subdivision_code(country_iso, state_abbr)
-        next if canonical.blank? || canonical == state_abbr
+      rows.each do |country_iso, state_code|
+        canonical = Spree::IsoData.subdivision_code(country_iso, state_code)
+        next if canonical.blank? || canonical == state_code
 
         connection.update(<<~SQL.squish)
-          UPDATE #{quoted_table} SET state_abbr = #{connection.quote(canonical)}
+          UPDATE #{quoted_table} SET state_code = #{connection.quote(canonical)}
           WHERE country_iso = #{connection.quote(country_iso)}
-            AND state_abbr = #{connection.quote(state_abbr)}
+            AND state_code = #{connection.quote(state_code)}
         SQL
       end
     end

@@ -6,7 +6,7 @@ require 'spec_helper'
 RSpec.describe 'Admin tax configuration', type: :request do
   include_context 'API v3 Admin authenticated'
 
-  let(:country) { Spree::Country.find_by(iso: 'DE') || create(:country, iso: 'DE', name: 'Germany') }
+  let(:country) { Spree::Country.by_iso('DE') }
   let(:address) { create(:address, country: country, state: nil, state_name: 'Berlin') }
   let(:tax_category) { create(:tax_category) }
 

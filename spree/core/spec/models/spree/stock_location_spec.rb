@@ -289,7 +289,7 @@ module Spree
       context 'both name and abbr is present' do
         subject { described_class.create(name: 'testing', state: state, state_name: nil) }
 
-        let(:state) { create(:state, name: 'virginia', abbr: 'va') }
+        let(:state) { Spree::State.resolve('US', 'VA') }
 
         specify { expect(subject.state_text).to eq(state.abbr) }
       end
@@ -297,9 +297,9 @@ module Spree
       context 'only name is present' do
         subject { described_class.create(name: 'testing', state: state, state_name: nil) }
 
-        let(:state) { create(:state, name: 'virginia', abbr: nil) }
+        let(:state) { Spree::State.resolve('US', 'VA') }
 
-        specify { expect(subject.state_text).to eq(state.name) }
+        specify { expect(subject.state_text).to eq(state.abbr) }
       end
     end
 

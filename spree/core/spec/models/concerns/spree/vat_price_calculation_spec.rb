@@ -6,9 +6,9 @@ require 'spec_helper'
 # coverage in tax_rate_spec.rb drives the order path.
 describe Spree::VatPriceCalculation, type: :model do
   let(:store) { @default_store }
-  let(:germany) { Spree::Country.find_by(iso: 'DE') || create(:country, iso: 'DE', name: 'Germany') }
-  let(:france) { Spree::Country.find_by(iso: 'FR') || create(:country, iso: 'FR', name: 'France') }
-  let(:japan) { Spree::Country.find_by(iso: 'JP') || create(:country, iso: 'JP', name: 'Japan') }
+  let(:germany) { Spree::Country.by_iso('DE') }
+  let(:france) { Spree::Country.by_iso('FR') }
+  let(:japan) { Spree::Country.by_iso('JP') }
   let(:category) { create(:tax_category, name: "Goods #{Time.current.to_f}") }
 
   # Prices are quoted including German VAT, so Germany is the home zone.
@@ -54,8 +54,11 @@ describe Spree::VatPriceCalculation, type: :model do
       # Market validates tax_provider against the registry.
       Spree.tax_providers << SpecExternalTaxProvider
 
+      # Pinned country: the factory pool cycles real codes and can hand out
+      # Germany, which the home market owns — one country, one market per store.
       create(:market, store: store, name: "External #{Time.current.to_f}", currency: 'USD',
-                      default_locale: 'en', tax_provider: 'SpecExternalTaxProvider')
+                      default_locale: 'en', tax_provider: 'SpecExternalTaxProvider',
+                      country_isos: %w[US])
     end
 
     after { Spree.tax_providers.delete(SpecExternalTaxProvider) if defined?(SpecExternalTaxProvider) }

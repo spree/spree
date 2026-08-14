@@ -54,7 +54,7 @@ module Spree
       next none if address.nil?
 
       where(country_iso: [address.country_iso.presence, nil].uniq).
-        where(state_code: [address.state_abbr.presence, nil].uniq)
+        where(state_code: [address.state_code.presence, nil].uniq)
     }
 
     self.whitelisted_ransackable_attributes = %w[certificate_number reason_code status expires_at]

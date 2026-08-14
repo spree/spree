@@ -39,25 +39,25 @@ module Spree
     end
 
     def state
-      Spree::State.resolve(country_iso, state_abbr) if country_iso.present? && state_abbr.present?
+      Spree::State.resolve(country_iso, state_code) if country_iso.present? && state_code.present?
     end
 
     # A subdivision that means nothing in this country came from the country
     # the location just moved off, so it is dropped rather than kept as a code
     # no lookup will ever resolve. Mirrors Spree::Address.
-    def normalize_state_abbr
-      return if state_abbr.blank?
+    def resolve_state_code
+      return if state_code.blank?
 
       if country_iso.blank?
-        self[:state_abbr] = nil
+        self[:state_code] = nil
         return
       end
 
-      self[:state_abbr] = Spree::IsoData.subdivision_code(country_iso, state_abbr)
+      self[:state_code] = Spree::IsoData.subdivision_code(country_iso, state_code)
     end
 
     def state=(value)
-      self.state_abbr = value&.abbr
+      self.state_code = value&.abbr
       self.country_iso ||= value.country_iso if value
     end
 
@@ -69,14 +69,24 @@ module Spree
 
     self.whitelisted_ransackable_attributes = %w[
       name active default kind pickup_enabled
-      country_iso state_abbr created_at updated_at
+      country_iso state_code created_at updated_at
     ]
 
     scope :active, -> { where(active: true) }
     scope :pickup_enabled, -> { where(pickup_enabled: true) }
     scope :order_default, -> { order(default: :desc, name: :asc) }
 
-    before_validation :normalize_state_abbr
+    # SDK clients use country_iso/state_code because Country/State don't expose
+    # prefixed IDs — their `iso` is the public handle.
+    normalizes :country_iso, :state_code, with: ->(value) { value.presence&.to_s&.upcase }
+
+    # Canonical name is state_code (matching the tax tables); the v3 API
+    # shipped state_abbr, kept as an alias.
+    alias_attribute :state_abbr, :state_code
+
+    # Resolving a subdivision needs its country, which normalizes can't see,
+    # so that part stays a callback.
+    before_validation :resolve_state_code
 
     after_create :create_stock_items, if: :propagate_all_variants?
     after_save :ensure_one_default
@@ -84,18 +94,19 @@ module Spree
 
     delegate :name, :iso3, :iso_name, to: :country, prefix: true, allow_nil: true
 
-    # SDK clients use country_iso/state_abbr because Country/State don't expose
+    # SDK clients use country_iso/state_code because Country/State don't expose
     # prefixed IDs — their `iso` is the public handle.
+    # A blank code leaves the country alone, mirroring Spree::Address: partial
+    # updates post only the fields they change. Upcasing is the normalizes
+    # declaration's job.
     def country_iso=(value)
-      super(value.presence&.to_s&.upcase)
-    end
+      return if value.blank?
 
-    def state_abbr=(value)
-      super(value.presence&.to_s&.upcase)
+      super(value)
     end
 
     def state_text
-      state_abbr.presence || state.try(:name) || state_name
+      state_code.presence || state.try(:name) || state_name
     end
 
     # Wrapper for creating a new stock item respecting the backorderable config
