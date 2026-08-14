@@ -26,7 +26,7 @@ module Spree
       # Stubs store-scoped commerce settings for the duration of one example.
       #
       #   stub_store_preferences(track_inventory_levels: false)
-      #   stub_store_preferences(other_store, auto_capture: false)
+      #   stub_store_preferences(other_store, capture_method: 'on_dispatch')
       #
       # Stubs rather than writes: the suite-wide +@default_store+ is shared by
       # every example, so persisting a setting here would leak into whatever

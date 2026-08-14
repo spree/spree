@@ -77,7 +77,7 @@ RSpec.shared_examples 'a payment processing host' do
 
     # Regression spec for https://github.com/spree/spree/issues/8148
     it 'updates the record with correct payment total' do
-      stub_store_preferences(auto_capture: true)
+      stub_store_preferences(capture_method: 'checkout')
       record.process_payments!
 
       expect(payment).to be_completed

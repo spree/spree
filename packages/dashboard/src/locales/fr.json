@@ -960,9 +960,11 @@
           "help": "Les méthodes inactives sont masquées lors du paiement.",
           "label": "Active"
         },
-        "auto_capture": {
-          "help": "Capturer les fonds automatiquement à l'autorisation. Si désactivé, vous devez capturer manuellement.",
-          "label": "Capture automatique"
+        "capture_method": {
+          "label": "Quand débiter les clients",
+          "help": "Remplace le réglage de la boutique pour ce moyen de paiement uniquement.",
+          "inherit": "Utiliser le réglage de la boutique",
+          "inherited": "Utiliser le réglage de la boutique ({{value}})"
         },
         "description": {
           "placeholder": "Description visible par le client affichée lors du paiement"
@@ -1249,13 +1251,23 @@
           "help": "Rendre le numéro de téléphone obligatoire dans les adresses des clients.",
           "label": "Numéro de téléphone obligatoire"
         },
-        "auto_capture": {
-          "help": "Encaisser immédiatement au lieu de simplement réserver le montant. Un moyen de paiement peut modifier ce réglage.",
-          "label": "Débiter les cartes au paiement"
-        },
-        "auto_capture_on_dispatch": {
-          "help": "Attendre l’expédition réelle des marchandises avant d’encaisser.",
-          "label": "Débiter à l’expédition"
+        "capture_method": {
+          "label": "Quand débiter les clients",
+          "help": "La valeur par défaut pour tous les moyens de paiement. Un moyen de paiement peut la remplacer.",
+          "options": {
+            "checkout": {
+              "label": "Au paiement",
+              "description": "Encaisser dès que la commande est passée."
+            },
+            "on_dispatch": {
+              "label": "À l’expédition",
+              "description": "Réserver le montant au paiement et l’encaisser à l’expédition des marchandises."
+            },
+            "manual": {
+              "label": "Manuellement",
+              "description": "Réserver le montant au paiement et laisser l’équipe l’encaisser plus tard."
+            }
+          }
         },
         "company_field_enabled": {
           "help": "Afficher un champ société dans les formulaires d’adresse lors du paiement.",

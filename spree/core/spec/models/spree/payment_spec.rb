@@ -276,14 +276,14 @@ describe Spree::Payment, type: :model do
 
   context 'processing' do
     describe '#process!' do
-      it 'purchases if with auto_capture' do
-        expect(payment.payment_method).to receive(:auto_capture?).and_return(true)
+      it 'purchases when the method charges at checkout' do
+        payment.payment_method.capture_method = 'checkout'
         payment.process!
         expect(payment).to be_completed
       end
 
-      it 'authorizes without auto_capture' do
-        expect(payment.payment_method).to receive(:auto_capture?).and_return(false)
+      it 'authorizes when the method charges later' do
+        payment.payment_method.capture_method = 'on_dispatch'
         payment.process!
         expect(payment).to be_pending
       end
@@ -453,11 +453,11 @@ describe Spree::Payment, type: :model do
       subject(:confirm!) { payment.confirm! }
 
       before do
-        gateway.update!(auto_capture: auto_capture)
+        gateway.update!(capture_method: capture_method)
       end
 
       context 'for automatically captured payments' do
-        let(:auto_capture) { true }
+        let(:capture_method) { 'checkout' }
 
         it 'makes the payment complete' do
           confirm!
@@ -490,7 +490,7 @@ describe Spree::Payment, type: :model do
       end
 
       context 'for manually captured payments' do
-        let(:auto_capture) { false }
+        let(:capture_method) { 'manual' }
 
         it 'makes the payment pending' do
           confirm!
@@ -708,7 +708,7 @@ describe Spree::Payment, type: :model do
 
   context 'with source optional' do
     context 'when payment method does not require source' do
-      let(:check_payment_method) { create(:check_payment_method, store: order.store, auto_capture: false) }
+      let(:check_payment_method) { create(:check_payment_method, store: order.store, capture_method: 'manual') }
 
       before do
         payment.source = nil
@@ -721,7 +721,7 @@ describe Spree::Payment, type: :model do
       end
 
       context 'with auto capture' do
-        let(:check_payment_method) { create(:check_payment_method, store: order.store, auto_capture: true) }
+        let(:check_payment_method) { create(:check_payment_method, store: order.store, capture_method: 'checkout') }
 
         it 'processes successfully and transitions to completed' do
           expect { payment.process! }.not_to raise_error

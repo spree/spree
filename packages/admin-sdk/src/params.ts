@@ -26,9 +26,11 @@ export interface StoreUpdateParams {
   preferred_company_field_enabled?: boolean
   /** Makes a phone number mandatory on customer addresses. */
   preferred_address_requires_phone?: boolean
-  /** Store-wide default for charging cards at checkout rather than only authorizing them. A payment method's own setting wins when set. */
+  /** Store-wide default for when a customer is charged rather than only authorized. A payment method's own setting wins when set. */
+  preferred_capture_method?: 'checkout' | 'on_dispatch' | 'manual'
+  /** @deprecated Use `preferred_capture_method`; removed in 6.1. */
   preferred_auto_capture?: boolean
-  /** Takes payment when goods are dispatched rather than at checkout. */
+  /** @deprecated Use `preferred_capture_method`; removed in 6.1. */
   preferred_auto_capture_on_dispatch?: boolean
   /** Counts on-hand quantities. Off means everything is treated as always available. */
   preferred_track_inventory_levels?: boolean
@@ -1514,7 +1516,10 @@ export interface PaymentMethodCreateParams {
   active?: boolean
   /** `false` → admin-only; `true` → also on the storefront. */
   storefront_visible?: boolean
+  /** @deprecated Use `capture_method`; removed in 6.1. */
   auto_capture?: boolean | null
+  /** When customers are charged for this method. `null` inherits the store setting. */
+  capture_method?: 'checkout' | 'on_dispatch' | 'manual' | null
   position?: number
   metadata?: Record<string, unknown>
   /** Provider-specific configuration; values are coerced via the typed setters. */
@@ -1527,7 +1532,10 @@ export interface PaymentMethodUpdateParams {
   active?: boolean
   /** `false` → admin-only; `true` → also on the storefront. */
   storefront_visible?: boolean
+  /** @deprecated Use `capture_method`; removed in 6.1. */
   auto_capture?: boolean | null
+  /** When customers are charged for this method. `null` inherits the store setting. */
+  capture_method?: 'checkout' | 'on_dispatch' | 'manual' | null
   position?: number
   metadata?: Record<string, unknown>
   preferences?: Record<string, unknown>

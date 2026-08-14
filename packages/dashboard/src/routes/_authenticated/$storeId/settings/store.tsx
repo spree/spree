@@ -46,9 +46,11 @@ import {
 } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+import { ChoiceCardPicker } from '../../../../components/spree/choice-card-picker'
 import { useStoreSettings, useUpdateStoreSettings } from '../../../../hooks/use-store-settings'
 import { getAvailableUiLocales } from '../../../../i18n-setup'
 import {
+  CAPTURE_METHODS,
   DOCUMENT_NUMBER_FORMATS,
   STOREFRONT_ACCESS_LEVELS,
   type StoreSettingsFormValues,
@@ -97,8 +99,8 @@ function storeToFormValues(store: Store): StoreSettingsFormValues {
     preferred_guest_checkout: store.preferred_guest_checkout ?? true,
     preferred_company_field_enabled: store.preferred_company_field_enabled ?? false,
     preferred_address_requires_phone: store.preferred_address_requires_phone ?? false,
-    preferred_auto_capture: store.preferred_auto_capture ?? true,
-    preferred_auto_capture_on_dispatch: store.preferred_auto_capture_on_dispatch ?? false,
+    preferred_capture_method:
+      (store.preferred_capture_method as (typeof CAPTURE_METHODS)[number]) ?? 'checkout',
     preferred_track_inventory_levels: store.preferred_track_inventory_levels ?? true,
     preferred_stock_reservations_enabled: store.preferred_stock_reservations_enabled ?? true,
     preferred_track_price_history: store.preferred_track_price_history ?? true,
@@ -213,8 +215,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
         preferred_guest_checkout: values.preferred_guest_checkout,
         preferred_company_field_enabled: values.preferred_company_field_enabled,
         preferred_address_requires_phone: values.preferred_address_requires_phone,
-        preferred_auto_capture: values.preferred_auto_capture,
-        preferred_auto_capture_on_dispatch: values.preferred_auto_capture_on_dispatch,
+        preferred_capture_method: values.preferred_capture_method,
         preferred_track_inventory_levels: values.preferred_track_inventory_levels,
         preferred_stock_reservations_enabled: values.preferred_stock_reservations_enabled,
         preferred_track_price_history: values.preferred_track_price_history,
@@ -286,6 +287,15 @@ function StoreSettingsForm({ store }: { store: Store }) {
       DOCUMENT_NUMBER_FORMATS.map((value) => ({
         value,
         label: t(`admin.fields.store.document_number_format.options.${value}`),
+      })),
+    [t],
+  )
+  const captureMethodOptions = useMemo(
+    () =>
+      CAPTURE_METHODS.map((value) => ({
+        value,
+        label: t(`admin.fields.store.capture_method.options.${value}.label`),
+        description: t(`admin.fields.store.capture_method.options.${value}.description`),
       })),
     [t],
   )
@@ -588,22 +598,19 @@ function StoreSettingsForm({ store }: { store: Store }) {
                   <CardTitle>{t('admin.pages.settings.store.tab_payments')}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <FieldGroup>
-                    <SwitchField
-                      id="store-auto-capture"
-                      label={t('admin.fields.store.auto_capture.label')}
-                      help={t('admin.fields.store.auto_capture.help')}
-                      name="preferred_auto_capture"
-                      control={form.control}
-                    />
-                    <SwitchField
-                      id="store-auto-capture-on-dispatch"
-                      label={t('admin.fields.store.auto_capture_on_dispatch.label')}
-                      help={t('admin.fields.store.auto_capture_on_dispatch.help')}
-                      name="preferred_auto_capture_on_dispatch"
-                      control={form.control}
-                    />
-                  </FieldGroup>
+                  <Controller
+                    control={form.control}
+                    name="preferred_capture_method"
+                    render={({ field }) => (
+                      <ChoiceCardPicker
+                        label={t('admin.fields.store.capture_method.label')}
+                        help={t('admin.fields.store.capture_method.help')}
+                        options={captureMethodOptions}
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    )}
+                  />
                 </CardContent>
               </Card>
               <Card>

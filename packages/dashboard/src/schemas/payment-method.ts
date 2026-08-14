@@ -1,13 +1,18 @@
 import type { PaymentMethodCreateParams, PaymentMethodUpdateParams } from '@spree/admin-sdk'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
+import { CAPTURE_METHODS } from './store'
+
+// Empty means "inherit from the store" — the API models that as null, so the
+// form's empty option maps back to null on submit.
+export const CAPTURE_METHOD_OVERRIDES = ['', ...CAPTURE_METHODS] as const
 
 export const paymentMethodBaseFormSchema = z.object({
   name: z.string().min(1, { error: requiredMessage('name') }),
   description: z.string().optional(),
   storefront_visible: z.boolean(),
   active: z.boolean(),
-  auto_capture: z.boolean(),
+  capture_method: z.enum(CAPTURE_METHOD_OVERRIDES),
   // Provider STI shorthand (e.g. `stripe`). Only set in create mode; the
   // top-level type is optional on the shared shape and required on the
   // create-only schema below.
@@ -25,7 +30,7 @@ export const PAYMENT_METHOD_BASE_DEFAULTS: PaymentMethodFormValues = {
   description: '',
   storefront_visible: true,
   active: true,
-  auto_capture: false,
+  capture_method: '',
 }
 
 export const PAYMENT_METHOD_CREATE_DEFAULTS: PaymentMethodFormValues = {
@@ -45,7 +50,7 @@ export function paymentMethodValuesToCreateParams(
     name: v.name,
     description: v.description?.length ? v.description : null,
     active: v.active,
-    auto_capture: v.auto_capture,
+    capture_method: v.capture_method || null,
     storefront_visible: v.storefront_visible,
     ...(Object.keys(preferences).length > 0 ? { preferences } : {}),
   }
@@ -58,7 +63,7 @@ export function paymentMethodValuesToUpdateParams(
     name: v.name,
     description: v.description?.length ? v.description : null,
     active: v.active,
-    auto_capture: v.auto_capture,
+    capture_method: v.capture_method || null,
     storefront_visible: v.storefront_visible,
   }
 }

@@ -29,9 +29,9 @@ describe Spree::StorePreferences do
   describe '#store_preference' do
     it 'reads through the store the record belongs to' do
       payment_method = create(:payment_method, store: store)
-      stub_store_preferences(store, auto_capture: false)
+      stub_store_preferences(store, capture_method: 'on_dispatch')
 
-      expect(payment_method.store_preference(:auto_capture)).to be(false)
+      expect(payment_method.store_preference(:capture_method)).to eq('on_dispatch')
     end
 
     it 'follows an overridden preference_store' do
