@@ -34,12 +34,16 @@ module SpreeOpenTelemetry
   ].freeze
 
   class << self
+    # @return [SpreeOpenTelemetry::Configuration] the process-wide configuration
     def configuration
       @configuration ||= Configuration.new
     end
 
+    # @yieldparam configuration [SpreeOpenTelemetry::Configuration]
+    # @return [SpreeOpenTelemetry::Configuration]
     def configure
       yield configuration
+      configuration
     end
 
     # Whether telemetry should activate in this process. Dormant unless an
@@ -50,7 +54,9 @@ module SpreeOpenTelemetry
     #
     # @return [Boolean]
     def enabled?
-      return false if ENV['OTEL_SDK_DISABLED'] == 'true'
+      # OpenTelemetry booleans are case-insensitive, so OTEL_SDK_DISABLED=TRUE
+      # must silence telemetry exactly like the lowercase spelling.
+      return false if ENV['OTEL_SDK_DISABLED'].to_s.casecmp?('true')
       return configuration.enabled unless configuration.enabled.nil?
       return true if EXPORTER_ENV_KEYS.any? { |key| !ENV[key].to_s.empty? }
 
@@ -58,6 +64,7 @@ module SpreeOpenTelemetry
       !exporter.empty? && exporter != 'none'
     end
 
+    # @return [Boolean] whether {#install!} has already run in this process
     def installed?
       @installed == true
     end
@@ -92,6 +99,8 @@ module SpreeOpenTelemetry
     end
 
     # Test-only: forget installation state and configuration.
+    #
+    # @return [void]
     def reset!
       Subscribers.detach!
       @installed = nil

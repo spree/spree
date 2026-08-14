@@ -16,15 +16,24 @@ module Spree
       # merge into the hash to add outbound headers (e.g. W3C trace context
       # propagation). Registrations live on a reloadable class: register from
       # a `config.to_prepare` block so they survive code reloads.
+      #
+      # @return [Array<#call>] the mutable decorator list
       def self.header_decorators
         @header_decorators ||= []
       end
 
+      # @param delivery [Spree::WebhookDelivery] the pending delivery to send
+      # @param secret_key [String] endpoint secret used to sign the payload
       def initialize(delivery:, secret_key:)
         @delivery = delivery
         @secret_key = secret_key
       end
 
+      # Sends the webhook and records the outcome on the delivery. Transport
+      # failures are captured on the record rather than raised, so a broken
+      # endpoint never breaks the caller.
+      #
+      # @return [Spree::WebhookDelivery] the completed delivery
       def call
         ActiveSupport::Notifications.instrument(
           'deliver.spree_webhooks',

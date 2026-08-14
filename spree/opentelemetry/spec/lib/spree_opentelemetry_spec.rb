@@ -5,13 +5,21 @@ require 'spec_helper'
 RSpec.describe SpreeOpenTelemetry do
   # enabled? reads ENV directly — manage the relevant keys per example and
   # restore them afterwards.
+  MANAGED_ENV_KEYS = %w[
+    OTEL_SDK_DISABLED
+    OTEL_EXPORTER_OTLP_ENDPOINT
+    OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+    OTEL_TRACES_EXPORTER
+  ].freeze
+
   around do |example|
-    saved = %w[OTEL_SDK_DISABLED OTEL_EXPORTER_OTLP_ENDPOINT OTEL_EXPORTER_OTLP_TRACES_ENDPOINT OTEL_TRACES_EXPORTER]
-            .index_with { |key| ENV[key] }
-    saved.each_key { |key| ENV.delete(key) }
-    example.run
-  ensure
-    saved.each { |key, value| value.nil? ? ENV.delete(key) : ENV[key] = value }
+    saved = MANAGED_ENV_KEYS.index_with { |key| ENV[key] }
+    begin
+      saved.each_key { |key| ENV.delete(key) }
+      example.run
+    ensure
+      saved.each { |key, value| value.nil? ? ENV.delete(key) : ENV[key] = value }
+    end
   end
 
   after { described_class.instance_variable_set(:@configuration, nil) }
@@ -44,6 +52,18 @@ RSpec.describe SpreeOpenTelemetry do
       ENV['OTEL_SDK_DISABLED'] = 'true'
 
       expect(described_class.enabled?).to be false
+    end
+
+    # OpenTelemetry booleans are case-insensitive — a kill switch that only
+    # recognises one spelling is not a kill switch.
+    it 'honors the kill switch whatever its casing' do
+      ENV['OTEL_EXPORTER_OTLP_ENDPOINT'] = 'http://collector:4318'
+
+      ['TRUE', 'True', 'tRuE'].each do |spelling|
+        ENV['OTEL_SDK_DISABLED'] = spelling
+
+        expect(described_class.enabled?).to be(false), "expected #{spelling.inspect} to disable telemetry"
+      end
     end
 
     it 'can be forced on from configuration without any env vars — the Sentry-OTLP-mode path' do

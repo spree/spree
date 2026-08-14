@@ -10,14 +10,16 @@ store = Spree::Store.default
 # disappear from checkout. Demo data only: the production seed deliberately
 # leaves the address blank rather than invent an origin real rates would be
 # quoted from.
-stock_location = Spree::StockLocation.where(store: store).find_by(default: true) ||
-                 Spree::StockLocation.where(store: store).first
+stock_location = store.stock_locations.find_by(default: true) || store.stock_locations.first
 
-if stock_location && stock_location.address1.blank? && stock_location.country&.iso == 'US'
+# Any missing field leaves the origin unquotable, so completeness — not just a
+# blank street — decides whether the demo address applies.
+if stock_location&.country&.iso == 'US' &&
+   [stock_location.address1, stock_location.city, stock_location.state_id, stock_location.zipcode].any?(&:blank?)
   stock_location.update!(
     address1: '417 Montgomery St',
     city: 'San Francisco',
-    state: stock_location.country.states.find_by(abbr: 'CA'),
+    state: stock_location.country.states.find_by!(abbr: 'CA'),
     zipcode: '94104',
     phone: '415-555-0100'
   )
@@ -25,8 +27,17 @@ end
 
 # A realistic shipping box (imperial units — the demo store is US): its weight
 # rides on every parcel and its dimensions feed dimensional-weight pricing,
-# without which carrier quotes under-price bulky-but-light items.
-if store.preferred_default_package_weight.to_f.zero?
+# without which carrier quotes under-price bulky-but-light items. Applied only
+# when nothing is configured, so a half-filled box is never completed with
+# values the merchant did not choose.
+package_preferences = %i[
+  preferred_default_package_weight
+  preferred_default_package_length
+  preferred_default_package_width
+  preferred_default_package_height
+]
+
+if package_preferences.all? { |preference| store.public_send(preference).to_f.zero? }
   store.preferred_default_package_weight = 0.5
   store.preferred_default_package_length = 12
   store.preferred_default_package_width = 9
@@ -38,8 +49,9 @@ domestic = store.delivery_zones.find_by(name: 'Domestic')
 international = store.delivery_zones.find_by(name: 'International')
 
 if domestic.nil? || international.nil?
-  puts "Couldn't find the Domestic/International delivery zones. Did you run `rake db:seed` first?"
-  exit
+  # abort, not exit: exit reports success and would silently skip the payment
+  # methods and promotions the loader still has to seed.
+  abort "Couldn't find the Domestic/International delivery zones. Did you run `rake db:seed` first?"
 end
 
 currency = store.default_currency

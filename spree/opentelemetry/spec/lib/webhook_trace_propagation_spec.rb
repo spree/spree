@@ -21,4 +21,19 @@ RSpec.describe SpreeOpenTelemetry::WebhookTracePropagation do
 
     expect(headers).not_to have_key('traceparent')
   end
+
+  # Baggage carries arbitrary application context; the merchant's webhook
+  # endpoint is a third party and must never receive it.
+  it 'never forwards baggage to the endpoint' do
+    headers = {}
+    context = OpenTelemetry::Baggage.set_value('customer_email', 'private@example.com')
+
+    OpenTelemetry::Context.with_current(context) do
+      SpreeOpenTelemetry.tracer.in_span('outer') { described_class.call(headers, nil) }
+    end
+
+    expect(headers).to have_key('traceparent')
+    expect(headers).not_to have_key('baggage')
+    expect(headers.values.join).not_to include('private@example.com')
+  end
 end

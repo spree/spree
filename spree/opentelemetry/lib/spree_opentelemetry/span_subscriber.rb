@@ -34,6 +34,10 @@ module SpreeOpenTelemetry
     # name/kind/attributes proc is reported through the OpenTelemetry error
     # handler instead of propagating, and finish/detach always run so a bad
     # proc cannot leak an unfinished span or a stuck context onto the thread.
+    # @param _event_name [String] notification name (unused)
+    # @param _id [String] notification instrumenter id (unused)
+    # @param payload [Hash] notification payload; the span handle is stored on it
+    # @return [void]
     def start(_event_name, _id, payload)
       return if @skip&.call(payload)
 
@@ -48,6 +52,10 @@ module SpreeOpenTelemetry
       span&.finish if payload[PAYLOAD_KEY].nil?
     end
 
+    # @param _event_name [String] notification name (unused)
+    # @param _id [String] notification instrumenter id (unused)
+    # @param payload [Hash] notification payload; the span handle is removed from it
+    # @return [void]
     def finish(_event_name, _id, payload)
       span, token = payload.delete(PAYLOAD_KEY)
       return unless span

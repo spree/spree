@@ -100,7 +100,13 @@ module SpreeEasyPost
     # lane, oversize parcel). Without surfacing them, the method silently
     # vanishing from checkout is undiagnosable from the outside.
     def log_rating_failures(shipment)
-      reasons = Array(shipment.messages).map { |message| "#{message.carrier}: #{message.message}" }.uniq
+      # The carrier account is part of the identity: the same carrier can fail
+      # differently per linked account, and deduplicating on carrier alone
+      # would hide one of them.
+      reasons = Array(shipment.messages).map do |message|
+        carrier = [message.carrier, message.try(:carrier_account_id)].compact.join('/')
+        "#{carrier}: #{message.message}"
+      end.uniq
       reasons = ['no rates returned and no carrier messages given'] if reasons.empty?
 
       Rails.logger.warn(

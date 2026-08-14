@@ -150,7 +150,11 @@ RSpec.describe SpreeEasyPost::DeliveryRateProvider do
     # instead of rates when it cannot quote — without logging them, "no
     # delivery options" is undiagnosable (e.g. an origin with no zip code).
     it 'logs the carrier rate errors when the shipment comes back with no rates' do
-      rate_error = double(carrier: 'USPS', message: 'Unable to retrieve USPS rates without a valid origin zip code.')
+      rate_error = double(
+        carrier: 'USPS',
+        carrier_account_id: 'ca_1',
+        message: 'Unable to retrieve USPS rates without a valid origin zip code.'
+      )
       empty_shipment = double(id: 'shp_empty', rates: [], messages: [rate_error, rate_error])
       allow(shipment_service).to receive(:create).and_return(empty_shipment)
       allow(Rails.logger).to receive(:warn)
@@ -158,6 +162,21 @@ RSpec.describe SpreeEasyPost::DeliveryRateProvider do
       expect(provider.estimates(package)).to eq([])
       expect(Rails.logger).to have_received(:warn).with(
         a_string_including('no rates', delivery_method.name, 'shp_empty', 'valid origin zip code')
+      )
+    end
+
+    # Two linked accounts for one carrier can fail for different reasons;
+    # collapsing them on carrier alone would hide one.
+    it 'keeps per-account rate errors distinct' do
+      first_account = double(carrier: 'UPS', carrier_account_id: 'ca_1', message: 'Invalid origin zip')
+      second_account = double(carrier: 'UPS', carrier_account_id: 'ca_2', message: 'Account not authorized')
+      empty_shipment = double(id: 'shp_empty', rates: [], messages: [first_account, second_account])
+      allow(shipment_service).to receive(:create).and_return(empty_shipment)
+      allow(Rails.logger).to receive(:warn)
+
+      expect(provider.estimates(package)).to eq([])
+      expect(Rails.logger).to have_received(:warn).with(
+        a_string_including('UPS/ca_1', 'Invalid origin zip', 'UPS/ca_2', 'Account not authorized')
       )
     end
 

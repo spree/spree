@@ -9,6 +9,10 @@ module SpreeOpenTelemetry
   # docs/plans/6.0-opentelemetry.md).
   module Subscribers
     class << self
+      # Subscribes one span source per Spree notification family. Idempotent,
+      # so a code reload cannot double-subscribe.
+      #
+      # @return [void]
       def attach!
         return if attached?
 
@@ -19,11 +23,13 @@ module SpreeOpenTelemetry
         @subscriptions << domain_event_subscription
       end
 
+      # @return [void]
       def detach!
         Array(@subscriptions).each { |subscription| ActiveSupport::Notifications.unsubscribe(subscription) }
         @subscriptions = nil
       end
 
+      # @return [Boolean] whether the span sources are currently subscribed
       def attached?
         !@subscriptions.nil?
       end

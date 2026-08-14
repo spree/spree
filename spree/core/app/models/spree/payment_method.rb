@@ -27,6 +27,9 @@ module Spree
     # Provider subclasses override the payment-session methods wholesale, so
     # tracing instrumentation must be prepended to each subclass — prepended
     # to this base class it would sit below the override and never run.
+    #
+    # @param subclass [Class] the inheriting payment method class
+    # @return [void]
     def self.inherited(subclass)
       super
       subclass.prepend(Spree::PaymentMethod::SessionInstrumentation)
