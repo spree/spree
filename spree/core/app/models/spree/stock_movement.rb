@@ -43,6 +43,13 @@ module Spree
     validates :reason, presence: true, if: :adjusted?
 
     scope :recent, -> { order(created_at: :desc) }
+
+    # Movements for products assigned to `store`, walking
+    # `stock level → variant → product → store`. The table carries no store of
+    # its own, so this walk is the only tenancy path there is.
+    scope :for_store, ->(store) {
+      joins(stock_level: { variant: :product }).where(spree_products: { store_id: store.id })
+    }
     KINDS.each do |movement_kind|
       scope movement_kind, -> { where(kind: movement_kind) }
       define_method("#{movement_kind}?") { kind == movement_kind }

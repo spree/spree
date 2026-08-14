@@ -292,6 +292,7 @@ import type {
   Role,
   StockLevel,
   StockLocation,
+  StockMovement,
   StockTransfer,
   Store,
   StoreCredit,
@@ -3831,7 +3832,7 @@ export class AdminClient {
   }
 
   // ============================================
-  // Stock Items
+  // Stock Levels
   // ============================================
 
   readonly stockLevels = {
@@ -3863,6 +3864,34 @@ export class AdminClient {
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/stock_levels/${id}`, options),
+  }
+
+  // ============================================
+  // Stock Movements
+  // ============================================
+
+  // Read-only: a movement records something that already happened to stock.
+  // Reversing one means writing its counterpart through the resource that
+  // caused it.
+  readonly stockMovements = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<StockMovement>> =>
+      this.request<PaginatedResponse<StockMovement>>('GET', '/stock_movements', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<StockMovement> =>
+      this.request<StockMovement>('GET', `/stock_movements/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
   }
 
   // ============================================
