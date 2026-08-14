@@ -51,6 +51,7 @@ Spree::Core::Engine.add_routes do
             end
           end
           resource :store_credits, only: [:create, :destroy], controller: 'carts/store_credits'
+          resource :tax_identifier, only: [:show, :update, :destroy], controller: 'carts/tax_identifiers'
         end
 
         # Delivery methods (pickup discovery)
@@ -67,6 +68,8 @@ Spree::Core::Engine.add_routes do
           # merchant approves, receives and refunds through the Admin API.
           resources :returns, only: [:index, :show, :create], controller: 'orders/returns'
           resources :claims, only: [:index, :show, :create], controller: 'orders/claims'
+          # Read-only — the registration frozen onto the order at completion.
+          resource :tax_identifier, only: [:show], controller: 'orders/tax_identifiers'
         end
 
         # Policies (return policy, privacy policy, terms of service, etc.)
@@ -100,6 +103,10 @@ Spree::Core::Engine.add_routes do
           resources :credit_cards, only: [:index, :show, :destroy]
           resources :gift_cards, only: [:index, :show]
           resources :store_credits, only: [:index, :show]
+          # Plural for the list a checkout page offers; singular for reading or
+          # upserting one kind without knowing whether it exists yet.
+          resources :tax_identifiers, only: [:index], controller: 'tax_identifiers'
+          resource :tax_identifier, only: [:show, :update, :destroy], controller: 'tax_identifiers'
           resources :payment_setup_sessions, only: [:create, :show] do
             member do
               patch :complete
@@ -308,6 +315,12 @@ Spree::Core::Engine.add_routes do
         # Tax Categories
         resources :tax_categories
 
+        # Tax Rates — the internal tax provider's configuration
+        resources :tax_rates
+
+        # Selectable tax engines and their declared limits (discovery only)
+        resources :tax_providers, only: [:index]
+
         # Return / claim / refund reasons (dropdowns + settings management)
         resources :return_reasons
         resources :claim_reasons
@@ -394,6 +407,11 @@ Spree::Core::Engine.add_routes do
           resources :addresses, controller: 'customers/addresses'
           resources :credit_cards, controller: 'customers/credit_cards', only: [:index, :show, :destroy]
           resources :store_credits, controller: 'customers/store_credits'
+          resources :tax_identifiers, controller: 'customers/tax_identifiers' do
+            member do
+              post :validate
+            end
+          end
 
           collection do
             post :bulk_add_to_groups
@@ -405,6 +423,42 @@ Spree::Core::Engine.add_routes do
 
         # Customer groups (segmentation; used by promotion rules + bulk customer ops)
         resources :customer_groups
+
+        # Business customers. Branches and their buyers are created under their
+        # parent and then addressed directly, so a caller holding a branch id
+        # does not have to know which company it belongs to.
+        resources :companies do
+          # Listed and created under the company you arrived from; read and
+          # written by their own id below, which has to exist anyway as the
+          # parent path for contacts (three levels of nesting is over the cap —
+          # docs/plans/6.0-admin-api.md).
+          resources :locations, controller: 'companies/locations', only: [:index, :create]
+
+          # The business's own registration — the number on its invoices, which
+          # outranks the buyer's own. Same shape as the customer's.
+          resources :tax_identifiers, controller: 'companies/tax_identifiers' do
+            member do
+              post :validate
+            end
+          end
+
+          # Exemption evidence. Accepting or withdrawing one is its own action —
+          # never mass assignment — and a verified certificate is revoked
+          # rather than deleted.
+          resources :tax_exemption_certificates, controller: 'companies/tax_exemption_certificates' do
+            member do
+              patch :verify
+              patch :revoke
+              get :download
+            end
+          end
+        end
+
+        resources :company_locations, only: [:show, :update, :destroy] do
+          resources :contacts, controller: 'company_locations/contacts', only: [:index, :create]
+        end
+
+        resources :company_contacts, only: [:show, :destroy]
 
         # Price lists
         resources :price_lists do
@@ -509,6 +563,8 @@ Spree::Core::Engine.add_routes do
           end
           resources :refunds, controller: 'orders/refunds', only: [:index, :create]
           resources :tax_lines, controller: 'orders/tax_lines', only: [:index, :show]
+          # Read-only — the registration frozen onto the order at completion.
+          resource :tax_identifier, controller: 'orders/tax_identifiers', only: [:show]
           resources :discounts, controller: 'orders/discounts', only: [:index, :show, :create, :update, :destroy]
           resources :discount_codes, controller: 'orders/discount_codes', only: [:create, :destroy]
           resources :fees, controller: 'orders/fees', only: [:index, :show, :create, :update, :destroy]

@@ -257,6 +257,35 @@ steps:
       their own records afterwards. The NOT NULL constraints land in 6.1.
       Idempotent.
 
+  - id: migrate_tax_zones
+    name: "Convert tax zones to country and state references"
+    task: "spree:migrate_tax_zones"
+    notes: |
+      Tax rates name their jurisdiction directly in Spree 6 — merchants think
+      "Germany charges 19% VAT", and a tax line has to be able to report the
+      country that taxed it, which a zone spanning several countries cannot
+      say. Copies each rate's zone countries and states onto the rate, splitting
+      a multi-country zone into one rate per country. Zones with no members stay
+      as every-country rates.
+
+      Run immediately after db:migrate, BEFORE the migration that drops
+      spree_tax_rates.zone_id — that column is the only record of what a rate
+      was configured against. Spree::Zone itself is not dropped; shipping and
+      the browsing context still use it. Idempotent.
+
+  - id: backfill_tax_store_ids
+    name: "Bind tax rates and tax categories to the default store"
+    task: "spree:backfill_tax_store_ids"
+    notes: |
+      Tax rates and tax categories carry a store_id in Spree 6 — they are the
+      internal tax provider's configuration and belong to a store like every
+      other commerce setting. Unassigned rows, soft-deleted ones included, go
+      to the default store; additional stores manage their own records
+      afterwards. Category names become unique per store rather than globally,
+      so installs that relied on global names may need to reconcile duplicates
+      once several stores hold tax configuration. The NOT NULL constraints land
+      in 6.1. Idempotent.
+
   - id: backfill_order_markets
     name: "Backfill order markets"
     task: "spree:backfill_order_markets"

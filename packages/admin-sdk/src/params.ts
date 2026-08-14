@@ -1246,6 +1246,11 @@ export interface MarketCreateParams {
   position?: number
   /** 2-letter ISO country codes assigned to this market. At least one is required. */
   country_isos: string[]
+  /**
+   * Class name of the tax engine that prices this market, from
+   * `taxProviders.list()`. `null` uses the installation default.
+   */
+  tax_provider?: string | null
 }
 
 export interface MarketUpdateParams {
@@ -1257,6 +1262,7 @@ export interface MarketUpdateParams {
   default?: boolean
   position?: number
   country_isos?: string[]
+  tax_provider?: string | null
 }
 
 export interface CustomerGroupCreateParams {
@@ -1963,4 +1969,75 @@ export interface DeliveryZoneParams {
   delivery_profile_id?: string
   /** Replaces the zone's full member set atomically. */
   members?: DeliveryZoneMemberParams[]
+}
+
+export interface CompanyParams {
+  name?: string
+  /** Your own reference for this business, unique within the store. */
+  external_id?: string | null
+  metadata?: Record<string, unknown>
+}
+
+/** Addresses are created inline and owned by the branch. */
+export interface CompanyLocationAddressParams {
+  first_name?: string
+  last_name?: string
+  company?: string
+  address1?: string
+  address2?: string
+  city?: string
+  postal_code?: string
+  zipcode?: string
+  phone?: string
+  country_iso?: string
+  state_abbr?: string
+  state_name?: string
+  label?: string
+}
+
+export interface CompanyLocationParams {
+  name?: string
+  external_id?: string | null
+  billing_address?: CompanyLocationAddressParams
+  shipping_address?: CompanyLocationAddressParams
+  metadata?: Record<string, unknown>
+}
+
+export interface CompanyContactParams {
+  customer_id?: string
+  /** Free-form label; carries no permissions. */
+  role?: string
+}
+
+export interface TaxIdentifierParams {
+  /** The regime the number belongs to, e.g. `eu_vat`, `gb_vat`. */
+  kind?: string
+  value?: string
+}
+
+export interface TaxExemptionCertificateParams {
+  certificate_number?: string
+  /** Becomes the tax provider's entity use code, e.g. `resale`. */
+  reason_code?: string
+  /** Where the certificate holds. Omit both for one valid everywhere. */
+  country_iso?: string | null
+  state_code?: string | null
+  issued_at?: string | null
+  expires_at?: string | null
+  issuing_authority?: string | null
+  /** ActiveStorage signed blob id from `directUploads.create()`. */
+  document?: string
+  metadata?: Record<string, unknown>
+}
+
+export interface TaxRateParams {
+  name?: string
+  amount?: number | string
+  /** Where the rate applies. A rate naming no country taxes everywhere. */
+  country_iso?: string | null
+  state_code?: string | null
+  tax_category_id?: string
+  included_in_price?: boolean
+  show_rate_in_label?: boolean
+  calculator_type?: string
 }

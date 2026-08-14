@@ -3,14 +3,6 @@ module Spree
     belongs_to :country, class_name: 'Spree::Country'
     has_many :addresses, dependent: :restrict_with_error
 
-    has_many :zone_members,
-             -> { where(zoneable_type: 'Spree::State') },
-             class_name: 'Spree::ZoneMember',
-             dependent: :destroy,
-             foreign_key: :zoneable_id
-
-    has_many :zones, through: :zone_members, class_name: 'Spree::Zone'
-
     validates :country, :name, presence: true
     validates :name, :abbr, uniqueness: { case_sensitive: false, scope: :country_id }, allow_blank: true
 

@@ -85,6 +85,164 @@ module Spree
       end
     end
 
+    describe 'tax lifecycle' do
+      it 'tells the tax engine the sale is final' do
+        provider = instance_double(Spree::TaxProvider::Internal, estimate: nil, commit: nil)
+        allow_any_instance_of(Spree::Order).to receive(:tax_provider).and_return(provider)
+        allow_any_instance_of(Spree::Cart).to receive(:tax_provider).and_return(provider)
+
+        order = described_class.call(cart: ready_cart).value
+
+        expect(provider).to have_received(:commit).with(order)
+      end
+
+      it 'does not re-estimate while copying the cart onto the order' do
+        provider = instance_double(Spree::TaxProvider::Internal, estimate: nil, commit: nil)
+        allow_any_instance_of(Spree::Order).to receive(:tax_provider).and_return(provider)
+
+        described_class.call(cart: ready_cart)
+
+        # Only commit files the sale. An estimate here would be a remote call per
+        # line item for an external engine, and its answer is discarded anyway.
+        expect(provider).not_to have_received(:estimate)
+      end
+
+      # The copy is the source of truth: whatever the cart was taxed is what the
+      # order owes. Left to itself, creating the order's line items fires
+      # LineItem#update_tax_charge and writes a second row per item — the order's
+      # own totals still read correctly, so the damage lands on whatever reads
+      # the rows: an invoice, an e-invoicing export, a tax return.
+      context 'when the cart carries tax rows' do
+        let(:tax_category) { create(:tax_category) }
+        let!(:rate) do
+          create(:tax_rate, store: store, country_iso: ready_cart.tax_country&.iso, amount: 0.1,
+                            included_in_price: false, tax_category: tax_category)
+        end
+
+        before do
+          # The line item copies its category from the variant on every save, so
+          # the variant is where it has to be set.
+          ready_cart.line_items.each do |line_item|
+            line_item.variant.update!(tax_category: tax_category)
+            line_item.reload.update!(tax_category: tax_category)
+          end
+          ready_cart.recalculate_totals!
+
+          # The factory sized the payment before this tax existed, so the cart is
+          # now a pound short and completion would stop at payment processing —
+          # which reads here as "the order has no tax rows".
+          ready_cart.payments.first.update!(amount: ready_cart.reload.total)
+        end
+
+        # Queried directly rather than through order.tax_lines: the association
+        # is loaded during the copy and reports the cart's rows here.
+        def order_rows(order)
+          Spree::TaxLine.where(order_id: order.id)
+        end
+
+        it 'gives the order exactly one tax row per taxed line item' do
+          expect(ready_cart.tax_lines.reload.where.not(line_item_id: nil).count).to eq(1)
+
+          result = described_class.call(cart: ready_cart)
+          # Asserted explicitly: a failed completion returns the cart, and every
+          # row assertion below would then read zero for the wrong reason.
+          expect(result).to be_success
+
+          rows = order_rows(result.value).where.not(line_item_id: nil)
+
+          expect(rows.count).to eq(1)
+          expect(rows.pluck(:line_item_id).uniq.length).to eq(1)
+        end
+
+        it 'keeps the summed rows equal to the order additional tax total' do
+          result = described_class.call(cart: ready_cart)
+          expect(result).to be_success
+
+          order = result.value
+          expect(order_rows(order).sum(:amount)).to eq(order.additional_tax_total)
+        end
+      end
+    end
+
+    describe 'business customer' do
+      let(:customer) { create(:customer) }
+      let(:company) { create(:company, store: store) }
+      let(:location) { create(:company_location, company: company) }
+
+      before { ready_cart.update!(customer: customer) }
+
+      # Without this the exemption applies during checkout and vanishes from the
+      # placed order, so commit and refund work from different facts.
+      it 'carries the branch onto the order' do
+        ready_cart.update!(company_location: location)
+
+        order = described_class.call(cart: ready_cart).value
+
+        expect(order.company_location).to eq(location)
+        expect(order.company).to eq(company)
+      end
+
+      it 'carries a branch the buyer resolved to without naming it' do
+        create(:company_contact, company_location: location, customer: customer)
+
+        order = described_class.call(cart: ready_cart.reload).value
+
+        expect(order.company_location).to eq(location)
+      end
+
+      it 'leaves a consumer order with no branch' do
+        expect(described_class.call(cart: ready_cart).value.company_location).to be_nil
+      end
+    end
+
+    describe 'tax identifier snapshot' do
+      let(:customer) { create(:user) }
+
+      before { ready_cart.update!(customer: customer) }
+
+      it 'freezes the customer registration onto the order' do
+        create(:tax_identifier, customer: customer, kind: 'eu_vat', value: 'DE123456789')
+
+        order = described_class.call(cart: ready_cart).value
+
+        snapshot = order.tax_identifier
+        expect(snapshot.value).to eq('DE123456789')
+        expect(snapshot.source).to eq('customer')
+        expect(snapshot).to be_readonly
+      end
+
+      it 'records a checkout override as such' do
+        create(:tax_identifier, customer: customer, kind: 'eu_vat', value: 'DE123456789')
+        create(:tax_identifier, customer: nil, cart: ready_cart, kind: 'eu_vat', value: 'DE999999999')
+
+        order = described_class.call(cart: ready_cart).value
+
+        expect(order.tax_identifier.value).to eq('DE999999999')
+        expect(order.tax_identifier.source).to eq('override')
+      end
+
+      it 'stamps a company registration as such' do
+        company = create(:company, store: store)
+        location = create(:company_location, company: company)
+        ready_cart.update!(company_location: location)
+        create(:tax_identifier, customer: nil, company: company, kind: 'eu_vat', value: 'DE777777777')
+
+        order = described_class.call(cart: ready_cart).value
+
+        expect(order.tax_identifier.value).to eq('DE777777777')
+        expect(order.tax_identifier.source).to eq('company')
+        # The copy must not carry the company along, or the order row would
+        # have two owners.
+        expect(order.tax_identifier.company_id).to be_nil
+      end
+
+      it 'copies nothing for a consumer sale' do
+        order = described_class.call(cart: ready_cart).value
+
+        expect(order.tax_identifier).to be_nil
+      end
+    end
+
     describe 'guest checkout policy' do
       it 'fails when the channel forbids guest checkout and the cart has no customer' do
         allow_any_instance_of(Spree::Cart).to receive(:guest_checkout_disallowed?).and_return(true)

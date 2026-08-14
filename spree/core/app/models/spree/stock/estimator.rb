@@ -106,15 +106,18 @@ module Spree
       def taxation_options_for(delivery_method)
         {
           tax_category: delivery_method.tax_category,
-          tax_zone: @order.tax_zone
+          address: @order.tax_address,
+          country: @order.tax_country,
+          market: @order.market
         }
       end
 
       def first_tax_rate_for(tax_category)
-        return unless @order.tax_zone && tax_category
+        return unless @order.tax_address && tax_category
 
-        Spree::TaxRate.for_tax_category(tax_category).
-          potential_rates_for_zone(@order.tax_zone).first
+        scope = Spree::TaxRate.for_tax_category(tax_category).for_address(@order.tax_address)
+        scope = scope.for_store(@order.store) if @order.store
+        scope.first
       end
 
       # The eligibility seam: every rate consumer (checkout, routing, cart

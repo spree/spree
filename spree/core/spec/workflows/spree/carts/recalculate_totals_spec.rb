@@ -34,7 +34,11 @@ module Spree
       let(:order) { create(:completed_order_with_totals, store: store) }
 
       it 'never regenerates typed rows but re-sums them (the post-placement resum path)' do
-        expect(Spree.tax_provider).not_to receive(:estimate)
+        # The order's own provider, not the global default — selection is
+        # per-market since 6.0, so stubbing the global would assert nothing.
+        provider = instance_double(Spree::TaxProvider::Internal)
+        allow(order).to receive(:tax_provider).and_return(provider)
+        expect(provider).not_to receive(:estimate)
 
         line_item = order.line_items.first
         order.discounts.create!(line_item: line_item, label: 'Manual', amount: -3,

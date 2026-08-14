@@ -509,7 +509,7 @@ module Spree
     # Returns tax category for Product
     # @return [Spree::TaxCategory, nil]
     def tax_category
-      @tax_category ||= super || TaxCategory.default
+      @tax_category ||= super || TaxCategory.default(assignable_store)
     end
 
     def first_or_default_variant(currency)
@@ -918,7 +918,7 @@ module Spree
     end
 
     def assign_default_tax_category
-      self.tax_category = Spree::TaxCategory.default if new_record? && self[:tax_category_id].blank?
+      self.tax_category = Spree::TaxCategory.default(assignable_store) if new_record? && self[:tax_category_id].blank?
     end
 
     def stamp_template_delivery_profile

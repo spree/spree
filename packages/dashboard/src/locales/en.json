@@ -739,6 +739,7 @@
           "label": "Internal note",
           "placeholder": "Staff-only context about this customer…"
         },
+        "label": "Customer",
         "tags": {
           "label": "Tags"
         }
@@ -887,6 +888,10 @@
         "tax_inclusive": {
           "help": "Display prices with tax included. Common in EU markets.",
           "label": "Tax-inclusive pricing"
+        },
+        "tax_provider": {
+          "help": "Which engine calculates tax for orders in this market.",
+          "label": "Tax engine"
         }
       },
       "match_policy": {
@@ -1481,6 +1486,106 @@
           "label": "Destination URL",
           "placeholder": "https://example.com/webhooks"
         }
+      },
+      "external_id": {
+        "label": "Reference"
+      },
+      "country": {
+        "label": "Country"
+      },
+      "state": {
+        "label": "State"
+      },
+      "postal_code": {
+        "label": "Postal code"
+      },
+      "certificate_number": {
+        "label": "Certificate number"
+      },
+      "reason_code": {
+        "help": "Becomes the tax engine's entity use code.",
+        "label": "Reason"
+      },
+      "issued_at": {
+        "label": "Issued on"
+      },
+      "issuing_authority": {
+        "label": "Issuing authority"
+      },
+      "certificate_document": {
+        "help": "PDF or image, up to 10 MB. Only staff can download it.",
+        "label": "Certificate document"
+      },
+      "company": {
+        "name": {
+          "placeholder": "Acme Industries"
+        },
+        "external_id": {
+          "help": "Your own reference for this business, unique within the store.",
+          "placeholder": "ACME-001"
+        }
+      },
+      "company_location": {
+        "name": {
+          "placeholder": "Head office"
+        },
+        "external_id": {
+          "help": "Your own reference for this branch."
+        }
+      },
+      "company_contact": {
+        "role": {
+          "label": "Role"
+        }
+      },
+      "tax_identifier": {
+        "kind": {
+          "help": "Which registration this is. It has to match the validator registered for it, so spelling matters.",
+          "label": "Kind"
+        },
+        "value": {
+          "label": "Number",
+          "placeholder": "DE123456789"
+        }
+      },
+      "tax_rate": {
+        "name": {
+          "placeholder": "Standard VAT"
+        },
+        "amount": {
+          "help": "As a percentage. Enter 20 for 20%.",
+          "label": "Rate"
+        },
+        "jurisdiction": {
+          "label": "Applies to"
+        },
+        "country_iso": {
+          "help": "Leave empty to tax every country."
+        },
+        "state_code": {
+          "help": "Leave empty to tax the whole country."
+        },
+        "tax_category_id": {
+          "help": "Which products this rate taxes.",
+          "label": "Tax category"
+        },
+        "included_in_price": {
+          "help": "Prices already carry this tax, so it is backed out rather than added.",
+          "label": "Included in price",
+          "short": "Included"
+        },
+        "show_rate_in_label": {
+          "help": "Adds the percentage to the tax line the customer sees.",
+          "label": "Show rate in the tax label"
+        }
+      },
+      "tax_exemption_certificate": {
+        "country_iso": {
+          "help": "Leave empty for a certificate that holds everywhere."
+        },
+        "expires_at": {
+          "help": "Leave empty for a certificate that does not expire."
+        }
       }
     },
     "delivery_profiles": {
@@ -1736,6 +1841,7 @@
       "categories": "Categories",
       "claims": "Claims",
       "collections": "Collections",
+      "companies": "Companies",
       "customer_groups": "Groups",
       "customers": "Customers",
       "draft_orders": "Draft Orders",
@@ -2846,6 +2952,10 @@
             "url": "URL"
           },
           "title": "Webhooks"
+        },
+        "tax_rates": {
+          "add_sheet_title": "New tax rate",
+          "edit_sheet_title": "Edit tax rate"
         }
       },
       "staff": {
@@ -3564,6 +3674,7 @@
         "stock_locations": "Stock locations",
         "store": "Store",
         "tax_categories": "Tax categories",
+        "tax_rates": "Tax rates",
         "webhooks": "Webhooks"
       }
     },
@@ -3746,6 +3857,186 @@
       "saved": "Translations saved",
       "source": "Source",
       "title": "Translations"
+    },
+    "jurisdiction": {
+      "everywhere": "Everywhere"
+    },
+    "companies": {
+      "add_cta": "Add company",
+      "add_sheet_title": "New company",
+      "create_description": "Business customers buy through branches. You can add branches, tax registration and exemption certificates once the company exists.",
+      "create_label": "Create company",
+      "delete_confirm": {
+        "message": "This deletes {{name}} along with its branches, buyers and certificates. This cannot be undone.",
+        "title": "Delete company?"
+      },
+      "detail": {
+        "delete_label": "Delete company",
+        "load_error": "Could not load this company",
+        "profile": "Company"
+      },
+      "empty": "No companies yet",
+      "locations_column": "Branches",
+      "messages": {
+        "created": "Company created",
+        "deleted": "Company deleted",
+        "updated": "Company updated"
+      },
+      "search_placeholder": "Search companies"
+    },
+    "company_locations": {
+      "add_cta": "Add branch",
+      "add_title": "New branch",
+      "addresses": "Addresses",
+      "billing_address": "Billing address",
+      "contacts_count_one": "{{count}} buyer",
+      "contacts_count_other": "{{count}} buyers",
+      "detail": {
+        "delete_label": "Delete branch",
+        "load_error": "Could not load this branch"
+      },
+      "dialog_description": "A branch is where the business is invoiced and where its orders ship. Addresses are optional, but a partial address needs a name and country.",
+      "edit_title": "Edit branch",
+      "empty": "No branches yet",
+      "messages": {
+        "created": "Branch created",
+        "deleted": "Branch deleted",
+        "updated": "Branch updated"
+      },
+      "shipping_address": "Shipping address",
+      "shipping_same_as_billing": "Shipping address is the same as billing",
+      "title": "Branches"
+    },
+    "company_contacts": {
+      "add_cta": "Add buyer",
+      "add_title": "Authorise a buyer",
+      "dialog_description": "A customer who buys for this branch. Someone who buys for exactly one branch has their orders attributed to it automatically.",
+      "empty": "No buyers authorised yet",
+      "messages": {
+        "created": "Buyer added",
+        "deleted": "Buyer removed"
+      },
+      "remove_action": "Remove buyer",
+      "remove_confirm": {
+        "message": "{{email}} will no longer buy for this branch. Their customer account is not affected.",
+        "title": "Remove this buyer?"
+      },
+      "roles_enterprise_help": "Buyers you add here can place orders for this branch. Roles, approval workflows and spending limits come with Spree Enterprise.",
+      "roles_enterprise_title": "Roles and approvals are an Enterprise feature",
+      "title": "Buyers"
+    },
+    "tax_identifiers": {
+      "add_cta": "Add registration",
+      "add_title": "Add tax registration",
+      "checked_prefix": "Checked",
+      "delete_confirm": {
+        "message": "{{value}} will be removed. Orders already placed keep the number they were invoiced with.",
+        "title": "Delete this registration?"
+      },
+      "dialog_description": "The VAT or business number that appears on invoices. It is what makes EU B2B reverse charge possible.",
+      "edit_title": "Edit tax registration",
+      "empty": "No tax registration on file",
+      "kinds": {
+        "au_abn": "Australian Business Number",
+        "ch_vat": "Swiss VAT",
+        "eu_vat": "EU VAT",
+        "gb_vat": "UK VAT",
+        "us_ein": "US EIN"
+      },
+      "messages": {
+        "created": "Registration added",
+        "deleted": "Registration deleted",
+        "updated": "Registration updated",
+        "validation_failed": "Could not check the number",
+        "validation_requested": "Checking the number with the registry"
+      },
+      "not_validatable": "No validator is set up for this kind, so the number is used as entered.",
+      "select_kind": "Select a kind",
+      "title": "Tax registration",
+      "validate_action": "Check with registry",
+      "validation_status": {
+        "not_checked": "Not checked",
+        "pending": "Checking",
+        "unavailable": "Registry unavailable",
+        "unsupported": "Cannot be checked",
+        "unverified": "Not valid",
+        "verified": "Verified"
+      }
+    },
+    "tax_exemption_certificates": {
+      "add_cta": "Add certificate",
+      "add_title": "Add exemption certificate",
+      "delete_confirm": {
+        "message": "Certificate {{number}} will be removed. This cannot be undone.",
+        "title": "Delete this certificate?"
+      },
+      "dialog_description": "Evidence that this business's purchases are not taxed. A new certificate waits for your decision before it applies.",
+      "download_action": "Download document",
+      "empty": "No certificates on file",
+      "expires_prefix": "Expires",
+      "lapsed": "Lapsed",
+      "messages": {
+        "created": "Certificate added",
+        "deleted": "Certificate deleted",
+        "revoked": "Certificate revoked",
+        "updated": "Certificate updated",
+        "verified": "Certificate accepted"
+      },
+      "never_expires": "Does not expire",
+      "no_document": "No document attached",
+      "reason_codes": {
+        "agricultural": "Agricultural",
+        "charitable": "Charitable",
+        "educational": "Educational",
+        "government": "Government",
+        "manufacturing": "Manufacturing",
+        "resale": "Resale"
+      },
+      "revoke_action": "Revoke",
+      "revoke_confirm": {
+        "message": "Certificate {{number}} stops applying to new orders. It stays on file as a record.",
+        "title": "Revoke this certificate?"
+      },
+      "select_reason": "Select a reason",
+      "status": {
+        "expired": "Expired",
+        "pending": "Awaiting review",
+        "revoked": "Revoked",
+        "verified": "Accepted"
+      },
+      "title": "Exemption certificates",
+      "verified_at": "Accepted on",
+      "verify_action": "Accept"
+    },
+    "tax_rates": {
+      "add_cta": "Add tax rate",
+      "all_categories": "All categories",
+      "create_description": "Tax rates configure the built-in tax engine. A rate that names no country taxes everywhere.",
+      "create_label": "Create tax rate",
+      "delete_confirm": {
+        "message": "{{name}} will no longer be applied. Orders already placed keep the tax they were charged.",
+        "title": "Delete tax rate?"
+      },
+      "edit_description": "Changes apply to new calculations. Orders already placed keep the tax they were charged.",
+      "empty": "No tax rates yet",
+      "every_country": "Every country",
+      "every_state": "Every state",
+      "messages": {
+        "created": "Tax rate created",
+        "deleted": "Tax rate deleted",
+        "updated": "Tax rate updated"
+      },
+      "search_placeholder": "Search tax rates",
+      "select_category": "Select a category"
+    },
+    "tax_providers": {
+      "limitations_title": "{{name}} does not handle",
+      "unavailable_option": "{{name}} (not configured)",
+      "use_default": "Use the default engine",
+      "use_default_named": "Default ({{name}})"
+    },
+    "enterprise": {
+      "learn_more": "Learn about Spree Enterprise"
     }
   }
 }

@@ -129,7 +129,7 @@ describe Spree::PriceList, type: :model do
     end
 
     context 'with rules and match_policy = all' do
-      let!(:passing_rule) { create(:zone_price_rule, price_list: price_list) }
+      let!(:passing_rule) { create(:market_price_rule, price_list: price_list) }
       let!(:failing_rule) { create(:user_price_rule, price_list: price_list) }
 
       before do
@@ -145,7 +145,7 @@ describe Spree::PriceList, type: :model do
     end
 
     context 'with rules and match_policy = any' do
-      let!(:passing_rule) { create(:zone_price_rule, price_list: price_list) }
+      let!(:passing_rule) { create(:market_price_rule, price_list: price_list) }
       let!(:failing_rule) { create(:user_price_rule, price_list: price_list) }
 
       before do

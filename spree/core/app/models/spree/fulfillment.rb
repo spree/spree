@@ -599,18 +599,22 @@ module Spree
       cost + discounts.sum(:amount)
     end
 
-    # Returns the tax category of the selected shipping rate
+    # How the delivery charge is classified for tax, as the merchant set it on
+    # the delivery method. Read from the method rather than through the selected
+    # rate's tax_rate: that hop answers out of the internal provider's rate
+    # table, so an external provider asking for the freight classification got
+    # nothing, and a classification with no matching rate configured reported
+    # none at all — leaving delivery to be taxed under the store's default
+    # category instead.
     #
-    # @return [Spree::TaxCategory]
+    # @return [Spree::TaxCategory, nil]
     def tax_category
-      selected_delivery_rate.try(:tax_rate).try(:tax_category)
+      delivery_method&.tax_category
     end
 
-    # Returns the tax category ID of the selected shipping rate
-    #
-    # @return [Integer]
+    # @return [String, nil]
     def tax_category_id
-      selected_delivery_rate.try(:tax_rate).try(:tax_category_id)
+      delivery_method&.tax_category_id
     end
 
     # Only one of either included_tax_total or additional_tax_total is set

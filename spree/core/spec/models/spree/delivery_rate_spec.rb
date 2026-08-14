@@ -25,16 +25,15 @@ describe Spree::DeliveryRate, type: :model do
 
   context '#display_price' do
     context 'when tax included in price' do
-      let!(:default_zone) { create(:zone, default_tax: true) }
       let(:default_tax_rate) do
         create :tax_rate,
                name: 'VAT',
                amount: 0.1,
                included_in_price: true,
-               zone: default_zone
+               country_iso: @default_country&.iso
       end
 
-      context 'when the tax rate is from the default zone' do
+      context 'when the rate taxes the home country' do
         before { shipping_rate.tax_rate = default_tax_rate }
 
         it 'shows correct tax amount' do
@@ -53,20 +52,18 @@ describe Spree::DeliveryRate, type: :model do
         end
       end
 
-      context 'when the tax rate is from another zone' do
-        let!(:non_default_zone) { create(:zone, default_tax: false) }
-
+      context 'when the rate taxes another country' do
         let(:non_default_tax_rate) do
           create :tax_rate,
                  name: 'VAT',
                  amount: 0.2,
                  included_in_price: true,
-                 zone: non_default_zone
+                 country_iso: create(:country, iso: 'FR', name: 'France')&.iso
         end
 
         before { shipping_rate.tax_rate = non_default_tax_rate }
 
-        it "deducts the other zone's VAT from the calculated shipping rate" do
+        it "deducts the other country's VAT from the calculated shipping rate" do
           expect(shipping_rate.display_price.to_s).
             to eq("$10.00 (incl. $1.67 #{non_default_tax_rate.name})")
         end

@@ -60,7 +60,12 @@ module Spree
     after_save :update_inventory
     after_save :update_adjustments
 
-    after_create :update_tax_charge
+    # Set on copies whose tax is already known — the completion copy carries the
+    # cart's tax rows over verbatim, so re-estimating would discard the answer
+    # and, with an external engine, spend a remote call per line item.
+    attr_accessor :skip_tax_estimation
+
+    after_create :update_tax_charge, unless: :skip_tax_estimation
 
     delegate :sku, :should_track_inventory?, :product, :options_text, :slug, :product_id, :dimensions_unit, :weight_unit, :option_values, to: :variant
     delegate :name, :description, :brand, :category, to: :product
@@ -71,7 +76,6 @@ module Spree
     def thumbnail
       variant.primary_media || product.primary_media
     end
-    delegate :tax_zone, to: :owner
     delegate :digital?, :can_supply?, to: :variant
 
     scope :with_digital_assets, -> { joins(:variant).merge(Spree::Variant.with_digital_assets) }
@@ -130,7 +134,15 @@ module Spree
       context = Spree::Pricing::Context.from_order(variant, owner, quantity: quantity)
       currency_price = variant.price_for(context)
 
-      self.price = currency_price.price_including_vat_for(tax_zone: tax_zone) if currency_price.present?
+      # country:, not just address: — an address-less cart still has a taxing
+      # country (the market's own), and the provider already estimates against it.
+      # Without it a cross-border cart is taxed for the destination at a price
+      # quoted for home, and the merchant silently absorbs the rate difference.
+      if currency_price.present?
+        self.price = currency_price.price_including_vat_for(
+          address: owner&.tax_address, country: owner&.tax_country, market: owner&.market
+        )
+      end
       self.price_list_id = currency_price.price_list_id if currency_price.present?
     end
 
@@ -316,7 +328,9 @@ module Spree
 
       return unless currency_price.present?
 
-      new_price = currency_price.price_including_vat_for(tax_zone: tax_zone)
+      new_price = currency_price.price_including_vat_for(
+        address: owner&.tax_address, country: owner&.tax_country, market: owner&.market
+      )
 
       return unless new_price.present?
 
@@ -389,7 +403,7 @@ module Spree
     def update_tax_charge
       return unless owner
 
-      Spree.tax_provider.estimate(owner, [self])
+      owner.tax_provider.estimate(owner, [self], **owner.tax_estimate_inputs)
     end
 
     def ensure_proper_currency

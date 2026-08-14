@@ -10,7 +10,8 @@ module Spree
                                :dependencies,
                                :payment_methods,
                                :adjusters,
-                               :tax_provider,
+                               :default_tax_provider,
+                               :tax_providers,
                                :password_validator,
                                :fulfillment_providers,
                                :tracking_carriers,
@@ -135,6 +136,12 @@ module Spree
         app.config.spree.delivery_rate_providers = []
       end
 
+      # Same reason again: a tax provider gem, or a host app, registers its
+      # engine from an initializer file. Core's Internal concatenates below.
+      initializer 'spree.register.tax_providers', before: :load_config_initializers do |app|
+        app.config.spree.tax_providers = []
+      end
+
       initializer 'spree.register.delivery_profile_types', before: :load_config_initializers do |app|
         app.config.spree.delivery_profile_types = []
       end
@@ -191,8 +198,14 @@ module Spree
           Spree::Adjusters::Promotion
         ]
 
-        # The sanctioned TaxLine writer (see docs/plans/6.0-tax-provider.md).
-        Rails.application.config.spree.tax_provider = Spree::TaxProvider::Internal
+        # The fallback engine when a market names none (see docs/plans/6.0-tax-provider.md).
+        # Assigned only if an initializer file has not already named one — an app
+        # that picks its own default must keep it.
+        Rails.application.config.spree.default_tax_provider ||= Spree::TaxProvider::Internal
+
+        # Engines a market can select. Concatenated, not assigned: provider gems
+        # and host apps append theirs from initializer files, which run first.
+        Rails.application.config.spree.tax_providers.concat [Spree::TaxProvider::Internal]
 
         # Password policy for the default auth models. Swap for corporate rules,
         # breach-list lookups or entropy scoring.
@@ -299,13 +312,10 @@ module Spree
           Spree::Promotion::Rules::OptionValue,
         ]
 
-        # Default registry. MarketRule is included so existing installs
-        # don't lose access to saved rule rows in the admin. ZoneRule is
-        # intentionally excluded — Zones are being removed in 6.0 (see
-        # docs/plans/6.0-tax-provider.md) and we don't want to invest
-        # in admin UI for a model on its way out. The class itself
-        # stays so legacy data continues to load; it just doesn't show
-        # up in the "Add rule" picker.
+        # Default registry. MarketRule is the only geography rule: price
+        # lists that were zone-scoped before 6.0 are converted onto it by
+        # `spree:migrate_tax_zones` where the countries match a market, and
+        # deactivated with a report where they don't.
         Rails.application.config.spree.pricing.rules.concat [
           Spree::PriceRules::UserRule,
           Spree::PriceRules::CustomerGroupRule,
@@ -477,7 +487,8 @@ module Spree
           Spree::ReportSubscriber,
           Spree::InvitationEmailSubscriber,
           Spree::AdminUserEmailSubscriber,
-          Spree::ProductMetricsSubscriber
+          Spree::ProductMetricsSubscriber,
+          Spree::TaxIdentifierValidationSubscriber
         ]
 
         # Pre-load authentication strategy classes to avoid reflection at request time

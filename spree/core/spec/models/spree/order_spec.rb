@@ -1367,13 +1367,14 @@ describe Spree::Order, type: :model do
   describe '#create_shipment_tax_charge!' do
     let(:provider) { instance_double(Spree::TaxProvider::Internal, estimate: nil) }
 
-    before { allow(Spree).to receive(:tax_provider).and_return(provider) }
+    # The order's own engine — selection is per-market since 6.0.
+    before { allow(order).to receive(:tax_provider).and_return(provider) }
 
     context 'when order has shipments' do
       let!(:shipment) { create(:shipment, order: order) }
 
       it 'estimates tax over the fulfillments' do
-        expect(provider).to receive(:estimate).with(order, [shipment])
+        expect(provider).to receive(:estimate).with(order, [shipment], hash_including(:tax_date))
         order.create_shipment_tax_charge!
       end
     end

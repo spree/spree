@@ -16,9 +16,10 @@ module Spree
     class RecalculateTotals < Spree::Workflow
       hooks :set_tax_line_context
 
-      # Tax context contributed by set_tax_line_context handlers (exemption
-      # certificates, customer tax IDs) — read by tax providers that support
-      # it. Nil until the typed rows are regenerated.
+      # Untyped provider extras contributed by set_tax_line_context handlers —
+      # anything a specific provider needs that the typed estimate arguments
+      # don't carry. Exemptions and the buyer's tax identity are NOT this: they
+      # are typed inputs of their own. Nil until the typed rows are regenerated.
       attr_reader :tax_line_context
 
       # @param cart [Spree::Cart, Spree::Order]
@@ -57,7 +58,7 @@ module Spree
         Spree.adjusters.each { |adjuster| adjuster.adjust(cart) }
         refresh_discount_and_fee_columns
         @tax_line_context = run_hooks :set_tax_line_context
-        Spree.tax_provider.estimate(cart)
+        cart.tax_provider.estimate(cart, **cart.tax_estimate_inputs, context: tax_line_context)
       end
 
       # Re-derives the denormalized per-adjustable columns and the record's

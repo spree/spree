@@ -17,6 +17,7 @@ module Spree
 
     include Spree::SingleStoreResource
     include Spree::Purchase::Channel
+    include Spree::Purchase::Company
     include Spree::Purchase::Market
     include Spree::Purchase::Currency
     include Spree::Purchase::Locale
@@ -72,6 +73,7 @@ module Spree
     has_many :variants, through: :line_items
     has_many :products, through: :variants
     has_many :tax_lines, class_name: 'Spree::TaxLine', dependent: :destroy, inverse_of: :cart
+    has_one :tax_identifier, class_name: 'Spree::TaxIdentifier', dependent: :destroy, inverse_of: :cart
     has_many :discounts, class_name: 'Spree::Discount', dependent: :destroy, inverse_of: :cart
     has_many :fees, class_name: 'Spree::Fee', dependent: :destroy, inverse_of: :cart
     has_many :fulfillments, -> { order(:created_at, :id) }, class_name: 'Spree::Fulfillment', dependent: :destroy, inverse_of: :cart do
@@ -203,7 +205,11 @@ module Spree
     # recalculation-on-write replacement for transition-triggered rebuilds.
     # Called by Carts::Update after address/market changes.
     def recalculate_for_address_change!
-      line_items.reload.each(&:update_price)
+      # recalculate_price, not update_price: the latter only assigns, and nothing
+      # here saves the line items — rebuild_fulfillments! and recalculate_totals!
+      # reset the association cache and drop the new figures. Order#update_line_item_prices!
+      # gets away with update_price because it follows it with save!.
+      line_items.reload.each(&:recalculate_price)
       rebuild_fulfillments!
       set_fulfillments_cost
       recalculate_totals!

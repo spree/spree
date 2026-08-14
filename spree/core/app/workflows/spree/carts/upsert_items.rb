@@ -174,7 +174,13 @@ module Spree
         end
 
         line_item.reload.recalculate_price
-        ::Spree.tax_provider.estimate(line_item.owner, [line_item]) if created
+        return unless created
+
+        # Per-market provider rather than a global one, and carrying the same
+        # typed inputs as a full recalculation so a single new line is taxed
+        # with the buyer's registration and exemptions.
+        owner = line_item.owner
+        owner.tax_provider.estimate(owner, [line_item], **owner.tax_estimate_inputs)
       end
 
       def handle_stock_reservations

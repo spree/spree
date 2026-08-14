@@ -127,7 +127,8 @@ module Spree
       payment_webhooks: :default,
       api_keys: :default,
       search: :default,
-      stock_reservations: :default
+      stock_reservations: :default,
+      tax_identifiers: :default
     ).tap do |queues|
       # @deprecated The taxons queue was renamed to categories in 6.0; removed in 6.1.
       queues.define_singleton_method(:taxons) do
@@ -147,6 +148,22 @@ module Spree
 
   def self.search_provider=(value)
     @@search_provider = value.to_s
+  end
+
+  # Tax ID validators, keyed by registration kind. Empty by default: core ships
+  # no registry client, because VAT number rules live in 27 different statute
+  # books and a guess would reject real business customers.
+  #
+  #   Spree.tax_identifier_validators['eu_vat'] = 'SpreeEuVat::TaxIdentifierValidator'
+  #
+  # Class names are stored as strings and constantized at call time, so an
+  # initializer can register a validator before its class is autoloaded.
+  # Whether a kind has a validator is also what tells the admin apart the two
+  # reasons a registration has no verdict: unchecked, or uncheckable here.
+  #
+  # @return [Hash{String => String}]
+  def self.tax_identifier_validators
+    @@tax_identifier_validators ||= {}
   end
 
   # Returns the events adapter class used for publishing and subscribing to events.
@@ -272,17 +289,39 @@ module Spree
     Rails.application.config.spree.adjusters = value
   end
 
-  # The configured tax provider instance — the only sanctioned writer of
-  # {Spree::TaxLine} rows. Global default is {Spree::TaxProvider::Internal};
-  # per-Market resolution arrives with docs/plans/6.0-tax-provider.md.
+  # The tax engine used when a market names none — the fallback behind
+  # {Spree::Purchase::Taxation#tax_provider}, which is what call sites actually
+  # use. Defaults to {Spree::TaxProvider::Internal}.
   #
-  # @return [Spree::TaxProvider::Base]
-  def self.tax_provider
-    Rails.application.config.spree.tax_provider.new
+  #   Spree.default_tax_provider = SpreeTaxAvalara::TaxProvider
+  #
+  # Returns the class rather than an instance: callers that want one say `.new`,
+  # and the ones that only need to name it (market selection constantizing its
+  # own choice, the admin marking which entry is the default) do not pay for an
+  # object they discard. A String or Symbol is accepted and constantized, so an
+  # initializer can name a provider before its class is autoloaded.
+  #
+  # @return [Class]
+  def self.default_tax_provider
+    provider = Rails.application.config.spree.default_tax_provider
+    provider.is_a?(Class) ? provider : provider.to_s.constantize
   end
 
-  def self.tax_provider=(value)
-    Rails.application.config.spree.tax_provider = value
+  def self.default_tax_provider=(value)
+    Rails.application.config.spree.default_tax_provider = value
+  end
+
+  # Tax engines a market can be pointed at. Provider gems append their own, so a
+  # merchant picks from what is actually installed rather than typing a class
+  # name and finding out at checkout.
+  #
+  # @return [Array<Class>]
+  def self.tax_providers
+    Rails.application.config.spree.tax_providers
+  end
+
+  def self.tax_providers=(value)
+    Rails.application.config.spree.tax_providers = value
   end
 
   # Validator enforcing the password policy on the default auth models

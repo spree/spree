@@ -54,8 +54,9 @@ module Spree
       end
 
       it 'update order adjustments' do
-        # Tax is provider-written; stub it out so the synthetic tax line survives.
-        allow(Spree).to receive(:tax_provider).and_return(instance_double(Spree::TaxProvider::Internal, estimate: nil))
+        # Tax is provider-written, and the provider comes from the order's own
+        # market since 6.0; stub it so the synthetic tax line survives.
+        allow(order).to receive(:tax_provider).and_return(instance_double(Spree::TaxProvider::Internal, estimate: nil))
 
         line_item = order.line_items.first
         create(:discount, order: order, line_item: line_item, amount: -2.50, kind: 'manual')

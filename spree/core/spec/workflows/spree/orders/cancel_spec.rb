@@ -88,6 +88,17 @@ module Spree
       it_behaves_like 'tries to cancel'
     end
 
+    describe 'tax lifecycle' do
+      it 'reverses the filed tax document so the sale leaves the liability' do
+        provider = instance_double(Spree::TaxProvider::Internal, void: nil, estimate: nil)
+        allow(order).to receive(:tax_provider).and_return(provider)
+
+        result
+
+        expect(provider).to have_received(:void).with(order)
+      end
+    end
+
     describe 'OrderCancellation record creation' do
       it 'creates a cancellation record with default reason' do
         expect { result }.to change(order.cancellations, :count).by(1)

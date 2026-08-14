@@ -12,6 +12,7 @@ describe '6.0 data migration tasks' do
     load Spree::Core::Engine.root.join('lib', 'tasks', 'order_market_backfill.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'store_binding_migration.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'fulfillment_statuses_migration.rake')
+    load Spree::Core::Engine.root.join('lib', 'tasks', 'tax_zones_migration.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'capture_methods_migration.rake')
   end
 
@@ -184,12 +185,185 @@ describe '6.0 data migration tasks' do
     end
   end
 
+  describe 'spree:backfill_tax_store_ids' do
+    it 'assigns the default store to unbound rows and skips bound ones' do
+      other_store = create(:store)
+      bound_category = create(:tax_category)
+      bound_category.update_columns(store_id: other_store.id)
+      legacy_category = create(:tax_category)
+      legacy_category.update_columns(store_id: nil)
+      legacy_rate = create(:tax_rate)
+      legacy_rate.update_columns(store_id: nil)
+
+      run_task('spree:backfill_tax_store_ids')
+
+      expect(legacy_category.reload.store_id).to eq(@default_store.id)
+      expect(legacy_rate.reload.store_id).to eq(@default_store.id)
+      expect(bound_category.reload.store_id).to eq(other_store.id)
+    end
+
+    it 'binds soft-deleted rows too' do
+      deleted_rate = create(:tax_rate)
+      deleted_rate.destroy
+      deleted_rate.update_columns(store_id: nil)
+
+      run_task('spree:backfill_tax_store_ids')
+
+      expect(Spree::TaxRate.with_deleted.find(deleted_rate.id).store_id).to eq(@default_store.id)
+    end
+  end
+
+  describe 'spree:migrate_tax_zones' do
+    let(:germany) { Spree::Country.find_by(iso: 'DE') || create(:country, iso: 'DE', name: 'Germany') }
+    let(:france) { Spree::Country.find_by(iso: 'FR') || create(:country, iso: 'FR', name: 'France') }
+
+    def zone_with(*zoneables)
+      zone = create(:zone, name: "Tax Zone #{Time.current.to_f}#{rand(1000)}", kind: 'country')
+      zoneables.each { |zoneable| create(:zone_member, zone: zone, zoneable: zoneable) }
+      zone
+    end
+
+    def unconverted_rate(zone, **attributes)
+      create(:tax_rate, **attributes).tap do |rate|
+        rate.update_columns(country_iso: nil, state_code: nil, zone_id: zone.id)
+      end
+    end
+
+    it 'copies a single-country zone onto the rate' do
+      rate = unconverted_rate(zone_with(germany))
+
+      run_task('spree:migrate_tax_zones')
+
+      expect(rate.reload.country_iso).to eq(germany.iso)
+      expect(rate.state_code).to be_nil
+    end
+
+    it 'splits a multi-country zone into one rate per country' do
+      rate = unconverted_rate(zone_with(germany, france), amount: 0.19)
+
+      expect { run_task('spree:migrate_tax_zones') }.to change(Spree::TaxRate, :count).by(1)
+
+      countries = Spree::TaxRate.where(name: rate.name).map(&:country_iso)
+      expect(countries).to contain_exactly(germany.iso, france.iso)
+      expect(Spree::TaxRate.where(name: rate.name).map(&:amount).uniq).to eq([0.19])
+    end
+
+    it 'keeps a state member as a country and state pair' do
+      state = create(:state, country: germany, abbr: 'BE', name: 'Berlin')
+      rate = unconverted_rate(zone_with(state))
+
+      run_task('spree:migrate_tax_zones')
+
+      expect(rate.reload.country_iso).to eq(germany.iso)
+      expect(rate.state_code).to eq(state.abbr)
+    end
+
+    it 'leaves a memberless zone as an every-country rate' do
+      rate = unconverted_rate(zone_with)
+
+      run_task('spree:migrate_tax_zones')
+
+      expect(rate.reload.country_iso).to be_nil
+    end
+
+    it 'is idempotent' do
+      unconverted_rate(zone_with(germany, france))
+      run_task('spree:migrate_tax_zones')
+
+      expect { run_task('spree:migrate_tax_zones') }.not_to change(Spree::TaxRate, :count)
+    end
+
+    context 'price rules restricted by zone' do
+      let(:price_list) { create(:price_list, status: 'active') }
+
+      # A pre-upgrade row: ZoneRule-typed with zone ids in its preferences.
+      # Written with update_columns because 6.0 code never creates such rows.
+      def legacy_rule(zone, list: price_list)
+        create(:market_price_rule, price_list: list).tap do |rule|
+          rule.update_columns(
+            type: 'Spree::PriceRules::ZoneRule',
+            preferences: { zone_ids: [zone.id.to_s] }
+          )
+        end
+      end
+
+      def market_for(*countries)
+        create(:market, store: price_list.store, countries: countries)
+      end
+
+      it 'converts a rule whose zone matches a market exactly' do
+        market = market_for(germany, france)
+        rule = legacy_rule(zone_with(germany, france))
+
+        run_task('spree:migrate_tax_zones')
+
+        rule.reload
+        expect(rule.type).to eq('Spree::PriceRules::MarketRule')
+        expect(rule.preferred_market_ids.map(&:to_s)).to eq([market.id.to_s])
+        expect(price_list.reload.status).to eq('active')
+      end
+
+      # A state-level zone resolves to its states' countries before matching.
+      it 'matches a state-level zone through its country' do
+        market = market_for(germany)
+        state = create(:state, country: germany, abbr: 'BE', name: 'Berlin')
+        rule = legacy_rule(zone_with(state))
+
+        run_task('spree:migrate_tax_zones')
+
+        rule.reload
+        expect(rule.type).to eq('Spree::PriceRules::MarketRule')
+        expect(rule.preferred_market_ids.map(&:to_s)).to eq([market.id.to_s])
+      end
+
+      it 'deactivates the list and removes the rule when no market matches' do
+        market_for(germany)
+        rule = legacy_rule(zone_with(germany, france))
+
+        run_task('spree:migrate_tax_zones')
+
+        expect(Spree::PriceRule.exists?(rule.id)).to be(false)
+        expect(price_list.reload.status).to eq('inactive')
+      end
+
+      # A zone that was deleted or memberless resolves to nothing — the one
+      # outcome that must never widen the list to every buyer.
+      it 'deactivates a list whose zones resolve to no country' do
+        rule = legacy_rule(zone_with)
+
+        run_task('spree:migrate_tax_zones')
+
+        expect(Spree::PriceRule.exists?(rule.id)).to be(false)
+        expect(price_list.reload.status).to eq('inactive')
+      end
+
+      it 'is idempotent over a converted row' do
+        market_for(germany)
+        rule = legacy_rule(zone_with(germany))
+
+        run_task('spree:migrate_tax_zones')
+        run_task('spree:migrate_tax_zones')
+
+        expect(rule.reload.type).to eq('Spree::PriceRules::MarketRule')
+        expect(price_list.reload.status).to eq('active')
+      end
+
+      it 'does not touch other rule types' do
+        market_rule = create(:market_price_rule, price_list: price_list)
+
+        run_task('spree:migrate_tax_zones')
+
+        expect(market_rule.reload.type).to eq('Spree::PriceRules::MarketRule')
+      end
+    end
+  end
+
   describe 'spree:migrate_zones_to_delivery_zones' do
     let!(:country) { Spree::Country.find_by(iso: 'US') || create(:country_us) }
     let!(:zone) do
-      zone = Spree::Zone.create!(name: "Legacy Ship Zone #{Time.current.to_f}", kind: 'shipping')
-      zone.zone_members.create!(zoneable: country)
-      zone
+      create(:zone, name: "Legacy Ship Zone #{Time.current.to_f}", kind: 'shipping').tap do |zone|
+        create(:zone_member, zone: zone, zoneable: country)
+      end
     end
     let!(:delivery_method) { create(:shipping_method) }
 

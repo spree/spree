@@ -16,6 +16,18 @@ module Spree
       raise NotImplementedError, "#{self.class.name} must implement #applicable?"
     end
 
+    # Whether this rule narrows its price list by geography. A list carrying one
+    # states the price for that geography outright, so its prices are charged as
+    # entered and never restated for the buyer's VAT rate
+    # (Spree::VatPriceCalculation). A rule that narrows by anything else — a
+    # quantity, a group, a channel — leaves its prices open to restatement, since
+    # they were not set for a country.
+    #
+    # @return [Boolean]
+    def geographic?
+      false
+    end
+
     # Returns the human name of the price rule
     # @return [String]
     def self.human_name

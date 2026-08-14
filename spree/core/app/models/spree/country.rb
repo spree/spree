@@ -7,12 +7,6 @@ module Spree
              -> { order name: :asc },
              inverse_of: :country,
              dependent: :destroy
-    has_many :zone_members,
-             -> { where(zoneable_type: 'Spree::Country') },
-             class_name: 'Spree::ZoneMember',
-             dependent: :destroy,
-             foreign_key: :zoneable_id
-    has_many :zones, through: :zone_members, class_name: 'Spree::Zone'
     has_many :market_countries, class_name: 'Spree::MarketCountry', dependent: :destroy
     has_many :markets, through: :market_countries, class_name: 'Spree::Market'
 

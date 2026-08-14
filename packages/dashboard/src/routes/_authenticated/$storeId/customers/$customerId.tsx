@@ -11,6 +11,7 @@ import {
   Subject,
   TagCombobox,
   useCountries,
+  usePermissions,
   useStore,
 } from '@spree/dashboard-core'
 import {
@@ -79,6 +80,7 @@ import {
   CustomFieldsInlineCard,
   EditableApiCustomFieldsProvider,
 } from '../../../../components/spree/custom-fields/custom-fields-inline'
+import { TaxIdentifiersCard } from '../../../../components/spree/tax-identifiers-card'
 import { useCurrencyLocale } from '../../../../hooks/use-currency-locale'
 import {
   customerGroupAutocompleteProps,
@@ -92,13 +94,18 @@ import {
 } from '../../../../hooks/use-customer-store-credits'
 import {
   useCreateCustomerAddress,
+  useCreateCustomerTaxIdentifier,
   useCustomer,
   useCustomerOrders,
+  useCustomerTaxIdentifiers,
   useDeleteCustomer,
   useDeleteCustomerAddress,
+  useDeleteCustomerTaxIdentifier,
   useUpdateCustomer,
   useUpdateCustomerAddress,
   useUpdateCustomerGroups,
+  useUpdateCustomerTaxIdentifier,
+  useValidateCustomerTaxIdentifier,
 } from '../../../../hooks/use-customers'
 import { useStoreCreditCategories } from '../../../../hooks/use-store-credit-categories'
 import { spreeJsonLinkResolver } from '../../../../lib/json-link-resolver'
@@ -216,6 +223,7 @@ function CustomerBody({ customer }: { customer: Customer }) {
           <ProfileCard customer={customer} />
           <CustomerGroupsCard customer={customer} />
           <AddressesCard customer={customer} />
+          <CustomerTaxIdentifiersCard customer={customer} />
           <InternalNoteCard customer={customer} />
           <Slot name="customer.form_sidebar" context={{ customer }} />
         </>
@@ -854,6 +862,34 @@ function InternalNoteCard({ customer }: { customer: Customer }) {
         )}
       </CardContent>
     </Card>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Tax identifiers
+// ---------------------------------------------------------------------------
+
+function CustomerTaxIdentifiersCard({ customer }: { customer: Customer }) {
+  const { permissions } = usePermissions()
+  const { data, isLoading } = useCustomerTaxIdentifiers(customer.id)
+  const createMutation = useCreateCustomerTaxIdentifier(customer.id)
+  const updateMutation = useUpdateCustomerTaxIdentifier(customer.id)
+  const deleteMutation = useDeleteCustomerTaxIdentifier(customer.id)
+  const validateMutation = useValidateCustomerTaxIdentifier(customer.id)
+
+  return (
+    <TaxIdentifiersCard
+      identifiers={data?.data ?? []}
+      isLoading={isLoading}
+      canEdit={permissions.can('update', Subject.Customer)}
+      mutations={{
+        create: (params) => createMutation.mutateAsync(params),
+        update: (id, params) => updateMutation.mutateAsync({ id, params }),
+        remove: (id) => deleteMutation.mutateAsync(id),
+        validate: (id) => validateMutation.mutateAsync(id),
+        isValidating: validateMutation.isPending,
+      }}
+    />
   )
 }
 

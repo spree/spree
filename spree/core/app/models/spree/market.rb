@@ -36,6 +36,12 @@ module Spree
     validates :preferred_return_window_days,
               numericality: { only_integer: true, greater_than: 0, allow_nil: true }
     validates :name, presence: true, uniqueness: { scope: spree_base_uniqueness_scope + [:store_id] }
+    # An unregistered class name would only fail at checkout, when a customer is
+    # waiting on a total. The list is read at validation time so a provider gem
+    # loaded after boot still counts.
+    validates :tax_provider,
+              inclusion: { in: ->(_market) { Spree.tax_providers.map(&:to_s) } },
+              allow_blank: true
     validates :currency, presence: true
     validates :default_locale, presence: true
     validates :countries, presence: true
@@ -87,12 +93,14 @@ module Spree
       countries.order(:name).first
     end
 
-    # Returns the tax zone matching this market's default country.
-    # Used by Spree::Current to determine the browsing tax zone before a customer enters an address.
+    # The tax engine that computes for this market. A fresh instance per call:
+    # providers are stateless and argless, so the market selects which class
+    # rather than constructing state — everything request-specific arrives as an
+    # argument to the provider's own methods.
     #
-    # @return [Spree::Zone, nil]
-    def tax_zone
-      @tax_zone ||= Spree::Zone.match(default_country)
+    # @return [Spree::TaxProvider::Base]
+    def tax_provider_instance
+      (tax_provider.presence || Spree.default_tax_provider.to_s).constantize.new
     end
 
     # Returns supported locales as an array, always including default_locale

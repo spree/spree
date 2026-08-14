@@ -52,6 +52,7 @@ module Spree
 
         external_step :notify_fulfillment_providers
         external_step :settle_payments
+        external_step :void_tax
         step :recompute_totals, with: -> { Spree.order_recalculate_totals_workflow }
         step :update_statuses, with: -> { Spree.order_update_statuses_service }
         order.publish_event('order.canceled', order.event_payload.merge(notify_customer: notify_customer))
@@ -127,6 +128,12 @@ module Spree
           order.payments.incomplete.not_store_credits.each(&:void_transaction!)
           order.payments.store_credits.pending.each(&:void!)
         end
+      end
+
+      # Reverses the filed tax document. The canceled sale must stop appearing
+      # in the merchant's tax liability.
+      def void_tax
+        order.tax_provider.void(order)
       end
     end
   end

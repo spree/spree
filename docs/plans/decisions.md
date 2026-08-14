@@ -1,3 +1,34 @@
+## 2026-08-14: ZoneRule retired by migration; Zone shelled to a migration-only reader
+
+Two amendments to the 2026-08-12 jurisdiction-as-codes entry, both Damian's
+call, finishing what "kept because it is persisted in the type column" left
+hanging.
+
+**`PriceRules::ZoneRule` is retired — onto MarketRule, with no replacement
+class.** Markets are how pricing targets geography, so `spree:migrate_tax_zones`
+converts each zone rule to a `MarketRule` where the zone's countries exactly
+match one of the store's markets — the one mapping that provably keeps the
+same buyers on the same prices. Where no market matches, the restriction is
+unrepresentable: the price list is **deactivated**, the rule row removed, and
+the task reports each list with the ISO codes it named so the merchant can
+create the market and rebuild. Deactivating errs on buyers briefly losing a
+discount over a restricted list quietly widening to everyone. A CountryRule
+carrier class was written and then rejected the same day — it preserved data
+at the cost of a second, half-alive geography concept beside markets.
+ZoneRule survives as a bare STI shell (rows keep the old type until the task
+runs; a 6.0 deployment boots before its upgrade tasks do), deleted in 6.1.
+
+**`Spree::Zone` and `ZoneMember` are shells.** Bare ActiveRecord — the
+associations plus a `country_list` — kept solely so the 5.6→6.0 upgrade tasks
+(`migrate_tax_zones`, `migrate_zones_to_delivery_zones`,
+`backfill_order_markets`) can read the rows they convert. Everything else
+went: the matching/inclusion logic, seeds (`Seeds::Zones` and its EU_VAT
+groupings — the markets sample data now names its ISO lists directly), the
+permission-catalog entries, Country/State's zone associations, and Store's
+`checkout_zone` bridge (deprecated since 5.4 with a 5.5 deadline, two
+releases overdue). `6.0-delivery-zones.md` still owns dropping the classes
+and tables in 6.1; what remains for it is deletion, not untangling.
+
 ## 2026-08-13: Document numbers — sequential by default, store-configurable orders, derived child numbers
 
 `Spree::Core::NumberGenerator` (the boot-frozen `Module` factory) is replaced
@@ -155,6 +186,47 @@ What ships instead is the work that makes the hook recommendation honest:
   `CustomField` model, gating new writes only. The 2026-08-06 "required stays
   advisory" constraint is untouched.
 
+## 2026-08-12: Jurisdiction is stored as a code, never as a country or state row
+
+Amends 2026-08-06 ("Converted-away columns outlive the release that converts
+them"), which had tax rates gaining `country_id`/`state_id`. They gain
+`country_iso` and `state_code` instead — plain strings, upcased on write. The
+reason is that `Spree::Country` and `Spree::State` are themselves on the way out,
+so a rate pointing at their rows would need converting a second time; and "DE"
+is what a merchant recognises, where a row id is not. It also matches the
+jurisdiction snapshot `spree_tax_lines` already carries, so a rate and the line
+it produced now speak in the same terms.
+
+Everything else in that entry stands: `spree_tax_rates.zone_id` still survives
+through 6.0 as `spree:migrate_tax_zones`'s input, and the task now writes codes.
+
+**The cost, accepted:** the `state_belongs_to_country` validation is gone. With
+codes there is no country row to check a state against, and keeping the guard
+would mean keeping the `Spree::State` lookup this removes. A mismatched pair is
+simply a rate that never matches an address — which is what the mismatch always
+meant in practice, minus the early warning.
+
+Because the columns had not shipped, the original migration was amended rather
+than followed by a second one.
+
+**Extended the same day to everything this work owns**, after a review pass found
+the same shape elsewhere. `Spree::TaxExemptionCertificate` held country and state
+references, and `Spree::PriceRules::ZoneRule` held a `country_ids` preference of
+`Spree::Country` primary keys; both now hold codes (`country_iso`/`state_code`,
+`country_isos`). The certificate case was a live defect rather than a tidy-up:
+an unrecognised ISO resolved to a nil country, and nil claims *every* country
+there, so a mistyped code silently turned one state's certificate into a
+worldwide exemption. A code that matches nothing narrows to nothing.
+
+`Spree::Pricing::Context` gained a `country_iso` reader so a price rule compares
+codes rather than reaching through `context.country`; when Country goes, the
+context is the only place that changes.
+
+**Where a Country object is still correct:** `Purchase::Taxation#tax_country` and
+`Spree::Current.tax_country` return one, and should. Those are lookups in request
+context, not stored jurisdiction, and addresses and markets still speak in
+countries. The rule this entry sets is about what a row *persists*.
+
 ## 2026-08-12: The label leads, fulfilled follows (amends the Phase 7 fulfill flow)
 
 A warehouse prints the label, sticks it on the box, hands the box over — and
@@ -291,6 +363,64 @@ now would be work thrown away.
 a projected total client-side to fake a preview — 6.0 cannot project totals, and
 an approximation would disagree with the server.
 
+## 2026-08-11: Cross-border tax-inclusive pricing derives net-fixed, except where the merchant priced that geography
+
+A live pass against a running server found three defects in one seam — what a customer is charged
+when the destination's VAT rate differs from the home zone's. `6.0-tax-provider.md` gains Phase 8 to
+fix them (the 6.1 cleanup renumbers to Phase 9).
+
+**The rule, which is Shopify's:** a price the merchant set for a geography is **final** — charged
+exactly as entered, never restated. Everything else **derives net-fixed**: home rate out, destination
+rate on, via `VatPriceCalculation`. The merchant's net is preserved and the gross moves.
+
+"Set for a geography" needs the `match_policy`, not just the presence of a geographic rule
+(`MarketRule`, `ZoneRule`), because a list can win without its geographic rule being the reason:
+
+- `match_policy: 'all'` — every rule matched, so the geography is why this price applied. **Final.**
+- `match_policy: 'any'` — the list may have won on a non-geographic rule alone (a volume break, a
+  customer group), so the price is not evidence of a decision about this destination. Final only
+  when *every* rule is geographic.
+
+Each rule kind answers `geographic?` for itself, always a boolean; the base `PriceRule` answers
+false, so a rule that names no geography — including an empty country or market list, which matches
+every buyer — never makes a price final.
+
+**Why this matters beyond tax.** Two of the three defects are pricing defects, not tax defects:
+
+1. `Pricing::Context.from_order` never carried the owner's `market`, so cart line pricing followed
+   the request's `x-spree-country` hint (or the store default) instead of the cart's own market.
+   Measured: a catalogue request with the hint served a French price list at 99.00 while the cart on
+   that same French market priced at 100.00, and the wrong figure persisted. **Market-scoped price
+   lists were therefore unreachable from a cart** — they work for the catalogue only.
+2. `Cart#recalculate_for_address_change!` called `LineItem#update_price`, which assigns without
+   saving, where `recalculate_price` persists. A destination change computed the restated price and
+   discarded it; a later quantity change wrote it. So what a cross-border customer paid depended on
+   the order of operations.
+
+**Constraints this places on other work:** cart-stage pricing must read the cart's own market, never
+`Spree::Current` (catalogue requests keep that fallback, having no owner); any new `PriceRule`
+subclass must answer `geographic?`, since that predicate now decides whether its list's prices are
+exempt from restatement; and re-pricing paths must stay behind
+`Carts::Complete#verify_expected_total`, whose `cart_changed` failure is what makes a mid-checkout
+price movement disclosable instead of silent.
+
+**Restatement is a capability of the Internal provider, not of the platform.** `VatPriceCalculation`
+derives both the home and destination rate from `TaxRate` rows, so it only works where those rows are
+the whole truth. An absent row is ambiguous — *no tax is due here* or *tax is computed by an engine* —
+and the code reads it as the former. Measured: German home zone, Japanese destination, no Japanese
+rates, and 100.00 is charged as **84.03**. Correct for a genuine zero-rated export; wrong for a market
+whose engine simply has no rows in that table, where it makes every foreign destination look like an
+export. So restatement runs for Internal and is skipped elsewhere, with a geo-scoped price list as the
+external-provider merchant's way to state destination prices. Shopify arrived at the same separation:
+dynamic tax-inclusive pricing reads a standard-rate table and is explicitly unsupported alongside
+AvaTax. A
+read-only `rate_for` on the provider contract would dissolve the limitation and stays deferred with
+the delivery-option quote question, which is the same problem for a different surface.
+
+Surveyed for this: Shopify, WooCommerce, Magento/Adobe Commerce, BigCommerce, Saleor, Medusa,
+Vendure, commercetools. Net-fixed is the majority default (WooCommerce, Magento, Shopify, Vendure);
+the headless platforms (Saleor, commercetools, Medusa) refuse to derive at all and require a price
+per channel/region.
 ## 2026-08-10: Fulfillment side effects move to workflows; the state machine keeps the status column
 
 Answers "should Fulfillment follow Order and lose its state machine?" with
@@ -449,6 +579,79 @@ never in metadata.
 
 Plan: `docs/plans/6.0-consolidate-metadata-columns.md`.
 
+## 2026-08-07: The tax plan builds the minimal Company tree; the B2B release keeps Catalog
+
+Exemption certificates need an entity to hang off, and `Spree::Company` does not
+exist — `6.1-channels-catalogs-b2b.md` targets 6.1. Rather than leave the tax
+plan's last phase blocked behind a release, `6.0-tax-provider.md` Phase 7 builds
+**Company → CompanyLocation → CompanyContact** plus
+`Spree::TaxExemptionCertificate`, and the B2B release inherits those models
+instead of defining them.
+
+**Why the whole tree and not just Company.** The contact record is what lets a
+logged-in B2B buyer's own cart resolve a company without staff touching the
+order. Company alone would mean exemption works only on admin-created orders —
+the wrong limitation for a self-serve wholesale channel. The location is what
+the Cart and Order reference (`company_location_id` on both, following
+`channel_id`/`market_id`), because that is the FK the B2B plan already specifies
+for orders; a direct `company_id` would save one hop now and cost a schema
+reversal later.
+
+**Supersedes the B2B plan on one point: no `tax_exempt` boolean.** That plan's
+Company and CompanyLocation sketches both carry one. It is not being built. A
+flag cannot say which jurisdiction it holds in or which lines it covers, and
+removing the boolean `exempt?` from the provider contract was the substance of
+the 2026-08-05 refinement — reintroducing it a layer down would undo it.
+Exemption is a certificate resolved into a typed `Spree::TaxExemption` entry.
+**`6.1-channels-catalogs-b2b.md` still needs this note added to its own Key
+Decisions** — deliberately not edited yet, at the author's instruction.
+
+**Explicitly not pulled forward:** Catalog, CatalogProduct, CatalogAssignment,
+`default_catalog_id`, per-company pricing, `Products::ForContext` visibility, the
+Company → CustomerGroup link, and roles/approvals/purchase limits/invoicing.
+Certificates hang off Company scoped by their own country/state columns, so no
+per-location duplication.
+
+**Constraint going forward:** pulling a model forward out of another plan takes
+the model, not the feature. If a field only makes sense for the deferred feature,
+it waits with it.
+
+## 2026-08-07: The pricing zone dimension ships with the tax provider, but the price-rule design stays with delivery-zones
+
+`6.0-delivery-zones.md`'s ownership table gives the `Pricing::Context` zone
+dimension and the `Spree::Current` zone attribute to that plan, "with
+tax-provider". It landed in the tax provider work instead, because the two
+cannot be separated: `Pricing::Context.from_order` read `order.tax_zone`, so it
+broke the moment `Purchase::Taxation#tax_zone` was removed — which the same
+table assigns to the tax plan.
+
+`Spree::Current.tax_country` returns a `Spree::Country` rather than the ISO
+string that plan's constraints section specified, matching the already-shipped
+`Purchase::Taxation#tax_country`. An ISO code would mean a country lookup on
+every read, and the price rule compares stored ids.
+
+**Where the line was drawn.** `PriceRules::ZoneRule` also reads the zone
+dimension, so it had to change or crash. It now decides by country, keeps its
+class name (the `type` column persists it), stays out of the rule registry, and
+`spree:migrate_tax_zones` restates each row's stored zones as the countries they
+contained — state-level zones widen to the whole country, which the task
+reports. What was **not** done: promoting it to a first-class `CountryRule` with
+a factory and a registry entry. That is a customer-visible pricing feature no
+plan called for, and it belongs to the plan that owns Zone's removal.
+
+**Constraint going forward:** "something must change or it crashes" licenses the
+minimum that keeps it working, not a redesign. When a forced edit reaches into
+another plan's surface, do the minimum and hand the design decision back in that
+plan's own document.
+
+**Corollary (2026-08-07).** The same reasoning ruled out guarding the window
+between `db:migrate` and the data task. A review found that an unconverted rule
+matches every country, and the first fix made such a row refuse to apply. That
+was also scope creep: the 6.0 data tasks are steps in the upgrade manifest, so
+"code deployed, task not yet run" is not a state Spree supports, and inventing
+behaviour for it adds a permanent branch to a hot path to cover a transient.
+Don't design for half-upgraded installs; make the task correct and say what it
+did.
 ## 2026-08-09: Origin groups and per-currency delivery pricing in 6.0
 
 Two same-day additions to the delivery-profiles model, both Damian-approved
@@ -1055,6 +1258,118 @@ register a handler on `customers.create.after_create` (storefront registration
 only). The method itself can stay; nothing in core invokes it any more.
 
 Plan: `6.0-service-workflows.md` decision 13.
+
+## 2026-08-05: Tax provider contract carries treatments, identities and dates — refined after the #14056 community review
+
+The provider contract in `6.0-tax-provider.md` was reworked after two
+outside implementers (an EU VAT decision engine, a US rates API) reviewed
+the RFC on spree/spree#14056. Every concern was verified before adoption:
+against primary legal sources (the European e-invoicing standard, the VAT
+Directive, the EU verification service's own documentation — citations now
+live in the plan's **Regulatory background** section), the major provider
+APIs (Avalara, Stripe Tax, TaxJar, Vertex) and platform practice (Medusa,
+Saleor, commercetools, Shopify, Magento, Odoo). Decisions:
+
+**TaxLine carries a taxability reason, not just an amount.** A zero from
+reverse charge, an export and an exemption are different facts landing in
+different boxes of a tax return, and European e-invoices must state the
+category for every line. New `taxability_reason` column with an additive
+vocabulary (Stripe's enum pruned, plus `intra_community_supply` and
+`export` — Stripe's own values cannot tell cross-border goods from
+services, or an export from a domestic zero rate), plus a jurisdiction
+snapshot (`country_iso`/`state_code` — one-stop-shop returns are filed per
+destination country). The invoice category and exemption reason codes are
+deliberately NOT stored — they derive at invoicing time from the reason
+plus order facts (the Odoo pattern; no surveyed platform stores them).
+Core ships the reason→code lookup maps as code. Write contract: a row for
+every item the provider formed a treatment for, including zero amounts.
+
+**Buyer tax identity is a separate model, `Spree::TaxIdentifier`.**
+Stripe's shape (typed kinds, multiple per customer, verification state)
+with Magento's evidence discipline (VIES consultation number, validated
+country/value — VIES has no historical lookup, so entry-time evidence is
+the only proof that will ever exist). Dual-FK owner: customer (durable —
+sole proprietors will never have a Company), cart (override), order
+(completion snapshot, frozen via `readonly?`, `source`-stamped, no
+correction path); company/company_location FKs arrive with the B2B plan.
+Zero footprint on consumer orders. Live-read designs were rejected on
+documented drift pain (Shopify B2B, Odoo).
+
+**Validating a tax ID belongs to the identifier, not to a tax provider.**
+The registry that can answer is determined by the number's *kind* (EU VAT
+→ the EU service, UK → HMRC, and so on), never by a market — a customer
+saves a tax ID on a profile before any order exists, so a provider-hung
+`validate_tax_id` would force an arbitrary choice (a US sales-tax engine
+asked to check an EU number, or an EU market on Internal declining while
+a connected Avalara sits unused). The seam is therefore
+`Spree.tax_identifier_validators`, a registry keyed by kind and empty by default —
+core ships no registry client for any jurisdiction — so two extensions
+covering different kinds coexist where a single swappable service would
+let the second loaded silently disable the first. Validation splits the way Stripe's does: **format
+synchronously, the registry asynchronously, and the tax treatment depends
+on neither.** Format is a hard validation on save — whitespace/case
+normalization, presence, then the registered validator's class-level
+`valid_format?` (the `SearchProvider::Base.indexing_required?` shape) — so a
+typo is a field error and never persists. Core asserts no format rules of its
+own: a charset or length range spanning every tax regime would be an untestable
+guess whose failure mode is rejecting a real business customer. The registry check runs after
+commit on the address-geocoding precedent (`after_commit` enqueues, the job
+does the I/O, `update_columns` writes back, a non-answering registry is
+reported and recorded as `unavailable`), never during estimate, which reads
+the stored result. Reverse charge follows the number's format, not its
+verdict — Stripe applies it "regardless of its validity" — so a sale may
+complete with `pending` and still be treated correctly; the verdict is
+evidence, not arithmetic. **Magento's model was rejected:** synchronous
+registry validation gating the treatment through customer groups, whose own
+ecosystem documents the cost (a third-party module exists solely to add
+caching and offline fallback for the unstable registry, and per-transaction
+validation cannot run at all under external checkouts). A tax provider gem
+may register itself as the validator for kinds its service can check.
+
+**Exemption is a typed estimate input plus the TaxLine outcome — the
+boolean `exempt?(order)` is removed** (wrong arity: per jurisdiction, per
+item, and the reason is the audit artifact; no provider API exposes an
+exempt? query). `Spree::TaxExemption` value objects (mirroring the future
+certificate row, with typed per-item overrides) are assembled by the
+`tax_resolve_exemptions_service` dependency (default `[]`) — a seam because
+the real implementation, certificate filtering by active status and
+jurisdiction, is the B2B integration point. The identifier chain gets no
+seam: it is a fallback `||` and lives as `#resolved_tax_identifier` on the
+`Spree::Purchase::Taxation` concern beside `tax_address`. No exemption flags
+on customer, order or line items. The `set_tax_line_context` hook is NOT
+the channel for typed inputs — it narrows to untyped provider extras
+before the 6.0 hook freeze. `TaxExemptionCertificate` stays in the tax plan
+as its last phase, gated on Company existing, and gains `reason_code` — the
+field providers actually consume as an entity use code, missing from the
+original sketch.
+
+**Dates are explicit.** `estimate`/`refund` take the rates-effective tax
+date (unanimous provider practice, and legally the rate in force when the
+sale happened is the one that applies), kept distinct from the
+document/posting date. Refund becomes
+`refund(order, return_items, tax_date:)` — supports both recompute-at-
+original-date (Avalara/Vertex) and derive-from-recorded (Stripe/TaxJar);
+the Internal provider only ever derives (TaxRate rows are unversioned).
+The "credit note corrects the original filing period" claim from the
+thread was checked and not adopted: a return is reported in the period its
+credit note is issued, and only correcting a genuine error reopens the
+original period.
+
+**Capability honesty.** Providers declare unsupported domains; Internal
+declares no destination-based US local tax (state-level rates cannot
+express county/city/district stacking — silently under-collecting lands
+on the merchant), no OSS threshold tracking, no reverse charge (unvalidated
+ID → normal VAT, the protected default), no ID validation. `estimate`
+A runtime indeterminacy channel on `estimate` was
+considered and deferred: both cases the review raised (one-stop-shop
+thresholds, Internal against US local rates) are answered by the capability
+declarations at configuration time, nothing in core would consume a
+per-calculation verdict, and unlike a hook key a return value can be added
+later without breaking providers. `estimate` keeps its current signature —
+the rows it writes are its output. Per-Market provider selection is
+reworded to selection-not-construction: the market names the provider,
+providers stay stateless and argless (the shipped `Base` shape), the
+shipped global config class stays as the fallback.
 
 ## 2026-08-04: Commerce-behavior globals move to Store preferences; app configuration stays global
 
@@ -2222,6 +2537,22 @@ and `Spree::CalculatedAdjustments` resolves an equivalent registry
 separately. Extract a `Spree::RegisteredSubclasses` concern when a family
 needs the registry without preferences — that second consumer is the
 trigger, and it would absorb CalculatedAdjustments too.
+## 2026-08-06 — Converted-away columns outlive the release that converts them
+
+`spree_tax_rates.zone_id` stays in the schema through 6.0 even though
+nothing reads it, and is dropped in 6.1. The reason is ordering, and it
+generalizes: a data task named in the upgrade manifest runs *after*
+`db:migrate`, so a migration that removes the task's input column in the
+same release destroys the data the task exists to convert — and leaves a
+merchant no source to re-run from if the conversion needs repeating.
+Tax rates therefore gain a jurisdiction of their own (`country_id`/`state_id`
+here; changed to `country_iso`/`state_code` on 2026-08-12, see above), every `zone_id` reader
+is severed (the association, the zone scopes, and `Zone#has_many
+:tax_rates`, whose `dependent: :destroy` would otherwise delete live
+rates when a shipping zone is destroyed), and the column is left in
+place, unread. `spree_adjustments` already worked this way under
+`migrate_adjustments_to_typed_rows`, which keeps the legacy table as its
+rollback source; treat that as the pattern rather than the exception.
 
 ## 2026-08-07 — StateChange and LogEntry removed; lifecycle events are the only audit
 

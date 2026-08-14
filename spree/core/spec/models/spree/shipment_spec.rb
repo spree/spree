@@ -860,6 +860,44 @@ describe Spree::Shipment, type: :model do
     end
   end
 
+  describe '#tax_category' do
+    let(:order) { create(:order_with_line_items, line_items_count: 1) }
+    let(:fulfillment) { order.fulfillments.first }
+    let(:reduced_rate_category) { create(:tax_category, name: "Reduced #{Time.current.to_f}") }
+    let(:delivery_method) { create(:shipping_method, tax_category: reduced_rate_category) }
+
+    def select_rate(method)
+      fulfillment.delivery_rates.destroy_all
+      create(:delivery_rate, fulfillment: fulfillment, delivery_method: method, selected: true)
+      fulfillment.reload
+    end
+
+    it "is the classification the merchant set on the delivery method" do
+      select_rate(delivery_method)
+
+      expect(fulfillment.tax_category).to eq(reduced_rate_category)
+      expect(fulfillment.tax_category_id).to eq(reduced_rate_category.id)
+    end
+
+    # The classification used to be read through the selected rate's tax_rate,
+    # so a method classified for a rate the merchant never configured in the
+    # destination reported no category — and delivery was then taxed under the
+    # store's default one.
+    it 'answers even when no tax rate covers that category' do
+      select_rate(delivery_method)
+
+      expect(Spree::TaxRate.for_tax_category(reduced_rate_category)).to be_empty
+      expect(fulfillment.tax_category).to eq(reduced_rate_category)
+    end
+
+    it 'is nil when the delivery method carries no classification' do
+      select_rate(create(:shipping_method, tax_category: nil))
+
+      expect(fulfillment.tax_category).to be_nil
+      expect(fulfillment.tax_category_id).to be_nil
+    end
+  end
+
   describe '#selected_delivery_rate_id / #selected_delivery_rate_id=' do
     let(:order) { create(:order_with_line_items, line_items_count: 1) }
     let(:shipment) { order.fulfillments.first }

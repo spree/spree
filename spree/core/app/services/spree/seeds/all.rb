@@ -9,7 +9,6 @@ module Spree
             # GEO
             Countries.call
             States.call
-            Zones.call
 
             # user roles
             Roles.call
@@ -31,6 +30,7 @@ module Spree
 
             # add store resources
             PaymentMethods.call
+            TaxCategories.call
             ProductTypes.call
             CustomerGroups.call
             ReturnsEnvironment.call

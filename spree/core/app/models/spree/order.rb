@@ -25,6 +25,7 @@ module Spree
     include Spree::SingleStoreResource
     include Spree::SanitizableRichText
     include Spree::Purchase::Channel
+    include Spree::Purchase::Company
     include Spree::Purchase::Market
     include Spree::Purchase::Currency
     include Spree::Purchase::Locale
@@ -43,7 +44,6 @@ module Spree
     include Spree::NumberIdentifier
 
     publishes_lifecycle_events
-    include Spree::MemoizedData
     include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::Searchable
@@ -57,8 +57,6 @@ module Spree
     has_secure_token :token, length: 35
 
     has_spree_rich_text :internal_note
-
-    MEMOIZED_METHODS = %w(tax_zone)
 
     money_methods :outstanding_balance, :item_total,           :adjustment_total,
                   :included_tax_total,  :additional_tax_total, :tax_total,
@@ -181,6 +179,9 @@ module Spree
     # Typed adjustment rows owned by this order (line-, fulfillment- and
     # order-level). See docs/plans/6.0-6.1-split-adjustments.md.
     has_many :tax_lines, class_name: 'Spree::TaxLine', dependent: :destroy, inverse_of: :order
+    # delete, not destroy: the snapshot is readonly once written, and destroy
+    # refuses readonly records. It has no dependents of its own.
+    has_one :tax_identifier, class_name: 'Spree::TaxIdentifier', dependent: :delete, inverse_of: :order
     has_many :discounts, class_name: 'Spree::Discount', dependent: :destroy, inverse_of: :order
     has_many :fees, class_name: 'Spree::Fee', dependent: :destroy, inverse_of: :order
 
@@ -527,11 +528,11 @@ module Spree
     # Re-estimates tax through the configured provider (writes TaxLine rows
     # with replace-all semantics).
     def create_tax_charge!
-      Spree.tax_provider.estimate(self)
+      tax_provider.estimate(self, **tax_estimate_inputs)
     end
 
     def create_shipment_tax_charge!
-      Spree.tax_provider.estimate(self, fulfillments.to_a) if fulfillments.any?
+      tax_provider.estimate(self, fulfillments.to_a, **tax_estimate_inputs) if fulfillments.any?
     end
 
     def update_line_item_prices!

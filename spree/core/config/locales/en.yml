@@ -887,6 +887,7 @@ en:
         discount_value_type_invalid: value_type must be flat or percent
         exactly_one_adjustable: must be attached to exactly one adjustable
         exactly_one_of_cart_or_order: must belong to exactly one of cart or order
+        exactly_one_tax_identifier_owner: must belong to exactly one of customer, cart or order
         integration_connection_failed: could not connect with the saved credentials
         integration_type_not_registered: is not a registered integration
         invalid_delivery_method_rule: is not a registered delivery method rule
@@ -1590,6 +1591,19 @@ en:
     supported_locales: Supported Locales
     tags: Tags
     tax: Tax
+    tax_capabilities:
+      oss_thresholds:
+        description: Crossing the EU-wide cross-border threshold does not switch to destination-country rates automatically, because it depends on annual turnover across every destination rather than on any single order.
+        label: Distance-selling thresholds
+      proportional_delivery_tax:
+        description: Delivery is taxed at the single rate its delivery method names, not split across the rates of the goods being delivered. A basket mixing tax rates collects the wrong amount on delivery.
+        label: Proportional delivery tax
+      reverse_charge:
+        description: A VAT-registered business buyer is charged tax instead of receiving a zero-rated invoice. Their registration number is recorded but does not change the tax.
+        label: EU reverse charge
+      us_local_tax:
+        description: County, city and district rates are not applied — only the rates configured per country or state. Sales into US states that levy local tax will be under-collected.
+        label: US local tax
     tax_category: Tax Category
     tax_code: Tax Code
     tax_inclusive: Tax inclusive

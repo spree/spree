@@ -750,6 +750,7 @@
           "label": "ملاحظة داخلية",
           "placeholder": "سياق داخلي للموظفين عن هذا العميل…"
         },
+        "label": "العميل",
         "tags": {
           "label": "Tags"
         }
@@ -898,6 +899,10 @@
         "tax_inclusive": {
           "help": "عرض الأسعار مع الضريبة. شائع في أسواق الاتحاد الأوروبي.",
           "label": "تسعير شامل الضريبة"
+        },
+        "tax_provider": {
+          "help": "ما يحسب الضريبة لطلبات هذا السوق.",
+          "label": "محرك حساب الضريبة"
         }
       },
       "match_policy": {
@@ -1492,6 +1497,106 @@
           "label": "Destination URL",
           "placeholder": "https://example.com/webhooks"
         }
+      },
+      "external_id": {
+        "label": "المرجع"
+      },
+      "country": {
+        "label": "الدولة"
+      },
+      "state": {
+        "label": "المنطقة"
+      },
+      "postal_code": {
+        "label": "الرمز البريدي"
+      },
+      "certificate_number": {
+        "label": "رقم الشهادة"
+      },
+      "reason_code": {
+        "help": "يُمرَّر إلى محرك حساب الضريبة كرمز للاستخدام.",
+        "label": "السبب"
+      },
+      "issued_at": {
+        "label": "تاريخ الإصدار"
+      },
+      "issuing_authority": {
+        "label": "الجهة المُصدِرة"
+      },
+      "certificate_document": {
+        "help": "ملف PDF أو صورة، حتى 10 ميغابايت. الموظفون وحدهم يمكنهم تنزيله.",
+        "label": "مستند الشهادة"
+      },
+      "company": {
+        "name": {
+          "placeholder": "Acme Industries"
+        },
+        "external_id": {
+          "help": "مرجعك الخاص لهذه الشركة، فريد داخل المتجر.",
+          "placeholder": "ACME-001"
+        }
+      },
+      "company_location": {
+        "name": {
+          "placeholder": "المقر الرئيسي"
+        },
+        "external_id": {
+          "help": "مرجعك الخاص لهذا الفرع."
+        }
+      },
+      "company_contact": {
+        "role": {
+          "label": "الدور"
+        }
+      },
+      "tax_identifier": {
+        "kind": {
+          "help": "نوع هذا الرقم. يجب أن يطابق التحقق المُعد له، لذا فالكتابة الصحيحة مهمة.",
+          "label": "النوع"
+        },
+        "value": {
+          "label": "الرقم",
+          "placeholder": "DE123456789"
+        }
+      },
+      "tax_rate": {
+        "name": {
+          "placeholder": "ضريبة القيمة المضافة الأساسية"
+        },
+        "amount": {
+          "help": "بالنسبة المئوية. أدخل 20 لتعني 20%.",
+          "label": "النسبة"
+        },
+        "jurisdiction": {
+          "label": "تسري على"
+        },
+        "country_iso": {
+          "help": "اتركه فارغاً لفرض الضريبة على كل الدول."
+        },
+        "state_code": {
+          "help": "اتركه فارغاً لفرض الضريبة على الدولة بأكملها."
+        },
+        "tax_category_id": {
+          "help": "المنتجات التي تسري عليها هذه النسبة.",
+          "label": "الفئة الضريبية"
+        },
+        "included_in_price": {
+          "help": "الأسعار تتضمن هذه الضريبة أصلاً، لذا تُستخرج منها بدلاً من أن تُضاف إليها.",
+          "label": "مشمولة في السعر",
+          "short": "مشمولة"
+        },
+        "show_rate_in_label": {
+          "help": "يضيف النسبة المئوية إلى سطر الضريبة الذي يراه العميل.",
+          "label": "إظهار النسبة في وصف الضريبة"
+        }
+      },
+      "tax_exemption_certificate": {
+        "country_iso": {
+          "help": "اتركه فارغاً لشهادة تسري في كل المناطق."
+        },
+        "expires_at": {
+          "help": "اتركه فارغاً لشهادة بلا تاريخ انتهاء."
+        }
       }
     },
     "delivery_profiles": {
@@ -1747,6 +1852,7 @@
       "categories": "الفئات",
       "claims": "المطالبات",
       "collections": "المجموعات",
+      "companies": "الشركات",
       "customer_groups": "المجموعات",
       "customers": "العملاء",
       "draft_orders": "مسودات الطلبات",
@@ -2856,6 +2962,10 @@
             "url": "URL"
           },
           "title": "Webhooks"
+        },
+        "tax_rates": {
+          "add_sheet_title": "نسبة ضريبة جديدة",
+          "edit_sheet_title": "تعديل نسبة الضريبة"
         }
       },
       "staff": {
@@ -3580,6 +3690,7 @@
         "stock_locations": "مواقع المخزون",
         "store": "المتجر",
         "tax_categories": "فئات الضريبة",
+        "tax_rates": "نسب الضريبة",
         "webhooks": "Webhooks"
       }
     },
@@ -3762,6 +3873,190 @@
       "saved": "تم حفظ الترجمات",
       "source": "المصدر",
       "title": "الترجمات"
+    },
+    "jurisdiction": {
+      "everywhere": "كل المناطق"
+    },
+    "companies": {
+      "add_cta": "إضافة شركة",
+      "add_sheet_title": "شركة جديدة",
+      "create_description": "يشتري العملاء من الشركات عبر الفروع. يمكنك إضافة الفروع والرقم الضريبي وشهادات الإعفاء بعد إنشاء الشركة.",
+      "create_label": "إنشاء الشركة",
+      "delete_confirm": {
+        "message": "سيؤدي هذا إلى حذف {{name}} مع فروعها ومشترييها وشهاداتها. لا يمكن التراجع عن هذا الإجراء.",
+        "title": "حذف الشركة؟"
+      },
+      "detail": {
+        "delete_label": "حذف الشركة",
+        "load_error": "تعذر تحميل هذه الشركة",
+        "profile": "الشركة"
+      },
+      "empty": "لا توجد شركات بعد",
+      "locations_column": "الفروع",
+      "messages": {
+        "created": "تم إنشاء الشركة",
+        "deleted": "تم حذف الشركة",
+        "updated": "تم تحديث الشركة"
+      },
+      "search_placeholder": "البحث في الشركات"
+    },
+    "company_locations": {
+      "add_cta": "إضافة فرع",
+      "add_title": "فرع جديد",
+      "addresses": "العناوين",
+      "billing_address": "عنوان الفوترة",
+      "contacts_count_few": "{{count}} مشترين",
+      "contacts_count_many": "{{count}} مشترياً",
+      "contacts_count_one": "مشترٍ واحد",
+      "contacts_count_other": "{{count}} مشترٍ",
+      "contacts_count_two": "مشتريان",
+      "contacts_count_zero": "لا مشترين",
+      "detail": {
+        "delete_label": "حذف الفرع",
+        "load_error": "تعذر تحميل هذا الفرع"
+      },
+      "dialog_description": "الفرع هو الجهة التي تُصدر لها الفاتورة وتُشحن إليها الطلبات. العناوين اختيارية، لكن أي عنوان تبدأ بتعبئته يتطلب الاسم والدولة.",
+      "edit_title": "تعديل الفرع",
+      "empty": "لا توجد فروع بعد",
+      "messages": {
+        "created": "تم إنشاء الفرع",
+        "deleted": "تم حذف الفرع",
+        "updated": "تم تحديث الفرع"
+      },
+      "shipping_address": "عنوان الشحن",
+      "shipping_same_as_billing": "عنوان الشحن هو نفسه عنوان الفوترة",
+      "title": "الفروع"
+    },
+    "company_contacts": {
+      "add_cta": "إضافة مشترٍ",
+      "add_title": "تخويل مشترٍ",
+      "dialog_description": "عميل يشتري لهذا الفرع. من يشتري لفرع واحد فقط تُنسب طلباته إليه تلقائياً.",
+      "empty": "لم يتم تخويل أي مشترٍ بعد",
+      "messages": {
+        "created": "تمت إضافة المشتري",
+        "deleted": "تمت إزالة المشتري"
+      },
+      "remove_action": "إزالة المشتري",
+      "remove_confirm": {
+        "message": "لن يعود {{email}} يشتري لهذا الفرع. لن يتأثر حساب العميل.",
+        "title": "إزالة هذا المشتري؟"
+      },
+      "roles_enterprise_help": "يمكن للمشترين المضافين هنا تقديم الطلبات لهذا الفرع. الأدوار ومسارات الموافقة وحدود الإنفاق تأتي مع Spree Enterprise.",
+      "roles_enterprise_title": "الأدوار والموافقات من مزايا Enterprise",
+      "title": "المشترون"
+    },
+    "tax_identifiers": {
+      "add_cta": "إضافة رقم",
+      "add_title": "إضافة رقم ضريبي",
+      "checked_prefix": "تم التحقق",
+      "delete_confirm": {
+        "message": "ستتم إزالة {{value}}. تحتفظ الطلبات المكتملة بالرقم الذي فُوترت به.",
+        "title": "حذف هذا الرقم؟"
+      },
+      "dialog_description": "رقم ضريبة القيمة المضافة أو رقم الشركة الذي يظهر على الفواتير، وهو ما يتيح آلية الاحتساب العكسي بين الشركات في الاتحاد الأوروبي.",
+      "edit_title": "تعديل الرقم الضريبي",
+      "empty": "لا يوجد رقم ضريبي مسجل",
+      "kinds": {
+        "au_abn": "رقم الشركة الأسترالي",
+        "ch_vat": "ضريبة القيمة المضافة (سويسرا)",
+        "eu_vat": "ضريبة القيمة المضافة (الاتحاد الأوروبي)",
+        "gb_vat": "ضريبة القيمة المضافة (المملكة المتحدة)",
+        "us_ein": "رقم صاحب العمل (الولايات المتحدة)"
+      },
+      "messages": {
+        "created": "تمت إضافة الرقم",
+        "deleted": "تم حذف الرقم",
+        "updated": "تم تحديث الرقم",
+        "validation_failed": "تعذر التحقق من الرقم",
+        "validation_requested": "جارٍ التحقق من الرقم لدى السجل"
+      },
+      "not_validatable": "لا يوجد تحقق مُعد لهذا النوع، لذا يُستخدم الرقم كما أُدخل.",
+      "select_kind": "اختر النوع",
+      "title": "الرقم الضريبي",
+      "validate_action": "التحقق لدى السجل",
+      "validation_status": {
+        "not_checked": "لم يُتحقق منه",
+        "pending": "جارٍ التحقق",
+        "unavailable": "السجل غير متاح",
+        "unsupported": "يتعذر التحقق منه",
+        "unverified": "غير صالح",
+        "verified": "تم التحقق"
+      }
+    },
+    "tax_exemption_certificates": {
+      "add_cta": "إضافة شهادة",
+      "add_title": "إضافة شهادة إعفاء",
+      "delete_confirm": {
+        "message": "ستتم إزالة الشهادة {{number}}. لا يمكن التراجع عن هذا الإجراء.",
+        "title": "حذف هذه الشهادة؟"
+      },
+      "dialog_description": "إثبات أن مشتريات هذه الشركة غير خاضعة للضريبة. لا تسري الشهادة الجديدة إلا بعد قبولها.",
+      "download_action": "تنزيل المستند",
+      "empty": "لا توجد شهادات مسجلة",
+      "expires_prefix": "تنتهي",
+      "lapsed": "منتهية",
+      "messages": {
+        "created": "تمت إضافة الشهادة",
+        "deleted": "تم حذف الشهادة",
+        "revoked": "تم إلغاء الشهادة",
+        "updated": "تم تحديث الشهادة",
+        "verified": "تم قبول الشهادة"
+      },
+      "never_expires": "بلا تاريخ انتهاء",
+      "no_document": "لا يوجد مستند مرفق",
+      "reason_codes": {
+        "agricultural": "الزراعة",
+        "charitable": "جهة خيرية",
+        "educational": "جهة تعليمية",
+        "government": "جهة حكومية",
+        "manufacturing": "التصنيع",
+        "resale": "إعادة البيع"
+      },
+      "revoke_action": "إلغاء",
+      "revoke_confirm": {
+        "message": "لن تعود الشهادة {{number}} تسري على الطلبات الجديدة، لكنها تبقى محفوظة كسجل.",
+        "title": "إلغاء هذه الشهادة؟"
+      },
+      "select_reason": "اختر السبب",
+      "status": {
+        "expired": "منتهية الصلاحية",
+        "pending": "بانتظار المراجعة",
+        "revoked": "ملغاة",
+        "verified": "مقبولة"
+      },
+      "title": "شهادات الإعفاء",
+      "verified_at": "تاريخ القبول",
+      "verify_action": "قبول"
+    },
+    "tax_rates": {
+      "add_cta": "إضافة نسبة ضريبة",
+      "all_categories": "كل الفئات",
+      "create_description": "تضبط نسب الضريبة محرك الحساب المدمج. النسبة التي لا تحدد دولة تسري في كل المناطق.",
+      "create_label": "إنشاء النسبة",
+      "delete_confirm": {
+        "message": "لن تُطبَّق {{name}} بعد الآن. تحتفظ الطلبات المكتملة بالضريبة التي حُسبت لها.",
+        "title": "حذف نسبة الضريبة؟"
+      },
+      "edit_description": "تسري التعديلات على الحسابات الجديدة. تحتفظ الطلبات المكتملة بالضريبة التي حُسبت لها.",
+      "empty": "لا توجد نسب ضريبة بعد",
+      "every_country": "كل الدول",
+      "every_state": "كل المناطق",
+      "messages": {
+        "created": "تم إنشاء النسبة",
+        "deleted": "تم حذف النسبة",
+        "updated": "تم تحديث النسبة"
+      },
+      "search_placeholder": "البحث في نسب الضريبة",
+      "select_category": "اختر فئة"
+    },
+    "tax_providers": {
+      "limitations_title": "{{name}} لا يغطي",
+      "unavailable_option": "{{name}} (غير مُعد)",
+      "use_default": "استخدام المحرك الافتراضي",
+      "use_default_named": "الافتراضي ({{name}})"
+    },
+    "enterprise": {
+      "learn_more": "تعرّف على Spree Enterprise"
     }
   }
 }

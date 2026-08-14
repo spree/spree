@@ -67,7 +67,10 @@ module Spree
 
         @line_item.reload.recalculate_price
 
-        ::Spree.tax_provider.estimate(@line_item.owner, [@line_item]) if @line_item_created
+        return unless @line_item_created
+
+        owner = @line_item.owner
+        owner.tax_provider.estimate(owner, [@line_item], **owner.tax_estimate_inputs)
       end
 
       def handle_stock_reservations

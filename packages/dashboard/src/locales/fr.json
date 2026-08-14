@@ -739,6 +739,7 @@
           "label": "Note interne",
           "placeholder": "Contexte réservé au personnel à propos de ce client…"
         },
+        "label": "Client",
         "tags": {
           "label": "Étiquettes"
         }
@@ -887,6 +888,10 @@
         "tax_inclusive": {
           "help": "Afficher les prix taxes comprises. Courant sur les marchés de l'UE.",
           "label": "Prix taxes comprises"
+        },
+        "tax_provider": {
+          "help": "Ce qui calcule la taxe pour les commandes de ce marché.",
+          "label": "Moteur de calcul"
         }
       },
       "match_policy": {
@@ -1481,6 +1486,106 @@
           "label": "URL de destination",
           "placeholder": "https://example.com/webhooks"
         }
+      },
+      "external_id": {
+        "label": "Référence"
+      },
+      "country": {
+        "label": "Pays"
+      },
+      "state": {
+        "label": "Région"
+      },
+      "postal_code": {
+        "label": "Code postal"
+      },
+      "certificate_number": {
+        "label": "Numéro d'attestation"
+      },
+      "reason_code": {
+        "help": "Transmis au moteur de calcul comme code d'usage.",
+        "label": "Motif"
+      },
+      "issued_at": {
+        "label": "Délivrée le"
+      },
+      "issuing_authority": {
+        "label": "Autorité émettrice"
+      },
+      "certificate_document": {
+        "help": "PDF ou image, jusqu'à 10 Mo. Seul le personnel peut le télécharger.",
+        "label": "Document"
+      },
+      "company": {
+        "name": {
+          "placeholder": "Acme Industries"
+        },
+        "external_id": {
+          "help": "Votre propre référence pour cette entreprise, unique dans la boutique.",
+          "placeholder": "ACME-001"
+        }
+      },
+      "company_location": {
+        "name": {
+          "placeholder": "Siège social"
+        },
+        "external_id": {
+          "help": "Votre propre référence pour cet établissement."
+        }
+      },
+      "company_contact": {
+        "role": {
+          "label": "Rôle"
+        }
+      },
+      "tax_identifier": {
+        "kind": {
+          "help": "De quel numéro il s'agit. Il doit correspondre à la vérification configurée, l'orthographe compte donc.",
+          "label": "Type"
+        },
+        "value": {
+          "label": "Numéro",
+          "placeholder": "FR12345678901"
+        }
+      },
+      "tax_rate": {
+        "name": {
+          "placeholder": "TVA taux normal"
+        },
+        "amount": {
+          "help": "En pourcentage. Saisissez 20 pour 20 %.",
+          "label": "Taux"
+        },
+        "jurisdiction": {
+          "label": "S'applique à"
+        },
+        "country_iso": {
+          "help": "Laissez vide pour taxer tous les pays."
+        },
+        "state_code": {
+          "help": "Laissez vide pour taxer tout le pays."
+        },
+        "tax_category_id": {
+          "help": "Les produits auxquels ce taux s'applique.",
+          "label": "Catégorie de taxe"
+        },
+        "included_in_price": {
+          "help": "Les prix contiennent déjà cette taxe, elle est déduite au lieu d'être ajoutée.",
+          "label": "Incluse dans le prix",
+          "short": "Incluse"
+        },
+        "show_rate_in_label": {
+          "help": "Ajoute le pourcentage à la ligne de taxe vue par le client.",
+          "label": "Afficher le taux dans le libellé"
+        }
+      },
+      "tax_exemption_certificate": {
+        "country_iso": {
+          "help": "Laissez vide pour une attestation valable partout."
+        },
+        "expires_at": {
+          "help": "Laissez vide pour une attestation sans date d'expiration."
+        }
       }
     },
     "delivery_profiles": {
@@ -1736,6 +1841,7 @@
       "categories": "Catégories",
       "claims": "Réclamations",
       "collections": "Collections",
+      "companies": "Entreprises",
       "customer_groups": "Groupes",
       "customers": "Clients",
       "draft_orders": "Commandes provisoires",
@@ -2846,6 +2952,10 @@
             "url": "URL"
           },
           "title": "Webhooks"
+        },
+        "tax_rates": {
+          "add_sheet_title": "Nouveau taux de taxe",
+          "edit_sheet_title": "Modifier le taux de taxe"
         }
       },
       "staff": {
@@ -3564,6 +3674,7 @@
         "stock_locations": "Emplacements de stock",
         "store": "Boutique",
         "tax_categories": "Catégories de taxe",
+        "tax_rates": "Taux de taxe",
         "webhooks": "Webhooks"
       }
     },
@@ -3746,6 +3857,186 @@
       "saved": "Traductions enregistrées",
       "source": "Source",
       "title": "Traductions"
+    },
+    "jurisdiction": {
+      "everywhere": "Partout"
+    },
+    "companies": {
+      "add_cta": "Ajouter une entreprise",
+      "add_sheet_title": "Nouvelle entreprise",
+      "create_description": "Les clients professionnels achètent via des établissements. Vous pourrez ajouter des établissements, un numéro de TVA et des attestations d'exonération une fois l'entreprise créée.",
+      "create_label": "Créer l'entreprise",
+      "delete_confirm": {
+        "message": "Cela supprime {{name}} ainsi que ses établissements, ses acheteurs et ses attestations. Cette action est irréversible.",
+        "title": "Supprimer l'entreprise ?"
+      },
+      "detail": {
+        "delete_label": "Supprimer l'entreprise",
+        "load_error": "Impossible de charger cette entreprise",
+        "profile": "Entreprise"
+      },
+      "empty": "Aucune entreprise pour le moment",
+      "locations_column": "Établissements",
+      "messages": {
+        "created": "Entreprise créée",
+        "deleted": "Entreprise supprimée",
+        "updated": "Entreprise mise à jour"
+      },
+      "search_placeholder": "Rechercher des entreprises"
+    },
+    "company_locations": {
+      "add_cta": "Ajouter un établissement",
+      "add_title": "Nouvel établissement",
+      "addresses": "Adresses",
+      "billing_address": "Adresse de facturation",
+      "contacts_count_one": "{{count}} acheteur",
+      "contacts_count_other": "{{count}} acheteurs",
+      "detail": {
+        "delete_label": "Supprimer l'établissement",
+        "load_error": "Impossible de charger cet établissement"
+      },
+      "dialog_description": "Un établissement est l'adresse de facturation et de livraison de l'entreprise. Les adresses sont facultatives, mais une adresse renseignée exige un nom et un pays.",
+      "edit_title": "Modifier l'établissement",
+      "empty": "Aucun établissement pour le moment",
+      "messages": {
+        "created": "Établissement créé",
+        "deleted": "Établissement supprimé",
+        "updated": "Établissement mis à jour"
+      },
+      "shipping_address": "Adresse de livraison",
+      "shipping_same_as_billing": "L'adresse de livraison est identique à celle de facturation",
+      "title": "Établissements"
+    },
+    "company_contacts": {
+      "add_cta": "Ajouter un acheteur",
+      "add_title": "Autoriser un acheteur",
+      "dialog_description": "Un client qui achète pour cet établissement. Celui qui achète pour un seul établissement voit ses commandes rattachées automatiquement.",
+      "empty": "Aucun acheteur autorisé pour le moment",
+      "messages": {
+        "created": "Acheteur ajouté",
+        "deleted": "Acheteur retiré"
+      },
+      "remove_action": "Retirer l'acheteur",
+      "remove_confirm": {
+        "message": "{{email}} n'achètera plus pour cet établissement. Son compte client n'est pas modifié.",
+        "title": "Retirer cet acheteur ?"
+      },
+      "roles_enterprise_help": "Les acheteurs ajoutés ici peuvent commander pour cet établissement. Les rôles, circuits de validation et plafonds de dépenses font partie de Spree Enterprise.",
+      "roles_enterprise_title": "Les rôles et validations sont une fonctionnalité Enterprise",
+      "title": "Acheteurs"
+    },
+    "tax_identifiers": {
+      "add_cta": "Ajouter un numéro",
+      "add_title": "Ajouter un numéro de TVA",
+      "checked_prefix": "Vérifié",
+      "delete_confirm": {
+        "message": "{{value}} sera retiré. Les commandes déjà passées conservent le numéro utilisé pour leur facturation.",
+        "title": "Supprimer ce numéro ?"
+      },
+      "dialog_description": "Le numéro de TVA ou d'entreprise qui figure sur les factures. C'est lui qui rend possible l'autoliquidation en B2B dans l'UE.",
+      "edit_title": "Modifier le numéro de TVA",
+      "empty": "Aucun numéro enregistré",
+      "kinds": {
+        "au_abn": "Numéro d'entreprise australien",
+        "ch_vat": "TVA Suisse",
+        "eu_vat": "TVA UE",
+        "gb_vat": "TVA Royaume-Uni",
+        "us_ein": "EIN (États-Unis)"
+      },
+      "messages": {
+        "created": "Numéro ajouté",
+        "deleted": "Numéro supprimé",
+        "updated": "Numéro mis à jour",
+        "validation_failed": "Impossible de vérifier le numéro",
+        "validation_requested": "Vérification du numéro auprès du registre"
+      },
+      "not_validatable": "Aucune vérification n'est configurée pour ce type, le numéro est utilisé tel qu'il a été saisi.",
+      "select_kind": "Choisir un type",
+      "title": "Numéro de TVA",
+      "validate_action": "Vérifier auprès du registre",
+      "validation_status": {
+        "not_checked": "Non vérifié",
+        "pending": "Vérification en cours",
+        "unavailable": "Registre indisponible",
+        "unsupported": "Non vérifiable",
+        "unverified": "Non valide",
+        "verified": "Vérifié"
+      }
+    },
+    "tax_exemption_certificates": {
+      "add_cta": "Ajouter une attestation",
+      "add_title": "Ajouter une attestation d'exonération",
+      "delete_confirm": {
+        "message": "L'attestation {{number}} sera retirée. Cette action est irréversible.",
+        "title": "Supprimer cette attestation ?"
+      },
+      "dialog_description": "La preuve que les achats de cette entreprise ne sont pas taxés. Une nouvelle attestation ne s'applique qu'une fois acceptée.",
+      "download_action": "Télécharger le document",
+      "empty": "Aucune attestation enregistrée",
+      "expires_prefix": "Expire",
+      "lapsed": "Périmée",
+      "messages": {
+        "created": "Attestation ajoutée",
+        "deleted": "Attestation supprimée",
+        "revoked": "Attestation révoquée",
+        "updated": "Attestation mise à jour",
+        "verified": "Attestation acceptée"
+      },
+      "never_expires": "Sans expiration",
+      "no_document": "Aucun document joint",
+      "reason_codes": {
+        "agricultural": "Agriculture",
+        "charitable": "Organisme caritatif",
+        "educational": "Enseignement",
+        "government": "Administration",
+        "manufacturing": "Production",
+        "resale": "Revente"
+      },
+      "revoke_action": "Révoquer",
+      "revoke_confirm": {
+        "message": "L'attestation {{number}} ne s'appliquera plus aux nouvelles commandes. Elle reste conservée comme justificatif.",
+        "title": "Révoquer cette attestation ?"
+      },
+      "select_reason": "Choisir un motif",
+      "status": {
+        "expired": "Expirée",
+        "pending": "En attente d'examen",
+        "revoked": "Révoquée",
+        "verified": "Acceptée"
+      },
+      "title": "Attestations d'exonération",
+      "verified_at": "Acceptée le",
+      "verify_action": "Accepter"
+    },
+    "tax_rates": {
+      "add_cta": "Ajouter un taux",
+      "all_categories": "Toutes les catégories",
+      "create_description": "Les taux de taxe configurent le moteur de calcul intégré. Un taux sans pays s'applique partout.",
+      "create_label": "Créer le taux",
+      "delete_confirm": {
+        "message": "{{name}} ne sera plus appliqué. Les commandes déjà passées conservent la taxe facturée.",
+        "title": "Supprimer le taux ?"
+      },
+      "edit_description": "Les modifications s'appliquent aux nouveaux calculs. Les commandes déjà passées conservent la taxe facturée.",
+      "empty": "Aucun taux de taxe pour le moment",
+      "every_country": "Tous les pays",
+      "every_state": "Toutes les régions",
+      "messages": {
+        "created": "Taux créé",
+        "deleted": "Taux supprimé",
+        "updated": "Taux mis à jour"
+      },
+      "search_placeholder": "Rechercher des taux",
+      "select_category": "Choisir une catégorie"
+    },
+    "tax_providers": {
+      "limitations_title": "{{name}} ne prend pas en charge",
+      "unavailable_option": "{{name}} (non configuré)",
+      "use_default": "Utiliser le moteur par défaut",
+      "use_default_named": "Par défaut ({{name}})"
+    },
+    "enterprise": {
+      "learn_more": "En savoir plus sur Spree Enterprise"
     }
   }
 }

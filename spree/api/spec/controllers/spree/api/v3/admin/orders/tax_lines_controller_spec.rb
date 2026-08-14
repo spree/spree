@@ -23,6 +23,39 @@ RSpec.describe Spree::Api::V3::Admin::Orders::TaxLinesController, type: :control
       expect(json_response['data'].first['rate']).to eq('0.15')
       expect(json_response['data'].first['line_item_id']).to eq(line_item.prefixed_id)
     end
+
+    it 'exposes the treatment, the jurisdiction and the provider payload' do
+      tax_line.update!(taxability_reason: 'standard_rated', country_iso: 'DE',
+                       data: { 'jurisdictions' => [{ 'name' => 'DE', 'amount' => '1.5' }] })
+
+      get :index, params: { order_id: order.prefixed_id }, as: :json
+
+      row = json_response['data'].first
+      expect(row['taxability_reason']).to eq('standard_rated')
+      expect(row['country_iso']).to eq('DE')
+      expect(row['state_code']).to be_nil
+      expect(row['data']['jurisdictions'].first['name']).to eq('DE')
+      expect(row['provider_id']).to eq('internal')
+    end
+
+    it 'filters by taxability reason, which is what tax reporting needs' do
+      exempt_line = create(:tax_line, order: order, line_item: line_item, amount: 0, rate: 0,
+                                      taxability_reason: 'customer_exempt')
+
+      get :index, params: { order_id: order.prefixed_id, q: { taxability_reason_eq: 'customer_exempt' } }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data'].map { |row| row['id'] }).to eq([exempt_line.prefixed_id])
+    end
+
+    it 'filters by taxing country' do
+      tax_line.update!(country_iso: 'DE')
+      create(:tax_line, order: order, line_item: line_item, country_iso: 'FR')
+
+      get :index, params: { order_id: order.prefixed_id, q: { country_iso_eq: 'DE' } }, as: :json
+
+      expect(json_response['data'].map { |row| row['id'] }).to eq([tax_line.prefixed_id])
+    end
   end
 
   describe 'GET #show' do

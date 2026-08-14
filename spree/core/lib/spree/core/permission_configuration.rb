@@ -231,7 +231,8 @@ module Spree
     def register_default_resources
       register_resource(:orders, group: :orders, subjects: -> {
         [Spree::Order, Spree::LineItem, Spree::TaxLine, Spree::Discount, Spree::Fee,
-         Spree::Return, Spree::Exchange, Spree::Claim, Spree::CustomField]
+         Spree::Return, Spree::Exchange, Spree::Claim, Spree::TaxIdentifier,
+         Spree::CustomField]
       })
       register_resource(:payments, group: :orders, subjects: -> { [Spree::Payment] })
       register_resource(:fulfillments, group: :orders, subjects: -> { [Spree::Fulfillment] })
@@ -264,13 +265,15 @@ module Spree
 
       register_resource(:customers, group: :customers, subjects: -> {
         [Spree.customer_class, Spree::Address, Spree::CreditCard, Spree::CustomerGroup,
+         Spree::Company, Spree::CompanyLocation, Spree::CompanyContact,
+         Spree::TaxIdentifier, Spree::TaxExemptionCertificate,
          Spree::CustomField]
       })
 
       register_resource(:settings, group: :settings, subjects: -> {
         [Spree::Store, Spree::PaymentMethod, Spree::Gateway, Spree::DeliveryMethod,
          Spree::DeliveryMethodRule, Spree::DeliveryZone, Spree::DeliveryZoneMember,
-         Spree::StockLocation, Spree::DeliveryProfile, Spree::Zone, Spree::ZoneMember,
+         Spree::StockLocation, Spree::DeliveryProfile,
          Spree::Market, Spree::TaxCategory, Spree::TaxRate, Spree::AllowedOrigin,
          Spree::RefundReason, Spree::ReturnReason, Spree::ClaimReason, Spree::Channel,
          Spree::OrderRoutingRule, Spree::CustomFieldDefinition, Spree::Policy,

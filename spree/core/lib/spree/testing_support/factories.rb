@@ -1,11 +1,5 @@
 require 'factory_bot'
 
-Spree::Zone.class_eval do
-  def self.global
-    find_by(name: 'GlobalZone') || FactoryBot.create(:global_zone, name: 'GlobalZone')
-  end
-end
-
 Dir["#{File.dirname(__FILE__)}/factories/**"].each do |f|
   load File.expand_path(f)
 end

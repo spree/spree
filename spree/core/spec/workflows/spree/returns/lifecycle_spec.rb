@@ -171,6 +171,65 @@ RSpec.describe 'Spree::Returns workflows' do
         expect(credit.amount).to eq(return_record.refund_total)
       end
 
+      it 'credits only the lines that actually arrived' do
+        # Two of three announced units came back, so the third must not be
+        # credited — the same rule resolve_amount applies to the money.
+        line = return_record.return_line_items.first
+        line.update!(quantity: 3, received_quantity: 2)
+        # A second announced line the warehouse never received.
+        unreceived = create(:return_line_item,
+                            return: return_record,
+                            fulfillment_item: line.fulfillment_item,
+                            line_item: line.line_item,
+                            variant: line.variant,
+                            quantity: 1)
+
+        order = return_record.order
+        provider = instance_double(Spree::TaxProvider::Internal, refund: nil, estimate: nil)
+        allow(order).to receive(:tax_provider).and_return(provider)
+        allow_any_instance_of(Spree::Return).to receive(:order).and_return(order)
+
+        Spree::Returns::Refund.call(return_record: return_record, refund_method: 'store_credit')
+
+        expect(provider).to have_received(:refund) do |_order, lines, **|
+          expect(lines).to include(line)
+          expect(lines).not_to include(unreceived)
+        end
+      end
+
+      it 'credits the returned items against the filed tax document' do
+        order = return_record.order
+        provider = instance_double(Spree::TaxProvider::Internal, refund: nil, estimate: nil)
+        allow(order).to receive(:tax_provider).and_return(provider)
+        allow_any_instance_of(Spree::Return).to receive(:order).and_return(order)
+
+        Spree::Returns::Refund.call(return_record: return_record, refund_method: 'store_credit')
+
+        expect(provider).to have_received(:refund).with(
+          order, return_record.return_line_items.to_a,
+          amount: return_record.refund_total, tax_date: order.completed_at
+        )
+      end
+
+      # A partial refund must not hand the provider the returned lines with no
+      # word of how little went back: crediting their full tax would reclaim tax
+      # the merchant kept, and a return is marked refunded only once.
+      it 'tells the provider how much was actually refunded' do
+        order = return_record.order
+        provider = instance_double(Spree::TaxProvider::Internal, refund: nil, estimate: nil)
+        allow(order).to receive(:tax_provider).and_return(provider)
+        allow_any_instance_of(Spree::Return).to receive(:order).and_return(order)
+
+        part = (return_record.refund_total / 2).round(2)
+
+        Spree::Returns::Refund.call(return_record: return_record, amount: part,
+                                    refund_method: 'store_credit')
+
+        expect(provider).to have_received(:refund).with(
+          order, anything, amount: part, tax_date: order.completed_at
+        )
+      end
+
       it 'lets a validate handler veto before any credit is issued' do
         Spree.hooks.register('returns.refund.validate') { |flow| flow.reject!('refunds on hold') }
 

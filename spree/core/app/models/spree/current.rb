@@ -4,9 +4,7 @@ module Spree
   # All attributes are automatically reset between requests by Rails.
   # Fallback chains ensure sensible defaults when attributes are not explicitly set.
   class Current < ::ActiveSupport::CurrentAttributes
-    attribute :store, :channel, :market, :currency, :locale, :content_locale, :zone, :default_tax_zone, :price_lists, :global_pricing_context, :provider_cache
-
-    resets { @default_tax_zone_loaded = false }
+    attribute :store, :channel, :market, :currency, :locale, :content_locale, :tax_country, :price_lists, :global_pricing_context, :provider_cache
 
     # Scratch space for provider strategies to memoize a call across the
     # request — part of the delivery rate provider contract (nothing in core
@@ -60,21 +58,17 @@ module Spree
       super.presence || I18n.default_locale.name
     end
 
-    # Returns the current tax zone.
-    # Fallback: market's tax zone (from default country) -> global default tax zone.
-    # @return [Spree::Zone, nil]
-    def zone
-      super || market&.tax_zone || default_tax_zone
-    end
-
-    # Returns the default tax zone (memoized per request).
-    # @return [Spree::Zone, nil]
-    def default_tax_zone
-      result = super
-      return result if result || @default_tax_zone_loaded
-
-      @default_tax_zone_loaded = true
-      self.default_tax_zone = Spree::Zone.find_by(default_tax: true)
+    # The country whose tax applies while browsing, before any address exists.
+    # Fallback: the market being browsed -> the store's own country. An order
+    # in hand answers this better (Spree::Purchase::Taxation#tax_country reads
+    # its address first); this is the storefront's answer without one.
+    #
+    # Assigns the resolved country the way #channel does, because the fallback
+    # costs a query: a product listing builds one pricing context per variant,
+    # and each would otherwise re-ask the market for its default country.
+    # @return [Spree::Country, nil]
+    def tax_country
+      super || (self.tax_country = market&.default_country || store&.default_country)
     end
 
     # Returns the current price lists for the global pricing context.
@@ -86,14 +80,14 @@ module Spree
       end
     end
 
-    # Returns the current global pricing context, built from store, currency, zone, and market.
+    # Returns the current global pricing context, built from store, currency, country, and market.
     # @return [Spree::Pricing::Context]
     def global_pricing_context
       super || begin
         self.global_pricing_context = Spree::Pricing::Context.new(
           currency: currency,
           store: store,
-          zone: zone,
+          country: tax_country,
           market: market,
           channel: channel
         )

@@ -37,8 +37,8 @@ module Spree
 
         # Return a Hash of things that influence the prices displayed in your shop.
         #
-        # By default, the only thing that influences prices that is the current order's +tax_zone+
-        # (to facilitate differing prices depending on VAT rate for digital products in Europe, see
+        # By default, the only thing that influences prices is the country whose tax applies (to
+        # facilitate differing prices depending on VAT rate for digital products in Europe, see
         # https://github.com/spree/spree/pull/6295 and https://github.com/spree/spree/pull/6662).
         #
         # If your prices depend on something else, overwrite this method and add
@@ -49,21 +49,20 @@ module Spree
         # * `Spree::VatPriceCalculation#gross_amount`
         # * `Spree::LineItem#update_price`
         # * `Spree::Stock::Estimator#taxation_options_for`
-        # * Subclass the `DefaultTax` calculator
         #
         def current_price_options
           {
-            tax_zone: current_tax_zone
+            country: current_tax_country
           }
         end
 
         private
 
-        def current_tax_zone
-          @current_tax_zone ||= begin
-            zone = @current_order&.tax_zone || Spree::Zone.default_tax
-            Spree::Current.zone = zone
-            zone
+        def current_tax_country
+          @current_tax_country ||= begin
+            country = @current_order&.tax_country || Spree::Current.tax_country
+            Spree::Current.tax_country = country
+            country
           end
         end
 

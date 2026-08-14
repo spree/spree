@@ -146,6 +146,13 @@ nav.add({
       subject: Subject.CustomerGroup,
       position: 100,
     },
+    {
+      key: 'customers.companies',
+      label: i18n.t('admin.nav.companies'),
+      path: '/companies',
+      subject: Subject.Company,
+      position: 200,
+    },
   ],
 })
 

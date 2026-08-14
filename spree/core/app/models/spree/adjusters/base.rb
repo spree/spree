@@ -4,7 +4,7 @@ module Spree
     # invoked once per order recalculation and owns a family of typed rows
     # (Discount or Fee) — it writes, refreshes and removes them so the rows
     # always reflect the order's current state. Tax is not an adjuster; it is
-    # written by +Spree.tax_provider+ after all adjusters ran.
+    # written by the sale's tax provider after all adjusters ran.
     class Base
       def self.adjust(order)
         new(order).update

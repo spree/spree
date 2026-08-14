@@ -176,6 +176,7 @@ module Spree
             locale: cart.locale,
             market: cart.market,
             channel: cart.channel,
+            company_location: cart.resolved_company_location,
             customer: cart.customer,
             token: cart.token,
             accept_marketing: cart.accept_marketing,
@@ -192,6 +193,7 @@ module Spree
           fulfillment_map = copy_fulfillments!(cart, order, line_item_map)
           copy_typed_lines!(cart, order, line_item_map, fulfillment_map)
           copy_promotions!(cart, order)
+          copy_tax_identifier!(cart, order)
           repoint_money_records!(cart, order)
 
           order.update_columns(
@@ -212,10 +214,40 @@ module Spree
         order
       end
 
+      # Freezes the buyer's tax registration onto the order, stamped with which
+      # link of the chain won. A copy rather than a reference: the customer can
+      # change or withdraw the number later, and the placed order's tax still
+      # has to be explainable. Consumer sales copy nothing.
+      def copy_tax_identifier!(cart, order)
+        resolved = cart.resolved_tax_identifier
+        return if resolved.nil?
+
+        attributes = resolved.attributes.except('id', 'customer_id', 'company_id', 'cart_id',
+                                                'created_at', 'updated_at')
+        order.create_tax_identifier!(attributes.merge('source' => source_of(resolved)))
+      end
+
+      # Which link of the chain produced the snapshot, so a placed order's tax
+      # treatment names its own reason.
+      def source_of(resolved)
+        return 'override' if resolved.cart_id.present?
+        return 'company' if resolved.company_id.present?
+
+        'customer'
+      end
+
+      # Copies carry skip_tax_estimation: the cart's tax rows are copied onto the
+      # order a few lines below, so estimating per copied item would ask the
+      # provider a question whose answer is discarded — and for an external
+      # engine that is a billable remote call per line item, inside the
+      # completion lock.
       def copy_line_items!(cart, order)
         cart.line_items.reload.index_with do |cart_line_item|
           attributes = cart_line_item.attributes.except('id', 'cart_id', 'created_at', 'updated_at')
-          order.line_items.create!(attributes.merge('order_id' => order.id))
+          line_item = order.line_items.new(attributes.merge('order_id' => order.id))
+          line_item.skip_tax_estimation = true
+          line_item.save!
+          line_item
         end
       end
 
@@ -247,6 +279,8 @@ module Spree
         end
       end
 
+      # The cart's rows are the record of what the sale was costed at, so the
+      # order receives them verbatim rather than being re-estimated.
       def copy_typed_lines!(cart, order, line_item_map, fulfillment_map)
         line_item_id_map = line_item_map.transform_keys(&:id).transform_values(&:id)
 
@@ -297,6 +331,15 @@ module Spree
         step :complete_order, with: -> { Spree.order_complete_workflow }
         step :complete_cart
         step :mark_coupon_codes_used
+        external_step :commit_tax
+      end
+
+      # Tells the tax engine the sale is final. A no-op for the built-in
+      # provider, whose rows are already the record; external engines file the
+      # document that a tax return is later built from. Outside the
+      # transaction — a remote call must not hold the completion open.
+      def commit_tax
+        order.tax_provider.commit(order)
       end
 
       def complete_cart

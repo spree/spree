@@ -10,11 +10,6 @@ describe 'Promotion discounts and the taxable basis', type: :model do
   let(:store) { @default_store }
   let(:tax_category) { create(:tax_category) }
 
-  let!(:zone) do
-    create(:zone, name: 'Default tax zone', kind: 'country', default_tax: true).tap do |zone|
-      zone.zone_members.create!(zoneable: @default_country)
-    end
-  end
 
   let(:product) { create(:product, price: item_price, tax_category: tax_category, store: store) }
   let(:order) { create(:order, store: store, currency: 'USD') }
@@ -74,7 +69,7 @@ describe 'Promotion discounts and the taxable basis', type: :model do
   context 'with additional (US-style) tax of 10%' do
     let(:item_price) { 250 }
     let!(:tax_rate) do
-      create(:tax_rate, zone: zone, tax_category: tax_category, amount: 0.10, included_in_price: false)
+      create(:tax_rate, country_iso: @default_country&.iso, tax_category: tax_category, amount: 0.10, included_in_price: false)
     end
 
     before { build_cart! }
@@ -162,7 +157,7 @@ describe 'Promotion discounts and the taxable basis', type: :model do
   context 'with included (VAT-style) tax of 20%' do
     let(:item_price) { 350 }
     let!(:tax_rate) do
-      create(:tax_rate, zone: zone, tax_category: tax_category, amount: 0.20, included_in_price: true)
+      create(:tax_rate, country_iso: @default_country&.iso, tax_category: tax_category, amount: 0.20, included_in_price: true)
     end
 
     before { build_cart! }

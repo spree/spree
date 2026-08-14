@@ -171,12 +171,14 @@ module Spree
     has_many :stock_locations, class_name: 'Spree::StockLocation', dependent: :nullify
     has_many :promotions, class_name: 'Spree::Promotion', dependent: :nullify
 
+    has_many :tax_categories, class_name: 'Spree::TaxCategory', dependent: :destroy, inverse_of: :store
+    has_many :tax_rates, class_name: 'Spree::TaxRate', dependent: :destroy, inverse_of: :store
+
     has_many :wishlists, class_name: 'Spree::Wishlist'
 
     has_many :data_feeds, class_name: 'Spree::DataFeed'
 
     belongs_to :default_country, class_name: 'Spree::Country'
-    belongs_to :checkout_zone, class_name: 'Spree::Zone'
 
     has_many :reports, class_name: 'Spree::Report'
     has_many :exports, class_name: 'Spree::Export'
@@ -194,6 +196,8 @@ module Spree
     has_many :order_routing_rules, through: :channels, class_name: 'Spree::OrderRoutingRule'
 
     has_many :customer_groups, class_name: 'Spree::CustomerGroup', dependent: :destroy, inverse_of: :store
+
+    has_many :companies, class_name: 'Spree::Company', dependent: :destroy, inverse_of: :store
 
     has_many :api_keys, class_name: 'Spree::ApiKey', dependent: :destroy
     has_many :allowed_origins, class_name: 'Spree::AllowedOrigin', dependent: :destroy
@@ -289,18 +293,6 @@ module Spree
     # @return [Spree::Channel, nil]
     def default_channel
       channels.default.first || channels.active.first
-    end
-
-    # @deprecated Use Markets instead. Will be removed in Spree 5.5.
-    def checkout_zone
-      Spree::Deprecation.warn('Store#checkout_zone is deprecated and will be removed in Spree 5.5. Use Markets instead.')
-      super
-    end
-
-    # @deprecated Use Markets instead. Will be removed in Spree 5.5.
-    def checkout_zone=(zone)
-      Spree::Deprecation.warn('Store#checkout_zone= is deprecated and will be removed in Spree 5.5. Use Markets instead.')
-      super
     end
 
     # Virtual attribute — sets the country for the default market created on store creation.

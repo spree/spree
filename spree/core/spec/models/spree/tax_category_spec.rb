@@ -32,6 +32,31 @@ describe Spree::TaxCategory, type: :model do
     end
   end
 
+  describe 'store binding' do
+    it 'falls back to the current store' do
+      expect(create(:tax_category).store).to eq(@default_store)
+    end
+
+    it 'allows the same name in another store' do
+      other_store = create(:store)
+      create(:tax_category, name: 'Standard')
+
+      expect(build(:tax_category, name: 'Standard', store: other_store)).to be_valid
+    end
+
+    it 'rejects a duplicate name within the same store, ignoring case' do
+      create(:tax_category, name: 'Standard')
+
+      expect(build(:tax_category, name: 'standard')).not_to be_valid
+    end
+
+    it 'ignores soft-deleted rows when checking the name' do
+      create(:tax_category, name: 'Standard').destroy
+
+      expect(build(:tax_category, name: 'Standard')).to be_valid
+    end
+  end
+
   describe '#destroy' do
     let!(:tax_category) { create(:tax_category) }
     let!(:tax_rate) { create(:tax_rate, tax_category: tax_category) }

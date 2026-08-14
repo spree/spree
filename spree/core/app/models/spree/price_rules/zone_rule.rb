@@ -1,19 +1,11 @@
 module Spree
   module PriceRules
+    # Deprecated STI shell, removed in Spree 6.1. Exists only so price-rule
+    # rows created before `spree:migrate_tax_zones` runs still load — the task
+    # converts each row to a {MarketRule} where the zone's countries match a
+    # market exactly, and otherwise deactivates the price list and removes the
+    # row, reporting what it named. Never create rows with this class.
     class ZoneRule < Spree::PriceRule
-      preference :zone_ids, :array, default: []
-
-      def applicable?(context)
-        return false unless context.zone
-        return true if preferred_zone_ids.empty?
-
-        # Compare as strings to support both integer and UUID primary keys
-        preferred_zone_ids.map(&:to_s).include?(context.zone.id.to_s)
-      end
-
-      def self.description
-        'Apply pricing based on the tax/shipping zone'
-      end
     end
   end
 end

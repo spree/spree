@@ -1,4 +1,4 @@
-import type { Customer } from '@spree/admin-sdk'
+import type { Customer, TaxIdentifier, TaxIdentifierParams } from '@spree/admin-sdk'
 import {
   adminClient,
   i18n,
@@ -168,5 +168,55 @@ export function useBulkRemoveCustomerTags() {
     mutationFn: (params: BulkCustomerTagsParams) => adminClient.customers.bulkRemoveTags(params),
     successMessage: false,
     errorMessage: false,
+  })
+}
+
+// ---------------------------------------------------------------------------
+// Tax identifiers — the customer's own registration, kept on their profile
+// ---------------------------------------------------------------------------
+
+export function useCustomerTaxIdentifiers(customerId: string | undefined) {
+  return useQuery({
+    queryKey: useResourceKey('customers', customerId ?? 'noop', 'tax-identifiers'),
+    queryFn: () => adminClient.customers.taxIdentifiers.list(customerId as string),
+    enabled: !!customerId,
+  })
+}
+
+export function useCreateCustomerTaxIdentifier(customerId: string) {
+  return useResourceMutation<TaxIdentifier, Error, TaxIdentifierParams>({
+    mutationFn: (params) => adminClient.customers.taxIdentifiers.create(customerId, params),
+    invalidate: [['customers', customerId, 'tax-identifiers']],
+    successMessage: i18n.t('admin.tax_identifiers.messages.created'),
+    errorMessage: i18n.t('admin.errors.failed_to_create'),
+  })
+}
+
+/** The id travels with the variables so one hook serves every row. */
+export function useUpdateCustomerTaxIdentifier(customerId: string) {
+  return useResourceMutation<TaxIdentifier, Error, { id: string; params: TaxIdentifierParams }>({
+    mutationFn: ({ id, params }) =>
+      adminClient.customers.taxIdentifiers.update(customerId, id, params),
+    invalidate: [['customers', customerId, 'tax-identifiers']],
+    successMessage: i18n.t('admin.tax_identifiers.messages.updated'),
+    errorMessage: i18n.t('admin.errors.failed_to_update'),
+  })
+}
+
+export function useDeleteCustomerTaxIdentifier(customerId: string) {
+  return useResourceMutation<void, Error, string>({
+    mutationFn: (id) => adminClient.customers.taxIdentifiers.delete(customerId, id),
+    invalidate: [['customers', customerId, 'tax-identifiers']],
+    successMessage: i18n.t('admin.tax_identifiers.messages.deleted'),
+    errorMessage: i18n.t('admin.errors.failed_to_delete'),
+  })
+}
+
+export function useValidateCustomerTaxIdentifier(customerId: string) {
+  return useResourceMutation<TaxIdentifier, Error, string>({
+    mutationFn: (id) => adminClient.customers.taxIdentifiers.validate(customerId, id),
+    invalidate: [['customers', customerId, 'tax-identifiers']],
+    successMessage: i18n.t('admin.tax_identifiers.messages.validation_requested'),
+    errorMessage: i18n.t('admin.tax_identifiers.messages.validation_failed'),
   })
 }

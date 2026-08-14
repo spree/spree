@@ -195,12 +195,7 @@ module Spree
         end
 
         context 'includes tax adjustments if applicable' do
-          let!(:default_tax_zone) do
-            create(:zone, default_tax: true, kind: 'country').tap do |zone|
-              zone.zone_members.create!(zoneable: ship_address.country)
-            end
-          end
-          let!(:tax_rate) { create(:tax_rate, zone: default_tax_zone) }
+          let!(:tax_rate) { create(:tax_rate, country_iso: order.tax_address.country&.iso) }
 
           before do
             Spree::ShippingMethod.all.each do |sm|
@@ -220,52 +215,61 @@ module Spree
           let(:tax_category) { create :tax_category }
           let!(:shipping_method) { create(:shipping_method, tax_category: tax_category) }
 
-          let(:default_zone) { create(:zone_with_country, default_tax: true) }
+          # Shipping is priced including the home country's VAT.
+          let(:home_country) { order.tax_address.country }
           let!(:default_vat) do
             create :tax_rate,
                    included_in_price: true,
-                   zone: default_zone,
+                   country_iso: home_country&.iso,
                    amount: 0.2,
                    tax_category: shipping_method.tax_category
           end
 
-          context 'when the order does not have a tax zone' do
-            before { allow(order).to receive(:tax_zone).and_return nil }
+          before { @default_store.default_market.update!(countries: [home_country]) }
+
+          context 'when the order has no address to tax against' do
+            before { allow(order).to receive(:tax_address).and_return nil }
 
             it_behaves_like 'shipping rate matches'
           end
 
-          context "when the order's tax zone is the default zone" do
-            before { allow(order).to receive(:tax_zone).and_return(default_zone) }
-
+          context 'when the order ships within the home country' do
             it_behaves_like 'shipping rate matches'
           end
 
-          context "when the order's tax zone is a non-VAT zone" do
-            let!(:zone_without_vat) { create(:zone_with_country) }
+          context 'when the order ships to a country with no VAT' do
+            let(:country_without_vat) { create(:country, iso: 'IN', name: 'India') }
 
-            before { allow(order).to receive(:tax_zone).and_return(zone_without_vat) }
+            before do
+              allow(order).to receive(:tax_address).
+                and_return(create(:address, country: country_without_vat, state: nil,
+                                            state_name: 'Delhi', zipcode: '110001'))
+            end
 
-            it 'deducts the default VAT from the cost' do
+            it 'deducts the home VAT from the cost' do
               delivery_rates = subject.delivery_rates(package)
               # deduct default vat: 4.00 / 1.2 = 3.33 (rounded)
               expect(delivery_rates.first.cost).to eq(3.33)
             end
           end
 
-          context "when the order's tax zone is a zone with VAT outside the default zone" do
-            let(:other_vat_zone) { create(:zone_with_country) }
+          context 'when the order ships to another country that charges VAT' do
+            let(:other_country) { create(:country, iso: 'FR', name: 'France') }
             let!(:other_vat) do
               create :tax_rate,
                      included_in_price: true,
-                     zone: other_vat_zone,
+                     country_iso: other_country&.iso,
                      amount: 0.3,
                      tax_category: shipping_method.tax_category
             end
 
-            before { allow(order).to receive(:tax_zone).and_return(other_vat_zone) }
+            before do
+              allow(order).to receive(:tax_address).
+                and_return(create(:address, country: other_country, state: nil,
+                                            state_name: 'Paris', zipcode: '75001'))
+            end
 
-            it 'deducts the default vat and applies the foreign vat to calculate the price' do
+            it 'deducts the home vat and applies the foreign vat to calculate the price' do
               delivery_rates = subject.delivery_rates(package)
               #
               # deduct default vat: 4.00 / 1.2 = 3.33 (rounded)

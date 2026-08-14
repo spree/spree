@@ -2,16 +2,6 @@ FactoryBot.define do
   factory :price_rule, class: Spree::PriceRule do
     price_list
 
-    factory :zone_price_rule, class: Spree::PriceRules::ZoneRule do
-      after(:build) do |rule, evaluator|
-        rule.preferred_zone_ids = evaluator.zone_ids if evaluator.respond_to?(:zone_ids)
-      end
-
-      transient do
-        zone_ids { [] }
-      end
-    end
-
     factory :volume_price_rule, class: Spree::PriceRules::VolumeRule do
       after(:build) do |rule, evaluator|
         rule.preferred_min_quantity = evaluator.min_quantity if evaluator.min_quantity.present?

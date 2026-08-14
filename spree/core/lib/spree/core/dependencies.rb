@@ -104,6 +104,8 @@ module Spree
         claim_deny_workflow: 'Spree::Claims::Deny',
         claim_cancel_workflow: 'Spree::Claims::Cancel',
 
+        tax_exemption_certificate_verify_workflow: 'Spree::TaxExemptionCertificates::Verify',
+
         # customers
         customer_create_workflow: 'Spree::Customers::Create',
 
@@ -135,7 +137,11 @@ module Spree
 
         # search — the document shape belongs to whichever indexing provider is
         # installed (spree_meilisearch registers its own), so core ships no default.
-        search_product_presenter: nil
+        search_product_presenter: nil,
+
+        # tax — assembles the exemption evidence handed to the tax provider.
+        # Core resolves none; swap this to read wherever certificates live.
+        tax_resolve_exemptions_service: 'Spree::Tax::ResolveExemptions'
       }.freeze
 
       include Spree::DependenciesHelper

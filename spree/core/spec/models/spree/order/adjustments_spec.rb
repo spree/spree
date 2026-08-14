@@ -30,8 +30,6 @@ describe Spree::Order do
     let!(:line_item) { create(:line_item) }
 
     let!(:country) { create(:country) }
-    let!(:zone) { create(:zone) }
-    let!(:zone_member) { create(:zone_member, zone: zone, zoneable: country) }
     let(:address) { create(:address, country: country) }
 
     let!(:tax_category) { create(:tax_category) }
@@ -40,7 +38,7 @@ describe Spree::Order do
         amount: 0.2,
         included_in_price: true,
         tax_category: tax_category,
-        zone: zone
+        country_iso: country&.iso
       )
     }
     let!(:shipping_method) do
@@ -63,12 +61,15 @@ describe Spree::Order do
       order.create_shipment_tax_charge!
     end
 
-    it 'removes the fulfillment tax lines' do
+    it 'charges no fulfillment tax' do
       order.coupon_code = free_shipping_promotion.code
       Spree::PromotionHandler::Coupon.new(order).apply
       order.apply_free_shipping_promotions
 
-      expect(order.tax_lines.for_fulfillments).to be_blank
+      # Free shipping leaves nothing to tax. The row stays, at zero: since 6.0 a
+      # matched rate always records its treatment, so reporting can tell a
+      # zero-tax delivery from one nobody assessed.
+      expect(order.tax_lines.for_fulfillments.sum(:amount)).to eq(0)
     end
   end
 end

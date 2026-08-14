@@ -41,4 +41,12 @@ FactoryBot.define do
       end
     end
   end
+
+  # A single announced line. Its fulfillment item, line item and variant have to
+  # agree with each other, so the caller passes them — usually copied from a
+  # sibling line it already holds.
+  factory :return_line_item, class: Spree::ReturnLineItem do
+    quantity { 1 }
+    received_quantity { 0 }
+  end
 end
