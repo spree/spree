@@ -46,9 +46,12 @@ import {
 } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+import { ChoiceCardPicker } from '../../../../components/spree/choice-card-picker'
 import { useStoreSettings, useUpdateStoreSettings } from '../../../../hooks/use-store-settings'
 import { getAvailableUiLocales } from '../../../../i18n-setup'
 import {
+  CAPTURE_METHODS,
+  DOCUMENT_NUMBER_FORMATS,
   STOREFRONT_ACCESS_LEVELS,
   type StoreSettingsFormValues,
   storeSettingsFormSchema,
@@ -96,13 +99,21 @@ function storeToFormValues(store: Store): StoreSettingsFormValues {
     preferred_guest_checkout: store.preferred_guest_checkout ?? true,
     preferred_company_field_enabled: store.preferred_company_field_enabled ?? false,
     preferred_address_requires_phone: store.preferred_address_requires_phone ?? false,
-    preferred_auto_capture: store.preferred_auto_capture ?? true,
-    preferred_auto_capture_on_dispatch: store.preferred_auto_capture_on_dispatch ?? false,
+    preferred_capture_method:
+      (store.preferred_capture_method as (typeof CAPTURE_METHODS)[number]) ?? 'checkout',
     preferred_track_inventory_levels: store.preferred_track_inventory_levels ?? true,
     preferred_stock_reservations_enabled: store.preferred_stock_reservations_enabled ?? true,
     preferred_track_price_history: store.preferred_track_price_history ?? true,
     preferred_show_products_without_price: store.preferred_show_products_without_price ?? false,
     preferred_disable_sku_validation: store.preferred_disable_sku_validation ?? false,
+    preferred_document_number_format:
+      (store.preferred_document_number_format as (typeof DOCUMENT_NUMBER_FORMATS)[number]) ??
+      'sequential',
+    preferred_order_number_prefix: store.preferred_order_number_prefix ?? 'R',
+    preferred_order_number_suffix: store.preferred_order_number_suffix ?? '',
+    preferred_order_number_sequence_start: Number(
+      store.preferred_order_number_sequence_start ?? 1001,
+    ),
   }
 }
 
@@ -149,6 +160,21 @@ function StoreSettingsForm({ store }: { store: Store }) {
     defaultValues: { ...storeToFormValues(store), ...extensionFormValues('store', store) },
   })
 
+  // Shows the merchant the shape their next order number will take. The
+  // sequential preview uses the configured starting value, which is only
+  // accurate for a store that has not taken an order yet — the copy under it
+  // says so rather than the preview pretending to know the live counter.
+  // Once the counter has issued its first number the starting value is inert,
+  // so the field says so rather than accepting a value that does nothing.
+  const sequenceStarted = store.order_number_sequence_started ?? false
+  const numberFormat = form.watch('preferred_document_number_format')
+  const numberPrefix = form.watch('preferred_order_number_prefix')
+  const numberSuffix = form.watch('preferred_order_number_suffix')
+  const numberStart = form.watch('preferred_order_number_sequence_start')
+  const orderNumberPreview = `${numberPrefix ?? ''}${
+    numberFormat === 'random' ? '482910375' : (numberStart ?? 1001)
+  }${numberSuffix ?? ''}`
+
   // Live unit suffixes for the default-package inputs.
   const weightUnit = form.watch('preferred_weight_unit')
   const dimensionUnit = form.watch('preferred_unit_system') === 'metric' ? 'cm' : 'in'
@@ -189,13 +215,16 @@ function StoreSettingsForm({ store }: { store: Store }) {
         preferred_guest_checkout: values.preferred_guest_checkout,
         preferred_company_field_enabled: values.preferred_company_field_enabled,
         preferred_address_requires_phone: values.preferred_address_requires_phone,
-        preferred_auto_capture: values.preferred_auto_capture,
-        preferred_auto_capture_on_dispatch: values.preferred_auto_capture_on_dispatch,
+        preferred_capture_method: values.preferred_capture_method,
         preferred_track_inventory_levels: values.preferred_track_inventory_levels,
         preferred_stock_reservations_enabled: values.preferred_stock_reservations_enabled,
         preferred_track_price_history: values.preferred_track_price_history,
         preferred_show_products_without_price: values.preferred_show_products_without_price,
         preferred_disable_sku_validation: values.preferred_disable_sku_validation,
+        preferred_document_number_format: values.preferred_document_number_format,
+        preferred_order_number_prefix: values.preferred_order_number_prefix,
+        preferred_order_number_suffix: values.preferred_order_number_suffix,
+        preferred_order_number_sequence_start: values.preferred_order_number_sequence_start,
         ...extensionValues,
       })
       toast.success(t('admin.messages.store_settings_updated'))
@@ -250,6 +279,23 @@ function StoreSettingsForm({ store }: { store: Store }) {
       STOREFRONT_ACCESS_LEVELS.map((value) => ({
         value,
         label: t(`admin.fields.store.storefront_access.options.${value}`),
+      })),
+    [t],
+  )
+  const documentNumberFormatOptions = useMemo(
+    () =>
+      DOCUMENT_NUMBER_FORMATS.map((value) => ({
+        value,
+        label: t(`admin.fields.store.document_number_format.options.${value}`),
+      })),
+    [t],
+  )
+  const captureMethodOptions = useMemo(
+    () =>
+      CAPTURE_METHODS.map((value) => ({
+        value,
+        label: t(`admin.fields.store.capture_method.options.${value}.label`),
+        description: t(`admin.fields.store.capture_method.options.${value}.description`),
       })),
     [t],
   )
@@ -479,25 +525,92 @@ function StoreSettingsForm({ store }: { store: Store }) {
               </Card>
               <Card>
                 <CardHeader>
-                  <CardTitle>{t('admin.pages.settings.store.tab_payments')}</CardTitle>
+                  <CardTitle>{t('admin.pages.settings.store.tab_order_numbers')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <FieldGroup>
-                    <SwitchField
-                      id="store-auto-capture"
-                      label={t('admin.fields.store.auto_capture.label')}
-                      help={t('admin.fields.store.auto_capture.help')}
-                      name="preferred_auto_capture"
+                    <SelectField
+                      id="store-document-number-format"
+                      label={t('admin.fields.store.document_number_format.label')}
+                      name="preferred_document_number_format"
                       control={form.control}
+                      options={documentNumberFormatOptions}
+                      help={t('admin.fields.store.document_number_format.help')}
                     />
-                    <SwitchField
-                      id="store-auto-capture-on-dispatch"
-                      label={t('admin.fields.store.auto_capture_on_dispatch.label')}
-                      help={t('admin.fields.store.auto_capture_on_dispatch.help')}
-                      name="preferred_auto_capture_on_dispatch"
-                      control={form.control}
-                    />
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <Field>
+                        <FieldLabel htmlFor="store-order-number-prefix">
+                          {t('admin.fields.store.order_number_prefix.label')}
+                        </FieldLabel>
+                        <Input
+                          id="store-order-number-prefix"
+                          aria-invalid={!!errors.preferred_order_number_prefix || undefined}
+                          {...form.register('preferred_order_number_prefix')}
+                        />
+                        <FieldError errors={[errors.preferred_order_number_prefix]} />
+                      </Field>
+                      <Field>
+                        <FieldLabel htmlFor="store-order-number-suffix">
+                          {t('admin.fields.store.order_number_suffix.label')}
+                        </FieldLabel>
+                        <Input
+                          id="store-order-number-suffix"
+                          aria-invalid={!!errors.preferred_order_number_suffix || undefined}
+                          {...form.register('preferred_order_number_suffix')}
+                        />
+                        <FieldError errors={[errors.preferred_order_number_suffix]} />
+                      </Field>
+                    </div>
+                    {numberFormat === 'sequential' && (
+                      <Field>
+                        <FieldLabel htmlFor="store-order-number-sequence-start">
+                          {t('admin.fields.store.order_number_sequence_start.label')}
+                        </FieldLabel>
+                        <Input
+                          id="store-order-number-sequence-start"
+                          type="number"
+                          min={1}
+                          disabled={sequenceStarted}
+                          aria-invalid={!!errors.preferred_order_number_sequence_start || undefined}
+                          {...form.register('preferred_order_number_sequence_start')}
+                        />
+                        <FieldDescription>
+                          {sequenceStarted
+                            ? t('admin.fields.store.order_number_sequence_start.locked')
+                            : t('admin.fields.store.order_number_sequence_start.help')}
+                        </FieldDescription>
+                        <FieldError errors={[errors.preferred_order_number_sequence_start]} />
+                      </Field>
+                    )}
+                    <Field>
+                      <FieldLabel>{t('admin.fields.store.order_number_preview.label')}</FieldLabel>
+                      <p className="font-mono text-sm">{orderNumberPreview}</p>
+                      <FieldDescription>
+                        {t('admin.fields.store.order_number_preview.help')}
+                      </FieldDescription>
+                    </Field>
                   </FieldGroup>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('admin.pages.settings.store.tab_payments')}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Controller
+                    control={form.control}
+                    name="preferred_capture_method"
+                    render={({ field }) => (
+                      <ChoiceCardPicker
+                        label={t('admin.fields.store.capture_method.label')}
+                        help={t('admin.fields.store.capture_method.help')}
+                        options={captureMethodOptions}
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    )}
+                  />
                 </CardContent>
               </Card>
               <Card>

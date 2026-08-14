@@ -4,8 +4,8 @@ module Spree
   class Payment < Spree.base_class
     has_prefix_id :py  # Stripe: py_
 
-    include Spree::Core::NumberGenerator.new(prefix: 'P', letters: true, length: 7)
-    include Spree::NumberIdentifier
+    include Spree::DerivedNumber
+    derives_number infix: 'P'
     include Spree::HasCustomFields
     include Spree::Metadata
     if defined?(Spree::Security::Payments)

@@ -7,7 +7,7 @@ module Spree
     context 'processing payments' do
       before do
         # So that Payment#purchase! is called during processing
-        stub_store_preferences(auto_capture: true)
+        stub_store_preferences(capture_method: 'checkout')
 
         allow(order).to receive_message_chain(:line_items, :empty?).and_return(false)
       end
@@ -39,14 +39,14 @@ module Spree
           end
         end
 
-        context 'with store credits payment method auto capture turned off' do
+        context 'with a store credit payment method captured manually' do
           let!(:payment) { create(:payment, order: order, amount: payment_amount) }
           let!(:store_credit_payment) do
             create(
               :store_credit_payment,
               order: order,
               amount: store_credit_amount,
-              payment_method: create(:store_credit_payment_method, auto_capture: false, store: payment.order.store)
+              payment_method: create(:store_credit_payment_method, capture_method: 'manual', store: payment.order.store)
             )
           end
 

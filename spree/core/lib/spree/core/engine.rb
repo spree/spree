@@ -41,6 +41,7 @@ module Spree
                                :analytics_events,
                                :analytics_event_handlers,
                                :integrations,
+                               :number_generators,
                                :subscribers,
                                :store_authentication_strategies,
                                :admin_authentication_strategies)
@@ -93,6 +94,12 @@ module Spree
       end
 
       initializer 'spree.register.calculators', before: :after_initialize do |app|
+      end
+
+      # Seeded before application initializers so a host's
+      # `config/initializers/spree.rb` can register custom generators.
+      initializer 'spree.register.number_generators', before: :load_config_initializers do |app|
+        app.config.spree.number_generators = Spree::NumberGenerators::Registry.new
       end
 
       initializer 'spree.register.stock_splitters', before: :load_config_initializers do |app|

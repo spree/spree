@@ -67,10 +67,16 @@ module Spree
         end
 
         def idempotency_cache_key(key)
-          owner_id = request.headers['X-Spree-Api-Key'].presence ||
-                     spree_current_user&.id ||
-                     request.remote_ip
-          "spree:idempotency:#{Digest::SHA256.hexdigest(owner_id.to_s)}:#{Digest::SHA256.hexdigest(key)}"
+          credential = request.headers['X-Spree-Api-Key'].presence ||
+                       spree_current_user&.id ||
+                       request.remote_ip
+          # The resolved store partitions the namespace: a staff JWT spans
+          # stores, and replaying one store's cached response for a request
+          # aimed at another would cross store boundaries. The resolved
+          # store — not the raw header — so a header naming the default store
+          # and no header at all land in the same partition, as they resolve
+          # to the same store.
+          "spree:idempotency:#{Digest::SHA256.hexdigest("#{credential}\0#{current_store&.id}\0#{key}")}"
         end
 
         def request_fingerprint

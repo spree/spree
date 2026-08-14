@@ -67,6 +67,11 @@ end
 RSpec.configure do |config|
   config.color = true
   config.default_formatter = 'progress'
+
+  # Cross-store leaks fail this suite rather than warn: a store-less query on
+  # a store-owned table inside a guarded request raises (see
+  # Spree::StoreScopeGuard — wrap deliberately global lookups in `skip`).
+  config.before(:suite) { Spree::Config.store_scope_guard = 'raise' }
   config.fail_fast = ENV['FAIL_FAST'] || false
   config.infer_spec_type_from_file_location!
   config.raise_errors_for_deprecations!

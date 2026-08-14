@@ -11,6 +11,3 @@ export const STOREFRONT_REPO = 'https://github.com/spree/storefront.git'
  */
 export const PNPM_VERSION = '10.33.4'
 export const BACKEND_REPO = 'https://github.com/spree/spree-starter.git'
-
-export const DEFAULT_ADMIN_EMAIL = 'spree@example.com'
-export const DEFAULT_ADMIN_PASSWORD = 'spree123'

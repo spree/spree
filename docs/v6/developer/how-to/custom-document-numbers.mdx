@@ -1,0 +1,156 @@
+---
+title: Customize Document Numbers
+description: Change the shape of order, return and other document numbers — from the dashboard for order numbers, or in code for full control.
+---
+
+## Overview
+
+Every order, return, exchange, claim, stock transfer, import and export carries a **document number** — the short, human-readable reference a merchant reads out on a support call and a customer quotes in an email. Orders look like `R1001`, returns like `RET1001`.
+
+Numbers are separate from IDs. Every record also has a prefixed ID (`order_86Rf07xd4z`) which is what the API uses and what you should reference in code. The number exists purely so people can read, say and type it.
+
+There are two ways to change it. Merchants can reshape **order numbers** from the dashboard without any code. Developers can replace the generator for **any** document type when the settings are not enough.
+
+## Merchant settings
+
+**Settings → Store → Order numbers** controls four things:
+
+| Setting | Effect |
+|---|---|
+| Numbering format | Sequential (default) or random. Applies to every numbered document. |
+| Prefix | Leads each order number. Defaults to `R`. |
+| Suffix | Ends each order number. Empty by default. |
+| Start numbering at | The first order number. Defaults to `1001`. |
+
+Sequential numbering counts up: `R1001`, `R1002`, `R1003`. Random numbering produces nine unpredictable digits, which is what Spree did before 6.0. The trade-off is worth stating to merchants: sequential numbers are far easier to read back over the phone, but a customer who orders twice can see how many orders you took in between. Random numbers give that away nothing, at the cost of legibility.
+
+Two rules apply to every change:
+
+- **Changes affect future numbers only.** Numbers already issued are permanent — they are printed on invoices, quoted in emails, and stored at payment gateways.
+- **The starting value only applies before the first order.** Set it to `10001` on a new store and the first order is `R10001`, the second `R10002`. Once the counter has issued a number the field is locked in the dashboard, because raising it then would do nothing — the counter keeps going from where it is.
+
+Prefix and suffix have no such restriction. Change them whenever you like: `INV` with suffix `-EU` and a start of `5001` gives `INV5001-EU`, and existing orders keep the numbers they were issued.
+
+<Note>
+Sequential numbering is *mostly* gapless, not guaranteed gapless — an abandoned checkout or a rare collision consumes a value. Do not rely on it for legal invoice numbering, which in most jurisdictions requires a provably unbroken sequence.
+</Note>
+
+## Custom generators
+
+When the settings are not enough — you need the year in the number, a per-warehouse prefix, or a format your ERP already expects — register a generator class.
+
+A generator answers one question: what should this record's number be? Uniqueness is handled for you, so a generator only has to propose.
+
+```ruby
+# lib/my_app/branch_order_numbers.rb
+module MyApp
+  class BranchOrderNumbers < Spree::NumberGenerators::Base
+    # @param record [Spree::Order]
+    # @return [String]
+    def generate(record)
+      branch = record.number_store.code.upcase
+      year = Time.current.year
+
+      "#{branch}-#{year}-#{SecureRandom.random_number(10_000).to_s.rjust(4, '0')}"
+    end
+  end
+end
+```
+
+Register it in an initializer:
+
+```ruby
+# config/initializers/spree.rb
+Spree.number_generators[:order] = 'MyApp::BranchOrderNumbers'
+```
+
+That is the whole contract. Orders now get numbers like `NYC-2026-0042`; every other document type keeps following the store's settings.
+
+The resource key matches the model name, underscored: `:order`, `:return`, `:exchange`, `:claim`, `:stock_transfer`, `:import`, `:export`. Register the same class under several keys to share one format across document types.
+
+A registered generator wins over the store's format setting — that is the point of registering one. If you want merchants to keep some control, read their settings yourself through `prefix_for` and `suffix_for` (below).
+
+`Spree.number_generators.delete(:order)` removes the registration and hands numbering back to the store settings.
+
+### What a generator can read
+
+The record is passed to `generate`, so anything reachable from it is available:
+
+- `record.number_store` — the store whose settings apply, wherever it lives on the model
+- `record.class.number_prefix` — the model's built-in prefix (`R`, `RET`, …)
+- Any attribute of the record itself
+
+Inheriting from `Spree::NumberGenerators::Base` also gives you `prefix_for(record)` and `suffix_for(record)`, which return the merchant's configured values for orders and the code-level prefix for everything else. Use them when you want to extend the merchant's choice rather than override it.
+
+### Sequential counters
+
+If your generator needs its own counter, use the same one the built-in sequential generator uses rather than deriving a maximum from existing rows. This generator combines both — the merchant's prefix, a year, and a zero-padded counter:
+
+```ruby
+module MyApp
+  class YearScopedNumbers < Spree::NumberGenerators::Base
+    def generate(record)
+      sequence = Spree::NumberSequence.next_value(
+        store: record.number_store,
+        resource_type: 'order',
+        start_at: 1
+      )
+
+      "#{prefix_for(record)}-#{Time.current.year}-#{sequence.to_s.rjust(5, '0')}"
+    end
+  end
+end
+```
+
+With the default prefix that produces `R-2026-00001`; a merchant who changes their prefix to `ACME` gets `ACME-2026-00001` without you touching the class.
+
+Deriving the next value by parsing existing numbers looks simpler but breaks in three ways: legacy numbers from before your format existed do not parse, string columns sort `R999` above `R1000`, and two concurrent checkouts read the same maximum and produce the same number. The counter is locked for the increment, so it hands out distinct values under load.
+
+## Adding numbers to your own model
+
+Models you add can carry document numbers too:
+
+```ruby
+class MyApp::Consignment < Spree.base_class
+  has_spree_number prefix: 'CN'
+end
+```
+
+The record is numbered before validation on create, and the number follows the store's format setting like everything else. The model needs a `number` column with a unique index:
+
+```ruby
+add_column :my_app_consignments, :number, :string, null: false
+add_index :my_app_consignments, :number, unique: true
+```
+
+If the model does not respond to `store`, define `number_store` so the generator knows whose settings to read:
+
+```ruby
+def number_store
+  warehouse.store
+end
+```
+
+## Fulfillments and payments
+
+Fulfillments and payments do **not** have their own numbers. Theirs are derived from the order they belong to — `R1001-F1` for the first parcel, `R1001-P1` for the first payment — so they group visibly with their order and follow whatever format the merchant chose.
+
+This is not configurable and there is no generator to register. If you need a different shape, override `number` on the model.
+
+## Upgrading from Spree 5.x
+
+Two changes matter.
+
+**Numbers are sequential by default.** Stores upgrading from 5.x keep every existing number untouched, but new documents get sequential numbers starting at 1001. To keep the old behavior, set the store's numbering format to **Random** in Settings → Store → Order numbers.
+
+**`Spree::Core::NumberGenerator` is deprecated.** Models using it still work through Spree 6.0 and log a deprecation warning. Replace it with the concern:
+
+```ruby
+# before
+include Spree::Core::NumberGenerator.new(prefix: 'R', length: 9)
+
+# after
+has_spree_number prefix: 'R'
+```
+
+The `length:` and `letters:` options are gone — they described the random format, which is now the generator's business rather than the model's. If you were relying on a specific length, register a custom generator.

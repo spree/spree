@@ -730,8 +730,11 @@ module Spree
       self.cost_currency = Spree::Store.default.default_currency if cost_currency.blank?
     end
 
+    # Only the product's own store's locations — a new variant must not grow
+    # stock items in every other store's warehouses.
     def create_stock_items
-      StockLocation.where(propagate_all_variants: true).each do |stock_location|
+      locations = product&.store ? product.store.stock_locations : StockLocation.all
+      locations.where(propagate_all_variants: true).each do |stock_location|
         stock_location.propagate_variant(self)
       end
     end

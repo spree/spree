@@ -59,7 +59,11 @@ export function createAdminClient(config: AdminClientConfig): Client {
     options: InternalRequestOptions = {},
   ): Promise<T> => {
     const extraHeaders: Record<string, string> = {}
-    if (currentStoreId) {
+    // Auth endpoints are store-agnostic by design (login, refresh, setup,
+    // invitation acceptance run before or between store selections), and a
+    // stale store id from a previous session must never be able to 404 the
+    // way back in.
+    if (currentStoreId && !path.startsWith('/auth/')) {
       extraHeaders['X-Spree-Store-Id'] = currentStoreId
     }
 

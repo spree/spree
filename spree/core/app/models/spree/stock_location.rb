@@ -229,10 +229,12 @@ module Spree
       Spree::StockLocations::StockItems::CreateJob.perform_later(self)
     end
 
+    # One default per STORE — scoping to the whole table would let one
+    # store's default demote every other store's.
     def ensure_one_default
       if default
-        StockLocation.where(default: true).where.not(id: id).update_all(default: false)
-        StockLocation.where.not(id: id).update_all(updated_at: Time.current)
+        store.stock_locations.where(default: true).where.not(id: id).update_all(default: false)
+        store.stock_locations.where.not(id: id).update_all(updated_at: Time.current)
       end
     end
 

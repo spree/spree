@@ -124,10 +124,14 @@ describe('readmeContent', () => {
     expect(content).toContain('# my-store')
   })
 
-  it('includes admin credentials', () => {
+  // No dummy credentials are seeded any more — the admin account is created
+  // during first run, so the README points there instead of printing a
+  // well-known email and password.
+  it('points at first-run setup instead of printing credentials', () => {
     const content = readmeContent('my-store', true, 3000)
-    expect(content).toContain('spree@example.com')
-    expect(content).toContain('spree123')
+    expect(content).toContain('admin email and password during the first run')
+    expect(content).not.toContain('spree@example.com')
+    expect(content).not.toContain('spree123')
   })
 
   it('includes storefront section', () => {

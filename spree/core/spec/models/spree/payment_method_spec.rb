@@ -85,47 +85,109 @@ describe Spree::PaymentMethod, type: :model do
 
     let(:gateway) { TestGateway.new(store: store) }
 
-    context 'when auto_capture is nil' do
-      before { stub_store_preferences(store, auto_capture: auto_capture) }
+    context 'when the method has no capture method of its own' do
+      before { stub_store_preferences(store, capture_method: capture_method) }
 
-      context "and when the store's auto_capture is false" do
-        let(:auto_capture) { false }
+      context "and the store charges on dispatch" do
+        let(:capture_method) { 'on_dispatch' }
 
         it 'is false' do
-          expect(gateway.auto_capture).to be_nil
+          expect(gateway.capture_method).to be_nil
           expect(subject).to be false
         end
       end
 
-      context "and when the store's auto_capture is true" do
-        let(:auto_capture) { true }
+      context "and the store charges at checkout" do
+        let(:capture_method) { 'checkout' }
 
         it 'is true' do
-          expect(gateway.auto_capture).to be_nil
+          expect(gateway.capture_method).to be_nil
           expect(subject).to be true
         end
       end
     end
 
-    context 'when auto_capture is not nil' do
-      before do
-        gateway.auto_capture = auto_capture
+    context 'when the method sets its own capture method' do
+      before { stub_store_preferences(store, capture_method: 'on_dispatch') }
+
+      it 'is true when it charges at checkout' do
+        gateway.capture_method = 'checkout'
+        expect(subject).to be true
       end
 
-      context 'and is true' do
-        let(:auto_capture) { true }
+      it 'is false when it charges manually' do
+        gateway.capture_method = 'manual'
+        expect(subject).to be false
+      end
+    end
 
-        it 'is true' do
-          expect(subject).to be true
-        end
+    context 'when only the legacy auto_capture column is set' do
+      before { stub_store_preferences(store, capture_method: 'on_dispatch') }
+
+      it 'is true when the column is true' do
+        gateway.auto_capture = true
+        expect(subject).to be true
       end
 
-      context 'and is false' do
-        let(:auto_capture) { false }
+      # False only ever meant "not at checkout", so the store still decides.
+      it 'defers to the store when the column is false' do
+        gateway.auto_capture = false
+        expect(subject).to be false
+        expect(gateway.resolved_capture_method).to eq('on_dispatch')
+      end
+    end
+  end
 
-        it 'is true' do
-          expect(subject).to be false
-        end
+  describe '#resolved_capture_method' do
+    let(:gateway) { Spree::Gateway::Bogus.new(store: store) }
+
+    before { stub_store_preferences(store, capture_method: 'on_dispatch') }
+
+    it 'inherits the store value when the method sets nothing' do
+      expect(gateway.resolved_capture_method).to eq('on_dispatch')
+    end
+
+    it 'prefers its own value over the store' do
+      gateway.capture_method = 'manual'
+      expect(gateway.resolved_capture_method).to eq('manual')
+    end
+
+    it 'treats a blank write as going back to inheriting' do
+      gateway.capture_method = 'manual'
+      gateway.capture_method = ''
+      expect(gateway.capture_method).to be_nil
+      expect(gateway.resolved_capture_method).to eq('on_dispatch')
+    end
+
+    it 'rejects a value outside the vocabulary' do
+      gateway.capture_method = 'whenever'
+      expect(gateway).not_to be_valid
+      expect(gateway.errors[:capture_method]).to be_present
+    end
+
+    # It is a column like `active` and `position`, not gateway configuration —
+    # in the preferences blob it would render as a credential field and could
+    # not be queried.
+    it 'stays out of the provider preference schema' do
+      expect(gateway.serialized_preference_schema.map { |field| field[:key] }).not_to include(:capture_method)
+      expect(gateway.serialized_preferences.keys).not_to include('capture_method')
+    end
+
+    it 'is queryable' do
+      create(:payment_method, store: store, capture_method: 'on_dispatch')
+
+      expect(Spree::PaymentMethod.where(capture_method: 'on_dispatch')).to be_present
+    end
+
+    # The migration leaves auto_capture-false rows empty on purpose so they
+    # keep inheriting. Reading them as manual here would take them out of
+    # dispatch capture while the goods still went out.
+    context 'when a legacy row was left for the store to decide' do
+      it 'inherits the store setting rather than charging manually' do
+        gateway.auto_capture = false
+
+        expect(gateway.resolved_capture_method).to eq('on_dispatch')
+        expect(gateway).to be_capture_on_dispatch
       end
     end
   end
@@ -206,6 +268,16 @@ describe Spree::PaymentMethod, type: :model do
       expect(payment.reload.payment_method).to be_nil
       expect(credit_card.reload.payment_method).to be_nil
       expect(credit_card.reload.deleted_at).not_to be_nil
+    end
+  end
+  describe 'position scoping' do
+    it 'numbers positions per store, not across the whole table' do
+      create(:payment_method, store: @default_store)
+      other_store = create(:store)
+
+      first_in_other_store = create(:payment_method, store: other_store)
+
+      expect(first_in_other_store.position).to eq(1)
     end
   end
 end

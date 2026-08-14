@@ -131,7 +131,17 @@ module Spree
           failure(@source, Spree.t('fulfillments.errors.backordered_units'))
         end
 
-        return if order.paid? || @source.store_preference(:auto_capture_on_dispatch)
+        return if order.paid?
+
+        # Charging later is a deliberate choice, so an authorized-but-uncaptured
+        # order is ready to hand over: on dispatch the money is taken below,
+        # and manual means staff have taken charge of collecting it.
+        #
+        # Every pending payment has to defer, not just one — on a mixed-tender
+        # order a single deferred payment must not wave through a sibling that
+        # should have been collected at checkout.
+        pending = order.pending_payments
+        return if pending.any? && pending.all? { |payment| payment.payment_method&.capture_at_checkout? == false }
 
         failure(@source, Spree.t('fulfillments.errors.order_not_paid'))
       end
@@ -223,11 +233,9 @@ module Spree
         @fulfillment.publish_fulfillment_fulfilled_event
       end
 
-      # Dispatch is the trigger for taking the money when the merchant has
-      # chosen to charge on dispatch rather than at checkout.
+      # Dispatch is the trigger for taking the money on payments whose method
+      # charges on dispatch; the fulfillment decides which ones qualify.
       def capture_payment_if_configured
-        return unless @fulfillment.store_preference(:auto_capture_on_dispatch)
-
         @fulfillment.process_order_payments
       end
 

@@ -48,7 +48,7 @@ module Spree
           # (which is the legacy Rails admin's surface). `type` and
           # `preferences` are added by `SubclassedResource` on top.
           def permitted_params
-            params.permit(:name, :description, :active, :storefront_visible, :auto_capture, :position, metadata: {}, preferences: {})
+            params.permit(:name, :description, :active, :storefront_visible, :auto_capture, :capture_method, :position, metadata: {}, preferences: {})
           end
 
           # `types` is read-only discovery — maps to the read scope + :show ability.

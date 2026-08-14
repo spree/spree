@@ -57,6 +57,9 @@ module Spree
               :preferred_guest_checkout,
               :preferred_company_field_enabled,
               :preferred_address_requires_phone,
+              :preferred_capture_method,
+              # @deprecated Superseded by preferred_capture_method; the model
+              #   maps them onto it. Removed in 6.1.
               :preferred_auto_capture,
               :preferred_auto_capture_on_dispatch,
               :preferred_track_inventory_levels,
@@ -65,6 +68,10 @@ module Spree
               :preferred_show_products_without_price,
               :preferred_disable_sku_validation,
               :preferred_order_routing_strategy,
+              :preferred_document_number_format,
+              :preferred_order_number_prefix,
+              :preferred_order_number_suffix,
+              :preferred_order_number_sequence_start,
               :mail_from_address,
               :customer_support_email,
               :new_order_notifications_email,

@@ -3,6 +3,9 @@ module Spree
     module V3
       module Store
         class BaseController < Spree::Api::V3::BaseController
+          # The publishable key selects the store — must come before
+          # ChannelResolution, whose store-context callback reads it.
+          include Spree::Api::V3::KeyStoreContext
           # Channel resolution is a Store API concern — admin endpoints return
           # data across all channels and filter via Ransack instead. Including
           # this here keeps the +X-Spree-Channel+ header from accidentally

@@ -305,12 +305,13 @@ module Spree
     end
 
     # Stock locations this method can fulfill from. For pickup methods an
-    # empty set means every active pickup-enabled location qualifies.
+    # empty set means every active pickup-enabled location of the method's
+    # own store qualifies — never other stores' counters.
     #
     # @return [ActiveRecord::Relation<Spree::StockLocation>]
     def available_pickup_locations
       configured = pickup_locations.merge(Spree::StockLocation.active)
-      configured.exists? ? configured : Spree::StockLocation.active.pickup_enabled
+      configured.exists? ? configured : store.stock_locations.active.pickup_enabled
     end
 
     # The third-party pickup point network behind a pickup_point method.

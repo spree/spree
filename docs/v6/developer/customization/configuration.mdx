@@ -16,21 +16,51 @@ end
 Restart your Rails server after editing the initializer.
 </Note>
 
+## Deployment settings read the environment
+
+Settings that describe the deployment rather than commerce behavior can be set with an environment variable — no Ruby, no code change, no restart-after-edit dance. An explicitly configured value always wins over the environment.
+
+| Setting | Environment variable | What it configures |
+|---|---|---|
+| `dashboard_url` | `SPREE_DASHBOARD_URL` | Origin where the admin dashboard is hosted (e.g. `https://admin.my-shop.com`). Used for every link that sends someone into the dashboard: invitation emails, SSO redirects, and the first-run setup link printed by `db:seed`. |
+
 This page lists only settings Spree 6 actually reads. Settings that exist for backwards compatibility are listed under [Deprecated settings](#deprecated-settings) rather than mixed in with the rest.
 
 ## Settings that belong to a store
 
-Settings that shape how a shop sells — when cards are charged, whether stock is counted, which products appear without a price — are properties of a store, not of the installation, so they live on `Spree::Store` and are edited in the dashboard under **Settings → Store**:
+Settings that shape how a shop sells — when customers are charged, whether stock is counted, which products appear without a price — are properties of a store, not of the installation, so they live on `Spree::Store` and are edited in the dashboard under **Settings → Store**:
 
-`auto_capture`, `auto_capture_on_dispatch`, `track_inventory_levels`, `stock_reservations_enabled`, `stock_reservation_ttl_minutes`, `track_price_history`, `show_products_without_price`, `disable_sku_validation`, `address_requires_phone`, `company_field_enabled`, plus `guest_checkout` and `storefront_access` — those last two are owned by the channel, and the store's value is what a channel falls back to.
+`capture_method`, `track_inventory_levels`, `stock_reservations_enabled`, `stock_reservation_ttl_minutes`, `track_price_history`, `show_products_without_price`, `disable_sku_validation`, `address_requires_phone`, `company_field_enabled`, plus `guest_checkout` and `storefront_access` — those last two are owned by the channel, and the store's value is what a channel falls back to.
 
 They were global before Spree 6. The global versions still exist for one release but are no longer read, so setting one in the initializer changes nothing — run `bin/rake spree:store_settings:backfill_from_config` during the upgrade to copy your values onto every store.
 
 ```ruby
 store = Spree::Current.store
-store.preferred_auto_capture                  # => true
+store.preferred_capture_method                # => "checkout"
 store.update!(preferred_track_inventory_levels: false)
 ```
+
+### When customers are charged
+
+`capture_method` says when a customer is charged rather than only authorized. It applies to every payment method, not just card gateways. It takes one of three values:
+
+| Value | What happens |
+|---|---|
+| `checkout` | The money is taken as soon as the order is placed. This is the default. |
+| `on_dispatch` | The amount is authorized at checkout and captured when the goods are dispatched. |
+| `manual` | The amount is authorized at checkout and staff capture it when they choose. |
+
+A payment method can override the store for its own payments by setting the same three values; leaving it blank inherits the store's choice. Ask a payment method what applies with `resolved_capture_method`, or use the `capture_at_checkout?`, `capture_on_dispatch?` and `capture_manually?` questions.
+
+```ruby
+payment_method.update!(capture_method: 'on_dispatch')
+payment_method.resolved_capture_method        # => "on_dispatch"
+
+payment_method.update!(capture_method: nil)   # back to inheriting
+payment_method.resolved_capture_method        # => "checkout"
+```
+
+Before Spree 6 this was two separate booleans, `auto_capture` and `auto_capture_on_dispatch`, which could contradict each other. Two upgrade tasks carry existing installs over: `spree:store_settings:backfill_from_config` maps the old globals onto each store's `capture_method`, and `spree:migrate_capture_methods` converts the per-payment-method `auto_capture` column. A method left without a value inherits its store.
 
 ## Checkout and payments
 
@@ -167,8 +197,8 @@ These still exist so upgrades don't break, but Spree 6 either ignores them or re
 | `company` | The `company_field_enabled` setting on the store |
 | `address_requires_phone` | The `address_requires_phone` setting on the store |
 | `default_stock_reservation_ttl_minutes` | The `stock_reservation_ttl_minutes` setting on the store |
-| `auto_capture` | The `auto_capture` setting on the store |
-| `auto_capture_on_dispatch` | The `auto_capture_on_dispatch` setting on the store |
+| `auto_capture` | The `capture_method` setting on the store |
+| `auto_capture_on_dispatch` | The `capture_method` setting on the store |
 | `stock_reservations_enabled` | The `stock_reservations_enabled` setting on the store |
 | `track_inventory_levels` | The `track_inventory_levels` setting on the store |
 | `show_products_without_price` | The `show_products_without_price` setting on the store |

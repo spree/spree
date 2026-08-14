@@ -42,6 +42,44 @@ describe Spree::Pricing::Resolver do
       end
     end
 
+    context 'with a zero-amount price list price' do
+      let!(:price_list) { create(:price_list, :active, store: store) }
+      let!(:list_price) { create(:price, variant: variant, currency: currency, amount: 0, price_list: price_list) }
+
+      it 'returns the free price list price instead of the base price' do
+        price = resolver.resolve
+        expect(price).to eq(list_price)
+        expect(price.amount).to eq(0)
+        expect(price.price_list_id).to eq(price_list.id)
+      end
+
+      it 'returns the free price list price when prices are already loaded' do
+        variant.prices.load
+        price = resolver.resolve
+        expect(price).to eq(list_price)
+        expect(price.amount).to eq(0)
+      end
+    end
+
+    context 'with a placeholder (nil amount) price list price' do
+      let!(:price_list) { create(:price_list, :active, store: store) }
+      let!(:list_price) { create(:price, variant: variant, currency: currency, amount: nil, price_list: price_list) }
+
+      it 'falls back to the base price' do
+        base_price = variant.prices.base_prices.with_currency(currency).first
+        price = resolver.resolve
+        expect(price).to eq(base_price)
+        expect(price.amount).to eq(19.99)
+      end
+
+      it 'falls back to the base price when prices are already loaded' do
+        variant.prices.load
+        price = resolver.resolve
+        expect(price.amount).to eq(19.99)
+        expect(price.price_list_id).to be_nil
+      end
+    end
+
     context 'with multiple applicable price lists' do
       let!(:second_position_list) { create(:price_list, :active, store: store, position: 2) }
       let!(:second_position_price) { create(:price, variant: variant, currency: currency, amount: 17.99, price_list: second_position_list) }

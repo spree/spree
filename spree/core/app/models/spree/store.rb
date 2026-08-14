@@ -16,6 +16,7 @@ module Spree
     include Spree::Security::Stores if defined?(Spree::Security::Stores)
     include Spree::UserManagement
     include Spree::OrderRouting::HasStrategyPreference
+    include Spree::CaptureMethod
 
     #
     # Magic methods
@@ -66,10 +67,10 @@ module Spree
     preference :storefront_url, :string
     preference :special_instructions_enabled, :boolean, default: false
     preference :stock_reservation_ttl_minutes, :integer, default: 10
-    # Store-wide default for charging cards at checkout rather than only
-    # authorizing them. A payment method's own auto_capture column wins when set.
-    preference :auto_capture, :boolean, default: true
-    preference :auto_capture_on_dispatch, :boolean, default: false
+    # Store-wide default for when a customer is charged rather than only
+    # authorized. A payment method's own capture_method wins when set.
+    # See Spree::CaptureMethod.
+    preference :capture_method, :string, default: Spree::CaptureMethod::DEFAULT_CAPTURE_METHOD
     preference :stock_reservations_enabled, :boolean, default: true
     # Catalog preferences
     preference :track_inventory_levels, :boolean, default: true
@@ -90,6 +91,15 @@ module Spree
     # Class name of the Spree::OrderRouting::Strategy::Base subclass that
     # decides which StockLocation fulfills which items.
     preference :order_routing_strategy, :string, default: 'Spree::OrderRouting::Strategy::Rules'
+
+    # Document numbering (docs/plans/6.0-document-numbers.md). The format
+    # applies to every numbered document; prefix, suffix and starting value
+    # are order-only — other document types keep their code-level prefixes.
+    # Changes affect future numbers only; existing numbers are permanent.
+    preference :document_number_format, :string, default: 'sequential'
+    preference :order_number_prefix, :string, default: 'R'
+    preference :order_number_suffix, :string, default: ''
+    preference :order_number_sequence_start, :integer, default: 1001
 
     #
     # Associations
@@ -200,7 +210,17 @@ module Spree
     validates :preferred_digital_asset_authorized_days, numericality: { only_integer: true, greater_than: 0 }
     validates :preferred_stock_reservation_ttl_minutes, numericality: { only_integer: true, greater_than: 0 }
     validates :preferred_storefront_access, inclusion: { in: Spree::Channel::Gating::STOREFRONT_ACCESS }
+    validates :preferred_document_number_format,
+              inclusion: { in: Spree::NumberGenerators::Registry::FORMATS.keys }
+    validates :preferred_order_number_sequence_start,
+              numericality: { only_integer: true, greater_than: 0 }
+    validates :preferred_order_number_prefix, :preferred_order_number_suffix,
+              length: { maximum: 10 },
+              format: { with: /\A[A-Z0-9#-]*\z/,
+                        message: :invalid_document_number_affix }
+    validates :preferred_capture_method, inclusion: { in: Spree::CaptureMethod::CAPTURE_METHODS }
     validate :preferred_storefront_url_is_an_origin
+    validate :order_number_sequence_start_unchanged_after_first_number, on: :update
     validates :mail_from_address, email: { allow_blank: false }
     validates :customer_support_email, email: { allow_blank: true }
     # FIXME: we should remove this condition in v5
@@ -217,6 +237,22 @@ module Spree
     #
     has_one_attached :logo, service: Spree.public_storage_service_name
     has_one_attached :mailer_logo, service: Spree.public_storage_service_name
+
+    # First-run setup credential (docs/plans/6.0-store-context-and-first-run-setup.md):
+    # printed by the installer, only consulted by the setup endpoint while no
+    # admin user exists, cleared when setup completes. Plaintext at rest —
+    # same posture as invitation tokens, and only meaningful while the
+    # database holds nothing but seed data.
+    has_secure_token :setup_token
+
+    # Link that claims this installation: the dashboard's first-run setup
+    # screen with the store's token.
+    # @return [String, nil] nil when no token is outstanding
+    def setup_url
+      return if setup_token.blank?
+
+      "#{Spree::Stores::DashboardUrl.call(store: self)}/setup?token=#{setup_token}"
+    end
 
     #
     # Callbacks
@@ -404,6 +440,52 @@ module Spree
       preferred_unit_system == 'metric'
     end
 
+    # A store is where capture settings bottom out, so it resolves to its own
+    # preference. Payment methods layer their override on top of this.
+    #
+    # @return [String] one of Spree::CaptureMethod::CAPTURE_METHODS
+    def resolved_capture_method
+      preferred_capture_method.presence || Spree::CaptureMethod::DEFAULT_CAPTURE_METHOD
+    end
+
+    # @deprecated Use #preferred_capture_method; removed in 6.1.
+    def preferred_auto_capture
+      Spree::Deprecation.warn('Store#preferred_auto_capture is deprecated and will be removed in Spree 6.1. Use #preferred_capture_method instead.')
+      capture_at_checkout?
+    end
+
+    # @deprecated Use #preferred_capture_method=; removed in 6.1.
+    def preferred_auto_capture=(value)
+      Spree::Deprecation.warn('Store#preferred_auto_capture= is deprecated and will be removed in Spree 6.1. Use #preferred_capture_method= instead.')
+      # Turning it off only says "not at checkout" — it cannot distinguish
+      # dispatch from manual, so an existing on_dispatch choice is preserved.
+      self.preferred_capture_method = if value.to_b
+                                        'checkout'
+                                      elsif capture_at_checkout?
+                                        'manual'
+                                      else
+                                        preferred_capture_method
+                                      end
+    end
+
+    # @deprecated Use #preferred_capture_method; removed in 6.1.
+    def preferred_auto_capture_on_dispatch
+      Spree::Deprecation.warn('Store#preferred_auto_capture_on_dispatch is deprecated and will be removed in Spree 6.1. Use #preferred_capture_method instead.')
+      capture_on_dispatch?
+    end
+
+    # @deprecated Use #preferred_capture_method=; removed in 6.1.
+    def preferred_auto_capture_on_dispatch=(value)
+      Spree::Deprecation.warn('Store#preferred_auto_capture_on_dispatch= is deprecated and will be removed in Spree 6.1. Use #preferred_capture_method= instead.')
+      self.preferred_capture_method = if value.to_b
+                                        'on_dispatch'
+                                      elsif capture_on_dispatch?
+                                        'manual'
+                                      else
+                                        preferred_capture_method
+                                      end
+    end
+
     private
 
     # Products without a profile fall back to this one, so it must exist
@@ -446,8 +528,28 @@ module Spree
       false
     end
 
+    # The very first store keeps the well-known 'default' code (tooling and
+    # seeds reference it); every later store derives its code from the name,
+    # suffixed until unique — a literal 'default' fallback would collide with
+    # the unique index the moment a second store is created. Soft-deleted
+    # stores still occupy their code (the unique index has no deleted_at
+    # scope), so generation checks with_deleted.
     def set_default_code
-      self.code = 'default' if code.blank?
+      return if code.present?
+
+      self.code =
+        if Spree::Store.with_deleted.none?
+          'default'
+        else
+          base = name.to_s.parameterize.presence || 'store'
+          candidate = base
+          sequence = 2
+          while Spree::Store.with_deleted.exists?(code: candidate)
+            candidate = "#{base}-#{sequence}"
+            sequence += 1
+          end
+          candidate
+        end
     end
 
     # The storefront URL preference must always hold a canonical origin — it
@@ -469,6 +571,23 @@ module Spree
       return if Spree::AllowedOrigin.normalize_origin(raw)
 
       errors.add(:preferred_storefront_url, :invalid)
+    end
+
+    # The starting value only shapes a counter that does not exist yet — once
+    # the first number is issued the counter owns the value, so accepting a
+    # change here would persist a setting that can never apply again. The
+    # dashboard disables the field; this backs it for API clients.
+    def order_number_sequence_start_unchanged_after_first_number
+      return unless preferences_changed?
+
+      default = preference_default(:order_number_sequence_start)
+      old_value, new_value = changes['preferences'].map do |preferences_hash|
+        ((preferences_hash || {})[:order_number_sequence_start] || default).to_i
+      end
+      return if old_value == new_value
+      return unless Spree::NumberSequence.started?(store: self)
+
+      errors.add(:preferred_order_number_sequence_start, :locked_after_first_number)
     end
   end
 end

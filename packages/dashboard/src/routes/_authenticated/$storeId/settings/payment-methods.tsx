@@ -283,7 +283,7 @@ function EditPaymentMethodSheet({
       description: paymentMethod.description ?? '',
       storefront_visible: paymentMethod.storefront_visible ?? true,
       active: paymentMethod.active,
-      auto_capture: paymentMethod.auto_capture ?? false,
+      capture_method: paymentMethod.capture_method ?? '',
     })
     const initialPreferences = (paymentMethod.preferences as Record<string, unknown>) ?? {}
     setPreferences(initialPreferences)

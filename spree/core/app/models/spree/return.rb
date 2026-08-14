@@ -13,7 +13,7 @@ module Spree
   class Return < Spree.base_class
     has_prefix_id :ret
 
-    include Spree::Core::NumberGenerator.new(prefix: 'RET', length: 9)
+    has_spree_number prefix: 'RET'
     include Spree::NumberIdentifier
     include Spree::SingleStoreResource
     include Spree::HasStatus

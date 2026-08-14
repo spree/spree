@@ -39,7 +39,7 @@ module Spree
     include Spree::Purchase::Validations
     include Spree::Purchase::Totals
     include Spree::Purchase::Lifecycle
-    include Spree::Core::NumberGenerator.new(prefix: 'R')
+    has_spree_number prefix: 'R'
 
     include Spree::NumberIdentifier
 

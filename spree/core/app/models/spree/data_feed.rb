@@ -11,7 +11,7 @@ module Spree
 
     with_options presence: true do
       validates :store
-      validates :name, uniqueness: true
+      validates :name, uniqueness: { scope: :store_id }
       validates :slug, uniqueness: { scope: :store_id }
     end
 

@@ -4,13 +4,7 @@ import * as p from '@clack/prompts'
 import { execa } from 'execa'
 import pc from 'picocolors'
 import { downloadBackend } from './backend.js'
-import {
-  DASHBOARD_PORT,
-  DEFAULT_ADMIN_EMAIL,
-  DEFAULT_ADMIN_PASSWORD,
-  STOREFRONT_PORT,
-  STOREFRONT_REPO,
-} from './constants.js'
+import { DASHBOARD_PORT, STOREFRONT_PORT, STOREFRONT_REPO } from './constants.js'
 import { scaffoldDashboard } from './dashboard.js'
 import {
   downloadStorefront,
@@ -264,8 +258,7 @@ function printSuccessWithoutDocker(
       `${pc.bold('Admin Dashboard (React, Developer Preview)')}`,
       `  http://localhost:${DASHBOARD_PORT}`,
       `  ${pc.dim('# started automatically by `spree dev`, live-reloading from apps/dashboard/')}`,
-      `  Email:    ${DEFAULT_ADMIN_EMAIL}`,
-      `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
+      `  ${pc.dim("# you'll create the admin account on first run")}`,
       `  ${pc.dim(`Classic admin: http://localhost:${port}/admin`)}`,
       '',
     )
@@ -274,8 +267,7 @@ function printSuccessWithoutDocker(
       '',
       `${pc.bold('Admin Dashboard')}`,
       `  http://localhost:${port}/admin`,
-      `  Email:    ${DEFAULT_ADMIN_EMAIL}`,
-      `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
+      `  ${pc.dim("# you'll create the admin account on first run")}`,
       '',
     )
   }

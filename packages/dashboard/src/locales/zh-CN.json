@@ -957,9 +957,11 @@
           "help": "未启用的方式将在结账时隐藏。",
           "label": "启用"
         },
-        "auto_capture": {
-          "help": "授权后自动收取款项。关闭时，需手动收款。",
-          "label": "自动收款"
+        "capture_method": {
+          "label": "何时向客户收款",
+          "help": "仅针对此支付方式覆盖店铺设置。",
+          "inherit": "使用店铺设置",
+          "inherited": "使用店铺设置（{{value}}）"
         },
         "description": {
           "placeholder": "结账时向客户展示的描述"
@@ -1190,6 +1192,14 @@
       "role_ids": {
         "label": "角色"
       },
+      "setup": {
+        "password_confirmation": {
+          "label": "确认密码"
+        },
+        "store_name": {
+          "label": "商店名称"
+        }
+      },
       "stock_location": {
         "active": {
           "help": "停用的库存地点不会出现在履约选择中。",
@@ -1238,13 +1248,23 @@
           "help": "将电话号码设为客户地址的必填项。",
           "label": "要求填写电话号码"
         },
-        "auto_capture": {
-          "help": "立即收取款项，而不是仅预授权。支付方式可覆盖此设置。",
-          "label": "结账时扣款"
-        },
-        "auto_capture_on_dispatch": {
-          "help": "等到商品实际发出后再收款。",
-          "label": "发货时扣款"
+        "capture_method": {
+          "label": "何时向客户收款",
+          "help": "所有支付方式的默认设置。单个支付方式可覆盖此设置。",
+          "options": {
+            "checkout": {
+              "label": "结账时",
+              "description": "下单后立即收取款项。"
+            },
+            "on_dispatch": {
+              "label": "发货时",
+              "description": "结账时预授权金额，发货时收取。"
+            },
+            "manual": {
+              "label": "手动",
+              "description": "结账时预授权金额，由员工稍后收取。"
+            }
+          }
         },
         "company_field_enabled": {
           "help": "在结账时的地址表单中显示公司字段。",
@@ -1258,6 +1278,14 @@
         "disable_sku_validation": {
           "help": "允许多个变体使用相同的 SKU。",
           "label": "允许重复 SKU"
+        },
+        "document_number_format": {
+          "label": "编号格式",
+          "help": "适用于所有带编号的单据。顺序编号依次递增、更便于口头核对；随机编号则不会透露店铺的订单量。",
+          "options": {
+            "sequential": "顺序编号 — 从起始号依次递增",
+            "random": "随机编号 — 不可预测的数字"
+          }
         },
         "guest_checkout": {
           "help": "店铺范围内的默认设置，控制顾客是否可以无需账户即可结账。渠道可以覆盖此设置。",
@@ -1279,6 +1307,25 @@
           "help": "“新订单已下单”通知的接收人。留空则禁用。",
           "label": "新订单通知",
           "placeholder": "ops@yourstore.com"
+        },
+        "order_number_prefix": {
+          "label": "前缀",
+          "help": "位于每个订单编号的开头。",
+          "invalid": "只能使用大写字母、数字、连字符和 #。"
+        },
+        "order_number_preview": {
+          "label": "预览",
+          "help": "更改仅影响后续订单。已生成的编号永远不会改变。"
+        },
+        "order_number_sequence_start": {
+          "label": "起始编号",
+          "help": "仅在首个订单之前生效。之后修改不会为已有订单重新编号。",
+          "locked": "编号已经开始，因此该设置不再生效。已有订单编号永远不会改变。"
+        },
+        "order_number_suffix": {
+          "label": "后缀",
+          "help": "位于每个订单编号的末尾。",
+          "invalid": "只能使用大写字母、数字、连字符和 #。"
         },
         "preferred_admin_locale": {
           "label": "后台语言",
@@ -2656,6 +2703,7 @@
           "tab_default_package": "默认包裹",
           "tab_general": "通用",
           "tab_inventory": "库存",
+          "tab_order_numbers": "订单编号",
           "tab_payments": "支付",
           "tab_standards": "标准与格式",
           "tab_storefront_access": "店铺访问权限",
@@ -3514,6 +3562,22 @@
         "tax_categories": "税收类别",
         "webhooks": "Webhooks"
       }
+    },
+    "setup": {
+      "title": "设置 Spree",
+      "subtitle": "创建管理员账户并为商店命名，以完成安装。",
+      "loading": "正在检查设置状态…",
+      "missing_token_title": "需要设置链接",
+      "missing_token_message": "请打开安装时输出的设置链接——其中包含一次性设置令牌。运行 \"bin/rails spree:setup:token\" 可重新生成。",
+      "not_available_title": "设置不可用",
+      "not_available_message": "此安装已完成设置。请使用您的管理员账户登录。",
+      "could_not_complete": "无法完成设置",
+      "completing": "正在设置…",
+      "complete": "完成设置",
+      "back_to_login": "返回登录",
+      "required_notice_title": "此安装尚未完成设置",
+      "required_notice_message": "尚无管理员账户。请使用安装输出中的设置链接创建。",
+      "required_notice_link": "前往设置"
     },
     "staff": {
       "actions": {

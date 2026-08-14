@@ -3,16 +3,26 @@ module Spree
     has_prefix_id :pm  # Stripe: pm_
 
     acts_as_paranoid
-    acts_as_list
+    # Scoped like every other store-owned list (Collection, Market,
+    # PriceList): without it, position assignment and reordering shift rows
+    # across ALL stores.
+    acts_as_list scope: :store_id
 
     include Spree::SingleStoreResource
     include Spree::StorePreferences
     include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::DisplayOn
+    include Spree::CaptureMethod
     if defined?(Spree::Security::PaymentMethods)
       include Spree::Security::PaymentMethods
     end
+
+    # Blank falls back to the store, so a method only overrides when a merchant
+    # deliberately picks one — the meaning the auto_capture boolean already had.
+    normalizes :capture_method, with: ->(value) { value.presence }
+
+    validates :capture_method, inclusion: { in: Spree::CaptureMethod::CAPTURE_METHODS }, allow_nil: true
 
     scope :active,    -> { where(active: true).order(position: :asc) }
     scope :available, -> { active.where(display_on: [:front_end, :back_end, :both]) }
@@ -179,8 +189,28 @@ module Spree
       []
     end
 
+    # The method's own choice when it has one, otherwise the store's. A legacy
+    # auto_capture of true is still honored for installs that set it before
+    # capture_method existed and have not run the migration task.
+    #
+    # auto_capture false is NOT read as manual: it only ever recorded "not at
+    # checkout" and could not distinguish dispatch from staff collection, so
+    # the store decides — the same rows the migration deliberately leaves
+    # empty. Reading it as manual would exclude those payments from dispatch
+    # capture while still letting the goods go out.
+    #
+    # @return [String] one of Spree::CaptureMethod::CAPTURE_METHODS
+    def resolved_capture_method
+      return capture_method if capture_method.present?
+      return 'checkout' if auto_capture
+
+      store_preference(:capture_method).presence || Spree::CaptureMethod::DEFAULT_CAPTURE_METHOD
+    end
+
+    # @deprecated Use #capture_at_checkout?; removed in 6.1. Deliberately does
+    #   not warn — it runs on every payment and would flood the logs.
     def auto_capture?
-      auto_capture.nil? ? store_preference(:auto_capture) : auto_capture
+      capture_at_checkout?
     end
 
     def supports?(_source)

@@ -59,3 +59,19 @@ export const acceptInvitationSignUpFormSchema = z
     path: ['password_confirmation'],
   })
 export type AcceptInvitationSignUpFormValues = z.infer<typeof acceptInvitationSignUpFormSchema>
+
+/** First-run setup — the first admin account plus the store's name. */
+export const setupFormSchema = z
+  .object({
+    email: z.email(),
+    first_name: z.string().min(1, { error: firstNameRequired }),
+    last_name: z.string().min(1, { error: lastNameRequired }),
+    password: z.string().min(8, { error: passwordMinLength }),
+    password_confirmation: z.string(),
+    store_name: z.string().min(1, { error: () => i18n.t('admin.validation.store_name_required') }),
+  })
+  .refine((data) => data.password === data.password_confirmation, {
+    error: passwordsDontMatch,
+    path: ['password_confirmation'],
+  })
+export type SetupFormValues = z.infer<typeof setupFormSchema>

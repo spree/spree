@@ -6,8 +6,6 @@ namespace :spree do
     # intent and is never copied.
     MOVED_SETTINGS = {
       address_requires_phone: { default: false },
-      auto_capture: { default: true },
-      auto_capture_on_dispatch: { default: false },
       company: { default: false, store_preference: :company_field_enabled },
       default_stock_reservation_ttl_minutes: { default: 10, store_preference: :stock_reservation_ttl_minutes },
       disable_sku_validation: { default: false },
@@ -16,6 +14,21 @@ namespace :spree do
       track_inventory_levels: { default: true },
       track_price_history: { default: true }
     }.freeze
+
+    # The two capture booleans became one Store#preferred_capture_method
+    # string, so they are derived together rather than copied name-for-name.
+    # Capturing at checkout wins when both were on, matching the old code:
+    # money already taken at checkout left the dispatch capture with nothing
+    # to do.
+    #
+    # @return [String] the capture method the globals describe.
+    CAPTURE_METHOD_FROM_CONFIG = lambda do
+      next 'checkout' if Spree::Config.auto_capture
+      next 'on_dispatch' if Spree::Config.auto_capture_on_dispatch
+
+      # auto_capture off with no dispatch capture means staff took charge of it.
+      'manual'
+    end
 
     # Marks a store the backfill has already visited. Preferences seed their
     # declared defaults on create, so a stored value that equals the default is
@@ -42,7 +55,10 @@ namespace :spree do
         Spree::Config.send(name) == config[:default]
       end
 
-      if changed.empty?
+      capture_method = CAPTURE_METHOD_FROM_CONFIG.call
+      capture_method = nil if capture_method == Spree::CaptureMethod::DEFAULT_CAPTURE_METHOD
+
+      if changed.empty? && capture_method.nil?
         puts '  No moved settings differ from their defaults — nothing to copy.'
         next
       end
@@ -67,6 +83,15 @@ namespace :spree do
           store.set_preference(preference, value)
 
           puts "  #{store.name} (#{store.id}): #{preference} = #{value}"
+        end
+
+        if capture_method
+          if store.get_preference(:capture_method) != store.preference_default(:capture_method)
+            puts "  #{store.name} (#{store.id}): capture_method already customized — skipped."
+          else
+            store.set_preference(:capture_method, capture_method)
+            puts "  #{store.name} (#{store.id}): capture_method = #{capture_method}"
+          end
         end
 
         store.metadata = metadata.merge(BACKFILL_MARKER => true)

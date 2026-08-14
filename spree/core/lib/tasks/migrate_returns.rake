@@ -171,7 +171,7 @@ module Spree
         created_at: authorization.created_at,
         updated_at: authorization.updated_at
       )
-      # Required, not an optimisation: NumberGenerator assigns the number in a
+      # Required, not an optimisation: Spree::HasNumber assigns the number in a
       # before_validation hook, which save!(validate: false) below skips — so
       # without this the NOT NULL constraint on `number` rejects the row. The
       # legacy number is also what makes a re-run idempotent, so a generated
@@ -184,7 +184,7 @@ module Spree
       if authorization.number.present?
         record.number = authorization.number
       else
-        record.number = record.generate_permalink(klass)
+        record.generate_number
         # write_attribute, not #metadata= — see migrated_numberless_ids.
         record.write_attribute(:metadata, { 'legacy_return_authorization_id' => authorization.id })
       end

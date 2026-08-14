@@ -62,18 +62,19 @@ module Spree
       def find_price_for_list(price_list)
         currency = context.currency&.upcase
 
+        # Zero is a valid override (free for this list); only nil placeholder
+        # rows (materialized by PriceList#add_products) are skipped.
         if prices.loaded?
           prices.detect do |p|
             p.currency == currency &&
               p.price_list_id == price_list.id &&
-              p.amount.present? &&
-              !p.amount.zero?
+              !p.amount.nil?
           end
         else
           context.variant.prices
                  .with_currency(currency)
                  .where(price_list_id: price_list.id)
-                 .non_zero
+                 .where.not(amount: nil)
                  .first
         end
       end

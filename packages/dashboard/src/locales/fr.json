@@ -960,9 +960,11 @@
           "help": "Les méthodes inactives sont masquées lors du paiement.",
           "label": "Active"
         },
-        "auto_capture": {
-          "help": "Capturer les fonds automatiquement à l'autorisation. Si désactivé, vous devez capturer manuellement.",
-          "label": "Capture automatique"
+        "capture_method": {
+          "label": "Quand débiter les clients",
+          "help": "Remplace le réglage de la boutique pour ce moyen de paiement uniquement.",
+          "inherit": "Utiliser le réglage de la boutique",
+          "inherited": "Utiliser le réglage de la boutique ({{value}})"
         },
         "description": {
           "placeholder": "Description visible par le client affichée lors du paiement"
@@ -1193,6 +1195,14 @@
       "role_ids": {
         "label": "Rôles"
       },
+      "setup": {
+        "password_confirmation": {
+          "label": "Confirmer le mot de passe"
+        },
+        "store_name": {
+          "label": "Nom de la boutique"
+        }
+      },
       "stock_location": {
         "active": {
           "help": "Les emplacements inactifs n'apparaissent pas dans la sélection d'expédition.",
@@ -1241,13 +1251,23 @@
           "help": "Rendre le numéro de téléphone obligatoire dans les adresses des clients.",
           "label": "Numéro de téléphone obligatoire"
         },
-        "auto_capture": {
-          "help": "Encaisser immédiatement au lieu de simplement réserver le montant. Un moyen de paiement peut modifier ce réglage.",
-          "label": "Débiter les cartes au paiement"
-        },
-        "auto_capture_on_dispatch": {
-          "help": "Attendre l’expédition réelle des marchandises avant d’encaisser.",
-          "label": "Débiter à l’expédition"
+        "capture_method": {
+          "label": "Quand débiter les clients",
+          "help": "La valeur par défaut pour tous les moyens de paiement. Un moyen de paiement peut la remplacer.",
+          "options": {
+            "checkout": {
+              "label": "Au paiement",
+              "description": "Encaisser dès que la commande est passée."
+            },
+            "on_dispatch": {
+              "label": "À l’expédition",
+              "description": "Réserver le montant au paiement et l’encaisser à l’expédition des marchandises."
+            },
+            "manual": {
+              "label": "Manuellement",
+              "description": "Réserver le montant au paiement et laisser l’équipe l’encaisser plus tard."
+            }
+          }
         },
         "company_field_enabled": {
           "help": "Afficher un champ société dans les formulaires d’adresse lors du paiement.",
@@ -1261,6 +1281,14 @@
         "disable_sku_validation": {
           "help": "Permettre à plusieurs déclinaisons de partager la même UGS.",
           "label": "Autoriser les UGS en double"
+        },
+        "document_number_format": {
+          "label": "Format de numérotation",
+          "help": "S'applique à tous les documents numérotés. Les numéros séquentiels se suivent et sont plus faciles à lire à voix haute ; les numéros aléatoires ne révèlent pas le nombre de commandes reçues.",
+          "options": {
+            "sequential": "Séquentiel — incrémenté à partir d’un numéro de départ",
+            "random": "Aléatoire — chiffres imprévisibles"
+          }
         },
         "guest_checkout": {
           "help": "Valeur par défaut à l'échelle de la boutique pour la possibilité de commander sans compte. Les canaux peuvent la remplacer.",
@@ -1282,6 +1310,25 @@
           "help": "Destinataire des notifications « nouvelle commande passée ». Laissez vide pour désactiver.",
           "label": "Notifications de nouvelles commandes",
           "placeholder": "ops@votreboutique.com"
+        },
+        "order_number_prefix": {
+          "label": "Préfixe",
+          "help": "Placé au début de chaque numéro de commande.",
+          "invalid": "Utilisez uniquement des majuscules, des chiffres, des tirets et #."
+        },
+        "order_number_preview": {
+          "label": "Aperçu",
+          "help": "Les modifications ne s'appliquent qu'aux commandes futures. Les numéros déjà attribués ne changent jamais."
+        },
+        "order_number_sequence_start": {
+          "label": "Commencer la numérotation à",
+          "help": "S'applique uniquement avant votre première commande. Une modification ultérieure ne renumérote pas les commandes existantes.",
+          "locked": "La numérotation a déjà commencé, ce réglage ne s'applique donc plus. Les numéros de commande existants ne changent jamais."
+        },
+        "order_number_suffix": {
+          "label": "Suffixe",
+          "help": "Placé à la fin de chaque numéro de commande.",
+          "invalid": "Utilisez uniquement des majuscules, des chiffres, des tirets et #."
         },
         "preferred_admin_locale": {
           "label": "Langue de l'administration",
@@ -2660,6 +2707,7 @@
           "tab_default_package": "Colis par défaut",
           "tab_general": "Général",
           "tab_inventory": "Stock",
+          "tab_order_numbers": "Numéros de commande",
           "tab_payments": "Paiements",
           "tab_standards": "Normes et formats",
           "tab_storefront_access": "Accès à la vitrine",
@@ -3518,6 +3566,22 @@
         "tax_categories": "Catégories de taxe",
         "webhooks": "Webhooks"
       }
+    },
+    "setup": {
+      "title": "Configurer Spree",
+      "subtitle": "Créez votre compte administrateur et nommez votre boutique pour terminer l'installation.",
+      "loading": "Vérification de l'état de la configuration…",
+      "missing_token_title": "Lien de configuration requis",
+      "missing_token_message": "Ouvrez le lien de configuration affiché lors de l'installation — il contient le jeton unique. Exécutez \"bin/rails spree:setup:token\" pour en générer un nouveau.",
+      "not_available_title": "Configuration indisponible",
+      "not_available_message": "Cette installation est déjà configurée. Connectez-vous avec votre compte administrateur.",
+      "could_not_complete": "Impossible de terminer la configuration",
+      "completing": "Configuration…",
+      "complete": "Terminer la configuration",
+      "back_to_login": "Retour à la connexion",
+      "required_notice_title": "Cette installation n'est pas encore configurée",
+      "required_notice_message": "Aucun compte administrateur n'existe. Utilisez le lien de configuration affiché lors de l'installation pour en créer un.",
+      "required_notice_link": "Aller à la configuration"
     },
     "staff": {
       "actions": {

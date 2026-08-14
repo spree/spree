@@ -28,16 +28,21 @@ module Spree
         order.last_ip_address
       end
 
+      # The payment number already names its order (`R1001-P1`), so this is
+      # the payment number alone rather than the two concatenated.
       def order_id
-        "#{order.number}-#{payment.number}"
+        payment.number
       end
 
       def payment_id
         payment.number
       end
 
+      # Built on the prefixed ID, not the number: a derived number shifts if
+      # an earlier sibling payment is destroyed, and a shifted idempotency
+      # key could collide with one already used at the gateway.
       def idempotency_key
-        "spree-#{payment.number}"
+        "spree-#{payment.prefixed_id}"
       end
 
       def shipping

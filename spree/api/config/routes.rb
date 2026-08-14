@@ -170,6 +170,11 @@ Spree::Core::Engine.add_routes do
         get 'auth/invitations/:id/lookup', to: 'invitation_acceptances#lookup'
         post 'auth/invitations/:id/accept', to: 'invitation_acceptances#accept'
 
+        # First-run setup — unauthenticated; the one-time setup token is the
+        # credential, and the flow self-disables once any admin user exists.
+        get 'auth/setup', to: 'setup#show'
+        post 'auth/setup', to: 'setup#create'
+
         # Public password reset — unauthenticated; the token is the credential.
         # Mounted under `auth/` so the refresh-token cookie issued on success
         # shares its path with `/auth/refresh`.

@@ -598,7 +598,8 @@
       "invalid_password": "Invalid password",
       "password_required": "Password is required",
       "first_name_required": "First name is required",
-      "last_name_required": "Last name is required"
+      "last_name_required": "Last name is required",
+      "store_name_required": "Store name is required"
     },
     "account": {
       "edit_profile": "Edit Profile",

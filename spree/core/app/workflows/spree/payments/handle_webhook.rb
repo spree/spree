@@ -65,9 +65,9 @@ module Spree
         failure(payment_session, error.message)
       end
 
-      # Spree::Payment#confirm! honors the payment method's auto_capture?
-      # setting: auto_capture completes and records a capture event,
-      # otherwise the payment pends (auth-only, payment_state=balance_due).
+      # Spree::Payment#confirm! honors when the payment method charges:
+      # charging at checkout completes and records a capture event, otherwise
+      # the payment pends (auth-only, payment_state=balance_due).
       def ensure_payment
         @payment = payment_session.find_or_create_payment!(metadata)
         payment.confirm! if payment.present? && !payment.completed?

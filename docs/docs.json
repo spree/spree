@@ -1144,6 +1144,13 @@
                     ]
                   },
                   {
+                    "group": "Orders",
+                    "icon": "receipt",
+                    "pages": [
+                      "v6/developer/how-to/custom-document-numbers"
+                    ]
+                  },
+                  {
                     "group": "Reports",
                     "icon": "chart-bar",
                     "pages": [

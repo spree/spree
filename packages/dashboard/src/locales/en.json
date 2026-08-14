@@ -960,9 +960,11 @@
           "help": "Inactive methods are hidden from checkout.",
           "label": "Active"
         },
-        "auto_capture": {
-          "help": "Capture funds automatically on authorization. When off, you must capture manually.",
-          "label": "Auto-capture"
+        "capture_method": {
+          "label": "When to charge customers",
+          "help": "Overrides the store setting for this payment method only.",
+          "inherit": "Use the store setting",
+          "inherited": "Use the store setting ({{value}})"
         },
         "description": {
           "placeholder": "Customer-facing description shown at checkout"
@@ -1193,6 +1195,14 @@
       "role_ids": {
         "label": "Roles"
       },
+      "setup": {
+        "password_confirmation": {
+          "label": "Confirm password"
+        },
+        "store_name": {
+          "label": "Store name"
+        }
+      },
       "stock_location": {
         "active": {
           "help": "Inactive locations don't appear in fulfillment selection.",
@@ -1241,13 +1251,23 @@
           "help": "Make a phone number mandatory on customer addresses.",
           "label": "Require phone number"
         },
-        "auto_capture": {
-          "help": "Take payment straight away instead of only reserving the amount. A payment method can override this.",
-          "label": "Charge cards at checkout"
-        },
-        "auto_capture_on_dispatch": {
-          "help": "Wait until goods actually go out before taking the money.",
-          "label": "Charge on dispatch"
+        "capture_method": {
+          "label": "When to charge customers",
+          "help": "The default for every payment method. An individual payment method can override it.",
+          "options": {
+            "checkout": {
+              "label": "At checkout",
+              "description": "Take the money as soon as the order is placed."
+            },
+            "on_dispatch": {
+              "label": "On dispatch",
+              "description": "Reserve the amount at checkout and take it when the goods go out."
+            },
+            "manual": {
+              "label": "Manually",
+              "description": "Reserve the amount at checkout and let staff take it later."
+            }
+          }
         },
         "company_field_enabled": {
           "help": "Show a company field on address forms during checkout.",
@@ -1261,6 +1281,14 @@
         "disable_sku_validation": {
           "help": "Let more than one variant share the same SKU.",
           "label": "Allow duplicate SKUs"
+        },
+        "document_number_format": {
+          "label": "Numbering format",
+          "help": "Applies to every numbered document. Sequential numbers count up and are easier to read back; random numbers do not reveal how many orders your store has taken.",
+          "options": {
+            "sequential": "Sequential — count up from a starting number",
+            "random": "Random — unpredictable digits"
+          }
         },
         "guest_checkout": {
           "help": "Store-wide default for whether shoppers can check out without an account. Channels can override this.",
@@ -1282,6 +1310,25 @@
           "help": "Recipient of \"new order placed\" notifications. Leave blank to disable.",
           "label": "New order notifications",
           "placeholder": "ops@yourstore.com"
+        },
+        "order_number_prefix": {
+          "label": "Prefix",
+          "help": "Leads every order number.",
+          "invalid": "Use only uppercase letters, digits, dashes and #."
+        },
+        "order_number_preview": {
+          "label": "Preview",
+          "help": "Changes apply to future orders only. Numbers already issued never change."
+        },
+        "order_number_sequence_start": {
+          "label": "Start numbering at",
+          "help": "Only applies before your first order. Changing it later does not renumber existing orders.",
+          "locked": "Numbering has already started, so this no longer applies. Existing order numbers never change."
+        },
+        "order_number_suffix": {
+          "label": "Suffix",
+          "help": "Ends every order number.",
+          "invalid": "Use only uppercase letters, digits, dashes and #."
         },
         "preferred_admin_locale": {
           "label": "Admin language",
@@ -2660,6 +2707,7 @@
           "tab_default_package": "Default package",
           "tab_general": "General",
           "tab_inventory": "Inventory",
+          "tab_order_numbers": "Order numbers",
           "tab_payments": "Payments",
           "tab_standards": "Standards and formats",
           "tab_storefront_access": "Storefront access",
@@ -3518,6 +3566,22 @@
         "tax_categories": "Tax categories",
         "webhooks": "Webhooks"
       }
+    },
+    "setup": {
+      "title": "Set up Spree",
+      "subtitle": "Create your admin account and name your store to finish installation.",
+      "loading": "Checking setup status…",
+      "missing_token_title": "Setup link required",
+      "missing_token_message": "Open the setup link printed during installation — it contains the one-time setup token. Run \"bin/rails spree:setup:token\" to print a fresh one.",
+      "not_available_title": "Setup is not available",
+      "not_available_message": "This installation is already set up. Sign in with your admin account instead.",
+      "could_not_complete": "Could not complete setup",
+      "completing": "Setting up…",
+      "complete": "Complete setup",
+      "back_to_login": "Back to sign in",
+      "required_notice_title": "This installation isn't set up yet",
+      "required_notice_message": "No admin account exists. Use the setup link from the install output to create one.",
+      "required_notice_link": "Go to setup"
     },
     "staff": {
       "actions": {

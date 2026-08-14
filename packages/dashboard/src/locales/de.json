@@ -960,9 +960,11 @@
           "help": "Inaktive Methoden werden beim Checkout ausgeblendet.",
           "label": "Aktiv"
         },
-        "auto_capture": {
-          "help": "Bei Autorisierung automatisch einziehen. Wenn deaktiviert, müssen Sie manuell einziehen.",
-          "label": "Automatischer Einzug"
+        "capture_method": {
+          "label": "Wann Kunden belastet werden",
+          "help": "Überschreibt die Store-Einstellung nur für diese Zahlungsart.",
+          "inherit": "Store-Einstellung verwenden",
+          "inherited": "Store-Einstellung verwenden ({{value}})"
         },
         "description": {
           "placeholder": "Kundenseitige Beschreibung, die beim Checkout angezeigt wird"
@@ -1193,6 +1195,14 @@
       "role_ids": {
         "label": "Rollen"
       },
+      "setup": {
+        "password_confirmation": {
+          "label": "Passwort bestätigen"
+        },
+        "store_name": {
+          "label": "Shopname"
+        }
+      },
       "stock_location": {
         "active": {
           "help": "Inaktive Standorte erscheinen nicht in der Fulfillment-Auswahl.",
@@ -1241,13 +1251,23 @@
           "help": "Eine Telefonnummer in Kundenadressen zur Pflicht machen.",
           "label": "Telefonnummer erforderlich"
         },
-        "auto_capture": {
-          "help": "Den Betrag sofort einziehen statt ihn nur zu reservieren. Eine Zahlungsart kann dies überschreiben.",
-          "label": "Karten beim Bezahlen belasten"
-        },
-        "auto_capture_on_dispatch": {
-          "help": "Erst abbuchen, wenn die Ware tatsächlich rausgeht.",
-          "label": "Bei Versand belasten"
+        "capture_method": {
+          "label": "Wann Kunden belastet werden",
+          "help": "Die Vorgabe für jede Zahlungsart. Eine einzelne Zahlungsart kann sie überschreiben.",
+          "options": {
+            "checkout": {
+              "label": "Beim Bezahlen",
+              "description": "Den Betrag einziehen, sobald die Bestellung aufgegeben wird."
+            },
+            "on_dispatch": {
+              "label": "Bei Versand",
+              "description": "Den Betrag beim Bezahlen reservieren und einziehen, wenn die Ware rausgeht."
+            },
+            "manual": {
+              "label": "Manuell",
+              "description": "Den Betrag beim Bezahlen reservieren und später vom Team einziehen lassen."
+            }
+          }
         },
         "company_field_enabled": {
           "help": "Ein Firmenfeld in den Adressformularen an der Kasse anzeigen.",
@@ -1261,6 +1281,14 @@
         "disable_sku_validation": {
           "help": "Mehrere Varianten dürfen dieselbe SKU verwenden.",
           "label": "Doppelte SKUs erlauben"
+        },
+        "document_number_format": {
+          "label": "Nummerierungsformat",
+          "help": "Gilt für alle nummerierten Dokumente. Fortlaufende Nummern zählen hoch und lassen sich leichter vorlesen; zufällige Nummern verraten nicht, wie viele Bestellungen Ihr Shop erhalten hat.",
+          "options": {
+            "sequential": "Fortlaufend — zählt von einem Startwert hoch",
+            "random": "Zufällig — unvorhersehbare Ziffern"
+          }
         },
         "guest_checkout": {
           "help": "Store-weite Vorgabe dafür, ob Kunden ohne Konto zur Kasse gehen können. Vertriebskanäle können dies überschreiben.",
@@ -1282,6 +1310,25 @@
           "help": "Empfänger von Benachrichtigungen über „neue Bestellung aufgegeben“. Leer lassen, um zu deaktivieren.",
           "label": "Benachrichtigungen über neue Bestellungen",
           "placeholder": "ops@yourstore.com"
+        },
+        "order_number_prefix": {
+          "label": "Präfix",
+          "help": "Steht vor jeder Bestellnummer.",
+          "invalid": "Nur Großbuchstaben, Ziffern, Bindestriche und # verwenden."
+        },
+        "order_number_preview": {
+          "label": "Vorschau",
+          "help": "Änderungen gelten nur für künftige Bestellungen. Bereits vergebene Nummern ändern sich nie."
+        },
+        "order_number_sequence_start": {
+          "label": "Nummerierung beginnen bei",
+          "help": "Gilt nur vor Ihrer ersten Bestellung. Eine spätere Änderung nummeriert bestehende Bestellungen nicht neu.",
+          "locked": "Die Nummerierung hat bereits begonnen, daher gilt dies nicht mehr. Bestehende Bestellnummern ändern sich nie."
+        },
+        "order_number_suffix": {
+          "label": "Suffix",
+          "help": "Steht am Ende jeder Bestellnummer.",
+          "invalid": "Nur Großbuchstaben, Ziffern, Bindestriche und # verwenden."
         },
         "preferred_admin_locale": {
           "label": "Admin-Sprache",
@@ -2660,6 +2707,7 @@
           "tab_default_package": "Standardpaket",
           "tab_general": "Allgemein",
           "tab_inventory": "Lagerbestand",
+          "tab_order_numbers": "Bestellnummern",
           "tab_payments": "Zahlungen",
           "tab_standards": "Standards und Formate",
           "tab_storefront_access": "Storefront-Zugriff",
@@ -3518,6 +3566,22 @@
         "tax_categories": "Steuerkategorien",
         "webhooks": "Webhooks"
       }
+    },
+    "setup": {
+      "title": "Spree einrichten",
+      "subtitle": "Erstellen Sie Ihr Administratorkonto und benennen Sie Ihren Shop, um die Installation abzuschließen.",
+      "loading": "Setup-Status wird geprüft…",
+      "missing_token_title": "Setup-Link erforderlich",
+      "missing_token_message": "Öffnen Sie den bei der Installation ausgegebenen Setup-Link — er enthält das einmalige Setup-Token. Mit \"bin/rails spree:setup:token\" können Sie einen neuen ausgeben.",
+      "not_available_title": "Setup ist nicht verfügbar",
+      "not_available_message": "Diese Installation ist bereits eingerichtet. Melden Sie sich stattdessen mit Ihrem Administratorkonto an.",
+      "could_not_complete": "Setup konnte nicht abgeschlossen werden",
+      "completing": "Wird eingerichtet…",
+      "complete": "Setup abschließen",
+      "back_to_login": "Zurück zur Anmeldung",
+      "required_notice_title": "Diese Installation ist noch nicht eingerichtet",
+      "required_notice_message": "Es existiert noch kein Administratorkonto. Verwenden Sie den Setup-Link aus der Installationsausgabe, um eines zu erstellen.",
+      "required_notice_link": "Zum Setup"
     },
     "staff": {
       "actions": {

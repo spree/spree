@@ -11,14 +11,16 @@ module Spree
         # different store entirely.
         user ||= store.users.first
 
-        raise 'No admin user found. Please run seeds first.' unless user
+        raise 'No admin user found for the store. Complete first-run setup, or seed with ADMIN_EMAIL/ADMIN_PASSWORD set.' unless user
 
         import = import_class.new(owner: store, user: user)
         # Persisted before save: the processing jobs reload the record, so these
         # have to travel with it rather than live on the instance.
         import.preferred_inline = inline
         import.preferred_skip_events = skip_events
-        import.number = import.generate_permalink(import_class)
+        # Saved with `validate: false` below, which skips the before_validation
+        # that normally numbers the record.
+        import.generate_number
         import.attachment.attach(
           io: File.open(csv_path),
           filename: File.basename(csv_path),

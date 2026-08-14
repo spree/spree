@@ -5,6 +5,31 @@ describe Spree::Store, type: :model, without_global_store: true do
     Spree::Country.find_by(iso: 'US') || create(:country_us)
   end
 
+  describe 'order number sequence start' do
+    let(:store) { create(:store) }
+
+    it 'can change while no number has been issued' do
+      store.preferred_order_number_sequence_start = 10_001
+
+      expect(store).to be_valid
+    end
+
+    it 'locks once the counter has issued a number' do
+      Spree::NumberSequence.next_value(store: store, resource_type: 'order')
+      store.preferred_order_number_sequence_start = 10_001
+
+      expect(store).not_to be_valid
+      expect(store.errors[:preferred_order_number_sequence_start]).to be_present
+    end
+
+    it 'accepts a save that does not change the start after numbering began' do
+      Spree::NumberSequence.next_value(store: store, resource_type: 'order')
+      store.name = 'Renamed'
+
+      expect(store).to be_valid
+    end
+  end
+
   context 'Associations' do
     subject { create(:store) }
 
@@ -111,11 +136,59 @@ describe Spree::Store, type: :model, without_global_store: true do
   end
 
   context 'Callbacks' do
-    describe '#set_default_code' do
-      let(:store) { build(:store, name: 'Store', code: nil) }
+    # Pinned: store provisioning (first-run setup, enterprise multi-tenant)
+    # leans on the single-default invariant this callback maintains.
+    describe '#ensure_default_exists_and_is_unique' do
+      it 'demotes every other store when one is saved as default' do
+        default_store = create(:store, default: true)
+        other_store = create(:store)
 
-      it 'sets the code to default when blank' do
-        expect { store.valid? }.to change(store, :code).from(nil).to('default')
+        other_store.update!(default: true)
+
+        expect(other_store.reload).to be_default
+        expect(default_store.reload).not_to be_default
+      end
+
+      it 'makes the first created store the default automatically' do
+        # Rows created in other files' before(:all) blocks survive into this
+        # example's transaction — clear them so "first store" is really first.
+        Spree::Store.with_deleted.delete_all
+
+        store = create(:store)
+
+        expect(store.reload).to be_default
+      end
+    end
+
+    describe '#set_default_code' do
+      context 'when no store exists yet' do
+        before { Spree::Store.with_deleted.delete_all }
+
+        it "sets the very first store's code to 'default'" do
+          store = build(:store, name: 'Store', code: nil)
+
+          expect { store.valid? }.to change(store, :code).from(nil).to('default')
+        end
+      end
+
+      context 'when other stores exist' do
+        before { create(:store) }
+
+        it 'derives the code from the name' do
+          store = build(:store, name: 'Fancy Shop', code: nil)
+
+          expect { store.valid? }.to change(store, :code).from(nil).to('fancy-shop')
+        end
+
+        it 'suffixes the code until unique, counting soft-deleted stores' do
+          create(:store, name: 'Fancy Shop', code: 'fancy-shop')
+          create(:store, name: 'Fancy Shop', code: 'fancy-shop-2').destroy
+
+          store = build(:store, name: 'Fancy Shop', code: nil)
+          store.valid?
+
+          expect(store.code).to eq('fancy-shop-3')
+        end
       end
 
       context 'when code is already set' do
@@ -258,13 +331,30 @@ describe Spree::Store, type: :model, without_global_store: true do
 
   end
 
+  describe '#setup_url' do
+    let(:store) { create(:store, url: 'shop.example.com') }
+
+    it 'points at the configured dashboard origin' do
+      allow(Spree::Stores::DashboardUrl).to receive(:call).and_return('https://admin.example.com')
+
+      expect(store.setup_url).to eq("https://admin.example.com/setup?token=#{store.setup_token}")
+    end
+
+    it 'is nil once the token is spent' do
+      store.update!(setup_token: nil)
+
+      expect(store.setup_url).to be_nil
+    end
+  end
+
   context 'Validations' do
     describe '#code' do
-      it 'requires code to be present' do
+      it 'generates a code when blank' do
         store = build(:store, code: nil, name: nil)
         store.valid?
-        # set_default_code sets it to 'default' if blank, so it should be valid
-        expect(store.code).to eq('default')
+        # set_default_code generates a code if blank, so it should be valid
+        expect(store.code).to be_present
+        expect(store.errors[:code]).to be_empty
       end
     end
 
@@ -965,6 +1055,71 @@ describe Spree::Store, type: :model, without_global_store: true do
 
       expect(store).not_to be_valid
       expect(store.errors[:preferred_storefront_url]).to be_present
+    end
+  end
+
+  describe 'capture method' do
+    let(:store) { create(:store) }
+
+    it 'charges at checkout unless told otherwise' do
+      expect(store.resolved_capture_method).to eq('checkout')
+      expect(store).to be_capture_at_checkout
+    end
+
+    it 'answers the matching question for each value' do
+      store.preferred_capture_method = 'on_dispatch'
+      expect(store).to be_capture_on_dispatch
+      expect(store).not_to be_capture_at_checkout
+
+      store.preferred_capture_method = 'manual'
+      expect(store).to be_capture_manually
+    end
+
+    it 'rejects a value outside the vocabulary' do
+      store.preferred_capture_method = 'whenever'
+
+      expect(store).not_to be_valid
+      expect(store.errors[:preferred_capture_method]).to be_present
+    end
+
+    describe 'deprecated accessors' do
+      before { allow(Spree::Deprecation).to receive(:warn) }
+
+      it 'reads the old names off the new preference' do
+        store.preferred_capture_method = 'on_dispatch'
+
+        expect(store.preferred_auto_capture).to be false
+        expect(store.preferred_auto_capture_on_dispatch).to be true
+      end
+
+      it 'writes charging at checkout through the old name' do
+        store.preferred_capture_method = 'manual'
+        store.preferred_auto_capture = true
+
+        expect(store.preferred_capture_method).to eq('checkout')
+      end
+
+      it 'writes charging on dispatch through the old name' do
+        store.preferred_auto_capture_on_dispatch = true
+
+        expect(store.preferred_capture_method).to eq('on_dispatch')
+      end
+
+      # Turning the old flag off says only "not at checkout", so a store
+      # already charging on dispatch must keep doing that.
+      it 'keeps an existing dispatch choice when the old flag is turned off' do
+        store.preferred_capture_method = 'on_dispatch'
+        store.preferred_auto_capture = false
+
+        expect(store.preferred_capture_method).to eq('on_dispatch')
+      end
+
+      it 'falls back to charging manually when the old flag is turned off at checkout' do
+        store.preferred_capture_method = 'checkout'
+        store.preferred_auto_capture = false
+
+        expect(store.preferred_capture_method).to eq('manual')
+      end
     end
   end
 

@@ -26,9 +26,11 @@ export interface StoreUpdateParams {
   preferred_company_field_enabled?: boolean
   /** Makes a phone number mandatory on customer addresses. */
   preferred_address_requires_phone?: boolean
-  /** Store-wide default for charging cards at checkout rather than only authorizing them. A payment method's own setting wins when set. */
+  /** Store-wide default for when a customer is charged rather than only authorized. A payment method's own setting wins when set. */
+  preferred_capture_method?: 'checkout' | 'on_dispatch' | 'manual'
+  /** @deprecated Use `preferred_capture_method`; removed in 6.1. */
   preferred_auto_capture?: boolean
-  /** Takes payment when goods are dispatched rather than at checkout. */
+  /** @deprecated Use `preferred_capture_method`; removed in 6.1. */
   preferred_auto_capture_on_dispatch?: boolean
   /** Counts on-hand quantities. Off means everything is treated as always available. */
   preferred_track_inventory_levels?: boolean
@@ -40,6 +42,14 @@ export interface StoreUpdateParams {
   preferred_show_products_without_price?: boolean
   /** Lets more than one variant share the same SKU. */
   preferred_disable_sku_validation?: boolean
+  /** How document numbers are produced: `sequential` or `random`. Applies to every numbered document. */
+  preferred_document_number_format?: string
+  /** Leads every order number, e.g. `R`. Uppercase letters, digits, dashes and # only. */
+  preferred_order_number_prefix?: string
+  /** Ends every order number. Uppercase letters, digits, dashes and # only. */
+  preferred_order_number_suffix?: string
+  /** First sequential order number. Only applies before the store's first order. */
+  preferred_order_number_sequence_start?: number
   /** Sender address used on all transactional emails (required by the model). */
   mail_from_address?: string
   /** Customer-facing reply-to address shown in the storefront/email footer. */
@@ -958,6 +968,31 @@ export interface InvitationAcceptParams {
   last_name?: string
 }
 
+/** Response of the public first-run setup availability check. */
+export interface SetupStatus {
+  /** True only while the installation has no admin user. */
+  setup_required: boolean
+}
+
+/**
+ * Body for completing first-run setup: creates the first admin account and
+ * names the store, authorized by the one-time setup token printed at install
+ * time.
+ */
+export interface SetupParams {
+  setup_token: string
+  email: string
+  password: string
+  password_confirmation?: string
+  first_name?: string
+  last_name?: string
+  store_name?: string
+  /** ISO currency code for the store, e.g. `USD`. */
+  currency?: string
+  /** ISO 3166-1 alpha-2 country code for the store, e.g. `US`. */
+  country_iso?: string
+}
+
 /** Body for requesting a password reset email. */
 export interface PasswordResetRequestParams {
   email: string
@@ -1481,7 +1516,10 @@ export interface PaymentMethodCreateParams {
   active?: boolean
   /** `false` → admin-only; `true` → also on the storefront. */
   storefront_visible?: boolean
+  /** @deprecated Use `capture_method`; removed in 6.1. */
   auto_capture?: boolean | null
+  /** When customers are charged for this method. `null` inherits the store setting. */
+  capture_method?: 'checkout' | 'on_dispatch' | 'manual' | null
   position?: number
   metadata?: Record<string, unknown>
   /** Provider-specific configuration; values are coerced via the typed setters. */
@@ -1494,7 +1532,10 @@ export interface PaymentMethodUpdateParams {
   active?: boolean
   /** `false` → admin-only; `true` → also on the storefront. */
   storefront_visible?: boolean
+  /** @deprecated Use `capture_method`; removed in 6.1. */
   auto_capture?: boolean | null
+  /** When customers are charged for this method. `null` inherits the store setting. */
+  capture_method?: 'checkout' | 'on_dispatch' | 'manual' | null
   position?: number
   metadata?: Record<string, unknown>
   preferences?: Record<string, unknown>

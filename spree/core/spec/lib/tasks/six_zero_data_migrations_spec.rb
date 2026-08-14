@@ -13,6 +13,7 @@ describe '6.0 data migration tasks' do
     load Spree::Core::Engine.root.join('lib', 'tasks', 'store_binding_migration.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'fulfillment_statuses_migration.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'tax_zones_migration.rake')
+    load Spree::Core::Engine.root.join('lib', 'tasks', 'capture_methods_migration.rake')
   end
 
   let(:store) { @default_store }
@@ -567,6 +568,37 @@ describe '6.0 data migration tasks' do
       run_task('spree:migrate_fulfillment_statuses')
 
       expect(order.fulfillments.map { |fulfillment| fulfillment.reload.status }).to eq(first_pass)
+    end
+  end
+
+  describe 'spree:migrate_capture_methods' do
+    it 'converts capture-on-authorization into charging at checkout' do
+      payment_method = create(:payment_method, store: store)
+      payment_method.update_columns(auto_capture: true, capture_method: nil)
+
+      run_task('spree:migrate_capture_methods')
+
+      expect(payment_method.reload.capture_method).to eq('checkout')
+    end
+
+    # The boolean only recorded "not at checkout"; it could not say whether
+    # dispatch or staff was meant to charge, so the store keeps deciding.
+    it 'leaves a method that did not capture on authorization inheriting' do
+      payment_method = create(:payment_method, store: store)
+      payment_method.update_columns(auto_capture: false, capture_method: nil)
+
+      run_task('spree:migrate_capture_methods')
+
+      expect(payment_method.reload.capture_method).to be_nil
+    end
+
+    it 'never overwrites a method that already has a capture method' do
+      payment_method = create(:payment_method, store: store)
+      payment_method.update_columns(auto_capture: true, capture_method: 'manual')
+
+      run_task('spree:migrate_capture_methods')
+
+      expect(payment_method.reload.capture_method).to eq('manual')
     end
   end
 end

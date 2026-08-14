@@ -95,4 +95,45 @@ describe 'spree:store_settings:backfill_from_config' do
       expect { run_task }.not_to change { store.reload.preferred_stock_reservation_ttl_minutes }.from(40)
     end
   end
+
+  # The two capture booleans collapsed into one string, so the pair has to be
+  # read together — neither global maps to the preference on its own.
+  context 'when the capture globals were changed' do
+    after do
+      Spree::Config.auto_capture = true
+      Spree::Config.auto_capture_on_dispatch = false
+      store.update!(preferred_capture_method: 'checkout', metadata: (store.metadata || {}).except(marker))
+    end
+
+    it 'maps charging on dispatch onto the capture method' do
+      Spree::Config.auto_capture = false
+      Spree::Config.auto_capture_on_dispatch = true
+
+      expect { run_task }.to change { store.reload.preferred_capture_method }.from('checkout').to('on_dispatch')
+    end
+
+    it 'maps both globals off onto charging manually' do
+      Spree::Config.auto_capture = false
+      Spree::Config.auto_capture_on_dispatch = false
+
+      expect { run_task }.to change { store.reload.preferred_capture_method }.from('checkout').to('manual')
+    end
+
+    # The old code captured at checkout and then had nothing left to take on
+    # dispatch, so checkout is what the contradictory pair actually meant.
+    it 'keeps charging at checkout when both globals were on' do
+      Spree::Config.auto_capture = true
+      Spree::Config.auto_capture_on_dispatch = true
+
+      expect { run_task }.not_to change { store.reload.preferred_capture_method }.from('checkout')
+    end
+
+    it 'leaves a store that already picked a capture method alone' do
+      Spree::Config.auto_capture = false
+      Spree::Config.auto_capture_on_dispatch = true
+      store.update!(preferred_capture_method: 'manual')
+
+      expect { run_task }.not_to change { store.reload.preferred_capture_method }.from('manual')
+    end
+  end
 end

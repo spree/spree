@@ -1,3 +1,117 @@
+## 2026-08-13: Document numbers — sequential by default, store-configurable orders, derived child numbers
+
+`Spree::Core::NumberGenerator` (the boot-frozen `Module` factory) is replaced
+at 6.0 by a `has_spree_number prefix: 'R'` macro (`Spree::HasNumber`, included
+into `Spree::Base` so no model needs its own include) plus runtime-resolved
+strategy classes
+(`Spree.number_generators` registry, `NumberGenerators::Sequential` |
+`::Random`). Sequential is the new default — invoice-like `R1001, R1002` with
+a per-`(store, resource_type)` counter table (`spree_number_sequences`,
+`with_lock` increment, portable across all three databases); random becomes
+opt-in. Merchants get exactly one dashboard surface: an "Order numbers" card
+(prefix, suffix, format, starting value — default 1001) stored as
+`Spree::Store` preferences. Other document types keep code defaults;
+developers swap generators via the registry.
+
+The numbered-model census shrank. Numbers predate prefixed IDs as the
+human-readable identifier, so each model was audited for who actually reads
+its number: **Order** keeps the flagship stored number; **Return / Exchange /
+Claim** keep stored numbers (customer-visible, dashboard cards, and the
+`migrate_returns` resume cursor); **Fulfillment and Payment numbers become
+derived methods** — stored value honored on legacy rows, new rows compute
+`"#{order.number}-F1"` / `"-P1"` from parent + sibling position, generation
+and counters gone (gateway `order_id` simplifies to `payment.number`;
+idempotency to `"spree-#{payment.number}"`). Every other numbered model keeps
+its stored number. The dividing line is *document handled outside the
+dashboard* versus *row in an admin table* — which on inspection kept more
+than the draft expected: transfer slips travel on boxes, POs are quoted to
+suppliers, and **imports and exports mail their number in a subject line**
+(`Your export EF1001 was successfully processed!`), so the planned removal of
+back-office numbers was dropped during implementation.
+
+Consequences: never parse or regex a `number` (format is merchant data now);
+never write `spree_fulfillments.number` / `spree_payments.number` (frozen
+until the 6.1 column drop); the global unique index stays, so sequential is
+mostly-gapless and must never be sold as legal invoice numbering; settings
+changes only affect future numbers; and code saving a numbered record with
+`validate: false` must call `generate_number` itself, since the hook that
+normally assigns one is `before_validation`. Plan:
+`6.0-document-numbers.md`.
+
+## 2026-08-13: Isolation tripwires — the guard under the store-scoping discipline
+
+Open-core isolation is the controller discipline (every lookup through a
+`current_store` association); row-level enforcement is deliberately not a
+core feature. Two nets now sit under that discipline rather than trusting
+review alone.
+
+`Spree::StoreScopeGuard` wraps every v3 API request in development and test:
+a SELECT against a store-owned table (schema-derived — any `spree_*` table
+with a `store_id` column) carrying no `store_id` predicate is reported with
+the SQL and call site. `log` by default, `raise` in this repo's API suite,
+never active in production. Deliberately global lookups — the API-key
+searches, where the key selects the store — opt out with
+`StoreScopeGuard.skip`, which doubles as documentation of intent.
+`watchable_environment?` is overridable so a multi-tenant enforcement layer
+can run the guard as a production log-mode canary, and the schema-derived
+watched set means tables stamped with `store_id` later are watched with no
+registration.
+
+Cache keys get a static audit spec: every `Rails.cache` call site in core
+and api must visibly carry the store in its key or hold a reviewed allowlist
+entry saying why the data is global. Writing the audit surfaced a real bug —
+idempotency replay caching keyed per credential but not per store, so a
+staff JWT reusing an Idempotency-Key across stores replayed the first
+store's response. The key now partitions by the requested store.
+
+Consequences: a store-less secondary-key lookup (slug, number, code, email,
+token) or unscoped scan on a store-owned table inside an API request is a
+test failure, not a review comment — wrap genuinely global lookups in
+`skip`. Honest limits: id/foreign-key filters and `SELECT 1 AS one`
+existence checks are exempt (they are dominated by loads from already-scoped
+rows and uniqueness validations) — exemption is NOT proof of scoping, so a
+lookup fed a request-derived id still requires `current_store` fetching even
+though the guard stays silent on it; and only the v3 controller surface is
+watched — jobs, webhooks and callbacks are a future extension, ideally keyed
+off `Spree::Current.store` assignment rather than per-entry-point
+registration. A new `Rails.cache` call without a store-scoped key fails the
+core suite until scoped or reviewed onto the allowlist, and a store-owned
+model with an unscoped `acts_as_list` fails it too (positions would bleed
+across stores — the bug PaymentMethod shipped with, fixed alongside three
+sibling leaks the tripwires surfaced: the pickup-location fallback, the
+stock-location default flag, variant stock-item propagation, and data-feed
+name uniqueness). Plan: `6.0-store-context-and-first-run-setup.md`.
+
+## 2026-08-13: Store context is credential-derived — hostname resolution retired; first-run setup replaces the dummy admin
+
+Every v3 API request resolved to `Spree::Store.default`: the configured finder
+discarded the hostname it was handed, and no server code read the
+`X-Spree-Store-Id` header the admin SDK sends on every request — so the
+dashboard's store switcher silently lied, and API keys were validated
+*against* the default store instead of *selecting* their own.
+
+Decision: store context is explicit and comes from the credential, never the
+hostname. The publishable key selects the store on the Store API (the key
+already `belongs_to :store`); a secret key is bound to its store; JWT staff
+sessions select via `X-Spree-Store-Id`, membership-checked against the
+*requested* store (header-less JWT requests fall back to the default store
+with a deprecation warning through 6.0, required at 6.1). Hostname-based
+store resolution was a requirement of the server-rendered per-subdomain era
+and is gone with it — never read `request.host` to pick a store.
+`Spree.current_store_finder` stays as the override point.
+
+With it, installation stops minting `spree@example.com` / `spree123`: the
+seed creates an admin only when `ADMIN_EMAIL`/`ADMIN_PASSWORD` are explicitly
+set, and otherwise a one-time, token-guarded first-run setup flow (dashboard
+`/setup` + `auth/setup` endpoints, invitation-acceptance shape) creates the
+first admin and adopts/renames the seeded store. The token is required in
+every environment — no env-based security branches. No general store CRUD
+ships in the OSS Admin API; first-run configures the one store.
+
+Consequences: Admin API code must never assume `current_store` is the default
+store, and store-touching cache keys must carry the store id by construction.
+Plan: `6.0-store-context-and-first-run-setup.md`.
+
 ## 2026-08-12: Jurisdiction is stored as a code, never as a country or state row
 
 Amends 2026-08-06 ("Converted-away columns outlive the release that converts

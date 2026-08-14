@@ -974,9 +974,11 @@
           "help": "Nieaktywne metody są ukryte podczas składania zamówienia.",
           "label": "Aktywna"
         },
-        "auto_capture": {
-          "help": "Pobieraj środki automatycznie po autoryzacji. Gdy wyłączone, musisz pobrać je ręcznie.",
-          "label": "Automatyczne pobranie"
+        "capture_method": {
+          "label": "Kiedy obciążać klientów",
+          "help": "Nadpisuje ustawienie sklepu tylko dla tej metody płatności.",
+          "inherit": "Użyj ustawienia sklepu",
+          "inherited": "Użyj ustawienia sklepu ({{value}})"
         },
         "description": {
           "placeholder": "Opis widoczny dla klienta podczas składania zamówienia"
@@ -1207,6 +1209,14 @@
       "role_ids": {
         "label": "Role"
       },
+      "setup": {
+        "password_confirmation": {
+          "label": "Potwierdź hasło"
+        },
+        "store_name": {
+          "label": "Nazwa sklepu"
+        }
+      },
       "stock_location": {
         "active": {
           "help": "Nieaktywne lokalizacje nie pojawiają się w wyborze realizacji zamówień.",
@@ -1255,13 +1265,23 @@
           "help": "Uczyń numer telefonu obowiązkowym w adresach klientów.",
           "label": "Wymagaj numeru telefonu"
         },
-        "auto_capture": {
-          "help": "Pobieraj płatność od razu, zamiast tylko rezerwować kwotę. Metoda płatności może to nadpisać.",
-          "label": "Obciążaj karty przy zamówieniu"
-        },
-        "auto_capture_on_dispatch": {
-          "help": "Pobieraj pieniądze dopiero wtedy, gdy towar faktycznie wyjeżdża.",
-          "label": "Obciążaj przy wysyłce"
+        "capture_method": {
+          "label": "Kiedy obciążać klientów",
+          "help": "Domyślne ustawienie dla każdej metody płatności. Pojedyncza metoda płatności może je nadpisać.",
+          "options": {
+            "checkout": {
+              "label": "Przy zamówieniu",
+              "description": "Pobierz pieniądze zaraz po złożeniu zamówienia."
+            },
+            "on_dispatch": {
+              "label": "Przy wysyłce",
+              "description": "Zarezerwuj kwotę przy zamówieniu i pobierz ją, gdy towar wyjeżdża."
+            },
+            "manual": {
+              "label": "Ręcznie",
+              "description": "Zarezerwuj kwotę przy zamówieniu i pozwól zespołowi pobrać ją później."
+            }
+          }
         },
         "company_field_enabled": {
           "help": "Pokaż pole firmy w formularzach adresowych podczas składania zamówienia.",
@@ -1275,6 +1295,14 @@
         "disable_sku_validation": {
           "help": "Pozwól, aby kilka wariantów miało ten sam SKU.",
           "label": "Zezwalaj na powtórzone SKU"
+        },
+        "document_number_format": {
+          "label": "Format numeracji",
+          "help": "Dotyczy wszystkich numerowanych dokumentów. Numery kolejne rosną i łatwiej je podyktować; numery losowe nie zdradzają, ile zamówień otrzymał sklep.",
+          "options": {
+            "sequential": "Kolejny — liczony od wartości początkowej",
+            "random": "Losowy — nieprzewidywalne cyfry"
+          }
         },
         "guest_checkout": {
           "help": "Domyślne ustawienie dla całego sklepu określające, czy klienci mogą składać zamówienia bez konta. Kanały mogą je nadpisać.",
@@ -1296,6 +1324,25 @@
           "help": "Odbiorca powiadomień „złożono nowe zamówienie”. Pozostaw puste, aby wyłączyć.",
           "label": "Powiadomienia o nowych zamówieniach",
           "placeholder": "ops@twojsklep.com"
+        },
+        "order_number_prefix": {
+          "label": "Prefiks",
+          "help": "Poprzedza każdy numer zamówienia.",
+          "invalid": "Używaj tylko wielkich liter, cyfr, myślników i #."
+        },
+        "order_number_preview": {
+          "label": "Podgląd",
+          "help": "Zmiany dotyczą wyłącznie przyszłych zamówień. Już nadane numery nigdy się nie zmieniają."
+        },
+        "order_number_sequence_start": {
+          "label": "Zacznij numerację od",
+          "help": "Dotyczy tylko okresu przed pierwszym zamówieniem. Późniejsza zmiana nie przenumeruje istniejących zamówień.",
+          "locked": "Numeracja już się rozpoczęła, więc to ustawienie nie ma już zastosowania. Istniejące numery zamówień nigdy się nie zmieniają."
+        },
+        "order_number_suffix": {
+          "label": "Sufiks",
+          "help": "Kończy każdy numer zamówienia.",
+          "invalid": "Używaj tylko wielkich liter, cyfr, myślników i #."
         },
         "preferred_admin_locale": {
           "label": "Język panelu administracyjnego",
@@ -2698,6 +2745,7 @@
           "tab_default_package": "Domyślna paczka",
           "tab_general": "Ogólne",
           "tab_inventory": "Stan magazynowy",
+          "tab_order_numbers": "Numery zamówień",
           "tab_payments": "Płatności",
           "tab_standards": "Standardy i formaty",
           "tab_storefront_access": "Dostęp do sklepu",
@@ -3572,6 +3620,22 @@
         "tax_categories": "Kategorie podatkowe",
         "webhooks": "Webhooki"
       }
+    },
+    "setup": {
+      "title": "Skonfiguruj Spree",
+      "subtitle": "Utwórz konto administratora i nazwij swój sklep, aby zakończyć instalację.",
+      "loading": "Sprawdzanie stanu konfiguracji…",
+      "missing_token_title": "Wymagany link konfiguracyjny",
+      "missing_token_message": "Otwórz link konfiguracyjny wyświetlony podczas instalacji — zawiera jednorazowy token. Uruchom \"bin/rails spree:setup:token\", aby wygenerować nowy.",
+      "not_available_title": "Konfiguracja niedostępna",
+      "not_available_message": "Ta instalacja jest już skonfigurowana. Zaloguj się na konto administratora.",
+      "could_not_complete": "Nie udało się ukończyć konfiguracji",
+      "completing": "Konfigurowanie…",
+      "complete": "Zakończ konfigurację",
+      "back_to_login": "Wróć do logowania",
+      "required_notice_title": "Ta instalacja nie została jeszcze skonfigurowana",
+      "required_notice_message": "Nie istnieje żadne konto administratora. Użyj linku konfiguracyjnego z wyniku instalacji, aby je utworzyć.",
+      "required_notice_link": "Przejdź do konfiguracji"
     },
     "staff": {
       "actions": {
