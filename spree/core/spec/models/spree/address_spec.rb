@@ -435,8 +435,11 @@ describe Spree::Address, type: :model do
   end
 
   context '#clear_invalid_state_entities' do
-    let(:country) { create(:country) }
-    let(:state) { create(:state, country: country) }
+    # Pinned rather than drawn from the factory pool: the contexts below move
+    # the address to Japan to prove a foreign subdivision is dropped, which
+    # only holds while the starting country isn't Japan itself.
+    let(:country) { Spree::Country.by_iso('US') }
+    let(:state) { Spree::State.resolve('US', 'NY') }
     let (:address) { create(:address, country: country, state: state) }
 
     def clear_state_entities
