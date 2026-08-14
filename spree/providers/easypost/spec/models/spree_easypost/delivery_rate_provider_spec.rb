@@ -146,6 +146,30 @@ RSpec.describe SpreeEasyPost::DeliveryRateProvider do
       expect(provider.estimates(package)).to eq([])
     end
 
+    # EasyPost accepts the shipment (201) but attaches rate_error messages
+    # instead of rates when it cannot quote — without logging them, "no
+    # delivery options" is undiagnosable (e.g. an origin with no zip code).
+    it 'logs the carrier rate errors when the shipment comes back with no rates' do
+      rate_error = double(carrier: 'USPS', message: 'Unable to retrieve USPS rates without a valid origin zip code.')
+      empty_shipment = double(id: 'shp_empty', rates: [], messages: [rate_error, rate_error])
+      allow(shipment_service).to receive(:create).and_return(empty_shipment)
+      allow(Rails.logger).to receive(:warn)
+
+      expect(provider.estimates(package)).to eq([])
+      expect(Rails.logger).to have_received(:warn).with(
+        a_string_including('no rates', delivery_method.name, 'shp_empty', 'valid origin zip code')
+      )
+    end
+
+    it 'logs even when EasyPost gives no reason for the empty rate list' do
+      empty_shipment = double(id: 'shp_empty', rates: [], messages: [])
+      allow(shipment_service).to receive(:create).and_return(empty_shipment)
+      allow(Rails.logger).to receive(:warn)
+
+      expect(provider.estimates(package)).to eq([])
+      expect(Rails.logger).to have_received(:warn).with(a_string_including('no carrier messages given'))
+    end
+
     describe 'parcel dimensions' do
       before do
         store.update!(
