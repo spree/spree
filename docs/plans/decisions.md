@@ -112,6 +112,49 @@ Consequences: Admin API code must never assume `current_store` is the default
 store, and store-touching cache keys must carry the store id by construction.
 Plan: `6.0-store-context-and-first-run-setup.md`.
 
+## 2026-08-13: Validate hooks are the validation extension surface; no generic model-validation registry
+
+New plan `6.0-extendable-validations.md`. The question was whether developers
+customizing validations — the single most common core-model modification —
+deserve a generic add/remove validation mechanism, or whether workflow
+`validate` hooks plus the existing model-level knobs already are the answer.
+Decision: the latter. Adding a rule via prepended decorator is already short
+and Rails-native; removing one via registry would require repackaging every
+core validation as a named unit, and no competitor ships anything comparable.
+Relaxing a core rule stays on named store preferences
+(`disable_sku_validation` pattern) or predicate overrides.
+
+What ships instead is the work that makes the hook recommendation honest:
+
+- **`Carts::UpsertItems` graduates to the workflow tier** and absorbs every
+  non-increment item mutation (bulk payloads, PATCH quantity, DELETE item —
+  quantity `0` removes). It fires `validate` per item with `AddItem`-compatible
+  readers, shares the item-application steps with `AddItem` (whose per-item
+  full recalculate is what made N-item adds slow — the batch recalculates
+  once), and is **partial-success on the storefront**: a per-item rejection
+  skips the item onto the cart's existing `warnings` array on a 2xx response
+  rather than rolling back the batch. The **order-side twin fails the whole
+  batch** — a merchant's struck-out row silently not applying is worse than a
+  failed request. No whole-batch veto in 6.0.
+  `SetQuantity`/`RemoveLineItem` become deprecated shells.
+- **`Products::Create`/`Update`/`Destroy` become workflows** (real
+  orchestration, not the plain CRUD the doctrine rejects) with all write paths
+  routed through them — Admin API v3, CSV importer, seeds — so hooks always
+  fire. Variants ride the product graph; no standalone variant workflow.
+- **Rejections carry `ActiveModel::Errors`.** `Workflow#errors` +
+  argument-less `reject!` render through `render_validation_error`, so
+  extension rejections share the model-422 shape (field-scoped symbolic
+  codes) instead of a flat message under a controller-hardcoded wrong code.
+  `reject!(message)` bridges to `:base`.
+- **Address and cart creation get no workflow** — plain CRUD, demand already
+  served (store preferences, gating predicates, `Spree.validators.addresses`
+  which finally gets docs + a removal API + a `require_company` preference;
+  flow-level address policy belongs on `carts.complete.validate`).
+- **Custom-field value validation deferred** to its own plan: Shopify-style
+  per-definition length/range/regex/allowed-values, enforced in the
+  `CustomField` model, gating new writes only. The 2026-08-06 "required stays
+  advisory" constraint is untouched.
+
 ## 2026-08-12: Jurisdiction is stored as a code, never as a country or state row
 
 Amends 2026-08-06 ("Converted-away columns outlive the release that converts

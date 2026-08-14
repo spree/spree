@@ -115,10 +115,7 @@ module Spree
       def process_items
         return unless params[:items].is_a?(Array)
 
-        result = Spree::Carts::UpsertItems.call(
-          cart: cart,
-          items: params[:items]
-        )
+        result = Spree.cart_upsert_items_workflow.call(cart: cart, items: params[:items])
 
         raise StandardError, result.error.to_s if result.failure?
       end

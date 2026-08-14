@@ -51,7 +51,7 @@ RSpec.describe Spree::TaxExemptionCertificates::Verify do
       result = described_class.call(certificate: certificate)
 
       expect(result).to be_failure
-      expect(result.error.value).to eq('registry check failed')
+      expect(result.error.to_s).to eq('registry check failed')
       expect(certificate.reload).to be_pending
       expect(certificate.verified_at).to be_nil
     end

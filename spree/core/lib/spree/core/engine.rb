@@ -49,7 +49,9 @@ module Spree
       PromoEnvironment = Struct.new(:rules, :actions)
       PricingEnvironment = Struct.new(:rules)
       OrderRoutingEnvironment = Struct.new(:strategies, :rules)
-      SpreeValidators = Struct.new(:addresses)
+      # Spree::Validators, not a Struct: the sets carry register/unregister so
+      # a host can drop a core rule (see Spree.validators.addresses).
+      SpreeValidators = Spree::Validators
       CustomFieldsEnvironment = Struct.new(:types, :enabled_resources)
       isolate_namespace Spree
       engine_name 'spree'
@@ -538,6 +540,17 @@ module Spree
       initializer 'spree.returns.register_eligibility_validator', after: :load_config_initializers do
         Spree.hooks.register('returns.create.validate', 'Spree::Returns::EligibilityValidator')
         Spree.hooks.register('exchanges.create.validate', 'Spree::Returns::EligibilityValidator')
+      end
+
+      # A hook registered against a key no workflow declares would never fire
+      # and never say so. Checking after eager load turns that typo into a
+      # boot failure. Skipped when eager loading is off (development,
+      # console): workflow classes load lazily there, so a declared hook may
+      # simply not be defined yet.
+      initializer 'spree.hooks.validate', after: :load_config_initializers do |app|
+        app.config.after_initialize do
+          Spree.hooks.validate! if app.config.eager_load
+        end
       end
 
       config.to_prepare do

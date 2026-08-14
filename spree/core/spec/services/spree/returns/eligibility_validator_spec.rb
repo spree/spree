@@ -40,7 +40,8 @@ RSpec.describe Spree::Returns::EligibilityValidator do
       result = open_return
 
       expect(result).to be_failure
-      expect(result.error.value).to include('30-day return window')
+      expect(result.error.to_s).to include('30-day return window')
+      expect(result.error.value.details[:base].first[:error]).to eq(:outside_return_window)
       expect(order.reload.returns).to be_empty
     end
 

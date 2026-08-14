@@ -64,6 +64,7 @@ module Spree
       validates :city, :country
       validates :zipcode, if: :require_zipcode?
       validates :phone, if: :require_phone?
+      validates :company, if: :require_company?
     end
 
     validate :state_validate, :postal_code_validate
@@ -209,7 +210,9 @@ module Spree
     end
 
     def require_company?
-      false
+      # Only meaningful when the field is on the form at all — requiring a
+      # value the customer is never shown would make checkout unfinishable.
+      !quick_checkout && show_company_address_field? && store_preference(:address_requires_company, false)
     end
 
     def require_street?

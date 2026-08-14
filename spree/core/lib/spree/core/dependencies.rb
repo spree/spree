@@ -21,6 +21,10 @@ module Spree
         cart_recalculate_totals_workflow: 'Spree::Carts::RecalculateTotals',
         order_recalculate_totals_workflow: 'Spree::Orders::RecalculateTotals',
         cart_remove_item_service: 'Spree::Carts::RemoveItem',
+        # Deprecated shims, not the workflow: they still speak the old
+        # line_item:/quantity: vocabulary and delegate to
+        # cart_upsert_items_workflow internally. Pointing these at the
+        # workflow would ArgumentError on every legacy caller.
         cart_remove_line_item_service: 'Spree::Carts::RemoveLineItem',
         cart_set_item_quantity_service: 'Spree::Carts::SetQuantity',
 
@@ -39,7 +43,8 @@ module Spree
         carts_complete_workflow: 'Spree::Carts::Complete',
         carts_create_service: 'Spree::Carts::Create',
         carts_update_service: 'Spree::Carts::Update',
-        carts_upsert_items_service: 'Spree::Carts::UpsertItems',
+        cart_upsert_items_workflow: 'Spree::Carts::UpsertItems',
+        order_upsert_items_workflow: 'Spree::Orders::UpsertItems',
         cart_merge_workflow: 'Spree::Carts::Merge',
 
         # checkout
@@ -104,6 +109,12 @@ module Spree
         # customers
         customer_create_workflow: 'Spree::Customers::Create',
 
+        # products — every server-side write path runs through these, so a
+        # :validate handler sees dashboard edits, CSV imports and seeds alike
+        product_create_workflow: 'Spree::Products::Create',
+        product_update_workflow: 'Spree::Products::Update',
+        product_destroy_workflow: 'Spree::Products::Destroy',
+
         # tracking numbers
         tracking_number_service: 'Spree::TrackingNumbers::BaseService',
 
@@ -149,6 +160,7 @@ module Spree
         cart_recalculate_service: :cart_recalculate_workflow,
         cart_merge_strategy: :cart_merge_workflow,
         carts_complete_service: :carts_complete_workflow,
+        carts_upsert_items_service: :cart_upsert_items_workflow,
         payments_handle_webhook_service: :payments_handle_webhook_workflow,
         fulfillment_create_service: :fulfillment_create_workflow,
         order_cancel_service: :order_cancel_workflow,

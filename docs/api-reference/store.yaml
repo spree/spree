@@ -87,16 +87,16 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6ImU5NjI3OTg4LTExYTktNGJmOC1iZTkxLTY1ODc1NjUwNmE3NyIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzg2NjU3ODgyfQ.4JRg9z2ShQn3zrFyLz8qCHDTeLC1WeADEa8oVHegkNk
-                refresh_token: SyvK7EMWxcuZB8k9AJ9huqmp
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6IjY5NmE2NDdmLThmZDQtNDc1Mi1iOGU3LTFlYTA3OGUzZTAwNyIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzg2Njk4ODU4fQ.oOqQ2bauQZ4Ck88b68J1k_XCr7VDE_MJ57RQffZ3TiM
+                refresh_token: BzWKLbwXtmd1aZdudRzEuBkv
                 user:
                   id: cust_UkLWZg9DAJ
                   email: test@example.com
-                  first_name: Rayford
-                  last_name: Marvin
+                  first_name: Hermine
+                  last_name: Terry
                   phone:
                   accepts_email_marketing: false
-                  full_name: Rayford Marvin
+                  full_name: Hermine Terry
                   available_store_credit_total: '0'
                   display_available_store_credit_total: "$0.00"
                   addresses: []
@@ -194,16 +194,16 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6ImIxMjA0Y2YzLTdmYmUtNDRhMy05MjM3LWYwM2Y1MzY1NDQwYyIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzg2NjU3ODgyfQ.2K_htxHBUlf99Vlt_bbZRSAV2bWQwVyIJM8SrjGIM1o
-                refresh_token: vHfUDH6acYpBWwaqhGcPzcPh
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6IjljODE1NjQxLWI0ODEtNGE4MS05Mjk2LThkYTliZTUzMGVjOCIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzg2Njk4ODU4fQ.yX_50wOMDs2DJqbXHBrObvhZ8G8yr3mxnFi4LUm-J80
+                refresh_token: BMeip9U9jEjHHPrJZ4d4L3aH
                 user:
                   id: cust_UkLWZg9DAJ
                   email: test@example.com
-                  first_name: Carlota
-                  last_name: Yost
+                  first_name: Merissa
+                  last_name: Huel
                   phone:
                   accepts_email_marketing: false
-                  full_name: Carlota Yost
+                  full_name: Merissa Huel
                   available_store_credit_total: '0'
                   display_available_store_credit_total: "$0.00"
                   addresses: []
@@ -393,16 +393,16 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6IjJkNzVkYTMwLWRmMmQtNDMxNC1hNDcwLWE0MzNhZDcwZjQyMCIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzg2NjU3ODg2fQ.M5t8nstr8keyRN6ca0WsdTDT-oXIyTi_RsWkd1qrJsk
-                refresh_token: 8jYDAN8HtyWk1VHdp46qgNGJ
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6ImVhMWRhOGYzLTE1MWMtNGI2ZC04Y2ZmLTlkNzgwOTQyNjI2MyIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzg2Njk4ODYyfQ.9LuICqbKxup_V5_P3OwOL3Z-uEXOL5PDgbzBQql2c-w
+                refresh_token: yhFdyWWrHjXRTV1ZmFDWya1P
                 user:
                   id: cust_UkLWZg9DAJ
                   email: customer@example.com
-                  first_name: Jacquelyne
-                  last_name: McKenzie
+                  first_name: Celia
+                  last_name: Turcotte
                   phone:
                   accepts_email_marketing: false
-                  full_name: Jacquelyne McKenzie
+                  full_name: Celia Turcotte
                   available_store_credit_total: '0'
                   display_available_store_credit_total: "$0.00"
                   addresses: []
@@ -879,8 +879,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1338129
-                  slug: product-1338129
+                  name: Product 134956
+                  slug: product-134956
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -892,12 +892,30 @@ paths:
                   in_stock: false
                   backorderable: true
                   available: true
-                  description: Labore blanditiis aperiam deserunt beatae doloribus
-                    cupiditate veritatis. Saepe nam blanditiis ad veniam voluptatibus.
-                    Iure odit nesciunt sequi soluta facilis laborum.
-                  description_html: Labore blanditiis aperiam deserunt beatae doloribus
-                    cupiditate veritatis. Saepe nam blanditiis ad veniam voluptatibus.
-                    Iure odit nesciunt sequi soluta facilis laborum.
+                  description: Tenetur dolorum illo voluptate labore rerum cum dolores
+                    delectus. Fugit quis cumque cum quos quia aliquam exercitationem.
+                    Doloremque ipsam optio dignissimos maiores quidem expedita reprehenderit
+                    ullam. Adipisci eius voluptate incidunt optio vel occaecati mollitia
+                    repudiandae. Iusto ullam atque laudantium ipsam quaerat voluptatibus.
+                    Nam ad facilis dignissimos repudiandae. Amet esse odio quo debitis
+                    eaque explicabo veritatis accusamus. Qui suscipit odit repellat
+                    aliquam. Inventore ut perferendis quasi neque asperiores distinctio.
+                    Velit necessitatibus eum voluptatem rem voluptatum veniam nobis
+                    dolore. Unde ipsum sed laborum quae qui tenetur perspiciatis.
+                    Repellat dignissimos qui libero alias ab tempora fugit autem.
+                    Itaque eius non dolor iste labore officiis autem fugit. Alias
+                    consequuntur dicta vero facilis nihil quasi. Alias debitis recusandae
+                    vitae porro molestias similique fugiat perferendis. Minima iusto
+                    rem iure a explicabo consequatur cum eum. Veniam non dolorem minus
+                    pariatur quis tempora ut. Tenetur molestiae illum ratione alias
+                    laborum. Reprehenderit optio nesciunt pariatur nemo laborum mollitia
+                    esse fugit.
+                  description_html: |-
+                    Tenetur dolorum illo voluptate labore rerum cum dolores delectus. Fugit quis cumque cum quos quia aliquam exercitationem. Doloremque ipsam optio dignissimos maiores quidem expedita reprehenderit ullam.
+                    Adipisci eius voluptate incidunt optio vel occaecati mollitia repudiandae. Iusto ullam atque laudantium ipsam quaerat voluptatibus. Nam ad facilis dignissimos repudiandae. Amet esse odio quo debitis eaque explicabo veritatis accusamus.
+                    Qui suscipit odit repellat aliquam. Inventore ut perferendis quasi neque asperiores distinctio. Velit necessitatibus eum voluptatem rem voluptatum veniam nobis dolore. Unde ipsum sed laborum quae qui tenetur perspiciatis. Repellat dignissimos qui libero alias ab tempora fugit autem.
+                    Itaque eius non dolor iste labore officiis autem fugit. Alias consequuntur dicta vero facilis nihil quasi. Alias debitis recusandae vitae porro molestias similique fugiat perferendis. Minima iusto rem iure a explicabo consequatur cum eum.
+                    Veniam non dolorem minus pariatur quis tempora ut. Tenetur molestiae illum ratione alias laborum. Reprehenderit optio nesciunt pariatur nemo laborum mollitia esse fugit.
                   default_variant_id: variant_UkLWZg9DAJ
                   thumbnail_url:
                   tags: []
@@ -1052,8 +1070,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1752737
-                  slug: product-1752737
+                  name: Product 1797268
+                  slug: product-1797268
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1082,8 +1100,8 @@ paths:
                     price_list_id:
                   original_price:
                 - id: prod_gbHJdmfrXB
-                  name: Product 1767740
-                  slug: product-1767740
+                  name: Product 1804864
+                  slug: product-1804864
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1095,25 +1113,12 @@ paths:
                   in_stock: false
                   backorderable: true
                   available: true
-                  description: Nobis vel quas nesciunt aperiam nulla corporis doloribus
-                    non. Autem tempore aperiam doloribus illum quis iusto eius. Saepe
-                    eum repellat mollitia dolore maiores eaque fugit velit. Hic recusandae
-                    temporibus quia deleniti nisi ut. Nihil explicabo fuga officia
-                    quibusdam natus quidem. Eaque natus in maxime numquam possimus
-                    exercitationem. Asperiores debitis autem ipsam pariatur quisquam
-                    porro. Possimus molestias eius nemo ipsa soluta. Explicabo inventore
-                    officia necessitatibus magnam consectetur. Ullam veniam neque
-                    autem deleniti rem dolores fugit delectus. Necessitatibus temporibus
-                    quibusdam quis quae dolor error voluptatum. Corporis at quis quam
-                    a. Reprehenderit asperiores fugit distinctio voluptas porro. Excepturi
-                    perferendis aliquid consectetur maiores odio ut. Quisquam tempore
-                    sunt maxime doloremque. Placeat minima non facilis veritatis commodi
-                    vitae repudiandae praesentium.
-                  description_html: |-
-                    Nobis vel quas nesciunt aperiam nulla corporis doloribus non. Autem tempore aperiam doloribus illum quis iusto eius. Saepe eum repellat mollitia dolore maiores eaque fugit velit.
-                    Hic recusandae temporibus quia deleniti nisi ut. Nihil explicabo fuga officia quibusdam natus quidem. Eaque natus in maxime numquam possimus exercitationem. Asperiores debitis autem ipsam pariatur quisquam porro. Possimus molestias eius nemo ipsa soluta.
-                    Explicabo inventore officia necessitatibus magnam consectetur. Ullam veniam neque autem deleniti rem dolores fugit delectus. Necessitatibus temporibus quibusdam quis quae dolor error voluptatum. Corporis at quis quam a.
-                    Reprehenderit asperiores fugit distinctio voluptas porro. Excepturi perferendis aliquid consectetur maiores odio ut. Quisquam tempore sunt maxime doloremque. Placeat minima non facilis veritatis commodi vitae repudiandae praesentium.
+                  description: Error sit blanditiis recusandae inventore sunt in.
+                    Iste saepe veniam beatae consequuntur. Ad sed temporibus quis
+                    explicabo nostrum reiciendis iste.
+                  description_html: Error sit blanditiis recusandae inventore sunt
+                    in. Iste saepe veniam beatae consequuntur. Ad sed temporibus quis
+                    explicabo nostrum reiciendis iste.
                   default_variant_id: variant_EfhxLZ9ck8
                   thumbnail_url:
                   tags: []
@@ -1215,8 +1220,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 2036461
-                slug: product-2036461
+                name: Product 2076374
+                slug: product-2076374
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -1250,7 +1255,7 @@ paths:
                   amount_in_cents: 999
                   currency: USD
                   display_amount: "$9.99"
-                  recorded_at: '2026-07-29T20:51:34Z'
+                  recorded_at: '2026-07-30T08:14:32Z'
               schema:
                 "$ref": "#/components/schemas/Product"
         '404':
@@ -1500,7 +1505,7 @@ paths:
                   channel_id: ch_UkLWZg9DAJ
                   preferred_stock_location_id:
                   number: cart_gbHJdmfrXB
-                  token: CTfrtFixn8GtyHaXaVbRZdsJ
+                  token: zMBG4xPmvnvUpweDoiSkeU9M
                   email:
                   customer_note:
                   currency: USD
@@ -1559,8 +1564,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 1089341
-                    slug: product-1089341
+                    name: Product 1097994
+                    slug: product-1097994
                     options_text: ''
                     price: '10.0'
                     display_price: "$10.00"
@@ -1605,7 +1610,7 @@ paths:
                   channel_id: ch_UkLWZg9DAJ
                   preferred_stock_location_id:
                   number: cart_UkLWZg9DAJ
-                  token: ycQHQkszbnGftmEaifNsmEWz
+                  token: p97ABaANxtNUsn9MFiKsHfgq
                   email:
                   customer_note:
                   currency: USD
@@ -1664,8 +1669,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 1072609
-                    slug: product-1072609
+                    name: Product 1083868
+                    slug: product-1083868
                     options_text: ''
                     price: '10.0'
                     display_price: "$10.00"
@@ -1783,7 +1788,7 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
                 number: cart_UkLWZg9DAJ
-                token: YgG5bEtW23p7iQpN69ZsVPbf
+                token: PN2NE4NhAi12bC3ro1jxELiA
                 email:
                 customer_note:
                 currency: USD
@@ -1948,7 +1953,7 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
                 number: cart_UkLWZg9DAJ
-                token: rFthqHxs4W8dq6fMQcTpths6
+                token: 32bnSsVMJaZaft4HetrZkkpx
                 email:
                 customer_note:
                 currency: USD
@@ -1956,7 +1961,7 @@ paths:
                 total_quantity: 0
                 warnings:
                 - code: line_item_removed
-                  message: Product 1124296 was removed because it was sold out
+                  message: Product 1139651 was removed because it was sold out
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                 coupon_code:
@@ -2098,7 +2103,7 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
                 number: cart_UkLWZg9DAJ
-                token: EtDZM6DwwWMFunhMPuKHMgGK
+                token: krrviFWRbaXyKfCMiZzNrypf
                 email:
                 customer_note: Leave at door
                 currency: USD
@@ -2153,8 +2158,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1133726
-                  slug: product-1133726
+                  name: Product 1145279
+                  slug: product-1145279
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -2373,8 +2378,8 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
                 number: cart_UkLWZg9DAJ
-                token: rDSpLUJyAtUFNdDXBZ3AWA3h
-                email: argentina.balistreri@kunze.biz
+                token: UzZb7Q5pbA3owE3XsLSdjK3p
+                email: emanuel.moen@batz.ca
                 customer_note:
                 currency: USD
                 locale: en
@@ -2425,8 +2430,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 115925
-                  slug: product-115925
+                  name: Product 1169451
+                  slug: product-1169451
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -2581,7 +2586,7 @@ paths:
                 cart_id: cart_UkLWZg9DAJ
                 channel_id: ch_UkLWZg9DAJ
                 number: R1001
-                email: mellissa_romaguera@robel.biz
+                email: aleen@sanfordpacocha.co.uk
                 customer_note:
                 currency: USD
                 locale: en
@@ -2589,7 +2594,7 @@ paths:
                 coupon_code:
                 fulfillment_status: backorder
                 payment_status: paid
-                completed_at: '2026-08-13T20:51:23.454Z'
+                completed_at: '2026-08-14T08:14:20.198Z'
                 item_total: '10.0'
                 display_item_total: "$10.00"
                 adjustment_total: '0.0'
@@ -2621,8 +2626,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1181370
-                  slug: product-1181370
+                  name: Product 1198757
+                  slug: product-1198757
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -2688,7 +2693,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: NY
-                    name: Janna Moore
+                    name: Tesha Murray
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -2727,7 +2732,7 @@ paths:
                 payments:
                 - id: py_UkLWZg9DAJ
                   payment_method_id: pm_UkLWZg9DAJ
-                  response_code: BGS-bc2d11fc943d
+                  response_code: BGS-145d3d64c735
                   number: R1001-P1
                   amount: '20.0'
                   display_amount: "$20.00"
@@ -2884,7 +2889,7 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
                 number: cart_UkLWZg9DAJ
-                token: JH7HUUjQ4gFS8q8Dj64dVg37
+                token: FtJyKty4FppHQrdsicaKevfc
                 email:
                 customer_note:
                 currency: USD
@@ -2942,8 +2947,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1446105
-                  slug: product-1446105
+                  name: Product 1454442
+                  slug: product-1454442
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3072,7 +3077,7 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
                 number: cart_UkLWZg9DAJ
-                token: 4HPHZ4MoUcYZHQV59VP1Xv5Y
+                token: fDVhvAqKMEF9SWSX9xgHN9sB
                 email:
                 customer_note:
                 currency: USD
@@ -3127,8 +3132,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1461597
-                  slug: product-1461597
+                  name: Product 1479236
+                  slug: product-1479236
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3246,8 +3251,8 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
                 number: cart_UkLWZg9DAJ
-                token: kSKsM54y5FsjGUCAofYkG4mx
-                email: kum@breitenberg.name
+                token: b7KRponWQxis6iAoHQhanMGC
+                email: reatha@boehm.com
                 customer_note:
                 currency: USD
                 locale: en
@@ -3295,8 +3300,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1485794
-                  slug: product-1485794
+                  name: Product 1496348
+                  slug: product-1496348
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3362,7 +3367,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: NY
-                    name: Ma Barrows
+                    name: Jen Orn
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -3524,7 +3529,7 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
                 number: cart_UkLWZg9DAJ
-                token: 7LmLqtfgWjXU33CCCtadaTSx
+                token: ztfpWFzyos2yJGrY3a9ZZxQU
                 email:
                 customer_note:
                 currency: USD
@@ -3575,8 +3580,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1507661
-                  slug: product-1507661
+                  name: Product 1513484
+                  slug: product-1513484
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3603,7 +3608,7 @@ paths:
                 payments:
                 - id: py_UkLWZg9DAJ
                   payment_method_id: pm_UkLWZg9DAJ
-                  response_code: 1-SC-20260813205128431255
+                  response_code: 1-SC-20260814081425362871
                   number: cart_UkLWZg9DAJ-P1
                   amount: '10.0'
                   display_amount: "$10.00"
@@ -3760,7 +3765,7 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
                 number: cart_UkLWZg9DAJ
-                token: B8gjwbMpizTJUY2B72FwvGZ4
+                token: iNFM9wetMx5mij7Rjv2fFJMj
                 email:
                 customer_note:
                 currency: USD
@@ -3815,8 +3820,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1549377
-                  slug: product-1549377
+                  name: Product 1556379
+                  slug: product-1556379
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3843,7 +3848,7 @@ paths:
                 payments:
                 - id: py_UkLWZg9DAJ
                   payment_method_id: pm_UkLWZg9DAJ
-                  response_code: 1-SC-20260813205128973522
+                  response_code: 1-SC-20260814081425795920
                   number: cart_UkLWZg9DAJ-P1
                   amount: '10.0'
                   display_amount: "$10.00"
@@ -3951,7 +3956,7 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
                 number: cart_UkLWZg9DAJ
-                token: GdBSZJ6Ujftsp3uFpdBQVqJv
+                token: YhcjyHK16vakgDzkXgxshpJj
                 email:
                 customer_note:
                 currency: USD
@@ -3959,10 +3964,10 @@ paths:
                 total_quantity: 2
                 warnings:
                 - code: delivery_unavailable
-                  message: Product 1579167 cannot be delivered to the selected address
+                  message: Product 1585627 cannot be delivered to the selected address
                   line_item_id: li_UkLWZg9DAJ
                 - code: delivery_unavailable
-                  message: Product 1588252 cannot be delivered to the selected address
+                  message: Product 1599117 cannot be delivered to the selected address
                   line_item_id: li_gbHJdmfrXB
                 coupon_code:
                 item_total: '29.99'
@@ -4012,8 +4017,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1579167
-                  slug: product-1579167
+                  name: Product 1585627
+                  slug: product-1585627
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -4042,8 +4047,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1588252
-                  slug: product-1588252
+                  name: Product 1599117
+                  slug: product-1599117
                   options_text: ''
                   price: '19.99'
                   display_price: "$19.99"
@@ -4093,6 +4098,19 @@ paths:
                 error:
                   code: variant_not_found
                   message: Variant not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        '422':
+          description: rejected by a store rule
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Quantity You can order at most 10 of this item.
+                  details:
+                    quantity:
+                    - You can order at most 10 of this item.
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -4172,7 +4190,7 @@ paths:
           type: string
       responses:
         '200':
-          description: metadata updated on line item
+          description: quantity change rejected, reported in warnings
           content:
             application/json:
               example:
@@ -4181,16 +4199,20 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
                 number: cart_UkLWZg9DAJ
-                token: FzM1ug9EoEFx5Go8NNb6FHsf
+                token: acPE3ThQkWgFXuQb3mzPzA6M
                 email:
                 customer_note:
                 currency: USD
                 locale: en
-                total_quantity: 0
-                warnings: []
+                total_quantity: 1
+                warnings:
+                - code: purchase_limit_exceeded
+                  message: Quantity You can order at most 10 of this item.
+                  variant_id: variant_UkLWZg9DAJ
+                  item_index: 0
                 coupon_code:
-                item_total: '0.0'
-                display_item_total: "$0.00"
+                item_total: '10.0'
+                display_item_total: "$10.00"
                 adjustment_total: '0.0'
                 display_adjustment_total: "$0.00"
                 discount_total: '0.0'
@@ -4201,12 +4223,12 @@ paths:
                 display_included_tax_total: "$0.00"
                 additional_tax_total: '0.0'
                 display_additional_tax_total: "$0.00"
-                total: '0.0'
-                display_total: "$0.00"
+                total: '10.0'
+                display_total: "$10.00"
                 gift_card_total: '0.0'
                 display_gift_card_total: "$0.00"
-                amount_due: '0.0'
-                display_amount_due: "$0.00"
+                amount_due: '10.0'
+                display_amount_due: "$10.00"
                 delivery_total: '0.0'
                 display_delivery_total: "$0.00"
                 store_credit_total: '0.0'
@@ -4223,6 +4245,10 @@ paths:
                   step: delivery
                   field: delivery_method
                   message: Select a delivery method for all fulfillments
+                - code: payment_required
+                  step: payment
+                  field: payment
+                  message: Add a payment method
                 shipping_eq_billing_address: true
                 discounts: []
                 items:
@@ -4232,8 +4258,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1617320
-                  slug: product-1617320
+                  name: Product 1653067
+                  slug: product-1653067
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -4351,7 +4377,7 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
                 number: cart_UkLWZg9DAJ
-                token: RQHpGBNcg2VwobMezqnVrBAB
+                token: NwdkLSsYTUJcNgt3eWsyRtdB
                 email:
                 customer_note:
                 currency: USD
@@ -4491,9 +4517,9 @@ paths:
                 id: ps_gbHJdmfrXB
                 status: pending
                 currency: USD
-                external_id: bogus_72ad2dc19ca7fa2ce909cc53
+                external_id: bogus_e65e225eac6ce02bb7a76160
                 external_data:
-                  client_secret: bogus_secret_8b57d314a8ddabf2
+                  client_secret: bogus_secret_d86a4e5e86272b8c
                 customer_external_id:
                 expires_at:
                 amount: '10.0'
@@ -4592,7 +4618,7 @@ paths:
                 id: ps_UkLWZg9DAJ
                 status: pending
                 currency: USD
-                external_id: bogus_4db32d3b6e74719cf146c26c
+                external_id: bogus_f738692572bdcbb7d5cfccf7
                 external_data:
                   client_secret: secret_123
                 customer_external_id:
@@ -4655,7 +4681,7 @@ paths:
                 id: ps_UkLWZg9DAJ
                 status: pending
                 currency: USD
-                external_id: bogus_4650a76a60f45d8e2a8f68e0
+                external_id: bogus_2257118dd52fbdc67ae837bc
                 external_data:
                   client_secret: secret_123
                 customer_external_id:
@@ -4758,7 +4784,7 @@ paths:
                 id: ps_UkLWZg9DAJ
                 status: completed
                 currency: USD
-                external_id: bogus_61c00e45d80f6ad84740d17d
+                external_id: bogus_729786e1d972ccb86e4ef475
                 external_data:
                   client_secret: secret_123
                 customer_external_id:
@@ -4966,7 +4992,7 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
                 number: cart_UkLWZg9DAJ
-                token: kwJ8hNh3zN2HeQR892cdX2KP
+                token: avVKTys5AodncSjbFf84Sjp8
                 email:
                 customer_note:
                 currency: USD
@@ -5017,8 +5043,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2233172
-                  slug: product-2233172
+                  name: Product 2276440
+                  slug: product-2276440
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5045,7 +5071,7 @@ paths:
                 payments:
                 - id: py_UkLWZg9DAJ
                   payment_method_id: pm_UkLWZg9DAJ
-                  response_code: 1-SC-20260813205136395333
+                  response_code: 1-SC-20260814081433997087
                   number: cart_UkLWZg9DAJ-P1
                   amount: '10.0'
                   display_amount: "$10.00"
@@ -5166,7 +5192,7 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
                 number: cart_UkLWZg9DAJ
-                token: wJ4xGkoN52HGDG6QpChLRXHu
+                token: 4q5MaaMs2XS1X2NKuJR7gh2J
                 email:
                 customer_note:
                 currency: USD
@@ -5221,8 +5247,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2257376
-                  slug: product-2257376
+                  name: Product 2294123
+                  slug: product-2294123
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5346,7 +5372,7 @@ paths:
                 coupon_code:
                 fulfillment_status:
                 payment_status:
-                completed_at: '2026-08-13T20:51:31.576Z'
+                completed_at: '2026-08-14T08:14:28.782Z'
                 item_total: '10.0'
                 display_item_total: "$10.00"
                 adjustment_total: '0.0'
@@ -5378,8 +5404,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1659073
-                  slug: product-1659073
+                  name: Product 1698581
+                  slug: product-1698581
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5445,7 +5471,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: NY
-                    name: Evangeline Little
+                    name: Michell Stracke
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -5487,7 +5513,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 247 Lovely Street
+                  address1: 251 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -5506,7 +5532,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 248 Lovely Street
+                  address1: 252 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6405,7 +6431,7 @@ paths:
                   cart_id:
                   channel_id: ch_UkLWZg9DAJ
                   number: R1001
-                  email: rita@sanford.co.uk
+                  email: carole@vonrueden.biz
                   customer_note:
                   currency: USD
                   locale: en
@@ -6413,7 +6439,7 @@ paths:
                   coupon_code:
                   fulfillment_status:
                   payment_status:
-                  completed_at: '2026-08-13T20:51:26.311Z'
+                  completed_at: '2026-08-14T08:14:23.132Z'
                   item_total: '10.0'
                   display_item_total: "$10.00"
                   adjustment_total: '0.0'
@@ -6445,8 +6471,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 1342185
-                    slug: product-1342185
+                    name: Product 1354977
+                    slug: product-1354977
                     options_text: ''
                     price: '10.0'
                     display_price: "$10.00"
@@ -6512,7 +6538,7 @@ paths:
                     stock_location:
                       id: sloc_UkLWZg9DAJ
                       state_abbr: NY
-                      name: Carlo Cummerata
+                      name: Kylee Ledner
                       address1: 1600 Pennsylvania Ave NW
                       city: Washington
                       zipcode: '20500'
@@ -6697,7 +6723,7 @@ paths:
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 number: R1001
-                email: matthew@konopelskiwuckert.ca
+                email: tiffani@schroedermohr.ca
                 customer_note:
                 currency: USD
                 locale: en
@@ -6705,7 +6731,7 @@ paths:
                 coupon_code:
                 fulfillment_status:
                 payment_status:
-                completed_at: '2026-08-13T20:51:26.524Z'
+                completed_at: '2026-08-14T08:14:23.362Z'
                 item_total: '10.0'
                 display_item_total: "$10.00"
                 adjustment_total: '0.0'
@@ -6737,8 +6763,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1369662
-                  slug: product-1369662
+                  name: Product 1372684
+                  slug: product-1372684
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -6804,7 +6830,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: NY
-                    name: Marisa Stanton
+                    name: Marcos Collier
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -6944,8 +6970,8 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6ImY1NGMyYTQ0LTE3NzgtNGQwZS1hNjdmLTAwN2VkZGQ5MDZmMiIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzg2NjU3ODg2fQ.u934e5vQA1OTchL5BCka4fcs5-U0NdHr2gUepjveY_Y
-                refresh_token: o9dwR7STqrS6T7bqgmyxw5XY
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6ImJhNGIzN2RmLTJhMzctNDhmOC1hODU2LWUxYjdlYmNjMDMyNyIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzg2Njk4ODYzfQ.Tbftvzfg5hqT3AAk5BdhN8EhIEZLOGea25SrEqfnIbM
+                refresh_token: eiVQSfZhNpsu4zzKUbZZ2iRB
                 user:
                   id: cust_UkLWZg9DAJ
                   email: newuser@example.com
@@ -6962,10 +6988,10 @@ paths:
                   newsletter_subscriber:
                     id: sub_UkLWZg9DAJ
                     email: newuser@example.com
-                    created_at: '2026-08-13T20:51:26.706Z'
-                    updated_at: '2026-08-13T20:51:26.707Z'
+                    created_at: '2026-08-14T08:14:23.585Z'
+                    updated_at: '2026-08-14T08:14:23.587Z'
                     verified: true
-                    verified_at: '2026-08-13T20:51:26Z'
+                    verified_at: '2026-08-14T08:14:23Z'
                     customer_id: cust_UkLWZg9DAJ
                   customer_groups: []
               schema:
@@ -7068,12 +7094,12 @@ paths:
             application/json:
               example:
                 id: cust_UkLWZg9DAJ
-                email: dawna_fay@gleichner.us
-                first_name: Adrian
-                last_name: Spinka
+                email: jacqualine.turner@lubowitz.name
+                first_name: Chester
+                last_name: Ferry
                 phone: 555-555-0199
                 accepts_email_marketing: false
-                full_name: Adrian Spinka
+                full_name: Chester Ferry
                 available_store_credit_total: '0'
                 display_available_store_credit_total: "$0.00"
                 addresses:
@@ -7209,7 +7235,7 @@ paths:
             application/json:
               example:
                 id: cust_UkLWZg9DAJ
-                email: lonnie@gerhold.name
+                email: zandra.kautzer@hauck.co.uk
                 first_name: Updated
                 last_name: Name
                 phone: 555-555-0199
@@ -7400,7 +7426,7 @@ paths:
               example:
                 data:
                 - id: gc_UkLWZg9DAJ
-                  code: 38A1B07104E77EFD
+                  code: F1AD9ECE6F0F8E0B
                   status: active
                   currency: USD
                   amount: '10.0'
@@ -7496,7 +7522,7 @@ paths:
             application/json:
               example:
                 id: gc_UkLWZg9DAJ
-                code: 6877AC67D5BFBAC6
+                code: 669A1D3D288A601C
                 status: active
                 currency: USD
                 amount: '10.0'
@@ -7568,8 +7594,8 @@ paths:
               example:
                 id: pss_gbHJdmfrXB
                 status: pending
-                external_id: bogus_seti_5bcd7e35a6cb52f0a08952db
-                external_client_secret: bogus_seti_secret_120d0483c031d7b4
+                external_id: bogus_seti_74fa22cd538112ddfeb512e1
+                external_client_secret: bogus_seti_secret_806adcdde276088b
                 external_data: {}
                 payment_method_id: pm_UkLWZg9DAJ
                 payment_source_id:
@@ -7668,8 +7694,8 @@ paths:
               example:
                 id: pss_UkLWZg9DAJ
                 status: pending
-                external_id: seti_test_9c8c966219ebd06af389d3db
-                external_client_secret: seti_secret_ded35372031c8c499fece627
+                external_id: seti_test_e84dec3f397329cf04fd243c
+                external_client_secret: seti_secret_1376518d96ebfa042b93ae07
                 external_data:
                   client_secret: secret_123
                 payment_method_id: pm_UkLWZg9DAJ
@@ -7745,8 +7771,8 @@ paths:
               example:
                 id: pss_UkLWZg9DAJ
                 status: completed
-                external_id: seti_test_85072f0b0956562f59743322
-                external_client_secret: seti_secret_b5d74d0bd76417f5b9b09a7e
+                external_id: seti_test_5271ae630222abb656d797ec
+                external_client_secret: seti_secret_c19c748f265c0cff3bb9e670
                 external_data:
                   client_secret: secret_123
                 payment_method_id: pm_UkLWZg9DAJ
@@ -8690,7 +8716,7 @@ paths:
                 data:
                 - id: wl_UkLWZg9DAJ
                   name: My Wishlist
-                  token: J5T4u1Kp37piPYfEPwDCbzUa
+                  token: RAWrQxQvGuj5shU9uZhnk7qV
                   is_default: false
                   is_private: true
                 meta:
@@ -8766,7 +8792,7 @@ paths:
               example:
                 id: wl_gbHJdmfrXB
                 name: Birthday Ideas
-                token: aECq2EysJDStAotj3HK9W9wW
+                token: PiLjz1PqW43WMhE3xhEj38aN
                 is_default: false
                 is_private: true
               schema:
@@ -8867,7 +8893,7 @@ paths:
               example:
                 id: wl_UkLWZg9DAJ
                 name: My Wishlist
-                token: TtW1ovtPAg1g2PDLsHk238hg
+                token: ZKW28uLSYhMW8AzgVnSRsDGU
                 is_default: false
                 is_private: true
               schema:
@@ -8929,7 +8955,7 @@ paths:
               example:
                 id: wl_UkLWZg9DAJ
                 name: Updated Name
-                token: E9Z6cfMF2nFsLPah8siCfMDZ
+                token: sWswuNKqn88rEGPxXQN8Q3m3
                 is_default: false
                 is_private: true
               schema:
@@ -9045,7 +9071,7 @@ paths:
                 variant:
                   id: variant_gbHJdmfrXB
                   product_id: prod_gbHJdmfrXB
-                  sku: SKU-273
+                  sku: SKU-277
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -9211,11 +9237,11 @@ paths:
             application/json:
               example:
                 id: sub_UkLWZg9DAJ
-                email: joelle_heidenreich@streichmonahan.name
-                created_at: '2026-08-13T20:51:30.589Z'
-                updated_at: '2026-08-13T20:51:30.589Z'
+                email: andreas_oreilly@gottliebtromp.name
+                created_at: '2026-08-14T08:14:27.879Z'
+                updated_at: '2026-08-14T08:14:27.880Z'
                 verified: true
-                verified_at: '2026-08-13T20:51:30Z'
+                verified_at: '2026-08-14T08:14:27Z'
                 customer_id: cust_UkLWZg9DAJ
               schema:
                 "$ref": "#/components/schemas/NewsletterSubscriber"
@@ -9294,10 +9320,10 @@ paths:
               example:
                 id: sub_UkLWZg9DAJ
                 email: pending@example.com
-                created_at: '2026-08-13T20:51:30.615Z'
-                updated_at: '2026-08-13T20:51:30.622Z'
+                created_at: '2026-08-14T08:14:27.914Z'
+                updated_at: '2026-08-14T08:14:27.923Z'
                 verified: true
-                verified_at: '2026-08-13T20:51:30Z'
+                verified_at: '2026-08-14T08:14:27Z'
                 customer_id:
               schema:
                 "$ref": "#/components/schemas/NewsletterSubscriber"
@@ -9467,7 +9493,7 @@ paths:
                   body_html: ''
                 - id: pol_OIJLhNcSbf
                   name: Privacy Policy
-                  slug: privacy-policy-6870aac1-60d5-4fee-84d5-1767b98718f7
+                  slug: privacy-policy-19b0f311-6692-42d7-8b75-232c59dab389
                   body: We respect your privacy.
                   body_html: We respect your privacy.
                 - id: pol_uw2YK1rnl0
@@ -9803,14 +9829,14 @@ paths:
               example:
                 data:
                 - id: sloc_UkLWZg9DAJ
-                  state_abbr: STATE_ABBR_93
+                  state_abbr: STATE_ABBR_94
                   name: Downtown
                   address1: 1600 Pennsylvania Ave NW
                   city: Washington
                   zipcode: '20500'
                   country_iso: US
                   country_name: United States of America
-                  state_text: STATE_ABBR_93
+                  state_text: STATE_ABBR_94
                   pickup_ready_in_minutes:
                   pickup_instructions:
 servers:
@@ -10051,6 +10077,12 @@ components:
           nullable: true
           description: Prefixed variant ID (when applicable)
           example: variant_abc123
+        item_index:
+          type: integer
+          nullable: true
+          description: Position in the submitted items array, for warnings raised
+            while applying a batch of item changes
+          example: 1
       required:
       - code
       - message

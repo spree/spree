@@ -327,6 +327,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
 
     delete 'Delete a product' do
       tags 'Products'
+      produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Soft-deletes a product.'
       admin_scope :write, :products
@@ -344,6 +345,29 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
 
         run_test! do
           expect(product.reload.deleted_at).not_to be_nil
+        end
+      end
+
+      # A store rule registered on 'products.destroy.validate' can refuse the
+      # deletion outright — a product still under a supplier contract, or one
+      # a live campaign points at.
+      response '422', 'deletion refused by a store rule' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { product.prefixed_id }
+
+        before do
+          Spree.hooks.register('products.destroy.validate') do |workflow|
+            workflow.errors.add(:base, :under_contract, message: 'This product is under an active supplier contract.')
+            workflow.reject!
+          end
+        end
+
+        after { Spree.hooks.clear! }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test! do
+          expect(product.reload.deleted_at).to be_nil
         end
       end
     end

@@ -58,7 +58,7 @@ RSpec.describe Spree::Payments::Refund do
       result = described_class.call(payment: payment)
 
       expect(result).to be_failure
-      expect(result.error.value).to eq('refunds disabled')
+      expect(result.error.to_s).to eq('refunds disabled')
       expect(payment.refunds).to be_empty
     end
 

@@ -23,7 +23,7 @@ module Spree
                  total: [:string, nullable: true], display_total: [:string, nullable: true],
                  amount_due: [:string, nullable: true], display_amount_due: [:string, nullable: true],
                  shipping_eq_billing_address: :boolean,
-                 warnings: 'Array<{code: string, message: string, line_item_id?: string, variant_id?: string}>',
+                 warnings: 'Array<{code: string, message: string, line_item_id?: string, variant_id?: string, item_index?: number}>',
                  billing_address: { nullable: true }, shipping_address: { nullable: true },
                  gift_card: { nullable: true }, market: { nullable: true }
 

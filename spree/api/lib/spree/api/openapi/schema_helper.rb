@@ -132,7 +132,13 @@ module Spree
                 code: { type: :string, description: 'Machine-readable warning code', example: 'line_item_removed' },
                 message: { type: :string, description: 'Human-readable warning message', example: 'Blue T-Shirt was removed because it was sold out' },
                 line_item_id: { type: :string, nullable: true, description: 'Prefixed line item ID (when applicable)', example: 'li_abc123' },
-                variant_id: { type: :string, nullable: true, description: 'Prefixed variant ID (when applicable)', example: 'variant_abc123' }
+                variant_id: { type: :string, nullable: true, description: 'Prefixed variant ID (when applicable)', example: 'variant_abc123' },
+                item_index: {
+                  type: :integer,
+                  nullable: true,
+                  description: 'Position in the submitted items array, for warnings raised while applying a batch of item changes',
+                  example: 1
+                }
               },
               required: %w[code message]
             },

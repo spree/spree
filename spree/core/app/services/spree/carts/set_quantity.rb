@@ -1,36 +1,38 @@
 module Spree
   module Carts
+    # @deprecated Setting a quantity is a one-item upsert. Call
+    #   Spree::Carts::UpsertItems so the change passes the same
+    #   'carts.upsert_items.validate' hook every other item mutation does.
+    #   Removed in Spree 6.1.
     class SetQuantity
       prepend Spree::ServiceModule::Base
 
       def call(cart: nil, order: nil, line_item: nil, quantity: nil)
-        if order
-          Spree::Deprecation.warn('Calling Spree::Carts::SetQuantity with order: is deprecated and will be removed in Spree 6.1. Pass cart: instead.')
-          cart ||= order
-        end
-        rewrite_input!(remove: [:order], cart: cart)
-        ActiveRecord::Base.transaction do
-          run :change_item_quantity
-          run :handle_stock_reservations
-          run Spree.cart_recalculate_workflow
-        end
-      end
+        Spree::Deprecation.warn(
+          'Spree::Carts::SetQuantity is deprecated and will be removed in Spree 6.1. ' \
+          'Use Spree::Carts::UpsertItems (quantity is set, not added) instead.'
+        )
+        owner = cart || order
 
-      private
+        # Draft orders keep the order workflow's all-or-nothing contract;
+        # only carts get the warn-and-skip one.
+        cart_owned = owner.is_a?(Spree::Cart)
+        workflow = (cart_owned ? Spree.cart_upsert_items_workflow : Spree.order_upsert_items_workflow).new
+        result = workflow.call(
+          **(cart_owned ? { cart: owner } : { order: owner }),
+          items: [{ variant_id: line_item.variant_id, quantity: quantity }]
+        )
 
-      def change_item_quantity(cart:, line_item:, quantity: nil)
-        return failure(line_item) unless line_item.update(quantity: quantity)
+        return failure(line_item, result.error) if result.failure?
 
-        success(cart: cart, line_item: line_item)
-      end
+        # The workflow succeeds on the cart side even when a :validate handler
+        # skipped this item — that is the batch contract. This service's
+        # callers predate it and expect a failure, so translate the warning.
+        rejection = workflow.warnings.first
+        return failure(line_item, rejection.message) if rejection
 
-      def handle_stock_reservations(cart:, line_item:)
-        if cart.in_checkout?
-          result = Spree::StockReservations::Reserve.call(cart: cart)
-          return failure(line_item, result.error) if result.failure?
-        end
-
-        success(cart: cart, line_item: line_item)
+        # Zero removed the row, so there is nothing to reload.
+        line_item.destroyed? || quantity.to_i <= 0 ? success(line_item) : success(line_item.reload)
       end
     end
   end

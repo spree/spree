@@ -81,8 +81,20 @@ module Spree
     end
     prepend ControlFlow
 
+    # ActiveModel::Errors asks its base for these when turning a symbolic
+    # error into a message — a workflow is not a model, but it answers the
+    # same three questions so `errors.add(:field, :symbol)` resolves against
+    # the workflow's own i18n scope.
+    extend ActiveModel::Naming
+    extend ActiveModel::Translation
+
     class << self
       attr_reader :declared_hooks
+
+      # Anonymous test doubles have no name to derive a model name from.
+      def model_name
+        @model_name ||= ActiveModel::Name.new(self, nil, name || 'Workflow')
+      end
 
       # A subclass inherits the parent's declared hooks but dispatches them
       # under its OWN key — Spree::Orders::AddItem fires
@@ -114,6 +126,12 @@ module Spree
 
       # Public readers for #perform's parameters, memoized per class. An
       # author-defined method of the same name wins.
+      #
+      # Note for workflow authors: inside #perform, a parameter name is a
+      # local variable and shadows the reader, so a step that reassigns the
+      # ivar (`@product = ...`) is invisible to `success(product)` further
+      # down. Name derived state differently from the parameter that seeded
+      # it — Carts::AddItem takes `variant` and exposes `line_item`.
       def define_argument_readers(names)
         @argument_readers ||= {}
         names.each do |name|
@@ -161,16 +179,42 @@ module Spree
       raise Halted.new(value)
     end
 
+    # Rejections a handler collected, rendered by the API through the same
+    # path as model validation errors — an extension veto and a failed
+    # `validates` produce the same 422 shape.
+    #
+    # @return [ActiveModel::Errors]
+    def errors
+      @errors ||= ActiveModel::Errors.new(self)
+    end
+
+    delegate :model_name, to: :class
+
+    # ActiveModel::Errors reads attribute values off its base when
+    # interpolating a message; a workflow's "attributes" are its argument
+    # readers, and an error on an attribute the workflow doesn't expose
+    # (:base, or a field name belonging to the record) must not raise.
+    def read_attribute_for_validation(attribute)
+      respond_to?(attribute) ? public_send(attribute) : nil
+    end
+
     # Vetoes the flow from a hook handler — the extension-facing twin of
     # failure(...). Same mechanics (raises, unwinds the undo stack, rolls
     # back an open transaction); the distinct name keeps "an extension
     # rejected this" legible against "this step failed" at the call site.
     # Public because handlers call it on the dispatched instance.
     #
-    # @param message [String, Symbol] surfaced as the failure Result's error
+    # Preferred form is argument-less, after adding symbolic errors:
+    #
+    #   workflow.errors.add(:quantity, :purchase_limit_exceeded, message: '…')
+    #   workflow.reject!
+    #
+    # @param message [String, Symbol, nil] legacy flat rejection; recorded on
+    #   :base so it renders through the same field-error payload
     # @param value [Object, nil] subject of the failure Result
-    def reject!(message, value = nil)
-      failure(value, message)
+    def reject!(message = nil, value = nil)
+      errors.add(:base, message) if message.present?
+      failure(value, errors)
     end
 
     private
