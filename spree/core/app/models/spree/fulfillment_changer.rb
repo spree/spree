@@ -40,13 +40,21 @@ module Spree
 
     def handle_stock
       ActiveRecord::Base.transaction do
-        if handle_stock_counts?
-          current_stock_location.restock(variant, current_on_hand_quantity, current_shipment)
-          desired_stock_location.unstock(variant, unstock_quantity, desired_shipment)
-        end
-
+        carry_allocation
         move_inventory_units_between_shipments
       end
+    end
+
+    # Re-pointing a promise between fulfillments moves no goods, so this runs
+    # whether or not the origin changes. Only a promise that exists can move:
+    # a fulfillment on an order that was never placed, or one created before
+    # typed movements, carries nothing.
+    def carry_allocation
+      carried = [current_shipment.allocated_quantities[variant.id].to_i, quantity].min
+      return unless carried.positive?
+
+      current_stock_location.release(variant, carried, current_shipment)
+      desired_stock_location.allocate(variant, carried, desired_shipment)
     end
 
     def move_inventory_units_between_shipments

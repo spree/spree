@@ -147,13 +147,13 @@ module Spree
       end
     end
 
-    # A canceled fulfillment already restocked its units, so shipping it
-    # directly has to take them off the shelf again. This used to ride on the
-    # resume transition callback.
+    # A canceled fulfillment gave its promise back, so shipping it directly
+    # has to re-promise the units before they can leave. This used to ride on
+    # the resume transition callback.
     describe 'fulfilling a canceled fulfillment' do
       before { fulfillment.update!(status: 'canceled') }
 
-      it 'takes the units back off the shelf' do
+      it 're-promises the units and then ships them' do
         variant = fulfillment.fulfillment_items.first.variant
         stock_level = fulfillment.stock_location.stock_level(variant)
 
@@ -164,13 +164,18 @@ module Spree
         expect(fulfillment.reload).to be_fulfilled
       end
 
-      it 'does not unstock when the fulfillment was open' do
+      # Resuming already re-promised the units, so fulfilling afterwards
+      # takes them off the shelf exactly once rather than twice.
+      it 'ships the re-promised units only once when the fulfillment was resumed' do
         Spree.fulfillment_resume_workflow.call(fulfillment: fulfillment)
         variant = fulfillment.fulfillment_items.first.variant
+        quantity = fulfillment.fulfillment_items.where(variant_id: variant.id).sum(:quantity)
         stock_level = fulfillment.stock_location.stock_level(variant)
 
         expect { subject.call(fulfillment: fulfillment) }.
-          not_to change { stock_level.reload.count_on_hand }
+          to change { stock_level.reload.count_on_hand }.by(-quantity)
+
+        expect(stock_level.reload.allocated_count).to eq(0)
       end
     end
 

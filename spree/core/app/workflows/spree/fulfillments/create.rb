@@ -197,10 +197,9 @@ module Spree
       end
 
       # Moves the requested quantities into the fulfillment, on-hand units
-      # first so the new fulfillment is shippable whenever possible. Restocks
-      # the source location and unstocks the target for tracked variants when
-      # the locations differ, keeping stock levels truthful about where the
-      # goods actually leave from.
+      # first so the new fulfillment is shippable whenever possible, and
+      # carries each moved unit's allocation across with it so the promise
+      # follows the fulfillment that will ship it.
       #
       # @return [Array<Spree::Shipment>] the shipments units were taken from
       def move_units(order, fulfillment, requested, units_by_line_item)
@@ -239,12 +238,20 @@ module Spree
           end
         end
 
+        # Re-pointing a promise moves no goods, so this runs even when the
+        # origin does not change: allocation is keyed to the fulfillment, and
+        # the quantity Spree::Fulfillments::Fulfill reads to decide what
+        # shipped would otherwise sit on the wrong one. Only a promise that
+        # exists can move — a fulfillment on an order that was never placed,
+        # or one created before typed movements, carries nothing.
         stock_moves.each do |(source_shipment, variant), quantity|
           next unless variant.track_inventory?
-          next if source_shipment.stock_location_id == fulfillment.stock_location_id
 
-          source_shipment.stock_location.restock(variant, quantity, source_shipment)
-          fulfillment.stock_location.unstock(variant, quantity, fulfillment)
+          carried = [source_shipment.allocated_quantities[variant.id].to_i, quantity].min
+          next unless carried.positive?
+
+          source_shipment.stock_location.release(variant, carried, source_shipment)
+          fulfillment.stock_location.allocate(variant, carried, fulfillment)
         end
 
         source_shipments.uniq

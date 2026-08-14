@@ -79,13 +79,16 @@ describe Spree::OrderInventory, type: :model do
       end
     end
 
-    it 'creates stock_movement' do
+    # Editing a placed order changes what is promised, not what is on the
+    # shelf.
+    it 'allocates the added units to the fulfillment' do
       expect(subject.send(:add_to_shipment, shipment, 5)).to eq(5)
 
       stock_level = shipment.stock_location.stock_level(subject.variant)
       movement = stock_level.stock_movements.last
-      # movement.originator.should == shipment
-      expect(movement.quantity).to eq(-5)
+
+      expect(movement).to have_attributes(kind: 'allocated', quantity: 5)
+      expect(movement.fulfillment).to eq(shipment)
     end
   end
 
@@ -231,10 +234,20 @@ describe Spree::OrderInventory, type: :model do
       end
 
       context 'backordered items are removed' do
-        it 'doesn\'t create on_hand items from backordered items' do
+        # Nothing physical comes back, so the shelf is untouched and only the
+        # promise is withdrawn — the old backordered special case is gone with
+        # the negative on-hand it served.
+        it 'withdraws the promise without inventing stock' do
           shipment.set_up_inventory('backordered', variant, order, line_item)
+          stock_level = shipment.stock_location.stock_level(variant)
+          shipment.stock_location.allocate(variant, 3, shipment)
+          allocated_before = stock_level.reload.allocated_count
+          removed = nil
 
-          expect { subject.send(:remove_from_shipment, shipment, 3) }.to change { line_item.variant.stock_levels.sum(:count_on_hand) }.from(-2).to(0)
+          expect { removed = subject.send(:remove_from_shipment, shipment, 3) }.
+            not_to change { line_item.variant.stock_levels.sum(:count_on_hand) }
+
+          expect(stock_level.reload.allocated_count).to eq(allocated_before - removed)
         end
       end
     end
