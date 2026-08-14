@@ -254,7 +254,7 @@
       "country_iso": {
         "label": "国家/地区"
       },
-      "state_abbr": {
+      "state_code": {
         "label": "州/省"
       },
       "state_name": {

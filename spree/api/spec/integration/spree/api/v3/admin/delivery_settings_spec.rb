@@ -131,7 +131,7 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
               properties: {
                 member_type: { type: :string, enum: %w[country state postal_code] },
                 country_iso: { type: :string, nullable: true, example: 'US' },
-                state_abbr: { type: :string, nullable: true },
+                state_code: { type: :string, nullable: true },
                 postal_code_prefix: { type: :string, nullable: true },
                 postal_code_from: { type: :string, nullable: true },
                 postal_code_to: { type: :string, nullable: true }

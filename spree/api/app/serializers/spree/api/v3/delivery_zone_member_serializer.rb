@@ -4,12 +4,12 @@ module Spree
       class DeliveryZoneMemberSerializer < BaseSerializer
         typelize member_type: :string, country_iso: [:string, nullable: true],
                  country_name: [:string, nullable: true],
-                 state_abbr: [:string, nullable: true], state_name: [:string, nullable: true],
+                 state_code: [:string, nullable: true], state_name: [:string, nullable: true],
                  postal_code_prefix: [:string, nullable: true],
                  postal_code_from: [:string, nullable: true],
                  postal_code_to: [:string, nullable: true]
 
-        attributes :member_type, :country_iso, :state_abbr,
+        attributes :member_type, :country_iso, :state_code,
                    :postal_code_prefix, :postal_code_from, :postal_code_to
 
         # Admin zone summaries list countries by name; without this every
@@ -21,7 +21,7 @@ module Spree
         # The subdivision's name is reference data rather than something the
         # member stores, so it is looked up from its country and code.
         attribute :state_name do |record|
-          Spree::IsoData.subdivision_name(record.country_iso, record.state_abbr) if record.state_abbr.present?
+          Spree::IsoData.subdivision_name(record.country_iso, record.state_code) if record.state_code.present?
         end
       end
     end

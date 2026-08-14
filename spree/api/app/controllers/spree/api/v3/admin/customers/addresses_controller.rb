@@ -68,7 +68,7 @@ module Spree
               params.permit(
                 :firstname, :lastname, :first_name, :last_name,
                 :address1, :address2, :city,
-                :country_iso, :state_abbr,
+                :country_iso, :state_code,
                 :zipcode, :postal_code, :phone, :alternative_phone,
                 :state_name, :company, :label, :quick_checkout
               )

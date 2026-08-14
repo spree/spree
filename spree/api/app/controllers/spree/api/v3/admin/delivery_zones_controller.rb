@@ -52,7 +52,7 @@ module Spree
           def permitted_params
             params.permit(
               :name, :description, :delivery_profile_id, :delivery_origin_group_id,
-              members: [:member_type, :country_iso, :state_abbr, :postal_code_prefix, :postal_code_from, :postal_code_to]
+              members: [:member_type, :country_iso, :state_code, :postal_code_prefix, :postal_code_from, :postal_code_to]
             )
           end
 
@@ -84,11 +84,11 @@ module Spree
             Array(permitted_params[:members]).each do |member|
               attributes = member.to_h.symbolize_keys
               country_iso = attributes[:country_iso].presence&.to_s&.upcase
-              state_value = attributes[:state_abbr].presence
+              state_value = attributes[:state_code].presence
 
               if state_value.present?
                 country_iso ||= infer_country_iso_for_state(state_value)
-                attributes[:state_abbr] = Spree::IsoData.subdivision_code(country_iso, state_value) if country_iso
+                attributes[:state_code] = Spree::IsoData.subdivision_code(country_iso, state_value) if country_iso
               end
 
               attributes[:country_iso] = country_iso

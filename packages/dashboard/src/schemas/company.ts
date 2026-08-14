@@ -34,7 +34,7 @@ const addressSchema = z.object({
   postal_code: z.string().optional(),
   phone: z.string().optional(),
   country_iso: z.string().optional(),
-  state_abbr: z.string().optional(),
+  state_code: z.string().optional(),
 })
 
 export const companyLocationFormSchema = z.object({
@@ -61,7 +61,7 @@ const EMPTY_ADDRESS = {
   postal_code: '',
   phone: '',
   country_iso: '',
-  state_abbr: '',
+  state_code: '',
 }
 
 export const COMPANY_LOCATION_DEFAULTS: CompanyLocationFormValues = {
@@ -116,7 +116,7 @@ const ADDRESS_COMPARISON_KEYS = [
   'postal_code',
   'phone',
   'country_iso',
-  'state_abbr',
+  'state_code',
 ] as const
 
 export const taxIdentifierFormSchema = z.object({

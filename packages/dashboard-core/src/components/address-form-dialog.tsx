@@ -32,7 +32,7 @@ export interface AddressParams {
   city: string
   postal_code: string
   country_iso: string
-  state_abbr: string
+  state_code: string
   phone: string
   label?: string
   is_default_billing?: boolean
@@ -65,7 +65,7 @@ const addressFormSchema = z.object({
     .string()
     .trim()
     .min(1, { error: requiredMessage('country_iso') }),
-  state_abbr: z.string(),
+  state_code: z.string(),
   phone: z.string(),
   label: z.string(),
   is_default_billing: z.boolean(),
@@ -83,7 +83,7 @@ function buildDefaults(address: Address | null | undefined): AddressFormValues {
     city: address?.city ?? '',
     postal_code: address?.postal_code ?? '',
     country_iso: address?.country_iso ?? '',
-    state_abbr: address?.state_abbr ?? '',
+    state_code: address?.state_code ?? '',
     phone: address?.phone ?? '',
     label: address?.label ?? '',
     is_default_billing: address?.is_default_billing ?? false,
@@ -145,7 +145,7 @@ export function AddressFormDialog({
         city: values.city,
         postal_code: values.postal_code,
         country_iso: values.country_iso,
-        state_abbr: values.state_abbr,
+        state_code: values.state_code,
         phone: values.phone,
         ...(showLabel && { label: values.label || undefined }),
         ...(showDefaultFlags && {
@@ -251,7 +251,7 @@ export function AddressFormDialog({
                       value={field.value}
                       onValueChange={(iso) => {
                         field.onChange(iso)
-                        form.setValue('state_abbr', '', { shouldDirty: true })
+                        form.setValue('state_code', '', { shouldDirty: true })
                       }}
                     />
                   )}
@@ -270,9 +270,9 @@ export function AddressFormDialog({
                 </Field>
                 {useStateCombobox ? (
                   <Field>
-                    <FieldLabel>{t('admin.fields.state_abbr.label')}</FieldLabel>
+                    <FieldLabel>{t('admin.fields.state_code.label')}</FieldLabel>
                     <Controller
-                      name="state_abbr"
+                      name="state_code"
                       control={form.control}
                       render={({ field }) => (
                         <StateCombobox
@@ -283,19 +283,19 @@ export function AddressFormDialog({
                         />
                       )}
                     />
-                    <FieldError errors={[errors.state_abbr]} />
+                    <FieldError errors={[errors.state_code]} />
                   </Field>
                 ) : (
                   <Field>
                     <FieldLabel htmlFor="addr-state-abbr">
-                      {t('admin.fields.state_abbr.label')}
+                      {t('admin.fields.state_code.label')}
                     </FieldLabel>
                     <Input
                       id="addr-state-abbr"
-                      aria-invalid={!!errors.state_abbr || undefined}
-                      {...form.register('state_abbr')}
+                      aria-invalid={!!errors.state_code || undefined}
+                      {...form.register('state_code')}
                     />
-                    <FieldError errors={[errors.state_abbr]} />
+                    <FieldError errors={[errors.state_code]} />
                   </Field>
                 )}
               </div>

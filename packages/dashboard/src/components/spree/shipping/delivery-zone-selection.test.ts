@@ -17,8 +17,8 @@ describe('readSelection', () => {
   it('splits members into whole countries, states and postal rules', () => {
     const selection = readSelection([
       { member_type: 'country', country_iso: 'DE' },
-      { member_type: 'state', country_iso: 'US', state_abbr: 'CA' },
-      { member_type: 'state', country_iso: 'US', state_abbr: 'NY' },
+      { member_type: 'state', country_iso: 'US', state_code: 'CA' },
+      { member_type: 'state', country_iso: 'US', state_code: 'NY' },
       { member_type: 'postal_code', country_iso: 'FR', postal_code_prefix: '75' },
     ])
 
@@ -30,7 +30,7 @@ describe('readSelection', () => {
   it('ignores members missing the fields that give them meaning', () => {
     const selection = readSelection([
       { member_type: 'country', country_iso: '' },
-      { member_type: 'state', country_iso: 'US', state_abbr: '' },
+      { member_type: 'state', country_iso: 'US', state_code: '' },
     ])
 
     expect(selection.countries.size).toBe(0)
@@ -42,7 +42,7 @@ describe('writeSelection', () => {
   it('round-trips a selection back into the flat member list', () => {
     const members: DeliveryZoneMemberValues[] = [
       { member_type: 'country', country_iso: 'DE' },
-      { member_type: 'state', country_iso: 'US', state_abbr: 'CA' },
+      { member_type: 'state', country_iso: 'US', state_code: 'CA' },
       { member_type: 'postal_code', country_iso: 'FR', postal_code_prefix: '75' },
     ]
 
@@ -71,7 +71,7 @@ describe('writeSelection', () => {
 describe('supersedeCountry', () => {
   it('drops the states and postal rules a whole country makes redundant', () => {
     const selection = readSelection([
-      { member_type: 'state', country_iso: 'US', state_abbr: 'NY' },
+      { member_type: 'state', country_iso: 'US', state_code: 'NY' },
       { member_type: 'postal_code', country_iso: 'US', postal_code_prefix: '10' },
       { member_type: 'postal_code', country_iso: 'DE', postal_code_prefix: '10' },
     ])
@@ -92,7 +92,7 @@ describe('claimedByOtherZones', () => {
     const claimed = claimedByOtherZones([
       zone([
         { member_type: 'country', country_iso: 'DE' },
-        { member_type: 'state', country_iso: 'US', state_abbr: 'CA' },
+        { member_type: 'state', country_iso: 'US', state_code: 'CA' },
       ]),
       zone([{ member_type: 'country', country_iso: 'FR' }]),
     ])
