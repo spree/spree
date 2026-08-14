@@ -1,3 +1,34 @@
+## 2026-08-14: ZoneRule retired by migration; Zone shelled to a migration-only reader
+
+Two amendments to the 2026-08-12 jurisdiction-as-codes entry, both Damian's
+call, finishing what "kept because it is persisted in the type column" left
+hanging.
+
+**`PriceRules::ZoneRule` is retired — onto MarketRule, with no replacement
+class.** Markets are how pricing targets geography, so `spree:migrate_tax_zones`
+converts each zone rule to a `MarketRule` where the zone's countries exactly
+match one of the store's markets — the one mapping that provably keeps the
+same buyers on the same prices. Where no market matches, the restriction is
+unrepresentable: the price list is **deactivated**, the rule row removed, and
+the task reports each list with the ISO codes it named so the merchant can
+create the market and rebuild. Deactivating errs on buyers briefly losing a
+discount over a restricted list quietly widening to everyone. A CountryRule
+carrier class was written and then rejected the same day — it preserved data
+at the cost of a second, half-alive geography concept beside markets.
+ZoneRule survives as a bare STI shell (rows keep the old type until the task
+runs; a 6.0 deployment boots before its upgrade tasks do), deleted in 6.1.
+
+**`Spree::Zone` and `ZoneMember` are shells.** Bare ActiveRecord — the
+associations plus a `country_list` — kept solely so the 5.6→6.0 upgrade tasks
+(`migrate_tax_zones`, `migrate_zones_to_delivery_zones`,
+`backfill_order_markets`) can read the rows they convert. Everything else
+went: the matching/inclusion logic, seeds (`Seeds::Zones` and its EU_VAT
+groupings — the markets sample data now names its ISO lists directly), the
+permission-catalog entries, Country/State's zone associations, and Store's
+`checkout_zone` bridge (deprecated since 5.4 with a 5.5 deadline, two
+releases overdue). `6.0-delivery-zones.md` still owns dropping the classes
+and tables in 6.1; what remains for it is deletion, not untangling.
+
 ## 2026-08-13: Document numbers — sequential by default, store-configurable orders, derived child numbers
 
 `Spree::Core::NumberGenerator` (the boot-frozen `Module` factory) is replaced

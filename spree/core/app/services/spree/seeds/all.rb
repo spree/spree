@@ -9,7 +9,6 @@ module Spree
             # GEO
             Countries.call
             States.call
-            Zones.call
 
             # user roles
             Roles.call

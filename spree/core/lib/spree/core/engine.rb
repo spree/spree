@@ -312,13 +312,10 @@ module Spree
           Spree::Promotion::Rules::OptionValue,
         ]
 
-        # Default registry. MarketRule is included so existing installs
-        # don't lose access to saved rule rows in the admin. ZoneRule is
-        # intentionally excluded: it decides by country now that tax and
-        # pricing no longer read zones, survives only to keep pre-6.0 data
-        # working, and
-        # MarketRule already covers geography for new price lists. The
-        # class loads; it just doesn't show up under "Add rule".
+        # Default registry. MarketRule is the only geography rule: price
+        # lists that were zone-scoped before 6.0 are converted onto it by
+        # `spree:migrate_tax_zones` where the countries match a market, and
+        # deactivated with a report where they don't.
         Rails.application.config.spree.pricing.rules.concat [
           Spree::PriceRules::UserRule,
           Spree::PriceRules::CustomerGroupRule,

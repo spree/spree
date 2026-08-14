@@ -179,7 +179,6 @@ module Spree
     has_many :data_feeds, class_name: 'Spree::DataFeed'
 
     belongs_to :default_country, class_name: 'Spree::Country'
-    belongs_to :checkout_zone, class_name: 'Spree::Zone'
 
     has_many :reports, class_name: 'Spree::Report'
     has_many :exports, class_name: 'Spree::Export'
@@ -294,18 +293,6 @@ module Spree
     # @return [Spree::Channel, nil]
     def default_channel
       channels.default.first || channels.active.first
-    end
-
-    # @deprecated Use Markets instead. Will be removed in Spree 5.5.
-    def checkout_zone
-      Spree::Deprecation.warn('Store#checkout_zone is deprecated and will be removed in Spree 5.5. Use Markets instead.')
-      super
-    end
-
-    # @deprecated Use Markets instead. Will be removed in Spree 5.5.
-    def checkout_zone=(zone)
-      Spree::Deprecation.warn('Store#checkout_zone= is deprecated and will be removed in Spree 5.5. Use Markets instead.')
-      super
     end
 
     # Virtual attribute — sets the country for the default market created on store creation.

@@ -274,62 +274,86 @@ describe '6.0 data migration tasks' do
     end
 
     context 'price rules restricted by zone' do
-      let(:price_list) { create(:price_list) }
+      let(:price_list) { create(:price_list, status: 'active') }
 
-      def legacy_rule(zone)
-        create(:zone_price_rule, price_list: price_list).tap do |rule|
-          rule.update_columns(preferences: { zone_ids: [zone.id.to_s] })
+      # A pre-upgrade row: ZoneRule-typed with zone ids in its preferences.
+      # Written with update_columns because 6.0 code never creates such rows.
+      def legacy_rule(zone, list: price_list)
+        create(:market_price_rule, price_list: list).tap do |rule|
+          rule.update_columns(
+            type: 'Spree::PriceRules::ZoneRule',
+            preferences: { zone_ids: [zone.id.to_s] }
+          )
         end
       end
 
-      it 'restates the zone as the countries it contained' do
+      def market_for(*countries)
+        create(:market, store: price_list.store, countries: countries)
+      end
+
+      it 'converts a rule whose zone matches a market exactly' do
+        market = market_for(germany, france)
         rule = legacy_rule(zone_with(germany, france))
 
         run_task('spree:migrate_tax_zones')
 
-        expect(rule.reload.preferred_country_isos).to contain_exactly(germany.iso, france.iso)
+        rule.reload
+        expect(rule.type).to eq('Spree::PriceRules::MarketRule')
+        expect(rule.preferred_market_ids.map(&:to_s)).to eq([market.id.to_s])
+        expect(price_list.reload.status).to eq('active')
       end
 
-      # A state-level zone can only be expressed as its states' countries,
-      # which lets the rule through for the rest of that country too.
-      it 'widens a state-level zone to the country' do
+      # A state-level zone resolves to its states' countries before matching.
+      it 'matches a state-level zone through its country' do
+        market = market_for(germany)
         state = create(:state, country: germany, abbr: 'BE', name: 'Berlin')
         rule = legacy_rule(zone_with(state))
 
         run_task('spree:migrate_tax_zones')
 
-        expect(rule.reload.preferred_country_isos).to eq([germany.iso])
+        rule.reload
+        expect(rule.type).to eq('Spree::PriceRules::MarketRule')
+        expect(rule.preferred_market_ids.map(&:to_s)).to eq([market.id.to_s])
       end
 
-      it 'is idempotent over a legacy row' do
-        rule = legacy_rule(zone_with(germany))
-        run_task('spree:migrate_tax_zones')
-        converted = rule.reload.preferred_country_isos
-
-        run_task('spree:migrate_tax_zones')
-
-        expect(rule.reload.preferred_country_isos).to eq(converted)
-        expect(rule.reload.preferences).not_to have_key(:zone_ids)
-      end
-
-      it 'leaves a rule the merchant already set countries on alone' do
-        rule = create(:zone_price_rule, price_list: price_list, country_isos: [france.iso])
+      it 'deactivates the list and removes the rule when no market matches' do
+        market_for(germany)
+        rule = legacy_rule(zone_with(germany, france))
 
         run_task('spree:migrate_tax_zones')
 
-        expect(rule.reload.preferred_country_isos).to eq([france.iso])
+        expect(Spree::PriceRule.exists?(rule.id)).to be(false)
+        expect(price_list.reload.status).to eq('inactive')
       end
 
-      # A zone that was deleted and one that never had members both leave no
-      # country to restrict by, so the rule stops narrowing its price list.
-      # The task reports the count; there is nothing to fall back on.
-      it 'clears a rule whose zones resolve to no country' do
+      # A zone that was deleted or memberless resolves to nothing — the one
+      # outcome that must never widen the list to every buyer.
+      it 'deactivates a list whose zones resolve to no country' do
         rule = legacy_rule(zone_with)
 
         run_task('spree:migrate_tax_zones')
 
-        expect(rule.reload.preferred_country_isos).to be_empty
-        expect(rule.preferences).not_to have_key(:zone_ids)
+        expect(Spree::PriceRule.exists?(rule.id)).to be(false)
+        expect(price_list.reload.status).to eq('inactive')
+      end
+
+      it 'is idempotent over a converted row' do
+        market_for(germany)
+        rule = legacy_rule(zone_with(germany))
+
+        run_task('spree:migrate_tax_zones')
+        run_task('spree:migrate_tax_zones')
+
+        expect(rule.reload.type).to eq('Spree::PriceRules::MarketRule')
+        expect(price_list.reload.status).to eq('active')
+      end
+
+      it 'does not touch other rule types' do
+        market_rule = create(:market_price_rule, price_list: price_list)
+
+        run_task('spree:migrate_tax_zones')
+
+        expect(market_rule.reload.type).to eq('Spree::PriceRules::MarketRule')
       end
     end
   end

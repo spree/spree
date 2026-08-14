@@ -66,54 +66,72 @@ namespace :spree do
     puts "  Converted #{converted} tax rates, split #{duplicated} extra rate(s) off multi-jurisdiction zones, " \
          "skipped #{skipped}."
 
-    # Price lists could also be restricted by zone. Those rules now decide by
-    # country, so restate each one as the countries its zones contained. A
-    # zone that named individual states becomes those states' countries, which
-    # widens the rule — reported below so the merchant can narrow it by hand.
-    # Both lists resolve through their model on the way out, so a member
-    # pointing at a deleted country or state drops out instead of being written
-    # back as a code nothing issued.
-    countries_for = lambda do |zone_ids|
+    # Price lists could also be restricted by zone. Markets are how pricing
+    # targets geography now, so each zone rule becomes a MarketRule where the
+    # zone's countries exactly match one of the store's markets — the one
+    # mapping that provably keeps the same buyers on the same prices. A rule
+    # whose countries match no market cannot be restated without silently
+    # re-scoping who pays what, so its price list is deactivated instead and
+    # reported with the countries it named, for the merchant to rebuild as a
+    # market. Zones naming states resolve to those states' countries.
+    zone_country_ids = lambda do |zone_ids|
       members = Spree::ZoneMember.where(zone_id: zone_ids)
-      country_isos = Spree::Country.where(
-        id: members.where(zoneable_type: 'Spree::Country').pluck(:zoneable_id)
-      ).pluck(:iso)
-      state_country_isos = Spree::Country.where(
+      country_ids = Spree::Country.where(
+        id: members.where(zoneable_type: 'Spree::Country').select(:zoneable_id)
+      ).ids
+      state_country_ids = Spree::Country.where(
         id: Spree::State.where(
-          id: members.where(zoneable_type: 'Spree::State').pluck(:zoneable_id)
+          id: members.where(zoneable_type: 'Spree::State').select(:zoneable_id)
         ).select(:country_id)
-      ).pluck(:iso)
+      ).ids
 
-      [(country_isos + state_country_isos).compact.uniq.map(&:upcase), state_country_isos.any?]
+      (country_ids + state_country_ids).uniq.sort
     end
 
-    rules_converted = 0
-    rules_widened = 0
-    rules_unrestricted = 0
+    rules_matched = 0
+    lists_deactivated = []
 
-    Spree::PriceRules::ZoneRule.find_each do |rule|
+    Spree::PriceRule.where(type: 'Spree::PriceRules::ZoneRule').find_each do |rule|
       stored = rule.preferences.with_indifferent_access
       zone_ids = Array(stored[:zone_ids]).reject(&:blank?)
-      next if stored[:country_isos].present? || zone_ids.empty?
+      country_ids = zone_country_ids.call(zone_ids)
 
-      country_isos, from_states = countries_for.call(zone_ids)
-      rule.update_columns(
-        preferences: stored.except(:zone_ids).merge(country_isos: country_isos).to_h.symbolize_keys,
-        updated_at: Time.current
-      )
-      rules_converted += 1
-      rules_widened += 1 if from_states
-      # A zone that was deleted, or had no members, leaves nothing to restrict
-      # by, so the rule stops narrowing its price list at all. Called out
-      # because it is the one outcome here a merchant would not predict.
-      rules_unrestricted += 1 if country_isos.empty?
+      price_list = Spree::PriceList.with_deleted.find_by(id: rule.price_list_id)
+      market = if price_list && country_ids.any?
+                 price_list.store.markets.find do |candidate|
+                   candidate.market_countries.pluck(:country_id).uniq.sort == country_ids
+                 end
+               end
+
+      if market
+        rule.update_columns(
+          type: 'Spree::PriceRules::MarketRule',
+          preferences: stored.except(:zone_ids, :country_isos).
+                       merge(market_ids: [market.id.to_s]).to_h.symbolize_keys,
+          updated_at: Time.current
+        )
+        rules_matched += 1
+      else
+        # Without a matching market the restriction is unrepresentable; the
+        # list must not quietly widen to every buyer, so it goes dark until
+        # the merchant rebuilds the geography as a market.
+        if price_list && !price_list.deleted? && price_list.status != 'inactive'
+          price_list.update_columns(status: 'inactive', updated_at: Time.current)
+        end
+        isos = Spree::Country.where(id: country_ids).pluck(:iso).sort
+        lists_deactivated << [price_list, isos]
+        rule.delete
+      end
     end
 
-    puts "  Restated #{rules_converted} zone price rule(s) as countries " \
-         "(#{rules_widened} widened from state-level zones — review those price lists)."
-    if rules_unrestricted.positive?
-      puts "  #{rules_unrestricted} of them named zones that no longer resolve to any country, so " \
-           'those price lists now apply everywhere — set their countries by hand.'
+    puts "  Converted #{rules_matched} zone price rule(s) to market rules." if rules_matched.positive?
+    if lists_deactivated.any?
+      puts "  Deactivated #{lists_deactivated.size} price list(s) whose zone matched no market — " \
+           'create a market for the countries, then re-add the rule and reactivate:'
+      lists_deactivated.each do |list, isos|
+        label = list ? "#{list.name} (#{list.id})" : 'deleted price list'
+        puts "    - #{label}: #{isos.any? ? isos.join(', ') : 'no resolvable countries'}"
+      end
     end
   end
 end
