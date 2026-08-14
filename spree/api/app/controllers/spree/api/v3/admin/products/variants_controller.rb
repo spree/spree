@@ -26,7 +26,7 @@ module Spree
             end
 
             def scope_includes
-              [:prices, stock_items: :stock_location]
+              [:prices, stock_levels: :stock_location]
             end
 
             def permitted_params
@@ -38,7 +38,7 @@ module Spree
                 :track_inventory, :preorderable, :preorder_ships_at, :backorder_limit, :tax_category_id, :position,
                 options: [:name, :value],
                 prices: [:amount, :compare_at_amount, :currency],
-                stock_items: [:stock_location_id, :count_on_hand, :backorderable]
+                stock_levels: [:stock_location_id, :count_on_hand, :backorderable]
               )
             end
           end

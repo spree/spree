@@ -400,7 +400,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
     it 'splits items to a new fulfillment at a different stock location' do
       variant = shipment.inventory_units.first.variant
       target_stock_location = create(:stock_location, name: 'Warehouse 2')
-      target_stock_location.stock_items.find_or_create_by(variant: variant).set_count_on_hand(10)
+      target_stock_location.stock_levels.find_or_create_by(variant: variant).set_count_on_hand(10)
 
       patch :split, params: {
         order_id: order.prefixed_id,

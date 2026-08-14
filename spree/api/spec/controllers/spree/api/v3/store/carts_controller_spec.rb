@@ -242,7 +242,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
       before do
         [variant, variant2].each do |v|
-          v.stock_items.first.update!(count_on_hand: 10)
+          v.stock_levels.first.update!(count_on_hand: 10)
         end
       end
 
@@ -471,7 +471,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       end
 
       it 'returns warnings when a line item is out of stock' do
-        cart.line_items.first.variant.stock_items.update_all(count_on_hand: 0, backorderable: false)
+        cart.line_items.first.variant.stock_levels.update_all(count_on_hand: 0, backorderable: false)
 
         get :show, params: { id: cart.prefixed_id }
 
@@ -497,7 +497,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       end
 
       it 'removes the line item when returning a warning' do
-        cart.line_items.first.variant.stock_items.update_all(count_on_hand: 0, backorderable: false)
+        cart.line_items.first.variant.stock_levels.update_all(count_on_hand: 0, backorderable: false)
         original_item_count = cart.line_items.count
 
         get :show, params: { id: cart.prefixed_id }
@@ -744,8 +744,8 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       end
 
       before do
-        order.line_items.first.variant.stock_items.first.update!(backorderable: false)
-        order.line_items.first.variant.stock_items.first.set_count_on_hand(20)
+        order.line_items.first.variant.stock_levels.first.update!(backorderable: false)
+        order.line_items.first.variant.stock_levels.first.set_count_on_hand(20)
       end
 
       it 'creates a reservation when the cart leaves the cart state' do
@@ -924,11 +924,11 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
       it 'removes any stock reservations belonging to the cart' do
         line_item = cart.line_items.first
-        line_item.variant.stock_items.first.update!(backorderable: false)
-        line_item.variant.stock_items.first.set_count_on_hand(20)
+        line_item.variant.stock_levels.first.update!(backorderable: false)
+        line_item.variant.stock_levels.first.set_count_on_hand(20)
         create(
           :stock_reservation,
-          stock_item: line_item.variant.stock_items.first,
+          stock_level: line_item.variant.stock_levels.first,
           line_item: line_item,
           cart: cart,
           order: nil,
@@ -983,11 +983,11 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
     it 'releases stock reservations on successful completion' do
       create(:payment, cart: order, amount: order.reload.total)
       line_item = order.line_items.first
-      line_item.variant.stock_items.first.update!(backorderable: false)
-      line_item.variant.stock_items.first.set_count_on_hand(20)
+      line_item.variant.stock_levels.first.update!(backorderable: false)
+      line_item.variant.stock_levels.first.set_count_on_hand(20)
       create(
         :stock_reservation,
-        stock_item: line_item.variant.stock_items.first,
+        stock_level: line_item.variant.stock_levels.first,
         line_item: line_item,
         cart: order,
         order: nil,

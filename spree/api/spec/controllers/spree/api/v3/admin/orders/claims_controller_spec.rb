@@ -98,7 +98,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ClaimsController, type: :controlle
     it 'sends a replacement for the lines chosen at resolve time' do
       line = claim.claim_line_items.first
       line.update!(send_replacement: false)
-      line.variant.stock_items.first&.set_count_on_hand(10)
+      line.variant.stock_levels.first&.set_count_on_hand(10)
 
       patch :resolve, params: {
         order_id: order.prefixed_id,

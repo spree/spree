@@ -84,7 +84,7 @@ module Spree
                 :prices,
                 product: :tax_category,
                 option_values: :option_type,
-                stock_items: [:stock_location, :active_stock_reservations]
+                stock_levels: [:stock_location, :active_stock_reservations]
               ]
             }
           end

@@ -27,11 +27,11 @@ RSpec.describe Spree::Api::V3::Admin::StockReservationsController, type: :contro
     it 'serializes reservation with prefixed associations and active flag' do
       subject
       record = json_response['data'].find { |r| r['id'] == reservation.prefixed_id }
-      expect(record['stock_item_id']).to eq(reservation.stock_item.prefixed_id)
+      expect(record['stock_level_id']).to eq(reservation.stock_level.prefixed_id)
       expect(record['line_item_id']).to eq(reservation.line_item.prefixed_id)
       expect(record['order_id']).to eq(reservation.order.prefixed_id)
-      expect(record['variant_id']).to eq(reservation.stock_item.variant.prefixed_id)
-      expect(record['stock_location_id']).to eq(reservation.stock_item.stock_location.prefixed_id)
+      expect(record['variant_id']).to eq(reservation.stock_level.variant.prefixed_id)
+      expect(record['stock_location_id']).to eq(reservation.stock_level.stock_location.prefixed_id)
       expect(record['quantity']).to eq(reservation.quantity)
       expect(record['active']).to be(true)
     end

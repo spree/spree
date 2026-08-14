@@ -21,7 +21,7 @@ module Spree
 
           def scope_includes
             [
-              :prices, stock_items: :stock_location,
+              :prices, stock_levels: :stock_location,
               option_values: :option_type,
               primary_media: [attachment_attachment: :blob]
             ]

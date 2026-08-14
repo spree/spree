@@ -61,7 +61,7 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
       expect(json_response['sku']).to eq('NEW-SKU-001')
     end
 
-    context 'with nested prices and stock_items' do
+    context 'with nested prices and stock_levels' do
       let!(:stock_location_1) { Spree::StockLocation.first || create(:stock_location) }
       let!(:stock_location_2) { create(:stock_location, name: 'Warehouse 2') }
 
@@ -75,7 +75,7 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
               { currency: 'USD', amount: 19.99, compare_at_amount: 24.99 },
               { currency: 'EUR', amount: 17.99 }
             ],
-            stock_items: [
+            stock_levels: [
               { stock_location_id: stock_location_1.prefixed_id, count_on_hand: 50, backorderable: false },
               { stock_location_id: stock_location_2.prefixed_id, count_on_hand: 10, backorderable: true }
             ]
@@ -90,11 +90,11 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
         expect(created_variant.prices.find_by(currency: 'USD').compare_at_amount.to_f).to eq(24.99)
         expect(created_variant.prices.find_by(currency: 'EUR').amount.to_f).to eq(17.99)
 
-        si_1 = created_variant.stock_items.find_by(stock_location: stock_location_1)
+        si_1 = created_variant.stock_levels.find_by(stock_location: stock_location_1)
         expect(si_1.count_on_hand).to eq(50)
         expect(si_1.backorderable).to eq(false)
 
-        si_2 = created_variant.stock_items.find_by(stock_location: stock_location_2)
+        si_2 = created_variant.stock_levels.find_by(stock_location: stock_location_2)
         expect(si_2.count_on_hand).to eq(10)
         expect(si_2.backorderable).to eq(true)
       end
@@ -161,20 +161,20 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
       end
     end
 
-    context 'with nested stock_items' do
+    context 'with nested stock_levels' do
       let!(:stock_location) { Spree::StockLocation.first || create(:stock_location) }
 
       it 'updates stock levels' do
         patch :update, params: {
           product_id: product.prefixed_id,
           id: variant.prefixed_id,
-          stock_items: [
+          stock_levels: [
             { stock_location_id: stock_location.prefixed_id, count_on_hand: 99 }
           ]
         }, as: :json
 
         expect(response).to have_http_status(:ok)
-        expect(variant.reload.stock_items.find_by(stock_location: stock_location).count_on_hand).to eq(99)
+        expect(variant.reload.stock_levels.find_by(stock_location: stock_location).count_on_hand).to eq(99)
       end
     end
   end

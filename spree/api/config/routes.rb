@@ -340,7 +340,7 @@ Spree::Core::Engine.add_routes do
         # Inventory
         resources :stock_locations
         resources :stock_reservations, only: [:index, :show]
-        resources :stock_items, only: [:index, :show, :update, :destroy]
+        resources :stock_levels, only: [:index, :show, :update, :destroy]
         resources :stock_transfers, only: [:index, :show, :create, :destroy]
 
         # Payment Methods

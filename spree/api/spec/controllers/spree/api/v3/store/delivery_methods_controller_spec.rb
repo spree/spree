@@ -77,7 +77,7 @@ RSpec.describe Spree::Api::V3::Store::DeliveryMethodsController, type: :controll
 
       it 'keeps the location even without local stock' do
         pickup_location.update!(pickup_stock_policy: 'any')
-        pickup_location.stock_item_or_create(cart.line_items.first.variant).set_count_on_hand(0)
+        pickup_location.stock_level_or_create(cart.line_items.first.variant).set_count_on_hand(0)
 
         get :pickup_locations, params: { id: pickup_method.prefixed_id, cart_id: cart.prefixed_id }, as: :json
 
@@ -93,7 +93,7 @@ RSpec.describe Spree::Api::V3::Store::DeliveryMethodsController, type: :controll
       end
 
       it 'keeps locations that can fulfill the whole cart from local stock' do
-        pickup_location.stock_item_or_create(variant).set_count_on_hand(10)
+        pickup_location.stock_level_or_create(variant).set_count_on_hand(10)
 
         get :pickup_locations, params: { id: pickup_method.prefixed_id, cart_id: cart.prefixed_id }, as: :json
 
@@ -101,7 +101,7 @@ RSpec.describe Spree::Api::V3::Store::DeliveryMethodsController, type: :controll
       end
 
       it 'drops locations without local stock for the cart' do
-        pickup_location.stock_item_or_create(variant).set_count_on_hand(0)
+        pickup_location.stock_level_or_create(variant).set_count_on_hand(0)
 
         get :pickup_locations, params: { id: pickup_method.prefixed_id, cart_id: cart.prefixed_id }, as: :json
 
@@ -109,7 +109,7 @@ RSpec.describe Spree::Api::V3::Store::DeliveryMethodsController, type: :controll
       end
 
       it 'ignores items the counter will never hand over (mixed cart with a tracked digital item)' do
-        pickup_location.stock_item_or_create(variant).set_count_on_hand(10)
+        pickup_location.stock_level_or_create(variant).set_count_on_hand(10)
 
         digital_product = create(:digital_product, store: store)
         digital_product.default_variant.update!(track_inventory: true)

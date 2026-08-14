@@ -36,7 +36,7 @@ module Spree
           end
 
           # Physical pool minus already-allocated units. In 5.5 allocated_count
-          # is always 0, so this equals SUM(stock_items.count_on_hand).
+          # is always 0, so this equals SUM(stock_levels.count_on_hand).
           attribute :available_stock do |variant|
             variant.available_stock.to_i if variant.should_track_inventory?
           end
@@ -75,9 +75,9 @@ module Spree
                resource: proc { Spree.api.admin_custom_field_serializer },
                if: proc { expand?('custom_fields') }
 
-          many :stock_items,
-               resource: proc { Spree.api.admin_stock_item_serializer },
-               if: proc { expand?('stock_items') }
+          many :stock_levels,
+               resource: proc { Spree.api.admin_stock_level_serializer },
+               if: proc { expand?('stock_levels') }
         end
       end
     end

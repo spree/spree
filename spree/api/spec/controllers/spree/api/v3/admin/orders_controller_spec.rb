@@ -338,8 +338,8 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       let(:variant) { create(:variant) }
 
       before do
-        default_location.stock_item_or_create(variant).update!(count_on_hand: 10)
-        preferred_location.stock_item_or_create(variant).update!(count_on_hand: 10)
+        default_location.stock_level_or_create(variant).update!(count_on_hand: 10)
+        preferred_location.stock_level_or_create(variant).update!(count_on_hand: 10)
       end
 
       let(:create_params) do
@@ -380,7 +380,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
 
       context 'when the preferred location does not stock the variant' do
         before do
-          preferred_location.stock_items.where(variant_id: variant.id).destroy_all
+          preferred_location.stock_levels.where(variant_id: variant.id).destroy_all
         end
 
         it 'falls back to the default location instead of erroring' do

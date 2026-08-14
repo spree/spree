@@ -87,7 +87,7 @@ module Spree
         promotion_serializer: 'Spree::Api::V3::PromotionSerializer',
         refund_serializer: 'Spree::Api::V3::RefundSerializer',
         report_serializer: 'Spree::Api::V3::ReportSerializer',
-        stock_item_serializer: 'Spree::Api::V3::StockItemSerializer',
+        stock_level_serializer: 'Spree::Api::V3::StockLevelSerializer',
         stock_movement_serializer: 'Spree::Api::V3::StockMovementSerializer',
         stock_reservation_serializer: 'Spree::Api::V3::StockReservationSerializer',
         stock_transfer_serializer: 'Spree::Api::V3::StockTransferSerializer',
@@ -124,7 +124,7 @@ module Spree
         admin_option_type_serializer: 'Spree::Api::V3::Admin::OptionTypeSerializer',
         admin_option_value_serializer: 'Spree::Api::V3::Admin::OptionValueSerializer',
         admin_media_serializer: 'Spree::Api::V3::Admin::MediaSerializer',
-        admin_stock_item_serializer: 'Spree::Api::V3::Admin::StockItemSerializer',
+        admin_stock_level_serializer: 'Spree::Api::V3::Admin::StockLevelSerializer',
         admin_stock_transfer_serializer: 'Spree::Api::V3::Admin::StockTransferSerializer',
         admin_shipment_serializer: 'Spree::Api::V3::Admin::FulfillmentSerializer',
         admin_fulfillment_serializer: 'Spree::Api::V3::Admin::FulfillmentSerializer',
@@ -196,6 +196,33 @@ module Spree
       }
 
       include Spree::DependenciesHelper
+
+      # Pre-6.0 names for the StockItem → StockLevel serializers. Unlike the
+      # legacy workflow keys in core, these forward instead of stashing: a
+      # serializer renders the same model under a new class name, so an
+      # override written against the old key is still the class the host app
+      # wants used. Removed in 6.1.
+      LEGACY_SERIALIZER_KEYS = {
+        stock_item_serializer: :stock_level_serializer,
+        admin_stock_item_serializer: :admin_stock_level_serializer
+      }.freeze
+
+      LEGACY_SERIALIZER_KEYS.each do |legacy, current|
+        define_method("#{legacy}=") do |value|
+          Spree::Deprecation.warn("Spree.api.#{legacy}= is deprecated and will be removed in Spree 6.1. Use #{current}= instead.")
+          send("#{current}=", value)
+        end
+
+        define_method(legacy) do
+          Spree::Deprecation.warn("Spree.api.#{legacy} is deprecated and will be removed in Spree 6.1. Use #{current} instead.")
+          send(current)
+        end
+
+        define_method("#{legacy}_class") do
+          Spree::Deprecation.warn("Spree.api.#{legacy}_class is deprecated and will be removed in Spree 6.1. Use #{current}_class instead.")
+          send("#{current}_class")
+        end
+      end
     end
   end
 end

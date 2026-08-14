@@ -315,7 +315,7 @@ module Spree
         end
 
         # Override in subclass to eager load associations that don't work well
-        # with ar_lazy_preload (e.g., prices, stock_items)
+        # with ar_lazy_preload (e.g., prices, stock_levels)
         def scope_includes
           []
         end

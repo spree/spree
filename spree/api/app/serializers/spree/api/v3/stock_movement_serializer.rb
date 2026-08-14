@@ -6,7 +6,7 @@ module Spree
       class StockMovementSerializer < BaseSerializer
         typelize quantity: :number, action: [:string, nullable: true],
                  originator_type: [:string, nullable: true], originator_id: [:string, nullable: true],
-                 stock_item_id: [:string, nullable: true]
+                 stock_level_id: [:string, nullable: true]
 
         attributes :quantity, :action,
                    created_at: :iso8601, updated_at: :iso8601
@@ -20,8 +20,8 @@ module Spree
           movement.originator&.prefixed_id
         end
 
-        attribute :stock_item_id do |movement|
-          movement.stock_item&.prefixed_id
+        attribute :stock_level_id do |movement|
+          movement.stock_level&.prefixed_id
         end
       end
     end
