@@ -111,9 +111,10 @@ module Spree
         shipment.set_up_inventory('on_hand', variant, order, line_item, quantity)
       end
 
-      # adding to this shipment, and removing from stock_location
+      # Editing a placed order changes what is promised, not what is on the
+      # shelf — the goods only leave when the fulfillment ships.
       if order.completed? && variant.should_track_inventory?
-        shipment.stock_location.unstock(variant, quantity, shipment)
+        shipment.stock_location.allocate(variant, quantity, shipment)
       end
 
       quantity
@@ -144,17 +145,11 @@ module Spree
 
       shipment.destroy if shipment.fulfillment_items.sum(:quantity).zero?
 
-      # removing this from shipment, and adding to stock_location
-      if order.completed?
-        current_on_hand = shipment.stock_location.count_on_hand(variant)
-
-        if current_on_hand&.negative? && current_on_hand.abs < removed_backordered
-          shipment.stock_location.restock_backordered variant, current_on_hand.abs, shipment
-        else
-          shipment.stock_location.restock_backordered variant, removed_backordered, shipment
-        end
-
-        shipment.stock_location.restock variant, removed_quantity - removed_backordered, shipment
+      # Removing units from a placed order withdraws their promise. On-hand
+      # and backordered units go back the same way now — nothing physical
+      # moved either way.
+      if order.completed? && removed_quantity.positive? && variant.should_track_inventory?
+        shipment.stock_location.release(variant, removed_quantity, shipment)
       end
 
       removed_quantity

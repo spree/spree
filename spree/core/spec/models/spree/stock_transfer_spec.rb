@@ -49,8 +49,11 @@ module Spree
         expect(stock_transfer.source_location).to eq source_location
         expect(stock_transfer.destination_location).to eq destination_location
 
-        expect(stock_transfer.source_movements.first.quantity).to eq(-5)
-        expect(stock_transfer.destination_movements.first.quantity).to eq 5
+        # Quantities are positive on both sides now; the kind says which way
+        # the goods went.
+        expect(stock_transfer.source_movements.first).to have_attributes(quantity: 5, kind: 'shipped')
+        expect(stock_transfer.destination_movements.first).to have_attributes(quantity: 5, kind: 'received')
+        expect(stock_transfer.source_movements.first.stock_transfer).to eq(stock_transfer)
       end
 
       context 'when variants are not available in the source location' do

@@ -130,29 +130,66 @@ module Spree
       stock_level(variant).try(:backorderable?)
     end
 
-    def restock(variant, quantity, originator = nil, persist: true)
-      move(variant, quantity, originator, persist: persist)
+    # The five stock verbs are the public surface — extensions call these
+    # rather than creating movements themselves, so every row comes out typed
+    # and carrying its cause.
+
+    # Goods arrived: a purchase order, a transfer receipt, a return.
+    #
+    # @param variant [Spree::Variant]
+    # @param quantity [Integer]
+    # @param cause [ApplicationRecord, nil] the record this is happening for
+    # @return [Spree::StockMovement]
+    def restock(variant, quantity, cause = nil, persist: true)
+      move(variant, quantity, kind: 'received', cause: cause, persist: persist)
     end
 
-    def restock_backordered(variant, quantity, _originator = nil)
-      item = stock_level_or_create(variant)
-      item.update_columns(
-        count_on_hand: item.count_on_hand + quantity,
-        updated_at: Time.current
-      )
+    # Goods left. Departure is a physical fact, so this is allowed to take the
+    # shelf below zero.
+    #
+    # @return [Spree::StockMovement]
+    def unstock(variant, quantity, cause = nil, persist: true)
+      move(variant, quantity, kind: 'shipped', cause: cause, persist: persist)
     end
 
-    def unstock(variant, quantity, originator = nil, persist: true)
-      move(variant, -quantity, originator, persist: persist)
+    # Promises stock to a placed order. The cause is the fulfillment, never
+    # the order: it owns the origin location and the unit split, and the order
+    # comes along with it.
+    #
+    # @param fulfillment [Spree::Fulfillment]
+    # @return [Spree::StockMovement]
+    def allocate(variant, quantity, fulfillment)
+      move(variant, quantity, kind: 'allocated', cause: fulfillment)
     end
 
-    def move(variant, quantity, originator = nil, persist: true)
+    # Withdraws a promise — a canceled, relocated or shrunk fulfillment.
+    # Nothing physical moves.
+    #
+    # @param fulfillment [Spree::Fulfillment]
+    # @return [Spree::StockMovement]
+    def release(variant, quantity, fulfillment)
+      move(variant, quantity, kind: 'released', cause: fulfillment)
+    end
+
+    # A manual correction — an inventory count, shrinkage, damage. Signed, so
+    # a negative quantity writes stock off.
+    #
+    # @param reason [String] audit text, required
+    # @return [Spree::StockMovement]
+    def adjust(variant, quantity, reason:)
+      move(variant, quantity, kind: 'adjusted', reason: reason)
+    end
+
+    def move(variant, quantity, kind:, cause: nil, reason: nil, persist: true)
       stock_level = stock_level_or_create(variant)
+      attributes = { quantity: quantity, kind: kind, reason: reason, **cause_attributes(cause) }
 
       if persist
-        stock_level.stock_movements.create!(quantity: quantity, originator: originator)
+        stock_level.stock_movements.create!(attributes)
       else
-        originator.stock_movements << stock_level.stock_movements.build(quantity: quantity)
+        # StockTransfer builds its movements before it is saved, so they ride
+        # along on its own association rather than being created here.
+        cause.stock_movements << stock_level.stock_movements.build(attributes)
       end
     end
 
@@ -213,6 +250,21 @@ module Spree
     end
 
     private
+
+    # One cause in, the foreign keys it implies out. A fulfillment brings its
+    # order with it because "which order was this for?" must not cost a join.
+    # The set is closed and core-owned — extensions register causes by adding
+    # a branch here, never by inventing a movement column.
+    def cause_attributes(cause)
+      case cause
+      when Spree::Fulfillment   then { fulfillment: cause, order: cause.order }
+      when Spree::Return        then { return: cause, order: cause.order }
+      when Spree::Exchange      then { exchange: cause, order: cause.order }
+      when Spree::StockTransfer then { stock_transfer: cause }
+      when Spree::Order         then { order: cause }
+      else {}
+      end
+    end
 
     def create_stock_levels
       Spree::StockLocations::StockLevels::CreateJob.perform_later(self)

@@ -238,11 +238,12 @@ module Spree
     ]
 
     @@stock_movement_attributes = [
-      :quantity, :stock_level, :stock_level_id, :originator, :action
+      :quantity, :kind, :reason, :stock_level, :stock_level_id,
+      :order_id, :fulfillment_id, :return_id, :exchange_id, :stock_transfer_id
     ]
 
     @@stock_transfer_attributes = [:source_location_id, :destination_location_id, :reference,
-                                   stock_movements_attributes: [:variant_id, :quantity, :originator_id, :stock_level_id]]
+                                   stock_movements_attributes: [:variant_id, :quantity, :kind, :stock_level_id]]
 
     @@store_attributes = [:name, :url, :seo_title, :code, :meta_keywords,
                           :meta_description, :default_currency, :default_country_code, :mail_from_address,

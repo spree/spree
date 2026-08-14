@@ -9,7 +9,7 @@ module Spree
 
     publishes_lifecycle_events
 
-    has_many :stock_movements, as: :originator
+    has_many :stock_movements, class_name: 'Spree::StockMovement', inverse_of: :stock_transfer, dependent: :nullify
     accepts_nested_attributes_for :stock_movements, reject_if: proc { |attributes|
       attributes[:quantity] = attributes[:quantity].to_i
       attributes[:quantity].blank? || attributes[:quantity].zero? || attributes[:stock_level_id].blank?
@@ -92,7 +92,8 @@ module Spree
     def variants_available_in_source_location?(source_location, variants)
       return true if source_location.nil?
 
-      source_location.stock_levels.where(variant: variants.keys).where(Spree::StockLevel.arel_table[:count_on_hand].gt(0)).size == variants.keys.size
+      available = Spree::StockLevel.arel_table[:count_on_hand] - Spree::StockLevel.arel_table[:allocated_count]
+      source_location.stock_levels.where(variant: variants.keys).where(available.gt(0)).size == variants.keys.size
     end
   end
 end

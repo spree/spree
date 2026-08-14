@@ -749,18 +749,17 @@ module Spree
       owner.ship_address&.valid?
     end
 
+    # Cancelling withdraws the promise made at placement — nothing physical
+    # comes back, so on-hand and backordered units go back the same way and
+    # the old backordered special case is gone.
     def manifest_restock(item)
-      if item.states['on_hand'].to_i.positive?
-        stock_location.restock item.variant, item.states['on_hand'], self
-      end
+      return unless item.quantity.positive?
 
-      if item.states['backordered'].to_i.positive?
-        stock_location.restock_backordered item.variant, item.states['backordered']
-      end
+      stock_location.release(item.variant, item.quantity, self)
     end
 
     def manifest_unstock(item)
-      stock_location.unstock(item.variant, item.quantity, self) if item.variant.track_inventory?
+      stock_location.allocate(item.variant, item.quantity, self) if item.variant.track_inventory?
     end
 
     def set_cost_zero_when_nil

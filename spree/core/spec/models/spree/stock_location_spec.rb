@@ -170,22 +170,64 @@ module Spree
       expect(subject.backorderable?(variant)).to be true
     end
 
-    it 'restocks a variant with a positive stock movement' do
-      originator = double
-      expect(subject).to receive(:move).with(variant, 5, originator, persist: true)
-      subject.restock(variant, 5, originator)
+    it 'restocks a variant with a received movement' do
+      cause = double
+      expect(subject).to receive(:move).with(variant, 5, kind: 'received', cause: cause, persist: true)
+      subject.restock(variant, 5, cause)
     end
 
-    it 'unstocks a variant with a negative stock movement' do
-      originator = double
-      expect(subject).to receive(:move).with(variant, -5, originator, persist: true)
-      subject.unstock(variant, 5, originator)
+    # The sign no longer carries the direction — the kind does — so a
+    # departure is written positive like every other order-driven kind.
+    it 'unstocks a variant with a shipped movement' do
+      cause = double
+      expect(subject).to receive(:move).with(variant, 5, kind: 'shipped', cause: cause, persist: true)
+      subject.unstock(variant, 5, cause)
+    end
+
+    it 'allocates a variant to a fulfillment' do
+      fulfillment = double
+      expect(subject).to receive(:move).with(variant, 2, kind: 'allocated', cause: fulfillment)
+      subject.allocate(variant, 2, fulfillment)
+    end
+
+    it 'releases a variant from a fulfillment' do
+      fulfillment = double
+      expect(subject).to receive(:move).with(variant, 2, kind: 'released', cause: fulfillment)
+      subject.release(variant, 2, fulfillment)
+    end
+
+    it 'adjusts a variant with a reason' do
+      expect(subject).to receive(:move).with(variant, -2, kind: 'adjusted', reason: 'Damaged')
+      subject.adjust(variant, -2, reason: 'Damaged')
     end
 
     it 'creates a stock_movement' do
       expect do
-        subject.move variant, 5
+        subject.move variant, 5, kind: 'received'
       end.to change { subject.stock_movements.where(stock_level_id: stock_level).count }.by(1)
+    end
+
+    describe 'cause keys' do
+      let(:order) { create(:order) }
+      let(:fulfillment) { create(:fulfillment, order: order, stock_location: subject) }
+
+      it 'carries the fulfillment and its order onto an allocation' do
+        subject.allocate(variant, 1, fulfillment)
+        movement = subject.stock_movements.last
+
+        expect(movement.kind).to eq('allocated')
+        expect(movement.fulfillment).to eq(fulfillment)
+        expect(movement.order).to eq(order)
+      end
+
+      it 'leaves the cause keys empty for a plain adjustment' do
+        subject.adjust(variant, 1, reason: 'Cycle count')
+        movement = subject.stock_movements.last
+
+        expect(movement.reason).to eq('Cycle count')
+        expect(movement.fulfillment_id).to be_nil
+        expect(movement.order_id).to be_nil
+      end
     end
 
     it 'can be deactivated' do
