@@ -15,11 +15,37 @@ module Spree
 
         line_items = cart.line_items.includes(variant: [:product, :stock_locations, { stock_items: [:stock_location, :active_stock_reservations] }])
 
+        removal_error = nil
+
         ActiveRecord::Base.transaction do
-          line_items.each do |line_item|
-            cart_remove_line_item_service.call(cart: cart, line_item: line_item) if !valid_status?(line_item) || !stock_available?(line_item)
+          # The predicates record a message per candidate as they run, so the
+          # messages exist before the removal is attempted.
+          removals = line_items.reject { |line_item| valid_status?(line_item) && stock_available?(line_item) }
+
+          if removals.any?
+            workflow = Spree.cart_upsert_items_workflow.new
+            result = workflow.call(
+              cart: cart,
+              items: removals.map { |line_item| { variant_id: line_item.variant_id, quantity: 0 } }
+            )
+
+            # Nothing was removed — reporting the candidates as removed would
+            # tell the customer their cart changed when it did not. Raise
+            # rather than return so the transaction rolls back; a bare return
+            # would commit it.
+            if result.failure?
+              removal_error = result.error
+              raise ActiveRecord::Rollback
+            end
+
+            # A :validate handler can veto a removal, leaving the line in the
+            # cart. Telling the customer it was removed would be a lie, so
+            # retract the message for anything that survived.
+            discard_messages_for(workflow.warnings)
           end
         end
+
+        return failure(cart, removal_error) if removal_error
 
         if @messages.any? # If any line item was removed, reload the cart
           success([cart.reload, @messages, @warnings])
@@ -29,6 +55,19 @@ module Spree
       end
 
       private
+
+      # @param item_warnings [Array<Spree::Carts::ItemWarning>] items the upsert
+      #   did not remove
+      def discard_messages_for(item_warnings)
+        return if item_warnings.empty?
+
+        surviving_variant_ids = item_warnings.filter_map { |warning| warning.variant&.prefixed_id }
+        return if surviving_variant_ids.empty?
+
+        retracted = @warnings.select { |warning| surviving_variant_ids.include?(warning[:variant_id]) }
+        @messages -= retracted.map { |warning| warning[:message] }
+        @warnings -= retracted
+      end
 
       def valid_status?(line_item)
         product = line_item.product
@@ -59,10 +98,6 @@ module Spree
           return false
         end
         true
-      end
-
-      def cart_remove_line_item_service
-        Spree.cart_remove_line_item_service
       end
     end
   end

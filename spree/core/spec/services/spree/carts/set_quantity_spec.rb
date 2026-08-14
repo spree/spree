@@ -90,5 +90,36 @@ module Spree
         end
       end
     end
+
+    # The workflow this shim delegates to removes the row on a zero quantity,
+    # so a naive `line_item.reload` here would raise instead of returning a
+    # result — the contract legacy callers were written against.
+    describe 'a zero quantity' do
+      it 'removes the line item and still returns a result' do
+        line_item # the shim needs it to exist before the baseline is taken
+        result = nil
+
+        expect { result = subject.call(cart: cart, line_item: line_item, quantity: 0) }.
+          to change { cart.reload.line_items.count }.by(-1)
+
+        expect(result).to be_success
+      end
+    end
+
+    # The cart-side workflow turns a vetoed item into a warning and succeeds.
+    # This service's callers predate that, so it has to report the failure.
+    describe 'a rejected quantity change' do
+      after { Spree.hooks.clear! }
+
+      it 'returns a failure' do
+        Spree.hooks.register('carts.upsert_items.validate') { |flow| flow.reject!('over the limit') }
+
+        result = subject.call(cart: cart, line_item: line_item, quantity: 3)
+
+        expect(result).to be_failure
+        expect(result.error.to_s).to eq('over the limit')
+      end
+    end
+
   end
 end

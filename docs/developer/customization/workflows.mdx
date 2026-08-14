@@ -37,7 +37,7 @@ result = Spree.cart_add_item_workflow.call(cart: cart, variant: variant, quantit
 if result.success?
   line_item = result.value
 else
-  puts result.error.value
+  puts result.error.to_s
 end
 ```
 
@@ -76,11 +76,30 @@ module MyStore
       # every #perform keyword is a reader: cart, variant, quantity, ...
       return if workflow.quantity <= 10
 
-      workflow.reject!('You can order at most 10 of this item.')
+      workflow.errors.add(:quantity, :purchase_limit_exceeded,
+                          message: 'You can order at most 10 of this item.')
+      workflow.reject!
     end
   end
 end
 ```
+
+`workflow.errors` is an `ActiveModel::Errors`, the same object a model uses. A
+rejection therefore reaches the API in the shape clients already handle for
+validation failures — the field name, a symbolic code, and the message:
+
+```json
+{
+  "error": {
+    "code": "validation_error",
+    "message": "Quantity You can order at most 10 of this item.",
+    "details": { "quantity": ["You can order at most 10 of this item."] }
+  }
+}
+```
+
+Add to `:base` for a rejection that isn't about one field. `reject!('message')`
+with an argument is shorthand for exactly that.
 
 <Note>
 Hook keys are validated at boot. Registering against a hook that doesn't exist
@@ -183,9 +202,10 @@ The caller receives a normal failure result — no exception reaches your
 controller:
 
 ```ruby
-result = Spree.cart_add_item_workflow.call(cart: cart, variant: variant)
+result = Spree.return_create_workflow.call(order: order, items: items)
 result.success?    # => false
-result.error.value # => "You can order at most 10 of this item."
+result.error.to_s  # => "This order is outside the 30-day return window."
+result.error.value # => ActiveModel::Errors — the rejection, field by field
 ```
 
 <Warning>
@@ -233,6 +253,8 @@ is reported through `Rails.error` so it's visible rather than mysterious.
 |---|---|---|---|
 | `carts.add_item` | `validate` | validate | Before the line item is built |
 | `carts.add_item` | `after_item_added` | lifecycle | After the item is saved and totals recalculated (in transaction) |
+| `carts.upsert_items` | `validate` | validate | Once per item, immediately before that item is applied — quantity edits, removals and bulk payloads. Earlier items in the batch may already be written |
+| `carts.upsert_items` | `after_items_upserted` | lifecycle | After the batch is applied and the cart recalculated once (in transaction) |
 | `carts.complete` | `validate` | validate | After checkout requirements pass, before the order is created |
 | `carts.complete` | `before_finalize` | lifecycle | After payment, before the order is placed |
 | `carts.complete` | `after_finalize` | lifecycle | After the order is placed |
@@ -257,13 +279,35 @@ is reported through `Rails.error` so it's visible rather than mysterious.
 | `payments.handle_webhook` | `after_handle` | lifecycle | After the gateway callback is processed |
 | `customers.create` | `validate` | validate | After the customer is built, before it is saved — the registration-policy veto (bot screening, B2B approval) |
 | `customers.create` | `after_create` | lifecycle | After the customer is created and the newsletter subscriber linked |
+| `products.create` | `validate` | validate | After the product is built, before it is saved — fires for the Admin API, CSV imports and seeds alike |
+| `products.create` | `after_create` | lifecycle | After the product is saved (in transaction) |
+| `products.update` | `validate` | validate | With the pending attributes assigned, so `product.changes` describes the edit |
+| `products.update` | `after_update` | lifecycle | After the product is saved (in transaction) |
+| `products.destroy` | `validate` | validate | Before the product is soft-deleted — refuse a deletion your store shouldn't allow |
+| `products.destroy` | `after_destroy` | lifecycle | After the soft-delete, for host cleanup (in transaction) |
 
 `before_cancel` and `before_resume` accept `reject!` like a `validate` hook.
 
 Draft-order editing in the admin uses **twin workflows** with their own keys —
-`orders.add_item`, `orders.recalculate`, `orders.recalculate_totals` — carrying
-the same hooks as their cart counterparts. Register against the cart key for
-storefront carts, the order key for admin edits, or both.
+`orders.add_item`, `orders.upsert_items`, `orders.recalculate`,
+`orders.recalculate_totals` — carrying the same hooks as their cart
+counterparts. Register against the cart key for storefront carts, the order key
+for admin edits, or both.
+
+<Note>
+`carts.add_item` **adds** to a quantity; `carts.upsert_items` **sets** it, and
+is what a quantity edit, a removal (quantity `0`) and a bulk item payload all
+run through. A rule about what may be in a cart therefore belongs on both keys —
+the readers are the same (`cart`, `variant`, `quantity`), so one handler class
+registers against each.
+
+`upsert_items` is also the one flow where a rejection is **not** fatal on the
+storefront: the vetoed item is skipped, the rest of the batch applies, and what
+was dropped comes back in the cart's `warnings`. A customer restoring a saved
+cart keeps whatever is still purchasable. Admin order edits behave the opposite
+way — the whole edit fails — because a silently dropped row is worse than a
+failed request when a merchant is editing.
+</Note>
 
 Inspect what's available at runtime:
 
@@ -346,7 +390,7 @@ The whole vocabulary:
 | `on_flow_failure: :name` | Names the undo for a step, run in reverse if a later step fails |
 | `run_hooks :name` | Dispatches a declared hook; returns the merged hash from context handlers |
 | `failure(value, error)` | Aborts the flow — rolls back an open transaction and returns a failure result |
-| `reject!(message)` | The same, named for hook handlers vetoing a flow |
+| `reject!` | The same, named for hook handlers vetoing a flow — carries `workflow.errors` |
 | `halt!(value)` | Successful early exit (not valid inside a transaction the workflow opened) |
 | `hooks :a, :b` | Declares the extension points this workflow dispatches |
 

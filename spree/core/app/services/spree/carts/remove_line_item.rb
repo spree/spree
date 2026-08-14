@@ -1,31 +1,41 @@
 module Spree
   module Carts
+    # @deprecated Removing an item is an upsert with quantity zero. Call
+    #   Spree::Carts::UpsertItems so the removal passes the same
+    #   'carts.upsert_items.validate' hook every other item mutation does.
+    #   Removed in Spree 6.1.
     class RemoveLineItem
       prepend Spree::ServiceModule::Base
 
+      # @param options [Hash] accepted for signature compatibility and ignored —
+      #   the upsert path identifies the row by variant, not by line-item options.
       def call(cart: nil, order: nil, line_item: nil, options: nil)
-        if order
-          Spree::Deprecation.warn('Calling Spree::Carts::RemoveLineItem with order: is deprecated and will be removed in Spree 6.1. Pass cart: instead.')
-          cart ||= order
-        end
-        options ||= {}
-        ActiveRecord::Base.transaction do
-          cart.line_items.destroy(line_item)
+        Spree::Deprecation.warn(
+          'Spree::Carts::RemoveLineItem is deprecated and will be removed in Spree 6.1. ' \
+          'Use Spree::Carts::UpsertItems with quantity: 0 instead. Note it removes the ' \
+          'cart\'s line item for the variant, which is this one unless the cart holds ' \
+          'several rows of the same variant.'
+        )
+        owner = cart || order
 
-          # LineItem dependent: :destroy removes its own reservation row;
-          # remaining items may need a fresh reservation pass when in checkout.
-          if cart.in_checkout? && cart.line_items.any?
-            result = Spree::StockReservations::Reserve.call(cart: cart)
-            raise Spree::StockReservations::InsufficientStockError.new(nil, result.error.to_s) if result.failure?
-          end
+        # Draft orders keep the order workflow's all-or-nothing contract;
+        # only carts get the warn-and-skip one.
+        cart_owned = owner.is_a?(Spree::Cart)
+        workflow = (cart_owned ? Spree.cart_upsert_items_workflow : Spree.order_upsert_items_workflow).new
+        result = workflow.call(
+          **(cart_owned ? { cart: owner } : { order: owner }),
+          items: [{ variant_id: line_item.variant_id, quantity: 0 }]
+        )
 
-          Spree.cart_recalculate_workflow.new.call(cart: cart,
-                                                  line_item: line_item,
-                                                  options: options)
-        end
+        return failure(line_item, result.error) if result.failure?
+
+        # A :validate handler may have vetoed the removal; on the cart side
+        # that is a warning rather than a failed result, but this service's
+        # callers expect a failure.
+        rejection = workflow.warnings.first
+        return failure(line_item, rejection.message) if rejection
+
         success(line_item)
-      rescue Spree::StockReservations::InsufficientStockError => e
-        failure(line_item, e.message)
       end
     end
   end

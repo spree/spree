@@ -81,6 +81,9 @@ module Spree
     preference :track_price_history, :boolean, default: true
     # Address preferences
     preference :company_field_enabled, :boolean, default: false
+    # Showing the company field and requiring it are separate decisions: a
+    # B2B store collects it from everyone, a mixed store only offers it.
+    preference :address_requires_company, :boolean, default: false
     preference :address_requires_phone, :boolean, default: false
     # digital assets preferences
     preference :limit_digital_download_count, :boolean, default: true

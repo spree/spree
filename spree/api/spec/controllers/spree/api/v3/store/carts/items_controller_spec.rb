@@ -132,6 +132,19 @@ RSpec.describe Spree::Api::V3::Store::Carts::ItemsController, type: :controller 
 
         expect(response).to have_http_status(:not_found)
       end
+
+      # Zero removes the row in the upsert vocabulary, but this endpoint
+      # documents quantity >= 1 and DELETE is how a client removes an item.
+      [0, -1].each do |quantity|
+        it "rejects a quantity of #{quantity} instead of deleting the item" do
+          expect do
+            patch :update, params: { cart_id: order.prefixed_id, id: line_item.prefixed_id, quantity: quantity }
+          end.not_to change(Spree::LineItem, :count)
+
+          expect(response).to have_http_status(:unprocessable_content)
+          expect(json_response['error']['code']).to eq('invalid_quantity')
+        end
+      end
     end
   end
 
@@ -153,6 +166,51 @@ RSpec.describe Spree::Api::V3::Store::Carts::ItemsController, type: :controller 
 
         expect(response).to have_http_status(:not_found)
       end
+    end
+  end
+
+  describe 'a validate hook vetoing an item' do
+    let!(:line_item) { create(:line_item, order: order, variant: variant, quantity: 1) }
+
+    after { Spree.hooks.clear! }
+
+    # Every non-increment mutation runs the same hook, so one handler covers
+    # the quantity editor and the remove button alike.
+    it 'reports a rejected quantity change as a warning and leaves the item alone' do
+      Spree.hooks.register('carts.upsert_items.validate') do |flow|
+        flow.errors.add(:quantity, :purchase_limit_exceeded, message: 'at most 3 per item')
+        flow.reject!
+      end
+
+      patch :update, params: { cart_id: order.prefixed_id, id: line_item.prefixed_id, quantity: 9 }
+
+      expect(response).to have_http_status(:ok)
+      expect(line_item.reload.quantity).to eq(1)
+
+      warning = json_response['warnings'].sole
+      expect(warning['code']).to eq('purchase_limit_exceeded')
+      expect(warning['message']).to eq('Quantity at most 3 per item')
+      expect(warning['variant_id']).to eq(variant.prefixed_id)
+    end
+
+    it 'can veto a removal' do
+      Spree.hooks.register('carts.upsert_items.validate') { |flow| flow.reject!('this item is required') }
+
+      expect do
+        delete :destroy, params: { cart_id: order.prefixed_id, id: line_item.prefixed_id }
+      end.not_to change(Spree::LineItem, :count)
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['warnings'].sole['message']).to eq('this item is required')
+    end
+
+    # A cart nobody vetoed reports nothing — warnings are the exception.
+    it 'reports no warnings when everything applied' do
+      patch :update, params: { cart_id: order.prefixed_id, id: line_item.prefixed_id, quantity: 2 }
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['warnings']).to be_empty
+      expect(line_item.reload.quantity).to eq(2)
     end
   end
 end

@@ -68,7 +68,7 @@ RSpec.describe Spree::Customers::Create do
       end
 
       expect(result).to be_failure
-      expect(result.error.value).to eq('disposable emails are not accepted')
+      expect(result.error.to_s).to eq('disposable emails are not accepted')
       expect(Spree.customer_class.find_by(email: 'new@customer.com')).to be_nil
     end
 

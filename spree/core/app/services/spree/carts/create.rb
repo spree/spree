@@ -23,7 +23,13 @@ module Spree
           return result if result.failure?
         end
 
-        success(cart.reload)
+        # Items skipped during creation are reported on the cart, and reload
+        # would drop them — same carry-across as Carts::Update#try_advance.
+        warnings = cart.warnings
+        cart.reload
+        cart.warnings |= warnings if warnings.present?
+
+        success(cart)
       rescue ActiveRecord::RecordNotFound
         raise
       rescue StandardError => e

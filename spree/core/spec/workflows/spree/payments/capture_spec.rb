@@ -56,7 +56,7 @@ RSpec.describe Spree::Payments::Capture do
       result = described_class.call(payment: payment)
 
       expect(result).to be_failure
-      expect(result.error.value).to eq('on fraud hold')
+      expect(result.error.to_s).to eq('on fraud hold')
     end
 
     it 'runs after_capture once the gateway call succeeds' do

@@ -210,6 +210,25 @@ describe Spree::Address, type: :model do
       end
     end
 
+    context 'when company is required' do
+      it 'validates presence of the company' do
+        stub_store_preferences(company_field_enabled: true, address_requires_company: true)
+
+        address.company = ''
+        address.valid?
+        expect(address.errors['company']).to eq(["can't be blank"])
+      end
+
+      # Requiring a field the customer is never shown would make checkout
+      # unfinishable, so the requirement follows the field being on the form.
+      it 'stays optional while the company field is hidden' do
+        stub_store_preferences(company_field_enabled: false, address_requires_company: true)
+
+        address.company = ''
+        expect(address).to be_valid
+      end
+    end
+
     it 'requires zipcode' do
       address.zipcode = ''
       address.valid?
@@ -527,7 +546,9 @@ describe Spree::Address, type: :model do
     before { order.update_attribute(:bill_address, address2) }
 
     it 'has required attributes' do
-      expect(Spree::Address.required_fields).to eq([:firstname, :lastname, :address1, :city, :country, :zipcode, :phone])
+      # Every conditionally-required field, whatever the store's settings —
+      # phone and company both default to off.
+      expect(Spree::Address.required_fields).to eq([:firstname, :lastname, :address1, :city, :country, :zipcode, :phone, :company])
     end
 
     it 'is editable' do

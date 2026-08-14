@@ -1,0 +1,173 @@
+---
+title: Validations
+section: customization
+---
+
+## Overview
+
+Adding a rule — and occasionally relaxing one Spree ships — is one of the most
+common reasons to reach into core models. There are three ways to do it, and
+picking the right one is mostly a question of *what kind of rule* you have.
+
+| Your rule is about… | Use |
+|---|---|
+| Whether an **operation** may happen — a purchase limit, B2B eligibility, a region policy | A workflow [`validate` hook](/developer/customization/workflows) |
+| The **shape of a record** — a field you added must be present, a format must match | A [decorator](/developer/customization/decorators) adding a validation |
+| A **new attribute** you need on an existing model | [Custom fields](/developer/core-concepts/metafields) |
+
+Spree deliberately has no registry for adding or removing arbitrary model
+validations. Adding one with a decorator is already a single line of ordinary
+Rails, and removing a core rule is served by the knobs below.
+
+## Vetoing an operation
+
+This is the one to reach for first. A `validate` hook runs inside the flow,
+before anything is written, and can stop it:
+
+```ruby
+# config/initializers/spree.rb
+Spree.hooks.register('carts.add_item.validate', 'MyStore::CheckPurchaseLimit')
+Spree.hooks.register('carts.upsert_items.validate', 'MyStore::CheckPurchaseLimit')
+
+module MyStore
+  class CheckPurchaseLimit
+    def call(workflow)
+      return if workflow.quantity <= 10
+
+      workflow.errors.add(:quantity, :purchase_limit_exceeded,
+                          message: 'You can order at most 10 of this item.')
+      workflow.reject!
+    end
+  end
+end
+```
+
+Why this beats a model validation for operational rules: it runs only for the
+operation you targeted, so a data migration or an admin correction isn't fought
+by a customer-facing rule; it sees the whole flow, not one record; and it can
+tell staff from customers (`workflow.created_by`) to allow a supervisor
+override.
+
+Both cart keys appear above because adding to a cart and setting a quantity are
+different flows. See [Services & Workflows](/developer/customization/workflows)
+for the full hook list.
+
+## Adding a rule to a model
+
+For rules about the shape of a record, a decorator is the supported route:
+
+```ruby
+# app/models/spree/product_decorator.rb
+module MyStore
+  module ProductDecorator
+    def self.prepended(base)
+      base.validates :external_id, presence: true, uniqueness: true
+    end
+  end
+end
+
+Spree::Product.prepend(MyStore::ProductDecorator)
+```
+
+Decorators couple you to Spree internals, so prefer a hook when the rule is
+really about an operation. See
+[Decorators](/developer/customization/decorators).
+
+## Relaxing a rule Spree ships
+
+Never call `clear_validators!` — it wipes every validation on the model,
+including ones added by other extensions, and the breakage appears far from the
+cause. Use one of these instead.
+
+### Store preferences
+
+Some rules are already switchable, per store, from the dashboard or a console:
+
+| Preference | Effect |
+|---|---|
+| `address_requires_phone` | Requires a phone number on addresses |
+| `company_field_enabled` | Shows the company field on address forms |
+| `address_requires_company` | Requires it — only meaningful with the field shown |
+| `disable_sku_validation` | Turns off SKU uniqueness |
+
+```ruby
+store.update!(preferred_address_requires_company: true)
+```
+
+### Overriding the gating predicate
+
+Most conditional validations in `Spree::Address` are gated on a predicate you
+can override, which is far safer than removing the validation:
+
+```ruby
+module MyStore
+  module AddressDecorator
+    # Business addresses only in this store.
+    def require_company?
+      !quick_checkout
+    end
+  end
+end
+
+Spree::Address.prepend(MyStore::AddressDecorator)
+```
+
+`require_name?`, `require_street?`, `require_zipcode?`, `require_phone?` and
+`require_company?` all work this way.
+
+### The address validator registry
+
+Address rules are regional and business-specific, so addresses carry a registry
+of extra validator classes you can add to and remove from:
+
+```ruby
+# config/initializers/spree.rb — or config.to_prepare for your own classes
+Spree.validators.addresses.register(MyStore::PostBoxValidator)
+
+# Drop a rule Spree ships
+Spree.validators.addresses.unregister(Spree::Addresses::PhoneValidator)
+```
+
+A validator is an ordinary `ActiveModel::Validator`:
+
+```ruby
+module MyStore
+  class PostBoxValidator < ActiveModel::Validator
+    def validate(record)
+      return unless record.address1.to_s.match?(/\A\s*P\.?O\.? Box/i)
+
+      record.errors.add(:address1, :po_box_not_deliverable)
+    end
+  end
+end
+```
+
+Register your own classes from `config.to_prepare` rather than an initializer —
+the registry holds classes, and a reloadable constant registered once at boot
+goes stale on the next reload.
+
+## Checkout requirements
+
+Rules about what a cart needs *before it can be completed* — a phone number
+before delivery, a purchase order number for B2B — belong in the checkout
+requirements registry rather than a model validation, because they also drive
+what the storefront shows as outstanding:
+
+```ruby
+Spree::Checkout::Registry.add_requirement(
+  step: 'address',
+  field: 'phone',
+  message: 'Phone number is required for delivery',
+  satisfied: ->(cart) { cart.ship_address&.phone.present? }
+)
+```
+
+See the [Spree 6 quickstart](/v6/developer/customization/quickstart) for the full registry API.
+
+## Custom field values
+
+Custom fields currently validate their type only — a `Number` field rejects
+non-numbers, a `Json` field rejects malformed JSON. There is no per-definition
+length, range or format rule yet. A product type marking a custom field as
+*required* is an advisory marker shown in the dashboard; the server does not
+enforce it.

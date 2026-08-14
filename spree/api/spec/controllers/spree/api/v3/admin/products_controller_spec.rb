@@ -2067,4 +2067,42 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       expect(json_response['translations']['de']['name']).to eq('Espressomaschine')
     end
   end
+  describe 'validate hooks' do
+    before { request.headers.merge!(headers) }
+    after { Spree.hooks.clear! }
+
+    it 'rejects a create with the handler\'s field errors' do
+      Spree.hooks.register('products.create.validate') do |flow|
+        flow.errors.add(:name, :reserved_word, message: 'may not mention a competitor')
+        flow.reject!
+      end
+
+      expect do
+        post :create, params: { name: 'Better than BrandX' }, as: :json
+      end.not_to change(Spree::Product, :count)
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['details']['name']).to eq(['may not mention a competitor'])
+    end
+
+    it 'rejects an update' do
+      product = create(:product, name: 'Original')
+      Spree.hooks.register('products.update.validate') { |flow| flow.reject!('locked for editing') }
+
+      patch :update, params: { id: product.prefixed_id, name: 'Renamed' }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(product.reload.name).to eq('Original')
+    end
+
+    it 'refuses a destroy' do
+      product = create(:product)
+      Spree.hooks.register('products.destroy.validate') { |flow| flow.reject!('still under contract') }
+
+      delete :destroy, params: { id: product.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(product.reload.deleted_at).to be_nil
+    end
+  end
 end
