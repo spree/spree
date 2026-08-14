@@ -4,15 +4,17 @@ module Spree
 
     publishes_lifecycle_events
 
-    belongs_to :stock_item, class_name: 'Spree::StockItem', inverse_of: :stock_reservations
+    belongs_to :stock_level, class_name: 'Spree::StockLevel', inverse_of: :stock_reservations
     belongs_to :line_item, class_name: 'Spree::LineItem', inverse_of: :stock_reservations
     belongs_to :order, class_name: 'Spree::Order', inverse_of: :stock_reservations, optional: true
     belongs_to :cart, class_name: 'Spree::Cart', inverse_of: :stock_reservations, optional: true
 
-    validates :stock_item, :line_item, :quantity, :expires_at, presence: true
+    alias_attribute :stock_item_id, :stock_level_id
+
+    validates :stock_level, :line_item, :quantity, :expires_at, presence: true
     validate :exactly_one_owner
     validates :quantity, numericality: { greater_than: 0, only_integer: true }, presence: true
-    validates :line_item_id, uniqueness: { scope: :stock_item_id }, presence: true
+    validates :line_item_id, uniqueness: { scope: :stock_level_id }, presence: true
 
     scope :active, -> { where('spree_stock_reservations.expires_at > ?', Time.current) }
     scope :expired, -> { where('spree_stock_reservations.expires_at <= ?', Time.current) }
@@ -21,12 +23,24 @@ module Spree
       joins(:order).where(spree_orders: { store_id: store.id })
     }
 
-    self.whitelisted_ransackable_attributes = %w[stock_item_id line_item_id order_id quantity expires_at]
-    self.whitelisted_ransackable_associations = %w[stock_item line_item order]
+    self.whitelisted_ransackable_attributes = %w[stock_level_id line_item_id order_id quantity expires_at]
+    self.whitelisted_ransackable_associations = %w[stock_level line_item order]
 
     # @return [Spree::Cart, Spree::Order, nil]
     def owner
       order || cart
+    end
+
+    # @deprecated Use {#stock_level}; removed in 6.1.
+    def stock_item
+      Spree::Deprecation.warn('Spree::StockReservation#stock_item is deprecated and will be removed in Spree 6.1. Use #stock_level instead.')
+      stock_level
+    end
+
+    # @deprecated Use {#stock_level=}; removed in 6.1.
+    def stock_item=(record)
+      Spree::Deprecation.warn('Spree::StockReservation#stock_item= is deprecated and will be removed in Spree 6.1. Use #stock_level= instead.')
+      self.stock_level = record
     end
 
     # Bridge for legacy callers assigning +current_order+ (now a Spree::Cart)

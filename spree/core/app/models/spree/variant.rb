@@ -36,7 +36,7 @@ module Spree
     with_options inverse_of: :variant do
       has_many :fulfillment_items, class_name: 'Spree::FulfillmentItem'
       has_many :line_items
-      has_many :stock_items, dependent: :destroy, autosave: true
+      has_many :stock_items, class_name: 'Spree::StockLevel', dependent: :destroy, autosave: true
     end
     has_many :inventory_units, class_name: 'Spree::FulfillmentItem', inverse_of: :variant, deprecated: true
 
@@ -100,8 +100,8 @@ module Spree
     after_create :increment_product_variant_count
     after_destroy :decrement_product_variant_count
 
-    scope :in_stock, -> { left_joins(:stock_items).where("#{Spree::Variant.table_name}.track_inventory = ? OR #{Spree::StockItem.table_name}.count_on_hand > ?", false, 0) }
-    scope :backorderable, -> { left_joins(:stock_items).where(spree_stock_items: { backorderable: true }) }
+    scope :in_stock, -> { left_joins(:stock_items).where("#{Spree::Variant.table_name}.track_inventory = ? OR #{Spree::StockLevel.table_name}.count_on_hand > ?", false, 0) }
+    scope :backorderable, -> { left_joins(:stock_items).where(Spree::StockLevel.table_name => { backorderable: true }) }
     scope :in_stock_or_backorderable, -> { in_stock.or(backorderable) }
 
     scope :eligible, -> { all }

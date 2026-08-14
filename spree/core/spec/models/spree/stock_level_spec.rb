@@ -1,12 +1,90 @@
 require 'spec_helper'
 
-describe Spree::StockItem, type: :model do
+describe Spree::StockLevel, type: :model do
   subject { stock_location.stock_items.order(:id).first }
 
   let(:stock_location) { create(:stock_location_with_items) }
 
   it_behaves_like 'metadata'
   it_behaves_like 'lifecycle events'
+
+  # The rename would otherwise silently unsubscribe every webhook endpoint a
+  # merchant had pointed at stock_item.*. Both names ship for one release.
+  describe 'legacy stock_item events', events: true do
+    let!(:stock_level) { create(:stock_level) }
+
+    before do
+      Spree::Events.reset!
+      allow(Spree::Events).to receive(:enabled?).and_return(true)
+    end
+
+    after { Spree::Events.reset! }
+
+    # One subscription set per example: calling this twice would count every
+    # event twice over.
+    def names_published
+      received = []
+      %w[stock_level stock_item].each do |prefix|
+        %w[created updated deleted].each do |suffix|
+          Spree::Events.subscribe("#{prefix}.#{suffix}", async: false) { |event| received << event.name }
+        end
+      end
+      Spree::Events.activate!
+      yield
+      received
+    end
+
+    # Creating a level propagates more of them across the store's locations,
+    # so what matters is that the two names come out in step.
+    it 'publishes created under both names' do
+      names = names_published { create(:stock_level) }
+
+      expect(names).to include('stock_level.created', 'stock_item.created')
+      expect(names.count('stock_item.created')).to eq(names.count('stock_level.created'))
+    end
+
+    it 'publishes updated under both names' do
+      names = names_published { stock_level.update!(backorderable: !stock_level.backorderable) }
+
+      expect(names).to contain_exactly('stock_level.updated', 'stock_item.updated')
+    end
+
+    it 'publishes deleted under both names' do
+      names = names_published { stock_level.destroy! }
+
+      expect(names).to contain_exactly('stock_level.deleted', 'stock_item.deleted')
+    end
+
+    it 'carries the same payload on both' do
+      payloads = {}
+      %w[stock_level.created stock_item.created].each do |name|
+        Spree::Events.subscribe(name, async: false) { |event| payloads[name] = event.payload }
+      end
+      Spree::Events.activate!
+
+      create(:stock_level)
+
+      expect(payloads['stock_item.created']).to eq(payloads['stock_level.created'])
+    end
+
+    # The legacy twin follows whatever the real name did, so the touch-only
+    # guard in Publishable is not defeated by publishing around it.
+    it 'stays silent on a touch-only save' do
+      names = names_published { stock_level.touch }
+
+      expect(names).to be_empty
+    end
+
+    it 'leaves events this model does not own alone' do
+      received = []
+      Spree::Events.subscribe('stock_item.custom', async: false) { |event| received << event.name }
+      Spree::Events.activate!
+
+      stock_level.publish_event('stock_level.custom')
+
+      expect(received).to be_empty
+    end
+  end
 
   it 'maintains the count on hand for a variant' do
     expect(subject.count_on_hand).to eq 10
@@ -62,7 +140,7 @@ describe Spree::StockItem, type: :model do
     let!(:current_on_hand) { subject.count_on_hand }
 
     it 'is updated pessimistically' do
-      copy = Spree::StockItem.find(subject.id)
+      copy = Spree::StockLevel.find(subject.id)
 
       subject.adjust_count_on_hand(5)
       expect(subject.count_on_hand).to eq(current_on_hand + 5)
@@ -144,7 +222,7 @@ describe Spree::StockItem, type: :model do
     let!(:current_on_hand) { subject.count_on_hand }
 
     it 'is updated pessimistically' do
-      copy = Spree::StockItem.find(subject.id)
+      copy = Spree::StockLevel.find(subject.id)
 
       subject.set_count_on_hand(5)
       expect(subject.count_on_hand).to eq(5)
@@ -183,7 +261,7 @@ describe Spree::StockItem, type: :model do
   end
 
   context 'with stock movements' do
-    before { Spree::StockMovement.create(stock_item: subject, quantity: 1) }
+    before { Spree::StockMovement.create(stock_level: subject, quantity: 1) }
 
     it 'doesnt raise ReadOnlyRecord error' do
       expect { subject.destroy }.not_to raise_error
@@ -462,7 +540,7 @@ describe Spree::StockItem, type: :model do
 
   describe 'scopes' do
     context '.with_active_stock_location' do
-      let(:stock_items_with_active_location) { Spree::StockItem.with_active_stock_location }
+      let(:stock_items_with_active_location) { Spree::StockLevel.with_active_stock_location }
 
       context 'when stock location is active' do
         before { stock_location.update_column(:active, true) }

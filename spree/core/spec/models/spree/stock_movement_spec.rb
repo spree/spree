@@ -56,7 +56,7 @@ describe Spree::StockMovement, type: :model do
 
   describe 'whitelisted ransackable attributes' do
     it 'returns amount attribute' do
-      expect(Spree::StockMovement.whitelisted_ransackable_attributes).to eq(%w[quantity action created_at stock_item_id originator_type])
+      expect(Spree::StockMovement.whitelisted_ransackable_attributes).to eq(%w[quantity action created_at stock_level_id originator_type])
     end
   end
 
@@ -81,7 +81,7 @@ describe Spree::StockMovement, type: :model do
       end
     end
 
-    describe '#update_stock_item_quantity' do
+    describe '#update_stock_level_quantity' do
       context 'when track inventory levels is false' do
         before do
           stub_store_preferences(track_inventory_levels: false)
