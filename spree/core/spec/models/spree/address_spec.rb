@@ -137,16 +137,16 @@ describe Spree::Address, type: :model do
     let(:address) { build(:address, country: country, state: nil) }
 
     it 'state_name is not nil and country does not have any states' do
-      address.country = stateless_country
+      address.country_iso = stateless_country.iso
       address.zipcode = Spree::TestingSupport::CountryPool.postal_code_for('PL')
-      address.state = nil
+      address.state_code = nil
       address.state_name = 'Somewhere'
       expect(address).to be_valid
     end
 
     it 'errors when state_name is nil' do
       address.state_name = nil
-      address.state = nil
+      address.state_code = nil
       expect(address).not_to be_valid
     end
 
@@ -165,8 +165,8 @@ describe Spree::Address, type: :model do
     end
 
     it 'state is entered but country does not contain that state' do
-      address.state = state
-      address.country = Spree::Country.by_iso('CA')
+      address.state_code = state.abbr
+      address.country_iso = 'CA'
       address.zipcode = Spree::TestingSupport::CountryPool.postal_code_for('CA')
       address.valid?
       # The Maryland code means nothing in Canada, so it is dropped and the
@@ -175,31 +175,31 @@ describe Spree::Address, type: :model do
     end
 
     it 'both state and state_name are entered but country does not contain the state' do
-      address.state = state
+      address.state_code = state.abbr
       address.state_name = 'maryland'
-      address.country = stateless_country
+      address.country_iso = stateless_country.iso
       address.zipcode = Spree::TestingSupport::CountryPool.postal_code_for('PL')
       expect(address).to be_valid
       expect(address.state_abbr).to be_nil
     end
 
     it 'both state and state_name are entered and country does contain the state' do
-      address.state = state
+      address.state_code = state.abbr
       address.state_name = 'maryland'
       expect(address).to be_valid
       expect(address.state_name).to be_nil
     end
 
     it 'does not require a state when the country does not require one' do
-      address.country = stateless_country
+      address.country_iso = stateless_country.iso
       address.zipcode = Spree::TestingSupport::CountryPool.postal_code_for(stateless_country.iso)
-      address.state = nil
+      address.state_code = nil
       address.state_name = nil
       expect(address).to be_valid
     end
 
     it 'does not require phone' do
-      address.state = state
+      address.state_code = state.abbr
       address.phone = ''
       expect(address).to be_valid
     end
@@ -228,7 +228,7 @@ describe Spree::Address, type: :model do
       # Requiring a field the customer is never shown would make checkout
       # unfinishable, so the requirement follows the field being on the form.
       it 'stays optional while the company field is hidden' do
-      address.state = state
+      address.state_code = state.abbr
         stub_store_preferences(company_field_enabled: false, address_requires_company: true)
 
         address.company = ''
@@ -285,7 +285,7 @@ describe Spree::Address, type: :model do
         end
 
         it 'does not have a country' do
-          address.country = nil
+          address.country_iso = nil
           address.valid?
           expect(address.errors['zipcode']).not_to include('is invalid')
         end
@@ -406,7 +406,7 @@ describe Spree::Address, type: :model do
     end
 
     it 'returns nil if the country is nil' do
-      address.country = nil
+      address.country_iso = nil
       expect(address.country_iso).to be_nil
     end
   end
@@ -449,7 +449,7 @@ describe Spree::Address, type: :model do
 
     context 'state not present and state_name both not present' do
       before do
-        address.state = nil
+        address.state_code = nil
         address.state_name = nil
         clear_state_entities
       end
@@ -465,7 +465,7 @@ describe Spree::Address, type: :model do
         before do
           # Japan's subdivision codes are numeric, so a US code cannot
           # coincidentally be valid there.
-          address.country = Spree::Country.by_iso('JP')
+          address.country_iso = 'JP'
           address.zipcode = Spree::TestingSupport::CountryPool.postal_code_for('JP')
           clear_state_entities
         end
@@ -484,13 +484,13 @@ describe Spree::Address, type: :model do
 
     context 'state not present and state_name present' do
       before do
-        address.state = nil
+        address.state_code = nil
         address.state_name = state.name
       end
 
       context 'when country has no states and state is required' do
         before do
-          address.country = Spree::Country.by_iso('US')
+          address.country_iso = 'US'
           clear_state_entities
         end
 
@@ -511,7 +511,7 @@ describe Spree::Address, type: :model do
       context 'when country has no states and state is not required' do
         before do
           # Hong Kong genuinely has no subdivisions in the ISO data.
-          address.country = Spree::Country.by_iso('HK')
+          address.country_iso = 'HK'
           address.state_name = state.name
           clear_state_entities
         end
@@ -832,12 +832,12 @@ describe Spree::Address, type: :model do
         expect(address.country).to eq(country)
       end
 
-      it 'does nothing when ISO is blank' do
+      it 'clears the country when blank — a posted empty value means empty' do
         original_country = create(:country)
         address = build(:address, country: original_country)
         address.country_iso = ''
         address.valid?
-        expect(address.country).to eq(original_country)
+        expect(address.country).to be_nil
       end
 
       it 'sets country to nil when ISO is not found' do

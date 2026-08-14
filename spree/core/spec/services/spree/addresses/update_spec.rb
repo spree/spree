@@ -137,7 +137,7 @@ RSpec.describe Spree::Addresses::Update do
         let!(:completed_order) { create(:completed_order_with_totals, customer: user, ship_address: address, bill_address: address) }
 
         context 'when there have been created same address with new params' do
-          let!(:same_address) { user.addresses.create(new_address_params.except(:country_iso).merge(country: country, state: state)) }
+          let!(:same_address) { user.addresses.create(new_address_params.merge(country_iso: country.iso, state_code: state.abbr)) }
 
           context 'when is not deleted' do
             it 'takes that address' do

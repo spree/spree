@@ -47,29 +47,6 @@ module Spree
 
     has_iso_geography
 
-    # On top of the codes, an address also accepts and caches the value
-    # objects: checkout builds addresses from country/state instances, and
-    # validation reads them repeatedly. Assigning either one sets its code.
-    def country
-      @country = nil if @country && @country.iso != country_iso
-      @country ||= Spree::Country.by_iso(country_iso) if country_iso.present?
-    end
-
-    def country=(value)
-      @country = value
-      self[:country_iso] = value&.iso&.to_s&.upcase
-    end
-
-    def state
-      @state = nil if @state && (@state.abbr != state_code || @state.country_iso != country_iso)
-      @state ||= Spree::State.resolve(country_iso, state_code) if country_iso.present? && state_code.present?
-    end
-
-    def state=(value)
-      @state = value
-      self[:state_code] = value&.abbr
-      self[:country_iso] ||= value.country_iso if value
-    end
     # we need a safe operator here as Address is added to custom_field_enabled_resources in Engine
     belongs_to :customer, class_name: Spree.customer_class&.name, optional: true, touch: true
     include Spree::DeprecatedCustomerAlias
@@ -164,18 +141,6 @@ module Spree
       end
 
       params
-    end
-
-    # +country_iso+ and +state_code+ are the columns the address stores its
-    # geography in; +country+ and +state+ read through them.
-    #
-    # A blank code leaves the country alone: edit forms post only the fields
-    # they change, so an absent one must not wipe the address. Clearing is
-    # done by assigning `country = nil`, which writes the column directly.
-    def country_iso=(value)
-      return if value.blank?
-
-      super(value)
     end
 
     self.whitelisted_ransackable_attributes = ADDRESS_FIELDS + %w[country_iso state_code]
@@ -354,18 +319,14 @@ module Spree
     # with it for the one release it still exists. Assigning +country+ directly
     # is equally supported — whichever half was set fills in the other.
     def normalize_country
-      # Reads the column, not +country_iso+, whose association fallback would
-      # make this branch always taken once a country is assigned.
       submitted_iso = self[:country_iso].presence
+      return if submitted_iso.blank?
 
-      if submitted_iso.present?
-        self.country = Spree::Country.by_iso(submitted_iso) unless country&.iso == submitted_iso
-        # An unrecognised code leaves no country to validate against; the
-        # presence validation on +country+ reports it.
-        self[:country_iso] = country.iso if country
-      elsif country.present?
-        self[:country_iso] = country.iso
-      end
+      resolved = Spree::Country.by_iso(submitted_iso)
+      # Alpha-3 codes arrive here too; the column stores alpha-2. An
+      # unrecognised code is left in place — the presence validation on
+      # +country+ reports it.
+      self[:country_iso] = resolved.iso if resolved
     end
 
     # Resolves the subdivision code from whichever handle the caller supplied:
@@ -398,7 +359,6 @@ module Spree
     end
 
     def clear_state
-      self.state = nil
       self[:state_code] = nil
     end
 

@@ -205,13 +205,8 @@ module Spree
       end
 
       def find_existing_address(attributes)
-        # Geography is matched by code, so a country or state object passed in
-        # has to become one before it reaches the query.
+        # Geography is matched by code.
         attributes = Spree::Address.resolve_geo_params(attributes)
-        attributes[:country_iso] ||= attributes.delete(:country)&.iso
-        attributes[:state_code] ||= attributes.delete(:state)&.code
-        attributes.delete(:country)
-        attributes.delete(:state)
 
         state_name = attributes[:state_name]
         address_attributes = attributes.except(:state_name)
