@@ -5,6 +5,10 @@ module Spree
   # Fallback chains ensure sensible defaults when attributes are not explicitly set.
   class Current < ::ActiveSupport::CurrentAttributes
     attribute :store, :channel, :market, :currency, :locale, :content_locale, :tax_country, :price_lists, :global_pricing_context, :provider_cache
+    # Latch for the cross-store leak tripwire — see #store= below. Lives here
+    # so it clears exactly when the store context does, which Rails does per
+    # request and per job.
+    attribute :store_scope_guard_armed
 
     # Scratch space for provider strategies to memoize a call across the
     # request — part of the delivery rate provider contract (nothing in core
@@ -15,6 +19,17 @@ module Spree
     # @return [Hash]
     def provider_cache
       super || (self.provider_cache = {})
+    end
+
+    # Declaring a store context arms the cross-store leak tripwire for the
+    # rest of this unit of work — a request, a job, a webhook — so the guard
+    # follows the context rather than a list of entry points
+    # (docs/plans/6.0-store-context-and-first-run-setup.md). Work that never
+    # declares a store is left alone: it reads the default store through the
+    # fallback below, which is not a scoping claim to check.
+    def store=(value)
+      Spree::StoreScopeGuard.arm! if value
+      super
     end
 
     # Returns the current store, falling back to the default store.
