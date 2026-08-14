@@ -2,6 +2,7 @@
 import { z } from 'zod';
 import { AddressSchema } from './Address';
 import { AppliedPromotionSchema } from './AppliedPromotion';
+import { FeeSchema } from './Fee';
 import { FulfillmentSchema } from './Fulfillment';
 import { GiftCardSchema } from './GiftCard';
 import { LineItemSchema } from './LineItem';
@@ -43,6 +44,8 @@ export const CartSchema = z.object({
   display_amount_due: z.string().nullable(),
   delivery_total: z.string().nullable(),
   display_delivery_total: z.string().nullable(),
+  fee_total: z.string().nullable(),
+  display_fee_total: z.string().nullable(),
   store_credit_total: z.string().nullable(),
   display_store_credit_total: z.string().nullable(),
   covered_by_store_credit: z.boolean(),
@@ -51,6 +54,7 @@ export const CartSchema = z.object({
   requirements: z.array(z.object({ step: z.string(), field: z.string(), code: z.string(), message: z.string() })),
   shipping_eq_billing_address: z.boolean(),
   discounts: z.array(AppliedPromotionSchema),
+  fees: z.array(FeeSchema),
   items: z.array(LineItemSchema),
   fulfillments: z.array(FulfillmentSchema),
   payments: z.array(PaymentSchema),

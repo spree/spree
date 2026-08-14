@@ -8,6 +8,23 @@ module SpreeEasyPost
     # could otherwise mark parcels delivered, which starts return windows.
     preference :webhook_secret, :password
 
+    # Customs declaration defaults for international labels. The signer takes
+    # legal responsibility for the declared contents, so it names a person at
+    # the merchant rather than the store.
+    preference :customs_signer, :string
+    preference :customs_contents_type, :string, default: 'merchandise'
+    # Who pays duties and taxes on arrival. Defaults to DAP — the recipient is
+    # billed by the carrier. DDP bills the merchant instead, so only choose it
+    # once duties are actually collected from the customer at checkout;
+    # otherwise the merchant absorbs them silently.
+    preference :incoterm, :string, default: 'DAP'
+
+    # EasyPost rejects any other value outright, and a rejected shipment
+    # create is a checkout with no delivery options at all.
+    INCOTERMS = %w[CFR CIF CIP CPT DAT DAP DDP EXW FAS FCA FOB].freeze
+
+    validates :preferred_incoterm, inclusion: { in: INCOTERMS }, allow_blank: true
+
     # EasyPost's own documentation example address — used only to prove the
     # key authenticates.
     VERIFICATION_ADDRESS = {

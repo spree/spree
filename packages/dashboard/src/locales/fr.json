@@ -1436,6 +1436,13 @@
         "barcode": {
           "label": "Code-barres"
         },
+        "country_of_origin": {
+          "label": "Pays d'origine"
+        },
+        "customs_description": {
+          "label": "Description douanière",
+          "placeholder": "Description simple de la marchandise"
+        },
         "depth": {
           "label": "Profondeur"
         },
@@ -1444,6 +1451,10 @@
         },
         "height": {
           "label": "Hauteur"
+        },
+        "hs_code": {
+          "label": "Code SH",
+          "placeholder": "ex. 640411"
         },
         "preorder_ships_at": {
           "help": "Date à laquelle vous prévoyez d'expédier les précommandes. Affichée aux clients comme promesse de livraison ; la précommande se termine une fois cette date passée.",
@@ -1937,6 +1948,7 @@
           "discounts": "Remises",
           "discounts_empty": "Aucune remise sur cette commande pour le moment.",
           "fee_kind_cod": "Paiement à la livraison",
+          "fee_kind_duty": "Droits de douane",
           "fee_kind_gift_wrap": "Emballage cadeau",
           "fee_kind_handling": "Manutention",
           "fee_kind_payment": "Frais de paiement",
@@ -3305,6 +3317,8 @@
         "remove_row_aria": "Retirer {{name}}",
         "sheet": {
           "availability": "Disponibilité",
+          "customs": "Douane",
+          "customs_help": "Utilisé sur les formulaires douaniers lorsque cet article franchit une frontière.",
           "identity": "Identité",
           "tax_category_placeholder": "Hériter du produit"
         },

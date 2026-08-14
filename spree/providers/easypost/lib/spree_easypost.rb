@@ -96,6 +96,71 @@ module SpreeEasyPost
     source.try(:name)
   end
 
+  # Customs payload for an international shipment. Nil for domestic ones —
+  # EasyPost rejects a customs form on a domestic label, and every carrier
+  # treats "no customs_info" as the domestic case.
+  #
+  # Classification (HS code, country of origin) is sent per item when the
+  # merchant recorded it. It is deliberately not required: carriers differ on
+  # what they demand, and a rejected label carries the carrier's own message,
+  # which is more actionable than a guess made here.
+  #
+  # @param package [Spree::Stock::Package]
+  # @param origin [Spree::StockLocation, nil] where the parcel ships from
+  # @param destination [Spree::Address, nil] where it is going
+  # @param integration [SpreeEasyPost::Integration, nil] customs signer/contents preferences
+  # @return [Hash, nil] nil when the shipment is domestic or undeterminable
+  def self.customs_info_params(package, origin, destination, integration = nil)
+    return unless international?(origin, destination)
+
+    items = customs_items_params(package)
+    return if items.empty?
+
+    {
+      contents_type: integration&.preferred_customs_contents_type.presence || 'merchandise',
+      restriction_type: 'none',
+      eel_pfc: 'NOEEI 30.37(a)',
+      customs_certify: true,
+      customs_signer: integration&.preferred_customs_signer.presence,
+      customs_items: items
+    }.compact_blank
+  end
+
+  # One customs item per package line. Quantity, value and weight always;
+  # classification only when present.
+  #
+  # @param package [Spree::Stock::Package]
+  # @return [Array<Hash>]
+  def self.customs_items_params(package)
+    store = package.owner&.store
+
+    package.contents.filter_map do |item|
+      variant = item.variant
+      next if variant.nil?
+
+      {
+        description: variant.customs_description_for_declaration,
+        quantity: item.quantity,
+        value: (item.price.to_f * item.quantity).round(2),
+        weight: ounces(item.weight, store),
+        origin_country: variant.country_of_origin.presence,
+        hs_tariff_number: variant.hs_code.presence,
+        currency: package.owner&.currency
+      }.compact_blank
+    end
+  end
+
+  # A shipment crosses a customs border when its origin and destination
+  # countries differ. Unknown countries mean domestic — never attach a
+  # customs form on a guess.
+  def self.international?(origin, destination)
+    origin_iso = origin&.country&.iso
+    destination_iso = destination&.country&.iso
+    return false if origin_iso.blank? || destination_iso.blank?
+
+    origin_iso != destination_iso
+  end
+
   # EndShipper payload — the party legally responsible for the shipment,
   # required when buying labels on EasyPost's own carrier accounts (USPS
   # refuses the purchase without one). Unlike a plain address, EasyPost

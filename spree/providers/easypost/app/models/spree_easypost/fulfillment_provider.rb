@@ -92,9 +92,7 @@ module SpreeEasyPost
       return if selected&.carrier.blank? || selected.service_level.blank? || address.nil?
 
       shipment = integration.client.shipment.create(
-        from_address: address_params(fulfillment.stock_location),
-        to_address: address_params(address),
-        parcel: requote_parcel(fulfillment)
+        **shipment_params(integration, fulfillment, address)
       )
       rate = shipment.rates.find do |candidate|
         candidate.carrier == selected.carrier && candidate.service == selected.service_level
@@ -128,8 +126,25 @@ module SpreeEasyPost
       nil
     end
 
-    def requote_parcel(fulfillment)
-      SpreeEasyPost.parcel_params(fulfillment.to_package, fulfillment.order&.store)
+    # Adds the customs declaration and duty terms when the parcel crosses a
+    # border; a domestic shipment is created exactly as before.
+    def shipment_params(integration, fulfillment, address)
+      package = fulfillment.to_package
+      params = {
+        from_address: address_params(fulfillment.stock_location),
+        to_address: address_params(address),
+        parcel: SpreeEasyPost.parcel_params(package, fulfillment.order&.store)
+      }
+
+      customs_info = SpreeEasyPost.customs_info_params(
+        package, fulfillment.stock_location, address, integration
+      )
+      return params if customs_info.nil?
+
+      params[:customs_info] = customs_info
+      incoterm = integration.preferred_incoterm.presence
+      params[:options] = { incoterm: incoterm } if incoterm.present?
+      params
     end
 
     def remember_purchase(fulfillment, shipment)

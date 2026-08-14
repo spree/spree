@@ -1447,6 +1447,13 @@
         "barcode": {
           "label": "Barcode"
         },
+        "country_of_origin": {
+          "label": "بلد المنشأ"
+        },
+        "customs_description": {
+          "label": "الوصف الجمركي",
+          "placeholder": "وصف بسيط للبضاعة"
+        },
         "depth": {
           "label": "العمق"
         },
@@ -1455,6 +1462,10 @@
         },
         "height": {
           "label": "الارتفاع"
+        },
+        "hs_code": {
+          "label": "رمز النظام المنسق",
+          "placeholder": "مثال: 640411"
         },
         "preorder_ships_at": {
           "help": "موعد شحنك المتوقع للطلبات المسبقة. يظهر للعملاء كوعد بالتسليم؛ وينتهي الطلب المسبق بمجرد مرور هذا التاريخ.",
@@ -1948,6 +1959,7 @@
           "discounts": "الخصومات",
           "discounts_empty": "لا توجد خصومات على هذا الطلب بعد.",
           "fee_kind_cod": "الدفع عند الاستلام",
+          "fee_kind_duty": "رسوم جمركية",
           "fee_kind_gift_wrap": "تغليف الهدايا",
           "fee_kind_handling": "رسوم المناولة",
           "fee_kind_payment": "رسوم الدفع",
@@ -3321,6 +3333,8 @@
         "remove_row_aria": "إزالة {{name}}",
         "sheet": {
           "availability": "التوفر",
+          "customs": "الجمارك",
+          "customs_help": "يُستخدم في نماذج الجمارك عند شحن هذا المنتج عبر الحدود.",
           "identity": "هوية",
           "tax_category_placeholder": "ترث من المنتج"
         },

@@ -17,6 +17,10 @@ export interface BulkVariantsRow {
   preorderable?: boolean
   backorderLimit?: string | null
   taxCategoryId?: string | null
+  hsCode?: string | null
+  /** ISO 3166-1 alpha-2 code, never a country record id. */
+  countryOfOrigin?: string | null
+  customsDescription?: string | null
 }
 
 export type BulkVariantsField =
@@ -31,6 +35,9 @@ export type BulkVariantsField =
   | 'preorderable'
   | 'backorderLimit'
   | 'taxCategoryId'
+  | 'hsCode'
+  | 'countryOfOrigin'
+  | 'customsDescription'
 
 export type BulkVariantsChange =
   | { field: Exclude<BulkVariantsField, 'preorderable'>; value: string | null }
@@ -50,12 +57,17 @@ export interface BulkVariantsTableLabels {
   preorderable: string
   backorderLimit: string
   taxCategory: string
+  hsCode: string
+  countryOfOrigin: string
+  customsDescription: string
   /** Placeholder for a variant row with no options text (e.g. "Default"). */
   variantDefault: string
   /** Shown in unit cells with no explicit value ("inherit the default"). */
   unitDefault: string
   /** Shown in the tax-category cell when none is set. */
   taxCategoryNone: string
+  /** Shown in the country-of-origin cell when none is set. */
+  countryOfOriginNone: string
   /** Aria label on the DataGrid for screen readers. */
   gridAriaLabel?: string
 }
@@ -68,6 +80,12 @@ export interface BulkVariantsTableProps {
   dimensionUnitOptions: ReadonlyArray<{ value: string; label: string }>
   /** Omit to hide the tax-category column (no tax categories configured). */
   taxCategoryOptions?: ReadonlyArray<{ value: string; label: string }>
+  /**
+   * Countries as `{ value: ISO, label: name }`. Omit to hide the customs
+   * columns entirely (e.g. the country list has not loaded yet). Values are
+   * ISO codes so the stored data survives the countries table going away.
+   */
+  countryOptions?: ReadonlyArray<{ value: string; label: string }>
   /** Called when the user commits a value to a cell. The id is the row id. */
   onChange: (rowId: string, change: BulkVariantsChange) => void
 }
@@ -97,13 +115,14 @@ export function BulkVariantsTable({
   weightUnitOptions,
   dimensionUnitOptions,
   taxCategoryOptions,
+  countryOptions,
   onChange,
 }: BulkVariantsTableProps) {
   const columns = useMemo<ColumnDef<BulkVariantsRow>[]>(() => {
     // Keyboard column coordinates, fixed per column: variant label is
     // read-only (unregistered), then sku=1, barcode=2, weight=3, unit=4,
     // height=5, width=6, depth=7, unit=8, preorderable=9, backorder=10,
-    // tax=11.
+    // tax=11, hs code=12, origin=13, customs description=14.
     const numericHeader = (label: string) => () => <span className="block text-right">{label}</span>
     const rowLabel = (r: BulkVariantsRow) => r.variantLabel ?? labels.variantDefault
 
@@ -224,6 +243,55 @@ export function BulkVariantsTable({
       })
     }
 
+    // Customs columns travel together — classification is only meaningful
+    // alongside the origin it is declared with.
+    if (countryOptions) {
+      defs.push(
+        {
+          id: 'hs_code',
+          header: labels.hsCode,
+          cell: ({ row }) => (
+            <TextCell
+              coords={{ row: row.index, col: 12 }}
+              value={row.original.hsCode ?? null}
+              onChange={(next) => onChange(row.original.id, { field: 'hsCode', value: next })}
+              ariaLabel={`${labels.hsCode} — ${rowLabel(row.original)}`}
+            />
+          ),
+        },
+        {
+          id: 'country_of_origin',
+          header: labels.countryOfOrigin,
+          cell: ({ row }) => (
+            <SelectCell
+              coords={{ row: row.index, col: 13 }}
+              value={row.original.countryOfOrigin ?? null}
+              options={countryOptions}
+              nullLabel={labels.countryOfOriginNone}
+              onChange={(next) =>
+                onChange(row.original.id, { field: 'countryOfOrigin', value: next })
+              }
+              ariaLabel={`${labels.countryOfOrigin} — ${rowLabel(row.original)}`}
+            />
+          ),
+        },
+        {
+          id: 'customs_description',
+          header: labels.customsDescription,
+          cell: ({ row }) => (
+            <TextCell
+              coords={{ row: row.index, col: 14 }}
+              value={row.original.customsDescription ?? null}
+              onChange={(next) =>
+                onChange(row.original.id, { field: 'customsDescription', value: next })
+              }
+              ariaLabel={`${labels.customsDescription} — ${rowLabel(row.original)}`}
+            />
+          ),
+        },
+      )
+    }
+
     // Reorder to visual sequence: the coordinate map above is stable, but
     // the defs array built column groups out of order for concision.
     const order = [
@@ -239,9 +307,19 @@ export function BulkVariantsTable({
       'preorderable',
       'backorder_limit',
       'tax_category',
+      'hs_code',
+      'country_of_origin',
+      'customs_description',
     ]
     return defs.sort((a, b) => order.indexOf(a.id as string) - order.indexOf(b.id as string))
-  }, [onChange, labels, weightUnitOptions, dimensionUnitOptions, taxCategoryOptions])
+  }, [
+    onChange,
+    labels,
+    weightUnitOptions,
+    dimensionUnitOptions,
+    taxCategoryOptions,
+    countryOptions,
+  ])
 
   return (
     <div className="overflow-x-auto">
@@ -249,7 +327,7 @@ export function BulkVariantsTable({
         rows={rows}
         columns={columns}
         getRowId={(row) => row.id}
-        className="min-w-[1100px]"
+        className={countryOptions ? 'min-w-[1500px]' : 'min-w-[1100px]'}
         aria-label={labels.gridAriaLabel}
       />
     </div>

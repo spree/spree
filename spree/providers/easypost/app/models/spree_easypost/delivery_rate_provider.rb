@@ -120,10 +120,25 @@ module SpreeEasyPost
     def easypost_shipment(package)
       cache_key = [:easypost_shipment, store.id, package.stock_location.id, package.owner.id]
       Spree::Current.provider_cache[cache_key] ||= integration.client.shipment.create(
-        from_address: address_params(package.stock_location),
-        to_address: address_params(package.owner.ship_address),
-        parcel: parcel_params(package)
+        **shipment_params(package)
       )
+    end
+
+    # International rates depend on the declared contents, so the customs
+    # form goes on the quote as well as the label.
+    def shipment_params(package)
+      destination = package.owner.ship_address
+      params = {
+        from_address: address_params(package.stock_location),
+        to_address: address_params(destination),
+        parcel: parcel_params(package)
+      }
+
+      customs_info = SpreeEasyPost.customs_info_params(
+        package, package.stock_location, destination, integration
+      )
+      params[:customs_info] = customs_info if customs_info.present?
+      params
     end
 
     def address_params(source)

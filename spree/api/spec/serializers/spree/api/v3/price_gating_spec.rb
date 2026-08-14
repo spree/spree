@@ -40,6 +40,26 @@ RSpec.describe 'v3 Store serializer price gating' do
       expect(hash['total']).to be_present
       expect(hash['items'].first['price']).to be_present
     end
+
+    it 'nulls fee amounts and the fee total for gated guests' do
+      create(:fee, cart: cart, order: nil, amount: 7, label: 'Import duty', kind: 'duty')
+
+      hash = serialize(described_class, cart.reload, hide: true)
+
+      expect(hash['fee_total']).to be_nil
+      expect(hash['fees'].first['amount']).to be_nil
+      expect(hash['fees'].first['display_amount']).to be_nil
+    end
+
+    it 'itemizes fees so a storefront can show duties broken out' do
+      create(:fee, cart: cart, order: nil, amount: 7, label: 'Import duty', kind: 'duty')
+
+      hash = serialize(described_class, cart.reload, hide: false)
+
+      expect(hash['fee_total']).to be_present
+      expect(hash['fees'].first).to include('label' => 'Import duty', 'kind' => 'duty')
+      expect(hash['fees'].first['amount']).to be_present
+    end
   end
 
   describe Spree::Api::V3::OrderSerializer do
@@ -54,6 +74,15 @@ RSpec.describe 'v3 Store serializer price gating' do
 
     it 'serializes totals when not gated' do
       expect(serialize(described_class, hide: false)['total']).to be_present
+    end
+
+    it 'keeps fees itemized after placement' do
+      create(:fee, order: order, amount: 7, label: 'Import duty', kind: 'duty')
+
+      hash = serialize(described_class, order.reload, hide: false)
+
+      expect(hash['fee_total']).to be_present
+      expect(hash['fees'].first).to include('label' => 'Import duty', 'kind' => 'duty')
     end
   end
 

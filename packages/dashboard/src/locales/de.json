@@ -1436,6 +1436,13 @@
         "barcode": {
           "label": "Barcode"
         },
+        "country_of_origin": {
+          "label": "Ursprungsland"
+        },
+        "customs_description": {
+          "label": "Zollbeschreibung",
+          "placeholder": "Einfache Beschreibung der Ware"
+        },
         "depth": {
           "label": "Tiefe"
         },
@@ -1444,6 +1451,10 @@
         },
         "height": {
           "label": "Höhe"
+        },
+        "hs_code": {
+          "label": "HS-Code",
+          "placeholder": "z. B. 640411"
         },
         "preorder_ships_at": {
           "help": "Wann du Vorbestellungen voraussichtlich versendest. Wird Kunden als Lieferversprechen angezeigt; die Vorbestellung endet, sobald dieses Datum verstreicht.",
@@ -1937,6 +1948,7 @@
           "discounts": "Rabatte",
           "discounts_empty": "Noch keine Rabatte für diese Bestellung.",
           "fee_kind_cod": "Nachnahme",
+          "fee_kind_duty": "Zoll",
           "fee_kind_gift_wrap": "Geschenkverpackung",
           "fee_kind_handling": "Bearbeitung",
           "fee_kind_payment": "Zahlungsgebühr",
@@ -3305,6 +3317,8 @@
         "remove_row_aria": "{{name}} entfernen",
         "sheet": {
           "availability": "Verfügbarkeit",
+          "customs": "Zoll",
+          "customs_help": "Wird auf Zollformularen verwendet, wenn dieser Artikel eine Grenze überquert.",
           "identity": "Identität",
           "tax_category_placeholder": "Vom Produkt übernehmen"
         },

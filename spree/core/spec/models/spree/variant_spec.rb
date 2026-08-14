@@ -1587,4 +1587,63 @@ describe Spree::Variant, type: :model do
     end
   end
 
+  describe 'customs classification' do
+    let(:variant) { build(:variant) }
+
+    it 'is valid without any customs data' do
+      variant.hs_code = nil
+      variant.country_of_origin = nil
+
+      expect(variant).to be_valid
+    end
+
+    it 'strips non-digits from the hs code' do
+      variant.hs_code = '6404.11'
+      variant.validate
+
+      expect(variant.hs_code).to eq('640411')
+    end
+
+    it 'upcases the country of origin' do
+      variant.country_of_origin = 'vn'
+      variant.validate
+
+      expect(variant.country_of_origin).to eq('VN')
+    end
+
+    it 'rejects an hs code shorter than six digits' do
+      variant.hs_code = '64041'
+
+      expect(variant).not_to be_valid
+      expect(variant.errors[:hs_code]).to be_present
+    end
+
+    it 'rejects an hs code longer than thirteen digits' do
+      variant.hs_code = '1' * 14
+
+      expect(variant).not_to be_valid
+      expect(variant.errors[:hs_code]).to be_present
+    end
+
+    it 'rejects a country of origin that is not a two-letter code' do
+      variant.country_of_origin = 'VNM'
+
+      expect(variant).not_to be_valid
+      expect(variant.errors[:country_of_origin]).to be_present
+    end
+
+    describe '#customs_description_for_declaration' do
+      it 'prefers the explicit customs description' do
+        variant.customs_description = 'Leather footwear'
+
+        expect(variant.customs_description_for_declaration).to eq('Leather footwear')
+      end
+
+      it 'falls back to the product name' do
+        variant.customs_description = nil
+
+        expect(variant.customs_description_for_declaration).to eq(variant.name)
+      end
+    end
+  end
 end

@@ -8,7 +8,10 @@ module Spree
     include Spree::TypedAdjustmentLine
 
     # Extensions may append their own kinds — the list is validated, not frozen.
-    KINDS = %w[surcharge handling gift_wrap cod payment]
+    # `duty` rows are written by a duties provider's adjuster and snapshot the
+    # classification they were calculated from in `metadata` — never re-derive
+    # a duty from the live catalog.
+    KINDS = %w[surcharge handling gift_wrap cod payment duty]
 
     has_prefix_id :fee
 

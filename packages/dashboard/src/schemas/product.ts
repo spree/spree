@@ -45,6 +45,9 @@ export const variantFormSchema = z.object({
   depth: z.coerce.number().nullable().optional(),
   weight_unit: z.string().nullable().optional(),
   dimensions_unit: z.string().nullable().optional(),
+  hs_code: z.string().nullable().optional(),
+  country_of_origin: z.string().nullable().optional(),
+  customs_description: z.string().nullable().optional(),
   track_inventory: z.boolean().optional(),
   preorderable: z.boolean().optional(),
   preorder_ships_at: z.string().nullable().optional(),
@@ -210,6 +213,9 @@ export function isPlaceholderDefaultVariant(v: VariantFormValues): boolean {
     v.weight_unit == null &&
     v.dimensions_unit == null &&
     v.tax_category_id == null &&
+    !v.hs_code &&
+    !v.country_of_origin &&
+    !v.customs_description &&
     v.preorderable !== true &&
     v.preorder_ships_at == null &&
     v.backorder_limit == null &&

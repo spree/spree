@@ -1433,6 +1433,13 @@
         "barcode": {
           "label": "条形码"
         },
+        "country_of_origin": {
+          "label": "原产国"
+        },
+        "customs_description": {
+          "label": "海关申报描述",
+          "placeholder": "货物的简明描述"
+        },
         "depth": {
           "label": "深度"
         },
@@ -1441,6 +1448,10 @@
         },
         "height": {
           "label": "高度"
+        },
+        "hs_code": {
+          "label": "HS 编码",
+          "placeholder": "例如 640411"
         },
         "preorder_ships_at": {
           "help": "你预计发出预购订单的时间。作为交付承诺向顾客展示；该日期过后预购结束。",
@@ -1934,6 +1945,7 @@
           "discounts": "折扣",
           "discounts_empty": "该订单暂无折扣。",
           "fee_kind_cod": "货到付款",
+          "fee_kind_duty": "关税",
           "fee_kind_gift_wrap": "礼品包装",
           "fee_kind_handling": "手续费",
           "fee_kind_payment": "支付手续费",
@@ -3301,6 +3313,8 @@
         "remove_row_aria": "移除 {{name}}",
         "sheet": {
           "availability": "可用性",
+          "customs": "海关",
+          "customs_help": "当该商品跨境运输时用于海关申报单。",
           "identity": "标识",
           "tax_category_placeholder": "继承自商品"
         },

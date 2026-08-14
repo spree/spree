@@ -25,7 +25,11 @@ export type CountryOption = { iso: string; iso3: string; name: string }
  * stable ISO code), falling back to the API's backend-locale `name` when the
  * runtime lacks coverage.
  */
-function useCountryDisplayName() {
+/**
+ * Localized country name with the API's own name as fallback. Exported so
+ * every country-labelled surface (pickers, grid cells) reads the same.
+ */
+export function useCountryDisplayName() {
   const displayName = useDisplayName('region')
   return (country: CountryOption) => displayName(country.iso) ?? country.name
 }

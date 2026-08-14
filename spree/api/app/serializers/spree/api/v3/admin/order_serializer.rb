@@ -93,6 +93,10 @@ module Spree
           # promotion summaries carry their real name here. The inherited
           # store-keyed declaration is dropped, not shadowed.
           _attributes.delete(:discounts)
+          # Fees reach the admin through their own `/orders/:id/fees` endpoint,
+          # which is also the write path — embedding them here would ship the
+          # same rows twice, through a store serializer.
+          _attributes.delete(:fees)
           many :order_promotions, key: :applied_promotions, resource: proc { Spree.api.admin_applied_promotion_serializer }, if: proc { expand?('applied_promotions') }
           many :line_items, key: :items, resource: proc { Spree.api.admin_line_item_serializer }, if: proc { expand?('items') }
           many :fulfillments, resource: proc { Spree.api.admin_fulfillment_serializer }, if: proc { expand?('fulfillments') }

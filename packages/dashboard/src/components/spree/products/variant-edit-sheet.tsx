@@ -1,4 +1,4 @@
-import { StoreDatePicker } from '@spree/dashboard-core'
+import { CountryCombobox, StoreDatePicker } from '@spree/dashboard-core'
 import {
   Button,
   Field,
@@ -23,6 +23,7 @@ import { useTranslation } from 'react-i18next'
 import { useOptionTypes } from '../../../hooks/use-option-types'
 import { useTaxCategories } from '../../../hooks/use-tax-categories'
 import type { ProductFormValues, VariantFormValues } from '../../../schemas/product'
+import { normalizeCustomsDescription, normalizeHsCode } from './normalize-customs'
 import { variantDisplayLabel } from './variants-matrix'
 
 const WEIGHT_UNITS = ['g', 'kg', 'lb', 'oz'] as const
@@ -266,6 +267,55 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
                 />
               </Field>
             </div>
+          </Section>
+
+          <Section title={t('admin.products.variants.sheet.customs')}>
+            <p className="text-sm text-muted-foreground">
+              {t('admin.products.variants.sheet.customs_help')}
+            </p>
+            <div className="grid grid-cols-2 gap-3">
+              <Field>
+                <FieldLabel htmlFor={`variant-${variantIndex}-hs-code`}>
+                  {t('admin.fields.variant.hs_code.label')}
+                </FieldLabel>
+                <Input
+                  id={`variant-${variantIndex}-hs-code`}
+                  inputMode="numeric"
+                  placeholder={t('admin.fields.variant.hs_code.placeholder')}
+                  {...form.register(`variants.${variantIndex}.hs_code`, {
+                    setValueAs: normalizeHsCode,
+                  })}
+                />
+                <FieldError errors={[form.formState.errors.variants?.[variantIndex]?.hs_code]} />
+              </Field>
+              <Field>
+                <FieldLabel htmlFor={`variant-${variantIndex}-country-of-origin`}>
+                  {t('admin.fields.variant.country_of_origin.label')}
+                </FieldLabel>
+                <Controller
+                  name={`variants.${variantIndex}.country_of_origin`}
+                  control={form.control}
+                  render={({ field }) => (
+                    <CountryCombobox
+                      value={field.value ?? null}
+                      onValueChange={(iso) => field.onChange(iso || null)}
+                    />
+                  )}
+                />
+              </Field>
+            </div>
+            <Field>
+              <FieldLabel htmlFor={`variant-${variantIndex}-customs-description`}>
+                {t('admin.fields.variant.customs_description.label')}
+              </FieldLabel>
+              <Input
+                id={`variant-${variantIndex}-customs-description`}
+                placeholder={t('admin.fields.variant.customs_description.placeholder')}
+                {...form.register(`variants.${variantIndex}.customs_description`, {
+                  setValueAs: normalizeCustomsDescription,
+                })}
+              />
+            </Field>
           </Section>
 
           <Section title={t('admin.products.variants.sheet.availability')}>

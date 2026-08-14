@@ -12,7 +12,7 @@ module Spree
         # are redeclared with admin counterparts — admin serializers never
         # reference store serializers.
         class CartSerializer < V3::CartSerializer
-          %i[fulfillments payments payment_methods gift_card discounts].each { |key| _attributes.delete(key) }
+          %i[fulfillments payments payment_methods gift_card discounts fees].each { |key| _attributes.delete(key) }
 
           typelize completed_at: [:string, nullable: true]
 
