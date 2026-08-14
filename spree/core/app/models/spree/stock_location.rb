@@ -35,11 +35,25 @@ module Spree
     end
 
     def country=(value)
-      self.country_iso = value&.iso
+      self[:country_iso] = value&.iso&.to_s&.upcase
     end
 
     def state
       Spree::State.resolve(country_iso, state_abbr) if country_iso.present? && state_abbr.present?
+    end
+
+    # A subdivision that means nothing in this country came from the country
+    # the location just moved off, so it is dropped rather than kept as a code
+    # no lookup will ever resolve. Mirrors Spree::Address.
+    def normalize_state_abbr
+      return if state_abbr.blank?
+
+      if country_iso.blank?
+        self[:state_abbr] = nil
+        return
+      end
+
+      self[:state_abbr] = Spree::IsoData.subdivision_code(country_iso, state_abbr)
     end
 
     def state=(value)
@@ -61,6 +75,8 @@ module Spree
     scope :active, -> { where(active: true) }
     scope :pickup_enabled, -> { where(pickup_enabled: true) }
     scope :order_default, -> { order(default: :desc, name: :asc) }
+
+    before_validation :normalize_state_abbr
 
     after_create :create_stock_items, if: :propagate_all_variants?
     after_save :ensure_one_default

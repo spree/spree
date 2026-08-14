@@ -59,7 +59,6 @@ RSpec.describe Spree::Api::V3::Admin::SetupController, type: :controller do
       end
 
       it 'applies optional currency and country' do
-        create(:country_us) unless Spree::Country.find_by(iso: 'US')
 
         post :create, params: valid_params.merge(currency: 'eur', country_iso: 'us'), as: :json
 

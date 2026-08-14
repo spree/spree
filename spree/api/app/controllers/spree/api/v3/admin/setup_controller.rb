@@ -111,8 +111,8 @@ module Spree
               end
 
               if params[:country_iso].present?
-                country = Spree::Country.find_by(iso: params[:country_iso].to_s.upcase)
-                permitted[:default_country_id] = country.id if country
+                country = Spree::Country.by_iso(params[:country_iso])
+                permitted[:default_country_iso_code] = country.iso if country
               end
 
               permitted

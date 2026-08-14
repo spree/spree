@@ -60,7 +60,7 @@ RSpec.describe Spree::StoreScopeGuard do
 
     it 'ignores tables without a store_id column' do
       expect {
-        described_class.watch { Spree::Country.where(iso: 'US').to_a }
+        described_class.watch { Spree::Zone.where(name: 'US').to_a }
       }.not_to raise_error
     end
 

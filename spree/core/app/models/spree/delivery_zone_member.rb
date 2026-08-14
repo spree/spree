@@ -44,6 +44,7 @@ module Spree
     validates :country_iso, presence: true, if: -> { member_type.in?(MEMBER_TYPES) }
     validates :state_abbr, presence: true, if: -> { member_type == 'state' }
     validate :postal_definition, if: -> { member_type == 'postal_code' }
+    validate :geography_resolvable
 
     # @param address [Spree::Address]
     # @return [Boolean] whether the address falls inside this member
@@ -77,14 +78,30 @@ module Spree
     def normalize_iso_codes
       self.country_iso = country.iso if country_iso.blank? && country.present?
 
-      return if state.blank?
+      if state.present?
+        self.state_abbr = state.abbr if state_abbr.blank?
+        self.country_iso = state.country&.iso if country_iso.blank?
+      end
 
-      self.state_abbr = state.abbr if state_abbr.blank?
-      self.country_iso = state.country&.iso if country_iso.blank?
+      # Matching compares stored codes verbatim, so what is stored has to be
+      # the canonical form — otherwise 'us' or a retired subdivision code
+      # would sit in the column and match nothing for the row's whole life.
+      self.country_iso = country_iso.to_s.strip.upcase.presence
+
+      return if state_abbr.blank? || country_iso.blank?
+
+      self.state_abbr = Spree::IsoData.subdivision_code(country_iso, state_abbr)
     end
 
     # Stored values are normalized on assignment (see +normalizes+ above), so
     # matching compares normalized against normalized.
+    # normalize_iso_codes nils anything the registry can't resolve, so a blank
+    # column here means the caller supplied something invalid.
+    def geography_resolvable
+      errors.add(:country_iso, :invalid) if country_iso.present? && Spree::Country.by_iso(country_iso).nil?
+      errors.add(:state_abbr, :invalid) if member_type == 'state' && state_abbr.blank? && state.present?
+    end
+
     def postal_match?(zipcode)
       return false if zipcode.blank?
 

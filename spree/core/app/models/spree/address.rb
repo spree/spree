@@ -54,7 +54,7 @@ module Spree
 
     def country=(value)
       @country = value
-      self[:country_iso] = value&.iso
+      self[:country_iso] = value&.iso&.to_s&.upcase
     end
 
     def state

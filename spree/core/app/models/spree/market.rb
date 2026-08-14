@@ -86,7 +86,8 @@ module Spree
     def self.for_country(country, store:)
       return nil unless country && store
 
-      iso = country.respond_to?(:iso) ? country.iso : country.to_s
+      iso = (country.respond_to?(:iso) ? country.iso : country).to_s.strip.upcase
+      return if iso.blank?
 
       joins(:market_countries)
         .where(store_id: store.id)
