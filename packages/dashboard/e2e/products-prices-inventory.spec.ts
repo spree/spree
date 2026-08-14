@@ -210,7 +210,7 @@ test.describe('product inventory — multi-variant', () => {
     // Create a second stock location first — the test then verifies the
     // inventory grid renders editable cells for it on a fresh product
     // (previously it only rendered rows for locations with a persisted
-    // stock_item, so the new location showed up without inputs).
+    // stock_level, so the new location showed up without inputs).
     const locationName = `E2E Warehouse ${Date.now()}`
     await createStockLocation(page, creds.store_id, locationName)
 

@@ -2972,7 +2972,7 @@
             "refund": "Refund",
             "report": "Report",
             "return": "Return",
-            "stock_item": "Stock item",
+            "stock_level": "Stock level",
             "stock_movement": "Stock movement",
             "stock_reservation": "Stock reservation",
             "stock_transfer": "Stock transfer",
@@ -3802,9 +3802,9 @@
         "roles_required": "Pick at least one role"
       }
     },
-    "stock_items": {
+    "stock_levels": {
       "messages": {
-        "stock_item_deleted": "Stock item deleted",
+        "stock_level_deleted": "Stock level deleted",
         "stock_updated": "Stock updated"
       }
     },
@@ -3840,9 +3840,9 @@
       },
       "search_placeholder": "Search by name…",
       "section_pickup": "Pickup",
-      "stock_items": {
-        "empty": "No stock items at this location yet.",
-        "empty_search": "No stock items match your search.",
+      "stock_levels": {
+        "empty": "No stock levels at this location yet.",
+        "empty_search": "No stock levels match your search.",
         "help": "Adjust on-hand and backorderable counts per variant.",
         "low_stock_marker": "low stock",
         "search_placeholder": "Search SKU or product…",

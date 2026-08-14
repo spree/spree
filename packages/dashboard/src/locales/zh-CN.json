@@ -2968,7 +2968,7 @@
             "refund": "退款",
             "report": "报表",
             "return": "退货",
-            "stock_item": "库存项",
+            "stock_level": "库存水平",
             "stock_movement": "库存变动",
             "stock_reservation": "库存预留",
             "stock_transfer": "库存调拨",
@@ -3798,9 +3798,9 @@
         "roles_required": "请至少选择一个角色"
       }
     },
-    "stock_items": {
+    "stock_levels": {
       "messages": {
-        "stock_item_deleted": "库存项已删除",
+        "stock_level_deleted": "库存水平已删除",
         "stock_updated": "库存已更新"
       }
     },
@@ -3836,9 +3836,9 @@
       },
       "search_placeholder": "按名称搜索…",
       "section_pickup": "自提",
-      "stock_items": {
-        "empty": "此地点暂无库存项。",
-        "empty_search": "没有与搜索匹配的库存项。",
+      "stock_levels": {
+        "empty": "此地点暂无库存水平。",
+        "empty_search": "没有与搜索匹配的库存水平。",
         "help": "按变体调整在库数量和可缺货预订数量。",
         "low_stock_marker": "库存不足",
         "search_placeholder": "搜索 SKU 或商品…",

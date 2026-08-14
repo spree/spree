@@ -97,7 +97,7 @@ function variantToFormValues(variant: Variant, position: number): VariantFormVal
         amount: p.amount != null ? String(p.amount) : '',
         compare_at_amount: p.compare_at_amount != null ? String(p.compare_at_amount) : null,
       })),
-    stock_items: (variant.stock_items ?? []).map((si) => ({
+    stock_levels: (variant.stock_levels ?? []).map((si) => ({
       id: si.id,
       stock_location_id: si.stock_location_id ?? si.stock_location?.id ?? '',
       stock_location_name:
@@ -223,8 +223,8 @@ export function variantToWirePayload(v: VariantFormValues, index: number) {
   // the canonical API. So no normalization here — re-normalizing a canonical
   // value under a comma-decimal locale would mangle it (`34.56` → `3456`).
   if (v.prices != null) payload.prices = v.prices
-  if (v.stock_items?.length) {
-    payload.stock_items = v.stock_items.map(({ stock_location_name, ...rest }) => rest)
+  if (v.stock_levels?.length) {
+    payload.stock_levels = v.stock_levels.map(({ stock_location_name, ...rest }) => rest)
   }
   return payload
 }

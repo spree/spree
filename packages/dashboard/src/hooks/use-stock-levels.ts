@@ -1,4 +1,4 @@
-import type { StockItem, StockItemUpdateParams } from '@spree/admin-sdk'
+import type { StockLevel, StockLevelUpdateParams } from '@spree/admin-sdk'
 import {
   adminClient,
   useResourceKey,
@@ -8,18 +8,18 @@ import {
 import { type QueryKey, useQuery, useQueryClient } from '@tanstack/react-query'
 import i18n from 'i18next'
 
-interface UseStockItemsParams {
+interface UseStockLevelsParams {
   page?: number
   limit?: number
   stock_location_id_eq?: string
   variant_sku_or_variant_product_name_cont?: string
 }
 
-export function useStockItems(params: UseStockItemsParams = {}) {
+export function useStockLevels(params: UseStockLevelsParams = {}) {
   return useQuery({
-    queryKey: useResourceKey('stock-items', params),
+    queryKey: useResourceKey('stock-levels', params),
     queryFn: () =>
-      adminClient.stockItems.list({
+      adminClient.stockLevels.list({
         page: params.page ?? 1,
         limit: params.limit ?? 25,
         // The stock-at-location panel renders the variant's product name +
@@ -38,26 +38,26 @@ export function useStockItems(params: UseStockItemsParams = {}) {
   })
 }
 
-export function useUpdateStockItem(id: string, extraInvalidate: QueryKey[] = []) {
-  return useResourceMutation<StockItem, Error, StockItemUpdateParams>({
-    mutationFn: (params) => adminClient.stockItems.update(id, params),
-    invalidate: [['stock-items'], ['stock-items', id], ...extraInvalidate],
-    successMessage: i18n.t('admin.stock_items.messages.stock_updated'),
+export function useUpdateStockLevel(id: string, extraInvalidate: QueryKey[] = []) {
+  return useResourceMutation<StockLevel, Error, StockLevelUpdateParams>({
+    mutationFn: (params) => adminClient.stockLevels.update(id, params),
+    invalidate: [['stock-levels'], ['stock-levels', id], ...extraInvalidate],
+    successMessage: i18n.t('admin.stock_levels.messages.stock_updated'),
     errorMessage: i18n.t('admin.errors.failed_to_update'),
   })
 }
 
-export function useDeleteStockItem() {
+export function useDeleteStockLevel() {
   const queryClient = useQueryClient()
   const buildKey = useResourceKeyBuilder()
 
   return useResourceMutation<void, Error, string>({
-    mutationFn: (id) => adminClient.stockItems.delete(id),
-    invalidate: [['stock-items']],
-    successMessage: i18n.t('admin.stock_items.messages.stock_item_deleted'),
+    mutationFn: (id) => adminClient.stockLevels.delete(id),
+    invalidate: [['stock-levels']],
+    successMessage: i18n.t('admin.stock_levels.messages.stock_level_deleted'),
     errorMessage: i18n.t('admin.errors.failed_to_delete'),
     onSuccess: (_data, id) => {
-      queryClient.removeQueries({ queryKey: buildKey('stock-items', id) })
+      queryClient.removeQueries({ queryKey: buildKey('stock-levels', id) })
     },
   })
 }

@@ -205,7 +205,7 @@ import type {
   SetupCountries,
   SetupParams,
   SetupStatus,
-  StockItemUpdateParams,
+  StockLevelUpdateParams,
   StockLocationCreateParams,
   StockLocationUpdateParams,
   StockTransferCreateParams,
@@ -290,7 +290,7 @@ import type {
   Return,
   ReturnReason,
   Role,
-  StockItem,
+  StockLevel,
   StockLocation,
   StockTransfer,
   Store,
@@ -3834,12 +3834,12 @@ export class AdminClient {
   // Stock Items
   // ============================================
 
-  readonly stockItems = {
+  readonly stockLevels = {
     list: (
       params?: ListParams & Record<string, unknown>,
       options?: RequestOptions,
-    ): Promise<PaginatedResponse<StockItem>> =>
-      this.request<PaginatedResponse<StockItem>>('GET', '/stock_items', {
+    ): Promise<PaginatedResponse<StockLevel>> =>
+      this.request<PaginatedResponse<StockLevel>>('GET', '/stock_levels', {
         ...options,
         params: params ? transformListParams(params) : undefined,
       }),
@@ -3848,21 +3848,21 @@ export class AdminClient {
       id: string,
       params?: { expand?: string[] },
       options?: RequestOptions,
-    ): Promise<StockItem> =>
-      this.request<StockItem>('GET', `/stock_items/${id}`, {
+    ): Promise<StockLevel> =>
+      this.request<StockLevel>('GET', `/stock_levels/${id}`, {
         ...options,
         params: getParams(params),
       }),
 
     update: (
       id: string,
-      params: StockItemUpdateParams,
+      params: StockLevelUpdateParams,
       options?: RequestOptions,
-    ): Promise<StockItem> =>
-      this.request<StockItem>('PATCH', `/stock_items/${id}`, { ...options, body: params }),
+    ): Promise<StockLevel> =>
+      this.request<StockLevel>('PATCH', `/stock_levels/${id}`, { ...options, body: params }),
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
-      this.request<void>('DELETE', `/stock_items/${id}`, options),
+      this.request<void>('DELETE', `/stock_levels/${id}`, options),
   }
 
   // ============================================

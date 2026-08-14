@@ -64,7 +64,7 @@ const BOOTSTRAP_RUBY = [
   // order-creation tests can add it to a draft order without the
   // +"Quantity not available"+ validation kicking in.
   `default_location = s.default_stock_location`,
-  `product.variants_including_master.each { |v| default_location.stock_items.where(variant: v).first_or_create!.update!(count_on_hand: 100, backorderable: true) }`,
+  `product.variants_including_master.each { |v| default_location.stock_levels.where(variant: v).first_or_create!.update!(count_on_hand: 100, backorderable: true) }`,
   // Disjoint product fixtures for products-bulk.spec.ts. Each test owns its
   // own pair (A/B → status, C/D → categories, E/F → tags, G/H → delete,
   // I → row-action clone/delete) so the serial suite can mutate them in any

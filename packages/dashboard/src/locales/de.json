@@ -2972,7 +2972,7 @@
             "refund": "Erstattung",
             "report": "Bericht",
             "return": "Rücksendung",
-            "stock_item": "Bestandsartikel",
+            "stock_level": "Lagerbestand",
             "stock_movement": "Bestandsbewegung",
             "stock_reservation": "Bestandsreservierung",
             "stock_transfer": "Bestandsübertragung",
@@ -3802,9 +3802,9 @@
         "roles_required": "Wählen Sie mindestens eine Rolle"
       }
     },
-    "stock_items": {
+    "stock_levels": {
       "messages": {
-        "stock_item_deleted": "Bestandsposition gelöscht",
+        "stock_level_deleted": "Lagerbestand gelöscht",
         "stock_updated": "Bestand aktualisiert"
       }
     },
@@ -3840,9 +3840,9 @@
       },
       "search_placeholder": "Nach Name suchen…",
       "section_pickup": "Abholung",
-      "stock_items": {
-        "empty": "An diesem Standort sind noch keine Bestandsartikel vorhanden.",
-        "empty_search": "Keine Bestandsartikel entsprechen Ihrer Suche.",
+      "stock_levels": {
+        "empty": "An diesem Standort sind noch keine Lagerbestände vorhanden.",
+        "empty_search": "Keine Lagerbestände entsprechen Ihrer Suche.",
         "help": "Passen Sie die verfügbaren und nachbestellbaren Mengen pro Variante an.",
         "low_stock_marker": "niedriger Bestand",
         "search_placeholder": "SKU oder Produkt suchen…",

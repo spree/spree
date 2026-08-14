@@ -12,7 +12,7 @@ const sampleStockLocation = {
   updated_at: '2026-05-01T00:00:00Z',
 }
 
-const sampleStockItem = {
+const sampleStockLevel = {
   id: 'si_abc123',
   count_on_hand: 42,
   backorderable: false,
@@ -73,11 +73,11 @@ describe('stockLocations', () => {
       )
 
       const res = await createTestClient().stockLocations.get('sl_abc123', {
-        expand: ['stock_items'],
+        expand: ['stock_levels'],
       })
 
       expect(res.id).toBe('sl_abc123')
-      expect(url!.searchParams.get('expand')).toBe('stock_items')
+      expect(url!.searchParams.get('expand')).toBe('stock_levels')
     })
   })
 
@@ -126,16 +126,16 @@ describe('stockLocations', () => {
   })
 })
 
-describe('stockItems', () => {
+describe('stockLevels', () => {
   describe('list', () => {
-    it('GETs /stock_items and returns paginated data', async () => {
+    it('GETs /stock_levels and returns paginated data', async () => {
       server.use(
-        http.get(`${API_PREFIX}/stock_items`, () =>
-          HttpResponse.json(paginated([sampleStockItem])),
+        http.get(`${API_PREFIX}/stock_levels`, () =>
+          HttpResponse.json(paginated([sampleStockLevel])),
         ),
       )
 
-      const res = await createTestClient().stockItems.list()
+      const res = await createTestClient().stockLevels.list()
 
       expect(res.data).toHaveLength(1)
       expect(res.data[0]?.id).toBe('si_abc123')
@@ -144,13 +144,13 @@ describe('stockItems', () => {
     it('wraps Ransack predicates via transformListParams', async () => {
       let url: URL | null = null
       server.use(
-        http.get(`${API_PREFIX}/stock_items`, ({ request }) => {
+        http.get(`${API_PREFIX}/stock_levels`, ({ request }) => {
           url = new URL(request.url)
           return HttpResponse.json(paginated([]))
         }),
       )
 
-      await createTestClient().stockItems.list({
+      await createTestClient().stockLevels.list({
         stock_location_id_eq: 'sl_abc123',
         variant_id_eq: 'variant_1',
       })
@@ -161,16 +161,16 @@ describe('stockItems', () => {
   })
 
   describe('get', () => {
-    it('GETs /stock_items/:id and forwards expand params', async () => {
+    it('GETs /stock_levels/:id and forwards expand params', async () => {
       let url: URL | null = null
       server.use(
-        http.get(`${API_PREFIX}/stock_items/si_abc123`, ({ request }) => {
+        http.get(`${API_PREFIX}/stock_levels/si_abc123`, ({ request }) => {
           url = new URL(request.url)
-          return HttpResponse.json(sampleStockItem)
+          return HttpResponse.json(sampleStockLevel)
         }),
       )
 
-      const res = await createTestClient().stockItems.get('si_abc123', { expand: ['variant'] })
+      const res = await createTestClient().stockLevels.get('si_abc123', { expand: ['variant'] })
 
       expect(res.id).toBe('si_abc123')
       expect(url!.searchParams.get('expand')).toBe('variant')
@@ -181,28 +181,28 @@ describe('stockItems', () => {
     it('PATCHes the update body verbatim', async () => {
       let body: Record<string, unknown> | null = null
       server.use(
-        http.patch(`${API_PREFIX}/stock_items/si_abc123`, async ({ request }) => {
+        http.patch(`${API_PREFIX}/stock_levels/si_abc123`, async ({ request }) => {
           body = (await request.json()) as Record<string, unknown>
-          return HttpResponse.json({ ...sampleStockItem, count_on_hand: 100 })
+          return HttpResponse.json({ ...sampleStockLevel, count_on_hand: 100 })
         }),
       )
 
-      const res = await createTestClient().stockItems.update('si_abc123', { count_on_hand: 100 })
+      const res = await createTestClient().stockLevels.update('si_abc123', { count_on_hand: 100 })
 
       expect(body).toEqual({ count_on_hand: 100 })
       expect(res.count_on_hand).toBe(100)
     })
 
-    it('DELETEs /stock_items/:id', async () => {
+    it('DELETEs /stock_levels/:id', async () => {
       let hit = false
       server.use(
-        http.delete(`${API_PREFIX}/stock_items/si_abc123`, () => {
+        http.delete(`${API_PREFIX}/stock_levels/si_abc123`, () => {
           hit = true
           return new HttpResponse(null, { status: 204 })
         }),
       )
 
-      await expect(createTestClient().stockItems.delete('si_abc123')).resolves.toBeUndefined()
+      await expect(createTestClient().stockLevels.delete('si_abc123')).resolves.toBeUndefined()
       expect(hit).toBe(true)
     })
   })

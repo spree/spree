@@ -658,7 +658,7 @@ export interface ProductVariantInput {
   options?: VariantOptionPair[]
   /** Per-currency prices. Upserted by currency. */
   prices?: VariantPrice[]
-  stock_items?: VariantStockItem[]
+  stock_levels?: VariantStockLevel[]
 }
 
 export interface CategoryCreateParams {
@@ -819,7 +819,7 @@ export interface VariantPrice {
   compare_at_amount?: string | number | null
 }
 
-export interface VariantStockItem {
+export interface VariantStockLevel {
   stock_location_id: string
   count_on_hand: number
   backorderable?: boolean
@@ -851,7 +851,7 @@ export interface VariantCreateParams {
   options: [VariantOptionPair, ...VariantOptionPair[]]
   /** Per-currency prices. Upserted by currency. */
   prices?: VariantPrice[]
-  stock_items?: VariantStockItem[]
+  stock_levels?: VariantStockLevel[]
 }
 
 export interface VariantUpdateParams {
@@ -876,7 +876,7 @@ export interface VariantUpdateParams {
   options?: VariantOptionPair[]
   /** Per-currency prices. Upserted by currency. */
   prices?: VariantPrice[]
-  stock_items?: VariantStockItem[]
+  stock_levels?: VariantStockLevel[]
 }
 
 export interface CustomFieldCreateParams {
@@ -1106,7 +1106,7 @@ export interface StockLocationUpdateParams {
   pickup_instructions?: string | null
 }
 
-export interface StockItemUpdateParams {
+export interface StockLevelUpdateParams {
   count_on_hand?: number
   backorderable?: boolean
   metadata?: Record<string, unknown>

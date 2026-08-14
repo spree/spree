@@ -2982,7 +2982,7 @@
             "refund": "استرداد",
             "report": "تقرير",
             "return": "يعود",
-            "stock_item": "عنصر المخزون",
+            "stock_level": "مستوى المخزون",
             "stock_movement": "حركة الأسهم",
             "stock_reservation": "Stock reservation",
             "stock_transfer": "نقل المخزون",
@@ -3818,9 +3818,9 @@
         "roles_required": "اختر دورًا واحدًا على الأقل"
       }
     },
-    "stock_items": {
+    "stock_levels": {
       "messages": {
-        "stock_item_deleted": "تم حذف عنصر المخزون",
+        "stock_level_deleted": "تم حذف مستوى المخزون",
         "stock_updated": "تم تحديث المخزون"
       }
     },
@@ -3856,9 +3856,9 @@
       },
       "search_placeholder": "البحث بالاسم…",
       "section_pickup": "يلتقط",
-      "stock_items": {
-        "empty": "لا توجد عناصر المخزون في هذا الموقع حتى الآن.",
-        "empty_search": "لا توجد عناصر مخزون تطابق بحثك.",
+      "stock_levels": {
+        "empty": "لا توجد مستويات مخزون في هذا الموقع حتى الآن.",
+        "empty_search": "لا توجد مستويات مخزون تطابق بحثك.",
         "help": "اضبط الأعداد المتاحة والقابلة للطلب الخلفي لكل متغير.",
         "low_stock_marker": "مخزون منخفض",
         "search_placeholder": "ابحث عن SKU أو المنتج…",
