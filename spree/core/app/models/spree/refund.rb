@@ -4,6 +4,7 @@ module Spree
 
     include Spree::HasCustomFields
     include Spree::Metadata
+    include Spree::InstrumentsGatewayCalls
     if defined?(Spree::Security::Refunds)
       include Spree::Security::Refunds
     end
@@ -81,11 +82,13 @@ module Spree
     def process!(credit_cents)
       refund_total_in_cents = calculate_refund_amount(credit_cents)
 
-      response = if payment.payment_method.payment_profiles_supported?
-                   payment.payment_method.credit(refund_total_in_cents, payment.source, payment.transaction_id, originator: self)
-                 else
-                   payment.payment_method.credit(refund_total_in_cents, payment.transaction_id, originator: self)
-                 end
+      response = instrument_gateway_call(:credit, payment.payment_method) do
+        if payment.payment_method.payment_profiles_supported?
+          payment.payment_method.credit(refund_total_in_cents, payment.source, payment.transaction_id, originator: self)
+        else
+          payment.payment_method.credit(refund_total_in_cents, payment.transaction_id, originator: self)
+        end
+      end
 
       if response.success?
         track_order_as_refunded(refund_total_in_cents)

@@ -147,25 +147,52 @@ module Spree
         def invoke_subscriber(subscriber, event, options)
           async = options.fetch(:async, true)
 
-          if subscriber.is_a?(Proc)
-            # Block subscribers run synchronously
-            subscriber.call(event)
-          elsif subscriber.respond_to?(:call)
-            # Callable objects (including subscriber instances)
-            if async && defined?(Spree::Events::SubscriberJob)
-              Spree::Events::SubscriberJob.perform_later(subscriber.name, event.to_h)
-            else
+          ActiveSupport::Notifications.instrument(
+            'dispatch.spree_events',
+            event_name: event.name,
+            subscriber: subscriber_label(subscriber),
+            async: async_dispatch?(subscriber, async)
+          ) do
+            if subscriber.is_a?(Proc)
+              # Block subscribers run synchronously
               subscriber.call(event)
-            end
-          elsif subscriber.is_a?(Class) && subscriber < Spree::Subscriber
-            # Subscriber classes
-            if async && defined?(Spree::Events::SubscriberJob)
-              Spree::Events::SubscriberJob.perform_later(subscriber.name, event.to_h)
+            elsif subscriber.respond_to?(:call)
+              # Callable objects (including subscriber instances)
+              if async && defined?(Spree::Events::SubscriberJob)
+                Spree::Events::SubscriberJob.perform_later(subscriber.name, event.to_h)
+              else
+                subscriber.call(event)
+              end
+            elsif subscriber.is_a?(Class) && subscriber < Spree::Subscriber
+              # Subscriber classes
+              if async && defined?(Spree::Events::SubscriberJob)
+                Spree::Events::SubscriberJob.perform_later(subscriber.name, event.to_h)
+              else
+                subscriber.new.call(event)
+              end
             else
-              subscriber.new.call(event)
+              raise ArgumentError, "Invalid subscriber: #{subscriber.inspect}. Must be a Proc, callable, or Spree::Subscriber subclass."
             end
+          end
+        end
+
+        # Whether this dispatch hops to ActiveJob rather than running inline —
+        # mirrors the branching in {#invoke_subscriber}.
+        def async_dispatch?(subscriber, async)
+          return false if subscriber.is_a?(Proc)
+
+          async && defined?(Spree::Events::SubscriberJob) ? true : false
+        end
+
+        # Stable, low-cardinality label for instrumentation payloads (a
+        # Proc's #to_s embeds a memory address).
+        def subscriber_label(subscriber)
+          if subscriber.is_a?(Proc)
+            'Proc'
+          elsif subscriber.respond_to?(:name) && subscriber.name
+            subscriber.name
           else
-            raise ArgumentError, "Invalid subscriber: #{subscriber.inspect}. Must be a Proc, callable, or Spree::Subscriber subclass."
+            subscriber.class.name
           end
         end
 

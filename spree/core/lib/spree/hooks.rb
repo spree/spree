@@ -83,6 +83,13 @@ module Spree
       true
     end
 
+    # @param key [String, Symbol] '<workflow key>.<hook name>'
+    # @return [Integer] registered handler count for the key, without
+    #   constantizing anything (cheap enough for instrumentation payloads)
+    def handler_count(key)
+      @handlers.fetch(key.to_s) { [] }.size
+    end
+
     def keys
       @handlers.keys
     end

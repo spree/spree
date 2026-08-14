@@ -88,6 +88,19 @@ describe Spree::Refund, type: :model do
         expect { subject }.to change { Spree::Refund.count }.by(1)
       end
 
+      it 'instruments the credit gateway call as gateway.spree_payments' do
+        notifications = []
+        subscriber = ActiveSupport::Notifications.subscribe('gateway.spree_payments') do |*, payload|
+          notifications << payload
+        end
+
+        subject
+
+        expect(notifications.sole).to include(action: 'credit', payment_method_type: payment_method.type)
+      ensure
+        ActiveSupport::Notifications.unsubscribe(subscriber)
+      end
+
       it 'return the newly created refund' do
         expect(subject).to be_a(Spree::Refund)
       end

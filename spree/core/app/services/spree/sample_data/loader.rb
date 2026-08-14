@@ -65,7 +65,7 @@ module Spree
       private
 
       def load_configuration_data
-        load_ruby_file('shipping_methods')
+        load_ruby_file('fulfillment')
         load_ruby_file('payment_methods')
         load_ruby_file('promotions')
       end

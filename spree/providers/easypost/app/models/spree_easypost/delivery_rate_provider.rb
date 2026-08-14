@@ -70,12 +70,16 @@ module SpreeEasyPost
       return [] if integration.nil?
       return [] if package.owner&.ship_address.nil?
 
-      rates = begin
-        easypost_shipment(package).rates
+      shipment = begin
+        easypost_shipment(package)
       rescue StandardError => e
         Rails.error.report(e, context: { delivery_method_id: delivery_method.id }, source: 'spree_easypost.rating')
-        []
+        nil
       end
+      return [] if shipment.nil?
+
+      rates = Array(shipment.rates)
+      log_rating_failures(shipment) if rates.empty?
 
       rates.map do |rate|
         Spree::DeliveryRateProvider::Estimate.new(
@@ -90,6 +94,26 @@ module SpreeEasyPost
     end
 
     private
+
+    # EasyPost answers 201 with an empty rate list and per-carrier rate_error
+    # messages when it cannot quote (incomplete origin address, unsupported
+    # lane, oversize parcel). Without surfacing them, the method silently
+    # vanishing from checkout is undiagnosable from the outside.
+    def log_rating_failures(shipment)
+      # The carrier account is part of the identity: the same carrier can fail
+      # differently per linked account, and deduplicating on carrier alone
+      # would hide one of them.
+      reasons = Array(shipment.messages).map do |message|
+        carrier = [message.carrier, message.try(:carrier_account_id)].compact.join('/')
+        "#{carrier}: #{message.message}"
+      end.uniq
+      reasons = ['no rates returned and no carrier messages given'] if reasons.empty?
+
+      Rails.logger.warn(
+        "[SpreeEasyPost] no rates for delivery method '#{delivery_method.name}' " \
+        "(shipment #{shipment.id}): #{reasons.join(' | ')}"
+      )
+    end
 
     # One shipment-create returns rates for every carrier and service, so all
     # delivery methods sharing this provider within a request reuse it.

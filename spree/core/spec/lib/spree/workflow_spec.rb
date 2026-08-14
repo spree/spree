@@ -522,12 +522,18 @@ RSpec.describe Spree::Workflow do
   end
 
   describe 'observability' do
-    it 'instruments every step as step.spree_workflow' do
+    def capture_notifications(name)
       events = []
-      subscriber = ActiveSupport::Notifications.subscribe('step.spree_workflow') do |*, payload|
-        events << payload.slice(:workflow, :step)
+      subscriber = ActiveSupport::Notifications.subscribe(name) do |*, payload|
+        events << payload
       end
+      yield
+      events
+    ensure
+      ActiveSupport::Notifications.unsubscribe(subscriber)
+    end
 
+    it 'instruments every step as step.spree_workflow' do
       workflow = build_workflow do
         def perform(subject:)
           super
@@ -541,14 +547,123 @@ RSpec.describe Spree::Workflow do
         def one = nil
         def two = nil
       end
-      workflow.call(subject: 1)
 
-      expect(events).to eq([
-        { workflow: 'testing.sample_workflow', step: :one },
-        { workflow: 'testing.sample_workflow', step: :two }
+      events = capture_notifications('step.spree_workflow') { workflow.call(subject: 1) }
+
+      expect(events.map { |payload| payload.slice(:workflow, :step, :external, :outcome) }).to eq([
+        { workflow: 'testing.sample_workflow', step: :one, external: false, outcome: 'success' },
+        { workflow: 'testing.sample_workflow', step: :two, external: false, outcome: 'success' }
       ])
-    ensure
-      ActiveSupport::Notifications.unsubscribe(subscriber)
+    end
+
+    it 'marks external_step payloads external: true' do
+      workflow = build_workflow do
+        def perform(subject:)
+          super
+          external_step :call_gateway
+          success(subject)
+        end
+
+        private
+
+        def call_gateway = nil
+      end
+
+      events = capture_notifications('step.spree_workflow') { workflow.call(subject: 1) }
+
+      expect(events.sole).to include(step: :call_gateway, external: true)
+    end
+
+    it 'records a failure outcome when a collaborator step returns a failure result' do
+      failing_collaborator = Class.new do
+        def call = Spree::ServiceModule::Result.new(false, nil, 'nope')
+      end.new
+
+      workflow = build_workflow do
+        define_method(:collaborator) { failing_collaborator }
+
+        def perform(subject:)
+          super
+          step :delegated, with: -> { collaborator }
+          success(subject)
+        end
+      end
+
+      events = capture_notifications('step.spree_workflow') { workflow.call(subject: 1) }
+
+      expect(events.sole).to include(step: :delegated, outcome: 'failure')
+    end
+
+    it 'records the FailureSignal as the exception when a step calls failure' do
+      workflow = build_workflow do
+        def perform(subject:)
+          super
+          step :explode
+          success(subject)
+        end
+
+        private
+
+        def explode = failure(:exploded, 'boom')
+      end
+
+      events = capture_notifications('step.spree_workflow') { workflow.call(subject: 1) }
+
+      expect(events.sole[:exception]&.first).to eq('Spree::Workflow::FailureSignal')
+    end
+
+    it 'instruments the whole run as perform.spree_workflow with the outcome' do
+      succeeding = build_workflow do
+        def perform(subject:) = success(subject)
+      end
+      failing = build_workflow do
+        def perform(subject:)
+          super
+          step :explode
+        end
+
+        private
+
+        def explode = failure(:exploded, 'boom')
+      end
+      erroring = build_workflow do
+        def perform(subject:) = raise(ArgumentError, 'broken')
+      end
+      halting = build_workflow do
+        def perform(subject:)
+          super
+          halt!(subject)
+        end
+      end
+
+      events = capture_notifications('perform.spree_workflow') do
+        succeeding.call(subject: 1)
+        failing.call(subject: 1)
+        expect { erroring.call(subject: 1) }.to raise_error(ArgumentError)
+        halting.call(subject: 1)
+      end
+
+      expect(events.map { |payload| payload[:outcome] }).to eq(%w[success failure error success])
+      expect(events.map { |payload| payload[:workflow] }.uniq).to eq(['testing.sample_workflow'])
+    end
+
+    it 'instruments run_hooks as hooks.spree_workflow with the handler count' do
+      workflow = build_workflow do
+        hooks :after_thing
+
+        def perform(subject:)
+          super
+          run_hooks :after_thing
+          success(subject)
+        end
+      end
+      Spree.hooks.register('testing.sample_workflow.after_thing') { |_context| nil }
+
+      events = capture_notifications('hooks.spree_workflow') { workflow.call(subject: 1) }
+
+      expect(events.sole).to include(
+        workflow: 'testing.sample_workflow', hook: :after_thing, handler_count: 1
+      )
     end
   end
 end

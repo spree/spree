@@ -8,7 +8,7 @@ rescue LoadError
 end
 
 SPREE_CORE_GEMS = %w(core api).freeze
-SPREE_OPTIONAL_GEMS = %w(emails dashboard).freeze
+SPREE_OPTIONAL_GEMS = %w(emails dashboard opentelemetry).freeze
 # Provider gems sit one directory deeper and their gem name doesn't match the
 # directory, so they carry the path explicitly.
 SPREE_PROVIDER_GEMS = {

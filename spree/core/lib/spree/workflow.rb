@@ -156,16 +156,26 @@ module Spree
     def call(**kwargs)
       @undo_stack = []
       @outer_transaction_depth = ApplicationRecord.connection.open_transactions
-      outcome = perform(**kwargs)
-      outcome.is_a?(Spree::ServiceModule::Result) ? outcome : success(outcome)
-    rescue Halted => halted
-      success(halted.value)
-    rescue FailureSignal => signal
-      run_undo_stack!
-      signal.result
-    rescue StandardError
-      run_undo_stack!
-      raise
+
+      ActiveSupport::Notifications.instrument(
+        'perform.spree_workflow', workflow: self.class.workflow_key
+      ) do |payload|
+        outcome = perform(**kwargs)
+        result = outcome.is_a?(Spree::ServiceModule::Result) ? outcome : success(outcome)
+        payload[:outcome] = result.success? ? 'success' : 'failure'
+        result
+      rescue Halted => halted
+        payload[:outcome] = 'success'
+        success(halted.value)
+      rescue FailureSignal => signal
+        payload[:outcome] = 'failure'
+        run_undo_stack!
+        signal.result
+      rescue StandardError
+        payload[:outcome] = 'error'
+        run_undo_stack!
+        raise
+      end
     end
 
     # Successful early exit from anywhere — the caller receives
@@ -219,11 +229,13 @@ module Spree
 
     private
 
-    def step(name, with: nil, on_flow_failure: nil)
+    def step(name, with: nil, on_flow_failure: nil, external: false)
       outcome = ActiveSupport::Notifications.instrument(
-        'step.spree_workflow', workflow: self.class.workflow_key, step: name
-      ) do
-        with ? call_collaborator(instance_exec(&with)) : send(name)
+        'step.spree_workflow', workflow: self.class.workflow_key, step: name, external: external
+      ) do |payload|
+        result = with ? call_collaborator(instance_exec(&with)) : send(name)
+        payload[:outcome] = result.is_a?(Spree::ServiceModule::Result) && result.failure? ? 'failure' : 'success'
+        result
       end
 
       raise FailureSignal.new(outcome) if outcome.is_a?(Spree::ServiceModule::Result) && outcome.failure?
@@ -234,11 +246,12 @@ module Spree
 
     # Gateway/network I/O — must never share a database transaction the
     # workflow opened (a caller-level wrapping transaction is the caller's
-    # responsibility).
+    # responsibility). Marks the notification payload `external: true` so
+    # tracing subscribers render it as an outbound (client) call.
     def external_step(name, **options)
       raise ContractError, "external_step #{name} must not run inside a database transaction" if in_workflow_transaction?
 
-      step(name, **options)
+      step(name, external: true, **options)
     end
 
     # Dispatches every handler registered for this extension point with
@@ -253,7 +266,13 @@ module Spree
         raise ContractError, "#{self.class.name} does not declare hook :#{name} — add `hooks :#{name}` to the class"
       end
 
-      Spree.hooks.dispatch("#{self.class.workflow_key}.#{name}", self)
+      key = "#{self.class.workflow_key}.#{name}"
+      ActiveSupport::Notifications.instrument(
+        'hooks.spree_workflow',
+        workflow: self.class.workflow_key, hook: name.to_sym, handler_count: Spree.hooks.handler_count(key)
+      ) do
+        Spree.hooks.dispatch(key, self)
+      end
     end
 
     # Undo methods arm when the workflow-opened transaction around their
