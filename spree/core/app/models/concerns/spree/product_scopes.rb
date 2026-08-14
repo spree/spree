@@ -60,7 +60,7 @@ module Spree
       # names (to pair with join_variants_and_stock_levels).
       scope :in_stock_or_backorderable_condition, -> {
         where(
-          "#{Variant.table_name}.track_inventory = ? OR #{StockLevel.table_name}.count_on_hand > ? OR #{StockLevel.table_name}.backorderable = ?",
+          "#{Variant.table_name}.track_inventory = ? OR (#{StockLevel.table_name}.count_on_hand - #{StockLevel.table_name}.allocated_count) > ? OR #{StockLevel.table_name}.backorderable = ?",
           false, 0, true
         )
       }

@@ -265,7 +265,7 @@ describe Spree::Product, type: :model do
       let(:stock_level) { variant.stock_levels.first }
 
       it 'doesnt raise ReadOnlyRecord error' do
-        Spree::StockMovement.create!(stock_level: stock_level, quantity: 1)
+        Spree::StockMovement.create!(stock_level: stock_level, quantity: 1, kind: 'received')
         expect { product.destroy }.not_to raise_error
       end
     end

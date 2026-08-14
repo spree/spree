@@ -614,7 +614,7 @@ module Spree
                            if variants.loaded?
                              variants.sum(&:total_on_hand)
                            else
-                             stock_levels.loaded? ? stock_levels.sum(&:count_on_hand) : stock_levels.sum(:count_on_hand)
+                             stock_levels.loaded? ? stock_levels.sum(&:available_count) : stock_levels.sum('count_on_hand - allocated_count')
                            end
                          end
     end

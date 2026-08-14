@@ -36,8 +36,8 @@ module Spree
 
           Spree::StockLevel
             .where(stock_location_id: locations.map(&:id), variant_id: variant_ids)
-            .pluck(:stock_location_id, :variant_id, :count_on_hand)
-            .each_with_object({}) { |(loc_id, var_id, count), h| h[[loc_id, var_id]] = count }
+            .pluck(:stock_location_id, :variant_id, :count_on_hand, :allocated_count)
+            .each_with_object({}) { |(loc_id, var_id, on_hand, allocated), h| h[[loc_id, var_id]] = on_hand - allocated }
         end
       end
     end

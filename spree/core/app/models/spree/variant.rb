@@ -100,7 +100,7 @@ module Spree
     after_create :increment_product_variant_count
     after_destroy :decrement_product_variant_count
 
-    scope :in_stock, -> { left_joins(:stock_levels).where("#{Spree::Variant.table_name}.track_inventory = ? OR #{Spree::StockLevel.table_name}.count_on_hand > ?", false, 0) }
+    scope :in_stock, -> { left_joins(:stock_levels).where("#{Spree::Variant.table_name}.track_inventory = ? OR (#{Spree::StockLevel.table_name}.count_on_hand - #{Spree::StockLevel.table_name}.allocated_count) > ?", false, 0) }
     scope :backorderable, -> { left_joins(:stock_levels).where(Spree::StockLevel.table_name => { backorderable: true }) }
     scope :in_stock_or_backorderable, -> { in_stock.or(backorderable) }
 

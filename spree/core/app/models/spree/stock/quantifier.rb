@@ -31,21 +31,14 @@ module Spree
       end
 
       # Physical pool minus already-allocated units, summed across the
-      # variant's active stock items.
-      #
-      # In Spree 5.5 {Spree::StockLevel#allocated_count} is a Ruby shim that
-      # always returns 0, so this equals +SUM(count_on_hand)+. In 6.0
-      # (Typed Stock Movements) +allocated_count+ becomes a real column and
-      # the SQL path subtracts it natively.
+      # variant's active stock levels.
       #
       # @return [Integer] units available before checkout reservations
       def available_stock
         if association_loaded?
           stock_levels.sum(&:available_count)
-        elsif self.class.allocated_count_column?
-          stock_levels.sum('count_on_hand - allocated_count')
         else
-          stock_levels.sum(:count_on_hand)
+          stock_levels.sum('count_on_hand - allocated_count')
         end
       end
 
@@ -116,17 +109,6 @@ module Spree
 
       def stock_levels
         @stock_levels ||= scope_to_location(variant.stock_levels)
-      end
-
-      # Memoized schema check so {#available_stock} doesn't introspect the
-      # column list on every call. Flips from false → true when 6.0 Typed
-      # Stock Movements adds the `allocated_count` column.
-      #
-      # @return [Boolean]
-      def self.allocated_count_column?
-        return @allocated_count_column if defined?(@allocated_count_column)
-
-        @allocated_count_column = Spree::StockLevel.connection.column_exists?(:spree_stock_levels, :allocated_count)
       end
 
       private

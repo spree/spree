@@ -31,7 +31,7 @@ module Spree
 
           targets.each do |line_item, stock_level|
             stock_level = locked_stock_levels.fetch(stock_level.id)
-            available = stock_level.count_on_hand - held.fetch(stock_level.id, 0) - this_order_used[stock_level.id]
+            available = stock_level.available_count - held.fetch(stock_level.id, 0) - this_order_used[stock_level.id]
 
             if available < line_item.quantity
               raise InsufficientStockError.new(

@@ -267,7 +267,7 @@ describe Spree::StockLevel, type: :model do
   end
 
   context 'with stock movements' do
-    before { Spree::StockMovement.create(stock_level: subject, quantity: 1) }
+    before { Spree::StockMovement.create(stock_level: subject, quantity: 1, kind: 'received') }
 
     it 'doesnt raise ReadOnlyRecord error' do
       expect { subject.destroy }.not_to raise_error

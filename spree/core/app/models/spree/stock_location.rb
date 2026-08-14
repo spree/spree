@@ -195,11 +195,11 @@ module Spree
 
     def fill_status(variant, quantity)
       if item = stock_level_or_create(variant)
-        if item.count_on_hand >= quantity
+        if item.available_count >= quantity
           on_hand = quantity
           backordered = 0
         else
-          on_hand = item.count_on_hand
+          on_hand = item.available_count
           on_hand = 0 if on_hand < 0
           # A pre-order oversells like a backorder: the shortfall becomes
           # backordered inventory units (the backorder_limit cap is enforced

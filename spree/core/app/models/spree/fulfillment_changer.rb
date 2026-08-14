@@ -16,7 +16,7 @@ module Spree
       @variant                = params[:variant]
       @quantity               = params[:quantity]
       @available_quantity     = [
-        desired_stock_location.try(:count_on_hand, variant).to_i,
+        desired_stock_location&.stock_level(variant)&.available_count.to_i,
         current_quantity
       ].max
     end
