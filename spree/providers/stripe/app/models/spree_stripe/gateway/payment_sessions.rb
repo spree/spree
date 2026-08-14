@@ -178,7 +178,9 @@ module SpreeStripe
           currency: order.currency,
           customer: customer_profile_id,
           payment_method: payment_method_id,
-          capture_method: (MANUAL_CAPTURE_METHOD unless auto_capture?),
+          # Stripe knows only "charge now" or "authorize now, capture later",
+          # so both on_dispatch and manual map to its manual capture.
+          capture_method: (MANUAL_CAPTURE_METHOD unless capture_at_checkout?),
           statement_descriptor_suffix: statement_descriptor_suffix_for(order),
           automatic_payment_methods: { enabled: true },
           transfer_group: order.number,

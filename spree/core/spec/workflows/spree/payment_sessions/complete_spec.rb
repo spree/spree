@@ -52,7 +52,7 @@ RSpec.describe Spree::PaymentSessions::Complete do
       result = described_class.call(payment_session: payment_session)
 
       expect(result).to be_failure
-      expect(result.error.value).to eq('on fraud hold')
+      expect(result.error.to_s).to eq('on fraud hold')
       expect(payment_session.reload.status).to eq('pending')
     end
 

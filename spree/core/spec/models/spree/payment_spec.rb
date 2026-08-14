@@ -540,10 +540,10 @@ describe Spree::Payment, type: :model do
         end
       end
 
-      # The caller reporting actual gateway state overrides the auto_capture
-      # guess in both directions.
+      # The caller reporting actual gateway state overrides the method's
+      # capture timing in both directions.
       context 'when the funds are captured on a manual-capture method' do
-        let(:auto_capture) { false }
+        let(:capture_method) { 'manual' }
 
         it 'completes the payment with a capture event' do
           payment.confirm!(captured: true)
@@ -553,8 +553,8 @@ describe Spree::Payment, type: :model do
         end
       end
 
-      context 'when the funds are not captured on an auto-capture method' do
-        let(:auto_capture) { true }
+      context 'when the funds are not captured on a checkout-capture method' do
+        let(:capture_method) { 'checkout' }
 
         it 'pends the payment' do
           payment.confirm!(captured: false)

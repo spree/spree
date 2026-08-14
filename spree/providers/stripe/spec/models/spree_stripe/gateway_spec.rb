@@ -289,8 +289,8 @@ RSpec.describe SpreeStripe::Gateway do
       end
     end
 
-    context 'when auto_capture is false on the gateway' do
-      before { gateway.update!(auto_capture: false) }
+    context 'when the gateway captures manually' do
+      before { gateway.update!(capture_method: 'manual') }
 
       it 'asks Stripe for manual capture' do
         VCR.use_cassette('create_payment_intent_manual_capture') do
@@ -301,8 +301,8 @@ RSpec.describe SpreeStripe::Gateway do
       end
     end
 
-    context 'when auto_capture is true on the gateway' do
-      before { gateway.update!(auto_capture: true) }
+    context 'when the gateway captures at checkout' do
+      before { gateway.update!(capture_method: 'checkout') }
 
       it 'leaves the capture method to Stripe' do
         VCR.use_cassette('create_payment_intent') do

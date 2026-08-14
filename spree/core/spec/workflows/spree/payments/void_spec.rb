@@ -48,7 +48,7 @@ RSpec.describe Spree::Payments::Void do
       result = described_class.call(payment: payment)
 
       expect(result).to be_failure
-      expect(result.error.value).to eq('under review')
+      expect(result.error.to_s).to eq('under review')
     end
 
     it 'runs after_void once the gateway call succeeds' do
