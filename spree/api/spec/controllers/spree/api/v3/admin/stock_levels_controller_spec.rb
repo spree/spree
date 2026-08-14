@@ -51,6 +51,14 @@ RSpec.describe Spree::Api::V3::Admin::StockLevelsController, type: :controller d
       expect(movement.quantity).to eq(42 - count_before)
     end
 
+    it 'stores a client-supplied reason on the movement' do
+      patch :update, params: { id: stock_level.prefixed_id, count_on_hand: 42, reason: 'Damaged in transit' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(stock_level.reload.count_on_hand).to eq(42)
+      expect(stock_level.stock_movements.adjusted.last.reason).to eq('Damaged in transit')
+    end
+
     it 'labels an unlabelled correction in English' do
       patch :update, params: { id: stock_level.prefixed_id, count_on_hand: 42 }, as: :json
 

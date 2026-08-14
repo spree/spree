@@ -62,8 +62,12 @@ module Spree
           # Stock levels are auto-created against a (variant, stock_location)
           # pair and never re-pointed, so update only touches the count and
           # backorder flag — not the variant or location FKs.
+          #
+          # `reason` labels the correction in the stock history. It stays
+          # optional so an audit requirement never turns an existing endpoint
+          # into a 422; omitting it falls back to a translated default.
           def permitted_params
-            params.permit(:count_on_hand, :backorderable, metadata: {})
+            params.permit(:count_on_hand, :backorderable, :reason, metadata: {})
           end
         end
       end
