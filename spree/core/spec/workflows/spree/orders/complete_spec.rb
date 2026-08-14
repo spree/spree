@@ -18,6 +18,35 @@ module Spree
       expect(draft.reload.status).to eq('placed')
     end
 
+    describe 'stock' do
+      let(:draft) { create(:order_ready_to_ship, store: store, line_items_count: 1) }
+      let(:fulfillment) { draft.fulfillments.first }
+      let(:variant) { fulfillment.fulfillment_items.first.variant }
+      let(:stock_level) { fulfillment.stock_location.stock_level(variant) }
+      let(:quantity) { fulfillment.fulfillment_items.where(variant_id: variant.id).sum(:quantity) }
+
+      before { draft.update_columns(status: 'draft', completed_at: nil) }
+
+      # Placement promises stock; the shelf only empties when the parcel does.
+      it 'allocates each fulfillment without touching the shelf' do
+        count_on_hand_before = stock_level.reload.count_on_hand
+
+        expect { described_class.call(order: draft, payment_pending: true) }.
+          to change { stock_level.reload.allocated_count }.by(quantity)
+
+        expect(stock_level.reload.count_on_hand).to eq(count_on_hand_before)
+      end
+
+      it 'records the fulfillment and its order on the movement' do
+        described_class.call(order: draft, payment_pending: true)
+
+        movement = stock_level.stock_movements.allocated.last
+        expect(movement.fulfillment).to eq(fulfillment)
+        expect(movement.order).to eq(draft)
+        expect(movement.quantity).to eq(quantity)
+      end
+    end
+
     it 'is idempotent — an already placed order halts successfully with no side effects' do
       order.update_columns(completed_at: Time.current, status: 'placed')
 

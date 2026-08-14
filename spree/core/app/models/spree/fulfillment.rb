@@ -335,9 +335,43 @@ module Spree
       discounts.promotion.exists?
     end
 
+    # Placement no longer moves physical stock — the units are promised in
+    # Spree::Orders::Complete and only leave the shelf when the parcel does.
     def finalize!
       fulfillment_items.finalize_units!
-      after_resume
+    end
+
+    # Units this fulfillment still holds a promise for, keyed by variant id:
+    # what was allocated to it, less anything since released or shipped
+    # against it. A fulfillment has one origin, so a variant maps to exactly
+    # one stock level here.
+    #
+    # @return [Hash{Integer => Integer}]
+    def allocated_quantities
+      return {} unless persisted?
+
+      totals = Hash.new(0)
+
+      Spree::StockMovement.
+        where(fulfillment_id: id).
+        joins(:stock_level).
+        group("#{Spree::StockLevel.table_name}.variant_id", :kind).
+        sum(:quantity).
+        each do |(variant_id, kind), quantity|
+          case kind
+          when 'allocated' then totals[variant_id] += quantity.abs
+          when 'released', 'shipped' then totals[variant_id] -= quantity.abs
+          end
+        end
+
+      totals.select { |_, quantity| quantity.positive? }
+    end
+
+    # Total units still promised to this fulfillment.
+    #
+    # @return [Integer]
+    def allocated_quantity
+      allocated_quantities.values.sum
     end
 
     def include?(variant)

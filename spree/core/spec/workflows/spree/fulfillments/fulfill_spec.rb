@@ -174,6 +174,44 @@ module Spree
       end
     end
 
+    describe 'stock' do
+      let(:variant) { fulfillment.fulfillment_items.first.variant }
+      let(:quantity) { fulfillment.fulfillment_items.where(variant_id: variant.id).sum(:quantity) }
+      let(:stock_level) { fulfillment.stock_location.stock_level(variant) }
+
+      it 'ships only the units the fulfillment holds a promise for' do
+        fulfillment.stock_location.allocate(variant, quantity, fulfillment)
+
+        expect { subject.call(fulfillment: fulfillment) }.
+          to change { stock_level.reload.count_on_hand }.by(-quantity).
+          and change { stock_level.reload.allocated_count }.by(-quantity)
+      end
+
+      # A fulfillment created before typed movements holds no allocation — its
+      # stock left the shelf at placement under the old model — so shipping it
+      # must not decrement a second time.
+      it 'writes nothing for an unallocated fulfillment' do
+        expect { subject.call(fulfillment: fulfillment) }.
+          not_to change { stock_level.reload.count_on_hand }
+      end
+
+      # Departure is a physical fact: a forced dispatch records the parcel even
+      # when the shelf says the goods were never there. Availability is
+      # untouched on the way through — the promise had already been subtracted.
+      it 'leaves the shelf negative on a forced dispatch from an empty shelf' do
+        stock_level.update_column(:count_on_hand, 0)
+        fulfillment.stock_location.allocate(variant, quantity, fulfillment)
+        available_before = stock_level.reload.available_count
+
+        result = subject.call(fulfillment: fulfillment, force: true)
+
+        expect(result.success?).to eq(true)
+        expect(stock_level.reload.count_on_hand).to eq(-quantity)
+        expect(stock_level.allocated_count).to eq(0)
+        expect(stock_level.available_count).to eq(available_before)
+      end
+    end
+
     describe 'tracking' do
       it 'stores the tracking number on the fulfillment that ships' do
         subject.call(fulfillment: fulfillment, tracking: '1Z999')

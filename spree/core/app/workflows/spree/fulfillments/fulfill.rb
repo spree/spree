@@ -73,7 +73,8 @@ module Spree
         external_step :tell_provider_it_shipped
 
         ApplicationRecord.transaction do
-          step :unstock_if_resuming_from_canceled
+          step :reallocate_if_resuming_from_canceled
+          step :ship_allocated_units
           step :mark_fulfilled
           step :capture_payment_if_configured
         end
@@ -196,16 +197,35 @@ module Spree
         held.all? { |line_item_id, quantity| requested[line_item_id].to_i >= quantity }
       end
 
-      # A canceled fulfillment already put its units back on the shelf, so
-      # shipping it directly has to take them off again — canceled -> fulfilled
-      # is allowed precisely so goods that went out anyway can be recorded.
-      def unstock_if_resuming_from_canceled
+      # A canceled fulfillment gave its promise back, so shipping it directly
+      # has to make that promise again before the units can leave — canceled ->
+      # fulfilled is allowed precisely so goods that went out anyway can be
+      # recorded. Ordering matters: the ledger should read as a re-promise
+      # followed by a departure, which is what happened.
+      def reallocate_if_resuming_from_canceled
         return unless @source.canceled?
 
         @fulfillment.manifest.each do |item|
           next unless item.variant.track_inventory?
+          next unless item.quantity.positive?
 
-          @fulfillment.stock_location.unstock(item.variant, item.quantity, @fulfillment)
+          @fulfillment.stock_location.allocate(item.variant, item.quantity, @fulfillment)
+        end
+      end
+
+      # The shelf empties when the parcel leaves, for the units this
+      # fulfillment actually holds a promise for. A fulfillment created before
+      # typed movements holds none — its stock left at placement under the old
+      # model — so it ships without a movement and is not decremented twice.
+      def ship_allocated_units
+        allocated = @fulfillment.allocated_quantities
+        return if allocated.empty?
+
+        @fulfillment.manifest.each do |item|
+          quantity = [allocated[item.variant.id].to_i, item.quantity].min
+          next unless quantity.positive?
+
+          @fulfillment.stock_location.unstock(item.variant, quantity, @fulfillment)
         end
       end
 
