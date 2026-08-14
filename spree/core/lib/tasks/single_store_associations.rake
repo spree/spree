@@ -60,6 +60,17 @@ namespace :spree do
         puts "  #{shared[:promotions]} promotion(s) and #{shared[:payment_methods]} payment method(s) " \
              "were shared across stores — only the owner store keeps them unless spree_multi_store is installed."
       end
+
+      # Positions were numbered across the whole table before acts_as_list
+      # was scoped per store; renumber each store's list so reordering
+      # behaves on upgraded data (a sparse, non-1-based list confuses
+      # acts_as_list's move operations). Idempotent: renumbering an already
+      # per-store list reproduces it.
+      Spree::Store.ids.each do |store_id|
+        Spree::PaymentMethod.with_deleted.where(store_id: store_id).order(:position, :id).each.with_index(1) do |payment_method, index|
+          payment_method.update_column(:position, index) unless payment_method.position == index
+        end
+      end
     end
   end
 end

@@ -38,6 +38,12 @@ module Spree
                    with: RATE_LIMIT_RESPONSE,
                    unless: :secret_key_request?
 
+        # Cross-store leak tripwire, active in development/test only:
+        # registered ahead of the authentication callbacks so resource
+        # lookups run inside the guarded window. Deliberately global lookups
+        # (credential searches) opt out with Spree::StoreScopeGuard.skip.
+        around_action { |_controller, action| Spree::StoreScopeGuard.watch(&action) }
+
         # Optional JWT authentication by default
         before_action :authenticate_user
 

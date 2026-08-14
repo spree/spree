@@ -3,7 +3,10 @@ module Spree
     has_prefix_id :pm  # Stripe: pm_
 
     acts_as_paranoid
-    acts_as_list
+    # Scoped like every other store-owned list (Collection, Market,
+    # PriceList): without it, position assignment and reordering shift rows
+    # across ALL stores.
+    acts_as_list scope: :store_id
 
     include Spree::SingleStoreResource
     include Spree::StorePreferences

@@ -38,6 +38,50 @@ changes only affect future numbers; and code saving a numbered record with
 normally assigns one is `before_validation`. Plan:
 `6.0-document-numbers.md`.
 
+## 2026-08-13: Isolation tripwires — the guard under the store-scoping discipline
+
+Open-core isolation is the controller discipline (every lookup through a
+`current_store` association); row-level enforcement is deliberately not a
+core feature. Two nets now sit under that discipline rather than trusting
+review alone.
+
+`Spree::StoreScopeGuard` wraps every v3 API request in development and test:
+a SELECT against a store-owned table (schema-derived — any `spree_*` table
+with a `store_id` column) carrying no `store_id` predicate is reported with
+the SQL and call site. `log` by default, `raise` in this repo's API suite,
+never active in production. Deliberately global lookups — the API-key
+searches, where the key selects the store — opt out with
+`StoreScopeGuard.skip`, which doubles as documentation of intent.
+`watchable_environment?` is overridable so a multi-tenant enforcement layer
+can run the guard as a production log-mode canary, and the schema-derived
+watched set means tables stamped with `store_id` later are watched with no
+registration.
+
+Cache keys get a static audit spec: every `Rails.cache` call site in core
+and api must visibly carry the store in its key or hold a reviewed allowlist
+entry saying why the data is global. Writing the audit surfaced a real bug —
+idempotency replay caching keyed per credential but not per store, so a
+staff JWT reusing an Idempotency-Key across stores replayed the first
+store's response. The key now partitions by the requested store.
+
+Consequences: a store-less secondary-key lookup (slug, number, code, email,
+token) or unscoped scan on a store-owned table inside an API request is a
+test failure, not a review comment — wrap genuinely global lookups in
+`skip`. Honest limits: id/foreign-key filters and `SELECT 1 AS one`
+existence checks are exempt (they are dominated by loads from already-scoped
+rows and uniqueness validations) — exemption is NOT proof of scoping, so a
+lookup fed a request-derived id still requires `current_store` fetching even
+though the guard stays silent on it; and only the v3 controller surface is
+watched — jobs, webhooks and callbacks are a future extension, ideally keyed
+off `Spree::Current.store` assignment rather than per-entry-point
+registration. A new `Rails.cache` call without a store-scoped key fails the
+core suite until scoped or reviewed onto the allowlist, and a store-owned
+model with an unscoped `acts_as_list` fails it too (positions would bleed
+across stores — the bug PaymentMethod shipped with, fixed alongside three
+sibling leaks the tripwires surfaced: the pickup-location fallback, the
+stock-location default flag, variant stock-item propagation, and data-feed
+name uniqueness). Plan: `6.0-store-context-and-first-run-setup.md`.
+
 ## 2026-08-13: Store context is credential-derived — hostname resolution retired; first-run setup replaces the dummy admin
 
 Every v3 API request resolved to `Spree::Store.default`: the configured finder
