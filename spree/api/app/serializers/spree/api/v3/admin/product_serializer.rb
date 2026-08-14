@@ -77,6 +77,12 @@ module Spree
                resource: proc { Spree.api.admin_media_serializer },
                if: proc { expand?('media') }
 
+          # Read/write symmetry: the product accepts inline `digital_assets` on
+          # create, so it exposes them (opt-in via ?expand=digital_assets).
+          many :digital_assets,
+               resource: proc { Spree.api.admin_digital_asset_serializer },
+               if: proc { expand?('digital_assets') }
+
           many :option_types,
                resource: proc { Spree.api.admin_option_type_serializer },
                if: proc { expand?('option_types') }

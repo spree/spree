@@ -222,6 +222,12 @@ module Spree
               # server fetch a URL the caller chose, so it belongs to trusted
               # importers rather than to a request body.
               media: [*Spree::Media::WRITABLE_ATTRIBUTES, :id, :signed_id, { variant_ids: [] }],
+              # Inline digital files, so a new product ships its downloadable
+              # files in the same request. Create-only: entries carry a
+              # `signed_id` (uploaded file) or a `provider_type` (provider-backed
+              # asset). Edits and deletes use the nested digital_assets endpoints.
+              # See `Spree::Product#digital_assets=`.
+              digital_assets: [:signed_id, :variant_id, :provider_type, :authorized_clicks, :authorized_days, provider_settings: {}],
               product_publications: [:id, :channel_id, :published_at, :unpublished_at],
               variants: [
                 :id, :sku, :barcode,

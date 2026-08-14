@@ -778,6 +778,7 @@
       "title": "الملفات الرقمية",
       "untitled": "ملف بدون اسم",
       "upload": "إضافة ملف",
+      "upload_failed": "فشل رفع {{name}}: {{message}}",
       "uploading": "جارٍ رفع {{name}}…",
       "uploading_short": "جارٍ الرفع…"
     },

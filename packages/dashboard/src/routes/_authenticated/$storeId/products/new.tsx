@@ -12,6 +12,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { CustomFieldsInlineCard } from '../../../../components/spree/custom-fields/custom-fields-inline'
+import { DigitalFilesFormCard } from '../../../../components/spree/products/digital-files-form-card'
 import { ProductCustomFieldsProvider } from '../../../../components/spree/products/product-custom-fields-provider'
 import {
   CategorizationCard,
@@ -52,7 +53,7 @@ function NewProductPage() {
   })
 
   const onSubmit = async (data: ProductFormValues) => {
-    const { variants, custom_fields, media, ...rest } = data
+    const { variants, custom_fields, media, digital_assets, ...rest } = data
 
     // Strip the placeholder default variant if the merchant didn't touch it.
     // Spree::Product#variants= auto-creates the canonical default variant
@@ -81,6 +82,15 @@ function NewProductPage() {
         ...rest,
         position: i + 1,
       }))
+    }
+
+    // Pre-save digital files: strip the UI-only fields (filename/byteSize are
+    // display-only, uploadId is a client key) and ship each signed_id. The
+    // server's Product#digital_assets= attaches them to the default variant
+    // after the product is created.
+    if (digital_assets && digital_assets.length > 0) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ;(payload as any).digital_assets = digital_assets.map(({ signed_id }) => ({ signed_id }))
     }
 
     // For simple products (single variant with no options) the merchant
@@ -187,6 +197,7 @@ function NewProductPage() {
                 productName={form.watch('name') || t('admin.pages.products.new.title')}
               />
               <InventoryCard form={form} storeId={storeId} />
+              <DigitalFilesFormCard form={form} />
               <ProductCustomFieldsProvider
                 form={form}
                 productTypeId={form.watch('product_type_id')}
