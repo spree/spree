@@ -25,6 +25,9 @@ module Spree
     # Provider payloads (jurisdiction breakdowns, external ids) read nil-safe.
     attribute :data, default: -> { {} }
 
+    # The jurisdiction snapshot the provider stamped on the line.
+    has_iso_geography
+
     # Source — nil for externally-computed tax
     belongs_to :tax_rate, class_name: 'Spree::TaxRate', optional: true
 

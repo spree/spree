@@ -299,7 +299,7 @@ describe Spree::Store, type: :model, without_global_store: true do
 
         before do
           zone = create(:delivery_zone)
-          zone.members.create!(member_type: 'country', country: country)
+          zone.members.create!(member_type: 'country', country_iso: country.iso)
           create(:shipping_method, delivery_zone: zone)
           store.default_country_iso = country.iso
         end
@@ -846,8 +846,8 @@ describe Spree::Store, type: :model, without_global_store: true do
       let!(:zone) { create(:delivery_zone) }
 
       before do
-        zone.members.create!(member_type: 'country', country: country1)
-        zone.members.create!(member_type: 'country', country: country2)
+        zone.members.create!(member_type: 'country', country_iso: country1.iso)
+        zone.members.create!(member_type: 'country', country_iso: country2.iso)
         create(:shipping_method, delivery_zone: zone)
       end
 
@@ -863,7 +863,7 @@ describe Spree::Store, type: :model, without_global_store: true do
       let!(:zone) { create(:delivery_zone) }
 
       before do
-        zone.members.create!(member_type: 'state', state: state)
+        zone.members.create!(member_type: 'state', country_iso: state.country_iso, state_code: state.abbr)
         create(:shipping_method, delivery_zone: zone)
       end
 
@@ -878,7 +878,7 @@ describe Spree::Store, type: :model, without_global_store: true do
       let!(:zone) { create(:delivery_zone) }
 
       before do
-        zone.members.create!(member_type: 'country', country: country)
+        zone.members.create!(member_type: 'country', country_iso: country.iso)
       end
 
       it 'does not include countries from that zone' do
@@ -900,8 +900,8 @@ describe Spree::Store, type: :model, without_global_store: true do
       let!(:zone2) { create(:delivery_zone) }
 
       before do
-        zone1.members.create!(member_type: 'country', country: country)
-        zone2.members.create!(member_type: 'country', country: country)
+        zone1.members.create!(member_type: 'country', country_iso: country.iso)
+        zone2.members.create!(member_type: 'country', country_iso: country.iso)
         create(:shipping_method, delivery_zone: zone1)
         create(:shipping_method, delivery_zone: zone2)
       end

@@ -410,7 +410,7 @@ module Spree
         stock_location_scope = Spree::StockLocation.where(default: true)
         stock_location_scope.first || ActiveRecord::Base.connected_to(role: :writing) do
           stock_location_scope.create(default: true, name: Spree.t(:default_stock_location_name),
-                                      country: default_country)
+                                      country_iso: default_country&.iso)
         end
       end
     end

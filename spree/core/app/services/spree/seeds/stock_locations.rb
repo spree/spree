@@ -14,7 +14,7 @@ module Spree
             name: Spree.t(:default_stock_location_name)
           ).first_or_create! do |stock_location|
             stock_location.propagate_all_variants = false
-            stock_location.country = store.default_country
+            stock_location.country_iso = store.default_country&.iso
             stock_location.active = true
             stock_location.default = true
           end

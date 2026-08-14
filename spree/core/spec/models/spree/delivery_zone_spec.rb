@@ -40,8 +40,10 @@ describe Spree::DeliveryZone, type: :model do
       expect(zone.include?(build(:address, country: germany))).to be(true)
     end
 
+    # Pinned country: the factory pool cycles real codes and could hand the
+    # zone's own Germany back.
     it 'is false when no member matches' do
-      expect(zone.include?(build(:address, country: create(:country)))).to be(false)
+      expect(zone.include?(build(:address, country: Spree::Country.by_iso('FR')))).to be(false)
     end
 
     it 'is false for a nil address' do

@@ -32,7 +32,7 @@ module Spree
     # means everywhere, and a country with no state_code means the whole
     # country. Upcased on the way in so a rate entered as "de" still matches an
     # address from Germany.
-    normalizes :country_iso, :state_code, with: ->(value) { value.presence&.to_s&.upcase }
+    has_iso_geography
 
     # The primitive: rates that reach a jurisdiction, which is a country and
     # optionally one of its states. Rates naming neither are included, since a

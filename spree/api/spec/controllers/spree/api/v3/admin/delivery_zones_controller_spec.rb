@@ -51,7 +51,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryZonesController, type: :controller
   describe 'PATCH #update' do
     let!(:zone) do
       create(:delivery_zone, name: 'Domestic').tap do |z|
-        z.members.create!(member_type: 'country', country: country)
+        z.members.create!(member_type: 'country', country_iso: country.iso)
       end
     end
 
@@ -109,8 +109,8 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryZonesController, type: :controller
       zone = create(:delivery_zone, store: store)
       us = Spree::Country.by_iso('US')
       de = Spree::Country.by_iso('DE')
-      zone.members.create!(member_type: 'country', country: us)
-      zone.members.create!(member_type: 'country', country: de)
+      zone.members.create!(member_type: 'country', country_iso: us.iso)
+      zone.members.create!(member_type: 'country', country_iso: de.iso)
 
       get :show, params: { id: zone.prefixed_id, expand: 'members' }, as: :json
 

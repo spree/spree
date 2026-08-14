@@ -40,7 +40,7 @@ module Spree
     # Upcased on the way in, and unknown codes are kept as entered — a code
     # nothing recognises must narrow the certificate to nothing, never widen it
     # to everywhere, which is what resolving it to a nil country used to do.
-    normalizes :country_iso, :state_code, with: ->(value) { value.presence&.to_s&.upcase }
+    has_iso_geography
 
     # Expiry is decided here rather than persisted: the date is the fact, and a
     # sweeper writing 'expired' would only restate it. Matches how gift cards

@@ -45,16 +45,11 @@ module Spree
 
     scope :not_quick_checkout, -> { where(quick_checkout: false) }
 
-    # Geography is matched by comparing stored codes verbatim, so 'us' has to
-    # become 'US' before it is written.
-    normalizes :country_iso, :state_code, with: ->(value) { value.presence&.to_s&.upcase }
+    has_iso_geography
 
-    # `state_code` is the canonical name, matching the tax tables. The v3 API
-    # shipped `state_abbr`, so that name stays as an alias for now.
-    alias_attribute :state_abbr, :state_code
-
-    # Geography is reference data, so these read through the registry rather
-    # than being associations. Assigning either one sets its code.
+    # On top of the codes, an address also accepts and caches the value
+    # objects: checkout builds addresses from country/state instances, and
+    # validation reads them repeatedly. Assigning either one sets its code.
     def country
       @country = nil if @country && @country.iso != country_iso
       @country ||= Spree::Country.by_iso(country_iso) if country_iso.present?

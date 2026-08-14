@@ -281,25 +281,15 @@ module Spree
 
     context '#state_text' do
       context 'state is blank' do
-        subject { described_class.create(name: 'testing', state: nil, state_name: 'virginia') }
+        subject { described_class.create(name: 'testing', state_code: nil, state_name: 'virginia') }
 
         specify { expect(subject.state_text).to eq('virginia') }
       end
 
-      context 'both name and abbr is present' do
-        subject { described_class.create(name: 'testing', state: state, state_name: nil) }
+      context 'a state code is present' do
+        subject { described_class.create(name: 'testing', country_iso: 'US', state_code: 'VA', state_name: nil) }
 
-        let(:state) { Spree::State.resolve('US', 'VA') }
-
-        specify { expect(subject.state_text).to eq(state.abbr) }
-      end
-
-      context 'only name is present' do
-        subject { described_class.create(name: 'testing', state: state, state_name: nil) }
-
-        let(:state) { Spree::State.resolve('US', 'VA') }
-
-        specify { expect(subject.state_text).to eq(state.abbr) }
+        specify { expect(subject.state_text).to eq('VA') }
       end
     end
 
@@ -428,11 +418,11 @@ module Spree
         expect(stock_location.country).to eq(country)
       end
 
-      it 'is a no-op when blank' do
-        stock_location.country = country
+      it 'clears the country when blank' do
+        stock_location.country_iso = country.iso
         stock_location.country_iso = ''
         stock_location.valid?
-        expect(stock_location.country).to eq(country)
+        expect(stock_location.country).to be_nil
       end
     end
 
@@ -453,8 +443,8 @@ module Spree
         expect(stock_location.state).to be_nil
       end
 
-      it 'is a no-op when no country is set' do
-        stock_location.country = nil
+      it 'resolves nothing without a country — a subdivision code is only unique within one' do
+        stock_location.country_iso = nil
         stock_location.state_abbr = 'NY'
         stock_location.valid?
         expect(stock_location.state).to be_nil

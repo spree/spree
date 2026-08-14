@@ -28,38 +28,7 @@ module Spree
     has_many :variants, through: :stock_items
     has_many :stock_movements, through: :stock_items
 
-    # Geography is reference data, read back through the registry from the
-    # codes this row stores.
-    def country
-      Spree::Country.by_iso(country_iso) if country_iso.present?
-    end
-
-    def country=(value)
-      self[:country_iso] = value&.iso&.to_s&.upcase
-    end
-
-    def state
-      Spree::State.resolve(country_iso, state_code) if country_iso.present? && state_code.present?
-    end
-
-    # A subdivision that means nothing in this country came from the country
-    # the location just moved off, so it is dropped rather than kept as a code
-    # no lookup will ever resolve. Mirrors Spree::Address.
-    def resolve_state_code
-      return if state_code.blank?
-
-      if country_iso.blank?
-        self[:state_code] = nil
-        return
-      end
-
-      self[:state_code] = Spree::IsoData.subdivision_code(country_iso, state_code)
-    end
-
-    def state=(value)
-      self.state_code = value&.abbr
-      self.country_iso ||= value.country_iso if value
-    end
+    has_iso_geography
 
     validates :kind, presence: true
     validates :pickup_stock_policy, inclusion: { in: PICKUP_STOCK_POLICIES }
@@ -76,34 +45,11 @@ module Spree
     scope :pickup_enabled, -> { where(pickup_enabled: true) }
     scope :order_default, -> { order(default: :desc, name: :asc) }
 
-    # SDK clients use country_iso/state_code because Country/State don't expose
-    # prefixed IDs — their `iso` is the public handle.
-    normalizes :country_iso, :state_code, with: ->(value) { value.presence&.to_s&.upcase }
-
-    # Canonical name is state_code (matching the tax tables); the v3 API
-    # shipped state_abbr, kept as an alias.
-    alias_attribute :state_abbr, :state_code
-
-    # Resolving a subdivision needs its country, which normalizes can't see,
-    # so that part stays a callback.
-    before_validation :resolve_state_code
-
     after_create :create_stock_items, if: :propagate_all_variants?
     after_save :ensure_one_default
     after_update :conditional_touch_records
 
     delegate :name, :iso3, :iso_name, to: :country, prefix: true, allow_nil: true
-
-    # SDK clients use country_iso/state_code because Country/State don't expose
-    # prefixed IDs — their `iso` is the public handle.
-    # A blank code leaves the country alone, mirroring Spree::Address: partial
-    # updates post only the fields they change. Upcasing is the normalizes
-    # declaration's job.
-    def country_iso=(value)
-      return if value.blank?
-
-      super(value)
-    end
 
     def state_text
       state_code.presence || state.try(:name) || state_name
@@ -215,9 +161,9 @@ module Spree
         address2: address2,
         company: company,
         city: city,
-        state: state,
+        state_code: state_code,
         state_name: state_name,
-        country: country,
+        country_iso: country_iso,
         zipcode: zipcode,
         phone: phone
       )

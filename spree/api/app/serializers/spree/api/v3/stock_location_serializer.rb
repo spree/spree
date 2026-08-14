@@ -9,11 +9,7 @@ module Spree
                  pickup_ready_in_minutes: [:number, nullable: true],
                  pickup_instructions: [:string, nullable: true]
 
-        attribute :state_abbr do |stock_location|
-          stock_location.state&.abbr
-        end
-
-        attributes :name, :address1, :city, :zipcode, :country_iso, :country_name, :state_text
+        attributes :name, :address1, :city, :zipcode, :country_iso, :country_name, :state_abbr, :state_text
 
         # Collection details the customer needs when choosing a counter: how
         # long until the order is ready, and where to go. This serializer

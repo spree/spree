@@ -4,19 +4,7 @@ module Spree
 
     belongs_to :market, class_name: 'Spree::Market'
 
-    # Countries are reference data, so the row stores a code and reads the
-    # object back through the registry.
-    def country
-      Spree::Country.by_iso(country_iso) if country_iso.present?
-    end
-
-    def country=(value)
-      self.country_iso = value&.iso
-    end
-
-    # Stored codes are compared verbatim by shipping coverage and market
-    # resolution, so 'us' has to become 'US' before it is written.
-    normalizes :country_iso, with: ->(value) { value.presence&.to_s&.upcase }
+    has_iso_geography state: false
 
     validates :market, presence: true
     validates :country_iso, presence: true
