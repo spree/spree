@@ -850,6 +850,7 @@
       "title": "Digital files",
       "untitled": "Untitled file",
       "upload": "Add file",
+      "upload_failed": "Failed to upload {{name}}: {{message}}",
       "uploading": "Uploading {{name}}…",
       "uploading_short": "Uploading…"
     },

@@ -184,6 +184,43 @@ module Spree
           Spree::Images::SaveFromUrlJob.perform_later(*arguments)
         end
       end
+
+      # Attaches downloadable files a product write ships inline, so a new
+      # product can carry its digital files in the same request. Create-only,
+      # additive: each entry carries a `signed_id` (an uploaded file) or a
+      # `provider_type` (a provider-backed asset), and attaches to the default
+      # variant unless `variant_id` names another. Edits and deletes go through
+      # the nested digital_assets endpoints.
+      #
+      # @param product [Spree::Product]
+      # @param digital_assets_params [Array<Hash>, nil]
+      # @return [void]
+      def apply_digital_assets(product, digital_assets_params)
+        return if digital_assets_params.blank?
+
+        digital_assets_params.each do |raw|
+          attrs = (raw.respond_to?(:to_h) ? raw.to_h : raw).with_indifferent_access
+
+          signed_id = attrs.delete(:signed_id)
+          variant_id = attrs.delete(:variant_id)
+          target = variant_id.present? ? product.variants.find_by_param!(variant_id) : product.default_variant
+          next unless target
+
+          asset = target.digital_assets.build(attrs.except(:id))
+          if signed_id.present?
+            # Attaching never moves a blob between storage services, so a file
+            # uploaded to the public bucket would stay publicly readable. Refuse
+            # it rather than attaching it wrongly.
+            blob = ActiveStorage::Blob.find_signed(signed_id)
+            unless blob && blob.service_name.to_s == Spree.private_storage_service_name.to_s
+              raise ActiveRecord::RecordInvalid.new(asset)
+            end
+
+            asset.attachment.attach(signed_id)
+          end
+          asset.save!
+        end
+      end
     end
   end
 end

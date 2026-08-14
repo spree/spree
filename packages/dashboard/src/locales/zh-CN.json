@@ -845,6 +845,7 @@
       "title": "数字文件",
       "untitled": "未命名文件",
       "upload": "添加文件",
+      "upload_failed": "上传 {{name}} 失败：{{message}}",
       "uploading": "正在上传 {{name}}…",
       "uploading_short": "上传中…"
     },

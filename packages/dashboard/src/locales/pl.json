@@ -868,6 +868,7 @@
       "title": "Pliki cyfrowe",
       "untitled": "Plik bez nazwy",
       "upload": "Dodaj plik",
+      "upload_failed": "Nie udało się przesłać {{name}}: {{message}}",
       "uploading": "Przesyłanie {{name}}…",
       "uploading_short": "Przesyłanie…"
     },

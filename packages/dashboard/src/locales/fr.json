@@ -850,6 +850,7 @@
       "title": "Fichiers numériques",
       "untitled": "Fichier sans nom",
       "upload": "Ajouter un fichier",
+      "upload_failed": "Échec du téléversement de {{name}} : {{message}}",
       "uploading": "Téléversement de {{name}}…",
       "uploading_short": "Téléversement…"
     },

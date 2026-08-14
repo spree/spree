@@ -768,6 +768,12 @@ export interface ProductCreateParams {
   variants?: ProductVariantInput[]
   /** Media created alongside the product — see {@link ProductMediaInput}. */
   media?: ProductMediaInput[]
+  /** Downloadable files shipped inline with the product (create-time). Each
+   *  entry carries a `signed_id` (an uploaded file, to private storage) or a
+   *  `provider_type` (a provider-backed asset); it attaches to the default
+   *  variant unless `variant_id` is given. Edits/deletes use the nested
+   *  `products.digitalAssets` endpoints. */
+  digital_assets?: DigitalAssetCreateParams[]
   product_publications?: ProductPublicationInput[]
 }
 
@@ -792,6 +798,8 @@ export interface ProductUpdateParams {
   variants?: ProductVariantInput[]
   /** See {@link ProductMediaInput}. */
   media?: ProductMediaInput[]
+  /** See `ProductCreateParams.digital_assets`. */
+  digital_assets?: DigitalAssetCreateParams[]
   product_publications?: ProductPublicationInput[]
 }
 

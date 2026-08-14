@@ -48,7 +48,8 @@ module Spree
         # rather than a half-applied collection.
         @variants_params = attrs[:variants]
         @media_params = attrs[:media]
-        product.assign_attributes(attrs.except(:variants, :media))
+        @digital_assets_params = attrs[:digital_assets]
+        product.assign_attributes(attrs.except(:variants, :media, :digital_assets))
       end
 
       # Leaving review is a decision, and a decision belongs to Approve or
@@ -75,6 +76,7 @@ module Spree
       def apply_nested_attributes
         apply_variants(product, @variants_params)
         apply_media(product, @media_params)
+        apply_digital_assets(product, @digital_assets_params)
       end
     end
   end
