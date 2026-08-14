@@ -14,6 +14,7 @@ describe '6.0 data migration tasks' do
     load Spree::Core::Engine.root.join('lib', 'tasks', 'fulfillment_statuses_migration.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'tax_zones_migration.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'capture_methods_migration.rake')
+    load Spree::Core::Engine.root.join('lib', 'tasks', 'typed_stock_movements_migration.rake')
   end
 
   let(:store) { @default_store }
@@ -658,6 +659,178 @@ describe '6.0 data migration tasks' do
       run_task('spree:migrate_capture_methods')
 
       expect(payment_method.reload.capture_method).to eq('manual')
+    end
+  end
+
+  describe 'spree:migrate_stock_movements_to_typed_rows' do
+    let(:stock_location) { create(:stock_location) }
+    let(:variant) { create(:variant) }
+    let(:stock_level) { stock_location.stock_level_or_create(variant) }
+    # The legacy authorizations table survives to 6.1 and is reached the same
+    # way the task reaches it.
+    let(:legacy_authorizations) { Class.new(ActiveRecord::Base) { self.table_name = 'spree_return_authorizations' } }
+
+    # A pre-6.0 row: no kind, cause carried by the polymorphic originator.
+    def legacy_movement(quantity, originator_type: nil, originator_id: nil, level: nil)
+      movement = Spree::StockMovement.new(stock_level: level || stock_level, quantity: quantity)
+      movement.originator_type = originator_type
+      movement.originator_id = originator_id
+      movement.save(validate: false)
+      movement
+    end
+
+    def open_order
+      create(:order_ready_to_ship, store: store, line_items_count: 1)
+    end
+
+    describe 'typing the history' do
+      it 'types a fulfillment departure and carries its order' do
+        order = open_order
+        fulfillment = order.fulfillments.first
+        movement = legacy_movement(-3, originator_type: 'Spree::Fulfillment', originator_id: fulfillment.id)
+
+        run_task('spree:migrate_stock_movements_to_typed_rows')
+
+        movement.reload
+        expect(movement.kind).to eq('shipped')
+        expect(movement.quantity).to eq(3)
+        expect(movement.fulfillment_id).to eq(fulfillment.id)
+        expect(movement.order_id).to eq(order.id)
+      end
+
+      # Installs whose rows were never rewritten by migrate_shipping_to_delivery
+      # still say Spree::Shipment.
+      it 'accepts the pre-rename originator string' do
+        fulfillment = open_order.fulfillments.first
+        movement = legacy_movement(-1, originator_type: 'Spree::Shipment', originator_id: fulfillment.id)
+
+        run_task('spree:migrate_stock_movements_to_typed_rows')
+
+        expect(movement.reload.kind).to eq('shipped')
+        expect(movement.fulfillment_id).to eq(fulfillment.id)
+      end
+
+      it 'types a fulfillment restock as a release' do
+        fulfillment = open_order.fulfillments.first
+        movement = legacy_movement(2, originator_type: 'Spree::Fulfillment', originator_id: fulfillment.id)
+
+        run_task('spree:migrate_stock_movements_to_typed_rows')
+
+        movement.reload
+        expect(movement.kind).to eq('released')
+        expect(movement.quantity).to eq(2)
+      end
+
+      it 'types both sides of a stock transfer' do
+        transfer = create(:stock_transfer)
+        arrival = legacy_movement(4, originator_type: 'Spree::StockTransfer', originator_id: transfer.id)
+        departure = legacy_movement(-4, originator_type: 'Spree::StockTransfer', originator_id: transfer.id)
+
+        run_task('spree:migrate_stock_movements_to_typed_rows')
+
+        expect(arrival.reload.kind).to eq('received')
+        expect(arrival.stock_transfer_id).to eq(transfer.id)
+        expect(departure.reload.kind).to eq('shipped')
+        expect(departure.quantity).to eq(4)
+        expect(departure.stock_transfer_id).to eq(transfer.id)
+      end
+
+      # The legacy id is worthless: the returns migrator preserves the number,
+      # not the id, and an authorization can become either record.
+      it 'resolves a legacy return authorization by its preserved number' do
+        return_record = create(:return)
+        authorization = legacy_authorizations.create!(number: return_record.number, order_id: return_record.order_id)
+        movement = legacy_movement(2, originator_type: 'Spree::ReturnAuthorization', originator_id: authorization.id)
+
+        run_task('spree:migrate_stock_movements_to_typed_rows')
+
+        movement.reload
+        expect(movement.kind).to eq('received')
+        expect(movement.return_id).to eq(return_record.id)
+        expect(movement.order_id).to eq(return_record.order_id)
+      end
+
+      it 'resolves an authorization that became an exchange' do
+        exchange = create(:exchange)
+        authorization = legacy_authorizations.create!(number: exchange.number, order_id: exchange.order_id)
+        movement = legacy_movement(1, originator_type: 'Spree::ReturnAuthorization', originator_id: authorization.id)
+
+        run_task('spree:migrate_stock_movements_to_typed_rows')
+
+        movement.reload
+        expect(movement.kind).to eq('received')
+        expect(movement.exchange_id).to eq(exchange.id)
+        expect(movement.return_id).to be_nil
+      end
+
+      it 'types a row with no originator as a legacy adjustment, keeping its sign' do
+        movement = legacy_movement(-6)
+
+        run_task('spree:migrate_stock_movements_to_typed_rows')
+
+        movement.reload
+        expect(movement.kind).to eq('adjusted')
+        expect(movement.quantity).to eq(-6)
+        expect(movement.reason).to eq('Legacy manual adjustment')
+      end
+
+      # A movement with no resolvable cause is still a true statement about
+      # stock, so it is typed rather than skipped.
+      it 'types an unresolvable cause by sign and leaves the cause keys empty' do
+        movement = legacy_movement(-5, originator_type: 'Spree::Fulfillment', originator_id: 0)
+
+        run_task('spree:migrate_stock_movements_to_typed_rows')
+
+        movement.reload
+        expect(movement.kind).to eq('shipped')
+        expect(movement.quantity).to eq(5)
+        expect(movement.fulfillment_id).to be_nil
+        expect(movement.order_id).to be_nil
+      end
+    end
+
+    describe 'reconciling open fulfillments' do
+      let!(:order) { open_order }
+      let(:fulfillment) { order.fulfillments.first }
+      let(:reconciled_variant) { fulfillment.fulfillment_items.first.variant }
+      let(:level) { fulfillment.stock_location.stock_level(reconciled_variant) }
+      let(:quantity) { fulfillment.fulfillment_items.where(variant_id: reconciled_variant.id).sum(:quantity) }
+
+      it 'puts the units back on the shelf and allocates them, leaving availability alone' do
+        count_before = level.reload.count_on_hand
+        available_before = level.available_count
+
+        run_task('spree:migrate_stock_movements_to_typed_rows')
+
+        level.reload
+        expect(level.count_on_hand).to eq(count_before + quantity)
+        expect(level.allocated_count).to eq(quantity)
+        expect(level.available_count).to eq(available_before)
+        expect(Spree::StockMovement.where(fulfillment_id: fulfillment.id, kind: 'allocated').sum(:quantity)).to eq(quantity)
+      end
+
+      # Backordered units need no special case: the pair of increments cancels
+      # out the negative on-hand that used to represent them.
+      it 'reconciles a backordered fulfillment the same way' do
+        fulfillment.fulfillment_items.update_all(status: 'backordered')
+        level.update_column(:count_on_hand, -quantity)
+        available_before = level.reload.available_count
+
+        run_task('spree:migrate_stock_movements_to_typed_rows')
+
+        level.reload
+        expect(level.count_on_hand).to eq(0)
+        expect(level.allocated_count).to eq(quantity)
+        expect(level.available_count).to eq(available_before)
+      end
+
+      it 'changes nothing on a second run' do
+        run_task('spree:migrate_stock_movements_to_typed_rows')
+        level.reload
+
+        expect { run_task('spree:migrate_stock_movements_to_typed_rows') }.
+          not_to change { [level.reload.count_on_hand, level.allocated_count, Spree::StockMovement.count] }
+      end
     end
   end
 end

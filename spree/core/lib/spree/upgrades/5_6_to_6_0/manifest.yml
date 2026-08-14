@@ -270,6 +270,43 @@ steps:
       to retry those rows — the task only looks at what isn't migrated yet — or
       pass SKIP_FAILED_ROWS=true to accept the gap and continue.
 
+  - id: migrate_stock_movements_to_typed_rows
+    name: "Type stock movements and reconcile open fulfillments"
+    task: "spree:migrate_stock_movements_to_typed_rows"
+    notes: |
+      Gives every pre-6.0 stock movement a kind and a concrete cause key
+      derived from its polymorphic originator: a fulfillment originator
+      becomes shipped or released by sign, a stock transfer becomes received
+      or shipped, a legacy return authorization becomes received against the
+      Return or Exchange it turned into, and a movement with no originator
+      becomes an adjustment reading "Legacy manual adjustment". A cause that
+      cannot be resolved is still typed by sign and simply carries no cause
+      key — a movement with no cause is still a true statement about stock.
+
+      Then reconciles the representation change. Stock leaves the shelf at
+      dispatch in 6.0, not at placement, so the units of every open
+      fulfillment on a placed order go back onto count_on_hand and are
+      allocated at the same time, with an allocated movement recording the
+      jump. Availability is unchanged by construction, since both sides of
+      "on hand minus allocated" move together, and backordered units need no
+      special case — the pair of increments cancels out the negative on-hand
+      that used to represent them.
+
+      Run AFTER migrate_shipping_to_delivery, which rewrites the
+      'Spree::Shipment' originator strings, and AFTER migrate_returns,
+      because a legacy authorization id says nothing about the new record:
+      the returns migrator preserves the number, not the id, and one
+      authorization can become either a Return or an Exchange.
+
+      Idempotent. Typing narrows to rows without a kind and reconciliation
+      skips fulfillments that already hold an allocation, so an interrupted
+      run resumes for free. That same predicate makes the deploy window safe:
+      a fulfillment shipped before the task runs never gets an allocation,
+      and dispatch only ships allocated units, so its stock is never
+      decremented twice. originator_type and originator_id stay in place as
+      the rollback path and are dropped in 6.1. Tune the load size with
+      BATCH_SIZE (default 5000).
+
   - id: backfill_delivery_and_stock_store_ids
     name: "Bind delivery methods and stock locations to the default store"
     task: "spree:backfill_delivery_and_stock_store_ids"
