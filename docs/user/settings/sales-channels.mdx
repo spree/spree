@@ -7,14 +7,14 @@ import { Since } from '/snippets/since.mdx';
 
 <Since version="5.5" />
 
-Sales channels let you run multiple distinct storefronts or selling contexts from a single Spree instance — each with its own product catalog, order attribution, and routing behaviour. A channel might represent a public-facing online store, a wholesale portal, a mobile app, a point-of-sale terminal, or a seasonal microsite.
+Sales channels let you run multiple distinct storefronts or selling contexts from a single Spree instance — each with its own product catalog, order attribution, routing behaviour, and storefront access controls. A channel might represent a public-facing online store, a wholesale portal, a mobile app, a point-of-sale terminal, or a seasonal microsite.
 
-When an order comes in through a given channel, Spree tags it automatically so you can filter, report, and route fulfilment by channel. Products can be assigned to one or more channels, giving you precise control over what each audience sees.
+When an order comes in through a given channel, Spree tags it automatically so you can filter, report, and route fulfilment by channel. Products can be assigned to one or more channels, giving you precise control over what each audience sees. You can also control who can access a channel's storefront and view pricing — from fully public to login-required — and whether guest checkout is allowed.
 
 Common use cases include:
 
 - **Online store + POS** — keep retail and in-person orders separate for reporting and fulfilment
-- **B2C + B2B wholesale portal** — show different catalogues and pricing to different audiences from one backend
+- **B2C + B2B wholesale portal** — show different catalogues and pricing to different audiences from one backend, hiding prices or requiring login for wholesale accounts
 - **Marketplace or affiliate channel** — attribute orders to the source channel for commission tracking
 - **Mobile app** — route mobile orders separately and track conversion independently
 - **Seasonal microsite** — run a limited-time catalogue without affecting your main storefront
@@ -50,6 +50,15 @@ Fill in the following fields:
   - **Inherit from store** — uses the same routing strategy as the default channel
   - **Rules (ordered)** — sets up a rules-based strategy; the specific rules can be configured via code
   - **Legacy** — uses the original Spree fulfilment flow
+- **Storefront Access** — controls who can view this channel's storefront and see pricing. See below for details.
+  - **Inherit from store** — uses the storefront access setting as the default channel
+  - **Public** — anyone can browse the storefront and see prices, just like a typical online store.
+  - **Prices Hidden** — anyone can browse the storefront and view products, but prices are hidden until the customer logs in.
+  - **Login Required** — the entire storefront is hidden until the customer logs in.
+- **Guest Checkout** — whether customers can complete checkout on this channel without creating an account:
+  - **Inherit from store** — uses the same checkout setting as the default channel
+  - **Allowed** — customers can check out as a guest, without registering
+  - **Not Allowed** — customers must create an account or log in before completing checkout
 
 Once you've filled in the details, click **Create** to save the new channel.
 
