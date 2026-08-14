@@ -1109,6 +1109,8 @@ export interface StockLocationUpdateParams {
 export interface StockLevelUpdateParams {
   count_on_hand?: number
   backorderable?: boolean
+  /** Labels the correction in the stock history. Defaults to "Manual adjustment". */
+  reason?: string
   metadata?: Record<string, unknown>
 }
 

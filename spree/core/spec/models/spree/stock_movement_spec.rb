@@ -224,8 +224,9 @@ describe Spree::StockMovement, type: :model do
 
       context 'shipped' do
         it 'takes the units off the shelf and retires their allocation' do
-          create(:stock_movement, kind: 'allocated', quantity: 3, stock_level: stock_level)
-          create(:stock_movement, kind: 'shipped', quantity: 3, stock_level: stock_level)
+          fulfillment = create(:fulfillment, stock_location: stock_location)
+          create(:stock_movement, kind: 'allocated', quantity: 3, stock_level: stock_level, fulfillment: fulfillment)
+          create(:stock_movement, kind: 'shipped', quantity: 3, stock_level: stock_level, fulfillment: fulfillment)
           stock_level.reload
 
           expect(stock_level.count_on_hand).to eq(7)
@@ -238,6 +239,20 @@ describe Spree::StockMovement, type: :model do
 
           expect(stock_level.count_on_hand).to eq(8)
           expect(stock_level.allocated_count).to eq(0)
+        end
+
+        # A transfer moves goods nobody promised. Taking somebody else's
+        # allocation here would leave the level looking more available than
+        # it is.
+        it 'leaves other promises alone when the departure has no fulfillment' do
+          create(:stock_movement, kind: 'allocated', quantity: 3, stock_level: stock_level)
+
+          create(:stock_movement, kind: 'shipped', quantity: 2, stock_level: stock_level)
+          stock_level.reload
+
+          expect(stock_level.count_on_hand).to eq(8)
+          expect(stock_level.allocated_count).to eq(3)
+          expect(stock_level.available_count).to eq(5)
         end
 
         it 'may leave the shelf negative' do

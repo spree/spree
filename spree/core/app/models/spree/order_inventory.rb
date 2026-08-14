@@ -149,7 +149,9 @@ module Spree
       # and backordered units go back the same way now — nothing physical
       # moved either way.
       if order.completed? && removed_quantity.positive? && variant.should_track_inventory?
-        shipment.stock_location.release(variant, removed_quantity, shipment)
+        # Only this fulfillment's own promise can be withdrawn.
+        released = [removed_quantity, shipment.allocated_quantities[variant.id].to_i].min
+        shipment.stock_location.release(variant, released, shipment) if released.positive?
       end
 
       removed_quantity

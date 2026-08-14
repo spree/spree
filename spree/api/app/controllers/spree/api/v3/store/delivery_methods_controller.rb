@@ -98,7 +98,7 @@ module Spree
               next true unless line_item.variant.should_track_inventory?
 
               stock_level = location.stock_level(line_item.variant)
-              stock_level.present? && stock_level.count_on_hand >= line_item.quantity
+              stock_level.present? && stock_level.available_count >= line_item.quantity
             end
           end
         end

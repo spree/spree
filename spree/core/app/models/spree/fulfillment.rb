@@ -787,9 +787,10 @@ module Spree
     # comes back, so on-hand and backordered units go back the same way and
     # the old backordered special case is gone.
     def manifest_restock(item)
-      return unless item.quantity.positive?
+      quantity = [item.quantity, allocated_quantities[item.variant.id].to_i].min
+      return unless quantity.positive?
 
-      stock_location.release(item.variant, item.quantity, self)
+      stock_location.release(item.variant, quantity, self)
     end
 
     def manifest_unstock(item)

@@ -40,6 +40,17 @@ module Spree
 
       let(:variants) { { variant => 5 } }
 
+      # A transfer moves goods, not promises: units another order is waiting
+      # for stay promised at the source.
+      it 'leaves the source location\'s promises intact' do
+        level = source_location.stock_level_or_create(variant)
+        level.update_column(:allocated_count, 3)
+
+        subject
+
+        expect(level.reload.allocated_count).to eq(3)
+      end
+
       it 'transfers variants between 2 locations' do
         subject
 

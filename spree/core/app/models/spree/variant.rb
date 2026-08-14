@@ -543,6 +543,29 @@ module Spree
       self.stock_levels = value
     end
 
+    # The v3 API sends `stock_levels: [...]`, which the params normalizer
+    # rewrites to nested attributes — and Rails would then write count_on_hand
+    # straight onto the row. Each entry is routed through {#set_stock} instead,
+    # so a count typed in the dashboard lands in the stock history like every
+    # other change. Entries are upserted and never removed, which is what
+    # accepts_nested_attributes_for did here.
+    #
+    # @param rows [Array<Hash>, Hash]
+    # @return [void]
+    def stock_levels_attributes=(rows)
+      rows = rows.values if rows.respond_to?(:values) && !rows.is_a?(Array)
+
+      Array.wrap(rows).each do |row|
+        row = (row.respond_to?(:to_unsafe_h) ? row.to_unsafe_h : row.to_h).with_indifferent_access
+        next if row[:stock_location_id].blank? || row[:count_on_hand].blank?
+
+        stock_location = Spree::StockLocation.find_by_param(row[:stock_location_id])
+        next if stock_location.nil?
+
+        set_stock(row[:count_on_hand], row[:backorderable], stock_location)
+      end
+    end
+
     # @deprecated Use +stock_levels_attributes=+; removed in 6.1.
     def stock_items_attributes=(value)
       Spree::Deprecation.warn('Spree::Variant#stock_items_attributes= is deprecated and will be removed in Spree 6.1. Use #stock_levels_attributes= instead.')
@@ -622,7 +645,8 @@ module Spree
     def set_stock(count_on_hand, backorderable = nil, stock_location = nil)
       stock_location ||= default_stock_location
       stock_level = stock_levels.find_or_initialize_by(stock_location: stock_location)
-      stock_level.backorderable = backorderable if backorderable.present?
+      # `unless nil?`, not `if present?` — a caller passing false means it.
+      stock_level.backorderable = backorderable unless backorderable.nil?
 
       # Nothing is saved yet, so the count rides on the in-memory record and
       # the autosave association persists it with the variant.

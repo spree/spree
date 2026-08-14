@@ -51,8 +51,13 @@ module Spree
     def api_dependency?(name)
       return false unless defined?(Spree::Api::Dependencies)
 
-      # Check both V3 and dynamically added V2 dependencies
-      Spree::Api::Dependencies.class::INJECTION_POINTS.include?(name)
+      dependencies = Spree::Api::Dependencies.class
+
+      # Check V3, dynamically added V2, and the pre-rename names that forward
+      # to their replacement for one release.
+      dependencies::INJECTION_POINTS.include?(name) ||
+        (dependencies.const_defined?(:LEGACY_SERIALIZER_KEYS) &&
+          dependencies::LEGACY_SERIALIZER_KEYS.key?(name))
     end
   end
 end

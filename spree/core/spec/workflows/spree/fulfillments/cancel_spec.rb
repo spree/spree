@@ -30,6 +30,17 @@ module Spree
       expect(stock_level.stock_movements.released.last.fulfillment).to eq(fulfillment)
     end
 
+    # A fulfillment created before typed movements holds no promise, so there
+    # is nothing to withdraw — and withdrawing one it never made would take
+    # units another order is waiting for.
+    it 'withdraws nothing when the fulfillment holds no promise' do
+      variant = fulfillment.fulfillment_items.first.variant
+      stock_level = fulfillment.stock_location.stock_level(variant)
+      stock_level.update_column(:allocated_count, 4)
+
+      expect { execute }.not_to change { stock_level.reload.allocated_count }
+    end
+
     # Fulfillment#provider builds a fresh Manual provider per call, so the
     # double is injected rather than stubbed on an instance.
     let(:provider) { instance_double(Spree::FulfillmentProvider::Manual, cancel_fulfillment: true) }

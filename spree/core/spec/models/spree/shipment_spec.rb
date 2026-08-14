@@ -659,8 +659,18 @@ describe Spree::Shipment, type: :model do
     it 'releases the items through the deprecated shell' do
       allow(shipment).to receive(:fulfillment_items).and_return([inventory_unit])
       allow(shipment).to receive(:provider).and_return(instance_double(Spree::FulfillmentProvider::Manual, cancel_fulfillment: true))
+      # Only a promise the fulfillment actually holds can be withdrawn.
+      allow(shipment).to receive(:allocated_quantities).and_return(variant.id => 1)
       shipment.stock_location = create(:stock_location)
       expect(shipment.stock_location).to receive(:release).with(variant, 1, shipment)
+      shipment.after_cancel
+    end
+
+    it 'withdraws nothing through the shell when it holds no promise' do
+      allow(shipment).to receive(:fulfillment_items).and_return([inventory_unit])
+      allow(shipment).to receive(:provider).and_return(instance_double(Spree::FulfillmentProvider::Manual, cancel_fulfillment: true))
+      shipment.stock_location = create(:stock_location)
+      expect(shipment.stock_location).not_to receive(:release)
       shipment.after_cancel
     end
 

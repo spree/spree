@@ -53,11 +53,19 @@ module Spree
       # units release the same way and the old backordered special case is
       # gone with the negative-on-hand representation it served.
       def release_units
+        # Capped at what this fulfillment itself still holds: a fulfillment
+        # created before typed movements holds no promise, and withdrawing one
+        # it never made would take another order's units.
+        outstanding = fulfillment.allocated_quantities
+
         fulfillment.manifest.each do |item|
           next unless item.variant.track_inventory?
-          next unless item.quantity.positive?
 
-          stock_location.release(item.variant, item.quantity, fulfillment)
+          quantity = [item.quantity, outstanding[item.variant.id].to_i].min
+          next unless quantity.positive?
+
+          outstanding[item.variant.id] -= quantity
+          stock_location.release(item.variant, quantity, fulfillment)
         end
       end
 

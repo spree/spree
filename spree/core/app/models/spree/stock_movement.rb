@@ -43,6 +43,10 @@ module Spree
     validates :reason, presence: true, if: :adjusted?
 
     scope :recent, -> { order(created_at: :desc) }
+    KINDS.each do |movement_kind|
+      scope movement_kind, -> { where(kind: movement_kind) }
+      define_method("#{movement_kind}?") { kind == movement_kind }
+    end
 
     # Movements for products assigned to `store`, walking
     # `stock level → variant → product → store`. The table carries no store of
@@ -50,10 +54,6 @@ module Spree
     scope :for_store, ->(store) {
       joins(stock_level: { variant: :product }).where(spree_products: { store_id: store.id })
     }
-    KINDS.each do |movement_kind|
-      scope movement_kind, -> { where(kind: movement_kind) }
-      define_method("#{movement_kind}?") { kind == movement_kind }
-    end
 
     delegate :variant, :variant_id, to: :stock_level, allow_nil: true
     delegate :product, to: :variant
@@ -109,10 +109,15 @@ module Spree
     # Departure is a physical fact, so it is allowed to leave the shelf
     # negative — see the plan's "shipping from an empty shelf". The stock
     # level needs to know that to relax its own non-negative guard.
+    #
+    # Only a dispatch retires a promise, and only its own: a stock transfer
+    # moves goods nobody had promised, so consuming an allocation there would
+    # take a different order's units and leave the level looking more
+    # available than it is.
     def apply_departure
       stock_level.applying_movement_kind = 'shipped'
       stock_level.adjust_count_on_hand(-quantity.abs)
-      stock_level.release_allocated_count(quantity.abs)
+      stock_level.release_allocated_count(quantity.abs) if fulfillment_id.present?
     ensure
       stock_level.applying_movement_kind = nil
     end
