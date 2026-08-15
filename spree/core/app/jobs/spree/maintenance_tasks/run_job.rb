@@ -102,11 +102,14 @@ module Spree
         record_error(e)
       end
 
+      # The callback runs before the row is written so a task can summarise in
+      # `after_complete` — tallying there and persisting first would silently
+      # drop whatever it recorded.
       def finish
         return if @halted
 
-        write_status('succeeded', ended_at: Time.current, tallies: merged_tallies)
         task.after_complete
+        write_status('succeeded', ended_at: Time.current, tallies: merged_tallies)
         publish('succeeded')
       end
 

@@ -658,6 +658,7 @@ require 'spree/core/version'
 require 'spree/core/number_generator'
 require 'spree/number_generators/registry'
 require 'spree/migrations'
+require 'spree/upgrade'
 require 'spree/validators'
 require 'spree/core/engine'
 
