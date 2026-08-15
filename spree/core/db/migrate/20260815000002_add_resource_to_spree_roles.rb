@@ -43,10 +43,17 @@ class AddResourceToSpreeRoles < ActiveRecord::Migration[8.1]
                                                                 name: 'index_spree_roles_on_resource_and_name'
 
     dedupe_assignments
+    # Both indexes span the columns about to disappear. Dropping them first
+    # keeps adapters from silently rewriting them over what is left, which
+    # would leave a duplicate of the new index under a stale name.
     remove_index :spree_role_users, name: 'index_spree_role_users_on_resource'
+    stale_index = role_user_resource_index_name
+    remove_index :spree_role_users, name: stale_index if stale_index
+
     remove_column :spree_role_users, :resource_id
     remove_column :spree_role_users, :resource_type
     remove_column :spree_role_users, :store_id
+
     add_index :spree_role_users, %i[user_type user_id role_id], unique: true,
                                                                 name: 'index_spree_role_users_on_user_and_role'
   end
@@ -58,6 +65,16 @@ class AddResourceToSpreeRoles < ActiveRecord::Migration[8.1]
   end
 
   private
+
+  # The 2025 migration let Rails generate this name, so it is a digest rather
+  # than something to hardcode — find it by the columns it spans.
+  def role_user_resource_index_name
+    index = connection.indexes(:spree_role_users).find do |candidate|
+      candidate.columns.include?('resource_id') && candidate.columns.include?('role_id')
+    end
+
+    index&.name
+  end
 
   # Every (role, resource) pairing an assignment or invitation names becomes a
   # role of its own, and the rows that named it are re-pointed at it. The first
@@ -105,14 +122,18 @@ class AddResourceToSpreeRoles < ActiveRecord::Migration[8.1]
   # Reuses a same-named role already owned by that resource rather than
   # creating a second one, since names are unique per resource.
   def duplicate_role(role, (resource_type, resource_id))
-    existing = MigrationRole.where(resource_type: resource_type, resource_id: resource_id, name: role.name).pick(:id)
+    owned = MigrationRole.where(resource_type: resource_type, resource_id: resource_id, name: role.name)
+    existing = owned.pick(:id)
     return existing if existing
 
-    attributes = role.attributes.except('id').merge(
-      'resource_type' => resource_type, 'resource_id' => resource_id
+    now = Time.current
+    MigrationRole.insert(
+      role.attributes.except('id').merge(
+        'resource_type' => resource_type, 'resource_id' => resource_id,
+        'created_at' => now, 'updated_at' => now
+      )
     )
-    MigrationRole.insert(attributes)
-    MigrationRole.where(resource_type: resource_type, resource_id: resource_id, name: role.name).pick(:id)
+    owned.pick(:id)
   end
 
   # Roles nobody holds have no resource to infer, so they go to the first store
@@ -130,14 +151,11 @@ class AddResourceToSpreeRoles < ActiveRecord::Migration[8.1]
   end
 
   # The old unique index spanned the resource, so one user could hold one role
-  # on several of them. Those rows collapse into one.
+  # on several of them. The fan-out gives each pairing its own role, but a
+  # belt-and-braces collapse keeps the new index safe to add.
   def dedupe_assignments
-    duplicates = MigrationRoleUser.group(:user_type, :user_id, :role_id).having('COUNT(*) > 1').count
+    keepers = MigrationRoleUser.group(:user_type, :user_id, :role_id).select('MIN(id) AS id')
 
-    duplicates.each_key do |user_type, user_id, role_id|
-      keeper = MigrationRoleUser.where(user_type: user_type, user_id: user_id, role_id: role_id).minimum(:id)
-      MigrationRoleUser.where(user_type: user_type, user_id: user_id, role_id: role_id).
-        where.not(id: keeper).delete_all
-    end
+    MigrationRoleUser.where.not(id: keepers).delete_all
   end
 end

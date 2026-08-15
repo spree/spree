@@ -62,7 +62,7 @@ module Spree
           end
 
           def collection_includes
-            [{ role_users: :role, avatar_attachment: :blob }, :stores]
+            [{ spree_roles: :resource, avatar_attachment: :blob }]
           end
 
           # Restrict to users with a role assignment on the current store.
@@ -71,10 +71,7 @@ module Spree
           # host-app-defined and may contain `json` columns, which Postgres
           # cannot compare for equality.
           def scope
-            staff_ids = model_class.
-              joins(:spree_roles).
-              where(Spree::Role.table_name => { resource_type: Spree::Store.to_s, resource_id: current_store.id }).
-              select(:id)
+            staff_ids = model_class.joins(:spree_roles).merge(current_store.roles).select(:id)
 
             model_class.
               where(id: staff_ids).
@@ -99,14 +96,11 @@ module Spree
             current = @resource.role_users.where(role: store_roles).pluck(:role_id).map(&:to_s)
             target = desired_role_ids.map(&:to_s)
 
-            (target - current).each do |role_id|
-              role = store_roles.find_by(id: role_id)
-              @resource.role_users.find_or_create_by!(role: role) if role
+            store_roles.where(id: target - current).each do |role|
+              @resource.role_users.find_or_create_by!(role: role)
             end
 
-            (current - target).each do |role_id|
-              @resource.role_users.where(role_id: role_id).destroy_all
-            end
+            @resource.role_users.where(role: store_roles.where(id: current - target)).destroy_all
           end
         end
       end

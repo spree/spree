@@ -2,10 +2,11 @@ module Spree
   module Api
     module V3
       module Admin
-        # Admin API serializer for {Spree::Role}. Roles are global; permissions
-        # are flat catalog keys (see the `/admin/permissions` discovery
-        # endpoint). `mutable: false` marks the protected admin role and
-        # host-locked rows — the dashboard renders those read-only.
+        # Admin API serializer for {Spree::Role}. A role belongs to the store
+        # it governs; permissions are flat catalog keys (see the
+        # `/admin/permissions` discovery endpoint). `mutable: false` marks the
+        # protected admin role and host-locked rows — the dashboard renders
+        # those read-only.
         class RoleSerializer < V3::BaseSerializer
           typelize name: :string, description: 'string | null', mutable: :boolean,
                    users_count: :number

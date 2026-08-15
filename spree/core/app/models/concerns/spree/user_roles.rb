@@ -44,9 +44,7 @@ module Spree
       def has_spree_role?(role_name, resource = nil)
         resource ||= Spree::Store.current
 
-        role_users.joins(:role).
-          where(Spree::Role.table_name => { name: role_name, resource_type: resource.class.base_class.to_s,
-                                            resource_id: resource.id }).exists?
+        spree_roles.for_resource(resource).exists?(name: role_name)
       end
 
       # Returns true if the user has the admin role for a given resource

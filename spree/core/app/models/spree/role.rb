@@ -67,8 +67,6 @@ module Spree
     #
     scope :admin, -> { where(name: ADMIN_ROLE) }
     scope :for_resource, ->(resource) { where(resource: resource) }
-    scope :for_resource_type, ->(type) { where(resource_type: type.to_s) }
-    scope :staff, -> { for_resource_type(Spree::Store) }
 
     #
     # Class Methods

@@ -109,12 +109,12 @@ describe Spree::Role do
       expect(build(:role, name: 'Manager', resource: vendor_like)).not_to be_valid
     end
 
-    it 'scopes roles to the store back office' do
+    it 'scopes roles to their owner' do
       staff_role = create(:role)
       other_role = create(:role, resource: vendor_like)
 
-      expect(Spree::Role.staff).to include(staff_role)
-      expect(Spree::Role.staff).not_to include(other_role)
+      expect(Spree::Role.for_resource(@default_store)).to include(staff_role)
+      expect(Spree::Role.for_resource(@default_store)).not_to include(other_role)
       expect(Spree::Role.for_resource(vendor_like)).to eq([other_role])
     end
   end
