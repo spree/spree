@@ -15,6 +15,7 @@ import {
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
+  ComboboxTrigger,
   CountryFlag,
   Input,
   Label,
@@ -296,27 +297,45 @@ function SetupForm({ token }: { token: string }) {
                 itemToStringValue={(country: SetupCountry | null) => country?.code ?? ''}
                 disabled={countriesQuery.isPending}
               >
-                {/* Chrome reads a text input identified as a country, sitting
-                    near name and email fields, as part of an address form and
-                    covers our own list with saved addresses. It ignores
-                    `autoComplete` on such a field, and matches on the id and
-                    name, so neither says "country" — the value is held by
-                    react-hook-form, not the DOM, so nothing depends on them. */}
-                <ComboboxInput
+                {/* A button, not a text input. Chrome decides a field is part
+                    of an address form from its value and its neighbours, not
+                    just its name — "United States" sitting above Email was
+                    enough, and no combination of autocomplete attributes
+                    stopped the saved-address panel covering this list. There
+                    is nothing to autofill into a button. The search box lives
+                    inside the popup, where the address heuristics don't reach
+                    because it is outside the form's field flow. */}
+                <ComboboxTrigger
                   id="setup-country-search"
-                  name="setup-country-search"
-                  className="min-h-8.5"
-                  autoComplete="off"
-                  autoCorrect="off"
-                  autoCapitalize="off"
-                  spellCheck={false}
-                  data-1p-ignore
-                  data-lpignore="true"
+                  className="flex min-h-8.5 w-full items-center justify-between gap-1.5 rounded-lg border border-border bg-card py-1.5 pr-2 pl-2.5 text-base leading-normal shadow-xs outline-none focus:border-blue-500 focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] aria-invalid:border-destructive"
                   onBlur={field.onBlur}
                   aria-invalid={!!errors.country_code || undefined}
-                  placeholder={t('admin.fields.setup.country_code.placeholder')}
-                />
+                >
+                  {selectedCountry ? (
+                    <span className="flex items-center gap-2">
+                      <CountryFlag iso={selectedCountry.code} />
+                      {selectedCountry.name}
+                    </span>
+                  ) : (
+                    <span className="text-muted-foreground">
+                      {t('admin.fields.setup.country_code.placeholder')}
+                    </span>
+                  )}
+                </ComboboxTrigger>
                 <ComboboxContent>
+                  <div className="border-b border-border p-1">
+                    <ComboboxInput
+                      className="min-h-8.5 border-0 shadow-none"
+                      autoComplete="off"
+                      autoCorrect="off"
+                      autoCapitalize="off"
+                      spellCheck={false}
+                      data-1p-ignore
+                      data-lpignore="true"
+                      showTrigger={false}
+                      placeholder={t('admin.fields.setup.country_code.placeholder')}
+                    />
+                  </div>
                   <ComboboxEmpty>{t('admin.common.no_results')}</ComboboxEmpty>
                   <ComboboxList>
                     {(country: SetupCountry) => (
@@ -384,24 +403,37 @@ function SetupForm({ token }: { token: string }) {
                   itemToStringLabel={(code: string | null) => (code ? currencyLabel(code) : '')}
                   itemToStringValue={(code: string | null) => code ?? ''}
                 >
-                  {/* `Input` is min-h-8 and `SelectTrigger` min-h-8.5, so the
-                      currency box sat half a step above the language box
-                      beside it. Match the taller one. */}
-                  <ComboboxInput
+                  {/* Same shape as the country field: a button trigger keeps
+                      the browser's address autofill out, and matches the
+                      select beside it at min-h-8.5. */}
+                  <ComboboxTrigger
                     id="setup-currency-search"
-                    name="setup-currency-search"
-                    className="min-h-8.5"
-                    autoComplete="off"
-                    autoCorrect="off"
-                    autoCapitalize="off"
-                    spellCheck={false}
-                    data-1p-ignore
-                    data-lpignore="true"
+                    className="flex min-h-8.5 w-full items-center justify-between gap-1.5 rounded-lg border border-border bg-card py-1.5 pr-2 pl-2.5 text-base leading-normal shadow-xs outline-none focus:border-blue-500 focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] aria-invalid:border-destructive"
                     onBlur={field.onBlur}
                     aria-invalid={!!errors.currency || undefined}
-                    placeholder={t('admin.fields.setup.currency.placeholder')}
-                  />
+                  >
+                    {field.value ? (
+                      currencyLabel(field.value)
+                    ) : (
+                      <span className="text-muted-foreground">
+                        {t('admin.fields.setup.currency.placeholder')}
+                      </span>
+                    )}
+                  </ComboboxTrigger>
                   <ComboboxContent>
+                    <div className="border-b border-border p-1">
+                      <ComboboxInput
+                        className="min-h-8.5 border-0 shadow-none"
+                        autoComplete="off"
+                        autoCorrect="off"
+                        autoCapitalize="off"
+                        spellCheck={false}
+                        data-1p-ignore
+                        data-lpignore="true"
+                        showTrigger={false}
+                        placeholder={t('admin.fields.setup.currency.placeholder')}
+                      />
+                    </div>
                     <ComboboxEmpty>{t('admin.common.no_results')}</ComboboxEmpty>
                     <ComboboxList>
                       {(code: string) => (
