@@ -3721,7 +3721,8 @@
       "back_to_login": "Retour à la connexion",
       "required_notice_title": "Cette installation n'est pas encore configurée",
       "required_notice_message": "Aucun compte administrateur n'existe. Utilisez le lien de configuration affiché lors de l'installation pour en créer un.",
-      "required_notice_link": "Aller à la configuration"
+      "required_notice_link": "Aller à la configuration",
+      "countries_failed": "Impossible de charger la liste des pays."
     },
     "staff": {
       "actions": {

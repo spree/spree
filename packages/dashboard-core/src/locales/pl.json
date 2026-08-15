@@ -108,7 +108,8 @@
       "adjust_search_or_filters": "Spróbuj dostosować wyszukiwanie lub filtry",
       "default": "Domyślny",
       "cancel": "Anuluj",
-      "empty_value": "—"
+      "empty_value": "—",
+      "retry": "Spróbuj ponownie"
     },
     "color_picker": {
       "no_color": "Brak koloru"

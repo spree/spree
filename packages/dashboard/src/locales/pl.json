@@ -3775,7 +3775,8 @@
       "back_to_login": "Wróć do logowania",
       "required_notice_title": "Ta instalacja nie została jeszcze skonfigurowana",
       "required_notice_message": "Nie istnieje żadne konto administratora. Użyj linku konfiguracyjnego z wyniku instalacji, aby je utworzyć.",
-      "required_notice_link": "Przejdź do konfiguracji"
+      "required_notice_link": "Przejdź do konfiguracji",
+      "countries_failed": "Nie udało się wczytać listy krajów."
     },
     "staff": {
       "actions": {

@@ -3737,7 +3737,8 @@
       "back_to_login": "العودة إلى تسجيل الدخول",
       "required_notice_title": "لم يتم إعداد هذا التثبيت بعد",
       "required_notice_message": "لا يوجد حساب مسؤول. استخدم رابط الإعداد من مخرجات التثبيت لإنشاء حساب.",
-      "required_notice_link": "الانتقال إلى الإعداد"
+      "required_notice_link": "الانتقال إلى الإعداد",
+      "countries_failed": "تعذّر تحميل قائمة البلدان."
     },
     "staff": {
       "actions": {

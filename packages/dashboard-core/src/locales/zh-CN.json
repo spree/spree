@@ -108,7 +108,8 @@
       "adjust_search_or_filters": "请尝试调整搜索或筛选条件",
       "default": "默认",
       "cancel": "取消",
-      "empty_value": "—"
+      "empty_value": "—",
+      "retry": "重试"
     },
     "color_picker": {
       "no_color": "无颜色"

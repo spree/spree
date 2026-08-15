@@ -3717,7 +3717,8 @@
       "back_to_login": "返回登录",
       "required_notice_title": "此安装尚未完成设置",
       "required_notice_message": "尚无管理员账户。请使用安装输出中的设置链接创建。",
-      "required_notice_link": "前往设置"
+      "required_notice_link": "前往设置",
+      "countries_failed": "无法加载国家/地区列表。"
     },
     "staff": {
       "actions": {

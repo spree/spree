@@ -3721,7 +3721,8 @@
       "back_to_login": "Zurück zur Anmeldung",
       "required_notice_title": "Diese Installation ist noch nicht eingerichtet",
       "required_notice_message": "Es existiert noch kein Administratorkonto. Verwenden Sie den Setup-Link aus der Installationsausgabe, um eines zu erstellen.",
-      "required_notice_link": "Zum Setup"
+      "required_notice_link": "Zum Setup",
+      "countries_failed": "Die Länderliste konnte nicht geladen werden."
     },
     "staff": {
       "actions": {

@@ -108,7 +108,8 @@
       "adjust_search_or_filters": "جرّب تعديل البحث أو عوامل التصفية",
       "default": "افتراضي",
       "cancel": "إلغاء",
-      "empty_value": "—"
+      "empty_value": "—",
+      "retry": "أعد المحاولة"
     },
     "color_picker": {
       "no_color": "بدون لون"

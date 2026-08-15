@@ -13,9 +13,20 @@ home_isos = default_market&.country_codes.to_a
 # country to belong to at most one market per store.
 EU_ISOS = %w[PL FI PT RO DE FR SK HU SI IE AT ES IT BE SE LV BG LT CY LU MT DK NL EE HR CZ GR].freeze
 
-eu_countries = (EU_ISOS - home_isos).filter_map { |iso| Spree::Country.by_iso(iso) }
+eu_market = store.markets.find_or_initialize_by(name: 'Europe')
+
+# Any market may already hold an EU country — the merchant's own default, or
+# one they created themselves — and a country belongs to at most one market
+# per store, so claiming it twice aborts the load.
+eu_assigned_isos = Spree::MarketCountry.joins(:market).
+  where(spree_markets: { store_id: store.id, deleted_at: nil }).
+  then { |scope| eu_market.persisted? ? scope.where.not(market_id: eu_market.id) : scope }.
+  pluck(:country_code).to_set
+
+eu_countries = (EU_ISOS - home_isos).filter_map { |iso| Spree::Country.by_iso(iso) }.
+  reject { |country| eu_assigned_isos.include?(country.iso) }
+
 if eu_countries.any?
-  eu_market = store.markets.find_or_initialize_by(name: 'Europe')
   eu_market.currency = 'EUR'
   eu_market.default_locale = 'de'
   eu_market.supported_locales = 'de,fr,es,it'

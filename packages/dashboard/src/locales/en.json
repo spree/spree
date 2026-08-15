@@ -3721,7 +3721,8 @@
       "back_to_login": "Back to sign in",
       "required_notice_title": "This installation isn't set up yet",
       "required_notice_message": "No admin account exists. Use the setup link from the install output to create one.",
-      "required_notice_link": "Go to setup"
+      "required_notice_link": "Go to setup",
+      "countries_failed": "Couldn't load the list of countries."
     },
     "staff": {
       "actions": {

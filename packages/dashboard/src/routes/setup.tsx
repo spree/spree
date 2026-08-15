@@ -89,18 +89,17 @@ function useCurrencyLabel() {
 }
 
 /**
- * The merchant's own region, read from the browser's locale — a better
- * opening guess than any single hardcoded country. Falls back to the US,
- * which is where the seeded defaults pointed before setup asked.
+ * The merchant's own region, when the browser actually states one (`en-GB`,
+ * `pl-PL`). Only an explicit region counts: `Intl` will happily maximize a
+ * bare `en` to `en-Latn-US`, which would prefill "United States" as though the
+ * merchant had chosen it and quietly provision a US store. Undefined leaves
+ * the field empty, and the form requires an answer.
  */
-function guessCountryCode(): string {
+function guessCountryCode(): string | undefined {
   try {
-    const locale = new Intl.Locale(navigator.language)
-    // `maximize()` turns "de" into "de-Latn-DE", so a bare language still
-    // yields a region.
-    return locale.maximize().region ?? 'US'
+    return new Intl.Locale(navigator.language).region ?? undefined
   } catch {
-    return 'US'
+    return undefined
   }
 }
 
@@ -228,11 +227,12 @@ function SetupForm({ token }: { token: string }) {
     return recommended ? [recommended, ...all.filter((code) => code !== recommended)] : all
   }, [selectedCountry])
 
-  // The store most likely sells from wherever it is being set up, so the
-  // browser's own region is a better opening guess than an empty box. Applied
-  // once, and only while the merchant hasn't touched the field.
+  // The store most likely sells from wherever it is being set up, so a region
+  // the browser names outright is a better opening guess than an empty box.
+  // Applied once, and only while the merchant hasn't touched the field.
   const suggestedCountry = useMemo(() => guessCountryCode(), [])
   useEffect(() => {
+    if (!suggestedCountry) return
     if (countries.length === 0) return
     if (form.getValues('country_code')) return
     if (!countries.some((country) => country.code === suggestedCountry)) return
@@ -295,6 +295,23 @@ function SetupForm({ token }: { token: string }) {
             <p className="text-sm text-destructive">{errors.store_name.message}</p>
           )}
         </div>
+        {/* Setup cannot be completed without this list, so a failed request
+            needs saying out loud and a way back — otherwise the country box
+            is simply empty and the merchant is stuck with no explanation. */}
+        {countriesQuery.isError && (
+          <div className="flex items-center justify-between gap-3 rounded-lg border border-destructive/50 px-3 py-2">
+            <p className="text-sm text-destructive">{t('admin.setup.countries_failed')}</p>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => countriesQuery.refetch()}
+              disabled={countriesQuery.isFetching}
+            >
+              {t('admin.common.retry')}
+            </Button>
+          </div>
+        )}
         <div className="grid gap-2">
           <Label htmlFor="setup-country-search">{t('admin.fields.setup.country_code.label')}</Label>
           <Controller
