@@ -237,7 +237,7 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
         context 'when the charge billing address has a known country ISO' do
           let!(:california) do
             usa = Spree::Country.by_iso('US')
-            usa.states.find_by(abbr: 'CA') || create(:state, name: 'California', abbr: 'CA', country: usa)
+            usa.states.find { |state| state.abbr == 'CA' }
           end
 
           it 'builds the bill_address from the charge billing details' do
@@ -274,12 +274,16 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
           let(:stripe_charge) { build_charge({}, country: nil) }
 
           context 'and the store has a default_market with a default_country' do
-            let(:default_country) { create(:country, iso: 'CA', name: 'Canada') }
+            # Great Britain: the charge's address stays valid there (no
+            # subdivision required), so the fallback country actually survives
+            # the address validation instead of degrading to the ship address.
+            let(:default_country) { Spree::Country.by_iso('GB') }
 
+            # The store's real default market, repointed. Stubbing cannot work
+            # here: the flow reloads the order, so it sees the database rather
+            # than any in-memory double.
             before do
-              allow_any_instance_of(Spree::Store).to receive(:default_market).and_return(
-                instance_double(Spree::Market, default_country: default_country)
-              )
+              order.store.default_market.update!(countries: [default_country])
             end
 
             it 'falls back to the store default_market default_country' do
@@ -289,7 +293,7 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
 
               order.reload
               expect(order.bill_address).to be_present
-              expect(order.bill_address.country).to eq(default_country)
+              expect(order.bill_address.country_iso).to eq(default_country.iso)
             end
           end
 

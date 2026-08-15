@@ -352,8 +352,8 @@ RSpec.describe SpreeStripe::Gateway do
         )
       end
 
-      let(:usa_country) { Spree::Country.by_iso('US') || create(:country_us) }
-      let(:california_state) { usa_country.states.find_by(abbr: 'CA') || create(:state, name: 'California', abbr: 'CA', country: usa_country) }
+      let(:usa_country) { Spree::Country.by_iso('US') }
+      let(:california_state) { usa_country.states.find { |state| state.abbr == 'CA' } }
 
       before do
         order.update!(shipping_address: address)
@@ -715,9 +715,9 @@ RSpec.describe SpreeStripe::Gateway do
       )
     end
 
-    let(:usa_country) { Spree::Country.by_iso('US') || create(:country_us) }
-    let(:california_state) { usa_country.states.find_by(abbr: 'CA') || create(:state, name: 'California', abbr: 'CA', country: usa_country) }
-    let(:new_york_state) { usa_country.states.find_by(abbr: 'NY') || create(:state, name: 'New York', abbr: 'NY', country: usa_country) }
+    let(:usa_country) { Spree::Country.by_iso('US') }
+    let(:california_state) { usa_country.states.find { |state| state.abbr == 'CA' } }
+    let(:new_york_state) { usa_country.states.find { |state| state.abbr == 'NY' } }
 
     let(:gateway_customer) { Spree::GatewayCustomer.for_provider(SpreeStripe::Gateway).last }
 
@@ -812,9 +812,9 @@ RSpec.describe SpreeStripe::Gateway do
       )
     end
 
-    let(:usa_country) { Spree::Country.by_iso('US') || create(:country_us) }
-    let(:california_state) { usa_country.states.find_by(abbr: 'CA') || create(:state, name: 'California', abbr: 'CA', country: usa_country) }
-    let(:new_york_state) { usa_country.states.find_by(abbr: 'NY') || create(:state, name: 'New York', abbr: 'NY', country: usa_country) }
+    let(:usa_country) { Spree::Country.by_iso('US') }
+    let(:california_state) { usa_country.states.find { |state| state.abbr == 'CA' } }
+    let(:new_york_state) { usa_country.states.find { |state| state.abbr == 'NY' } }
 
     let!(:gateway_customer) { create(:gateway_customer, customer: customer, profile_id: customer_id, payment_method: gateway) }
     let(:customer_id) { 'cus_SeIsxI1TG3dGJv' }

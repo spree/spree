@@ -270,12 +270,13 @@ module SpreeStripe
 
         return if owner.bill_address.present? && owner.bill_address.valid?
 
-        country_iso = address.country
-        country = (country_iso.present? && Spree::Country.by_iso(country_iso)) ||
+        country = (address.country.presence && Spree::Country.by_iso(address.country)) ||
                   owner.store.default_market&.default_country ||
                   Spree::Country.by_iso('US')
 
-        owner.bill_address ||= Spree::Address.new(country: country, customer: owner.customer)
+        # Countries are reference data now, not records — addresses name one by
+        # ISO code rather than holding a foreign key.
+        owner.bill_address ||= Spree::Address.new(country_iso: country.iso, customer: owner.customer)
         owner.bill_address.quick_checkout = true
 
         # Google Pay sometimes omits the name entirely.
@@ -290,11 +291,13 @@ module SpreeStripe
         owner.bill_address.city ||= address.city
         owner.bill_address.zipcode ||= address.postal_code
 
+        # Stripe sends whatever the wallet had — a code or a full name — so it
+        # is resolved to a current subdivision code. The free-text state_name
+        # is kept as the fallback for countries without subdivisions, and as a
+        # record of what the wallet actually said.
         state_name = address.state
         if country.states_required?
-          owner.bill_address.state = country.states.find_all_by_name_or_abbr(state_name)&.first
-        else
-          owner.bill_address.state_name = state_name
+          owner.bill_address.state_code ||= Spree::IsoData.subdivision_code(country.iso, state_name)
         end
         owner.bill_address.state_name ||= state_name
 
