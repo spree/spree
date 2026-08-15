@@ -108,7 +108,8 @@
       "adjust_search_or_filters": "Spróbuj dostosować wyszukiwanie lub filtry",
       "default": "Domyślny",
       "cancel": "Anuluj",
-      "empty_value": "—"
+      "empty_value": "—",
+      "retry": "Spróbuj ponownie"
     },
     "color_picker": {
       "no_color": "Brak koloru"
@@ -597,7 +598,9 @@
       "password_required": "Hasło jest wymagane",
       "first_name_required": "Imię jest wymagane",
       "last_name_required": "Nazwisko jest wymagane",
-      "store_name_required": "Nazwa sklepu jest wymagana"
+      "store_name_required": "Nazwa sklepu jest wymagana",
+      "country_required": "Kraj jest wymagany",
+      "currency_required": "Waluta jest wymagana"
     },
     "account": {
       "edit_profile": "Edytuj profil",

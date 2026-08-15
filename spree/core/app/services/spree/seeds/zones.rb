@@ -6,7 +6,8 @@ module Spree
     # data rather than records in 6.0, so there are no ids to point at. The
     # zones are created empty and match nothing until the tax provider replaces
     # them (docs/plans/6.0-tax-provider.md Phase 5). Shipping geography is
-    # seeded as delivery zones instead — see Spree::Seeds::DeliveryZones.
+    # created from the store's own country instead — see
+    # Spree::Stores::ProvisionDefaults.
     class Zones
       prepend Spree::ServiceModule::Base
 

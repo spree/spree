@@ -1203,6 +1203,20 @@
         },
         "store_name": {
           "label": "商店名称"
+        },
+        "country_code": {
+          "label": "国家/地区",
+          "placeholder": "搜索国家/地区",
+          "help": "您的发货地。您的商店可以面向全球销售——这只设置初始货币、仓库和配送区域，之后均可修改。"
+        },
+        "locale": {
+          "label": "语言",
+          "help": "您的默认语言。随时可添加更多。"
+        },
+        "currency": {
+          "label": "货币",
+          "placeholder": "搜索货币",
+          "help": "您的默认货币。随时可添加更多。"
         }
       },
       "stock_location": {
@@ -3691,7 +3705,7 @@
     },
     "setup": {
       "title": "设置 Spree",
-      "subtitle": "创建管理员账户并为商店命名，以完成安装。",
+      "subtitle": "创建您的管理员账户并介绍您的商店。此处的所有设置之后均可更改。",
       "loading": "正在检查设置状态…",
       "missing_token_title": "需要设置链接",
       "missing_token_message": "请打开安装时输出的设置链接——其中包含一次性设置令牌。运行 \"bin/rails spree:setup:token\" 可重新生成。",
@@ -3703,7 +3717,8 @@
       "back_to_login": "返回登录",
       "required_notice_title": "此安装尚未完成设置",
       "required_notice_message": "尚无管理员账户。请使用安装输出中的设置链接创建。",
-      "required_notice_link": "前往设置"
+      "required_notice_link": "前往设置",
+      "countries_failed": "无法加载国家/地区列表。"
     },
     "staff": {
       "actions": {

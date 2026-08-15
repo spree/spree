@@ -1206,6 +1206,20 @@
         },
         "store_name": {
           "label": "Store name"
+        },
+        "country_code": {
+          "label": "Country",
+          "placeholder": "Search countries",
+          "help": "Where you ship from. Your store can sell worldwide — this just sets the starting currency, warehouse and delivery zones, all editable later."
+        },
+        "locale": {
+          "label": "Language",
+          "help": "Your default language. Add more anytime."
+        },
+        "currency": {
+          "label": "Currency",
+          "placeholder": "Search currencies",
+          "help": "Your default currency. Add more anytime."
         }
       },
       "stock_location": {
@@ -3695,7 +3709,7 @@
     },
     "setup": {
       "title": "Set up Spree",
-      "subtitle": "Create your admin account and name your store to finish installation.",
+      "subtitle": "Create your admin account and tell us about your store. Everything here can be changed later.",
       "loading": "Checking setup status…",
       "missing_token_title": "Setup link required",
       "missing_token_message": "Open the setup link printed during installation — it contains the one-time setup token. Run \"bin/rails spree:setup:token\" to print a fresh one.",
@@ -3707,7 +3721,8 @@
       "back_to_login": "Back to sign in",
       "required_notice_title": "This installation isn't set up yet",
       "required_notice_message": "No admin account exists. Use the setup link from the install output to create one.",
-      "required_notice_link": "Go to setup"
+      "required_notice_link": "Go to setup",
+      "countries_failed": "Couldn't load the list of countries."
     },
     "staff": {
       "actions": {

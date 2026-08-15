@@ -1,18 +1,11 @@
 store = Spree::Store.default
 
-us = Spree::Country.by_iso('US')
-ca = Spree::Country.by_iso('CA')
-
-if us
-  # Store auto-creates a default market on creation — update it rather than creating a new one
-  us_market = store.markets.default.first || store.markets.order(:position).first || store.markets.new
-  us_market.name = 'US'
-  us_market.currency = 'USD'
-  us_market.default_locale = 'en'
-  us_market.default = true
-  us_market.countries = [us, ca].compact
-  us_market.save!
-end
+# The default market says where the shop sells from — the merchant answered
+# that at first-run setup, so sample data builds around it and never
+# overwrites it. Resetting it here used to flip a store set up as German back
+# to a US store on every `spree:load_sample_data`.
+default_market = store.markets.default.first || store.markets.order(:position).first
+home_isos = default_market&.country_codes.to_a
 
 # Each market names its countries as ISO codes directly — the zone seeds these
 # groupings used to come from are gone. Countries already assigned to another
@@ -20,9 +13,20 @@ end
 # country to belong to at most one market per store.
 EU_ISOS = %w[PL FI PT RO DE FR SK HU SI IE AT ES IT BE SE LV BG LT CY LU MT DK NL EE HR CZ GR].freeze
 
-eu_countries = EU_ISOS.filter_map { |iso| Spree::Country.by_iso(iso) }
+eu_market = store.markets.find_or_initialize_by(name: 'Europe')
+
+# Any market may already hold an EU country — the merchant's own default, or
+# one they created themselves — and a country belongs to at most one market
+# per store, so claiming it twice aborts the load.
+eu_assigned_isos = Spree::MarketCountry.joins(:market).
+  where(spree_markets: { store_id: store.id, deleted_at: nil }).
+  then { |scope| eu_market.persisted? ? scope.where.not(market_id: eu_market.id) : scope }.
+  pluck(:country_code).to_set
+
+eu_countries = (EU_ISOS - home_isos).filter_map { |iso| Spree::Country.by_iso(iso) }.
+  reject { |country| eu_assigned_isos.include?(country.iso) }
+
 if eu_countries.any?
-  eu_market = store.markets.find_or_initialize_by(name: 'Europe')
   eu_market.currency = 'EUR'
   eu_market.default_locale = 'de'
   eu_market.supported_locales = 'de,fr,es,it'

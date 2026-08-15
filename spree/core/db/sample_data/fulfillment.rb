@@ -1,9 +1,21 @@
 # The whole demo fulfillment setup in one place: a rate-ready origin, a
-# realistic parcel, and Shopify-style delivery methods on the seeded Domestic
-# and International zones (Spree::Seeds::DeliveryZones). The free
-# international method showcases delivery-method rules — free above a spend
-# threshold, hidden below it.
+# realistic parcel, and Shopify-style delivery methods on the Domestic and
+# International zones. The free international method showcases
+# delivery-method rules — free above a spend threshold, hidden below it.
 store = Spree::Store.default
+
+# The zones are created from the store's country at first-run setup, so an
+# install that has not been set up yet has none. Provision them here from
+# whatever country the store already names rather than abort — sample data
+# should be loadable on a bare seed.
+if store.delivery_zones.where(name: %w[Domestic International]).count < 2
+  Spree::Stores::ProvisionDefaults.call(
+    store: store,
+    country: store.default_country || Spree::Country.by_iso('US'),
+    locale: store.default_locale
+  )
+  store.reload
+end
 
 # Carrier rate providers (EasyPost) cannot quote without a complete origin
 # address — a country-only stock location makes every carrier method silently
@@ -51,7 +63,7 @@ international = store.delivery_zones.find_by(name: 'International')
 if domestic.nil? || international.nil?
   # abort, not exit: exit reports success and would silently skip the payment
   # methods and promotions the loader still has to seed.
-  abort "Couldn't find the Domestic/International delivery zones. Did you run `rake db:seed` first?"
+  abort "Couldn't provision the Domestic/International delivery zones for this store."
 end
 
 currency = store.default_currency

@@ -12,12 +12,12 @@ module Spree
           include Spree::Api::V3::Admin::AuthCookies
 
           skip_scope_check!
-          skip_before_action :authenticate_admin!, only: [:show, :create]
+          skip_before_action :authenticate_admin!, only: [:show, :countries, :create]
 
           rate_limit to: Spree::Api::Config[:rate_limit_login],
                      within: Spree::Api::Config[:rate_limit_window].seconds,
                      store: Rails.cache,
-                     only: [:show, :create],
+                     only: [:show, :countries, :create],
                      with: -> { render_rate_limited(limit: Spree::Api::Config[:rate_limit_login]) }
 
           # GET /api/v3/admin/auth/setup
@@ -27,12 +27,27 @@ module Spree
             render json: { setup_required: setup_required? }
           end
 
+          # GET /api/v3/admin/auth/setup/countries
+          # The setup screen runs before any credential exists, so it cannot
+          # use the authenticated countries endpoint. Currency and locales are
+          # derived here rather than in the client, so the market the setup
+          # builds and the currency the merchant was shown cannot disagree.
+          def countries
+            return render_setup_unavailable unless setup_required?
+
+            render json: { countries: Spree::Country.all.map { |country| country_payload(country) } }
+          end
+
           # POST /api/v3/admin/auth/setup
           # Body: { setup_token, email, password, password_confirmation?,
-          #         first_name?, last_name?, store_name, currency?, country_code? }
+          #         first_name?, last_name?, store_name, country_code,
+          #         locale?, currency? }
+          # Currency defaults to the country's own; an unknown code is refused
+          # rather than ignored, since the token is spent in the same request.
           def create
             return render_setup_unavailable unless setup_token_usable?
-            return render_unknown_country if unknown_country_code?
+            return render_missing_country if country.nil?
+            return render_unknown_currency if unknown_currency?
 
             user = nil
             store = Spree::Store.default
@@ -73,19 +88,73 @@ module Spree
               ActiveSupport::SecurityUtils.secure_compare(stored, provided)
           end
 
-          # Checked before the token is spent: setup is one-shot, so applying a
-          # store with the wrong country — or silently ignoring the request —
-          # would leave no in-band way to correct it.
-          def unknown_country_code?
-            params[:country_code].present? && Spree::Country.by_iso(params[:country_code]).nil?
+          # Resolved before the token is spent: setup is one-shot, so a store
+          # provisioned for the wrong country would leave no in-band way to
+          # correct it.
+          def country
+            @country ||= Spree::Country.by_iso(params[:country_code]) if params[:country_code].present?
           end
 
-          def render_unknown_country
+          def render_missing_country
+            message = if params[:country_code].present?
+                        "Unknown country #{params[:country_code]}"
+                      else
+                        "Country can't be blank"
+                      end
+
             render_error(
-              code: ERROR_CODES[:resource_invalid],
-              message: "Unknown country #{params[:country_code]}",
-              status: :unprocessable_content
+              code: ERROR_CODES[:validation_error],
+              message: message,
+              status: :unprocessable_content,
+              details: { country_code: [message] }
             )
+          end
+
+          # Blank means "use the country's own currency"; a code that resolves
+          # to nothing is a typo worth refusing before the token is spent.
+          def unknown_currency?
+            params[:currency].present? && ::Money::Currency.find(params[:currency].to_s.strip).nil?
+          end
+
+          def render_unknown_currency
+            message = "Unknown currency #{params[:currency]}"
+
+            render_error(
+              code: ERROR_CODES[:validation_error],
+              message: message,
+              status: :unprocessable_content,
+              details: { currency: [message] }
+            )
+          end
+
+          def country_payload(country)
+            {
+              code: country.iso,
+              name: country.name,
+              currency: country.default_currency,
+              locales: offerable_locales(country)
+            }
+          end
+
+          # A country's official languages, minus any Spree has no translations
+          # for — Switzerland speaks Romansh and Spree does not, so offering it
+          # would point a storefront at a language with nothing behind it.
+          # English closes the gap for countries whose languages all fall
+          # through, and is always offered alongside.
+          #
+          # Installs without spree_i18n only have English, and filtering
+          # against that would leave every country English-only. There the
+          # unfiltered list is the better answer: the merchant's own language
+          # is still the right default for their storefront, whether or not
+          # this install carries a translation bundle for it.
+          def offerable_locales(country)
+            return country.official_locales if translated_locales.size <= 1
+
+            (country.official_locales & translated_locales).presence || ['en']
+          end
+
+          def translated_locales
+            @translated_locales ||= Spree.available_locales.map { |locale| locale.to_s.split('-').first }.uniq
           end
 
           # Token mismatch, spent token, and already-set-up all render the
@@ -105,34 +174,27 @@ module Spree
           # The seed already created the default store (every downstream seed
           # depends on it existing) — setup claims and renames it rather than
           # creating a second one, and spends the token.
+          #
+          # The country-shaped defaults (market, warehouse, delivery zones,
+          # pickup) are built here rather than seeded, because the seed ran
+          # before anyone had said where the shop sells from.
           def adopt_default_store(user, store)
             store.update!(store_params.merge(setup_token: nil))
             store.add_user(user)
+
+            Spree::Stores::ProvisionDefaults.call(
+              store: store,
+              country: country,
+              locale: params[:locale].presence,
+              currency: params[:currency].presence
+            )
           end
 
           # `store_name` is optional: an API client may claim the installation
           # without renaming the seeded store (the dashboard's form requires
-          # it, but the endpoint is the documented surface). `currency` and
-          # `country_code` are applied only when they resolve to something real
-          # — the token is spent in the same request, so persisting a typo
-          # here would be unrecoverable in-band.
+          # it, but the endpoint is the documented surface).
           def store_params
-            @store_params ||= begin
-              permitted = {}
-              permitted[:name] = params[:store_name] if params[:store_name].present?
-
-              if params[:currency].present?
-                currency = ::Money::Currency.find(params[:currency].to_s.strip)
-                permitted[:default_currency] = currency.iso_code if currency
-              end
-
-              if params[:country_code].present?
-                country = Spree::Country.by_iso(params[:country_code])
-                permitted[:default_country_code] = country.iso if country
-              end
-
-              permitted
-            end
+            params[:store_name].present? ? { name: params[:store_name] } : {}
           end
 
           def auth_response(user)

@@ -108,7 +108,8 @@
       "adjust_search_or_filters": "请尝试调整搜索或筛选条件",
       "default": "默认",
       "cancel": "取消",
-      "empty_value": "—"
+      "empty_value": "—",
+      "retry": "重试"
     },
     "color_picker": {
       "no_color": "无颜色"
@@ -597,7 +598,9 @@
       "password_required": "密码为必填项",
       "first_name_required": "名字为必填项",
       "last_name_required": "姓氏为必填项",
-      "store_name_required": "商店名称为必填项"
+      "store_name_required": "商店名称为必填项",
+      "country_required": "请选择国家/地区",
+      "currency_required": "请选择货币"
     },
     "account": {
       "edit_profile": "编辑个人资料",

@@ -135,6 +135,13 @@ module Spree
       iso3166_country&.languages&.first
     end
 
+    # Every official language, not just the first — Switzerland speaks four,
+    # and a merchant setting up there should be offered all of them.
+    # @return [Array<String>] e.g. ['de', 'fr', 'it', 'rm']
+    def official_locales
+      iso3166_country&.languages_official.presence || []
+    end
+
     # Countries are equal when they name the same place, so they can be
     # compared, deduplicated and used as hash keys.
     def ==(other)

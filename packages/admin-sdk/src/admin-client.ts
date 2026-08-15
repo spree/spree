@@ -202,6 +202,7 @@ import type {
   ReturnUpdateParams,
   RoleCreateParams,
   RoleUpdateParams,
+  SetupCountries,
   SetupParams,
   SetupStatus,
   StockItemUpdateParams,
@@ -560,6 +561,14 @@ export class AdminClient {
      */
     setupStatus: (options?: RequestOptions): Promise<SetupStatus> =>
       this.request<SetupStatus>('GET', '/auth/setup', options),
+
+    /**
+     * Public (unauthenticated) list of countries the store can be set up in,
+     * each with the currency and official languages derived from it. Returns
+     * 404 once any admin user exists.
+     */
+    setupCountries: (options?: RequestOptions): Promise<SetupCountries> =>
+      this.request<SetupCountries>('GET', '/auth/setup/countries', options),
 
     /**
      * Public (unauthenticated) first-run setup: creates the first admin

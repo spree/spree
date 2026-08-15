@@ -1206,6 +1206,20 @@
         },
         "store_name": {
           "label": "Nom de la boutique"
+        },
+        "country_code": {
+          "label": "Pays",
+          "placeholder": "Rechercher un pays",
+          "help": "D'où vous expédiez. Votre boutique peut vendre dans le monde entier — ceci définit seulement la devise, l'entrepôt et les zones de livraison de départ, tous modifiables ensuite."
+        },
+        "locale": {
+          "label": "Langue",
+          "help": "Votre langue par défaut. Ajoutez-en d’autres quand vous voulez."
+        },
+        "currency": {
+          "label": "Devise",
+          "placeholder": "Rechercher une devise",
+          "help": "Votre devise par défaut. Ajoutez-en d’autres quand vous voulez."
         }
       },
       "stock_location": {
@@ -3695,7 +3709,7 @@
     },
     "setup": {
       "title": "Configurer Spree",
-      "subtitle": "Créez votre compte administrateur et nommez votre boutique pour terminer l'installation.",
+      "subtitle": "Créez votre compte administrateur et présentez votre boutique. Tout ceci est modifiable par la suite.",
       "loading": "Vérification de l'état de la configuration…",
       "missing_token_title": "Lien de configuration requis",
       "missing_token_message": "Ouvrez le lien de configuration affiché lors de l'installation — il contient le jeton unique. Exécutez \"bin/rails spree:setup:token\" pour en générer un nouveau.",
@@ -3707,7 +3721,8 @@
       "back_to_login": "Retour à la connexion",
       "required_notice_title": "Cette installation n'est pas encore configurée",
       "required_notice_message": "Aucun compte administrateur n'existe. Utilisez le lien de configuration affiché lors de l'installation pour en créer un.",
-      "required_notice_link": "Aller à la configuration"
+      "required_notice_link": "Aller à la configuration",
+      "countries_failed": "Impossible de charger la liste des pays."
     },
     "staff": {
       "actions": {

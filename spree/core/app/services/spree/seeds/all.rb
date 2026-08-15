@@ -17,15 +17,16 @@ module Spree
             StoreCreditCategories.call
             TaxCategories.call
 
-            # store & stock location
+            # store & channels
             Stores.call
             Channels.call
-            StockLocations.call
-            DeliveryZones.call
-            # Store-scoped, so they can only run once a store and its
-            # locations exist.
+            # Store-scoped, so it can only run once a store exists.
             DigitalDelivery.call
-            PickupDelivery.call
+            # The warehouse, delivery zones and pickup are not seeded: their
+            # shape depends on which country the shop sells from, and nobody
+            # has answered that yet. Spree::Stores::ProvisionDefaults builds
+            # them from the merchant's answer — at first-run setup, or here
+            # when ADMIN_EMAIL/ADMIN_PASSWORD name an install that skips it.
             AdminUser.call
 
             # add store resources

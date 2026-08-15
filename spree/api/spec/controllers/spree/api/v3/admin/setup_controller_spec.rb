@@ -24,6 +24,56 @@ RSpec.describe Spree::Api::V3::Admin::SetupController, type: :controller do
     end
   end
 
+  describe 'GET #countries' do
+    it 'lists countries with their derived currency and official locales' do
+      get :countries, as: :json
+
+      expect(response).to have_http_status(:ok)
+
+      countries = json_response['countries']
+      switzerland = countries.find { |country| country['code'] == 'CH' }
+
+      expect(switzerland['name']).to eq('Switzerland')
+      expect(switzerland['currency']).to eq('CHF')
+      expect(switzerland['locales']).to include('de', 'fr', 'it')
+    end
+
+    context 'when the install carries translations (spree_i18n)' do
+      before do
+        allow(Spree).to receive(:available_locales).and_return(%i[en de fr it pl])
+      end
+
+      # Offering a language Spree has no translations for would point a
+      # storefront at nothing — Switzerland speaks Romansh, Spree does not.
+      it 'drops languages that have no translations' do
+        get :countries, as: :json
+
+        switzerland = json_response['countries'].find { |country| country['code'] == 'CH' }
+
+        expect(switzerland['locales']).to contain_exactly('de', 'fr', 'it')
+      end
+
+      it "falls back to English when none of a country's languages ship" do
+        get :countries, as: :json
+
+        # Eritrea speaks Tigrinya, which Spree does not translate.
+        eritrea = json_response['countries'].find { |country| country['code'] == 'ER' }
+
+        expect(eritrea['locales']).to eq(['en'])
+      end
+    end
+
+    # Same posture as the rest of the flow: it exists only while the
+    # installation is unclaimed.
+    it 'is gone once an admin exists' do
+      create(:admin_user)
+
+      get :countries, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
   describe 'POST #create' do
     # Read fresh, not through the memoized @default_store: the shared object
     # reloads in an after(:each) that runs inside the previous example's
@@ -37,7 +87,8 @@ RSpec.describe Spree::Api::V3::Admin::SetupController, type: :controller do
         password_confirmation: 'Secret123!',
         first_name: 'Olivia',
         last_name: 'Owner',
-        store_name: 'My New Store'
+        store_name: 'My New Store',
+        country_code: 'US'
       }
     end
 
@@ -58,13 +109,52 @@ RSpec.describe Spree::Api::V3::Admin::SetupController, type: :controller do
         expect(response.cookies['spree_admin_refresh_token']).to be_present
       end
 
-      it 'applies optional currency and country' do
+      # The whole point of asking for a country: the store, its market and
+      # everything shaped by geography agree on where the shop is.
+      it 'provisions the store for the chosen country, deriving the currency' do
+        post :create, params: valid_params.merge(country_code: 'de', locale: 'de'), as: :json
 
-        post :create, params: valid_params.merge(currency: 'eur', country_code: 'us'), as: :json
+        expect(response).to have_http_status(:ok)
+
+        store = @default_store.reload
+        expect(store.default_country_code).to eq('DE')
+        expect(store.default_currency).to eq('EUR')
+        expect(store.default_locale).to eq('de')
+        expect(store.default_market.country_codes).to eq(['DE'])
+        expect(store.stock_locations.find_by(default: true).country_code).to eq('DE')
+        expect(store.delivery_zones.find_by(name: 'Domestic').members.pluck(:country_code)).to eq(['DE'])
+      end
+
+      it 'accepts a currency that differs from the country default' do
+        post :create, params: valid_params.merge(country_code: 'PL', locale: 'pl', currency: 'eur'), as: :json
+
+        expect(response).to have_http_status(:ok)
+
+        store = @default_store.reload
+        expect(store.default_country_code).to eq('PL')
+        expect(store.default_currency).to eq('EUR')
+      end
+
+      it 'refuses an unknown currency and leaves the token usable' do
+        post :create, params: valid_params.merge(currency: 'NOTACURRENCY'), as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(@default_store.reload.setup_token).to be_present
+        expect(Spree.admin_user_class.count).to eq(0)
+      end
+
+      it "defaults the currency to the country's own when none is given" do
+        post :create, params: valid_params.merge(country_code: 'DE'), as: :json
 
         expect(response).to have_http_status(:ok)
         expect(@default_store.reload.default_currency).to eq('EUR')
-        expect(@default_store.default_country&.iso).to eq('US')
+      end
+
+      it "defaults the locale to the country's own language" do
+        post :create, params: valid_params.merge(country_code: 'DE'), as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(@default_store.reload.default_locale).to eq('de')
       end
 
       # An unknown country is refused before the token is spent, so the
@@ -77,16 +167,12 @@ RSpec.describe Spree::Api::V3::Admin::SetupController, type: :controller do
         expect(Spree.admin_user_class.find_by(email: 'owner@example.com')).to be_nil
       end
 
-      # The token is spent in the same request, so persisting garbage here
-      # would be unrecoverable in-band — unknown codes are ignored, mirroring
-      # country_code.
-      it 'ignores an unknown currency' do
-        original_currency = @default_store.default_currency
+      it 'refuses a missing country and leaves the token usable' do
+        post :create, params: valid_params.except(:country_code), as: :json
 
-        post :create, params: valid_params.merge(currency: 'NOTACURRENCY'), as: :json
-
-        expect(response).to have_http_status(:ok)
-        expect(@default_store.reload.default_currency).to eq(original_currency)
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(@default_store.reload.setup_token).to be_present
+        expect(Spree.admin_user_class.count).to eq(0)
       end
 
       it 'returns 422 with field errors on invalid input' do

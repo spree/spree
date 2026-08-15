@@ -32,7 +32,24 @@ module Spree
         )
 
         store = Spree::Store.default
-        store&.add_user(user) if store&.persisted?
+        return unless store&.persisted?
+
+        store.add_user(user)
+        provision_store_defaults(store)
+      end
+
+      # This install never sees the setup screen, so the country question is
+      # answered by the environment instead — defaulting to the US, which is
+      # what these installs got when the seeds hardcoded it.
+      def provision_store_defaults(store)
+        country = Spree::Country.by_iso(ENV.fetch('STORE_COUNTRY', 'US')) || Spree::Country.by_iso('US')
+
+        Spree::Stores::ProvisionDefaults.call(
+          store: store,
+          country: country,
+          locale: ENV['STORE_LOCALE'].presence,
+          currency: ENV['STORE_CURRENCY'].presence
+        )
       end
 
       # The setup token lives on the default store (has_secure_token, set at

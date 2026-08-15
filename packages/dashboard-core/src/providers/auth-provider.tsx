@@ -15,21 +15,27 @@ interface AuthContextValue {
   isAuthenticated: boolean
   isInitializing: boolean
   isLoading: boolean
-  login: (email: string, password: string) => Promise<void>
+  login: (email: string, password: string) => Promise<AuthTokens>
   logout: () => Promise<void>
-  acceptInvitation: (id: string, token: string, params: InvitationAcceptParams) => Promise<void>
+  acceptInvitation: (
+    id: string,
+    token: string,
+    params: InvitationAcceptParams,
+  ) => Promise<AuthTokens>
   /**
    * Complete first-run setup (create the first admin account) and sign in —
    * the endpoint issues a session just like login. `setupStatus` (the
    * availability check) is unauthenticated and lives on `adminClient`.
+   * Resolves with the session so the caller can route straight to the store
+   * it just claimed.
    */
-  completeSetup: (params: SetupParams) => Promise<void>
+  completeSetup: (params: SetupParams) => Promise<AuthTokens>
   /**
    * Consume a password reset token, set the new password, and sign in — the
    * endpoint issues a session just like login. `requestPasswordReset` (the
    * step that sends the email) is unauthenticated and lives on `adminClient`.
    */
-  resetPassword: (token: string, params: PasswordResetParams) => Promise<void>
+  resetPassword: (token: string, params: PasswordResetParams) => Promise<AuthTokens>
   /**
    * Merge updated fields into the authenticated user (e.g. after a profile
    * save) so context consumers like the top-bar reflect the change immediately
@@ -118,6 +124,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, REFRESH_INTERVAL_MS)
   }, [refreshAccessToken, clearRefreshTimer])
 
+  // Returns the response so callers that need something from it — the setup
+  // screen reads the new store's id to land on — don't have to wait for the
+  // provider's state to settle.
   const establish = useCallback(
     async (req: Promise<AuthTokens>) => {
       setIsLoading(true)
@@ -125,6 +134,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const res = await req
         applySession(res.token, res.user)
         scheduleRefresh()
+        return res
       } finally {
         setIsLoading(false)
       }

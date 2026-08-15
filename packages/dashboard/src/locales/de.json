@@ -1206,6 +1206,20 @@
         },
         "store_name": {
           "label": "Shopname"
+        },
+        "country_code": {
+          "label": "Land",
+          "placeholder": "Länder durchsuchen",
+          "help": "Von wo Sie versenden. Ihr Shop kann weltweit verkaufen — dies legt nur Startwährung, Lager und Liefergebiete fest, alle später änderbar."
+        },
+        "locale": {
+          "label": "Sprache",
+          "help": "Ihre Standardsprache. Jederzeit erweiterbar."
+        },
+        "currency": {
+          "label": "Währung",
+          "placeholder": "Währungen durchsuchen",
+          "help": "Ihre Standardwährung. Jederzeit erweiterbar."
         }
       },
       "stock_location": {
@@ -3695,7 +3709,7 @@
     },
     "setup": {
       "title": "Spree einrichten",
-      "subtitle": "Erstellen Sie Ihr Administratorkonto und benennen Sie Ihren Shop, um die Installation abzuschließen.",
+      "subtitle": "Erstellen Sie Ihr Administratorkonto und beschreiben Sie Ihren Shop. Alles hier lässt sich später ändern.",
       "loading": "Setup-Status wird geprüft…",
       "missing_token_title": "Setup-Link erforderlich",
       "missing_token_message": "Öffnen Sie den bei der Installation ausgegebenen Setup-Link — er enthält das einmalige Setup-Token. Mit \"bin/rails spree:setup:token\" können Sie einen neuen ausgeben.",
@@ -3707,7 +3721,8 @@
       "back_to_login": "Zurück zur Anmeldung",
       "required_notice_title": "Diese Installation ist noch nicht eingerichtet",
       "required_notice_message": "Es existiert noch kein Administratorkonto. Verwenden Sie den Setup-Link aus der Installationsausgabe, um eines zu erstellen.",
-      "required_notice_link": "Zum Setup"
+      "required_notice_link": "Zum Setup",
+      "countries_failed": "Die Länderliste konnte nicht geladen werden."
     },
     "staff": {
       "actions": {

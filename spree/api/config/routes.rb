@@ -173,6 +173,7 @@ Spree::Core::Engine.add_routes do
         # First-run setup — unauthenticated; the one-time setup token is the
         # credential, and the flow self-disables once any admin user exists.
         get 'auth/setup', to: 'setup#show'
+        get 'auth/setup/countries', to: 'setup#countries'
         post 'auth/setup', to: 'setup#create'
 
         # Public password reset — unauthenticated; the token is the credential.

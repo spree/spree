@@ -987,10 +987,35 @@ export interface SetupParams {
   first_name?: string
   last_name?: string
   store_name?: string
-  /** ISO currency code for the store, e.g. `USD`. */
+  /**
+   * ISO 3166-1 alpha-2 country the store sells from, e.g. `US`. Required: it
+   * determines the default market, the warehouse, the delivery zones and the
+   * store's currency.
+   */
+  country_code: string
+  /** Storefront locale. Defaults to the country's own language. */
+  locale?: string
+  /**
+   * ISO 4217 currency, e.g. `EUR`. Defaults to the country's own currency —
+   * pass one only when the store prices in something else.
+   */
   currency?: string
-  /** ISO 3166-1 alpha-2 country code for the store, e.g. `US`. */
-  country_code?: string
+}
+
+/** A country the store can be set up in, with everything derived from it. */
+export interface SetupCountry {
+  /** ISO 3166-1 alpha-2 code, e.g. `CH`. */
+  code: string
+  name: string
+  /** ISO 4217 currency the store gets when this country is chosen, e.g. `CHF`. */
+  currency: string | null
+  /** Official languages, e.g. `['de', 'fr', 'it', 'rm']`. */
+  locales: string[]
+}
+
+/** Response of the public first-run setup country list. */
+export interface SetupCountries {
+  countries: SetupCountry[]
 }
 
 /** Body for requesting a password reset email. */

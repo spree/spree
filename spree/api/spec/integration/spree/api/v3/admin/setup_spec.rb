@@ -35,7 +35,7 @@ RSpec.describe 'Admin Setup API', type: :request, swagger_doc: 'api-reference/ad
 
       parameter name: :body, in: :body, schema: {
         type: :object,
-        required: %w[setup_token email password],
+        required: %w[setup_token email password country_code],
         properties: {
           setup_token: { type: :string, description: 'One-time token from the install output.' },
           email: { type: :string, format: 'email', example: 'owner@example.com' },
@@ -44,8 +44,23 @@ RSpec.describe 'Admin Setup API', type: :request, swagger_doc: 'api-reference/ad
           first_name: { type: :string, example: 'Olivia' },
           last_name: { type: :string, example: 'Owner' },
           store_name: { type: :string, example: 'My Store' },
-          currency: { type: :string, description: 'ISO currency code for the store.', example: 'USD' },
-          country_code: { type: :string, description: 'ISO 3166-1 alpha-2 country code for the store.', example: 'US' }
+          country_code: {
+            type: :string,
+            description: 'ISO 3166-1 alpha-2 country the store sells from. Determines the ' \
+                         'default market, the warehouse, the delivery zones and the currency.',
+            example: 'US'
+          },
+          locale: {
+            type: :string,
+            description: "Storefront locale. Defaults to the country's own language.",
+            example: 'en'
+          },
+          currency: {
+            type: :string,
+            description: "ISO 4217 currency. Defaults to the country's own currency — " \
+                         'pass one only when the store prices in something else.',
+            example: 'USD'
+          }
         }
       }
 
@@ -58,7 +73,8 @@ RSpec.describe 'Admin Setup API', type: :request, swagger_doc: 'api-reference/ad
             password_confirmation: 'Secret123!',
             first_name: 'Olivia',
             last_name: 'Owner',
-            store_name: 'My Store'
+            store_name: 'My Store',
+            country_code: 'US'
           }
         end
 
@@ -75,11 +91,35 @@ RSpec.describe 'Admin Setup API', type: :request, swagger_doc: 'api-reference/ad
             setup_token: 'wrong-token',
             email: 'owner@example.com',
             password: 'Secret123!',
-            store_name: 'My Store'
+            store_name: 'My Store',
+            country_code: 'US'
           }
         end
 
         run_test!
+      end
+    end
+  end
+
+  path '/api/v3/admin/auth/setup/countries' do
+    get 'List countries for first-run setup' do
+      tags 'Authentication'
+      produces 'application/json'
+      description <<~DESC
+        Countries the store can be set up in, each with the currency and
+        official languages derived from it. Unauthenticated, because the setup
+        screen runs before any credential exists. Returns 404 once any admin
+        user exists.
+      DESC
+
+      response '200', 'countries' do
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          switzerland = data['countries'].find { |country| country['code'] == 'CH' }
+
+          expect(switzerland['currency']).to eq('CHF')
+          expect(switzerland['locales']).to include('de')
+        end
       end
     end
   end

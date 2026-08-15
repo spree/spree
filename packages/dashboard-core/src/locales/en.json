@@ -108,7 +108,8 @@
       "adjust_search_or_filters": "Try adjusting your search or filters",
       "default": "Default",
       "cancel": "Cancel",
-      "empty_value": "—"
+      "empty_value": "—",
+      "retry": "Try again"
     },
     "color_picker": {
       "no_color": "No color"
@@ -599,7 +600,9 @@
       "password_required": "Password is required",
       "first_name_required": "First name is required",
       "last_name_required": "Last name is required",
-      "store_name_required": "Store name is required"
+      "store_name_required": "Store name is required",
+      "country_required": "Country is required",
+      "currency_required": "Currency is required"
     },
     "account": {
       "edit_profile": "Edit Profile",
