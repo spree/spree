@@ -291,9 +291,22 @@ function SetupForm({ token }: { token: string }) {
                 itemToStringValue={(country: SetupCountry | null) => country?.code ?? ''}
                 disabled={countriesQuery.isPending}
               >
+                {/* Chrome reads a text input named like a country, sitting
+                    near name and email fields, as part of an address form and
+                    covers our own list with saved addresses. `autoComplete`
+                    alone is ignored on address-shaped fields, so the name is
+                    scrambled too — the value is held by react-hook-form, not
+                    by the DOM, so nothing depends on it. */}
                 <ComboboxInput
                   id="country_code"
+                  name="setup-country-search"
                   className="min-h-8.5"
+                  autoComplete="off"
+                  autoCorrect="off"
+                  autoCapitalize="off"
+                  spellCheck={false}
+                  data-1p-ignore
+                  data-lpignore="true"
                   onBlur={field.onBlur}
                   aria-invalid={!!errors.country_code || undefined}
                   placeholder={t('admin.fields.setup.country_code.placeholder')}
@@ -371,7 +384,14 @@ function SetupForm({ token }: { token: string }) {
                       beside it. Match the taller one. */}
                   <ComboboxInput
                     id="currency"
+                    name="setup-currency-search"
                     className="min-h-8.5"
+                    autoComplete="off"
+                    autoCorrect="off"
+                    autoCapitalize="off"
+                    spellCheck={false}
+                    data-1p-ignore
+                    data-lpignore="true"
                     onBlur={field.onBlur}
                     aria-invalid={!!errors.currency || undefined}
                     placeholder={t('admin.fields.setup.currency.placeholder')}
