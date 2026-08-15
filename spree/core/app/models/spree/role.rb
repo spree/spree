@@ -2,15 +2,26 @@ module Spree
   class Role < Spree.base_class
     has_prefix_id :role
 
-    include Spree::UniqueName
+    # Deliberately NOT Spree::UniqueName: its uniqueness is global, and the two
+    # audiences are independent vocabularies (see the name validation below).
+    # The normalization it applies is kept verbatim.
+    normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
 
     ADMIN_ROLE = 'admin'
+
+    # Which panel a role may be granted on. Staff roles are assigned on a
+    # store, vendor roles on a marketplace vendor; the two never mix, and a
+    # vendor role may only carry keys the catalog marks vendor-grantable.
+    STAFF_AUDIENCE = 'staff'.freeze
+    VENDOR_AUDIENCE = 'vendor'.freeze
+    AUDIENCES = [STAFF_AUDIENCE, VENDOR_AUDIENCE].freeze
 
     # Grantable capabilities as flat catalog keys (`read_orders`,
     # `write_products`, …) — see Spree::PermissionConfiguration. Stored as a
     # JSON array like Spree::ApiKey#scopes; the `admin` role ignores this and
     # always grants everything.
     attribute :permissions, default: []
+    attribute :audience, default: STAFF_AUDIENCE
 
     # Rows predating the column (or raw inserts) hold NULL — the array
     # contract holds regardless.
@@ -33,7 +44,16 @@ module Spree
     #
     # Validations
     #
+    validates :audience, presence: true, inclusion: { in: AUDIENCES }
+    # Unique per audience rather than globally: a marketplace may hold a staff
+    # "Manager" and a vendor "Manager" at once. Backed by a unique index on
+    # the pair.
+    validates :name, presence: true,
+                     uniqueness: { case_sensitive: false, allow_blank: true,
+                                   scope: [*spree_base_uniqueness_scope, :audience] }
     validate :permissions_must_be_known, if: :permissions_changed?
+    validate :permissions_must_be_grantable_for_audience, if: -> { permissions_changed? || audience_changed? }
+    validate :audience_immutable, on: :update, if: :audience_changed?
     validate :name_immutable, on: :update, if: :name_changed?
     validate :permissions_immutable, on: :update, if: :permissions_changed?
     validate :description_immutable, on: :update, if: :description_changed?
@@ -49,6 +69,9 @@ module Spree
     # Scopes
     #
     scope :admin, -> { where(name: ADMIN_ROLE) }
+    scope :for_audience, ->(audience) { where(audience: audience) }
+    scope :staff, -> { for_audience(STAFF_AUDIENCE) }
+    scope :vendor, -> { for_audience(VENDOR_AUDIENCE) }
 
     #
     # Class Methods
@@ -65,6 +88,16 @@ module Spree
     # @return [Boolean]
     def admin?
       name == ADMIN_ROLE || name_was == ADMIN_ROLE
+    end
+
+    # @return [Boolean]
+    def vendor?
+      audience == VENDOR_AUDIENCE
+    end
+
+    # @return [Boolean]
+    def staff?
+      audience == STAFF_AUDIENCE
     end
 
     # Whether the dashboard may edit or delete this role. False for the admin
@@ -89,6 +122,27 @@ module Spree
     def permissions_must_be_known
       unknown = permissions - Spree.permissions.catalog_keys
       errors.add(:permissions, Spree.t(:role_permissions_unknown, keys: unknown.join(', '))) if unknown.any?
+    end
+
+    # A non-staff role is bounded by the catalog: only resources registered as
+    # grantable to its audience may appear on it, so settings/staff/api_keys
+    # can never reach a seller even through a hand-written seed.
+    def permissions_must_be_grantable_for_audience
+      return if staff? || audience.blank?
+
+      ungrantable = permissions - Spree.permissions.grantable_keys(audience)
+      return if ungrantable.none?
+
+      errors.add(
+        :permissions,
+        Spree.t(:role_permissions_not_grantable_for_audience, audience: audience, keys: ungrantable.join(', '))
+      )
+    end
+
+    # Flipping the audience would silently re-point every existing assignment
+    # at the other panel.
+    def audience_immutable
+      errors.add(:audience, Spree.t(:role_audience_immutable))
     end
 
     def name_immutable

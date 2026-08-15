@@ -197,6 +197,41 @@ RSpec.describe Spree::Api::V3::Admin::BaseController, type: :controller do
         expect(response).to have_http_status(:forbidden)
       end
     end
+
+    # A role held on a non-store resource binds to that resource's store, so
+    # matching membership on store_id alone would admit its holder here. The
+    # stand-in resource plays the part of a marketplace vendor until the Vendor
+    # model lands.
+    context 'with an admin JWT whose only role is on a non-store resource of this store' do
+      let(:panel) { create(:customer_group, store: store) }
+      let(:panel_admin) do
+        create(:admin_user, :without_admin_role).tap do |u|
+          u.role_users.create!(
+            role: create(:role, name: 'panel_orders', audience: 'vendor', permissions: %w[write_orders]),
+            resource: panel,
+            store: store
+          )
+        end
+      end
+      let(:panel_admin_jwt) do
+        Spree::Api::V3::TestingSupport.generate_jwt(
+          panel_admin,
+          audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN
+        )
+      end
+
+      before { request.headers['Authorization'] = "Bearer #{panel_admin_jwt}" }
+
+      it 'binds the assignment to this store (else the check below proves nothing)' do
+        expect(panel_admin.role_users.where(store: store)).to exist
+      end
+
+      it 'returns 403 forbidden' do
+        get :index
+
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
   end
 
   describe 'authentication priority (secret key vs JWT)' do

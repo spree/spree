@@ -22,7 +22,7 @@ module Spree
 
             if result.success?
               user = result.value
-              refresh_token = Spree::RefreshToken.create_for(user, request_env: {
+              refresh_token = Spree::RefreshToken.create_for(user, audience: JWT_AUDIENCE_STORE, request_env: {
                 ip_address: request.remote_ip,
                 user_agent: request.user_agent&.truncate(255)
               })

@@ -3,9 +3,11 @@ FactoryBot.define do
     association :user, factory: :user
     user_type { user.class.to_s }
     expires_at { Spree::RefreshToken.default_expiry.from_now }
+    audience { 'store_api' }
 
     trait :for_admin do
       association :user, factory: :admin_user
+      audience { 'admin_api' }
     end
 
     trait :expired do

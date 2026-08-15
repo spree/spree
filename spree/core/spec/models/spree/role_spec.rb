@@ -49,6 +49,68 @@ describe Spree::Role do
     end
   end
 
+  describe '#audience' do
+    it 'defaults to staff' do
+      expect(build(:role).audience).to eq('staff')
+      expect(build(:role)).to be_staff
+    end
+
+    it 'rejects a blank audience' do
+      expect(build(:role, audience: nil)).not_to be_valid
+    end
+
+    it 'rejects an unknown audience' do
+      expect(build(:role, audience: 'wizard')).not_to be_valid
+    end
+
+    it 'cannot be changed once the role exists' do
+      role = create(:role, audience: 'staff')
+      role.audience = 'vendor'
+
+      expect(role).not_to be_valid
+      expect(role.errors[:audience]).to be_present
+    end
+
+    it 'allows the same name in each audience' do
+      create(:role, name: 'Manager', audience: 'staff')
+
+      expect(build(:role, name: 'Manager', audience: 'vendor')).to be_valid
+    end
+
+    it 'still rejects a duplicate name within one audience' do
+      create(:role, name: 'Manager', audience: 'vendor')
+
+      expect(build(:role, name: 'Manager', audience: 'vendor')).not_to be_valid
+    end
+
+    it 'scopes roles by audience' do
+      staff_role = create(:role, audience: 'staff')
+      vendor_role = create(:role, audience: 'vendor')
+
+      expect(Spree::Role.staff).to include(staff_role)
+      expect(Spree::Role.staff).not_to include(vendor_role)
+      expect(Spree::Role.vendor).to include(vendor_role)
+    end
+  end
+
+  describe 'audience-bounded permissions' do
+    it 'allows a vendor role to hold vendor-grantable keys' do
+      expect(build(:role, audience: 'vendor', permissions: %w[write_products write_orders])).to be_valid
+    end
+
+    it 'refuses operator-only keys on a vendor role' do
+      role = build(:role, audience: 'vendor', permissions: %w[write_products write_settings])
+
+      expect(role).not_to be_valid
+      expect(role.errors[:permissions].join).to include('write_settings')
+      expect(role.errors[:permissions].join).not_to include('write_products')
+    end
+
+    it 'leaves staff roles unbounded' do
+      expect(build(:role, audience: 'staff', permissions: %w[write_settings write_staff])).to be_valid
+    end
+  end
+
   describe 'admin role protection' do
     let(:admin_role) { Spree::Role.default_admin_role }
 

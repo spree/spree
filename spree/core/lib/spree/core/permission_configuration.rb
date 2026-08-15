@@ -20,6 +20,11 @@ module Spree
     READ_PREFIX = 'read_'.freeze
     WRITE_PREFIX = 'write_'.freeze
 
+    # Back-office staff are the baseline audience: every resource is grantable
+    # to them, so registrations name only the *additional* audiences they open
+    # up (see Spree::Role::AUDIENCES for the vocabulary).
+    STAFF_AUDIENCE = :staff
+
     # A registered catalog resource. Yields one or two grantable keys and maps
     # them to the CanCanCan subjects they cover.
     class Resource
@@ -30,16 +35,33 @@ module Spree
       # @param subjects [Proc, Array] CanCanCan subjects covered by this
       #   resource; pass a lambda so model classes resolve lazily
       # @param write [Boolean] whether a `write_<name>` key exists
-      def initialize(name:, group:, subjects:, write: true)
+      # @param audiences [Array<Symbol>] the non-staff audiences whose roles may
+      #   hold this resource's keys
+      def initialize(name:, group:, subjects:, write: true, audiences: [])
         @name = name.to_sym
         @group = group.to_sym
         @subjects = subjects
         @write = write
+        @audiences = (Array(audiences).map(&:to_sym) | [STAFF_AUDIENCE]).freeze
       end
 
       # @return [Boolean]
       def write?
         @write
+      end
+
+      # @return [Array<Symbol>] every audience this resource is grantable to,
+      #   staff included
+      def audiences
+        @audiences
+      end
+
+      # @param audience [Symbol, String, nil]
+      # @return [Boolean]
+      def grantable_to?(audience)
+        return false if audience.blank?
+
+        @audiences.include?(audience.to_s.to_sym)
       end
 
       # @return [Array<Class, Symbol>]
@@ -76,13 +98,20 @@ module Spree
     #   `:customers`, `:settings`, `:access`, `:analytics` — or your own)
     # @param subjects [Proc, Array] CanCanCan subjects the keys grant
     # @param write [Boolean]
+    # @param audiences [Array<Symbol>] the audiences beyond staff whose roles
+    #   may hold these keys (`%i[vendor]`). Empty by default — opening a
+    #   resource to another audience exposes it to a principal outside the
+    #   store's own staff, so it is a deliberate act. Never open `settings`,
+    #   `staff` or `api_keys`.
     # @return [Resource]
-    def register_resource(name, group:, subjects:, write: true)
+    def register_resource(name, group:, subjects:, write: true, audiences: [])
       # `read_all` / `write_all` are the API-key wildcard aliases — a resource
       # named `all` would silently mint keys that grant the whole catalog.
       raise ArgumentError, "the permission resource name 'all' is reserved" if name.to_s == 'all'
 
-      resource = Resource.new(name: name, group: group, subjects: subjects, write: write)
+      resource = Resource.new(
+        name: name, group: group, subjects: subjects, write: write, audiences: audiences
+      )
       @resources[resource.name] = resource
     end
 
@@ -133,6 +162,22 @@ module Spree
     # @return [Array<String>] every grantable key, in registration order
     def catalog_keys
       resources.flat_map(&:keys)
+    end
+
+    # Resources grantable to one audience. An unknown audience simply matches
+    # nothing, so a panel that does not exist yet reads as granting nothing
+    # rather than raising.
+    #
+    # @param audience [Symbol, String] `:staff`, `:vendor`, …
+    # @return [Array<Resource>] in registration order
+    def grantable_resources(audience)
+      resources.select { |resource| resource.grantable_to?(audience) }
+    end
+
+    # @param audience [Symbol, String]
+    # @return [Array<String>] every key that audience may hold, in catalog order
+    def grantable_keys(audience)
+      grantable_resources(audience).flat_map(&:keys)
     end
 
     # @return [Array<Entry>] every grantable key with metadata, in catalog order
@@ -229,20 +274,20 @@ module Spree
     # are lambdas so model classes resolve at activation, not load, time.
     # rubocop:disable Metrics/MethodLength
     def register_default_resources
-      register_resource(:orders, group: :orders, subjects: -> {
+      register_resource(:orders, group: :orders, audiences: %i[vendor], subjects: -> {
         [Spree::Order, Spree::LineItem, Spree::TaxLine, Spree::Discount, Spree::Fee,
          Spree::Return, Spree::Exchange, Spree::Claim, Spree::TaxIdentifier,
          Spree::CustomField]
       })
       register_resource(:payments, group: :orders, subjects: -> { [Spree::Payment] })
-      register_resource(:fulfillments, group: :orders, subjects: -> { [Spree::Fulfillment] })
+      register_resource(:fulfillments, group: :orders, audiences: %i[vendor], subjects: -> { [Spree::Fulfillment] })
       register_resource(:refunds, group: :orders, subjects: -> { [Spree::Refund] })
       register_resource(:gift_cards, group: :orders, subjects: -> {
         [Spree::GiftCard, Spree::GiftCardBatch]
       })
       register_resource(:store_credits, group: :orders, subjects: -> { [Spree::StoreCredit] })
 
-      register_resource(:products, group: :catalog, subjects: -> {
+      register_resource(:products, group: :catalog, audiences: %i[vendor], subjects: -> {
         [Spree::Product, Spree::ProductType, Spree::Variant, Spree::OptionType,
          Spree::OptionValue, Spree::Price, Spree::PriceList, Spree::PriceRule,
          Spree::Asset, Spree::ProductPublication, Spree::CustomField]
@@ -253,7 +298,7 @@ module Spree
       register_resource(:collections, group: :catalog, subjects: -> {
         [Spree::Collection, Spree::ProductCollection, Spree::CollectionRule]
       })
-      register_resource(:stock, group: :catalog, subjects: -> {
+      register_resource(:stock, group: :catalog, audiences: %i[vendor], subjects: -> {
         [Spree::StockItem, Spree::StockLocation, Spree::StockMovement,
          Spree::StockTransfer, Spree::StockReservation]
       })
@@ -289,7 +334,8 @@ module Spree
         [Spree.admin_user_class, Spree::Invitation, Spree::Role, Spree::RoleUser]
       })
 
-      register_resource(:dashboard, group: :analytics, subjects: -> { [:dashboard] }, write: false)
+      register_resource(:dashboard, group: :analytics, subjects: -> { [:dashboard] },
+                                    write: false, audiences: %i[vendor])
     end
     # rubocop:enable Metrics/MethodLength
   end

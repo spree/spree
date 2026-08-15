@@ -24,15 +24,34 @@ module Spree
     # @return [Spree::Store, nil] the current store
     attr_reader :store
 
+    # @return [Object] the resource whose role assignments this ability reads —
+    #   the store for the admin panel, a Spree::Vendor for a vendor panel
+    attr_reader :resource
+
     # @return [Array<String>] the expanded catalog keys this ability activated
     #   (empty for non-staff principals). Feeds `/me` and the admin key gate.
     attr_reader :permission_keys
 
+    # @param user [Object] the principal
+    # @param options [Hash]
+    # @option options [Spree::Store] :store the current store
+    # @option options [Object] :resource the resource whose assignments grant
+    #   capability — defaults to the store. Pass a Spree::Vendor to build the
+    #   ability of a vendor panel from that vendor's own role assignments.
+    #
+    #   **The ability answers capability, never tenancy.** A vendor holding
+    #   `write_orders` gets `can :manage, Spree::Order` — the model class, not
+    #   that vendor's subset — exactly as a store admin does. Which records a
+    #   panel may touch is decided by scope-fetching in the controller
+    #   (`current_vendor.orders`), the same way store isolation works on the
+    #   admin branch. A panel controller that authorizes with `accessible_by`
+    #   or `authorize!` and does NOT scope-fetch is reading store-wide.
     def initialize(user, options = {})
       alias_cancan_delete_action
 
       @user = user || Spree.customer_class.new
       @store = options[:store] || Spree::Current.store
+      @resource = options[:resource] || @store
       @permission_keys = []
 
       apply_staff_permissions if staff_principal?
@@ -70,31 +89,64 @@ module Spree
     def apply_staff_permissions
       roles = staff_roles
 
-      if roles.any? { |role| role.name == Spree::Role::ADMIN_ROLE } || implicit_admin?(roles)
+      if full_access?(roles)
         activate_full_access
       else
         apply_staff_baseline
-        Spree.permissions.expand_keys(roles.flat_map(&:permissions)).each do |key|
-          activate_permission(key)
-        end
+        grantable_keys_for(roles).each { |key| activate_permission(key) }
       end
     end
 
-    # The user's store-admin roles on the current store.
+    # Every key the roles ask for, bounded at activation by what each role's
+    # audience may hold. `Spree::Role` validates the same bound on write, but a
+    # catalog that changes after the role was saved would leave stale keys
+    # behind — the write-time check is a UX affordance, this is the boundary.
     #
-    # Assignments are matched on the store AND on a store resource: a
-    # `RoleUser` scoped to a non-store resource (a marketplace vendor, say)
-    # binds to that resource's store, so matching on `store_id` alone would
-    # let a vendor's own staff role grant store-wide admin capability. Those
-    # assignments belong to their own panel's ability, not this one.
+    # @param roles [Array<Spree::Role>]
+    # @return [Array<String>]
+    def grantable_keys_for(roles)
+      roles.flat_map do |role|
+        keys = Spree.permissions.expand_keys(role.permissions)
+        next keys if role.staff?
+
+        keys & Spree.permissions.grantable_keys(role.audience)
+      end.uniq
+    end
+
+    # The super-role and the implicit-admin fallback are store-panel concepts:
+    # `admin` means "everything in this store", which is not a grant another
+    # panel's roles can carry. Outside the store panel, capability only ever
+    # comes from catalog keys.
+    def full_access?(roles)
+      return false unless store_resource?
+
+      roles.any? { |role| role.name == Spree::Role::ADMIN_ROLE } || implicit_admin?(roles)
+    end
+
+    # @return [Boolean] whether this ability is being built for the store's own
+    #   back office, as opposed to another panel (a marketplace vendor's)
+    def store_resource?
+      @resource.is_a?(Spree::Store)
+    end
+
+    # The user's roles on the ability's resource.
+    #
+    # Assignments are matched on the store AND on the resource: a `RoleUser`
+    # scoped to a non-store resource (a marketplace vendor, say) binds to that
+    # resource's store, so matching on `store_id` alone would let a vendor's
+    # own role grant store-wide capability. Each panel reads only its own
+    # assignments.
     #
     # @return [Array<Spree::Role>]
     def staff_roles
-      return [] unless @user.respond_to?(:role_users)
+      return @staff_roles if defined?(@staff_roles)
 
-      @staff_roles ||= @user.role_users.
-                       where(store: @store, resource_type: Spree::Store.to_s).
-                       includes(:role).map(&:role)
+      @staff_roles =
+        if @user.respond_to?(:role_users) && @resource.present?
+          @user.role_users.where(store: @store, resource: @resource).includes(:role).map(&:role)
+        else
+          []
+        end
     end
 
     # Backward-compatible fallback for principals with no role rows whose
@@ -113,10 +165,19 @@ module Spree
 
     # Reference data every staff member can read regardless of keys — address
     # forms need countries/states, and the dashboard shell reads the store.
+    #
+    # The store grant is unrestricted only for the store's own back office.
+    # Another panel reads the one store it operates under and no other, so a
+    # marketplace's vendors cannot enumerate its sibling stores.
     def apply_staff_baseline
       can :read, Spree::Country
       can :read, Spree::State
-      can :read, Spree::Store
+
+      if store_resource? || @store.nil?
+        can :read, Spree::Store
+      else
+        can :read, Spree::Store, id: @store.id
+      end
     end
 
   end

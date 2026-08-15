@@ -208,7 +208,7 @@ RSpec.describe Spree::Api::V3::Admin::AuthController, type: :controller do
   end
 
   describe 'POST #refresh' do
-    let(:refresh_token) { create(:refresh_token, user: admin_user, ip_address: '127.0.0.1', user_agent: 'test') }
+    let(:refresh_token) { create(:refresh_token, :for_admin, user: admin_user, ip_address: '127.0.0.1', user_agent: 'test') }
 
     context 'with a valid refresh cookie' do
       before do
@@ -261,10 +261,28 @@ RSpec.describe Spree::Api::V3::Admin::AuthController, type: :controller do
         expect(set_cookie_for('spree_admin_refresh_token')).to include('=;')
       end
     end
+
+    # A token is redeemable only on the surface that minted it — otherwise one
+    # surface's refresh token buys another surface's access token.
+    context 'with a refresh token minted for another audience' do
+      let(:foreign_token) do
+        create(:refresh_token, user: admin_user, audience: 'store_api', ip_address: '127.0.0.1', user_agent: 'test')
+      end
+
+      it 'returns 401 invalid_refresh_token and leaves the row intact' do
+        request.cookie_jar.signed[refresh_cookie_name] = foreign_token.token
+
+        post :refresh
+
+        expect(response).to have_http_status(:unauthorized)
+        expect(json_response['error']['code']).to eq('invalid_refresh_token')
+        expect(foreign_token.reload).to be_present
+      end
+    end
   end
 
   describe 'POST #logout' do
-    let(:refresh_token) { create(:refresh_token, user: admin_user, ip_address: '127.0.0.1', user_agent: 'test') }
+    let(:refresh_token) { create(:refresh_token, :for_admin, user: admin_user, ip_address: '127.0.0.1', user_agent: 'test') }
 
     context 'with a valid refresh cookie' do
       before do
@@ -287,6 +305,21 @@ RSpec.describe Spree::Api::V3::Admin::AuthController, type: :controller do
         post :logout
 
         expect(response).to have_http_status(:no_content)
+      end
+    end
+
+    context 'with a refresh token minted for another audience' do
+      let(:foreign_token) do
+        create(:refresh_token, user: admin_user, audience: 'store_api', ip_address: '127.0.0.1', user_agent: 'test')
+      end
+
+      it 'leaves the other surface session alone' do
+        request.cookie_jar.signed[refresh_cookie_name] = foreign_token.token
+
+        post :logout
+
+        expect(response).to have_http_status(:no_content)
+        expect(foreign_token.reload).to be_present
       end
     end
   end

@@ -36,7 +36,7 @@ module Spree
 
             if result.success?
               user = result.value
-              refresh_token = Spree::RefreshToken.create_for(user, request_env: request_env_for_token)
+              refresh_token = Spree::RefreshToken.create_for(user, audience: JWT_AUDIENCE_ADMIN, request_env: request_env_for_token)
               set_refresh_cookie(refresh_token)
               render json: auth_response(user)
             else
@@ -87,7 +87,9 @@ module Spree
               return redirect_to_dashboard(error: callback_error_code(strategy))
             end
 
-            set_refresh_cookie(Spree::RefreshToken.create_for(result.value, request_env: request_env_for_token))
+            set_refresh_cookie(
+              Spree::RefreshToken.create_for(result.value, audience: JWT_AUDIENCE_ADMIN, request_env: request_env_for_token)
+            )
             redirect_to_dashboard
           end
 
@@ -103,7 +105,9 @@ module Spree
               )
             end
 
-            refresh_token = Spree::RefreshToken.active.find_by(token: refresh_token_value)
+            # Narrowed by audience: a token minted on another surface must not
+            # be exchangeable for an admin access token here.
+            refresh_token = Spree::RefreshToken.active.for_audience(JWT_AUDIENCE_ADMIN).find_by(token: refresh_token_value)
 
             if refresh_token.nil?
               clear_refresh_cookie
@@ -124,7 +128,11 @@ module Spree
           # POST /api/v3/admin/auth/logout
           def logout
             refresh_token_value = refresh_token_from_cookie
-            Spree::RefreshToken.active.find_by(token: refresh_token_value)&.destroy if refresh_token_value.present?
+            if refresh_token_value.present?
+              # No `active` scope — revoking an already-expired token should
+              # still delete the row rather than leave it for the sweeper.
+              Spree::RefreshToken.for_audience(JWT_AUDIENCE_ADMIN).find_by(token: refresh_token_value)&.destroy
+            end
 
             clear_refresh_cookie
             head :no_content

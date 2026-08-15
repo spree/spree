@@ -25,6 +25,17 @@ RSpec.describe Spree::Api::V3::Admin::RolesController, type: :controller do
       expect(support['users_count']).to eq(0)
     end
 
+    # The staff Roles page feeds the staff role picker, so a vendor role listed
+    # here would be assignable to store staff.
+    it 'omits roles from another audience' do
+      create(:role, name: 'vendor_manager', audience: 'vendor', permissions: %w[write_orders])
+
+      get :index, as: :json
+
+      names = json_response['data'].map { |r| r['name'] }
+      expect(names).not_to include('vendor_manager')
+    end
+
     it 'reports the admin role as immutable with the full catalog' do
       get :index, as: :json
 

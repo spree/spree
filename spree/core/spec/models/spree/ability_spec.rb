@@ -191,6 +191,62 @@ describe Spree::Ability, type: :model do
       end
     end
 
+    # A non-store resource stands in for a marketplace vendor until the Vendor
+    # model lands: what matters is that the assignment hangs off something
+    # other than the store, on the store's own turf.
+    context 'with a role held on a non-store resource' do
+      let(:panel) { create(:customer_group) }
+
+      before do
+        admin.role_users.create!(
+          role: create(:role, name: 'panel_orders', audience: 'vendor', permissions: %w[write_orders]),
+          resource: panel,
+          store: store
+        )
+      end
+
+      it 'is invisible to the store ability' do
+        expect(staff_ability).not_to be_able_to :read, Spree::Order.new
+        expect(staff_ability.permission_keys).to be_empty
+      end
+
+      # Capability, not tenancy: the grant is on the model class, as it is for
+      # a store admin. Which orders the panel may touch is decided by
+      # scope-fetching in its controllers, never here.
+      it 'activates when the ability is built for that resource' do
+        panel_ability = Spree::Ability.new(admin, store: store, resource: panel)
+
+        expect(panel_ability).to be_able_to :manage, Spree::Order.new
+        expect(panel_ability.permission_keys).to eq(%w[read_orders write_orders])
+      end
+
+      it 'grants only keys the role\'s audience may hold' do
+        role = Spree::Role.find_by(name: 'panel_orders')
+        role.update_column(:permissions, %w[write_orders write_settings])
+
+        panel_ability = Spree::Ability.new(admin, store: store, resource: panel)
+
+        expect(panel_ability.permission_keys).to eq(%w[read_orders write_orders])
+        expect(panel_ability).not_to be_able_to :read, Spree::TaxCategory.new
+      end
+
+      it 'reads only the store it operates under' do
+        other_store = create(:store)
+        panel_ability = Spree::Ability.new(admin, store: store, resource: panel)
+
+        expect(panel_ability).to be_able_to :read, store
+        expect(panel_ability).not_to be_able_to :read, other_store
+      end
+
+      it 'does not carry the store admin role onto the resource' do
+        admin.role_users.create!(role: Spree::Role.default_admin_role, resource: store)
+        panel_ability = Spree::Ability.new(admin, store: store, resource: panel)
+
+        expect(panel_ability).not_to be_able_to :manage, :all
+        expect(panel_ability.permission_keys).to eq(%w[read_orders write_orders])
+      end
+    end
+
     context 'as admin on one store and limited staff on another' do
       let(:store_b) { create(:store) }
 

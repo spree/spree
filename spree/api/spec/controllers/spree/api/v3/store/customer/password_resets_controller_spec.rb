@@ -111,8 +111,21 @@ RSpec.describe Spree::Api::V3::Store::Customer::PasswordResetsController, type: 
         expect(json_response['user']['email']).to eq(user.email)
       end
 
+      it 'mints the fresh session for the store surface' do
+        patch :update, params: {
+          id: reset_token,
+          password: 'newsecurepassword',
+          password_confirmation: 'newsecurepassword'
+        }
+
+        expect(response).to have_http_status(:ok)
+        expect(Spree::RefreshToken.where(user: user).last.audience).to eq('store_api')
+      end
+
       it 'revokes every pre-existing session, keeping only the fresh one' do
-        stolen_token = Spree::RefreshToken.create_for(user, request_env: {})
+        stolen_token = Spree::RefreshToken.create_for(
+          user, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_STORE, request_env: {}
+        )
 
         patch :update, params: {
           id: reset_token,

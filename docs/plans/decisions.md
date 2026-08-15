@@ -1,3 +1,39 @@
+## 2026-08-16: Grant audiences are a vocabulary, not a vendor flag
+
+Phase 0 of `6.0-multi-vendor-marketplace.md`. Damian's call, after
+re-examining the vendor principal question against a primary-source read of a
+leading open-source marketplace platform.
+
+**The principal decision stands, and the survey explains why it differs
+elsewhere.** The surveyed platform separates *credential* from *principal*: a
+standalone identity record holds the password, and it points at either an
+operator principal or a seller principal, with the token naming which one is
+acting. Spree has no such split — `Spree::AdminUser` **is** the credential
+(`has_secure_password`, lockout, password policy, reset tokens, SSO identity
+linking). Reproducing that shape means either a second copy of the whole auth
+stack or rebuilding the shipped one. So Decision 10 holds: one `AdminUser`,
+several hats, the surface distinguished by JWT audience. Worth noting the
+convergence — that platform's per-request seller header and its token-level
+actor tagging are the same two mechanisms Decision 10 specifies.
+
+**Where the boolean was wrong.** The first cut marked catalog resources with
+`vendor_grantable: true`. But `Role#audience` is already a *string* vocabulary
+(`staff` | `vendor`), and the B2B plan anticipates company roles as a separate
+future system — so the catalog would have needed a second boolean the moment a
+third panel appeared, then a third. The catalog now carries `audiences:` — the
+audiences *beyond staff* a resource opens up, staff being the implicit
+baseline every resource grants — and `grantable_keys(audience)` replaces the
+vendor-specific reader. An unregistered audience returns an empty set rather
+than raising, so a panel that does not exist yet reads as granting nothing.
+The vocabulary itself stays a constant on `Spree::Role` rather than a
+registry: a third audience is a one-line change, and nothing has asked to
+register one from outside.
+
+**Audience is immutable once a role exists**, since flipping it would
+re-point every existing assignment at the other panel, and a non-staff role
+may only hold keys its audience is granted — so `settings`/`staff`/`api_keys`
+cannot reach a seller even through a hand-written seed.
+
 ## 2026-08-15: Country-derived store defaults are born from the merchant's answer, not seeded and rewritten
 
 Amends the 2026-08-13 first-run setup entry. Damian's call, after

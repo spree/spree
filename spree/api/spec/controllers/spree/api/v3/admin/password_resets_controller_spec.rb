@@ -57,7 +57,9 @@ RSpec.describe Spree::Api::V3::Admin::PasswordResetsController, type: :controlle
     end
 
     it 'revokes every pre-existing session, keeping only the fresh one' do
-      stolen_token = Spree::RefreshToken.create_for(admin_user, request_env: {})
+      stolen_token = Spree::RefreshToken.create_for(
+        admin_user, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN, request_env: {}
+      )
       token = admin_user.generate_token_for(:password_reset)
 
       patch :update, params: { id: token, password: 'new-secret-123', password_confirmation: 'new-secret-123' }
@@ -65,6 +67,17 @@ RSpec.describe Spree::Api::V3::Admin::PasswordResetsController, type: :controlle
       expect(response).to have_http_status(:ok)
       expect(Spree::RefreshToken.exists?(stolen_token.id)).to be(false)
       expect(Spree::RefreshToken.where(user: admin_user).count).to eq(1)
+    end
+
+    # The auto-sign-in is worthless if the token it mints cannot be redeemed —
+    # the refresh endpoint only accepts its own audience.
+    it 'mints the fresh session for the admin surface' do
+      token = admin_user.generate_token_for(:password_reset)
+
+      patch :update, params: { id: token, password: 'new-secret-123', password_confirmation: 'new-secret-123' }
+
+      expect(response).to have_http_status(:ok)
+      expect(Spree::RefreshToken.where(user: admin_user).last.audience).to eq('admin_api')
     end
 
     it 'rejects an invalid token' do

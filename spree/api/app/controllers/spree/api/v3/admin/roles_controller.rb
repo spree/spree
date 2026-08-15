@@ -38,8 +38,12 @@ module Spree
             Spree.api.admin_role_serializer
           end
 
+          # Staff roles only. Vendor-audience roles are managed from the
+          # marketplace surface — listing them here would put them in the staff
+          # role picker, where assigning one would bind a vendor role to a
+          # store resource.
           def scope
-            Spree::Role.accessible_by(current_ability, :show)
+            Spree::Role.staff.accessible_by(current_ability, :show)
           end
 
           def collection_includes

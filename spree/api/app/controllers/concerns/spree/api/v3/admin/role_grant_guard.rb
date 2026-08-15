@@ -34,10 +34,27 @@ module Spree
             roles = Spree::Role.where(id: role_ids.map(&:to_s)).to_a
             return false if roles.empty?
 
+            return true if reject_foreign_audience_grant!(roles)
             return true if reject_admin_role_grant!(roles)
             return true if reject_privilege_escalating_grant!(roles)
 
             false
+          end
+
+          # Assignments made here bind to a store resource, so only staff roles
+          # belong on them. A vendor role assigned to store staff would carry
+          # its keys into the store's own back office.
+          #
+          # @param roles [Array<Spree::Role>]
+          # @return [Boolean] true if the request was rejected
+          def reject_foreign_audience_grant!(roles)
+            foreign = roles.reject(&:staff?)
+            return false if foreign.empty?
+
+            deny_role_grant!(
+              "These roles cannot be assigned to store staff: #{foreign.map(&:name).join(', ')}",
+              details: { foreign_audience_roles: foreign.map(&:name) }
+            )
           end
 
           # Rejects granting permission keys beyond the caller's own — used by

@@ -75,6 +75,18 @@ RSpec.describe Spree::Api::V3::Admin::InvitationsController, type: :controller d
         expect(response).to have_http_status(:created)
         expect(Spree::Invitation.last.role).to eq(admin_role)
       end
+
+      # Invitations here bind to a store resource, so a vendor-audience role
+      # would carry its keys into the store's own back office.
+      it 'forbids inviting store staff into a role from another audience' do
+        vendor_role = create(:role, name: 'vendor_manager', audience: 'vendor', permissions: %w[write_orders])
+
+        expect {
+          post :create, params: { email: 'seller@example.com', role_id: vendor_role.prefixed_id }, as: :json
+        }.not_to change(Spree::Invitation, :count)
+
+        expect(response).to have_http_status(:forbidden)
+      end
     end
   end
 end
