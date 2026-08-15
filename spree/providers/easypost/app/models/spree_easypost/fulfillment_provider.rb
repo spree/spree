@@ -126,25 +126,12 @@ module SpreeEasyPost
       nil
     end
 
-    # Adds the customs declaration and duty terms when the parcel crosses a
-    # border; a domestic shipment is created exactly as before.
+    # Same builder the rate provider uses, so a re-quote is priced and labelled
+    # under the same terms as the original quote.
     def shipment_params(integration, fulfillment, address)
-      package = fulfillment.to_package
-      params = {
-        from_address: address_params(fulfillment.stock_location),
-        to_address: address_params(address),
-        parcel: SpreeEasyPost.parcel_params(package, fulfillment.order&.store)
-      }
-
-      customs_info = SpreeEasyPost.customs_info_params(
-        package, fulfillment.stock_location, address, integration
+      SpreeEasyPost.shipment_params(
+        fulfillment.to_package, fulfillment.stock_location, address, integration, fulfillment.order&.store
       )
-      return params if customs_info.nil?
-
-      params[:customs_info] = customs_info
-      incoterm = integration.preferred_incoterm.presence
-      params[:options] = { incoterm: incoterm } if incoterm.present?
-      params
     end
 
     def remember_purchase(fulfillment, shipment)
@@ -155,10 +142,6 @@ module SpreeEasyPost
           'easypost_tracker_url' => shipment.tracker&.public_url
         )
       )
-    end
-
-    def address_params(source)
-      SpreeEasyPost.address_params(source)
     end
 
     def report(error, fulfillment)

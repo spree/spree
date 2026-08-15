@@ -42,8 +42,26 @@ RSpec.describe 'SpreeEasyPost customs params' do
       params = SpreeEasyPost.customs_info_params(package, origin, foreign_destination)
 
       expect(params[:contents_type]).to eq('merchandise')
-      expect(params[:customs_certify]).to be true
       expect(params[:customs_items].size).to eq(1)
+    end
+
+    # EasyPost requires a signer whenever the declaration is certified, so an
+    # integration without one must not certify — or every international quote
+    # would fail for the default configuration.
+    it 'does not certify the declaration when no signer is configured' do
+      params = SpreeEasyPost.customs_info_params(package, origin, foreign_destination)
+
+      expect(params).not_to have_key(:customs_certify)
+      expect(params).not_to have_key(:customs_signer)
+    end
+
+    it 'certifies the declaration once a signer is named' do
+      integration = SpreeEasyPost::Integration.new(store: store, preferences: { customs_signer: 'Jane Doe' })
+
+      params = SpreeEasyPost.customs_info_params(package, origin, foreign_destination, integration)
+
+      expect(params[:customs_certify]).to be true
+      expect(params[:customs_signer]).to eq('Jane Doe')
     end
 
     it 'carries the variant classification when the merchant recorded it' do
@@ -91,6 +109,19 @@ RSpec.describe 'SpreeEasyPost customs params' do
       expect(integration.errors[:preferred_incoterm]).to be_present
     end
 
+    it 'rejects a contents type EasyPost would refuse' do
+      integration = SpreeEasyPost::Integration.new(store: store, preferences: { customs_contents_type: 'Merchandise' })
+
+      expect(integration).not_to be_valid
+      expect(integration.errors[:preferred_customs_contents_type]).to be_present
+    end
+
+    # `other` demands a free-text explanation nothing here supplies, so it is
+    # deliberately not offered.
+    it 'does not offer the contents type that needs an explanation' do
+      expect(SpreeEasyPost::Integration::CUSTOMS_CONTENTS_TYPES).not_to include('other')
+    end
+
     it 'declares the line value and quantity' do
       line_item = order.line_items.first
 
@@ -98,6 +129,57 @@ RSpec.describe 'SpreeEasyPost customs params' do
 
       expect(item[:quantity]).to eq(line_item.quantity)
       expect(item[:value]).to eq((line_item.price.to_f * line_item.quantity).round(2))
+    end
+  end
+
+  describe '.eel_pfc_for' do
+    let(:cheap) { [{ value: 100.0, currency: 'USD' }] }
+    let(:dear) { [{ value: 3_000.0, currency: 'USD' }] }
+
+    it 'claims the US export exemption for a low-value US-origin shipment' do
+      expect(SpreeEasyPost.eel_pfc_for(cheap, origin)).to eq('NOEEI 30.37(a)')
+    end
+
+    # Above the filing threshold the merchant owes an export filing of their
+    # own; claiming the exemption for them would be a misdeclaration.
+    it 'claims nothing above the filing threshold' do
+      expect(SpreeEasyPost.eel_pfc_for(dear, origin)).to be_nil
+    end
+
+    it 'claims nothing for a non-US origin — the code is a US regulation' do
+      german_origin = create(:stock_location, country: Spree::Country.by_iso('DE'))
+
+      expect(SpreeEasyPost.eel_pfc_for(cheap, german_origin)).to be_nil
+    end
+
+    # The threshold is a dollar figure; a euro declaration cannot be compared
+    # against it without a conversion this code does not attempt.
+    it 'claims nothing when the declaration is not in US dollars' do
+      in_euros = [{ value: 100.0, currency: 'EUR' }]
+
+      expect(SpreeEasyPost.eel_pfc_for(in_euros, origin)).to be_nil
+    end
+  end
+
+  describe '.shipment_params' do
+    let(:integration) do
+      SpreeEasyPost::Integration.new(store: store, preferences: { incoterm: 'DDP', customs_signer: 'Jane Doe' })
+    end
+
+    it 'sets no customs form or duty terms on a domestic shipment' do
+      params = SpreeEasyPost.shipment_params(package, origin, domestic_destination, integration, store)
+
+      expect(params).not_to have_key(:customs_info)
+      expect(params).not_to have_key(:options)
+    end
+
+    # The incoterm is a property of the shipment fixed at creation, so it has
+    # to ride on the quote — a label bought against that quote cannot add it.
+    it 'puts the configured incoterm on an international shipment at creation' do
+      params = SpreeEasyPost.shipment_params(package, origin, foreign_destination, integration, store)
+
+      expect(params[:customs_info]).to be_present
+      expect(params[:options]).to eq(incoterm: 'DDP')
     end
   end
 end

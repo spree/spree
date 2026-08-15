@@ -149,6 +149,32 @@ RSpec.shared_examples 'a taxation host' do
       expect(record.pre_tax_total).to eq(7)
     end
   end
+
+  describe '#taxable_items' do
+    # Both hosts own fees through the exactly-one owner FK, so the factory
+    # needs the matching key.
+    def owner_attributes
+      record.is_a?(Spree::Cart) ? { cart: record, order: nil } : { order: record }
+    end
+
+    it 'withholds customs duties while keeping every other fee' do
+      create(:fee, owner_attributes.merge(amount: 20, kind: 'duty', label: 'Import duty'))
+      surcharge = create(:fee, owner_attributes.merge(amount: 5, kind: 'surcharge', label: 'Handling'))
+
+      expect(record.taxable_items.grep(Spree::Fee)).to contain_exactly(surcharge)
+    end
+
+    # The associations load empty at record creation, and recalculation asks
+    # for taxable items right after adjusters have written fees — so this must
+    # read fresh, not from the cache, on both hosts.
+    it 'sees fees written after the association was first loaded' do
+      record.fees.load
+
+      late = create(:fee, owner_attributes.merge(amount: 5, kind: 'handling', label: 'Late fee'))
+
+      expect(record.taxable_items).to include(late)
+    end
+  end
 end
 
 RSpec.describe Spree::Purchase::Taxation do

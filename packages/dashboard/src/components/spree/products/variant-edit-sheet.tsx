@@ -297,6 +297,7 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
                   control={form.control}
                   render={({ field }) => (
                     <CountryCombobox
+                      id={`variant-${variantIndex}-country-of-origin`}
                       value={field.value ?? null}
                       onValueChange={(iso) => field.onChange(iso || null)}
                     />

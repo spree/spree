@@ -124,29 +124,12 @@ module SpreeEasyPost
       )
     end
 
-    # International rates depend on the declared contents, so the customs
-    # form goes on the quote as well as the label.
+    # Built by the shared helper so a label bought against this quote carries
+    # exactly the customs form and duty terms the quote was priced with.
     def shipment_params(package)
-      destination = package.owner.ship_address
-      params = {
-        from_address: address_params(package.stock_location),
-        to_address: address_params(destination),
-        parcel: parcel_params(package)
-      }
-
-      customs_info = SpreeEasyPost.customs_info_params(
-        package, package.stock_location, destination, integration
+      SpreeEasyPost.shipment_params(
+        package, package.stock_location, package.owner.ship_address, integration, store
       )
-      params[:customs_info] = customs_info if customs_info.present?
-      params
-    end
-
-    def address_params(source)
-      SpreeEasyPost.address_params(source)
-    end
-
-    def parcel_params(package)
-      SpreeEasyPost.parcel_params(package, store)
     end
   end
 end

@@ -302,23 +302,4 @@ describe Spree::TaxProvider::Internal, type: :model do
     end
   end
 
-  describe '#taxable_items' do
-    let!(:duty) { create(:fee, order: order, amount: 20, kind: 'duty', label: 'Import duty') }
-
-    it 'withholds duties while keeping every other fee' do
-      surcharge = create(:fee, order: order, amount: 5, kind: 'surcharge', label: 'Handling')
-
-      expect(order.taxable_items.grep(Spree::Fee)).to contain_exactly(surcharge)
-    end
-
-    # The associations load empty at record creation, so reading them rather
-    # than a fresh scope would leave every just-written fee untaxed.
-    it 'sees fees written after the association was first loaded' do
-      order.fees.load
-
-      late = create(:fee, order: order, amount: 5, kind: 'handling', label: 'Late fee')
-
-      expect(order.taxable_items).to include(late)
-    end
-  end
 end

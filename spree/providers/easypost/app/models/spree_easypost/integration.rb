@@ -22,8 +22,13 @@ module SpreeEasyPost
     # EasyPost rejects any other value outright, and a rejected shipment
     # create is a checkout with no delivery options at all.
     INCOTERMS = %w[CFR CIF CIP CPT DAT DAP DDP EXW FAS FCA FOB].freeze
+    # EasyPost's contents enum minus `other`, which additionally demands a
+    # free-text explanation nothing here supplies — offering it would only
+    # produce a rejected declaration.
+    CUSTOMS_CONTENTS_TYPES = %w[documents gift merchandise returned_goods sample dangerous_goods humanitarian_donation].freeze
 
     validates :preferred_incoterm, inclusion: { in: INCOTERMS }, allow_blank: true
+    validates :preferred_customs_contents_type, inclusion: { in: CUSTOMS_CONTENTS_TYPES }, allow_blank: true
 
     # EasyPost's own documentation example address — used only to prove the
     # key authenticates.

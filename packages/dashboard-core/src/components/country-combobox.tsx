@@ -13,7 +13,7 @@ import {
   InputGroupAddon,
   useComboboxAnchor,
 } from '@spree/dashboard-ui'
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useCountries } from '../hooks/use-countries'
 import { useDisplayName } from '../hooks/use-display-name'
@@ -23,15 +23,19 @@ export type CountryOption = { iso: string; iso3: string; name: string }
 /**
  * Resolves a country's display name in the admin UI language (keyed on the
  * stable ISO code), falling back to the API's backend-locale `name` when the
- * runtime lacks coverage.
- */
-/**
- * Localized country name with the API's own name as fallback. Exported so
- * every country-labelled surface (pickers, grid cells) reads the same.
+ * runtime lacks coverage. Exported so every country-labelled surface
+ * (pickers, grid cells) reads the same.
+ *
+ * The resolver is referentially stable across renders — callers feed it into
+ * `useMemo` deps, and a fresh closure each render would rebuild every derived
+ * option list (and, downstream, every grid column) on each keystroke.
  */
 export function useCountryDisplayName() {
   const displayName = useDisplayName('region')
-  return (country: CountryOption) => displayName(country.iso) ?? country.name
+  return useCallback(
+    (country: CountryOption) => displayName(country.iso) ?? country.name,
+    [displayName],
+  )
 }
 
 /**
@@ -89,11 +93,14 @@ function CountryRow({ country, label }: { country: CountryOption; label: string 
  * name + flag in the trigger and `<CountryRow>` in the dropdown.
  */
 export function CountryCombobox({
+  id,
   value,
   onValueChange,
   placeholder,
   disabled = false,
 }: {
+  /** Forwarded to the text input so a `<FieldLabel htmlFor>` can target it. */
+  id?: string
   value: string | null | undefined
   onValueChange: (iso: string) => void
   placeholder?: string
@@ -126,6 +133,7 @@ export function CountryCombobox({
       filter={filter}
     >
       <ComboboxInput
+        id={id}
         placeholder={placeholder ?? t('admin.components.country_combobox.search_placeholder')}
         disabled={disabled}
       >
