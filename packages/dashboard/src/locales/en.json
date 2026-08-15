@@ -2112,9 +2112,12 @@
       "never_run": "Never run",
       "run": {
         "arguments": "Arguments",
-        "duration": "Duration",
+        "csv_help": "Needs a header row. Columns depend on the task.",
+        "csv_label": "CSV file",
+        "csv_required": "Choose a CSV file to run this task.",
         "dry_run_help": "Report what would change without writing anything.",
         "dry_run_label": "Preview only",
+        "duration": "Duration",
         "ended": "Ended",
         "error": "Error",
         "initiated_by": "Started by",

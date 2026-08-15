@@ -33,6 +33,11 @@ module Spree
     TERMINAL_STATUSES = %w[succeeded errored cancelled].freeze
     INITIATED_VIA = %w[dashboard api cli inline].freeze
 
+    # The file a CSV task reads its rows from. Private storage: an uploaded
+    # spreadsheet is merchant data, and a run keeps it as the record of what
+    # was applied.
+    has_one_attached :csv_file, service: Spree.private_storage_service_name
+
     belongs_to :parent_run, class_name: 'Spree::MaintenanceTaskRun', optional: true,
                             inverse_of: :child_runs
     belongs_to :store, class_name: 'Spree::Store', optional: true

@@ -1109,6 +1109,8 @@ en:
     mail_from_address: Mail from address
     mailer_logo: Mailer logo (JPG or PNG images only)
     maintenance_tasks:
+      update_variant_prices:
+        description: Apply variant prices from a CSV with sku and price columns
       upgrade:
         adjustments_to_typed_rows:
           description: Map adjustments onto tax lines, discounts and fees

@@ -18,7 +18,8 @@ module Spree
       # @param inline [Boolean] run synchronously (seeds, the CLI, the upgrade walk)
       # @return [Spree::ServiceModule::Base::Result] the run
       def call(task_name:, arguments: {}, dry_run: false, store: nil, admin_user: nil,
-               api_key: nil, initiated_via: 'api', parent_run: nil, inline: false)
+               api_key: nil, initiated_via: 'api', parent_run: nil, inline: false,
+               csv_file: nil)
         task_class = Spree::MaintenanceTask.find_registered(task_name)
         return failure(nil, unknown_task_error(task_name)) if task_class.nil?
 
@@ -32,8 +33,11 @@ module Spree
         active = active_run_for(task_name)
         return failure(active, already_running_error(task_name)) if active
 
+        return failure(task, missing_csv_error) if task_class.collection_kind == :csv && csv_file.blank?
+
         run = build_run(task_class, arguments, dry_run, store, admin_user, api_key,
                         initiated_via, parent_run)
+        run.csv_file.attach(csv_file) if csv_file.present?
         return failure(run, run.errors) unless run.save
 
         dispatch(run, inline)
@@ -86,6 +90,10 @@ module Spree
 
       def unknown_task_error(task_name)
         errors_for(:task_name, "#{task_name} is not a registered maintenance task")
+      end
+
+      def missing_csv_error
+        errors_for(:base, 'this task needs a CSV file')
       end
 
       def already_running_error(task_name)

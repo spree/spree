@@ -2109,9 +2109,12 @@
       "never_run": "从未运行",
       "run": {
         "arguments": "参数",
-        "duration": "耗时",
+        "csv_help": "需要标题行。列取决于具体任务。",
+        "csv_label": "CSV 文件",
+        "csv_required": "请选择 CSV 文件以运行此任务。",
         "dry_run_help": "只报告将会发生的更改，不写入任何数据。",
         "dry_run_label": "仅预览",
+        "duration": "耗时",
         "ended": "结束时间",
         "error": "错误",
         "initiated_by": "启动人",

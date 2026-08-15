@@ -2112,9 +2112,12 @@
       "never_run": "Nie ausgeführt",
       "run": {
         "arguments": "Parameter",
-        "duration": "Dauer",
+        "csv_help": "Benötigt eine Kopfzeile. Die Spalten hängen von der Aufgabe ab.",
+        "csv_label": "CSV-Datei",
+        "csv_required": "Wählen Sie eine CSV-Datei, um diese Aufgabe auszuführen.",
         "dry_run_help": "Melden, was sich ändern würde, ohne etwas zu schreiben.",
         "dry_run_label": "Nur Vorschau",
+        "duration": "Dauer",
         "ended": "Beendet",
         "error": "Fehler",
         "initiated_by": "Gestartet von",

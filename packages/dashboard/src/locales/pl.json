@@ -2128,9 +2128,12 @@
       "never_run": "Nigdy nie uruchomiono",
       "run": {
         "arguments": "Parametry",
-        "duration": "Czas trwania",
+        "csv_help": "Wymaga wiersza nagłówka. Kolumny zależą od zadania.",
+        "csv_label": "Plik CSV",
+        "csv_required": "Wybierz plik CSV, aby uruchomić to zadanie.",
         "dry_run_help": "Pokaż, co zostałoby zmienione, bez zapisywania.",
         "dry_run_label": "Tylko podgląd",
+        "duration": "Czas trwania",
         "ended": "Zakończono",
         "error": "Błąd",
         "initiated_by": "Uruchomił",

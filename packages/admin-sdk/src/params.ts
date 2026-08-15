@@ -1965,6 +1965,12 @@ export interface MaintenanceTaskRunCreateParams {
    * that would in fact have written.
    */
   dry_run?: boolean
+  /**
+   * Signed id of a blob uploaded through `directUploads.create()`. Required
+   * for tasks whose `csv` is true, and rejected for the rest — a task reads
+   * its rows either from a query or from a file, never from both.
+   */
+  csv_file?: string
 }
 
 export interface ExportCreateParams {

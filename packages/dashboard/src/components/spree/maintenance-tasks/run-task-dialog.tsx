@@ -1,5 +1,5 @@
 import type { MaintenanceTask } from '@spree/admin-sdk'
-import { mapSpreeErrorsToForm } from '@spree/dashboard-core'
+import { mapSpreeErrorsToForm, useDirectUpload } from '@spree/dashboard-core'
 import {
   Button,
   Dialog,
@@ -11,6 +11,7 @@ import {
   DialogTitle,
   Field,
   FieldLabel,
+  Input,
   Switch,
 } from '@spree/dashboard-ui'
 import { useEffect, useState } from 'react'
@@ -38,6 +39,8 @@ export function RunTaskDialog({
   const { t } = useTranslation()
   const startMutation = useStartMaintenanceTask()
 
+  const uploadMutation = useDirectUpload()
+  const [csvFile, setCsvFile] = useState<File | null>(null)
   const [values, setValues] = useState<Record<string, unknown>>({})
   const [dryRun, setDryRun] = useState(false)
   const [missing, setMissing] = useState<string[]>([])
@@ -53,6 +56,7 @@ export function RunTaskDialog({
     setDryRun(task.supports_dry_run)
     setMissing([])
     setSubmitError(null)
+    setCsvFile(null)
   }, [task])
 
   if (!task) return null
@@ -64,13 +68,23 @@ export function RunTaskDialog({
     setMissing(blank)
     if (blank.length > 0) return
 
+    if (task.csv && !csvFile) {
+      setSubmitError(t('admin.maintenance_tasks.run.csv_required'))
+      return
+    }
+
     setSubmitError(null)
 
     try {
+      // Uploaded first: the run row keeps the file as the record of what was
+      // applied, so it has to exist before the run does.
+      const signedId = csvFile ? (await uploadMutation.mutateAsync(csvFile)).signedId : undefined
+
       const run = await startMutation.mutateAsync({
         task_name: task.name,
         arguments: pruneTaskArguments(task.parameters, values),
         dry_run: dryRun,
+        csv_file: signedId,
       })
       onOpenChange(false)
       onStarted(run.id)
@@ -83,7 +97,7 @@ export function RunTaskDialog({
     }
   }
 
-  const running = startMutation.isPending
+  const running = startMutation.isPending || uploadMutation.isPending
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -100,6 +114,23 @@ export function RunTaskDialog({
             <p className="text-destructive text-sm" role="alert">
               {submitError}
             </p>
+          )}
+
+          {task.csv && (
+            <Field>
+              <FieldLabel htmlFor="maintenance-task-csv">
+                {t('admin.maintenance_tasks.run.csv_label')}
+              </FieldLabel>
+              <Input
+                id="maintenance-task-csv"
+                type="file"
+                accept=".csv,text/csv"
+                onChange={(event) => setCsvFile(event.target.files?.[0] ?? null)}
+              />
+              <span className="text-muted-foreground text-xs">
+                {t('admin.maintenance_tasks.run.csv_help')}
+              </span>
+            </Field>
           )}
 
           <TaskParametersForm

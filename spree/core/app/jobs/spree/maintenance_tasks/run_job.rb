@@ -67,6 +67,8 @@ module Spree
           return
         end
 
+        return process_csv(step) if task.csv_collection?
+
         relation_backed = task.collection.is_a?(ActiveRecord::Relation)
 
         loop do
@@ -111,6 +113,43 @@ module Spree
         task.after_complete
         write_status('succeeded', ended_at: Time.current, tallies: merged_tallies)
         publish('succeeded')
+      end
+
+      # CSV rows cursor by row number: the file is re-read on a resume, but
+      # rows at or below the cursor are skipped, so progress is monotonic
+      # without holding the parsed file across executions.
+      def process_csv(step)
+        rows = task.csv_rows
+        start = step.cursor.to_i
+        batch = []
+
+        rows.each_with_index do |row, index|
+          number = index + 1
+          next if number <= start
+          break if @halted
+
+          batch << [number, row]
+          next if batch.size < task.class.batch_size
+
+          apply_csv_batch(step, batch)
+          batch = []
+          break if @halted
+        end
+
+        apply_csv_batch(step, batch) if batch.any? && !@halted
+      end
+
+      def apply_csv_batch(step, batch)
+        wait_for_throttles
+        process_batch(batch.map(&:last))
+        return if @halted
+
+        cursor = batch.last.first
+        persist_progress(cursor: cursor.to_s, count: batch.size)
+        step.set!(cursor.to_s)
+
+        check_operator_request
+        check_time_slice(step)
       end
 
       # A no_collection task is one unit of work: no cursor, no partial
@@ -275,8 +314,16 @@ module Spree
         )
       end
 
+      # Summed, not replaced: a task instance counts only what the current
+      # execution did, so an interrupted run that merged would report its last
+      # slice as the whole total. Baselined at the first checkpoint of each
+      # execution so repeated writes within one execution stay accurate.
       def merged_tallies
-        (run.tallies || {}).merge(task.tallies)
+        @tally_baseline ||= (run.tallies || {}).dup
+
+        task.tallies.each_with_object(@tally_baseline.dup) do |(key, value), result|
+          result[key] = result.fetch(key, 0) + value
+        end
       end
 
       def accumulated_time
@@ -286,6 +333,8 @@ module Spree
       end
 
       def safe_count
+        return task.csv_rows.size if task.csv_collection?
+
         task.count
       rescue StandardError
         nil

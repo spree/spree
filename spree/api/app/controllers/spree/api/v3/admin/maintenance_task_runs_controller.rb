@@ -9,6 +9,8 @@ module Spree
         # data, so it is never removed through the API. Stopping one is
         # `cancel`.
         class MaintenanceTaskRunsController < ResourceController
+          include ActiveStorage::SetCurrent
+
           scoped_resource :maintenance_tasks
 
           # POST /api/v3/admin/maintenance_task_runs
@@ -22,7 +24,8 @@ module Spree
               store: current_store,
               admin_user: try_spree_current_user,
               api_key: current_api_key,
-              initiated_via: initiated_via
+              initiated_via: initiated_via,
+              csv_file: params[:csv_file].presence
             )
 
             if result.success?
@@ -88,6 +91,16 @@ module Spree
             else
               render_validation_error(result.error)
             end
+          end
+
+          # An invalid signed id is the caller's mistake, not a server fault —
+          # the same 422 the imports upload path returns.
+          rescue_from ActiveSupport::MessageVerifier::InvalidSignature do
+            render_error(
+              code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:validation_error],
+              message: 'Invalid csv_file signed id',
+              status: :unprocessable_content
+            )
           end
 
           # A secret key belongs to an integration rather than a person, so the

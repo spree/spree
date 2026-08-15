@@ -2127,9 +2127,12 @@
       "never_run": "لم تُشغَّل قط",
       "run": {
         "arguments": "المعاملات",
-        "duration": "المدة",
+        "csv_help": "يتطلب صف عناوين. تعتمد الأعمدة على المهمة.",
+        "csv_label": "ملف CSV",
+        "csv_required": "اختر ملف CSV لتشغيل هذه المهمة.",
         "dry_run_help": "اعرض ما سيتغير دون كتابة أي شيء.",
         "dry_run_label": "معاينة فقط",
+        "duration": "المدة",
         "ended": "انتهت",
         "error": "خطأ",
         "initiated_by": "بدأها",
