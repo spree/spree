@@ -43,6 +43,18 @@ bundle exec rake spree:upgrade
 
 Skipping versions and re-running are both safe — `bundle exec rake spree:upgrade` figures out what still needs to happen and does nothing on data that's already migrated.
 
+### Watching it, and picking it back up
+
+Every data step is a [maintenance task](/v6/developer/how-to/maintenance-tasks), which changes what a long upgrade looks like. Each step records a run: who started it, when, what it reported, and — if it stops — the cause. So a half-finished upgrade tells you which step stopped and why, rather than leaving a stack trace and no record of what already ran.
+
+Three consequences worth knowing before you start:
+
+- **Watch it from the dashboard.** Settings → Maintenance tasks shows each step with a progress bar while it works. On a large store this is the difference between a silent hour and a visible one.
+- **Run it without a shell.** Every step can be started from the dashboard, which is how operators on a managed platform run an upgrade at all.
+- **Re-run one step.** `STEP=migrate_returns bundle exec rake spree:upgrade` runs a single step by id — useful when one step needed a data fix and the rest already succeeded.
+
+Preview first where it is offered. Steps that can report what they would change without writing show a preview toggle in the dashboard, or take `DRY_RUN=1` on the command line.
+
 ## What the upgrade does
 
 Reference material — the data backfills `bundle exec rake spree:upgrade` executes. Every task is idempotent.

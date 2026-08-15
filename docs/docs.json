@@ -377,6 +377,13 @@
                     ]
                   },
                   {
+                    "group": "Operations",
+                    "icon": "wrench",
+                    "pages": [
+                      "v6/developer/how-to/maintenance-tasks"
+                    ]
+                  },
+                  {
                     "group": "Reports",
                     "icon": "chart-bar",
                     "pages": [
