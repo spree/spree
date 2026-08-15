@@ -39,7 +39,7 @@ module Spree
         end
 
         def process
-          load_engine_rake_tasks
+          load_engine_rake_tasks(self.class.rake_task_name)
 
           with_environment do
             task = ::Rake::Task[self.class.rake_task_name]

@@ -79,6 +79,17 @@ module Spree
         self.collection_kind = :none
       end
 
+      # Rows come from a CSV the operator uploads rather than from the
+      # database, and `process` receives one row at a time as a
+      # `CSV::Row` (docs/plans/6.0-maintenance-tasks.md).
+      #
+      # The cursor is the row number, so an interrupted run re-reads the file
+      # but skips what it has already applied — the same shape
+      # `Spree::Imports::ProcessJob` uses for its CSV spine.
+      def csv_collection
+        self.collection_kind = :csv
+      end
+
       def collection_batch_size(size)
         self.batch_size = size
       end
@@ -204,6 +215,7 @@ module Spree
     # @return [Integer, nil]
     def count
       return nil if no_collection?
+      return csv_rows.size if csv_collection?
 
       items = collection
       items.respond_to?(:count) ? items.count : nil
@@ -211,6 +223,26 @@ module Spree
 
     def no_collection?
       self.class.collection_kind == :none
+    end
+
+    def csv_collection?
+      self.class.collection_kind == :csv
+    end
+
+    # The uploaded file's rows, parsed with headers.
+    #
+    # Read fresh on every execution rather than memoized across the run: a
+    # resumed execution starts from the cursor, and holding a parsed catalog in
+    # memory is what the cursor exists to avoid.
+    #
+    # @return [Array<CSV::Row>]
+    def csv_rows
+      raise NotImplementedError, "#{self.class.name} is not a CSV task" unless csv_collection?
+
+      attachment = run&.csv_file
+      return [] if attachment.nil? || !attachment.attached?
+
+      ::CSV.parse(attachment.download, headers: true)
     end
 
     def dry_run?
@@ -243,12 +275,37 @@ module Spree
 
     # Rake tasks are defined by the Rakefile, which a web process never loads —
     # a task fired from the dashboard has to load the engine's tasks itself.
-    # Idempotent: Rake replaces a definition rather than duplicating it.
-    def load_engine_rake_tasks
+    #
+    # Loads the one file that defines the task, and only when it is not already
+    # defined. Both halves matter: re-loading a .rake file APPENDS its block to
+    # a task that already exists, so a second load makes that task run twice,
+    # and loading every file would do that to every task in the engine. The
+    # symptom is invisible until something counts what it did.
+    #
+    # @param task_name [String] the rake task about to be invoked
+    def load_engine_rake_tasks(task_name)
       require 'rake'
 
+      return if ::Rake::Task.task_defined?(task_name)
+
       ::Rake::Task.define_task(:environment) unless ::Rake::Task.task_defined?(:environment)
-      Dir.glob(Spree::Core::Engine.root.join('lib/tasks/**/*.rake')).sort.each { |path| load(path) }
+
+      path = rake_file_defining(task_name)
+      load(path) if path
+    end
+
+    # Finds the file that defines a task by reading the files rather than
+    # loading them: loading a .rake file to discover whether it is the right
+    # one would append its blocks to every task it defines, which is the very
+    # duplication this avoids.
+    #
+    # @return [String, nil]
+    def rake_file_defining(task_name)
+      leaf = task_name.split(':').last
+
+      Dir.glob(Spree::Core::Engine.root.join('lib/tasks/**/*.rake')).sort.find do |path|
+        File.read(path).match?(/^\s*(?:desc\s.*\n\s*)?task\s+:?["']?#{Regexp.escape(leaf)}["']?\b/)
+      end
     end
 
     def after_start; end

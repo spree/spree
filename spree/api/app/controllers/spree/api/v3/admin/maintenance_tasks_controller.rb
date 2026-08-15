@@ -41,6 +41,7 @@ module Spree
               parameters: task_class.parameters_schema,
               supports_dry_run: task_class.dry_run_supported,
               no_collection: task_class.collection_kind == :none,
+              csv: task_class.collection_kind == :csv,
               active_run: serialize_run(latest_runs[task_class.name]&.then { |run| run if run.active? }),
               last_run: serialize_run(latest_runs[task_class.name])
             }

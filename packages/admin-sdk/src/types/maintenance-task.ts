@@ -26,6 +26,8 @@ export interface MaintenanceTask {
   supports_dry_run: boolean
   /** A single operation rather than an iteration; there is no progress bar to draw. */
   no_collection: boolean
+  /** Rows come from an uploaded CSV — creating a run requires `csv_file`. */
+  csv: boolean
   /** Non-null while a run of this task is in flight — starting a second is refused. */
   active_run: import('./generated').MaintenanceTaskRun | null
   last_run: import('./generated').MaintenanceTaskRun | null
