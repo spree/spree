@@ -275,5 +275,35 @@ xdescribe Spree::TaxProvider::Internal, type: :model do
         expect(tax_line.amount).to eq(0.5)
       end
     end
+
+    context 'with a customs duty' do
+      let!(:rate) do
+        create(:tax_rate, country_iso: country&.iso, amount: 0.1, tax_category: create(:tax_category, is_default: true), included_in_price: false)
+      end
+      let!(:duty) { create(:fee, order: order, amount: 20, kind: 'duty', label: 'Import duty') }
+
+      it 'leaves the duty untaxed — an import charge is not a taxable supply' do
+        provider.estimate(order)
+
+        expect(order.tax_lines.reload.where.not(fee_id: nil)).to be_empty
+      end
+
+      it 'still taxes the other fees on the same order' do
+        surcharge = create(:fee, order: order, amount: 5, kind: 'surcharge', label: 'Handling')
+
+        provider.estimate(order)
+
+        taxed_fee_ids = order.tax_lines.reload.where.not(fee_id: nil).pluck(:fee_id)
+        expect(taxed_fee_ids).to contain_exactly(surcharge.id)
+      end
+
+      # Import VAT is levied on the duty in most regimes, so a landed-cost
+      # provider must still be able to tax one by naming it explicitly.
+      it 'taxes a duty a caller passes explicitly' do
+        provider.estimate(order, [duty])
+
+        expect(order.tax_lines.reload.sole.fee).to eq(duty)
+      end
+    end
   end
 end

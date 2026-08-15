@@ -150,7 +150,7 @@ A discount on the whole order is shared out across the items rather than kept as
 | Attribute | Description |
 |---|---|
 | `label` | What the customer sees, e.g. `Gift wrapping` |
-| `kind` | `surcharge`, `handling`, `gift_wrap`, `cod`, `payment`, or your own |
+| `kind` | `surcharge`, `handling`, `gift_wrap`, `cod`, `payment`, `duty`, or your own |
 | `amount` / `display_amount` | The charge |
 | `line_item_id` / `fulfillment_id` | What it applies to — both empty means the whole order |
 
@@ -164,6 +164,12 @@ await adminClient.orders.fees.create('or_xxx', {
 ```
 
 Fees are always positive, and they're taxable — a fee can have its own tax lines. To take money off, create a discount instead. That way a refund never has to work out whether a negative fee was a charge or a credit.
+
+### Customs duties
+
+A `duty` fee is the one kind tax is **not** applied to automatically. A customs duty is an import charge levied by the destination country, not a sale that domestic tax applies to, so charging tax on top of it would invent tax the merchant never owed. Where import VAT is charged on a duty, whoever calculates the duty records that tax itself.
+
+A duty also keeps a copy of what it was calculated from — the HS code, the country of origin, the rate — in its `metadata`. Classification on a product can change next month; what the customer was charged must not.
 
 ## Where rows attach
 
