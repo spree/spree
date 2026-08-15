@@ -1036,6 +1036,7 @@ en:
     invalid_exchange_variant: Invalid exchange variant.
     inventory: Inventory
     invitation_accepted: Invitation accepted!
+    invitation_role_resource_mismatch: must belong to the same store or vendor as the invitation
     invitation_mailer:
       greeting: Hi %{user_name},
       invitation_accepted:
@@ -1452,7 +1453,7 @@ en:
     review: Review
     risk: Risk
     risky: Risky
-    role_audience_immutable: cannot be changed once the role exists
+    role_resource_immutable: cannot be changed once the role exists
     role_cannot_be_deleted: This role is protected or still referenced by staff members or pending invitations and cannot be deleted
     role_id: Role ID
     role_immutable: cannot be changed on a protected role

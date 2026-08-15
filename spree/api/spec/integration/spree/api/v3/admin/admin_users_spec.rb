@@ -14,7 +14,7 @@ RSpec.describe 'Admin Staff API', type: :request, swagger_doc: 'api-reference/ad
   # and pin the role assignment to `store` so the staff list returns it.
   let!(:staff_member) do
     user = admin_user
-    user.role_users.find_or_create_by!(role: admin_role, resource: store)
+    user.role_users.find_or_create_by!(role: admin_role)
     user
   end
 
@@ -123,7 +123,7 @@ RSpec.describe 'Admin Staff API', type: :request, swagger_doc: 'api-reference/ad
         run_test! do |response|
           # Account still exists; only the per-store RoleUser is gone.
           expect(Spree.admin_user_class.exists?(staff_member.id)).to be true
-          expect(staff_member.role_users.where(resource: store).exists?).to be false
+          expect(staff_member.role_users.where(role: store.roles).exists?).to be false
         end
       end
     end

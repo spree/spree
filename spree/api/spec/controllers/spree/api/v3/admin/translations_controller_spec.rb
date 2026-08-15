@@ -46,7 +46,7 @@ RSpec.describe Spree::Api::V3::Admin::TranslationsController, type: :controller 
     context 'as a staffer holding read_products' do
       let(:staffer) do
         create(:admin_user, :without_admin_role).tap do |user|
-          user.role_users.create!(role: create(:role, name: 'catalog_viewer', permissions: %w[read_products]), resource: store)
+          user.role_users.create!(role: create(:role, name: 'catalog_viewer', permissions: %w[read_products], resource: store))
         end
       end
       let(:headers) do
@@ -63,7 +63,7 @@ RSpec.describe Spree::Api::V3::Admin::TranslationsController, type: :controller 
     context 'as a staffer without a products permission' do
       let(:staffer) do
         create(:admin_user, :without_admin_role).tap do |user|
-          user.role_users.create!(role: create(:role, name: 'orders_only', permissions: %w[read_orders]), resource: store)
+          user.role_users.create!(role: create(:role, name: 'orders_only', permissions: %w[read_orders], resource: store))
         end
       end
       let(:headers) do

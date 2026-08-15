@@ -61,17 +61,14 @@ module Spree
           false
         end
 
-        # Matched on the store AND on a store resource, mirroring
-        # Spree::Ability#staff_roles. A RoleUser scoped to another resource — a
-        # marketplace vendor, say — binds to that resource's store, so matching
-        # on store_id alone would admit a vendor's staff to the store's admin
-        # API. Their assignments belong to their own panel.
+        # Membership is holding a role the store itself owns, mirroring
+        # Spree::Ability#staff_roles. A role belonging to another resource — a
+        # marketplace vendor, say — is that panel's business and never admits
+        # its holder here.
         def current_user_member_of_store?
-          return false unless current_user.respond_to?(:role_users)
+          return false unless current_user.respond_to?(:spree_roles)
 
-          current_user.role_users.
-            joins(:role).merge(Spree::Role.staff).
-            exists?(store: current_store, resource_type: Spree::Store.to_s)
+          current_user.spree_roles.for_resource(current_store).exists?
         end
 
         def set_no_store_cache

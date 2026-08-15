@@ -5,7 +5,7 @@ module Spree
     included do
       has_many :role_users, class_name: 'Spree::RoleUser', foreign_key: :user_id, as: :user, dependent: :destroy_async # async as we need to check if the user has admin role before destroying
       has_many :spree_roles, through: :role_users, class_name: 'Spree::Role', source: :role
-      has_many :stores, through: :role_users, source: :resource, source_type: 'Spree::Store'
+      has_many :stores, through: :spree_roles, source: :resource, source_type: 'Spree::Store'
       has_many :invitations, class_name: 'Spree::Invitation', as: :invitee, dependent: :destroy
       has_many :sent_invitations, class_name: 'Spree::Invitation', as: :inviter, dependent: :destroy
 
@@ -18,10 +18,10 @@ module Spree
       # @return [Spree::RoleUser] The role user created
       def add_role(role_name, resource = nil)
         resource ||= Spree::Store.current
-        role = Spree::Role.find_by(name: role_name, store: store_for_resource(resource))
+        role = Spree::Role.find_by(name: role_name, resource: resource)
         return if role.nil?
 
-        role_users.find_or_create_by!(role: role, resource: resource)
+        role_users.find_or_create_by!(role: role)
       end
 
       # Removes a role from a resource
@@ -30,10 +30,10 @@ module Spree
       # @param resource [Spree::Base] The resource to remove the role from
       def remove_role(role_name, resource = nil)
         resource ||= Spree::Store.current
-        role = Spree::Role.find_by(name: role_name, store: store_for_resource(resource))
+        role = Spree::Role.find_by(name: role_name, resource: resource)
         return if role.nil?
 
-        role_users.where(role: role, resource: resource).destroy_all
+        role_users.where(role: role).destroy_all
       end
 
       # has_spree_role? simply needs to return true or false whether a user has a role or not.
@@ -44,7 +44,9 @@ module Spree
       def has_spree_role?(role_name, resource = nil)
         resource ||= Spree::Store.current
 
-        role_users.where(resource: resource).joins(:role).where(Spree::Role.table_name => { name: role_name }).exists?
+        role_users.joins(:role).
+          where(Spree::Role.table_name => { name: role_name, resource_type: resource.class.base_class.to_s,
+                                            resource_id: resource.id }).exists?
       end
 
       # Returns true if the user has the admin role for a given resource
@@ -62,15 +64,6 @@ module Spree
         invitations.first&.inviter
       end
 
-      # The store a role must belong to for it to be grantable on this
-      # resource — mirrors Spree::RoleUser#resource_bound_store, since roles
-      # are store-owned and an assignment binds to the resource's store.
-      #
-      # @param resource [Spree::Base]
-      # @return [Spree::Store, nil]
-      def store_for_resource(resource)
-        resource.is_a?(Spree::Store) ? resource : resource.try(:store)
-      end
     end
   end
 end

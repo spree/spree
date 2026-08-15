@@ -107,7 +107,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
     context 'as a staffer whose roles grant the required key' do
       let(:staffer) do
         create(:admin_user, :without_admin_role).tap do |user|
-          user.role_users.create!(role: create(:role, name: 'viewer', permissions: %w[read_orders]), resource: store)
+          user.role_users.create!(role: create(:role, name: 'viewer', permissions: %w[read_orders], resource: store))
         end
       end
       let(:jwt_token) { Spree::Api::V3::TestingSupport.generate_jwt(staffer, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN) }
@@ -121,7 +121,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
     context 'as a staffer whose roles lack the required key' do
       let(:staffer) do
         create(:admin_user, :without_admin_role).tap do |user|
-          user.role_users.create!(role: create(:role, name: 'other', permissions: %w[read_customers]), resource: store)
+          user.role_users.create!(role: create(:role, name: 'other', permissions: %w[read_customers], resource: store))
         end
       end
       let(:jwt_token) { Spree::Api::V3::TestingSupport.generate_jwt(staffer, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN) }

@@ -25,10 +25,10 @@ RSpec.describe Spree::Api::V3::Admin::RolesController, type: :controller do
       expect(support['users_count']).to eq(0)
     end
 
-    # The staff Roles page feeds the staff role picker, so a vendor role listed
-    # here would be assignable to store staff.
-    it 'omits roles from another audience' do
-      create(:role, name: 'vendor_manager', audience: 'vendor', permissions: %w[write_orders])
+    # The staff Roles page feeds the staff role picker, so a role owned by
+    # another resource would be assignable to store staff.
+    it 'omits roles owned by another resource' do
+      create(:role, name: 'vendor_manager', resource: create(:customer_group))
 
       get :index, as: :json
 
@@ -65,8 +65,7 @@ RSpec.describe Spree::Api::V3::Admin::RolesController, type: :controller do
       let(:staffer) do
         create(:admin_user, :without_admin_role).tap do |user|
           user.role_users.create!(
-            role: create(:role, name: 'team_manager', permissions: %w[write_staff read_orders]),
-            resource: store
+            role: create(:role, name: 'team_manager', permissions: %w[write_staff read_orders])
           )
         end
       end
@@ -88,19 +87,23 @@ RSpec.describe Spree::Api::V3::Admin::RolesController, type: :controller do
         expect(Spree::Role.find_by(name: 'sneaky')).to be_nil
       end
 
-      # Authority scoped to a non-store resource (a marketplace vendor) binds
-      # to that resource's store but confers nothing in the store admin, so it
-      # must not widen what the caller may grant.
+      # A role owned by another resource (a marketplace vendor) confers nothing
+      # in the store admin, so it must not widen what the caller may grant.
       it 'ignores keys the caller holds only on a non-store resource' do
+        Spree.permissions.register_resource(
+          :products, group: :catalog, audiences: %i[dummy_model], subjects: -> { [Spree::Product] }
+        )
         staffer.role_users.create!(
-          role: create(:role, name: 'vendor_catalog', permissions: %w[write_products]),
-          resource: Spree::DummyModel.create!(name: 'Vendor A')
+          role: create(:role, name: 'vendor_catalog', permissions: %w[write_products],
+                              resource: Spree::DummyModel.create!(name: 'Vendor A'))
         )
 
         post :create, params: { name: 'sneaky', permissions: %w[write_products] }, as: :json
 
         expect(response).to have_http_status(:forbidden)
         expect(Spree::Role.find_by(name: 'sneaky')).to be_nil
+      ensure
+        Spree.permissions.reset!
       end
 
       # Privileges held on OTHER stores don't count: the caller's grant is
@@ -108,8 +111,7 @@ RSpec.describe Spree::Api::V3::Admin::RolesController, type: :controller do
       it 'ignores keys the caller holds only on a different store' do
         store_b = create(:store)
         staffer.role_users.create!(
-          role: create(:role, name: 'b_products', permissions: %w[write_products]),
-          resource: store_b
+          role: create(:role, name: 'b_products', permissions: %w[write_products], resource: store_b)
         )
 
         post :create, params: { name: 'sneaky', permissions: %w[write_products] }, as: :json
@@ -180,7 +182,7 @@ RSpec.describe Spree::Api::V3::Admin::RolesController, type: :controller do
 
     it 'refuses to delete a role still assigned to staff' do
       role = create(:role, name: 'in_use')
-      create(:admin_user, :without_admin_role).role_users.create!(role: role, resource: store)
+      create(:admin_user, :without_admin_role).role_users.create!(role: role)
 
       delete :destroy, params: { id: role.prefixed_id }, as: :json
 

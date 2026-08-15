@@ -179,7 +179,7 @@ RSpec.describe Spree::Api::V3::Admin::BaseController, type: :controller do
       let(:other_store) { create(:store) }
       let(:foreign_admin) do
         create(:admin_user, :without_admin_role).tap do |u|
-          u.role_users.create!(role: Spree::Role.default_admin_role, resource: other_store, store: other_store)
+          u.role_users.create!(role: Spree::Role.default_admin_role(other_store))
         end
       end
       let(:foreign_admin_jwt) do
@@ -206,13 +206,7 @@ RSpec.describe Spree::Api::V3::Admin::BaseController, type: :controller do
       let(:panel) { create(:customer_group, store: store) }
       let(:panel_admin) do
         create(:admin_user, :without_admin_role).tap do |u|
-          create(
-            :role_user,
-            user: u,
-            role: create(:role, name: 'panel_orders', audience: 'vendor', permissions: %w[write_orders]),
-            resource: panel,
-            store: store
-          )
+          create(:role_user, user: u, role: create(:role, name: 'panel_orders', resource: panel))
         end
       end
       let(:panel_admin_jwt) do
@@ -224,8 +218,10 @@ RSpec.describe Spree::Api::V3::Admin::BaseController, type: :controller do
 
       before { request.headers['Authorization'] = "Bearer #{panel_admin_jwt}" }
 
-      it 'binds the assignment to this store (else the check below proves nothing)' do
-        expect(panel_admin.role_users.where(store: store)).to exist
+      # The panel belongs to this store, so the role is on the store's own turf
+      # — otherwise the check below would pass for the wrong reason.
+      it 'holds the role on a resource of this store' do
+        expect(panel_admin.spree_roles.first.resource.store).to eq(store)
       end
 
       it 'returns 403 forbidden' do

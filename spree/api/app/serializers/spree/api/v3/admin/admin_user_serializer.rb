@@ -27,9 +27,9 @@ module Spree
           # we fall back to `Spree::Current.store` if not.
           attribute :roles do |user, params|
             store = params&.dig(:store) || Spree::Current.store
-            scope = user.role_users
-            scope = scope.where(resource: store) if store
-            scope.includes(:role).map { |ru| { id: ru.role.prefixed_id, name: ru.role.name } }
+            scope = user.spree_roles
+            scope = scope.for_resource(store) if store
+            scope.map { |role| { id: role.prefixed_id, name: role.name } }
           end
 
           # Every store this user holds a role on (via `Spree::RoleUser`) —

@@ -19,9 +19,10 @@ module Spree
 
           attribute(:mutable, &:mutable?)
 
-          # Staff assignments on the serialized store.
+          # Staff assignments. The role belongs to one store already, so every
+          # assignment it has is on that store.
           attribute :users_count do |role|
-            role.role_users.count { |role_user| role_user.store_id == params[:store]&.id }
+            role.role_users.size
           end
         end
       end

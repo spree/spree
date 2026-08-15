@@ -14,8 +14,8 @@ describe Spree::UserRoles do
 
     context 'when a resource parameter is provided' do
       let(:resource) { create(:store) }
-      # Roles are store-owned, so the grant needs one in this resource's store.
-      let!(:resource_role) { create(:role, name: 'test', store: resource) }
+      # A role belongs to what it governs, so the grant needs one here.
+      let!(:resource_role) { create(:role, name: 'test', resource: resource) }
 
       before { test_user.add_role('test', resource) }
 
@@ -38,8 +38,8 @@ describe Spree::UserRoles do
 
     context 'when a resource parameter is provided' do
       let(:resource) { create(:store) }
-      # Roles are store-owned, so the grant needs one in this resource's store.
-      let!(:resource_role) { create(:role, name: 'test', store: resource) }
+      # A role belongs to what it governs, so the grant needs one here.
+      let!(:resource_role) { create(:role, name: 'test', resource: resource) }
 
       before { test_user.add_role('test', resource) }
 
@@ -66,8 +66,8 @@ describe Spree::UserRoles do
 
     context 'when a resource parameter is provided' do
       let(:resource) { create(:store) }
-      # Roles are store-owned, so the grant needs one in this resource's store.
-      let!(:resource_role) { create(:role, name: 'test', store: resource) }
+      # A role belongs to what it governs, so the grant needs one here.
+      let!(:resource_role) { create(:role, name: 'test', resource: resource) }
 
       context 'when the user has the role for the resource' do
         before { test_user.add_role('test', resource) }
@@ -93,8 +93,8 @@ describe Spree::UserRoles do
 
     context 'when a resource parameter is provided' do
       let(:resource) { create(:store) }
-      # Roles are store-owned, so the grant needs one in this resource's store.
-      let!(:resource_role) { create(:role, name: 'test', store: resource) }
+      # A role belongs to what it governs, so the grant needs one here.
+      let!(:resource_role) { create(:role, name: 'test', resource: resource) }
 
       it 'checks against the resource' do
         Spree::Role.default_admin_role(resource)

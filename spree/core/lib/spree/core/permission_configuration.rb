@@ -20,10 +20,13 @@ module Spree
     READ_PREFIX = 'read_'.freeze
     WRITE_PREFIX = 'write_'.freeze
 
-    # Back-office staff are the baseline audience: every resource is grantable
-    # to them, so registrations name only the *additional* audiences they open
-    # up (see Spree::Role::AUDIENCES for the vocabulary).
-    STAFF_AUDIENCE = :staff
+    # A role's audience is its owning resource, lowercased — a role on a
+    # `Spree::Store` is `:store`, one on a `Spree::Vendor` is `:vendor` (see
+    # `Spree::Role#audience`).
+    #
+    # The store's own back office is the baseline: every resource is grantable
+    # there, so registrations name only the *additional* audiences they open up.
+    STAFF_AUDIENCE = :store
 
     # A registered catalog resource. Yields one or two grantable keys and maps
     # them to the CanCanCan subjects they cover.
@@ -168,7 +171,7 @@ module Spree
     # nothing, so a panel that does not exist yet reads as granting nothing
     # rather than raising.
     #
-    # @param audience [Symbol, String] `:staff`, `:vendor`, …
+    # @param audience [Symbol, String] `:store`, `:vendor`, …
     # @return [Array<Resource>] in registration order
     def grantable_resources(audience)
       resources.select { |resource| resource.grantable_to?(audience) }

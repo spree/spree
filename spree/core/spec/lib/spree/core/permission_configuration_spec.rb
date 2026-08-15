@@ -46,17 +46,17 @@ RSpec.describe Spree::PermissionConfiguration do
   end
 
   describe 'audiences' do
-    it 'grants every resource to staff without naming them' do
+    it 'grants every resource to the store back office without naming it' do
       configuration.register_resource(:reviews, group: :catalog, subjects: [Spree::Product])
 
-      expect(configuration.resource(:reviews)).to be_grantable_to(:staff)
-      expect(configuration.grantable_keys(:staff)).to eq(configuration.catalog_keys)
+      expect(configuration.resource(:reviews)).to be_grantable_to(:store)
+      expect(configuration.grantable_keys(:store)).to eq(configuration.catalog_keys)
     end
 
-    it 'grants a resource to the audiences it names, staff included' do
+    it 'grants a resource to the audiences it names, store included' do
       configuration.register_resource(:reviews, group: :catalog, audiences: %i[vendor], subjects: [Spree::Product])
 
-      expect(configuration.resource(:reviews).audiences).to contain_exactly(:staff, :vendor)
+      expect(configuration.resource(:reviews).audiences).to contain_exactly(:store, :vendor)
     end
 
     it 'withholds unnamed audiences' do

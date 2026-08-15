@@ -74,7 +74,7 @@ RSpec.describe Spree::Api::V3::Admin::MeController, type: :controller do
     context 'as a staffer with a limited role' do
       let(:staffer) do
         create(:admin_user, :without_admin_role).tap do |user|
-          user.role_users.create!(role: create(:role, name: 'viewer', permissions: %w[write_orders]), resource: store)
+          user.role_users.create!(role: create(:role, name: 'viewer', permissions: %w[write_orders], resource: store))
         end
       end
       let(:headers) do
@@ -91,8 +91,8 @@ RSpec.describe Spree::Api::V3::Admin::MeController, type: :controller do
       let(:store_b) { create(:store) }
       let(:staffer) do
         create(:admin_user, :without_admin_role).tap do |user|
-          user.role_users.create!(role: create(:role, name: 'a_orders', permissions: %w[write_orders]), resource: store)
-          user.role_users.create!(role: create(:role, name: 'b_products', permissions: %w[read_products]), resource: store_b)
+          user.role_users.create!(role: create(:role, name: 'a_orders', permissions: %w[write_orders], resource: store))
+          user.role_users.create!(role: create(:role, name: 'b_products', permissions: %w[read_products], resource: store_b))
         end
       end
       let(:headers) do

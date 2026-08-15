@@ -24,7 +24,7 @@ module Spree
           # the account globally. The user keeps access to any other stores.
           def destroy
             authorize!(:destroy, @resource)
-            @resource.role_users.where(resource: current_store).destroy_all
+            @resource.role_users.where(role: current_store.roles).destroy_all
             head :no_content
           end
 
@@ -72,8 +72,8 @@ module Spree
           # cannot compare for equality.
           def scope
             staff_ids = model_class.
-              joins(:role_users).
-              where(Spree::RoleUser.table_name => { resource: current_store }).
+              joins(:spree_roles).
+              where(Spree::Role.table_name => { resource_type: Spree::Store.to_s, resource_id: current_store.id }).
               select(:id)
 
             model_class.
@@ -95,16 +95,17 @@ module Spree
           # Reconcile the user's roles on this store to match `desired_role_ids`.
           # Adds missing assignments and removes extras — no-op for unchanged.
           def apply_role_ids(desired_role_ids)
-            current = @resource.role_users.where(resource: current_store).pluck(:role_id).map(&:to_s)
+            store_roles = current_store.roles
+            current = @resource.role_users.where(role: store_roles).pluck(:role_id).map(&:to_s)
             target = desired_role_ids.map(&:to_s)
 
             (target - current).each do |role_id|
-              role = current_store.roles.staff.find_by(id: role_id)
-              @resource.role_users.find_or_create_by!(role: role, resource: current_store) if role
+              role = store_roles.find_by(id: role_id)
+              @resource.role_users.find_or_create_by!(role: role) if role
             end
 
             (current - target).each do |role_id|
-              @resource.role_users.where(role_id: role_id, resource: current_store).destroy_all
+              @resource.role_users.where(role_id: role_id).destroy_all
             end
           end
         end

@@ -12,7 +12,7 @@ RSpec.describe Spree::Seeds::AdminUser do
       expect { subject }.to change(Spree.admin_user_class, :count).by(1)
 
       admin = Spree.admin_user_class.find_by(email: 'boss@example.com')
-      expect(admin.role_users.exists?(store: @default_store)).to be(true)
+      expect(admin.spree_roles.for_resource(@default_store)).to exist
     end
 
     it 'does nothing when an admin already exists' do

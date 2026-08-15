@@ -103,7 +103,7 @@ RSpec.describe Spree::Api::V3::Admin::SetupController, type: :controller do
         expect(json_response['user']['email']).to eq('owner@example.com')
 
         user = Spree.admin_user_class.find_by(email: 'owner@example.com')
-        expect(user.role_users.exists?(store: @default_store)).to be(true)
+        expect(user.spree_roles.for_resource(@default_store).exists?).to be(true)
         expect(@default_store.reload.name).to eq('My New Store')
         expect(@default_store.setup_token).to be_nil
         expect(response.cookies['spree_admin_refresh_token']).to be_present

@@ -34,27 +34,10 @@ module Spree
             roles = current_store.roles.where(id: role_ids.map(&:to_s)).to_a
             return false if roles.empty?
 
-            return true if reject_foreign_audience_grant!(roles)
             return true if reject_admin_role_grant!(roles)
             return true if reject_privilege_escalating_grant!(roles)
 
             false
-          end
-
-          # Assignments made here bind to a store resource, so only staff roles
-          # belong on them. A vendor role assigned to store staff would carry
-          # its keys into the store's own back office.
-          #
-          # @param roles [Array<Spree::Role>]
-          # @return [Boolean] true if the request was rejected
-          def reject_foreign_audience_grant!(roles)
-            foreign = roles.reject(&:staff?)
-            return false if foreign.empty?
-
-            deny_role_grant!(
-              "These roles cannot be assigned to store staff: #{foreign.map(&:name).join(', ')}",
-              details: { foreign_audience_roles: foreign.map(&:name) }
-            )
           end
 
           # Rejects granting permission keys beyond the caller's own — used by
@@ -124,12 +107,10 @@ module Spree
               end
           end
 
-          # The caller's store-admin roles, fetched once per request. Matched
-          # on the store AND a store resource, mirroring
-          # `Spree::Ability#staff_roles`: an assignment scoped to another
-          # resource (a marketplace vendor) binds to that resource's store but
-          # confers no store-admin authority, so it must not widen what the
-          # caller may grant.
+          # The caller's roles on this store, fetched once per request,
+          # mirroring `Spree::Ability#staff_roles`: a role owned by another
+          # resource (a marketplace vendor) confers no store-admin authority
+          # and must not widen what the caller may grant.
           #
           # @return [Array<Spree::Role>]
           def caller_roles
@@ -137,11 +118,8 @@ module Spree
 
             user = try_spree_current_user
             @caller_roles =
-              if user.respond_to?(:role_users)
-                user.role_users.
-                  where(store: current_store, resource_type: Spree::Store.to_s).
-                  joins(:role).merge(Spree::Role.staff).
-                  includes(:role).map(&:role)
+              if user.respond_to?(:spree_roles)
+                user.spree_roles.for_resource(current_store).to_a
               else
                 []
               end

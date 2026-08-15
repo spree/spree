@@ -3,7 +3,8 @@ require 'spec_helper'
 describe Spree::UserManagement do
   let(:test_store) { create(:store) }
   let(:admin_user) { create(:admin_user) }
-  let(:role) { create(:role, name: 'test_role') }
+  # A role belongs to what it governs, so a grant on this store needs one here.
+  let(:role) { create(:role, name: 'test_role', resource: test_store) }
 
   describe 'instance methods' do
     describe '#add_user' do
@@ -44,11 +45,18 @@ describe Spree::UserManagement do
   end
 
   describe 'associations' do
-    it 'has many role_users' do
+    it 'has many roles' do
+      association = test_store.class.reflect_on_association(:roles)
+      expect(association.macro).to eq :has_many
+      expect(association.options[:class_name]).to eq 'Spree::Role'
+      expect(association.options[:as]).to eq :resource
+    end
+
+    # Assignments reach the resource through its roles, not directly.
+    it 'has many role_users through roles' do
       association = test_store.class.reflect_on_association(:role_users)
       expect(association.macro).to eq :has_many
-      expect(association.options[:class_name]).to eq 'Spree::RoleUser'
-      expect(association.options[:as]).to eq :resource
+      expect(association.options[:through]).to eq :roles
     end
 
     it 'has many users through role_users' do

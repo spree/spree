@@ -27,6 +27,7 @@ module Spree
     validates :inviter, :resource, :role, presence: true
     validate :invitee_is_not_inviter, on: :create
     validate :invitee_already_exists, on: :create
+    validate :role_belongs_to_resource
 
     #
     # Scopes
@@ -110,16 +111,26 @@ module Spree
 
     def set_defaults
       self.expires_at ||= 2.weeks.from_now
-      self.resource ||= Spree::Store.current
-      # Roles are store-owned, so the default follows the resource's store
-      # rather than whichever store happens to be current.
-      self.role ||= Spree::Role.default_admin_role(store)
+      # A role names what it governs, so the invitation follows it — an
+      # invitation to one resource carrying another's role would grant access
+      # somewhere the inviter never named.
+      self.resource ||= role&.resource || Spree::Store.current
+      self.role ||= Spree::Role.default_admin_role(resource)
     end
 
     def invitee_is_not_inviter
       if invitee == inviter
         errors.add(:invitee, 'cannot be the same as the inviter')
       end
+    end
+
+    # Accepting the invitation grants the role, which carries its own resource
+    # — so a mismatch would hand out access to somewhere else entirely.
+    def role_belongs_to_resource
+      return if role.blank? || resource.blank?
+      return if role.resource == resource
+
+      errors.add(:role, Spree.t(:invitation_role_resource_mismatch))
     end
 
     def invitee_already_exists

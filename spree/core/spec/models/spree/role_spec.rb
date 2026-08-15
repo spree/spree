@@ -3,6 +3,9 @@ require 'spec_helper'
 describe Spree::Role do
   let(:role) { create(:role) }
   let(:user) { create(:user) }
+  # A non-store resource stands in for a marketplace vendor until that model
+  # lands: what matters is that the role is owned by something else.
+  let(:vendor_like) { create(:customer_group) }
 
   describe 'with users' do
     before do
@@ -22,17 +25,17 @@ describe Spree::Role do
       expect(admin_role.read_attribute(:mutable)).to be false
     end
 
-    # Names are unique per audience, so a vendor role may legitimately be
-    # called "admin" — it must never be mistaken for the store super-role.
-    it 'ignores a vendor role of the same name' do
-      vendor_admin = create(:role, name: 'admin', audience: 'vendor', store: @default_store)
+    # Names are unique per owner, so another resource may legitimately call a
+    # role "admin" — it must never be mistaken for the store super-role.
+    it 'ignores a same-named role owned by something else' do
+      foreign_admin = create(:role, name: 'admin', resource: vendor_like)
 
       admin_role = Spree::Role.default_admin_role(@default_store)
 
-      expect(admin_role).not_to eq(vendor_admin)
+      expect(admin_role).not_to eq(foreign_admin)
       expect(admin_role).to be_staff
-      expect(vendor_admin).not_to be_admin
-      expect(vendor_admin).to be_mutable
+      expect(foreign_admin).not_to be_admin
+      expect(foreign_admin).to be_mutable
     end
 
     # "admin" means everything in *this* store, so it cannot be one shared row.
@@ -43,7 +46,7 @@ describe Spree::Role do
       second = Spree::Role.default_admin_role(other_store)
 
       expect(second).not_to eq(first)
-      expect(second.store).to eq(other_store)
+      expect(second.resource).to eq(other_store)
     end
   end
 
@@ -73,71 +76,72 @@ describe Spree::Role do
     end
   end
 
-  describe '#audience' do
-    it 'defaults to staff' do
-      expect(build(:role).audience).to eq('staff')
+  describe '#resource' do
+    it 'reads its audience from the owning resource' do
+      expect(build(:role).audience).to eq(:store)
       expect(build(:role)).to be_staff
+      expect(build(:role, resource: vendor_like).audience).to eq(:customer_group)
+      expect(build(:role, resource: vendor_like)).not_to be_staff
     end
 
-    it 'rejects a blank audience' do
-      expect(build(:role, audience: nil)).not_to be_valid
-    end
-
-    it 'rejects an unknown audience' do
-      expect(build(:role, audience: 'wizard')).not_to be_valid
+    it 'is required' do
+      expect(build(:role, resource: nil)).not_to be_valid
     end
 
     it 'cannot be changed once the role exists' do
-      role = create(:role, audience: 'staff')
-      role.audience = 'vendor'
+      role = create(:role)
+      role.resource = create(:store)
 
       expect(role).not_to be_valid
-      expect(role.errors[:audience]).to be_present
+      expect(role.errors[:resource]).to be_present
     end
 
-    it 'allows the same name in each audience' do
-      create(:role, name: 'Manager', audience: 'staff')
+    it 'allows the same name under a different owner' do
+      create(:role, name: 'Manager', resource: @default_store)
 
-      expect(build(:role, name: 'Manager', audience: 'vendor')).to be_valid
+      expect(build(:role, name: 'Manager', resource: vendor_like)).to be_valid
+      expect(build(:role, name: 'Manager', resource: create(:store))).to be_valid
     end
 
-    it 'still rejects a duplicate name within one audience' do
-      create(:role, name: 'Manager', audience: 'vendor')
+    it 'still rejects a duplicate name under one owner' do
+      create(:role, name: 'Manager', resource: vendor_like)
 
-      expect(build(:role, name: 'Manager', audience: 'vendor')).not_to be_valid
+      expect(build(:role, name: 'Manager', resource: vendor_like)).not_to be_valid
     end
 
-    it 'allows the same name in another store' do
-      create(:role, name: 'Manager', store: @default_store)
-
-      expect(build(:role, name: 'Manager', store: create(:store))).to be_valid
-    end
-
-    it 'scopes roles by audience' do
-      staff_role = create(:role, audience: 'staff')
-      vendor_role = create(:role, audience: 'vendor')
+    it 'scopes roles to the store back office' do
+      staff_role = create(:role)
+      other_role = create(:role, resource: vendor_like)
 
       expect(Spree::Role.staff).to include(staff_role)
-      expect(Spree::Role.staff).not_to include(vendor_role)
-      expect(Spree::Role.vendor).to include(vendor_role)
+      expect(Spree::Role.staff).not_to include(other_role)
+      expect(Spree::Role.for_resource(vendor_like)).to eq([other_role])
     end
   end
 
-  describe 'audience-bounded permissions' do
-    it 'allows a vendor role to hold vendor-grantable keys' do
-      expect(build(:role, audience: 'vendor', permissions: %w[write_products write_orders])).to be_valid
+  describe 'resource-bounded permissions' do
+    before do
+      Spree.permissions.register_resource(
+        :products, group: :catalog, audiences: %i[customer_group], subjects: -> { [Spree::Product] }
+      )
     end
 
-    it 'refuses operator-only keys on a vendor role' do
-      role = build(:role, audience: 'vendor', permissions: %w[write_products write_settings])
+    after { Spree.permissions.reset! }
+
+    it 'allows a non-store role to hold keys its audience is granted' do
+      expect(build(:role, resource: vendor_like, permissions: %w[write_products])).to be_valid
+    end
+
+    it 'refuses keys its audience is not granted' do
+      role = build(:role, resource: vendor_like, permissions: %w[write_products write_settings])
 
       expect(role).not_to be_valid
       expect(role.errors[:permissions].join).to include('write_settings')
       expect(role.errors[:permissions].join).not_to include('write_products')
     end
 
-    it 'leaves staff roles unbounded' do
-      expect(build(:role, audience: 'staff', permissions: %w[write_settings write_staff])).to be_valid
+    it 'leaves store roles unbounded' do
+      expect(build(:role, permissions: %w[write_settings write_staff])).to be_valid
     end
   end
 

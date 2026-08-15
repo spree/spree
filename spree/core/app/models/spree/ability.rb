@@ -131,25 +131,17 @@ module Spree
 
     # The user's roles on the ability's resource.
     #
-    # Assignments are matched on the store AND on the resource: a `RoleUser`
-    # scoped to a non-store resource (a marketplace vendor, say) binds to that
-    # resource's store, so matching on `store_id` alone would let a vendor's
-    # own role grant store-wide capability. Each panel reads only its own
-    # assignments.
-    #
-    # The store panel additionally reads only `staff`-audience roles, so a role
-    # from another audience mistakenly assigned on a store — by a seed or a
-    # console, since the API refuses it — still confers nothing here.
+    # A role names what it governs, so matching on it answers both questions at
+    # once: which panel these grants belong to, and which tenant. A role owned
+    # by a marketplace vendor cannot be picked up here however it was assigned.
     #
     # @return [Array<Spree::Role>]
     def staff_roles
       return @staff_roles if defined?(@staff_roles)
 
       @staff_roles =
-        if @user.respond_to?(:role_users) && @resource.present?
-          assignments = @user.role_users.where(store: @store, resource: @resource)
-          assignments = assignments.joins(:role).merge(Spree::Role.staff) if store_resource?
-          assignments.includes(:role).map(&:role)
+        if @user.respond_to?(:spree_roles) && @resource.present?
+          @user.spree_roles.for_resource(@resource).to_a
         else
           []
         end

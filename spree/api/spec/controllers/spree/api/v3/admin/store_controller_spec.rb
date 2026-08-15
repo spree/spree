@@ -26,8 +26,7 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
       let(:staffer) do
         create(:admin_user, :without_admin_role).tap do |user|
           user.role_users.create!(
-            role: create(:role, name: 'orders_only', permissions: %w[write_orders]),
-            resource: store
+            role: create(:role, name: 'orders_only', permissions: %w[write_orders])
           )
         end
       end

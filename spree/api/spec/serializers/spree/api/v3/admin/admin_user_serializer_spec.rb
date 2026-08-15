@@ -11,7 +11,7 @@ RSpec.describe Spree::Api::V3::Admin::AdminUserSerializer do
   describe 'stores' do
     it 'lists every store the user holds a role on, not just the current one' do
       other_store = create(:store)
-      create(:role_user, user: admin_user, role: Spree::Role.default_admin_role, resource: other_store, store: other_store)
+      create(:role_user, user: admin_user, role: Spree::Role.default_admin_role(other_store))
 
       expect(subject['stores']).to contain_exactly(
         { id: store.prefixed_id, name: store.name, code: store.code },
@@ -20,7 +20,7 @@ RSpec.describe Spree::Api::V3::Admin::AdminUserSerializer do
     end
 
     it 'does not duplicate a store the user holds multiple roles on' do
-      create(:role_user, user: admin_user, role: create(:role), resource: store, store: store)
+      create(:role_user, user: admin_user, role: create(:role))
 
       expect(subject['stores'].map { |s| s[:id] }).to eq([store.prefixed_id])
     end

@@ -85,7 +85,7 @@ describe Spree::Ability, type: :model do
 
     context 'with a role granting a read key' do
       before do
-        admin.role_users.create!(role: create(:role, name: 'viewer', permissions: %w[read_orders]), resource: store)
+        admin.role_users.create!(role: create(:role, name: 'viewer', permissions: %w[read_orders], resource: store))
       end
 
       it 'grants read and admin on the resource subjects' do
@@ -105,7 +105,7 @@ describe Spree::Ability, type: :model do
 
     context 'with a role granting a write key' do
       before do
-        admin.role_users.create!(role: create(:role, name: 'manager', permissions: %w[write_orders]), resource: store)
+        admin.role_users.create!(role: create(:role, name: 'manager', permissions: %w[write_orders], resource: store))
       end
 
       it 'grants manage on the resource subjects' do
@@ -120,8 +120,8 @@ describe Spree::Ability, type: :model do
 
     context 'with multiple roles' do
       before do
-        admin.role_users.create!(role: create(:role, name: 'support', permissions: %w[read_orders]), resource: store)
-        admin.role_users.create!(role: create(:role, name: 'merch', permissions: %w[write_products]), resource: store)
+        admin.role_users.create!(role: create(:role, name: 'support', permissions: %w[read_orders], resource: store))
+        admin.role_users.create!(role: create(:role, name: 'merch', permissions: %w[write_products], resource: store))
       end
 
       it 'combines keys from all roles' do
@@ -133,7 +133,7 @@ describe Spree::Ability, type: :model do
 
     context 'with a role granting no keys' do
       before do
-        admin.role_users.create!(role: create(:role, name: 'empty'), resource: store)
+        admin.role_users.create!(role: create(:role, name: 'empty', resource: store))
       end
 
       it 'grants only the staff baseline' do
@@ -147,7 +147,7 @@ describe Spree::Ability, type: :model do
 
     context 'with the admin role' do
       before do
-        admin.role_users.create!(role: Spree::Role.default_admin_role, resource: store)
+        admin.role_users.create!(role: Spree::Role.default_admin_role(store))
       end
 
       it 'grants everything and reports the full catalog' do
@@ -158,8 +158,8 @@ describe Spree::Ability, type: :model do
 
     context 'with overlapping keys across roles' do
       before do
-        admin.role_users.create!(role: create(:role, name: 'viewer', permissions: %w[read_orders]), resource: store)
-        admin.role_users.create!(role: create(:role, name: 'manager', permissions: %w[write_orders read_orders]), resource: store)
+        admin.role_users.create!(role: create(:role, name: 'viewer', permissions: %w[read_orders], resource: store))
+        admin.role_users.create!(role: create(:role, name: 'manager', permissions: %w[write_orders read_orders], resource: store))
       end
 
       it 'deduplicates into one expanded key set' do
@@ -172,8 +172,8 @@ describe Spree::Ability, type: :model do
       let(:store_b) { create(:store) }
 
       before do
-        admin.role_users.create!(role: create(:role, name: 'a_orders', permissions: %w[write_orders]), resource: store)
-        admin.role_users.create!(role: create(:role, name: 'b_products', permissions: %w[write_products]), resource: store_b)
+        admin.role_users.create!(role: create(:role, name: 'a_orders', permissions: %w[write_orders], resource: store))
+        admin.role_users.create!(role: create(:role, name: 'b_products', permissions: %w[write_products], resource: store_b))
       end
 
       it 'activates only the current store assignments' do
@@ -191,35 +191,24 @@ describe Spree::Ability, type: :model do
       end
     end
 
-    # The API refuses this assignment, but a seed or a console could still make
-    # it — reading it back at the query layer is what actually holds.
-    context 'with a foreign-audience role assigned on the store itself' do
-      before do
-        admin.role_users.create!(
-          role: create(:role, name: 'stray', audience: 'vendor', permissions: %w[write_orders]),
-          resource: store
-        )
-      end
-
-      it 'confers nothing in the store back office' do
-        expect(staff_ability.permission_keys).to be_empty
-        expect(staff_ability).not_to be_able_to :read, Spree::Order.new
-      end
-    end
-
     # A non-store resource stands in for a marketplace vendor until the Vendor
-    # model lands: what matters is that the assignment hangs off something
-    # other than the store, on the store's own turf.
+    # model lands: what matters is that the role is owned by something other
+    # than the store, on the store's own turf.
     context 'with a role held on a non-store resource' do
       let(:panel) { create(:customer_group) }
 
       before do
+        # Open orders to the stand-in's audience, as the catalog opens it to
+        # marketplace vendors.
+        Spree.permissions.register_resource(
+          :orders, group: :orders, audiences: %i[customer_group], subjects: -> { [Spree::Order] }
+        )
         admin.role_users.create!(
-          role: create(:role, name: 'panel_orders', audience: 'vendor', permissions: %w[write_orders]),
-          resource: panel,
-          store: store
+          role: create(:role, name: 'panel_orders', permissions: %w[write_orders], resource: panel)
         )
       end
+
+      after { Spree.permissions.reset! }
 
       it 'is invisible to the store ability' do
         expect(staff_ability).not_to be_able_to :read, Spree::Order.new
@@ -255,7 +244,7 @@ describe Spree::Ability, type: :model do
       end
 
       it 'does not carry the store admin role onto the resource' do
-        admin.role_users.create!(role: Spree::Role.default_admin_role, resource: store)
+        admin.role_users.create!(role: Spree::Role.default_admin_role(store))
         panel_ability = Spree::Ability.new(admin, store: store, resource: panel)
 
         expect(panel_ability).not_to be_able_to :manage, :all
@@ -267,8 +256,8 @@ describe Spree::Ability, type: :model do
       let(:store_b) { create(:store) }
 
       before do
-        admin.role_users.create!(role: Spree::Role.default_admin_role, resource: store)
-        admin.role_users.create!(role: create(:role, name: 'b_viewer', permissions: %w[read_orders]), resource: store_b)
+        admin.role_users.create!(role: Spree::Role.default_admin_role(store))
+        admin.role_users.create!(role: create(:role, name: 'b_viewer', permissions: %w[read_orders], resource: store_b))
       end
 
       it 'does not leak admin authority into the limited store' do
@@ -281,32 +270,40 @@ describe Spree::Ability, type: :model do
       end
     end
 
-    context 'with the same role assigned on two stores' do
+    # A role belongs to one store, so "the same role on two stores" is two
+    # roles. Holding both grants each store's keys on that store alone.
+    context 'with a same-named role on two stores' do
       let(:store_b) { create(:store) }
-      let(:role) { create(:role, name: 'shared', permissions: %w[write_orders]) }
 
       before do
-        admin.role_users.create!(role: role, resource: store)
-        admin.role_users.create!(role: role, resource: store_b)
+        admin.role_users.create!(role: create(:role, name: 'shared', permissions: %w[write_orders], resource: store))
+        admin.role_users.create!(role: create(:role, name: 'shared', permissions: %w[write_products], resource: store_b))
       end
 
-      it 'grants the same keys on each store' do
+      it 'grants each store only its own role keys' do
         expect(staff_ability.permission_keys).to eq(%w[read_orders write_orders])
-        expect(Spree::Ability.new(admin, store: store_b).permission_keys).to eq(%w[read_orders write_orders])
+        expect(Spree::Ability.new(admin, store: store_b).permission_keys).to eq(%w[read_products write_products])
       end
     end
 
-    # A marketplace vendor's staff hold roles scoped to the vendor, which binds
-    # to the vendor's store. Store-admin authority must come only from
-    # store-resourced assignments, or a vendor picker would inherit the whole
-    # store — including, for an `admin`-named vendor role, full access.
+    # A marketplace vendor's staff hold roles owned by the vendor. Store-admin
+    # authority must come only from the store's own roles, or a vendor picker
+    # would inherit the whole store — including, for an `admin`-named vendor
+    # role, full access.
     context 'with an assignment scoped to a non-store resource' do
       let(:vendor_like) { Spree::DummyModel.create!(name: 'Vendor A') }
 
+      before do
+        Spree.permissions.register_resource(
+          :products, group: :catalog, audiences: %i[dummy_model], subjects: -> { [Spree::Product] }
+        )
+      end
+
+      after { Spree.permissions.reset! }
+
       it 'grants nothing in the store admin' do
         admin.role_users.create!(
-          role: create(:role, name: 'vendor_catalog', permissions: %w[write_products]),
-          resource: vendor_like
+          role: create(:role, name: 'vendor_catalog', permissions: %w[write_products], resource: vendor_like)
         )
 
         expect(staff_ability).not_to be_able_to :manage, store.products.new
@@ -315,7 +312,7 @@ describe Spree::Ability, type: :model do
       end
 
       it 'does not confer full access through an admin-named role' do
-        admin.role_users.create!(role: Spree::Role.default_admin_role, resource: vendor_like)
+        admin.role_users.create!(role: Spree::Role.default_admin_role(vendor_like))
 
         expect(staff_ability).not_to be_able_to :manage, :all
         expect(staff_ability.permission_keys).to eq([])
@@ -326,7 +323,7 @@ describe Spree::Ability, type: :model do
       before do
         role = create(:role, name: 'stale', permissions: %w[read_orders])
         role.update_column(:permissions, %w[read_orders write_bogus])
-        admin.role_users.create!(role: role, resource: store)
+        admin.role_users.create!(role: role)
       end
 
       it 'activates the known keys and drops the rest' do
@@ -359,8 +356,7 @@ describe Spree::Ability, type: :model do
     it 'resolves staff roles for persisted customers' do
       manager = create(:user)
       manager.role_users.create!(
-        role: create(:role, name: 'shared_manager', permissions: %w[write_orders]),
-        resource: store
+        role: create(:role, name: 'shared_manager', permissions: %w[write_orders], resource: store)
       )
       shared_ability = Spree::Ability.new(manager, store: store)
 
@@ -387,7 +383,7 @@ describe Spree::Ability, type: :model do
     let(:store_b) { create(:store) }
 
     before do
-      admin.role_users.create!(role: Spree::Role.default_admin_role, resource: store_a)
+      admin.role_users.create!(role: Spree::Role.default_admin_role(store_a))
     end
 
     it "grants authority on the role assignment's store" do
