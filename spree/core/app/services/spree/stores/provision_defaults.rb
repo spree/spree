@@ -32,6 +32,7 @@ module Spree
           provision_stock_location
           provision_delivery_zones
           provision_pickup
+          restate_seeded_calculators
         end
 
         store.reload
@@ -156,6 +157,22 @@ module Spree
 
         # No configured counters means every pickup-enabled location, which
         # is what a fresh store wants; seeding the links would freeze the set.
+      end
+
+      # Methods seeded before the country was known (digital delivery) captured
+      # the store's then-current currency as their calculator default, so they
+      # would still quote in dollars on a store that turned out to sell from
+      # Zurich. Only the seeded zero-amount defaults are restated — a merchant's
+      # own priced methods are never rewritten.
+      def restate_seeded_calculators
+        store.delivery_methods.includes(:calculator).find_each do |delivery_method|
+          calculator = delivery_method.calculator
+          next unless calculator.respond_to?(:preferred_currency)
+          next if calculator.preferred_currency == currency
+          next unless calculator.preferences[:amount].to_f.zero?
+
+          calculator.update!(preferences: calculator.preferences.merge(currency: currency))
+        end
       end
     end
   end

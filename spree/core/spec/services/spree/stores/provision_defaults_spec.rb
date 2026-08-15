@@ -104,6 +104,34 @@ RSpec.describe Spree::Stores::ProvisionDefaults do
     end
   end
 
+  # Digital delivery is seeded before anyone names a country, so its
+  # calculator captured whatever currency the store had at seed time.
+  describe 'methods seeded before the country was known' do
+    it 'restates a zero-amount calculator into the store currency' do
+      digital = create(
+        :delivery_method,
+        store: store,
+        calculator: Spree::Calculator::Shipping::DigitalDelivery.new(preferences: { amount: 0, currency: 'USD' })
+      )
+
+      subject
+
+      expect(digital.reload.calculator.preferred_currency).to eq('EUR')
+    end
+
+    it "leaves a merchant's own priced method alone" do
+      priced = create(
+        :delivery_method,
+        store: store,
+        calculator: Spree::Calculator::Shipping::FlatRate.new(preferences: { amount: 12, currency: 'USD' })
+      )
+
+      subject
+
+      expect(priced.reload.calculator.preferred_currency).to eq('USD')
+    end
+  end
+
   describe 'running twice' do
     it 'is idempotent' do
       subject
