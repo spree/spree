@@ -30,7 +30,7 @@ function ProgressTrack({ className, ...props }: ProgressPrimitive.Track.Props) {
   return (
     <ProgressPrimitive.Track
       data-slot="progress-track"
-      className={cn('relative h-2 w-full overflow-hidden rounded-full bg-primary/20', className)}
+      className={cn('relative h-2 w-full overflow-hidden rounded-full bg-blue-500/20', className)}
       {...props}
     />
   )
@@ -44,7 +44,7 @@ function ProgressIndicator({ className, ...props }: ProgressPrimitive.Indicator.
         // `width` is a layout property, but it's the right one here: a
         // determinate bar has to grow, and `scaleX` would distort the fill's
         // rounded ends. Narrowed from `transition-all` so only width animates.
-        'h-full rounded-full bg-primary transition-[width] duration-200 ease-out',
+        'h-full rounded-full bg-blue-500 transition-[width] duration-200 ease-out',
         'data-[indeterminate]:w-1/3 data-[indeterminate]:animate-pulse',
         className,
       )}

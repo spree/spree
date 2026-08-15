@@ -51,9 +51,7 @@ export function SettingsSidebar({ open }: { open: boolean }) {
       data-state={open ? 'open' : 'closed'}
       className={cn(
         'sticky top-0 z-30 hidden h-svh shrink-0 self-start overflow-hidden bg-sidebar text-sidebar-foreground transition-[width,border-color] duration-200 ease-out lg:block',
-        open
-          ? 'lg:w-(--spacing-sidebar-width) border-e border-border/50'
-          : 'lg:w-0 border-e-0 border-transparent',
+        open ? 'lg:w-(--spacing-sidebar-width) border-e' : 'lg:w-0 border-e-0 border-transparent',
       )}
     >
       {/* `quiet-scrollbar` rather than the browser default: this nav is an
