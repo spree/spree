@@ -2,9 +2,11 @@ module Spree
   class Role < Spree.base_class
     has_prefix_id :role
 
-    # Deliberately NOT Spree::UniqueName: its uniqueness is global, and the two
-    # audiences are independent vocabularies (see the name validation below).
-    # The normalization it applies is kept verbatim.
+    include Spree::SingleStoreResource
+
+    # Deliberately NOT Spree::UniqueName: its uniqueness is global, while a
+    # role is unique within its own store and audience (see the name
+    # validation below). The normalization it applies is kept verbatim.
     normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
 
     ADMIN_ROLE = 'admin'
@@ -45,12 +47,12 @@ module Spree
     # Validations
     #
     validates :audience, presence: true, inclusion: { in: AUDIENCES }
-    # Unique per audience rather than globally: a marketplace may hold a staff
-    # "Manager" and a vendor "Manager" at once. Backed by a unique index on
-    # the pair.
+    # Unique within a store and audience rather than globally: two stores may
+    # each define a "Manager", and one store may hold a staff "Manager"
+    # alongside a vendor "Manager". Backed by a unique index on the triple.
     validates :name, presence: true,
                      uniqueness: { case_sensitive: false, allow_blank: true,
-                                   scope: [*spree_base_uniqueness_scope, :audience] }
+                                   scope: [*spree_base_uniqueness_scope, :store_id, :audience] }
     validate :permissions_must_be_known, if: :permissions_changed?
     validate :permissions_must_be_grantable_for_audience, if: -> { permissions_changed? || audience_changed? }
     validate :audience_immutable, on: :update, if: :audience_changed?
@@ -76,8 +78,15 @@ module Spree
     #
     # Class Methods
     #
-    def self.default_admin_role
-      find_or_create_by(name: ADMIN_ROLE) do |role|
+    # The store's own super-role, created on first ask. Each store owns one:
+    # "admin" means everything in *this* store, so it cannot be shared.
+    #
+    # @param store [Spree::Store] defaults to the current store
+    # @return [Spree::Role]
+    def self.default_admin_role(store = nil)
+      store ||= Spree::Current.store || Spree::Store.current
+
+      staff.where(store: store).find_or_create_by(name: ADMIN_ROLE) do |role|
         role.mutable = false
       end
     end

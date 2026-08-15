@@ -111,7 +111,9 @@ module Spree
     def set_defaults
       self.expires_at ||= 2.weeks.from_now
       self.resource ||= Spree::Store.current
-      self.role ||= Spree::Role.default_admin_role
+      # Roles are store-owned, so the default follows the resource's store
+      # rather than whichever store happens to be current.
+      self.role ||= Spree::Role.default_admin_role(store)
     end
 
     def invitee_is_not_inviter

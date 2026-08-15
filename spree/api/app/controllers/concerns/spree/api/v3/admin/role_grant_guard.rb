@@ -31,7 +31,7 @@ module Spree
             # past a caller without role-management authority.
             return true if require_role_management && reject_without_role_management!
 
-            roles = Spree::Role.where(id: role_ids.map(&:to_s)).to_a
+            roles = current_store.roles.where(id: role_ids.map(&:to_s)).to_a
             return false if roles.empty?
 
             return true if reject_foreign_audience_grant!(roles)

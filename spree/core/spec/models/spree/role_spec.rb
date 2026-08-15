@@ -16,10 +16,21 @@ describe Spree::Role do
 
   describe '.default_admin_role' do
     it 'returns the admin role, seeded immutable' do
-      admin_role = Spree::Role.default_admin_role
+      admin_role = Spree::Role.default_admin_role(@default_store)
 
       expect(admin_role.name).to eq('admin')
       expect(admin_role.read_attribute(:mutable)).to be false
+    end
+
+    # "admin" means everything in *this* store, so it cannot be one shared row.
+    it 'gives each store its own' do
+      other_store = create(:store)
+
+      first = Spree::Role.default_admin_role(@default_store)
+      second = Spree::Role.default_admin_role(other_store)
+
+      expect(second).not_to eq(first)
+      expect(second.store).to eq(other_store)
     end
   end
 
@@ -81,6 +92,12 @@ describe Spree::Role do
       create(:role, name: 'Manager', audience: 'vendor')
 
       expect(build(:role, name: 'Manager', audience: 'vendor')).not_to be_valid
+    end
+
+    it 'allows the same name in another store' do
+      create(:role, name: 'Manager', store: @default_store)
+
+      expect(build(:role, name: 'Manager', store: create(:store))).to be_valid
     end
 
     it 'scopes roles by audience' do

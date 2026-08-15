@@ -99,7 +99,7 @@ module Spree
             target = desired_role_ids.map(&:to_s)
 
             (target - current).each do |role_id|
-              role = Spree::Role.find_by(id: role_id)
+              role = current_store.roles.staff.find_by(id: role_id)
               @resource.role_users.find_or_create_by!(role: role, resource: current_store) if role
             end
 

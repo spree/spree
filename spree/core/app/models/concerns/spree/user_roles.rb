@@ -18,7 +18,7 @@ module Spree
       # @return [Spree::RoleUser] The role user created
       def add_role(role_name, resource = nil)
         resource ||= Spree::Store.current
-        role = Spree::Role.find_by(name: role_name)
+        role = Spree::Role.find_by(name: role_name, store: store_for_resource(resource))
         return if role.nil?
 
         role_users.find_or_create_by!(role: role, resource: resource)
@@ -30,7 +30,7 @@ module Spree
       # @param resource [Spree::Base] The resource to remove the role from
       def remove_role(role_name, resource = nil)
         resource ||= Spree::Store.current
-        role = Spree::Role.find_by(name: role_name)
+        role = Spree::Role.find_by(name: role_name, store: store_for_resource(resource))
         return if role.nil?
 
         role_users.where(role: role, resource: resource).destroy_all
@@ -60,6 +60,16 @@ module Spree
       # @return [Spree.admin_user_class]
       def invited_by
         invitations.first&.inviter
+      end
+
+      # The store a role must belong to for it to be grantable on this
+      # resource — mirrors Spree::RoleUser#resource_bound_store, since roles
+      # are store-owned and an assignment binds to the resource's store.
+      #
+      # @param resource [Spree::Base]
+      # @return [Spree::Store, nil]
+      def store_for_resource(resource)
+        resource.is_a?(Spree::Store) ? resource : resource.try(:store)
       end
     end
   end

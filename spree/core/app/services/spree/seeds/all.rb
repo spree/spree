@@ -10,9 +10,6 @@ module Spree
             # countries gem, and zones are migration-only, so none of them
             # are seeded.
 
-            # user roles
-            Roles.call
-
             # additional data
             StoreCreditCategories.call
             TaxCategories.call
@@ -20,6 +17,9 @@ module Spree
             # store & channels
             Stores.call
             Channels.call
+            # Roles are store-owned, so they can only be seeded once a store
+            # exists — every store gets its own immutable admin role.
+            Roles.call
             # Store-scoped, so it can only run once a store exists.
             DigitalDelivery.call
             # The warehouse, delivery zones and pickup are not seeded: their

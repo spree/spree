@@ -14,6 +14,8 @@ describe Spree::UserRoles do
 
     context 'when a resource parameter is provided' do
       let(:resource) { create(:store) }
+      # Roles are store-owned, so the grant needs one in this resource's store.
+      let!(:resource_role) { create(:role, name: 'test', store: resource) }
 
       before { test_user.add_role('test', resource) }
 
@@ -36,6 +38,8 @@ describe Spree::UserRoles do
 
     context 'when a resource parameter is provided' do
       let(:resource) { create(:store) }
+      # Roles are store-owned, so the grant needs one in this resource's store.
+      let!(:resource_role) { create(:role, name: 'test', store: resource) }
 
       before { test_user.add_role('test', resource) }
 
@@ -62,6 +66,8 @@ describe Spree::UserRoles do
 
     context 'when a resource parameter is provided' do
       let(:resource) { create(:store) }
+      # Roles are store-owned, so the grant needs one in this resource's store.
+      let!(:resource_role) { create(:role, name: 'test', store: resource) }
 
       context 'when the user has the role for the resource' do
         before { test_user.add_role('test', resource) }
@@ -87,8 +93,11 @@ describe Spree::UserRoles do
 
     context 'when a resource parameter is provided' do
       let(:resource) { create(:store) }
+      # Roles are store-owned, so the grant needs one in this resource's store.
+      let!(:resource_role) { create(:role, name: 'test', store: resource) }
 
       it 'checks against the resource' do
+        Spree::Role.default_admin_role(resource)
         admin_user = create(:admin_user)
         expect(admin_user.spree_admin?(resource)).to be false
 

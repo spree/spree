@@ -37,8 +37,8 @@ describe Spree::UserManagement do
     end
 
     describe '#default_user_role' do
-      it 'returns the default admin role' do
-        expect(test_store.default_user_role).to eq(Spree::Role.default_admin_role)
+      it 'returns the store own admin role' do
+        expect(test_store.default_user_role).to eq(Spree::Role.default_admin_role(test_store))
       end
     end
   end

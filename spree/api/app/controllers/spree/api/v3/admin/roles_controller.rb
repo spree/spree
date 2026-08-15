@@ -43,7 +43,7 @@ module Spree
           # role picker, where assigning one would bind a vendor role to a
           # store resource.
           def scope
-            Spree::Role.staff.accessible_by(current_ability, :show)
+            current_store.roles.staff.accessible_by(current_ability, :show)
           end
 
           def collection_includes

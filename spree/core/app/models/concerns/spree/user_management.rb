@@ -26,8 +26,9 @@ module Spree
     end
 
     # this can be overridden in the base model to use a different user role, eg. 'vendor'
+    # Roles are store-owned, so this resolves against the resource's own store.
     def default_user_role
-      Spree::Role.default_admin_role
+      Spree::Role.default_admin_role(is_a?(Spree::Store) ? self : try(:store))
     end
   end
 end
