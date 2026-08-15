@@ -32,13 +32,19 @@ stale. A bare `db:seed` without credentials now yields a store with no
 warehouse, zones or pickup until setup runs — correct, since nobody has said
 where the shop is.
 
-**Setup asks for country and locale; currency is derived and shown.** The
-countries gem gives currency and official languages per country — the
-derivation `ensure_default_market` already used — so `currency` leaves the
-request contract, `country_code` becomes required, `locale` is added
-(options: the country's official languages + English, English preselected).
-The form shows the derived currency read-only so Switzerland visibly gets
-CHF. Country data comes from a new unauthenticated
+**Setup asks for country, locale and currency, each defaulted from the
+country.** The countries gem gives currency and official languages per
+country — the derivation `ensure_default_market` already used — so
+`country_code` becomes required and both `locale` and `currency` default
+from it. All three are editable: a first cut made currency read-only and
+preselected English regardless of country, and both were wrong in the same
+way — the form asked a question and then ignored the answer. Shipping from
+Warsaw while pricing in euros, or running a Polish store in English, are
+ordinary. Unknown `currency` is now a pre-token-spend 422 rather than
+silently ignored. Locale options are the country's official languages
+filtered to those Spree actually translates (Switzerland loses Romansh),
+plus English; installs without spree_i18n skip the filter, since otherwise
+every country would collapse to English. Country data comes from a new unauthenticated
 `GET auth/setup/countries` guarded like the setup endpoint; folding it into
 the status endpoint (polled by the login page) and a static SDK map (a
 second source of truth) were both rejected.
