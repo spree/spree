@@ -2147,7 +2147,20 @@
         "succeeded": "Abgeschlossen"
       },
       "supports_dry_run": "Vorschau verfügbar",
-      "title": "Wartungsaufgaben"
+      "title": "Wartungsaufgaben",
+      "upgrade": {
+        "confirm": {
+          "title": "„{{name}}“ ausführen?",
+          "message": "Die Schritte haben eine Reihenfolge — führen Sie zuerst die vorhergehenden aus. Dies schreibt in Ihre Daten und kann nicht rückgängig gemacht werden."
+        },
+        "description": "Datenschritte, die dieses Release benötigt, in der Reihenfolge ihrer Ausführung.",
+        "progress": "{{done}} von {{total}} erledigt",
+        "read_guide": "Upgrade-Anleitung lesen",
+        "run_again": "Erneut ausführen",
+        "run_next": "Nächsten Schritt ausführen",
+        "run_step": "Ausführen",
+        "title": "Upgrade auf Spree {{version}}"
+      }
     },
     "nav": {
       "account": "Konto",

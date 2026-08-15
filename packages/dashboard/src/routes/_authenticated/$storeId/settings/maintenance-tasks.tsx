@@ -25,7 +25,12 @@ import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import { RunDetailSheet } from '../../../../components/spree/maintenance-tasks/run-detail-sheet'
 import { RunTaskDialog } from '../../../../components/spree/maintenance-tasks/run-task-dialog'
-import { isRunActive, useMaintenanceTasks } from '../../../../hooks/use-maintenance-tasks'
+import { UpgradePanel } from '../../../../components/spree/maintenance-tasks/upgrade-panel'
+import {
+  isRunActive,
+  useMaintenanceTasks,
+  useUpgradeSteps,
+} from '../../../../hooks/use-maintenance-tasks'
 import { taskShortName } from '../../../../lib/maintenance-tasks'
 import '../../../../tables/maintenance-task-runs'
 
@@ -50,7 +55,15 @@ function MaintenanceTasksPage() {
   const { data, isLoading } = useMaintenanceTasks()
   const [taskToRun, setTaskToRun] = useState<MaintenanceTask | null>(null)
 
-  const tasks = data?.data ?? []
+  // Upgrade steps have their own panel, where the manifest order and the
+  // operator notes are what make them legible. Listing them again as loose
+  // cards would bury the handful of tasks that are not part of an upgrade.
+  //
+  // Which tasks those are comes from the manifest rather than from a naming
+  // convention: a task belongs to an upgrade because a manifest names it.
+  const { data: upgradeData } = useUpgradeSteps()
+  const upgradeTaskNames = new Set((upgradeData?.data ?? []).map((step) => step.task_name))
+  const tasks = (data?.data ?? []).filter((task) => !upgradeTaskNames.has(task.name))
 
   const openRun = useCallback(
     (runId: string | undefined) => {
@@ -72,6 +85,8 @@ function MaintenanceTasksPage() {
         <h1 className="font-semibold text-2xl">{t('admin.maintenance_tasks.title')}</h1>
         <p className="text-muted-foreground text-sm">{t('admin.maintenance_tasks.description')}</p>
       </header>
+
+      <UpgradePanel onOpenRun={openRun} />
 
       <section className="flex flex-col gap-3">
         {isLoading && (

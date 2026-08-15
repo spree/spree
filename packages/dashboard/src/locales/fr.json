@@ -2147,7 +2147,20 @@
         "succeeded": "Terminée"
       },
       "supports_dry_run": "Aperçu disponible",
-      "title": "Tâches de maintenance"
+      "title": "Tâches de maintenance",
+      "upgrade": {
+        "confirm": {
+          "title": "Exécuter « {{name}} » ?",
+          "message": "Les étapes ont un ordre — exécutez d'abord celles qui précèdent. Cette action écrit dans vos données et est irréversible."
+        },
+        "description": "Étapes de données requises par cette version, dans l'ordre où elles doivent s'exécuter.",
+        "progress": "{{done}} sur {{total}} terminées",
+        "read_guide": "Lire le guide de mise à niveau",
+        "run_again": "Réexécuter",
+        "run_next": "Exécuter l'étape suivante",
+        "run_step": "Exécuter",
+        "title": "Mise à niveau vers Spree {{version}}"
+      }
     },
     "nav": {
       "account": "Compte",

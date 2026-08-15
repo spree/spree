@@ -2147,7 +2147,20 @@
         "succeeded": "Completed"
       },
       "supports_dry_run": "Preview available",
-      "title": "Maintenance tasks"
+      "title": "Maintenance tasks",
+      "upgrade": {
+        "confirm": {
+          "title": "Run “{{name}}”?",
+          "message": "Steps have an order — run the ones before it first. This writes to your data and cannot be undone."
+        },
+        "description": "Data steps this release needs, in the order they must run.",
+        "progress": "{{done}} of {{total}} done",
+        "read_guide": "Read the upgrade guide",
+        "run_again": "Run again",
+        "run_next": "Run next step",
+        "run_step": "Run",
+        "title": "Upgrade to Spree {{version}}"
+      }
     },
     "nav": {
       "account": "Account",

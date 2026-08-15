@@ -55,16 +55,32 @@ export function useMaintenanceTaskRun(id: string | undefined) {
       if (query.state.data) {
         queryClient.invalidateQueries({ queryKey: buildKey('maintenance-tasks') })
         queryClient.invalidateQueries({ queryKey: buildKey('maintenance-task-runs') })
+        queryClient.invalidateQueries({ queryKey: buildKey('upgrade-steps') })
       }
       return false
     },
   })
 }
 
+/**
+ * The upgrade manifest as an ordered checklist. Polled while any step is
+ * working, so the panel advances as the walk does.
+ */
+export function useUpgradeSteps() {
+  return useQuery({
+    queryKey: useResourceKey('upgrade-steps'),
+    queryFn: () => adminClient.upgradeSteps.list(),
+    refetchInterval: (query) =>
+      query.state.data?.data.some((step) => isRunActive(step.last_run?.status ?? undefined))
+        ? RUN_POLL_INTERVAL_MS
+        : false,
+  })
+}
+
 export function useStartMaintenanceTask() {
   return useResourceMutation<MaintenanceTaskRun, Error, MaintenanceTaskRunCreateParams>({
     mutationFn: (params) => adminClient.maintenanceTaskRuns.create(params),
-    invalidate: [['maintenance-tasks'], ['maintenance-task-runs']],
+    invalidate: [['maintenance-tasks'], ['maintenance-task-runs'], ['upgrade-steps']],
     successMessage: i18n.t('admin.maintenance_tasks.messages.started'),
     errorMessage: i18n.t('admin.maintenance_tasks.messages.start_failed'),
   })
@@ -93,7 +109,7 @@ function useRunControl(action: 'pause' | 'resume' | 'cancel', messageKey: string
 
   return useResourceMutation<MaintenanceTaskRun, Error, string>({
     mutationFn: (id) => adminClient.maintenanceTaskRuns[action](id),
-    invalidate: [['maintenance-tasks'], ['maintenance-task-runs']],
+    invalidate: [['maintenance-tasks'], ['maintenance-task-runs'], ['upgrade-steps']],
     successMessage: i18n.t(`admin.maintenance_tasks.messages.${messageKey}`),
     errorMessage: i18n.t('admin.errors.generic'),
     onSuccess: (run) => {

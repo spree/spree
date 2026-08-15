@@ -2163,7 +2163,20 @@
         "succeeded": "Zakończone"
       },
       "supports_dry_run": "Podgląd dostępny",
-      "title": "Zadania konserwacyjne"
+      "title": "Zadania konserwacyjne",
+      "upgrade": {
+        "confirm": {
+          "title": "Uruchomić „{{name}}”?",
+          "message": "Kroki mają kolejność — najpierw uruchom te wcześniejsze. Ta operacja zapisuje dane i nie można jej cofnąć."
+        },
+        "description": "Kroki na danych wymagane przez to wydanie, w kolejności ich wykonania.",
+        "progress": "ukończono {{done}} z {{total}}",
+        "read_guide": "Przeczytaj przewodnik aktualizacji",
+        "run_again": "Uruchom ponownie",
+        "run_next": "Uruchom następny krok",
+        "run_step": "Uruchom",
+        "title": "Aktualizacja do Spree {{version}}"
+      }
     },
     "nav": {
       "account": "Konto",

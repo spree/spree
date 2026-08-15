@@ -2144,7 +2144,20 @@
         "succeeded": "已完成"
       },
       "supports_dry_run": "支持预览",
-      "title": "维护任务"
+      "title": "维护任务",
+      "upgrade": {
+        "confirm": {
+          "title": "运行“{{name}}”？",
+          "message": "步骤有先后顺序——请先运行前面的步骤。此操作会写入数据且无法撤销。"
+        },
+        "description": "此版本所需的数据步骤，按必须执行的顺序排列。",
+        "progress": "已完成 {{done}} / {{total}}",
+        "read_guide": "阅读升级指南",
+        "run_again": "重新运行",
+        "run_next": "运行下一步",
+        "run_step": "运行",
+        "title": "升级到 Spree {{version}}"
+      }
     },
     "nav": {
       "account": "账户",

@@ -124,3 +124,4 @@ export type {
   TranslationBatchEntry,
   TranslationsUpsertParams,
 } from './translations'
+export type { UpgradeStep } from './upgrade-step'
