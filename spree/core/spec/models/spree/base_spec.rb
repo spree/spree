@@ -106,4 +106,29 @@ describe Spree::Base do
   describe '.json_api_permitted_attributes' do
     it { expect(Spree::Address.json_api_permitted_attributes).to contain_exactly('firstname', 'lastname', 'address1', 'address2', 'city', 'zipcode', 'phone', 'country_code', 'state_code', 'state_name', 'alternative_phone', 'company', 'country_id', 'state_id', 'created_at', 'updated_at', 'customer_id', 'deleted_at', 'label', 'metadata', 'quick_checkout', 'latitude', 'longitude') }
   end
+
+  describe 'preference defaults on load' do
+    let(:store) { Spree::Store.default }
+
+    it 'backfills preferences added since the record was last saved' do
+      store.update_column(:preferences, store.preferences.except(:timezone))
+
+      loaded = Spree::Store.find(store.id)
+
+      expect(loaded.preferences[:timezone]).to eq(loaded.preference_default(:timezone))
+    end
+
+    # `preferences` is a YAML-serialized Hash, so the dirty check compares the
+    # serialized string: re-writing the attribute with the same values in a
+    # different key order still counts as a change, and `with_lock` refuses a
+    # record with unpersisted changes.
+    it 'leaves a record clean when the stored preferences only differ in key order' do
+      store.update_column(:preferences, store.preferences.to_a.reverse.to_h)
+
+      loaded = Spree::Store.find(store.id)
+
+      expect(loaded).not_to be_changed
+      expect { loaded.with_lock { nil } }.not_to raise_error
+    end
+  end
 end
