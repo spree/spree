@@ -1450,6 +1450,13 @@
         "barcode": {
           "label": "Kod kreskowy"
         },
+        "country_of_origin": {
+          "label": "Kraj pochodzenia"
+        },
+        "customs_description": {
+          "label": "Opis celny",
+          "placeholder": "Prosty opis towaru"
+        },
         "depth": {
           "label": "Głębokość"
         },
@@ -1458,6 +1465,10 @@
         },
         "height": {
           "label": "Wysokość"
+        },
+        "hs_code": {
+          "label": "Kod HS",
+          "placeholder": "np. 640411"
         },
         "preorder_ships_at": {
           "help": "Kiedy planujesz wysłać zamówienia przedpremierowe. Pokazywane klientom jako obietnica dostawy; przedsprzedaż kończy się po upływie tej daty.",
@@ -1953,6 +1964,7 @@
           "discounts": "Rabaty",
           "discounts_empty": "Brak rabatów dla tego zamówienia.",
           "fee_kind_cod": "Płatność przy odbiorze",
+          "fee_kind_duty": "Cło",
           "fee_kind_gift_wrap": "Pakowanie na prezent",
           "fee_kind_handling": "Koszt obsługi",
           "fee_kind_payment": "Opłata za płatność",
@@ -3335,7 +3347,8 @@
         "bulk_edit": {
           "grid_aria": "Arkusz zbiorczej edycji wariantów",
           "title": "Edytuj warianty zbiorczo",
-          "trigger": "Edycja zbiorcza"
+          "trigger": "Edycja zbiorcza",
+          "unset": "Brak"
         },
         "create_option_type": "Utwórz nowy typ opcji",
         "create_option_type_title": "Nowy typ opcji",
@@ -3359,6 +3372,8 @@
         "remove_row_aria": "Usuń {{name}}",
         "sheet": {
           "availability": "Dostępność",
+          "customs": "Cło",
+          "customs_help": "Używane na formularzach celnych, gdy ten produkt przekracza granicę.",
           "identity": "Tożsamość",
           "tax_category_placeholder": "Dziedzicz z produktu"
         },

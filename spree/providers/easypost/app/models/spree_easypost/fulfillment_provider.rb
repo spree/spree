@@ -92,9 +92,7 @@ module SpreeEasyPost
       return if selected&.carrier.blank? || selected.service_level.blank? || address.nil?
 
       shipment = integration.client.shipment.create(
-        from_address: address_params(fulfillment.stock_location),
-        to_address: address_params(address),
-        parcel: requote_parcel(fulfillment)
+        **shipment_params(integration, fulfillment, address)
       )
       rate = shipment.rates.find do |candidate|
         candidate.carrier == selected.carrier && candidate.service == selected.service_level
@@ -128,8 +126,12 @@ module SpreeEasyPost
       nil
     end
 
-    def requote_parcel(fulfillment)
-      SpreeEasyPost.parcel_params(fulfillment.to_package, fulfillment.order&.store)
+    # Same builder the rate provider uses, so a re-quote is priced and labelled
+    # under the same terms as the original quote.
+    def shipment_params(integration, fulfillment, address)
+      SpreeEasyPost.shipment_params(
+        fulfillment.to_package, fulfillment.stock_location, address, integration, fulfillment.order&.store
+      )
     end
 
     def remember_purchase(fulfillment, shipment)
@@ -140,10 +142,6 @@ module SpreeEasyPost
           'easypost_tracker_url' => shipment.tracker&.public_url
         )
       )
-    end
-
-    def address_params(source)
-      SpreeEasyPost.address_params(source)
     end
 
     def report(error, fulfillment)

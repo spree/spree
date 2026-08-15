@@ -30,6 +30,9 @@ module Spree
           variant.width = attributes['width'] if attributes['width'].present?
           variant.depth = attributes['depth'] if attributes['depth'].present?
           variant.track_inventory = attributes['track_inventory'] if attributes['track_inventory'].present?
+          variant.hs_code = attributes['hs_code'] if attributes['hs_code'].present?
+          variant.country_of_origin = attributes['country_of_origin'] if attributes['country_of_origin'].present?
+          variant.customs_description = attributes['customs_description'] if attributes['customs_description'].present?
           variant.option_value_variants = prepare_option_value_variants if options.any?
 
           if attributes['tax_category'].present?

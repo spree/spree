@@ -78,6 +78,9 @@ function variantToFormValues(variant: Variant, position: number): VariantFormVal
     depth: variant.depth ?? null,
     weight_unit: variant.weight_unit ?? null,
     dimensions_unit: variant.dimensions_unit ?? null,
+    hs_code: variant.hs_code ?? null,
+    country_of_origin: variant.country_of_origin ?? null,
+    customs_description: variant.customs_description ?? null,
     track_inventory: variant.track_inventory,
     preorderable: variant.preorderable ?? false,
     preorder_ships_at: variant.preorder_ships_at ?? null,
@@ -200,6 +203,9 @@ export function variantToWirePayload(v: VariantFormValues, index: number) {
     weight_unit: v.weight_unit ?? null,
     dimensions_unit: v.dimensions_unit ?? null,
     tax_category_id: v.tax_category_id ?? null,
+    hs_code: v.hs_code ?? null,
+    country_of_origin: v.country_of_origin ?? null,
+    customs_description: v.customs_description ?? null,
   }
   if (v.id) payload.id = v.id
   if (v.track_inventory != null) payload.track_inventory = v.track_inventory

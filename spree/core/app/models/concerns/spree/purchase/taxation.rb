@@ -43,6 +43,27 @@ module Spree
         }
       end
 
+      # Everything a provider taxes when +estimate+ is called without an
+      # explicit item list: line items, fulfillments and fees.
+      #
+      # Customs duties are deliberately absent. A duty is an import charge
+      # levied by the destination's customs authority, not a supply that a
+      # domestic sales tax or VAT applies to — taxing it here would both
+      # invent tax the merchant never owed and double-count against the
+      # import VAT a landed-cost provider writes itself, as a TaxLine against
+      # the duty fee. Providers that do tax duties (import VAT is levied on
+      # the duty in most regimes) pass their own item list.
+      #
+      # Each set is read through a fresh scope rather than the cached
+      # association: recalculation runs after adjusters have just written
+      # fees, and an association loaded earlier in the same request (empty at
+      # order creation, typically) would leave those rows untaxed.
+      #
+      # @return [Array<Spree::LineItem, Spree::Fulfillment, Spree::Fee>]
+      def taxable_items
+        line_items.reload.to_a + fulfillments.reload.to_a + fees.where.not(kind: 'duty').to_a
+      end
+
       # The buyer's tax registration to compute against: a checkout-time
       # override first, then the customer's own. Nil means treat the sale as a
       # consumer sale, which is the legally safe default — charging normal tax

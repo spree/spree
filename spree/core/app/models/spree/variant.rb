@@ -25,6 +25,8 @@ module Spree
              :meta_description, :meta_keywords, :product_type, to: :product
 
     normalizes :sku, with: ->(value) { value&.to_s&.strip }
+    normalizes :hs_code, with: ->(value) { value&.to_s&.gsub(/[^0-9]/, '') }
+    normalizes :country_of_origin, with: ->(value) { value&.to_s&.strip&.upcase }
 
     # we need to have this callback before any dependent: :destroy associations
     # https://github.com/rails/rails/issues/3458
@@ -81,6 +83,13 @@ module Spree
     validates :weight_unit, inclusion: { in: WEIGHT_UNITS }, allow_blank: true
 
     validates :backorder_limit, numericality: { only_integer: true, greater_than_or_equal_to: 0, allow_nil: true }
+
+    # Customs classification. Optional everywhere — only an international
+    # shipment or a duties provider needs it, and each raises its own error
+    # when it does. Carriers reject an HS code outside 6..13 digits, so the
+    # format is checked here rather than at the label counter.
+    validates :hs_code, format: { with: /\A\d{6,13}\z/ }, allow_blank: true
+    validates :country_of_origin, format: { with: /\A[A-Z]{2}\z/ }, allow_blank: true
 
     after_create :create_stock_items
     after_commit :clear_line_items_cache, on: :update
@@ -182,7 +191,7 @@ module Spree
 
     self.whitelisted_ransackable_associations = %w[option_values product tax_category prices]
     self.whitelisted_ransackable_attributes = %w[weight depth width height sku discontinue_on cost_price cost_currency track_inventory
-                                                 deleted_at product_id]
+                                                 deleted_at product_id hs_code country_of_origin]
     self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku search)
 
     def self.product_name_or_sku_cont(query)
@@ -286,6 +295,14 @@ module Spree
     # @return [String] the descriptive name of the variant
     def descriptive_name
       option_values.any? ? "#{name} - #{options_text}" : name
+    end
+
+    # Plain-language contents description for a customs declaration. Customs
+    # authorities reject marketing names, so merchants set an explicit one;
+    # the product name is the fallback that keeps a declaration valid.
+    # @return [String, nil]
+    def customs_description_for_declaration
+      customs_description.presence || name
     end
 
     # Returns the variant's media gallery.

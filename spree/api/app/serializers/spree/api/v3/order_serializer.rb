@@ -18,6 +18,7 @@ module Spree
                  tax_total: [:string, nullable: true], display_tax_total: [:string, nullable: true],
                  included_tax_total: [:string, nullable: true], display_included_tax_total: [:string, nullable: true],
                  additional_tax_total: [:string, nullable: true], display_additional_tax_total: [:string, nullable: true],
+                 fee_total: [:string, nullable: true], display_fee_total: [:string, nullable: true],
                  store_credit_total: [:string, nullable: true], display_store_credit_total: [:string, nullable: true],
                  gift_card_total: [:string, nullable: true], display_gift_card_total: [:string, nullable: true],
                  covered_by_store_credit: :boolean,
@@ -57,7 +58,8 @@ module Spree
                          :additional_tax_total, :display_additional_tax_total, :total, :display_total,
                          :gift_card_total, :display_gift_card_total,
                          :amount_due, :display_amount_due,
-                         :delivery_total, :display_delivery_total
+                         :delivery_total, :display_delivery_total,
+                         :fee_total, :display_fee_total
 
         attribute :store_credit_total do |order|
           order.total_applied_store_credit.to_s unless params[:hide_prices]
@@ -72,6 +74,9 @@ module Spree
         end
 
         many :order_promotions, key: :discounts, resource: proc { Spree.api.applied_promotion_serializer }
+        # Itemized charges (duties, surcharges, COD, handling) — see the cart
+        # serializer; the order keeps them visible after placement.
+        many :fees, resource: proc { Spree.api.fee_serializer }
         many :line_items, key: :items, resource: proc { Spree.api.line_item_serializer }
         many :fulfillments, resource: proc { Spree.api.fulfillment_serializer }
         many :payments, resource: proc { Spree.api.payment_serializer }

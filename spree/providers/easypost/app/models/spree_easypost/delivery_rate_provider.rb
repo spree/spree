@@ -120,18 +120,16 @@ module SpreeEasyPost
     def easypost_shipment(package)
       cache_key = [:easypost_shipment, store.id, package.stock_location.id, package.owner.id]
       Spree::Current.provider_cache[cache_key] ||= integration.client.shipment.create(
-        from_address: address_params(package.stock_location),
-        to_address: address_params(package.owner.ship_address),
-        parcel: parcel_params(package)
+        **shipment_params(package)
       )
     end
 
-    def address_params(source)
-      SpreeEasyPost.address_params(source)
-    end
-
-    def parcel_params(package)
-      SpreeEasyPost.parcel_params(package, store)
+    # Built by the shared helper so a label bought against this quote carries
+    # exactly the customs form and duty terms the quote was priced with.
+    def shipment_params(package)
+      SpreeEasyPost.shipment_params(
+        package, package.stock_location, package.owner.ship_address, integration, store
+      )
     end
   end
 end

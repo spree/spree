@@ -190,4 +190,31 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
       expect(variant.reload.deleted_at).not_to be_nil
     end
   end
+
+  describe 'customs classification' do
+    it 'writes and reads back the customs fields' do
+      patch :update, params: {
+        product_id: product.prefixed_id,
+        id: variant.prefixed_id,
+        hs_code: '640411',
+        country_of_origin: 'vn',
+        customs_description: 'Leather footwear'
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['hs_code']).to eq('640411')
+      expect(json_response['country_of_origin']).to eq('VN')
+      expect(json_response['customs_description']).to eq('Leather footwear')
+    end
+
+    it 'rejects a malformed hs code' do
+      patch :update, params: {
+        product_id: product.prefixed_id,
+        id: variant.prefixed_id,
+        hs_code: '123'
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+  end
 end

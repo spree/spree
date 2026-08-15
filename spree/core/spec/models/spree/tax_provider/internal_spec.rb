@@ -1,11 +1,6 @@
 require 'spec_helper'
 
-# Tax matching runs through Spree::Zone, which is defunct: it addressed its
-# members by country and state row id, and those became reference data in 6.0
-# (docs/plans/6.0-drop-country-state-models.md). Tax finds no zone until the
-# tax provider replaces it (docs/plans/6.0-tax-provider.md Phase 5), so these
-# are skipped rather than deleted — that rewrite decides their fate.
-xdescribe Spree::TaxProvider::Internal, type: :model do
+describe Spree::TaxProvider::Internal, type: :model do
   subject(:provider) { described_class.new }
 
   let(:order) { create(:order_with_line_items, line_items_count: 1) }
@@ -275,5 +270,56 @@ xdescribe Spree::TaxProvider::Internal, type: :model do
         expect(tax_line.amount).to eq(0.5)
       end
     end
+
+    context 'with a customs duty' do
+      let!(:rate) do
+        create(:tax_rate, country_code: country&.iso, amount: 0.1, tax_category: create(:tax_category, is_default: true), included_in_price: false)
+      end
+      let!(:duty) { create(:fee, order: order, amount: 20, kind: 'duty', label: 'Import duty') }
+
+      it 'leaves the duty untaxed — an import charge is not a taxable supply' do
+        provider.estimate(order)
+
+        expect(order.tax_lines.reload.where.not(fee_id: nil)).to be_empty
+      end
+
+      it 'still taxes the other fees on the same order' do
+        surcharge = create(:fee, order: order, amount: 5, kind: 'surcharge', label: 'Handling')
+
+        provider.estimate(order)
+
+        taxed_fee_ids = order.tax_lines.reload.where.not(fee_id: nil).pluck(:fee_id)
+        expect(taxed_fee_ids).to contain_exactly(surcharge.id)
+      end
+
+      # Import VAT is levied on the duty in most regimes, so a landed-cost
+      # provider must still be able to tax one by naming it explicitly.
+      it 'taxes a duty a caller passes explicitly' do
+        provider.estimate(order, [duty])
+
+        expect(order.tax_lines.reload.sole.fee).to eq(duty)
+      end
+
+      # Duties are absent from the default set, so the per-item cleanup never
+      # revisits them — without an explicit sweep a row written once would
+      # inflate the total for the life of the order.
+      it 'clears a duty tax line it wrote earlier once the duty is excluded again' do
+        provider.estimate(order, [duty])
+        expect(order.tax_lines.reload.where(fee_id: duty.id)).to be_present
+
+        provider.estimate(order)
+
+        expect(order.tax_lines.reload.where(fee_id: duty.id)).to be_empty
+      end
+
+      it 'leaves import VAT another provider wrote on the duty alone' do
+        create(:tax_line, order: order, fee: duty, line_item: nil, provider_id: 'landed_cost', amount: 4)
+
+        provider.estimate(order)
+
+        expect(order.tax_lines.reload.where(fee_id: duty.id).pluck(:provider_id)).to eq(['landed_cost'])
+      end
+    end
   end
+
 end

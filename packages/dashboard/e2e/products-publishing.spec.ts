@@ -118,6 +118,11 @@ test.describe('product publishing', () => {
     // computes from published_at (it short-circuits to "not_available"
     // while the product is Draft).
     await createMinimalProduct(page, creds.store_id, productName)
+    // Wait for the default channel to be seeded before saving. The Publishing
+    // card seeds it once the channels query resolves, so clicking Create
+    // first saves a product listed on no channel — and the assertions below
+    // would then be waiting for a row that was never persisted.
+    await expect(publishingCard(page).getByText(/online store/i)).toBeVisible({ timeout: 15_000 })
     await page.getByRole('button', { name: /^create product$/i }).click()
     await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/products/prod_[^/]+$`), {
       timeout: 30_000,

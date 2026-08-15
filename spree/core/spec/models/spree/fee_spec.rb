@@ -40,6 +40,18 @@ describe Spree::Fee, type: :model do
     expect(fee).to be_valid
   end
 
+  it 'accepts a customs duty attached to a line item, snapshotting its classification' do
+    line_item = order.line_items.first
+    fee = described_class.new(
+      order: order, line_item: line_item, amount: 12.5, label: 'Import duty', kind: 'duty',
+      metadata: { 'hs_code' => '640411', 'country_of_origin' => 'VN', 'rate' => '0.125' }
+    )
+
+    expect(fee).to be_valid
+    expect(fee.adjustable).to eq(line_item)
+    expect(fee.metadata['hs_code']).to eq('640411')
+  end
+
   it 'destroys its tax lines with it' do
     fee = create(:fee, order: order)
     create(:tax_line, order: order, fee: fee, line_item: nil)

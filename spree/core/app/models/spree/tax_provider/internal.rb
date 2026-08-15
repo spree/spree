@@ -4,7 +4,8 @@ module Spree
     # base, with VAT included-in-price math backed out of the gross basis.
     # Rates are matched on the owner's tax address, each naming its own country
     # and optionally a state. Fees without a tax category are taxed with the
-    # default tax category's rates.
+    # default tax category's rates — except customs duties, which +taxable_items+
+    # withholds (see Spree::Purchase::Taxation).
     class Internal < Base
       # Rates are configured per country or state with no local-tax breakdown, no buyer
       # registration handling, no distance-selling thresholds, and delivery taxed
@@ -20,7 +21,13 @@ module Spree
       # +tax_identifier+ likewise — reverse charge is on the unsupported list,
       # so a buyer registration changes nothing here.
       def estimate(owner, items = nil, tax_date: nil, tax_identifier: nil, exemptions: [], context: {})
-        items ||= owner.line_items.to_a + owner.fulfillments.to_a + owner.fees.to_a
+        full_estimate = items.nil?
+        items ||= owner.taxable_items
+        # A duty this engine taxed before it was excluded — or through an
+        # explicit item list — is never revisited by the per-item cleanup
+        # below, since duties are absent from the default set. Left alone the
+        # row would inflate the total for the life of the order.
+        sweep_internal_duty_tax_lines(owner) if full_estimate
         return if items.empty?
 
         rates = Spree::TaxRate.for_store(owner.store).for_jurisdiction(owner.tax_country&.iso, owner.tax_address&.state_code).to_a
@@ -61,6 +68,16 @@ module Spree
       end
 
       private
+
+      # Scoped to this engine's own rows: a landed-cost provider writes the
+      # import VAT that genuinely belongs on a duty, and clearing that would
+      # be deleting another provider's work.
+      def sweep_internal_duty_tax_lines(owner)
+        duty_fee_ids = owner.fees.where(kind: 'duty').ids
+        return if duty_fee_ids.empty?
+
+        owner.tax_lines.where(fee_id: duty_fee_ids, provider_id: 'internal').delete_all
+      end
 
       def tax_line_foreign_key(klass)
         case klass.name

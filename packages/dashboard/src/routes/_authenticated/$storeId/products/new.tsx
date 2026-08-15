@@ -116,6 +116,9 @@ function NewProductPage() {
         v.weight_unit != null ||
         v.dimensions_unit != null ||
         v.tax_category_id != null ||
+        v.hs_code != null ||
+        v.country_of_origin != null ||
+        v.customs_description != null ||
         v.track_inventory === false ||
         v.preorderable === true ||
         v.preorder_ships_at != null ||

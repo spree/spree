@@ -1436,6 +1436,13 @@
         "barcode": {
           "label": "Barcode"
         },
+        "country_of_origin": {
+          "label": "Country of origin"
+        },
+        "customs_description": {
+          "label": "Customs description",
+          "placeholder": "Plain description of the goods"
+        },
         "depth": {
           "label": "Depth"
         },
@@ -1444,6 +1451,10 @@
         },
         "height": {
           "label": "Height"
+        },
+        "hs_code": {
+          "label": "HS code",
+          "placeholder": "e.g. 640411"
         },
         "preorder_ships_at": {
           "help": "When you expect to ship pre-orders. Shown to customers as the delivery promise; the pre-order ends once this date passes.",
@@ -1937,6 +1948,7 @@
           "discounts": "Discounts",
           "discounts_empty": "No discounts on this order yet.",
           "fee_kind_cod": "Cash on delivery",
+          "fee_kind_duty": "Duty",
           "fee_kind_gift_wrap": "Gift wrap",
           "fee_kind_handling": "Handling",
           "fee_kind_payment": "Payment fee",
@@ -3283,7 +3295,8 @@
         "bulk_edit": {
           "grid_aria": "Variant bulk edit spreadsheet",
           "title": "Bulk edit variants",
-          "trigger": "Bulk edit"
+          "trigger": "Bulk edit",
+          "unset": "None"
         },
         "create_option_type": "Create new option type",
         "create_option_type_title": "New option type",
@@ -3305,6 +3318,8 @@
         "remove_row_aria": "Remove {{name}}",
         "sheet": {
           "availability": "Availability",
+          "customs": "Customs",
+          "customs_help": "Used on customs forms when this item ships across a border.",
           "identity": "Identity",
           "tax_category_placeholder": "Inherit from product"
         },

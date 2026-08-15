@@ -767,6 +767,9 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
               options: [{ name: 'size', value: 'Small' }],
               weight: 0.3,
               track_inventory: true,
+              hs_code: '6109.10',
+              country_of_origin: 'bd',
+              customs_description: 'Cotton t-shirt',
               prices: [
                 { currency: 'USD', amount: 34.99, compare_at_amount: 49.99 },
                 { currency: 'EUR', amount: 31.99 },
@@ -807,6 +810,13 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect(small).to be_present
         expect(small.weight.to_f).to eq(0.3)
         expect(small.option_values.first.presentation).to eq('Small')
+
+        # Customs classification rides inline with the variant — this is the
+        # path the dashboard's product Save uses, not the nested variants
+        # endpoint — and lands normalized.
+        expect(small.hs_code).to eq('610910')
+        expect(small.country_of_origin).to eq('BD')
+        expect(small.customs_description).to eq('Cotton t-shirt')
 
         # Multi-currency prices on small variant
         expect(small.prices.find_by(currency: 'USD').amount.to_f).to eq(34.99)

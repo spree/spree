@@ -283,6 +283,7 @@ module Spree
       :product_id, :product, :option_values_attributes,
       :weight, :height, :width, :depth, :sku, :barcode, :cost_currency,
       :weight_unit, :dimensions_unit,
+      :hs_code, :country_of_origin, :customs_description,
       {
         options: [:id, :name, :option_value_presentation, :option_value_name, :position, :_destroy],
         stock_items_attributes: [:id, :count_on_hand, :stock_location_id, :backorderable, :_destroy],

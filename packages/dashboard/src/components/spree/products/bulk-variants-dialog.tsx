@@ -1,3 +1,4 @@
+import { useCountries, useCountryDisplayName } from '@spree/dashboard-core'
 import {
   type BulkVariantsChange,
   type BulkVariantsRow,
@@ -15,6 +16,7 @@ import { useTranslation } from 'react-i18next'
 import { useOptionTypes } from '../../../hooks/use-option-types'
 import { useTaxCategories } from '../../../hooks/use-tax-categories'
 import type { ProductFormValues, VariantFormValues } from '../../../schemas/product'
+import { normalizeCustomsDescription, normalizeHsCode } from './normalize-customs'
 import { composeOptionsText } from './variants-matrix'
 
 const WEIGHT_UNITS = ['g', 'kg', 'lb', 'oz'] as const
@@ -46,6 +48,19 @@ export function BulkVariantsDialog({ form, open, onOpenChange }: Props) {
   const optionTypes = useMemo(() => optionTypesData?.data ?? [], [optionTypesData])
   const { data: taxCategoriesResponse } = useTaxCategories()
   const taxCategories = taxCategoriesResponse?.data ?? []
+  const { countries } = useCountries()
+  const countryName = useCountryDisplayName()
+
+  // ISO codes as values — customs data must survive the countries table, and
+  // a country record id would not.
+  const countryOptions = useMemo(
+    () =>
+      countries.map((country) => ({
+        value: country.iso,
+        label: countryName({ iso: country.iso, iso3: country.iso3, name: country.name }),
+      })),
+    [countries, countryName],
+  )
 
   // Snapshot the variants when the dialog opens so Cancel can restore them.
   // Deep-clone — `form.getValues` returns references into RHF's internal
@@ -92,6 +107,9 @@ export function BulkVariantsDialog({ form, open, onOpenChange }: Props) {
         preorderable: !!v.preorderable,
         backorderLimit: v.backorder_limit != null ? String(v.backorder_limit) : null,
         taxCategoryId: v.tax_category_id ?? null,
+        hsCode: v.hs_code ?? null,
+        countryOfOrigin: v.country_of_origin ?? null,
+        customsDescription: v.customs_description ?? null,
       })),
     [variants, optionTypes],
   )
@@ -119,6 +137,17 @@ export function BulkVariantsDialog({ form, open, onOpenChange }: Props) {
           break
         case 'taxCategoryId':
           set(`variants.${idx}.tax_category_id`, change.value)
+          break
+        case 'hsCode':
+          set(`variants.${idx}.hs_code`, normalizeHsCode(change.value))
+          break
+        case 'countryOfOrigin':
+          // Already an ISO code — SelectCell resolves pasted country names
+          // against the option list before committing.
+          set(`variants.${idx}.country_of_origin`, change.value)
+          break
+        case 'customsDescription':
+          set(`variants.${idx}.customs_description`, normalizeCustomsDescription(change.value))
           break
         case 'preorderable':
           set(`variants.${idx}.preorderable`, change.value)
@@ -186,6 +215,7 @@ export function BulkVariantsDialog({ form, open, onOpenChange }: Props) {
                 ? taxCategories.map((c) => ({ value: c.id, label: c.name }))
                 : undefined
             }
+            countryOptions={countryOptions.length > 0 ? countryOptions : undefined}
             labels={{
               variant: t('admin.pages.products.price_lists.edit_prices.columns.variant'),
               sku: t('admin.fields.variant.sku.label'),
@@ -199,9 +229,13 @@ export function BulkVariantsDialog({ form, open, onOpenChange }: Props) {
               preorderable: t('admin.fields.variant.preorderable.label'),
               backorderLimit: t('admin.fields.variant.backorder_limit.label'),
               taxCategory: t('admin.fields.tax_category_id.label'),
+              hsCode: t('admin.fields.variant.hs_code.label'),
+              countryOfOrigin: t('admin.fields.variant.country_of_origin.label'),
+              customsDescription: t('admin.fields.variant.customs_description.label'),
               variantDefault: t('admin.products.variants.default_variant'),
-              unitDefault: '—',
+              unitDefault: t('admin.products.variants.bulk_edit.unset'),
               taxCategoryNone: t('admin.products.variants.sheet.tax_category_placeholder'),
+              countryOfOriginNone: t('admin.products.variants.bulk_edit.unset'),
               gridAriaLabel: t('admin.products.variants.bulk_edit.grid_aria'),
             }}
           />
