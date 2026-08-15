@@ -242,8 +242,22 @@ function SetupForm({ token }: { token: string }) {
 
   const onSubmit = async (data: SetupFormValues) => {
     try {
-      await completeSetup({ ...data, setup_token: token })
-      navigate({ to: '/', replace: true })
+      const session = await completeSetup({ ...data, setup_token: token })
+
+      // A merchant who has just claimed the installation has an empty store,
+      // so the checklist is the useful landing place rather than a dashboard
+      // of zeroes. Falls back to the index redirect if the payload carries no
+      // store, which resolves one for itself.
+      const storeId = session.user?.stores?.[0]?.id
+      if (storeId) {
+        navigate({
+          to: '/$storeId/getting-started',
+          params: { storeId },
+          replace: true,
+        })
+      } else {
+        navigate({ to: '/', replace: true })
+      }
     } catch (err) {
       const e = err as SpreeError
       if (e?.status === 404) {
