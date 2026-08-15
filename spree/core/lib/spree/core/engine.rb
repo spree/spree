@@ -43,6 +43,7 @@ module Spree
                                :analytics_events,
                                :analytics_event_handlers,
                                :integrations,
+                               :maintenance_tasks,
                                :number_generators,
                                :subscribers,
                                :store_authentication_strategies,
@@ -519,6 +520,10 @@ module Spree
         Rails.application.config.spree.analytics_event_handlers = []
 
         Rails.application.config.spree.integrations = []
+
+        Rails.application.config.spree.maintenance_tasks = [
+          'Spree::MaintenanceTasks::Upgrade::BackfillOrderMarkets'
+        ]
 
         Rails.application.config.spree.validators.addresses = [
           Spree::Addresses::PhoneValidator

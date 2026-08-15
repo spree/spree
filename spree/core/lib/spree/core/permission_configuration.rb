@@ -331,6 +331,13 @@ module Spree
       })
       register_resource(:integrations, group: :settings, subjects: -> { [Spree::Integration] })
 
+      # Sits with the other sensitive access grants rather than under
+      # settings: a task can rewrite any data in the install, so out of the
+      # box only the admin role holds it (docs/plans/6.0-maintenance-tasks.md).
+      register_resource(:maintenance_tasks, group: :access, subjects: -> {
+        [Spree::MaintenanceTaskRun, :maintenance_task]
+      })
+
       register_resource(:api_keys, group: :access, subjects: -> { [Spree::ApiKey] })
       register_resource(:staff, group: :access, subjects: -> {
         [Spree.admin_user_class, Spree::Invitation, Spree::Role, Spree::RoleUser]

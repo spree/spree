@@ -123,7 +123,8 @@ module Spree
       api_keys: :default,
       search: :default,
       stock_reservations: :default,
-      tax_identifiers: :default
+      tax_identifiers: :default,
+      maintenance_tasks: :default
     ).tap do |queues|
       # @deprecated The taxons queue was renamed to categories in 6.0; removed in 6.1.
       queues.define_singleton_method(:taxons) do
@@ -542,6 +543,25 @@ module Spree
 
   def self.integrations=(value)
     Rails.application.config.spree.integrations = value
+  end
+
+  # Registered maintenance task class names — the tasks an operator can run
+  # from the dashboard, the Admin API or the CLI
+  # (docs/plans/6.0-maintenance-tasks.md). Extensions append their own from an
+  # initializer:
+  #
+  #   Spree.maintenance_tasks << 'SpreeReviews::MaintenanceTasks::RecountRatings'
+  #
+  # Class names rather than classes, so registration is safe at initializer
+  # time and survives code reloading in development.
+  #
+  # @return [Array<String, Class>]
+  def self.maintenance_tasks
+    Rails.application.config.spree.maintenance_tasks
+  end
+
+  def self.maintenance_tasks=(value)
+    Rails.application.config.spree.maintenance_tasks = value
   end
 
   # Registry mapping a numbered resource to the generator that produces its

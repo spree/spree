@@ -1108,6 +1108,9 @@ en:
     logs: Logs
     mail_from_address: Mail from address
     mailer_logo: Mailer logo (JPG or PNG images only)
+    maintenance_tasks:
+      backfill_order_markets:
+        description: Assign a market to orders placed before markets existed
     make_active_at: Make Active At
     manual: Manual
     manual_intervention_required: Manual intervention required
