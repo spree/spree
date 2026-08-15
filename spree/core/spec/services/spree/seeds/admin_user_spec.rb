@@ -20,6 +20,60 @@ RSpec.describe Spree::Seeds::AdminUser do
 
       expect { subject }.not_to change(Spree.admin_user_class, :count)
     end
+
+    # This install never sees the setup screen, so the seed answers the
+    # country question itself — defaulting to what it hardcoded before.
+    it 'provisions the country-shaped defaults as US by default' do
+      subject
+
+      store = @default_store.reload
+      expect(store.default_country_code).to eq('US')
+      expect(store.stock_locations.find_by(default: true).country_code).to eq('US')
+      expect(store.delivery_zones.find_by(name: 'Domestic').members.pluck(:country_code)).to eq(['US'])
+    end
+
+    context 'with STORE_COUNTRY and STORE_LOCALE set' do
+      before do
+        stub_const(
+          'ENV',
+          ENV.to_h.merge(
+            'ADMIN_EMAIL' => 'boss@example.com',
+            'ADMIN_PASSWORD' => 'Secret123!',
+            'STORE_COUNTRY' => 'DE',
+            'STORE_LOCALE' => 'de'
+          )
+        )
+      end
+
+      it 'provisions the store for that country' do
+        subject
+
+        store = @default_store.reload
+        expect(store.default_country_code).to eq('DE')
+        expect(store.default_currency).to eq('EUR')
+        expect(store.default_locale).to eq('de')
+        expect(store.delivery_zones.find_by(name: 'Domestic').members.pluck(:country_code)).to eq(['DE'])
+      end
+    end
+
+    context 'with an unknown STORE_COUNTRY' do
+      before do
+        stub_const(
+          'ENV',
+          ENV.to_h.merge(
+            'ADMIN_EMAIL' => 'boss@example.com',
+            'ADMIN_PASSWORD' => 'Secret123!',
+            'STORE_COUNTRY' => 'ZZ'
+          )
+        )
+      end
+
+      it 'falls back to the US rather than failing the seed' do
+        expect { subject }.not_to raise_error
+
+        expect(@default_store.reload.default_country_code).to eq('US')
+      end
+    end
   end
 
   context 'without explicit credentials' do

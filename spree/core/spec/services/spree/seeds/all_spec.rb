@@ -14,10 +14,10 @@ RSpec.describe Spree::Seeds::All do
     subject
 
     store = Spree::Store.find_by(default: true)
-    store.stock_locations.update_all(pickup_enabled: true, active: false)
+    store.tax_categories.update_all(is_default: false)
 
     expect { described_class.call }.not_to raise_error
-    expect(store.stock_locations.where(name: Spree.t(:default_stock_location_name)).count).to eq(1)
+    expect(store.tax_categories.where(name: 'Default').count).to eq(1)
   end
 
   # Store-scoped seeds iterate `Spree::Store.all`, so one ordered before
@@ -44,13 +44,17 @@ RSpec.describe Spree::Seeds::All do
       expect(profile.delivery_methods.map(&:fulfillment_provider)).to eq(['Spree::FulfillmentProvider::Digital'])
     end
 
-    it 'gives the seeded store a pickup method with a collectable location' do
+    # The warehouse, delivery zones and pickup are deliberately absent: their
+    # shape depends on a country nobody has named yet. First-run setup (or the
+    # env-credential seed path) provisions them from the merchant's answer.
+    it 'leaves the country-shaped defaults to first-run setup' do
       subject
 
       store = Spree::Store.find_by(default: true)
 
-      expect(store.delivery_methods.select(&:pickup?)).to be_present
-      expect(store.stock_locations.where(pickup_enabled: true)).to exist
+      expect(store.stock_locations).to be_empty
+      expect(store.delivery_zones).to be_empty
+      expect(store.delivery_methods.select(&:pickup?)).to be_empty
     end
   end
 end
