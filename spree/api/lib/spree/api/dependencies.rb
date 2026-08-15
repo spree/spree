@@ -41,6 +41,7 @@ module Spree
            store setup_task update_status api_key oauth_application oauth_access_token oauth_consent_request oauth_redirect
            oauth_protected_resource allowed_origin webhook_endpoint webhook_event webhook_delivery invitation
            invitation_acceptance_link role permission export saved_report import import_row import_mapping promotion
+           maintenance_task_run
            promotion_action promotion_rule coupon_code price_adjustment_tier price_list price_rule
            resource_translations email_template email_template_draft email_template_revision email_template_preview
            email_template_sample_record file_upload file_upload_target].freeze
