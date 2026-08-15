@@ -112,8 +112,29 @@ module Spree
               code: country.iso,
               name: country.name,
               currency: country.default_currency,
-              locales: country.official_locales
+              locales: offerable_locales(country)
             }
+          end
+
+          # A country's official languages, minus any Spree has no translations
+          # for — Switzerland speaks Romansh and Spree does not, so offering it
+          # would point a storefront at a language with nothing behind it.
+          # English closes the gap for countries whose languages all fall
+          # through, and is always offered alongside.
+          #
+          # Installs without spree_i18n only have English, and filtering
+          # against that would leave every country English-only. There the
+          # unfiltered list is the better answer: the merchant's own language
+          # is still the right default for their storefront, whether or not
+          # this install carries a translation bundle for it.
+          def offerable_locales(country)
+            return country.official_locales if translated_locales.size <= 1
+
+            (country.official_locales & translated_locales).presence || ['en']
+          end
+
+          def translated_locales
+            @translated_locales ||= Spree.available_locales.map { |locale| locale.to_s.split('-').first }.uniq
           end
 
           # Token mismatch, spent token, and already-set-up all render the

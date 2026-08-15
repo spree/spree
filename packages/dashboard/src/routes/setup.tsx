@@ -20,7 +20,7 @@ import {
 } from '@spree/dashboard-ui'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, Navigate, useNavigate } from '@tanstack/react-router'
-import { useMemo } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
@@ -35,6 +35,22 @@ export const Route = createFileRoute('/setup')({
   validateSearch: setupSearchSchema,
   component: SetupPage,
 })
+
+/**
+ * The merchant's own region, read from the browser's locale — a better
+ * opening guess than any single hardcoded country. Falls back to the US,
+ * which is where the seeded defaults pointed before setup asked.
+ */
+function guessCountryCode(): string {
+  try {
+    const locale = new Intl.Locale(navigator.language)
+    // `maximize()` turns "de" into "de-Latn-DE", so a bare language still
+    // yields a region.
+    return locale.maximize().region ?? 'US'
+  } catch {
+    return 'US'
+  }
+}
 
 function SetupPage() {
   const { t } = useTranslation()
@@ -128,20 +144,38 @@ function SetupForm({ token }: { token: string }) {
     [countries, countryCode],
   )
 
-  // English is always offered: the backend's own strings fall back to it, and
-  // it is the only locale every install is guaranteed to have.
+  // English stays on the list so an English-speaking merchant running a store
+  // in Warsaw isn't forced into Polish.
   const localeOptions = useMemo(() => {
     const codes = [...(selectedCountry?.locales ?? []), 'en']
     return Array.from(new Set(codes))
   }, [selectedCountry])
 
-  // The currency follows the country, so picking a country re-derives it and
-  // resets the locale to the safe default rather than leaving the previous
-  // country's language selected.
-  const handleCountryChange = (code: string) => {
-    form.setValue('country_code', code, { shouldValidate: true })
-    form.setValue('locale', 'en')
-  }
+  // Both the currency and the language follow the country: having just said
+  // the store is in Poland, being left on English reads as the form ignoring
+  // the answer. The country's own language wins, and English remains one
+  // click away in the dropdown.
+  const handleCountryChange = useCallback(
+    (code: string) => {
+      form.setValue('country_code', code, { shouldValidate: true })
+
+      const country = countries.find((candidate) => candidate.code === code)
+      form.setValue('locale', country?.locales[0] ?? 'en')
+    },
+    [countries, form],
+  )
+
+  // The store most likely sells from wherever it is being set up, so the
+  // browser's own region is a better opening guess than an empty box. Applied
+  // once, and only while the merchant hasn't touched the field.
+  const suggestedCountry = useMemo(() => guessCountryCode(), [])
+  useEffect(() => {
+    if (countries.length === 0) return
+    if (form.getValues('country_code')) return
+    if (!countries.some((country) => country.code === suggestedCountry)) return
+
+    handleCountryChange(suggestedCountry)
+  }, [countries, suggestedCountry, handleCountryChange, form])
 
   const onSubmit = async (data: SetupFormValues) => {
     try {

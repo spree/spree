@@ -38,6 +38,31 @@ RSpec.describe Spree::Api::V3::Admin::SetupController, type: :controller do
       expect(switzerland['locales']).to include('de', 'fr', 'it')
     end
 
+    context 'when the install carries translations (spree_i18n)' do
+      before do
+        allow(Spree).to receive(:available_locales).and_return(%i[en de fr it pl])
+      end
+
+      # Offering a language Spree has no translations for would point a
+      # storefront at nothing — Switzerland speaks Romansh, Spree does not.
+      it 'drops languages that have no translations' do
+        get :countries, as: :json
+
+        switzerland = json_response['countries'].find { |country| country['code'] == 'CH' }
+
+        expect(switzerland['locales']).to contain_exactly('de', 'fr', 'it')
+      end
+
+      it "falls back to English when none of a country's languages ship" do
+        get :countries, as: :json
+
+        # Eritrea speaks Tigrinya, which Spree does not translate.
+        eritrea = json_response['countries'].find { |country| country['code'] == 'ER' }
+
+        expect(eritrea['locales']).to eq(['en'])
+      end
+    end
+
     # Same posture as the rest of the flow: it exists only while the
     # installation is unclaimed.
     it 'is gone once an admin exists' do
