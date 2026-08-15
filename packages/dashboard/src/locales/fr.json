@@ -1219,7 +1219,7 @@
         "currency": {
           "label": "Devise",
           "placeholder": "Rechercher une devise",
-          "help": "Votre devise par défaut, suggérée selon votre pays. Ajoutez-en d’autres quand vous voulez."
+          "help": "Votre devise par défaut. Ajoutez-en d’autres quand vous voulez."
         }
       },
       "stock_location": {

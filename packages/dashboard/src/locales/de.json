@@ -1219,7 +1219,7 @@
         "currency": {
           "label": "Währung",
           "placeholder": "Währungen durchsuchen",
-          "help": "Ihre Standardwährung, vorgeschlagen anhand Ihres Landes. Jederzeit erweiterbar."
+          "help": "Ihre Standardwährung. Jederzeit erweiterbar."
         }
       },
       "stock_location": {

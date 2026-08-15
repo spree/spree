@@ -293,6 +293,7 @@ function SetupForm({ token }: { token: string }) {
               >
                 <ComboboxInput
                   id="country_code"
+                  className="min-h-8.5"
                   onBlur={field.onBlur}
                   aria-invalid={!!errors.country_code || undefined}
                   placeholder={t('admin.fields.setup.country_code.placeholder')}
@@ -313,15 +314,19 @@ function SetupForm({ token }: { token: string }) {
               </Combobox>
             )}
           />
-          <p className="text-xs text-muted-foreground">
-            {t('admin.fields.setup.country_code.help')}
-          </p>
-          {errors.country_code && (
+          {errors.country_code ? (
             <p className="text-sm text-destructive">{errors.country_code.message}</p>
+          ) : (
+            <p className="text-xs text-muted-foreground">
+              {t('admin.fields.setup.country_code.help')}
+            </p>
           )}
         </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div className="grid gap-2">
+        {/* `grid-rows-subgrid` keeps the label, control and help of both
+            columns on the same three lines, so help text that wraps to a
+            different number of lines can't stagger the fields. */}
+        <div className="grid grid-cols-2 grid-rows-[auto_auto_auto] gap-x-3 gap-y-0">
+          <div className="grid grid-rows-subgrid row-span-3 gap-2">
             <Label htmlFor="locale">{t('admin.fields.setup.locale.label')}</Label>
             <Controller
               name="locale"
@@ -345,7 +350,7 @@ function SetupForm({ token }: { token: string }) {
             />
             <p className="text-xs text-muted-foreground">{t('admin.fields.setup.locale.help')}</p>
           </div>
-          <div className="grid gap-2">
+          <div className="grid grid-rows-subgrid row-span-3 gap-2">
             <Label htmlFor="currency">{t('admin.fields.setup.currency.label')}</Label>
             {/* The country's own currency leads the list and is preselected,
                 but the merchant can override it — shipping from Warsaw and
@@ -361,8 +366,12 @@ function SetupForm({ token }: { token: string }) {
                   itemToStringLabel={(code: string | null) => (code ? currencyLabel(code) : '')}
                   itemToStringValue={(code: string | null) => code ?? ''}
                 >
+                  {/* `Input` is min-h-8 and `SelectTrigger` min-h-8.5, so the
+                      currency box sat half a step above the language box
+                      beside it. Match the taller one. */}
                   <ComboboxInput
                     id="currency"
+                    className="min-h-8.5"
                     onBlur={field.onBlur}
                     aria-invalid={!!errors.currency || undefined}
                     placeholder={t('admin.fields.setup.currency.placeholder')}
@@ -380,9 +389,14 @@ function SetupForm({ token }: { token: string }) {
                 </Combobox>
               )}
             />
-            <p className="text-xs text-muted-foreground">{t('admin.fields.setup.currency.help')}</p>
-            {errors.currency && (
+            {/* Error replaces the help rather than joining it, so the column
+                keeps exactly the three rows the subgrid expects. */}
+            {errors.currency ? (
               <p className="text-sm text-destructive">{errors.currency.message}</p>
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                {t('admin.fields.setup.currency.help')}
+              </p>
             )}
           </div>
         </div>
