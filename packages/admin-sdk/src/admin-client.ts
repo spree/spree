@@ -748,6 +748,7 @@ import type {
   TranslationBatchEntry,
   TranslationCoverage,
   UpdateStatus,
+  UpgradeStep,
   Variant,
   WebhookDelivery,
   WebhookEndpoint,
@@ -4496,6 +4497,19 @@ export class AdminClient {
    * (`cancel`); `resumable` and `cancelable` say which of those apply right
    * now. There is no delete: a run records work that touched merchant data.
    */
+  /**
+   * The upgrade manifest as an ordered checklist: what this release still
+   * needs run, the operator notes each step carries, and how each last went.
+   *
+   * Read-only — running a step is starting the task it names through
+   * `maintenanceTaskRuns.create()` with the step's own `task_name` and
+   * `arguments`.
+   */
+  readonly upgradeSteps = {
+    list: (options?: RequestOptions): Promise<{ data: UpgradeStep[] }> =>
+      this.request<{ data: UpgradeStep[] }>('GET', '/upgrade_steps', options),
+  }
+
   readonly maintenanceTaskRuns = {
     list: (
       params?: ListParams & Record<string, unknown>,
