@@ -97,7 +97,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
         postal_code: Spree::TestingSupport::CountryPool.postal_code_for(country.iso),
         phone: '555-1234',
         country_iso: country.iso,
-        state_abbr: state.abbr
+        state_code: state.abbr
       }
     end
 
@@ -115,6 +115,22 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
       expect(json_response['first_name']).to eq('John')
       expect(json_response['last_name']).to eq('Doe')
       expect(json_response['address1']).to eq('123 Main St')
+      expect(json_response['state_code']).to eq(state.abbr)
+    end
+
+    # state_abbr is the name storefronts shipped against; both halves of the
+    # bridge stay until 6.1 removes it.
+    it 'still answers to the deprecated state_abbr on read' do
+      post :create, params: address_params
+
+      expect(json_response['state_abbr']).to eq(state.abbr)
+    end
+
+    it 'still accepts the deprecated state_abbr on write' do
+      post :create, params: address_params.except(:state_code).merge(state_abbr: state.abbr)
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['state_code']).to eq(state.abbr)
     end
 
     context 'with invalid params' do
@@ -204,7 +220,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
           postal_code: Spree::TestingSupport::CountryPool.postal_code_for(country.iso),
           phone: '555-9999',
           country_iso: country.iso,
-          state_abbr: state.abbr
+          state_code: state.abbr
         }
       end
 

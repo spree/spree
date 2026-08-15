@@ -724,7 +724,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         shipping_address: {
           first_name: 'John', last_name: 'Doe',
           address1: '123 Main St', city: 'New York',
-          postal_code: '10001', country_iso: 'US', state_abbr: 'NY',
+          postal_code: '10001', country_iso: 'US', state_code: 'NY',
           phone: '555-1234'
         }
       }
@@ -738,7 +738,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         {
           first_name: 'Buyer', last_name: 'McGee',
           address1: '1 Test St', city: 'New York',
-          postal_code: '10001', country_iso: 'US', state_abbr: 'NY',
+          postal_code: '10001', country_iso: 'US', state_code: 'NY',
           phone: '555-0100'
         }
       end

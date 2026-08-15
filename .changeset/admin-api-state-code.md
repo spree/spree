@@ -1,5 +1,8 @@
 ---
-'@spree/admin-sdk': minor
+'@spree/admin-sdk': major
+'@spree/sdk': major
 ---
 
-Rename `state_abbr` to `state_code` across the Admin API: address, stock location and delivery zone member payloads now serialize `state_code`, and write endpoints accept `state_code` instead of `state_abbr`. The canonical name matches the tax jurisdiction fields (`country_iso`/`state_code`); the Store API contract is unchanged and keeps `state_abbr`.
+Rename `state_abbr` to `state_code` across the v3 API. Addresses, stock locations and delivery zone members now serialize `state_code`, and write endpoints accept it — the canonical name matches the tax jurisdiction fields (`country_iso`/`state_code`).
+
+Addresses keep `state_abbr` as a deprecated read field and an accepted write name for one release, so existing storefronts keep working; it is removed in 6.1. Every other resource moves outright.

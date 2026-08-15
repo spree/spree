@@ -813,7 +813,7 @@ describe Spree::Address, type: :model do
     end
   end
 
-  describe 'country_iso= and state_abbr= writer methods' do
+  describe 'country_iso= and state_code= writer methods' do
     let(:country) { Spree::Country.by_iso('US') }
     let!(:state) { Spree::State.resolve(country.iso, 'NY') }
 
@@ -857,31 +857,31 @@ describe Spree::Address, type: :model do
       end
     end
 
-    describe '#state_abbr=' do
+    describe '#state_code=' do
       it 'sets state from abbreviation on validation' do
         address = build(:address, country: country, state: nil)
-        address.state_abbr = 'NY'
+        address.state_code = 'NY'
         address.valid?
         expect(address.state).to eq(state)
       end
 
       it 'requires country to be set first' do
         address = build(:address, country: nil, state: nil)
-        address.state_abbr = 'NY'
+        address.state_code = 'NY'
         address.valid?
         expect(address.state).to be_nil
       end
 
       it 'does nothing when abbreviation is blank' do
         address = build(:address, country: country, state: nil)
-        address.state_abbr = ''
+        address.state_code = ''
         address.valid?
         expect(address.state).to be_nil
       end
 
       it 'sets state to nil when abbreviation is not found for country' do
         address = build(:address, country: country, state: nil)
-        address.state_abbr = 'XX'
+        address.state_code = 'XX'
         address.valid?
         expect(address.state).to be_nil
       end
@@ -891,7 +891,7 @@ describe Spree::Address, type: :model do
         other_state = create(:state, country: other_country, abbr: 'NY', name: 'Not York')
 
         address = build(:address, country: country, state: nil)
-        address.state_abbr = 'NY'
+        address.state_code = 'NY'
         address.valid?
         expect(address.state).to eq(state)
         expect(address.state).not_to eq(other_state)

@@ -27,14 +27,6 @@ module Spree
           end
         end
 
-        # Drops attributes a parent serializer declared. Alba clones the
-        # attribute table per subclass, so this only affects the caller — the
-        # admin surface uses it to shed names the store contract must keep
-        # (e.g. state_abbr, renamed state_code on the Admin API).
-        def self.remove_attributes(*names)
-          names.each { |name| @_attributes.delete(name.to_sym) }
-        end
-
         # Context accessors
         def current_store
           params[:store]

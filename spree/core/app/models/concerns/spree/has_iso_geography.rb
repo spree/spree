@@ -46,10 +46,6 @@ module Spree
 
         normalizes :state_code, with: UPCASE
 
-        # `state_code` is the canonical name, matching the tax tables; the
-        # v3 API shipped `state_abbr`, kept as an alias.
-        alias_attribute :state_abbr, :state_code
-
         # @return [Spree::State, nil]
         define_method(:state) do
           Spree::State.resolve(country_iso, state_code) if country_iso.present? && state_code.present?

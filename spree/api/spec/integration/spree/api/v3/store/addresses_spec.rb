@@ -74,7 +74,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
           phone: { type: :string, example: '+1 555 123 4567' },
           company: { type: :string, example: 'Acme Inc' },
           country_iso: { type: :string, example: 'US', description: 'ISO 3166-1 alpha-2 country code (e.g., "US", "DE")' },
-          state_abbr: { type: :string, example: 'NY', description: 'ISO 3166-2 subdivision code without country prefix (e.g., "CA", "NY")' },
+          state_code: { type: :string, example: 'NY', description: 'ISO 3166-2 subdivision code without country prefix (e.g., "CA", "NY")' },
           state_name: { type: :string, example: 'New York', description: 'State name - for countries without predefined states' },
           is_default_billing: { type: :boolean, example: true, description: 'Set as default billing address' },
           is_default_shipping: { type: :boolean, example: true, description: 'Set as default shipping address' }
@@ -94,7 +94,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
             postal_code: '10001',
             phone: '+1 555 123 4567',
             country_iso: country.iso,
-            state_abbr: state.abbr
+            state_code: state.abbr
           }
         end
 
@@ -105,7 +105,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
           expect(data['first_name']).to eq('John')
           expect(data['city']).to eq('New York')
           expect(data['country_iso']).to eq(country.iso)
-          expect(data['state_abbr']).to eq(state.abbr)
+          expect(data['state_code']).to eq(state.abbr)
         end
       end
 

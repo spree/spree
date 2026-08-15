@@ -47,6 +47,10 @@ module Spree
 
     has_iso_geography
 
+    # @deprecated The canonical name is +state_code+, matching the tax tables.
+    #   Kept because the Store API shipped +state_abbr+; removed in 6.1.
+    alias_attribute :state_abbr, :state_code
+
     # we need a safe operator here as Address is added to custom_field_enabled_resources in Engine
     belongs_to :customer, class_name: Spree.customer_class&.name, optional: true, touch: true
     include Spree::DeprecatedCustomerAlias

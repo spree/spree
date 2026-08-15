@@ -5,17 +5,12 @@ module Spree
         class StockLocationSerializer < V3::StockLocationSerializer
           typelize active: :boolean, default: :boolean, backorderable_default: :boolean,
                    propagate_all_variants: :boolean, pickup_enabled: :boolean,
-                   admin_name: [:string, nullable: true], state_code: [:string, nullable: true],
+                   admin_name: [:string, nullable: true],
                    address2: [:string, nullable: true], state_name: [:string, nullable: true],
                    phone: [:string, nullable: true], company: [:string, nullable: true],
                    kind: :string, pickup_stock_policy: :string,
                    pickup_ready_in_minutes: [:number, nullable: true],
                    pickup_instructions: [:string, nullable: true]
-
-          # The Admin API speaks the canonical name; the store pickup surface
-          # shipped state_abbr and keeps it.
-          remove_attributes :state_abbr
-          attributes :state_code
 
           attributes :admin_name, :address2, :state_name, :phone, :company,
                      :active, :default, :backorderable_default, :propagate_all_variants,

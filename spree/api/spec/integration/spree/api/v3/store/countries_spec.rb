@@ -121,10 +121,10 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
       expect(response).to have_http_status(:ok)
       data = JSON.parse(response.body)
       expect(data['states']).to be_an(Array)
-      state_abbrs = data['states'].map { |s| s['abbr'] }
+      state_codes = data['states'].map { |s| s['abbr'] }
       # Subdivisions are reference data now, so the country carries its full
       # ISO list rather than only what a spec happened to seed.
-      expect(state_abbrs).to include('CA', 'NY')
+      expect(state_codes).to include('CA', 'NY')
     end
   end
 

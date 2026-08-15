@@ -426,26 +426,26 @@ module Spree
       end
     end
 
-    describe '#state_abbr=' do
+    describe '#state_code=' do
       let(:country) { Spree::Country.by_iso('US') }
       let!(:state) { Spree::State.resolve(country.iso, 'NY') }
       let(:stock_location) { build(:stock_location, country: country, state: nil) }
 
       it 'resolves the state from an abbreviation scoped to the country' do
-        stock_location.state_abbr = 'NY'
+        stock_location.state_code = 'NY'
         stock_location.valid?
         expect(stock_location.state).to eq(state)
       end
 
       it 'leaves state nil when no matching abbreviation exists for the country' do
-        stock_location.state_abbr = 'ZZ'
+        stock_location.state_code = 'ZZ'
         stock_location.valid?
         expect(stock_location.state).to be_nil
       end
 
       it 'resolves nothing without a country — a subdivision code is only unique within one' do
         stock_location.country_iso = nil
-        stock_location.state_abbr = 'NY'
+        stock_location.state_code = 'NY'
         stock_location.valid?
         expect(stock_location.state).to be_nil
       end
