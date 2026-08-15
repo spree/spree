@@ -120,7 +120,7 @@ module Spree
     def full_access?(roles)
       return false unless store_resource?
 
-      roles.any? { |role| role.name == Spree::Role::ADMIN_ROLE } || implicit_admin?(roles)
+      roles.any?(&:admin?) || implicit_admin?(roles)
     end
 
     # @return [Boolean] whether this ability is being built for the store's own
@@ -137,13 +137,19 @@ module Spree
     # own role grant store-wide capability. Each panel reads only its own
     # assignments.
     #
+    # The store panel additionally reads only `staff`-audience roles, so a role
+    # from another audience mistakenly assigned on a store — by a seed or a
+    # console, since the API refuses it — still confers nothing here.
+    #
     # @return [Array<Spree::Role>]
     def staff_roles
       return @staff_roles if defined?(@staff_roles)
 
       @staff_roles =
         if @user.respond_to?(:role_users) && @resource.present?
-          @user.role_users.where(store: @store, resource: @resource).includes(:role).map(&:role)
+          assignments = @user.role_users.where(store: @store, resource: @resource)
+          assignments = assignments.joins(:role).merge(Spree::Role.staff) if store_resource?
+          assignments.includes(:role).map(&:role)
         else
           []
         end

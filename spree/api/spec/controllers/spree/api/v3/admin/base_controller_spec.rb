@@ -206,7 +206,9 @@ RSpec.describe Spree::Api::V3::Admin::BaseController, type: :controller do
       let(:panel) { create(:customer_group, store: store) }
       let(:panel_admin) do
         create(:admin_user, :without_admin_role).tap do |u|
-          u.role_users.create!(
+          create(
+            :role_user,
+            user: u,
             role: create(:role, name: 'panel_orders', audience: 'vendor', permissions: %w[write_orders]),
             resource: panel,
             store: store

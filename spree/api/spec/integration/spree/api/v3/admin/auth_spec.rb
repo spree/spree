@@ -112,7 +112,7 @@ RSpec.describe 'Admin Authentication API', type: :request, swagger_doc: 'api-ref
 
       response '200', 'refresh successful' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:refresh_token_record) { create(:refresh_token, user: existing_admin) }
+        let(:refresh_token_record) { create(:refresh_token, :for_admin, user: existing_admin) }
 
         # rswag drives requests through Rack::Test, whose cookie jar can't sign cookies the
         # way Rails does. Stub the cookie reader on the controller concern so the integration

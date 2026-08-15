@@ -93,7 +93,7 @@ module Spree
           end
 
           def reject_admin_role_grant!(roles)
-            return false unless roles.any? { |role| role.name == Spree::Role::ADMIN_ROLE }
+            return false unless roles.any?(&:admin?)
             return false if caller_holds_admin_role?
 
             deny_role_grant!('You cannot grant the admin role.')
@@ -140,6 +140,7 @@ module Spree
               if user.respond_to?(:role_users)
                 user.role_users.
                   where(store: current_store, resource_type: Spree::Store.to_s).
+                  joins(:role).merge(Spree::Role.staff).
                   includes(:role).map(&:role)
               else
                 []
@@ -149,7 +150,7 @@ module Spree
           def caller_holds_admin_role?
             return current_api_key.has_scope?('write_all') if scope_limited_principal?
 
-            caller_roles.any? { |role| role.name == Spree::Role::ADMIN_ROLE } ||
+            caller_roles.any?(&:admin?) ||
               try_spree_current_user.try(:spree_admin?, current_store)
           end
 

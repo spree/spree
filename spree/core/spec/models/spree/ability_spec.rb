@@ -191,6 +191,22 @@ describe Spree::Ability, type: :model do
       end
     end
 
+    # The API refuses this assignment, but a seed or a console could still make
+    # it — reading it back at the query layer is what actually holds.
+    context 'with a foreign-audience role assigned on the store itself' do
+      before do
+        admin.role_users.create!(
+          role: create(:role, name: 'stray', audience: 'vendor', permissions: %w[write_orders]),
+          resource: store
+        )
+      end
+
+      it 'confers nothing in the store back office' do
+        expect(staff_ability.permission_keys).to be_empty
+        expect(staff_ability).not_to be_able_to :read, Spree::Order.new
+      end
+    end
+
     # A non-store resource stands in for a marketplace vendor until the Vendor
     # model lands: what matters is that the assignment hangs off something
     # other than the store, on the store's own turf.

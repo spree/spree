@@ -22,6 +22,19 @@ describe Spree::Role do
       expect(admin_role.read_attribute(:mutable)).to be false
     end
 
+    # Names are unique per audience, so a vendor role may legitimately be
+    # called "admin" — it must never be mistaken for the store super-role.
+    it 'ignores a vendor role of the same name' do
+      vendor_admin = create(:role, name: 'admin', audience: 'vendor', store: @default_store)
+
+      admin_role = Spree::Role.default_admin_role(@default_store)
+
+      expect(admin_role).not_to eq(vendor_admin)
+      expect(admin_role).to be_staff
+      expect(vendor_admin).not_to be_admin
+      expect(vendor_admin).to be_mutable
+    end
+
     # "admin" means everything in *this* store, so it cannot be one shared row.
     it 'gives each store its own' do
       other_store = create(:store)

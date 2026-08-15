@@ -69,7 +69,9 @@ module Spree
         def current_user_member_of_store?
           return false unless current_user.respond_to?(:role_users)
 
-          current_user.role_users.exists?(store: current_store, resource_type: Spree::Store.to_s)
+          current_user.role_users.
+            joins(:role).merge(Spree::Role.staff).
+            exists?(store: current_store, resource_type: Spree::Store.to_s)
         end
 
         def set_no_store_cache

@@ -91,12 +91,14 @@ module Spree
       end
     end
 
-    # The protected super-role. Guarded by name as well as the `mutable` flag
-    # so a stale flag (e.g. a row predating the column) can never expose it.
+    # The protected super-role: everything in this store. Guarded by audience
+    # as well as name — names are unique per audience, so a vendor role may
+    # legitimately be called "admin" and must never be mistaken for this one —
+    # and by the `mutable` flag, so a stale flag can never expose it.
     #
     # @return [Boolean]
     def admin?
-      name == ADMIN_ROLE || name_was == ADMIN_ROLE
+      staff? && (name == ADMIN_ROLE || name_was == ADMIN_ROLE)
     end
 
     # @return [Boolean]
