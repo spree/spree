@@ -1032,6 +1032,9 @@ en:
     locale_not_supported_by_market: is not offered by the chosen market
     locale_not_supported_by_store: is not supported by this store
     locales_not_listed: 'includes locales Spree does not support: %{codes}'
+    maintenance_tasks:
+      backfill_order_markets:
+        description: Assign a market to orders placed before markets existed
     manual: Manual
     market: Market
     me_no_current_user: No admin user authenticated this request
