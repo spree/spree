@@ -1109,8 +1109,53 @@ en:
     mail_from_address: Mail from address
     mailer_logo: Mailer logo (JPG or PNG images only)
     maintenance_tasks:
-      backfill_order_markets:
-        description: Assign a market to orders placed before markets existed
+      upgrade:
+        adjustments_to_typed_rows:
+          description: Map adjustments onto tax lines, discounts and fees
+        backfill_order_markets:
+          description: Assign a market to orders placed before markets existed
+        calculator_bounds_to_delivery_method_rules:
+          description: Convert calculator bounds into delivery method rules
+        capture_methods:
+          description: Convert payment method auto capture into capture methods
+        consolidate_metadata:
+          description: Check for leftover split metadata columns
+        country_state_codes:
+          description: Fill ISO country and state codes from the legacy records
+        delivery_and_stock_store_ids:
+          description: Assign delivery methods and stock locations to the default store
+        delivery_profiles:
+          description: Convert shipping categories into delivery profiles
+        fulfillment_statuses:
+          description: Collapse fulfillment statuses onto the 6.0 set
+        incomplete_orders_to_carts:
+          description: Move incomplete orders onto the Cart model
+        product_types:
+          description: Bind product types to the default store and reset counters
+        reason_store_ids:
+          description: Assign return and refund reasons to the default store
+        remove_master_variant:
+          description: Migrate products off the master variant
+        returns:
+          description: Move return authorizations onto the Return and Exchange models
+        rich_text_to_columns:
+          description: Move rich text out of Action Text into its own columns
+        shipping_to_delivery:
+          description: Rename the shipping vocabulary to delivery
+        store_settings_from_config:
+          description: Copy moved settings from the global config onto each store
+        tax_store_ids:
+          description: Assign tax categories and rates to the default store
+        tax_zones:
+          description: Convert zone-scoped tax rates to country and state codes
+        taxons_to_categories_and_collections:
+          description: Migrate taxons to categories and collections
+        users_to_customers:
+          description: Move users onto the gem-owned customer model
+        zones_to_delivery_zones:
+          description: Convert shipping zones into delivery zones
+      upgrade_step:
+        description: Run one step of the upgrade manifest
     make_active_at: Make Active At
     manual: Manual
     manual_intervention_required: Manual intervention required

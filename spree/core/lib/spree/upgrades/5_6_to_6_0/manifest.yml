@@ -12,8 +12,15 @@
 #     live in the upgrade doc at docs/developer/upgrades/5.6-to-6.0.mdx.
 #
 # This manifest is the machine-runnable shape — what `bin/rake spree:upgrade`
-# (in production) and `spree upgrade` (in dev) execute. Every step must be a
-# rake task and must be idempotent. Re-running the full manifest is safe.
+# (in production) and `spree upgrade` (in dev) execute. Every step must be
+# idempotent; re-running the full manifest is safe.
+#
+# Steps name a `task_class` — a Spree::MaintenanceTask that the walk runs
+# through the maintenance task runner, so a shell walk and a dashboard run
+# leave the same audit record and the same resume behaviour
+# (docs/plans/6.0-maintenance-tasks.md). Released manifests keep their `task`
+# rake names, which have shipped and may be scripted; the walker runs both
+# kinds.
 ---
 from: "5.6"
 to: "6.0"
@@ -22,7 +29,7 @@ docs: "https://spreecommerce.org/docs/developer/upgrades/5.6-to-6.0"
 steps:
   - id: consolidate_metadata
     name: "Check for leftover split metadata columns"
-    task: "spree:upgrade:consolidate_metadata"
+    task_class: "Spree::MaintenanceTasks::Upgrade::ConsolidateMetadata"
     notes: |
       Spree 6.0 collapses the public_metadata / private_metadata column pair into a
       single metadata column. The migration performs the merge itself, before it
@@ -65,7 +72,7 @@ steps:
 
   - id: remove_master_variant
     name: "Migrate products off the master variant"
-    task: "spree:remove_master_variant"
+    task_class: "Spree::MaintenanceTasks::Upgrade::RemoveMasterVariant"
     notes: |
       Backfills spree_products.default_variant_id and retires the hidden master
       variant: simple products' masters become regular variants, ghost masters
@@ -79,7 +86,7 @@ steps:
 
   - id: migrate_taxons_to_categories_and_collections
     name: "Migrate taxons to categories and collections"
-    task: "spree:migrate_taxons_to_categories_and_collections"
+    task_class: "Spree::MaintenanceTasks::Upgrade::TaxonsToCategoriesAndCollections"
     notes: |
       Migrates rule-based (automatic) taxons into Spree::Collection — copying
       their rules, product membership and translations, and moving the ActionText
@@ -98,7 +105,7 @@ steps:
 
   - id: migrate_users_to_customers
     name: "Move users onto the gem-owned Customer/AdminUser models"
-    task: "spree:upgrade:migrate_users_to_customers"
+    task_class: "Spree::MaintenanceTasks::Upgrade::UsersToCustomers"
     notes: |
       Copies the legacy Devise user table (default spree_users) into
       spree_customers, preserving ids so the renamed customer_id foreign keys
@@ -126,7 +133,7 @@ steps:
 
   - id: migrate_rich_text_to_columns
     name: "Move rich text out of Action Text into its own columns"
-    task: "spree:migrate_rich_text_to_columns"
+    task_class: "Spree::MaintenanceTasks::Upgrade::RichTextToColumns"
     notes: |
       Copies category and collection descriptions, policy bodies, and the order
       and customer internal notes out of action_text_rich_texts into the text
@@ -147,7 +154,7 @@ steps:
 
   - id: migrate_shipping_to_delivery
     name: "Backfill fulfillment & delivery naming"
-    task: "spree:migrate_shipping_to_delivery"
+    task_class: "Spree::MaintenanceTasks::Upgrade::ShippingToDelivery"
     notes: |
       Rewrites stored 'Spree::Shipment' class-name strings (state changes,
       stock movements, legacy adjustments), renames the terminal fulfillment
@@ -169,7 +176,7 @@ steps:
 
   - id: migrate_delivery_profiles
     name: "Promote shipping categories to delivery profiles"
-    task: "spree:migrate_delivery_profiles"
+    task_class: "Spree::MaintenanceTasks::Upgrade::DeliveryProfiles"
     notes: |
       The schema migration renames spree_shipping_categories to
       spree_delivery_profiles in place, so 5.x product assignments carry
@@ -189,7 +196,7 @@ steps:
 
   - id: migrate_fulfillment_statuses
     name: "Remap fulfillment statuses"
-    task: "spree:migrate_fulfillment_statuses"
+    task_class: "Spree::MaintenanceTasks::Upgrade::FulfillmentStatuses"
     notes: |
       Moves fulfillments onto the unfulfilled/fulfilled/delivered vocabulary.
       'pending' and 'ready' both become 'unfulfilled' — the difference between
@@ -206,7 +213,7 @@ steps:
 
   - id: migrate_zones_to_delivery_zones
     name: "Convert delivery zones"
-    task: "spree:migrate_zones_to_delivery_zones"
+    task_class: "Spree::MaintenanceTasks::Upgrade::ZonesToDeliveryZones"
     notes: |
       Converts legacy Spree::Zone rows referenced by delivery methods into
       Spree::DeliveryZone records with typed country/state members and
@@ -222,7 +229,7 @@ steps:
 
   - id: migrate_country_state_codes
     name: "Name countries and states by ISO code"
-    task: "spree:upgrade:migrate_country_state_codes"
+    task_class: "Spree::MaintenanceTasks::Upgrade::CountryStateCodes"
     notes: |
       Countries and states stop being database records in Spree 6. Addresses,
       delivery zone members, market countries, stock locations and stores name
@@ -240,7 +247,7 @@ steps:
 
   - id: migrate_adjustments_to_typed_rows
     name: "Convert adjustments to typed rows"
-    task: "spree:migrate_adjustments_to_typed_rows"
+    task_class: "Spree::MaintenanceTasks::Upgrade::AdjustmentsToTypedRows"
     notes: |
       Converts legacy spree_adjustments into TaxLine / Discount / Fee rows:
       tax-rate rows become tax lines with rate snapshots, eligible promotion
@@ -255,7 +262,7 @@ steps:
 
   - id: backfill_reason_store_ids
     name: "Bind return and refund reasons to the default store"
-    task: "spree:upgrade:backfill_reason_store_ids"
+    task_class: "Spree::MaintenanceTasks::Upgrade::ReasonStoreIds"
     notes: |
       Return and refund reasons are store-owned in Spree 6. The rename
       migration backfills them and enforces NOT NULL, so this is a safety net
@@ -268,7 +275,7 @@ steps:
 
   - id: migrate_returns
     name: "Move returns onto the new returns models"
-    task: "spree:upgrade:migrate_returns"
+    task_class: "Spree::MaintenanceTasks::Upgrade::Returns"
     notes: |
       Converts each ReturnAuthorization into a Spree::Return, or a
       Spree::Exchange when any of its return items named an exchange variant,
@@ -337,7 +344,7 @@ steps:
 
   - id: backfill_delivery_and_stock_store_ids
     name: "Bind delivery methods and stock locations to the default store"
-    task: "spree:backfill_delivery_and_stock_store_ids"
+    task_class: "Spree::MaintenanceTasks::Upgrade::DeliveryAndStockStoreIds"
     notes: |
       Delivery methods and stock locations carry a store_id in Spree 6.
       Unassigned rows go to the default store; additional stores manage
@@ -346,7 +353,7 @@ steps:
 
   - id: migrate_tax_zones
     name: "Convert tax zones to country and state references"
-    task: "spree:migrate_tax_zones"
+    task_class: "Spree::MaintenanceTasks::Upgrade::TaxZones"
     notes: |
       Tax rates name their jurisdiction directly in Spree 6 — merchants think
       "Germany charges 19% VAT", and a tax line has to be able to report the
@@ -362,7 +369,7 @@ steps:
 
   - id: backfill_tax_store_ids
     name: "Bind tax rates and tax categories to the default store"
-    task: "spree:backfill_tax_store_ids"
+    task_class: "Spree::MaintenanceTasks::Upgrade::TaxStoreIds"
     notes: |
       Tax rates and tax categories carry a store_id in Spree 6 — they are the
       internal tax provider's configuration and belong to a store like every
@@ -375,7 +382,7 @@ steps:
 
   - id: backfill_order_markets
     name: "Backfill order markets"
-    task: "spree:backfill_order_markets"
+    task_class: "Spree::MaintenanceTasks::Upgrade::BackfillOrderMarkets"
     notes: |
       Market is mandatory in Spree 6. Assigns the store's default market to
       orders that predate markets. Channel needs no step here — the 5.4→5.5
@@ -386,7 +393,7 @@ steps:
 
   - id: migrate_incomplete_orders_to_carts
     name: "Convert incomplete orders to carts"
-    task: "spree:migrate_incomplete_orders_to_carts"
+    task_class: "Spree::MaintenanceTasks::Upgrade::IncompleteOrdersToCarts"
     notes: |
       The final flip: every order that never completed nor canceled becomes a
       Spree::Cart with the same token, binding, addresses and totals. Line
@@ -398,7 +405,7 @@ steps:
 
   - id: migrate_calculator_bounds_to_delivery_method_rules
     name: "Convert calculator eligibility bounds to delivery method rules"
-    task: "spree:migrate_calculator_bounds_to_delivery_method_rules"
+    task_class: "Spree::MaintenanceTasks::Upgrade::CalculatorBoundsToDeliveryMethodRules"
     notes: |
       Folds the FlatRate calculator's min/max item-total and weight
       preferences into DeliveryMethodRule rows (eligibility separated from
@@ -408,7 +415,7 @@ steps:
 
   - id: store_settings_backfill_from_config
     name: "Copy moved commerce settings onto every store"
-    task: "spree:store_settings:backfill_from_config"
+    task_class: "Spree::MaintenanceTasks::Upgrade::StoreSettingsFromConfig"
     notes: |
       Settings that describe how a shop sells moved from Spree::Config onto
       Spree::Store in 6.0: track_inventory_levels, stock_reservations_enabled,
@@ -438,7 +445,7 @@ steps:
 
   - id: migrate_capture_methods
     name: "Convert payment method auto_capture into capture_method"
-    task: "spree:migrate_capture_methods"
+    task_class: "Spree::MaintenanceTasks::Upgrade::CaptureMethods"
     notes: |
       Payment methods say when they charge with a capture_method string
       (checkout, on_dispatch or manual) rather than an auto_capture boolean,
@@ -457,7 +464,7 @@ steps:
 
   - id: product_types_backfill
     name: "Backfill product type store ownership"
-    task: "spree:product_types:backfill"
+    task_class: "Spree::MaintenanceTasks::Upgrade::ProductTypes"
     notes: |
       Assigns store-less product types to the default store, removes orphaned
       option-type joins, and resets product counters. Idempotent.

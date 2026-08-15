@@ -241,6 +241,16 @@ module Spree
       item.respond_to?(:id) ? item.id.to_s : item.to_s
     end
 
+    # Rake tasks are defined by the Rakefile, which a web process never loads —
+    # a task fired from the dashboard has to load the engine's tasks itself.
+    # Idempotent: Rake replaces a definition rather than duplicating it.
+    def load_engine_rake_tasks
+      require 'rake'
+
+      ::Rake::Task.define_task(:environment) unless ::Rake::Task.task_defined?(:environment)
+      Dir.glob(Spree::Core::Engine.root.join('lib/tasks/**/*.rake')).sort.each { |path| load(path) }
+    end
+
     def after_start; end
     def after_pause; end
     def after_interrupt; end

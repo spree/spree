@@ -33,41 +33,10 @@ namespace :spree do
   end
 end
 
+require 'spree/upgrade'
+
 module Spree
   module Upgrade
-    # Two-segment "5.5" form of the installed Spree version.
-    def self.installed_minor_version
-      Spree.version.split('.').first(2).join('.')
-    end
-
-    # Root directory containing N_M_to_O_P/manifest.yml files inside
-    # the spree_core gem.
-    def self.manifests_root
-      File.expand_path('../spree/upgrades', __dir__)
-    end
-
-    # All available manifest directories, parsed into { from:, to:, dir: }.
-    # Sorted by `to` ascending, with `from` as a tiebreaker (smallest first)
-    # for the rare case where two manifests share a `to` boundary.
-    def self.available_manifests
-      Dir.glob(File.join(manifests_root, '*_to_*')).filter_map do |dir|
-        name = File.basename(dir)
-        match = name.match(/\A([\d_]+)_to_([\d_]+)\z/)
-        next unless match
-
-        { from: match[1].tr('_', '.'), to: match[2].tr('_', '.'), dir: dir }
-      end.sort_by { |m| version_parts(m[:to]) + version_parts(m[:from]) }
-    end
-
-    def self.version_parts(v)
-      v.split('.').map { |s| Integer(s, 10) rescue 0 }
-    end
-
-    # Compare two dotted-version strings (returns -1, 0, +1).
-    def self.compare(a, b)
-      version_parts(a) <=> version_parts(b)
-    end
-
     # The runner is a class (not a method) so individual concerns (selection,
     # rendering, invocation) stay separable and the plan can be inspected
     # without execution.
@@ -177,38 +146,76 @@ module Spree
         puts
         puts "  Step #{index}/#{total} [#{step['id']}]"
         puts "    #{step['name']}"
-        puts "    > bin/rake #{step['task']}"
+        puts "    > #{step_command(step)}"
         return unless step['notes']
 
         step['notes'].each_line { |line| puts "    #{line.chomp}" }
       end
 
       def print_step_complete(step)
-        puts "    ✓ #{step['task']} done."
+        puts "    ✓ #{step_label(step)} done."
       end
 
-      def invoke(step)
-        task = step.fetch('task')
+      def step_label(step)
+        step['task_class'] || step['task']
+      end
 
-        # Steps contributed by optional gems (payment gateways, for instance)
-        # are absent unless that gem is installed. Skipping keeps the upgrade
-        # runnable on installs that never had the gem, while an install that
-        # does have it still gets the backfill.
-        if step['optional'] && !Rake::Task.task_defined?(task)
-          puts "    Skipping #{task} — not installed."
+      def step_command(step)
+        if step['task_class']
+          "bin/rake \"spree:maintenance_tasks:perform[#{step['task_class']}]\""
+        else
+          "bin/rake #{step['task']}"
+        end
+      end
+
+      # Both step kinds run through the maintenance task runner, so a shell
+      # walk records the same audit rows a dashboard run does: a class-backed
+      # step runs its own task, a rake-backed step runs inside UpgradeStep.
+      #
+      # Returns false when the step was skipped, so the caller can leave the
+      # "done" line off a step that never ran.
+      def invoke(step)
+        return false if skip_uninstalled?(step)
+
+        puts "    Running #{step_label(step)}..."
+
+        result = Spree::MaintenanceTasks::Start.call(
+          task_name: step['task_class'] || 'Spree::MaintenanceTasks::UpgradeStep',
+          arguments: step['task_class'] ? {} : { 'step_id' => step['id'] },
+          initiated_via: 'cli',
+          inline: true
+        )
+
+        abort "    #{result.error}" if result.failure?
+
+        run = result.value.reload
+        run.tallies.each { |key, value| puts "      #{key}: #{value}" }
+
+        if run.errored?
+          puts "    #{run.error_class}: #{run.error_message}"
+          abort '    Step failed. Fix the cause, then re-run this step.'
+        end
+
+        true
+      end
+
+      # Steps contributed by optional gems (payment gateways, for instance)
+      # are absent unless that gem is installed. Skipping keeps the upgrade
+      # runnable on installs that never had the gem, while an install that
+      # does have it still gets the backfill.
+      #
+      # The check reads the rake task even for a class-backed step, since an
+      # optional step's task class ships in the same absent gem.
+      def skip_uninstalled?(step)
+        return false unless step['optional']
+
+        if step['task_class']
+          return false if Spree::MaintenanceTask.find_registered(step['task_class'])
+        elsif Rake::Task.task_defined?(step['task'])
           return false
         end
 
-        puts "    Running #{task}..."
-
-        # Rake caches invoked tasks in-process; explicit reenable lets a
-        # single `rake spree:upgrade` run re-invoke aggregators that share
-        # subtasks across multiple manifests (e.g. two manifests both
-        # depending on `spree:install:migrations` would otherwise only
-        # invoke it once).
-        rake_task = Rake::Task[task]
-        rake_task.reenable
-        rake_task.invoke
+        puts "    Skipping #{step_label(step)} — not installed."
         true
       end
     end

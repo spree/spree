@@ -11,7 +11,7 @@ module Spree
       # there is nothing to assign, and failing the run would strand every
       # other store's orders behind them.
       class BackfillOrderMarkets < Spree::MaintenanceTask
-        description 'maintenance_tasks.backfill_order_markets.description'
+        description 'maintenance_tasks.upgrade.backfill_order_markets.description'
         supports_dry_run
         collection_batch_size 500
 

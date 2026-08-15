@@ -522,7 +522,29 @@ module Spree
         Rails.application.config.spree.integrations = []
 
         Rails.application.config.spree.maintenance_tasks = [
-          'Spree::MaintenanceTasks::Upgrade::BackfillOrderMarkets'
+          'Spree::MaintenanceTasks::UpgradeStep',
+          'Spree::MaintenanceTasks::Upgrade::ConsolidateMetadata',
+          'Spree::MaintenanceTasks::Upgrade::RemoveMasterVariant',
+          'Spree::MaintenanceTasks::Upgrade::TaxonsToCategoriesAndCollections',
+          'Spree::MaintenanceTasks::Upgrade::UsersToCustomers',
+          'Spree::MaintenanceTasks::Upgrade::RichTextToColumns',
+          'Spree::MaintenanceTasks::Upgrade::ShippingToDelivery',
+          'Spree::MaintenanceTasks::Upgrade::DeliveryProfiles',
+          'Spree::MaintenanceTasks::Upgrade::FulfillmentStatuses',
+          'Spree::MaintenanceTasks::Upgrade::ZonesToDeliveryZones',
+          'Spree::MaintenanceTasks::Upgrade::CountryStateCodes',
+          'Spree::MaintenanceTasks::Upgrade::AdjustmentsToTypedRows',
+          'Spree::MaintenanceTasks::Upgrade::ReasonStoreIds',
+          'Spree::MaintenanceTasks::Upgrade::Returns',
+          'Spree::MaintenanceTasks::Upgrade::DeliveryAndStockStoreIds',
+          'Spree::MaintenanceTasks::Upgrade::TaxZones',
+          'Spree::MaintenanceTasks::Upgrade::TaxStoreIds',
+          'Spree::MaintenanceTasks::Upgrade::BackfillOrderMarkets',
+          'Spree::MaintenanceTasks::Upgrade::IncompleteOrdersToCarts',
+          'Spree::MaintenanceTasks::Upgrade::CalculatorBoundsToDeliveryMethodRules',
+          'Spree::MaintenanceTasks::Upgrade::StoreSettingsFromConfig',
+          'Spree::MaintenanceTasks::Upgrade::CaptureMethods',
+          'Spree::MaintenanceTasks::Upgrade::ProductTypes'
         ]
 
         Rails.application.config.spree.validators.addresses = [
