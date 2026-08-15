@@ -154,11 +154,11 @@ module SpreeEasyPost
   # countries differ. Unknown countries mean domestic — never attach a
   # customs form on a guess.
   def self.international?(origin, destination)
-    origin_iso = origin&.country&.iso
-    destination_iso = destination&.country&.iso
-    return false if origin_iso.blank? || destination_iso.blank?
+    origin_code = origin&.country_code
+    destination_code = destination&.country_code
+    return false if origin_code.blank? || destination_code.blank?
 
-    origin_iso != destination_iso
+    origin_code != destination_code
   end
 
   # EndShipper payload — the party legally responsible for the shipment,

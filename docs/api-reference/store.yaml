@@ -87,16 +87,16 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6IjJhMjFkMzdhLTg5Y2QtNGMxMC1iYWFmLWVlZjJkYjdiNjA4NCIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzg2NzI3NDU3fQ.ft5RY2UgzUD6mMCMuGWr3l5HSaEsiCAnla1Fb1NcOXQ
-                refresh_token: WSJQD2XhJEmyWkntrJfAnVQF
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6IjQzN2Q2NDZjLWQwMTQtNDRhYS1hNDg5LTBlNzYwZDk1ZWQ1ZSIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzg2Nzg1NDIyfQ.ikzxUzILp7mFMElSsvbQi2knBDkEh_9zUgCRV44a92U
+                refresh_token: eykioPVhQ4bSfXsaG8iC2FPw
                 user:
                   id: cust_UkLWZg9DAJ
                   email: test@example.com
-                  first_name: Carmon
-                  last_name: Heaney
+                  first_name: Melodie
+                  last_name: Murray
                   phone:
                   accepts_email_marketing: false
-                  full_name: Carmon Heaney
+                  full_name: Melodie Murray
                   available_store_credit_total: '0'
                   display_available_store_credit_total: "$0.00"
                   addresses: []
@@ -194,16 +194,16 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6IjcwMWU2MzRmLTcyZjQtNGY4ZC04OTRhLWZjMzA1ZmU0N2EwYiIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzg2NzI3NDU3fQ.603Bpmylcy_ALqqmi_fpPRwM7agwsho5DKL8zRu_hss
-                refresh_token: gHYNjkPJKnQsf4BDFFk7wJ6D
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6IjExN2Y0YjMzLWFmMTAtNGZmMy05MzBhLTQzZmU4ZGUzYjQyMCIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzg2Nzg1NDIyfQ.bJLbyMEE6YIrMR945DJoSLMVWkMBzkGcAi17-6HzDuM
+                refresh_token: ASt4xXHWBuLdCWjLWM4U9U1L
                 user:
                   id: cust_UkLWZg9DAJ
                   email: test@example.com
-                  first_name: Celina
-                  last_name: Ratke
+                  first_name: Abel
+                  last_name: Schuppe
                   phone:
                   accepts_email_marketing: false
-                  full_name: Celina Ratke
+                  full_name: Abel Schuppe
                   available_store_credit_total: '0'
                   display_available_store_credit_total: "$0.00"
                   addresses: []
@@ -393,16 +393,16 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6ImUwZWJjZGRhLTRhYjUtNDljNy04OWM3LWVjZGYxYjAwN2E2NCIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzg2NzI3NDYxfQ.ydsSpxlKnLZa7MBRwlZRkST40G4Q-z84C_t1PCAUSy4
-                refresh_token: 83bCcSFjcPhsS798YaUcWtge
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6ImM5OTUwNDUzLTZjNzItNDQ0ZC1iZjkzLThmMDBlZTlmZjlkMiIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzg2Nzg1NDI1fQ.Gi9KeKIGwWOb2fAOhxwF41I-L1sjpSybncMyczu-Row
+                refresh_token: cL8ioGTxvRHDrGbQQQ3bUtci
                 user:
                   id: cust_UkLWZg9DAJ
                   email: customer@example.com
-                  first_name: Shaunna
-                  last_name: DuBuque
+                  first_name: Cristobal
+                  last_name: Keeling
                   phone:
                   accepts_email_marketing: false
-                  full_name: Shaunna DuBuque
+                  full_name: Cristobal Keeling
                   available_store_credit_total: '0'
                   display_available_store_credit_total: "$0.00"
                   addresses: []
@@ -879,8 +879,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1349475
-                  slug: product-1349475
+                  name: Product 134776
+                  slug: product-134776
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -892,14 +892,15 @@ paths:
                   in_stock: false
                   backorderable: true
                   available: true
-                  description: Sit accusamus molestias sed deserunt. Earum aperiam
-                    excepturi voluptatum similique optio numquam. Qui dolor ipsa inventore
-                    est. Totam quia libero hic nostrum architecto quod. Eius cum odit
-                    ut voluptatum fuga labore.
-                  description_html: Sit accusamus molestias sed deserunt. Earum aperiam
-                    excepturi voluptatum similique optio numquam. Qui dolor ipsa inventore
-                    est. Totam quia libero hic nostrum architecto quod. Eius cum odit
-                    ut voluptatum fuga labore.
+                  description: Animi accusamus dolor et recusandae. Repudiandae dolor
+                    enim doloribus id quam sed. Excepturi minus expedita corporis
+                    officia molestiae sint quas. Esse voluptate reprehenderit corrupti
+                    atque quo dolores. Vitae et iure aut enim. Quasi similique earum
+                    doloremque cupiditate. Nostrum est debitis facere asperiores nisi
+                    delectus harum quasi.
+                  description_html: |-
+                    Animi accusamus dolor et recusandae. Repudiandae dolor enim doloribus id quam sed. Excepturi minus expedita corporis officia molestiae sint quas. Esse voluptate reprehenderit corrupti atque quo dolores.
+                    Vitae et iure aut enim. Quasi similique earum doloremque cupiditate. Nostrum est debitis facere asperiores nisi delectus harum quasi.
                   default_variant_id: variant_UkLWZg9DAJ
                   thumbnail_url:
                   tags: []
@@ -1054,8 +1055,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1795531
-                  slug: product-1795531
+                  name: Product 1793456
+                  slug: product-1793456
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1084,8 +1085,8 @@ paths:
                     price_list_id:
                   original_price:
                 - id: prod_gbHJdmfrXB
-                  name: Product 1807508
-                  slug: product-1807508
+                  name: Product 1807427
+                  slug: product-1807427
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1097,29 +1098,28 @@ paths:
                   in_stock: false
                   backorderable: true
                   available: true
-                  description: Animi dolor tempore pariatur dolore nihil temporibus
-                    eligendi. Aperiam repellat numquam eum expedita. Mollitia quo
-                    ea vero illum cum dicta reiciendis iusto. Occaecati iusto placeat
-                    adipisci quod reiciendis unde. Dignissimos explicabo culpa velit
-                    reprehenderit. Rem quod ipsum distinctio quae dolores beatae.
-                    Adipisci cumque molestiae nostrum alias. Esse atque blanditiis
-                    doloribus dolor aperiam corrupti perspiciatis. Culpa voluptates
-                    cumque deleniti corporis dignissimos quaerat magni doloremque.
-                    Facilis nobis iusto nisi expedita porro. Ab harum temporibus laboriosam
-                    error. Nihil occaecati sunt numquam libero magnam nemo praesentium
-                    eveniet. Dignissimos non quos omnis tempora dolorem enim. Quia
-                    rem eligendi repudiandae maxime blanditiis fuga. Numquam officiis
-                    similique consectetur vel. Commodi dolor ex voluptatem praesentium
-                    illo architecto. Iure minima velit magni vel sed inventore corrupti
-                    ipsum. Similique atque veritatis ea eos maxime veniam. Necessitatibus
-                    maiores maxime illo facilis. Voluptates facilis neque quod incidunt
-                    minus dolore.
+                  description: Adipisci officiis ab vitae harum quas. Magni veniam
+                    dolores exercitationem voluptatem molestiae esse architecto. Tempora
+                    ipsa assumenda ullam quasi dicta minima temporibus. Recusandae
+                    illum rem placeat perferendis. Incidunt delectus cum numquam veniam.
+                    Explicabo nisi earum asperiores quisquam eligendi dolor. Nobis
+                    quas harum similique magnam unde delectus officiis inventore.
+                    Quidem perferendis nemo esse eveniet sapiente. Enim earum fuga
+                    aut incidunt corrupti architecto. Odit laboriosam quae asperiores
+                    dolorum rerum eius. Dolorum vel dolores recusandae expedita voluptas
+                    reiciendis quas fuga. Nesciunt asperiores atque illo cupiditate
+                    libero. Dolores delectus sed voluptates reiciendis eos. Veniam
+                    alias eveniet sit modi omnis. Consequuntur atque repudiandae officiis
+                    inventore molestiae ad. Eligendi ratione in labore velit ducimus
+                    repellendus delectus. Eius praesentium officiis accusantium qui
+                    debitis aspernatur. Reprehenderit tempore nobis autem veritatis
+                    placeat. Dolor eius sapiente occaecati temporibus error nobis.
                   description_html: |-
-                    Animi dolor tempore pariatur dolore nihil temporibus eligendi. Aperiam repellat numquam eum expedita. Mollitia quo ea vero illum cum dicta reiciendis iusto.
-                    Occaecati iusto placeat adipisci quod reiciendis unde. Dignissimos explicabo culpa velit reprehenderit. Rem quod ipsum distinctio quae dolores beatae.
-                    Adipisci cumque molestiae nostrum alias. Esse atque blanditiis doloribus dolor aperiam corrupti perspiciatis. Culpa voluptates cumque deleniti corporis dignissimos quaerat magni doloremque. Facilis nobis iusto nisi expedita porro. Ab harum temporibus laboriosam error.
-                    Nihil occaecati sunt numquam libero magnam nemo praesentium eveniet. Dignissimos non quos omnis tempora dolorem enim. Quia rem eligendi repudiandae maxime blanditiis fuga. Numquam officiis similique consectetur vel.
-                    Commodi dolor ex voluptatem praesentium illo architecto. Iure minima velit magni vel sed inventore corrupti ipsum. Similique atque veritatis ea eos maxime veniam. Necessitatibus maiores maxime illo facilis. Voluptates facilis neque quod incidunt minus dolore.
+                    Adipisci officiis ab vitae harum quas. Magni veniam dolores exercitationem voluptatem molestiae esse architecto. Tempora ipsa assumenda ullam quasi dicta minima temporibus.
+                    Recusandae illum rem placeat perferendis. Incidunt delectus cum numquam veniam. Explicabo nisi earum asperiores quisquam eligendi dolor. Nobis quas harum similique magnam unde delectus officiis inventore. Quidem perferendis nemo esse eveniet sapiente.
+                    Enim earum fuga aut incidunt corrupti architecto. Odit laboriosam quae asperiores dolorum rerum eius. Dolorum vel dolores recusandae expedita voluptas reiciendis quas fuga. Nesciunt asperiores atque illo cupiditate libero. Dolores delectus sed voluptates reiciendis eos.
+                    Veniam alias eveniet sit modi omnis. Consequuntur atque repudiandae officiis inventore molestiae ad. Eligendi ratione in labore velit ducimus repellendus delectus.
+                    Eius praesentium officiis accusantium qui debitis aspernatur. Reprehenderit tempore nobis autem veritatis placeat. Dolor eius sapiente occaecati temporibus error nobis.
                   default_variant_id: variant_EfhxLZ9ck8
                   thumbnail_url:
                   tags: []
@@ -1221,8 +1221,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 2074127
-                slug: product-2074127
+                name: Product 2078453
+                slug: product-2078453
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -1256,7 +1256,7 @@ paths:
                   amount_in_cents: 999
                   currency: USD
                   display_amount: "$9.99"
-                  recorded_at: '2026-07-30T16:11:10Z'
+                  recorded_at: '2026-07-31T08:17:13Z'
               schema:
                 "$ref": "#/components/schemas/Product"
         '404':
@@ -1506,7 +1506,7 @@ paths:
                   channel_id: ch_UkLWZg9DAJ
                   preferred_stock_location_id:
                   number: cart_gbHJdmfrXB
-                  token: mYfNSXAkV5CDRZLp4FxGt2PT
+                  token: Dvs1S7jYJTEgTsrkXUwCDLJw
                   email:
                   customer_note:
                   currency: USD
@@ -1568,8 +1568,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 1093032
-                    slug: product-1093032
+                    name: Product 1091878
+                    slug: product-1091878
                     options_text: ''
                     price: '10.0'
                     display_price: "$10.00"
@@ -1600,12 +1600,12 @@ paths:
                   gift_card:
                   market:
                     id: mkt_UkLWZg9DAJ
-                    name: United States of America
+                    name: United States
                     currency: USD
                     default_locale: en
                     tax_inclusive: false
                     default: true
-                    country_isos:
+                    country_codes:
                     - US
                     supported_locales:
                     - en
@@ -1614,7 +1614,7 @@ paths:
                   channel_id: ch_UkLWZg9DAJ
                   preferred_stock_location_id:
                   number: cart_UkLWZg9DAJ
-                  token: i7ffJjhpDno6jwKcu4bfwjKa
+                  token: tFfvYbrc4e3KFBwxsVnsFdmF
                   email:
                   customer_note:
                   currency: USD
@@ -1676,8 +1676,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 1087465
-                    slug: product-1087465
+                    name: Product 1085260
+                    slug: product-1085260
                     options_text: ''
                     price: '10.0'
                     display_price: "$10.00"
@@ -1708,12 +1708,12 @@ paths:
                   gift_card:
                   market:
                     id: mkt_UkLWZg9DAJ
-                    name: United States of America
+                    name: United States
                     currency: USD
                     default_locale: en
                     tax_inclusive: false
                     default: true
-                    country_isos:
+                    country_codes:
                     - US
                     supported_locales:
                     - en
@@ -1795,7 +1795,7 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
                 number: cart_UkLWZg9DAJ
-                token: 4Q4L6LApSWEDRAKeV9woLJbo
+                token: gTLA9ffyDkH2cg8GJMPNSRXE
                 email:
                 customer_note:
                 currency: USD
@@ -1851,12 +1851,12 @@ paths:
                 gift_card:
                 market:
                   id: mkt_UkLWZg9DAJ
-                  name: United States of America
+                  name: United States
                   currency: USD
                   default_locale: en
                   tax_inclusive: false
                   default: true
-                  country_isos:
+                  country_codes:
                   - US
                   supported_locales:
                   - en
@@ -1963,7 +1963,7 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
                 number: cart_UkLWZg9DAJ
-                token: 1X4PwJmQEQRhWo47nTzN3QJU
+                token: 1PN9tDu2NAFCZ6zxdJxwJzrc
                 email:
                 customer_note:
                 currency: USD
@@ -1971,7 +1971,7 @@ paths:
                 total_quantity: 0
                 warnings:
                 - code: line_item_removed
-                  message: Product 1136704 was removed because it was sold out
+                  message: Product 1131202 was removed because it was sold out
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                 coupon_code:
@@ -2023,12 +2023,12 @@ paths:
                 gift_card:
                 market:
                   id: mkt_UkLWZg9DAJ
-                  name: United States of America
+                  name: United States
                   currency: USD
                   default_locale: en
                   tax_inclusive: false
                   default: true
-                  country_isos:
+                  country_codes:
                   - US
                   supported_locales:
                   - en
@@ -2064,20 +2064,24 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const cart = await client.carts.update('cart_abc123', {
-            email: 'customer@example.com',
-            shipping_address: {
-              first_name: 'John',
-              last_name: 'Doe',
-              address1: '123 Main St',
-              city: 'New York',
-              postal_code: '10001',
-              country_iso: 'US',
-              state_abbr: 'NY',
+          const cart = await client.carts.update(
+            'cart_abc123',
+            {
+              email: 'customer@example.com',
+              shipping_address: {
+                first_name: 'John',
+                last_name: 'Doe',
+                address1: '123 Main St',
+                city: 'New York',
+                postal_code: '10001',
+                country_code: 'US',
+                state_abbr: 'NY',
+              },
             },
-          }, {
-            token: '<token>',
-          })
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -2116,7 +2120,7 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
                 number: cart_UkLWZg9DAJ
-                token: dXefTEY7JmPCmK4Wetv1VofH
+                token: xKwAY5UgJJbi5UNKTTNbPYzR
                 email:
                 customer_note: Leave at door
                 currency: USD
@@ -2174,8 +2178,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1142085
-                  slug: product-1142085
+                  name: Product 1149195
+                  slug: product-1149195
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -2206,12 +2210,12 @@ paths:
                 gift_card:
                 market:
                   id: mkt_UkLWZg9DAJ
-                  name: United States of America
+                  name: United States
                   currency: USD
                   default_locale: en
                   tax_inclusive: false
                   default: true
-                  country_isos:
+                  country_codes:
                   - US
                   supported_locales:
                   - en
@@ -2260,9 +2264,9 @@ paths:
                       type: string
                     company:
                       type: string
-                    country_iso:
+                    country_code:
                       type: string
-                    state_abbr:
+                    state_code:
                       type: string
                 shipping_address:
                   type: object
@@ -2283,9 +2287,9 @@ paths:
                       type: string
                     company:
                       type: string
-                    country_iso:
+                    country_code:
                       type: string
-                    state_abbr:
+                    state_code:
                       type: string
     delete:
       summary: Delete a cart
@@ -2394,8 +2398,8 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
                 number: cart_UkLWZg9DAJ
-                token: XVQ946zXAvqXGSy5Ycq6ozvC
-                email: olympia@yost.co.uk
+                token: nAikJCeVwWQdme6MsEzUCqZ8
+                email: toccara@rowe.ca
                 customer_note:
                 currency: USD
                 locale: en
@@ -2449,8 +2453,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1168943
-                  slug: product-1168943
+                  name: Product 1165033
+                  slug: product-1165033
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -2486,13 +2490,15 @@ paths:
                   city: New York
                   phone: 555-555-0199
                   company: Company
-                  country_name: United States of America
-                  country_iso: US
+                  country_name: United States
+                  country_code: US
                   state_text: NY
-                  state_abbr: NY
+                  state_code: NY
                   quick_checkout: false
                   is_default_billing: true
                   is_default_shipping: false
+                  state_abbr: NY
+                  country_iso: US
                   state_name: New York
                 shipping_address:
                   id: addr_UkLWZg9DAJ
@@ -2505,24 +2511,26 @@ paths:
                   city: New York
                   phone: 555-555-0199
                   company: Company
-                  country_name: United States of America
-                  country_iso: US
+                  country_name: United States
+                  country_code: US
                   state_text: NY
-                  state_abbr: NY
+                  state_code: NY
                   quick_checkout: false
                   is_default_billing: false
                   is_default_shipping: true
+                  state_abbr: NY
+                  country_iso: US
                   state_name: New York
                 payment_methods: []
                 gift_card:
                 market:
                   id: mkt_UkLWZg9DAJ
-                  name: United States of America
+                  name: United States
                   currency: USD
                   default_locale: en
                   tax_inclusive: false
                   default: true
-                  country_isos:
+                  country_codes:
                   - US
                   supported_locales:
                   - en
@@ -2605,7 +2613,7 @@ paths:
                 cart_id: cart_UkLWZg9DAJ
                 channel_id: ch_UkLWZg9DAJ
                 number: R1001
-                email: lynn_blick@kuphalrunte.com
+                email: cherrie.hickle@jacobi.name
                 customer_note:
                 currency: USD
                 locale: en
@@ -2613,7 +2621,7 @@ paths:
                 coupon_code:
                 fulfillment_status: backorder
                 payment_status: paid
-                completed_at: '2026-08-14T16:10:58.805Z'
+                completed_at: '2026-08-15T08:17:03.404Z'
                 item_total: '10.0'
                 display_item_total: "$10.00"
                 adjustment_total: '0.0'
@@ -2648,8 +2656,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1195233
-                  slug: product-1195233
+                  name: Product 1195557
+                  slug: product-1195557
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -2714,14 +2722,14 @@ paths:
                     pickup_point: false
                   stock_location:
                     id: sloc_UkLWZg9DAJ
-                    state_abbr: NY
-                    name: Katelynn Reynolds
+                    name: Angelika Nader
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
-                    country_iso: US
-                    country_name: United States of America
-                    state_text: NY
+                    country_code: US
+                    country_name: United States
+                    state_code: AL
+                    state_text: AL
                     pickup_ready_in_minutes:
                     pickup_instructions:
                   delivery_rates:
@@ -2754,7 +2762,7 @@ paths:
                 payments:
                 - id: py_UkLWZg9DAJ
                   payment_method_id: pm_UkLWZg9DAJ
-                  response_code: BGS-61be02bf3220
+                  response_code: BGS-68efc4236398
                   number: R1001-P1
                   amount: '20.0'
                   display_amount: "$20.00"
@@ -2788,13 +2796,15 @@ paths:
                   city: New York
                   phone: 555-555-0199
                   company: Company
-                  country_name: United States of America
-                  country_iso: US
+                  country_name: United States
+                  country_code: US
                   state_text: NY
-                  state_abbr: NY
+                  state_code: NY
                   quick_checkout: false
                   is_default_billing: false
                   is_default_shipping: false
+                  state_abbr: NY
+                  country_iso: US
                   state_name: New York
                 shipping_address:
                   id: addr_OIJLhNcSbf
@@ -2807,23 +2817,25 @@ paths:
                   city: New York
                   phone: 555-555-0199
                   company: Company
-                  country_name: United States of America
-                  country_iso: US
+                  country_name: United States
+                  country_code: US
                   state_text: NY
-                  state_abbr: NY
+                  state_code: NY
                   quick_checkout: false
                   is_default_billing: false
                   is_default_shipping: false
+                  state_abbr: NY
+                  country_iso: US
                   state_name: New York
                 gift_card:
                 market:
                   id: mkt_UkLWZg9DAJ
-                  name: United States of America
+                  name: United States
                   currency: USD
                   default_locale: en
                   tax_inclusive: false
                   default: true
-                  country_isos:
+                  country_codes:
                   - US
                   supported_locales:
                   - en
@@ -2911,7 +2923,7 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
                 number: cart_UkLWZg9DAJ
-                token: jz2v7XChxRDYFCYgRK3gnKH7
+                token: LTrF1Lz5rk6vWuCqbWfr3dSF
                 email:
                 customer_note:
                 currency: USD
@@ -2972,8 +2984,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 145344
-                  slug: product-145344
+                  name: Product 14577
+                  slug: product-14577
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3004,12 +3016,12 @@ paths:
                 gift_card:
                 market:
                   id: mkt_UkLWZg9DAJ
-                  name: United States of America
+                  name: United States
                   currency: USD
                   default_locale: en
                   tax_inclusive: false
                   default: true
-                  country_isos:
+                  country_codes:
                   - US
                   supported_locales:
                   - en
@@ -3102,7 +3114,7 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
                 number: cart_UkLWZg9DAJ
-                token: hrStsZCNDvQxiqortSZ3ycKA
+                token: sqtV2DgrADc8HzsULwmLyrmJ
                 email:
                 customer_note:
                 currency: USD
@@ -3160,8 +3172,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1474667
-                  slug: product-1474667
+                  name: Product 1475814
+                  slug: product-1475814
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3192,12 +3204,12 @@ paths:
                 gift_card:
                 market:
                   id: mkt_UkLWZg9DAJ
-                  name: United States of America
+                  name: United States
                   currency: USD
                   default_locale: en
                   tax_inclusive: false
                   default: true
-                  country_isos:
+                  country_codes:
                   - US
                   supported_locales:
                   - en
@@ -3279,8 +3291,8 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
                 number: cart_UkLWZg9DAJ
-                token: geyAqxmyRTXmugvXeJyNgeua
-                email: madeline@kirlin.com
+                token: xjQUBXhzMmRsB5u8Zc2XJHB1
+                email: latarsha_vandervort@johnson.biz
                 customer_note:
                 currency: USD
                 locale: en
@@ -3331,8 +3343,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1498500
-                  slug: product-1498500
+                  name: Product 1491643
+                  slug: product-1491643
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3397,14 +3409,14 @@ paths:
                     pickup_point: false
                   stock_location:
                     id: sloc_UkLWZg9DAJ
-                    state_abbr: NY
-                    name: Madie Gibson
+                    name: Miki Jakubowski
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
-                    country_iso: US
-                    country_name: United States of America
-                    state_text: NY
+                    country_code: US
+                    country_name: United States
+                    state_code: AL
+                    state_text: AL
                     pickup_ready_in_minutes:
                     pickup_instructions:
                   delivery_rates:
@@ -3447,24 +3459,26 @@ paths:
                   city: New York
                   phone: 555-555-0199
                   company: Company
-                  country_name: United States of America
-                  country_iso: US
+                  country_name: United States
+                  country_code: US
                   state_text: NY
-                  state_abbr: NY
+                  state_code: NY
                   quick_checkout: false
                   is_default_billing: false
                   is_default_shipping: false
+                  state_abbr: NY
+                  country_iso: US
                   state_name: New York
                 payment_methods: []
                 gift_card:
                 market:
                   id: mkt_UkLWZg9DAJ
-                  name: United States of America
+                  name: United States
                   currency: USD
                   default_locale: en
                   tax_inclusive: false
                   default: true
-                  country_isos:
+                  country_codes:
                   - US
                   supported_locales:
                   - en
@@ -3560,7 +3574,7 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
                 number: cart_UkLWZg9DAJ
-                token: G4ChPNmZGXWq45Avw1iE2xMQ
+                token: 7XbxZVyspWqgXFfAvn6RzGfW
                 email:
                 customer_note:
                 currency: USD
@@ -3614,8 +3628,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1511466
-                  slug: product-1511466
+                  name: Product 1517490
+                  slug: product-1517490
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3642,7 +3656,7 @@ paths:
                 payments:
                 - id: py_UkLWZg9DAJ
                   payment_method_id: pm_UkLWZg9DAJ
-                  response_code: 1-SC-20260814161103777381
+                  response_code: 1-SC-20260815081707839377
                   number: cart_UkLWZg9DAJ-P1
                   amount: '10.0'
                   display_amount: "$10.00"
@@ -3692,12 +3706,12 @@ paths:
                   active: true
                 market:
                   id: mkt_UkLWZg9DAJ
-                  name: United States of America
+                  name: United States
                   currency: USD
                   default_locale: en
                   tax_inclusive: false
                   default: true
-                  country_isos:
+                  country_codes:
                   - US
                   supported_locales:
                   - en
@@ -3799,7 +3813,7 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
                 number: cart_UkLWZg9DAJ
-                token: 38n3RmuE4PpFyTncsNmSNjJr
+                token: LJDzS5yBAnY198UCTUTRr5LN
                 email:
                 customer_note:
                 currency: USD
@@ -3857,8 +3871,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1555535
-                  slug: product-1555535
+                  name: Product 1552762
+                  slug: product-1552762
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3885,7 +3899,7 @@ paths:
                 payments:
                 - id: py_UkLWZg9DAJ
                   payment_method_id: pm_UkLWZg9DAJ
-                  response_code: 1-SC-20260814161104215256
+                  response_code: 1-SC-20260815081708213321
                   number: cart_UkLWZg9DAJ-P1
                   amount: '10.0'
                   display_amount: "$10.00"
@@ -3914,12 +3928,12 @@ paths:
                 gift_card:
                 market:
                   id: mkt_UkLWZg9DAJ
-                  name: United States of America
+                  name: United States
                   currency: USD
                   default_locale: en
                   tax_inclusive: false
                   default: true
-                  country_isos:
+                  country_codes:
                   - US
                   supported_locales:
                   - en
@@ -3993,7 +4007,7 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
                 number: cart_UkLWZg9DAJ
-                token: fnE3RsLg6up4tbPeBTLZF6ZK
+                token: vHvC18JVf5LSmudy15EjtmQf
                 email:
                 customer_note:
                 currency: USD
@@ -4001,10 +4015,10 @@ paths:
                 total_quantity: 2
                 warnings:
                 - code: delivery_unavailable
-                  message: Product 1589836 cannot be delivered to the selected address
+                  message: Product 1584101 cannot be delivered to the selected address
                   line_item_id: li_UkLWZg9DAJ
                 - code: delivery_unavailable
-                  message: Product 1595422 cannot be delivered to the selected address
+                  message: Product 159428 cannot be delivered to the selected address
                   line_item_id: li_gbHJdmfrXB
                 coupon_code:
                 item_total: '29.99'
@@ -4057,8 +4071,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1589836
-                  slug: product-1589836
+                  name: Product 1584101
+                  slug: product-1584101
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -4087,8 +4101,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1595422
-                  slug: product-1595422
+                  name: Product 159428
+                  slug: product-159428
                   options_text: ''
                   price: '19.99'
                   display_price: "$19.99"
@@ -4119,12 +4133,12 @@ paths:
                 gift_card:
                 market:
                   id: mkt_UkLWZg9DAJ
-                  name: United States of America
+                  name: United States
                   currency: USD
                   default_locale: en
                   tax_inclusive: false
                   default: true
-                  country_isos:
+                  country_codes:
                   - US
                   supported_locales:
                   - en
@@ -4239,7 +4253,7 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
                 number: cart_UkLWZg9DAJ
-                token: NteUwvXBpXNa3qqiusAjrAjp
+                token: T7LSFHvTUpw6P789DgFtDFKq
                 email:
                 customer_note:
                 currency: USD
@@ -4301,8 +4315,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1652033
-                  slug: product-1652033
+                  name: Product 1651786
+                  slug: product-1651786
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -4333,12 +4347,12 @@ paths:
                 gift_card:
                 market:
                   id: mkt_UkLWZg9DAJ
-                  name: United States of America
+                  name: United States
                   currency: USD
                   default_locale: en
                   tax_inclusive: false
                   default: true
-                  country_isos:
+                  country_codes:
                   - US
                   supported_locales:
                   - en
@@ -4420,7 +4434,7 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
                 number: cart_UkLWZg9DAJ
-                token: y298H7ver8imh3xkdiMB6KUk
+                token: 2tY7U5p3pNoQ358NiXdYZtAF
                 email:
                 customer_note:
                 currency: USD
@@ -4476,12 +4490,12 @@ paths:
                 gift_card:
                 market:
                   id: mkt_UkLWZg9DAJ
-                  name: United States of America
+                  name: United States
                   currency: USD
                   default_locale: en
                   tax_inclusive: false
                   default: true
-                  country_isos:
+                  country_codes:
                   - US
                   supported_locales:
                   - en
@@ -4563,9 +4577,9 @@ paths:
                 id: ps_gbHJdmfrXB
                 status: pending
                 currency: USD
-                external_id: bogus_148c15f8393fd954671f1b2a
+                external_id: bogus_7833cdd94a2292e48ea8be6c
                 external_data:
-                  client_secret: bogus_secret_1a310782698288e6
+                  client_secret: bogus_secret_dc9f8c27e9383aaf
                 customer_external_id:
                 expires_at:
                 amount: '10.0'
@@ -4664,7 +4678,7 @@ paths:
                 id: ps_UkLWZg9DAJ
                 status: pending
                 currency: USD
-                external_id: bogus_c95f43ec51bacba35558f4f8
+                external_id: bogus_a89738a8760fc3c4a1c04673
                 external_data:
                   client_secret: secret_123
                 customer_external_id:
@@ -4727,7 +4741,7 @@ paths:
                 id: ps_UkLWZg9DAJ
                 status: pending
                 currency: USD
-                external_id: bogus_e5e8990489c4a22b14530f11
+                external_id: bogus_a1489b663666623cd19401f8
                 external_data:
                   client_secret: secret_123
                 customer_external_id:
@@ -4830,7 +4844,7 @@ paths:
                 id: ps_UkLWZg9DAJ
                 status: completed
                 currency: USD
-                external_id: bogus_dabbc6889d13efd0a4dbfa02
+                external_id: bogus_3f59bc459f1f9ef2aac4a828
                 external_data:
                   client_secret: secret_123
                 customer_external_id:
@@ -5038,7 +5052,7 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
                 number: cart_UkLWZg9DAJ
-                token: BUQ4FfHfY5UjNzCc8Va3ofqs
+                token: wRXhY4fmuUyqYg7Kc9We4FhU
                 email:
                 customer_note:
                 currency: USD
@@ -5092,8 +5106,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2274745
-                  slug: product-2274745
+                  name: Product 2277212
+                  slug: product-2277212
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5120,7 +5134,7 @@ paths:
                 payments:
                 - id: py_UkLWZg9DAJ
                   payment_method_id: pm_UkLWZg9DAJ
-                  response_code: 1-SC-20260814161112102619
+                  response_code: 1-SC-20260815081714653415
                   number: cart_UkLWZg9DAJ-P1
                   amount: '10.0'
                   display_amount: "$10.00"
@@ -5155,12 +5169,12 @@ paths:
                 gift_card:
                 market:
                   id: mkt_UkLWZg9DAJ
-                  name: United States of America
+                  name: United States
                   currency: USD
                   default_locale: en
                   tax_inclusive: false
                   default: true
-                  country_isos:
+                  country_codes:
                   - US
                   supported_locales:
                   - en
@@ -5241,7 +5255,7 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
                 number: cart_UkLWZg9DAJ
-                token: bysCP38TFBL6wUUW1t1CtXGo
+                token: NGZQjGfXnCxhVgqoKAnpPJo8
                 email:
                 customer_note:
                 currency: USD
@@ -5299,8 +5313,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2295183
-                  slug: product-2295183
+                  name: Product 2295795
+                  slug: product-2295795
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5331,12 +5345,12 @@ paths:
                 gift_card:
                 market:
                   id: mkt_UkLWZg9DAJ
-                  name: United States of America
+                  name: United States
                   currency: USD
                   default_locale: en
                   tax_inclusive: false
                   default: true
-                  country_isos:
+                  country_codes:
                   - US
                   supported_locales:
                   - en
@@ -5424,7 +5438,7 @@ paths:
                 coupon_code:
                 fulfillment_status:
                 payment_status:
-                completed_at: '2026-08-14T16:11:06.959Z'
+                completed_at: '2026-08-15T08:17:10.501Z'
                 item_total: '10.0'
                 display_item_total: "$10.00"
                 adjustment_total: '0.0'
@@ -5459,8 +5473,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1693200
-                  slug: product-1693200
+                  name: Product 1699908
+                  slug: product-1699908
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5525,14 +5539,14 @@ paths:
                     pickup_point: false
                   stock_location:
                     id: sloc_UkLWZg9DAJ
-                    state_abbr: NY
-                    name: Camilla Yundt
+                    name: Bok Kling
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
-                    country_iso: US
-                    country_name: United States of America
-                    state_text: NY
+                    country_code: US
+                    country_name: United States
+                    state_code: AL
+                    state_text: AL
                     pickup_ready_in_minutes:
                     pickup_instructions:
                   delivery_rates:
@@ -5574,13 +5588,15 @@ paths:
                   city: New York
                   phone: 555-555-0199
                   company: Company
-                  country_name: United States of America
-                  country_iso: US
+                  country_name: United States
+                  country_code: US
                   state_text: NY
-                  state_abbr: NY
+                  state_code: NY
                   quick_checkout: false
                   is_default_billing: false
                   is_default_shipping: false
+                  state_abbr: NY
+                  country_iso: US
                   state_name: New York
                 shipping_address:
                   id: addr_gbHJdmfrXB
@@ -5593,23 +5609,25 @@ paths:
                   city: New York
                   phone: 555-555-0199
                   company: Company
-                  country_name: United States of America
-                  country_iso: US
+                  country_name: United States
+                  country_code: US
                   state_text: NY
-                  state_abbr: NY
+                  state_code: NY
                   quick_checkout: false
                   is_default_billing: false
                   is_default_shipping: false
+                  state_abbr: NY
+                  country_iso: US
                   state_name: New York
                 gift_card:
                 market:
                   id: mkt_UkLWZg9DAJ
-                  name: United States of America
+                  name: United States
                   currency: USD
                   default_locale: en
                   tax_inclusive: false
                   default: true
-                  country_isos:
+                  country_codes:
                   - US
                   supported_locales:
                   - en
@@ -5693,13 +5711,15 @@ paths:
                   city: New York
                   phone: 555-555-0199
                   company: Company
-                  country_name: United States of America
-                  country_iso: US
+                  country_name: United States
+                  country_code: US
                   state_text: NY
-                  state_abbr: NY
+                  state_code: NY
                   quick_checkout: false
                   is_default_billing: false
                   is_default_shipping: false
+                  state_abbr: NY
+                  country_iso: US
                   state_name: New York
                 - id: addr_gbHJdmfrXB
                   first_name: John
@@ -5711,13 +5731,15 @@ paths:
                   city: New York
                   phone: 555-555-0199
                   company: Company
-                  country_name: United States of America
-                  country_iso: US
+                  country_name: United States
+                  country_code: US
                   state_text: NY
-                  state_abbr: NY
+                  state_code: NY
                   quick_checkout: false
                   is_default_billing: true
                   is_default_shipping: false
+                  state_abbr: NY
+                  country_iso: US
                   state_name: New York
                 - id: addr_UkLWZg9DAJ
                   first_name: John
@@ -5729,13 +5751,15 @@ paths:
                   city: New York
                   phone: 555-555-0199
                   company: Company
-                  country_name: United States of America
-                  country_iso: US
+                  country_name: United States
+                  country_code: US
                   state_text: NY
-                  state_abbr: NY
+                  state_code: NY
                   quick_checkout: false
                   is_default_billing: false
                   is_default_shipping: true
+                  state_abbr: NY
+                  country_iso: US
                   state_name: New York
                 meta:
                   page: 1
@@ -5785,18 +5809,21 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const address = await client.customer.addresses.create({
-            first_name: 'John',
-            last_name: 'Doe',
-            address1: '123 Main St',
-            city: 'New York',
-            postal_code: '10001',
-            country_iso: 'US',
-            state_abbr: 'NY',
-            phone: '+1 555 123 4567',
-          }, {
-            token: '<token>',
-          })
+          const address = await client.customer.addresses.create(
+            {
+              first_name: 'John',
+              last_name: 'Doe',
+              address1: '123 Main St',
+              city: 'New York',
+              postal_code: '10001',
+              country_code: 'US',
+              state_abbr: 'NY',
+              phone: '+1 555 123 4567',
+            },
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -5824,13 +5851,15 @@ paths:
                 city: New York
                 phone: "+1 555 123 4567"
                 company:
-                country_name: United States of America
-                country_iso: US
+                country_name: United States
+                country_code: US
                 state_text: NY
-                state_abbr: NY
+                state_code: NY
                 quick_checkout: false
                 is_default_billing: false
                 is_default_shipping: false
+                state_abbr: NY
+                country_iso: US
                 state_name: New York
               schema:
                 "$ref": "#/components/schemas/Address"
@@ -5889,11 +5918,11 @@ paths:
                 company:
                   type: string
                   example: Acme Inc
-                country_iso:
+                country_code:
                   type: string
                   example: US
                   description: ISO 3166-1 alpha-2 country code (e.g., "US", "DE")
-                state_abbr:
+                state_code:
                   type: string
                   example: NY
                   description: ISO 3166-2 subdivision code without country prefix
@@ -5916,7 +5945,7 @@ paths:
               - address1
               - city
               - postal_code
-              - country_iso
+              - country_code
   "/api/v3/store/customers/me/addresses/{id}":
     get:
       summary: Get an address
@@ -5978,13 +6007,15 @@ paths:
                 city: New York
                 phone: 555-555-0199
                 company: Company
-                country_name: United States of America
-                country_iso: US
+                country_name: United States
+                country_code: US
                 state_text: NY
-                state_abbr: NY
+                state_code: NY
                 quick_checkout: false
                 is_default_billing: false
                 is_default_shipping: false
+                state_abbr: NY
+                country_iso: US
                 state_name: New York
               schema:
                 "$ref": "#/components/schemas/Address"
@@ -6053,13 +6084,15 @@ paths:
                 city: Los Angeles
                 phone: 555-555-0199
                 company: Company
-                country_name: United States of America
-                country_iso: US
+                country_name: United States
+                country_code: US
                 state_text: NY
-                state_abbr: NY
+                state_code: NY
                 quick_checkout: false
                 is_default_billing: false
                 is_default_shipping: false
+                state_abbr: NY
+                country_iso: US
                 state_name: New York
               schema:
                 "$ref": "#/components/schemas/Address"
@@ -6486,7 +6519,7 @@ paths:
                   cart_id:
                   channel_id: ch_UkLWZg9DAJ
                   number: R1001
-                  email: armandina@tremblaykerluke.us
+                  email: janine@beierkassulke.co.uk
                   customer_note:
                   currency: USD
                   locale: en
@@ -6494,7 +6527,7 @@ paths:
                   coupon_code:
                   fulfillment_status:
                   payment_status:
-                  completed_at: '2026-08-14T16:11:01.518Z'
+                  completed_at: '2026-08-15T08:17:05.698Z'
                   item_total: '10.0'
                   display_item_total: "$10.00"
                   adjustment_total: '0.0'
@@ -6529,8 +6562,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 1357191
-                    slug: product-1357191
+                    name: Product 1359767
+                    slug: product-1359767
                     options_text: ''
                     price: '10.0'
                     display_price: "$10.00"
@@ -6595,14 +6628,14 @@ paths:
                       pickup_point: false
                     stock_location:
                       id: sloc_UkLWZg9DAJ
-                      state_abbr: NY
-                      name: Lasonya Kirlin
+                      name: Verlie Emard
                       address1: 1600 Pennsylvania Ave NW
                       city: Washington
                       zipcode: '20500'
-                      country_iso: US
-                      country_name: United States of America
-                      state_text: NY
+                      country_code: US
+                      country_name: United States
+                      state_code: AL
+                      state_text: AL
                       pickup_ready_in_minutes:
                       pickup_instructions:
                     delivery_rates:
@@ -6644,13 +6677,15 @@ paths:
                     city: New York
                     phone: 555-555-0199
                     company: Company
-                    country_name: United States of America
-                    country_iso: US
+                    country_name: United States
+                    country_code: US
                     state_text: NY
-                    state_abbr: NY
+                    state_code: NY
                     quick_checkout: false
                     is_default_billing: false
                     is_default_shipping: false
+                    state_abbr: NY
+                    country_iso: US
                     state_name: New York
                   shipping_address:
                     id: addr_VqXmZF31wY
@@ -6663,23 +6698,25 @@ paths:
                     city: New York
                     phone: 555-555-0199
                     company: Company
-                    country_name: United States of America
-                    country_iso: US
+                    country_name: United States
+                    country_code: US
                     state_text: NY
-                    state_abbr: NY
+                    state_code: NY
                     quick_checkout: false
                     is_default_billing: false
                     is_default_shipping: false
+                    state_abbr: NY
+                    country_iso: US
                     state_name: New York
                   gift_card:
                   market:
                     id: mkt_UkLWZg9DAJ
-                    name: United States of America
+                    name: United States
                     currency: USD
                     default_locale: en
                     tax_inclusive: false
                     default: true
-                    country_isos:
+                    country_codes:
                     - US
                     supported_locales:
                     - en
@@ -6781,7 +6818,7 @@ paths:
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 number: R1001
-                email: katerine@collins.ca
+                email: janean_bosco@denesik.info
                 customer_note:
                 currency: USD
                 locale: en
@@ -6789,7 +6826,7 @@ paths:
                 coupon_code:
                 fulfillment_status:
                 payment_status:
-                completed_at: '2026-08-14T16:11:01.832Z'
+                completed_at: '2026-08-15T08:17:06.015Z'
                 item_total: '10.0'
                 display_item_total: "$10.00"
                 adjustment_total: '0.0'
@@ -6824,8 +6861,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1376428
-                  slug: product-1376428
+                  name: Product 1373006
+                  slug: product-1373006
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -6890,14 +6927,14 @@ paths:
                     pickup_point: false
                   stock_location:
                     id: sloc_UkLWZg9DAJ
-                    state_abbr: NY
-                    name: Love Herman
+                    name: Ezekiel Kling
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
-                    country_iso: US
-                    country_name: United States of America
-                    state_text: NY
+                    country_code: US
+                    country_name: United States
+                    state_code: AL
+                    state_text: AL
                     pickup_ready_in_minutes:
                     pickup_instructions:
                   delivery_rates:
@@ -6939,13 +6976,15 @@ paths:
                   city: New York
                   phone: 555-555-0199
                   company: Company
-                  country_name: United States of America
-                  country_iso: US
+                  country_name: United States
+                  country_code: US
                   state_text: NY
-                  state_abbr: NY
+                  state_code: NY
                   quick_checkout: false
                   is_default_billing: false
                   is_default_shipping: false
+                  state_abbr: NY
+                  country_iso: US
                   state_name: New York
                 shipping_address:
                   id: addr_VqXmZF31wY
@@ -6958,23 +6997,25 @@ paths:
                   city: New York
                   phone: 555-555-0199
                   company: Company
-                  country_name: United States of America
-                  country_iso: US
+                  country_name: United States
+                  country_code: US
                   state_text: NY
-                  state_abbr: NY
+                  state_code: NY
                   quick_checkout: false
                   is_default_billing: false
                   is_default_shipping: false
+                  state_abbr: NY
+                  country_iso: US
                   state_name: New York
                 gift_card:
                 market:
                   id: mkt_UkLWZg9DAJ
-                  name: United States of America
+                  name: United States
                   currency: USD
                   default_locale: en
                   tax_inclusive: false
                   default: true
-                  country_isos:
+                  country_codes:
                   - US
                   supported_locales:
                   - en
@@ -7031,8 +7072,8 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6IjY0YmU3OTU5LWQ2ZDYtNGQzOS04NWQ1LTZlNDMzNDI5NDU0NSIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzg2NzI3NDYyfQ.Ssp8CPsJiBvYJmhsHhG6c8bgx9OFf6BKZziJcI2Pl68
-                refresh_token: RVa3QRSuRDrg92LQfs84EyUm
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6ImFlNmY5MmIyLTM3OTEtNGJmNy1hZmFiLWYxZmYyNDM0ZmViNSIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzg2Nzg1NDI2fQ.E0dUduFz-pZajaOMMGKCvhpbpp5cB5LWiG9AWZKGAQE
+                refresh_token: qrbTKfdNSHzc2bk5rbPZ5U4E
                 user:
                   id: cust_UkLWZg9DAJ
                   email: newuser@example.com
@@ -7049,10 +7090,10 @@ paths:
                   newsletter_subscriber:
                     id: sub_UkLWZg9DAJ
                     email: newuser@example.com
-                    created_at: '2026-08-14T16:11:02.035Z'
-                    updated_at: '2026-08-14T16:11:02.036Z'
+                    created_at: '2026-08-15T08:17:06.195Z'
+                    updated_at: '2026-08-15T08:17:06.196Z'
                     verified: true
-                    verified_at: '2026-08-14T16:11:02Z'
+                    verified_at: '2026-08-15T08:17:06Z'
                     customer_id: cust_UkLWZg9DAJ
                   customer_groups: []
               schema:
@@ -7155,12 +7196,12 @@ paths:
             application/json:
               example:
                 id: cust_UkLWZg9DAJ
-                email: maricruz@cronin.info
-                first_name: Delcie
-                last_name: Kuphal
+                email: junita@sipesconn.ca
+                first_name: Luz
+                last_name: Berge
                 phone: 555-555-0199
                 accepts_email_marketing: false
-                full_name: Delcie Kuphal
+                full_name: Luz Berge
                 available_store_credit_total: '0'
                 display_available_store_credit_total: "$0.00"
                 addresses:
@@ -7174,13 +7215,15 @@ paths:
                   city: New York
                   phone: 555-555-0199
                   company: Company
-                  country_name: United States of America
-                  country_iso: US
+                  country_name: United States
+                  country_code: US
                   state_text: NY
-                  state_abbr: NY
+                  state_code: NY
                   quick_checkout: false
                   is_default_billing: true
                   is_default_shipping: false
+                  state_abbr: NY
+                  country_iso: US
                   state_name: New York
                 - id: addr_UkLWZg9DAJ
                   first_name: John
@@ -7192,13 +7235,15 @@ paths:
                   city: New York
                   phone: 555-555-0199
                   company: Company
-                  country_name: United States of America
-                  country_iso: US
+                  country_name: United States
+                  country_code: US
                   state_text: NY
-                  state_abbr: NY
+                  state_code: NY
                   quick_checkout: false
                   is_default_billing: false
                   is_default_shipping: true
+                  state_abbr: NY
+                  country_iso: US
                   state_name: New York
                 default_billing_address:
                   id: addr_gbHJdmfrXB
@@ -7211,13 +7256,15 @@ paths:
                   city: New York
                   phone: 555-555-0199
                   company: Company
-                  country_name: United States of America
-                  country_iso: US
+                  country_name: United States
+                  country_code: US
                   state_text: NY
-                  state_abbr: NY
+                  state_code: NY
                   quick_checkout: false
                   is_default_billing: true
                   is_default_shipping: false
+                  state_abbr: NY
+                  country_iso: US
                   state_name: New York
                 default_shipping_address:
                   id: addr_UkLWZg9DAJ
@@ -7230,13 +7277,15 @@ paths:
                   city: New York
                   phone: 555-555-0199
                   company: Company
-                  country_name: United States of America
-                  country_iso: US
+                  country_name: United States
+                  country_code: US
                   state_text: NY
-                  state_abbr: NY
+                  state_code: NY
                   quick_checkout: false
                   is_default_billing: false
                   is_default_shipping: true
+                  state_abbr: NY
+                  country_iso: US
                   state_name: New York
                 newsletter_subscriber:
                 customer_groups: []
@@ -7296,7 +7345,7 @@ paths:
             application/json:
               example:
                 id: cust_UkLWZg9DAJ
-                email: evia@kiehn.ca
+                email: josiah.dubuque@bayerkerluke.biz
                 first_name: Updated
                 last_name: Name
                 phone: 555-555-0199
@@ -7315,13 +7364,15 @@ paths:
                   city: New York
                   phone: 555-555-0199
                   company: Company
-                  country_name: United States of America
-                  country_iso: US
+                  country_name: United States
+                  country_code: US
                   state_text: NY
-                  state_abbr: NY
+                  state_code: NY
                   quick_checkout: false
                   is_default_billing: true
                   is_default_shipping: false
+                  state_abbr: NY
+                  country_iso: US
                   state_name: New York
                 - id: addr_UkLWZg9DAJ
                   first_name: John
@@ -7333,13 +7384,15 @@ paths:
                   city: New York
                   phone: 555-555-0199
                   company: Company
-                  country_name: United States of America
-                  country_iso: US
+                  country_name: United States
+                  country_code: US
                   state_text: NY
-                  state_abbr: NY
+                  state_code: NY
                   quick_checkout: false
                   is_default_billing: false
                   is_default_shipping: true
+                  state_abbr: NY
+                  country_iso: US
                   state_name: New York
                 default_billing_address:
                   id: addr_gbHJdmfrXB
@@ -7352,13 +7405,15 @@ paths:
                   city: New York
                   phone: 555-555-0199
                   company: Company
-                  country_name: United States of America
-                  country_iso: US
+                  country_name: United States
+                  country_code: US
                   state_text: NY
-                  state_abbr: NY
+                  state_code: NY
                   quick_checkout: false
                   is_default_billing: true
                   is_default_shipping: false
+                  state_abbr: NY
+                  country_iso: US
                   state_name: New York
                 default_shipping_address:
                   id: addr_UkLWZg9DAJ
@@ -7371,13 +7426,15 @@ paths:
                   city: New York
                   phone: 555-555-0199
                   company: Company
-                  country_name: United States of America
-                  country_iso: US
+                  country_name: United States
+                  country_code: US
                   state_text: NY
-                  state_abbr: NY
+                  state_code: NY
                   quick_checkout: false
                   is_default_billing: false
                   is_default_shipping: true
+                  state_abbr: NY
+                  country_iso: US
                   state_name: New York
                 newsletter_subscriber:
                 customer_groups: []
@@ -7487,7 +7544,7 @@ paths:
               example:
                 data:
                 - id: gc_UkLWZg9DAJ
-                  code: DA0DA3989D052C7D
+                  code: 94560A8A36607AC0
                   status: active
                   currency: USD
                   amount: '10.0'
@@ -7583,7 +7640,7 @@ paths:
             application/json:
               example:
                 id: gc_UkLWZg9DAJ
-                code: 70F0403B2EA3EA5C
+                code: 98D769F2EFABC7E5
                 status: active
                 currency: USD
                 amount: '10.0'
@@ -7655,8 +7712,8 @@ paths:
               example:
                 id: pss_gbHJdmfrXB
                 status: pending
-                external_id: bogus_seti_39b01cf8978ba8eb6eadb8db
-                external_client_secret: bogus_seti_secret_73f034deaf78ddad
+                external_id: bogus_seti_7c173e0a8d2d0764df2925e7
+                external_client_secret: bogus_seti_secret_b55f9b1245ea6068
                 external_data: {}
                 payment_method_id: pm_UkLWZg9DAJ
                 payment_source_id:
@@ -7755,8 +7812,8 @@ paths:
               example:
                 id: pss_UkLWZg9DAJ
                 status: pending
-                external_id: seti_test_ef226ae71235860323b626c3
-                external_client_secret: seti_secret_1e9aae5cc90c6f063c879b8a
+                external_id: seti_test_0cb8de39932da380e1ade212
+                external_client_secret: seti_secret_7229302918b3bb2438b8709b
                 external_data:
                   client_secret: secret_123
                 payment_method_id: pm_UkLWZg9DAJ
@@ -7832,8 +7889,8 @@ paths:
               example:
                 id: pss_UkLWZg9DAJ
                 status: completed
-                external_id: seti_test_ae21ae962792888cf11c86b8
-                external_client_secret: seti_secret_c9301830fdb4a495cc949f91
+                external_id: seti_test_3e8051d277b462477b16e6be
+                external_client_secret: seti_secret_6e3308d70240ab229cc369c2
                 external_data:
                   client_secret: secret_123
                 payment_method_id: pm_UkLWZg9DAJ
@@ -8077,13 +8134,13 @@ paths:
               example:
                 data:
                 - iso: DE
-                  iso3: IS14
+                  iso3: DEU
                   name: Germany
                   states_required: false
                   zipcode_required: true
                 - iso: US
                   iso3: USA
-                  name: United States of America
+                  name: United States
                   states_required: true
                   zipcode_required: true
               schema:
@@ -8153,7 +8210,7 @@ paths:
               example:
                 iso: US
                 iso3: USA
-                name: United States of America
+                name: United States
                 states_required: true
                 zipcode_required: true
               schema:
@@ -8182,7 +8239,7 @@ paths:
               example:
                 error:
                   code: record_not_found
-                  message: Country not found
+                  message: record not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/currencies":
@@ -8367,7 +8424,7 @@ paths:
                   default_locale: en
                   tax_inclusive: false
                   default: true
-                  country_isos:
+                  country_codes:
                   - US
                   supported_locales:
                   - en
@@ -8375,7 +8432,7 @@ paths:
                   countries:
                   - iso: US
                     iso3: USA
-                    name: United States of America
+                    name: United States
                     states_required: true
                     zipcode_required: true
                 - id: mkt_gbHJdmfrXB
@@ -8384,7 +8441,7 @@ paths:
                   default_locale: de
                   tax_inclusive: true
                   default: false
-                  country_isos:
+                  country_codes:
                   - DE
                   - FR
                   supported_locales:
@@ -8392,14 +8449,14 @@ paths:
                   - en
                   - fr
                   countries:
-                  - iso: DE
-                    iso3: IS24
-                    name: Germany
+                  - iso: FR
+                    iso3: FRA
+                    name: France
                     states_required: false
                     zipcode_required: true
-                  - iso: FR
-                    iso3: IS25
-                    name: France
+                  - iso: DE
+                    iso3: DEU
+                    name: Germany
                     states_required: false
                     zipcode_required: true
               schema:
@@ -8471,7 +8528,7 @@ paths:
                 default_locale: de
                 tax_inclusive: true
                 default: false
-                country_isos:
+                country_codes:
                 - DE
                 - FR
                 supported_locales:
@@ -8479,14 +8536,14 @@ paths:
                 - en
                 - fr
                 countries:
-                - iso: DE
-                  iso3: IS28
-                  name: Germany
+                - iso: FR
+                  iso3: FRA
+                  name: France
                   states_required: false
                   zipcode_required: true
-                - iso: FR
-                  iso3: IS29
-                  name: France
+                - iso: DE
+                  iso3: DEU
+                  name: Germany
                   states_required: false
                   zipcode_required: true
               schema:
@@ -8554,7 +8611,7 @@ paths:
                 default_locale: de
                 tax_inclusive: true
                 default: false
-                country_isos:
+                country_codes:
                 - DE
                 - FR
                 supported_locales:
@@ -8562,14 +8619,14 @@ paths:
                 - en
                 - fr
                 countries:
-                - iso: DE
-                  iso3: IS32
-                  name: Germany
+                - iso: FR
+                  iso3: FRA
+                  name: France
                   states_required: false
                   zipcode_required: true
-                - iso: FR
-                  iso3: IS33
-                  name: France
+                - iso: DE
+                  iso3: DEU
+                  name: Germany
                   states_required: false
                   zipcode_required: true
               schema:
@@ -8581,7 +8638,7 @@ paths:
               example:
                 error:
                   code: record_not_found
-                  message: Country not found
+                  message: record not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/markets/{market_id}/countries":
@@ -8632,12 +8689,12 @@ paths:
               example:
                 data:
                 - iso: FR
-                  iso3: IS37
+                  iso3: FRA
                   name: France
                   states_required: false
                   zipcode_required: true
                 - iso: DE
-                  iso3: IS36
+                  iso3: DEU
                   name: Germany
                   states_required: false
                   zipcode_required: true
@@ -8702,7 +8759,7 @@ paths:
               example:
                 iso: US
                 iso3: USA
-                name: United States of America
+                name: United States
                 states_required: true
                 zipcode_required: true
               schema:
@@ -8714,7 +8771,7 @@ paths:
               example:
                 error:
                   code: record_not_found
-                  message: Country not found
+                  message: record not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/wishlists":
@@ -8777,7 +8834,7 @@ paths:
                 data:
                 - id: wl_UkLWZg9DAJ
                   name: My Wishlist
-                  token: 9M8rixSe2e7cDsgczJ3zTVqW
+                  token: hG7LqzLG5WDUUN15PPsdgALU
                   is_default: false
                   is_private: true
                 meta:
@@ -8853,7 +8910,7 @@ paths:
               example:
                 id: wl_gbHJdmfrXB
                 name: Birthday Ideas
-                token: wCFxqjE63cqDVRJH5PXDLQRb
+                token: t5qjoZqhG7DD8NWVVDXBvE7R
                 is_default: false
                 is_private: true
               schema:
@@ -8954,7 +9011,7 @@ paths:
               example:
                 id: wl_UkLWZg9DAJ
                 name: My Wishlist
-                token: nqgnZu4p2zLkYG47gd31jw69
+                token: fWaTAcZctnvHiwFSKo18svrH
                 is_default: false
                 is_private: true
               schema:
@@ -9016,7 +9073,7 @@ paths:
               example:
                 id: wl_UkLWZg9DAJ
                 name: Updated Name
-                token: ZKw6LEn1r4vUgqHqcatA2gU1
+                token: 1QjoWwjchEVGjyfXZFuzv9vU
                 is_default: false
                 is_private: true
               schema:
@@ -9298,11 +9355,11 @@ paths:
             application/json:
               example:
                 id: sub_UkLWZg9DAJ
-                email: glennis@luettgen.info
-                created_at: '2026-08-14T16:11:06.177Z'
-                updated_at: '2026-08-14T16:11:06.178Z'
+                email: anita_gutkowski@mosciski.us
+                created_at: '2026-08-15T08:17:09.848Z'
+                updated_at: '2026-08-15T08:17:09.848Z'
                 verified: true
-                verified_at: '2026-08-14T16:11:06Z'
+                verified_at: '2026-08-15T08:17:09Z'
                 customer_id: cust_UkLWZg9DAJ
               schema:
                 "$ref": "#/components/schemas/NewsletterSubscriber"
@@ -9381,10 +9438,10 @@ paths:
               example:
                 id: sub_UkLWZg9DAJ
                 email: pending@example.com
-                created_at: '2026-08-14T16:11:06.201Z'
-                updated_at: '2026-08-14T16:11:06.207Z'
+                created_at: '2026-08-15T08:17:09.873Z'
+                updated_at: '2026-08-15T08:17:09.879Z'
                 verified: true
-                verified_at: '2026-08-14T16:11:06Z'
+                verified_at: '2026-08-15T08:17:09Z'
                 customer_id:
               schema:
                 "$ref": "#/components/schemas/NewsletterSubscriber"
@@ -9554,7 +9611,7 @@ paths:
                   body_html: ''
                 - id: pol_OIJLhNcSbf
                   name: Privacy Policy
-                  slug: privacy-policy-84e187ec-addd-45b5-b325-94f1a75ef84f
+                  slug: privacy-policy-5297bf14-babb-4d27-9eba-dbfd36557dc2
                   body: We respect your privacy.
                   body_html: We respect your privacy.
                 - id: pol_uw2YK1rnl0
@@ -9890,14 +9947,14 @@ paths:
               example:
                 data:
                 - id: sloc_UkLWZg9DAJ
-                  state_abbr: STATE_ABBR_94
                   name: Downtown
                   address1: 1600 Pennsylvania Ave NW
                   city: Washington
                   zipcode: '20500'
-                  country_iso: US
-                  country_name: United States of America
-                  state_text: STATE_ABBR_94
+                  country_code: US
+                  country_name: United States
+                  state_code: AL
+                  state_text: AL
                   pickup_ready_in_minutes:
                   pickup_instructions:
 servers:
@@ -10294,12 +10351,12 @@ components:
           nullable: true
         country_name:
           type: string
-        country_iso:
+        country_code:
           type: string
         state_text:
           type: string
           nullable: true
-        state_abbr:
+        state_code:
           type: string
           nullable: true
         quick_checkout:
@@ -10308,6 +10365,11 @@ components:
           type: boolean
         is_default_shipping:
           type: boolean
+        state_abbr:
+          type: string
+          nullable: true
+        country_iso:
+          type: string
         state_name:
           type: string
           nullable: true
@@ -10323,12 +10385,14 @@ components:
       - phone
       - company
       - country_name
-      - country_iso
+      - country_code
       - state_text
-      - state_abbr
+      - state_code
       - quick_checkout
       - is_default_billing
       - is_default_shipping
+      - state_abbr
+      - country_iso
       - state_name
       x-typelizer: true
     AppliedPromotion:
@@ -11127,6 +11191,12 @@ components:
           type: string
         member_type:
           type: string
+        country_code:
+          type: string
+          nullable: true
+        state_code:
+          type: string
+          nullable: true
         postal_code_prefix:
           type: string
           nullable: true
@@ -11136,13 +11206,7 @@ components:
         postal_code_to:
           type: string
           nullable: true
-        country_iso:
-          type: string
-          nullable: true
         country_name:
-          type: string
-          nullable: true
-        state_abbr:
           type: string
           nullable: true
         state_name:
@@ -11151,12 +11215,12 @@ components:
       required:
       - id
       - member_type
+      - country_code
+      - state_code
       - postal_code_prefix
       - postal_code_from
       - postal_code_to
-      - country_iso
       - country_name
-      - state_abbr
       - state_name
       x-typelizer: true
     DeliveryZone:
@@ -11733,7 +11797,7 @@ components:
           type: boolean
         default:
           type: boolean
-        country_isos:
+        country_codes:
           type: array
           items:
             type: string
@@ -11752,7 +11816,7 @@ components:
       - default_locale
       - tax_inclusive
       - default
-      - country_isos
+      - country_codes
       - supported_locales
       x-typelizer: true
     Media:
@@ -12855,9 +12919,6 @@ components:
       properties:
         id:
           type: string
-        state_abbr:
-          type: string
-          nullable: true
         name:
           type: string
         address1:
@@ -12869,10 +12930,13 @@ components:
         zipcode:
           type: string
           nullable: true
-        country_iso:
+        country_code:
           type: string
           nullable: true
         country_name:
+          type: string
+          nullable: true
+        state_code:
           type: string
           nullable: true
         state_text:
@@ -12886,13 +12950,13 @@ components:
           nullable: true
       required:
       - id
-      - state_abbr
       - name
       - address1
       - city
       - zipcode
-      - country_iso
+      - country_code
       - country_name
+      - state_code
       - state_text
       - pickup_ready_in_minutes
       - pickup_instructions

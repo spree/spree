@@ -1,11 +1,6 @@
 require 'spec_helper'
 
-# Tax matching runs through Spree::Zone, which is defunct: it addressed its
-# members by country and state row id, and those became reference data in 6.0
-# (docs/plans/6.0-drop-country-state-models.md). Tax finds no zone until the
-# tax provider replaces it (docs/plans/6.0-tax-provider.md Phase 5), so these
-# are skipped rather than deleted — that rewrite decides their fate.
-xdescribe Spree::TaxProvider::Internal, type: :model do
+describe Spree::TaxProvider::Internal, type: :model do
   subject(:provider) { described_class.new }
 
   let(:order) { create(:order_with_line_items, line_items_count: 1) }
@@ -278,7 +273,7 @@ xdescribe Spree::TaxProvider::Internal, type: :model do
 
     context 'with a customs duty' do
       let!(:rate) do
-        create(:tax_rate, country_iso: country&.iso, amount: 0.1, tax_category: create(:tax_category, is_default: true), included_in_price: false)
+        create(:tax_rate, country_code: country&.iso, amount: 0.1, tax_category: create(:tax_category, is_default: true), included_in_price: false)
       end
       let!(:duty) { create(:fee, order: order, amount: 20, kind: 'duty', label: 'Import duty') }
 
@@ -304,6 +299,26 @@ xdescribe Spree::TaxProvider::Internal, type: :model do
 
         expect(order.tax_lines.reload.sole.fee).to eq(duty)
       end
+    end
+  end
+
+  describe '#taxable_items' do
+    let!(:duty) { create(:fee, order: order, amount: 20, kind: 'duty', label: 'Import duty') }
+
+    it 'withholds duties while keeping every other fee' do
+      surcharge = create(:fee, order: order, amount: 5, kind: 'surcharge', label: 'Handling')
+
+      expect(order.taxable_items.grep(Spree::Fee)).to contain_exactly(surcharge)
+    end
+
+    # The associations load empty at record creation, so reading them rather
+    # than a fresh scope would leave every just-written fee untaxed.
+    it 'sees fees written after the association was first loaded' do
+      order.fees.load
+
+      late = create(:fee, order: order, amount: 5, kind: 'handling', label: 'Late fee')
+
+      expect(order.taxable_items).to include(late)
     end
   end
 end

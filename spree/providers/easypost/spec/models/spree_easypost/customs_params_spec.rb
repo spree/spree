@@ -2,8 +2,9 @@ require 'spec_helper'
 
 RSpec.describe 'SpreeEasyPost customs params' do
   let(:store) { @default_store }
-  let(:usa) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
-  let(:canada) { Spree::Country.find_by(iso: 'CA') || create(:country, iso: 'CA', name: 'Canada') }
+  # Countries are reference data since 6.0 — looked up, never created.
+  let(:usa) { Spree::Country.by_iso('US') }
+  let(:canada) { Spree::Country.by_iso('CA') }
 
   let(:origin) { create(:stock_location, country: usa) }
   let(:domestic_destination) { create(:address, country: usa) }
