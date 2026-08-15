@@ -325,7 +325,7 @@ function SetupForm({ token }: { token: string }) {
                 <ComboboxContent>
                   <div className="border-b border-border p-1">
                     <ComboboxInput
-                      className="min-h-8.5 border-0 shadow-none"
+                      className="min-h-8.5 border-0 shadow-none has-[[data-slot=input-group-control]:focus-visible]:border-transparent has-[[data-slot=input-group-control]:focus-visible]:shadow-none"
                       autoComplete="off"
                       autoCorrect="off"
                       autoCapitalize="off"
@@ -423,7 +423,7 @@ function SetupForm({ token }: { token: string }) {
                   <ComboboxContent>
                     <div className="border-b border-border p-1">
                       <ComboboxInput
-                        className="min-h-8.5 border-0 shadow-none"
+                        className="min-h-8.5 border-0 shadow-none has-[[data-slot=input-group-control]:focus-visible]:border-transparent has-[[data-slot=input-group-control]:focus-visible]:shadow-none"
                         autoComplete="off"
                         autoCorrect="off"
                         autoCapitalize="off"
