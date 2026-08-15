@@ -5,7 +5,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryZonesController, type: :controller
 
   include_context 'API v3 Admin authenticated'
 
-  let!(:country) { Spree::Country.find_by(iso: 'US') || create(:country_us) }
+  let!(:country) { Spree::Country.by_iso('US') }
 
   before { request.headers.merge!(headers) }
 
@@ -51,7 +51,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryZonesController, type: :controller
   describe 'PATCH #update' do
     let!(:zone) do
       create(:delivery_zone, name: 'Domestic').tap do |z|
-        z.members.create!(member_type: 'country', country: country)
+        z.members.create!(member_type: 'country', country_iso: country.iso)
       end
     end
 
@@ -107,10 +107,10 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryZonesController, type: :controller
   describe 'member round-trip' do
     it 'returns members on show when expanded, and preserves them when echoed back' do
       zone = create(:delivery_zone, store: store)
-      us = Spree::Country.find_by(iso: 'US') || create(:country_us)
-      de = Spree::Country.find_by(iso: 'DE') || create(:country, iso: 'DE', name: 'Germany')
-      zone.members.create!(member_type: 'country', country: us)
-      zone.members.create!(member_type: 'country', country: de)
+      us = Spree::Country.by_iso('US')
+      de = Spree::Country.by_iso('DE')
+      zone.members.create!(member_type: 'country', country_iso: us.iso)
+      zone.members.create!(member_type: 'country', country_iso: de.iso)
 
       get :show, params: { id: zone.prefixed_id, expand: 'members' }, as: :json
 

@@ -18,9 +18,10 @@ module Spree
 
         def countries
           isos = preferred_country_isos.presence || [preferred_country_iso].compact_blank
-          return Spree::Country.none if isos.blank?
+          isos = [legacy_country_iso(preferred_country_id)].compact_blank if isos.blank? && preferred_country_id.present?
+          return [] if isos.blank?
 
-          Spree::Country.where(iso: isos.map { |s| s.to_s.upcase })
+          isos.filter_map { |iso| Spree::Country.by_iso(iso) }
         end
 
         def eligible?(order, options = {})
@@ -49,13 +50,25 @@ module Spree
           return [preferred_country_iso.to_s.upcase] if preferred_country_iso.present?
 
           if preferred_country_id.present?
-            iso = Spree::Country.where(id: preferred_country_id).pick(:iso)
-            return [iso.to_s.upcase] if iso.present?
+            iso = legacy_country_iso(preferred_country_id)
+            return [iso.upcase] if iso.present?
           end
 
           return [] if order.nil?
 
           [order.store&.default_country&.iso, order.store&.default_market&.default_country&.iso].compact.map(&:upcase).uniq
+        end
+
+        # Countries stopped being records in 6.0, so a rule still configured
+        # with the legacy row id is resolved by reading the table the upgrade
+        # keeps until 6.1. Rules saved since store the ISO code directly.
+        def legacy_country_iso(country_id)
+          connection = ActiveRecord::Base.connection
+          return nil unless connection.table_exists?('spree_countries')
+
+          connection.select_value(
+            "SELECT iso FROM spree_countries WHERE id = #{connection.quote(country_id)}"
+          )
         end
       end
     end

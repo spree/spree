@@ -28,8 +28,7 @@ module Spree
     has_many :variants, through: :stock_items
     has_many :stock_movements, through: :stock_items
 
-    belongs_to :state, class_name: 'Spree::State', optional: true
-    belongs_to :country, class_name: 'Spree::Country'
+    has_iso_geography
 
     validates :kind, presence: true
     validates :pickup_stock_policy, inclusion: { in: PICKUP_STOCK_POLICIES }
@@ -39,36 +38,21 @@ module Spree
 
     self.whitelisted_ransackable_attributes = %w[
       name active default kind pickup_enabled
-      country_id state_id created_at updated_at
+      country_iso state_code created_at updated_at
     ]
 
     scope :active, -> { where(active: true) }
     scope :pickup_enabled, -> { where(pickup_enabled: true) }
     scope :order_default, -> { order(default: :desc, name: :asc) }
 
-    before_validation :normalize_country
-    before_validation :normalize_state
-
     after_create :create_stock_items, if: :propagate_all_variants?
     after_save :ensure_one_default
     after_update :conditional_touch_records
 
-    delegate :name, :iso3, :iso, :iso_name, to: :country, prefix: true, allow_nil: true
-    delegate :abbr, to: :state, prefix: true, allow_nil: true
-
-    # Writer methods for API convenience — accept ISO/abbr codes instead of FK IDs.
-    # Mirrors Spree::Address: SDK clients use country_iso/state_abbr because
-    # Country/State don't expose prefixed IDs (their `iso` is the public handle).
-    def country_iso=(value)
-      @country_iso_input = value
-    end
-
-    def state_abbr=(value)
-      @state_abbr_input = value
-    end
+    delegate :name, :iso3, :iso_name, to: :country, prefix: true, allow_nil: true
 
     def state_text
-      state.try(:abbr) || state.try(:name) || state_name
+      state_code.presence || state.try(:name) || state_name
     end
 
     # Wrapper for creating a new stock item respecting the backorderable config
@@ -177,9 +161,9 @@ module Spree
         address2: address2,
         company: company,
         city: city,
-        state: state,
+        state_code: state_code,
         state_name: state_name,
-        country: country,
+        country_iso: country_iso,
         zipcode: zipcode,
         phone: phone
       )
@@ -208,22 +192,6 @@ module Spree
     end
 
     private
-
-    def normalize_country
-      iso = @country_iso_input
-      return if iso.blank?
-
-      self.country = Spree::Country.by_iso(iso)
-      @country_iso_input = nil
-    end
-
-    def normalize_state
-      abbr = @state_abbr_input
-      return if abbr.blank? || country.blank?
-
-      self.state = country.states.find_by(abbr: abbr)
-      @state_abbr_input = nil
-    end
 
     def create_stock_items
       Spree::StockLocations::StockItems::CreateJob.perform_later(self)

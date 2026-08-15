@@ -11,7 +11,12 @@ namespace :spree do
         countries = if zone
                       zone.country_list.to_a
                     else
-                      default_country = Spree::Country.find_by(id: store.read_attribute(:default_country_id))
+                      # Countries are reference data in 6.0, so the legacy id
+                      # is resolved against the table the upgrade keeps.
+                      iso = ActiveRecord::Base.connection.select_value(
+                        "SELECT iso FROM spree_countries WHERE id = #{ActiveRecord::Base.connection.quote(store.read_attribute(:default_country_id))}"
+                      ) if store.read_attribute(:default_country_id)
+                      default_country = Spree::Country.by_iso(iso) if iso
                       default_country ? [default_country] : []
                     end
 
@@ -28,7 +33,7 @@ namespace :spree do
           currency: iso_country&.currency_code || store.read_attribute(:default_currency) || 'USD',
           default_locale: iso_country&.languages_official&.first || store.read_attribute(:default_locale) || 'en',
           default: true,
-          country_ids: countries.map(&:id)
+          countries: countries
         )
 
         store.update_column(:checkout_zone_id, nil) if checkout_zone_id

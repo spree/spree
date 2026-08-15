@@ -353,7 +353,7 @@ export interface AddressInputParams {
   city?: string
   postal_code?: string
   country_iso?: string
-  state_abbr?: string
+  state_code?: string
   phone?: string
   company?: string
 }
@@ -517,7 +517,7 @@ export interface CustomerAddressParams {
   country_id?: string
   state_id?: string
   country_iso?: string
-  state_abbr?: string
+  state_code?: string
   phone?: string
   company?: string
   label?: string
@@ -1048,7 +1048,7 @@ export interface StockLocationCreateParams {
   /** ISO-3166 alpha-2 country code (e.g. 'US'). */
   country_iso?: string | null
   /** State / province abbreviation (e.g. 'NY'). Resolved against the selected country's states. */
-  state_abbr?: string | null
+  state_code?: string | null
   /** Free-text state for countries that don't have a states list. */
   state_name?: string | null
   pickup_enabled?: boolean
@@ -1073,7 +1073,7 @@ export interface StockLocationUpdateParams {
   phone?: string | null
   company?: string | null
   country_iso?: string | null
-  state_abbr?: string | null
+  state_code?: string | null
   state_name?: string | null
   pickup_enabled?: boolean
   pickup_stock_policy?: 'local' | 'any'
@@ -1956,7 +1956,7 @@ export interface DeliveryMethodServiceParams {
 export interface DeliveryZoneMemberParams {
   member_type: 'country' | 'state' | 'postal_code'
   country_iso?: string
-  state_abbr?: string
+  state_code?: string
   postal_code_prefix?: string
   postal_code_from?: string
   postal_code_to?: string
@@ -1990,7 +1990,7 @@ export interface CompanyLocationAddressParams {
   zipcode?: string
   phone?: string
   country_iso?: string
-  state_abbr?: string
+  state_code?: string
   state_name?: string
   label?: string
 }

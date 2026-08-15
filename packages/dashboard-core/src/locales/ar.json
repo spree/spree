@@ -254,7 +254,7 @@
       "country_iso": {
         "label": "البلد"
       },
-      "state_abbr": {
+      "state_code": {
         "label": "الولاية / المقاطعة"
       },
       "state_name": {

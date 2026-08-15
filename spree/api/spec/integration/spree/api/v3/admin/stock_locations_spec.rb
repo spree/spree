@@ -109,7 +109,7 @@ RSpec.describe 'Admin Stock Locations API', type: :request, swagger_doc: 'api-re
           phone: { type: :string, nullable: true },
           company: { type: :string, nullable: true },
           country_iso: { type: :string, nullable: true, description: 'ISO-3166 alpha-2 country code (e.g. "US").' },
-          state_abbr: { type: :string, nullable: true, description: 'State / province abbreviation (e.g. "NY"). Resolved against the selected country.' },
+          state_code: { type: :string, nullable: true, description: 'State / province abbreviation (e.g. "NY"). Resolved against the selected country.' },
           state_name: { type: :string, nullable: true, description: 'Free-text state for countries without a states list.' },
           pickup_enabled: { type: :boolean },
           pickup_stock_policy: {
@@ -231,7 +231,7 @@ RSpec.describe 'Admin Stock Locations API', type: :request, swagger_doc: 'api-re
           phone: { type: :string, nullable: true },
           company: { type: :string, nullable: true },
           country_iso: { type: :string, nullable: true },
-          state_abbr: { type: :string, nullable: true },
+          state_code: { type: :string, nullable: true },
           state_name: { type: :string, nullable: true },
           pickup_enabled: { type: :boolean },
           pickup_stock_policy: { type: :string, enum: Spree::StockLocation::PICKUP_STOCK_POLICIES },

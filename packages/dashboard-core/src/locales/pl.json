@@ -254,7 +254,7 @@
       "country_iso": {
         "label": "Kraj"
       },
-      "state_abbr": {
+      "state_code": {
         "label": "Województwo / Region"
       },
       "state_name": {

@@ -17,9 +17,13 @@ RSpec.configure do |config|
       # when previous tests left the locale in a different language
       I18n.with_locale(:en) do
         Spree::Events.disable do
-          @default_country = Spree::Country.find_by(iso: 'US') || FactoryBot.create(:country_us)
+          # Countries are reference data rather than records, so there is
+          # nothing to create — the store just names one.
+          @default_country = Spree::Country.by_iso('US')
           @default_store = Spree::Store.find_by(default: true) || FactoryBot.create(:store, default: true, default_currency: 'USD')
-          @default_store.update_column(:default_country_id, @default_country.id) unless @default_store.read_attribute(:default_country_id) == @default_country.id
+          unless @default_store.read_attribute(:default_country_iso_code) == 'US'
+            @default_store.update_column(:default_country_iso_code, 'US')
+          end
         end
       end
     end

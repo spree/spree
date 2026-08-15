@@ -1,7 +1,7 @@
 store = Spree::Store.default
 
-us = Spree::Country.find_by(iso: 'US')
-ca = Spree::Country.find_by(iso: 'CA')
+us = Spree::Country.by_iso('US')
+ca = Spree::Country.by_iso('CA')
 
 if us
   # Store auto-creates a default market on creation — update it rather than creating a new one
@@ -20,7 +20,7 @@ end
 # country to belong to at most one market per store.
 EU_ISOS = %w[PL FI PT RO DE FR SK HU SI IE AT ES IT BE SE LV BG LT CY LU MT DK NL EE HR CZ GR].freeze
 
-eu_countries = Spree::Country.where(iso: EU_ISOS).to_a
+eu_countries = EU_ISOS.filter_map { |iso| Spree::Country.by_iso(iso) }
 if eu_countries.any?
   eu_market = store.markets.find_or_initialize_by(name: 'Europe')
   eu_market.currency = 'EUR'
@@ -49,9 +49,10 @@ end
   assigned_scope = Spree::MarketCountry.joins(:market).
     where(spree_markets: { store_id: store.id, deleted_at: nil })
   assigned_scope = assigned_scope.where.not(market_id: market.id) if market.persisted?
-  assigned_country_ids = assigned_scope.pluck(:country_id).to_set
+  assigned_isos = assigned_scope.pluck(:country_iso).to_set
 
-  countries = Spree::Country.where(iso: attrs[:isos]).reject { |c| assigned_country_ids.include?(c.id) }
+  countries = attrs[:isos].filter_map { |iso| Spree::Country.by_iso(iso) }.
+    reject { |country| assigned_isos.include?(country.iso) }
   next if countries.empty?
 
   market.currency = attrs[:currency]

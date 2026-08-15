@@ -2,15 +2,17 @@ module Spree
   module Api
     module V3
       module Store
+        # Deliberately uncached. The country list is reference data that only
+        # changes with the countries gem, so the conditional-GET machinery had
+        # nothing meaningful to key on: it fell back to the store's timestamp,
+        # which invalidates on every unrelated store edit while never noticing
+        # a change to the countries themselves.
         class CountriesController < Store::BaseController
           allow_guest_storefront_access!
-          include Spree::Api::V3::HttpCaching
 
           # GET /api/v3/store/countries
           def index
             countries = current_store.countries_from_markets
-
-            return unless cache_collection(countries)
 
             render json: {
               data: countries.map { |country| serialize_country(country) }
@@ -19,9 +21,9 @@ module Spree
 
           # GET /api/v3/store/countries/:id
           def show
-            country = current_store.countries_from_markets.find_by!(iso: params[:id].upcase)
-
-            return unless cache_resource(country)
+            iso = params[:id].to_s.upcase
+            country = current_store.countries_from_markets.find { |candidate| candidate.iso == iso }
+            raise ActiveRecord::RecordNotFound if country.nil?
 
             render json: serialize_country(country)
           end

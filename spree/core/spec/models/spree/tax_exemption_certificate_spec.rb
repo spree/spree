@@ -83,9 +83,11 @@ describe Spree::TaxExemptionCertificate, type: :model do
     # The reason the jurisdiction is a code rather than a country row: an
     # unrecognised code used to resolve to nil, and nil claims every country
     # here — so a typo turned one state's certificate into a worldwide
-    # exemption. It must narrow to nothing instead.
+    # exemption. Writes reject unknown codes now; a stored one — left by
+    # registry drift — must still narrow to nothing.
     it 'never matches when the country code is one nothing recognises' do
-      certificate = create(:tax_exemption_certificate, company: company, country_iso: 'ZZ')
+      certificate = create(:tax_exemption_certificate, company: company)
+      certificate.update_columns(country_iso: 'ZZ')
 
       expect(described_class.for_address(address)).not_to include(certificate)
     end

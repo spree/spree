@@ -73,7 +73,7 @@ RSpec.describe Spree::Api::V3::Admin::StockLocationsController, type: :controlle
   end
 
   describe 'POST #create' do
-    let(:country) { Spree::Country.first || create(:country) }
+    let(:country) { Spree::Country.by_iso('US') }
 
     let(:valid_params) do
       {
@@ -106,16 +106,15 @@ RSpec.describe Spree::Api::V3::Admin::StockLocationsController, type: :controlle
       )
     end
 
-    it 'resolves country_iso and state_abbr to the right associations' do
-      state = country.states.find_by(abbr: 'NY') ||
-              create(:state, country: country, abbr: 'NY', name: 'New York')
+    it 'resolves country_iso and state_code to the right associations' do
+      state = Spree::State.resolve(country.iso, 'NY')
 
-      post :create, params: valid_params.merge(state_abbr: state.abbr), as: :json
+      post :create, params: valid_params.merge(state_code: state.abbr), as: :json
 
       expect(response).to have_http_status(:created)
       created = Spree::StockLocation.find_by_prefix_id!(json_response['id'])
-      expect(created.country_id).to eq(country.id)
-      expect(created.state_id).to eq(state.id)
+      expect(created.country_iso).to eq(country.iso)
+      expect(created.state_code).to eq(state.abbr)
     end
 
     context 'with invalid params' do

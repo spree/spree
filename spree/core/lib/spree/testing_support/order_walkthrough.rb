@@ -48,9 +48,9 @@ class OrderWalkthrough
   end
 
   def self.address(cart)
-    country = Spree::Country.first || FactoryBot.create(:country)
-    cart.bill_address = FactoryBot.create(:address, country_id: country.id)
-    cart.ship_address = FactoryBot.create(:address, country_id: country.id)
+    country = Spree::Country.by_iso('US')
+    cart.bill_address = FactoryBot.create(:address, country: country)
+    cart.ship_address = FactoryBot.create(:address, country: country)
     cart.save!
     cart.rebuild_fulfillments!
     cart.set_fulfillments_cost

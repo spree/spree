@@ -49,14 +49,14 @@ describe Spree::Address, type: :model do
                         address2: FFaker::Address.secondary_address,
                         alternative_phone: FFaker::PhoneNumberAU.mobile_phone_number,
                         city: FFaker::AddressUS.city,
-                        country: Spree::Country.first,
+                        country: Spree::Country.by_iso('US'),
                         firstname: FFaker::Name.first_name,
                         lastname: FFaker::Name.last_name,
                         company: FFaker::Company.name,
                         phone: FFaker::PhoneNumber.short_phone_number,
-                        state_id: state.id,
+                        state: state,
                         state_name: state.name,
-                        zipcode: FFaker::AddressUS.zip_code)
+                        zipcode: Spree::TestingSupport::CountryPool.postal_code_for('US'))
 
       cloned = original.clone
 
@@ -64,12 +64,12 @@ describe Spree::Address, type: :model do
       expect(cloned.address2).to eq(original.address2)
       expect(cloned.alternative_phone).to eq(original.alternative_phone)
       expect(cloned.city).to eq(original.city)
-      expect(cloned.country_id).to eq(original.country_id)
+      expect(cloned.country_iso).to eq(original.country_iso)
       expect(cloned.firstname).to eq(original.firstname)
       expect(cloned.lastname).to eq(original.lastname)
       expect(cloned.company).to eq(original.company)
       expect(cloned.phone).to eq(original.phone)
-      expect(cloned.state_id).to eq(original.state_id)
+      expect(cloned.state_abbr).to eq(original.state_abbr)
       expect(cloned.state_name).to eq(original.state_name)
       expect(cloned.zipcode).to eq(original.zipcode)
 
@@ -89,13 +89,13 @@ describe Spree::Address, type: :model do
 
       context '#country_name' do
         it 'return proper country_iso_name' do
-          expect(address.country_name).to eq 'United States of America'
+          expect(address.country_name).to eq 'United States'
         end
       end
 
       context '#country_iso_name' do
         it 'return proper country_iso_name' do
-          expect(address.country_iso_name).to eq 'UNITED STATES'
+          expect(address.country_iso_name).to eq 'UNITED STATES OF AMERICA'
         end
       end
 
@@ -128,30 +128,30 @@ describe Spree::Address, type: :model do
   end
 
   context 'validation' do
-    let(:country) { create(:country, states: [state], states_required: true) }
-    let(:state) { create(:state, name: 'maryland', abbr: 'md') }
-    let(:address) { build(:address, country: country) }
-
-    before do
-      allow(Spree::State).to receive(:find_all_by_name_or_abbr) { [state] }
-    end
+    # Countries and subdivisions are reference data now, so these are real
+    # places rather than invented ones: Maryland is a subdivision of the US,
+    # and Poland requires no subdivision at all.
+    let(:country) { Spree::Country.by_iso('US') }
+    let(:state) { Spree::State.resolve('US', 'MD') }
+    let(:stateless_country) { Spree::Country.by_iso('PL') }
+    let(:address) { build(:address, country: country, state: nil) }
 
     it 'state_name is not nil and country does not have any states' do
-      address.state = nil
-      address.state_name = 'alabama'
+      address.country_iso = stateless_country.iso
+      address.zipcode = Spree::TestingSupport::CountryPool.postal_code_for('PL')
+      address.state_code = nil
+      address.state_name = 'Somewhere'
       expect(address).to be_valid
     end
 
     it 'errors when state_name is nil' do
       address.state_name = nil
-      address.state = nil
+      address.state_code = nil
       expect(address).not_to be_valid
     end
 
     it 'full state name is in state_name and country does contain that state' do
-      address.state_name = 'alabama'
-      # called by state_validate to set up state_id.
-      # Perhaps this should be a before_validation instead?
+      address.state_name = 'Maryland'
       expect(address).to be_valid
       expect(address.state).not_to be_nil
       expect(address.state_name).to be_nil
@@ -160,40 +160,46 @@ describe Spree::Address, type: :model do
     it 'state abbr is in state_name and country does contain that state' do
       address.state_name = state.abbr
       expect(address).to be_valid
-      expect(address.state_id).not_to be_nil
+      expect(address.state_abbr).to eq('MD')
       expect(address.state_name).to be_nil
     end
 
     it 'state is entered but country does not contain that state' do
-      address.state = state
-      address.country = create(:country, states_required: true)
+      address.state_code = state.abbr
+      address.country_iso = 'CA'
+      address.zipcode = Spree::TestingSupport::CountryPool.postal_code_for('CA')
       address.valid?
-      expect(address.errors['state']).to eq(['is invalid'])
+      # The Maryland code means nothing in Canada, so it is dropped and the
+      # address is left with no subdivision at all.
+      expect(address.errors['state']).to eq(["can't be blank"])
     end
 
     it 'both state and state_name are entered but country does not contain the state' do
-      address.state = state
+      address.state_code = state.abbr
       address.state_name = 'maryland'
-      address.country = create(:country, states_required: true)
+      address.country_iso = stateless_country.iso
+      address.zipcode = Spree::TestingSupport::CountryPool.postal_code_for('PL')
       expect(address).to be_valid
-      expect(address.state_id).to be_nil
+      expect(address.state_abbr).to be_nil
     end
 
     it 'both state and state_name are entered and country does contain the state' do
-      address.state = state
+      address.state_code = state.abbr
       address.state_name = 'maryland'
       expect(address).to be_valid
       expect(address.state_name).to be_nil
     end
 
     it 'does not require a state when the country does not require one' do
-      address.country = create(:country, states_required: false)
-      address.state = nil
+      address.country_iso = stateless_country.iso
+      address.zipcode = Spree::TestingSupport::CountryPool.postal_code_for(stateless_country.iso)
+      address.state_code = nil
       address.state_name = nil
       expect(address).to be_valid
     end
 
     it 'does not require phone' do
+      address.state_code = state.abbr
       address.phone = ''
       expect(address).to be_valid
     end
@@ -222,6 +228,7 @@ describe Spree::Address, type: :model do
       # Requiring a field the customer is never shown would make checkout
       # unfinishable, so the requirement follows the field being on the form.
       it 'stays optional while the company field is hidden' do
+      address.state_code = state.abbr
         stub_store_preferences(company_field_enabled: false, address_requires_company: true)
 
         address.company = ''
@@ -263,7 +270,7 @@ describe Spree::Address, type: :model do
       end
 
       it 'accepts an unformatted zip code' do
-        allow(address.country).to receive(:iso).and_return('GB')
+        address.country_iso = 'GB'
         address.zipcode = '	AL38QE'
         address.valid?
         expect(address.errors['zipcode']).not_to include('is invalid')
@@ -278,7 +285,7 @@ describe Spree::Address, type: :model do
         end
 
         it 'does not have a country' do
-          address.country = nil
+          address.country_iso = nil
           address.valid?
           expect(address.errors['zipcode']).not_to include('is invalid')
         end
@@ -357,59 +364,49 @@ describe Spree::Address, type: :model do
   end
 
   context '#state_text' do
+    # Virginia is a real US subdivision, so the code is what gets stored.
+    let(:virginia) { Spree::State.resolve('US', 'VA') }
+
     context 'state is blank' do
-      let(:address) { create(:address, state: nil, state_name: 'virginia') }
+      # A country that requires no subdivision keeps free text as-is.
+      let(:address) { create(:address, country: Spree::Country.by_iso('PL'), zipcode: '00-001', state: nil, state_name: 'Somewhere Else') }
 
-      specify { expect(address.state_text).to eq('virginia') }
+      specify { expect(address.state_text).to eq('Somewhere Else') }
     end
 
-    context 'both name and abbr is present' do
-      let(:state) { create(:state, name: 'virginia', abbr: 'va') }
-      let(:address) { create(:address, state: state) }
+    context 'the subdivision is known' do
+      let(:address) { create(:address, state: virginia) }
 
-      specify { expect(address.state_text).to eq('va') }
-    end
-
-    context 'only name is present' do
-      let(:state) { create(:state, name: 'virginia', abbr: nil) }
-      let(:address) { create(:address, state: state) }
-
-      specify { expect(address.state_text).to eq('virginia') }
+      specify { expect(address.state_text).to eq('VA') }
     end
   end
 
   context '#state_name_text' do
-    context 'state_name is blank' do
-      let(:state) { create(:state, name: 'virginia', abbr: nil) }
-      let(:address) { create(:address, state: state, state_name: nil) }
+    let(:virginia) { Spree::State.resolve('US', 'VA') }
 
-      specify { expect(address.state_name_text).to eq('virginia') }
+    context 'state_name is blank' do
+      let(:address) { create(:address, state: virginia, state_name: nil) }
+
+      specify { expect(address.state_name_text).to eq('Virginia') }
     end
 
     context 'state is blank' do
-      let(:address) { create(:address, state: nil, state_name: 'virginia') }
+      let(:address) { create(:address, country: Spree::Country.by_iso('PL'), zipcode: '00-001', state: nil, state_name: 'Somewhere Else') }
 
-      specify { expect(address.state_name_text).to eq('virginia') }
-    end
-
-    context 'state and state_name are present' do
-      let(:state) { create(:state, name: 'virginia', abbr: nil) }
-      let(:address) { create(:address, state: state, state_name: 'virginia') }
-
-      specify { expect(address.state_name_text).to eq('virginia') }
+      specify { expect(address.state_name_text).to eq('Somewhere Else') }
     end
   end
 
   describe '#country_iso' do
     let(:address) { build(:address, country: country) }
-    let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
+    let(:country) { Spree::Country.by_iso('US') }
 
     it 'returns the country iso' do
       expect(address.country_iso).to eq('US')
     end
 
     it 'returns nil if the country is nil' do
-      address.country = nil
+      address.country_iso = nil
       expect(address.country_iso).to be_nil
     end
   end
@@ -434,13 +431,16 @@ describe Spree::Address, type: :model do
 
     before { address.state_name = 'maryland' }
 
-    it { expect { address.send(:clear_state_name) }.not_to change(address, :state_id) }
+    it { expect { address.send(:clear_state_name) }.not_to change(address, :state_abbr) }
     it { expect { address.send(:clear_state_name) }.to change(address, :state_name).to(nil).from('maryland') }
   end
 
   context '#clear_invalid_state_entities' do
-    let(:country) { create(:country) }
-    let(:state) { create(:state, country: country) }
+    # Pinned rather than drawn from the factory pool: the contexts below move
+    # the address to Japan to prove a foreign subdivision is dropped, which
+    # only holds while the starting country isn't Japan itself.
+    let(:country) { Spree::Country.by_iso('US') }
+    let(:state) { Spree::State.resolve('US', 'NY') }
     let (:address) { create(:address, country: country, state: state) }
 
     def clear_state_entities
@@ -449,7 +449,7 @@ describe Spree::Address, type: :model do
 
     context 'state not present and state_name both not present' do
       before do
-        address.state = nil
+        address.state_code = nil
         address.state_name = nil
         clear_state_entities
       end
@@ -463,7 +463,10 @@ describe Spree::Address, type: :model do
 
       context 'state belongs to a different country than to which address is associated' do
         before do
-          address.country = create(:country)
+          # Japan's subdivision codes are numeric, so a US code cannot
+          # coincidentally be valid there.
+          address.country_iso = 'JP'
+          address.zipcode = Spree::TestingSupport::CountryPool.postal_code_for('JP')
           clear_state_entities
         end
 
@@ -481,13 +484,13 @@ describe Spree::Address, type: :model do
 
     context 'state not present and state_name present' do
       before do
-        address.state = nil
+        address.state_code = nil
         address.state_name = state.name
       end
 
       context 'when country has no states and state is required' do
         before do
-          address.country = create(:country, states_required: true)
+          address.country_iso = 'US'
           clear_state_entities
         end
 
@@ -507,13 +510,16 @@ describe Spree::Address, type: :model do
 
       context 'when country has no states and state is not required' do
         before do
-          address.country = create(:country, states_required: false)
+          # Hong Kong genuinely has no subdivisions in the ISO data.
+          address.country_iso = 'HK'
           address.state_name = state.name
           clear_state_entities
         end
 
         it { expect(address.state).to be_nil }
-        it { expect(address.state_name).to be_nil }
+        # A country with no subdivisions has nothing to match the text
+        # against, so it stays as the customer typed it.
+        it { expect(address.state_name).to eq(state.name) }
       end
     end
   end
@@ -807,9 +813,9 @@ describe Spree::Address, type: :model do
     end
   end
 
-  describe 'country_iso= and state_abbr= writer methods' do
-    let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
-    let!(:state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
+  describe 'country_iso= and state_code= writer methods' do
+    let(:country) { Spree::Country.by_iso('US') }
+    let!(:state) { Spree::State.resolve(country.iso, 'NY') }
 
     describe '#country_iso=' do
       it 'sets country from ISO code on validation' do
@@ -826,12 +832,12 @@ describe Spree::Address, type: :model do
         expect(address.country).to eq(country)
       end
 
-      it 'does nothing when ISO is blank' do
+      it 'clears the country when blank — a posted empty value means empty' do
         original_country = create(:country)
         address = build(:address, country: original_country)
         address.country_iso = ''
         address.valid?
-        expect(address.country).to eq(original_country)
+        expect(address.country).to be_nil
       end
 
       it 'sets country to nil when ISO is not found' do
@@ -851,31 +857,31 @@ describe Spree::Address, type: :model do
       end
     end
 
-    describe '#state_abbr=' do
+    describe '#state_code=' do
       it 'sets state from abbreviation on validation' do
         address = build(:address, country: country, state: nil)
-        address.state_abbr = 'NY'
+        address.state_code = 'NY'
         address.valid?
         expect(address.state).to eq(state)
       end
 
       it 'requires country to be set first' do
         address = build(:address, country: nil, state: nil)
-        address.state_abbr = 'NY'
+        address.state_code = 'NY'
         address.valid?
         expect(address.state).to be_nil
       end
 
       it 'does nothing when abbreviation is blank' do
         address = build(:address, country: country, state: nil)
-        address.state_abbr = ''
+        address.state_code = ''
         address.valid?
         expect(address.state).to be_nil
       end
 
       it 'sets state to nil when abbreviation is not found for country' do
         address = build(:address, country: country, state: nil)
-        address.state_abbr = 'XX'
+        address.state_code = 'XX'
         address.valid?
         expect(address.state).to be_nil
       end
@@ -885,7 +891,7 @@ describe Spree::Address, type: :model do
         other_state = create(:state, country: other_country, abbr: 'NY', name: 'Not York')
 
         address = build(:address, country: country, state: nil)
-        address.state_abbr = 'NY'
+        address.state_code = 'NY'
         address.valid?
         expect(address.state).to eq(state)
         expect(address.state).not_to eq(other_state)

@@ -31,10 +31,10 @@ module Spree
         store.channels.each { |channel| channel.add_products(product_ids) }
       end
 
-      # Cheap proxy for "the base seeds have run": the US states are seeded
-      # alongside everything else, and products/addresses depend on them.
+      # Cheap proxy for "the base seeds have run". Countries and states are
+      # reference data now, so the marker is a seeded role instead.
       def seeds_loaded?
-        Spree::State.joins(:country).where(spree_countries: { iso: 'US' }).exists?
+        Spree::Role.exists?(name: 'admin')
       end
 
       def ensure_seeds_loaded

@@ -10,10 +10,6 @@ RSpec.describe Spree::Imports::RowProcessors::Customer, type: :service do
 
   before do
     import.create_mappings
-    create(:country, iso: 'US', name: 'United States') unless Spree::Country.exists?(iso: 'US')
-    us = Spree::Country.find_by(iso: 'US')
-    create(:state, country: us, abbr: 'NY', name: 'New York') unless us.states.exists?(abbr: 'NY')
-    create(:state, country: us, abbr: 'CA', name: 'California') unless us.states.exists?(abbr: 'CA')
   end
 
   def csv_row_hash(attrs = {})

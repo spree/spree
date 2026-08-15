@@ -40,7 +40,7 @@ module Spree
           customer.address&.address2,
           customer.address&.city,
           customer.address&.state_text,
-          customer.address&.state_abbr,
+          customer.address&.state_code,
           customer.address&.country&.name,
           customer.address&.country&.iso,
           customer.address&.zipcode,

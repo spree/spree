@@ -80,9 +80,10 @@ module Spree
 
         context "when the order's ship address is in a different zone" do
           before do
-            other_country = create(:country, iso: 'XZ', iso3: 'XZZ', name: 'Elsewhere', iso_name: 'ELSEWHERE')
+            # Any real country the order doesn't ship to — the address factory
+            # ships to the US, and invented codes don't resolve any more.
             zone = create(:delivery_zone)
-            zone.members.create!(member_type: 'country', country: other_country)
+            zone.members.create!(member_type: 'country', country_iso: 'JP')
             shipping_method.update!(delivery_zone: zone)
           end
 

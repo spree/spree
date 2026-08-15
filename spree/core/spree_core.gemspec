@@ -26,6 +26,8 @@ Gem::Specification.new do |s|
   s.files        = Dir["{app,config,db,lib}/**/*", "spec/fixtures/**/*", "Rakefile", "README.md"].reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.require_path = 'lib'
 
+  # Only used by the spec that replays the pre-6.0 seeded state list and fails
+  # if any code it produced stops resolving through Spree::IsoData.
   s.add_development_dependency 'i18n-tasks'
 
   s.add_dependency 'rails', '>= 8.1', '< 8.2'
@@ -35,7 +37,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'acts-as-taggable-on'
   s.add_dependency 'awesome_nested_set', '~> 3.3', '>= 3.3.1'
   s.add_dependency 'benchmark' # needed for ruby 4.0 and benchmark gem
-  s.add_dependency 'carmen', '>= 1.0'
   s.add_dependency 'cancancan', '~> 3.2'
   s.add_dependency 'countries'
   s.add_dependency 'friendly_id', '~> 5.2', '>= 5.2.1'

@@ -6,7 +6,10 @@ describe Spree::TaxRate, type: :model do
     let(:berlin) { create(:state, country: germany, abbr: 'BE', name: 'Berlin') }
     let(:france) { create(:country, iso: 'FR', name: 'France') }
     let(:tax_category) { create(:tax_category) }
-    let(:german_address) { create(:address, country: germany, state: nil, state_name: 'Berlin') }
+    # A name that resolves to no subdivision: 'Berlin' would be promoted to
+    # its ISO code (BE) now that Germany carries the gem's subdivision list,
+    # and these examples are about an address whose jurisdiction is unknown.
+    let(:german_address) { create(:address, country: germany, state: nil, state_name: 'Somewhere') }
 
     it 'falls back to rates that tax everywhere when the jurisdiction is unknown' do
       worldwide = create(:tax_rate, :worldwide, tax_category: tax_category)
@@ -68,11 +71,12 @@ describe Spree::TaxRate, type: :model do
       end
     end
 
-    # A state code that belongs to another country is no longer rejected on
-    # write — with codes there is no Country row to check it against. It simply
-    # never matches an address, which is what the mismatch always meant.
+    # Writes reject a state code from another country; a stored one — left by
+    # registry drift — simply never matches an address, which is what the
+    # mismatch always meant.
     it 'never matches when the state code belongs to another country' do
-      create(:tax_rate, country_iso: 'FR', state_code: berlin&.abbr, tax_category: tax_category)
+      rate = create(:tax_rate, country_iso: 'FR', tax_category: tax_category)
+      rate.update_columns(state_code: berlin&.abbr)
 
       expect(described_class.for_address(german_address)).to be_empty
     end
@@ -125,9 +129,13 @@ describe Spree::TaxRate, type: :model do
 
       ZIPCODES = { 'DE' => '10115', 'FR' => '75001', 'IN' => '110001' }.freeze
 
+      # India requires a subdivision, so it gets a real one; the EU countries
+      # don't, and keep free text there.
       def ship_to(country)
+        state = country.states_required? ? country.states.first : nil
         order.update!(
-          ship_address: create(:address, country: country, state: nil, state_name: 'Somewhere',
+          ship_address: create(:address, country: country, state: state,
+                                         state_name: state ? nil : 'Somewhere',
                                          zipcode: ZIPCODES.fetch(country.iso))
         )
         order.update_line_item_prices!
@@ -193,7 +201,7 @@ describe Spree::TaxRate, type: :model do
     end
 
     describe 'tax line lifecycle around rate deletion' do
-      let(:country) { Spree::Country.find_by(iso: 'US') || create(:country) }
+      let(:country) { Spree::Country.by_iso('US') }
       let!(:order) { create(:order, ship_address: create(:address, country: country)) }
       let(:category) { create(:tax_category, name: 'Taxable Foo') }
       let!(:rate) do

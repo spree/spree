@@ -14,9 +14,7 @@ module Spree
     let(:other_country) { create(:country) }
     let(:other_state)   { create(:state, country: other_country) }
     let!(:zone)   { create(:zone) }
-    let!(:zone_member) { create(:zone_member, zone: zone, zoneable: country) }
     let!(:other_zone)  { create(:zone) }
-    let!(:other_zone_member) { create(:zone_member, zone: other_zone, zoneable: other_country) }
     let!(:shipping_method) do
       create(:shipping_method).tap do |sm|
         sm.calculator.preferred_amount = 5
@@ -179,8 +177,9 @@ module Spree
             {
               firstname: 'Bob', lastname: 'Stone',
               address1: '99 New Street', city: 'Other City',
-              zipcode: '99999', phone: '555-000-9999',
-              country_id: other_country.id, state_id: other_state.id
+              zipcode: Spree::TestingSupport::CountryPool.postal_code_for(other_country.iso),
+              phone: '555-000-9999',
+              country_iso: other_country.iso, state_abbr: other_state.abbr
             }
           end
           let(:params) { { ship_address_attributes: new_address_attrs } }
@@ -191,7 +190,7 @@ module Spree
             expect(subject).to be_success
 
             order.reload
-            expect(order.ship_address.country_id).to eq(other_country.id)
+            expect(order.ship_address.country_iso).to eq(other_country.iso)
             expect(order.ship_address.address1).to eq('99 New Street')
 
             new_shipment_ids = order.shipments.map(&:id)
@@ -253,8 +252,9 @@ module Spree
             ship_address_attributes: {
               firstname: 'Bob', lastname: 'Stone',
               address1: '99 New Street', city: 'Other City',
-              zipcode: '99999', phone: '555-000-9999',
-              country_id: other_country.id, state_id: other_state.id
+              zipcode: Spree::TestingSupport::CountryPool.postal_code_for(other_country.iso),
+              phone: '555-000-9999',
+              country_iso: other_country.iso, state_abbr: other_state.abbr
             }
           })
 

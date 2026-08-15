@@ -17,7 +17,7 @@ RSpec.describe Spree::Seeds::DeliveryZones do
     expect(domestic.members.map(&:country)).to eq([store.default_country])
 
     international = store.delivery_zones.find_by(name: 'International')
-    expect(international.members.count).to eq(Spree::Country.count - 1)
+    expect(international.members.count).to eq(Spree::Country.all.size - 1)
     expect(international.members.map(&:country)).not_to include(store.default_country)
 
     standard = store.delivery_methods.find_by(name: 'Standard')

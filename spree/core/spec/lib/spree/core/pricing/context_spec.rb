@@ -264,7 +264,7 @@ module Spree
               variant.id,
               currency,
               store.id,
-              country.id,
+              country.iso,
               market.id,
               channel.id,
               user.id,
@@ -290,7 +290,7 @@ module Spree
                 currency,
                 Spree::Current.store.id
               ]
-              expected_parts << Spree::Current.tax_country.id if Spree::Current.tax_country
+              expected_parts << Spree::Current.tax_country.iso if Spree::Current.tax_country
               expected_parts << Spree::Current.market.id if Spree::Current.market
               expected_parts << Spree::Current.channel.id if Spree::Current.channel
               expected_parts << Time.current.to_i
@@ -319,7 +319,7 @@ module Spree
                 currency,
                 Spree::Current.store.id
               ]
-              expected_parts << Spree::Current.tax_country.id if Spree::Current.tax_country
+              expected_parts << Spree::Current.tax_country.iso if Spree::Current.tax_country
               expected_parts << Spree::Current.market.id if Spree::Current.market
               expected_parts << Spree::Current.channel.id if Spree::Current.channel
               expected_parts << user.id

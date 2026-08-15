@@ -19,6 +19,16 @@ FactoryBot.define do
   factory :delivery_zone_member, class: Spree::DeliveryZoneMember do
     delivery_zone
     member_type { 'country' }
-    country
+
+    # The model stores plain codes; country/state stay as transient value
+    # objects so specs can keep passing them. A state supplies its country —
+    # a subdivision code is only unique within one.
+    transient do
+      country { create(:country) }
+      state { nil }
+    end
+
+    country_iso { country&.iso || state&.country_iso }
+    state_code { state&.abbr }
   end
 end

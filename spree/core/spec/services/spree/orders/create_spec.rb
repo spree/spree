@@ -9,7 +9,6 @@ module Spree
     let(:country) { @default_country }
     let(:state)   { country.states.first || create(:state, country: country) }
     let!(:zone)   { create(:zone) }
-    let!(:zone_member) { create(:zone_member, zone: zone, zoneable: country) }
     let!(:shipping_method) do
       create(:shipping_method).tap do |sm|
         sm.calculator.preferred_amount = 5
@@ -26,7 +25,7 @@ module Spree
         firstname: 'Jane', lastname: 'Doe',
         address1: '350 Fifth Avenue', city: 'New York',
         zipcode: '10118', phone: '555-555-0199',
-        country_id: country.id, state_id: state.id
+        country_iso: country.iso, state_abbr: state.abbr
       }
     end
 

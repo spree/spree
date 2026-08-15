@@ -6,9 +6,9 @@ module Spree
       def call
         Spree::Events.disable do
           ActiveRecord::Base.no_touching do
-            # GEO
-            Countries.call
-            States.call
+            # GEO — countries and states are reference data supplied by the
+            # countries gem, and zones are migration-only, so none of them
+            # are seeded.
 
             # user roles
             Roles.call

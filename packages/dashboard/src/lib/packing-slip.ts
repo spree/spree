@@ -19,7 +19,7 @@ function addressBlock(order: Order): string {
     address.company,
     address.address1,
     address.address2,
-    [address.city, address.state_name ?? address.state_abbr, address.postal_code]
+    [address.city, address.state_name ?? address.state_code, address.postal_code]
       .filter(Boolean)
       .join(', '),
     address.country_name || address.country_iso,

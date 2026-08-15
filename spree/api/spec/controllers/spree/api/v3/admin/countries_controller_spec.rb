@@ -19,7 +19,7 @@ RSpec.describe Spree::Api::V3::Admin::CountriesController, type: :controller do
 
     it 'returns ALL countries without pagination truncation' do
       subject
-      total_countries = Spree::Country.count
+      total_countries = Spree::Country.all.size
       expect(json_response['data'].length).to eq(total_countries)
       expect(json_response['meta']['count']).to eq(total_countries)
     end
@@ -41,7 +41,7 @@ RSpec.describe Spree::Api::V3::Admin::CountriesController, type: :controller do
       subject { get :index, params: { expand: 'states' }, as: :json }
 
       let!(:country_with_states) do
-        country = Spree::Country.first || create(:country)
+        country = Spree::Country.by_iso('US')
         create(:state, country: country) unless country.states.any?
         country
       end
@@ -66,7 +66,7 @@ RSpec.describe Spree::Api::V3::Admin::CountriesController, type: :controller do
   end
 
   describe 'GET #show' do
-    let!(:country) { Spree::Country.first || create(:country) }
+    let!(:country) { Spree::Country.by_iso('US') }
 
     subject { get :show, params: { id: country.iso }, as: :json }
 

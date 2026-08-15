@@ -64,7 +64,8 @@ module Spree
             def permitted_params
               params.permit(
                 :first_name, :last_name, :address1, :address2, :city,
-                :postal_code, :phone, :company, :country_iso, :state_abbr, :state_name,
+                # state_abbr is the legacy write name, accepted until 6.1.
+                :postal_code, :phone, :company, :country_iso, :state_code, :state_abbr, :state_name,
                 :is_default_billing, :is_default_shipping
               )
             end

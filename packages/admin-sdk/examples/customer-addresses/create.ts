@@ -13,11 +13,12 @@ const address = await client.customers.addresses.create('cus_UkLWZg9DAJ', {
   city: 'New York',
   postal_code: '10118',
   country_iso: 'US',
-  state_abbr: 'NY',
+  state_code: 'NY',
   phone: '+1 212 555 1234',
   label: 'Office',
   is_default_shipping: true,
 })
+
 // endregion:example
 
 export { address }

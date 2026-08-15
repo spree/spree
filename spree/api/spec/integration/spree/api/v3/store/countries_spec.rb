@@ -5,10 +5,10 @@ require 'swagger_helper'
 RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/store.yaml' do
   include_context 'API v3 Store'
 
-  let!(:usa) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US', name: 'United States', states_required: true) }
-  let!(:california) { Spree::State.find_by(abbr: 'CA', country: usa) || create(:state, country: usa, name: 'California', abbr: 'CA') }
-  let!(:new_york) { Spree::State.find_by(abbr: 'NY', country: usa) || create(:state, country: usa, name: 'New York', abbr: 'NY') }
-  let!(:germany) { Spree::Country.find_by(iso: 'DE') || create(:country, iso: 'DE', name: 'Germany', states_required: false) }
+  let!(:usa) { Spree::Country.by_iso('US') }
+  let!(:california) { Spree::State.resolve(usa.iso, 'CA') }
+  let!(:new_york) { Spree::State.resolve(usa.iso, 'NY') }
+  let!(:germany) { Spree::Country.by_iso('DE') }
 
   let!(:na_market) do
     store.default_market.tap do |market|
@@ -121,8 +121,10 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
       expect(response).to have_http_status(:ok)
       data = JSON.parse(response.body)
       expect(data['states']).to be_an(Array)
-      state_abbrs = data['states'].map { |s| s['abbr'] }
-      expect(state_abbrs).to match_array(['CA', 'NY'])
+      state_codes = data['states'].map { |s| s['abbr'] }
+      # Subdivisions are reference data now, so the country carries its full
+      # ISO list rather than only what a spec happened to seed.
+      expect(state_codes).to include('CA', 'NY')
     end
   end
 

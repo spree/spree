@@ -1,17 +1,36 @@
 FactoryBot.define do
+  # Countries are reference data supplied by the countries gem, not records —
+  # there is nothing to persist, so this hands back the registry's value
+  # object. `create(:country)` and `build(:country)` are equivalent.
   factory :country, class: Spree::Country do
-    sequence(:iso_name) { |n| "ISO_NAME_#{n}" }
-    sequence(:name)     { |n| "NAME_#{n}" }
-    sequence(:iso)      { |n| "I#{n}" }
-    sequence(:iso3)     { |n| "IS#{n}" }
-    numcode             { 840 }
+    transient do
+      sequence(:iso_pool_index) { |n| n }
+
+      # Countries are reference data: their names and codes come from the gem,
+      # so a spec naming one is choosing which country it wants rather than
+      # describing a record to build. Accepted and ignored so the many specs
+      # written against the old table keep reading naturally.
+      name { nil }
+      iso3 { nil }
+      iso_name { nil }
+      numcode { nil }
+      states_required { nil }
+      zipcode_required { nil }
+      states { nil }
+    end
+
+    # A spec naming a country ("France") gets that country; otherwise the
+    # sequence walks a pool of real codes so "some other country" still works.
+    iso do
+      named = name.present? ? ISO3166::Country.find_country_by_any_name(name) : nil
+      named&.alpha2 || Spree::TestingSupport::CountryPool.iso_for(iso_pool_index)
+    end
+
+    skip_create
+    initialize_with { Spree::Country.by_iso(iso) }
 
     factory :country_us, class: Spree::Country, parent: :country do
       iso { 'US' }
-      iso3 { 'USA' }
-      name { 'United States of America' }
-      iso_name { 'UNITED STATES' }
-      states_required { true }
     end
   end
 end

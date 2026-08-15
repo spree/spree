@@ -281,25 +281,15 @@ module Spree
 
     context '#state_text' do
       context 'state is blank' do
-        subject { described_class.create(name: 'testing', state: nil, state_name: 'virginia') }
+        subject { described_class.create(name: 'testing', state_code: nil, state_name: 'virginia') }
 
         specify { expect(subject.state_text).to eq('virginia') }
       end
 
-      context 'both name and abbr is present' do
-        subject { described_class.create(name: 'testing', state: state, state_name: nil) }
+      context 'a state code is present' do
+        subject { described_class.create(name: 'testing', country_iso: 'US', state_code: 'VA', state_name: nil) }
 
-        let(:state) { create(:state, name: 'virginia', abbr: 'va') }
-
-        specify { expect(subject.state_text).to eq(state.abbr) }
-      end
-
-      context 'only name is present' do
-        subject { described_class.create(name: 'testing', state: state, state_name: nil) }
-
-        let(:state) { create(:state, name: 'virginia', abbr: nil) }
-
-        specify { expect(subject.state_text).to eq(state.name) }
+        specify { expect(subject.state_text).to eq('VA') }
       end
     end
 
@@ -419,7 +409,7 @@ module Spree
     end
 
     describe '#country_iso=' do
-      let(:country) { Spree::Country.first || create(:country, iso: 'US') }
+      let(:country) { Spree::Country.by_iso('US') }
       let(:stock_location) { build(:stock_location, country: nil, state: nil) }
 
       it 'resolves the country from an ISO code on validation' do
@@ -428,34 +418,34 @@ module Spree
         expect(stock_location.country).to eq(country)
       end
 
-      it 'is a no-op when blank' do
-        stock_location.country = country
+      it 'clears the country when blank' do
+        stock_location.country_iso = country.iso
         stock_location.country_iso = ''
         stock_location.valid?
-        expect(stock_location.country).to eq(country)
+        expect(stock_location.country).to be_nil
       end
     end
 
-    describe '#state_abbr=' do
-      let(:country) { Spree::Country.first || create(:country, iso: 'US') }
-      let!(:state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
+    describe '#state_code=' do
+      let(:country) { Spree::Country.by_iso('US') }
+      let!(:state) { Spree::State.resolve(country.iso, 'NY') }
       let(:stock_location) { build(:stock_location, country: country, state: nil) }
 
       it 'resolves the state from an abbreviation scoped to the country' do
-        stock_location.state_abbr = 'NY'
+        stock_location.state_code = 'NY'
         stock_location.valid?
         expect(stock_location.state).to eq(state)
       end
 
       it 'leaves state nil when no matching abbreviation exists for the country' do
-        stock_location.state_abbr = 'ZZ'
+        stock_location.state_code = 'ZZ'
         stock_location.valid?
         expect(stock_location.state).to be_nil
       end
 
-      it 'is a no-op when no country is set' do
-        stock_location.country = nil
-        stock_location.state_abbr = 'NY'
+      it 'resolves nothing without a country — a subdivision code is only unique within one' do
+        stock_location.country_iso = nil
+        stock_location.state_code = 'NY'
         stock_location.valid?
         expect(stock_location.state).to be_nil
       end

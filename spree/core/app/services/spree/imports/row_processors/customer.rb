@@ -48,11 +48,11 @@ module Spree
           address.phone = attributes['phone'].presence || user.phone
 
           if attributes['country_code'].present?
-            address.country = Spree::Country.find_by(iso: attributes['country_code'].strip.upcase)
+            address.country_iso = attributes['country_code'].strip
           end
 
-          if attributes['province_code'].present? && address.country
-            address.state = address.country.states.find_by(abbr: attributes['province_code'].strip)
+          if attributes['province_code'].present? && address.country_iso.present?
+            address.state_code = attributes['province_code'].strip
           end
 
           address.save!

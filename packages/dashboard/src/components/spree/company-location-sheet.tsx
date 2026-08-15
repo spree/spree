@@ -210,7 +210,7 @@ function addressToForm(address: CompanyLocation['billing_address'] | undefined) 
     postal_code: address?.postal_code ?? '',
     phone: address?.phone ?? '',
     country_iso: address?.country_iso ?? '',
-    state_abbr: address?.state_abbr ?? '',
+    state_code: address?.state_code ?? '',
   }
 }
 
@@ -280,7 +280,7 @@ function AddressFieldset({
                 value={field.value}
                 onValueChange={(iso) => {
                   field.onChange(iso)
-                  form.setValue(`${prefix}.state_abbr`, '', { shouldDirty: true })
+                  form.setValue(`${prefix}.state_code`, '', { shouldDirty: true })
                 }}
               />
             )}
@@ -290,7 +290,7 @@ function AddressFieldset({
           <Field>
             <FieldLabel htmlFor={`${prefix}-state`}>{t('admin.fields.state.label')}</FieldLabel>
             <Controller
-              name={`${prefix}.state_abbr`}
+              name={`${prefix}.state_code`}
               control={form.control}
               render={({ field }) => (
                 <StateCombobox

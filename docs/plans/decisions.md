@@ -774,6 +774,42 @@ one-method-one-quote. The two-entity method→services shape is the
 normalized version of what Shopify/Woo store as config blobs, and Spree
 ends up expressing all four models.
 
+## 2026-08-07: Country/State AR models dropped — ISO codes are the identifier everywhere
+
+**Decision:** Delete `Spree::Country` and `Spree::State` as ActiveRecord models
+in 6.0 — tables, seeds, factories, and every `country_id`/`state_id` FK. The
+constants survive as gem-backed value objects (`ActiveModel::Model`, data from
+the `countries` gem; `carmen` removed). Consumers store `country_iso` (+
+`state_abbr` always paired with its `country_iso` — subdivision codes are not
+globally unique). Address validation semantics are preserved exactly
+(`STATES_REQUIRED` countries validate `state_abbr` against gem subdivisions
+with name→abbr promotion; elsewhere `state_name` stays free text). Full design:
+`6.0-drop-country-state-models.md`.
+
+**Why:** No competitor points an address at a state row (Vendure has a Province
+entity and still stores a string on Address); Medusa and Vendure's country
+tables are materialized caches of static ISO lists. Our public surface is
+already ISO-native — neither model exposes an `id` in v3, addresses serialize
+flat ISO strings, the dashboard submits ISO only — so the AR layer was pure
+internal overhead: two seed services, two gems (carmen + countries), duplicate
+ISO→record resolution paths with divergent failure modes, and localized names
+already delegating to `ISO3166::Country` with the DB column as fallback.
+
+**Supersedes:** the FK member design in `6.0-delivery-zones.md`
+(`DeliveryZoneMember` converts to `country_iso`/`state_abbr` strings; state
+members gain their own `country_iso`) and — decisive on timing — the unshipped
+`6.0-tax-provider.md` Phase 5, amended so `spree_tax_rates` columns are **born
+as `country_iso`/`state_abbr` strings**, never FKs (verified 2026-08-07 the FK
+columns don't exist yet; amending now avoids migrating the same columns twice).
+The two admin endpoints still permitting raw `country_id`/`state_id` params
+(customer addresses, order addresses) drop them. Sequencing: the table drop
+lands after delivery-zones Phase D so the polymorphic `ZoneMember` is removed,
+never string-converted.
+
+**Constraint now:** no new `country_id`/`state_id` columns or
+`belongs_to :country/:state` anywhere — new features store ISO strings
+(`Promotion::Rules::Country` is the template).
+
 ## 2026-08-07: `Claim#claim_type` dropped — the reason vocabulary is the only "what went wrong" axis
 
 Reverses the two-axis design in `6.0-returns-exchanges-claims.md`, which

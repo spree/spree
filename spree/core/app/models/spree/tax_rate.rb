@@ -32,7 +32,7 @@ module Spree
     # means everywhere, and a country with no state_code means the whole
     # country. Upcased on the way in so a rate entered as "de" still matches an
     # address from Germany.
-    normalizes :country_iso, :state_code, with: ->(value) { value.presence&.to_s&.upcase }
+    has_iso_geography
 
     # The primitive: rates that reach a jurisdiction, which is a country and
     # optionally one of its states. Rates naming neither are included, since a
@@ -46,7 +46,7 @@ module Spree
       where(country_iso: [country_iso.presence, nil].uniq).where(state_code: [state_code.presence, nil].uniq)
     }
     # The same question asked with an address in hand.
-    scope :for_address, ->(address) { for_jurisdiction(address&.country_iso, address&.state_abbr) }
+    scope :for_address, ->(address) { for_jurisdiction(address&.country_iso, address&.state_code) }
     # Country-wide: unlike for_jurisdiction(country_iso, nil) this leaves the
     # state unconstrained, so it sums a country's state-level rates too. Used
     # where the state is irrelevant — backing VAT out of a gross price.

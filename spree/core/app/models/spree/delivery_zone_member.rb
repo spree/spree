@@ -15,24 +15,33 @@ module Spree
     ].freeze
 
     belongs_to :delivery_zone, class_name: 'Spree::DeliveryZone', inverse_of: :members
-    belongs_to :country, class_name: 'Spree::Country', optional: true
-    belongs_to :state, class_name: 'Spree::State', optional: true
+
+    has_iso_geography
 
     normalizes :postal_code_prefix, :postal_code_from, :postal_code_to,
                with: ->(value) { Spree::Address.normalize_zipcode(value).presence }
 
+    # Mapping a retired subdivision code to its successor needs both halves,
+    # which normalizes can't see — it runs per attribute — so it stays a
+    # callback.
+    before_validation :resolve_geography
+
     validates :member_type, presence: true, inclusion: { in: MEMBER_TYPES }
-    validates :country, presence: true, if: -> { member_type.in?(%w[country postal_code]) }
-    validates :state, presence: true, if: -> { member_type == 'state' }
+    validates :country_iso, presence: true, if: -> { member_type.in?(MEMBER_TYPES) }
+    validates :state_code, presence: true, if: -> { member_type == 'state' }
     validate :postal_definition, if: -> { member_type == 'postal_code' }
 
     # @param address [Spree::Address]
     # @return [Boolean] whether the address falls inside this member
+    #
+    # A state member compares the country too: a subdivision code is only
+    # unique within its country, so "CA" alone would match California and
+    # several other places.
     def match?(address)
       case member_type
-      when 'country' then address.country_id == country_id
-      when 'state' then address.state_id == state_id
-      when 'postal_code' then address.country_id == country_id && postal_match?(address.normalized_zipcode)
+      when 'country' then same_country?(address)
+      when 'state' then same_country?(address) && address.state_code.present? && address.state_code == state_code
+      when 'postal_code' then same_country?(address) && postal_match?(address.normalized_zipcode)
       else false
       end
     end
@@ -44,8 +53,19 @@ module Spree
 
     private
 
-    # Stored values are normalized on assignment (see +normalizes+ above), so
-    # matching compares normalized against normalized.
+    def same_country?(address)
+      country_iso.present? && address.country_iso == country_iso
+    end
+
+    # An unresolvable code is left in place for the geography validation to
+    # report, rather than nilled into a less telling presence error.
+    def resolve_geography
+      return if state_code.blank? || country_iso.blank?
+
+      resolved = Spree::IsoData.subdivision_code(country_iso, state_code)
+      self.state_code = resolved if resolved
+    end
+
     def postal_match?(zipcode)
       return false if zipcode.blank?
 
@@ -67,7 +87,7 @@ module Spree
         return
       end
 
-      unless country&.iso.present? && range_capable_country_isos.include?(country.iso)
+      unless country_iso.present? && range_capable_country_isos.include?(country_iso)
         errors.add(:base, Spree.t('errors.messages.delivery_zone_range_not_supported'))
         return
       end

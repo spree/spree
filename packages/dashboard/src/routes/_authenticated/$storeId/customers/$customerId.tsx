@@ -968,7 +968,7 @@ function AddressesCard({ customer }: { customer: Customer }) {
                   <div className="text-muted-foreground">{addr.address1}</div>
                   {addr.address2 && <div className="text-muted-foreground">{addr.address2}</div>}
                   <div className="text-muted-foreground">
-                    {[addr.city, addr.state_abbr, addr.postal_code].filter(Boolean).join(', ')} ·{' '}
+                    {[addr.city, addr.state_code, addr.postal_code].filter(Boolean).join(', ')} ·{' '}
                     {addr.country_iso}
                   </div>
                   {addr.phone && <div className="text-muted-foreground">{addr.phone}</div>}
@@ -1082,7 +1082,7 @@ function CustomerAddressDialog({
   }
 
   // Wait for countries before mounting so the country/state lazy initializer
-  // can resolve the address's country_iso/state_abbr to a real option.
+  // can resolve the address's country_iso/state_code to a real option.
   if (countriesLoading) return null
 
   return (

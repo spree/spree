@@ -14,7 +14,7 @@ RSpec.describe Spree::Addresses::GeocodeAddressJob do
     )
   end
 
-  let(:usa_country) { Spree::Country.find_by(iso: 'US') || create(:usa_country) }
+  let(:usa_country) { Spree::Country.by_iso('US') }
   let(:california_state) { create(:state, name: 'California', abbr: 'CA', country: usa_country) }
 
   let(:geocoder_coordinates) { [37.8, -122.4] }

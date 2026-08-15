@@ -1,18 +1,54 @@
 require 'spec_helper'
 
-describe Spree::State, type: :model do
-  it 'can find a state by name or abbr' do
-    state = create(:state, name: 'California', abbr: 'CA')
-    expect(Spree::State.find_all_by_name_or_abbr('California')).to include(state)
-    expect(Spree::State.find_all_by_name_or_abbr('CA')).to include(state)
+describe Spree::State do
+  describe '.for_country' do
+    it 'lists the subdivisions of a country' do
+      states = described_class.for_country('US')
+
+      expect(states.map(&:abbr)).to include('CA', 'NY', 'MD')
+      expect(states.find { |state| state.abbr == 'CA' }.name).to eq('California')
+    end
+
+    it 'is empty for a country with no subdivisions' do
+      expect(described_class.for_country('HK')).to be_empty
+    end
   end
 
-  it 'can find all states group by country id' do
-    state = create(:state)
-    expect(Spree::State.states_group_by_country_id).to eq(state.country_id.to_s => [[state.id, state.name]])
+  describe '.resolve' do
+    it 'finds a subdivision by code or name' do
+      expect(described_class.resolve('US', 'CA').name).to eq('California')
+      expect(described_class.resolve('US', 'California').abbr).to eq('CA')
+    end
+
+    it 'finds a subdivision by a code ISO has since retired' do
+      expect(described_class.resolve('ZA', 'GT').abbr).to eq('GP')
+    end
+
+    it 'is nil when nothing matches' do
+      expect(described_class.resolve('US', 'Nonsense')).to be_nil
+    end
   end
 
-  describe 'whitelisted_ransackable_attributes' do
-    it { expect(Spree::State.whitelisted_ransackable_attributes).to eq(%w(abbr country_id name)) }
+  describe '#country' do
+    it 'reads back the country it belongs to' do
+      expect(described_class.resolve('US', 'CA').country.iso).to eq('US')
+    end
+  end
+
+  # A subdivision code is only unique within its country, so both halves count.
+  describe 'equality' do
+    it 'is equal to the same subdivision of the same country' do
+      expect(described_class.resolve('US', 'CA')).to eq(described_class.resolve('US', 'CA'))
+    end
+
+    it 'is not equal to the same code in another country' do
+      expect(described_class.resolve('US', 'CA')).not_to eq(described_class.resolve('IT', 'CA'))
+    end
+
+    it 'deduplicates by country and code' do
+      states = [described_class.resolve('US', 'CA'), described_class.resolve('US', 'CA')]
+
+      expect(states.uniq.size).to eq(1)
+    end
   end
 end

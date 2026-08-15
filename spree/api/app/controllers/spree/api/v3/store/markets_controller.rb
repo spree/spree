@@ -8,7 +8,7 @@ module Spree
 
           # GET /api/v3/store/markets
           def index
-            markets = current_store.markets.includes(:countries).order(:position)
+            markets = current_store.markets.includes(:market_countries).order(:position)
 
             return unless cache_collection(markets)
 
@@ -19,7 +19,7 @@ module Spree
 
           # GET /api/v3/store/markets/:id
           def show
-            market = current_store.markets.includes(:countries).find_by_prefix_id!(params[:id])
+            market = current_store.markets.includes(:market_countries).find_by_prefix_id!(params[:id])
 
             return unless cache_resource(market)
 
@@ -29,7 +29,7 @@ module Spree
           # GET /api/v3/store/markets/resolve?country=DE
           def resolve
             country_iso = params[:country]&.upcase
-            country = Spree::Country.find_by!(iso: country_iso)
+            country = Spree::Country.find_by_iso!(country_iso)
             market = current_store.market_for_country(country)
 
             raise ActiveRecord::RecordNotFound unless market

@@ -37,7 +37,7 @@ RSpec.shared_examples 'a market host' do
 
   describe '#resolve_market_from_currency' do
     let!(:eur_market) do
-      germany = Spree::Country.find_by(iso: 'DE') || create(:country, iso: 'DE')
+      germany = Spree::Country.by_iso('DE')
       store.markets.find_by(currency: 'EUR') ||
         store.markets.create!(name: 'Europe', currency: 'EUR', default_locale: 'de', countries: [germany])
     end

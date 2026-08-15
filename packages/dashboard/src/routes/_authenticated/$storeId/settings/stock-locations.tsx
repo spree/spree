@@ -716,7 +716,7 @@ function StockLocationFormFields({ form }: { form: UseFormReturn<StockLocationFo
                   value={field.value}
                   onValueChange={(iso) => {
                     field.onChange(iso)
-                    form.setValue('state_abbr', '', { shouldDirty: true })
+                    form.setValue('state_code', '', { shouldDirty: true })
                     form.setValue('state_name', '', { shouldDirty: true })
                   }}
                 />
@@ -726,9 +726,9 @@ function StockLocationFormFields({ form }: { form: UseFormReturn<StockLocationFo
           </Field>
           {states.length > 0 ? (
             <Field>
-              <FieldLabel>{t('admin.fields.state_abbr.label')}</FieldLabel>
+              <FieldLabel>{t('admin.fields.state_code.label')}</FieldLabel>
               <Controller
-                name="state_abbr"
+                name="state_code"
                 control={form.control}
                 render={({ field }) => (
                   <StateCombobox
@@ -739,7 +739,7 @@ function StockLocationFormFields({ form }: { form: UseFormReturn<StockLocationFo
                   />
                 )}
               />
-              <FieldError errors={[errors.state_abbr]} />
+              <FieldError errors={[errors.state_code]} />
             </Field>
           ) : (
             <Field>

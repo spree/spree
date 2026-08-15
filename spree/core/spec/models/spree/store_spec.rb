@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Store, type: :model, without_global_store: true do
   before(:all) do
-    Spree::Country.find_by(iso: 'US') || create(:country_us)
+    Spree::Country.by_iso('US')
   end
 
   describe 'order number sequence start' do
@@ -294,12 +294,12 @@ describe Spree::Store, type: :model, without_global_store: true do
 
     describe '#ensure_default_market' do
       context 'when default_country_iso is set with shipping coverage' do
-        let(:country) { Spree::Country.first || create(:country) }
+        let(:country) { Spree::Country.by_iso('US') }
         let(:store) { build(:store) }
 
         before do
           zone = create(:delivery_zone)
-          zone.members.create!(member_type: 'country', country: country)
+          zone.members.create!(member_type: 'country', country_iso: country.iso)
           create(:shipping_method, delivery_zone: zone)
           store.default_country_iso = country.iso
         end
@@ -479,9 +479,11 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
 
     context 'without markets' do
+      before { allow(subject).to receive(:has_markets?).and_return(false) }
+
       it 'returns list of all countries' do
-        checkout_available_countries_ids = subject.countries_available_for_checkout.pluck(:id)
-        all_countries_ids                = Spree::Country.all.ids
+        checkout_available_countries_ids = subject.countries_available_for_checkout.map(&:iso)
+        all_countries_ids                = Spree::Country.all.map(&:iso)
 
         expect(checkout_available_countries_ids).to eq(all_countries_ids)
       end
@@ -493,13 +495,13 @@ describe Spree::Store, type: :model, without_global_store: true do
 
     let(:country_with_states) do
       create(:country).tap do |country|
-        country.states << create(:state)
+        # subdivisions are reference data — the country already has them
       end
     end
 
     it 'returns list of states associated to country' do
-      checkout_available_states_ids = subject.states_available_for_checkout(country_with_states).pluck(:id)
-      all_state_ids                 = country_with_states.states.pluck(:id)
+      checkout_available_states_ids = subject.states_available_for_checkout(country_with_states).map(&:abbr)
+      all_state_ids                 = country_with_states.states.map(&:abbr)
 
       expect(checkout_available_states_ids).to eq(all_state_ids)
     end
@@ -521,10 +523,10 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
 
     context 'without markets' do
-      let!(:country) { Spree::Country.first || create(:country) }
+      let!(:country) { Spree::Country.by_iso('US') }
       let(:store) { build(:store) }
 
-      before { store.write_attribute(:default_country_id, country.id) }
+      before { store.write_attribute(:default_country_iso_code, country.iso) }
 
       it 'returns the store column value' do
         expect(store.default_country).to eq(country)
@@ -535,32 +537,17 @@ describe Spree::Store, type: :model, without_global_store: true do
   describe '#default_country_iso=' do
     let(:store) { build(:store) }
 
-    context 'when country is not found in the database' do
-      it 'creates the country from ISO3166 data' do
-        expect(Spree::Country.find_by(iso: 'GB')).to be_nil
-        expect { store.default_country_iso = 'GB' }.to change(Spree::Country, :count).by(1)
+    it 'names the country the store defaults to' do
+      store.default_country_iso = 'GB'
 
-        gb_country = Spree::Country.find_by(iso: 'GB')
-        expect(gb_country).to be_present
-        expect(gb_country.numcode.to_s).to eq(::Country['GB'].number)
-        expect(store.default_country_iso).to eq('GB')
-      end
+      expect(store.default_country_iso).to eq('GB')
+      expect(store.default_country.iso).to eq('GB')
     end
 
-    context 'when country exists in the database' do
-      let!(:country) { create(:country, iso: 'GB') }
+    it 'ignores a code no country has' do
+      store.default_country_iso = 'ZZ'
 
-      it 'uses the existing country' do
-        expect { store.default_country_iso = 'GB' }.not_to change(Spree::Country, :count)
-        expect(store.default_country_iso).to eq('GB')
-      end
-    end
-
-    context 'when iso is blank' do
-      it 'does nothing' do
-        store.default_country_iso = ''
-        expect(store.instance_variable_get(:@default_country_for_market)).to be_nil
-      end
+      expect(store.default_country).to be_nil
     end
   end
 
@@ -786,32 +773,32 @@ describe Spree::Store, type: :model, without_global_store: true do
 
       it 'returns countries from all markets' do
         countries = store.countries_from_markets
-        expect(countries.pluck(:iso)).to contain_exactly(country_a.iso, country_b.iso, country_c.iso, 'US')
+        expect(countries.map(&:iso)).to contain_exactly(country_a.iso, country_b.iso, country_c.iso, 'US')
       end
 
       it 'returns an ActiveRecord relation' do
-        expect(store.countries_from_markets).to be_a(ActiveRecord::Relation)
+        expect(store.countries_from_markets).to all(be_a(Spree::Country))
       end
 
       it 'orders by name' do
-        names = store.countries_from_markets.pluck(:name)
+        names = store.countries_from_markets.map(&:name)
         expect(names).to eq(names.sort)
       end
 
       it 'does not include countries not in any market' do
         other_country = create(:country)
-        expect(store.countries_from_markets.pluck(:iso)).not_to include(other_country.iso)
+        expect(store.countries_from_markets.map(&:iso)).not_to include(other_country.iso)
       end
 
       it 'does not duplicate countries shared across markets' do
         store.markets.last.countries << country_a rescue nil
-        expect(store.countries_from_markets.where(iso: country_a.iso).count).to eq(1)
+        expect(store.countries_from_markets.count { |c| c.iso == country_a.iso }).to eq(1)
       end
     end
 
     context 'without markets' do
       it 'returns the bootstrap market country' do
-        expect(store.countries_from_markets.pluck(:iso)).to eq(['US'])
+        expect(store.countries_from_markets.map(&:iso)).to eq(['US'])
       end
     end
   end
@@ -859,8 +846,8 @@ describe Spree::Store, type: :model, without_global_store: true do
       let!(:zone) { create(:delivery_zone) }
 
       before do
-        zone.members.create!(member_type: 'country', country: country1)
-        zone.members.create!(member_type: 'country', country: country2)
+        zone.members.create!(member_type: 'country', country_iso: country1.iso)
+        zone.members.create!(member_type: 'country', country_iso: country2.iso)
         create(:shipping_method, delivery_zone: zone)
       end
 
@@ -876,7 +863,7 @@ describe Spree::Store, type: :model, without_global_store: true do
       let!(:zone) { create(:delivery_zone) }
 
       before do
-        zone.members.create!(member_type: 'state', state: state)
+        zone.members.create!(member_type: 'state', country_iso: state.country_iso, state_code: state.abbr)
         create(:shipping_method, delivery_zone: zone)
       end
 
@@ -891,7 +878,7 @@ describe Spree::Store, type: :model, without_global_store: true do
       let!(:zone) { create(:delivery_zone) }
 
       before do
-        zone.members.create!(member_type: 'country', country: country)
+        zone.members.create!(member_type: 'country', country_iso: country.iso)
       end
 
       it 'does not include countries from that zone' do
@@ -913,15 +900,15 @@ describe Spree::Store, type: :model, without_global_store: true do
       let!(:zone2) { create(:delivery_zone) }
 
       before do
-        zone1.members.create!(member_type: 'country', country: country)
-        zone2.members.create!(member_type: 'country', country: country)
+        zone1.members.create!(member_type: 'country', country_iso: country.iso)
+        zone2.members.create!(member_type: 'country', country_iso: country.iso)
         create(:shipping_method, delivery_zone: zone1)
         create(:shipping_method, delivery_zone: zone2)
       end
 
       it 'deduplicates countries' do
         result = store.countries_with_shipping_coverage
-        expect(result.where(id: country.id).count).to eq(1)
+        expect(result.count { |candidate| candidate.iso == country.iso }).to eq(1)
       end
     end
   end

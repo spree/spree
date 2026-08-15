@@ -12,7 +12,7 @@ module Spree
             # permits :id, :user_id and :deleted_at.
             ADDRESS_KEYS = [
               :first_name, :last_name, :company, :address1, :address2, :city,
-              :postal_code, :zipcode, :phone, :country_iso, :state_abbr, :state_name, :label
+              :postal_code, :zipcode, :phone, :country_iso, :state_code, :state_name, :label
             ].freeze
 
             protected

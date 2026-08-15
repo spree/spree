@@ -8,7 +8,7 @@ describe Spree::Promotion::Rules::Country, type: :model do
   let(:other_country) { create(:country) }
 
   context 'preferred country_id is set' do
-    before { rule.preferred_country_id = country.id }
+    before { rule.preferred_country_iso = country.iso }
 
     it 'is eligible for correct country' do
       allow(order).to receive_message_chain(:ship_address, :country_id) { country.id }

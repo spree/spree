@@ -37,10 +37,9 @@ module Spree
 
     # Where the certificate holds, as codes: a blank country_iso claims every
     # country, and a country with no state_code claims all of its states.
-    # Upcased on the way in, and unknown codes are kept as entered — a code
-    # nothing recognises must narrow the certificate to nothing, never widen it
-    # to everywhere, which is what resolving it to a nil country used to do.
-    normalizes :country_iso, :state_code, with: ->(value) { value.presence&.to_s&.upcase }
+    # New writes reject unknown codes; a stored one that stops resolving still
+    # narrows the certificate to nothing, never widens it to everywhere.
+    has_iso_geography
 
     # Expiry is decided here rather than persisted: the date is the fact, and a
     # sweeper writing 'expired' would only restate it. Matches how gift cards
@@ -54,7 +53,7 @@ module Spree
       next none if address.nil?
 
       where(country_iso: [address.country_iso.presence, nil].uniq).
-        where(state_code: [address.state_abbr.presence, nil].uniq)
+        where(state_code: [address.state_code.presence, nil].uniq)
     }
 
     self.whitelisted_ransackable_attributes = %w[certificate_number reason_code status expires_at]

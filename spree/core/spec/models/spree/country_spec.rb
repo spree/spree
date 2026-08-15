@@ -3,27 +3,51 @@ require 'spec_helper'
 describe Spree::Country, type: :model do
   let(:store) { @default_store }
   let(:america) { store.default_country }
-  let(:canada)  { create :country, name: 'Canada', iso_name: 'CANADA', iso: 'CA', iso3: 'CAN', numcode: '124' }
+  let(:canada)  { described_class.by_iso('CA') }
 
-  it 'validates uniqueness' do
-    canada.touch
-    expect(Spree::Country.new(name: 'Canada', iso: 'CA', iso3: 'CAN', iso_name: 'CANADA')).not_to be_valid
+  describe '.all' do
+    it 'lists the countries a store can sell to' do
+      expect(described_class.all.map(&:iso)).to include('US', 'DE', 'PL')
+    end
+
+    it 'omits territories that can never be ordered to' do
+      expect(described_class.all.map(&:iso)).not_to include('AQ')
+    end
+  end
+
+  describe '#states' do
+    it 'lists the country subdivisions' do
+      expect(america.states.map(&:abbr)).to include('CA', 'NY')
+    end
+
+    it 'is empty for a country with no subdivisions' do
+      expect(described_class.by_iso('HK').states).to be_empty
+    end
+  end
+
+  describe 'equality' do
+    it 'is equal to the same country' do
+      expect(described_class.by_iso('US')).to eq(described_class.by_iso('US'))
+    end
+
+    it 'deduplicates by ISO' do
+      expect([described_class.by_iso('US'), described_class.by_iso('US')].uniq.size).to eq(1)
+    end
   end
 
   describe '#localized_name' do
     it 'returns the localized country name' do
-      expect(described_class.new(iso: 'US', name: 'USA').localized_name(locale: :en)).to include('United States')
+      expect(described_class.new(iso: 'US').localized_name(locale: :en)).to include('United States')
     end
 
-    it 'falls back to the name (then iso) for an unknown ISO' do
-      expect(described_class.new(iso: 'ZZ', name: 'Nowhere').localized_name).to eq('Nowhere')
+    it 'falls back to the iso for an unknown code' do
       expect(described_class.new(iso: 'ZZ').localized_name).to eq('ZZ')
     end
   end
 
   describe '#option_label' do
     it 'prefixes the localized name with the flag emoji' do
-      label = described_class.new(iso: 'US', name: 'United States').option_label(locale: :en)
+      label = described_class.new(iso: 'US').option_label(locale: :en)
       expect(label).to include('🇺🇸')
       expect(label).to include('United States')
     end

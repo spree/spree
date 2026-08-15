@@ -10,10 +10,15 @@ FactoryBot.define do
     backorderable_default { true }
     propagate_all_variants { false }
 
-    country  { |stock_location| Spree::Country.first || stock_location.association(:country) }
-    state do |stock_location|
-      stock_location.country.states.first || stock_location.association(:state, country: stock_location.country)
+    # The model stores plain codes; country/state stay as transient value
+    # objects so specs can keep passing them.
+    transient do
+      country { Spree::Country.by_iso('US') }
+      state { country&.states&.first }
     end
+
+    country_iso { country&.iso }
+    state_code { state&.abbr }
 
     factory :stock_location_with_items do
       after(:create) do |stock_location, _evaluator|

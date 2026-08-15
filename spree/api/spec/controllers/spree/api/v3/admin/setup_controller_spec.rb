@@ -59,13 +59,22 @@ RSpec.describe Spree::Api::V3::Admin::SetupController, type: :controller do
       end
 
       it 'applies optional currency and country' do
-        create(:country_us) unless Spree::Country.find_by(iso: 'US')
 
         post :create, params: valid_params.merge(currency: 'eur', country_iso: 'us'), as: :json
 
         expect(response).to have_http_status(:ok)
         expect(@default_store.reload.default_currency).to eq('EUR')
         expect(@default_store.default_country&.iso).to eq('US')
+      end
+
+      # An unknown country is refused before the token is spent, so the
+      # operator can correct the typo and try again.
+      it 'refuses an unknown country and leaves the token usable' do
+        post :create, params: valid_params.merge(country_iso: 'ZZ'), as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(@default_store.reload.setup_token).to be_present
+        expect(Spree.admin_user_class.find_by(email: 'owner@example.com')).to be_nil
       end
 
       # The token is spent in the same request, so persisting garbage here

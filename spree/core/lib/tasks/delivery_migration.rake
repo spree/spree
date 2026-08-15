@@ -127,16 +127,46 @@ namespace :spree do
     referenced_ids = Spree::DeliveryMethod.unscoped.distinct.pluck(:delivery_zone_id).compact
     legacy_zones = Spree::Zone.where(id: referenced_ids - migrated.values)
 
+    # Members are named by ISO code in 6.0, and countries and states stopped
+    # being records — so the legacy tables are read directly by id, the way
+    # this task's sibling upgrade steps read tables their models no longer own.
+    connection = ActiveRecord::Base.connection
+    country_iso_for = lambda do |country_id|
+      return nil if country_id.blank?
+
+      connection.select_value(
+        "SELECT iso FROM spree_countries WHERE id = #{connection.quote(country_id)}"
+      )
+    end
+
+    state_pair_for = lambda do |state_id|
+      return nil if state_id.blank?
+
+      row = connection.select_one(<<~SQL.squish)
+        SELECT spree_states.abbr AS abbr, spree_countries.iso AS iso
+        FROM spree_states
+        INNER JOIN spree_countries ON spree_countries.id = spree_states.country_id
+        WHERE spree_states.id = #{connection.quote(state_id)}
+      SQL
+      row && [row['abbr'], row['iso']]
+    end
+
     copy_members = lambda do |zone, delivery_zone|
       zone.zone_members.find_each do |member|
         case member.zoneable_type
         when 'Spree::Country'
-          delivery_zone.members.create!(member_type: 'country', country_id: member.zoneable_id)
-        when 'Spree::State'
-          state = Spree::State.find_by(id: member.zoneable_id)
-          next unless state
+          iso = country_iso_for.call(member.zoneable_id)
+          next if iso.blank?
 
-          delivery_zone.members.create!(member_type: 'state', state_id: state.id, country_id: state.country_id)
+          delivery_zone.members.create!(member_type: 'country', country_iso: iso)
+        when 'Spree::State'
+          pair = state_pair_for.call(member.zoneable_id)
+          next if pair.nil?
+
+          abbr, iso = pair
+          # A state member carries its country too: a subdivision code is only
+          # unique within its country.
+          delivery_zone.members.create!(member_type: 'state', state_code: abbr, country_iso: iso)
         end
       end
     end

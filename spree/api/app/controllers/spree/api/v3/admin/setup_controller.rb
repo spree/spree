@@ -32,6 +32,7 @@ module Spree
           #         first_name?, last_name?, store_name, currency?, country_iso? }
           def create
             return render_setup_unavailable unless setup_token_usable?
+            return render_unknown_country if unknown_country_iso?
 
             user = nil
             store = Spree::Store.default
@@ -70,6 +71,21 @@ module Spree
 
             provided.present? && stored.present? &&
               ActiveSupport::SecurityUtils.secure_compare(stored, provided)
+          end
+
+          # Checked before the token is spent: setup is one-shot, so applying a
+          # store with the wrong country — or silently ignoring the request —
+          # would leave no in-band way to correct it.
+          def unknown_country_iso?
+            params[:country_iso].present? && Spree::Country.by_iso(params[:country_iso]).nil?
+          end
+
+          def render_unknown_country
+            render_error(
+              code: ERROR_CODES[:resource_invalid],
+              message: "Unknown country #{params[:country_iso]}",
+              status: :unprocessable_content
+            )
           end
 
           # Token mismatch, spent token, and already-set-up all render the
@@ -111,8 +127,8 @@ module Spree
               end
 
               if params[:country_iso].present?
-                country = Spree::Country.find_by(iso: params[:country_iso].to_s.upcase)
-                permitted[:default_country_id] = country.id if country
+                country = Spree::Country.by_iso(params[:country_iso])
+                permitted[:default_country_iso_code] = country.iso if country
               end
 
               permitted

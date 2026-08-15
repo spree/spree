@@ -178,7 +178,12 @@ module Spree
 
     has_many :data_feeds, class_name: 'Spree::DataFeed'
 
-    belongs_to :default_country, class_name: 'Spree::Country'
+    # Countries are reference data, so this is a plain writer over the stored
+    # code. Reading goes through Spree::Stores::Markets#default_country, which
+    # prefers the default market's country when the store has markets.
+    def default_country=(value)
+      self[:default_country_iso_code] = value&.iso
+    end
 
     has_many :reports, class_name: 'Spree::Report'
     has_many :exports, class_name: 'Spree::Export'
@@ -303,24 +308,10 @@ module Spree
       return if iso.blank?
 
       @default_country_iso = iso
-
       country = Spree::Country.by_iso(iso)
+      return if country.nil?
 
-      unless country
-        iso_country = ::Country[iso]
-        return unless iso_country
-
-        country = Spree::Country.create!(
-          iso_name: iso_country.local_name&.upcase,
-          iso: iso_country.alpha2,
-          iso3: iso_country.alpha3,
-          name: iso_country.local_name,
-          numcode: iso_country.number,
-          states_required: Spree::Address::STATES_REQUIRED.include?(iso),
-          zipcode_required: !Spree::Address::NO_ZIPCODE_ISO_CODES.include?(iso)
-        )
-      end
-
+      self[:default_country_iso_code] = country.iso
       @default_country_for_market = country
     end
 
@@ -400,18 +391,16 @@ module Spree
     #
     # @return [ActiveRecord::Relation<Spree::Country>]
     def countries_with_shipping_coverage
-      return Spree::Country.order(:name) if Spree::DeliveryMethod.where(delivery_zone_id: nil).exists?
+      return Spree::Country.all.sort_by(&:name) if Spree::DeliveryMethod.where(delivery_zone_id: nil).exists?
 
       zone_ids = Spree::DeliveryMethod.where.not(delivery_zone_id: nil).select(:delivery_zone_id)
-      members = Spree::DeliveryZoneMember.where(delivery_zone_id: zone_ids)
 
-      country_ids = members.where(member_type: %w[country postal_code]).select(:country_id)
-      state_country_ids = Spree::State.where(id: members.where(member_type: 'state').select(:state_id)).select(:country_id)
+      # Every member carries its own country, including state members, so
+      # coverage no longer has to resolve a subdivision back to its country.
+      country_isos = Spree::DeliveryZoneMember.where(delivery_zone_id: zone_ids).
+                     where.not(country_iso: nil).distinct.pluck(:country_iso)
 
-      Spree::Country
-        .where(id: country_ids)
-        .or(Spree::Country.where(id: state_country_ids))
-        .order(:name)
+      country_isos.filter_map { |iso| Spree::Country.by_iso(iso) }.sort_by(&:name)
     end
 
     # Returns the default stock location for the store or creates a new one if it doesn't exist
@@ -421,7 +410,7 @@ module Spree
         stock_location_scope = Spree::StockLocation.where(default: true)
         stock_location_scope.first || ActiveRecord::Base.connected_to(role: :writing) do
           stock_location_scope.create(default: true, name: Spree.t(:default_stock_location_name),
-                                      country: default_country)
+                                      country_iso: default_country&.iso)
         end
       end
     end
