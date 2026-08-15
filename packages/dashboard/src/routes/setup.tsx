@@ -261,7 +261,12 @@ function SetupForm({ token }: { token: string }) {
         <h1 className="text-2xl font-bold">{t('admin.setup.title')}</h1>
         <p className="text-sm text-muted-foreground">{t('admin.setup.subtitle')}</p>
       </div>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
+      {/* Chrome ignores `autocomplete="off"` on a field it has decided is part
+          of an address form — which is what it made of the country box, and it
+          covered our own list with saved addresses. On the form element it is
+          honoured. Nothing is lost here: this screen creates an account that
+          does not exist yet, so there is nothing useful to autofill. */}
+      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6" autoComplete="off">
         {errors.root && <p className="text-sm text-destructive">{errors.root.message}</p>}
         <div className="grid gap-2">
           <Label htmlFor="store_name">{t('admin.fields.setup.store_name.label')}</Label>
@@ -276,7 +281,7 @@ function SetupForm({ token }: { token: string }) {
           )}
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="country_code">{t('admin.fields.setup.country_code.label')}</Label>
+          <Label htmlFor="setup-country-search">{t('admin.fields.setup.country_code.label')}</Label>
           <Controller
             name="country_code"
             control={form.control}
@@ -291,14 +296,14 @@ function SetupForm({ token }: { token: string }) {
                 itemToStringValue={(country: SetupCountry | null) => country?.code ?? ''}
                 disabled={countriesQuery.isPending}
               >
-                {/* Chrome reads a text input named like a country, sitting
+                {/* Chrome reads a text input identified as a country, sitting
                     near name and email fields, as part of an address form and
-                    covers our own list with saved addresses. `autoComplete`
-                    alone is ignored on address-shaped fields, so the name is
-                    scrambled too — the value is held by react-hook-form, not
-                    by the DOM, so nothing depends on it. */}
+                    covers our own list with saved addresses. It ignores
+                    `autoComplete` on such a field, and matches on the id and
+                    name, so neither says "country" — the value is held by
+                    react-hook-form, not the DOM, so nothing depends on them. */}
                 <ComboboxInput
-                  id="country_code"
+                  id="setup-country-search"
                   name="setup-country-search"
                   className="min-h-8.5"
                   autoComplete="off"
@@ -364,7 +369,7 @@ function SetupForm({ token }: { token: string }) {
             <p className="text-xs text-muted-foreground">{t('admin.fields.setup.locale.help')}</p>
           </div>
           <div className="grid grid-rows-subgrid row-span-3 gap-2">
-            <Label htmlFor="currency">{t('admin.fields.setup.currency.label')}</Label>
+            <Label htmlFor="setup-currency-search">{t('admin.fields.setup.currency.label')}</Label>
             {/* The country's own currency leads the list and is preselected,
                 but the merchant can override it — shipping from Warsaw and
                 pricing in euros is an ordinary thing to want. */}
@@ -383,7 +388,7 @@ function SetupForm({ token }: { token: string }) {
                       currency box sat half a step above the language box
                       beside it. Match the taller one. */}
                   <ComboboxInput
-                    id="currency"
+                    id="setup-currency-search"
                     name="setup-currency-search"
                     className="min-h-8.5"
                     autoComplete="off"
