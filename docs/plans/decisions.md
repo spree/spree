@@ -102,10 +102,13 @@ test failure, not a review comment — wrap genuinely global lookups in
 existence checks are exempt (they are dominated by loads from already-scoped
 rows and uniqueness validations) — exemption is NOT proof of scoping, so a
 lookup fed a request-derived id still requires `current_store` fetching even
-though the guard stays silent on it; and only the v3 controller surface is
-watched — jobs, webhooks and callbacks are a future extension, ideally keyed
-off `Spree::Current.store` assignment rather than per-entry-point
-registration. A new `Rails.cache` call without a store-scoped key fails the
+though the guard stays silent on it. Coverage follows the store context
+rather than the entry point (extended 2026-08-14): declaring a store through
+`Spree::Current#store=` arms the guard for that unit of work, so jobs,
+webhook controllers and console scripts are watched without registering
+each one, while work that never declares a store stays unguarded — reading
+the default store through the fallback is not a scoping claim worth
+checking. A new `Rails.cache` call without a store-scoped key fails the
 core suite until scoped or reviewed onto the allowlist, and a store-owned
 model with an unscoped `acts_as_list` fails it too (positions would bleed
 across stores — the bug PaymentMethod shipped with, fixed alongside three

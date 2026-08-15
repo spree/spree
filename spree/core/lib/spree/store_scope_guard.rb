@@ -72,6 +72,19 @@ module Spree
         RequestStore.store[ACTIVE_KEY] = previous
       end
 
+      # Opens the window for whatever declared a store context — a job, a
+      # webhook, a console script — and leaves it open until Spree::Current
+      # resets, which Rails does per request and per job. Called from
+      # `Spree::Current#store=`; work that never declares a store stays
+      # unguarded, since reading the default store through the fallback is
+      # not a scoping claim.
+      def arm!
+        return unless enabled?
+
+        install!
+        Spree::Current.store_scope_guard_armed = true
+      end
+
       # Suppresses the guard for a deliberately store-less lookup.
       def skip
         previous = RequestStore.store[SKIP_KEY]
@@ -82,7 +95,9 @@ module Spree
       end
 
       def active?
-        RequestStore.store[ACTIVE_KEY] && !RequestStore.store[SKIP_KEY]
+        return false if RequestStore.store[SKIP_KEY]
+
+        RequestStore.store[ACTIVE_KEY] || Spree::Current.store_scope_guard_armed.present?
       end
 
       # Forgets memoized environment/schema state (specs, migrations).
