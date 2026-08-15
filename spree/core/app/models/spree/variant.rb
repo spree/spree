@@ -526,13 +526,30 @@ module Spree
       # observe the write without a reload. `base_prices.find_or_initialize_by`
       # would issue a fresh query and return a detached object, leaving the
       # loaded collection — and the serialized response — stale.
-      price =
+      existing =
         if prices.loaded?
-          prices.detect { |p| p.price_list_id.nil? && p.currency == currency } ||
-            prices.build(currency: currency)
+          prices.detect { |p| p.price_list_id.nil? && p.currency == currency }
         else
-          prices.base_prices.find_or_initialize_by(currency: currency)
+          prices.base_prices.find_by(currency: currency)
         end
+
+      # A blank amount means the merchant left that currency empty, which is
+      # the same statement as leaving it out of the payload: there is no base
+      # price in this currency. Writing it would persist a nil amount, and a
+      # base price (unlike a price-list placeholder) must have one.
+      if amount.blank?
+        return if existing.nil?
+
+        prices.delete(existing) if prices.loaded?
+        existing.destroy if existing.persisted?
+        return
+      end
+
+      price = existing || if prices.loaded?
+                            prices.build(currency: currency)
+                          else
+                            prices.base_prices.build(currency: currency)
+                          end
 
       price.amount = amount
       price.compare_at_amount = compare_at_amount

@@ -669,6 +669,39 @@ describe Spree::Variant, type: :model do
       expect(price.compare_at_amount).to eq(35.00)
     end
 
+    # A base price must carry an amount, so a currency the merchant left empty
+    # is an absent base price rather than one with a nil amount.
+    context 'when the amount is blank' do
+      it 'does not create a base price' do
+        expect { variant.set_price(currency, '') }.not_to raise_error
+
+        expect(variant.prices.base_prices.find_by(currency: currency)).to be_nil
+      end
+
+      it 'removes an existing base price' do
+        create(:price, variant: variant, currency: currency, amount: 10.00)
+
+        variant.set_price(currency, '')
+
+        expect(variant.prices.base_prices.find_by(currency: currency)).to be_nil
+      end
+
+      it 'leaves a price list placeholder alone' do
+        price_list = create(:price_list)
+        placeholder = create(:price, variant: variant, currency: currency, amount: nil, price_list: price_list)
+
+        variant.set_price(currency, '')
+
+        expect(placeholder.reload).to be_persisted
+      end
+
+      it 'does not raise when the prices association is loaded' do
+        variant.prices.load
+
+        expect { variant.set_price(currency, '') }.not_to raise_error
+      end
+    end
+
     # Guards the PATCH /variants response: when the prices association is
     # eager-loaded for serialization, updating a base price must be visible
     # to readers that branch on `prices.loaded?` (#price_in, #price_for)
