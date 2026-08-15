@@ -14,7 +14,7 @@ stock_location = store.stock_locations.find_by(default: true) || store.stock_loc
 
 # Any missing field leaves the origin unquotable, so completeness — not just a
 # blank street — decides whether the demo address applies.
-if stock_location&.country_iso == 'US' &&
+if stock_location&.country_code == 'US' &&
    [stock_location.address1, stock_location.city, stock_location.state_code, stock_location.zipcode].any?(&:blank?)
   stock_location.update!(
     address1: '417 Montgomery St',

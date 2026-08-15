@@ -22,7 +22,7 @@ function addressBlock(order: Order): string {
     [address.city, address.state_name ?? address.state_code, address.postal_code]
       .filter(Boolean)
       .join(', '),
-    address.country_name || address.country_iso,
+    address.country_name || address.country_code,
   ]
     .filter(Boolean)
     .map((line) => escapeHtml(String(line)))

@@ -182,7 +182,7 @@ module Spree
     # code. Reading goes through Spree::Stores::Markets#default_country, which
     # prefers the default market's country when the store has markets.
     def default_country=(value)
-      self[:default_country_iso_code] = value&.iso
+      self[:default_country_code] = value&.iso
     end
 
     has_many :reports, class_name: 'Spree::Report'
@@ -300,19 +300,23 @@ module Spree
       channels.default.first || channels.active.first
     end
 
-    # Virtual attribute — sets the country for the default market created on store creation.
-    # Not persisted on the store itself; only used by the after_create callback.
-    attr_reader :default_country_iso
+    # Sets the stored code and seeds the country for the default market created
+    # on store creation. Reading goes through Spree::Stores::Markets, which
+    # prefers the default market's country once the store has markets.
+    def default_country_code=(code)
+      return if code.blank?
 
-    def default_country_iso=(iso)
-      return if iso.blank?
-
-      @default_country_iso = iso
-      country = Spree::Country.by_iso(iso)
+      country = Spree::Country.by_iso(code)
       return if country.nil?
 
-      self[:default_country_iso_code] = country.iso
+      self[:default_country_code] = country.iso
       @default_country_for_market = country
+    end
+
+    # @deprecated Use +default_country_code=+. Removed in 6.1.
+    def default_country_iso=(code)
+      Spree::Deprecation.warn('Spree::Store#default_country_iso= is deprecated, use #default_country_code= instead')
+      self.default_country_code = code
     end
 
     def unique_name
@@ -397,10 +401,10 @@ module Spree
 
       # Every member carries its own country, including state members, so
       # coverage no longer has to resolve a subdivision back to its country.
-      country_isos = Spree::DeliveryZoneMember.where(delivery_zone_id: zone_ids).
-                     where.not(country_iso: nil).distinct.pluck(:country_iso)
+      country_codes = Spree::DeliveryZoneMember.where(delivery_zone_id: zone_ids).
+                      where.not(country_code: nil).distinct.pluck(:country_code)
 
-      country_isos.filter_map { |iso| Spree::Country.by_iso(iso) }.sort_by(&:name)
+      country_codes.filter_map { |code| Spree::Country.by_iso(code) }.sort_by(&:name)
     end
 
     # Returns the default stock location for the store or creates a new one if it doesn't exist
@@ -410,7 +414,7 @@ module Spree
         stock_location_scope = Spree::StockLocation.where(default: true)
         stock_location_scope.first || ActiveRecord::Base.connected_to(role: :writing) do
           stock_location_scope.create(default: true, name: Spree.t(:default_stock_location_name),
-                                      country_iso: default_country&.iso)
+                                      country_code: default_country&.iso)
         end
       end
     end

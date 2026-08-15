@@ -12,8 +12,9 @@ const market = await client.markets.create({
   default_locale: 'de',
   supported_locales: ['de', 'en', 'fr'],
   tax_inclusive: true,
-  country_isos: ['DE', 'FR', 'IT'],
+  country_codes: ['DE', 'FR', 'IT'],
 })
+
 // endregion:example
 
 export { market }

@@ -251,7 +251,7 @@
       "zipcode": {
         "label": "Kod pocztowy"
       },
-      "country_iso": {
+      "country_code": {
         "label": "Kraj"
       },
       "state_code": {

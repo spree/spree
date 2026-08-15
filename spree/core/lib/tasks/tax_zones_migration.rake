@@ -15,7 +15,7 @@ namespace :spree do
     # reference data rather than records in 6.0, so the ids the members hold
     # can only be resolved against the tables the upgrade keeps.
     connection = ActiveRecord::Base.connection
-    country_iso_by_id = lambda do |id|
+    country_code_by_id = lambda do |id|
       connection.select_value("SELECT iso FROM spree_countries WHERE id = #{connection.quote(id)}")
     end
     state_pair_by_id = lambda do |id|
@@ -25,15 +25,15 @@ namespace :spree do
         INNER JOIN spree_countries ON spree_countries.id = spree_states.country_id
         WHERE spree_states.id = #{connection.quote(id)}
       SQL
-      row && { country_iso: row['iso'], state_code: row['abbr'] }
+      row && { country_code: row['iso'], state_code: row['abbr'] }
     end
 
     jurisdictions_for = lambda do |zone|
       zone.zone_members.filter_map do |member|
         case member.zoneable_type
         when 'Spree::Country'
-          iso = country_iso_by_id.call(member.zoneable_id)
-          { country_iso: iso, state_code: nil } if iso
+          iso = country_code_by_id.call(member.zoneable_id)
+          { country_code: iso, state_code: nil } if iso
         when 'Spree::State'
           state_pair_by_id.call(member.zoneable_id)
         end
@@ -45,7 +45,7 @@ namespace :spree do
     skipped = 0
 
     Spree::TaxRate.with_deleted.
-      where(country_iso: nil, state_code: nil).where.not(zone_id: nil).find_each do |rate|
+      where(country_code: nil, state_code: nil).where.not(zone_id: nil).find_each do |rate|
       zone = Spree::Zone.find_by(id: rate.zone_id)
       jurisdictions = zone ? jurisdictions_for.call(zone) : []
 
@@ -62,12 +62,12 @@ namespace :spree do
       # now carries a country. The merchant would be short a rate with nothing
       # saying so.
       ApplicationRecord.transaction do
-        rate.update_columns(country_iso: first[:country_iso], state_code: first[:state_code], updated_at: Time.current)
+        rate.update_columns(country_code: first[:country_code], state_code: first[:state_code], updated_at: Time.current)
 
         rest.each do |jurisdiction|
           Spree::TaxRate.insert(
             rate.attributes.slice(*Spree::TaxRate.column_names).except('id', 'created_at', 'updated_at').merge(
-              'country_iso' => jurisdiction[:country_iso],
+              'country_code' => jurisdiction[:country_code],
               'state_code' => jurisdiction[:state_code],
               'created_at' => Time.current,
               'updated_at' => Time.current
@@ -91,13 +91,13 @@ namespace :spree do
     # re-scoping who pays what, so its price list is deactivated instead and
     # reported with the countries it named, for the merchant to rebuild as a
     # market. Zones naming states resolve to those states' countries.
-    zone_country_isos = lambda do |zone_ids|
+    zone_country_codes = lambda do |zone_ids|
       members = Spree::ZoneMember.where(zone_id: zone_ids)
       country_ids = members.where(zoneable_type: 'Spree::Country').pluck(:zoneable_id)
       state_ids = members.where(zoneable_type: 'Spree::State').pluck(:zoneable_id)
 
-      isos = country_ids.filter_map { |id| country_iso_by_id.call(id) }
-      isos += state_ids.filter_map { |id| state_pair_by_id.call(id)&.fetch(:country_iso) }
+      isos = country_ids.filter_map { |id| country_code_by_id.call(id) }
+      isos += state_ids.filter_map { |id| state_pair_by_id.call(id)&.fetch(:country_code) }
       isos.uniq.sort
     end
 
@@ -107,17 +107,17 @@ namespace :spree do
     Spree::PriceRule.where(type: 'Spree::PriceRules::ZoneRule').find_each do |rule|
       stored = rule.preferences.with_indifferent_access
       zone_ids = Array(stored[:zone_ids]).reject(&:blank?)
-      isos = zone_country_isos.call(zone_ids)
+      isos = zone_country_codes.call(zone_ids)
 
       price_list = Spree::PriceList.with_deleted.find_by(id: rule.price_list_id)
       market = if price_list && isos.any?
-                 price_list.store.markets.find { |candidate| candidate.country_isos == isos }
+                 price_list.store.markets.find { |candidate| candidate.country_codes == isos }
                end
 
       if market
         rule.update_columns(
           type: 'Spree::PriceRules::MarketRule',
-          preferences: stored.except(:zone_ids, :country_isos).
+          preferences: stored.except(:zone_ids, :country_codes).
                        merge(market_ids: [market.id.to_s]).to_h.symbolize_keys,
           updated_at: Time.current
         )

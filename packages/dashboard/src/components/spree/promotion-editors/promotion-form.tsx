@@ -828,9 +828,9 @@ function RuleSummary({ draft }: { draft: PromotionRuleFormDraft }) {
 const RULE_PREFS_SHOWN_ELSEWHERE = new Set([
   'match_policy', // shown in the rules card header
   'customer_group_ids', // surfaced via `customer_groups` records
-  'country_isos', // surfaced via `countries` records
+  'country_codes', // surfaced via `countries` records
   'country_id',
-  'country_iso',
+  'country_code',
   'channel_ids', // surfaced via `channels` records
   'market_ids', // surfaced via `markets` records
 ])

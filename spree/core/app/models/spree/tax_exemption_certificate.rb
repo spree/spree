@@ -35,7 +35,7 @@ module Spree
 
     validates :document, size: { less_than_or_equal_to: MAX_DOCUMENT_SIZE }
 
-    # Where the certificate holds, as codes: a blank country_iso claims every
+    # Where the certificate holds, as codes: a blank country_code claims every
     # country, and a country with no state_code claims all of its states.
     # New writes reject unknown codes; a stored one that stops resolving still
     # narrows the certificate to nothing, never widens it to everywhere.
@@ -52,7 +52,7 @@ module Spree
     scope :for_address, lambda { |address|
       next none if address.nil?
 
-      where(country_iso: [address.country_iso.presence, nil].uniq).
+      where(country_code: [address.country_code.presence, nil].uniq).
         where(state_code: [address.state_code.presence, nil].uniq)
     }
 

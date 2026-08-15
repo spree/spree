@@ -31,7 +31,7 @@ module Spree
       # country row, so eligibility keeps working once Spree::Country is gone.
       #
       # @return [String, nil]
-      def country_iso
+      def country_code
         country&.iso
       end
 

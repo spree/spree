@@ -59,7 +59,7 @@ export interface AddressParams {
   phone?: string
   company?: string
   /** ISO 3166-1 alpha-2 country code (e.g., "US", "DE") */
-  country_iso: string
+  country_code: string
   /** ISO 3166-2 subdivision code without country prefix (e.g., "CA", "NY") */
   state_abbr?: string
   /** State name - used for countries without predefined states */

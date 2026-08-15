@@ -115,7 +115,7 @@ module Spree
       context 'when the cart carries tax rows' do
         let(:tax_category) { create(:tax_category) }
         let!(:rate) do
-          create(:tax_rate, store: store, country_iso: ready_cart.tax_country&.iso, amount: 0.1,
+          create(:tax_rate, store: store, country_code: ready_cart.tax_country&.iso, amount: 0.1,
                             included_in_price: false, tax_category: tax_category)
         end
 

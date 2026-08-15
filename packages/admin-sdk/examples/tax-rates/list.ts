@@ -6,7 +6,7 @@ const client = createAdminClient({
 })
 
 // region:example
-const { data: taxRates } = await client.taxRates.list({ country_iso_eq: 'DE' })
+const { data: taxRates } = await client.taxRates.list({ country_code_eq: 'DE' })
 
 // endregion:example
 

@@ -19,7 +19,7 @@ const { signed_id } = await client.directUploads.create({
 const certificate = await client.companies.taxExemptionCertificates.create('comp_UkLWZg9DAJ', {
   certificate_number: 'DE-RESALE-7',
   reason_code: 'resale',
-  country_iso: 'DE',
+  country_code: 'DE',
   document: signed_id,
 })
 

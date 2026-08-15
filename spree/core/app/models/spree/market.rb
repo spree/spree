@@ -22,12 +22,12 @@ module Spree
     # validation and then delete every join row.
     def countries
       market_countries.reject(&:marked_for_destruction?).
-        filter_map { |join| Spree::Country.by_iso(join.country_iso) }.sort_by(&:name)
+        filter_map { |join| Spree::Country.by_iso(join.country_code) }.sort_by(&:name)
     end
 
     # @param values [Array<Spree::Country>]
     def countries=(values)
-      self.country_isos = Array(values).map { |country| country.respond_to?(:iso) ? country.iso : country.to_s }
+      self.country_codes = Array(values).map { |country| country.respond_to?(:iso) ? country.iso : country.to_s }
     end
     has_many :orders, class_name: 'Spree::Order', dependent: :nullify
 
@@ -91,7 +91,7 @@ module Spree
 
       joins(:market_countries)
         .where(store_id: store.id)
-        .where(spree_market_countries: { country_iso: iso })
+        .where(spree_market_countries: { country_code: iso })
         .take
     end
 
@@ -141,14 +141,14 @@ module Spree
       super(normalized)
     end
 
-    # Read companion for `country_isos=`. Returns the sorted list of ISO codes
+    # Read companion for `country_codes=`. Returns the sorted list of ISO codes
     # currently assigned to the market.
     #
     # @return [Array<String>]
     # Reads through +countries+ rather than the join rows: assigning
-    # +country_isos=+ replaces that collection, which would leave a cached
+    # +country_codes=+ replaces that collection, which would leave a cached
     # market_countries association reporting the old set.
-    def country_isos
+    def country_codes
       countries.filter_map(&:iso).sort
     end
 
@@ -161,14 +161,14 @@ module Spree
     # The single writer for a market's countries — +countries=+ routes here.
     # Unknown codes are dropped; the presence validation covers the case where
     # every one of them was bogus.
-    def country_isos=(values)
+    def country_codes=(values)
       isos = Array(values).compact.map { |value| value.to_s.upcase }.reject(&:blank?).uniq
       isos = isos.select { |iso| Spree::Country.by_iso(iso) }
 
-      existing = market_countries.index_by(&:country_iso)
+      existing = market_countries.index_by(&:country_code)
 
-      market_countries.each { |join| join.mark_for_destruction unless isos.include?(join.country_iso) }
-      (isos - existing.keys).each { |iso| market_countries.build(country_iso: iso) }
+      market_countries.each { |join| join.mark_for_destruction unless isos.include?(join.country_code) }
+      (isos - existing.keys).each { |iso| market_countries.build(country_code: iso) }
     end
 
     # Returns true when the market is safe to delete. A market cannot be deleted

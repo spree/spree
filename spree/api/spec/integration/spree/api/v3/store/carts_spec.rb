@@ -207,7 +207,7 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
               address1: { type: :string }, address2: { type: :string },
               city: { type: :string }, postal_code: { type: :string },
               phone: { type: :string }, company: { type: :string },
-              country_iso: { type: :string }, state_code: { type: :string }
+              country_code: { type: :string }, state_code: { type: :string }
             }
           },
           shipping_address: {
@@ -217,7 +217,7 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
               address1: { type: :string }, address2: { type: :string },
               city: { type: :string }, postal_code: { type: :string },
               phone: { type: :string }, company: { type: :string },
-              country_iso: { type: :string }, state_code: { type: :string }
+              country_code: { type: :string }, state_code: { type: :string }
             }
           }
         }

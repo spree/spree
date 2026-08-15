@@ -153,7 +153,7 @@ function CustomerBody({ customer }: { customer: Customer }) {
   const lastCompletedOrder = orders.find((o) => o.status === 'complete')
 
   const defaultShipping = customer.addresses?.find((a) => a.is_default_shipping)
-  const location = [defaultShipping?.city, defaultShipping?.country_iso].filter(Boolean).join(', ')
+  const location = [defaultShipping?.city, defaultShipping?.country_code].filter(Boolean).join(', ')
 
   // The server hard-deletes only when the customer has no completed orders
   // (Spree::Core::DestroyWithOrdersError → 422 `customer_has_orders`). We
@@ -969,7 +969,7 @@ function AddressesCard({ customer }: { customer: Customer }) {
                   {addr.address2 && <div className="text-muted-foreground">{addr.address2}</div>}
                   <div className="text-muted-foreground">
                     {[addr.city, addr.state_code, addr.postal_code].filter(Boolean).join(', ')} ·{' '}
-                    {addr.country_iso}
+                    {addr.country_code}
                   </div>
                   {addr.phone && <div className="text-muted-foreground">{addr.phone}</div>}
                 </div>
@@ -1082,7 +1082,7 @@ function CustomerAddressDialog({
   }
 
   // Wait for countries before mounting so the country/state lazy initializer
-  // can resolve the address's country_iso/state_code to a real option.
+  // can resolve the address's country_code/state_code to a real option.
   if (countriesLoading) return null
 
   return (

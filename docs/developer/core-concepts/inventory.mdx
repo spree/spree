@@ -131,7 +131,7 @@ const location = await client.stockLocations.create({
   name: 'Warehouse 1',
   admin_name: 'WH1 Domestic',
   default: true,
-  country_iso: 'US',
+  country_code: 'US',
   propagate_all_variants: true,
 })
 
@@ -142,7 +142,7 @@ await client.stockLocations.update('sloc_xxx', { active: false })
 spree api post /stock_locations -d '{
   "name": "Warehouse 1",
   "default": true,
-  "country_iso": "US",
+  "country_code": "US",
   "propagate_all_variants": true
 }'
 ```

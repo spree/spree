@@ -8,17 +8,17 @@ import { useTranslation } from 'react-i18next'
  * worldwide scope, never as a dash.
  */
 export function JurisdictionLabel({
-  countryIso,
+  countryCode,
   stateCode,
 }: {
-  countryIso?: string | null
+  countryCode?: string | null
   stateCode?: string | null
 }) {
   const { t } = useTranslation()
   const regionName = useDisplayName('region')
 
-  if (!countryIso) return <>{t('admin.jurisdiction.everywhere')}</>
+  if (!countryCode) return <>{t('admin.jurisdiction.everywhere')}</>
 
-  const country = regionName(countryIso) ?? countryIso
+  const country = regionName(countryCode) ?? countryCode
   return <>{stateCode ? `${country} — ${stateCode}` : country}</>
 }

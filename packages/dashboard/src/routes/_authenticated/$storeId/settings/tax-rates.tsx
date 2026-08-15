@@ -231,7 +231,7 @@ function EditTaxRateSheet({
         name: taxRate.name,
         amount_percentage: taxRate.amount_percentage ?? 0,
         tax_category_id: taxRate.tax_category_id ?? '',
-        country_iso: taxRate.country_iso ?? '',
+        country_code: taxRate.country_code ?? '',
         state_code: taxRate.state_code ?? '',
         included_in_price: taxRate.included_in_price,
         show_rate_in_label: taxRate.show_rate_in_label,
@@ -294,8 +294,8 @@ function TaxRateFormFields({ form }: { form: UseFormReturn<TaxRateFormValues> })
   const { t } = useTranslation()
   const { errors } = form.formState
   const { data: taxCategories } = useTaxCategories({ limit: 100 })
-  const countryIso = form.watch('country_iso')
-  const { states } = useCountryStates(countryIso)
+  const countryCode = form.watch('country_code')
+  const { states } = useCountryStates(countryCode)
 
   return (
     <FieldGroup>
@@ -366,9 +366,9 @@ function TaxRateFormFields({ form }: { form: UseFormReturn<TaxRateFormValues> })
       </Field>
 
       <Field>
-        <FieldLabel htmlFor="country_iso">{t('admin.fields.country.label')}</FieldLabel>
+        <FieldLabel htmlFor="country_code">{t('admin.fields.country.label')}</FieldLabel>
         <Controller
-          name="country_iso"
+          name="country_code"
           control={form.control}
           render={({ field }) => (
             <CountryCombobox
@@ -383,10 +383,10 @@ function TaxRateFormFields({ form }: { form: UseFormReturn<TaxRateFormValues> })
             />
           )}
         />
-        <FieldDescription>{t('admin.fields.tax_rate.country_iso.help')}</FieldDescription>
+        <FieldDescription>{t('admin.fields.tax_rate.country_code.help')}</FieldDescription>
       </Field>
 
-      {countryIso && states.length > 0 && (
+      {countryCode && states.length > 0 && (
         <Field>
           <FieldLabel htmlFor="state_code">{t('admin.fields.state.label')}</FieldLabel>
           <Controller
@@ -394,7 +394,7 @@ function TaxRateFormFields({ form }: { form: UseFormReturn<TaxRateFormValues> })
             control={form.control}
             render={({ field }) => (
               <StateCombobox
-                countryIso={countryIso}
+                countryCode={countryCode}
                 value={field.value}
                 onValueChange={field.onChange}
                 states={states}

@@ -63,7 +63,7 @@ RSpec.describe 'Admin Customer Addresses API', type: :request, swagger_doc: 'api
           address2: { type: :string },
           city: { type: :string },
           postal_code: { type: :string },
-          country_iso: { type: :string, description: 'ISO-2 country code (e.g. US)' },
+          country_code: { type: :string, description: 'ISO-2 country code (e.g. US)' },
           state_code: { type: :string, description: 'State/province abbreviation (e.g. NY)' },
           phone: { type: :string },
           company: { type: :string },
@@ -79,7 +79,7 @@ RSpec.describe 'Admin Customer Addresses API', type: :request, swagger_doc: 'api
           {
             first_name: 'Jane', last_name: 'Doe',
             address1: '350 Fifth Avenue', city: 'New York', postal_code: '10118',
-            country_iso: 'US', state_code: 'NY', phone: '+12125551234',
+            country_code: 'US', state_code: 'NY', phone: '+12125551234',
             label: 'Office'
           }
         end

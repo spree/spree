@@ -131,7 +131,7 @@ namespace :spree do
     # being records — so the legacy tables are read directly by id, the way
     # this task's sibling upgrade steps read tables their models no longer own.
     connection = ActiveRecord::Base.connection
-    country_iso_for = lambda do |country_id|
+    country_code_for = lambda do |country_id|
       return nil if country_id.blank?
 
       connection.select_value(
@@ -155,10 +155,10 @@ namespace :spree do
       zone.zone_members.find_each do |member|
         case member.zoneable_type
         when 'Spree::Country'
-          iso = country_iso_for.call(member.zoneable_id)
+          iso = country_code_for.call(member.zoneable_id)
           next if iso.blank?
 
-          delivery_zone.members.create!(member_type: 'country', country_iso: iso)
+          delivery_zone.members.create!(member_type: 'country', country_code: iso)
         when 'Spree::State'
           pair = state_pair_for.call(member.zoneable_id)
           next if pair.nil?
@@ -166,7 +166,7 @@ namespace :spree do
           abbr, iso = pair
           # A state member carries its country too: a subdivision code is only
           # unique within its country.
-          delivery_zone.members.create!(member_type: 'state', state_code: abbr, country_iso: iso)
+          delivery_zone.members.create!(member_type: 'state', state_code: abbr, country_code: iso)
         end
       end
     end

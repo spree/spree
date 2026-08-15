@@ -78,7 +78,7 @@ module Spree
     @@address_attributes = [
       :id, :firstname, :lastname, :first_name, :last_name,
       # state_abbr is the deprecated write name (see Spree::Address); 6.1 drops it.
-      :address1, :address2, :city, :country_iso, :state_code, :state_abbr,
+      :address1, :address2, :city, :country_code, :state_code, :state_abbr,
       :zipcode, :phone, :state_name, :alternative_phone, :company,
       :user_id, :deleted_at, :label, :quick_checkout
     ]
@@ -245,7 +245,7 @@ module Spree
                                    stock_movements_attributes: [:variant_id, :quantity, :originator_id, :stock_item_id]]
 
     @@store_attributes = [:name, :url, :seo_title, :code, :meta_keywords,
-                          :meta_description, :default_currency, :default_country_iso, :mail_from_address,
+                          :meta_description, :default_currency, :default_country_code, :mail_from_address,
                           :customer_support_email, :description, :address, :contact_phone,
                           :supported_locales, :default_locale, :supported_currencies,
                           :new_order_notifications_email,

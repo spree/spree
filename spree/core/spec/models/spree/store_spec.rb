@@ -293,15 +293,15 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
 
     describe '#ensure_default_market' do
-      context 'when default_country_iso is set with shipping coverage' do
+      context 'when default_country_code is set with shipping coverage' do
         let(:country) { Spree::Country.by_iso('US') }
         let(:store) { build(:store) }
 
         before do
           zone = create(:delivery_zone)
-          zone.members.create!(member_type: 'country', country_iso: country.iso)
+          zone.members.create!(member_type: 'country', country_code: country.iso)
           create(:shipping_method, delivery_zone: zone)
-          store.default_country_iso = country.iso
+          store.default_country_code = country.iso
         end
 
         it 'creates a default market named after the country' do
@@ -319,7 +319,7 @@ describe Spree::Store, type: :model, without_global_store: true do
         end
       end
 
-      context 'when default_country_iso is not set' do
+      context 'when default_country_code is not set' do
         let(:store) { build(:store) }
 
         it 'creates a fallback default market so the store always owns one' do
@@ -526,7 +526,7 @@ describe Spree::Store, type: :model, without_global_store: true do
       let!(:country) { Spree::Country.by_iso('US') }
       let(:store) { build(:store) }
 
-      before { store.write_attribute(:default_country_iso_code, country.iso) }
+      before { store.write_attribute(:default_country_code, country.iso) }
 
       it 'returns the store column value' do
         expect(store.default_country).to eq(country)
@@ -534,18 +534,18 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
   end
 
-  describe '#default_country_iso=' do
+  describe '#default_country_code=' do
     let(:store) { build(:store) }
 
     it 'names the country the store defaults to' do
-      store.default_country_iso = 'GB'
+      store.default_country_code = 'GB'
 
-      expect(store.default_country_iso).to eq('GB')
+      expect(store.default_country_code).to eq('GB')
       expect(store.default_country.iso).to eq('GB')
     end
 
     it 'ignores a code no country has' do
-      store.default_country_iso = 'ZZ'
+      store.default_country_code = 'ZZ'
 
       expect(store.default_country).to be_nil
     end
@@ -846,8 +846,8 @@ describe Spree::Store, type: :model, without_global_store: true do
       let!(:zone) { create(:delivery_zone) }
 
       before do
-        zone.members.create!(member_type: 'country', country_iso: country1.iso)
-        zone.members.create!(member_type: 'country', country_iso: country2.iso)
+        zone.members.create!(member_type: 'country', country_code: country1.iso)
+        zone.members.create!(member_type: 'country', country_code: country2.iso)
         create(:shipping_method, delivery_zone: zone)
       end
 
@@ -863,7 +863,7 @@ describe Spree::Store, type: :model, without_global_store: true do
       let!(:zone) { create(:delivery_zone) }
 
       before do
-        zone.members.create!(member_type: 'state', country_iso: state.country_iso, state_code: state.abbr)
+        zone.members.create!(member_type: 'state', country_code: state.country_code, state_code: state.abbr)
         create(:shipping_method, delivery_zone: zone)
       end
 
@@ -878,7 +878,7 @@ describe Spree::Store, type: :model, without_global_store: true do
       let!(:zone) { create(:delivery_zone) }
 
       before do
-        zone.members.create!(member_type: 'country', country_iso: country.iso)
+        zone.members.create!(member_type: 'country', country_code: country.iso)
       end
 
       it 'does not include countries from that zone' do
@@ -900,8 +900,8 @@ describe Spree::Store, type: :model, without_global_store: true do
       let!(:zone2) { create(:delivery_zone) }
 
       before do
-        zone1.members.create!(member_type: 'country', country_iso: country.iso)
-        zone2.members.create!(member_type: 'country', country_iso: country.iso)
+        zone1.members.create!(member_type: 'country', country_code: country.iso)
+        zone2.members.create!(member_type: 'country', country_code: country.iso)
         create(:shipping_method, delivery_zone: zone1)
         create(:shipping_method, delivery_zone: zone2)
       end

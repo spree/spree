@@ -4,7 +4,7 @@ import { z } from 'zod';
 export const DeliveryZoneMemberSchema = z.object({
   id: z.string(),
   member_type: z.string(),
-  country_iso: z.string().nullable(),
+  country_code: z.string().nullable(),
   state_code: z.string().nullable(),
   postal_code_prefix: z.string().nullable(),
   postal_code_from: z.string().nullable(),

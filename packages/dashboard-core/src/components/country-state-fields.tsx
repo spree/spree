@@ -18,11 +18,11 @@ type StateOption = { abbr: string; name: string }
  * when the country doesn't enumerate them (free-text region); `statesRequired`
  * tells callers whether to fall back to a plain text input.
  */
-export function useCountryStates(countryIso: string | null | undefined) {
+export function useCountryStates(countryCode: string | null | undefined) {
   const { countries } = useCountries()
   const country = useMemo(
-    () => countries.find((c) => c.iso === countryIso) ?? null,
-    [countries, countryIso],
+    () => countries.find((c) => c.iso === countryCode) ?? null,
+    [countries, countryCode],
   )
   return {
     states: ((country?.states ?? []) as StateOption[]).filter((s) => Boolean(s.abbr)),
@@ -35,18 +35,18 @@ export function useCountryStates(countryIso: string | null | undefined) {
  * abbreviation (e.g. "CA"). Callers should hide this and render a free-text
  * Input when `useCountryStates(...).states` is empty.
  *
- * Keyed on `countryIso` so the internal state is reset when the country
+ * Keyed on `countryCode` so the internal state is reset when the country
  * changes — prevents a stale highlight from a previous country.
  */
 export function StateCombobox({
-  countryIso,
+  countryCode,
   states,
   value,
   onValueChange,
   placeholder,
   disabled = false,
 }: {
-  countryIso: string | null | undefined
+  countryCode: string | null | undefined
   /** State list for the active country (typically from `useCountryStates`). */
   states: Pick<State, 'abbr' | 'name'>[]
   value: string | null | undefined
@@ -60,7 +60,7 @@ export function StateCombobox({
 
   return (
     <Combobox
-      key={countryIso ?? 'no-country'}
+      key={countryCode ?? 'no-country'}
       items={items}
       value={selected}
       onValueChange={(s: StateOption | null) => onValueChange(s?.abbr ?? '')}

@@ -14,7 +14,7 @@ const location = await client.companies.locations.create('comp_UkLWZg9DAJ', {
     address1: 'Hafenstr 1',
     city: 'Hamburg',
     postal_code: '20095',
-    country_iso: 'DE',
+    country_code: 'DE',
   },
 })
 

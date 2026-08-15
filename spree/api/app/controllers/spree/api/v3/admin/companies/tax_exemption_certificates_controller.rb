@@ -100,7 +100,7 @@ module Spree
             # POST /api/v3/admin/direct_uploads.
             def permitted_params
               params.permit(:certificate_number, :reason_code, :issuing_authority,
-                            :issued_at, :expires_at, :country_iso, :state_code, :document,
+                            :issued_at, :expires_at, :country_code, :state_code, :document,
                             metadata: {})
             end
 

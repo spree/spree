@@ -862,7 +862,7 @@
         }
       },
       "market": {
-        "country_isos": {
+        "country_codes": {
           "help": "Choisissez les pays couverts par ce marché. Chaque pays ne peut appartenir qu'à un seul marché par boutique.",
           "label": "Pays"
         },
@@ -1559,7 +1559,7 @@
         "jurisdiction": {
           "label": "S'applique à"
         },
-        "country_iso": {
+        "country_code": {
           "help": "Laissez vide pour taxer tous les pays."
         },
         "state_code": {
@@ -1580,7 +1580,7 @@
         }
       },
       "tax_exemption_certificate": {
-        "country_iso": {
+        "country_code": {
           "help": "Laissez vide pour une attestation valable partout."
         },
         "expires_at": {

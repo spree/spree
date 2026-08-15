@@ -88,7 +88,7 @@ export function DeliveryZoneSheet({
       // up empty and saving would wipe the zone's real coverage.
       members: (zone.members ?? []).map((member) => ({
         member_type: member.member_type as DeliveryZoneFormValues['members'][number]['member_type'],
-        country_iso: member.country_iso ?? '',
+        country_code: member.country_code ?? '',
         state_code: member.state_code ?? '',
         postal_code_prefix: member.postal_code_prefix ?? '',
         postal_code_from: member.postal_code_from ?? '',

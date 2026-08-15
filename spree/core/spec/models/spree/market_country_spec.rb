@@ -11,12 +11,12 @@ RSpec.describe Spree::MarketCountry, type: :model do
         let!(:zone) { create(:delivery_zone) }
 
         before do
-          zone.members.create!(member_type: 'country', country_iso: country.iso)
+          zone.members.create!(member_type: 'country', country_code: country.iso)
           create(:shipping_method, delivery_zone: zone)
         end
 
         it 'is valid' do
-          market_country = Spree::MarketCountry.new(market: market, country_iso: country.iso)
+          market_country = Spree::MarketCountry.new(market: market, country_code: country.iso)
           expect(market_country).to be_valid
         end
       end
@@ -28,12 +28,12 @@ RSpec.describe Spree::MarketCountry, type: :model do
           market # instantiate first — the factory may add a worldwide method
           # scope any worldwide methods (e.g. the market factory's) elsewhere
           elsewhere = create(:delivery_zone)
-          elsewhere.members.create!(member_type: 'country', country_iso: create(:country).iso)
+          elsewhere.members.create!(member_type: 'country', country_code: create(:country).iso)
           Spree::DeliveryMethod.find_each { |dm| dm.update!(delivery_zone: elsewhere) if dm.delivery_zone.nil? }
         end
 
         it 'is invalid' do
-          market_country = Spree::MarketCountry.new(market: market, country_iso: country.iso)
+          market_country = Spree::MarketCountry.new(market: market, country_code: country.iso)
           expect(market_country).not_to be_valid
           expect(market_country.errors[:country]).to include(/not covered by any shipping zone/)
         end
@@ -45,14 +45,14 @@ RSpec.describe Spree::MarketCountry, type: :model do
 
         before do
           market # instantiate first — the factory may add a worldwide method
-          zone.members.create!(member_type: 'country', country_iso: country.iso)
+          zone.members.create!(member_type: 'country', country_code: country.iso)
           elsewhere = create(:delivery_zone)
-          elsewhere.members.create!(member_type: 'country', country_iso: create(:country).iso)
+          elsewhere.members.create!(member_type: 'country', country_code: create(:country).iso)
           Spree::DeliveryMethod.find_each { |dm| dm.update!(delivery_zone: elsewhere) if dm.delivery_zone.nil? }
         end
 
         it 'is invalid' do
-          market_country = Spree::MarketCountry.new(market: market, country_iso: country.iso)
+          market_country = Spree::MarketCountry.new(market: market, country_code: country.iso)
           expect(market_country).not_to be_valid
           expect(market_country.errors[:country]).to include(/not covered by any shipping zone/)
         end
@@ -64,12 +64,12 @@ RSpec.describe Spree::MarketCountry, type: :model do
         let!(:zone) { create(:delivery_zone) }
 
         before do
-          zone.members.create!(member_type: 'state', country_iso: state.country_iso, state_code: state.abbr)
+          zone.members.create!(member_type: 'state', country_code: state.country_code, state_code: state.abbr)
           create(:shipping_method, delivery_zone: zone)
         end
 
         it 'is valid' do
-          market_country = Spree::MarketCountry.new(market: market, country_iso: country.iso)
+          market_country = Spree::MarketCountry.new(market: market, country_code: country.iso)
           expect(market_country).to be_valid
         end
       end
@@ -83,7 +83,7 @@ RSpec.describe Spree::MarketCountry, type: :model do
       it 'prevents assigning same country to another market in the same store' do
         market1 # ensure it exists
         market2 = create(:market, store: store)
-        market_country = Spree::MarketCountry.new(market: market2, country_iso: country.iso)
+        market_country = Spree::MarketCountry.new(market: market2, country_code: country.iso)
         expect(market_country).not_to be_valid
         expect(market_country.errors[:country]).to include(/already assigned to another market/)
       end

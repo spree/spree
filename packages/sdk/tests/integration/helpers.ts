@@ -20,7 +20,7 @@ export function testAddress(overrides: Record<string, string> = {}) {
     address1: '1 Times Square',
     city: 'New York',
     postal_code: '10036',
-    country_iso: getCredentials().country_iso,
+    country_code: getCredentials().country_code,
     state_abbr: 'NY',
     phone: '555-0100',
     ...overrides,

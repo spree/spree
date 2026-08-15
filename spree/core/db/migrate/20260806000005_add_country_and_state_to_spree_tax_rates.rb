@@ -12,9 +12,9 @@ class AddCountryAndStateToSpreeTaxRates < ActiveRecord::Migration[8.1]
     # it — one zone can span several. Existing rows are converted by
     # `spree:migrate_tax_zones`, which splits a multi-country zone into one rate
     # per country, before `zone_id` comes off.
-    add_column :spree_tax_rates, :country_iso, :string
+    add_column :spree_tax_rates, :country_code, :string
     add_column :spree_tax_rates, :state_code, :string
 
-    add_index :spree_tax_rates, [:country_iso, :state_code]
+    add_index :spree_tax_rates, [:country_code, :state_code]
   end
 end

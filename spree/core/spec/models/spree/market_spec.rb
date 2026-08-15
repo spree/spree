@@ -129,74 +129,74 @@ RSpec.describe Spree::Market, type: :model do
     end
   end
 
-  describe '#country_isos' do
+  describe '#country_codes' do
     it 'returns the sorted ISO codes for assigned countries' do
       de = create(:country, iso: 'DE', name: 'Germany')
       fr = create(:country, iso: 'FR', name: 'France')
       market = create(:market, store: store, countries: [fr, de])
 
-      expect(market.country_isos).to eq(%w[DE FR])
+      expect(market.country_codes).to eq(%w[DE FR])
     end
 
     it 'returns an empty array when no countries are assigned' do
       market = build(:market, store: store, countries: [])
-      expect(market.country_isos).to eq([])
+      expect(market.country_codes).to eq([])
     end
 
-    it 'reflects updates made via country_isos=' do
+    it 'reflects updates made via country_codes=' do
       create(:country, iso: 'DE', name: 'Germany')
       create(:country, iso: 'FR', name: 'France')
       market = build(:market, store: store, countries: [])
-      market.country_isos = %w[FR DE]
-      expect(market.country_isos).to eq(%w[DE FR])
+      market.country_codes = %w[FR DE]
+      expect(market.country_codes).to eq(%w[DE FR])
     end
 
     it 'round-trips through save/reload' do
       de = create(:country, iso: 'DE', name: 'Germany')
       fr = create(:country, iso: 'FR', name: 'France')
       market = create(:market, store: store, countries: [de, fr])
-      expect(market.reload.country_isos).to eq(%w[DE FR])
+      expect(market.reload.country_codes).to eq(%w[DE FR])
     end
   end
 
-  describe '#country_isos=' do
+  describe '#country_codes=' do
     let!(:de) { create(:country, iso: 'DE', name: 'Germany') }
     let!(:fr) { create(:country, iso: 'FR', name: 'France') }
     let!(:italy) { create(:country, iso: 'IT', name: 'Italy') }
 
     it 'resolves ISO codes to Country records' do
       market = build(:market, store: store, countries: [])
-      market.country_isos = %w[DE FR]
+      market.country_codes = %w[DE FR]
       expect(market.countries).to contain_exactly(de, fr)
     end
 
     it 'is case-insensitive' do
       market = build(:market, store: store, countries: [])
-      market.country_isos = %w[de fr]
+      market.country_codes = %w[de fr]
       expect(market.countries).to contain_exactly(de, fr)
     end
 
     it 'silently drops unknown codes' do
       market = build(:market, store: store, countries: [])
-      market.country_isos = %w[DE XX FR]
+      market.country_codes = %w[DE XX FR]
       expect(market.countries).to contain_exactly(de, fr)
     end
 
     it 'replaces the existing country list (full-set update)' do
       market = build(:market, store: store, countries: [de, fr])
-      market.country_isos = %w[IT]
+      market.country_codes = %w[IT]
       expect(market.countries).to contain_exactly(italy)
     end
 
     it 'clears all countries when given an empty array' do
       market = build(:market, store: store, countries: [de])
-      market.country_isos = []
+      market.country_codes = []
       expect(market.countries).to be_empty
     end
 
     it 'strips blanks and nils' do
       market = build(:market, store: store, countries: [])
-      market.country_isos = ['DE', '', nil, 'FR']
+      market.country_codes = ['DE', '', nil, 'FR']
       expect(market.countries).to contain_exactly(de, fr)
     end
   end

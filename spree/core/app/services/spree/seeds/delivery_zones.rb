@@ -20,7 +20,7 @@ module Spree
             zone.description = domestic_country.name
             zone.delivery_profile = profile
           end
-          domestic.members.where(member_type: 'country', country_iso: domestic_country.iso).first_or_create!
+          domestic.members.where(member_type: 'country', country_code: domestic_country.iso).first_or_create!
 
           international = store.delivery_zones.where(name: 'International').first_or_create! do |zone|
             zone.description = 'Everywhere else'
@@ -36,7 +36,7 @@ module Spree
       private
 
       def add_country_members(zone, countries)
-        existing_isos = zone.members.where(member_type: 'country').pluck(:country_iso)
+        existing_isos = zone.members.where(member_type: 'country').pluck(:country_code)
         new_isos = countries.map(&:iso) - existing_isos
         return if new_isos.empty?
 
@@ -45,7 +45,7 @@ module Spree
           {
             delivery_zone_id: zone.id,
             member_type: 'country',
-            country_iso: iso,
+            country_code: iso,
             created_at: now,
             updated_at: now
           }

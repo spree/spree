@@ -130,7 +130,7 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
               type: :object,
               properties: {
                 member_type: { type: :string, enum: %w[country state postal_code] },
-                country_iso: { type: :string, nullable: true, example: 'US' },
+                country_code: { type: :string, nullable: true, example: 'US' },
                 state_code: { type: :string, nullable: true },
                 postal_code_prefix: { type: :string, nullable: true },
                 postal_code_from: { type: :string, nullable: true },
@@ -151,8 +151,8 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
           {
             name: 'US North-East',
             members: [
-              { member_type: 'country', country_iso: 'US' },
-              { member_type: 'postal_code', country_iso: 'US', postal_code_prefix: '10' }
+              { member_type: 'country', country_code: 'US' },
+              { member_type: 'postal_code', country_code: 'US', postal_code_prefix: '10' }
             ]
           }
         end

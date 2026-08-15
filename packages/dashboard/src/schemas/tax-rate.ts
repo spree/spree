@@ -10,7 +10,7 @@ export const taxRateFormSchema = z.object({
   // Required: a rate always taxes exactly one category.
   tax_category_id: z.string().min(1, { error: requiredMessage('tax_rate.tax_category_id') }),
   // Empty means the rate applies everywhere, so neither field is required.
-  country_iso: z.string().optional(),
+  country_code: z.string().optional(),
   state_code: z.string().optional(),
   included_in_price: z.boolean(),
   show_rate_in_label: z.boolean(),
@@ -22,7 +22,7 @@ export const TAX_RATE_DEFAULTS: TaxRateFormValues = {
   name: '',
   amount_percentage: 0,
   tax_category_id: '',
-  country_iso: '',
+  country_code: '',
   state_code: '',
   included_in_price: false,
   show_rate_in_label: false,
@@ -38,7 +38,7 @@ export function taxRateValuesToParams(values: TaxRateFormValues): TaxRateParams 
     name: values.name,
     amount: values.amount_percentage / 100,
     tax_category_id: values.tax_category_id,
-    country_iso: blankToNull(values.country_iso),
+    country_code: blankToNull(values.country_code),
     state_code: blankToNull(values.state_code),
     included_in_price: values.included_in_price,
     show_rate_in_label: values.show_rate_in_label,

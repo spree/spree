@@ -53,7 +53,7 @@ defineTable<StockLocation>('stock-locations', {
       label: i18n.t('admin.stock_locations.columns.location'),
       default: true,
       render: (sl) => {
-        const parts = [sl.city, sl.state_text || sl.state_code, sl.country_iso]
+        const parts = [sl.city, sl.state_text || sl.state_code, sl.country_code]
           .filter(Boolean)
           .join(', ')
         return parts || '—'

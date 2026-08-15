@@ -12,7 +12,7 @@ module Spree
     attribute :address2, :string
     attribute :city, :string
     attribute :zipcode, :string
-    attribute :country_iso, :string
+    attribute :country_code, :string
     attribute :latitude, :float
     attribute :longitude, :float
     attribute :provider, :string

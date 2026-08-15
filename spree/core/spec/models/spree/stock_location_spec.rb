@@ -287,7 +287,7 @@ module Spree
       end
 
       context 'a state code is present' do
-        subject { described_class.create(name: 'testing', country_iso: 'US', state_code: 'VA', state_name: nil) }
+        subject { described_class.create(name: 'testing', country_code: 'US', state_code: 'VA', state_name: nil) }
 
         specify { expect(subject.state_text).to eq('VA') }
       end
@@ -339,7 +339,7 @@ module Spree
       subject { build(:stock_location, country: nil, state: nil) }
 
       it { expect(subject.country_name).to be_nil }
-      it { expect(subject.country_iso).to be_nil }
+      it { expect(subject.country_code).to be_nil }
       it { expect(subject.country_iso3).to be_nil }
       it { expect(subject.country_iso_name).to be_nil }
     end
@@ -408,19 +408,19 @@ module Spree
       end
     end
 
-    describe '#country_iso=' do
+    describe '#country_code=' do
       let(:country) { Spree::Country.by_iso('US') }
       let(:stock_location) { build(:stock_location, country: nil, state: nil) }
 
       it 'resolves the country from an ISO code on validation' do
-        stock_location.country_iso = country.iso
+        stock_location.country_code = country.iso
         stock_location.valid?
         expect(stock_location.country).to eq(country)
       end
 
       it 'clears the country when blank' do
-        stock_location.country_iso = country.iso
-        stock_location.country_iso = ''
+        stock_location.country_code = country.iso
+        stock_location.country_code = ''
         stock_location.valid?
         expect(stock_location.country).to be_nil
       end
@@ -444,7 +444,7 @@ module Spree
       end
 
       it 'resolves nothing without a country — a subdivision code is only unique within one' do
-        stock_location.country_iso = nil
+        stock_location.country_code = nil
         stock_location.state_code = 'NY'
         stock_location.valid?
         expect(stock_location.state).to be_nil

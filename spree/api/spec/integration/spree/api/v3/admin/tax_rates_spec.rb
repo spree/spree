@@ -7,7 +7,7 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
 
   let!(:tax_category) { create(:tax_category) }
   let!(:germany) { Spree::Country.by_iso('DE') }
-  let!(:tax_rate) { create(:tax_rate, tax_category: tax_category, country_iso: germany&.iso, amount: 0.19, included_in_price: true) }
+  let!(:tax_rate) { create(:tax_rate, tax_category: tax_category, country_code: germany&.iso, amount: 0.19, included_in_price: true) }
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
 
   path '/api/v3/admin/tax_rates' do
@@ -69,7 +69,7 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
         Creates a tax rate for the current store. Give either `amount` as a
         decimal (`0.19`) or `amount_percentage` as a percentage (`19`).
 
-        Name the jurisdiction with `country_iso` (and `state_code` for a
+        Name the jurisdiction with `country_code` (and `state_code` for a
         state-level rate). Omitting the country makes the rate apply everywhere.
 
         Set `included_in_price` for VAT-style pricing, where the rate is backed
@@ -89,7 +89,7 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
           included_in_price: { type: :boolean },
           show_rate_in_label: { type: :boolean },
           tax_category_id: { type: :string },
-          country_iso: { type: :string, description: 'ISO code, e.g. "DE". Omit for every country.' },
+          country_code: { type: :string, description: 'ISO code, e.g. "DE". Omit for every country.' },
           state_code: { type: :string, description: 'State abbreviation within that country, e.g. "CA".' }
         },
         required: %w[name tax_category_id]
@@ -99,7 +99,7 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:body) do
           { name: 'VAT', amount_percentage: 19, included_in_price: true,
-            tax_category_id: tax_category.prefixed_id, country_iso: 'DE' }
+            tax_category_id: tax_category.prefixed_id, country_code: 'DE' }
         end
 
         schema '$ref' => '#/components/schemas/TaxRate'
@@ -165,7 +165,7 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
           included_in_price: { type: :boolean },
           show_rate_in_label: { type: :boolean },
           tax_category_id: { type: :string },
-          country_iso: { type: :string },
+          country_code: { type: :string },
           state_code: { type: :string }
         }
       }

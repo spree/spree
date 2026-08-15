@@ -3,7 +3,7 @@
 # infrastructure. Same placement as Spree::ReturnsMigrator in a sibling task.
 module Spree
   # Copies country and state foreign keys onto the ISO string columns that
-  # replace them. Driven by `rake spree:upgrade:migrate_country_state_isos`.
+  # replace them. Driven by `rake spree:upgrade:migrate_country_state_codes`.
   #
   # Reads the legacy tables through throwaway model classes: Spree::Country and
   # Spree::State stop being ActiveRecord models in 6.0, but this task has to
@@ -13,7 +13,7 @@ module Spree
   # scoped to the rows whose ISO column is still null, so the work outstanding
   # is a query rather than tracked state. An interrupted run picks up where it
   # stopped, and re-running when nothing is left is a no-op.
-  class CountryStateIsoMigrator
+  class CountryStateCodeMigrator
     COUNTRIES_TABLE = 'spree_countries'.freeze
     STATES_TABLE = 'spree_states'.freeze
 
@@ -42,7 +42,7 @@ module Spree
 
     # Country ISO for every row whose FK still resolves. The state branch is
     # separate because a row can carry a country without a state.
-    def backfill_country_iso(table, foreign_key: 'country_id', column: 'country_iso')
+    def backfill_country_code(table, foreign_key: 'country_id', column: 'country_code')
       return 0 unless connection.column_exists?(table, column)
 
       update_from(
@@ -55,37 +55,37 @@ module Spree
     end
 
     def backfill_addresses
-      filled = backfill_country_iso(Spree::Address.table_name)
+      filled = backfill_country_code(Spree::Address.table_name)
       filled + backfill_state_code(Spree::Address.table_name)
     end
 
     def backfill_delivery_zone_members
       table = Spree::DeliveryZoneMember.table_name
-      filled = backfill_country_iso(table)
+      filled = backfill_country_code(table)
       filled += copy_state_code(table)
       # A state member records no country of its own, so its country comes from
       # the state's — without it, coverage queries could not tell which country
       # an abbreviation belongs to. Runs before normalization, which needs both
       # halves to resolve a code.
-      filled += backfill_country_iso_from_state(table)
+      filled += backfill_country_code_from_state(table)
       normalize_state_codes(table)
       filled
     end
 
     def backfill_market_countries
-      backfill_country_iso(Spree::MarketCountry.table_name)
+      backfill_country_code(Spree::MarketCountry.table_name)
     end
 
     def backfill_stock_locations
       table = Spree::StockLocation.table_name
-      backfill_country_iso(table) + backfill_state_code(table)
+      backfill_country_code(table) + backfill_state_code(table)
     end
 
     def backfill_stores
-      backfill_country_iso(
+      backfill_country_code(
         Spree::Store.table_name,
         foreign_key: 'default_country_id',
-        column: 'default_country_iso_code'
+        column: 'default_country_code'
       )
     end
 
@@ -120,37 +120,37 @@ module Spree
     def normalize_state_codes(table)
       quoted_table = quote(table)
       rows = connection.select_rows(<<~SQL.squish)
-        SELECT DISTINCT country_iso, state_code FROM #{quoted_table}
-        WHERE state_code IS NOT NULL AND country_iso IS NOT NULL
+        SELECT DISTINCT country_code, state_code FROM #{quoted_table}
+        WHERE state_code IS NOT NULL AND country_code IS NOT NULL
       SQL
 
-      rows.each do |country_iso, state_code|
-        canonical = Spree::IsoData.subdivision_code(country_iso, state_code)
+      rows.each do |country_code, state_code|
+        canonical = Spree::IsoData.subdivision_code(country_code, state_code)
         next if canonical.blank? || canonical == state_code
 
         connection.update(<<~SQL.squish)
           UPDATE #{quoted_table} SET state_code = #{connection.quote(canonical)}
-          WHERE country_iso = #{connection.quote(country_iso)}
+          WHERE country_code = #{connection.quote(country_code)}
             AND state_code = #{connection.quote(state_code)}
         SQL
       end
     end
 
     # Country ISO for state members, resolved through the state's own country.
-    def backfill_country_iso_from_state(table)
+    def backfill_country_code_from_state(table)
       quoted_table = quote(table)
       states = quote(STATES_TABLE)
       countries = quote(COUNTRIES_TABLE)
 
       sql = <<~SQL.squish
         UPDATE #{quoted_table}
-        SET country_iso = (
+        SET country_code = (
           SELECT #{countries}.iso
           FROM #{states}
           INNER JOIN #{countries} ON #{countries}.id = #{states}.country_id
           WHERE #{states}.id = #{quoted_table}.state_id
         )
-        WHERE #{quoted_table}.country_iso IS NULL
+        WHERE #{quoted_table}.country_code IS NULL
           AND #{quoted_table}.state_id IS NOT NULL
       SQL
 
@@ -212,8 +212,8 @@ namespace :spree do
       Run after spree:migrate_zones_to_delivery_zones, so converted zone
       members are present to be backfilled.
     DESC
-    task migrate_country_state_isos: :environment do
-      result = Spree::CountryStateIsoMigrator.new.call
+    task migrate_country_state_codes: :environment do
+      result = Spree::CountryStateCodeMigrator.new.call
 
       if result.nil?
         puts '  spree_countries not found — nothing to migrate.'

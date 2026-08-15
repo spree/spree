@@ -52,7 +52,7 @@ module Spree
           def permitted_params
             params.permit(
               :name, :description, :delivery_profile_id, :delivery_origin_group_id,
-              members: [:member_type, :country_iso, :state_code, :postal_code_prefix, :postal_code_from, :postal_code_to]
+              members: [:member_type, :country_code, :state_code, :postal_code_prefix, :postal_code_from, :postal_code_to]
             )
           end
 
@@ -83,15 +83,15 @@ module Spree
           def build_members(zone)
             Array(permitted_params[:members]).each do |member|
               attributes = member.to_h.symbolize_keys
-              country_iso = attributes[:country_iso].presence&.to_s&.upcase
+              country_code = attributes[:country_code].presence&.to_s&.upcase
               state_value = attributes[:state_code].presence
 
               if state_value.present?
-                country_iso ||= infer_country_iso_for_state(state_value)
-                attributes[:state_code] = Spree::IsoData.subdivision_code(country_iso, state_value) if country_iso
+                country_code ||= infer_country_code_for_state(state_value)
+                attributes[:state_code] = Spree::IsoData.subdivision_code(country_code, state_value) if country_code
               end
 
-              attributes[:country_iso] = country_iso
+              attributes[:country_code] = country_code
               zone.members.build(attributes)
             end
           end
@@ -101,7 +101,7 @@ module Spree
           # than silently picking one of several matching countries.
           #
           # @return [String, nil] the only country whose subdivisions match, if exactly one does
-          def infer_country_iso_for_state(state_value)
+          def infer_country_code_for_state(state_value)
             matches = Spree::IsoData.countries.map(&:alpha2).select do |iso|
               Spree::IsoData.subdivision_code(iso, state_value).present?
             end

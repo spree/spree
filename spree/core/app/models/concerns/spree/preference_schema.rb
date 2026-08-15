@@ -102,7 +102,7 @@ module Spree
       #
       # When `klass` is nil, prefixed-ID decoding is skipped — used for
       # ISO/string-keyed preferences where the value is the identifier
-      # (e.g. country `:country_isos`).
+      # (e.g. country `:country_codes`).
       #
       # When `scope:` is given, the existence check runs through the
       # scope relation derived from the owning record — prevents a

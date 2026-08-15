@@ -249,7 +249,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
             firstname: 'Jane', lastname: 'Doe',
             address1: '350 Fifth Avenue', city: 'New York',
             zipcode: '10118', phone: '555-555-0199',
-            country_iso: country.iso, state_code: state.abbr
+            country_code: country.iso, state_code: state.abbr
           }
         }
       end
@@ -351,7 +351,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
             firstname: 'Jane', lastname: 'Doe',
             address1: '350 Fifth Avenue', city: 'New York',
             zipcode: '10118', phone: '555-555-0199',
-            country_iso: country.iso, state_code: state.abbr
+            country_code: country.iso, state_code: state.abbr
           }
         }
       end

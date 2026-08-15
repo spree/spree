@@ -251,7 +251,7 @@ function EditMarketSheet({
         supported_locales: market.supported_locales.filter((l) => l !== market.default_locale),
         tax_inclusive: market.tax_inclusive,
         default: market.default,
-        country_isos: market.country_isos,
+        country_codes: market.country_codes,
         tax_provider: market.tax_provider ?? '',
       })
     }
@@ -403,19 +403,19 @@ function MarketFormFields({ form }: { form: UseFormReturn<MarketFormValues> }) {
 
       <Field>
         <FieldLabel htmlFor="market-countries">
-          {t('admin.fields.market.country_isos.label')}
+          {t('admin.fields.market.country_codes.label')}
         </FieldLabel>
         <Controller
-          name="country_isos"
+          name="country_codes"
           control={form.control}
           render={({ field }) => (
             <CountryMultiCombobox value={field.value} onValueChange={field.onChange} />
           )}
         />
         <span className="text-xs text-muted-foreground">
-          {t('admin.fields.market.country_isos.help')}
+          {t('admin.fields.market.country_codes.help')}
         </span>
-        <FieldError errors={[errors.country_isos]} />
+        <FieldError errors={[errors.country_codes]} />
       </Field>
 
       <TaxProviderField form={form} />

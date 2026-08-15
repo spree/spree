@@ -13,7 +13,7 @@ describe Spree::TaxRate, type: :model do
 
     it 'falls back to rates that tax everywhere when the jurisdiction is unknown' do
       worldwide = create(:tax_rate, :worldwide, tax_category: tax_category)
-      create(:tax_rate, country_iso: germany&.iso, tax_category: tax_category)
+      create(:tax_rate, country_code: germany&.iso, tax_category: tax_category)
 
       # A rate naming no country taxes everywhere, so it still applies when we
       # cannot say where the sale is — a country-specific one does not.
@@ -21,22 +21,22 @@ describe Spree::TaxRate, type: :model do
     end
 
     it 'reads a jurisdiction off an address, or takes the pair directly' do
-      rate = create(:tax_rate, country_iso: germany&.iso, tax_category: tax_category)
+      rate = create(:tax_rate, country_code: germany&.iso, tax_category: tax_category)
 
       expect(described_class.for_address(german_address)).to eq([rate])
       expect(described_class.for_jurisdiction(germany.iso)).to eq([rate])
     end
 
     it 'matches a rate for the address country' do
-      rate = create(:tax_rate, country_iso: germany&.iso, tax_category: tax_category)
-      create(:tax_rate, country_iso: france&.iso, tax_category: tax_category)
+      rate = create(:tax_rate, country_code: germany&.iso, tax_category: tax_category)
+      create(:tax_rate, country_code: france&.iso, tax_category: tax_category)
 
       expect(described_class.for_address(german_address)).to eq([rate])
     end
 
     it 'matches every rate configured for that country' do
-      standard = create(:tax_rate, country_iso: germany&.iso, amount: 0.19, tax_category: tax_category)
-      reduced = create(:tax_rate, country_iso: germany&.iso, amount: 0.07, tax_category: create(:tax_category))
+      standard = create(:tax_rate, country_code: germany&.iso, amount: 0.19, tax_category: tax_category)
+      reduced = create(:tax_rate, country_code: germany&.iso, amount: 0.07, tax_category: create(:tax_category))
 
       expect(described_class.for_address(german_address)).to match_array([standard, reduced])
     end
@@ -51,21 +51,21 @@ describe Spree::TaxRate, type: :model do
       let(:berlin_address) { create(:address, country: germany, state: berlin) }
 
       it 'matches the state rate alongside the country rate' do
-        country_rate = create(:tax_rate, country_iso: germany&.iso, tax_category: tax_category)
-        state_rate = create(:tax_rate, country_iso: germany&.iso, state_code: berlin&.abbr, tax_category: create(:tax_category))
+        country_rate = create(:tax_rate, country_code: germany&.iso, tax_category: tax_category)
+        state_rate = create(:tax_rate, country_code: germany&.iso, state_code: berlin&.abbr, tax_category: create(:tax_category))
 
         expect(described_class.for_address(berlin_address)).to match_array([country_rate, state_rate])
       end
 
       it 'does not match another state rate' do
         hamburg = create(:state, country: germany, abbr: 'HH', name: 'Hamburg')
-        create(:tax_rate, country_iso: germany&.iso, state_code: hamburg&.abbr, tax_category: tax_category)
+        create(:tax_rate, country_code: germany&.iso, state_code: hamburg&.abbr, tax_category: tax_category)
 
         expect(described_class.for_address(berlin_address)).to be_empty
       end
 
       it 'does not match a state rate for an address with no state' do
-        create(:tax_rate, country_iso: germany&.iso, state_code: berlin&.abbr, tax_category: tax_category)
+        create(:tax_rate, country_code: germany&.iso, state_code: berlin&.abbr, tax_category: tax_category)
 
         expect(described_class.for_address(german_address)).to be_empty
       end
@@ -75,16 +75,16 @@ describe Spree::TaxRate, type: :model do
     # registry drift — simply never matches an address, which is what the
     # mismatch always meant.
     it 'never matches when the state code belongs to another country' do
-      rate = create(:tax_rate, country_iso: 'FR', tax_category: tax_category)
+      rate = create(:tax_rate, country_code: 'FR', tax_category: tax_category)
       rate.update_columns(state_code: berlin&.abbr)
 
       expect(described_class.for_address(german_address)).to be_empty
     end
 
     it 'matches regardless of the case a code was entered in' do
-      rate = create(:tax_rate, country_iso: 'de', tax_category: tax_category)
+      rate = create(:tax_rate, country_code: 'de', tax_category: tax_category)
 
-      expect(rate.country_iso).to eq('DE')
+      expect(rate.country_code).to eq('DE')
       expect(described_class.for_address(german_address)).to eq([rate])
     end
   end
@@ -102,21 +102,21 @@ describe Spree::TaxRate, type: :model do
 
       let!(:german_vat) do
         create(:tax_rate, name: 'German VAT', amount: 0.19, tax_category: moss_category,
-                          country_iso: germany&.iso, included_in_price: true)
+                          country_code: germany&.iso, included_in_price: true)
       end
       let!(:french_vat) do
         create(:tax_rate, name: 'French VAT', amount: 0.25, tax_category: moss_category,
-                          country_iso: france&.iso, included_in_price: true)
+                          country_code: france&.iso, included_in_price: true)
       end
       # Physical goods are taxed where they ship from, so both EU countries
       # carry the same rate — one row each, a zone spanning both being gone.
       let!(:german_goods_vat) do
         create(:tax_rate, name: 'EU VAT (DE)', amount: 0.19, tax_category: normal_category,
-                          country_iso: germany&.iso, included_in_price: true)
+                          country_code: germany&.iso, included_in_price: true)
       end
       let!(:french_goods_vat) do
         create(:tax_rate, name: 'EU VAT (FR)', amount: 0.19, tax_category: normal_category,
-                          country_iso: france&.iso, included_in_price: true)
+                          country_code: france&.iso, included_in_price: true)
       end
 
       let(:download) { create(:product, tax_category: moss_category, price: 100) }
@@ -205,7 +205,7 @@ describe Spree::TaxRate, type: :model do
       let!(:order) { create(:order, ship_address: create(:address, country: country)) }
       let(:category) { create(:tax_category, name: 'Taxable Foo') }
       let!(:rate) do
-        create(:tax_rate, name: 'Tax Rate #1', amount: 0.1, tax_category: category, country_iso: country&.iso)
+        create(:tax_rate, name: 'Tax Rate #1', amount: 0.1, tax_category: category, country_code: country&.iso)
       end
       let(:taxable) { create(:product, tax_category: category) }
       let!(:line_item) { Spree::Orders::AddItem.call(order: order, variant: taxable.default_variant).value }
@@ -238,20 +238,20 @@ describe Spree::TaxRate, type: :model do
 
     let!(:included_tax_rate) do
       create(:tax_rate, included_in_price: true, tax_category: line_item.tax_category,
-                        country_iso: country&.iso, amount: 0.4)
+                        country_code: country&.iso, amount: 0.4)
     end
     let!(:other_included_tax_rate) do
       create(:tax_rate, included_in_price: true, tax_category: line_item.tax_category,
-                        country_iso: country&.iso, amount: 0.05)
+                        country_code: country&.iso, amount: 0.05)
     end
     # Additional tax is added to the price rather than sitting inside it.
     let!(:additional_tax_rate) do
       create(:tax_rate, included_in_price: false, tax_category: line_item.tax_category,
-                        country_iso: country&.iso, amount: 0.2)
+                        country_code: country&.iso, amount: 0.2)
     end
     let!(:included_tax_rate_from_somewhere_else) do
       create(:tax_rate, included_in_price: true, tax_category: line_item.tax_category,
-                        country_iso: create(:country, iso: 'JP', name: 'Japan')&.iso, amount: 0.1)
+                        country_code: create(:country, iso: 'JP', name: 'Japan')&.iso, amount: 0.1)
     end
 
     let(:price_options) { { country: country, tax_category: line_item.tax_category } }

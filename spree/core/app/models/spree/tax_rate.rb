@@ -28,7 +28,7 @@ module Spree
       validates :tax_category, :name
     end
 
-    # The jurisdiction this rate applies in, held as codes: a blank country_iso
+    # The jurisdiction this rate applies in, held as codes: a blank country_code
     # means everywhere, and a country with no state_code means the whole
     # country. Upcased on the way in so a rate entered as "de" still matches an
     # address from Germany.
@@ -42,20 +42,20 @@ module Spree
     # Spree::Purchase::Taxation#tax_country).
     # +normalizes+ above applies to query values too, so a caller passing "de"
     # still matches a rate stored as "DE".
-    scope :for_jurisdiction, lambda { |country_iso, state_code = nil|
-      where(country_iso: [country_iso.presence, nil].uniq).where(state_code: [state_code.presence, nil].uniq)
+    scope :for_jurisdiction, lambda { |country_code, state_code = nil|
+      where(country_code: [country_code.presence, nil].uniq).where(state_code: [state_code.presence, nil].uniq)
     }
     # The same question asked with an address in hand.
-    scope :for_address, ->(address) { for_jurisdiction(address&.country_iso, address&.state_code) }
-    # Country-wide: unlike for_jurisdiction(country_iso, nil) this leaves the
+    scope :for_address, ->(address) { for_jurisdiction(address&.country_code, address&.state_code) }
+    # Country-wide: unlike for_jurisdiction(country_code, nil) this leaves the
     # state unconstrained, so it sums a country's state-level rates too. Used
     # where the state is irrelevant — backing VAT out of a gross price.
-    scope :for_country, ->(country_iso) { where(country_iso: [country_iso.presence, nil].uniq) }
+    scope :for_country, ->(country_code) { where(country_code: [country_code.presence, nil].uniq) }
     scope :for_tax_category,
           ->(category) { where(tax_category_id: category.try(:id)) }
     scope :included_in_price, -> { where(included_in_price: true) }
 
-    self.whitelisted_ransackable_attributes = %w[amount country_iso state_code tax_category_id included_in_price name]
+    self.whitelisted_ransackable_attributes = %w[amount country_code state_code tax_category_id included_in_price name]
 
     # Virtual attribute for percentage display in admin forms
     def amount_percentage
@@ -76,10 +76,10 @@ module Spree
       # +:country+ is a documented override point and the VAT path still hands
       # it a Spree::Country, so take the code off whichever arrives.
       country = options[:country]
-      country_iso = country.try(:iso) || country.presence || options[:address]&.country_iso
-      return 0 unless country_iso && options[:tax_category]
+      country_code = country.try(:iso) || country.presence || options[:address]&.country_code
+      return 0 unless country_code && options[:tax_category]
 
-      scope = options[:address] ? for_address(options[:address]) : for_country(country_iso)
+      scope = options[:address] ? for_address(options[:address]) : for_country(country_code)
       # Per-store tax configuration is the norm since 6.0, so without this the
       # sum would add up every store's rate for the same country.
       store = options[:store] || Spree::Current.store

@@ -7,7 +7,7 @@ export const StockLocationSchema = z.object({
   address1: z.string().nullable(),
   city: z.string().nullable(),
   zipcode: z.string().nullable(),
-  country_iso: z.string().nullable(),
+  country_code: z.string().nullable(),
   country_name: z.string().nullable(),
   state_code: z.string().nullable(),
   state_text: z.string().nullable(),

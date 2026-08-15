@@ -7,8 +7,8 @@ module Spree
     # ISO codes of countries with numeric postal formats, where lexicographic
     # ranges over normalized codes are meaningful. Prefix members are allowed
     # for every country; range members only for these. Extend via
-    # `Spree::DeliveryZoneMember.range_capable_country_isos += %w[XY]`.
-    class_attribute :range_capable_country_isos, default: %w[
+    # `Spree::DeliveryZoneMember.range_capable_country_codes += %w[XY]`.
+    class_attribute :range_capable_country_codes, default: %w[
       AR AT AU BD BE BG BR CH CN CZ DE DK DZ EE EG ES FI FR GR HR HU ID IL IN
       IS IT JP KR LK LT LU MA MX MY NO NZ PH PK PL PT RO RS RU SA SE SG SI SK
       TH TN TR TW UA US UY VN ZA
@@ -27,7 +27,7 @@ module Spree
     before_validation :resolve_geography
 
     validates :member_type, presence: true, inclusion: { in: MEMBER_TYPES }
-    validates :country_iso, presence: true, if: -> { member_type.in?(MEMBER_TYPES) }
+    validates :country_code, presence: true, if: -> { member_type.in?(MEMBER_TYPES) }
     validates :state_code, presence: true, if: -> { member_type == 'state' }
     validate :postal_definition, if: -> { member_type == 'postal_code' }
 
@@ -54,15 +54,15 @@ module Spree
     private
 
     def same_country?(address)
-      country_iso.present? && address.country_iso == country_iso
+      country_code.present? && address.country_code == country_code
     end
 
     # An unresolvable code is left in place for the geography validation to
     # report, rather than nilled into a less telling presence error.
     def resolve_geography
-      return if state_code.blank? || country_iso.blank?
+      return if state_code.blank? || country_code.blank?
 
-      resolved = Spree::IsoData.subdivision_code(country_iso, state_code)
+      resolved = Spree::IsoData.subdivision_code(country_code, state_code)
       self.state_code = resolved if resolved
     end
 
@@ -87,7 +87,7 @@ module Spree
         return
       end
 
-      unless country_iso.present? && range_capable_country_isos.include?(country_iso)
+      unless country_code.present? && range_capable_country_codes.include?(country_code)
         errors.add(:base, Spree.t('errors.messages.delivery_zone_range_not_supported'))
         return
       end

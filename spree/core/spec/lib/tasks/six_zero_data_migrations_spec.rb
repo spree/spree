@@ -260,7 +260,7 @@ describe '6.0 data migration tasks' do
 
     def unconverted_rate(zone, **attributes)
       create(:tax_rate, **attributes).tap do |rate|
-        rate.update_columns(country_iso: nil, state_code: nil, zone_id: zone.id)
+        rate.update_columns(country_code: nil, state_code: nil, zone_id: zone.id)
       end
     end
 
@@ -269,7 +269,7 @@ describe '6.0 data migration tasks' do
 
       run_task('spree:migrate_tax_zones')
 
-      expect(rate.reload.country_iso).to eq(germany.iso)
+      expect(rate.reload.country_code).to eq(germany.iso)
       expect(rate.state_code).to be_nil
     end
 
@@ -278,7 +278,7 @@ describe '6.0 data migration tasks' do
 
       expect { run_task('spree:migrate_tax_zones') }.to change(Spree::TaxRate, :count).by(1)
 
-      countries = Spree::TaxRate.where(name: rate.name).map(&:country_iso)
+      countries = Spree::TaxRate.where(name: rate.name).map(&:country_code)
       expect(countries).to contain_exactly(germany.iso, france.iso)
       expect(Spree::TaxRate.where(name: rate.name).map(&:amount).uniq).to eq([0.19])
     end
@@ -289,7 +289,7 @@ describe '6.0 data migration tasks' do
 
       run_task('spree:migrate_tax_zones')
 
-      expect(rate.reload.country_iso).to eq(germany.iso)
+      expect(rate.reload.country_code).to eq(germany.iso)
       expect(rate.state_code).to eq(state.abbr)
     end
 
@@ -298,7 +298,7 @@ describe '6.0 data migration tasks' do
 
       run_task('spree:migrate_tax_zones')
 
-      expect(rate.reload.country_iso).to be_nil
+      expect(rate.reload.country_code).to be_nil
     end
 
     it 'is idempotent' do
@@ -414,7 +414,7 @@ describe '6.0 data migration tasks' do
       expect(delivery_zone.metadata['migrated_from_zone_id']).to eq(zone.id)
       expect(delivery_zone.store_id).to eq(delivery_method.store_id)
       expect(delivery_zone.delivery_profile_id).to eq(delivery_method.delivery_profile_id)
-      expect(delivery_zone.members.pluck(:member_type, :country_iso)).to eq([['country', country.iso]])
+      expect(delivery_zone.members.pluck(:member_type, :country_code)).to eq([['country', country.iso]])
       expect(delivery_method.reload.delivery_zone_id).to eq(delivery_zone.id)
     end
 

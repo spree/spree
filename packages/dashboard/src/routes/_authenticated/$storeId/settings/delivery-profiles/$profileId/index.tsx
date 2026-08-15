@@ -977,7 +977,7 @@ function ZoneMembersSummary({ zone }: { zone: DeliveryZone }) {
   const names = useMemo(() => {
     const members = zone.members ?? []
     const label = (member: DeliveryZoneMember): string | null => {
-      if (member.member_type === 'country') return member.country_name ?? member.country_iso
+      if (member.member_type === 'country') return member.country_name ?? member.country_code
       if (member.member_type === 'state') return member.state_name ?? member.state_code
       if (member.postal_code_prefix) return `${member.postal_code_prefix}*`
       if (member.postal_code_from && member.postal_code_to) {

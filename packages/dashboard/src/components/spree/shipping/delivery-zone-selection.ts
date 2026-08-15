@@ -31,12 +31,12 @@ export function readSelection(members: DeliveryZoneMemberValues[]): Selection {
   const postalRules: DeliveryZoneMemberValues[] = []
 
   for (const member of members) {
-    if (member.member_type === 'country' && member.country_iso) {
-      countries.add(member.country_iso)
-    } else if (member.member_type === 'state' && member.country_iso && member.state_code) {
-      const forCountry = states.get(member.country_iso) ?? new Set<string>()
+    if (member.member_type === 'country' && member.country_code) {
+      countries.add(member.country_code)
+    } else if (member.member_type === 'state' && member.country_code && member.state_code) {
+      const forCountry = states.get(member.country_code) ?? new Set<string>()
       forCountry.add(member.state_code)
-      states.set(member.country_iso, forCountry)
+      states.set(member.country_code, forCountry)
     } else if (member.member_type === 'postal_code') {
       postalRules.push(member)
     }
@@ -53,14 +53,14 @@ export function writeSelection(selection: Selection): DeliveryZoneMemberValues[]
   const members: DeliveryZoneMemberValues[] = []
 
   for (const iso of [...selection.countries].sort()) {
-    members.push({ member_type: 'country', country_iso: iso })
+    members.push({ member_type: 'country', country_code: iso })
   }
 
   for (const [iso, abbrs] of [...selection.states.entries()].sort(([left], [right]) =>
     left.localeCompare(right),
   )) {
     for (const abbr of [...abbrs].sort()) {
-      members.push({ member_type: 'state', country_iso: iso, state_code: abbr })
+      members.push({ member_type: 'state', country_code: iso, state_code: abbr })
     }
   }
 
@@ -84,7 +84,7 @@ export function supersedeCountry(selection: Selection, iso: string): Selection {
   return {
     countries,
     states,
-    postalRules: selection.postalRules.filter((rule) => rule.country_iso !== iso),
+    postalRules: selection.postalRules.filter((rule) => rule.country_code !== iso),
   }
 }
 
@@ -94,13 +94,13 @@ export function claimedByOtherZones(siblingZones: DeliveryZone[]) {
 
   for (const zone of siblingZones) {
     for (const member of zone.members ?? []) {
-      if (!member.country_iso) continue
+      if (!member.country_code) continue
       if (member.member_type === 'country') {
-        countries.add(member.country_iso)
+        countries.add(member.country_code)
       } else if (member.member_type === 'state' && member.state_code) {
-        const forCountry = states.get(member.country_iso) ?? new Set<string>()
+        const forCountry = states.get(member.country_code) ?? new Set<string>()
         forCountry.add(member.state_code)
-        states.set(member.country_iso, forCountry)
+        states.set(member.country_code, forCountry)
       }
     }
   }

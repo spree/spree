@@ -200,8 +200,8 @@ Zones match on country and state, and also on postal code prefixes and ranges, s
 await adminClient.deliveryZones.create({
   name: 'London same-day',
   members: [
-    { member_type: 'postal_code', country_iso: 'GB', postal_code_prefix: 'SW1' },
-    { member_type: 'postal_code', country_iso: 'GB', postal_code_from: 'EC1A', postal_code_to: 'EC1V' },
+    { member_type: 'postal_code', country_code: 'GB', postal_code_prefix: 'SW1' },
+    { member_type: 'postal_code', country_code: 'GB', postal_code_from: 'EC1A', postal_code_to: 'EC1V' },
   ],
 })
 ```

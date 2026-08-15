@@ -209,7 +209,7 @@ function addressToForm(address: CompanyLocation['billing_address'] | undefined) 
     city: address?.city ?? '',
     postal_code: address?.postal_code ?? '',
     phone: address?.phone ?? '',
-    country_iso: address?.country_iso ?? '',
+    country_code: address?.country_code ?? '',
     state_code: address?.state_code ?? '',
   }
 }
@@ -224,8 +224,8 @@ function AddressFieldset({
   legend: string
 }) {
   const { t } = useTranslation()
-  const countryIso = form.watch(`${prefix}.country_iso`)
-  const { states } = useCountryStates(countryIso)
+  const countryCode = form.watch(`${prefix}.country_code`)
+  const { states } = useCountryStates(countryCode)
 
   return (
     <fieldset className="flex flex-col gap-4 rounded-md border p-4">
@@ -273,7 +273,7 @@ function AddressFieldset({
         <Field>
           <FieldLabel htmlFor={`${prefix}-country`}>{t('admin.fields.country.label')}</FieldLabel>
           <Controller
-            name={`${prefix}.country_iso`}
+            name={`${prefix}.country_code`}
             control={form.control}
             render={({ field }) => (
               <CountryCombobox
@@ -286,7 +286,7 @@ function AddressFieldset({
             )}
           />
         </Field>
-        {countryIso && states.length > 0 && (
+        {countryCode && states.length > 0 && (
           <Field>
             <FieldLabel htmlFor={`${prefix}-state`}>{t('admin.fields.state.label')}</FieldLabel>
             <Controller
@@ -294,7 +294,7 @@ function AddressFieldset({
               control={form.control}
               render={({ field }) => (
                 <StateCombobox
-                  countryIso={countryIso}
+                  countryCode={countryCode}
                   states={states}
                   value={field.value}
                   onValueChange={field.onChange}

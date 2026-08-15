@@ -6,20 +6,25 @@ const client = createClient({
 })
 
 // region:example
-const cart = await client.carts.update('cart_abc123', {
-  email: 'customer@example.com',
-  shipping_address: {
-    first_name: 'John',
-    last_name: 'Doe',
-    address1: '123 Main St',
-    city: 'New York',
-    postal_code: '10001',
-    country_iso: 'US',
-    state_abbr: 'NY',
+const cart = await client.carts.update(
+  'cart_abc123',
+  {
+    email: 'customer@example.com',
+    shipping_address: {
+      first_name: 'John',
+      last_name: 'Doe',
+      address1: '123 Main St',
+      city: 'New York',
+      postal_code: '10001',
+      country_code: 'US',
+      state_abbr: 'NY',
+    },
   },
-}, {
-  token: '<token>',
-})
+  {
+    token: '<token>',
+  },
+)
+
 // endregion:example
 
 export { cart }

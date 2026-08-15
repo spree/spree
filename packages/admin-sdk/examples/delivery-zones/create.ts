@@ -9,8 +9,8 @@ const client = createAdminClient({
 const deliveryZone = await client.deliveryZones.create({
   name: 'US North-East',
   members: [
-    { member_type: 'country', country_iso: 'US' },
-    { member_type: 'postal_code', country_iso: 'US', postal_code_prefix: '10' },
+    { member_type: 'country', country_code: 'US' },
+    { member_type: 'postal_code', country_code: 'US', postal_code_prefix: '10' },
   ],
 })
 

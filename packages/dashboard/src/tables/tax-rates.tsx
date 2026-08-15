@@ -33,13 +33,13 @@ defineTable<TaxRate>('tax-rates', {
         taxRate.amount_percentage === null ? '—' : `${taxRate.amount_percentage}%`,
     },
     {
-      key: 'country_iso',
+      key: 'country_code',
       label: i18n.t('admin.fields.tax_rate.jurisdiction.label'),
       sortable: true,
       filterable: true,
       default: true,
       render: (taxRate) => (
-        <JurisdictionLabel countryIso={taxRate.country_iso} stateCode={taxRate.state_code} />
+        <JurisdictionLabel countryCode={taxRate.country_code} stateCode={taxRate.state_code} />
       ),
     },
     {

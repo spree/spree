@@ -33,7 +33,7 @@ const addressSchema = z.object({
   city: z.string().optional(),
   postal_code: z.string().optional(),
   phone: z.string().optional(),
-  country_iso: z.string().optional(),
+  country_code: z.string().optional(),
   state_code: z.string().optional(),
 })
 
@@ -60,7 +60,7 @@ const EMPTY_ADDRESS = {
   city: '',
   postal_code: '',
   phone: '',
-  country_iso: '',
+  country_code: '',
   state_code: '',
 }
 
@@ -115,7 +115,7 @@ const ADDRESS_COMPARISON_KEYS = [
   'city',
   'postal_code',
   'phone',
-  'country_iso',
+  'country_code',
   'state_code',
 ] as const
 
@@ -142,7 +142,7 @@ export const TAX_IDENTIFIER_KINDS = ['eu_vat', 'gb_vat', 'ch_vat', 'au_abn', 'us
 export const taxExemptionCertificateFormSchema = z.object({
   certificate_number: z.string().min(1, { error: requiredMessage('certificate_number') }),
   reason_code: z.string().min(1, { error: requiredMessage('reason_code') }),
-  country_iso: z.string().optional(),
+  country_code: z.string().optional(),
   state_code: z.string().optional(),
   issued_at: z.string().optional(),
   expires_at: z.string().optional(),
@@ -155,7 +155,7 @@ export type TaxExemptionCertificateFormValues = z.infer<typeof taxExemptionCerti
 export const TAX_EXEMPTION_CERTIFICATE_DEFAULTS: TaxExemptionCertificateFormValues = {
   certificate_number: '',
   reason_code: '',
-  country_iso: '',
+  country_code: '',
   state_code: '',
   issued_at: '',
   expires_at: '',
@@ -183,7 +183,7 @@ export function taxExemptionCertificateValuesToParams(
   return {
     certificate_number: values.certificate_number,
     reason_code: values.reason_code,
-    country_iso: blankToNull(values.country_iso),
+    country_code: blankToNull(values.country_code),
     state_code: blankToNull(values.state_code),
     issued_at: blankToNull(values.issued_at),
     expires_at: blankToNull(values.expires_at),
