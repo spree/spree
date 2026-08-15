@@ -74,6 +74,8 @@ rails_name() { echo "$(branch_slug).spree"; }
 dashboard_name() { echo "admin.$(branch_slug).spree"; }
 rails_url() { echo "https://$(rails_name).localhost$(url_suffix)"; }
 dashboard_url() { echo "https://$(dashboard_name).localhost$(url_suffix)"; }
+# RAILS_HOST wants a bare host with an optional port, no scheme.
+rails_host() { echo "$(rails_name).localhost$(url_suffix)"; }
 
 port_free() { ! lsof -iTCP:"$1" -sTCP:LISTEN -n -P >/dev/null 2>&1; }
 

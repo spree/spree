@@ -24,6 +24,7 @@ SECRET_KEY_BASE=$(openssl rand -hex 64)
 DATABASE_NAME=$(db_name)
 DATABASE_NAME_TEST=$(test_db_name)
 SPREE_DASHBOARD_URL=$(dashboard_url)
+RAILS_HOST=$(rails_host)
 EOF
 fi
 
@@ -31,6 +32,12 @@ fi
 # first-run setup link is built from it.
 if ! grep -q '^SPREE_DASHBOARD_URL=' server/.env; then
   printf 'SPREE_DASHBOARD_URL=%s\n' "$(dashboard_url)" >> server/.env
+fi
+
+# Backfill likewise: without it, attachment URLs in API payloads fall back to
+# the store's seeded `localhost:3000`, so dashboard images 404.
+if ! grep -q '^RAILS_HOST=' server/.env; then
+  printf 'RAILS_HOST=%s\n' "$(rails_host)" >> server/.env
 fi
 
 require_current_starter
