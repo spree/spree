@@ -1210,14 +1210,16 @@
         "country_code": {
           "label": "Country",
           "placeholder": "Search countries",
-          "help": "Where your store sells from. Sets your currency, warehouse and delivery zones."
+          "help": "Where you ship from. Your store can sell worldwide — this just sets the starting currency, warehouse and delivery zones, all editable later."
         },
         "locale": {
-          "label": "Language"
+          "label": "Language",
+          "help": "Your default language. Add more anytime."
         },
         "currency": {
           "label": "Currency",
-          "placeholder": "Choose a country first"
+          "placeholder": "Choose a country first",
+          "help": "Your default currency. Add more anytime."
         }
       },
       "stock_location": {
@@ -3707,7 +3709,7 @@
     },
     "setup": {
       "title": "Set up Spree",
-      "subtitle": "Create your admin account and name your store to finish installation.",
+      "subtitle": "Create your admin account and tell us about your store. Everything here can be changed later.",
       "loading": "Checking setup status…",
       "missing_token_title": "Setup link required",
       "missing_token_message": "Open the setup link printed during installation — it contains the one-time setup token. Run \"bin/rails spree:setup:token\" to print a fresh one.",

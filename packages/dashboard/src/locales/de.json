@@ -1210,14 +1210,16 @@
         "country_code": {
           "label": "Land",
           "placeholder": "Länder durchsuchen",
-          "help": "Von wo aus Ihr Shop verkauft. Legt Währung, Lager und Liefergebiete fest."
+          "help": "Von wo Sie versenden. Ihr Shop kann weltweit verkaufen — dies legt nur Startwährung, Lager und Liefergebiete fest, alle später änderbar."
         },
         "locale": {
-          "label": "Sprache"
+          "label": "Sprache",
+          "help": "Ihre Standardsprache. Jederzeit erweiterbar."
         },
         "currency": {
           "label": "Währung",
-          "placeholder": "Zuerst ein Land wählen"
+          "placeholder": "Zuerst ein Land wählen",
+          "help": "Ihre Standardwährung. Jederzeit erweiterbar."
         }
       },
       "stock_location": {
@@ -3707,7 +3709,7 @@
     },
     "setup": {
       "title": "Spree einrichten",
-      "subtitle": "Erstellen Sie Ihr Administratorkonto und benennen Sie Ihren Shop, um die Installation abzuschließen.",
+      "subtitle": "Erstellen Sie Ihr Administratorkonto und beschreiben Sie Ihren Shop. Alles hier lässt sich später ändern.",
       "loading": "Setup-Status wird geprüft…",
       "missing_token_title": "Setup-Link erforderlich",
       "missing_token_message": "Öffnen Sie den bei der Installation ausgegebenen Setup-Link — er enthält das einmalige Setup-Token. Mit \"bin/rails spree:setup:token\" können Sie einen neuen ausgeben.",

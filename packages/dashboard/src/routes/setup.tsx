@@ -281,6 +281,7 @@ function SetupForm({ token }: { token: string }) {
                 </Select>
               )}
             />
+            <p className="text-xs text-muted-foreground">{t('admin.fields.setup.locale.help')}</p>
           </div>
           <div className="grid gap-2">
             <Label>{t('admin.fields.setup.currency.label')}</Label>
@@ -290,6 +291,7 @@ function SetupForm({ token }: { token: string }) {
             <div className="flex h-9 items-center rounded-md border border-input bg-muted px-3 text-sm text-muted-foreground">
               {selectedCountry?.currency ?? t('admin.fields.setup.currency.placeholder')}
             </div>
+            <p className="text-xs text-muted-foreground">{t('admin.fields.setup.currency.help')}</p>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-3">
