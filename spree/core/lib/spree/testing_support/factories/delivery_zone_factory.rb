@@ -28,7 +28,7 @@ FactoryBot.define do
       state { nil }
     end
 
-    country_iso { country&.iso || state&.country_iso }
+    country_code { country&.iso || state&.country_code }
     state_code { state&.abbr }
   end
 end

@@ -8,10 +8,10 @@ module Spree
   module Addresses
     class PhoneValidator < ActiveModel::Validator
       def validate(address)
-        return if !address.require_phone? || address.phone.blank? || address.country.blank? || address.country_iso.blank?
+        return if !address.require_phone? || address.phone.blank? || address.country.blank? || address.country_code.blank?
 
         phone = Phonelib.parse(address.phone)
-        unless phone.valid_for_country?(address.country_iso)
+        unless phone.valid_for_country?(address.country_code)
           address.errors.add(:phone, :invalid)
         end
       end

@@ -8,16 +8,16 @@ FactoryBot.define do
       country { Spree::Country.by_iso('US') }
     end
 
-    country_iso { country&.iso }
+    country_code { country&.iso }
 
     abbr do
-      codes = country_iso ? Spree::IsoData.subdivisions(country_iso).keys : []
+      codes = country_code ? Spree::IsoData.subdivisions(country_code).keys : []
       codes.any? ? codes[subdivision_index % codes.size] : nil
     end
 
-    name { (country_iso && abbr && Spree::IsoData.subdivision_name(country_iso, abbr)) || abbr }
+    name { (country_code && abbr && Spree::IsoData.subdivision_name(country_code, abbr)) || abbr }
 
     skip_create
-    initialize_with { Spree::State.new(abbr: abbr, name: name, country_iso: country_iso) }
+    initialize_with { Spree::State.new(abbr: abbr, name: name, country_code: country_code) }
   end
 end

@@ -251,7 +251,7 @@
       "zipcode": {
         "label": "الرمز البريدي"
       },
-      "country_iso": {
+      "country_code": {
         "label": "البلد"
       },
       "state_code": {

@@ -38,7 +38,7 @@ describe Spree::Order do
         amount: 0.2,
         included_in_price: true,
         tax_category: tax_category,
-        country_iso: country&.iso
+        country_code: country&.iso
       )
     }
     let!(:shipping_method) do

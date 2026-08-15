@@ -16,10 +16,10 @@ function zone(members: Partial<DeliveryZoneMember>[]): DeliveryZone {
 describe('readSelection', () => {
   it('splits members into whole countries, states and postal rules', () => {
     const selection = readSelection([
-      { member_type: 'country', country_iso: 'DE' },
-      { member_type: 'state', country_iso: 'US', state_code: 'CA' },
-      { member_type: 'state', country_iso: 'US', state_code: 'NY' },
-      { member_type: 'postal_code', country_iso: 'FR', postal_code_prefix: '75' },
+      { member_type: 'country', country_code: 'DE' },
+      { member_type: 'state', country_code: 'US', state_code: 'CA' },
+      { member_type: 'state', country_code: 'US', state_code: 'NY' },
+      { member_type: 'postal_code', country_code: 'FR', postal_code_prefix: '75' },
     ])
 
     expect([...selection.countries]).toEqual(['DE'])
@@ -29,8 +29,8 @@ describe('readSelection', () => {
 
   it('ignores members missing the fields that give them meaning', () => {
     const selection = readSelection([
-      { member_type: 'country', country_iso: '' },
-      { member_type: 'state', country_iso: 'US', state_code: '' },
+      { member_type: 'country', country_code: '' },
+      { member_type: 'state', country_code: 'US', state_code: '' },
     ])
 
     expect(selection.countries.size).toBe(0)
@@ -41,9 +41,9 @@ describe('readSelection', () => {
 describe('writeSelection', () => {
   it('round-trips a selection back into the flat member list', () => {
     const members: DeliveryZoneMemberValues[] = [
-      { member_type: 'country', country_iso: 'DE' },
-      { member_type: 'state', country_iso: 'US', state_code: 'CA' },
-      { member_type: 'postal_code', country_iso: 'FR', postal_code_prefix: '75' },
+      { member_type: 'country', country_code: 'DE' },
+      { member_type: 'state', country_code: 'US', state_code: 'CA' },
+      { member_type: 'postal_code', country_code: 'FR', postal_code_prefix: '75' },
     ]
 
     expect(writeSelection(readSelection(members))).toEqual(members)
@@ -53,7 +53,7 @@ describe('writeSelection', () => {
     const members = writeSelection({
       countries: new Set(['US', 'DE']),
       states: new Map([['CA', new Set(['ON'])]]),
-      postalRules: [{ member_type: 'postal_code', country_iso: 'FR', postal_code_prefix: '75' }],
+      postalRules: [{ member_type: 'postal_code', country_code: 'FR', postal_code_prefix: '75' }],
     })
 
     expect(members.map((member) => member.member_type)).toEqual([
@@ -63,17 +63,17 @@ describe('writeSelection', () => {
       'postal_code',
     ])
     // Countries are emitted in ISO order so a saved zone reads consistently.
-    expect(members[0].country_iso).toBe('DE')
-    expect(members[1].country_iso).toBe('US')
+    expect(members[0].country_code).toBe('DE')
+    expect(members[1].country_code).toBe('US')
   })
 })
 
 describe('supersedeCountry', () => {
   it('drops the states and postal rules a whole country makes redundant', () => {
     const selection = readSelection([
-      { member_type: 'state', country_iso: 'US', state_code: 'NY' },
-      { member_type: 'postal_code', country_iso: 'US', postal_code_prefix: '10' },
-      { member_type: 'postal_code', country_iso: 'DE', postal_code_prefix: '10' },
+      { member_type: 'state', country_code: 'US', state_code: 'NY' },
+      { member_type: 'postal_code', country_code: 'US', postal_code_prefix: '10' },
+      { member_type: 'postal_code', country_code: 'DE', postal_code_prefix: '10' },
     ])
 
     const next = supersedeCountry(selection, 'US')
@@ -81,7 +81,7 @@ describe('supersedeCountry', () => {
     expect([...next.countries]).toEqual(['US'])
     expect(next.states.has('US')).toBe(false)
     // Germany's rule is untouched — only the superseded country is cleaned up.
-    expect(next.postalRules.map((rule: DeliveryZoneMemberValues) => rule.country_iso)).toEqual([
+    expect(next.postalRules.map((rule: DeliveryZoneMemberValues) => rule.country_code)).toEqual([
       'DE',
     ])
   })
@@ -91,10 +91,10 @@ describe('claimedByOtherZones', () => {
   it('collects the countries and states sibling zones already cover', () => {
     const claimed = claimedByOtherZones([
       zone([
-        { member_type: 'country', country_iso: 'DE' },
-        { member_type: 'state', country_iso: 'US', state_code: 'CA' },
+        { member_type: 'country', country_code: 'DE' },
+        { member_type: 'state', country_code: 'US', state_code: 'CA' },
       ]),
-      zone([{ member_type: 'country', country_iso: 'FR' }]),
+      zone([{ member_type: 'country', country_code: 'FR' }]),
     ])
 
     expect([...claimed.countries].sort()).toEqual(['DE', 'FR'])

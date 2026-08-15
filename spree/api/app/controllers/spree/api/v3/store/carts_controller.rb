@@ -181,8 +181,8 @@ module Spree
               :id, :first_name, :last_name,
               :address1, :address2,
               :city, :postal_code, :phone, :company,
-              # state_abbr is the legacy write name, accepted until 6.1.
-              :country_iso, :state_code, :state_abbr, :state_name, :quick_checkout
+              # country_iso and state_abbr are the legacy write names, accepted until 6.1.
+              :country_code, :country_iso, :state_code, :state_abbr, :state_name, :quick_checkout
             ]
           end
 

@@ -8,7 +8,7 @@ module Spree
           typelize certificate_number: :string, reason_code: :string, status: :string,
                    issuing_authority: [:string, nullable: true],
                    company_id: :string,
-                   country_iso: [:string, nullable: true], state_code: [:string, nullable: true],
+                   country_code: [:string, nullable: true], state_code: [:string, nullable: true],
                    active: :boolean, lapsed: :boolean, can_be_deleted: :boolean,
                    document_filename: [:string, nullable: true],
                    document_byte_size: ['number | null'],
@@ -25,7 +25,7 @@ module Spree
 
           # The jurisdiction the certificate holds in, in the same vocabulary the
           # tax lines use.
-          attributes :country_iso, :state_code
+          attributes :country_code, :state_code
 
           # Whether it counts right now — the status alone can't say, since a
           # verified certificate stops counting once its date passes.

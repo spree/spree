@@ -127,7 +127,7 @@ module Spree
       # still say where the sale was taxed.
       def jurisdiction_for(rate, owner)
         {
-          country_iso: rate.country_iso.presence || owner.tax_country&.iso,
+          country_code: rate.country_code.presence || owner.tax_country&.iso,
           state_code: rate.state_code.presence || owner.tax_address&.state_code
         }
       end
@@ -138,7 +138,7 @@ module Spree
       def exemption_for(item, exemptions, jurisdiction)
         Array(exemptions).find do |exemption|
           exemption.covers_item?(item) &&
-            exemption.covers_jurisdiction?(jurisdiction[:country_iso], jurisdiction[:state_code])
+            exemption.covers_jurisdiction?(jurisdiction[:country_code], jurisdiction[:state_code])
         end
       end
 

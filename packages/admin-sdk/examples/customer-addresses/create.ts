@@ -12,7 +12,7 @@ const address = await client.customers.addresses.create('cus_UkLWZg9DAJ', {
   address1: '350 Fifth Avenue',
   city: 'New York',
   postal_code: '10118',
-  country_iso: 'US',
+  country_code: 'US',
   state_code: 'NY',
   phone: '+1 212 555 1234',
   label: 'Office',

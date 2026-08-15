@@ -13,13 +13,14 @@ export const AddressSchema = z.object({
   phone: z.string().nullable(),
   company: z.string().nullable(),
   country_name: z.string(),
-  country_iso: z.string(),
+  country_code: z.string(),
   state_text: z.string().nullable(),
   state_code: z.string().nullable(),
   quick_checkout: z.boolean(),
   is_default_billing: z.boolean(),
   is_default_shipping: z.boolean(),
   state_abbr: z.string().nullable(),
+  country_iso: z.string(),
   state_name: z.string().nullable(),
 });
 

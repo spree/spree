@@ -45,7 +45,7 @@ RSpec.describe 'Admin Setup API', type: :request, swagger_doc: 'api-reference/ad
           last_name: { type: :string, example: 'Owner' },
           store_name: { type: :string, example: 'My Store' },
           currency: { type: :string, description: 'ISO currency code for the store.', example: 'USD' },
-          country_iso: { type: :string, description: 'ISO 3166-1 alpha-2 country code for the store.', example: 'US' }
+          country_code: { type: :string, description: 'ISO 3166-1 alpha-2 country code for the store.', example: 'US' }
         }
       }
 

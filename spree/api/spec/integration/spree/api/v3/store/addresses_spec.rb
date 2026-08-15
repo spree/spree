@@ -73,13 +73,13 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
           postal_code: { type: :string, example: '10001' },
           phone: { type: :string, example: '+1 555 123 4567' },
           company: { type: :string, example: 'Acme Inc' },
-          country_iso: { type: :string, example: 'US', description: 'ISO 3166-1 alpha-2 country code (e.g., "US", "DE")' },
+          country_code: { type: :string, example: 'US', description: 'ISO 3166-1 alpha-2 country code (e.g., "US", "DE")' },
           state_code: { type: :string, example: 'NY', description: 'ISO 3166-2 subdivision code without country prefix (e.g., "CA", "NY")' },
           state_name: { type: :string, example: 'New York', description: 'State name - for countries without predefined states' },
           is_default_billing: { type: :boolean, example: true, description: 'Set as default billing address' },
           is_default_shipping: { type: :boolean, example: true, description: 'Set as default shipping address' }
         },
-        required: %w[first_name last_name address1 city postal_code country_iso]
+        required: %w[first_name last_name address1 city postal_code country_code]
       }
 
       response '201', 'address created' do
@@ -93,7 +93,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
             city: 'New York',
             postal_code: '10001',
             phone: '+1 555 123 4567',
-            country_iso: country.iso,
+            country_code: country.iso,
             state_code: state.abbr
           }
         end
@@ -104,7 +104,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
           data = JSON.parse(response.body)
           expect(data['first_name']).to eq('John')
           expect(data['city']).to eq('New York')
-          expect(data['country_iso']).to eq(country.iso)
+          expect(data['country_code']).to eq(country.iso)
           expect(data['state_code']).to eq(state.abbr)
         end
       end

@@ -62,7 +62,7 @@ RSpec.describe 'Admin Markets API', type: :request, swagger_doc: 'api-reference/
       description <<~DESC
         Creates a new market for the current store.
 
-        - `country_isos` accepts 2-letter ISO country codes (e.g. `["DE", "FR"]`);
+        - `country_codes` accepts 2-letter ISO country codes (e.g. `["DE", "FR"]`);
           the market must contain at least one country. Unknown codes are
           silently dropped.
         - `supported_locales` accepts an array of locale codes; the
@@ -91,14 +91,14 @@ RSpec.describe 'Admin Markets API', type: :request, swagger_doc: 'api-reference/
           tax_inclusive: { type: :boolean, default: false, description: 'Display prices with tax included.' },
           default: { type: :boolean, default: false, description: 'Setting to true demotes the previous default.' },
           position: { type: :integer, description: 'Sort order within the store; lower = first.' },
-          country_isos: {
+          country_codes: {
             type: :array,
             items: { type: :string },
             description: '2-letter ISO country codes assigned to this market. At least one is required.',
             example: %w[DE FR]
           }
         },
-        required: %w[name currency default_locale country_isos]
+        required: %w[name currency default_locale country_codes]
       }
 
       response '201', 'market created' do
@@ -110,7 +110,7 @@ RSpec.describe 'Admin Markets API', type: :request, swagger_doc: 'api-reference/
             default_locale: 'fr',
             supported_locales: ['fr', 'en'],
             tax_inclusive: true,
-            country_isos: [other_country.iso]
+            country_codes: [other_country.iso]
           }
         end
 
@@ -122,7 +122,7 @@ RSpec.describe 'Admin Markets API', type: :request, swagger_doc: 'api-reference/
           expect(data['currency']).to eq('EUR')
           expect(data['tax_inclusive']).to be true
           expect(data['supported_locales']).to match_array(%w[en fr])
-          expect(data['country_isos']).to eq(['FR'])
+          expect(data['country_codes']).to eq(['FR'])
         end
       end
 
@@ -180,7 +180,7 @@ RSpec.describe 'Admin Markets API', type: :request, swagger_doc: 'api-reference/
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description <<~DESC
-        Updates an existing market. Pass `country_isos` to replace the
+        Updates an existing market. Pass `country_codes` to replace the
         market's country list (full-set update), `supported_locales` to
         replace the supported locales, or `position` to reorder the market
         within the store.
@@ -203,7 +203,7 @@ RSpec.describe 'Admin Markets API', type: :request, swagger_doc: 'api-reference/
           tax_inclusive: { type: :boolean },
           default: { type: :boolean },
           position: { type: :integer },
-          country_isos: { type: :array, items: { type: :string } }
+          country_codes: { type: :array, items: { type: :string } }
         }
       }
 

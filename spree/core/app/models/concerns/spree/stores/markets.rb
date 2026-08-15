@@ -17,18 +17,24 @@ module Spree
         if has_markets?
           default_market&.default_country
         else
-          Spree::Country.by_iso(read_attribute(:default_country_iso_code))
+          Spree::Country.by_iso(read_attribute(:default_country_code))
         end
       end
 
       # Returns the default country's ISO code, derived from the default market
       # @return [String, nil]
-      def default_country_iso_code
+      def default_country_code
         if has_markets?
           default_country&.iso
         else
-          read_attribute(:default_country_iso_code)
+          read_attribute(:default_country_code)
         end
+      end
+
+      # @deprecated Use +default_country_code+. Removed in 6.1.
+      def default_country_iso_code
+        Spree::Deprecation.warn('Spree::Store#default_country_iso_code is deprecated, use #default_country_code instead')
+        default_country_code
       end
 
       # Returns the default locale, delegating to the default market when markets exist
@@ -63,11 +69,11 @@ module Spree
       # Returns the countries covered by this store's markets, by name
       # @return [Array<Spree::Country>]
       def countries_from_markets
-        isos = Spree::MarketCountry.joins(:market).
-               where(Spree::Market.table_name => { store_id: id, deleted_at: nil }).
-               distinct.pluck(:country_iso)
+        codes = Spree::MarketCountry.joins(:market).
+                where(Spree::Market.table_name => { store_id: id, deleted_at: nil }).
+                distinct.pluck(:country_code)
 
-        isos.filter_map { |iso| Spree::Country.by_iso(iso) }.sort_by(&:name)
+        codes.filter_map { |code| Spree::Country.by_iso(code) }.sort_by(&:name)
       end
 
       # Returns the countries available for checkout, derived from markets
@@ -130,7 +136,7 @@ module Spree
         return if markets.exists?
 
         country = @default_country_for_market ||
-          Spree::Country.by_iso(read_attribute(:default_country_iso_code)) ||
+          Spree::Country.by_iso(read_attribute(:default_country_code)) ||
           Spree::Country.by_iso('US')
 
         iso_country = ISO3166::Country[country.iso]

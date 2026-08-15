@@ -9,7 +9,7 @@ const client = createAdminClient({
 const stockLocation = await client.stockLocations.create({
   name: 'Brooklyn warehouse',
   kind: 'warehouse',
-  country_iso: 'US',
+  country_code: 'US',
   state_code: 'NY',
   city: 'Brooklyn',
   zipcode: '11201',

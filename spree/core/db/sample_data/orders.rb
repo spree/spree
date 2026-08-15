@@ -20,7 +20,7 @@ billing_address = Spree::Address.find_or_create_by!(
   city: 'Bethesda',
   state_abbr: ny_abbr,
   zipcode: '20814',
-  country_iso: us_iso,
+  country_code: us_iso,
   phone: '555-0199'
 )
 
@@ -31,7 +31,7 @@ shipping_address = Spree::Address.find_or_create_by!(
   city: 'Washington',
   state_abbr: ny_abbr,
   zipcode: '20500',
-  country_iso: us_iso,
+  country_code: us_iso,
   phone: '555-0199'
 )
 

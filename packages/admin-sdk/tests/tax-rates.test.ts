@@ -10,7 +10,7 @@ const sampleTaxRate = {
   // the numeric form is the separate amount_percentage.
   amount: '0.19',
   amount_percentage: 19.0,
-  country_iso: 'DE',
+  country_code: 'DE',
   state_code: null,
   included_in_price: true,
   show_rate_in_label: true,
@@ -28,10 +28,10 @@ describe('taxRates', () => {
       }),
     )
 
-    const res = await createTestClient().taxRates.list({ country_iso_eq: 'DE' })
+    const res = await createTestClient().taxRates.list({ country_code_eq: 'DE' })
 
     expect(res.data[0]?.id).toBe('txr_abc123')
-    expect(url!.searchParams.get('q[country_iso_eq]')).toBe('DE')
+    expect(url!.searchParams.get('q[country_code_eq]')).toBe('DE')
   })
 
   // A rate names its jurisdiction directly rather than pointing at a zone.
@@ -47,7 +47,7 @@ describe('taxRates', () => {
     await createTestClient().taxRates.create({
       name: 'California Sales Tax',
       amount: 0.0825,
-      country_iso: 'US',
+      country_code: 'US',
       state_code: 'CA',
       tax_category_id: 'txc_1',
     })
@@ -55,7 +55,7 @@ describe('taxRates', () => {
     expect(body).toEqual({
       name: 'California Sales Tax',
       amount: 0.0825,
-      country_iso: 'US',
+      country_code: 'US',
       state_code: 'CA',
       tax_category_id: 'txc_1',
     })

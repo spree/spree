@@ -78,7 +78,7 @@ export const fixtures = {
     address1: '123 Main St',
     city: 'New York',
     postal_code: '10001',
-    country_iso: 'US',
+    country_code: 'US',
     state_abbr: 'NY',
   },
   category: {

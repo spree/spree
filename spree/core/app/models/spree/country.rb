@@ -74,7 +74,7 @@ module Spree
     # later one. IsoData holds the per-locale cache this reads from.
     def states
       Spree::IsoData.subdivisions(iso).map do |abbr, subdivision_name|
-        Spree::State.new(abbr: abbr, name: subdivision_name, country_iso: iso)
+        Spree::State.new(abbr: abbr, name: subdivision_name, country_code: iso)
       end.freeze
     end
 

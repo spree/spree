@@ -29,10 +29,10 @@ module Spree
 
           # POST /api/v3/admin/auth/setup
           # Body: { setup_token, email, password, password_confirmation?,
-          #         first_name?, last_name?, store_name, currency?, country_iso? }
+          #         first_name?, last_name?, store_name, currency?, country_code? }
           def create
             return render_setup_unavailable unless setup_token_usable?
-            return render_unknown_country if unknown_country_iso?
+            return render_unknown_country if unknown_country_code?
 
             user = nil
             store = Spree::Store.default
@@ -76,14 +76,14 @@ module Spree
           # Checked before the token is spent: setup is one-shot, so applying a
           # store with the wrong country — or silently ignoring the request —
           # would leave no in-band way to correct it.
-          def unknown_country_iso?
-            params[:country_iso].present? && Spree::Country.by_iso(params[:country_iso]).nil?
+          def unknown_country_code?
+            params[:country_code].present? && Spree::Country.by_iso(params[:country_code]).nil?
           end
 
           def render_unknown_country
             render_error(
               code: ERROR_CODES[:resource_invalid],
-              message: "Unknown country #{params[:country_iso]}",
+              message: "Unknown country #{params[:country_code]}",
               status: :unprocessable_content
             )
           end
@@ -113,7 +113,7 @@ module Spree
           # `store_name` is optional: an API client may claim the installation
           # without renaming the seeded store (the dashboard's form requires
           # it, but the endpoint is the documented surface). `currency` and
-          # `country_iso` are applied only when they resolve to something real
+          # `country_code` are applied only when they resolve to something real
           # — the token is spent in the same request, so persisting a typo
           # here would be unrecoverable in-band.
           def store_params
@@ -126,9 +126,9 @@ module Spree
                 permitted[:default_currency] = currency.iso_code if currency
               end
 
-              if params[:country_iso].present?
-                country = Spree::Country.by_iso(params[:country_iso])
-                permitted[:default_country_iso_code] = country.iso if country
+              if params[:country_code].present?
+                country = Spree::Country.by_iso(params[:country_code])
+                permitted[:default_country_code] = country.iso if country
               end
 
               permitted

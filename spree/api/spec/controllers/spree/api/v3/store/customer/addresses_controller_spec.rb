@@ -96,7 +96,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
         city: 'New York',
         postal_code: Spree::TestingSupport::CountryPool.postal_code_for(country.iso),
         phone: '555-1234',
-        country_iso: country.iso,
+        country_code: country.iso,
         state_code: state.abbr
       }
     end
@@ -219,7 +219,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
           city: 'Chicago',
           postal_code: Spree::TestingSupport::CountryPool.postal_code_for(country.iso),
           phone: '555-9999',
-          country_iso: country.iso,
+          country_code: country.iso,
           state_code: state.abbr
         }
       end

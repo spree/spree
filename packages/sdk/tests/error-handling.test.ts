@@ -64,7 +64,7 @@ describe('error handling', () => {
           address1: '',
           city: '',
           postal_code: '00000',
-          country_iso: 'US',
+          country_code: 'US',
         },
         { token: 'jwt' },
       )

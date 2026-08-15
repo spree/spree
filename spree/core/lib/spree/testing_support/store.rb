@@ -21,8 +21,8 @@ RSpec.configure do |config|
           # nothing to create — the store just names one.
           @default_country = Spree::Country.by_iso('US')
           @default_store = Spree::Store.find_by(default: true) || FactoryBot.create(:store, default: true, default_currency: 'USD')
-          unless @default_store.read_attribute(:default_country_iso_code) == 'US'
-            @default_store.update_column(:default_country_iso_code, 'US')
+          unless @default_store.read_attribute(:default_country_code) == 'US'
+            @default_store.update_column(:default_country_code, 'US')
           end
         end
       end

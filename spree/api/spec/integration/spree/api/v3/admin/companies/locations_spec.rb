@@ -60,7 +60,7 @@ RSpec.describe 'Admin Company Locations API', type: :request, swagger_doc: 'api-
             properties: {
               first_name: { type: :string }, last_name: { type: :string },
               address1: { type: :string }, city: { type: :string },
-              postal_code: { type: :string }, country_iso: { type: :string, example: 'DE' }
+              postal_code: { type: :string }, country_code: { type: :string, example: 'DE' }
             }
           }
         },
@@ -75,7 +75,7 @@ RSpec.describe 'Admin Company Locations API', type: :request, swagger_doc: 'api-
             name: 'Hamburg warehouse',
             billing_address: {
               first_name: 'Anna', last_name: 'Muller', address1: 'Hafenstr 1',
-              city: 'Hamburg', postal_code: '20095', country_iso: germany.iso
+              city: 'Hamburg', postal_code: '20095', country_code: germany.iso
             }
           }
         end

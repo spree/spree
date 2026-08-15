@@ -26,7 +26,7 @@ RSpec.describe 'Admin tax configuration', type: :request do
   it 'configures a rate and produces the tax it describes' do
     post '/api/v3/admin/tax_rates',
          params: { name: 'German VAT', amount_percentage: 19, included_in_price: true,
-                   tax_category_id: tax_category.prefixed_id, country_iso: 'DE' },
+                   tax_category_id: tax_category.prefixed_id, country_code: 'DE' },
          headers: headers, as: :json
 
     expect(response).to have_http_status(:created)
@@ -35,7 +35,7 @@ RSpec.describe 'Admin tax configuration', type: :request do
 
     Spree::Carts::RecalculateTotals.call(cart: cart)
 
-    expect(cart.tax_lines.reload.pluck(:amount, :taxability_reason, :country_iso, :provider_id)).to eq(
+    expect(cart.tax_lines.reload.pluck(:amount, :taxability_reason, :country_code, :provider_id)).to eq(
       [[BigDecimal('1.6'), 'standard_rated', 'DE', 'internal']]
     )
   end
@@ -43,7 +43,7 @@ RSpec.describe 'Admin tax configuration', type: :request do
   it 'still records a treatment when the rate is zero' do
     post '/api/v3/admin/tax_rates',
          params: { name: 'German VAT', amount_percentage: 19, included_in_price: true,
-                   tax_category_id: tax_category.prefixed_id, country_iso: 'DE' },
+                   tax_category_id: tax_category.prefixed_id, country_code: 'DE' },
          headers: headers, as: :json
     rate_id = JSON.parse(response.body)['id']
 
@@ -62,7 +62,7 @@ RSpec.describe 'Admin tax configuration', type: :request do
   it 'shows the storefront the tax on a line, without the admin treatment fields' do
     post '/api/v3/admin/tax_rates',
          params: { name: 'German VAT', amount_percentage: 19, included_in_price: true,
-                   tax_category_id: tax_category.prefixed_id, country_iso: 'DE' },
+                   tax_category_id: tax_category.prefixed_id, country_code: 'DE' },
          headers: headers, as: :json
 
     Spree::Carts::RecalculateTotals.call(cart: cart)
@@ -76,6 +76,6 @@ RSpec.describe 'Admin tax configuration', type: :request do
     expect(tax_lines.first).to include('label', 'rate', 'amount', 'included')
     expect(tax_lines.first['included']).to be(true)
     expect(tax_lines.first).not_to have_key('taxability_reason')
-    expect(tax_lines.first).not_to have_key('country_iso')
+    expect(tax_lines.first).not_to have_key('country_code')
   end
 end

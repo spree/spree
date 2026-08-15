@@ -49,7 +49,7 @@ end
   assigned_scope = Spree::MarketCountry.joins(:market).
     where(spree_markets: { store_id: store.id, deleted_at: nil })
   assigned_scope = assigned_scope.where.not(market_id: market.id) if market.persisted?
-  assigned_isos = assigned_scope.pluck(:country_iso).to_set
+  assigned_isos = assigned_scope.pluck(:country_code).to_set
 
   countries = attrs[:isos].filter_map { |iso| Spree::Country.by_iso(iso) }.
     reject { |country| assigned_isos.include?(country.iso) }

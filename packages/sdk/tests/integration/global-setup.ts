@@ -42,7 +42,7 @@ const CREDENTIALS_RUBY = [
   'p = s.products.available.first',
   'c = s.categories.first',
   'port = ENV.fetch("PORT", 3010)',
-  'puts JSON.generate(base_url: "http://localhost:#{port}", publishable_key: k.token, jwt_token: jwt, user_email: u.email, user_password: "spree123", product_slug: p&.slug, product_id: p&.prefixed_id, variant_id: p&.default_variant&.prefixed_id, category_id: c&.prefixed_id, category_permalink: c&.permalink, country_iso: "US", store_name: s.name, bogus_payment_method_id: pm.prefixed_id, check_payment_method_id: check.prefixed_id)',
+  'puts JSON.generate(base_url: "http://localhost:#{port}", publishable_key: k.token, jwt_token: jwt, user_email: u.email, user_password: "spree123", product_slug: p&.slug, product_id: p&.prefixed_id, variant_id: p&.default_variant&.prefixed_id, category_id: c&.prefixed_id, category_permalink: c&.permalink, country_code: "US", store_name: s.name, bogus_payment_method_id: pm.prefixed_id, check_payment_method_id: check.prefixed_id)',
 ].join('; ')
 
 let serverProcess: ChildProcess | null = null

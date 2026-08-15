@@ -131,7 +131,7 @@ RSpec.describe 'Store tax identifiers', type: :request do
     describe 'the re-costing it triggers' do
       let(:line_item) { cart.line_items.first }
       let!(:tax_rate) do
-        create(:tax_rate, store: store, country_iso: cart.tax_country&.iso,
+        create(:tax_rate, store: store, country_code: cart.tax_country&.iso,
                           tax_category: line_item.tax_category, amount: 0.1, included_in_price: false)
       end
 

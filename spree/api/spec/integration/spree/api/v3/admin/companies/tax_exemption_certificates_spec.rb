@@ -59,7 +59,7 @@ RSpec.describe 'Admin Tax Exemption Certificates API', type: :request, swagger_d
         Records exemption evidence against a business. Certificates start `pending` and exempt nothing
         until verified.
 
-        `country_iso` and `state_code` say where the certificate holds — omit both for one valid
+        `country_code` and `state_code` say where the certificate holds — omit both for one valid
         everywhere, give only the country for one valid throughout it. `document` takes an ActiveStorage
         signed blob id obtained from `POST /api/v3/admin/direct_uploads`.
       DESC
@@ -72,7 +72,7 @@ RSpec.describe 'Admin Tax Exemption Certificates API', type: :request, swagger_d
         properties: {
           certificate_number: { type: :string, example: 'DE-RESALE-7' },
           reason_code: { type: :string, description: 'Becomes the tax provider\'s entity use code.', example: 'resale' },
-          country_iso: { type: :string, nullable: true, example: 'DE' },
+          country_code: { type: :string, nullable: true, example: 'DE' },
           state_code: { type: :string, nullable: true, example: 'BE' },
           expires_at: { type: :string, format: 'date-time', nullable: true },
           issuing_authority: { type: :string, nullable: true, example: 'Finanzamt Berlin' },
@@ -90,7 +90,7 @@ RSpec.describe 'Admin Tax Exemption Certificates API', type: :request, swagger_d
           {
             certificate_number: 'DE-RESALE-7',
             reason_code: 'resale',
-            country_iso: germany.iso,
+            country_code: germany.iso,
             document: pdf_blob.signed_id
           }
         end

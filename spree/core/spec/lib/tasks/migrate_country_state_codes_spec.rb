@@ -2,11 +2,11 @@ require 'spec_helper'
 
 # The migrator lives in the rake file (it is a one-release upgrade step, not
 # engine infrastructure), so load it the way the task does.
-unless defined?(Spree::CountryStateIsoMigrator)
-  load Spree::Core::Engine.root.join('lib', 'tasks', 'migrate_country_state_isos.rake')
+unless defined?(Spree::CountryStateCodeMigrator)
+  load Spree::Core::Engine.root.join('lib', 'tasks', 'migrate_country_state_codes.rake')
 end
 
-RSpec.describe Spree::CountryStateIsoMigrator do
+RSpec.describe Spree::CountryStateCodeMigrator do
   subject(:migrate) { described_class.new.call }
 
   # Countries and states are reference data in 6.0, so the rows this task reads
@@ -39,7 +39,7 @@ RSpec.describe Spree::CountryStateIsoMigrator do
   # Writes the legacy foreign keys and clears the ISO columns, so the row looks
   # the way it did before this release.
   def as_legacy_row(record, country_id: nil, state_id: nil)
-    updates = { country_iso: nil }
+    updates = { country_code: nil }
     updates[:country_id] = country_id if connection.column_exists?(record.class.table_name, :country_id)
     if connection.column_exists?(record.class.table_name, :state_id)
       updates[:state_id] = state_id
@@ -58,7 +58,7 @@ RSpec.describe Spree::CountryStateIsoMigrator do
 
       migrate
 
-      expect(address.reload.country_iso).to eq('PL')
+      expect(address.reload.country_code).to eq('PL')
       expect(address.state_code).to eq('DS')
     end
 
@@ -68,7 +68,7 @@ RSpec.describe Spree::CountryStateIsoMigrator do
 
       migrate
 
-      expect(address.reload.country_iso).to eq('PL')
+      expect(address.reload.country_code).to eq('PL')
       expect(address.state_code).to be_nil
     end
   end
@@ -77,37 +77,37 @@ RSpec.describe Spree::CountryStateIsoMigrator do
     let(:delivery_zone) { create(:delivery_zone) }
 
     it 'names a country member by code' do
-      member = delivery_zone.members.create!(member_type: 'country', country_iso: 'US')
+      member = delivery_zone.members.create!(member_type: 'country', country_code: 'US')
       as_legacy_row(member, country_id: country_id)
 
       migrate
 
-      expect(member.reload.country_iso).to eq('PL')
+      expect(member.reload.country_code).to eq('PL')
     end
 
     # A subdivision code is only unique within its country, so a state member
     # has to record both halves or it cannot be resolved on its own.
     it 'gives a state member its country as well' do
-      member = delivery_zone.members.create!(member_type: 'state', country_iso: 'US', state_code: 'NY')
+      member = delivery_zone.members.create!(member_type: 'state', country_code: 'US', state_code: 'NY')
       as_legacy_row(member, country_id: nil, state_id: state_id)
 
       migrate
 
       expect(member.reload.state_code).to eq('DS')
-      expect(member.country_iso).to eq('PL')
+      expect(member.country_code).to eq('PL')
     end
   end
 
   describe 'other consumers' do
     it 'names a market country by code' do
       # DE rather than US — the default store's bootstrap market owns US.
-      market = create(:market, store: @default_store, country_isos: ['DE'])
+      market = create(:market, store: @default_store, country_codes: ['DE'])
       market_country = market.market_countries.first
       as_legacy_row(market_country, country_id: country_id)
 
       migrate
 
-      expect(market_country.reload.country_iso).to eq('PL')
+      expect(market_country.reload.country_code).to eq('PL')
     end
 
     it 'names a stock location country and state by code' do
@@ -116,20 +116,20 @@ RSpec.describe Spree::CountryStateIsoMigrator do
 
       migrate
 
-      expect(stock_location.reload.country_iso).to eq('PL')
+      expect(stock_location.reload.country_code).to eq('PL')
       expect(stock_location.state_code).to eq('DS')
     end
 
     it 'names a store default country by code' do
       store = create(:store)
       # Clears what creation wrote so the backfill is what puts the code back.
-      store.update_columns(default_country_id: country_id, default_country_iso_code: nil)
+      store.update_columns(default_country_id: country_id, default_country_code: nil)
 
       migrate
 
       # The store column reflects the legacy foreign key; the market-derived
       # reader is separate and unaffected.
-      expect(store.reload.read_attribute(:default_country_iso_code)).to eq('PL')
+      expect(store.reload.read_attribute(:default_country_code)).to eq('PL')
     end
   end
 
@@ -173,7 +173,7 @@ RSpec.describe Spree::CountryStateIsoMigrator do
 
     it 'leaves already-migrated rows untouched' do
       migrate
-      expect { described_class.new.call }.not_to change { address.reload.country_iso }
+      expect { described_class.new.call }.not_to change { address.reload.country_code }
     end
 
     # An interrupted run leaves some rows filled and some empty; the next run
@@ -184,7 +184,7 @@ RSpec.describe Spree::CountryStateIsoMigrator do
       as_legacy_row(other, country_id: country_id, state_id: state_id)
 
       expect(described_class.new.call[:addresses]).to eq(2) # country + state for the one row
-      expect(other.reload.country_iso).to eq('PL')
+      expect(other.reload.country_code).to eq('PL')
     end
   end
 end

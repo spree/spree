@@ -64,7 +64,7 @@ RSpec.describe Spree::Api::V3::Admin::CompanyLocationsController, type: :control
         id: location.prefixed_id,
         billing_address: {
           first_name: 'Anna', last_name: 'Muller', address1: 'Neue Str 5',
-          city: 'Berlin', postal_code: '10115', country_iso: germany.iso
+          city: 'Berlin', postal_code: '10115', country_code: germany.iso
         }
       }, as: :json
 

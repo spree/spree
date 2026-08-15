@@ -179,7 +179,7 @@ module Spree
               address1: '99 New Street', city: 'Other City',
               zipcode: Spree::TestingSupport::CountryPool.postal_code_for(other_country.iso),
               phone: '555-000-9999',
-              country_iso: other_country.iso, state_abbr: other_state.abbr
+              country_code: other_country.iso, state_abbr: other_state.abbr
             }
           end
           let(:params) { { ship_address_attributes: new_address_attrs } }
@@ -190,7 +190,7 @@ module Spree
             expect(subject).to be_success
 
             order.reload
-            expect(order.ship_address.country_iso).to eq(other_country.iso)
+            expect(order.ship_address.country_code).to eq(other_country.iso)
             expect(order.ship_address.address1).to eq('99 New Street')
 
             new_shipment_ids = order.shipments.map(&:id)
@@ -254,7 +254,7 @@ module Spree
               address1: '99 New Street', city: 'Other City',
               zipcode: Spree::TestingSupport::CountryPool.postal_code_for(other_country.iso),
               phone: '555-000-9999',
-              country_iso: other_country.iso, state_abbr: other_state.abbr
+              country_code: other_country.iso, state_abbr: other_state.abbr
             }
           })
 

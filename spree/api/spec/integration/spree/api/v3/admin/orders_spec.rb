@@ -105,7 +105,7 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
             properties: {
               first_name: { type: :string }, last_name: { type: :string },
               address1: { type: :string }, city: { type: :string },
-              postal_code: { type: :string }, country_iso: { type: :string },
+              postal_code: { type: :string }, country_code: { type: :string },
               state_code: { type: :string }, phone: { type: :string }
             }
           },
@@ -115,7 +115,7 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
             properties: {
               first_name: { type: :string }, last_name: { type: :string },
               address1: { type: :string }, city: { type: :string },
-              postal_code: { type: :string }, country_iso: { type: :string },
+              postal_code: { type: :string }, country_code: { type: :string },
               state_code: { type: :string }, phone: { type: :string }
             }
           },
@@ -239,7 +239,7 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
               address1: { type: :string },
               city: { type: :string },
               zipcode: { type: :string },
-              country_iso: { type: :string },
+              country_code: { type: :string },
               state_code: { type: :string },
               phone: { type: :string }
             }
@@ -252,7 +252,7 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
               address1: { type: :string },
               city: { type: :string },
               zipcode: { type: :string },
-              country_iso: { type: :string },
+              country_code: { type: :string },
               state_code: { type: :string },
               phone: { type: :string }
             }

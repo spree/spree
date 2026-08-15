@@ -4,7 +4,7 @@ export const MEMBER_TYPES = ['country', 'state', 'postal_code'] as const
 
 export const deliveryZoneMemberSchema = z.object({
   member_type: z.enum(MEMBER_TYPES),
-  country_iso: z.string().optional(),
+  country_code: z.string().optional(),
   state_code: z.string().optional(),
   postal_code_prefix: z.string().optional(),
   postal_code_from: z.string().optional(),
@@ -43,7 +43,7 @@ export function deliveryZoneValuesToParams(
     ...(deliveryOriginGroupId ? { delivery_origin_group_id: deliveryOriginGroupId } : {}),
     members: values.members.map((member) => ({
       member_type: member.member_type,
-      ...(member.country_iso ? { country_iso: member.country_iso } : {}),
+      ...(member.country_code ? { country_code: member.country_code } : {}),
       ...(member.state_code ? { state_code: member.state_code } : {}),
       ...(member.postal_code_prefix ? { postal_code_prefix: member.postal_code_prefix } : {}),
       ...(member.postal_code_from ? { postal_code_from: member.postal_code_from } : {}),

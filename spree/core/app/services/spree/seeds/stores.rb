@@ -13,7 +13,7 @@ module Spree
           s.mail_from_address            = 'no-reply@example.com'
           s.customer_support_email       = 'support@example.com'
           s.default_currency             = 'USD'
-          s.default_country_iso          = 'US'
+          s.default_country_code          = 'US'
           s.default_locale               = I18n.locale
         end.save!
       end

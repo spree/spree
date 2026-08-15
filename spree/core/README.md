@@ -87,7 +87,7 @@ Configure Spree in an initializer:
 # config/initializers/spree.rb
 Spree.config do |config|
   config.currency = 'USD'
-  config.default_country_iso = 'US'
+  config.default_country_code = 'US'
 end
 ```
 

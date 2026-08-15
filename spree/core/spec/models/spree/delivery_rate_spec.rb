@@ -30,7 +30,7 @@ describe Spree::DeliveryRate, type: :model do
                name: 'VAT',
                amount: 0.1,
                included_in_price: true,
-               country_iso: @default_country&.iso
+               country_code: @default_country&.iso
       end
 
       context 'when the rate taxes the home country' do
@@ -58,7 +58,7 @@ describe Spree::DeliveryRate, type: :model do
                  name: 'VAT',
                  amount: 0.2,
                  included_in_price: true,
-                 country_iso: create(:country, iso: 'FR', name: 'France')&.iso
+                 country_code: create(:country, iso: 'FR', name: 'France')&.iso
         end
 
         before { shipping_rate.tax_rate = non_default_tax_rate }

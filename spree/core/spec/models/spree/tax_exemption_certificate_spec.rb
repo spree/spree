@@ -56,26 +56,26 @@ describe Spree::TaxExemptionCertificate, type: :model do
     end
 
     it 'matches one naming the country' do
-      certificate = create(:tax_exemption_certificate, company: company, country_iso: germany&.iso)
+      certificate = create(:tax_exemption_certificate, company: company, country_code: germany&.iso)
 
       expect(described_class.for_address(address)).to include(certificate)
     end
 
     it 'matches one naming the exact state' do
-      certificate = create(:tax_exemption_certificate, company: company, country_iso: germany&.iso, state_code: berlin&.abbr)
+      certificate = create(:tax_exemption_certificate, company: company, country_code: germany&.iso, state_code: berlin&.abbr)
 
       expect(described_class.for_address(address)).to include(certificate)
     end
 
     it 'excludes one naming another state of the same country' do
       other = create(:state, country: germany, abbr: 'HH', name: 'Hamburg')
-      certificate = create(:tax_exemption_certificate, company: company, country_iso: germany&.iso, state_code: other&.abbr)
+      certificate = create(:tax_exemption_certificate, company: company, country_code: germany&.iso, state_code: other&.abbr)
 
       expect(described_class.for_address(address)).not_to include(certificate)
     end
 
     it 'excludes one naming another country' do
-      certificate = create(:tax_exemption_certificate, company: company, country_iso: create(:country, iso: 'FR')&.iso)
+      certificate = create(:tax_exemption_certificate, company: company, country_code: create(:country, iso: 'FR')&.iso)
 
       expect(described_class.for_address(address)).not_to include(certificate)
     end
@@ -87,15 +87,15 @@ describe Spree::TaxExemptionCertificate, type: :model do
     # registry drift — must still narrow to nothing.
     it 'never matches when the country code is one nothing recognises' do
       certificate = create(:tax_exemption_certificate, company: company)
-      certificate.update_columns(country_iso: 'ZZ')
+      certificate.update_columns(country_code: 'ZZ')
 
       expect(described_class.for_address(address)).not_to include(certificate)
     end
 
     it 'stores the jurisdiction upcased however it was entered' do
-      certificate = create(:tax_exemption_certificate, company: company, country_iso: 'de', state_code: 'be')
+      certificate = create(:tax_exemption_certificate, company: company, country_code: 'de', state_code: 'be')
 
-      expect(certificate.country_iso).to eq('DE')
+      expect(certificate.country_code).to eq('DE')
       expect(certificate.state_code).to eq('BE')
     end
   end

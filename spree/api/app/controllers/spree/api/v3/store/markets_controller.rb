@@ -28,8 +28,8 @@ module Spree
 
           # GET /api/v3/store/markets/resolve?country=DE
           def resolve
-            country_iso = params[:country]&.upcase
-            country = Spree::Country.find_by_iso!(country_iso)
+            country_code = params[:country]&.upcase
+            country = Spree::Country.find_by_iso!(country_code)
             market = current_store.market_for_country(country)
 
             raise ActiveRecord::RecordNotFound unless market

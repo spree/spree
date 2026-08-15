@@ -55,7 +55,7 @@ async function addSupportedLocale(page: Page, { search, label }: LocalePick) {
 }
 
 // The seeded default store creates a default market for `US` via
-// `Store#ensure_default_market` (anchored to `default_country_iso = 'US'`),
+// `Store#ensure_default_market` (anchored to `default_country_code = 'US'`),
 // plus a EUR market anchored to `Germany` (so the store is multi-currency —
 // see `global-setup.ts`). `Spree::MarketCountry#country_unique_per_store`
 // rejects re-assigning a country to a second market in the same store, so

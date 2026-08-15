@@ -15,7 +15,7 @@ export interface TestCredentials {
   variant_id: string
   category_id: string
   category_permalink: string
-  country_iso: string
+  country_code: string
   store_name: string
   bogus_payment_method_id: string
   check_payment_method_id: string

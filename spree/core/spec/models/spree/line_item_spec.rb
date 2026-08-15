@@ -265,7 +265,7 @@ describe Spree::LineItem, type: :model do
     let(:variant) { create(:variant) }
 
     before do
-      create(:tax_rate, country_iso: rate_country&.iso, tax_category: variant.tax_category)
+      create(:tax_rate, country_code: rate_country&.iso, tax_category: variant.tax_category)
     end
 
     context 'when a rate covers the order destination' do

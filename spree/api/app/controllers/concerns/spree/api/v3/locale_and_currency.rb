@@ -171,10 +171,10 @@ module Spree
         # When a matching market is found, it is set on +Spree::Current.market+,
         # which influences the default locale and currency fallbacks.
         def set_market_from_country
-          country_iso = request.headers['x-spree-country'].presence || params[:country].presence
-          return unless country_iso
+          country_code = request.headers['x-spree-country'].presence || params[:country].presence
+          return unless country_code
 
-          country = Spree::Country.by_iso(country_iso)
+          country = Spree::Country.by_iso(country_code)
           return unless country
 
           market = current_store&.market_for_country(country)

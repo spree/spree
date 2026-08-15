@@ -273,7 +273,7 @@ module Spree
                   address1: '123 Main St',
                   city: 'New York',
                   postal_code: '10001',
-                  country_iso: 'US',
+                  country_code: 'US',
                   state_abbr: 'NY',
                   phone: '555-1234'
                 }
@@ -334,7 +334,7 @@ module Spree
                 shipping_address: {
                   first_name: 'John', last_name: 'Doe',
                   address1: '123 Main St', city: 'New York',
-                  postal_code: '10001', country_iso: 'US', state_abbr: 'NY',
+                  postal_code: '10001', country_code: 'US', state_abbr: 'NY',
                   phone: '555-1234'
                 }
               }
@@ -476,7 +476,7 @@ module Spree
               address1: '456 Oak Ave',
               city: 'New York',
               postal_code: '10002',
-              country_iso: 'US',
+              country_code: 'US',
               state_abbr: 'NY',
               phone: '555-9999'
             }
@@ -505,7 +505,7 @@ module Spree
             address1: '123 Main St',
             city: 'New York',
             postal_code: '10001',
-            country_iso: 'US',
+            country_code: 'US',
             state_abbr: 'NY',
             phone: '555-1234'
           }
@@ -626,7 +626,7 @@ module Spree
               address1: '123 Main St',
               city: 'New York',
               postal_code: '10001',
-              country_iso: 'US',
+              country_code: 'US',
               state_abbr: 'NY'
             }
           }
@@ -752,7 +752,7 @@ module Spree
           {
             first_name: 'Buyer', last_name: 'McGee',
             address1: '1 Test St', city: 'New York',
-            postal_code: '10001', country_iso: 'US', state_abbr: 'NY',
+            postal_code: '10001', country_code: 'US', state_abbr: 'NY',
             phone: '555-0100'
           }
         end
@@ -830,7 +830,7 @@ module Spree
             shipping_address: {
               first_name: 'Buyer', last_name: 'McGee',
               address1: '1 Test St', city: 'New York',
-              postal_code: '10001', country_iso: 'US', state_abbr: 'NY',
+              postal_code: '10001', country_code: 'US', state_abbr: 'NY',
               phone: '555-0100'
             } }
         end

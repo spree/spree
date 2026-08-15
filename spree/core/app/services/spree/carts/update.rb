@@ -147,9 +147,9 @@ module Spree
       # is not part of the new market. The market dictates which countries
       # are available for checkout.
       def clear_shipping_address_if_outside_market
-        return unless cart.market_id_changed? && cart.ship_address&.country_iso.present?
+        return unless cart.market_id_changed? && cart.ship_address&.country_code.present?
 
-        unless cart.market.country_isos.include?(cart.ship_address.country_iso)
+        unless cart.market.country_codes.include?(cart.ship_address.country_code)
           cart.ship_address = nil
           @address_invalidated = true
         end

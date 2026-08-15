@@ -10,7 +10,7 @@ const client = createAdminClient({
 const taxRate = await client.taxRates.create({
   name: 'German VAT',
   amount: 0.19,
-  country_iso: 'DE',
+  country_code: 'DE',
   tax_category_id: 'txc_UkLWZg9DAJ',
   included_in_price: true,
 })

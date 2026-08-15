@@ -23,7 +23,7 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxExemptionCertificatesControl
     it 'lists the company certificates with whether each counts' do
       create(:tax_exemption_certificate, :verified, company: company,
                                                     certificate_number: 'DE-1', reason_code: 'resale',
-                                                    country_iso: germany&.iso)
+                                                    country_code: germany&.iso)
 
       get :index, params: { company_id: company.prefixed_id }, as: :json
 
@@ -32,7 +32,7 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxExemptionCertificatesControl
       expect(row['id']).to start_with('cert_')
       expect(row['certificate_number']).to eq('DE-1')
       expect(row['status']).to eq('verified')
-      expect(row['country_iso']).to eq('DE')
+      expect(row['country_code']).to eq('DE')
       expect(row['active']).to be(true)
       expect(row['can_be_deleted']).to be(false)
     end
@@ -63,13 +63,13 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxExemptionCertificatesControl
         company_id: company.prefixed_id,
         certificate_number: 'DE-RESALE-7',
         reason_code: 'resale',
-        country_iso: germany.iso
+        country_code: germany.iso
       }, as: :json
 
       expect(response).to have_http_status(:created)
       expect(json_response['status']).to eq('pending')
-      expect(json_response['country_iso']).to eq('DE')
-      expect(company.tax_exemption_certificates.sole.country_iso).to eq(germany.iso)
+      expect(json_response['country_code']).to eq('DE')
+      expect(company.tax_exemption_certificates.sole.country_code).to eq(germany.iso)
     end
 
     it 'attaches a document from a direct upload' do

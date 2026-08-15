@@ -83,7 +83,7 @@ module Spree
             # Any real country the order doesn't ship to — the address factory
             # ships to the US, and invented codes don't resolve any more.
             zone = create(:delivery_zone)
-            zone.members.create!(member_type: 'country', country_iso: 'JP')
+            zone.members.create!(member_type: 'country', country_code: 'JP')
             shipping_method.update!(delivery_zone: zone)
           end
 
@@ -196,7 +196,7 @@ module Spree
         end
 
         context 'includes tax adjustments if applicable' do
-          let!(:tax_rate) { create(:tax_rate, country_iso: order.tax_address.country&.iso) }
+          let!(:tax_rate) { create(:tax_rate, country_code: order.tax_address.country&.iso) }
 
           before do
             Spree::ShippingMethod.all.each do |sm|
@@ -221,7 +221,7 @@ module Spree
           let!(:default_vat) do
             create :tax_rate,
                    included_in_price: true,
-                   country_iso: home_country&.iso,
+                   country_code: home_country&.iso,
                    amount: 0.2,
                    tax_category: shipping_method.tax_category
           end
@@ -259,7 +259,7 @@ module Spree
             let!(:other_vat) do
               create :tax_rate,
                      included_in_price: true,
-                     country_iso: other_country&.iso,
+                     country_code: other_country&.iso,
                      amount: 0.3,
                      tax_category: shipping_method.tax_category
             end

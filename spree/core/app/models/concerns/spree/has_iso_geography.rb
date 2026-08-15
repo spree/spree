@@ -1,6 +1,6 @@
 module Spree
   # Geography as reference data (docs/plans/6.0-drop-country-state-models.md):
-  # a model stores ISO codes — `country_iso`, and `state_code` where
+  # a model stores ISO codes — `country_code`, and `state_code` where
   # subdivisions matter — and reads them back as {Spree::Country} /
   # {Spree::State} value objects.
   #
@@ -23,24 +23,24 @@ module Spree
     class_methods do
       # @param state [Boolean] whether the model also carries a `state_code` column
       def has_iso_geography(state: true)
-        normalizes :country_iso, with: UPCASE
+        normalizes :country_code, with: UPCASE
 
         # @return [Spree::Country, nil]
         define_method(:country) do
-          Spree::Country.by_iso(country_iso) if country_iso.present?
+          Spree::Country.by_iso(country_code) if country_code.present?
         end
 
         # A code nothing recognises is rejected rather than stored: every
         # consumer matches codes verbatim, so a bad one silently matches
         # nothing. Gated on change so historical rows stay updatable even if
         # the registry's curation shifts under them.
-        validate :country_iso_must_resolve, if: -> { new_record? || will_save_change_to_country_iso? }
-        define_method(:country_iso_must_resolve) do
-          return if country_iso.blank?
+        validate :country_code_must_resolve, if: -> { new_record? || will_save_change_to_country_code? }
+        define_method(:country_code_must_resolve) do
+          return if country_code.blank?
 
-          errors.add(:country_iso, :invalid) if Spree::Country.by_iso(country_iso).nil?
+          errors.add(:country_code, :invalid) if Spree::Country.by_iso(country_code).nil?
         end
-        private :country_iso_must_resolve
+        private :country_code_must_resolve
 
         return unless state
 
@@ -48,7 +48,7 @@ module Spree
 
         # @return [Spree::State, nil]
         define_method(:state) do
-          Spree::State.resolve(country_iso, state_code) if country_iso.present? && state_code.present?
+          Spree::State.resolve(country_code, state_code) if country_code.present? && state_code.present?
         end
 
         # A subdivision code is only meaningful within its country, so it is
@@ -56,13 +56,13 @@ module Spree
         # through their successors). Without a country there is nothing to
         # check against — the code is left alone.
         validate :state_code_must_resolve,
-                 if: -> { new_record? || will_save_change_to_state_code? || will_save_change_to_country_iso? }
+                 if: -> { new_record? || will_save_change_to_state_code? || will_save_change_to_country_code? }
         define_method(:state_code_must_resolve) do
-          return if state_code.blank? || country_iso.blank?
+          return if state_code.blank? || country_code.blank?
           # An unresolvable country already got its own error.
-          return if Spree::Country.by_iso(country_iso).nil?
+          return if Spree::Country.by_iso(country_code).nil?
 
-          errors.add(:state_code, :invalid) if Spree::IsoData.subdivision_code(country_iso, state_code).nil?
+          errors.add(:state_code, :invalid) if Spree::IsoData.subdivision_code(country_code, state_code).nil?
         end
         private :state_code_must_resolve
       end

@@ -17,7 +17,7 @@ FactoryBot.define do
       state { country&.states&.first }
     end
 
-    country_iso { country&.iso }
+    country_code { country&.iso }
     state_code { state&.abbr }
 
     factory :stock_location_with_items do

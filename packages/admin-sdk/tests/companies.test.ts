@@ -32,7 +32,7 @@ const sampleCertificate = {
   certificate_number: 'DE-RESALE-1',
   reason_code: 'resale',
   status: 'pending',
-  country_iso: 'DE',
+  country_code: 'DE',
   state_code: null,
   active: false,
   lapsed: false,
@@ -107,13 +107,13 @@ describe('companies', () => {
       const listed = await client.companies.locations.list('comp_abc123')
       await client.companies.locations.create('comp_abc123', {
         name: 'Hamburg',
-        billing_address: { city: 'Hamburg', country_iso: 'DE' },
+        billing_address: { city: 'Hamburg', country_code: 'DE' },
       })
 
       expect(listed.data[0]?.id).toBe('cloc_abc123')
       expect(body).toEqual({
         name: 'Hamburg',
-        billing_address: { city: 'Hamburg', country_iso: 'DE' },
+        billing_address: { city: 'Hamburg', country_code: 'DE' },
       })
     })
 

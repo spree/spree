@@ -352,7 +352,7 @@ export interface AddressInputParams {
   address2?: string
   city?: string
   postal_code?: string
-  country_iso?: string
+  country_code?: string
   state_code?: string
   phone?: string
   company?: string
@@ -516,7 +516,7 @@ export interface CustomerAddressParams {
   postal_code?: string
   country_id?: string
   state_id?: string
-  country_iso?: string
+  country_code?: string
   state_code?: string
   phone?: string
   company?: string
@@ -990,7 +990,7 @@ export interface SetupParams {
   /** ISO currency code for the store, e.g. `USD`. */
   currency?: string
   /** ISO 3166-1 alpha-2 country code for the store, e.g. `US`. */
-  country_iso?: string
+  country_code?: string
 }
 
 /** Body for requesting a password reset email. */
@@ -1046,7 +1046,7 @@ export interface StockLocationCreateParams {
   phone?: string | null
   company?: string | null
   /** ISO-3166 alpha-2 country code (e.g. 'US'). */
-  country_iso?: string | null
+  country_code?: string | null
   /** State / province abbreviation (e.g. 'NY'). Resolved against the selected country's states. */
   state_code?: string | null
   /** Free-text state for countries that don't have a states list. */
@@ -1072,7 +1072,7 @@ export interface StockLocationUpdateParams {
   zipcode?: string | null
   phone?: string | null
   company?: string | null
-  country_iso?: string | null
+  country_code?: string | null
   state_code?: string | null
   state_name?: string | null
   pickup_enabled?: boolean
@@ -1245,7 +1245,7 @@ export interface MarketCreateParams {
   /** Sort order within the store; lower = first. */
   position?: number
   /** 2-letter ISO country codes assigned to this market. At least one is required. */
-  country_isos: string[]
+  country_codes: string[]
   /**
    * Class name of the tax engine that prices this market, from
    * `taxProviders.list()`. `null` uses the installation default.
@@ -1261,7 +1261,7 @@ export interface MarketUpdateParams {
   tax_inclusive?: boolean
   default?: boolean
   position?: number
-  country_isos?: string[]
+  country_codes?: string[]
   tax_provider?: string | null
 }
 
@@ -1955,7 +1955,7 @@ export interface DeliveryMethodServiceParams {
 
 export interface DeliveryZoneMemberParams {
   member_type: 'country' | 'state' | 'postal_code'
-  country_iso?: string
+  country_code?: string
   state_code?: string
   postal_code_prefix?: string
   postal_code_from?: string
@@ -1989,7 +1989,7 @@ export interface CompanyLocationAddressParams {
   postal_code?: string
   zipcode?: string
   phone?: string
-  country_iso?: string
+  country_code?: string
   state_code?: string
   state_name?: string
   label?: string
@@ -2020,7 +2020,7 @@ export interface TaxExemptionCertificateParams {
   /** Becomes the tax provider's entity use code, e.g. `resale`. */
   reason_code?: string
   /** Where the certificate holds. Omit both for one valid everywhere. */
-  country_iso?: string | null
+  country_code?: string | null
   state_code?: string | null
   issued_at?: string | null
   expires_at?: string | null
@@ -2034,7 +2034,7 @@ export interface TaxRateParams {
   name?: string
   amount?: number | string
   /** Where the rate applies. A rate naming no country taxes everywhere. */
-  country_iso?: string | null
+  country_code?: string | null
   state_code?: string | null
   tax_category_id?: string
   included_in_price?: boolean

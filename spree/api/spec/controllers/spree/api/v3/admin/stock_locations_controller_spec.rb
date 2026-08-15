@@ -82,7 +82,7 @@ RSpec.describe Spree::Api::V3::Admin::StockLocationsController, type: :controlle
         address1: '350 5th Ave',
         city: 'New York',
         zipcode: '10118',
-        country_iso: country.iso,
+        country_code: country.iso,
         kind: 'store',
         pickup_enabled: true,
         pickup_stock_policy: 'local',
@@ -106,14 +106,14 @@ RSpec.describe Spree::Api::V3::Admin::StockLocationsController, type: :controlle
       )
     end
 
-    it 'resolves country_iso and state_code to the right associations' do
+    it 'resolves country_code and state_code to the right associations' do
       state = Spree::State.resolve(country.iso, 'NY')
 
       post :create, params: valid_params.merge(state_code: state.abbr), as: :json
 
       expect(response).to have_http_status(:created)
       created = Spree::StockLocation.find_by_prefix_id!(json_response['id'])
-      expect(created.country_iso).to eq(country.iso)
+      expect(created.country_code).to eq(country.iso)
       expect(created.state_code).to eq(state.abbr)
     end
 

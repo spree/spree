@@ -13,7 +13,7 @@ export interface AddressBlockValue {
   city?: string | null
   state_text?: string | null
   postal_code?: string | null
-  country_iso?: string | null
+  country_code?: string | null
   country_name?: string | null
   phone?: string | null
 }
@@ -60,7 +60,7 @@ export function AddressBlock({
             {[address.city, address.state_text, address.postal_code].filter(Boolean).join(', ')}
           </div>
           <div>
-            {localizedCountryName(i18n.language, address.country_iso, address.country_name)}
+            {localizedCountryName(i18n.language, address.country_code, address.country_name)}
           </div>
           {address.phone && <div>{address.phone}</div>}
         </div>

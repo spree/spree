@@ -47,9 +47,11 @@ module Spree
 
     has_iso_geography
 
-    # @deprecated The canonical name is +state_code+, matching the tax tables.
-    #   Kept because the Store API shipped +state_abbr+; removed in 6.1.
+    # @deprecated The canonical names are +country_code+ and +state_code+,
+    #   matching the tax tables. Kept because the Store API shipped
+    #   +country_iso+ and +state_abbr+; both are removed in 6.1.
     alias_attribute :state_abbr, :state_code
+    alias_attribute :country_iso, :country_code
 
     # we need a safe operator here as Address is added to custom_field_enabled_resources in Engine
     belongs_to :customer, class_name: Spree.customer_class&.name, optional: true, touch: true
@@ -127,16 +129,18 @@ module Spree
       params.delete(:country_id)
       params.delete(:state_id)
 
-      # The API still speaks state_abbr; the column is state_code.
+      # Legacy write names accepted until 6.1; the columns are country_code
+      # and state_code.
       params[:state_code] = params.delete(:state_abbr) if params.key?(:state_abbr)
+      params[:country_code] = params.delete(:country_iso) if params.key?(:country_iso)
 
-      country_iso = params[:country_iso].presence&.to_s&.upcase
-      params[:country_iso] = country_iso if country_iso
+      country_code = params[:country_code].presence&.to_s&.upcase
+      params[:country_code] = country_code if country_code
 
       if params[:state_code].present?
         params[:state_code] = params[:state_code].to_s.upcase
-      elsif country_iso && params[:state_name].present?
-        matched = Spree::IsoData.subdivision_code(country_iso, params[:state_name])
+      elsif country_code && params[:state_name].present?
+        matched = Spree::IsoData.subdivision_code(country_code, params[:state_name])
 
         if matched
           params[:state_code] = matched
@@ -147,7 +151,7 @@ module Spree
       params
     end
 
-    self.whitelisted_ransackable_attributes = ADDRESS_FIELDS + %w[country_iso state_code]
+    self.whitelisted_ransackable_attributes = ADDRESS_FIELDS + %w[country_code state_code]
     self.whitelisted_ransackable_associations = %w[customer]
 
     def self.required_fields
@@ -214,7 +218,7 @@ module Spree
     # A country alone doesn't make an address — a new one is pre-filled with the
     # store's default, so both the code and the association are ignored here.
     def empty?
-      attributes.except('id', 'created_at', 'updated_at', 'country_id', 'country_iso').all? { |_, v| v.nil? }
+      attributes.except('id', 'created_at', 'updated_at', 'country_id', 'country_code').all? { |_, v| v.nil? }
     end
 
     # Generates an address hash for payment gateway options
@@ -309,7 +313,7 @@ module Spree
     def should_geocode?
       Spree::Config[:geocode_addresses] && (
         saved_changes.key?(:address1) || saved_changes.key?(:city) ||
-        saved_changes.key?(:state_code) || saved_changes.key?(:country_iso)
+        saved_changes.key?(:state_code) || saved_changes.key?(:country_code)
       )
     end
 
@@ -323,14 +327,14 @@ module Spree
     # with it for the one release it still exists. Assigning +country+ directly
     # is equally supported — whichever half was set fills in the other.
     def normalize_country
-      submitted_iso = self[:country_iso].presence
+      submitted_iso = self[:country_code].presence
       return if submitted_iso.blank?
 
       resolved = Spree::Country.by_iso(submitted_iso)
       # Alpha-3 codes arrive here too; the column stores alpha-2. An
       # unrecognised code is left in place — the presence validation on
       # +country+ reports it.
-      self[:country_iso] = resolved.iso if resolved
+      self[:country_code] = resolved.iso if resolved
     end
 
     # Resolves the subdivision code from whichever handle the caller supplied:
@@ -339,12 +343,12 @@ module Spree
     # alone — countries without subdivisions keep it as free text, and
     # +state_validate+ decides whether that is acceptable.
     def normalize_state
-      return if country_iso.blank?
+      return if country_code.blank?
 
       submitted_abbr = self[:state_code].presence
 
       if submitted_abbr.present?
-        resolved = Spree::IsoData.subdivision_code(country_iso, submitted_abbr)
+        resolved = Spree::IsoData.subdivision_code(country_code, submitted_abbr)
 
         # A code that means nothing in this country is stale — it came from the
         # country the address just moved off — so drop it and let the other
@@ -355,7 +359,7 @@ module Spree
 
       return if state_name.blank?
 
-      matched = Spree::IsoData.subdivision_code(country_iso, state_name)
+      matched = Spree::IsoData.subdivision_code(country_code, state_name)
       return if matched.blank?
 
       self[:state_code] = matched
@@ -413,15 +417,15 @@ module Spree
     end
 
     def postal_code_validate
-      return if country.blank? || country_iso.blank? || !require_zipcode? || zipcode.blank?
-      return unless ::ValidatesZipcode::CldrRegexpCollection::ZIPCODES_REGEX.keys.include?(country_iso.upcase.to_sym)
+      return if country.blank? || country_code.blank? || !require_zipcode? || zipcode.blank?
+      return unless ::ValidatesZipcode::CldrRegexpCollection::ZIPCODES_REGEX.keys.include?(country_code.upcase.to_sym)
 
       formatted_zip = ::ValidatesZipcode::Formatter.new(
         zipcode: zipcode.to_s.strip,
-        country_alpha2: country_iso.upcase
+        country_alpha2: country_code.upcase
       ).format
 
-      errors.add(:zipcode, :invalid) unless ::ValidatesZipcode.valid?(formatted_zip, country_iso.upcase)
+      errors.add(:zipcode, :invalid) unless ::ValidatesZipcode.valid?(formatted_zip, country_code.upcase)
     end
 
     def assign_new_default_address_to_user

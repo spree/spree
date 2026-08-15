@@ -26,8 +26,8 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryZonesController, type: :controller
         name: 'US North-East',
         expand: 'members',
         members: [
-          { member_type: 'country', country_iso: 'US' },
-          { member_type: 'postal_code', country_iso: 'US', postal_code_prefix: '10' }
+          { member_type: 'country', country_code: 'US' },
+          { member_type: 'postal_code', country_code: 'US', postal_code_prefix: '10' }
         ]
       }, as: :json
 
@@ -51,7 +51,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryZonesController, type: :controller
   describe 'PATCH #update' do
     let!(:zone) do
       create(:delivery_zone, name: 'Domestic').tap do |z|
-        z.members.create!(member_type: 'country', country_iso: country.iso)
+        z.members.create!(member_type: 'country', country_code: country.iso)
       end
     end
 
@@ -59,7 +59,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryZonesController, type: :controller
       patch :update, params: {
         id: zone.prefixed_id,
         name: 'Domestic v2',
-        members: [{ member_type: 'postal_code', country_iso: 'US', postal_code_from: '10000', postal_code_to: '19999' }]
+        members: [{ member_type: 'postal_code', country_code: 'US', postal_code_from: '10000', postal_code_to: '19999' }]
       }, as: :json
 
       expect(response).to have_http_status(:ok)
@@ -109,18 +109,18 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryZonesController, type: :controller
       zone = create(:delivery_zone, store: store)
       us = Spree::Country.by_iso('US')
       de = Spree::Country.by_iso('DE')
-      zone.members.create!(member_type: 'country', country_iso: us.iso)
-      zone.members.create!(member_type: 'country', country_iso: de.iso)
+      zone.members.create!(member_type: 'country', country_code: us.iso)
+      zone.members.create!(member_type: 'country', country_code: de.iso)
 
       get :show, params: { id: zone.prefixed_id, expand: 'members' }, as: :json
 
       expect(response).to have_http_status(:ok)
       members = json_response['members']
-      expect(members.map { |member| member['country_iso'] }).to match_array(%w[US DE])
+      expect(members.map { |member| member['country_code'] }).to match_array(%w[US DE])
 
       patch :update, params: {
         id: zone.prefixed_id,
-        members: members.map { |member| { member_type: member['member_type'], country_iso: member['country_iso'] } }
+        members: members.map { |member| { member_type: member['member_type'], country_code: member['country_code'] } }
       }, as: :json
 
       expect(response).to have_http_status(:ok)

@@ -859,7 +859,7 @@
         }
       },
       "market": {
-        "country_isos": {
+        "country_codes": {
           "help": "选择此市场涵盖的国家/地区。每个国家/地区在每个商店中最多只能属于一个市场。",
           "label": "国家/地区"
         },
@@ -1556,7 +1556,7 @@
         "jurisdiction": {
           "label": "适用范围"
         },
-        "country_iso": {
+        "country_code": {
           "help": "留空表示对所有国家征税。"
         },
         "state_code": {
@@ -1577,7 +1577,7 @@
         }
       },
       "tax_exemption_certificate": {
-        "country_iso": {
+        "country_code": {
           "help": "留空表示该证明在所有地区有效。"
         },
         "expires_at": {

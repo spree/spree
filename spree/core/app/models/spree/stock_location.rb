@@ -38,7 +38,7 @@ module Spree
 
     self.whitelisted_ransackable_attributes = %w[
       name active default kind pickup_enabled
-      country_iso state_code created_at updated_at
+      country_code state_code created_at updated_at
     ]
 
     scope :active, -> { where(active: true) }
@@ -163,7 +163,7 @@ module Spree
         city: city,
         state_code: state_code,
         state_name: state_name,
-        country_iso: country_iso,
+        country_code: country_code,
         zipcode: zipcode,
         phone: phone
       )

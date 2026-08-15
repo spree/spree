@@ -7,8 +7,8 @@ module Spree
         # `scope` chain narrows appropriately when we restrict to
         # `current_store.markets`.
         #
-        # `country_isos` and `supported_locales` are accepted as arrays on the
-        # wire and translated by model setters (`Spree::Market#country_isos=`,
+        # `country_codes` and `supported_locales` are accepted as arrays on the
+        # wire and translated by model setters (`Spree::Market#country_codes=`,
         # `#supported_locales=`).
         class MarketsController < ResourceController
           scoped_resource :settings
@@ -31,7 +31,7 @@ module Spree
             normalize_params(
               params.permit(
                 :name, :currency, :default_locale, :tax_inclusive, :tax_provider,
-                :default, :position, supported_locales: [], country_isos: []
+                :default, :position, supported_locales: [], country_codes: []
               )
             )
           end

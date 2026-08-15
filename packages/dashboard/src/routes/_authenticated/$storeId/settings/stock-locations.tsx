@@ -570,8 +570,8 @@ function StockItemRow({ item }: { item: StockItem }) {
 function StockLocationFormFields({ form }: { form: UseFormReturn<StockLocationFormValues> }) {
   const { t } = useTranslation()
   const { errors } = form.formState
-  const countryIso = form.watch('country_iso')
-  const { states } = useCountryStates(countryIso)
+  const countryCode = form.watch('country_code')
+  const { states } = useCountryStates(countryCode)
   const pickupEnabled = form.watch('pickup_enabled')
 
   return (
@@ -707,9 +707,9 @@ function StockLocationFormFields({ form }: { form: UseFormReturn<StockLocationFo
             </Field>
           </div>
           <Field>
-            <FieldLabel>{t('admin.fields.country_iso.label')}</FieldLabel>
+            <FieldLabel>{t('admin.fields.country_code.label')}</FieldLabel>
             <Controller
-              name="country_iso"
+              name="country_code"
               control={form.control}
               render={({ field }) => (
                 <CountryCombobox
@@ -722,7 +722,7 @@ function StockLocationFormFields({ form }: { form: UseFormReturn<StockLocationFo
                 />
               )}
             />
-            <FieldError errors={[errors.country_iso]} />
+            <FieldError errors={[errors.country_code]} />
           </Field>
           {states.length > 0 ? (
             <Field>
@@ -732,7 +732,7 @@ function StockLocationFormFields({ form }: { form: UseFormReturn<StockLocationFo
                 control={form.control}
                 render={({ field }) => (
                   <StateCombobox
-                    countryIso={countryIso}
+                    countryCode={countryCode}
                     states={states}
                     value={field.value}
                     onValueChange={field.onChange}

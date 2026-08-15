@@ -47,7 +47,7 @@ RSpec.describe Spree::Api::V3::Admin::Companies::LocationsController, type: :con
         name: 'Munich',
         billing_address: {
           first_name: 'Anna', last_name: 'Muller', address1: 'Leopoldstr 1',
-          city: 'Munich', postal_code: '80802', country_iso: germany.iso
+          city: 'Munich', postal_code: '80802', country_code: germany.iso
         }
       }, as: :json
 

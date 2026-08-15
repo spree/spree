@@ -192,9 +192,9 @@ steps:
       and spree_states directly — countries and states are reference data in
       6.0, so their models can no longer look the rows up.
 
-  - id: migrate_country_state_isos
+  - id: migrate_country_state_codes
     name: "Name countries and states by ISO code"
-    task: "spree:upgrade:migrate_country_state_isos"
+    task: "spree:upgrade:migrate_country_state_codes"
     notes: |
       Countries and states stop being database records in Spree 6. Addresses,
       delivery zone members, market countries, stock locations and stores name

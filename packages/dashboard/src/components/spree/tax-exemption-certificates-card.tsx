@@ -205,7 +205,7 @@ export function TaxExemptionCertificatesCard({
                   })}
                   {' · '}
                   <JurisdictionLabel
-                    countryIso={certificate.country_iso}
+                    countryCode={certificate.country_code}
                     stateCode={certificate.state_code}
                   />
                 </span>
@@ -346,8 +346,8 @@ function CertificateSheet({
     if (open) form.reset(TAX_EXEMPTION_CERTIFICATE_DEFAULTS)
   }, [open, form])
 
-  const countryIso = form.watch('country_iso')
-  const { states } = useCountryStates(countryIso)
+  const countryCode = form.watch('country_code')
+  const { states } = useCountryStates(countryCode)
 
   async function handleSubmit(values: TaxExemptionCertificateFormValues) {
     try {
@@ -447,7 +447,7 @@ function CertificateSheet({
                   {t('admin.fields.country.label')}
                 </FieldLabel>
                 <Controller
-                  name="country_iso"
+                  name="country_code"
                   control={form.control}
                   render={({ field }) => (
                     <CountryCombobox
@@ -461,11 +461,11 @@ function CertificateSheet({
                   )}
                 />
                 <FieldDescription>
-                  {t('admin.fields.tax_exemption_certificate.country_iso.help')}
+                  {t('admin.fields.tax_exemption_certificate.country_code.help')}
                 </FieldDescription>
               </Field>
 
-              {countryIso && states.length > 0 && (
+              {countryCode && states.length > 0 && (
                 <Field>
                   <FieldLabel htmlFor="certificate-state">
                     {t('admin.fields.state.label')}
@@ -475,7 +475,7 @@ function CertificateSheet({
                     control={form.control}
                     render={({ field }) => (
                       <StateCombobox
-                        countryIso={countryIso}
+                        countryCode={countryCode}
                         states={states}
                         value={field.value}
                         onValueChange={field.onChange}

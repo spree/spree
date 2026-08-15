@@ -31,7 +31,7 @@ export interface AddressParams {
   address2: string
   city: string
   postal_code: string
-  country_iso: string
+  country_code: string
   state_code: string
   phone: string
   label?: string
@@ -61,10 +61,10 @@ const addressFormSchema = z.object({
     .string()
     .trim()
     .min(1, { error: requiredMessage('address.postal_code') }),
-  country_iso: z
+  country_code: z
     .string()
     .trim()
-    .min(1, { error: requiredMessage('country_iso') }),
+    .min(1, { error: requiredMessage('country_code') }),
   state_code: z.string(),
   phone: z.string(),
   label: z.string(),
@@ -82,7 +82,7 @@ function buildDefaults(address: Address | null | undefined): AddressFormValues {
     address2: address?.address2 ?? '',
     city: address?.city ?? '',
     postal_code: address?.postal_code ?? '',
-    country_iso: address?.country_iso ?? '',
+    country_code: address?.country_code ?? '',
     state_code: address?.state_code ?? '',
     phone: address?.phone ?? '',
     label: address?.label ?? '',
@@ -131,8 +131,8 @@ export function AddressFormDialog({
     }
   }, [address, form])
 
-  const countryIso = form.watch('country_iso')
-  const { states, statesRequired } = useCountryStates(countryIso)
+  const countryCode = form.watch('country_code')
+  const { states, statesRequired } = useCountryStates(countryCode)
   const useStateCombobox = statesRequired && states.length > 0
 
   async function onSubmit(values: AddressFormValues) {
@@ -144,7 +144,7 @@ export function AddressFormDialog({
         address2: values.address2,
         city: values.city,
         postal_code: values.postal_code,
-        country_iso: values.country_iso,
+        country_code: values.country_code,
         state_code: values.state_code,
         phone: values.phone,
         ...(showLabel && { label: values.label || undefined }),
@@ -242,9 +242,9 @@ export function AddressFormDialog({
                 <FieldError errors={[errors.address2]} />
               </Field>
               <Field>
-                <FieldLabel>{t('admin.fields.country_iso.label')}</FieldLabel>
+                <FieldLabel>{t('admin.fields.country_code.label')}</FieldLabel>
                 <Controller
-                  name="country_iso"
+                  name="country_code"
                   control={form.control}
                   render={({ field }) => (
                     <CountryCombobox
@@ -256,7 +256,7 @@ export function AddressFormDialog({
                     />
                   )}
                 />
-                <FieldError errors={[errors.country_iso]} />
+                <FieldError errors={[errors.country_code]} />
               </Field>
               <div className="grid grid-cols-2 gap-3">
                 <Field>
@@ -276,7 +276,7 @@ export function AddressFormDialog({
                       control={form.control}
                       render={({ field }) => (
                         <StateCombobox
-                          countryIso={countryIso}
+                          countryCode={countryCode}
                           states={states}
                           value={field.value}
                           onValueChange={field.onChange}

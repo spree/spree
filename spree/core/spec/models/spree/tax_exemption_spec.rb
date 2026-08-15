@@ -23,7 +23,7 @@ describe Spree::TaxExemption, type: :model do
     end
 
     it 'claims a whole country without a state' do
-      exemption = described_class.new(reason_code: 'resale', country_iso: 'US')
+      exemption = described_class.new(reason_code: 'resale', country_code: 'US')
 
       expect(exemption.covers_jurisdiction?('US', 'NY')).to be(true)
       expect(exemption.covers_jurisdiction?('us', nil)).to be(true)
@@ -31,7 +31,7 @@ describe Spree::TaxExemption, type: :model do
     end
 
     it 'claims one state when it names one' do
-      exemption = described_class.new(reason_code: 'resale', country_iso: 'US', state_code: 'NY')
+      exemption = described_class.new(reason_code: 'resale', country_code: 'US', state_code: 'NY')
 
       expect(exemption.covers_jurisdiction?('US', 'NY')).to be(true)
       expect(exemption.covers_jurisdiction?('US', 'CA')).to be(false)

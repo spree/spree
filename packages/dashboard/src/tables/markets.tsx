@@ -23,7 +23,7 @@ defineTable<Market>('markets', {
           id={market.id}
           dataAttr="data-market-id"
           name={market.name}
-          secondary={market.country_isos.length > 0 ? market.country_isos.join(', ') : undefined}
+          secondary={market.country_codes.length > 0 ? market.country_codes.join(', ') : undefined}
         />
       ),
     },

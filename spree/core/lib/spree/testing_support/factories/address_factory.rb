@@ -12,7 +12,7 @@ FactoryBot.define do
     # A real US/NY pair, so generated OpenAPI examples carry plausible fields
     # and address validation has a subdivision it recognises. The model stores
     # plain codes; country/state stay as transient value objects so specs can
-    # keep passing them (or country_iso/state_code directly).
+    # keep passing them (or country_code/state_code directly).
     transient do
       country { Spree::Country.by_iso('US') }
 
@@ -30,7 +30,7 @@ FactoryBot.define do
       end
     end
 
-    country_iso { country&.iso }
+    country_code { country&.iso }
     state_code { state&.abbr }
 
     # Countries now carry their real postal formats, so a US ZIP would be

@@ -411,8 +411,8 @@ function PostalRulesSection({
           <div className="flex items-center gap-2">
             <Select
               items={countryOptions}
-              value={rule.country_iso ?? ''}
-              onValueChange={(next) => update(index, { country_iso: next as string })}
+              value={rule.country_code ?? ''}
+              onValueChange={(next) => update(index, { country_code: next as string })}
             >
               <SelectTrigger className="flex-1">
                 <SelectValue>
@@ -474,7 +474,7 @@ function PostalRulesSection({
               ...rules,
               {
                 member_type: 'postal_code',
-                country_iso: countryOptions[0]?.value ?? '',
+                country_code: countryOptions[0]?.value ?? '',
                 postal_code_prefix: '',
                 postal_code_from: '',
                 postal_code_to: '',
