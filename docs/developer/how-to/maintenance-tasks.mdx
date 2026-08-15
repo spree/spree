@@ -1,0 +1,215 @@
+---
+title: Maintenance Tasks
+description: Write and run data corrections, backfills and reindexes from the dashboard — reviewed code with a progress bar, a pause button and a record of who ran what.
+---
+
+## Overview
+
+Sooner or later a store needs a one-off pass over its data. A supplier changes prices. An import writes the wrong category on four thousand products. A field added last release needs filling in for everything that came before.
+
+The usual answers are both poor. A console session leaves no record of what it did — only of what was typed, which is not the same thing. A rake task is better, but it needs a shell, which a merchant on a managed platform does not have, and it starts from the beginning when it dies at row 400,000.
+
+A **maintenance task** is that work written as reviewed, deployed code. You write a class; Spree gives it batching, a cursor that survives a deploy, pause and resume, and a run record naming who started it, with which parameters, and how it ended.
+
+## Writing a task
+
+A task declares what to walk and what to do with each record:
+
+```ruby
+# app/maintenance_tasks/backfill_supplier_codes.rb
+class BackfillSupplierCodes < Spree::MaintenanceTask
+  description 'Copy supplier codes onto variants that predate the column'
+  supports_dry_run
+
+  def collection
+    Spree::Variant.where(supplier_code: nil).order(:id)
+  end
+
+  def process(variant)
+    code = variant.product.metadata['supplier_code']
+    return tally(:skipped_no_code) if code.blank?
+
+    return tally(:would_update) if dry_run?
+
+    variant.update_columns(supplier_code: code)
+    tally(:updated)
+  end
+end
+```
+
+Then register it, which is what makes it runnable:
+
+```ruby
+# config/initializers/spree.rb
+Spree.maintenance_tasks << 'BackfillSupplierCodes'
+```
+
+Registration is deliberate. A class that merely exists under `app/` is not something operators can fire; adding the line is how you say it is ready.
+
+### The collection must be ordered
+
+The cursor is a value from your ordering, so the ordering has to be stable and unique — in practice, `order(:id)`. An unordered relation resumes in the wrong place, and the failure is silent: rows get skipped rather than an error raised.
+
+Write the collection as **what is left to do**, not as everything. `where(supplier_code: nil)` shrinks as the task works, which makes the task idempotent for free and makes a re-run cheap. A scope that does not narrow will re-process everything on every run.
+
+### Reporting what happened
+
+`tally` is what the run page shows and what an operator reads afterwards. Count the outcomes that matter — what changed, what was skipped and why — rather than just successes. "1,200 updated, 43 skipped because the product had no code" answers the question a merchant actually asks.
+
+### Parameters
+
+Parameters are Active Model attributes, and their validators shape the form the dashboard renders:
+
+```ruby
+class RepriceCategory < Spree::MaintenanceTask
+  attribute :category_id, :string
+  attribute :percentage, :decimal
+  attribute :mode, :string
+
+  validates :category_id, presence: true          # required field
+  validates :mode, inclusion: { in: %w[increase decrease] }  # a select
+end
+```
+
+A presence validator marks the field required; an inclusion validator turns it into a dropdown. There is no second place to describe the form — the task's own validations are the description.
+
+Use `mask_attribute :token` for anything sensitive. Masked values are still stored, because a run has to be reproducible, but they are never rendered back.
+
+## Declarations
+
+| Declaration | Meaning |
+|---|---|
+| `description(text)` | Shown in the task list. Pass a translation key to localize. |
+| `supports_dry_run` | Offers the preview toggle. Your `process` must honor `dry_run?`. |
+| `no_collection` | One operation instead of an iteration; `process` runs once. |
+| `csv_collection` | Rows come from an uploaded CSV. |
+| `collection_batch_size(n)` | Records per checkpoint. Defaults to 100. |
+| `max_run_time(duration)` | How long one execution may run before yielding. Defaults to 5 minutes. |
+| `throttle_on(backoff:) { }` | Pause while the block is true — replica lag, a rate limit. |
+| `report_on(ErrorClass)` | Skip a failing record and carry on instead of failing the run. |
+| `precondition(message) { }` | Refuse the run up front when the block is false. |
+| `mask_attribute(*names)` | Never render these values back. |
+
+## Dry run
+
+A task that declares `supports_dry_run` gets a preview toggle, defaulted **on**. Your `process` decides what preview means:
+
+```ruby
+def process(order)
+  return tally(:would_refund) if dry_run?
+
+  Spree::Payments::Refund.call(payment: order.payments.last)
+  tally(:refunded)
+end
+```
+
+Spree does not fake this by rolling a transaction back. A rollback would silently lie about anything outside the database — a gateway call, an email, an enqueued job — and those are exactly the operations an operator most wants to preview honestly.
+
+## Long-running work
+
+The runner checkpoints after every batch. At each checkpoint it writes the cursor, then asks three questions: is the worker shutting down, has this execution used its time slice, and has an operator asked to pause or cancel. Any of the three stops the run cleanly with its place recorded.
+
+That means your `process` needs one property: **re-running the batch that was in flight must change nothing**. Writing `update_columns(supplier_code: code)` is safe to repeat. Incrementing a counter is not — reach for a computed value or an idempotent write instead.
+
+`throttle_on` is how you keep a long task from overwhelming something else:
+
+```ruby
+throttle_on(backoff: 30.seconds) { Spree::Order.connection.pool.stat[:waiting] > 5 }
+```
+
+## CSV tasks
+
+When the input is a spreadsheet rather than a query, declare `csv_collection` and `process` receives one row at a time:
+
+```ruby
+class UpdatePricesFromSupplier < Spree::MaintenanceTask
+  description 'Apply a supplier price list'
+  csv_collection
+
+  def process(row)
+    variant = Spree::Variant.find_by(sku: row['sku'])
+    return tally(:skipped_unknown_sku) if variant.nil?
+
+    variant.prices.find_or_initialize_by(currency: 'USD').update!(amount: row['price'])
+    tally(:updated)
+  end
+end
+```
+
+The operator attaches the file when starting the run, and it stays attached afterwards — the record of a bulk write is incomplete without the input that produced it. The cursor is the row number, so an interrupted run re-reads the file but re-applies nothing.
+
+Skip rows the catalog no longer matches rather than failing the whole run. A spreadsheet assembled by hand routinely carries a few stale rows, and stopping on the first makes the task useless for the case it exists to serve.
+
+## Running a task
+
+**From the dashboard:** Settings → Maintenance tasks. Each task shows its description, whether it can preview, and how its last run went. Starting one opens a form built from its parameters.
+
+**From the command line:**
+
+```bash
+bin/rails spree:maintenance_tasks:list
+bin/rails "spree:maintenance_tasks:perform[BackfillSupplierCodes]"
+ARGS='percentage=10 mode=increase' DRY_RUN=1 bin/rails "spree:maintenance_tasks:perform[RepriceCategory]"
+```
+
+A command-line run writes the same run record a dashboard run does. There is no back door.
+
+**From code**, for seeds or tests:
+
+```ruby
+Spree::MaintenanceTasks::Start.call(
+  task_name: 'BackfillSupplierCodes',
+  arguments: { 'batch_size' => 500 },
+  inline: true
+)
+```
+
+## While a task is running
+
+The run page shows progress, the tallies so far, and three controls:
+
+- **Pause** stops at the next checkpoint and keeps the cursor. Resume picks up where it left off.
+- **Resume** restarts a paused or failed run from its cursor.
+- **Cancel** stops it for good. Work already committed stays committed — cancelling is not an undo.
+
+Only one run of a task can be in flight at a time. Two runs of the same task would race over the same records and their cursors would leapfrog, so a second start is refused.
+
+## Permissions
+
+Running a task can rewrite any data in the installation, so the grant sits with the other sensitive permissions:
+
+- `read_maintenance_tasks` — see the task list and run history.
+- `write_maintenance_tasks` — start, pause, resume and cancel runs.
+
+Only the admin role holds these by default. A role granted broad data permissions elsewhere still cannot run tasks; that is the point of a separate key. Error backtraces are shown only to callers who may act on a run, since they name internal paths.
+
+## Shipping tasks from an extension
+
+An extension registers its tasks the same way an application does:
+
+```ruby
+# lib/spree_my_extension/engine.rb
+initializer 'spree_my_extension.maintenance_tasks' do
+  Spree.maintenance_tasks << 'SpreeMyExtension::MaintenanceTasks::RecountRatings'
+end
+```
+
+This is the alternative to a README telling merchants to open a console after upgrading. A task ships with the code that needs it, appears in the dashboard, and records that it ran.
+
+Localize the description by passing a translation key relative to the `spree.` scope:
+
+```ruby
+description 'maintenance_tasks.recount_ratings.description'
+```
+
+## What tasks are not for
+
+- **Schema changes.** Migrations belong in the deploy pipeline. A task that needs a column the migration has not added yet should declare a `precondition` and fail fast with a clear message.
+- **Recurring work.** A task is for work an operator decides to run. Scheduled jobs belong in `config/recurring.yml`.
+- **System-triggered background work.** Imports and other pipelines the application starts on its own stay plain `ActiveJob::Continuable` jobs; the task primitive is for operator-triggered work.
+
+## Upgrades
+
+Every data step of the 5.6 → 6.0 upgrade is a maintenance task. `bin/rake spree:upgrade` walks them in order, and each step records a run — so a half-finished upgrade tells you exactly which step stopped and why, instead of leaving a stack trace and no trace of what ran.
+
+The steps also appear in the dashboard, which is how an operator without a shell runs them.

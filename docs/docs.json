@@ -1082,7 +1082,8 @@
                       "developer/how-to/extend-reporting",
                       "developer/how-to/custom-document-numbers",
                       "developer/how-to/custom-order-routing",
-                      "developer/how-to/custom-stock-splitter"
+                      "developer/how-to/custom-stock-splitter",
+                      "developer/how-to/maintenance-tasks"
                     ],
                     "icon": "compass"
                   },

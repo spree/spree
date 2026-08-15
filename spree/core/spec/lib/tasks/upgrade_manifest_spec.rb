@@ -163,6 +163,35 @@ RSpec.describe 'the upgrade manifest' do
     end
   end
 
+  describe 'the walk' do
+    before(:all) do
+      require 'rake'
+      Rake::Task.define_task(:environment) unless Rake::Task.task_defined?(:environment)
+      load Spree::Core::Engine.root.join('lib', 'tasks', 'upgrade.rake')
+    end
+
+    # The documented way to re-run one step after fixing the data that stopped
+    # it, rather than walking the whole manifest again.
+    it 'runs a single step by id and records it' do
+      runner = Spree::Upgrade::Runner.new(target_version: '6.0', step_id: 'migrate_capture_methods')
+
+      expect { runner.call }.to change(Spree::MaintenanceTaskRun, :count).by(1)
+
+      expect(Spree::MaintenanceTaskRun.last.task_name).
+        to eq('Spree::MaintenanceTasks::Upgrade::CaptureMethods')
+    end
+
+    it 'records a run for a rake-backed step of a released manifest' do
+      runner = Spree::Upgrade::Runner.new(target_version: '5.6', step_id: 'taxon_store_id')
+
+      expect { runner.call }.to change(Spree::MaintenanceTaskRun, :count).by(1)
+
+      run = Spree::MaintenanceTaskRun.last
+      expect(run.task_name).to eq('Spree::MaintenanceTasks::UpgradeStep')
+      expect(run.arguments['step_id']).to eq('taxon_store_id')
+    end
+  end
+
   describe 'a step whose precondition fails' do
     it 'is refused before a run row is created' do
       allow(Spree::Store).to receive(:default).and_return(nil)
