@@ -81,13 +81,13 @@
   --radius: 0.75rem;
 
   /* Sidebar — the site's raised warm surface, one step off the page. */
-  --sidebar: oklch(0.9858 0.0045 78.3); /* #fcfaf7 — site page background */
+  --sidebar: oklch(97.1% 0.005 78.3);
   --sidebar-foreground: oklch(0.2136 0.0555 255.9);
   --sidebar-primary: oklch(0.2136 0.0555 255.9);
   --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.965 0.006 84.6);
+  --sidebar-accent: oklch(92.1% 0.011 76.6);
   --sidebar-accent-foreground: oklch(0.2136 0.0555 255.9);
-  --sidebar-border: oklch(0.928 0.0075 87.5);
+  --sidebar-border: oklch(90.4% 0.01 87.5);
   --sidebar-ring: var(--brand-blue);
 
   /* Status ramps, following Vercel's Geist colour system.
