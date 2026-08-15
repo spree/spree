@@ -17,14 +17,17 @@ module Spree
       INTERNATIONAL_AMOUNT = 20
 
       # @param store [Spree::Store] the store to provision, already persisted
-      # @param country [Spree::Country] where the shop sells from
+      # @param country [Spree::Country] where the shop ships from
       # @param locale [String, nil] storefront locale; defaults to the
       #   country's own language, then English
+      # @param currency [String, nil] ISO 4217 code; defaults to the country's
+      #   own currency. Merchants who ship from one country and price in
+      #   another currency pass it explicitly.
       # @return [Spree::Store] the store, reloaded
-      def call(store:, country:, locale: nil)
+      def call(store:, country:, locale: nil, currency: nil)
         @store = store
         @country = country
-        @currency = country.default_currency.presence || 'USD'
+        @currency = resolve_currency(currency, country)
         @locale = locale.presence || country.default_locale.presence || 'en'
 
         ApplicationRecord.transaction do
@@ -41,6 +44,15 @@ module Spree
       private
 
       attr_reader :store, :country, :currency, :locale
+
+      # An unknown code falls back rather than raising: callers validate before
+      # calling, and a seed reading STORE_CURRENCY from the environment should
+      # not fail an install over a typo.
+      def resolve_currency(requested, country)
+        found = ::Money::Currency.find(requested.to_s.strip) if requested.present?
+
+        found&.iso_code || country.default_currency.presence || 'USD'
+      end
 
       # The store's own country/currency/locale columns are not the source of
       # truth once a market exists — Spree::Stores::Markets reads through the

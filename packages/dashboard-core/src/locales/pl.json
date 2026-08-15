@@ -598,7 +598,8 @@
       "first_name_required": "Imię jest wymagane",
       "last_name_required": "Nazwisko jest wymagane",
       "store_name_required": "Nazwa sklepu jest wymagana",
-      "country_required": "Kraj jest wymagany"
+      "country_required": "Kraj jest wymagany",
+      "currency_required": "Waluta jest wymagana"
     },
     "account": {
       "edit_profile": "Edytuj profil",

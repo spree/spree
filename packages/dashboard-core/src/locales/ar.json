@@ -598,7 +598,8 @@
       "first_name_required": "الاسم الأول مطلوب",
       "last_name_required": "اسم العائلة مطلوب",
       "store_name_required": "اسم المتجر مطلوب",
-      "country_required": "البلد مطلوب"
+      "country_required": "البلد مطلوب",
+      "currency_required": "العملة مطلوبة"
     },
     "account": {
       "edit_profile": "تعديل الملف الشخصي",

@@ -1218,8 +1218,8 @@
         },
         "currency": {
           "label": "Währung",
-          "placeholder": "Zuerst ein Land wählen",
-          "help": "Ihre Standardwährung. Jederzeit erweiterbar."
+          "placeholder": "Währungen durchsuchen",
+          "help": "Ihre Standardwährung, vorgeschlagen anhand Ihres Landes. Jederzeit erweiterbar."
         }
       },
       "stock_location": {

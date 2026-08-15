@@ -54,6 +54,12 @@ RSpec.describe 'Admin Setup API', type: :request, swagger_doc: 'api-reference/ad
             type: :string,
             description: "Storefront locale. Defaults to the country's own language.",
             example: 'en'
+          },
+          currency: {
+            type: :string,
+            description: "ISO 4217 currency. Defaults to the country's own currency — " \
+                         'pass one only when the store prices in something else.',
+            example: 'USD'
           }
         }
       }

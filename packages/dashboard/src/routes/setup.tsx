@@ -1,6 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { SetupCountry, SpreeError } from '@spree/admin-sdk'
-import { adminClient, mapSpreeErrorsToForm, useAuth, useDisplayName } from '@spree/dashboard-core'
+import {
+  ALL_CURRENCY_CODES,
+  adminClient,
+  mapSpreeErrorsToForm,
+  useAuth,
+  useDisplayName,
+} from '@spree/dashboard-core'
 import {
   Button,
   Combobox,
@@ -35,6 +41,51 @@ export const Route = createFileRoute('/setup')({
   validateSearch: setupSearchSchema,
   component: SetupPage,
 })
+
+/**
+ * Enough of ISO 4217 to stay useful on runtimes without
+ * `Intl.supportedValuesOf` — the country's own currency is prepended to
+ * whichever list is used, so the recommendation is never missing.
+ */
+const FALLBACK_CURRENCY_CODES = [
+  'USD',
+  'EUR',
+  'GBP',
+  'CHF',
+  'PLN',
+  'SEK',
+  'NOK',
+  'DKK',
+  'CZK',
+  'RON',
+  'CAD',
+  'AUD',
+  'NZD',
+  'JPY',
+  'CNY',
+  'HKD',
+  'SGD',
+  'INR',
+  'BRL',
+  'MXN',
+  'ZAR',
+  'AED',
+  'TRY',
+  'ILS',
+  'KRW',
+]
+
+/** `PLN — Polish Zloty`, with the name in the admin UI language. */
+function useCurrencyLabel() {
+  const currencyName = useDisplayName('currency')
+  return useCallback(
+    (code: string) => {
+      const name = currencyName(code)
+      return name && name !== code ? `${code} — ${name}` : code
+    },
+    [currencyName],
+  )
+}
 
 /**
  * The merchant's own region, read from the browser's locale — a better
@@ -123,6 +174,7 @@ function SetupForm({ token }: { token: string }) {
       store_name: '',
       country_code: '',
       locale: 'en',
+      currency: 'USD',
     },
   })
   const { errors } = form.formState
@@ -138,6 +190,7 @@ function SetupForm({ token }: { token: string }) {
   const countries = countriesQuery.data?.countries ?? []
 
   const languageName = useDisplayName('language')
+  const currencyLabel = useCurrencyLabel()
   const countryCode = form.watch('country_code')
   const selectedCountry = useMemo(
     () => countries.find((country) => country.code === countryCode) ?? null,
@@ -153,17 +206,26 @@ function SetupForm({ token }: { token: string }) {
 
   // Both the currency and the language follow the country: having just said
   // the store is in Poland, being left on English reads as the form ignoring
-  // the answer. The country's own language wins, and English remains one
-  // click away in the dropdown.
+  // the answer. The country's own language and currency win, and both stay
+  // editable — plenty of Polish merchants price in euros.
   const handleCountryChange = useCallback(
     (code: string) => {
       form.setValue('country_code', code, { shouldValidate: true })
 
       const country = countries.find((candidate) => candidate.code === code)
       form.setValue('locale', country?.locales[0] ?? 'en')
+      form.setValue('currency', country?.currency ?? 'USD', { shouldValidate: true })
     },
     [countries, form],
   )
+
+  // The country's own currency leads the list; the rest of ISO 4217 follows so
+  // pricing in a currency other than the local one is one scroll away.
+  const currencyOptions = useMemo(() => {
+    const recommended = selectedCountry?.currency
+    const all = ALL_CURRENCY_CODES.length > 0 ? ALL_CURRENCY_CODES : FALLBACK_CURRENCY_CODES
+    return recommended ? [recommended, ...all.filter((code) => code !== recommended)] : all
+  }, [selectedCountry])
 
   // The store most likely sells from wherever it is being set up, so the
   // browser's own region is a better opening guess than an empty box. Applied
@@ -284,14 +346,44 @@ function SetupForm({ token }: { token: string }) {
             <p className="text-xs text-muted-foreground">{t('admin.fields.setup.locale.help')}</p>
           </div>
           <div className="grid gap-2">
-            <Label>{t('admin.fields.setup.currency.label')}</Label>
-            {/* Derived, never typed: the currency a country uses is a fact
-                about the country, and showing it here stops a merchant in
-                Switzerland assuming they are getting euros. */}
-            <div className="flex h-9 items-center rounded-md border border-input bg-muted px-3 text-sm text-muted-foreground">
-              {selectedCountry?.currency ?? t('admin.fields.setup.currency.placeholder')}
-            </div>
+            <Label htmlFor="currency">{t('admin.fields.setup.currency.label')}</Label>
+            {/* The country's own currency leads the list and is preselected,
+                but the merchant can override it — shipping from Warsaw and
+                pricing in euros is an ordinary thing to want. */}
+            <Controller
+              name="currency"
+              control={form.control}
+              render={({ field }) => (
+                <Combobox
+                  items={currencyOptions}
+                  value={field.value}
+                  onValueChange={(code: string | null) => field.onChange(code ?? '')}
+                  itemToStringLabel={(code: string | null) => (code ? currencyLabel(code) : '')}
+                  itemToStringValue={(code: string | null) => code ?? ''}
+                >
+                  <ComboboxInput
+                    id="currency"
+                    onBlur={field.onBlur}
+                    aria-invalid={!!errors.currency || undefined}
+                    placeholder={t('admin.fields.setup.currency.placeholder')}
+                  />
+                  <ComboboxContent>
+                    <ComboboxEmpty>{t('admin.common.no_results')}</ComboboxEmpty>
+                    <ComboboxList>
+                      {(code: string) => (
+                        <ComboboxItem key={code} value={code}>
+                          {currencyLabel(code)}
+                        </ComboboxItem>
+                      )}
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
+              )}
+            />
             <p className="text-xs text-muted-foreground">{t('admin.fields.setup.currency.help')}</p>
+            {errors.currency && (
+              <p className="text-sm text-destructive">{errors.currency.message}</p>
+            )}
           </div>
         </div>
         <div className="grid grid-cols-2 gap-3">

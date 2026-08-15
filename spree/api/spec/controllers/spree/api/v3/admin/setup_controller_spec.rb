@@ -125,6 +125,31 @@ RSpec.describe Spree::Api::V3::Admin::SetupController, type: :controller do
         expect(store.delivery_zones.find_by(name: 'Domestic').members.pluck(:country_code)).to eq(['DE'])
       end
 
+      it 'accepts a currency that differs from the country default' do
+        post :create, params: valid_params.merge(country_code: 'PL', locale: 'pl', currency: 'eur'), as: :json
+
+        expect(response).to have_http_status(:ok)
+
+        store = @default_store.reload
+        expect(store.default_country_code).to eq('PL')
+        expect(store.default_currency).to eq('EUR')
+      end
+
+      it 'refuses an unknown currency and leaves the token usable' do
+        post :create, params: valid_params.merge(currency: 'NOTACURRENCY'), as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(@default_store.reload.setup_token).to be_present
+        expect(Spree.admin_user_class.count).to eq(0)
+      end
+
+      it "defaults the currency to the country's own when none is given" do
+        post :create, params: valid_params.merge(country_code: 'DE'), as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(@default_store.reload.default_currency).to eq('EUR')
+      end
+
       it "defaults the locale to the country's own language" do
         post :create, params: valid_params.merge(country_code: 'DE'), as: :json
 

@@ -1232,8 +1232,8 @@
         },
         "currency": {
           "label": "Waluta",
-          "placeholder": "Najpierw wybierz kraj",
-          "help": "Twoja domyślna waluta. Kolejne dodasz w każdej chwili."
+          "placeholder": "Szukaj walut",
+          "help": "Twoja domyślna waluta, zaproponowana na podstawie kraju. Kolejne dodasz w każdej chwili."
         }
       },
       "stock_location": {

@@ -47,7 +47,8 @@ module Spree
         Spree::Stores::ProvisionDefaults.call(
           store: store,
           country: country,
-          locale: ENV['STORE_LOCALE'].presence
+          locale: ENV['STORE_LOCALE'].presence,
+          currency: ENV['STORE_CURRENCY'].presence
         )
       end
 

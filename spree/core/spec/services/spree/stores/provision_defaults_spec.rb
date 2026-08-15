@@ -90,6 +90,25 @@ RSpec.describe Spree::Stores::ProvisionDefaults do
       end
     end
 
+    # Shipping from one country and pricing in another currency is ordinary —
+    # a Polish merchant selling to the eurozone, say.
+    context 'when a currency is given explicitly' do
+      it 'overrides the country default everywhere' do
+        described_class.call(store: store, country: Spree::Country.by_iso('PL'), locale: 'pl', currency: 'EUR')
+
+        store.reload
+        expect(store.default_currency).to eq('EUR')
+        expect(store.default_market.currency).to eq('EUR')
+        expect(store.delivery_methods.find_by(name: 'Standard').calculator.preferred_currency).to eq('EUR')
+      end
+
+      it 'falls back to the country currency when the code is unknown' do
+        described_class.call(store: store, country: country, locale: locale, currency: 'NOTACURRENCY')
+
+        expect(store.reload.default_currency).to eq('EUR')
+      end
+    end
+
     context 'for a country with several official languages' do
       let(:country) { Spree::Country.by_iso('CH') }
       let(:locale) { 'fr' }

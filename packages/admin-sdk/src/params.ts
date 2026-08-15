@@ -995,6 +995,11 @@ export interface SetupParams {
   country_code: string
   /** Storefront locale. Defaults to the country's own language. */
   locale?: string
+  /**
+   * ISO 4217 currency, e.g. `EUR`. Defaults to the country's own currency —
+   * pass one only when the store prices in something else.
+   */
+  currency?: string
 }
 
 /** A country the store can be set up in, with everything derived from it. */

@@ -1218,8 +1218,8 @@
         },
         "currency": {
           "label": "Devise",
-          "placeholder": "Choisissez d'abord un pays",
-          "help": "Votre devise par défaut. Ajoutez-en d’autres quand vous voulez."
+          "placeholder": "Rechercher une devise",
+          "help": "Votre devise par défaut, suggérée selon votre pays. Ajoutez-en d’autres quand vous voulez."
         }
       },
       "stock_location": {

@@ -1218,8 +1218,8 @@
         },
         "currency": {
           "label": "Currency",
-          "placeholder": "Choose a country first",
-          "help": "Your default currency. Add more anytime."
+          "placeholder": "Search currencies",
+          "help": "Your default currency, suggested from your country. Add more anytime."
         }
       },
       "stock_location": {

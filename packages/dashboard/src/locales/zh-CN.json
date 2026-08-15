@@ -1215,8 +1215,8 @@
         },
         "currency": {
           "label": "货币",
-          "placeholder": "请先选择国家/地区",
-          "help": "您的默认货币。随时可添加更多。"
+          "placeholder": "搜索货币",
+          "help": "您的默认货币，根据所在国家/地区推荐。随时可添加更多。"
         }
       },
       "stock_location": {

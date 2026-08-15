@@ -40,11 +40,14 @@ module Spree
 
           # POST /api/v3/admin/auth/setup
           # Body: { setup_token, email, password, password_confirmation?,
-          #         first_name?, last_name?, store_name, country_code, locale? }
-          # Currency is derived from country_code, never submitted.
+          #         first_name?, last_name?, store_name, country_code,
+          #         locale?, currency? }
+          # Currency defaults to the country's own; an unknown code is refused
+          # rather than ignored, since the token is spent in the same request.
           def create
             return render_setup_unavailable unless setup_token_usable?
             return render_missing_country if country.nil?
+            return render_unknown_currency if unknown_currency?
 
             user = nil
             store = Spree::Store.default
@@ -107,6 +110,23 @@ module Spree
             )
           end
 
+          # Blank means "use the country's own currency"; a code that resolves
+          # to nothing is a typo worth refusing before the token is spent.
+          def unknown_currency?
+            params[:currency].present? && ::Money::Currency.find(params[:currency].to_s.strip).nil?
+          end
+
+          def render_unknown_currency
+            message = "Unknown currency #{params[:currency]}"
+
+            render_error(
+              code: ERROR_CODES[:validation_error],
+              message: message,
+              status: :unprocessable_content,
+              details: { currency: [message] }
+            )
+          end
+
           def country_payload(country)
             {
               code: country.iso,
@@ -165,7 +185,8 @@ module Spree
             Spree::Stores::ProvisionDefaults.call(
               store: store,
               country: country,
-              locale: params[:locale].presence
+              locale: params[:locale].presence,
+              currency: params[:currency].presence
             )
           end
 
