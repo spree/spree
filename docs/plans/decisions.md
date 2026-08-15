@@ -2891,3 +2891,91 @@ serializer work must not assume fees stay hidden. A dedicated duty-provider
 contract (estimate/commit/void) is deliberately NOT built — it graduates only
 if the first provider gem proves the need. Plan:
 `6.0-duties-and-custom-fees.md`.
+
+## 2026-08-15 — Vendor users are `Spree::AdminUser`; vendors get their own API branch, JWT audience and login surface
+
+**Context:** The marketplace plan (2026-07-14 wording) said vendor users would
+"hit the same admin API with JWT + vendor-scoped abilities — no separate
+vendor routes", with abilities built from `PermissionSets::VendorUser`
+carrying `vendor_id: user.vendor_ids` hash conditions. Two shipped PRs changed
+the ground under that: platform-owned auth (#14380) made the platform
+two-principal (`Customer` buys, `AdminUser` operates a back office, one auth
+stack on that class), and first-class RBAC (#14412) removed permission sets
+with no bridge — the catalog is flat `read_*`/`write_*` keys with **no
+conditions**, tenancy is controller scoping, and `Spree::Ability#staff_roles`
+already excludes vendor-resourced `RoleUser` rows as belonging to "their own
+panel's ability" (the RBAC plan's 2026-08-08 direction: vendor-panel endpoints
+scope-fetch through `current_vendor`). Two questions were re-examined: should
+vendor staff be a separate model, and should they reuse the Admin API with
+narrower permissions.
+
+**Decision:** *Reuse the principal, separate the surface.*
+
+- **Vendor staff are `Spree.admin_user_class`. No `VendorUser` model, no
+  `Spree.vendor_user_class`.** A third principal would duplicate
+  `has_secure_password`, lockout, password policy, password-reset tokens,
+  `UserIdentity` SSO linking, invitation acceptance and the refresh-cookie
+  flow — every future MFA/passkey improvement, twice. Membership is by
+  `RoleUser.resource_type` (`Spree::Vendor` vs `Spree::Store`), never by
+  `store_id`; one account may hold a store role and a vendor role at once.
+- **A dedicated `/api/v3/vendor` branch** (third v3 branch beside `store` and
+  `admin`, `Vendor::BaseController`/`ResourceController` anchors). Every
+  endpoint scope-fetches through `current_vendor` (`X-Spree-Vendor-Id` +
+  membership; the store is derived from the vendor, never from a header) —
+  IDOR by construction, the same mechanism that isolates stores on the admin
+  branch. Vendors never call the Admin API. What a vendor may not do is an
+  endpoint that does not exist, not an ability rule. Own serializer branch off
+  the store serializers, own OpenAPI spec; admin controllers are never
+  subclassed into the vendor namespace (inherited `current_store.*` lookups
+  are the leak).
+- **Isolation at the token layer, not only at membership:** own
+  `JWT_AUDIENCE_VENDOR = 'vendor_api'` (admin and vendor branches reject each
+  other's tokens at decode, before any membership check); own
+  `Spree.vendor_authentication_strategies` + `/vendor/auth/*` (login policy
+  is per surface, so staff can be SSO-only while vendors use passwords — the
+  vendor login refuses accounts with no vendor membership);
+  `spree_refresh_tokens.audience` enforced on refresh with a separate cookie.
+
+**Rejected:** a separate `VendorUser` model — buys only type-level separation
+on top of the three token-layer measures, at the cost of a duplicated auth
+stack and split identities. Reusing admin controllers with vendor
+permissions — not expressible in the conditionless catalog; would require
+per-principal forks in ~300 endpoints' `scope`/`find_resource`/incidental
+lookups (`stock_location_id`, `reason_id`, `variant_id`), each miss a
+cross-vendor read or write inside the same store.
+
+**Consequences:** `AdminAuthentication#current_user_member_of_store?` must
+match `resource_type: 'Spree::Store'` (today it matches `store_id`, which a
+vendor-resourced assignment passes — scope-exempt admin endpoints such as
+`/admin/tags` and `/admin/store` would be reachable by a vendor-only user
+once vendors exist); ship this ahead of the Vendor model. `Role#audience` and
+a vendor-grantable marker on `register_resource` come from the RBAC plan's
+settled direction. Never add a login surface without its own strategy
+registry and JWT audience; refresh tokens carry the audience they were minted
+for. Accepted trade-off: password policy and lockout stay shared between
+staff and vendors (model-level), and thin controllers are duplicated across
+the two branches. Plan: `6.0-multi-vendor-marketplace.md` Decision 10;
+supersedes the 2026-07-14 "collapse into ability scoping" wording there and
+extends `6.0-admin-rbac.md`'s vendor-scoped-assignments direction.
+
+## 2026-08-15 — Marketplace: facilitator-tax flag and payout floor are core; the policy around them is Enterprise
+
+**Decision:** Three of the marketplace plan's long-open questions were settled
+the same day as the vendor-principal decision. (1) Store-credit and gift-card
+payments on a split checkout are group-level `Payment`s with their own
+`PaymentSplit` rows, prorated by child totals like the gateway payment — one
+attribution rule for every payment source. (2) `spree_vendors.minimum_payout_amount`
+(nil ⇒ store preference) ships in core and the sweep carries sub-threshold
+balances forward; a percentage holdback with a release window stays Enterprise.
+(3) `spree_vendors.tax_remittance` (`vendor` | `platform`, default `vendor`)
+ships in core and core's transfer basis honors it (`platform` ⇒
+`total − tax_total − commission`); *deciding* that a vendor is
+platform-remitted (US facilitator nexus, EU deemed-supplier rules) stays
+Enterprise "automatic taxes", which sets the column. Vendor-scoped promotions
+are deferred past 6.0 with their shape recorded.
+
+**Why:** the ledger math must be provider- and edition-independent so
+Enterprise never forks core ledger code — it configures rows, it does not
+override the basis service. **Consequences:** amends the marketplace plan's
+Decision 9 note that facilitator mode is "not core" (the flag and the math
+are; the policy is not). Plan: `6.0-multi-vendor-marketplace.md`.
