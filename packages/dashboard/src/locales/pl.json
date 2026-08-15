@@ -1220,6 +1220,18 @@
         },
         "store_name": {
           "label": "Nazwa sklepu"
+        },
+        "country_code": {
+          "label": "Kraj",
+          "placeholder": "Szukaj krajów",
+          "help": "Skąd sprzedaje Twój sklep. Ustala walutę, magazyn i strefy dostawy."
+        },
+        "locale": {
+          "label": "Język"
+        },
+        "currency": {
+          "label": "Waluta",
+          "placeholder": "Najpierw wybierz kraj"
         }
       },
       "stock_location": {

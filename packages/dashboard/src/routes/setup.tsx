@@ -1,10 +1,27 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { SpreeError } from '@spree/admin-sdk'
-import { adminClient, mapSpreeErrorsToForm, useAuth } from '@spree/dashboard-core'
-import { Button, Input, Label } from '@spree/dashboard-ui'
+import type { SetupCountry, SpreeError } from '@spree/admin-sdk'
+import { adminClient, mapSpreeErrorsToForm, useAuth, useDisplayName } from '@spree/dashboard-core'
+import {
+  Button,
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+  CountryFlag,
+  Input,
+  Label,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@spree/dashboard-ui'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, Navigate, useNavigate } from '@tanstack/react-router'
-import { useForm } from 'react-hook-form'
+import { useMemo } from 'react'
+import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { AuthShell } from '../components/spree/auth-shell'
@@ -88,9 +105,43 @@ function SetupForm({ token }: { token: string }) {
       password: '',
       password_confirmation: '',
       store_name: '',
+      country_code: '',
+      locale: 'en',
     },
   })
   const { errors } = form.formState
+
+  // Unauthenticated: setup runs before any credential exists, so this cannot
+  // use the authenticated countries endpoint the rest of the app uses.
+  const countriesQuery = useQuery({
+    queryKey: ['setup-countries'],
+    queryFn: () => adminClient.auth.setupCountries(),
+    retry: false,
+    staleTime: Number.POSITIVE_INFINITY,
+  })
+  const countries = countriesQuery.data?.countries ?? []
+
+  const languageName = useDisplayName('language')
+  const countryCode = form.watch('country_code')
+  const selectedCountry = useMemo(
+    () => countries.find((country) => country.code === countryCode) ?? null,
+    [countries, countryCode],
+  )
+
+  // English is always offered: the backend's own strings fall back to it, and
+  // it is the only locale every install is guaranteed to have.
+  const localeOptions = useMemo(() => {
+    const codes = [...(selectedCountry?.locales ?? []), 'en']
+    return Array.from(new Set(codes))
+  }, [selectedCountry])
+
+  // The currency follows the country, so picking a country re-derives it and
+  // resets the locale to the safe default rather than leaving the previous
+  // country's language selected.
+  const handleCountryChange = (code: string) => {
+    form.setValue('country_code', code, { shouldValidate: true })
+    form.setValue('locale', 'en')
+  }
 
   const onSubmit = async (data: SetupFormValues) => {
     try {
@@ -127,6 +178,85 @@ function SetupForm({ token }: { token: string }) {
           {errors.store_name && (
             <p className="text-sm text-destructive">{errors.store_name.message}</p>
           )}
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="country_code">{t('admin.fields.setup.country_code.label')}</Label>
+          <Controller
+            name="country_code"
+            control={form.control}
+            render={({ field }) => (
+              <Combobox
+                items={countries}
+                value={selectedCountry}
+                onValueChange={(country: SetupCountry | null) =>
+                  handleCountryChange(country?.code ?? '')
+                }
+                itemToStringLabel={(country: SetupCountry | null) => country?.name ?? ''}
+                itemToStringValue={(country: SetupCountry | null) => country?.code ?? ''}
+                disabled={countriesQuery.isPending}
+              >
+                <ComboboxInput
+                  id="country_code"
+                  onBlur={field.onBlur}
+                  aria-invalid={!!errors.country_code || undefined}
+                  placeholder={t('admin.fields.setup.country_code.placeholder')}
+                />
+                <ComboboxContent>
+                  <ComboboxEmpty>{t('admin.common.no_results')}</ComboboxEmpty>
+                  <ComboboxList>
+                    {(country: SetupCountry) => (
+                      <ComboboxItem key={country.code} value={country}>
+                        <span className="flex items-center gap-2">
+                          <CountryFlag iso={country.code} />
+                          {country.name}
+                        </span>
+                      </ComboboxItem>
+                    )}
+                  </ComboboxList>
+                </ComboboxContent>
+              </Combobox>
+            )}
+          />
+          <p className="text-xs text-muted-foreground">
+            {t('admin.fields.setup.country_code.help')}
+          </p>
+          {errors.country_code && (
+            <p className="text-sm text-destructive">{errors.country_code.message}</p>
+          )}
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="grid gap-2">
+            <Label htmlFor="locale">{t('admin.fields.setup.locale.label')}</Label>
+            <Controller
+              name="locale"
+              control={form.control}
+              render={({ field }) => (
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger id="locale">
+                    <SelectValue>
+                      {(value) => languageName(value as string) ?? (value as string)}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {localeOptions.map((code) => (
+                      <SelectItem key={code} value={code}>
+                        {languageName(code) ?? code}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label>{t('admin.fields.setup.currency.label')}</Label>
+            {/* Derived, never typed: the currency a country uses is a fact
+                about the country, and showing it here stops a merchant in
+                Switzerland assuming they are getting euros. */}
+            <div className="flex h-9 items-center rounded-md border border-input bg-muted px-3 text-sm text-muted-foreground">
+              {selectedCountry?.currency ?? t('admin.fields.setup.currency.placeholder')}
+            </div>
+          </div>
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div className="grid gap-2">

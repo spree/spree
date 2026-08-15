@@ -1206,6 +1206,18 @@
         },
         "store_name": {
           "label": "Nom de la boutique"
+        },
+        "country_code": {
+          "label": "Pays",
+          "placeholder": "Rechercher un pays",
+          "help": "D'où votre boutique vend. Définit la devise, l'entrepôt et les zones de livraison."
+        },
+        "locale": {
+          "label": "Langue"
+        },
+        "currency": {
+          "label": "Devise",
+          "placeholder": "Choisissez d'abord un pays"
         }
       },
       "stock_location": {

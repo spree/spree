@@ -597,7 +597,8 @@
       "password_required": "密码为必填项",
       "first_name_required": "名字为必填项",
       "last_name_required": "姓氏为必填项",
-      "store_name_required": "商店名称为必填项"
+      "store_name_required": "商店名称为必填项",
+      "country_required": "请选择国家/地区"
     },
     "account": {
       "edit_profile": "编辑个人资料",

@@ -597,7 +597,8 @@
       "password_required": "Passwort ist erforderlich",
       "first_name_required": "Vorname ist erforderlich",
       "last_name_required": "Nachname ist erforderlich",
-      "store_name_required": "Shopname ist erforderlich"
+      "store_name_required": "Shopname ist erforderlich",
+      "country_required": "Land ist erforderlich"
     },
     "account": {
       "edit_profile": "Profil bearbeiten",

@@ -1203,6 +1203,18 @@
         },
         "store_name": {
           "label": "商店名称"
+        },
+        "country_code": {
+          "label": "国家/地区",
+          "placeholder": "搜索国家/地区",
+          "help": "您的商店的销售地。决定货币、仓库和配送区域。"
+        },
+        "locale": {
+          "label": "语言"
+        },
+        "currency": {
+          "label": "货币",
+          "placeholder": "请先选择国家/地区"
         }
       },
       "stock_location": {

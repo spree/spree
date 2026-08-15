@@ -1217,6 +1217,18 @@
         },
         "store_name": {
           "label": "اسم المتجر"
+        },
+        "country_code": {
+          "label": "البلد",
+          "placeholder": "ابحث عن البلدان",
+          "help": "المكان الذي يبيع منه متجرك. يحدد العملة والمستودع ومناطق التوصيل."
+        },
+        "locale": {
+          "label": "اللغة"
+        },
+        "currency": {
+          "label": "العملة",
+          "placeholder": "اختر بلدًا أولاً"
         }
       },
       "stock_location": {

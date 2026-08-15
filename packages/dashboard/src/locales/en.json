@@ -1206,6 +1206,18 @@
         },
         "store_name": {
           "label": "Store name"
+        },
+        "country_code": {
+          "label": "Country",
+          "placeholder": "Search countries",
+          "help": "Where your store sells from. Sets your currency, warehouse and delivery zones."
+        },
+        "locale": {
+          "label": "Language"
+        },
+        "currency": {
+          "label": "Currency",
+          "placeholder": "Choose a country first"
         }
       },
       "stock_location": {

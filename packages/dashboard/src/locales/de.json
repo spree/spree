@@ -1206,6 +1206,18 @@
         },
         "store_name": {
           "label": "Shopname"
+        },
+        "country_code": {
+          "label": "Land",
+          "placeholder": "Länder durchsuchen",
+          "help": "Von wo aus Ihr Shop verkauft. Legt Währung, Lager und Liefergebiete fest."
+        },
+        "locale": {
+          "label": "Sprache"
+        },
+        "currency": {
+          "label": "Währung",
+          "placeholder": "Zuerst ein Land wählen"
         }
       },
       "stock_location": {
