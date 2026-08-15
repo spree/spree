@@ -1,3 +1,59 @@
+## 2026-08-15: Country-derived store defaults are born from the merchant's answer, not seeded and rewritten
+
+Amends the 2026-08-13 first-run setup entry. Damian's call, after
+verifying against a live database that the setup endpoint's `country_code`
+parameter silently did nothing.
+
+**The seed can only guess a country, and the guess leaks.** Four seeds bake
+`US`/USD in: the bootstrap market, the default stock location's country, the
+Domestic/International delivery zones with their flat rates, and the pickup
+method's calculator currency. Worse, `Store#default_country_code=` only
+reaches the market through `after_create` — on a store that already has a
+market it writes a dead column and `store.default_country_code` keeps
+answering `US`, because the readers delegate to the market and the
+`after_update` sync copies locale and currency only. So a merchant who
+submitted `country_code: DE` at setup got a store still named "United
+States", their own buyers routed to the International rate, and a domestic
+flat rate priced in dollars.
+
+**Decision: one provisioning service, two callers, seeds stop guessing.**
+`Spree::Stores::ProvisionDefaults.call(store:, country:, locale:)` updates
+the bootstrap market in place (the `sample_data/markets.rb` shape) and
+creates the warehouse, zones, methods and pickup method in the right country
+and currency; `Seeds::All` no longer runs `StockLocations`, `DeliveryZones`
+or `PickupDelivery` (deleted, absorbed). The setup endpoint calls it inside
+its store lock; `Seeds::AdminUser`'s env-credential branch calls it with
+`STORE_COUNTRY`/`STORE_LOCALE` (defaults `US`/`en`), so CI, worktrees and e2e
+are unchanged while scripted non-US installs stop being US-shaped.
+Rewriting the seeded rows after the fact was the first sketch and was
+rejected: every rewrite step that gets missed leaves stale "Domestic =
+United States" data behind, whereas rows created from the answer cannot be
+stale. A bare `db:seed` without credentials now yields a store with no
+warehouse, zones or pickup until setup runs — correct, since nobody has said
+where the shop is.
+
+**Setup asks for country and locale; currency is derived and shown.** The
+countries gem gives currency and official languages per country — the
+derivation `ensure_default_market` already used — so `currency` leaves the
+request contract, `country_code` becomes required, `locale` is added
+(options: the country's official languages + English, English preselected).
+The form shows the derived currency read-only so Switzerland visibly gets
+CHF. Country data comes from a new unauthenticated
+`GET auth/setup/countries` guarded like the setup endpoint; folding it into
+the status endpoint (polled by the login page) and a static SDK map (a
+second source of truth) were both rejected.
+
+**Sample data builds around the default market, never resets it.**
+`sample_data/markets.rb` forced the default market back to US+CA/USD/en,
+which would flip a German store to a US store on `spree:load_sample_data`;
+it now reads what exists and creates the zones `fulfillment.rb` aborted
+without.
+
+Constraint for everyone: a store's country changes through its **market**,
+never `Store#default_country_code=`; a new seed that depends on country or
+currency goes into `ProvisionDefaults`, not `Seeds::All`; the service keeps
+exactly two callers — wired to a settings page it becomes a data reset.
+
 ## 2026-08-14: ZoneRule retired by migration; Zone shelled to a migration-only reader
 
 Two amendments to the 2026-08-12 jurisdiction-as-codes entry, both Damian's
