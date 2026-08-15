@@ -3295,7 +3295,8 @@
         "bulk_edit": {
           "grid_aria": "Tableau d'édition groupée des variantes",
           "title": "Modifier les variantes en masse",
-          "trigger": "Édition groupée"
+          "trigger": "Édition groupée",
+          "unset": "Aucun"
         },
         "create_option_type": "Créer un nouveau type d'option",
         "create_option_type_title": "Nouveau type d'option",

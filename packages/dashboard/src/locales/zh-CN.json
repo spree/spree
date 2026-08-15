@@ -3291,7 +3291,8 @@
         "bulk_edit": {
           "grid_aria": "变体批量编辑表格",
           "title": "批量编辑变体",
-          "trigger": "批量编辑"
+          "trigger": "批量编辑",
+          "unset": "无"
         },
         "create_option_type": "新建选项类型",
         "create_option_type_title": "新选项类型",

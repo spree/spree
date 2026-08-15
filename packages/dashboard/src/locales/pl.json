@@ -3347,7 +3347,8 @@
         "bulk_edit": {
           "grid_aria": "Arkusz zbiorczej edycji wariantów",
           "title": "Edytuj warianty zbiorczo",
-          "trigger": "Edycja zbiorcza"
+          "trigger": "Edycja zbiorcza",
+          "unset": "Brak"
         },
         "create_option_type": "Utwórz nowy typ opcji",
         "create_option_type_title": "Nowy typ opcji",

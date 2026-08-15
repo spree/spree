@@ -163,7 +163,7 @@ await adminClient.orders.fees.create('or_xxx', {
 })
 ```
 
-Fees are always positive, and they're taxable — a fee can have its own tax lines. To take money off, create a discount instead. That way a refund never has to work out whether a negative fee was a charge or a credit.
+Fees are always positive, and they're taxable by default — a fee can have its own tax lines. Customs duties are the one exception, described below. To take money off, create a discount instead. That way a refund never has to work out whether a negative fee was a charge or a credit.
 
 ### Customs duties
 

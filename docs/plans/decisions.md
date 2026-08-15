@@ -2806,16 +2806,20 @@ guaranteed flag) in `metadata`, so re-classifying the catalog never rewrites
 order history. Classification lives as three plain nullable columns on
 `spree_variants` (`hs_code`, `country_of_origin`, `customs_description`),
 shipped together with their first consumer: the EasyPost provider's customs
-declaration on international label purchase (today it sends `customs_info:
-null`). Fees become shopper-visible — the Store API cart/order serializers
+declaration, built for international rate quotes as well as label purchases
+(today it sends `customs_info: null`) — the two share one shipment builder, so
+a label always carries the declaration and duty terms its quote was priced
+with. Fees become shopper-visible — the Store API cart/order serializers
 gain `fees` + `fee_total`. Duty estimation enters the cart exclusively through
 `Spree.adjusters` (a provider gem's adjuster writes the duty fee rows during
 recalculation); core ships no calculation engine and no landed-cost guarantee
 — a guarantee requires being importer of record, which is a service business,
-not a code path. The internal tax provider excludes `kind: 'duty'` from its
-default fee-taxing set: import VAT on a duty exists only as provider-written
-`TaxLine(fee_id: …)` rows, preventing domestic tax stacking and
-double-counting. Plumbing ships in 6.0; the landed-cost provider gem and a
+not a code path. Duties are excluded from the default taxable-item set in the
+shared `Spree::Purchase::Taxation#taxable_items` (Cart and Order), so **every**
+provider inherits the exclusion rather than each reimplementing it; a provider
+that does tax duties passes its own item list. Import VAT on a duty therefore
+exists only as provider-written `TaxLine(fee_id: …)` rows, preventing domestic
+tax stacking and double-counting. Plumbing ships in 6.0; the landed-cost provider gem and a
 `Spree::Market` shipping-terms setting are 6.1.
 
 **Consequences:** No duty math against the live catalog on existing orders —

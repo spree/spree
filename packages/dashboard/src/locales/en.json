@@ -3295,7 +3295,8 @@
         "bulk_edit": {
           "grid_aria": "Variant bulk edit spreadsheet",
           "title": "Bulk edit variants",
-          "trigger": "Bulk edit"
+          "trigger": "Bulk edit",
+          "unset": "None"
         },
         "create_option_type": "Create new option type",
         "create_option_type_title": "New option type",

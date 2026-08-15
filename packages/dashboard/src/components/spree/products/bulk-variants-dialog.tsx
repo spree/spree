@@ -233,9 +233,9 @@ export function BulkVariantsDialog({ form, open, onOpenChange }: Props) {
               countryOfOrigin: t('admin.fields.variant.country_of_origin.label'),
               customsDescription: t('admin.fields.variant.customs_description.label'),
               variantDefault: t('admin.products.variants.default_variant'),
-              unitDefault: '—',
+              unitDefault: t('admin.products.variants.bulk_edit.unset'),
               taxCategoryNone: t('admin.products.variants.sheet.tax_category_placeholder'),
-              countryOfOriginNone: '—',
+              countryOfOriginNone: t('admin.products.variants.bulk_edit.unset'),
               gridAriaLabel: t('admin.products.variants.bulk_edit.grid_aria'),
             }}
           />

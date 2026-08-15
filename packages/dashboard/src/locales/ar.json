@@ -3311,7 +3311,8 @@
         "bulk_edit": {
           "grid_aria": "جدول التحرير الجماعي للمتغيرات",
           "title": "تحرير المتغيرات جماعيًا",
-          "trigger": "تحرير جماعي"
+          "trigger": "تحرير جماعي",
+          "unset": "لا شيء"
         },
         "create_option_type": "إنشاء نوع خيار جديد",
         "create_option_type_title": "نوع خيار جديد",

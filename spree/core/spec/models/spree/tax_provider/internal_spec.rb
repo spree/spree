@@ -299,6 +299,26 @@ describe Spree::TaxProvider::Internal, type: :model do
 
         expect(order.tax_lines.reload.sole.fee).to eq(duty)
       end
+
+      # Duties are absent from the default set, so the per-item cleanup never
+      # revisits them — without an explicit sweep a row written once would
+      # inflate the total for the life of the order.
+      it 'clears a duty tax line it wrote earlier once the duty is excluded again' do
+        provider.estimate(order, [duty])
+        expect(order.tax_lines.reload.where(fee_id: duty.id)).to be_present
+
+        provider.estimate(order)
+
+        expect(order.tax_lines.reload.where(fee_id: duty.id)).to be_empty
+      end
+
+      it 'leaves import VAT another provider wrote on the duty alone' do
+        create(:tax_line, order: order, fee: duty, line_item: nil, provider_id: 'landed_cost', amount: 4)
+
+        provider.estimate(order)
+
+        expect(order.tax_lines.reload.where(fee_id: duty.id).pluck(:provider_id)).to eq(['landed_cost'])
+      end
     end
   end
 

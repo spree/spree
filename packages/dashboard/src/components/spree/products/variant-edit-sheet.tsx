@@ -303,6 +303,9 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
                     />
                   )}
                 />
+                <FieldError
+                  errors={[form.formState.errors.variants?.[variantIndex]?.country_of_origin]}
+                />
               </Field>
             </div>
             <Field>
@@ -315,6 +318,9 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
                 {...form.register(`variants.${variantIndex}.customs_description`, {
                   setValueAs: normalizeCustomsDescription,
                 })}
+              />
+              <FieldError
+                errors={[form.formState.errors.variants?.[variantIndex]?.customs_description]}
               />
             </Field>
           </Section>

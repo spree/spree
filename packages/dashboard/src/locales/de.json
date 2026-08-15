@@ -3295,7 +3295,8 @@
         "bulk_edit": {
           "grid_aria": "Tabelle zur Massenbearbeitung der Varianten",
           "title": "Varianten massenbearbeiten",
-          "trigger": "Massenbearbeitung"
+          "trigger": "Massenbearbeitung",
+          "unset": "Keine"
         },
         "create_option_type": "Neuen Optionstyp erstellen",
         "create_option_type_title": "Neuer Optionstyp",

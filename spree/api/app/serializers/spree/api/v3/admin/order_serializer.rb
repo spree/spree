@@ -20,6 +20,7 @@ module Spree
                    additional_tax_total: [:string, nullable: false], display_additional_tax_total: [:string, nullable: false],
                    store_credit_total: [:string, nullable: false], display_store_credit_total: [:string, nullable: false],
                    gift_card_total: [:string, nullable: false], display_gift_card_total: [:string, nullable: false],
+                   fee_total: [:string, nullable: false], display_fee_total: [:string, nullable: false],
                    total: [:string, nullable: false], display_total: [:string, nullable: false],
                    amount_due: [:string, nullable: false], display_amount_due: [:string, nullable: false]
 
