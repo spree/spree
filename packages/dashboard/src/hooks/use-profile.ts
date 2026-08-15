@@ -20,7 +20,9 @@ export function useUpdateProfile() {
 
   return useResourceMutation<MeResponse, Error, MeUpdateParams>({
     mutationFn: (params) => adminClient.me.update(params),
-    invalidate: [['profile']],
+    // The signed-in admin is also a row on the staff page, so their own name
+    // and avatar there go stale on a self-edit unless that list is refetched.
+    invalidate: [['profile'], ['staff']],
     successMessage: false, // the dialog toasts success itself
     errorMessage: false, // the dialog maps 422s inline via mapSpreeErrorsToForm
     // Write the response into the cache instead of leaning on the invalidation

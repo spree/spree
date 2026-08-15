@@ -78,14 +78,12 @@ export interface PermissionRule {
 }
 
 export interface MeResponse {
-  user: {
-    id: string
-    email: string
-    first_name: string | null
-    last_name: string | null
-    selected_locale: string | null
-    avatar_url: string | null
-  }
+  /**
+   * The signed-in admin, serialized exactly like every other admin user — so a
+   * profile save can be merged straight into the auth context without dropping
+   * the fields the top bar reads (`full_name`, `avatar_url`).
+   */
+  user: AdminUser
   permissions: PermissionRule[]
   /**
    * The flat expanded catalog permission keys the user holds on the current
