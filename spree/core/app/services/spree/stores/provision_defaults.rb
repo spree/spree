@@ -19,7 +19,7 @@ module Spree
       # @param store [Spree::Store] the store to provision, already persisted
       # @param country [Spree::Country] where the shop ships from
       # @param locale [String, nil] storefront locale; defaults to the
-      #   country's own language, then English
+      #   country's own language when Spree translates it, then English
       # @param currency [String, nil] ISO 4217 code; defaults to the country's
       #   own currency. Merchants who ship from one country and price in
       #   another currency pass it explicitly.
@@ -28,7 +28,7 @@ module Spree
         @store = store
         @country = country
         @currency = resolve_currency(currency, country)
-        @locale = locale.presence || country.default_locale.presence || 'en'
+        @locale = resolve_locale(locale, country)
 
         ApplicationRecord.transaction do
           update_default_market
@@ -52,6 +52,24 @@ module Spree
         found = ::Money::Currency.find(requested.to_s.strip) if requested.present?
 
         found&.iso_code || country.default_currency.presence || 'USD'
+      end
+
+      # An explicit locale is honored as given — a host app may ship its own
+      # translations. Only the *derived* default is filtered: falling back to
+      # a country's official language that Spree has no strings for would set
+      # a storefront to a language with nothing behind it, and it is not one
+      # the setup screen ever offers. Installs without spree_i18n know only
+      # English, so filtering there would flatten every country to it.
+      def resolve_locale(requested, country)
+        return requested if requested.present?
+
+        derived = country.default_locale.presence
+        return 'en' if derived.blank?
+
+        translated = Spree.available_locales.map { |locale| locale.to_s.split('-').first }.uniq
+        return derived if translated.size <= 1 || translated.include?(derived)
+
+        (country.official_locales & translated).first || 'en'
       end
 
       # The store's own country/currency/locale columns are not the source of

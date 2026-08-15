@@ -109,6 +109,28 @@ RSpec.describe Spree::Stores::ProvisionDefaults do
       end
     end
 
+    # The setup screen only ever offers languages Spree translates, so a
+    # derived default must land in the same set — otherwise an API client
+    # omitting `locale` gets a storefront language with no strings behind it.
+    context "when the country's own language has no translations" do
+      let(:locale) { nil }
+      let(:country) { Spree::Country.by_iso('AL') } # Albania → Albanian
+
+      before { allow(Spree).to receive(:available_locales).and_return(%i[en de fr]) }
+
+      it 'falls back to English rather than the untranslated language' do
+        subject
+
+        expect(store.reload.default_market.default_locale).to eq('en')
+      end
+
+      it 'still honors a locale the caller asked for outright' do
+        described_class.call(store: store, country: country, locale: 'sq')
+
+        expect(store.reload.default_market.default_locale).to eq('sq')
+      end
+    end
+
     context 'for a country with several official languages' do
       let(:country) { Spree::Country.by_iso('CH') }
       let(:locale) { 'fr' }
