@@ -159,6 +159,7 @@ import type {
   InvitationCreateParams,
   LineItemCreateParams,
   LineItemUpdateParams,
+  MaintenanceTaskRunCreateParams,
   MarketCreateParams,
   MarketUpdateParams,
   MediaCreateParams,
@@ -282,6 +283,8 @@ import type {
   Invitation,
   LineItem,
   Locale,
+  MaintenanceTask,
+  MaintenanceTaskRun,
   Market,
   Media,
   OptionType,
@@ -3148,6 +3151,75 @@ export class AdminClient {
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/exports/${id}`, options),
+  }
+
+  // ============================================
+  // Maintenance tasks
+  // ============================================
+
+  /**
+   * Operator-run data work — backfills, reindexes, bulk corrections
+   * (docs/plans/6.0-maintenance-tasks.md). Tasks are deployed Ruby classes
+   * rather than records: `list()` returns what this installation can run,
+   * each entry carrying the `parameters` schema a run form is built from,
+   * whether it `supports_dry_run`, and its `active_run` / `last_run`.
+   *
+   * A task is addressed by its class name, so pass that to `get()` — not an id.
+   */
+  readonly maintenanceTasks = {
+    list: (options?: RequestOptions): Promise<{ data: MaintenanceTask[] }> =>
+      this.request<{ data: MaintenanceTask[] }>('GET', '/maintenance_tasks', options),
+
+    get: (name: string, options?: RequestOptions): Promise<{ data: MaintenanceTask }> =>
+      this.request<{ data: MaintenanceTask }>(
+        'GET',
+        `/maintenance_tasks/${encodeURIComponent(name)}`,
+        options,
+      ),
+  }
+
+  /**
+   * Runs of a maintenance task — the progress to poll while one is working and
+   * the audit trail afterwards (who ran what, with which arguments, and how it
+   * ended).
+   *
+   * After `create()`, poll `get(id)` while `active` is true; `progress` is
+   * `0..1` when the task could count its collection and `null` when it could
+   * not, in which case show `tick_count` alone. A run can be paused and picked
+   * up later from its cursor (`pause` → `resume`) or stopped for good
+   * (`cancel`); `resumable` and `cancelable` say which of those apply right
+   * now. There is no delete: a run records work that touched merchant data.
+   */
+  readonly maintenanceTaskRuns = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<MaintenanceTaskRun>> =>
+      this.request<PaginatedResponse<MaintenanceTaskRun>>('GET', '/maintenance_task_runs', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<MaintenanceTaskRun> =>
+      this.request<MaintenanceTaskRun>('GET', `/maintenance_task_runs/${id}`, options),
+
+    create: (
+      params: MaintenanceTaskRunCreateParams,
+      options?: RequestOptions,
+    ): Promise<MaintenanceTaskRun> =>
+      this.request<MaintenanceTaskRun>('POST', '/maintenance_task_runs', {
+        ...options,
+        body: params,
+      }),
+
+    pause: (id: string, options?: RequestOptions): Promise<MaintenanceTaskRun> =>
+      this.request<MaintenanceTaskRun>('PATCH', `/maintenance_task_runs/${id}/pause`, options),
+
+    resume: (id: string, options?: RequestOptions): Promise<MaintenanceTaskRun> =>
+      this.request<MaintenanceTaskRun>('PATCH', `/maintenance_task_runs/${id}/resume`, options),
+
+    cancel: (id: string, options?: RequestOptions): Promise<MaintenanceTaskRun> =>
+      this.request<MaintenanceTaskRun>('PATCH', `/maintenance_task_runs/${id}/cancel`, options),
   }
 
   // ============================================

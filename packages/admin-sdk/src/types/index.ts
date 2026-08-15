@@ -63,6 +63,7 @@ export type { default as ImportRow } from './generated/ImportRow'
 export type { default as Integration } from './generated/Integration'
 export type { default as Invitation } from './generated/Invitation'
 export type { default as LineItem } from './generated/LineItem'
+export type { default as MaintenanceTaskRun } from './generated/MaintenanceTaskRun'
 export type { default as Market } from './generated/Market'
 export type { default as Media } from './generated/Media'
 export type { default as OptionType } from './generated/OptionType'
@@ -110,7 +111,7 @@ export type { default as TaxRate } from './generated/TaxRate'
 export type { default as Variant } from './generated/Variant'
 export type { default as WebhookDelivery } from './generated/WebhookDelivery'
 export type { default as WebhookEndpoint } from './generated/WebhookEndpoint'
-
+export type { MaintenanceTask, MaintenanceTaskParameter } from './maintenance-task'
 // Hand-written translation-management types (controller-shaped, not generated)
 export type {
   Locale,

@@ -1950,6 +1950,23 @@ export type ExportType =
   | 'newsletter_subscribers'
   | (string & {})
 
+export interface MaintenanceTaskRunCreateParams {
+  /** The task's Ruby class name, as returned by `maintenanceTasks.list()`. */
+  task_name: string
+  /**
+   * Values for the task's declared parameters, keyed by parameter name.
+   * Validated server-side by the task's own Active Model validations, so a
+   * bad value is a 422 rather than a run that fails on its first record.
+   */
+  arguments?: Record<string, unknown>
+  /**
+   * Preview mode. Only meaningful for tasks whose `supports_dry_run` is true —
+   * the server ignores it otherwise rather than recording a run as a preview
+   * that would in fact have written.
+   */
+  dry_run?: boolean
+}
+
 export interface ExportCreateParams {
   /** Which dataset to export. Server validates against `Spree::Export.available_types`. */
   type: ExportType

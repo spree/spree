@@ -201,6 +201,7 @@ module Spree
         admin_price_list_serializer: 'Spree::Api::V3::Admin::PriceListSerializer',
         admin_price_rule_serializer: 'Spree::Api::V3::Admin::PriceRuleSerializer',
         admin_resource_translations_serializer: 'Spree::Api::V3::Admin::ResourceTranslationsSerializer',
+        admin_maintenance_task_run_serializer: 'Spree::Api::V3::Admin::MaintenanceTaskRunSerializer',
       }
 
       include Spree::DependenciesHelper

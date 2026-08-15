@@ -386,6 +386,17 @@ Spree::Core::Engine.add_routes do
           end
         end
 
+        # Maintenance tasks — see docs/plans/6.0-maintenance-tasks.md.
+        # Tasks are classes, addressed by class name; runs are records.
+        resources :maintenance_tasks, only: [:index, :show], id: /[^\/]+/
+        resources :maintenance_task_runs, only: [:index, :show, :create] do
+          member do
+            patch :pause
+            patch :resume
+            patch :cancel
+          end
+        end
+
         # Promotions, with nested actions/rules/coupon codes.
         resources :promotions do
           resources :promotion_actions, only: [:index, :show, :create, :update, :destroy]
