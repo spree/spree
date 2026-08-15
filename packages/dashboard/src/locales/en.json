@@ -2067,6 +2067,85 @@
       "tax_exclusive": "Exclusive",
       "tax_inclusive": "Inclusive"
     },
+    "maintenance_tasks": {
+      "actions": {
+        "cancel_run": "Cancel run",
+        "pause": "Pause",
+        "resume": "Resume",
+        "run": "Run"
+      },
+      "already_running": "This task is already running",
+      "cancel_confirm": {
+        "message": "The task stops at its next checkpoint. Work already done stays done — cancelling does not undo it.",
+        "title": "Cancel this run?"
+      },
+      "description": "Run data corrections, backfills and reindexes that ship with your store's code. Every run is recorded.",
+      "dry_run_badge": "Preview",
+      "empty_description": "Tasks are Ruby classes registered by Spree or your extensions.",
+      "empty_title": "No maintenance tasks",
+      "history": {
+        "empty_title": "No runs yet",
+        "search_placeholder": "Search by task name…",
+        "table": {
+          "initiated_by": "Started by",
+          "processed": "Processed",
+          "status": "Status",
+          "task": "Task"
+        },
+        "title": "Run history"
+      },
+      "initiated_via": {
+        "api": "Started through the API",
+        "cli": "Started from the command line",
+        "dashboard": "Started from the dashboard",
+        "inline": "Started by Spree"
+      },
+      "last_run": "Last run",
+      "loading": "Loading tasks…",
+      "messages": {
+        "canceled": "Cancelling the run",
+        "paused": "Pausing the run",
+        "resumed": "Resuming the run",
+        "start_failed": "Could not start the task",
+        "started": "Task started"
+      },
+      "never_run": "Never run",
+      "run": {
+        "arguments": "Arguments",
+        "duration": "Duration",
+        "dry_run_help": "Report what would change without writing anything.",
+        "dry_run_label": "Preview only",
+        "ended": "Ended",
+        "error": "Error",
+        "initiated_by": "Started by",
+        "loading": "Loading run…",
+        "no_description": "No description provided.",
+        "processed_count": "{{count}} processed",
+        "progress_label": "Progress",
+        "required_field": "This field is required.",
+        "results": "Results",
+        "seconds": "{{count}}s",
+        "show_backtrace": "Show technical detail",
+        "start": "Run task",
+        "start_dry_run": "Run preview",
+        "started": "Started",
+        "starting": "Starting…",
+        "write_warning": "This starts immediately and writes to your data. It can be stopped, but not undone."
+      },
+      "status": {
+        "cancelled": "Cancelled",
+        "cancelling": "Cancelling…",
+        "enqueued": "Queued",
+        "errored": "Failed",
+        "interrupted": "Resuming…",
+        "paused": "Paused",
+        "pausing": "Pausing…",
+        "running": "Running",
+        "succeeded": "Completed"
+      },
+      "supports_dry_run": "Preview available",
+      "title": "Maintenance tasks"
+    },
     "nav": {
       "account": "Account",
       "categories": "Categories",
@@ -4144,6 +4223,7 @@
         "emails": "Emails",
         "imports": "Imports",
         "integrations": "Integrations",
+        "maintenance_tasks": "Maintenance tasks",
         "markets": "Markets",
         "payment_methods": "Payment methods",
         "product_types": "Product types",

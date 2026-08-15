@@ -42,6 +42,7 @@ import { Route as SettingsReasonsRouteImport } from './routes/_authenticated/$st
 import { Route as SettingsProductTypesRouteImport } from './routes/_authenticated/$storeId/settings/product-types'
 import { Route as SettingsPaymentMethodsRouteImport } from './routes/_authenticated/$storeId/settings/payment-methods'
 import { Route as SettingsMarketsRouteImport } from './routes/_authenticated/$storeId/settings/markets'
+import { Route as SettingsMaintenanceTasksRouteImport } from './routes/_authenticated/$storeId/settings/maintenance-tasks'
 import { Route as SettingsIntegrationsRouteImport } from './routes/_authenticated/$storeId/settings/integrations'
 import { Route as SettingsEmailsRouteImport } from './routes/_authenticated/$storeId/settings/emails'
 import { Route as SettingsCustomFieldDefinitionsRouteImport } from './routes/_authenticated/$storeId/settings/custom-field-definitions'
@@ -248,6 +249,12 @@ const SettingsMarketsRoute = SettingsMarketsRouteImport.update({
   path: '/markets',
   getParentRoute: () => SettingsRoute,
 } as any)
+const SettingsMaintenanceTasksRoute =
+  SettingsMaintenanceTasksRouteImport.update({
+    id: '/maintenance-tasks',
+    path: '/maintenance-tasks',
+    getParentRoute: () => SettingsRoute,
+  } as any)
 const SettingsIntegrationsRoute = SettingsIntegrationsRouteImport.update({
   id: '/integrations',
   path: '/integrations',
@@ -490,6 +497,7 @@ export interface FileRoutesByFullPath {
   '/$storeId/settings/custom-field-definitions': typeof SettingsCustomFieldDefinitionsRoute
   '/$storeId/settings/emails': typeof SettingsEmailsRoute
   '/$storeId/settings/integrations': typeof SettingsIntegrationsRoute
+  '/$storeId/settings/maintenance-tasks': typeof SettingsMaintenanceTasksRoute
   '/$storeId/settings/markets': typeof SettingsMarketsRoute
   '/$storeId/settings/payment-methods': typeof SettingsPaymentMethodsRoute
   '/$storeId/settings/product-types': typeof SettingsProductTypesRoute
@@ -561,6 +569,7 @@ export interface FileRoutesByTo {
   '/$storeId/settings/custom-field-definitions': typeof SettingsCustomFieldDefinitionsRoute
   '/$storeId/settings/emails': typeof SettingsEmailsRoute
   '/$storeId/settings/integrations': typeof SettingsIntegrationsRoute
+  '/$storeId/settings/maintenance-tasks': typeof SettingsMaintenanceTasksRoute
   '/$storeId/settings/markets': typeof SettingsMarketsRoute
   '/$storeId/settings/payment-methods': typeof SettingsPaymentMethodsRoute
   '/$storeId/settings/product-types': typeof SettingsProductTypesRoute
@@ -636,6 +645,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/settings/custom-field-definitions': typeof SettingsCustomFieldDefinitionsRoute
   '/_authenticated/$storeId/settings/emails': typeof SettingsEmailsRoute
   '/_authenticated/$storeId/settings/integrations': typeof SettingsIntegrationsRoute
+  '/_authenticated/$storeId/settings/maintenance-tasks': typeof SettingsMaintenanceTasksRoute
   '/_authenticated/$storeId/settings/markets': typeof SettingsMarketsRoute
   '/_authenticated/$storeId/settings/payment-methods': typeof SettingsPaymentMethodsRoute
   '/_authenticated/$storeId/settings/product-types': typeof SettingsProductTypesRoute
@@ -711,6 +721,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings/custom-field-definitions'
     | '/$storeId/settings/emails'
     | '/$storeId/settings/integrations'
+    | '/$storeId/settings/maintenance-tasks'
     | '/$storeId/settings/markets'
     | '/$storeId/settings/payment-methods'
     | '/$storeId/settings/product-types'
@@ -782,6 +793,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings/custom-field-definitions'
     | '/$storeId/settings/emails'
     | '/$storeId/settings/integrations'
+    | '/$storeId/settings/maintenance-tasks'
     | '/$storeId/settings/markets'
     | '/$storeId/settings/payment-methods'
     | '/$storeId/settings/product-types'
@@ -856,6 +868,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/settings/custom-field-definitions'
     | '/_authenticated/$storeId/settings/emails'
     | '/_authenticated/$storeId/settings/integrations'
+    | '/_authenticated/$storeId/settings/maintenance-tasks'
     | '/_authenticated/$storeId/settings/markets'
     | '/_authenticated/$storeId/settings/payment-methods'
     | '/_authenticated/$storeId/settings/product-types'
@@ -1135,6 +1148,13 @@ declare module '@tanstack/react-router' {
       path: '/markets'
       fullPath: '/$storeId/settings/markets'
       preLoaderRoute: typeof SettingsMarketsRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/_authenticated/$storeId/settings/maintenance-tasks': {
+      id: '/_authenticated/$storeId/settings/maintenance-tasks'
+      path: '/maintenance-tasks'
+      fullPath: '/$storeId/settings/maintenance-tasks'
+      preLoaderRoute: typeof SettingsMaintenanceTasksRouteImport
       parentRoute: typeof SettingsRoute
     }
     '/_authenticated/$storeId/settings/integrations': {
@@ -1421,6 +1441,7 @@ interface SettingsRouteChildren {
   SettingsCustomFieldDefinitionsRoute: typeof SettingsCustomFieldDefinitionsRoute
   SettingsEmailsRoute: typeof SettingsEmailsRoute
   SettingsIntegrationsRoute: typeof SettingsIntegrationsRoute
+  SettingsMaintenanceTasksRoute: typeof SettingsMaintenanceTasksRoute
   SettingsMarketsRoute: typeof SettingsMarketsRoute
   SettingsPaymentMethodsRoute: typeof SettingsPaymentMethodsRoute
   SettingsProductTypesRoute: typeof SettingsProductTypesRoute
@@ -1450,6 +1471,7 @@ const SettingsRouteChildren: SettingsRouteChildren = {
   SettingsCustomFieldDefinitionsRoute: SettingsCustomFieldDefinitionsRoute,
   SettingsEmailsRoute: SettingsEmailsRoute,
   SettingsIntegrationsRoute: SettingsIntegrationsRoute,
+  SettingsMaintenanceTasksRoute: SettingsMaintenanceTasksRoute,
   SettingsMarketsRoute: SettingsMarketsRoute,
   SettingsPaymentMethodsRoute: SettingsPaymentMethodsRoute,
   SettingsProductTypesRoute: SettingsProductTypesRoute,

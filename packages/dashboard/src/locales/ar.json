@@ -2082,6 +2082,85 @@
       "tax_exclusive": "غير شامل",
       "tax_inclusive": "شامل"
     },
+    "maintenance_tasks": {
+      "actions": {
+        "cancel_run": "إلغاء التشغيل",
+        "pause": "إيقاف مؤقت",
+        "resume": "استئناف",
+        "run": "تشغيل"
+      },
+      "already_running": "هذه المهمة قيد التشغيل بالفعل",
+      "cancel_confirm": {
+        "message": "تتوقف المهمة عند نقطة التحقق التالية. العمل المنجز يبقى كما هو — الإلغاء لا يتراجع عنه.",
+        "title": "إلغاء هذا التشغيل؟"
+      },
+      "description": "شغّل تصحيحات البيانات وعمليات التعبئة وإعادة الفهرسة المرفقة مع كود متجرك. يُسجَّل كل تشغيل.",
+      "dry_run_badge": "معاينة",
+      "empty_description": "المهام هي أصناف Ruby مسجَّلة من Spree أو من إضافاتك.",
+      "empty_title": "لا توجد مهام صيانة",
+      "history": {
+        "empty_title": "لا توجد عمليات تشغيل",
+        "search_placeholder": "ابحث باسم المهمة…",
+        "table": {
+          "initiated_by": "بدأها",
+          "processed": "تمت معالجتها",
+          "status": "الحالة",
+          "task": "المهمة"
+        },
+        "title": "سجل التشغيل"
+      },
+      "initiated_via": {
+        "api": "بدأت عبر واجهة البرمجة",
+        "cli": "بدأت من سطر الأوامر",
+        "dashboard": "بدأت من لوحة التحكم",
+        "inline": "بدأت بواسطة Spree"
+      },
+      "last_run": "آخر تشغيل",
+      "loading": "جارٍ تحميل المهام…",
+      "messages": {
+        "canceled": "جارٍ إلغاء التشغيل",
+        "paused": "جارٍ إيقاف التشغيل",
+        "resumed": "جارٍ استئناف التشغيل",
+        "start_failed": "تعذّر بدء المهمة",
+        "started": "بدأت المهمة"
+      },
+      "never_run": "لم تُشغَّل قط",
+      "run": {
+        "arguments": "المعاملات",
+        "duration": "المدة",
+        "dry_run_help": "اعرض ما سيتغير دون كتابة أي شيء.",
+        "dry_run_label": "معاينة فقط",
+        "ended": "انتهت",
+        "error": "خطأ",
+        "initiated_by": "بدأها",
+        "loading": "جارٍ تحميل التشغيل…",
+        "no_description": "لا يوجد وصف.",
+        "processed_count": "تمت معالجة {{count}}",
+        "progress_label": "التقدّم",
+        "required_field": "هذا الحقل مطلوب.",
+        "results": "النتائج",
+        "seconds": "{{count}} ث",
+        "show_backtrace": "عرض التفاصيل التقنية",
+        "start": "تشغيل المهمة",
+        "start_dry_run": "تشغيل المعاينة",
+        "started": "بدأت",
+        "starting": "جارٍ البدء…",
+        "write_warning": "يبدأ التشغيل فورًا ويكتب في بياناتك. يمكن إيقافه، لكن لا يمكن التراجع عنه."
+      },
+      "status": {
+        "cancelled": "أُلغيت",
+        "cancelling": "جارٍ الإلغاء…",
+        "enqueued": "في الانتظار",
+        "errored": "فشلت",
+        "interrupted": "جارٍ الاستئناف…",
+        "paused": "متوقفة مؤقتًا",
+        "pausing": "جارٍ الإيقاف…",
+        "running": "قيد التشغيل",
+        "succeeded": "اكتملت"
+      },
+      "supports_dry_run": "المعاينة متاحة",
+      "title": "مهام الصيانة"
+    },
     "nav": {
       "account": "الحساب",
       "categories": "الفئات",
@@ -4163,6 +4242,7 @@
         "emails": "البريد الإلكتروني",
         "imports": "عمليات الاستيراد",
         "integrations": "التكاملات",
+        "maintenance_tasks": "مهام الصيانة",
         "markets": "الأسواق",
         "payment_methods": "طرق الدفع",
         "product_types": "أنواع المنتجات",

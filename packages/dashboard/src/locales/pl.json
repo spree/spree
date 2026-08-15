@@ -2083,6 +2083,85 @@
       "tax_exclusive": "Bez podatku",
       "tax_inclusive": "Z podatkiem"
     },
+    "maintenance_tasks": {
+      "actions": {
+        "cancel_run": "Anuluj uruchomienie",
+        "pause": "Wstrzymaj",
+        "resume": "Wznów",
+        "run": "Uruchom"
+      },
+      "already_running": "To zadanie już działa",
+      "cancel_confirm": {
+        "message": "Zadanie zatrzyma się w najbliższym punkcie kontrolnym. Wykonana już praca pozostaje — anulowanie jej nie cofa.",
+        "title": "Anulować to uruchomienie?"
+      },
+      "description": "Uruchamiaj poprawki danych, uzupełnienia i przebudowy indeksów dostarczone wraz z kodem sklepu. Każde uruchomienie jest zapisywane.",
+      "dry_run_badge": "Podgląd",
+      "empty_description": "Zadania to klasy Ruby rejestrowane przez Spree lub Twoje rozszerzenia.",
+      "empty_title": "Brak zadań konserwacyjnych",
+      "history": {
+        "empty_title": "Brak uruchomień",
+        "search_placeholder": "Szukaj po nazwie zadania…",
+        "table": {
+          "initiated_by": "Uruchomił",
+          "processed": "Przetworzono",
+          "status": "Status",
+          "task": "Zadanie"
+        },
+        "title": "Historia uruchomień"
+      },
+      "initiated_via": {
+        "api": "Uruchomione przez API",
+        "cli": "Uruchomione z wiersza poleceń",
+        "dashboard": "Uruchomione z panelu",
+        "inline": "Uruchomione przez Spree"
+      },
+      "last_run": "Ostatnie uruchomienie",
+      "loading": "Wczytywanie zadań…",
+      "messages": {
+        "canceled": "Anulowanie uruchomienia",
+        "paused": "Wstrzymywanie uruchomienia",
+        "resumed": "Wznawianie uruchomienia",
+        "start_failed": "Nie udało się uruchomić zadania",
+        "started": "Zadanie uruchomione"
+      },
+      "never_run": "Nigdy nie uruchomiono",
+      "run": {
+        "arguments": "Parametry",
+        "duration": "Czas trwania",
+        "dry_run_help": "Pokaż, co zostałoby zmienione, bez zapisywania.",
+        "dry_run_label": "Tylko podgląd",
+        "ended": "Zakończono",
+        "error": "Błąd",
+        "initiated_by": "Uruchomił",
+        "loading": "Wczytywanie uruchomienia…",
+        "no_description": "Brak opisu.",
+        "processed_count": "przetworzono: {{count}}",
+        "progress_label": "Postęp",
+        "required_field": "To pole jest wymagane.",
+        "results": "Wyniki",
+        "seconds": "{{count}} s",
+        "show_backtrace": "Pokaż szczegóły techniczne",
+        "start": "Uruchom zadanie",
+        "start_dry_run": "Uruchom podgląd",
+        "started": "Rozpoczęto",
+        "starting": "Uruchamianie…",
+        "write_warning": "Uruchomienie startuje natychmiast i zapisuje dane. Można je zatrzymać, ale nie cofnąć."
+      },
+      "status": {
+        "cancelled": "Anulowane",
+        "cancelling": "Anulowanie…",
+        "enqueued": "W kolejce",
+        "errored": "Nieudane",
+        "interrupted": "Wznawianie…",
+        "paused": "Wstrzymane",
+        "pausing": "Wstrzymywanie…",
+        "running": "W trakcie",
+        "succeeded": "Zakończone"
+      },
+      "supports_dry_run": "Podgląd dostępny",
+      "title": "Zadania konserwacyjne"
+    },
     "nav": {
       "account": "Konto",
       "categories": "Kategorie",
@@ -4200,6 +4279,7 @@
         "emails": "Wiadomości e-mail",
         "imports": "Importy",
         "integrations": "Integracje",
+        "maintenance_tasks": "Zadania konserwacyjne",
         "markets": "Rynki",
         "payment_methods": "Metody płatności",
         "product_types": "Typy produktów",

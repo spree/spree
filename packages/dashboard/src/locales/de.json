@@ -2067,6 +2067,85 @@
       "tax_exclusive": "Exklusive",
       "tax_inclusive": "Inklusive"
     },
+    "maintenance_tasks": {
+      "actions": {
+        "cancel_run": "Lauf abbrechen",
+        "pause": "Pausieren",
+        "resume": "Fortsetzen",
+        "run": "Ausführen"
+      },
+      "already_running": "Diese Aufgabe läuft bereits",
+      "cancel_confirm": {
+        "message": "Die Aufgabe stoppt am nächsten Prüfpunkt. Bereits erledigte Arbeit bleibt bestehen — ein Abbruch macht sie nicht rückgängig.",
+        "title": "Diesen Lauf abbrechen?"
+      },
+      "description": "Führen Sie Datenkorrekturen, Nachbefüllungen und Neuindizierungen aus, die mit dem Code Ihres Shops ausgeliefert werden. Jeder Lauf wird aufgezeichnet.",
+      "dry_run_badge": "Vorschau",
+      "empty_description": "Aufgaben sind Ruby-Klassen, die von Spree oder Ihren Erweiterungen registriert werden.",
+      "empty_title": "Keine Wartungsaufgaben",
+      "history": {
+        "empty_title": "Noch keine Läufe",
+        "search_placeholder": "Nach Aufgabenname suchen…",
+        "table": {
+          "initiated_by": "Gestartet von",
+          "processed": "Verarbeitet",
+          "status": "Status",
+          "task": "Aufgabe"
+        },
+        "title": "Laufverlauf"
+      },
+      "initiated_via": {
+        "api": "Über die API gestartet",
+        "cli": "Über die Kommandozeile gestartet",
+        "dashboard": "Über das Dashboard gestartet",
+        "inline": "Von Spree gestartet"
+      },
+      "last_run": "Letzter Lauf",
+      "loading": "Aufgaben werden geladen…",
+      "messages": {
+        "canceled": "Lauf wird abgebrochen",
+        "paused": "Lauf wird pausiert",
+        "resumed": "Lauf wird fortgesetzt",
+        "start_failed": "Aufgabe konnte nicht gestartet werden",
+        "started": "Aufgabe gestartet"
+      },
+      "never_run": "Nie ausgeführt",
+      "run": {
+        "arguments": "Parameter",
+        "duration": "Dauer",
+        "dry_run_help": "Melden, was sich ändern würde, ohne etwas zu schreiben.",
+        "dry_run_label": "Nur Vorschau",
+        "ended": "Beendet",
+        "error": "Fehler",
+        "initiated_by": "Gestartet von",
+        "loading": "Lauf wird geladen…",
+        "no_description": "Keine Beschreibung vorhanden.",
+        "processed_count": "{{count}} verarbeitet",
+        "progress_label": "Fortschritt",
+        "required_field": "Dieses Feld ist erforderlich.",
+        "results": "Ergebnisse",
+        "seconds": "{{count}} s",
+        "show_backtrace": "Technische Details anzeigen",
+        "start": "Aufgabe ausführen",
+        "start_dry_run": "Vorschau ausführen",
+        "started": "Gestartet",
+        "starting": "Wird gestartet…",
+        "write_warning": "Der Lauf startet sofort und schreibt in Ihre Daten. Er kann gestoppt, aber nicht rückgängig gemacht werden."
+      },
+      "status": {
+        "cancelled": "Abgebrochen",
+        "cancelling": "Wird abgebrochen…",
+        "enqueued": "In Warteschlange",
+        "errored": "Fehlgeschlagen",
+        "interrupted": "Wird fortgesetzt…",
+        "paused": "Pausiert",
+        "pausing": "Wird pausiert…",
+        "running": "Läuft",
+        "succeeded": "Abgeschlossen"
+      },
+      "supports_dry_run": "Vorschau verfügbar",
+      "title": "Wartungsaufgaben"
+    },
     "nav": {
       "account": "Konto",
       "categories": "Kategorien",
@@ -4144,6 +4223,7 @@
         "emails": "E-Mails",
         "imports": "Importe",
         "integrations": "Integrationen",
+        "maintenance_tasks": "Wartungsaufgaben",
         "markets": "Märkte",
         "payment_methods": "Zahlungsmethoden",
         "product_types": "Produkttypen",

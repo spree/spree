@@ -2067,6 +2067,85 @@
       "tax_exclusive": "HT",
       "tax_inclusive": "TTC"
     },
+    "maintenance_tasks": {
+      "actions": {
+        "cancel_run": "Annuler l'exécution",
+        "pause": "Mettre en pause",
+        "resume": "Reprendre",
+        "run": "Exécuter"
+      },
+      "already_running": "Cette tâche est déjà en cours",
+      "cancel_confirm": {
+        "message": "La tâche s'arrête au prochain point de contrôle. Le travail déjà effectué est conservé — l'annulation ne le défait pas.",
+        "title": "Annuler cette exécution ?"
+      },
+      "description": "Exécutez les corrections de données, les remplissages et les réindexations livrés avec le code de votre boutique. Chaque exécution est enregistrée.",
+      "dry_run_badge": "Aperçu",
+      "empty_description": "Les tâches sont des classes Ruby enregistrées par Spree ou vos extensions.",
+      "empty_title": "Aucune tâche de maintenance",
+      "history": {
+        "empty_title": "Aucune exécution",
+        "search_placeholder": "Rechercher par nom de tâche…",
+        "table": {
+          "initiated_by": "Lancée par",
+          "processed": "Traités",
+          "status": "Statut",
+          "task": "Tâche"
+        },
+        "title": "Historique des exécutions"
+      },
+      "initiated_via": {
+        "api": "Lancée via l'API",
+        "cli": "Lancée en ligne de commande",
+        "dashboard": "Lancée depuis le tableau de bord",
+        "inline": "Lancée par Spree"
+      },
+      "last_run": "Dernière exécution",
+      "loading": "Chargement des tâches…",
+      "messages": {
+        "canceled": "Annulation de l'exécution",
+        "paused": "Mise en pause de l'exécution",
+        "resumed": "Reprise de l'exécution",
+        "start_failed": "Impossible de démarrer la tâche",
+        "started": "Tâche démarrée"
+      },
+      "never_run": "Jamais exécutée",
+      "run": {
+        "arguments": "Paramètres",
+        "duration": "Durée",
+        "dry_run_help": "Indiquer ce qui changerait sans rien écrire.",
+        "dry_run_label": "Aperçu seulement",
+        "ended": "Terminée",
+        "error": "Erreur",
+        "initiated_by": "Lancée par",
+        "loading": "Chargement de l'exécution…",
+        "no_description": "Aucune description fournie.",
+        "processed_count": "{{count}} traités",
+        "progress_label": "Progression",
+        "required_field": "Ce champ est obligatoire.",
+        "results": "Résultats",
+        "seconds": "{{count}} s",
+        "show_backtrace": "Afficher le détail technique",
+        "start": "Exécuter la tâche",
+        "start_dry_run": "Lancer l'aperçu",
+        "started": "Démarrée",
+        "starting": "Démarrage…",
+        "write_warning": "L'exécution démarre immédiatement et écrit dans vos données. Elle peut être arrêtée, mais pas annulée."
+      },
+      "status": {
+        "cancelled": "Annulée",
+        "cancelling": "Annulation…",
+        "enqueued": "En file d'attente",
+        "errored": "Échouée",
+        "interrupted": "Reprise…",
+        "paused": "En pause",
+        "pausing": "Mise en pause…",
+        "running": "En cours",
+        "succeeded": "Terminée"
+      },
+      "supports_dry_run": "Aperçu disponible",
+      "title": "Tâches de maintenance"
+    },
     "nav": {
       "account": "Compte",
       "categories": "Catégories",
@@ -4144,6 +4223,7 @@
         "emails": "E-mails",
         "imports": "Imports",
         "integrations": "Intégrations",
+        "maintenance_tasks": "Tâches de maintenance",
         "markets": "Marchés",
         "payment_methods": "Modes de paiement",
         "product_types": "Types de produit",

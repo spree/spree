@@ -2064,6 +2064,85 @@
       "tax_exclusive": "不含税",
       "tax_inclusive": "含税"
     },
+    "maintenance_tasks": {
+      "actions": {
+        "cancel_run": "取消运行",
+        "pause": "暂停",
+        "resume": "继续",
+        "run": "运行"
+      },
+      "already_running": "该任务正在运行",
+      "cancel_confirm": {
+        "message": "任务会在下一个检查点停止。已完成的工作会保留——取消不会撤销它。",
+        "title": "取消这次运行？"
+      },
+      "description": "运行随店铺代码一同发布的数据修正、回填与重建索引。每次运行都会被记录。",
+      "dry_run_badge": "预览",
+      "empty_description": "任务是由 Spree 或您的扩展注册的 Ruby 类。",
+      "empty_title": "暂无维护任务",
+      "history": {
+        "empty_title": "暂无运行记录",
+        "search_placeholder": "按任务名称搜索…",
+        "table": {
+          "initiated_by": "启动人",
+          "processed": "已处理",
+          "status": "状态",
+          "task": "任务"
+        },
+        "title": "运行历史"
+      },
+      "initiated_via": {
+        "api": "通过 API 启动",
+        "cli": "从命令行启动",
+        "dashboard": "从仪表板启动",
+        "inline": "由 Spree 启动"
+      },
+      "last_run": "上次运行",
+      "loading": "正在加载任务…",
+      "messages": {
+        "canceled": "正在取消运行",
+        "paused": "正在暂停运行",
+        "resumed": "正在恢复运行",
+        "start_failed": "无法启动任务",
+        "started": "任务已启动"
+      },
+      "never_run": "从未运行",
+      "run": {
+        "arguments": "参数",
+        "duration": "耗时",
+        "dry_run_help": "只报告将会发生的更改，不写入任何数据。",
+        "dry_run_label": "仅预览",
+        "ended": "结束时间",
+        "error": "错误",
+        "initiated_by": "启动人",
+        "loading": "正在加载运行记录…",
+        "no_description": "暂无说明。",
+        "processed_count": "已处理 {{count}} 条",
+        "progress_label": "进度",
+        "required_field": "此项为必填。",
+        "results": "结果",
+        "seconds": "{{count}} 秒",
+        "show_backtrace": "显示技术详情",
+        "start": "运行任务",
+        "start_dry_run": "运行预览",
+        "started": "开始时间",
+        "starting": "正在启动…",
+        "write_warning": "运行会立即开始并写入数据。可以停止，但无法撤销。"
+      },
+      "status": {
+        "cancelled": "已取消",
+        "cancelling": "正在取消…",
+        "enqueued": "排队中",
+        "errored": "已失败",
+        "interrupted": "正在恢复…",
+        "paused": "已暂停",
+        "pausing": "正在暂停…",
+        "running": "运行中",
+        "succeeded": "已完成"
+      },
+      "supports_dry_run": "支持预览",
+      "title": "维护任务"
+    },
     "nav": {
       "account": "账户",
       "categories": "分类",
@@ -4139,6 +4218,7 @@
         "emails": "邮件",
         "imports": "导入",
         "integrations": "集成",
+        "maintenance_tasks": "维护任务",
         "markets": "市场",
         "payment_methods": "支付方式",
         "product_types": "商品类型",

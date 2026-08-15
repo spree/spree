@@ -21,6 +21,7 @@ import {
   UsersRoundIcon,
   WarehouseIcon,
   WebhookIcon,
+  WrenchIcon,
 } from 'lucide-react'
 
 // Built-in entries use `labelKey` so labels re-render on language change —
@@ -257,4 +258,16 @@ settingsNav.add({
   position: 100,
   subject: Subject.Product,
   action: 'update',
+})
+
+// Running a task can rewrite any data in the install, so the entry follows the
+// same grant the API enforces rather than a proxy permission.
+settingsNav.add({
+  key: 'settings.maintenance-tasks',
+  labelKey: 'admin.settings_nav.items.maintenance_tasks',
+  path: '/maintenance-tasks',
+  icon: WrenchIcon,
+  group: 'audit',
+  position: 200,
+  subject: Subject.MaintenanceTaskRun,
 })
