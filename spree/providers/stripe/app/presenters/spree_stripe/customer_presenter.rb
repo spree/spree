@@ -28,8 +28,8 @@ module SpreeStripe
         line1: address.address1,
         line2: address.address2,
         postal_code: address.zipcode,
-        country: address.country_iso,
-        state: address.state_abbr.presence || address.state_name_text
+        country: address.country_code,
+        state: address.state_code.presence || address.state_name_text
       }
     end
   end

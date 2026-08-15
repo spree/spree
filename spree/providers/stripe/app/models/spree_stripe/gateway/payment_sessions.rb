@@ -234,11 +234,11 @@ module SpreeStripe
         {
           address: {
             city: ship_address.city,
-            country: ship_address.country_iso,
+            country: ship_address.country_code,
             line1: ship_address.address1,
             line2: ship_address.address2,
             postal_code: ship_address.zipcode,
-            state: ship_address.state_abbr
+            state: ship_address.state_code
           },
           name: ship_address.full_name
         }
@@ -276,7 +276,7 @@ module SpreeStripe
 
         # Countries are reference data now, not records — addresses name one by
         # ISO code rather than holding a foreign key.
-        owner.bill_address ||= Spree::Address.new(country_iso: country.iso, customer: owner.customer)
+        owner.bill_address ||= Spree::Address.new(country_code: country.iso, customer: owner.customer)
         owner.bill_address.quick_checkout = true
 
         # Google Pay sometimes omits the name entirely.

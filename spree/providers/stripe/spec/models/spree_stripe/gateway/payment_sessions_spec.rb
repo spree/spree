@@ -293,7 +293,7 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
 
               order.reload
               expect(order.bill_address).to be_present
-              expect(order.bill_address.country_iso).to eq(default_country.iso)
+              expect(order.bill_address.country_code).to eq(default_country.iso)
             end
           end
 
