@@ -3612,3 +3612,48 @@ is superseded; `Spree.store_setup_tasks` stays code-only for the merchant's own
 Getting Started list. Never add `Seller#onboarding_completed?`-style predicates
 or step-done columns; a new admission check is a kind or a `validate` hook on
 the seller workflows. Plan: `6.0-seller-onboarding-requirements.md`.
+
+## 2026-08-15 — Maintenance tasks: operator-run data work is a task class with a run row, and every 6.0 upgrade step is one
+
+**Decision:** Spree 6.0 core gains a first-class maintenance-task primitive —
+`Spree::MaintenanceTask` (Shopify `maintenance_tasks` authoring contract:
+`collection`/`process`/`count`, ActiveModel attributes as parameters,
+`throttle_on`, `report_on`, `no_collection`, later `csv_collection`) run by a
+native `ActiveJob::Continuable` job, with a persistent
+`Spree::MaintenanceTaskRun` row carrying cursor, progress, arguments, tallies,
+outcome and who fired it from where. It is built natively, not by depending
+on Shopify's gem: the gem's runner is a second interruption mechanism
+(`job-iteration`) beside the one 6.0 already standardized on, and its UI is
+a server-rendered engine Spree 6.0 has no place to mount. Tasks are
+registered explicitly (`Spree.maintenance_tasks`, the same
+`Rails.application.config.spree.*` array as every class family) — never
+autodiscovered. Authorization is **one catalog resource,
+`maintenance_tasks`, in the `access` group**: admins hold it by default,
+nothing is gated per task and nothing checks the `admin` role by name.
+Runs are installation-wide with a recorded context store the runner loads
+into `Spree::Current.store`. Dry-run is opt-in and task-honored
+(`supports_dry_run` + `dry_run?`), never a runner-faked rollback. The run
+row is the audit; lifecycle events fire; no audit-log model. Schema
+migrations stay in the deploy pipeline forever.
+
+**All 22 steps of the 5.6→6.0 upgrade manifest are rewritten as
+`Spree::MaintenanceTasks::Upgrade::*` classes and the manifest names
+`task_class:` instead of rake tasks** (those rake names never shipped, so
+there is nothing to bridge; older manifests keep rake steps and the walker
+runs both kinds inside run rows). `spree:upgrade` keeps its interface and
+becomes an inline walk that writes the same run rows; the dashboard gets an
+Upgrade panel and `Upgrade::Walk`, an orchestrating task whose steps are
+child runs.
+
+**Why:** A console session records what was typed, not what it did; a
+managed platform cannot hand out shells; and the 6.0 upgrade is the largest
+data migration Spree has shipped. Building the runner for our own migration
+path yields the cloud capability as a side effect and turns "run this rake
+task and wait" into progress bars and resume buttons. It lives in BSD-3 core
+because it is infrastructure self-hosted merchants need exactly as much.
+
+**Consequences:** New bulk/backfill work is a task, not a bare rake task or
+a README console snippet; new 6.0 upgrade steps are born as task classes;
+`Imports::ProcessJob`-style system-triggered jobs stay plain Continuable
+jobs (the primitive is for operator-triggered work). Plan:
+`6.0-maintenance-tasks.md`.
