@@ -88,7 +88,7 @@ This step is disabled by default, but can be enabled by two ways:
       module OrderDecorator
         # require confirmation for orders with a US billing address
         def confirmation_required?
-          billing_address&.country_code == 'US'
+          billing_address&.country_iso == 'US'
         end
       end
     end

@@ -176,7 +176,7 @@ await client.carts.update(cartId, {
   shipping_address: {
     first_name: 'John', last_name: 'Doe',
     address1: '123 Main St', city: 'Los Angeles',
-    country_code: 'US', state_abbr: 'CA', postal_code: '90001',
+    country_iso: 'US', state_abbr: 'CA', postal_code: '90001',
     phone: '555-0100',
   },
 })
@@ -212,7 +212,7 @@ curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx' \
     "shipping_address": {
       "first_name": "John", "last_name": "Doe",
       "address1": "123 Main St", "city": "Los Angeles",
-      "country_code": "US", "state_abbr": "CA", "postal_code": "90001",
+      "country_iso": "US", "state_abbr": "CA", "postal_code": "90001",
       "phone": "555-0100"
     }
   }'

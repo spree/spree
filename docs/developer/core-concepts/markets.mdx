@@ -259,7 +259,7 @@ const northAmerica = await client.markets.create({
   name: 'North America',
   currency: 'USD',
   default_locale: 'en',
-  country_codes: ['US', 'CA'],
+  country_isos: ['US', 'CA'],
   default: true,
 })
 
@@ -270,7 +270,7 @@ const europe = await client.markets.create({
   default_locale: 'de',
   supported_locales: ['de', 'en', 'fr'],
   tax_inclusive: true,
-  country_codes: ['DE', 'FR', 'AT', 'NL'],
+  country_isos: ['DE', 'FR', 'AT', 'NL'],
 })
 ```
 
@@ -279,7 +279,7 @@ spree api post /markets -d '{
   "name": "North America",
   "currency": "USD",
   "default_locale": "en",
-  "country_codes": ["US", "CA"],
+  "country_isos": ["US", "CA"],
   "default": true
 }'
 ```
