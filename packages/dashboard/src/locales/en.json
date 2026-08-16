@@ -1670,7 +1670,7 @@
           }
         },
         "value": {
-          "label": "Amount",
+          "label": "Value",
           "help_percentage": "Percent of the sale charged to the seller.",
           "help_fixed": "Flat fee charged per sale, in the currency below."
         },
@@ -1699,7 +1699,7 @@
         },
         "include_tax": {
           "label": "Charge on the gross price",
-          "help": "Charge on the price including the customer's VAT. Off is the EU rule: charge on the seller's net revenue."
+          "help": "Charge on the price including the customer's VAT. Left off, commission is charged on the seller's net revenue, which is the usual basis where the fee is taxed as its own supply."
         },
         "enabled": {
           "help": "Disabled rates are skipped when charging a sale."

@@ -1670,7 +1670,7 @@
           }
         },
         "value": {
-          "label": "Montant",
+          "label": "Valeur",
           "help_percentage": "Pourcentage de la vente facturé au vendeur.",
           "help_fixed": "Montant fixe par vente, dans la devise ci-dessous."
         },
@@ -1699,7 +1699,7 @@
         },
         "include_tax": {
           "label": "Facturer sur le prix TTC",
-          "help": "Facturer sur le prix incluant la TVA du client. Désactivé correspond à la règle européenne : sur le revenu net du vendeur."
+          "help": "Facturer sur le prix incluant la TVA du client. Si l'option est désactivée, la commission est calculée sur le revenu net du vendeur, la base habituelle lorsque les frais sont taxés comme une prestation distincte."
         },
         "enabled": {
           "help": "Les taux désactivés sont ignorés lors de la facturation."

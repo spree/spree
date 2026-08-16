@@ -27,8 +27,10 @@ module Spree
             super.where(order_id: current_store.orders.select(:id))
           end
 
+          # Every association the serializer reads, so a page of lines costs a
+          # fixed number of queries rather than one per row.
           def collection_includes
-            [:vendor, :commission_rate, :order]
+            [:vendor, :commission_rate, :order, :line_item, :fulfillment]
           end
         end
       end

@@ -119,6 +119,34 @@ RSpec.describe Spree::Commissions::ResolveRate do
     it 'resolves nothing for nothing' do
       expect(described_class.categories_for([])).to eq({})
     end
+
+    # Nested-set bounds only mean something inside the tree that assigned them,
+    # so another store's category can enclose this one by coincidence. Letting
+    # it through would make a rate targeting that category match a sale in a
+    # different store entirely.
+    it 'never reaches into another store tree' do
+      other_store = create(:store)
+
+      root = create(:category, store: store)
+      leaf = create(:category, parent: root, taxonomy: root.taxonomy, store: store)
+
+      # Deep enough that its root's bounds enclose the other store's leaf.
+      foreign_root = create(:category, store: other_store)
+      foreign_branch = create(:category, parent: foreign_root, taxonomy: foreign_root.taxonomy, store: other_store)
+      create(:category, parent: foreign_branch, taxonomy: foreign_root.taxonomy, store: other_store)
+      foreign_leaf = create(:category, parent: foreign_root, taxonomy: foreign_root.taxonomy, store: other_store)
+
+      mine = create(:product, store: store)
+      mine.categories << leaf
+      theirs = create(:product, store: other_store)
+      theirs.categories << foreign_leaf
+
+      # Both stores in one call is what fills the pool with foreign rows.
+      resolved = described_class.categories_for([mine, theirs])
+
+      expect(resolved[mine.id].map(&:store_id).uniq).to eq([store.id])
+      expect(resolved[theirs.id].map(&:store_id).uniq).to eq([other_store.id])
+    end
   end
 
   describe 'currency' do

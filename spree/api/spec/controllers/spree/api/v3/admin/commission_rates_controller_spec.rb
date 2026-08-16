@@ -79,10 +79,12 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
       expect(rate.reload.commission_rules.map(&:subject)).to eq([other_vendor])
     end
 
-    # A rule naming someone else's record would be read straight back by the
-    # serializer, which turns the rate editor into a way to enumerate another
-    # marketplace's catalog.
-    it 'drops a rule naming another store record' do
+    # Refused rather than filtered: `rules` replaces the whole targeting, so
+    # dropping the bad row would leave a rate with no rules — and a rate with
+    # no rules charges every seller. Silently widening what the client meant to
+    # narrow is the worst available outcome.
+    it 'refuses a rule naming another store record, leaving the targeting alone' do
+      create(:commission_rule, commission_rate: rate, subject: vendor)
       foreign_vendor = create(:vendor, store: create(:store))
 
       patch :update, params: {
@@ -90,16 +92,34 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
         rules: [{ subject_type: 'Spree::Vendor', subject_id: foreign_vendor.prefixed_id }]
       }, as: :json
 
-      expect(response).to have_http_status(:ok)
-      expect(rate.reload.commission_rules).to be_empty
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(rate.reload.commission_rules.map(&:subject)).to eq([vendor])
     end
 
-    it 'drops a rule naming a type that cannot be targeted' do
+    it 'refuses a rule naming a type that cannot be targeted' do
       patch :update, params: {
         id: rate.prefixed_id,
         rules: [{ subject_type: 'Spree::Order', subject_id: create(:order, store: store).prefixed_id }]
       }, as: :json
 
+      expect(response).to have_http_status(:unprocessable_entity)
+    end
+
+    it 'refuses a rule naming a record that no longer exists' do
+      patch :update, params: {
+        id: rate.prefixed_id,
+        rules: [{ subject_type: 'Spree::Vendor', subject_id: 'ven_gone' }]
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_entity)
+    end
+
+    it 'still accepts an empty list as clearing the targeting' do
+      create(:commission_rule, commission_rate: rate, subject: vendor)
+
+      patch :update, params: { id: rate.prefixed_id, rules: [] }, as: :json
+
+      expect(response).to have_http_status(:ok)
       expect(rate.reload.commission_rules).to be_empty
     end
   end

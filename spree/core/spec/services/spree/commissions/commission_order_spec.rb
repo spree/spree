@@ -53,6 +53,23 @@ RSpec.describe Spree::Commissions::CommissionOrder do
     expect { commission }.not_to change(Spree::CommissionLine, :count)
   end
 
+  # Two deliveries of the same event race: the unique index stops the second
+  # writing, and the loser reports the winner's lines rather than failing a
+  # checkout over work already done.
+  it 'reports the existing lines when another delivery got there first' do
+    line_for(vendor)
+    # Stands in for the winner committing between this caller's guard and its
+    # own write — the index raises, and the loser has to recover from it
+    # rather than failing the checkout.
+    allow_any_instance_of(Spree::CommissionLine).to receive(:save!).
+      and_raise(ActiveRecord::RecordNotUnique, 'duplicate')
+
+    result = described_class.call(order: order)
+
+    expect(result).to be_success
+    expect(result.value).to eq([])
+  end
+
   it 'writes nothing when no rate matches the sale' do
     rate.update!(enabled: false)
     line_for(vendor)

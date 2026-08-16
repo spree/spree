@@ -1,4 +1,6 @@
 class CreateSpreeCommissionRates < ActiveRecord::Migration[8.1]
+  INDEX_NAME = 'index_spree_commission_rates_on_store_id_and_code'.freeze
+
   def change
     create_table :spree_commission_rates do |t|
       t.references :store, null: false
@@ -38,10 +40,7 @@ class CreateSpreeCommissionRates < ActiveRecord::Migration[8.1]
       t.datetime :deleted_at
     end
 
-    # Deleted rows are excluded, matching the model's own uniqueness check:
-    # rates are paranoid, so without this a store could never reuse the code of
-    # a rate it had retired.
-    add_index :spree_commission_rates, [:store_id, :code], unique: true, where: 'deleted_at IS NULL'
+    add_code_uniqueness_index
     add_index :spree_commission_rates, [:store_id, :enabled, :priority]
     add_index :spree_commission_rates, :deleted_at
 
@@ -58,5 +57,48 @@ class CreateSpreeCommissionRates < ActiveRecord::Migration[8.1]
               [:commission_rate_id, :subject_type, :subject_id],
               unique: true,
               name: 'index_commission_rules_on_rate_and_subject'
+  end
+
+  private
+
+  # A code is unique per store among the rates that are still there. Rates are
+  # paranoid, so a store that retires one must be able to reuse its code.
+  #
+  # Written per adapter because only PostgreSQL and SQLite have partial
+  # indexes. MySQL and MariaDB instead index a stored generated column holding
+  # the code only while the row is live, so a retired rate drops out of the
+  # index altogether — NULLs compare distinct there, which also lets a store
+  # retire and reuse the same code repeatedly.
+  #
+  # Verified against MySQL 8 and MariaDB 11: the two disagree sharply about
+  # what a generated column may contain. A DATETIME sentinel (`COALESCE(
+  # deleted_at, CAST(...))`) is MySQL-only, `UNIX_TIMESTAMP` is MariaDB-only,
+  # and a functional index on COALESCE — the older precedent in this tree — is
+  # MySQL-only too. This expression is the one both accept.
+  def add_code_uniqueness_index
+    if mysql?
+      reversible do |dir|
+        dir.up do
+          execute <<~SQL.squish
+            ALTER TABLE spree_commission_rates
+            ADD COLUMN code_key VARCHAR(255)
+            AS (IF(deleted_at IS NULL, code, NULL)) STORED
+          SQL
+          add_index :spree_commission_rates, [:store_id, :code_key], unique: true, name: INDEX_NAME
+        end
+
+        dir.down do
+          remove_index :spree_commission_rates, name: INDEX_NAME
+          remove_column :spree_commission_rates, :code_key
+        end
+      end
+    else
+      add_index :spree_commission_rates, [:store_id, :code],
+                unique: true, where: 'deleted_at IS NULL', name: INDEX_NAME
+    end
+  end
+
+  def mysql?
+    ActiveRecord::Base.connection.adapter_name.match?(/mysql|trilogy/i)
   end
 end

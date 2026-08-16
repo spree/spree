@@ -75,7 +75,11 @@ function CommissionRatesPage() {
   const deleteMutation = useDeleteCommissionRate()
   const { permissions } = usePermissions()
 
-  const editId = search.edit
+  const canUpdate = permissions.can('update', Subject.CommissionRate)
+  // A deep link to ?edit= would otherwise open the sheet for someone who may
+  // only read. The server refuses the write either way; this stops the form
+  // being offered at all.
+  const editId = canUpdate ? search.edit : undefined
   const isCreating = !!search.new
 
   const closeSheet = () =>
@@ -92,7 +96,7 @@ function CommissionRatesPage() {
   const openEdit = (id: string) =>
     navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, edit: id }) as never })
 
-  useRowClickBridge('data-commission-rate-id', openEdit)
+  useRowClickBridge('data-commission-rate-id', canUpdate ? openEdit : () => {})
 
   async function handleDelete(rate: CommissionRate) {
     const ok = await confirm({
@@ -115,7 +119,7 @@ function CommissionRatesPage() {
         rowActions={(rate) => (
           <RowActions
             actions={[
-              { key: 'edit', onSelect: () => openEdit(rate.id) },
+              { key: 'edit', visible: canUpdate, onSelect: () => openEdit(rate.id) },
               {
                 key: 'delete',
                 destructive: true,

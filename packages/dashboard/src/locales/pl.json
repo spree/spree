@@ -1684,7 +1684,7 @@
           }
         },
         "value": {
-          "label": "Kwota",
+          "label": "Wartość",
           "help_percentage": "Procent sprzedaży pobierany od sprzedawcy.",
           "help_fixed": "Stała opłata za sprzedaż, w walucie poniżej."
         },
@@ -1713,7 +1713,7 @@
         },
         "include_tax": {
           "label": "Nalicz od ceny brutto",
-          "help": "Nalicz od ceny z VAT klienta. Wyłączone to reguła UE: od przychodu netto sprzedawcy."
+          "help": "Nalicz od ceny zawierającej VAT klienta. Po wyłączeniu prowizja liczona jest od przychodu netto sprzedawcy — zwykle stosowana podstawa, gdy opłata jest opodatkowana jako odrębna usługa."
         },
         "enabled": {
           "help": "Wyłączone stawki są pomijane przy naliczaniu."

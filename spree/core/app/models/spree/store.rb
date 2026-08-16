@@ -229,6 +229,11 @@ module Spree
     validates :preferred_digital_asset_authorized_clicks, numericality: { only_integer: true, greater_than: 0 }
     validates :preferred_digital_asset_authorized_days, numericality: { only_integer: true, greater_than: 0 }
     validates :preferred_stock_reservation_ttl_minutes, numericality: { only_integer: true, greater_than: 0 }
+    # A fraction, not a percentage: 0.21 is 21%. Bounded because the value is
+    # multiplied straight into what a seller is charged, so a negative would
+    # credit them and a figure above 1 would bill more tax than fee.
+    validates :preferred_default_commission_tax_rate,
+              numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 1 }
     validates :preferred_storefront_access, inclusion: { in: Spree::Channel::Gating::STOREFRONT_ACCESS }
     validates :preferred_document_number_format,
               inclusion: { in: Spree::NumberGenerators::Registry::FORMATS.keys }

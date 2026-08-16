@@ -25,10 +25,11 @@ module Spree
                    min_amount: 'string | null',
                    max_amount: 'string | null',
                    commission_tax_rate: 'string | null',
+                   metadata: 'Record<string, unknown> | null',
                    deleted_at: 'string | null'
 
           attributes :name, :code, :enabled, :priority, :kind, :currency,
-                     :include_tax, :include_shipping,
+                     :include_tax, :include_shipping, :metadata,
                      deleted_at: :iso8601, created_at: :iso8601, updated_at: :iso8601
 
           %i[value min_amount max_amount commission_tax_rate].each do |decimal|

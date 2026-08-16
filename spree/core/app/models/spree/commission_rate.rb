@@ -100,6 +100,13 @@ module Spree
       end
     end
 
+    # The rate's targeting, under the name the API reads and writes it by.
+    #
+    # @return [Array<Spree::CommissionRule>]
+    def rules
+      commission_rules
+    end
+
     # The flat payload the admin API writes: `[{subject_type:, subject_id:}]`,
     # replacing the rate's rules wholesale. Ids are already store-checked by
     # the controller, which is where the tenancy boundary belongs.

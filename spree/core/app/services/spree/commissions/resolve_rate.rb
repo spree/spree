@@ -84,14 +84,21 @@ module Spree
         return {} if categories.empty?
 
         table = Spree::Category.arel_table
-        within_store = categories.group_by(&:store_id).map do |store_id, group|
+        # Kept per store rather than flattened into one pool: bounds are only
+        # meaningful within the tree that assigned them, so a category from
+        # another store can enclose these ones by coincidence — and a rate
+        # targeting it would then match a sale it has nothing to do with.
+        pool_by_store = categories.group_by(&:store_id).transform_values do |group|
           reaching = group.map { |c| table[:lft].lteq(c.lft).and(table[:rgt].gteq(c.rgt)) }.reduce(:or)
-          Spree::Category.where(store_id: store_id).where(reaching)
+          Spree::Category.where(store_id: group.first.store_id).where(reaching).to_a
         end
-        pool = within_store.flat_map(&:to_a)
 
         categories.to_h do |category|
-          [category.id, pool.select { |node| node.lft <= category.lft && node.rgt >= category.rgt }]
+          ancestors = pool_by_store.fetch(category.store_id, []).select do |node|
+            node.lft <= category.lft && node.rgt >= category.rgt
+          end
+
+          [category.id, ancestors]
         end
       end
 

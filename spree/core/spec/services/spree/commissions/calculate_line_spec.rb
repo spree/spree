@@ -104,7 +104,10 @@ RSpec.describe Spree::Commissions::CalculateLine do
 
     it 'prefers an explicit rate override to anything the tax engine says' do
       overridden = create(:commission_rate, store: store, value: 10, commission_tax_rate: 0.19)
-      allow(order.tax_provider).to receive(:service_tax_rate).and_return(0.21)
+      # Stubbed on the class: the order builds a fresh provider per call, so
+      # stubbing one returned instance would leave the real engine in play and
+      # pass for the wrong reason.
+      allow_any_instance_of(Spree::TaxProvider::Internal).to receive(:service_tax_rate).and_return(0.21)
 
       expect(call(rate: overridden, commission_tax_rate: nil).tax_amount).to eq(1.9)
     end
@@ -155,5 +158,13 @@ RSpec.describe Spree::Commissions::CalculateLine do
 
   it 'refuses to price nothing' do
     expect(calculate.call(rate: rate, vendor: vendor, order: order)).to be_failure
+  end
+
+  # Both would silently commission the item and drop the delivery.
+  it 'refuses to price an item and a delivery at once' do
+    result = calculate.call(rate: rate, vendor: vendor, order: order,
+                            line_item: line_item, fulfillment: create(:fulfillment, order: order))
+
+    expect(result).to be_failure
   end
 end

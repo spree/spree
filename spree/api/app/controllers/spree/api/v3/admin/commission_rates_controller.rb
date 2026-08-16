@@ -32,6 +32,18 @@ module Spree
             }
           end
 
+          def create
+            return if reject_unreachable_rules
+
+            super
+          end
+
+          def update
+            return if reject_unreachable_rules
+
+            super
+          end
+
           protected
 
           def model_class
@@ -66,26 +78,67 @@ module Spree
               )
             )
 
-            attributes[:rules] = own_store_rules(attributes[:rules]) if attributes.key?(:rules)
             attributes
           end
 
           private
 
-          # Drops any rule naming a record this store does not own.
+          # Refuses a payload naming anything this store does not own.
           #
-          # The model assigns rule subjects by id with no scoping of its own, so
-          # without this a rate could be targeted at another store's product —
-          # and the serializer would then read that record's name straight back,
-          # which is an enumeration oracle over someone else's catalog.
-          def own_store_rules(rules)
-            Array(rules).select do |rule|
+          # Rejected rather than filtered, because `rules` replaces a rate's
+          # whole targeting: quietly dropping the bad rows would leave a rate
+          # with no rules, and a rate with no rules charges every seller on the
+          # marketplace. A client sending one stale id would silently widen what
+          # it meant to narrow, and get a 200 saying so.
+          #
+          # The model resolves subjects by id with no scoping of its own, so
+          # this is also what stops a rate being pointed at another store's
+          # catalog — the serializer reads the subject's name straight back,
+          # which would otherwise enumerate it.
+          # Renders the refusal and answers whether it did, so the action can
+          # stop before the write.
+          def reject_unreachable_rules
+            unreachable = unreachable_rules
+            return false if unreachable.empty?
+
+            errors = ActiveModel::Errors.new(Spree::CommissionRate.new)
+            unreachable.each do |rule|
+              errors.add(:rules, :not_found, message: rules_error_message(rule))
+            end
+            render_validation_error(errors)
+
+            true
+          end
+
+          def rules_error_message(rule)
+            subject_type = rule[:subject_type].presence
+
+            if subject_type.blank? || !Spree::CommissionRule::SUBJECT_TYPES.include?(subject_type)
+              Spree.t('errors.messages.commission_rule_subject_type_unknown', type: subject_type.presence || '')
+            else
+              Spree.t('errors.messages.commission_rule_subject_not_found',
+                      type: subject_type, id: rule[:subject_id])
+            end
+          end
+
+          def unreachable_rules
+            return [] unless params.key?(:rules)
+
+            Array(params[:rules]).reject do |rule|
               subject_type = rule[:subject_type].presence
               next true if subject_type.nil? && rule[:subject_id].blank?
               next false unless Spree::CommissionRule::SUBJECT_TYPES.include?(subject_type)
 
-              own_store_subject?(subject_type, rule[:subject_id])
+              own_store_subject?(subject_type, decode_subject_id(rule[:subject_id]))
             end
+          end
+
+          # Ids arrive prefixed; `normalize_params` decodes them on the way to
+          # assignment, but this check reads the raw payload.
+          def decode_subject_id(value)
+            return value if value.blank?
+
+            prefixed_id?(value) ? decode_prefixed_id(value) : value
           end
 
           def own_store_subject?(subject_type, subject_id)

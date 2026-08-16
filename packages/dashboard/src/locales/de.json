@@ -1670,7 +1670,7 @@
           }
         },
         "value": {
-          "label": "Betrag",
+          "label": "Wert",
           "help_percentage": "Prozentsatz des Verkaufs, der dem Verkäufer berechnet wird.",
           "help_fixed": "Pauschale pro Verkauf, in der Währung unten."
         },
@@ -1699,7 +1699,7 @@
         },
         "include_tax": {
           "label": "Auf den Bruttopreis berechnen",
-          "help": "Auf den Preis inklusive Kundensteuer berechnen. Aus entspricht der EU-Regel: auf den Nettoerlös des Verkäufers."
+          "help": "Auf den Preis inklusive Kundensteuer berechnen. Ausgeschaltet wird die Provision auf den Nettoerlös des Verkäufers berechnet — die übliche Grundlage, wenn die Gebühr als eigene Leistung besteuert wird."
         },
         "enabled": {
           "help": "Deaktivierte Sätze werden bei der Berechnung übersprungen."

@@ -29,9 +29,15 @@ module Spree
       #   so commissioning a whole order resolves it once
       # @return [Spree::CommissionLine] unsaved
       def call(rate:, vendor:, order:, line_item: nil, fulfillment: nil, commission_tax_rate: nil)
-        subject = line_item || fulfillment
-        return failure(nil, 'a commission line needs a line item or a fulfillment') if subject.nil?
+        # Exactly one, checked here rather than left to the record's own
+        # validation: passing both would otherwise quietly commission the item
+        # and drop the delivery, and only fail on save.
+        subjects = [line_item, fulfillment].compact
+        unless subjects.one?
+          return failure(nil, 'a commission line needs exactly one of a line item or a fulfillment')
+        end
 
+        subject = subjects.first
         currency = order.currency
         precision = Spree::Money::Rounding.precision(currency)
         tax_rate = commission_tax_rate || resolve_tax_rate(rate: rate, vendor: vendor, order: order)

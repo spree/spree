@@ -55,6 +55,12 @@ module Spree
         end
 
         success(lines)
+      rescue ActiveRecord::RecordNotUnique
+        # Another delivery of the same event got there first. The unique index
+        # on line item and fulfillment is what makes that safe: the winner's
+        # rows are the record, and the loser reports them rather than failing a
+        # checkout over work already done.
+        success(order.commission_lines.reload.to_a)
       end
 
       private
