@@ -875,6 +875,8 @@ en:
         cannot_delete_default_channel: Default channel cannot be deleted. Promote another channel to default first.
         cart_currency_mismatch: carts in different currencies cannot be merged
         channel_store_mismatch: must belong to the same store
+        commission_rule_subject_not_found: "%{type} %{id} was not found in this store"
+        commission_rule_subject_type_unknown: "%{type} cannot be targeted by a commission rule"
         coupon_code_frozen_after_completion: coupon codes cannot be changed on a completed order — add a manual discount instead
         delivery_zone_not_in_origin_group: must belong to the delivery method's origin group
         delivery_zone_not_in_profile: must belong to the delivery method's delivery profile
@@ -882,8 +884,6 @@ en:
         delivery_zone_prefix_and_range_exclusive: cannot be combined with a from/to range
         delivery_zone_range_inverted: must be greater than or equal to postal_code_from
         delivery_zone_range_not_supported: postal code ranges are not supported for this country — use prefixes
-        commission_rule_subject_not_found: "%{type} %{id} was not found in this store"
-        commission_rule_subject_type_unknown: "%{type} cannot be targeted by a commission rule"
         discount_has_no_effect: discount would have no effect on this order
         discount_value_must_be_positive: discount value must be a positive number
         discount_value_type_invalid: value_type must be flat or percent
