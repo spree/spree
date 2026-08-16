@@ -27,6 +27,18 @@ module Spree
     validates :source, presence: true, inclusion: { in: SOURCES }
     validates :completed_at, presence: true
 
+    # Whether this installation has ever been upgraded, as opposed to having
+    # been installed at its current version.
+    #
+    # A store installed fresh at 6.0 has no historical data to convert and no
+    # upgrade to perform — showing it a manifest of steps, current or past,
+    # describes work that does not exist for it.
+    #
+    # @return [Boolean]
+    def self.upgraded?
+      where.not(source: 'install').exists?
+    end
+
     # The highest boundary recorded, or nil when this installation has never
     # stamped one.
     #

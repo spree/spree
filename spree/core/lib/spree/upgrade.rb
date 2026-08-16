@@ -95,6 +95,21 @@ module Spree
         max_by { |version| version_parts(version) }
     end
 
+    # Whether an upgrade applies to this installation at all.
+    #
+    # False for a store installed fresh at its current version: it has no
+    # historical data to convert, so neither the outstanding steps nor the
+    # history of past releases describes anything real for it. False also once
+    # every boundary is complete and nothing is outstanding.
+    #
+    # @return [Boolean]
+    def self.relevant?
+      return true unless Spree::UpgradeRecord.exists?
+      return false unless Spree::UpgradeRecord.upgraded?
+
+      true
+    end
+
     # Steps this installation still has to run: every manifest above the
     # boundary it has completed, up to and including the installed version.
     #

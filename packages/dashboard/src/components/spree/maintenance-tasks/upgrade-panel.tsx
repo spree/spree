@@ -1,4 +1,4 @@
-import type { UpgradeStep } from '@spree/admin-sdk'
+import type { UpgradeStep, UpgradeStepsMeta } from '@spree/admin-sdk'
 import { Can, Subject } from '@spree/dashboard-core'
 import {
   Button,
@@ -20,48 +20,85 @@ import {
   useUpgradeSteps,
 } from '../../../hooks/use-maintenance-tasks'
 
+interface Boundary {
+  from: string
+  to: string
+  steps: UpgradeStep[]
+  /** A release this installation has already been through. */
+  superseded: boolean
+  docs: string | null
+}
+
 /**
- * The upgrade manifest as an ordered checklist.
+ * The upgrade manifests, one card per release.
  *
- * The steps are ordinary maintenance tasks and can be run from the task list
- * like any other. What this adds is the part a task cannot know about itself:
- * the order it must run in, the operator notes the manifest carries, and how
- * far through the release an installation has got.
+ * The release being upgraded to comes first, open, with its steps runnable.
+ * Releases already crossed follow as collapsed history — a store should be
+ * able to see which upgrades it has been through, but re-running a conversion
+ * it already applied is how an upgrade does damage, so those are never
+ * runnable.
+ *
+ * Renders nothing at all for a store installed fresh at this release: it has
+ * no historical data to convert, so neither the steps nor the history describe
+ * anything real for it.
  */
 export function UpgradePanel({ onOpenRun }: { onOpenRun: (runId: string) => void }) {
+  const { data, isLoading } = useUpgradeSteps()
+
+  const allSteps = data?.data ?? []
+  if (isLoading || allSteps.length === 0) return null
+
+  const boundaries = groupByBoundary(allSteps)
+  const current = boundaries.filter((boundary) => !boundary.superseded)
+  // Newest first: the most recently completed upgrade is the one an operator
+  // is most likely to be checking.
+  const history = boundaries.filter((boundary) => boundary.superseded).reverse()
+
+  return (
+    <div className="flex flex-col gap-4">
+      {current.map((boundary) => (
+        <BoundaryCard
+          key={`${boundary.from}-${boundary.to}`}
+          boundary={boundary}
+          meta={data?.meta}
+          onOpenRun={onOpenRun}
+        />
+      ))}
+
+      {history.map((boundary) => (
+        <BoundaryCard
+          key={`${boundary.from}-${boundary.to}`}
+          boundary={boundary}
+          onOpenRun={onOpenRun}
+        />
+      ))}
+    </div>
+  )
+}
+
+function BoundaryCard({
+  boundary,
+  meta,
+  onOpenRun,
+}: {
+  boundary: Boundary
+  meta?: UpgradeStepsMeta
+  onOpenRun: (runId: string) => void
+}) {
   const { t } = useTranslation()
   const confirm = useConfirm()
   const startMutation = useStartMaintenanceTask()
 
-  const { data, isLoading } = useUpgradeSteps()
-  const [expanded, setExpanded] = useState<string | null>(null)
+  // History starts collapsed — it is reference, not work.
+  const [open, setOpen] = useState(!boundary.superseded)
+  const [expandedStep, setExpandedStep] = useState<string | null>(null)
 
-  const steps = data?.data ?? []
-  const meta = data?.meta
-  if (isLoading || steps.length === 0) return null
-
-  // The release being upgraded TO is the last boundary in the walk, not the
-  // first: a store several versions behind runs older manifests on the way,
-  // and naming one of those as the destination would misreport the target.
-  const targetVersion = steps[steps.length - 1].to
-  const guideUrl = [...steps].reverse().find((step) => step.docs)?.docs
-
-  const done = steps.filter((step) => step.last_run?.status === 'succeeded').length
+  const { steps, superseded } = boundary
+  const done = superseded
+    ? steps.length
+    : steps.filter((step) => step.last_run?.status === 'succeeded').length
   const busy = steps.some((step) => isRunActive(step.last_run?.status ?? undefined))
   const nextStep = steps.find((step) => step.last_run?.status !== 'succeeded')
-
-  // Grouped by release, because a multi-version jump runs several manifests
-  // and an operator needs to see which release each step belongs to — and
-  // where a partial upgrade stopped.
-  const boundaries: { from: string; to: string; steps: UpgradeStep[] }[] = []
-  for (const step of steps) {
-    const last = boundaries[boundaries.length - 1]
-    if (last && last.from === step.from && last.to === step.to) {
-      last.steps.push(step)
-    } else {
-      boundaries.push({ from: step.from, to: step.to, steps: [step] })
-    }
-  }
 
   async function runStep(step: UpgradeStep) {
     const confirmed = await confirm({
@@ -79,110 +116,102 @@ export function UpgradePanel({ onOpenRun }: { onOpenRun: (runId: string) => void
   }
 
   return (
-    <Card>
+    <Card className={superseded ? 'border-dashed' : undefined}>
       <CardHeader>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="flex flex-col gap-1">
-            <CardTitle className="text-base">
-              {t('admin.maintenance_tasks.upgrade.title', { version: targetVersion })}
+            <CardTitle className={superseded ? 'text-base text-muted-foreground' : 'text-base'}>
+              {superseded
+                ? t('admin.maintenance_tasks.upgrade.boundary', {
+                    from: boundary.from,
+                    to: boundary.to,
+                  })
+                : t('admin.maintenance_tasks.upgrade.title', { version: boundary.to })}
             </CardTitle>
-            <CardDescription>{t('admin.maintenance_tasks.upgrade.description')}</CardDescription>
+            <CardDescription>
+              {superseded
+                ? t('admin.maintenance_tasks.upgrade.history_description')
+                : t('admin.maintenance_tasks.upgrade.description')}
+            </CardDescription>
           </div>
 
           <div className="flex items-center gap-3">
             <span className="text-muted-foreground text-sm tabular-nums">
-              {t('admin.maintenance_tasks.upgrade.progress', { done, total: steps.length })}
+              {superseded
+                ? t('admin.maintenance_tasks.upgrade.already_completed')
+                : t('admin.maintenance_tasks.upgrade.progress', { done, total: steps.length })}
             </span>
 
-            {/* Runs the next unfinished step rather than the whole manifest:
-                steps have ordering constraints, and a failure part way needs
-                the operator to look before the walk carries on. */}
-            <Can I="update" a={Subject.MaintenanceTaskRun}>
-              {nextStep && (
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={() => runStep(nextStep)}
-                  disabled={busy || startMutation.isPending}
-                >
-                  <PlayIcon className="size-4" />
-                  {t('admin.maintenance_tasks.upgrade.run_next')}
-                </Button>
-              )}
-            </Can>
+            {superseded ? (
+              <Button type="button" size="sm" variant="ghost" onClick={() => setOpen(!open)}>
+                {open
+                  ? t('admin.maintenance_tasks.upgrade.hide_steps')
+                  : t('admin.maintenance_tasks.upgrade.show_steps')}
+              </Button>
+            ) : (
+              // Runs the next unfinished step rather than the whole manifest:
+              // steps have ordering constraints, and a failure part way needs
+              // the operator to look before the walk carries on.
+              <Can I="update" a={Subject.MaintenanceTaskRun}>
+                {nextStep && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={() => runStep(nextStep)}
+                    disabled={busy || startMutation.isPending}
+                  >
+                    <PlayIcon className="size-4" />
+                    {t('admin.maintenance_tasks.upgrade.run_next')}
+                  </Button>
+                )}
+              </Can>
+            )}
           </div>
         </div>
 
-        <Progress value={done} max={steps.length} className="mt-2" />
+        {!superseded && <Progress value={done} max={steps.length} className="mt-2" />}
       </CardHeader>
 
-      <CardContent className="flex flex-col gap-4">
-        {boundaries.map((boundary) => {
-          const boundaryDone = boundary.steps.filter(
-            (step) => step.last_run?.status === 'succeeded',
-          ).length
+      {open && (
+        <CardContent className="flex flex-col gap-1">
+          {steps.map((step, index) => (
+            <StepRow
+              key={`${step.to}-${step.id}`}
+              step={step}
+              position={index + 1}
+              superseded={superseded}
+              expanded={expandedStep === step.id}
+              onToggle={() => setExpandedStep(expandedStep === step.id ? null : step.id)}
+              onRun={() => runStep(step)}
+              onOpenRun={onOpenRun}
+              disabled={busy || startMutation.isPending}
+            />
+          ))}
 
-          return (
-            <section key={`${boundary.from}-${boundary.to}`} className="flex flex-col gap-1">
-              {/* Only worth a header when there is more than one — a typical
-                  upgrade spans a single release. */}
-              {boundaries.length > 1 && (
-                <header className="flex items-baseline justify-between px-2 pb-1">
-                  <h3 className="font-medium text-sm">
-                    {t('admin.maintenance_tasks.upgrade.boundary', {
-                      from: boundary.from,
-                      to: boundary.to,
-                    })}
-                  </h3>
-                  <span className="text-muted-foreground text-xs tabular-nums">
-                    {t('admin.maintenance_tasks.upgrade.progress', {
-                      done: boundaryDone,
-                      total: boundary.steps.length,
-                    })}
-                  </span>
-                </header>
-              )}
+          {/* Without a recorded boundary the earlier releases are shown as
+              completed on an assumption. A store that actually skipped them
+              needs to know their steps are still runnable. */}
+          {meta && !meta.completed_version_recorded && meta.superseded_step_count > 0 && (
+            <p className="px-2 pt-2 text-muted-foreground text-xs">
+              {t('admin.maintenance_tasks.upgrade.assumed_boundary', {
+                version: meta.completed_version,
+              })}
+            </p>
+          )}
 
-              {boundary.steps.map((step, index) => (
-                <StepRow
-                  key={`${step.to}-${step.id}`}
-                  step={step}
-                  position={index + 1}
-                  expanded={expanded === step.id}
-                  onToggle={() => setExpanded(expanded === step.id ? null : step.id)}
-                  onRun={() => runStep(step)}
-                  onOpenRun={onOpenRun}
-                  disabled={busy || startMutation.isPending}
-                />
-              ))}
-            </section>
-          )
-        })}
-
-        {/* Without a recorded boundary the starting point is a guess. Saying
-            so is what lets a store that postponed several releases find the
-            steps it still needs, instead of them being silently absent. */}
-        {meta && !meta.completed_version_recorded && meta.superseded_step_count > 0 && (
-          <p className="px-2 text-muted-foreground text-xs">
-            {t('admin.maintenance_tasks.upgrade.assumed_boundary', {
-              version: meta.completed_version,
-              count: meta.superseded_step_count,
-            })}
-          </p>
-        )}
-
-        {guideUrl && (
-          <a
-            href={guideUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-2 flex items-center gap-1 text-muted-foreground text-xs hover:underline"
-          >
-            <ExternalLinkIcon className="size-3" />
-            {t('admin.maintenance_tasks.upgrade.read_guide')}
-          </a>
-        )}
-      </CardContent>
+          {boundary.docs && (
+            <a
+              href={boundary.docs}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-2 flex items-center gap-1 text-muted-foreground text-xs hover:underline"
+            >
+              <ExternalLinkIcon className="size-3" />
+              {t('admin.maintenance_tasks.upgrade.read_guide')}
+            </a>
+          )}
+        </CardContent>
+      )}
     </Card>
   )
 }
@@ -190,6 +219,7 @@ export function UpgradePanel({ onOpenRun }: { onOpenRun: (runId: string) => void
 function StepRow({
   step,
   position,
+  superseded,
   expanded,
   onToggle,
   onRun,
@@ -198,6 +228,7 @@ function StepRow({
 }: {
   step: UpgradeStep
   position: number
+  superseded: boolean
   expanded: boolean
   onToggle: () => void
   onRun: () => void
@@ -206,7 +237,10 @@ function StepRow({
 }) {
   const { t } = useTranslation()
   const run = step.last_run
-  const succeeded = run?.status === 'succeeded'
+  // A superseded step belongs to a release this store has already been
+  // through, so it counts as done whether or not a run row exists for it —
+  // most were run long before runs were recorded.
+  const succeeded = superseded || run?.status === 'succeeded'
   const active = isRunActive(run?.status ?? undefined)
 
   return (
@@ -246,19 +280,21 @@ function StepRow({
           </button>
         )}
 
-        <Can I="update" a={Subject.MaintenanceTaskRun}>
-          <Button
-            type="button"
-            size="sm"
-            variant="ghost"
-            onClick={onRun}
-            disabled={disabled || active}
-          >
-            {succeeded
-              ? t('admin.maintenance_tasks.upgrade.run_again')
-              : t('admin.maintenance_tasks.upgrade.run_step')}
-          </Button>
-        </Can>
+        {!superseded && (
+          <Can I="update" a={Subject.MaintenanceTaskRun}>
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              onClick={onRun}
+              disabled={disabled || active}
+            >
+              {succeeded
+                ? t('admin.maintenance_tasks.upgrade.run_again')
+                : t('admin.maintenance_tasks.upgrade.run_step')}
+            </Button>
+          </Can>
+        )}
       </div>
 
       {/* The manifest's own guidance: ordering constraints and caveats that
@@ -268,4 +304,28 @@ function StepRow({
       )}
     </div>
   )
+}
+
+function groupByBoundary(steps: UpgradeStep[]): Boundary[] {
+  const boundaries: Boundary[] = []
+
+  for (const step of steps) {
+    const last = boundaries[boundaries.length - 1]
+
+    if (last && last.from === step.from && last.to === step.to) {
+      last.steps.push(step)
+      // A boundary is history only when every one of its steps is.
+      last.superseded = last.superseded && step.superseded
+    } else {
+      boundaries.push({
+        from: step.from,
+        to: step.to,
+        steps: [step],
+        superseded: step.superseded,
+        docs: step.docs,
+      })
+    }
+  }
+
+  return boundaries
 }

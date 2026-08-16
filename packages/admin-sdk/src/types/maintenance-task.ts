@@ -28,6 +28,12 @@ export interface MaintenanceTask {
   no_collection: boolean
   /** Rows come from an uploaded CSV — creating a run requires `csv_file`. */
   csv: boolean
+  /**
+   * True for a step of an upgrade manifest. Those appear in the upgrade panel,
+   * which supplies the order and notes a manifest owns, rather than as a loose
+   * task card.
+   */
+  upgrade_step: boolean
   /** Non-null while a run of this task is in flight — starting a second is refused. */
   active_run: import('./generated').MaintenanceTaskRun | null
   last_run: import('./generated').MaintenanceTaskRun | null

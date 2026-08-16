@@ -4,6 +4,38 @@ require 'active_job/continuation/test_helper'
 RSpec.describe 'CSV maintenance tasks', type: :job do
   let(:store) { @default_store }
 
+  # Defined here rather than shipped in core: this exercises the CSV
+  # machinery, and a sample task registered in the gem would appear in every
+  # merchant's dashboard as a feature nobody asked for.
+  before do
+    stub_const('CsvSpecTask', Class.new(Spree::MaintenanceTask) do
+      csv_collection
+      supports_dry_run
+      collection_batch_size 250
+
+      def self.name = 'CsvSpecTask'
+
+      def process(row)
+        sku = row['sku'].to_s.strip
+        amount = row['price'].to_s.strip
+        return tally(:skipped_blank_row) if sku.blank? || amount.blank?
+
+        variant = Spree::Variant.find_by(sku: sku)
+        return tally(:skipped_unknown_sku) if variant.nil?
+
+        return tally(:would_update) if dry_run?
+
+        price = variant.prices.find_or_initialize_by(currency: store&.default_currency || 'USD')
+        price.amount = amount
+        price.save!
+        tally(:updated)
+      end
+    end)
+    Spree.maintenance_tasks << 'CsvSpecTask'
+  end
+
+  after { Spree.maintenance_tasks.delete('CsvSpecTask') }
+
   # Unique per example: the variant factory seeds its own SKUs, so fixed ones
   # collide with whatever the product factory already created.
   let(:first_sku) { "MT-#{SecureRandom.hex(4)}" }
@@ -25,7 +57,7 @@ RSpec.describe 'CSV maintenance tasks', type: :job do
 
   def run_task(content, dry_run: false)
     result = Spree::MaintenanceTasks::Start.call(
-      task_name: 'Spree::MaintenanceTasks::UpdateVariantPrices',
+      task_name: 'CsvSpecTask',
       dry_run: dry_run,
       initiated_via: 'dashboard',
       csv_file: csv_blob(content),
@@ -89,7 +121,7 @@ RSpec.describe 'CSV maintenance tasks', type: :job do
   describe 'a task that needs a file' do
     it 'is refused without one' do
       result = Spree::MaintenanceTasks::Start.call(
-        task_name: 'Spree::MaintenanceTasks::UpdateVariantPrices',
+        task_name: 'CsvSpecTask',
         initiated_via: 'dashboard'
       )
 
@@ -110,20 +142,14 @@ RSpec.describe 'CSV maintenance tasks', type: :job do
       ActiveJob::Base.queue_adapter = original
     end
 
-    before { stub_const('Spree::MaintenanceTasks::UpdateVariantPrices', described_batch_size_task) }
-
-    let(:described_batch_size_task) do
-      Class.new(Spree::MaintenanceTasks::UpdateVariantPrices) do
-        collection_batch_size 1
-        def self.name = 'Spree::MaintenanceTasks::UpdateVariantPrices'
-      end
-    end
+    # One row per batch, so the cursor advances mid-file.
+    before { CsvSpecTask.collection_batch_size 1 }
 
     # The file is re-read on resume, so what proves the cursor works is that no
     # row is applied twice — not that the second execution reads less.
     it 'resumes from the row it reached' do
       result = Spree::MaintenanceTasks::Start.call(
-        task_name: 'Spree::MaintenanceTasks::UpdateVariantPrices',
+        task_name: 'CsvSpecTask',
         initiated_via: 'dashboard',
         csv_file: csv_blob(two_rows)
       )
