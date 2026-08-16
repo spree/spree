@@ -87,6 +87,12 @@ module Spree
     # happens to a departed seller's catalog, so it is never cascade-deleted.
     has_many :products, class_name: 'Spree::Product', dependent: :nullify
 
+    # What this seller has been charged. Deliberately neither destroyed nor
+    # nullified when the vendor goes: a vendor is paranoid, so it is still
+    # there to be read, and a settlement record that forgot who owed it would
+    # be worse than no record at all.
+    has_many :commission_lines, class_name: 'Spree::CommissionLine', dependent: nil
+
     #
     # Attachments
     #

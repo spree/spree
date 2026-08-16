@@ -1652,6 +1652,58 @@
           "placeholder": "Datum wählen",
           "help": "Der Katalog bleibt sichtbar, es kann bis dahin aber nichts gekauft werden."
         }
+      },
+      "commission_rate": {
+        "name": {
+          "placeholder": "Standardprovision"
+        },
+        "code": {
+          "label": "Code",
+          "placeholder": "standard",
+          "help": "Ihre eigene Kennung für diesen Satz."
+        },
+        "kind": {
+          "label": "Gebühr",
+          "options": {
+            "percentage": "Prozent vom Verkauf",
+            "fixed": "Pauschale"
+          }
+        },
+        "value": {
+          "label": "Betrag",
+          "help_percentage": "Prozentsatz des Verkaufs, der dem Verkäufer berechnet wird.",
+          "help_fixed": "Pauschale pro Verkauf, in der Währung unten."
+        },
+        "priority": {
+          "label": "Priorität",
+          "help": "Sätze werden von hoch nach niedrig geprüft; der erste Treffer gilt."
+        },
+        "rules": {
+          "label": "Gilt für",
+          "help": "Einträge in einem Feld sind Alternativen; jedes ausgefüllte Feld muss zutreffen. Alle leer lassen, um jeden Verkauf zu berechnen."
+        },
+        "min_amount": {
+          "label": "Minimum"
+        },
+        "max_amount": {
+          "label": "Maximum"
+        },
+        "commission_tax_rate": {
+          "label": "Steuer auf die Provision (%)",
+          "placeholder": "Aus Ihren Steuereinstellungen",
+          "help": "Umsatzsteuer auf die Provision selbst, als eigene Leistung an den Verkäufer. Leer lassen, um Ihre Steuereinstellungen zu verwenden."
+        },
+        "include_shipping": {
+          "label": "Auf Versand berechnen",
+          "help": "Provision auch auf die Versanderlöse des Verkäufers berechnen."
+        },
+        "include_tax": {
+          "label": "Auf den Bruttopreis berechnen",
+          "help": "Auf den Preis inklusive Kundensteuer berechnen. Aus entspricht der EU-Regel: auf den Nettoerlös des Verkäufers."
+        },
+        "enabled": {
+          "help": "Deaktivierte Sätze werden bei der Berechnung übersprungen."
+        }
       }
     },
     "delivery_profiles": {
@@ -3024,6 +3076,10 @@
         "tax_rates": {
           "add_sheet_title": "Neuer Steuersatz",
           "edit_sheet_title": "Steuersatz bearbeiten"
+        },
+        "commission_rates": {
+          "add_sheet_title": "Provisionssatz hinzufügen",
+          "edit_sheet_title": "Provisionssatz bearbeiten"
         }
       },
       "staff": {
@@ -3746,7 +3802,8 @@
         "store": "Shop",
         "tax_categories": "Steuerkategorien",
         "tax_rates": "Steuersätze",
-        "webhooks": "Webhooks"
+        "webhooks": "Webhooks",
+        "commission_rates": "Provisionssätze"
       }
     },
     "setup": {
@@ -4220,6 +4277,25 @@
         "placeholder": "Verkäufer suchen",
         "empty": "Keine Verkäufer gefunden"
       }
+    },
+    "commission_rates": {
+      "add_cta": "Provisionssatz hinzufügen",
+      "applies_to_everything": "Jeder Verkauf",
+      "create_description": "Legen Sie fest, was der Marktplatz Verkäufern berechnet und für welche Verkäufe das gilt.",
+      "create_label": "Provisionssatz erstellen",
+      "delete_confirm": {
+        "message": "{{name}} wird entfernt. Bereits berechnete Provisionen bleiben unverändert.",
+        "title": "Provisionssatz löschen?"
+      },
+      "edit_description": "Gebühr, Grenzen und betroffene Verkäufe aktualisieren.",
+      "empty": "Noch keine Provisionssätze",
+      "messages": {
+        "created": "Provisionssatz erstellt",
+        "deleted": "Provisionssatz gelöscht",
+        "updated": "Provisionssatz aktualisiert"
+      },
+      "search_placeholder": "Nach Namen suchen…",
+      "rule_picker_unavailable": "Dieser Build hat keine Auswahl für diesen Zieltyp."
     }
   }
 }

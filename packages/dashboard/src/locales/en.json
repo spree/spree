@@ -1652,6 +1652,58 @@
           "placeholder": "Pick a date",
           "help": "The catalog stays visible but nothing can be bought until then."
         }
+      },
+      "commission_rate": {
+        "name": {
+          "placeholder": "Standard commission"
+        },
+        "code": {
+          "label": "Code",
+          "placeholder": "standard",
+          "help": "Your own identifier for this rate."
+        },
+        "kind": {
+          "label": "Charge",
+          "options": {
+            "percentage": "Percentage of the sale",
+            "fixed": "Flat fee"
+          }
+        },
+        "value": {
+          "label": "Amount",
+          "help_percentage": "Percent of the sale charged to the seller.",
+          "help_fixed": "Flat fee charged per sale, in the currency below."
+        },
+        "priority": {
+          "label": "Priority",
+          "help": "Rates are tried highest first, and the first match wins."
+        },
+        "rules": {
+          "label": "Applies to",
+          "help": "Picks within one box are alternatives; every box you fill must match. Leave all empty to charge every sale."
+        },
+        "min_amount": {
+          "label": "Minimum"
+        },
+        "max_amount": {
+          "label": "Maximum"
+        },
+        "commission_tax_rate": {
+          "label": "Tax on commission (%)",
+          "placeholder": "From your tax settings",
+          "help": "VAT charged on the commission itself, as a separate supply to the seller. Leave empty to use your tax settings."
+        },
+        "include_shipping": {
+          "label": "Charge on delivery",
+          "help": "Also charge commission on the seller's delivery revenue."
+        },
+        "include_tax": {
+          "label": "Charge on the gross price",
+          "help": "Charge on the price including the customer's VAT. Off is the EU rule: charge on the seller's net revenue."
+        },
+        "enabled": {
+          "help": "Disabled rates are skipped when charging a sale."
+        }
       }
     },
     "delivery_profiles": {
@@ -3024,6 +3076,10 @@
         "tax_rates": {
           "add_sheet_title": "New tax rate",
           "edit_sheet_title": "Edit tax rate"
+        },
+        "commission_rates": {
+          "add_sheet_title": "Add commission rate",
+          "edit_sheet_title": "Edit commission rate"
         }
       },
       "staff": {
@@ -3746,7 +3802,8 @@
         "store": "Store",
         "tax_categories": "Tax categories",
         "tax_rates": "Tax rates",
-        "webhooks": "Webhooks"
+        "webhooks": "Webhooks",
+        "commission_rates": "Commission rates"
       }
     },
     "setup": {
@@ -4220,6 +4277,25 @@
         "placeholder": "Search vendors",
         "empty": "No vendors found"
       }
+    },
+    "commission_rates": {
+      "add_cta": "Add commission rate",
+      "applies_to_everything": "Every sale",
+      "create_description": "Set what the marketplace charges sellers, and which sales it applies to.",
+      "create_label": "Create commission rate",
+      "delete_confirm": {
+        "message": "{{name}} will be removed. Commission already charged is unaffected.",
+        "title": "Delete commission rate?"
+      },
+      "edit_description": "Update the charge, its limits, and which sales it applies to.",
+      "empty": "No commission rates yet",
+      "messages": {
+        "created": "Commission rate created",
+        "deleted": "Commission rate deleted",
+        "updated": "Commission rate updated"
+      },
+      "search_placeholder": "Search by name…",
+      "rule_picker_unavailable": "This build has no picker for this target type."
     }
   }
 }

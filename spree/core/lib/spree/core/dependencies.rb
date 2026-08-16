@@ -110,6 +110,14 @@ module Spree
         vendor_suspend_workflow: 'Spree::Vendors::Suspend',
         vendor_reject_workflow: 'Spree::Vendors::Reject',
 
+        # commissions — what a marketplace charges its sellers. Swappable
+        # because the pricing of a marketplace's own service is exactly the
+        # kind of policy an operator replaces wholesale.
+        commissions_resolve_rate_service: 'Spree::Commissions::ResolveRate',
+        commissions_resolve_tax_rate_service: 'Spree::Commissions::ResolveTaxRate',
+        commissions_calculate_line_service: 'Spree::Commissions::CalculateLine',
+        commissions_commission_order_service: 'Spree::Commissions::CommissionOrder',
+
         tax_exemption_certificate_verify_workflow: 'Spree::TaxExemptionCertificates::Verify',
 
         # customers

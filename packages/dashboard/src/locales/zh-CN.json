@@ -1649,6 +1649,58 @@
           "placeholder": "选择日期",
           "help": "在此之前商品仍然可见，但无法购买。"
         }
+      },
+      "commission_rate": {
+        "name": {
+          "placeholder": "标准佣金"
+        },
+        "code": {
+          "label": "代码",
+          "placeholder": "standard",
+          "help": "你为该费率设定的标识。"
+        },
+        "kind": {
+          "label": "收费方式",
+          "options": {
+            "percentage": "按销售额百分比",
+            "fixed": "固定费用"
+          }
+        },
+        "value": {
+          "label": "金额",
+          "help_percentage": "向卖家收取的销售额百分比。",
+          "help_fixed": "每笔销售收取的固定费用，使用下方货币。"
+        },
+        "priority": {
+          "label": "优先级",
+          "help": "按优先级从高到低匹配，首个匹配的费率生效。"
+        },
+        "rules": {
+          "label": "适用范围",
+          "help": "同一栏内的选择是「或」的关系；每个填写的栏位都必须匹配。全部留空则适用于所有销售。"
+        },
+        "min_amount": {
+          "label": "最低"
+        },
+        "max_amount": {
+          "label": "最高"
+        },
+        "commission_tax_rate": {
+          "label": "佣金税率（%）",
+          "placeholder": "使用税务设置",
+          "help": "对佣金本身征收的增值税，属于面向卖家的独立服务。留空则使用你的税务设置。"
+        },
+        "include_shipping": {
+          "label": "对配送收费",
+          "help": "同时对卖家的配送收入收取佣金。"
+        },
+        "include_tax": {
+          "label": "按含税价计算",
+          "help": "按含客户增值税的价格计算。关闭即欧盟规则：按卖家净收入计算。"
+        },
+        "enabled": {
+          "help": "停用的费率在计费时会被跳过。"
+        }
       }
     },
     "delivery_profiles": {
@@ -3020,6 +3072,10 @@
         "tax_rates": {
           "add_sheet_title": "新建税率",
           "edit_sheet_title": "编辑税率"
+        },
+        "commission_rates": {
+          "add_sheet_title": "添加佣金费率",
+          "edit_sheet_title": "编辑佣金费率"
         }
       },
       "staff": {
@@ -3742,7 +3798,8 @@
         "store": "店铺",
         "tax_categories": "税收类别",
         "tax_rates": "税率",
-        "webhooks": "Webhooks"
+        "webhooks": "Webhooks",
+        "commission_rates": "佣金费率"
       }
     },
     "setup": {
@@ -4216,6 +4273,25 @@
         "placeholder": "搜索卖家",
         "empty": "未找到卖家"
       }
+    },
+    "commission_rates": {
+      "add_cta": "添加佣金费率",
+      "applies_to_everything": "所有销售",
+      "create_description": "设置平台向卖家收取的费用，以及适用于哪些销售。",
+      "create_label": "创建佣金费率",
+      "delete_confirm": {
+        "message": "将删除 {{name}}。已收取的佣金不受影响。",
+        "title": "删除佣金费率？"
+      },
+      "edit_description": "更新费用、上下限以及适用的销售范围。",
+      "empty": "暂无佣金费率",
+      "messages": {
+        "created": "佣金费率已创建",
+        "deleted": "佣金费率已删除",
+        "updated": "佣金费率已更新"
+      },
+      "search_placeholder": "按名称搜索…",
+      "rule_picker_unavailable": "当前版本没有该目标类型的选择器。"
     }
   }
 }

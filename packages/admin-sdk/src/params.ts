@@ -1418,6 +1418,67 @@ export interface VendorRejectParams {
 }
 
 /**
+ * One targeting clause on a commission rate: the record it applies to.
+ *
+ * Rules are grouped by `subject_type` and matched AND across the groups, OR
+ * within one — so `[Cameras, Audio, VendorX]` reads "(Cameras OR Audio) AND
+ * VendorX", which is how a seller-and-category pairing is expressed.
+ *
+ * A clause with neither field is a global rule, and so is a rate with no rules
+ * at all: both match every sale.
+ */
+export interface CommissionRuleDraft {
+  /** `Spree::Product`, `Spree::Category` or `Spree::Vendor`. */
+  subject_type?: string | null
+  /** Prefixed id of the record being targeted. */
+  subject_id?: string | null
+}
+
+/** One entry from `commissionRates.ruleSubjectTypes()`. */
+export interface CommissionRuleSubjectType {
+  type: string
+  name: string
+}
+
+export interface CommissionRateCreateParams {
+  name: string
+  /** Optional operator-facing identifier; unique per store. */
+  code?: string | null
+  enabled?: boolean
+  /**
+   * Resolution order, walked highest first — the first matching rate wins.
+   * Precedence is yours to assign; there is no built-in ladder.
+   */
+  priority?: number
+  /** `percentage` charges a share of the sale; `fixed` charges a flat fee. */
+  kind: 'percentage' | 'fixed'
+  /** A percentage (e.g. `10` for 10%) or a flat amount, per `kind`. */
+  value: number
+  /** Required for a fixed rate, ignored for a percentage. */
+  currency?: string | null
+  /**
+   * Charge on the item's gross price rather than its net one. Off by default:
+   * in the EU the fee is a separate supply from the sale, so it is charged on
+   * the seller's net revenue and taxed on top.
+   */
+  include_tax?: boolean
+  /** Also charge commission on the seller's delivery revenue. */
+  include_shipping?: boolean
+  min_amount?: number | null
+  max_amount?: number | null
+  /**
+   * VAT on the commission itself, as a fraction (e.g. `0.21`). Leave null to
+   * let the store's tax engine answer for the seller's own jurisdiction.
+   */
+  commission_tax_rate?: number | null
+  /** The rate's full targeting; the server replaces what it holds with this. */
+  rules?: CommissionRuleDraft[]
+  metadata?: Record<string, unknown>
+}
+
+export type CommissionRateUpdateParams = Partial<CommissionRateCreateParams>
+
+/**
  * One entry in `preference_schema`, describing a single tunable knob on
  * a STI subclass (payment provider, promotion action, promotion rule).
  *

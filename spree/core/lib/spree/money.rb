@@ -5,6 +5,46 @@ Money.rounding_mode = BigDecimal::ROUND_HALF_UP
 
 module Spree
   class Money
+    # How Spree rounds an amount to a currency.
+    #
+    # Lives here beside the rounding mode above because "how much is this worth
+    # in this currency" is one answer a store should give consistently — the
+    # same two lines had otherwise been written out wherever a service needed
+    # them, each copy free to drift.
+    module Rounding
+      module_function
+
+      # The number of decimal places a currency is written in: 2 for most, 0
+      # for yen, 3 for dinar. An unknown currency falls back to two places
+      # rather than raising — a sale is not the moment to discover a typo in a
+      # currency code.
+      #
+      # @param currency [String, ::Money::Currency, nil]
+      # @return [Integer]
+      def precision(currency)
+        (::Money::Currency.find(currency) || ::Money::Currency.find('USD')).exponent
+      end
+
+      # Rounds to the currency's own minor unit, half-up, so amounts reconcile
+      # to the cent when they are summed.
+      #
+      # @param amount [Numeric, String, nil]
+      # @param currency [String, ::Money::Currency, nil]
+      # @return [BigDecimal]
+      def to_currency(amount, currency)
+        quantize(amount, precision(currency))
+      end
+
+      # The same rounding against a precision already in hand.
+      #
+      # @param amount [Numeric, String, nil]
+      # @param precision [Integer]
+      # @return [BigDecimal]
+      def quantize(amount, precision)
+        BigDecimal(amount.to_s).round(precision, BigDecimal::ROUND_HALF_UP)
+      end
+    end
+
     include Comparable
 
     class << self

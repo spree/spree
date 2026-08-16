@@ -1652,6 +1652,58 @@
           "placeholder": "Choisir une date",
           "help": "Le catalogue reste visible mais rien ne peut être acheté jusque-là."
         }
+      },
+      "commission_rate": {
+        "name": {
+          "placeholder": "Commission standard"
+        },
+        "code": {
+          "label": "Code",
+          "placeholder": "standard",
+          "help": "Votre propre identifiant pour ce taux."
+        },
+        "kind": {
+          "label": "Frais",
+          "options": {
+            "percentage": "Pourcentage de la vente",
+            "fixed": "Montant fixe"
+          }
+        },
+        "value": {
+          "label": "Montant",
+          "help_percentage": "Pourcentage de la vente facturé au vendeur.",
+          "help_fixed": "Montant fixe par vente, dans la devise ci-dessous."
+        },
+        "priority": {
+          "label": "Priorité",
+          "help": "Les taux sont testés du plus élevé au plus bas ; le premier correspondant gagne."
+        },
+        "rules": {
+          "label": "S'applique à",
+          "help": "Les choix d'un même champ sont des alternatives ; chaque champ rempli doit correspondre. Laissez tout vide pour facturer chaque vente."
+        },
+        "min_amount": {
+          "label": "Minimum"
+        },
+        "max_amount": {
+          "label": "Maximum"
+        },
+        "commission_tax_rate": {
+          "label": "Taxe sur la commission (%)",
+          "placeholder": "Selon vos réglages de taxes",
+          "help": "TVA sur la commission elle-même, en tant que prestation distincte au vendeur. Laissez vide pour utiliser vos réglages de taxes."
+        },
+        "include_shipping": {
+          "label": "Facturer sur la livraison",
+          "help": "Facturer aussi la commission sur les revenus de livraison du vendeur."
+        },
+        "include_tax": {
+          "label": "Facturer sur le prix TTC",
+          "help": "Facturer sur le prix incluant la TVA du client. Désactivé correspond à la règle européenne : sur le revenu net du vendeur."
+        },
+        "enabled": {
+          "help": "Les taux désactivés sont ignorés lors de la facturation."
+        }
       }
     },
     "delivery_profiles": {
@@ -3024,6 +3076,10 @@
         "tax_rates": {
           "add_sheet_title": "Nouveau taux de taxe",
           "edit_sheet_title": "Modifier le taux de taxe"
+        },
+        "commission_rates": {
+          "add_sheet_title": "Ajouter un taux de commission",
+          "edit_sheet_title": "Modifier le taux de commission"
         }
       },
       "staff": {
@@ -3746,7 +3802,8 @@
         "store": "Boutique",
         "tax_categories": "Catégories de taxe",
         "tax_rates": "Taux de taxe",
-        "webhooks": "Webhooks"
+        "webhooks": "Webhooks",
+        "commission_rates": "Taux de commission"
       }
     },
     "setup": {
@@ -4220,6 +4277,25 @@
         "placeholder": "Rechercher des vendeurs",
         "empty": "Aucun vendeur trouvé"
       }
+    },
+    "commission_rates": {
+      "add_cta": "Ajouter un taux de commission",
+      "applies_to_everything": "Toutes les ventes",
+      "create_description": "Définissez ce que la place de marché facture aux vendeurs, et les ventes concernées.",
+      "create_label": "Créer le taux de commission",
+      "delete_confirm": {
+        "message": "{{name}} sera supprimé. Les commissions déjà facturées ne changent pas.",
+        "title": "Supprimer le taux de commission ?"
+      },
+      "edit_description": "Modifiez les frais, leurs limites et les ventes concernées.",
+      "empty": "Aucun taux de commission",
+      "messages": {
+        "created": "Taux de commission créé",
+        "deleted": "Taux de commission supprimé",
+        "updated": "Taux de commission mis à jour"
+      },
+      "search_placeholder": "Rechercher par nom…",
+      "rule_picker_unavailable": "Cette version n'a pas de sélecteur pour ce type de cible."
     }
   }
 }

@@ -368,6 +368,9 @@
       },
       "contact_email": {
         "label": "Kontakt-E-Mail"
+      },
+      "enabled": {
+        "label": "Aktiviert"
       }
     },
     "components": {

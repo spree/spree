@@ -342,6 +342,14 @@ module Spree
       # administering other sellers is the one thing this key must not allow.
       register_resource(:vendors, group: :access, subjects: -> { [Spree::Vendor] })
 
+      # What the marketplace charges its sellers. Its own resource rather than
+      # part of `settings`, and closed to the vendor audience for the same
+      # reason `vendors` is: a seller must never be able to read, let alone
+      # set, what anyone is charged.
+      register_resource(:commissions, group: :access, subjects: -> {
+        [Spree::CommissionRate, Spree::CommissionRule, Spree::CommissionLine]
+      })
+
       # A seller editing their own record: profile, branding, addresses,
       # onboarding.
       #

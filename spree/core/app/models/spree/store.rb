@@ -60,6 +60,12 @@ module Spree
     # be silenced — a marketplace fronting its own seller comms turns these off
     # without also stopping customer receipts.
     preference :send_vendor_transactional_emails, :boolean, default: true
+    # Marketplace preferences
+    #
+    # VAT on the commission itself, as a fraction, when neither the rate nor
+    # the tax provider names one. Zero by default: a marketplace outside the EU
+    # charges no tax on its fee, and inventing one would overcharge sellers.
+    preference :default_commission_tax_rate, :decimal, default: 0
     # Checkout preferences
     # Store-level fallback for the channel-owned `guest_checkout` preference
     # (see Spree::Channel::Gating). Retained so existing accessors keep working.
@@ -177,6 +183,9 @@ module Spree
 
     has_many :tax_categories, class_name: 'Spree::TaxCategory', dependent: :destroy, inverse_of: :store
     has_many :tax_rates, class_name: 'Spree::TaxRate', dependent: :destroy, inverse_of: :store
+
+    has_many :vendors, class_name: 'Spree::Vendor', dependent: :destroy, inverse_of: :store
+    has_many :commission_rates, class_name: 'Spree::CommissionRate', dependent: :destroy, inverse_of: :store
 
     has_many :wishlists, class_name: 'Spree::Wishlist'
 

@@ -107,6 +107,27 @@ module Spree
       # @return [void]
       def void(order); end
 
+      # The tax rate, as a fraction, on a service the platform itself supplies
+      # and invoices — today only a marketplace's commission to a seller.
+      #
+      # Distinct from +estimate+ because nothing here is a sale: there is no
+      # order, no buyer and no item, only a B2B supply between the platform and
+      # a business it invoices. Returning a rate rather than writing rows is
+      # deliberate for the same reason — the caller snapshots the number onto
+      # its own ledger row, which is not a TaxLine.
+      #
+      # Providers that cannot price a service supply return nil rather than
+      # zero: zero is the claim that the supply is untaxed, and the caller has
+      # a configured default to fall back on that a wrong zero would silence.
+      #
+      # @param address [Spree::Address, nil] where the business being invoiced
+      #   is established — for commission, the seller's billing address
+      # @param store [Spree::Store]
+      # @return [BigDecimal, nil] e.g. 0.21 for 21%; nil if it has no opinion
+      def service_tax_rate(address:, store:)
+        nil
+      end
+
       # Reports a partial credit against the committed document, keyed to the
       # original transaction rather than voiding and re-committing it.
       #

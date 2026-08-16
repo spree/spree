@@ -441,6 +441,16 @@ Spree::Core::Engine.add_routes do
           end
         end
 
+        # Commissions — what the marketplace charges its sellers. Rates are
+        # configuration; lines are the record of what was charged, so they are
+        # read-only.
+        resources :commission_rates do
+          collection do
+            get :rule_subject_types
+          end
+        end
+        resources :commission_lines, only: [:index, :show]
+
         # Business customers. Branches and their buyers are created under their
         # parent and then addressed directly, so a caller holding a branch id
         # does not have to know which company it belongs to.

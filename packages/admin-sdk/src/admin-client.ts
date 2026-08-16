@@ -112,6 +112,9 @@ import type {
   CollectionCreateParams,
   CollectionProductRepositionParams,
   CollectionUpdateParams,
+  CommissionRateCreateParams,
+  CommissionRateUpdateParams,
+  CommissionRuleSubjectType,
   CompanyContactParams,
   CompanyLocationParams,
   CompanyParams,
@@ -238,6 +241,8 @@ import type {
   Claim,
   ClaimReason,
   Collection,
+  CommissionLine,
+  CommissionRate,
   Company,
   CompanyContact,
   CompanyLocation,
@@ -2401,6 +2406,89 @@ export class AdminClient {
 
     reject: (id: string, params?: VendorRejectParams, options?: RequestOptions): Promise<Vendor> =>
       this.request<Vendor>('PATCH', `/vendors/${id}/reject`, { ...options, body: params }),
+  }
+
+  // ============================================
+  // Commissions (what the marketplace charges its sellers)
+  // ============================================
+
+  /**
+   * CRUD for `Spree::CommissionRate`. Targeting rides the regular payload as
+   * `rules: [...]` — the whole editor saves in one round-trip, and the server
+   * replaces the rate's rules with exactly what it is sent.
+   */
+  readonly commissionRates = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<CommissionRate>> =>
+      this.request<PaginatedResponse<CommissionRate>>('GET', '/commission_rates', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<CommissionRate> =>
+      this.request<CommissionRate>('GET', `/commission_rates/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+
+    create: (
+      params: CommissionRateCreateParams,
+      options?: RequestOptions,
+    ): Promise<CommissionRate> =>
+      this.request<CommissionRate>('POST', '/commission_rates', { ...options, body: params }),
+
+    update: (
+      id: string,
+      params: CommissionRateUpdateParams,
+      options?: RequestOptions,
+    ): Promise<CommissionRate> =>
+      this.request<CommissionRate>('PATCH', `/commission_rates/${id}`, {
+        ...options,
+        body: params,
+      }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/commission_rates/${id}`, options),
+
+    /** What a rule may target, so the picker isn't a hardcoded list. */
+    ruleSubjectTypes: (options?: RequestOptions): Promise<{ data: CommissionRuleSubjectType[] }> =>
+      this.request<{ data: CommissionRuleSubjectType[] }>(
+        'GET',
+        '/commission_rates/rule_subject_types',
+        options,
+      ),
+  }
+
+  /**
+   * Read-only view of `Spree::CommissionLine` — what each sale actually earned
+   * the marketplace, frozen when the order was placed. There is no write path:
+   * correcting a charge is a reversal, not an edit.
+   */
+  readonly commissionLines = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<CommissionLine>> =>
+      this.request<PaginatedResponse<CommissionLine>>('GET', '/commission_lines', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<CommissionLine> =>
+      this.request<CommissionLine>('GET', `/commission_lines/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
   }
 
   // ============================================

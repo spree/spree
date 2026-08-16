@@ -1666,6 +1666,58 @@
           "placeholder": "Wybierz datę",
           "help": "Katalog pozostaje widoczny, ale do tego czasu nic nie da się kupić."
         }
+      },
+      "commission_rate": {
+        "name": {
+          "placeholder": "Prowizja standardowa"
+        },
+        "code": {
+          "label": "Kod",
+          "placeholder": "standard",
+          "help": "Twój własny identyfikator tej stawki."
+        },
+        "kind": {
+          "label": "Opłata",
+          "options": {
+            "percentage": "Procent sprzedaży",
+            "fixed": "Kwota stała"
+          }
+        },
+        "value": {
+          "label": "Kwota",
+          "help_percentage": "Procent sprzedaży pobierany od sprzedawcy.",
+          "help_fixed": "Stała opłata za sprzedaż, w walucie poniżej."
+        },
+        "priority": {
+          "label": "Priorytet",
+          "help": "Stawki są sprawdzane od najwyższej; wygrywa pierwsze dopasowanie."
+        },
+        "rules": {
+          "label": "Dotyczy",
+          "help": "Wybory w jednym polu to alternatywy; każde wypełnione pole musi pasować. Zostaw wszystkie puste, aby objąć każdą sprzedaż."
+        },
+        "min_amount": {
+          "label": "Minimum"
+        },
+        "max_amount": {
+          "label": "Maksimum"
+        },
+        "commission_tax_rate": {
+          "label": "Podatek od prowizji (%)",
+          "placeholder": "Z ustawień podatkowych",
+          "help": "VAT od samej prowizji, jako odrębna usługa dla sprzedawcy. Zostaw puste, aby użyć ustawień podatkowych."
+        },
+        "include_shipping": {
+          "label": "Nalicz od dostawy",
+          "help": "Nalicz prowizję również od przychodów sprzedawcy z dostawy."
+        },
+        "include_tax": {
+          "label": "Nalicz od ceny brutto",
+          "help": "Nalicz od ceny z VAT klienta. Wyłączone to reguła UE: od przychodu netto sprzedawcy."
+        },
+        "enabled": {
+          "help": "Wyłączone stawki są pomijane przy naliczaniu."
+        }
       }
     },
     "delivery_profiles": {
@@ -3068,6 +3120,10 @@
         "tax_rates": {
           "add_sheet_title": "Nowa stawka podatku",
           "edit_sheet_title": "Edytuj stawkę podatku"
+        },
+        "commission_rates": {
+          "add_sheet_title": "Dodaj stawkę prowizji",
+          "edit_sheet_title": "Edytuj stawkę prowizji"
         }
       },
       "staff": {
@@ -3800,7 +3856,8 @@
         "store": "Sklep",
         "tax_categories": "Kategorie podatkowe",
         "tax_rates": "Stawki podatku",
-        "webhooks": "Webhooki"
+        "webhooks": "Webhooki",
+        "commission_rates": "Stawki prowizji"
       }
     },
     "setup": {
@@ -4276,6 +4333,25 @@
         "placeholder": "Szukaj sprzedawców",
         "empty": "Nie znaleziono sprzedawców"
       }
+    },
+    "commission_rates": {
+      "add_cta": "Dodaj stawkę prowizji",
+      "applies_to_everything": "Każda sprzedaż",
+      "create_description": "Określ, ile marketplace pobiera od sprzedawców i których sprzedaży to dotyczy.",
+      "create_label": "Utwórz stawkę prowizji",
+      "delete_confirm": {
+        "message": "{{name}} zostanie usunięta. Naliczone już prowizje pozostaną bez zmian.",
+        "title": "Usunąć stawkę prowizji?"
+      },
+      "edit_description": "Zaktualizuj opłatę, jej limity i objęte nią sprzedaże.",
+      "empty": "Brak stawek prowizji",
+      "messages": {
+        "created": "Utworzono stawkę prowizji",
+        "deleted": "Usunięto stawkę prowizji",
+        "updated": "Zaktualizowano stawkę prowizji"
+      },
+      "search_placeholder": "Szukaj po nazwie…",
+      "rule_picker_unavailable": "Ta wersja nie ma selektora dla tego typu celu."
     }
   }
 }
