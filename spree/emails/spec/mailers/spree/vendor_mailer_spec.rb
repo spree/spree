@@ -52,6 +52,25 @@ RSpec.describe Spree::VendorMailer do
     end
   end
 
+  # The subject is translated inside the store-locale block, not before it.
+  # Resolved outside, it would render in whatever locale the delivery job
+  # happens to run under — an English subject over a German email.
+  describe 'locale' do
+    before do
+      I18n.backend.store_translations(
+        :de,
+        spree: { vendor_mailer: { approved_email: { subject: 'DE-SUBJECT', heading: 'DE-HEADING' } } }
+      )
+      store.update!(default_locale: 'de', supported_locales: 'en,de')
+    end
+
+    it 'renders the subject in the store locale, not the job locale' do
+      message = I18n.with_locale(:en) { described_class.approved_email(vendor.id) }
+
+      expect(message.subject).to include('DE-SUBJECT')
+    end
+  end
+
   describe 'recipients' do
     it 'reaches the whole team plus the contact address' do
       member = create(:admin_user, email: 'owner@example.com')

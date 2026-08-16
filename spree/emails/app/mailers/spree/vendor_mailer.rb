@@ -15,7 +15,7 @@ module Spree
       # so a hosted dashboard, a dev Vite server and a mounted build all work.
       @dashboard_url = Spree::Stores::DashboardUrl.call(store: store).presence
 
-      deliver_to_vendor(Spree.t('vendor_mailer.approved_email.subject', store_name: store.name))
+      deliver_to_vendor('vendor_mailer.approved_email.subject')
     end
 
     # Carries no reason: the operator's note is an internal record, and a
@@ -23,13 +23,13 @@ module Spree
     def suspended_email(vendor)
       @vendor = load_vendor(vendor)
 
-      deliver_to_vendor(Spree.t('vendor_mailer.suspended_email.subject', store_name: store.name))
+      deliver_to_vendor('vendor_mailer.suspended_email.subject')
     end
 
     def rejected_email(vendor)
       @vendor = load_vendor(vendor)
 
-      deliver_to_vendor(Spree.t('vendor_mailer.rejected_email.subject', store_name: store.name))
+      deliver_to_vendor('vendor_mailer.rejected_email.subject')
     end
 
     private
@@ -49,12 +49,19 @@ module Spree
       (@vendor.users.pluck(:email) << @vendor.contact_email).compact_blank.uniq(&:downcase)
     end
 
-    def deliver_to_vendor(subject)
+    # Takes the key, not the translated string: resolving the subject outside
+    # the block would render it in whatever locale the job happens to run
+    # under, so a seller could get an English subject over a German email.
+    def deliver_to_vendor(subject_key)
       addresses = recipients
       return message.perform_deliveries = false if addresses.empty?
 
       with_store_locale(store) do
-        mail(to: addresses, subject: subject, store_url: store.storefront_url)
+        mail(
+          to: addresses,
+          subject: Spree.t(subject_key, store_name: store.name),
+          store_url: store.storefront_url
+        )
       end
     end
   end
