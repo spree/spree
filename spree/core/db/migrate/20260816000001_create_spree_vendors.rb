@@ -39,5 +39,20 @@ class CreateSpreeVendors < ActiveRecord::Migration[8.1]
     add_index :spree_vendors, [:store_id, :slug], unique: true
     add_index :spree_vendors, [:store_id, :status]
     add_index :spree_vendors, :deleted_at
+
+    # Mobility table-backend translations, mirroring spree_collection_translations.
+    create_table :spree_vendor_translations do |t|
+      t.string :name
+      t.text :about
+      t.string :locale, null: false
+      t.references :spree_vendor, null: false, index: false
+
+      t.timestamps null: false
+      t.datetime :deleted_at
+    end
+
+    add_index :spree_vendor_translations, :locale, name: 'index_spree_vendor_translations_on_locale'
+    add_index :spree_vendor_translations, [:spree_vendor_id, :locale], unique: true,
+                                                                      name: 'index_vendor_translations_on_vendor_and_locale'
   end
 end

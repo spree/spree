@@ -46,6 +46,11 @@ module Spree
     self::Translation.class_eval do
       include Spree::SanitizableRichText
       sanitizes_rich_text :about
+
+      acts_as_paranoid
+      # A deleted vendor's translations still have to render — its storefront
+      # profile outlives the row for as long as anything links to it.
+      default_scope { unscope(where: :deleted_at) }
     end
 
     #

@@ -116,6 +116,23 @@ describe Spree::Vendor do
     end
   end
 
+  describe 'translations' do
+    it 'stores a translated name and about per locale' do
+      vendor = create(:vendor, name: 'Bright Sparks', about: '<p>We make lamps.</p>')
+
+      Mobility.with_locale(:fr) do
+        vendor.update!(name: 'Étincelles', about: '<p>Nous fabriquons des lampes.</p>')
+      end
+
+      expect(vendor.reload.name).to eq('Bright Sparks')
+      expect(Mobility.with_locale(:fr) { vendor.reload.name }).to eq('Étincelles')
+    end
+
+    it 'is registered as a translatable resource' do
+      expect(Spree.translatable_resources).to include(described_class)
+    end
+  end
+
   describe 'settlement configuration' do
     it 'defaults to the vendor remitting its own tax' do
       expect(create(:vendor).tax_remittance).to eq('vendor')
