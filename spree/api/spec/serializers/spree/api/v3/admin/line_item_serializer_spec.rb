@@ -36,7 +36,8 @@ RSpec.describe Spree::Api::V3::Admin::LineItemSerializer do
   describe 'vendor expand' do
     it 'resolves the operator view rather than the public profile' do
       vendor = create(:vendor, store: store)
-      line_item.update!(vendor: vendor)
+      line_item.variant.product.update!(vendor: vendor)
+      line_item.reload.save!
 
       result = described_class.new(
         line_item.reload, params: base_params.merge(expand: ['vendor'])

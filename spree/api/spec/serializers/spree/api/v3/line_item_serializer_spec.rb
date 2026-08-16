@@ -117,7 +117,8 @@ RSpec.describe Spree::Api::V3::LineItemSerializer do
     let(:vendor) { create(:vendor, store: store, name: 'Sparks Audio') }
 
     it 'exposes the seller id without an expand' do
-      line_item.update!(vendor: vendor)
+      line_item.variant.product.update!(vendor: vendor)
+      line_item.reload.save!
 
       result = described_class.new(line_item.reload, params: base_params).to_h
 
@@ -132,7 +133,8 @@ RSpec.describe Spree::Api::V3::LineItemSerializer do
     # The storefront gets the public profile, never how the marketplace runs
     # the seller.
     it 'embeds the public profile on expand' do
-      line_item.update!(vendor: vendor)
+      line_item.variant.product.update!(vendor: vendor)
+      line_item.reload.save!
 
       result = described_class.new(
         line_item.reload, params: base_params.merge(expand: ['vendor'])
