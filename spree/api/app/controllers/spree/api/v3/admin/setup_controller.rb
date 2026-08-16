@@ -63,7 +63,7 @@ module Spree
               adopt_default_store(user, store)
             end
 
-            refresh_token = Spree::RefreshToken.create_for(user, request_env: request_env_for_token)
+            refresh_token = Spree::RefreshToken.create_for(user, audience: JWT_AUDIENCE_ADMIN, request_env: request_env_for_token)
             set_refresh_cookie(refresh_token)
             render json: auth_response(user)
           rescue ActiveRecord::RecordInvalid => e

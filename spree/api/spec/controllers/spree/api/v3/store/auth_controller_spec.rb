@@ -255,6 +255,17 @@ RSpec.describe Spree::Api::V3::Store::AuthController, type: :controller do
       expect(response).to have_http_status(:no_content)
     end
 
+    it 'leaves a token minted for another surface alone' do
+      admin_token = create(:refresh_token, :for_admin)
+
+      expect {
+        post :logout, params: { refresh_token: admin_token.token }
+      }.not_to change(Spree::RefreshToken, :count)
+
+      expect(response).to have_http_status(:no_content)
+      expect(admin_token.reload).to be_present
+    end
+
     it 'succeeds without refresh token param' do
       post :logout
 

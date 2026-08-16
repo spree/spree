@@ -23,7 +23,7 @@ RSpec.describe Spree::Api::V3::Admin::TaxCategoriesController, type: :controller
 
     context 'with X-Spree-Store-Id naming a store the admin has a role on' do
       before do
-        create(:role_user, user: admin_user, role: Spree::Role.default_admin_role, resource: other_store)
+        create(:role_user, user: admin_user, role: Spree::Role.default_admin_role(other_store))
         request.headers['X-Spree-Store-Id'] = other_store.prefixed_id
       end
 

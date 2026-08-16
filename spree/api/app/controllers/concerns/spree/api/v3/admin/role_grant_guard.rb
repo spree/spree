@@ -31,7 +31,7 @@ module Spree
             # past a caller without role-management authority.
             return true if require_role_management && reject_without_role_management!
 
-            roles = Spree::Role.where(id: role_ids.map(&:to_s)).to_a
+            roles = current_store.roles.where(id: role_ids.map(&:to_s)).to_a
             return false if roles.empty?
 
             return true if reject_admin_role_grant!(roles)
@@ -76,7 +76,7 @@ module Spree
           end
 
           def reject_admin_role_grant!(roles)
-            return false unless roles.any? { |role| role.name == Spree::Role::ADMIN_ROLE }
+            return false unless roles.any?(&:admin?)
             return false if caller_holds_admin_role?
 
             deny_role_grant!('You cannot grant the admin role.')
@@ -107,12 +107,10 @@ module Spree
               end
           end
 
-          # The caller's store-admin roles, fetched once per request. Matched
-          # on the store AND a store resource, mirroring
-          # `Spree::Ability#staff_roles`: an assignment scoped to another
-          # resource (a marketplace vendor) binds to that resource's store but
-          # confers no store-admin authority, so it must not widen what the
-          # caller may grant.
+          # The caller's roles on this store, fetched once per request,
+          # mirroring `Spree::Ability#staff_roles`: a role owned by another
+          # resource (a marketplace vendor) confers no store-admin authority
+          # and must not widen what the caller may grant.
           #
           # @return [Array<Spree::Role>]
           def caller_roles
@@ -120,10 +118,8 @@ module Spree
 
             user = try_spree_current_user
             @caller_roles =
-              if user.respond_to?(:role_users)
-                user.role_users.
-                  where(store: current_store, resource_type: Spree::Store.to_s).
-                  includes(:role).map(&:role)
+              if user.respond_to?(:spree_roles)
+                user.spree_roles.for_resource(current_store).to_a
               else
                 []
               end
@@ -132,7 +128,7 @@ module Spree
           def caller_holds_admin_role?
             return current_api_key.has_scope?('write_all') if scope_limited_principal?
 
-            caller_roles.any? { |role| role.name == Spree::Role::ADMIN_ROLE } ||
+            caller_roles.any?(&:admin?) ||
               try_spree_current_user.try(:spree_admin?, current_store)
           end
 

@@ -1046,6 +1046,7 @@ en:
         link_description: 'To accept this invitation, please click the link below:'
         subject: Invitation to join %{resource_name}
       thanks: Thank you,
+    invitation_role_resource_mismatch: must belong to the same store or vendor as the invitation
     invitations: Invitations
     invited_by: Invited by
     iso: ISO Alpha-2
@@ -1455,7 +1456,9 @@ en:
     role_cannot_be_deleted: This role is protected or still referenced by staff members or pending invitations and cannot be deleted
     role_id: Role ID
     role_immutable: cannot be changed on a protected role
+    role_permissions_not_grantable_for_audience: 'cannot be granted to a %{audience} role: %{keys}'
     role_permissions_unknown: 'contains unknown permissions: %{keys}'
+    role_resource_immutable: cannot be changed once the role exists
     roles: Roles
     row: Row
     rules: Rules

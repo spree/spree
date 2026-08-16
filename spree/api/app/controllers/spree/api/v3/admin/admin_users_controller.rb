@@ -24,7 +24,7 @@ module Spree
           # the account globally. The user keeps access to any other stores.
           def destroy
             authorize!(:destroy, @resource)
-            @resource.role_users.where(resource: current_store).destroy_all
+            @resource.role_users.where(role: current_store.roles).destroy_all
             head :no_content
           end
 
@@ -62,7 +62,7 @@ module Spree
           end
 
           def collection_includes
-            [{ role_users: :role, avatar_attachment: :blob }, :stores]
+            [{ spree_roles: :resource, avatar_attachment: :blob }]
           end
 
           # Restrict to users with a role assignment on the current store.
@@ -71,10 +71,7 @@ module Spree
           # host-app-defined and may contain `json` columns, which Postgres
           # cannot compare for equality.
           def scope
-            staff_ids = model_class.
-              joins(:role_users).
-              where(Spree::RoleUser.table_name => { resource: current_store }).
-              select(:id)
+            staff_ids = model_class.joins(:spree_roles).merge(current_store.roles).select(:id)
 
             model_class.
               where(id: staff_ids).
@@ -95,17 +92,15 @@ module Spree
           # Reconcile the user's roles on this store to match `desired_role_ids`.
           # Adds missing assignments and removes extras — no-op for unchanged.
           def apply_role_ids(desired_role_ids)
-            current = @resource.role_users.where(resource: current_store).pluck(:role_id).map(&:to_s)
+            store_roles = current_store.roles
+            current = @resource.role_users.where(role: store_roles).pluck(:role_id).map(&:to_s)
             target = desired_role_ids.map(&:to_s)
 
-            (target - current).each do |role_id|
-              role = Spree::Role.find_by(id: role_id)
-              @resource.role_users.find_or_create_by!(role: role, resource: current_store) if role
+            store_roles.where(id: target - current).each do |role|
+              @resource.role_users.find_or_create_by!(role: role)
             end
 
-            (current - target).each do |role_id|
-              @resource.role_users.where(role_id: role_id, resource: current_store).destroy_all
-            end
+            @resource.role_users.where(role: store_roles.where(id: current - target)).destroy_all
           end
         end
       end

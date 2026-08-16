@@ -25,21 +25,24 @@ module Spree
           # the user might have on other stores. Block receives `params`
           # only when Alba passes it through the `serializer_params` hash —
           # we fall back to `Spree::Current.store` if not.
+          # Filtered in Ruby rather than with `for_resource`, so the staff
+          # index's preloaded roles are used instead of a query per user.
           attribute :roles do |user, params|
             store = params&.dig(:store) || Spree::Current.store
-            scope = user.role_users
-            scope = scope.where(resource: store) if store
-            scope.includes(:role).map { |ru| { id: ru.role.prefixed_id, name: ru.role.name } }
+            roles = user.spree_roles.to_a
+            roles = roles.select { |role| role.resource == store } if store
+            roles.map { |role| { id: role.prefixed_id, name: role.name } }
           end
 
-          # Every store this user holds a role on (via `Spree::RoleUser`) —
-          # unlike `roles`, deliberately NOT scoped to the current store, so
-          # the dashboard store switcher can offer all accessible stores.
-          # Dedupe/sort happen in Ruby (not `.distinct.order`) so the staff
-          # index's `collection_includes` preload is used instead of firing
-          # an extra query per user.
+          # Every store this user holds a role on — unlike `roles`,
+          # deliberately NOT scoped to the current store, so the dashboard
+          # store switcher can offer all accessible stores. Read off the same
+          # preloaded roles, and deduped/sorted in Ruby, so the staff index
+          # spends no extra query per user.
           attribute :stores do |user|
-            user.stores.uniq.sort_by(&:name).map do |store|
+            stores = user.spree_roles.filter_map { |role| role.resource if role.resource.is_a?(Spree::Store) }
+
+            stores.uniq.sort_by(&:name).map do |store|
               { id: store.prefixed_id, name: store.name, code: store.code }
             end
           end

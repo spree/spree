@@ -179,7 +179,7 @@ RSpec.describe Spree::Api::V3::Admin::BaseController, type: :controller do
       let(:other_store) { create(:store) }
       let(:foreign_admin) do
         create(:admin_user, :without_admin_role).tap do |u|
-          u.role_users.create!(role: Spree::Role.default_admin_role, resource: other_store, store: other_store)
+          create(:role_user, user: u, role: Spree::Role.default_admin_role(other_store))
         end
       end
       let(:foreign_admin_jwt) do
@@ -190,6 +190,39 @@ RSpec.describe Spree::Api::V3::Admin::BaseController, type: :controller do
       end
 
       before { request.headers['Authorization'] = "Bearer #{foreign_admin_jwt}" }
+
+      it 'returns 403 forbidden' do
+        get :index
+
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
+
+    # A role held on a non-store resource binds to that resource's store, so
+    # matching membership on store_id alone would admit its holder here. The
+    # stand-in resource plays the part of a marketplace vendor until the Vendor
+    # model lands.
+    context 'with an admin JWT whose only role is on a non-store resource of this store' do
+      let(:panel) { create(:customer_group, store: store) }
+      let(:panel_admin) do
+        create(:admin_user, :without_admin_role).tap do |u|
+          create(:role_user, user: u, role: create(:role, name: 'panel_orders', resource: panel))
+        end
+      end
+      let(:panel_admin_jwt) do
+        Spree::Api::V3::TestingSupport.generate_jwt(
+          panel_admin,
+          audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN
+        )
+      end
+
+      before { request.headers['Authorization'] = "Bearer #{panel_admin_jwt}" }
+
+      # The panel belongs to this store, so the role is on the store's own turf
+      # — otherwise the check below would pass for the wrong reason.
+      it 'holds the role on a resource of this store' do
+        expect(panel_admin.spree_roles.first.resource.store).to eq(store)
+      end
 
       it 'returns 403 forbidden' do
         get :index

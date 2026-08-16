@@ -3,10 +3,11 @@ module Spree
     module V3
       module Admin
         # Staff roles and their catalog permissions (docs/plans/6.0-admin-rbac.md).
-        # Roles are global, not per-store — the controller ignores
-        # `current_store` for that reason; assignments (RoleUser) are the
-        # store-scoped half. Protection of the admin role and host-locked rows
-        # lives on the model (`mutable` guards, `can_be_deleted?`).
+        # A role belongs to what it governs, so this surface reads and writes
+        # the current store's own roles; one owned by another resource — a
+        # marketplace vendor's — belongs to that panel. Protection of the admin
+        # role and host-locked rows lives on the model (`mutable` guards,
+        # `can_be_deleted?`).
         class RolesController < ResourceController
           include Spree::Api::V3::Admin::RoleGrantGuard
 
@@ -38,12 +39,22 @@ module Spree
             Spree.api.admin_role_serializer
           end
 
+          # The store's own roles. A role belonging to another resource — a
+          # marketplace vendor's — is managed from that panel and never appears
+          # in the staff role picker.
           def scope
-            Spree::Role.accessible_by(current_ability, :show)
+            current_store.roles.accessible_by(current_ability, :show)
           end
 
           def collection_includes
             [:role_users]
+          end
+
+          # Roles created here belong to the store being administered. The base
+          # builder stamps `store`, which a role does not have — its owner is
+          # polymorphic — so it would leave the resource unset.
+          def build_resource
+            current_store.roles.build(permitted_params)
           end
 
           def permitted_params

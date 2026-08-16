@@ -51,7 +51,7 @@ const BOOTSTRAP_RUBY = [
   's = Spree::Store.default',
   'admin = Spree.admin_user_class.first || Spree.admin_user_class.create!(email: "admin@example.com", password: "spree123", password_confirmation: "spree123")',
   'admin.update!(password: "spree123", password_confirmation: "spree123")',
-  's.add_user(admin, Spree::Role.default_admin_role) unless s.role_users.exists?(user: admin)',
+  's.add_user(admin, Spree::Role.default_admin_role(s)) unless s.role_users.exists?(user: admin)',
   // Idempotent fixtures for promotion rule/action editor specs. Customer
   // groups have no admin UI yet, so this is the only path to seed one.
   // Looked up by permalink, not name: category names are not unique, so a name

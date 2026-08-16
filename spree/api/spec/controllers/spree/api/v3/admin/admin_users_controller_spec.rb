@@ -11,7 +11,7 @@ RSpec.describe Spree::Api::V3::Admin::AdminUsersController, type: :controller do
   # `scope` resolves them) but without the admin role.
   let!(:target) do
     create(:admin_user, :without_admin_role).tap do |u|
-      u.role_users.create!(role: staff_role, resource: store)
+      create(:role_user, user: u, role: staff_role)
     end
   end
 
@@ -35,14 +35,14 @@ RSpec.describe Spree::Api::V3::Admin::AdminUsersController, type: :controller do
         patch :update, params: { id: target.prefixed_id, role_ids: [other_role.prefixed_id] }, as: :json
 
         expect(response).to have_http_status(:ok)
-        expect(target.role_users.where(resource: store, role: other_role)).to exist
+        expect(target.role_users.where(role: other_role)).to exist
       end
     end
 
     context 'authenticated as a staff JWT without staff permissions' do
       let(:orders_role) { create(:role, name: 'orders_only', permissions: %w[write_orders]) }
       let(:staff_admin) do
-        create(:admin_user, :without_admin_role).tap { |u| u.role_users.create!(role: orders_role, resource: store) }
+        create(:admin_user, :without_admin_role).tap { |u| create(:role_user, user: u, role: orders_role) }
       end
       let(:headers) do
         api_key_headers.merge('Authorization' => "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(staff_admin, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN)}")
@@ -60,7 +60,7 @@ RSpec.describe Spree::Api::V3::Admin::AdminUsersController, type: :controller do
       it 'cannot assign any role' do
         expect {
           patch :update, params: { id: target.prefixed_id, role_ids: [staff_role.prefixed_id] }, as: :json
-        }.not_to change { target.role_users.where(resource: store).count }
+        }.not_to change { target.role_users.where(role: store.roles).count }
 
         expect(response).to have_http_status(:not_found)
       end
@@ -70,7 +70,7 @@ RSpec.describe Spree::Api::V3::Admin::AdminUsersController, type: :controller do
       it 'cannot mutate roles with unresolved role ids' do
         expect {
           patch :update, params: { id: target.prefixed_id, role_ids: ['role_nonexistent'] }, as: :json
-        }.not_to change { target.role_users.where(resource: store).count }
+        }.not_to change { target.role_users.where(role: store.roles).count }
 
         expect(response).to have_http_status(:not_found)
       end
@@ -79,7 +79,7 @@ RSpec.describe Spree::Api::V3::Admin::AdminUsersController, type: :controller do
     context 'authenticated as a staff JWT holding write_staff' do
       let(:manager_role) { create(:role, name: 'team_manager', permissions: %w[write_staff]) }
       let(:staff_admin) do
-        create(:admin_user, :without_admin_role).tap { |u| u.role_users.create!(role: manager_role, resource: store) }
+        create(:admin_user, :without_admin_role).tap { |u| create(:role_user, user: u, role: manager_role) }
       end
       let(:headers) do
         api_key_headers.merge('Authorization' => "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(staff_admin, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN)}")
@@ -89,7 +89,7 @@ RSpec.describe Spree::Api::V3::Admin::AdminUsersController, type: :controller do
         patch :update, params: { id: target.prefixed_id, role_ids: [staff_role.prefixed_id] }, as: :json
 
         expect(response).to have_http_status(:ok)
-        expect(target.role_users.where(resource: store, role: staff_role)).to exist
+        expect(target.role_users.where(role: staff_role)).to exist
       end
 
       it 'forbids promoting an account to admin' do
@@ -105,7 +105,7 @@ RSpec.describe Spree::Api::V3::Admin::AdminUsersController, type: :controller do
         patch :update, params: { id: target.prefixed_id, role_ids: [owner_role.prefixed_id] }, as: :json
 
         expect(response).to have_http_status(:forbidden)
-        expect(target.role_users.where(resource: store, role: owner_role)).not_to exist
+        expect(target.role_users.where(role: owner_role)).not_to exist
       end
     end
 

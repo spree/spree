@@ -61,10 +61,14 @@ module Spree
           false
         end
 
+        # Membership is holding a role the store itself owns, mirroring
+        # Spree::Ability#staff_roles. A role belonging to another resource — a
+        # marketplace vendor, say — is that panel's business and never admits
+        # its holder here.
         def current_user_member_of_store?
-          return false unless current_user.respond_to?(:role_users)
+          return false unless current_user.respond_to?(:spree_roles)
 
-          current_user.role_users.exists?(store: current_store)
+          current_user.spree_roles.for_resource(current_store).exists?
         end
 
         def set_no_store_cache

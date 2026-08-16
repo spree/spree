@@ -45,6 +45,46 @@ RSpec.describe Spree::PermissionConfiguration do
     end
   end
 
+  describe 'audiences' do
+    it 'grants every resource to the store back office without naming it' do
+      configuration.register_resource(:reviews, group: :catalog, subjects: [Spree::Product])
+
+      expect(configuration.resource(:reviews)).to be_grantable_to(:store)
+      expect(configuration.grantable_keys(:store)).to eq(configuration.catalog_keys)
+    end
+
+    it 'grants a resource to the audiences it names, store included' do
+      configuration.register_resource(:reviews, group: :catalog, audiences: %i[vendor], subjects: [Spree::Product])
+
+      expect(configuration.resource(:reviews).audiences).to contain_exactly(:store, :vendor)
+    end
+
+    it 'withholds unnamed audiences' do
+      configuration.register_resource(:reviews, group: :catalog, subjects: [Spree::Product])
+
+      expect(configuration.resource(:reviews)).not_to be_grantable_to(:vendor)
+      expect(configuration.grantable_keys(:vendor)).not_to include('read_reviews')
+    end
+
+    it 'opens the seller-facing core resources to vendors' do
+      expect(configuration.grantable_keys(:vendor)).to include(
+        'read_products', 'write_products', 'read_orders', 'write_orders',
+        'read_fulfillments', 'write_fulfillments', 'read_stock', 'write_stock', 'read_dashboard'
+      )
+    end
+
+    it 'never opens the operator-only resources to vendors' do
+      expect(configuration.grantable_keys(:vendor)).not_to include(
+        'read_settings', 'write_settings', 'read_staff', 'write_staff',
+        'read_api_keys', 'write_api_keys', 'read_payments', 'read_refunds'
+      )
+    end
+
+    it 'reads an unregistered audience as granting nothing' do
+      expect(configuration.grantable_keys(:company)).to be_empty
+    end
+  end
+
   describe '#unregister_resource' do
     it 'removes the resource and its keys' do
       configuration.register_resource(:reviews, group: :catalog, subjects: [Spree::Product])

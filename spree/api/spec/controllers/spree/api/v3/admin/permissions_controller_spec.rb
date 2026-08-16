@@ -33,7 +33,7 @@ RSpec.describe Spree::Api::V3::Admin::PermissionsController, type: :controller d
     context 'with a limited staff JWT' do
       let(:staffer) do
         create(:admin_user, :without_admin_role).tap do |user|
-          user.role_users.create!(role: create(:role, name: 'viewer', permissions: %w[read_orders]), resource: store)
+          create(:role_user, user: user, role: create(:role, name: 'viewer', permissions: %w[read_orders], resource: store))
         end
       end
       let(:headers) do

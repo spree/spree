@@ -89,7 +89,8 @@ shared_context 'API v3 Admin with custom permissions' do
   include_context 'API v3 Admin'
 
   let(:custom_permissions) { [] }
-  let(:custom_role) { create(:role, name: 'limited', permissions: custom_permissions) }
+  # A role belongs to what it governs, so it must be the store under test.
+  let(:custom_role) { create(:role, name: 'limited', permissions: custom_permissions, resource: store) }
   let(:custom_admin) { create(:admin_user, :without_admin_role) }
   let(:headers) do
     { 'Authorization' => "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(custom_admin, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN)}" }

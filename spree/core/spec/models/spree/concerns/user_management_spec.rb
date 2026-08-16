@@ -3,7 +3,8 @@ require 'spec_helper'
 describe Spree::UserManagement do
   let(:test_store) { create(:store) }
   let(:admin_user) { create(:admin_user) }
-  let(:role) { create(:role, name: 'test_role') }
+  # A role belongs to what it governs, so a grant on this store needs one here.
+  let(:role) { create(:role, name: 'test_role', resource: test_store) }
 
   describe 'instance methods' do
     describe '#add_user' do
@@ -12,6 +13,12 @@ describe Spree::UserManagement do
 
         expect(test_store.users).to include(admin_user)
         expect(admin_user.has_spree_role?('admin', test_store)).to be true
+      end
+
+      it 'refuses a role owned by another resource' do
+        foreign_role = create(:role, name: 'elsewhere', resource: create(:store))
+
+        expect { test_store.add_user(admin_user, foreign_role) }.to raise_error(ArgumentError)
       end
 
       it 'adds a user to the resource with a specified role' do
@@ -37,18 +44,25 @@ describe Spree::UserManagement do
     end
 
     describe '#default_user_role' do
-      it 'returns the default admin role' do
-        expect(test_store.default_user_role).to eq(Spree::Role.default_admin_role)
+      it 'returns the store own admin role' do
+        expect(test_store.default_user_role).to eq(Spree::Role.default_admin_role(test_store))
       end
     end
   end
 
   describe 'associations' do
-    it 'has many role_users' do
+    it 'has many roles' do
+      association = test_store.class.reflect_on_association(:roles)
+      expect(association.macro).to eq :has_many
+      expect(association.options[:class_name]).to eq 'Spree::Role'
+      expect(association.options[:as]).to eq :resource
+    end
+
+    # Assignments reach the resource through its roles, not directly.
+    it 'has many role_users through roles' do
       association = test_store.class.reflect_on_association(:role_users)
       expect(association.macro).to eq :has_many
-      expect(association.options[:class_name]).to eq 'Spree::RoleUser'
-      expect(association.options[:as]).to eq :resource
+      expect(association.options[:through]).to eq :roles
     end
 
     it 'has many users through role_users' do

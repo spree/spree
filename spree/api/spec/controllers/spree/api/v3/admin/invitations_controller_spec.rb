@@ -30,7 +30,7 @@ RSpec.describe Spree::Api::V3::Admin::InvitationsController, type: :controller d
     context 'authenticated as a non-admin staff JWT' do
       let(:inviter_role) { create(:role, name: 'team_manager', permissions: %w[write_staff]) }
       let(:staff_admin) do
-        create(:admin_user, :without_admin_role).tap { |u| u.role_users.create!(role: inviter_role, resource: store) }
+        create(:admin_user, :without_admin_role).tap { |u| create(:role_user, user: u, role: inviter_role) }
       end
       let(:headers) do
         api_key_headers.merge('Authorization' => "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(staff_admin, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN)}")
@@ -74,6 +74,19 @@ RSpec.describe Spree::Api::V3::Admin::InvitationsController, type: :controller d
 
         expect(response).to have_http_status(:created)
         expect(Spree::Invitation.last.role).to eq(admin_role)
+      end
+
+      # A role names what it governs, so one owned elsewhere cannot be granted
+      # on this store — the invitation is rejected as invalid rather than
+      # unauthorized, since it is not a privilege question but a nonsensical one.
+      it 'refuses inviting store staff into a role owned by another resource' do
+        vendor_role = create(:role, name: 'vendor_manager', resource: create(:customer_group))
+
+        expect {
+          post :create, params: { email: 'seller@example.com', role_id: vendor_role.prefixed_id }, as: :json
+        }.not_to change(Spree::Invitation, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end

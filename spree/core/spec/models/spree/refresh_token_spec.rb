@@ -18,15 +18,31 @@ RSpec.describe Spree::RefreshToken, type: :model do
     end
 
     it 'auto-generates a token via has_secure_token' do
-      token = described_class.create!(user: user, expires_at: 30.days.from_now)
+      token = described_class.create!(user: user, audience: 'store_api', expires_at: 30.days.from_now)
       expect(token.token).to be_present
       expect(token.token.length).to be >= 24
+    end
+
+    it 'requires an audience on create' do
+      token = described_class.new(user: user, expires_at: 30.days.from_now)
+
+      expect(token).not_to be_valid
+      expect(token.errors[:audience]).to be_present
+    end
+
+    # Rows minted before the column existed stay loadable and saveable — they
+    # are unredeemable at every refresh endpoint, which is enough.
+    it 'tolerates a legacy row with no audience on update' do
+      token = described_class.create!(user: user, audience: 'store_api', expires_at: 30.days.from_now)
+      token.update_column(:audience, nil)
+
+      expect(token.reload.update(ip_address: '10.0.0.1')).to be(true)
     end
   end
 
   describe '.create_for' do
     it 'creates a refresh token for a user' do
-      token = described_class.create_for(user)
+      token = described_class.create_for(user, audience: 'store_api')
 
       expect(token).to be_persisted
       expect(token.user).to eq(user)
@@ -35,7 +51,7 @@ RSpec.describe Spree::RefreshToken, type: :model do
     end
 
     it 'stores request env data' do
-      token = described_class.create_for(user, request_env: {
+      token = described_class.create_for(user, audience: 'store_api', request_env: {
         ip_address: '192.168.1.1',
         user_agent: 'Mozilla/5.0'
       })
@@ -45,7 +61,7 @@ RSpec.describe Spree::RefreshToken, type: :model do
     end
 
     it 'sets default 30-day expiry' do
-      token = described_class.create_for(user)
+      token = described_class.create_for(user, audience: 'store_api')
 
       expect(token.expires_at).to be_within(1.minute).of(30.days.from_now)
     end
@@ -53,19 +69,19 @@ RSpec.describe Spree::RefreshToken, type: :model do
 
   describe '#expired?' do
     it 'returns false for active tokens' do
-      token = described_class.create_for(user)
+      token = described_class.create_for(user, audience: 'store_api')
       expect(token.expired?).to be false
     end
 
     it 'returns true for expired tokens' do
-      token = described_class.create_for(user)
+      token = described_class.create_for(user, audience: 'store_api')
       token.update_column(:expires_at, 1.hour.ago)
       expect(token.expired?).to be true
     end
   end
 
   describe '#rotate!' do
-    let!(:original_token) { described_class.create_for(user) }
+    let!(:original_token) { described_class.create_for(user, audience: 'store_api') }
 
     it 'destroys the original token' do
       original_id = original_token.id
@@ -101,9 +117,9 @@ RSpec.describe Spree::RefreshToken, type: :model do
   end
 
   describe 'scopes' do
-    let!(:active_token) { described_class.create_for(user) }
+    let!(:active_token) { described_class.create_for(user, audience: 'store_api') }
     let!(:expired_token) do
-      t = described_class.create_for(user)
+      t = described_class.create_for(user, audience: 'store_api')
       t.update_column(:expires_at, 1.day.ago)
       t
     end
@@ -125,8 +141,8 @@ RSpec.describe Spree::RefreshToken, type: :model do
 
   describe '.revoke_all_for' do
     it 'deletes all tokens for a user' do
-      described_class.create_for(user)
-      described_class.create_for(user)
+      described_class.create_for(user, audience: 'store_api')
+      described_class.create_for(user, audience: 'store_api')
 
       expect {
         described_class.revoke_all_for(user)
@@ -135,8 +151,8 @@ RSpec.describe Spree::RefreshToken, type: :model do
 
     it 'does not delete tokens for other users' do
       other_user = create(:user)
-      described_class.create_for(user)
-      other_token = described_class.create_for(other_user)
+      described_class.create_for(user, audience: 'store_api')
+      other_token = described_class.create_for(other_user, audience: 'store_api')
 
       described_class.revoke_all_for(user)
 
@@ -146,8 +162,8 @@ RSpec.describe Spree::RefreshToken, type: :model do
 
   describe '.cleanup_expired!' do
     it 'deletes expired tokens' do
-      active = described_class.create_for(user)
-      expired = described_class.create_for(user)
+      active = described_class.create_for(user, audience: 'store_api')
+      expired = described_class.create_for(user, audience: 'store_api')
       expired.update_column(:expires_at, 1.day.ago)
 
       described_class.cleanup_expired!
@@ -159,7 +175,7 @@ RSpec.describe Spree::RefreshToken, type: :model do
 
   describe 'prefixed_id' do
     it 'uses rt_ prefix' do
-      token = described_class.create_for(user)
+      token = described_class.create_for(user, audience: 'store_api')
       expect(token.prefixed_id).to start_with('rt_')
     end
   end

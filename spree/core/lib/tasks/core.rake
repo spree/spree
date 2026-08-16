@@ -1,15 +1,5 @@
 require 'active_record'
 
-namespace :db do
-  task migrate_admin_users_to_role_users: :environment do |_t, _args|
-    default_store = Spree::Store.default
-    Spree::RoleUser.where(resource: nil).each do |role_user|
-      role_user.update_columns(resource_type: default_store.class.name, resource_id: default_store.id)
-    end
-  end
-
-end
-
 namespace :core do
   desc 'Set "active" status on draft products where make_active_at is in the past'
   task activate_products: :environment do |_t, _args|

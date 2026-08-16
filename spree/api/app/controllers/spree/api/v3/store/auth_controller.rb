@@ -52,7 +52,7 @@ module Spree
               )
             end
 
-            refresh_token = Spree::RefreshToken.active.find_by(token: refresh_token_value)
+            refresh_token = Spree::RefreshToken.active.for_audience(JWT_AUDIENCE_STORE).find_by(token: refresh_token_value)
 
             if refresh_token.nil?
               return render_error(
@@ -76,11 +76,14 @@ module Spree
           # Accepts: { "refresh_token": "rt_xxx" }
           # Revokes the submitted refresh token. The token itself is the
           # credential — no access JWT is required, so clients with an expired
-          # access token can still log out.
+          # access token can still log out. Narrowed to this surface's own
+          # tokens: ending a session belongs to the surface that started it.
           def logout
             refresh_token_value = params[:refresh_token]
 
-            Spree::RefreshToken.find_by(token: refresh_token_value)&.destroy if refresh_token_value.present?
+            if refresh_token_value.present?
+              Spree::RefreshToken.for_audience(JWT_AUDIENCE_STORE).find_by(token: refresh_token_value)&.destroy
+            end
 
             head :no_content
           end
@@ -101,7 +104,7 @@ module Spree
           private
 
           def auth_response(user)
-            refresh_token = Spree::RefreshToken.create_for(user, request_env: request_env_for_token)
+            refresh_token = Spree::RefreshToken.create_for(user, audience: JWT_AUDIENCE_STORE, request_env: request_env_for_token)
 
             {
               token: generate_jwt(user),

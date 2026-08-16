@@ -38,7 +38,7 @@ class Spree::InvitationPreview < ActionMailer::Preview
       resource: store,
       inviter: admin,
       invitee: accepted ? admin : nil,
-      role: Spree::Role.first || Spree::Role.new(name: 'admin'),
+      role: Spree::Role.for_resource(store).first || Spree::Role.new(name: 'admin', resource: store),
       token: 'preview-token',
       status: accepted ? 'accepted' : 'pending',
       expires_at: 7.days.from_now

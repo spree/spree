@@ -26,47 +26,28 @@ describe Spree::RoleUser do
     end
   end
 
-  describe 'Callbacks' do
-    describe 'before_validation :set_default_resource' do
-      it 'sets the resource to the current store if it is not set' do
-        role_user = described_class.new(role: role, user: spree_user)
-        expect(role_user.valid?).to be_truthy
+  # An assignment carries no copy of where it applies — the role says.
+  describe '#resource' do
+    it 'comes from the role' do
+      other_store = create(:store)
+      role_user = described_class.new(role: create(:role, resource: other_store), user: spree_user)
 
-        expect(role_user.resource).to eq(Spree::Store.current)
-      end
+      expect(role_user.resource).to eq(other_store)
+    end
+  end
+
+  describe 'uniqueness' do
+    it 'allows a user to hold a role once' do
+      create(:role_user, role: role, user: spree_user)
+
+      expect(described_class.new(role: role, user: spree_user)).not_to be_valid
     end
 
-    describe 'before_validation :ensure_store' do
-      it 'sets the store to the current store' do
-        role_user = described_class.new(role: role, user: spree_user)
-        expect(role_user.valid?).to be_truthy
+    it 'allows the same user to hold a role owned by another resource' do
+      create(:role_user, role: role, user: spree_user)
+      other_role = create(:role, name: 'test_role', resource: create(:store))
 
-        expect(role_user.store).to eq(Spree::Current.store)
-      end
-
-      it 'keeps an explicitly assigned store' do
-        store = create(:store)
-        role_user = described_class.new(role: role, user: spree_user, store: store)
-        expect(role_user.valid?).to be_truthy
-
-        expect(role_user.store).to eq(store)
-      end
-
-      it 'binds the store to a store resource, not the current store' do
-        other_store = create(:store)
-        role_user = described_class.new(role: role, user: spree_user, resource: other_store)
-        expect(role_user.valid?).to be_truthy
-
-        expect(role_user.store).to eq(other_store)
-      end
-
-      it 'defaults the resource to an explicitly assigned store' do
-        store = create(:store)
-        role_user = described_class.new(role: role, user: spree_user, store: store)
-        expect(role_user.valid?).to be_truthy
-
-        expect(role_user.resource).to eq(store)
-      end
+      expect(described_class.new(role: other_role, user: spree_user)).to be_valid
     end
   end
 

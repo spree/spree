@@ -60,7 +60,7 @@ module Spree
               # password. Revoke first, then mint the fresh token for this
               # browser (the auto-sign-in below).
               Spree::RefreshToken.revoke_all_for(user)
-              refresh_token = Spree::RefreshToken.create_for(user, request_env: request_env_for_token)
+              refresh_token = Spree::RefreshToken.create_for(user, audience: JWT_AUDIENCE_ADMIN, request_env: request_env_for_token)
               set_refresh_cookie(refresh_token)
 
               render json: auth_response(user)
