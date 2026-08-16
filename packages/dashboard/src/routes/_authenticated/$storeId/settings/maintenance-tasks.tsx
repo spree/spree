@@ -63,6 +63,10 @@ function MaintenanceTasksPage() {
   // convention: a task belongs to an upgrade because a manifest names it.
   const { data: upgradeData } = useUpgradeSteps()
   const upgradeTaskNames = new Set((upgradeData?.data ?? []).map((step) => step.task_name))
+  // The manifest wrapper is machinery the panel drives, not something an
+  // operator picks from a list — on its own it does nothing until told which
+  // step to run. It stays hidden even when no manifest currently names it.
+  upgradeTaskNames.add('Spree::MaintenanceTasks::UpgradeStep')
   const tasks = (data?.data ?? []).filter((task) => !upgradeTaskNames.has(task.name))
 
   const openRun = useCallback(

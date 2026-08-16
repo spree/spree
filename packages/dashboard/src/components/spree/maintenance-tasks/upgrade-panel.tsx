@@ -37,6 +37,7 @@ export function UpgradePanel({ onOpenRun }: { onOpenRun: (runId: string) => void
   const [expanded, setExpanded] = useState<string | null>(null)
 
   const steps = data?.data ?? []
+  const meta = data?.meta
   if (isLoading || steps.length === 0) return null
 
   // The release being upgraded TO is the last boundary in the walk, not the
@@ -48,6 +49,19 @@ export function UpgradePanel({ onOpenRun }: { onOpenRun: (runId: string) => void
   const done = steps.filter((step) => step.last_run?.status === 'succeeded').length
   const busy = steps.some((step) => isRunActive(step.last_run?.status ?? undefined))
   const nextStep = steps.find((step) => step.last_run?.status !== 'succeeded')
+
+  // Grouped by release, because a multi-version jump runs several manifests
+  // and an operator needs to see which release each step belongs to — and
+  // where a partial upgrade stopped.
+  const boundaries: { from: string; to: string; steps: UpgradeStep[] }[] = []
+  for (const step of steps) {
+    const last = boundaries[boundaries.length - 1]
+    if (last && last.from === step.from && last.to === step.to) {
+      last.steps.push(step)
+    } else {
+      boundaries.push({ from: step.from, to: step.to, steps: [step] })
+    }
+  }
 
   async function runStep(step: UpgradeStep) {
     const confirmed = await confirm({
@@ -102,19 +116,60 @@ export function UpgradePanel({ onOpenRun }: { onOpenRun: (runId: string) => void
         <Progress value={done} max={steps.length} className="mt-2" />
       </CardHeader>
 
-      <CardContent className="flex flex-col gap-1">
-        {steps.map((step, index) => (
-          <StepRow
-            key={`${step.to}-${step.id}`}
-            step={step}
-            position={index + 1}
-            expanded={expanded === step.id}
-            onToggle={() => setExpanded(expanded === step.id ? null : step.id)}
-            onRun={() => runStep(step)}
-            onOpenRun={onOpenRun}
-            disabled={busy || startMutation.isPending}
-          />
-        ))}
+      <CardContent className="flex flex-col gap-4">
+        {boundaries.map((boundary) => {
+          const boundaryDone = boundary.steps.filter(
+            (step) => step.last_run?.status === 'succeeded',
+          ).length
+
+          return (
+            <section key={`${boundary.from}-${boundary.to}`} className="flex flex-col gap-1">
+              {/* Only worth a header when there is more than one — a typical
+                  upgrade spans a single release. */}
+              {boundaries.length > 1 && (
+                <header className="flex items-baseline justify-between px-2 pb-1">
+                  <h3 className="font-medium text-sm">
+                    {t('admin.maintenance_tasks.upgrade.boundary', {
+                      from: boundary.from,
+                      to: boundary.to,
+                    })}
+                  </h3>
+                  <span className="text-muted-foreground text-xs tabular-nums">
+                    {t('admin.maintenance_tasks.upgrade.progress', {
+                      done: boundaryDone,
+                      total: boundary.steps.length,
+                    })}
+                  </span>
+                </header>
+              )}
+
+              {boundary.steps.map((step, index) => (
+                <StepRow
+                  key={`${step.to}-${step.id}`}
+                  step={step}
+                  position={index + 1}
+                  expanded={expanded === step.id}
+                  onToggle={() => setExpanded(expanded === step.id ? null : step.id)}
+                  onRun={() => runStep(step)}
+                  onOpenRun={onOpenRun}
+                  disabled={busy || startMutation.isPending}
+                />
+              ))}
+            </section>
+          )
+        })}
+
+        {/* Without a recorded boundary the starting point is a guess. Saying
+            so is what lets a store that postponed several releases find the
+            steps it still needs, instead of them being silently absent. */}
+        {meta && !meta.completed_version_recorded && meta.superseded_step_count > 0 && (
+          <p className="px-2 text-muted-foreground text-xs">
+            {t('admin.maintenance_tasks.upgrade.assumed_boundary', {
+              version: meta.completed_version,
+              count: meta.superseded_step_count,
+            })}
+          </p>
+        )}
 
         {guideUrl && (
           <a

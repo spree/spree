@@ -15,10 +15,27 @@ module Spree
           scoped_resource :maintenance_tasks
 
           # GET /api/v3/admin/upgrade_steps
+          #
+          # Only what this installation still has to run. Steps of releases it
+          # already completed are reported separately rather than listed: a
+          # store several versions behind needs them, and a store that upgraded
+          # last release must never run them again.
           def index
             authorize! :read, :maintenance_task
 
-            render json: { data: Spree::Upgrade.pending_steps.map { |step| present(step) } }
+            render json: {
+              data: Spree::Upgrade.pending_steps.map { |step| present(step) },
+              meta: {
+                installed_version: Spree::Upgrade.installed_minor_version,
+                completed_version: Spree::Upgrade.completed_boundary,
+                # False when the boundary was assumed from the installed
+                # version rather than recorded by a walk or a fresh install.
+                # The dashboard offers the older steps in that case instead of
+                # hiding work a long-postponed upgrade still needs.
+                completed_version_recorded: Spree::Upgrade.completed_boundary_known?,
+                superseded_step_count: Spree::Upgrade.superseded_steps.size
+              }
+            }
           end
 
           private

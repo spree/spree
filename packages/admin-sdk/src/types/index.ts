@@ -221,4 +221,4 @@ export type {
   TranslationCoverageRow,
   TranslationsUpsertParams,
 } from './translations'
-export type { UpgradeStep } from './upgrade-step'
+export type { UpgradeStep, UpgradeStepsMeta } from './upgrade-step'
