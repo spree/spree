@@ -19,6 +19,12 @@ module Spree
       # rather than raising — a sale is not the moment to discover a typo in a
       # currency code.
       #
+      # Note that Spree's money columns are `decimal(_, 2)` throughout, so a
+      # three-decimal currency still loses its last place on the way into the
+      # database. Rounding here to the currency's own precision keeps the
+      # arithmetic honest and means widening those columns would be the only
+      # change needed; it does not by itself make Spree dinar-exact.
+      #
       # @param currency [String, ::Money::Currency, nil]
       # @return [Integer]
       def precision(currency)
