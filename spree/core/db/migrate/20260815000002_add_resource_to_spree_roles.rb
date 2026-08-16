@@ -31,32 +31,32 @@ class AddResourceToSpreeRoles < ActiveRecord::Migration[8.1]
   def up
     ensure_an_owner_is_available!
 
-    add_reference :spree_roles, :resource, polymorphic: true, index: false
+    add_reference roles_table, :resource, polymorphic: true, index: false
 
     MigrationRole.reset_column_information
     fan_out_roles_per_resource
     adopt_orphan_roles
 
-    change_column_null :spree_roles, :resource_id, false
-    change_column_null :spree_roles, :resource_type, false
+    change_column_null roles_table, :resource_id, false
+    change_column_null roles_table, :resource_type, false
 
-    remove_index :spree_roles, :name, unique: true
-    add_index :spree_roles, %i[resource_type resource_id name], unique: true,
-                                                                name: 'index_spree_roles_on_resource_and_name'
+    remove_index roles_table, :name, unique: true
+    add_index roles_table, %i[resource_type resource_id name], unique: true,
+                                                               name: 'index_spree_roles_on_resource_and_name'
 
     dedupe_assignments
     # Both indexes span the columns about to disappear. Dropping them first
     # keeps adapters from silently rewriting them over what is left, which
     # would leave a duplicate of the new index under a stale name.
-    remove_index :spree_role_users, name: 'index_spree_role_users_on_resource'
+    remove_index assignments_table, name: 'index_spree_role_users_on_resource'
     stale_index = role_user_resource_index_name
-    remove_index :spree_role_users, name: stale_index if stale_index
+    remove_index assignments_table, name: stale_index if stale_index
 
-    remove_column :spree_role_users, :resource_id
-    remove_column :spree_role_users, :resource_type
-    remove_column :spree_role_users, :store_id
+    remove_column assignments_table, :resource_id
+    remove_column assignments_table, :resource_type
+    remove_column assignments_table, :store_id
 
-    add_index :spree_role_users, %i[user_type user_id role_id], unique: true,
+    add_index assignments_table, %i[user_type user_id role_id], unique: true,
                                                                 name: 'index_spree_role_users_on_user_and_role'
   end
 
@@ -67,6 +67,16 @@ class AddResourceToSpreeRoles < ActiveRecord::Migration[8.1]
   end
 
   private
+
+  # The names live on the classes above, so schema statements read them from
+  # there rather than spelling each one a second time.
+  def roles_table
+    MigrationRole.table_name
+  end
+
+  def assignments_table
+    MigrationRoleUser.table_name
+  end
 
   # A role with no assignments has nothing to infer an owner from, so it falls
   # back to the first store. Without one it would reach the NOT NULL constraint
@@ -84,7 +94,7 @@ class AddResourceToSpreeRoles < ActiveRecord::Migration[8.1]
   # The 2025 migration let Rails generate this name, so it is a digest rather
   # than something to hardcode — find it by the columns it spans.
   def role_user_resource_index_name
-    index = connection.indexes(:spree_role_users).find do |candidate|
+    index = connection.indexes(assignments_table).find do |candidate|
       candidate.columns.include?('resource_id') && candidate.columns.include?('role_id')
     end
 
