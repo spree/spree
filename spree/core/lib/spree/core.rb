@@ -573,6 +573,26 @@ module Spree
     Rails.application.config.spree.admin_authentication_strategies = value
   end
 
+  # Registry of authentication strategy classes for the Vendor API.
+  #
+  # Login policy is per surface, not per principal: marketplace sellers and the
+  # store's own staff are both Spree.admin_user_class, so a store that requires
+  # SSO for staff can still let sellers sign in with a password by leaving this
+  # registry's :email strategy in place.
+  #
+  # @return [Spree::Authentication::StrategyRegistry]
+  # @example Registering an SSO strategy for vendor users
+  #   Spree.vendor_authentication_strategies.add(:okta, MyApp::Auth::OktaStrategy)
+  def self.vendor_authentication_strategies
+    Rails.application.config.spree.vendor_authentication_strategies
+  end
+
+  # @param value [Spree::Authentication::StrategyRegistry] the registry to use for Vendor API authentication dispatch
+  # @return [Spree::Authentication::StrategyRegistry] the assigned registry
+  def self.vendor_authentication_strategies=(value)
+    Rails.application.config.spree.vendor_authentication_strategies = value
+  end
+
   def self.analytics
     @analytics ||= AnalyticsConfig.new
   end

@@ -233,7 +233,7 @@ end
 ```
 
 ```ruby
-class CreateSpreeMetafields < ActiveRecord::Migration[7.2]
+class CreateSpreeMetafields < ActiveRecord::Migration[8.1]
   def change
     create_table :spree_metafields do |t|
       t.string :key, null: false

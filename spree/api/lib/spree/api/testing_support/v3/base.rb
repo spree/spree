@@ -80,6 +80,33 @@ shared_context 'API v3 Admin authenticated' do
   let(:headers) { bearer_headers }
 end
 
+# The marketplace seller panel. Deliberately no `current_vendor` stub: the
+# header and the membership lookup behind it are what these specs exist to
+# exercise, so stubbing them would test nothing.
+shared_context 'API v3 Vendor' do
+  let(:store) { @default_store || create(:store, default: true) }
+  let(:vendor) { create(:vendor, :approved, store: store) }
+  let(:vendor_role) { create(:role, name: 'Seller', resource: vendor, permissions: %w[write_products]) }
+  let(:vendor_user) do
+    create(:admin_user, :without_admin_role).tap { |user| vendor.add_user(user, vendor_role) }
+  end
+
+  let(:vendor_jwt_token) do
+    Spree::Api::V3::TestingSupport.generate_jwt(
+      vendor_user, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_VENDOR
+    )
+  end
+  let(:vendor_headers) do
+    { 'Authorization' => "Bearer #{vendor_jwt_token}", 'X-Spree-Vendor-Id' => vendor.prefixed_id }
+  end
+end
+
+shared_context 'API v3 Vendor authenticated' do
+  include_context 'API v3 Vendor'
+
+  let(:headers) { vendor_headers }
+end
+
 # Authenticates as an admin whose ability is restricted to specific catalog
 # permission keys, so authorization specs can assert what a limited role can
 # and cannot do. Define `custom_permissions` (an array of catalog keys, e.g.

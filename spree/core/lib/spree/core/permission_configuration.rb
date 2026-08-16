@@ -337,6 +337,12 @@ module Spree
         [Spree.admin_user_class, Spree::Invitation, Spree::Role, Spree::RoleUser]
       })
 
+      # A seller's own record: profile, branding, addresses, onboarding. Only
+      # ever granted on the vendor surface — the store's staff manage vendors
+      # through the marketplace endpoints, which the `vendors` resource covers.
+      register_resource(:vendor_profile, group: :access, subjects: -> { [Spree::Vendor] },
+                                         audiences: %i[vendor])
+
       register_resource(:dashboard, group: :analytics, subjects: -> { [:dashboard] },
                                     write: false, audiences: %i[vendor])
     end

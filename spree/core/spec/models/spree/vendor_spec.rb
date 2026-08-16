@@ -103,6 +103,22 @@ describe Spree::Vendor do
       expect(staffer.stores).not_to include(store)
       expect(Spree::Ability.new(staffer, store: store).permission_keys).to be_empty
     end
+
+    # The vendor login refuses anyone this is false for, so a store's own staff
+    # cannot mint a vendor token.
+    it 'marks its team as vendor members' do
+      expect(staffer).not_to be_vendor_member
+
+      vendor.add_user(staffer, create(:role, name: 'Packer', resource: vendor))
+
+      expect(staffer.reload).to be_vendor_member
+    end
+
+    it 'does not mark store staff as vendor members' do
+      store.add_user(staffer, create(:role, name: 'Support', resource: store))
+
+      expect(staffer.reload).not_to be_vendor_member
+    end
   end
 
   describe 'products' do

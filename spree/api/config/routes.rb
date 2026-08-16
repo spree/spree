@@ -574,6 +574,21 @@ Spree::Core::Engine.add_routes do
         end
       end
 
+      # The marketplace seller panel. A branch of its own rather than a
+      # narrowing of :admin — every endpoint here scope-fetches through
+      # current_vendor, which is what makes cross-seller access impossible by
+      # construction rather than by rule.
+      namespace :vendor do
+        # Everything unauthenticated lives under auth/, so the refresh
+        # cookie's path covers it and nothing else.
+        post 'auth/login', to: 'auth#create'
+        post 'auth/refresh', to: 'auth#refresh'
+        post 'auth/logout', to: 'auth#logout'
+        get 'auth/providers', to: 'auth#providers'
+
+        get 'me', to: 'me#show'
+      end
+
       # Webhooks (outside of store namespace — no API key authentication)
       namespace :webhooks do
         post 'payments/:payment_method_id', to: 'payments#create', as: :payment_webhook

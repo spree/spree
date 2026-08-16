@@ -63,6 +63,16 @@ module Spree
         invitations.first&.inviter
       end
 
+      # Whether this user belongs to any marketplace vendor. The vendor login
+      # refuses anyone this is false for, so a store's own staff cannot mint a
+      # vendor token — the same rule the admin SSO callback applies to
+      # unprovisioned subjects.
+      #
+      # @return [Boolean]
+      def vendor_member?
+        spree_roles.where(resource_type: 'Spree::Vendor').exists?
+      end
+
     end
   end
 end

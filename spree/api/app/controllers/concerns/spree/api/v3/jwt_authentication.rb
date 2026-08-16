@@ -11,6 +11,11 @@ module Spree
 
         JWT_AUDIENCE_STORE = 'store_api'.freeze
         JWT_AUDIENCE_ADMIN = 'admin_api'.freeze
+        # Marketplace sellers share the admin user class, so the audience — not
+        # the principal — is what keeps a seller's token off the admin API and
+        # an admin's off the vendor panel. Enforced at decode, before any store
+        # or vendor is resolved.
+        JWT_AUDIENCE_VENDOR = 'vendor_api'.freeze
         JWT_ISSUER = 'spree'.freeze
 
         included do
