@@ -112,4 +112,35 @@ RSpec.describe Spree::Api::V3::LineItemSerializer do
       end
     end
   end
+
+  describe 'vendor' do
+    let(:vendor) { create(:vendor, store: store, name: 'Sparks Audio') }
+
+    it 'exposes the seller id without an expand' do
+      line_item.update!(vendor: vendor)
+
+      result = described_class.new(line_item.reload, params: base_params).to_h
+
+      expect(result['vendor_id']).to eq(vendor.prefixed_id)
+      expect(result).not_to have_key('vendor')
+    end
+
+    it 'is nil on a first-party line' do
+      expect(subject['vendor_id']).to be_nil
+    end
+
+    # The storefront gets the public profile, never how the marketplace runs
+    # the seller.
+    it 'embeds the public profile on expand' do
+      line_item.update!(vendor: vendor)
+
+      result = described_class.new(
+        line_item.reload, params: base_params.merge(expand: ['vendor'])
+      ).to_h
+
+      expect(result['vendor']['name']).to eq('Sparks Audio')
+      expect(result['vendor']).not_to have_key('status')
+      expect(result['vendor']).not_to have_key('tax_remittance')
+    end
+  end
 end
