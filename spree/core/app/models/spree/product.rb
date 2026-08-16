@@ -143,7 +143,10 @@ module Spree
     # Guards every write path (including raw prefixed-id assignment) against
     # linking another store's profile.
     validate :delivery_profile_must_belong_to_store, if: :delivery_profile_id_changed?
-    validate :vendor_must_belong_to_store, if: :vendor_id_changed?
+    # Either side moving breaks the pair, and a product's store is not frozen
+    # after create, so watching only the vendor would let a move carry the old
+    # store's seller along.
+    validate :vendor_must_belong_to_store, if: -> { vendor_id_changed? || store_id_changed? }
 
     # Every product has at least one variant. `default_variant` is the "face" of
     # the product (price display, default add-to-cart, property delegation).

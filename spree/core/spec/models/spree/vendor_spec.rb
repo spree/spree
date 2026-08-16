@@ -134,6 +134,18 @@ describe Spree::Vendor do
       expect(build(:product, store: store, vendor: create(:vendor, :approved, store: store))).to be_valid
     end
 
+    # A product's store is not frozen after create, so the pair can also be
+    # broken from the other side — by moving the product and leaving the
+    # seller behind.
+    it 'refuses moving to a store the seller does not belong to' do
+      product = create(:product, store: store, vendor: create(:vendor, :approved, store: store))
+
+      product.store = create(:store)
+
+      expect(product).not_to be_valid
+      expect(product.errors[:vendor]).to be_present
+    end
+
     it 'keeps them when the vendor is destroyed' do
       vendor = create(:vendor, :approved)
       product = create(:product, store: store, vendor: vendor)
