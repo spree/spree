@@ -170,10 +170,12 @@ module Spree
       errors.add(:description, Spree.t(:role_immutable)) unless mutable_was_and_not_admin?
     end
 
-    # Guards compare against the persisted state so flipping `mutable` in the
-    # same save cannot smuggle a change past them.
+    # Guards compare against the persisted `mutable` so flipping it in the same
+    # save cannot smuggle a change past them. `admin?` reads the persisted name
+    # too, and is resource-aware — another resource may call a role "admin"
+    # without inheriting the store super-role's protection.
     def mutable_was_and_not_admin?
-      mutable_was && name_was != ADMIN_ROLE
+      mutable_was && !admin?
     end
 
     def ensure_can_be_deleted

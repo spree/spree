@@ -165,6 +165,16 @@ describe Spree::Role do
       expect(admin_role).not_to be_valid
     end
 
+    # The protection is the store's super-role, not the name: another resource
+    # may call a role "admin" and it stays an ordinary, editable role.
+    it 'leaves a same-named role owned by something else editable' do
+      foreign_admin = create(:role, name: 'admin', resource: vendor_like)
+      foreign_admin.name = 'renamed'
+
+      expect(foreign_admin).to be_mutable
+      expect(foreign_admin).to be_valid
+    end
+
     it 'cannot be destroyed' do
       expect(admin_role.destroy).to be false
       expect(admin_role.errors[:base]).to be_present

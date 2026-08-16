@@ -29,6 +29,8 @@ class AddResourceToSpreeRoles < ActiveRecord::Migration[8.1]
   end
 
   def up
+    ensure_an_owner_is_available!
+
     add_reference :spree_roles, :resource, polymorphic: true, index: false
 
     MigrationRole.reset_column_information
@@ -65,6 +67,19 @@ class AddResourceToSpreeRoles < ActiveRecord::Migration[8.1]
   end
 
   private
+
+  # A role with no assignments has nothing to infer an owner from, so it falls
+  # back to the first store. Without one it would reach the NOT NULL constraint
+  # unowned and fail after the column was already added — say so up front
+  # instead, while nothing has been changed.
+  def ensure_an_owner_is_available!
+    return if MigrationStore.exists?
+    return unless MigrationRole.exists?
+
+    raise ActiveRecord::MigrationError,
+          'Roles exist but no store does, so they have no owner to migrate to. ' \
+          'Create the store these roles belong to (or delete them) and run this again.'
+  end
 
   # The 2025 migration let Rails generate this name, so it is a digest rather
   # than something to hardcode — find it by the columns it spans.

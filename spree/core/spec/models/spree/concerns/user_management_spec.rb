@@ -15,6 +15,12 @@ describe Spree::UserManagement do
         expect(admin_user.has_spree_role?('admin', test_store)).to be true
       end
 
+      it 'refuses a role owned by another resource' do
+        foreign_role = create(:role, name: 'elsewhere', resource: create(:store))
+
+        expect { test_store.add_user(admin_user, foreign_role) }.to raise_error(ArgumentError)
+      end
+
       it 'adds a user to the resource with a specified role' do
         test_store.add_user(admin_user, role)
 
