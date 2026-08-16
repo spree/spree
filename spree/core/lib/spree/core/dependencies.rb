@@ -104,6 +104,12 @@ module Spree
         claim_deny_workflow: 'Spree::Claims::Deny',
         claim_cancel_workflow: 'Spree::Claims::Cancel',
 
+        # vendors
+        vendor_invite_workflow: 'Spree::Vendors::Invite',
+        vendor_approve_workflow: 'Spree::Vendors::Approve',
+        vendor_suspend_workflow: 'Spree::Vendors::Suspend',
+        vendor_reject_workflow: 'Spree::Vendors::Reject',
+
         tax_exemption_certificate_verify_workflow: 'Spree::TaxExemptionCertificates::Verify',
 
         # customers

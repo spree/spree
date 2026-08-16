@@ -425,6 +425,18 @@ Spree::Core::Engine.add_routes do
         # Customer groups (segmentation; used by promotion rules + bulk customer ops)
         resources :customer_groups
 
+        # Marketplace sellers. Each status change is its own member action
+        # because each one is a workflow with its own arguments — mass
+        # assignment would skip the mail and the extension hooks.
+        resources :vendors, concerns: :custom_fieldable do
+          member do
+            post :invite
+            patch :approve
+            patch :suspend
+            patch :reject
+          end
+        end
+
         # Business customers. Branches and their buyers are created under their
         # parent and then addressed directly, so a caller holding a branch id
         # does not have to know which company it belongs to.

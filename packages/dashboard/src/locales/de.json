@@ -1611,6 +1611,43 @@
         "expires_at": {
           "help": "Leer lassen für eine Bescheinigung ohne Ablaufdatum."
         }
+      },
+      "vendor": {
+        "name": {
+          "placeholder": "Sparks Audio"
+        },
+        "slug": {
+          "help": "Teil der Storefront-Adresse des Verkäufers. Wird aus dem Namen abgeleitet, wenn leer."
+        },
+        "contact_email": {
+          "placeholder": "hallo@sparks.example",
+          "help": "Hierhin gehen Einladungen und Mitteilungen des Marktplatzes."
+        },
+        "billing_email": {
+          "label": "Rechnungs-E-Mail",
+          "help": "Hierhin gehen Provisionsrechnungen und Auszahlungsmitteilungen, falls abweichend."
+        },
+        "about": {
+          "label": "Über",
+          "help": "Wird im Storefront-Profil des Verkäufers angezeigt."
+        },
+        "tax_remittance": {
+          "label": "Steuer abgeführt von",
+          "help": "Wer die Verbrauchsteuer auf die Verkäufe dieses Verkäufers abführt."
+        },
+        "payouts_schedule_interval": {
+          "label": "Auszahlungsrhythmus",
+          "help": "Wie oft dieser Verkäufer ausgezahlt wird."
+        },
+        "minimum_payout_amount": {
+          "label": "Mindestauszahlung",
+          "help": "Kleinere Beträge werden auf die nächste Auszahlung übertragen."
+        },
+        "holiday_mode_until": {
+          "label": "Abwesend bis",
+          "placeholder": "Datum wählen",
+          "help": "Der Katalog bleibt sichtbar, es kann bis dahin aber nichts gekauft werden."
+        }
       }
     },
     "delivery_profiles": {
@@ -1882,7 +1919,8 @@
       "reports": "Berichte",
       "returns": "Retouren",
       "settings": "Einstellungen",
-      "transfers": "Umlagerungen"
+      "transfers": "Umlagerungen",
+      "vendors": "Verkäufer"
     },
     "option_types": {
       "columns": {
@@ -4067,6 +4105,113 @@
     },
     "enterprise": {
       "learn_more": "Mehr über Spree Enterprise erfahren"
+    },
+    "vendors": {
+      "add_cta": "Verkäufer hinzufügen",
+      "add_sheet_title": "Neuer Verkäufer",
+      "create_description": "Legen Sie zuerst den Verkäufer an. Einladung, Freigabe und Auszahlungen richten Sie danach auf seiner Seite ein.",
+      "create_label": "Verkäufer anlegen",
+      "search_placeholder": "Verkäufer suchen",
+      "empty": "Noch keine Verkäufer",
+      "products_column": "Produkte",
+      "team_column": "Team",
+      "on_holiday_notice": "Dieser Verkäufer ist abwesend. Sein Katalog bleibt sichtbar, es kann aber nichts gekauft werden.",
+      "delete_confirm": {
+        "title": "Verkäufer löschen?",
+        "message": "Damit wird {{name}} vom Marktplatz entfernt. Die Produkte bleiben ohne Verkäufer im Katalog. Das lässt sich nicht rückgängig machen."
+      },
+      "suspend_confirm": {
+        "title": "Verkäufer sperren?",
+        "message": "{{name}} kann sofort nicht mehr verkaufen. Katalog und Historie bleiben erhalten, und Sie können die Sperre später aufheben."
+      },
+      "reject_confirm": {
+        "title": "Verkäufer ablehnen?",
+        "message": "{{name}} wird nicht zum Marktplatz zugelassen. Sie können ihn später trotzdem freigeben."
+      },
+      "invite_sheet": {
+        "title": "Verkäufer einladen",
+        "description": "Mit der Annahme tritt die Person dem Verkäuferteam bei und kann sich in ihrem eigenen Bereich anmelden.",
+        "email_help": "Die Einladung geht an diese Adresse."
+      },
+      "actions": {
+        "invite": "Einladen",
+        "reinvite": "Erneut senden",
+        "send_invitation": "Einladung senden",
+        "approve": "Freigeben",
+        "reinstate": "Sperre aufheben",
+        "suspend": "Sperren",
+        "reject": "Ablehnen"
+      },
+      "detail": {
+        "load_error": "Dieser Verkäufer konnte nicht geladen werden",
+        "delete_label": "Verkäufer löschen",
+        "status": "Status",
+        "settlement": "Auszahlungen und Steuern",
+        "at_a_glance": "Auf einen Blick",
+        "contact": "Kontakt",
+        "edit_profile": "Profil bearbeiten",
+        "edit_profile_description": "Der Verkäufer pflegt das in seinem eigenen Bereich. Änderungen hier erfolgen in seinem Namen.",
+        "edit_settlement": "Auszahlungen und Steuern bearbeiten",
+        "edit_settlement_description": "Nur Sie sehen und ändern diese Angaben. Der Verkäufer bearbeitet sie nie.",
+        "no_about": "Dieser Verkäufer hat noch keine Beschreibung verfasst."
+      },
+      "status": {
+        "pending": "Offen",
+        "invited": "Eingeladen",
+        "onboarding": "In Einrichtung",
+        "ready_for_review": "Zur Prüfung bereit",
+        "approved": "Freigegeben",
+        "suspended": "Gesperrt",
+        "rejected": "Abgelehnt",
+        "canceled": "Abgebrochen"
+      },
+      "status_help": {
+        "pending": "Angelegt, aber noch niemand eingeladen.",
+        "invited": "Wartet darauf, dass jemand die Einladung annimmt.",
+        "onboarding": "Trägt gerade seine Daten ein.",
+        "ready_for_review": "Wartet auf Ihre Freigabe.",
+        "approved": "Verkauft auf dem Marktplatz.",
+        "suspended": "Vom Verkauf ausgeschlossen. Heben Sie die Sperre auf, um wieder zu handeln.",
+        "rejected": "Nicht zum Marktplatz zugelassen.",
+        "canceled": "Hat vor dem Beitritt zurückgezogen."
+      },
+      "tax_remittance": {
+        "vendor": "Verkäufer führt ab",
+        "platform": "Marktplatz führt ab"
+      },
+      "payout_interval": {
+        "inherit": "Standard des Shops",
+        "daily": "Täglich",
+        "weekly": "Wöchentlich",
+        "biweekly": "Alle zwei Wochen",
+        "monthly": "Monatlich",
+        "manual": "Manuell"
+      },
+      "messages": {
+        "created": "Verkäufer angelegt",
+        "create_failed": "Verkäufer konnte nicht angelegt werden",
+        "updated": "Verkäufer aktualisiert",
+        "update_failed": "Verkäufer konnte nicht aktualisiert werden",
+        "deleted": "Verkäufer gelöscht",
+        "delete_failed": "Verkäufer konnte nicht gelöscht werden",
+        "invited": "Einladung gesendet",
+        "invite_failed": "Einladung konnte nicht gesendet werden",
+        "approved": "Verkäufer freigegeben",
+        "approve_failed": "Verkäufer konnte nicht freigegeben werden",
+        "suspended": "Verkäufer gesperrt",
+        "suspend_failed": "Verkäufer konnte nicht gesperrt werden",
+        "rejected": "Verkäufer abgelehnt",
+        "reject_failed": "Verkäufer konnte nicht abgelehnt werden"
+      },
+      "not_provided": "Nicht angegeben",
+      "images": {
+        "logo_label": "Logo",
+        "logo_help": "Quadratisch passt am besten. Wird überall neben dem Verkäufer angezeigt.",
+        "square_logo_label": "Quadratisches Logo",
+        "square_logo_help": "Für Stellen, die ein enges Quadrat brauchen, etwa ein Profilbild.",
+        "cover_photo_label": "Titelbild",
+        "cover_photo_help": "Ein breites Banner oben auf dem Verkäuferprofil."
+      }
     }
   }
 }

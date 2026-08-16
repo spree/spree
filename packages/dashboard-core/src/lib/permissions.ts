@@ -58,6 +58,7 @@ export const Subject = {
   WebhookEndpoint: 'Spree::WebhookEndpoint',
   WebhookDelivery: 'Spree::WebhookDelivery',
   Wishlist: 'Spree::Wishlist',
+  Vendor: 'Spree::Vendor',
 } as const
 
 export type SubjectName = (typeof Subject)[keyof typeof Subject] | string

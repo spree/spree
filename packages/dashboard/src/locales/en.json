@@ -1611,6 +1611,43 @@
         "expires_at": {
           "help": "Leave empty for a certificate that does not expire."
         }
+      },
+      "vendor": {
+        "name": {
+          "placeholder": "Sparks Audio"
+        },
+        "slug": {
+          "help": "Used in the vendor’s storefront address. Derived from the name when left empty."
+        },
+        "contact_email": {
+          "placeholder": "hello@sparks.example",
+          "help": "Where invitations and marketplace notices go."
+        },
+        "billing_email": {
+          "label": "Billing email",
+          "help": "Where commission invoices and payout notices go, if different."
+        },
+        "about": {
+          "label": "About",
+          "help": "Shown on the vendor’s storefront profile."
+        },
+        "tax_remittance": {
+          "label": "Tax remitted by",
+          "help": "Who accounts for consumer tax on this vendor’s sales."
+        },
+        "payouts_schedule_interval": {
+          "label": "Payout schedule",
+          "help": "How often this vendor is paid."
+        },
+        "minimum_payout_amount": {
+          "label": "Minimum payout",
+          "help": "Balances below this carry over to the next payout."
+        },
+        "holiday_mode_until": {
+          "label": "Away until",
+          "placeholder": "Pick a date",
+          "help": "The catalog stays visible but nothing can be bought until then."
+        }
       }
     },
     "delivery_profiles": {
@@ -1882,7 +1919,8 @@
       "reports": "Reports",
       "returns": "Returns",
       "settings": "Settings",
-      "transfers": "Transfers"
+      "transfers": "Transfers",
+      "vendors": "Vendors"
     },
     "option_types": {
       "columns": {
@@ -4067,6 +4105,113 @@
     },
     "enterprise": {
       "learn_more": "Learn about Spree Enterprise"
+    },
+    "vendors": {
+      "add_cta": "Add vendor",
+      "add_sheet_title": "New vendor",
+      "create_description": "Create the seller record first. You can invite them, approve them and set up payouts from their page.",
+      "create_label": "Create vendor",
+      "search_placeholder": "Search vendors",
+      "empty": "No vendors yet",
+      "products_column": "Products",
+      "team_column": "Team",
+      "on_holiday_notice": "This vendor is away. Their catalog stays visible but nothing can be bought from them.",
+      "delete_confirm": {
+        "title": "Delete vendor?",
+        "message": "This removes {{name}} from the marketplace. Their products stay in your catalog without a seller. This cannot be undone."
+      },
+      "suspend_confirm": {
+        "title": "Suspend vendor?",
+        "message": "{{name}} stops selling immediately. Their catalog and history stay, and you can reinstate them later."
+      },
+      "reject_confirm": {
+        "title": "Reject vendor?",
+        "message": "{{name}} will not be admitted to the marketplace. You can still approve them later if this was a mistake."
+      },
+      "invite_sheet": {
+        "title": "Invite vendor",
+        "description": "They join the vendor team when they accept and can then sign in to their own panel.",
+        "email_help": "The invitation goes to this address."
+      },
+      "actions": {
+        "invite": "Invite",
+        "reinvite": "Send again",
+        "send_invitation": "Send invitation",
+        "approve": "Approve",
+        "reinstate": "Reinstate",
+        "suspend": "Suspend",
+        "reject": "Reject"
+      },
+      "detail": {
+        "load_error": "Could not load this vendor",
+        "delete_label": "Delete vendor",
+        "status": "Status",
+        "settlement": "Payouts and tax",
+        "at_a_glance": "At a glance",
+        "contact": "Contact",
+        "edit_profile": "Edit profile",
+        "edit_profile_description": "The vendor maintains this from their own panel. Edits here apply on their behalf.",
+        "edit_settlement": "Edit payouts and tax",
+        "edit_settlement_description": "Only you can see or change these. The vendor never edits them.",
+        "no_about": "This vendor has not written a description yet."
+      },
+      "status": {
+        "pending": "Pending",
+        "invited": "Invited",
+        "onboarding": "Onboarding",
+        "ready_for_review": "Ready for review",
+        "approved": "Approved",
+        "suspended": "Suspended",
+        "rejected": "Rejected",
+        "canceled": "Canceled"
+      },
+      "status_help": {
+        "pending": "Created, but nobody has been invited yet.",
+        "invited": "Waiting for someone to accept the invitation.",
+        "onboarding": "Filling in their details.",
+        "ready_for_review": "Waiting for you to approve them.",
+        "approved": "Selling on the marketplace.",
+        "suspended": "Stopped from selling. Reinstate to let them trade again.",
+        "rejected": "Not admitted to the marketplace.",
+        "canceled": "They withdrew before joining."
+      },
+      "tax_remittance": {
+        "vendor": "Vendor remits",
+        "platform": "Marketplace remits"
+      },
+      "payout_interval": {
+        "inherit": "Use store default",
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "biweekly": "Every two weeks",
+        "monthly": "Monthly",
+        "manual": "Manual"
+      },
+      "messages": {
+        "created": "Vendor created",
+        "create_failed": "Could not create the vendor",
+        "updated": "Vendor updated",
+        "update_failed": "Could not update the vendor",
+        "deleted": "Vendor deleted",
+        "delete_failed": "Could not delete the vendor",
+        "invited": "Invitation sent",
+        "invite_failed": "Could not send the invitation",
+        "approved": "Vendor approved",
+        "approve_failed": "Could not approve the vendor",
+        "suspended": "Vendor suspended",
+        "suspend_failed": "Could not suspend the vendor",
+        "rejected": "Vendor rejected",
+        "reject_failed": "Could not reject the vendor"
+      },
+      "not_provided": "Not provided",
+      "images": {
+        "logo_label": "Logo",
+        "logo_help": "Square works best. Shown beside the vendor everywhere they appear.",
+        "square_logo_label": "Square logo",
+        "square_logo_help": "Used where a tight square is needed, such as an avatar.",
+        "cover_photo_label": "Cover photo",
+        "cover_photo_help": "A wide banner across the top of the vendor profile."
+      }
     }
   }
 }

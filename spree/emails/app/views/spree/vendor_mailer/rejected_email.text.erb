@@ -1,0 +1,7 @@
+<%= Spree.t('vendor_mailer.greeting', vendor_name: @vendor.name) %>
+
+<%= Spree.t('vendor_mailer.rejected_email.message', store_name: current_store.name) %>
+
+<%= Spree.t('vendor_mailer.get_in_touch', store_email: current_store.mail_from_address) %>
+
+<%= Spree.t('order_mailer.store_team', store_name: current_store.name) %>

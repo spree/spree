@@ -337,14 +337,23 @@ module Spree
         [Spree.admin_user_class, Spree::Invitation, Spree::Role, Spree::RoleUser]
       })
 
-      # A seller's own record: profile, branding, addresses, onboarding.
+      # Running the marketplace: admitting sellers, approving them, suspending
+      # them. Deliberately not opened to the vendor audience — a seller
+      # administering other sellers is the one thing this key must not allow.
+      register_resource(:vendors, group: :access, subjects: -> { [Spree::Vendor] })
+
+      # A seller editing their own record: profile, branding, addresses,
+      # onboarding.
       #
-      # Grantable to staff as well, like every resource — the operator runs the
-      # marketplace and manages its sellers. What keeps a seller to their own
-      # record is not this key but the branch they hold it on: the vendor
-      # endpoints scope-fetch through `current_vendor`, so the key answers what
-      # they may do and the scope answers to which vendor.
-      register_resource(:vendor_profile, group: :access, subjects: -> { [Spree::Vendor] },
+      # A symbol subject, not `Spree::Vendor`: that class belongs to `vendors`
+      # above — the operator's key — and claiming it twice would make
+      # `resource_for_subject` answer by registration order, besides letting a
+      # seller's key manage vendor records generally. A symbol grants a real
+      # `can` rule (so `authorize!` on the seller branch resolves) while
+      # staying invisible to `resource_for_subject`, which matches Classes
+      # only. Which vendor they may touch is still `current_vendor`
+      # scope-fetching, never an ability rule.
+      register_resource(:vendor_profile, group: :access, subjects: -> { [:vendor_profile] },
                                          audiences: %i[vendor])
 
       register_resource(:dashboard, group: :analytics, subjects: -> { [:dashboard] },

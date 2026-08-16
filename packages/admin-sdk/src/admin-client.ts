@@ -219,6 +219,11 @@ import type {
   TrackingCarrierOption,
   VariantCreateParams,
   VariantUpdateParams,
+  VendorCreateParams,
+  VendorInviteParams,
+  VendorRejectParams,
+  VendorSuspendParams,
+  VendorUpdateParams,
   WebhookEndpointCreateParams,
   WebhookEndpointDisableParams,
   WebhookEndpointUpdateParams,
@@ -299,6 +304,7 @@ import type {
   TranslatableResource,
   TranslationBatchEntry,
   Variant,
+  Vendor,
   WebhookDelivery,
   WebhookEndpoint,
 } from './types'
@@ -2341,6 +2347,60 @@ export class AdminClient {
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/customer_groups/${id}`, options),
+  }
+
+  // ============================================
+  // Marketplace sellers
+  // ============================================
+
+  /**
+   * CRUD for `Spree::Vendor`, plus the lifecycle actions. Status is never
+   * writable through `update` — each transition is a workflow that also
+   * sends mail and runs extension hooks, so moving a vendor by hand would
+   * skip all of it.
+   */
+  readonly vendors = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Vendor>> =>
+      this.request<PaginatedResponse<Vendor>>('GET', '/vendors', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, params?: { expand?: string[] }, options?: RequestOptions): Promise<Vendor> =>
+      this.request<Vendor>('GET', `/vendors/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+
+    create: (params: VendorCreateParams, options?: RequestOptions): Promise<Vendor> =>
+      this.request<Vendor>('POST', '/vendors', { ...options, body: params }),
+
+    update: (id: string, params: VendorUpdateParams, options?: RequestOptions): Promise<Vendor> =>
+      this.request<Vendor>('PATCH', `/vendors/${id}`, { ...options, body: params }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/vendors/${id}`, options),
+
+    /** Opens the vendor's team to someone; they join when they accept. */
+    invite: (id: string, params: VendorInviteParams, options?: RequestOptions): Promise<Vendor> =>
+      this.request<Vendor>('POST', `/vendors/${id}/invite`, { ...options, body: params }),
+
+    /** Lets the vendor trade — also the way back from suspended or rejected. */
+    approve: (id: string, options?: RequestOptions): Promise<Vendor> =>
+      this.request<Vendor>('PATCH', `/vendors/${id}/approve`, options),
+
+    suspend: (
+      id: string,
+      params?: VendorSuspendParams,
+      options?: RequestOptions,
+    ): Promise<Vendor> =>
+      this.request<Vendor>('PATCH', `/vendors/${id}/suspend`, { ...options, body: params }),
+
+    reject: (id: string, params?: VendorRejectParams, options?: RequestOptions): Promise<Vendor> =>
+      this.request<Vendor>('PATCH', `/vendors/${id}/reject`, { ...options, body: params }),
   }
 
   // ============================================

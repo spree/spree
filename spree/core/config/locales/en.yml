@@ -1665,6 +1665,22 @@ en:
     variants: Variants
     vendor: Vendor
     vendor_access_denied: You do not have access to this vendor.
+    vendor_mailer:
+      approved_email:
+        action: Go to your dashboard
+        heading: You're approved
+        message: Your application to sell on %{store_name} has been approved. You can now list products and start taking orders.
+        subject: You're approved to sell on %{store_name}
+      get_in_touch: If you think this is a mistake, reply to this email or contact us at %{store_email}.
+      greeting: Hi %{vendor_name},
+      rejected_email:
+        heading: About your application
+        message: Your application to sell on %{store_name} has not been accepted.
+        subject: Your application to sell on %{store_name}
+      suspended_email:
+        heading: Your account has been suspended
+        message: Selling on %{store_name} has been paused for your account. Your products and order history are unaffected.
+        subject: Your %{store_name} account has been suspended
     vendor_membership_required: This account does not belong to any vendor.
     verified: Verified
     verified_at: Verified at

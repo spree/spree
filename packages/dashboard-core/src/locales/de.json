@@ -365,6 +365,9 @@
       },
       "number": {
         "label": "Nummer"
+      },
+      "contact_email": {
+        "label": "Kontakt-E-Mail"
       }
     },
     "components": {

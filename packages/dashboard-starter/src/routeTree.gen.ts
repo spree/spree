@@ -24,6 +24,7 @@ import { Route as GettingStartedRouteImport } from './../../dashboard/src/routes
 import { Route as ExchangesRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/exchanges'
 import { Route as ClaimsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/claims'
 import { Route as SplatRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/$'
+import { Route as VendorsIndexRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/vendors/index'
 import { Route as SettingsIndexRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/index'
 import { Route as PromotionsIndexRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/promotions/index'
 import { Route as ProductsIndexRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/products/index'
@@ -31,6 +32,7 @@ import { Route as OrdersIndexRouteImport } from './../../dashboard/src/routes/_a
 import { Route as CustomersIndexRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/customers/index'
 import { Route as CompaniesIndexRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/companies/index'
 import { Route as BrandsDotindexRouteImport } from './../../dashboard-plugin-example/src/routes/brands.index'
+import { Route as VendorsVendorIdRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/vendors/$vendorId'
 import { Route as SettingsTaxRatesRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/tax-rates'
 import { Route as SettingsTaxCategoriesRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/tax-categories'
 import { Route as SettingsStoreRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/store'
@@ -155,6 +157,11 @@ const SplatRoute = SplatRouteImport.update({
   path: '/$',
   getParentRoute: () => authenticatedStoreIdRoute,
 } as any)
+const VendorsIndexRoute = VendorsIndexRouteImport.update({
+  id: '/vendors/',
+  path: '/vendors/',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
 const SettingsIndexRoute = SettingsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -188,6 +195,11 @@ const CompaniesIndexRoute = CompaniesIndexRouteImport.update({
 const BrandsDotindexRoute = BrandsDotindexRouteImport.update({
   id: '/brands/',
   path: '/brands/',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const VendorsVendorIdRoute = VendorsVendorIdRouteImport.update({
+  id: '/vendors/$vendorId',
+  path: '/vendors/$vendorId',
   getParentRoute: () => authenticatedStoreIdRoute,
 } as any)
 const SettingsTaxRatesRoute = SettingsTaxRatesRouteImport.update({
@@ -486,6 +498,7 @@ export interface FileRoutesByFullPath {
   '/$storeId/settings/store': typeof SettingsStoreRoute
   '/$storeId/settings/tax-categories': typeof SettingsTaxCategoriesRoute
   '/$storeId/settings/tax-rates': typeof SettingsTaxRatesRoute
+  '/$storeId/vendors/$vendorId': typeof VendorsVendorIdRoute
   '/$storeId/brands/': typeof BrandsDotindexRoute
   '/$storeId/companies/': typeof CompaniesIndexRoute
   '/$storeId/customers/': typeof CustomersIndexRoute
@@ -493,6 +506,7 @@ export interface FileRoutesByFullPath {
   '/$storeId/products/': typeof ProductsIndexRoute
   '/$storeId/promotions/': typeof PromotionsIndexRoute
   '/$storeId/settings/': typeof SettingsIndexRoute
+  '/$storeId/vendors/': typeof VendorsIndexRoute
   '/$storeId/companies/locations/$locationId': typeof CompaniesLocationsDotlocationIdRoute
   '/$storeId/orders/$orderId/edit': typeof OrdersOrderIdEditRoute
   '/$storeId/products/categories/$categoryId': typeof ProductsCategoriesCategoryIdRoute
@@ -555,6 +569,7 @@ export interface FileRoutesByTo {
   '/$storeId/settings/store': typeof SettingsStoreRoute
   '/$storeId/settings/tax-categories': typeof SettingsTaxCategoriesRoute
   '/$storeId/settings/tax-rates': typeof SettingsTaxRatesRoute
+  '/$storeId/vendors/$vendorId': typeof VendorsVendorIdRoute
   '/$storeId/brands': typeof BrandsDotindexRoute
   '/$storeId/companies': typeof CompaniesIndexRoute
   '/$storeId/customers': typeof CustomersIndexRoute
@@ -562,6 +577,7 @@ export interface FileRoutesByTo {
   '/$storeId/products': typeof ProductsIndexRoute
   '/$storeId/promotions': typeof PromotionsIndexRoute
   '/$storeId/settings': typeof SettingsIndexRoute
+  '/$storeId/vendors': typeof VendorsIndexRoute
   '/$storeId/companies/locations/$locationId': typeof CompaniesLocationsDotlocationIdRoute
   '/$storeId/orders/$orderId/edit': typeof OrdersOrderIdEditRoute
   '/$storeId/products/categories/$categoryId': typeof ProductsCategoriesCategoryIdRoute
@@ -628,6 +644,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/settings/store': typeof SettingsStoreRoute
   '/_authenticated/$storeId/settings/tax-categories': typeof SettingsTaxCategoriesRoute
   '/_authenticated/$storeId/settings/tax-rates': typeof SettingsTaxRatesRoute
+  '/_authenticated/$storeId/vendors/$vendorId': typeof VendorsVendorIdRoute
   '/_authenticated/$storeId/brands/': typeof BrandsDotindexRoute
   '/_authenticated/$storeId/companies/': typeof CompaniesIndexRoute
   '/_authenticated/$storeId/customers/': typeof CustomersIndexRoute
@@ -635,6 +652,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/products/': typeof ProductsIndexRoute
   '/_authenticated/$storeId/promotions/': typeof PromotionsIndexRoute
   '/_authenticated/$storeId/settings/': typeof SettingsIndexRoute
+  '/_authenticated/$storeId/vendors/': typeof VendorsIndexRoute
   '/_authenticated/$storeId/companies/locations/$locationId': typeof CompaniesLocationsDotlocationIdRoute
   '/_authenticated/$storeId/orders/$orderId/edit': typeof OrdersOrderIdEditRoute
   '/_authenticated/$storeId/products/categories/$categoryId': typeof ProductsCategoriesCategoryIdRoute
@@ -701,6 +719,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings/store'
     | '/$storeId/settings/tax-categories'
     | '/$storeId/settings/tax-rates'
+    | '/$storeId/vendors/$vendorId'
     | '/$storeId/brands/'
     | '/$storeId/companies/'
     | '/$storeId/customers/'
@@ -708,6 +727,7 @@ export interface FileRouteTypes {
     | '/$storeId/products/'
     | '/$storeId/promotions/'
     | '/$storeId/settings/'
+    | '/$storeId/vendors/'
     | '/$storeId/companies/locations/$locationId'
     | '/$storeId/orders/$orderId/edit'
     | '/$storeId/products/categories/$categoryId'
@@ -770,6 +790,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings/store'
     | '/$storeId/settings/tax-categories'
     | '/$storeId/settings/tax-rates'
+    | '/$storeId/vendors/$vendorId'
     | '/$storeId/brands'
     | '/$storeId/companies'
     | '/$storeId/customers'
@@ -777,6 +798,7 @@ export interface FileRouteTypes {
     | '/$storeId/products'
     | '/$storeId/promotions'
     | '/$storeId/settings'
+    | '/$storeId/vendors'
     | '/$storeId/companies/locations/$locationId'
     | '/$storeId/orders/$orderId/edit'
     | '/$storeId/products/categories/$categoryId'
@@ -842,6 +864,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/settings/store'
     | '/_authenticated/$storeId/settings/tax-categories'
     | '/_authenticated/$storeId/settings/tax-rates'
+    | '/_authenticated/$storeId/vendors/$vendorId'
     | '/_authenticated/$storeId/brands/'
     | '/_authenticated/$storeId/companies/'
     | '/_authenticated/$storeId/customers/'
@@ -849,6 +872,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/products/'
     | '/_authenticated/$storeId/promotions/'
     | '/_authenticated/$storeId/settings/'
+    | '/_authenticated/$storeId/vendors/'
     | '/_authenticated/$storeId/companies/locations/$locationId'
     | '/_authenticated/$storeId/orders/$orderId/edit'
     | '/_authenticated/$storeId/products/categories/$categoryId'
@@ -986,6 +1010,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SplatRouteImport
       parentRoute: typeof authenticatedStoreIdRoute
     }
+    '/_authenticated/$storeId/vendors/': {
+      id: '/_authenticated/$storeId/vendors/'
+      path: '/vendors'
+      fullPath: '/$storeId/vendors/'
+      preLoaderRoute: typeof VendorsIndexRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
+    }
     '/_authenticated/$storeId/settings/': {
       id: '/_authenticated/$storeId/settings/'
       path: '/'
@@ -1033,6 +1064,13 @@ declare module '@tanstack/react-router' {
       path: '/brands'
       fullPath: '/$storeId/brands/'
       preLoaderRoute: typeof BrandsDotindexRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
+    }
+    '/_authenticated/$storeId/vendors/$vendorId': {
+      id: '/_authenticated/$storeId/vendors/$vendorId'
+      path: '/vendors/$vendorId'
+      fullPath: '/$storeId/vendors/$vendorId'
+      preLoaderRoute: typeof VendorsVendorIdRouteImport
       parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/settings/tax-rates': {
@@ -1457,12 +1495,14 @@ interface authenticatedStoreIdRouteChildren {
   PromotionsPromotionIdRoute: typeof PromotionsPromotionIdRoute
   PromotionsGiftCardsRoute: typeof PromotionsGiftCardsRoute
   PromotionsNewRoute: typeof PromotionsNewRoute
+  VendorsVendorIdRoute: typeof VendorsVendorIdRoute
   BrandsDotindexRoute: typeof BrandsDotindexRoute
   CompaniesIndexRoute: typeof CompaniesIndexRoute
   CustomersIndexRoute: typeof CustomersIndexRoute
   OrdersIndexRoute: typeof OrdersIndexRoute
   ProductsIndexRoute: typeof ProductsIndexRoute
   PromotionsIndexRoute: typeof PromotionsIndexRoute
+  VendorsIndexRoute: typeof VendorsIndexRoute
   CompaniesLocationsDotlocationIdRoute: typeof CompaniesLocationsDotlocationIdRoute
   OrdersOrderIdEditRoute: typeof OrdersOrderIdEditRoute
   ProductsCategoriesCategoryIdRoute: typeof ProductsCategoriesCategoryIdRoute
@@ -1498,12 +1538,14 @@ const authenticatedStoreIdRouteChildren: authenticatedStoreIdRouteChildren = {
   PromotionsPromotionIdRoute: PromotionsPromotionIdRoute,
   PromotionsGiftCardsRoute: PromotionsGiftCardsRoute,
   PromotionsNewRoute: PromotionsNewRoute,
+  VendorsVendorIdRoute: VendorsVendorIdRoute,
   BrandsDotindexRoute: BrandsDotindexRoute,
   CompaniesIndexRoute: CompaniesIndexRoute,
   CustomersIndexRoute: CustomersIndexRoute,
   OrdersIndexRoute: OrdersIndexRoute,
   ProductsIndexRoute: ProductsIndexRoute,
   PromotionsIndexRoute: PromotionsIndexRoute,
+  VendorsIndexRoute: VendorsIndexRoute,
   CompaniesLocationsDotlocationIdRoute: CompaniesLocationsDotlocationIdRoute,
   OrdersOrderIdEditRoute: OrdersOrderIdEditRoute,
   ProductsCategoriesCategoryIdRoute: ProductsCategoriesCategoryIdRoute,

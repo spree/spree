@@ -1351,6 +1351,73 @@ export interface CustomerGroupUpdateParams {
 }
 
 /**
+ * A marketplace seller. `status` is absent by design — a vendor moves
+ * through its lifecycle via the invite/approve/suspend/reject actions,
+ * never through a plain update.
+ */
+export interface VendorCreateParams {
+  name: string
+  /** URL-safe slug; derived from `name` when omitted. */
+  slug?: string
+  contact_email?: string | null
+  billing_email?: string | null
+  /** Sanitized HTML — the vendor's public description. */
+  about?: string | null
+  /**
+   * Branding attachments. Pass an ActiveStorage signed id to set one, `null`
+   * to remove it, or omit the key to leave it untouched.
+   */
+  logo?: string | null
+  square_logo?: string | null
+  cover_photo?: string | null
+  tax_remittance?: 'vendor' | 'platform'
+  payouts_schedule_interval?: 'daily' | 'weekly' | 'biweekly' | 'monthly' | 'manual' | null
+  minimum_payout_amount?: string | number | null
+  /** Set while the vendor is away: the catalog stays but stops selling. */
+  holiday_mode_until?: string | null
+  /**
+   * Written as nested attributes, never by id — an address has no store of
+   * its own, so an id would reference a row belonging to someone else.
+   */
+  billing_address?: VendorAddressParams
+  returns_address?: VendorAddressParams
+  metadata?: Record<string, unknown>
+}
+
+/** The vendor's own billing / returns address. */
+export interface VendorAddressParams {
+  first_name?: string
+  last_name?: string
+  company?: string
+  address1?: string
+  address2?: string
+  city?: string
+  postal_code?: string
+  zipcode?: string
+  phone?: string
+  country_code?: string
+  state_code?: string
+  state_name?: string
+  label?: string
+}
+
+export type VendorUpdateParams = Partial<VendorCreateParams>
+
+export interface VendorInviteParams {
+  email: string
+  /** A role the vendor owns; defaults to the vendor's own admin role. */
+  role_id?: string
+}
+
+export interface VendorSuspendParams {
+  reason?: string
+}
+
+export interface VendorRejectParams {
+  reason?: string
+}
+
+/**
  * One entry in `preference_schema`, describing a single tunable knob on
  * a STI subclass (payment provider, promotion action, promotion rule).
  *

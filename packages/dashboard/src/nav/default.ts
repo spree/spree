@@ -7,6 +7,7 @@ import {
   MapIcon,
   PackageIcon,
   SettingsIcon,
+  StoreIcon,
   TagIcon,
   UsersIcon,
 } from 'lucide-react'
@@ -154,6 +155,17 @@ nav.add({
       position: 200,
     },
   ],
+})
+
+// Only a marketplace has sellers, so the entry hides itself on a store whose
+// staff hold no vendor permission at all.
+nav.add({
+  key: 'vendors',
+  label: i18n.t('admin.nav.vendors'),
+  path: '/vendors',
+  icon: StoreIcon,
+  subject: Subject.Vendor,
+  position: 450,
 })
 
 nav.add({

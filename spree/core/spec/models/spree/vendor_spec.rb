@@ -196,4 +196,44 @@ describe Spree::Vendor do
       expect(build(:vendor, payouts_schedule_interval: nil, minimum_payout_amount: nil)).to be_valid
     end
   end
+
+  describe 'addresses' do
+    let(:vendor) { create(:vendor) }
+
+    it 'writes an address from nested attributes' do
+      vendor.update!(billing_address: { first_name: 'Ada', last_name: 'Lovelace',
+                                        address1: '1 Vendor Way', city: 'London',
+                                        postal_code: 'EC1A 1BB', country_code: 'GB', phone: '555' })
+
+      expect(vendor.reload.billing_address.address1).to eq('1 Vendor Way')
+    end
+
+    # A vendor is paranoid, so destroy is a soft delete. Taking the addresses
+    # with it would hard-delete rows a restored vendor still points at.
+    it 'keeps its addresses when soft-deleted, and finds them again on restore' do
+      vendor.update!(billing_address: create(:address))
+      address_id = vendor.billing_address_id
+
+      vendor.destroy
+
+      expect(Spree::Address.exists?(address_id)).to be(true)
+      vendor.restore
+      expect(vendor.reload.billing_address_id).to eq(address_id)
+    end
+  end
+
+  describe 'deletion' do
+    let(:vendor) { create(:vendor) }
+
+    # A role refuses deletion while anyone holds it. That guard is for deleting
+    # a role on its own; when the whole vendor goes, its team goes with it.
+    it 'takes its team with it, so an invited vendor stays deletable' do
+      Spree::Vendors::Invite.call(vendor: vendor, email: 'seller@example.com',
+                                  inviter: create(:admin_user))
+
+      expect(vendor.destroy).to be_truthy
+      expect(Spree::Role.where(resource: vendor)).to be_empty
+      expect(Spree::Invitation.where(resource: vendor)).to be_empty
+    end
+  end
 end

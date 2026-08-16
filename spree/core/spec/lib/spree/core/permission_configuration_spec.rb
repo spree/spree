@@ -210,4 +210,33 @@ RSpec.describe Spree::PermissionConfiguration do
       )
     end
   end
+
+  describe 'vendor_profile' do
+    let(:store) { @default_store }
+    let(:vendor) { create(:vendor, store: store) }
+    let(:user) { create(:admin_user) }
+
+    let(:seller_ability) do
+      role = create(:role, name: 'seller', resource: vendor, permissions: %w[write_vendor_profile])
+      create(:role_user, role: role, user: user)
+
+      Spree::Ability.new(user, resource: vendor)
+    end
+
+    # A key that grants no subject silently authorizes nothing: `authorize!` on
+    # the seller branch would fail closed with the permission apparently held.
+    it 'grants a real ability rule' do
+      expect(seller_ability).to be_can(:manage, :vendor_profile)
+    end
+
+    # The subject is a symbol so it cannot be confused with the operator's
+    # `vendors` key, which owns the Spree::Vendor class.
+    it 'does not let a seller manage vendor records' do
+      expect(seller_ability).not_to be_can(:manage, vendor)
+    end
+
+    it 'leaves Spree::Vendor mapped to the operator resource' do
+      expect(Spree.permissions.resource_for_subject(Spree::Vendor).name).to eq(:vendors)
+    end
+  end
 end

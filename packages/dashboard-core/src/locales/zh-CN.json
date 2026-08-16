@@ -365,6 +365,9 @@
       },
       "number": {
         "label": "编号"
+      },
+      "contact_email": {
+        "label": "联系邮箱"
       }
     },
     "components": {

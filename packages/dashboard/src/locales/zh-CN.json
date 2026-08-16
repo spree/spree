@@ -1608,6 +1608,43 @@
         "expires_at": {
           "help": "留空表示该证明长期有效。"
         }
+      },
+      "vendor": {
+        "name": {
+          "placeholder": "Sparks Audio"
+        },
+        "slug": {
+          "help": "用于卖家店铺地址。留空时根据名称生成。"
+        },
+        "contact_email": {
+          "placeholder": "hello@sparks.example",
+          "help": "邀请和市场通知会发送到这里。"
+        },
+        "billing_email": {
+          "label": "账单邮箱",
+          "help": "佣金发票和结算通知的接收邮箱（如果不同）。"
+        },
+        "about": {
+          "label": "简介",
+          "help": "显示在卖家的店铺资料页。"
+        },
+        "tax_remittance": {
+          "label": "税务申报方",
+          "help": "由谁为该卖家的销售申报消费税。"
+        },
+        "payouts_schedule_interval": {
+          "label": "结算周期",
+          "help": "该卖家多久收到一次款项。"
+        },
+        "minimum_payout_amount": {
+          "label": "最低结算金额",
+          "help": "低于此金额的余额会顺延到下次结算。"
+        },
+        "holiday_mode_until": {
+          "label": "休假至",
+          "placeholder": "选择日期",
+          "help": "在此之前商品仍然可见，但无法购买。"
+        }
       }
     },
     "delivery_profiles": {
@@ -1879,7 +1916,8 @@
       "reports": "报表",
       "returns": "退货",
       "settings": "设置",
-      "transfers": "调拨"
+      "transfers": "调拨",
+      "vendors": "卖家"
     },
     "option_types": {
       "columns": {
@@ -4063,6 +4101,113 @@
     },
     "enterprise": {
       "learn_more": "了解 Spree Enterprise"
+    },
+    "vendors": {
+      "add_cta": "添加卖家",
+      "add_sheet_title": "新建卖家",
+      "create_description": "先创建卖家记录，然后在卖家页面邀请、批准并设置结算。",
+      "create_label": "创建卖家",
+      "search_placeholder": "搜索卖家",
+      "empty": "暂无卖家",
+      "products_column": "商品",
+      "team_column": "团队",
+      "on_holiday_notice": "该卖家处于休假状态。商品仍然可见，但无法购买。",
+      "delete_confirm": {
+        "title": "删除卖家？",
+        "message": "这会将 {{name}} 从市场中移除。其商品会保留在目录中但不再归属任何卖家。此操作无法撤销。"
+      },
+      "suspend_confirm": {
+        "title": "暂停卖家？",
+        "message": "{{name}} 将立即停止销售。商品和历史记录会保留，之后可以恢复。"
+      },
+      "reject_confirm": {
+        "title": "拒绝卖家？",
+        "message": "{{name}} 将不会进入市场。如有需要，之后仍可批准。"
+      },
+      "invite_sheet": {
+        "title": "邀请卖家",
+        "description": "对方接受后即加入卖家团队，并可登录自己的面板。",
+        "email_help": "邀请将发送到该邮箱。"
+      },
+      "actions": {
+        "invite": "邀请",
+        "reinvite": "重新发送",
+        "send_invitation": "发送邀请",
+        "approve": "批准",
+        "reinstate": "恢复",
+        "suspend": "暂停",
+        "reject": "拒绝"
+      },
+      "detail": {
+        "load_error": "无法加载该卖家",
+        "delete_label": "删除卖家",
+        "status": "状态",
+        "settlement": "结算与税务",
+        "at_a_glance": "概览",
+        "contact": "联系方式",
+        "edit_profile": "编辑资料",
+        "edit_profile_description": "卖家在自己的面板中维护这些信息。在这里的修改代表卖家进行。",
+        "edit_settlement": "编辑结算与税务",
+        "edit_settlement_description": "只有你能查看和修改这些设置，卖家无法编辑。",
+        "no_about": "该卖家尚未填写简介。"
+      },
+      "status": {
+        "pending": "待处理",
+        "invited": "已邀请",
+        "onboarding": "入驻中",
+        "ready_for_review": "待审核",
+        "approved": "已批准",
+        "suspended": "已暂停",
+        "rejected": "已拒绝",
+        "canceled": "已取消"
+      },
+      "status_help": {
+        "pending": "已创建，但尚未邀请任何人。",
+        "invited": "等待对方接受邀请。",
+        "onboarding": "正在填写资料。",
+        "ready_for_review": "等待你的批准。",
+        "approved": "正在市场中销售。",
+        "suspended": "已停止销售。恢复后可继续经营。",
+        "rejected": "未获准进入市场。",
+        "canceled": "在加入前已退出。"
+      },
+      "tax_remittance": {
+        "vendor": "卖家申报",
+        "platform": "市场申报"
+      },
+      "payout_interval": {
+        "inherit": "使用商店默认值",
+        "daily": "每天",
+        "weekly": "每周",
+        "biweekly": "每两周",
+        "monthly": "每月",
+        "manual": "手动"
+      },
+      "messages": {
+        "created": "卖家已创建",
+        "create_failed": "无法创建卖家",
+        "updated": "卖家已更新",
+        "update_failed": "无法更新卖家",
+        "deleted": "卖家已删除",
+        "delete_failed": "无法删除卖家",
+        "invited": "邀请已发送",
+        "invite_failed": "无法发送邀请",
+        "approved": "卖家已批准",
+        "approve_failed": "无法批准卖家",
+        "suspended": "卖家已暂停",
+        "suspend_failed": "无法暂停卖家",
+        "rejected": "卖家已拒绝",
+        "reject_failed": "无法拒绝卖家"
+      },
+      "not_provided": "未填写",
+      "images": {
+        "logo_label": "标志",
+        "logo_help": "建议使用正方形。会在卖家出现的各处显示在其旁边。",
+        "square_logo_label": "方形标志",
+        "square_logo_help": "用于需要严格正方形的位置，例如头像。",
+        "cover_photo_label": "封面图",
+        "cover_photo_help": "卖家资料页顶部的宽幅横幅。"
+      }
     }
   }
 }

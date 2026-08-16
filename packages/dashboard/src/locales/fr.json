@@ -1611,6 +1611,43 @@
         "expires_at": {
           "help": "Laissez vide pour une attestation sans date d'expiration."
         }
+      },
+      "vendor": {
+        "name": {
+          "placeholder": "Sparks Audio"
+        },
+        "slug": {
+          "help": "Utilisé dans l'adresse de la boutique du vendeur. Dérivé du nom s'il est vide."
+        },
+        "contact_email": {
+          "placeholder": "bonjour@sparks.example",
+          "help": "Destination des invitations et des avis de la place de marché."
+        },
+        "billing_email": {
+          "label": "E-mail de facturation",
+          "help": "Destination des factures de commission et des avis de versement, si elle diffère."
+        },
+        "about": {
+          "label": "À propos",
+          "help": "Affiché sur le profil boutique du vendeur."
+        },
+        "tax_remittance": {
+          "label": "Taxe reversée par",
+          "help": "Qui déclare la taxe à la consommation sur les ventes de ce vendeur."
+        },
+        "payouts_schedule_interval": {
+          "label": "Fréquence de versement",
+          "help": "À quelle fréquence ce vendeur est payé."
+        },
+        "minimum_payout_amount": {
+          "label": "Versement minimum",
+          "help": "Les soldes inférieurs sont reportés au versement suivant."
+        },
+        "holiday_mode_until": {
+          "label": "Absent jusqu'au",
+          "placeholder": "Choisir une date",
+          "help": "Le catalogue reste visible mais rien ne peut être acheté jusque-là."
+        }
       }
     },
     "delivery_profiles": {
@@ -1882,7 +1919,8 @@
       "reports": "Rapports",
       "returns": "Retours",
       "settings": "Paramètres",
-      "transfers": "Transferts"
+      "transfers": "Transferts",
+      "vendors": "Vendeurs"
     },
     "option_types": {
       "columns": {
@@ -4067,6 +4105,113 @@
     },
     "enterprise": {
       "learn_more": "En savoir plus sur Spree Enterprise"
+    },
+    "vendors": {
+      "add_cta": "Ajouter un vendeur",
+      "add_sheet_title": "Nouveau vendeur",
+      "create_description": "Créez d'abord la fiche du vendeur. Vous pourrez l'inviter, l'approuver et configurer ses versements depuis sa page.",
+      "create_label": "Créer le vendeur",
+      "search_placeholder": "Rechercher des vendeurs",
+      "empty": "Aucun vendeur pour le moment",
+      "products_column": "Produits",
+      "team_column": "Équipe",
+      "on_holiday_notice": "Ce vendeur est absent. Son catalogue reste visible mais rien ne peut être acheté.",
+      "delete_confirm": {
+        "title": "Supprimer le vendeur ?",
+        "message": "Cela retire {{name}} de la place de marché. Ses produits restent dans votre catalogue sans vendeur. Action irréversible."
+      },
+      "suspend_confirm": {
+        "title": "Suspendre le vendeur ?",
+        "message": "{{name}} cesse de vendre immédiatement. Son catalogue et son historique sont conservés, et vous pourrez le réactiver plus tard."
+      },
+      "reject_confirm": {
+        "title": "Refuser le vendeur ?",
+        "message": "{{name}} ne sera pas admis sur la place de marché. Vous pourrez toujours l'approuver plus tard."
+      },
+      "invite_sheet": {
+        "title": "Inviter un vendeur",
+        "description": "La personne rejoint l'équipe du vendeur en acceptant et peut alors se connecter à son propre espace.",
+        "email_help": "L'invitation part à cette adresse."
+      },
+      "actions": {
+        "invite": "Inviter",
+        "reinvite": "Renvoyer",
+        "send_invitation": "Envoyer l'invitation",
+        "approve": "Approuver",
+        "reinstate": "Réactiver",
+        "suspend": "Suspendre",
+        "reject": "Refuser"
+      },
+      "detail": {
+        "load_error": "Impossible de charger ce vendeur",
+        "delete_label": "Supprimer le vendeur",
+        "status": "Statut",
+        "settlement": "Versements et taxes",
+        "at_a_glance": "En un coup d'œil",
+        "contact": "Contact",
+        "edit_profile": "Modifier le profil",
+        "edit_profile_description": "Le vendeur gère ces informations depuis son propre espace. Les modifications faites ici le sont en son nom.",
+        "edit_settlement": "Modifier les versements et les taxes",
+        "edit_settlement_description": "Vous seul pouvez voir et modifier ces réglages. Le vendeur ne les modifie jamais.",
+        "no_about": "Ce vendeur n'a pas encore rédigé de description."
+      },
+      "status": {
+        "pending": "En attente",
+        "invited": "Invité",
+        "onboarding": "Configuration",
+        "ready_for_review": "À examiner",
+        "approved": "Approuvé",
+        "suspended": "Suspendu",
+        "rejected": "Refusé",
+        "canceled": "Annulé"
+      },
+      "status_help": {
+        "pending": "Créé, mais personne n'a encore été invité.",
+        "invited": "En attente de l'acceptation de l'invitation.",
+        "onboarding": "Renseigne ses informations.",
+        "ready_for_review": "Attend votre approbation.",
+        "approved": "Vend sur la place de marché.",
+        "suspended": "Ne peut plus vendre. Réactivez-le pour reprendre.",
+        "rejected": "Non admis sur la place de marché.",
+        "canceled": "S'est retiré avant de rejoindre."
+      },
+      "tax_remittance": {
+        "vendor": "Le vendeur reverse",
+        "platform": "La place de marché reverse"
+      },
+      "payout_interval": {
+        "inherit": "Valeur par défaut de la boutique",
+        "daily": "Chaque jour",
+        "weekly": "Chaque semaine",
+        "biweekly": "Toutes les deux semaines",
+        "monthly": "Chaque mois",
+        "manual": "Manuel"
+      },
+      "messages": {
+        "created": "Vendeur créé",
+        "create_failed": "Impossible de créer le vendeur",
+        "updated": "Vendeur mis à jour",
+        "update_failed": "Impossible de mettre à jour le vendeur",
+        "deleted": "Vendeur supprimé",
+        "delete_failed": "Impossible de supprimer le vendeur",
+        "invited": "Invitation envoyée",
+        "invite_failed": "Impossible d'envoyer l'invitation",
+        "approved": "Vendeur approuvé",
+        "approve_failed": "Impossible d'approuver le vendeur",
+        "suspended": "Vendeur suspendu",
+        "suspend_failed": "Impossible de suspendre le vendeur",
+        "rejected": "Vendeur refusé",
+        "reject_failed": "Impossible de refuser le vendeur"
+      },
+      "not_provided": "Non renseigné",
+      "images": {
+        "logo_label": "Logo",
+        "logo_help": "Un format carré convient le mieux. Affiché à côté du vendeur partout où il apparaît.",
+        "square_logo_label": "Logo carré",
+        "square_logo_help": "Pour les emplacements qui exigent un carré strict, comme un avatar.",
+        "cover_photo_label": "Photo de couverture",
+        "cover_photo_help": "Une bannière large en haut du profil du vendeur."
+      }
     }
   }
 }
