@@ -2165,6 +2165,8 @@
       "supports_dry_run": "Podgląd dostępny",
       "title": "Zadania konserwacyjne",
       "upgrade": {
+        "assumed_boundary": "Zakładamy, że sklep był na {{version}}. Jeśli pominięto wydania, obowiązuje też {{count}} wcześniejszych kroków — uruchom je poleceniem bin/rake spree:upgrade.",
+        "boundary": "Spree {{from}} → {{to}}",
         "confirm": {
           "title": "Uruchomić „{{name}}”?",
           "message": "Kroki mają kolejność — najpierw uruchom te wcześniejsze. Ta operacja zapisuje dane i nie można jej cofnąć."

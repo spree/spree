@@ -42,7 +42,21 @@ module Spree
             SellerRequirements.call
             ApiKeys.call
             AllowedOrigins.call
+
+            # A database created by today's schema has no historical data to
+            # convert, so every upgrade boundary up to this release is already
+            # satisfied. Recording that is what keeps a fresh install from
+            # being shown a backlog of steps it must never run.
+            stamp_upgrade_boundaries
           end
+        end
+      end
+
+      private
+
+      def stamp_upgrade_boundaries
+        Spree::Upgrade.manifests.each do |manifest|
+          Spree::UpgradeRecord.stamp!(manifest['to'], source: 'install')
         end
       end
     end

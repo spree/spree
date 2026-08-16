@@ -2164,6 +2164,8 @@
       "supports_dry_run": "المعاينة متاحة",
       "title": "مهام الصيانة",
       "upgrade": {
+        "assumed_boundary": "بافتراض أن هذا المتجر كان على {{version}}. إذا تم تخطي إصدارات، فهناك {{count}} خطوات سابقة تنطبق أيضًا — شغّلها عبر bin/rake spree:upgrade.",
+        "boundary": "Spree {{from}} ← {{to}}",
         "confirm": {
           "title": "تشغيل «{{name}}»؟",
           "message": "للخطوات ترتيب — شغّل ما قبلها أولًا. هذا يكتب في بياناتك ولا يمكن التراجع عنه."

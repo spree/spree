@@ -2146,6 +2146,8 @@
       "supports_dry_run": "支持预览",
       "title": "维护任务",
       "upgrade": {
+        "assumed_boundary": "假定此店铺此前为 {{version}}。若跳过了某些版本，另有 {{count}} 个较早的步骤同样适用——请使用 bin/rake spree:upgrade 运行。",
+        "boundary": "Spree {{from}} → {{to}}",
         "confirm": {
           "title": "运行“{{name}}”？",
           "message": "步骤有先后顺序——请先运行前面的步骤。此操作会写入数据且无法撤销。"

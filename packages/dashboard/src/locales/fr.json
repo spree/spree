@@ -2149,6 +2149,8 @@
       "supports_dry_run": "Aperçu disponible",
       "title": "Tâches de maintenance",
       "upgrade": {
+        "assumed_boundary": "En supposant que cette boutique était en {{version}}. Si des versions ont été sautées, {{count}} étapes antérieures s'appliquent aussi — exécutez-les avec bin/rake spree:upgrade.",
+        "boundary": "Spree {{from}} → {{to}}",
         "confirm": {
           "title": "Exécuter « {{name}} » ?",
           "message": "Les étapes ont un ordre — exécutez d'abord celles qui précèdent. Cette action écrit dans vos données et est irréversible."

@@ -2149,6 +2149,8 @@
       "supports_dry_run": "Preview available",
       "title": "Maintenance tasks",
       "upgrade": {
+        "assumed_boundary": "Assuming this store was on {{version}}. If it skipped releases, {{count}} earlier steps also apply — run them from the command line with bin/rake spree:upgrade.",
+        "boundary": "Spree {{from}} → {{to}}",
         "confirm": {
           "title": "Run “{{name}}”?",
           "message": "Steps have an order — run the ones before it first. This writes to your data and cannot be undone."

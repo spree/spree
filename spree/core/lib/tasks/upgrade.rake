@@ -106,8 +106,20 @@ module Spree
           end
         end
 
+        stamp_completed_boundaries(manifests) unless dry_run
+
         puts
         puts dry_run ? '  (dry run — nothing executed)' : '  Upgrade tasks complete.'
+      end
+
+      # Records the boundaries this walk finished, so a later dashboard visit
+      # shows only what is still outstanding rather than every step of every
+      # manifest ever written. A partial walk stamps nothing — `invoke` aborts
+      # on a failed step, so reaching here means every step succeeded.
+      def stamp_completed_boundaries(manifests)
+        manifests.each do |manifest|
+          Spree::UpgradeRecord.stamp!(manifest['to'], source: 'walk')
+        end
       end
 
       # STEP=<id> looks across every eligible manifest; we need exactly one

@@ -26,3 +26,19 @@ export interface UpgradeStep {
   arguments: Record<string, unknown>
   last_run: MaintenanceTaskRun | null
 }
+
+export interface UpgradeStepsMeta {
+  /** The release this installation is running. */
+  installed_version: string
+  /** The boundary whose steps are already done, and where the list starts. */
+  completed_version: string | null
+  /**
+   * False when `completed_version` was assumed from the installed version
+   * rather than recorded by an upgrade walk or a fresh install. A store that
+   * postponed several releases needs the older steps, so offer them rather
+   * than hide them when this is false.
+   */
+  completed_version_recorded: boolean
+  /** How many steps sit below the boundary and are therefore not listed. */
+  superseded_step_count: number
+}

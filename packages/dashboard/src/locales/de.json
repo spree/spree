@@ -2149,6 +2149,8 @@
       "supports_dry_run": "Vorschau verfügbar",
       "title": "Wartungsaufgaben",
       "upgrade": {
+        "assumed_boundary": "Angenommen, dieser Shop war auf {{version}}. Wurden Releases übersprungen, gelten auch {{count}} frühere Schritte — führen Sie sie mit bin/rake spree:upgrade aus.",
+        "boundary": "Spree {{from}} → {{to}}",
         "confirm": {
           "title": "„{{name}}“ ausführen?",
           "message": "Die Schritte haben eine Reihenfolge — führen Sie zuerst die vorhergehenden aus. Dies schreibt in Ihre Daten und kann nicht rückgängig gemacht werden."

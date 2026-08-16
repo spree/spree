@@ -64,12 +64,62 @@ module Spree
       steps.find { |step| step['id'] == step_id.to_s }
     end
 
-    # Steps of manifests at or beyond the installed version — what an operator
-    # upgrading to this release still has to run.
+    # The boundary this installation has already completed, and therefore the
+    # point a pending list starts from.
+    #
+    # Falls back to the release before the installed one when nothing has been
+    # stamped: an installation running 6.0 has, by far most often, come from
+    # 5.6, and showing every step of every manifest ever written is worse than
+    # showing the one boundary that is almost certainly right. The fallback is
+    # a guess and is reported as one — `completed_boundary_known?` is false —
+    # so callers can offer the older steps rather than hide them.
+    #
+    # @return [String, nil]
+    def self.completed_boundary
+      Spree::UpgradeRecord.current_version || previous_boundary
+    end
+
+    # Whether the boundary was recorded rather than assumed.
+    #
+    # @return [Boolean]
+    def self.completed_boundary_known?
+      Spree::UpgradeRecord.current_version.present?
+    end
+
+    # The `to` of the manifest immediately below the installed version.
+    #
+    # @return [String, nil]
+    def self.previous_boundary
+      boundaries = manifests.map { |manifest| manifest['from'] }.uniq
+      boundaries.select { |version| compare(version, installed_minor_version) < 0 }.
+        max_by { |version| version_parts(version) }
+    end
+
+    # Steps this installation still has to run: every manifest above the
+    # boundary it has completed, up to and including the installed version.
     #
     # @return [Array<Hash>]
     def self.pending_steps
-      steps.select { |step| compare(step['to'], installed_minor_version) <= 0 }
+      boundary = completed_boundary
+
+      steps.select do |step|
+        next false if compare(step['to'], installed_minor_version) > 0
+        next true if boundary.nil?
+
+        compare(step['from'], boundary) >= 0
+      end
+    end
+
+    # Steps of manifests below the completed boundary — the ones a fresh or
+    # already-upgraded installation does not need. Offered rather than hidden
+    # when the boundary was assumed rather than recorded.
+    #
+    # @return [Array<Hash>]
+    def self.superseded_steps
+      boundary = completed_boundary
+      return [] if boundary.nil?
+
+      steps.select { |step| compare(step['from'], boundary) < 0 }
     end
 
     def self.version_parts(version)

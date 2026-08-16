@@ -212,4 +212,16 @@ description 'maintenance_tasks.recount_ratings.description'
 
 Every data step of the 5.6 → 6.0 upgrade is a maintenance task. `bin/rake spree:upgrade` walks them in order, and each step records a run — so a half-finished upgrade tells you exactly which step stopped and why, instead of leaving a stack trace and no trace of what ran.
 
-The steps also appear in the dashboard, which is how an operator without a shell runs them.
+The steps also appear in the dashboard, as an ordered checklist under Settings → Maintenance tasks. That is how an operator without a shell runs an upgrade.
+
+### Which steps a store is shown
+
+The panel lists only the boundaries a store still has to cross. Which those are comes from `Spree::UpgradeRecord`, a stamp written when an upgrade walk completes and when a store is first installed — a database created by today's schema has no historical data to convert, so it starts fully stamped.
+
+Without a stamp — a store upgraded before this record existed — the panel assumes the release immediately below the installed one and says so, pointing at `bin/rake spree:upgrade` for the earlier steps. That matters for a store that postponed several releases: its older steps are real work, so they are offered rather than hidden.
+
+Stamp a boundary by hand when you know a store already ran those steps:
+
+```ruby
+Spree::UpgradeRecord.stamp!('5.6', source: 'manual')
+```

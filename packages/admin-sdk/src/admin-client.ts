@@ -324,6 +324,7 @@ import type {
   TranslatableResource,
   TranslationBatchEntry,
   UpgradeStep,
+  UpgradeStepsMeta,
   Variant,
   WebhookDelivery,
   WebhookEndpoint,
@@ -3200,8 +3201,12 @@ export class AdminClient {
    * `arguments`.
    */
   readonly upgradeSteps = {
-    list: (options?: RequestOptions): Promise<{ data: UpgradeStep[] }> =>
-      this.request<{ data: UpgradeStep[] }>('GET', '/upgrade_steps', options),
+    list: (options?: RequestOptions): Promise<{ data: UpgradeStep[]; meta: UpgradeStepsMeta }> =>
+      this.request<{ data: UpgradeStep[]; meta: UpgradeStepsMeta }>(
+        'GET',
+        '/upgrade_steps',
+        options,
+      ),
   }
 
   readonly maintenanceTaskRuns = {
