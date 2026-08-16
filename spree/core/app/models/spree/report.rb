@@ -3,7 +3,6 @@ module Spree
     has_prefix_id :rep
 
     include Spree::SingleStoreResource
-    include Spree::VendorConcern if defined?(Spree::VendorConcern)
 
     publishes_lifecycle_events
 

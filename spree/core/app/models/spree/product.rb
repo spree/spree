@@ -33,9 +33,6 @@ module Spree
     include Spree::Product::Channels
     include Spree::SearchIndexable
     include Spree::StorePreferences
-    if defined?(Spree::VendorConcern)
-      include Spree::VendorConcern
-    end
 
     publishes_lifecycle_events
 
@@ -130,6 +127,10 @@ module Spree
 
     belongs_to :tax_category, class_name: 'Spree::TaxCategory'
     belongs_to :product_type, class_name: 'Spree::ProductType', optional: true, counter_cache: :products_count
+    # The seller this product belongs to on a marketplace. Nil is the
+    # operator's own catalog — which is everything, on a store selling only
+    # its own goods.
+    belongs_to :vendor, class_name: 'Spree::Vendor', optional: true, inverse_of: :products
 
     # How this product ships: origins, zones and methods all hang off the
     # profile. Required — a product without one could not be fulfilled at
@@ -142,6 +143,10 @@ module Spree
     # Guards every write path (including raw prefixed-id assignment) against
     # linking another store's profile.
     validate :delivery_profile_must_belong_to_store, if: :delivery_profile_id_changed?
+    # Either side moving breaks the pair, and a product's store is not frozen
+    # after create, so watching only the vendor would let a move carry the old
+    # store's seller along.
+    validate :vendor_must_belong_to_store, if: -> { vendor_id_changed? || store_id_changed? }
 
     # Every product has at least one variant. `default_variant` is the "face" of
     # the product (price display, default add-to-cart, property delegation).
@@ -933,6 +938,16 @@ module Spree
       return if delivery_profile.store_id == store_id
 
       errors.add(:delivery_profile, :invalid)
+    end
+
+    # A seller from another store would put one store's catalog inside another
+    # store's vendor — and every vendor-scoped read is rooted in exactly that
+    # association.
+    def vendor_must_belong_to_store
+      return if vendor.nil? || store.nil?
+      return if vendor.store_id == store_id
+
+      errors.add(:vendor, :invalid)
     end
 
     def run_touch_callbacks

@@ -1664,6 +1664,8 @@ en:
     variant: Variant
     variants: Variants
     vendor: Vendor
+    vendor_access_denied: You do not have access to this vendor.
+    vendor_membership_required: This account does not belong to any vendor.
     verified: Verified
     verified_at: Verified at
     version: Version

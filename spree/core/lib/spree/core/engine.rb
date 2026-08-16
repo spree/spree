@@ -44,7 +44,8 @@ module Spree
                                :number_generators,
                                :subscribers,
                                :store_authentication_strategies,
-                               :admin_authentication_strategies)
+                               :admin_authentication_strategies,
+                               :vendor_authentication_strategies)
       SpreeCalculators = Struct.new(:shipping_methods, :tax_rates, :promotion_actions_create_adjustments, :promotion_actions_create_item_adjustments)
       PromoEnvironment = Struct.new(:rules, :actions)
       PricingEnvironment = Struct.new(:rules)
@@ -397,7 +398,8 @@ module Spree
           Spree::Collection,
           Spree::Category,
           Spree::Store,
-          Spree::Policy
+          Spree::Policy,
+          Spree::Vendor
         ]
 
         # Resources that expose tags via `acts_as_taggable_on :tags`. The
@@ -452,6 +454,7 @@ module Spree
           Spree::TaxRate,
           Spree::Category,
           Spree::Variant,
+          Spree::Vendor,
           Spree.customer_class
         ]
 
@@ -508,6 +511,9 @@ module Spree
           email: Spree::Authentication::Strategies::EmailPasswordStrategy
         )
         Rails.application.config.spree.admin_authentication_strategies = Spree::Authentication::StrategyRegistry.new(
+          email: Spree::Authentication::Strategies::EmailPasswordStrategy
+        )
+        Rails.application.config.spree.vendor_authentication_strategies = Spree::Authentication::StrategyRegistry.new(
           email: Spree::Authentication::Strategies::EmailPasswordStrategy
         )
       end

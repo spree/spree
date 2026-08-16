@@ -1,3 +1,58 @@
+## 2026-08-16: Several sellers share a product by sharing it — the seller is on the variant, not on an offer record
+
+Damian's call, after a survey of how marketplace platforms model a shared
+catalog and an audit of what it would cost Spree.
+
+**The gap.** The marketplace plan assumed one product, one seller. Two sellers
+of the same book produced two unrelated products and two listings. That suits
+unique goods and fails commodities, and it is the capability the legacy module
+was most often asked for and could never provide.
+
+**Why not an offer record.** Every surveyed implementation introduces one, and
+every one of them is built on top of a commerce engine or a merchant's existing
+catalog — they cannot put a seller on the variant and cannot re-key inventory.
+Their offer is a variant they were not permitted to write. We own the variant.
+An offer here would duplicate its seller, sku, price, stock, condition and
+delivery config, and would cost a second pricing pipeline, a stock-anchor
+migration (stock items are uniquely keyed on `(variant, stock_location)`), a
+new line-item FK with the cart's variant-keyed deduplication reworked around
+it, and offer-relative rewrites of the purchasability predicates. Putting the
+seller on the variant makes all of that true by construction: two sellers are
+two variant rows, so two stock rows; prices resolve unchanged; and the line
+item already reaches the seller through the variant it points at — which is
+exactly what the order split partitions on.
+
+"Offer" survives as storefront vocabulary. Presentation need not be a table.
+
+**Condition is an OptionType**, so it splits the variant like any other axis
+and inherits the option machinery. That also makes the buy box key on the
+option combination, giving the industry's separate new/used featured offers
+without a second mechanism.
+
+**An audit found four things that must ship with it**, three of which are
+pre-existing faults the change would expose rather than create: `Product#variants=`
+destroys variants absent from the payload, so removal must be filtered to the
+writer's own or a narrower read would make the write destructive; delivery
+profile is product-level and memoised per product, so sellers would share
+whichever profile resolved first (fixed by a variant-level override, which
+follows `Variant#tax_category` exactly and is worth having for plain merchants);
+option filtering matches each option type independently against the product, so
+"Blue AND XL" already matches a product with no Blue XL variant; and product
+rollups become buy-box-relative, which is what makes them correct again rather
+than a change of meaning.
+
+**Operators see every seller's variants** — they run the marketplace. Seller
+isolation is the vendor API branch scope-fetching through `current_vendor`
+(Decision 10), not a narrowing of the admin surface.
+
+**Catalog matching stays out of core.** Deciding two submissions are the same
+item is hard enough that several platforms sell it separately. Core ships exact
+matching on a typed identifier, with the namespace stored rather than inferred
+from the value's shape; fuzzy matching is an extension.
+
+Supersedes the plan's "SKU uniqueness relaxes to per-vendor scope" line, which
+assumed duplicate product rows per seller.
+
 ## 2026-08-16: Grant audiences are a vocabulary, not a vendor flag
 
 Phase 0 of `6.0-multi-vendor-marketplace.md`. Damian's call, after

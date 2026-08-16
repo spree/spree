@@ -12,9 +12,6 @@ module Spree
     if defined?(Spree::Security::Shipments)
       include Spree::Security::Shipments
     end
-    if defined?(Spree::VendorConcern)
-      include Spree::VendorConcern
-    end
     include Spree::Fulfillment::CustomEvents
 
     publishes_lifecycle_events
