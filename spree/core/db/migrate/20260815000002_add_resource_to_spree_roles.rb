@@ -153,8 +153,12 @@ class AddResourceToSpreeRoles < ActiveRecord::Migration[8.1]
   # The old unique index spanned the resource, so one user could hold one role
   # on several of them. The fan-out gives each pairing its own role, but a
   # belt-and-braces collapse keeps the new index safe to add.
+  #
+  # The keepers are read out before the delete rather than left as a subquery:
+  # MySQL refuses to select from the table it is deleting from.
   def dedupe_assignments
-    keepers = MigrationRoleUser.group(:user_type, :user_id, :role_id).select('MIN(id) AS id')
+    keepers = MigrationRoleUser.group(:user_type, :user_id, :role_id).minimum(:id).values
+    return if keepers.empty?
 
     MigrationRoleUser.where.not(id: keepers).delete_all
   end
