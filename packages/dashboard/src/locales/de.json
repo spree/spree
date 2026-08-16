@@ -1083,6 +1083,10 @@
         },
         "tags": {
           "label": "Tags"
+        },
+        "vendor": {
+          "label": "Verkäufer",
+          "first_party": "Eigener Verkauf"
         }
       },
       "product_publication": {
@@ -4211,6 +4215,10 @@
         "square_logo_help": "Für Stellen, die ein enges Quadrat brauchen, etwa ein Profilbild.",
         "cover_photo_label": "Titelbild",
         "cover_photo_help": "Ein breites Banner oben auf dem Verkäuferprofil."
+      },
+      "autocomplete": {
+        "placeholder": "Verkäufer suchen",
+        "empty": "Keine Verkäufer gefunden"
       }
     }
   }

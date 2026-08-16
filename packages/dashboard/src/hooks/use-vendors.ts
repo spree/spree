@@ -23,6 +23,22 @@ export function useVendors(params?: ListParams & Record<string, unknown>) {
   })
 }
 
+/**
+ * Shared config for any `<ResourceMultiAutocomplete>` picking vendors (today
+ * the products table filter). Pass a unique `queryKey` per instance so
+ * independent caches don't collide.
+ */
+export function vendorAutocompleteProps(queryKey: string) {
+  return {
+    queryKey,
+    search: (q: string) => adminClient.vendors.list({ name_cont: q, limit: 20, sort: 'name' }),
+    hydrate: (ids: string[]) => adminClient.vendors.list({ id_in: ids, limit: ids.length }),
+    getOptionLabel: (vendor: Vendor) => vendor.name ?? vendor.id,
+    placeholder: i18n.t('admin.vendors.autocomplete.placeholder'),
+    emptyText: i18n.t('admin.vendors.autocomplete.empty'),
+  }
+}
+
 export function useVendor(id: string | undefined) {
   const key = useResourceKey('vendors', id ?? 'noop')
   return useQuery({

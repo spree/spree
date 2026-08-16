@@ -2,19 +2,12 @@ module Spree
   module Api
     module V3
       module Admin
-        # A seller as the marketplace operator sees it: the profile the vendor
-        # maintains, plus the settlement and tax configuration only the
-        # operator sets.
-        #
-        # No store-level twin yet — a public seller profile arrives with the
-        # storefront work, and until then nothing customer-facing reads a
-        # vendor.
-        class VendorSerializer < BaseSerializer
-          typelize name: :string, slug: :string, status: :string,
+        # A seller as the marketplace operator sees it: the public profile the
+        # shopper also gets, plus the operational state and the settlement and
+        # tax configuration only the operator sets.
+        class VendorSerializer < V3::VendorSerializer
+          typelize status: :string,
                    contact_email: [:string, nullable: true], billing_email: [:string, nullable: true],
-                   about: :string, about_html: :string,
-                   logo_url: [:string, nullable: true], square_logo_url: [:string, nullable: true],
-                   cover_photo_url: [:string, nullable: true],
                    tax_remittance: :string,
                    payouts_schedule_interval: [:string, nullable: true],
                    minimum_payout_amount: [:string, nullable: true],
@@ -25,7 +18,7 @@ module Spree
                    products_count: :number, users_count: :number,
                    metadata: 'Record<string, unknown> | null'
 
-          attributes :name, :slug, :status, :contact_email, :billing_email,
+          attributes :status, :contact_email, :billing_email,
                      :tax_remittance, :payouts_schedule_interval, :metadata,
                      holiday_mode_until: :iso8601,
                      terms_accepted_at: :iso8601,
@@ -35,26 +28,6 @@ module Spree
 
           attribute :minimum_payout_amount do |vendor|
             vendor.minimum_payout_amount&.to_s
-          end
-
-          attribute :about do |vendor|
-            Spree::RichTextHelper.to_plain_text(vendor.about)
-          end
-
-          attribute :about_html do |vendor|
-            vendor.about_html
-          end
-
-          attribute :logo_url do |vendor|
-            image_url_for(vendor.logo)
-          end
-
-          attribute :square_logo_url do |vendor|
-            image_url_for(vendor.square_logo)
-          end
-
-          attribute :cover_photo_url do |vendor|
-            image_url_for(vendor.cover_photo)
           end
 
           # Approved but away still cannot sell, and the list has to say so

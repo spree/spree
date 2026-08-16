@@ -1097,6 +1097,10 @@
         },
         "tags": {
           "label": "Tagi"
+        },
+        "vendor": {
+          "label": "Sprzedawca",
+          "first_party": "Sprzedajesz Ty"
         }
       },
       "product_publication": {
@@ -4267,6 +4271,10 @@
         "square_logo_help": "Do miejsc wymagających ścisłego kwadratu, na przykład awatara.",
         "cover_photo_label": "Zdjęcie w tle",
         "cover_photo_help": "Szeroki baner u góry profilu sprzedawcy."
+      },
+      "autocomplete": {
+        "placeholder": "Szukaj sprzedawców",
+        "empty": "Nie znaleziono sprzedawców"
       }
     }
   }

@@ -1094,6 +1094,10 @@
         },
         "tags": {
           "label": "Tags"
+        },
+        "vendor": {
+          "label": "البائع",
+          "first_party": "تبيعه بنفسك"
         }
       },
       "product_publication": {
@@ -4231,6 +4235,10 @@
         "square_logo_help": "للمواضع التي تتطلب مربّعاً دقيقاً، مثل الصورة الرمزية.",
         "cover_photo_label": "صورة الغلاف",
         "cover_photo_help": "لافتة عريضة أعلى ملف البائع."
+      },
+      "autocomplete": {
+        "placeholder": "ابحث عن بائعين",
+        "empty": "لم يُعثر على بائعين"
       }
     }
   }

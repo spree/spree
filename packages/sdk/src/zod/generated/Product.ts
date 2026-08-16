@@ -8,6 +8,7 @@ import { OptionValueSchema } from './OptionValue';
 import { PriceSchema } from './Price';
 import { PriceHistorySchema } from './PriceHistory';
 import { VariantSchema } from './Variant';
+import { VendorSchema } from './Vendor';
 
 export const ProductSchema = z.object({
   id: z.string(),
@@ -31,6 +32,8 @@ export const ProductSchema = z.object({
   tags: z.array(z.string()),
   price: PriceSchema,
   original_price: PriceSchema.nullable(),
+  vendor_id: z.string().nullable(),
+  vendor: VendorSchema.optional(),
   primary_media: MediaSchema.optional(),
   media: z.array(MediaSchema).optional(),
   variants: z.array(VariantSchema).optional(),

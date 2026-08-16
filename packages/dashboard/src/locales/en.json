@@ -1083,6 +1083,10 @@
         },
         "tags": {
           "label": "Tags"
+        },
+        "vendor": {
+          "label": "Vendor",
+          "first_party": "Sold by you"
         }
       },
       "product_publication": {
@@ -4211,6 +4215,10 @@
         "square_logo_help": "Used where a tight square is needed, such as an avatar.",
         "cover_photo_label": "Cover photo",
         "cover_photo_help": "A wide banner across the top of the vendor profile."
+      },
+      "autocomplete": {
+        "placeholder": "Search vendors",
+        "empty": "No vendors found"
       }
     }
   }

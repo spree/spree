@@ -41,7 +41,15 @@ import {
   useConfirm,
 } from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { MailIcon, PackageIcon, PencilIcon, StoreIcon, UsersIcon } from 'lucide-react'
+import {
+  BanIcon,
+  MailIcon,
+  PackageIcon,
+  PauseIcon,
+  PencilIcon,
+  StoreIcon,
+  UsersIcon,
+} from 'lucide-react'
 import { type ReactNode, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -190,11 +198,13 @@ function VendorBody({ vendor }: { vendor: Vendor }) {
     <>
       {canSuspend && (
         <DropdownMenuItem onClick={handleSuspend}>
+          <PauseIcon className="size-4" />
           {t('admin.vendors.actions.suspend')}
         </DropdownMenuItem>
       )}
       {canReject && (
         <DropdownMenuItem onClick={handleReject}>
+          <BanIcon className="size-4" />
           {t('admin.vendors.actions.reject')}
         </DropdownMenuItem>
       )}
@@ -309,8 +319,14 @@ function VendorBrandCard({
             the tile. The border belongs on the tile itself rather than a ring
             outside it, which over the band reads as a halo. */}
         <div className="-mt-10 relative z-10 flex size-20 items-center justify-center overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-          {vendor.logo_url ? (
-            <img src={vendor.logo_url} alt="" className="size-full object-cover" />
+          {/* The square logo is the one cropped for a tile like this; the main
+              logo is the fallback, since a vendor may have set only one. */}
+          {vendor.square_logo_url || vendor.logo_url ? (
+            <img
+              src={vendor.square_logo_url ?? vendor.logo_url ?? undefined}
+              alt=""
+              className="size-full object-cover"
+            />
           ) : (
             <StoreIcon className="size-7 text-muted-foreground" />
           )}

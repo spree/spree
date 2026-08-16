@@ -29,6 +29,10 @@ Spree::Core::Engine.add_routes do
             get :filters, to: 'products/filters#index'
           end
         end
+        # Public seller profiles. Read-only, and only sellers a shopper can
+        # actually buy from — see Store::VendorsController.
+        resources :vendors, only: [:index, :show], id: /.+/
+
         resources :categories, only: [:index, :show], id: /.+/
         resources :collections, only: [:index, :show] do
           resources :products, controller: 'collections/products', only: [:index]

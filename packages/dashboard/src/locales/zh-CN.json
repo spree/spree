@@ -1080,6 +1080,10 @@
         },
         "tags": {
           "label": "标签"
+        },
+        "vendor": {
+          "label": "卖家",
+          "first_party": "自营"
         }
       },
       "product_publication": {
@@ -4207,6 +4211,10 @@
         "square_logo_help": "用于需要严格正方形的位置，例如头像。",
         "cover_photo_label": "封面图",
         "cover_photo_help": "卖家资料页顶部的宽幅横幅。"
+      },
+      "autocomplete": {
+        "placeholder": "搜索卖家",
+        "empty": "未找到卖家"
       }
     }
   }
