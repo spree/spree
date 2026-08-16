@@ -11,7 +11,7 @@ RSpec.describe Spree::Api::V3::Admin::AdminUsersController, type: :controller do
   # `scope` resolves them) but without the admin role.
   let!(:target) do
     create(:admin_user, :without_admin_role).tap do |u|
-      u.role_users.create!(role: staff_role)
+      create(:role_user, user: u, role: staff_role)
     end
   end
 
@@ -42,7 +42,7 @@ RSpec.describe Spree::Api::V3::Admin::AdminUsersController, type: :controller do
     context 'authenticated as a staff JWT without staff permissions' do
       let(:orders_role) { create(:role, name: 'orders_only', permissions: %w[write_orders]) }
       let(:staff_admin) do
-        create(:admin_user, :without_admin_role).tap { |u| u.role_users.create!(role: orders_role) }
+        create(:admin_user, :without_admin_role).tap { |u| create(:role_user, user: u, role: orders_role) }
       end
       let(:headers) do
         api_key_headers.merge('Authorization' => "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(staff_admin, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN)}")
@@ -79,7 +79,7 @@ RSpec.describe Spree::Api::V3::Admin::AdminUsersController, type: :controller do
     context 'authenticated as a staff JWT holding write_staff' do
       let(:manager_role) { create(:role, name: 'team_manager', permissions: %w[write_staff]) }
       let(:staff_admin) do
-        create(:admin_user, :without_admin_role).tap { |u| u.role_users.create!(role: manager_role) }
+        create(:admin_user, :without_admin_role).tap { |u| create(:role_user, user: u, role: manager_role) }
       end
       let(:headers) do
         api_key_headers.merge('Authorization' => "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(staff_admin, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN)}")

@@ -30,7 +30,7 @@ RSpec.describe Spree::Api::V3::Admin::InvitationsController, type: :controller d
     context 'authenticated as a non-admin staff JWT' do
       let(:inviter_role) { create(:role, name: 'team_manager', permissions: %w[write_staff]) }
       let(:staff_admin) do
-        create(:admin_user, :without_admin_role).tap { |u| u.role_users.create!(role: inviter_role) }
+        create(:admin_user, :without_admin_role).tap { |u| create(:role_user, user: u, role: inviter_role) }
       end
       let(:headers) do
         api_key_headers.merge('Authorization' => "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(staff_admin, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN)}")

@@ -179,7 +179,7 @@ RSpec.describe Spree::Api::V3::Admin::BaseController, type: :controller do
       let(:other_store) { create(:store) }
       let(:foreign_admin) do
         create(:admin_user, :without_admin_role).tap do |u|
-          u.role_users.create!(role: Spree::Role.default_admin_role(other_store))
+          create(:role_user, user: u, role: Spree::Role.default_admin_role(other_store))
         end
       end
       let(:foreign_admin_jwt) do

@@ -38,13 +38,13 @@ describe Spree::RoleUser do
 
   describe 'uniqueness' do
     it 'allows a user to hold a role once' do
-      described_class.create!(role: role, user: spree_user)
+      create(:role_user, role: role, user: spree_user)
 
       expect(described_class.new(role: role, user: spree_user)).not_to be_valid
     end
 
     it 'allows the same user to hold a role owned by another resource' do
-      described_class.create!(role: role, user: spree_user)
+      create(:role_user, role: role, user: spree_user)
       other_role = create(:role, name: 'test_role', resource: create(:store))
 
       expect(described_class.new(role: other_role, user: spree_user)).to be_valid

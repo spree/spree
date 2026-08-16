@@ -64,9 +64,8 @@ RSpec.describe Spree::Api::V3::Admin::RolesController, type: :controller do
     context 'as a staffer with limited permissions' do
       let(:staffer) do
         create(:admin_user, :without_admin_role).tap do |user|
-          user.role_users.create!(
-            role: create(:role, name: 'team_manager', permissions: %w[write_staff read_orders])
-          )
+          create(:role_user, user: user,
+                 role: create(:role, name: 'team_manager', permissions: %w[write_staff read_orders]))
         end
       end
       let(:headers) do
@@ -93,10 +92,9 @@ RSpec.describe Spree::Api::V3::Admin::RolesController, type: :controller do
         Spree.permissions.register_resource(
           :products, group: :catalog, audiences: %i[dummy_model], subjects: -> { [Spree::Product] }
         )
-        staffer.role_users.create!(
-          role: create(:role, name: 'vendor_catalog', permissions: %w[write_products],
-                              resource: Spree::DummyModel.create!(name: 'Vendor A'))
-        )
+        create(:role_user, user: staffer,
+               role: create(:role, name: 'vendor_catalog', permissions: %w[write_products],
+                                   resource: Spree::DummyModel.create!(name: 'Vendor A')))
 
         post :create, params: { name: 'sneaky', permissions: %w[write_products] }, as: :json
 
@@ -110,9 +108,8 @@ RSpec.describe Spree::Api::V3::Admin::RolesController, type: :controller do
       # their roles on the store the request runs against.
       it 'ignores keys the caller holds only on a different store' do
         store_b = create(:store)
-        staffer.role_users.create!(
-          role: create(:role, name: 'b_products', permissions: %w[write_products], resource: store_b)
-        )
+        create(:role_user, user: staffer,
+               role: create(:role, name: 'b_products', permissions: %w[write_products], resource: store_b))
 
         post :create, params: { name: 'sneaky', permissions: %w[write_products] }, as: :json
 
@@ -182,7 +179,7 @@ RSpec.describe Spree::Api::V3::Admin::RolesController, type: :controller do
 
     it 'refuses to delete a role still assigned to staff' do
       role = create(:role, name: 'in_use')
-      create(:admin_user, :without_admin_role).role_users.create!(role: role)
+      create(:role_user, user: create(:admin_user, :without_admin_role), role: role)
 
       delete :destroy, params: { id: role.prefixed_id }, as: :json
 
