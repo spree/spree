@@ -19,6 +19,35 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
     I18n.locale = store.default_locale
   end
 
+  describe 'vendor' do
+    let!(:vendor) { create(:vendor, store: store, name: 'Sparks Audio', status: 'approved') }
+    let!(:vendor_product) { create(:product, store: store, vendor: vendor, status: 'active') }
+
+    # Always present so a storefront can group or link by seller without
+    # paying for the expand.
+    it 'exposes vendor_id without an expand' do
+      get :show, params: { id: vendor_product.slug }, as: :json
+
+      expect(json_response['vendor_id']).to eq(vendor.prefixed_id)
+      expect(json_response).not_to have_key('vendor')
+    end
+
+    it 'embeds the public profile on expand' do
+      get :show, params: { id: vendor_product.slug, expand: 'vendor' }, as: :json
+
+      expect(json_response['vendor']['name']).to eq('Sparks Audio')
+      # The storefront never sees how the marketplace runs the seller.
+      expect(json_response['vendor']).not_to have_key('status')
+      expect(json_response['vendor']).not_to have_key('tax_remittance')
+    end
+
+    it 'leaves vendor_id nil on a first-party product' do
+      get :show, params: { id: product.slug }, as: :json
+
+      expect(json_response['vendor_id']).to be_nil
+    end
+  end
+
   describe 'GET #index' do
     it 'returns a list of products' do
       get :index

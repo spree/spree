@@ -1,3 +1,38 @@
+## 2026-08-16: A vendor's status is something that happened to it, not a field you set
+
+Damian asked for vendor management with "invitation, approvals, all in
+workflows". Recording why the API refuses the obvious shortcut.
+
+**The shortcut we did not take.** A `status` in `permitted_params` would have
+made the whole lifecycle one endpoint. It is also how the transitions stop
+meaning anything: approving a vendor sends mail, provisions payouts and is the
+moment extensions want to hook — none of which happens when the value arrives
+by mass assignment. So each move is its own workflow (`Spree::Vendors::Invite`,
+`Approve`, `Suspend`, `Reject`), reached through its own member action, and
+`status` is simply not writable. Consistent with returns and claims, which
+already ship this way.
+
+**The guards admit more than the happy path**, because the interesting moves
+are the ones back. `Approve` lifts a suspension and revives a rejected
+applicant, and it clears holiday mode on the way — a vendor coming back is
+coming back to sell, and leaving them invisible would look like the approval
+had not worked. `Suspend` and `Reject` are not synonyms: suspension is for a
+vendor already trading and can be undone; rejection is for one that never did.
+Rejecting an approved vendor is refused rather than quietly aliased, because
+the two say different things to the person on the other end.
+
+**Reasons live in metadata, not columns.** A suspension reason is a note about
+one event; the next suspension has its own. A column would hold only the most
+recent and read as though it described the vendor.
+
+**Creating a vendor is not a transition**, so it stays plain CRUD and the
+default status is applied in an `after_initialize`, following
+`Spree::Fulfillment`. Only the moves are workflows.
+
+**Managing sellers is staff-only.** `read_vendors`/`write_vendors` are not
+offered to the vendor audience: a seller administering other sellers is the one
+thing that key must never allow.
+
 ## 2026-08-16: Several sellers share a product by sharing it — the seller is on the variant, not on an offer record
 
 Damian's call, after a survey of how marketplace platforms model a shared

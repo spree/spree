@@ -365,6 +365,9 @@
       },
       "number": {
         "label": "الرقم"
+      },
+      "contact_email": {
+        "label": "البريد الإلكتروني للتواصل"
       }
     },
     "components": {

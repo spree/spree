@@ -152,6 +152,8 @@ module Spree
         admin_company_contact_serializer: 'Spree::Api::V3::Admin::CompanyContactSerializer',
         admin_tax_exemption_certificate_serializer: 'Spree::Api::V3::Admin::TaxExemptionCertificateSerializer',
         admin_admin_user_serializer: 'Spree::Api::V3::Admin::AdminUserSerializer',
+        vendor_serializer: 'Spree::Api::V3::VendorSerializer',
+        admin_vendor_serializer: 'Spree::Api::V3::Admin::VendorSerializer',
         admin_address_serializer: 'Spree::Api::V3::Admin::AddressSerializer',
         admin_channel_serializer: 'Spree::Api::V3::Admin::ChannelSerializer',
         admin_order_routing_rule_serializer: 'Spree::Api::V3::Admin::OrderRoutingRuleSerializer',

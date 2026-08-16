@@ -7,6 +7,7 @@ import { PackageIcon } from 'lucide-react'
 import { categoryAutocompleteProps } from '../hooks/use-categories'
 import { channelAutocompleteProps } from '../hooks/use-channels'
 import { productTypeAutocompleteProps } from '../hooks/use-product-types'
+import { vendorAutocompleteProps } from '../hooks/use-vendors'
 
 defineTable('products', {
   title: i18n.t('admin.nav.products'),
@@ -133,6 +134,31 @@ defineTable('products', {
     // emitted is `taxons_id_in`. We don't render a categories cell on the
     // index to avoid expanding categories on every list refetch; users can
     // see attached categories on the product edit page.
+    // Only meaningful on a marketplace: a first-party product has no seller,
+    // so the cell reads as the store's own rather than blank.
+    {
+      key: 'vendor',
+      label: i18n.t('admin.fields.product.vendor.label'),
+      filterable: true,
+      filterType: 'resource',
+      filterResource: vendorAutocompleteProps('products-table-vendor-filter'),
+      ransackAttribute: 'vendor_id',
+      default: false,
+      render: (product) =>
+        product.vendor_id ? (
+          <Link
+            to={'/$storeId/vendors/$vendorId' as string}
+            params={{ vendorId: product.vendor_id }}
+            className="no-underline"
+          >
+            {product.vendor_name}
+          </Link>
+        ) : (
+          <span className="text-muted-foreground">
+            {i18n.t('admin.fields.product.vendor.first_party')}
+          </span>
+        ),
+    },
     {
       key: 'categories',
       label: i18n.t('admin.fields.product.category_ids.label'),

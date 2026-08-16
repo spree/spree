@@ -56,6 +56,10 @@ module Spree
     preference :unit_system, :string, default: 'imperial'
     # email preferences
     preference :send_consumer_transactional_emails, :boolean, default: true
+    # Sellers are a different audience from shoppers, with their own reasons to
+    # be silenced — a marketplace fronting its own seller comms turns these off
+    # without also stopping customer receipts.
+    preference :send_vendor_transactional_emails, :boolean, default: true
     # Checkout preferences
     # Store-level fallback for the channel-owned `guest_checkout` preference
     # (see Spree::Channel::Gating). Retained so existing accessors keep working.

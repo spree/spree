@@ -24,7 +24,8 @@ module Spree
           Spree::FulfillmentEmailSubscriber,
           Spree::ReturnEmailSubscriber,
           Spree::NewsletterSubscriberEmailSubscriber,
-          Spree::CustomerEmailSubscriber
+          Spree::CustomerEmailSubscriber,
+          Spree::VendorEmailSubscriber
         ]
       end
     end

@@ -1094,6 +1094,10 @@
         },
         "tags": {
           "label": "Tags"
+        },
+        "vendor": {
+          "label": "البائع",
+          "first_party": "تبيعه بنفسك"
         }
       },
       "product_publication": {
@@ -1622,6 +1626,43 @@
         "expires_at": {
           "help": "اتركه فارغاً لشهادة بلا تاريخ انتهاء."
         }
+      },
+      "vendor": {
+        "name": {
+          "placeholder": "Sparks Audio"
+        },
+        "slug": {
+          "help": "يُستخدم في عنوان متجر البائع. يُشتق من الاسم إذا تُرك فارغاً."
+        },
+        "contact_email": {
+          "placeholder": "hello@sparks.example",
+          "help": "تصل إليه الدعوات وإشعارات السوق."
+        },
+        "billing_email": {
+          "label": "بريد الفوترة",
+          "help": "تصل إليه فواتير العمولة وإشعارات الدفع إن اختلف."
+        },
+        "about": {
+          "label": "نبذة",
+          "help": "تظهر في ملف البائع بالمتجر."
+        },
+        "tax_remittance": {
+          "label": "الضريبة يورّدها",
+          "help": "من يتولى توريد ضريبة الاستهلاك على مبيعات هذا البائع."
+        },
+        "payouts_schedule_interval": {
+          "label": "جدول الدفعات",
+          "help": "كم مرة يتقاضى هذا البائع مستحقاته."
+        },
+        "minimum_payout_amount": {
+          "label": "الحد الأدنى للدفعة",
+          "help": "تُرحّل الأرصدة الأقل من ذلك إلى الدفعة التالية."
+        },
+        "holiday_mode_until": {
+          "label": "غائب حتى",
+          "placeholder": "اختر تاريخاً",
+          "help": "يبقى الكتالوج ظاهراً لكن لا يمكن الشراء حتى ذلك الحين."
+        }
       }
     },
     "delivery_profiles": {
@@ -1893,7 +1934,8 @@
       "reports": "التقارير",
       "returns": "المرتجعات",
       "settings": "الإعدادات",
-      "transfers": "التحويلات"
+      "transfers": "التحويلات",
+      "vendors": "البائعون"
     },
     "option_types": {
       "columns": {
@@ -4087,6 +4129,117 @@
     },
     "enterprise": {
       "learn_more": "تعرّف على Spree Enterprise"
+    },
+    "vendors": {
+      "add_cta": "إضافة بائع",
+      "add_sheet_title": "بائع جديد",
+      "create_description": "أنشئ سجل البائع أولاً، ثم ادعُه ووافق عليه واضبط الدفعات من صفحته.",
+      "create_label": "إنشاء البائع",
+      "search_placeholder": "ابحث عن بائعين",
+      "empty": "لا يوجد بائعون بعد",
+      "products_column": "المنتجات",
+      "team_column": "الفريق",
+      "on_holiday_notice": "هذا البائع في إجازة. تبقى منتجاته ظاهرة لكن لا يمكن شراء أي منها.",
+      "delete_confirm": {
+        "title": "حذف البائع؟",
+        "message": "سيؤدي هذا إلى إزالة {{name}} من السوق. تبقى منتجاته في الكتالوج بلا بائع. لا يمكن التراجع عن ذلك."
+      },
+      "suspend_confirm": {
+        "title": "تعليق البائع؟",
+        "message": "سيتوقف {{name}} عن البيع فوراً. يبقى الكتالوج والسجل، ويمكنك إعادته لاحقاً."
+      },
+      "reject_confirm": {
+        "title": "رفض البائع؟",
+        "message": "لن يُقبل {{name}} في السوق. يمكنك الموافقة عليه لاحقاً إذا لزم الأمر."
+      },
+      "invite_sheet": {
+        "title": "دعوة بائع",
+        "description": "ينضم الشخص إلى فريق البائع عند قبول الدعوة، ويمكنه بعدها الدخول إلى لوحته الخاصة.",
+        "email_help": "سترسل الدعوة إلى هذا العنوان."
+      },
+      "actions": {
+        "invite": "دعوة",
+        "reinvite": "إعادة الإرسال",
+        "send_invitation": "إرسال الدعوة",
+        "approve": "الموافقة",
+        "reinstate": "إعادة التفعيل",
+        "suspend": "تعليق",
+        "reject": "رفض"
+      },
+      "detail": {
+        "load_error": "تعذّر تحميل هذا البائع",
+        "delete_label": "حذف البائع",
+        "status": "الحالة",
+        "settlement": "الدفعات والضرائب",
+        "at_a_glance": "لمحة سريعة",
+        "contact": "التواصل",
+        "edit_profile": "تعديل الملف",
+        "edit_profile_description": "يحرّر البائع هذه البيانات من لوحته الخاصة، وما تعدّله هنا يجري نيابةً عنه.",
+        "edit_settlement": "تعديل الدفعات والضرائب",
+        "edit_settlement_description": "أنت وحدك من يرى هذه الإعدادات ويغيّرها، ولا يحرّرها البائع.",
+        "no_about": "لم يكتب هذا البائع نبذة بعد."
+      },
+      "status": {
+        "pending": "قيد الانتظار",
+        "invited": "مدعو",
+        "onboarding": "قيد الإعداد",
+        "ready_for_review": "جاهز للمراجعة",
+        "approved": "معتمد",
+        "suspended": "معلّق",
+        "rejected": "مرفوض",
+        "canceled": "ملغى"
+      },
+      "status_help": {
+        "pending": "تم الإنشاء، ولم تُرسل أي دعوة بعد.",
+        "invited": "في انتظار قبول الدعوة.",
+        "onboarding": "يستكمل بياناته.",
+        "ready_for_review": "في انتظار موافقتك.",
+        "approved": "يبيع في السوق.",
+        "suspended": "موقوف عن البيع. أعد تفعيله ليتاجر من جديد.",
+        "rejected": "غير مقبول في السوق.",
+        "canceled": "انسحب قبل الانضمام."
+      },
+      "tax_remittance": {
+        "vendor": "البائع يورّد الضريبة",
+        "platform": "السوق يورّد الضريبة"
+      },
+      "payout_interval": {
+        "inherit": "الإعداد الافتراضي للمتجر",
+        "daily": "يومياً",
+        "weekly": "أسبوعياً",
+        "biweekly": "كل أسبوعين",
+        "monthly": "شهرياً",
+        "manual": "يدوي"
+      },
+      "messages": {
+        "created": "تم إنشاء البائع",
+        "create_failed": "تعذّر إنشاء البائع",
+        "updated": "تم تحديث البائع",
+        "update_failed": "تعذّر تحديث البائع",
+        "deleted": "تم حذف البائع",
+        "delete_failed": "تعذّر حذف البائع",
+        "invited": "تم إرسال الدعوة",
+        "invite_failed": "تعذّر إرسال الدعوة",
+        "approved": "تمت الموافقة على البائع",
+        "approve_failed": "تعذّرت الموافقة على البائع",
+        "suspended": "تم تعليق البائع",
+        "suspend_failed": "تعذّر تعليق البائع",
+        "rejected": "تم رفض البائع",
+        "reject_failed": "تعذّر رفض البائع"
+      },
+      "not_provided": "غير محدد",
+      "images": {
+        "logo_label": "الشعار",
+        "logo_help": "يُفضَّل الشكل المربّع. يظهر بجوار البائع في كل مكان يرد فيه.",
+        "square_logo_label": "شعار مربّع",
+        "square_logo_help": "للمواضع التي تتطلب مربّعاً دقيقاً، مثل الصورة الرمزية.",
+        "cover_photo_label": "صورة الغلاف",
+        "cover_photo_help": "لافتة عريضة أعلى ملف البائع."
+      },
+      "autocomplete": {
+        "placeholder": "ابحث عن بائعين",
+        "empty": "لم يُعثر على بائعين"
+      }
     }
   }
 }

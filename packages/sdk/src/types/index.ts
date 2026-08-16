@@ -50,6 +50,7 @@ export type {
   StockLocation,
   StoreCredit,
   Variant,
+  Vendor,
   Wishlist,
   WishlistItem,
 } from './generated'

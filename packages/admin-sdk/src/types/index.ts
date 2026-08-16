@@ -101,6 +101,7 @@ export type { default as TaxIdentifier } from './generated/TaxIdentifier'
 export type { default as TaxLine } from './generated/TaxLine'
 export type { default as TaxRate } from './generated/TaxRate'
 export type { default as Variant } from './generated/Variant'
+export type { default as Vendor } from './generated/Vendor'
 export type { default as WebhookDelivery } from './generated/WebhookDelivery'
 export type { default as WebhookEndpoint } from './generated/WebhookEndpoint'
 

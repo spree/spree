@@ -58,8 +58,30 @@ module Spree
     #
     belongs_to :store, class_name: 'Spree::Store'
     # On the commission invoice (EU) and where customer returns route.
+    #
+    # Written as nested attributes, never by id: an address carries no store of
+    # its own, so accepting an id would let any staff member bind — and then
+    # read back — a row belonging to another store's customer.
+    #
+    # Not `dependent: :destroy`, unlike the equivalent on CompanyLocation: a
+    # vendor is paranoid, so destroy is a soft delete, and taking the addresses
+    # with it would hard-delete the rows a restored vendor — and its historical
+    # commission invoices — still point at.
     belongs_to :billing_address, class_name: 'Spree::Address', optional: true
     belongs_to :returns_address, class_name: 'Spree::Address', optional: true
+
+    # update_only, so editing one field of an existing address changes that
+    # row instead of building a replacement and orphaning the old one.
+    accepts_nested_attributes_for :billing_address, update_only: true
+    accepts_nested_attributes_for :returns_address, update_only: true
+
+    # The API reads and writes these under the same name, so the writer takes
+    # either a record or the nested hash a client sends.
+    %i[billing_address returns_address].each do |name|
+      define_method(:"#{name}=") do |value|
+        value.is_a?(Hash) || value.is_a?(ActionController::Parameters) ? send(:"#{name}_attributes=", value) : super(value)
+      end
+    end
 
     # Products and stock survive the vendor leaving: the operator decides what
     # happens to a departed seller's catalog, so it is never cascade-deleted.
@@ -95,6 +117,15 @@ module Spree
     # Callbacks
     #
     before_validation :normalize_slug
+    # A vendor is born through plain CRUD rather than a workflow — creating one
+    # is not a lifecycle transition, inviting them is — so the default lands
+    # here instead of in a creating workflow, as on Spree::Fulfillment.
+    after_initialize :apply_default_status, if: :new_record?
+    # Roles refuse to be destroyed while anyone still holds them, which is
+    # right when a role is deleted on its own and wrong when the whole vendor
+    # goes: its roles govern nothing else. Dissolving the team first lets the
+    # cascade through, so an invited vendor stays deletable.
+    before_destroy :dissolve_team, prepend: true
 
     # A vendor's own team is granted through its roles, not the store's.
     #
@@ -127,6 +158,18 @@ module Spree
 
     def normalize_slug
       self.slug = (slug.presence || name).to_s.parameterize.presence
+    end
+
+    def apply_default_status
+      self.status ||= self.class.default_status
+    end
+
+    # Memberships and outstanding invitations are what make a role undeletable.
+    # They mean nothing once the vendor is gone, so they go first.
+    def dissolve_team
+      Spree::RoleUser.where(role_id: roles.ids).delete_all
+      invitations.destroy_all
+      roles.each { |role| role.update_columns(mutable: true) unless role.mutable? }
     end
   end
 end

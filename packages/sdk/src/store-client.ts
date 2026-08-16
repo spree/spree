@@ -53,6 +53,7 @@ import type {
   UpdateCartParams,
   UpdateLineItemParams,
   UpdatePaymentSessionParams,
+  Vendor,
   Wishlist,
   WishlistItem,
 } from './types'
@@ -181,6 +182,40 @@ export class StoreClient {
    * "New Arrivals"). Membership may be curated by the merchant or maintained
    * automatically from rules; either way it reads the same from the storefront.
    */
+  /**
+   * Public seller profiles on a marketplace. Only sellers a shopper can
+   * currently buy from are listed — see the Store Vendors endpoint.
+   */
+  readonly vendors = {
+    /**
+     * List sellers. Paginated like every other collection (`page`, `limit`),
+     * and filterable through Ransack — `q[name_cont]` for a name search,
+     * `sort` for ordering.
+     *
+     * Only sellers a shopper can currently buy from are returned; one still
+     * onboarding, suspended, or away on holiday is omitted.
+     */
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Vendor>> =>
+      this.request<PaginatedResponse<Vendor>>('GET', '/vendors', {
+        ...options,
+        params: transformListParams({ ...params }),
+      }),
+
+    /** By slug or prefixed ID, so a storefront can route `/vendors/sparks-audio`. */
+    get: (
+      idOrSlug: string,
+      params?: { expand?: string[]; fields?: string[] },
+      options?: RequestOptions,
+    ): Promise<Vendor> =>
+      this.request<Vendor>('GET', `/vendors/${idOrSlug}`, {
+        ...options,
+        params: getParams(params),
+      }),
+  }
+
   readonly collections = {
     /**
      * List collections

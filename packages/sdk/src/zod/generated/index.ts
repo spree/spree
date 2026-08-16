@@ -67,5 +67,6 @@ export { StoreCreditSchema, type StoreCredit } from './StoreCredit';
 export { TaxIdentifierSchema, type TaxIdentifier } from './TaxIdentifier';
 export { TaxLineSchema, type TaxLine } from './TaxLine';
 export { VariantSchema, type Variant } from './Variant';
+export { VendorSchema, type Vendor } from './Vendor';
 export { WishlistSchema, type Wishlist } from './Wishlist';
 export { WishlistItemSchema, type WishlistItem } from './WishlistItem';
