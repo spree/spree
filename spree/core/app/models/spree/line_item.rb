@@ -159,13 +159,18 @@ module Spree
     # catalog), the variant answers first and this fallback covers a product
     # whose seller owns every variant on it.
     #
-    # Only filled while the line is still being chosen. Once the order is
-    # placed the line records who sold it, and nothing about the catalog
-    # changing hands afterwards may rewrite that — including a first-party
-    # line, whose nil is just as much a record as a seller's id.
+    # Only filled while the line is still being chosen — a cart, or an admin
+    # draft that has not been placed. Once the order is placed the line records
+    # who sold it, and nothing about the catalog changing hands afterwards may
+    # rewrite that, including a first-party line whose nil is just as much a
+    # record as a seller's id.
+    #
+    # Keyed on the order being placed rather than on the line being persisted:
+    # a draft order's lines are persisted too, and they must keep following
+    # their product until the order is actually placed.
     def copy_vendor
       return if variant.blank?
-      return if order_id.present? && persisted?
+      return if order&.placed?
 
       self.vendor_id = vendor_id_from_variant
     end

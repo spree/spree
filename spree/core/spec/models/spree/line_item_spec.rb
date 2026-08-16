@@ -865,7 +865,7 @@ describe Spree::LineItem, type: :model do
     it "snapshots the seller from the line's product" do
       product = create(:product, store: store, vendor: vendor)
 
-      line_item = cart.line_items.create!(variant: product.default_variant, quantity: 1)
+      line_item = create(:line_item, cart: cart, variant: product.default_variant, quantity: 1)
 
       expect(line_item.reload.vendor).to eq(vendor)
     end
@@ -875,14 +875,27 @@ describe Spree::LineItem, type: :model do
     it 'leaves a first-party line without a seller' do
       product = create(:product, store: store)
 
-      line_item = cart.line_items.create!(variant: product.default_variant, quantity: 1)
+      line_item = create(:line_item, cart: cart, variant: product.default_variant, quantity: 1)
 
       expect(line_item.reload.vendor_id).to be_nil
     end
 
     it 'follows the product while the line is still in a cart' do
       product = create(:product, store: store)
-      line_item = cart.line_items.create!(variant: product.default_variant, quantity: 1)
+      line_item = create(:line_item, cart: cart, variant: product.default_variant, quantity: 1)
+
+      product.update!(vendor: vendor)
+      line_item.reload.update!(quantity: 2)
+
+      expect(line_item.reload.vendor).to eq(vendor)
+    end
+
+    # An admin draft is persisted but not placed, so its lines keep following
+    # the catalog right up until the order is placed.
+    it 'follows the product on an unplaced draft order' do
+      draft = create(:order, store: store)
+      product = create(:product, store: store)
+      line_item = create(:line_item, order: draft, variant: product.default_variant, quantity: 1)
 
       product.update!(vendor: vendor)
       line_item.reload.update!(quantity: 2)
