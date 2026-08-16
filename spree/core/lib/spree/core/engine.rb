@@ -454,6 +454,7 @@ module Spree
           Spree::TaxRate,
           Spree::Category,
           Spree::Variant,
+          Spree::Vendor,
           Spree.customer_class
         ]
 

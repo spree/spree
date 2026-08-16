@@ -122,6 +122,18 @@ describe Spree::Vendor do
   end
 
   describe 'products' do
+    # Every vendor-scoped read is rooted in this association, so a seller from
+    # another store would put one store's catalog inside another store's vendor.
+    it 'refuses a seller from another store' do
+      foreign = create(:vendor, :approved, store: create(:store))
+
+      expect(build(:product, store: store, vendor: foreign)).not_to be_valid
+    end
+
+    it 'accepts a seller from the same store' do
+      expect(build(:product, store: store, vendor: create(:vendor, :approved, store: store))).to be_valid
+    end
+
     it 'keeps them when the vendor is destroyed' do
       vendor = create(:vendor, :approved)
       product = create(:product, store: store, vendor: vendor)
@@ -146,6 +158,14 @@ describe Spree::Vendor do
 
     it 'is registered as a translatable resource' do
       expect(Spree.translatable_resources).to include(described_class)
+    end
+  end
+
+  describe 'custom fields' do
+    # Including the concern is not enough — a resource the registry does not
+    # list has no way to define fields for it.
+    it 'is registered as a custom-field resource' do
+      expect(Spree.custom_fields.enabled_resources).to include(described_class)
     end
   end
 

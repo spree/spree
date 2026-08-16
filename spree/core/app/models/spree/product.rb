@@ -143,6 +143,7 @@ module Spree
     # Guards every write path (including raw prefixed-id assignment) against
     # linking another store's profile.
     validate :delivery_profile_must_belong_to_store, if: :delivery_profile_id_changed?
+    validate :vendor_must_belong_to_store, if: :vendor_id_changed?
 
     # Every product has at least one variant. `default_variant` is the "face" of
     # the product (price display, default add-to-cart, property delegation).
@@ -934,6 +935,16 @@ module Spree
       return if delivery_profile.store_id == store_id
 
       errors.add(:delivery_profile, :invalid)
+    end
+
+    # A seller from another store would put one store's catalog inside another
+    # store's vendor — and every vendor-scoped read is rooted in exactly that
+    # association.
+    def vendor_must_belong_to_store
+      return if vendor.nil? || store.nil?
+      return if vendor.store_id == store_id
+
+      errors.add(:vendor, :invalid)
     end
 
     def run_touch_callbacks

@@ -337,9 +337,13 @@ module Spree
         [Spree.admin_user_class, Spree::Invitation, Spree::Role, Spree::RoleUser]
       })
 
-      # A seller's own record: profile, branding, addresses, onboarding. Only
-      # ever granted on the vendor surface — the store's staff manage vendors
-      # through the marketplace endpoints, which the `vendors` resource covers.
+      # A seller's own record: profile, branding, addresses, onboarding.
+      #
+      # Grantable to staff as well, like every resource — the operator runs the
+      # marketplace and manages its sellers. What keeps a seller to their own
+      # record is not this key but the branch they hold it on: the vendor
+      # endpoints scope-fetch through `current_vendor`, so the key answers what
+      # they may do and the scope answers to which vendor.
       register_resource(:vendor_profile, group: :access, subjects: -> { [Spree::Vendor] },
                                          audiences: %i[vendor])
 
