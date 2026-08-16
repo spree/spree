@@ -522,7 +522,6 @@ module Spree
         Rails.application.config.spree.integrations = []
 
         Rails.application.config.spree.maintenance_tasks = [
-          'Spree::MaintenanceTasks::UpdateVariantPrices',
           'Spree::MaintenanceTasks::UpgradeStep',
           'Spree::MaintenanceTasks::Upgrade::ConsolidateMetadata',
           'Spree::MaintenanceTasks::Upgrade::RemoveMasterVariant',

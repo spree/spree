@@ -10,6 +10,12 @@ import type { MaintenanceTaskRun } from './generated'
 export interface UpgradeStep {
   /** Manifest step id, stable across releases and used with `STEP=` on the CLI. */
   id: string
+  /**
+   * True for a release this installation has already been through. Shown as
+   * history and never runnable — re-running a completed conversion is how an
+   * upgrade does damage.
+   */
+  superseded: boolean
   name: string
   /** Operator guidance from the manifest — ordering constraints, knobs, caveats. */
   notes: string | null
@@ -39,6 +45,11 @@ export interface UpgradeStepsMeta {
    * than hide them when this is false.
    */
   completed_version_recorded: boolean
-  /** How many steps sit below the boundary and are therefore not listed. */
+  /** How many steps belong to releases this store has already been through. */
   superseded_step_count: number
+  /**
+   * False for a store installed fresh at this release — it has no historical
+   * data to convert, so there is no upgrade to show and `data` is empty.
+   */
+  upgrade_relevant: boolean
 }

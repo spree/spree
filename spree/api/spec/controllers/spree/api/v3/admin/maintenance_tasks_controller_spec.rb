@@ -53,6 +53,19 @@ RSpec.describe Spree::Api::V3::Admin::MaintenanceTasksController, type: :control
       expect(mode['options']).to eq(%w[fast thorough])
     end
 
+    # Upgrade steps belong to the upgrade panel, which owns their order and
+    # notes; the flag keeps them out of the loose task list even on an
+    # installation with no upgrade to run.
+    it 'marks the tasks that are upgrade manifest steps' do
+      get :index
+
+      upgrade = json_response['data'].find { |entry| entry['name'].include?('MaintenanceTasks::Upgrade::') }
+      own = json_response['data'].find { |entry| entry['name'] == 'TestMaintenance::Backfill' }
+
+      expect(upgrade['upgrade_step']).to be(true)
+      expect(own['upgrade_step']).to be(false)
+    end
+
     it 'flags masked parameters so the form never echoes them back' do
       get :index
 

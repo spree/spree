@@ -2097,7 +2097,7 @@
       },
       "description": "Uruchamiaj poprawki danych, uzupełnienia i przebudowy indeksów dostarczone wraz z kodem sklepu. Każde uruchomienie jest zapisywane.",
       "dry_run_badge": "Podgląd",
-      "empty_description": "Zadania to klasy Ruby rejestrowane przez Spree lub Twoje rozszerzenia.",
+      "empty_description": "Zadania pochodzą z kodu Twojego sklepu — część dostarcza Spree, a kolejne może dodać Twój programista lub rozszerzenie.",
       "empty_title": "Brak zadań konserwacyjnych",
       "history": {
         "empty_title": "Brak uruchomień",
@@ -2163,20 +2163,29 @@
         "succeeded": "Zakończone"
       },
       "supports_dry_run": "Podgląd dostępny",
+      "tabs": {
+        "history": "Historia",
+        "tasks": "Zadania",
+        "upgrade": "Aktualizacja"
+      },
       "title": "Zadania konserwacyjne",
       "upgrade": {
-        "assumed_boundary": "Zakładamy, że sklep był na {{version}}. Jeśli pominięto wydania, obowiązuje też {{count}} wcześniejszych kroków — uruchom je poleceniem bin/rake spree:upgrade.",
+        "already_completed": "Ukończone",
+        "assumed_boundary": "Wydania do {{version}} są pokazane jako ukończone przy założeniu, że sklep już na nim działał. Jeśli pominięto wydania, poproś programistę o uruchomienie wcześniejszych kroków z wiersza poleceń.",
         "boundary": "Spree {{from}} → {{to}}",
         "confirm": {
           "title": "Uruchomić „{{name}}”?",
           "message": "Kroki mają kolejność — najpierw uruchom te wcześniejsze. Ta operacja zapisuje dane i nie można jej cofnąć."
         },
         "description": "Kroki na danych wymagane przez to wydanie, w kolejności ich wykonania.",
+        "hide_steps": "Ukryj kroki",
+        "history_description": "Już ukończone w tym sklepie.",
         "progress": "ukończono {{done}} z {{total}}",
         "read_guide": "Przeczytaj przewodnik aktualizacji",
         "run_again": "Uruchom ponownie",
         "run_next": "Uruchom następny krok",
         "run_step": "Uruchom",
+        "show_steps": "Pokaż kroki",
         "title": "Aktualizacja do Spree {{version}}"
       }
     },

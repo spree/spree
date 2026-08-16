@@ -38,7 +38,7 @@ RSpec.describe Spree::Api::V3::Admin::UpgradeStepsController, type: :controller 
       get :index
 
       wrapper = json_response['data'].find do |entry|
-        entry['task_name'] == 'Spree::MaintenanceTasks::UpgradeStep'
+        entry['task_name'] == 'Spree::MaintenanceTasks::UpgradeStep' && !entry['superseded']
       end
 
       expect(wrapper['arguments']['step_id']).to eq(wrapper['id'])
@@ -98,14 +98,19 @@ RSpec.describe Spree::Api::V3::Admin::UpgradeStepsController, type: :controller 
     # The list would otherwise grow with every release Spree ships, and a
     # store that upgraded last release would be offered steps it must never
     # run again.
-    it 'shows only the boundaries above the one already completed' do
+    # Earlier releases stay visible as history — a store should be able to see
+    # which upgrades it has been through — but are never runnable.
+    it 'marks the boundaries it has already crossed as superseded' do
       Spree::UpgradeRecord.stamp!('5.6', source: 'walk')
 
       get :index
 
-      boundaries = json_response['data'].map { |step| step['from'] }.uniq
+      outstanding = json_response['data'].reject { |step| step['superseded'] }
+      history = json_response['data'].select { |step| step['superseded'] }
 
-      expect(boundaries).to eq(['5.6'])
+      expect(outstanding.map { |step| step['from'] }.uniq).to eq(['5.6'])
+      expect(history).not_to be_empty
+      expect(history.map { |step| step['from'] }.uniq).not_to include('5.6')
     end
 
     it 'reports the boundary it is counting from' do
@@ -118,13 +123,27 @@ RSpec.describe Spree::Api::V3::Admin::UpgradeStepsController, type: :controller 
       expect(json_response['meta']['superseded_step_count']).to be > 0
     end
 
-    # A database created by today's schema has no historical data to convert.
-    it 'shows a freshly seeded installation nothing to run' do
+    # A store installed fresh at this release has no upgrade at all — not the
+    # outstanding steps, and not a history of releases it was never on.
+    it 'shows a freshly installed store no upgrade whatsoever' do
       Spree::Upgrade.manifests.each { |m| Spree::UpgradeRecord.stamp!(m['to'], source: 'install') }
 
       get :index
 
       expect(json_response['data']).to be_empty
+      expect(json_response['meta']['upgrade_relevant']).to be(false)
+    end
+
+    # An upgraded store keeps its history, so it can see which releases it has
+    # been through even once nothing is outstanding.
+    it 'keeps the history of a store that was upgraded' do
+      Spree::Upgrade.manifests.each { |m| Spree::UpgradeRecord.stamp!(m['to'], source: 'walk') }
+
+      get :index
+
+      expect(json_response['data']).not_to be_empty
+      expect(json_response['data']).to all(include('superseded' => true))
+      expect(json_response['meta']['upgrade_relevant']).to be(true)
     end
 
     # Without a stamp the boundary is a guess, and saying so is what lets the
@@ -137,10 +156,12 @@ RSpec.describe Spree::Api::V3::Admin::UpgradeStepsController, type: :controller 
       expect(json_response['meta']['completed_version']).to eq('5.6')
     end
 
-    it 'still bounds the list at the installed version' do
+    it 'still bounds outstanding work at the installed version' do
       get :index
 
-      expect(json_response['data'].map { |step| step['to'] }.uniq).to eq(['6.0'])
+      outstanding = json_response['data'].reject { |step| step['superseded'] }
+
+      expect(outstanding.map { |step| step['to'] }.uniq).to eq(['6.0'])
     end
   end
 

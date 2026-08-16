@@ -2081,7 +2081,7 @@
       },
       "description": "Führen Sie Datenkorrekturen, Nachbefüllungen und Neuindizierungen aus, die mit dem Code Ihres Shops ausgeliefert werden. Jeder Lauf wird aufgezeichnet.",
       "dry_run_badge": "Vorschau",
-      "empty_description": "Aufgaben sind Ruby-Klassen, die von Spree oder Ihren Erweiterungen registriert werden.",
+      "empty_description": "Aufgaben stammen aus dem Code Ihres Shops — einige liefert Spree, weitere können Ihre Entwickler oder eine Erweiterung hinzufügen.",
       "empty_title": "Keine Wartungsaufgaben",
       "history": {
         "empty_title": "Noch keine Läufe",
@@ -2147,20 +2147,29 @@
         "succeeded": "Abgeschlossen"
       },
       "supports_dry_run": "Vorschau verfügbar",
+      "tabs": {
+        "history": "Verlauf",
+        "tasks": "Aufgaben",
+        "upgrade": "Upgrade"
+      },
       "title": "Wartungsaufgaben",
       "upgrade": {
-        "assumed_boundary": "Angenommen, dieser Shop war auf {{version}}. Wurden Releases übersprungen, gelten auch {{count}} frühere Schritte — führen Sie sie mit bin/rake spree:upgrade aus.",
+        "already_completed": "Abgeschlossen",
+        "assumed_boundary": "Releases bis {{version}} werden als abgeschlossen angezeigt, in der Annahme, dass dieser Shop bereits darauf lief. Wurden Releases übersprungen, lassen Sie die früheren Schritte von Ihren Entwicklern über die Kommandozeile ausführen.",
         "boundary": "Spree {{from}} → {{to}}",
         "confirm": {
           "title": "„{{name}}“ ausführen?",
           "message": "Die Schritte haben eine Reihenfolge — führen Sie zuerst die vorhergehenden aus. Dies schreibt in Ihre Daten und kann nicht rückgängig gemacht werden."
         },
         "description": "Datenschritte, die dieses Release benötigt, in der Reihenfolge ihrer Ausführung.",
+        "hide_steps": "Schritte ausblenden",
+        "history_description": "In diesem Shop bereits abgeschlossen.",
         "progress": "{{done}} von {{total}} erledigt",
         "read_guide": "Upgrade-Anleitung lesen",
         "run_again": "Erneut ausführen",
         "run_next": "Nächsten Schritt ausführen",
         "run_step": "Ausführen",
+        "show_steps": "Schritte anzeigen",
         "title": "Upgrade auf Spree {{version}}"
       }
     },

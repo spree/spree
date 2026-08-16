@@ -2081,7 +2081,7 @@
       },
       "description": "Exécutez les corrections de données, les remplissages et les réindexations livrés avec le code de votre boutique. Chaque exécution est enregistrée.",
       "dry_run_badge": "Aperçu",
-      "empty_description": "Les tâches sont des classes Ruby enregistrées par Spree ou vos extensions.",
+      "empty_description": "Les tâches proviennent du code de votre boutique : Spree en fournit certaines, et votre développeur ou une extension peut en ajouter.",
       "empty_title": "Aucune tâche de maintenance",
       "history": {
         "empty_title": "Aucune exécution",
@@ -2147,20 +2147,29 @@
         "succeeded": "Terminée"
       },
       "supports_dry_run": "Aperçu disponible",
+      "tabs": {
+        "history": "Historique",
+        "tasks": "Tâches",
+        "upgrade": "Mise à niveau"
+      },
       "title": "Tâches de maintenance",
       "upgrade": {
-        "assumed_boundary": "En supposant que cette boutique était en {{version}}. Si des versions ont été sautées, {{count}} étapes antérieures s'appliquent aussi — exécutez-les avec bin/rake spree:upgrade.",
+        "already_completed": "Terminé",
+        "assumed_boundary": "Les versions jusqu'à {{version}} sont affichées comme terminées, en supposant que cette boutique y était déjà. Si des versions ont été sautées, demandez à votre développeur d'exécuter les étapes antérieures en ligne de commande.",
         "boundary": "Spree {{from}} → {{to}}",
         "confirm": {
           "title": "Exécuter « {{name}} » ?",
           "message": "Les étapes ont un ordre — exécutez d'abord celles qui précèdent. Cette action écrit dans vos données et est irréversible."
         },
         "description": "Étapes de données requises par cette version, dans l'ordre où elles doivent s'exécuter.",
+        "hide_steps": "Masquer les étapes",
+        "history_description": "Déjà effectué sur cette boutique.",
         "progress": "{{done}} sur {{total}} terminées",
         "read_guide": "Lire le guide de mise à niveau",
         "run_again": "Réexécuter",
         "run_next": "Exécuter l'étape suivante",
         "run_step": "Exécuter",
+        "show_steps": "Afficher les étapes",
         "title": "Mise à niveau vers Spree {{version}}"
       }
     },

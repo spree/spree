@@ -2081,7 +2081,7 @@
       },
       "description": "Run data corrections, backfills and reindexes that ship with your store's code. Every run is recorded.",
       "dry_run_badge": "Preview",
-      "empty_description": "Tasks are Ruby classes registered by Spree or your extensions.",
+      "empty_description": "Tasks come from your store's code — Spree provides some, and your developer or an extension can add more.",
       "empty_title": "No maintenance tasks",
       "history": {
         "empty_title": "No runs yet",
@@ -2147,20 +2147,29 @@
         "succeeded": "Completed"
       },
       "supports_dry_run": "Preview available",
+      "tabs": {
+        "history": "History",
+        "tasks": "Tasks",
+        "upgrade": "Upgrade"
+      },
       "title": "Maintenance tasks",
       "upgrade": {
-        "assumed_boundary": "Assuming this store was on {{version}}. If it skipped releases, {{count}} earlier steps also apply — run them from the command line with bin/rake spree:upgrade.",
+        "already_completed": "Completed",
+        "assumed_boundary": "Releases up to {{version}} are shown as completed, assuming this store was already on it. If it skipped releases, ask your developer to run the earlier steps from the command line.",
         "boundary": "Spree {{from}} → {{to}}",
         "confirm": {
           "title": "Run “{{name}}”?",
           "message": "Steps have an order — run the ones before it first. This writes to your data and cannot be undone."
         },
         "description": "Data steps this release needs, in the order they must run.",
+        "hide_steps": "Hide steps",
+        "history_description": "Already completed on this store.",
         "progress": "{{done}} of {{total}} done",
         "read_guide": "Read the upgrade guide",
         "run_again": "Run again",
         "run_next": "Run next step",
         "run_step": "Run",
+        "show_steps": "Show steps",
         "title": "Upgrade to Spree {{version}}"
       }
     },

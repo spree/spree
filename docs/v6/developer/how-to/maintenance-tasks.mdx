@@ -214,9 +214,11 @@ Every data step of the 5.6 → 6.0 upgrade is a maintenance task. `bin/rake spre
 
 The steps also appear in the dashboard, as an ordered checklist under Settings → Maintenance tasks. That is how an operator without a shell runs an upgrade.
 
-### Which steps a store is shown
+### What a store is shown
 
-The panel lists only the boundaries a store still has to cross. Which those are comes from `Spree::UpgradeRecord`, a stamp written when an upgrade walk completes and when a store is first installed — a database created by today's schema has no historical data to convert, so it starts fully stamped.
+A store installed fresh at this release sees no upgrade panel at all — it has no historical data to convert. For a store that was upgraded, the panel shows the release it is moving to, with the releases it has already crossed below as completed history that cannot be re-run.
+
+Which those are comes from `Spree::UpgradeRecord`, a stamp written when an upgrade walk completes and when a store is first installed. The stamp records how the boundary was reached, which is what distinguishes "installed here" from "upgraded to here".
 
 Without a stamp — a store upgraded before this record existed — the panel assumes the release immediately below the installed one and says so, pointing at `bin/rake spree:upgrade` for the earlier steps. That matters for a store that postponed several releases: its older steps are real work, so they are offered rather than hidden.
 

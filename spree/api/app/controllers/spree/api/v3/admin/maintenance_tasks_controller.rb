@@ -42,6 +42,11 @@ module Spree
               supports_dry_run: task_class.dry_run_supported,
               no_collection: task_class.collection_kind == :none,
               csv: task_class.collection_kind == :csv,
+              # An upgrade step belongs to a manifest, which owns its order and
+              # its notes. The dashboard shows those in the upgrade panel
+              # rather than as a loose card — including on installs that have
+              # no upgrade to run, where they are not work at all.
+              upgrade_step: upgrade_task_names.include?(task_class.name),
               active_run: serialize_run(latest_runs[task_class.name]&.then { |run| run if run.active? }),
               last_run: serialize_run(latest_runs[task_class.name])
             }
@@ -52,6 +57,15 @@ module Spree
           # who may only read one.
           def serializer_params
             { show_backtrace: can?(:update, Spree::MaintenanceTaskRun) }
+          end
+
+          # Every task any manifest names, regardless of whether this
+          # installation still has an upgrade outstanding.
+          def upgrade_task_names
+            @upgrade_task_names ||= (
+              Spree::Upgrade.steps.map { |step| step['task_class'] }.compact +
+                [Spree::MaintenanceTasks::UpgradeStep.name]
+            ).to_set
           end
 
           # One query for the whole index rather than two per task.

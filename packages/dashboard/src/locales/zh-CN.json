@@ -2078,7 +2078,7 @@
       },
       "description": "运行随店铺代码一同发布的数据修正、回填与重建索引。每次运行都会被记录。",
       "dry_run_badge": "预览",
-      "empty_description": "任务是由 Spree 或您的扩展注册的 Ruby 类。",
+      "empty_description": "任务来自您店铺的代码——Spree 提供了一部分，您的开发者或扩展可以添加更多。",
       "empty_title": "暂无维护任务",
       "history": {
         "empty_title": "暂无运行记录",
@@ -2144,20 +2144,29 @@
         "succeeded": "已完成"
       },
       "supports_dry_run": "支持预览",
+      "tabs": {
+        "history": "历史",
+        "tasks": "任务",
+        "upgrade": "升级"
+      },
       "title": "维护任务",
       "upgrade": {
-        "assumed_boundary": "假定此店铺此前为 {{version}}。若跳过了某些版本，另有 {{count}} 个较早的步骤同样适用——请使用 bin/rake spree:upgrade 运行。",
+        "already_completed": "已完成",
+        "assumed_boundary": "假定此店铺此前已在 {{version}}，因此该版本及更早的发布显示为已完成。若跳过了某些版本，请让开发者从命令行运行较早的步骤。",
         "boundary": "Spree {{from}} → {{to}}",
         "confirm": {
           "title": "运行“{{name}}”？",
           "message": "步骤有先后顺序——请先运行前面的步骤。此操作会写入数据且无法撤销。"
         },
         "description": "此版本所需的数据步骤，按必须执行的顺序排列。",
+        "hide_steps": "隐藏步骤",
+        "history_description": "此店铺已完成。",
         "progress": "已完成 {{done}} / {{total}}",
         "read_guide": "阅读升级指南",
         "run_again": "重新运行",
         "run_next": "运行下一步",
         "run_step": "运行",
+        "show_steps": "显示步骤",
         "title": "升级到 Spree {{version}}"
       }
     },
