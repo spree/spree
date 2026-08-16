@@ -397,7 +397,8 @@ module Spree
           Spree::Collection,
           Spree::Category,
           Spree::Store,
-          Spree::Policy
+          Spree::Policy,
+          Spree::Vendor
         ]
 
         # Resources that expose tags via `acts_as_taggable_on :tags`. The

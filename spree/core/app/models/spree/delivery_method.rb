@@ -7,9 +7,6 @@ module Spree
     include Spree::CalculatedAdjustments
     include Spree::HasCustomFields
     include Spree::Metadata
-    if defined?(Spree::VendorConcern)
-      include Spree::VendorConcern
-    end
     include Spree::MemoizedData
     include Spree::TypedAssociations
 

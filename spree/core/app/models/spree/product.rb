@@ -33,9 +33,6 @@ module Spree
     include Spree::Product::Channels
     include Spree::SearchIndexable
     include Spree::StorePreferences
-    if defined?(Spree::VendorConcern)
-      include Spree::VendorConcern
-    end
 
     publishes_lifecycle_events
 
@@ -130,6 +127,10 @@ module Spree
 
     belongs_to :tax_category, class_name: 'Spree::TaxCategory'
     belongs_to :product_type, class_name: 'Spree::ProductType', optional: true, counter_cache: :products_count
+    # The seller this product belongs to on a marketplace. Nil is the
+    # operator's own catalog — which is everything, on a store selling only
+    # its own goods.
+    belongs_to :vendor, class_name: 'Spree::Vendor', optional: true, inverse_of: :products
 
     # How this product ships: origins, zones and methods all hang off the
     # profile. Required — a product without one could not be fulfilled at

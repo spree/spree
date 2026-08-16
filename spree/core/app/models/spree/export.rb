@@ -8,7 +8,6 @@ module Spree
 
     include Spree::SingleStoreResource
     include Spree::NumberIdentifier
-    include Spree::VendorConcern if defined?(Spree::VendorConcern)
 
     has_spree_number prefix: 'EF'
 
