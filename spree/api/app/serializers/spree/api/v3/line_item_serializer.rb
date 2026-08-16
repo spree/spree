@@ -14,10 +14,19 @@ module Spree
                  discounted_amount: [:string, nullable: true], display_discounted_amount: [:string, nullable: true],
                  compare_at_amount: [:string, nullable: true], display_compare_at_amount: [:string, nullable: true],
                  thumbnail_url: [:string, nullable: true],
-                 preorder: :boolean, preorder_ships_at: [:string, nullable: true]
+                 preorder: :boolean, preorder_ships_at: [:string, nullable: true],
+                 vendor_id: [:string, nullable: true]
 
         attribute :variant_id do |line_item|
           line_item.variant&.prefixed_id
+        end
+
+        # Which seller this line was bought from, snapshotted when it was
+        # added — nil is the operator's own first-party item. Always present
+        # so a storefront can group a multi-seller cart without paying for the
+        # expand; `?expand=vendor` adds the public profile.
+        attribute :vendor_id do |line_item|
+          line_item.vendor&.prefixed_id
         end
 
         # True when the line item's variant is currently a pre-order, so the
@@ -56,6 +65,10 @@ module Spree
         attribute :thumbnail_url do |line_item|
           image_url_for(line_item.thumbnail)
         end
+
+        one :vendor,
+            resource: proc { Spree.api.vendor_serializer },
+            if: proc { expand?('vendor') }
 
         many :option_values, resource: proc { Spree.api.option_value_serializer }
         many :digital_links, resource: proc { Spree.api.digital_link_serializer }

@@ -856,4 +856,76 @@ describe Spree::LineItem, type: :model do
       end
     end
   end
+
+  describe 'vendor' do
+    let(:store) { @default_store }
+    let(:vendor) { create(:vendor, store: store, name: 'Sparks Audio') }
+    let(:cart) { create(:cart, store: store) }
+
+    it "snapshots the seller from the line's product" do
+      product = create(:product, store: store, vendor: vendor)
+
+      line_item = create(:line_item, cart: cart, variant: product.default_variant, quantity: 1)
+
+      expect(line_item.reload.vendor).to eq(vendor)
+    end
+
+    # Nil is the operator's own catalog, which is every line on a store that
+    # sells nothing but its own.
+    it 'leaves a first-party line without a seller' do
+      product = create(:product, store: store)
+
+      line_item = create(:line_item, cart: cart, variant: product.default_variant, quantity: 1)
+
+      expect(line_item.reload.vendor_id).to be_nil
+    end
+
+    it 'follows the product while the line is still in a cart' do
+      product = create(:product, store: store)
+      line_item = create(:line_item, cart: cart, variant: product.default_variant, quantity: 1)
+
+      product.update!(vendor: vendor)
+      line_item.reload.update!(quantity: 2)
+
+      expect(line_item.reload.vendor).to eq(vendor)
+    end
+
+    # An admin draft is persisted but not placed, so its lines keep following
+    # the catalog right up until the order is placed.
+    it 'follows the product on an unplaced draft order' do
+      draft = create(:order, store: store)
+      product = create(:product, store: store)
+      line_item = create(:line_item, order: draft, variant: product.default_variant, quantity: 1)
+
+      product.update!(vendor: vendor)
+      line_item.reload.update!(quantity: 2)
+
+      expect(line_item.reload.vendor).to eq(vendor)
+    end
+
+    # A placed order records who sold each line. The catalog changing hands
+    # afterwards must not rewrite that.
+    context 'once the order is placed' do
+      let(:order) { create(:completed_order_with_totals, store: store) }
+
+      it 'keeps the seller it was bought from' do
+        line_item = order.line_items.first
+        line_item.update_columns(vendor_id: vendor.id)
+        line_item.variant.product.update!(vendor: create(:vendor, store: store))
+
+        line_item.reload.update!(quantity: 3)
+
+        expect(line_item.reload.vendor).to eq(vendor)
+      end
+
+      it 'keeps a first-party line first-party' do
+        line_item = order.line_items.first
+        line_item.variant.product.update!(vendor: vendor)
+
+        line_item.reload.update!(quantity: 2)
+
+        expect(line_item.reload.vendor_id).to be_nil
+      end
+    end
+  end
 end
