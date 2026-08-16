@@ -45,8 +45,24 @@ RSpec.describe Spree::Invitation, type: :model do
     it 'sets defaults on initialization' do
       invitation = build(:invitation)
       expect(invitation.expires_at).to be_present
+    end
+
+    # Resolved at validation, not on initialize: the caller's own resource is
+    # not assigned yet when the record is instantiated.
+    it 'defaults the resource and its admin role before validation' do
+      invitation = build(:invitation)
+      invitation.valid?
+
       expect(invitation.resource).to eq(Spree::Store.current)
       expect(invitation.role).to eq(Spree::Role.default_admin_role)
+    end
+
+    it 'follows an explicitly assigned resource' do
+      other_store = create(:store)
+      invitation = build(:invitation, resource: other_store)
+      invitation.valid?
+
+      expect(invitation.role).to eq(Spree::Role.default_admin_role(other_store))
     end
 
     it 'sets invitee from email before validation' do

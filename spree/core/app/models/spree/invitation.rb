@@ -56,6 +56,7 @@ module Spree
     # Callbacks
     #
     after_initialize :set_defaults, if: :new_record?
+    before_validation :set_role_and_resource, if: :new_record?
     before_validation :set_invitee_from_email, on: :create
     after_commit :publish_invitation_created_event, on: :create, unless: :skip_email
 
@@ -111,9 +112,13 @@ module Spree
 
     def set_defaults
       self.expires_at ||= 2.weeks.from_now
-      # A role names what it governs, so the invitation follows it — an
-      # invitation to one resource carrying another's role would grant access
-      # somewhere the inviter never named.
+    end
+
+    # A role names what it governs, so the invitation follows it — one carrying
+    # another resource's role would grant access somewhere the inviter never
+    # named. Resolved at validation rather than on initialize, since a caller's
+    # own `resource` is not assigned yet when the record is instantiated.
+    def set_role_and_resource
       self.resource ||= role&.resource || Spree::Store.current
       self.role ||= Spree::Role.default_admin_role(resource)
     end
