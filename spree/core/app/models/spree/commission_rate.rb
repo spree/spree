@@ -37,6 +37,12 @@ module Spree
     validates :kind, presence: true, inclusion: { in: KINDS }
     validates :priority, numericality: { only_integer: true }
     validates :value, numericality: { greater_than_or_equal_to: 0 }
+    # Stored lowercase so the database enforces the same uniqueness the
+    # validation promises. A functional index over LOWER(code) would be the
+    # alternative, but that is a MySQL-only construct MariaDB rejects — and
+    # normalizing on write means every adapter agrees without one.
+    normalizes :code, with: ->(value) { value.to_s.strip.downcase.presence }
+
     validates :code, uniqueness: { scope: [*spree_base_uniqueness_scope, :store_id], case_sensitive: false },
                      allow_blank: true
     # A flat fee is meaningless without one; a percentage applies in any

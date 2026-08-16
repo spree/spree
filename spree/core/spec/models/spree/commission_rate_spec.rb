@@ -32,6 +32,15 @@ RSpec.describe Spree::CommissionRate, type: :model do
       expect { create(:commission_rate, store: store, code: 'standard') }.not_to raise_error
     end
 
+    # The validation is case-insensitive, so the stored value has to be too —
+    # otherwise the index would let "Foo" past "foo" on a concurrent write.
+    it 'stores a code in one case, so the database enforces what the validation promises' do
+      rate = create(:commission_rate, store: store, code: '  Standard  ')
+
+      expect(rate.code).to eq('standard')
+      expect(build(:commission_rate, store: store, code: 'STANDARD')).not_to be_valid
+    end
+
     it 'allows several rates to carry no code at all' do
       create(:commission_rate, store: store, code: nil)
 
