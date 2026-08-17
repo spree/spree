@@ -441,9 +441,9 @@ function CommissionRateFormFields({ form }: { form: UseFormReturn<CommissionRate
         <FieldError errors={[errors.commission_tax_rate]} />
       </Field>
 
-      {/* A flat fee is charged once per sale, so there is nothing for it to
-          charge on a parcel — the same amount again would bill one sale
-          twice. A marketplace wanting that states it as its own rate. */}
+      {/* A parcel is part of the sale a flat fee already charges for, so the
+          same amount again would bill one sale twice. A marketplace wanting a
+          flat charge on delivery states it as its own rate. */}
       {kind === 'percentage' && (
         <ToggleField
           form={form}

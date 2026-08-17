@@ -1700,7 +1700,7 @@
           "help": "Disabled rates are skipped when charging a sale."
         },
         "amounts": {
-          "help": "Charged per sale. A currency left empty is one this rate does not charge — those sales fall to the next rate.",
+          "help": "Charged for every unit sold. A currency left empty is one this rate does not charge — those sales fall to the next rate.",
           "label": "Flat fee"
         },
         "bounds": {

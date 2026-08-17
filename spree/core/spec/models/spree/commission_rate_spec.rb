@@ -104,7 +104,7 @@ RSpec.describe Spree::CommissionRate, type: :model do
       rate = build(:commission_rate, :fixed, store: store, include_shipping: true)
 
       expect(rate).not_to be_valid
-      expect(rate.errors[:include_shipping].first).to match(/once per sale/)
+      expect(rate.errors[:include_shipping].first).to match(/already charges for the sale/)
     end
 
     it 'retires a currency dropped from the set' do

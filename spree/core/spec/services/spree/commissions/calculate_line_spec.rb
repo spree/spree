@@ -26,11 +26,34 @@ RSpec.describe Spree::Commissions::CalculateLine do
     expect(call(line_item: three).amount).to eq(30)
   end
 
-  it 'charges a fixed rate once, however many units it covered' do
+  # Charging a flat fee once per line would let the shopper set the fee: three
+  # cameras in one line would earn a third of three bought one at a time.
+  it 'charges a flat fee for every unit sold' do
     three = create(:line_item, order: order, price: 100, quantity: 3)
-    fixed = create(:commission_rate, :fixed, store: store, value: 2.5, currency: 'USD')
+    fixed = create(:commission_rate, :fixed, store: store, amounts: { 'USD' => 2.5 })
 
-    expect(call(rate: fixed, line_item: three).amount).to eq(2.5)
+    expect(call(rate: fixed, line_item: three).amount).to eq(7.5)
+  end
+
+  # The invariant behind charging per unit: what the marketplace earns is a
+  # property of the sale, not of how the shopper happened to group their cart.
+  it 'earns the same whether units share a line or not' do
+    fixed = create(:commission_rate, :fixed, store: store, amounts: { 'USD' => 2.5 })
+    together = create(:line_item, order: order, price: 100, quantity: 3)
+    separately = create_list(:line_item, 3, order: order, price: 100, quantity: 1)
+
+    grouped = call(rate: fixed, line_item: together).amount
+    split = separately.sum { |item| call(rate: fixed, line_item: item).amount }
+
+    expect(grouped).to eq(split)
+  end
+
+  it 'caps a flat fee that multiplied past the cap' do
+    ten = create(:line_item, order: order, price: 100, quantity: 10)
+    fixed = create(:commission_rate, :fixed, store: store, amounts: { 'USD' => 2.5 },
+                   currency: 'USD', max_amount: 12)
+
+    expect(call(rate: fixed, line_item: ten).amount).to eq(12)
   end
 
   it 'snapshots the rate that applied' do

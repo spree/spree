@@ -1700,7 +1700,7 @@
           "help": "Deaktivierte Sätze werden bei der Berechnung übersprungen."
         },
         "amounts": {
-          "help": "Pro Verkauf berechnet. Eine leer gelassene Währung berechnet dieser Satz nicht — solche Verkäufe fallen an den nächsten Satz.",
+          "help": "Wird für jede verkaufte Einheit berechnet. Eine leer gelassene Währung berechnet dieser Satz nicht — solche Verkäufe fallen an den nächsten Satz.",
           "label": "Pauschale"
         },
         "bounds": {

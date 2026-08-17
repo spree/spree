@@ -1700,7 +1700,7 @@
           "help": "Les taux désactivés sont ignorés lors de la facturation."
         },
         "amounts": {
-          "help": "Facturé par vente. Une devise laissée vide n'est pas facturée par ce taux — ces ventes passent au taux suivant.",
+          "help": "Facturé pour chaque unité vendue. Une devise laissée vide n'est pas facturée par ce taux — ces ventes passent au taux suivant.",
           "label": "Montant fixe"
         },
         "bounds": {

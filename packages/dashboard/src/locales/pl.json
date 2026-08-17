@@ -1714,7 +1714,7 @@
           "help": "Wyłączone stawki są pomijane przy naliczaniu."
         },
         "amounts": {
-          "help": "Naliczana za sprzedaż. Waluta pozostawiona pusta nie jest naliczana przez tę stawkę — takie sprzedaże trafiają do następnej.",
+          "help": "Naliczana za każdą sprzedaną sztukę. Waluta pozostawiona pusta nie jest naliczana przez tę stawkę — takie sprzedaże trafiają do następnej.",
           "label": "Opłata stała"
         },
         "bounds": {

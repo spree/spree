@@ -97,13 +97,17 @@ module Spree
 
       private
 
-      # A fixed rate is a flat fee for the sale, charged once however many units
-      # it covered — quantity is what a percentage already accounts for through
-      # the base.
+      # Both kinds scale with quantity: a percentage through the base, which is
+      # already the line's total, and a flat fee by multiplying.
       def charge_for(rate, subject, currency)
-        # A flat fee is charged in the sale's own currency; the rate only got
-        # this far because it states an amount there.
-        return clamp(rate, rate.amount_for(currency).to_d) if rate.fixed?
+        # A flat fee is charged per unit sold, in the sale's own currency — the
+        # rate only got this far because it states an amount there. Charging it
+        # once per line would let the shopper decide the fee: three cameras
+        # bought together would earn a third of three bought separately.
+        #
+        # A fulfillment has no quantity, and never reaches this branch — a flat
+        # rate is barred from charging delivery.
+        return clamp(rate, rate.amount_for(currency).to_d * subject.quantity) if rate.fixed?
 
         clamp(rate, self.class.base_for(rate, subject) * rate.value / 100)
       end
