@@ -1063,7 +1063,7 @@ en:
     inventory: Inventory
     invitation_accepted: Invitation accepted!
     invitation_already_accepted: This invitation has already been accepted.
-    invitation_expired: This invitation has expired.
+    invitation_expired: This invitation has expired. Invite them again to send a new one.
     invitation_invitee_missing: This invitation has no invitee.
     invitation_mailer:
       greeting: Hi %{user_name},

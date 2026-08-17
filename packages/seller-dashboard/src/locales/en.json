@@ -63,20 +63,46 @@
   "team": {
     "title": "Your team",
     "subtitle": "The people who can sign in and manage this seller.",
-    "invite": "Invite someone",
+    "members_section": "Members",
+    "invitations_section": "Pending invitations",
+    "invite_cta": "Invite member",
+    "invite_title": "Invite a colleague",
+    "invite_description": "They will get an email with a link to join this seller.",
     "invite_email": "Email",
+    "invite_email_placeholder": "colleague@example.com",
     "invite_submit": "Send invitation",
     "invite_sending": "Sending…",
-    "invited": "Invitation sent",
-    "remove": "Remove",
-    "remove_confirm": "Remove {{name}} from the team?",
-    "removed": "Member removed",
-    "last_member": "A seller needs at least one member. Invite someone else first.",
-    "empty": "Nobody else yet."
+    "empty": "Nobody on the team yet",
+    "empty_description": "Invite a colleague and they will appear here once they accept.",
+    "table": {
+      "member": "Member",
+      "email": "Email",
+      "expires": "Expires"
+    },
+    "actions": {
+      "remove": "Remove",
+      "resend": "Resend invitation",
+      "copy_link": "Copy invitation link",
+      "revoke": "Revoke"
+    },
+    "confirm": {
+      "remove_title": "Remove member",
+      "remove_message": "{{name}} will lose access to this seller immediately.",
+      "revoke_title": "Revoke invitation",
+      "revoke_message": "The invitation to {{email}} will stop working."
+    },
+    "messages": {
+      "invited": "Invitation sent",
+      "removed": "Member removed",
+      "resent": "Invitation sent again",
+      "revoked": "Invitation revoked",
+      "link_copied": "Invitation link copied"
+    }
   },
   "common": {
     "loading": "Loading…",
     "error": "Something went wrong.",
-    "retry": "Try again"
+    "retry": "Try again",
+    "cancel": "Cancel"
   }
 }

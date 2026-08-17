@@ -111,6 +111,26 @@ export class SellerClient {
     remove: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/team/${id}`, options),
   }
+
+  /**
+   * Offers nobody has accepted yet.
+   *
+   * Sending one lives on `team` — that is hiring — while chasing or
+   * withdrawing one is bookkeeping on the offer itself.
+   */
+  readonly invitations = {
+    /** Pending only; an accepted invitation is a team member. */
+    list: (options?: RequestOptions): Promise<{ data: Invitation[] }> =>
+      this.request<{ data: Invitation[] }>('GET', '/invitations', options),
+
+    /** Sends the email again, for a colleague who never got the first one. */
+    resend: (id: string, options?: RequestOptions): Promise<Invitation> =>
+      this.request<Invitation>('PATCH', `/invitations/${id}/resend`, options),
+
+    /** Withdraws an offer that has not been accepted. */
+    revoke: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/invitations/${id}`, options),
+  }
 }
 
 /** What `/seller/me` answers. */
