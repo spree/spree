@@ -1,0 +1,18 @@
+/* Seller panel CSS entry.
+ *
+ * Pulls in the design system stylesheet from `@spree/dashboard-ui` — the same
+ * components and the same look as the marketplace operator's dashboard, with
+ * a different API behind them.
+ *
+ * `@source` directives for this package and `@spree/dashboard-core` are
+ * appended at build time by `spreeSellerDashboardPlugin` from
+ * `@spree/seller-dashboard/vite`. Resolution goes through Node module
+ * resolution, so paths stay correct under any package layout (workspace
+ * symlinks, npm tarballs, pnpm's `.pnpm/` hoisting) — never hardcode them
+ * relative to this file.
+ *
+ * The Vite plugin bundles `@tailwindcss/vite` internally, so host apps must
+ * NOT register `tailwindcss()` separately.
+ */
+
+@import "@spree/dashboard-ui/styles.css";

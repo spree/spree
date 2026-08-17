@@ -281,4 +281,39 @@ describe Spree::Seller do
     end
   end
 
+
+  describe '#default_user_role' do
+    let(:seller) { create(:seller) }
+
+    # A store's admin role short-circuits through `activate_full_access`; a
+    # seller's cannot (`Role#admin?` requires `staff?`), so without seeding the
+    # person running the seller would hold nothing at all.
+    it 'grants the whole seller vocabulary' do
+      expect(seller.default_user_role.permissions).
+        to match_array(Spree.permissions.grantable_keys(:seller))
+    end
+
+    it 'is immutable, like the store role it mirrors' do
+      expect(seller.default_user_role).not_to be_mutable
+    end
+
+    it 'returns the same role rather than creating another' do
+      first = seller.default_user_role
+
+      expect(seller.default_user_role).to eq(first)
+      expect(seller.roles.count).to eq(1)
+    end
+
+    # The operator's `sellers` key is not in the seller vocabulary, so holding
+    # this role never lets a seller administer sellers — their own included.
+    it 'does not let its holder manage the seller record' do
+      user = create(:admin_user)
+      seller.add_user(user)
+
+      ability = Spree::Ability.new(user, resource: seller)
+
+      expect(ability).to be_can(:manage, :seller_profile)
+      expect(ability).not_to be_can(:manage, seller)
+    end
+  end
 end

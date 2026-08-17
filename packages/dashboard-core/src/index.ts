@@ -11,6 +11,7 @@
 //     import { AuthProvider } from '@spree/dashboard-core/providers/auth-provider'
 //     import { useResourceMutation } from '@spree/dashboard-core/hooks/use-resource-mutation'
 
+export * from './api-client'
 // ---------------------------------------------------------------------------
 // Admin SDK client (Vite-aware singleton; reads VITE_SPREE_API_URL at build)
 // ---------------------------------------------------------------------------

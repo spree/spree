@@ -645,6 +645,14 @@ Spree::Core::Engine.add_routes do
         get 'auth/providers', to: 'auth#providers'
 
         get 'me', to: 'me#show'
+
+        # The seller's own record. Singular — there is exactly one seller in
+        # play and it is `current_seller`, never an id from the request.
+        resource :profile, only: [:show, :update], controller: 'profile'
+
+        # Who runs this seller. Inviting reuses the operator's workflow, so
+        # there is one invitation rail and one set of hooks.
+        resources :team, only: [:index, :create, :destroy], controller: 'team'
       end
 
       # Webhooks (outside of store namespace — no API key authentication)

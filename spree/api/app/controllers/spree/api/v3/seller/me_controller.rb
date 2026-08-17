@@ -22,7 +22,7 @@ module Spree
 
           def me_response
             {
-              user: Spree.api.admin_user_serializer.new(current_user, params: serializer_params).to_h,
+              user: Spree.api.seller_team_member_serializer.new(current_user, params: serializer_params).to_h,
               sellers: serialized_sellers,
               permission_keys: permission_keys
             }

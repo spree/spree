@@ -9,7 +9,7 @@ import {
   useRef,
   useState,
 } from 'react'
-import { adminClient } from '../client'
+import { getApiClient } from '../api-client'
 import { useAuth } from '../hooks/use-auth'
 import type { ActionName, SubjectName } from '../lib/permissions'
 
@@ -103,10 +103,10 @@ export function PermissionProvider({ children }: { children: ReactNode }) {
     const generation = ++requestGeneration.current
     setIsLoading(true)
     try {
-      const res = await adminClient.me.get()
+      const res = await getApiClient().fetchPermissions()
       if (generation !== requestGeneration.current) return
-      setRules(res.permissions)
-      setPermissionKeys(res.permission_keys ?? [])
+      setRules(res.rules)
+      setPermissionKeys(res.keys)
     } catch {
       if (generation !== requestGeneration.current) return
       setRules([])

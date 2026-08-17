@@ -34,7 +34,7 @@ Rails.application.config.after_initialize do
       c.output_dir = api_root.join('../../packages/sdk/src/types/generated')
       c.reject_class = ->(serializer:) {
         name = serializer.name.to_s
-        name.include?('::Admin::') ||
+        name.include?('::Admin::') || name.include?('::Seller::') ||
           store_excluded.include?(name.sub(/\ASpree::Api::V3::/, '').sub(/Serializer\z/, ''))
       }
       c.serializer_name_mapper = ->(serializer) {
@@ -51,6 +51,19 @@ Rails.application.config.after_initialize do
       c.serializer_name_mapper = ->(serializer) {
         serializer.name.to_s
           .sub(/\ASpree::Api::V3::Admin::/, '')
+          .sub(/Serializer\z/, '')
+      }
+    end
+
+    # Seller SDK — the seller panel's own branch. Keyed on the `::Seller::`
+    # namespace exactly as admin is on `::Admin::`, which is why seller
+    # serializers must live there and nowhere else.
+    config.writer(:seller) do |c|
+      c.output_dir = api_root.join('../../packages/seller-sdk/src/types/generated')
+      c.reject_class = ->(serializer:) { !serializer.name.to_s.include?('::Seller::') }
+      c.serializer_name_mapper = ->(serializer) {
+        serializer.name.to_s
+          .sub(/\ASpree::Api::V3::Seller::/, '')
           .sub(/Serializer\z/, '')
       }
     end
