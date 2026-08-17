@@ -98,6 +98,15 @@ RSpec.describe Spree::CommissionRate, type: :model do
       expect(build(:commission_rate, kind: 'fixed', value: 0)).not_to be_valid
     end
 
+    # Charging the flat amount again per parcel would bill one sale twice, so
+    # a marketplace wanting a flat delivery charge states it as its own rate.
+    it 'refuses to also charge delivery' do
+      rate = build(:commission_rate, :fixed, store: store, include_shipping: true)
+
+      expect(rate).not_to be_valid
+      expect(rate.errors[:include_shipping].first).to match(/once per sale/)
+    end
+
     it 'retires a currency dropped from the set' do
       rate = create(:commission_rate, :fixed, store: store, amounts: { 'USD' => 5, 'GBP' => 4 })
 

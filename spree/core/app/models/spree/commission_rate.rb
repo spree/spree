@@ -80,6 +80,11 @@ module Spree
     # A flat fee that charges nothing anywhere would be skipped for every sale,
     # which reads as a rate that does not work rather than one that is off.
     validate :fixed_rate_states_an_amount
+    # A flat fee is charged per sale, so there is nothing sensible for it to
+    # charge on a parcel: the same amount again would double the fee for one
+    # sale. A marketplace wanting a flat charge on delivery states it as its
+    # own rate.
+    validate :flat_fee_does_not_charge_delivery
     validates :min_amount, :max_amount, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
     # A fraction, bounded like the store preference it overrides: the number is
     # multiplied straight into what a seller is charged, so a figure above 1
@@ -252,6 +257,12 @@ module Spree
         row.update!(amount: amount)
       end
       commission_rate_values.reset
+    end
+
+    def flat_fee_does_not_charge_delivery
+      return unless fixed? && include_shipping?
+
+      errors.add(:include_shipping, Spree.t('errors.messages.flat_fee_cannot_charge_delivery'))
     end
 
     def fixed_rate_states_an_amount

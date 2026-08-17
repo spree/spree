@@ -112,7 +112,8 @@ export function commissionRateValuesToParams(
           )
         : {},
     tax_inclusive: v.tax_inclusive,
-    include_shipping: v.include_shipping,
+    // Only a percentage can charge delivery; a flat fee is per sale.
+    include_shipping: v.kind === 'percentage' ? v.include_shipping : false,
     min_amount: decimalOrNull(v.min_amount),
     max_amount: decimalOrNull(v.max_amount),
     commission_tax_rate: taxPercentage === null ? null : taxPercentage / 100,
