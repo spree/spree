@@ -29,12 +29,11 @@
    Adapted from spree/admin Tailwind design system to match look & feel.
    ============================================================================ */
 
-/* Brand palette, taken from spreecommerce.org.
+/* Brand palette.
  *
- * The marketing site is built on a warm sand neutral ramp (hue ~80) rather
- * than a pure greyscale, with a single blue accent. Neutrals below carry a
- * small amount of chroma on that hue so surfaces, borders and text read as
- * one family; the accent is the only saturated colour in the palette.
+ * Surfaces, borders and text are Tailwind's `neutral` ramp — true greyscale,
+ * zero chroma — so the single blue accent is the only colour in the palette
+ * and reads unmistakably as interaction.
  *
  * Primary CTAs stay near-black rather than adopting the site's blue button:
  * in a dense admin UI the blue has to stay meaningful as a selection and
@@ -44,34 +43,33 @@
   --brand-blue: oklch(0.5967 0.2212 258); /* #0077ff — site accent */
   --brand-blue-strong: oklch(0.5106 0.1868 257.7); /* #0060ce — site link hover */
 
-  --background: oklch(0.9858 0.0045 78.3); /* #fcfaf7 — site page background */
-  --foreground: oklch(0.2136 0.0555 255.9); /* #061932 — site body text */
-  --card: oklch(1 0 0); /* white cards, as on the site */
-  --card-foreground: oklch(0.2136 0.0555 255.9);
+  --background: oklch(0.97 0 0); /* neutral-100 */
+  --foreground: oklch(0.145 0 0); /* neutral-950 */
+  --card: oklch(1 0 0); /* white cards, one step above the page */
+  --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.2136 0.0555 255.9);
-  --primary: oklch(0.2136 0.0555 255.9); /* near-black navy for primary CTAs */
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.145 0 0); /* neutral-950 — near-black primary CTAs */
   --primary-foreground: oklch(1 0 0);
-  /* Halfway from the site's #f7f5f2 to white — filled surfaces (table headers,
-     badges, secondary buttons) read as a whisper against the card rather than
-     a distinct band. */
-  --secondary: oklch(0.9854 0.0022 78.3);
-  --secondary-foreground: oklch(0.2136 0.0555 255.9);
-  --muted: oklch(0.9854 0.0022 78.3);
-  --muted-foreground: oklch(0.5232 0.0122 76.5); /* warm mid-grey on the same ramp */
-  /* Hover/highlight for menu items and table rows. Deliberately a lighter step
-     than the site's #e9e5dd: these sit on white surfaces, where that value is
-     a ~8% drop in lightness and reads as a pressed state rather than a hover.
-     The sidebar keeps the stronger tone via --sidebar-accent, since it sits on
-     the sand sidebar rather than on white. */
-  --accent: oklch(0.965 0.006 84.6);
-  --accent-foreground: oklch(0.2136 0.0555 255.9);
+  /* Filled surfaces (table headers, badges, secondary buttons) read as a
+     whisper against the white card rather than a distinct band. */
+  --secondary: oklch(0.97 0 0); /* neutral-100 */
+  --secondary-foreground: oklch(0.145 0 0);
+  --muted: oklch(0.97 0 0); /* neutral-100 */
+  --muted-foreground: oklch(0.556 0 0); /* neutral-500 */
+  /* Hover/highlight for menu items and table rows. A lighter step than
+     neutral-200: these sit on white surfaces, where that value reads as a
+     pressed state rather than a hover. The sidebar keeps the stronger tone
+     via --sidebar-accent, since it sits on the grey sidebar rather than on
+     white. */
+  --accent: oklch(0.955 0 0);
+  --accent-foreground: oklch(0.145 0 0);
   --destructive: oklch(0.58 0.22 27); /* red-600 */
   --destructive-foreground: oklch(1 0 0); /* #ffffff */
-  /* A quarter of the way from the site's #e2dfd8 to white — rules stay legible
-     but recede, so a dense table reads as rows of content rather than a grid. */
-  --border: oklch(0.928 0.0075 87.5);
-  --input: oklch(0.928 0.0075 87.5);
+  /* neutral-200 — rules stay legible but recede, so a dense table reads as
+     rows of content rather than a grid. */
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
   --ring: var(--brand-blue);
   --chart-1: oklch(0.7663 0.1067 254.4);
   --chart-2: oklch(0.5967 0.2212 258); /* brand blue */
@@ -80,14 +78,14 @@
   --chart-5: oklch(0.3358 0.118 257.1);
   --radius: 0.75rem;
 
-  /* Sidebar — the site's raised warm surface, one step off the page. */
-  --sidebar: oklch(97.1% 0.005 78.3);
-  --sidebar-foreground: oklch(0.2136 0.0555 255.9);
-  --sidebar-primary: oklch(0.2136 0.0555 255.9);
+  /* Sidebar — one step off the page, so it reads as its own surface. */
+  --sidebar: oklch(0.97 0 0); /* neutral-100 */
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.145 0 0);
   --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(92.1% 0.011 76.6);
-  --sidebar-accent-foreground: oklch(0.2136 0.0555 255.9);
-  --sidebar-border: oklch(90.4% 0.01 87.5);
+  --sidebar-accent: oklch(0.922 0 0); /* neutral-200 */
+  --sidebar-accent-foreground: oklch(0.145 0 0);
+  --sidebar-border: oklch(0.9 0 0);
   --sidebar-ring: var(--brand-blue);
 
   /* Status ramps, following Vercel's Geist colour system.
@@ -140,7 +138,7 @@
   /* Mirrors the light theme's primary: there a navy fill carries white text,
      so here the two swap rather than the button taking on its own colour. */
   --primary: oklch(0.95 0 0);
-  --primary-foreground: oklch(0.2136 0.0555 255.9); /* #061932 — light theme's primary */
+  --primary-foreground: oklch(0.145 0 0); /* neutral-950 — light theme's primary */
   /* Above --card, but only just. These fill elements that sit *on* a card
      (combobox chips, badges, secondary buttons, table header rows), so a value
      at or under the card's lightness erases them — while too big a step reads
@@ -164,7 +162,7 @@
   --sidebar: oklch(0.145 0 0); /* #0a0a0a — slightly elevated from background */
   --sidebar-foreground: oklch(0.95 0 0);
   --sidebar-primary: oklch(0.95 0 0);
-  --sidebar-primary-foreground: oklch(0.2136 0.0555 255.9);
+  --sidebar-primary-foreground: oklch(0.145 0 0);
   --sidebar-accent: oklch(0.27 0 0);
   --sidebar-accent-foreground: oklch(0.95 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
@@ -385,8 +383,8 @@
 
 @layer base {
   :root {
-    --scrollbar-thumb: oklch(0.78 0.012 84.6); /* warm sand, sits on the brand ramp */
-    --scrollbar-thumb-hover: oklch(0.62 0.014 84.6);
+    --scrollbar-thumb: oklch(0.78 0 0); /* neutral-300-ish */
+    --scrollbar-thumb-hover: oklch(0.62 0 0);
   }
   .dark {
     --scrollbar-thumb: oklch(0.35 0 0); /* zinc-700-ish */

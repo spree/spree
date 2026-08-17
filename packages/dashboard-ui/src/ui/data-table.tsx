@@ -196,7 +196,7 @@ function TableHead({ className, ...props }: React.ComponentProps<'th'>) {
   return (
     <th
       className={cn(
-        'text-left text-sm font-medium text-muted-foreground bg-muted p-2 whitespace-nowrap first:pl-4 last:pr-4',
+        'text-left text-sm font-medium text-muted-foreground bg-muted/25 p-2 whitespace-nowrap first:pl-4 last:pr-4',
         'shadow-[inset_0_-1px_0_0_var(--color-border)]',
         className,
       )}
