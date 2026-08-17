@@ -673,6 +673,14 @@ Spree::Core::Engine.add_routes do
         # Who runs this seller. Inviting reuses the operator's workflow, so
         # there is one invitation rail and one set of hooks.
         resources :team, only: [:index, :create, :destroy], controller: 'team'
+
+        # Offers not yet accepted. Creating one is hiring, so it lives on
+        # `team`; chasing or withdrawing one is bookkeeping on the offer.
+        resources :invitations, only: [:index, :destroy], controller: 'invitations' do
+          member do
+            patch :resend
+          end
+        end
       end
 
       # Webhooks (outside of store namespace — no API key authentication)
