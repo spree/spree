@@ -226,8 +226,9 @@ module SpreeMeilisearch
     # new" while no single variant carries all three.
     #
     # Bounded by MAX_COMBINATION_AXES because the token count is exponential in
-    # the number of axes, and a filter that names more axes than this falls
-    # back to a pairwise approximation rather than silently matching nothing.
+    # the number of axes. A filter naming more axes than this falls back to the
+    # per-axis union in the search provider, which the database scope then
+    # narrows exactly — never to an approximation that would disagree with it.
     MAX_COMBINATION_AXES = 4
 
     def variant_option_value_combination_ids

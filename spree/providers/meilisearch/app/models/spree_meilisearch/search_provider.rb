@@ -464,26 +464,26 @@ module SpreeMeilisearch
     # token per whole combination rather than per pair: pairs can each hold on
     # a different variant while no variant carries them all.
     #
-    # Beyond the indexed combination size the tokens do not exist, so those
-    # filters fall back to the pairwise approximation — narrower than the union
-    # it replaced, wider than the truth, and only on filters naming more axes
-    # than a catalog realistically facets by.
+    # When the tokens cannot answer exactly — a filter naming more axes than
+    # the presenter indexed, or a swapped-in presenter that writes no tokens at
+    # all — this falls back to the per-axis union rather than an approximation
+    # that would quietly disagree with the database. The union is a superset,
+    # and `search_and_filter` intersects every hit with the caller's
+    # ActiveRecord scope, so `Spree::Product.with_option_value_ids` removes the
+    # extra products and the answer stays exact either way.
     def build_grouped_option_conditions(grouped)
       return single_axis_option_conditions(grouped) if grouped.size < 2
-      return pairwise_option_conditions(grouped) if grouped.size > max_combination_axes
+      return single_axis_option_conditions(grouped) unless combination_tokens_cover?(grouped)
 
       combinations = grouped.values[0].product(*grouped.values[1..])
       tokens = combinations.map { |combination| option_combination_condition(combination) }
       [tokens.length > 1 ? "(#{tokens.join(' OR ')})" : tokens.first]
     end
 
-    # Every cross-axis pair must hold. Necessary but not sufficient — see the
-    # caller — and used only past the indexed combination size.
-    def pairwise_option_conditions(grouped)
-      grouped.values.combination(2).map do |left_ids, right_ids|
-        pairs = left_ids.product(right_ids).map { |pair| option_combination_condition(pair) }
-        pairs.length > 1 ? "(#{pairs.join(' OR ')})" : pairs.first
-      end
+    # Whether the index actually holds a token for a filter this wide.
+    def combination_tokens_cover?(grouped)
+      max = max_combination_axes
+      !max.nil? && grouped.size <= max
     end
 
     # Each id is sanitized on its own — the separator is not part of an id and
@@ -493,12 +493,15 @@ module SpreeMeilisearch
       "option_value_combination_ids = '#{token}'"
     end
 
-    # Read off the presenter, since it is what decides how deep the tokens go
-    # — but a host may swap in a presenter that does not write them at all.
+    # Read off the presenter, since it is what decides how deep the tokens go.
+    # Nil when a swapped-in presenter declares nothing: it writes no tokens, so
+    # filtering on them would match nothing at all.
+    #
+    # @return [Integer, nil]
     def max_combination_axes
-      return presenter_class::MAX_COMBINATION_AXES if presenter_class.const_defined?(:MAX_COMBINATION_AXES)
+      return unless presenter_class.const_defined?(:MAX_COMBINATION_AXES)
 
-      ProductPresenter::MAX_COMBINATION_AXES
+      presenter_class::MAX_COMBINATION_AXES
     end
 
     def single_axis_option_conditions(grouped)

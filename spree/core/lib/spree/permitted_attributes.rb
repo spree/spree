@@ -281,7 +281,7 @@ module Spree
       :name, :presentation, :cost_price, :discontinue_on, :lock_version,
       :position, :track_inventory, :preorderable, :preorder_ships_at, :backorder_limit, :tax_category_id,
       :product_id, :product, :option_values_attributes,
-      :seller_id, :delivery_profile_id,
+      :seller_id, :own_delivery_profile_id,
       :weight, :height, :width, :depth, :sku, :barcode, :cost_currency,
       :weight_unit, :dimensions_unit,
       :hs_code, :country_of_origin, :customs_description,

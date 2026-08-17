@@ -28,7 +28,12 @@ module Spree
         def profile_id_for(item)
           @item_profiles ||= {}
           variant = item.variant
-          @item_profiles[[variant.product_id, variant[:delivery_profile_id]]] ||= variant.delivery_profile&.id
+          key = [variant.product_id, variant[:delivery_profile_id]]
+          # `key?` rather than `||=`: a store with no profile at all resolves
+          # to nil, which `||=` would look up again for every item.
+          return @item_profiles[key] if @item_profiles.key?(key)
+
+          @item_profiles[key] = variant.delivery_profile&.id
         end
       end
     end

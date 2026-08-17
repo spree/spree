@@ -60,7 +60,9 @@ module Spree
           cache[profile] = profile.present? && profile.requires_shipping_address?
         end
 
-        line_items.includes(variant: :product).any? do |line_item|
+        # Both profile paths are preloaded: the variant's own override, and the
+        # product's for the variants that inherit it.
+        line_items.includes(variant: [:delivery_profile, { product: :delivery_profile }]).any? do |line_item|
           profile_requires_address[line_item.variant&.delivery_profile]
         end
       end
