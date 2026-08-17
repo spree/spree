@@ -5,7 +5,7 @@ module Spree
         # Staff roles and their catalog permissions (docs/plans/6.0-admin-rbac.md).
         # A role belongs to what it governs, so this surface reads and writes
         # the current store's own roles; one owned by another resource — a
-        # marketplace vendor's — belongs to that panel. Protection of the admin
+        # marketplace seller's — belongs to that panel. Protection of the admin
         # role and host-locked rows lives on the model (`mutable` guards,
         # `can_be_deleted?`).
         class RolesController < ResourceController
@@ -40,7 +40,7 @@ module Spree
           end
 
           # The store's own roles. A role belonging to another resource — a
-          # marketplace vendor's — is managed from that panel and never appears
+          # marketplace seller's — is managed from that panel and never appears
           # in the staff role picker.
           def scope
             current_store.roles.accessible_by(current_ability, :show)

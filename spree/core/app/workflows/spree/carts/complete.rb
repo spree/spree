@@ -156,7 +156,7 @@ module Spree
       end
 
       # Exactly one of cart.order (single partition) or, later, the
-      # multi-vendor order group.
+      # multi-seller order group.
       def completion_result(cart)
         cart.order
       end

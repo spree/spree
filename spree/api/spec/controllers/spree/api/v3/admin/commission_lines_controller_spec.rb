@@ -5,11 +5,11 @@ RSpec.describe Spree::Api::V3::Admin::CommissionLinesController, type: :controll
 
   include_context 'API v3 Admin authenticated'
 
-  let(:vendor) { create(:vendor, :approved, store: store, name: 'Sparks Audio') }
+  let(:seller) { create(:seller, :approved, store: store, name: 'Sparks Audio') }
   let(:order) { create(:order, store: store) }
   let(:line_item) { create(:line_item, order: order) }
   let!(:commission_line) do
-    create(:commission_line, order: order, vendor: vendor, line_item: line_item,
+    create(:commission_line, order: order, seller: seller, line_item: line_item,
                              amount: 10, tax_amount: 2.1, total: 12.1, currency: 'USD')
   end
 
@@ -22,7 +22,7 @@ RSpec.describe Spree::Api::V3::Admin::CommissionLinesController, type: :controll
       expect(response).to have_http_status(:ok)
       row = json_response['data'].first
       expect(row['id']).to start_with('cline_')
-      expect(row['vendor_name']).to eq('Sparks Audio')
+      expect(row['seller_name']).to eq('Sparks Audio')
       expect(row['amount']).to eq('10.0')
       expect(row['tax_amount']).to eq('2.1')
       expect(row['total']).to eq('12.1')
@@ -33,7 +33,7 @@ RSpec.describe Spree::Api::V3::Admin::CommissionLinesController, type: :controll
       other_store = create(:store)
       other = create(:commission_line,
                      order: create(:order, store: other_store),
-                     vendor: create(:vendor, store: other_store),
+                     seller: create(:seller, store: other_store),
                      line_item: create(:line_item))
 
       get :index, as: :json
@@ -47,7 +47,7 @@ RSpec.describe Spree::Api::V3::Admin::CommissionLinesController, type: :controll
       other_store = create(:store)
       other = create(:commission_line,
                      order: create(:order, store: other_store),
-                     vendor: create(:vendor, store: other_store),
+                     seller: create(:seller, store: other_store),
                      line_item: create(:line_item))
 
       get :show, params: { id: other.prefixed_id }, as: :json

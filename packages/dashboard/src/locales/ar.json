@@ -1095,7 +1095,7 @@
         "tags": {
           "label": "Tags"
         },
-        "vendor": {
+        "seller": {
           "label": "البائع",
           "first_party": "تبيعه بنفسك"
         }
@@ -1627,7 +1627,7 @@
           "help": "اتركه فارغاً لشهادة بلا تاريخ انتهاء."
         }
       },
-      "vendor": {
+      "seller": {
         "name": {
           "placeholder": "Sparks Audio"
         },
@@ -1990,7 +1990,7 @@
       "returns": "المرتجعات",
       "settings": "الإعدادات",
       "transfers": "التحويلات",
-      "vendors": "البائعون"
+      "sellers": "البائعون"
     },
     "option_types": {
       "columns": {
@@ -4190,7 +4190,7 @@
     "enterprise": {
       "learn_more": "تعرّف على Spree Enterprise"
     },
-    "vendors": {
+    "sellers": {
       "add_cta": "إضافة بائع",
       "add_sheet_title": "بائع جديد",
       "create_description": "أنشئ سجل البائع أولاً، ثم ادعُه ووافق عليه واضبط الدفعات من صفحته.",
@@ -4260,7 +4260,7 @@
         "canceled": "انسحب قبل الانضمام."
       },
       "tax_remittance": {
-        "vendor": "البائع يورّد الضريبة",
+        "seller": "البائع يورّد الضريبة",
         "platform": "السوق يورّد الضريبة"
       },
       "payout_interval": {

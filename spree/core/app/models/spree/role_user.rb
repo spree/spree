@@ -1,6 +1,6 @@
 module Spree
   # A user holding a role. Where the grant applies is the role's business —
-  # `role.resource` names the store or vendor it governs — so an assignment
+  # `role.resource` names the store or seller it governs — so an assignment
   # carries nothing but the pairing.
   class RoleUser < Spree.base_class
     #

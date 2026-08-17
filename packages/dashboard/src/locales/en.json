@@ -1084,7 +1084,7 @@
         "tags": {
           "label": "Tags"
         },
-        "vendor": {
+        "seller": {
           "label": "Seller",
           "first_party": "Sold by you"
         }
@@ -1616,7 +1616,7 @@
           "help": "Leave empty for a certificate that does not expire."
         }
       },
-      "vendor": {
+      "seller": {
         "name": {
           "placeholder": "Sparks Audio"
         },
@@ -1979,7 +1979,7 @@
       "returns": "Returns",
       "settings": "Settings",
       "transfers": "Transfers",
-      "vendors": "Sellers"
+      "sellers": "Sellers"
     },
     "option_types": {
       "columns": {
@@ -4170,7 +4170,7 @@
     "enterprise": {
       "learn_more": "Learn about Spree Enterprise"
     },
-    "vendors": {
+    "sellers": {
       "add_cta": "Add seller",
       "add_sheet_title": "New seller",
       "create_description": "Create the seller record first. You can invite them, approve them and set up payouts from their page.",
@@ -4240,7 +4240,7 @@
         "canceled": "They withdrew before joining."
       },
       "tax_remittance": {
-        "vendor": "Seller remits",
+        "seller": "Seller remits",
         "platform": "Marketplace remits"
       },
       "payout_interval": {

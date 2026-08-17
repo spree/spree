@@ -1113,7 +1113,7 @@ export interface StockItemUpdateParams {
 }
 
 export interface StockTransferCreateParams {
-  /** Omit for a vendor receive (external stock arriving at the destination). */
+  /** Omit for a seller receive (external stock arriving at the destination). */
   source_location_id?: string
   destination_location_id: string
   reference?: string
@@ -1351,17 +1351,17 @@ export interface CustomerGroupUpdateParams {
 }
 
 /**
- * A marketplace seller. `status` is absent by design — a vendor moves
+ * A marketplace seller. `status` is absent by design — a seller moves
  * through its lifecycle via the invite/approve/suspend/reject actions,
  * never through a plain update.
  */
-export interface VendorCreateParams {
+export interface SellerCreateParams {
   name: string
   /** URL-safe slug; derived from `name` when omitted. */
   slug?: string
   contact_email?: string | null
   billing_email?: string | null
-  /** Sanitized HTML — the vendor's public description. */
+  /** Sanitized HTML — the seller's public description. */
   about?: string | null
   /**
    * Branding attachments. Pass an ActiveStorage signed id to set one, `null`
@@ -1370,22 +1370,22 @@ export interface VendorCreateParams {
   logo?: string | null
   square_logo?: string | null
   cover_photo?: string | null
-  tax_remittance?: 'vendor' | 'platform'
+  tax_remittance?: 'seller' | 'platform'
   payouts_schedule_interval?: 'daily' | 'weekly' | 'biweekly' | 'monthly' | 'manual' | null
   minimum_payout_amount?: string | number | null
-  /** Set while the vendor is away: the catalog stays but stops selling. */
+  /** Set while the seller is away: the catalog stays but stops selling. */
   holiday_mode_until?: string | null
   /**
    * Written as nested attributes, never by id — an address has no store of
    * its own, so an id would reference a row belonging to someone else.
    */
-  billing_address?: VendorAddressParams
-  returns_address?: VendorAddressParams
+  billing_address?: SellerAddressParams
+  returns_address?: SellerAddressParams
   metadata?: Record<string, unknown>
 }
 
-/** The vendor's own billing / returns address. */
-export interface VendorAddressParams {
+/** The seller's own billing / returns address. */
+export interface SellerAddressParams {
   first_name?: string
   last_name?: string
   company?: string
@@ -1401,19 +1401,19 @@ export interface VendorAddressParams {
   label?: string
 }
 
-export type VendorUpdateParams = Partial<VendorCreateParams>
+export type SellerUpdateParams = Partial<SellerCreateParams>
 
-export interface VendorInviteParams {
+export interface SellerInviteParams {
   email: string
-  /** A role the vendor owns; defaults to the vendor's own admin role. */
+  /** A role the seller owns; defaults to the seller's own admin role. */
   role_id?: string
 }
 
-export interface VendorSuspendParams {
+export interface SellerSuspendParams {
   reason?: string
 }
 
-export interface VendorRejectParams {
+export interface SellerRejectParams {
   reason?: string
 }
 
@@ -1422,7 +1422,7 @@ export interface VendorRejectParams {
  *
  * Every rule must hold for the rate to apply, and a rule naming several
  * records means any of them — so "(Cameras OR Audio) AND that seller" is a
- * category rule holding two ids beside a vendor rule holding one. A rate with
+ * category rule holding two ids beside a seller rule holding one. A rate with
  * no rules charges every sale.
  *
  * Kinds come from `commissionRates.ruleTypes()`; `preferences` are whatever
@@ -1432,7 +1432,7 @@ export interface VendorRejectParams {
 export interface CommissionRuleDraft {
   /** Present for an existing rule. Omit to create one. */
   id?: string | null
-  /** Wire shorthand for the kind — e.g. `vendor_rule`, `item_total_rule`. */
+  /** Wire shorthand for the kind — e.g. `seller_rule`, `item_total_rule`. */
   type: string
   /** Kind-specific configuration, coerced server-side by typed setters. */
   preferences?: Record<string, unknown>

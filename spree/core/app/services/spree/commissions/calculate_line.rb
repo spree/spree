@@ -21,14 +21,14 @@ module Spree
       prepend Spree::ServiceModule::Base
 
       # @param rate [Spree::CommissionRate] the resolved rate
-      # @param vendor [Spree::Vendor] the seller being charged
+      # @param seller [Spree::Seller] the seller being charged
       # @param order [Spree::Order]
       # @param line_item [Spree::LineItem, nil] the commissioned item…
       # @param fulfillment [Spree::Fulfillment, nil] …or the commissioned delivery
       # @param commission_tax [Spree::CommissionTax, nil] pre-resolved tax
       #   treatment, so commissioning a whole order resolves it once
       # @return [Spree::CommissionLine] unsaved
-      def call(rate:, vendor:, order:, line_item: nil, fulfillment: nil, commission_tax: nil)
+      def call(rate:, seller:, order:, line_item: nil, fulfillment: nil, commission_tax: nil)
         # Exactly one, checked here rather than left to the record's own
         # validation: passing both would otherwise quietly commission the item
         # and drop the delivery, and only fail on save.
@@ -40,7 +40,7 @@ module Spree
         subject = subjects.first
         currency = order.currency
         precision = Spree::Money::Rounding.precision(currency)
-        tax = commission_tax || resolve_tax(rate: rate, vendor: vendor, order: order)
+        tax = commission_tax || resolve_tax(rate: rate, seller: seller, order: order)
 
         amount = Spree::Money::Rounding.quantize(charge_for(rate, subject, currency), precision)
         tax_amount = Spree::Money::Rounding.quantize(amount * tax.rate, precision)
@@ -48,7 +48,7 @@ module Spree
         success(
           Spree::CommissionLine.new(
             order: order,
-            vendor: vendor,
+            seller: seller,
             line_item: line_item,
             fulfillment: fulfillment,
             commission_rate: rate,
@@ -124,8 +124,8 @@ module Spree
         amount
       end
 
-      def resolve_tax(rate:, vendor:, order:)
-        Spree.commissions_resolve_tax_rate_service.call(rate: rate, vendor: vendor, order: order).value
+      def resolve_tax(rate:, seller:, order:)
+        Spree.commissions_resolve_tax_rate_service.call(rate: rate, seller: seller, order: order).value
       end
     end
   end

@@ -46,7 +46,7 @@ module Spree
                                :subscribers,
                                :store_authentication_strategies,
                                :admin_authentication_strategies,
-                               :vendor_authentication_strategies)
+                               :seller_authentication_strategies)
       SpreeCalculators = Struct.new(:shipping_methods, :tax_rates, :promotion_actions_create_adjustments, :promotion_actions_create_item_adjustments)
       PromoEnvironment = Struct.new(:rules, :actions)
       PricingEnvironment = Struct.new(:rules)
@@ -292,9 +292,9 @@ module Spree
           Spree::OrderRouting::Rules::DefaultLocation
         ]
 
-        # Commission targeting rule kinds (docs/plans/6.0-multi-vendor-marketplace.md).
+        # Commission targeting rule kinds (docs/plans/6.0-multi-seller-marketplace.md).
         Rails.application.config.spree.commission_rules.concat [
-          Spree::CommissionRules::VendorRule,
+          Spree::CommissionRules::SellerRule,
           Spree::CommissionRules::CategoryRule,
           Spree::CommissionRules::ProductRule,
           Spree::CommissionRules::ItemTotalRule
@@ -412,7 +412,7 @@ module Spree
           Spree::Category,
           Spree::Store,
           Spree::Policy,
-          Spree::Vendor
+          Spree::Seller
         ]
 
         # Resources that expose tags via `acts_as_taggable_on :tags`. The
@@ -420,7 +420,7 @@ module Spree
         # `taggable_type`, and the SPA `<TagCombobox>` targets them by name.
         # Extend in an app initializer (after :load_config_initializers) to
         # surface custom taggables — e.g.
-        #   Rails.application.config.spree.taggable_types << 'MyApp::Vendor'.
+        #   Rails.application.config.spree.taggable_types << 'MyApp::Seller'.
         Rails.application.config.spree.taggable_types = [
           'Spree::Product',
           'Spree::Order',
@@ -467,7 +467,7 @@ module Spree
           Spree::TaxRate,
           Spree::Category,
           Spree::Variant,
-          Spree::Vendor,
+          Spree::Seller,
           Spree.customer_class
         ]
 
@@ -527,7 +527,7 @@ module Spree
         Rails.application.config.spree.admin_authentication_strategies = Spree::Authentication::StrategyRegistry.new(
           email: Spree::Authentication::Strategies::EmailPasswordStrategy
         )
-        Rails.application.config.spree.vendor_authentication_strategies = Spree::Authentication::StrategyRegistry.new(
+        Rails.application.config.spree.seller_authentication_strategies = Spree::Authentication::StrategyRegistry.new(
           email: Spree::Authentication::Strategies::EmailPasswordStrategy
         )
       end

@@ -3,12 +3,12 @@ require 'spec_helper'
 RSpec.describe Spree::Commissions::ResolveTaxRate do
   let(:store) { @default_store }
   let(:billing_address) { create(:address, country_iso: 'DE') }
-  let(:vendor) { create(:vendor, :approved, store: store, billing_address: billing_address) }
+  let(:seller) { create(:seller, :approved, store: store, billing_address: billing_address) }
   let(:order) { create(:order, store: store) }
   let(:rate) { create(:commission_rate, store: store) }
 
   def resolve
-    described_class.call(rate: rate, vendor: vendor, order: order).value
+    described_class.call(rate: rate, seller: seller, order: order).value
   end
 
   def resolved_rate

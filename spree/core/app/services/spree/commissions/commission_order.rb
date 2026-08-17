@@ -12,7 +12,7 @@ module Spree
     # placement would charge them twice.
     #
     # Lines are grouped by the seller each item was bought from, which is
-    # `line_item.vendor_id` — the snapshot frozen when the order was placed,
+    # `line_item.seller_id` — the snapshot frozen when the order was placed,
     # not whoever owns the product today. Items with no seller are the
     # marketplace's own and are not commissioned.
     #
@@ -32,22 +32,22 @@ module Spree
         return success([]) if order.commission_lines.exists?
 
         commissioned = order.line_items.
-                       includes(vendor: :billing_address, variant: { product: :categories }).
-                       select(&:vendor_id)
+                       includes(seller: :billing_address, variant: { product: :categories }).
+                       select(&:seller_id)
         return success([]) if commissioned.empty?
 
         rates = Spree::Commissions::ResolveRate.candidates_for(order.store)
         categories = Spree::Commissions::ResolveRate.categories_for(
           commissioned.map { |line_item| line_item.variant&.product }
         )
-        deliveries = deliveries_by_vendor(order)
+        deliveries = deliveries_by_seller(order)
         lines = []
 
         Spree::CommissionLine.transaction do
-          commissioned.group_by(&:vendor_id).each_value do |line_items|
+          commissioned.group_by(&:seller_id).each_value do |line_items|
             lines.concat(
-              commission_vendor(
-                order: order, vendor: line_items.first.vendor, line_items: line_items,
+              commission_seller(
+                order: order, seller: line_items.first.seller, line_items: line_items,
                 rates: rates, categories: categories, deliveries: deliveries
               )
             )
@@ -65,9 +65,9 @@ module Spree
 
       private
 
-      def commission_vendor(order:, vendor:, line_items:, rates:, categories:, deliveries:)
+      def commission_seller(order:, seller:, line_items:, rates:, categories:, deliveries:)
         matched = line_items.filter_map do |line_item|
-          rate = resolve(line_item: line_item, vendor: vendor, order: order, rates: rates, categories: categories)
+          rate = resolve(line_item: line_item, seller: seller, order: order, rates: rates, categories: categories)
           [line_item, rate] if rate
         end
         return [] if matched.empty?
@@ -77,11 +77,11 @@ module Spree
         # rate asks the tax service once — but a rate may carry its own
         # override, so two rates are still two answers.
         taxes = Hash.new do |cache, rate|
-          cache[rate] = resolve_tax(rate: rate, vendor: vendor, order: order)
+          cache[rate] = resolve_tax(rate: rate, seller: seller, order: order)
         end
 
         lines = matched.map do |line_item, rate|
-          write(rate: rate, vendor: vendor, order: order, line_item: line_item, tax: taxes[rate])
+          write(rate: rate, seller: seller, order: order, line_item: line_item, tax: taxes[rate])
         end
 
         # A fulfillment carries goods, not a rate, so the one that governs
@@ -89,10 +89,10 @@ module Spree
         shipping_rate = matched.map(&:last).find(&:include_shipping?)
         return lines if shipping_rate.nil?
 
-        deliveries.fetch(vendor.id, []).each do |fulfillment|
+        deliveries.fetch(seller.id, []).each do |fulfillment|
           next if fulfillment.taxable_basis.zero?
 
-          lines << write(rate: shipping_rate, vendor: vendor, order: order,
+          lines << write(rate: shipping_rate, seller: seller, order: order,
                          fulfillment: fulfillment, tax: taxes[shipping_rate])
         end
 
@@ -111,28 +111,28 @@ module Spree
       # construction and this becomes the plain "the seller's deliveries".
       #
       # @return [Hash{Integer=>Array<Spree::Fulfillment>}]
-      def deliveries_by_vendor(order)
+      def deliveries_by_seller(order)
         order.fulfillments.includes(fulfillment_items: :line_item).group_by do |fulfillment|
-          sellers = fulfillment.fulfillment_items.map { |item| item.line_item&.vendor_id }.uniq
+          sellers = fulfillment.fulfillment_items.map { |item| item.line_item&.seller_id }.uniq
 
           sellers.one? ? sellers.first : nil
         end.except(nil)
       end
 
-      def resolve(line_item:, vendor:, order:, rates:, categories:)
+      def resolve(line_item:, seller:, order:, rates:, categories:)
         Spree.commissions_resolve_rate_service.call(
-          line_item: line_item, vendor: vendor, store: order.store, currency: order.currency,
+          line_item: line_item, seller: seller, store: order.store, currency: order.currency,
           rates: rates, categories: categories
         ).value
       end
 
-      def resolve_tax(rate:, vendor:, order:)
-        Spree.commissions_resolve_tax_rate_service.call(rate: rate, vendor: vendor, order: order).value
+      def resolve_tax(rate:, seller:, order:)
+        Spree.commissions_resolve_tax_rate_service.call(rate: rate, seller: seller, order: order).value
       end
 
-      def write(rate:, vendor:, order:, tax:, line_item: nil, fulfillment: nil)
+      def write(rate:, seller:, order:, tax:, line_item: nil, fulfillment: nil)
         line = Spree.commissions_calculate_line_service.call(
-          rate: rate, vendor: vendor, order: order,
+          rate: rate, seller: seller, order: order,
           line_item: line_item, fulfillment: fulfillment, commission_tax: tax
         ).value
         line.save!

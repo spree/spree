@@ -33,7 +33,7 @@ RSpec.describe Spree::CommissionRules::ProductRule do
     rule.save!
 
     context = Spree::Commissions::Context.new(
-      vendor: create(:vendor, :approved, store: store),
+      seller: create(:seller, :approved, store: store),
       order: create(:order, store: store),
       line_item: create(:line_item, variant: product.default_variant)
     )

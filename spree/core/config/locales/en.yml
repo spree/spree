@@ -727,7 +727,7 @@ en:
       product_rule:
         description: Charges this rate only for the selected products
         name: Product
-      vendor_rule:
+      seller_rule:
         description: Charges this rate only when the seller is one of the selected
         name: Seller
     company: Company
@@ -1066,7 +1066,7 @@ en:
         link_description: 'To accept this invitation, please click the link below:'
         subject: Invitation to join %{resource_name}
       thanks: Thank you,
-    invitation_role_resource_mismatch: must belong to the same store or vendor as the invitation
+    invitation_role_resource_mismatch: must belong to the same store or seller as the invitation
     invitations: Invitations
     invited_by: Invited by
     iso: ISO Alpha-2
@@ -1504,6 +1504,25 @@ en:
     select: Select
     select_stock: Select stock
     selected_quantity_not_available: selected of %{item} is not available.
+    seller: Seller
+    seller_access_denied: You do not have access to this seller.
+    seller_mailer:
+      approved_email:
+        action: Go to your dashboard
+        heading: You're approved
+        message: Your application to sell on %{store_name} has been approved. You can now list products and start taking orders.
+        subject: You're approved to sell on %{store_name}
+      get_in_touch: If you think this is a mistake, reply to this email or contact us at %{store_email}.
+      greeting: Hi %{seller_name},
+      rejected_email:
+        heading: About your application
+        message: Your application to sell on %{store_name} has not been accepted.
+        subject: Your application to sell on %{store_name}
+      suspended_email:
+        heading: Your account has been suspended
+        message: Selling on %{store_name} has been paused for your account. Your products and order history are unaffected.
+        subject: Your %{store_name} account has been suspended
+    seller_membership_required: This account does not belong to any seller.
     send_consumer_transactional_emails: Send Customer Transactional Emails
     seo: SEO
     seo_title: SEO Title
@@ -1685,25 +1704,6 @@ en:
     value: Value
     variant: Variant
     variants: Variants
-    vendor: Vendor
-    vendor_access_denied: You do not have access to this vendor.
-    vendor_mailer:
-      approved_email:
-        action: Go to your dashboard
-        heading: You're approved
-        message: Your application to sell on %{store_name} has been approved. You can now list products and start taking orders.
-        subject: You're approved to sell on %{store_name}
-      get_in_touch: If you think this is a mistake, reply to this email or contact us at %{store_email}.
-      greeting: Hi %{vendor_name},
-      rejected_email:
-        heading: About your application
-        message: Your application to sell on %{store_name} has not been accepted.
-        subject: Your application to sell on %{store_name}
-      suspended_email:
-        heading: Your account has been suspended
-        message: Selling on %{store_name} has been paused for your account. Your products and order history are unaffected.
-        subject: Your %{store_name} account has been suspended
-    vendor_membership_required: This account does not belong to any vendor.
     verified: Verified
     verified_at: Verified at
     version: Version

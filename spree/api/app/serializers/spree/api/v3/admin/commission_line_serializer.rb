@@ -14,8 +14,8 @@ module Spree
         # has to show both.
         class CommissionLineSerializer < V3::BaseSerializer
           typelize order_id: :string,
-                   vendor_id: :string,
-                   vendor_name: 'string | null',
+                   seller_id: :string,
+                   seller_name: 'string | null',
                    line_item_id: 'string | null',
                    fulfillment_id: 'string | null',
                    commission_rate_id: 'string | null',
@@ -48,13 +48,13 @@ module Spree
             attribute(formatted) { |line| line.public_send(formatted).to_s }
           end
 
-          %i[order vendor line_item fulfillment commission_rate].each do |association|
+          %i[order seller line_item fulfillment commission_rate].each do |association|
             attribute(:"#{association}_id") { |line| line.public_send(association)&.prefixed_id }
           end
 
           # The seller's name, so a commission table reads without expanding.
-          attribute :vendor_name do |line|
-            line.vendor&.name
+          attribute :seller_name do |line|
+            line.seller&.name
           end
         end
       end

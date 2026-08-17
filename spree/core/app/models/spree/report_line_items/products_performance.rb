@@ -3,7 +3,7 @@ module Spree
     class ProductsPerformance < Spree::ReportLineItem
       attribute :sku, :string
       attribute :name, :string
-      attribute :vendor, :string
+      attribute :seller, :string
       attribute :category_lvl0, :string
       attribute :category_lvl1, :string
       attribute :category_lvl2, :string
@@ -17,8 +17,8 @@ module Spree
 
       delegate :sku, :name, to: :record
 
-      def vendor
-        record.try(:vendor_name)
+      def seller
+        record.try(:seller_name)
       end
 
       def category_lvl0

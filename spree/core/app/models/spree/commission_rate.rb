@@ -11,7 +11,7 @@ module Spree
   #
   # The list IS the precedence, so what an operator sees in the table is what
   # resolution does. Seeded rates arrive in the order merchants asked for —
-  # product, then category, then vendor, then the marketplace default — and a
+  # product, then category, then seller, then the marketplace default — and a
   # marketplace that wants a different answer drags a row instead of reasoning
   # about which rule type is 'narrower'.
   #
@@ -222,7 +222,7 @@ module Spree
     #
     # Every rule must say yes. A rule naming several records means any of
     # them, so "(Cameras OR Audio) AND that seller" is a category rule holding
-    # two ids beside a vendor rule holding one — the OR lives inside a rule,
+    # two ids beside a seller rule holding one — the OR lives inside a rule,
     # which is why there is no match-policy setting to get wrong. A rate with
     # no rules charges every sale.
     #

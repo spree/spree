@@ -1,0 +1,8 @@
+<%= render layout: 'spree/shared/mailer_hero' do %>
+  <h1><%= Spree.t('seller_mailer.approved_email.heading') %></h1>
+  <p class="greeting"><%= Spree.t('seller_mailer.greeting', seller_name: @seller.name) %></p>
+  <p><%= Spree.t('seller_mailer.approved_email.message', store_name: current_store.name) %></p>
+  <% if @dashboard_url %>
+    <%= render 'spree/shared/mailer_button', url: @dashboard_url, label: Spree.t('seller_mailer.approved_email.action') %>
+  <% end %>
+<% end %>

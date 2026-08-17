@@ -12,7 +12,7 @@ module Spree
                    tax_category_id: [:string, nullable: true],
                    product_type_id: [:string, nullable: true],
                    delivery_profile_id: [:string, nullable: true],
-                   vendor_name: [:string, nullable: true],
+                   seller_name: [:string, nullable: true],
                    price: ['Price', nullable: true],
                    deleted_at: [:string, nullable: true],
                    metadata: 'Record<string, unknown>'
@@ -25,16 +25,16 @@ module Spree
             product.delivery_profile&.prefixed_id
           end
 
-          # `vendor_id` comes from the store serializer. The name rides along
+          # `seller_id` comes from the store serializer. The name rides along
           # so the products list can show who sells a row without expanding —
-          # the full profile is `?expand=vendor`.
-          attribute :vendor_name do |product|
-            product.vendor&.name
+          # the full profile is `?expand=seller`.
+          attribute :seller_name do |product|
+            product.seller&.name
           end
 
-          one :vendor,
-              resource: proc { Spree.api.admin_vendor_serializer },
-              if: proc { expand?('vendor') }
+          one :seller,
+              resource: proc { Spree.api.admin_seller_serializer },
+              if: proc { expand?('seller') }
 
           attribute :product_type_id do |product|
             product.product_type&.prefixed_id

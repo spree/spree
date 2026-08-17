@@ -57,7 +57,7 @@ export interface DeliveryRateProviderOption {
    * way, so a method stays configurable.
    */
   service_catalog: DeliveryRateProviderCatalogEntry[]
-  /** Why the services could not be listed (the vendor's own message), or null when they were. */
+  /** Why the services could not be listed (the seller's own message), or null when they were. */
   service_catalog_error: string | null
 }
 

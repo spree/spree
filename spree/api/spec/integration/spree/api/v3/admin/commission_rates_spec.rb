@@ -76,7 +76,7 @@ RSpec.describe 'Admin Commission Rates API', type: :request, swagger_doc: 'api-r
         `rules` is the rate's whole targeting, sent inline. Every rule has to
         hold, and a rule naming several records means any of them — so
         "(Cameras OR Audio) AND that seller" is a category rule holding two ids
-        beside a vendor rule holding one. Send no rules to charge every sale.
+        beside a seller rule holding one. Send no rules to charge every sale.
 
         Rule kinds come from `GET /commission_rates/rule_types`, which also
         describes the configuration each one takes. A marketplace that adds its
@@ -142,9 +142,9 @@ RSpec.describe 'Admin Commission Rates API', type: :request, swagger_doc: 'api-r
               type: :object,
               properties: {
                 id: { type: :string, description: 'Present for an existing rule; omit to create one.' },
-                type: { type: :string, example: 'vendor_rule',
+                type: { type: :string, example: 'seller_rule',
                         description: 'A kind from /commission_rates/rule_types.' },
-                preferences: { type: :object, example: { vendor_ids: ['ven_a1b2c3'] },
+                preferences: { type: :object, example: { seller_ids: ['sel_a1b2c3'] },
                                description: "Configuration for the kind, per its preference_schema." },
                 product_ids: { type: :array, items: { type: :string },
                                description: 'For kinds that name products, which are kept outside preferences.' }
@@ -206,7 +206,7 @@ RSpec.describe 'Admin Commission Rates API', type: :request, swagger_doc: 'api-r
                    items: {
                      type: :object,
                      properties: {
-                       type: { type: :string, example: 'vendor_rule' },
+                       type: { type: :string, example: 'seller_rule' },
                        name: { type: :string, example: 'Seller' },
                        description: { type: :string, nullable: true },
                        preference_schema: { type: :array, items: { type: :object } },
@@ -218,7 +218,7 @@ RSpec.describe 'Admin Commission Rates API', type: :request, swagger_doc: 'api-r
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['data'].pluck('type')).to include('vendor_rule', 'item_total_rule')
+          expect(data['data'].pluck('type')).to include('seller_rule', 'item_total_rule')
         end
       end
     end

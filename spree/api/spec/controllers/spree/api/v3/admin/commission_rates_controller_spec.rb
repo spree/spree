@@ -6,13 +6,13 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
   include_context 'API v3 Admin authenticated'
 
   let!(:rate) { create(:commission_rate, store: store, name: 'Standard', value: 10) }
-  let(:vendor) { create(:vendor, store: store) }
+  let(:seller) { create(:seller, store: store) }
 
   before { request.headers.merge!(headers) }
 
   describe 'GET #index' do
     it 'lists the store rates with their targeting' do
-      create(:commission_vendor_rule, commission_rate: rate, vendors: [vendor])
+      create(:commission_seller_rule, commission_rate: rate, sellers: [seller])
 
       get :index, as: :json
 
@@ -21,7 +21,7 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
       expect(row['id']).to start_with('crate_')
       expect(row['name']).to eq('Standard')
       expect(row['kind']).to eq('percentage')
-      expect(row['rules'].first).to include('type' => 'vendor_rule', 'label' => 'Seller')
+      expect(row['rules'].first).to include('type' => 'seller_rule', 'label' => 'Seller')
     end
 
     it "hides another marketplace's rates" do
@@ -49,12 +49,12 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
         name: 'Audio sellers',
         kind: 'percentage',
         value: 12.5,
-        rules: [{ type: 'vendor_rule', preferences: { vendor_ids: [vendor.prefixed_id] } }]
+        rules: [{ type: 'seller_rule', preferences: { seller_ids: [seller.prefixed_id] } }]
       }, as: :json
 
       expect(response).to have_http_status(:created)
       expect(json_response['value']).to eq('12.5')
-      expect(json_response['rules'].first['type']).to eq('vendor_rule')
+      expect(json_response['rules'].first['type']).to eq('seller_rule')
     end
 
     it 'refuses a fixed rate that states no amount anywhere' do
@@ -79,7 +79,7 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
 
   describe 'PATCH #update' do
     it 'replaces the targeting wholesale' do
-      create(:commission_vendor_rule, commission_rate: rate, vendors: [vendor])
+      create(:commission_seller_rule, commission_rate: rate, sellers: [seller])
       category = create(:category, store: store)
 
       patch :update, params: {
@@ -96,16 +96,16 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
     # rather than having it silently dropped — and the rate keeps the targeting
     # it had, since a half-applied payload could widen what it charges.
     it 'refuses a rule naming another store record, leaving the targeting alone' do
-      create(:commission_vendor_rule, commission_rate: rate, vendors: [vendor])
-      foreign_vendor = create(:vendor, store: create(:store))
+      create(:commission_seller_rule, commission_rate: rate, sellers: [seller])
+      foreign_seller = create(:seller, store: create(:store))
 
       patch :update, params: {
         id: rate.prefixed_id,
-        rules: [{ type: 'vendor_rule', preferences: { vendor_ids: [foreign_vendor.prefixed_id] } }]
+        rules: [{ type: 'seller_rule', preferences: { seller_ids: [foreign_seller.prefixed_id] } }]
       }, as: :json
 
       expect(response).to have_http_status(:not_found)
-      expect(rate.reload.commission_rules.map(&:class)).to eq([Spree::CommissionRules::VendorRule])
+      expect(rate.reload.commission_rules.map(&:class)).to eq([Spree::CommissionRules::SellerRule])
     end
 
     it 'refuses a rule kind nobody registered' do
@@ -120,14 +120,14 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
     it 'refuses a rule naming a record that no longer exists' do
       patch :update, params: {
         id: rate.prefixed_id,
-        rules: [{ type: 'vendor_rule', preferences: { vendor_ids: ['ven_gone'] } }]
+        rules: [{ type: 'seller_rule', preferences: { seller_ids: ['sel_gone'] } }]
       }, as: :json
 
       expect(response).to have_http_status(:not_found)
     end
 
     it 'still accepts an empty list as clearing the targeting' do
-      create(:commission_vendor_rule, commission_rate: rate, vendors: [vendor])
+      create(:commission_seller_rule, commission_rate: rate, sellers: [seller])
 
       patch :update, params: { id: rate.prefixed_id, rules: [] }, as: :json
 
@@ -206,7 +206,7 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
       expect(response).to have_http_status(:ok)
       types = json_response['data']
       expect(types.map { |row| row['type'] }).
-        to include('vendor_rule', 'category_rule', 'product_rule', 'item_total_rule')
+        to include('seller_rule', 'category_rule', 'product_rule', 'item_total_rule')
 
       band = types.find { |row| row['type'] == 'item_total_rule' }
       expect(band['name']).to eq('Sale value')

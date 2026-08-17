@@ -1098,7 +1098,7 @@
         "tags": {
           "label": "Tagi"
         },
-        "vendor": {
+        "seller": {
           "label": "Sprzedawca",
           "first_party": "Sprzedajesz Ty"
         }
@@ -1630,7 +1630,7 @@
           "help": "Zostaw puste, aby certyfikat nie wygasał."
         }
       },
-      "vendor": {
+      "seller": {
         "name": {
           "placeholder": "Sparks Audio"
         },
@@ -1993,7 +1993,7 @@
       "returns": "Zwroty",
       "settings": "Ustawienia",
       "transfers": "Transfery",
-      "vendors": "Sprzedawcy"
+      "sellers": "Sprzedawcy"
     },
     "option_types": {
       "columns": {
@@ -4226,7 +4226,7 @@
     "enterprise": {
       "learn_more": "Dowiedz się więcej o Spree Enterprise"
     },
-    "vendors": {
+    "sellers": {
       "add_cta": "Dodaj sprzedawcę",
       "add_sheet_title": "Nowy sprzedawca",
       "create_description": "Najpierw utwórz sprzedawcę. Zaproszenie, akceptację i wypłaty ustawisz na jego stronie.",
@@ -4296,7 +4296,7 @@
         "canceled": "Wycofał się przed dołączeniem."
       },
       "tax_remittance": {
-        "vendor": "Rozlicza sprzedawca",
+        "seller": "Rozlicza sprzedawca",
         "platform": "Rozlicza marketplace"
       },
       "payout_interval": {

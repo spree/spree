@@ -1084,7 +1084,7 @@
         "tags": {
           "label": "Tags"
         },
-        "vendor": {
+        "seller": {
           "label": "Verkäufer",
           "first_party": "Eigener Verkauf"
         }
@@ -1616,7 +1616,7 @@
           "help": "Leer lassen für eine Bescheinigung ohne Ablaufdatum."
         }
       },
-      "vendor": {
+      "seller": {
         "name": {
           "placeholder": "Sparks Audio"
         },
@@ -1979,7 +1979,7 @@
       "returns": "Retouren",
       "settings": "Einstellungen",
       "transfers": "Umlagerungen",
-      "vendors": "Verkäufer"
+      "sellers": "Verkäufer"
     },
     "option_types": {
       "columns": {
@@ -4170,7 +4170,7 @@
     "enterprise": {
       "learn_more": "Mehr über Spree Enterprise erfahren"
     },
-    "vendors": {
+    "sellers": {
       "add_cta": "Verkäufer hinzufügen",
       "add_sheet_title": "Neuer Verkäufer",
       "create_description": "Legen Sie zuerst den Verkäufer an. Einladung, Freigabe und Auszahlungen richten Sie danach auf seiner Seite ein.",
@@ -4240,7 +4240,7 @@
         "canceled": "Hat vor dem Beitritt zurückgezogen."
       },
       "tax_remittance": {
-        "vendor": "Verkäufer führt ab",
+        "seller": "Verkäufer führt ab",
         "platform": "Marktplatz führt ab"
       },
       "payout_interval": {

@@ -16,7 +16,7 @@ module Spree
     #
     # Associations
     #
-    belongs_to :owner, polymorphic: true, touch: true # can be a store or a vendor or organization
+    belongs_to :owner, polymorphic: true, touch: true # can be a store or a seller or organization
 
     #
     # Translations

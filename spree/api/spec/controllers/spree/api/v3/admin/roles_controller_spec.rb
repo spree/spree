@@ -28,12 +28,12 @@ RSpec.describe Spree::Api::V3::Admin::RolesController, type: :controller do
     # The staff Roles page feeds the staff role picker, so a role owned by
     # another resource would be assignable to store staff.
     it 'omits roles owned by another resource' do
-      create(:role, name: 'vendor_manager', resource: create(:customer_group))
+      create(:role, name: 'seller_manager', resource: create(:customer_group))
 
       get :index, as: :json
 
       names = json_response['data'].map { |r| r['name'] }
-      expect(names).not_to include('vendor_manager')
+      expect(names).not_to include('seller_manager')
     end
 
     it 'reports the admin role as immutable with the full catalog' do
@@ -86,15 +86,15 @@ RSpec.describe Spree::Api::V3::Admin::RolesController, type: :controller do
         expect(Spree::Role.find_by(name: 'sneaky')).to be_nil
       end
 
-      # A role owned by another resource (a marketplace vendor) confers nothing
+      # A role owned by another resource (a marketplace seller) confers nothing
       # in the store admin, so it must not widen what the caller may grant.
       it 'ignores keys the caller holds only on a non-store resource' do
         Spree.permissions.register_resource(
           :products, group: :catalog, audiences: %i[dummy_model], subjects: -> { [Spree::Product] }
         )
         create(:role_user, user: staffer,
-               role: create(:role, name: 'vendor_catalog', permissions: %w[write_products],
-                                   resource: Spree::DummyModel.create!(name: 'Vendor A')))
+               role: create(:role, name: 'seller_catalog', permissions: %w[write_products],
+                                   resource: Spree::DummyModel.create!(name: 'Seller A')))
 
         post :create, params: { name: 'sneaky', permissions: %w[write_products] }, as: :json
 

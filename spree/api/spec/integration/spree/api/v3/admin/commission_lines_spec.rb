@@ -6,10 +6,10 @@ RSpec.describe 'Admin Commission Lines API', type: :request, swagger_doc: 'api-r
   include_context 'API v3 Admin'
 
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
-  let(:vendor) { create(:vendor, :approved, store: store, name: 'Sparks Audio') }
+  let(:seller) { create(:seller, :approved, store: store, name: 'Sparks Audio') }
   let(:order) { create(:order, store: store) }
   let!(:commission_line) do
-    create(:commission_line, order: order, vendor: vendor, line_item: create(:line_item, order: order),
+    create(:commission_line, order: order, seller: seller, line_item: create(:line_item, order: order),
                              amount: 10, tax_amount: 2.1, total: 12.1, currency: 'USD')
   end
 
@@ -43,7 +43,7 @@ RSpec.describe 'Admin Commission Lines API', type: :request, swagger_doc: 'api-r
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false,
                 description: 'Number of records per page'
-      parameter name: :'q[vendor_id_eq]', in: :query, type: :string, required: false,
+      parameter name: :'q[seller_id_eq]', in: :query, type: :string, required: false,
                 description: 'Filter to one seller'
       parameter name: :'q[order_id_eq]', in: :query, type: :string, required: false,
                 description: 'Filter to one order'

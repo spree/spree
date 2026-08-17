@@ -20,7 +20,7 @@ module Spree
       prepend Spree::ServiceModule::Base
 
       # @param line_item [Spree::LineItem] the sale being commissioned
-      # @param vendor [Spree::Vendor] its seller
+      # @param seller [Spree::Seller] its seller
       # @param store [Spree::Store]
       # @param currency [String] the order's currency
       # @param rates [Array<Spree::CommissionRate>, nil] pre-loaded candidates,
@@ -30,11 +30,11 @@ module Spree
       #   product's categories with their ancestors, resolved once for the
       #   order — see .categories_for
       # @return [Spree::CommissionRate, nil]
-      def call(line_item:, vendor:, store:, currency: nil, rates: nil, categories: nil)
+      def call(line_item:, seller:, store:, currency: nil, rates: nil, categories: nil)
         currency ||= line_item.currency
         candidates = rates || self.class.candidates_for(store)
         context = Spree::Commissions::Context.new(
-          vendor: vendor,
+          seller: seller,
           order: line_item.order,
           line_item: line_item,
           currency: currency,

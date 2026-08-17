@@ -63,7 +63,7 @@ module Spree
 
         # Membership is holding a role the store itself owns, mirroring
         # Spree::Ability#staff_roles. A role belonging to another resource — a
-        # marketplace vendor, say — is that panel's business and never admits
+        # marketplace seller, say — is that panel's business and never admits
         # its holder here.
         def current_user_member_of_store?
           return false unless current_user.respond_to?(:spree_roles)

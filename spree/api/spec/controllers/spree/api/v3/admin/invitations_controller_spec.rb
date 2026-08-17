@@ -80,10 +80,10 @@ RSpec.describe Spree::Api::V3::Admin::InvitationsController, type: :controller d
       # on this store — the invitation is rejected as invalid rather than
       # unauthorized, since it is not a privilege question but a nonsensical one.
       it 'refuses inviting store staff into a role owned by another resource' do
-        vendor_role = create(:role, name: 'vendor_manager', resource: create(:customer_group))
+        seller_role = create(:role, name: 'seller_manager', resource: create(:customer_group))
 
         expect {
-          post :create, params: { email: 'seller@example.com', role_id: vendor_role.prefixed_id }, as: :json
+          post :create, params: { email: 'seller@example.com', role_id: seller_role.prefixed_id }, as: :json
         }.not_to change(Spree::Invitation, :count)
 
         expect(response).to have_http_status(:unprocessable_content)

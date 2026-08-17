@@ -9,7 +9,7 @@ module Spree
         # round-trip — the same shape price lists use.
         #
         # Operator-only: `read_commissions`/`write_commissions` is closed to the
-        # vendor audience, because a seller must never see, let alone set, what
+        # seller audience, because a seller must never see, let alone set, what
         # anyone is charged.
         class CommissionRatesController < ResourceController
           scoped_resource :commissions

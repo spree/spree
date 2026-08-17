@@ -30,7 +30,7 @@ module Spree
           # Every association the serializer reads, so a page of lines costs a
           # fixed number of queries rather than one per row.
           def collection_includes
-            [:vendor, :commission_rate, :order, :line_item, :fulfillment]
+            [:seller, :commission_rate, :order, :line_item, :fulfillment]
           end
         end
       end

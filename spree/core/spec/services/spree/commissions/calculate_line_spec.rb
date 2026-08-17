@@ -4,14 +4,14 @@ RSpec.describe Spree::Commissions::CalculateLine do
   subject(:calculate) { described_class }
 
   let(:store) { @default_store }
-  let(:vendor) { create(:vendor, :approved, store: store) }
+  let(:seller) { create(:seller, :approved, store: store) }
   let(:order) { create(:order, store: store, currency: 'USD') }
   let(:line_item) { create(:line_item, order: order, price: 100, quantity: 1) }
   let(:rate) { create(:commission_rate, store: store, kind: 'percentage', value: 10) }
 
   def call(**overrides)
     calculate.call(
-      { rate: rate, vendor: vendor, order: order, line_item: line_item,
+      { rate: rate, seller: seller, order: order, line_item: line_item,
         commission_tax: Spree::CommissionTax.untaxed }.merge(overrides)
     ).value
   end
@@ -209,12 +209,12 @@ RSpec.describe Spree::Commissions::CalculateLine do
   end
 
   it 'refuses to price nothing' do
-    expect(calculate.call(rate: rate, vendor: vendor, order: order)).to be_failure
+    expect(calculate.call(rate: rate, seller: seller, order: order)).to be_failure
   end
 
   # Both would silently commission the item and drop the delivery.
   it 'refuses to price an item and a delivery at once' do
-    result = calculate.call(rate: rate, vendor: vendor, order: order,
+    result = calculate.call(rate: rate, seller: seller, order: order,
                             line_item: line_item, fulfillment: create(:fulfillment, order: order))
 
     expect(result).to be_failure

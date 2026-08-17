@@ -12,7 +12,7 @@ class CreateSpreeCommissionRates < ActiveRecord::Migration[8.1]
       t.boolean :enabled, null: false, default: true
       # Resolution order: the list is walked top-down and the first matching
       # rate wins, so what an operator sees in the table IS the precedence.
-      # Seeds arrive product-before-category-before-vendor, which is the
+      # Seeds arrive product-before-category-before-seller, which is the
       # conventional ladder; reordering is dragging a row.
       t.integer :position, null: false, default: 0
 
@@ -26,7 +26,7 @@ class CreateSpreeCommissionRates < ActiveRecord::Migration[8.1]
       # Commission base: net (ex-VAT) item price by default, which is the EU
       # rule — the fee is a separate supply from the consumer's item sale.
       t.boolean :tax_inclusive, null: false, default: false
-      # Also commission the vendor order's delivery revenue.
+      # Also commission the seller order's delivery revenue.
       t.boolean :include_shipping, null: false, default: false
 
       # Overrides the tax provider's answer for VAT on the commission. Null

@@ -191,7 +191,7 @@ describe Spree::Ability, type: :model do
       end
     end
 
-    # A non-store resource stands in for a marketplace vendor until the Vendor
+    # A non-store resource stands in for a marketplace seller until the Seller
     # model lands: what matters is that the role is owned by something other
     # than the store, on the store's own turf.
     context 'with a role held on a non-store resource' do
@@ -199,7 +199,7 @@ describe Spree::Ability, type: :model do
 
       before do
         # Open orders to the stand-in's audience, as the catalog opens it to
-        # marketplace vendors.
+        # marketplace sellers.
         Spree.permissions.register_resource(
           :orders, group: :orders, audiences: %i[customer_group], subjects: -> { [Spree::Order] }
         )
@@ -286,12 +286,12 @@ describe Spree::Ability, type: :model do
       end
     end
 
-    # A marketplace vendor's staff hold roles owned by the vendor. Store-admin
-    # authority must come only from the store's own roles, or a vendor picker
-    # would inherit the whole store — including, for an `admin`-named vendor
+    # A marketplace seller's staff hold roles owned by the seller. Store-admin
+    # authority must come only from the store's own roles, or a seller picker
+    # would inherit the whole store — including, for an `admin`-named seller
     # role, full access.
     context 'with an assignment scoped to a non-store resource' do
-      let(:vendor_like) { Spree::DummyModel.create!(name: 'Vendor A') }
+      let(:seller_like) { Spree::DummyModel.create!(name: 'Seller A') }
 
       before do
         Spree.permissions.register_resource(
@@ -303,7 +303,7 @@ describe Spree::Ability, type: :model do
 
       it 'grants nothing in the store admin' do
         admin.role_users.create!(
-          role: create(:role, name: 'vendor_catalog', permissions: %w[write_products], resource: vendor_like)
+          role: create(:role, name: 'seller_catalog', permissions: %w[write_products], resource: seller_like)
         )
 
         expect(staff_ability).not_to be_able_to :manage, store.products.new
@@ -312,7 +312,7 @@ describe Spree::Ability, type: :model do
       end
 
       it 'does not confer full access through an admin-named role' do
-        admin.role_users.create!(role: Spree::Role.default_admin_role(vendor_like))
+        admin.role_users.create!(role: Spree::Role.default_admin_role(seller_like))
 
         expect(staff_ability).not_to be_able_to :manage, :all
         expect(staff_ability.permission_keys).to eq([])

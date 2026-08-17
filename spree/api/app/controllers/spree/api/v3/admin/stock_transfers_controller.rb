@@ -2,7 +2,7 @@ module Spree
   module Api
     module V3
       module Admin
-        # Inventory movement between stock locations, or vendor → location
+        # Inventory movement between stock locations, or seller → location
         # for receives. Pass `source_location_id` for transfers; omit it to
         # record an external receive.
         class StockTransfersController < ResourceController

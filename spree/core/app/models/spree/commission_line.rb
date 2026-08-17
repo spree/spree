@@ -30,7 +30,7 @@ module Spree
     # Associations
     #
     belongs_to :order, class_name: 'Spree::Order'
-    belongs_to :vendor, class_name: 'Spree::Vendor'
+    belongs_to :seller, class_name: 'Spree::Seller'
     # Exactly one of these: the item that was commissioned, or the delivery,
     # when the rate carries include_shipping.
     belongs_to :line_item, class_name: 'Spree::LineItem', optional: true
@@ -62,7 +62,7 @@ module Spree
     scope :for_fulfillments, -> { where.not(fulfillment_id: nil) }
 
     self.whitelisted_ransackable_attributes = %w[amount tax_amount total currency kind rate]
-    self.whitelisted_ransackable_associations = %w[order vendor commission_rate]
+    self.whitelisted_ransackable_associations = %w[order seller commission_rate]
 
     extend Spree::DisplayMoney
     money_methods :amount, :tax_amount, :total

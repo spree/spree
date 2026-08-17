@@ -168,8 +168,8 @@ RSpec.describe Spree::CommissionRate, type: :model do
   end
 
   describe '#matches?' do
-    let(:vendor) { create(:vendor, store: store) }
-    let(:other_vendor) { create(:vendor, store: store) }
+    let(:seller) { create(:seller, store: store) }
+    let(:other_seller) { create(:seller, store: store) }
     let(:cameras) { create(:category, store: store) }
     let(:audio) { create(:category, store: store) }
     let(:product) { create(:product, store: store) }
@@ -178,7 +178,7 @@ RSpec.describe Spree::CommissionRate, type: :model do
 
     def context(categories: [cameras])
       Spree::Commissions::Context.new(
-        vendor: vendor, order: order, line_item: line_item, categories: categories
+        seller: seller, order: order, line_item: line_item, categories: categories
       )
     end
 
@@ -188,14 +188,14 @@ RSpec.describe Spree::CommissionRate, type: :model do
 
     it 'matches a rule naming the seller' do
       rate = create(:commission_rate, store: store)
-      create(:commission_vendor_rule, commission_rate: rate, vendors: [vendor])
+      create(:commission_seller_rule, commission_rate: rate, sellers: [seller])
 
       expect(rate.reload.matches?(context)).to be true
     end
 
     it 'does not match a rule naming someone else' do
       rate = create(:commission_rate, store: store)
-      create(:commission_vendor_rule, commission_rate: rate, vendors: [other_vendor])
+      create(:commission_seller_rule, commission_rate: rate, sellers: [other_seller])
 
       expect(rate.reload.matches?(context)).to be false
     end
@@ -213,7 +213,7 @@ RSpec.describe Spree::CommissionRate, type: :model do
     # this category" — the pairing a marketplace actually sells.
     it 'requires every rule to agree' do
       rate = create(:commission_rate, store: store)
-      create(:commission_vendor_rule, commission_rate: rate, vendors: [vendor])
+      create(:commission_seller_rule, commission_rate: rate, sellers: [seller])
       create(:commission_category_rule, commission_rate: rate, categories: [audio])
 
       expect(rate.reload.matches?(context)).to be false
@@ -221,7 +221,7 @@ RSpec.describe Spree::CommissionRate, type: :model do
 
     it 'matches a seller-and-category pairing when both hold' do
       rate = create(:commission_rate, store: store)
-      create(:commission_vendor_rule, commission_rate: rate, vendors: [vendor])
+      create(:commission_seller_rule, commission_rate: rate, sellers: [seller])
       create(:commission_category_rule, commission_rate: rate, categories: [cameras])
 
       expect(rate.reload.matches?(context)).to be true
@@ -231,7 +231,7 @@ RSpec.describe Spree::CommissionRate, type: :model do
     # be read as "every seller" — that would charge sales nobody targeted.
     it 'does not match a rule that names nobody' do
       rate = create(:commission_rate, store: store)
-      create(:commission_vendor_rule, commission_rate: rate)
+      create(:commission_seller_rule, commission_rate: rate)
 
       expect(rate.reload.matches?(context)).to be false
     end
@@ -277,12 +277,12 @@ RSpec.describe Spree::CommissionRate, type: :model do
   end
 
   describe '#rules=' do
-    let(:vendor) { create(:vendor, store: store) }
+    let(:seller) { create(:seller, store: store) }
     let(:category) { create(:category, store: store) }
 
     it 'replaces the rate targeting wholesale' do
       rate = create(:commission_rate, store: store)
-      create(:commission_vendor_rule, commission_rate: rate, vendors: [vendor])
+      create(:commission_seller_rule, commission_rate: rate, sellers: [seller])
 
       rate.update!(rules: [{ type: 'category_rule', preferences: { category_ids: [category.id] } }])
 
@@ -295,19 +295,19 @@ RSpec.describe Spree::CommissionRate, type: :model do
     # second one beside it.
     it 'edits the rule of a kind the rate already carries' do
       rate = create(:commission_rate, store: store)
-      first_vendor = create(:vendor, store: store)
-      second_vendor = create(:vendor, store: store)
-      rate.update!(rules: [{ type: 'vendor_rule', preferences: { vendor_ids: [first_vendor.id] } }])
+      first_seller = create(:seller, store: store)
+      second_seller = create(:seller, store: store)
+      rate.update!(rules: [{ type: 'seller_rule', preferences: { seller_ids: [first_seller.id] } }])
 
-      rate.update!(rules: [{ type: 'vendor_rule', preferences: { vendor_ids: [second_vendor.id] } }])
+      rate.update!(rules: [{ type: 'seller_rule', preferences: { seller_ids: [second_seller.id] } }])
 
       expect(rate.reload.commission_rules.count).to eq(1)
-      expect(rate.commission_rules.first.preferred_vendor_ids.map(&:to_s)).to eq([second_vendor.id.to_s])
+      expect(rate.commission_rules.first.preferred_seller_ids.map(&:to_s)).to eq([second_seller.id.to_s])
     end
 
     it 'clears the targeting when given nothing' do
       rate = create(:commission_rate, store: store)
-      create(:commission_vendor_rule, commission_rate: rate, vendors: [vendor])
+      create(:commission_seller_rule, commission_rate: rate, sellers: [seller])
 
       rate.update!(rules: [])
 
@@ -319,18 +319,18 @@ RSpec.describe Spree::CommissionRate, type: :model do
     # having the id silently dropped.
     it 'refuses a record belonging to another marketplace' do
       rate = create(:commission_rate, store: store)
-      foreign_vendor = create(:vendor, store: create(:store))
+      foreign_seller = create(:seller, store: create(:store))
 
       expect {
-        rate.update!(rules: [{ type: 'vendor_rule', preferences: { vendor_ids: [foreign_vendor.id] } }])
+        rate.update!(rules: [{ type: 'seller_rule', preferences: { seller_ids: [foreign_seller.id] } }])
       }.to raise_error(ActiveRecord::RecordNotFound)
     end
 
     it 'builds rules on a rate that does not exist yet' do
       rate = create(:commission_rate, store: store,
-                                      rules: [{ type: 'vendor_rule', preferences: { vendor_ids: [vendor.id] } }])
+                                      rules: [{ type: 'seller_rule', preferences: { seller_ids: [seller.id] } }])
 
-      expect(rate.reload.commission_rules.map(&:class)).to eq([Spree::CommissionRules::VendorRule])
+      expect(rate.reload.commission_rules.map(&:class)).to eq([Spree::CommissionRules::SellerRule])
     end
   end
 
@@ -377,20 +377,20 @@ RSpec.describe Spree::CommissionRate, type: :model do
   # A rate is paranoid, so `destroy` is a soft delete — and cascading from one
   # would take rules that cannot be restored with it.
   describe 'retiring a rate' do
-    let(:vendor) { create(:vendor, store: store) }
+    let(:seller) { create(:seller, store: store) }
 
     # Retired, not deleted: a commission line is explained by the rule that
     # matched it, so the conditions have to stay readable after the rate stops
     # applying to anything.
     it 'retires its rules with it rather than deleting them' do
       rate = create(:commission_rate, store: store)
-      create(:commission_vendor_rule, commission_rate: rate, vendors: [vendor])
+      create(:commission_seller_rule, commission_rate: rate, sellers: [seller])
 
       rate.destroy
 
       expect(Spree::CommissionRule.where(commission_rate_id: rate.id)).to be_empty
       retired = Spree::CommissionRule.with_deleted.find_by(commission_rate_id: rate.id)
-      expect(retired.preferred_vendor_ids.map(&:to_s)).to eq([vendor.id.to_s])
+      expect(retired.preferred_seller_ids.map(&:to_s)).to eq([seller.id.to_s])
     end
 
     # "Which rate charged this" has to stay answerable after the rate is
@@ -398,7 +398,7 @@ RSpec.describe Spree::CommissionRate, type: :model do
     it 'leaves the lines it already charged pointing at it' do
       rate = create(:commission_rate, store: store)
       order = create(:order, store: store)
-      line = create(:commission_line, order: order, vendor: vendor,
+      line = create(:commission_line, order: order, seller: seller,
                                       line_item: create(:line_item, order: order), commission_rate: rate)
 
       rate.destroy
@@ -414,7 +414,7 @@ RSpec.describe Spree::CommissionRate, type: :model do
 
     it 'is false once it carries a rule' do
       rate = create(:commission_rate, store: store)
-      create(:commission_vendor_rule, commission_rate: rate, vendors: [create(:vendor, store: store)])
+      create(:commission_seller_rule, commission_rate: rate, sellers: [create(:seller, store: store)])
 
       expect(rate.reload).not_to be_global
     end

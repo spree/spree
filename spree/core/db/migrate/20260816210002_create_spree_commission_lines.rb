@@ -2,7 +2,7 @@ class CreateSpreeCommissionLines < ActiveRecord::Migration[8.1]
   def change
     create_table :spree_commission_lines do |t|
       t.references :order, null: false
-      t.references :vendor, null: false
+      t.references :seller, null: false
       # Exactly one of these two: the commissioned item, or the commissioned
       # delivery when the rate carries include_shipping. Their indexes are
       # declared below, unique.
@@ -55,7 +55,7 @@ class CreateSpreeCommissionLines < ActiveRecord::Migration[8.1]
                          name: 'chk_spree_commission_lines_one_subject'
     end
 
-    add_index :spree_commission_lines, [:vendor_id, :created_at]
+    add_index :spree_commission_lines, [:seller_id, :created_at]
     # Reporting asks "what did we charge, where, and how was it treated" —
     # the same questions Spree::TaxLine indexes for.
     add_index :spree_commission_lines, :taxability_reason

@@ -113,36 +113,36 @@ RSpec.describe Spree::Api::V3::LineItemSerializer do
     end
   end
 
-  describe 'vendor' do
-    let(:vendor) { create(:vendor, store: store, name: 'Sparks Audio') }
+  describe 'seller' do
+    let(:seller) { create(:seller, store: store, name: 'Sparks Audio') }
 
     it 'exposes the seller id without an expand' do
-      line_item.variant.product.update!(vendor: vendor)
+      line_item.variant.product.update!(seller: seller)
       line_item.reload.save!
 
       result = described_class.new(line_item.reload, params: base_params).to_h
 
-      expect(result['vendor_id']).to eq(vendor.prefixed_id)
-      expect(result).not_to have_key('vendor')
+      expect(result['seller_id']).to eq(seller.prefixed_id)
+      expect(result).not_to have_key('seller')
     end
 
     it 'is nil on a first-party line' do
-      expect(subject['vendor_id']).to be_nil
+      expect(subject['seller_id']).to be_nil
     end
 
     # The storefront gets the public profile, never how the marketplace runs
     # the seller.
     it 'embeds the public profile on expand' do
-      line_item.variant.product.update!(vendor: vendor)
+      line_item.variant.product.update!(seller: seller)
       line_item.reload.save!
 
       result = described_class.new(
-        line_item.reload, params: base_params.merge(expand: ['vendor'])
+        line_item.reload, params: base_params.merge(expand: ['seller'])
       ).to_h
 
-      expect(result['vendor']['name']).to eq('Sparks Audio')
-      expect(result['vendor']).not_to have_key('status')
-      expect(result['vendor']).not_to have_key('tax_remittance')
+      expect(result['seller']['name']).to eq('Sparks Audio')
+      expect(result['seller']).not_to have_key('status')
+      expect(result['seller']).not_to have_key('tax_remittance')
     end
   end
 end

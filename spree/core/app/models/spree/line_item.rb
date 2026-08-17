@@ -18,9 +18,9 @@ module Spree
     end
     belongs_to :tax_category, -> { with_deleted }, class_name: 'Spree::TaxCategory'
     belongs_to :price_list, class_name: 'Spree::PriceList', optional: true
-    # Snapshotted from the variant when the line is added — see copy_vendor.
+    # Snapshotted from the variant when the line is added — see copy_seller.
     # Nil is the operator's own first-party item.
-    belongs_to :vendor, class_name: 'Spree::Vendor', optional: true
+    belongs_to :seller, class_name: 'Spree::Seller', optional: true
 
     has_one :product, -> { with_deleted }, class_name: 'Spree::Product', through: :variant
 
@@ -36,7 +36,7 @@ module Spree
 
     before_validation :copy_price
     before_validation :copy_tax_category
-    before_validation :copy_vendor
+    before_validation :copy_seller
 
     validates :variant, presence: true
     validate :exactly_one_owner
@@ -155,7 +155,7 @@ module Spree
     end
 
     # Reads the seller off the variant, falling back to the product that owns
-    # the listing. Once a variant can carry its own `vendor_id` (the shared
+    # the listing. Once a variant can carry its own `seller_id` (the shared
     # catalog), the variant answers first and this fallback covers a product
     # whose seller owns every variant on it.
     #
@@ -168,17 +168,17 @@ module Spree
     # Keyed on the order being placed rather than on the line being persisted:
     # a draft order's lines are persisted too, and they must keep following
     # their product until the order is actually placed.
-    def copy_vendor
+    def copy_seller
       return if variant.blank?
       return if order&.placed?
 
-      self.vendor_id = vendor_id_from_variant
+      self.seller_id = seller_id_from_variant
     end
 
-    def vendor_id_from_variant
-      return variant.vendor_id if variant.respond_to?(:vendor_id) && variant.vendor_id.present?
+    def seller_id_from_variant
+      return variant.seller_id if variant.respond_to?(:seller_id) && variant.seller_id.present?
 
-      variant.product&.vendor_id
+      variant.product&.seller_id
     end
 
     extend DisplayMoney

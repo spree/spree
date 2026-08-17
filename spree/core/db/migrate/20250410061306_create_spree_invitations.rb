@@ -5,7 +5,7 @@ class CreateSpreeInvitations < ActiveRecord::Migration[7.2]
       t.string :token, index: { unique: true }, null: false
       t.string :status, null: false, index: true
 
-      t.references :resource, polymorphic: true, index: true, null: false # eg. Store, Vendor, Account
+      t.references :resource, polymorphic: true, index: true, null: false # eg. Store, Seller, Account
       t.references :inviter, polymorphic: true, index: true, null: false
       t.references :invitee, polymorphic: true, index: true
       t.references :role, null: false

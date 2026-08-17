@@ -1,6 +1,6 @@
 <p>
   <a href="https://spreecommerce.org">
-    <img src="https://spreecommerce.org/wp-content/themes/spree/images/logo.svg" alt="Spree Commerce open source headless eCommerce platform for B2B, Multi-vendor Marketplace, cross-border eCommerce, multi-tenant eCommerce" width="250" />
+    <img src="https://spreecommerce.org/wp-content/themes/spree/images/logo.svg" alt="Spree Commerce open source headless eCommerce platform for B2B, Multi-seller Marketplace, cross-border eCommerce, multi-tenant eCommerce" width="250" />
   </a>
 </p>
 
@@ -118,11 +118,11 @@ Price Lists, Customer Groups, and gated storefronts. Sell to multiple customer s
 
 <img src="https://github.com/spree/spree/assets/12614496/bac1e551-f629-47d6-a983-b385aa65b1bd" alt="Spree Commerce - Wholesale eCommerce Platform" width="600" >
 
-### [Multi-vendor Marketplace](https://spreecommerce.org/marketplace-ecommerce/)
+### [Multi-seller Marketplace](https://spreecommerce.org/marketplace-ecommerce/)
 
-Launch a multi-vendor marketplace with vendor accounts, product catalog curation, split payments, vendor payouts, and commission management. The Enterprise Edition adds automated vendor onboarding (Shopify, WooCommerce sync) and Stripe Connect / Adyen for Platforms integrations.
+Launch a multi-seller marketplace with seller accounts, product catalog curation, split payments, seller payouts, and commission management. The Enterprise Edition adds automated seller onboarding (Shopify, WooCommerce sync) and Stripe Connect / Adyen for Platforms integrations.
 
-<img alt="Spree Commerce - Multi-vendor Marketplace eCommerce" src="https://github.com/spree/spree/assets/12614496/c4ddd118-df4c-464e-b1fe-d43862e5cf25" width="600" >
+<img alt="Spree Commerce - Multi-seller Marketplace eCommerce" src="https://github.com/spree/spree/assets/12614496/c4ddd118-df4c-464e-b1fe-d43862e5cf25" width="600" >
 
 ## Community & Contributing
 
@@ -151,8 +151,8 @@ Enterprise Edition is built on top of the same open-source REST API and BSD 3-Cl
 | **B2B Buyer organizations** (companies, locations, contacts) | Coming soon in Spree 6.0 | ✅ |
 | **B2B Catalogs** — curated per-segment product assortments | Coming soon in Spree 6.0 | ✅ |
 | **B2B approval workflows & ERP integrations** — role-based approval chains, procurement and ERP connectors | — | ✅ |
-| **Multi-vendor Marketplace** — vendor onboarding, vendor panel, commissions, split payments, vendor payouts | Coming soon in Spree 6.0 | ✅ |
-| **Marketplace automations** — Shopify/WooCommerce vendor sync, Stripe Connect onboarding, automated commission rules, advanced reporting | — | ✅ |
+| **Multi-seller Marketplace** — seller onboarding, seller panel, commissions, split payments, seller payouts | Coming soon in Spree 6.0 | ✅ |
+| **Marketplace automations** — Shopify/WooCommerce seller sync, Stripe Connect onboarding, automated commission rules, advanced reporting | — | ✅ |
 | **Multi-tenant SaaS** — super-admin layer, tenant provisioning, white-label billing, central operations across hundreds of tenant stores | — | ✅ |
 | **Enterprise security** — SSO (SAML/OIDC), encryption at-rest, audit logging, PCI-compliant architecture | — | ✅ |
 | **SLA support** — dedicated success manager, guaranteed response times, LTS releases, 24/7 monitoring | — | ✅ |

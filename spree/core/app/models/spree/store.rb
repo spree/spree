@@ -59,7 +59,7 @@ module Spree
     # Sellers are a different audience from shoppers, with their own reasons to
     # be silenced — a marketplace fronting its own seller comms turns these off
     # without also stopping customer receipts.
-    preference :send_vendor_transactional_emails, :boolean, default: true
+    preference :send_seller_transactional_emails, :boolean, default: true
     # Marketplace preferences
     #
     # VAT on the commission itself, as a fraction, when neither the rate nor
@@ -184,7 +184,7 @@ module Spree
     has_many :tax_categories, class_name: 'Spree::TaxCategory', dependent: :destroy, inverse_of: :store
     has_many :tax_rates, class_name: 'Spree::TaxRate', dependent: :destroy, inverse_of: :store
 
-    has_many :vendors, class_name: 'Spree::Vendor', dependent: :destroy, inverse_of: :store
+    has_many :sellers, class_name: 'Spree::Seller', dependent: :destroy, inverse_of: :store
     has_many :commission_rates, class_name: 'Spree::CommissionRate', dependent: :destroy, inverse_of: :store
 
     has_many :wishlists, class_name: 'Spree::Wishlist'

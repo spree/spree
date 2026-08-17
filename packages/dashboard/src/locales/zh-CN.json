@@ -1081,7 +1081,7 @@
         "tags": {
           "label": "标签"
         },
-        "vendor": {
+        "seller": {
           "label": "卖家",
           "first_party": "自营"
         }
@@ -1613,7 +1613,7 @@
           "help": "留空表示该证明长期有效。"
         }
       },
-      "vendor": {
+      "seller": {
         "name": {
           "placeholder": "Sparks Audio"
         },
@@ -1976,7 +1976,7 @@
       "returns": "退货",
       "settings": "设置",
       "transfers": "调拨",
-      "vendors": "卖家"
+      "sellers": "卖家"
     },
     "option_types": {
       "columns": {
@@ -4166,7 +4166,7 @@
     "enterprise": {
       "learn_more": "了解 Spree Enterprise"
     },
-    "vendors": {
+    "sellers": {
       "add_cta": "添加卖家",
       "add_sheet_title": "新建卖家",
       "create_description": "先创建卖家记录，然后在卖家页面邀请、批准并设置结算。",
@@ -4236,7 +4236,7 @@
         "canceled": "在加入前已退出。"
       },
       "tax_remittance": {
-        "vendor": "卖家申报",
+        "seller": "卖家申报",
         "platform": "市场申报"
       },
       "payout_interval": {

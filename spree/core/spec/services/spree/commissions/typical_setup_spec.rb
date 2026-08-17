@@ -10,13 +10,13 @@ require 'spec_helper'
 # of them.
 RSpec.describe 'a typical commission setup' do
   let(:store) { @default_store }
-  let(:vendor) { create(:vendor, :approved, store: store) }
+  let(:seller) { create(:seller, :approved, store: store) }
   let(:cameras) { create(:category, store: store) }
   let(:order) { create(:order, store: store, currency: 'USD') }
 
-  let(:promoted) { create(:product, store: store, vendor: vendor).tap { |p| p.categories << cameras } }
-  let(:camera) { create(:product, store: store, vendor: vendor).tap { |p| p.categories << cameras } }
-  let(:other_goods) { create(:product, store: store, vendor: vendor) }
+  let(:promoted) { create(:product, store: store, seller: seller).tap { |p| p.categories << cameras } }
+  let(:camera) { create(:product, store: store, seller: seller).tap { |p| p.categories << cameras } }
+  let(:other_goods) { create(:product, store: store, seller: seller) }
   let(:first_party) { create(:product, store: store) }
 
   before do
@@ -25,7 +25,7 @@ RSpec.describe 'a typical commission setup' do
       update!(enabled: true, value: 20)
 
     seller_deal = create(:commission_rate, store: store, name: 'Acme deal', value: 12)
-    create(:commission_vendor_rule, commission_rate: seller_deal, vendors: [vendor])
+    create(:commission_seller_rule, commission_rate: seller_deal, sellers: [seller])
 
     category_rate = create(:commission_rate, store: store, name: 'Cameras', value: 8)
     create(:commission_category_rule, commission_rate: category_rate, categories: [cameras])
@@ -37,7 +37,7 @@ RSpec.describe 'a typical commission setup' do
   def rate_for(product)
     line = create(:line_item, order: order, variant: product.default_variant, price: 100)
     Spree::Commissions::ResolveRate.call(
-      line_item: line, vendor: product.vendor, store: store, currency: 'USD'
+      line_item: line, seller: product.seller, store: store, currency: 'USD'
     ).value
   end
 

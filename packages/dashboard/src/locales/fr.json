@@ -1084,7 +1084,7 @@
         "tags": {
           "label": "Étiquettes"
         },
-        "vendor": {
+        "seller": {
           "label": "Vendeur",
           "first_party": "Vendu par vous"
         }
@@ -1616,7 +1616,7 @@
           "help": "Laissez vide pour une attestation sans date d'expiration."
         }
       },
-      "vendor": {
+      "seller": {
         "name": {
           "placeholder": "Sparks Audio"
         },
@@ -1979,7 +1979,7 @@
       "returns": "Retours",
       "settings": "Paramètres",
       "transfers": "Transferts",
-      "vendors": "Vendeurs"
+      "sellers": "Vendeurs"
     },
     "option_types": {
       "columns": {
@@ -4170,7 +4170,7 @@
     "enterprise": {
       "learn_more": "En savoir plus sur Spree Enterprise"
     },
-    "vendors": {
+    "sellers": {
       "add_cta": "Ajouter un vendeur",
       "add_sheet_title": "Nouveau vendeur",
       "create_description": "Créez d'abord la fiche du vendeur. Vous pourrez l'inviter, l'approuver et configurer ses versements depuis sa page.",
@@ -4240,7 +4240,7 @@
         "canceled": "S'est retiré avant de rejoindre."
       },
       "tax_remittance": {
-        "vendor": "Le vendeur reverse",
+        "seller": "Le vendeur reverse",
         "platform": "La place de marché reverse"
       },
       "payout_interval": {

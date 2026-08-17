@@ -1980,6 +1980,11 @@ Plan: `6.0-multi-vendor-marketplace.md`.
 
 ## 2026-07-14: `Spree::Vendor` = marketplace seller; procurement source renamed `Spree::Supplier`
 
+> **Superseded in part by 2026-08-17.** The *split* stands — the marketplace
+> seller and the procurement source are separate models — but the marketplace
+> model is now `Spree::Seller` (`sel_`, `spree_sellers`), not `Spree::Vendor`.
+> `Spree::Supplier` is unchanged.
+
 Two 6.0 plans introduced a `Spree::Vendor`: the marketplace seller
 (`6.0-multi-vendor-marketplace.md`, prefix `ven_`) and the purchase-order
 procurement source (`6.0-inventory-operations.md`, prefix `vnd_`). Same class
@@ -3105,3 +3110,58 @@ Enterprise never forks core ledger code — it configures rows, it does not
 override the basis service. **Consequences:** amends the marketplace plan's
 Decision 9 note that facilitator mode is "not core" (the flag and the math
 are; the policy is not). Plan: `6.0-multi-vendor-marketplace.md`.
+
+## 2026-08-17 — The marketplace seller is `Spree::Seller`; `Vendor` is retired
+
+Reverses the naming half of 2026-07-14. That entry gave the marketplace the
+`Vendor` name on two grounds, and by 2026-08-17 both were gone: the user docs'
+Vendors area is being rewritten wholesale for the 6.0 stable release, and there
+is no Enterprise production data to keep `ven_` continuity with. Nothing was
+released, so nothing had to be carried over — the migrations were edited in
+place rather than added to.
+
+**The decisive argument is Amazon's, and it is about the second party.** Spree
+models both a business selling *through* the marketplace and a supplier the
+merchant buys stock *from*. Amazon names those two relationships in opposite
+directions: Seller Central hosts third parties, Vendor Central buys from
+suppliers. So `vendor` was the single worst available word for a marketplace
+seller in a schema that also contains the supplier — every integrator with
+Amazon experience reads `vendor_id` as the procurement relationship. Shopify
+agrees by construction: when it built purchase orders it chose `supplier`.
+
+`Seller` also matches the buyers we are selling to. Gartner's category is
+"Enterprise Marketplaces" and its definition says "third-party sellers";
+Forrester's Wave criteria are "seller onboarding" and "seller compliance".
+Neither analyst firm uses "multi-vendor" for anything. VTEX (`sellerId`,
+`/sellers/`), Marketplacer (`Seller`), Amazon (`sellerId`) and Mercur
+(`seller`, `sel_`) all name the entity that way in public APIs. Mirakl is the
+one mixed case — its data entity is `shop_id` while its docs and API routing
+say seller — and its `shop` is a legacy artefact we have no reason to inherit.
+Spryker's `merchant` is the sole enterprise divergence, and "merchant" fits
+Spree badly since it most naturally means the store owner running the
+marketplace.
+
+**Scope:** `Spree::Seller`, `spree_sellers`, prefix `sel_`, `seller_id`,
+`current_seller`, `SellerMailer`, `read_sellers`/`write_sellers`, and all three
+API surfaces (store `/sellers` public profiles, admin `/sellers` operator CRUD,
+and the seller-facing `/api/v3/seller` branch). `Spree::Supplier` is unchanged
+and keeps the procurement source — 2026-07-14's *split* stands; only which word
+lands on which side changed.
+
+**Category naming, separately:** describe the product as a **marketplace**
+platform, not a "multi-vendor" one. Every platform leading with "multi-vendor"
+sits in the $29–$6,999 plugin tier (CS-Cart, Dokan, WCFM, Yo!Kart); every
+analyst-recognised vendor says "marketplace platform". Keep "multi-vendor
+marketplace" in SEO surfaces only — meta descriptions, comparison pages — which
+is exactly what Marketplacer does, capturing the search volume without letting
+the term define the positioning. Internal branch and plan filenames keep their
+`multi-vendor` prefixes for stable cross-references; this is positioning, not
+engineering.
+
+**Consequences:** `Rails`/Bundler `vendor/` directories, gemspec
+`{app,config,db,lib,vendor}` globs, the "vendor lock-in" idiom, and EasyPost's
+carrier-meaning "vendor" are all deliberately untouched — a blanket rename
+breaks CI and ships broken gems, and each of those was caught only by running
+the suites. `docs/user/vendors/` and the rest of the published documentation
+are **not** renamed here; they are part of the 6.0 stable docs overhaul. Plan:
+`6.0-multi-vendor-marketplace.md`.

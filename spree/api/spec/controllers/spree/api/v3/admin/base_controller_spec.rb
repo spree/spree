@@ -200,7 +200,7 @@ RSpec.describe Spree::Api::V3::Admin::BaseController, type: :controller do
 
     # A role held on a non-store resource binds to that resource's store, so
     # matching membership on store_id alone would admit its holder here. The
-    # stand-in resource plays the part of a marketplace vendor until the Vendor
+    # stand-in resource plays the part of a marketplace seller until the Seller
     # model lands.
     context 'with an admin JWT whose only role is on a non-store resource of this store' do
       let(:panel) { create(:customer_group, store: store) }

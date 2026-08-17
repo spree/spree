@@ -2,14 +2,14 @@ require 'spec_helper'
 
 RSpec.describe Spree::Commissions::ResolveRate do
   let(:store) { @default_store }
-  let(:vendor) { create(:vendor, :approved, store: store) }
-  let(:other_vendor) { create(:vendor, :approved, store: store) }
-  let(:product) { create(:product, store: store, vendor: vendor) }
+  let(:seller) { create(:seller, :approved, store: store) }
+  let(:other_seller) { create(:seller, :approved, store: store) }
+  let(:product) { create(:product, store: store, seller: seller) }
   let(:order) { create(:order, store: store, currency: 'USD') }
   let(:line_item) { create(:line_item, order: order, variant: product.default_variant) }
 
   def resolve(currency: 'USD')
-    described_class.call(line_item: line_item, vendor: vendor, store: store, currency: currency).value
+    described_class.call(line_item: line_item, seller: seller, store: store, currency: currency).value
   end
 
   it 'returns nothing when the marketplace has configured no rates' do
@@ -46,21 +46,21 @@ RSpec.describe Spree::Commissions::ResolveRate do
   it 'skips a higher-placed rate whose targeting does not match' do
     fallback = create(:commission_rate, store: store)
     mismatched = create(:commission_rate, store: store)
-    create(:commission_vendor_rule, commission_rate: mismatched, vendors: [other_vendor])
+    create(:commission_seller_rule, commission_rate: mismatched, sellers: [other_seller])
 
     expect(resolve).to eq(fallback)
   end
 
-  # Which rule type a rate names decides nothing — a vendor-targeted rate
+  # Which rule type a rate names decides nothing — a seller-targeted rate
   # placed above a product-targeted one wins, and that is the point of making
   # the order editable rather than inferring specificity.
   it 'lets the operator order beat any notion of how specific a rule is' do
     product_rate = create(:commission_rate, store: store)
     create(:commission_product_rule, commission_rate: product_rate, products: [product])
-    vendor_rate = create(:commission_rate, store: store)
-    create(:commission_vendor_rule, commission_rate: vendor_rate, vendors: [vendor])
+    seller_rate = create(:commission_rate, store: store)
+    create(:commission_seller_rule, commission_rate: seller_rate, sellers: [seller])
 
-    expect(resolve).to eq(vendor_rate)
+    expect(resolve).to eq(seller_rate)
 
     product_rate.move_to_top
 
@@ -83,7 +83,7 @@ RSpec.describe Spree::Commissions::ResolveRate do
 
   it 'matches a rate targeting the seller' do
     rate = create(:commission_rate, store: store)
-    create(:commission_vendor_rule, commission_rate: rate, vendors: [vendor])
+    create(:commission_seller_rule, commission_rate: rate, sellers: [seller])
 
     expect(resolve).to eq(rate)
   end

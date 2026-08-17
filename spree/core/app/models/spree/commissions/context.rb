@@ -10,9 +10,9 @@ module Spree
     # category walk especially — are resolved for the whole order up front.
     # Mirrors Spree::Pricing::Context, which serves price rules the same way.
     class Context
-      attr_reader :line_item, :fulfillment, :vendor, :order, :currency
+      attr_reader :line_item, :fulfillment, :seller, :order, :currency
 
-      # @param vendor [Spree::Vendor] the seller being charged
+      # @param seller [Spree::Seller] the seller being charged
       # @param order [Spree::Order]
       # @param line_item [Spree::LineItem, nil] the sale being commissioned…
       # @param fulfillment [Spree::Fulfillment, nil] …or its delivery
@@ -20,8 +20,8 @@ module Spree
       # @param categories [Array<Spree::Category>, nil] the product's
       #   categories *with their ancestors*, resolved once for the order — a
       #   rate on a parent governs everything filed beneath it
-      def initialize(vendor:, order:, line_item: nil, fulfillment: nil, currency: nil, categories: nil)
-        @vendor = vendor
+      def initialize(seller:, order:, line_item: nil, fulfillment: nil, currency: nil, categories: nil)
+        @seller = seller
         @order = order
         @line_item = line_item
         @fulfillment = fulfillment

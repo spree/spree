@@ -1,7 +1,7 @@
 import type { ResourceFilterConfig } from '@spree/dashboard-core'
 import { categoryAutocompleteProps } from '../../hooks/use-categories'
 import { productAutocompleteProps } from '../../hooks/use-products'
-import { vendorAutocompleteProps } from '../../hooks/use-vendors'
+import { sellerAutocompleteProps } from '../../hooks/use-sellers'
 
 /**
  * How to pick records for a commission rule that names them.
@@ -27,7 +27,7 @@ export type CommissionRuleSubjectPicker = (queryKey: string) => ResourceFilterCo
 
 // Keyed by rule kind, matching the `type` the discovery endpoint reports.
 const PICKERS: Record<string, CommissionRuleSubjectPicker> = {
-  vendor_rule: vendorAutocompleteProps,
+  seller_rule: sellerAutocompleteProps,
   product_rule: productAutocompleteProps,
   category_rule: categoryAutocompleteProps,
 }
@@ -36,7 +36,7 @@ const PICKERS: Record<string, CommissionRuleSubjectPicker> = {
  * The picker for a rule kind, or undefined when the kind names no records —
  * a value band configures itself through its preference schema instead.
  *
- * @param ruleType e.g. `vendor_rule`
+ * @param ruleType e.g. `seller_rule`
  */
 export function commissionRuleSubjectPicker(
   ruleType: string,

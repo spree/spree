@@ -1,0 +1,118 @@
+import type {
+  ListParams,
+  Seller,
+  SellerCreateParams,
+  SellerInviteParams,
+  SellerRejectParams,
+  SellerSuspendParams,
+  SellerUpdateParams,
+} from '@spree/admin-sdk'
+import {
+  adminClient,
+  useResourceKey,
+  useResourceKeyBuilder,
+  useResourceMutation,
+} from '@spree/dashboard-core'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import i18n from 'i18next'
+
+export function useSellers(params?: ListParams & Record<string, unknown>) {
+  return useQuery({
+    queryKey: useResourceKey('sellers', params ? JSON.stringify(params) : 'all'),
+    queryFn: () => adminClient.sellers.list(params),
+  })
+}
+
+/**
+ * Shared config for any `<ResourceMultiAutocomplete>` picking sellers (today
+ * the products table filter). Pass a unique `queryKey` per instance so
+ * independent caches don't collide.
+ */
+export function sellerAutocompleteProps(queryKey: string) {
+  return {
+    queryKey,
+    search: (q: string) => adminClient.sellers.list({ name_cont: q, limit: 20, sort: 'name' }),
+    hydrate: (ids: string[]) => adminClient.sellers.list({ id_in: ids, limit: ids.length }),
+    getOptionLabel: (seller: Seller) => seller.name ?? seller.id,
+    placeholder: i18n.t('admin.sellers.autocomplete.placeholder'),
+    emptyText: i18n.t('admin.sellers.autocomplete.empty'),
+  }
+}
+
+export function useSeller(id: string | undefined) {
+  const key = useResourceKey('sellers', id ?? 'noop')
+  return useQuery({
+    queryKey: key,
+    queryFn: () => adminClient.sellers.get(id as string),
+    enabled: !!id,
+  })
+}
+
+export function useCreateSeller() {
+  return useResourceMutation<Seller, Error, SellerCreateParams>({
+    mutationFn: (params) => adminClient.sellers.create(params),
+    invalidate: [['sellers']],
+    successMessage: i18n.t('admin.sellers.messages.created'),
+    errorMessage: i18n.t('admin.sellers.messages.create_failed'),
+  })
+}
+
+export function useUpdateSeller(id: string) {
+  return useResourceMutation<Seller, Error, SellerUpdateParams>({
+    mutationFn: (params) => adminClient.sellers.update(id, params),
+    invalidate: [['sellers'], ['sellers', id]],
+    successMessage: i18n.t('admin.sellers.messages.updated'),
+    errorMessage: i18n.t('admin.sellers.messages.update_failed'),
+  })
+}
+
+export function useDeleteSeller() {
+  const queryClient = useQueryClient()
+  const buildKey = useResourceKeyBuilder()
+
+  return useResourceMutation<void, Error, string>({
+    mutationFn: (id) => adminClient.sellers.delete(id),
+    invalidate: [['sellers']],
+    successMessage: i18n.t('admin.sellers.messages.deleted'),
+    errorMessage: i18n.t('admin.sellers.messages.delete_failed'),
+    onSuccess: (_data, id) => {
+      queryClient.removeQueries({ queryKey: buildKey('sellers', id) })
+    },
+  })
+}
+
+export function useInviteSeller(id: string) {
+  return useResourceMutation<Seller, Error, SellerInviteParams>({
+    mutationFn: (params) => adminClient.sellers.invite(id, params),
+    invalidate: [['sellers'], ['sellers', id]],
+    successMessage: i18n.t('admin.sellers.messages.invited'),
+    errorMessage: i18n.t('admin.sellers.messages.invite_failed'),
+  })
+}
+
+export function useApproveSeller(id: string) {
+  return useResourceMutation<Seller, Error, void>({
+    mutationFn: () => adminClient.sellers.approve(id),
+    invalidate: [['sellers'], ['sellers', id]],
+    successMessage: i18n.t('admin.sellers.messages.approved'),
+    errorMessage: i18n.t('admin.sellers.messages.approve_failed'),
+  })
+}
+
+export function useSuspendSeller(id: string) {
+  return useResourceMutation<Seller, Error, SellerSuspendParams | undefined>({
+    mutationFn: (params) => adminClient.sellers.suspend(id, params ?? undefined),
+    invalidate: [['sellers'], ['sellers', id]],
+    successMessage: i18n.t('admin.sellers.messages.suspended'),
+    errorMessage: i18n.t('admin.sellers.messages.suspend_failed'),
+  })
+}
+
+export function useRejectSeller(id: string) {
+  return useResourceMutation<Seller, Error, SellerRejectParams | undefined>({
+    mutationFn: (params) => adminClient.sellers.reject(id, params ?? undefined),
+    invalidate: [['sellers'], ['sellers', id]],
+    successMessage: i18n.t('admin.sellers.messages.rejected'),
+    errorMessage: i18n.t('admin.sellers.messages.reject_failed'),
+  })
+}

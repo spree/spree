@@ -24,13 +24,13 @@ module Spree
       prepend Spree::ServiceModule::Base
 
       # @param rate [Spree::CommissionRate]
-      # @param vendor [Spree::Vendor] the seller being invoiced
+      # @param seller [Spree::Seller] the seller being invoiced
       # @param order [Spree::Order]
       # @return [Spree::CommissionTax]
-      def call(rate:, vendor:, order:)
+      def call(rate:, seller:, order:)
         return success(configured(rate.commission_tax_rate)) if rate.commission_tax_rate.present?
 
-        from_provider = provider_tax(vendor: vendor, order: order)
+        from_provider = provider_tax(seller: seller, order: order)
         return success(from_provider) if from_provider
 
         success(configured(order.store.preferred_default_commission_tax_rate))
@@ -53,8 +53,8 @@ module Spree
       # Commission is written while an order is being placed, so a tax service
       # being unreachable must never cost the marketplace a checkout: the error
       # is reported and the configured default applies.
-      def provider_tax(vendor:, order:)
-        address = vendor.billing_address
+      def provider_tax(seller:, order:)
+        address = seller.billing_address
         amount = order.tax_provider.service_tax_rate(address: address, store: order.store)
         return nil if amount.blank?
 
@@ -68,7 +68,7 @@ module Spree
         Rails.error.report(
           error,
           handled: true,
-          context: { vendor_id: vendor.id, order_id: order.id },
+          context: { seller_id: seller.id, order_id: order.id },
           source: 'spree.core'
         )
         nil
