@@ -115,7 +115,7 @@ RSpec.describe 'Admin Integrations API', type: :request, swagger_doc: 'api-refer
       tags 'Integrations'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Runs a live connection check against the provider. Nothing is persisted; a failed check reports the vendor error message.'
+      description 'Runs a live connection check against the provider. Nothing is persisted; a failed check reports the seller error message.'
       admin_scope :write, :integrations
 
       admin_sdk_example 'integrations/test'

@@ -36,11 +36,11 @@ module Spree
           many :digital_links, resource: proc { Spree.api.admin_digital_link_serializer }
           many :tax_lines, resource: proc { Spree.api.admin_tax_line_serializer }, if: proc { expand?('tax_lines') }
 
-          # `vendor_id` comes from the store serializer; the expand resolves
+          # `seller_id` comes from the store serializer; the expand resolves
           # to the operator's view of the seller rather than the public one.
-          one :vendor,
-              resource: proc { Spree.api.admin_vendor_serializer },
-              if: proc { expand?('vendor') }
+          one :seller,
+              resource: proc { Spree.api.admin_seller_serializer },
+              if: proc { expand?('seller') }
 
           one :variant,
               resource: proc { Spree.api.admin_variant_serializer },

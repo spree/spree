@@ -3,9 +3,9 @@ require 'spec_helper'
 describe Spree::Role do
   let(:role) { create(:role) }
   let(:user) { create(:user) }
-  # A non-store resource stands in for a marketplace vendor until that model
+  # A non-store resource stands in for a marketplace seller until that model
   # lands: what matters is that the role is owned by something else.
-  let(:vendor_like) { create(:customer_group) }
+  let(:seller_like) { create(:customer_group) }
 
   describe 'with users' do
     before do
@@ -28,7 +28,7 @@ describe Spree::Role do
     # Names are unique per owner, so another resource may legitimately call a
     # role "admin" — it must never be mistaken for the store super-role.
     it 'ignores a same-named role owned by something else' do
-      foreign_admin = create(:role, name: 'admin', resource: vendor_like)
+      foreign_admin = create(:role, name: 'admin', resource: seller_like)
 
       admin_role = Spree::Role.default_admin_role(@default_store)
 
@@ -80,8 +80,8 @@ describe Spree::Role do
     it 'reads its audience from the owning resource' do
       expect(build(:role).audience).to eq(:store)
       expect(build(:role)).to be_staff
-      expect(build(:role, resource: vendor_like).audience).to eq(:customer_group)
-      expect(build(:role, resource: vendor_like)).not_to be_staff
+      expect(build(:role, resource: seller_like).audience).to eq(:customer_group)
+      expect(build(:role, resource: seller_like)).not_to be_staff
     end
 
     it 'is required' do
@@ -99,23 +99,23 @@ describe Spree::Role do
     it 'allows the same name under a different owner' do
       create(:role, name: 'Manager', resource: @default_store)
 
-      expect(build(:role, name: 'Manager', resource: vendor_like)).to be_valid
+      expect(build(:role, name: 'Manager', resource: seller_like)).to be_valid
       expect(build(:role, name: 'Manager', resource: create(:store))).to be_valid
     end
 
     it 'still rejects a duplicate name under one owner' do
-      create(:role, name: 'Manager', resource: vendor_like)
+      create(:role, name: 'Manager', resource: seller_like)
 
-      expect(build(:role, name: 'Manager', resource: vendor_like)).not_to be_valid
+      expect(build(:role, name: 'Manager', resource: seller_like)).not_to be_valid
     end
 
     it 'scopes roles to their owner' do
       staff_role = create(:role)
-      other_role = create(:role, resource: vendor_like)
+      other_role = create(:role, resource: seller_like)
 
       expect(Spree::Role.for_resource(@default_store)).to include(staff_role)
       expect(Spree::Role.for_resource(@default_store)).not_to include(other_role)
-      expect(Spree::Role.for_resource(vendor_like)).to eq([other_role])
+      expect(Spree::Role.for_resource(seller_like)).to eq([other_role])
     end
   end
 
@@ -129,11 +129,11 @@ describe Spree::Role do
     after { Spree.permissions.reset! }
 
     it 'allows a non-store role to hold keys its audience is granted' do
-      expect(build(:role, resource: vendor_like, permissions: %w[write_products])).to be_valid
+      expect(build(:role, resource: seller_like, permissions: %w[write_products])).to be_valid
     end
 
     it 'refuses keys its audience is not granted' do
-      role = build(:role, resource: vendor_like, permissions: %w[write_products write_settings])
+      role = build(:role, resource: seller_like, permissions: %w[write_products write_settings])
 
       expect(role).not_to be_valid
       expect(role.errors[:permissions].join).to include('write_settings')
@@ -168,7 +168,7 @@ describe Spree::Role do
     # The protection is the store's super-role, not the name: another resource
     # may call a role "admin" and it stays an ordinary, editable role.
     it 'leaves a same-named role owned by something else editable' do
-      foreign_admin = create(:role, name: 'admin', resource: vendor_like)
+      foreign_admin = create(:role, name: 'admin', resource: seller_like)
       foreign_admin.name = 'renamed'
 
       expect(foreign_admin).to be_mutable

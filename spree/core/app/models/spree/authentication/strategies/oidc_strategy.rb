@@ -5,10 +5,10 @@ module Spree
     module Strategies
       # Generic OpenID Connect strategy — the reference SSO provider.
       #
-      # Configured by issuer rather than by vendor, so one class covers Microsoft
+      # Configured by issuer rather than by seller, so one class covers Microsoft
       # Entra ID, Okta, Google Workspace, Keycloak and Auth0. Endpoints and signing
       # keys are read from the issuer's discovery document
-      # (+.well-known/openid-configuration+), so nothing vendor-specific is hardcoded.
+      # (+.well-known/openid-configuration+), so nothing seller-specific is hardcoded.
       #
       # Registered as a configured factory, which lets the same class back several
       # providers with different issuers:
@@ -223,7 +223,7 @@ module Spree
         end
 
         def identity_info(claims)
-          claims.slice('email', 'name', 'given_name', 'family_name', 'picture')
+          claims.slice('email', 'name', 'gisel_name', 'family_name', 'picture')
         end
 
         # The key this provider is registered under — used as UserIdentity#provider

@@ -98,6 +98,10 @@ module Spree
 
         private
 
+        def promotion_variants_scope
+          promotion.store.variants
+        end
+
         # Handles the creation, updating, and pruning of promotion action
         # line items. The submitted list is the *desired* set — variants
         # not present are deleted, ones that are get upserted. Accepts
@@ -109,9 +113,16 @@ module Spree
           rows = promotion_action_line_items_attributes.is_a?(Hash) ? promotion_action_line_items_attributes.values : promotion_action_line_items_attributes
           rows = rows.map { |row| row.respond_to?(:to_h) ? row.to_h.with_indifferent_access : row.with_indifferent_access }
 
-          rows = rows.map do |row|
+          # Resolved through the promotion's own store, so a variant from
+          # another store's catalog resolves to nothing and is dropped rather
+          # than gifted by a promotion that cannot sell it. An unresolvable id
+          # is dropped for the same reason a nil one always was — the upsert
+          # would otherwise write a row with no variant.
+          rows = rows.filter_map do |row|
             variant_id = row['variant_id']
-            variant_id = Spree::Variant.find_by_param(variant_id)&.id if Spree::PrefixedId.prefixed_id?(variant_id)
+            variant_id = promotion_variants_scope.find_by_param(variant_id)&.id if Spree::PrefixedId.prefixed_id?(variant_id)
+            next if variant_id.blank?
+
             row.merge('variant_id' => variant_id)
           end
 

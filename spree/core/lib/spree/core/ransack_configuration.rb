@@ -5,9 +5,9 @@ module Spree
   # configurations without using decorators.
   #
   # @example Adding custom searchable fields
-  #   Spree.ransack.add_attribute(Spree::Product, :vendor_id)
-  #   Spree.ransack.add_scope(Spree::Product, :by_vendor)
-  #   Spree.ransack.add_association(Spree::Product, :vendor)
+  #   Spree.ransack.add_attribute(Spree::Product, :seller_id)
+  #   Spree.ransack.add_scope(Spree::Product, :by_seller)
+  #   Spree.ransack.add_association(Spree::Product, :seller)
   #
   class RansackConfiguration
     def initialize

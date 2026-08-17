@@ -25,7 +25,7 @@ module Spree
     #
     # Associations
     #
-    belongs_to :owner, polymorphic: true # Store, Vendor, etc.
+    belongs_to :owner, polymorphic: true # Store, Seller, etc.
     belongs_to :user, class_name: Spree.admin_user_class.to_s, optional: true
     has_many :mappings, class_name: 'Spree::ImportMapping', dependent: :destroy, inverse_of: :import
     alias import_mappings mappings

@@ -26,7 +26,7 @@ module Spree
         line_items_sql = line_items_scope.to_sql
 
         product_scope = store.products
-        product_scope = product_scope.where(vendor_id: vendor.id) if defined?(vendor) && vendor.present?
+        product_scope = product_scope.where(seller_id: seller.id) if defined?(seller) && seller.present?
 
         product_scope.includes(:categories, :tax_category, variants: :prices).
                               joins("LEFT JOIN (#{line_items_sql}) AS line_items ON #{Spree::Product.table_name}.id = line_items.product_id").

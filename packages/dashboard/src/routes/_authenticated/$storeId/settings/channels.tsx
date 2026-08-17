@@ -48,6 +48,7 @@ import {
   useUpdateChannel,
 } from '../../../../hooks/use-channels'
 import { useStockLocations } from '../../../../hooks/use-stock-locations'
+import { slugify } from '../../../../lib/slugify'
 import {
   CHANNEL_DEFAULTS,
   type ChannelFormValues,
@@ -145,18 +146,6 @@ function ChannelsPage() {
   )
 }
 
-// Mirrors ActiveSupport's +String#parameterize+: lowercase, ASCII-friendly,
-// hyphen-separated. Keeps the SPA preview in sync with what +normalizes :code+
-// produces on the model so users see the final slug as they type.
-function slugifyChannelCode(value: string): string {
-  return value
-    .normalize('NFKD')
-    .replace(/\p{M}/gu, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-}
-
 function CreateChannelSheet({
   open,
   onOpenChange,
@@ -178,7 +167,7 @@ function CreateChannelSheet({
   const name = form.watch('name')
   useEffect(() => {
     if (form.getFieldState('code').isDirty) return
-    form.setValue('code', slugifyChannelCode(name ?? ''))
+    form.setValue('code', slugify(name ?? ''))
   }, [name, form])
 
   async function onSubmit(values: ChannelFormValues) {

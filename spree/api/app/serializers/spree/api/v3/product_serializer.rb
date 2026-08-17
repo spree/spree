@@ -88,15 +88,15 @@ module Spree
 
         # Nil on the marketplace's own first-party products. The id is always
         # present so a storefront can group or link by seller without paying
-        # for the expand; `?expand=vendor` adds the public profile.
-        attribute :vendor_id do |product|
-          product.vendor&.prefixed_id
+        # for the expand; `?expand=seller` adds the public profile.
+        attribute :seller_id do |product|
+          product.seller&.prefixed_id
         end
 
         # Conditional associations
-        one :vendor,
-            resource: proc { Spree.api.vendor_serializer },
-            if: proc { expand?('vendor') }
+        one :seller,
+            resource: proc { Spree.api.seller_serializer },
+            if: proc { expand?('seller') }
 
         one :primary_media,
             resource: proc { Spree.api.media_serializer },
@@ -137,7 +137,7 @@ module Spree
              if: proc { expand?('custom_fields') }
 
         typelize prior_price: ['PriceHistory', nullable: true],
-                 vendor_id: [:string, nullable: true]
+                 seller_id: [:string, nullable: true]
 
         attribute :prior_price,
                   if: proc { expand?('prior_price') } do |product|

@@ -32,18 +32,18 @@ RSpec.describe Spree::Api::V3::Admin::LineItemSerializer do
     expect(subject).to have_key('total')
   end
 
-  # `vendor_id` itself is covered on the store serializer this one extends.
-  describe 'vendor expand' do
+  # `seller_id` itself is covered on the store serializer this one extends.
+  describe 'seller expand' do
     it 'resolves the operator view rather than the public profile' do
-      vendor = create(:vendor, store: store)
-      line_item.variant.product.update!(vendor: vendor)
+      seller = create(:seller, store: store)
+      line_item.variant.product.update!(seller: seller)
       line_item.reload.save!
 
       result = described_class.new(
-        line_item.reload, params: base_params.merge(expand: ['vendor'])
+        line_item.reload, params: base_params.merge(expand: ['seller'])
       ).to_h
 
-      expect(result['vendor']['status']).to eq(vendor.status)
+      expect(result['seller']['status']).to eq(seller.status)
     end
   end
 end

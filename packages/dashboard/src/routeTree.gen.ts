@@ -24,14 +24,13 @@ import { Route as GettingStartedRouteImport } from './routes/_authenticated/$sto
 import { Route as ExchangesRouteImport } from './routes/_authenticated/$storeId/exchanges'
 import { Route as ClaimsRouteImport } from './routes/_authenticated/$storeId/claims'
 import { Route as SplatRouteImport } from './routes/_authenticated/$storeId/$'
-import { Route as VendorsIndexRouteImport } from './routes/_authenticated/$storeId/vendors/index'
 import { Route as SettingsIndexRouteImport } from './routes/_authenticated/$storeId/settings/index'
+import { Route as SellersIndexRouteImport } from './routes/_authenticated/$storeId/sellers/index'
 import { Route as PromotionsIndexRouteImport } from './routes/_authenticated/$storeId/promotions/index'
 import { Route as ProductsIndexRouteImport } from './routes/_authenticated/$storeId/products/index'
 import { Route as OrdersIndexRouteImport } from './routes/_authenticated/$storeId/orders/index'
 import { Route as CustomersIndexRouteImport } from './routes/_authenticated/$storeId/customers/index'
 import { Route as CompaniesIndexRouteImport } from './routes/_authenticated/$storeId/companies/index'
-import { Route as VendorsVendorIdRouteImport } from './routes/_authenticated/$storeId/vendors/$vendorId'
 import { Route as SettingsTaxRatesRouteImport } from './routes/_authenticated/$storeId/settings/tax-rates'
 import { Route as SettingsTaxCategoriesRouteImport } from './routes/_authenticated/$storeId/settings/tax-categories'
 import { Route as SettingsStoreRouteImport } from './routes/_authenticated/$storeId/settings/store'
@@ -45,9 +44,11 @@ import { Route as SettingsMarketsRouteImport } from './routes/_authenticated/$st
 import { Route as SettingsIntegrationsRouteImport } from './routes/_authenticated/$storeId/settings/integrations'
 import { Route as SettingsEmailsRouteImport } from './routes/_authenticated/$storeId/settings/emails'
 import { Route as SettingsCustomFieldDefinitionsRouteImport } from './routes/_authenticated/$storeId/settings/custom-field-definitions'
+import { Route as SettingsCommissionRatesRouteImport } from './routes/_authenticated/$storeId/settings/commission-rates'
 import { Route as SettingsChannelsRouteImport } from './routes/_authenticated/$storeId/settings/channels'
 import { Route as SettingsApiKeysRouteImport } from './routes/_authenticated/$storeId/settings/api-keys'
 import { Route as SettingsAllowedOriginsRouteImport } from './routes/_authenticated/$storeId/settings/allowed-origins'
+import { Route as SellersSellerIdRouteImport } from './routes/_authenticated/$storeId/sellers/$sellerId'
 import { Route as PromotionsNewRouteImport } from './routes/_authenticated/$storeId/promotions/new'
 import { Route as PromotionsGiftCardsRouteImport } from './routes/_authenticated/$storeId/promotions/gift-cards'
 import { Route as PromotionsPromotionIdRouteImport } from './routes/_authenticated/$storeId/promotions/$promotionId'
@@ -155,15 +156,15 @@ const SplatRoute = SplatRouteImport.update({
   path: '/$',
   getParentRoute: () => authenticatedStoreIdRoute,
 } as any)
-const VendorsIndexRoute = VendorsIndexRouteImport.update({
-  id: '/vendors/',
-  path: '/vendors/',
-  getParentRoute: () => authenticatedStoreIdRoute,
-} as any)
 const SettingsIndexRoute = SettingsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => SettingsRoute,
+} as any)
+const SellersIndexRoute = SellersIndexRouteImport.update({
+  id: '/sellers/',
+  path: '/sellers/',
+  getParentRoute: () => authenticatedStoreIdRoute,
 } as any)
 const PromotionsIndexRoute = PromotionsIndexRouteImport.update({
   id: '/promotions/',
@@ -188,11 +189,6 @@ const CustomersIndexRoute = CustomersIndexRouteImport.update({
 const CompaniesIndexRoute = CompaniesIndexRouteImport.update({
   id: '/companies/',
   path: '/companies/',
-  getParentRoute: () => authenticatedStoreIdRoute,
-} as any)
-const VendorsVendorIdRoute = VendorsVendorIdRouteImport.update({
-  id: '/vendors/$vendorId',
-  path: '/vendors/$vendorId',
   getParentRoute: () => authenticatedStoreIdRoute,
 } as any)
 const SettingsTaxRatesRoute = SettingsTaxRatesRouteImport.update({
@@ -261,6 +257,11 @@ const SettingsCustomFieldDefinitionsRoute =
     path: '/custom-field-definitions',
     getParentRoute: () => SettingsRoute,
   } as any)
+const SettingsCommissionRatesRoute = SettingsCommissionRatesRouteImport.update({
+  id: '/commission-rates',
+  path: '/commission-rates',
+  getParentRoute: () => SettingsRoute,
+} as any)
 const SettingsChannelsRoute = SettingsChannelsRouteImport.update({
   id: '/channels',
   path: '/channels',
@@ -275,6 +276,11 @@ const SettingsAllowedOriginsRoute = SettingsAllowedOriginsRouteImport.update({
   id: '/allowed-origins',
   path: '/allowed-origins',
   getParentRoute: () => SettingsRoute,
+} as any)
+const SellersSellerIdRoute = SellersSellerIdRouteImport.update({
+  id: '/sellers/$sellerId',
+  path: '/sellers/$sellerId',
+  getParentRoute: () => authenticatedStoreIdRoute,
 } as any)
 const PromotionsNewRoute = PromotionsNewRouteImport.update({
   id: '/promotions/new',
@@ -469,9 +475,11 @@ export interface FileRoutesByFullPath {
   '/$storeId/promotions/$promotionId': typeof PromotionsPromotionIdRoute
   '/$storeId/promotions/gift-cards': typeof PromotionsGiftCardsRoute
   '/$storeId/promotions/new': typeof PromotionsNewRoute
+  '/$storeId/sellers/$sellerId': typeof SellersSellerIdRoute
   '/$storeId/settings/allowed-origins': typeof SettingsAllowedOriginsRoute
   '/$storeId/settings/api-keys': typeof SettingsApiKeysRoute
   '/$storeId/settings/channels': typeof SettingsChannelsRoute
+  '/$storeId/settings/commission-rates': typeof SettingsCommissionRatesRoute
   '/$storeId/settings/custom-field-definitions': typeof SettingsCustomFieldDefinitionsRoute
   '/$storeId/settings/emails': typeof SettingsEmailsRoute
   '/$storeId/settings/integrations': typeof SettingsIntegrationsRoute
@@ -485,14 +493,13 @@ export interface FileRoutesByFullPath {
   '/$storeId/settings/store': typeof SettingsStoreRoute
   '/$storeId/settings/tax-categories': typeof SettingsTaxCategoriesRoute
   '/$storeId/settings/tax-rates': typeof SettingsTaxRatesRoute
-  '/$storeId/vendors/$vendorId': typeof VendorsVendorIdRoute
   '/$storeId/companies/': typeof CompaniesIndexRoute
   '/$storeId/customers/': typeof CustomersIndexRoute
   '/$storeId/orders/': typeof OrdersIndexRoute
   '/$storeId/products/': typeof ProductsIndexRoute
   '/$storeId/promotions/': typeof PromotionsIndexRoute
+  '/$storeId/sellers/': typeof SellersIndexRoute
   '/$storeId/settings/': typeof SettingsIndexRoute
-  '/$storeId/vendors/': typeof VendorsIndexRoute
   '/$storeId/companies/locations/$locationId': typeof CompaniesLocationsDotlocationIdRoute
   '/$storeId/orders/$orderId/edit': typeof OrdersOrderIdEditRoute
   '/$storeId/products/categories/$categoryId': typeof ProductsCategoriesCategoryIdRoute
@@ -538,9 +545,11 @@ export interface FileRoutesByTo {
   '/$storeId/promotions/$promotionId': typeof PromotionsPromotionIdRoute
   '/$storeId/promotions/gift-cards': typeof PromotionsGiftCardsRoute
   '/$storeId/promotions/new': typeof PromotionsNewRoute
+  '/$storeId/sellers/$sellerId': typeof SellersSellerIdRoute
   '/$storeId/settings/allowed-origins': typeof SettingsAllowedOriginsRoute
   '/$storeId/settings/api-keys': typeof SettingsApiKeysRoute
   '/$storeId/settings/channels': typeof SettingsChannelsRoute
+  '/$storeId/settings/commission-rates': typeof SettingsCommissionRatesRoute
   '/$storeId/settings/custom-field-definitions': typeof SettingsCustomFieldDefinitionsRoute
   '/$storeId/settings/emails': typeof SettingsEmailsRoute
   '/$storeId/settings/integrations': typeof SettingsIntegrationsRoute
@@ -554,14 +563,13 @@ export interface FileRoutesByTo {
   '/$storeId/settings/store': typeof SettingsStoreRoute
   '/$storeId/settings/tax-categories': typeof SettingsTaxCategoriesRoute
   '/$storeId/settings/tax-rates': typeof SettingsTaxRatesRoute
-  '/$storeId/vendors/$vendorId': typeof VendorsVendorIdRoute
   '/$storeId/companies': typeof CompaniesIndexRoute
   '/$storeId/customers': typeof CustomersIndexRoute
   '/$storeId/orders': typeof OrdersIndexRoute
   '/$storeId/products': typeof ProductsIndexRoute
   '/$storeId/promotions': typeof PromotionsIndexRoute
+  '/$storeId/sellers': typeof SellersIndexRoute
   '/$storeId/settings': typeof SettingsIndexRoute
-  '/$storeId/vendors': typeof VendorsIndexRoute
   '/$storeId/companies/locations/$locationId': typeof CompaniesLocationsDotlocationIdRoute
   '/$storeId/orders/$orderId/edit': typeof OrdersOrderIdEditRoute
   '/$storeId/products/categories/$categoryId': typeof ProductsCategoriesCategoryIdRoute
@@ -611,9 +619,11 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/promotions/$promotionId': typeof PromotionsPromotionIdRoute
   '/_authenticated/$storeId/promotions/gift-cards': typeof PromotionsGiftCardsRoute
   '/_authenticated/$storeId/promotions/new': typeof PromotionsNewRoute
+  '/_authenticated/$storeId/sellers/$sellerId': typeof SellersSellerIdRoute
   '/_authenticated/$storeId/settings/allowed-origins': typeof SettingsAllowedOriginsRoute
   '/_authenticated/$storeId/settings/api-keys': typeof SettingsApiKeysRoute
   '/_authenticated/$storeId/settings/channels': typeof SettingsChannelsRoute
+  '/_authenticated/$storeId/settings/commission-rates': typeof SettingsCommissionRatesRoute
   '/_authenticated/$storeId/settings/custom-field-definitions': typeof SettingsCustomFieldDefinitionsRoute
   '/_authenticated/$storeId/settings/emails': typeof SettingsEmailsRoute
   '/_authenticated/$storeId/settings/integrations': typeof SettingsIntegrationsRoute
@@ -627,14 +637,13 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/settings/store': typeof SettingsStoreRoute
   '/_authenticated/$storeId/settings/tax-categories': typeof SettingsTaxCategoriesRoute
   '/_authenticated/$storeId/settings/tax-rates': typeof SettingsTaxRatesRoute
-  '/_authenticated/$storeId/vendors/$vendorId': typeof VendorsVendorIdRoute
   '/_authenticated/$storeId/companies/': typeof CompaniesIndexRoute
   '/_authenticated/$storeId/customers/': typeof CustomersIndexRoute
   '/_authenticated/$storeId/orders/': typeof OrdersIndexRoute
   '/_authenticated/$storeId/products/': typeof ProductsIndexRoute
   '/_authenticated/$storeId/promotions/': typeof PromotionsIndexRoute
+  '/_authenticated/$storeId/sellers/': typeof SellersIndexRoute
   '/_authenticated/$storeId/settings/': typeof SettingsIndexRoute
-  '/_authenticated/$storeId/vendors/': typeof VendorsIndexRoute
   '/_authenticated/$storeId/companies/locations/$locationId': typeof CompaniesLocationsDotlocationIdRoute
   '/_authenticated/$storeId/orders/$orderId/edit': typeof OrdersOrderIdEditRoute
   '/_authenticated/$storeId/products/categories/$categoryId': typeof ProductsCategoriesCategoryIdRoute
@@ -684,9 +693,11 @@ export interface FileRouteTypes {
     | '/$storeId/promotions/$promotionId'
     | '/$storeId/promotions/gift-cards'
     | '/$storeId/promotions/new'
+    | '/$storeId/sellers/$sellerId'
     | '/$storeId/settings/allowed-origins'
     | '/$storeId/settings/api-keys'
     | '/$storeId/settings/channels'
+    | '/$storeId/settings/commission-rates'
     | '/$storeId/settings/custom-field-definitions'
     | '/$storeId/settings/emails'
     | '/$storeId/settings/integrations'
@@ -700,14 +711,13 @@ export interface FileRouteTypes {
     | '/$storeId/settings/store'
     | '/$storeId/settings/tax-categories'
     | '/$storeId/settings/tax-rates'
-    | '/$storeId/vendors/$vendorId'
     | '/$storeId/companies/'
     | '/$storeId/customers/'
     | '/$storeId/orders/'
     | '/$storeId/products/'
     | '/$storeId/promotions/'
+    | '/$storeId/sellers/'
     | '/$storeId/settings/'
-    | '/$storeId/vendors/'
     | '/$storeId/companies/locations/$locationId'
     | '/$storeId/orders/$orderId/edit'
     | '/$storeId/products/categories/$categoryId'
@@ -753,9 +763,11 @@ export interface FileRouteTypes {
     | '/$storeId/promotions/$promotionId'
     | '/$storeId/promotions/gift-cards'
     | '/$storeId/promotions/new'
+    | '/$storeId/sellers/$sellerId'
     | '/$storeId/settings/allowed-origins'
     | '/$storeId/settings/api-keys'
     | '/$storeId/settings/channels'
+    | '/$storeId/settings/commission-rates'
     | '/$storeId/settings/custom-field-definitions'
     | '/$storeId/settings/emails'
     | '/$storeId/settings/integrations'
@@ -769,14 +781,13 @@ export interface FileRouteTypes {
     | '/$storeId/settings/store'
     | '/$storeId/settings/tax-categories'
     | '/$storeId/settings/tax-rates'
-    | '/$storeId/vendors/$vendorId'
     | '/$storeId/companies'
     | '/$storeId/customers'
     | '/$storeId/orders'
     | '/$storeId/products'
     | '/$storeId/promotions'
+    | '/$storeId/sellers'
     | '/$storeId/settings'
-    | '/$storeId/vendors'
     | '/$storeId/companies/locations/$locationId'
     | '/$storeId/orders/$orderId/edit'
     | '/$storeId/products/categories/$categoryId'
@@ -825,9 +836,11 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/promotions/$promotionId'
     | '/_authenticated/$storeId/promotions/gift-cards'
     | '/_authenticated/$storeId/promotions/new'
+    | '/_authenticated/$storeId/sellers/$sellerId'
     | '/_authenticated/$storeId/settings/allowed-origins'
     | '/_authenticated/$storeId/settings/api-keys'
     | '/_authenticated/$storeId/settings/channels'
+    | '/_authenticated/$storeId/settings/commission-rates'
     | '/_authenticated/$storeId/settings/custom-field-definitions'
     | '/_authenticated/$storeId/settings/emails'
     | '/_authenticated/$storeId/settings/integrations'
@@ -841,14 +854,13 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/settings/store'
     | '/_authenticated/$storeId/settings/tax-categories'
     | '/_authenticated/$storeId/settings/tax-rates'
-    | '/_authenticated/$storeId/vendors/$vendorId'
     | '/_authenticated/$storeId/companies/'
     | '/_authenticated/$storeId/customers/'
     | '/_authenticated/$storeId/orders/'
     | '/_authenticated/$storeId/products/'
     | '/_authenticated/$storeId/promotions/'
+    | '/_authenticated/$storeId/sellers/'
     | '/_authenticated/$storeId/settings/'
-    | '/_authenticated/$storeId/vendors/'
     | '/_authenticated/$storeId/companies/locations/$locationId'
     | '/_authenticated/$storeId/orders/$orderId/edit'
     | '/_authenticated/$storeId/products/categories/$categoryId'
@@ -986,19 +998,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SplatRouteImport
       parentRoute: typeof authenticatedStoreIdRoute
     }
-    '/_authenticated/$storeId/vendors/': {
-      id: '/_authenticated/$storeId/vendors/'
-      path: '/vendors'
-      fullPath: '/$storeId/vendors/'
-      preLoaderRoute: typeof VendorsIndexRouteImport
-      parentRoute: typeof authenticatedStoreIdRoute
-    }
     '/_authenticated/$storeId/settings/': {
       id: '/_authenticated/$storeId/settings/'
       path: '/'
       fullPath: '/$storeId/settings/'
       preLoaderRoute: typeof SettingsIndexRouteImport
       parentRoute: typeof SettingsRoute
+    }
+    '/_authenticated/$storeId/sellers/': {
+      id: '/_authenticated/$storeId/sellers/'
+      path: '/sellers'
+      fullPath: '/$storeId/sellers/'
+      preLoaderRoute: typeof SellersIndexRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/promotions/': {
       id: '/_authenticated/$storeId/promotions/'
@@ -1033,13 +1045,6 @@ declare module '@tanstack/react-router' {
       path: '/companies'
       fullPath: '/$storeId/companies/'
       preLoaderRoute: typeof CompaniesIndexRouteImport
-      parentRoute: typeof authenticatedStoreIdRoute
-    }
-    '/_authenticated/$storeId/vendors/$vendorId': {
-      id: '/_authenticated/$storeId/vendors/$vendorId'
-      path: '/vendors/$vendorId'
-      fullPath: '/$storeId/vendors/$vendorId'
-      preLoaderRoute: typeof VendorsVendorIdRouteImport
       parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/settings/tax-rates': {
@@ -1133,6 +1138,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsCustomFieldDefinitionsRouteImport
       parentRoute: typeof SettingsRoute
     }
+    '/_authenticated/$storeId/settings/commission-rates': {
+      id: '/_authenticated/$storeId/settings/commission-rates'
+      path: '/commission-rates'
+      fullPath: '/$storeId/settings/commission-rates'
+      preLoaderRoute: typeof SettingsCommissionRatesRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/_authenticated/$storeId/settings/channels': {
       id: '/_authenticated/$storeId/settings/channels'
       path: '/channels'
@@ -1153,6 +1165,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/$storeId/settings/allowed-origins'
       preLoaderRoute: typeof SettingsAllowedOriginsRouteImport
       parentRoute: typeof SettingsRoute
+    }
+    '/_authenticated/$storeId/sellers/$sellerId': {
+      id: '/_authenticated/$storeId/sellers/$sellerId'
+      path: '/sellers/$sellerId'
+      fullPath: '/$storeId/sellers/$sellerId'
+      preLoaderRoute: typeof SellersSellerIdRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/promotions/new': {
       id: '/_authenticated/$storeId/promotions/new'
@@ -1378,6 +1397,7 @@ interface SettingsRouteChildren {
   SettingsAllowedOriginsRoute: typeof SettingsAllowedOriginsRoute
   SettingsApiKeysRoute: typeof SettingsApiKeysRoute
   SettingsChannelsRoute: typeof SettingsChannelsRoute
+  SettingsCommissionRatesRoute: typeof SettingsCommissionRatesRoute
   SettingsCustomFieldDefinitionsRoute: typeof SettingsCustomFieldDefinitionsRoute
   SettingsEmailsRoute: typeof SettingsEmailsRoute
   SettingsIntegrationsRoute: typeof SettingsIntegrationsRoute
@@ -1405,6 +1425,7 @@ const SettingsRouteChildren: SettingsRouteChildren = {
   SettingsAllowedOriginsRoute: SettingsAllowedOriginsRoute,
   SettingsApiKeysRoute: SettingsApiKeysRoute,
   SettingsChannelsRoute: SettingsChannelsRoute,
+  SettingsCommissionRatesRoute: SettingsCommissionRatesRoute,
   SettingsCustomFieldDefinitionsRoute: SettingsCustomFieldDefinitionsRoute,
   SettingsEmailsRoute: SettingsEmailsRoute,
   SettingsIntegrationsRoute: SettingsIntegrationsRoute,
@@ -1456,13 +1477,13 @@ interface authenticatedStoreIdRouteChildren {
   PromotionsPromotionIdRoute: typeof PromotionsPromotionIdRoute
   PromotionsGiftCardsRoute: typeof PromotionsGiftCardsRoute
   PromotionsNewRoute: typeof PromotionsNewRoute
-  VendorsVendorIdRoute: typeof VendorsVendorIdRoute
+  SellersSellerIdRoute: typeof SellersSellerIdRoute
   CompaniesIndexRoute: typeof CompaniesIndexRoute
   CustomersIndexRoute: typeof CustomersIndexRoute
   OrdersIndexRoute: typeof OrdersIndexRoute
   ProductsIndexRoute: typeof ProductsIndexRoute
   PromotionsIndexRoute: typeof PromotionsIndexRoute
-  VendorsIndexRoute: typeof VendorsIndexRoute
+  SellersIndexRoute: typeof SellersIndexRoute
   CompaniesLocationsDotlocationIdRoute: typeof CompaniesLocationsDotlocationIdRoute
   OrdersOrderIdEditRoute: typeof OrdersOrderIdEditRoute
   ProductsCategoriesCategoryIdRoute: typeof ProductsCategoriesCategoryIdRoute
@@ -1497,13 +1518,13 @@ const authenticatedStoreIdRouteChildren: authenticatedStoreIdRouteChildren = {
   PromotionsPromotionIdRoute: PromotionsPromotionIdRoute,
   PromotionsGiftCardsRoute: PromotionsGiftCardsRoute,
   PromotionsNewRoute: PromotionsNewRoute,
-  VendorsVendorIdRoute: VendorsVendorIdRoute,
+  SellersSellerIdRoute: SellersSellerIdRoute,
   CompaniesIndexRoute: CompaniesIndexRoute,
   CustomersIndexRoute: CustomersIndexRoute,
   OrdersIndexRoute: OrdersIndexRoute,
   ProductsIndexRoute: ProductsIndexRoute,
   PromotionsIndexRoute: PromotionsIndexRoute,
-  VendorsIndexRoute: VendorsIndexRoute,
+  SellersIndexRoute: SellersIndexRoute,
   CompaniesLocationsDotlocationIdRoute: CompaniesLocationsDotlocationIdRoute,
   OrdersOrderIdEditRoute: OrdersOrderIdEditRoute,
   ProductsCategoriesCategoryIdRoute: ProductsCategoriesCategoryIdRoute,

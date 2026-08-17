@@ -182,6 +182,11 @@ module Spree
     has_many :discounts, class_name: 'Spree::Discount', dependent: :destroy, inverse_of: :order
     has_many :fees, class_name: 'Spree::Fee', dependent: :destroy, inverse_of: :order
 
+    # What the marketplace charged its sellers on this order. Off-order by
+    # design: commission never reaches a total the customer pays, so this is a
+    # ledger the order merely hosts. See docs/plans/6.0-multi-seller-marketplace.md.
+    has_many :commission_lines, class_name: 'Spree::CommissionLine', dependent: :destroy, inverse_of: :order
+
     has_many :line_item_tax_lines, through: :line_items, source: :tax_lines
     has_many :line_item_discounts, through: :line_items, source: :discounts
 

@@ -158,13 +158,13 @@ nav.add({
 })
 
 // Only a marketplace has sellers, so the entry hides itself on a store whose
-// staff hold no vendor permission at all.
+// staff hold no seller permission at all.
 nav.add({
-  key: 'vendors',
-  label: i18n.t('admin.nav.vendors'),
-  path: '/vendors',
+  key: 'sellers',
+  label: i18n.t('admin.nav.sellers'),
+  path: '/sellers',
   icon: StoreIcon,
-  subject: Subject.Vendor,
+  subject: Subject.Seller,
   position: 450,
 })
 

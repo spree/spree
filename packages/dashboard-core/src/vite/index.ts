@@ -83,7 +83,7 @@ export interface SpreeDashboardPluginOptions {
  *
  *     spreeDashboardPlugin({
  *       cssEntry: './src/admin.css',
- *       plugins: ['@my-store/vendor-portal-plugin'],  // explicit whitelist opt-out
+ *       plugins: ['@my-store/seller-portal-plugin'],  // explicit whitelist opt-out
  *     })
  */
 export function spreeDashboardPlugin(options: SpreeDashboardPluginOptions = {}): PluginOption[] {

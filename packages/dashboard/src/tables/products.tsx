@@ -7,7 +7,7 @@ import { PackageIcon } from 'lucide-react'
 import { categoryAutocompleteProps } from '../hooks/use-categories'
 import { channelAutocompleteProps } from '../hooks/use-channels'
 import { productTypeAutocompleteProps } from '../hooks/use-product-types'
-import { vendorAutocompleteProps } from '../hooks/use-vendors'
+import { sellerAutocompleteProps } from '../hooks/use-sellers'
 
 defineTable('products', {
   title: i18n.t('admin.nav.products'),
@@ -137,25 +137,25 @@ defineTable('products', {
     // Only meaningful on a marketplace: a first-party product has no seller,
     // so the cell reads as the store's own rather than blank.
     {
-      key: 'vendor',
-      label: i18n.t('admin.fields.product.vendor.label'),
+      key: 'seller',
+      label: i18n.t('admin.fields.product.seller.label'),
       filterable: true,
       filterType: 'resource',
-      filterResource: vendorAutocompleteProps('products-table-vendor-filter'),
-      ransackAttribute: 'vendor_id',
+      filterResource: sellerAutocompleteProps('products-table-seller-filter'),
+      ransackAttribute: 'seller_id',
       default: false,
       render: (product) =>
-        product.vendor_id ? (
+        product.seller_id ? (
           <Link
-            to={'/$storeId/vendors/$vendorId' as string}
-            params={{ vendorId: product.vendor_id }}
+            to={'/$storeId/sellers/$sellerId' as string}
+            params={{ sellerId: product.seller_id }}
             className="no-underline"
           >
-            {product.vendor_name}
+            {product.seller_name}
           </Link>
         ) : (
           <span className="text-muted-foreground">
-            {i18n.t('admin.fields.product.vendor.first_party')}
+            {i18n.t('admin.fields.product.seller.first_party')}
           </span>
         ),
     },

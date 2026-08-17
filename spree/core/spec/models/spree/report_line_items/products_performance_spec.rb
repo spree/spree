@@ -12,9 +12,9 @@ RSpec.describe Spree::ReportLineItems::ProductsPerformance do
 
   subject { report.line_items.first }
 
-  describe '#vendor' do
-    it 'returns vendor name from record' do
-      expect(subject.vendor).to eq(variant.try(:vendor_name))
+  describe '#seller' do
+    it 'returns seller name from record' do
+      expect(subject.seller).to eq(variant.try(:seller_name))
     end
   end
 

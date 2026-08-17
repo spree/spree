@@ -34,7 +34,7 @@ module Spree
 
         step :ensure_cancellable
 
-        # Veto point — vendor policy, already-dispatched guards. Before the
+        # Veto point — seller policy, already-dispatched guards. Before the
         # transaction: nothing is written yet, and payment settlement has
         # not run.
         run_hooks :before_cancel

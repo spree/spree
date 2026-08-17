@@ -1084,7 +1084,7 @@
         "tags": {
           "label": "Tags"
         },
-        "vendor": {
+        "seller": {
           "label": "Verkäufer",
           "first_party": "Eigener Verkauf"
         }
@@ -1616,7 +1616,7 @@
           "help": "Leer lassen für eine Bescheinigung ohne Ablaufdatum."
         }
       },
-      "vendor": {
+      "seller": {
         "name": {
           "placeholder": "Sparks Audio"
         },
@@ -1651,6 +1651,61 @@
           "label": "Abwesend bis",
           "placeholder": "Datum wählen",
           "help": "Der Katalog bleibt sichtbar, es kann bis dahin aber nichts gekauft werden."
+        }
+      },
+      "commission_rate": {
+        "name": {
+          "placeholder": "Standardprovision"
+        },
+        "code": {
+          "label": "Code",
+          "placeholder": "standard",
+          "help": "Ihre eigene Kennung für diesen Satz."
+        },
+        "kind": {
+          "label": "Gebühr",
+          "options": {
+            "percentage": "Prozent vom Verkauf",
+            "fixed": "Pauschale"
+          }
+        },
+        "value": {
+          "label": "Wert",
+          "help_percentage": "Prozentsatz des Verkaufs, der dem Verkäufer berechnet wird."
+        },
+        "rules": {
+          "label": "Bedingungen",
+          "help": "Jede Bedingung muss zutreffen; nennt eine Bedingung mehrere Einträge, genügt einer davon. Ein Satz ohne Bedingungen gilt für jeden Verkauf."
+        },
+        "min_amount": {
+          "label": "Minimum"
+        },
+        "max_amount": {
+          "label": "Maximum"
+        },
+        "commission_tax_rate": {
+          "label": "Steuer auf die Provision (%)",
+          "placeholder": "Aus Ihren Steuereinstellungen",
+          "help": "Umsatzsteuer auf die Provision selbst, als eigene Leistung an den Verkäufer. Leer lassen, um Ihre Steuereinstellungen zu verwenden."
+        },
+        "include_shipping": {
+          "label": "Auf Versand berechnen",
+          "help": "Provision auch auf die Versanderlöse des Verkäufers berechnen."
+        },
+        "tax_inclusive": {
+          "label": "Auf den Bruttopreis berechnen",
+          "help": "Auf den Preis inklusive Kundensteuer berechnen. Ausgeschaltet wird die Provision auf den Nettoerlös des Verkäufers berechnet — die übliche Grundlage, wenn die Gebühr als eigene Leistung besteuert wird."
+        },
+        "enabled": {
+          "help": "Deaktivierte Sätze werden bei der Berechnung übersprungen."
+        },
+        "amounts": {
+          "help": "Wird für jede verkaufte Einheit berechnet. Eine leer gelassene Währung berechnet dieser Satz nicht — solche Verkäufe fallen an den nächsten Satz.",
+          "label": "Pauschale"
+        },
+        "bounds": {
+          "help": "Nie weniger als der erste und nie mehr als der zweite Betrag. Jeder gilt nur für Verkäufe in seiner eigenen Währung; eine leer gelassene Währung wird unbegrenzt berechnet.",
+          "label": "Unter- und Obergrenze (optional)"
         }
       }
     },
@@ -1924,7 +1979,7 @@
       "returns": "Retouren",
       "settings": "Einstellungen",
       "transfers": "Umlagerungen",
-      "vendors": "Verkäufer"
+      "sellers": "Verkäufer"
     },
     "option_types": {
       "columns": {
@@ -3024,6 +3079,10 @@
         "tax_rates": {
           "add_sheet_title": "Neuer Steuersatz",
           "edit_sheet_title": "Steuersatz bearbeiten"
+        },
+        "commission_rates": {
+          "add_sheet_title": "Provisionssatz hinzufügen",
+          "edit_sheet_title": "Provisionssatz bearbeiten"
         }
       },
       "staff": {
@@ -3310,7 +3369,7 @@
       },
       "tax_category_placeholder": "Steuerkategorie auswählen",
       "transfers": {
-        "create_description": "Bestand zwischen Standorten verschieben oder neuen Bestand von einem externen Lieferanten empfangen.",
+        "create_description": "Bestand zwischen Lagern bewegen oder neuen Bestand von einem externen Lieferanten annehmen.",
         "delete_confirm": {
           "message": "Durch diesen Transfer erstellte Bestandsbewegungen werden rückgängig gemacht.",
           "title": "Diesen Transfer löschen?"
@@ -3318,7 +3377,7 @@
         "destination_placeholder": "Zielstandort auswählen",
         "details_card": "Details",
         "different_locations_error": "Quelle und Ziel müssen sich unterscheiden.",
-        "external_label": "Extern (Lieferanten-Wareneingang)",
+        "external_label": "Extern (Wareneingang vom Lieferanten)",
         "fields": {
           "created": "Erstellt",
           "external_receive": "Externer Wareneingang",
@@ -3746,7 +3805,8 @@
         "store": "Shop",
         "tax_categories": "Steuerkategorien",
         "tax_rates": "Steuersätze",
-        "webhooks": "Webhooks"
+        "webhooks": "Webhooks",
+        "commission_rates": "Provisionssätze"
       }
     },
     "setup": {
@@ -4110,7 +4170,7 @@
     "enterprise": {
       "learn_more": "Mehr über Spree Enterprise erfahren"
     },
-    "vendors": {
+    "sellers": {
       "add_cta": "Verkäufer hinzufügen",
       "add_sheet_title": "Neuer Verkäufer",
       "create_description": "Legen Sie zuerst den Verkäufer an. Einladung, Freigabe und Auszahlungen richten Sie danach auf seiner Seite ein.",
@@ -4180,7 +4240,7 @@
         "canceled": "Hat vor dem Beitritt zurückgezogen."
       },
       "tax_remittance": {
-        "vendor": "Verkäufer führt ab",
+        "seller": "Verkäufer führt ab",
         "platform": "Marktplatz führt ab"
       },
       "payout_interval": {
@@ -4219,6 +4279,29 @@
       "autocomplete": {
         "placeholder": "Verkäufer suchen",
         "empty": "Keine Verkäufer gefunden"
+      }
+    },
+    "commission_rates": {
+      "add_cta": "Provisionssatz hinzufügen",
+      "applies_to_everything": "Jeder Verkauf",
+      "create_description": "Legen Sie fest, was der Marktplatz Verkäufern berechnet und für welche Verkäufe das gilt.",
+      "create_label": "Provisionssatz erstellen",
+      "delete_confirm": {
+        "message": "{{name}} wird entfernt. Bereits berechnete Provisionen bleiben unverändert.",
+        "title": "Provisionssatz löschen?"
+      },
+      "edit_description": "Gebühr, Grenzen und betroffene Verkäufe aktualisieren.",
+      "empty": "Noch keine Provisionssätze",
+      "messages": {
+        "created": "Provisionssatz erstellt",
+        "deleted": "Provisionssatz gelöscht",
+        "updated": "Provisionssatz aktualisiert"
+      },
+      "search_placeholder": "Nach Namen suchen…",
+      "order_hint": "Neue Sätze stehen oben in der Liste, und der erste passende gilt — zum Umsortieren ziehen.",
+      "conditions": {
+        "add": "Bedingung hinzufügen",
+        "title": "Bedingungen"
       }
     }
   }

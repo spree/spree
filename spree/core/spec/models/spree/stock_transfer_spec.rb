@@ -95,7 +95,7 @@ module Spree
         )
       end
 
-      it 'receives new inventory (from a vendor)' do
+      it 'receives new inventory (from a seller)' do
         subject
 
         expect(destination_location.count_on_hand(variant)).to eq 5

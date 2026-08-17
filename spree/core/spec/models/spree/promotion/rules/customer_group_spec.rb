@@ -2,7 +2,10 @@ require 'spec_helper'
 
 describe Spree::Promotion::Rules::CustomerGroup, type: :model do
   let(:store) { @default_store }
-  let(:rule) { Spree::Promotion::Rules::CustomerGroup.new }
+  let(:promotion) { create(:promotion, store: store) }
+  # Attached to its promotion, because the rule resolves group ids through
+  # that promotion's store.
+  let(:rule) { described_class.new(promotion: promotion) }
   let(:customer_group) { create(:customer_group, store: store) }
   let(:other_customer_group) { create(:customer_group, store: store) }
   let(:user) { create(:user) }
@@ -81,6 +84,17 @@ describe Spree::Promotion::Rules::CustomerGroup, type: :model do
       it 'is eligible' do
         expect(rule).to be_eligible(order)
       end
+    end
+  end
+
+  # Groups are store-owned, so a promotion must not target an audience
+  # belonging to another store.
+  context 'when given a customer group from another store' do
+    let(:foreign_group) { create(:customer_group, store: create(:store)) }
+
+    it 'rejects the foreign ID' do
+      expect { rule.preferred_customer_group_ids = [foreign_group.prefixed_id] }.
+        to raise_error(ActiveRecord::RecordNotFound)
     end
   end
 end

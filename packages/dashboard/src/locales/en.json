@@ -1084,8 +1084,8 @@
         "tags": {
           "label": "Tags"
         },
-        "vendor": {
-          "label": "Vendor",
+        "seller": {
+          "label": "Seller",
           "first_party": "Sold by you"
         }
       },
@@ -1616,12 +1616,12 @@
           "help": "Leave empty for a certificate that does not expire."
         }
       },
-      "vendor": {
+      "seller": {
         "name": {
           "placeholder": "Sparks Audio"
         },
         "slug": {
-          "help": "Used in the vendor’s storefront address. Derived from the name when left empty."
+          "help": "Used in the seller’s storefront address. Derived from the name when left empty."
         },
         "contact_email": {
           "placeholder": "hello@sparks.example",
@@ -1633,15 +1633,15 @@
         },
         "about": {
           "label": "About",
-          "help": "Shown on the vendor’s storefront profile."
+          "help": "Shown on the seller’s storefront profile."
         },
         "tax_remittance": {
           "label": "Tax remitted by",
-          "help": "Who accounts for consumer tax on this vendor’s sales."
+          "help": "Who accounts for consumer tax on this seller’s sales."
         },
         "payouts_schedule_interval": {
           "label": "Payout schedule",
-          "help": "How often this vendor is paid."
+          "help": "How often this seller is paid."
         },
         "minimum_payout_amount": {
           "label": "Minimum payout",
@@ -1651,6 +1651,61 @@
           "label": "Away until",
           "placeholder": "Pick a date",
           "help": "The catalog stays visible but nothing can be bought until then."
+        }
+      },
+      "commission_rate": {
+        "name": {
+          "placeholder": "Standard commission"
+        },
+        "code": {
+          "label": "Code",
+          "placeholder": "standard",
+          "help": "Your own identifier for this rate."
+        },
+        "kind": {
+          "label": "Charge",
+          "options": {
+            "percentage": "Percentage of the sale",
+            "fixed": "Flat fee"
+          }
+        },
+        "value": {
+          "label": "Value",
+          "help_percentage": "Percent of the sale charged to the seller."
+        },
+        "rules": {
+          "label": "Conditions",
+          "help": "Every condition has to hold, and a condition naming several records means any of them. A rate with no conditions charges every sale."
+        },
+        "min_amount": {
+          "label": "Minimum"
+        },
+        "max_amount": {
+          "label": "Maximum"
+        },
+        "commission_tax_rate": {
+          "label": "Tax on commission (%)",
+          "placeholder": "From your tax settings",
+          "help": "VAT charged on the commission itself, as a separate supply to the seller. Leave empty to use your tax settings."
+        },
+        "include_shipping": {
+          "label": "Charge on delivery",
+          "help": "Also charge commission on the seller's delivery revenue."
+        },
+        "tax_inclusive": {
+          "label": "Charge on the gross price",
+          "help": "Charge on the price including the customer's VAT. Left off, commission is charged on the seller's net revenue, which is the usual basis where the fee is taxed as its own supply."
+        },
+        "enabled": {
+          "help": "Disabled rates are skipped when charging a sale."
+        },
+        "amounts": {
+          "help": "Charged for every unit sold. A currency left empty is one this rate does not charge — those sales fall to the next rate.",
+          "label": "Flat fee"
+        },
+        "bounds": {
+          "help": "Never charge less than the first, or more than the second. Each applies only to sales in its own currency; leave a currency empty to charge it unbounded.",
+          "label": "Floor and cap (optional)"
         }
       }
     },
@@ -1924,7 +1979,7 @@
       "returns": "Returns",
       "settings": "Settings",
       "transfers": "Transfers",
-      "vendors": "Vendors"
+      "sellers": "Sellers"
     },
     "option_types": {
       "columns": {
@@ -2341,7 +2396,7 @@
         "tasks": {
           "add_products": {
             "cta": "Add products",
-            "description": "Add products to your store — your own, or invite third-party vendors to sell together.",
+            "description": "Add products to your store — your own, or invite third-party sellers to sell together.",
             "import_cta": "Import products from CSV",
             "title": "Add products"
           },
@@ -3024,6 +3079,10 @@
         "tax_rates": {
           "add_sheet_title": "New tax rate",
           "edit_sheet_title": "Edit tax rate"
+        },
+        "commission_rates": {
+          "add_sheet_title": "Add commission rate",
+          "edit_sheet_title": "Edit commission rate"
         }
       },
       "staff": {
@@ -3310,7 +3369,7 @@
       },
       "tax_category_placeholder": "Select tax category",
       "transfers": {
-        "create_description": "Move stock between locations, or receive new stock from an external vendor.",
+        "create_description": "Move stock between locations, or receive new stock from an external supplier.",
         "delete_confirm": {
           "message": "Stock movements created by this transfer will be reversed.",
           "title": "Delete this transfer?"
@@ -3318,7 +3377,7 @@
         "destination_placeholder": "Select destination location",
         "details_card": "Details",
         "different_locations_error": "Source and destination must differ.",
-        "external_label": "External (vendor receive)",
+        "external_label": "External (supplier receive)",
         "fields": {
           "created": "Created",
           "external_receive": "External receive",
@@ -3334,7 +3393,7 @@
         },
         "new_cta": "New transfer",
         "reference_label": "Reference",
-        "reference_placeholder": "PO number, vendor invoice, …",
+        "reference_placeholder": "PO number, supplier invoice, …",
         "review_description": "Review the transfer before creating. Items can't be changed afterwards.",
         "search_items_placeholder": "Search by name or SKU (3+ chars)…"
       },
@@ -3746,7 +3805,8 @@
         "store": "Store",
         "tax_categories": "Tax categories",
         "tax_rates": "Tax rates",
-        "webhooks": "Webhooks"
+        "webhooks": "Webhooks",
+        "commission_rates": "Commission rates"
       }
     },
     "setup": {
@@ -4110,31 +4170,31 @@
     "enterprise": {
       "learn_more": "Learn about Spree Enterprise"
     },
-    "vendors": {
-      "add_cta": "Add vendor",
-      "add_sheet_title": "New vendor",
+    "sellers": {
+      "add_cta": "Add seller",
+      "add_sheet_title": "New seller",
       "create_description": "Create the seller record first. You can invite them, approve them and set up payouts from their page.",
-      "create_label": "Create vendor",
-      "search_placeholder": "Search vendors",
-      "empty": "No vendors yet",
+      "create_label": "Create seller",
+      "search_placeholder": "Search sellers",
+      "empty": "No sellers yet",
       "products_column": "Products",
       "team_column": "Team",
-      "on_holiday_notice": "This vendor is away. Their catalog stays visible but nothing can be bought from them.",
+      "on_holiday_notice": "This seller is away. Their catalog stays visible but nothing can be bought from them.",
       "delete_confirm": {
-        "title": "Delete vendor?",
+        "title": "Delete seller?",
         "message": "This removes {{name}} from the marketplace. Their products stay in your catalog without a seller. This cannot be undone."
       },
       "suspend_confirm": {
-        "title": "Suspend vendor?",
+        "title": "Suspend seller?",
         "message": "{{name}} stops selling immediately. Their catalog and history stay, and you can reinstate them later."
       },
       "reject_confirm": {
-        "title": "Reject vendor?",
+        "title": "Reject seller?",
         "message": "{{name}} will not be admitted to the marketplace. You can still approve them later if this was a mistake."
       },
       "invite_sheet": {
-        "title": "Invite vendor",
-        "description": "They join the vendor team when they accept and can then sign in to their own panel.",
+        "title": "Invite seller",
+        "description": "They join the seller team when they accept and can then sign in to their own panel.",
         "email_help": "The invitation goes to this address."
       },
       "actions": {
@@ -4147,17 +4207,17 @@
         "reject": "Reject"
       },
       "detail": {
-        "load_error": "Could not load this vendor",
-        "delete_label": "Delete vendor",
+        "load_error": "Could not load this seller",
+        "delete_label": "Delete seller",
         "status": "Status",
         "settlement": "Payouts and tax",
         "at_a_glance": "At a glance",
         "contact": "Contact",
         "edit_profile": "Edit profile",
-        "edit_profile_description": "The vendor maintains this from their own panel. Edits here apply on their behalf.",
+        "edit_profile_description": "The seller maintains this from their own panel. Edits here apply on their behalf.",
         "edit_settlement": "Edit payouts and tax",
-        "edit_settlement_description": "Only you can see or change these. The vendor never edits them.",
-        "no_about": "This vendor has not written a description yet."
+        "edit_settlement_description": "Only you can see or change these. The seller never edits them.",
+        "no_about": "This seller has not written a description yet."
       },
       "status": {
         "pending": "Pending",
@@ -4180,7 +4240,7 @@
         "canceled": "They withdrew before joining."
       },
       "tax_remittance": {
-        "vendor": "Vendor remits",
+        "seller": "Seller remits",
         "platform": "Marketplace remits"
       },
       "payout_interval": {
@@ -4192,33 +4252,56 @@
         "manual": "Manual"
       },
       "messages": {
-        "created": "Vendor created",
-        "create_failed": "Could not create the vendor",
-        "updated": "Vendor updated",
-        "update_failed": "Could not update the vendor",
-        "deleted": "Vendor deleted",
-        "delete_failed": "Could not delete the vendor",
+        "created": "Seller created",
+        "create_failed": "Could not create the seller",
+        "updated": "Seller updated",
+        "update_failed": "Could not update the seller",
+        "deleted": "Seller deleted",
+        "delete_failed": "Could not delete the seller",
         "invited": "Invitation sent",
         "invite_failed": "Could not send the invitation",
-        "approved": "Vendor approved",
-        "approve_failed": "Could not approve the vendor",
-        "suspended": "Vendor suspended",
-        "suspend_failed": "Could not suspend the vendor",
-        "rejected": "Vendor rejected",
-        "reject_failed": "Could not reject the vendor"
+        "approved": "Seller approved",
+        "approve_failed": "Could not approve the seller",
+        "suspended": "Seller suspended",
+        "suspend_failed": "Could not suspend the seller",
+        "rejected": "Seller rejected",
+        "reject_failed": "Could not reject the seller"
       },
       "not_provided": "Not provided",
       "images": {
         "logo_label": "Logo",
-        "logo_help": "Square works best. Shown beside the vendor everywhere they appear.",
+        "logo_help": "Square works best. Shown beside the seller everywhere they appear.",
         "square_logo_label": "Square logo",
         "square_logo_help": "Used where a tight square is needed, such as an avatar.",
         "cover_photo_label": "Cover photo",
-        "cover_photo_help": "A wide banner across the top of the vendor profile."
+        "cover_photo_help": "A wide banner across the top of the seller profile."
       },
       "autocomplete": {
-        "placeholder": "Search vendors",
-        "empty": "No vendors found"
+        "placeholder": "Search sellers",
+        "empty": "No sellers found"
+      }
+    },
+    "commission_rates": {
+      "add_cta": "Add commission rate",
+      "applies_to_everything": "Every sale",
+      "create_description": "Set what the marketplace charges sellers, and which sales it applies to.",
+      "create_label": "Create commission rate",
+      "delete_confirm": {
+        "message": "{{name}} will be removed. Commission already charged is unaffected.",
+        "title": "Delete commission rate?"
+      },
+      "edit_description": "Update the charge, its limits, and which sales it applies to.",
+      "empty": "No commission rates yet",
+      "messages": {
+        "created": "Commission rate created",
+        "deleted": "Commission rate deleted",
+        "updated": "Commission rate updated"
+      },
+      "search_placeholder": "Search by name…",
+      "order_hint": "New rates go to the top of the list, and the first one that matches a sale wins — drag to reorder.",
+      "conditions": {
+        "add": "Add condition",
+        "title": "Conditions"
       }
     }
   }

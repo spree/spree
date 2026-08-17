@@ -1,8 +1,0 @@
-<%= Spree.t('vendor_mailer.greeting', vendor_name: @vendor.name) %>
-
-<%= Spree.t('vendor_mailer.approved_email.message', store_name: current_store.name) %>
-<% if @dashboard_url %>
-<%= Spree.t('vendor_mailer.approved_email.action') %>: <%= @dashboard_url %>
-<% end %>
-
-<%= Spree.t('order_mailer.store_team', store_name: current_store.name) %>

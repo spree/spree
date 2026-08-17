@@ -10,25 +10,25 @@ module Spree
     # The split partitions on this column, so it has to survive the copy from
     # cart line to order line — and be right at the moment of placement, since
     # the catalog can change hands while an item sits in a cart.
-    describe 'the vendor snapshot' do
-      let(:vendor) { create(:vendor, store: store, name: 'Sparks Audio') }
+    describe 'the seller snapshot' do
+      let(:seller) { create(:seller, store: store, name: 'Sparks Audio') }
 
       it 'carries onto the order lines' do
         ready_cart.line_items.each do |line_item|
-          line_item.variant.product.update!(vendor: vendor)
-          line_item.update!(vendor: vendor)
+          line_item.variant.product.update!(seller: seller)
+          line_item.update!(seller: seller)
         end
 
         result = described_class.call(cart: ready_cart)
 
         expect(result).to be_success
-        expect(result.value.line_items.map(&:vendor_id).uniq).to eq([vendor.id])
+        expect(result.value.line_items.map(&:seller_id).uniq).to eq([seller.id])
       end
 
       it 'leaves first-party lines without a seller' do
         result = described_class.call(cart: ready_cart)
 
-        expect(result.value.line_items.map(&:vendor_id).uniq).to eq([nil])
+        expect(result.value.line_items.map(&:seller_id).uniq).to eq([nil])
       end
     end
 

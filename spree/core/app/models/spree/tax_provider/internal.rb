@@ -67,6 +67,34 @@ module Spree
         end
       end
 
+      # Reads the service rate off the same TaxRate configuration as everything
+      # else, matched on where the invoiced business sits and taxed under the
+      # store's default category — this engine has no separate notion of a
+      # services category, and a marketplace commission is standard-rated
+      # nearly everywhere.
+      #
+      # Additional (not included-in-price) rates only: a commission is quoted
+      # net and its VAT is added on top, so a rate configured as
+      # tax-inclusive describes consumer pricing rather than this supply.
+      #
+      # Nil when the jurisdiction is unknown or configured with no matching
+      # rate at all, so the caller falls back to its own default instead of
+      # reading silence as "not taxed".
+      def service_tax_rate(address:, store:)
+        return nil if address&.country_code.blank?
+
+        category = default_tax_category_for(store)
+        return nil if category.nil?
+
+        rates = Spree::TaxRate.for_store(store).
+                for_jurisdiction(address.country_code, address.state_code).
+                for_tax_category(category).
+                where(included_in_price: false)
+        return nil if rates.empty?
+
+        rates.sum(:amount)
+      end
+
       private
 
       # Scoped to this engine's own rows: a landed-cost provider writes the
@@ -92,17 +120,23 @@ module Spree
         if item.respond_to?(:tax_category_id) && item.tax_category_id
           item.tax_category_id
         else
-          default_tax_category(owner)&.id
+          default_tax_category_for(owner.store)&.id
         end
       end
 
-      # The owner's store's default, not any store's: defaults are per store
+      # The given store's default, not any store's: defaults are per store
       # since 6.0, and a foreign category id would match none of this store's
       # rates, silently leaving the item untaxed.
-      def default_tax_category(owner)
-        return @default_tax_category if defined?(@default_tax_category)
+      #
+      # Memoized per store rather than per owner, so one `estimate` over a
+      # basket asks once. It buys nothing across calls — Purchase::Taxation
+      # builds a fresh provider every time — which is why commission memoizes
+      # its own answer rather than relying on this.
+      def default_tax_category_for(store)
+        @default_tax_categories ||= {}
+        return @default_tax_categories[store.id] if @default_tax_categories.key?(store.id)
 
-        @default_tax_category = Spree::TaxCategory.default(owner.store)
+        @default_tax_categories[store.id] = Spree::TaxCategory.default(store)
       end
 
       def taxable_basis(item)

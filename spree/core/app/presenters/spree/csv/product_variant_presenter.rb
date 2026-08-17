@@ -9,7 +9,7 @@ module Spree
         'name',
         'slug',
         'status',
-        'vendor_name',
+        'seller_name',
         'description',
         'meta_title',
         'meta_description',
@@ -64,7 +64,7 @@ module Spree
       # Generates an array representing a CSV row of product variant data.
       #
       # For the primary variant row (when the index is zero), product-level details such as name,
-      # slug, status, vendor name, description, meta tags, and tag/label lists are included.
+      # slug, status, seller name, description, meta tags, and tag/label lists are included.
       # In all cases, variant-specific attributes (e.g., id, SKU, pricing, dimensions, weight,
       # availability dates, inventory count, shipping category, tax category, image URLs via original_url,
       # and the first three option types and corresponding option values) are appended.
@@ -82,7 +82,7 @@ module Spree
           index.zero? ? product.name : nil,
           product.slug,
           index.zero? ? product.status : nil,
-          index.zero? ? product.try(:vendor_name) : nil,
+          index.zero? ? product.try(:seller_name) : nil,
           index.zero? ? product.description : nil,
           index.zero? ? product.meta_title : nil,
           index.zero? ? product.meta_description : nil,

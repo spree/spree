@@ -368,6 +368,9 @@
       },
       "contact_email": {
         "label": "联系邮箱"
+      },
+      "enabled": {
+        "label": "已启用"
       }
     },
     "components": {

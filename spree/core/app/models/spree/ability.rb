@@ -25,7 +25,7 @@ module Spree
     attr_reader :store
 
     # @return [Object] the resource whose role assignments this ability reads —
-    #   the store for the admin panel, a Spree::Vendor for a vendor panel
+    #   the store for the admin panel, a Spree::Seller for a seller panel
     attr_reader :resource
 
     # @return [Array<String>] the expanded catalog keys this ability activated
@@ -36,14 +36,14 @@ module Spree
     # @param options [Hash]
     # @option options [Spree::Store] :store the current store
     # @option options [Object] :resource the resource whose assignments grant
-    #   capability — defaults to the store. Pass a Spree::Vendor to build the
-    #   ability of a vendor panel from that vendor's own role assignments.
+    #   capability — defaults to the store. Pass a Spree::Seller to build the
+    #   ability of a seller panel from that seller's own role assignments.
     #
-    #   **The ability answers capability, never tenancy.** A vendor holding
+    #   **The ability answers capability, never tenancy.** A seller holding
     #   `write_orders` gets `can :manage, Spree::Order` — the model class, not
-    #   that vendor's subset — exactly as a store admin does. Which records a
+    #   that seller's subset — exactly as a store admin does. Which records a
     #   panel may touch is decided by scope-fetching in the controller
-    #   (`current_vendor.orders`), the same way store isolation works on the
+    #   (`current_seller.orders`), the same way store isolation works on the
     #   admin branch. A panel controller that authorizes with `accessible_by`
     #   or `authorize!` and does NOT scope-fetch is reading store-wide.
     def initialize(user, options = {})
@@ -124,7 +124,7 @@ module Spree
     end
 
     # @return [Boolean] whether this ability is being built for the store's own
-    #   back office, as opposed to another panel (a marketplace vendor's)
+    #   back office, as opposed to another panel (a marketplace seller's)
     def store_resource?
       @resource.is_a?(Spree::Store)
     end
@@ -133,7 +133,7 @@ module Spree
     #
     # A role names what it governs, so matching on it answers both questions at
     # once: which panel these grants belong to, and which tenant. A role owned
-    # by a marketplace vendor cannot be picked up here however it was assigned.
+    # by a marketplace seller cannot be picked up here however it was assigned.
     #
     # @return [Array<Spree::Role>]
     def staff_roles
@@ -166,7 +166,7 @@ module Spree
     #
     # The store grant is unrestricted only for the store's own back office.
     # Another panel reads the one store it operates under and no other, so a
-    # marketplace's vendors cannot enumerate its sibling stores.
+    # marketplace's sellers cannot enumerate its sibling stores.
     def apply_staff_baseline
       can :read, Spree::Country
       can :read, Spree::State

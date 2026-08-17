@@ -47,7 +47,7 @@ The Spree 6.0 admin is a three-package stack:
 - **`@spree/dashboard-core`** — the framework. The four registries (table, nav, slot, settings-nav), the four providers (auth, permission, store, theme), generic infra hooks (`use-auth`, `use-permissions`, `use-resource-mutation`, `use-direct-upload`, `use-global-search`, …), the admin SDK client singleton, and the `defineDashboardPlugin` extension facade. **This is what plugin authors import** to register navigation, slots, table columns, and routes.
 - **`@spree/dashboard`** — the deployable SPA. Routes, resource hooks (`use-orders`, `use-products`, `use-customers`, …), Zod schemas, locale strings, the app shell. Composes the other two. Built with Vite + TanStack Router (file-based) + TanStack Query + React Hook Form + Tailwind.
 
-Plugin authors install `@spree/dashboard-ui` + `@spree/dashboard-core` as peer dependencies. Vendor panels, white-label admins, and other custom variants compose the same packages with their own routes/shell.
+Plugin authors install `@spree/dashboard-ui` + `@spree/dashboard-core` as peer dependencies. Seller panels, white-label admins, and other custom variants compose the same packages with their own routes/shell.
 
 Architecture, extension points (table registry, navigation registry, component injection), the package boundary rules, and the phased migration are documented in [`docs/plans/6.0-admin-spa.md`](../docs/plans/6.0-admin-spa.md). Local setup for the SPA is in [`packages/dashboard/README.md`](./dashboard/README.md).
 

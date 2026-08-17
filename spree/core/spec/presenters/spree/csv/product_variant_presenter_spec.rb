@@ -21,7 +21,7 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
       expect(subject[2]).to eq product.name
       expect(subject[3]).to eq product.slug
       expect(subject[4]).to eq product.status
-      expect(subject[5]).to eq product.try(:vendor_name)
+      expect(subject[5]).to eq product.try(:seller_name)
       expect(subject[6]).to eq product.description&.html_safe
       expect(subject[7]).to eq product.meta_title
       expect(subject[8]).to eq product.meta_description
@@ -71,7 +71,7 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
       it 'returns nil for product-level fields' do
         expect(subject[2]).to be_nil # name
         expect(subject[4]).to be_nil # status
-        expect(subject[5]).to be_nil # vendor_name
+        expect(subject[5]).to be_nil # seller_name
       end
 
       it 'returns variant specific fields' do

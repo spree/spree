@@ -48,12 +48,12 @@ import type {
   RequestPasswordResetParams,
   ResetPasswordParams,
   Return,
+  Seller,
   StockLocation,
   StoreCredit,
   UpdateCartParams,
   UpdateLineItemParams,
   UpdatePaymentSessionParams,
-  Vendor,
   Wishlist,
   WishlistItem,
 } from './types'
@@ -184,9 +184,9 @@ export class StoreClient {
    */
   /**
    * Public seller profiles on a marketplace. Only sellers a shopper can
-   * currently buy from are listed — see the Store Vendors endpoint.
+   * currently buy from are listed — see the Store Sellers endpoint.
    */
-  readonly vendors = {
+  readonly sellers = {
     /**
      * List sellers. Paginated like every other collection (`page`, `limit`),
      * and filterable through Ransack — `q[name_cont]` for a name search,
@@ -198,19 +198,19 @@ export class StoreClient {
     list: (
       params?: ListParams & Record<string, unknown>,
       options?: RequestOptions,
-    ): Promise<PaginatedResponse<Vendor>> =>
-      this.request<PaginatedResponse<Vendor>>('GET', '/vendors', {
+    ): Promise<PaginatedResponse<Seller>> =>
+      this.request<PaginatedResponse<Seller>>('GET', '/sellers', {
         ...options,
         params: transformListParams({ ...params }),
       }),
 
-    /** By slug or prefixed ID, so a storefront can route `/vendors/sparks-audio`. */
+    /** By slug or prefixed ID, so a storefront can route `/sellers/sparks-audio`. */
     get: (
       idOrSlug: string,
       params?: { expand?: string[]; fields?: string[] },
       options?: RequestOptions,
-    ): Promise<Vendor> =>
-      this.request<Vendor>('GET', `/vendors/${idOrSlug}`, {
+    ): Promise<Seller> =>
+      this.request<Seller>('GET', `/sellers/${idOrSlug}`, {
         ...options,
         params: getParams(params),
       }),

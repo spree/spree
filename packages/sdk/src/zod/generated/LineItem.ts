@@ -2,13 +2,13 @@
 import { z } from 'zod';
 import { DigitalLinkSchema } from './DigitalLink';
 import { OptionValueSchema } from './OptionValue';
+import { SellerSchema } from './Seller';
 import { TaxLineSchema } from './TaxLine';
-import { VendorSchema } from './Vendor';
 
 export const LineItemSchema = z.object({
   id: z.string(),
   variant_id: z.string(),
-  vendor_id: z.string().nullable(),
+  seller_id: z.string().nullable(),
   preorder: z.boolean(),
   preorder_ships_at: z.string().nullable(),
   quantity: z.number(),
@@ -35,7 +35,7 @@ export const LineItemSchema = z.object({
   display_compare_at_amount: z.string().nullable(),
   compare_at_amount: z.string().nullable(),
   thumbnail_url: z.string().nullable(),
-  vendor: VendorSchema.optional(),
+  seller: SellerSchema.optional(),
   option_values: z.array(OptionValueSchema),
   digital_links: z.array(DigitalLinkSchema),
   tax_lines: z.array(TaxLineSchema).optional(),

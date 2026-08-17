@@ -9,7 +9,7 @@ module Spree
           )
         ).includes(:order, shipments: :inventory_units, variant: :product)
 
-        scope = scope.where(vendor_id: vendor.id) if defined?(vendor) && vendor.present?
+        scope = scope.where(seller_id: seller.id) if defined?(seller) && seller.present?
 
         scope
       end

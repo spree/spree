@@ -37,7 +37,7 @@ module Spree
     validate :type_must_be_registered, if: :type_changed?
     # Verify-before-activate (decisions.md 2026-08-06): saving credentials
     # never makes a network call; flipping active on does, and a failed
-    # connection blocks going live with the vendor's message attached.
+    # connection blocks going live with the seller's message attached.
     validate :must_connect_when_activating, if: -> { active? && will_save_change_to_active? }
 
     #
@@ -170,7 +170,7 @@ module Spree
       errors.add(:type, Spree.t('errors.messages.integration_type_not_registered'))
     end
 
-    # On :base, not :active — the vendor's message ("This api key is no
+    # On :base, not :active — the seller's message ("This api key is no
     # longer active…") is a record-level failure, and an attribute error
     # would render with the humanized attribute prepended ("Active This
     # api key…").

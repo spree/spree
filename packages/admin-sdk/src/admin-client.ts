@@ -112,6 +112,9 @@ import type {
   CollectionCreateParams,
   CollectionProductRepositionParams,
   CollectionUpdateParams,
+  CommissionRateCreateParams,
+  CommissionRateUpdateParams,
+  CommissionRuleType,
   CompanyContactParams,
   CompanyLocationParams,
   CompanyParams,
@@ -202,6 +205,11 @@ import type {
   ReturnUpdateParams,
   RoleCreateParams,
   RoleUpdateParams,
+  SellerCreateParams,
+  SellerInviteParams,
+  SellerRejectParams,
+  SellerSuspendParams,
+  SellerUpdateParams,
   SetupCountries,
   SetupParams,
   SetupStatus,
@@ -219,11 +227,6 @@ import type {
   TrackingCarrierOption,
   VariantCreateParams,
   VariantUpdateParams,
-  VendorCreateParams,
-  VendorInviteParams,
-  VendorRejectParams,
-  VendorSuspendParams,
-  VendorUpdateParams,
   WebhookEndpointCreateParams,
   WebhookEndpointDisableParams,
   WebhookEndpointUpdateParams,
@@ -238,6 +241,8 @@ import type {
   Claim,
   ClaimReason,
   Collection,
+  CommissionLine,
+  CommissionRate,
   Company,
   CompanyContact,
   CompanyLocation,
@@ -290,6 +295,7 @@ import type {
   Return,
   ReturnReason,
   Role,
+  Seller,
   StockItem,
   StockLocation,
   StockTransfer,
@@ -304,7 +310,6 @@ import type {
   TranslatableResource,
   TranslationBatchEntry,
   Variant,
-  Vendor,
   WebhookDelivery,
   WebhookEndpoint,
 } from './types'
@@ -2354,53 +2359,136 @@ export class AdminClient {
   // ============================================
 
   /**
-   * CRUD for `Spree::Vendor`, plus the lifecycle actions. Status is never
+   * CRUD for `Spree::Seller`, plus the lifecycle actions. Status is never
    * writable through `update` — each transition is a workflow that also
-   * sends mail and runs extension hooks, so moving a vendor by hand would
+   * sends mail and runs extension hooks, so moving a seller by hand would
    * skip all of it.
    */
-  readonly vendors = {
+  readonly sellers = {
     list: (
       params?: ListParams & Record<string, unknown>,
       options?: RequestOptions,
-    ): Promise<PaginatedResponse<Vendor>> =>
-      this.request<PaginatedResponse<Vendor>>('GET', '/vendors', {
+    ): Promise<PaginatedResponse<Seller>> =>
+      this.request<PaginatedResponse<Seller>>('GET', '/sellers', {
         ...options,
         params: params ? transformListParams(params) : undefined,
       }),
 
-    get: (id: string, params?: { expand?: string[] }, options?: RequestOptions): Promise<Vendor> =>
-      this.request<Vendor>('GET', `/vendors/${id}`, {
+    get: (id: string, params?: { expand?: string[] }, options?: RequestOptions): Promise<Seller> =>
+      this.request<Seller>('GET', `/sellers/${id}`, {
         ...options,
         params: getParams(params),
       }),
 
-    create: (params: VendorCreateParams, options?: RequestOptions): Promise<Vendor> =>
-      this.request<Vendor>('POST', '/vendors', { ...options, body: params }),
+    create: (params: SellerCreateParams, options?: RequestOptions): Promise<Seller> =>
+      this.request<Seller>('POST', '/sellers', { ...options, body: params }),
 
-    update: (id: string, params: VendorUpdateParams, options?: RequestOptions): Promise<Vendor> =>
-      this.request<Vendor>('PATCH', `/vendors/${id}`, { ...options, body: params }),
+    update: (id: string, params: SellerUpdateParams, options?: RequestOptions): Promise<Seller> =>
+      this.request<Seller>('PATCH', `/sellers/${id}`, { ...options, body: params }),
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
-      this.request<void>('DELETE', `/vendors/${id}`, options),
+      this.request<void>('DELETE', `/sellers/${id}`, options),
 
-    /** Opens the vendor's team to someone; they join when they accept. */
-    invite: (id: string, params: VendorInviteParams, options?: RequestOptions): Promise<Vendor> =>
-      this.request<Vendor>('POST', `/vendors/${id}/invite`, { ...options, body: params }),
+    /** Opens the seller's team to someone; they join when they accept. */
+    invite: (id: string, params: SellerInviteParams, options?: RequestOptions): Promise<Seller> =>
+      this.request<Seller>('POST', `/sellers/${id}/invite`, { ...options, body: params }),
 
-    /** Lets the vendor trade — also the way back from suspended or rejected. */
-    approve: (id: string, options?: RequestOptions): Promise<Vendor> =>
-      this.request<Vendor>('PATCH', `/vendors/${id}/approve`, options),
+    /** Lets the seller trade — also the way back from suspended or rejected. */
+    approve: (id: string, options?: RequestOptions): Promise<Seller> =>
+      this.request<Seller>('PATCH', `/sellers/${id}/approve`, options),
 
     suspend: (
       id: string,
-      params?: VendorSuspendParams,
+      params?: SellerSuspendParams,
       options?: RequestOptions,
-    ): Promise<Vendor> =>
-      this.request<Vendor>('PATCH', `/vendors/${id}/suspend`, { ...options, body: params }),
+    ): Promise<Seller> =>
+      this.request<Seller>('PATCH', `/sellers/${id}/suspend`, { ...options, body: params }),
 
-    reject: (id: string, params?: VendorRejectParams, options?: RequestOptions): Promise<Vendor> =>
-      this.request<Vendor>('PATCH', `/vendors/${id}/reject`, { ...options, body: params }),
+    reject: (id: string, params?: SellerRejectParams, options?: RequestOptions): Promise<Seller> =>
+      this.request<Seller>('PATCH', `/sellers/${id}/reject`, { ...options, body: params }),
+  }
+
+  // ============================================
+  // Commissions (what the marketplace charges its sellers)
+  // ============================================
+
+  /**
+   * CRUD for `Spree::CommissionRate`. Targeting rides the regular payload as
+   * `rules: [...]` — the whole editor saves in one round-trip, and the server
+   * replaces the rate's rules with exactly what it is sent.
+   */
+  readonly commissionRates = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<CommissionRate>> =>
+      this.request<PaginatedResponse<CommissionRate>>('GET', '/commission_rates', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<CommissionRate> =>
+      this.request<CommissionRate>('GET', `/commission_rates/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+
+    create: (
+      params: CommissionRateCreateParams,
+      options?: RequestOptions,
+    ): Promise<CommissionRate> =>
+      this.request<CommissionRate>('POST', '/commission_rates', { ...options, body: params }),
+
+    update: (
+      id: string,
+      params: CommissionRateUpdateParams,
+      options?: RequestOptions,
+    ): Promise<CommissionRate> =>
+      this.request<CommissionRate>('PATCH', `/commission_rates/${id}`, {
+        ...options,
+        body: params,
+      }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/commission_rates/${id}`, options),
+
+    /**
+     * Every registered rule kind with the schema describing its configuration,
+     * so a client builds its editor from what the marketplace actually has
+     * rather than a list hardcoded to match core's.
+     */
+    ruleTypes: (options?: RequestOptions): Promise<{ data: CommissionRuleType[] }> =>
+      this.request<{ data: CommissionRuleType[] }>('GET', '/commission_rates/rule_types', options),
+  }
+
+  /**
+   * Read-only view of `Spree::CommissionLine` — what each sale actually earned
+   * the marketplace, frozen when the order was placed. There is no write path:
+   * correcting a charge is a reversal, not an edit.
+   */
+  readonly commissionLines = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<CommissionLine>> =>
+      this.request<PaginatedResponse<CommissionLine>>('GET', '/commission_lines', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<CommissionLine> =>
+      this.request<CommissionLine>('GET', `/commission_lines/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
   }
 
   // ============================================
@@ -3872,7 +3960,7 @@ export class AdminClient {
   /**
    * Inventory movement between stock locations, or external → location for
    * receives. Pass `source_location_id` for transfers; omit it to record a
-   * vendor receive (external stock arriving at the destination).
+   * seller receive (external stock arriving at the destination).
    */
   readonly stockTransfers = {
     list: (

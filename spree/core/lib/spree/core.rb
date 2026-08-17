@@ -369,6 +369,17 @@ module Spree
     Rails.application.config.spree.stock_splitters = value
   end
 
+  # Commission rule kinds selectable on a commission rate.
+  #
+  # @return [Array<Class>]
+  def self.commission_rules
+    Rails.application.config.spree.commission_rules
+  end
+
+  def self.commission_rules=(value)
+    Rails.application.config.spree.commission_rules = value
+  end
+
   def self.delivery_method_rules
     Rails.application.config.spree.delivery_method_rules
   end
@@ -461,7 +472,7 @@ module Spree
   # `/tags` autocomplete endpoint to validate `taggable_type`. Apps extend
   # the list in an initializer:
   #
-  #   Spree.taggable_types << 'MyApp::Vendor'
+  #   Spree.taggable_types << 'MyApp::Seller'
   def self.taggable_types
     Rails.application.config.spree.taggable_types
   end
@@ -573,7 +584,7 @@ module Spree
     Rails.application.config.spree.admin_authentication_strategies = value
   end
 
-  # Registry of authentication strategy classes for the Vendor API.
+  # Registry of authentication strategy classes for the Seller API.
   #
   # Login policy is per surface, not per principal: marketplace sellers and the
   # store's own staff are both Spree.admin_user_class, so a store that requires
@@ -581,16 +592,16 @@ module Spree
   # registry's :email strategy in place.
   #
   # @return [Spree::Authentication::StrategyRegistry]
-  # @example Registering an SSO strategy for vendor users
-  #   Spree.vendor_authentication_strategies.add(:okta, MyApp::Auth::OktaStrategy)
-  def self.vendor_authentication_strategies
-    Rails.application.config.spree.vendor_authentication_strategies
+  # @example Registering an SSO strategy for seller users
+  #   Spree.seller_authentication_strategies.add(:okta, MyApp::Auth::OktaStrategy)
+  def self.seller_authentication_strategies
+    Rails.application.config.spree.seller_authentication_strategies
   end
 
-  # @param value [Spree::Authentication::StrategyRegistry] the registry to use for Vendor API authentication dispatch
+  # @param value [Spree::Authentication::StrategyRegistry] the registry to use for Seller API authentication dispatch
   # @return [Spree::Authentication::StrategyRegistry] the assigned registry
-  def self.vendor_authentication_strategies=(value)
-    Rails.application.config.spree.vendor_authentication_strategies = value
+  def self.seller_authentication_strategies=(value)
+    Rails.application.config.spree.seller_authentication_strategies = value
   end
 
   def self.analytics
@@ -634,9 +645,9 @@ module Spree
   # associations, and scopes across Spree models.
   #
   # @example Adding custom searchable fields
-  #   Spree.ransack.add_attribute(Spree::Product, :vendor_id)
-  #   Spree.ransack.add_scope(Spree::Product, :by_vendor)
-  #   Spree.ransack.add_association(Spree::Product, :vendor)
+  #   Spree.ransack.add_attribute(Spree::Product, :seller_id)
+  #   Spree.ransack.add_scope(Spree::Product, :by_seller)
+  #   Spree.ransack.add_association(Spree::Product, :seller)
   #
   # @return [Spree::RansackConfiguration] the ransack configuration instance
   def self.ransack

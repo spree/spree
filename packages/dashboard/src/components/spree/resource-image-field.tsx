@@ -35,7 +35,7 @@ interface ConcreteImageFields {
 /**
  * Form adapter over the reusable {@link ImageUploadField}, shared by every
  * resource whose form carries the image triple (categories, collections,
- * vendors). Maps the triple onto the generic controlled `ImageUploadValue`
+ * sellers). Maps the triple onto the generic controlled `ImageUploadValue`
  * and resolves labels from the owning resource's locale namespace.
  */
 export function ResourceImageField<Name extends string, T extends ImageFieldsFor<Name>>({
