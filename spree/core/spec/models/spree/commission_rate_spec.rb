@@ -202,6 +202,21 @@ RSpec.describe Spree::CommissionRate, type: :model do
       expect(rate.commission_rules.first.preferred_category_ids.map(&:to_s)).to eq([category.id.to_s])
     end
 
+    # One rule per kind, so naming a kind means "this condition should now say
+    # that" — the edit lands on the rule already there rather than building a
+    # second one beside it.
+    it 'edits the rule of a kind the rate already carries' do
+      rate = create(:commission_rate, store: store)
+      first_vendor = create(:vendor, store: store)
+      second_vendor = create(:vendor, store: store)
+      rate.update!(rules: [{ type: 'vendor_rule', preferences: { vendor_ids: [first_vendor.id] } }])
+
+      rate.update!(rules: [{ type: 'vendor_rule', preferences: { vendor_ids: [second_vendor.id] } }])
+
+      expect(rate.reload.commission_rules.count).to eq(1)
+      expect(rate.commission_rules.first.preferred_vendor_ids.map(&:to_s)).to eq([second_vendor.id.to_s])
+    end
+
     it 'clears the targeting when given nothing' do
       rate = create(:commission_rate, store: store)
       create(:commission_vendor_rule, commission_rate: rate, vendors: [vendor])
@@ -276,15 +291,18 @@ RSpec.describe Spree::CommissionRate, type: :model do
   describe 'retiring a rate' do
     let(:vendor) { create(:vendor, store: store) }
 
-    it 'keeps its rules, so restoring it does not make it charge everything' do
+    # Retired, not deleted: a commission line is explained by the rule that
+    # matched it, so the conditions have to stay readable after the rate stops
+    # applying to anything.
+    it 'retires its rules with it rather than deleting them' do
       rate = create(:commission_rate, store: store)
       create(:commission_vendor_rule, commission_rate: rate, vendors: [vendor])
 
       rate.destroy
-      rate.restore
 
-      expect(rate.reload.commission_rules.count).to eq(1)
-      expect(rate).not_to be_global
+      expect(Spree::CommissionRule.where(commission_rate_id: rate.id)).to be_empty
+      retired = Spree::CommissionRule.with_deleted.find_by(commission_rate_id: rate.id)
+      expect(retired.preferred_vendor_ids.map(&:to_s)).to eq([vendor.id.to_s])
     end
 
     # "Which rate charged this" has to stay answerable after the rate is

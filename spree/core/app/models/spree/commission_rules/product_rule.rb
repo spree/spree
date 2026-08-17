@@ -9,7 +9,7 @@ module Spree
     # thousand ids in a JSON column.
     class ProductRule < Spree::CommissionRule
       has_many :commission_rule_products, class_name: 'Spree::CommissionRuleProduct',
-               foreign_key: :commission_rule_id, dependent: :delete_all
+               foreign_key: :commission_rule_id, dependent: :destroy
       has_many :products, class_name: 'Spree::Product', through: :commission_rule_products
 
       def self.additional_permitted_attributes

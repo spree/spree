@@ -1,5 +1,7 @@
 class CreateSpreeCommissionRates < ActiveRecord::Migration[8.1]
   INDEX_NAME = 'index_spree_commission_rates_on_store_id_and_code'.freeze
+  RULE_INDEX_NAME = 'index_commission_rules_on_rate_and_type'.freeze
+  RULE_PRODUCT_INDEX_NAME = 'index_commission_rule_products_on_rule_and_product'.freeze
 
   def change
     create_table :spree_commission_rates do |t|
@@ -60,14 +62,19 @@ class CreateSpreeCommissionRates < ActiveRecord::Migration[8.1]
       end
 
       t.timestamps
+      # Rules are retired with their rate, and separately as an operator edits
+      # a rate's conditions. Kept rather than deleted so a commission line
+      # stays explainable: "why was this charged" is answered by the rule that
+      # matched, which must still be readable afterwards.
+      t.datetime :deleted_at
     end
 
+    add_index :spree_commission_rules, :deleted_at
     # One rule of each kind per rate: a second would repeat the first or
     # contradict it, and under AND semantics contradiction means the rate
-    # silently never applies.
-    add_index :spree_commission_rules, [:commission_rate_id, :type],
-              unique: true,
-              name: 'index_commission_rules_on_rate_and_type'
+    # silently never applies. Live rows only, or replacing a rule would
+    # collide with the retired one it supersedes.
+    add_rule_uniqueness_index
 
     # Catalog-scale references get a table of their own — a marketplace naming
     # a thousand products should not put a thousand ids in a JSON column.
@@ -76,11 +83,14 @@ class CreateSpreeCommissionRates < ActiveRecord::Migration[8.1]
       t.references :product, null: false
 
       t.timestamps
+      t.datetime :deleted_at
     end
 
-    add_index :spree_commission_rule_products, [:commission_rule_id, :product_id],
-              unique: true,
-              name: 'index_commission_rule_products_on_rule_and_product'
+    add_index :spree_commission_rule_products, :deleted_at
+    # Unique among live rows only: a rule that named a product, dropped it and
+    # named it again keeps the retired row beside the live one, but must never
+    # hold the same product twice at once.
+    add_rule_product_uniqueness_index
   end
 
   private
@@ -99,6 +109,56 @@ class CreateSpreeCommissionRates < ActiveRecord::Migration[8.1]
   # deleted_at, CAST(...))`) is MySQL-only, `UNIX_TIMESTAMP` is MariaDB-only,
   # and a functional index on COALESCE — the older precedent in this tree — is
   # MySQL-only too. This expression is the one both accept.
+  def add_rule_product_uniqueness_index
+    if mysql?
+      reversible do |dir|
+        dir.up do
+          execute <<~SQL.squish
+            ALTER TABLE spree_commission_rule_products
+            ADD COLUMN product_key BIGINT
+            AS (IF(deleted_at IS NULL, product_id, NULL)) STORED
+          SQL
+          add_index :spree_commission_rule_products, [:commission_rule_id, :product_key],
+                    unique: true, name: RULE_PRODUCT_INDEX_NAME
+        end
+
+        dir.down do
+          remove_index :spree_commission_rule_products, name: RULE_PRODUCT_INDEX_NAME
+          remove_column :spree_commission_rule_products, :product_key
+        end
+      end
+    else
+      add_index :spree_commission_rule_products, [:commission_rule_id, :product_id],
+                unique: true, where: 'deleted_at IS NULL', name: RULE_PRODUCT_INDEX_NAME
+    end
+  end
+
+  # Same per-adapter split as the rate's code index below, and for the same
+  # reason: only PostgreSQL and SQLite have partial indexes.
+  def add_rule_uniqueness_index
+    if mysql?
+      reversible do |dir|
+        dir.up do
+          execute <<~SQL.squish
+            ALTER TABLE spree_commission_rules
+            ADD COLUMN type_key VARCHAR(255)
+            AS (IF(deleted_at IS NULL, type, NULL)) STORED
+          SQL
+          add_index :spree_commission_rules, [:commission_rate_id, :type_key],
+                    unique: true, name: RULE_INDEX_NAME
+        end
+
+        dir.down do
+          remove_index :spree_commission_rules, name: RULE_INDEX_NAME
+          remove_column :spree_commission_rules, :type_key
+        end
+      end
+    else
+      add_index :spree_commission_rules, [:commission_rate_id, :type],
+                unique: true, where: 'deleted_at IS NULL', name: RULE_INDEX_NAME
+    end
+  end
+
   def add_code_uniqueness_index
     if mysql?
       reversible do |dir|

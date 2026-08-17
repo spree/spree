@@ -18,6 +18,12 @@ module Spree
 
     has_prefix_id :crule
 
+    # Retired rather than deleted, with its rate or on its own as an operator
+    # edits a rate's conditions. A commission line is a settlement record, and
+    # "why was this charged" is answered by the rule that matched — which has
+    # to still be readable once the rule no longer applies to anything.
+    acts_as_paranoid
+
     belongs_to :commission_rate, class_name: 'Spree::CommissionRate',
                                  inverse_of: :commission_rules, touch: true
 
@@ -29,7 +35,14 @@ module Spree
     # One of each kind per rate: a second rule of the same kind would either
     # repeat the first or contradict it, and under AND semantics contradiction
     # means the rate silently never applies.
-    validates :type, uniqueness: { scope: [:commission_rate_id, *spree_base_uniqueness_scope] }
+    #
+    # Among live rules only, matching the partial index. Retired rules are
+    # history, and a replacement is saved before the rule it supersedes is
+    # retired — counting those would refuse every edit.
+    validates :type, uniqueness: {
+      scope: [:commission_rate_id, *spree_base_uniqueness_scope],
+      conditions: -> { where(deleted_at: nil) }
+    }
     validate :type_must_be_registered
 
     registers_subclasses_via { Spree.commission_rules }

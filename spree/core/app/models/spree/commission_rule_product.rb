@@ -7,6 +7,10 @@ module Spree
   class CommissionRuleProduct < Spree.base_class
     # No inverse_of: the association lives on the ProductRule subclass, not on
     # the base class this points at.
+    # Retired with its rule, so a retired product rule still says which
+    # products it named.
+    acts_as_paranoid
+
     belongs_to :commission_rule, class_name: 'Spree::CommissionRule'
     belongs_to :product, class_name: 'Spree::Product'
 

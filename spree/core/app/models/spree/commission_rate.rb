@@ -43,16 +43,11 @@ module Spree
     # Associations
     #
     belongs_to :store, class_name: 'Spree::Store'
-    # No `dependent:`. A rate is paranoid, so `destroy` is a soft delete — and
-    # paranoia fires destroy callbacks on it, which would take rules that are
-    # not paranoid and so cannot come back with a restore. A rate restored
-    # without its rules matches every sale, and sitting at the top of the list
-    # would shadow every rate beneath it.
-    #
-    # Replacing a rate's rules still deletes the ones it dropped: that path is
-    # Spree::TypedAssociations, which destroys them explicitly rather than
-    # relying on the association.
-    has_many :commission_rules, class_name: 'Spree::CommissionRule', inverse_of: :commission_rate
+    # Retired with the rate, not deleted: rules are paranoid too, so a soft
+    # delete cascades to a soft delete and the rate's conditions stay readable
+    # beside the commission lines they explain.
+    has_many :commission_rules, class_name: 'Spree::CommissionRule',
+             dependent: :destroy, inverse_of: :commission_rate
     # Never cascaded: a commission line is a settlement record, and "which rate
     # charged this" has to stay answerable after the rate is retired. The rate
     # itself is still readable through `with_deleted`, which is the point of
@@ -169,15 +164,35 @@ module Spree
     # @param rows [Array<Hash>, nil]
     # @return [void]
     def rules=(rows)
-      # Clearing is destroyed explicitly rather than assigned away: without
-      # `dependent: :destroy` on the association — see above for why it cannot
-      # have one — an empty assignment would try to null a non-null column.
+      # Destroyed rather than assigned away, so clearing retires the rules
+      # instead of trying to null a non-null column.
       return commission_rules.destroy_all if persisted? && Array(rows).empty?
 
-      assign_typed_association(:commission_rules, rows)
+      assign_typed_association(:commission_rules, identify_existing_rules(rows))
     end
 
     private
+
+    # Points each incoming row at the rule of its kind the rate already has.
+    #
+    # There is one rule per kind, so a payload naming a kind means "this is
+    # what that condition should now say" — but a row without an `id` builds a
+    # new rule, which then collides with the live one it was meant to replace.
+    # Clients send the whole set without ids (the dashboard rebuilds it from
+    # form state), so identifying by kind is what makes an edit an edit.
+    def identify_existing_rules(rows)
+      return rows unless persisted?
+
+      existing = commission_rules.index_by { |rule| rule.class.api_type }
+
+      Array(rows).map do |row|
+        attributes = row.respond_to?(:to_h) ? row.to_h.with_indifferent_access : row
+        next row if attributes[:id].present?
+
+        match = existing[attributes[:type].to_s]
+        match ? attributes.merge(id: match.id) : row
+      end
+    end
 
     # A new rate has no id for its rules to hang off until it is saved.
     def apply_pending_rules
