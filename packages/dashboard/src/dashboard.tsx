@@ -7,6 +7,7 @@ import { StrictMode } from 'react'
 // bundle), the default sidebar nav, settings nav, and command-palette search
 // entries. Importing this module runs them — before any chrome component
 // reads the registries, and before plugin modules that call i18n.t at load.
+import './api-client-setup'
 import './i18n-setup'
 import './nav/default'
 import './nav/settings'

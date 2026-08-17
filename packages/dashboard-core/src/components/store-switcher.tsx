@@ -91,11 +91,12 @@ export function StoreSwitcher() {
           >
             {stores.map((availableStore) => (
               <DropdownMenuItem key={availableStore.id} asChild>
-                <Link
-                  to="/$storeId"
-                  params={{ storeId: availableStore.id }}
-                  className="no-underline"
-                >
+                {/* Built as a runtime path rather than a typed literal: core
+                    is the framework behind more than one panel, and a panel
+                    with no `/$storeId` route (a seller's) would fail to
+                    typecheck against a route it never registers. Same approach
+                    as the nav registries, which take paths as strings. */}
+                <Link to={`/${availableStore.id}` as never} className="no-underline">
                   <span className="flex-1 truncate">{availableStore.name}</span>
                   {availableStore.id === store?.id && <CheckIcon className="size-4" />}
                 </Link>

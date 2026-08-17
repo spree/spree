@@ -147,10 +147,23 @@ module Spree
     before_destroy :dissolve_team, prepend: true
 
     # A seller's own team is granted through its roles, not the store's.
+    # A store's "admin" role is the protected super-role and needs no
+    # permissions — `Ability#activate_full_access` short-circuits it. A
+    # seller's cannot take that path (`Role#admin?` requires `staff?`), so
+    # without seeding, whoever runs the seller would hold nothing and every
+    # endpoint on their own panel would refuse them.
+    #
+    # Seeded at creation rather than patched afterwards: the role is born
+    # immutable, so a later write would have to defeat its own guard.
     #
     # @return [Spree::Role]
     def default_user_role
-      Spree::Role.default_admin_role(self)
+      roles.for_resource(self).find_by(name: Spree::Role::ADMIN_ROLE) ||
+        roles.create!(
+          name: Spree::Role::ADMIN_ROLE,
+          mutable: false,
+          permissions: Spree.permissions.grantable_keys(:seller)
+        )
     end
 
     # Whether the seller is currently away. The catalog stays visible; what

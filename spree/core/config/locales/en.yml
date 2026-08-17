@@ -1565,6 +1565,7 @@ en:
       file_required: A file is required for this requirement
       file_type_not_accepted: This requirement accepts %{types}
       incomplete: "%{name} is not complete"
+    seller_team_last_member: A seller needs at least one team member. Invite someone else before removing this one.
     send_consumer_transactional_emails: Send Customer Transactional Emails
     seo: SEO
     seo_title: SEO Title

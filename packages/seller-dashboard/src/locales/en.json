@@ -1,0 +1,69 @@
+{
+  "app": {
+    "name": "Seller panel"
+  },
+  "login": {
+    "title": "Sign in to your seller panel",
+    "subtitle": "Manage your storefront, team and payouts.",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign in",
+    "submitting": "Signing in…",
+    "failed": "That email and password did not match a seller account.",
+    "no_seller": "This account does not run a seller on this marketplace."
+  },
+  "seller_picker": {
+    "title": "Choose a seller",
+    "subtitle": "You run more than one. Pick which to manage.",
+    "status": "Status"
+  },
+  "nav": {
+    "profile": "Profile",
+    "team": "Team",
+    "sign_out": "Sign out"
+  },
+  "profile": {
+    "title": "Your profile",
+    "subtitle": "How your storefront presents you, and how the marketplace reaches you.",
+    "section_presentation": "Presentation",
+    "section_contact": "Contact",
+    "section_standing": "Standing",
+    "section_settlement": "Payouts and tax",
+    "name": "Name",
+    "about": "About",
+    "contact_email": "Contact email",
+    "billing_email": "Billing email",
+    "handle": "Storefront address",
+    "status": "Status",
+    "sellable": "Currently selling",
+    "not_sellable": "Not currently selling",
+    "products_count": "Products",
+    "tax_remittance": "Tax remitted by",
+    "payout_schedule": "Payout schedule",
+    "minimum_payout": "Minimum payout",
+    "operator_managed": "Set by the marketplace",
+    "save": "Save changes",
+    "saving": "Saving…",
+    "saved": "Profile saved",
+    "not_provided": "Not provided"
+  },
+  "team": {
+    "title": "Your team",
+    "subtitle": "The people who can sign in and manage this seller.",
+    "invite": "Invite someone",
+    "invite_email": "Email",
+    "invite_submit": "Send invitation",
+    "invite_sending": "Sending…",
+    "invited": "Invitation sent",
+    "remove": "Remove",
+    "remove_confirm": "Remove {{name}} from the team?",
+    "removed": "Member removed",
+    "last_member": "A seller needs at least one member. Invite someone else first.",
+    "empty": "Nobody else yet."
+  },
+  "common": {
+    "loading": "Loading…",
+    "error": "Something went wrong.",
+    "retry": "Try again"
+  }
+}

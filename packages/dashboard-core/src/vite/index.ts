@@ -22,6 +22,17 @@ export interface SpreeDashboardPluginOptions {
   cssEntry?: string
 
   /**
+   * Shell packages whose source Tailwind should scan, on top of
+   * `@spree/dashboard-core` and `@spree/dashboard-ui`. Defaults to
+   * `['@spree/dashboard']`, the operator's dashboard. A different panel — a
+   * seller's, or a host's own shell — passes its own package name here so its
+   * components' classes survive the build. Unresolvable names are skipped
+   * rather than erroring: a custom dashboard composed straight from core + ui
+   * has no shell at all.
+   */
+  shellPackages?: string[]
+
+  /**
    * Names of dashboard plugin packages installed in the host app. Each name
    * must be a resolvable npm package specifier — the same string you'd pass
    * to `import()`. The plugin resolves each one via Node module resolution
@@ -155,11 +166,15 @@ function dashboardTailwindSourcePlugin(options: SpreeDashboardPluginOptions): Pl
           pluginErrors.push({ pkg, kind: 'unresolved' })
         }
       }
-      // The app shell is optional: present when the host builds on the full
-      // `@spree/dashboard` package, absent for custom dashboards composed
-      // directly from core + ui — hence no error when unresolved.
-      const shellDir = resolvePackageSourceDir('@spree/dashboard', fromHost)
-      if (shellDir) resolvedSources.push(shellDir)
+      // The app shell is optional: present when the host builds on a full
+      // shell package, absent for custom dashboards composed directly from
+      // core + ui — hence no error when unresolved. Which shell varies by
+      // panel: `@spree/dashboard` for the operator's, `@spree/seller-dashboard`
+      // for a seller's, or a host's own.
+      for (const shell of options.shellPackages ?? ['@spree/dashboard']) {
+        const shellDir = resolvePackageSourceDir(shell, fromHost)
+        if (shellDir) resolvedSources.push(shellDir)
+      }
       for (const pkg of pluginPackages) {
         const dir = resolvePackageSourceDir(pkg, fromHost)
         if (dir) {

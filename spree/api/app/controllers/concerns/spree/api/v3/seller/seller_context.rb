@@ -37,9 +37,17 @@ module Spree
           #
           # @return [Spree::Seller, nil]
           def current_seller
-            return @current_seller if defined?(@current_seller)
+            return @current_seller if defined?(@current_seller) && !@current_seller.nil?
 
-            @current_seller = resolve_current_seller
+            # Deliberately not memoising a nil: the locale/currency chain reads
+            # `current_store` — and so this — before authentication has run, and
+            # caching that first miss would leave a controller which skips the
+            # context callback (MeController) permanently without a seller even with
+            # a valid header.
+            resolved = resolve_current_seller
+            @current_seller = resolved if resolved
+
+            resolved
           end
 
           # Derived from the seller, so a seller can never widen their reach by
