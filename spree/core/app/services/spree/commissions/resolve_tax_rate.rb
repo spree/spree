@@ -2,7 +2,7 @@
 
 module Spree
   module Commissions
-    # The VAT charged on a commission, as a fraction.
+    # How a commission is taxed — the rate, and the treatment behind it.
     #
     # This is tax on the marketplace's own service to the seller, not on the
     # goods the customer bought — a separate supply with its own place of
@@ -14,6 +14,11 @@ module Spree
     # than zero, so silence falls through to the default instead of being read
     # as "this fee is untaxed".
     #
+    # The treatment is only as good as its source: an operator override or a
+    # store default is a number someone typed, so it is recorded as standard
+    # rated without inventing a jurisdiction for it. Only the tax engine knows
+    # where it taxed the fee.
+    #
     # Swap through +Spree.commissions_resolve_tax_rate_service+.
     class ResolveTaxRate
       prepend Spree::ServiceModule::Base
@@ -21,23 +26,44 @@ module Spree
       # @param rate [Spree::CommissionRate]
       # @param vendor [Spree::Vendor] the seller being invoiced
       # @param order [Spree::Order]
-      # @return [BigDecimal] e.g. 0.21 for 21%
+      # @return [Spree::CommissionTax]
       def call(rate:, vendor:, order:)
-        return success(rate.commission_tax_rate.to_d) if rate.commission_tax_rate.present?
+        return success(configured(rate.commission_tax_rate)) if rate.commission_tax_rate.present?
 
-        from_provider = provider_rate(vendor: vendor, order: order)
-        return success(from_provider.to_d) if from_provider.present?
+        from_provider = provider_tax(vendor: vendor, order: order)
+        return success(from_provider) if from_provider
 
-        success(order.store.preferred_default_commission_tax_rate.to_d)
+        success(configured(order.store.preferred_default_commission_tax_rate))
       end
 
       private
 
+      # A rate somebody configured. Standard rated by definition — nobody
+      # types a number to mean "exempt" — and carrying no jurisdiction, because
+      # a store preference does not know one.
+      def configured(value)
+        amount = value.to_d
+
+        Spree::CommissionTax.new(
+          rate: amount,
+          taxability_reason: amount.zero? ? nil : 'standard_rated'
+        )
+      end
+
       # Commission is written while an order is being placed, so a tax service
       # being unreachable must never cost the marketplace a checkout: the error
       # is reported and the configured default applies.
-      def provider_rate(vendor:, order:)
-        order.tax_provider.service_tax_rate(address: vendor.billing_address, store: order.store)
+      def provider_tax(vendor:, order:)
+        address = vendor.billing_address
+        amount = order.tax_provider.service_tax_rate(address: address, store: order.store)
+        return nil if amount.blank?
+
+        Spree::CommissionTax.new(
+          rate: amount.to_d,
+          taxability_reason: amount.to_d.zero? ? 'zero_rated' : 'standard_rated',
+          country_code: address&.country_code,
+          state_code: address&.state_code
+        )
       rescue StandardError => error
         Rails.error.report(
           error,

@@ -11,7 +11,8 @@ RSpec.describe Spree::Commissions::CalculateLine do
 
   def call(**overrides)
     calculate.call(
-      { rate: rate, vendor: vendor, order: order, line_item: line_item, commission_tax_rate: 0 }.merge(overrides)
+      { rate: rate, vendor: vendor, order: order, line_item: line_item,
+        commission_tax: Spree::CommissionTax.untaxed }.merge(overrides)
     ).value
   end
 
@@ -88,7 +89,7 @@ RSpec.describe Spree::Commissions::CalculateLine do
     # The headline EU behaviour: VAT is charged on the marketplace's fee as a
     # separate B2B supply, on top of it rather than out of it.
     it 'adds tax on top of the fee and totals the two' do
-      line = call(commission_tax_rate: 0.21)
+      line = call(commission_tax: Spree::CommissionTax.new(rate: 0.21))
 
       expect(line.amount).to eq(10)
       expect(line.tax_amount).to eq(2.1)
@@ -96,7 +97,7 @@ RSpec.describe Spree::Commissions::CalculateLine do
     end
 
     it 'leaves the fee alone when nothing taxes it' do
-      line = call(commission_tax_rate: 0)
+      line = call(commission_tax: Spree::CommissionTax.untaxed)
 
       expect(line.tax_amount).to eq(0)
       expect(line.total).to eq(10)
@@ -109,21 +110,21 @@ RSpec.describe Spree::Commissions::CalculateLine do
       # pass for the wrong reason.
       allow_any_instance_of(Spree::TaxProvider::Internal).to receive(:service_tax_rate).and_return(0.21)
 
-      expect(call(rate: overridden, commission_tax_rate: nil).tax_amount).to eq(1.9)
+      expect(call(rate: overridden, commission_tax: nil).tax_amount).to eq(1.9)
     end
 
     it 'falls back to the store default when neither the rate nor the engine answers' do
       stub_store_preferences(store, default_commission_tax_rate: 0.2)
       allow_any_instance_of(Spree::TaxProvider::Internal).to receive(:service_tax_rate).and_return(nil)
 
-      expect(call(commission_tax_rate: nil).tax_amount).to eq(2)
+      expect(call(commission_tax: nil).tax_amount).to eq(2)
     end
   end
 
   describe 'rounding' do
     it 'rounds each part half-up to the currency, then sums them' do
       odd = create(:commission_rate, store: store, value: 3.33)
-      line = call(rate: odd, commission_tax_rate: 0.21)
+      line = call(rate: odd, commission_tax: Spree::CommissionTax.new(rate: 0.21))
 
       # 100 * 3.33% = 3.33; 3.33 * 21% = 0.6993 -> 0.70
       expect(line.amount).to eq(3.33)

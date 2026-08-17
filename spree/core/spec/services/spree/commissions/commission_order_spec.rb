@@ -165,6 +165,20 @@ RSpec.describe Spree::Commissions::CommissionOrder do
       expect(lines[generic.id].tax_amount).to eq(0.5)
     end
 
+    # The figure alone cannot justify itself on an invoice — the seller has to
+    # be able to see why their fee was taxed the way it was.
+    it 'records the treatment and jurisdiction on the line' do
+      line_for(vendor)
+      vendor.update!(billing_address: create(:address, country_iso: 'DE'))
+      allow_any_instance_of(Spree::TaxProvider::Internal).to receive(:service_tax_rate).and_return(0.19)
+
+      line = commission.first
+
+      expect(line.tax_rate).to eq(0.19)
+      expect(line.taxability_reason).to eq('standard_rated')
+      expect(line.country_code).to eq('DE')
+    end
+
     # One rate governing a whole basket is one question about where the seller
     # sits, so the tax engine is consulted once rather than per item.
     it 'asks the tax engine once for a basket governed by one rate' do

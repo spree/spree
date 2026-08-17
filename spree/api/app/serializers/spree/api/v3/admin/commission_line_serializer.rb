@@ -21,6 +21,10 @@ module Spree
                    commission_rate_id: 'string | null',
                    kind: :string,
                    rate: :string,
+                   tax_rate: :string,
+                   taxability_reason: 'string | null',
+                   country_code: 'string | null',
+                   state_code: 'string | null',
                    amount: :string,
                    tax_amount: :string,
                    total: :string,
@@ -29,10 +33,14 @@ module Spree
                    display_tax_amount: :string,
                    display_total: :string
 
-          attributes :kind, :currency, created_at: :iso8601, updated_at: :iso8601
+          # The treatment, in Spree::TaxLine's vocabulary — a seller's invoice
+          # has to explain why its fee was taxed the way it was, and the
+          # jurisdiction is the seller's own rather than the shopper's.
+          attributes :kind, :currency, :taxability_reason, :country_code, :state_code,
+                     created_at: :iso8601, updated_at: :iso8601
 
           # Strings, so the figures a seller is invoiced round-trip exactly.
-          %i[rate amount tax_amount total].each do |decimal|
+          %i[rate tax_rate amount tax_amount total].each do |decimal|
             attribute(decimal) { |line| line.public_send(decimal)&.to_s }
           end
 

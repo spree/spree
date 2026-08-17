@@ -76,12 +76,12 @@ module Spree
         # sits is the same question every time — so a basket governed by one
         # rate asks the tax service once — but a rate may carry its own
         # override, so two rates are still two answers.
-        tax_rates = Hash.new do |cache, rate|
-          cache[rate] = resolve_tax_rate(rate: rate, vendor: vendor, order: order)
+        taxes = Hash.new do |cache, rate|
+          cache[rate] = resolve_tax(rate: rate, vendor: vendor, order: order)
         end
 
         lines = matched.map do |line_item, rate|
-          write(rate: rate, vendor: vendor, order: order, line_item: line_item, tax_rate: tax_rates[rate])
+          write(rate: rate, vendor: vendor, order: order, line_item: line_item, tax: taxes[rate])
         end
 
         # A fulfillment carries goods, not a rate, so the one that governs
@@ -93,7 +93,7 @@ module Spree
           next if fulfillment.taxable_basis.zero?
 
           lines << write(rate: shipping_rate, vendor: vendor, order: order,
-                         fulfillment: fulfillment, tax_rate: tax_rates[shipping_rate])
+                         fulfillment: fulfillment, tax: taxes[shipping_rate])
         end
 
         lines
@@ -126,14 +126,14 @@ module Spree
         ).value
       end
 
-      def resolve_tax_rate(rate:, vendor:, order:)
+      def resolve_tax(rate:, vendor:, order:)
         Spree.commissions_resolve_tax_rate_service.call(rate: rate, vendor: vendor, order: order).value
       end
 
-      def write(rate:, vendor:, order:, tax_rate:, line_item: nil, fulfillment: nil)
+      def write(rate:, vendor:, order:, tax:, line_item: nil, fulfillment: nil)
         line = Spree.commissions_calculate_line_service.call(
           rate: rate, vendor: vendor, order: order,
-          line_item: line_item, fulfillment: fulfillment, commission_tax_rate: tax_rate
+          line_item: line_item, fulfillment: fulfillment, commission_tax: tax
         ).value
         line.save!
         line

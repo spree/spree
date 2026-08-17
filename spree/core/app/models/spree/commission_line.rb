@@ -22,6 +22,10 @@ module Spree
 
     include Spree::Metadata
 
+    # Where the fee was taxed, validated against the ISO registry like every
+    # other geography column. The seller's own jurisdiction, not the shopper's.
+    has_iso_geography
+
     #
     # Associations
     #
@@ -38,7 +42,15 @@ module Spree
     #
     # Validations
     #
-    validates :amount, :tax_amount, :total, :rate, numericality: true
+    validates :amount, :tax_amount, :total, :rate, :tax_rate, numericality: true
+    # Deliberately Spree::TaxLine's vocabulary rather than a second one: an
+    # invoice explaining why a marketplace fee was zero-rated or reverse-charged
+    # should use the same words as the one explaining it for goods, and a
+    # provider registering a new treatment registers it once. Read through the
+    # lambda so a reason added after boot is accepted, as it is there.
+    validates :taxability_reason,
+              inclusion: { in: ->(_line) { Spree::TaxLine.taxability_reasons } },
+              allow_nil: true
     validates :currency, presence: true
     validates :kind, presence: true, inclusion: { in: Spree::CommissionRate::KINDS }
     validate :exactly_one_subject
