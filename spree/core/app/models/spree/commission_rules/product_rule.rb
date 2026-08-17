@@ -12,6 +12,12 @@ module Spree
                foreign_key: :commission_rule_id, dependent: :destroy
       has_many :products, class_name: 'Spree::Product', through: :commission_rule_products
 
+      # Refused rather than filtered: unlike the id preferences, which raise on
+      # a foreign id, this list arrives as records. A rate narrowed to another
+      # marketplace's catalog would read those products' ids straight back out
+      # of the serializer.
+      validate :products_belong_to_the_store
+
       def self.additional_permitted_attributes
         [product_ids: []]
       end
@@ -32,6 +38,19 @@ module Spree
         return false if context.product.nil?
 
         commission_rule_products.exists?(product_id: context.product.id)
+      end
+
+      private
+
+      # Counted rather than compared: a rate covering much of the catalog
+      # would otherwise load every product to check them.
+      def products_belong_to_the_store
+        chosen_ids = products.map(&:id).compact
+        return if chosen_ids.empty?
+
+        return if store.products.where(id: chosen_ids).count == chosen_ids.uniq.size
+
+        errors.add(:products, :invalid, message: Spree.t('errors.messages.product_not_in_store'))
       end
     end
   end

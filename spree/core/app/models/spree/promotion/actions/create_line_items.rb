@@ -98,10 +98,8 @@ module Spree
 
         private
 
-        # An action built before its promotion is attached has no store to
-        # read, so it resolves nothing rather than the whole catalog.
         def promotion_variants_scope
-          promotion&.store&.variants || Spree::Variant.none
+          promotion.store.variants
         end
 
         # Handles the creation, updating, and pruning of promotion action

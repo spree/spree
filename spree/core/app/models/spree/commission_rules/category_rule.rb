@@ -12,7 +12,7 @@ module Spree
       preference :category_ids, :array, default: [],
                  parse_on_set: normalize_id_preference(
                    klass: Spree::Category,
-                   scope: ->(rule) { rule.store&.categories || Spree::Category.none }
+                   scope: ->(rule) { rule.store.categories }
                  )
 
       # @return [Array<Spree::Category>]

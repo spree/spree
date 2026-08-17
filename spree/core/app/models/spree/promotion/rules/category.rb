@@ -138,10 +138,8 @@ module Spree
 
         private
 
-        # A rule built before its promotion is attached has no store to read,
-        # so it resolves nothing rather than falling back to every category.
         def promotion_categories_scope
-          promotion&.store&.categories || Spree::Category.none
+          promotion.store.categories
         end
 
         # IDs of categories in rule including all their children

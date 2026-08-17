@@ -922,6 +922,7 @@ en:
         oidc_missing_code: The identity provider did not return an authorization code.
         oidc_requires_redirect: This provider requires signing in through its own login page.
         pickup_point_not_found: pickup point could not be found with this provider
+        product_not_in_store: must all belong to this store
         profile_does_not_accept_provider: "%{provider} deliveries cannot join the %{profile} profile"
         promotion_discount_not_editable: promotion discounts are managed by recalculation and cannot be edited
         rate_provider_requires_shipping: "%{provider} quotes shipments, so this method must ship to an address"

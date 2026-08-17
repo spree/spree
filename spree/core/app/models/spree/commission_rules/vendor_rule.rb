@@ -10,7 +10,7 @@ module Spree
       preference :vendor_ids, :array, default: [],
                  parse_on_set: normalize_id_preference(
                    klass: Spree::Vendor,
-                   scope: ->(rule) { rule.store&.vendors || Spree::Vendor.none }
+                   scope: ->(rule) { rule.store.vendors }
                  )
 
       # @return [Array<Spree::Vendor>]

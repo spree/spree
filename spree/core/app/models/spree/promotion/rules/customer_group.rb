@@ -12,7 +12,7 @@ module Spree
         preference :customer_group_ids, :array, default: [],
                    parse_on_set: normalize_id_preference(
                      klass: Spree::CustomerGroup,
-                     scope: ->(rule) { rule.promotion&.store&.customer_groups || Spree::CustomerGroup.none }
+                     scope: ->(rule) { rule.promotion.store.customer_groups }
                    )
 
         def applicable?(promotable)
