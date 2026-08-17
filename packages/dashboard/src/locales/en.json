@@ -1693,7 +1693,7 @@
           "label": "Charge on delivery",
           "help": "Also charge commission on the seller's delivery revenue."
         },
-        "include_tax": {
+        "tax_inclusive": {
           "label": "Charge on the gross price",
           "help": "Charge on the price including the customer's VAT. Left off, commission is charged on the seller's net revenue, which is the usual basis where the fee is taxed as its own supply."
         },

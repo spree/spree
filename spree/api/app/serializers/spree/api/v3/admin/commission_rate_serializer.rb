@@ -21,7 +21,7 @@ module Spree
                    kind: :string,
                    value: :string,
                    currency: 'string | null',
-                   include_tax: :boolean,
+                   tax_inclusive: :boolean,
                    include_shipping: :boolean,
                    min_amount: 'string | null',
                    max_amount: 'string | null',
@@ -30,7 +30,7 @@ module Spree
                    deleted_at: 'string | null'
 
           attributes :name, :code, :enabled, :position, :kind, :currency,
-                     :include_tax, :include_shipping, :metadata,
+                     :tax_inclusive, :include_shipping, :metadata,
                      deleted_at: :iso8601, created_at: :iso8601, updated_at: :iso8601
 
           %i[value min_amount max_amount commission_tax_rate].each do |decimal|

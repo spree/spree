@@ -106,7 +106,7 @@ RSpec.describe 'Admin Commission Rates API', type: :request, swagger_doc: 'api-r
                    description: 'A percentage (10 = 10%) or a flat amount, per `kind`.' },
           currency: { type: :string, example: 'USD', nullable: true,
                       description: 'Required for a fixed rate, ignored for a percentage.' },
-          include_tax: { type: :boolean, example: false,
+          tax_inclusive: { type: :boolean, example: false,
                          description: 'Charge on the price including the customer\'s VAT. Left off, commission is ' \
                                       "charged on the seller's net revenue, which is the usual basis where the " \
                                       'fee is taxed as its own supply.' },

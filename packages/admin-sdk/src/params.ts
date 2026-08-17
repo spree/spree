@@ -1468,7 +1468,7 @@ export interface CommissionRateCreateParams {
    * in the EU the fee is a separate supply from the sale, so it is charged on
    * the seller's net revenue and taxed on top.
    */
-  include_tax?: boolean
+  tax_inclusive?: boolean
   /** Also charge commission on the seller's delivery revenue. */
   include_shipping?: boolean
   min_amount?: number | null

@@ -87,7 +87,7 @@ module Spree
       def base_for(rate, subject)
         basis = subject.taxable_basis
 
-        base = if rate.include_tax?
+        base = if rate.tax_inclusive?
                  basis + subject.additional_tax_total.to_d
                else
                  basis - subject.included_tax_total.to_d

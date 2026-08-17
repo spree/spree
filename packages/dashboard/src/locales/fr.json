@@ -1693,7 +1693,7 @@
           "label": "Facturer sur la livraison",
           "help": "Facturer aussi la commission sur les revenus de livraison du vendeur."
         },
-        "include_tax": {
+        "tax_inclusive": {
           "label": "Facturer sur le prix TTC",
           "help": "Facturer sur le prix incluant la TVA du client. Si l'option est désactivée, la commission est calculée sur le revenu net du vendeur, la base habituelle lorsque les frais sont taxés comme une prestation distincte."
         },

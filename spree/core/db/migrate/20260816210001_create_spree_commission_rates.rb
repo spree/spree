@@ -21,7 +21,7 @@ class CreateSpreeCommissionRates < ActiveRecord::Migration[8.1]
 
       # Commission base: net (ex-VAT) item price by default, which is the EU
       # rule — the fee is a separate supply from the consumer's item sale.
-      t.boolean :include_tax, null: false, default: false
+      t.boolean :tax_inclusive, null: false, default: false
       # Also commission the vendor order's delivery revenue.
       t.boolean :include_shipping, null: false, default: false
 

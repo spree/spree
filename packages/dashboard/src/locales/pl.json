@@ -1707,7 +1707,7 @@
           "label": "Nalicz od dostawy",
           "help": "Nalicz prowizję również od przychodów sprzedawcy z dostawy."
         },
-        "include_tax": {
+        "tax_inclusive": {
           "label": "Nalicz od ceny brutto",
           "help": "Nalicz od ceny zawierającej VAT klienta. Po wyłączeniu prowizja liczona jest od przychodu netto sprzedawcy — zwykle stosowana podstawa, gdy opłata jest opodatkowana jako odrębna usługa."
         },

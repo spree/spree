@@ -1693,7 +1693,7 @@
           "label": "Auf Versand berechnen",
           "help": "Provision auch auf die Versanderlöse des Verkäufers berechnen."
         },
-        "include_tax": {
+        "tax_inclusive": {
           "label": "Auf den Bruttopreis berechnen",
           "help": "Auf den Preis inklusive Kundensteuer berechnen. Ausgeschaltet wird die Provision auf den Nettoerlös des Verkäufers berechnet — die übliche Grundlage, wenn die Gebühr als eigene Leistung besteuert wird."
         },

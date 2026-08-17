@@ -21,7 +21,7 @@ FactoryBot.define do
     end
 
     trait :gross_base do
-      include_tax { true }
+      tax_inclusive { true }
     end
   end
 

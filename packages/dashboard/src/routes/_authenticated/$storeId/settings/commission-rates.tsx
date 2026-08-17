@@ -457,9 +457,9 @@ function CommissionRateFormFields({ form }: { form: UseFormReturn<CommissionRate
 
       <ToggleField
         form={form}
-        name="include_tax"
-        label={t('admin.fields.commission_rate.include_tax.label')}
-        help={t('admin.fields.commission_rate.include_tax.help')}
+        name="tax_inclusive"
+        label={t('admin.fields.commission_rate.tax_inclusive.label')}
+        help={t('admin.fields.commission_rate.tax_inclusive.help')}
       />
 
       <ToggleField
@@ -479,7 +479,7 @@ function ToggleField({
   help,
 }: {
   form: UseFormReturn<CommissionRateFormValues>
-  name: 'enabled' | 'include_tax' | 'include_shipping'
+  name: 'enabled' | 'tax_inclusive' | 'include_shipping'
   label: string
   help: string
 }) {

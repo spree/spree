@@ -77,7 +77,7 @@ module Spree
     scope :ordered, -> { order(position: :asc, id: :asc) }
 
     self.whitelisted_ransackable_attributes = %w[name code kind enabled position value currency
-                                                 include_tax include_shipping]
+                                                 tax_inclusive include_shipping]
     self.whitelisted_ransackable_associations = %w[commission_rules]
 
     # @return [Boolean]

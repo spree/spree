@@ -72,7 +72,7 @@ module Spree
             attributes = normalize_params(
               params.permit(
                 :name, :code, :enabled, :position, :kind, :value, :currency,
-                :include_tax, :include_shipping, :min_amount, :max_amount, :commission_tax_rate,
+                :tax_inclusive, :include_shipping, :min_amount, :max_amount, :commission_tax_rate,
                 metadata: {},
                 rules: [:subject_type, :subject_id]
               )
