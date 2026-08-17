@@ -67,6 +67,7 @@ Pending design work (drafts, no implementation yet):
 - `5.4-centralized-translations-admin.md` — Centralized Translations admin page under Products, overview grid + bulk CSV import/export
 - `5.4-metafield-translations.md` — Translate MetafieldDefinition names + Metafield text values (ShortText, LongText, RichText) via Mobility translation tables
 - `5.5-admin-api-cli.md` — `spree api` command group in `@spree/cli` (gh-api-style generic verbs + schema introspection + layered auth, CLI-first ahead of MCP servers; core patch: `SCOPES` on `spree:cli:create_api_key`, promotions scopes)
+- `6.1-exchange-rates.md` — `Spree::ExchangeRate` + `ExchangeRateProvider` (ECB feed as the credential-free default, registry copied from `tax_providers`/`delivery_rate_providers`, keyed providers via `Spree::Integration`). **Rates fill fields, they never price anything** — a merchant gets editable suggestions for the other currencies and what persists is a plain number they own; Spree's "one explicit amount per currency, no FX" stance is unchanged. Never at charge time: EU VAT Directive Art. 91 pins the rate to the instant VAT becomes chargeable, so a commission invoice's VAT figure must be frozen with its rate/date/source or the platform cannot reproduce its own filed documents (Shopify converts at capture and is the wrong pattern here; Vendure/Medusa/Saleor never convert in core). Rates are stored historically and looked up **most-recent-on-or-before**, never exact-date (the ECB skips weekends); cross-currency derives through the base per Art. 91, never stored as a third row; rate precision is NOT money's `decimal(_,2)`. **Constraints now:** never set `Money.default_bank` or call `exchange_to` (the empty rate store raising `UnknownRate` is correct); new money configuration is born per currency, never one amount + a currency column; no conversion endpoint on any API. Also records two live promotion bugs found while researching it — `Calculator::FlatRate` silently discounts **zero** on a currency mismatch, and `Promotion::Rules::ItemTotal` stores a bare threshold with no currency — both independent of this feature.
 
 Shipped plans:
 - `5.4-store-api-bridges.md` — Bridge 6.0 naming into 5.4 Store API (PR #13782)
@@ -667,7 +668,7 @@ Re-run `parallel_setup` after schema changes.
 
 **Test guidelines:**
 - RSpec + Factory Bot
-- Prefer `build` over `create` for speed
+- Prefer `build` over `create` for speed, use `create_list` for creating multiple records
 - Factories live in `lib/spree/testing_support/factories/`
 - ALWAYS use factories in tests, never call `Model#create` directly
 - ALWAYS run parallel tests if running full test suite, if there are any failures repeat the failed examples seperately and confirm they really fail before investigating
