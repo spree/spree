@@ -33,9 +33,11 @@ export interface PanelApiClient {
     refresh(): Promise<PanelSession>
     logout(): Promise<void>
     /**
-     * Admin-only sign-in flows. A seller's panel has none of these: sellers
-     * arrive by invitation on the staff rail, and password reset and
-     * first-run setup are the marketplace's own.
+     * Optional sign-in flows, because not every panel offers all of them.
+     * Both panels accept invitations — each against its own API, so the
+     * session that comes back carries the right audience. Password reset and
+     * first-run setup remain the marketplace's own, so a seller's client
+     * leaves them undefined.
      */
     acceptInvitation?(id: string, token: string, params: unknown): Promise<PanelSession>
     resetPassword?(token: string, params: unknown): Promise<PanelSession>

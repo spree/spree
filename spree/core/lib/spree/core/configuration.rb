@@ -32,6 +32,13 @@ module Spree
       # initializer — the setup link is printed by `db:seed`, before there is
       # any way to configure a running app.
       preference :dashboard_url, :string, default: nil, env: 'SPREE_DASHBOARD_URL'
+      # Origin where the seller panel is hosted (e.g. `https://sellers.shop.com`).
+      # Separate from `dashboard_url` because the two are different apps for
+      # different audiences: a seller invitation sent to the staff dashboard
+      # lands on a page that authenticates against the Admin API, which no
+      # seller may call. Unset on a marketplace that runs no panel, in which
+      # case seller invitations fall back to the dashboard origin.
+      preference :seller_panel_url, :string, default: nil, env: 'SPREE_SELLER_PANEL_URL'
       preference :allow_checkout_on_gateway_error, :boolean, default: false, deprecated: 'Nothing reads this in Spree 6 — completion checks whether payments cover the total, so a failed gateway call never completes an order'
       preference :allow_empty_price_amount, :boolean, default: false
       preference :alternative_shipping_phone, :boolean, default: false, deprecated: 'Nothing reads this in Spree 6'

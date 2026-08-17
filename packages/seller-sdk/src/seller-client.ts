@@ -1,5 +1,5 @@
 import type { RequestFn, RequestOptions } from '@spree/sdk-core'
-import type { AuthTokens, Profile, SellerSummary, TeamMember } from './types'
+import type { AuthTokens, Invitation, Profile, SellerSummary, TeamMember } from './types'
 
 /**
  * Resource methods for the Spree Seller API — the marketplace seller panel.
@@ -33,6 +33,42 @@ export class SellerClient {
     /** Sign-in methods this marketplace offers sellers, for the login page. */
     providers: (options?: RequestOptions): Promise<{ providers: unknown[] }> =>
       this.request<{ providers: unknown[] }>('GET', '/auth/providers', options),
+
+    /**
+     * Reads an invitation from the emailed link, before anyone signs in — the
+     * page needs the invited address to decide whether it is asking someone to
+     * set a password or to confirm the one they already have.
+     */
+    lookupInvitation: (
+      invitationId: string,
+      token: string,
+      options?: RequestOptions,
+    ): Promise<Invitation> =>
+      this.request<Invitation>('GET', `/auth/invitations/${invitationId}/lookup`, {
+        ...options,
+        params: { token },
+      }),
+
+    /**
+     * Accepts the invitation and returns a signed-in seller session, so the
+     * new member lands in the panel rather than on a login form.
+     */
+    acceptInvitation: (
+      invitationId: string,
+      token: string,
+      params: {
+        password?: string
+        password_confirmation?: string
+        first_name?: string
+        last_name?: string
+      },
+      options?: RequestOptions,
+    ): Promise<AuthTokens> =>
+      this.request<AuthTokens>('POST', `/auth/invitations/${invitationId}/accept`, {
+        ...options,
+        params: { token },
+        body: params,
+      }),
   }
 
   /**

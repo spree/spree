@@ -1061,6 +1061,7 @@ en:
     internationalization: Internationalization
     invalid_credit_card: Invalid credit card.
     invalid_exchange_variant: Invalid exchange variant.
+    invalid_password: Invalid password.
     inventory: Inventory
     invitation_accepted: Invitation accepted!
     invitation_already_accepted: This invitation has already been accepted.
@@ -1076,6 +1077,7 @@ en:
         link_description: 'To accept this invitation, please click the link below:'
         subject: Invitation to join %{resource_name}
       thanks: Thank you,
+    invitation_not_acceptable: Invitation not found, expired, or already accepted.
     invitation_role_resource_mismatch: must belong to the same store or seller as the invitation
     invitations: Invitations
     invited_by: Invited by
@@ -1243,6 +1245,7 @@ en:
     page: Page
     pages: Pages
     password: Password
+    password_required_to_create_account: Password is required to create your account.
     path: Path
     pay: Pay
     payment: Payment
