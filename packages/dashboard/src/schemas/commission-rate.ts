@@ -15,14 +15,17 @@ export const commissionRateFormSchema = z.object({
   enabled: z.boolean(),
   kind: z.enum(COMMISSION_RATE_KINDS),
   value: z.coerce.number().min(0),
-  currency: z.string().optional(),
   // What a flat fee charges, keyed by currency. Held as strings because they
   // come from number inputs and an empty one means "not charged here".
   amounts: z.record(z.string(), z.string()).default({}),
+  // The floor and cap a percentage charges within, keyed by currency. Each
+  // holds only in its own currency, so a rate may bound some and leave the
+  // rest unbounded rather than have a figure converted on its behalf.
+  bounds: z
+    .record(z.string(), z.object({ min_amount: z.string(), max_amount: z.string() }))
+    .default({}),
   tax_inclusive: z.boolean(),
   include_shipping: z.boolean(),
-  min_amount: z.string().optional(),
-  max_amount: z.string().optional(),
   // Held as a percentage in the form because that is how merchants think about
   // VAT; converted to the fraction the API stores on the way out.
   commission_tax_rate: z.string().optional(),
@@ -48,12 +51,10 @@ export const COMMISSION_RATE_DEFAULTS: CommissionRateFormValues = {
   enabled: true,
   kind: 'percentage',
   value: 10,
-  currency: '',
   amounts: {},
+  bounds: {},
   tax_inclusive: false,
   include_shipping: false,
-  min_amount: '',
-  max_amount: '',
   commission_tax_rate: '',
   rules: [],
 }
@@ -65,14 +66,20 @@ export function commissionRateToFormValues(rate: CommissionRate): CommissionRate
     enabled: rate.enabled,
     kind: (rate.kind as CommissionRateFormValues['kind']) ?? 'percentage',
     value: Number(rate.value ?? 0),
-    currency: rate.currency ?? '',
     amounts: Object.fromEntries(
       Object.entries(rate.amounts ?? {}).map(([code, amount]) => [code, String(amount ?? '')]),
     ),
+    bounds: Object.fromEntries(
+      Object.entries(rate.bounds ?? {}).map(([code, bound]) => [
+        code,
+        {
+          min_amount: bound?.min_amount == null ? '' : String(bound.min_amount),
+          max_amount: bound?.max_amount == null ? '' : String(bound.max_amount),
+        },
+      ]),
+    ),
     tax_inclusive: rate.tax_inclusive,
     include_shipping: rate.include_shipping,
-    min_amount: rate.min_amount == null ? '' : String(rate.min_amount),
-    max_amount: rate.max_amount == null ? '' : String(rate.max_amount),
     commission_tax_rate:
       rate.commission_tax_rate == null ? '' : String(Number(rate.commission_tax_rate) * 100),
     rules: (rate.rules ?? []).map((rule) => ({
@@ -100,11 +107,6 @@ export function commissionRateValuesToParams(
     enabled: v.enabled,
     kind: v.kind,
     value: v.value,
-    // A percentage applies in any currency, so sending one would only be
-    // noise the server ignores.
-    // A flat fee says its currencies through `amounts`; `currency` only marks
-    // the one a percentage's floor or cap is stated in.
-    currency: v.kind === 'percentage' ? blankToNull(v.currency) : null,
     amounts:
       v.kind === 'fixed'
         ? Object.fromEntries(
@@ -112,10 +114,28 @@ export function commissionRateValuesToParams(
           )
         : {},
     tax_inclusive: v.tax_inclusive,
-    // Only a percentage can charge delivery; a flat fee is per sale.
+    // Only a percentage can charge delivery; a flat fee already charges for
+    // the sale a parcel belongs to.
     include_shipping: v.kind === 'percentage' ? v.include_shipping : false,
-    min_amount: decimalOrNull(v.min_amount),
-    max_amount: decimalOrNull(v.max_amount),
+    // A currency the merchant left blank carries no bound, so it is left out
+    // entirely rather than sent as a pair of nulls.
+    bounds: Object.fromEntries(
+      Object.entries(v.bounds)
+        .map(([code, bound]) => [
+          code,
+          {
+            min_amount: decimalOrNull(bound.min_amount),
+            max_amount: decimalOrNull(bound.max_amount),
+          },
+        ])
+        .filter(([, bound]) => {
+          const { min_amount, max_amount } = bound as {
+            min_amount: number | null
+            max_amount: number | null
+          }
+          return min_amount !== null || max_amount !== null
+        }),
+    ),
     commission_tax_rate: taxPercentage === null ? null : taxPercentage / 100,
     // `product_ids` is only meaningful to kinds that name products; sending an
     // empty array to the others is noise the server would ignore.

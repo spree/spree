@@ -35,10 +35,14 @@ defineTable<CommissionRate>('commission-rates', {
       label: i18n.t('admin.fields.commission_rate.value.label'),
       sortable: true,
       default: true,
+      // A flat fee states an amount per currency, so the cell lists them —
+      // "5.00 USD, 4.00 GBP" — rather than showing one and implying the rest.
       render: (rate) =>
         rate.kind === 'percentage'
           ? `${rate.value}%`
-          : `${rate.value} ${rate.currency ?? ''}`.trim(),
+          : Object.entries(rate.amounts ?? {})
+              .map(([currency, amount]) => `${amount} ${currency}`)
+              .join(', '),
     },
     {
       key: 'rules',

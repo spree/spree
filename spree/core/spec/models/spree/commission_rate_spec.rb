@@ -4,17 +4,11 @@ RSpec.describe Spree::CommissionRate, type: :model do
   let(:store) { @default_store }
 
   describe 'validations' do
-    it 'requires a currency on a fixed rate but not on a plain percentage' do
-      expect(build(:commission_rate, kind: 'fixed', currency: nil)).not_to be_valid
-      expect(build(:commission_rate, kind: 'percentage', currency: nil)).to be_valid
-    end
-
-    # A floor or a cap is an amount, so a percentage carrying one is no longer
-    # free to travel — "at least 5" means 5 of something.
-    it 'requires a currency once a percentage carries a floor or a cap' do
-      expect(build(:commission_rate, kind: 'percentage', min_amount: 5, currency: nil)).not_to be_valid
-      expect(build(:commission_rate, kind: 'percentage', max_amount: 50, currency: nil)).not_to be_valid
-      expect(build(:commission_rate, kind: 'percentage', min_amount: 5, currency: 'USD')).to be_valid
+    # A flat fee is an amount, so it says which currency through its per-currency
+    # rows. A percentage is a ratio and needs no currency at all.
+    it 'requires an amount somewhere on a fixed rate but not on a percentage' do
+      expect(build(:commission_rate, kind: 'fixed')).not_to be_valid
+      expect(build(:commission_rate, kind: 'percentage')).to be_valid
     end
 
     # The override takes precedence over the store default, so it needs the
@@ -25,10 +19,11 @@ RSpec.describe Spree::CommissionRate, type: :model do
     end
 
     it 'rejects a cap below the floor' do
-      rate = build(:commission_rate, min_amount: 10, max_amount: 5, currency: 'USD')
+      rate = create(:commission_rate, store: store)
+      value = rate.commission_rate_values.build(currency: 'USD', min_amount: 10, max_amount: 5)
 
-      expect(rate).not_to be_valid
-      expect(rate.errors[:max_amount]).to be_present
+      expect(value).not_to be_valid
+      expect(value.errors[:max_amount]).to be_present
     end
 
     it 'scopes the code to the store' do
@@ -80,6 +75,62 @@ RSpec.describe Spree::CommissionRate, type: :model do
       expect(rate.applies_to_currency?('usd')).to be true
       expect(rate.applies_to_currency?('GBP')).to be true
       expect(rate.applies_to_currency?('EUR')).to be false
+    end
+
+    # Capping the dollar fee is not a statement that euro sales earn nothing.
+    # The percentage still charges; only the bound stays behind.
+    it 'still charges a percentage in a currency it set no bounds for' do
+      rate = create(:commission_rate, store: store, bounds: { 'USD' => { max_amount: 20 } })
+
+      expect(rate.applies_to_currency?('EUR')).to be true
+    end
+  end
+
+  describe 'floors and caps' do
+    it 'reads each bound in its own currency' do
+      rate = create(:commission_rate, store: store,
+                    bounds: { 'USD' => { min_amount: 2, max_amount: 20 },
+                              'PLN' => { max_amount: 80 } })
+
+      expect(rate.min_amount_for('usd')).to eq(2)
+      expect(rate.max_amount_for('USD')).to eq(20)
+      expect(rate.min_amount_for('PLN')).to be_nil
+      expect(rate.max_amount_for('EUR')).to be_nil
+    end
+
+    it 'reports only the currencies it bounds' do
+      rate = create(:commission_rate, store: store, bounds: { 'USD' => { max_amount: 20 } })
+
+      expect(rate.bounds.keys).to eq(['USD'])
+    end
+
+    # Bounds and flat fee amounts share a row, and are written by two different
+    # fields. Neither write may quietly erase the other.
+    it 'keeps a flat fee when its bounds are cleared' do
+      rate = create(:commission_rate, :fixed, store: store, amounts: { 'USD' => 5 },
+                    bounds: { 'USD' => { max_amount: 20 } })
+
+      rate.update!(bounds: {})
+
+      expect(rate.amount_for('USD')).to eq(5)
+      expect(rate.max_amount_for('USD')).to be_nil
+    end
+
+    it 'keeps a bound when a currency is dropped from the flat fee' do
+      rate = create(:commission_rate, store: store, bounds: { 'USD' => { max_amount: 20 } })
+
+      rate.update!(amounts: {})
+
+      expect(rate.max_amount_for('USD')).to eq(20)
+    end
+
+    it 'retires a currency dropped from the bounds' do
+      rate = create(:commission_rate, store: store,
+                    bounds: { 'USD' => { max_amount: 20 }, 'PLN' => { max_amount: 80 } })
+
+      rate.update!(bounds: { 'USD' => { max_amount: 20 } })
+
+      expect(rate.reload.bounds.keys).to eq(['USD'])
     end
   end
 

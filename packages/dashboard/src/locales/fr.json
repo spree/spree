@@ -1704,7 +1704,7 @@
           "label": "Montant fixe"
         },
         "bounds": {
-          "help": "Ne jamais facturer moins que le premier, ni plus que le second.",
+          "help": "Ne jamais facturer moins que le premier, ni plus que le second. Chacun ne s'applique qu'aux ventes dans sa propre devise ; une devise laissée vide est facturée sans limite.",
           "label": "Plancher et plafond (facultatif)"
         }
       }

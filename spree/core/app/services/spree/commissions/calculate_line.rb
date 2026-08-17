@@ -107,14 +107,20 @@ module Spree
         #
         # A fulfillment has no quantity, and never reaches this branch — a flat
         # rate is barred from charging delivery.
-        return clamp(rate, rate.amount_for(currency).to_d * subject.quantity) if rate.fixed?
+        return clamp(rate, rate.amount_for(currency).to_d * subject.quantity, currency) if rate.fixed?
 
-        clamp(rate, self.class.base_for(rate, subject) * rate.value / 100)
+        clamp(rate, self.class.base_for(rate, subject) * rate.value / 100, currency)
       end
 
-      def clamp(rate, amount)
-        amount = [amount, rate.min_amount].max if rate.min_amount.present?
-        amount = [amount, rate.max_amount].min if rate.max_amount.present?
+      # The floor and cap are amounts, so each holds only in the currency it was
+      # written in. A sale in a currency the rate set no bounds for is charged
+      # unbounded rather than against a converted figure nobody agreed to.
+      def clamp(rate, amount, currency)
+        minimum = rate.min_amount_for(currency)
+        maximum = rate.max_amount_for(currency)
+
+        amount = [amount, minimum].max if minimum.present?
+        amount = [amount, maximum].min if maximum.present?
         amount
       end
 

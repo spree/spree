@@ -20,21 +20,19 @@ module Spree
                    global: :boolean,
                    kind: :string,
                    value: :string,
-                   currency: 'string | null',
                    amounts: 'Record<string, string>',
+                   bounds: 'Record<string, { min_amount: string | null; max_amount: string | null }>',
                    tax_inclusive: :boolean,
                    include_shipping: :boolean,
-                   min_amount: 'string | null',
-                   max_amount: 'string | null',
                    commission_tax_rate: 'string | null',
                    metadata: 'Record<string, unknown> | null',
                    deleted_at: 'string | null'
 
-          attributes :name, :code, :enabled, :position, :kind, :currency,
+          attributes :name, :code, :enabled, :position, :kind,
                      :tax_inclusive, :include_shipping, :metadata,
                      deleted_at: :iso8601, created_at: :iso8601, updated_at: :iso8601
 
-          %i[value min_amount max_amount commission_tax_rate].each do |decimal|
+          %i[value commission_tax_rate].each do |decimal|
             attribute(decimal) { |rate| rate.public_send(decimal)&.to_s }
           end
 
@@ -42,6 +40,15 @@ module Spree
           # which needs no amount of its own.
           attribute :amounts do |rate|
             rate.amounts.transform_values(&:to_s)
+          end
+
+          # The floor and cap a percentage charges within, per currency. Each
+          # holds only in its own currency, so a rate may bound some and leave
+          # others unbounded.
+          attribute :bounds do |rate|
+            rate.bounds.transform_values do |bound|
+              bound.transform_values { |amount| amount&.to_s }
+            end
           end
 
           # A rate that names nothing matches every sale, so everything below

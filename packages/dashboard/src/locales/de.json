@@ -1704,7 +1704,7 @@
           "label": "Pauschale"
         },
         "bounds": {
-          "help": "Nie weniger als der erste, nie mehr als der zweite Betrag.",
+          "help": "Nie weniger als der erste und nie mehr als der zweite Betrag. Jeder gilt nur für Verkäufe in seiner eigenen Währung; eine leer gelassene Währung wird unbegrenzt berechnet.",
           "label": "Unter- und Obergrenze (optional)"
         }
       }

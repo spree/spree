@@ -1462,11 +1462,6 @@ export interface CommissionRateCreateParams {
   /** A percentage (e.g. `10` for 10%) or a flat amount, per `kind`. */
   value: number
   /**
-   * The currency a percentage rate's floor or cap is stated in. A flat fee
-   * says its currencies through `amounts` instead.
-   */
-  currency?: string | null
-  /**
    * What a flat fee charges, keyed by currency: `{ USD: '5.00', GBP: '4.00' }`.
    * A rate is skipped for a currency it states no amount in, so that sale
    * falls through to the next matching rate rather than being charged a
@@ -1479,10 +1474,19 @@ export interface CommissionRateCreateParams {
    * the seller's net revenue and taxed on top.
    */
   tax_inclusive?: boolean
-  /** Also charge commission on the seller's delivery revenue. */
+  /**
+   * Also charge commission on the seller's delivery revenue. Percentage rates
+   * only — a flat fee already charges for the sale a parcel belongs to.
+   */
   include_shipping?: boolean
-  min_amount?: number | null
-  max_amount?: number | null
+  /**
+   * The floor and cap a percentage charges within, keyed by currency:
+   * `{ USD: { min_amount: 1, max_amount: 50 } }`. Each holds only in its own
+   * currency; a sale in a currency with no bounds is charged unbounded rather
+   * than against a converted figure nobody set. Replaces the whole set on
+   * write, and never disturbs `amounts`.
+   */
+  bounds?: Record<string, { min_amount?: number | null; max_amount?: number | null }>
   /**
    * VAT on the commission itself, as a fraction (e.g. `0.21`). Leave null to
    * let the store's tax engine answer for the seller's own jurisdiction.

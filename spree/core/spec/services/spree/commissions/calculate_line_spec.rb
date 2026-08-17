@@ -51,7 +51,7 @@ RSpec.describe Spree::Commissions::CalculateLine do
   it 'caps a flat fee that multiplied past the cap' do
     ten = create(:line_item, order: order, price: 100, quantity: 10)
     fixed = create(:commission_rate, :fixed, store: store, amounts: { 'USD' => 2.5 },
-                   currency: 'USD', max_amount: 12)
+                   bounds: { 'USD' => { max_amount: 12 } })
 
     expect(call(rate: fixed, line_item: ten).amount).to eq(12)
   end
@@ -96,15 +96,43 @@ RSpec.describe Spree::Commissions::CalculateLine do
 
   describe 'floor and cap' do
     it 'lifts a commission to the floor' do
-      floored = create(:commission_rate, store: store, value: 1, min_amount: 5, currency: 'USD')
+      floored = create(:commission_rate, store: store, value: 1,
+                       bounds: { 'USD' => { min_amount: 5 } })
 
       expect(call(rate: floored).amount).to eq(5)
     end
 
     it 'holds a commission to the cap' do
-      capped = create(:commission_rate, store: store, value: 50, max_amount: 20, currency: 'USD')
+      capped = create(:commission_rate, store: store, value: 50,
+                      bounds: { 'USD' => { max_amount: 20 } })
 
       expect(call(rate: capped).amount).to eq(20)
+    end
+
+    # Each bound holds only where it was written. Charging a euro sale against
+    # a dollar cap would apply a number nobody agreed to, and skipping the sale
+    # would read a cap on one currency as a refusal to earn on the others.
+    it 'leaves a sale unbounded in a currency the rate set no bounds for' do
+      allow_any_instance_of(Spree::Store).to receive(:supported_currencies_list).
+        and_return([::Money::Currency.find('USD'), ::Money::Currency.find('EUR')])
+      capped = create(:commission_rate, store: store, value: 50,
+                      bounds: { 'USD' => { max_amount: 20 } })
+      euro_order = create(:order, store: store, currency: 'EUR')
+      euro_item = create(:line_item, order: euro_order, price: 100, quantity: 1, currency: 'EUR')
+
+      expect(call(rate: capped, order: euro_order, line_item: euro_item).amount).to eq(50)
+    end
+
+    it 'applies each currency its own cap' do
+      allow_any_instance_of(Spree::Store).to receive(:supported_currencies_list).
+        and_return([::Money::Currency.find('USD'), ::Money::Currency.find('EUR')])
+      capped = create(:commission_rate, store: store, value: 50,
+                      bounds: { 'USD' => { max_amount: 20 }, 'EUR' => { max_amount: 30 } })
+      euro_order = create(:order, store: store, currency: 'EUR')
+      euro_item = create(:line_item, order: euro_order, price: 100, quantity: 1, currency: 'EUR')
+
+      expect(call(rate: capped).amount).to eq(20)
+      expect(call(rate: capped, order: euro_order, line_item: euro_item).amount).to eq(30)
     end
   end
 

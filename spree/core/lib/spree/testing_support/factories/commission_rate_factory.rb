@@ -18,6 +18,7 @@ FactoryBot.define do
       enabled { false }
     end
 
+
     trait :with_shipping do
       include_shipping { true }
     end

@@ -1718,7 +1718,7 @@
           "label": "Opłata stała"
         },
         "bounds": {
-          "help": "Nigdy mniej niż pierwsza kwota ani więcej niż druga.",
+          "help": "Nigdy nie naliczaj mniej niż pierwsza kwota ani więcej niż druga. Każda dotyczy tylko sprzedaży w swojej walucie; waluta pozostawiona pusta jest naliczana bez ograniczeń.",
           "label": "Dolna i górna granica (opcjonalnie)"
         }
       }

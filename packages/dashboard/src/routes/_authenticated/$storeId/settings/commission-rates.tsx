@@ -7,7 +7,6 @@ import type {
 import {
   adminClient,
   Can,
-  CurrencySelect,
   mapSpreeErrorsToForm,
   PreferencesForm,
   ResourceMultiAutocomplete,
@@ -552,10 +551,16 @@ function FlatFeeAmountsField({ form }: { form: UseFormReturn<CommissionRateFormV
  * than that. Amounts, so they carry a currency of their own — which is what
  * stops "at least 5" meaning five of whatever the buyer happened to pay in.
  */
+/**
+ * A floor and a cap per currency, on the same one-row-per-currency footing as
+ * the flat fee. Each bound holds only in its own currency — a sale in a
+ * currency left blank is charged unbounded rather than against a converted
+ * figure the merchant never agreed to.
+ */
 function PercentageBoundsField({ form }: { form: UseFormReturn<CommissionRateFormValues> }) {
   const { t } = useTranslation()
   const { errors } = form.formState
-  const hasBound = !!form.watch('min_amount') || !!form.watch('max_amount')
+  const { currencies } = useStore()
 
   return (
     <Field>
@@ -563,35 +568,47 @@ function PercentageBoundsField({ form }: { form: UseFormReturn<CommissionRateFor
       <span className="text-xs text-muted-foreground">
         {t('admin.fields.commission_rate.bounds.help')}
       </span>
-      <div className="flex items-center gap-2 pt-1">
-        <Input
-          type="number"
-          step="0.01"
-          min="0"
-          aria-label={t('admin.fields.commission_rate.min_amount.label')}
-          placeholder={t('admin.fields.commission_rate.min_amount.label')}
-          {...form.register('min_amount')}
-        />
-        <span className="text-sm text-muted-foreground">–</span>
-        <Input
-          type="number"
-          step="0.01"
-          min="0"
-          aria-label={t('admin.fields.commission_rate.max_amount.label')}
-          placeholder={t('admin.fields.commission_rate.max_amount.label')}
-          {...form.register('max_amount')}
-        />
-        {hasBound && (
-          <Controller
-            control={form.control}
-            name="currency"
-            render={({ field }) => (
-              <CurrencySelect value={field.value || undefined} onChange={field.onChange} />
-            )}
-          />
-        )}
+      <div className="flex flex-col gap-2 pt-1">
+        {currencies.map((currency) => (
+          <div key={currency} className="flex items-center gap-2">
+            <span className="w-12 shrink-0 text-sm text-muted-foreground">{currency}</span>
+            <Controller
+              control={form.control}
+              name="bounds"
+              render={({ field }) => {
+                const bound = field.value?.[currency] ?? { min_amount: '', max_amount: '' }
+                const write = (key: 'min_amount' | 'max_amount', amount: string) =>
+                  field.onChange({ ...field.value, [currency]: { ...bound, [key]: amount } })
+
+                return (
+                  <>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      aria-label={`${currency} ${t('admin.fields.commission_rate.min_amount.label')}`}
+                      placeholder={t('admin.fields.commission_rate.min_amount.label')}
+                      value={bound.min_amount}
+                      onChange={(event) => write('min_amount', event.target.value)}
+                    />
+                    <span className="text-sm text-muted-foreground">–</span>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      aria-label={`${currency} ${t('admin.fields.commission_rate.max_amount.label')}`}
+                      placeholder={t('admin.fields.commission_rate.max_amount.label')}
+                      value={bound.max_amount}
+                      onChange={(event) => write('max_amount', event.target.value)}
+                    />
+                  </>
+                )
+              }}
+            />
+          </div>
+        ))}
       </div>
-      <FieldError errors={[errors.min_amount, errors.max_amount, errors.currency]} />
+      <FieldError errors={[errors.bounds]} />
     </Field>
   )
 }

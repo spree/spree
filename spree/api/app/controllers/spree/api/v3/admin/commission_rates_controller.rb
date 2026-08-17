@@ -82,10 +82,14 @@ module Spree
           def permitted_params
             attributes = normalize_params(
               params.permit(
-                :name, :code, :enabled, :position, :kind, :value, :currency,
-                :tax_inclusive, :include_shipping, :min_amount, :max_amount, :commission_tax_rate,
+                :name, :code, :enabled, :position, :kind, :value,
+                :tax_inclusive, :include_shipping, :commission_tax_rate,
                 metadata: {},
                 amounts: {},
+                # Nested one level deeper than +amounts+ — currency => floor and
+                # cap — so the whole subtree is permitted rather than its keys,
+                # which are currency codes and not knowable here.
+                bounds: {},
                 rules: [:id, :type, { preferences: {} }, *rule_association_attributes]
               )
             )

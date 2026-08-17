@@ -17,21 +17,17 @@ class CreateSpreeCommissionRates < ActiveRecord::Migration[8.1]
       t.integer :position, null: false, default: 0
 
       t.string :kind, null: false # percentage | fixed
-      # A percentage. A flat fee's amounts live in spree_commission_rate_values,
-      # one per currency, since "2" means nothing without saying 2 of what.
+      # A percentage. Every *amount* a rate states — a flat fee, and a
+      # percentage's floor and cap alike — lives in
+      # spree_commission_rate_values, one row per currency, since "2" means
+      # nothing without saying 2 of what.
       t.decimal :value, precision: 10, scale: 5, null: false, default: 0
-      # Only set when a percentage carries a floor or a cap — those are amounts
-      # too, so the rate stops being free to travel.
-      t.string :currency
 
       # Commission base: net (ex-VAT) item price by default, which is the EU
       # rule — the fee is a separate supply from the consumer's item sale.
       t.boolean :tax_inclusive, null: false, default: false
       # Also commission the vendor order's delivery revenue.
       t.boolean :include_shipping, null: false, default: false
-
-      t.decimal :min_amount, precision: 10, scale: 2
-      t.decimal :max_amount, precision: 10, scale: 2
 
       # Overrides the tax provider's answer for VAT on the commission. Null
       # means ask the provider, which is what keeps the rate jurisdiction-correct.
@@ -51,13 +47,19 @@ class CreateSpreeCommissionRates < ActiveRecord::Migration[8.1]
     add_index :spree_commission_rates, [:store_id, :enabled, :position]
     add_index :spree_commission_rates, :deleted_at
 
-    # What a flat fee charges, per currency. A rate is skipped for a currency
-    # it has no amount for, so a marketplace states each one deliberately
-    # rather than having a figure converted on its behalf.
+    # What a rate charges, and the bounds it charges within, in one currency.
+    # Every amount a rate states lives here: a marketplace writes each one
+    # deliberately rather than having a figure converted on its behalf, since
+    # a converted number would drift daily against a fee a seller has agreed.
+    #
+    # A flat fee uses +amount+; a percentage leaves it at zero and may state a
+    # floor and a cap instead, which is why only +amount+ carries a default.
     create_table :spree_commission_rate_values do |t|
       t.references :commission_rate, null: false
       t.string :currency, null: false
       t.decimal :amount, precision: 10, scale: 2, null: false, default: 0
+      t.decimal :min_amount, precision: 10, scale: 2
+      t.decimal :max_amount, precision: 10, scale: 2
 
       t.timestamps
       t.datetime :deleted_at

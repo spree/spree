@@ -1704,7 +1704,7 @@
           "label": "Flat fee"
         },
         "bounds": {
-          "help": "Never charge less than the first, or more than the second.",
+          "help": "Never charge less than the first, or more than the second. Each applies only to sales in its own currency; leave a currency empty to charge it unbounded.",
           "label": "Floor and cap (optional)"
         }
       }

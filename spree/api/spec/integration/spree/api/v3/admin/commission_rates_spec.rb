@@ -107,16 +107,32 @@ RSpec.describe 'Admin Commission Rates API', type: :request, swagger_doc: 'api-r
           kind: { type: :string, enum: %w[percentage fixed], example: 'percentage' },
           value: { type: :string, example: '12.5',
                    description: 'A percentage (10 = 10%) or a flat amount, per `kind`.' },
-          currency: { type: :string, example: 'USD', nullable: true,
-                      description: 'Required for a fixed rate, ignored for a percentage.' },
+          amounts: {
+            type: :object,
+            additionalProperties: { type: :string },
+            example: { USD: '2.50', EUR: '2.00' },
+            description: 'What a flat fee charges, keyed by currency. A currency with no amount is one ' \
+                         'this rate does not charge — those sales fall to the next rate. Ignored for a percentage.'
+          },
           tax_inclusive: { type: :boolean, example: false,
                          description: 'Charge on the price including the customer\'s VAT. Left off, commission is ' \
                                       "charged on the seller's net revenue, which is the usual basis where the " \
                                       'fee is taxed as its own supply.' },
           include_shipping: { type: :boolean, example: false,
                               description: "Also charge commission on the seller's delivery revenue." },
-          min_amount: { type: :string, example: '1.0', nullable: true },
-          max_amount: { type: :string, example: '50.0', nullable: true },
+          bounds: {
+            type: :object,
+            additionalProperties: {
+              type: :object,
+              properties: {
+                min_amount: { type: :string, nullable: true },
+                max_amount: { type: :string, nullable: true }
+              }
+            },
+            example: { USD: { min_amount: '1.0', max_amount: '50.0' } },
+            description: 'The floor and cap a percentage charges within, keyed by currency. Each holds only ' \
+                         'in its own currency; a sale in a currency with no bounds is charged unbounded.'
+          },
           commission_tax_rate: { type: :string, example: '0.21', nullable: true,
                                  description: 'A fraction, not a percentage. Null asks the tax engine.' },
           rules: {

@@ -57,10 +57,23 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
       expect(json_response['rules'].first['type']).to eq('vendor_rule')
     end
 
-    it 'refuses a fixed rate with no currency' do
+    it 'refuses a fixed rate that states no amount anywhere' do
       post :create, params: { name: 'Flat', kind: 'fixed', value: 2 }, as: :json
 
       expect(response).to have_http_status(:unprocessable_entity)
+    end
+
+    it 'writes a floor and a cap per currency' do
+      post :create, params: {
+        name: 'Bounded', kind: 'percentage', value: 10,
+        bounds: { 'USD' => { min_amount: '2', max_amount: '20' }, 'PLN' => { max_amount: '80' } }
+      }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['bounds']).to eq(
+        'USD' => { 'min_amount' => '2.0', 'max_amount' => '20.0' },
+        'PLN' => { 'min_amount' => nil, 'max_amount' => '80.0' }
+      )
     end
   end
 
