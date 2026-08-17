@@ -67,6 +67,25 @@ module Spree
         expect(stock_transfer.source_movements.first.stock_transfer).to eq(stock_transfer)
       end
 
+      # Checking only for a positive balance let a transfer take more than the
+      # shelf held and leave it negative.
+      context 'when the source holds some of the variant but not enough' do
+        let(:variants) { { variant => 5 } }
+
+        before { source_location.stock_level_or_create(variant).update_column(:count_on_hand, 1) }
+
+        it 'does not transfer the variants' do
+          expect(subject).to be false
+          expect(stock_transfer.errors[:base]).to include(Spree.t('stock_transfer.errors.variants_unavailable'))
+        end
+
+        it 'leaves the source shelf alone' do
+          subject
+
+          expect(source_location.stock_level(variant).reload.count_on_hand).to eq(1)
+        end
+      end
+
       context 'when variants are not available in the source location' do
         let(:variants) { { variant => 5, other_variant => 5 } }
         let(:other_variant) { create(:variant) }

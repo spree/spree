@@ -32,11 +32,6 @@ module Spree
     delegate :name, to: :variant, prefix: true
     delegate :product, to: :variant
 
-    # Which movement kind is currently writing count_on_hand, set by
-    # {Spree::StockMovement#apply_to_stock_level} so the non-negative guard
-    # can key off the kind rather than off the variant's backorder settings.
-    attr_accessor :applying_movement_kind
-
     after_save :conditional_variant_touch, if: :saved_changes?
     after_touch { variant.touch }
     after_destroy { variant.touch }
@@ -66,17 +61,27 @@ module Spree
     # {Spree::StockLocation} verb rather than this, so the change leaves an
     # audit row. Keeps the locked read-modify-write that
     # {#process_backorders} needs the delta for.
-    def adjust_count_on_hand(value)
+    #
+    # @param force [Boolean] let the write leave the shelf below zero. Only a
+    #   forced dispatch asks for this: the merchant has decided the parcel
+    #   left whatever the ledger claims.
+    def adjust_count_on_hand(value, force: false)
       with_lock do
-        set_count_on_hand(count_on_hand + value)
+        set_count_on_hand(count_on_hand + value, force: force)
       end
     end
 
-    def set_count_on_hand(value)
+    # @param force [Boolean] see {#adjust_count_on_hand}
+    def set_count_on_hand(value, force: false)
+      @forced_count_on_hand = force
       self.count_on_hand = value
       process_backorders(count_on_hand - count_on_hand_was)
 
       save!
+    ensure
+      # Scoped to this write: the exemption must not outlive the call that
+      # asked for it.
+      @forced_count_on_hand = false
     end
 
     # Units that are physically here and not already promised to a placed
@@ -131,14 +136,14 @@ module Spree
 
     private
 
-    # A shelf can only be driven below zero by goods physically leaving, and
-    # then it means Spree never saw those goods arrive — a receiving gap that
-    # heals itself when the missing `received` movement lands. Every other
-    # writer, a correction above all, is stopped: a hand-typed count below
-    # zero is a typo, not a fact.
+    # A shelf can only be driven below zero by a write that asked to, and then
+    # it means Spree never saw those goods arrive — a receiving gap that heals
+    # itself when the missing `received` movement lands. Every other writer, a
+    # correction above all, is stopped: a hand-typed count below zero is a
+    # typo, not a fact.
     def verify_count_on_hand?
       count_on_hand_changed? && count_on_hand.negative? &&
-        count_on_hand < count_on_hand_was && applying_movement_kind != 'shipped'
+        count_on_hand < count_on_hand_was && !@forced_count_on_hand
     end
 
     # Process backorders based on amount of stock received

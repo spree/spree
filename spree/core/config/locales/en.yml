@@ -970,6 +970,7 @@ en:
         cannot_purchase_label: Labels can only be bought before the fulfillment ships
         cannot_resume: This fulfillment cannot be resumed in its current status
         insufficient_quantity: Requested quantity (%{requested}) for item %{item} exceeds its unfulfilled quantity (%{available})
+        insufficient_stock_on_hand: This dispatch needs %{requested} of %{item} but only %{on_hand} are on hand at this location — correct the stock count or force the dispatch
         invalid_cost: cost must be a non-negative number
         invalid_quantity: Quantity for item %{item} must be a positive integer
         invalid_status: status must be 'shipped' when provided

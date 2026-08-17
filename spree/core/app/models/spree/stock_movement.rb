@@ -30,6 +30,11 @@ module Spree
 
     alias_attribute :stock_item_id, :stock_level_id
 
+    # Whether this write may leave the shelf below zero. An instruction about
+    # this one movement rather than a property of it, so it is never
+    # persisted — the same shape as {Spree::Fulfillment#notify_customer}.
+    attr_accessor :force
+
     after_create :apply_to_stock_level
 
     validates :stock_level, :quantity, :kind, presence: true
@@ -106,20 +111,17 @@ module Spree
       end
     end
 
-    # Departure is a physical fact, so it is allowed to leave the shelf
-    # negative — see the plan's "shipping from an empty shelf". The stock
-    # level needs to know that to relax its own non-negative guard.
+    # The shelf may only be driven below zero when the caller said so: a
+    # merchant forcing a dispatch has decided the parcel left whatever the
+    # ledger claims. Nothing else — a transfer least of all — may send goods a
+    # warehouse does not have.
     #
-    # Only a dispatch retires a promise, and only its own: a stock transfer
-    # moves goods nobody had promised, so consuming an allocation there would
-    # take a different order's units and leave the level looking more
-    # available than it is.
+    # Retiring the promise keys off the cause instead, because only a dispatch
+    # has one to retire: consuming an allocation on a transfer would take a
+    # different order's units.
     def apply_departure
-      stock_level.applying_movement_kind = 'shipped'
-      stock_level.adjust_count_on_hand(-quantity.abs)
+      stock_level.adjust_count_on_hand(-quantity.abs, force: force.present?)
       stock_level.release_allocated_count(quantity.abs) if fulfillment_id.present?
-    ensure
-      stock_level.applying_movement_kind = nil
     end
   end
 end

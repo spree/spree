@@ -180,8 +180,14 @@ module Spree
     # departure is written positive like every other order-driven kind.
     it 'unstocks a variant with a shipped movement' do
       cause = double
-      expect(subject).to receive(:move).with(variant, 5, kind: 'shipped', cause: cause, persist: true)
+      expect(subject).to receive(:move).with(variant, 5, kind: 'shipped', cause: cause, persist: true, force: false)
       subject.unstock(variant, 5, cause)
+    end
+
+    it 'passes force through so a merchant can record a departure the shelf cannot cover' do
+      cause = double
+      expect(subject).to receive(:move).with(variant, 5, kind: 'shipped', cause: cause, persist: true, force: true)
+      subject.unstock(variant, 5, cause, force: true)
     end
 
     it 'allocates a variant to a fulfillment' do

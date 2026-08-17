@@ -255,12 +255,34 @@ describe Spree::StockMovement, type: :model do
           expect(stock_level.available_count).to eq(5)
         end
 
-        it 'may leave the shelf negative' do
+        # A parcel that physically left has to be recordable whatever the
+        # ledger says — the shelf then reads as goods Spree never saw arrive.
+        it 'may leave the shelf negative when the caller forced it' do
           stock_level.update_column(:count_on_hand, 0)
 
-          create(:stock_movement, kind: 'shipped', quantity: 1, stock_level: stock_level)
+          create(:stock_movement, kind: 'shipped', quantity: 1, stock_level: stock_level, force: true)
 
           expect(stock_level.reload.count_on_hand).to eq(-1)
+        end
+
+        # Nobody may send goods a warehouse does not have without saying so —
+        # a stock transfer least of all.
+        it 'refuses to leave the shelf negative otherwise' do
+          stock_level.update_column(:count_on_hand, 0)
+
+          expect {
+            create(:stock_movement, kind: 'shipped', quantity: 1, stock_level: stock_level)
+          }.to raise_error(ActiveRecord::RecordInvalid)
+
+          expect(stock_level.reload.count_on_hand).to eq(0)
+        end
+
+        # An instruction about one write, not a property of the row — so a
+        # movement read back later carries no trace of it.
+        it 'does not persist the force instruction' do
+          movement = create(:stock_movement, kind: 'shipped', quantity: 1, stock_level: stock_level, force: true)
+
+          expect(described_class.find(movement.id).force).to be_nil
         end
       end
 

@@ -9,6 +9,14 @@ module Spree
     let(:fulfillment) { order.fulfillments.first }
     let(:line_items) { order.line_items.sort_by(&:id) }
 
+    # A placed order's goods were on the shelf when it was placed; the
+    # order_ready_to_ship factory never puts them there.
+    def stock_the_shelf(fulfillment, count: 10)
+      fulfillment.manifest.each do |item|
+        fulfillment.stock_location.stock_level_or_create(item.variant).update_column(:count_on_hand, count)
+      end
+    end
+
     describe 'fulfilling everything (items omitted)' do
       let(:execute) { subject.call(fulfillment: fulfillment) }
 
@@ -97,6 +105,7 @@ module Spree
       # Shipping a canceled fulfillment is deliberate — the goods went out
       # anyway — so the workflow must not second-guess it.
       it 'fulfills a canceled fulfillment' do
+        stock_the_shelf(fulfillment)
         fulfillment.update!(status: 'canceled')
 
         result = subject.call(fulfillment: fulfillment)
@@ -154,6 +163,7 @@ module Spree
       before { fulfillment.update!(status: 'canceled') }
 
       it 're-promises the units and then ships them' do
+        stock_the_shelf(fulfillment)
         variant = fulfillment.fulfillment_items.first.variant
         stock_level = fulfillment.stock_location.stock_level(variant)
 
@@ -167,6 +177,7 @@ module Spree
       # Resuming already re-promised the units, so fulfilling afterwards
       # takes them off the shelf exactly once rather than twice.
       it 'ships the re-promised units only once when the fulfillment was resumed' do
+        stock_the_shelf(fulfillment)
         Spree.fulfillment_resume_workflow.call(fulfillment: fulfillment)
         variant = fulfillment.fulfillment_items.first.variant
         quantity = fulfillment.fulfillment_items.where(variant_id: variant.id).sum(:quantity)
@@ -185,6 +196,7 @@ module Spree
       let(:stock_level) { fulfillment.stock_location.stock_level(variant) }
 
       it 'ships only the units the fulfillment holds a promise for' do
+        stock_the_shelf(fulfillment)
         fulfillment.stock_location.allocate(variant, quantity, fulfillment)
 
         expect { subject.call(fulfillment: fulfillment) }.
@@ -198,6 +210,19 @@ module Spree
       it 'writes nothing for an unallocated fulfillment' do
         expect { subject.call(fulfillment: fulfillment) }.
           not_to change { stock_level.reload.count_on_hand }
+      end
+
+      # The merchant has to say which it is: a ledger error to correct, or
+      # goods the warehouse knows it does not have.
+      it 'refuses a dispatch the shelf cannot cover' do
+        fulfillment.stock_location.allocate(variant, quantity, fulfillment)
+
+        result = subject.call(fulfillment: fulfillment)
+
+        expect(result.success?).to eq(false)
+        expect(result.error.to_s).to match(/only 0 are on hand/)
+        expect(fulfillment.reload).not_to be_fulfilled
+        expect(stock_level.reload.count_on_hand).to eq(0)
       end
 
       # Departure is a physical fact: a forced dispatch records the parcel even

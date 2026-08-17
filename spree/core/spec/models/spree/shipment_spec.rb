@@ -760,7 +760,15 @@ describe Spree::Shipment, type: :model do
         let(:paid_order) { create(:order_ready_to_ship) }
         let(:fulfillment) { paid_order.fulfillments.first }
 
-        before { fulfillment.update_column(:status, status) }
+        before do
+          # A placed order's goods were on the shelf when it was placed; the
+          # factory never puts them there, and a dispatch the shelf cannot
+          # cover is refused unless it is forced.
+          fulfillment.manifest.each do |item|
+            fulfillment.stock_location.stock_level_or_create(item.variant).update_column(:count_on_hand, 10)
+          end
+          fulfillment.update_column(:status, status)
+        end
 
         it 'updates fulfilled_at timestamp' do
           Spree.fulfillment_fulfill_workflow.call(fulfillment: fulfillment)

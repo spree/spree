@@ -196,13 +196,12 @@ describe Spree::StockLevel, type: :model do
         expect(subject.count_on_hand).to eq(-1)
       end
 
-      # Test for #3755. Only a departure may drive the shelf further below
-      # zero now, so this states the kind that is doing the writing.
+      # Test for #3755. Only a dispatch may drive the shelf further below zero
+      # now, so this says so at the call.
       it 'does not process backorders when stock is adjusted negatively' do
         expect(inventory_unit).not_to receive(:fill_backorder)
         expect(inventory_unit_2).not_to receive(:fill_backorder)
-        subject.applying_movement_kind = 'shipped'
-        subject.adjust_count_on_hand(-1)
+        subject.adjust_count_on_hand(-1, force: true)
         expect(subject.count_on_hand).to eq(-3)
       end
 
@@ -238,11 +237,7 @@ describe Spree::StockLevel, type: :model do
       let(:inventory_unit) { double('InventoryUnit') }
       let(:inventory_unit_2) { double('InventoryUnit2') }
 
-      before do
-        subject.applying_movement_kind = 'shipped'
-        subject.set_count_on_hand(-2)
-        subject.applying_movement_kind = nil
-      end
+      before { subject.set_count_on_hand(-2, force: true) }
 
       it "doesn't process backorders" do
         expect(subject).not_to receive(:backordered_inventory_units)
@@ -425,10 +420,26 @@ describe Spree::StockLevel, type: :model do
           it_behaves_like 'not valid count_on_hand'
         end
 
-        context 'and a departure is what is writing it' do
-          before { subject.applying_movement_kind = 'shipped' }
+        context 'and a dispatch is what is writing it' do
+          it 'is let through' do
+            subject.update_column(:count_on_hand, 3)
 
-          it_behaves_like 'valid count_on_hand'
+            subject.set_count_on_hand(-3, force: true)
+
+            expect(subject.reload.count_on_hand).to eq(-3)
+          end
+
+          # The exemption belongs to the write that asked for it, not to the
+          # record — the next save must be policed again.
+          it 'does not outlive the call that asked for it' do
+            subject.update_column(:count_on_hand, 3)
+            subject.set_count_on_hand(-3, force: true)
+
+            subject.count_on_hand = -4
+            subject.save
+
+            expect(subject.errors[:count_on_hand]).to include 'must be greater than or equal to 0'
+          end
         end
       end
     end

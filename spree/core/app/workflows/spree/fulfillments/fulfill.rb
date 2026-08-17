@@ -104,6 +104,7 @@ module Spree
 
         ensure_order_placed
         ensure_ready_to_hand_over
+        ensure_shelf_can_cover_dispatch
         ensure_requested_units_available
       end
 
@@ -145,6 +146,66 @@ module Spree
         return if pending.any? && pending.all? { |payment| payment.payment_method&.capture_at_checkout? == false }
 
         failure(@source, Spree.t('fulfillments.errors.order_not_paid'))
+      end
+
+      # The shelf has to be able to cover what is about to leave it. A dispatch
+      # that would take it below zero is one of two things, and only the
+      # merchant can say which: a ledger error, fixed with a stock adjustment
+      # and then shipped normally, or goods the warehouse knows it does not
+      # have, which is what force is for.
+      #
+      # Refused here rather than at the stock write so it renders as a 422 the
+      # merchant can act on, instead of a validation exception surfacing from
+      # inside the dispatch transaction.
+      def ensure_shelf_can_cover_dispatch
+        return if force
+
+        quantities = dispatch_quantity_by_variant
+        return if quantities.empty?
+
+        variants = Spree::Variant.with_deleted.where(id: quantities.keys).index_by(&:id)
+
+        quantities.each do |variant_id, quantity|
+          stock_level = @source.stock_location.stock_level(variant_id)
+          next if stock_level.nil? || stock_level.count_on_hand >= quantity
+
+          failure(
+            @source,
+            Spree.t('fulfillments.errors.insufficient_stock_on_hand',
+                    item: variants[variant_id]&.name,
+                    on_hand: stock_level.count_on_hand,
+                    requested: quantity)
+          )
+        end
+      end
+
+      # What each variant will actually ship: its outstanding promise, capped
+      # by what this dispatch covers. A partial dispatch splits first and the
+      # split carries min(promise, moved quantity), so the two agree.
+      #
+      # @return [Hash{Integer => Integer}]
+      def dispatch_quantity_by_variant
+        held = @source.fulfillment_items.group(:variant_id).sum(:quantity)
+
+        # A canceled fulfillment gets its promise back on the way out (see
+        # #reallocate_if_resuming_from_canceled), so what it is about to take
+        # is its whole manifest rather than the nothing it holds right now.
+        allocated = @source.canceled? ? held : @source.allocated_quantities
+        return {} if allocated.empty?
+
+        wanted =
+          if @requested.empty?
+            held
+          else
+            @requested.each_with_object(Hash.new(0)) do |item, totals|
+              totals[item[:line_item].variant_id] += item[:quantity]
+            end
+          end
+
+        allocated.each_with_object({}) do |(variant_id, promised), totals|
+          quantity = [promised, wanted[variant_id].to_i].min
+          totals[variant_id] = quantity if quantity.positive?
+        end
       end
 
       # Each requested quantity has to exist in *this* fulfillment. Without
@@ -225,7 +286,7 @@ module Spree
           quantity = [allocated[item.variant.id].to_i, item.quantity].min
           next unless quantity.positive?
 
-          @fulfillment.stock_location.unstock(item.variant, quantity, @fulfillment)
+          @fulfillment.stock_location.unstock(item.variant, quantity, @fulfillment, force: force)
         end
       end
 

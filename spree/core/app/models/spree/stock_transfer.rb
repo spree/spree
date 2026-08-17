@@ -89,11 +89,17 @@ module Spree
       errors.add(:base, Spree.t('stock_transfer.errors.must_have_variant')) if stock_movements.empty?
     end
 
+    # Each variant needs enough available stock for the quantity being moved,
+    # not merely some. Checking only for a positive balance let a transfer take
+    # more than the shelf held and leave it negative.
     def variants_available_in_source_location?(source_location, variants)
       return true if source_location.nil?
 
-      available = Spree::StockLevel.arel_table[:count_on_hand] - Spree::StockLevel.arel_table[:allocated_count]
-      source_location.stock_levels.where(variant: variants.keys).where(available.gt(0)).size == variants.keys.size
+      variants.all? do |variant, quantity|
+        stock_level = source_location.stock_level(variant)
+
+        stock_level.present? && stock_level.available_count >= quantity.to_i
+      end
     end
   end
 end

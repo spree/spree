@@ -144,12 +144,14 @@ module Spree
       move(variant, quantity, kind: 'received', cause: cause, persist: persist)
     end
 
-    # Goods left. Departure is a physical fact, so this is allowed to take the
-    # shelf below zero.
+    # Goods left.
     #
+    # @param force [Boolean] record the departure even if it leaves the shelf
+    #   below zero. A merchant forcing a dispatch has decided the parcel left
+    #   whatever the ledger claims.
     # @return [Spree::StockMovement]
-    def unstock(variant, quantity, cause = nil, persist: true)
-      move(variant, quantity, kind: 'shipped', cause: cause, persist: persist)
+    def unstock(variant, quantity, cause = nil, persist: true, force: false)
+      move(variant, quantity, kind: 'shipped', cause: cause, persist: persist, force: force)
     end
 
     # Promises stock to a placed order. The cause is the fulfillment, never
@@ -180,16 +182,19 @@ module Spree
       move(variant, quantity, kind: 'adjusted', reason: reason)
     end
 
-    def move(variant, quantity, kind:, cause: nil, reason: nil, persist: true)
+    def move(variant, quantity, kind:, cause: nil, reason: nil, persist: true, force: false)
       stock_level = stock_level_or_create(variant)
       attributes = { quantity: quantity, kind: kind, reason: reason, **cause_attributes(cause) }
 
       if persist
-        stock_level.stock_movements.create!(attributes)
+        stock_level.stock_movements.create!(attributes) { |movement| movement.force = force }
       else
         # StockTransfer builds its movements before it is saved, so they ride
         # along on its own association rather than being created here.
-        cause.stock_movements << stock_level.stock_movements.build(attributes)
+        built = stock_level.stock_movements.build(attributes)
+        built.force = force
+        cause.stock_movements << built
+        built
       end
     end
 
