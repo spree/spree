@@ -3369,7 +3369,7 @@
       },
       "tax_category_placeholder": "Steuerkategorie auswählen",
       "transfers": {
-        "create_description": "Bestand zwischen Standorten verschieben oder neuen Bestand von einem externen Lieferanten empfangen.",
+        "create_description": "Bestand zwischen Lagern bewegen oder neuen Bestand von einem externen Lieferanten annehmen.",
         "delete_confirm": {
           "message": "Durch diesen Transfer erstellte Bestandsbewegungen werden rückgängig gemacht.",
           "title": "Diesen Transfer löschen?"
@@ -3377,7 +3377,7 @@
         "destination_placeholder": "Zielstandort auswählen",
         "details_card": "Details",
         "different_locations_error": "Quelle und Ziel müssen sich unterscheiden.",
-        "external_label": "Extern (Lieferanten-Wareneingang)",
+        "external_label": "Extern (Wareneingang vom Lieferanten)",
         "fields": {
           "created": "Erstellt",
           "external_receive": "Externer Wareneingang",

@@ -3365,7 +3365,7 @@
       },
       "tax_category_placeholder": "选择税务类别",
       "transfers": {
-        "create_description": "在不同地点之间调拨库存，或从外部供应商接收新库存。",
+        "create_description": "在库存地点之间调拨库存，或从外部供应商收货。",
         "delete_confirm": {
           "message": "此调拨创建的库存变动将被撤销。",
           "title": "删除此调拨？"
@@ -3373,7 +3373,7 @@
         "destination_placeholder": "选择目标地点",
         "details_card": "详情",
         "different_locations_error": "来源地点和目标地点必须不同。",
-        "external_label": "外部（供应商接收）",
+        "external_label": "外部（供应商收货）",
         "fields": {
           "created": "创建时间",
           "external_receive": "外部接收",
@@ -3389,7 +3389,7 @@
         },
         "new_cta": "新建调拨",
         "reference_label": "参考编号",
-        "reference_placeholder": "采购订单号、供应商发票…",
+        "reference_placeholder": "采购单号、供应商发票……",
         "review_description": "创建前请检查此调拨。创建后将无法更改商品项。",
         "search_items_placeholder": "按名称或 SKU 搜索（3 个以上字符）…"
       },

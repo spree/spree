@@ -3385,7 +3385,7 @@
       },
       "tax_category_placeholder": "Select tax category",
       "transfers": {
-        "create_description": "انقل المخزون بين المواقع، أو احصل على مخزون جديد من بائع خارجي.",
+        "create_description": "انقل المخزون بين المواقع، أو استلم مخزونًا جديدًا من مورّد خارجي.",
         "delete_confirm": {
           "message": "سيتم عكس حركات المخزون الناتجة عن هذا النقل.",
           "title": "هل تريد حذف هذا النقل؟"
@@ -3393,7 +3393,7 @@
         "destination_placeholder": "حدد موقع الوجهة",
         "details_card": "تفاصيل",
         "different_locations_error": "يجب أن يختلف المصدر والوجهة.",
-        "external_label": "خارجي (استلام البائع)",
+        "external_label": "خارجي (استلام من مورّد)",
         "fields": {
           "created": "مخلوق",
           "external_receive": "استلام خارجي",
@@ -3409,7 +3409,7 @@
         },
         "new_cta": "نقل جديد",
         "reference_label": "مرجع",
-        "reference_placeholder": "رقم أمر الشراء، فاتورة البائع،…",
+        "reference_placeholder": "رقم أمر الشراء، فاتورة المورّد، …",
         "review_description": "قم بمراجعة النقل قبل الإنشاء. لا يمكن تغيير العناصر بعد ذلك.",
         "search_items_placeholder": "البحث بالاسم أو SKU (3+ أحرف) …"
       },

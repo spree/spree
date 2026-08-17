@@ -2,7 +2,7 @@ import { expect, type Page, test } from '@playwright/test'
 import { escapeRegex, gotoIndex, login, openRowMenu } from './helpers'
 
 const VENDORS_PATH = (storeId: string) => `/${storeId}/vendors`
-const CTA = /add vendor/i
+const CTA = /add seller/i
 
 /** The vendor name cell is a link to the detail page, not a sheet trigger. */
 function rowLink(page: Page, name: string) {
@@ -20,10 +20,10 @@ function cardEdit(page: Page, title: RegExp) {
 /** Creating a vendor lands on its profile page. */
 async function createVendor(page: Page, name: string) {
   await page.getByRole('button', { name: CTA }).click()
-  await expect(page.getByRole('heading', { name: /new vendor/i })).toBeVisible()
+  await expect(page.getByRole('heading', { name: /new seller/i })).toBeVisible()
 
   await page.locator('#name').fill(name)
-  await page.getByRole('button', { name: /create vendor/i }).click()
+  await page.getByRole('button', { name: /create seller/i }).click()
 
   await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 15_000 })
 }
@@ -71,7 +71,7 @@ test.describe('vendors', () => {
     await createVendor(page, name)
 
     await page.getByRole('button', { name: /^invite$/i }).click()
-    await expect(page.getByRole('heading', { name: /invite vendor/i })).toBeVisible()
+    await expect(page.getByRole('heading', { name: /invite seller/i })).toBeVisible()
 
     await page.locator('#invite-email').fill(`seller-${Date.now()}@example.com`)
     await page.getByRole('button', { name: /send invitation/i }).click()
@@ -164,7 +164,7 @@ test.describe('vendors', () => {
 
     await openRowMenu(page, name)
     await page.getByRole('menuitem', { name: /^delete$/i }).click()
-    await expect(page.getByRole('heading', { name: /delete vendor\?/i })).toBeVisible()
+    await expect(page.getByRole('heading', { name: /delete seller\?/i })).toBeVisible()
     await page
       .getByRole('dialog')
       .getByRole('button', { name: /^delete$/i })

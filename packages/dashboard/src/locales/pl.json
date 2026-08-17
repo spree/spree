@@ -3421,7 +3421,7 @@
       },
       "tax_category_placeholder": "Wybierz kategorię podatkową",
       "transfers": {
-        "create_description": "Przenoś zapasy między lokalizacjami lub przyjmuj nowe zapasy od zewnętrznego dostawcy.",
+        "create_description": "Przenieś zapasy między lokalizacjami lub przyjmij nowy towar od zewnętrznego dostawcy.",
         "delete_confirm": {
           "message": "Ruchy magazynowe utworzone przez ten transfer zostaną cofnięte.",
           "title": "Usunąć ten transfer?"
@@ -3429,7 +3429,7 @@
         "destination_placeholder": "Wybierz lokalizację docelową",
         "details_card": "Szczegóły",
         "different_locations_error": "Lokalizacja źródłowa i docelowa muszą się różnić.",
-        "external_label": "Zewnętrzny (przyjęcie od dostawcy)",
+        "external_label": "Zewnętrzne (przyjęcie od dostawcy)",
         "fields": {
           "created": "Utworzono",
           "external_receive": "Przyjęcie zewnętrzne",

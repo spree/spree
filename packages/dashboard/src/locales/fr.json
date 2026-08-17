@@ -3369,7 +3369,7 @@
       },
       "tax_category_placeholder": "Sélectionner une catégorie de taxe",
       "transfers": {
-        "create_description": "Déplacez du stock entre emplacements, ou recevez du nouveau stock d'un fournisseur externe.",
+        "create_description": "Déplacer du stock entre les emplacements, ou recevoir du nouveau stock d’un fournisseur externe.",
         "delete_confirm": {
           "message": "Les mouvements de stock créés par ce transfert seront annulés.",
           "title": "Supprimer ce transfert ?"
@@ -3393,7 +3393,7 @@
         },
         "new_cta": "Nouveau transfert",
         "reference_label": "Référence",
-        "reference_placeholder": "Numéro de bon de commande, facture fournisseur, …",
+        "reference_placeholder": "Numéro de commande, facture fournisseur, …",
         "review_description": "Vérifiez le transfert avant de le créer. Les articles ne pourront plus être modifiés ensuite.",
         "search_items_placeholder": "Rechercher par nom ou SKU (3 caractères ou plus)…"
       },
