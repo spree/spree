@@ -34,6 +34,30 @@ RSpec.describe Spree::Stores::ProvisionDefaults do
     end
   end
 
+  # The storefront language and the back-office language are separate
+  # settings, and setup only asks once — so the answer has to reach both.
+  describe 'the admin language' do
+    it 'puts the back office in the chosen language too' do
+      subject
+
+      expect(store.reload.preferred_admin_locale).to eq('de')
+    end
+
+    it 'leaves an existing choice alone' do
+      store.update!(preferred_admin_locale: 'fr')
+
+      expect { subject }.not_to change { store.reload.preferred_admin_locale }
+    end
+
+    # The dashboard ships its own set of admin translations, which this side
+    # cannot check; it ignores a code it has no bundle for.
+    it 'records the language even when it has no admin translations' do
+      described_class.call(store: store, country: Spree::Country.by_iso('AL'), locale: 'sq')
+
+      expect(store.reload.preferred_admin_locale).to eq('sq')
+    end
+  end
+
   describe 'the stock location' do
     it 'places the warehouse in the chosen country' do
       subject

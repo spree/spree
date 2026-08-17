@@ -125,6 +125,15 @@ RSpec.describe Spree::Api::V3::Admin::SetupController, type: :controller do
         expect(store.delivery_zones.find_by(name: 'Domestic').members.pluck(:country_code)).to eq(['DE'])
       end
 
+      # Setup asks for one language, so it has to reach the back office as
+      # well as the storefront — the dashboard reads its own setting.
+      it 'puts the back office in the chosen language' do
+        post :create, params: valid_params.merge(country_code: 'de', locale: 'de'), as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(@default_store.reload.preferred_admin_locale).to eq('de')
+      end
+
       it 'accepts a currency that differs from the country default' do
         post :create, params: valid_params.merge(country_code: 'PL', locale: 'pl', currency: 'eur'), as: :json
 

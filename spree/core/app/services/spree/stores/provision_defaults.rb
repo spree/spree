@@ -83,6 +83,7 @@ module Spree
           default_locale: locale,
           updated_at: Time.current
         )
+        adopt_admin_locale
         store.association(:default_market).reset
 
         market = store.default_market
@@ -95,6 +96,24 @@ module Spree
         market.save!
 
         store.association(:default_market).reset
+      end
+
+      # The merchant is asked for one language, and expects it to apply to the
+      # back office as well as the storefront — those are separate settings,
+      # and setting only the storefront one leaves the dashboard in English.
+      # This is the store-wide default, the weakest of the three tiers: an
+      # admin's own choice still wins, and Settings can change it later.
+      #
+      # Written even when the dashboard ships no translations for it. Whether
+      # a language has an admin bundle is the dashboard's own fact, not one
+      # this side can check without going stale — an unsupported code is
+      # ignored there and falls back to English, and starts working on its
+      # own if a bundle lands later.
+      def adopt_admin_locale
+        return if store.preferred_admin_locale.present?
+
+        store.preferred_admin_locale = locale
+        store.save!
       end
 
       # Match on identity alone: folding the other attributes into the finder
