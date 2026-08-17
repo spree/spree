@@ -629,17 +629,13 @@ module Spree
       Spree::Pricing::Resolver.new(context).resolve
     end
 
-    # Sets the stock for the variant at a given location.
-    # Mirrors set_price: find-or-initialize, set attrs, save only if persisted.
-    # @param count_on_hand [Integer] the count on hand
-    # @param backorderable [Boolean] the backorderable flag
-    # @param stock_location [Spree::StockLocation] the stock location (defaults to store default)
-    # @return [void]
     # Sets the count at a location. The correction goes through an `adjusted`
     # movement so it shows up in the stock history like every other change.
+    # A count below zero is refused whatever the variant's backorder settings
+    # say, so a caller passing one gets ActiveRecord::RecordInvalid.
     #
     # @param count_on_hand [Integer] the count the level should end up at
-    # @param backorderable [Boolean, nil]
+    # @param backorderable [Boolean, nil] left as it is when nil
     # @param stock_location [Spree::StockLocation, nil] defaults to the store's
     # @return [void]
     def set_stock(count_on_hand, backorderable = nil, stock_location = nil)
