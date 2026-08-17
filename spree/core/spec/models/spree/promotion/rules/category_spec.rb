@@ -127,4 +127,14 @@ describe Spree::Promotion::Rules::Category, type: :model do
       expect(rule.taxons).to match_array(taxons)
     end
   end
+
+  # A promotion must not discount against a catalog its own store cannot see.
+  context 'when given a category from another store' do
+    let(:foreign_category) { create(:category, store: create(:store)) }
+
+    it 'rejects the foreign ID' do
+      expect { rule.category_ids = [foreign_category.prefixed_id] }.
+        to raise_error(ActiveRecord::RecordNotFound)
+    end
+  end
 end

@@ -25,9 +25,13 @@ module Spree
 
         # Decode prefixed IDs before delegating to the generated setter (direct
         # calls bypass PrefixedId's assign_attributes auto-resolver).
+        #
+        # Resolved through the promotion's own store, so an id belonging to
+        # another store raises rather than quietly linking — the promotion
+        # would otherwise discount against a catalog its store cannot see.
         def category_ids=(ids)
           super(Array(ids).map do |id|
-            Spree::PrefixedId.prefixed_id?(id) ? Spree::Category.find_by_param!(id).id : id
+            Spree::PrefixedId.prefixed_id?(id) ? promotion_categories_scope.find_by_param!(id).id : id
           end)
         end
 
@@ -133,6 +137,12 @@ module Spree
         end
 
         private
+
+        # A rule built before its promotion is attached has no store to read,
+        # so it resolves nothing rather than falling back to every category.
+        def promotion_categories_scope
+          promotion&.store&.categories || Spree::Category.none
+        end
 
         # IDs of categories in rule including all their children
         def eligible_category_ids_including_children
