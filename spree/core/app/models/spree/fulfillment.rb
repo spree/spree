@@ -32,6 +32,13 @@ module Spree
     has_many :fees, class_name: 'Spree::Fee', dependent: :destroy, inverse_of: :fulfillment
     has_many :delivery_methods, through: :delivery_rates
     has_many :variants, through: :fulfillment_items
+    # The ledger rows this fulfillment caused. Deliberately no `dependent:`
+    # option: a movement is a committed fact about stock that outlives the
+    # fulfillment behind it, and every option Rails offers would either delete
+    # those rows or rewrite their cause. Draining a fulfillment already hands
+    # its promise to the one taking the units over, so nothing is left holding
+    # stock by the time it is destroyed.
+    has_many :stock_movements, class_name: 'Spree::StockMovement', inverse_of: :fulfillment
     has_one :selected_delivery_rate, -> { where(selected: true).order(:cost) }, class_name: 'Spree::DeliveryRate'
 
     after_save :update_adjustments
@@ -348,12 +355,12 @@ module Spree
     #
     # @return [Hash{Integer => Integer}]
     def allocated_quantities
+      # An unsaved fulfillment has caused nothing.
       return {} unless persisted?
 
       totals = Hash.new(0)
 
-      Spree::StockMovement.
-        where(fulfillment_id: id).
+      stock_movements.
         joins(:stock_level).
         group("#{Spree::StockLevel.table_name}.variant_id", :kind).
         sum(:quantity).

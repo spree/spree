@@ -9,7 +9,9 @@ module Spree
 
     publishes_lifecycle_events
 
-    has_many :stock_movements, class_name: 'Spree::StockMovement', inverse_of: :stock_transfer, dependent: :nullify
+    # No `dependent:` option, for the reason given on Spree::Fulfillment's own
+    # movements: the ledger outlives the record that caused it.
+    has_many :stock_movements, class_name: 'Spree::StockMovement', inverse_of: :stock_transfer
     accepts_nested_attributes_for :stock_movements, reject_if: proc { |attributes|
       attributes[:quantity] = attributes[:quantity].to_i
       attributes[:quantity].blank? || attributes[:quantity].zero? || attributes[:stock_level_id].blank?
