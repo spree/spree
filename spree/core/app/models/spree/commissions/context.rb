@@ -1,0 +1,64 @@
+# frozen_string_literal: true
+
+module Spree
+  module Commissions
+    # What a commission rule is asked about: one sale, and everything a rule
+    # might want to know about it.
+    #
+    # Assembled once per line rather than let each rule reach into the record
+    # itself, so a rule stays a predicate and the expensive parts — the
+    # category walk especially — are resolved for the whole order up front.
+    # Mirrors Spree::Pricing::Context, which serves price rules the same way.
+    class Context
+      attr_reader :line_item, :fulfillment, :vendor, :order, :currency
+
+      # @param vendor [Spree::Vendor] the seller being charged
+      # @param order [Spree::Order]
+      # @param line_item [Spree::LineItem, nil] the sale being commissioned…
+      # @param fulfillment [Spree::Fulfillment, nil] …or its delivery
+      # @param currency [String, nil] defaults to the order's
+      # @param categories [Array<Spree::Category>, nil] the product's
+      #   categories *with their ancestors*, resolved once for the order — a
+      #   rate on a parent governs everything filed beneath it
+      def initialize(vendor:, order:, line_item: nil, fulfillment: nil, currency: nil, categories: nil)
+        @vendor = vendor
+        @order = order
+        @line_item = line_item
+        @fulfillment = fulfillment
+        @currency = currency || order&.currency
+        @categories = categories
+      end
+
+      # What is being commissioned — the item, or the delivery.
+      #
+      # @return [Spree::LineItem, Spree::Fulfillment, nil]
+      def subject
+        line_item || fulfillment
+      end
+
+      # @return [Spree::Product, nil] nil when commissioning a delivery
+      def product
+        line_item&.variant&.product
+      end
+
+      # The product's categories and every category above them. Empty when
+      # commissioning a delivery, which belongs to no category.
+      #
+      # @return [Array<Spree::Category>]
+      def categories
+        return @categories if @categories
+
+        @categories = product ? Spree::Commissions::ResolveRate.categories_for([product]).fetch(product.id, []) : []
+      end
+
+      # The money a rule about value should compare against: the same
+      # discounted, never-negative figure the fee itself is charged on, so a
+      # band and the charge it gates never disagree about what a sale was worth.
+      #
+      # @return [BigDecimal, nil]
+      def commission_basis
+        subject&.taxable_basis
+      end
+    end
+  end
+end

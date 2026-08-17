@@ -1,32 +1,73 @@
 # frozen_string_literal: true
 
 module Spree
-  # One targeting clause on a Spree::CommissionRate: this rate applies to this
-  # product, this category, or this seller.
+  # One condition on a Spree::CommissionRate: the rate applies to this sale
+  # only if every one of its rules says so.
   #
-  # Not STI, unlike the promotion and price rules: a commission rule carries no
-  # behavior of its own and no preferences — it names a record, and matching is
-  # set membership. The dimension it constrains is its `subject_type`, so
-  # adding one (a channel, a market) needs no new class.
+  # Typed like Spree::PriceRule and Spree::DeliveryMethodRule, and for the same
+  # reason. A rule that could only name a record — this seller, this category —
+  # left everything else unsayable: a price band, a channel, a promotional
+  # window. Each of those was a schema migration and an edit to the matcher.
+  # As a class it is a subclass and a registration.
   #
-  # A rule with no subject is a global one, which reads the same as a rate
-  # holding no rules at all; both match every sale.
+  # AND across rules, and a rule holding several ids means any of them, so
+  # "(Cameras OR Audio) AND that seller" is two rules rather than a policy
+  # setting. A rate with no rules charges every sale.
   class CommissionRule < Spree.base_class
+    include Spree::PreferenceSchema
+
     has_prefix_id :crule
 
-    SUBJECT_TYPES = %w[Spree::Product Spree::Category Spree::Vendor].freeze
+    belongs_to :commission_rate, class_name: 'Spree::CommissionRate',
+                                 inverse_of: :commission_rules, touch: true
 
-    belongs_to :commission_rate, class_name: 'Spree::CommissionRate', inverse_of: :commission_rules
-    belongs_to :subject, polymorphic: true, optional: true
+    # Rules reach the store through their rate, which is what lets a rule's
+    # own reference lists be scope-checked against it.
+    delegate :store, to: :commission_rate, allow_nil: true
 
-    validates :subject_type, inclusion: { in: SUBJECT_TYPES }, allow_blank: true
-    validates :subject_id, presence: true, if: -> { subject_type.present? }
-    validates :subject_type, presence: true, if: -> { subject_id.present? }
-    validates :subject_id, uniqueness: { scope: [:commission_rate_id, :subject_type] }, allow_nil: true
+    validates :type, presence: true
+    # One of each kind per rate: a second rule of the same kind would either
+    # repeat the first or contradict it, and under AND semantics contradiction
+    # means the rate silently never applies.
+    validates :type, uniqueness: { scope: [:commission_rate_id, *spree_base_uniqueness_scope] }
+    validate :type_must_be_registered
 
+    registers_subclasses_via { Spree.commission_rules }
+
+    # Extra params a subclass accepts beyond `type` and `preferences` —
+    # association-backed config declares itself here so the nested rules API
+    # stays generic (mirrors Spree::DeliveryMethodRule).
+    #
+    # @return [Array]
+    def self.additional_permitted_attributes
+      []
+    end
+
+    # @return [String] the name an operator picks this rule kind by
+    def self.human_name
+      Spree.t("commission_rule_types.#{api_type}.name", default: name.demodulize.titleize)
+    end
+
+    # @return [String] what the rule does, shown beside the name in the picker
+    def self.description
+      Spree.t("commission_rule_types.#{api_type}.description", default: '')
+    end
+
+    # Whether this rule admits the sale.
+    #
+    # @param context [Spree::Commissions::Context]
     # @return [Boolean]
-    def global?
-      subject_type.blank? || subject_id.blank?
+    def applicable?(context)
+      raise NotImplementedError, "#{self.class.name} must implement #applicable?"
+    end
+
+    private
+
+    def type_must_be_registered
+      return if type.blank?
+      return if Spree.commission_rules.any? { |rule| rule.to_s == type }
+
+      errors.add(:type, :invalid_commission_rule)
     end
   end
 end

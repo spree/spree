@@ -14,32 +14,43 @@ module Spree
         class CommissionRatesController < ResourceController
           scoped_resource :commissions
 
-          # GET /api/v3/admin/commission_rates/rule_subject_types
+          # GET /api/v3/admin/commission_rates/rule_types
           #
-          # What a rule may target, so the dashboard can build its picker
-          # without hardcoding a list that core owns.
-          def rule_subject_types
-            authorize! :read, Spree::CommissionRule
+          # Every registered rule kind with its configuration schema, so a
+          # client builds its editor from what the marketplace actually has
+          # rather than a list hardcoded to match core's.
+          def rule_types
+            authorize! :create, Spree::CommissionRule
 
-            render json: {
-              data: Spree::CommissionRule::SUBJECT_TYPES.map do |subject_type|
-                {
-                  type: subject_type,
-                  name: Spree.t("commission_rule_subjects.#{subject_type.demodulize.underscore}",
-                                default: subject_type.demodulize.titleize)
-                }
-              end
-            }
+            data = Spree.commission_rules.map do |klass|
+              {
+                type: klass.api_type,
+                name: klass.human_name,
+                description: klass.description,
+                preference_schema: klass.serialized_preference_schema,
+                # Config a rule takes beyond its preferences — a catalog-scale
+                # reference list lives in its own table, not the blob, and an
+                # editor has to know to render a picker for it.
+                association_fields: association_fields_for(klass)
+              }
+            end
+
+            render json: { data: data }
           end
 
+          # A rule kind nobody registered is refused rather than skipped.
+          # `assign_typed_association` drops a row it cannot resolve, which
+          # would leave the rate with fewer rules than the client sent — and
+          # fewer rules means a rate that charges *more* sales, so a typo would
+          # silently widen what a marketplace bills.
           def create
-            return if reject_unreachable_rules
+            return if reject_unregistered_rules
 
             super
           end
 
           def update
-            return if reject_unreachable_rules
+            return if reject_unregistered_rules
 
             super
           end
@@ -59,13 +70,13 @@ module Spree
           end
 
           def collection_includes
-            [{ commission_rules: :subject }]
+            [:commission_rules]
           end
 
-          # `rule_subject_types` is read-only discovery — maps to the read
-          # scope and the :show ability rather than counting as a write.
+          # `rule_types` is read-only discovery — maps to the read scope and
+          # the :show ability rather than counting as a write.
           def read_actions
-            super + %w[rule_subject_types]
+            super + %w[rule_types]
           end
 
           def permitted_params
@@ -74,7 +85,7 @@ module Spree
                 :name, :code, :enabled, :position, :kind, :value, :currency,
                 :tax_inclusive, :include_shipping, :min_amount, :max_amount, :commission_tax_rate,
                 metadata: {},
-                rules: [:subject_type, :subject_id]
+                rules: [:id, :type, { preferences: {} }, *rule_association_attributes]
               )
             )
 
@@ -83,73 +94,38 @@ module Spree
 
           private
 
-          # Refuses a payload naming anything this store does not own, and
-          # answers whether it did so the action can stop before the write.
-          #
-          # Rejected rather than filtered, because `rules` replaces a rate's
-          # whole targeting: quietly dropping the bad rows would leave a rate
-          # with no rules, and a rate with no rules charges every seller on the
-          # marketplace. A client sending one stale id would silently widen what
-          # it meant to narrow, and get a 200 saying so.
-          #
-          # The model resolves subjects by id with no scoping of its own, so
-          # this is also what stops a rate being pointed at another store's
-          # catalog — the serializer reads the subject's name straight back,
-          # which would otherwise enumerate it.
-          def reject_unreachable_rules
-            unreachable = unreachable_rules
-            return false if unreachable.empty?
+          def reject_unregistered_rules
+            return false unless params.key?(:rules)
+
+            unknown = Array(params[:rules]).map { |rule| rule[:type].presence }.compact.reject do |type|
+              Spree.commission_rules.any? { |klass| klass.api_type == type }
+            end
+            return false if unknown.empty?
 
             errors = ActiveModel::Errors.new(Spree::CommissionRate.new)
-            unreachable.each do |rule|
-              errors.add(:rules, :not_found, message: rules_error_message(rule))
+            unknown.each do |type|
+              errors.add(:rules, :invalid, message: Spree.t('errors.messages.invalid_commission_rule_type', type: type))
             end
             render_validation_error(errors)
 
             true
           end
 
-          def rules_error_message(rule)
-            subject_type = rule[:subject_type].presence
-
-            if subject_type.blank? || !Spree::CommissionRule::SUBJECT_TYPES.include?(subject_type)
-              Spree.t('errors.messages.commission_rule_subject_type_unknown', type: subject_type.presence || '')
-            else
-              Spree.t('errors.messages.commission_rule_subject_not_found',
-                      type: subject_type, id: rule[:subject_id])
-            end
+          # Association-backed config every registered rule kind accepts, so
+          # the permit list stays generic. A rule naming catalog-scale records
+          # keeps them in its own table rather than its preferences.
+          def rule_association_attributes
+            Spree.commission_rules.flat_map do |klass|
+              klass.additional_permitted_attributes
+            end.uniq
           end
 
-          def unreachable_rules
-            return [] unless params.key?(:rules)
+          def association_fields_for(klass)
+            return [] unless klass.respond_to?(:additional_permitted_attributes)
 
-            Array(params[:rules]).reject do |rule|
-              subject_type = rule[:subject_type].presence
-              next true if subject_type.nil? && rule[:subject_id].blank?
-              next false unless Spree::CommissionRule::SUBJECT_TYPES.include?(subject_type)
-
-              own_store_subject?(subject_type, decode_subject_id(rule[:subject_id]))
-            end
-          end
-
-          # Ids arrive prefixed; `normalize_params` decodes them on the way to
-          # assignment, but this check reads the raw payload.
-          def decode_subject_id(value)
-            return value if value.blank?
-
-            prefixed_id?(value) ? decode_prefixed_id(value) : value
-          end
-
-          def own_store_subject?(subject_type, subject_id)
-            return false if subject_id.blank?
-
-            case subject_type
-            when 'Spree::Product' then current_store.products.exists?(id: subject_id)
-            when 'Spree::Vendor' then current_store.vendors.exists?(id: subject_id)
-            # Categories are store-owned too, and reached the same way.
-            when 'Spree::Category' then current_store.categories.exists?(id: subject_id)
-            else false
-            end
+            klass.additional_permitted_attributes.flat_map do |attribute|
+              attribute.is_a?(Hash) ? attribute.keys : attribute
+            end.map(&:to_s)
           end
         end
       end

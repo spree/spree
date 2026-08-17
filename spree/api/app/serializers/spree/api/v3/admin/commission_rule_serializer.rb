@@ -2,35 +2,48 @@ module Spree
   module Api
     module V3
       module Admin
-        # Serializes Spree::CommissionRule — one targeting clause on a rate.
+        # Serializes Spree::CommissionRule — one condition on a rate.
         #
         # Admin-only, like everything commission: what a marketplace charges is
         # between it and its sellers, so there is no Store API counterpart.
         #
-        # `subject_name` saves the SPA a lookup per rule: a rules list has to
-        # render "Cameras" rather than a prefixed id, and the alternative is
-        # three more requests to resolve a handful of names.
+        # Shaped like the price-rule serializer so one generic editor can drive
+        # both: the wire `type`, the values, and the schema describing them.
         class CommissionRuleSerializer < V3::BaseSerializer
-          typelize commission_rate_id: :string,
-                   subject_type: 'string | null',
-                   subject_id: 'string | null',
-                   subject_name: 'string | null'
+          typelize type: :string,
+                   commission_rate_id: :string,
+                   preferences: 'Record<string, unknown>',
+                   preference_schema: 'Array<{ key: string; type: string; default: unknown }>',
+                   label: :string,
+                   description: 'string | null',
+                   product_ids: [:string, multi: true]
 
-          attributes :subject_type, created_at: :iso8601, updated_at: :iso8601
+          attributes created_at: :iso8601, updated_at: :iso8601
+
+          attribute :type do |rule|
+            rule.class.api_type
+          end
 
           attribute :commission_rate_id do |rule|
             rule.commission_rate&.prefixed_id
           end
 
-          attribute :subject_id do |rule|
-            rule.subject&.prefixed_id
+          attribute :preferences, &:serialized_preferences
+          attribute :preference_schema, &:serialized_preference_schema
+
+          attribute :label do |rule|
+            rule.class.human_name
           end
 
-          attribute :subject_name do |rule|
-            subject = rule.subject
-            next nil if subject.nil?
+          attribute :description do |rule|
+            rule.class.description.presence
+          end
 
-            subject.try(:name) || subject.try(:title)
+          # Catalog-scale references live in their own table rather than the
+          # preferences blob, so they are read back separately — omitted
+          # entirely for rule kinds that carry none.
+          attribute :product_ids, if: proc { |rule| rule.respond_to?(:product_prefixed_ids) } do |rule|
+            rule.product_prefixed_ids
           end
         end
       end

@@ -64,97 +64,143 @@ RSpec.describe Spree::CommissionRate, type: :model do
     end
   end
 
-  describe '#matches_subjects?' do
+  describe '#matches?' do
     let(:vendor) { create(:vendor, store: store) }
     let(:other_vendor) { create(:vendor, store: store) }
-    let(:cameras) { create(:category) }
-    let(:audio) { create(:category) }
+    let(:cameras) { create(:category, store: store) }
+    let(:audio) { create(:category, store: store) }
     let(:product) { create(:product, store: store) }
+    let(:order) { create(:order, store: store) }
+    let(:line_item) { create(:line_item, order: order, variant: product.default_variant, price: 100) }
 
-    let(:subjects) do
-      { 'Spree::Vendor' => [vendor], 'Spree::Category' => [cameras], 'Spree::Product' => [product] }
+    def context(categories: [cameras])
+      Spree::Commissions::Context.new(
+        vendor: vendor, order: order, line_item: line_item, categories: categories
+      )
     end
 
-    it 'matches everything when it carries no rules' do
-      expect(create(:commission_rate, store: store).matches_subjects?(subjects)).to be true
+    it 'charges every sale when it names nothing' do
+      expect(create(:commission_rate, store: store).matches?(context)).to be true
     end
 
-    it 'matches on a single dimension' do
+    it 'matches a rule naming the seller' do
       rate = create(:commission_rate, store: store)
-      create(:commission_rule, commission_rate: rate, subject: vendor)
+      create(:commission_vendor_rule, commission_rate: rate, vendors: [vendor])
 
-      expect(rate.reload.matches_subjects?(subjects)).to be true
+      expect(rate.reload.matches?(context)).to be true
     end
 
     it 'does not match a rule naming someone else' do
       rate = create(:commission_rate, store: store)
-      create(:commission_rule, commission_rate: rate, subject: other_vendor)
+      create(:commission_vendor_rule, commission_rate: rate, vendors: [other_vendor])
 
-      expect(rate.reload.matches_subjects?(subjects)).to be false
+      expect(rate.reload.matches?(context)).to be false
     end
 
-    # The dimension-grouped rule: OR inside one subject type.
-    it 'matches when any rule of a dimension matches' do
+    # A rule holding several ids means any of them — the OR lives inside the
+    # rule, which is why there is no match-policy setting.
+    it 'matches when any id in one rule matches' do
       rate = create(:commission_rate, store: store)
-      create(:commission_rule, commission_rate: rate, subject: cameras)
-      create(:commission_rule, commission_rate: rate, subject: audio)
+      create(:commission_category_rule, commission_rate: rate, categories: [cameras, audio])
 
-      expect(rate.reload.matches_subjects?(subjects)).to be true
+      expect(rate.reload.matches?(context)).to be true
     end
 
-    # ...and AND across them, which is what expresses "this seller, in this
-    # category" — the pairing a marketplace actually sells.
-    it 'requires every dimension it names to match' do
+    # ...and every rule has to agree, which is what expresses "this seller, in
+    # this category" — the pairing a marketplace actually sells.
+    it 'requires every rule to agree' do
       rate = create(:commission_rate, store: store)
-      create(:commission_rule, commission_rate: rate, subject: vendor)
-      create(:commission_rule, commission_rate: rate, subject: audio)
+      create(:commission_vendor_rule, commission_rate: rate, vendors: [vendor])
+      create(:commission_category_rule, commission_rate: rate, categories: [audio])
 
-      expect(rate.reload.matches_subjects?(subjects)).to be false
+      expect(rate.reload.matches?(context)).to be false
     end
 
     it 'matches a seller-and-category pairing when both hold' do
       rate = create(:commission_rate, store: store)
-      create(:commission_rule, commission_rate: rate, subject: vendor)
-      create(:commission_rule, commission_rate: rate, subject: cameras)
+      create(:commission_vendor_rule, commission_rate: rate, vendors: [vendor])
+      create(:commission_category_rule, commission_rate: rate, categories: [cameras])
 
-      expect(rate.reload.matches_subjects?(subjects)).to be true
+      expect(rate.reload.matches?(context)).to be true
     end
 
-    it 'ignores a dimension the rate says nothing about' do
+    # A rule left empty by a half-finished form narrows nothing. It must not
+    # be read as "every seller" — that would charge sales nobody targeted.
+    it 'does not match a rule that names nobody' do
       rate = create(:commission_rate, store: store)
-      create(:commission_rule, commission_rate: rate, subject: vendor)
+      create(:commission_vendor_rule, commission_rate: rate)
 
-      expect(rate.reload.matches_subjects?(subjects.except('Spree::Category'))).to be true
+      expect(rate.reload.matches?(context)).to be false
     end
 
-    it 'treats a global rule as no constraint' do
-      rate = create(:commission_rate, store: store)
-      create(:commission_rule, commission_rate: rate, subject: nil)
+    # The rule kind that could not exist while a rule could only name a record.
+    describe 'a value band' do
+      it 'matches inside the band' do
+        rate = create(:commission_rate, store: store)
+        create(:commission_item_total_rule, commission_rate: rate,
+                                            preferred_min_amount: 50, preferred_max_amount: 200)
 
-      expect(rate.reload.matches_subjects?(subjects)).to be true
+        expect(rate.reload.matches?(context)).to be true
+      end
+
+      it 'does not match below it' do
+        rate = create(:commission_rate, store: store)
+        create(:commission_item_total_rule, commission_rate: rate, preferred_min_amount: 500)
+
+        expect(rate.reload.matches?(context)).to be false
+      end
+
+      # Bounds meet at a number without covering it twice, so two bands can be
+      # laid end to end.
+      it 'treats the ceiling as exclusive' do
+        rate = create(:commission_rate, store: store)
+        create(:commission_item_total_rule, commission_rate: rate, preferred_max_amount: 100)
+
+        expect(rate.reload.matches?(context)).to be false
+      end
     end
   end
 
   describe '#rules=' do
     let(:vendor) { create(:vendor, store: store) }
-    let(:category) { create(:category) }
+    let(:category) { create(:category, store: store) }
 
     it 'replaces the rate targeting wholesale' do
       rate = create(:commission_rate, store: store)
-      create(:commission_rule, commission_rate: rate, subject: vendor)
+      create(:commission_vendor_rule, commission_rate: rate, vendors: [vendor])
 
-      rate.update!(rules: [{ subject_type: 'Spree::Category', subject_id: category.id }])
+      rate.update!(rules: [{ type: 'category_rule', preferences: { category_ids: [category.id] } }])
 
-      expect(rate.reload.commission_rules.map(&:subject)).to eq([category])
+      expect(rate.reload.commission_rules.map(&:class)).to eq([Spree::CommissionRules::CategoryRule])
+      expect(rate.commission_rules.first.preferred_category_ids.map(&:to_s)).to eq([category.id.to_s])
     end
 
     it 'clears the targeting when given nothing' do
       rate = create(:commission_rate, store: store)
-      create(:commission_rule, commission_rate: rate, subject: vendor)
+      create(:commission_vendor_rule, commission_rate: rate, vendors: [vendor])
 
       rate.update!(rules: [])
 
       expect(rate.reload.commission_rules).to be_empty
+    end
+
+    # A rule can only be pointed at records of the rate's own store — the
+    # preference writer checks as it writes, so the caller is told rather than
+    # having the id silently dropped.
+    it 'refuses a record belonging to another marketplace' do
+      rate = create(:commission_rate, store: store)
+      foreign_vendor = create(:vendor, store: create(:store))
+
+      expect {
+        rate.update!(rules: [{ type: 'vendor_rule', preferences: { vendor_ids: [foreign_vendor.id] } }])
+      }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    it 'builds rules on a rate that does not exist yet' do
+      rate = create(:commission_rate, store: store,
+                                      rules: [{ type: 'vendor_rule', preferences: { vendor_ids: [vendor.id] } }])
+
+      expect(rate.reload.commission_rules.map(&:class)).to eq([Spree::CommissionRules::VendorRule])
     end
   end
 
@@ -203,9 +249,9 @@ RSpec.describe Spree::CommissionRate, type: :model do
       expect(create(:commission_rate, store: store)).to be_global
     end
 
-    it 'is false once it targets something' do
+    it 'is false once it carries a rule' do
       rate = create(:commission_rate, store: store)
-      create(:commission_rule, commission_rate: rate, subject: create(:vendor, store: store))
+      create(:commission_vendor_rule, commission_rate: rate, vendors: [create(:vendor, store: store)])
 
       expect(rate.reload).not_to be_global
     end

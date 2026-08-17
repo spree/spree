@@ -1675,8 +1675,8 @@
           "help_fixed": "Pauschale pro Verkauf, in der Währung unten."
         },
         "rules": {
-          "label": "Gilt für",
-          "help": "Einträge in einem Feld sind Alternativen; jedes ausgefüllte Feld muss zutreffen. Alle leer lassen, um jeden Verkauf zu berechnen."
+          "label": "Bedingungen",
+          "help": "Jede Bedingung muss zutreffen; nennt eine Bedingung mehrere Einträge, genügt einer davon. Ein Satz ohne Bedingungen gilt für jeden Verkauf."
         },
         "min_amount": {
           "label": "Minimum"
@@ -4291,8 +4291,11 @@
         "updated": "Provisionssatz aktualisiert"
       },
       "search_placeholder": "Nach Namen suchen…",
-      "rule_picker_unavailable": "Dieser Build hat keine Auswahl für diesen Zieltyp.",
-      "order_hint": "Neue Sätze stehen oben in der Liste, und der erste passende gilt — zum Umsortieren ziehen."
+      "order_hint": "Neue Sätze stehen oben in der Liste, und der erste passende gilt — zum Umsortieren ziehen.",
+      "conditions": {
+        "add": "Bedingung hinzufügen",
+        "title": "Bedingungen"
+      }
     }
   }
 }

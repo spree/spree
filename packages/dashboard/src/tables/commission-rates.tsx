@@ -44,10 +44,13 @@ defineTable<CommissionRate>('commission-rates', {
       key: 'rules',
       label: i18n.t('admin.fields.commission_rate.rules.label'),
       default: true,
+      // The conditions by name — "Seller, Sale value" — rather than the records
+      // inside them, which would run to a paragraph on a rate naming fifty
+      // products. The editor shows what each one holds.
       render: (rate) =>
         rate.rules?.length ? (
           rate.rules
-            .map((rule) => rule.subject_name)
+            .map((rule) => rule.label)
             .filter(Boolean)
             .join(', ')
         ) : (

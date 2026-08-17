@@ -46,7 +46,7 @@ RSpec.describe Spree::Commissions::ResolveRate do
   it 'skips a higher-placed rate whose targeting does not match' do
     fallback = create(:commission_rate, store: store)
     mismatched = create(:commission_rate, store: store)
-    create(:commission_rule, commission_rate: mismatched, subject: other_vendor)
+    create(:commission_vendor_rule, commission_rate: mismatched, vendors: [other_vendor])
 
     expect(resolve).to eq(fallback)
   end
@@ -56,9 +56,9 @@ RSpec.describe Spree::Commissions::ResolveRate do
   # the order editable rather than inferring specificity.
   it 'lets the operator order beat any notion of how specific a rule is' do
     product_rate = create(:commission_rate, store: store)
-    create(:commission_rule, commission_rate: product_rate, subject: product)
+    create(:commission_product_rule, commission_rate: product_rate, products: [product])
     vendor_rate = create(:commission_rate, store: store)
-    create(:commission_rule, commission_rate: vendor_rate, subject: vendor)
+    create(:commission_vendor_rule, commission_rate: vendor_rate, vendors: [vendor])
 
     expect(resolve).to eq(vendor_rate)
 
@@ -71,7 +71,7 @@ RSpec.describe Spree::Commissions::ResolveRate do
   # unreachable. It belongs at the bottom, and the seed puts it there.
   it 'lets an untargeted rate shadow everything below it' do
     targeted = create(:commission_rate, store: store)
-    create(:commission_rule, commission_rate: targeted, subject: product)
+    create(:commission_product_rule, commission_rate: targeted, products: [product])
     catch_all = create(:commission_rate, store: store) # top of list
 
     expect(resolve).to eq(catch_all)
@@ -83,14 +83,14 @@ RSpec.describe Spree::Commissions::ResolveRate do
 
   it 'matches a rate targeting the seller' do
     rate = create(:commission_rate, store: store)
-    create(:commission_rule, commission_rate: rate, subject: vendor)
+    create(:commission_vendor_rule, commission_rate: rate, vendors: [vendor])
 
     expect(resolve).to eq(rate)
   end
 
   it 'matches a rate targeting the product' do
     rate = create(:commission_rate, store: store)
-    create(:commission_rule, commission_rate: rate, subject: product)
+    create(:commission_product_rule, commission_rate: rate, products: [product])
 
     expect(resolve).to eq(rate)
   end
@@ -99,7 +99,7 @@ RSpec.describe Spree::Commissions::ResolveRate do
     category = create(:category)
     product.categories << category
     rate = create(:commission_rate, store: store)
-    create(:commission_rule, commission_rate: rate, subject: category)
+    create(:commission_category_rule, commission_rate: rate, categories: [category])
 
     expect(resolve).to eq(rate)
   end
@@ -111,7 +111,7 @@ RSpec.describe Spree::Commissions::ResolveRate do
     child = create(:category, parent: parent, taxonomy: parent.taxonomy)
     product.categories << child
     rate = create(:commission_rate, store: store)
-    create(:commission_rule, commission_rate: rate, subject: parent)
+    create(:commission_category_rule, commission_rate: rate, categories: [parent])
 
     expect(resolve).to eq(rate)
   end

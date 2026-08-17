@@ -12,7 +12,7 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
 
   describe 'GET #index' do
     it 'lists the store rates with their targeting' do
-      create(:commission_rule, commission_rate: rate, subject: vendor)
+      create(:commission_vendor_rule, commission_rate: rate, vendors: [vendor])
 
       get :index, as: :json
 
@@ -21,7 +21,7 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
       expect(row['id']).to start_with('crate_')
       expect(row['name']).to eq('Standard')
       expect(row['kind']).to eq('percentage')
-      expect(row['rules'].first).to include('subject_type' => 'Spree::Vendor', 'subject_name' => vendor.name)
+      expect(row['rules'].first).to include('type' => 'vendor_rule', 'label' => 'Seller')
     end
 
     it "hides another marketplace's rates" do
@@ -49,12 +49,12 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
         name: 'Audio sellers',
         kind: 'percentage',
         value: 12.5,
-        rules: [{ subject_type: 'Spree::Vendor', subject_id: vendor.prefixed_id }]
+        rules: [{ type: 'vendor_rule', preferences: { vendor_ids: [vendor.prefixed_id] } }]
       }, as: :json
 
       expect(response).to have_http_status(:created)
       expect(json_response['value']).to eq('12.5')
-      expect(json_response['rules'].first['subject_id']).to eq(vendor.prefixed_id)
+      expect(json_response['rules'].first['type']).to eq('vendor_rule')
     end
 
     it 'refuses a fixed rate with no currency' do
@@ -66,39 +66,39 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
 
   describe 'PATCH #update' do
     it 'replaces the targeting wholesale' do
-      create(:commission_rule, commission_rate: rate, subject: vendor)
-      other_vendor = create(:vendor, store: store)
+      create(:commission_vendor_rule, commission_rate: rate, vendors: [vendor])
+      category = create(:category, store: store)
 
       patch :update, params: {
         id: rate.prefixed_id,
-        rules: [{ subject_type: 'Spree::Vendor', subject_id: other_vendor.prefixed_id }]
+        rules: [{ type: 'category_rule', preferences: { category_ids: [category.prefixed_id] } }]
       }, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(rate.reload.commission_rules.map(&:subject)).to eq([other_vendor])
+      expect(rate.reload.commission_rules.map(&:class)).to eq([Spree::CommissionRules::CategoryRule])
     end
 
-    # Refused rather than filtered: `rules` replaces the whole targeting, so
-    # dropping the bad row would leave a rate with no rules — and a rate with
-    # no rules charges every seller. Silently widening what the client meant to
-    # narrow is the worst available outcome.
+    # A rule can only name records of its own marketplace. The preference
+    # writer checks as it writes, so the caller is told which id was wrong
+    # rather than having it silently dropped — and the rate keeps the targeting
+    # it had, since a half-applied payload could widen what it charges.
     it 'refuses a rule naming another store record, leaving the targeting alone' do
-      create(:commission_rule, commission_rate: rate, subject: vendor)
+      create(:commission_vendor_rule, commission_rate: rate, vendors: [vendor])
       foreign_vendor = create(:vendor, store: create(:store))
 
       patch :update, params: {
         id: rate.prefixed_id,
-        rules: [{ subject_type: 'Spree::Vendor', subject_id: foreign_vendor.prefixed_id }]
+        rules: [{ type: 'vendor_rule', preferences: { vendor_ids: [foreign_vendor.prefixed_id] } }]
       }, as: :json
 
-      expect(response).to have_http_status(:unprocessable_entity)
-      expect(rate.reload.commission_rules.map(&:subject)).to eq([vendor])
+      expect(response).to have_http_status(:not_found)
+      expect(rate.reload.commission_rules.map(&:class)).to eq([Spree::CommissionRules::VendorRule])
     end
 
-    it 'refuses a rule naming a type that cannot be targeted' do
+    it 'refuses a rule kind nobody registered' do
       patch :update, params: {
         id: rate.prefixed_id,
-        rules: [{ subject_type: 'Spree::Order', subject_id: create(:order, store: store).prefixed_id }]
+        rules: [{ type: 'nonsense_rule', preferences: {} }]
       }, as: :json
 
       expect(response).to have_http_status(:unprocessable_entity)
@@ -107,19 +107,32 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
     it 'refuses a rule naming a record that no longer exists' do
       patch :update, params: {
         id: rate.prefixed_id,
-        rules: [{ subject_type: 'Spree::Vendor', subject_id: 'ven_gone' }]
+        rules: [{ type: 'vendor_rule', preferences: { vendor_ids: ['ven_gone'] } }]
       }, as: :json
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:not_found)
     end
 
     it 'still accepts an empty list as clearing the targeting' do
-      create(:commission_rule, commission_rate: rate, subject: vendor)
+      create(:commission_vendor_rule, commission_rate: rate, vendors: [vendor])
 
       patch :update, params: { id: rate.prefixed_id, rules: [] }, as: :json
 
       expect(response).to have_http_status(:ok)
       expect(rate.reload.commission_rules).to be_empty
+    end
+
+    # The rule kind that could not exist while a rule could only name a record.
+    it 'accepts a value band' do
+      patch :update, params: {
+        id: rate.prefixed_id,
+        rules: [{ type: 'item_total_rule', preferences: { min_amount: '50', max_amount: '200' } }]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      band = rate.reload.commission_rules.first
+      expect(band).to be_a(Spree::CommissionRules::ItemTotalRule)
+      expect(band.preferred_min_amount).to eq(50)
     end
   end
 
@@ -145,13 +158,21 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
     end
   end
 
-  describe 'GET #rule_subject_types' do
-    it 'tells the dashboard what a rule may target' do
-      get :rule_subject_types, as: :json
+  describe 'GET #rule_types' do
+    it 'describes every registered rule kind, so a client builds its own editor' do
+      get :rule_types, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['data'].map { |row| row['type'] }).
-        to match_array(['Spree::Product', 'Spree::Category', 'Spree::Vendor'])
+      types = json_response['data']
+      expect(types.map { |row| row['type'] }).
+        to include('vendor_rule', 'category_rule', 'product_rule', 'item_total_rule')
+
+      band = types.find { |row| row['type'] == 'item_total_rule' }
+      expect(band['name']).to eq('Sale value')
+      expect(band['preference_schema'].map { |field| field['key'] }).to include('min_amount', 'max_amount')
+
+      products = types.find { |row| row['type'] == 'product_rule' }
+      expect(products['association_fields']).to include('product_ids')
     end
   end
 end

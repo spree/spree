@@ -1,9 +1,14 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { CommissionRate, CommissionRateCreateParams } from '@spree/admin-sdk'
+import type {
+  CommissionRate,
+  CommissionRateCreateParams,
+  CommissionRuleType,
+} from '@spree/admin-sdk'
 import {
   adminClient,
   Can,
   mapSpreeErrorsToForm,
+  PreferencesForm,
   ResourceMultiAutocomplete,
   ResourceTable,
   resourceSearchSchema,
@@ -12,6 +17,10 @@ import {
 } from '@spree/dashboard-core'
 import {
   Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
   Field,
   FieldError,
   FieldGroup,
@@ -35,15 +44,15 @@ import {
 } from '@spree/dashboard-ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { PlusIcon } from 'lucide-react'
+import { PlusIcon, Trash2Icon } from 'lucide-react'
 import { useEffect } from 'react'
-import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
+import { Controller, type UseFormReturn, useFieldArray, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { commissionRuleSubjectPicker } from '../../../../components/spree/commission-rule-subjects'
 import {
   useCommissionRate,
-  useCommissionRuleSubjectTypes,
+  useCommissionRuleTypes,
   useCreateCommissionRate,
   useDeleteCommissionRate,
   useUpdateCommissionRate,
@@ -505,67 +514,167 @@ function ToggleField({
 }
 
 /**
- * The rate's targeting, one picker per dimension.
+ * The rate's conditions.
  *
- * Grouping the pickers by subject type is what makes the matching rule
- * legible: everything picked inside one box is an alternative, and every box
- * that holds something has to match. A rate with all three empty applies to
- * every sale, which the empty state says outright.
+ * Every condition has to hold for the rate to apply, and a condition naming
+ * several records means any of them — so "cameras or audio, from that seller"
+ * is two conditions. A rate with none charges every sale, which the empty
+ * state says outright.
+ *
+ * Built from the rule kinds the marketplace reports rather than a list baked
+ * in here, so a kind added by an extension appears without a change to this
+ * file. Kinds already used drop out of the picker: a second condition of the
+ * same kind would repeat the first or contradict it.
  */
 function CommissionRulesField({ form }: { form: UseFormReturn<CommissionRateFormValues> }) {
   const { t } = useTranslation()
-  const { data: subjectTypes } = useCommissionRuleSubjectTypes()
-  const rules = form.watch('rules') ?? []
+  const { data: ruleTypes } = useCommissionRuleTypes()
+  const rulesArray = useFieldArray<CommissionRateFormValues, 'rules', '_key'>({
+    control: form.control,
+    name: 'rules',
+    keyName: '_key',
+  })
 
-  function idsFor(subjectType: string) {
-    return rules.filter((rule) => rule.subject_type === subjectType).map((rule) => rule.subject_id)
-  }
-
-  function setIdsFor(subjectType: string, ids: string[]) {
-    const others = rules.filter((rule) => rule.subject_type !== subjectType)
-    form.setValue(
-      'rules',
-      [...others, ...ids.map((id) => ({ subject_type: subjectType, subject_id: id }))],
-      { shouldDirty: true },
-    )
-  }
+  const usedTypes = new Set(rulesArray.fields.map((rule) => rule.type))
+  const availableTypes = (ruleTypes?.data ?? []).filter((type) => !usedTypes.has(type.type))
 
   return (
     <Field>
-      <FieldLabel>{t('admin.fields.commission_rate.rules.label')}</FieldLabel>
+      <div className="flex items-center justify-between">
+        <FieldLabel>{t('admin.fields.commission_rate.rules.label')}</FieldLabel>
+        {availableTypes.length > 0 && (
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <Button type="button" variant="outline" size="sm">
+                  <PlusIcon className="size-4" />
+                  {t('admin.commission_rates.conditions.add')}
+                </Button>
+              }
+            />
+            <DropdownMenuContent align="end">
+              {availableTypes.map((type) => (
+                <DropdownMenuItem
+                  key={type.type}
+                  onClick={() =>
+                    rulesArray.append({ type: type.type, preferences: {}, product_ids: [] })
+                  }
+                >
+                  {type.name}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+      </div>
       <span className="text-xs text-muted-foreground">
         {t('admin.fields.commission_rate.rules.help')}
       </span>
-      <div className="flex flex-col gap-3 pt-1">
-        {(subjectTypes?.data ?? []).map((subjectType) => {
-          const picker = commissionRuleSubjectPicker(subjectType.type)
 
-          return (
-            <div key={subjectType.type} className="flex flex-col gap-1">
-              <span className="text-xs font-medium">{subjectType.name}</span>
-              {picker ? (
-                <ResourceMultiAutocomplete
-                  {...picker(`commission-rule-${subjectType.type}`)}
-                  value={idsFor(subjectType.type)}
-                  onChange={(ids: string[]) => setIdsFor(subjectType.type, ids)}
-                />
-              ) : (
-                // The server can offer a dimension this build has no picker
-                // for. Saying so beats rendering nothing, which reads as the
-                // dimension not existing.
-                <span className="text-xs text-muted-foreground">
-                  {t('admin.commission_rates.rule_picker_unavailable')}
-                </span>
-              )}
-            </div>
-          )
-        })}
-        {rules.length === 0 && (
+      <div className="flex flex-col gap-3 pt-1">
+        {rulesArray.fields.length === 0 && (
           <span className="text-xs text-muted-foreground">
             {t('admin.commission_rates.applies_to_everything')}
           </span>
         )}
+
+        {rulesArray.fields.map((field, index) => (
+          <CommissionRuleRow
+            key={field._key}
+            form={form}
+            index={index}
+            ruleType={(ruleTypes?.data ?? []).find((candidate) => candidate.type === field.type)}
+            fallbackLabel={field.type}
+            onRemove={() => rulesArray.remove(index)}
+          />
+        ))}
       </div>
     </Field>
+  )
+}
+
+/**
+ * One condition. What it renders is decided by what the server said about the
+ * kind: a condition naming records gets that resource's picker, and anything
+ * else renders its own preference schema — so a value band needs no code here.
+ */
+function CommissionRuleRow({
+  form,
+  index,
+  ruleType,
+  fallbackLabel,
+  onRemove,
+}: {
+  form: UseFormReturn<CommissionRateFormValues>
+  index: number
+  ruleType?: CommissionRuleType
+  fallbackLabel: string
+  onRemove: () => void
+}) {
+  const { t } = useTranslation()
+  const schema = ruleType?.preference_schema ?? []
+  // Catalog-scale references arrive as their own field; everything else names
+  // records through an id list in preferences. Either way the picker comes
+  // from the registry, keyed by rule kind.
+  const picker = ruleType ? commissionRuleSubjectPicker(ruleType.type) : undefined
+  const associationField = ruleType?.association_fields?.[0]
+  const preferenceIdKey = schema.find((preference) => preference.key.endsWith('_ids'))?.key
+
+  return (
+    <div className="flex flex-col gap-2 rounded-md border p-3">
+      <div className="flex items-center justify-between">
+        <div className="flex flex-col">
+          <span className="text-sm">{ruleType?.name ?? fallbackLabel}</span>
+          {ruleType?.description && (
+            <span className="text-xs text-muted-foreground">{ruleType.description}</span>
+          )}
+        </div>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          onClick={onRemove}
+          aria-label={t('admin.actions.delete')}
+        >
+          <Trash2Icon className="size-4" />
+        </Button>
+      </div>
+
+      {picker && associationField ? (
+        <Controller
+          control={form.control}
+          name={`rules.${index}.product_ids`}
+          render={({ field }) => (
+            <ResourceMultiAutocomplete
+              {...picker(`commission-rule-${ruleType?.type}`)}
+              value={field.value ?? []}
+              onChange={field.onChange}
+            />
+          )}
+        />
+      ) : picker && preferenceIdKey ? (
+        <Controller
+          control={form.control}
+          name={`rules.${index}.preferences`}
+          render={({ field }) => (
+            <ResourceMultiAutocomplete
+              {...picker(`commission-rule-${ruleType?.type}`)}
+              value={(field.value?.[preferenceIdKey] ?? []) as string[]}
+              onChange={(ids: string[]) =>
+                field.onChange({ ...field.value, [preferenceIdKey]: ids })
+              }
+            />
+          )}
+        />
+      ) : (
+        <Controller
+          control={form.control}
+          name={`rules.${index}.preferences`}
+          render={({ field }) => (
+            <PreferencesForm schema={schema} values={field.value} onChange={field.onChange} />
+          )}
+        />
+      )}
+    </div>
   )
 }

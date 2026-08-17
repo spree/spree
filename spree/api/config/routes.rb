@@ -446,7 +446,7 @@ Spree::Core::Engine.add_routes do
         # read-only.
         resources :commission_rates do
           collection do
-            get :rule_subject_types
+            get :rule_types
           end
         end
         resources :commission_lines, only: [:index, :show]

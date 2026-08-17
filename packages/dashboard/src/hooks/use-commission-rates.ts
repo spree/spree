@@ -21,14 +21,15 @@ export function useCommissionRate(id: string | undefined) {
 }
 
 /**
- * What a rule may target. Store-independent and effectively static, so it is
- * fetched once and never refetched.
+ * Every rule kind the marketplace has, with the schema describing its
+ * configuration. What a rate can be narrowed by is whatever is registered, so
+ * the editor is built from this rather than a list hardcoded to match core's.
  */
-export function useCommissionRuleSubjectTypes() {
+export function useCommissionRuleTypes() {
   return useQuery({
-    queryKey: ['commission-rule-subject-types'],
-    queryFn: () => adminClient.commissionRates.ruleSubjectTypes(),
-    staleTime: Number.POSITIVE_INFINITY,
+    queryKey: useResourceKey('commission-rule-types'),
+    queryFn: () => adminClient.commissionRates.ruleTypes(),
+    staleTime: 1000 * 60 * 30,
   })
 }
 

@@ -114,7 +114,7 @@ import type {
   CollectionUpdateParams,
   CommissionRateCreateParams,
   CommissionRateUpdateParams,
-  CommissionRuleSubjectType,
+  CommissionRuleType,
   CompanyContactParams,
   CompanyLocationParams,
   CompanyParams,
@@ -2456,13 +2456,13 @@ export class AdminClient {
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/commission_rates/${id}`, options),
 
-    /** What a rule may target, so the picker isn't a hardcoded list. */
-    ruleSubjectTypes: (options?: RequestOptions): Promise<{ data: CommissionRuleSubjectType[] }> =>
-      this.request<{ data: CommissionRuleSubjectType[] }>(
-        'GET',
-        '/commission_rates/rule_subject_types',
-        options,
-      ),
+    /**
+     * Every registered rule kind with the schema describing its configuration,
+     * so a client builds its editor from what the marketplace actually has
+     * rather than a list hardcoded to match core's.
+     */
+    ruleTypes: (options?: RequestOptions): Promise<{ data: CommissionRuleType[] }> =>
+      this.request<{ data: CommissionRuleType[] }>('GET', '/commission_rates/rule_types', options),
   }
 
   /**

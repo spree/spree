@@ -25,11 +25,14 @@ export const commissionRateFormSchema = z.object({
   commission_tax_rate: z.string().optional(),
   // Shallow on purpose: react-hook-form's `Path<T>` walks every nested key, so
   // an SDK entity here would drag its whole object graph into the form type.
-  // The pickers resolve their own labels, so an id is all the form carries.
+  // Pickers resolve their own labels, so ids are all the form carries.
   rules: z.array(
     z.object({
-      subject_type: z.string(),
-      subject_id: z.string(),
+      id: z.string().optional(),
+      type: z.string(),
+      preferences: z.record(z.string(), z.unknown()).default({}),
+      // Catalog-scale references ride beside preferences, not inside them.
+      product_ids: z.array(z.string()).default([]),
     }),
   ),
 })
@@ -66,8 +69,10 @@ export function commissionRateToFormValues(rate: CommissionRate): CommissionRate
     commission_tax_rate:
       rate.commission_tax_rate == null ? '' : String(Number(rate.commission_tax_rate) * 100),
     rules: (rate.rules ?? []).map((rule) => ({
-      subject_type: rule.subject_type ?? '',
-      subject_id: rule.subject_id ?? '',
+      id: rule.id,
+      type: rule.type,
+      preferences: (rule.preferences ?? {}) as Record<string, unknown>,
+      product_ids: rule.product_ids ?? [],
     })),
   }
 }
@@ -96,6 +101,13 @@ export function commissionRateValuesToParams(
     min_amount: decimalOrNull(v.min_amount),
     max_amount: decimalOrNull(v.max_amount),
     commission_tax_rate: taxPercentage === null ? null : taxPercentage / 100,
-    rules: v.rules,
+    // `product_ids` is only meaningful to kinds that name products; sending an
+    // empty array to the others is noise the server would ignore.
+    rules: v.rules.map((rule) => ({
+      id: rule.id,
+      type: rule.type,
+      preferences: rule.preferences,
+      ...(rule.product_ids.length > 0 ? { product_ids: rule.product_ids } : {}),
+    })),
   }
 }

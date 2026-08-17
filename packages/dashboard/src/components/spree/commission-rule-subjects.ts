@@ -4,22 +4,18 @@ import { productAutocompleteProps } from '../../hooks/use-products'
 import { vendorAutocompleteProps } from '../../hooks/use-vendors'
 
 /**
- * How to pick a record for each kind of commission-rule target.
+ * How to pick records for a commission rule that names them.
  *
  * A registry rather than a branch in the form, because the server owns the
- * list of targetable types (`commissionRates.ruleSubjectTypes()`) and may grow
- * it — a channel, a market. Adding one here is then the whole client-side
- * change, and a type nobody has registered yet still renders as itself rather
- * than silently disappearing.
+ * list of rule kinds (`commissionRates.ruleTypes()`) and may grow it. A kind
+ * with no picker here still works — it renders its own preference schema —
+ * so an extension's rule is usable before anyone teaches the dashboard about
+ * it, and better once they do.
  *
  * Each entry is the shared autocomplete config the rest of the dashboard
  * already uses for that resource, so a category picked here shows its full
- * path exactly as it does on a product.
- */
-/**
- * Everything a `<ResourceMultiAutocomplete>` needs to search one resource,
- * minus the value/onChange the form supplies — the shape the shared
- * `*AutocompleteProps` helpers already return.
+ * path exactly as it does on a product — everything a
+ * `<ResourceMultiAutocomplete>` needs bar the value/onChange the form supplies.
  *
  * The record type is `any` for the same reason the table registry's
  * `filterResource` is: pickers for different resources cannot be stored under
@@ -29,29 +25,32 @@ import { vendorAutocompleteProps } from '../../hooks/use-vendors'
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type CommissionRuleSubjectPicker = (queryKey: string) => ResourceFilterConfig<any>
 
+// Keyed by rule kind, matching the `type` the discovery endpoint reports.
 const PICKERS: Record<string, CommissionRuleSubjectPicker> = {
-  'Spree::Vendor': vendorAutocompleteProps,
-  'Spree::Product': productAutocompleteProps,
-  'Spree::Category': categoryAutocompleteProps,
+  vendor_rule: vendorAutocompleteProps,
+  product_rule: productAutocompleteProps,
+  category_rule: categoryAutocompleteProps,
 }
 
 /**
- * The picker for a subject type, or undefined when nothing has registered one.
+ * The picker for a rule kind, or undefined when the kind names no records —
+ * a value band configures itself through its preference schema instead.
  *
- * @param subjectType e.g. `Spree::Vendor`
+ * @param ruleType e.g. `vendor_rule`
  */
 export function commissionRuleSubjectPicker(
-  subjectType: string,
+  ruleType: string,
 ): CommissionRuleSubjectPicker | undefined {
-  return PICKERS[subjectType]
+  return PICKERS[ruleType]
 }
 
 /**
- * Registers a picker for a subject type an extension has added to the catalog.
+ * Registers a picker for a rule kind an extension has added, so its condition
+ * gets a proper resource picker rather than a raw id field.
  */
 export function registerCommissionRuleSubjectPicker(
-  subjectType: string,
+  ruleType: string,
   picker: CommissionRuleSubjectPicker,
 ): void {
-  PICKERS[subjectType] = picker
+  PICKERS[ruleType] = picker
 }

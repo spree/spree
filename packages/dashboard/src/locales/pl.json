@@ -1689,8 +1689,8 @@
           "help_fixed": "Stała opłata za sprzedaż, w walucie poniżej."
         },
         "rules": {
-          "label": "Dotyczy",
-          "help": "Wybory w jednym polu to alternatywy; każde wypełnione pole musi pasować. Zostaw wszystkie puste, aby objąć każdą sprzedaż."
+          "label": "Warunki",
+          "help": "Każdy warunek musi być spełniony, a warunek wskazujący kilka pozycji oznacza dowolną z nich. Stawka bez warunków obejmuje każdą sprzedaż."
         },
         "min_amount": {
           "label": "Minimum"
@@ -4347,8 +4347,11 @@
         "updated": "Zaktualizowano stawkę prowizji"
       },
       "search_placeholder": "Szukaj po nazwie…",
-      "rule_picker_unavailable": "Ta wersja nie ma selektora dla tego typu celu.",
-      "order_hint": "Nowe stawki trafiają na górę listy, a wygrywa pierwsza pasująca — przeciągnij, aby zmienić kolejność."
+      "order_hint": "Nowe stawki trafiają na górę listy, a wygrywa pierwsza pasująca — przeciągnij, aby zmienić kolejność.",
+      "conditions": {
+        "add": "Dodaj warunek",
+        "title": "Warunki"
+      }
     }
   }
 }

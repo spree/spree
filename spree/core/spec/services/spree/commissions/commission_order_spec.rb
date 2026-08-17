@@ -156,7 +156,7 @@ RSpec.describe Spree::Commissions::CommissionOrder do
 
       # Created after the generic rate, so it sits above it in the list.
       special_rate = create(:commission_rate, store: store, value: 10, commission_tax_rate: 0.19)
-      create(:commission_rule, commission_rate: special_rate, subject: special_product)
+      create(:commission_product_rule, commission_rate: special_rate, products: [special_product])
       rate.update!(commission_tax_rate: 0.05)
 
       lines = commission.index_by(&:line_item_id)

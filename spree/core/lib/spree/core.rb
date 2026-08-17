@@ -369,6 +369,17 @@ module Spree
     Rails.application.config.spree.stock_splitters = value
   end
 
+  # Commission rule kinds selectable on a commission rate.
+  #
+  # @return [Array<Class>]
+  def self.commission_rules
+    Rails.application.config.spree.commission_rules
+  end
+
+  def self.commission_rules=(value)
+    Rails.application.config.spree.commission_rules = value
+  end
+
   def self.delivery_method_rules
     Rails.application.config.spree.delivery_method_rules
   end

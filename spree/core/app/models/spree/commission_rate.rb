@@ -35,6 +35,7 @@ module Spree
 
     include Spree::SingleStoreResource
     include Spree::Metadata
+    include Spree::TypedAssociations
 
     KINDS = %w[percentage fixed].freeze
 
@@ -67,6 +68,8 @@ module Spree
     validates :min_amount, :max_amount, :commission_tax_rate,
               numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
     validate :max_amount_above_min_amount
+
+    after_save :apply_pending_rules
 
     #
     # Scopes
@@ -110,28 +113,21 @@ module Spree
     #
     # @return [Boolean]
     def global?
-      commission_rules.all?(&:global?)
+      commission_rules.empty?
     end
 
-    # Whether this rate's targeting admits the given subjects.
+    # Whether this rate's rules admit the sale.
     #
-    # Rules are grouped by what they target, and the groups are ANDed while the
-    # rules inside one are ORed: `{category: Cameras, category: Audio, vendor: X}`
-    # reads "(Cameras OR Audio) AND vendor X". A dimension the rate says nothing
-    # about is not a constraint, so a vendor-only rate matches that vendor's
-    # every product.
+    # Every rule must say yes. A rule naming several records means any of
+    # them, so "(Cameras OR Audio) AND that seller" is a category rule holding
+    # two ids beside a vendor rule holding one — the OR lives inside a rule,
+    # which is why there is no match-policy setting to get wrong. A rate with
+    # no rules charges every sale.
     #
-    # @param subjects [Hash{String=>Array}] subject type => the sale's records
-    #   of that type, e.g. `{'Spree::Vendor' => [vendor], 'Spree::Category' => [...]}`
+    # @param context [Spree::Commissions::Context]
     # @return [Boolean]
-    def matches_subjects?(subjects)
-      rules_by_type = commission_rules.reject(&:global?).group_by(&:subject_type)
-      return true if rules_by_type.empty?
-
-      rules_by_type.all? do |subject_type, rules|
-        candidate_ids = Array(subjects[subject_type]).compact.map { |record| record.try(:id) || record }.map(&:to_s)
-        rules.any? { |rule| candidate_ids.include?(rule.subject_id.to_s) }
-      end
+    def matches?(context)
+      commission_rules.all? { |rule| rule.applicable?(context) }
     end
 
     # The rate's targeting, under the name the API reads and writes it by.
@@ -141,23 +137,27 @@ module Spree
       commission_rules
     end
 
-    # The flat payload the admin API writes: `[{subject_type:, subject_id:}]`,
-    # replacing the rate's rules wholesale. Ids are already store-checked by
-    # the controller, which is where the tenancy boundary belongs.
+    # The flat payload the admin API writes: `[{type:, preferences: {...}}]`,
+    # replacing the rate's rules wholesale. Rows update by id, new ones resolve
+    # their class through the registry, and omitted ones are removed — the same
+    # shape a price list's rules use.
+    #
+    # Ids inside a rule's preferences are scope-checked against this rate's own
+    # store as they are written (see normalize_id_preference), so a rule can
+    # never be pointed at another marketplace's records.
     #
     # @param rows [Array<Hash>, nil]
     # @return [void]
     def rules=(rows)
-      self.commission_rules = Array(rows).map do |row|
-        attributes = row.to_h.with_indifferent_access
-        commission_rules.build(
-          subject_type: attributes[:subject_type].presence,
-          subject_id: attributes[:subject_id].presence
-        )
-      end
+      assign_typed_association(:commission_rules, rows)
     end
 
     private
+
+    # A new rate has no id for its rules to hang off until it is saved.
+    def apply_pending_rules
+      flush_pending_typed_association(:commission_rules)
+    end
 
     def max_amount_above_min_amount
       return if max_amount.nil? || min_amount.nil?

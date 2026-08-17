@@ -717,6 +717,19 @@ en:
         name: Tag
     color_code: Color Code
     colors: Colors
+    commission_rule_types:
+      category_rule:
+        description: Charges this rate only for products in the selected categories, and anything filed beneath them
+        name: Category
+      item_total_rule:
+        description: Charges this rate only on sales within a value range
+        name: Sale value
+      product_rule:
+        description: Charges this rate only for the selected products
+        name: Product
+      vendor_rule:
+        description: Charges this rate only when the seller is one of the selected
+        name: Seller
     company: Company
     compare_at_amount: Compare at amount
     compare_at_price: Compare at price
@@ -892,6 +905,7 @@ en:
         exactly_one_tax_identifier_owner: must belong to exactly one of customer, cart or order
         integration_connection_failed: could not connect with the saved credentials
         integration_type_not_registered: is not a registered integration
+        invalid_commission_rule_type: "%{type} is not a commission rule kind this store has"
         invalid_delivery_method_rule: is not a registered delivery method rule
         invalid_oauth_state: Invalid or expired authentication state. Please start the sign-in again.
         invalid_order_routing_rule: is not a registered order routing rule

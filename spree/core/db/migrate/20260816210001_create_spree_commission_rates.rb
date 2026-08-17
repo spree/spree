@@ -48,17 +48,39 @@ class CreateSpreeCommissionRates < ActiveRecord::Migration[8.1]
 
     create_table :spree_commission_rules do |t|
       t.references :commission_rate, null: false
-      # Product | Category | Vendor. Null on every column means a global rule,
-      # which is how a rate with no targeting matches everything.
-      t.references :subject, polymorphic: true
+      # The rule kind, as a class name. Typed rather than a subject reference
+      # so a rule can carry its own configuration — a value band or a date
+      # window has nothing to point at.
+      t.string :type, null: false
+
+      if t.respond_to?(:jsonb)
+        t.jsonb :preferences
+      else
+        t.json :preferences
+      end
 
       t.timestamps
     end
 
-    add_index :spree_commission_rules,
-              [:commission_rate_id, :subject_type, :subject_id],
+    # One rule of each kind per rate: a second would repeat the first or
+    # contradict it, and under AND semantics contradiction means the rate
+    # silently never applies.
+    add_index :spree_commission_rules, [:commission_rate_id, :type],
               unique: true,
-              name: 'index_commission_rules_on_rate_and_subject'
+              name: 'index_commission_rules_on_rate_and_type'
+
+    # Catalog-scale references get a table of their own — a marketplace naming
+    # a thousand products should not put a thousand ids in a JSON column.
+    create_table :spree_commission_rule_products do |t|
+      t.references :commission_rule, null: false
+      t.references :product, null: false
+
+      t.timestamps
+    end
+
+    add_index :spree_commission_rule_products, [:commission_rule_id, :product_id],
+              unique: true,
+              name: 'index_commission_rule_products_on_rule_and_product'
   end
 
   private

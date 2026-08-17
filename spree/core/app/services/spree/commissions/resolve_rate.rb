@@ -33,11 +33,18 @@ module Spree
       def call(line_item:, vendor:, store:, currency: nil, rates: nil, categories: nil)
         currency ||= line_item.currency
         candidates = rates || self.class.candidates_for(store)
-        subjects = subjects_for(line_item, vendor, categories)
+        context = Spree::Commissions::Context.new(
+          vendor: vendor,
+          order: line_item.order,
+          line_item: line_item,
+          currency: currency,
+          categories: categories && line_item.variant&.product ?
+            categories.fetch(line_item.variant.product.id, []) : nil
+        )
 
         success(
           candidates.find do |rate|
-            rate.applies_to_currency?(currency) && rate.matches_subjects?(subjects)
+            rate.applies_to_currency?(currency) && rate.matches?(context)
           end
         )
       end
@@ -102,28 +109,6 @@ module Spree
         end
       end
 
-      private
-
-      # What this sale offers a rule to match on. Categories include ancestors,
-      # so a rate targeting "Electronics" also governs a camera filed under
-      # "Electronics → Cameras" — the alternative would make a merchant restate
-      # every leaf whenever they add one.
-      def subjects_for(line_item, vendor, categories)
-        product = line_item.variant&.product
-
-        {
-          'Spree::Vendor' => [vendor],
-          'Spree::Product' => [product].compact,
-          'Spree::Category' => product_categories(product, categories)
-        }
-      end
-
-      def product_categories(product, categories)
-        return [] if product.nil?
-        return categories.fetch(product.id, []) if categories
-
-        self.class.categories_for([product]).fetch(product.id, [])
-      end
     end
   end
 end

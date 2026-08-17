@@ -1675,8 +1675,8 @@
           "help_fixed": "Montant fixe par vente, dans la devise ci-dessous."
         },
         "rules": {
-          "label": "S'applique à",
-          "help": "Les choix d'un même champ sont des alternatives ; chaque champ rempli doit correspondre. Laissez tout vide pour facturer chaque vente."
+          "label": "Conditions",
+          "help": "Chaque condition doit être remplie ; si une condition nomme plusieurs éléments, l'un d'eux suffit. Un taux sans condition s'applique à toutes les ventes."
         },
         "min_amount": {
           "label": "Minimum"
@@ -4291,8 +4291,11 @@
         "updated": "Taux de commission mis à jour"
       },
       "search_placeholder": "Rechercher par nom…",
-      "rule_picker_unavailable": "Cette version n'a pas de sélecteur pour ce type de cible.",
-      "order_hint": "Les nouveaux taux se placent en haut de la liste, et le premier qui correspond l'emporte — glissez pour réordonner."
+      "order_hint": "Les nouveaux taux se placent en haut de la liste, et le premier qui correspond l'emporte — glissez pour réordonner.",
+      "conditions": {
+        "add": "Ajouter une condition",
+        "title": "Conditions"
+      }
     }
   }
 }

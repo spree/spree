@@ -16,6 +16,7 @@ module Spree
                                :fulfillment_providers,
                                :tracking_carriers,
                                :stock_splitters,
+                               :commission_rules,
                                :delivery_method_rules,
                                :delivery_rate_providers,
                                :delivery_profile_types,
@@ -129,6 +130,10 @@ module Spree
 
       # Seeded early for the same reason as order routing: initializer files
       # append custom rule kinds. Core defaults concatenate in after_initialize.
+      initializer 'spree.register.commission_rules', before: :load_config_initializers do |app|
+        app.config.spree.commission_rules = []
+      end
+
       initializer 'spree.register.delivery_method_rules', before: :load_config_initializers do |app|
         app.config.spree.delivery_method_rules = []
       end
@@ -285,6 +290,14 @@ module Spree
           Spree::OrderRouting::Rules::PreferredLocation,
           Spree::OrderRouting::Rules::MinimizeSplits,
           Spree::OrderRouting::Rules::DefaultLocation
+        ]
+
+        # Commission targeting rule kinds (docs/plans/6.0-multi-vendor-marketplace.md).
+        Rails.application.config.spree.commission_rules.concat [
+          Spree::CommissionRules::VendorRule,
+          Spree::CommissionRules::CategoryRule,
+          Spree::CommissionRules::ProductRule,
+          Spree::CommissionRules::ItemTotalRule
         ]
 
         # Delivery-method eligibility rule kinds (docs/plans/6.0-delivery-method-rules.md).

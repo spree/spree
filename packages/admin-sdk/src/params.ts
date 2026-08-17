@@ -1418,26 +1418,26 @@ export interface VendorRejectParams {
 }
 
 /**
- * One targeting clause on a commission rate: the record it applies to.
+ * One condition on a commission rate.
  *
- * Rules are grouped by `subject_type` and matched AND across the groups, OR
- * within one — so `[Cameras, Audio, VendorX]` reads "(Cameras OR Audio) AND
- * VendorX", which is how a seller-and-category pairing is expressed.
+ * Every rule must hold for the rate to apply, and a rule naming several
+ * records means any of them — so "(Cameras OR Audio) AND that seller" is a
+ * category rule holding two ids beside a vendor rule holding one. A rate with
+ * no rules charges every sale.
  *
- * A clause with neither field is a global rule, and so is a rate with no rules
- * at all: both match every sale.
+ * Kinds come from `commissionRates.ruleTypes()`; `preferences` are whatever
+ * that kind's schema declares. Catalog-scale references (products) ride
+ * alongside as their own field rather than inside preferences.
  */
 export interface CommissionRuleDraft {
-  /** `Spree::Product`, `Spree::Category` or `Spree::Vendor`. */
-  subject_type?: string | null
-  /** Prefixed id of the record being targeted. */
-  subject_id?: string | null
-}
-
-/** One entry from `commissionRates.ruleSubjectTypes()`. */
-export interface CommissionRuleSubjectType {
+  /** Present for an existing rule. Omit to create one. */
+  id?: string | null
+  /** Wire shorthand for the kind — e.g. `vendor_rule`, `item_total_rule`. */
   type: string
-  name: string
+  /** Kind-specific configuration, coerced server-side by typed setters. */
+  preferences?: Record<string, unknown>
+  /** Prefixed product ids, for kinds that name products. */
+  product_ids?: string[]
 }
 
 export interface CommissionRateCreateParams {
@@ -1524,6 +1524,20 @@ export function isMaskedSecret(value: unknown): value is string {
  * registered subclass with its preference schema. Used to build "Add
  * provider / action / rule" pickers and render generic preferences forms.
  */
+/**
+ * One rule kind a commission rate can be narrowed by, as the marketplace
+ * reports it. `preference_schema` describes the configuration the kind takes,
+ * and `association_fields` names any catalog-scale reference it keeps outside
+ * that — so a client can render the right editor without knowing the kind.
+ */
+export interface CommissionRuleType {
+  type: string
+  name: string
+  description: string | null
+  preference_schema: PreferenceField[]
+  association_fields: string[]
+}
+
 export interface ResourceTypeDefinition {
   type: string
   label: string

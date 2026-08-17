@@ -1675,8 +1675,8 @@
           "help_fixed": "Flat fee charged per sale, in the currency below."
         },
         "rules": {
-          "label": "Applies to",
-          "help": "Picks within one box are alternatives; every box you fill must match. Leave all empty to charge every sale."
+          "label": "Conditions",
+          "help": "Every condition has to hold, and a condition naming several records means any of them. A rate with no conditions charges every sale."
         },
         "min_amount": {
           "label": "Minimum"
@@ -4291,8 +4291,11 @@
         "updated": "Commission rate updated"
       },
       "search_placeholder": "Search by name…",
-      "rule_picker_unavailable": "This build has no picker for this target type.",
-      "order_hint": "New rates go to the top of the list, and the first one that matches a sale wins — drag to reorder."
+      "order_hint": "New rates go to the top of the list, and the first one that matches a sale wins — drag to reorder.",
+      "conditions": {
+        "add": "Add condition",
+        "title": "Conditions"
+      }
     }
   }
 }

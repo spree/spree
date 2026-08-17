@@ -25,9 +25,37 @@ FactoryBot.define do
     end
   end
 
-  factory :commission_rule, class: Spree::CommissionRule do
+  # Reference lists go through the preference writers, so ids are
+  # scope-checked in specs exactly as they are through the API.
+  factory :commission_vendor_rule, class: Spree::CommissionRules::VendorRule do
     commission_rate { create(:commission_rate) }
-    subject { create(:vendor) }
+    transient { vendors { [] } }
+
+    after(:build) do |rule, evaluator|
+      rule.preferred_vendor_ids = Array(evaluator.vendors).map(&:id) if evaluator.vendors.present?
+    end
+  end
+
+  factory :commission_category_rule, class: Spree::CommissionRules::CategoryRule do
+    commission_rate { create(:commission_rate) }
+    transient { categories { [] } }
+
+    after(:build) do |rule, evaluator|
+      rule.preferred_category_ids = Array(evaluator.categories).map(&:id) if evaluator.categories.present?
+    end
+  end
+
+  factory :commission_product_rule, class: Spree::CommissionRules::ProductRule do
+    commission_rate { create(:commission_rate) }
+    transient { products { [] } }
+
+    after(:create) do |rule, evaluator|
+      rule.products = Array(evaluator.products) if evaluator.products.present?
+    end
+  end
+
+  factory :commission_item_total_rule, class: Spree::CommissionRules::ItemTotalRule do
+    commission_rate { create(:commission_rate) }
   end
 
   factory :commission_line, class: Spree::CommissionLine do

@@ -13,7 +13,7 @@ const commissionRate = await client.commissionRates.create({
   name: 'Audio sellers',
   kind: 'percentage',
   value: 12.5,
-  rules: [{ subject_type: 'Spree::Vendor', subject_id: 'ven_a1b2c3' }],
+  rules: [{ type: 'vendor_rule', preferences: { vendor_ids: ['ven_a1b2c3'] } }],
 })
 
 // endregion:example
