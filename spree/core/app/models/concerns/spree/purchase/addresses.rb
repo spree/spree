@@ -61,7 +61,7 @@ module Spree
         end
 
         line_items.includes(variant: :product).any? do |line_item|
-          profile_requires_address[line_item.variant&.product&.resolved_delivery_profile]
+          profile_requires_address[line_item.variant&.delivery_profile]
         end
       end
 

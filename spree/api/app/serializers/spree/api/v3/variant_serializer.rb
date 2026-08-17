@@ -11,7 +11,8 @@ module Spree
                  preorder_ships_at: [:string, nullable: true],
                  weight: [:number, nullable: true], height: [:number, nullable: true], width: [:number, nullable: true], depth: [:number, nullable: true],
                  price: 'Price',
-                 original_price: ['Price', nullable: true]
+                 original_price: ['Price', nullable: true],
+                 seller_id: [:string, nullable: true]
 
         attribute :product_id do |variant|
           variant.product&.prefixed_id
@@ -78,6 +79,18 @@ module Spree
             Spree.api.price_serializer.new(base, params: params).to_h
           end
         end
+
+        # Which seller sells this variant — the resolved answer, so a product
+        # owned outright by one seller reports them on every variant. Nil is
+        # first-party. Shoppers comparing offers on one product page group by
+        # exactly this, so it is a plain attribute rather than an expand.
+        attribute :seller_id do |variant|
+          variant.seller&.prefixed_id
+        end
+
+        one :seller,
+            resource: proc { Spree.api.seller_serializer },
+            if: proc { expand?('seller') }
 
         # Conditional associations
         one :primary_media,

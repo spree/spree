@@ -129,6 +129,11 @@ module Spree
         product_update_workflow: 'Spree::Products::Update',
         product_destroy_workflow: 'Spree::Products::Destroy',
 
+        # which of a product's variants it leads with when sellers share the
+        # listing. Ranking is marketplace policy — swap this to weight seller
+        # performance, delivery speed or anything else the operator sells on
+        product_buy_box_service: 'Spree::Products::SelectBuyBox',
+
         # tracking numbers
         tracking_number_service: 'Spree::TrackingNumbers::BaseService',
 

@@ -33,6 +33,7 @@ module Spree
             PaymentMethods.call
             TaxCategories.call
             ProductTypes.call
+            OptionTypes.call
             CustomerGroups.call
             ReturnsEnvironment.call
             # The marketplace's catch-all rate, at the bottom of the list so

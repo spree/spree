@@ -217,4 +217,81 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
       expect(response).to have_http_status(:unprocessable_content)
     end
   end
+
+  describe 'seller and delivery profile' do
+    let(:seller) { create(:seller, :approved, store: store) }
+    let(:profile) { create(:delivery_profile, store: store) }
+
+    it 'writes and reads back the seller' do
+      patch :update, params: {
+        product_id: product.prefixed_id,
+        id: variant.prefixed_id,
+        seller_id: seller.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['seller_id']).to eq(seller.prefixed_id)
+      expect(json_response['seller_name']).to eq(seller.name)
+    end
+
+    it 'writes and reads back the delivery profile override' do
+      patch :update, params: {
+        product_id: product.prefixed_id,
+        id: variant.prefixed_id,
+        own_delivery_profile_id: profile.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['delivery_profile_id']).to eq(profile.prefixed_id)
+      expect(json_response['own_delivery_profile_id']).to eq(profile.prefixed_id)
+    end
+
+    # The resolved profile is read-only: sending it back as it was read must
+    # not freeze what the variant inherits into an override of its own.
+    it 'ignores the resolved profile on write' do
+      patch :update, params: {
+        product_id: product.prefixed_id,
+        id: variant.prefixed_id,
+        delivery_profile_id: profile.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['own_delivery_profile_id']).to be_nil
+      expect(variant.reload[:delivery_profile_id]).to be_nil
+    end
+
+    it 'clears the override back to inheriting' do
+      variant.update!(delivery_profile: profile)
+
+      patch :update, params: {
+        product_id: product.prefixed_id,
+        id: variant.prefixed_id,
+        own_delivery_profile_id: nil
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['own_delivery_profile_id']).to be_nil
+      expect(json_response['delivery_profile_id']).to eq(product.delivery_profile.prefixed_id)
+    end
+
+    it 'reports the product\'s profile when the variant has no override of its own' do
+      get :show, params: { product_id: product.prefixed_id, id: variant.prefixed_id }, as: :json
+
+      expect(json_response['delivery_profile_id']).to eq(product.delivery_profile.prefixed_id)
+      expect(json_response['own_delivery_profile_id']).to be_nil
+    end
+
+    it 'refuses a seller belonging to another store' do
+      foreign = create(:seller, store: create(:store))
+
+      patch :update, params: {
+        product_id: product.prefixed_id,
+        id: variant.prefixed_id,
+        seller_id: foreign.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(variant.reload.association(:seller).reader).to be_nil
+    end
+  end
 end

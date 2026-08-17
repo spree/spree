@@ -94,7 +94,7 @@ module Spree
             return true if location.pickup_stock_policy == 'any'
 
             cart.line_items.includes(variant: :product).all? do |line_item|
-              next true if line_item.variant.product.digital?
+              next true if line_item.variant.digital?
               next true unless line_item.variant.should_track_inventory?
 
               stock_item = location.stock_item(line_item.variant)

@@ -7,7 +7,7 @@ module SpreeMeilisearch
   class SearchProvider < Spree::SearchProvider::Base
     PREFIXED_ID_PATTERN = /\A[a-z]+_[A-Za-z0-9]+\z/
     ALLOWED_STATUSES = %w[active draft archived paused].freeze
-    BUILT_IN_FILTERABLE_ATTRIBUTES = %w[product_id status in_stock preorder store_ids channel_ids locale currency available_on discontinue_on price category_ids collection_ids grouping_id tags option_value_ids].freeze
+    BUILT_IN_FILTERABLE_ATTRIBUTES = %w[product_id status in_stock preorder store_ids channel_ids locale currency available_on discontinue_on price category_ids collection_ids grouping_id tags option_value_ids option_value_combination_ids].freeze
     CUSTOM_FIELD_RANGE_OPERATORS = { 'gt' => '>', 'gteq' => '>=', 'lt' => '<', 'lteq' => '<=' }.freeze
 
     def self.indexing_required?
@@ -455,8 +455,53 @@ module SpreeMeilisearch
     end
 
     # Build Meilisearch filter conditions from grouped option values.
-    # OR within each option type, AND across option types.
+    # OR within each option type, AND across option types — and the AND has to
+    # hold within ONE variant, matching Spree::Product.with_option_value_ids.
+    #
+    # A single axis reads straight off the value union. Two or more axes ask
+    # instead for a combination token the presenter wrote per variant, so "blue
+    # AND XL" cannot be satisfied by a blue small sitting beside a red XL. One
+    # token per whole combination rather than per pair: pairs can each hold on
+    # a different variant while no variant carries them all.
+    #
+    # Beyond the indexed combination size the tokens do not exist, so those
+    # filters fall back to the pairwise approximation — narrower than the union
+    # it replaced, wider than the truth, and only on filters naming more axes
+    # than a catalog realistically facets by.
     def build_grouped_option_conditions(grouped)
+      return single_axis_option_conditions(grouped) if grouped.size < 2
+      return pairwise_option_conditions(grouped) if grouped.size > max_combination_axes
+
+      combinations = grouped.values[0].product(*grouped.values[1..])
+      tokens = combinations.map { |combination| option_combination_condition(combination) }
+      [tokens.length > 1 ? "(#{tokens.join(' OR ')})" : tokens.first]
+    end
+
+    # Every cross-axis pair must hold. Necessary but not sufficient — see the
+    # caller — and used only past the indexed combination size.
+    def pairwise_option_conditions(grouped)
+      grouped.values.combination(2).map do |left_ids, right_ids|
+        pairs = left_ids.product(right_ids).map { |pair| option_combination_condition(pair) }
+        pairs.length > 1 ? "(#{pairs.join(' OR ')})" : pairs.first
+      end
+    end
+
+    # Each id is sanitized on its own — the separator is not part of an id and
+    # the sanitizer would strip it.
+    def option_combination_condition(prefixed_ids)
+      token = prefixed_ids.map { |id| sanitize_prefixed_id(id) }.sort.join('|')
+      "option_value_combination_ids = '#{token}'"
+    end
+
+    # Read off the presenter, since it is what decides how deep the tokens go
+    # — but a host may swap in a presenter that does not write them at all.
+    def max_combination_axes
+      return presenter_class::MAX_COMBINATION_AXES if presenter_class.const_defined?(:MAX_COMBINATION_AXES)
+
+      ProductPresenter::MAX_COMBINATION_AXES
+    end
+
+    def single_axis_option_conditions(grouped)
       grouped.map do |_, prefixed_ids|
         parts = prefixed_ids.map { |id| "option_value_ids = '#{sanitize_prefixed_id(id)}'" }
         parts.length > 1 ? "(#{parts.join(' OR ')})" : parts.first

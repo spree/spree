@@ -19,6 +19,9 @@ module Spree
                    country_of_origin: [:string, nullable: true],
                    customs_description: [:string, nullable: true],
                    deleted_at: [:string, nullable: true],
+                   seller_name: [:string, nullable: true],
+                   delivery_profile_id: [:string, nullable: true],
+                   own_delivery_profile_id: [:string, nullable: true],
                    metadata: 'Record<string, unknown>'
 
           attributes :metadata, :position, :cost_price, :cost_currency,
@@ -53,6 +56,33 @@ module Spree
           attribute :product_name do |variant|
             variant.product&.name
           end
+
+          # `seller_id` comes from the store serializer. The name rides along
+          # so the variants table can show a seller column without an expand.
+          attribute :seller_name do |variant|
+            variant.seller&.name
+          end
+
+          # Two answers, because they mean different things. `delivery_profile_id`
+          # is what the variant actually ships on, resolved through the product.
+          # `own_delivery_profile_id` is the override itself — the writable one,
+          # so an editor can tell "inherits" from "deliberately set to the same
+          # profile", and clear it back to inheriting by writing nil.
+          #
+          # Reading the resolved value under the writable name is what would
+          # freeze an inherited profile into an override on the first round-trip
+          # save, which is precisely what a variant-level override must not do.
+          attribute :delivery_profile_id do |variant|
+            variant.delivery_profile&.prefixed_id
+          end
+
+          attribute :own_delivery_profile_id do |variant|
+            variant.association(:delivery_profile).reader&.prefixed_id if variant.own_delivery_profile_id
+          end
+
+          one :seller,
+              resource: proc { Spree.api.admin_seller_serializer },
+              if: proc { expand?('seller') }
 
           # Override inherited associations to use admin serializers
           one :primary_media,

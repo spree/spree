@@ -180,6 +180,106 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
       expect(names).to include('Red Cotton Shirt', 'Blue Running Shoes')
       expect(names).not_to include('Blue Silk Shirt')
     end
+
+    # The document is per product, so a naive union of its variants' option
+    # values answers "blue AND large" for a product selling a blue small
+    # beside a red large. This must agree with Spree::Product
+    # .with_option_value_ids, or a store's results change meaning when the
+    # operator installs the search gem.
+    context 'across two option types' do
+      let!(:two_variant_shirt) do
+        p = create(:product, name: 'Mixed Option Shirt', status: 'active', store: store,
+                             categories: [clothing_category])
+        p.option_types << color_option
+        p.option_types << size_option
+        first = create(:variant, product: p, option_values: [blue, small])
+        first.prices.find_or_create_by!(currency: 'USD').update!(amount: 29.99)
+        second = create(:variant, product: p, option_values: [red, large])
+        second.prices.find_or_create_by!(currency: 'USD').update!(amount: 29.99)
+        p.update!(default_variant_id: first.id)
+        p.variants.where.missing(:option_value_variants).destroy_all
+        p.reload
+      end
+
+      before do
+        provider.reindex(store.products)
+        wait_for_meilisearch_indexing!
+      end
+
+      it 'requires one variant to carry both values' do
+        get :index, params: { q: { with_option_value_ids: [blue.prefixed_id, large.prefixed_id] } }
+
+        expect(response).to have_http_status(:ok)
+        names = json_response['data'].map { |p| p['name'] }
+        expect(names).not_to include('Mixed Option Shirt')
+        expect(names).to include('Blue Silk Shirt')
+      end
+
+      it 'matches when one variant carries both' do
+        get :index, params: { q: { with_option_value_ids: [blue.prefixed_id, small.prefixed_id] } }
+
+        expect(response).to have_http_status(:ok)
+        names = json_response['data'].map { |p| p['name'] }
+        expect(names).to include('Mixed Option Shirt')
+      end
+
+      it 'still ORs within one option type' do
+        get :index, params: { q: { with_option_value_ids: [blue.prefixed_id, red.prefixed_id] } }
+
+        expect(response).to have_http_status(:ok)
+        names = json_response['data'].map { |p| p['name'] }
+        expect(names).to include('Mixed Option Shirt')
+      end
+
+      # Every pair holding on some variant is not the same as one variant
+      # holding them all, so a third axis has to be checked as a whole rather
+      # than as its pairs.
+      context 'with a third option type' do
+        let(:condition_option) do
+          create(:option_type, name: 'condition', presentation: 'Condition', filterable: true)
+        end
+        let(:used) { create(:option_value, option_type: condition_option, name: 'used', presentation: 'Used') }
+        let(:brand_new) { create(:option_value, option_type: condition_option, name: 'new', presentation: 'New') }
+
+        let!(:three_axis_shirt) do
+          p = create(:product, name: 'Three Axis Shirt', status: 'active', store: store,
+                               categories: [clothing_category])
+          [color_option, size_option, condition_option].each { |o| p.option_types << o }
+          [[blue, large, used], [blue, small, brand_new], [red, large, brand_new]].each do |values|
+            v = create(:variant, product: p, option_values: values)
+            v.prices.find_or_create_by!(currency: 'USD').update!(amount: 39.99)
+          end
+          p.update!(default_variant_id: p.variants.first.id)
+          p.variants.where.missing(:option_value_variants).destroy_all
+          p.reload
+        end
+
+        before do
+          provider.reindex(store.products)
+          wait_for_meilisearch_indexing!
+        end
+
+        it 'rejects a product whose three values only hold pairwise' do
+          get :index, params: {
+            q: { with_option_value_ids: [blue.prefixed_id, large.prefixed_id, brand_new.prefixed_id] }
+          }
+
+          expect(response).to have_http_status(:ok)
+          names = json_response['data'].map { |p| p['name'] }
+          expect(names).not_to include('Three Axis Shirt')
+        end
+
+        it 'matches when one variant carries all three' do
+          get :index, params: {
+            q: { with_option_value_ids: [blue.prefixed_id, large.prefixed_id, used.prefixed_id] }
+          }
+
+          expect(response).to have_http_status(:ok)
+          names = json_response['data'].map { |p| p['name'] }
+          expect(names).to include('Three Axis Shirt')
+        end
+      end
+    end
   end
 
   describe 'combined search + filters' do

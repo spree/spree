@@ -38,7 +38,7 @@ module Spree
 
     MEMOIZED_METHODS = %w[total_on_hand category_and_ancestors
                           default_variant_id tax_category default_variant variant_for_images
-                          primary_category
+                          primary_category buy_box_variants resolved_delivery_profile
                           purchasable? in_stock? backorderable? digital?]
 
     STATUSES = %w[draft active archived].freeze
@@ -132,6 +132,28 @@ module Spree
     # its own goods.
     belongs_to :seller, class_name: 'Spree::Seller', optional: true, inverse_of: :products
 
+    # Who is writing this product, when the writer speaks for one seller. Not
+    # persisted and not part of the record's identity — it bounds a single
+    # save, so `variants=` may only touch variants belonging to the seller
+    # doing the writing, whether the payload is editing them or dropping them.
+    # Unset (the default) writes freely, which is what the operator's own back
+    # office does; setting it to nil means the first-party writer, who may
+    # touch only first-party variants.
+    def writing_seller=(seller)
+      @writing_seller_id = seller.respond_to?(:id) ? seller.id : seller
+      @writing_seller_set = true
+    end
+
+    # @return [Boolean] whether this write speaks for one particular seller
+    def writing_for_one_seller?
+      !!@writing_seller_set
+    end
+
+    # @return [Integer, nil] the writing seller's id; nil is first-party
+    def writing_seller_id
+      @writing_seller_id
+    end
+
     # How this product ships: origins, zones and methods all hang off the
     # profile. Required — a product without one could not be fulfilled at
     # all — and auto-assigned on create (type template, else the store's
@@ -139,6 +161,18 @@ module Spree
     # the renamed 5.x shipping_category_id, so migrated catalogs arrive
     # already assigned.
     belongs_to :delivery_profile, class_name: 'Spree::DeliveryProfile', inverse_of: :products
+
+    # Every one of the product's variants now resolves its profile through
+    # +resolved_delivery_profile+, which memoizes — so a reassignment has to
+    # drop the memo, or the whole fleet keeps shipping on the old profile
+    # until the product is saved.
+    %i[delivery_profile delivery_profile_id].each do |name|
+      define_method(:"#{name}=") do |value|
+        @resolved_delivery_profile = nil
+        @digital = nil
+        super(value)
+      end
+    end
 
     # Guards every write path (including raw prefixed-id assignment) against
     # linking another store's profile.
@@ -409,18 +443,47 @@ module Spree
       ActiveJob.perform_all_later(auto_match_collections_jobs)
     end
 
-    # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
-    def purchasable?
-      @purchasable ||= variants.any?(&:purchasable?)
+    # The variant this product leads with: its price, its stock, and what the
+    # add-to-cart button buys. On a product only the operator sells this is
+    # simply the cheapest available variant; once sellers share the listing it
+    # is whichever of their offers wins the buy box.
+    #
+    # Computed per read and never stored — it turns on price, stock and who is
+    # currently selling, none of which hold still
+    # (docs/plans/6.0-multi-seller-marketplace.md, Decision 11).
+    #
+    # @param currency [String, nil]
+    # @param option_value_ids [Array<Integer>, nil] narrows to one option
+    #   combination, so a `Condition` option gives a new buy box and a used one
+    # @return [Spree::Variant, nil]
+    def buy_box_variant(currency: nil, option_value_ids: nil)
+      currency ||= Spree::Current.currency
+      key = [currency, option_value_ids]
+      @buy_box_variants ||= {}
+      return @buy_box_variants[key] if @buy_box_variants.key?(key)
+
+      @buy_box_variants[key] = Spree::Dependencies.product_buy_box_service.constantize.call(
+        product: self, currency: currency, option_value_ids: option_value_ids
+      ).value
     end
 
-    # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
+    # Answered by the buy-box winner rather than by any variant at all: a
+    # product is not purchasable because a suspended seller's variant happens
+    # to be in stock.
+    def purchasable?
+      return @purchasable unless @purchasable.nil?
+
+      @purchasable = !!buy_box_variant&.purchasable?
+    end
+
     def in_stock?
-      @in_stock ||= variants.any?(&:in_stock?)
+      return @in_stock unless @in_stock.nil?
+
+      @in_stock = !!buy_box_variant&.in_stock?
     end
 
     def backorderable?
-      variants.any?(&:backorderable?)
+      !!buy_box_variant&.backorderable?
     end
 
     def on_sale?(currency)
@@ -527,8 +590,19 @@ module Spree
       end
     end
 
+    # The first variant a shopper can actually buy, in this currency.
+    #
+    # Position order, deliberately — this is "the first one that works", not
+    # the buy box's ranked winner. What it does borrow from the buy box is the
+    # seller check: a variant from a seller who is suspended, still onboarding
+    # or away is not for sale, so it cannot be what the product displays.
     def first_available_variant(currency)
-      variants.find { |v| v.purchasable? && v.price_in(currency).amount.present? }
+      variants.find do |variant|
+        next false unless variant.purchasable? && variant.price_in(currency).amount.present?
+
+        seller = variant.seller
+        seller.nil? || seller.sellable?
+      end
     end
 
     def price_varies?(currency)
@@ -677,7 +751,11 @@ module Spree
     #
     # @return [Spree::DeliveryProfile, nil]
     def resolved_delivery_profile
-      delivery_profile || (store && Spree::DeliveryProfile.default_for(store))
+      # Memoized via nil-check, like +digital?+ above: the store-default branch
+      # is an uncached lookup, and every variant on the product asks.
+      return @resolved_delivery_profile unless @resolved_delivery_profile.nil?
+
+      @resolved_delivery_profile = delivery_profile || (store && Spree::DeliveryProfile.default_for(store))
     end
 
     def auto_match_collections
@@ -818,7 +896,11 @@ module Spree
 
         variant =
           if variant_id.present?
-            variants.find_by_param!(variant_id)
+            # Resolved through the same bound as removal: a payload naming
+            # another seller's variant must not be able to rewrite its price
+            # or stock either, and an id outside the bound is a 404 rather
+            # than a silent no-op.
+            writable_variants.find_by_param!(variant_id)
           elsif reuse_default_variant_for?(variant_data, variant_ids_in_payload)
             # An id-less, option-less entry targets the product's existing
             # option-less default variant (the simple-product case) — update it in
@@ -836,13 +918,32 @@ module Spree
         mutated = true
       end
 
-      # Full replacement: variants not in the payload are removed.
+      # Full replacement, bounded by what the writer is allowed to remove.
+      #
+      # The payload is the writer's whole intent, so anything of theirs that is
+      # missing from it was deleted. Another seller's variants were never the
+      # writer's to send, and a narrower read would otherwise make this write
+      # destructive — a seller saving their own listing would wipe the rival
+      # sharing the product. `writable_variants` answers who owns what; for a
+      # store with no sellers it is every variant, which is exactly today's
+      # behaviour.
       if variant_ids_in_payload.any?
-        removed = variants.where.not(id: variant_ids_in_payload).destroy_all
+        removed = writable_variants.where.not(id: variant_ids_in_payload).destroy_all
         mutated ||= removed.any?
       end
 
       sync_variant_state! if mutated
+    end
+
+    # The variants this write may touch — edit or destroy. Defaults to all of
+    # them; a caller writing on behalf of one seller narrows it to that
+    # seller's own by setting +writing_seller+ (the seller branch does, per its
+    # scope-fetching rule — the operator's admin surface never does, since
+    # staff manage every seller's variants on a product they run).
+    def writable_variants
+      return variants unless writing_for_one_seller?
+
+      variants.for_seller(writing_seller_id)
     end
 
     # True when an id-less variant payload should update the product's existing
@@ -908,7 +1009,7 @@ module Spree
     def set_default_variant
       return if default_variant_id.present?
 
-      first_variant = variants.first
+      first_variant = preferred_default_variant
       update_column(:default_variant_id, first_variant.id) if first_variant
     end
 
@@ -918,8 +1019,18 @@ module Spree
       current = association(:default_variant).reader
       return if current && current.deleted_at.nil?
 
-      next_variant = variants.reload.first
+      next_variant = preferred_default_variant(reload: true)
       update_column(:default_variant_id, next_variant&.id) if next_variant && next_variant.id != default_variant_id
+    end
+
+    # The product's public identity — its headline price, its SKU, and the
+    # Omnibus `prior_price`, which is a compliance claim about this shop's own
+    # pricing history. Where the operator sells the item themselves that is the
+    # listing that should speak for the product, not whichever seller happens
+    # to sort first.
+    def preferred_default_variant(reload: false)
+      candidates = reload ? variants.reload : variants
+      candidates.detect { |variant| variant.seller_id.nil? } || candidates.first
     end
 
     def assign_default_tax_category

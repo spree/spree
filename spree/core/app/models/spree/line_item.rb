@@ -154,10 +154,8 @@ module Spree
       self.tax_category = variant.tax_category if variant
     end
 
-    # Reads the seller off the variant, falling back to the product that owns
-    # the listing. Once a variant can carry its own `seller_id` (the shared
-    # catalog), the variant answers first and this fallback covers a product
-    # whose seller owns every variant on it.
+    # Reads the seller off the variant, which resolves it — its own when the
+    # variant carries one, otherwise the product's.
     #
     # Only filled while the line is still being chosen — a cart, or an admin
     # draft that has not been placed. Once the order is placed the line records
@@ -172,13 +170,7 @@ module Spree
       return if variant.blank?
       return if order&.placed?
 
-      self.seller_id = seller_id_from_variant
-    end
-
-    def seller_id_from_variant
-      return variant.seller_id if variant.respond_to?(:seller_id) && variant.seller_id.present?
-
-      variant.product&.seller_id
+      self.seller_id = variant.seller_id
     end
 
     extend DisplayMoney
