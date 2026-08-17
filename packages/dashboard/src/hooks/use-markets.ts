@@ -1,11 +1,12 @@
 import type { Market, MarketCreateParams, MarketUpdateParams } from '@spree/admin-sdk'
 import {
   adminClient,
+  STORE_QUERY_RESOURCE,
   useResourceKey,
   useResourceKeyBuilder,
   useResourceMutation,
 } from '@spree/dashboard-core'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { type QueryKey, useQuery, useQueryClient } from '@tanstack/react-query'
 import i18n from 'i18next'
 
 interface UseMarketsParams {
@@ -46,10 +47,27 @@ export function useMarket(id: string | undefined) {
   })
 }
 
+/**
+ * Query keys every market write invalidates.
+ *
+ * A store's supported currencies and locales are the union of its markets', so
+ * a market write makes the cached store payload stale — pickers built on
+ * `useStore()` would keep offering currencies and locales the markets no longer
+ * carry. `STORE_QUERY_RESOURCE` refreshes them alongside the market lists.
+ *
+ * Exported so the invalidation contract is assertable without rendering hooks.
+ */
+export const marketWriteInvalidations: QueryKey[] = [['markets'], [STORE_QUERY_RESOURCE]]
+
+/** As above, plus the single-market key the update writes through. */
+export function marketUpdateInvalidations(id: string): QueryKey[] {
+  return [['markets'], ['markets', id], [STORE_QUERY_RESOURCE]]
+}
+
 export function useCreateMarket() {
   return useResourceMutation<Market, Error, MarketCreateParams>({
     mutationFn: (params) => adminClient.markets.create(params),
-    invalidate: [['markets']],
+    invalidate: marketWriteInvalidations,
     successMessage: i18n.t('admin.markets.messages.created'),
     errorMessage: i18n.t('admin.markets.errors.failed_to_create'),
   })
@@ -58,7 +76,7 @@ export function useCreateMarket() {
 export function useUpdateMarket(id: string) {
   return useResourceMutation<Market, Error, MarketUpdateParams>({
     mutationFn: (params) => adminClient.markets.update(id, params),
-    invalidate: [['markets'], ['markets', id]],
+    invalidate: marketUpdateInvalidations(id),
     successMessage: i18n.t('admin.markets.messages.updated'),
     errorMessage: i18n.t('admin.markets.errors.failed_to_update'),
   })
@@ -70,7 +88,7 @@ export function useDeleteMarket() {
 
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.markets.delete(id),
-    invalidate: [['markets']],
+    invalidate: marketWriteInvalidations,
     successMessage: i18n.t('admin.markets.messages.deleted'),
     errorMessage: i18n.t('admin.markets.errors.failed_to_delete'),
     onSuccess: (_data, id) => {
