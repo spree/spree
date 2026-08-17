@@ -133,10 +133,6 @@ module Spree
       [available_quantity, current_on_hand_quantity].min
     end
 
-    def unstock_quantity
-      desired_stock_location.backorderable?(variant) ? quantity : new_on_hand_quantity
-    end
-
     def current_on_hand_quantity
       [current_shipment.fulfillment_items.on_hand_or_backordered.sum(:quantity), quantity].min
     end
