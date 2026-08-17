@@ -644,6 +644,11 @@ Spree::Core::Engine.add_routes do
         post 'auth/logout', to: 'auth#logout'
         get 'auth/providers', to: 'auth#providers'
 
+        # Public invitation acceptance — unauthenticated; the prefixed ID +
+        # token in the emailed link are the credential.
+        get 'auth/invitations/:id/lookup', to: 'invitation_acceptances#lookup'
+        post 'auth/invitations/:id/accept', to: 'invitation_acceptances#accept'
+
         get 'me', to: 'me#show'
 
         # The seller's own record. Singular — there is exactly one seller in

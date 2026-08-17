@@ -23,6 +23,7 @@ Settings that describe the deployment rather than commerce behavior can be set w
 | Setting | Environment variable | What it configures |
 |---|---|---|
 | `dashboard_url` | `SPREE_DASHBOARD_URL` | Origin where the admin dashboard is hosted (e.g. `https://admin.my-shop.com`). Used for every link that sends someone into the dashboard: invitation emails, SSO redirects, and the first-run setup link printed by `db:seed`. |
+| `seller_panel_url` | `SPREE_SELLER_PANEL_URL` | Origin where the marketplace seller panel is hosted (e.g. `https://sellers.my-shop.com`). Used for links sent to sellers, today the invitation email. Leave it unset on a marketplace with no seller panel — those links then open the dashboard. |
 
 This page lists only settings Spree 6 actually reads. Settings that exist for backwards compatibility are listed under [Deprecated settings](#deprecated-settings) rather than mixed in with the rest.
 

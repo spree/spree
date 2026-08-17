@@ -62,6 +62,7 @@ function sellerRouterPlugin(hostRoot: string, options: SpreeSellerDashboardPlugi
 
   const virtualRouteConfig = rootRoute('__root.tsx', [
     route('/login', 'login.tsx'),
+    route('/accept-invitation/$invitationId', 'accept-invitation.$invitationId.tsx'),
     layout('_authenticated.tsx', [
       index('_authenticated/index.tsx'),
       route('/$sellerId', '_authenticated/$sellerId.tsx', [

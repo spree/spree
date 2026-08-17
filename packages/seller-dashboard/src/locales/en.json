@@ -12,6 +12,19 @@
     "failed": "That email and password did not match a seller account.",
     "no_seller": "This account does not run a seller on this marketplace."
   },
+  "accept_invitation": {
+    "title": "Join the team",
+    "subtitle": "You were invited as {{email}}. Set a password to finish.",
+    "first_name": "First name",
+    "last_name": "Last name",
+    "password": "Password",
+    "password_confirmation": "Confirm password",
+    "submit": "Accept invitation",
+    "submitting": "Accepting…",
+    "failed": "That invitation could not be accepted. It may have expired, or the password was wrong.",
+    "not_found": "This invitation is no longer valid. Ask whoever invited you to send a new one.",
+    "invalid_link": "This link is missing its token. Open the link from your invitation email."
+  },
   "seller_picker": {
     "title": "Choose a seller",
     "subtitle": "You run more than one. Pick which to manage.",
