@@ -1476,6 +1476,8 @@ en:
     search_by: 'Search by:'
     security: Security
     seed:
+      commission_rates:
+        marketplace_default: Marketplace default
       delivery_profiles:
         digital: Digital
       product_types:

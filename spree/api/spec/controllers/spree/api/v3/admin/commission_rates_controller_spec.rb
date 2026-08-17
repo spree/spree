@@ -5,7 +5,7 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
 
   include_context 'API v3 Admin authenticated'
 
-  let!(:rate) { create(:commission_rate, store: store, name: 'Standard', value: 10, priority: 5) }
+  let!(:rate) { create(:commission_rate, store: store, name: 'Standard', value: 10) }
   let(:vendor) { create(:vendor, store: store) }
 
   before { request.headers.merge!(headers) }
@@ -18,7 +18,7 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
 
       expect(response).to have_http_status(:ok)
       row = json_response['data'].first
-      expect(row['id']).to start_with('comrt_')
+      expect(row['id']).to start_with('crate_')
       expect(row['name']).to eq('Standard')
       expect(row['kind']).to eq('percentage')
       expect(row['rules'].first).to include('subject_type' => 'Spree::Vendor', 'subject_name' => vendor.name)
@@ -49,7 +49,6 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
         name: 'Audio sellers',
         kind: 'percentage',
         value: 12.5,
-        priority: 10,
         rules: [{ subject_type: 'Spree::Vendor', subject_id: vendor.prefixed_id }]
       }, as: :json
 
@@ -121,6 +120,19 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
 
       expect(response).to have_http_status(:ok)
       expect(rate.reload.commission_rules).to be_empty
+    end
+  end
+
+  describe 'reordering' do
+    # The list is the precedence, so moving a row is how an operator changes
+    # which rate wins.
+    it 'moves a rate through the list' do
+      top = create(:commission_rate, store: store)
+
+      patch :update, params: { id: rate.prefixed_id, position: 1 }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(store.commission_rates.ordered.to_a).to eq([rate, top])
     end
   end
 

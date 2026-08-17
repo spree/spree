@@ -7,9 +7,11 @@ class CreateSpreeCommissionRates < ActiveRecord::Migration[8.1]
       t.string :name, null: false
       t.string :code
       t.boolean :enabled, null: false, default: true
-      # Walked DESC when resolving, first match wins. Operator-assignable, so
-      # a marketplace reorders its own ladder instead of inheriting one.
-      t.integer :priority, null: false, default: 0
+      # Resolution order: the list is walked top-down and the first matching
+      # rate wins, so what an operator sees in the table IS the precedence.
+      # Seeds arrive product-before-category-before-vendor, which is the
+      # conventional ladder; reordering is dragging a row.
+      t.integer :position, null: false, default: 0
 
       t.string :kind, null: false # percentage | fixed
       t.decimal :value, precision: 10, scale: 5, null: false, default: 0
@@ -41,7 +43,7 @@ class CreateSpreeCommissionRates < ActiveRecord::Migration[8.1]
     end
 
     add_code_uniqueness_index
-    add_index :spree_commission_rates, [:store_id, :enabled, :priority]
+    add_index :spree_commission_rates, [:store_id, :enabled, :position]
     add_index :spree_commission_rates, :deleted_at
 
     create_table :spree_commission_rules do |t|

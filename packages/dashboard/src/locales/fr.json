@@ -1674,10 +1674,6 @@
           "help_percentage": "Pourcentage de la vente facturé au vendeur.",
           "help_fixed": "Montant fixe par vente, dans la devise ci-dessous."
         },
-        "priority": {
-          "label": "Priorité",
-          "help": "Les taux sont testés du plus élevé au plus bas ; le premier correspondant gagne."
-        },
         "rules": {
           "label": "S'applique à",
           "help": "Les choix d'un même champ sont des alternatives ; chaque champ rempli doit correspondre. Laissez tout vide pour facturer chaque vente."
@@ -4295,7 +4291,8 @@
         "updated": "Taux de commission mis à jour"
       },
       "search_placeholder": "Rechercher par nom…",
-      "rule_picker_unavailable": "Cette version n'a pas de sélecteur pour ce type de cible."
+      "rule_picker_unavailable": "Cette version n'a pas de sélecteur pour ce type de cible.",
+      "order_hint": "Les nouveaux taux se placent en haut de la liste, et le premier qui correspond l'emporte — glissez pour réordonner."
     }
   }
 }

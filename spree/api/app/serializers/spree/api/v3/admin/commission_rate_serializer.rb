@@ -16,7 +16,8 @@ module Spree
           typelize name: :string,
                    code: 'string | null',
                    enabled: :boolean,
-                   priority: :number,
+                   position: :number,
+                   global: :boolean,
                    kind: :string,
                    value: :string,
                    currency: 'string | null',
@@ -28,13 +29,17 @@ module Spree
                    metadata: 'Record<string, unknown> | null',
                    deleted_at: 'string | null'
 
-          attributes :name, :code, :enabled, :priority, :kind, :currency,
+          attributes :name, :code, :enabled, :position, :kind, :currency,
                      :include_tax, :include_shipping, :metadata,
                      deleted_at: :iso8601, created_at: :iso8601, updated_at: :iso8601
 
           %i[value min_amount max_amount commission_tax_rate].each do |decimal|
             attribute(decimal) { |rate| rate.public_send(decimal)&.to_s }
           end
+
+          # A rate that names nothing matches every sale, so everything below
+          # it in the list is unreachable. The dashboard needs to say so.
+          attribute :global, &:global?
 
           # Always embedded rather than expand-gated: a rate without its
           # targeting cannot be read (a rate with no rules means something

@@ -46,6 +46,7 @@ import { Route as SettingsMarketsRouteImport } from './../../dashboard/src/route
 import { Route as SettingsIntegrationsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/integrations'
 import { Route as SettingsEmailsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/emails'
 import { Route as SettingsCustomFieldDefinitionsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/custom-field-definitions'
+import { Route as SettingsCommissionRatesRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/commission-rates'
 import { Route as SettingsChannelsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/channels'
 import { Route as SettingsApiKeysRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/api-keys'
 import { Route as SettingsAllowedOriginsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/allowed-origins'
@@ -268,6 +269,11 @@ const SettingsCustomFieldDefinitionsRoute =
     path: '/custom-field-definitions',
     getParentRoute: () => SettingsRoute,
   } as any)
+const SettingsCommissionRatesRoute = SettingsCommissionRatesRouteImport.update({
+  id: '/commission-rates',
+  path: '/commission-rates',
+  getParentRoute: () => SettingsRoute,
+} as any)
 const SettingsChannelsRoute = SettingsChannelsRouteImport.update({
   id: '/channels',
   path: '/channels',
@@ -485,6 +491,7 @@ export interface FileRoutesByFullPath {
   '/$storeId/settings/allowed-origins': typeof SettingsAllowedOriginsRoute
   '/$storeId/settings/api-keys': typeof SettingsApiKeysRoute
   '/$storeId/settings/channels': typeof SettingsChannelsRoute
+  '/$storeId/settings/commission-rates': typeof SettingsCommissionRatesRoute
   '/$storeId/settings/custom-field-definitions': typeof SettingsCustomFieldDefinitionsRoute
   '/$storeId/settings/emails': typeof SettingsEmailsRoute
   '/$storeId/settings/integrations': typeof SettingsIntegrationsRoute
@@ -556,6 +563,7 @@ export interface FileRoutesByTo {
   '/$storeId/settings/allowed-origins': typeof SettingsAllowedOriginsRoute
   '/$storeId/settings/api-keys': typeof SettingsApiKeysRoute
   '/$storeId/settings/channels': typeof SettingsChannelsRoute
+  '/$storeId/settings/commission-rates': typeof SettingsCommissionRatesRoute
   '/$storeId/settings/custom-field-definitions': typeof SettingsCustomFieldDefinitionsRoute
   '/$storeId/settings/emails': typeof SettingsEmailsRoute
   '/$storeId/settings/integrations': typeof SettingsIntegrationsRoute
@@ -631,6 +639,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/settings/allowed-origins': typeof SettingsAllowedOriginsRoute
   '/_authenticated/$storeId/settings/api-keys': typeof SettingsApiKeysRoute
   '/_authenticated/$storeId/settings/channels': typeof SettingsChannelsRoute
+  '/_authenticated/$storeId/settings/commission-rates': typeof SettingsCommissionRatesRoute
   '/_authenticated/$storeId/settings/custom-field-definitions': typeof SettingsCustomFieldDefinitionsRoute
   '/_authenticated/$storeId/settings/emails': typeof SettingsEmailsRoute
   '/_authenticated/$storeId/settings/integrations': typeof SettingsIntegrationsRoute
@@ -706,6 +715,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings/allowed-origins'
     | '/$storeId/settings/api-keys'
     | '/$storeId/settings/channels'
+    | '/$storeId/settings/commission-rates'
     | '/$storeId/settings/custom-field-definitions'
     | '/$storeId/settings/emails'
     | '/$storeId/settings/integrations'
@@ -777,6 +787,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings/allowed-origins'
     | '/$storeId/settings/api-keys'
     | '/$storeId/settings/channels'
+    | '/$storeId/settings/commission-rates'
     | '/$storeId/settings/custom-field-definitions'
     | '/$storeId/settings/emails'
     | '/$storeId/settings/integrations'
@@ -851,6 +862,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/settings/allowed-origins'
     | '/_authenticated/$storeId/settings/api-keys'
     | '/_authenticated/$storeId/settings/channels'
+    | '/_authenticated/$storeId/settings/commission-rates'
     | '/_authenticated/$storeId/settings/custom-field-definitions'
     | '/_authenticated/$storeId/settings/emails'
     | '/_authenticated/$storeId/settings/integrations'
@@ -1164,6 +1176,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsCustomFieldDefinitionsRouteImport
       parentRoute: typeof SettingsRoute
     }
+    '/_authenticated/$storeId/settings/commission-rates': {
+      id: '/_authenticated/$storeId/settings/commission-rates'
+      path: '/commission-rates'
+      fullPath: '/$storeId/settings/commission-rates'
+      preLoaderRoute: typeof SettingsCommissionRatesRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/_authenticated/$storeId/settings/channels': {
       id: '/_authenticated/$storeId/settings/channels'
       path: '/channels'
@@ -1416,6 +1435,7 @@ interface SettingsRouteChildren {
   SettingsAllowedOriginsRoute: typeof SettingsAllowedOriginsRoute
   SettingsApiKeysRoute: typeof SettingsApiKeysRoute
   SettingsChannelsRoute: typeof SettingsChannelsRoute
+  SettingsCommissionRatesRoute: typeof SettingsCommissionRatesRoute
   SettingsCustomFieldDefinitionsRoute: typeof SettingsCustomFieldDefinitionsRoute
   SettingsEmailsRoute: typeof SettingsEmailsRoute
   SettingsIntegrationsRoute: typeof SettingsIntegrationsRoute
@@ -1443,6 +1463,7 @@ const SettingsRouteChildren: SettingsRouteChildren = {
   SettingsAllowedOriginsRoute: SettingsAllowedOriginsRoute,
   SettingsApiKeysRoute: SettingsApiKeysRoute,
   SettingsChannelsRoute: SettingsChannelsRoute,
+  SettingsCommissionRatesRoute: SettingsCommissionRatesRoute,
   SettingsCustomFieldDefinitionsRoute: SettingsCustomFieldDefinitionsRoute,
   SettingsEmailsRoute: SettingsEmailsRoute,
   SettingsIntegrationsRoute: SettingsIntegrationsRoute,

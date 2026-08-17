@@ -5,7 +5,6 @@ FactoryBot.define do
     kind { 'percentage' }
     value { 10 }
     enabled { true }
-    priority { 0 }
 
     trait :fixed do
       kind { 'fixed' }

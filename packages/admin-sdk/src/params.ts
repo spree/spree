@@ -1446,10 +1446,17 @@ export interface CommissionRateCreateParams {
   code?: string | null
   enabled?: boolean
   /**
-   * Resolution order, walked highest first — the first matching rate wins.
-   * Precedence is yours to assign; there is no built-in ladder.
+   * Place in the list, which IS the resolution order: rates are walked
+   * top-down and the first whose targeting matches the sale wins, so 1 is
+   * tried first.
+   *
+   * Omit on create — a new rate is placed at the top, ahead of anything more
+   * general already there. Send it to move an existing rate.
+   *
+   * Note that a rate with no `rules` matches every sale, so anything below it
+   * is unreachable; the marketplace default belongs at the bottom.
    */
-  priority?: number
+  position?: number
   /** `percentage` charges a share of the sale; `fixed` charges a flat fee. */
   kind: 'percentage' | 'fixed'
   /** A percentage (e.g. `10` for 10%) or a flat amount, per `kind`. */

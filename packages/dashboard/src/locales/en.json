@@ -1674,10 +1674,6 @@
           "help_percentage": "Percent of the sale charged to the seller.",
           "help_fixed": "Flat fee charged per sale, in the currency below."
         },
-        "priority": {
-          "label": "Priority",
-          "help": "Rates are tried highest first, and the first match wins."
-        },
         "rules": {
           "label": "Applies to",
           "help": "Picks within one box are alternatives; every box you fill must match. Leave all empty to charge every sale."
@@ -4295,7 +4291,8 @@
         "updated": "Commission rate updated"
       },
       "search_placeholder": "Search by name…",
-      "rule_picker_unavailable": "This build has no picker for this target type."
+      "rule_picker_unavailable": "This build has no picker for this target type.",
+      "order_hint": "New rates go to the top of the list, and the first one that matches a sale wins — drag to reorder."
     }
   }
 }

@@ -4,12 +4,12 @@ module Spree
   module Commissions
     # Picks the commission rate that governs one line item.
     #
-    # Walks the store's enabled rates from highest priority down and takes the
-    # first whose targeting admits the sale. Precedence is therefore an integer
-    # the operator assigns, not a hardcoded product-beats-category-beats-seller
-    # ladder: the seeded rates order themselves so a marketplace that never
-    # touches priorities still gets the conventional answer, and one that needs
-    # a different order just reorders.
+    # Walks the store's enabled rates in list order and takes the first whose
+    # targeting admits the sale. Precedence is therefore the order an operator
+    # sees in the table, not a hardcoded product-beats-category-beats-seller
+    # ladder: seeded rates arrive in the conventional order, so a marketplace
+    # that never touches it still gets the expected answer, and one that wants
+    # a different answer drags a row.
     #
     # Returns nil when nothing matches, which is a real answer — a marketplace
     # with no rate for a sale charges no commission, rather than falling back
@@ -49,7 +49,7 @@ module Spree
       # @param store [Spree::Store]
       # @return [Array<Spree::CommissionRate>]
       def self.candidates_for(store)
-        store.commission_rates.enabled.by_priority.includes(:commission_rules).to_a
+        store.commission_rates.enabled.ordered.includes(:commission_rules).to_a
       end
 
       # Each product's categories together with their ancestors, keyed by

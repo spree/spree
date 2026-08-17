@@ -33,6 +33,7 @@ import {
   useConfirm,
   useRowClickBridge,
 } from '@spree/dashboard-ui'
+import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon } from 'lucide-react'
 import { useEffect } from 'react'
@@ -74,6 +75,7 @@ function CommissionRatesPage() {
   const confirm = useConfirm()
   const deleteMutation = useDeleteCommissionRate()
   const { permissions } = usePermissions()
+  const queryClient = useQueryClient()
 
   const canUpdate = permissions.can('update', Subject.CommissionRate)
   // A deep link to ?edit= would otherwise open the sheet for someone who may
@@ -116,6 +118,16 @@ function CommissionRatesPage() {
         queryKey="commission-rates"
         queryFn={(params) => adminClient.commissionRates.list(params)}
         searchParams={search}
+        reorder={
+          canUpdate
+            ? {
+                onReorder: async (id, position) => {
+                  await adminClient.commissionRates.update(id, { position })
+                  queryClient.invalidateQueries({ queryKey: ['commission-rates'] })
+                },
+              }
+            : undefined
+        }
         rowActions={(rate) => (
           <RowActions
             actions={[
@@ -186,7 +198,10 @@ function CreateCommissionRateSheet({
       <SheetContent>
         <SheetHeader>
           <SheetTitle>{t('admin.pages.settings.commission_rates.add_sheet_title')}</SheetTitle>
-          <SheetDescription>{t('admin.commission_rates.create_description')}</SheetDescription>
+          <SheetDescription>
+            {t('admin.commission_rates.create_description')}{' '}
+            {t('admin.commission_rates.order_hint')}
+          </SheetDescription>
         </SheetHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
@@ -383,23 +398,6 @@ function CommissionRateFormFields({ form }: { form: UseFormReturn<CommissionRate
           <FieldError errors={[errors.currency]} />
         </Field>
       )}
-
-      <Field>
-        <FieldLabel htmlFor="priority">
-          {t('admin.fields.commission_rate.priority.label')}
-        </FieldLabel>
-        <Input
-          id="priority"
-          type="number"
-          step="1"
-          aria-invalid={!!errors.priority || undefined}
-          {...form.register('priority')}
-        />
-        <span className="text-xs text-muted-foreground">
-          {t('admin.fields.commission_rate.priority.help')}
-        </span>
-        <FieldError errors={[errors.priority]} />
-      </Field>
 
       <CommissionRulesField form={form} />
 

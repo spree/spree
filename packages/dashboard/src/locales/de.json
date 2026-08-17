@@ -1674,10 +1674,6 @@
           "help_percentage": "Prozentsatz des Verkaufs, der dem Verkäufer berechnet wird.",
           "help_fixed": "Pauschale pro Verkauf, in der Währung unten."
         },
-        "priority": {
-          "label": "Priorität",
-          "help": "Sätze werden von hoch nach niedrig geprüft; der erste Treffer gilt."
-        },
         "rules": {
           "label": "Gilt für",
           "help": "Einträge in einem Feld sind Alternativen; jedes ausgefüllte Feld muss zutreffen. Alle leer lassen, um jeden Verkauf zu berechnen."
@@ -4295,7 +4291,8 @@
         "updated": "Provisionssatz aktualisiert"
       },
       "search_placeholder": "Nach Namen suchen…",
-      "rule_picker_unavailable": "Dieser Build hat keine Auswahl für diesen Zieltyp."
+      "rule_picker_unavailable": "Dieser Build hat keine Auswahl für diesen Zieltyp.",
+      "order_hint": "Neue Sätze stehen oben in der Liste, und der erste passende gilt — zum Umsortieren ziehen."
     }
   }
 }

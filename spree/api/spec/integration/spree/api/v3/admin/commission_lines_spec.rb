@@ -97,7 +97,7 @@ RSpec.describe 'Admin Commission Lines API', type: :request, swagger_doc: 'api-r
 
       response '404', 'commission line not found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:id) { 'comln_nonexistent' }
+        let(:id) { 'cline_nonexistent' }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 

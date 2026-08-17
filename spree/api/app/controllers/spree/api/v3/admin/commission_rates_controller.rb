@@ -71,7 +71,7 @@ module Spree
           def permitted_params
             attributes = normalize_params(
               params.permit(
-                :name, :code, :enabled, :priority, :kind, :value, :currency,
+                :name, :code, :enabled, :position, :kind, :value, :currency,
                 :include_tax, :include_shipping, :min_amount, :max_amount, :commission_tax_rate,
                 metadata: {},
                 rules: [:subject_type, :subject_id]
@@ -83,7 +83,8 @@ module Spree
 
           private
 
-          # Refuses a payload naming anything this store does not own.
+          # Refuses a payload naming anything this store does not own, and
+          # answers whether it did so the action can stop before the write.
           #
           # Rejected rather than filtered, because `rules` replaces a rate's
           # whole targeting: quietly dropping the bad rows would leave a rate
@@ -95,8 +96,6 @@ module Spree
           # this is also what stops a rate being pointed at another store's
           # catalog — the serializer reads the subject's name straight back,
           # which would otherwise enumerate it.
-          # Renders the refusal and answers whether it did, so the action can
-          # stop before the write.
           def reject_unreachable_rules
             unreachable = unreachable_rules
             return false if unreachable.empty?

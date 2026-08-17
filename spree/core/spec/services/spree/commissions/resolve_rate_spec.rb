@@ -34,20 +34,51 @@ RSpec.describe Spree::Commissions::ResolveRate do
     expect(resolve).to be_nil
   end
 
-  # Precedence is the operator's integer, not a hardcoded ladder.
-  it 'takes the highest priority match' do
-    create(:commission_rate, store: store, priority: 1)
-    winner = create(:commission_rate, store: store, priority: 10)
+  # Precedence is the operator's own ordering, not a hardcoded ladder.
+  it 'takes the first match in list order' do
+    later = create(:commission_rate, store: store)
+    winner = create(:commission_rate, store: store) # created last, so top of list
 
+    expect(described_class.candidates_for(store)).to eq([winner, later])
     expect(resolve).to eq(winner)
   end
 
-  it 'skips a higher-priority rate whose targeting does not match' do
-    mismatched = create(:commission_rate, store: store, priority: 10)
+  it 'skips a higher-placed rate whose targeting does not match' do
+    fallback = create(:commission_rate, store: store)
+    mismatched = create(:commission_rate, store: store)
     create(:commission_rule, commission_rate: mismatched, subject: other_vendor)
-    fallback = create(:commission_rate, store: store, priority: 1)
 
     expect(resolve).to eq(fallback)
+  end
+
+  # Which rule type a rate names decides nothing — a vendor-targeted rate
+  # placed above a product-targeted one wins, and that is the point of making
+  # the order editable rather than inferring specificity.
+  it 'lets the operator order beat any notion of how specific a rule is' do
+    product_rate = create(:commission_rate, store: store)
+    create(:commission_rule, commission_rate: product_rate, subject: product)
+    vendor_rate = create(:commission_rate, store: store)
+    create(:commission_rule, commission_rate: vendor_rate, subject: vendor)
+
+    expect(resolve).to eq(vendor_rate)
+
+    product_rate.move_to_top
+
+    expect(resolve).to eq(product_rate)
+  end
+
+  # A rate with no rules matches everything, so anything under it is
+  # unreachable. It belongs at the bottom, and the seed puts it there.
+  it 'lets an untargeted rate shadow everything below it' do
+    targeted = create(:commission_rate, store: store)
+    create(:commission_rule, commission_rate: targeted, subject: product)
+    catch_all = create(:commission_rate, store: store) # top of list
+
+    expect(resolve).to eq(catch_all)
+
+    catch_all.move_to_bottom
+
+    expect(resolve).to eq(targeted)
   end
 
   it 'matches a rate targeting the seller' do
@@ -151,8 +182,8 @@ RSpec.describe Spree::Commissions::ResolveRate do
 
   describe 'currency' do
     it 'passes over a fixed rate priced in another currency' do
-      create(:commission_rate, :fixed, store: store, currency: 'EUR', priority: 10)
-      fallback = create(:commission_rate, store: store, priority: 1)
+      fallback = create(:commission_rate, store: store)
+      create(:commission_rate, :fixed, store: store, currency: 'EUR') # top of list
 
       expect(resolve(currency: 'USD')).to eq(fallback)
     end

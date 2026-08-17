@@ -21,7 +21,7 @@ RSpec.describe Spree::Api::V3::Admin::CommissionLinesController, type: :controll
 
       expect(response).to have_http_status(:ok)
       row = json_response['data'].first
-      expect(row['id']).to start_with('comln_')
+      expect(row['id']).to start_with('cline_')
       expect(row['vendor_name']).to eq('Sparks Audio')
       expect(row['amount']).to eq('10.0')
       expect(row['tax_amount']).to eq('2.1')

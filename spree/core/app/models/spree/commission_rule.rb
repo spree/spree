@@ -12,7 +12,7 @@ module Spree
   # A rule with no subject is a global one, which reads the same as a rate
   # holding no rules at all; both match every sale.
   class CommissionRule < Spree.base_class
-    has_prefix_id :comrl
+    has_prefix_id :crule
 
     SUBJECT_TYPES = %w[Spree::Product Spree::Category Spree::Vendor].freeze
 

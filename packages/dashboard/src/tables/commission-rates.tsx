@@ -8,9 +8,10 @@ defineTable<CommissionRate>('commission-rates', {
   title: i18n.t('admin.settings_nav.items.commission_rates'),
   searchParam: 'name_cont',
   searchPlaceholder: i18n.t('admin.commission_rates.search_placeholder'),
-  // Highest priority first — the order the marketplace actually resolves in,
-  // so the list reads as the ladder it is.
-  defaultSort: { field: 'priority', direction: 'desc' },
+  // The list IS the resolution order, walked top-down, so the table has to
+  // show it in that order and nothing else. Sorting by another column would
+  // show a sequence the engine does not follow.
+  defaultSort: { field: 'position', direction: 'asc' },
   emptyIcon: <HandCoinsIcon className="size-8 text-muted-foreground" />,
   emptyMessage: i18n.t('admin.commission_rates.empty'),
   columns: [
@@ -40,23 +41,22 @@ defineTable<CommissionRate>('commission-rates', {
           : `${rate.value} ${rate.currency ?? ''}`.trim(),
     },
     {
-      key: 'priority',
-      label: i18n.t('admin.fields.commission_rate.priority.label'),
-      sortable: true,
-      default: true,
-      render: (rate) => rate.priority,
-    },
-    {
       key: 'rules',
       label: i18n.t('admin.fields.commission_rate.rules.label'),
       default: true,
       render: (rate) =>
-        rate.rules?.length
-          ? rate.rules
-              .map((rule) => rule.subject_name)
-              .filter(Boolean)
-              .join(', ')
-          : i18n.t('admin.commission_rates.applies_to_everything'),
+        rate.rules?.length ? (
+          rate.rules
+            .map((rule) => rule.subject_name)
+            .filter(Boolean)
+            .join(', ')
+        ) : (
+          // A rate naming nothing matches every sale, so everything below it
+          // never resolves. Worth saying plainly in the row.
+          <span className="text-muted-foreground">
+            {i18n.t('admin.commission_rates.applies_to_everything')}
+          </span>
+        ),
     },
     {
       key: 'enabled',

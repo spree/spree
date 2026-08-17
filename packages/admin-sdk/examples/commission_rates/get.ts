@@ -6,7 +6,7 @@ const client = createAdminClient({
 })
 
 // region:example
-const commissionRate = await client.commissionRates.get('comrt_a1b2c3')
+const commissionRate = await client.commissionRates.get('crate_a1b2c3')
 
 // endregion:example
 

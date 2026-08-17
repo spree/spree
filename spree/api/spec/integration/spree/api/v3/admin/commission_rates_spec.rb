@@ -7,7 +7,7 @@ RSpec.describe 'Admin Commission Rates API', type: :request, swagger_doc: 'api-r
 
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
   let!(:commission_rate) do
-    create(:commission_rate, store: store, name: 'Standard', kind: 'percentage', value: 10, priority: 5)
+    create(:commission_rate, store: store, name: 'Standard', kind: 'percentage', value: 10)
   end
 
   path '/api/v3/admin/commission_rates' do
@@ -18,10 +18,14 @@ RSpec.describe 'Admin Commission Rates API', type: :request, swagger_doc: 'api-r
       description <<~DESC
         What the marketplace charges its sellers.
 
-        Rates are tried in `priority` order, highest first, and the first one
-        whose targeting matches the sale wins. A rate carrying no rules matches
-        everything, which is how a marketplace expresses a single default
-        without configuring anything.
+        Rates are returned in resolution order: the list is walked top-down and
+        the first rate whose targeting matches the sale wins, so the order you
+        see is the precedence. Move a rate with `position` on update.
+
+        A rate carrying no rules matches every sale — `global` says so — which
+        is how a marketplace expresses a single default. Because resolution
+        stops at the first match, a global rate makes everything below it
+        unreachable, so it belongs at the bottom.
       DESC
       admin_scope :read, :commissions
 
@@ -38,7 +42,7 @@ RSpec.describe 'Admin Commission Rates API', type: :request, swagger_doc: 'api-r
       parameter name: :'q[enabled_eq]', in: :query, type: :boolean, required: false,
                 description: 'Filter by whether the rate is in use'
       parameter name: :sort, in: :query, type: :string, required: false,
-                description: 'Sort by field. Prefix with `-` for descending (e.g., `-priority`).'
+                description: 'Sort by field. Prefix with `-` for descending (e.g., `-position`).'
 
       response '200', 'commission rates found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -94,15 +98,18 @@ RSpec.describe 'Admin Commission Rates API', type: :request, swagger_doc: 'api-r
           code: { type: :string, example: 'audio', nullable: true,
                   description: 'Your own identifier for this rate; unique per store.' },
           enabled: { type: :boolean, example: true },
-          priority: { type: :integer, example: 10,
-                      description: 'Tried highest first; the first matching rate wins.' },
+          position: { type: :integer, example: 1,
+                      description: 'Place in the list. Rates resolve top-down, so 1 is tried first. ' \
+                                   'New rates are created at the top; send this to move one.' },
           kind: { type: :string, enum: %w[percentage fixed], example: 'percentage' },
           value: { type: :string, example: '12.5',
                    description: 'A percentage (10 = 10%) or a flat amount, per `kind`.' },
           currency: { type: :string, example: 'USD', nullable: true,
                       description: 'Required for a fixed rate, ignored for a percentage.' },
           include_tax: { type: :boolean, example: false,
-                         description: "Charge on the gross price. Off is the EU rule: charge on the seller's net revenue." },
+                         description: 'Charge on the price including the customer\'s VAT. Left off, commission is ' \
+                                      "charged on the seller's net revenue, which is the usual basis where the " \
+                                      'fee is taxed as its own supply.' },
           include_shipping: { type: :boolean, example: false,
                               description: "Also charge commission on the seller's delivery revenue." },
           min_amount: { type: :string, example: '1.0', nullable: true },
@@ -125,7 +132,7 @@ RSpec.describe 'Admin Commission Rates API', type: :request, swagger_doc: 'api-r
 
       response '201', 'commission rate created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:body) { { name: 'Audio sellers', kind: 'percentage', value: 12.5, priority: 10 } }
+        let(:body) { { name: 'Audio sellers', kind: 'percentage', value: 12.5 } }
 
         schema '$ref' => '#/components/schemas/CommissionRate'
 
@@ -211,7 +218,7 @@ RSpec.describe 'Admin Commission Rates API', type: :request, swagger_doc: 'api-r
 
       response '404', 'commission rate not found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:id) { 'comrt_nonexistent' }
+        let(:id) { 'crate_nonexistent' }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
@@ -240,7 +247,7 @@ RSpec.describe 'Admin Commission Rates API', type: :request, swagger_doc: 'api-r
         properties: {
           name: { type: :string, example: 'Standard' },
           enabled: { type: :boolean, example: true },
-          priority: { type: :integer, example: 20 },
+          position: { type: :integer, example: 1 },
           value: { type: :string, example: '15.0' },
           rules: {
             type: :array,

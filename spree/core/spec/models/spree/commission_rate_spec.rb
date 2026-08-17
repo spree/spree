@@ -158,12 +158,56 @@ RSpec.describe Spree::CommissionRate, type: :model do
     end
   end
 
-  describe '.by_priority' do
-    it 'walks from the highest priority down' do
-      low = create(:commission_rate, store: store, priority: 1)
-      high = create(:commission_rate, store: store, priority: 10)
+  describe 'ordering' do
+    # The list IS the precedence, so a new rate has to take effect on
+    # creation — appending would file it behind the catch-all that already
+    # matches everything, leaving it dead on arrival.
+    it 'puts a new rate at the top of the list' do
+      first = create(:commission_rate, store: store)
+      second = create(:commission_rate, store: store)
 
-      expect(described_class.by_priority.to_a).to eq([high, low])
+      expect(described_class.ordered.to_a).to eq([second, first])
+    end
+
+    it 'walks the list top-down' do
+      bottom = create(:commission_rate, store: store)
+      top = create(:commission_rate, store: store)
+
+      expect(described_class.ordered.to_a).to eq([top, bottom])
+      # Reloaded: inserting at the top pushes the other row down in the
+      # database, which an already-loaded record knows nothing about.
+      expect(top.reload.position).to be < bottom.reload.position
+    end
+
+    it 'keeps one marketplace positions out of another' do
+      other_store = create(:store)
+      mine = create(:commission_rate, store: store)
+      theirs = create(:commission_rate, store: other_store)
+
+      expect(mine.position).to eq(theirs.position)
+      expect(described_class.for_store(store).ordered.to_a).to eq([mine])
+    end
+
+    it 'reorders on demand' do
+      top = create(:commission_rate, store: store)
+      bottom = create(:commission_rate, store: store)
+
+      bottom.move_to_top
+
+      expect(described_class.ordered.to_a).to eq([bottom, top])
+    end
+  end
+
+  describe '#global?' do
+    it 'is true for a rate that names nothing' do
+      expect(create(:commission_rate, store: store)).to be_global
+    end
+
+    it 'is false once it targets something' do
+      rate = create(:commission_rate, store: store)
+      create(:commission_rule, commission_rate: rate, subject: create(:vendor, store: store))
+
+      expect(rate.reload).not_to be_global
     end
   end
 end

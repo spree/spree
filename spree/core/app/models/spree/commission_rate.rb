@@ -4,17 +4,34 @@ module Spree
   # What a marketplace charges a seller, as configuration.
   #
   # Rates are resolved per line item by walking a store's enabled rates in
-  # `priority` order and taking the first whose rules match
+  # list order and taking the first whose rules match
   # (Spree::Commissions::ResolveRate). A rate with no rules matches
   # everything, which is how a marketplace expresses a single default without
   # configuring anything.
   #
+  # The list IS the precedence, so what an operator sees in the table is what
+  # resolution does. Seeded rates arrive in the order merchants asked for —
+  # product, then category, then vendor, then the marketplace default — and a
+  # marketplace that wants a different answer drags a row instead of reasoning
+  # about which rule type is 'narrower'.
+  #
   # Mutable, unlike the Spree::CommissionLine rows it produces: editing a rate
   # changes what the next sale is charged and never what a past one was.
   class CommissionRate < Spree.base_class
-    has_prefix_id :comrt
+    has_prefix_id :crate
 
     acts_as_paranoid
+    # Scoped to the store: positions in one marketplace must not shuffle
+    # another's, and an unscoped list on a store-owned model fails the core
+    # suite for exactly that reason.
+    #
+    # New rates go to the top, not the bottom. A rate is created to say
+    # something more specific than what is already there — and the bottom of
+    # the list is where the catch-all lives, so appending would file every new
+    # rate behind the one rate guaranteed to match first, leaving it dead on
+    # arrival. Top-of-list means a new rate takes effect, which is what
+    # creating one means.
+    acts_as_list scope: :store_id, add_new_at: :top
 
     include Spree::SingleStoreResource
     include Spree::Metadata
@@ -35,7 +52,6 @@ module Spree
     #
     validates :name, presence: true
     validates :kind, presence: true, inclusion: { in: KINDS }
-    validates :priority, numericality: { only_integer: true }
     validates :value, numericality: { greater_than_or_equal_to: 0 }
     # Stored lowercase so the database enforces the same uniqueness the
     # validation promises. A functional index over LOWER(code) would be the
@@ -56,11 +72,11 @@ module Spree
     # Scopes
     #
     scope :enabled, -> { where(enabled: true) }
-    # The resolution order. Ties break on id so a rate added later never
-    # silently displaces an equal-priority one already in use.
-    scope :by_priority, -> { order(priority: :desc, id: :asc) }
+    # The resolution order, top-down. Ties break on id so two rates sharing a
+    # position resolve the same way on every read.
+    scope :ordered, -> { order(position: :asc, id: :asc) }
 
-    self.whitelisted_ransackable_attributes = %w[name code kind enabled priority value currency
+    self.whitelisted_ransackable_attributes = %w[name code kind enabled position value currency
                                                  include_tax include_shipping]
     self.whitelisted_ransackable_associations = %w[commission_rules]
 
@@ -83,6 +99,18 @@ module Spree
       return true if percentage?
 
       currency.to_s.casecmp?(order_currency.to_s)
+    end
+
+    # Whether this rate charges every sale, having named nothing to narrow it.
+    #
+    # Load-bearing for ordering, not just description: resolution stops at the
+    # first match, so a global rate makes every rate below it unreachable. It
+    # belongs at the bottom of the list, and an operator moving one up is
+    # turning off everything beneath it.
+    #
+    # @return [Boolean]
+    def global?
+      commission_rules.all?(&:global?)
     end
 
     # Whether this rate's targeting admits the given subjects.

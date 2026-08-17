@@ -1688,10 +1688,6 @@
           "help_percentage": "Procent sprzedaży pobierany od sprzedawcy.",
           "help_fixed": "Stała opłata za sprzedaż, w walucie poniżej."
         },
-        "priority": {
-          "label": "Priorytet",
-          "help": "Stawki są sprawdzane od najwyższej; wygrywa pierwsze dopasowanie."
-        },
         "rules": {
           "label": "Dotyczy",
           "help": "Wybory w jednym polu to alternatywy; każde wypełnione pole musi pasować. Zostaw wszystkie puste, aby objąć każdą sprzedaż."
@@ -4351,7 +4347,8 @@
         "updated": "Zaktualizowano stawkę prowizji"
       },
       "search_placeholder": "Szukaj po nazwie…",
-      "rule_picker_unavailable": "Ta wersja nie ma selektora dla tego typu celu."
+      "rule_picker_unavailable": "Ta wersja nie ma selektora dla tego typu celu.",
+      "order_hint": "Nowe stawki trafiają na górę listy, a wygrywa pierwsza pasująca — przeciągnij, aby zmienić kolejność."
     }
   }
 }

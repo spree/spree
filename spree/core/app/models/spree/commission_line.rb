@@ -18,7 +18,7 @@ module Spree
   # supply to the seller, separate from the consumer's item sale, so the two
   # VATs are computed independently and never mix.
   class CommissionLine < Spree.base_class
-    has_prefix_id :comln
+    has_prefix_id :cline
 
     include Spree::Metadata
 
