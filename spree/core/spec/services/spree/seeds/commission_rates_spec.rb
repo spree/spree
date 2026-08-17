@@ -33,6 +33,18 @@ RSpec.describe Spree::Seeds::CommissionRates do
     expect(store.commission_rates.ordered.to_a).to eq([added, seeded])
   end
 
+  # The catch-all matches every sale, so anywhere but the bottom leaves the
+  # rates below it unreachable — including on a store that already had some
+  # when this ran.
+  it 'lands below rates the store already had' do
+    existing = create(:commission_rate, store: store)
+
+    described_class.call
+
+    seeded = store.commission_rates.find_by(code: described_class::DEFAULT_CODE)
+    expect(store.commission_rates.ordered.to_a).to eq([existing, seeded])
+  end
+
   it 'seeds every store' do
     other_store = create(:store)
 

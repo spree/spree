@@ -29,13 +29,20 @@ module Spree
         Spree::Store.find_each do |store|
           next if store.commission_rates.with_deleted.exists?(code: DEFAULT_CODE)
 
-          store.commission_rates.create!(
+          rate = store.commission_rates.create!(
             name: I18n.t('spree.seed.commission_rates.marketplace_default'),
             code: DEFAULT_CODE,
             kind: 'percentage',
             value: 0,
             enabled: false
           )
+
+          # New rates are born at the top, which is right for one an operator
+          # adds and wrong for this one: it matches every sale, so anywhere but
+          # the bottom leaves the rates below it unreachable. A store seeded
+          # after it already has rates would otherwise have them all shadowed
+          # the moment this was enabled.
+          rate.move_to_bottom
         end
       end
     end
