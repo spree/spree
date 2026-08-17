@@ -18,7 +18,8 @@ module Spree
       preference :max_amount, :decimal, nullable: true
 
       def applicable?(context)
-        amount = context.commission_basis
+        # Weighed exactly as the fee will weigh it, per this rate's own base.
+        amount = context.commission_basis(commission_rate)
         return false if amount.nil?
         return false if preferred_min_amount.present? && amount < preferred_min_amount
         return false if preferred_max_amount.present? && amount >= preferred_max_amount

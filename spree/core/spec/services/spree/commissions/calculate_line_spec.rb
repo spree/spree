@@ -73,13 +73,13 @@ RSpec.describe Spree::Commissions::CalculateLine do
 
   describe 'floor and cap' do
     it 'lifts a commission to the floor' do
-      floored = create(:commission_rate, store: store, value: 1, min_amount: 5)
+      floored = create(:commission_rate, store: store, value: 1, min_amount: 5, currency: 'USD')
 
       expect(call(rate: floored).amount).to eq(5)
     end
 
     it 'holds a commission to the cap' do
-      capped = create(:commission_rate, store: store, value: 50, max_amount: 20)
+      capped = create(:commission_rate, store: store, value: 50, max_amount: 20, currency: 'USD')
 
       expect(call(rate: capped).amount).to eq(20)
     end

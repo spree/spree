@@ -888,8 +888,6 @@ en:
         cannot_delete_default_channel: Default channel cannot be deleted. Promote another channel to default first.
         cart_currency_mismatch: carts in different currencies cannot be merged
         channel_store_mismatch: must belong to the same store
-        commission_rule_subject_not_found: "%{type} %{id} was not found in this store"
-        commission_rule_subject_type_unknown: "%{type} cannot be targeted by a commission rule"
         coupon_code_frozen_after_completion: coupon codes cannot be changed on a completed order — add a manual discount instead
         delivery_zone_not_in_origin_group: must belong to the delivery method's origin group
         delivery_zone_not_in_profile: must belong to the delivery method's delivery profile
@@ -902,9 +900,11 @@ en:
         discount_value_type_invalid: value_type must be flat or percent
         exactly_one_adjustable: must be attached to exactly one adjustable
         exactly_one_of_cart_or_order: must belong to exactly one of cart or order
+        exactly_one_of_line_item_or_fulfillment: must be charged against exactly one of a line item or a fulfillment
         exactly_one_tax_identifier_owner: must belong to exactly one of customer, cart or order
         integration_connection_failed: could not connect with the saved credentials
         integration_type_not_registered: is not a registered integration
+        invalid_commission_rule: is not a commission rule kind this store has
         invalid_commission_rule_type: "%{type} is not a commission rule kind this store has"
         invalid_delivery_method_rule: is not a registered delivery method rule
         invalid_oauth_state: Invalid or expired authentication state. Please start the sign-in again.
@@ -912,6 +912,7 @@ en:
         invalid_order_routing_strategy: is not a registered order routing strategy
         invalid_refund_method: must be one of original_payment, store_credit
         invalid_storefront_access: is not a valid storefront access level
+        must_be_greater_than_min_amount: must be greater than or equal to the minimum
         must_be_origin_only: must be an origin (scheme and host) without path, query, or fragment
         no_pickup_point_provider: this delivery method has no pickup point provider configured
         oidc_account_not_provisioned: This account is not authorized for this store. Ask an administrator for an invitation.

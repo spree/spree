@@ -89,10 +89,39 @@ module Spree
               )
             )
 
+            attributes[:rules] = resolved_rule_rows(attributes[:rules]) if attributes.key?(:rules)
             attributes
           end
 
           private
+
+          # Resolves a rule's product list against this store before it reaches
+          # the model. Two things have to happen here and nowhere else: the ids
+          # arrive prefixed (only `preferences` are decoded on the way through
+          # TypedAssociations), and a product the caller cannot reach must not
+          # become part of a rule — a rate could otherwise be narrowed to
+          # another marketplace's catalog, and the serializer would read those
+          # products' ids straight back.
+          #
+          # Unreachable ids are dropped rather than refused, matching how
+          # delivery-method rules and price-list membership handle the same
+          # case: failing the whole save over one stale id would leave a
+          # merchant unable to clear it.
+          def resolved_rule_rows(rules)
+            Array(rules).map do |row|
+              row = row.to_h.with_indifferent_access
+              next row if row[:product_ids].blank?
+
+              row.merge(product_ids: accessible_product_ids(row[:product_ids]))
+            end
+          end
+
+          def accessible_product_ids(ids)
+            current_store.products.
+              accessible_by(current_ability, :show).
+              where(id: decode_prefixed_ids(ids)).
+              pluck(:id)
+          end
 
           def reject_unregistered_rules
             return false unless params.key?(:rules)

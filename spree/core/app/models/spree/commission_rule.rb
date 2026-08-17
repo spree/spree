@@ -67,7 +67,7 @@ module Spree
       return if type.blank?
       return if Spree.commission_rules.any? { |rule| rule.to_s == type }
 
-      errors.add(:type, :invalid_commission_rule)
+      errors.add(:type, Spree.t('errors.messages.invalid_commission_rule'))
     end
   end
 end

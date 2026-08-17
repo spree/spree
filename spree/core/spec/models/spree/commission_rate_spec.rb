@@ -4,13 +4,28 @@ RSpec.describe Spree::CommissionRate, type: :model do
   let(:store) { @default_store }
 
   describe 'validations' do
-    it 'requires a currency on a fixed rate but not on a percentage' do
+    it 'requires a currency on a fixed rate but not on a plain percentage' do
       expect(build(:commission_rate, kind: 'fixed', currency: nil)).not_to be_valid
       expect(build(:commission_rate, kind: 'percentage', currency: nil)).to be_valid
     end
 
+    # A floor or a cap is an amount, so a percentage carrying one is no longer
+    # free to travel — "at least 5" means 5 of something.
+    it 'requires a currency once a percentage carries a floor or a cap' do
+      expect(build(:commission_rate, kind: 'percentage', min_amount: 5, currency: nil)).not_to be_valid
+      expect(build(:commission_rate, kind: 'percentage', max_amount: 50, currency: nil)).not_to be_valid
+      expect(build(:commission_rate, kind: 'percentage', min_amount: 5, currency: 'USD')).to be_valid
+    end
+
+    # The override takes precedence over the store default, so it needs the
+    # same bound: it is multiplied straight into what a seller is charged.
+    it 'refuses a commission tax rate above one' do
+      expect(build(:commission_rate, commission_tax_rate: 21)).not_to be_valid
+      expect(build(:commission_rate, commission_tax_rate: 0.21)).to be_valid
+    end
+
     it 'rejects a cap below the floor' do
-      rate = build(:commission_rate, min_amount: 10, max_amount: 5)
+      rate = build(:commission_rate, min_amount: 10, max_amount: 5, currency: 'USD')
 
       expect(rate).not_to be_valid
       expect(rate.errors[:max_amount]).to be_present
@@ -150,6 +165,18 @@ RSpec.describe Spree::CommissionRate, type: :model do
         expect(rate.reload.matches?(context)).to be false
       end
 
+      # The band has to weigh the sale exactly as the fee will. On a
+      # tax-inclusive store a 100 item carrying 20 of VAT is worth 80 to the
+      # seller, so a band drawn under 100 must admit it — otherwise the fee
+      # charges on a figure the band never saw.
+      it 'weighs the sale the same way the fee will' do
+        line_item.update_columns(included_tax_total: 20)
+        rate = create(:commission_rate, store: store)
+        create(:commission_item_total_rule, commission_rate: rate, preferred_max_amount: 90)
+
+        expect(rate.reload.matches?(context)).to be true
+      end
+
       # Bounds meet at a number without covering it twice, so two bands can be
       # laid end to end.
       it 'treats the ceiling as exclusive' do
@@ -241,6 +268,36 @@ RSpec.describe Spree::CommissionRate, type: :model do
       bottom.move_to_top
 
       expect(described_class.ordered.to_a).to eq([bottom, top])
+    end
+  end
+
+  # A rate is paranoid, so `destroy` is a soft delete — and cascading from one
+  # would take rules that cannot be restored with it.
+  describe 'retiring a rate' do
+    let(:vendor) { create(:vendor, store: store) }
+
+    it 'keeps its rules, so restoring it does not make it charge everything' do
+      rate = create(:commission_rate, store: store)
+      create(:commission_vendor_rule, commission_rate: rate, vendors: [vendor])
+
+      rate.destroy
+      rate.restore
+
+      expect(rate.reload.commission_rules.count).to eq(1)
+      expect(rate).not_to be_global
+    end
+
+    # "Which rate charged this" has to stay answerable after the rate is
+    # retired; the rate itself is still there to read through with_deleted.
+    it 'leaves the lines it already charged pointing at it' do
+      rate = create(:commission_rate, store: store)
+      order = create(:order, store: store)
+      line = create(:commission_line, order: order, vendor: vendor,
+                                      line_item: create(:line_item, order: order), commission_rate: rate)
+
+      rate.destroy
+
+      expect(line.reload.commission_rate_id).to eq(rate.id)
     end
   end
 

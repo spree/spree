@@ -79,7 +79,7 @@ module Spree
     def exactly_one_subject
       return if [line_item_id, fulfillment_id].compact.one?
 
-      errors.add(:base, :exactly_one_of_line_item_or_fulfillment)
+      errors.add(:base, Spree.t('errors.messages.exactly_one_of_line_item_or_fulfillment'))
     end
   end
 end

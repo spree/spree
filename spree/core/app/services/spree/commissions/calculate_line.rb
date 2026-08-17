@@ -65,17 +65,6 @@ module Spree
         )
       end
 
-      private
-
-      # A fixed rate is a flat fee for the sale, charged once however many units
-      # it covered — quantity is what a percentage already accounts for through
-      # the base.
-      def charge_for(rate, subject)
-        return clamp(rate, rate.value) if rate.fixed?
-
-        clamp(rate, base_for(rate, subject) * rate.value / 100)
-      end
-
       # The seller's own revenue on this row, net of VAT unless the rate opts
       # into a gross base. Discounts come off either way — `taxable_basis` is
       # already the discounted, never-negative figure both line items and
@@ -85,16 +74,36 @@ module Spree
       # Which VAT column matters depends on how the store prices: a
       # tax-inclusive price carries VAT inside it, which a net base removes,
       # while a tax-exclusive one carries none, so only a gross base adds any.
-      def base_for(rate, subject)
+      #
+      # A class method because a value band has to weigh the sale exactly as
+      # the fee will (Spree::Commissions::Context#commission_basis) — if the
+      # two ever computed it differently, a band would admit sales the fee then
+      # charged as though they were worth something else.
+      #
+      # @param rate [Spree::CommissionRate, nil]
+      # @param subject [Spree::LineItem, Spree::Fulfillment]
+      # @return [BigDecimal]
+      def self.base_for(rate, subject)
         basis = subject.taxable_basis
 
-        base = if rate.tax_inclusive?
+        base = if rate&.tax_inclusive?
                  basis + subject.additional_tax_total.to_d
                else
                  basis - subject.included_tax_total.to_d
                end
 
         [base, BigDecimal(0)].max
+      end
+
+      private
+
+      # A fixed rate is a flat fee for the sale, charged once however many units
+      # it covered — quantity is what a percentage already accounts for through
+      # the base.
+      def charge_for(rate, subject)
+        return clamp(rate, rate.value) if rate.fixed?
+
+        clamp(rate, self.class.base_for(rate, subject) * rate.value / 100)
       end
 
       def clamp(rate, amount)

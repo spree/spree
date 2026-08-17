@@ -122,6 +122,34 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
       expect(rate.reload.commission_rules).to be_empty
     end
 
+    # Products are named with the prefixed ids every client sends, and are
+    # kept in a table rather than the preferences blob — so unlike the other
+    # reference lists they are resolved by the controller.
+    it 'links products by their prefixed ids' do
+      product = create(:product, store: store)
+
+      patch :update, params: {
+        id: rate.prefixed_id,
+        rules: [{ type: 'product_rule', product_ids: [product.prefixed_id] }]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(rate.reload.commission_rules.first.products).to eq([product])
+    end
+
+    # A rate narrowed to another marketplace's catalog would also read those
+    # products' ids straight back through the serializer.
+    it 'drops a product this store cannot reach' do
+      foreign_product = create(:product, store: create(:store))
+
+      patch :update, params: {
+        id: rate.prefixed_id,
+        rules: [{ type: 'product_rule', product_ids: [foreign_product.id] }]
+      }, as: :json
+
+      expect(rate.reload.commission_rules.first.products).to be_empty
+    end
+
     # The rule kind that could not exist while a rule could only name a record.
     it 'accepts a value band' do
       patch :update, params: {

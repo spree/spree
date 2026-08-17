@@ -51,13 +51,20 @@ module Spree
         @categories = product ? Spree::Commissions::ResolveRate.categories_for([product]).fetch(product.id, []) : []
       end
 
-      # The money a rule about value should compare against: the same
-      # discounted, never-negative figure the fee itself is charged on, so a
-      # band and the charge it gates never disagree about what a sale was worth.
+      # The money a rule about value compares against.
       #
+      # Whether that is the tax-inclusive or tax-exclusive figure depends on
+      # the rate being considered, which is why the rate is passed in: a band
+      # and the fee it gates must weigh the same sale the same way, or two
+      # bands meeting at 50 would straddle a number the operator never set.
+      #
+      # @param rate [Spree::CommissionRate, nil] nil weighs the sale as it
+      #   stands, which is all a caller without a rate in hand can mean
       # @return [BigDecimal, nil]
-      def commission_basis
-        subject&.taxable_basis
+      def commission_basis(rate = nil)
+        return nil if subject.nil?
+
+        Spree::Commissions::CalculateLine.base_for(rate, subject)
       end
     end
   end

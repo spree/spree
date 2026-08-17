@@ -59,13 +59,17 @@ RSpec.describe Spree::Seeds::CommissionRates do
     expect { described_class.call }.not_to change(Spree::CommissionRate, :count)
   end
 
-  # Re-seeding must not resurrect a rate the operator deliberately removed.
-  it 'does not bring back a deleted default' do
+  # A store with no catch-all has rates that resolve to nothing below the last
+  # targeted one, so the fallback comes back rather than being gone for good —
+  # matching the partial unique index, which only constrains live rows.
+  it 'restores a deleted default on the next run' do
     described_class.call
     store.commission_rates.find_by(code: described_class::DEFAULT_CODE).destroy
 
     described_class.call
 
-    expect(store.commission_rates.where(code: described_class::DEFAULT_CODE)).not_to exist
+    restored = store.commission_rates.find_by(code: described_class::DEFAULT_CODE)
+    expect(restored).to be_present
+    expect(store.commission_rates.ordered.last).to eq(restored)
   end
 end

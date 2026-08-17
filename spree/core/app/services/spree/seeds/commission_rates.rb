@@ -27,10 +27,13 @@ module Spree
 
       def call
         Spree::Store.find_each do |store|
-          next if store.commission_rates.with_deleted.exists?(code: DEFAULT_CODE)
+          # Live rows only, matching the partial unique index: an operator who
+          # deleted the seeded fallback gets it back on the next run rather
+          # than being left with no bottom-of-list catch-all forever.
+          next if store.commission_rates.exists?(code: DEFAULT_CODE)
 
           rate = store.commission_rates.create!(
-            name: I18n.t('spree.seed.commission_rates.marketplace_default'),
+            name: Spree.t('seed.commission_rates.marketplace_default'),
             code: DEFAULT_CODE,
             kind: 'percentage',
             value: 0,

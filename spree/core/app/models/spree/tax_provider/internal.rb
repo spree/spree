@@ -128,9 +128,10 @@ module Spree
       # since 6.0, and a foreign category id would match none of this store's
       # rates, silently leaving the item untaxed.
       #
-      # Memoized per store rather than per provider, since one provider
-      # instance answers for a whole order — and, on a marketplace, for each of
-      # its sellers in turn.
+      # Memoized per store rather than per owner, so one `estimate` over a
+      # basket asks once. It buys nothing across calls — Purchase::Taxation
+      # builds a fresh provider every time — which is why commission memoizes
+      # its own answer rather than relying on this.
       def default_tax_category_for(store)
         @default_tax_categories ||= {}
         return @default_tax_categories[store.id] if @default_tax_categories.key?(store.id)
