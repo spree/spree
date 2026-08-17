@@ -1461,8 +1461,18 @@ export interface CommissionRateCreateParams {
   kind: 'percentage' | 'fixed'
   /** A percentage (e.g. `10` for 10%) or a flat amount, per `kind`. */
   value: number
-  /** Required for a fixed rate, ignored for a percentage. */
+  /**
+   * The currency a percentage rate's floor or cap is stated in. A flat fee
+   * says its currencies through `amounts` instead.
+   */
   currency?: string | null
+  /**
+   * What a flat fee charges, keyed by currency: `{ USD: '5.00', GBP: '4.00' }`.
+   * A rate is skipped for a currency it states no amount in, so that sale
+   * falls through to the next matching rate rather than being charged a
+   * converted figure nobody set. Replaces the whole set on write.
+   */
+  amounts?: Record<string, string | number>
   /**
    * Charge on the item's gross price rather than its net one. Off by default:
    * in the EU the fee is a separate supply from the sale, so it is charged on

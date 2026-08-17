@@ -1671,8 +1671,7 @@
         },
         "value": {
           "label": "Value",
-          "help_percentage": "Percent of the sale charged to the seller.",
-          "help_fixed": "Flat fee charged per sale, in the currency below."
+          "help_percentage": "Percent of the sale charged to the seller."
         },
         "rules": {
           "label": "Conditions",
@@ -1699,6 +1698,14 @@
         },
         "enabled": {
           "help": "Disabled rates are skipped when charging a sale."
+        },
+        "amounts": {
+          "help": "Charged per sale. A currency left empty is one this rate does not charge — those sales fall to the next rate.",
+          "label": "Flat fee"
+        },
+        "bounds": {
+          "help": "Never charge less than the first, or more than the second.",
+          "label": "Floor and cap (optional)"
         }
       }
     },

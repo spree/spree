@@ -1671,8 +1671,7 @@
         },
         "value": {
           "label": "Wert",
-          "help_percentage": "Prozentsatz des Verkaufs, der dem Verkäufer berechnet wird.",
-          "help_fixed": "Pauschale pro Verkauf, in der Währung unten."
+          "help_percentage": "Prozentsatz des Verkaufs, der dem Verkäufer berechnet wird."
         },
         "rules": {
           "label": "Bedingungen",
@@ -1699,6 +1698,14 @@
         },
         "enabled": {
           "help": "Deaktivierte Sätze werden bei der Berechnung übersprungen."
+        },
+        "amounts": {
+          "help": "Pro Verkauf berechnet. Eine leer gelassene Währung berechnet dieser Satz nicht — solche Verkäufe fallen an den nächsten Satz.",
+          "label": "Pauschale"
+        },
+        "bounds": {
+          "help": "Nie weniger als der erste, nie mehr als der zweite Betrag.",
+          "label": "Unter- und Obergrenze (optional)"
         }
       }
     },

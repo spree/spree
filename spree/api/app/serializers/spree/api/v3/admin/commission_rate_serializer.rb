@@ -21,6 +21,7 @@ module Spree
                    kind: :string,
                    value: :string,
                    currency: 'string | null',
+                   amounts: 'Record<string, string>',
                    tax_inclusive: :boolean,
                    include_shipping: :boolean,
                    min_amount: 'string | null',
@@ -35,6 +36,12 @@ module Spree
 
           %i[value min_amount max_amount commission_tax_rate].each do |decimal|
             attribute(decimal) { |rate| rate.public_send(decimal)&.to_s }
+          end
+
+          # What a flat fee charges, per currency. Empty on a percentage rate,
+          # which needs no amount of its own.
+          attribute :amounts do |rate|
+            rate.amounts.transform_values(&:to_s)
           end
 
           # A rate that names nothing matches every sale, so everything below

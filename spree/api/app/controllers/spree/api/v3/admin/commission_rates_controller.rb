@@ -70,7 +70,7 @@ module Spree
           end
 
           def collection_includes
-            [:commission_rules]
+            [:commission_rules, :commission_rate_values]
           end
 
           # `rule_types` is read-only discovery — maps to the read scope and
@@ -85,6 +85,7 @@ module Spree
                 :name, :code, :enabled, :position, :kind, :value, :currency,
                 :tax_inclusive, :include_shipping, :min_amount, :max_amount, :commission_tax_rate,
                 metadata: {},
+                amounts: {},
                 rules: [:id, :type, { preferences: {} }, *rule_association_attributes]
               )
             )

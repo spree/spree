@@ -7,6 +7,7 @@ import type {
 import {
   adminClient,
   Can,
+  CurrencySelect,
   mapSpreeErrorsToForm,
   PreferencesForm,
   ResourceMultiAutocomplete,
@@ -14,6 +15,7 @@ import {
   resourceSearchSchema,
   Subject,
   usePermissions,
+  useStore,
 } from '@spree/dashboard-core'
 import {
   Button,
@@ -26,6 +28,10 @@ import {
   FieldGroup,
   FieldLabel,
   Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
   RowActions,
   Select,
   SelectContent,
@@ -57,6 +63,7 @@ import {
   useDeleteCommissionRate,
   useUpdateCommissionRate,
 } from '../../../../hooks/use-commission-rates'
+import { slugify } from '../../../../lib/slugify'
 import {
   COMMISSION_RATE_DEFAULTS,
   COMMISSION_RATE_KINDS,
@@ -316,6 +323,15 @@ function CommissionRateFormFields({ form }: { form: UseFormReturn<CommissionRate
   const { t } = useTranslation()
   const { errors } = form.formState
   const kind = form.watch('kind')
+  const name = form.watch('name')
+  // "Base Commission" becomes "base-commission" while the operator types, and
+  // stops the moment they write a code of their own — matching how a channel's
+  // code is derived.
+  useEffect(() => {
+    if (form.getFieldState('code').isDirty) return
+
+    form.setValue('code', slugify(name ?? ''))
+  }, [name, form])
 
   const kindOptions = COMMISSION_RATE_KINDS.map((value) => ({
     value,
@@ -378,66 +394,34 @@ function CommissionRateFormFields({ form }: { form: UseFormReturn<CommissionRate
         />
       </Field>
 
-      <Field>
-        <FieldLabel htmlFor="value">{t('admin.fields.commission_rate.value.label')}</FieldLabel>
-        <Input
-          id="value"
-          type="number"
-          step="0.01"
-          min="0"
-          aria-invalid={!!errors.value || undefined}
-          {...form.register('value')}
-        />
-        <span className="text-xs text-muted-foreground">
-          {t(`admin.fields.commission_rate.value.help_${kind}`)}
-        </span>
-        <FieldError errors={[errors.value]} />
-      </Field>
-
-      {/* A percentage travels across currencies; only a flat fee needs one. */}
-      {kind === 'fixed' && (
+      {kind === 'percentage' ? (
         <Field>
-          <FieldLabel htmlFor="currency">{t('admin.fields.currency.label')}</FieldLabel>
-          <Input
-            id="currency"
-            placeholder="USD"
-            aria-invalid={!!errors.currency || undefined}
-            {...form.register('currency')}
-          />
-          <FieldError errors={[errors.currency]} />
+          <FieldLabel htmlFor="value">{t('admin.fields.commission_rate.value.label')}</FieldLabel>
+          <InputGroup>
+            <InputGroupInput
+              id="value"
+              type="number"
+              step="0.01"
+              min="0"
+              aria-invalid={!!errors.value || undefined}
+              {...form.register('value')}
+            />
+            <InputGroupAddon align="inline-end">
+              <InputGroupText>%</InputGroupText>
+            </InputGroupAddon>
+          </InputGroup>
+          <span className="text-xs text-muted-foreground">
+            {t('admin.fields.commission_rate.value.help_percentage')}
+          </span>
+          <FieldError errors={[errors.value]} />
         </Field>
+      ) : (
+        <FlatFeeAmountsField form={form} />
       )}
 
       <CommissionRulesField form={form} />
 
-      <div className="grid grid-cols-2 gap-4">
-        <Field>
-          <FieldLabel htmlFor="min_amount">
-            {t('admin.fields.commission_rate.min_amount.label')}
-          </FieldLabel>
-          <Input
-            id="min_amount"
-            type="number"
-            step="0.01"
-            min="0"
-            {...form.register('min_amount')}
-          />
-          <FieldError errors={[errors.min_amount]} />
-        </Field>
-        <Field>
-          <FieldLabel htmlFor="max_amount">
-            {t('admin.fields.commission_rate.max_amount.label')}
-          </FieldLabel>
-          <Input
-            id="max_amount"
-            type="number"
-            step="0.01"
-            min="0"
-            {...form.register('max_amount')}
-          />
-          <FieldError errors={[errors.max_amount]} />
-        </Field>
-      </div>
+      {kind === 'percentage' && <PercentageBoundsField form={form} />}
 
       <Field>
         <FieldLabel htmlFor="commission_tax_rate">
@@ -509,6 +493,100 @@ function ToggleField({
           )}
         />
       </div>
+    </Field>
+  )
+}
+
+/**
+ * What a flat fee charges, one field per currency the store sells in.
+ *
+ * No currency picker: a flat fee cannot travel the way a percentage can, and
+ * a marketplace selling in three currencies needs an amount in each rather
+ * than one figure and a conversion nobody asked for. A currency left empty is
+ * one this rate does not charge — that sale falls through to the next rate.
+ */
+function FlatFeeAmountsField({ form }: { form: UseFormReturn<CommissionRateFormValues> }) {
+  const { t } = useTranslation()
+  const { currencies } = useStore()
+
+  return (
+    <Field>
+      <FieldLabel>{t('admin.fields.commission_rate.amounts.label')}</FieldLabel>
+      <span className="text-xs text-muted-foreground">
+        {t('admin.fields.commission_rate.amounts.help')}
+      </span>
+      <div className="flex flex-col gap-2 pt-1">
+        {currencies.map((currency) => (
+          <div key={currency} className="flex items-center gap-2">
+            <span className="w-12 shrink-0 text-sm text-muted-foreground">{currency}</span>
+            <Controller
+              control={form.control}
+              name="amounts"
+              render={({ field }) => (
+                <Input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  aria-label={currency}
+                  value={(field.value?.[currency] as string) ?? ''}
+                  onChange={(event) =>
+                    field.onChange({ ...field.value, [currency]: event.target.value })
+                  }
+                />
+              )}
+            />
+          </div>
+        ))}
+      </div>
+    </Field>
+  )
+}
+
+/**
+ * Optional bounds on a percentage: never charge less than this, never more
+ * than that. Amounts, so they carry a currency of their own — which is what
+ * stops "at least 5" meaning five of whatever the buyer happened to pay in.
+ */
+function PercentageBoundsField({ form }: { form: UseFormReturn<CommissionRateFormValues> }) {
+  const { t } = useTranslation()
+  const { errors } = form.formState
+  const hasBound = !!form.watch('min_amount') || !!form.watch('max_amount')
+
+  return (
+    <Field>
+      <FieldLabel>{t('admin.fields.commission_rate.bounds.label')}</FieldLabel>
+      <span className="text-xs text-muted-foreground">
+        {t('admin.fields.commission_rate.bounds.help')}
+      </span>
+      <div className="flex items-center gap-2 pt-1">
+        <Input
+          type="number"
+          step="0.01"
+          min="0"
+          aria-label={t('admin.fields.commission_rate.min_amount.label')}
+          placeholder={t('admin.fields.commission_rate.min_amount.label')}
+          {...form.register('min_amount')}
+        />
+        <span className="text-sm text-muted-foreground">–</span>
+        <Input
+          type="number"
+          step="0.01"
+          min="0"
+          aria-label={t('admin.fields.commission_rate.max_amount.label')}
+          placeholder={t('admin.fields.commission_rate.max_amount.label')}
+          {...form.register('max_amount')}
+        />
+        {hasBound && (
+          <Controller
+            control={form.control}
+            name="currency"
+            render={({ field }) => (
+              <CurrencySelect value={field.value || undefined} onChange={field.onChange} />
+            )}
+          />
+        )}
+      </div>
+      <FieldError errors={[errors.min_amount, errors.max_amount, errors.currency]} />
     </Field>
   )
 }

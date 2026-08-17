@@ -888,6 +888,7 @@ en:
         cannot_delete_default_channel: Default channel cannot be deleted. Promote another channel to default first.
         cart_currency_mismatch: carts in different currencies cannot be merged
         channel_store_mismatch: must belong to the same store
+        commission_rate_needs_an_amount: needs a flat fee amount in at least one currency
         coupon_code_frozen_after_completion: coupon codes cannot be changed on a completed order — add a manual discount instead
         delivery_zone_not_in_origin_group: must belong to the delivery method's origin group
         delivery_zone_not_in_profile: must belong to the delivery method's delivery profile

@@ -16,6 +16,9 @@ export const commissionRateFormSchema = z.object({
   kind: z.enum(COMMISSION_RATE_KINDS),
   value: z.coerce.number().min(0),
   currency: z.string().optional(),
+  // What a flat fee charges, keyed by currency. Held as strings because they
+  // come from number inputs and an empty one means "not charged here".
+  amounts: z.record(z.string(), z.string()).default({}),
   tax_inclusive: z.boolean(),
   include_shipping: z.boolean(),
   min_amount: z.string().optional(),
@@ -46,6 +49,7 @@ export const COMMISSION_RATE_DEFAULTS: CommissionRateFormValues = {
   kind: 'percentage',
   value: 10,
   currency: '',
+  amounts: {},
   tax_inclusive: false,
   include_shipping: false,
   min_amount: '',
@@ -62,6 +66,9 @@ export function commissionRateToFormValues(rate: CommissionRate): CommissionRate
     kind: (rate.kind as CommissionRateFormValues['kind']) ?? 'percentage',
     value: Number(rate.value ?? 0),
     currency: rate.currency ?? '',
+    amounts: Object.fromEntries(
+      Object.entries(rate.amounts ?? {}).map(([code, amount]) => [code, String(amount ?? '')]),
+    ),
     tax_inclusive: rate.tax_inclusive,
     include_shipping: rate.include_shipping,
     min_amount: rate.min_amount == null ? '' : String(rate.min_amount),
@@ -95,7 +102,15 @@ export function commissionRateValuesToParams(
     value: v.value,
     // A percentage applies in any currency, so sending one would only be
     // noise the server ignores.
-    currency: v.kind === 'fixed' ? blankToNull(v.currency) : null,
+    // A flat fee says its currencies through `amounts`; `currency` only marks
+    // the one a percentage's floor or cap is stated in.
+    currency: v.kind === 'percentage' ? blankToNull(v.currency) : null,
+    amounts:
+      v.kind === 'fixed'
+        ? Object.fromEntries(
+            Object.entries(v.amounts).filter(([, amount]) => String(amount ?? '').trim() !== ''),
+          )
+        : {},
     tax_inclusive: v.tax_inclusive,
     include_shipping: v.include_shipping,
     min_amount: decimalOrNull(v.min_amount),

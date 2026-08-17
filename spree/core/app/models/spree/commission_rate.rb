@@ -43,6 +43,11 @@ module Spree
     # Associations
     #
     belongs_to :store, class_name: 'Spree::Store'
+    # What a flat fee charges, one row per currency. A rate with no amount for
+    # the sale's currency does not apply to it (see #applies_to_currency?).
+    has_many :commission_rate_values, class_name: 'Spree::CommissionRateValue',
+             dependent: :destroy, inverse_of: :commission_rate
+
     # Retired with the rate, not deleted: rules are paranoid too, so a soft
     # delete cascades to a soft delete and the rate's conditions stay readable
     # beside the commission lines they explain.
@@ -68,10 +73,13 @@ module Spree
 
     validates :code, uniqueness: { scope: [*spree_base_uniqueness_scope, :store_id], case_sensitive: false },
                      allow_blank: true
-    # A flat fee is meaningless without one, and so is a floor or a cap: those
-    # are amounts too, so a percentage rate carrying one is no longer free to
-    # travel — "at least 5" means 5 of something.
-    validates :currency, presence: true, if: -> { fixed? || min_amount.present? || max_amount.present? }
+    # A floor or a cap is an amount, so a percentage rate carrying one is no
+    # longer free to travel — "at least 5" means 5 of something. A flat fee
+    # says the same thing through its per-currency amounts instead.
+    validates :currency, presence: true, if: -> { percentage? && (min_amount.present? || max_amount.present?) }
+    # A flat fee that charges nothing anywhere would be skipped for every sale,
+    # which reads as a rate that does not work rather than one that is off.
+    validate :fixed_rate_states_an_amount
     validates :min_amount, :max_amount, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
     # A fraction, bounded like the store preference it overrides: the number is
     # multiplied straight into what a seller is charged, so a figure above 1
@@ -112,11 +120,42 @@ module Spree
     # @param order_currency [String]
     # @return [Boolean]
     def applies_to_currency?(order_currency)
+      # A flat fee applies only where it has stated an amount. Falling through
+      # to the next rate is deliberate: converting one currency's figure into
+      # another would invent a fee nobody set.
+      return amount_for(order_currency).present? if fixed?
+
       # A percentage is a ratio and travels — unless it carries a floor or a
       # cap, which are amounts and only mean something in their own currency.
-      return true if percentage? && currency.blank?
+      return true if currency.blank?
 
       currency.to_s.casecmp?(order_currency.to_s)
+    end
+
+    # The flat fee in one currency, or nil where none is set.
+    #
+    # @param order_currency [String]
+    # @return [BigDecimal, nil]
+    def amount_for(order_currency)
+      commission_rate_values.
+        find { |value| value.currency.to_s.casecmp?(order_currency.to_s) }&.amount
+    end
+
+    # The flat fee amounts as the API reads and writes them: currency => amount.
+    #
+    # @return [Hash{String=>BigDecimal}]
+    def amounts
+      commission_rate_values.to_h { |value| [value.currency, value.amount] }
+    end
+
+    # Replaces the flat fee amounts wholesale. A currency left out is retired,
+    # which is how a marketplace stops charging this rate there.
+    #
+    # @param values [Hash, nil] currency => amount
+    # @return [void]
+    def amounts=(values)
+      @pending_amounts = (values || {}).to_h.transform_keys { |key| key.to_s.upcase }
+      apply_pending_amounts if persisted?
     end
 
     # Whether this rate charges every sale, having named nothing to narrow it.
@@ -197,6 +236,29 @@ module Spree
     # A new rate has no id for its rules to hang off until it is saved.
     def apply_pending_rules
       flush_pending_typed_association(:commission_rules)
+      apply_pending_amounts
+    end
+
+    def apply_pending_amounts
+      return if @pending_amounts.nil?
+
+      wanted = @pending_amounts.compact_blank
+      @pending_amounts = nil
+
+      commission_rate_values.reject { |value| wanted.key?(value.currency) }.each(&:destroy)
+      wanted.each do |currency, amount|
+        row = commission_rate_values.find { |value| value.currency == currency } ||
+              commission_rate_values.build(currency: currency)
+        row.update!(amount: amount)
+      end
+      commission_rate_values.reset
+    end
+
+    def fixed_rate_states_an_amount
+      return unless fixed?
+      return if @pending_amounts.present? || commission_rate_values.any?
+
+      errors.add(:base, Spree.t('errors.messages.commission_rate_needs_an_amount'))
     end
 
     def max_amount_above_min_amount

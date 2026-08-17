@@ -183,7 +183,9 @@ RSpec.describe Spree::Commissions::ResolveRate do
   describe 'currency' do
     it 'passes over a fixed rate priced in another currency' do
       fallback = create(:commission_rate, store: store)
-      create(:commission_rate, :fixed, store: store, currency: 'EUR') # top of list
+      # Top of the list, but states no dollar amount — so a dollar sale falls
+      # past it rather than being charged a euro figure.
+      create(:commission_rate, :fixed, store: store, amounts: { 'EUR' => 3 })
 
       expect(resolve(currency: 'USD')).to eq(fallback)
     end

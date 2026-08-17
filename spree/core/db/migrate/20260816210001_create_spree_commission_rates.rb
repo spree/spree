@@ -2,6 +2,7 @@ class CreateSpreeCommissionRates < ActiveRecord::Migration[8.1]
   INDEX_NAME = 'index_spree_commission_rates_on_store_id_and_code'.freeze
   RULE_INDEX_NAME = 'index_commission_rules_on_rate_and_type'.freeze
   RULE_PRODUCT_INDEX_NAME = 'index_commission_rule_products_on_rule_and_product'.freeze
+  RATE_VALUE_INDEX_NAME = 'index_commission_rate_values_on_rate_and_currency'.freeze
 
   def change
     create_table :spree_commission_rates do |t|
@@ -16,9 +17,11 @@ class CreateSpreeCommissionRates < ActiveRecord::Migration[8.1]
       t.integer :position, null: false, default: 0
 
       t.string :kind, null: false # percentage | fixed
+      # A percentage. A flat fee's amounts live in spree_commission_rate_values,
+      # one per currency, since "2" means nothing without saying 2 of what.
       t.decimal :value, precision: 10, scale: 5, null: false, default: 0
-      # Required for a fixed rate (a flat "2" means nothing without one),
-      # ignored for a percentage.
+      # Only set when a percentage carries a floor or a cap — those are amounts
+      # too, so the rate stops being free to travel.
       t.string :currency
 
       # Commission base: net (ex-VAT) item price by default, which is the EU
@@ -47,6 +50,21 @@ class CreateSpreeCommissionRates < ActiveRecord::Migration[8.1]
     add_code_uniqueness_index
     add_index :spree_commission_rates, [:store_id, :enabled, :position]
     add_index :spree_commission_rates, :deleted_at
+
+    # What a flat fee charges, per currency. A rate is skipped for a currency
+    # it has no amount for, so a marketplace states each one deliberately
+    # rather than having a figure converted on its behalf.
+    create_table :spree_commission_rate_values do |t|
+      t.references :commission_rate, null: false
+      t.string :currency, null: false
+      t.decimal :amount, precision: 10, scale: 2, null: false, default: 0
+
+      t.timestamps
+      t.datetime :deleted_at
+    end
+
+    add_index :spree_commission_rate_values, :deleted_at
+    add_rate_value_uniqueness_index
 
     create_table :spree_commission_rules do |t|
       t.references :commission_rate, null: false
@@ -109,6 +127,31 @@ class CreateSpreeCommissionRates < ActiveRecord::Migration[8.1]
   # deleted_at, CAST(...))`) is MySQL-only, `UNIX_TIMESTAMP` is MariaDB-only,
   # and a functional index on COALESCE — the older precedent in this tree — is
   # MySQL-only too. This expression is the one both accept.
+  # One amount per currency per rate, among live rows.
+  def add_rate_value_uniqueness_index
+    if mysql?
+      reversible do |dir|
+        dir.up do
+          execute <<~SQL.squish
+            ALTER TABLE spree_commission_rate_values
+            ADD COLUMN currency_key VARCHAR(255)
+            AS (IF(deleted_at IS NULL, currency, NULL)) STORED
+          SQL
+          add_index :spree_commission_rate_values, [:commission_rate_id, :currency_key],
+                    unique: true, name: RATE_VALUE_INDEX_NAME
+        end
+
+        dir.down do
+          remove_index :spree_commission_rate_values, name: RATE_VALUE_INDEX_NAME
+          remove_column :spree_commission_rate_values, :currency_key
+        end
+      end
+    else
+      add_index :spree_commission_rate_values, [:commission_rate_id, :currency],
+                unique: true, where: 'deleted_at IS NULL', name: RATE_VALUE_INDEX_NAME
+    end
+  end
+
   def add_rule_product_uniqueness_index
     if mysql?
       reversible do |dir|

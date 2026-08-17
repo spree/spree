@@ -8,8 +8,10 @@ FactoryBot.define do
 
     trait :fixed do
       kind { 'fixed' }
-      value { 2.5 }
-      currency { 'USD' }
+      value { 0 }
+      transient { amounts { { 'USD' => 2.5 } } }
+
+      after(:build) { |rate, evaluator| rate.amounts = evaluator.amounts }
     end
 
     trait :disabled do

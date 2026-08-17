@@ -1671,8 +1671,7 @@
         },
         "value": {
           "label": "Valeur",
-          "help_percentage": "Pourcentage de la vente facturé au vendeur.",
-          "help_fixed": "Montant fixe par vente, dans la devise ci-dessous."
+          "help_percentage": "Pourcentage de la vente facturé au vendeur."
         },
         "rules": {
           "label": "Conditions",
@@ -1699,6 +1698,14 @@
         },
         "enabled": {
           "help": "Les taux désactivés sont ignorés lors de la facturation."
+        },
+        "amounts": {
+          "help": "Facturé par vente. Une devise laissée vide n'est pas facturée par ce taux — ces ventes passent au taux suivant.",
+          "label": "Montant fixe"
+        },
+        "bounds": {
+          "help": "Ne jamais facturer moins que le premier, ni plus que le second.",
+          "label": "Plancher et plafond (facultatif)"
         }
       }
     },

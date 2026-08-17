@@ -42,7 +42,7 @@ module Spree
         precision = Spree::Money::Rounding.precision(currency)
         tax = commission_tax || resolve_tax(rate: rate, vendor: vendor, order: order)
 
-        amount = Spree::Money::Rounding.quantize(charge_for(rate, subject), precision)
+        amount = Spree::Money::Rounding.quantize(charge_for(rate, subject, currency), precision)
         tax_amount = Spree::Money::Rounding.quantize(amount * tax.rate, precision)
 
         success(
@@ -100,8 +100,10 @@ module Spree
       # A fixed rate is a flat fee for the sale, charged once however many units
       # it covered — quantity is what a percentage already accounts for through
       # the base.
-      def charge_for(rate, subject)
-        return clamp(rate, rate.value) if rate.fixed?
+      def charge_for(rate, subject, currency)
+        # A flat fee is charged in the sale's own currency; the rate only got
+        # this far because it states an amount there.
+        return clamp(rate, rate.amount_for(currency).to_d) if rate.fixed?
 
         clamp(rate, self.class.base_for(rate, subject) * rate.value / 100)
       end

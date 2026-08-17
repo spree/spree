@@ -600,6 +600,10 @@ Wire through `<Controller>` in forms; pass `value`/`onChange` directly in filter
 
 **Base UI `<Popover>` is unreliable inside a `<Sheet>`'s portal tree.** Symptom: the trigger gets `aria-expanded="true"` and `data-popup-open=""` on click, but no `[data-slot="popover-content"]` ever appears in the DOM. Happens in deeply-nested portal trees (Sheet → SortableContext → TableRow → Popover). Fix: render the panel inline with `absolute top-full left-0 z-50` + a `document.pointerdown` click-outside listener + Escape-to-close. A portal is only needed to escape an `overflow: hidden` ancestor; for table cells and form fields, inline is fine. Reference: `components/spree/color-picker.tsx`, plus `<StoreDatePicker inline>` above.
 
+`Currency` should be always rendered as a dropdown using `currency-select.tsx` component, this also applies to Preferences fields representing currency
+`Country` and `Countries` fields should always use `copuntry-combobox.tsx` component, this also applies to preferences fields representing a single country or multiple choices
+
+
 ### @spree/sdk-core — Shared HTTP Layer
 
 Private package providing `createRequestFn()`, `SpreeError`, retry logic, and Ransack param transformation. Used internally by both SDKs.

@@ -71,11 +71,39 @@ RSpec.describe Spree::CommissionRate, type: :model do
       expect(rate.applies_to_currency?('USD')).to be true
     end
 
-    it 'holds a fixed rate to its own currency' do
-      rate = build(:commission_rate, :fixed, currency: 'EUR')
+    # A flat fee charges what it states, where it states it. Converting one
+    # currency's figure into another would invent a fee nobody set, so a sale
+    # in an unstated currency falls through to the next rate.
+    it 'holds a flat fee to the currencies it states an amount in' do
+      rate = create(:commission_rate, :fixed, store: store, amounts: { 'USD' => 5, 'GBP' => 4 })
 
-      expect(rate.applies_to_currency?('EUR')).to be true
-      expect(rate.applies_to_currency?('usd')).to be false
+      expect(rate.applies_to_currency?('usd')).to be true
+      expect(rate.applies_to_currency?('GBP')).to be true
+      expect(rate.applies_to_currency?('EUR')).to be false
+    end
+  end
+
+  describe 'flat fee amounts' do
+    it 'charges what it states for the sale currency' do
+      rate = create(:commission_rate, :fixed, store: store, amounts: { 'USD' => 5, 'GBP' => 4 })
+
+      expect(rate.amount_for('USD')).to eq(5)
+      expect(rate.amount_for('gbp')).to eq(4)
+      expect(rate.amount_for('EUR')).to be_nil
+    end
+
+    # A flat fee charging nothing anywhere is skipped for every sale, which
+    # reads as a broken rate rather than a disabled one.
+    it 'refuses a flat fee that states no amount at all' do
+      expect(build(:commission_rate, kind: 'fixed', value: 0)).not_to be_valid
+    end
+
+    it 'retires a currency dropped from the set' do
+      rate = create(:commission_rate, :fixed, store: store, amounts: { 'USD' => 5, 'GBP' => 4 })
+
+      rate.update!(amounts: { 'USD' => 6 })
+
+      expect(rate.reload.amounts).to eq('USD' => 6)
     end
   end
 

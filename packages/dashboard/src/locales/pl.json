@@ -1685,8 +1685,7 @@
         },
         "value": {
           "label": "Wartość",
-          "help_percentage": "Procent sprzedaży pobierany od sprzedawcy.",
-          "help_fixed": "Stała opłata za sprzedaż, w walucie poniżej."
+          "help_percentage": "Procent sprzedaży pobierany od sprzedawcy."
         },
         "rules": {
           "label": "Warunki",
@@ -1713,6 +1712,14 @@
         },
         "enabled": {
           "help": "Wyłączone stawki są pomijane przy naliczaniu."
+        },
+        "amounts": {
+          "help": "Naliczana za sprzedaż. Waluta pozostawiona pusta nie jest naliczana przez tę stawkę — takie sprzedaże trafiają do następnej.",
+          "label": "Opłata stała"
+        },
+        "bounds": {
+          "help": "Nigdy mniej niż pierwsza kwota ani więcej niż druga.",
+          "label": "Dolna i górna granica (opcjonalnie)"
         }
       }
     },
