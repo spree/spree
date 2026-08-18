@@ -47,14 +47,14 @@ RSpec.describe Spree::Payments::Void do
     end
 
     it 'is a no-op for an already-void payment' do
-      voided = create(:payment, status: 'void')
+      voided = create(:payment, payment_method: gateway, source: card, status: 'void')
       expect(gateway).not_to receive(:void)
 
       expect(described_class.call(payment: voided)).to be_success
     end
 
     it 'fails without calling the gateway when the payment cannot be voided' do
-      failed = create(:payment, status: 'failed')
+      failed = create(:payment, payment_method: gateway, source: card, status: 'failed')
       expect(gateway).not_to receive(:void)
 
       result = described_class.call(payment: failed)

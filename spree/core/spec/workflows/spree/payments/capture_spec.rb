@@ -50,14 +50,14 @@ RSpec.describe Spree::Payments::Capture do
     end
 
     it 'is a no-op for an already-captured payment' do
-      completed = create(:payment, status: 'completed')
+      completed = create(:payment, payment_method: gateway, source: card, status: 'completed')
       expect(gateway).not_to receive(:capture)
 
       expect(described_class.call(payment: completed)).to be_success
     end
 
     it 'fails without calling the gateway when the payment cannot be captured' do
-      voided = create(:payment, status: 'void')
+      voided = create(:payment, payment_method: gateway, source: card, status: 'void')
       expect(gateway).not_to receive(:capture)
 
       result = described_class.call(payment: voided)
