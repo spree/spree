@@ -2,7 +2,6 @@ module Spree
   class OptionType < Spree.base_class
     has_prefix_id :opt  # Spree-specific: option type
 
-    COLOR_NAMES = %w[color colour].freeze
     KINDS = %w[dropdown color_swatch buttons].freeze
 
     include Spree::ParameterizableName
@@ -60,8 +59,6 @@ module Spree
     # Scopes
     #
     default_scope { order(:position) }
-    scope :colors, -> { where(name: COLOR_NAMES) }
-    scope :color_swatches, -> { where(kind: 'color_swatch') }
     scope :filterable, -> { where(filterable: true) }
 
     #
@@ -77,10 +74,6 @@ module Spree
     after_touch :touch_all_products
     after_update :touch_all_products, if: -> { saved_changes.key?(:presentation) }
     after_destroy :touch_all_products
-
-    def self.color
-      colors.first
-    end
 
     def color_swatch?
       kind == 'color_swatch'

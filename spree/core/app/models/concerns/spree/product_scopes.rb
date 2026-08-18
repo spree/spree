@@ -182,6 +182,12 @@ module Spree
       # Groups values by option type automatically:
       #   - Within the same option type: OR (Blue OR Red)
       #   - Across different option types: AND ((Blue OR Red) AND (S OR M))
+      #
+      # The AND must hold *within one variant*: "Blue and XL" means a product
+      # that sells a blue XL, not one that happens to sell a blue small beside
+      # a red XL. Every axis is therefore counted against the same variant row
+      # rather than asked of the product separately — which is also what keeps
+      # a filter honest once several sellers list variants on one product.
       def self.with_option_value_ids(*ids)
         ids = ids.flatten.compact
         return none if ids.empty?
@@ -192,16 +198,14 @@ module Spree
         grouped = OptionValue.where(id: actual_ids).group_by(&:option_type_id)
         return none if grouped.empty?
 
-        scope = all
-        grouped.each_value do |option_values|
-          ov_ids = option_values.map(&:id)
-          matching_product_ids = Variant.where(deleted_at: nil)
-                                       .joins(:option_value_variants)
-                                       .where(OptionValueVariant.table_name => { option_value_id: ov_ids })
-                                       .select(:product_id)
-          scope = scope.where(id: matching_product_ids)
-        end
-        scope
+        matching_product_ids = Variant.where(deleted_at: nil).
+                               joins(option_value_variants: :option_value).
+                               where(OptionValue.table_name => { id: actual_ids }).
+                               group(Variant.arel_table[:id]).
+                               having(OptionValue.arel_table[:option_type_id].count(true).eq(grouped.size)).
+                               select(:product_id)
+
+        where(id: matching_product_ids)
       end
 
       scope :not_deleted, -> {

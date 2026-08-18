@@ -11,7 +11,8 @@ module Spree
                  preorder_ships_at: [:string, nullable: true],
                  weight: [:number, nullable: true], height: [:number, nullable: true], width: [:number, nullable: true], depth: [:number, nullable: true],
                  price: 'Price',
-                 original_price: ['Price', nullable: true]
+                 original_price: ['Price', nullable: true],
+                 seller_id: [:string, nullable: true]
 
         attribute :product_id do |variant|
           variant.product&.prefixed_id
@@ -77,6 +78,21 @@ module Spree
           if calculated.present? && base.present? && calculated.id != base.id
             Spree.api.price_serializer.new(base, params: params).to_h
           end
+        end
+
+        # Who sells this variant — one answer, resolved on the model, so a
+        # storefront never learns whether it came from the product (an owned
+        # listing) or the row itself (a master shared by several sellers). Nil
+        # is first-party. Shoppers comparing offers on one page group by this,
+        # so it is a plain attribute rather than an expand.
+        attribute :seller_id do |variant|
+          variant.resolved_seller&.prefixed_id
+        end
+
+        one :seller,
+            resource: proc { Spree.api.seller_serializer },
+            if: proc { expand?('seller') } do |variant|
+          variant.resolved_seller
         end
 
         # Conditional associations

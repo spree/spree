@@ -292,7 +292,7 @@ module Spree
           Spree::OrderRouting::Rules::DefaultLocation
         ]
 
-        # Commission targeting rule kinds (docs/plans/6.0-multi-seller-marketplace.md).
+        # Commission targeting rule kinds (docs/plans/6.0-multi-vendor-marketplace.md).
         Rails.application.config.spree.commission_rules.concat [
           Spree::CommissionRules::SellerRule,
           Spree::CommissionRules::CategoryRule,

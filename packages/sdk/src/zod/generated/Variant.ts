@@ -5,6 +5,7 @@ import { MediaSchema } from './Media';
 import { OptionValueSchema } from './OptionValue';
 import { PriceSchema } from './Price';
 import { PriceHistorySchema } from './PriceHistory';
+import { SellerSchema } from './Seller';
 
 export const VariantSchema = z.object({
   id: z.string(),
@@ -25,6 +26,8 @@ export const VariantSchema = z.object({
   depth: z.number().nullable(),
   price: PriceSchema,
   original_price: PriceSchema.nullable(),
+  seller_id: z.string().nullable(),
+  seller: SellerSchema.optional(),
   primary_media: MediaSchema.optional(),
   media: z.array(MediaSchema).optional(),
   option_values: z.array(OptionValueSchema),

@@ -35,10 +35,18 @@ module Spree
           # these scopes are not automatically picked by ar_lazy_preload gem and we need to explicitly include them
           def scope_includes
             [
-              product_publications: [],
-              primary_media: [attachment_attachment: :blob],
-              default_variant: [:prices, stock_items: [:stock_location, :active_stock_reservations]],
-              variants: [:prices, stock_items: [:stock_location, :active_stock_reservations]]
+              # `seller` is declared on both sides rather than left to lazy
+              # preloading: the buy box asks every variant who is selling it,
+              # and a variant with no seller of its own asks its product — so a
+              # listing would otherwise depend on ambient behaviour to avoid an
+              # N+1 on whichever of the two answers.
+              :seller,
+              {
+                product_publications: [],
+                primary_media: [attachment_attachment: :blob],
+                default_variant: [:prices, stock_items: [:stock_location, :active_stock_reservations]],
+                variants: [:prices, :seller, stock_items: [:stock_location, :active_stock_reservations]]
+              }
             ]
           end
 

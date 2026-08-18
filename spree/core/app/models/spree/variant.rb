@@ -13,13 +13,21 @@ module Spree
 
     publishes_lifecycle_events
 
-    MEMOIZED_METHODS = %w(in_stock on_sale backorderable tax_category options_text compare_at_price)
+    MEMOIZED_METHODS = %w(in_stock on_sale backorderable tax_category tax_category_id options_text compare_at_price)
 
     DIMENSION_UNITS = %w[mm cm in ft]
     WEIGHT_UNITS = %w[g kg lb oz]
 
     belongs_to :product, -> { with_deleted }, touch: true, class_name: 'Spree::Product', inverse_of: :variants
     belongs_to :tax_category, class_name: 'Spree::TaxCategory', optional: true
+    # Which seller sells this variant. Nil is the operator's own listing, and
+    # on a product whose seller owns every variant the product answers instead
+    # — see #resolved_seller_id. Several sellers on one product is the whole point: two
+    # of them are two variant rows, so their stock, prices and line-item
+    # attribution are separate by construction.
+    belongs_to :seller, class_name: 'Spree::Seller', optional: true
+    # Nil defers to the product, exactly as tax_category does.
+    belongs_to :delivery_profile, class_name: 'Spree::DeliveryProfile', optional: true
 
     delegate :name, :name=, :description, :slug, :available_on, :make_active_at, :product_type_id,
              :meta_description, :meta_keywords, :product_type, to: :product
@@ -76,8 +84,26 @@ module Spree
     before_validation :apply_pending_options, if: :pending_options?
 
     validates :cost_price, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
-    validates :sku, uniqueness: { conditions: -> { where(deleted_at: nil) }, case_sensitive: false, scope: spree_base_uniqueness_scope },
-                    allow_blank: true, unless: :disable_sku_validation?
+    # Uniqueness is scoped to the seller — see #validate_sku_uniqueness. Written
+    # by hand rather than as a `scope:` option because the seller is resolved
+    # (the variant's own, else its product's) and the built-in validator reads
+    # the raw column, which would let two sellers who each own a whole product
+    # collide.
+    validate :validate_sku_uniqueness, if: -> { sku.present? && !disable_sku_validation? }
+
+    # Both guards catch raw prefixed-id assignment as well as association
+    # writes, the way the same pair does on Product: a seller or a shipping
+    # configuration from another store must never be reachable by id.
+    validate :seller_must_belong_to_store, if: -> { will_save_change_to_seller_id? }
+    validate :delivery_profile_must_belong_to_store, if: -> { will_save_change_to_delivery_profile_id? }
+
+    # On an owned product the variant's own seller and profile columns carry
+    # no meaning — every variant is the product's seller's and ships as the
+    # product does — so they are kept blank rather than validated. A client
+    # that reads a resolved `seller_id` and writes it straight back therefore
+    # changes nothing, and the storefront never has to know which mode it is
+    # in. Only a variant on a master product keeps what it is given.
+    before_validation :blank_owned_product_overrides
 
     validates :dimensions_unit, inclusion: { in: DIMENSION_UNITS }, allow_blank: true
     validates :weight_unit, inclusion: { in: WEIGHT_UNITS }, allow_blank: true
@@ -105,6 +131,22 @@ module Spree
     scope :in_stock_or_backorderable, -> { in_stock.or(backorderable) }
 
     scope :eligible, -> { all }
+
+    # Variants whose *resolved* seller is the given one: their own column when
+    # set, otherwise their product's. Passing nil selects first-party listings,
+    # which on a store with no sellers is the whole catalog.
+    scope :for_seller, lambda { |seller|
+      seller_id = seller.respond_to?(:id) ? seller.id : seller
+      own = arel_table[:seller_id]
+      products = Spree::Product.arel_table[:seller_id]
+
+      relation = joins(:product)
+      if seller_id.nil?
+        relation.where(own.eq(nil).and(products.eq(nil)))
+      else
+        relation.where(own.eq(seller_id).or(own.eq(nil).and(products.eq(seller_id))))
+      end
+    }
 
     scope :not_discontinued, lambda {
       where(
@@ -189,7 +231,15 @@ module Spree
       allow_destroy: false
     )
 
-    self.whitelisted_ransackable_associations = %w[option_values product tax_category prices]
+    self.whitelisted_ransackable_associations = %w[option_values product tax_category prices seller]
+    # `seller_id` and `delivery_profile_id` are deliberately absent: they are
+    # the raw columns, nil on every variant that inherits from its product —
+    # so "filter by seller" against them would silently miss the inheritors,
+    # which on a single-owner catalog is all of them. Server-side callers
+    # narrow by seller with the `for_seller` scope, which resolves the way
+    # `resolved_seller` does; a client-facing filter needs an endpoint that
+    # applies it, not an allowlist entry that quietly answers a different
+    # question.
     self.whitelisted_ransackable_attributes = %w[weight depth width height sku discontinue_on cost_price cost_currency track_inventory
                                                  deleted_at product_id hs_code country_of_origin]
     self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku search)
@@ -270,6 +320,62 @@ module Spree
                              self[:tax_category_id]
                            end
     end
+
+    # Who sells this variant. Two modes, and they never mix:
+    #
+    # * An OWNED product (`product.seller_id` set) — every variant is that
+    #   seller's, by definition. No other seller can create a variant here, so
+    #   the variant's own column is meaningless and is kept blank.
+    # * A MASTER product (`product.seller_id` nil) — the shared catalog. This
+    #   is the only place `variant.seller_id` means anything: several sellers
+    #   list variants on one page, and each row names its own.
+    #
+    # So the answer is the product's seller if it has one, else the variant's
+    # own — a plain read, not an inheritance chain. Line items snapshot it at
+    # add-to-cart, and the buy box and SKU check read it. Nil is first-party.
+    #
+    # @return [Spree::Seller, nil]
+    def resolved_seller
+      product&.seller || seller
+    end
+
+    # @return [Integer, nil]
+    def resolved_seller_id
+      product&.seller_id || self[:seller_id]
+    end
+
+    # Whether this variant sits on an owned product — the mode in which the
+    # variant's own seller and delivery-profile columns carry no meaning.
+    #
+    # @return [Boolean]
+    def owned_by_product_seller?
+      product&.seller_id.present?
+    end
+
+    # How this variant ships, on the same two-mode rule as the seller, keyed
+    # on OWNERSHIP rather than on whether the product has a profile — every
+    # product does, so "product's profile if set" would never reach the
+    # variant's own and no seller on a master could ship differently.
+    #
+    # * Owned product: every variant ships as the product does; the variant's
+    #   own column is meaningless and is kept blank.
+    # * Master product: each seller's row names how that seller ships, and
+    #   falls back to the master's profile when it does not.
+    #
+    # A plain read, not memoized.
+    #
+    # @return [Spree::DeliveryProfile, nil]
+    def resolved_delivery_profile
+      return product&.resolved_delivery_profile if owned_by_product_seller?
+
+      delivery_profile || product&.resolved_delivery_profile
+    end
+
+    # @return [Integer, nil]
+    def resolved_delivery_profile_id
+      resolved_delivery_profile&.id
+    end
+
 
     # Returns the options text of the variant.
     # @return [String] the options text of the variant
@@ -717,9 +823,13 @@ module Spree
 
     # Is this variant purely digital? (no physical product)
     #
+    # Answered by the variant's own profile so a download and its printed
+    # edition can sit on one product — the profile kind declares it, here as
+    # everywhere else.
+    #
     # @return [Boolean]
     def digital?
-      product.digital?
+      !!resolved_delivery_profile&.digital?
     end
 
     def with_digital_assets?
@@ -775,6 +885,60 @@ module Spree
 
     def disable_sku_validation?
       store_preference(:disable_sku_validation)
+    end
+
+    # A SKU identifies an item within one seller's catalog, not across the
+    # marketplace: two sellers listing the same manufacturer part number is
+    # ordinary, and rejecting the second one would be refusing the sale.
+    #
+    # Compared on the *resolved* seller, so a seller who owns whole products
+    # is separated from another who does, not merged into the nil scope.
+    #
+    # Case-insensitive over a join, so it runs behind index_spree_variants_on_sku
+    # rather than on it. A functional index on LOWER(sku) would suit it better,
+    # but MariaDB rejects MySQL's syntax for one, so bulk writers that care pay
+    # this or turn the check off with the disable_sku_validation preference.
+    # Reads the raw column, not the resolved seller: what is being checked is
+    # the variant's *own* link, and a product-owned variant has none to check.
+    def blank_owned_product_overrides
+      return unless owned_by_product_seller?
+
+      self.seller_id = nil
+      self.delivery_profile_id = nil
+    end
+
+    def seller_must_belong_to_store
+      return if self[:seller_id].nil?
+
+      store = product&.store
+      return if store.nil?
+      return if association(:seller).reader&.store_id == store.id
+
+      errors.add(:seller, :invalid)
+    end
+
+    def delivery_profile_must_belong_to_store
+      return if self[:delivery_profile_id].nil?
+
+      store = product&.store
+      return if store.nil?
+      return if association(:delivery_profile).reader&.store_id == store.id
+
+      errors.add(:delivery_profile, :invalid)
+    end
+
+    def validate_sku_uniqueness
+      scope = self.class.for_seller(resolved_seller_id).
+              where(deleted_at: nil).
+              where(self.class.arel_table[:sku].lower.eq(sku.to_s.downcase))
+      # Honour a host app's tenancy scope, as the validator this replaced did.
+      # Empty in core, so this narrows nothing here.
+      Array(self.class.spree_base_uniqueness_scope).each do |attribute|
+        scope = scope.where(attribute => self[attribute])
+      end
+      scope = scope.where.not(id: id) if persisted?
+
+      errors.add(:sku, :taken, value: sku) if scope.exists?
     end
 
     def clear_line_items_cache
