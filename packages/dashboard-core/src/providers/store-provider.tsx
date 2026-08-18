@@ -109,3 +109,16 @@ export function useStore(): StoreContextValue {
   }
   return context
 }
+
+/**
+ * The store context if a `StoreProvider` is mounted, else `null`.
+ *
+ * For code that runs in more than one panel. The operator's dashboard always
+ * has a store; the seller panel has none — its tenant is a seller, and the
+ * store is derived server-side. Shared pieces (the nav visibility context)
+ * take the store when it is there and carry on when it is not, rather than
+ * forcing every panel to mount a provider for a concept it does not have.
+ */
+export function useOptionalStore(): StoreContextValue | null {
+  return useContext(StoreContext)
+}

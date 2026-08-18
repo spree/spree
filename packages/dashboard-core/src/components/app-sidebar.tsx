@@ -6,12 +6,12 @@ import { useAuth } from '../hooks/use-auth'
 import { primarySidebarSide, useTranslation } from '../lib/i18n'
 import { type NavEntry, useNavEntries } from '../lib/nav-registry'
 import { type Permissions, usePermissions } from '../providers/permission-provider'
-import { useStore } from '../providers/store-provider'
+import { useOptionalStore } from '../providers/store-provider'
 import { type NavItem, NavMain } from './nav-main'
 import { StoreSwitcher } from './store-switcher'
 
-function entryToNavItem(entry: NavEntry, storeId: string): NavItem {
-  const pathFor = (path: string) => (path === '/' ? `/${storeId}` : `/${storeId}${path}`)
+function entryToNavItem(entry: NavEntry, tenantId: string): NavItem {
+  const pathFor = (path: string) => (path === '/' ? `/${tenantId}` : `/${tenantId}${path}`)
   return {
     title: entry.label,
     url: pathFor(entry.path),
@@ -41,26 +41,40 @@ function filterByPermissions(items: NavItem[], permissions: Permissions): NavIte
     }))
 }
 
-export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
-  const { i18n } = useTranslation()
-  const { storeId } = useParams({ strict: false }) as { storeId?: string }
+/**
+ * The nav registry resolved for one tenant: entries prefixed with the tenant
+ * segment, `if` gates evaluated, and items the user cannot act on removed.
+ *
+ * Exported so a panel scoped by something other than a store composes the
+ * same registry — the seller panel prefixes with a seller id instead — rather
+ * than re-deriving the prefixing and permission filtering, which is what a
+ * second sidebar would otherwise copy.
+ */
+export function useNavItems(tenantId: string): { navItems: NavItem[]; bottomItems: NavItem[] } {
   const { permissions } = usePermissions()
-  const { store } = useStore()
+  const store = useOptionalStore()?.store ?? null
   const { user } = useAuth()
-  const id = storeId || 'default'
   const { main, bottom } = useNavEntries()
 
   const visibilityContext = { permissions, store, user }
   const visible = (entry: NavEntry) => !entry.if || entry.if(visibilityContext)
 
   const navItems = filterByPermissions(
-    main.filter(visible).map((e) => entryToNavItem(e, id)),
+    main.filter(visible).map((e) => entryToNavItem(e, tenantId)),
     permissions,
   )
   const bottomItems = filterByPermissions(
-    bottom.filter(visible).map((e) => entryToNavItem(e, id)),
+    bottom.filter(visible).map((e) => entryToNavItem(e, tenantId)),
     permissions,
   )
+
+  return { navItems, bottomItems }
+}
+
+export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
+  const { i18n } = useTranslation()
+  const { storeId } = useParams({ strict: false }) as { storeId?: string }
+  const { navItems, bottomItems } = useNavItems(storeId || 'default')
 
   return (
     <Sidebar collapsible="icon" side={primarySidebarSide(i18n.language)} {...props}>

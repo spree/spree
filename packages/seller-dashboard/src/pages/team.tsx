@@ -1,4 +1,4 @@
-import { getInitials } from '@spree/dashboard-core'
+import { Can, getInitials, Slot } from '@spree/dashboard-core'
 import {
   Avatar,
   AvatarFallback,
@@ -91,10 +91,20 @@ export function TeamPage() {
           <h1 className="font-medium text-2xl">{t('team.title')}</h1>
           <p className="text-muted-foreground text-sm">{t('team.subtitle')}</p>
         </div>
-        <Button size="sm" onClick={() => setInviteOpen(true)}>
-          <PlusIcon className="size-4" />
-          {t('team.invite_cta')}
-        </Button>
+        {/* Purely a UX gate — the API refuses the write regardless. Same
+            `<Can>` the operator's dashboard uses, reading the CanCanCan rules
+            the seller `/me` serializes. */}
+        <div className="flex items-center gap-2">
+          {/* A marketplace adds its own actions here via
+              `defineDashboardPlugin({ slots: { 'seller.team.actions': [...] } })`. */}
+          <Slot name="seller.team.actions" context={{ sellerId }} />
+          <Can I="update" a="seller_profile">
+            <Button size="sm" onClick={() => setInviteOpen(true)}>
+              <PlusIcon className="size-4" />
+              {t('team.invite_cta')}
+            </Button>
+          </Can>
+        </div>
       </div>
 
       <MembersCard members={members.data?.data ?? []} loading={members.isLoading} />
@@ -104,6 +114,10 @@ export function TeamPage() {
       {(invitations.isLoading || pending.length > 0) && (
         <PendingInvitationsCard invitations={pending} loading={invitations.isLoading} />
       )}
+
+      {/* Extra cards below the built-ins — a marketplace's own team-related
+          content (roles they add, an audit trail) lands here. */}
+      <Slot name="seller.team.after" context={{ sellerId }} />
 
       <InviteDialog open={inviteOpen} onOpenChange={setInviteOpen} />
     </div>
