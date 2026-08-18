@@ -3,6 +3,7 @@ import {
   adminClient,
   Can,
   formatPrice,
+  ResourceCombobox,
   ResourceTable,
   resourceSearchSchema,
   Subject,
@@ -41,10 +42,9 @@ import {
   useConfirm,
   useRowClickBridge,
 } from '@spree/dashboard-ui'
-import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { ArrowLeftRightIcon, EyeIcon, PlusIcon, TrashIcon } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { useStockLocations } from '../../../../hooks/use-stock-locations'
@@ -170,15 +170,9 @@ function CreateStockTransferSheet({
   const [destinationId, setDestinationId] = useState<string>('')
   const [reference, setReference] = useState('')
   const [items, setItems] = useState<PendingItem[]>([])
-  const [variantSearch, setVariantSearch] = useState('')
-
-  const { data: variantsData } = useQuery({
-    queryKey: ['variants', 'search', variantSearch],
-    queryFn: () => adminClient.variants.list({ search: variantSearch, limit: 8 }),
-    enabled: variantSearch.length >= 3,
-    staleTime: 30_000,
-  })
-  const variantResults = variantsData?.data ?? []
+  // `onChange` hands back only the option id, so keep the records the search
+  // returned to resolve it. A ref, not state: it's a lookup table.
+  const variantById = useRef(new Map<string, Variant>())
 
   const isExternalReceive = sourceId === SOURCE_NONE
   const canSubmit =
@@ -192,7 +186,7 @@ function CreateStockTransferSheet({
     setDestinationId('')
     setReference('')
     setItems([])
-    setVariantSearch('')
+    variantById.current.clear()
   }
 
   function addItem(variant: Variant) {
@@ -204,7 +198,6 @@ function CreateStockTransferSheet({
     } else {
       setItems([...items, { variant, quantity: 1 }])
     }
-    setVariantSearch('')
   }
 
   function updateQuantity(variantId: string, quantity: number) {
@@ -310,28 +303,34 @@ function CreateStockTransferSheet({
 
             <Field>
               <FieldLabel>{t('admin.pages.products.transfers.section_items')}</FieldLabel>
-              <Input
+              {/* Combobox rather than a bare input over a list of buttons:
+                  arrow-key navigation, `aria-activedescendant` and
+                  Enter-to-pick come from the primitive. Selecting adds the row
+                  and clears the field, so no value is held. */}
+              <ResourceCombobox<Variant>
+                queryKey="transfer-variant-picker"
+                value=""
+                onChange={(id) => {
+                  const variant = id ? variantById.current.get(id) : undefined
+                  if (variant) addItem(variant)
+                }}
+                search={async (query) => {
+                  const res = await adminClient.variants.list({ search: query, limit: 8 })
+                  for (const v of res.data) variantById.current.set(v.id, v)
+                  return res
+                }}
+                hydrate={async () => ({ data: [] })}
+                getOptionLabel={(v) => v.product_name ?? v.sku ?? v.id}
+                renderOption={(v) => (
+                  <div className="flex flex-col">
+                    <span className="font-medium">{v.product_name ?? v.sku ?? v.id}</span>
+                    <span className="text-xs text-muted-foreground">
+                      SKU {v.sku} · {formatPrice(v.price)}
+                    </span>
+                  </div>
+                )}
                 placeholder={t('admin.products.transfers.search_items_placeholder')}
-                value={variantSearch}
-                onChange={(e) => setVariantSearch(e.target.value)}
               />
-              {variantSearch.length >= 3 && variantResults.length > 0 && (
-                <div className="mt-1 rounded-lg border border-border bg-popover text-popover-foreground shadow-xs max-h-[280px] overflow-y-auto">
-                  {variantResults.map((v) => (
-                    <button
-                      key={v.id}
-                      type="button"
-                      onClick={() => addItem(v)}
-                      className="block w-full px-3 py-2.5 text-left text-sm hover:bg-muted transition-colors border-b last:border-0"
-                    >
-                      <div className="font-medium">{v.product_name ?? v.sku ?? v.id}</div>
-                      <div className="text-xs text-muted-foreground">
-                        SKU {v.sku} · {formatPrice(v.price)}
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              )}
             </Field>
           </FieldGroup>
 

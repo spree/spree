@@ -447,6 +447,7 @@
         "visible_columns": "可见列",
         "reset_to_default": "重置为默认值",
         "clear_all": "全部清除",
+        "remove_filter": "移除筛选",
         "no_filters": "暂无筛选条件。点击下方添加。",
         "add_filter": "添加筛选条件",
         "operators": {

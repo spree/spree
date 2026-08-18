@@ -447,6 +447,7 @@
         "visible_columns": "الأعمدة المرئية",
         "reset_to_default": "إعادة إلى الافتراضي",
         "clear_all": "مسح الكل",
+        "remove_filter": "إزالة الفلتر",
         "no_filters": "لا توجد فلاتر. انقر أدناه لإضافة واحد.",
         "add_filter": "إضافة فلتر",
         "operators": {

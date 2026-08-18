@@ -447,6 +447,7 @@
         "visible_columns": "Visible columns",
         "reset_to_default": "Reset to default",
         "clear_all": "Clear all",
+        "remove_filter": "Remove filter",
         "no_filters": "No filters. Click below to add one.",
         "add_filter": "Add filter",
         "operators": {
