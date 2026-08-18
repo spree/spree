@@ -12,8 +12,7 @@ module Spree
                  weight: [:number, nullable: true], height: [:number, nullable: true], width: [:number, nullable: true], depth: [:number, nullable: true],
                  price: 'Price',
                  original_price: ['Price', nullable: true],
-                 seller_id: [:string, nullable: true],
-                 resolved_seller_id: [:string, nullable: true]
+                 seller_id: [:string, nullable: true]
 
         attribute :product_id do |variant|
           variant.product&.prefixed_id
@@ -81,26 +80,15 @@ module Spree
           end
         end
 
-        # `seller_id` is the variant's own column — nil when it inherits its
-        # seller from the product — and is what a client writes back. It reads
-        # and writes the same value, so a round trip can never turn inheritance
-        # into an override.
-        #
-        # `resolved_seller_id` is who actually sells this: the variant's own,
-        # else the product's. Shoppers comparing offers on one page group by
-        # this, so it is a plain attribute rather than an expand. Read-only:
-        # it is an answer, not a field.
+        # Who sells this variant — one answer, resolved on the model, so a
+        # storefront never learns whether it came from the product (an owned
+        # listing) or the row itself (a master shared by several sellers). Nil
+        # is first-party. Shoppers comparing offers on one page group by this,
+        # so it is a plain attribute rather than an expand.
         attribute :seller_id do |variant|
-          variant.association(:seller).reader&.prefixed_id if variant.seller_id
-        end
-
-        attribute :resolved_seller_id do |variant|
           variant.resolved_seller&.prefixed_id
         end
 
-        # The expand follows the resolved answer, like `resolved_seller_id`:
-        # a shopper asking "who sells this?" wants the product's seller on an
-        # inheriting variant, not an empty association.
         one :seller,
             resource: proc { Spree.api.seller_serializer },
             if: proc { expand?('seller') } do |variant|

@@ -222,12 +222,11 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
     let(:seller) { create(:seller, :approved, store: store) }
     let(:profile) { create(:delivery_profile, store: store) }
 
-    # `seller_id`/`delivery_profile_id` are the variant's own columns and read
-    # and write the same value; `resolved_*` say who sells it and how it ships,
-    # answered through the product when the column is blank. Because the
-    # column reads what it writes, a client saving a record back can never
-    # turn inheritance into an override by accident.
-    it 'writes the seller and reads it back on both the column and the resolved answer' do
+    # One field each on the wire, resolved on the model. On a master product
+    # (the fixture) a write names how this seller's row sells and ships; on an
+    # owned product the same write is a no-op — and the client never learns
+    # which mode it is in.
+    it 'writes and reads back the seller as one field' do
       patch :update, params: {
         product_id: product.prefixed_id,
         id: variant.prefixed_id,
@@ -236,20 +235,25 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
 
       expect(response).to have_http_status(:ok)
       expect(json_response['seller_id']).to eq(seller.prefixed_id)
-      expect(json_response['resolved_seller_id']).to eq(seller.prefixed_id)
       expect(json_response['seller_name']).to eq(seller.name)
     end
 
-    it 'reports an inherited seller on the resolved answer while the column stays blank' do
+    it 'reports the product\'s seller on an owned product and ignores a write there' do
       product.update!(seller: seller)
+      other = create(:seller, :approved, store: store)
 
-      get :show, params: { product_id: product.prefixed_id, id: variant.prefixed_id }, as: :json
+      patch :update, params: {
+        product_id: product.prefixed_id,
+        id: variant.prefixed_id,
+        seller_id: other.prefixed_id
+      }, as: :json
 
-      expect(json_response['seller_id']).to be_nil
-      expect(json_response['resolved_seller_id']).to eq(seller.prefixed_id)
+      expect(response).to have_http_status(:ok)
+      expect(json_response['seller_id']).to eq(seller.prefixed_id)
+      expect(variant.reload[:seller_id]).to be_nil
     end
 
-    it 'writes the delivery profile override and reads it back' do
+    it 'writes and reads back the delivery profile as one field' do
       patch :update, params: {
         product_id: product.prefixed_id,
         id: variant.prefixed_id,
@@ -258,17 +262,15 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
 
       expect(response).to have_http_status(:ok)
       expect(json_response['delivery_profile_id']).to eq(profile.prefixed_id)
-      expect(json_response['resolved_delivery_profile_id']).to eq(profile.prefixed_id)
     end
 
-    it 'reports the product\'s profile as resolved when the variant has no override' do
+    it 'reports the product\'s profile when the row names none' do
       get :show, params: { product_id: product.prefixed_id, id: variant.prefixed_id }, as: :json
 
-      expect(json_response['delivery_profile_id']).to be_nil
-      expect(json_response['resolved_delivery_profile_id']).to eq(product.delivery_profile.prefixed_id)
+      expect(json_response['delivery_profile_id']).to eq(product.delivery_profile.prefixed_id)
     end
 
-    it 'clears the override back to inheriting' do
+    it 'clears the row\'s profile back to the master\'s' do
       variant.update!(delivery_profile: profile)
 
       patch :update, params: {
@@ -278,8 +280,7 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
       }, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['delivery_profile_id']).to be_nil
-      expect(json_response['resolved_delivery_profile_id']).to eq(product.delivery_profile.prefixed_id)
+      expect(json_response['delivery_profile_id']).to eq(product.delivery_profile.prefixed_id)
     end
 
     it 'refuses a seller belonging to another store' do

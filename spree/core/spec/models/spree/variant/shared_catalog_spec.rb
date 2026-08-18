@@ -8,78 +8,64 @@ describe Spree::Variant, type: :model do
   let(:seller) { create(:seller, :approved, store: store) }
   let(:other_seller) { create(:seller, :approved, store: store) }
 
-  describe 'seller' do
-    let(:product) { create(:product, store: store) }
+  describe 'seller — two modes that never mix' do
+    let(:owned) { create(:product, store: store, seller: seller) }
+    let(:master) { create(:product, store: store) }
 
-    # `seller_id`/`seller` are the variant's own column and association —
-    # honest, nil when inheriting. `resolved_seller` answers who actually
-    # sells it. Consumers must ask the resolved one; the column is not the answer.
-    it 'resolves to its own seller when it has one' do
-      variant = create(:variant, product: product, seller: seller)
+    # Owned product: every variant is the product's seller's, by definition.
+    it 'answers the product\'s seller on an owned product' do
+      variant = create(:variant, product: owned)
 
-      expect(variant.seller_id).to eq(seller.id)
       expect(variant.resolved_seller).to eq(seller)
       expect(variant.resolved_seller_id).to eq(seller.id)
-    end
-
-    it 'resolves to the product\'s seller when its own column is blank' do
-      product.update!(seller: seller)
-      variant = create(:variant, product: product)
-
       expect(variant.seller_id).to be_nil
-      expect(variant.seller).to be_nil
-      expect(variant.resolved_seller).to eq(seller)
-      expect(variant.resolved_seller_id).to eq(seller.id)
     end
 
-    it 'is first-party only when both are blank' do
-      variant = create(:variant, product: product)
+    # No other seller can create a variant on an owned product, so a value
+    # written there carries no meaning and is dropped, not stored.
+    it 'blanks a seller written onto a variant of an owned product' do
+      variant = create(:variant, product: owned, seller: other_seller)
+
+      expect(variant.reload.seller_id).to be_nil
+      expect(variant.resolved_seller).to eq(seller)
+    end
+
+    # Master product: the shared catalog, the only place the row's own
+    # seller means anything.
+    it 'answers the row\'s own seller on a master product' do
+      mine = create(:variant, product: master, seller: seller)
+      theirs = create(:variant, product: master, seller: other_seller)
+
+      expect(mine.resolved_seller).to eq(seller)
+      expect(theirs.resolved_seller).to eq(other_seller)
+      expect(master.reload.variants).to include(mine, theirs)
+    end
+
+    it 'is first-party on a master row with no seller' do
+      variant = create(:variant, product: master)
 
       expect(variant.resolved_seller).to be_nil
       expect(variant.resolved_seller_id).to be_nil
     end
 
-    it 'lets two sellers list variants on one product' do
-      mine = create(:variant, product: product, seller: seller)
-      theirs = create(:variant, product: product, seller: other_seller)
+    # The whole reason the resolved answer is one field on the API: a client
+    # that reads it and writes it straight back must change nothing.
+    it 'survives a read-then-write round trip on an owned product unchanged' do
+      variant = create(:variant, product: owned)
+      read_back = variant.resolved_seller_id
 
-      expect(product.reload.variants).to include(mine, theirs)
-      expect(mine.resolved_seller).to eq(seller)
-      expect(theirs.resolved_seller).to eq(other_seller)
+      variant.update!(seller_id: read_back)
+
+      expect(variant.reload.seller_id).to be_nil
+      expect(variant.resolved_seller_id).to eq(seller.id)
     end
 
-    it 'refuses a seller from another store' do
+    it 'refuses a seller from another store on a master product' do
       foreign = create(:seller, store: create(:store))
-      variant = build(:variant, product: product, seller: foreign)
+      variant = build(:variant, product: master, seller: foreign)
 
       expect(variant).not_to be_valid
       expect(variant.errors[:seller]).to be_present
-    end
-
-    # The resolved reader memoizes, so a write has to drop the memo. Reading
-    # first is what makes this bite: the inherited seller is truthy, so the
-    # memo sticks and the reader keeps naming the old seller until save —
-    # and the SKU check reads it.
-    it 'does not keep answering with the inherited seller after a reassignment' do
-      product.update!(seller: seller)
-      variant = create(:variant, product: product)
-      expect(variant.resolved_seller_id).to eq(seller.id)
-
-      variant.seller = other_seller
-
-      expect(variant.resolved_seller_id).to eq(other_seller.id)
-      expect(variant.resolved_seller).to eq(other_seller)
-    end
-
-    it 'does not keep answering with the inherited seller after an id write' do
-      product.update!(seller: seller)
-      variant = create(:variant, product: product)
-      expect(variant.resolved_seller_id).to eq(seller.id)
-
-      variant.seller_id = other_seller.id
-
-      expect(variant.resolved_seller_id).to eq(other_seller.id)
-      expect(variant.resolved_seller).to eq(other_seller)
     end
   end
 
@@ -99,67 +85,46 @@ describe Spree::Variant, type: :model do
     end
   end
 
-  describe 'delivery profile' do
+  describe 'delivery profile — the same two modes' do
     let(:product_profile) { create(:delivery_profile, store: store) }
-    let(:variant_profile) { create(:delivery_profile, store: store) }
-    let(:product) { create(:product, store: store, delivery_profile: product_profile) }
+    let(:row_profile) { create(:delivery_profile, store: store) }
+    let(:owned) { create(:product, store: store, seller: seller, delivery_profile: product_profile) }
+    let(:master) { create(:product, store: store, delivery_profile: product_profile) }
 
-    # `delivery_profile_id` is the variant's own column, nil when inheriting.
-    # `resolved_delivery_profile` is what it actually ships on.
-    it 'resolves to the product\'s profile when its own column is blank' do
-      variant = create(:variant, product: product)
+    it 'ships as the product does on an owned product, whatever the row says' do
+      variant = create(:variant, product: owned, delivery_profile: row_profile)
 
-      expect(variant.delivery_profile_id).to be_nil
+      expect(variant.reload.delivery_profile_id).to be_nil
       expect(variant.resolved_delivery_profile).to eq(product_profile)
-      expect(variant.resolved_delivery_profile_id).to eq(product_profile.id)
     end
 
-    it 'resolves to its own override when it has one' do
-      variant = create(:variant, product: product, delivery_profile: variant_profile)
+    it 'ships on the row\'s own profile on a master product' do
+      variant = create(:variant, product: master, delivery_profile: row_profile)
 
-      expect(variant.delivery_profile_id).to eq(variant_profile.id)
-      expect(variant.resolved_delivery_profile).to eq(variant_profile)
-      expect(variant.resolved_delivery_profile_id).to eq(variant_profile.id)
+      expect(variant.resolved_delivery_profile).to eq(row_profile)
+      expect(variant.resolved_delivery_profile_id).to eq(row_profile.id)
+    end
+
+    it 'falls back to the master\'s profile when the row names none' do
+      variant = create(:variant, product: master)
+
+      expect(variant.resolved_delivery_profile).to eq(product_profile)
     end
 
     it 'refuses a profile from another store' do
       foreign = create(:delivery_profile, store: create(:store))
-      variant = build(:variant, product: product, delivery_profile: foreign)
+      variant = build(:variant, product: master, delivery_profile: foreign)
 
       expect(variant).not_to be_valid
       expect(variant.errors[:delivery_profile]).to be_present
     end
 
-    # The column reads and writes the same value, so a client that saves a
-    # record back never turns inheritance into an override by accident.
-    it 'writes the override through the column and clears it with nil' do
-      variant = create(:variant, product: product)
-
-      variant.update!(delivery_profile_id: variant_profile.id)
-      expect(variant.reload.delivery_profile_id).to eq(variant_profile.id)
-      expect(variant.resolved_delivery_profile_id).to eq(variant_profile.id)
-
-      variant.update!(delivery_profile_id: nil)
-      expect(variant.reload.delivery_profile_id).to be_nil
-      expect(variant.resolved_delivery_profile_id).to eq(product_profile.id)
-    end
-
-    it 'does not keep answering with the inherited profile after a reassignment' do
-      variant = create(:variant, product: product)
-      expect(variant.resolved_delivery_profile).to eq(product_profile)
-
-      variant.delivery_profile = variant_profile
-
-      expect(variant.resolved_delivery_profile).to eq(variant_profile)
-      expect(variant.resolved_delivery_profile_id).to eq(variant_profile.id)
-    end
-
-    it 'answers digital? from its own profile, not the product\'s' do
+    it 'answers digital? from the resolved profile' do
       digital = create(:digital_delivery_profile, store: store)
-      variant = create(:variant, product: product, delivery_profile: digital)
+      variant = create(:variant, product: master, delivery_profile: digital)
 
       expect(variant).to be_digital
-      expect(create(:variant, product: product)).not_to be_digital
+      expect(create(:variant, product: master)).not_to be_digital
     end
   end
 

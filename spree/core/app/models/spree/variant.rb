@@ -13,10 +13,7 @@ module Spree
 
     publishes_lifecycle_events
 
-    MEMOIZED_METHODS = %w(in_stock on_sale backorderable tax_category tax_category_id
-                          resolved_seller resolved_seller_id
-                          resolved_delivery_profile resolved_delivery_profile_id
-                          options_text compare_at_price)
+    MEMOIZED_METHODS = %w(in_stock on_sale backorderable tax_category tax_category_id options_text compare_at_price)
 
     DIMENSION_UNITS = %w[mm cm in ft]
     WEIGHT_UNITS = %w[g kg lb oz]
@@ -99,6 +96,14 @@ module Spree
     # configuration from another store must never be reachable by id.
     validate :seller_must_belong_to_store, if: -> { will_save_change_to_seller_id? }
     validate :delivery_profile_must_belong_to_store, if: -> { will_save_change_to_delivery_profile_id? }
+
+    # On an owned product the variant's own seller and profile columns carry
+    # no meaning — every variant is the product's seller's and ships as the
+    # product does — so they are kept blank rather than validated. A client
+    # that reads a resolved `seller_id` and writes it straight back therefore
+    # changes nothing, and the storefront never has to know which mode it is
+    # in. Only a variant on a master product keeps what it is given.
+    before_validation :blank_owned_product_overrides
 
     validates :dimensions_unit, inclusion: { in: DIMENSION_UNITS }, allow_blank: true
     validates :weight_unit, inclusion: { in: WEIGHT_UNITS }, allow_blank: true
@@ -316,78 +321,61 @@ module Spree
                            end
     end
 
-    # `seller_id` and `delivery_profile_id` are plain columns — read raw,
-    # written raw, nil meaning "inherits from the product". The *resolved*
-    # answer lives on the `resolved_*` readers below, and every consumer that
-    # wants to know who sells this or how it ships must ask those, never the
-    # column: on an inheriting variant the column is nil and is not the answer.
+    # Who sells this variant. Two modes, and they never mix:
     #
-    # Kept as honest columns on purpose. An earlier cut overrode the readers to
-    # return the resolved value, which then made the column name unsafe to
-    # write (read resolved, write raw — a round-trip freezes inheritance into
-    # an override) and forced a second `own_*` name onto the API. A column
-    # that means what a column means needs neither.
-
-    # The seller of this variant, falling back to the product's own.
+    # * An OWNED product (`product.seller_id` set) — every variant is that
+    #   seller's, by definition. No other seller can create a variant here, so
+    #   the variant's own column is meaningless and is kept blank.
+    # * A MASTER product (`product.seller_id` nil) — the shared catalog. This
+    #   is the only place `variant.seller_id` means anything: several sellers
+    #   list variants on one page, and each row names its own.
     #
-    # A product owned outright by one seller leaves its variants blank and is
-    # answered here, so a store that never shares a listing sets the seller
-    # once. A shared product carries the seller per variant and the product's
-    # is nil, so the fallback yields nothing and each variant speaks for itself.
-    #
-    # The column decides on its own when it is set — no second fallback, or a
-    # variant whose seller row went missing would silently be attributed to
-    # the product's seller while `resolved_seller_id` still reported the
-    # column, and the two answers would name different sellers.
-    #
-    # Memoized, and cleared by the writers below: a stale memo here would let
-    # `validate_sku_uniqueness` check the SKU against the wrong seller.
+    # So the answer is the product's seller if it has one, else the variant's
+    # own — a plain read, not an inheritance chain. Line items snapshot it at
+    # add-to-cart, and the buy box and SKU check read it. Nil is first-party.
     #
     # @return [Spree::Seller, nil]
     def resolved_seller
-      return @resolved_seller unless @resolved_seller.nil?
-
-      @resolved_seller = self[:seller_id].nil? ? product&.seller : seller
+      product&.seller || seller
     end
 
     # @return [Integer, nil]
     def resolved_seller_id
-      @resolved_seller_id ||= self[:seller_id] || product&.seller_id
+      product&.seller_id || self[:seller_id]
     end
 
-    # The delivery profile that governs this variant: its own, else the
-    # product's. Sellers sharing a product ship on their own terms, and a
-    # merchant selling a poster beside its framed print can finally say so.
+    # Whether this variant sits on an owned product — the mode in which the
+    # variant's own seller and delivery-profile columns carry no meaning.
+    #
+    # @return [Boolean]
+    def owned_by_product_seller?
+      product&.seller_id.present?
+    end
+
+    # How this variant ships, on the same two-mode rule as the seller, keyed
+    # on OWNERSHIP rather than on whether the product has a profile — every
+    # product does, so "product's profile if set" would never reach the
+    # variant's own and no seller on a master could ship differently.
+    #
+    # * Owned product: every variant ships as the product does; the variant's
+    #   own column is meaningless and is kept blank.
+    # * Master product: each seller's row names how that seller ships, and
+    #   falls back to the master's profile when it does not.
+    #
+    # A plain read, not memoized.
     #
     # @return [Spree::DeliveryProfile, nil]
     def resolved_delivery_profile
-      # Nil-check rather than `||=`: a store with no default profile resolves
-      # to nil, and `||=` would re-run the lookup on every call.
-      return @resolved_delivery_profile unless @resolved_delivery_profile.nil?
+      return product&.resolved_delivery_profile if owned_by_product_seller?
 
-      @resolved_delivery_profile = self[:delivery_profile_id].nil? ? product&.resolved_delivery_profile : delivery_profile
+      delivery_profile || product&.resolved_delivery_profile
     end
 
     # @return [Integer, nil]
     def resolved_delivery_profile_id
-      @resolved_delivery_profile_id ||= self[:delivery_profile_id] || product&.resolved_delivery_profile&.id
+      resolved_delivery_profile&.id
     end
 
-    # A write to either column has to drop the resolved memos, or the readers
-    # keep answering with what the variant used to inherit until it is saved.
-    %i[seller delivery_profile].each do |name|
-      define_method(:"#{name}=") do |value|
-        instance_variable_set(:"@resolved_#{name}", nil)
-        instance_variable_set(:"@resolved_#{name}_id", nil)
-        super(value)
-      end
-
-      define_method(:"#{name}_id=") do |value|
-        instance_variable_set(:"@resolved_#{name}", nil)
-        instance_variable_set(:"@resolved_#{name}_id", nil)
-        super(value)
-      end
-    end
 
     # Returns the options text of the variant.
     # @return [String] the options text of the variant
@@ -912,6 +900,13 @@ module Spree
     # this or turn the check off with the disable_sku_validation preference.
     # Reads the raw column, not the resolved seller: what is being checked is
     # the variant's *own* link, and a product-owned variant has none to check.
+    def blank_owned_product_overrides
+      return unless owned_by_product_seller?
+
+      self.seller_id = nil
+      self.delivery_profile_id = nil
+    end
+
     def seller_must_belong_to_store
       return if self[:seller_id].nil?
 

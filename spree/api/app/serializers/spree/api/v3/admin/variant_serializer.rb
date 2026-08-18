@@ -21,7 +21,6 @@ module Spree
                    deleted_at: [:string, nullable: true],
                    seller_name: [:string, nullable: true],
                    delivery_profile_id: [:string, nullable: true],
-                   resolved_delivery_profile_id: [:string, nullable: true],
                    metadata: 'Record<string, unknown>'
 
           attributes :metadata, :position, :cost_price, :cost_currency,
@@ -57,25 +56,19 @@ module Spree
             variant.product&.name
           end
 
-          # `seller_id` and `resolved_seller_id` come from the store serializer.
-          # The name rides along so the variants table can show a seller
-          # column without an expand — the resolved one, since that is who
-          # sells it.
+          # `seller_id` comes from the store serializer, already resolved. The
+          # name rides along so the variants table can show a seller column
+          # without an expand.
           attribute :seller_name do |variant|
             variant.resolved_seller&.name
           end
 
-          # Same pair as the seller. `delivery_profile_id` is the variant's own
-          # column — nil when it inherits — and what a client writes back, so a
-          # round trip never freezes inheritance into an override.
-          # `resolved_delivery_profile_id` is what the variant actually ships
-          # on: its own, else the product's. Read-only, because it is an
-          # answer rather than a field.
+          # How this variant ships — one answer, resolved on the model the same
+          # way the seller is. Writable: on a master product it names how this
+          # seller's row ships; on an owned product the write is a no-op, since
+          # every variant ships as the product does. The dashboard need not
+          # know which.
           attribute :delivery_profile_id do |variant|
-            variant.association(:delivery_profile).reader&.prefixed_id if variant.delivery_profile_id
-          end
-
-          attribute :resolved_delivery_profile_id do |variant|
             variant.resolved_delivery_profile&.prefixed_id
           end
 
