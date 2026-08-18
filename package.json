@@ -26,6 +26,7 @@
     "wt:template": "scripts/worktree/make-template.sh",
     "wt:dev": "scripts/worktree/dev.sh",
     "wt:dashboard": "scripts/worktree/dev-dashboard.sh",
+    "wt:seller": "scripts/worktree/dev-seller.sh",
     "wt:e2e": "scripts/worktree/e2e.sh",
     "changeset": "changeset",
     "version:preview": "changeset version --ignore @spree/sdk"

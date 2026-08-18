@@ -114,6 +114,7 @@ Development happens in **git worktrees** — every worktree is a self-contained 
 wt switch -c feature-x       # create worktree + provisioned environment (~20 s)
 pnpm wt:dev                  # Rails → https://feature-x.spree.localhost  (/up, /api/v3, /jobs; jobs run inside Puma via Solid Queue)
 pnpm wt:dashboard            # admin UI → https://admin.feature-x.spree.localhost
+pnpm wt:seller               # seller panel → https://sellers.feature-x.spree.localhost
 pnpm wt:e2e [spec...]        # Playwright on this worktree's own port block
 pnpm wt:template             # rebuild the template DB after schema-changing pulls
 wt merge main                # ship + clean up (worktree, branch and databases all removed)
@@ -563,6 +564,11 @@ pnpm wt:dev             # foreground; streams logs — https://<branch>.spree.lo
 
 # 2. Boot the admin (separate terminal)
 pnpm wt:dashboard       # https://admin.<branch>.spree.localhost (proxies /api/* to this worktree's Rails)
+
+# 3. Boot the marketplace seller panel (third terminal, optional)
+pnpm wt:seller          # https://sellers.<branch>.spree.localhost
+#    Seed a seller to sign in as:
+#    cd server && bin/rails spree:sellers:sample_data   → seller@example.com / spree123
 ```
 
 The starter is the canonical host — the same app `spree add dashboard` scaffolds — so local dev exercises the real consumer path (shell + plugin pipeline) while still hot-reloading `@spree/dashboard`/`-core`/`-ui` source through the workspace. Building the workspace deps first matters on a fresh worktree: the starter's `vite.config.ts` resolves the compiled Node-side Vite entries (`@spree/dashboard/vite`, `@spree/dashboard-core/vite`) from `dist/` — `pnpm wt:dashboard` handles this (turbo builds the dependency graph, then starts Vite on the portless-assigned port).
