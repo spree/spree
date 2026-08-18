@@ -55,15 +55,42 @@ Rails.application.config.after_initialize do
       }
     end
 
-    # Seller SDK — the seller panel's own branch. Keyed on the `::Seller::`
-    # namespace exactly as admin is on `::Admin::`, which is why seller
-    # serializers must live there and nowhere else.
+    # Seller SDK — the seller panel's own branch.
+    #
+    # Emits every `::Seller::` serializer PLUS the store-level serializers a
+    # seller serializer nests. Seller serializers extend store ones (a
+    # seller's product renders its media, variants and categories through the
+    # public shapes — those are exactly what a seller may see of their own
+    # record), so the referenced types have to exist in this package too. Admin
+    # avoids the same problem by shipping an admin twin of every store
+    # serializer it references; the seller branch is deliberately thinner and
+    # borrows the store shapes as-is.
+    #
+    # Store-level names are emitted only when a seller serializer reaches
+    # them — the `store_nested_for_seller` set — so this package does not
+    # grow into a second copy of the whole store SDK.
+    store_nested_for_seller = %w[
+      Address Category CustomField Media OptionType OptionValue
+      Price PriceHistory Seller Variant
+    ].to_set
+
     config.writer(:seller) do |c|
       c.output_dir = api_root.join('../../packages/seller-sdk/src/types/generated')
-      c.reject_class = ->(serializer:) { !serializer.name.to_s.include?('::Seller::') }
+      c.reject_class = ->(serializer:) {
+        name = serializer.name.to_s
+        # Everything on the seller branch is in.
+        next false if name.include?('::Seller::')
+        # Nothing from the admin branch, ever.
+        next true if name.include?('::Admin::')
+
+        # A store-level serializer is in only if a seller serializer nests it.
+        bare = name.sub(/\ASpree::Api::V3::/, '').sub(/Serializer\z/, '')
+        !store_nested_for_seller.include?(bare)
+      }
       c.serializer_name_mapper = ->(serializer) {
         serializer.name.to_s
           .sub(/\ASpree::Api::V3::Seller::/, '')
+          .sub(/\ASpree::Api::V3::/, '')
           .sub(/Serializer\z/, '')
       }
     end

@@ -6,7 +6,13 @@ export { SpreeError } from '@spree/sdk-core'
 // both names so hosts can say what they mean.
 export type { Client, Client as SellerApiClient, SellerClientConfig } from './client'
 export { createSellerClient } from './client'
-export type { MeResponse, ProfileUpdateParams, SellerAddressParams } from './seller-client'
+export type {
+  MeResponse,
+  PermissionRule,
+  ProductParams,
+  ProfileUpdateParams,
+  SellerAddressParams,
+} from './seller-client'
 // Client class, for advanced use and subclassing
 export { SellerClient } from './seller-client'
 export type * from './types'

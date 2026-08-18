@@ -47,11 +47,11 @@ module Spree
           end
 
           one :billing_address,
-              resource: proc { Spree.api.seller_address_serializer },
+              resource: proc { Spree.api.address_serializer },
               if: proc { |seller| seller.billing_address.present? }
 
           one :returns_address,
-              resource: proc { Spree.api.seller_address_serializer },
+              resource: proc { Spree.api.address_serializer },
               if: proc { |seller| seller.returns_address.present? }
         end
       end

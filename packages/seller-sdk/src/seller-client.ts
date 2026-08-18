@@ -1,5 +1,6 @@
-import type { RequestFn, RequestOptions } from '@spree/sdk-core'
-import type { AuthTokens, Invitation, Profile, SellerSummary, TeamMember } from './types'
+import type { ListParams, ListResponse, RequestFn, RequestOptions } from '@spree/sdk-core'
+import { transformListParams } from '@spree/sdk-core'
+import type { AuthTokens, Invitation, Product, Profile, SellerSummary, TeamMember } from './types'
 
 /**
  * Resource methods for the Spree Seller API — the marketplace seller panel.
@@ -131,12 +132,75 @@ export class SellerClient {
     revoke: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/invitations/${id}`, options),
   }
+
+  /**
+   * The seller's own catalog — products they own outright. Every call is
+   * rooted in the seller server-side, so an id belonging to another seller
+   * is a 404. Variants listed against shared master-catalog products are a
+   * separate surface.
+   */
+  readonly products = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<ListResponse<Product>> =>
+      this.request<ListResponse<Product>>('GET', '/products', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<Product> =>
+      this.request<Product>('GET', `/products/${id}`, options),
+
+    create: (params: ProductParams, options?: RequestOptions): Promise<Product> =>
+      this.request<Product>('POST', '/products', { ...options, body: params }),
+
+    update: (id: string, params: ProductParams, options?: RequestOptions): Promise<Product> =>
+      this.request<Product>('PATCH', `/products/${id}`, { ...options, body: params }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/products/${id}`, options),
+  }
+}
+
+/** The fields a seller may set on their own product. */
+export interface ProductParams {
+  name?: string
+  description?: string
+  slug?: string
+  status?: string
+  meta_title?: string
+  meta_description?: string
+  meta_keywords?: string
+  product_type_id?: string
+  tags?: string[]
+  category_ids?: string[]
+  metadata?: Record<string, unknown>
+  prices?: Array<{ amount: string | number; compare_at_amount?: string | number; currency: string }>
 }
 
 /** What `/seller/me` answers. */
+/**
+ * One CanCanCan rule, in the shape the panels' `<Can>` reads. Identical to
+ * the Admin API's, on purpose: the framework's permission model is one
+ * implementation, so its input has to be too.
+ */
+export interface PermissionRule {
+  /** true for `can`, false for `cannot` */
+  allow: boolean
+  /** Action names, e.g. ["read", "update"] or ["manage"] */
+  actions: string[]
+  /** Subject class names, e.g. ["Spree::Product"] or ["all"] */
+  subjects: string[]
+  /** The rule carries per-record conditions the API will still enforce. */
+  has_conditions: boolean
+}
+
 export interface MeResponse {
   user: TeamMember
   sellers: SellerSummary[]
+  /** Empty until a seller is named — capability is per seller. */
+  permissions: PermissionRule[]
   permission_keys: string[]
 }
 

@@ -681,6 +681,10 @@ Spree::Core::Engine.add_routes do
             patch :resend
           end
         end
+
+        # A seller's own catalog. The first collection on this branch, and the
+        # shape every later one follows — rooted in the seller by the anchor.
+        resources :products, only: [:index, :show, :create, :update, :destroy]
       end
 
       # Webhooks (outside of store namespace — no API key authentication)
