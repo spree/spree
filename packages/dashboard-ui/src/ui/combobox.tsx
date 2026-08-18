@@ -241,16 +241,18 @@ function ComboboxChip({
           render={<Button variant="ghost" size="icon-xs" />}
           className="opacity-50 hover:opacity-100"
           data-slot="combobox-chip-remove"
+          // Names the chip it clears ("Remove Wholesale") rather than a bare
+          // "Remove": several sit side by side, and a dialog's own submit
+          // button is often called Remove too. An `aria-label` rather than an
+          // `sr-only` span, so the chip's text isn't duplicated as a second
+          // text node beside the one already visible.
+          aria-label={
+            typeof children === 'string'
+              ? i18n.t('admin.actions.remove_item', { label: children })
+              : i18n.t('admin.actions.remove')
+          }
         >
           <XIcon className="pointer-events-none" />
-          {/* Names the chip it removes ("Remove Wholesale") rather than a bare
-              "Remove": several of these sit side by side, and a dialog's own
-              submit button is often called Remove too. */}
-          <span className="sr-only">
-            {typeof children === 'string'
-              ? i18n.t('admin.actions.remove_item', { label: children })
-              : i18n.t('admin.actions.remove')}
-          </span>
         </ComboboxPrimitive.ChipRemove>
       )}
     </ComboboxPrimitive.Chip>
