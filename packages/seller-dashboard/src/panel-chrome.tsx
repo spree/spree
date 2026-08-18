@@ -1,77 +1,59 @@
-import { useAuth } from '@spree/dashboard-core'
-import { Button } from '@spree/dashboard-ui'
+import { NavMain, useAuth, useNavItems } from '@spree/dashboard-core'
+import {
+  Button,
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarInset,
+  SidebarProvider,
+} from '@spree/dashboard-ui'
 import { Link, useParams } from '@tanstack/react-router'
-import { StoreIcon, UsersIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 
 /**
- * The panel's frame: a nav rail and a content column.
+ * The panel's frame: the sidebar and a content column.
  *
- * Deliberately small. The admin dashboard's chrome carries a store switcher,
- * a command palette and a plugin slot system, none of which a seller managing
- * one seller needs yet.
+ * Built on the same sidebar primitives and the same nav registry as the
+ * operator's dashboard, so a marketplace customises this panel the way it
+ * customises that one — `defineDashboardPlugin({ nav, slots, ... })` — rather
+ * than forking the chrome. `useNavItems` resolves the registry against the
+ * seller id: entries are prefixed with it, `if` gates evaluated, and items the
+ * member cannot act on hidden by the same permission filter.
+ *
+ * Deliberately without the operator's store switcher, settings sidebar and
+ * command palette. A seller has one tenant at a time (switching is a link
+ * back to the picker) and nothing here yet earns a palette.
  */
 export function PanelChrome({ children }: { children: ReactNode }) {
   const { t } = useTranslation()
   const { logout } = useAuth()
   const { sellerId } = useParams({ from: '/_authenticated/$sellerId' })
+  const { navItems, bottomItems } = useNavItems(sellerId)
 
   return (
-    <div className="flex min-h-screen">
-      <nav className="flex w-56 shrink-0 flex-col gap-1 border-border border-r p-4">
-        <p className="mb-4 font-medium text-sm">{t('app.name')}</p>
-
-        <NavLink to="/$sellerId" params={{ sellerId }} icon={<StoreIcon className="size-4" />}>
-          {t('nav.profile')}
-        </NavLink>
-        <NavLink to="/$sellerId/team" params={{ sellerId }} icon={<UsersIcon className="size-4" />}>
-          {t('nav.team')}
-        </NavLink>
-
-        <div className="mt-auto flex flex-col gap-1">
+    <SidebarProvider>
+      <Sidebar collapsible="icon">
+        <SidebarHeader className="px-4 py-3">
+          <p className="truncate font-medium text-sm">{t('app.name')}</p>
+        </SidebarHeader>
+        <SidebarContent>
+          <NavMain items={navItems} bottomItems={bottomItems} />
+        </SidebarContent>
+        <SidebarFooter className="flex flex-col gap-1 p-2">
           <Button variant="ghost" size="sm" className="justify-start" asChild>
             <Link to="/">{t('seller_picker.title')}</Link>
           </Button>
           <Button variant="ghost" size="sm" className="justify-start" onClick={() => logout()}>
             {t('nav.sign_out')}
           </Button>
-        </div>
-      </nav>
+        </SidebarFooter>
+      </Sidebar>
 
-      <main className="min-w-0 flex-1 p-8">{children}</main>
-    </div>
-  )
-}
-
-/**
- * A rail entry that highlights itself when its route is the active one.
- *
- * `activeProps` is TanStack's own active-state channel, so the highlight
- * follows the router rather than a copy of the current page held in state.
- */
-function NavLink({
-  to,
-  params,
-  icon,
-  children,
-}: {
-  to: string
-  params: Record<string, string>
-  icon: ReactNode
-  children: ReactNode
-}) {
-  return (
-    <Button variant="ghost" className="justify-start" asChild>
-      <Link
-        to={to}
-        params={params}
-        activeOptions={{ exact: true }}
-        activeProps={{ 'data-active': 'true', className: 'bg-accent text-accent-foreground' }}
-      >
-        {icon}
-        {children}
-      </Link>
-    </Button>
+      <SidebarInset>
+        <div className="container mx-auto flex flex-1 flex-col gap-4 p-4 lg:p-6">{children}</div>
+      </SidebarInset>
+    </SidebarProvider>
   )
 }
