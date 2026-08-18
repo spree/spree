@@ -312,7 +312,7 @@ module Spree
       it 'rolls the draft order back and re-points money records to the cart' do
         # A payment that never completes: processing is a no-op, so coverage
         # stays below total and the pre-capture rollback arm fires.
-        allow_any_instance_of(Spree::Payment).to receive(:process!)
+        allow(Spree::Payments::Process).to receive(:call).and_return(double(failure?: false))
         payment = ready_cart.payments.first
 
         result = described_class.call(cart: ready_cart)

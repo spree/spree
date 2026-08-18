@@ -23,14 +23,14 @@ RSpec.shared_examples 'a payment processing host' do
     end
 
     it 'processes the payments' do
-      expect(payment).to receive(:process!)
+      expect(Spree::Payments::Process).to receive(:call).with(payment: payment, action: nil).and_return(double(failure?: false))
       expect(record.process_payments!).to be_truthy
     end
 
     # Regression spec for https://github.com/spree/spree/issues/5436
     it 'raises an error if there are no payments to process' do
       allow(record).to receive_messages unprocessed_payments: []
-      expect(payment).not_to receive(:process!)
+      expect(Spree::Payments::Process).not_to receive(:call)
       expect(record.process_payments!).to be_falsey
     end
 
@@ -40,7 +40,7 @@ RSpec.shared_examples 'a payment processing host' do
       let(:unprocessed_payments) { [] }
 
       it 'skips processing the payments' do
-        expect(payment).not_to receive(:process!)
+        expect(Spree::Payments::Process).not_to receive(:call)
         expect(record.process_payments!).to be_nil
       end
 
@@ -53,8 +53,8 @@ RSpec.shared_examples 'a payment processing host' do
         end
 
         it 'processes only the other payment' do
-          expect(payment).not_to receive(:process!)
-          expect(other_payment).to receive(:process!)
+          expect(Spree::Payments::Process).to receive(:call).once
+            .with(payment: other_payment, action: nil).and_return(double(failure?: false))
 
           expect(record.process_payments!).to be_truthy
         end
@@ -62,7 +62,10 @@ RSpec.shared_examples 'a payment processing host' do
     end
 
     context 'when a payment raises a GatewayError' do
-      before { expect(payment).to receive(:process!).and_raise(Spree::Core::GatewayError) }
+      before do
+      expect(Spree::Payments::Process).to receive(:call)
+        .and_return(double(failure?: true, error: double(value: 'card declined')))
+    end
 
       it 'returns false' do
         expect(record.process_payments!).to be false
@@ -94,7 +97,7 @@ RSpec.shared_examples 'a payment processing host' do
     before { allow(record).to receive_messages unprocessed_payments: [payment], total: 10 }
 
     it 'processes payments with authorize!' do
-      expect(payment).to receive(:authorize!)
+      expect(Spree::Payments::Process).to receive(:call).with(payment: payment, action: :authorize).and_return(double(failure?: false))
       subject
     end
 
@@ -110,7 +113,7 @@ RSpec.shared_examples 'a payment processing host' do
     before { allow(record).to receive_messages unprocessed_payments: [payment], total: 10 }
 
     it 'processes payments with purchase!' do
-      expect(payment).to receive(:purchase!)
+      expect(Spree::Payments::Process).to receive(:call).with(payment: payment, action: :purchase).and_return(double(failure?: false))
       subject
     end
 

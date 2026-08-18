@@ -146,6 +146,7 @@ module Spree
         address_update_service: 'Spree::Addresses::Update',
 
         payment_create_service: 'Spree::Payments::Create',
+        payment_process_workflow: 'Spree::Payments::Process',
         payment_capture_workflow: 'Spree::Payments::Capture',
         payment_void_workflow: 'Spree::Payments::Void',
         refund_create_workflow: 'Spree::Refunds::Create',

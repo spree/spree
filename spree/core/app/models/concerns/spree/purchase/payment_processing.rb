@@ -9,22 +9,22 @@ module Spree
       # Deliberately not locked: holding the order's row lock across gateway
       # round trips is what the workflow external_step boundary exists to
       # prevent. Concurrent processing of the same payment is guarded twice —
-      # started_processing! refuses re-entry, and the gateway idempotency key
-      # (spree-<payment.number>) makes a duplicate charge a no-op at the
-      # provider.
+      # the workflow's atomic claim refuses a payment another writer settled,
+      # and the gateway idempotency key (spree-<payment.number>) makes a
+      # duplicate charge a no-op at the provider.
       def process_payments!
         # with_lock used to reload the record as a side effect; callers create
         # payments right before processing, so the association must refresh.
         payments.reset
-        process_payments_with(:process!)
+        process_payments_with(nil)
       end
 
       def authorize_payments!
-        process_payments_with(:authorize!)
+        process_payments_with(:authorize)
       end
 
       def capture_payments!
-        process_payments_with(:purchase!)
+        process_payments_with(:purchase)
       end
 
       def pending_payments
@@ -60,7 +60,7 @@ module Spree
 
       private
 
-      def process_payments_with(method)
+      def process_payments_with(action)
         # Don't run if there is nothing to pay.
         return if payment_total >= total
         # Don't run if there are authorized payments
@@ -71,7 +71,8 @@ module Spree
         unprocessed_payments.each do |payment|
           break if payment_total >= total
 
-          payment.public_send(method)
+          result = Spree.payment_process_workflow.call(payment: payment, action: action)
+          raise Spree::Core::GatewayError, result.error.value.to_s if result.failure?
         end
       rescue Spree::Core::GatewayError => e
         errors.add(:base, e.message)

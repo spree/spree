@@ -112,8 +112,35 @@ module Spree
     # Status writes, called from the payments workflows and Processing. The
     # completed/voided events publish here — the one place the status changes —
     # replacing the machine's after_transition callbacks.
+    CLAIMABLE_STATUSES = %w[checkout pending processing].freeze
+
+    # Atomically claims the payment for gateway processing. Only a live
+    # payment can be claimed, so a stale instance can never resurrect a
+    # payment another writer already settled and drive the gateway again.
+    #
+    # @return [Boolean] false when the payment completed concurrently — the
+    #   caller's outcome already exists and the claim must be a no-op
+    # @raise [Spree::Core::GatewayError] for a dead payment (failed, void,
+    #   invalid)
     def started_processing!
-      update!(status: 'processing')
+      if new_record?
+        self.status = 'processing'
+        save!
+        return true
+      end
+
+      claimed = self.class.where(id: id, status: CLAIMABLE_STATUSES)
+                          .update_all(status: 'processing', updated_at: Time.current) == 1
+      if claimed
+        self.status = 'processing'
+        clear_attribute_changes(['status'])
+        return true
+      end
+
+      fresh_status = self.class.where(id: id).pick(:status)
+      return false if fresh_status == 'completed'
+
+      raise Spree::Core::GatewayError, "Payment #{number} is #{fresh_status} and cannot be processed"
     end
 
     def pend!
@@ -272,6 +299,25 @@ module Spree
       amount - captured_amount
     end
 
+    # Row work only — moves the uncaptured remainder onto a new pending
+    # payment and shrinks this one to what was captured. The caller authorizes
+    # the returned remainder at the gateway afterwards, outside any lock.
+    #
+    # @return [Spree::Payment, nil] the remainder payment, or nil when fully captured
+    def split_uncaptured_amount
+      return if uncaptured_amount <= 0
+
+      remainder = owner.payments.create!(
+        amount: uncaptured_amount,
+        payment_method: payment_method,
+        source: source,
+        status: 'pending',
+        capture_on_dispatch: true
+      )
+      update(amount: captured_amount)
+      remainder
+    end
+
     def editable?
       checkout? || pending?
     end
@@ -346,7 +392,7 @@ module Spree
     # gateways store profile ids during source creation and never call this.
     def create_payment_profile
       # Don't attempt to create on bad payments.
-      return if has_invalid_state?
+      return if has_invalid_status?
       # Payment profile cannot be created without source
       return unless source
       # Imported payments shouldn't create a payment profile.
@@ -411,24 +457,6 @@ module Spree
 
 
 
-    # Row work only — moves the uncaptured remainder onto a new pending
-    # payment and shrinks this one to what was captured. The caller authorizes
-    # the returned remainder at the gateway afterwards, outside any lock.
-    #
-    # @return [Spree::Payment, nil] the remainder payment, or nil when fully captured
-    def split_uncaptured_amount
-      return if uncaptured_amount <= 0
-
-      remainder = owner.payments.create!(
-        amount: uncaptured_amount,
-        payment_method: payment_method,
-        source: source,
-        state: 'pending',
-        capture_on_dispatch: true
-      )
-      update(amount: captured_amount)
-      remainder
-    end
 
     def update_order
       return unless completed? || void? || (owner.is_a?(Spree::Order) && owner.completed?)
@@ -456,7 +484,7 @@ module Spree
 
     def invalidate_old_payments
       # invalid payment or store_credit payment shouldn't invalidate other payment types
-      return if has_invalid_state? || store_credit?
+      return if has_invalid_status? || store_credit?
 
       owner.payments.with_state('checkout').where.not(id: id).each do |payment|
         payment.invalidate! unless payment.store_credit?

@@ -343,4 +343,29 @@ RSpec.describe Spree::PaymentSession, type: :model do
       expect(payment.id).to eq(existing.id)
     end
   end
+
+  describe 'racing transitions' do
+    let(:session) { create(:bogus_payment_session, order: order, payment_method: payment_method, amount: 50) }
+
+    # The webhook and the customer's synchronous return race by design;
+    # the loser of the row lock must land as a no-op false with no event.
+    it 'lets exactly one of two racing writers complete the session' do
+      stale = Spree::PaymentSession.find(session.id)
+      expect(session.complete).to be(true)
+
+      events = []
+      allow(stale).to receive(:publish_event) { |name| events << name }
+
+      expect(stale.complete).to be(false)
+      expect(events).to be_empty
+      expect(stale.reload).to be_completed
+    end
+
+    it 'refuses to fail a session that already completed' do
+      Spree::PaymentSession.find(session.id).complete
+
+      expect(session.fail).to be(false)
+      expect(session.reload).to be_completed
+    end
+  end
 end

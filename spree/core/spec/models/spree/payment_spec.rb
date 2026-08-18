@@ -786,10 +786,10 @@ describe Spree::Payment, type: :model do
   end
 
   context 'when already processing' do
-    it 'returns nil without trying to process the source' do
+    it 'is a no-op success without trying to process the source' do
       payment.status = 'processing'
 
-      expect(payment.process!).to be_nil
+      expect(payment.process!).to be(true)
     end
   end
 

@@ -433,7 +433,9 @@ module Spree
                             end
 
         cents = (capturable_amount * 100).to_i
-        payment.capture!(cents)
+        result = Spree.payment_capture_workflow.call(payment: payment, amount: cents)
+        raise Spree::Core::GatewayError, result.error.value.to_s if result.failure?
+
         shipment_to_pay -= capturable_amount
       end
     end

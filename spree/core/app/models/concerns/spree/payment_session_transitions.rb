@@ -5,7 +5,11 @@ module Spree
   # Transitions are non-raising, matching the machines' non-bang events: the
   # webhook and synchronous completion paths race by design, and the loser
   # must land as a no-op `false`, never an exception. Each transition
-  # publishes through the model's own publish_*_event method.
+  # publishes through the model's own publish_*_event method, exactly once —
+  # only the writer whose conditional update moved the row publishes.
+  #
+  # A transition writes status alone — unlike the machine's save, it never
+  # carries other dirty attributes along; a caller persists its own.
   module PaymentSessionTransitions
     extend ActiveSupport::Concern
 
@@ -25,42 +29,64 @@ module Spree
     end
 
     def process
-      return false unless can_process?
+      return false unless transition_to('processing', from: %w[pending])
 
-      update!(status: 'processing')
       publish_processing_event
       true
     end
 
     def complete
-      return false unless can_complete?
+      return false unless transition_to('completed', from: %w[pending processing])
 
-      update!(status: 'completed')
       publish_completed_event
       true
     end
 
     def fail
-      return false unless can_fail?
+      return false unless transition_to('failed', from: %w[pending processing])
 
-      update!(status: 'failed')
       publish_failed_event
       true
     end
 
     def cancel
-      return false unless can_cancel?
+      return false unless transition_to('canceled', from: %w[pending processing])
 
-      update!(status: 'canceled')
       publish_canceled_event
       true
     end
 
     def expire
-      return false unless can_expire?
+      return false unless transition_to('expired', from: %w[pending processing])
 
-      update!(status: 'expired')
       publish_expired_event
+      true
+    end
+
+    private
+
+    # A compare-and-swap on the status column, like Payment's processing
+    # claim: the conditional update either moves the row or touches nothing,
+    # and the loser is the writer whose update matched no row. Deliberately
+    # not with_lock — its reload would wipe the session's association cache
+    # mid-flow. The write is the transition event's, published by the
+    # caller; the generic lifecycle updated event does not fire for status
+    # flips.
+    def transition_to(to, from:)
+      if new_record?
+        return false unless status.in?(from)
+
+        self.status = to
+        save!
+        return true
+      end
+
+      claimed = self.class.where(id: id, status: from)
+                          .update_all(status: to, updated_at: Time.current) == 1
+      return false unless claimed
+
+      self.status = to
+      clear_attribute_changes(['status'])
       true
     end
   end

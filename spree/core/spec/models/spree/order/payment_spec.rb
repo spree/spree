@@ -86,6 +86,12 @@ module Spree
         payment_1 = create(:payment, amount: 50, order: order)
         payment_2 = create(:payment, amount: 50, order: order)
         payment_3 = create(:payment, amount: 50, order: order)
+        # Each create invalidates its predecessors; this spec wants three
+        # live checkout payments, so restore them. The atomic claim reads
+        # the database, and refuses invalid payments — the old machine let
+        # these stale instances resurrect them, which is the race the claim
+        # closes.
+        Spree::Payment.where(id: [payment_1, payment_2, payment_3]).update_all(status: 'checkout')
         allow(order).to receive(:unprocessed_payments).and_return([payment_1, payment_2, payment_3])
 
         order.process_payments!
