@@ -54,6 +54,7 @@ import { type ReactNode, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { ResourceImageField } from '../../../../components/spree/resource-image-field'
+import { ResourceDetailSkeleton } from '../../../../components/spree/route-pending'
 import {
   useApproveSeller,
   useDeleteSeller,
@@ -84,7 +85,7 @@ function SellerDetailPage() {
   const { sellerId } = Route.useParams()
   const { data: seller, isLoading, error, refetch } = useSeller(sellerId)
 
-  if (isLoading) return <p className="text-muted-foreground">{t('admin.common.loading')}</p>
+  if (isLoading) return <ResourceDetailSkeleton />
   if (error || !seller) {
     return (
       <ErrorState

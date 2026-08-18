@@ -170,7 +170,7 @@ function TopProducts({ products }: { products: DashboardAnalytics['top_products'
         <CardDescription>{t('admin.pages.home.top_products_description')}</CardDescription>
       </CardHeader>
       <CardContent className="p-0">
-        <Table>
+        <Table roundedBottom>
           <TableHeader>
             <TableRow>
               <TableHead>{t('admin.pages.home.columns.product')}</TableHead>

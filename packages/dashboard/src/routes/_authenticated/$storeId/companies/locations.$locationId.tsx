@@ -39,6 +39,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CompanyLocationSheet } from '../../../../components/spree/company-location-sheet'
 import { EnterpriseUpsell } from '../../../../components/spree/enterprise-upsell'
+import { ResourceDetailSkeleton } from '../../../../components/spree/route-pending'
 import {
   useCompanyLocation,
   useCompanyLocationContacts,
@@ -57,7 +58,7 @@ function CompanyLocationDetailPage() {
   const { locationId } = Route.useParams()
   const { data: location, isLoading, error, refetch } = useCompanyLocation(locationId)
 
-  if (isLoading) return <p className="text-muted-foreground">{t('admin.common.loading')}</p>
+  if (isLoading) return <ResourceDetailSkeleton />
   if (error || !location) {
     return (
       <ErrorState

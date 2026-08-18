@@ -165,7 +165,7 @@ function ReasonSection({
               </EmptyHeader>
             </Empty>
           ) : (
-            <Table>
+            <Table roundedBottom>
               <TableHeader>
                 <TableRow>
                   <TableHead>{t('admin.fields.name.label')}</TableHead>

@@ -86,6 +86,7 @@ import {
   CustomFieldsInlineCard,
   EditableApiCustomFieldsProvider,
 } from '../../../../components/spree/custom-fields/custom-fields-inline'
+import { ResourceDetailSkeleton } from '../../../../components/spree/route-pending'
 import { TaxIdentifiersCard } from '../../../../components/spree/tax-identifiers-card'
 import { useCurrencyLocale } from '../../../../hooks/use-currency-locale'
 import {
@@ -135,7 +136,7 @@ function CustomerDetailPage() {
   const { customerId } = Route.useParams()
   const { data: customer, isLoading, error, refetch } = useCustomer(customerId)
 
-  if (isLoading) return <p className="text-muted-foreground">{t('admin.common.loading')}</p>
+  if (isLoading) return <ResourceDetailSkeleton />
   if (error || !customer) {
     return (
       <ErrorState
@@ -739,7 +740,7 @@ function OrdersCard({
         </CardContent>
       ) : (
         <CardContent className="p-0">
-          <Table>
+          <Table roundedBottom>
             <TableHeader>
               <TableRow>
                 <TableHead>{t('admin.customers.detail.orders_table.order')}</TableHead>
@@ -1136,7 +1137,7 @@ function StoreCreditsCard({ customer }: { customer: Customer }) {
           </CardContent>
         ) : (
           <CardContent className="p-0">
-            <Table>
+            <Table roundedBottom>
               <TableHeader>
                 <TableRow>
                   <TableHead>{t('admin.fields.amount.label')}</TableHead>

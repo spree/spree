@@ -28,6 +28,7 @@ import {
   EmptyTitle,
   Pagination,
   type PaginationMeta,
+  Skeleton,
   Table,
   TableBody,
   TableCell,
@@ -502,9 +503,9 @@ export function ResourceTable<T extends Record<string, any>>({
                 </TableHeader>
                 <TableBody>
                   {isLoading ? (
-                    <TableEmpty colSpan={visibleColumns.length + 1 + (rowActionsEnabled ? 1 : 0)}>
-                      {t('admin.common.loading')}
-                    </TableEmpty>
+                    <TableSkeletonRows
+                      colSpan={visibleColumns.length + 1 + (rowActionsEnabled ? 1 : 0)}
+                    />
                   ) : rows.length === 0 ? (
                     <TableEmpty colSpan={visibleColumns.length + 1 + (rowActionsEnabled ? 1 : 0)}>
                       <Empty className="border-0 p-0">
@@ -611,15 +612,13 @@ export function ResourceTable<T extends Record<string, any>>({
               </TableHeader>
               <TableBody>
                 {isLoading ? (
-                  <TableEmpty
+                  <TableSkeletonRows
                     colSpan={
                       visibleColumns.length +
                       (selectionEnabled ? 1 : 0) +
                       (rowActionsEnabled ? 1 : 0)
                     }
-                  >
-                    {t('admin.common.loading')}
-                  </TableEmpty>
+                  />
                 ) : rows.length === 0 ? (
                   <TableEmpty
                     colSpan={
@@ -651,7 +650,10 @@ export function ResourceTable<T extends Record<string, any>>({
                     return (
                       <TableRow
                         key={(row as any).id ?? i}
-                        className={isSelected ? 'bg-muted/40' : undefined}
+                        // Selected rows carry the hover tint so the selection is
+                        // visible at rest; hovering one goes a step deeper so the
+                        // row still answers the pointer.
+                        className={isSelected ? 'bg-accent/60 hover:bg-accent' : undefined}
                       >
                         {selectionEnabled && (
                           <TableCell className="w-8">
@@ -687,6 +689,27 @@ export function ResourceTable<T extends Record<string, any>>({
         )}
       </CardContent>
     </Card>
+  )
+}
+
+// ============================================================================
+// TableSkeletonRows — placeholder rows while the first page loads. Rows rather
+// than a "Loading…" line so the table keeps its height and the page doesn't
+// jump when data lands.
+// ============================================================================
+
+function TableSkeletonRows({ colSpan, rows = 8 }: { colSpan: number; rows?: number }) {
+  return (
+    <>
+      {Array.from({ length: rows }, (_, i) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: fixed-length placeholder list
+        <tr key={i} className="last:*:border-b-0">
+          <TableCell colSpan={colSpan}>
+            <Skeleton className="h-5 w-full" />
+          </TableCell>
+        </tr>
+      ))}
+    </>
   )
 }
 
