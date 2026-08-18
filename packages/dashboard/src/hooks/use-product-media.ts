@@ -1,4 +1,4 @@
-import type { Media } from '@spree/admin-sdk'
+import type { Media, MediaCreateParams, MediaUpdateParams } from '@spree/admin-sdk'
 import { adminClient, useResourceKey, useResourceKeyBuilder } from '@spree/dashboard-core'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
@@ -17,12 +17,7 @@ export function useCreateProductMedia(productId: string) {
   const buildKey = useResourceKeyBuilder()
 
   return useMutation({
-    mutationFn: (params: {
-      signed_id: string
-      alt?: string
-      position?: number
-      variant_ids?: string[]
-    }) => adminClient.products.media.create(productId, params),
+    mutationFn: (params: MediaCreateParams) => adminClient.products.media.create(productId, params),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: buildKey('products', productId, 'media') })
       queryClient.invalidateQueries({ queryKey: buildKey('products', productId) })
@@ -39,15 +34,8 @@ export function useUpdateProductMedia(productId: string) {
   const queryKey = buildKey('products', productId, 'media')
 
   return useMutation({
-    mutationFn: ({
-      id,
-      ...params
-    }: {
-      id: string
-      alt?: string
-      position?: number
-      variant_ids?: string[]
-    }) => adminClient.products.media.update(productId, id, params),
+    mutationFn: ({ id, ...params }: MediaUpdateParams & { id: string }) =>
+      adminClient.products.media.update(productId, id, params),
 
     // Optimistically splice on `position` change — server-side acts_as_list
     // shifts siblings, so the post-success refetch will match.

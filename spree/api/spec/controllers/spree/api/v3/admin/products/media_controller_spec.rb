@@ -156,6 +156,137 @@ RSpec.describe Spree::Api::V3::Admin::MediaController, type: :controller do
     end
   end
 
+  describe 'video' do
+    describe 'POST #create' do
+      it 'adds an external video from a link' do
+        post :create, params: {
+          product_id: product.prefixed_id,
+          media_type: 'external_video',
+          external_video_url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+          alt: 'Product walkthrough'
+        }, as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(json_response['media_type']).to eq('external_video')
+        expect(json_response['video_provider']).to eq('youtube')
+        expect(json_response['video_embed_url']).to eq('https://www.youtube.com/embed/dQw4w9WgXcQ')
+        expect(json_response['poster_url']).to eq('https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg')
+      end
+
+      it 'adds a Vimeo video' do
+        post :create, params: {
+          product_id: product.prefixed_id,
+          media_type: 'external_video',
+          external_video_url: 'https://vimeo.com/123456789'
+        }, as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(json_response['video_provider']).to eq('vimeo')
+        expect(json_response['video_embed_url']).to eq('https://player.vimeo.com/video/123456789')
+      end
+
+      it 'rejects a link Spree cannot embed' do
+        post :create, params: {
+          product_id: product.prefixed_id,
+          media_type: 'external_video',
+          external_video_url: 'https://example.com/clip.mp4'
+        }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+
+      it 'rejects an external video with no link' do
+        post :create, params: {
+          product_id: product.prefixed_id,
+          media_type: 'external_video'
+        }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+    end
+
+    describe 'PATCH #update' do
+      let!(:video) do
+        create(:external_video_asset, viewable: product,
+                                      external_video_url: 'https://vimeo.com/123456789')
+      end
+
+      it 'swaps the video link' do
+        patch :update, params: {
+          product_id: product.prefixed_id,
+          id: video.prefixed_id,
+          external_video_url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['video_provider']).to eq('youtube')
+      end
+
+      it 'rejects a link Spree cannot embed' do
+        patch :update, params: {
+          product_id: product.prefixed_id,
+          id: video.prefixed_id,
+          external_video_url: 'https://example.com/clip.mp4'
+        }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(video.reload.external_video_url).to eq('https://vimeo.com/123456789')
+      end
+    end
+
+    describe 'poster' do
+      let(:poster_blob) do
+        ActiveStorage::Blob.create_and_upload!(
+          io: File.open(Spree::Core::Engine.root.join('spec', 'fixtures', 'thinking-cat.jpg')),
+          filename: 'poster.jpg',
+          content_type: 'image/jpeg'
+        )
+      end
+
+      it 'attaches a poster when the video is created' do
+        post :create, params: {
+          product_id: product.prefixed_id,
+          media_type: 'external_video',
+          external_video_url: 'https://vimeo.com/123456789',
+          poster_signed_id: poster_blob.signed_id
+        }, as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(json_response['poster_url']).to be_present
+        expect(Spree::Media.find_by_prefix_id(json_response['id']).poster).to be_attached
+      end
+
+      it 'attaches a poster to an existing video' do
+        video = create(:external_video_asset, viewable: product,
+                                              external_video_url: 'https://vimeo.com/123456789')
+
+        patch :update, params: {
+          product_id: product.prefixed_id,
+          id: video.prefixed_id,
+          poster_signed_id: poster_blob.signed_id
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(video.reload.poster).to be_attached
+        expect(json_response['poster_url']).to be_present
+      end
+    end
+
+    describe 'focal point' do
+      it 'writes the focal point on an image' do
+        patch :update, params: {
+          product_id: product.prefixed_id,
+          id: image.prefixed_id,
+          focal_point_x: 0.25,
+          focal_point_y: 0.75
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(image.reload.focal_point).to eq({ x: 0.25, y: 0.75 })
+      end
+    end
+  end
+
   describe 'variant assets' do
     let!(:variant) { create(:variant, product: product) }
     let!(:variant_image) { create(:image, viewable: variant) }

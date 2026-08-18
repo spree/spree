@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe Spree::Api::V3::AssetSerializer do
+RSpec.describe Spree::Api::V3::MediaEventSerializer do
   let(:store) { @default_store }
   let(:product) { create(:product) }
   let(:asset) { create(:asset, viewable: product.default_variant) }

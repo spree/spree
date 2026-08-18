@@ -126,9 +126,9 @@ module Spree
           return nil if image.nil?
           return nil unless image.respond_to?(:attached?) && image.attached?
 
-          # Handle Spree::Asset models (like Spree::Image) which have attachment inside
+          # Handle Spree::Media rows, which keep the file in `attachment`
           # vs direct ActiveStorage attachments (like taxon.image)
-          attachment = image.is_a?(Spree::Asset) ? image.attachment : image
+          attachment = image.is_a?(Spree::Media) ? image.attachment : image
           Rails.application.routes.url_helpers.cdn_image_url(attachment)
         end
       end

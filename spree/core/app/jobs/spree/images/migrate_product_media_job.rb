@@ -1,7 +1,7 @@
 module Spree
-  module Media
+  module Images
     # Per-product worker for the 5.4 → 5.5 media migration. Idempotent.
-    class MigrateProductAssetsJob < Spree::BaseJob
+    class MigrateProductMediaJob < Spree::BaseJob
       queue_as Spree.queues.images
 
       def perform(product_id)
@@ -13,7 +13,7 @@ module Spree
         viewable_ids = product.variants.map(&:id)
         return if viewable_ids.empty?
 
-        assets_by_variant = Spree::Asset
+        assets_by_variant = Spree::Media
                               .where(viewable_type: 'Spree::Variant', viewable_id: viewable_ids)
                               .pluck(:id, :viewable_id)
                               .group_by(&:last)
@@ -43,7 +43,7 @@ module Spree
       private
 
       def move_assets_to_product(asset_ids, product)
-        Spree::Asset.where(id: asset_ids).update_all(
+        Spree::Media.where(id: asset_ids).update_all(
           viewable_type: 'Spree::Product',
           viewable_id: product.id,
           updated_at: Time.current

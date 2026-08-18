@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe Spree::Media::MigrateProductAssetsJob, type: :job do
+RSpec.describe Spree::Images::MigrateProductMediaJob, type: :job do
   subject { described_class.perform_now(product.id) }
 
   describe '#perform' do
@@ -64,7 +64,7 @@ RSpec.describe Spree::Media::MigrateProductAssetsJob, type: :job do
 
       it 'does not duplicate assets even when historical line items exist' do
         create(:line_item, variant: variant)
-        expect { subject }.not_to change(Spree::Asset, :count)
+        expect { subject }.not_to change(Spree::Media, :count)
       end
     end
 
@@ -94,7 +94,7 @@ RSpec.describe Spree::Media::MigrateProductAssetsJob, type: :job do
         described_class.perform_now(product.id)
 
         expect { described_class.perform_now(product.id) }.not_to change(Spree::VariantMedia, :count)
-        expect(Spree::Asset.count).to eq(1)
+        expect(Spree::Media.count).to eq(1)
       end
     end
 
@@ -102,7 +102,7 @@ RSpec.describe Spree::Media::MigrateProductAssetsJob, type: :job do
       let!(:product) { create(:product) }
 
       it 'is a no-op for asset counts' do
-        expect { subject }.not_to change(Spree::Asset, :count)
+        expect { subject }.not_to change(Spree::Media, :count)
       end
 
       it 'is a no-op for VariantMedia counts' do

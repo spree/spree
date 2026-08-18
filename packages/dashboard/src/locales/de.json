@@ -2,7 +2,7 @@
   "admin": {
     "a11y": {
       "delete_image": "Bild löschen",
-      "edit_media": "Bild bearbeiten"
+      "edit_media": "Medien bearbeiten"
     },
     "allowed_origins": {
       "add_cta": "Erlaubten Ursprung hinzufügen",
@@ -901,6 +901,15 @@
         "alt": {
           "label": "Alt-Text",
           "placeholder": "Beschreiben Sie das Bild für Barrierefreiheit und SEO"
+        },
+        "external_video_url": {
+          "help": "Fügen Sie einen YouTube- oder Vimeo-Link ein.",
+          "label": "Video-Link",
+          "placeholder": "https://www.youtube.com/watch?v=..."
+        },
+        "poster": {
+          "help": "Das Standbild, das vor dem Abspielen angezeigt wird. Leer lassen, um das Bild des Anbieters zu verwenden, sofern vorhanden.",
+          "label": "Vorschaubild"
         }
       },
       "option_type": {
@@ -3310,14 +3319,21 @@
         "unknown_location": "Unbekannter Standort"
       },
       "media": {
+        "add_video": "Video hinzufügen",
+        "add_video_submit": "Video hinzufügen",
+        "add_video_title": "Video hinzufügen",
         "assigned_variants_help": "Wählen Sie die Varianten aus, die dieses Bild repräsentiert. Leer lassen, um es auf alle Varianten anzuwenden.",
         "assigned_variants_label": "Zugeordnete Varianten",
         "delete_confirm": "Dieses Medium löschen? Dies kann nicht rückgängig gemacht werden.",
         "drop_hint": "Medien hierher ziehen und ablegen oder zum Durchsuchen klicken",
         "edit_title": "Medium bearbeiten",
-        "file_types_hint": "PNG, JPG, WebP bis zu 10 MB",
+        "file_types_hint": "Bilder (PNG, JPG, WebP) und Videos (MP4, WebM, MOV)",
+        "focal_point_help": "Klicken Sie auf das Bild, um festzulegen, was beim Zuschneiden sichtbar bleibt.",
+        "focal_point_reset": "Zurücksetzen",
         "upload_failed": "Hochladen von {{name}} fehlgeschlagen: {{message}}",
-        "upload_status_failed": "Fehlgeschlagen"
+        "upload_status_failed": "Fehlgeschlagen",
+        "video_preview_title": "Videovorschau",
+        "video_url_invalid": "Geben Sie einen YouTube- oder Vimeo-Link ein."
       },
       "no_categories_found": "Keine Kategorien gefunden",
       "no_collections_found": "Keine Kollektionen gefunden",
@@ -3396,14 +3412,6 @@
         "reference_placeholder": "Bestellnummer, Lieferantenrechnung, …",
         "review_description": "Überprüfen Sie den Transfer vor dem Erstellen. Artikel können danach nicht mehr geändert werden.",
         "search_items_placeholder": "Nach Name oder SKU suchen (3+ Zeichen)…"
-      },
-      "variant_media_picker": {
-        "add_count_one": "{{count}} hinzufügen",
-        "add_count_other": "{{count}} hinzufügen",
-        "empty_all_linked": "Alle Produktmedien sind bereits mit dieser Variante verknüpft.",
-        "empty_no_media": "Noch keine Produktmedien — laden Sie zuerst Bilder auf dem Produkt hoch.",
-        "title": "Aus Produktgalerie auswählen",
-        "trigger": "Aus Produktgalerie auswählen"
       },
       "variants": {
         "add_option": "Option hinzufügen",

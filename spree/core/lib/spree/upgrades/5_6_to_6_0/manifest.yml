@@ -35,6 +35,34 @@ steps:
 
       Idempotent, and a no-op on an already-consolidated schema.
 
+  - id: migrate_media_class_names
+    name: "Rewrite stored Spree::Asset and Spree::Image class names"
+    task: "spree:migrate_media_class_names"
+    notes: |
+      Spree::Asset and Spree::Image became Spree::Media in 6.0. The table rename
+      (spree_assets to spree_media) travels with db:migrate, but the old class
+      names are also written into data — custom field resource types, and any
+      polymorphic type column an extension points at media rows.
+
+      Run immediately after db:migrate. Spree::Asset stays readable as a
+      deprecated alias until 6.1, so code referencing it keeps working either
+      way; this step is about the stored strings.
+
+      Idempotent — rows already saying Spree::Media are left alone.
+
+  - id: migrate_master_images_to_product_media
+    name: "Re-home variant-pinned media onto the product"
+    task: "spree:media:migrate_master_images_to_product_media"
+    notes: |
+      Moves images pinned to a variant onto the product's own gallery, linking
+      them back to the variants that had them. Enqueues one background job per
+      affected product, so let the queue drain before the next step.
+
+      Run this BEFORE spree:remove_master_variant — deleting a ghost master
+      variant that still owns media would take the media with it.
+
+      Idempotent — re-running skips products that are already migrated.
+
   - id: remove_master_variant
     name: "Migrate products off the master variant"
     task: "spree:remove_master_variant"

@@ -227,12 +227,12 @@ module Spree
               # whether the parsed payload is an array or an object, while
               # text/number/boolean ship scalars.
               custom_fields: [:id, :custom_field_definition_id, :value, { value: [] }, { value: {} }],
-              # Inline media. Entries with `id` patch an existing asset
-              # (alt, position, variant_ids). Entries with `signed_id` create
-              # + attach a fresh upload. Lets the dashboard ship media changes
-              # alongside the rest of the product form. See
-              # `Spree::Product#media=`.
-              media: [:id, :signed_id, :alt, :position, :type, variant_ids: []],
+              # Inline media. Entries with `id` patch an existing asset.
+              # Entries with `signed_id` create + attach a fresh upload; an
+              # external video creates with a URL and no file. Lets the
+              # dashboard ship media changes alongside the rest of the product
+              # form. See `Spree::Product#media=`.
+              media: [*Spree::Media::WRITABLE_ATTRIBUTES, :id, :signed_id, { variant_ids: [] }],
               product_publications: [:id, :channel_id, :published_at, :unpublished_at],
               variants: [
                 :id, :sku, :barcode,

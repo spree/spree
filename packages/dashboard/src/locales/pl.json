@@ -2,7 +2,7 @@
   "admin": {
     "a11y": {
       "delete_image": "Usuń obraz",
-      "edit_media": "Edytuj obraz"
+      "edit_media": "Edytuj multimedia"
     },
     "allowed_origins": {
       "add_cta": "Dodaj dozwolone źródło",
@@ -915,6 +915,15 @@
         "alt": {
           "label": "Tekst alternatywny",
           "placeholder": "Opisz obraz na potrzeby dostępności i SEO"
+        },
+        "external_video_url": {
+          "help": "Wklej link do YouTube lub Vimeo.",
+          "label": "Link do wideo",
+          "placeholder": "https://www.youtube.com/watch?v=..."
+        },
+        "poster": {
+          "help": "Nieruchomy obraz pokazywany przed odtworzeniem. Zostaw puste, aby użyć obrazu dostawcy, jeśli jest dostępny.",
+          "label": "Miniatura wideo"
         }
       },
       "option_type": {
@@ -3358,14 +3367,21 @@
         "unknown_location": "Nieznana lokalizacja"
       },
       "media": {
+        "add_video": "Dodaj wideo",
+        "add_video_submit": "Dodaj wideo",
+        "add_video_title": "Dodaj wideo",
         "assigned_variants_help": "Wybierz warianty, które reprezentuje to zdjęcie. Pozostaw puste, aby zastosować do wszystkich wariantów.",
         "assigned_variants_label": "Przypisane warianty",
         "delete_confirm": "Usunąć ten plik multimedialny? Tej operacji nie można cofnąć.",
         "drop_hint": "Przeciągnij i upuść pliki tutaj lub kliknij, aby przeglądać",
         "edit_title": "Edytuj plik multimedialny",
-        "file_types_hint": "PNG, JPG, WebP do 10 MB",
+        "file_types_hint": "Zdjęcia (PNG, JPG, WebP) i wideo (MP4, WebM, MOV)",
+        "focal_point_help": "Kliknij zdjęcie, aby wskazać, co ma pozostać widoczne po przycięciu.",
+        "focal_point_reset": "Przywróć",
         "upload_failed": "Nie udało się przesłać {{name}}: {{message}}",
-        "upload_status_failed": "Niepowodzenie"
+        "upload_status_failed": "Niepowodzenie",
+        "video_preview_title": "Podgląd wideo",
+        "video_url_invalid": "Podaj link do YouTube lub Vimeo."
       },
       "no_categories_found": "Nie znaleziono kategorii",
       "no_collections_found": "Nie znaleziono kolekcji",
@@ -3448,14 +3464,6 @@
         "reference_placeholder": "Numer zamówienia, faktura dostawcy, …",
         "review_description": "Sprawdź transfer przed utworzeniem. Pozycji nie można później zmienić.",
         "search_items_placeholder": "Szukaj według nazwy lub SKU (min. 3 znaki)…"
-      },
-      "variant_media_picker": {
-        "add_count_one": "Dodaj {{count}}",
-        "add_count_other": "Dodaj {{count}}",
-        "empty_all_linked": "Wszystkie media produktu są już powiązane z tym wariantem.",
-        "empty_no_media": "Brak mediów produktu — najpierw prześlij obrazy do produktu.",
-        "title": "Wybierz z galerii produktu",
-        "trigger": "Wybierz z galerii produktu"
       },
       "variants": {
         "add_option": "Dodaj opcję",

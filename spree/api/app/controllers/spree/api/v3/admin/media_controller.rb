@@ -6,7 +6,10 @@ module Spree
           scoped_resource :products
 
           def create
-            if permitted_params[:url].present?
+            # An external video has no file, so it takes the plain create path
+            # even though a URL is present — `url` means "fetch this image from
+            # here" and only applies to image rows.
+            if permitted_params[:url].present? && !external_video_request?
               create_from_url
             elsif permitted_params[:signed_id].present?
               create_from_signed_id
@@ -25,7 +28,7 @@ module Spree
           protected
 
           def model_class
-            Spree::Asset
+            Spree::Media
           end
 
           def serializer_class
@@ -44,7 +47,7 @@ module Spree
           end
 
           # Variants store assets via the polymorphic `images` association; products own
-          # their gallery via `media`. Both resolve to `Spree::Asset` rows with different
+          # their gallery via `media`. Both resolve to `Spree::Media` rows with different
           # `viewable_type` values.
           def parent_association
             params[:variant_id].present? ? :images : :media
@@ -57,36 +60,35 @@ module Spree
           def scope
             return super if params[:variant_id].present?
 
-            Spree::Asset.where(
+            Spree::Media.where(
               viewable_type: 'Spree::Product', viewable_id: @product.id
             ).or(
-              Spree::Asset.where(
+              Spree::Media.where(
                 viewable_type: 'Spree::Variant', viewable_id: @product.default_variant&.id
               )
             ).order(:position)
           end
 
-          ALLOWED_MEDIA_TYPES = -> { [Spree::Asset, *Spree::Asset.descendants].map(&:name).to_set.freeze }
-
           def build_resource
-            media_type = permitted_params[:type] || 'Spree::Image'
-
-            unless ALLOWED_MEDIA_TYPES.call.include?(media_type)
-              raise ArgumentError, "Invalid media type: #{media_type}"
-            end
-
-            media = @parent.send(parent_association).build(permitted_params.except(:type, :url, :signed_id))
-            media.type = media_type
-
-            media
+            @parent.send(parent_association).build(permitted_params.except(:url, :signed_id))
           end
 
+          # The media file and a URL to fetch one from are transport, not
+          # attributes — everything a client can set lives on the model.
           def permitted_params
-            params.permit(:type, :alt, :position, :attachment, :url, :signed_id, variant_ids: [])
+            params.permit(
+              *Spree::Media::WRITABLE_ATTRIBUTES,
+              :attachment, :url, :signed_id,
+              variant_ids: []
+            )
+          end
+
+          def external_video_request?
+            permitted_params[:media_type] == 'external_video'
           end
 
           def create_from_url
-            authorize!(:create, Spree::Asset)
+            authorize!(:create, Spree::Media)
 
             url = permitted_params[:url]
             position = permitted_params[:position]

@@ -9,6 +9,10 @@ module Spree
                  focal_point_x: [:number, nullable: true],
                  focal_point_y: [:number, nullable: true],
                  external_video_url: [:string, nullable: true],
+                 video_provider: [:string, nullable: true],
+                 video_embed_url: [:string, nullable: true],
+                 video_url: [:string, nullable: true],
+                 poster_url: [:string, nullable: true],
                  original_url: [:string, nullable: true], mini_url: [:string, nullable: true],
                  small_url: [:string, nullable: true], medium_url: [:string, nullable: true],
                  large_url: [:string, nullable: true], xlarge_url: [:string, nullable: true],
@@ -33,7 +37,36 @@ module Spree
         attributes :position, :alt, :media_type,
                    :focal_point_x, :focal_point_y, :external_video_url
 
+        # Spree parses the YouTube/Vimeo link once, here, so no storefront has
+        # to reimplement it. Nil on anything that isn't an external video.
+        attribute :video_provider do |asset|
+          asset.external_video&.provider
+        end
+
+        attribute :video_embed_url do |asset|
+          asset.external_video&.embed_url
+        end
+
+        # The uploaded video file itself. Served as-is — Spree does not
+        # transcode.
+        attribute :video_url do |asset|
+          next nil unless asset.video? && asset.attachment.attached?
+
+          url_helpers.cdn_image_url(asset.attachment)
+        end
+
+        # Still frame for a video tile: the merchant's upload when there is one,
+        # otherwise the provider's own thumbnail.
+        attribute :poster_url do |asset|
+          next nil unless asset.playable_video?
+
+          still_url(asset)
+        end
+
+        # Nil for video rows — there is no image to size.
         attribute :original_url do |asset|
+          next nil if asset.playable_video?
+
           image_url_for(asset)
         end
 
@@ -42,18 +75,26 @@ module Spree
         # (e.g., mini, small, medium, large, xlarge)
         Spree::Config.product_image_variant_sizes.each_key do |variant_name|
           attribute :"#{variant_name}_url" do |asset|
-            variant_url(asset, variant_name)
+            still_url(asset, variant_name)
           end
         end
 
         private
 
-        def variant_url(asset, variant_name)
-          return nil unless asset&.attachment&.attached?
+        # The row's still frame, sized when it's an attachment we control — an
+        # image's own file, or a video's poster, so a gallery that only knows
+        # how to draw an image still renders the right picture. A provider's
+        # thumbnail is served as-is: it isn't ours to resize, so every size
+        # resolves to the same URL.
+        def still_url(asset, variant_name = nil)
+          source = asset&.still_image
+          return asset&.provider_still_url if source.nil?
 
-          Rails.application.routes.url_helpers.cdn_image_url(
-            asset.attachment.variant(variant_name)
-          )
+          url_helpers.cdn_image_url(variant_name ? source.variant(variant_name) : source)
+        end
+
+        def url_helpers
+          Rails.application.routes.url_helpers
         end
       end
     end

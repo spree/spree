@@ -2,7 +2,7 @@
   "admin": {
     "a11y": {
       "delete_image": "删除图片",
-      "edit_media": "编辑图片"
+      "edit_media": "编辑媒体"
     },
     "allowed_origins": {
       "add_cta": "添加允许的来源",
@@ -898,6 +898,15 @@
         "alt": {
           "label": "替代文本",
           "placeholder": "为无障碍访问和 SEO 描述该图片"
+        },
+        "external_video_url": {
+          "help": "粘贴 YouTube 或 Vimeo 链接。",
+          "label": "视频链接",
+          "placeholder": "https://www.youtube.com/watch?v=..."
+        },
+        "poster": {
+          "help": "播放前显示的静态图片。留空则使用视频平台自带的封面（如果有）。",
+          "label": "视频封面"
         }
       },
       "option_type": {
@@ -3306,14 +3315,21 @@
         "unknown_location": "未知位置"
       },
       "media": {
+        "add_video": "添加视频",
+        "add_video_submit": "添加视频",
+        "add_video_title": "添加视频",
         "assigned_variants_help": "选择此图片所代表的变体。留空则应用于所有变体。",
         "assigned_variants_label": "关联的变体",
         "delete_confirm": "删除此媒体？此操作无法撤销。",
         "drop_hint": "将媒体拖放到此处，或点击浏览",
         "edit_title": "编辑媒体",
-        "file_types_hint": "PNG、JPG、WebP，最大 10MB",
+        "file_types_hint": "图片（PNG、JPG、WebP）和视频（MP4、WebM、MOV）",
+        "focal_point_help": "点击图片，设置裁剪时需要保留的画面位置。",
+        "focal_point_reset": "重置",
         "upload_failed": "上传 {{name}} 失败：{{message}}",
-        "upload_status_failed": "失败"
+        "upload_status_failed": "失败",
+        "video_preview_title": "视频预览",
+        "video_url_invalid": "请输入 YouTube 或 Vimeo 链接。"
       },
       "no_categories_found": "未找到分类",
       "no_collections_found": "未找到系列",
@@ -3392,14 +3408,6 @@
         "reference_placeholder": "采购单号、供应商发票……",
         "review_description": "创建前请检查此调拨。创建后将无法更改商品项。",
         "search_items_placeholder": "按名称或 SKU 搜索（3 个以上字符）…"
-      },
-      "variant_media_picker": {
-        "add_count_one": "添加 {{count}} 个",
-        "add_count_other": "添加 {{count}} 个",
-        "empty_all_linked": "所有产品媒体已关联到此变体。",
-        "empty_no_media": "尚无产品媒体 — 请先在产品上上传图片。",
-        "title": "从产品图库选择",
-        "trigger": "从产品图库选择"
       },
       "variants": {
         "add_option": "添加选项",

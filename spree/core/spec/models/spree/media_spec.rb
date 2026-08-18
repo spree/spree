@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Asset, type: :model do
+describe Spree::Media, type: :model do
   it_behaves_like 'metadata'
   it_behaves_like 'lifecycle events', event_prefix: 'media'
 
@@ -83,13 +83,110 @@ describe Spree::Asset, type: :model do
     end
 
     it 'defaults to image' do
-      asset = Spree::Asset.new
+      asset = Spree::Media.new
       expect(asset.media_type).to eq('image')
     end
 
-    it 'defaults to image for Spree::Image subclass' do
-      image = Spree::Image.new
+    it 'defaults to image for Spree::Media subclass' do
+      image = Spree::Media.new
       expect(image.media_type).to eq('image')
+    end
+
+    it 'answers a predicate per media type' do
+      expect(build(:asset)).to be_image
+      expect(build(:video_asset)).to be_video
+      expect(build(:external_video_asset)).to be_external_video
+    end
+  end
+
+  describe 'video' do
+    it 'accepts an uploaded video file' do
+      expect(build(:video_asset)).to be_valid
+    end
+
+    it 'requires a file, not a URL' do
+      asset = build(:asset, media_type: 'video')
+      asset.attachment.detach
+
+      expect(asset).not_to be_valid
+      expect(asset.errors[:attachment]).to be_present
+    end
+
+    it 'rejects a file type browsers cannot play' do
+      asset = build(:asset, media_type: 'video')
+      asset.attachment.attach(
+        io: File.new(Spree::Core::Engine.root + 'spec/fixtures' + 'text-file.txt'),
+        filename: 'text-file.txt',
+        content_type: 'text/plain'
+      )
+
+      expect(asset).not_to be_valid
+      expect(asset.errors[:attachment]).to be_present
+    end
+
+    it 'reports as playable' do
+      expect(build(:video_asset).playable_video?).to be(true)
+      expect(build(:external_video_asset).playable_video?).to be(true)
+      expect(build(:asset).playable_video?).to be(false)
+    end
+  end
+
+  describe 'external video' do
+    it 'accepts a YouTube link' do
+      expect(build(:external_video_asset)).to be_valid
+    end
+
+    it 'accepts a Vimeo link' do
+      expect(build(:external_video_asset, external_video_url: 'https://vimeo.com/123456789')).to be_valid
+    end
+
+    it 'requires a URL' do
+      asset = build(:external_video_asset, external_video_url: nil)
+
+      expect(asset).not_to be_valid
+      expect(asset.errors[:external_video_url]).to be_present
+    end
+
+    it 'rejects a link Spree cannot embed' do
+      asset = build(:external_video_asset, external_video_url: 'https://example.com/clip.mp4')
+
+      expect(asset).not_to be_valid
+      expect(asset.errors[:external_video_url]).to include('must be a YouTube or Vimeo link')
+    end
+
+    it 'needs no attachment' do
+      asset = build(:external_video_asset)
+
+      expect(asset.attachment).not_to be_attached
+      expect(asset).to be_valid
+    end
+
+    it 'exposes the parsed video' do
+      asset = build(:external_video_asset)
+
+      expect(asset.external_video.provider).to eq('youtube')
+      expect(asset.external_video.embed_url).to eq('https://www.youtube.com/embed/dQw4w9WgXcQ')
+    end
+
+    it 'strips whitespace around the URL' do
+      asset = build(:external_video_asset, external_video_url: '  https://vimeo.com/123456789  ')
+
+      expect(asset.external_video_url).to eq('https://vimeo.com/123456789')
+    end
+
+    it 're-parses after the URL changes' do
+      asset = build(:external_video_asset)
+      expect(asset.external_video.provider).to eq('youtube')
+
+      asset.external_video_url = 'https://vimeo.com/123456789'
+      expect(asset.external_video.provider).to eq('vimeo')
+    end
+
+    it 'falls back to the provider thumbnail when no poster was uploaded' do
+      video = build(:external_video_asset)
+
+      expect(video.still_image).to be_nil
+      expect(video.provider_still_url).to eq('https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg')
     end
   end
 
@@ -188,7 +285,7 @@ describe Spree::Asset, type: :model do
 
   context 'external URL' do
     before do
-      create(:custom_field_definition, namespace: 'external', key: 'url', resource_type: 'Spree::Asset')
+      create(:custom_field_definition, namespace: 'external', key: 'url', resource_type: 'Spree::Media')
     end
 
     describe '.with_external_url' do

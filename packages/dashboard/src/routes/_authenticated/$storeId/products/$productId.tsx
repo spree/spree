@@ -43,6 +43,7 @@ import { useDeleteProduct, useProduct, useUpdateProduct } from '../../../../hook
 import { useProductMedia } from '../../../../hooks/use-product-media'
 import { spreeJsonLinkResolver } from '../../../../lib/json-link-resolver'
 import {
+  type MediaType,
   type ProductFormValues,
   productFormSchema,
   type VariantFormValues,
@@ -108,21 +109,47 @@ function variantToFormValues(variant: Variant, position: number): VariantFormVal
   }
 }
 
+type MediaResponseRow = {
+  id: string
+  alt: string | null
+  position: number | null
+  variant_ids: string[] | null
+  media_type: string
+  external_video_url: string | null
+  focal_point_x: number | null
+  focal_point_y: number | null
+  poster_url: string | null
+  small_url: string | null
+  mini_url: string | null
+  original_url: string | null
+}
+
+// One mapping for both hydration paths (the form reset and the media-only
+// late paint) so a new media field can't reach one and miss the other.
+function mediaToFormValues(media: MediaResponseRow, index: number) {
+  return {
+    id: media.id,
+    alt: media.alt ?? null,
+    position: media.position ?? index + 1,
+    variant_ids: media.variant_ids ?? [],
+    media_type: (media.media_type ?? 'image') as MediaType,
+    external_video_url: media.external_video_url ?? null,
+    focal_point_x: media.focal_point_x ?? null,
+    focal_point_y: media.focal_point_y ?? null,
+    // Video rows have no image of their own, so the poster is the preview.
+    previewUrl:
+      media.small_url ?? media.mini_url ?? media.poster_url ?? media.original_url ?? undefined,
+    posterUrl: media.poster_url,
+  }
+}
+
 function productToFormValues(
   product: Product,
   // Optional media list — passed in from useProductMedia (which is a separate
   // query). When provided we hydrate form.media here so the form.reset cycle
   // captures it atomically instead of via a follow-up setValue that races
   // with the merchant's unsaved edits.
-  media?: Array<{
-    id: string
-    alt: string | null
-    position: number | null
-    variant_ids: string[] | null
-    small_url: string | null
-    mini_url: string | null
-    original_url: string | null
-  }>,
+  media?: MediaResponseRow[],
 ): ProductFormValues {
   const hasVariants = (product.variant_count ?? 0) > 0
   const variantSource = hasVariants
@@ -159,14 +186,7 @@ function productToFormValues(
         custom_field_definition_id: cf.custom_field_definition_id,
         value: cf.value,
       })) ?? [],
-    media:
-      media?.map((m, i) => ({
-        id: m.id,
-        alt: m.alt ?? null,
-        position: m.position ?? i + 1,
-        variant_ids: m.variant_ids ?? [],
-        previewUrl: m.small_url ?? m.mini_url ?? m.original_url ?? undefined,
-      })) ?? [],
+    media: media?.map(mediaToFormValues) ?? [],
     product_publications: (product.product_publications ?? []).map((l) => ({
       id: l.id,
       channel_id: l.channel_id,
@@ -326,17 +346,7 @@ function ProductForm({ product }: { product: Product }) {
     const current = form.getValues('media') ?? []
     if (current.length > 0) return
     if (form.formState.dirtyFields?.media) return
-    form.setValue(
-      'media',
-      mediaItems.map((m, i) => ({
-        id: m.id,
-        alt: m.alt ?? null,
-        position: m.position ?? i + 1,
-        variant_ids: m.variant_ids ?? [],
-        previewUrl: m.small_url ?? m.mini_url ?? m.original_url ?? undefined,
-      })),
-      { shouldDirty: false },
-    )
+    form.setValue('media', mediaItems.map(mediaToFormValues), { shouldDirty: false })
   }, [mediaItems, form])
 
   const onSubmit = async (data: ProductFormValues) => {
@@ -358,7 +368,7 @@ function ProductForm({ product }: { product: Product }) {
     // dedicated DELETE /media endpoint, which the MediaCard already calls
     // before removing an entry from form state.
     if (media && media.length > 0) {
-      payload.media = media.map(({ previewUrl, uploadId, ...rest }, i) => ({
+      payload.media = media.map(({ previewUrl, posterUrl, uploadId, ...rest }, i) => ({
         ...rest,
         position: i + 1,
       }))
@@ -381,7 +391,14 @@ function ProductForm({ product }: { product: Product }) {
         // values back so the reset doesn't blank their inputs pre-refetch.
         ...extensionValues,
         media: (data.media ?? []).map(
-          ({ signed_id: _sid, previewUrl: _p, uploadId: _u, ...rest }) => rest,
+          ({
+            signed_id: _sid,
+            poster_signed_id: _psid,
+            previewUrl: _p,
+            posterUrl: _pu,
+            uploadId: _u,
+            ...rest
+          }) => rest,
         ),
       }
       form.reset(baseline)

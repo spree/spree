@@ -3,9 +3,9 @@
 module Spree
   module Api
     module V3
-      class AssetSerializer < BaseSerializer
-        # `type` is not exposed: Spree::Image/Spree::Video were collapsed into
-        # Spree::Asset, so the STI column is a legacy vestige with no subclasses
+      class MediaEventSerializer < BaseSerializer
+        # `type` is not exposed: the old Spree::Image/Spree::Video STI collapsed
+        # into one class, so the column is a legacy vestige with no subclasses
         # — `media_type` is the discriminator (see MediaSerializer).
         typelize media_type: :string, viewable_type: :string,
                  viewable_id: :string, position: [:number, nullable: true],

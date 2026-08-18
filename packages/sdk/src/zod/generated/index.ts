@@ -31,6 +31,7 @@ export { LineItemSchema, type LineItem } from './LineItem';
 export { LocaleSchema, type Locale } from './Locale';
 export { MarketSchema, type Market } from './Market';
 export { MediaSchema, type Media } from './Media';
+export { MediaEventSchema, type MediaEvent } from './MediaEvent';
 export { NewsletterSubscriberSchema, type NewsletterSubscriber } from './NewsletterSubscriber';
 export { OptionTypeSchema, type OptionType } from './OptionType';
 export { OptionValueSchema, type OptionValue } from './OptionValue';

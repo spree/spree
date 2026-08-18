@@ -74,12 +74,24 @@ export type CustomFieldFormValues = z.infer<typeof customFieldFormSchema>
 // can hold edits to alt, position, and variant_ids that the parent product
 // PATCH/POST ships inline. previewUrl + uploadId are UI-only; stripped at
 // submit.
+export const MEDIA_TYPES = ['image', 'video', 'external_video'] as const
+
+export type MediaType = (typeof MEDIA_TYPES)[number]
+
 export const mediaFormSchema = z.object({
   id: z.string().optional(),
   signed_id: z.string().optional(),
   alt: z.string().nullable().optional(),
   position: z.number().int().nonnegative().optional(),
   variant_ids: z.array(z.string()).optional(),
+  media_type: z.enum(MEDIA_TYPES).optional(),
+  external_video_url: z.string().nullable().optional(),
+  // A video's still frame. Sent as a signed id like the media file itself;
+  // `posterUrl` is the UI-only preview and never reaches the API.
+  poster_signed_id: z.string().optional(),
+  posterUrl: z.string().nullable().optional(),
+  focal_point_x: z.number().min(0).max(1).nullable().optional(),
+  focal_point_y: z.number().min(0).max(1).nullable().optional(),
   // UI-only — strip at submit.
   previewUrl: z.string().optional(),
   uploadId: z.string().optional(),

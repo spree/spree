@@ -1,29 +1,29 @@
 require 'spec_helper'
 
-describe Spree::Image, type: :model do
-  let(:spree_image) { described_class.new }
+describe Spree::Media, type: :model do
+  let(:media) { described_class.new }
   let(:image_file) { File.open("#{Spree::Core::Engine.root}/spec/fixtures/thinking-cat.jpg") }
   let(:text_file) { File.open("#{Spree::Core::Engine.root}/spec/fixtures/text-file.txt") }
 
   context 'validation' do
     it 'has attachment present' do
-      spree_image.attachment.attach(io: image_file, filename: 'thinking-cat.jpg')
-      expect(spree_image).to be_valid
+      media.attachment.attach(io: image_file, filename: 'thinking-cat.jpg')
+      expect(media).to be_valid
     end
 
     it 'has attachment absent' do
-      spree_image.attachment.attach(nil)
-      expect(spree_image).not_to be_valid
+      media.attachment.attach(nil)
+      expect(media).not_to be_valid
     end
 
     it 'allows only web image content types' do
-      spree_image.attachment.attach(io: image_file, filename: 'thinking-cat.jpg', content_type: 'image/jpeg')
-      expect(spree_image).to be_valid
+      media.attachment.attach(io: image_file, filename: 'thinking-cat.jpg', content_type: 'image/jpeg')
+      expect(media).to be_valid
     end
 
     it 'does not allow non-web image content types' do
-      spree_image.attachment.attach(io: text_file, filename: 'text-file.txt', content_type: 'text/plain')
-      expect(spree_image).not_to be_valid
+      media.attachment.attach(io: text_file, filename: 'text-file.txt', content_type: 'text/plain')
+      expect(media).not_to be_valid
     end
   end
 

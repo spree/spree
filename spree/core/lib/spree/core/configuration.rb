@@ -86,6 +86,18 @@ module Spree
           og_image: [1200, 630]
         }
       end
+
+      # Content types accepted for uploaded product videos (media_type 'video').
+      # Kept deliberately narrow — these three play natively in every current
+      # browser, so a merchant never uploads a file their shoppers can't watch.
+      attr_writer :video_content_types
+
+      def video_content_types
+        @video_content_types ||= %w[video/mp4 video/webm video/quicktime]
+      end
+
+      # Maximum size of an uploaded product video, in bytes.
+      preference :max_video_upload_size, :integer, default: 524_288_000 # 500 MB
       preference :layout, :string, deprecated: 'Please use Spree::Frontend::Config[:layout] instead'
       preference :logo, :string, deprecated: true
       preference :mailer_logo, :string, deprecated: true
