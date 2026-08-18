@@ -325,7 +325,8 @@ function CreateStockTransferSheet({
                   <div className="flex flex-col">
                     <span className="font-medium">{v.product_name ?? v.sku ?? v.id}</span>
                     <span className="text-xs text-muted-foreground">
-                      SKU {v.sku} · {formatPrice(v.price)}
+                      {t('admin.products.transfers.items_table.sku')} {v.sku} ·{' '}
+                      {formatPrice(v.price)}
                     </span>
                   </div>
                 )}

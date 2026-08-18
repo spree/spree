@@ -86,7 +86,9 @@ export function TopBar({
       // so keyboard focus can't land on a control the user cannot see.
       inert={hidden || undefined}
     >
-      <SidebarTrigger className="-ml-1 h-5 w-5 opacity-50 hover:opacity-100 hover:bg-accent" />
+      {/* Size the glyph, not the button — `size="icon-sm"` sets a 28px hit area
+          and overriding the box would shrink the target to 20px. */}
+      <SidebarTrigger className="-ml-1 opacity-50 hover:bg-accent hover:opacity-100 [&_svg]:size-5" />
 
       <div className="flex flex-1 justify-center">
         <SearchTrigger />

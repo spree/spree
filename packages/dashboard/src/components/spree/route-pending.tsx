@@ -1,4 +1,5 @@
 import { Skeleton } from '@spree/dashboard-ui'
+import { useTranslation } from 'react-i18next'
 
 /**
  * Router-wide fallback while a route's code chunk or loader resolves.
@@ -9,8 +10,14 @@ import { Skeleton } from '@spree/dashboard-ui'
  * their own pending UI.
  */
 export function RoutePending() {
+  const { t } = useTranslation()
   return (
-    <div className="flex flex-col gap-4 p-4 lg:p-6" aria-busy="true" aria-live="polite">
+    <div className="flex flex-col gap-4 p-4 lg:p-6" aria-busy="true">
+      {/* `aria-busy` marks the region pending but announces nothing on its own —
+          screen readers need actual text to read out. */}
+      <span role="status" className="sr-only">
+        {t('admin.common.loading')}
+      </span>
       <div className="flex flex-col gap-2">
         <Skeleton className="h-7 w-48" />
         <Skeleton className="h-4 w-72" />
@@ -26,8 +33,12 @@ export function RoutePending() {
  * doesn't reflow when the real content replaces it.
  */
 export function ResourceDetailSkeleton({ sidebar = true }: { sidebar?: boolean }) {
+  const { t } = useTranslation()
   return (
-    <div className="flex flex-col gap-6" aria-busy="true" aria-live="polite">
+    <div className="flex flex-col gap-6" aria-busy="true">
+      <span role="status" className="sr-only">
+        {t('admin.common.loading')}
+      </span>
       <div className="flex flex-col gap-2">
         <Skeleton className="h-8 w-64" />
         <Skeleton className="h-4 w-40" />
