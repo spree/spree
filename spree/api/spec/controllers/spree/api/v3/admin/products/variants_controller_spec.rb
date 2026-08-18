@@ -235,7 +235,6 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
 
       expect(response).to have_http_status(:ok)
       expect(json_response['seller_id']).to eq(seller.prefixed_id)
-      expect(json_response['seller_name']).to eq(seller.name)
     end
 
     it 'reports the product\'s seller on an owned product and ignores a write there' do

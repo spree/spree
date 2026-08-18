@@ -19,7 +19,6 @@ module Spree
                    country_of_origin: [:string, nullable: true],
                    customs_description: [:string, nullable: true],
                    deleted_at: [:string, nullable: true],
-                   seller_name: [:string, nullable: true],
                    delivery_profile_id: [:string, nullable: true],
                    metadata: 'Record<string, unknown>'
 
@@ -54,13 +53,6 @@ module Spree
 
           attribute :product_name do |variant|
             variant.product&.name
-          end
-
-          # `seller_id` comes from the store serializer, already resolved. The
-          # name rides along so the variants table can show a seller column
-          # without an expand.
-          attribute :seller_name do |variant|
-            variant.resolved_seller&.name
           end
 
           # How this variant ships — one answer, resolved on the model the same
