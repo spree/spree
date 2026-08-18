@@ -451,7 +451,7 @@ module Spree
       # would be missing the sibling rows created after it.
       candidates = gallery_media.reload.to_a
       # See Product#update_thumbnail! — a video without a still can't be a thumbnail.
-      first_media = candidates.find(&:renderable_as_image?) || candidates.first
+      first_media = candidates.find(&:renderable_as_image?)
 
       update_column(:primary_media_id, first_media&.id)
     end

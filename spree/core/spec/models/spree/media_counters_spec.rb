@@ -115,6 +115,24 @@ describe Spree::Media, type: :model do
       expect(video.renderable_as_image?).to be(false)
     end
 
+    it 'leaves no thumbnail when every row is a video without a still' do
+      create(:video_asset, viewable: product, position: 1)
+
+      product.update_thumbnail!
+
+      # Better none than one that renders as a broken image.
+      expect(product.reload.primary_media_id).to be_nil
+    end
+
+    it 'leaves a variant without a thumbnail on the same terms' do
+      variant = create(:variant, product: product)
+      create(:video_asset, viewable: variant, position: 1)
+
+      variant.update_thumbnail!
+
+      expect(variant.reload.primary_media_id).to be_nil
+    end
+
     it 'uses a leading video once it has a still' do
       video = create(:external_video_asset, viewable: product, position: 1)
       create(:image, viewable: product, position: 2)

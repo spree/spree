@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { type Product, SpreeError, type Variant } from '@spree/admin-sdk'
+import { type Media, type Product, SpreeError, type Variant } from '@spree/admin-sdk'
 import {
   adminClient,
   extensionFormValues,
@@ -109,25 +109,11 @@ function variantToFormValues(variant: Variant, position: number): VariantFormVal
   }
 }
 
-type MediaResponseRow = {
-  id: string
-  alt: string | null
-  position: number | null
-  variant_ids: string[] | null
-  media_type: string
-  external_video_url: string | null
-  focal_point_x: number | null
-  focal_point_y: number | null
-  video_url: string | null
-  poster_url: string | null
-  small_url: string | null
-  mini_url: string | null
-  original_url: string | null
-}
-
 // One mapping for both hydration paths (the form reset and the media-only
 // late paint) so a new media field can't reach one and miss the other.
-function mediaToFormValues(media: MediaResponseRow, index: number) {
+// Takes the generated SDK type rather than a hand-listed shape, so a field
+// added to the serializer can't quietly go missing here.
+function mediaToFormValues(media: Media, index: number) {
   return {
     id: media.id,
     alt: media.alt ?? null,
@@ -153,7 +139,7 @@ function productToFormValues(
   // query). When provided we hydrate form.media here so the form.reset cycle
   // captures it atomically instead of via a follow-up setValue that races
   // with the merchant's unsaved edits.
-  media?: MediaResponseRow[],
+  media?: Media[],
 ): ProductFormValues {
   const hasVariants = (product.variant_count ?? 0) > 0
   const variantSource = hasVariants

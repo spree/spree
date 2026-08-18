@@ -556,9 +556,10 @@ module Spree
       # Fresh scopes, never the cached associations — this runs from a media
       # row's after_commit, where a loaded association is missing its siblings.
       candidates = media.reload.order(:position).presence || variant_images.reload.order(:position)
-      # Skip a leading video that has no still — it would render as an empty or
-      # broken tile everywhere `thumbnail_url` is used.
-      first_media = candidates.find(&:renderable_as_image?) || candidates.first
+      # Only media that can draw as an image: `thumbnail_url` is rendered in an
+      # <img> everywhere it's used, so a video with no still leaves no
+      # thumbnail at all rather than a broken one.
+      first_media = candidates.find(&:renderable_as_image?)
 
       update_column(:primary_media_id, first_media&.id)
     end
