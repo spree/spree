@@ -32,6 +32,12 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
   useConfirm,
   useRowClickBridge,
 } from '@spree/dashboard-ui'
@@ -331,29 +337,25 @@ function CreateStockTransferSheet({
 
           {items.length > 0 && (
             <div className="overflow-x-auto rounded-md border">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b bg-muted/50 text-muted-foreground">
-                    <th className="p-3 pl-5 text-left font-normal">
-                      {t('admin.products.transfers.items_table.variant')}
-                    </th>
-                    <th className="p-3 text-left font-normal">
-                      {t('admin.products.transfers.items_table.sku')}
-                    </th>
-                    <th className="p-3 text-right font-normal">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{t('admin.products.transfers.items_table.variant')}</TableHead>
+                    <TableHead>{t('admin.products.transfers.items_table.sku')}</TableHead>
+                    <TableHead className="text-right">
                       {t('admin.products.transfers.items_table.qty')}
-                    </th>
-                    <th className="p-3 pr-5 w-10" />
-                  </tr>
-                </thead>
-                <tbody>
+                    </TableHead>
+                    <TableHead className="w-10" />
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {items.map(({ variant, quantity }) => (
-                    <tr key={variant.id} className="border-b last:border-b-0">
-                      <td className="p-3 pl-5 font-medium">
+                    <TableRow key={variant.id}>
+                      <TableCell className="font-medium">
                         {variant.product_name ?? variant.sku ?? variant.id}
-                      </td>
-                      <td className="p-3 text-muted-foreground">{variant.sku}</td>
-                      <td className="p-3 text-right">
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">{variant.sku}</TableCell>
+                      <TableCell className="text-right">
                         <Input
                           type="number"
                           min={1}
@@ -361,8 +363,8 @@ function CreateStockTransferSheet({
                           onChange={(e) => updateQuantity(variant.id, Number(e.target.value))}
                           className="w-20 text-right ml-auto"
                         />
-                      </td>
-                      <td className="p-3 pr-5 text-right">
+                      </TableCell>
+                      <TableCell className="text-right">
                         <Button
                           type="button"
                           size="icon-xs"
@@ -372,11 +374,11 @@ function CreateStockTransferSheet({
                           <TrashIcon className="size-4" />
                           <span className="sr-only">{t('admin.actions.remove')}</span>
                         </Button>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           )}
         </div>

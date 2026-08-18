@@ -40,6 +40,12 @@ import {
   SheetHeader,
   SheetTitle,
   Switch,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
   Textarea,
   useConfirm,
   useRowClickBridge,
@@ -460,27 +466,23 @@ function ProductGroup({ group, defaultOpen }: { group: StockItemGroup; defaultOp
         </div>
       </CollapsibleTrigger>
       <CollapsibleContent>
-        <table className="w-full text-sm">
-          <thead className="sticky top-0 bg-card text-xs text-muted-foreground">
-            <tr className="border-y">
-              <th className="px-4 py-2 text-left font-medium">
-                {t('admin.stock_locations.stock_items.table.variant')}
-              </th>
-              <th className="px-3 py-2 text-right font-medium">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{t('admin.stock_locations.stock_items.table.variant')}</TableHead>
+              <TableHead className="text-right">
                 {t('admin.stock_locations.stock_items.table.on_hand')}
-              </th>
-              <th className="px-3 py-2 text-left font-medium">
-                {t('admin.stock_locations.stock_items.table.backorder')}
-              </th>
-              <th className="px-3 py-2" />
-            </tr>
-          </thead>
-          <tbody>
+              </TableHead>
+              <TableHead>{t('admin.stock_locations.stock_items.table.backorder')}</TableHead>
+              <TableHead className="w-10" />
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {group.items.map((item) => (
               <StockItemRow key={item.id} item={item} />
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </CollapsibleContent>
     </Collapsible>
   )
@@ -515,8 +517,8 @@ function StockItemRow({ item }: { item: StockItem }) {
   }
 
   return (
-    <tr className="border-b last:border-b-0">
-      <td className="px-4 py-2">
+    <TableRow>
+      <TableCell>
         <div className="min-w-0">
           {productId ? (
             <Link
@@ -531,8 +533,8 @@ function StockItemRow({ item }: { item: StockItem }) {
           )}
           {sku && <div className="text-xs text-muted-foreground">SKU {sku}</div>}
         </div>
-      </td>
-      <td className="px-3 py-2 text-right">
+      </TableCell>
+      <TableCell className="text-right">
         <Input
           type="number"
           value={count}
@@ -540,15 +542,15 @@ function StockItemRow({ item }: { item: StockItem }) {
           className={`ml-auto w-20 text-right ${isLowStock ? 'border-amber-500' : ''}`}
           aria-label={`On hand for ${variantLabel}`}
         />
-      </td>
-      <td className="px-3 py-2">
+      </TableCell>
+      <TableCell>
         <Switch
           checked={backorderable}
           onCheckedChange={setBackorderable}
           aria-label={`Backorderable for ${variantLabel}`}
         />
-      </td>
-      <td className="px-3 py-2 text-right">
+      </TableCell>
+      <TableCell className="text-right">
         <Button
           type="button"
           size="sm"
@@ -558,8 +560,8 @@ function StockItemRow({ item }: { item: StockItem }) {
         >
           {updateMutation.isPending ? '…' : t('admin.actions.save')}
         </Button>
-      </td>
-    </tr>
+      </TableCell>
+    </TableRow>
   )
 }
 

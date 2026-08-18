@@ -255,7 +255,7 @@ function MappingStep({ imp }: { imp: Import }) {
       <CardContent className="flex flex-col gap-4 p-0">
         <div className="overflow-x-auto">
           <Table>
-            <TableHeader className="border-b">
+            <TableHeader>
               <TableRow>
                 <TableHead>{t('admin.imports.mapping.field')}</TableHead>
                 <TableHead>{t('admin.imports.mapping.file_column')}</TableHead>
@@ -525,7 +525,7 @@ function FailedRowsCard({ imp }: { imp: Import }) {
           <>
             <div className="overflow-x-auto">
               <Table>
-                <TableHeader className="border-b">
+                <TableHeader>
                   <TableRow>
                     <TableHead className="w-16">
                       {t('admin.imports.failed_rows.row_number')}

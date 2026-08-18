@@ -30,6 +30,12 @@ import {
   SelectValue,
   StatusBadge,
   Switch,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
   useConfirm,
 } from '@spree/dashboard-ui'
 import { useQuery } from '@tanstack/react-query'
@@ -76,96 +82,88 @@ export function PaymentsCard({ order }: { order: Order }) {
           </p>
         </CardContent>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b bg-muted/50 text-muted-foreground">
-                <th className="p-3 pl-5 text-left font-normal">
-                  {t('admin.orders.detail.payments_table.number')}
-                </th>
-                <th className="p-3 text-left font-normal">
-                  {t('admin.orders.detail.payments_table.method')}
-                </th>
-                <th className="p-3 text-left font-normal">
-                  {t('admin.orders.detail.payments_table.state')}
-                </th>
-                <th className="p-3 text-right font-normal">{t('admin.fields.amount.label')}</th>
-                <th className="p-3 pr-5 w-10" />
-              </tr>
-            </thead>
-            <tbody>
-              {payments.map((payment) => (
-                <tr key={payment.id} className="border-b last:border-b-0">
-                  <td className="p-3 pl-5 font-medium">{payment.number}</td>
-                  <td className="p-3 text-muted-foreground">
-                    {payment.payment_method?.name ?? '—'}
-                  </td>
-                  <td className="p-3">
-                    <StatusBadge status={payment.status} />
-                  </td>
-                  <td className="p-3 text-right font-medium whitespace-nowrap">
-                    {payment.display_amount}
-                  </td>
-                  <td className="p-3 pr-5">
-                    {(payment.status === 'checkout' ||
-                      payment.status === 'pending' ||
-                      payment.status === 'completed') && (
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon-xs">
-                            <EllipsisVerticalIcon className="size-4" />
-                            <span className="sr-only">{t('admin.actions.actions_menu')}</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          {(payment.status === 'checkout' || payment.status === 'pending') && (
-                            <DropdownMenuItem
-                              onClick={async () => {
-                                if (
-                                  await confirm({
-                                    message: t('admin.orders.detail.confirm.capture_message'),
-                                    variant: 'default',
-                                    confirmLabel: t('admin.pages.orders.detail.actions.capture'),
-                                  })
-                                ) {
-                                  captureMutation.mutate(payment.id)
-                                }
-                              }}
-                            >
-                              <CreditCardIcon className="size-4" />
-                              {t('admin.pages.orders.detail.actions.capture')}
-                            </DropdownMenuItem>
-                          )}
-                          {(payment.status === 'checkout' ||
-                            payment.status === 'pending' ||
-                            payment.status === 'completed') && (
-                            <DropdownMenuItem
-                              className="text-destructive focus:text-destructive"
-                              onClick={async () => {
-                                if (
-                                  await confirm({
-                                    message: t('admin.orders.detail.confirm.void_message'),
-                                    variant: 'destructive',
-                                    confirmLabel: t('admin.pages.orders.detail.actions.void'),
-                                  })
-                                ) {
-                                  voidMutation.mutate(payment.id)
-                                }
-                              }}
-                            >
-                              <XCircleIcon className="size-4" />
-                              {t('admin.pages.orders.detail.actions.void')}
-                            </DropdownMenuItem>
-                          )}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{t('admin.orders.detail.payments_table.number')}</TableHead>
+              <TableHead>{t('admin.orders.detail.payments_table.method')}</TableHead>
+              <TableHead>{t('admin.orders.detail.payments_table.state')}</TableHead>
+              <TableHead className="text-right">{t('admin.fields.amount.label')}</TableHead>
+              <TableHead className="w-10" />
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {payments.map((payment) => (
+              <TableRow key={payment.id}>
+                <TableCell className="font-medium">{payment.number}</TableCell>
+                <TableCell className="text-muted-foreground">
+                  {payment.payment_method?.name ?? '—'}
+                </TableCell>
+                <TableCell>
+                  <StatusBadge status={payment.status} />
+                </TableCell>
+                <TableCell className="text-right font-medium whitespace-nowrap tabular-nums">
+                  {payment.display_amount}
+                </TableCell>
+                <TableCell>
+                  {(payment.status === 'checkout' ||
+                    payment.status === 'pending' ||
+                    payment.status === 'completed') && (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon-xs">
+                          <EllipsisVerticalIcon className="size-4" />
+                          <span className="sr-only">{t('admin.actions.actions_menu')}</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        {(payment.status === 'checkout' || payment.status === 'pending') && (
+                          <DropdownMenuItem
+                            onClick={async () => {
+                              if (
+                                await confirm({
+                                  message: t('admin.orders.detail.confirm.capture_message'),
+                                  variant: 'default',
+                                  confirmLabel: t('admin.pages.orders.detail.actions.capture'),
+                                })
+                              ) {
+                                captureMutation.mutate(payment.id)
+                              }
+                            }}
+                          >
+                            <CreditCardIcon className="size-4" />
+                            {t('admin.pages.orders.detail.actions.capture')}
+                          </DropdownMenuItem>
+                        )}
+                        {(payment.status === 'checkout' ||
+                          payment.status === 'pending' ||
+                          payment.status === 'completed') && (
+                          <DropdownMenuItem
+                            className="text-destructive focus:text-destructive"
+                            onClick={async () => {
+                              if (
+                                await confirm({
+                                  message: t('admin.orders.detail.confirm.void_message'),
+                                  variant: 'destructive',
+                                  confirmLabel: t('admin.pages.orders.detail.actions.void'),
+                                })
+                              ) {
+                                voidMutation.mutate(payment.id)
+                              }
+                            }}
+                          >
+                            <XCircleIcon className="size-4" />
+                            {t('admin.pages.orders.detail.actions.void')}
+                          </DropdownMenuItem>
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       )}
       <AddPaymentDialog order={order} open={addOpen} onOpenChange={setAddOpen} />
     </Card>

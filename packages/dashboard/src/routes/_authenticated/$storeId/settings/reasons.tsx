@@ -166,7 +166,7 @@ function ReasonSection({
             </Empty>
           ) : (
             <Table>
-              <TableHeader className="border-b">
+              <TableHeader>
                 <TableRow>
                   <TableHead>{t('admin.fields.name.label')}</TableHead>
                   <TableHead>{t('admin.fields.status.label')}</TableHead>
