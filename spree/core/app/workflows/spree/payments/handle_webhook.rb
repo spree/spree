@@ -44,11 +44,17 @@ module Spree
       # and the redelivery races the checkout request that created the
       # session.
       def settle_session
+        # Provider round trips happen here, before the lock — settlement
+        # inside it must be pure database work.
+        payment_session.prepare_for_settlement!
+
         order.with_lock do
-          # Idempotency: the API endpoint or an earlier delivery may have
-          # already settled this session. Not halt! — that is forbidden
-          # inside a transaction (there is nothing committed to halt with).
-          next if payment_session.reload.completed?
+          # Idempotency keys off the payment, not the session: an authorized
+          # session is already completed (manual capture, delayed-notification
+          # banks), and the capture webhook that follows must still be able to
+          # complete its payment. Not halt! — that is forbidden inside a
+          # transaction (there is nothing committed to halt with).
+          next if payment_session.reload.payment&.completed?
 
           step :ensure_payment
           step :complete_session
@@ -65,12 +71,12 @@ module Spree
         failure(payment_session, error.message)
       end
 
-      # Spree::Payment#confirm! honors when the payment method charges:
-      # charging at checkout completes and records a capture event, otherwise
-      # the payment pends (auth-only, payment_state=balance_due).
+      # :captured means the gateway reports the funds as moved, so the payment
+      # completes with a capture event; :authorized pends it (auth-only,
+      # payment_state=balance_due) until an explicit capture. The webhook's
+      # action decides, not the method's capture timing.
       def ensure_payment
-        @payment = payment_session.find_or_create_payment!(metadata)
-        payment.confirm! if payment.present? && !payment.completed?
+        @payment = payment_session.settle_payment!(captured: action == :captured, metadata: metadata)
       end
 
       def complete_session

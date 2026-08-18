@@ -330,6 +330,201 @@ ships in the OSS Admin API; first-run configures the one store.
 Consequences: Admin API code must never assume `current_store` is the default
 store, and store-touching cache keys must carry the store id by construction.
 Plan: `6.0-store-context-and-first-run-setup.md`.
+## 2026-08-12 — Code review findings on the payment surface, and what they corrected
+
+The review of the day's work surfaced ten findings; all ten held up. The ones
+that correct earlier entries in this log:
+
+- **Profile creation had become dead code.** The after_save removal documented
+  "creation flows call this explicitly" with no flow calling it. Now they do:
+  `Payments::Create` profiles after its transaction, the admin payment
+  endpoint after its lock (a source that cannot be profiled destroys the
+  half-created payment, matching the old rollback), and specs that create
+  payments programmatically call it themselves.
+- **The webhook path settled with cold provider caches** — up to three Stripe
+  round trips inside the order lock, contradicting settle_payment!'s own
+  comment. `PaymentSession#prepare_for_settlement!` (no-op default; Stripe
+  warms intent, charge and gateway customer) runs before HandleWebhook's
+  lock, making the comment true.
+- **capture! completed before splitting**, so a partial capture published
+  payment.completed at the full amount. The split's row work now happens
+  inside the lock before complete; only the remainder's authorize runs after.
+- **settle_payment!'s completed? guard read a stale cached payment** — the
+  same check-then-act shape one level down. Closed with a DB-state recheck
+  inside the lock, not a reload (reload discards skip_source_requirement, as
+  it discards card numbers in capture!).
+- **The completion fence broke reads**: GET /carts/:id runs Checkout::Advance
+  under with_order_lock and answered 409 for the claim window. The advance
+  now skips claimed carts (`Cart#completion_claimed?`, which owns the TTL).
+- Store scoping and correctness details: refund reasons resolve through
+  `current_store.refund_reasons`; Stripe's cancel passes the store to
+  order_canceled_reason; the customer payload sends ISO codes like the
+  shipping payload; setup_intent.succeeded left SUPPORTED_EVENTS until core's
+  webhook contract can route setup sessions.
+
+## 2026-08-12 — Amount consistency during gateway operations: the completion claim, not a lock
+
+Raised as a challenge to the lock removals: shouldn't the order be locked for
+the whole gateway operation, so it cannot be mutated into a different total
+than the one sent to the gateway? The invariant is right; the mechanism cannot
+be. For session gateways the charge happens client-side before any server
+endpoint runs — no server lock reaches it. And a row lock spanning a gateway
+timeout pins a database connection per in-flight payment; a provider brownout
+turns that into pool exhaustion for the whole store, not one order.
+
+What actually enforces the invariant is Carts::Complete's three layers:
+totals recalculated **inside** the cart's row lock at PREPARE ("not trusted
+from earlier requests") and checked against the client's expected_total; the
+`completing` claim stamped before the lock releases; payment coverage
+re-verified at FINALIZE, with the Y3 undo popping payments back to the cart
+when it fails.
+
+The challenge found a real hole in layer two: the claim was only consulted by
+guard_concurrent_completion — it blocked a second *completion*, but nothing
+blocked a *mutation* during the unlocked gateway window. An AddItem landing
+there changed the cart under a completion whose totals were fixed at PREPARE.
+Now `with_order_lock` — the funnel every store cart mutation passes through —
+refuses mutations while a fresh claim holds the cart (409
+completion_in_progress), checked after acquiring the row lock so it cannot
+race the claim being written, with the same TTL as the completion guard so a
+crashed completion never bricks its cart.
+
+**Consequences:** third-party gateway authors rely on four guarantees, none of
+which is "the order is locked while you talk to your provider": the amount is
+fixed in the session/intent and synced on update; mutations are excluded
+during the completion window by the claim; completion re-verifies coverage
+and compensates; settlement and capture bookkeeping serialize on row locks.
+
+## 2026-08-12 — Payment lock audit: locks live where money is recorded, never around gateway I/O
+
+A sweep of every payment operation with the settle_payment! lens — check-then-act
+on money state without mutual exclusion — after the with_order_lock removals.
+The rule that came out: **the row lock wraps the money bookkeeping with an
+in-lock recheck; the gateway call runs before it, unlocked, relying on provider
+idempotency.**
+
+Two real bugs found and fixed:
+
+- **`Payment#capture!` wrote the capture event before `handle_response`.** A
+  concurrent second capture passed the completed? check, hit the gateway
+  (idempotent at Stripe), persisted a second capture event, then exploded on
+  `complete!` — doubled captured_amount plus an ungraceful error. Now: gateway
+  first, then bookkeeping under `owner.with_lock` with a DB-state recheck
+  (deliberately not a reload — card numbers never persist, and
+  `split_uncaptured_amount` authorizes the remainder at the gateway, so it
+  stays outside the lock). A declined response also no longer leaves a
+  phantom capture event, and its failure transition runs outside the lock so
+  the raise cannot roll it back.
+- **Refund balance validation was unserialized.** Two concurrent partial
+  refunds both validated against the pre-refund balance and both credited —
+  a double-clicked 50% refund refunded 100% (Stripe's credit carries no
+  idempotency key). The refund row is what reserves the balance
+  (credit_allowed sums rows), so creation takes `payment.with_lock` in one
+  place: `Refunds::Create`, which the returns/exchange/claim drain loops and
+  Stripe's cancel verb all route through (code review caught the first
+  version duplicating the lock/credit/compensation sequence at five sites —
+  which also meant refund hooks and payment.refunded fired only for admin
+  refunds). `perform!` stays outside the lock.
+
+Judged acceptable, with reasons on record:
+
+- **Double void** — no capture events involved; the second void gets the
+  gateway's "already canceled" as a clean failure.
+- **Concurrent `process_payments!`** — the gateway is deduped by the
+  per-payment idempotency key, and the loser's `complete!` raises before its
+  capture-event line, so money math survives; the error is ungraceful. An
+  atomic claim (compare-and-swap on the state column) would make replays
+  graceful — follow-up, not urgent.
+- **Session create/update endpoints still hold with_order_lock across Stripe
+  intent calls** — the same smell the confirm endpoint shed, but fixing it
+  means restructuring gateway-owned code (persist the session row under a
+  short lock after the intent call). Flagged as follow-up.
+
+## 2026-08-12 — The payment lifecycle routes through its workflows; refund creation owns the credit
+
+An audit found the two payment workflows were dead code: `Payments::Capture`
+and `Payments::Refund` existed with hooks, but the admin API called
+`payment.capture!` and `Refund.create` directly — inside `with_order_lock`, a
+row lock held across gateway round trips — and `Refund#after_create :perform!`
+fired the gateway credit from a save callback, the exact shape the workflow
+doctrine prohibits. The boundary the plan says workflows own was owned by
+controllers.
+
+Five changes close the gap:
+
+- **`Refunds::Create`** (renamed from `Payments::Refund`, key
+  `refund_create_workflow`, before any release of the old key) owns refund
+  creation end to end. The `after_create` is gone: the row commits, then the
+  credit runs as an explicit `external_step` via a now-public
+  `Refund#perform!` (idempotent — a present transaction_id is a no-op). A
+  cleanly declined credit destroys the uncredited row, because
+  `credit_allowed` sums every refund row and a dangling one would block the
+  retry; a crash between commit and credit leaves the row for reconciliation.
+  Returns, exchanges, claims and Stripe's cancel verb call `perform!`
+  explicitly from their own external steps.
+- **`Payments::Void`** exists (mirror of Capture) and the admin void endpoint
+  routes through it; capture routes through `Payments::Capture`. Neither
+  wraps in `with_order_lock` — replays are idempotent successes.
+- **`PaymentSessions::Complete`** is the synchronous twin of `HandleWebhook`:
+  same settlement through `settle_payment!`, plus the one veto point the sync
+  path lacked (`validate` before money is recorded — the webhook path
+  deliberately has none, money that moved cannot be rejected).
+  `settle_payment!` itself takes the owner's row lock around the local
+  settlement — the completed? guard alone is check-then-act, and two
+  concurrent settlements would each record a capture event. The lock never
+  spans gateway I/O (Stripe memoizes the intent and charge before settling;
+  the webhook path's outer lock nests reentrantly), which is the difference
+  between this and the controller-level with_order_lock it replaced.
+- **`create_payment_profile` left its save callback and became an explicit
+  call.** No subscriber replaced it — a first attempt proved why: the card
+  number never persists, so profile creation only works on the in-memory
+  instance the creation flow holds, and an observer that reloads the payment
+  can never do it. Creation flows that take raw card data call
+  `payment.create_payment_profile` after the commit; session gateways store
+  profile ids during source creation and never call it. Row save alone no
+  longer talks to a gateway.
+- **`process_payments!` dropped its `with_lock`** around the gateway loop;
+  re-entry is guarded by `started_processing!` and the per-payment gateway
+  idempotency key.
+
+**Consequences:** hook keys `refunds.create.*`, `payments.void.*` and
+`payment_sessions.complete.*` are public API from 6.0. Controllers never wrap
+gateway-calling workflows in `with_order_lock`. Anything creating a
+`Spree::Refund` row must either call `Refund#perform!` from an external step
+or accept an uncredited row — creation alone no longer moves money.
+
+## 2026-08-12 — Providers never decorate core models; risk codes become a gateway interface
+
+The Stripe provider shipped with three decorators on core models, and all three
+are gone. A decorator is the extension mechanism of last resort — a first-party
+provider using them licenses every third-party gateway to do the same, and a
+`before_save` on `Spree::Payment` firing forever for one provider's bookkeeping
+is exactly the shape that rots.
+
+What replaced them decides the pattern for Adyen and every gateway after it:
+
+- **AVS/CVV risk codes are a core interface.** The session flow never passes
+  through the gateway response path that normally sets
+  `avs_response`/`cvv_response_code` — the check results live on the payment
+  source, in whatever shape the provider recorded them. Core now asks:
+  `PaymentMethod#risk_codes_for(source)` (nil by default), called by `Payment`
+  once at creation, response-path codes winning. Stripe's implementation
+  translates its pass/fail/unchecked checks from the source's metadata. Core
+  owns when to ask; the gateway owns how to answer. The old callback re-ran on
+  every save; the hook runs at creation only — the sole lost case is a payment
+  gaining a Stripe card source after creation, which nothing does.
+- **Provider-scoped gateway customers are a core scope.**
+  `GatewayCustomer.for_provider(SpreeStripe::Gateway)` replaces the decorated
+  `.stripe` scope; every gateway needs exactly this filter.
+- **The rest was dead or sugar.** The `.stripe`/`stripe?` payment-method
+  decorator had no callers left. `store_accessor :metadata, :stripe_charge_id`
+  was sugar over a hash write, so the service writes
+  `payment.metadata['stripe_charge_id']` directly.
+
+**Consequences:** the provider ships zero decorators and the engine's
+`to_prepare` decorator glob is gone. A provider needing something from a core
+model proposes a core interface, mirroring how delivery providers already work
+(`Spree.delivery_rate_providers`, `Spree.fulfillment_providers`).
 
 ## 2026-08-13: Validate hooks are the validation extension surface; no generic model-validation registry
 
@@ -705,6 +900,111 @@ means splitting first, and split-then-ship inside an `after_transition` callback
 is exactly the shape `6.0-service-workflows.md` prohibits. The workflow wraps the
 machine as a low-level mechanic, mirroring how `Fulfillments::Create` already
 wraps `mark_shipped`.
+## 2026-08-10 — One payment settlement path: PaymentSession#settle_payment!
+
+A settled payment session is noticed on two routes — the storefront's confirm
+call and the gateway webhook — and they settled the payment differently. The
+webhook path called `Payment#confirm!`, a local state move guessed from the
+`auto_capture?` setting. The Stripe sync path called `process!`/`authorize!`,
+which route through `gateway_action` back into the gateway's authorize/purchase
+verbs: a second Stripe round trip to learn what `complete_payment_session` had
+just read from the intent. Worse, those verbs look the owner up in
+`store.orders`, which can never find a cart — so checkout-time (cart-owned)
+settlement failed with "Order not found". The specs missed it because they
+built order-owned sessions.
+
+Now both routes call `PaymentSession#settle_payment!(captured:)` — find or
+create the payment, skip if completed, then `confirm!(captured:)`. The
+`captured` flag carries what the gateway actually reported instead of the
+config guess: `Payment#confirm!` gained the keyword (nil keeps the old
+auto_capture fallback for any other caller). Stripe passes intent status
+`succeeded`; the webhook path passes `action == :captured`. That also fixes the
+dashboard-capture edge: a manual-capture payment captured directly in the
+Stripe dashboard now completes on webhook instead of pending forever.
+
+**Consequences:** gateway `complete_payment_session` implementations settle via
+`settle_payment!` and never call `process!`/`authorize!` — those verbs remain
+core's fallback for payments not covered at completion time, where the owner is
+already an Order. A gateway reports facts (`captured` or not); core owns what
+the payment does with them.
+
+## 2026-08-10 — Stripe drops Apple Pay domain registration; payment intents are not a subsystem
+
+Two removals from the Stripe port, both from the same question: what does a
+headless backend actually know?
+
+**Apple Pay / Google Pay domain registration is gone.** The gateway registered
+`store.url` with Stripe on create, and re-registered whenever a store code or
+custom domain changed. That only works when Spree serves the storefront. Headless,
+the storefront is someone else's deployment on a domain the backend never sees,
+so the call registers the wrong host — worse than not running, because it looks
+like it worked. Merchants register domains in the Stripe dashboard, which is
+where a headless setup has to do it regardless. Removes `RegisterDomain`, its
+job, the `CustomDomain` decorator and the `stripe_apple_pay_domain_id` /
+`stripe_top_level_domain_id` accessors.
+
+**Payment intents are not a parallel system.** A `Gateway::PaymentIntents`
+concern alongside `Gateway::PaymentSessions` implied two paths, one of them
+legacy. There is one: creating a payment session *is* creating a Stripe payment
+intent, and the session stores the intent id as its external id. The intent
+calls now live in `Gateway::PaymentSessions`, with payload building private to
+it. `PaymentIntentPresenter` went too — it presented nothing, it built a request
+body, and `update_payment_intent` proved the framing wrong by constructing the
+full create-payload only to `slice` most of it away.
+
+**Consequences:** the gem no longer touches storefront domains at all, and there
+is no "intents" vocabulary suggesting a second code path. Net −2,000 lines
+against the initial port. A gateway that wants to register domains needs the
+storefront's real host as configuration, not `store.url`.
+
+## 2026-08-09 — Stripe moves into the monorepo as a payment-session-only gem, with no tables
+
+`spree_stripe` ships from `spree/providers/stripe` in the monorepo, per
+`6.0-payment-gateways-monorepo.md`. Three things were decided during the port
+that the plan had left open or assumed differently.
+
+**Scope is the payment-session API, not the whole gateway.** The plan's
+keep-set was "the v3 half of the repo"; the sharper line is the session flow.
+The six money verbs (`authorize`/`purchase`/`capture`/`credit`/`void`/`cancel`)
+stay, because core's payment lifecycle calls them after a session completes —
+`Spree::Gateway::Bogus`, core's own reference session gateway, implements the
+same six. What left is the machinery around them: creating intents for payments
+that never had a session, off-session confirmation, the storefront
+redirect/confirm controllers, `SpreeStripe::CompleteOrder` (`Carts::Complete`
+owns completion now), and the `stripe_event` engine with its four webhook
+handlers — webhooks arrive at core's v3 endpoint and route through
+`#parse_webhook_event`. Stripe Tax is dropped outright and revisits as a
+`TaxProvider`.
+
+**The webhook-key tables collapse into preferences, and the gem ends up with no
+schema at all.** `spree_stripe_webhook_keys` plus its join table existed to map
+signing secrets to payment methods many-to-many — a shape that only made sense
+while a payment method could be shared across stores. `belongs_to :store` means
+one endpoint per gateway, so the secret is a `:password` preference. Worth
+stating plainly, because the plan called this an "encrypted preferences" move
+and it is not: `spree_payment_methods.preferences` is serialized YAML with no
+encryption at rest, while the dropped model declared
+`encrypts … deterministic: true`. It is not a new exposure — the Stripe secret
+key, a more powerful credential, has always sat in that same column — but
+encrypting the preferences column is now a live core-wide question rather than
+something this port solved. `spree:upgrade:migrate_stripe_webhook_keys` carries
+existing secrets across.
+
+**Manifest steps from optional gems need an `optional: true` flag.** The
+upgrade runner resolves each step with `Rake::Task[…]`, which raises when the
+task isn't defined — so an unconditional Stripe step in core's 5.6→6.0 manifest
+would break `rake spree:upgrade` for every install without the gem. The flag
+makes the runner skip with a note. Every future gateway gem contributing a
+backfill uses it.
+
+**Consequences:** gateway configuration lives in payment-method preferences,
+never in new tables — a gateway that thinks it needs one should first check
+whether single-store ownership removed the reason. Gem-contributed upgrade
+steps are always `optional: true`. Two committed VCR cassettes were found
+carrying real webhook signing secrets (the sensitive-data filters covered
+request keys but not response bodies) and were redacted; cassettes now default
+to `record: :none`, since record-by-default turns renaming a `:vcr` example
+into a live API call.
 
 ## 2026-08-09: Metadata consolidated to one column — `public_metadata` dropped, `private_metadata` renamed
 

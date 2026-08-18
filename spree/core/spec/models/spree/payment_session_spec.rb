@@ -164,6 +164,45 @@ RSpec.describe Spree::PaymentSession, type: :model do
     end
   end
 
+  describe '#settle_payment!' do
+    context 'when the funds are captured' do
+      it 'creates the payment and completes it with a capture event' do
+        payment = payment_session.settle_payment!(captured: true)
+
+        expect(payment).to be_completed
+        expect(payment.capture_events.sum(:amount)).to eq(payment.amount)
+        expect(payment.response_code).to eq(payment_session.external_id)
+      end
+    end
+
+    context 'when the funds are only authorized' do
+      it 'creates the payment and pends it' do
+        payment = payment_session.settle_payment!(captured: false)
+
+        expect(payment).to be_pending
+        expect(payment.capture_events).to be_empty
+      end
+    end
+
+    context 'when the payment is already completed' do
+      it 'leaves it untouched without a duplicate capture event' do
+        first_settlement = payment_session.settle_payment!(captured: true)
+
+        expect { payment_session.settle_payment!(captured: true) }.
+          not_to change { first_settlement.reload.capture_events.count }
+      end
+    end
+
+    # The storefront confirm and the gateway webhook can race; the completed?
+    # guard alone is check-then-act, so settlement must hold the owner's row
+    # lock for the capture event to be recorded exactly once.
+    it 'settles under the owner row lock' do
+      expect(payment_session.owner).to receive(:with_lock).and_call_original
+
+      payment_session.settle_payment!(captured: true)
+    end
+  end
+
   describe '#amount_in_cents' do
     it 'returns amount in cents' do
       payment_session.update!(amount: 99.99)

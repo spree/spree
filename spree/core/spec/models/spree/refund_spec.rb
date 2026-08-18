@@ -24,8 +24,10 @@ describe Spree::Refund, type: :model do
     end
   end
 
-  describe 'create' do
-    subject { create(:refund, payment: payment, amount: amount, reason: refund_reason, transaction_id: nil) }
+  describe '#perform!' do
+    subject { refund.perform! }
+
+    let(:refund) { create(:refund, payment: payment, amount: amount, reason: refund_reason, transaction_id: nil) }
 
     let(:amount) { 100.0 }
     let(:amount_in_cents) { amount * 100 }
@@ -49,7 +51,7 @@ describe Spree::Refund, type: :model do
     let(:gateway_response_success) { true }
     let(:gateway_response_message) { '' }
     let(:gateway_response_params) { {} }
-    let(:gateway_response_options) { {} }
+    let(:gateway_response_options) { { authorization: authorization } }
 
     before do
       allow(payment.payment_method).
@@ -58,36 +60,30 @@ describe Spree::Refund, type: :model do
         and_return(gateway_response)
     end
 
-    context 'transaction id exists on creation' do
-      subject { create(:refund, payment: payment, amount: amount, reason: refund_reason, transaction_id: transaction_id) }
+    it 'is never attempted by creation alone' do
+      expect(payment.payment_method).not_to receive(:credit)
 
-      let(:transaction_id) { '12kfjas0' }
+      refund
+    end
 
-      it 'creates a refund record' do
-        expect { subject }.to change { Spree::Refund.count }.by(1)
-      end
-
-      it 'maintains the transaction id' do
-        expect(subject.reload.transaction_id).to eq transaction_id
-      end
-
-      it 'saves the amount' do
-        expect(subject.reload.amount).to eq amount
-      end
+    context 'when the refund was already credited' do
+      let(:refund) { create(:refund, payment: payment, amount: amount, reason: refund_reason, transaction_id: '12kfjas0') }
 
       it 'does not attempt to process a transaction' do
         expect(payment.payment_method).not_to receive(:credit)
+
         subject
+      end
+
+      it 'maintains the transaction id' do
+        subject
+        expect(refund.reload.transaction_id).to eq '12kfjas0'
       end
     end
 
     context 'processing is successful' do
-      let(:gateway_response_options) { { authorization: authorization } }
-
-      it 'creates a refund' do
-        expect { subject }.to change { Spree::Refund.count }.by(1)
-      end
-
+      # Creation no longer credits, so the count and return-value examples moved
+      # to the workflow spec; the instrumentation belongs with the call itself.
       it 'instruments the credit gateway call as gateway.spree_payments' do
         notifications = []
         subscriber = ActiveSupport::Notifications.subscribe('gateway.spree_payments') do |*, payload|
@@ -101,24 +97,19 @@ describe Spree::Refund, type: :model do
         ActiveSupport::Notifications.unsubscribe(subscriber)
       end
 
-      it 'return the newly created refund' do
-        expect(subject).to be_a(Spree::Refund)
-      end
-
       it 'saves the returned authorization value' do
-        expect(subject.reload.transaction_id).to eq authorization
-      end
-
-      it 'saves the passed amount as the refund amount' do
-        expect(subject.amount).to eq amount
+        subject
+        expect(refund.reload.transaction_id).to eq authorization
       end
 
       it 'attempts to process a transaction' do
         expect(payment.payment_method).to receive(:credit).once
+
         subject
       end
 
       it 'recalculates order totals' do
+        refund
         expect { subject }.to change { payment.order.reload.updated_at }
       end
     end
@@ -127,10 +118,10 @@ describe Spree::Refund, type: :model do
       let(:gateway_response_success) { false }
       let(:gateway_response_message) { 'failure message' }
 
-      it 'raises error and not create a refund' do
-        expect do
-          expect { subject }.to raise_error(Spree::Core::GatewayError, gateway_response_message)
-        end.not_to change { Spree::Refund.count }
+      it 'raises and leaves the refund uncredited for the caller to handle' do
+        expect { subject }.to raise_error(Spree::Core::GatewayError, gateway_response_message)
+
+        expect(refund.reload.transaction_id).to be_nil
       end
     end
 
@@ -166,13 +157,12 @@ describe Spree::Refund, type: :model do
 
     context 'with a gateway connection error' do
       before do
-        message = 'gateway_error'
         expect(payment.payment_method).to receive(:credit).with(
           amount_in_cents,
           payment.source,
           payment.transaction_id,
           originator: an_instance_of(Spree::Refund)
-        ).and_raise(Spree::PaymentConnectionError.new(message))
+        ).and_raise(Spree::PaymentConnectionError.new('gateway_error'))
       end
 
       it 'raises Spree::Core::GatewayError' do
@@ -184,8 +174,8 @@ describe Spree::Refund, type: :model do
       let(:payment_amount) { 10 }
       let(:amount) { payment_amount * 2 }
 
-      it 'is invalid' do
-        expect { subject }.to raise_error { |error|
+      it 'refuses to create the refund' do
+        expect { refund }.to raise_error { |error|
           expect(error).to be_a(ActiveRecord::RecordInvalid)
           expect(error.record.errors.full_messages).to eq ["Amount #{I18n.t('activerecord.errors.models.spree/refund.attributes.amount.greater_than_allowed')}"]
         }

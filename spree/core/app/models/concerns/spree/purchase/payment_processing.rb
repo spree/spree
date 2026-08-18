@@ -5,8 +5,18 @@ module Spree
       # Processes any pending payments, recording a gateway failure on
       # +errors+. The completion workflows check whether payments actually
       # cover the total rather than trusting the return value.
+      #
+      # Deliberately not locked: holding the order's row lock across gateway
+      # round trips is what the workflow external_step boundary exists to
+      # prevent. Concurrent processing of the same payment is guarded twice —
+      # started_processing! refuses re-entry, and the gateway idempotency key
+      # (spree-<payment.number>) makes a duplicate charge a no-op at the
+      # provider.
       def process_payments!
-        with_lock { process_payments_with(:process!) }
+        # with_lock used to reload the record as a side effect; callers create
+        # payments right before processing, so the association must refresh.
+        payments.reset
+        process_payments_with(:process!)
       end
 
       def authorize_payments!

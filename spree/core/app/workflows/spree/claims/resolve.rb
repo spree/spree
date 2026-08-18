@@ -133,25 +133,29 @@ module Spree
 
       def refund_at_gateway
         remaining = @amount_to_refund
-
         claim.order.payments.completed.each do |payment|
           break unless remaining.positive?
 
           creditable = [payment.credit_allowed.to_d, remaining].min
           next unless creditable.positive?
 
-          @refunds << payment.refunds.create!(
+          # One refund path for the whole system: Refunds::Create owns the
+          # row-lock balance check, the gateway credit, the declined-row
+          # compensation, the refund hooks and the payment.refunded event.
+          result = Spree.refund_create_workflow.call(
+            payment: payment,
             amount: creditable,
             reason: Spree::RefundReason.return_processing_reason(claim.store),
             refunder: resolver,
             originator: claim
           )
+          failure(claim, result.error.value) if result.failure?
+
+          @refunds << result.value
           remaining -= creditable
         end
 
         failure(claim, :no_refundable_payments) if @refunds.empty?
-      rescue Spree::Core::GatewayError => error
-        failure(claim, error.message)
       end
 
       def mark_resolved

@@ -85,20 +85,72 @@ module Spree
     # @param metadata [Hash] gateway-specific metadata
     # @return [Spree::Payment] the payment record
     def find_or_create_payment!(metadata = {})
-      return payment if payment.present?
+      # Session payments carry no Spree-side source (the gateway holds the
+      # instrument), so the requirement is skipped on every load, not just at
+      # creation — a later capture webhook transitions the same row and would
+      # otherwise fail source validation.
+      return skip_source_requirement(payment) if payment.present?
 
-      owner.payments.find_or_create_by!(
-        payment_method: payment_method,
-        response_code: external_id,
-      ) do |p|
-        p.amount = amount
-        p.skip_source_requirement = true
-      end
-    rescue ActiveRecord::RecordNotUnique
-      owner.payments.find_by!(
-        payment_method: payment_method,
-        response_code: external_id
+      skip_source_requirement(
+        owner.payments.find_or_create_by!(
+          payment_method: payment_method,
+          response_code: external_id,
+        ) do |p|
+          p.amount = amount
+          p.skip_source_requirement = true
+        end
       )
+    rescue ActiveRecord::RecordNotUnique
+      skip_source_requirement(
+        owner.payments.find_by!(
+          payment_method: payment_method,
+          response_code: external_id
+        )
+      )
+    end
+
+    # Fetches whatever settlement will need from the provider, so a caller
+    # that settles inside a lock (the webhook path) holds it across no
+    # provider I/O. Gateway session subclasses override; no-op by default.
+    #
+    # @return [Spree::PaymentSession] self
+    def prepare_for_settlement!
+      self
+    end
+
+    # The one place a session settles its payment — used by both routes a
+    # settled session is noticed on (the storefront confirm call and the
+    # gateway webhook), so the two can never drift apart.
+    #
+    # Serialized on the owner's row: the two routes can race, and the
+    # completed? guard alone is check-then-act — two concurrent settlements
+    # would each record a capture event, doubling captured_amount. The lock
+    # wraps only the local settlement, never gateway I/O — callers fetch
+    # provider data first (the confirm path as it verifies the session, the
+    # webhook path via prepare_for_settlement!) — and nests as a no-op inside
+    # HandleWebhook's own owner lock.
+    #
+    # @param captured [Boolean] whether the gateway reports the funds as
+    #   captured; false means authorized only, so the payment pends
+    # @param metadata [Hash] gateway-specific metadata for payment creation
+    # @return [Spree::Payment, nil]
+    def settle_payment!(captured:, metadata: {})
+      owner.with_lock do
+        settled_payment = find_or_create_payment!(metadata)
+
+        if settled_payment.present?
+          # DB-state recheck, deliberately not a reload — the payment may have
+          # been cached on this instance before the lock (a concurrent
+          # settlement could have completed it), but reload would discard
+          # in-memory state like skip_source_requirement.
+          already_completed = settled_payment.completed? ||
+                              Spree::Payment.where(id: settled_payment.id, state: 'completed').exists?
+
+          settled_payment.confirm!(captured: captured) unless already_completed
+        end
+
+        settled_payment
+      end
     end
 
     # @return [Spree::Cart, Spree::Order, nil]
@@ -132,6 +184,13 @@ module Spree
     end
 
     private
+
+    # Only for payments with no Spree-side source — a gateway that does record
+    # one (Stripe's card sources) leaves it untouched.
+    def skip_source_requirement(payment_record)
+      payment_record.skip_source_requirement = true if payment_record&.source.blank?
+      payment_record
+    end
 
     def exactly_one_owner
       errors.add(:base, Spree.t('errors.messages.exactly_one_of_cart_or_order')) unless [order, cart].compact.one?

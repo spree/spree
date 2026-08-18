@@ -19,6 +19,21 @@ module Spree
             # the row lock alone still serializes the idempotent paths.
             next yield if order.readonly?
 
+            # A completion attempt fixed this cart's totals under the lock and
+            # is now off at the gateway — mutating the cart mid-window would
+            # complete it with different totals than the ones being charged.
+            # The completion claim excludes mutations for exactly that window;
+            # checked after acquiring the lock so it cannot race the claim
+            # being written. The TTL matches guard_concurrent_completion — a
+            # crashed completion must not brick its cart.
+            if order.is_a?(Spree::Cart) && order.completion_claimed?
+              next render_error(
+                code: 'completion_in_progress',
+                message: Spree.t(:cart_completion_in_progress),
+                status: :conflict
+              )
+            end
+
             # Persist increment within the transaction so reloads inside yield see the new version
             new_version = order.lock_version + 1
             order.update_column(:lock_version, new_version)

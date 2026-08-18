@@ -32,6 +32,30 @@ RSpec.describe Spree::Api::V3::Store::Carts::ItemsController, type: :controller 
       expect(json_response['total_quantity']).to eq(1)
     end
 
+    # A completion attempt fixed the cart's totals and is off at the gateway —
+    # a mutation landing in that window would complete the cart with different
+    # totals than the ones being charged.
+    context 'while a completion holds the cart' do
+      before { order.update_column(:completing_at, Time.current) }
+
+      it 'refuses the mutation with a conflict' do
+        expect do
+          post :create, params: { cart_id: order.prefixed_id, variant_id: variant.prefixed_id }
+        end.not_to change(Spree::LineItem, :count)
+
+        expect(response).to have_http_status(:conflict)
+        expect(json_response['error']['code']).to eq('completion_in_progress')
+      end
+
+      it 'allows the mutation once the claim is stale' do
+        order.update_column(:completing_at, 10.minutes.ago)
+
+        post :create, params: { cart_id: order.prefixed_id, variant_id: variant.prefixed_id }
+
+        expect(response).to have_http_status(:created)
+      end
+    end
+
     it 'returns updated totals' do
       post :create, params: { cart_id: order.prefixed_id, variant_id: variant.prefixed_id, quantity: 2 }
 

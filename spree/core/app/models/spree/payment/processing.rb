@@ -28,13 +28,19 @@ module Spree
         handle_payment_preconditions { process_purchase }
       end
 
-      # Confirms a payment by completing it or pending it depending on when the
-      # payment method charges. Useful for payments that are authorized/captured
-      # with SDK/Drop-in elements
-      def confirm!
+      # Confirms a payment already authorized or captured on the gateway side
+      # (SDK / Drop-in / payment session flows) — the local state move only, no
+      # gateway call.
+      #
+      # @param captured [Boolean, nil] whether the gateway reports the funds as
+      #   captured. Callers who know the gateway state pass it; nil falls back
+      #   to when the payment method charges.
+      def confirm!(captured: nil)
+        captured = payment_method&.capture_at_checkout? if captured.nil?
+
         started_processing! if checkout?
 
-        if payment_method&.capture_at_checkout? && can_complete?
+        if captured && can_complete?
           complete!
           capture_events.create!(amount: amount)
         elsif can_pend?
@@ -45,6 +51,12 @@ module Spree
       # Takes the amount in cents to capture.
       # Can be used to capture partial amounts of a payment, and will create
       # a new pending payment record for the remaining amount to capture later.
+      #
+      # The gateway call runs outside any lock (capture is idempotent at the
+      # provider — an already-captured intent comes back as success); the
+      # bookkeeping runs under the owner's row lock with a recheck, so a
+      # concurrent capture — or the webhook settling the same payment —
+      # records the capture event exactly once.
       def capture!(amount = nil)
         return true if completed?
 
@@ -59,10 +71,33 @@ module Spree
               gateway_options
             )
           end
-          money = ::Money.new(amount, currency)
-          capture_events.create!(amount: money.to_f)
-          split_uncaptured_amount
-          handle_response(response, :complete, :failure)
+
+          # A failed response writes no money records, so it needs no lock —
+          # and handle_response raises, which inside the lock's transaction
+          # would roll the failure state back.
+          handle_response(response, :complete, :failure) unless response.success?
+
+          already_captured = false
+          remainder = nil
+          owner.with_lock do
+            # DB-state recheck, deliberately not a reload — reload would
+            # discard the in-memory source (card numbers never persist).
+            if self.class.where(id: id, state: 'completed').exists?
+              already_captured = true
+            else
+              capture_events.create!(amount: ::Money.new(amount, currency).to_f)
+              # Split before completing, so payment.completed publishes with
+              # the captured amount and the order recomputes from correct rows.
+              remainder = split_uncaptured_amount
+              handle_response(response, :complete, :failure)
+            end
+          end
+          return true if already_captured
+
+          # Authorizes the remainder at the gateway — its own network call,
+          # so it stays outside the lock.
+          remainder&.authorize!
+          true
         end
       end
 

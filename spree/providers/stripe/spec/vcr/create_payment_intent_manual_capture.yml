@@ -1,0 +1,307 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.stripe.com/v1/customers
+    body:
+      encoding: UTF-8
+      string: address[city]=New+York&address[line1]=33+Lovely+Street&address[line2]=Northwest&address[postal_code]=10118&address[country]=United+States+of+America&address[state]=New+York&email=estella.lynch%40fadel.info&name=John+Doe
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/18.4.2 Spree Stripe/5.5.0.beta (https://spreecommerce.org)
+        AIAgent/claude_code
+      Authorization:
+      - Bearer <STRIPE_SECRET_KEY>
+      X-Stripe-Client-Telemetry:
+      - '{"last_request_metrics":{"request_id":"req_KOuz9aRI8GQidn","request_duration_ms":1}}'
+      Idempotency-Key:
+      - e3a5778b-2005-4025-bbd3-88e0b79e9c9d
+      Stripe-Version:
+      - '2023-10-16'
+      X-Stripe-Client-User-Agent:
+      - "<FILTERED>"
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Fri, 08 May 2026 15:11:50 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '849'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET, HEAD, PUT, PATCH, POST, DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required,
+        X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Content-Security-Policy:
+      - base-uri 'none'; default-src 'none'; form-action 'none'; frame-ancestors 'none';
+        img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'; worker-src
+        'none'; upgrade-insecure-requests; report-uri https://q.stripe.com/csp-violation?q=Zx0OHNWSgDTSzOj5Pkp_BHa3Ogdvf85LOl4pIpHKcEP00CKZPp3kLmmwEVYyCjH-TPYjQe4pANhk3gbJ;
+        report-to csp
+      Idempotency-Key:
+      - e3a5778b-2005-4025-bbd3-88e0b79e9c9d
+      Original-Request:
+      - req_3BLSecPTZoarbr
+      Report-To:
+      - '{"group":"csp","max_age":8640,"endpoints":[{"url":"https://q.stripe.com/csp-report-v2?q=Zx0OHNWSgDTSzOj5Pkp_BHa3Ogdvf85LOl4pIpHKcEP00CKZPp3kLmmwEVYyCjH-TPYjQe4pANhk3gbJ&t=1"}],"include_subdomains":true}'
+      Reporting-Endpoints:
+      - csp="https://q.stripe.com/csp-report-v2?q=Zx0OHNWSgDTSzOj5Pkp_BHa3Ogdvf85LOl4pIpHKcEP00CKZPp3kLmmwEVYyCjH-TPYjQe4pANhk3gbJ&t=1"
+      Request-Id:
+      - req_3BLSecPTZoarbr
+      Stripe-Should-Retry:
+      - 'false'
+      Stripe-Version:
+      - '2023-10-16'
+      Vary:
+      - Origin
+      X-Stripe-Priority-Routing-Enabled:
+      - 'true'
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      X-Wc:
+      - 3c3
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "cus_UTnfWyIfDZZlfU",
+          "object": "customer",
+          "address": {
+            "city": "New York",
+            "country": "United States of America",
+            "line1": "33 Lovely Street",
+            "line2": "Northwest",
+            "postal_code": "10118",
+            "state": "New York"
+          },
+          "balance": 0,
+          "created": 1778253110,
+          "currency": null,
+          "customer_account": null,
+          "default_source": null,
+          "delinquent": false,
+          "description": null,
+          "discount": null,
+          "email": "estella.lynch@fadel.info",
+          "invoice_prefix": "LMCXNGL9",
+          "invoice_settings": {
+            "custom_fields": null,
+            "default_payment_method": null,
+            "footer": null,
+            "rendering_options": null
+          },
+          "livemode": false,
+          "metadata": {},
+          "name": "John Doe",
+          "next_invoice_sequence": 1,
+          "phone": null,
+          "preferred_locales": [],
+          "shipping": null,
+          "tax_exempt": "none",
+          "test_clock": null
+        }
+  recorded_at: Fri, 08 May 2026 15:11:50 GMT
+- request:
+    method: post
+    uri: https://api.stripe.com/v1/payment_intents
+    body:
+      encoding: UTF-8
+      string: payment_method_options[card][setup_future_usage]=off_session&payment_method_options[sepa_debit][setup_future_usage]=off_session&amount=100&customer=cus_UTnfWyIfDZZlfU&currency=USD&statement_descriptor_suffix=R258461850&automatic_payment_methods[enabled]=true&transfer_group=R258461850&metadata[spree_order_id]=1&capture_method=manual&shipping[address][city]=New+York&shipping[address][country]=US&shipping[address][line1]=34+Lovely+Street&shipping[address][line2]=Northwest&shipping[address][postal_code]=10118&shipping[address][state]=NY&shipping[name]=John+Doe
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/18.4.2 Spree Stripe/5.5.0.beta (https://spreecommerce.org)
+        AIAgent/claude_code
+      Authorization:
+      - Bearer <STRIPE_SECRET_KEY>
+      X-Stripe-Client-Telemetry:
+      - '{"last_request_metrics":{"request_id":"req_3BLSecPTZoarbr","request_duration_ms":482}}'
+      Idempotency-Key:
+      - a0445d43-0a5c-451f-ba87-15f571d3c185
+      Stripe-Version:
+      - '2023-10-16'
+      X-Stripe-Client-User-Agent:
+      - "<FILTERED>"
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Fri, 08 May 2026 15:11:50 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '2193'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET, HEAD, PUT, PATCH, POST, DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required,
+        X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Content-Security-Policy:
+      - base-uri 'none'; default-src 'none'; form-action 'none'; frame-ancestors 'none';
+        img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'; worker-src
+        'none'; upgrade-insecure-requests; report-uri https://q.stripe.com/csp-violation?q=Zx0OHNWSgDTSzOj5Pkp_BHa3Ogdvf85LOl4pIpHKcEP00CKZPp3kLmmwEVYyCjH-TPYjQe4pANhk3gbJ;
+        report-to csp
+      Idempotency-Key:
+      - a0445d43-0a5c-451f-ba87-15f571d3c185
+      Original-Request:
+      - req_EutEo4AzOUi8Gi
+      Report-To:
+      - '{"group":"csp","max_age":8640,"endpoints":[{"url":"https://q.stripe.com/csp-report-v2?q=Zx0OHNWSgDTSzOj5Pkp_BHa3Ogdvf85LOl4pIpHKcEP00CKZPp3kLmmwEVYyCjH-TPYjQe4pANhk3gbJ&t=1"}],"include_subdomains":true}'
+      Reporting-Endpoints:
+      - csp="https://q.stripe.com/csp-report-v2?q=Zx0OHNWSgDTSzOj5Pkp_BHa3Ogdvf85LOl4pIpHKcEP00CKZPp3kLmmwEVYyCjH-TPYjQe4pANhk3gbJ&t=1"
+      Request-Id:
+      - req_EutEo4AzOUi8Gi
+      Stripe-Should-Retry:
+      - 'false'
+      Stripe-Version:
+      - '2023-10-16'
+      Vary:
+      - Origin
+      X-Stripe-Priority-Routing-Enabled:
+      - 'true'
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      X-Wc:
+      - 3c3
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "pi_3TUq4A2ESifGlJez1znHBNDU",
+          "object": "payment_intent",
+          "amount": 100,
+          "amount_capturable": 0,
+          "amount_details": {
+            "tip": {}
+          },
+          "amount_received": 0,
+          "application": null,
+          "application_fee_amount": null,
+          "automatic_payment_methods": {
+            "allow_redirects": "always",
+            "enabled": true
+          },
+          "canceled_at": null,
+          "cancellation_reason": null,
+          "capture_method": "manual",
+          "client_secret": "pi_3TUq4A2ESifGlJez1znHBNDU_secret_a5xEFPV8MtFMZ8j8ulMBy6JFR",
+          "confirmation_method": "automatic",
+          "created": 1778253110,
+          "currency": "usd",
+          "customer": "cus_UTnfWyIfDZZlfU",
+          "customer_account": null,
+          "description": null,
+          "excluded_payment_method_types": null,
+          "invoice": null,
+          "last_payment_error": null,
+          "latest_charge": null,
+          "livemode": false,
+          "managed_payments": {
+            "enabled": false
+          },
+          "metadata": {
+            "spree_order_id": "1"
+          },
+          "next_action": null,
+          "on_behalf_of": null,
+          "payment_method": null,
+          "payment_method_configuration_details": {
+            "id": "pmc_1QVa9x2ESifGlJezRC5fgLVg",
+            "parent": null
+          },
+          "payment_method_options": {
+            "afterpay_clearpay": {
+              "reference": null
+            },
+            "card": {
+              "installments": null,
+              "mandate_options": null,
+              "network": null,
+              "request_three_d_secure": "automatic",
+              "setup_future_usage": "off_session"
+            },
+            "klarna": {
+              "preferred_locale": null
+            },
+            "link": {
+              "persistent_token": null
+            }
+          },
+          "payment_method_types": [
+            "card",
+            "afterpay_clearpay",
+            "klarna",
+            "link"
+          ],
+          "processing": null,
+          "receipt_email": null,
+          "review": null,
+          "setup_future_usage": null,
+          "shared_payment_granted_token": null,
+          "shipping": {
+            "address": {
+              "city": "New York",
+              "country": "US",
+              "line1": "34 Lovely Street",
+              "line2": "Northwest",
+              "postal_code": "10118",
+              "state": "NY"
+            },
+            "carrier": null,
+            "name": "John Doe",
+            "phone": null,
+            "tracking_number": null
+          },
+          "source": null,
+          "statement_descriptor": null,
+          "statement_descriptor_suffix": "R258461850",
+          "status": "requires_payment_method",
+          "transfer_data": null,
+          "transfer_group": "R258461850"
+        }
+  recorded_at: Fri, 08 May 2026 15:11:50 GMT
+recorded_with: VCR 6.4.0
