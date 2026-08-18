@@ -99,7 +99,7 @@ module Spree
 
       it 'does not use failed payments' do
         payment_1 = create(:payment, amount: 50, order: order)
-        payment_2 = create(:payment, amount: 50, state: 'failed', order: order)
+        payment_2 = create(:payment, amount: 50, status: 'failed', order: order)
         allow(order).to receive(:pending_payments).and_return([payment_1])
 
         expect(payment_2).not_to receive(:process!)
@@ -160,7 +160,7 @@ module Spree
         calculator.set_preference(:amount, order.fulfillments.first.cost)
         calculator.save!
 
-        order.payments << create(:payment, state: :completed, order: order, amount: order.total)
+        order.payments << create(:payment, status: :completed, order: order, amount: order.total)
         return_record = create(:received_return, order: order, store: order.store)
 
         create(:refund, amount: 10, payment: order.payments.first, originator: return_record)
@@ -176,7 +176,7 @@ module Spree
         calculator.set_preference(:amount, order.fulfillments.first.cost)
         calculator.save!
 
-        order.payments << create(:payment, state: :completed, order: order, amount: order.total)
+        order.payments << create(:payment, status: :completed, order: order, amount: order.total)
 
         create(:refund, amount: 10, payment: order.payments.first)
         order.recalculate_totals!

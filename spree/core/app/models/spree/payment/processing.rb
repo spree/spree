@@ -82,7 +82,7 @@ module Spree
           owner.with_lock do
             # DB-state recheck, deliberately not a reload — reload would
             # discard the in-memory source (card numbers never persist).
-            if self.class.where(id: id, state: 'completed').exists?
+            if self.class.where(id: id, status: 'completed').exists?
               already_captured = true
             else
               capture_events.create!(amount: ::Money.new(amount, currency).to_f)
@@ -103,7 +103,7 @@ module Spree
 
       def void_transaction!
         return true if void?
-        return void if response_code.blank?
+        return void! if response_code.blank?
 
         protect_from_connection_error do
           response = instrument_gateway_call(:void, payment_method) do
@@ -119,7 +119,7 @@ module Spree
 
           if response.success?
             self.response_code = response.authorization
-            void
+            void!
           else
             gateway_error(response)
           end
@@ -186,7 +186,7 @@ module Spree
         end
       end
 
-      def handle_response(response, success_state, failure_state)
+      def handle_response(response, success_state, _failure_state = :failure)
         if response.success?
           unless response.authorization.nil?
             self.response_code = response.authorization
@@ -197,9 +197,19 @@ module Spree
               self.cvv_response_message = response.cvv_result['message']
             end
           end
-          send("#{success_state}!")
+
+          case success_state
+          when :complete then complete!
+          when :pend then pend!
+          when :void then void!
+          else raise ArgumentError, "Unknown payment success state: #{success_state.inspect}"
+          end
         else
-          send(failure_state)
+          # Non-raising write, matching the machine's non-bang failure event:
+          # gateway_error below is the exception this path reports, and a
+          # validation problem must not preempt it.
+          self.status = 'failed'
+          save
           gateway_error(response)
         end
       end

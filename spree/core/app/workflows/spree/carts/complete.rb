@@ -321,7 +321,7 @@ module Spree
       # never on paid? — a net-terms order completes with a pending payment.
       def payment_covered?(order)
         order.payments.reset
-        order.payments.valid.where(state: %w[pending processing completed]).sum(:amount) >= order.total
+        order.payments.valid.where(status: %w[pending processing completed]).sum(:amount) >= order.total
       end
 
       # The FINALIZE phase: the order-side completion workflow owns the

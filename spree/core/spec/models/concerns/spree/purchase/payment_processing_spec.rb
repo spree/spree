@@ -4,7 +4,7 @@ RSpec.shared_examples 'a payment processing host' do
   describe '#process_payments!' do
     let!(:record) { new_record_with_line_items }
     let!(:payment) do
-      payment = create_payment(record, amount: 10, state: payment_state)
+      payment = create_payment(record, amount: 10, status: payment_state)
       record.payments << payment
       payment
     end
@@ -45,7 +45,7 @@ RSpec.shared_examples 'a payment processing host' do
       end
 
       context 'when there is other unprocessed payment' do
-        let(:other_payment) { create_payment(record, amount: 5, state: 'checkout') }
+        let(:other_payment) { create_payment(record, amount: 5, status: 'checkout') }
         let(:unprocessed_payments) { [other_payment] }
 
         before do
@@ -123,8 +123,8 @@ RSpec.shared_examples 'a payment processing host' do
     it 'partitions payments by state' do
       # Pending first — creating a new payment invalidates existing
       # checkout-state payments (Payment#invalidate_old_payments).
-      pending_payment = create_payment(record, amount: 5, state: 'pending')
-      checkout_payment = create_payment(record, amount: 5, state: 'checkout')
+      pending_payment = create_payment(record, amount: 5, status: 'pending')
+      checkout_payment = create_payment(record, amount: 5, status: 'checkout')
 
       expect(record.pending_payments).to contain_exactly(pending_payment)
       expect(record.unprocessed_payments).to contain_exactly(checkout_payment)

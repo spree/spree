@@ -509,8 +509,8 @@ describe Spree::CreditCard, type: :model do
     end
 
     context 'with non-checkout payments on incomplete orders' do
-      let!(:completed_payment) { create(:payment, source: card, order: incomplete_order, state: 'completed') }
-      let!(:pending_payment) { create(:payment, source: card, order: incomplete_order, state: 'pending') }
+      let!(:completed_payment) { create(:payment, source: card, order: incomplete_order, status: 'completed') }
+      let!(:pending_payment) { create(:payment, source: card, order: incomplete_order, status: 'pending') }
 
       it 'voids the payments' do
         card.destroy
@@ -522,7 +522,7 @@ describe Spree::CreditCard, type: :model do
 
     context 'with payments on completed orders' do
       let!(:completed_order) { create(:completed_order_with_pending_payment, user_id: incomplete_order.user_id) }
-      let!(:completed_order_payment) { create(:payment, source: card, order: completed_order, state: 'completed', amount: completed_order.total) }
+      let!(:completed_order_payment) { create(:payment, source: card, order: completed_order, status: 'completed', amount: completed_order.total) }
 
       it 'does not modify payments on completed orders' do
         card.destroy

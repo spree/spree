@@ -19,9 +19,9 @@ module Spree
 
       def should_publish_paid_event?
         return false unless Spree::Events.enabled?
-        return false unless state_previously_changed?
+        return false unless status_previously_changed?
 
-        state_previous_change&.last == 'completed'
+        status_previous_change&.last == 'completed'
       end
 
       def publish_payment_paid_event

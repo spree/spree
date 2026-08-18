@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Payments::Capture do
-  let(:payment) { create(:payment, state: 'pending', amount: 45.75) }
+  let(:payment) { create(:payment, status: 'pending', amount: 45.75) }
 
   before { Spree.hooks.clear! }
   after { Spree.hooks.clear! }
@@ -22,14 +22,14 @@ RSpec.describe Spree::Payments::Capture do
     end
 
     it 'is a no-op for an already-captured payment' do
-      completed = create(:payment, state: 'completed')
+      completed = create(:payment, status: 'completed')
       expect(completed).not_to receive(:capture!)
 
       expect(described_class.call(payment: completed)).to be_success
     end
 
     it 'fails without calling the gateway when the payment cannot be captured' do
-      voided = create(:payment, state: 'void')
+      voided = create(:payment, status: 'void')
       expect(voided).not_to receive(:capture!)
 
       result = described_class.call(payment: voided)

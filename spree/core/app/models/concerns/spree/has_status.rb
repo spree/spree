@@ -22,13 +22,16 @@ module Spree
 
     class_methods do
       # @param values [Array<Symbol, String>] the valid statuses, in order
-      # @param default [Symbol, String] applied by the creating workflow —
-      #   never a database default (see the migration rules in CLAUDE.md)
+      # @param default [Symbol, String] applied as an attribute default at
+      #   instantiation — never a database default (see the migration rules
+      #   in CLAUDE.md)
       def has_status(*values, default:)
         values = values.map(&:to_s)
 
         class_attribute :statuses, default: values, instance_writer: false
         class_attribute :default_status, default: default.to_s, instance_writer: false
+
+        attribute :status, :string, default: default.to_s
 
         validates :status, inclusion: { in: ->(record) { record.class.statuses } }
 
@@ -57,8 +60,11 @@ module Spree
       private
 
       def define_status_methods(value)
-        define_method(:"#{value}?") { status == value }
-        scope value, -> { where(status: value) }
+        # A status may collide with a method Rails already defines — Payment's
+        # `invalid` vs ActiveModel#invalid? — so an existing method is never
+        # redefined. The status itself stays valid; callers compare `status`.
+        define_method(:"#{value}?") { status == value } unless method_defined?(:"#{value}?")
+        scope value, -> { where(status: value) } unless respond_to?(value)
       end
     end
   end

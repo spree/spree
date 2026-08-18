@@ -21,7 +21,7 @@ module Spree
 
       it 'nets refunds out of the payment total' do
         order = create(:completed_order_with_totals, store: store)
-        payment = create(:payment, order: order, amount: order.total, state: 'completed')
+        payment = create(:payment, order: order, amount: order.total, status: 'completed')
         create(:refund, payment: payment, amount: 5)
 
         described_class.call(cart: order)

@@ -114,12 +114,6 @@ module Spree
     include Spree::HasStatus
     has_status :unfulfilled, :fulfilled, :delivered, :canceled, default: :unfulfilled
 
-    # Unlike returns and claims, fulfillments are built directly — by the stock
-    # coordinator, by cart completion, by transfers — rather than always through
-    # a creating workflow, so the default is applied here instead of being left
-    # to each caller. This is what the machine's `initial:` used to do.
-    after_initialize :apply_default_status, if: :new_record?
-
     # What the carrier reports, kept apart from the merchant lifecycle: a bounced
     # or damaged package changes this, never #status.
     TRACKING_STATUSES = %w(
@@ -765,10 +759,6 @@ module Spree
 
     def set_cost_zero_when_nil
       self.cost = 0 unless cost
-    end
-
-    def apply_default_status
-      self.status ||= self.class.default_status
     end
 
     def carrier_tracking_url

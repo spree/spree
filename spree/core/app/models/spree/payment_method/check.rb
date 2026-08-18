@@ -14,12 +14,12 @@ module Spree
 
     # Indicates whether its possible to capture the payment
     def can_capture?(payment)
-      ['checkout', 'pending'].include?(payment.state)
+      ['checkout', 'pending'].include?(payment.status)
     end
 
     # Indicates whether its possible to void the payment.
     def can_void?(payment)
-      payment.state != 'void'
+      payment.status != 'void'
     end
 
     def capture(*)

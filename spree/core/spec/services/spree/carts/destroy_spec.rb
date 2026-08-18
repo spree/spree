@@ -28,7 +28,7 @@ module Spree
         end
 
         it 'voids pending payments' do
-          expect_any_instance_of(Spree::Payment).to receive(:void).exactly(cart.payments.count).times
+          expect_any_instance_of(Spree::Payment).to receive(:void!).exactly(cart.payments.count).times
 
           subject
         end
@@ -134,7 +134,7 @@ module Spree
 
         context 'because a payment is completed' do
           let(:cart) { create(:cart_with_line_items) }
-          let!(:payment) { create(:payment, cart: cart, order: nil, state: 'completed', amount: cart.total) }
+          let!(:payment) { create(:payment, cart: cart, order: nil, status: 'completed', amount: cart.total) }
 
           it 'returns failure' do
             expect(subject.success?).to be false

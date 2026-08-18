@@ -127,10 +127,6 @@ module Spree
     # Callbacks
     #
     before_validation :normalize_slug
-    # A seller is born through plain CRUD rather than a workflow — creating one
-    # is not a lifecycle transition, inviting them is — so the default lands
-    # here instead of in a creating workflow, as on Spree::Fulfillment.
-    after_initialize :apply_default_status, if: :new_record?
     # Roles refuse to be destroyed while anyone still holds them, which is
     # right when a role is deleted on its own and wrong when the whole seller
     # goes: its roles govern nothing else. Dissolving the team first lets the
@@ -168,10 +164,6 @@ module Spree
 
     def normalize_slug
       self.slug = (slug.presence || name).to_s.parameterize.presence
-    end
-
-    def apply_default_status
-      self.status ||= self.class.default_status
     end
 
     # Memberships and outstanding invitations are what make a role undeletable.

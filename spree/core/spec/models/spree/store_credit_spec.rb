@@ -579,7 +579,7 @@ describe Spree::StoreCredit, type: :model do
     subject { store_credit.can_capture?(payment) }
 
     let(:store_credit) { create(:store_credit) }
-    let(:payment) { create(:payment, state: payment_state) }
+    let(:payment) { create(:payment, status: payment_state) }
 
     context 'pending payment' do
       let(:payment_state) { 'pending' }
@@ -626,7 +626,7 @@ describe Spree::StoreCredit, type: :model do
     subject { store_credit.can_void?(payment) }
 
     let(:store_credit) { create(:store_credit) }
-    let(:payment) { create(:payment, state: payment_state) }
+    let(:payment) { create(:payment, status: payment_state) }
 
     context 'pending payment' do
       let(:payment_state) { 'pending' }
@@ -650,7 +650,7 @@ describe Spree::StoreCredit, type: :model do
       end
 
       context 'when payment is completed' do
-        before { payment.update_column(:state, :completed) }
+        before { payment.update_column(:status, :completed) }
 
         it { is_expected.to be false }
       end
@@ -685,7 +685,7 @@ describe Spree::StoreCredit, type: :model do
     subject { store_credit.can_credit?(payment) }
 
     let(:store_credit) { create(:store_credit) }
-    let(:payment) { create(:payment, state: payment_state) }
+    let(:payment) { create(:payment, status: payment_state) }
 
     context 'payment is not completed' do
       let(:payment_state) { 'pending' }

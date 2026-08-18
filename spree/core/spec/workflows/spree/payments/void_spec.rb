@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Payments::Void do
-  let(:payment) { create(:payment, state: 'pending', amount: 45.75) }
+  let(:payment) { create(:payment, status: 'pending', amount: 45.75) }
 
   before { Spree.hooks.clear! }
   after { Spree.hooks.clear! }
@@ -14,14 +14,14 @@ RSpec.describe Spree::Payments::Void do
     end
 
     it 'is a no-op for an already-void payment' do
-      voided = create(:payment, state: 'void')
+      voided = create(:payment, status: 'void')
       expect(voided).not_to receive(:void_transaction!)
 
       expect(described_class.call(payment: voided)).to be_success
     end
 
     it 'fails without calling the gateway when the payment cannot be voided' do
-      failed = create(:payment, state: 'failed')
+      failed = create(:payment, status: 'failed')
       expect(failed).not_to receive(:void_transaction!)
 
       result = described_class.call(payment: failed)

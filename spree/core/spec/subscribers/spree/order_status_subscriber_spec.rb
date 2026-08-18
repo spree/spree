@@ -22,7 +22,7 @@ RSpec.describe Spree::OrderStatusSubscriber do
   end
 
   it 'recomputes the owning order statuses through the single writer' do
-    payment = create(:payment, order: order, cart: nil, amount: order.total, state: 'completed')
+    payment = create(:payment, order: order, cart: nil, amount: order.total, status: 'completed')
     order.update_columns(payment_status: nil)
 
     event = Spree::Event.new(name: 'payment.completed', payload: { 'id' => payment.prefixed_id }, store_id: order.store_id)
@@ -48,7 +48,7 @@ RSpec.describe Spree::OrderStatusSubscriber do
   it 'rolls the order up when a payment is captured through the machine', events: true do
     order = create(:order_with_line_items, store: @default_store)
     order.update_columns(status: 'draft', completed_at: nil)
-    payment = create(:payment, order: order, cart: nil, amount: order.total, state: 'pending')
+    payment = create(:payment, order: order, cart: nil, amount: order.total, status: 'pending')
     order.update_columns(payment_status: 'none')
 
     payment.capture!

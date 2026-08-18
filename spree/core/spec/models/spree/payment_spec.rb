@@ -54,19 +54,19 @@ describe Spree::Payment, type: :model do
       subject { Spree::Payment.valid }
 
       let!(:invalid_payment) do
-        create(:payment, avs_response: 'Y', cvv_response_code: 'M', cvv_response_message: '', state: 'invalid')
+        create(:payment, avs_response: 'Y', cvv_response_code: 'M', cvv_response_message: '', status: 'invalid')
       end
 
       let!(:failed_payment) do
-        create(:payment, avs_response: 'Y', cvv_response_code: 'M', cvv_response_message: '', state: 'failed')
+        create(:payment, avs_response: 'Y', cvv_response_code: 'M', cvv_response_message: '', status: 'failed')
       end
 
       let!(:checkout_payment) do
-        create(:payment, avs_response: 'A', cvv_response_code: 'M', cvv_response_message: '', state: 'checkout')
+        create(:payment, avs_response: 'A', cvv_response_code: 'M', cvv_response_message: '', status: 'checkout')
       end
 
       let!(:completed_payment) do
-        create(:payment, avs_response: 'Y', cvv_response_code: 'N', cvv_response_message: '', state: 'completed')
+        create(:payment, avs_response: 'Y', cvv_response_code: 'N', cvv_response_message: '', status: 'completed')
       end
 
       it { is_expected.not_to include(invalid_payment) }
@@ -210,7 +210,7 @@ describe Spree::Payment, type: :model do
 
   describe 'Callbacks' do
     describe '#update_order' do
-      let(:payment) { create(:payment, order: order, state: 'completed') }
+      let(:payment) { create(:payment, order: order, status: 'completed') }
 
       context 'when destroying completed payment' do
         it 'updates the order' do
@@ -254,23 +254,23 @@ describe Spree::Payment, type: :model do
   # Regression test for https://github.com/spree/spree/pull/2224
   context 'failure' do
     it 'transitions to failed from pending state' do
-      payment.state = 'pending'
+      payment.status = 'pending'
       payment.failure
-      expect(payment.state).to eql('failed')
+      expect(payment.status).to eql('failed')
     end
 
     it 'transitions to failed from processing state' do
-      payment.state = 'processing'
+      payment.status = 'processing'
       payment.failure
-      expect(payment.state).to eql('failed')
+      expect(payment.status).to eql('failed')
     end
   end
 
   context 'invalidate' do
-    it 'transitions from checkout to invalid' do
-      payment.state = 'checkout'
-      payment.invalidate
-      expect(payment.state).to eq('invalid')
+    it 'moves from checkout to invalid' do
+      payment.status = 'checkout'
+      payment.invalidate!
+      expect(payment.status).to eq('invalid')
     end
   end
 
@@ -296,7 +296,7 @@ describe Spree::Payment, type: :model do
       it 'invalidates if payment method doesnt support source' do
         expect(payment.payment_method).to receive(:supports?).with(payment.source).and_return(false)
         expect { payment.process! }.to raise_error(Spree::Core::GatewayError)
-        expect(payment.state).to eq('invalid')
+        expect(payment.status).to eq('invalid')
       end
 
       # Regression test for #4598
@@ -357,11 +357,10 @@ describe Spree::Payment, type: :model do
         context 'when response is returned from gateway' do
           it 'marks payment as failed' do
             allow(gateway).to receive(:authorize).and_return(failed_response)
-            expect(payment).to receive(:failure)
-            expect(payment).not_to receive(:pend)
             expect do
               payment.authorize!
             end.to raise_error(Spree::Core::GatewayError)
+            expect(payment.reload).to be_failed
           end
         end
 
@@ -401,7 +400,7 @@ describe Spree::Payment, type: :model do
       end
 
       it 'instruments the capture gateway call' do
-        payment.state = 'pending'
+        payment.status = 'pending'
         payment.response_code = "BGS-#{SecureRandom.hex(6)}"
         allow(gateway).to receive(:capture).and_return(success_response)
 
@@ -451,12 +450,11 @@ describe Spree::Payment, type: :model do
         context 'when response is returned from gateway' do
           before do
             allow(gateway).to receive(:purchase).and_return(failed_response)
-            expect(payment).to receive(:failure)
-            expect(payment).not_to receive(:pend)
           end
 
           it 'makes payment failed' do
             expect { payment.purchase! }.to raise_error(Spree::Core::GatewayError)
+            expect(payment.reload).to be_failed
           end
 
           it 'does not log a capture event' do
@@ -600,7 +598,7 @@ describe Spree::Payment, type: :model do
       context 'when payment is pending' do
         before do
           payment.amount = 100
-          payment.state = 'pending'
+          payment.status = 'pending'
           payment.response_code = "BGS-#{SecureRandom.hex(6)}"
         end
 
@@ -672,9 +670,9 @@ describe Spree::Payment, type: :model do
           context 'when response is returned from gateway' do
             it 'does not make payment complete' do
               allow(gateway).to receive_messages capture: failed_response
-              expect(payment).to receive(:failure)
-              expect(payment).not_to receive(:complete)
               expect { payment.capture! }.to raise_error(Spree::Core::GatewayError)
+              expect(payment.reload).to be_failed
+              expect(payment).not_to be_completed
             end
           end
 
@@ -696,11 +694,10 @@ describe Spree::Payment, type: :model do
       # Regression test for #2119
       context 'when payment is completed' do
         before do
-          payment.state = 'completed'
+          payment.status = 'completed'
         end
 
         it 'does nothing' do
-          expect(payment).not_to receive(:complete)
           expect(payment.payment_method).not_to receive(:capture)
           payment.capture!
         end
@@ -710,7 +707,7 @@ describe Spree::Payment, type: :model do
     describe '#void_transaction!' do
       before do
         payment.response_code = '123'
-        payment.state = 'pending'
+        payment.status = 'pending'
       end
 
       context 'when profiles are supported' do
@@ -742,8 +739,8 @@ describe Spree::Payment, type: :model do
         context 'when response is returned from gateway' do
           it 'does not void the payment' do
             allow(gateway).to receive_messages void: failed_response
-            expect(payment).not_to receive(:void)
             expect { payment.void_transaction! }.to raise_error(Spree::Core::GatewayError)
+            expect(payment).not_to be_void
           end
         end
 
@@ -764,7 +761,7 @@ describe Spree::Payment, type: :model do
       # Regression test for #2119
       context 'if payment is already voided' do
         before do
-          payment.state = 'void'
+          payment.status = 'void'
         end
 
         it 'does not void the payment' do
@@ -776,13 +773,13 @@ describe Spree::Payment, type: :model do
       context 'if response_code is blank' do
         before do
           payment.response_code = nil
-          payment.state = 'pending'
+          payment.status = 'pending'
         end
 
         it 'voids the payment without calling the gateway' do
           expect(payment.payment_method).not_to receive(:void)
           payment.void_transaction!
-          expect(payment.state).to eq('void')
+          expect(payment.status).to eq('void')
         end
       end
     end
@@ -790,7 +787,7 @@ describe Spree::Payment, type: :model do
 
   context 'when already processing' do
     it 'returns nil without trying to process the source' do
-      payment.state = 'processing'
+      payment.status = 'processing'
 
       expect(payment.process!).to be_nil
     end
@@ -819,7 +816,7 @@ describe Spree::Payment, type: :model do
 
       it 'processes successfully and transitions to pending' do
         expect { payment.process! }.not_to raise_error
-        expect(payment.state).to eq('pending')
+        expect(payment.status).to eq('pending')
       end
 
       context 'with auto capture' do
@@ -827,7 +824,7 @@ describe Spree::Payment, type: :model do
 
         it 'processes successfully and transitions to completed' do
           expect { payment.process! }.not_to raise_error
-          expect(payment.state).to eq('completed')
+          expect(payment.status).to eq('completed')
         end
       end
     end
@@ -859,7 +856,7 @@ describe Spree::Payment, type: :model do
   describe '#save' do
     context 'captured payments' do
       it 'update order payment total' do
-        payment = create(:payment, order: order, state: 'completed')
+        payment = create(:payment, order: order, status: 'completed')
         expect(order.payment_total).to eq payment.amount
       end
     end
@@ -878,17 +875,11 @@ describe Spree::Payment, type: :model do
     end
 
     context 'when the payment was completed but now void' do
-      let(:payment) do
-        Spree::Payment.create(
-          amount: 100,
-          order: order,
-          state: 'completed'
-        )
-      end
+      let(:payment) { create(:payment, order: order, amount: 100, status: 'completed') }
 
       it 'updates order payment total' do
-        payment.void
-        expect(order.payment_total).to eq 0
+        payment.void!
+        expect(order.reload.payment_total).to eq 0
       end
     end
 
@@ -1237,7 +1228,7 @@ describe Spree::Payment, type: :model do
   end
 
   describe '#editable?' do
-    before { payment.state = state }
+    before { payment.status = state }
 
     context "when the state is 'checkout'" do
       let(:state) { 'checkout' }
@@ -1262,7 +1253,7 @@ describe Spree::Payment, type: :model do
 
   describe '#source' do
     context 'with source required enabled' do
-      let(:payment) { create(:payment, payment_method: payment_method, source: card, state: 'completed') }
+      let(:payment) { create(:payment, payment_method: payment_method, source: card, status: 'completed') }
       let(:card) { create(:credit_card) }
       let(:payment_method) { card.payment_method }
 
@@ -1363,7 +1354,7 @@ describe Spree::Payment, type: :model do
   end
 
   describe '#has_invalid_state?' do
-    let(:payment) { create(:payment, state: state) }
+    let(:payment) { create(:payment, status: state) }
     subject(:has_invalid_state?) { payment.has_invalid_state? }
 
     context 'when the state is invalid' do

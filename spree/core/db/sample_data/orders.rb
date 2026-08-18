@@ -129,7 +129,7 @@ if method
       source: credit_card.clone,
       payment_method: method
     ).first_or_create!
-    payment.update_columns(state: 'pending', response_code: "BGS-#{SecureRandom.hex(6)}")
+    payment.update_columns(status: 'pending', response_code: "BGS-#{SecureRandom.hex(6)}")
   end
 end
 

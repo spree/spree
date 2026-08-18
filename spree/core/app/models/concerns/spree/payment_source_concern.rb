@@ -54,7 +54,7 @@ module Spree
                                           .merge(Spree::Order.incomplete)
 
       incomplete_payments.checkout.each(&:invalidate!)
-      incomplete_payments.where.not(state: :checkout).each(&:void!)
+      incomplete_payments.where.not(status: :checkout).each(&:void!)
     end
   end
 end
