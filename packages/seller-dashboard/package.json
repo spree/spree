@@ -35,10 +35,10 @@
     "@tanstack/react-router": "^1.133.32",
     "@tanstack/router-plugin": "^1.167.35",
     "@tanstack/virtual-file-routes": "^1.162.0",
-    "i18next": "^25.6.0",
+    "i18next": "^26.2.0",
     "lucide-react": "^0.545.0",
     "react-hook-form": "^7.65.0",
-    "react-i18next": "^16.0.0",
+    "react-i18next": "^17.0.8",
     "sonner": "^2.0.7",
     "zod": "^4.4.3"
   },

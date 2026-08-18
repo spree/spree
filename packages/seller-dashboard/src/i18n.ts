@@ -1,12 +1,16 @@
 // Extends the framework's i18n rather than standing up a second instance.
 //
-// `@spree/dashboard-core/lib/i18n` initialises i18next and registers the
-// framework's own copy — the strings baked into shared components like
-// `RowActions` and the confirm dialog. A panel that called `init()` itself
-// would win the race and leave those components rendering raw keys
-// (`admin.row_actions.menu_label`) wherever they appear.
+// The side-effect import initialises i18next and registers the framework's
+// own copy — the strings baked into shared components like `RowActions` and
+// the confirm dialog. A panel that called `init()` itself would win the race
+// and leave those components rendering raw keys
+// (`admin.row_actions.menu_label`) wherever they appear. It must come first:
+// side-effect imports are ordering barriers.
 import '@spree/dashboard-core/lib/i18n'
-import i18n from 'i18next'
+// The instance comes from core too, not a bare `i18next` import: a bundled
+// build can resolve a second copy of the package, and `addResourceBundle` on
+// that one throws. Core re-exports the object it initialised for exactly this.
+import { i18n } from '@spree/dashboard-core'
 import en from './locales/en.json'
 
 /**

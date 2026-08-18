@@ -135,6 +135,7 @@ One-time machine setup: Homebrew `postgresql@18` running on :5432 (with a `postg
 | E2E prerequisites | Once per worktree: `cd spree/api && bundle install && bundle exec rake test_app` (then `pnpm wt:e2e`) |
 | Meilisearch search provider | Optional: `brew install meilisearch`, run it, set `MEILISEARCH_URL` in `server/.env`, `bin/rails spree:search:reindex` |
 | Hosted dashboard at `/dashboard` (single-node test) | `pnpm server:dashboard` to build `packages/dashboard-starter/dist`, set `SPREE_DASHBOARD_DIST_PATH=<monorepo>/packages/dashboard-starter/dist` in `server/.env` |
+| Hosted seller panel at `/sellers` (single-node test) | `pnpm server:seller` to build `packages/seller-dashboard-starter/dist`, set `SPREE_SELLER_PANEL_DIST_PATH=<monorepo>/packages/seller-dashboard-starter/dist` in `server/.env` |
 | Broken beyond repair | `wt remove` and recreate — or `dropdb spree_dev_<branch>`, delete `server/`, re-run `pnpm wt:setup` |
 
 **The legacy Docker compose flow (`pnpm server:setup` / `server:dev` / `server:stop` etc.) is deprecated — never use it.** It exists only for spree-starter parity; it fights the worktree stack for ports and its teardown scripts wipe shared state.
