@@ -1,3 +1,14 @@
+## 2026-08-18: Payment family: state machines removed, `state` renamed to `status`
+
+**Context:** `6.0-normalize-state-to-status.md` listed Payment as a plain column rename with the machine kept (`state_machine :status`). Reviewing the new payments workflows (Capture, Void, Refunds::Create, PaymentSessions::Complete, HandleWebhook) showed the machine had become residue: guards were duplicated between workflow steps and the transition graph, events published from two different layers (`payment.captured` from the workflow, `payment.completed` from an `after_transition` that fires inside `capture!`'s lock), and the actual transitions hid behind `send("#{success_state}!")`. Order and Fulfillment had already answered this question.
+
+**Decision:** Remove the machines from `Spree::Payment`, `Spree::PaymentSession` and `Spree::PaymentSetupSession` in the same change as the Payment column rename. Payment joins `Spree::HasStatus`; transitions are explicit named writes in `Payment::Processing` and the payments workflows, publishing `payment.completed`/`payment.voided` at the write. The two session models (identical machines) share a `Spree::PaymentSessionTransitions` concern whose non-raising guarded transitions preserve the non-bang event semantics the racing webhook/synchronous paths rely on. `has_status` now applies its `default:` as an ActiveModel attribute default (no callbacks — also removed Fulfillment's and Seller's `after_initialize`) and refuses to shadow methods Rails already defines (Payment's `invalid` vs `ActiveModel#invalid?`). Bridges until 6.1: `state`/`state=`, `has_invalid_state?`, `with_state`, `INVALID_STATES`, ransack `state` alias.
+
+**Rejected:** keeping the machine with a renamed column (two sources of truth for the transition graph, callbacks still firing side effects inside locks); non-bang event shells on Payment (the machine is gone — Order precedent is wholesale removal, and all callers were internal); a generic transition-validation layer in `HasStatus` (a state machine by another name — the concern's docs already rule it out).
+
+**Consequences:** an illegal direct status write no longer raises — the workflows are the transitions, which is the accepted trade across the family. InventoryUnit and GiftCard remain the last `state` columns and follow the same rename+removal doctrine when they move.
+
+
 ## 2026-08-16: A vendor's status is something that happened to it, not a field you set
 
 Damian asked for vendor management with "invitation, approvals, all in

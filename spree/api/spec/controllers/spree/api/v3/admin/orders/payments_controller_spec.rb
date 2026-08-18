@@ -161,7 +161,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
 
   describe 'PATCH #capture' do
     before do
-      payment.update_column(:state, 'pending') if payment.state != 'pending'
+      payment.update_column(:status, 'pending') if payment.status != 'pending'
     end
 
     it 'captures the payment' do
@@ -172,20 +172,20 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
 
       expect(response).to have_http_status(:ok)
       expect(json_response['status']).to eq('completed')
-      expect(payment.reload.state).to eq('completed')
+      expect(payment.reload.status).to eq('completed')
     end
 
     context 'when payment is already completed' do
-      before { payment.update_column(:state, 'completed') }
+      before { payment.update_column(:status, 'completed') }
 
-      it 'is a no-op (state machine treats this as success)' do
+      it 'is a no-op (an already-done transition is a success)' do
         patch :capture, params: {
           order_id: order_with_payment.prefixed_id,
           id: payment.prefixed_id
         }, as: :json
 
         expect(response).to have_http_status(:ok)
-        expect(payment.reload.state).to eq('completed')
+        expect(payment.reload.status).to eq('completed')
       end
     end
 
@@ -203,7 +203,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
 
         expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['message']).to eq('Bogus Gateway: Forced failure')
-        expect(payment.reload.state).to eq('failed')
+        expect(payment.reload.status).to eq('failed')
       end
     end
   end
@@ -217,20 +217,20 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
 
       expect(response).to have_http_status(:ok)
       expect(json_response['status']).to eq('void')
-      expect(payment.reload.state).to eq('void')
+      expect(payment.reload.status).to eq('void')
     end
 
     context 'when payment is already voided' do
-      before { payment.update_column(:state, 'void') }
+      before { payment.update_column(:status, 'void') }
 
-      it 'is a no-op (state machine treats this as success)' do
+      it 'is a no-op (an already-done transition is a success)' do
         patch :void, params: {
           order_id: order_with_payment.prefixed_id,
           id: payment.prefixed_id
         }, as: :json
 
         expect(response).to have_http_status(:ok)
-        expect(payment.reload.state).to eq('void')
+        expect(payment.reload.status).to eq('void')
       end
     end
 
