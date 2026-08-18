@@ -1,29 +1,29 @@
 require 'spec_helper'
 
-describe Spree::Image, type: :model do
-  let(:spree_image) { described_class.new }
+describe Spree::Media, type: :model do
+  let(:media) { described_class.new }
   let(:image_file) { File.open("#{Spree::Core::Engine.root}/spec/fixtures/thinking-cat.jpg") }
   let(:text_file) { File.open("#{Spree::Core::Engine.root}/spec/fixtures/text-file.txt") }
 
   context 'validation' do
     it 'has attachment present' do
-      spree_image.attachment.attach(io: image_file, filename: 'thinking-cat.jpg')
-      expect(spree_image).to be_valid
+      media.attachment.attach(io: image_file, filename: 'thinking-cat.jpg')
+      expect(media).to be_valid
     end
 
     it 'has attachment absent' do
-      spree_image.attachment.attach(nil)
-      expect(spree_image).not_to be_valid
+      media.attachment.attach(nil)
+      expect(media).not_to be_valid
     end
 
     it 'allows only web image content types' do
-      spree_image.attachment.attach(io: image_file, filename: 'thinking-cat.jpg', content_type: 'image/jpeg')
-      expect(spree_image).to be_valid
+      media.attachment.attach(io: image_file, filename: 'thinking-cat.jpg', content_type: 'image/jpeg')
+      expect(media).to be_valid
     end
 
     it 'does not allow non-web image content types' do
-      spree_image.attachment.attach(io: text_file, filename: 'text-file.txt', content_type: 'text/plain')
-      expect(spree_image).not_to be_valid
+      media.attachment.attach(io: text_file, filename: 'text-file.txt', content_type: 'text/plain')
+      expect(media).not_to be_valid
     end
   end
 
@@ -99,6 +99,87 @@ describe Spree::Image, type: :model do
       create(:image, viewable: variant)
       create(:image, viewable: variant)
       expect(product.reload.media_count).to eq(3)
+    end
+  end
+
+  describe 'thumbnail choice with video in the gallery' do
+    let(:product) { create(:product) }
+
+    it 'skips a leading video that has no still' do
+      video = create(:video_asset, viewable: product, position: 1)
+      image = create(:image, viewable: product, position: 2)
+
+      product.update_thumbnail!
+
+      expect(product.reload.primary_media_id).to eq(image.id)
+      expect(video.renderable_as_image?).to be(false)
+    end
+
+    it 'leaves no thumbnail when every row is a video without a still' do
+      create(:video_asset, viewable: product, position: 1)
+
+      product.update_thumbnail!
+
+      # Better none than one that renders as a broken image.
+      expect(product.reload.primary_media_id).to be_nil
+    end
+
+    it 'leaves a variant without a thumbnail on the same terms' do
+      variant = create(:variant, product: product)
+      create(:video_asset, viewable: variant, position: 1)
+
+      variant.update_thumbnail!
+
+      expect(variant.reload.primary_media_id).to be_nil
+    end
+
+    it 'uses a leading video once it has a still' do
+      video = create(:external_video_asset, viewable: product, position: 1)
+      create(:image, viewable: product, position: 2)
+
+      product.update_thumbnail!
+
+      # A YouTube link carries the provider's own thumbnail, so it can lead.
+      expect(product.reload.primary_media_id).to eq(video.id)
+    end
+  end
+
+  describe 'media_count when a row changes owner' do
+    let(:product) { create(:product) }
+    let(:other_product) { create(:product) }
+
+    it 'clears the old owner thumbnail, which still pointed at the moved row' do
+      media = create(:image, viewable: product)
+      expect(product.reload.primary_media_id).to eq(media.id)
+
+      media.update!(viewable: other_product)
+
+      expect(product.reload.primary_media_id).to be_nil
+      expect(other_product.reload.primary_media_id).to eq(media.id)
+    end
+
+    it 'treats a type-only change as a move' do
+      variant = create(:variant, product: product)
+      media = create(:image, viewable: variant)
+
+      # Same numeric id on both sides, so only viewable_type changes. Watching
+      # viewable_id alone would sit this move out and leave both owners wrong.
+      Spree::Media.where(id: media.id).update_all(viewable_id: product.id)
+      media.reload
+      media.update!(viewable_type: 'Spree::Product')
+
+      expect(media.send(:saved_change_to_viewable?)).to be(true)
+      expect(media.reload.viewable).to eq(product)
+    end
+
+    it 'moves the count from the old owner to the new one' do
+      media = create(:image, viewable: product)
+      expect(product.reload.media_count).to eq(1)
+
+      media.update!(viewable: other_product)
+
+      expect(product.reload.media_count).to eq(0)
+      expect(other_product.reload.media_count).to eq(1)
     end
   end
 

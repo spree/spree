@@ -282,11 +282,6 @@ en:
           attributes:
             base:
               cannot_destroy_used_gift_card: Can't delete a used gift card
-        spree/image:
-          attributes:
-            attachment:
-              attachment_must_be_present: must be present
-              not_allowed_content_type: has not allowed content type
         spree/import:
           attributes:
             attachment:
@@ -315,6 +310,13 @@ en:
             country:
               already_in_market: is already assigned to another market in this store
               not_in_shipping_zone: is not covered by any shipping zone. Please set up a shipping zone first.
+        spree/media:
+          attributes:
+            attachment:
+              attachment_must_be_present: must be present
+              not_allowed_content_type: has not allowed content type
+            external_video_url:
+              unsupported_video_provider: must be a YouTube or Vimeo link
         spree/payment:
           attributes:
             amount:

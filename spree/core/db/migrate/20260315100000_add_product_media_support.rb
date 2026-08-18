@@ -14,7 +14,10 @@ class AddProductMediaSupport < ActiveRecord::Migration[7.2]
 
     reversible do |dir|
       dir.up do
-        Spree::Asset.unscoped.where(media_type: nil).update_all(media_type: 'image')
+        # Raw SQL against this migration's own table name — Spree::Asset became
+        # Spree::Media on a later migration, so reaching through the model here
+        # would look for a table that does not exist yet.
+        execute "UPDATE spree_assets SET media_type = 'image' WHERE media_type IS NULL"
       end
     end
   end

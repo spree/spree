@@ -39,7 +39,7 @@ import {
   Textarea,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { ImagePlusIcon, Loader2Icon, PencilIcon, TrashIcon } from 'lucide-react'
+import { FilmIcon, ImagePlusIcon, Loader2Icon, PencilIcon, PlayIcon, TrashIcon } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, type UseFormReturn, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -51,8 +51,10 @@ import { useOptionTypesByIds } from '../../../hooks/use-option-types'
 import { useDeleteProductMedia } from '../../../hooks/use-product-media'
 import { useProductType, useProductTypes } from '../../../hooks/use-product-types'
 import { useTaxCategories } from '../../../hooks/use-tax-categories'
-import type { ProductFormValues } from '../../../schemas/product'
+import { parseVideoUrl } from '../../../lib/video-url'
+import type { MediaType, ProductFormValues } from '../../../schemas/product'
 import { ProductBulkPriceEditor } from '../bulk-price-editor/product-bulk-price-editor'
+import { AddVideoDialog } from './add-video-dialog'
 import { InventorySection } from './inventory-section'
 import { MediaEditSheet } from './media-edit-sheet'
 import { VariantsSection } from './variants-section'
@@ -165,6 +167,17 @@ interface PendingUpload {
   progress: 'uploading' | 'attaching' | 'done' | 'error'
 }
 
+// What the gallery accepts. `accept` on the file input only constrains the OS
+// picker — a drop bypasses it entirely, so handleDrop filters against the same
+// list or an unsupported file uploads and then fails the whole product save.
+const ACCEPTED_MEDIA = ['image/', 'video/mp4', 'video/webm', 'video/quicktime']
+
+function isAcceptedMedia(file: File): boolean {
+  return ACCEPTED_MEDIA.some((type) =>
+    type.endsWith('/') ? file.type.startsWith(type) : file.type === type,
+  )
+}
+
 // Unified, form-backed media card. Single source of truth: form.media.
 // Both new and edit pages use the same component; the only difference is
 // whether form.media starts empty (new) or pre-hydrated from the persisted
@@ -192,6 +205,7 @@ export function MediaCard({
   const confirm = useConfirm()
   const [pending, setPending] = useState<PendingUpload[]>([])
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
+  const [addingVideo, setAddingVideo] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const items = useWatch({ control: form.control, name: 'media' }) ?? []
@@ -247,7 +261,12 @@ export function MediaCard({
                 signed_id: result.signedId,
                 alt: file.name,
                 position: current.length + 1,
+                media_type: file.type.startsWith('video/')
+                  ? ('video' as const)
+                  : ('image' as const),
                 previewUrl: preview,
+                // Lets an uploaded video play in the editor before it is saved.
+                videoUrl: file.type.startsWith('video/') ? preview : null,
                 uploadId,
               },
             ],
@@ -270,14 +289,41 @@ export function MediaCard({
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault()
-      if (e.dataTransfer.files.length > 0) handleFiles(e.dataTransfer.files)
+      const accepted = Array.from(e.dataTransfer.files).filter(isAcceptedMedia)
+      const rejected = e.dataTransfer.files.length - accepted.length
+
+      if (rejected > 0) toast.error(t('admin.products.media.unsupported_file', { count: rejected }))
+      if (accepted.length > 0) handleFiles(accepted)
     },
-    [handleFiles],
+    [handleFiles, t],
   )
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault()
   }, [])
+
+  // An external video has no file to upload — it goes straight into form state
+  // with its link, and the provider's own still stands in as the preview.
+  const handleAddVideo = useCallback(
+    (url: string) => {
+      const current = form.getValues('media') ?? []
+      form.setValue(
+        'media',
+        [
+          ...current,
+          {
+            media_type: 'external_video' as const,
+            external_video_url: url,
+            position: current.length + 1,
+            previewUrl: parseVideoUrl(url)?.thumbnailUrl ?? undefined,
+            uploadId: crypto.randomUUID(),
+          },
+        ],
+        { shouldDirty: true },
+      )
+    },
+    [form],
+  )
 
   const handleDelete = useCallback(
     async (index: number) => {
@@ -356,6 +402,7 @@ export function MediaCard({
                       sortableId={sortableIds[index]}
                       previewUrl={media.previewUrl ?? null}
                       alt={media.alt ?? ''}
+                      mediaType={media.media_type ?? 'image'}
                       onEdit={() => setEditingIndex(index)}
                       onDelete={() => handleDelete(index)}
                     />
@@ -365,11 +412,21 @@ export function MediaCard({
                       key={upload.id}
                       className="relative aspect-square overflow-hidden rounded-lg border border-border bg-muted"
                     >
-                      <img
-                        src={upload.preview}
-                        alt=""
-                        className="size-full object-cover opacity-60"
-                      />
+                      {upload.file.type.startsWith('video/') ? (
+                        <video
+                          src={upload.preview}
+                          muted
+                          playsInline
+                          preload="metadata"
+                          className="size-full object-cover opacity-60"
+                        />
+                      ) : (
+                        <img
+                          src={upload.preview}
+                          alt=""
+                          className="size-full object-cover opacity-60"
+                        />
+                      )}
                       <div className="absolute inset-0 flex items-center justify-center">
                         {upload.progress === 'error' ? (
                           <span className="text-xs text-destructive font-medium">
@@ -402,13 +459,26 @@ export function MediaCard({
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/*"
+            accept={ACCEPTED_MEDIA.map((type) => (type.endsWith('/') ? `${type}*` : type)).join(
+              ',',
+            )}
             multiple
             className="hidden"
             onChange={(e) => e.target.files && handleFiles(e.target.files)}
           />
+
+          <Button
+            type="button"
+            variant="outline"
+            className="self-start"
+            onClick={() => setAddingVideo(true)}
+          >
+            <FilmIcon />
+            {t('admin.products.media.add_video')}
+          </Button>
         </CardContent>
       </Card>
+      <AddVideoDialog open={addingVideo} onOpenChange={setAddingVideo} onAdd={handleAddVideo} />
       {editingEntry && editingIndex !== null && (
         <MediaEditSheet
           form={form}
@@ -428,12 +498,14 @@ function SortableMediaThumbnail({
   sortableId,
   previewUrl,
   alt,
+  mediaType,
   onEdit,
   onDelete,
 }: {
   sortableId: string
   previewUrl: string | null
   alt: string
+  mediaType: MediaType
   onEdit: () => void
   onDelete: () => void
 }) {
@@ -451,13 +523,24 @@ function SortableMediaThumbnail({
     <div
       ref={setNodeRef}
       style={style}
+      data-slot="media-thumbnail"
       {...attributes}
       {...listeners}
       className={`group relative aspect-square cursor-grab overflow-hidden rounded-md border border-border bg-muted touch-none active:cursor-grabbing ${
         isDragging ? 'opacity-40 ring-2 ring-primary/40' : ''
       }`}
     >
-      {previewUrl ? (
+      {previewUrl && mediaType === 'video' ? (
+        // An uploaded video has no still until a poster is set, so its own
+        // first frame stands in — an <img> would render a broken icon.
+        <video
+          src={previewUrl}
+          muted
+          playsInline
+          preload="metadata"
+          className="pointer-events-none size-full object-cover"
+        />
+      ) : previewUrl ? (
         <img
           src={previewUrl}
           alt={alt}
@@ -466,8 +549,18 @@ function SortableMediaThumbnail({
         />
       ) : (
         <div className="flex size-full items-center justify-center text-muted-foreground">
-          <ImagePlusIcon className="size-6" />
+          {mediaType === 'image' ? (
+            <ImagePlusIcon className="size-6" />
+          ) : (
+            <FilmIcon className="size-6" />
+          )}
         </div>
+      )}
+
+      {mediaType !== 'image' && (
+        <span className="pointer-events-none absolute left-1.5 top-1.5 z-10 flex size-6 items-center justify-center rounded-full bg-black/60 text-white">
+          <PlayIcon className="size-3 fill-current" />
+        </span>
       )}
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex justify-end gap-1 p-1.5 opacity-0 translate-y-1 transition-all duration-200 ease-out group-hover:pointer-events-auto group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-focus-within:translate-y-0">

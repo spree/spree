@@ -2,7 +2,7 @@
   "admin": {
     "a11y": {
       "delete_image": "Delete image",
-      "edit_media": "Edit image"
+      "edit_media": "Edit media"
     },
     "allowed_origins": {
       "add_cta": "Add allowed origin",
@@ -901,6 +901,15 @@
         "alt": {
           "label": "Alt text",
           "placeholder": "Describe the image for accessibility and SEO"
+        },
+        "external_video_url": {
+          "help": "Paste a YouTube or Vimeo link.",
+          "label": "Video link",
+          "placeholder": "https://www.youtube.com/watch?v=..."
+        },
+        "poster": {
+          "help": "The still shown before the video plays. Leave blank to use the provider’s own image where there is one.",
+          "label": "Poster image"
         }
       },
       "option_type": {
@@ -3310,14 +3319,23 @@
         "unknown_location": "Unknown location"
       },
       "media": {
+        "add_video": "Add video link",
+        "add_video_submit": "Add video",
+        "add_video_title": "Add a video link",
         "assigned_variants_help": "Pick the variants this image represents. Leave blank to apply to all variants.",
         "assigned_variants_label": "Assigned variants",
         "delete_confirm": "Delete this media? This cannot be undone.",
         "drop_hint": "Drag & drop media here, or click to browse",
         "edit_title": "Edit media",
-        "file_types_hint": "PNG, JPG, WebP up to 10MB",
+        "file_types_hint": "Images (PNG, JPG, WebP) and video (MP4, WebM, MOV)",
+        "focal_point_help": "Click the image to set what stays in frame when it is cropped.",
+        "focal_point_reset": "Reset",
+        "unsupported_file_one": "{{count}} file was not added — only images and video are supported.",
+        "unsupported_file_other": "{{count}} files were not added — only images and video are supported.",
         "upload_failed": "Failed to upload {{name}}: {{message}}",
-        "upload_status_failed": "Failed"
+        "upload_status_failed": "Failed",
+        "video_preview_title": "Video preview",
+        "video_url_invalid": "Enter a YouTube or Vimeo link."
       },
       "no_categories_found": "No categories found",
       "no_collections_found": "No collections found",
@@ -3396,14 +3414,6 @@
         "reference_placeholder": "PO number, supplier invoice, …",
         "review_description": "Review the transfer before creating. Items can't be changed afterwards.",
         "search_items_placeholder": "Search by name or SKU (3+ chars)…"
-      },
-      "variant_media_picker": {
-        "add_count_one": "Add {{count}}",
-        "add_count_other": "Add {{count}}",
-        "empty_all_linked": "All product media is already linked to this variant.",
-        "empty_no_media": "No product media yet — upload images on the product first.",
-        "title": "Select from product gallery",
-        "trigger": "Select from product gallery"
       },
       "variants": {
         "add_option": "Add option",

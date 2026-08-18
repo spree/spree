@@ -117,11 +117,18 @@ RSpec.describe Spree::CustomField, type: :model do
     end
 
     it 'accepts a definition naming an STI subclass of the resource' do
-      # Images store `Spree::Asset` in the polymorphic column, while the
-      # definition names the concrete `Spree::Image`.
-      image_definition = create(:custom_field_definition, resource_type: 'Spree::Image', key: 'sti_key')
-      custom_field = build(:custom_field, custom_field_definition: image_definition, value: 'x')
-      custom_field.resource_type = 'Spree::Asset'
+      # An STI row stores its base class in the polymorphic column while the
+      # definition names the subclass, so the two still have to match up.
+      subclass = Class.new(Spree::Variant) do
+        def self.name = 'Spree::TestVariantSubclass'
+      end
+      stub_const('Spree::TestVariantSubclass', subclass)
+      allow(Spree::CustomFieldDefinition).to receive(:available_resources).
+        and_return(Spree::CustomFieldDefinition.available_resources + [subclass])
+
+      definition = create(:custom_field_definition, resource_type: 'Spree::TestVariantSubclass', key: 'sti_key')
+      custom_field = build(:custom_field, custom_field_definition: definition, value: 'x')
+      custom_field.resource_type = 'Spree::Variant'
 
       custom_field.valid?
       expect(custom_field.errors[:resource_type]).to be_empty

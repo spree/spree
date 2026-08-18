@@ -293,7 +293,7 @@ module Spree
       register_resource(:products, group: :catalog, audiences: %i[seller], subjects: -> {
         [Spree::Product, Spree::ProductType, Spree::Variant, Spree::OptionType,
          Spree::OptionValue, Spree::Price, Spree::PriceList, Spree::PriceRule,
-         Spree::Asset, Spree::ProductPublication, Spree::CustomField]
+         Spree::Media, Spree::ProductPublication, Spree::CustomField]
       })
       register_resource(:categories, group: :catalog, subjects: -> {
         [Spree::Category, Spree::ProductCategory]

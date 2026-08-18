@@ -24,7 +24,7 @@ steps:
     name: "Migrate legacy variant-pinned images to product-level media"
     task: "spree:media:migrate_master_images_to_product_media"
     notes: |
-      Enqueues one `Spree::Media::MigrateProductAssetsJob` per product onto
+      Enqueues one `Spree::Images::MigrateProductMediaJob` per product onto
       the `images` queue — confirm your job runner is processing that queue.
       Storefront keeps working while jobs drain (old assets stay variant-pinned
       until each job finishes). For large catalogs, tune with BATCH_SIZE=1000.

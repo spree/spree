@@ -76,7 +76,7 @@ module Spree
 
     # Returns the thumbnail image for this line item
     # Prefers variant primary media, falls back to product primary media
-    # @return [Spree::Asset, nil]
+    # @return [Spree::Media, nil]
     def thumbnail
       variant.primary_media || product.primary_media
     end

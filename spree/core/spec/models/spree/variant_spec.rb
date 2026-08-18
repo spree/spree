@@ -1363,11 +1363,25 @@ describe Spree::Variant, type: :model do
 
   describe '#secondary_image' do
     let(:variant) { create(:variant) }
-    let!(:image1) { create(:image, position: 1, viewable: variant) }
-    let!(:image2) { create(:image, position: 2, viewable: variant) }
 
-    it 'returns the second image' do
-      expect(variant.secondary_image).to eq(image2)
+    context 'with images pinned to the variant' do
+      let!(:image1) { create(:image, position: 1, viewable: variant) }
+      let!(:image2) { create(:image, position: 2, viewable: variant) }
+
+      it 'returns the second image' do
+        expect(variant.secondary_image).to eq(image2)
+      end
+    end
+
+    context 'with product-level media linked to the variant' do
+      let!(:image1) { create(:image, position: 1, viewable: variant.product) }
+      let!(:image2) { create(:image, position: 2, viewable: variant.product) }
+
+      before { variant.associated_media = [image1, image2] }
+
+      it 'reads the gallery rather than variant-pinned images only' do
+        expect(variant.reload.secondary_image).to eq(image2)
+      end
     end
   end
 

@@ -178,11 +178,11 @@ module Spree
     has_many :orders, through: :line_items
     has_many :completed_orders, -> { reorder(nil).distinct.complete }, through: :line_items, source: :order
 
-    has_many :media, -> { order(:position) }, as: :viewable, dependent: :destroy, class_name: 'Spree::Asset'
+    has_many :media, -> { order(:position) }, as: :viewable, dependent: :destroy, class_name: 'Spree::Media'
 
     has_many :variant_images, -> { order(:position) }, source: :images, through: :variants
 
-    belongs_to :primary_media, class_name: 'Spree::Asset', optional: true, foreign_key: :primary_media_id
+    belongs_to :primary_media, class_name: 'Spree::Media', optional: true, foreign_key: :primary_media_id
 
     has_many :option_value_variants, class_name: 'Spree::OptionValueVariant', through: :variants
     has_many :option_values, class_name: 'Spree::OptionValue', through: :variants
@@ -339,7 +339,7 @@ module Spree
       # `[]` and trigger `dependent: :destroy` on every persisted asset.
       # Explicit deletes go through the dedicated DELETE /media endpoint.
       return if media_params.blank?
-      return super if media_params.first.is_a?(Spree::Asset)
+      return super if media_params.first.is_a?(Spree::Media)
 
       if new_record?
         @pending_media_params = media_params
@@ -535,10 +535,13 @@ module Spree
       @variant_for_images ||= find_variant_for_images
     end
 
-    # Returns secondary media for Product (for hover effects).
-    # @return [Spree::Asset, nil]
+    # @deprecated Read #gallery_media directly; removed in 6.1. Nothing in
+    #   Spree calls this — a hover image is a storefront presentation choice,
+    #   not something core should name.
+    # @return [Spree::Media, nil]
     def secondary_image
-      variant_for_images&.secondary_image
+      Spree::Deprecation.warn('Spree::Product#secondary_image is deprecated and will be removed in Spree 6.1. Use #gallery_media instead.')
+      gallery_media.second
     end
 
     # @deprecated Use media_count instead
@@ -550,7 +553,14 @@ module Spree
     # Checks product-level media first, then falls back to variant images.
     # Called when media is added, removed, or reordered.
     def update_thumbnail!
-      first_media = media.order(:position).first || variant_images.order(:position).first
+      # Fresh scopes, never the cached associations — this runs from a media
+      # row's after_commit, where a loaded association is missing its siblings.
+      candidates = media.reload.order(:position).presence || variant_images.reload.order(:position)
+      # Only media that can draw as an image: `thumbnail_url` is rendered in an
+      # <img> everywhere it's used, so a video with no still leaves no
+      # thumbnail at all rather than a broken one.
+      first_media = candidates.find(&:renderable_as_image?)
+
       update_column(:primary_media_id, first_media&.id)
     end
 
@@ -844,35 +854,29 @@ module Spree
     end
 
     def apply_media(media_params)
-      # Eager-load Asset descendants once so the type allowlist is stable across
-      # the loop (and across requests once subclasses are referenced). Computed
-      # per-call rather than at class-load to avoid forcing autoload of every
-      # Asset subclass during boot.
-      allowed_types = [Spree::Asset, *Spree::Asset.descendants].map(&:name).to_set
       media_params.each do |raw|
         attrs = raw.respond_to?(:to_h) ? raw.to_h : raw
         attrs = attrs.with_indifferent_access
 
         # Upsert path: entries with an `id` patch an existing asset (alt,
-        # position, variant_ids). Entries with a `signed_id` create+attach.
+        # position, variant_ids, focal point, video URL). Entries with a
+        # `signed_id` create+attach; external videos create with neither.
         # Omitting an entry leaves it alone — explicit DELETE on the dedicated
         # media endpoint is still the only way to remove an asset.
         asset_id = attrs.delete(:id)
         if asset_id.present?
           asset = media.find_by_param(asset_id) || next
-          asset.update!(attrs.except(:signed_id, :type))
+          asset.update!(attrs.except(:signed_id))
           next
         end
 
         signed_id = attrs.delete(:signed_id)
-        next if signed_id.blank?
-
-        media_type = attrs.delete(:type) || 'Spree::Image'
-        next unless allowed_types.include?(media_type)
+        # An external video carries a URL instead of a file, so it's the one
+        # kind of new row that legitimately arrives without a signed id.
+        next if signed_id.blank? && attrs[:media_type] != 'external_video'
 
         asset = media.build(attrs.except(:id))
-        asset.type = media_type
-        asset.attachment.attach(signed_id)
+        asset.attachment.attach(signed_id) if signed_id.present?
         asset.save!
       end
     end

@@ -438,14 +438,13 @@ module Spree
 
         Rails.application.config.spree.custom_fields.enabled_resources = [
           Spree::Address,
-          Spree::Asset,
           Spree::Claim,
           Spree::Collection,
           Spree::CreditCard,
           Spree::Exchange,
           Spree::GiftCard,
-          Spree::Image,
           Spree::LineItem,
+          Spree::Media,
           Spree::NewsletterSubscriber,
           Spree::OptionType,
           Spree::OptionValue,

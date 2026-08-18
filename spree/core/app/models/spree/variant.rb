@@ -58,17 +58,17 @@ module Spree
     has_many :option_value_variants, class_name: 'Spree::OptionValueVariant'
     has_many :option_values, through: :option_value_variants, dependent: :destroy, class_name: 'Spree::OptionValue'
 
-    has_many :images, -> { order(:position) }, as: :viewable, dependent: :destroy, class_name: 'Spree::Asset'
+    has_many :images, -> { order(:position) }, as: :viewable, dependent: :destroy, class_name: 'Spree::Media'
 
     has_many :variant_media, class_name: 'Spree::VariantMedia', dependent: :destroy
     # Order through the asset's product-level position so a variant's gallery
     # follows whatever ordering the merchant set on the product. There's no
     # per-variant reordering — link/unlink only.
     has_many :associated_media,
-             -> { order(Spree::Asset.arel_table[:position].asc) },
-             through: :variant_media, source: :asset, class_name: 'Spree::Asset'
+             -> { order(Spree::Media.arel_table[:position].asc) },
+             through: :variant_media, source: :asset, class_name: 'Spree::Media'
 
-    belongs_to :primary_media, class_name: 'Spree::Asset', optional: true, foreign_key: :primary_media_id
+    belongs_to :primary_media, class_name: 'Spree::Media', optional: true, foreign_key: :primary_media_id
 
     has_many :prices,
              class_name: 'Spree::Price',
@@ -446,20 +446,32 @@ module Spree
     # Uses gallery_media so product-level assets linked via VariantMedia are
     # considered alongside legacy variant-pinned images.
     def update_thumbnail!
-      first_media = gallery_media.first
+      # Read through a fresh scope, never the cached association — this runs
+      # from a media row's after_commit, and a loaded `images`/`associated_media`
+      # would be missing the sibling rows created after it.
+      candidates = gallery_media.reload.to_a
+      # See Product#update_thumbnail! — a video without a still can't be a thumbnail.
+      first_media = candidates.find(&:renderable_as_image?)
+
       update_column(:primary_media_id, first_media&.id)
     end
 
-    # Returns second Image for Variant (for hover effects).
-    # @return [Spree::Image, nil]
+    # @deprecated Read #gallery_media directly; removed in 6.1. Nothing in
+    #   Spree calls this — a hover image is a storefront presentation choice,
+    #   not something core should name.
+    # @return [Spree::Media, nil]
     def secondary_image
-      images.second
+      Spree::Deprecation.warn('Spree::Variant#secondary_image is deprecated and will be removed in Spree 6.1. Use #gallery_media instead.')
+      gallery_media.second
     end
 
-    # Returns all images except the primary media, combining variant and product images.
-    # @return [Array<Spree::Image>]
+    # @deprecated Read #gallery_media directly; removed in 6.1. Nothing in
+    #   Spree calls this, and which images to show beside the main one is a
+    #   storefront presentation choice.
+    # @return [Array<Spree::Media>]
     def additional_images
-      @additional_images ||= (images + product.images).uniq.reject { |image| image.id == primary_media&.id }
+      Spree::Deprecation.warn('Spree::Variant#additional_images is deprecated and will be removed in Spree 6.1. Use #gallery_media instead.')
+      gallery_media.reject { |media| media.id == primary_media&.id }
     end
 
     # Returns an array of hashes with the option type name, value and presentation

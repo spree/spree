@@ -68,7 +68,7 @@ module Spree
         product_filter_sort_option_serializer: 'Spree::Api::V3::ProductFilterSortOptionSerializer',
 
         # v3 event serializers (for models without Store API endpoints yet)
-        asset_serializer: 'Spree::Api::V3::AssetSerializer',
+        media_event_serializer: 'Spree::Api::V3::MediaEventSerializer',
         return_serializer: 'Spree::Api::V3::ReturnSerializer',
         return_line_item_serializer: 'Spree::Api::V3::ReturnLineItemSerializer',
         exchange_serializer: 'Spree::Api::V3::ExchangeSerializer',

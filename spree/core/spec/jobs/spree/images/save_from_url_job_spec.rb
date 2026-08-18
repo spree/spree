@@ -33,7 +33,7 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
     end
 
     it "downloads and attaches image from the URL" do
-      expect { subject }.to change(Spree::Image, :count).by(1)
+      expect { subject }.to change(Spree::Media, :count).by(1)
       expect(image.attachment).to be_attached
       expect(image.external_url).to eq(external_url.strip)
       expect(image.position).to eq(1)
@@ -83,7 +83,7 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
       end
 
       it 'discards the job without downloading' do
-        expect { subject }.not_to change(Spree::Image, :count)
+        expect { subject }.not_to change(Spree::Media, :count)
       end
     end
 
@@ -113,7 +113,7 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
 
         link = Spree::VariantMedia.last
         expect(link.variant_id).to eq(linked_variant.id)
-        expect(link.media_id).to eq(Spree::Image.last.id)
+        expect(link.media_id).to eq(Spree::Media.last.id)
       end
 
       it 'is idempotent on repeat invocations' do

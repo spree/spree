@@ -2,7 +2,7 @@
   "admin": {
     "a11y": {
       "delete_image": "حذف الصورة",
-      "edit_media": "تعديل الصورة"
+      "edit_media": "تحرير الوسائط"
     },
     "allowed_origins": {
       "add_cta": "أضف الأصل المسموح به",
@@ -912,6 +912,15 @@
         "alt": {
           "label": "Alt text",
           "placeholder": "صف الصورة لإمكانية الوصول وSEO"
+        },
+        "external_video_url": {
+          "help": "الصق رابط YouTube أو Vimeo.",
+          "label": "رابط الفيديو",
+          "placeholder": "https://www.youtube.com/watch?v=..."
+        },
+        "poster": {
+          "help": "الصورة الثابتة التي تظهر قبل تشغيل الفيديو. اتركها فارغة لاستخدام صورة المزود إن وُجدت.",
+          "label": "صورة الغلاف"
         }
       },
       "option_type": {
@@ -3326,14 +3335,22 @@
         "unknown_location": "موقع غير معروف"
       },
       "media": {
+        "add_video": "إضافة رابط فيديو",
+        "add_video_submit": "إضافة الفيديو",
+        "add_video_title": "إضافة رابط فيديو",
         "assigned_variants_help": "اختر المتغيرات التي تمثلها هذه الصورة. اتركه فارغًا ليتم تطبيقه على كافة المتغيرات.",
         "assigned_variants_label": "المتغيرات المخصصة",
         "delete_confirm": "هل تريد حذف هذه الوسائط؟ لا يمكن التراجع عن هذا.",
         "drop_hint": "قم بسحب وإفلات الوسائط هنا، أو انقر للتصفح",
         "edit_title": "تحرير الوسائط",
-        "file_types_hint": "PNG، JPG، WebP حتى 10 ميغابايت",
+        "file_types_hint": "صور (PNG، JPG، WebP) وفيديو (MP4، WebM، MOV)",
+        "focal_point_help": "انقر على الصورة لتحديد الجزء الذي يبقى ظاهراً عند الاقتصاص.",
+        "focal_point_reset": "إعادة تعيين",
+        "unsupported_file": "لم تتم إضافة {{count}} ملف — الصور والفيديو فقط مدعومة.",
         "upload_failed": "فشل تحميل {{name}}: {{message}}",
-        "upload_status_failed": "فشل"
+        "upload_status_failed": "فشل",
+        "video_preview_title": "معاينة الفيديو",
+        "video_url_invalid": "أدخل رابط YouTube أو Vimeo."
       },
       "no_categories_found": "لم يتم العثور على فئات",
       "no_collections_found": "لم يتم العثور على مجموعات",
@@ -3412,14 +3429,6 @@
         "reference_placeholder": "رقم أمر الشراء، فاتورة المورّد، …",
         "review_description": "قم بمراجعة النقل قبل الإنشاء. لا يمكن تغيير العناصر بعد ذلك.",
         "search_items_placeholder": "البحث بالاسم أو SKU (3+ أحرف) …"
-      },
-      "variant_media_picker": {
-        "add_count_one": "إضافة {{count}}",
-        "add_count_other": "إضافة {{count}}",
-        "empty_all_linked": "جميع وسائط المنتج مرتبطة بالفعل بهذا المتغير.",
-        "empty_no_media": "لا توجد وسائط للمنتج بعد — ارفع الصور على المنتج أولاً.",
-        "title": "اختر من معرض المنتج",
-        "trigger": "اختر من معرض المنتج"
       },
       "variants": {
         "add_option": "إضافة خيار",
