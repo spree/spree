@@ -106,6 +106,7 @@ module Spree
     after_save :apply_poster_signed_id, if: -> { defined?(@poster_signed_id) }
     after_create :increment_viewable_media_count
     after_destroy :decrement_viewable_media_count
+    after_update :move_viewable_media_count, if: :saved_change_to_viewable_id?
 
     def image?
       media_type == 'image'
@@ -163,6 +164,15 @@ module Spree
     # @return [String, nil]
     def provider_still_url
       external_video&.thumbnail_url
+    end
+
+    # Whether this row can stand in as a thumbnail. A video qualifies only once
+    # it has a still — otherwise a gallery's first tile, and every listing that
+    # renders `thumbnail_url` in an <img>, would come back empty or with a raw
+    # video file.
+    # @return [Boolean]
+    def renderable_as_image?
+      still_image.present? || provider_still_url.present?
     end
 
     def product
@@ -269,6 +279,29 @@ module Spree
         Spree::Product.decrement_counter(:media_count, viewable.product_id)
       when Spree::Product
         Spree::Product.decrement_counter(:media_count, viewable_id)
+      end
+    end
+
+    # A row that changes owner has already been counted against the old one.
+    # Without this the previous owner stays inflated and the new one short.
+    def move_viewable_media_count
+      previous_id, _current_id = saved_change_to_viewable_id
+      previous_type = saved_change_to_viewable_type&.first || viewable_type
+
+      adjust_media_count(previous_type, previous_id, -1)
+      increment_viewable_media_count
+    end
+
+    def adjust_media_count(type, id, by)
+      return if id.blank?
+
+      case type
+      when 'Spree::Variant'
+        variant = Spree::Variant.find_by(id: id) || return
+        Spree::Variant.update_counters(id, media_count: by)
+        Spree::Product.update_counters(variant.product_id, media_count: by)
+      when 'Spree::Product'
+        Spree::Product.update_counters(id, media_count: by) if Spree::Product.exists?(id: id)
       end
     end
 

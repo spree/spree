@@ -75,7 +75,10 @@ export function MediaEditSheet({ form, mediaIndex, variants, open, onOpenChange 
     const row = current[mediaIndex]
     if (!row) return
     snapshotRef.current = {
-      ...(Object.fromEntries(EDITED_FIELDS.map((field) => [field, row[field] ?? null])) as Pick<
+      // Copy each value as-is. Normalizing to null would turn an absent
+      // `poster_signed_id` — typed string | undefined — into a value the
+      // schema rejects, so cancelling would break the next save.
+      ...(Object.fromEntries(EDITED_FIELDS.map((field) => [field, row[field]])) as Pick<
         MediaRow,
         (typeof EDITED_FIELDS)[number]
       >),

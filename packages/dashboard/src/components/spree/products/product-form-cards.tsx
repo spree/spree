@@ -413,9 +413,13 @@ export function MediaCard({
                       className="relative aspect-square overflow-hidden rounded-lg border border-border bg-muted"
                     >
                       {upload.file.type.startsWith('video/') ? (
-                        <div className="flex size-full items-center justify-center text-muted-foreground opacity-60">
-                          <FilmIcon className="size-6" />
-                        </div>
+                        <video
+                          src={upload.preview}
+                          muted
+                          playsInline
+                          preload="metadata"
+                          className="size-full object-cover opacity-60"
+                        />
                       ) : (
                         <img
                           src={upload.preview}
@@ -525,7 +529,17 @@ function SortableMediaThumbnail({
         isDragging ? 'opacity-40 ring-2 ring-primary/40' : ''
       }`}
     >
-      {previewUrl ? (
+      {previewUrl && mediaType === 'video' ? (
+        // An uploaded video has no still until a poster is set, so its own
+        // first frame stands in — an <img> would render a broken icon.
+        <video
+          src={previewUrl}
+          muted
+          playsInline
+          preload="metadata"
+          className="pointer-events-none size-full object-cover"
+        />
+      ) : previewUrl ? (
         <img
           src={previewUrl}
           alt={alt}

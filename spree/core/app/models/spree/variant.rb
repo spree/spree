@@ -446,7 +446,13 @@ module Spree
     # Uses gallery_media so product-level assets linked via VariantMedia are
     # considered alongside legacy variant-pinned images.
     def update_thumbnail!
-      first_media = gallery_media.first
+      # Read through a fresh scope, never the cached association — this runs
+      # from a media row's after_commit, and a loaded `images`/`associated_media`
+      # would be missing the sibling rows created after it.
+      candidates = gallery_media.reload.to_a
+      # See Product#update_thumbnail! — a video without a still can't be a thumbnail.
+      first_media = candidates.find(&:renderable_as_image?) || candidates.first
+
       update_column(:primary_media_id, first_media&.id)
     end
 

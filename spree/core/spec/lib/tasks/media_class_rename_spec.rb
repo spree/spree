@@ -62,6 +62,23 @@ describe 'spree:migrate_media_class_names' do
     expect(custom_field.reload.custom_field_definition_id).to eq(survivor.id)
   end
 
+  it 'collapses two legacy definitions that share a key with no survivor' do
+    # Both rewrite to Spree::Media, so without a merge the second violates the
+    # uniqueness index and aborts the task partway through.
+    asset_def = create(:custom_field_definition, resource_type: 'Spree::Media', key: 'shared')
+    image_def = create(:custom_field_definition, resource_type: 'Spree::Media', key: 'shared_two')
+    Spree::CustomFieldDefinition.where(id: asset_def.id).
+      update_all(resource_type: 'Spree::Asset', key: 'shared')
+    Spree::CustomFieldDefinition.where(id: image_def.id).
+      update_all(resource_type: 'Spree::Image', key: 'shared')
+
+    expect { subject.invoke }.not_to raise_error
+
+    survivors = Spree::CustomFieldDefinition.where(key: 'shared')
+    expect(survivors.count).to eq(1)
+    expect(survivors.first.resource_type).to eq('Spree::Media')
+  end
+
   it 'is idempotent' do
     name_rows_legacy!('Spree::Asset')
     subject.invoke

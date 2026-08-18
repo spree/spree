@@ -1,5 +1,6 @@
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
+import { isSupportedVideoUrl } from '../lib/video-url'
 
 export const stockItemFormSchema = z.object({
   id: z.string().optional(),
@@ -78,27 +79,35 @@ export const MEDIA_TYPES = ['image', 'video', 'external_video'] as const
 
 export type MediaType = (typeof MEDIA_TYPES)[number]
 
-export const mediaFormSchema = z.object({
-  id: z.string().optional(),
-  signed_id: z.string().optional(),
-  alt: z.string().nullable().optional(),
-  position: z.number().int().nonnegative().optional(),
-  variant_ids: z.array(z.string()).optional(),
-  media_type: z.enum(MEDIA_TYPES).optional(),
-  external_video_url: z.string().nullable().optional(),
-  // A video's still frame. Sent as a signed id like the media file itself;
-  // `posterUrl` is the UI-only preview and never reaches the API.
-  poster_signed_id: z.string().optional(),
-  posterUrl: z.string().nullable().optional(),
-  // Playback source for an uploaded video. UI-only: a blob URL before save,
-  // the served file after. Never sent back.
-  videoUrl: z.string().nullable().optional(),
-  focal_point_x: z.number().min(0).max(1).nullable().optional(),
-  focal_point_y: z.number().min(0).max(1).nullable().optional(),
-  // UI-only — strip at submit.
-  previewUrl: z.string().optional(),
-  uploadId: z.string().optional(),
-})
+export const mediaFormSchema = z
+  .object({
+    id: z.string().optional(),
+    signed_id: z.string().optional(),
+    alt: z.string().nullable().optional(),
+    position: z.number().int().nonnegative().optional(),
+    variant_ids: z.array(z.string()).optional(),
+    media_type: z.enum(MEDIA_TYPES).optional(),
+    external_video_url: z.string().nullable().optional(),
+    // A video's still frame. Sent as a signed id like the media file itself;
+    // `posterUrl` is the UI-only preview and never reaches the API.
+    poster_signed_id: z.string().optional(),
+    posterUrl: z.string().nullable().optional(),
+    // Playback source for an uploaded video. UI-only: a blob URL before save,
+    // the served file after. Never sent back.
+    videoUrl: z.string().nullable().optional(),
+    focal_point_x: z.number().min(0).max(1).nullable().optional(),
+    focal_point_y: z.number().min(0).max(1).nullable().optional(),
+    // UI-only — strip at submit.
+    previewUrl: z.string().optional(),
+    uploadId: z.string().optional(),
+  })
+  // The server rejects a link it can't embed, and that failure aborts the whole
+  // product save. Catch it here so the merchant sees it on the field instead.
+  .refine(
+    (media) =>
+      media.media_type !== 'external_video' || isSupportedVideoUrl(media.external_video_url),
+    { message: 'unsupported_video_provider', path: ['external_video_url'] },
+  )
 
 export type MediaFormValues = z.infer<typeof mediaFormSchema>
 

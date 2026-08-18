@@ -102,6 +102,45 @@ describe Spree::Media, type: :model do
     end
   end
 
+  describe 'thumbnail choice with video in the gallery' do
+    let(:product) { create(:product) }
+
+    it 'skips a leading video that has no still' do
+      video = create(:video_asset, viewable: product, position: 1)
+      image = create(:image, viewable: product, position: 2)
+
+      product.update_thumbnail!
+
+      expect(product.reload.primary_media_id).to eq(image.id)
+      expect(video.renderable_as_image?).to be(false)
+    end
+
+    it 'uses a leading video once it has a still' do
+      video = create(:external_video_asset, viewable: product, position: 1)
+      create(:image, viewable: product, position: 2)
+
+      product.update_thumbnail!
+
+      # A YouTube link carries the provider's own thumbnail, so it can lead.
+      expect(product.reload.primary_media_id).to eq(video.id)
+    end
+  end
+
+  describe 'media_count when a row changes owner' do
+    let(:product) { create(:product) }
+    let(:other_product) { create(:product) }
+
+    it 'moves the count from the old owner to the new one' do
+      media = create(:image, viewable: product)
+      expect(product.reload.media_count).to eq(1)
+
+      media.update!(viewable: other_product)
+
+      expect(product.reload.media_count).to eq(0)
+      expect(other_product.reload.media_count).to eq(1)
+    end
+  end
+
   describe 'primary_media_id updates' do
     let(:product) { create(:product) }
     let(:variant) { product.default_variant }

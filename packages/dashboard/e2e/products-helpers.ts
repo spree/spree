@@ -125,7 +125,7 @@ export async function clickMediaThumbnailAction(
 ): Promise<void> {
   const thumb = media.locator('img[src]').first()
   const button = media.getByRole('button', {
-    name: action === 'edit' ? /^edit image$/i : /^delete image$/i,
+    name: action === 'edit' ? /^edit media$/i : /^delete image$/i,
   })
 
   await thumb.scrollIntoViewIfNeeded()

@@ -553,7 +553,13 @@ module Spree
     # Checks product-level media first, then falls back to variant images.
     # Called when media is added, removed, or reordered.
     def update_thumbnail!
-      first_media = media.order(:position).first || variant_images.order(:position).first
+      # Fresh scopes, never the cached associations — this runs from a media
+      # row's after_commit, where a loaded association is missing its siblings.
+      candidates = media.reload.order(:position).presence || variant_images.reload.order(:position)
+      # Skip a leading video that has no still — it would render as an empty or
+      # broken tile everywhere `thumbnail_url` is used.
+      first_media = candidates.find(&:renderable_as_image?) || candidates.first
+
       update_column(:primary_media_id, first_media&.id)
     end
 

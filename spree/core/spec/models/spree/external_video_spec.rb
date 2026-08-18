@@ -58,6 +58,11 @@ RSpec.describe Spree::ExternalVideo do
     end
 
     [
+      # Not videos: a channel, an arbitrary nested path, or a short link with
+      # anything after the id.
+      'https://www.youtube.com/c/dQw4w9WgXcQ',
+      'https://www.youtube.com/not-a-video/ABCDEFGHIJK',
+      'https://youtu.be/dQw4w9WgXcQ/extra',
       'https://example.com/video.mp4',
       'https://www.youtube.com/watch?v=short',
       'https://vimeo.com/not-a-number',

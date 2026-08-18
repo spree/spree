@@ -16,19 +16,27 @@ namespace :spree do
     # Spree::Asset with the same namespace and key. Renaming both would violate
     # the definition's uniqueness, so fold the duplicates into the survivor
     # before the bulk rewrite below touches them.
+    # Group by what the uniqueness index covers. Any group holding more than one
+    # row collapses to a single survivor — including a group of only legacy rows
+    # (a Spree::Asset and a Spree::Image sharing a key), which would otherwise
+    # both rewrite to Spree::Media and collide.
     puts 'Merging duplicate custom field definitions...'
-    survivors = Spree::CustomFieldDefinition.where(resource_type: 'Spree::Media').
-                index_by { |definition| [definition.namespace, definition.key] }
-
     Spree::CustomFieldDefinition.transaction do
-      Spree::CustomFieldDefinition.where(resource_type: legacy_names).find_each do |definition|
-        survivor = survivors[[definition.namespace, definition.key]]
-        next if survivor.blank?
+      Spree::CustomFieldDefinition.
+        where(resource_type: legacy_names + ['Spree::Media']).
+        group_by { |definition| [definition.namespace, definition.key] }.
+        each_value do |group|
+          next if group.one?
 
-        Spree::CustomField.where(custom_field_definition_id: definition.id).
-          update_all(custom_field_definition_id: survivor.id)
-        definition.delete
-      end
+          # Prefer a row already on the new name so its id keeps its custom fields.
+          survivor = group.find { |definition| definition.resource_type == 'Spree::Media' } || group.first
+
+          (group - [survivor]).each do |duplicate|
+            Spree::CustomField.where(custom_field_definition_id: duplicate.id).
+              update_all(custom_field_definition_id: survivor.id)
+            duplicate.delete
+          end
+        end
     end
 
     puts 'Rewriting renamed class-name strings...'

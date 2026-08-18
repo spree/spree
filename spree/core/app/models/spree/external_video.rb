@@ -49,6 +49,11 @@ module Spree
       parse(url).present?
     end
 
+    # Path shapes that actually carry a video id. Anything else on the domain —
+    # /c/name, /@handle, /playlist — is not a video, and treating its last
+    # segment as an id yields an embed URL that plays nothing.
+    YOUTUBE_ID_PATHS = %w[embed shorts live v].freeze
+
     def self.youtube_from(uri, host)
       # Ignore empty segments so a trailing slash — ordinary when a URL is
       # copied from the address bar — parses like the same link without one.
@@ -56,11 +61,11 @@ module Spree
 
       video_id =
         if host.include?('youtu.be')
-          segments.first
+          # A short link is the id and nothing else.
+          segments.first if segments.one?
         elsif uri.path.chomp('/') == '/watch'
           URI.decode_www_form(uri.query.to_s).to_h['v']
-        else
-          # /embed/ID, /shorts/ID, /live/ID
+        elsif segments.size == 2 && segments.first.in?(YOUTUBE_ID_PATHS)
           segments.last
         end
 

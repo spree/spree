@@ -11,6 +11,10 @@ const YOUTUBE_HOSTS = [
 ]
 const VIMEO_HOSTS = ['vimeo.com', 'www.vimeo.com', 'player.vimeo.com']
 
+// Path shapes that actually carry a video id. Anything else on the domain —
+// /c/name, /@handle, /playlist — is not a video. Mirrors Spree::ExternalVideo.
+const YOUTUBE_ID_PATHS = ['embed', 'shorts', 'live', 'v']
+
 const YOUTUBE_ID = /^[\w-]{11}$/
 const VIMEO_ID = /^\d+$/
 
@@ -38,10 +42,15 @@ export function parseVideoUrl(input: string | null | undefined): ParsedVideoUrl 
 
   if (YOUTUBE_HOSTS.includes(host)) {
     const videoId = host.includes('youtu.be')
-      ? segments[0]
-      : url.pathname === '/watch'
+      ? // A short link is the id and nothing else.
+        segments.length === 1
+        ? segments[0]
+        : ''
+      : url.pathname.replace(/\/$/, '') === '/watch'
         ? (url.searchParams.get('v') ?? '')
-        : (segments.at(-1) ?? '')
+        : segments.length === 2 && YOUTUBE_ID_PATHS.includes(segments[0])
+          ? segments[1]
+          : ''
 
     if (!YOUTUBE_ID.test(videoId)) return null
 
