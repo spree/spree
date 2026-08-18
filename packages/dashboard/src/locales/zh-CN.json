@@ -3315,9 +3315,9 @@
         "unknown_location": "未知位置"
       },
       "media": {
-        "add_video": "添加视频",
+        "add_video": "添加视频链接",
         "add_video_submit": "添加视频",
-        "add_video_title": "添加视频",
+        "add_video_title": "添加视频链接",
         "assigned_variants_help": "选择此图片所代表的变体。留空则应用于所有变体。",
         "assigned_variants_label": "关联的变体",
         "delete_confirm": "删除此媒体？此操作无法撤销。",
@@ -3326,6 +3326,7 @@
         "file_types_hint": "图片（PNG、JPG、WebP）和视频（MP4、WebM、MOV）",
         "focal_point_help": "点击图片，设置裁剪时需要保留的画面位置。",
         "focal_point_reset": "重置",
+        "unsupported_file": "有 {{count}} 个文件未添加 — 仅支持图片和视频。",
         "upload_failed": "上传 {{name}} 失败：{{message}}",
         "upload_status_failed": "失败",
         "video_preview_title": "视频预览",

@@ -170,7 +170,7 @@ RSpec.describe Spree::Api::V3::Admin::MediaController, type: :controller do
         expect(json_response['media_type']).to eq('external_video')
         expect(json_response['video_provider']).to eq('youtube')
         expect(json_response['video_embed_url']).to eq('https://www.youtube.com/embed/dQw4w9WgXcQ')
-        expect(json_response['poster_url']).to eq('https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg')
+        expect(json_response['poster_url']).to eq('https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg')
       end
 
       it 'adds a Vimeo video' do

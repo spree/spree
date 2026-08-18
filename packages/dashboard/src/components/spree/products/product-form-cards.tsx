@@ -167,6 +167,17 @@ interface PendingUpload {
   progress: 'uploading' | 'attaching' | 'done' | 'error'
 }
 
+// What the gallery accepts. `accept` on the file input only constrains the OS
+// picker — a drop bypasses it entirely, so handleDrop filters against the same
+// list or an unsupported file uploads and then fails the whole product save.
+const ACCEPTED_MEDIA = ['image/', 'video/mp4', 'video/webm', 'video/quicktime']
+
+function isAcceptedMedia(file: File): boolean {
+  return ACCEPTED_MEDIA.some((type) =>
+    type.endsWith('/') ? file.type.startsWith(type) : file.type === type,
+  )
+}
+
 // Unified, form-backed media card. Single source of truth: form.media.
 // Both new and edit pages use the same component; the only difference is
 // whether form.media starts empty (new) or pre-hydrated from the persisted
@@ -254,6 +265,8 @@ export function MediaCard({
                   ? ('video' as const)
                   : ('image' as const),
                 previewUrl: preview,
+                // Lets an uploaded video play in the editor before it is saved.
+                videoUrl: file.type.startsWith('video/') ? preview : null,
                 uploadId,
               },
             ],
@@ -276,9 +289,13 @@ export function MediaCard({
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault()
-      if (e.dataTransfer.files.length > 0) handleFiles(e.dataTransfer.files)
+      const accepted = Array.from(e.dataTransfer.files).filter(isAcceptedMedia)
+      const rejected = e.dataTransfer.files.length - accepted.length
+
+      if (rejected > 0) toast.error(t('admin.products.media.unsupported_file', { count: rejected }))
+      if (accepted.length > 0) handleFiles(accepted)
     },
-    [handleFiles],
+    [handleFiles, t],
   )
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
@@ -395,11 +412,17 @@ export function MediaCard({
                       key={upload.id}
                       className="relative aspect-square overflow-hidden rounded-lg border border-border bg-muted"
                     >
-                      <img
-                        src={upload.preview}
-                        alt=""
-                        className="size-full object-cover opacity-60"
-                      />
+                      {upload.file.type.startsWith('video/') ? (
+                        <div className="flex size-full items-center justify-center text-muted-foreground opacity-60">
+                          <FilmIcon className="size-6" />
+                        </div>
+                      ) : (
+                        <img
+                          src={upload.preview}
+                          alt=""
+                          className="size-full object-cover opacity-60"
+                        />
+                      )}
                       <div className="absolute inset-0 flex items-center justify-center">
                         {upload.progress === 'error' ? (
                           <span className="text-xs text-destructive font-medium">
@@ -432,7 +455,9 @@ export function MediaCard({
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/*,video/mp4,video/webm,video/quicktime"
+            accept={ACCEPTED_MEDIA.map((type) => (type.endsWith('/') ? `${type}*` : type)).join(
+              ',',
+            )}
             multiple
             className="hidden"
             onChange={(e) => e.target.files && handleFiles(e.target.files)}

@@ -3319,9 +3319,9 @@
         "unknown_location": "Emplacement inconnu"
       },
       "media": {
-        "add_video": "Ajouter une vidéo",
+        "add_video": "Ajouter un lien vidéo",
         "add_video_submit": "Ajouter la vidéo",
-        "add_video_title": "Ajouter une vidéo",
+        "add_video_title": "Ajouter un lien vidéo",
         "assigned_variants_help": "Sélectionnez les variantes que cette image représente. Laissez vide pour l'appliquer à toutes les variantes.",
         "assigned_variants_label": "Variantes associées",
         "delete_confirm": "Supprimer ce média ? Cette action est irréversible.",
@@ -3330,6 +3330,8 @@
         "file_types_hint": "Images (PNG, JPG, WebP) et vidéos (MP4, WebM, MOV)",
         "focal_point_help": "Cliquez sur l'image pour définir ce qui reste visible lors du recadrage.",
         "focal_point_reset": "Réinitialiser",
+        "unsupported_file_one": "{{count}} fichier n'a pas été ajouté — seules les images et vidéos sont prises en charge.",
+        "unsupported_file_other": "{{count}} fichiers n'ont pas été ajoutés — seules les images et vidéos sont prises en charge.",
         "upload_failed": "Échec du téléversement de {{name}} : {{message}}",
         "upload_status_failed": "Échec",
         "video_preview_title": "Aperçu de la vidéo",

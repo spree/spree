@@ -39,6 +39,8 @@ module Spree
     validates :attachment, attached: true, content_type: ->(_record) { Spree::Config.video_content_types },
               size: { less_than_or_equal_to: ->(_record) { Spree::Config.max_video_upload_size } },
               if: :video?
+    validates :poster, content_type: Rails.application.config.active_storage.web_image_content_types,
+              if: -> { poster.attached? }
     validates :external_video_url, presence: true, if: :external_video?
     validate :external_video_url_is_supported, if: -> { external_video? && external_video_url.present? }
 
@@ -101,6 +103,7 @@ module Spree
     after_commit :update_viewable_thumbnail_on_reorder, on: :update, if: :saved_change_to_position?
     after_commit :update_viewable_thumbnail_on_viewable_change, on: :update, if: :saved_change_to_viewable_id?
 
+    after_save :apply_poster_signed_id, if: -> { defined?(@poster_signed_id) }
     after_create :increment_viewable_media_count
     after_destroy :decrement_viewable_media_count
 
@@ -131,9 +134,15 @@ module Spree
 
     # A plain writer so a poster rides mass-assignment like any other attribute,
     # on every write path, instead of each caller reaching for the attachment.
+    #
+    # The attach is deferred to after_save: attaching on assignment uploads the
+    # blob even when the record then fails validation, orphaning it. A blank
+    # value removes the poster, so a merchant can undo a wrong one.
     def poster_signed_id=(signed_id)
-      poster.attach(signed_id) if signed_id.present?
+      @poster_signed_id = signed_id
     end
+
+    attr_reader :poster_signed_id
 
     def external_video_url=(url)
       @external_video = nil
@@ -211,6 +220,18 @@ module Spree
     end
 
     private
+
+    def apply_poster_signed_id
+      signed_id = @poster_signed_id
+      remove_instance_variable(:@poster_signed_id)
+
+      if signed_id.present?
+        poster.attach(signed_id)
+      elsif poster.attached?
+        # purge_later, not detach — detach leaves the blob behind in storage.
+        poster.purge_later
+      end
+    end
 
     def external_video_url_is_supported
       return if Spree::ExternalVideo.supported?(external_video_url)

@@ -3335,9 +3335,9 @@
         "unknown_location": "موقع غير معروف"
       },
       "media": {
-        "add_video": "إضافة فيديو",
+        "add_video": "إضافة رابط فيديو",
         "add_video_submit": "إضافة الفيديو",
-        "add_video_title": "إضافة فيديو",
+        "add_video_title": "إضافة رابط فيديو",
         "assigned_variants_help": "اختر المتغيرات التي تمثلها هذه الصورة. اتركه فارغًا ليتم تطبيقه على كافة المتغيرات.",
         "assigned_variants_label": "المتغيرات المخصصة",
         "delete_confirm": "هل تريد حذف هذه الوسائط؟ لا يمكن التراجع عن هذا.",
@@ -3346,6 +3346,7 @@
         "file_types_hint": "صور (PNG، JPG، WebP) وفيديو (MP4، WebM، MOV)",
         "focal_point_help": "انقر على الصورة لتحديد الجزء الذي يبقى ظاهراً عند الاقتصاص.",
         "focal_point_reset": "إعادة تعيين",
+        "unsupported_file": "لم تتم إضافة {{count}} ملف — الصور والفيديو فقط مدعومة.",
         "upload_failed": "فشل تحميل {{name}}: {{message}}",
         "upload_status_failed": "فشل",
         "video_preview_title": "معاينة الفيديو",

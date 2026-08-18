@@ -3319,9 +3319,9 @@
         "unknown_location": "Unknown location"
       },
       "media": {
-        "add_video": "Add video",
+        "add_video": "Add video link",
         "add_video_submit": "Add video",
-        "add_video_title": "Add a video",
+        "add_video_title": "Add a video link",
         "assigned_variants_help": "Pick the variants this image represents. Leave blank to apply to all variants.",
         "assigned_variants_label": "Assigned variants",
         "delete_confirm": "Delete this media? This cannot be undone.",
@@ -3330,6 +3330,8 @@
         "file_types_hint": "Images (PNG, JPG, WebP) and video (MP4, WebM, MOV)",
         "focal_point_help": "Click the image to set what stays in frame when it is cropped.",
         "focal_point_reset": "Reset",
+        "unsupported_file_one": "{{count}} file was not added — only images and video are supported.",
+        "unsupported_file_other": "{{count}} files were not added — only images and video are supported.",
         "upload_failed": "Failed to upload {{name}}: {{message}}",
         "upload_status_failed": "Failed",
         "video_preview_title": "Video preview",

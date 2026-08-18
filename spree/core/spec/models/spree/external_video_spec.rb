@@ -17,7 +17,7 @@ RSpec.describe Spree::ExternalVideo do
           expect(video.video_id).to eq(video_id)
           expect(video.embed_url).to eq("https://www.youtube.com/embed/#{video_id}")
           expect(video.watch_url).to eq("https://www.youtube.com/watch?v=#{video_id}")
-          expect(video.thumbnail_url).to eq("https://img.youtube.com/vi/#{video_id}/maxresdefault.jpg")
+          expect(video.thumbnail_url).to eq("https://img.youtube.com/vi/#{video_id}/hqdefault.jpg")
         end
       end
     end
@@ -41,6 +41,16 @@ RSpec.describe Spree::ExternalVideo do
       it 'has no provider thumbnail' do
         expect(described_class.parse('https://vimeo.com/123456789').thumbnail_url).to be_nil
       end
+    end
+
+    # The dashboard mirrors this parser to validate as the merchant types. If
+    # the two disagree, the dialog accepts a link the server then rejects —
+    # failing the whole product save.
+    it 'accepts a trailing slash, as an address-bar copy carries' do
+      expect(described_class.parse('https://youtu.be/dQw4w9WgXcQ/')&.video_id).to eq('dQw4w9WgXcQ')
+      expect(described_class.parse('https://vimeo.com/123456789/')&.video_id).to eq('123456789')
+      expect(described_class.parse('https://www.youtube.com/watch/?v=dQw4w9WgXcQ')&.video_id).
+        to eq('dQw4w9WgXcQ')
     end
 
     it 'ignores surrounding whitespace' do

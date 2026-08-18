@@ -13,7 +13,7 @@ describe('parseVideoUrl', () => {
       provider: 'youtube',
       videoId: 'dQw4w9WgXcQ',
       embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-      thumbnailUrl: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
+      thumbnailUrl: 'https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg',
     })
   })
 
@@ -28,6 +28,13 @@ describe('parseVideoUrl', () => {
       embedUrl: 'https://player.vimeo.com/video/123456789',
       thumbnailUrl: null,
     })
+  })
+
+  // Mirrors the Ruby spec of the same name — the two parsers must agree, or
+  // the dialog accepts a link the server rejects.
+  it('accepts a trailing slash, as an address-bar copy carries', () => {
+    expect(parseVideoUrl('https://youtu.be/dQw4w9WgXcQ/')?.videoId).toBe('dQw4w9WgXcQ')
+    expect(parseVideoUrl('https://vimeo.com/123456789/')?.videoId).toBe('123456789')
   })
 
   it('ignores surrounding whitespace', () => {

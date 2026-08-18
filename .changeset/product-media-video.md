@@ -13,6 +13,6 @@ Spree reads the link when it is saved and rejects anything it cannot embed, so t
 
 A video carries a **poster** — the still shown before it plays. Upload one with `poster_signed_id`, or leave it off and a YouTube link falls back to the provider's own image. Spree does not extract a frame from an uploaded file, so hosted video and Vimeo links want a poster.
 
-In the dashboard, video files upload through the same drop zone as images, an "Add video" button takes a link, and the media editor plays the video back and takes its poster. The editor also gains a focal-point picker: click the spot on an image that must stay in frame when a storefront crops it.
+In the dashboard, video files upload through the same drop zone as images, an "Add video link" button takes a YouTube or Vimeo URL, and the media editor plays the video back and takes its poster. The editor also gains a focal-point picker: click the spot on an image that must stay in frame when a storefront crops it.
 
 Choosing which variants a media item represents happens in one place — the media editor on the product. The unmounted variant-side gallery picker has been removed; it was a second way to edit the same thing.

@@ -118,6 +118,7 @@ type MediaResponseRow = {
   external_video_url: string | null
   focal_point_x: number | null
   focal_point_y: number | null
+  video_url: string | null
   poster_url: string | null
   small_url: string | null
   mini_url: string | null
@@ -140,6 +141,9 @@ function mediaToFormValues(media: MediaResponseRow, index: number) {
     previewUrl:
       media.small_url ?? media.mini_url ?? media.poster_url ?? media.original_url ?? undefined,
     posterUrl: media.poster_url,
+    // The file itself, so an uploaded video can actually play. Every sized URL
+    // on a video row resolves to its poster, so none of them work here.
+    videoUrl: media.video_url,
   }
 }
 
@@ -368,7 +372,7 @@ function ProductForm({ product }: { product: Product }) {
     // dedicated DELETE /media endpoint, which the MediaCard already calls
     // before removing an entry from form state.
     if (media && media.length > 0) {
-      payload.media = media.map(({ previewUrl, posterUrl, uploadId, ...rest }, i) => ({
+      payload.media = media.map(({ previewUrl, posterUrl, videoUrl, uploadId, ...rest }, i) => ({
         ...rest,
         position: i + 1,
       }))
@@ -396,6 +400,7 @@ function ProductForm({ product }: { product: Product }) {
             poster_signed_id: _psid,
             previewUrl: _p,
             posterUrl: _pu,
+            videoUrl: _vu,
             uploadId: _u,
             ...rest
           }) => rest,

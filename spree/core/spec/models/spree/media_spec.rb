@@ -182,11 +182,49 @@ describe Spree::Media, type: :model do
       expect(asset.external_video.provider).to eq('vimeo')
     end
 
+    it 'attaches a poster only once the record saves' do
+      poster = ActiveStorage::Blob.create_and_upload!(
+        io: File.open(Spree::Core::Engine.root + 'spec/fixtures' + 'thinking-cat.jpg'),
+        filename: 'poster.jpg', content_type: 'image/jpeg'
+      )
+      asset = build(:external_video_asset, external_video_url: 'https://example.com/nope')
+      asset.poster_signed_id = poster.signed_id
+
+      # The record is invalid, so nothing should reach storage.
+      expect(asset.save).to be(false)
+      expect(asset.poster).not_to be_attached
+    end
+
+    it 'removes the poster when the signed id is blank' do
+      poster = ActiveStorage::Blob.create_and_upload!(
+        io: File.open(Spree::Core::Engine.root + 'spec/fixtures' + 'thinking-cat.jpg'),
+        filename: 'poster.jpg', content_type: 'image/jpeg'
+      )
+      asset = create(:external_video_asset)
+      asset.update!(poster_signed_id: poster.signed_id)
+      expect(asset.reload.poster).to be_attached
+
+      asset.update!(poster_signed_id: '')
+
+      expect(asset.reload.poster).not_to be_attached
+    end
+
+    it 'rejects a poster that is not a web image' do
+      asset = build(:external_video_asset)
+      asset.poster.attach(
+        io: File.open(Spree::Core::Engine.root + 'spec/fixtures' + 'text-file.txt'),
+        filename: 'notes.txt', content_type: 'text/plain'
+      )
+
+      expect(asset).not_to be_valid
+      expect(asset.errors[:poster]).to be_present
+    end
+
     it 'falls back to the provider thumbnail when no poster was uploaded' do
       video = build(:external_video_asset)
 
       expect(video.still_image).to be_nil
-      expect(video.provider_still_url).to eq('https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg')
+      expect(video.provider_still_url).to eq('https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg')
     end
   end
 

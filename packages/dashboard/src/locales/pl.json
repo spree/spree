@@ -3367,9 +3367,9 @@
         "unknown_location": "Nieznana lokalizacja"
       },
       "media": {
-        "add_video": "Dodaj wideo",
+        "add_video": "Dodaj link do wideo",
         "add_video_submit": "Dodaj wideo",
-        "add_video_title": "Dodaj wideo",
+        "add_video_title": "Dodaj link do wideo",
         "assigned_variants_help": "Wybierz warianty, które reprezentuje to zdjęcie. Pozostaw puste, aby zastosować do wszystkich wariantów.",
         "assigned_variants_label": "Przypisane warianty",
         "delete_confirm": "Usunąć ten plik multimedialny? Tej operacji nie można cofnąć.",
@@ -3378,6 +3378,8 @@
         "file_types_hint": "Zdjęcia (PNG, JPG, WebP) i wideo (MP4, WebM, MOV)",
         "focal_point_help": "Kliknij zdjęcie, aby wskazać, co ma pozostać widoczne po przycięciu.",
         "focal_point_reset": "Przywróć",
+        "unsupported_file_one": "Nie dodano {{count}} pliku — obsługiwane są tylko zdjęcia i wideo.",
+        "unsupported_file_other": "Nie dodano {{count}} plików — obsługiwane są tylko zdjęcia i wideo.",
         "upload_failed": "Nie udało się przesłać {{name}}: {{message}}",
         "upload_status_failed": "Niepowodzenie",
         "video_preview_title": "Podgląd wideo",

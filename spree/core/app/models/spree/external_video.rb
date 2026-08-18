@@ -50,14 +50,18 @@ module Spree
     end
 
     def self.youtube_from(uri, host)
+      # Ignore empty segments so a trailing slash — ordinary when a URL is
+      # copied from the address bar — parses like the same link without one.
+      segments = uri.path.split('/').reject(&:blank?)
+
       video_id =
         if host.include?('youtu.be')
-          uri.path.delete_prefix('/')
-        elsif uri.path == '/watch'
+          segments.first
+        elsif uri.path.chomp('/') == '/watch'
           URI.decode_www_form(uri.query.to_s).to_h['v']
         else
           # /embed/ID, /shorts/ID, /live/ID
-          uri.path.split('/').last
+          segments.last
         end
 
       return nil unless video_id.to_s.match?(YOUTUBE_ID_FORMAT)
@@ -68,7 +72,7 @@ module Spree
 
     def self.vimeo_from(uri)
       # /ID, /video/ID, /channels/name/ID all end in the numeric id.
-      video_id = uri.path.split('/').last
+      video_id = uri.path.split('/').reject(&:blank?).last
 
       return nil unless video_id.to_s.match?(VIMEO_ID_FORMAT)
 
@@ -96,9 +100,13 @@ module Spree
     # Vimeo requires an API call, so it has none here and the merchant uploads
     # a poster instead.
     #
+    # `hqdefault` is the only size YouTube guarantees for every video —
+    # `maxresdefault` 404s on anything without an HD source, which would leave
+    # a broken image as the video's only still.
+    #
     # @return [String, nil]
     def thumbnail_url
-      return "https://img.youtube.com/vi/#{video_id}/maxresdefault.jpg" if provider == 'youtube'
+      return "https://img.youtube.com/vi/#{video_id}/hqdefault.jpg" if provider == 'youtube'
     end
   end
 end

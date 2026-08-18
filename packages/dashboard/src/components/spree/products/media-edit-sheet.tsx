@@ -105,6 +105,8 @@ export function MediaEditSheet({ form, mediaIndex, variants, open, onOpenChange 
   // Mirrors Spree::Media#playable_video? — both kinds want a poster.
   const isVideo = isHostedVideo || isExternalVideo
   const externalVideoUrl = entry.external_video_url ?? ''
+  // The video file itself — a blob URL before save, the served file after.
+  const videoUrl = entry.videoUrl ?? null
   const parsedVideo = parseVideoUrl(externalVideoUrl)
   const videoUrlInvalid = externalVideoUrl.length > 0 && !parsedVideo
 
@@ -144,14 +146,21 @@ export function MediaEditSheet({ form, mediaIndex, variants, open, onOpenChange 
   const posterValue = {
     signedId: entry.poster_signed_id ?? null,
     previewUrl: entry.posterUrl ?? null,
-    cleared: false,
+    cleared: entry.poster_signed_id === '',
   }
 
-  const setPoster = (value: { signedId: string | null; previewUrl: string | null }) => {
-    form.setValue(`media.${mediaIndex}.poster_signed_id`, value.signedId ?? undefined, {
+  const setPoster = (value: {
+    signedId: string | null
+    previewUrl: string | null
+    cleared: boolean
+  }) => {
+    // An empty string is how the API is told to drop the poster; `undefined`
+    // would fall out of the request body and leave the old one in place.
+    const next = value.cleared ? '' : (value.signedId ?? undefined)
+    form.setValue(`media.${mediaIndex}.poster_signed_id`, next, { shouldDirty: true })
+    form.setValue(`media.${mediaIndex}.posterUrl`, value.cleared ? null : value.previewUrl, {
       shouldDirty: true,
     })
-    form.setValue(`media.${mediaIndex}.posterUrl`, value.previewUrl, { shouldDirty: true })
   }
 
   const clearFocalPoint = () => {
@@ -203,23 +212,27 @@ export function MediaEditSheet({ form, mediaIndex, variants, open, onOpenChange 
 
         <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-5">
           {isExternalVideo && parsedVideo ? (
-            <div className="overflow-hidden rounded-lg border border-border bg-black">
+            <div className="aspect-video w-full shrink-0 overflow-hidden rounded-lg border border-border bg-black">
               <iframe
                 src={parsedVideo.embedUrl}
                 title={alt || t('admin.products.media.video_preview_title')}
                 allowFullScreen
-                className="aspect-video w-full"
+                className="size-full"
               />
             </div>
-          ) : isHostedVideo && previewUrl ? (
+          ) : isHostedVideo && videoUrl ? (
             // biome-ignore lint/a11y/useMediaCaption: merchant-supplied product footage has no track
-            <video src={previewUrl} controls className="w-full max-h-[60vh] rounded-lg bg-black" />
+            <video
+              src={videoUrl}
+              controls
+              className="max-h-[60vh] w-full shrink-0 rounded-lg bg-black"
+            />
           ) : (
             <button
               type="button"
               disabled={!isImage || !previewUrl}
               onClick={handleFocalPointClick}
-              className="group relative block w-full overflow-hidden rounded-lg border border-border bg-muted disabled:cursor-default"
+              className="group relative block w-full shrink-0 overflow-hidden rounded-lg border border-border bg-muted disabled:cursor-default"
             >
               {previewUrl ? (
                 <>

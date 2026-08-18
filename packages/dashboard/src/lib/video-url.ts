@@ -49,7 +49,7 @@ export function parseVideoUrl(input: string | null | undefined): ParsedVideoUrl 
       provider: 'youtube',
       videoId,
       embedUrl: `https://www.youtube.com/embed/${videoId}`,
-      thumbnailUrl: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+      thumbnailUrl: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
     }
   }
 

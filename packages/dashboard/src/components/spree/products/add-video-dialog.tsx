@@ -1,11 +1,13 @@
 import {
   Button,
   Dialog,
+  DialogBody,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
   Field,
+  FieldDescription,
   FieldError,
   FieldLabel,
   Input,
@@ -58,28 +60,30 @@ export function AddVideoDialog({ open, onOpenChange, onAdd }: Props) {
           <DialogTitle>{t('admin.products.media.add_video_title')}</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={submit}>
-          <Field>
-            <FieldLabel htmlFor="external-video-url">
-              {t('admin.fields.media.external_video_url.label')}
-            </FieldLabel>
-            <Input
-              id="external-video-url"
-              value={url}
-              autoFocus
-              aria-invalid={invalid || undefined}
-              placeholder={t('admin.fields.media.external_video_url.placeholder')}
-              onChange={(e) => setUrl(e.target.value)}
-              onBlur={() => setTouched(true)}
-            />
-            {invalid ? (
-              <FieldError>{t('admin.products.media.video_url_invalid')}</FieldError>
-            ) : (
-              <p className="text-xs text-muted-foreground">
-                {t('admin.fields.media.external_video_url.help')}
-              </p>
-            )}
-          </Field>
+        <form onSubmit={submit} className="contents">
+          <DialogBody>
+            <Field>
+              <FieldLabel htmlFor="external-video-url">
+                {t('admin.fields.media.external_video_url.label')}
+              </FieldLabel>
+              <Input
+                id="external-video-url"
+                value={url}
+                autoFocus
+                aria-invalid={invalid || undefined}
+                placeholder={t('admin.fields.media.external_video_url.placeholder')}
+                onChange={(e) => setUrl(e.target.value)}
+                onBlur={() => setTouched(true)}
+              />
+              {invalid ? (
+                <FieldError>{t('admin.products.media.video_url_invalid')}</FieldError>
+              ) : (
+                <FieldDescription>
+                  {t('admin.fields.media.external_video_url.help')}
+                </FieldDescription>
+              )}
+            </Field>
+          </DialogBody>
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={close}>

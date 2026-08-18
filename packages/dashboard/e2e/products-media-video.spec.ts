@@ -15,11 +15,11 @@ test.describe('product media — video', () => {
     await createProduct(page, creds.store_id, `E2E Video ${Date.now()}`)
 
     const media = mediaCard(page)
-    await media.getByRole('button', { name: /add video/i }).click()
+    await media.getByRole('button', { name: /add video link/i }).click()
 
     const dialog = page.getByRole('dialog')
     await dialog.getByLabel(/video link/i).fill('https://www.youtube.com/watch?v=dQw4w9WgXcQ')
-    await dialog.getByRole('button', { name: /add video/i }).click()
+    await dialog.getByRole('button', { name: /^add video$/i }).click()
 
     // The tile previews from YouTube's own still, so an image appears without
     // anything being uploaded.
@@ -37,12 +37,12 @@ test.describe('product media — video', () => {
     await createProduct(page, creds.store_id, `E2E Poster ${Date.now()}`)
 
     const media = mediaCard(page)
-    await media.getByRole('button', { name: /add video/i }).click()
+    await media.getByRole('button', { name: /add video link/i }).click()
 
     const dialog = page.getByRole('dialog')
     // Vimeo supplies no thumbnail, so this is the case that needs a poster.
     await dialog.getByLabel(/video link/i).fill('https://vimeo.com/123456789')
-    await dialog.getByRole('button', { name: /add video/i }).click()
+    await dialog.getByRole('button', { name: /^add video$/i }).click()
 
     // Open the tile's editor and upload the still.
     await clickMediaThumbnailAction(media, 'edit')
@@ -63,12 +63,12 @@ test.describe('product media — video', () => {
     await createProduct(page, creds.store_id, `E2E Bad Video ${Date.now()}`)
 
     await mediaCard(page)
-      .getByRole('button', { name: /add video/i })
+      .getByRole('button', { name: /add video link/i })
       .click()
 
     const dialog = page.getByRole('dialog')
     await dialog.getByLabel(/video link/i).fill('https://example.com/clip.mp4')
-    await dialog.getByRole('button', { name: /add video/i }).click()
+    await dialog.getByRole('button', { name: /^add video$/i }).click()
 
     await expect(dialog.getByText(/youtube or vimeo/i)).toBeVisible()
     // The dialog stays open — nothing was added.

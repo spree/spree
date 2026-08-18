@@ -3319,9 +3319,9 @@
         "unknown_location": "Unbekannter Standort"
       },
       "media": {
-        "add_video": "Video hinzufügen",
+        "add_video": "Videolink hinzufügen",
         "add_video_submit": "Video hinzufügen",
-        "add_video_title": "Video hinzufügen",
+        "add_video_title": "Videolink hinzufügen",
         "assigned_variants_help": "Wählen Sie die Varianten aus, die dieses Bild repräsentiert. Leer lassen, um es auf alle Varianten anzuwenden.",
         "assigned_variants_label": "Zugeordnete Varianten",
         "delete_confirm": "Dieses Medium löschen? Dies kann nicht rückgängig gemacht werden.",
@@ -3330,6 +3330,8 @@
         "file_types_hint": "Bilder (PNG, JPG, WebP) und Videos (MP4, WebM, MOV)",
         "focal_point_help": "Klicken Sie auf das Bild, um festzulegen, was beim Zuschneiden sichtbar bleibt.",
         "focal_point_reset": "Zurücksetzen",
+        "unsupported_file_one": "{{count}} Datei wurde nicht hinzugefügt — nur Bilder und Videos werden unterstützt.",
+        "unsupported_file_other": "{{count}} Dateien wurden nicht hinzugefügt — nur Bilder und Videos werden unterstützt.",
         "upload_failed": "Hochladen von {{name}} fehlgeschlagen: {{message}}",
         "upload_status_failed": "Fehlgeschlagen",
         "video_preview_title": "Videovorschau",

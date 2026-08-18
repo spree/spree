@@ -90,6 +90,9 @@ export const mediaFormSchema = z.object({
   // `posterUrl` is the UI-only preview and never reaches the API.
   poster_signed_id: z.string().optional(),
   posterUrl: z.string().nullable().optional(),
+  // Playback source for an uploaded video. UI-only: a blob URL before save,
+  // the served file after. Never sent back.
+  videoUrl: z.string().nullable().optional(),
   focal_point_x: z.number().min(0).max(1).nullable().optional(),
   focal_point_y: z.number().min(0).max(1).nullable().optional(),
   // UI-only — strip at submit.
