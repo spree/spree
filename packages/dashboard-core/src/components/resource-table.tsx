@@ -718,7 +718,7 @@ function SortableRow<T extends Record<string, any>>({
       ref={setNodeRef}
       style={style}
       className={cn(
-        'group/row hover:bg-muted/60 last:*:border-b-0',
+        'group/row hover:bg-accent/60 last:*:border-b-0',
         isDragging && 'relative z-10 opacity-70',
       )}
     >

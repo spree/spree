@@ -78,7 +78,7 @@ export function TopBar({
   return (
     <header
       className={cn(
-        'sticky top-0 z-40 flex h-header-height shrink-0 items-center gap-3 bg-background/90 px-4 border-b backdrop-blur supports-[backdrop-filter]:bg-background/75',
+        'sticky top-0 z-40 flex h-header-height shrink-0 items-center gap-3 bg-background/90 px-4 border-b border-border/75 backdrop-blur supports-[backdrop-filter]:bg-background/75',
         'transition-transform duration-200 ease-out motion-reduce:transition-none',
         hidden && '-translate-y-full',
       )}

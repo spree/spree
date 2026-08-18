@@ -85,7 +85,7 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
         <DialogDescription>{t('admin.components.command_palette.description')}</DialogDescription>
       </DialogHeader>
       <DialogContent
-        className="top-1/3 translate-y-0 overflow-hidden p-0 sm:max-w-2xl"
+        className="top-1/3 translate-y-0 overflow-hidden rounded-2xl p-0 sm:max-w-2xl"
         showCloseButton={false}
         // Don't restore focus to the trigger after navigating — the trigger is
         // gone (we navigated away) and focus would land on the first sidebar

@@ -225,7 +225,7 @@ function ApiKeyTable({
           </Empty>
         ) : (
           <Table>
-            <TableHeader className="border-b">
+            <TableHeader>
               <TableRow>
                 <TableHead>{t('admin.fields.name.label')}</TableHead>
                 <TableHead>{t('admin.pages.settings.api_keys.table.key')}</TableHead>

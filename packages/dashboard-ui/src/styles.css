@@ -55,7 +55,7 @@
      whisper against the white card rather than a distinct band. */
   --secondary: oklch(0.97 0 0); /* neutral-100 */
   --secondary-foreground: oklch(0.145 0 0);
-  --muted: oklch(0.97 0 0); /* neutral-100 */
+  --muted: oklch(0.985 0 0); /* neutral-50 */
   --muted-foreground: oklch(0.556 0 0); /* neutral-500 */
   /* Hover/highlight for menu items and table rows. A lighter step than
      neutral-200: these sit on white surfaces, where that value reads as a
@@ -69,6 +69,12 @@
   /* neutral-200 — rules stay legible but recede, so a dense table reads as
      rows of content rather than a grid. */
   --border: oklch(0.922 0 0);
+  /* Half-strength rule for dividers *inside* a container — card header/footer
+     splits, dialog and sheet separators, table chrome. Distinct from --border,
+     which draws a container's own edge. Resolved to a real colour rather than
+     an opacity utility so it also works inside arbitrary values such as the
+     sticky table header's inset shadow, where `/50` has no effect. */
+  --border-subtle: color-mix(in srgb, var(--border) 50%, transparent);
   --input: oklch(0.922 0 0);
   --ring: var(--brand-blue);
   --chart-1: oklch(0.7663 0.1067 254.4);
@@ -152,6 +158,7 @@
   --accent-foreground: oklch(0.95 0 0);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 12%);
+  --border-subtle: color-mix(in srgb, var(--border) 50%, transparent);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.552 0.016 285); /* same blue ring as light, for focus parity */
   --chart-1: oklch(0.809 0.105 251.813);
@@ -246,6 +253,7 @@
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
+  --color-border-subtle: var(--border-subtle);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-accent-foreground: var(--accent-foreground);
