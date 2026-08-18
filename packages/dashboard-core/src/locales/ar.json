@@ -29,6 +29,8 @@
       "invite": "دعوة",
       "more_actions": "المزيد من الإجراءات",
       "remove": "إزالة",
+      "remove_item": "إزالة {{label}}",
+      "remove_rule": "إزالة القاعدة",
       "reset": "إعادة تعيين",
       "revoke": "إلغاء التفويض",
       "save": "حفظ",

@@ -243,7 +243,14 @@ function ComboboxChip({
           data-slot="combobox-chip-remove"
         >
           <XIcon className="pointer-events-none" />
-          <span className="sr-only">{i18n.t('admin.actions.remove')}</span>
+          {/* Names the chip it removes ("Remove Wholesale") rather than a bare
+              "Remove": several of these sit side by side, and a dialog's own
+              submit button is often called Remove too. */}
+          <span className="sr-only">
+            {typeof children === 'string'
+              ? i18n.t('admin.actions.remove_item', { label: children })
+              : i18n.t('admin.actions.remove')}
+          </span>
         </ComboboxPrimitive.ChipRemove>
       )}
     </ComboboxPrimitive.Chip>

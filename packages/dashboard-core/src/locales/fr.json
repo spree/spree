@@ -29,6 +29,8 @@
       "invite": "Inviter",
       "more_actions": "Plus d'actions",
       "remove": "Retirer",
+      "remove_item": "Supprimer {{label}}",
+      "remove_rule": "Supprimer la règle",
       "reset": "Réinitialiser",
       "revoke": "Révoquer",
       "save": "Enregistrer",

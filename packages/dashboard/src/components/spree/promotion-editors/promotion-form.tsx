@@ -772,7 +772,10 @@ function RuleRow({
             className="text-destructive hover:bg-destructive/10 hover:text-destructive"
           >
             <TrashIcon className="size-4" />
-            <span className="sr-only">{t('admin.actions.remove')}</span>
+            {/* "Remove rule", not "Remove": the confirm dialog this opens has
+                its own Remove button, and two identical names in one view is
+                ambiguous for screen readers and test locators alike. */}
+            <span className="sr-only">{t('admin.actions.remove_rule')}</span>
           </Button>
         </div>
       </Can>
@@ -1148,7 +1151,10 @@ function ActionRow({
             className="text-destructive hover:bg-destructive/10 hover:text-destructive"
           >
             <TrashIcon className="size-4" />
-            <span className="sr-only">{t('admin.actions.remove')}</span>
+            {/* "Remove rule", not "Remove": the confirm dialog this opens has
+                its own Remove button, and two identical names in one view is
+                ambiguous for screen readers and test locators alike. */}
+            <span className="sr-only">{t('admin.actions.remove_rule')}</span>
           </Button>
         </div>
       </Can>
