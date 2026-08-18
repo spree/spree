@@ -30,7 +30,7 @@ module Spree
     delegate :name, to: :variant, prefix: true
     delegate :product, to: :variant
 
-    after_save :conditional_variant_touch, if: :saved_changes?
+    after_save(if: :saved_changes?) { variant.touch }
     after_touch { variant.touch }
     after_destroy { variant.touch }
 
@@ -131,18 +131,6 @@ module Spree
         end
         number -= unit.quantity
       end
-    end
-
-    def conditional_variant_touch
-      variant.touch if !Spree::Config.binary_inventory_cache || stock_changed?
-    end
-
-    def stock_changed?
-      # the variant_id changes from nil when a new stock location is added
-      (
-        saved_change_to_count_on_hand? &&
-        saved_change_to_count_on_hand.any?(&:zero?)
-      ) || saved_change_to_variant_id?
     end
   end
 end

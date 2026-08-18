@@ -55,7 +55,7 @@ module Spree
 
           attribute :display_total_spent do |user|
             amount = user.attributes['total_spent'] || user.orders.complete.sum(:total)
-            currency = Spree::Current.currency || Spree::Current.store&.default_currency || Spree::Config[:currency]
+            currency = Spree::Current.currency || Spree::Current.store&.default_currency
             Spree::Money.new(amount, currency: currency).to_s
           end
 

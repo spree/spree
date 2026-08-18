@@ -192,7 +192,6 @@ These still exist so upgrades don't break, but Spree 6 either ignores them or re
 | `expedited_exchanges_days_window` | [Exchanges](/v6/developer/core-concepts/returns-exchanges-claims) |
 | `enable_legacy_default_price` | Compatibility switch for the old default-price behavior; leave off |
 | `use_user_locale` | Locale comes from the `x-spree-locale` header or the `locale` parameter |
-| `allow_guest_checkout` | The `guest_checkout` setting on the store or channel |
 | `company` | The `company_field_enabled` setting on the store |
 | `address_requires_phone` | The `address_requires_phone` setting on the store |
 | `default_stock_reservation_ttl_minutes` | The `stock_reservation_ttl_minutes` setting on the store |
@@ -203,14 +202,25 @@ These still exist so upgrades don't break, but Spree 6 either ignores them or re
 | `show_products_without_price` | The `show_products_without_price` setting on the store |
 | `disable_sku_validation` | The `disable_sku_validation` setting on the store |
 | `track_price_history` | The `track_price_history` setting on the store |
-| `address_requires_state` | State requirements come from the country |
-| `checkout_zone` | [Delivery zones](/v6/developer/core-concepts/fulfillments#delivery-methods-and-zones) |
-| `currency` | Store and market currencies |
 | `disable_store_presence_validation` | Every store-owned record now requires a store |
 
 <Warning>
 These settings have no effect at all in Spree 6, and are scheduled for removal: `allow_checkout_on_gateway_error` (completion checks whether payments cover the total, so a failed gateway call never completes an order), `products_per_page`, `alternative_shipping_phone`, `show_variant_full_price`, `reserve_stock_on`, `storefront_products_path`, `storefront_taxons_path`, `storefront_pages_path`. Setting them changes nothing.
 </Warning>
+
+## Settings removed in Spree 6
+
+These were deprecated in Spree 5 and are gone. Assigning one in your initializer now raises `NoMethodError`, so delete the line.
+
+| Setting | What to do instead |
+|---|---|
+| `send_core_emails` | Spree only sends an email when a mailer is called. Remove the mailer call, or override the mailer, to stop one being sent. |
+| `currency` | Currency belongs to the store and the market. |
+| `address_requires_state` | State requirements come from the address country. |
+| `checkout_zone` | Use [delivery zones](/v6/developer/core-concepts/fulfillments#delivery-methods-and-zones). |
+| `allow_guest_checkout` | Use the `guest_checkout` setting on the store or channel. |
+| `binary_inventory_cache` | A stock change always touches its variant. |
+| `layout`, `logo`, `mailer_logo`, `always_put_site_name_in_title`, `title_site_name_separator`, `max_level_in_taxons_menu`, `show_raw_product_description`, `shipping_instructions`, `show_only_complete_orders_by_default` | These configured the removed Rails storefront and admin. A storefront owns its own presentation. |
 
 ## Related
 
