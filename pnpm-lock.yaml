@@ -4251,7 +4251,7 @@ packages:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
     engines: {node: '>= 0.8'}
 
-  victory-seller@37.3.6:
+  victory-vendor@37.3.6:
     resolution: {integrity: sha512-SbPDPdDBYp+5MJHhBCAyI7wKM3d5ivekigc2Dk2s7pgbZ9wIgIBYGVw4zGHBml/qTFbexrofXW6Gu4noGxrOwQ==}
 
   vite@8.0.16:
@@ -7394,7 +7394,7 @@ snapshots:
       reselect: 5.1.1
       tiny-invariant: 1.3.3
       use-sync-external-store: 1.6.0(react@19.2.6)
-      victory-seller: 37.3.6
+      victory-vendor: 37.3.6
     transitivePeerDependencies:
       - '@types/react'
       - redux
@@ -7886,7 +7886,7 @@ snapshots:
 
   vary@1.1.2: {}
 
-  victory-seller@37.3.6:
+  victory-vendor@37.3.6:
     dependencies:
       '@types/d3-array': 3.2.2
       '@types/d3-ease': 3.0.2
