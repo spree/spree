@@ -16,7 +16,11 @@ module Spree
 
     publishes_lifecycle_events
 
-    belongs_to :stock_level, class_name: 'Spree::StockLevel', inverse_of: :stock_movements
+    # `with_deleted` because the ledger outlives what it describes: a level is
+    # soft-deleted whenever a product save stops listing its location, and
+    # without this the default scope propagates into every join — taking the
+    # history of those units out of `for_store` and out of the API with it.
+    belongs_to :stock_level, -> { with_deleted }, class_name: 'Spree::StockLevel', inverse_of: :stock_movements
     # @deprecated Replaced by the concrete cause keys below; dropped in 6.1.
     belongs_to :originator, polymorphic: true, optional: true
 

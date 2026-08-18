@@ -14,6 +14,20 @@ describe Spree::StockMovement, type: :model do
     end
   end
 
+  describe '.for_store' do
+    let(:store) { Spree::Store.default || create(:store) }
+
+    # A level is soft-deleted whenever a product save stops listing its
+    # location, and the ledger has to survive that: the units it accounts for
+    # are the ones a merchant most wants explained afterwards.
+    it 'still finds movements whose stock level was soft-deleted' do
+      movement = create(:stock_movement, kind: 'received', quantity: 4)
+      movement.stock_level.destroy
+
+      expect(described_class.for_store(store)).to include(movement)
+    end
+  end
+
   describe 'Constants' do
     describe 'KINDS' do
       it 'names every movement kind' do
