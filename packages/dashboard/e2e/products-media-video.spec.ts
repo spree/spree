@@ -25,7 +25,12 @@ test.describe('product media — video', () => {
     // anything being uploaded.
     await expect(media.locator('img[src]').first()).toBeVisible({ timeout: 15_000 })
 
-    await page.getByRole('button', { name: /^save$/i }).click()
+    // Wait for the button to disable — that's the save completing, so the
+    // reload below reads persisted state rather than racing the request.
+    await page.getByRole('button', { name: /save product/i }).click()
+    await expect(page.getByRole('button', { name: /save product/i })).toBeDisabled({
+      timeout: 30_000,
+    })
     await page.reload()
 
     // Survives the round trip: the gallery still shows one tile after reload.
@@ -51,7 +56,12 @@ test.describe('product media — video', () => {
     await expect(sheet.locator('img[src]').first()).toBeVisible({ timeout: 15_000 })
     await sheet.getByRole('button', { name: /^done$/i }).click()
 
-    await page.getByRole('button', { name: /^save$/i }).click()
+    // Wait for the button to disable — that's the save completing, so the
+    // reload below reads persisted state rather than racing the request.
+    await page.getByRole('button', { name: /save product/i }).click()
+    await expect(page.getByRole('button', { name: /save product/i })).toBeDisabled({
+      timeout: 30_000,
+    })
     await page.reload()
 
     // The poster survives the round trip — the tile renders it after reload.

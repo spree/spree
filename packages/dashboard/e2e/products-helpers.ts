@@ -123,7 +123,9 @@ export async function clickMediaThumbnailAction(
   media: Locator,
   action: 'edit' | 'delete',
 ): Promise<void> {
-  const thumb = media.locator('img[src]').first()
+  // Hover the tile itself, not its image — a video with no poster renders an
+  // icon instead, and waiting on an <img> would hang.
+  const thumb = media.locator('[data-slot="media-thumbnail"]').first()
   const button = media.getByRole('button', {
     name: action === 'edit' ? /^edit media$/i : /^delete image$/i,
   })

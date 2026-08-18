@@ -523,6 +523,7 @@ function SortableMediaThumbnail({
     <div
       ref={setNodeRef}
       style={style}
+      data-slot="media-thumbnail"
       {...attributes}
       {...listeners}
       className={`group relative aspect-square cursor-grab overflow-hidden rounded-md border border-border bg-muted touch-none active:cursor-grabbing ${
