@@ -9,6 +9,7 @@ module Spree
                  meta_description: [:string, nullable: true], meta_keywords: [:string, nullable: true],
                  variant_count: :number,
                  default_variant_id: :string,
+                 buy_box_variant_id: [:string, nullable: true],
                  thumbnail_url: [:string, nullable: true],
                  available_on: [:string, nullable: true],
                  preorder_ships_at: [:string, nullable: true],
@@ -55,8 +56,21 @@ module Spree
           product.description
         end
 
+        # The product's stable identity for add-to-cart. Deliberately NOT the
+        # buy-box winner: that moves with price and stock, and a client that
+        # cached or linked this id must not find it pointing at a different
+        # row tomorrow. On a single-seller catalog the two coincide anyway.
         attribute :default_variant_id do |product|
           product.default_variant&.prefixed_id
+        end
+
+        # The offer a storefront should lead with when several sellers share
+        # the listing — the buy-box winner in the request's currency. Nil when
+        # nothing wins. Separate from `default_variant_id` so a storefront opts
+        # into the marketplace behaviour without the identity field moving
+        # under it; storefronts that ignore it lose nothing.
+        attribute :buy_box_variant_id do |product|
+          product.buy_box_variant(currency: current_currency)&.prefixed_id
         end
 
         # Main product image URL for listings (cached primary_media)
@@ -68,16 +82,22 @@ module Spree
           product.tags.map(&:name) # not pluck as we preload tags
         end
 
-        # Price object - calculated price with price list resolution
+        # Price object - calculated price with price list resolution.
+        #
+        # Priced off the buy-box winner, not `default_variant_id`. Price is a
+        # display fact that already moves with price lists and currency, so it
+        # is not an identity — and it must agree with `buy_box_variant_id`: the
+        # price a shopper sees is the price of the offer they are shown. On a
+        # single-seller catalog winner and default variant are the same row.
         attribute :price do |product|
-          price = price_for(product.default_variant)
+          price = price_for(featured_variant(product))
           Spree.api.price_serializer.new(price, params: params).to_h if price.present?
         end
 
         # Original price - base price without price list resolution (for showing strikethrough)
         # Returns null when same as calculated price, only populated when a price list discount is applied
         attribute :original_price do |product|
-          variant = product.default_variant
+          variant = featured_variant(product)
           calculated = price_for(variant)
           base = price_in(variant)
 
@@ -141,7 +161,7 @@ module Spree
 
         attribute :prior_price,
                   if: proc { expand?('prior_price') } do |product|
-          record = price_in(product.default_variant)&.prior_price
+          record = price_in(featured_variant(product))&.prior_price
           Spree.api.price_history_serializer.new(record, params: params).to_h if record
         end
       end
