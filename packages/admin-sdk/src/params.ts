@@ -529,14 +529,12 @@ export interface CustomerStoreCreditCreateParams {
   /** Decimal amount; see `PaymentCreateParams.amount` for the string rationale. */
   amount: string | number
   currency: string
-  category_id: string
   memo?: string
 }
 
 export interface CustomerStoreCreditUpdateParams {
   /** Decimal amount; see `PaymentCreateParams.amount` for the string rationale. */
   amount?: string | number
-  category_id?: string
   memo?: string
 }
 

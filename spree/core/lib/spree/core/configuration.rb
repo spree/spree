@@ -102,7 +102,7 @@ module Spree
       preference :logo, :string, deprecated: true
       preference :mailer_logo, :string, deprecated: true
       preference :max_level_in_taxons_menu, :integer, deprecated: true
-      preference :non_expiring_credit_types, :array, default: []
+      preference :non_expiring_credit_types, :array, default: [], deprecated: 'Nothing reads this in Spree 6 — store credits no longer carry a category, and expiry lives on Spree::GiftCard'
       preference :products_per_page, :integer, default: 12, deprecated: 'Nothing reads this in Spree 6 — pass per_page to the API instead'
       preference :restock_inventory, :boolean, default: true, deprecated: 'Restocking is decided per line item by Spree::ReturnLineItem#resellable'
       preference :return_eligibility_number_of_days, :integer, default: 365, deprecated: 'Use the return_window_days preference on Spree::Market, or a returns.create.validate hook'

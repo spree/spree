@@ -61,7 +61,6 @@ module Spree
       :stock_transfer_attributes,
       :store_attributes,
       :store_credit_attributes,
-      :store_credit_category_attributes,
       :tax_rate_attributes,
       :tax_category_attributes,
       :theme_attributes,
@@ -256,9 +255,7 @@ module Spree
                           :logo, :mailer_logo,
                           :preferred_guest_checkout, :preferred_storefront_access]
 
-    @@store_credit_attributes = %i[amount currency category_id memo]
-
-    @@store_credit_category_attributes = [:name]
+    @@store_credit_attributes = %i[amount currency memo]
 
     @@tax_category_attributes = [:name, :tax_code,:description, :is_default]
 

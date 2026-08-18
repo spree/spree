@@ -405,10 +405,9 @@
         "store_credit": {
           "add_description": "Przyznaj kredyt sklepowy na konto tego klienta.",
           "delete_confirm_message": "Usunąć ten kredyt sklepowy?",
-          "edit_description": "Dostosuj kwotę, kategorię lub notatkę. Wykorzystanego salda nie można edytować.",
+          "edit_description": "Dostosuj kwotę lub notatkę. Wykorzystanego salda nie można edytować.",
           "empty": "Nie wydano żadnych kredytów sklepowych",
           "table": {
-            "category": "Kategoria",
             "memo": "Notatka",
             "remaining": "Pozostało",
             "used": "Wykorzystano"
@@ -1434,9 +1433,6 @@
       "store_credit": {
         "amount": {
           "label": "Kwota"
-        },
-        "category_id": {
-          "label": "Kategoria"
         },
         "currency": {
           "label": "Waluta"

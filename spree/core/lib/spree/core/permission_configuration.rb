@@ -324,8 +324,7 @@ module Spree
          Spree::StockLocation, Spree::DeliveryProfile,
          Spree::Market, Spree::TaxCategory, Spree::TaxRate, Spree::AllowedOrigin,
          Spree::RefundReason, Spree::ReturnReason, Spree::ClaimReason, Spree::Channel,
-         Spree::OrderRoutingRule, Spree::CustomFieldDefinition, Spree::Policy,
-         Spree::StoreCreditCategory]
+         Spree::OrderRoutingRule, Spree::CustomFieldDefinition, Spree::Policy]
       })
       register_resource(:webhooks, group: :settings, subjects: -> {
         [Spree::WebhookEndpoint, Spree::WebhookDelivery]

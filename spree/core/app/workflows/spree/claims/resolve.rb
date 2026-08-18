@@ -123,7 +123,6 @@ module Spree
             customer: claim.order.customer,
             amount: @amount_to_refund,
             currency: claim.currency,
-            category: Spree::StoreCreditCategory.default_refund_category,
             created_by: resolver,
             originator: claim,
             memo: "Claim #{claim.number}"

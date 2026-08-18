@@ -104,7 +104,6 @@ module Spree
           customer: return_record.order.customer,
           amount: @amount_to_refund,
           currency: return_record.currency,
-          category: Spree::StoreCreditCategory.default_refund_category,
           created_by: refunder,
           originator: return_record,
           memo: "Return #{return_record.number}"

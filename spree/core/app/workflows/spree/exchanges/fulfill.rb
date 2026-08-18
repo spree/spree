@@ -102,7 +102,6 @@ module Spree
             customer: exchange.order.customer,
             amount: credit_amount,
             currency: exchange.currency,
-            category: Spree::StoreCreditCategory.default_refund_category,
             created_by: refunder,
             originator: exchange,
             memo: "Exchange #{exchange.number}"

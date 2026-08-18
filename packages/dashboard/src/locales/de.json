@@ -399,10 +399,9 @@
         "store_credit": {
           "add_description": "Stellen Sie diesem Kundenkonto Guthaben aus.",
           "delete_confirm_message": "Dieses Guthaben löschen?",
-          "edit_description": "Passen Sie den Betrag, die Kategorie oder die Notiz an. Das verwendete Guthaben kann nicht bearbeitet werden.",
+          "edit_description": "Passen Sie den Betrag oder die Notiz an. Das verwendete Guthaben kann nicht bearbeitet werden.",
           "empty": "Kein Guthaben ausgestellt",
           "table": {
-            "category": "Kategorie",
             "memo": "Notiz",
             "remaining": "Verbleibend",
             "used": "Verwendet"
@@ -1420,9 +1419,6 @@
       "store_credit": {
         "amount": {
           "label": "Betrag"
-        },
-        "category_id": {
-          "label": "Kategorie"
         },
         "currency": {
           "label": "Währung"

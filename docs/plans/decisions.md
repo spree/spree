@@ -3465,3 +3465,39 @@ breaks CI and ships broken gems, and each of those was caught only by running
 the suites. `docs/user/vendors/` and the rest of the published documentation
 are **not** renamed here; they are part of the 6.0 stable docs overhaul. Plan:
 `6.0-multi-vendor-marketplace.md`.
+
+## 2026-08-18 — Store credits lose their category and type
+
+`Spree::StoreCreditCategory` and `Spree::StoreCreditType` are retired.
+Both were inherited reference tables that no longer answered a question
+anything asked. A type was never created by any code path — no seed, no
+writer — so the "priority" it was meant to give store-credit redemption
+ordered on `NULL`, and which of a customer's credits got spent first was
+whatever the database returned. A category carried a name and an
+`expiring`/`non-expiring` label that nothing enforced: store credits have no
+expiry (gift cards do, on their own row), gift-card redemptions never set a
+category, and the only readers were a read-only admin endpoint feeding a
+dropdown nobody could manage.
+
+**What answers the question instead.** Why a credit exists is
+`StoreCredit#originator` (the return, exchange, claim or gift card that
+issued it) plus the free-text `memo` the refund workflows already write.
+Which credit is spent first is `StoreCredit.oldest_first` — deterministic
+and what shoppers expect. This is the shape every hosted platform ships:
+a balance with a note, no taxonomy.
+
+**Scope.** Refund workflows stop passing a category; the admin store-credit
+endpoint drops `category_id`/`category_name` and the read-only
+`/admin/store_credit_categories` routes are gone, as are the dashboard
+picker, the admin SDK resource, the seed and the `settings` catalog entry.
+`Spree::Config[:non_expiring_credit_types]` is deprecated as
+"nothing reads this". `spree:upgrade:fold_store_credit_categories` copies a
+legacy category name into the memo of credits that have none, so the only
+information a category row held stays visible.
+
+**Kept for one release.** Both classes survive as deprecated shells on their
+existing tables (warning on instantiation; `default_refund_category` and
+`order_by_priority` warn and delegate), and `spree_store_credits.category_id`
+/ `type_id` stay as frozen columns — never written — so extensions
+referencing the constants fail loudly and the fold step has its source. 6.1
+drops the two tables, the two columns and the shells.

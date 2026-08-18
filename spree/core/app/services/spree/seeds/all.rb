@@ -11,7 +11,6 @@ module Spree
             # are seeded.
 
             # additional data
-            StoreCreditCategories.call
             TaxCategories.call
 
             # store & channels

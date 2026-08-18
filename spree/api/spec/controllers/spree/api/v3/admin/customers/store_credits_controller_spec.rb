@@ -6,8 +6,7 @@ RSpec.describe Spree::Api::V3::Admin::Customers::StoreCreditsController, type: :
   include_context 'API v3 Admin authenticated'
 
   let(:customer) { create(:user) }
-  let(:category) { create(:store_credit_category) }
-  let!(:store_credit) { create(:store_credit, customer: customer, store: store, amount: 50.00, category: category) }
+  let!(:store_credit) { create(:store_credit, customer: customer, store: store, amount: 50.00) }
 
   before { request.headers.merge!(headers) }
 
@@ -54,7 +53,7 @@ RSpec.describe Spree::Api::V3::Admin::Customers::StoreCreditsController, type: :
     it 'cannot create a store credit on a customer it can only view' do
       expect {
         post :create, params: {
-          customer_id: customer.prefixed_id, amount: 10.0, currency: 'USD', category_id: category.id
+          customer_id: customer.prefixed_id, amount: 10.0, currency: 'USD'
         }, as: :json
       }.not_to change(customer.store_credits, :count)
 
@@ -70,7 +69,7 @@ RSpec.describe Spree::Api::V3::Admin::Customers::StoreCreditsController, type: :
     let(:headers) { { 'x-spree-api-key' => secret_api_key.plaintext_token } }
 
     let(:create_params) do
-      { customer_id: customer.prefixed_id, amount: 10.0, currency: 'USD', category_id: category.id }
+      { customer_id: customer.prefixed_id, amount: 10.0, currency: 'USD' }
     end
 
     context 'with a key granting only read_store_credits' do
@@ -112,7 +111,6 @@ RSpec.describe Spree::Api::V3::Admin::Customers::StoreCreditsController, type: :
           customer_id: customer.prefixed_id,
           amount: 25.00,
           currency: 'USD',
-          category_id: category.id,
           memo: 'Goodwill'
         }, as: :json
       }.to change(customer.store_credits, :count).by(1)
@@ -171,7 +169,7 @@ RSpec.describe Spree::Api::V3::Admin::Customers::StoreCreditsController, type: :
   describe 'cross-store isolation' do
     let(:other_store) { create(:store) }
     let!(:foreign_credit) do
-      create(:store_credit, customer: customer, store: other_store, amount: 99.00, category: category)
+      create(:store_credit, customer: customer, store: other_store, amount: 99.00)
     end
 
     it 'excludes other stores\' credits from the index' do
