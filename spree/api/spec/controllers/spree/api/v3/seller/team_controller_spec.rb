@@ -97,6 +97,21 @@ RSpec.describe Spree::Api::V3::Seller::TeamController, type: :controller do
       expect(seller.reload.users).to include(seller_user)
     end
 
+    # Counted and removed under a lock on the seller. Unlocked, two concurrent
+    # deletes against a two-member team both observe two and both proceed,
+    # leaving a seller nobody can sign in to — a state only an operator can
+    # repair. Asserted here as the invariant: whatever the order of removals,
+    # the team never reaches zero through this endpoint.
+    it 'never lets the team reach zero' do
+      second = create(:admin_user, :without_admin_role).tap { |user| seller.add_user(user) }
+
+      delete :destroy, params: { id: second.prefixed_id }, as: :json
+      expect(response).to have_http_status(:no_content)
+
+      delete :destroy, params: { id: seller_user.prefixed_id }, as: :json
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(seller.reload.users.count).to eq(1)
+    end
     it "404s on someone outside this seller's team" do
       other = create(:seller, :approved, store: store)
       outsider = create(:admin_user, :without_admin_role)

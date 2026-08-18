@@ -36,12 +36,14 @@ export function spreeSellerDashboardPlugin(
 ): PluginOption[] {
   const hostRoot = options.root ?? process.cwd()
   return [
-    // Name this shell so Tailwind scans the panel's own components; core
-    // defaults to the operator's dashboard, which a seller's host does not
-    // install.
+    // This shell is always scanned, whatever the host passes. Core defaults to
+    // the operator's dashboard, which a seller's host does not install — and a
+    // host naming its own shell is adding one, not replacing the panel whose
+    // components it renders. Overwriting instead of merging drops the panel's
+    // classes from the production CSS, and only in a built bundle.
     ...spreeDashboardCorePlugin({
-      shellPackages: ['@spree/seller-dashboard'],
       ...options,
+      shellPackages: ['@spree/seller-dashboard', ...(options.shellPackages ?? [])],
     }),
     sellerRouterPlugin(hostRoot, options),
   ]

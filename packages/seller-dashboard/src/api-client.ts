@@ -80,17 +80,37 @@ export function setActiveSeller(sellerId: string): void {
   sellerClient().setSeller(sellerId)
 }
 
-/** Persists the choice so a reload does not drop the seller back to the picker. */
+/**
+ * Persists the choice so a reload does not drop the seller back to the picker.
+ *
+ * Every access is guarded: a browser that blocks storage (sandboxed iframe,
+ * blocked third-party storage, some private modes) throws on `localStorage`,
+ * and these run at boot and during logout — the two places a throw would
+ * leave the panel unusable rather than merely forgetful. Losing the memory is
+ * a small cost; failing to boot or to sign out is not.
+ */
 export function rememberSeller(sellerId: string): void {
-  localStorage.setItem(SELLER_STORAGE_KEY, sellerId)
+  try {
+    localStorage.setItem(SELLER_STORAGE_KEY, sellerId)
+  } catch {
+    // Storage unavailable — the choice lives for this page only.
+  }
   setActiveSeller(sellerId)
 }
 
 export function forgetSeller(): void {
-  localStorage.removeItem(SELLER_STORAGE_KEY)
+  try {
+    localStorage.removeItem(SELLER_STORAGE_KEY)
+  } catch {
+    // Nothing to forget; clearing the header below is what matters for logout.
+  }
   client?.setSeller('')
 }
 
 export function rememberedSeller(): string | null {
-  return localStorage.getItem(SELLER_STORAGE_KEY)
+  try {
+    return localStorage.getItem(SELLER_STORAGE_KEY)
+  } catch {
+    return null
+  }
 }

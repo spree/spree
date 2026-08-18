@@ -46,17 +46,26 @@ module Spree
           # Revokes a member's access. The seller keeps at least one member:
           # emptying the team would leave a seller nobody can sign in to, and
           # only the operator could put someone back.
+          #
+          # Counted and removed under a lock on the seller. Unlocked, two
+          # concurrent deletes against a two-member team both see two and both
+          # proceed — the one state this endpoint exists to prevent, and one a
+          # seller cannot repair themselves.
           def destroy
-            if members.size <= 1
-              return render_error(
-                code: ErrorHandler::ERROR_CODES[:processing_error],
-                message: Spree.t(:seller_team_last_member),
-                status: :unprocessable_content
-              )
+            removed = current_seller.with_lock do
+              next false if current_seller.users.count <= 1
+
+              current_seller.remove_user(@member)
+              true
             end
 
-            current_seller.remove_user(@member)
-            head :no_content
+            return head :no_content if removed
+
+            render_error(
+              code: ErrorHandler::ERROR_CODES[:processing_error],
+              message: Spree.t(:seller_team_last_member),
+              status: :unprocessable_content
+            )
           end
 
           protected
