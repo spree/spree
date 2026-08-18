@@ -1498,13 +1498,6 @@ en:
         marketplace_default: Marketplace default
       delivery_profiles:
         digital: Digital
-      option_types:
-        condition:
-          label: Condition
-          values:
-            new: New
-            refurbished: Refurbished
-            used: Used
       product_types:
         default: Default
         digital: Digital

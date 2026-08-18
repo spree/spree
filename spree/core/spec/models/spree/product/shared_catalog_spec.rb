@@ -94,10 +94,9 @@ describe Spree::Product, type: :model do
     end
 
     it 'answers per option combination, so used and new have their own winners' do
-      Spree::Seeds::OptionTypes.call
-      condition = Spree::OptionType.find_by!(name: Spree::Seeds::OptionTypes::CONDITION_NAME)
-      used = condition.option_values.find_by(name: 'used')
-      new_value = condition.option_values.find_by(name: 'new')
+      condition = create(:option_type, name: 'condition', presentation: 'Condition')
+      used = create(:option_value, option_type: condition, name: 'used', presentation: 'Used')
+      new_value = create(:option_value, option_type: condition, name: 'new', presentation: 'New')
 
       used_variant = create(:variant, product: product, seller: seller, sku: 'U-1', price: 4,
                                       option_values: [used])

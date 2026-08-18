@@ -78,12 +78,9 @@ describe Spree::Products::SelectBuyBox do
   end
 
   describe 'option combinations' do
-    let(:condition) do
-      Spree::Seeds::OptionTypes.call
-      Spree::OptionType.find_by!(name: Spree::Seeds::OptionTypes::CONDITION_NAME)
-    end
-    let(:used) { condition.option_values.find_by!(name: 'used') }
-    let(:new_value) { condition.option_values.find_by!(name: 'new') }
+    let(:condition) { create(:option_type, name: 'condition', presentation: 'Condition') }
+    let(:used) { create(:option_value, option_type: condition, name: 'used', presentation: 'Used') }
+    let(:new_value) { create(:option_value, option_type: condition, name: 'new', presentation: 'New') }
 
     it 'gives each condition its own winner' do
       used_cheap = create(:variant, product: product, seller: seller, sku: 'U-1', price: 4, option_values: [used])
