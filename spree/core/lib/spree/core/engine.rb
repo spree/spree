@@ -544,7 +544,8 @@ module Spree
           'Spree::MaintenanceTasks::Upgrade::CalculatorBoundsToDeliveryMethodRules',
           'Spree::MaintenanceTasks::Upgrade::StoreSettingsFromConfig',
           'Spree::MaintenanceTasks::Upgrade::CaptureMethods',
-          'Spree::MaintenanceTasks::Upgrade::ProductTypes'
+          'Spree::MaintenanceTasks::Upgrade::ProductTypes',
+          'Spree::MaintenanceTasks::Upgrade::SearchReindex'
         ]
 
         Rails.application.config.spree.validators.addresses = [

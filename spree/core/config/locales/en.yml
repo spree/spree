@@ -1140,6 +1140,8 @@ en:
           description: Move return authorizations onto the Return and Exchange models
         rich_text_to_columns:
           description: Move rich text out of Action Text into its own columns
+        search_reindex:
+          description: Rebuild the search index
         shipping_to_delivery:
           description: Rename the shipping vocabulary to delivery
         store_settings_from_config:

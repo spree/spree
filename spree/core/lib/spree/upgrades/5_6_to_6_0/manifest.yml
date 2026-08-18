@@ -471,7 +471,7 @@ steps:
 
   - id: search_reindex
     name: "Rebuild the search index"
-    task: "spree:search:reindex"
+    task_class: "Spree::MaintenanceTasks::Upgrade::SearchReindex"
     notes: |
       Only affects installations running an indexing search provider —
       Meilisearch, or any gem that declares indexing_required?. The database
