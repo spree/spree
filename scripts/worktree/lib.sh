@@ -74,6 +74,10 @@ rails_name() { echo "$(branch_slug).spree"; }
 dashboard_name() { echo "admin.$(branch_slug).spree"; }
 rails_url() { echo "https://$(rails_name).localhost$(url_suffix)"; }
 dashboard_url() { echo "https://$(dashboard_name).localhost$(url_suffix)"; }
+# The marketplace seller panel — a separate app from the operator's dashboard,
+# so it gets its own host rather than a route inside it.
+seller_name() { echo "sellers.$(branch_slug).spree"; }
+seller_url() { echo "https://$(seller_name).localhost$(url_suffix)"; }
 # RAILS_HOST wants a bare host with an optional port, no scheme.
 rails_host() { echo "$(rails_name).localhost$(url_suffix)"; }
 
