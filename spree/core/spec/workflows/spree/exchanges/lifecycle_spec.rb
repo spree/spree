@@ -106,6 +106,20 @@ RSpec.describe 'Spree::Exchanges workflows' do
       expect(result.value).to be_fulfilled
     end
 
+    # An unallocated replacement looks exactly like a fulfillment created before
+    # typed movements, so dispatch ships it without writing anything and the
+    # goods leave the shelf untouched.
+    it 'promises the replacement stock so dispatch has something to convert' do
+      line = exchange.exchange_line_items.first
+      line.new_variant.stock_levels.first&.set_count_on_hand(10)
+
+      result = Spree::Exchanges::Fulfill.call(exchange: exchange)
+      replacement = result.value.order.fulfillments.detect { |f| f.variants.include?(line.new_variant) }
+
+      expect(replacement.allocated_quantities[line.new_variant.id]).to eq(1)
+      expect(replacement.stock_movements.allocated.sum(:quantity)).to eq(1)
+    end
+
     # The guard only matters when money moves: a cheaper replacement owes the
     # customer the difference, and an unrecognised method would otherwise fall
     # through to the gateway instead of store credit.

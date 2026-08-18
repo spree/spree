@@ -85,6 +85,22 @@ RSpec.describe 'Spree::Claims workflows' do
       expect(result).to be_success
     end
 
+    # Unallocated, the replacement is indistinguishable from a fulfillment made
+    # before typed movements: dispatch writes nothing and the goods leave the
+    # shelf untouched.
+    it 'promises the replacement stock so dispatch has something to convert' do
+      replacing = create(:approved_claim, store: store, order: order, send_replacement: true)
+      replacing.claim_line_items.each { |line| (line.replacement_variant || line.variant).stock_levels.first&.set_count_on_hand(10) }
+      # A replacement often reuses the same variant, so the new fulfillment is
+      # identified by being new — not by what it carries.
+      existing_ids = replacing.order.fulfillments.ids
+
+      result = Spree::Claims::Resolve.call(claim: replacing, resolution: 'replacement')
+      replacement = result.value.order.fulfillments.reload.find { |f| existing_ids.exclude?(f.id) }
+
+      expect(replacement.stock_movements.allocated.sum(:quantity)).to be_positive
+    end
+
     it 'refunds to store credit' do
       result = Spree::Claims::Resolve.call(claim: claim, resolution: 'refund')
 

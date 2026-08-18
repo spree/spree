@@ -92,7 +92,21 @@ module Spree
 
         exchange.order.fulfillments += @fulfillments
         exchange.order.save!
-        @fulfillments.each { |fulfillment| fulfillment.update!(exchange.order) }
+        @fulfillments.each { |fulfillment| allocate_replacement_stock(fulfillment) }
+      end
+
+      # The replacement is promised the moment it exists, exactly as placement
+      # promises an order's own fulfillments. Without this the fulfillment holds
+      # nothing, and dispatch then writes no movement at all — an unallocated
+      # fulfillment is indistinguishable from one created before typed
+      # movements, so the goods would leave the shelf untouched and unrecorded.
+      def allocate_replacement_stock(fulfillment)
+        fulfillment.manifest.each do |item|
+          next unless item.variant.track_inventory?
+          next unless item.quantity.positive?
+
+          fulfillment.stock_location.allocate(item.variant, item.quantity, fulfillment)
+        end
       end
 
       def issue_store_credit
