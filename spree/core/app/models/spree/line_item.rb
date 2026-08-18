@@ -170,7 +170,7 @@ module Spree
       return if variant.blank?
       return if order&.placed?
 
-      self.seller_id = variant.seller_id
+      self.seller_id = variant.resolved_seller_id
     end
 
     extend DisplayMoney

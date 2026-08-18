@@ -13,8 +13,10 @@ module Spree
 
     publishes_lifecycle_events
 
-    MEMOIZED_METHODS = %w(in_stock on_sale backorderable tax_category tax_category_id seller seller_id
-                          delivery_profile delivery_profile_id options_text compare_at_price)
+    MEMOIZED_METHODS = %w(in_stock on_sale backorderable tax_category tax_category_id
+                          resolved_seller resolved_seller_id
+                          resolved_delivery_profile resolved_delivery_profile_id
+                          options_text compare_at_price)
 
     DIMENSION_UNITS = %w[mm cm in ft]
     WEIGHT_UNITS = %w[g kg lb oz]
@@ -23,7 +25,7 @@ module Spree
     belongs_to :tax_category, class_name: 'Spree::TaxCategory', optional: true
     # Which seller sells this variant. Nil is the operator's own listing, and
     # on a product whose seller owns every variant the product answers instead
-    # — see #seller_id. Several sellers on one product is the whole point: two
+    # — see #resolved_seller_id. Several sellers on one product is the whole point: two
     # of them are two variant rows, so their stock, prices and line-item
     # attribution are separate by construction.
     belongs_to :seller, class_name: 'Spree::Seller', optional: true
@@ -225,14 +227,14 @@ module Spree
     )
 
     self.whitelisted_ransackable_associations = %w[option_values product tax_category prices seller]
-    # `seller_id` and `delivery_profile_id` are deliberately absent: the reader
-    # and the serializer report the *resolved* value, while Ransack would match
-    # the raw column — so filtering by the seller a client just read back would
-    # silently miss every variant that inherits it from the product, which on a
-    # single-owner catalog is all of them. Server-side callers narrow by seller
-    # with the `for_seller` scope, which resolves the same way the reader does;
-    # a client-facing filter needs an endpoint that applies it, not an
-    # allowlist entry that quietly answers a different question.
+    # `seller_id` and `delivery_profile_id` are deliberately absent: they are
+    # the raw columns, nil on every variant that inherits from its product —
+    # so "filter by seller" against them would silently miss the inheritors,
+    # which on a single-owner catalog is all of them. Server-side callers
+    # narrow by seller with the `for_seller` scope, which resolves the way
+    # `resolved_seller` does; a client-facing filter needs an endpoint that
+    # applies it, not an allowlist entry that quietly answers a different
+    # question.
     self.whitelisted_ransackable_attributes = %w[weight depth width height sku discontinue_on cost_price cost_currency track_inventory
                                                  deleted_at product_id hs_code country_of_origin]
     self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku search)
@@ -314,25 +316,17 @@ module Spree
                            end
     end
 
-    # Both resolved readers memoize, and both resolve to a value that may be
-    # inherited from the product — so a write has to drop the memo or the
-    # reader keeps answering with the old seller (or profile) until the record
-    # is saved. That window is not cosmetic: `validate_sku_uniqueness` reads
-    # the resolved seller, so a stale one checks the SKU against the wrong
-    # seller's catalog and lets a genuine collision through.
-    %i[seller delivery_profile].each do |name|
-      define_method(:"#{name}=") do |value|
-        instance_variable_set(:"@#{name}", nil)
-        instance_variable_set(:"@#{name}_id", nil)
-        super(value)
-      end
-
-      define_method(:"#{name}_id=") do |value|
-        instance_variable_set(:"@#{name}", nil)
-        instance_variable_set(:"@#{name}_id", nil)
-        super(value)
-      end
-    end
+    # `seller_id` and `delivery_profile_id` are plain columns — read raw,
+    # written raw, nil meaning "inherits from the product". The *resolved*
+    # answer lives on the `resolved_*` readers below, and every consumer that
+    # wants to know who sells this or how it ships must ask those, never the
+    # column: on an inheriting variant the column is nil and is not the answer.
+    #
+    # Kept as honest columns on purpose. An earlier cut overrode the readers to
+    # return the resolved value, which then made the column name unsafe to
+    # write (read resolved, write raw — a round-trip freezes inheritance into
+    # an override) and forced a second `own_*` name onto the API. A column
+    # that means what a column means needs neither.
 
     # The seller of this variant, falling back to the product's own.
     #
@@ -343,17 +337,22 @@ module Spree
     #
     # The column decides on its own when it is set — no second fallback, or a
     # variant whose seller row went missing would silently be attributed to
-    # the product's seller while `seller_id` still reported the column, and the
-    # two answers would name different sellers.
+    # the product's seller while `resolved_seller_id` still reported the
+    # column, and the two answers would name different sellers.
+    #
+    # Memoized, and cleared by the writers below: a stale memo here would let
+    # `validate_sku_uniqueness` check the SKU against the wrong seller.
     #
     # @return [Spree::Seller, nil]
-    def seller
-      @seller ||= self[:seller_id].nil? ? product&.seller : super
+    def resolved_seller
+      return @resolved_seller unless @resolved_seller.nil?
+
+      @resolved_seller = self[:seller_id].nil? ? product&.seller : seller
     end
 
     # @return [Integer, nil]
-    def seller_id
-      @seller_id ||= self[:seller_id] || product&.seller_id
+    def resolved_seller_id
+      @resolved_seller_id ||= self[:seller_id] || product&.seller_id
     end
 
     # The delivery profile that governs this variant: its own, else the
@@ -361,47 +360,33 @@ module Spree
     # merchant selling a poster beside its framed print can finally say so.
     #
     # @return [Spree::DeliveryProfile, nil]
-    def delivery_profile
+    def resolved_delivery_profile
       # Nil-check rather than `||=`: a store with no default profile resolves
       # to nil, and `||=` would re-run the lookup on every call.
-      return @delivery_profile unless @delivery_profile.nil?
+      return @resolved_delivery_profile unless @resolved_delivery_profile.nil?
 
-      @delivery_profile = self[:delivery_profile_id].nil? ? product&.resolved_delivery_profile : super
+      @resolved_delivery_profile = self[:delivery_profile_id].nil? ? product&.resolved_delivery_profile : delivery_profile
     end
 
     # @return [Integer, nil]
-    def delivery_profile_id
-      @delivery_profile_id ||= self[:delivery_profile_id] || product&.resolved_delivery_profile&.id
+    def resolved_delivery_profile_id
+      @resolved_delivery_profile_id ||= self[:delivery_profile_id] || product&.resolved_delivery_profile&.id
     end
 
-    # The override itself, rather than what the variant resolves to. This is
-    # the writable half of the pair: writing the *resolved* profile back would
-    # turn inheritance into an override on the first round-trip save, so the
-    # API reads and writes this name and nil clears the override.
-    #
-    # Aliased rather than hand-written so a prefixed id sent under this name
-    # still resolves — the decoder follows attribute aliases to find the
-    # association it belongs to.
-    #
-    # The writer is defined by hand on top of it: `alias_attribute` targets the
-    # generated attribute method, not the memo-clearing override below, so
-    # writing through the alias alone would leave the resolved readers
-    # answering with the profile the variant used to have.
-    alias_attribute :own_delivery_profile_id, :delivery_profile_id
+    # A write to either column has to drop the resolved memos, or the readers
+    # keep answering with what the variant used to inherit until it is saved.
+    %i[seller delivery_profile].each do |name|
+      define_method(:"#{name}=") do |value|
+        instance_variable_set(:"@resolved_#{name}", nil)
+        instance_variable_set(:"@resolved_#{name}_id", nil)
+        super(value)
+      end
 
-    def own_delivery_profile_id=(value)
-      self.delivery_profile_id = value
-    end
-
-    # The seller override, on the same terms and for the same reason: `seller_id`
-    # reads resolved (the variant's own, else the product's), so writing it back
-    # as read would freeze an inherited seller into a per-variant override the
-    # moment a client round-trips a record — and reassigning the product to
-    # another seller later would silently leave that variant behind.
-    alias_attribute :own_seller_id, :seller_id
-
-    def own_seller_id=(value)
-      self.seller_id = value
+      define_method(:"#{name}_id=") do |value|
+        instance_variable_set(:"@resolved_#{name}", nil)
+        instance_variable_set(:"@resolved_#{name}_id", nil)
+        super(value)
+      end
     end
 
     # Returns the options text of the variant.
@@ -856,7 +841,7 @@ module Spree
     #
     # @return [Boolean]
     def digital?
-      !!delivery_profile&.digital?
+      !!resolved_delivery_profile&.digital?
     end
 
     def with_digital_assets?
@@ -948,7 +933,7 @@ module Spree
     end
 
     def validate_sku_uniqueness
-      scope = self.class.for_seller(seller_id).
+      scope = self.class.for_seller(resolved_seller_id).
               where(deleted_at: nil).
               where(self.class.arel_table[:sku].lower.eq(sku.to_s.downcase))
       # Honour a host app's tenancy scope, as the validator this replaced did.

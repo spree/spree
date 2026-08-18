@@ -222,24 +222,12 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
     let(:seller) { create(:seller, :approved, store: store) }
     let(:profile) { create(:delivery_profile, store: store) }
 
-    it 'writes the seller through the override name and reads it back resolved' do
-      patch :update, params: {
-        product_id: product.prefixed_id,
-        id: variant.prefixed_id,
-        own_seller_id: seller.prefixed_id
-      }, as: :json
-
-      expect(response).to have_http_status(:ok)
-      expect(json_response['seller_id']).to eq(seller.prefixed_id)
-      expect(json_response['own_seller_id']).to eq(seller.prefixed_id)
-      expect(json_response['seller_name']).to eq(seller.name)
-    end
-
-    # `seller_id` reads resolved (variant's own, else the product's), so
-    # writing it back as read would freeze an inherited seller into an
-    # override on the first round-trip. It is read-only; the override is
-    # `own_seller_id`.
-    it 'ignores the resolved seller on write' do
+    # `seller_id`/`delivery_profile_id` are the variant's own columns and read
+    # and write the same value; `resolved_*` say who sells it and how it ships,
+    # answered through the product when the column is blank. Because the
+    # column reads what it writes, a client saving a record back can never
+    # turn inheritance into an override by accident.
+    it 'writes the seller and reads it back on both the column and the resolved answer' do
       patch :update, params: {
         product_id: product.prefixed_id,
         id: variant.prefixed_id,
@@ -247,25 +235,21 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
       }, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['own_seller_id']).to be_nil
-      expect(variant.reload[:seller_id]).to be_nil
+      expect(json_response['seller_id']).to eq(seller.prefixed_id)
+      expect(json_response['resolved_seller_id']).to eq(seller.prefixed_id)
+      expect(json_response['seller_name']).to eq(seller.name)
     end
 
-    it 'writes and reads back the delivery profile override' do
-      patch :update, params: {
-        product_id: product.prefixed_id,
-        id: variant.prefixed_id,
-        own_delivery_profile_id: profile.prefixed_id
-      }, as: :json
+    it 'reports an inherited seller on the resolved answer while the column stays blank' do
+      product.update!(seller: seller)
 
-      expect(response).to have_http_status(:ok)
-      expect(json_response['delivery_profile_id']).to eq(profile.prefixed_id)
-      expect(json_response['own_delivery_profile_id']).to eq(profile.prefixed_id)
+      get :show, params: { product_id: product.prefixed_id, id: variant.prefixed_id }, as: :json
+
+      expect(json_response['seller_id']).to be_nil
+      expect(json_response['resolved_seller_id']).to eq(seller.prefixed_id)
     end
 
-    # The resolved profile is read-only: sending it back as it was read must
-    # not freeze what the variant inherits into an override of its own.
-    it 'ignores the resolved profile on write' do
+    it 'writes the delivery profile override and reads it back' do
       patch :update, params: {
         product_id: product.prefixed_id,
         id: variant.prefixed_id,
@@ -273,8 +257,15 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
       }, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['own_delivery_profile_id']).to be_nil
-      expect(variant.reload[:delivery_profile_id]).to be_nil
+      expect(json_response['delivery_profile_id']).to eq(profile.prefixed_id)
+      expect(json_response['resolved_delivery_profile_id']).to eq(profile.prefixed_id)
+    end
+
+    it 'reports the product\'s profile as resolved when the variant has no override' do
+      get :show, params: { product_id: product.prefixed_id, id: variant.prefixed_id }, as: :json
+
+      expect(json_response['delivery_profile_id']).to be_nil
+      expect(json_response['resolved_delivery_profile_id']).to eq(product.delivery_profile.prefixed_id)
     end
 
     it 'clears the override back to inheriting' do
@@ -283,19 +274,12 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
       patch :update, params: {
         product_id: product.prefixed_id,
         id: variant.prefixed_id,
-        own_delivery_profile_id: nil
+        delivery_profile_id: nil
       }, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['own_delivery_profile_id']).to be_nil
-      expect(json_response['delivery_profile_id']).to eq(product.delivery_profile.prefixed_id)
-    end
-
-    it 'reports the product\'s profile when the variant has no override of its own' do
-      get :show, params: { product_id: product.prefixed_id, id: variant.prefixed_id }, as: :json
-
-      expect(json_response['delivery_profile_id']).to eq(product.delivery_profile.prefixed_id)
-      expect(json_response['own_delivery_profile_id']).to be_nil
+      expect(json_response['delivery_profile_id']).to be_nil
+      expect(json_response['resolved_delivery_profile_id']).to eq(product.delivery_profile.prefixed_id)
     end
 
     it 'refuses a seller belonging to another store' do
@@ -304,7 +288,7 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
       patch :update, params: {
         product_id: product.prefixed_id,
         id: variant.prefixed_id,
-        own_seller_id: foreign.prefixed_id
+        seller_id: foreign.prefixed_id
       }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)

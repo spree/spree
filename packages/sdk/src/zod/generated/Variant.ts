@@ -27,6 +27,7 @@ export const VariantSchema = z.object({
   price: PriceSchema,
   original_price: PriceSchema.nullable(),
   seller_id: z.string().nullable(),
+  resolved_seller_id: z.string().nullable(),
   seller: SellerSchema.optional(),
   primary_media: MediaSchema.optional(),
   media: z.array(MediaSchema).optional(),

@@ -8,29 +8,35 @@ describe Spree::Variant, type: :model do
   let(:seller) { create(:seller, :approved, store: store) }
   let(:other_seller) { create(:seller, :approved, store: store) }
 
-  describe '#seller' do
+  describe 'seller' do
     let(:product) { create(:product, store: store) }
 
-    it 'is the variant\'s own seller when it has one' do
+    # `seller_id`/`seller` are the variant's own column and association —
+    # honest, nil when inheriting. `resolved_seller` answers who actually
+    # sells it. Consumers must ask the resolved one; the column is not the answer.
+    it 'resolves to its own seller when it has one' do
       variant = create(:variant, product: product, seller: seller)
 
-      expect(variant.seller).to eq(seller)
       expect(variant.seller_id).to eq(seller.id)
+      expect(variant.resolved_seller).to eq(seller)
+      expect(variant.resolved_seller_id).to eq(seller.id)
     end
 
-    it 'falls back to the product\'s seller when the variant has none' do
+    it 'resolves to the product\'s seller when its own column is blank' do
       product.update!(seller: seller)
       variant = create(:variant, product: product)
 
-      expect(variant.seller).to eq(seller)
-      expect(variant.seller_id).to eq(seller.id)
+      expect(variant.seller_id).to be_nil
+      expect(variant.seller).to be_nil
+      expect(variant.resolved_seller).to eq(seller)
+      expect(variant.resolved_seller_id).to eq(seller.id)
     end
 
-    it 'is nil for a first-party listing' do
+    it 'is first-party only when both are blank' do
       variant = create(:variant, product: product)
 
-      expect(variant.seller).to be_nil
-      expect(variant.seller_id).to be_nil
+      expect(variant.resolved_seller).to be_nil
+      expect(variant.resolved_seller_id).to be_nil
     end
 
     it 'lets two sellers list variants on one product' do
@@ -38,8 +44,8 @@ describe Spree::Variant, type: :model do
       theirs = create(:variant, product: product, seller: other_seller)
 
       expect(product.reload.variants).to include(mine, theirs)
-      expect(mine.seller).to eq(seller)
-      expect(theirs.seller).to eq(other_seller)
+      expect(mine.resolved_seller).to eq(seller)
+      expect(theirs.resolved_seller).to eq(other_seller)
     end
 
     it 'refuses a seller from another store' do
@@ -57,23 +63,23 @@ describe Spree::Variant, type: :model do
     it 'does not keep answering with the inherited seller after a reassignment' do
       product.update!(seller: seller)
       variant = create(:variant, product: product)
-      expect(variant.seller_id).to eq(seller.id)
+      expect(variant.resolved_seller_id).to eq(seller.id)
 
       variant.seller = other_seller
 
-      expect(variant.seller_id).to eq(other_seller.id)
-      expect(variant.seller).to eq(other_seller)
+      expect(variant.resolved_seller_id).to eq(other_seller.id)
+      expect(variant.resolved_seller).to eq(other_seller)
     end
 
     it 'does not keep answering with the inherited seller after an id write' do
       product.update!(seller: seller)
       variant = create(:variant, product: product)
-      expect(variant.seller_id).to eq(seller.id)
+      expect(variant.resolved_seller_id).to eq(seller.id)
 
       variant.seller_id = other_seller.id
 
-      expect(variant.seller_id).to eq(other_seller.id)
-      expect(variant.seller).to eq(other_seller)
+      expect(variant.resolved_seller_id).to eq(other_seller.id)
+      expect(variant.resolved_seller).to eq(other_seller)
     end
   end
 
@@ -93,23 +99,27 @@ describe Spree::Variant, type: :model do
     end
   end
 
-  describe '#delivery_profile' do
+  describe 'delivery profile' do
     let(:product_profile) { create(:delivery_profile, store: store) }
     let(:variant_profile) { create(:delivery_profile, store: store) }
     let(:product) { create(:product, store: store, delivery_profile: product_profile) }
 
-    it 'falls back to the product\'s profile' do
+    # `delivery_profile_id` is the variant's own column, nil when inheriting.
+    # `resolved_delivery_profile` is what it actually ships on.
+    it 'resolves to the product\'s profile when its own column is blank' do
       variant = create(:variant, product: product)
 
-      expect(variant.delivery_profile).to eq(product_profile)
-      expect(variant.delivery_profile_id).to eq(product_profile.id)
+      expect(variant.delivery_profile_id).to be_nil
+      expect(variant.resolved_delivery_profile).to eq(product_profile)
+      expect(variant.resolved_delivery_profile_id).to eq(product_profile.id)
     end
 
-    it 'prefers its own override' do
+    it 'resolves to its own override when it has one' do
       variant = create(:variant, product: product, delivery_profile: variant_profile)
 
-      expect(variant.delivery_profile).to eq(variant_profile)
       expect(variant.delivery_profile_id).to eq(variant_profile.id)
+      expect(variant.resolved_delivery_profile).to eq(variant_profile)
+      expect(variant.resolved_delivery_profile_id).to eq(variant_profile.id)
     end
 
     it 'refuses a profile from another store' do
@@ -120,50 +130,28 @@ describe Spree::Variant, type: :model do
       expect(variant.errors[:delivery_profile]).to be_present
     end
 
-    # The resolved profile is what the variant ships on; the override is what
-    # a client may write. Reading the resolved value under the writable name
-    # would freeze inheritance into an override on the first round-trip save.
-    it 'separates the resolved profile from the override a client writes' do
+    # The column reads and writes the same value, so a client that saves a
+    # record back never turns inheritance into an override by accident.
+    it 'writes the override through the column and clears it with nil' do
       variant = create(:variant, product: product)
 
-      expect(variant.delivery_profile_id).to eq(product_profile.id)
-      expect(variant.own_delivery_profile_id).to be_nil
+      variant.update!(delivery_profile_id: variant_profile.id)
+      expect(variant.reload.delivery_profile_id).to eq(variant_profile.id)
+      expect(variant.resolved_delivery_profile_id).to eq(variant_profile.id)
 
-      variant.update!(own_delivery_profile_id: variant_profile.id)
-
-      expect(variant.reload.own_delivery_profile_id).to eq(variant_profile.id)
-      expect(variant.delivery_profile_id).to eq(variant_profile.id)
-    end
-
-    # The writable name has to clear the memos too, or a hook or serializer
-    # reading the profile between the write and the save sees the old one.
-    it 'does not keep answering with the old profile after a write through the override name' do
-      variant = create(:variant, product: product)
-      expect(variant.delivery_profile).to eq(product_profile)
-
-      variant.own_delivery_profile_id = variant_profile.id
-
-      expect(variant.delivery_profile).to eq(variant_profile)
-      expect(variant.delivery_profile_id).to eq(variant_profile.id)
-    end
-
-    it 'clears the override back to inheriting when the client writes nil' do
-      variant = create(:variant, product: product, delivery_profile: variant_profile)
-
-      variant.update!(own_delivery_profile_id: nil)
-
-      expect(variant.reload.own_delivery_profile_id).to be_nil
-      expect(variant.delivery_profile_id).to eq(product_profile.id)
+      variant.update!(delivery_profile_id: nil)
+      expect(variant.reload.delivery_profile_id).to be_nil
+      expect(variant.resolved_delivery_profile_id).to eq(product_profile.id)
     end
 
     it 'does not keep answering with the inherited profile after a reassignment' do
       variant = create(:variant, product: product)
-      expect(variant.delivery_profile).to eq(product_profile)
+      expect(variant.resolved_delivery_profile).to eq(product_profile)
 
       variant.delivery_profile = variant_profile
 
-      expect(variant.delivery_profile).to eq(variant_profile)
-      expect(variant.delivery_profile_id).to eq(variant_profile.id)
+      expect(variant.resolved_delivery_profile).to eq(variant_profile)
+      expect(variant.resolved_delivery_profile_id).to eq(variant_profile.id)
     end
 
     it 'answers digital? from its own profile, not the product\'s' do

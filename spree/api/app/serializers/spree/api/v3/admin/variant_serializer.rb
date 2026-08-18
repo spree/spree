@@ -20,9 +20,8 @@ module Spree
                    customs_description: [:string, nullable: true],
                    deleted_at: [:string, nullable: true],
                    seller_name: [:string, nullable: true],
-                   own_seller_id: [:string, nullable: true],
                    delivery_profile_id: [:string, nullable: true],
-                   own_delivery_profile_id: [:string, nullable: true],
+                   resolved_delivery_profile_id: [:string, nullable: true],
                    metadata: 'Record<string, unknown>'
 
           attributes :metadata, :position, :cost_price, :cost_currency,
@@ -58,39 +57,33 @@ module Spree
             variant.product&.name
           end
 
-          # `seller_id` comes from the store serializer. The name rides along
-          # so the variants table can show a seller column without an expand.
+          # `seller_id` and `resolved_seller_id` come from the store serializer.
+          # The name rides along so the variants table can show a seller
+          # column without an expand — the resolved one, since that is who
+          # sells it.
           attribute :seller_name do |variant|
-            variant.seller&.name
+            variant.resolved_seller&.name
           end
 
-          # Two answers, because they mean different things. `delivery_profile_id`
-          # is what the variant actually ships on, resolved through the product.
-          # `own_delivery_profile_id` is the override itself — the writable one,
-          # so an editor can tell "inherits" from "deliberately set to the same
-          # profile", and clear it back to inheriting by writing nil.
-          #
-          # Reading the resolved value under the writable name is what would
-          # freeze an inherited profile into an override on the first round-trip
-          # save, which is precisely what a variant-level override must not do.
+          # Same pair as the seller. `delivery_profile_id` is the variant's own
+          # column — nil when it inherits — and what a client writes back, so a
+          # round trip never freezes inheritance into an override.
+          # `resolved_delivery_profile_id` is what the variant actually ships
+          # on: its own, else the product's. Read-only, because it is an
+          # answer rather than a field.
           attribute :delivery_profile_id do |variant|
-            variant.delivery_profile&.prefixed_id
+            variant.association(:delivery_profile).reader&.prefixed_id if variant.delivery_profile_id
           end
 
-          attribute :own_delivery_profile_id do |variant|
-            variant.association(:delivery_profile).reader&.prefixed_id if variant.own_delivery_profile_id
-          end
-
-          # The seller override, on the same terms: `seller_id` above reads
-          # resolved, this is the writable per-variant link — nil when the
-          # variant inherits its seller from the product.
-          attribute :own_seller_id do |variant|
-            variant.association(:seller).reader&.prefixed_id if variant.own_seller_id
+          attribute :resolved_delivery_profile_id do |variant|
+            variant.resolved_delivery_profile&.prefixed_id
           end
 
           one :seller,
               resource: proc { Spree.api.admin_seller_serializer },
-              if: proc { expand?('seller') }
+              if: proc { expand?('seller') } do |variant|
+            variant.resolved_seller
+          end
 
           # Override inherited associations to use admin serializers
           one :primary_media,

@@ -87,7 +87,7 @@ module Spree
         key = [variant.product_id, variant[:delivery_profile_id]]
         return @unit_profiles[key] if @unit_profiles.key?(key)
 
-        profile = variant.delivery_profile
+        profile = variant.resolved_delivery_profile
         profile&.delivery_origin_groups&.each(&:member_stock_location_ids)
         @unit_profiles[key] = profile
       end

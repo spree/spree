@@ -63,7 +63,7 @@ module Spree
         # Both profile paths are preloaded: the variant's own override, and the
         # product's for the variants that inherit it.
         line_items.includes(variant: [:delivery_profile, { product: :delivery_profile }]).any? do |line_item|
-          profile_requires_address[line_item.variant&.delivery_profile]
+          profile_requires_address[line_item.variant&.resolved_delivery_profile]
         end
       end
 

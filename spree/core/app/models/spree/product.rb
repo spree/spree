@@ -497,7 +497,7 @@ module Spree
     # @return [Array<Spree::Variant>]
     def sellable_variants
       variants.reject(&:deleted_at).select do |variant|
-        seller = variant.seller
+        seller = variant.resolved_seller
         seller.nil? || seller.sellable?
       end
     end
@@ -1057,7 +1057,7 @@ module Spree
     # to sort first.
     def preferred_default_variant(reload: false)
       candidates = reload ? variants.reload : variants
-      candidates.detect { |variant| variant.seller_id.nil? } || candidates.first
+      candidates.detect { |variant| variant.resolved_seller_id.nil? } || candidates.first
     end
 
     def assign_default_tax_category

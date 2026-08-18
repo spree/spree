@@ -66,7 +66,7 @@ module Spree
 
       # Whether the variant's seller is selling today. First-party always is.
       def seller_active?(variant)
-        seller = variant.seller
+        seller = variant.resolved_seller
         seller.nil? || seller.sellable?
       end
 
@@ -87,7 +87,7 @@ module Spree
       def rank(variants, prices)
         variants.sort_by do |variant|
           [
-            variant.seller_id.nil? ? 0 : 1,
+            variant.resolved_seller_id.nil? ? 0 : 1,
             prices[variant.id] || BigDecimal('Infinity'),
             variant.id
           ]

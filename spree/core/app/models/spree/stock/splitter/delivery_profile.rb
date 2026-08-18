@@ -33,7 +33,7 @@ module Spree
           # to nil, which `||=` would look up again for every item.
           return @item_profiles[key] if @item_profiles.key?(key)
 
-          @item_profiles[key] = variant.delivery_profile&.id
+          @item_profiles[key] = variant.resolved_delivery_profile&.id
         end
       end
     end
