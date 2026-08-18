@@ -132,28 +132,6 @@ module Spree
     # its own goods.
     belongs_to :seller, class_name: 'Spree::Seller', optional: true, inverse_of: :products
 
-    # Who is writing this product, when the writer speaks for one seller. Not
-    # persisted and not part of the record's identity — it bounds a single
-    # save, so `variants=` may only touch variants belonging to the seller
-    # doing the writing, whether the payload is editing them or dropping them.
-    # Unset (the default) writes freely, which is what the operator's own back
-    # office does; setting it to nil means the first-party writer, who may
-    # touch only first-party variants.
-    def writing_seller=(seller)
-      @writing_seller_id = seller.respond_to?(:id) ? seller.id : seller
-      @writing_seller_set = true
-    end
-
-    # @return [Boolean] whether this write speaks for one particular seller
-    def writing_for_one_seller?
-      !!@writing_seller_set
-    end
-
-    # @return [Integer, nil] the writing seller's id; nil is first-party
-    def writing_seller_id
-      @writing_seller_id
-    end
-
     # How this product ships: origins, zones and methods all hang off the
     # profile. Required — a product without one could not be fulfilled at
     # all — and auto-assigned on create (type template, else the store's
@@ -496,7 +474,7 @@ module Spree
     #
     # @return [Array<Spree::Variant>]
     def sellable_variants
-      variants.reject(&:deleted_at).select do |variant|
+      variants.select do |variant|
         seller = variant.resolved_seller
         seller.nil? || seller.sellable?
       end
@@ -909,11 +887,7 @@ module Spree
 
         variant =
           if variant_id.present?
-            # Resolved through the same bound as removal: a payload naming
-            # another seller's variant must not be able to rewrite its price
-            # or stock either, and an id outside the bound is a 404 rather
-            # than a silent no-op.
-            writable_variants.find_by_param!(variant_id)
+            variants.find_by_param!(variant_id)
           elsif reuse_default_variant_for?(variant_data, variant_ids_in_payload)
             # An id-less, option-less entry targets the product's existing
             # option-less default variant (the simple-product case) — update it in
@@ -924,16 +898,6 @@ module Spree
             variants.build
           end
 
-        # A write that speaks for one seller stamps that seller onto every
-        # variant it creates and may not name another: the bound is who the
-        # writer IS, not a field the payload gets to choose. Without this a
-        # seller could mint a variant owned by a rival and then, on the next
-        # save, be refused their own row.
-        if writing_for_one_seller?
-          variant_data[:seller_id] = writing_seller_id
-          variant_data.delete(:seller)
-        end
-
         variant.assign_attributes(variant_data)
         variant.save!
 
@@ -941,32 +905,19 @@ module Spree
         mutated = true
       end
 
-      # Full replacement, bounded by what the writer is allowed to remove.
-      #
-      # The payload is the writer's whole intent, so anything of theirs that is
-      # missing from it was deleted. Another seller's variants were never the
-      # writer's to send, and a narrower read would otherwise make this write
-      # destructive — a seller saving their own listing would wipe the rival
-      # sharing the product. `writable_variants` answers who owns what; for a
-      # store with no sellers it is every variant, which is exactly today's
-      # behaviour.
+      # Full replacement: variants not in the payload are removed. The payload
+      # is the writer's whole intent, and this write path is the operator's —
+      # who sees and writes every seller's variants on a master product, so
+      # nothing here narrows by seller. A seller's own write path (the seller
+      # branch, Phase 3) scope-fetches through `current_seller` at the
+      # controller, per docs/plans/6.0-multi-vendor-marketplace.md Decision 10;
+      # it never reaches this method with a payload naming another seller's rows.
       if variant_ids_in_payload.any?
-        removed = writable_variants.where.not(id: variant_ids_in_payload).destroy_all
+        removed = variants.where.not(id: variant_ids_in_payload).destroy_all
         mutated ||= removed.any?
       end
 
       sync_variant_state! if mutated
-    end
-
-    # The variants this write may touch — edit or destroy. Defaults to all of
-    # them; a caller writing on behalf of one seller narrows it to that
-    # seller's own by setting +writing_seller+ (the seller branch does, per its
-    # scope-fetching rule — the operator's admin surface never does, since
-    # staff manage every seller's variants on a product they run).
-    def writable_variants
-      return variants unless writing_for_one_seller?
-
-      variants.for_seller(writing_seller_id)
     end
 
     # True when an id-less variant payload should update the product's existing
@@ -978,11 +929,7 @@ module Spree
         variant_data[:option_value_variants_attributes].blank? &&
         default_variant.present? &&
         default_variant.option_values.empty? &&
-        consumed_ids.exclude?(default_variant.id) &&
-        # The default variant is reachable without an id, so it has to pass
-        # the same bound an id would — otherwise an option-less entry is a
-        # way to rewrite the operator's own row from a seller's payload.
-        writable_variants.exists?(id: default_variant.id)
+        consumed_ids.exclude?(default_variant.id)
     end
 
     # Re-syncs the in-memory derived variant state after `apply_variants`

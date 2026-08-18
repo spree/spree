@@ -55,7 +55,7 @@ module Spree
       # Reads the loaded association rather than querying, so a serialized
       # product list resolves every buy box from the variants it already has.
       def candidates_for(product, option_value_ids)
-        variants = product.variants.reject(&:deleted_at)
+        variants = product.variants.to_a
         return variants if option_value_ids.blank?
 
         # Compared as strings, never cast: ids may be UUIDs, and a prefixed id

@@ -8,77 +8,20 @@ describe Spree::Product, type: :model do
   let(:seller) { create(:seller, :approved, store: store) }
   let(:other_seller) { create(:seller, :approved, store: store) }
 
-  describe '#variants= ownership filter' do
+  describe '#variants= on a master product' do
     let(:product) { create(:product, store: store) }
     let!(:mine) { create(:variant, product: product, seller: seller, sku: 'MINE-1') }
     let!(:theirs) { create(:variant, product: product, seller: other_seller, sku: 'THEIRS-1') }
 
-    it 'keeps another seller\'s variants when the write speaks for one seller' do
-      product.writing_seller = seller
+    # This is the operator's write path, and the operator sees and writes
+    # every seller's variants on a master. There is no seller-narrowing here
+    # on purpose; a seller's own writes go through the seller branch, which
+    # scope-fetches at the controller (Decision 10).
+    it 'lets the operator edit and remove any seller\'s variant' do
       product.variants = [{ id: mine.prefixed_id, sku: 'MINE-2' }]
 
-      expect(product.variants.reload).to include(theirs)
       expect(mine.reload.sku).to eq('MINE-2')
-    end
-
-    it 'still removes the writing seller\'s own omitted variants' do
-      also_mine = create(:variant, product: product, seller: seller, sku: 'MINE-9')
-
-      product.writing_seller = seller
-      product.variants = [{ id: mine.prefixed_id }]
-
-      expect(product.variants.reload).not_to include(also_mine)
-      expect(product.variants.reload).to include(mine, theirs)
-    end
-
-    it 'removes freely when no seller is named — the operator runs the marketplace' do
-      product.variants = [{ id: mine.prefixed_id }]
-
       expect(product.variants.reload).not_to include(theirs)
-    end
-
-    # Editing a rival's row is the same fault as deleting it, through the same
-    # payload — an id outside the bound must not resolve at all.
-    it 'refuses to edit another seller\'s variant' do
-      product.writing_seller = seller
-
-      expect {
-        product.variants = [{ id: theirs.prefixed_id, sku: 'STOLEN' }]
-      }.to raise_error(ActiveRecord::RecordNotFound)
-
-      expect(theirs.reload.sku).to eq('THEIRS-1')
-    end
-
-    # The bound is who the writer IS, not a field the payload chooses: a
-    # seller could otherwise mint a variant owned by a rival.
-    it 'stamps the writing seller onto variants it creates, whatever the payload says' do
-      product.writing_seller = seller
-      product.variants = [{ id: mine.prefixed_id }, { sku: 'NEW-1', seller_id: other_seller.id }]
-
-      created = product.variants.reload.find_by(sku: 'NEW-1')
-      expect(created[:seller_id]).to eq(seller.id)
-    end
-
-    # The default variant is reachable without an id, so it has to pass the
-    # bound an id would.
-    it 'does not let an id-less entry rewrite the operator\'s default variant' do
-      first_party = create(:variant, product: product, sku: 'OURS-1')
-      product.update_column(:default_variant_id, first_party.id)
-      product.reload
-
-      product.writing_seller = seller
-      product.variants = [{ id: mine.prefixed_id }, { sku: 'HIJACK' }]
-
-      expect(first_party.reload.sku).to eq('OURS-1')
-    end
-
-    it 'bounds a first-party writer to first-party variants' do
-      first_party = create(:variant, product: product, sku: 'OURS-1')
-
-      product.writing_seller = nil
-      product.variants = [{ id: first_party.prefixed_id }]
-
-      expect(product.variants.reload).to include(mine, theirs, first_party)
     end
   end
 
