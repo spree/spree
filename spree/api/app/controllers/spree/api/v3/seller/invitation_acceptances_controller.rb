@@ -26,7 +26,9 @@ module Spree
           def lookup
             return unless load_invitation
 
-            render json: Spree.api.seller_invitation_serializer.new(@invitation).serializable_hash
+            render json: Spree.api.seller_invitation_serializer.new(
+              @invitation, params: { store: @invitation.store }
+            ).serializable_hash
           end
 
           # POST /api/v3/seller/auth/invitations/:id/accept?token=:token
