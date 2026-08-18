@@ -605,6 +605,7 @@ function RuleRow({
             className="text-destructive hover:bg-destructive/10 hover:text-destructive"
           >
             <TrashIcon className="size-4" />
+            <span className="sr-only">{t('admin.actions.remove')}</span>
           </Button>
         </div>
       </Can>

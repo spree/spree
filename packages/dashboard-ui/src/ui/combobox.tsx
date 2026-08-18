@@ -1,6 +1,7 @@
 'use client'
 
 import { Combobox as ComboboxPrimitive } from '@base-ui/react'
+import i18n from 'i18next'
 import { CheckIcon, ChevronDownIcon, XIcon } from 'lucide-react'
 import * as React from 'react'
 import { cn } from '../lib/utils'
@@ -242,6 +243,7 @@ function ComboboxChip({
           data-slot="combobox-chip-remove"
         >
           <XIcon className="pointer-events-none" />
+          <span className="sr-only">{i18n.t('admin.actions.remove')}</span>
         </ComboboxPrimitive.ChipRemove>
       )}
     </ComboboxPrimitive.Chip>

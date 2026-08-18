@@ -245,6 +245,7 @@ function ContactsCard({ location, canEdit }: { location: CompanyLocation; canEdi
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="icon-xs">
                         <EllipsisVerticalIcon className="size-4" />
+                        <span className="sr-only">{t('admin.actions.actions_menu')}</span>
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">

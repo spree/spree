@@ -216,7 +216,12 @@ export function TableToolbar({
               <Tooltip>
                 <TooltipTrigger asChild>
                   <PopoverTrigger asChild>
-                    <Button variant="ghost" size="sm" className="h-[2.125rem]">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-[2.125rem]"
+                      aria-label={t('admin.components.table_toolbar.filters_button')}
+                    >
                       <FilterIcon className="size-4" />
                       {activeFilterCount > 0 && (
                         <Badge variant="outline" className="ml-1 px-1.5 py-0 text-xs">
@@ -469,7 +474,12 @@ function SortDropdown({
       <Tooltip>
         <TooltipTrigger asChild>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="h-[2.125rem]">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-[2.125rem]"
+              aria-label={t('admin.components.table_toolbar.sort_tooltip')}
+            >
               <ArrowUpDownIcon className="size-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -536,7 +546,12 @@ function ColumnSelector({
       <Tooltip>
         <TooltipTrigger asChild>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="h-[2.125rem]">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-[2.125rem]"
+              aria-label={t('admin.components.table_toolbar.columns_tooltip')}
+            >
               <Columns3Icon className="size-4" />
             </Button>
           </DropdownMenuTrigger>

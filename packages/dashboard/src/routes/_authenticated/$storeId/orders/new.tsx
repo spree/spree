@@ -266,6 +266,7 @@ function NewOrderPage() {
                                 onClick={() => removeItem(variant.id)}
                               >
                                 <TrashIcon className="size-4" />
+                                <span className="sr-only">{t('admin.actions.remove')}</span>
                               </Button>
                             </td>
                           </tr>

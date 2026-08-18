@@ -56,7 +56,11 @@
   --secondary: oklch(0.97 0 0); /* neutral-100 */
   --secondary-foreground: oklch(0.145 0 0);
   --muted: oklch(0.985 0 0); /* neutral-50 */
-  --muted-foreground: oklch(0.556 0 0); /* neutral-500 */
+  /* Between neutral-500 and -600. Clears 4.5:1 against every surface this text
+     actually lands on — including --accent, the darkest of them — where the
+     neutral-500 step measured 4.15:1. Dark mode keeps its own value: it already
+     passes on all four grounds. */
+  --muted-foreground: oklch(0.535 0 0);
   /* Hover/highlight for menu items and table rows. A lighter step than
      neutral-200: these sit on white surfaces, where that value reads as a
      pressed state rather than a hover. The sidebar keeps the stronger tone
