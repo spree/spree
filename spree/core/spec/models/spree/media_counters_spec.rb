@@ -130,6 +130,30 @@ describe Spree::Media, type: :model do
     let(:product) { create(:product) }
     let(:other_product) { create(:product) }
 
+    it 'clears the old owner thumbnail, which still pointed at the moved row' do
+      media = create(:image, viewable: product)
+      expect(product.reload.primary_media_id).to eq(media.id)
+
+      media.update!(viewable: other_product)
+
+      expect(product.reload.primary_media_id).to be_nil
+      expect(other_product.reload.primary_media_id).to eq(media.id)
+    end
+
+    it 'treats a type-only change as a move' do
+      variant = create(:variant, product: product)
+      media = create(:image, viewable: variant)
+
+      # Same numeric id on both sides, so only viewable_type changes. Watching
+      # viewable_id alone would sit this move out and leave both owners wrong.
+      Spree::Media.where(id: media.id).update_all(viewable_id: product.id)
+      media.reload
+      media.update!(viewable_type: 'Spree::Product')
+
+      expect(media.send(:saved_change_to_viewable?)).to be(true)
+      expect(media.reload.viewable).to eq(product)
+    end
+
     it 'moves the count from the old owner to the new one' do
       media = create(:image, viewable: product)
       expect(product.reload.media_count).to eq(1)

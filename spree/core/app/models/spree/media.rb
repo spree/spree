@@ -101,12 +101,12 @@ module Spree
     after_commit :update_viewable_thumbnail_on_create, on: :create
     after_commit :update_viewable_thumbnail_on_destroy, on: :destroy
     after_commit :update_viewable_thumbnail_on_reorder, on: :update, if: :saved_change_to_position?
-    after_commit :update_viewable_thumbnail_on_viewable_change, on: :update, if: :saved_change_to_viewable_id?
+    after_commit :update_viewable_thumbnail_on_viewable_change, on: :update, if: :saved_change_to_viewable?
 
     after_save :apply_poster_signed_id, if: -> { defined?(@poster_signed_id) }
     after_create :increment_viewable_media_count
     after_destroy :decrement_viewable_media_count
-    after_update :move_viewable_media_count, if: :saved_change_to_viewable_id?
+    after_update :move_viewable_media_count, if: :saved_change_to_viewable?
 
     def image?
       media_type == 'image'
@@ -285,11 +285,22 @@ module Spree
     # A row that changes owner has already been counted against the old one.
     # Without this the previous owner stays inflated and the new one short.
     def move_viewable_media_count
-      previous_id, _current_id = saved_change_to_viewable_id
-      previous_type = saved_change_to_viewable_type&.first || viewable_type
-
-      adjust_media_count(previous_type, previous_id, -1)
+      adjust_media_count(*previous_owner, -1)
       increment_viewable_media_count
+    end
+
+    # A move changes viewable_type, viewable_id, or both — read whichever
+    # actually changed, falling back to the current value for the other.
+    # @return [Array(String, Integer)] the owner this row was taken from
+    def previous_owner
+      [
+        saved_change_to_viewable_type&.first || viewable_type,
+        saved_change_to_viewable_id&.first || viewable_id
+      ]
+    end
+
+    def saved_change_to_viewable?
+      saved_change_to_viewable_id? || saved_change_to_viewable_type?
     end
 
     def adjust_media_count(type, id, by)
@@ -319,9 +330,25 @@ module Spree
       end
     end
 
+    # On a move, the owner left behind still points at this row through its
+    # primary_media_id — refresh it too, or it renders media it no longer has.
+    def update_viewable_thumbnail_on_viewable_change
+      type, id = previous_owner
+      previous = type&.safe_constantize&.find_by(id: id)
+
+      case previous
+      when Spree::Variant
+        previous.update_thumbnail!
+        previous.product&.update_thumbnail!
+      when Spree::Product
+        previous.update_thumbnail!
+      end
+
+      update_viewable_thumbnail
+    end
+
     alias update_viewable_thumbnail_on_create update_viewable_thumbnail
     alias update_viewable_thumbnail_on_destroy update_viewable_thumbnail
     alias update_viewable_thumbnail_on_reorder update_viewable_thumbnail
-    alias update_viewable_thumbnail_on_viewable_change update_viewable_thumbnail
   end
 end
