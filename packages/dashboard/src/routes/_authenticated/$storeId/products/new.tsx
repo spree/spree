@@ -77,13 +77,10 @@ function NewProductPage() {
     // The server's Product#media= setter attaches each blob via signed_id
     // after the product is created (deferred to after_save).
     if (media && media.length > 0) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ;(payload as any).media = media.map(
-        ({ previewUrl, posterUrl, videoUrl, uploadId, ...rest }, i) => ({
-          ...rest,
-          position: i + 1,
-        }),
-      )
+      payload.media = media.map(({ previewUrl, posterUrl, videoUrl, uploadId, ...rest }, i) => ({
+        ...rest,
+        position: i + 1,
+      }))
     }
 
     // For simple products (single variant with no options) the merchant

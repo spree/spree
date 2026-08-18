@@ -571,6 +571,25 @@ export interface MediaCreateParams {
   variant_ids?: Array<string>
 }
 
+/**
+ * One entry in a product's inline `media` list. An entry carrying `id` patches
+ * that media row; one carrying `signed_id` creates from a fresh upload; an
+ * external video creates from its URL alone. Omitting a persisted entry leaves
+ * it untouched — removal goes through the media endpoint's DELETE.
+ */
+export interface ProductMediaInput {
+  id?: string
+  signed_id?: string
+  alt?: string | null
+  position?: number
+  media_type?: MediaType
+  external_video_url?: string | null
+  poster_signed_id?: string
+  focal_point_x?: number | null
+  focal_point_y?: number | null
+  variant_ids?: Array<string>
+}
+
 export interface MediaUpdateParams {
   alt?: string
   position?: number
@@ -615,6 +634,8 @@ export interface ProductCreateParams {
   /** Every purchasable attribute (sku, prices, stock, weight, dimensions) lives
    *  on variants. Pass at least one variant to make the product purchasable. */
   variants?: ProductVariantInput[]
+  /** Media created alongside the product — see {@link ProductMediaInput}. */
+  media?: ProductMediaInput[]
   product_publications?: ProductPublicationInput[]
 }
 
@@ -634,6 +655,8 @@ export interface ProductUpdateParams {
   /** Shorthand for a simple (no-options) product — see `ProductCreateParams.prices`. */
   prices?: VariantPrice[]
   variants?: ProductVariantInput[]
+  /** See {@link ProductMediaInput}. */
+  media?: ProductMediaInput[]
   product_publications?: ProductPublicationInput[]
 }
 

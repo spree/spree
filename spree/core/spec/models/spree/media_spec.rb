@@ -209,6 +209,15 @@ describe Spree::Media, type: :model do
       expect(asset.reload.poster).not_to be_attached
     end
 
+    it 'rejects a signed id it cannot resolve' do
+      asset = build(:external_video_asset, poster_signed_id: 'not-a-real-signed-id')
+
+      # A tampered id raises inside attach, which would be a 500 after the row
+      # was already written — it has to fail as a validation instead.
+      expect(asset).not_to be_valid
+      expect(asset.errors[:poster]).to be_present
+    end
+
     it 'rejects a poster that is not a web image' do
       asset = build(:external_video_asset)
       asset.poster.attach(

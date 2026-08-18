@@ -43,6 +43,7 @@ module Spree
               if: -> { poster.attached? }
     validates :external_video_url, presence: true, if: :external_video?
     validate :external_video_url_is_supported, if: -> { external_video? && external_video_url.present? }
+    validate :poster_signed_id_is_resolvable, if: -> { @poster_signed_id.present? }
 
     WEBP_SAVER_OPTIONS = {
       strip: true,
@@ -241,6 +242,15 @@ module Spree
         # purge_later, not detach — detach leaves the blob behind in storage.
         poster.purge_later
       end
+    end
+
+    # A tampered or expired signed id raises deep inside `attach`, which would
+    # surface as a 500 after the row is already written. Resolve it up front so
+    # a bad one reads as a validation error on the field that carried it.
+    def poster_signed_id_is_resolvable
+      ActiveStorage::Blob.find_signed!(@poster_signed_id)
+    rescue ActiveSupport::MessageVerifier::InvalidSignature, ActiveRecord::RecordNotFound
+      errors.add(:poster, :invalid)
     end
 
     def external_video_url_is_supported
