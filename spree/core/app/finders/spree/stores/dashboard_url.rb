@@ -58,6 +58,9 @@ module Spree
       # Where this Rails app answers. `default_url_options` is what mailers
       # already rely on, so a deployment that gets email links right gets this
       # right too; the store URL is the last resort.
+      #
+      # Public because the seller panel resolves its own `/sellers` mount
+      # against the same host — both are asking where this app serves.
       # @return [String, nil]
       def self.app_host(store)
         options = Rails.application.routes.default_url_options
@@ -68,7 +71,6 @@ module Spree
         host = "#{protocol}://#{options[:host]}"
         port.present? ? "#{host}:#{port}" : host
       end
-      private_class_method :app_host
     end
   end
 end

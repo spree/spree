@@ -288,10 +288,15 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
   })
 
   async function handleCopyLink() {
-    // Path-only when no panel origin is configured; resolve against this
-    // panel's own origin, which is where the link would land anyway.
+    // Path-only when no panel origin is configured; resolve against wherever
+    // this panel is actually mounted. `BASE_URL` matters: served at /sellers
+    // (the single-node topology), origin alone would produce a link that
+    // misses the mount and 404s.
     const url = invitation.acceptance_url.startsWith('/')
-      ? `${window.location.origin}${invitation.acceptance_url}`
+      ? new URL(
+          `.${invitation.acceptance_url}`,
+          `${window.location.origin}${import.meta.env.BASE_URL}`,
+        ).toString()
       : invitation.acceptance_url
 
     await copy(url)
