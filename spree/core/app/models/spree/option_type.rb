@@ -9,7 +9,7 @@ module Spree
     # product the way any other axis does, so it is an option type rather than
     # a column — and being one is what gives a marketplace a new buy box and a
     # used buy box on the same listing, at no extra cost
-    # (docs/plans/6.0-multi-seller-marketplace.md, Decision 11). Seeded by
+    # (docs/plans/6.0-multi-vendor-marketplace.md, Decision 11). Seeded by
     # Spree::Seeds::OptionTypes; merchants may edit or delete it like any other.
     CONDITION_NAME = 'condition'.freeze
     CONDITION_VALUES = %w[new refurbished used].freeze

@@ -20,6 +20,7 @@ module Spree
                    customs_description: [:string, nullable: true],
                    deleted_at: [:string, nullable: true],
                    seller_name: [:string, nullable: true],
+                   own_seller_id: [:string, nullable: true],
                    delivery_profile_id: [:string, nullable: true],
                    own_delivery_profile_id: [:string, nullable: true],
                    metadata: 'Record<string, unknown>'
@@ -78,6 +79,13 @@ module Spree
 
           attribute :own_delivery_profile_id do |variant|
             variant.association(:delivery_profile).reader&.prefixed_id if variant.own_delivery_profile_id
+          end
+
+          # The seller override, on the same terms: `seller_id` above reads
+          # resolved, this is the writable per-variant link — nil when the
+          # variant inherits its seller from the product.
+          attribute :own_seller_id do |variant|
+            variant.association(:seller).reader&.prefixed_id if variant.own_seller_id
           end
 
           one :seller,

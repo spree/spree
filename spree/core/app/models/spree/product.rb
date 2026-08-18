@@ -450,10 +450,10 @@ module Spree
     #
     # Computed per read and never stored — it turns on price, stock and who is
     # currently selling, none of which hold still
-    # (docs/plans/6.0-multi-seller-marketplace.md, Decision 11).
+    # (docs/plans/6.0-multi-vendor-marketplace.md, Decision 11).
     #
     # @param currency [String, nil]
-    # @param option_value_ids [Array<Integer>, nil] narrows to one option
+    # @param option_value_ids [Array<String, Integer>, nil] narrows to one option
     #   combination, so a `Condition` option gives a new buy box and a used one
     # @return [Spree::Variant, nil]
     def buy_box_variant(currency: nil, option_value_ids: nil)
@@ -467,23 +467,39 @@ module Spree
       ).value
     end
 
-    # Answered by the buy-box winner rather than by any variant at all: a
-    # product is not purchasable because a suspended seller's variant happens
-    # to be in stock.
+    # Availability asks whether *anyone who is selling today* has this on the
+    # shelf. It deliberately does not ask the buy box: the winner is picked
+    # by price in one currency, and stock is a fact about the shelf, not about
+    # pricing — a variant stocked but priced only in another currency is still
+    # in stock. What it does share with the buy box is the seller test: a
+    # variant from a seller who is suspended, still onboarding or away is not
+    # for sale, so it cannot make the product available.
     def purchasable?
       return @purchasable unless @purchasable.nil?
 
-      @purchasable = !!buy_box_variant&.purchasable?
+      @purchasable = sellable_variants.any?(&:purchasable?)
     end
 
     def in_stock?
       return @in_stock unless @in_stock.nil?
 
-      @in_stock = !!buy_box_variant&.in_stock?
+      @in_stock = sellable_variants.any?(&:in_stock?)
     end
 
     def backorderable?
-      !!buy_box_variant&.backorderable?
+      sellable_variants.any?(&:backorderable?)
+    end
+
+    # The variants a shopper could actually buy from: every one whose seller
+    # is selling today, first-party included. Reads the loaded association so
+    # a serialized list resolves it from variants it already holds.
+    #
+    # @return [Array<Spree::Variant>]
+    def sellable_variants
+      variants.reject(&:deleted_at).select do |variant|
+        seller = variant.seller
+        seller.nil? || seller.sellable?
+      end
     end
 
     def on_sale?(currency)
@@ -597,11 +613,8 @@ module Spree
     # seller check: a variant from a seller who is suspended, still onboarding
     # or away is not for sale, so it cannot be what the product displays.
     def first_available_variant(currency)
-      variants.find do |variant|
-        next false unless variant.purchasable? && variant.price_in(currency).amount.present?
-
-        seller = variant.seller
-        seller.nil? || seller.sellable?
+      sellable_variants.find do |variant|
+        variant.purchasable? && variant.price_in(currency).amount.present?
       end
     end
 
@@ -911,6 +924,16 @@ module Spree
             variants.build
           end
 
+        # A write that speaks for one seller stamps that seller onto every
+        # variant it creates and may not name another: the bound is who the
+        # writer IS, not a field the payload gets to choose. Without this a
+        # seller could mint a variant owned by a rival and then, on the next
+        # save, be refused their own row.
+        if writing_for_one_seller?
+          variant_data[:seller_id] = writing_seller_id
+          variant_data.delete(:seller)
+        end
+
         variant.assign_attributes(variant_data)
         variant.save!
 
@@ -955,7 +978,11 @@ module Spree
         variant_data[:option_value_variants_attributes].blank? &&
         default_variant.present? &&
         default_variant.option_values.empty? &&
-        consumed_ids.exclude?(default_variant.id)
+        consumed_ids.exclude?(default_variant.id) &&
+        # The default variant is reachable without an id, so it has to pass
+        # the same bound an id would — otherwise an option-less entry is a
+        # way to rewrite the operator's own row from a seller's payload.
+        writable_variants.exists?(id: default_variant.id)
     end
 
     # Re-syncs the in-memory derived variant state after `apply_variants`

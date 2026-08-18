@@ -222,7 +222,24 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
     let(:seller) { create(:seller, :approved, store: store) }
     let(:profile) { create(:delivery_profile, store: store) }
 
-    it 'writes and reads back the seller' do
+    it 'writes the seller through the override name and reads it back resolved' do
+      patch :update, params: {
+        product_id: product.prefixed_id,
+        id: variant.prefixed_id,
+        own_seller_id: seller.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['seller_id']).to eq(seller.prefixed_id)
+      expect(json_response['own_seller_id']).to eq(seller.prefixed_id)
+      expect(json_response['seller_name']).to eq(seller.name)
+    end
+
+    # `seller_id` reads resolved (variant's own, else the product's), so
+    # writing it back as read would freeze an inherited seller into an
+    # override on the first round-trip. It is read-only; the override is
+    # `own_seller_id`.
+    it 'ignores the resolved seller on write' do
       patch :update, params: {
         product_id: product.prefixed_id,
         id: variant.prefixed_id,
@@ -230,8 +247,8 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
       }, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['seller_id']).to eq(seller.prefixed_id)
-      expect(json_response['seller_name']).to eq(seller.name)
+      expect(json_response['own_seller_id']).to be_nil
+      expect(variant.reload[:seller_id]).to be_nil
     end
 
     it 'writes and reads back the delivery profile override' do
@@ -287,7 +304,7 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
       patch :update, params: {
         product_id: product.prefixed_id,
         id: variant.prefixed_id,
-        seller_id: foreign.prefixed_id
+        own_seller_id: foreign.prefixed_id
       }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)

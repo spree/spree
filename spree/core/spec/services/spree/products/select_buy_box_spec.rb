@@ -59,6 +59,18 @@ describe Spree::Products::SelectBuyBox do
     expect(winner).to eq(available)
   end
 
+  # The out-of-stock fallback still refuses to lead with a seller who is not
+  # selling — otherwise a suspended seller's row could make the product read
+  # as purchasable.
+  it 'prefers an active seller\'s unbuyable variant over a suspended seller\'s' do
+    suspended = create(:seller, :suspended, store: store)
+    create(:variant, product: product, seller: suspended, sku: 'X-1', price: 1)
+    active_empty = create(:variant, product: product, seller: seller, sku: 'S-1', price: 50)
+    active_empty.stock_items.update_all(count_on_hand: 0, backorderable: false)
+
+    expect(winner).to eq(active_empty)
+  end
+
   it 'still names a variant when nothing at all is buyable' do
     only = create(:variant, product: product, seller: create(:seller, :suspended, store: store), sku: 'S-1', price: 5)
 

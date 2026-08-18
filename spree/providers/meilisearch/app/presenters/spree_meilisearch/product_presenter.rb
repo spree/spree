@@ -229,7 +229,7 @@ module SpreeMeilisearch
     # the number of axes. A filter naming more axes than this falls back to the
     # per-axis union in the search provider, which the database scope then
     # narrows exactly — never to an approximation that would disagree with it.
-    MAX_COMBINATION_AXES = 4
+    MAX_COMBINATION_AXES = 6
 
     def variant_option_value_combination_ids
       product.variants.flat_map do |variant|

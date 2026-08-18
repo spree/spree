@@ -5,7 +5,7 @@ module Spree
     # A product used to have one answer to "what does this cost, is it in
     # stock, what happens when I press buy", because it had one seller. Once
     # sellers share a listing those answers become relative to a winner, and
-    # this is what chooses it (docs/plans/6.0-multi-seller-marketplace.md,
+    # this is what chooses it (docs/plans/6.0-multi-vendor-marketplace.md,
     # Decision 11).
     #
     # The winner is computed on every read and never stored. It turns on
@@ -27,7 +27,7 @@ module Spree
 
       # @param product [Spree::Product]
       # @param currency [String, nil] defaults to the current store currency
-      # @param option_value_ids [Array<Integer>, nil] narrows the candidates to
+      # @param option_value_ids [Array<String, Integer>, nil] narrows the candidates to
       #   variants carrying every one of these values — the "used buy box" case
       # @return [Spree::Variant, nil] nil when the product sells nothing at all
       def call(product:, currency: nil, option_value_ids: nil)
@@ -36,11 +36,18 @@ module Spree
         return success(nil) if candidates.empty?
 
         prices = candidates.to_h { |variant| [variant.id, variant.price_in(currency)&.amount] }
-        sellable = candidates.select { |variant| sellable?(variant, prices) }
+        # Anyone selling today, buyable or not — a seller who is suspended,
+        # onboarding or away drops out before stock or price is considered.
+        from_active_sellers = candidates.select { |variant| seller_active?(variant) }
+        buyable = from_active_sellers.select { |variant| buyable?(variant, prices) }
 
-        # Nothing is buyable: rank the whole set instead, so the page still has
-        # a price to show and an out-of-stock state to render against.
-        success(rank(sellable.presence || candidates, prices).first)
+        # Nothing is buyable: still name a variant, so the page has a price to
+        # show and an out-of-stock state to render against — but from a seller
+        # who is at least selling, so a suspended seller's row is never what
+        # the product leads with. Only when *no* seller is active does the
+        # whole set get ranked.
+        pool = buyable.presence || from_active_sellers.presence || candidates
+        success(rank(pool, prices).first)
       end
 
       private
@@ -51,23 +58,32 @@ module Spree
         variants = product.variants.reject(&:deleted_at)
         return variants if option_value_ids.blank?
 
-        wanted = option_value_ids.map(&:to_i).to_set
-        variants.select { |variant| wanted.subset?(variant.option_values.map(&:id).to_set) }
+        # Compared as strings, never cast: ids may be UUIDs, and a prefixed id
+        # sent straight from a request decodes to the record's real key.
+        wanted = option_value_ids.map { |id| resolve_option_value_id(id) }.to_set
+        variants.select { |variant| wanted.subset?(variant.option_values.map { |value| value.id.to_s }.to_set) }
       end
 
-      # A seller who is suspended, still onboarding or away is not selling
-      # today, so their variant cannot be what the product leads with.
-      def sellable?(variant, prices)
-        return false unless variant.purchasable?
-        return false if prices[variant.id].nil?
-
+      # Whether the variant's seller is selling today. First-party always is.
+      def seller_active?(variant)
         seller = variant.seller
         seller.nil? || seller.sellable?
+      end
+
+      # Whether a shopper could put this in a cart right now, in this currency.
+      def buyable?(variant, prices)
+        variant.purchasable? && !prices[variant.id].nil?
       end
 
       # First-party first, then cheapest, then oldest — the last is only there
       # so two identical offers rank in a stable order rather than by whatever
       # the database returns.
+      def resolve_option_value_id(id)
+        return Spree::OptionValue.decode_prefixed_id(id).to_s if Spree::PrefixedId.prefixed_id?(id)
+
+        id.to_s
+      end
+
       def rank(variants, prices)
         variants.sort_by do |variant|
           [

@@ -278,6 +278,35 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
           names = json_response['data'].map { |p| p['name'] }
           expect(names).to include('Three Axis Shirt')
         end
+
+        # Past the indexed combination size the index can only pre-filter, so
+        # the database has to give the same-variant answer. Lowering the cap
+        # below three axes forces the same fixture down that path.
+        context 'when the filter is wider than the index covers' do
+          before do
+            stub_const('SpreeMeilisearch::ProductPresenter::MAX_COMBINATION_AXES', 2)
+          end
+
+          it 'still rejects a product whose values only hold across variants' do
+            get :index, params: {
+              q: { with_option_value_ids: [blue.prefixed_id, large.prefixed_id, brand_new.prefixed_id] }
+            }
+
+            expect(response).to have_http_status(:ok)
+            names = json_response['data'].map { |p| p['name'] }
+            expect(names).not_to include('Three Axis Shirt')
+          end
+
+          it 'still matches when one variant carries them all' do
+            get :index, params: {
+              q: { with_option_value_ids: [blue.prefixed_id, large.prefixed_id, used.prefixed_id] }
+            }
+
+            expect(response).to have_http_status(:ok)
+            names = json_response['data'].map { |p| p['name'] }
+            expect(names).to include('Three Axis Shirt')
+          end
+        end
       end
     end
   end

@@ -393,6 +393,17 @@ module Spree
       self.delivery_profile_id = value
     end
 
+    # The seller override, on the same terms and for the same reason: `seller_id`
+    # reads resolved (the variant's own, else the product's), so writing it back
+    # as read would freeze an inherited seller into a per-variant override the
+    # moment a client round-trips a record — and reassigning the product to
+    # another seller later would silently leave that variant behind.
+    alias_attribute :own_seller_id, :seller_id
+
+    def own_seller_id=(value)
+      self.seller_id = value
+    end
+
     # Returns the options text of the variant.
     # @return [String] the options text of the variant
     def options_text

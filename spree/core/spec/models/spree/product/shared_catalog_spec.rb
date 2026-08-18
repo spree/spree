@@ -2,7 +2,7 @@ require 'spec_helper'
 
 # The product side of the shared catalog: what a product leads with when
 # several sellers list it, and the write that used to delete their variants.
-# docs/plans/6.0-multi-seller-marketplace.md, Decision 11.
+# docs/plans/6.0-multi-vendor-marketplace.md, Decision 11.
 describe Spree::Product, type: :model do
   let(:store) { @default_store }
   let(:seller) { create(:seller, :approved, store: store) }
@@ -47,6 +47,29 @@ describe Spree::Product, type: :model do
       }.to raise_error(ActiveRecord::RecordNotFound)
 
       expect(theirs.reload.sku).to eq('THEIRS-1')
+    end
+
+    # The bound is who the writer IS, not a field the payload chooses: a
+    # seller could otherwise mint a variant owned by a rival.
+    it 'stamps the writing seller onto variants it creates, whatever the payload says' do
+      product.writing_seller = seller
+      product.variants = [{ id: mine.prefixed_id }, { sku: 'NEW-1', seller_id: other_seller.id }]
+
+      created = product.variants.reload.find_by(sku: 'NEW-1')
+      expect(created[:seller_id]).to eq(seller.id)
+    end
+
+    # The default variant is reachable without an id, so it has to pass the
+    # bound an id would.
+    it 'does not let an id-less entry rewrite the operator\'s default variant' do
+      first_party = create(:variant, product: product, sku: 'OURS-1')
+      product.update_column(:default_variant_id, first_party.id)
+      product.reload
+
+      product.writing_seller = seller
+      product.variants = [{ id: mine.prefixed_id }, { sku: 'HIJACK' }]
+
+      expect(first_party.reload.sku).to eq('OURS-1')
     end
 
     it 'bounds a first-party writer to first-party variants' do
@@ -153,6 +176,33 @@ describe Spree::Product, type: :model do
       available = create(:variant, product: product, seller: seller, sku: 'S-2', price: 30)
 
       expect(product.reload.first_available_variant('USD')).to eq(available)
+    end
+  end
+
+  describe 'availability is about the shelf, not the currency' do
+    let(:product) { create(:product, store: store) }
+
+    before { product.variants.destroy_all }
+
+    it 'is in stock through a variant priced only in another currency' do
+      empty = create(:variant, product: product, sku: 'A-1', price: 10)
+      empty.stock_items.update_all(count_on_hand: 0, backorderable: false)
+      stocked = create(:variant, product: product, sku: 'B-1', price: nil)
+      stocked.prices.destroy_all
+      stocked.set_price('EUR', 9)
+      stocked.stock_items.update_all(count_on_hand: 5)
+
+      Spree::Current.currency = 'USD'
+      expect(product.reload).to be_in_stock
+      expect(product).to be_purchasable
+    end
+
+    it 'is not purchasable through a suspended seller alone, even when nothing else is priced' do
+      suspended = create(:seller, :suspended, store: store)
+      create(:variant, product: product, seller: suspended, sku: 'S-1', price: nil)
+
+      expect(product.reload).not_to be_purchasable
+      expect(product).not_to be_in_stock
     end
   end
 

@@ -35,7 +35,7 @@ module Spree
                 :cost_price, :cost_currency,
                 :weight, :height, :width, :depth, :weight_unit, :dimensions_unit,
                 :hs_code, :country_of_origin, :customs_description,
-                :seller_id, :own_delivery_profile_id,
+                :own_seller_id, :own_delivery_profile_id,
                 :track_inventory, :preorderable, :preorder_ships_at, :backorder_limit, :tax_category_id, :position,
                 options: [:name, :value],
                 prices: [:amount, :compare_at_amount, :currency],

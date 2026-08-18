@@ -7,7 +7,7 @@ module Spree
     # variants — and modelling it as one hands it the whole option machinery
     # for free: presentation kinds, positions, storefront pickers and facets,
     # and a separate buy box per condition rather than one winner spanning new
-    # and used (docs/plans/6.0-multi-seller-marketplace.md, Decision 11).
+    # and used (docs/plans/6.0-multi-vendor-marketplace.md, Decision 11).
     #
     # Seeded rather than left to the merchant so that a marketplace's sellers
     # all describe condition the same way. Nothing is enforced: the type and

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 # The variant side of the shared catalog: which seller sells a variant, how
 # they ship it, and what those two answers change about SKUs and stock.
-# docs/plans/6.0-multi-seller-marketplace.md, Decision 11.
+# docs/plans/6.0-multi-vendor-marketplace.md, Decision 11.
 describe Spree::Variant, type: :model do
   let(:store) { @default_store }
   let(:seller) { create(:seller, :approved, store: store) }
@@ -74,6 +74,22 @@ describe Spree::Variant, type: :model do
 
       expect(variant.seller_id).to eq(other_seller.id)
       expect(variant.seller).to eq(other_seller)
+    end
+  end
+
+  describe 'when the seller is destroyed' do
+    let(:product) { create(:product, store: store) }
+
+    # A variant left pointing at a departed seller reads as first-party to the
+    # buy box (the paranoid scope hides the row) while its id says otherwise.
+    it 'releases the variant, so it does not stay attributed to nobody' do
+      variant = create(:variant, product: product, seller: seller)
+
+      seller.destroy!
+
+      expect(variant.reload[:seller_id]).to be_nil
+      expect(variant.seller_id).to be_nil
+      expect(variant.seller).to be_nil
     end
   end
 
