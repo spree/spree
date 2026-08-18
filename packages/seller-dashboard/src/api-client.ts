@@ -46,10 +46,11 @@ export function createSellerApiClient({
     fetchPermissions: async () => {
       const response = await sellerClient().me()
 
-      // The seller API grants capability by key alone — there are no CanCanCan
-      // rules to report, and an empty list is the correct answer rather than a
-      // missing one.
-      return { rules: [], keys: response.permission_keys ?? [] }
+      // Both shapes, exactly as the operator's dashboard receives them. The
+      // framework's `<Can>` reads CanCanCan rules; the key list is what the
+      // API's own gate enforces. Dropping the rules here (an earlier version
+      // did) left every `<Can>` on the panel answering false — silently.
+      return { rules: response.permissions ?? [], keys: response.permission_keys ?? [] }
     },
   })
 

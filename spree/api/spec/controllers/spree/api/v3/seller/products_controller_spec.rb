@@ -1,0 +1,134 @@
+require 'spec_helper'
+
+# The first collection on the seller branch, so this doubles as the proof that
+# `Seller::ResourceController` roots everything in the seller. Every later
+# collection (orders, returns) inherits exactly this behaviour.
+RSpec.describe Spree::Api::V3::Seller::ProductsController, type: :controller do
+  render_views
+
+  include_context 'API v3 Seller'
+
+  let(:seller_user) do
+    create(:admin_user, :without_admin_role).tap { |user| seller.add_user(user) }
+  end
+  let(:token) do
+    Spree::Api::V3::TestingSupport.generate_jwt(
+      seller_user, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_SELLER
+    )
+  end
+
+  let!(:mine) { create(:product, name: 'My Lamp', seller: seller, store: store) }
+  let(:other_seller) { create(:seller, :approved, store: store) }
+  let!(:theirs) { create(:product, name: 'Their Lamp', seller: other_seller, store: store) }
+  let!(:first_party) { create(:product, name: 'Marketplace Lamp', store: store) }
+
+  before do
+    request.headers['Authorization'] = "Bearer #{token}"
+    request.headers['X-Spree-Seller-Id'] = seller.prefixed_id
+  end
+
+  describe 'GET #index' do
+    it "lists only this seller's products" do
+      get :index, as: :json
+
+      expect(response).to have_http_status(:ok)
+      names = json_response['data'].pluck('name')
+      expect(names).to include('My Lamp')
+      expect(names).not_to include('Their Lamp', 'Marketplace Lamp')
+    end
+
+    it 'exposes status, which the storefront serializer withholds' do
+      get :index, as: :json
+
+      expect(json_response['data'].first).to include('status')
+    end
+  end
+
+  describe 'GET #show' do
+    it 'returns their own product' do
+      get :show, params: { id: mine.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['name']).to eq('My Lamp')
+    end
+
+    # 404, not 403: the caller cannot tell whether the id exists at all.
+    it "404s on another seller's product" do
+      get :show, params: { id: theirs.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it '404s on a first-party product' do
+      get :show, params: { id: first_party.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
+  describe 'POST #create' do
+    it 'creates the product as this seller, whatever the payload says' do
+      post :create,
+           params: { name: 'New Lamp', status: 'draft', seller_id: other_seller.prefixed_id },
+           as: :json
+
+      expect(response).to have_http_status(:created)
+      product = Spree::Product.find_by(name: 'New Lamp')
+      expect(product.seller).to eq(seller)
+      expect(product.store).to eq(store)
+    end
+  end
+
+  describe 'PATCH #update' do
+    it 'edits their own product' do
+      patch :update, params: { id: mine.prefixed_id, name: 'Renamed Lamp' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(mine.reload.name).to eq('Renamed Lamp')
+    end
+
+    it "cannot edit another seller's product" do
+      patch :update, params: { id: theirs.prefixed_id, name: 'Hijacked' }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(theirs.reload.name).to eq('Their Lamp')
+    end
+
+    # Marketplace configuration stays with the operator.
+    it 'ignores tax and delivery configuration' do
+      other_tax = create(:tax_category)
+
+      patch :update, params: { id: mine.prefixed_id, tax_category_id: other_tax.prefixed_id }, as: :json
+
+      expect(mine.reload.tax_category).not_to eq(other_tax)
+    end
+  end
+
+  describe 'DELETE #destroy' do
+    it "cannot delete another seller's product" do
+      delete :destroy, params: { id: theirs.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(theirs.reload).to be_present
+    end
+  end
+
+  # A member whose role lacks the products key is refused by the gate before
+  # the scope is even consulted.
+  context 'without write_products' do
+    let(:narrow_role) { create(:role, name: 'Viewer', resource: seller, permissions: %w[read_products]) }
+    let(:seller_user) do
+      create(:admin_user, :without_admin_role).tap { |user| seller.add_user(user, narrow_role) }
+    end
+
+    it 'can read' do
+      get :index, as: :json
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'cannot write' do
+      patch :update, params: { id: mine.prefixed_id, name: 'Nope' }, as: :json
+      expect(response).to have_http_status(:forbidden)
+    end
+  end
+end

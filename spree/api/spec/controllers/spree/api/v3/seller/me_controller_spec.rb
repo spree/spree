@@ -40,4 +40,25 @@ RSpec.describe Spree::Api::V3::Seller::MeController, type: :controller do
 
     expect(json_response['permission_keys']).to include('write_seller_profile', 'write_products')
   end
+
+  # The panel's `<Can>` reads CanCanCan rules, not keys — same code as the
+  # operator's dashboard. Sending only keys left every `<Can>` answering false
+  # on the seller panel, silently.
+  it 'serializes CanCanCan rules so the panel can gate on them' do
+    request.headers['X-Spree-Seller-Id'] = seller.prefixed_id
+
+    get :show, as: :json
+
+    rules = json_response['permissions']
+    expect(rules).to be_present
+    expect(rules).to include(
+      a_hash_including('allow' => true, 'subjects' => include('Spree::Product'))
+    )
+  end
+
+  it 'serializes no rules until a seller is named' do
+    get :show, as: :json
+
+    expect(json_response['permissions']).to eq([])
+  end
 end
