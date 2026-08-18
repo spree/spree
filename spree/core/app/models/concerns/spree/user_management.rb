@@ -1,6 +1,6 @@
 module Spree
   # Included into whatever a role can govern — a Store today, a marketplace
-  # vendor later. Assignments hang off the resource's own roles, so a user is
+  # seller later. Assignments hang off the resource's own roles, so a user is
   # "in" a resource exactly when they hold one of its roles.
   module UserManagement
     extend ActiveSupport::Concern
@@ -37,7 +37,7 @@ module Spree
       Spree::RoleUser.where(user: user, role: roles).destroy_all
     end
 
-    # this can be overridden in the base model to use a different user role, eg. 'vendor'
+    # this can be overridden in the base model to use a different user role, eg. 'seller'
     def default_user_role
       Spree::Role.default_admin_role(self)
     end

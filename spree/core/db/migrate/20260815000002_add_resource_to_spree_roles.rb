@@ -1,6 +1,6 @@
 class AddResourceToSpreeRoles < ActiveRecord::Migration[8.1]
   # A role now names what it governs: a Spree::Store for back-office staff, a
-  # Spree::Vendor for a marketplace seller. That one fact replaces two — roles
+  # Spree::Seller for a marketplace seller. That one fact replaces two — roles
   # were global, so nothing said which store owned a definition, and nothing
   # said which panel a role belonged to.
   #

@@ -59,7 +59,13 @@ module Spree
     # Sellers are a different audience from shoppers, with their own reasons to
     # be silenced — a marketplace fronting its own seller comms turns these off
     # without also stopping customer receipts.
-    preference :send_vendor_transactional_emails, :boolean, default: true
+    preference :send_seller_transactional_emails, :boolean, default: true
+    # Marketplace preferences
+    #
+    # VAT on the commission itself, as a fraction, when neither the rate nor
+    # the tax provider names one. Zero by default: a marketplace outside the EU
+    # charges no tax on its fee, and inventing one would overcharge sellers.
+    preference :default_commission_tax_rate, :decimal, default: 0
     # Checkout preferences
     # Store-level fallback for the channel-owned `guest_checkout` preference
     # (see Spree::Channel::Gating). Retained so existing accessors keep working.
@@ -184,6 +190,9 @@ module Spree
     has_many :tax_categories, class_name: 'Spree::TaxCategory', dependent: :destroy, inverse_of: :store
     has_many :tax_rates, class_name: 'Spree::TaxRate', dependent: :destroy, inverse_of: :store
 
+    has_many :sellers, class_name: 'Spree::Seller', dependent: :destroy, inverse_of: :store
+    has_many :commission_rates, class_name: 'Spree::CommissionRate', dependent: :destroy, inverse_of: :store
+
     has_many :wishlists, class_name: 'Spree::Wishlist'
 
     has_many :data_feeds, class_name: 'Spree::DataFeed'
@@ -226,6 +235,11 @@ module Spree
     validates :preferred_digital_asset_authorized_clicks, numericality: { only_integer: true, greater_than: 0 }
     validates :preferred_digital_asset_authorized_days, numericality: { only_integer: true, greater_than: 0 }
     validates :preferred_stock_reservation_ttl_minutes, numericality: { only_integer: true, greater_than: 0 }
+    # A fraction, not a percentage: 0.21 is 21%. Bounded because the value is
+    # multiplied straight into what a seller is charged, so a negative would
+    # credit them and a figure above 1 would bill more tax than fee.
+    validates :preferred_default_commission_tax_rate,
+              numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 1 }
     validates :preferred_storefront_access, inclusion: { in: Spree::Channel::Gating::STOREFRONT_ACCESS }
     validates :preferred_document_number_format,
               inclusion: { in: Spree::NumberGenerators::Registry::FORMATS.keys }

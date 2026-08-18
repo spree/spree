@@ -861,17 +861,17 @@ describe Spree::LineItem, type: :model do
     end
   end
 
-  describe 'vendor' do
+  describe 'seller' do
     let(:store) { @default_store }
-    let(:vendor) { create(:vendor, store: store, name: 'Sparks Audio') }
+    let(:seller) { create(:seller, store: store, name: 'Sparks Audio') }
     let(:cart) { create(:cart, store: store) }
 
     it "snapshots the seller from the line's product" do
-      product = create(:product, store: store, vendor: vendor)
+      product = create(:product, store: store, seller: seller)
 
       line_item = create(:line_item, cart: cart, variant: product.default_variant, quantity: 1)
 
-      expect(line_item.reload.vendor).to eq(vendor)
+      expect(line_item.reload.seller).to eq(seller)
     end
 
     # Nil is the operator's own catalog, which is every line on a store that
@@ -881,17 +881,17 @@ describe Spree::LineItem, type: :model do
 
       line_item = create(:line_item, cart: cart, variant: product.default_variant, quantity: 1)
 
-      expect(line_item.reload.vendor_id).to be_nil
+      expect(line_item.reload.seller_id).to be_nil
     end
 
     it 'follows the product while the line is still in a cart' do
       product = create(:product, store: store)
       line_item = create(:line_item, cart: cart, variant: product.default_variant, quantity: 1)
 
-      product.update!(vendor: vendor)
+      product.update!(seller: seller)
       line_item.reload.update!(quantity: 2)
 
-      expect(line_item.reload.vendor).to eq(vendor)
+      expect(line_item.reload.seller).to eq(seller)
     end
 
     # An admin draft is persisted but not placed, so its lines keep following
@@ -901,10 +901,10 @@ describe Spree::LineItem, type: :model do
       product = create(:product, store: store)
       line_item = create(:line_item, order: draft, variant: product.default_variant, quantity: 1)
 
-      product.update!(vendor: vendor)
+      product.update!(seller: seller)
       line_item.reload.update!(quantity: 2)
 
-      expect(line_item.reload.vendor).to eq(vendor)
+      expect(line_item.reload.seller).to eq(seller)
     end
 
     # A placed order records who sold each line. The catalog changing hands
@@ -914,21 +914,21 @@ describe Spree::LineItem, type: :model do
 
       it 'keeps the seller it was bought from' do
         line_item = order.line_items.first
-        line_item.update_columns(vendor_id: vendor.id)
-        line_item.variant.product.update!(vendor: create(:vendor, store: store))
+        line_item.update_columns(seller_id: seller.id)
+        line_item.variant.product.update!(seller: create(:seller, store: store))
 
         line_item.reload.update!(quantity: 3)
 
-        expect(line_item.reload.vendor).to eq(vendor)
+        expect(line_item.reload.seller).to eq(seller)
       end
 
       it 'keeps a first-party line first-party' do
         line_item = order.line_items.first
-        line_item.variant.product.update!(vendor: vendor)
+        line_item.variant.product.update!(seller: seller)
 
         line_item.reload.update!(quantity: 2)
 
-        expect(line_item.reload.vendor_id).to be_nil
+        expect(line_item.reload.seller_id).to be_nil
       end
     end
   end

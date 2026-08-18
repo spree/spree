@@ -73,7 +73,7 @@ module Spree
       end
 
       def quantize(amount, precision)
-        BigDecimal(amount.to_s).round(precision)
+        Spree::Money::Rounding.quantize(amount, precision)
       end
     end
   end

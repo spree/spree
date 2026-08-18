@@ -15,9 +15,9 @@ RSpec.describe Spree::RansackableAttributes do
     end
 
     it 'merges custom attributes from Spree.ransack' do
-      Spree.ransack.add_attribute(Spree::Product, :vendor_id)
+      Spree.ransack.add_attribute(Spree::Product, :seller_id)
 
-      expect(Spree::Product.ransackable_attributes).to include('vendor_id')
+      expect(Spree::Product.ransackable_attributes).to include('seller_id')
     end
 
     it 'does not duplicate attributes' do
@@ -33,9 +33,9 @@ RSpec.describe Spree::RansackableAttributes do
     end
 
     it 'merges custom associations from Spree.ransack' do
-      Spree.ransack.add_association(Spree::Product, :vendor)
+      Spree.ransack.add_association(Spree::Product, :seller)
 
-      expect(Spree::Product.ransackable_associations).to include('vendor')
+      expect(Spree::Product.ransackable_associations).to include('seller')
     end
 
     it 'does not duplicate associations' do
@@ -51,9 +51,9 @@ RSpec.describe Spree::RansackableAttributes do
     end
 
     it 'merges custom scopes from Spree.ransack' do
-      Spree.ransack.add_scope(Spree::Product, :by_vendor)
+      Spree.ransack.add_scope(Spree::Product, :by_seller)
 
-      expect(Spree::Product.ransackable_scopes).to include('by_vendor')
+      expect(Spree::Product.ransackable_scopes).to include('by_seller')
     end
 
     it 'does not duplicate scopes' do

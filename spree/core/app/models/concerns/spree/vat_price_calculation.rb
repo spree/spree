@@ -94,7 +94,7 @@ module Spree
     end
 
     def round_to_two_places(amount)
-      BigDecimal(amount.to_s).round(2, BigDecimal::ROUND_HALF_UP)
+      Spree::Money::Rounding.quantize(amount, 2)
     end
   end
 end

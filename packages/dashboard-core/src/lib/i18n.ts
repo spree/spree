@@ -116,8 +116,9 @@ export function reconcileStoreDefaultLocale(
 }
 
 // All non-English core bundles, imported EAGERLY so the active language has its
-// resources synchronously available (registered just after init() below) —
-// no flash, no async race with module-load `i18n.t(...)` calls.
+// resources synchronously available when init() runs below — no flash, no async
+// race with module-load `i18n.t(...)` calls, and the stored language resolves
+// to itself rather than falling back.
 const coreLocales = import.meta.glob<{ default: Record<string, unknown> }>(
   ['../locales/*.json', '!../locales/en.json'],
   { eager: true },
@@ -160,10 +161,23 @@ export function switchLocale(code: string): void {
 // after this side-effect import has settled. The `deep` + `overwrite` flags
 // merge the extension into the base namespace without dropping framework keys.
 //
-// English ships eagerly; `lng` is read from localStorage so a previously
-// chosen language is the initial language on first paint (no flash).
+// `lng` is read from localStorage so a previously chosen language is the
+// initial language on first paint (no flash).
 i18n.use(initReactI18next).init({
-  resources: { en: { translation: en } },
+  // Every bundle is registered up front. Passing `lng` with only English
+  // loaded would resolve the language to the fallback and leave
+  // `resolvedLanguage` stuck on 'en' — which reads as "the stored language
+  // never took effect" and sends the store-default reconciler into a
+  // reload loop.
+  resources: {
+    en: { translation: en },
+    ...Object.fromEntries(
+      Object.entries(coreLocales).map(([path, mod]) => [
+        path.replace('../locales/', '').replace('.json', ''),
+        { translation: mod.default },
+      ]),
+    ),
+  },
   lng: readStoredLocale(),
   fallbackLng: 'en',
   interpolation: { escapeValue: false },
@@ -175,12 +189,6 @@ i18n.use(initReactI18next).init({
     ? (_lngs, _ns, key) => console.warn(`[i18n] Missing key: ${key}`)
     : undefined,
 })
-
-// Register the eager non-English core bundles now that i18next is initialized.
-for (const [path, mod] of Object.entries(coreLocales)) {
-  const code = path.replace('../locales/', '').replace('.json', '')
-  i18n.addResourceBundle(code, 'translation', mod.default, true, true)
-}
 
 // Reflect the active language on the root <html> element so the document
 // advertises the right `lang` (a11y, spellcheck, font selection) and `dir`

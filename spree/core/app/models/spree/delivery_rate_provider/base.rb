@@ -82,7 +82,7 @@ module Spree
         # hides the ones they have.
         #
         # Return {ServiceCatalog.listing} with `[{ carrier:, service:,
-        # label: }]`, {ServiceCatalog.unavailable} with the vendor's message
+        # label: }]`, {ServiceCatalog.unavailable} with the seller's message
         # when the listing cannot be fetched (unconnected integration,
         # credential tier without access, carrier outage), or
         # {ServiceCatalog.none} — the default — when the provider lists no

@@ -40,7 +40,7 @@ export function OrderEditItemsTable({
 
   return (
     <Table>
-      <TableHeader className="border-b">
+      <TableHeader>
         <TableRow>
           <TableHead>{t('admin.orders.edit.columns.product')}</TableHead>
           <TableHead className="text-right">{t('admin.orders.edit.columns.unit_price')}</TableHead>

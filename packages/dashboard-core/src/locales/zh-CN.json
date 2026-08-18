@@ -29,6 +29,8 @@
       "invite": "邀请",
       "more_actions": "更多操作",
       "remove": "移除",
+      "remove_item": "移除 {{label}}",
+      "remove_rule": "移除规则",
       "reset": "重置",
       "revoke": "撤销",
       "save": "保存",
@@ -368,6 +370,9 @@
       },
       "contact_email": {
         "label": "联系邮箱"
+      },
+      "enabled": {
+        "label": "已启用"
       }
     },
     "components": {
@@ -444,6 +449,7 @@
         "visible_columns": "可见列",
         "reset_to_default": "重置为默认值",
         "clear_all": "全部清除",
+        "remove_filter": "移除筛选",
         "no_filters": "暂无筛选条件。点击下方添加。",
         "add_filter": "添加筛选条件",
         "operators": {

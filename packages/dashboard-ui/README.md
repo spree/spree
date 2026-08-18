@@ -11,7 +11,7 @@ Spree Dashboard design system. Shadcn primitives + headless composed components 
 - `src/styles.css` — design tokens + Tailwind theme. Import once from your Vite app.
 - `src/lib/` — generic helpers (`cn`, formatters, …).
 
-The headless rule is what makes the components composable from outside `@spree/dashboard` — a plugin author, an app developer building a vendor panel, or a third-party using just `@spree/dashboard-ui` can all instantiate the same components with their own data sources.
+The headless rule is what makes the components composable from outside `@spree/dashboard` — a plugin author, an app developer building a seller panel, or a third-party using just `@spree/dashboard-ui` can all instantiate the same components with their own data sources.
 
 ## Source-only package
 

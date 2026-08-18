@@ -1115,7 +1115,7 @@ export interface StockLevelUpdateParams {
 }
 
 export interface StockTransferCreateParams {
-  /** Omit for a vendor receive (external stock arriving at the destination). */
+  /** Omit for a seller receive (external stock arriving at the destination). */
   source_location_id?: string
   destination_location_id: string
   reference?: string
@@ -1353,17 +1353,17 @@ export interface CustomerGroupUpdateParams {
 }
 
 /**
- * A marketplace seller. `status` is absent by design — a vendor moves
+ * A marketplace seller. `status` is absent by design — a seller moves
  * through its lifecycle via the invite/approve/suspend/reject actions,
  * never through a plain update.
  */
-export interface VendorCreateParams {
+export interface SellerCreateParams {
   name: string
   /** URL-safe slug; derived from `name` when omitted. */
   slug?: string
   contact_email?: string | null
   billing_email?: string | null
-  /** Sanitized HTML — the vendor's public description. */
+  /** Sanitized HTML — the seller's public description. */
   about?: string | null
   /**
    * Branding attachments. Pass an ActiveStorage signed id to set one, `null`
@@ -1372,22 +1372,22 @@ export interface VendorCreateParams {
   logo?: string | null
   square_logo?: string | null
   cover_photo?: string | null
-  tax_remittance?: 'vendor' | 'platform'
+  tax_remittance?: 'seller' | 'platform'
   payouts_schedule_interval?: 'daily' | 'weekly' | 'biweekly' | 'monthly' | 'manual' | null
   minimum_payout_amount?: string | number | null
-  /** Set while the vendor is away: the catalog stays but stops selling. */
+  /** Set while the seller is away: the catalog stays but stops selling. */
   holiday_mode_until?: string | null
   /**
    * Written as nested attributes, never by id — an address has no store of
    * its own, so an id would reference a row belonging to someone else.
    */
-  billing_address?: VendorAddressParams
-  returns_address?: VendorAddressParams
+  billing_address?: SellerAddressParams
+  returns_address?: SellerAddressParams
   metadata?: Record<string, unknown>
 }
 
-/** The vendor's own billing / returns address. */
-export interface VendorAddressParams {
+/** The seller's own billing / returns address. */
+export interface SellerAddressParams {
   first_name?: string
   last_name?: string
   company?: string
@@ -1403,21 +1403,103 @@ export interface VendorAddressParams {
   label?: string
 }
 
-export type VendorUpdateParams = Partial<VendorCreateParams>
+export type SellerUpdateParams = Partial<SellerCreateParams>
 
-export interface VendorInviteParams {
+export interface SellerInviteParams {
   email: string
-  /** A role the vendor owns; defaults to the vendor's own admin role. */
+  /** A role the seller owns; defaults to the seller's own admin role. */
   role_id?: string
 }
 
-export interface VendorSuspendParams {
+export interface SellerSuspendParams {
   reason?: string
 }
 
-export interface VendorRejectParams {
+export interface SellerRejectParams {
   reason?: string
 }
+
+/**
+ * One condition on a commission rate.
+ *
+ * Every rule must hold for the rate to apply, and a rule naming several
+ * records means any of them — so "(Cameras OR Audio) AND that seller" is a
+ * category rule holding two ids beside a seller rule holding one. A rate with
+ * no rules charges every sale.
+ *
+ * Kinds come from `commissionRates.ruleTypes()`; `preferences` are whatever
+ * that kind's schema declares. Catalog-scale references (products) ride
+ * alongside as their own field rather than inside preferences.
+ */
+export interface CommissionRuleDraft {
+  /** Present for an existing rule. Omit to create one. */
+  id?: string | null
+  /** Wire shorthand for the kind — e.g. `seller_rule`, `item_total_rule`. */
+  type: string
+  /** Kind-specific configuration, coerced server-side by typed setters. */
+  preferences?: Record<string, unknown>
+  /** Prefixed product ids, for kinds that name products. */
+  product_ids?: string[]
+}
+
+export interface CommissionRateCreateParams {
+  name: string
+  /** Optional operator-facing identifier; unique per store. */
+  code?: string | null
+  enabled?: boolean
+  /**
+   * Place in the list, which IS the resolution order: rates are walked
+   * top-down and the first whose targeting matches the sale wins, so 1 is
+   * tried first.
+   *
+   * Omit on create — a new rate is placed at the top, ahead of anything more
+   * general already there. Send it to move an existing rate.
+   *
+   * Note that a rate with no `rules` matches every sale, so anything below it
+   * is unreachable; the marketplace default belongs at the bottom.
+   */
+  position?: number
+  /** `percentage` charges a share of the sale; `fixed` charges a flat fee. */
+  kind: 'percentage' | 'fixed'
+  /** A percentage (e.g. `10` for 10%) or a flat amount, per `kind`. */
+  value: number
+  /**
+   * What a flat fee charges, keyed by currency: `{ USD: '5.00', GBP: '4.00' }`.
+   * A rate is skipped for a currency it states no amount in, so that sale
+   * falls through to the next matching rate rather than being charged a
+   * converted figure nobody set. Replaces the whole set on write.
+   */
+  amounts?: Record<string, string | number>
+  /**
+   * Charge on the item's gross price rather than its net one. Off by default:
+   * in the EU the fee is a separate supply from the sale, so it is charged on
+   * the seller's net revenue and taxed on top.
+   */
+  tax_inclusive?: boolean
+  /**
+   * Also charge commission on the seller's delivery revenue. Percentage rates
+   * only — a flat fee already charges for the sale a parcel belongs to.
+   */
+  include_shipping?: boolean
+  /**
+   * The floor and cap a percentage charges within, keyed by currency:
+   * `{ USD: { min_amount: 1, max_amount: 50 } }`. Each holds only in its own
+   * currency; a sale in a currency with no bounds is charged unbounded rather
+   * than against a converted figure nobody set. Replaces the whole set on
+   * write, and never disturbs `amounts`.
+   */
+  bounds?: Record<string, { min_amount?: number | null; max_amount?: number | null }>
+  /**
+   * VAT on the commission itself, as a fraction (e.g. `0.21`). Leave null to
+   * let the store's tax engine answer for the seller's own jurisdiction.
+   */
+  commission_tax_rate?: number | null
+  /** The rate's full targeting; the server replaces what it holds with this. */
+  rules?: CommissionRuleDraft[]
+  metadata?: Record<string, unknown>
+}
+
+export type CommissionRateUpdateParams = Partial<CommissionRateCreateParams>
 
 /**
  * One entry in `preference_schema`, describing a single tunable knob on
@@ -1458,6 +1540,20 @@ export function isMaskedSecret(value: unknown): value is string {
  * registered subclass with its preference schema. Used to build "Add
  * provider / action / rule" pickers and render generic preferences forms.
  */
+/**
+ * One rule kind a commission rate can be narrowed by, as the marketplace
+ * reports it. `preference_schema` describes the configuration the kind takes,
+ * and `association_fields` names any catalog-scale reference it keeps outside
+ * that — so a client can render the right editor without knowing the kind.
+ */
+export interface CommissionRuleType {
+  type: string
+  name: string
+  description: string | null
+  preference_schema: PreferenceField[]
+  association_fields: string[]
+}
+
 export interface ResourceTypeDefinition {
   type: string
   label: string

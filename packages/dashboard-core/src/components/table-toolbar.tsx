@@ -179,7 +179,7 @@ export function TableToolbar({
 
   return (
     <>
-      <div className="flex flex-col lg:flex-row gap-2 items-start lg:items-center justify-between p-3 pl-4 border-b border-border">
+      <div className="flex flex-col lg:flex-row gap-2 items-start lg:items-center justify-between p-3 pl-4 border-b border-border-subtle">
         {title && <CardTitle>{title}</CardTitle>}
         <div className="flex gap-2 items-center flex-wrap ml-auto">
           {/* Search */}
@@ -216,7 +216,12 @@ export function TableToolbar({
               <Tooltip>
                 <TooltipTrigger asChild>
                   <PopoverTrigger asChild>
-                    <Button variant="ghost" size="sm" className="h-[2.125rem]">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-[2.125rem]"
+                      aria-label={t('admin.components.table_toolbar.filters_button')}
+                    >
                       <FilterIcon className="size-4" />
                       {activeFilterCount > 0 && (
                         <Badge variant="outline" className="ml-1 px-1.5 py-0 text-xs">
@@ -262,7 +267,7 @@ export function TableToolbar({
 
       {/* Active filter badges */}
       {filters.length > 0 && (
-        <div className="flex gap-2 flex-wrap px-3 py-2 border-b border-border">
+        <div className="flex flex-wrap items-center gap-2 border-b border-border-subtle px-3 py-2">
           {filters.map((filter) => (
             <FilterChip
               key={filter.id}
@@ -271,13 +276,15 @@ export function TableToolbar({
               onRemove={() => onFiltersChange(filters.filter((f) => f.id !== filter.id))}
             />
           ))}
-          <button
+          <Button
             type="button"
-            className="text-xs text-muted-foreground hover:text-foreground"
+            variant="ghost"
+            size="sm"
+            className="text-muted-foreground hover:text-foreground"
             onClick={() => onFiltersChange([])}
           >
             {t('admin.components.table_toolbar.clear_all')}
-          </button>
+          </Button>
         </div>
       )}
     </>
@@ -303,7 +310,7 @@ function FilterChip({
   const showValue = !noValueOperators.includes(filter.operator)
 
   return (
-    <Badge variant="outline" className="gap-1.5 pr-0.5">
+    <Badge variant="outline" className="h-7 gap-1.5 pr-1 pl-2.5 text-sm">
       <span className="font-medium">{col?.label ?? filter.field}</span>
       <span className="text-muted-foreground">{opLabel}</span>
       {showValue &&
@@ -318,9 +325,13 @@ function FilterChip({
         ) : (
           <span className="font-medium">{filter.value}</span>
         ))}
+      {/* 20px box around a 12px glyph: the chip's own height caps how large
+          this can be, and the chips are spaced by `gap-2`, which is what the
+          target-size rule asks for when the control itself is under 24px. */}
       <button
         type="button"
-        className="ml-0.5 p-0.5 rounded-full hover:bg-accent"
+        aria-label={t('admin.components.table_toolbar.remove_filter')}
+        className="ml-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
         onClick={onRemove}
       >
         <XIcon className="size-3" />
@@ -469,7 +480,12 @@ function SortDropdown({
       <Tooltip>
         <TooltipTrigger asChild>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="h-[2.125rem]">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-[2.125rem]"
+              aria-label={t('admin.components.table_toolbar.sort_tooltip')}
+            >
               <ArrowUpDownIcon className="size-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -536,7 +552,12 @@ function ColumnSelector({
       <Tooltip>
         <TooltipTrigger asChild>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="h-[2.125rem]">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-[2.125rem]"
+              aria-label={t('admin.components.table_toolbar.columns_tooltip')}
+            >
               <Columns3Icon className="size-4" />
             </Button>
           </DropdownMenuTrigger>

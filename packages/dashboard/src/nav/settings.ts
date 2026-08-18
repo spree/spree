@@ -3,6 +3,7 @@ import {
   CreditCardIcon,
   GlobeIcon,
   GlobeLockIcon,
+  HandCoinsIcon,
   KeyRoundIcon,
   MailIcon,
   PercentIcon,
@@ -101,6 +102,16 @@ settingsNav.add({
   group: 'payments',
   position: 250,
   subject: Subject.TaxRate,
+})
+
+settingsNav.add({
+  key: 'settings.commission-rates',
+  labelKey: 'admin.settings_nav.items.commission_rates',
+  path: '/commission-rates',
+  icon: HandCoinsIcon,
+  group: 'payments',
+  position: 275,
+  subject: Subject.CommissionRate,
 })
 
 settingsNav.add({

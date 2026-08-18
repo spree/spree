@@ -29,6 +29,8 @@
       "invite": "Inviter",
       "more_actions": "Plus d'actions",
       "remove": "Retirer",
+      "remove_item": "Supprimer {{label}}",
+      "remove_rule": "Supprimer la règle",
       "reset": "Réinitialiser",
       "revoke": "Révoquer",
       "save": "Enregistrer",
@@ -368,6 +370,9 @@
       },
       "contact_email": {
         "label": "E-mail de contact"
+      },
+      "enabled": {
+        "label": "Activé"
       }
     },
     "components": {
@@ -444,6 +449,7 @@
         "visible_columns": "Colonnes visibles",
         "reset_to_default": "Réinitialiser",
         "clear_all": "Tout effacer",
+        "remove_filter": "Supprimer le filtre",
         "no_filters": "Aucun filtre. Cliquez ci-dessous pour en ajouter un.",
         "add_filter": "Ajouter un filtre",
         "operators": {

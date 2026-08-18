@@ -99,7 +99,7 @@ function RolesSettingsPage() {
               </EmptyHeader>
             </Empty>
           ) : (
-            <Table>
+            <Table roundedBottom>
               <TableHeader>
                 <TableRow>
                   <TableHead>{t('admin.pages.roles.table.role')}</TableHead>

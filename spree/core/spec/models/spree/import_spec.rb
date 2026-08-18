@@ -147,7 +147,7 @@ RSpec.describe Spree::Import, :job, type: :model do
                                          'sku',
                                          'name',
                                          'status',
-                                         'vendor_name',
+                                         'seller_name',
                                          'brand_name',
                                          'description',
                                          'meta_title',
@@ -311,7 +311,7 @@ RSpec.describe Spree::Import, :job, type: :model do
     end
 
     it 'returns columns that are not mapped' do
-      expect(import.unmapped_file_columns).to include('vendor_name', 'brand_name', 'labels', 'custom_field.properties.fit', 'custom_field.properties.manufacturer', 'custom_field.properties.material')
+      expect(import.unmapped_file_columns).to include('seller_name', 'brand_name', 'labels', 'custom_field.properties.fit', 'custom_field.properties.manufacturer', 'custom_field.properties.material')
       expect(import.unmapped_file_columns).not_to include('slug')
     end
   end

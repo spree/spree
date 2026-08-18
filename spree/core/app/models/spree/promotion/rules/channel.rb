@@ -11,7 +11,7 @@ module Spree
         preference :channel_ids, :array, default: [],
                    parse_on_set: normalize_id_preference(
                      klass: Spree::Channel,
-                     scope: ->(rule) { rule.promotion&.store&.channels || Spree::Channel.none }
+                     scope: ->(rule) { rule.promotion.store.channels }
                    )
 
         def applicable?(promotable)

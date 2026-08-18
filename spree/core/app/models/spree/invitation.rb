@@ -13,7 +13,7 @@ module Spree
     #
     # Associations
     #
-    belongs_to :resource, polymorphic: true # eg. Store, Vendor, Account
+    belongs_to :resource, polymorphic: true # eg. Store, Seller, Account
     belongs_to :inviter, polymorphic: true # User or AdminUser
     belongs_to :invitee, polymorphic: true, optional: true # User or AdminUser
     belongs_to :role, class_name: 'Spree::Role'

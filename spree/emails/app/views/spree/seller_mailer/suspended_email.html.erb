@@ -1,0 +1,6 @@
+<%= render layout: 'spree/shared/mailer_hero' do %>
+  <h1><%= Spree.t('seller_mailer.suspended_email.heading') %></h1>
+  <p class="greeting"><%= Spree.t('seller_mailer.greeting', seller_name: @seller.name) %></p>
+  <p><%= Spree.t('seller_mailer.suspended_email.message', store_name: current_store.name) %></p>
+  <p class="sub"><%= Spree.t('seller_mailer.get_in_touch', store_email: current_store.mail_from_address) %></p>
+<% end %>

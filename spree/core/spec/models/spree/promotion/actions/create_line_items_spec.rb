@@ -136,4 +136,19 @@ describe Spree::Promotion::Actions::CreateLineItems, type: :model do
       end
     end
   end
+
+  # A gift the promotion's store cannot sell is dropped rather than written
+  # as a row with no variant.
+  context 'when given a variant from another store' do
+    let(:foreign_variant) { create(:product, store: create(:store)).default_variant }
+
+    it 'drops it' do
+      action.promotion_action_line_items_attributes = [
+        { 'variant_id' => foreign_variant.prefixed_id, 'quantity' => 1 }
+      ]
+      action.save!
+
+      expect(action.promotion_action_line_items.reload).to be_empty
+    end
+  end
 end

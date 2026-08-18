@@ -18,6 +18,13 @@ interface TableProps extends React.ComponentProps<'table'> {
    * main content — inside cards, sheets or dialogs, keep the default.
    */
   stickyHeader?: boolean
+  /**
+   * Rounds the last row's outer corners. Opt-in, because it only reads
+   * correctly when the table is the last thing inside a rounded container —
+   * anything below it (a pagination footer, a card action row) leaves the
+   * curve floating mid-surface.
+   */
+  roundedBottom?: boolean
 }
 
 /**
@@ -41,10 +48,22 @@ interface TableProps extends React.ComponentProps<'table'> {
  * rounding), and a scroll listener mirrors the body's `scrollLeft` onto the
  * pinned table so the header tracks horizontal scrolling.
  */
-function Table({ className, children, stickyHeader = false, ...props }: TableProps) {
+function Table({
+  className,
+  children,
+  stickyHeader = false,
+  roundedBottom = false,
+  ...props
+}: TableProps) {
   const scrollRef = useRef<HTMLDivElement | null>(null)
   const bodyTableRef = useRef<HTMLTableElement | null>(null)
   const pinnedTableRef = useRef<HTMLTableElement | null>(null)
+
+  // Applied on the table so it reaches the last row's edge cells without
+  // every TableCell paying for the selector.
+  const roundedClasses = roundedBottom
+    ? '[&_tbody_tr:last-child_td:first-child]:rounded-bl-xl [&_tbody_tr:last-child_td:last-child]:rounded-br-xl'
+    : undefined
 
   const kids = Children.toArray(children)
   const headerElement = kids.find(
@@ -98,7 +117,10 @@ function Table({ className, children, stickyHeader = false, ...props }: TablePro
       // keep `auto`, where scrolling a wide table sideways matters more than a
       // sticky header.
       <div className="overflow-x-auto md:overflow-x-clip">
-        <table className={cn('w-full align-top text-foreground', className)} {...props}>
+        <table
+          className={cn('w-full align-top text-foreground', roundedClasses, className)}
+          {...props}
+        >
           {children}
         </table>
       </div>
@@ -107,7 +129,7 @@ function Table({ className, children, stickyHeader = false, ...props }: TablePro
 
   // `w-max` + `min-w-full`: size to the content, but never narrower than the
   // card, so a table with few columns still fills the width.
-  const tableClasses = cn('w-max min-w-full align-top text-foreground', className)
+  const tableClasses = cn('w-max min-w-full align-top text-foreground', roundedClasses, className)
 
   return (
     <div className="relative">
@@ -182,7 +204,7 @@ function TableBody({ className, ...props }: React.ComponentProps<'tbody'>) {
 
 function TableRow({ className, ...props }: React.ComponentProps<'tr'>) {
   return (
-    <tr className={cn('group/row hover:bg-muted/60 last:*:border-b-0', className)} {...props} />
+    <tr className={cn('group/row hover:bg-accent/25 last:*:border-b-0', className)} {...props} />
   )
 }
 
@@ -197,7 +219,7 @@ function TableHead({ className, ...props }: React.ComponentProps<'th'>) {
     <th
       className={cn(
         'text-left text-sm font-medium text-muted-foreground bg-muted p-2 whitespace-nowrap first:pl-4 last:pr-4',
-        'shadow-[inset_0_-1px_0_0_var(--color-border)]',
+        'shadow-[inset_0_-1px_0_0_var(--border-subtle)]',
         className,
       )}
       {...props}
@@ -225,7 +247,7 @@ function TableCell({ className, ...props }: React.ComponentProps<'td'>) {
   return (
     <td
       className={cn(
-        'py-3 px-2 border-b border-border align-middle first:pl-4 last:pr-4 group-last/row:first:rounded-bl-xl group-last/row:last:rounded-br-xl',
+        'py-3 px-2 border-b border-border-subtle align-middle first:pl-4 last:pr-4',
         className,
       )}
       {...props}

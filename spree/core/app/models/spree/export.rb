@@ -25,7 +25,7 @@ module Spree
     # exports without a human user attached. The email notification is
     # skipped for these — apps poll instead.
     belongs_to :user, class_name: Spree.admin_user_class.to_s, optional: true
-    belongs_to :vendor, -> { with_deleted }, class_name: 'Spree::Vendor', optional: true
+    belongs_to :seller, -> { with_deleted }, class_name: 'Spree::Seller', optional: true
 
     #
     # Validations
@@ -40,7 +40,7 @@ module Spree
     #
     # Ransack configuration
     #
-    self.whitelisted_ransackable_attributes = %w[number type format vendor_id]
+    self.whitelisted_ransackable_attributes = %w[number type format seller_id]
 
     #
     # Preferences
@@ -132,7 +132,7 @@ module Spree
     def scope
       scope = model_class
       scope = scope.for_store(store) if model_class.respond_to?(:for_store)
-      scope = scope.for_vendor(vendor) if model_class.respond_to?(:for_vendor) && vendor.present?
+      scope = scope.for_seller(seller) if model_class.respond_to?(:for_seller) && seller.present?
       # A staff-created export only contains what its creator may read; a
       # userless export (console, system jobs) is unfiltered.
       scope = scope.accessible_by(current_ability) if user.present?
@@ -158,7 +158,7 @@ module Spree
 
     # Replace any prefixed IDs in `search_params` with their raw DB IDs so
     # Ransack can match them. Without this, an admin filtering an export by
-    # a foreign key (`promotion_id_eq: 'promo_xxx'`, `vendor_id_in: [...]`)
+    # a foreign key (`promotion_id_eq: 'promo_xxx'`, `seller_id_in: [...]`)
     # would always get zero rows. We only touch values that look like
     # prefixed IDs — anything else (numeric IDs, code strings, ranges,
     # state names) passes through untouched.

@@ -109,7 +109,7 @@ module Spree
 
           # The caller's roles on this store, fetched once per request,
           # mirroring `Spree::Ability#staff_roles`: a role owned by another
-          # resource (a marketplace vendor) confers no store-admin authority
+          # resource (a marketplace seller) confers no store-admin authority
           # and must not widen what the caller may grant.
           #
           # @return [Array<Spree::Role>]

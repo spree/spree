@@ -393,8 +393,8 @@ function ProductRow({
       // Mirror <TableRow> styling — a plain <tr> is required so dnd-kit's
       // setNodeRef attaches (TableRow doesn't forward refs).
       className={cn(
-        'group/row last:*:border-b-0 hover:bg-muted/60',
-        selected && 'bg-muted/40',
+        'group/row last:*:border-b-0 hover:bg-accent/60',
+        selected && 'bg-accent/60 hover:bg-accent',
         isDragging && 'relative z-10 opacity-70',
       )}
     >

@@ -30,8 +30,8 @@ Spree::Core::Engine.add_routes do
           end
         end
         # Public seller profiles. Read-only, and only sellers a shopper can
-        # actually buy from — see Store::VendorsController.
-        resources :vendors, only: [:index, :show], id: /.+/
+        # actually buy from — see Store::SellersController.
+        resources :sellers, only: [:index, :show], id: /.+/
 
         resources :categories, only: [:index, :show], id: /.+/
         resources :collections, only: [:index, :show] do
@@ -433,7 +433,7 @@ Spree::Core::Engine.add_routes do
         # Marketplace sellers. Each status change is its own member action
         # because each one is a workflow with its own arguments — mass
         # assignment would skip the mail and the extension hooks.
-        resources :vendors, concerns: :custom_fieldable do
+        resources :sellers, concerns: :custom_fieldable do
           member do
             post :invite
             patch :approve
@@ -441,6 +441,16 @@ Spree::Core::Engine.add_routes do
             patch :reject
           end
         end
+
+        # Commissions — what the marketplace charges its sellers. Rates are
+        # configuration; lines are the record of what was charged, so they are
+        # read-only.
+        resources :commission_rates do
+          collection do
+            get :rule_types
+          end
+        end
+        resources :commission_lines, only: [:index, :show]
 
         # Business customers. Branches and their buyers are created under their
         # parent and then addressed directly, so a caller holding a branch id
@@ -593,9 +603,9 @@ Spree::Core::Engine.add_routes do
 
       # The marketplace seller panel. A branch of its own rather than a
       # narrowing of :admin — every endpoint here scope-fetches through
-      # current_vendor, which is what makes cross-seller access impossible by
+      # current_seller, which is what makes cross-seller access impossible by
       # construction rather than by rule.
-      namespace :vendor do
+      namespace :seller do
         # Everything unauthenticated lives under auth/, so the refresh
         # cookie's path covers it and nothing else.
         post 'auth/login', to: 'auth#create'

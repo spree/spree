@@ -16,6 +16,7 @@ module Spree
                                :fulfillment_providers,
                                :tracking_carriers,
                                :stock_splitters,
+                               :commission_rules,
                                :delivery_method_rules,
                                :delivery_rate_providers,
                                :delivery_profile_types,
@@ -45,7 +46,7 @@ module Spree
                                :subscribers,
                                :store_authentication_strategies,
                                :admin_authentication_strategies,
-                               :vendor_authentication_strategies)
+                               :seller_authentication_strategies)
       SpreeCalculators = Struct.new(:shipping_methods, :tax_rates, :promotion_actions_create_adjustments, :promotion_actions_create_item_adjustments)
       PromoEnvironment = Struct.new(:rules, :actions)
       PricingEnvironment = Struct.new(:rules)
@@ -129,6 +130,10 @@ module Spree
 
       # Seeded early for the same reason as order routing: initializer files
       # append custom rule kinds. Core defaults concatenate in after_initialize.
+      initializer 'spree.register.commission_rules', before: :load_config_initializers do |app|
+        app.config.spree.commission_rules = []
+      end
+
       initializer 'spree.register.delivery_method_rules', before: :load_config_initializers do |app|
         app.config.spree.delivery_method_rules = []
       end
@@ -287,6 +292,14 @@ module Spree
           Spree::OrderRouting::Rules::DefaultLocation
         ]
 
+        # Commission targeting rule kinds (docs/plans/6.0-multi-seller-marketplace.md).
+        Rails.application.config.spree.commission_rules.concat [
+          Spree::CommissionRules::SellerRule,
+          Spree::CommissionRules::CategoryRule,
+          Spree::CommissionRules::ProductRule,
+          Spree::CommissionRules::ItemTotalRule
+        ]
+
         # Delivery-method eligibility rule kinds (docs/plans/6.0-delivery-method-rules.md).
         Rails.application.config.spree.delivery_method_rules.concat [
           Spree::DeliveryMethodRules::ItemTotalRule,
@@ -399,7 +412,7 @@ module Spree
           Spree::Category,
           Spree::Store,
           Spree::Policy,
-          Spree::Vendor
+          Spree::Seller
         ]
 
         # Resources that expose tags via `acts_as_taggable_on :tags`. The
@@ -407,7 +420,7 @@ module Spree
         # `taggable_type`, and the SPA `<TagCombobox>` targets them by name.
         # Extend in an app initializer (after :load_config_initializers) to
         # surface custom taggables — e.g.
-        #   Rails.application.config.spree.taggable_types << 'MyApp::Vendor'.
+        #   Rails.application.config.spree.taggable_types << 'MyApp::Seller'.
         Rails.application.config.spree.taggable_types = [
           'Spree::Product',
           'Spree::Order',
@@ -454,7 +467,7 @@ module Spree
           Spree::TaxRate,
           Spree::Category,
           Spree::Variant,
-          Spree::Vendor,
+          Spree::Seller,
           Spree.customer_class
         ]
 
@@ -497,6 +510,7 @@ module Spree
         # survives Zeitwerk code reloads in development.
         Spree.subscribers.concat [
           Spree::OrderPlacedSubscriber,
+          Spree::OrderCommissionSubscriber,
           Spree::OrderStatusSubscriber,
           Spree::ExportSubscriber,
           Spree::ReportSubscriber,
@@ -513,7 +527,7 @@ module Spree
         Rails.application.config.spree.admin_authentication_strategies = Spree::Authentication::StrategyRegistry.new(
           email: Spree::Authentication::Strategies::EmailPasswordStrategy
         )
-        Rails.application.config.spree.vendor_authentication_strategies = Spree::Authentication::StrategyRegistry.new(
+        Rails.application.config.spree.seller_authentication_strategies = Spree::Authentication::StrategyRegistry.new(
           email: Spree::Authentication::Strategies::EmailPasswordStrategy
         )
       end

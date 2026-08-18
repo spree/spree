@@ -41,6 +41,7 @@ export function SpecialInstructionsCard({ order }: { order: Order }) {
         <CardAction>
           <Button variant="ghost" size="icon-xs" onClick={() => setEditing(!editing)}>
             <PencilIcon className="size-4" />
+            <span className="sr-only">{t('admin.actions.edit')}</span>
           </Button>
         </CardAction>
       </CardHeader>
@@ -91,6 +92,7 @@ export function TagsCard({ order }: { order: Order }) {
             }}
           >
             <PencilIcon className="size-4" />
+            <span className="sr-only">{t('admin.actions.edit')}</span>
           </Button>
         </CardAction>
       </CardHeader>
@@ -160,6 +162,7 @@ export function InternalNoteCard({ order }: { order: Order }) {
         <CardAction>
           <Button variant="ghost" size="icon-xs" onClick={() => setEditing(!editing)}>
             <PencilIcon className="size-4" />
+            <span className="sr-only">{t('admin.actions.edit')}</span>
           </Button>
         </CardAction>
       </CardHeader>

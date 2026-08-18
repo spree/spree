@@ -21,7 +21,7 @@ module Spree
     WRITE_PREFIX = 'write_'.freeze
 
     # A role's audience is its owning resource, lowercased — a role on a
-    # `Spree::Store` is `:store`, one on a `Spree::Vendor` is `:vendor` (see
+    # `Spree::Store` is `:store`, one on a `Spree::Seller` is `:seller` (see
     # `Spree::Role#audience`).
     #
     # The store's own back office is the baseline: every resource is grantable
@@ -102,7 +102,7 @@ module Spree
     # @param subjects [Proc, Array] CanCanCan subjects the keys grant
     # @param write [Boolean]
     # @param audiences [Array<Symbol>] the audiences beyond staff whose roles
-    #   may hold these keys (`%i[vendor]`). Empty by default — opening a
+    #   may hold these keys (`%i[seller]`). Empty by default — opening a
     #   resource to another audience exposes it to a principal outside the
     #   store's own staff, so it is a deliberate act. Never open `settings`,
     #   `staff` or `api_keys`.
@@ -171,7 +171,7 @@ module Spree
     # nothing, so a panel that does not exist yet reads as granting nothing
     # rather than raising.
     #
-    # @param audience [Symbol, String] `:store`, `:vendor`, …
+    # @param audience [Symbol, String] `:store`, `:seller`, …
     # @return [Array<Resource>] in registration order
     def grantable_resources(audience)
       resources.select { |resource| resource.grantable_to?(audience) }
@@ -277,20 +277,20 @@ module Spree
     # are lambdas so model classes resolve at activation, not load, time.
     # rubocop:disable Metrics/MethodLength
     def register_default_resources
-      register_resource(:orders, group: :orders, audiences: %i[vendor], subjects: -> {
+      register_resource(:orders, group: :orders, audiences: %i[seller], subjects: -> {
         [Spree::Order, Spree::LineItem, Spree::TaxLine, Spree::Discount, Spree::Fee,
          Spree::Return, Spree::Exchange, Spree::Claim, Spree::TaxIdentifier,
          Spree::CustomField]
       })
       register_resource(:payments, group: :orders, subjects: -> { [Spree::Payment] })
-      register_resource(:fulfillments, group: :orders, audiences: %i[vendor], subjects: -> { [Spree::Fulfillment] })
+      register_resource(:fulfillments, group: :orders, audiences: %i[seller], subjects: -> { [Spree::Fulfillment] })
       register_resource(:refunds, group: :orders, subjects: -> { [Spree::Refund] })
       register_resource(:gift_cards, group: :orders, subjects: -> {
         [Spree::GiftCard, Spree::GiftCardBatch]
       })
       register_resource(:store_credits, group: :orders, subjects: -> { [Spree::StoreCredit] })
 
-      register_resource(:products, group: :catalog, audiences: %i[vendor], subjects: -> {
+      register_resource(:products, group: :catalog, audiences: %i[seller], subjects: -> {
         [Spree::Product, Spree::ProductType, Spree::Variant, Spree::OptionType,
          Spree::OptionValue, Spree::Price, Spree::PriceList, Spree::PriceRule,
          Spree::Asset, Spree::ProductPublication, Spree::CustomField]
@@ -301,7 +301,7 @@ module Spree
       register_resource(:collections, group: :catalog, subjects: -> {
         [Spree::Collection, Spree::ProductCollection, Spree::CollectionRule]
       })
-      register_resource(:stock, group: :catalog, audiences: %i[vendor], subjects: -> {
+      register_resource(:stock, group: :catalog, audiences: %i[seller], subjects: -> {
         [Spree::StockLevel, Spree::StockLocation, Spree::StockMovement,
          Spree::StockTransfer, Spree::StockReservation]
       })
@@ -338,26 +338,34 @@ module Spree
       })
 
       # Running the marketplace: admitting sellers, approving them, suspending
-      # them. Deliberately not opened to the vendor audience — a seller
+      # them. Deliberately not opened to the seller audience — a seller
       # administering other sellers is the one thing this key must not allow.
-      register_resource(:vendors, group: :access, subjects: -> { [Spree::Vendor] })
+      register_resource(:sellers, group: :access, subjects: -> { [Spree::Seller] })
+
+      # What the marketplace charges its sellers. Its own resource rather than
+      # part of `settings`, and closed to the seller audience for the same
+      # reason `sellers` is: a seller must never be able to read, let alone
+      # set, what anyone is charged.
+      register_resource(:commissions, group: :access, subjects: -> {
+        [Spree::CommissionRate, Spree::CommissionRule, Spree::CommissionLine]
+      })
 
       # A seller editing their own record: profile, branding, addresses,
       # onboarding.
       #
-      # A symbol subject, not `Spree::Vendor`: that class belongs to `vendors`
+      # A symbol subject, not `Spree::Seller`: that class belongs to `sellers`
       # above — the operator's key — and claiming it twice would make
       # `resource_for_subject` answer by registration order, besides letting a
-      # seller's key manage vendor records generally. A symbol grants a real
+      # seller's key manage seller records generally. A symbol grants a real
       # `can` rule (so `authorize!` on the seller branch resolves) while
       # staying invisible to `resource_for_subject`, which matches Classes
-      # only. Which vendor they may touch is still `current_vendor`
+      # only. Which seller they may touch is still `current_seller`
       # scope-fetching, never an ability rule.
-      register_resource(:vendor_profile, group: :access, subjects: -> { [:vendor_profile] },
-                                         audiences: %i[vendor])
+      register_resource(:seller_profile, group: :access, subjects: -> { [:seller_profile] },
+                                         audiences: %i[seller])
 
       register_resource(:dashboard, group: :analytics, subjects: -> { [:dashboard] },
-                                    write: false, audiences: %i[vendor])
+                                    write: false, audiences: %i[seller])
     end
     # rubocop:enable Metrics/MethodLength
   end

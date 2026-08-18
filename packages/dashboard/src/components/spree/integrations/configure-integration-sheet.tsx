@@ -66,7 +66,7 @@ export function ConfigureIntegrationSheet({
       }
       onOpenChange(false)
     } catch (err) {
-      // Activation failures come back as a 422 on `active` with the vendor's
+      // Activation failures come back as a 422 on `active` with the seller's
       // message — surface it inline, where the admin can act on it.
       setSubmitError(err instanceof Error ? err.message : String(err))
     }

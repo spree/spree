@@ -15,7 +15,7 @@ async function createDraftOrder(page: Page, storeId: string) {
   await page.locator('#order-email').fill(`e2e-fulfillment-${Date.now()}@example.com`)
   await page.getByPlaceholder(/search variant/i).fill(FIXTURE_PROMO_PRODUCT)
   await page
-    .getByRole('button', { name: new RegExp(FIXTURE_PROMO_PRODUCT, 'i') })
+    .getByRole('option', { name: new RegExp(FIXTURE_PROMO_PRODUCT, 'i') })
     .first()
     .click()
 

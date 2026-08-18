@@ -7,7 +7,7 @@ module Spree
     # Providers fetch live where their API allows it. When it does not — an
     # unconnected integration, a credential tier that forbids the listing
     # endpoint, a carrier outage — they return {.unavailable} with the
-    # vendor's own message, and the picker explains the situation instead of
+    # seller's own message, and the picker explains the situation instead of
     # showing a silently empty or invented list.
     class ServiceCatalog
       include ActiveModel::Model
@@ -33,7 +33,7 @@ module Spree
         new(services: Array(services))
       end
 
-      # @param message [String] the vendor's message, shown to the merchant
+      # @param message [String] the seller's message, shown to the merchant
       # @return [ServiceCatalog]
       def self.unavailable(message)
         new(error_message: message)

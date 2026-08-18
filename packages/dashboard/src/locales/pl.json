@@ -1098,7 +1098,7 @@
         "tags": {
           "label": "Tagi"
         },
-        "vendor": {
+        "seller": {
           "label": "Sprzedawca",
           "first_party": "Sprzedajesz Ty"
         }
@@ -1630,7 +1630,7 @@
           "help": "Zostaw puste, aby certyfikat nie wygasał."
         }
       },
-      "vendor": {
+      "seller": {
         "name": {
           "placeholder": "Sparks Audio"
         },
@@ -1665,6 +1665,61 @@
           "label": "Nieobecny do",
           "placeholder": "Wybierz datę",
           "help": "Katalog pozostaje widoczny, ale do tego czasu nic nie da się kupić."
+        }
+      },
+      "commission_rate": {
+        "name": {
+          "placeholder": "Prowizja standardowa"
+        },
+        "code": {
+          "label": "Kod",
+          "placeholder": "standard",
+          "help": "Twój własny identyfikator tej stawki."
+        },
+        "kind": {
+          "label": "Opłata",
+          "options": {
+            "percentage": "Procent sprzedaży",
+            "fixed": "Kwota stała"
+          }
+        },
+        "value": {
+          "label": "Wartość",
+          "help_percentage": "Procent sprzedaży pobierany od sprzedawcy."
+        },
+        "rules": {
+          "label": "Warunki",
+          "help": "Każdy warunek musi być spełniony, a warunek wskazujący kilka pozycji oznacza dowolną z nich. Stawka bez warunków obejmuje każdą sprzedaż."
+        },
+        "min_amount": {
+          "label": "Minimum"
+        },
+        "max_amount": {
+          "label": "Maksimum"
+        },
+        "commission_tax_rate": {
+          "label": "Podatek od prowizji (%)",
+          "placeholder": "Z ustawień podatkowych",
+          "help": "VAT od samej prowizji, jako odrębna usługa dla sprzedawcy. Zostaw puste, aby użyć ustawień podatkowych."
+        },
+        "include_shipping": {
+          "label": "Nalicz od dostawy",
+          "help": "Nalicz prowizję również od przychodów sprzedawcy z dostawy."
+        },
+        "tax_inclusive": {
+          "label": "Nalicz od ceny brutto",
+          "help": "Nalicz od ceny zawierającej VAT klienta. Po wyłączeniu prowizja liczona jest od przychodu netto sprzedawcy — zwykle stosowana podstawa, gdy opłata jest opodatkowana jako odrębna usługa."
+        },
+        "enabled": {
+          "help": "Wyłączone stawki są pomijane przy naliczaniu."
+        },
+        "amounts": {
+          "help": "Naliczana za każdą sprzedaną sztukę. Waluta pozostawiona pusta nie jest naliczana przez tę stawkę — takie sprzedaże trafiają do następnej.",
+          "label": "Opłata stała"
+        },
+        "bounds": {
+          "help": "Nigdy nie naliczaj mniej niż pierwsza kwota ani więcej niż druga. Każda dotyczy tylko sprzedaży w swojej walucie; waluta pozostawiona pusta jest naliczana bez ograniczeń.",
+          "label": "Dolna i górna granica (opcjonalnie)"
         }
       }
     },
@@ -1938,7 +1993,7 @@
       "returns": "Zwroty",
       "settings": "Ustawienia",
       "transfers": "Transfery",
-      "vendors": "Sprzedawcy"
+      "sellers": "Sprzedawcy"
     },
     "option_types": {
       "columns": {
@@ -3068,6 +3123,10 @@
         "tax_rates": {
           "add_sheet_title": "Nowa stawka podatku",
           "edit_sheet_title": "Edytuj stawkę podatku"
+        },
+        "commission_rates": {
+          "add_sheet_title": "Dodaj stawkę prowizji",
+          "edit_sheet_title": "Edytuj stawkę prowizji"
         }
       },
       "staff": {
@@ -3362,7 +3421,7 @@
       },
       "tax_category_placeholder": "Wybierz kategorię podatkową",
       "transfers": {
-        "create_description": "Przenoś zapasy między lokalizacjami lub przyjmuj nowe zapasy od zewnętrznego dostawcy.",
+        "create_description": "Przenieś zapasy między lokalizacjami lub przyjmij nowy towar od zewnętrznego dostawcy.",
         "delete_confirm": {
           "message": "Ruchy magazynowe utworzone przez ten transfer zostaną cofnięte.",
           "title": "Usunąć ten transfer?"
@@ -3370,7 +3429,7 @@
         "destination_placeholder": "Wybierz lokalizację docelową",
         "details_card": "Szczegóły",
         "different_locations_error": "Lokalizacja źródłowa i docelowa muszą się różnić.",
-        "external_label": "Zewnętrzny (przyjęcie od dostawcy)",
+        "external_label": "Zewnętrzne (przyjęcie od dostawcy)",
         "fields": {
           "created": "Utworzono",
           "external_receive": "Przyjęcie zewnętrzne",
@@ -3800,7 +3859,8 @@
         "store": "Sklep",
         "tax_categories": "Kategorie podatkowe",
         "tax_rates": "Stawki podatku",
-        "webhooks": "Webhooki"
+        "webhooks": "Webhooki",
+        "commission_rates": "Stawki prowizji"
       }
     },
     "setup": {
@@ -4166,7 +4226,7 @@
     "enterprise": {
       "learn_more": "Dowiedz się więcej o Spree Enterprise"
     },
-    "vendors": {
+    "sellers": {
       "add_cta": "Dodaj sprzedawcę",
       "add_sheet_title": "Nowy sprzedawca",
       "create_description": "Najpierw utwórz sprzedawcę. Zaproszenie, akceptację i wypłaty ustawisz na jego stronie.",
@@ -4236,7 +4296,7 @@
         "canceled": "Wycofał się przed dołączeniem."
       },
       "tax_remittance": {
-        "vendor": "Rozlicza sprzedawca",
+        "seller": "Rozlicza sprzedawca",
         "platform": "Rozlicza marketplace"
       },
       "payout_interval": {
@@ -4275,6 +4335,29 @@
       "autocomplete": {
         "placeholder": "Szukaj sprzedawców",
         "empty": "Nie znaleziono sprzedawców"
+      }
+    },
+    "commission_rates": {
+      "add_cta": "Dodaj stawkę prowizji",
+      "applies_to_everything": "Każda sprzedaż",
+      "create_description": "Określ, ile marketplace pobiera od sprzedawców i których sprzedaży to dotyczy.",
+      "create_label": "Utwórz stawkę prowizji",
+      "delete_confirm": {
+        "message": "{{name}} zostanie usunięta. Naliczone już prowizje pozostaną bez zmian.",
+        "title": "Usunąć stawkę prowizji?"
+      },
+      "edit_description": "Zaktualizuj opłatę, jej limity i objęte nią sprzedaże.",
+      "empty": "Brak stawek prowizji",
+      "messages": {
+        "created": "Utworzono stawkę prowizji",
+        "deleted": "Usunięto stawkę prowizji",
+        "updated": "Zaktualizowano stawkę prowizji"
+      },
+      "search_placeholder": "Szukaj po nazwie…",
+      "order_hint": "Nowe stawki trafiają na górę listy, a wygrywa pierwsza pasująca — przeciągnij, aby zmienić kolejność.",
+      "conditions": {
+        "add": "Dodaj warunek",
+        "title": "Warunki"
       }
     }
   }

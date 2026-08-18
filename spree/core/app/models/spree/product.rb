@@ -130,7 +130,7 @@ module Spree
     # The seller this product belongs to on a marketplace. Nil is the
     # operator's own catalog — which is everything, on a store selling only
     # its own goods.
-    belongs_to :vendor, class_name: 'Spree::Vendor', optional: true, inverse_of: :products
+    belongs_to :seller, class_name: 'Spree::Seller', optional: true, inverse_of: :products
 
     # How this product ships: origins, zones and methods all hang off the
     # profile. Required — a product without one could not be fulfilled at
@@ -144,9 +144,9 @@ module Spree
     # linking another store's profile.
     validate :delivery_profile_must_belong_to_store, if: :delivery_profile_id_changed?
     # Either side moving breaks the pair, and a product's store is not frozen
-    # after create, so watching only the vendor would let a move carry the old
+    # after create, so watching only the seller would let a move carry the old
     # store's seller along.
-    validate :vendor_must_belong_to_store, if: -> { vendor_id_changed? || store_id_changed? }
+    validate :seller_must_belong_to_store, if: -> { seller_id_changed? || store_id_changed? }
 
     # Every product has at least one variant. `default_variant` is the "face" of
     # the product (price display, default add-to-cart, property delegation).
@@ -354,9 +354,9 @@ module Spree
       apply_variants(variants_params)
     end
 
-    self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status available_on created_at updated_at vendor_id]
+    self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status available_on created_at updated_at seller_id]
     self.whitelisted_ransackable_associations = %w[categories collections store channels variants default_variant tags labels
-                                                   product_type product_categories option_types vendor]
+                                                   product_type product_categories option_types seller]
     self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name in_taxon in_category in_categories in_collection price_between
                                              price_lte price_gte
                                              search multi_search in_stock out_of_stock with_option_value_ids
@@ -947,13 +947,13 @@ module Spree
     end
 
     # A seller from another store would put one store's catalog inside another
-    # store's vendor — and every vendor-scoped read is rooted in exactly that
+    # store's seller — and every seller-scoped read is rooted in exactly that
     # association.
-    def vendor_must_belong_to_store
-      return if vendor.nil? || store.nil?
-      return if vendor.store_id == store_id
+    def seller_must_belong_to_store
+      return if seller.nil? || store.nil?
+      return if seller.store_id == store_id
 
-      errors.add(:vendor, :invalid)
+      errors.add(:seller, :invalid)
     end
 
     def run_touch_callbacks

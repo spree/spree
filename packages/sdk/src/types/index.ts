@@ -46,11 +46,11 @@ export type {
   Refund,
   Return,
   ReturnLineItem,
+  Seller,
   State,
   StockLocation,
   StoreCredit,
   Variant,
-  Vendor,
   Wishlist,
   WishlistItem,
 } from './generated'

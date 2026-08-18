@@ -1,6 +1,6 @@
 module Spree
   class InvitationMailer < BaseMailer
-    # invitation email, sending email to the invited to let them know they have been invited to join a store/account/vendor
+    # invitation email, sending email to the invited to let them know they have been invited to join a store/account/seller
     def invitation_email(invitation)
       @invitation = invitation
       # The shared header/footer and from/reply-to addresses read

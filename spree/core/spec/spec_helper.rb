@@ -23,7 +23,7 @@ if ENV['COVERAGE']
     add_filter '/lib/tasks/'
     add_filter '/script/'
     add_filter '/spec/'
-    add_filter '/vendor/'
+    add_filter '/seller/'
 
     # CI_SHARD distinguishes runners; TEST_ENV_NUMBER distinguishes the parallel
     # rspec processes within a runner — both are needed so concurrent processes

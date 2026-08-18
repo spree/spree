@@ -7,37 +7,37 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
 
   let!(:product) { create(:product) }
 
-  describe 'vendor' do
-    let!(:vendor) { create(:vendor, store: store, name: 'Sparks Audio') }
-    let!(:vendor_product) { create(:product, store: store, vendor: vendor, name: 'Vendor Item') }
+  describe 'seller' do
+    let!(:seller) { create(:seller, store: store, name: 'Sparks Audio') }
+    let!(:seller_product) { create(:product, store: store, seller: seller, name: 'Seller Item') }
     let!(:own_product) { create(:product, store: store, name: 'First Party Item') }
 
     before { request.headers.merge!(headers) }
 
     # The name rides along so a products list can show who sells a row without
-    # a request per vendor.
+    # a request per seller.
     it 'serializes the seller, and nothing for a first-party product' do
       get :index, as: :json
 
       rows = json_response['data'].index_by { |row| row['name'] }
-      expect(rows['Vendor Item']['vendor_id']).to eq(vendor.prefixed_id)
-      expect(rows['Vendor Item']['vendor_name']).to eq('Sparks Audio')
-      expect(rows['First Party Item']['vendor_id']).to be_nil
-      expect(rows['First Party Item']['vendor_name']).to be_nil
+      expect(rows['Seller Item']['seller_id']).to eq(seller.prefixed_id)
+      expect(rows['Seller Item']['seller_name']).to eq('Sparks Audio')
+      expect(rows['First Party Item']['seller_id']).to be_nil
+      expect(rows['First Party Item']['seller_name']).to be_nil
     end
 
     it 'filters to one seller' do
-      get :index, params: { q: { vendor_id_eq: vendor.id } }, as: :json
+      get :index, params: { q: { seller_id_eq: seller.id } }, as: :json
 
-      expect(json_response['data'].pluck('name')).to eq(['Vendor Item'])
+      expect(json_response['data'].pluck('name')).to eq(['Seller Item'])
     end
 
     # "Sold by us" is a question a marketplace operator asks constantly.
     it 'filters to the products nobody sells but the marketplace' do
-      get :index, params: { q: { vendor_id_null: true } }, as: :json
+      get :index, params: { q: { seller_id_null: true } }, as: :json
 
       expect(json_response['data'].pluck('name')).to include('First Party Item')
-      expect(json_response['data'].pluck('name')).not_to include('Vendor Item')
+      expect(json_response['data'].pluck('name')).not_to include('Seller Item')
     end
   end
 

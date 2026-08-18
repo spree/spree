@@ -54,27 +54,27 @@ RSpec.describe Spree::PermissionConfiguration do
     end
 
     it 'grants a resource to the audiences it names, store included' do
-      configuration.register_resource(:reviews, group: :catalog, audiences: %i[vendor], subjects: [Spree::Product])
+      configuration.register_resource(:reviews, group: :catalog, audiences: %i[seller], subjects: [Spree::Product])
 
-      expect(configuration.resource(:reviews).audiences).to contain_exactly(:store, :vendor)
+      expect(configuration.resource(:reviews).audiences).to contain_exactly(:store, :seller)
     end
 
     it 'withholds unnamed audiences' do
       configuration.register_resource(:reviews, group: :catalog, subjects: [Spree::Product])
 
-      expect(configuration.resource(:reviews)).not_to be_grantable_to(:vendor)
-      expect(configuration.grantable_keys(:vendor)).not_to include('read_reviews')
+      expect(configuration.resource(:reviews)).not_to be_grantable_to(:seller)
+      expect(configuration.grantable_keys(:seller)).not_to include('read_reviews')
     end
 
-    it 'opens the seller-facing core resources to vendors' do
-      expect(configuration.grantable_keys(:vendor)).to include(
+    it 'opens the seller-facing core resources to sellers' do
+      expect(configuration.grantable_keys(:seller)).to include(
         'read_products', 'write_products', 'read_orders', 'write_orders',
         'read_fulfillments', 'write_fulfillments', 'read_stock', 'write_stock', 'read_dashboard'
       )
     end
 
-    it 'never opens the operator-only resources to vendors' do
-      expect(configuration.grantable_keys(:vendor)).not_to include(
+    it 'never opens the operator-only resources to sellers' do
+      expect(configuration.grantable_keys(:seller)).not_to include(
         'read_settings', 'write_settings', 'read_staff', 'write_staff',
         'read_api_keys', 'write_api_keys', 'read_payments', 'read_refunds'
       )
@@ -211,32 +211,32 @@ RSpec.describe Spree::PermissionConfiguration do
     end
   end
 
-  describe 'vendor_profile' do
+  describe 'seller_profile' do
     let(:store) { @default_store }
-    let(:vendor) { create(:vendor, store: store) }
+    let(:seller) { create(:seller, store: store) }
     let(:user) { create(:admin_user) }
 
     let(:seller_ability) do
-      role = create(:role, name: 'seller', resource: vendor, permissions: %w[write_vendor_profile])
+      role = create(:role, name: 'seller', resource: seller, permissions: %w[write_seller_profile])
       create(:role_user, role: role, user: user)
 
-      Spree::Ability.new(user, resource: vendor)
+      Spree::Ability.new(user, resource: seller)
     end
 
     # A key that grants no subject silently authorizes nothing: `authorize!` on
     # the seller branch would fail closed with the permission apparently held.
     it 'grants a real ability rule' do
-      expect(seller_ability).to be_can(:manage, :vendor_profile)
+      expect(seller_ability).to be_can(:manage, :seller_profile)
     end
 
     # The subject is a symbol so it cannot be confused with the operator's
-    # `vendors` key, which owns the Spree::Vendor class.
-    it 'does not let a seller manage vendor records' do
-      expect(seller_ability).not_to be_can(:manage, vendor)
+    # `sellers` key, which owns the Spree::Seller class.
+    it 'does not let a seller manage seller records' do
+      expect(seller_ability).not_to be_can(:manage, seller)
     end
 
-    it 'leaves Spree::Vendor mapped to the operator resource' do
-      expect(Spree.permissions.resource_for_subject(Spree::Vendor).name).to eq(:vendors)
+    it 'leaves Spree::Seller mapped to the operator resource' do
+      expect(Spree.permissions.resource_for_subject(Spree::Seller).name).to eq(:sellers)
     end
   end
 end

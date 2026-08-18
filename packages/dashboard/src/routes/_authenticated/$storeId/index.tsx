@@ -13,6 +13,12 @@ import {
   type DateRange,
   DateRangePicker,
   Skeleton,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
   Thumbnail,
 } from '@spree/dashboard-ui'
 import { useQuery } from '@tanstack/react-query'
@@ -164,23 +170,19 @@ function TopProducts({ products }: { products: DashboardAnalytics['top_products'
         <CardDescription>{t('admin.pages.home.top_products_description')}</CardDescription>
       </CardHeader>
       <CardContent className="p-0">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b text-left text-muted-foreground">
-              <th className="px-4 py-2 font-medium">{t('admin.pages.home.columns.product')}</th>
-              <th className="px-4 py-2 text-right font-medium">
-                {t('admin.pages.home.columns.price')}
-              </th>
-              <th className="px-4 py-2 text-right font-medium">
-                {t('admin.pages.home.columns.sold')}
-              </th>
-              <th className="px-4 py-2 text-right font-medium">{t('admin.fields.total.label')}</th>
-            </tr>
-          </thead>
-          <tbody>
+        <Table roundedBottom>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{t('admin.pages.home.columns.product')}</TableHead>
+              <TableHead className="text-right">{t('admin.pages.home.columns.price')}</TableHead>
+              <TableHead className="text-right">{t('admin.pages.home.columns.sold')}</TableHead>
+              <TableHead className="text-right">{t('admin.fields.total.label')}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {products.map((product) => (
-              <tr key={product.id} className="border-b last:border-0">
-                <td className="px-4 py-3">
+              <TableRow key={product.id}>
+                <TableCell>
                   <Link
                     to="/$storeId/products/$productId"
                     params={(prev) => ({
@@ -192,16 +194,18 @@ function TopProducts({ products }: { products: DashboardAnalytics['top_products'
                     <Thumbnail src={product.image_url} fallback={<PackageIcon />} />
                     <span className="font-medium">{product.name}</span>
                   </Link>
-                </td>
-                <td className="px-4 py-3 text-right text-muted-foreground">
+                </TableCell>
+                <TableCell className="text-right text-muted-foreground tabular-nums">
                   {product.price ?? '-'}
-                </td>
-                <td className="px-4 py-3 text-right">{product.quantity}</td>
-                <td className="px-4 py-3 text-right font-medium">{product.total}</td>
-              </tr>
+                </TableCell>
+                <TableCell className="text-right tabular-nums">{product.quantity}</TableCell>
+                <TableCell className="text-right font-medium tabular-nums">
+                  {product.total}
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </CardContent>
     </Card>
   )

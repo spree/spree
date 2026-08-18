@@ -11,7 +11,7 @@ module Spree
         preference :market_ids, :array, default: [],
                    parse_on_set: normalize_id_preference(
                      klass: Spree::Market,
-                     scope: ->(rule) { rule.promotion&.store&.markets || Spree::Market.none }
+                     scope: ->(rule) { rule.promotion.store.markets }
                    )
 
         def applicable?(promotable)

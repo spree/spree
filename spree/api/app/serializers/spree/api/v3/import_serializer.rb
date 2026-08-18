@@ -23,7 +23,7 @@ module Spree
           import.status.to_s
         end
 
-        # `"store"` / `"vendor"`, not the polymorphic class name.
+        # `"store"` / `"seller"`, not the polymorphic class name.
         attribute :owner_type do |import|
           Spree::Base.polymorphic_api_type(import.owner_type)
         end

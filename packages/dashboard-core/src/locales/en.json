@@ -29,6 +29,8 @@
       "invite": "Invite",
       "more_actions": "More actions",
       "remove": "Remove",
+      "remove_item": "Remove {{label}}",
+      "remove_rule": "Remove rule",
       "reset": "Reset",
       "revoke": "Revoke",
       "save": "Save",
@@ -368,6 +370,9 @@
       },
       "contact_email": {
         "label": "Contact email"
+      },
+      "enabled": {
+        "label": "Enabled"
       }
     },
     "components": {
@@ -444,6 +449,7 @@
         "visible_columns": "Visible columns",
         "reset_to_default": "Reset to default",
         "clear_all": "Clear all",
+        "remove_filter": "Remove filter",
         "no_filters": "No filters. Click below to add one.",
         "add_filter": "Add filter",
         "operators": {

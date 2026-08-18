@@ -68,7 +68,7 @@ module Spree
       true
     end
 
-    # receive inventory from external vendor
+    # receive inventory from external seller
     def receive(destination_location, variants)
       transfer(nil, destination_location, variants)
     end

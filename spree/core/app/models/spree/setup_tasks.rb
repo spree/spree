@@ -1,7 +1,7 @@
 module Spree
   # Registry of onboarding tasks for a given subject type. `Spree.store_setup_tasks`
   # holds the Getting Started checklist evaluated against a store; future
-  # registries (e.g. vendor onboarding) instantiate the same class against
+  # registries (e.g. seller onboarding) instantiate the same class against
   # their own subject. Defaults are registered in
   # `config/initializers/spree_store_setup_tasks.rb`; extensions and host apps
   # can add or remove tasks at boot:

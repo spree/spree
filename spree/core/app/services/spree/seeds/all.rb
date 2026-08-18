@@ -35,6 +35,9 @@ module Spree
             ProductTypes.call
             CustomerGroups.call
             ReturnsEnvironment.call
+            # The marketplace's catch-all rate, at the bottom of the list so
+            # narrower rates added later resolve ahead of it.
+            CommissionRates.call
             ApiKeys.call
             AllowedOrigins.call
           end

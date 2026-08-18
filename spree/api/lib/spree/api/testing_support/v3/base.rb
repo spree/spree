@@ -80,31 +80,31 @@ shared_context 'API v3 Admin authenticated' do
   let(:headers) { bearer_headers }
 end
 
-# The marketplace seller panel. Deliberately no `current_vendor` stub: the
+# The marketplace seller panel. Deliberately no `current_seller` stub: the
 # header and the membership lookup behind it are what these specs exist to
 # exercise, so stubbing them would test nothing.
-shared_context 'API v3 Vendor' do
+shared_context 'API v3 Seller' do
   let(:store) { @default_store || create(:store, default: true) }
-  let(:vendor) { create(:vendor, :approved, store: store) }
-  let(:vendor_role) { create(:role, name: 'Seller', resource: vendor, permissions: %w[write_products]) }
-  let(:vendor_user) do
-    create(:admin_user, :without_admin_role).tap { |user| vendor.add_user(user, vendor_role) }
+  let(:seller) { create(:seller, :approved, store: store) }
+  let(:seller_role) { create(:role, name: 'Seller', resource: seller, permissions: %w[write_products]) }
+  let(:seller_user) do
+    create(:admin_user, :without_admin_role).tap { |user| seller.add_user(user, seller_role) }
   end
 
-  let(:vendor_jwt_token) do
+  let(:seller_jwt_token) do
     Spree::Api::V3::TestingSupport.generate_jwt(
-      vendor_user, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_VENDOR
+      seller_user, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_SELLER
     )
   end
-  let(:vendor_headers) do
-    { 'Authorization' => "Bearer #{vendor_jwt_token}", 'X-Spree-Vendor-Id' => vendor.prefixed_id }
+  let(:seller_headers) do
+    { 'Authorization' => "Bearer #{seller_jwt_token}", 'X-Spree-Seller-Id' => seller.prefixed_id }
   end
 end
 
-shared_context 'API v3 Vendor authenticated' do
-  include_context 'API v3 Vendor'
+shared_context 'API v3 Seller authenticated' do
+  include_context 'API v3 Seller'
 
-  let(:headers) { vendor_headers }
+  let(:headers) { seller_headers }
 end
 
 # Authenticates as an admin whose ability is restricted to specific catalog

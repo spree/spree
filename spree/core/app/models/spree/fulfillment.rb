@@ -629,7 +629,7 @@ module Spree
       delivery_method&.provider || Spree::FulfillmentProvider::Manual.new
     end
 
-    # Commission base for multi-vendor include_shipping: the cost net of
+    # Commission base for multi-seller include_shipping: the cost net of
     # fulfillment-attached discounts.
     #
     # @return [BigDecimal]

@@ -717,6 +717,19 @@ en:
         name: Tag
     color_code: Color Code
     colors: Colors
+    commission_rule_types:
+      category_rule:
+        description: Charges this rate only for products in the selected categories, and anything filed beneath them
+        name: Category
+      item_total_rule:
+        description: Charges this rate only on sales within a value range
+        name: Sale value
+      product_rule:
+        description: Charges this rate only for the selected products
+        name: Product
+      seller_rule:
+        description: Charges this rate only when the seller is one of the selected
+        name: Seller
     company: Company
     compare_at_amount: Compare at amount
     compare_at_price: Compare at price
@@ -875,6 +888,7 @@ en:
         cannot_delete_default_channel: Default channel cannot be deleted. Promote another channel to default first.
         cart_currency_mismatch: carts in different currencies cannot be merged
         channel_store_mismatch: must belong to the same store
+        commission_rate_needs_an_amount: needs a flat fee amount in at least one currency
         coupon_code_frozen_after_completion: coupon codes cannot be changed on a completed order — add a manual discount instead
         delivery_zone_not_in_origin_group: must belong to the delivery method's origin group
         delivery_zone_not_in_profile: must belong to the delivery method's delivery profile
@@ -887,15 +901,20 @@ en:
         discount_value_type_invalid: value_type must be flat or percent
         exactly_one_adjustable: must be attached to exactly one adjustable
         exactly_one_of_cart_or_order: must belong to exactly one of cart or order
+        exactly_one_of_line_item_or_fulfillment: must be charged against exactly one of a line item or a fulfillment
         exactly_one_tax_identifier_owner: must belong to exactly one of customer, cart or order
+        flat_fee_cannot_charge_delivery: is not available on a flat fee, which already charges for the sale the delivery belongs to — add a separate rate to charge delivery
         integration_connection_failed: could not connect with the saved credentials
         integration_type_not_registered: is not a registered integration
+        invalid_commission_rule: is not a commission rule kind this store has
+        invalid_commission_rule_type: "%{type} is not a commission rule kind this store has"
         invalid_delivery_method_rule: is not a registered delivery method rule
         invalid_oauth_state: Invalid or expired authentication state. Please start the sign-in again.
         invalid_order_routing_rule: is not a registered order routing rule
         invalid_order_routing_strategy: is not a registered order routing strategy
         invalid_refund_method: must be one of original_payment, store_credit
         invalid_storefront_access: is not a valid storefront access level
+        must_be_greater_than_min_amount: must be greater than or equal to the minimum
         must_be_origin_only: must be an origin (scheme and host) without path, query, or fragment
         no_pickup_point_provider: this delivery method has no pickup point provider configured
         oidc_account_not_provisioned: This account is not authorized for this store. Ask an administrator for an invitation.
@@ -903,6 +922,7 @@ en:
         oidc_missing_code: The identity provider did not return an authorization code.
         oidc_requires_redirect: This provider requires signing in through its own login page.
         pickup_point_not_found: pickup point could not be found with this provider
+        product_not_in_store: must all belong to this store
         profile_does_not_accept_provider: "%{provider} deliveries cannot join the %{profile} profile"
         promotion_discount_not_editable: promotion discounts are managed by recalculation and cannot be edited
         rate_provider_requires_shipping: "%{provider} quotes shipments, so this method must ship to an address"
@@ -1047,7 +1067,7 @@ en:
         link_description: 'To accept this invitation, please click the link below:'
         subject: Invitation to join %{resource_name}
       thanks: Thank you,
-    invitation_role_resource_mismatch: must belong to the same store or vendor as the invitation
+    invitation_role_resource_mismatch: must belong to the same store or seller as the invitation
     invitations: Invitations
     invited_by: Invited by
     iso: ISO Alpha-2
@@ -1475,6 +1495,8 @@ en:
     search_by: 'Search by:'
     security: Security
     seed:
+      commission_rates:
+        marketplace_default: Marketplace default
       delivery_profiles:
         digital: Digital
       product_types:
@@ -1483,6 +1505,25 @@ en:
     select: Select
     select_stock: Select stock
     selected_quantity_not_available: selected of %{item} is not available.
+    seller: Seller
+    seller_access_denied: You do not have access to this seller.
+    seller_mailer:
+      approved_email:
+        action: Go to your dashboard
+        heading: You're approved
+        message: Your application to sell on %{store_name} has been approved. You can now list products and start taking orders.
+        subject: You're approved to sell on %{store_name}
+      get_in_touch: If you think this is a mistake, reply to this email or contact us at %{store_email}.
+      greeting: Hi %{seller_name},
+      rejected_email:
+        heading: About your application
+        message: Your application to sell on %{store_name} has not been accepted.
+        subject: Your application to sell on %{store_name}
+      suspended_email:
+        heading: Your account has been suspended
+        message: Selling on %{store_name} has been paused for your account. Your products and order history are unaffected.
+        subject: Your %{store_name} account has been suspended
+    seller_membership_required: This account does not belong to any seller.
     send_consumer_transactional_emails: Send Customer Transactional Emails
     seo: SEO
     seo_title: SEO Title
@@ -1667,25 +1708,6 @@ en:
     value: Value
     variant: Variant
     variants: Variants
-    vendor: Vendor
-    vendor_access_denied: You do not have access to this vendor.
-    vendor_mailer:
-      approved_email:
-        action: Go to your dashboard
-        heading: You're approved
-        message: Your application to sell on %{store_name} has been approved. You can now list products and start taking orders.
-        subject: You're approved to sell on %{store_name}
-      get_in_touch: If you think this is a mistake, reply to this email or contact us at %{store_email}.
-      greeting: Hi %{vendor_name},
-      rejected_email:
-        heading: About your application
-        message: Your application to sell on %{store_name} has not been accepted.
-        subject: Your application to sell on %{store_name}
-      suspended_email:
-        heading: Your account has been suspended
-        message: Selling on %{store_name} has been paused for your account. Your products and order history are unaffected.
-        subject: Your %{store_name} account has been suspended
-    vendor_membership_required: This account does not belong to any vendor.
     verified: Verified
     verified_at: Verified at
     version: Version

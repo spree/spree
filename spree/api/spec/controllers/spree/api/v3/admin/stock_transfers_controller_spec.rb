@@ -46,7 +46,7 @@ RSpec.describe Spree::Api::V3::Admin::StockTransfersController, type: :controlle
       expect(destination_location.stock_level(variant).reload.count_on_hand).to eq(5)
     end
 
-    it 'receives from external vendor when source is omitted' do
+    it 'receives from external seller when source is omitted' do
       post :create, params: base_params.except(:source_location_id), as: :json
 
       expect(response).to have_http_status(:created)

@@ -99,7 +99,7 @@ module Spree
           # Sourced from `Spree.taggable_types` (registered in
           # `Spree::Core::Engine`'s after_initialize block). Apps extend the
           # list in an initializer without overriding this controller:
-          #   Spree.taggable_types << 'MyApp::Vendor'
+          #   Spree.taggable_types << 'MyApp::Seller'
           def allowed_taggable_types
             Spree.taggable_types
           end

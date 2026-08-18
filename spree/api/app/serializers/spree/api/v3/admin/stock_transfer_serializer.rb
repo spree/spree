@@ -4,7 +4,7 @@ module Spree
       module Admin
         # Inventory movement between two stock locations (or external →
         # location for receives). The originating location is `nil` for
-        # receives (vendor stock arriving) and present for transfers.
+        # receives (seller stock arriving) and present for transfers.
         class StockTransferSerializer < V3::BaseSerializer
           typelize number: :string,
                    reference: [:string, nullable: true],

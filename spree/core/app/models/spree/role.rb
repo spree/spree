@@ -29,7 +29,7 @@ module Spree
     # Associations
     #
     # What this role governs: a Spree::Store for back-office staff, a
-    # marketplace vendor for a seller's own team. The resource is the role's
+    # marketplace seller for a seller's own team. The resource is the role's
     # owner and its audience at once — a role on a Store is a staff role by
     # construction, so there is no parallel column to keep in step.
     belongs_to :resource, polymorphic: true
@@ -44,7 +44,7 @@ module Spree
     #
     validates :resource, presence: true
     # Unique within the owning resource rather than globally: two stores may
-    # each define a "Manager", and a store may hold one beside a vendor's.
+    # each define a "Manager", and a store may hold one beside a seller's.
     validates :name, presence: true,
                      uniqueness: { case_sensitive: false, allow_blank: true,
                                    scope: [*spree_base_uniqueness_scope, :resource_id, :resource_type] }
@@ -85,7 +85,7 @@ module Spree
     end
 
     # The protected super-role: everything in this store. Guarded by the owning
-    # resource as well as the name — names are unique per resource, so a vendor
+    # resource as well as the name — names are unique per resource, so a seller
     # may legitimately call a role "admin" and it must never be mistaken for
     # this one — and by the `mutable` flag, so a stale flag cannot expose it.
     #
@@ -104,7 +104,7 @@ module Spree
 
     # The permission catalog's name for the panel this role belongs to —
     # derived from the owning resource, never stored, so the two cannot drift.
-    # `Spree::Vendor` reads as `:vendor`.
+    # `Spree::Seller` reads as `:seller`.
     #
     # @return [Symbol, nil]
     def audience

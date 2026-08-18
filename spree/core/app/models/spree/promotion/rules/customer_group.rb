@@ -5,7 +5,15 @@ module Spree
         # Stored as raw IDs. Accepts prefixed IDs (`cg_…`) from API
         # callers and decodes them on write so eligibility checks can
         # compare against raw `customer_group_id` rows directly.
-        preference :customer_group_ids, :array, default: [], parse_on_set: normalize_id_preference(klass: Spree::CustomerGroup)
+        #
+        # Scoped to the promotion's own store: groups are store-owned, so an
+        # id from elsewhere must raise rather than link a promotion to an
+        # audience its store cannot see.
+        preference :customer_group_ids, :array, default: [],
+                   parse_on_set: normalize_id_preference(
+                     klass: Spree::CustomerGroup,
+                     scope: ->(rule) { rule.promotion.store.customer_groups }
+                   )
 
         def applicable?(promotable)
           promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
