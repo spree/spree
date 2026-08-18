@@ -57,11 +57,9 @@ function OrderTotalsCard({ order }: { order: Order }) {
 
   return (
     <Card className="gap-0 py-0">
-      <CardHeader className="px-5 py-4">
+      <CardHeader>
         <CardTitle>{t('admin.orders.edit.totals_title')}</CardTitle>
       </CardHeader>
-
-      <Separator />
 
       <div className="py-2">
         <TotalRow label={t('admin.fields.subtotal.label')} value={order.display_item_total} />

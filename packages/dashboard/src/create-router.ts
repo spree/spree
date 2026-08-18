@@ -4,6 +4,7 @@ import {
   type RouterConstructorOptions,
   type RouterHistory,
 } from '@tanstack/react-router'
+import { RoutePending } from './components/spree/route-pending'
 
 /**
  * Build the dashboard's router from a generated route tree.
@@ -49,5 +50,14 @@ export function createDashboardRouter<TRouteTree extends AnyRoute>(
     RouterHistory,
     Record<string, unknown>
   >
-  return createRouter(options)
+  return createRouter({
+    ...options,
+    // Every route inherits this while its chunk or loader resolves. Without it
+    // TanStack renders a bare "Loading…" string on an otherwise blank page.
+    defaultPendingComponent: RoutePending,
+    // Long enough that a fast navigation never flashes a skeleton, short enough
+    // that a slow one doesn't look frozen.
+    defaultPendingMs: 300,
+    defaultPendingMinMs: 400,
+  })
 }

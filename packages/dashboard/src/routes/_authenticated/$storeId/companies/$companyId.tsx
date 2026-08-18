@@ -31,6 +31,7 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { CompanyLocationSheet } from '../../../../components/spree/company-location-sheet'
+import { ResourceDetailSkeleton } from '../../../../components/spree/route-pending'
 import { TaxExemptionCertificatesCard } from '../../../../components/spree/tax-exemption-certificates-card'
 import { TaxIdentifiersCard } from '../../../../components/spree/tax-identifiers-card'
 import {
@@ -60,7 +61,7 @@ function CompanyDetailPage() {
   const { companyId } = Route.useParams()
   const { data: company, isLoading, error, refetch } = useCompany(companyId)
 
-  if (isLoading) return <p className="text-muted-foreground">{t('admin.common.loading')}</p>
+  if (isLoading) return <ResourceDetailSkeleton />
   if (error || !company) {
     return (
       <ErrorState

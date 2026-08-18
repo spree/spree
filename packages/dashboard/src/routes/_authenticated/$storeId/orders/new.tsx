@@ -20,12 +20,18 @@ import {
   Input,
   ResourceLayout,
   Switch,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
   Textarea,
 } from '@spree/dashboard-ui'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { TrashIcon } from 'lucide-react'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { ChannelSelect } from '../../../../components/spree/channel-select'
@@ -56,23 +62,17 @@ function NewOrderPage() {
   // typeahead button list, items table), not standard form fields.
   const [customer, setCustomer] = useState<Customer | null>(null)
   const [items, setItems] = useState<PendingItem[]>([])
-  const [variantSearch, setVariantSearch] = useState('')
   const [useDefaultAddress, setUseDefaultAddress] = useState(true)
+  // `onChange` hands back only the option id, so keep the records the search
+  // returned to resolve it. A ref, not state: it's a lookup table, and writing
+  // it must not re-render the form mid-search.
+  const variantById = useRef(new Map<string, Variant>())
 
   const form = useForm<NewOrderFormValues>({
     resolver: zodResolver(newOrderFormSchema),
     defaultValues: NEW_ORDER_DEFAULTS,
   })
   const { errors } = form.formState
-
-  // Variant typeahead
-  const { data: variantsData } = useQuery({
-    queryKey: ['variants', 'search', variantSearch],
-    queryFn: () => adminClient.variants.list({ search: variantSearch, limit: 8 }),
-    enabled: variantSearch.length >= 3,
-    staleTime: 30_000,
-  })
-  const variantResults = variantsData?.data ?? []
 
   const { data: channelsData } = useChannels()
   const channels = channelsData?.data ?? []
@@ -121,7 +121,6 @@ function NewOrderPage() {
     } else {
       setItems([...items, { variant, quantity: 1 }])
     }
-    setVariantSearch('')
   }
 
   function updateQuantity(variantId: string, quantity: number) {
@@ -200,56 +199,59 @@ function NewOrderPage() {
                 <FieldGroup>
                   <Field>
                     <FieldLabel>{t('admin.orders.new.add_variant')}</FieldLabel>
-                    <Input
+                    {/* Combobox rather than a bare input over a list of
+                        buttons: arrow-key navigation, `aria-activedescendant`
+                        and Enter-to-pick come from the primitive. Selecting
+                        adds the row and clears the field, so no value is
+                        held — the picker is an action, not a bound input. */}
+                    <ResourceCombobox<Variant>
+                      queryKey="new-order-variant-picker"
+                      value=""
+                      onChange={(id) => {
+                        const variant = id ? variantById.current.get(id) : undefined
+                        if (variant) addItem(variant)
+                      }}
+                      search={async (query) => {
+                        const res = await adminClient.variants.list({ search: query, limit: 8 })
+                        for (const v of res.data) variantById.current.set(v.id, v)
+                        return res
+                      }}
+                      hydrate={async () => ({ data: [] })}
+                      getOptionLabel={(v) => v.product_name ?? v.sku ?? v.id}
+                      renderOption={(v) => (
+                        <div className="flex flex-col">
+                          <span className="font-medium">{v.product_name ?? v.sku ?? v.id}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {t('admin.orders.new.items_table.sku')} {v.sku} · {formatPrice(v.price)}
+                          </span>
+                        </div>
+                      )}
                       placeholder={t('admin.pages.orders.new.search_variant')}
-                      value={variantSearch}
-                      onChange={(e) => setVariantSearch(e.target.value)}
                     />
-                    {variantSearch.length >= 3 && variantResults.length > 0 && (
-                      <div className="mt-1 rounded-lg border border-border bg-popover text-popover-foreground shadow-xs max-h-[280px] overflow-y-auto">
-                        {variantResults.map((v) => (
-                          <button
-                            key={v.id}
-                            type="button"
-                            onClick={() => addItem(v)}
-                            className="block w-full px-3 py-2.5 text-left text-sm hover:bg-muted transition-colors border-b last:border-0"
-                          >
-                            <div className="font-medium">{v.product_name ?? v.sku ?? v.id}</div>
-                            <div className="text-xs text-muted-foreground">
-                              SKU {v.sku} · {formatPrice(v.price)}
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                    )}
                   </Field>
                 </FieldGroup>
 
                 {items.length > 0 && (
                   <div className="mt-4 overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="border-b bg-muted/50 text-muted-foreground">
-                          <th className="p-3 pl-5 text-left font-normal">
-                            {t('admin.orders.new.items_table.variant')}
-                          </th>
-                          <th className="p-3 text-left font-normal">
-                            {t('admin.orders.new.items_table.sku')}
-                          </th>
-                          <th className="p-3 text-right font-normal">
+                    <Table roundedBottom>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>{t('admin.orders.new.items_table.variant')}</TableHead>
+                          <TableHead>{t('admin.orders.new.items_table.sku')}</TableHead>
+                          <TableHead className="text-right">
                             {t('admin.orders.new.items_table.qty')}
-                          </th>
-                          <th className="p-3 pr-5 w-10" />
-                        </tr>
-                      </thead>
-                      <tbody>
+                          </TableHead>
+                          <TableHead className="w-10" />
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
                         {items.map(({ variant, quantity }) => (
-                          <tr key={variant.id} className="border-b last:border-b-0">
-                            <td className="p-3 pl-5 font-medium">
+                          <TableRow key={variant.id}>
+                            <TableCell className="font-medium">
                               {variant.product_name ?? variant.sku ?? variant.id}
-                            </td>
-                            <td className="p-3 text-muted-foreground">{variant.sku}</td>
-                            <td className="p-3 text-right">
+                            </TableCell>
+                            <TableCell className="text-muted-foreground">{variant.sku}</TableCell>
+                            <TableCell className="text-right">
                               <Input
                                 type="number"
                                 min={1}
@@ -257,8 +259,8 @@ function NewOrderPage() {
                                 onChange={(e) => updateQuantity(variant.id, Number(e.target.value))}
                                 className="w-20 text-right ml-auto"
                               />
-                            </td>
-                            <td className="p-3 pr-5 text-right">
+                            </TableCell>
+                            <TableCell className="text-right">
                               <Button
                                 type="button"
                                 size="icon-xs"
@@ -266,12 +268,13 @@ function NewOrderPage() {
                                 onClick={() => removeItem(variant.id)}
                               >
                                 <TrashIcon className="size-4" />
+                                <span className="sr-only">{t('admin.actions.remove')}</span>
                               </Button>
-                            </td>
-                          </tr>
+                            </TableCell>
+                          </TableRow>
                         ))}
-                      </tbody>
-                    </table>
+                      </TableBody>
+                    </Table>
                   </div>
                 )}
               </CardContent>

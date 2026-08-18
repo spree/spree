@@ -29,6 +29,8 @@
       "invite": "Zaproś",
       "more_actions": "Więcej akcji",
       "remove": "Usuń",
+      "remove_item": "Usuń {{label}}",
+      "remove_rule": "Usuń regułę",
       "reset": "Resetuj",
       "revoke": "Cofnij",
       "save": "Zapisz",
@@ -447,6 +449,7 @@
         "visible_columns": "Widoczne kolumny",
         "reset_to_default": "Przywróć domyślne",
         "clear_all": "Wyczyść wszystko",
+        "remove_filter": "Usuń filtr",
         "no_filters": "Brak filtrów. Kliknij poniżej, aby dodać filtr.",
         "add_filter": "Dodaj filtr",
         "operators": {

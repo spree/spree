@@ -95,6 +95,14 @@ function FieldLabel({ className, ...props }: React.ComponentProps<typeof Label>)
       data-slot="field-label"
       className={cn(
         'group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50 has-data-checked:border-blue-500/30 has-data-checked:bg-blue-500/5 has-[>[data-slot=field]]:rounded-lg has-[>[data-slot=field]]:border *:data-[slot=field]:p-2.5 dark:has-data-checked:border-blue-500/20 dark:has-data-checked:bg-blue-500/10',
+        // Card-shaped labels (the ones wrapping a whole `Field`) are clickable
+        // targets, so they need the affordance a bare text label doesn't:
+        // a pointer and a hover tint. Scoped by `has-[>[data-slot=field]]` so
+        // plain field labels keep their default cursor, and excluded on the
+        // checked card by `not-has-data-checked` — a competing hover rule of
+        // equal specificity would just race the selected tint and win.
+        'has-[>[data-slot=field]]:cursor-pointer has-[>[data-slot=field]]:transition-colors',
+        'has-[>[data-slot=field]]:not-has-data-checked:hover:border-border has-[>[data-slot=field]]:not-has-data-checked:hover:bg-accent/60',
         'has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col',
         className,
       )}

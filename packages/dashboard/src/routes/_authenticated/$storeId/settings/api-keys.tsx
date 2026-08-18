@@ -224,8 +224,8 @@ function ApiKeyTable({
             </EmptyHeader>
           </Empty>
         ) : (
-          <Table>
-            <TableHeader className="border-b">
+          <Table roundedBottom>
+            <TableHeader>
               <TableRow>
                 <TableHead>{t('admin.fields.name.label')}</TableHead>
                 <TableHead>{t('admin.pages.settings.api_keys.table.key')}</TableHead>
@@ -894,15 +894,10 @@ function ScopePicker({
   }
 
   return (
-    <div
-      className={cn(
-        'flex flex-col gap-3 rounded-md border border-border',
-        disabled && 'opacity-70',
-      )}
-    >
+    <div className={cn('flex flex-col gap-3', disabled && 'opacity-70')}>
       {/* Quick access: write_all / read_all toggles. Selecting one blocks the
           per-resource grid because the catch-all already covers it. */}
-      <div className="flex flex-col gap-2 border-b border-border bg-muted/30 p-3">
+      <div className="flex flex-col gap-2 rounded-md border border-border bg-muted/30 p-3">
         <label htmlFor="scope-write-all" className="flex cursor-pointer items-center gap-2 text-sm">
           <Checkbox
             id="scope-write-all"

@@ -54,10 +54,11 @@ async function fillNewOrderForm(page: Page, email: string) {
   // service needs (no addresses required for a draft).
   await page.locator('#order-email').fill(email)
 
-  // Variant typeahead requires 3+ chars and renders a flyout of buttons.
+  // Variant typeahead is a combobox: results are `role="option"`, so they are
+  // reachable by keyboard as well as click.
   await page.getByPlaceholder(/search variant/i).fill(FIXTURE_PROMO_PRODUCT)
   await page
-    .getByRole('button', { name: new RegExp(FIXTURE_PROMO_PRODUCT, 'i') })
+    .getByRole('option', { name: new RegExp(FIXTURE_PROMO_PRODUCT, 'i') })
     .first()
     .click()
 }

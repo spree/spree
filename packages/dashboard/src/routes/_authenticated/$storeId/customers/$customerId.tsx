@@ -56,6 +56,12 @@ import {
   SheetHeader,
   SheetTitle,
   StatusBadge,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
   Textarea,
   Thumbnail,
   useConfirm,
@@ -80,6 +86,7 @@ import {
   CustomFieldsInlineCard,
   EditableApiCustomFieldsProvider,
 } from '../../../../components/spree/custom-fields/custom-fields-inline'
+import { ResourceDetailSkeleton } from '../../../../components/spree/route-pending'
 import { TaxIdentifiersCard } from '../../../../components/spree/tax-identifiers-card'
 import { useCurrencyLocale } from '../../../../hooks/use-currency-locale'
 import {
@@ -129,7 +136,7 @@ function CustomerDetailPage() {
   const { customerId } = Route.useParams()
   const { data: customer, isLoading, error, refetch } = useCustomer(customerId)
 
-  if (isLoading) return <p className="text-muted-foreground">{t('admin.common.loading')}</p>
+  if (isLoading) return <ResourceDetailSkeleton />
   if (error || !customer) {
     return (
       <ErrorState
@@ -733,25 +740,19 @@ function OrdersCard({
         </CardContent>
       ) : (
         <CardContent className="p-0">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b text-muted-foreground text-left">
-                <th className="px-6 py-2 font-normal">
-                  {t('admin.customers.detail.orders_table.order')}
-                </th>
-                <th className="px-6 py-2 font-normal">
-                  {t('admin.customers.detail.orders_table.date')}
-                </th>
-                <th className="px-6 py-2 font-normal">{t('admin.fields.status.label')}</th>
-                <th className="px-6 py-2 font-normal text-right">
-                  {t('admin.fields.total.label')}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table roundedBottom>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{t('admin.customers.detail.orders_table.order')}</TableHead>
+                <TableHead>{t('admin.customers.detail.orders_table.date')}</TableHead>
+                <TableHead>{t('admin.fields.status.label')}</TableHead>
+                <TableHead className="text-right">{t('admin.fields.total.label')}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {orders.map((order: Order) => (
-                <tr key={order.id} className="border-b last:border-b-0">
-                  <td className="px-6 py-3">
+                <TableRow key={order.id}>
+                  <TableCell>
                     <Link
                       to={'/$storeId/orders/$orderId' as string}
                       params={{ orderId: order.id }}
@@ -759,11 +760,11 @@ function OrdersCard({
                     >
                       #{order.number}
                     </Link>
-                  </td>
-                  <td className="px-6 py-3 text-muted-foreground">
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">
                     <RelativeTime iso={order.completed_at ?? order.created_at} />
-                  </td>
-                  <td className="px-6 py-3">
+                  </TableCell>
+                  <TableCell>
                     <span className="inline-flex gap-1">
                       <StatusBadge status={order.status} />
                       {order.payment_status && <StatusBadge status={order.payment_status} />}
@@ -771,14 +772,14 @@ function OrdersCard({
                         <StatusBadge status={order.fulfillment_status} />
                       )}
                     </span>
-                  </td>
-                  <td className="px-6 py-3 text-right font-medium tabular-nums">
+                  </TableCell>
+                  <TableCell className="text-right font-medium tabular-nums">
                     {order.display_total}
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </CardContent>
       )}
     </Card>
@@ -977,6 +978,7 @@ function AddressesCard({ customer }: { customer: Customer }) {
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon-xs">
                       <EllipsisVerticalIcon className="size-4" />
+                      <span className="sr-only">{t('admin.actions.actions_menu')}</span>
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
@@ -1135,44 +1137,39 @@ function StoreCreditsCard({ customer }: { customer: Customer }) {
           </CardContent>
         ) : (
           <CardContent className="p-0">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b text-muted-foreground text-left">
-                  <th className="px-6 py-2 font-normal">{t('admin.fields.amount.label')}</th>
-                  <th className="px-6 py-2 font-normal">
-                    {t('admin.customers.detail.store_credit.table.used')}
-                  </th>
-                  <th className="px-6 py-2 font-normal">
-                    {t('admin.customers.detail.store_credit.table.remaining')}
-                  </th>
-                  <th className="px-6 py-2 font-normal">
-                    {t('admin.customers.detail.store_credit.table.category')}
-                  </th>
-                  <th className="px-6 py-2 font-normal">
-                    {t('admin.customers.detail.store_credit.table.memo')}
-                  </th>
-                  <th className="px-6 py-2 w-10" />
-                </tr>
-              </thead>
-              <tbody>
+            <Table roundedBottom>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t('admin.fields.amount.label')}</TableHead>
+                  <TableHead>{t('admin.customers.detail.store_credit.table.used')}</TableHead>
+                  <TableHead>{t('admin.customers.detail.store_credit.table.remaining')}</TableHead>
+                  <TableHead>{t('admin.customers.detail.store_credit.table.category')}</TableHead>
+                  <TableHead>{t('admin.customers.detail.store_credit.table.memo')}</TableHead>
+                  <TableHead className="w-10" />
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {credits.map((sc: StoreCredit) => (
-                  <tr key={sc.id} className="border-b last:border-b-0">
-                    <td className="px-6 py-3 font-medium tabular-nums">
+                  <TableRow key={sc.id}>
+                    <TableCell className="font-medium tabular-nums">
                       {sc.display_amount ?? sc.amount}
-                    </td>
-                    <td className="px-6 py-3 tabular-nums">
+                    </TableCell>
+                    <TableCell className="tabular-nums">
                       {sc.display_amount_used ?? sc.amount_used}
-                    </td>
-                    <td className="px-6 py-3 tabular-nums">
+                    </TableCell>
+                    <TableCell className="tabular-nums">
                       {sc.display_amount_remaining ?? sc.amount_remaining}
-                    </td>
-                    <td className="px-6 py-3 text-muted-foreground">{sc.category_name ?? '—'}</td>
-                    <td className="px-6 py-3 text-muted-foreground">{sc.memo ?? '—'}</td>
-                    <td className="px-6 py-3 text-right">
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {sc.category_name ?? '—'}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">{sc.memo ?? '—'}</TableCell>
+                    <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="icon-xs">
                             <EllipsisVerticalIcon className="size-4" />
+                            <span className="sr-only">{t('admin.actions.actions_menu')}</span>
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
@@ -1201,11 +1198,11 @@ function StoreCreditsCard({ customer }: { customer: Customer }) {
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </CardContent>
         )}
       </Card>

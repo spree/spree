@@ -78,7 +78,7 @@ export function TopBar({
   return (
     <header
       className={cn(
-        'sticky top-0 z-40 flex h-header-height shrink-0 items-center gap-3 bg-background/90 px-4 border-b backdrop-blur supports-[backdrop-filter]:bg-background/75',
+        'sticky top-0 z-40 flex h-header-height shrink-0 items-center gap-3 bg-background/90 px-4 border-b border-border/75 backdrop-blur supports-[backdrop-filter]:bg-background/75',
         'transition-transform duration-200 ease-out motion-reduce:transition-none',
         hidden && '-translate-y-full',
       )}
@@ -86,7 +86,9 @@ export function TopBar({
       // so keyboard focus can't land on a control the user cannot see.
       inert={hidden || undefined}
     >
-      <SidebarTrigger className="-ml-1 h-6 w-6 opacity-60 hover:opacity-100 hover:bg-accent" />
+      {/* Size the glyph, not the button — `size="icon-sm"` sets a 28px hit area
+          and overriding the box would shrink the target to 20px. */}
+      <SidebarTrigger className="-ml-1 opacity-50 hover:bg-accent hover:opacity-100 [&_svg]:size-5" />
 
       <div className="flex flex-1 justify-center">
         <SearchTrigger />

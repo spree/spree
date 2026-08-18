@@ -29,6 +29,8 @@
       "invite": "Einladen",
       "more_actions": "Weitere Aktionen",
       "remove": "Entfernen",
+      "remove_item": "{{label}} entfernen",
+      "remove_rule": "Regel entfernen",
       "reset": "Zurücksetzen",
       "revoke": "Widerrufen",
       "save": "Speichern",
@@ -447,6 +449,7 @@
         "visible_columns": "Sichtbare Spalten",
         "reset_to_default": "Auf Standard zurücksetzen",
         "clear_all": "Alle löschen",
+        "remove_filter": "Filter entfernen",
         "no_filters": "Keine Filter. Klicken Sie unten, um einen hinzuzufügen.",
         "add_filter": "Filter hinzufügen",
         "operators": {
