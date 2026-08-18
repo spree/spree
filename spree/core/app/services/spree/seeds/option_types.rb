@@ -22,16 +22,22 @@ module Spree
     class OptionTypes
       prepend Spree::ServiceModule::Base
 
+      # Seed vocabulary, and only that: nothing in core keys on the word
+      # "condition" — the buy box groups by whatever option values it is
+      # given — so these live here rather than on the model.
+      CONDITION_NAME = 'condition'.freeze
+      CONDITION_VALUES = %w[new refurbished used].freeze
+
       def call
         # Block form, so the defaults apply on create only — re-running the
         # seed must never overwrite a merchant's edits.
-        option_type = Spree::OptionType.find_or_create_by!(name: Spree::OptionType::CONDITION_NAME) do |type|
+        option_type = Spree::OptionType.find_or_create_by!(name: CONDITION_NAME) do |type|
           type.presentation = I18n.t('spree.seed.option_types.condition.label')
           type.kind = 'buttons'
           type.filterable = true
         end
 
-        Spree::OptionType::CONDITION_VALUES.each_with_index do |value, index|
+        CONDITION_VALUES.each_with_index do |value, index|
           next if option_type.option_values.exists?(name: value)
 
           option_type.option_values.create!(

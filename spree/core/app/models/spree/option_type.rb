@@ -2,17 +2,7 @@ module Spree
   class OptionType < Spree.base_class
     has_prefix_id :opt  # Spree-specific: option type
 
-    COLOR_NAMES = %w[color colour].freeze
     KINDS = %w[dropdown color_swatch buttons].freeze
-
-    # The one option type core attaches a meaning to. Condition splits a
-    # product the way any other axis does, so it is an option type rather than
-    # a column — and being one is what gives a marketplace a new buy box and a
-    # used buy box on the same listing, at no extra cost
-    # (docs/plans/6.0-multi-vendor-marketplace.md, Decision 11). Seeded by
-    # Spree::Seeds::OptionTypes; merchants may edit or delete it like any other.
-    CONDITION_NAME = 'condition'.freeze
-    CONDITION_VALUES = %w[new refurbished used].freeze
 
     include Spree::ParameterizableName
     include Spree::UniqueName
@@ -69,9 +59,6 @@ module Spree
     # Scopes
     #
     default_scope { order(:position) }
-    scope :colors, -> { where(name: COLOR_NAMES) }
-    scope :condition, -> { where(name: CONDITION_NAME) }
-    scope :color_swatches, -> { where(kind: 'color_swatch') }
     scope :filterable, -> { where(filterable: true) }
 
     #
@@ -87,10 +74,6 @@ module Spree
     after_touch :touch_all_products
     after_update :touch_all_products, if: -> { saved_changes.key?(:presentation) }
     after_destroy :touch_all_products
-
-    def self.color
-      colors.first
-    end
 
     def color_swatch?
       kind == 'color_swatch'

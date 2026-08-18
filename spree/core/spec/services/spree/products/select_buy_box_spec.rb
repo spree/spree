@@ -80,7 +80,7 @@ describe Spree::Products::SelectBuyBox do
   describe 'option combinations' do
     let(:condition) do
       Spree::Seeds::OptionTypes.call
-      Spree::OptionType.condition.first!
+      Spree::OptionType.find_by!(name: Spree::Seeds::OptionTypes::CONDITION_NAME)
     end
     let(:used) { condition.option_values.find_by!(name: 'used') }
     let(:new_value) { condition.option_values.find_by!(name: 'new') }

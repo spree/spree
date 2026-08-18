@@ -127,27 +127,6 @@ describe Spree::OptionType, type: :model do
     end
   end
 
-  describe '.color_swatches' do
-    let!(:color_type) { create(:option_type, :color_swatch) }
-    let!(:size_type) { create(:option_type, :size) }
-
-    it 'returns only color_swatch option types' do
-      expect(described_class.color_swatches).to include(color_type)
-      expect(described_class.color_swatches).not_to include(size_type)
-    end
-  end
-
-  describe 'color methods' do
-    let!(:option_type) { create(:option_type, name: 'Color', kind: 'color_swatch') }
-
-    describe '.color' do
-      it 'should return the first option type with name "color"' do
-        expect(described_class.color).to eq(option_type)
-      end
-    end
-
-  end
-
   context 'touching' do
     let(:option_type) { create(:option_type) }
     let(:product) { create(:product) }
@@ -163,14 +142,6 @@ describe Spree::OptionType, type: :model do
 
     it 'touches a product on update' do
       expect { option_type.update!(presentation: 'New Presentation') }.to change { product.reload.updated_at }
-    end
-  end
-
-  describe '#self.color' do
-    let!(:option_type) { create(:option_type, name: 'color', presentation: 'Color') }
-
-    it 'finds color option type' do
-      Spree::OptionType.color.id == option_type.id
     end
   end
 
