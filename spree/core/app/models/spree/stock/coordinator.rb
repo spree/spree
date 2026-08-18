@@ -50,7 +50,7 @@ module Spree
       # covers — a profile narrowed to the cold-storage warehouse never packs
       # from anywhere else — intersected with the channel's served set when
       # the order carries one (docs/plans/6.0-channel-delivery.md). Profiles
-      # resolve once per order, not per unit.
+      # resolve once per variant, not per unit.
       def allocatable_units_for(stock_location)
         return [] unless channel_serves?(stock_location)
 
@@ -81,12 +81,15 @@ module Spree
       # than re-queried per question.
       def profile_for(unit)
         @unit_profiles ||= {}
-        product = unit.variant.product
-        return @unit_profiles[product.id] if @unit_profiles.key?(product.id)
+        variant = unit.variant
+        # The variant's own override, read raw, so variants that inherit the
+        # product's profile share one slot instead of resolving it each.
+        key = [variant.product_id, variant[:delivery_profile_id]]
+        return @unit_profiles[key] if @unit_profiles.key?(key)
 
-        profile = product.resolved_delivery_profile
+        profile = variant.resolved_delivery_profile
         profile&.delivery_origin_groups&.each(&:member_stock_location_ids)
-        @unit_profiles[product.id] = profile
+        @unit_profiles[key] = profile
       end
 
       def requested_variant_ids

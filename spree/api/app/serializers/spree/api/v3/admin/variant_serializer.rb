@@ -19,6 +19,7 @@ module Spree
                    country_of_origin: [:string, nullable: true],
                    customs_description: [:string, nullable: true],
                    deleted_at: [:string, nullable: true],
+                   delivery_profile_id: [:string, nullable: true],
                    metadata: 'Record<string, unknown>'
 
           attributes :metadata, :position, :cost_price, :cost_currency,
@@ -52,6 +53,21 @@ module Spree
 
           attribute :product_name do |variant|
             variant.product&.name
+          end
+
+          # How this variant ships — one answer, resolved on the model the same
+          # way the seller is. Writable: on a master product it names how this
+          # seller's row ships; on an owned product the write is a no-op, since
+          # every variant ships as the product does. The dashboard need not
+          # know which.
+          attribute :delivery_profile_id do |variant|
+            variant.resolved_delivery_profile&.prefixed_id
+          end
+
+          one :seller,
+              resource: proc { Spree.api.admin_seller_serializer },
+              if: proc { expand?('seller') } do |variant|
+            variant.resolved_seller
           end
 
           # Override inherited associations to use admin serializers

@@ -217,4 +217,82 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
       expect(response).to have_http_status(:unprocessable_content)
     end
   end
+
+  describe 'seller and delivery profile' do
+    let(:seller) { create(:seller, :approved, store: store) }
+    let(:profile) { create(:delivery_profile, store: store) }
+
+    # One field each on the wire, resolved on the model. On a master product
+    # (the fixture) a write names how this seller's row sells and ships; on an
+    # owned product the same write is a no-op — and the client never learns
+    # which mode it is in.
+    it 'writes and reads back the seller as one field' do
+      patch :update, params: {
+        product_id: product.prefixed_id,
+        id: variant.prefixed_id,
+        seller_id: seller.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['seller_id']).to eq(seller.prefixed_id)
+    end
+
+    it 'reports the product\'s seller on an owned product and ignores a write there' do
+      product.update!(seller: seller)
+      other = create(:seller, :approved, store: store)
+
+      patch :update, params: {
+        product_id: product.prefixed_id,
+        id: variant.prefixed_id,
+        seller_id: other.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['seller_id']).to eq(seller.prefixed_id)
+      expect(variant.reload[:seller_id]).to be_nil
+    end
+
+    it 'writes and reads back the delivery profile as one field' do
+      patch :update, params: {
+        product_id: product.prefixed_id,
+        id: variant.prefixed_id,
+        delivery_profile_id: profile.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['delivery_profile_id']).to eq(profile.prefixed_id)
+    end
+
+    it 'reports the product\'s profile when the row names none' do
+      get :show, params: { product_id: product.prefixed_id, id: variant.prefixed_id }, as: :json
+
+      expect(json_response['delivery_profile_id']).to eq(product.delivery_profile.prefixed_id)
+    end
+
+    it 'clears the row\'s profile back to the master\'s' do
+      variant.update!(delivery_profile: profile)
+
+      patch :update, params: {
+        product_id: product.prefixed_id,
+        id: variant.prefixed_id,
+        delivery_profile_id: nil
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['delivery_profile_id']).to eq(product.delivery_profile.prefixed_id)
+    end
+
+    it 'refuses a seller belonging to another store' do
+      foreign = create(:seller, store: create(:store))
+
+      patch :update, params: {
+        product_id: product.prefixed_id,
+        id: variant.prefixed_id,
+        seller_id: foreign.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(variant.reload.association(:seller).reader).to be_nil
+    end
+  end
 end

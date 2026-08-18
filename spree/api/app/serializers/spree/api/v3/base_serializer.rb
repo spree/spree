@@ -83,6 +83,13 @@ module Spree
           end
         end
 
+        # The variant a product leads with in the request's currency: the buy
+        # box winner, else the default variant. Resolved in the same currency
+        # `price_for` prices in, so the two never describe different rows.
+        def featured_variant(product)
+          product.buy_box_variant(currency: current_currency) || product.default_variant
+        end
+
         # Returns price for a variant using full Price List resolution
         # This may return a price from a price list if applicable
         # Memoized per variant to avoid duplicate queries

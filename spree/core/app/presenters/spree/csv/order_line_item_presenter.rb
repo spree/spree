@@ -94,7 +94,7 @@ module Spree
           line_item.price,
           line_item.promo_total.abs,
           line_item.total,
-          !line_item.product.digital?,
+          !line_item.variant.digital?,
           line_item.product.tax_category_id.present?,
           line_item.product.try(:seller_name),
           taxon_dict(line_item.product.primary_category)[0],

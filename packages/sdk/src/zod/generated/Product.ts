@@ -28,6 +28,7 @@ export const ProductSchema = z.object({
   description: z.string().nullable(),
   description_html: z.string().nullable(),
   default_variant_id: z.string(),
+  buy_box_variant_id: z.string().nullable(),
   thumbnail_url: z.string().nullable(),
   tags: z.array(z.string()),
   price: PriceSchema,

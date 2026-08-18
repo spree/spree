@@ -133,7 +133,7 @@ module Spree
       #
       # @return [Spree::DeliveryProfile, nil]
       def delivery_profile
-        contents.first&.variant&.product&.resolved_delivery_profile
+        contents.first&.variant&.resolved_delivery_profile
       end
 
       # Delivery methods eligible to serve this package: exactly the

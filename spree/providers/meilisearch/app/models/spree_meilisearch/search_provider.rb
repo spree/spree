@@ -7,7 +7,7 @@ module SpreeMeilisearch
   class SearchProvider < Spree::SearchProvider::Base
     PREFIXED_ID_PATTERN = /\A[a-z]+_[A-Za-z0-9]+\z/
     ALLOWED_STATUSES = %w[active draft archived paused].freeze
-    BUILT_IN_FILTERABLE_ATTRIBUTES = %w[product_id status in_stock preorder store_ids channel_ids locale currency available_on discontinue_on price category_ids collection_ids grouping_id tags option_value_ids].freeze
+    BUILT_IN_FILTERABLE_ATTRIBUTES = %w[product_id status in_stock preorder store_ids channel_ids locale currency available_on discontinue_on price category_ids collection_ids grouping_id tags option_value_ids option_value_combination_ids].freeze
     CUSTOM_FIELD_RANGE_OPERATORS = { 'gt' => '>', 'gteq' => '>=', 'lt' => '<', 'lteq' => '<=' }.freeze
 
     def self.indexing_required?
@@ -29,6 +29,9 @@ module SpreeMeilisearch
       raw_ids = product_prefixed_ids.filter_map { |pid| Spree::Product.decode_prefixed_id(pid) }
 
       # Intersect with AR scope for security/visibility, preserving Meilisearch sort order.
+      # When the index could only pre-filter the option values, the database
+      # answers the same-variant question exactly here.
+      scope = scope.with_option_value_ids(@inexact_option_value_ids) if @inexact_option_value_ids.present?
       products = if raw_ids.any?
                    records = scope.where(id: raw_ids).reorder(nil).index_by(&:id)
                    raw_ids.filter_map { |id| records[id] }
@@ -182,6 +185,9 @@ module SpreeMeilisearch
 
       option_value_ids = extract_and_delete(filters, 'with_option_value_ids')
       grouped_options = group_option_values_by_type(Array(option_value_ids))
+      # Handed back to the caller so it can narrow the record scope exactly
+      # when the index cannot — see build_grouped_option_conditions.
+      @inexact_option_value_ids = option_exact?(grouped_options) ? nil : Array(option_value_ids)
 
       base_conditions = build_filters(filters)
       option_conditions = build_grouped_option_conditions(grouped_options)
@@ -455,8 +461,66 @@ module SpreeMeilisearch
     end
 
     # Build Meilisearch filter conditions from grouped option values.
-    # OR within each option type, AND across option types.
+    # OR within each option type, AND across option types — and the AND has to
+    # hold within ONE variant, matching Spree::Product.with_option_value_ids.
+    #
+    # A single axis reads straight off the value union. Two or more axes ask
+    # instead for a combination token the presenter wrote per variant, so "blue
+    # AND XL" cannot be satisfied by a blue small sitting beside a red XL. One
+    # token per whole combination rather than per pair: pairs can each hold on
+    # a different variant while no variant carries them all.
+    #
+    # When the tokens cannot answer exactly — a filter naming more axes than
+    # the presenter indexed, or a swapped-in presenter that writes no tokens at
+    # all — this falls back to the per-axis union, a superset. On its own that
+    # superset would re-open the cross-variant bug, so `search_and_filter`
+    # detects the fallback and narrows the ActiveRecord scope through
+    # `Spree::Product.with_option_value_ids` before intersecting: the database
+    # gives the exact answer, Meilisearch only pre-filters. Rare by
+    # construction — MAX_COMBINATION_AXES covers any product a catalog
+    # realistically facets by — so its one cost, a page that can come back
+    # short, is accepted rather than designed around.
     def build_grouped_option_conditions(grouped)
+      return single_axis_option_conditions(grouped) if grouped.size < 2
+      return single_axis_option_conditions(grouped) unless combination_tokens_cover?(grouped)
+
+      combinations = grouped.values[0].product(*grouped.values[1..])
+      tokens = combinations.map { |combination| option_combination_condition(combination) }
+      [tokens.length > 1 ? "(#{tokens.join(' OR ')})" : tokens.first]
+    end
+
+    # Whether the index actually holds a token for a filter this wide.
+    def combination_tokens_cover?(grouped)
+      max = max_combination_axes
+      !max.nil? && grouped.size <= max
+    end
+
+    # Whether the option conditions sent to Meilisearch answer the filter
+    # exactly. A single axis always does (the union IS the answer there); more
+    # need the combination tokens to be present for that width.
+    def option_exact?(grouped)
+      grouped.size < 2 || combination_tokens_cover?(grouped)
+    end
+
+    # Each id is sanitized on its own — the separator is not part of an id and
+    # the sanitizer would strip it.
+    def option_combination_condition(prefixed_ids)
+      token = prefixed_ids.map { |id| sanitize_prefixed_id(id) }.sort.join('|')
+      "option_value_combination_ids = '#{token}'"
+    end
+
+    # Read off the presenter, since it is what decides how deep the tokens go.
+    # Nil when a swapped-in presenter declares nothing: it writes no tokens, so
+    # filtering on them would match nothing at all.
+    #
+    # @return [Integer, nil]
+    def max_combination_axes
+      return unless presenter_class.const_defined?(:MAX_COMBINATION_AXES)
+
+      presenter_class::MAX_COMBINATION_AXES
+    end
+
+    def single_axis_option_conditions(grouped)
       grouped.map do |_, prefixed_ids|
         parts = prefixed_ids.map { |id| "option_value_ids = '#{sanitize_prefixed_id(id)}'" }
         parts.length > 1 ? "(#{parts.join(' OR ')})" : parts.first

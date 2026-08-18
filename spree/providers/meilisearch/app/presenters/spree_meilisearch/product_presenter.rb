@@ -82,6 +82,7 @@ module SpreeMeilisearch
         option_type_ids: product.option_types.map(&:prefixed_id),
         option_type_names: product.option_types.map { |ot| translated(ot, :presentation, fallback_locale) },
         option_value_ids: variant_option_value_ids,
+        option_value_combination_ids: variant_option_value_combination_ids,
         option_values: variant_option_values_data.map { |ov| translated(ov, :presentation, fallback_locale) }.uniq,
         tags: product.tag_list || [],
         units_sold_count: product.units_sold_count || 0,
@@ -209,6 +210,34 @@ module SpreeMeilisearch
 
     def variant_option_value_ids
       variant_option_values_data.map(&:prefixed_id).uniq
+    end
+
+    # One token per combination of option values that appear on the SAME
+    # variant, for every combination size from two up.
+    #
+    # The document is per product, so `option_value_ids` is a union across
+    # every variant and cannot answer "blue AND XL" — it matches a product
+    # selling a blue small beside a red XL. A token per whole combination
+    # restores the question the database scope asks, because a filter naming
+    # one value per axis matches exactly one of these tokens.
+    #
+    # Pairs alone are not enough: three variants (blue, XL, used), (blue, S,
+    # new) and (red, XL, new) satisfy every *pair* drawn from "blue AND XL AND
+    # new" while no single variant carries all three.
+    #
+    # Bounded by MAX_COMBINATION_AXES because the token count is exponential in
+    # the number of axes. A filter naming more axes than this falls back to the
+    # per-axis union in the search provider, which the database scope then
+    # narrows exactly — never to an approximation that would disagree with it.
+    MAX_COMBINATION_AXES = 6
+
+    def variant_option_value_combination_ids
+      product.variants.flat_map do |variant|
+        ids = variant.option_values.map(&:prefixed_id).sort
+        (2..[ids.size, MAX_COMBINATION_AXES].min).flat_map do |size|
+          ids.combination(size).map { |combination| combination.join('|') }
+        end
+      end.uniq
     end
 
     # Use variants (matches reindex preload) instead of variants.includes

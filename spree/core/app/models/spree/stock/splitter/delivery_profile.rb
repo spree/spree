@@ -17,10 +17,23 @@ module Spree
           grouped.values.map { |contents| build_package(contents) }
         end
 
-        # optimization: save product -> profile correspondence
+        # Keyed on the product AND the variant's own override, rather than the
+        # product alone: a variant may override the profile, so two sellers
+        # sharing a product ship on their own terms, and a product-only key
+        # would have packed the second seller's goods with the first seller's
+        # shipping configuration.
+        #
+        # The override is read as the raw column, so the many variants that
+        # simply inherit still share one slot and one resolution.
         def profile_id_for(item)
           @item_profiles ||= {}
-          @item_profiles[item.variant.product_id] ||= item.variant.product.resolved_delivery_profile&.id
+          variant = item.variant
+          key = [variant.product_id, variant[:delivery_profile_id]]
+          # `key?` rather than `||=`: a store with no profile at all resolves
+          # to nil, which `||=` would look up again for every item.
+          return @item_profiles[key] if @item_profiles.key?(key)
+
+          @item_profiles[key] = variant.resolved_delivery_profile&.id
         end
       end
     end

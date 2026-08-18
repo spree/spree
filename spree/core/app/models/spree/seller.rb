@@ -2,7 +2,7 @@
 
 module Spree
   # A selling party on a marketplace: the store is the tenant, the seller is a
-  # seller within it (docs/plans/6.0-multi-seller-marketplace.md).
+  # seller within it (docs/plans/6.0-multi-vendor-marketplace.md).
   #
   # A seller owns roles, so its team is the people holding them — the same
   # machinery the store's own back office uses, pointed at the seller.
@@ -85,7 +85,11 @@ module Spree
 
     # Products and stock survive the seller leaving: the operator decides what
     # happens to a departed seller's catalog, so it is never cascade-deleted.
+    # Both levels are released — a variant can carry the seller on its own
+    # (the shared catalog), and one left pointing at a departed seller would
+    # read as first-party to the buy box while its id still said otherwise.
     has_many :products, class_name: 'Spree::Product', dependent: :nullify
+    has_many :variants, class_name: 'Spree::Variant', dependent: :nullify
 
     # What this seller has been charged. Deliberately neither destroyed nor
     # nullified when the seller goes: a seller is paranoid, so it is still

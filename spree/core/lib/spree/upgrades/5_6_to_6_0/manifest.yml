@@ -433,3 +433,19 @@ steps:
     notes: |
       Assigns store-less product types to the default store, removes orphaned
       option-type joins, and resets product counters. Idempotent.
+
+  - id: search_reindex
+    name: "Rebuild the search index"
+    task: "spree:search:reindex"
+    notes: |
+      Only affects installations running an indexing search provider —
+      Meilisearch, or any gem that declares indexing_required?. The database
+      provider queries live tables and needs nothing.
+
+      Documents gained a field describing which option values sit together on
+      the same variant, so "Blue and XL" means a product that sells a blue XL
+      rather than one selling a blue small beside a red XL. Existing documents
+      do not carry it, so a filter naming two or more option types matches
+      nothing until the index is rebuilt.
+
+      Safe to run at any time and safe to repeat; it re-enqueues every product.
