@@ -65,6 +65,7 @@ module Spree
               :preferred_auto_capture_on_dispatch,
               :preferred_track_inventory_levels,
               :preferred_stock_reservations_enabled,
+              :preferred_tax_using_ship_address,
               :preferred_track_price_history,
               :preferred_show_products_without_price,
               :preferred_disable_sku_validation,

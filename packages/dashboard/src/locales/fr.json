@@ -1407,6 +1407,10 @@
             "public": "Public — tout le monde peut parcourir et voir les prix"
           }
         },
+        "tax_using_ship_address": {
+          "help": "Calculer la taxe à partir de l'adresse de livraison du client. Désactivez cette option pour utiliser l'adresse de facturation.",
+          "label": "Taxe selon l'adresse de livraison"
+        },
         "track_inventory_levels": {
           "help": "Compter les quantités disponibles. Désactivez pour traiter chaque produit comme toujours disponible.",
           "label": "Suivre les niveaux de stock"

@@ -374,13 +374,6 @@ module Spree
           include_examples 'address update', :billing_address
 
           context 'with top-level billing_address_id' do
-            around do |example|
-              previous = Spree::Config[:tax_using_ship_address]
-              example.run
-            ensure
-              Spree::Config.set(tax_using_ship_address: previous)
-            end
-
             let(:existing_bill) { create(:address, user: user) }
             let(:other_bill) { create(:address, user: user) }
             let(:cart) do
@@ -394,7 +387,7 @@ module Spree
             end
 
             context 'when tax is computed from the billing address' do
-              before { Spree::Config.set(tax_using_ship_address: false) }
+              before { stub_store_preferences(store, tax_using_ship_address: false) }
 
               it 'recalculates when the tax address is picked by id' do
                 expect(cart).to receive(:recalculate_for_address_change!)
@@ -407,7 +400,7 @@ module Spree
             end
 
             context 'when tax is computed from the shipping address' do
-              before { Spree::Config.set(tax_using_ship_address: true) }
+              before { stub_store_preferences(store, tax_using_ship_address: true) }
 
               it 'does not rebuild delivery proposals' do
                 cart.rebuild_fulfillments!

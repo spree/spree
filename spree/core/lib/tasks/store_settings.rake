@@ -11,6 +11,7 @@ namespace :spree do
       disable_sku_validation: { default: false },
       show_products_without_price: { default: false },
       stock_reservations_enabled: { default: true },
+      tax_using_ship_address: { default: true },
       track_inventory_levels: { default: true },
       track_price_history: { default: true }
     }.freeze
