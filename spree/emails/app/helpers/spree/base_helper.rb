@@ -1,7 +1,7 @@
 module Spree
   module BaseHelper
     # returns the URL of an object on the storefront
-    # @param resource [Spree::Product, Spree::Category, Spree::Page] the resource to get the URL for
+    # @param resource [Spree::Product, Spree::Category] the resource to get the URL for
     # @param options [Hash] the options for the URL
     # @option options [String] :locale the locale of the resource, defaults to I18n.locale
     # @option options [String] :store the store of the resource, defaults to current_store
@@ -10,8 +10,6 @@ module Spree
     # @option options [String] :variant_id the variant ID of the resource, usually the ID of the variant (only used for products)
     # @return [String] the URL of the resource
     def spree_storefront_resource_url(resource, options = {})
-      options.merge!(locale: locale_param) if defined?(locale_param) && locale_param.present?
-
       store = options[:store] || current_store
 
       base_url = if options[:relative]
@@ -37,10 +35,6 @@ module Spree
         "#{base_url + localize}/products/#{resource.slug}#{params}"
       elsif resource.is_a?(Spree::Category)
         "#{base_url + localize}/t/#{resource.permalink}"
-      elsif defined?(Spree::Page) && (resource.is_a?(Spree::Page) || resource.is_a?(Spree::Policy))
-        "#{base_url + localize}#{resource.page_builder_url}"
-      elsif defined?(Spree::PageLink) && resource.is_a?(Spree::PageLink)
-        resource.linkable_url
       elsif localize.blank?
         base_url
       else
