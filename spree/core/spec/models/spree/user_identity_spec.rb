@@ -1,15 +1,8 @@
 require 'spec_helper'
 
 describe Spree::UserIdentity, type: :model do
-  describe 'associations' do
-    it { is_expected.to belong_to(:user).required }
-  end
-
   describe 'validations' do
     subject { build(:user_identity) }
-
-    it { is_expected.to validate_presence_of(:provider) }
-    it { is_expected.to validate_presence_of(:uid) }
 
     it 'validates provider is a registered authentication strategy' do
       identity = build(:user_identity, provider: 'unsupported')

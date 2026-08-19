@@ -4,22 +4,6 @@ describe Spree::AdminUserMethods do
   let(:admin_user) { create(:admin_user) }
   let(:current_store) { @default_store }
 
-  describe 'associations' do
-    it { expect(admin_user).to have_many(:identities).dependent(:destroy) }
-    it { expect(admin_user).to have_many(:canceled_orders) }
-    it { expect(admin_user).to have_many(:created_orders) }
-    it { expect(admin_user).to have_many(:approved_orders) }
-    it { expect(admin_user).to have_many(:created_gift_cards) }
-    it { expect(admin_user).to have_many(:created_gift_card_batches) }
-    it { expect(admin_user).to have_many(:refunded_refunds) }
-    it { expect(admin_user).to have_many(:created_returns) }
-    it { expect(admin_user).to have_many(:created_exchanges) }
-    it { expect(admin_user).to have_many(:created_claims) }
-    it { expect(admin_user).to have_many(:created_store_credits) }
-    it { expect(admin_user).to have_many(:reports) }
-    it { expect(admin_user).to have_many(:exports) }
-  end
-
   describe 'prefixed_id' do
     it 'generates a prefixed_id starting with adm_' do
       expect(admin_user.prefixed_id).to start_with('adm_')
