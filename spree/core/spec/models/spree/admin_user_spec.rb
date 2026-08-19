@@ -81,7 +81,7 @@ describe Spree.admin_user_class, type: :model do
 
       context 'other users accept invitation' do
         before do
-          invitation.accept!
+          Spree.invitation_accept_workflow.call(invitation: invitation)
         end
 
         it 'does not remove other user\'s role' do

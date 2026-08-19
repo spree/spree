@@ -20,13 +20,16 @@ RSpec.describe Spree::Invitation, type: :model do
     end
 
     context 'when invitation is accepted after expiration' do
-      it 'is invalid' do
-        invitation.expires_at = 1.day.ago
-        expect(invitation.accept).to be_falsey
+      it 'is refused' do
+        invitation.save!
+        invitation.update_column(:expires_at, 1.day.ago)
 
-        expect(invitation.accepted_at).not_to be_present
+        result = Spree.invitation_accept_workflow.call(invitation: invitation)
+
+        expect(result).not_to be_success
+        expect(result.error.value).to eq(:invitation_expired)
+        expect(invitation.reload.accepted_at).not_to be_present
         expect(invitation.status).to eq('pending')
-        expect(invitation.errors[:base]).to include('Invitation expired')
       end
     end
 
@@ -83,14 +86,14 @@ RSpec.describe Spree::Invitation, type: :model do
     context 'when accepting an invitation' do
       it 'changes status to accepted' do
         invitation.invitee = create(:admin_user, :without_admin_role)
-        invitation.accept
+        Spree.invitation_accept_workflow.call(invitation: invitation)
         expect(invitation.status).to eq('accepted')
       end
 
       it 'sets accepted_at timestamp' do
         expect(invitation.accepted_at).to be_nil
         invitation.invitee = create(:admin_user, :without_admin_role)
-        invitation.accept
+        Spree.invitation_accept_workflow.call(invitation: invitation)
         expect(invitation.accepted_at).to be_present
       end
 
@@ -98,12 +101,12 @@ RSpec.describe Spree::Invitation, type: :model do
         invitation.invitee = create(:admin_user, :without_admin_role)
 
         expect(invitation).to receive(:publish_event).with('invitation.accepted')
-        invitation.accept
+        Spree.invitation_accept_workflow.call(invitation: invitation)
       end
 
       it 'creates a resource user' do
         invitation.invitee = create(:admin_user, :without_admin_role)
-        expect { invitation.accept }.to change(invitation, :role_user).from(nil).to(Spree::RoleUser)
+        expect { Spree.invitation_accept_workflow.call(invitation: invitation) }.to change(invitation, :role_user).from(nil).to(Spree::RoleUser)
         expect(invitation.role_user.user).to eq(invitation.invitee)
         expect(invitation.role_user.resource).to eq(invitation.resource)
         expect(invitation.role_user.invitation).to eq(invitation)
@@ -139,7 +142,7 @@ RSpec.describe Spree::Invitation, type: :model do
     it 'does not publish event if invitation is accepted', events: true do
       invitation.invitee = create(:admin_user, :without_admin_role)
       expect(invitation).to receive(:publish_event).with('invitation.accepted')
-      invitation.accept
+      Spree.invitation_accept_workflow.call(invitation: invitation)
 
       expect(invitation).not_to receive(:publish_event)
       invitation.resend!
