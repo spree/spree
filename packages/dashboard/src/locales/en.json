@@ -1407,6 +1407,10 @@
             "public": "Public — anyone can browse and see prices"
           }
         },
+        "tax_using_ship_address": {
+          "help": "Calculate tax from the customer's shipping address. Turn this off to tax by the billing address instead.",
+          "label": "Tax by shipping address"
+        },
         "track_inventory_levels": {
           "help": "Count on-hand quantities. Turn off to treat every product as always available.",
           "label": "Track stock levels"

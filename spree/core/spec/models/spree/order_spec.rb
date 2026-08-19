@@ -457,7 +457,7 @@ describe Spree::Order, type: :model do
   describe '#tax_address' do
     subject { order.tax_address }
 
-    before { Spree::Config[:tax_using_ship_address] = tax_using_ship_address }
+    before { stub_store_preferences(order.store, tax_using_ship_address: tax_using_ship_address) }
 
     context 'when tax_using_ship_address is true' do
       let(:tax_using_ship_address) { true }

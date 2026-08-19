@@ -101,6 +101,7 @@ function storeToFormValues(store: Store): StoreSettingsFormValues {
     preferred_address_requires_phone: store.preferred_address_requires_phone ?? false,
     preferred_capture_method:
       (store.preferred_capture_method as (typeof CAPTURE_METHODS)[number]) ?? 'checkout',
+    preferred_tax_using_ship_address: store.preferred_tax_using_ship_address ?? true,
     preferred_track_inventory_levels: store.preferred_track_inventory_levels ?? true,
     preferred_stock_reservations_enabled: store.preferred_stock_reservations_enabled ?? true,
     preferred_track_price_history: store.preferred_track_price_history ?? true,
@@ -216,6 +217,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
         preferred_company_field_enabled: values.preferred_company_field_enabled,
         preferred_address_requires_phone: values.preferred_address_requires_phone,
         preferred_capture_method: values.preferred_capture_method,
+        preferred_tax_using_ship_address: values.preferred_tax_using_ship_address,
         preferred_track_inventory_levels: values.preferred_track_inventory_levels,
         preferred_stock_reservations_enabled: values.preferred_stock_reservations_enabled,
         preferred_track_price_history: values.preferred_track_price_history,
@@ -598,19 +600,28 @@ function StoreSettingsForm({ store }: { store: Store }) {
                   <CardTitle>{t('admin.pages.settings.store.tab_payments')}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <Controller
-                    control={form.control}
-                    name="preferred_capture_method"
-                    render={({ field }) => (
-                      <ChoiceCardPicker
-                        label={t('admin.fields.store.capture_method.label')}
-                        help={t('admin.fields.store.capture_method.help')}
-                        options={captureMethodOptions}
-                        value={field.value}
-                        onChange={field.onChange}
-                      />
-                    )}
-                  />
+                  <FieldGroup>
+                    <Controller
+                      control={form.control}
+                      name="preferred_capture_method"
+                      render={({ field }) => (
+                        <ChoiceCardPicker
+                          label={t('admin.fields.store.capture_method.label')}
+                          help={t('admin.fields.store.capture_method.help')}
+                          options={captureMethodOptions}
+                          value={field.value}
+                          onChange={field.onChange}
+                        />
+                      )}
+                    />
+                    <SwitchField
+                      id="store-tax-using-ship-address"
+                      label={t('admin.fields.store.tax_using_ship_address.label')}
+                      help={t('admin.fields.store.tax_using_ship_address.help')}
+                      name="preferred_tax_using_ship_address"
+                      control={form.control}
+                    />
+                  </FieldGroup>
                 </CardContent>
               </Card>
               <Card>

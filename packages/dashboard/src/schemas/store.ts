@@ -50,6 +50,7 @@ export const storeSettingsFormSchema = z.object({
   preferred_company_field_enabled: z.boolean(),
   preferred_address_requires_phone: z.boolean(),
   preferred_capture_method: z.enum(CAPTURE_METHODS),
+  preferred_tax_using_ship_address: z.boolean(),
   preferred_track_inventory_levels: z.boolean(),
   preferred_stock_reservations_enabled: z.boolean(),
   preferred_track_price_history: z.boolean(),

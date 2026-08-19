@@ -1407,6 +1407,10 @@
             "public": "Öffentlich – alle können stöbern und Preise sehen"
           }
         },
+        "tax_using_ship_address": {
+          "help": "Die Steuer anhand der Lieferadresse des Kunden berechnen. Deaktivieren Sie diese Option, um stattdessen die Rechnungsadresse zu verwenden.",
+          "label": "Steuer nach Lieferadresse"
+        },
         "track_inventory_levels": {
           "help": "Bestände zählen. Ausschalten, um jedes Produkt als immer verfügbar zu behandeln.",
           "label": "Lagerbestand verfolgen"
