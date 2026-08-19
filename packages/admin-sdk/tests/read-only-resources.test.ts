@@ -28,11 +28,6 @@ const sampleCountry = {
   name: 'United States',
 }
 
-const sampleStoreCreditCategory = {
-  id: 'scc_abc123',
-  name: 'Refund',
-}
-
 describe('roles', () => {
   describe('list', () => {
     it('GETs /roles and returns paginated data', async () => {
@@ -196,51 +191,6 @@ describe('countries', () => {
 
       expect(res.iso).toBe('US')
       expect(url!.searchParams.get('expand')).toBe('states')
-    })
-  })
-})
-
-describe('storeCreditCategories', () => {
-  describe('list', () => {
-    it('GETs /store_credit_categories and returns paginated data', async () => {
-      server.use(
-        http.get(`${API_PREFIX}/store_credit_categories`, () =>
-          HttpResponse.json(paginated([sampleStoreCreditCategory])),
-        ),
-      )
-
-      const res = await createTestClient().storeCreditCategories.list()
-
-      expect(res.data).toHaveLength(1)
-      expect(res.data[0]?.id).toBe('scc_abc123')
-    })
-
-    it('wraps Ransack predicates via transformListParams', async () => {
-      let url: URL | null = null
-      server.use(
-        http.get(`${API_PREFIX}/store_credit_categories`, ({ request }) => {
-          url = new URL(request.url)
-          return HttpResponse.json(paginated([]))
-        }),
-      )
-
-      await createTestClient().storeCreditCategories.list({ name_cont: 'Refund' })
-
-      expect(url!.searchParams.get('q[name_cont]')).toBe('Refund')
-    })
-  })
-
-  describe('get', () => {
-    it('GETs /store_credit_categories/:id', async () => {
-      server.use(
-        http.get(`${API_PREFIX}/store_credit_categories/scc_abc123`, () =>
-          HttpResponse.json(sampleStoreCreditCategory),
-        ),
-      )
-
-      const res = await createTestClient().storeCreditCategories.get('scc_abc123')
-
-      expect(res.id).toBe('scc_abc123')
     })
   })
 })

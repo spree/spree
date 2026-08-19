@@ -130,12 +130,11 @@ describe Spree::Checkout::AddStoreCredit, type: :service do
 
     context 'there are multiple store credits' do
       let(:amount_difference) { 100 }
-      let!(:primary_store_credit) { create(:store_credit, amount: (order_total - amount_difference), store: store) }
-      let!(:secondary_store_credit) do
-        create(:store_credit, amount: order_total, customer: primary_store_credit.user,
-                credit_type: create(:secondary_credit_type), store: store)
+      let!(:older_store_credit) { create(:store_credit, amount: (order_total - amount_difference), store: store, created_at: 2.days.ago) }
+      let!(:newer_store_credit) do
+        create(:store_credit, amount: order_total, customer: older_store_credit.user, store: store, created_at: 1.day.ago)
       end
-      let(:order) { create(:order, customer: primary_store_credit.user, total: order_total, store: store) }
+      let(:order) { create(:order, customer: older_store_credit.user, total: order_total, store: store) }
 
       before do
         Timecop.scale(3600)
@@ -143,17 +142,17 @@ describe Spree::Checkout::AddStoreCredit, type: :service do
 
       after { Timecop.return }
 
-      it 'uses the primary store credit type over the secondary' do
+      it 'spends the oldest store credit first' do
         expect(subject).to be_success
 
-        primary_payment = order.reload.payments.first
-        secondary_payment = order.payments.last
+        older_payment = order.reload.payments.first
+        newer_payment = order.payments.last
 
         expect(order.payments.size).to eq 2
-        expect(primary_payment.source).to eq primary_store_credit
-        expect(secondary_payment.source).to eq secondary_store_credit
-        expect(primary_payment.amount).to eq(order_total - amount_difference)
-        expect(secondary_payment.amount).to eq(amount_difference)
+        expect(older_payment.source).to eq older_store_credit
+        expect(newer_payment.source).to eq newer_store_credit
+        expect(older_payment.amount).to eq(order_total - amount_difference)
+        expect(newer_payment.amount).to eq(amount_difference)
       end
     end
   end

@@ -441,6 +441,16 @@ steps:
 
       Safe to run at any time and safe to repeat; it re-enqueues every product.
 
+  - id: fold_store_credit_categories
+    name: "Fold store credit categories into the memo"
+    task: "spree:upgrade:fold_store_credit_categories"
+    notes: |
+      Store credits no longer carry a category in Spree 6. Their reason is the
+      originator (return, exchange, claim, gift card) plus the memo, so this
+      copies each legacy category name into the memo of credits that have
+      none. Admin-written memos are never overwritten. Idempotent, and a
+      no-op once the legacy tables are dropped in 6.1.
+
   - id: migrate_stripe_webhook_keys
     name: "Move Stripe webhook signing secrets onto the gateway"
     task: "spree:upgrade:migrate_stripe_webhook_keys"

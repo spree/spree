@@ -399,10 +399,9 @@
         "store_credit": {
           "add_description": "Émettez un avoir en boutique sur le compte de ce client.",
           "delete_confirm_message": "Supprimer cet avoir en boutique ?",
-          "edit_description": "Ajustez le montant, la catégorie ou la note. Le solde utilisé ne peut pas être modifié.",
+          "edit_description": "Ajustez le montant ou la note. Le solde utilisé ne peut pas être modifié.",
           "empty": "Aucun avoir en boutique émis",
           "table": {
-            "category": "Catégorie",
             "memo": "Note",
             "remaining": "Restant",
             "used": "Utilisé"
@@ -1420,9 +1419,6 @@
       "store_credit": {
         "amount": {
           "label": "Montant"
-        },
-        "category_id": {
-          "label": "Catégorie"
         },
         "currency": {
           "label": "Devise"

@@ -192,8 +192,6 @@ en:
         url: Site URL
       spree/store_credit:
         amount_used: Amount used
-      spree/store_credit_category:
-        name: Name
       spree/tax_category:
         description: Description
         name: Name
@@ -354,10 +352,6 @@ en:
             amount_used:
               cannot_be_greater_than_amount: Cannot be greater than amount.
               greater_than_zero_restrict_delete: is greater than zero. Can not delete store credit.
-        spree/store_credit_category:
-          attributes:
-            base:
-              cannot_destroy_if_used_in_store_credit: Cannot delete store credit categories once they are used in store credit.
         spree/taxon_image:
           attributes:
             attachment:
@@ -512,9 +506,6 @@ en:
       spree/store_credit:
         one: Store Credit
         other: Store Credits
-      spree/store_credit_category:
-        one: Store Credit Category
-        other: Store Credit Categories
       spree/tax_category:
         one: Tax Category
         other: Tax Categories

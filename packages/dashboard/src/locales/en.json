@@ -399,10 +399,9 @@
         "store_credit": {
           "add_description": "Issue store credit to this customer's account.",
           "delete_confirm_message": "Delete this store credit?",
-          "edit_description": "Adjust the amount, category, or memo. Used balance cannot be edited.",
+          "edit_description": "Adjust the amount or memo. Used balance cannot be edited.",
           "empty": "No store credits issued",
           "table": {
-            "category": "Category",
             "memo": "Memo",
             "remaining": "Remaining",
             "used": "Used"
@@ -1420,9 +1419,6 @@
       "store_credit": {
         "amount": {
           "label": "Amount"
-        },
-        "category_id": {
-          "label": "Category"
         },
         "currency": {
           "label": "Currency"

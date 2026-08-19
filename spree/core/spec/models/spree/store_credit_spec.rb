@@ -81,6 +81,21 @@ describe Spree::StoreCredit, type: :model do
     end
   end
 
+  describe '.oldest_first' do
+    it 'orders credits by issue time, oldest first' do
+      newer = create(:store_credit, created_at: 1.day.ago)
+      older = create(:store_credit, created_at: 2.days.ago)
+
+      expect(described_class.oldest_first.to_a).to eq([older, newer])
+    end
+
+    it 'keeps order_by_priority as a warning alias' do
+      expect(Spree::Deprecation).to receive(:warn).with(/order_by_priority is deprecated/)
+
+      expect(described_class.order_by_priority.to_sql).to eq(described_class.oldest_first.to_sql)
+    end
+  end
+
   describe '#display_amount' do
     it 'returns a Spree::Money instance' do
       expect(store_credit.display_amount).to be_instance_of(Spree::Money)
@@ -497,7 +512,7 @@ describe Spree::StoreCredit, type: :model do
             expect(@new_store_credit.amount).to eq credit_amount
           end
 
-          [:user_id, :category_id, :created_by_id, :currency, :type_id].each do |attr|
+          [:user_id, :created_by_id, :currency].each do |attr|
             it "sets attribute #{attr} inherited from the originating store credit" do
               expect(@new_store_credit.send(attr)).to eq store_credit.send(attr)
             end

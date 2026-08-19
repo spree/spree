@@ -92,8 +92,6 @@ test.describe('customers', () => {
 
     await page.locator('#sc-amount').fill('25.00')
     await page.locator('#sc-memo').fill('E2E test credit')
-    await page.locator('#sc-category').click()
-    await page.getByRole('option').first().click()
 
     await page
       .getByRole('dialog')
@@ -125,8 +123,6 @@ test.describe('customers', () => {
     // German-formatted amount: dot thousands, comma decimal.
     await page.locator('#sc-amount').fill('1.234,56')
     await page.locator('#sc-memo').fill('E2E EUR localized credit')
-    await page.locator('#sc-category').click()
-    await page.getByRole('option').first().click()
 
     await page
       .getByRole('dialog')
@@ -159,8 +155,6 @@ test.describe('customers', () => {
     await page.locator('#sc-currency').click()
     await page.getByRole('option', { name: /EUR/ }).click()
     await page.locator('#sc-memo').fill('E2E currency switch')
-    await page.locator('#sc-category').click()
-    await page.getByRole('option').first().click()
 
     await page
       .getByRole('dialog')
@@ -183,8 +177,6 @@ test.describe('customers', () => {
     await expect(page.getByRole('heading', { name: /issue store credit/i })).toBeVisible()
     await page.locator('#sc-amount').fill('25.00')
     await page.locator('#sc-memo').fill('E2E credit to edit')
-    await page.locator('#sc-category').click()
-    await page.getByRole('option').first().click()
     await page
       .getByRole('dialog')
       .getByRole('button', { name: /^issue store credit$/i })
@@ -230,8 +222,6 @@ test.describe('customers', () => {
     await page.getByRole('option', { name: /EUR/ }).click()
     await page.locator('#sc-amount').fill('50,00')
     await page.locator('#sc-memo').fill('E2E EUR credit to edit')
-    await page.locator('#sc-category').click()
-    await page.getByRole('option').first().click()
     await page
       .getByRole('dialog')
       .getByRole('button', { name: /^issue store credit$/i })

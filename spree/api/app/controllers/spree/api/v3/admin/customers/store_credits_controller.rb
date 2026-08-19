@@ -14,7 +14,6 @@ module Spree
               @resource = @parent.store_credits.new(create_attrs)
               @resource.created_by = try_spree_current_user
               @resource.store ||= current_store
-              @resource.category ||= Spree::StoreCreditCategory.first
               authorize_resource!(@resource, :create)
 
               if @resource.save
@@ -84,11 +83,11 @@ module Spree
             private
 
             def create_attrs
-              params.permit(:amount, :currency, :category_id, :memo).to_h
+              params.permit(:amount, :currency, :memo).to_h
             end
 
             def update_attrs
-              params.permit(:memo, :category_id, :amount).to_h
+              params.permit(:memo, :amount).to_h
             end
           end
         end
