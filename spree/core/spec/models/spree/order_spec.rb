@@ -206,8 +206,8 @@ describe Spree::Order, type: :model do
     end
 
     context 'with incomplete payments' do
-      let!(:payment) { create(:payment, order: order, amount: order.total - 10, state: 'pending', response_code: 'abc') }
-      let!(:other_payment) { create(:payment, order: order, amount: 10, state: 'checkout', response_code: 'def') }
+      let!(:payment) { create(:payment, order: order, amount: order.total - 10, status: 'pending', response_code: 'abc') }
+      let!(:other_payment) { create(:payment, order: order, amount: 10, status: 'checkout', response_code: 'def') }
 
       it 'marks the incomplete payments as void' do
         order.cancel
@@ -228,7 +228,7 @@ describe Spree::Order, type: :model do
     context 'when gift card is present' do
       let(:gift_card) { create(:gift_card, amount: 110) }
       let(:order) { create(:completed_order_with_totals, store: store, gift_card: gift_card, total: 110) }
-      let!(:payment) { create(:store_credit_payment, order: order, state: 'completed', amount: 110) }
+      let!(:payment) { create(:store_credit_payment, order: order, status: 'completed', amount: 110) }
 
       it 'handles additional actions' do
         order.cancel
@@ -242,7 +242,7 @@ describe Spree::Order, type: :model do
 
     context 'when no gift card' do
       let(:order) { create(:completed_order_with_totals, store: store) }
-      let!(:payment) { create(:payment, order: order, state: 'completed', amount: 10) }
+      let!(:payment) { create(:payment, order: order, status: 'completed', amount: 10) }
 
       it 'handles additional actions' do
         order.cancel

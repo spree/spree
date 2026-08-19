@@ -24,7 +24,7 @@ RSpec.shared_examples 'a purchase lifecycle host' do
       expect(new_record(completed_at: Time.current)).not_to be_can_be_deleted
 
       record = new_record_with_line_items
-      create_payment(record, state: 'completed', amount: record.total)
+      create_payment(record, status: 'completed', amount: record.total)
       expect(record.reload).not_to be_can_be_deleted
     end
   end

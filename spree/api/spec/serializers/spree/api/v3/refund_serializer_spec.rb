@@ -4,7 +4,7 @@ require 'spec_helper'
 
 RSpec.describe Spree::Api::V3::RefundSerializer do
   let(:store) { @default_store }
-  let(:payment) { create(:payment, amount: 100, state: 'completed') }
+  let(:payment) { create(:payment, amount: 100, status: 'completed') }
   let(:refund) { create(:refund, payment: payment, amount: 10) }
   let(:base_params) { { store: store, currency: 'USD' } }
 

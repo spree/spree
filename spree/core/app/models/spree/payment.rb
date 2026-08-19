@@ -21,7 +21,9 @@ module Spree
 
     NON_RISKY_AVS_CODES = ['B', 'D', 'H', 'J', 'M', 'Q', 'T', 'V', 'X', 'Y'].freeze
     RISKY_AVS_CODES     = ['A', 'C', 'E', 'F', 'G', 'I', 'K', 'L', 'N', 'O', 'P', 'R', 'S', 'U', 'W', 'Z'].freeze
-    INVALID_STATES      = %w(failed invalid void).freeze
+    INVALID_STATUSES    = %w(failed invalid void).freeze
+    INVALID_STATES      = INVALID_STATUSES
+    deprecate_constant :INVALID_STATES
 
     with_options inverse_of: :payments do
       belongs_to :order, class_name: 'Spree::Order', touch: true, optional: true
@@ -72,26 +74,24 @@ module Spree
     default_scope { order(:created_at) }
 
     scope :from_credit_card, -> { where(source_type: 'Spree::CreditCard') }
-    scope :with_state, ->(s) { where(state: s.to_s) }
+    # @deprecated use the status scopes / +where(status:)+ — removed in 6.1
+    scope :with_state, ->(s) { where(status: s.to_s) }
     # "offset" is reserved by activerecord
-    scope :offset_payment, -> { where("source_type = 'Spree::Payment' AND amount < 0 AND state = 'completed'") }
+    scope :offset_payment, -> { where("source_type = 'Spree::Payment' AND amount < 0 AND status = 'completed'") }
 
-    scope :checkout, -> { with_state('checkout') }
-    scope :completed, -> { with_state('completed') }
-    scope :pending, -> { with_state('pending') }
-    scope :processing, -> { with_state('processing') }
-    scope :failed, -> { with_state('failed') }
+    # checkout/processing/pending/completed/failed/void scopes and predicates
+    # come from has_status below.
+    scope :incomplete, -> { where.not(status: 'completed') }
 
-    scope :incomplete, -> { where.not(state: 'completed') }
-
-    scope :risky, -> { where("avs_response IN (?) OR (cvv_response_code IS NOT NULL and cvv_response_code != 'M') OR state = 'failed'", RISKY_AVS_CODES) }
-    scope :valid, -> { where.not(state: INVALID_STATES) }
+    scope :risky, -> { where("avs_response IN (?) OR (cvv_response_code IS NOT NULL and cvv_response_code != 'M') OR status = 'failed'", RISKY_AVS_CODES) }
+    scope :valid, -> { where.not(status: INVALID_STATUSES) }
 
     scope :store_credits, -> { where(source_type: Spree::StoreCredit.to_s) }
     scope :not_store_credits, -> { where(arel_table[:source_type].not_eq(Spree::StoreCredit.to_s).or(arel_table[:source_type].eq(nil))) }
 
     self.whitelisted_ransackable_associations = %w[payment_method order source]
-    self.whitelisted_ransackable_attributes = %w[number amount state response_code avs_response cvv_response_code cvv_response_message]
+    ransack_alias :state, :status # @deprecated filter alias — removed in 6.1
+    self.whitelisted_ransackable_attributes = %w[number amount status state response_code avs_response cvv_response_code cvv_response_message]
 
     # transaction_id is much easier to understand
     alias_attribute :transaction_id, :response_code
@@ -101,37 +101,102 @@ module Spree
     money_methods :amount, :credit_allowed
     alias money display_amount # for compatibility with older versions of Spree
 
-    # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
-    state_machine initial: :checkout do
-      # With card payments, happens before purchase or authorization happens
-      #
-      # Setting it after creating a profile and authorizing a full amount will
-      # prevent the payment from being authorized again once Order transitions
-      # to complete
-      event :started_processing do
-        transition from: [:checkout, :pending, :completed, :processing], to: :processing
+    # No state machine — transitions run inside Spree::Payments workflows and
+    # Spree::Payment::Processing (docs/plans/6.0-service-workflows.md). The
+    # `invalid` status deliberately generates no predicate or scope: `invalid?`
+    # is ActiveModel's, use +has_invalid_status?+.
+    include Spree::HasStatus
+    has_status :checkout, :processing, :pending, :completed, :failed, :void, :invalid,
+               default: :checkout
+
+    # Status writes, called from the payments workflows and Processing. The
+    # completed/voided events publish here — the one place the status changes —
+    # replacing the machine's after_transition callbacks.
+    # failed is deliberately claimable: a failure can be transient — a
+    # gateway outage, a network timeout, our own error — and the retry is
+    # simply running the workflow again on the same row. The row must be
+    # reused, not replaced: response_code is unique per order, so a session
+    # payment's intent can only ever live on one payment.
+    CLAIMABLE_STATUSES = %w[checkout pending processing failed].freeze
+
+    # Atomically claims the payment for gateway processing. Only a live or
+    # retryable payment can be claimed, so a stale instance can never
+    # resurrect a payment another writer already settled and drive the
+    # gateway again.
+    #
+    # @return [Boolean] false when the payment completed concurrently — the
+    #   caller's outcome already exists and the claim must be a no-op
+    # @raise [Spree::Core::GatewayError] for a dead payment (void, invalid)
+    def started_processing!
+      if new_record?
+        self.status = 'processing'
+        save!
+        return true
       end
-      # When processing during checkout fails
-      event :failure do
-        transition from: [:pending, :processing], to: :failed
+
+      claimed = self.class.where(id: id, status: CLAIMABLE_STATUSES)
+                          .update_all(status: 'processing', updated_at: Time.current) == 1
+      if claimed
+        self.status = 'processing'
+        clear_attribute_changes(['status'])
+        return true
       end
-      # With card payments this represents authorizing the payment
-      event :pend do
-        transition from: [:checkout, :processing], to: :pending
-      end
-      # With card payments this represents completing a purchase or capture transaction
-      event :complete do
-        transition from: [:processing, :pending, :checkout], to: :completed
-      end
-      after_transition to: :completed, do: [:after_completed, :publish_payment_completed_event]
-      event :void do
-        transition from: [:pending, :processing, :completed, :checkout], to: :void
-      end
-      after_transition to: :void, do: [:after_void, :publish_payment_voided_event]
-      # when the card brand isn't supported
-      event :invalidate do
-        transition from: [:checkout], to: :invalid
-      end
+
+      fresh_status = self.class.where(id: id).pick(:status)
+      return false if fresh_status == 'completed'
+
+      raise Spree::Core::GatewayError, "Payment #{number} is #{fresh_status} and cannot be processed"
+    end
+
+    def pend!
+      update!(status: 'pending')
+    end
+
+    def complete!
+      update!(status: 'completed')
+      publish_event('payment.completed')
+      true
+    end
+
+    def void!
+      update!(status: 'void')
+      publish_event('payment.voided')
+      true
+    end
+
+    def failure!
+      update!(status: 'failed')
+    end
+    alias failure failure!
+
+    def invalidate!
+      update!(status: 'invalid')
+    end
+
+    # Guards preserved from the machine's transition graph, consulted by the
+    # workflows before money moves.
+    def can_complete?
+      status.in?(%w[processing pending checkout])
+    end
+
+    def can_pend?
+      status.in?(%w[checkout processing])
+    end
+
+    def can_void?
+      status.in?(%w[pending processing completed checkout])
+    end
+
+    # @deprecated read +status+ — removed in 6.1
+    def state
+      Spree::Deprecation.warn('Spree::Payment#state is deprecated and will be removed in Spree 6.1. Use #status instead.')
+      status
+    end
+
+    # @deprecated write +status+ — removed in 6.1
+    def state=(value)
+      Spree::Deprecation.warn('Spree::Payment#state= is deprecated and will be removed in Spree 6.1. Use #status= instead.')
+      self.status = value
     end
 
     def source
@@ -239,6 +304,25 @@ module Spree
       amount - captured_amount
     end
 
+    # Row work only — moves the uncaptured remainder onto a new pending
+    # payment and shrinks this one to what was captured. The caller authorizes
+    # the returned remainder at the gateway afterwards, outside any lock.
+    #
+    # @return [Spree::Payment, nil] the remainder payment, or nil when fully captured
+    def split_uncaptured_amount
+      return if uncaptured_amount <= 0
+
+      remainder = owner.payments.create!(
+        amount: uncaptured_amount,
+        payment_method: payment_method,
+        source: source,
+        status: 'pending',
+        capture_on_dispatch: true
+      )
+      update(amount: captured_amount)
+      remainder
+    end
+
     def editable?
       checkout? || pending?
     end
@@ -276,8 +360,14 @@ module Spree
       end
     end
 
+    def has_invalid_status?
+      INVALID_STATUSES.include?(status)
+    end
+
+    # @deprecated use {#has_invalid_status?} — removed in 6.1
     def has_invalid_state?
-      INVALID_STATES.include?(state)
+      Spree::Deprecation.warn('Spree::Payment#has_invalid_state? is deprecated and will be removed in Spree 6.1. Use #has_invalid_status? instead.')
+      has_invalid_status?
     end
 
     # @return [Spree::Cart, Spree::Order, nil]
@@ -307,7 +397,7 @@ module Spree
     # gateways store profile ids during source creation and never call this.
     def create_payment_profile
       # Don't attempt to create on bad payments.
-      return if has_invalid_state?
+      return if has_invalid_status?
       # Payment profile cannot be created without source
       return unless source
       # Imported payments shouldn't create a payment profile.
@@ -347,20 +437,6 @@ module Spree
       errors.add(:amount, :greater_than_max_amount, max_amount: max_amount) if amount > max_amount
     end
 
-    def after_void
-    end
-
-    def after_completed
-    end
-
-    def publish_payment_completed_event
-      publish_event('payment.completed')
-    end
-
-    def publish_payment_voided_event
-      publish_event('payment.voided')
-    end
-
     def validate_source
       if source && !source.valid?
         source.errors.map { |error| { field: error.attribute, message: error&.message } }.each do |err|
@@ -386,24 +462,6 @@ module Spree
 
 
 
-    # Row work only — moves the uncaptured remainder onto a new pending
-    # payment and shrinks this one to what was captured. The caller authorizes
-    # the returned remainder at the gateway afterwards, outside any lock.
-    #
-    # @return [Spree::Payment, nil] the remainder payment, or nil when fully captured
-    def split_uncaptured_amount
-      return if uncaptured_amount <= 0
-
-      remainder = owner.payments.create!(
-        amount: uncaptured_amount,
-        payment_method: payment_method,
-        source: source,
-        state: 'pending',
-        capture_on_dispatch: true
-      )
-      update(amount: captured_amount)
-      remainder
-    end
 
     def update_order
       return unless completed? || void? || (owner.is_a?(Spree::Order) && owner.completed?)
@@ -431,7 +489,7 @@ module Spree
 
     def invalidate_old_payments
       # invalid payment or store_credit payment shouldn't invalidate other payment types
-      return if has_invalid_state? || store_credit?
+      return if has_invalid_status? || store_credit?
 
       owner.payments.with_state('checkout').where.not(id: id).each do |payment|
         payment.invalidate! unless payment.store_credit?

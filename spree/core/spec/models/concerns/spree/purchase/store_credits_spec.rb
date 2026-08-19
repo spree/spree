@@ -417,10 +417,10 @@ RSpec.shared_examples 'a store credits host' do
       let(:other_record_payment) { 22.0 }
 
       before do
-        create_store_credit_payment(record, state: 'completed', amount: valid_payment)
-        create_store_credit_payment(record, state: 'completed', amount: valid_payment_2)
-        create_store_credit_payment(record, state: 'invalid', amount: invalid_payment)
-        create_store_credit_payment(new_record(user: create(:user), total: 100.00), state: 'completed', amount: other_record_payment)
+        create_store_credit_payment(record, status: 'completed', amount: valid_payment)
+        create_store_credit_payment(record, status: 'completed', amount: valid_payment_2)
+        create_store_credit_payment(record, status: 'invalid', amount: invalid_payment)
+        create_store_credit_payment(new_record(user: create(:user), total: 100.00), status: 'completed', amount: other_record_payment)
       end
 
       it 'returns the sum of the payment amounts' do

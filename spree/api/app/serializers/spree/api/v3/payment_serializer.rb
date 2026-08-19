@@ -12,15 +12,11 @@ module Spree
           payment.payment_method&.prefixed_id
         end
 
-        attributes :response_code, :number
+        attributes :response_code, :number, :status
 
         # Nulled for gated (prices_hidden) guests so a payment can't leak the
         # amount the cart/order totals already withhold.
         money_attributes :amount, :display_amount
-
-        attribute :status do |payment|
-          payment.state
-        end
 
         attribute :source_type do |payment|
           case payment.source_type

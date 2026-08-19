@@ -2,14 +2,14 @@ FactoryBot.define do
   factory :payment, class: Spree::Payment do
     order         { cart.present? ? nil : create(:order, total: amount) }
     amount        { 45.75 }
-    state         { 'checkout' }
+    status        { 'checkout' }
     response_code { "BGS-#{SecureRandom.hex(6)}" }
 
     payment_method { create(:credit_card_payment_method, store: (order || cart).store) }
     association(:source, factory: :credit_card)
 
     factory :payment_with_refund do
-      state { 'completed' }
+      status { 'completed' }
       after :create do |payment|
         create(:refund, amount: 5, payment: payment)
       end

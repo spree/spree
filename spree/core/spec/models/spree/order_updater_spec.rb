@@ -180,7 +180,7 @@ module Spree
       end
 
       it 'is authorized when a payment is only pending' do
-        create(:payment, order: order, amount: order_total, state: 'pending')
+        create(:payment, order: order, amount: order_total, status: 'pending')
 
         updater.update_payment_state
 
@@ -189,7 +189,7 @@ module Spree
 
       context 'order total is greater than payment total' do
         it 'is partially_paid' do
-          create(:payment, order: order, amount: order_total - 1, state: 'completed')
+          create(:payment, order: order, amount: order_total - 1, status: 'completed')
 
           updater.update_payment_state
 
@@ -199,7 +199,7 @@ module Spree
 
       context 'order total equals payment total' do
         it 'is paid' do
-          create(:payment, order: order, amount: order_total, state: 'completed')
+          create(:payment, order: order, amount: order_total, status: 'completed')
 
           updater.update_payment_state
 
@@ -220,7 +220,7 @@ module Spree
 
         context 'and payment is refunded' do
           it 'is voided' do
-            payment = create(:payment, order: order, amount: order_total, state: 'completed')
+            payment = create(:payment, order: order, amount: order_total, status: 'completed')
             create(:refund, payment: payment, amount: order_total)
 
             updater.update_payment_state

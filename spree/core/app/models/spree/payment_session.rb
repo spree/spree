@@ -24,40 +24,7 @@ module Spree
     validates :external_id, uniqueness: { scope: [:order_id, :payment_method_id] }
     validates :amount, presence: true, numericality: { greater_than: 0 }
 
-    state_machine :status, initial: :pending do
-      state :pending
-      state :processing
-      state :completed
-      state :failed
-      state :canceled
-      state :expired
-
-      event :process do
-        transition pending: :processing
-      end
-
-      event :complete do
-        transition [:pending, :processing] => :completed
-      end
-
-      event :fail do
-        transition [:pending, :processing] => :failed
-      end
-
-      event :cancel do
-        transition [:pending, :processing] => :canceled
-      end
-
-      event :expire do
-        transition [:pending, :processing] => :expired
-      end
-
-      after_transition to: :processing, do: :publish_processing_event
-      after_transition to: :completed, do: :publish_completed_event
-      after_transition to: :failed, do: :publish_failed_event
-      after_transition to: :canceled, do: :publish_canceled_event
-      after_transition to: :expired, do: :publish_expired_event
-    end
+    include Spree::PaymentSessionTransitions
 
     scope :not_expired, -> { where('expires_at IS NULL OR expires_at > ?', Time.current) }
     scope :active, -> { not_expired.where(status: %w[pending processing]) }
@@ -144,7 +111,7 @@ module Spree
           # settlement could have completed it), but reload would discard
           # in-memory state like skip_source_requirement.
           already_completed = settled_payment.completed? ||
-                              Spree::Payment.where(id: settled_payment.id, state: 'completed').exists?
+                              Spree::Payment.where(id: settled_payment.id, status: 'completed').exists?
 
           settled_payment.confirm!(captured: captured) unless already_completed
         end

@@ -4,7 +4,7 @@ require 'spec_helper'
 
 RSpec.describe Spree::Payment::CustomEvents do
   let(:order) { create(:order_with_line_items) }
-  let(:payment) { create(:payment, order: order, state: 'pending') }
+  let(:payment) { create(:payment, order: order, status: 'pending') }
 
   before do
     allow(Spree::Events).to receive(:enabled?).and_return(true)

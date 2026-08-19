@@ -17,40 +17,7 @@ module Spree
     validates :payment_method, :status, presence: true
     validates :external_id, uniqueness: { scope: :payment_method_id }, allow_nil: true
 
-    state_machine :status, initial: :pending do
-      state :pending
-      state :processing
-      state :completed
-      state :failed
-      state :canceled
-      state :expired
-
-      event :process do
-        transition pending: :processing
-      end
-
-      event :complete do
-        transition [:pending, :processing] => :completed
-      end
-
-      event :fail do
-        transition [:pending, :processing] => :failed
-      end
-
-      event :cancel do
-        transition [:pending, :processing] => :canceled
-      end
-
-      event :expire do
-        transition [:pending, :processing] => :expired
-      end
-
-      after_transition to: :processing, do: :publish_processing_event
-      after_transition to: :completed, do: :publish_completed_event
-      after_transition to: :failed, do: :publish_failed_event
-      after_transition to: :canceled, do: :publish_canceled_event
-      after_transition to: :expired, do: :publish_expired_event
-    end
+    include Spree::PaymentSessionTransitions
 
     scope :active, -> { where(status: %w[pending processing]) }
 

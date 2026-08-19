@@ -34,7 +34,7 @@ module Spree
       end
 
       def void_payments(cart:)
-        cart.payments.each(&:void)
+        cart.payments.each { |payment| payment.void! if payment.can_void? }
 
         success(cart: cart)
       end

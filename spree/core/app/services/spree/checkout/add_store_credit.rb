@@ -12,7 +12,7 @@ module Spree
         return failure(nil, Spree.t(:error_user_does_not_have_any_store_credits)) unless @order.customer&.store_credits&.any?
 
         ApplicationRecord.transaction do
-          existing = @order.payments.store_credits.where(state: :checkout)
+          existing = @order.payments.store_credits.where(status: :checkout)
 
           if existing.any?
             update_existing_payments(existing, remaining_total)

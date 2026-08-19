@@ -41,13 +41,17 @@ module SpreeStripe
 
           stripe_payment_method = stripe_setup_intent.payment_method
 
-          setup_session.payment_source = SpreeStripe::CreateSource.new(
-            stripe_payment_method_details: stripe_payment_method,
-            stripe_payment_method_id: stripe_payment_method.id,
-            stripe_billing_details: stripe_payment_method.billing_details,
-            gateway: self,
-            customer: setup_session.customer
-          ).call
+          # Persisted explicitly — a status transition writes status alone,
+          # never a ride-along for other dirty attributes.
+          setup_session.update!(
+            payment_source: SpreeStripe::CreateSource.new(
+              stripe_payment_method_details: stripe_payment_method,
+              stripe_payment_method_id: stripe_payment_method.id,
+              stripe_billing_details: stripe_payment_method.billing_details,
+              gateway: self,
+              customer: setup_session.customer
+            ).call
+          )
 
           setup_session.complete unless setup_session.completed?
         else

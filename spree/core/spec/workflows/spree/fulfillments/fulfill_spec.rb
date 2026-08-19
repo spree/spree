@@ -377,7 +377,7 @@ module Spree
       before do
         payment = order.payments.first
         payment.capture_events.delete_all
-        payment.update_columns(state: 'pending')
+        payment.update_columns(status: 'pending')
         order.update_columns(payment_total: 0, payment_state: 'balance_due')
       end
 
@@ -427,7 +427,7 @@ module Spree
       it 'refuses to hand over a mixed-tender order with an uncaptured checkout payment' do
         set_capture_method('manual')
         checkout_method = create(:credit_card_payment_method, store: store, capture_method: 'checkout')
-        create(:payment, order: order, payment_method: checkout_method, amount: 10, state: 'pending')
+        create(:payment, order: order, payment_method: checkout_method, amount: 10, status: 'pending')
 
         result = subject.call(fulfillment: fulfillment)
 

@@ -111,7 +111,7 @@ describe Spree::PromotionHandler::Coupon, type: :model do
       order.recalculate_gift_card
 
       expect(order.payments.count).to eq(initial_payment_count)
-      expect(order.payments.where(state: 'invalid').count).to eq(0)
+      expect(order.payments.where(status: 'invalid').count).to eq(0)
     end
 
     it 'does not change amount when total is unchanged' do
