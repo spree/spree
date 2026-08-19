@@ -128,6 +128,23 @@ module Spree
         product_create_workflow: 'Spree::Products::Create',
         product_update_workflow: 'Spree::Products::Update',
         product_destroy_workflow: 'Spree::Products::Destroy',
+        product_activate_workflow: 'Spree::Products::Activate',
+        product_archive_workflow: 'Spree::Products::Archive',
+        product_draft_workflow: 'Spree::Products::Draft',
+
+        # price lists
+        price_list_activate_workflow: 'Spree::PriceLists::Activate',
+        price_list_deactivate_workflow: 'Spree::PriceLists::Deactivate',
+
+        # invitations
+        invitation_accept_workflow: 'Spree::Invitations::Accept',
+
+        # imports — the CSV pipeline's steps
+        import_start_mapping_workflow: 'Spree::Imports::StartMapping',
+        import_complete_mapping_workflow: 'Spree::Imports::CompleteMapping',
+        import_start_processing_workflow: 'Spree::Imports::StartProcessing',
+        import_complete_workflow: 'Spree::Imports::Complete',
+        import_retry_failed_rows_workflow: 'Spree::Imports::RetryFailedRows',
 
         # which of a product's variants it leads with when sellers share the
         # listing. Ranking is marketplace policy — swap this to weight seller
