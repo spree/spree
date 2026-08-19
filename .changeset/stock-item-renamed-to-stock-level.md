@@ -11,6 +11,7 @@ Spree 6.0 renames `Spree::StockItem` to `Spree::StockLevel`, and the admin API a
 - `client.stockItems` is now `client.stockLevels`, and it calls `/stock_levels` instead of `/stock_items`.
 - The `StockItem` type is now `StockLevel`, and `StockItemUpdateParams` is now `StockLevelUpdateParams`.
 - `StockLevelUpdateParams` also gains `reason`, which labels a count correction in the stock history.
+- `client.stockMovements` is new, and reads the typed stock history behind those levels.
 - A variant's `stock_items` array is now `stock_levels`, on both reads and writes.
 - `Subject.StockItem` is now `Subject.StockLevel` in `@spree/dashboard-core`. The old name stays as a deprecated alias for one release.
 - Prefixed ids change from `si_…` to `sl_…`. Ids you stored earlier no longer resolve.
