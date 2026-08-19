@@ -9,7 +9,13 @@ class RenameStockItemsToStockLevels < ActiveRecord::Migration[8.1]
     rename_column :spree_stock_movements, :stock_item_id, :stock_level_id
     rename_column :spree_stock_reservations, :stock_item_id, :stock_level_id
 
-    rename_index :spree_stock_levels, 'stock_item_by_loc_var_id_deleted_at', 'stock_level_by_loc_var_id_deleted_at'
+    # Guarded, unlike its neighbours: 20240303174340 asks to remove this index
+    # and only misses because it names two of the three columns, so a host that
+    # dropped it by hand is a state worth renaming around rather than failing on.
+    if index_name_exists?(:spree_stock_levels, 'stock_item_by_loc_var_id_deleted_at')
+      rename_index :spree_stock_levels, 'stock_item_by_loc_var_id_deleted_at', 'stock_level_by_loc_var_id_deleted_at'
+    end
+
     rename_index :spree_stock_levels, 'stock_item_by_loc_and_var_id', 'stock_level_by_loc_and_var_id'
     rename_index :spree_stock_reservations, 'idx_stock_reservations_item_line_item', 'idx_stock_reservations_level_line_item'
 
@@ -27,7 +33,10 @@ class RenameStockItemsToStockLevels < ActiveRecord::Migration[8.1]
 
     rename_index :spree_stock_reservations, 'idx_stock_reservations_level_line_item', 'idx_stock_reservations_item_line_item'
     rename_index :spree_stock_levels, 'stock_level_by_loc_and_var_id', 'stock_item_by_loc_and_var_id'
-    rename_index :spree_stock_levels, 'stock_level_by_loc_var_id_deleted_at', 'stock_item_by_loc_var_id_deleted_at'
+
+    if index_name_exists?(:spree_stock_levels, 'stock_level_by_loc_var_id_deleted_at')
+      rename_index :spree_stock_levels, 'stock_level_by_loc_var_id_deleted_at', 'stock_item_by_loc_var_id_deleted_at'
+    end
 
     rename_column :spree_stock_reservations, :stock_level_id, :stock_item_id
     rename_column :spree_stock_movements, :stock_level_id, :stock_item_id
@@ -39,10 +48,17 @@ class RenameStockItemsToStockLevels < ActiveRecord::Migration[8.1]
   # rename_index rebuilds the index from its columns on adapters without a
   # native rename, which silently drops the partial condition. This one is a
   # uniqueness index over live rows only, so it is recreated explicitly.
+  #
+  # The branch asks the adapter what it supports rather than matching on its
+  # name: MySQL answers to more than one adapter name, and a `where:` clause it
+  # cannot honour is dropped without complaint, leaving a unique index over the
+  # wrong set of rows.
   def rename_partial_uniqueness_index(from:, to:)
     remove_index :spree_stock_levels, name: from
 
-    if connection.adapter_name.downcase.start_with?('mysql')
+    if connection.supports_partial_index?
+      add_index :spree_stock_levels, %w[variant_id stock_location_id], name: to, unique: true, where: 'deleted_at IS NULL'
+    else
       execute <<~SQL
         CREATE UNIQUE INDEX #{to}
         ON spree_stock_levels(
@@ -51,8 +67,6 @@ class RenameStockItemsToStockLevels < ActiveRecord::Migration[8.1]
           (COALESCE(deleted_at, CAST('1970-01-01' AS DATETIME)))
         );
       SQL
-    else
-      add_index :spree_stock_levels, %w[variant_id stock_location_id], name: to, unique: true, where: 'deleted_at IS NULL'
     end
   end
 end

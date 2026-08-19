@@ -143,9 +143,22 @@ describe Spree::StockMovement, type: :model do
   describe 'whitelisted ransackable attributes' do
     it 'exposes the kind and every cause key' do
       expect(Spree::StockMovement.whitelisted_ransackable_attributes).to eq(
-        %w[quantity kind reason created_at stock_level_id order_id fulfillment_id return_id
-           exchange_id stock_transfer_id]
+        %w[quantity kind reason created_at stock_level_id stock_item_id order_id fulfillment_id
+           return_id exchange_id stock_transfer_id]
       )
+    end
+
+    # Dropping the pre-rename filter would hand a client still sending it the
+    # whole collection rather than an error.
+    it 'still filters on the pre-rename stock_item_id name' do
+      stock_level = create(:stock_level)
+      movement = create(:stock_movement, kind: 'received', quantity: 3, stock_level: stock_level)
+      elsewhere = create(:stock_movement, kind: 'received', quantity: 3, stock_level: create(:stock_level))
+
+      results = Spree::StockMovement.ransack(stock_item_id_eq: stock_level.id).result
+
+      expect(results).to include(movement)
+      expect(results).not_to include(elsewhere)
     end
   end
 

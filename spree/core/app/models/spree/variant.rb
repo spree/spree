@@ -82,6 +82,7 @@ module Spree
 
     before_validation :set_cost_currency
     before_validation :apply_pending_options, if: :pending_options?
+    before_validation :apply_pending_stock_levels, if: :pending_stock_levels?
 
     validates :cost_price, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
     # Uniqueness is scoped to the seller — see #validate_sku_uniqueness. Written
@@ -635,12 +636,13 @@ module Spree
     # @return [void]
     def stock_levels=(stock_levels_params)
       return super if stock_levels_params.blank? || stock_levels_params.first.is_a?(Spree::StockLevel)
+      return if defer_stock_levels(:stock_levels=, stock_levels_params)
 
       location_ids_in_payload = []
 
       stock_levels_params.each do |stock_data|
         stock_data = stock_data.to_h.with_indifferent_access
-        location = Spree::StockLocation.find_by_param(stock_data[:stock_location_id])
+        location = stock_location_for_param(stock_data[:stock_location_id])
         # A stale or foreign location id is skipped rather than raising, which
         # is what #stock_levels_attributes= already does for the same payload.
         next if location.nil?
@@ -676,12 +678,13 @@ module Spree
     # @return [void]
     def stock_levels_attributes=(rows)
       rows = rows.values if rows.respond_to?(:values) && !rows.is_a?(Array)
+      return if defer_stock_levels(:stock_levels_attributes=, rows)
 
       Array.wrap(rows).each do |row|
         row = (row.respond_to?(:to_unsafe_h) ? row.to_unsafe_h : row.to_h).with_indifferent_access
         next if row[:stock_location_id].blank? || row[:count_on_hand].blank?
 
-        stock_location = Spree::StockLocation.find_by_param(row[:stock_location_id])
+        stock_location = stock_location_for_param(row[:stock_location_id])
         next if stock_location.nil?
 
         set_stock(row[:count_on_hand], row[:backorderable], stock_location)
@@ -910,6 +913,44 @@ module Spree
     end
 
     private
+
+    # Resolved through the product's own store, because
+    # +Spree::StockLocation.find_by_param+ is global: an id belonging to another
+    # store would otherwise resolve and put this variant's stock in that store's
+    # warehouse. There is no global fallback — a variant is only reachable
+    # through a product, and a product belongs to a store.
+    #
+    # @param param [String, Integer, nil] prefixed or raw stock location id
+    # @return [Spree::StockLocation, nil]
+    def stock_location_for_param(param)
+      return if param.blank?
+
+      product&.store&.stock_locations&.find_by_param(param)
+    end
+
+    # +product.variants.create(stock_levels_attributes: …)+ assigns attributes
+    # before Rails wires the owner, so the store these location ids have to be
+    # scoped against is not known yet. The payload waits for the product rather
+    # than resolving against every warehouse in the installation.
+    #
+    # @return [Boolean] true when the write was deferred
+    def defer_stock_levels(writer, payload)
+      return false if product.present?
+
+      @pending_stock_levels = { writer: writer, payload: payload }
+      true
+    end
+
+    def pending_stock_levels?
+      @pending_stock_levels.present?
+    end
+
+    def apply_pending_stock_levels
+      pending = @pending_stock_levels
+      @pending_stock_levels = nil
+
+      public_send(pending[:writer], pending[:payload])
+    end
 
     def pending_options?
       @pending_options.present?

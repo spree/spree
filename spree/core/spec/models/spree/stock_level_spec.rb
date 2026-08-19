@@ -460,6 +460,15 @@ describe Spree::StockLevel, type: :model do
         subject.adjust_allocated_count(-3)
         expect(subject.reload.allocated_count).to eq(1)
       end
+
+      # The counter write is bare SQL and runs no callbacks, so without a touch
+      # a placement taking the last unit leaves the variant's cache keys and the
+      # search index still advertising it.
+      it 'touches the variant so its caches and search index follow' do
+        subject.variant.update_column(:updated_at, 1.day.ago)
+
+        expect { subject.adjust_allocated_count(1) }.to change { subject.variant.reload.updated_at }
+      end
     end
 
     describe '#release_allocated_count' do

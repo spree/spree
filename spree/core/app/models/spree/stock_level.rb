@@ -100,10 +100,17 @@ module Spree
     # neither counter update needs the delta that count_on_hand's locked path
     # exists for.
     #
+    # Touched afterwards because the counter write is a bare SQL update: it
+    # runs no callbacks, so without this a placement taking the last unit would
+    # leave the variant's cache keys and the search index claiming it is still
+    # for sale, and would publish no stock_level.updated. Under the old model
+    # the same change went through `save`, and this is what restores it.
+    #
     # @param value [Integer] signed change
     # @return [void]
     def adjust_allocated_count(value)
       value.negative? ? decrement!(:allocated_count, value.abs) : increment!(:allocated_count, value)
+      touch
     end
 
     # Withdraws up to +units+ of promise. Only a promise that exists can be

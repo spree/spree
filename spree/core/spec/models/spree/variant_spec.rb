@@ -1608,7 +1608,28 @@ describe Spree::Variant, type: :model do
         variant.stock_levels = [{ stock_location_id: 'sloc_DoesNotExist', count_on_hand: 4 }]
       }.not_to raise_error
     end
+
+    # The id resolves globally, so without scoping to the product's own store
+    # this write sets stock in another store's warehouse.
+    it 'does not write stock into a stock location belonging to another store' do
+      foreign_location = create(:stock_location, store: create(:store), name: 'Foreign warehouse')
+
+      variant.stock_levels = [{ stock_location_id: foreign_location.prefixed_id, count_on_hand: 7 }]
+
+      level = Spree::StockLevel.unscoped.find_by(variant: variant, stock_location: foreign_location)
+      expect(level&.count_on_hand).not_to eq(7)
+    end
+
+    it 'does not write it through stock_levels_attributes= either' do
+      foreign_location = create(:stock_location, store: create(:store), name: 'Foreign warehouse')
+
+      variant.stock_levels_attributes = [{ stock_location_id: foreign_location.prefixed_id, count_on_hand: 7 }]
+
+      level = Spree::StockLevel.unscoped.find_by(variant: variant, stock_location: foreign_location)
+      expect(level&.count_on_hand).not_to eq(7)
+    end
   end
+
   describe '#options=' do
     it 'sets option values via set_option_value' do
       product = create(:product)
