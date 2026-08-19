@@ -862,25 +862,34 @@ describe '6.0 data migration tasks' do
       # whose units left the shelf at placement. A real 5.6 row carries no kind
       # and no allocation, so this strips what modern placement wrote and leaves
       # only the legacy departure behind.
-      def legacy_placement!
+      # +shelf+ is what the warehouse physically holds. Under 5.6 placement had
+      # already taken the ordered units off it, so the stored count starts that
+      # much lower and the migration's job is to put them back. Writing the
+      # count by hand is what makes this a 5.6 fixture: a kind-less movement
+      # moves no counter, so inserting the legacy row alone would leave the
+      # shelf at its post-migration value and hide an inflated count.
+      def legacy_placement!(shelf: 10)
         Spree::StockMovement.unscoped.where(stock_level_id: level.id).delete_all
-        level.update_columns(allocated_count: 0)
+        level.update_columns(count_on_hand: shelf - quantity, allocated_count: 0)
         legacy_movement(-quantity, originator_type: 'Spree::Fulfillment', originator_id: fulfillment.id, level: level)
       end
 
       context 'when the fulfillment carries a legacy placement row' do
-        it 'leaves it holding its promise, with availability unchanged' do
-          legacy_placement!
-          shelf_before = level.reload.count_on_hand
-          available_before = level.available_count
+        # Absolute counts, not deltas: the units are back on the shelf where a
+        # picker would find them, promised to this fulfillment, and what a
+        # customer can still buy is what it was before the upgrade.
+        it 'leaves it holding its promise, with the shelf restored and availability unchanged' do
+          legacy_placement!(shelf: 10)
+          available_before = level.reload.available_count
 
           run_task('spree:migrate_stock_movements_to_typed_rows')
 
           level.reload
           expect(fulfillment.reload.allocated_quantities[reconciled_variant.id]).to eq(quantity)
-          expect(level.count_on_hand).to eq(shelf_before + quantity)
+          expect(level.count_on_hand).to eq(10)
           expect(level.allocated_count).to eq(quantity)
           expect(level.available_count).to eq(available_before)
+          expect(level.available_count).to eq(10 - quantity)
         end
 
         # Typing the placement row as a departure used to retire the promise, so
