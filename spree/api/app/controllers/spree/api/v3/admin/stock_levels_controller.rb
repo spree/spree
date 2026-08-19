@@ -24,7 +24,11 @@ module Spree
               return render_validation_error(count_on_hand_errors) if new_count.nil?
             end
 
-            ActiveRecord::Base.transaction do
+            # Locked around the read: the delta is worked out from the count
+            # this request first saw, so two admins correcting the same level at
+            # once would otherwise each apply a delta measured against a shelf
+            # the other had already moved, and both edits would land.
+            @resource.with_lock do
               @resource.update!(attributes) if attributes.any?
               adjust_count_on_hand(new_count, reason) unless new_count.nil?
             end

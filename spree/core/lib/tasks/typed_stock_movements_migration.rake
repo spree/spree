@@ -161,7 +161,10 @@ module Spree
           stock_level = fulfillment.stock_location.stock_level_or_create(variant)
           # A direct column write, not a `received` movement: no goods
           # arrived. The allocation below is what gives the jump a cause.
-          stock_level.update_columns(count_on_hand: stock_level.count_on_hand + quantity, updated_at: Time.current)
+          #
+          # Incremented in the database rather than read and written back, so a
+          # count that moved since it was read is added to rather than replaced.
+          Spree::StockLevel.update_counters(stock_level.id, count_on_hand: quantity, touch: true)
           fulfillment.stock_location.allocate(variant, quantity, fulfillment)
         end
       end

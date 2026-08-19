@@ -112,13 +112,20 @@ module Spree
     # not drive the counter below zero, which would make the level look more
     # available than it is.
     #
+    # Locked, unlike its counterpart {#adjust_allocated_count}: the cap is read
+    # from the same counter the write then moves, so two concurrent releases
+    # reading before either writes would both pass a cap that only covered one
+    # of them.
+    #
     # @param units [Integer]
     # @return [void]
     def release_allocated_count(units)
-      withdrawn = [units.abs, allocated_count].min
-      return if withdrawn.zero?
+      with_lock do
+        withdrawn = [units.abs, allocated_count].min
+        next if withdrawn.zero?
 
-      adjust_allocated_count(-withdrawn)
+        adjust_allocated_count(-withdrawn)
+      end
     end
 
     # Physical stock minus allocated units at this stock level. Distinct from

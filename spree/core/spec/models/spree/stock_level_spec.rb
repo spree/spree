@@ -492,6 +492,39 @@ describe Spree::StockLevel, type: :model do
 
         expect(subject.reload.allocated_count).to eq(0)
       end
+
+      # The cap is read from the counter the write then moves, so it only holds
+      # if both happen as one step. Needs a database with real parallel
+      # connections and row locking, and needs to run outside the test
+      # transaction — a transaction never blocks on its own FOR UPDATE, so
+      # threads sharing one connection interleave freely and prove nothing.
+      context 'released concurrently', if: ENV['DB'] == 'postgres' do
+        self.use_transactional_tests = false
+
+        let!(:concurrent_level) { create(:stock_level, adjust_count_on_hand: false) }
+
+        after do
+          location = concurrent_level.stock_location
+          product = concurrent_level.variant.product
+          Spree::StockMovement.where(stock_level_id: concurrent_level.id).delete_all
+          location.really_destroy!
+          product.really_destroy!
+        end
+
+        it 'never withdraws more promise than the level holds' do
+          concurrent_level.adjust_allocated_count(5)
+
+          4.times.map do
+            Thread.new do
+              ActiveRecord::Base.connection_pool.with_connection do
+                Spree::StockLevel.find(concurrent_level.id).release_allocated_count(5)
+              end
+            end
+          end.each(&:join)
+
+          expect(concurrent_level.reload.allocated_count).to eq(0)
+        end
+      end
     end
 
     describe '#available_count' do
