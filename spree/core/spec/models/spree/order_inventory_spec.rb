@@ -250,6 +250,25 @@ describe Spree::OrderInventory, type: :model do
           expect(stock_level.reload.allocated_count).to eq(allocated_before - removed)
         end
       end
+
+      # Draining a fulfillment destroys it, and a destroyed fulfillment reports
+      # no allocation — so releasing after the destroy withdraws nothing and
+      # strands the promise on the level with nothing left to release it.
+      context 'when every unit is removed, so the fulfillment is destroyed' do
+        before { order.touch :completed_at }
+
+        it 'withdraws the promise before the fulfillment goes' do
+          stock_level = shipment.stock_location.stock_level(variant)
+          held = shipment.fulfillment_items.sum(&:quantity)
+          shipment.stock_location.allocate(variant, held, shipment)
+          allocated_before = stock_level.reload.allocated_count
+
+          subject.send(:remove_from_shipment, shipment, held)
+
+          expect(shipment).to be_destroyed
+          expect(stock_level.reload.allocated_count).to eq(allocated_before - held)
+        end
+      end
     end
   end
 

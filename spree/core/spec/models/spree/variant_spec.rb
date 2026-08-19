@@ -1586,8 +1586,17 @@ describe Spree::Variant, type: :model do
         expect(si.count_on_hand).to eq(99)
       end
     end
-  end
+  
+    # #stock_levels_attributes= already skips an id that does not resolve, so
+    # the two write paths must agree rather than one raising a 500.
+    it 'skips a stock location id that does not resolve' do
+      variant = create(:variant)
 
+      expect {
+        variant.stock_levels = [{ stock_location_id: 'sloc_DoesNotExist', count_on_hand: 4 }]
+      }.not_to raise_error
+    end
+  end
   describe '#options=' do
     it 'sets option values via set_option_value' do
       product = create(:product)

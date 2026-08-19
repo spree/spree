@@ -445,6 +445,32 @@ describe Spree::StockLevel, type: :model do
     end
   end
 
+  describe 'filling backorders on restock' do
+    # Splitting leaves `unit.quantity` holding the remainder, so subtracting it
+    # instead of what was filled leaves budget over — and the next unit is then
+    # filled from stock that has already been spoken for.
+    it 'fills only as many units as arrived, across several backordered units' do
+      order = create(:order_ready_to_ship, line_items_count: 1)
+      fulfillment = order.fulfillments.first
+      variant = fulfillment.manifest.first.variant
+      line_item = fulfillment.fulfillment_items.first.line_item
+
+      fulfillment.fulfillment_items.first.update_columns(quantity: 7, status: 'backordered')
+      fulfillment.fulfillment_items.create!(
+        variant: variant, quantity: 4, status: 'backordered',
+        order: order, line_item: line_item
+      )
+
+      level = fulfillment.stock_location.stock_level_or_create(variant)
+      level.update_columns(count_on_hand: 0, allocated_count: 0)
+
+      level.send(:process_backorders, 5)
+
+      filled = fulfillment.fulfillment_items.reload.select(&:on_hand?).sum(&:quantity)
+      expect(filled).to eq(5)
+    end
+  end
+
   describe 'allocation counters' do
     subject { create(:stock_level, adjust_count_on_hand: false) }
 

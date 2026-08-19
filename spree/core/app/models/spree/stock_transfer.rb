@@ -49,6 +49,15 @@ module Spree
         return false
       end
 
+      # Before the availability check, which a negative quantity would sail
+      # through — every count is greater than a negative number. The move would
+      # then write a negative in both directions and take stock off the source
+      # *and* the destination.
+      unless positive_quantities?(variants)
+        errors.add(:base, Spree.t('stock_transfer.errors.invalid_quantity'))
+        return false
+      end
+
       unless variants_available_in_source_location?(source_location, variants)
         errors.add(:base, Spree.t('stock_transfer.errors.variants_unavailable'))
         return false
@@ -94,6 +103,10 @@ module Spree
     # Each variant needs enough available stock for the quantity being moved,
     # not merely some. Checking only for a positive balance let a transfer take
     # more than the shelf held and leave it negative.
+    def positive_quantities?(variants)
+      variants.all? { |_variant, quantity| quantity.to_i.positive? }
+    end
+
     def variants_available_in_source_location?(source_location, variants)
       return true if source_location.nil?
 

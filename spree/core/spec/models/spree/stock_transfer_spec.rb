@@ -115,6 +115,36 @@ module Spree
       end
     end
 
+    describe 'quantity guards' do
+      let(:source) { create(:stock_location_with_items) }
+      let(:destination) { create(:stock_location) }
+      let(:variant) { source.stock_levels.first.variant }
+
+      # A negative quantity sails through the availability check — every count
+      # is greater than a negative number — and then takes stock off the source
+      # *and* the destination.
+      it 'refuses a negative transfer quantity' do
+        transfer = described_class.new
+
+        expect(transfer.transfer(source, destination, { variant => -5 })).to be false
+        expect(transfer.errors[:base]).to be_present
+      end
+
+      it 'refuses a zero transfer quantity' do
+        transfer = described_class.new
+
+        expect(transfer.transfer(source, destination, { variant => 0 })).to be false
+      end
+
+      # A receive has no source, so the availability check never runs and only
+      # this guard stands between a typo and stock disappearing.
+      it 'refuses a negative receive quantity' do
+        transfer = described_class.new
+
+        expect(transfer.receive(destination, { variant => -5 })).to be false
+      end
+    end
+
     describe '#receive' do
       subject { stock_transfer.receive(destination_location, { variant => 5 }) }
 

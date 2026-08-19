@@ -19,6 +19,11 @@ module Spree
             new_count = attributes.delete('count_on_hand')
             reason = attributes.delete('reason').presence || Spree::StockMovement.default_adjustment_reason
 
+            unless new_count.nil?
+              new_count = parse_count(new_count)
+              return render_validation_error(count_on_hand_errors) if new_count.nil?
+            end
+
             ActiveRecord::Base.transaction do
               @resource.update!(attributes) if attributes.any?
               adjust_count_on_hand(new_count, reason) unless new_count.nil?
@@ -34,10 +39,27 @@ module Spree
           # The movement carries the delta, not the new count — it records what
           # changed, and the column follows from it.
           def adjust_count_on_hand(new_count, reason)
-            delta = new_count.to_i - @resource.count_on_hand
+            delta = new_count - @resource.count_on_hand
             return if delta.zero?
 
             @resource.stock_location.adjust(@resource.variant, delta, reason: reason)
+          end
+
+          # Strictly, because `to_i` reads anything unparseable as zero — and a
+          # zero here is not a no-op but an instruction to write the whole shelf
+          # off. A typo must be refused, never obeyed.
+          #
+          # @return [Integer, nil] nil when the value is not a whole number
+          def parse_count(value)
+            return value if value.is_a?(Integer)
+
+            Integer(value.to_s.strip, exception: false)
+          end
+
+          def count_on_hand_errors
+            Spree::StockLevel.new.errors.tap do |errors|
+              errors.add(:count_on_hand, :not_an_integer)
+            end
           end
 
           def model_class

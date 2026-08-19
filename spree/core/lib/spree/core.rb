@@ -135,6 +135,21 @@ module Spree
         Spree::Deprecation.warn('Spree.queues.taxons is deprecated and will be removed in Spree 6.1. Use Spree.queues.categories instead.') if defined?(Spree::Deprecation)
         categories
       end
+
+      # @deprecated Renamed with the stock level rename in 6.0; removed in 6.1.
+      #
+      # The writer matters as much as the reader here: this is an OpenStruct, so
+      # an existing initializer assigning the old name would quietly define a
+      # field nobody reads and its jobs would fall back to the default queue.
+      queues.define_singleton_method(:stock_location_stock_items) do
+        Spree::Deprecation.warn('Spree.queues.stock_location_stock_items is deprecated and will be removed in Spree 6.1. Use Spree.queues.stock_location_stock_levels instead.') if defined?(Spree::Deprecation)
+        stock_location_stock_levels
+      end
+
+      queues.define_singleton_method(:stock_location_stock_items=) do |value|
+        Spree::Deprecation.warn('Spree.queues.stock_location_stock_items= is deprecated and will be removed in Spree 6.1. Use Spree.queues.stock_location_stock_levels= instead.') if defined?(Spree::Deprecation)
+        self.stock_location_stock_levels = value
+      end
     end
   end
 

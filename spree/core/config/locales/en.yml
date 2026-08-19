@@ -1602,6 +1602,7 @@ en:
     stock_movements: Stock Movements
     stock_transfer:
       errors:
+        invalid_quantity: Every variant must move a quantity above zero
         must_have_variant: You must add at least one variant
         same_location: cannot be the same as the destination location
         variants_unavailable: Some variants are not available on %{stock}

@@ -629,6 +629,10 @@ module Spree
       stock_levels_params.each do |stock_data|
         stock_data = stock_data.to_h.with_indifferent_access
         location = Spree::StockLocation.find_by_param(stock_data[:stock_location_id])
+        # A stale or foreign location id is skipped rather than raising, which
+        # is what #stock_levels_attributes= already does for the same payload.
+        next if location.nil?
+
         location_ids_in_payload << location.id
         set_stock(stock_data[:count_on_hand], stock_data[:backorderable], location)
       end

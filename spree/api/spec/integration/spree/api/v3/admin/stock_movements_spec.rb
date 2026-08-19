@@ -47,8 +47,8 @@ RSpec.describe 'Admin Stock Movements API', type: :request, swagger_doc: 'api-re
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
       parameter name: :'q[kind_eq]', in: :query, type: :string, required: false,
                 description: "Filter by kind ('received', 'allocated', 'shipped', 'released', 'adjusted')"
-      parameter name: :'q[stock_level_id_eq]', in: :query, type: :integer, required: false,
-                description: 'Filter by stock level'
+      parameter name: :'q[stock_level_id_eq]', in: :query, type: :string, required: false,
+                description: 'Filter by stock level, e.g. sl_1234567890'
       parameter name: :fields, in: :query, type: :string, required: false,
                 description: 'Comma-separated list of fields to include. id is always included.'
 

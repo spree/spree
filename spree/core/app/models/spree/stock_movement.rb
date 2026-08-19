@@ -49,6 +49,12 @@ module Spree
       less_than_or_equal_to: QUANTITY_LIMITS[:max],
       only_integer: true
     }, allow_nil: true
+    # The three order-driven kinds carry their direction in the kind, so they
+    # are written positive and read through `abs`. Accepting a negative would
+    # store a row whose sign contradicts the change it caused — the ledger
+    # would say one thing and the shelf another.
+    validates :quantity, numericality: { greater_than: 0 }, allow_nil: true,
+                         if: -> { allocated? || released? || shipped? }
     validates :reason, presence: true, if: :adjusted?
 
     scope :recent, -> { order(created_at: :desc) }

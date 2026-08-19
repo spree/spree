@@ -28,6 +28,27 @@ describe Spree::StockMovement, type: :model do
     end
   end
 
+  describe 'quantity sign' do
+    let(:stock_level) { create(:stock_level, count_on_hand: 10, backorderable: false) }
+
+    # The kind carries the direction and the effect is read through `abs`, so a
+    # negative row would say one thing while the shelf did another.
+    %w[allocated released shipped].each do |kind|
+      it "refuses a negative quantity for #{kind}" do
+        movement = build(:stock_movement, kind: kind, quantity: -2, stock_level: stock_level)
+
+        expect(movement).not_to be_valid
+        expect(movement.errors[:quantity]).to be_present
+      end
+    end
+
+    it 'still allows a negative adjusted quantity, which writes stock off' do
+      movement = build(:stock_movement, kind: 'adjusted', quantity: -2, reason: 'Shrinkage', stock_level: stock_level)
+
+      expect(movement).to be_valid
+    end
+  end
+
   describe 'Constants' do
     describe 'KINDS' do
       it 'names every movement kind' do

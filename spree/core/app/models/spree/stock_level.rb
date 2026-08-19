@@ -157,6 +157,12 @@ module Spree
       units.each do |unit|
         break unless number.positive?
 
+        # What this unit takes of the arriving stock — the whole unit, or the
+        # part of it the arrival covers. Read before the split, because the
+        # split leaves `unit.quantity` holding the *remainder*, and subtracting
+        # that would let the next unit be filled from stock already spoken for.
+        filled = [unit.quantity, number].min
+
         if unit.quantity > number
           # if required quantity is greater than available
           # split off and fulfill that
@@ -165,7 +171,7 @@ module Spree
         else
           unit.fill_backorder
         end
-        number -= unit.quantity
+        number -= filled
       end
     end
 

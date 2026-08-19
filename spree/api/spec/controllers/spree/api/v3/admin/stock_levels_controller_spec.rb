@@ -51,6 +51,19 @@ RSpec.describe Spree::Api::V3::Admin::StockLevelsController, type: :controller d
       expect(movement.quantity).to eq(42 - count_before)
     end
 
+    # `to_i` reads anything unparseable as zero, and a zero here is not a
+    # no-op — it is an instruction to write the whole shelf off.
+    it 'refuses a count that is not a whole number instead of zeroing the shelf' do
+      count_before = stock_level.count_on_hand
+
+      expect {
+        patch :update, params: { id: stock_level.prefixed_id, count_on_hand: 'invalid' }, as: :json
+      }.not_to change { stock_level.reload.count_on_hand }.from(count_before)
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(stock_level.stock_movements.adjusted).to be_empty
+    end
+
     it 'stores a client-supplied reason on the movement' do
       patch :update, params: { id: stock_level.prefixed_id, count_on_hand: 42, reason: 'Damaged in transit' }, as: :json
 

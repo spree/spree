@@ -143,16 +143,22 @@ module Spree
         inventory_unit.save! if inventory_unit.persisted?
       end
 
-      shipment.destroy if shipment.fulfillment_items.sum(:quantity).zero?
-
       # Removing units from a placed order withdraws their promise. On-hand
       # and backordered units go back the same way now — nothing physical
       # moved either way.
+      #
+      # Before the fulfillment is destroyed, never after: a destroyed record
+      # reports no allocation (`allocated_quantities` reads nothing for a
+      # record that is not persisted), so releasing afterwards would withdraw
+      # zero and strand the promise on the level with nothing left to release
+      # it.
       if order.completed? && removed_quantity.positive? && variant.should_track_inventory?
         # Only this fulfillment's own promise can be withdrawn.
         released = [removed_quantity, shipment.allocated_quantities[variant.id].to_i].min
         shipment.stock_location.release(variant, released, shipment) if released.positive?
       end
+
+      shipment.destroy if shipment.fulfillment_items.sum(:quantity).zero?
 
       removed_quantity
     end

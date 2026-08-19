@@ -66,6 +66,10 @@ module Spree
         stock_levels.map do |stock_level|
           new_stock_level = stock_level.dup
           new_stock_level.count_on_hand = 0
+          # A promise belongs to the order that made it, never to a copy of the
+          # product it was made against. Carried over, the duplicate would open
+          # holding stock for someone else's order and read as negative.
+          new_stock_level.allocated_count = 0
           new_stock_level
         end
       end
