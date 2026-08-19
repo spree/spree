@@ -97,8 +97,8 @@ module Spree
               next true if line_item.variant.digital?
               next true unless line_item.variant.should_track_inventory?
 
-              stock_item = location.stock_item(line_item.variant)
-              stock_item.present? && stock_item.count_on_hand >= line_item.quantity
+              stock_level = location.stock_level(line_item.variant)
+              stock_level.present? && stock_level.available_count >= line_item.quantity
             end
           end
         end

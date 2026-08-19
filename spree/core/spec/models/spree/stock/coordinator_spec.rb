@@ -85,7 +85,7 @@ module Spree
         let!(:product) { create(:product) }
 
         let!(:order) do
-          product.stock_items.map { |stock_item| stock_item.adjust_count_on_hand(1) }
+          product.stock_levels.map { |stock_level| stock_level.adjust_count_on_hand(1) }
           line_item = create(:line_item, product: product, variant: product.default_variant, quantity: 2)
           line_item.order
         end

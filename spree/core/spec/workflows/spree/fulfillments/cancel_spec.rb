@@ -15,13 +15,30 @@ module Spree
       expect(fulfillment.reload).to be_canceled
     end
 
-    it 'puts the units back on the shelf' do
+    # The goods never left the shelf — placement only promised them — so
+    # cancelling withdraws the promise and the physical count stays put.
+    it 'withdraws the promise, on-hand and backordered units alike' do
       variant = fulfillment.fulfillment_items.first.variant
-      stock_item = fulfillment.stock_location.stock_item(variant)
+      quantity = fulfillment.fulfillment_items.where(variant_id: variant.id).sum(:quantity)
+      stock_level = fulfillment.stock_location.stock_level(variant)
+      fulfillment.stock_location.allocate(variant, quantity, fulfillment)
+      count_on_hand_before = stock_level.reload.count_on_hand
 
-      expect { execute }.to change { stock_item.reload.count_on_hand }.by(
-        fulfillment.fulfillment_items.where(variant_id: variant.id).sum(:quantity)
-      )
+      expect { execute }.to change { stock_level.reload.allocated_count }.by(-quantity)
+
+      expect(stock_level.reload.count_on_hand).to eq(count_on_hand_before)
+      expect(stock_level.stock_movements.released.last.fulfillment).to eq(fulfillment)
+    end
+
+    # A fulfillment created before typed movements holds no promise, so there
+    # is nothing to withdraw — and withdrawing one it never made would take
+    # units another order is waiting for.
+    it 'withdraws nothing when the fulfillment holds no promise' do
+      variant = fulfillment.fulfillment_items.first.variant
+      stock_level = fulfillment.stock_location.stock_level(variant)
+      stock_level.update_column(:allocated_count, 4)
+
+      expect { execute }.not_to change { stock_level.reload.allocated_count }
     end
 
     # Fulfillment#provider builds a fresh Manual provider per call, so the
@@ -37,7 +54,7 @@ module Spree
 
     # The whole reason this moved out of the transition callback: a slow or
     # failing carrier must not hold the stock movements' row locks, and must
-    # not roll back a restock that already happened.
+    # not roll back a release that already happened.
     it 'notifies the provider only after the restock has committed' do
       open_transactions = nil
       allow(fulfillment).to receive(:provider).and_return(provider)

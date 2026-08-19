@@ -1,13 +1,13 @@
 module Spree
   module Fulfillments
     # Brings a canceled fulfillment back: the goods are going out after all, so
-    # their units come off the shelf again and the fulfillment returns to
-    # pending or ready depending on what the owning order can support.
+    # their units are promised again and the fulfillment returns to
+    # unfulfilled.
     #
-    # In the workflow tier for symmetry with Cancel — unstocking is a stock
+    # In the workflow tier for symmetry with Cancel — allocating is a stock
     # movement, and a stock movement belongs in an explicit transaction rather
     # than a transition callback where a failure would leave the status changed
-    # and the shelf wrong.
+    # and the ledger wrong.
     class Resume < Spree::Workflow
       hooks :validate, :after_resume
 
@@ -23,7 +23,7 @@ module Spree
         step :ensure_resumable
 
         ApplicationRecord.transaction do
-          step :unstock_units
+          step :allocate_units
           step :mark_resumed
         end
 
@@ -39,15 +39,17 @@ module Spree
         failure(fulfillment, Spree.t('fulfillments.errors.cannot_resume'))
       end
 
-      # Takes the units back off the shelf. Runs before the transition so a
-      # variant that cannot be unstocked aborts while the fulfillment is still
-      # canceled, rather than leaving it live with stock never taken.
+      # Reinstating a fulfillment re-promises its units. Nothing physical
+      # moves — the goods are still on the shelf and only leave when the
+      # parcel does. Runs before the transition so a failure leaves the
+      # fulfillment canceled rather than live with no promise behind it.
       # Untracked variants are skipped — nothing counts them.
-      def unstock_units
+      def allocate_units
         fulfillment.manifest.each do |item|
           next unless item.variant.track_inventory?
+          next unless item.quantity.positive?
 
-          fulfillment.stock_location.unstock(item.variant, item.quantity, fulfillment)
+          fulfillment.stock_location.allocate(item.variant, item.quantity, fulfillment)
         end
       end
 

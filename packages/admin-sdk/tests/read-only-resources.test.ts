@@ -140,11 +140,11 @@ describe('variants', () => {
       )
 
       const res = await createTestClient().variants.get('variant_abc123', {
-        expand: ['stock_items'],
+        expand: ['stock_levels'],
       })
 
       expect(res.id).toBe('variant_abc123')
-      expect(url!.searchParams.get('expand')).toBe('stock_items')
+      expect(url!.searchParams.get('expand')).toBe('stock_levels')
     })
   })
 })

@@ -99,16 +99,16 @@ RSpec.describe 'Spree::Returns workflows' do
 
     it 'restocks resellable goods' do
       variant = line.variant
-      stock_item = return_record.stock_location.stock_item_or_create(variant)
+      stock_level = return_record.stock_location.stock_level_or_create(variant)
 
       expect { Spree::Returns::Receive.call(return_record: return_record) }.
-        to change { stock_item.reload.count_on_hand }.by(line.quantity)
+        to change { stock_level.reload.count_on_hand }.by(line.quantity)
     end
 
     # The whole reason receiving is a workflow and not a state transition.
     it 'records a partial, non-resellable receipt without restocking' do
       variant = line.variant
-      stock_item = return_record.stock_location.stock_item_or_create(variant)
+      stock_level = return_record.stock_location.stock_level_or_create(variant)
 
       result = Spree::Returns::Receive.call(
         return_record: return_record,
@@ -118,7 +118,7 @@ RSpec.describe 'Spree::Returns workflows' do
       expect(result).to be_success
       expect(line.reload.received_quantity).to eq(1)
       expect(line.resellable).to be(false)
-      expect(stock_item.reload.count_on_hand).to eq(stock_item.count_on_hand)
+      expect(stock_level.reload.count_on_hand).to eq(stock_level.count_on_hand)
     end
 
     it 'refuses to receive more than was requested' do

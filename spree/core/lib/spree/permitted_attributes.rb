@@ -55,7 +55,7 @@ module Spree
       :shipping_method_attributes,
       :channel_attributes,
       :source_attributes,
-      :stock_item_attributes,
+      :stock_level_attributes,
       :stock_location_attributes,
       :stock_movement_attributes,
       :stock_transfer_attributes,
@@ -228,7 +228,7 @@ module Spree
       :gateway_payment_profile_id, :last_digits, :name, :encrypted_data
     ]
 
-    @@stock_item_attributes = [:variant_id, :stock_location_id, :backorderable, :count_on_hand, { metadata: {} }]
+    @@stock_level_attributes = [:variant_id, :stock_location_id, :backorderable, :count_on_hand, { metadata: {} }]
 
     @@stock_location_attributes = [
       :name, :admin_name, :active, :address1, :address2, :city, :zipcode, :company,
@@ -237,11 +237,12 @@ module Spree
     ]
 
     @@stock_movement_attributes = [
-      :quantity, :stock_item, :stock_item_id, :originator, :action
+      :quantity, :kind, :reason, :stock_level, :stock_level_id,
+      :order_id, :fulfillment_id, :return_id, :exchange_id, :stock_transfer_id
     ]
 
     @@stock_transfer_attributes = [:source_location_id, :destination_location_id, :reference,
-                                   stock_movements_attributes: [:variant_id, :quantity, :originator_id, :stock_item_id]]
+                                   stock_movements_attributes: [:variant_id, :quantity, :kind, :stock_level_id]]
 
     @@store_attributes = [:name, :url, :seo_title, :code, :meta_keywords,
                           :meta_description, :default_currency, :default_country_code, :mail_from_address,
@@ -284,7 +285,7 @@ module Spree
       :hs_code, :country_of_origin, :customs_description,
       {
         options: [:id, :name, :option_value_presentation, :option_value_name, :position, :_destroy],
-        stock_items_attributes: [:id, :count_on_hand, :stock_location_id, :backorderable, :_destroy],
+        stock_levels_attributes: [:id, :count_on_hand, :stock_location_id, :backorderable, :_destroy],
         prices_attributes: [:id, :amount, :compare_at_amount, :currency, :_destroy],
         option_value_variants_attributes: [:id, :option_value_id, :_destroy],
         option_value_ids: []

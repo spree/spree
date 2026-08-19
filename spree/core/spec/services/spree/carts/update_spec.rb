@@ -638,7 +638,7 @@ module Spree
         let(:variant) { create(:variant) }
 
         before do
-          variant.stock_items.first.update!(count_on_hand: 10)
+          variant.stock_levels.first.update!(count_on_hand: 10)
           store.products << variant.product unless store.products.include?(variant.product)
         end
 
@@ -751,8 +751,8 @@ module Spree
         end
 
         before do
-          cart.line_items.first.variant.stock_items.first.update!(backorderable: false)
-          cart.line_items.first.variant.stock_items.first.set_count_on_hand(20)
+          cart.line_items.first.variant.stock_levels.first.update!(backorderable: false)
+          cart.line_items.first.variant.stock_levels.first.set_count_on_hand(20)
         end
 
         context 'cart → checkout transition' do
@@ -792,11 +792,11 @@ module Spree
           let(:params) { { email: 'changed@example.com', shipping_address: address_params } }
 
           before do
-            # Bump line_item quantity above what stock_item can satisfy so that
-            # select_stock_item still picks the item (count_on_hand > 0) but
+            # Bump line_item quantity above what stock_level can satisfy so that
+            # select_stock_level still picks the item (count_on_hand > 0) but
             # the availability check fails.
             cart.line_items.first.update_column(:quantity, 5)
-            cart.line_items.first.variant.stock_items.first.set_count_on_hand(2)
+            cart.line_items.first.variant.stock_levels.first.set_count_on_hand(2)
           end
 
           it 'returns failure and rolls back the cart update' do

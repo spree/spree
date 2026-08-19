@@ -653,14 +653,24 @@ describe Spree::Shipment, type: :model do
       expect(shipment.status).to eq 'canceled'
     end
 
-    # Restocking belongs to Spree::Fulfillments::Cancel now; the deprecated
-    # shell is all that survives on the model. Covered by
+    # Withdrawing the promise belongs to Spree::Fulfillments::Cancel now; the
+    # deprecated shell is all that survives on the model. Covered by
     # spec/workflows/spree/fulfillments/cancel_spec.rb.
-    it 'restocks the items through the deprecated shell' do
+    it 'releases the items through the deprecated shell' do
+      allow(shipment).to receive(:fulfillment_items).and_return([inventory_unit])
+      allow(shipment).to receive(:provider).and_return(instance_double(Spree::FulfillmentProvider::Manual, cancel_fulfillment: true))
+      # Only a promise the fulfillment actually holds can be withdrawn.
+      allow(shipment).to receive(:allocated_quantities).and_return(variant.id => 1)
+      shipment.stock_location = create(:stock_location)
+      expect(shipment.stock_location).to receive(:release).with(variant, 1, shipment)
+      shipment.after_cancel
+    end
+
+    it 'withdraws nothing through the shell when it holds no promise' do
       allow(shipment).to receive(:fulfillment_items).and_return([inventory_unit])
       allow(shipment).to receive(:provider).and_return(instance_double(Spree::FulfillmentProvider::Manual, cancel_fulfillment: true))
       shipment.stock_location = create(:stock_location)
-      expect(shipment.stock_location).to receive(:restock).with(variant, 1, shipment)
+      expect(shipment.stock_location).not_to receive(:release)
       shipment.after_cancel
     end
 
@@ -707,20 +717,20 @@ describe Spree::Shipment, type: :model do
       expect(shipment.reload.status).to eq 'unfulfilled'
     end
 
-    it 'unstocks them items' do
+    it 're-promises the items' do
       allow(shipment).to receive(:fulfillment_items).and_return([inventory_unit])
       shipment.stock_location = create(:stock_location)
-      expect(shipment.stock_location).to receive(:unstock).with(variant, 1, shipment)
+      expect(shipment.stock_location).to receive(:allocate).with(variant, 1, shipment)
       shipment.after_resume
     end
 
     context 'for a shipment item that does not track inventory' do
       before { variant.update(track_inventory: false) }
 
-      it 'skips unstocking the shipment item' do
+      it 'skips allocating the shipment item' do
         allow(shipment).to receive(:fulfillment_items).and_return([inventory_unit])
         shipment.stock_location = create(:stock_location)
-        expect(shipment.stock_location).not_to receive(:unstock)
+        expect(shipment.stock_location).not_to receive(:allocate)
         shipment.after_resume
       end
     end
@@ -750,7 +760,15 @@ describe Spree::Shipment, type: :model do
         let(:paid_order) { create(:order_ready_to_ship) }
         let(:fulfillment) { paid_order.fulfillments.first }
 
-        before { fulfillment.update_column(:status, status) }
+        before do
+          # A placed order's goods were on the shelf when it was placed; the
+          # factory never puts them there, and a dispatch the shelf cannot
+          # cover is refused unless it is forced.
+          fulfillment.manifest.each do |item|
+            fulfillment.stock_location.stock_level_or_create(item.variant).update_column(:count_on_hand, 10)
+          end
+          fulfillment.update_column(:status, status)
+        end
 
         it 'updates fulfilled_at timestamp' do
           Spree.fulfillment_fulfill_workflow.call(fulfillment: fulfillment)
@@ -1047,7 +1065,7 @@ describe Spree::Shipment, type: :model do
     let(:variant) { order.line_items.first.variant }
 
     before do
-      perform_enqueued_jobs(only: Spree::StockLocations::StockItems::CreateJob)
+      perform_enqueued_jobs(only: Spree::StockLocations::StockLevels::CreateJob)
       shipping_method = order.fulfillments.first.shipping_method
       shipping_method.calculator.preferences[:amount] = order.fulfillments.first.cost
       shipping_method.calculator.save!

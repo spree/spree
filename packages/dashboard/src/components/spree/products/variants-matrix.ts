@@ -78,7 +78,7 @@ export function optionsKey(options: { name: string; value: string }[]): string {
 }
 
 export interface ReconcileResult {
-  // Carries persisted id/sku/prices/stock_items forward for matched combos,
+  // Carries persisted id/sku/prices/stock_levels forward for matched combos,
   // and stamps new entries with defaults. Position is the array index.
   next: VariantFormValues[]
   // Options-keys of variants that no longer match any generated combination
@@ -99,7 +99,7 @@ export interface ReconcileResult {
 // to show a confirm-before-drop banner; "Keep all" dismisses the banner
 // without changing the array, "Remove" filters them out.
 //
-// Blank variants ship with empty `prices` + `stock_items`. The inventory
+// Blank variants ship with empty `prices` + `stock_levels`. The inventory
 // grid renders editable rows for every (variant × location) and creates
 // entries on first edit; the pricing editor does the same per currency.
 // No pre-seeding here means the payload stays clean — only locations the
@@ -156,7 +156,7 @@ export function reconcileVariants(
 // Does this variant carry merchant data we'd lose if dropped?
 //
 // Server-propagated default variants come back with `weight: 0` (NOT NULL
-// column with default) and zero-count stock_items for every active location.
+// column with default) and zero-count stock_levels for every active location.
 // Treat those zero/default sentinels as "no data" — only truthy fields
 // count the row as carrying intent. Without this, every saved
 // single-variant product would be treated as an orphan on upgrade and the
@@ -173,7 +173,7 @@ function variantHasMerchantData(v: VariantFormValues): boolean {
     !!v.sku ||
     !!v.barcode ||
     (v.prices?.length ?? 0) > 0 ||
-    (v.stock_items?.some((s) => (s.count_on_hand ?? 0) > 0) ?? false) ||
+    (v.stock_levels?.some((s) => (s.count_on_hand ?? 0) > 0) ?? false) ||
     (v.weight ?? 0) > 0 ||
     (v.height ?? 0) > 0 ||
     (v.width ?? 0) > 0 ||
@@ -199,7 +199,7 @@ export function blankVariant(
     track_inventory: true,
     tax_category_id: null,
     prices: [],
-    stock_items: [],
+    stock_levels: [],
   }
 }
 

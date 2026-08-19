@@ -3,8 +3,8 @@ require 'spec_helper'
 describe Spree::StockReservations::Reserve do
   let(:store) { create(:store) }
   let(:variant) { create(:variant) }
-  let!(:stock_location) { variant.stock_items.first.stock_location.tap { |sl| sl.update!(active: true) } }
-  let!(:stock_item) { variant.stock_items.first.tap { |si| si.update!(backorderable: false); si.set_count_on_hand(10) } }
+  let!(:stock_location) { variant.stock_levels.first.stock_location.tap { |sl| sl.update!(active: true) } }
+  let!(:stock_level) { variant.stock_levels.first.tap { |si| si.update!(backorderable: false); si.set_count_on_hand(10) } }
   let(:order) { create(:order, store: store) }
   let!(:line_item) { create(:line_item, order: order, variant: variant, quantity: 3) }
 
@@ -18,7 +18,7 @@ describe Spree::StockReservations::Reserve do
       expect(result).to be_success
 
       reservation = Spree::StockReservation.last
-      expect(reservation.stock_item).to eq(stock_item)
+      expect(reservation.stock_level).to eq(stock_level)
       expect(reservation.line_item).to eq(line_item)
       expect(reservation.order).to eq(order)
       expect(reservation.quantity).to eq(3)
@@ -38,19 +38,19 @@ describe Spree::StockReservations::Reserve do
     end
 
     it 'fails when stock is insufficient and rolls back' do
-      stock_item.set_count_on_hand(1)
+      stock_level.set_count_on_hand(1)
       expect { result }.not_to change(Spree::StockReservation, :count)
       expect(result).to be_failure
       expect(result.error.to_s).to include('available')
     end
 
     it 'subtracts other orders\' reservations when checking availability' do
-      stock_item.set_count_on_hand(5)
+      stock_level.set_count_on_hand(5)
       other_order = create(:order, store: store)
       other_line_item = create(:line_item, order: other_order, variant: variant, quantity: 4)
       create(
         :stock_reservation,
-        stock_item: stock_item,
+        stock_level: stock_level,
         line_item: other_line_item,
         order: other_order,
         quantity: 4,
@@ -61,9 +61,9 @@ describe Spree::StockReservations::Reserve do
       expect(result).to be_failure
     end
 
-    it 'accumulates per stock_item across line items so the same SKU twice cannot oversell' do
+    it 'accumulates per stock_level across line items so the same SKU twice cannot oversell' do
       # 5 units on hand, two line items each wanting 3 → total demand 6, must fail.
-      stock_item.set_count_on_hand(5)
+      stock_level.set_count_on_hand(5)
       create(:line_item, order: order, variant: variant, quantity: 3)
 
       expect(result).to be_failure
@@ -71,7 +71,7 @@ describe Spree::StockReservations::Reserve do
     end
 
     it 'skips backorderable stock items' do
-      stock_item.update!(backorderable: true)
+      stock_level.update!(backorderable: true)
       expect { result }.not_to change(Spree::StockReservation, :count)
       expect(result).to be_success
     end

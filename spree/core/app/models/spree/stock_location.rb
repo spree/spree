@@ -21,9 +21,9 @@ module Spree
 
     has_many :fulfillments, class_name: 'Spree::Fulfillment'
     has_many :shipments, class_name: 'Spree::Fulfillment', foreign_key: :stock_location_id, deprecated: true
-    has_many :stock_items, dependent: :delete_all, inverse_of: :stock_location
-    has_many :variants, through: :stock_items
-    has_many :stock_movements, through: :stock_items
+    has_many :stock_levels, class_name: 'Spree::StockLevel', dependent: :delete_all, inverse_of: :stock_location
+    has_many :variants, through: :stock_levels
+    has_many :stock_movements, through: :stock_levels
 
     has_iso_geography
 
@@ -42,7 +42,7 @@ module Spree
     scope :pickup_enabled, -> { where(pickup_enabled: true) }
     scope :order_default, -> { order(default: :desc, name: :asc) }
 
-    after_create :create_stock_items, if: :propagate_all_variants?
+    after_create :create_stock_levels, if: :propagate_all_variants?
     after_save :ensure_one_default
     after_update :conditional_touch_records
 
@@ -54,35 +54,59 @@ module Spree
 
     # Wrapper for creating a new stock item respecting the backorderable config
     def propagate_variant(variant)
-      stock_items.create!(variant: variant, backorderable: backorderable_default)
+      stock_levels.create!(variant: variant, backorderable: backorderable_default)
     end
 
     # Return either an existing stock item or create a new one. Useful in
     # scenarios where the user might not know whether there is already a stock
     # item for a given variant
-    def set_up_stock_item(variant)
-      stock_item(variant) || propagate_variant(variant)
+    def set_up_stock_level(variant)
+      stock_level(variant) || propagate_variant(variant)
     end
 
-    # Returns an instance of StockItem for the variant id.
+    # Returns an instance of StockLevel for the variant id.
     #
     # @param variant_id [String] The id of a variant.
     #
-    # @return [StockItem] Corresponding StockItem for the StockLocation's variant.
-    def stock_item(variant_id)
-      stock_items.where(variant_id: variant_id).order(:id).first
+    # @return [StockLevel] Corresponding StockLevel for the StockLocation's variant.
+    def stock_level(variant_id)
+      stock_levels.where(variant_id: variant_id).order(:id).first
     end
 
     def stocks?(variant)
-      stock_items.exists?(variant: variant)
+      stock_levels.exists?(variant: variant)
     end
 
-    # Attempts to look up StockItem for the variant, and creates one if not found.
+    # @deprecated Use {#stock_levels}; removed in 6.1.
+    def stock_items
+      Spree::Deprecation.warn('Spree::StockLocation#stock_items is deprecated and will be removed in Spree 6.1. Use #stock_levels instead.')
+      stock_levels
+    end
+
+    # @deprecated Use {#stock_level}; removed in 6.1.
+    def stock_item(variant_id)
+      Spree::Deprecation.warn('Spree::StockLocation#stock_item is deprecated and will be removed in Spree 6.1. Use #stock_level instead.')
+      stock_level(variant_id)
+    end
+
+    # @deprecated Use {#set_up_stock_level}; removed in 6.1.
+    def set_up_stock_item(variant)
+      Spree::Deprecation.warn('Spree::StockLocation#set_up_stock_item is deprecated and will be removed in Spree 6.1. Use #set_up_stock_level instead.')
+      set_up_stock_level(variant)
+    end
+
+    # @deprecated Use {#stock_level_or_create}; removed in 6.1.
+    def stock_item_or_create(variant_or_variant_id)
+      Spree::Deprecation.warn('Spree::StockLocation#stock_item_or_create is deprecated and will be removed in Spree 6.1. Use #stock_level_or_create instead.')
+      stock_level_or_create(variant_or_variant_id)
+    end
+
+    # Attempts to look up StockLevel for the variant, and creates one if not found.
     #
     # @param variant Variant instance or Variant ID
     #
-    # @return [StockItem] Corresponding StockItem for the StockLocation's variant.
-    def stock_item_or_create(variant_or_variant_id)
+    # @return [StockLevel] Corresponding StockLevel for the StockLocation's variant.
+    def stock_level_or_create(variant_or_variant_id)
       if variant_or_variant_id.is_a?(Spree::Variant)
         variant_id = variant_or_variant_id.id
         variant = variant_or_variant_id
@@ -90,7 +114,7 @@ module Spree
         variant_id = variant_or_variant_id
         variant = Spree::Variant.find(variant_or_variant_id)
       end
-      stock_item(variant_id) || propagate_variant(variant)
+      stock_level(variant_id) || propagate_variant(variant)
     end
 
     # Returns the count on hand number for the variant
@@ -99,46 +123,88 @@ module Spree
     #
     # @return [Integer]
     def count_on_hand(variant)
-      stock_item(variant).try(:count_on_hand)
+      stock_level(variant).try(:count_on_hand)
     end
 
     def backorderable?(variant)
-      stock_item(variant).try(:backorderable?)
+      stock_level(variant).try(:backorderable?)
     end
 
-    def restock(variant, quantity, originator = nil, persist: true)
-      move(variant, quantity, originator, persist: persist)
+    # The five stock verbs are the public surface — extensions call these
+    # rather than creating movements themselves, so every row comes out typed
+    # and carrying its cause.
+
+    # Goods arrived: a purchase order, a transfer receipt, a return.
+    #
+    # @param variant [Spree::Variant]
+    # @param quantity [Integer]
+    # @param cause [ApplicationRecord, nil] the record this is happening for
+    # @return [Spree::StockMovement]
+    def restock(variant, quantity, cause = nil, persist: true)
+      move(variant, quantity, kind: 'received', cause: cause, persist: persist)
     end
 
-    def restock_backordered(variant, quantity, _originator = nil)
-      item = stock_item_or_create(variant)
-      item.update_columns(
-        count_on_hand: item.count_on_hand + quantity,
-        updated_at: Time.current
-      )
+    # Goods left.
+    #
+    # @param force [Boolean] record the departure even if it leaves the shelf
+    #   below zero. A merchant forcing a dispatch has decided the parcel left
+    #   whatever the ledger claims.
+    # @return [Spree::StockMovement]
+    def unstock(variant, quantity, cause = nil, persist: true, force: false)
+      move(variant, quantity, kind: 'shipped', cause: cause, persist: persist, force: force)
     end
 
-    def unstock(variant, quantity, originator = nil, persist: true)
-      move(variant, -quantity, originator, persist: persist)
+    # Promises stock to a placed order. The cause is the fulfillment, never
+    # the order: it owns the origin location and the unit split, and the order
+    # comes along with it.
+    #
+    # @param fulfillment [Spree::Fulfillment]
+    # @return [Spree::StockMovement]
+    def allocate(variant, quantity, fulfillment)
+      move(variant, quantity, kind: 'allocated', cause: fulfillment)
     end
 
-    def move(variant, quantity, originator = nil, persist: true)
-      stock_item = stock_item_or_create(variant)
+    # Withdraws a promise — a canceled, relocated or shrunk fulfillment.
+    # Nothing physical moves.
+    #
+    # @param fulfillment [Spree::Fulfillment]
+    # @return [Spree::StockMovement]
+    def release(variant, quantity, fulfillment)
+      move(variant, quantity, kind: 'released', cause: fulfillment)
+    end
+
+    # A manual correction — an inventory count, shrinkage, damage. Signed, so
+    # a negative quantity writes stock off.
+    #
+    # @param reason [String] audit text, required
+    # @return [Spree::StockMovement]
+    def adjust(variant, quantity, reason:)
+      move(variant, quantity, kind: 'adjusted', reason: reason)
+    end
+
+    def move(variant, quantity, kind:, cause: nil, reason: nil, persist: true, force: false)
+      stock_level = stock_level_or_create(variant)
+      attributes = { quantity: quantity, kind: kind, reason: reason, **cause_attributes(cause) }
 
       if persist
-        stock_item.stock_movements.create!(quantity: quantity, originator: originator)
+        stock_level.stock_movements.create!(attributes) { |movement| movement.force = force }
       else
-        originator.stock_movements << stock_item.stock_movements.build(quantity: quantity)
+        # StockTransfer builds its movements before it is saved, so they ride
+        # along on its own association rather than being created here.
+        built = stock_level.stock_movements.build(attributes)
+        built.force = force
+        cause.stock_movements << built
+        built
       end
     end
 
     def fill_status(variant, quantity)
-      if item = stock_item_or_create(variant)
-        if item.count_on_hand >= quantity
+      if item = stock_level_or_create(variant)
+        if item.available_count >= quantity
           on_hand = quantity
           backordered = 0
         else
-          on_hand = item.count_on_hand
+          on_hand = item.available_count
           on_hand = 0 if on_hand < 0
           # A pre-order oversells like a backorder: the shortfall becomes
           # backordered inventory units (the backorder_limit cap is enforced
@@ -190,8 +256,23 @@ module Spree
 
     private
 
-    def create_stock_items
-      Spree::StockLocations::StockItems::CreateJob.perform_later(self)
+    # One cause in, the foreign keys it implies out. A fulfillment brings its
+    # order with it because "which order was this for?" must not cost a join.
+    # The set is closed and core-owned — extensions register causes by adding
+    # a branch here, never by inventing a movement column.
+    def cause_attributes(cause)
+      case cause
+      when Spree::Fulfillment   then { fulfillment: cause, order: cause.order }
+      when Spree::Return        then { return: cause, order: cause.order }
+      when Spree::Exchange      then { exchange: cause, order: cause.order }
+      when Spree::StockTransfer then { stock_transfer: cause }
+      when Spree::Order         then { order: cause }
+      else {}
+      end
+    end
+
+    def create_stock_levels
+      Spree::StockLocations::StockLevels::CreateJob.perform_later(self)
     end
 
     # One default per STORE — scoping to the whole table would let one
@@ -206,7 +287,7 @@ module Spree
     def conditional_touch_records
       return unless active_changed?
 
-      stock_items.update_all(updated_at: Time.current)
+      stock_levels.update_all(updated_at: Time.current)
       variants.update_all(updated_at: Time.current)
     end
   end

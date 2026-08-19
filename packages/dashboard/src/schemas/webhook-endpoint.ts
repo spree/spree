@@ -226,8 +226,8 @@ export const WEBHOOK_EVENT_GROUPS: readonly WebhookEventGroup[] = [
     ],
   },
   {
-    labelKey: 'admin.pages.settings.webhooks.event_groups.stock_item',
-    events: ['stock_item.created', 'stock_item.deleted', 'stock_item.updated'],
+    labelKey: 'admin.pages.settings.webhooks.event_groups.stock_level',
+    events: ['stock_level.created', 'stock_level.deleted', 'stock_level.updated'],
   },
   {
     labelKey: 'admin.pages.settings.webhooks.event_groups.stock_movement',

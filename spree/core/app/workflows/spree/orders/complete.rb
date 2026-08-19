@@ -57,8 +57,25 @@ module Spree
       # Typed adjustment rows are frozen once completed — the totals
       # recalculation only re-sums them, never regenerates (see
       # Spree::Carts::RecalculateTotals) — so no per-row locking is needed.
+      #
+      # Placement promises stock rather than moving it: an `allocated`
+      # movement per fulfillment raises the level's allocated count and leaves
+      # the shelf alone until the parcel actually leaves. Draft orders enter
+      # here directly, which is why the write lives in this workflow.
       def finalize_fulfillments
-        order.fulfillments.each(&:finalize!)
+        order.fulfillments.each do |fulfillment|
+          fulfillment.finalize!
+          allocate_fulfillment_stock(fulfillment)
+        end
+      end
+
+      def allocate_fulfillment_stock(fulfillment)
+        fulfillment.manifest.each do |item|
+          next unless item.variant.track_inventory?
+          next unless item.quantity.positive?
+
+          fulfillment.stock_location.allocate(item.variant, item.quantity, fulfillment)
+        end
       end
 
       def place_order

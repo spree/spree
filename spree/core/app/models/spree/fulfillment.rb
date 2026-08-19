@@ -32,6 +32,13 @@ module Spree
     has_many :fees, class_name: 'Spree::Fee', dependent: :destroy, inverse_of: :fulfillment
     has_many :delivery_methods, through: :delivery_rates
     has_many :variants, through: :fulfillment_items
+    # The ledger rows this fulfillment caused. Deliberately no `dependent:`
+    # option: a movement is a committed fact about stock that outlives the
+    # fulfillment behind it, and every option Rails offers would either delete
+    # those rows or rewrite their cause. Draining a fulfillment already hands
+    # its promise to the one taking the units over, so nothing is left holding
+    # stock by the time it is destroyed.
+    has_many :stock_movements, class_name: 'Spree::StockMovement', inverse_of: :fulfillment
     has_one :selected_delivery_rate, -> { where(selected: true).order(:cost) }, class_name: 'Spree::DeliveryRate'
 
     after_save :update_adjustments
@@ -335,9 +342,43 @@ module Spree
       discounts.promotion.exists?
     end
 
+    # Placement no longer moves physical stock — the units are promised in
+    # Spree::Orders::Complete and only leave the shelf when the parcel does.
     def finalize!
       fulfillment_items.finalize_units!
-      after_resume
+    end
+
+    # Units this fulfillment still holds a promise for, keyed by variant id:
+    # what was allocated to it, less anything since released or shipped
+    # against it. A fulfillment has one origin, so a variant maps to exactly
+    # one stock level here.
+    #
+    # @return [Hash{Integer => Integer}]
+    def allocated_quantities
+      # An unsaved fulfillment has caused nothing.
+      return {} unless persisted?
+
+      totals = Hash.new(0)
+
+      stock_movements.
+        joins(:stock_level).
+        group("#{Spree::StockLevel.table_name}.variant_id", :kind).
+        sum(:quantity).
+        each do |(variant_id, kind), quantity|
+          case kind
+          when 'allocated' then totals[variant_id] += quantity.abs
+          when 'released', 'shipped' then totals[variant_id] -= quantity.abs
+          end
+        end
+
+      totals.select { |_, quantity| quantity.positive? }
+    end
+
+    # Total units still promised to this fulfillment.
+    #
+    # @return [Integer]
+    def allocated_quantity
+      allocated_quantities.values.sum
     end
 
     def include?(variant)
@@ -749,18 +790,18 @@ module Spree
       owner.ship_address&.valid?
     end
 
+    # Cancelling withdraws the promise made at placement — nothing physical
+    # comes back, so on-hand and backordered units go back the same way and
+    # the old backordered special case is gone.
     def manifest_restock(item)
-      if item.states['on_hand'].to_i.positive?
-        stock_location.restock item.variant, item.states['on_hand'], self
-      end
+      quantity = [item.quantity, allocated_quantities[item.variant.id].to_i].min
+      return unless quantity.positive?
 
-      if item.states['backordered'].to_i.positive?
-        stock_location.restock_backordered item.variant, item.states['backordered']
-      end
+      stock_location.release(item.variant, quantity, self)
     end
 
     def manifest_unstock(item)
-      stock_location.unstock(item.variant, item.quantity, self) if item.variant.track_inventory?
+      stock_location.allocate(item.variant, item.quantity, self) if item.variant.track_inventory?
     end
 
     def set_cost_zero_when_nil

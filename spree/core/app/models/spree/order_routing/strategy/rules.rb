@@ -41,8 +41,8 @@ module Spree
 
         def eligible_locations
           order.store.stock_locations.active
-            .joins(:stock_items)
-            .where(spree_stock_items: { variant_id: requested_variant_ids })
+            .joins(:stock_levels)
+            .where(Spree::StockLevel.table_name => { variant_id: requested_variant_ids })
             .distinct
             .to_a
         end

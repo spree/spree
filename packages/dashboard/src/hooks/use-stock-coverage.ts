@@ -27,10 +27,10 @@ export function useStockCoverage(demands: VariantDemand[], enabled = true) {
   const variantIds = demands.map((demand) => demand.variantId).sort()
 
   return useQuery({
-    queryKey: useResourceKey('stock-items', 'coverage', variantIds),
+    queryKey: useResourceKey('stock-levels', 'coverage', variantIds),
     enabled: enabled && variantIds.length > 0,
     queryFn: async (): Promise<StockCoverage> => {
-      const response = await adminClient.stockItems.list({
+      const response = await adminClient.stockLevels.list({
         variant_id_in: variantIds,
         // A variant can exist at every location, so the ceiling is
         // variants × locations. The API caps `limit` at 100; merchants with
@@ -44,8 +44,8 @@ export function useStockCoverage(demands: VariantDemand[], enabled = true) {
   })
 }
 
-/** The stock-item fields the coverage computation reads. */
-export interface CoverageStockItem {
+/** The stock-level fields the coverage computation reads. */
+export interface CoverageStockLevel {
   stock_location_id?: string | null
   variant_id?: string | null
   available_count: number
@@ -62,21 +62,21 @@ export interface CoverageStockItem {
  * a transfer stays selectable.
  */
 export function computeStockCoverage(
-  stockItems: CoverageStockItem[],
+  stockLevels: CoverageStockLevel[],
   demands: VariantDemand[],
 ): StockCoverage {
   const availabilityByLocation = new Map<string, Map<string, number>>()
 
-  for (const stockItem of stockItems) {
-    if (!stockItem.stock_location_id || !stockItem.variant_id) continue
+  for (const stockLevel of stockLevels) {
+    if (!stockLevel.stock_location_id || !stockLevel.variant_id) continue
 
     const perVariant =
-      availabilityByLocation.get(stockItem.stock_location_id) ?? new Map<string, number>()
+      availabilityByLocation.get(stockLevel.stock_location_id) ?? new Map<string, number>()
     perVariant.set(
-      stockItem.variant_id,
-      stockItem.backorderable ? Number.POSITIVE_INFINITY : stockItem.available_count,
+      stockLevel.variant_id,
+      stockLevel.backorderable ? Number.POSITIVE_INFINITY : stockLevel.available_count,
     )
-    availabilityByLocation.set(stockItem.stock_location_id, perVariant)
+    availabilityByLocation.set(stockLevel.stock_location_id, perVariant)
   }
 
   const coverage: StockCoverage = new Map()

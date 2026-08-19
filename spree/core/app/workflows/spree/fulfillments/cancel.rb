@@ -1,14 +1,14 @@
 module Spree
   module Fulfillments
-    # Cancels a fulfillment: the goods are not going out, so their units go
-    # back on the shelf and the carrier is told to stand down.
+    # Cancels a fulfillment: the goods are not going out, so the promise made
+    # against their units is withdrawn and the carrier is told to stand down.
     #
     # In the workflow tier because cancelling talks to the outside world. The
     # provider call refunds a purchased label or cancels a 3PL pick — network
     # I/O that must not sit inside the database transaction holding the stock
     # movements, since a slow carrier would hold row locks open and a failed
-    # call would roll back a restock that already happened at the warehouse.
-    # Restocking commits first; the provider is told afterwards.
+    # call would roll back a release that already happened at the warehouse.
+    # The release commits first; the provider is told afterwards.
     class Cancel < Spree::Workflow
       hooks :validate, :after_cancel
 
@@ -30,7 +30,7 @@ module Spree
         step :ensure_cancelable
 
         ApplicationRecord.transaction do
-          step :restock_units
+          step :release_units
           step :mark_canceled
         end
 
@@ -48,17 +48,24 @@ module Spree
         failure(fulfillment, Spree.t('fulfillments.errors.cannot_cancel'))
       end
 
-      # Puts every unit back on the shelf. On-hand and backordered units go
-      # back by different routes: an on-hand unit returns real stock, while a
-      # backordered one only cancels the promise made against stock that never
-      # arrived, so restocking it as on-hand would invent inventory.
-      def restock_units
-        fulfillment.manifest.each do |item|
-          on_hand = item.states['on_hand'].to_i
-          backordered = item.states['backordered'].to_i
+      # Withdraws the promise this fulfillment held. Nothing physical comes
+      # back — the goods never left the shelf — so on-hand and backordered
+      # units release the same way and the old backordered special case is
+      # gone with the negative-on-hand representation it served.
+      def release_units
+        # Capped at what this fulfillment itself still holds: a fulfillment
+        # created before typed movements holds no promise, and withdrawing one
+        # it never made would take another order's units.
+        outstanding = fulfillment.allocated_quantities
 
-          stock_location.restock(item.variant, on_hand, fulfillment) if on_hand.positive?
-          stock_location.restock_backordered(item.variant, backordered) if backordered.positive?
+        fulfillment.manifest.each do |item|
+          next unless item.variant.track_inventory?
+
+          quantity = [item.quantity, outstanding[item.variant.id].to_i].min
+          next unless quantity.positive?
+
+          outstanding[item.variant.id] -= quantity
+          stock_location.release(item.variant, quantity, fulfillment)
         end
       end
 

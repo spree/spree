@@ -3074,7 +3074,7 @@
             "refund": "Zwrot środków",
             "report": "Raport",
             "return": "Zwrot",
-            "stock_item": "Pozycja magazynowa",
+            "stock_level": "Stan magazynowy",
             "stock_movement": "Ruch magazynowy",
             "stock_reservation": "Rezerwacja magazynowa",
             "stock_transfer": "Transfer magazynowy",
@@ -3926,9 +3926,9 @@
         "roles_required": "Wybierz co najmniej jedną rolę"
       }
     },
-    "stock_items": {
+    "stock_levels": {
       "messages": {
-        "stock_item_deleted": "Usunięto pozycję magazynową",
+        "stock_level_deleted": "Usunięto stan magazynowy",
         "stock_updated": "Zaktualizowano stan magazynowy"
       }
     },
@@ -3964,9 +3964,9 @@
       },
       "search_placeholder": "Szukaj według nazwy…",
       "section_pickup": "Odbiór",
-      "stock_items": {
-        "empty": "Brak zapasów w tej lokalizacji.",
-        "empty_search": "Żadne zapasy nie pasują do wyszukiwania.",
+      "stock_levels": {
+        "empty": "Brak stanów magazynowych w tej lokalizacji.",
+        "empty_search": "Żadne stany magazynowe nie pasują do wyszukiwania.",
         "help": "Dostosuj liczbę dostępnych i możliwych do zamówienia z opóźnieniem dla każdego wariantu.",
         "low_stock_marker": "niski stan",
         "search_placeholder": "Szukaj SKU lub produktu…",

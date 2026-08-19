@@ -88,7 +88,7 @@ describe Spree::Product, type: :model do
 
     it 'still names a variant when nothing is buyable, so the page has a price' do
       out_of_stock = create(:variant, product: product, seller: seller, sku: 'S-1', price: 5)
-      out_of_stock.stock_items.update_all(count_on_hand: 0, backorderable: false)
+      out_of_stock.stock_levels.update_all(count_on_hand: 0, backorderable: false)
 
       expect(product.reload.buy_box_variant).to eq(out_of_stock)
     end
@@ -128,11 +128,11 @@ describe Spree::Product, type: :model do
 
     it 'is in stock through a variant priced only in another currency' do
       empty = create(:variant, product: product, sku: 'A-1', price: 10)
-      empty.stock_items.update_all(count_on_hand: 0, backorderable: false)
+      empty.stock_levels.update_all(count_on_hand: 0, backorderable: false)
       stocked = create(:variant, product: product, sku: 'B-1', price: nil)
       stocked.prices.destroy_all
       stocked.set_price('EUR', 9)
-      stocked.stock_items.update_all(count_on_hand: 5)
+      stocked.stock_levels.update_all(count_on_hand: 5)
 
       Spree::Current.currency = 'USD'
       expect(product.reload).to be_in_stock
@@ -157,7 +157,7 @@ describe Spree::Product, type: :model do
       suspended = create(:seller, :suspended, store: store)
       create(:variant, product: product, seller: suspended, sku: 'S-1', price: 5)
       ours = create(:variant, product: product, sku: 'O-1', price: 5)
-      ours.stock_items.update_all(count_on_hand: 0, backorderable: false)
+      ours.stock_levels.update_all(count_on_hand: 0, backorderable: false)
 
       expect(product.reload).not_to be_purchasable
     end

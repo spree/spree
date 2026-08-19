@@ -10,8 +10,8 @@ module Spree
 
     context 'with non-backorderable item' do
       before do
-        line_item.variant.stock_items.first.update(backorderable: false)
-        line_item.variant.stock_items.first.update(count_on_hand: 5)
+        line_item.variant.stock_levels.first.update(backorderable: false)
+        line_item.variant.stock_levels.first.update(count_on_hand: 5)
       end
 
       context 'with sufficient stock quantity' do
@@ -47,8 +47,8 @@ module Spree
 
     context 'stock reservations' do
       before do
-        line_item.variant.stock_items.first.update!(backorderable: false)
-        line_item.variant.stock_items.first.set_count_on_hand(20)
+        line_item.variant.stock_levels.first.update!(backorderable: false)
+        line_item.variant.stock_levels.first.set_count_on_hand(20)
       end
 
       context 'when the cart is mid-checkout' do
@@ -73,7 +73,7 @@ module Spree
 
         it 'fails when the new quantity exceeds available stock and rolls back' do
           subject.call(cart: cart, line_item: line_item, quantity: 2)
-          line_item.variant.stock_items.first.set_count_on_hand(3)
+          line_item.variant.stock_levels.first.set_count_on_hand(3)
 
           result = subject.call(cart: cart, line_item: line_item, quantity: 5)
 

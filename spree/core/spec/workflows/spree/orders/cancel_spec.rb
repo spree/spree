@@ -28,15 +28,21 @@ module Spree
         expect(order.fulfillments.reload).to all(be_canceled)
       end
 
-      it 'puts the units back on the shelf' do
+      # The goods never left the shelf — placement only promised them — so
+      # cancelling withdraws the promise and leaves the physical count alone.
+      it 'withdraws the promise made at placement' do
         fulfillment = order.fulfillments.first
         variant = fulfillment.fulfillment_items.first.variant
-        stock_item = fulfillment.stock_location.stock_item(variant)
+        quantity = fulfillment.fulfillment_items.where(variant_id: variant.id).sum(:quantity)
+        stock_level = fulfillment.stock_location.stock_level(variant)
+        fulfillment.stock_location.allocate(variant, quantity, fulfillment)
+
+        count_on_hand_before = stock_level.reload.count_on_hand
 
         expect { subject.call(order: order, canceler: user) }.
-          to change { stock_item.reload.count_on_hand }.by(
-            fulfillment.fulfillment_items.where(variant_id: variant.id).sum(:quantity)
-          )
+          to change { stock_level.reload.allocated_count }.by(-quantity)
+
+        expect(stock_level.reload.count_on_hand).to eq(count_on_hand_before)
       end
 
       # The carrier calls are batched after the order transaction commits, so

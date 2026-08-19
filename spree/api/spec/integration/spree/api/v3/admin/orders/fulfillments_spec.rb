@@ -448,7 +448,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
         let(:body) { { variant_id: variant.prefixed_id, quantity: 1, stock_location_id: stock_location.prefixed_id } }
 
         before do
-          stock_location.stock_items.find_or_create_by(variant: variant).set_count_on_hand(10)
+          stock_location.stock_levels.find_or_create_by(variant: variant).set_count_on_hand(10)
         end
 
         run_test! do |response|

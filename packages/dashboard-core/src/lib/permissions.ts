@@ -44,6 +44,8 @@ export const Subject = {
   /** @deprecated Use Subject.DeliveryMethod — removed in Spree 6.1. */
   ShippingMethod: 'Spree::ShippingMethod',
   StockLocation: 'Spree::StockLocation',
+  StockLevel: 'Spree::StockLevel',
+  /** @deprecated Use Subject.StockLevel — removed in Spree 6.1. */
   StockItem: 'Spree::StockItem',
   StockTransfer: 'Spree::StockTransfer',
   PriceList: 'Spree::PriceList',

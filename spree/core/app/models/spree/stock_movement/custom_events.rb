@@ -37,7 +37,7 @@ module Spree
       end
 
       def product
-        stock_item.variant.product
+        stock_level.variant.product
       end
     end
   end

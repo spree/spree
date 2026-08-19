@@ -197,19 +197,19 @@ describe 'Product scopes', type: :model do
   describe '#in_stock / #out_of_stock' do
     let!(:in_stock_product) do
       create(:product).tap do |p|
-        p.stock_items.update_all(count_on_hand: 10, backorderable: false)
+        p.stock_levels.update_all(count_on_hand: 10, backorderable: false)
       end
     end
 
     let!(:backorderable_product) do
       create(:product).tap do |p|
-        p.stock_items.update_all(count_on_hand: 0, backorderable: true)
+        p.stock_levels.update_all(count_on_hand: 0, backorderable: true)
       end
     end
 
     let!(:out_of_stock_product) do
       create(:product).tap do |p|
-        p.stock_items.update_all(count_on_hand: 0, backorderable: false)
+        p.stock_levels.update_all(count_on_hand: 0, backorderable: false)
       end
     end
 

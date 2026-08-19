@@ -4,7 +4,7 @@ import { API_PREFIX, createTestClient, paginated } from './helpers'
 import { server } from './mocks/server'
 
 const sampleStockLocation = {
-  id: 'sl_abc123',
+  id: 'sloc_abc123',
   name: 'Main Warehouse',
   default: true,
   active: true,
@@ -12,12 +12,27 @@ const sampleStockLocation = {
   updated_at: '2026-05-01T00:00:00Z',
 }
 
-const sampleStockItem = {
-  id: 'si_abc123',
+const sampleStockLevel = {
+  id: 'sl_abc123',
   count_on_hand: 42,
   backorderable: false,
   variant_id: 'variant_1',
-  stock_location_id: 'sl_abc123',
+  stock_location_id: 'sloc_abc123',
+  created_at: '2026-05-01T00:00:00Z',
+  updated_at: '2026-05-01T00:00:00Z',
+}
+
+const sampleStockMovement = {
+  id: 'sm_abc123',
+  quantity: 3,
+  kind: 'allocated',
+  reason: null,
+  stock_level_id: 'sl_abc123',
+  order_id: 'or_abc123',
+  fulfillment_id: 'ful_abc123',
+  return_id: null,
+  exchange_id: null,
+  stock_transfer_id: null,
   created_at: '2026-05-01T00:00:00Z',
   updated_at: '2026-05-01T00:00:00Z',
 }
@@ -25,8 +40,8 @@ const sampleStockItem = {
 const sampleStockTransfer = {
   id: 'st_abc123',
   number: 'T123456789',
-  source_location_id: 'sl_abc123',
-  destination_location_id: 'sl_def456',
+  source_location_id: 'sloc_abc123',
+  destination_location_id: 'sloc_def456',
   created_at: '2026-05-01T00:00:00Z',
   updated_at: '2026-05-01T00:00:00Z',
 }
@@ -43,7 +58,7 @@ describe('stockLocations', () => {
       const res = await createTestClient().stockLocations.list()
 
       expect(res.data).toHaveLength(1)
-      expect(res.data[0]?.id).toBe('sl_abc123')
+      expect(res.data[0]?.id).toBe('sloc_abc123')
     })
 
     it('wraps Ransack predicates via transformListParams', async () => {
@@ -66,18 +81,18 @@ describe('stockLocations', () => {
     it('GETs /stock_locations/:id and forwards expand params', async () => {
       let url: URL | null = null
       server.use(
-        http.get(`${API_PREFIX}/stock_locations/sl_abc123`, ({ request }) => {
+        http.get(`${API_PREFIX}/stock_locations/sloc_abc123`, ({ request }) => {
           url = new URL(request.url)
           return HttpResponse.json(sampleStockLocation)
         }),
       )
 
-      const res = await createTestClient().stockLocations.get('sl_abc123', {
-        expand: ['stock_items'],
+      const res = await createTestClient().stockLocations.get('sloc_abc123', {
+        expand: ['stock_levels'],
       })
 
-      expect(res.id).toBe('sl_abc123')
-      expect(url!.searchParams.get('expand')).toBe('stock_items')
+      expect(res.id).toBe('sloc_abc123')
+      expect(url!.searchParams.get('expand')).toBe('stock_levels')
     })
   })
 
@@ -99,13 +114,13 @@ describe('stockLocations', () => {
     it('PATCHes the update body verbatim', async () => {
       let body: Record<string, unknown> | null = null
       server.use(
-        http.patch(`${API_PREFIX}/stock_locations/sl_abc123`, async ({ request }) => {
+        http.patch(`${API_PREFIX}/stock_locations/sloc_abc123`, async ({ request }) => {
           body = (await request.json()) as Record<string, unknown>
           return HttpResponse.json({ ...sampleStockLocation, active: false })
         }),
       )
 
-      const res = await createTestClient().stockLocations.update('sl_abc123', { active: false })
+      const res = await createTestClient().stockLocations.update('sloc_abc123', { active: false })
 
       expect(body).toEqual({ active: false })
       expect(res.active).toBe(false)
@@ -114,65 +129,65 @@ describe('stockLocations', () => {
     it('DELETEs /stock_locations/:id', async () => {
       let hit = false
       server.use(
-        http.delete(`${API_PREFIX}/stock_locations/sl_abc123`, () => {
+        http.delete(`${API_PREFIX}/stock_locations/sloc_abc123`, () => {
           hit = true
           return new HttpResponse(null, { status: 204 })
         }),
       )
 
-      await expect(createTestClient().stockLocations.delete('sl_abc123')).resolves.toBeUndefined()
+      await expect(createTestClient().stockLocations.delete('sloc_abc123')).resolves.toBeUndefined()
       expect(hit).toBe(true)
     })
   })
 })
 
-describe('stockItems', () => {
+describe('stockLevels', () => {
   describe('list', () => {
-    it('GETs /stock_items and returns paginated data', async () => {
+    it('GETs /stock_levels and returns paginated data', async () => {
       server.use(
-        http.get(`${API_PREFIX}/stock_items`, () =>
-          HttpResponse.json(paginated([sampleStockItem])),
+        http.get(`${API_PREFIX}/stock_levels`, () =>
+          HttpResponse.json(paginated([sampleStockLevel])),
         ),
       )
 
-      const res = await createTestClient().stockItems.list()
+      const res = await createTestClient().stockLevels.list()
 
       expect(res.data).toHaveLength(1)
-      expect(res.data[0]?.id).toBe('si_abc123')
+      expect(res.data[0]?.id).toBe('sl_abc123')
     })
 
     it('wraps Ransack predicates via transformListParams', async () => {
       let url: URL | null = null
       server.use(
-        http.get(`${API_PREFIX}/stock_items`, ({ request }) => {
+        http.get(`${API_PREFIX}/stock_levels`, ({ request }) => {
           url = new URL(request.url)
           return HttpResponse.json(paginated([]))
         }),
       )
 
-      await createTestClient().stockItems.list({
-        stock_location_id_eq: 'sl_abc123',
+      await createTestClient().stockLevels.list({
+        stock_location_id_eq: 'sloc_abc123',
         variant_id_eq: 'variant_1',
       })
 
-      expect(url!.searchParams.get('q[stock_location_id_eq]')).toBe('sl_abc123')
+      expect(url!.searchParams.get('q[stock_location_id_eq]')).toBe('sloc_abc123')
       expect(url!.searchParams.get('q[variant_id_eq]')).toBe('variant_1')
     })
   })
 
   describe('get', () => {
-    it('GETs /stock_items/:id and forwards expand params', async () => {
+    it('GETs /stock_levels/:id and forwards expand params', async () => {
       let url: URL | null = null
       server.use(
-        http.get(`${API_PREFIX}/stock_items/si_abc123`, ({ request }) => {
+        http.get(`${API_PREFIX}/stock_levels/sl_abc123`, ({ request }) => {
           url = new URL(request.url)
-          return HttpResponse.json(sampleStockItem)
+          return HttpResponse.json(sampleStockLevel)
         }),
       )
 
-      const res = await createTestClient().stockItems.get('si_abc123', { expand: ['variant'] })
+      const res = await createTestClient().stockLevels.get('sl_abc123', { expand: ['variant'] })
 
-      expect(res.id).toBe('si_abc123')
+      expect(res.id).toBe('sl_abc123')
       expect(url!.searchParams.get('expand')).toBe('variant')
     })
   })
@@ -181,28 +196,28 @@ describe('stockItems', () => {
     it('PATCHes the update body verbatim', async () => {
       let body: Record<string, unknown> | null = null
       server.use(
-        http.patch(`${API_PREFIX}/stock_items/si_abc123`, async ({ request }) => {
+        http.patch(`${API_PREFIX}/stock_levels/sl_abc123`, async ({ request }) => {
           body = (await request.json()) as Record<string, unknown>
-          return HttpResponse.json({ ...sampleStockItem, count_on_hand: 100 })
+          return HttpResponse.json({ ...sampleStockLevel, count_on_hand: 100 })
         }),
       )
 
-      const res = await createTestClient().stockItems.update('si_abc123', { count_on_hand: 100 })
+      const res = await createTestClient().stockLevels.update('sl_abc123', { count_on_hand: 100 })
 
       expect(body).toEqual({ count_on_hand: 100 })
       expect(res.count_on_hand).toBe(100)
     })
 
-    it('DELETEs /stock_items/:id', async () => {
+    it('DELETEs /stock_levels/:id', async () => {
       let hit = false
       server.use(
-        http.delete(`${API_PREFIX}/stock_items/si_abc123`, () => {
+        http.delete(`${API_PREFIX}/stock_levels/sl_abc123`, () => {
           hit = true
           return new HttpResponse(null, { status: 204 })
         }),
       )
 
-      await expect(createTestClient().stockItems.delete('si_abc123')).resolves.toBeUndefined()
+      await expect(createTestClient().stockLevels.delete('sl_abc123')).resolves.toBeUndefined()
       expect(hit).toBe(true)
     })
   })
@@ -234,11 +249,11 @@ describe('stockTransfers', () => {
 
       await createTestClient().stockTransfers.list({
         number_cont: 'T123',
-        source_location_id_eq: 'sl_abc123',
+        source_location_id_eq: 'sloc_abc123',
       })
 
       expect(url!.searchParams.get('q[number_cont]')).toBe('T123')
-      expect(url!.searchParams.get('q[source_location_id_eq]')).toBe('sl_abc123')
+      expect(url!.searchParams.get('q[source_location_id_eq]')).toBe('sloc_abc123')
     })
   })
 
@@ -272,13 +287,13 @@ describe('stockTransfers', () => {
       )
 
       await createTestClient().stockTransfers.create({
-        source_location_id: 'sl_abc123',
-        destination_location_id: 'sl_def456',
+        source_location_id: 'sloc_abc123',
+        destination_location_id: 'sloc_def456',
       })
 
       expect(body).toEqual({
-        source_location_id: 'sl_abc123',
-        destination_location_id: 'sl_def456',
+        source_location_id: 'sloc_abc123',
+        destination_location_id: 'sloc_def456',
       })
     })
 
@@ -293,6 +308,53 @@ describe('stockTransfers', () => {
 
       await expect(createTestClient().stockTransfers.delete('st_abc123')).resolves.toBeUndefined()
       expect(hit).toBe(true)
+    })
+  })
+})
+
+describe('stockMovements', () => {
+  describe('list', () => {
+    it('GETs /stock_movements and returns paginated data', async () => {
+      server.use(
+        http.get(`${API_PREFIX}/stock_movements`, () =>
+          HttpResponse.json(paginated([sampleStockMovement])),
+        ),
+      )
+
+      const res = await createTestClient().stockMovements.list()
+
+      expect(res.data).toHaveLength(1)
+      expect(res.data[0]?.kind).toBe('allocated')
+      expect(res.data[0]?.fulfillment_id).toBe('ful_abc123')
+    })
+
+    it('wraps Ransack predicates via transformListParams', async () => {
+      let url: URL | null = null
+      server.use(
+        http.get(`${API_PREFIX}/stock_movements`, ({ request }) => {
+          url = new URL(request.url)
+          return HttpResponse.json(paginated([]))
+        }),
+      )
+
+      await createTestClient().stockMovements.list({ kind_eq: 'shipped', order_id_eq: 'or_abc123' })
+
+      expect(url!.searchParams.get('q[kind_eq]')).toBe('shipped')
+      expect(url!.searchParams.get('q[order_id_eq]')).toBe('or_abc123')
+    })
+  })
+
+  describe('get', () => {
+    it('GETs /stock_movements/:id', async () => {
+      server.use(
+        http.get(`${API_PREFIX}/stock_movements/sm_abc123`, () =>
+          HttpResponse.json(sampleStockMovement),
+        ),
+      )
+
+      const res = await createTestClient().stockMovements.get('sm_abc123')
+
+      expect(res.id).toBe('sm_abc123')
     })
   })
 })

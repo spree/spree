@@ -36,7 +36,7 @@ describe Spree::Products::SelectBuyBox do
 
   it 'passes over an out-of-stock variant for one that can be bought' do
     empty = create(:variant, product: product, seller: seller, sku: 'S-1', price: 5)
-    empty.stock_items.update_all(count_on_hand: 0, backorderable: false)
+    empty.stock_levels.update_all(count_on_hand: 0, backorderable: false)
     available = create(:variant, product: product, seller: other_seller, sku: 'S-2', price: 50)
 
     expect(winner).to eq(available)
@@ -66,7 +66,7 @@ describe Spree::Products::SelectBuyBox do
     suspended = create(:seller, :suspended, store: store)
     create(:variant, product: product, seller: suspended, sku: 'X-1', price: 1)
     active_empty = create(:variant, product: product, seller: seller, sku: 'S-1', price: 50)
-    active_empty.stock_items.update_all(count_on_hand: 0, backorderable: false)
+    active_empty.stock_levels.update_all(count_on_hand: 0, backorderable: false)
 
     expect(winner).to eq(active_empty)
   end

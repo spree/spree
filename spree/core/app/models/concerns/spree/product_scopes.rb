@@ -46,21 +46,21 @@ module Spree
         where(Price.table_name => { amount: low..high })
       }
 
-      # Joins spree_variants and spree_stock_items directly (without association
+      # Joins spree_variants and spree_stock_levels directly (without association
       # aliases) so that the table names stay as-is. This avoids alias conflicts
       # when combined with other scopes (e.g., price sorting) that also join
       # spree_variants through associations which generate aliases.
-      def self.join_variants_and_stock_items
+      def self.join_variants_and_stock_levels
         joins("INNER JOIN #{Variant.table_name} ON #{Variant.table_name}.deleted_at IS NULL AND #{Variant.table_name}.product_id = #{Product.table_name}.id").
-          joins("LEFT OUTER JOIN #{StockItem.table_name} ON #{StockItem.table_name}.deleted_at IS NULL AND #{StockItem.table_name}.variant_id = #{Variant.table_name}.id")
+          joins("LEFT OUTER JOIN #{StockLevel.table_name} ON #{StockLevel.table_name}.deleted_at IS NULL AND #{StockLevel.table_name}.variant_id = #{Variant.table_name}.id")
       end
-      private_class_method :join_variants_and_stock_items
+      private_class_method :join_variants_and_stock_levels
 
       # Mirrors Spree::Variant.in_stock_or_backorderable logic using raw table
-      # names (to pair with join_variants_and_stock_items).
+      # names (to pair with join_variants_and_stock_levels).
       scope :in_stock_or_backorderable_condition, -> {
         where(
-          "#{Variant.table_name}.track_inventory = ? OR #{StockItem.table_name}.count_on_hand > ? OR #{StockItem.table_name}.backorderable = ?",
+          "#{Variant.table_name}.track_inventory = ? OR (#{StockLevel.table_name}.count_on_hand - #{StockLevel.table_name}.allocated_count) > ? OR #{StockLevel.table_name}.backorderable = ?",
           false, 0, true
         )
       }
@@ -71,7 +71,7 @@ module Spree
         if in_stock == '0' || !in_stock
           all
         else
-          join_variants_and_stock_items.in_stock_or_backorderable_condition
+          join_variants_and_stock_levels.in_stock_or_backorderable_condition
         end
       end
 
@@ -87,16 +87,16 @@ module Spree
         if out_of_stock == '0' || !out_of_stock
           all
         else
-          where.not(id: join_variants_and_stock_items.in_stock_or_backorderable_condition)
+          where.not(id: join_variants_and_stock_levels.in_stock_or_backorderable_condition)
         end
       end
 
       def self.backorderable
-        join_variants_and_stock_items.where(StockItem.table_name => { backorderable: true })
+        join_variants_and_stock_levels.where(StockLevel.table_name => { backorderable: true })
       end
 
       def self.in_stock_or_backorderable
-        join_variants_and_stock_items.in_stock_or_backorderable_condition
+        join_variants_and_stock_levels.in_stock_or_backorderable_condition
       end
 
       # This scope selects products in taxon AND all its descendants

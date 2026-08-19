@@ -9,6 +9,14 @@ module Spree
     let(:fulfillment) { order.fulfillments.first }
     let(:line_items) { order.line_items.sort_by(&:id) }
 
+    # A placed order's goods were on the shelf when it was placed; the
+    # order_ready_to_ship factory never puts them there.
+    def stock_the_shelf(fulfillment, count: 10)
+      fulfillment.manifest.each do |item|
+        fulfillment.stock_location.stock_level_or_create(item.variant).update_column(:count_on_hand, count)
+      end
+    end
+
     describe 'fulfilling everything (items omitted)' do
       let(:execute) { subject.call(fulfillment: fulfillment) }
 
@@ -97,6 +105,7 @@ module Spree
       # Shipping a canceled fulfillment is deliberate — the goods went out
       # anyway — so the workflow must not second-guess it.
       it 'fulfills a canceled fulfillment' do
+        stock_the_shelf(fulfillment)
         fulfillment.update!(status: 'canceled')
 
         result = subject.call(fulfillment: fulfillment)
@@ -147,30 +156,104 @@ module Spree
       end
     end
 
-    # A canceled fulfillment already restocked its units, so shipping it
-    # directly has to take them off the shelf again. This used to ride on the
-    # resume transition callback.
+    # A canceled fulfillment gave its promise back, so shipping it directly
+    # has to re-promise the units before they can leave. This used to ride on
+    # the resume transition callback.
     describe 'fulfilling a canceled fulfillment' do
       before { fulfillment.update!(status: 'canceled') }
 
-      it 'takes the units back off the shelf' do
+      # A variant that keeps no stock is skipped by every write, so the
+      # shelf-cover check has to skip it too — otherwise a canceled dispatch of
+      # untracked goods is refused over a level nobody maintains.
+      it 'dispatches when the goods are untracked and no shelf is kept for them' do
+        fulfillment.manifest.each do |item|
+          item.variant.update!(track_inventory: false)
+          fulfillment.stock_location.stock_level(item.variant)&.update_columns(count_on_hand: 0)
+        end
+
+        result = subject.call(fulfillment: fulfillment)
+
+        expect(result).to be_success
+        expect(fulfillment.reload).to be_fulfilled
+      end
+
+      it 're-promises the units and then ships them' do
+        stock_the_shelf(fulfillment)
         variant = fulfillment.fulfillment_items.first.variant
-        stock_item = fulfillment.stock_location.stock_item(variant)
+        stock_level = fulfillment.stock_location.stock_level(variant)
 
         expect { subject.call(fulfillment: fulfillment) }.
-          to change { stock_item.reload.count_on_hand }.by(
+          to change { stock_level.reload.count_on_hand }.by(
             -fulfillment.fulfillment_items.where(variant_id: variant.id).sum(:quantity)
           )
         expect(fulfillment.reload).to be_fulfilled
       end
 
-      it 'does not unstock when the fulfillment was open' do
+      # Resuming already re-promised the units, so fulfilling afterwards
+      # takes them off the shelf exactly once rather than twice.
+      it 'ships the re-promised units only once when the fulfillment was resumed' do
+        stock_the_shelf(fulfillment)
         Spree.fulfillment_resume_workflow.call(fulfillment: fulfillment)
         variant = fulfillment.fulfillment_items.first.variant
-        stock_item = fulfillment.stock_location.stock_item(variant)
+        quantity = fulfillment.fulfillment_items.where(variant_id: variant.id).sum(:quantity)
+        stock_level = fulfillment.stock_location.stock_level(variant)
 
         expect { subject.call(fulfillment: fulfillment) }.
-          not_to change { stock_item.reload.count_on_hand }
+          to change { stock_level.reload.count_on_hand }.by(-quantity)
+
+        expect(stock_level.reload.allocated_count).to eq(0)
+      end
+    end
+
+    describe 'stock' do
+      let(:variant) { fulfillment.fulfillment_items.first.variant }
+      let(:quantity) { fulfillment.fulfillment_items.where(variant_id: variant.id).sum(:quantity) }
+      let(:stock_level) { fulfillment.stock_location.stock_level(variant) }
+
+      it 'ships only the units the fulfillment holds a promise for' do
+        stock_the_shelf(fulfillment)
+        fulfillment.stock_location.allocate(variant, quantity, fulfillment)
+
+        expect { subject.call(fulfillment: fulfillment) }.
+          to change { stock_level.reload.count_on_hand }.by(-quantity).
+          and change { stock_level.reload.allocated_count }.by(-quantity)
+      end
+
+      # A fulfillment created before typed movements holds no allocation — its
+      # stock left the shelf at placement under the old model — so shipping it
+      # must not decrement a second time.
+      it 'writes nothing for an unallocated fulfillment' do
+        expect { subject.call(fulfillment: fulfillment) }.
+          not_to change { stock_level.reload.count_on_hand }
+      end
+
+      # The merchant has to say which it is: a ledger error to correct, or
+      # goods the warehouse knows it does not have.
+      it 'refuses a dispatch the shelf cannot cover' do
+        fulfillment.stock_location.allocate(variant, quantity, fulfillment)
+
+        result = subject.call(fulfillment: fulfillment)
+
+        expect(result.success?).to eq(false)
+        expect(result.error.to_s).to match(/only 0 are on hand/)
+        expect(fulfillment.reload).not_to be_fulfilled
+        expect(stock_level.reload.count_on_hand).to eq(0)
+      end
+
+      # Departure is a physical fact: a forced dispatch records the parcel even
+      # when the shelf says the goods were never there. Availability is
+      # untouched on the way through — the promise had already been subtracted.
+      it 'leaves the shelf negative on a forced dispatch from an empty shelf' do
+        stock_level.update_column(:count_on_hand, 0)
+        fulfillment.stock_location.allocate(variant, quantity, fulfillment)
+        available_before = stock_level.reload.available_count
+
+        result = subject.call(fulfillment: fulfillment, force: true)
+
+        expect(result.success?).to eq(true)
+        expect(stock_level.reload.count_on_hand).to eq(-quantity)
+        expect(stock_level.allocated_count).to eq(0)
+        expect(stock_level.available_count).to eq(available_before)
       end
     end
 

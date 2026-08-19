@@ -11,15 +11,22 @@ RSpec.describe Spree::Api::V3::StockMovementSerializer do
 
   it 'includes all expected attributes' do
     expect(subject.keys).to match_array(%w[
-      id quantity action originator_type originator_id stock_item_id created_at updated_at
+      id quantity kind reason stock_level_id created_at updated_at
     ])
+  end
+
+  # The polymorphic originator left the response with the typed rows.
+  it 'says what happened to stock' do
+    expect(subject['kind']).to eq('received')
+    expect(subject).not_to have_key('originator_type')
+    expect(subject).not_to have_key('originator_id')
   end
 
   it 'returns the prefixed id' do
     expect(subject['id']).to eq(stock_movement.prefixed_id)
   end
 
-  it 'returns prefixed stock_item_id' do
-    expect(subject['stock_item_id']).to eq(stock_movement.stock_item.prefixed_id)
+  it 'returns prefixed stock_level_id' do
+    expect(subject['stock_level_id']).to eq(stock_movement.stock_level.prefixed_id)
   end
 end

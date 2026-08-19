@@ -3036,7 +3036,7 @@
             "refund": "Remboursement",
             "report": "Rapport",
             "return": "Retour",
-            "stock_item": "Article en stock",
+            "stock_level": "Niveau de stock",
             "stock_movement": "Mouvement de stock",
             "stock_reservation": "Réservation de stock",
             "stock_transfer": "Transfert de stock",
@@ -3872,9 +3872,9 @@
         "roles_required": "Choisissez au moins un rôle"
       }
     },
-    "stock_items": {
+    "stock_levels": {
       "messages": {
-        "stock_item_deleted": "Article en stock supprimé",
+        "stock_level_deleted": "Niveau de stock supprimé",
         "stock_updated": "Stock mis à jour"
       }
     },
@@ -3910,9 +3910,9 @@
       },
       "search_placeholder": "Rechercher par nom…",
       "section_pickup": "Retrait",
-      "stock_items": {
-        "empty": "Aucun article en stock à cet emplacement pour le moment.",
-        "empty_search": "Aucun article en stock ne correspond à votre recherche.",
+      "stock_levels": {
+        "empty": "Aucun niveau de stock à cet emplacement pour le moment.",
+        "empty_search": "Aucun niveau de stock ne correspond à votre recherche.",
         "help": "Ajustez les quantités disponibles et en réassort par variante.",
         "low_stock_marker": "stock faible",
         "search_placeholder": "Rechercher un SKU ou un produit…",

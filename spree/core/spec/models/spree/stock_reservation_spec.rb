@@ -16,11 +16,11 @@ describe Spree::StockReservation, type: :model do
       expect(reservation).to be_valid
     end
 
-    it 'enforces uniqueness of line_item per stock_item' do
+    it 'enforces uniqueness of line_item per stock_level' do
       reservation.save!
       duplicate = build(
         :stock_reservation,
-        stock_item: reservation.stock_item,
+        stock_level: reservation.stock_level,
         line_item: reservation.line_item,
         order: reservation.order
       )
@@ -96,7 +96,7 @@ describe Spree::StockReservation, type: :model do
 
     it 'is destroyed when its stock item is destroyed' do
       reservation
-      expect { reservation.stock_item.destroy }.to change(Spree::StockReservation, :count).by(-1)
+      expect { reservation.stock_level.destroy }.to change(Spree::StockReservation, :count).by(-1)
     end
   end
 end

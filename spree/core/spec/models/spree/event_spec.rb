@@ -132,8 +132,8 @@ RSpec.describe Spree::Event do
     end
 
     it 'handles nested event names' do
-      event = described_class.new(name: 'stock_item.low_stock', payload: {})
-      expect(event.resource_type).to eq('stock_item')
+      event = described_class.new(name: 'stock_level.low_stock', payload: {})
+      expect(event.resource_type).to eq('stock_level')
     end
   end
 
@@ -144,7 +144,7 @@ RSpec.describe Spree::Event do
     end
 
     it 'handles multi-part actions' do
-      event = described_class.new(name: 'stock_item.low_stock', payload: {})
+      event = described_class.new(name: 'stock_level.low_stock', payload: {})
       expect(event.action).to eq('low_stock')
     end
   end

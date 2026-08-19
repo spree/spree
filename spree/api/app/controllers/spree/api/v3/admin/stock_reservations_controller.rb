@@ -20,7 +20,7 @@ module Spree
           end
 
           def collection_includes
-            [{ stock_item: [:variant, :stock_location], line_item: [], order: [] }]
+            [{ stock_level: [:variant, :stock_location], line_item: [], order: [] }]
           end
         end
       end

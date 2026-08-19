@@ -9,8 +9,8 @@ describe Spree::Promotion::Actions::CreateLineItems, type: :model do
   let(:payload) { { order: order } }
 
   def empty_stock(variant)
-    variant.stock_items.update_all(backorderable: false)
-    variant.stock_items.each(&:reduce_count_on_hand_to_zero)
+    variant.stock_levels.update_all(backorderable: false)
+    variant.stock_levels.each(&:reduce_count_on_hand_to_zero)
   end
 
   context '#perform' do

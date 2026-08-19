@@ -281,8 +281,8 @@ module Spree
     describe 'stock reservations' do
       it 'releases reservations on successful completion' do
         line_item = ready_cart.line_items.first
-        stock_item = line_item.variant.stock_items.first
-        Spree::StockReservation.create!(cart: ready_cart, order: nil, line_item: line_item, stock_item: stock_item, quantity: 1, expires_at: 1.hour.from_now)
+        stock_level = line_item.variant.stock_levels.first
+        Spree::StockReservation.create!(cart: ready_cart, order: nil, line_item: line_item, stock_level: stock_level, quantity: 1, expires_at: 1.hour.from_now)
 
         expect { described_class.call(cart: ready_cart) }.to change { Spree::StockReservation.count }.by(-1)
       end

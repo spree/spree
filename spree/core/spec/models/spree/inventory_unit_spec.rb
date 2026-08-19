@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::InventoryUnit, type: :model do
   let(:stock_location) { create(:stock_location_with_items) }
-  let(:stock_item) { stock_location.stock_items.order(:id).first }
+  let(:stock_level) { stock_location.stock_levels.order(:id).first }
 
   describe 'scopes' do
     let!(:inventory_unit_1) { create(:inventory_unit, state: 'on_hand') }
@@ -31,13 +31,13 @@ describe Spree::InventoryUnit, type: :model do
     end
   end
 
-  describe '#backordered_for_stock_item' do
+  describe '#backordered_for_stock_level' do
     let(:order) do
       order = create(:order, state: 'complete', ship_address: create(:ship_address))
       order.completed_at = Time.current
       create(:shipment, order: order, stock_location: stock_location)
       order.shipments.reload
-      create(:line_item, order: order, variant: stock_item.variant)
+      create(:line_item, order: order, variant: stock_level.variant)
       order.line_items.reload
       order.tap(&:save!)
     end
@@ -56,18 +56,20 @@ describe Spree::InventoryUnit, type: :model do
       unit.tap(&:save!)
     end
 
+    # A shelf below zero is legacy fixture state now — only a departure may
+    # write one — so it is set on the column directly.
     before do
-      stock_item.set_count_on_hand(-2)
+      stock_level.update_column(:count_on_hand, -2)
     end
 
     # Regression for #3066
     it 'returns modifiable objects' do
-      units = Spree::InventoryUnit.backordered_for_stock_item(stock_item)
+      units = Spree::InventoryUnit.backordered_for_stock_level(stock_level)
       expect { units.first.save! }.not_to raise_error
     end
 
     it "finds inventory units from its stock location when the unit's variant matches the stock item's variant" do
-      expect(Spree::InventoryUnit.backordered_for_stock_item(stock_item)).to match_array([unit])
+      expect(Spree::InventoryUnit.backordered_for_stock_level(stock_level)).to match_array([unit])
     end
 
     it "does not find inventory units that aren't backordered" do
@@ -76,7 +78,7 @@ describe Spree::InventoryUnit, type: :model do
       on_hand_unit.variant_id = 1
       on_hand_unit.save!
 
-      expect(Spree::InventoryUnit.backordered_for_stock_item(stock_item)).not_to include(on_hand_unit)
+      expect(Spree::InventoryUnit.backordered_for_stock_level(stock_level)).not_to include(on_hand_unit)
     end
 
     it "does not find inventory units that don't match the stock item's variant" do
@@ -85,13 +87,13 @@ describe Spree::InventoryUnit, type: :model do
       other_variant_unit.variant = create(:variant)
       other_variant_unit.save!
 
-      expect(Spree::InventoryUnit.backordered_for_stock_item(stock_item)).not_to include(other_variant_unit)
+      expect(Spree::InventoryUnit.backordered_for_stock_level(stock_level)).not_to include(other_variant_unit)
     end
 
     it 'does not change shipping cost when fulfilling the order' do
       current_shipment_cost = shipment.cost
       shipping_method.calculator.set_preference(:amount, current_shipment_cost + 5.0)
-      stock_item.set_count_on_hand(0)
+      stock_level.set_count_on_hand(0)
       expect(shipment.reload.cost).to eq(current_shipment_cost)
     end
 
@@ -116,13 +118,13 @@ describe Spree::InventoryUnit, type: :model do
       let!(:other_unit) do
         unit = other_shipment.inventory_units.build
         unit.state = 'backordered'
-        unit.variant_id = stock_item.variant.id
+        unit.variant_id = stock_level.variant.id
         unit.order_id = other_order.id
         unit.tap(&:save!)
       end
 
       it 'does not find inventory units belonging to incomplete orders' do
-        expect(Spree::InventoryUnit.backordered_for_stock_item(stock_item)).not_to include(other_unit)
+        expect(Spree::InventoryUnit.backordered_for_stock_level(stock_level)).not_to include(other_unit)
       end
     end
   end

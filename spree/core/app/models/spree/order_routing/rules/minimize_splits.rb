@@ -8,7 +8,7 @@ module Spree
       class MinimizeSplits < Spree::OrderRoutingRule
         def rank(order, locations)
           demand = required_quantity_by_variant(order)
-          counts = stock_item_counts(demand.keys, locations)
+          counts = stock_level_counts(demand.keys, locations)
 
           locations.map do |loc|
             coverage = demand.count do |variant_id, qty|
@@ -30,14 +30,14 @@ module Spree
         end
 
         # One query for the entire location × variant matrix instead of
-        # N variants × M locations stock_item lookups.
-        def stock_item_counts(variant_ids, locations)
+        # N variants × M locations stock_level lookups.
+        def stock_level_counts(variant_ids, locations)
           return {} if variant_ids.empty? || locations.empty?
 
-          Spree::StockItem
+          Spree::StockLevel
             .where(stock_location_id: locations.map(&:id), variant_id: variant_ids)
-            .pluck(:stock_location_id, :variant_id, :count_on_hand)
-            .each_with_object({}) { |(loc_id, var_id, count), h| h[[loc_id, var_id]] = count }
+            .pluck(:stock_location_id, :variant_id, :count_on_hand, :allocated_count)
+            .each_with_object({}) { |(loc_id, var_id, on_hand, allocated), h| h[[loc_id, var_id]] = on_hand - allocated }
         end
       end
     end

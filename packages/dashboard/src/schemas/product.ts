@@ -2,7 +2,7 @@ import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 import { isSupportedVideoUrl } from '../lib/video-url'
 
-export const stockItemFormSchema = z.object({
+export const stockLevelFormSchema = z.object({
   id: z.string().optional(),
   stock_location_id: z.string(),
   stock_location_name: z.string().optional(),
@@ -10,7 +10,7 @@ export const stockItemFormSchema = z.object({
   backorderable: z.boolean(),
 })
 
-export type StockItemFormValues = z.infer<typeof stockItemFormSchema>
+export type StockLevelFormValues = z.infer<typeof stockLevelFormSchema>
 
 export const variantOptionPairSchema = z.object({
   name: z.string().min(1),
@@ -55,7 +55,7 @@ export const variantFormSchema = z.object({
   backorder_limit: z.coerce.number().int().nonnegative().nullable().optional(),
   tax_category_id: z.string().nullable().optional(),
   prices: z.array(variantPriceFormSchema).optional(),
-  stock_items: z.array(stockItemFormSchema).optional(),
+  stock_levels: z.array(stockLevelFormSchema).optional(),
 })
 
 export type VariantFormValues = z.infer<typeof variantFormSchema>
@@ -171,7 +171,7 @@ export const productFormSchema = z.object({
 export type ProductFormValues = z.infer<typeof productFormSchema>
 
 // Defaults for the "new product" page. Starts with a single placeholder
-// variant (no options, empty stock_items/prices) so the variants matrix
+// variant (no options, empty stock_levels/prices) so the variants matrix
 // renders a "Default variant" row the merchant can edit pre-save. On submit
 // the page strips this row if it carries no meaningful data, letting
 // Spree::Product#variants= auto-create the default variant server-side.
@@ -204,7 +204,7 @@ export function newProductFormDefaults(): ProductFormValues {
         track_inventory: true,
         tax_category_id: null,
         prices: [],
-        stock_items: [],
+        stock_levels: [],
       },
     ],
     custom_fields: [],
@@ -229,7 +229,7 @@ export function isPlaceholderDefaultVariant(v: VariantFormValues): boolean {
     !v.barcode &&
     v.options.length === 0 &&
     (v.prices ?? []).length === 0 &&
-    (v.stock_items ?? []).length === 0 &&
+    (v.stock_levels ?? []).length === 0 &&
     v.weight == null &&
     v.height == null &&
     v.width == null &&

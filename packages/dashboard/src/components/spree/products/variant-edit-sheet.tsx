@@ -55,7 +55,7 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
   //
   // Deep-clone via structuredClone — `form.getValues` returns a reference
   // to RHF's internal field state, and the inline cell editors mutate
-  // nested arrays (prices, stock_items) in place. Without the clone, Cancel
+  // nested arrays (prices, stock_levels) in place. Without the clone, Cancel
   // would write back the already-edited object.
   //
   // We also stash the variant's `id` (for persisted rows). The sheet is

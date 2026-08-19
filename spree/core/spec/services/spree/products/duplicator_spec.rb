@@ -24,7 +24,7 @@ RSpec.describe Spree::Products::Duplicator do
     new_image.save!
 
     product.default_variant.update!(barcode: '1234567890')
-    product.default_variant.stock_items.last.update!(count_on_hand: 100, backorderable: true)
+    product.default_variant.stock_levels.last.update!(count_on_hand: 100, backorderable: true)
   end
 
   it { is_expected.to be_success }
@@ -37,6 +37,23 @@ RSpec.describe Spree::Products::Duplicator do
     Timecop.scale(3600)
     expect { 3.times { described_class.call(product: product) } }.to change { Spree::Product.count }.by(3)
     Timecop.return
+  end
+
+  describe 'stock level duplication' do
+    # A promise belongs to the order that made it. Copied onto the duplicate,
+    # it would open holding stock for somebody else's order.
+    it 'starts the copy with no stock and no promise' do
+      original = product.variants_including_master.first
+      level = original.stock_levels.first
+      level.update_columns(count_on_hand: 7, allocated_count: 3)
+
+      new_product = subject.value
+
+      new_product.variants_including_master.flat_map(&:stock_levels).each do |copy|
+        expect(copy.count_on_hand).to eq(0)
+        expect(copy.allocated_count).to eq(0)
+      end
+    end
   end
 
   describe 'image duplication' do
@@ -120,8 +137,8 @@ RSpec.describe Spree::Products::Duplicator do
     let(:new_product) { duplicate.value }
 
     before do
-      variant1.stock_items.last.update!(count_on_hand: 100, backorderable: true)
-      variant2.stock_items.last.update!(count_on_hand: 200, backorderable: false)
+      variant1.stock_levels.last.update!(count_on_hand: 100, backorderable: true)
+      variant2.stock_levels.last.update!(count_on_hand: 200, backorderable: false)
     end
 
     it 'duplicates the variants' do

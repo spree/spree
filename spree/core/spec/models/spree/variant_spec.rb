@@ -126,7 +126,7 @@ describe Spree::Variant, type: :model do
     end
 
 
-    describe '#create_default_stock_item' do
+    describe '#create_default_stock_level' do
       let(:new_variant) { product.variants.create(track_inventory: track_inventory) }
 
       context 'when not tracking inventory' do
@@ -135,16 +135,16 @@ describe Spree::Variant, type: :model do
         it 'creates a default stock item' do
           new_variant
 
-          expect(new_variant.reload.stock_items.count).to eq(1)
-          expect(new_variant.stock_items[0].count_on_hand).to eq(0)
-          expect(new_variant.stock_items[0].backorderable).to eq(false)
+          expect(new_variant.reload.stock_levels.count).to eq(1)
+          expect(new_variant.stock_levels[0].count_on_hand).to eq(0)
+          expect(new_variant.stock_levels[0].backorderable).to eq(false)
         end
 
         context 'when variant is created along with a stock item' do
           let(:new_variant) do
             product.variants.create(
               track_inventory: track_inventory,
-              stock_items_attributes: {
+              stock_levels_attributes: {
                 '0' => {
                   stock_location_id: create(:stock_location).id,
                   count_on_hand: 10,
@@ -157,9 +157,9 @@ describe Spree::Variant, type: :model do
           it 'does not create an another stock item' do
             new_variant
 
-            expect(new_variant.reload.stock_items.count).to eq(1)
-            expect(new_variant.stock_items[0].count_on_hand).to eq(10)
-            expect(new_variant.stock_items[0].backorderable).to eq(true)
+            expect(new_variant.reload.stock_levels.count).to eq(1)
+            expect(new_variant.stock_levels[0].count_on_hand).to eq(10)
+            expect(new_variant.stock_levels[0].backorderable).to eq(true)
           end
         end
       end
@@ -169,7 +169,7 @@ describe Spree::Variant, type: :model do
 
         it 'does not create a default stock item' do
           new_variant
-          expect(new_variant.reload.stock_items.count).to eq(0)
+          expect(new_variant.reload.stock_levels.count).to eq(0)
         end
       end
 
@@ -178,13 +178,38 @@ describe Spree::Variant, type: :model do
 
         # clear out previous stock items
         before do
-          variant.stock_items.delete_all
+          variant.stock_levels.delete_all
         end
 
         it 'creates a default stock item' do
-          expect { variant.update!(track_inventory: false) }.to change(variant.stock_items, :count).by(1)
+          expect { variant.update!(track_inventory: false) }.to change(variant.stock_levels, :count).by(1)
         end
       end
+    end
+  end
+
+  describe '#set_stock' do
+    let!(:variant) { create(:variant) }
+    let(:stock_location) { variant.stock_levels.first.stock_location }
+    let(:stock_level) { variant.stock_levels.first }
+
+    it 'writes the difference as an adjustment with the default reason' do
+      count_before = stock_level.count_on_hand
+
+      expect { variant.set_stock(25, nil, stock_location) }.
+        to change { stock_level.reload.count_on_hand }.to(25)
+
+      movement = stock_level.stock_movements.adjusted.last
+      expect(movement).to have_attributes(kind: 'adjusted', quantity: 25 - count_before, reason: 'Manual adjustment')
+    end
+
+    it 'writes nothing when the count is unchanged' do
+      expect { variant.set_stock(stock_level.count_on_hand, nil, stock_location) }.
+        not_to change { stock_level.stock_movements.count }
+    end
+
+    it 'refuses a negative count' do
+      expect { variant.set_stock(-1, nil, stock_location) }.to raise_error(ActiveRecord::RecordInvalid)
     end
   end
 
@@ -195,10 +220,19 @@ describe Spree::Variant, type: :model do
       subject { variant.update!(track_inventory: false) }
 
       let!(:variant) { create(:variant, product: product, track_inventory: true) }
-      let!(:stock_item) { create(:stock_item, variant: variant, count_on_hand: 100) }
+      let!(:stock_level) { create(:stock_level, variant: variant, count_on_hand: 100) }
 
-      it 'updates stock item count on hand to 0' do
-        expect { subject }.to change { stock_item.reload.count_on_hand }.from(110).to(0)
+      it 'updates stock level count on hand to 0' do
+        expect { subject }.to change { stock_level.reload.count_on_hand }.from(110).to(0)
+      end
+
+      # Writing the stock away is a stock decision, so it belongs in the log
+      # rather than disappearing through a bulk column update.
+      it 'records the write-off as an adjustment' do
+        subject
+
+        movement = stock_level.stock_movements.adjusted.last
+        expect(movement).to have_attributes(quantity: -110, reason: 'Manual adjustment')
       end
     end
 
@@ -206,10 +240,10 @@ describe Spree::Variant, type: :model do
       subject { variant.update!(track_inventory: true) }
 
       let!(:variant) { create(:variant, product: product, track_inventory: false) }
-      let!(:stock_item) { create(:stock_item, variant: variant, count_on_hand: 100) }
+      let!(:stock_level) { create(:stock_level, variant: variant, count_on_hand: 100) }
 
       it 'keeps stock items' do
-        expect { subject }.not_to change(variant.stock_items, :count)
+        expect { subject }.not_to change(variant.stock_levels, :count)
       end
     end
   end
@@ -489,7 +523,7 @@ describe Spree::Variant, type: :model do
     let!(:variant) { create(:variant) }
 
     context 'when variant has no stock items' do
-      before { Spree::StockItem.delete_all }
+      before { Spree::StockLevel.delete_all }
 
       it { expect(subject).to eq(false) }
     end
@@ -497,16 +531,16 @@ describe Spree::Variant, type: :model do
     context 'when variant has stock items' do
       let!(:variant2) { create(:variant) }
 
-      before { Spree::StockItem.update_all(backorderable: false) }
+      before { Spree::StockLevel.update_all(backorderable: false) }
 
       context 'when variant stock items count_on_hand > 0' do
-        before { variant.stock_items.first.set_count_on_hand(1) }
+        before { variant.stock_levels.first.set_count_on_hand(1) }
 
         it { expect(subject).to eq(true) }
       end
 
       context 'when variant stock items count_on_hand <= 0' do
-        before { variant.stock_items.first.set_count_on_hand(0) }
+        before { variant.stock_levels.first.set_count_on_hand(0) }
 
         it { expect(subject).to eq(false) }
 
@@ -520,7 +554,7 @@ describe Spree::Variant, type: :model do
           it { expect(variant.in_stock_or_backorderable?).to eq(false) }
 
           context 'with some variant stock item having backorderable = true' do
-            before { variant.stock_items.first.update(backorderable: true) }
+            before { variant.stock_levels.first.update(backorderable: true) }
 
             it { expect(subject).to eq(true) }
           end
@@ -908,28 +942,28 @@ describe Spree::Variant, type: :model do
       stub_store_preferences(track_inventory_levels: true)
     end
 
-    context 'when stock_items are not backorderable' do
+    context 'when stock_levels are not backorderable' do
       before do
-        allow_any_instance_of(Spree::StockItem).to receive_messages(backorderable: false)
+        allow_any_instance_of(Spree::StockLevel).to receive_messages(backorderable: false)
       end
 
-      context 'when stock_items in stock' do
+      context 'when stock_levels in stock' do
         before do
-          variant.stock_items.first.update_column(:count_on_hand, 10)
+          variant.stock_levels.first.update_column(:count_on_hand, 10)
         end
 
-        it 'returns true if stock_items in stock' do
+        it 'returns true if stock_levels in stock' do
           expect(variant.in_stock?).to be true
         end
       end
 
-      context 'when stock_items out of stock' do
+      context 'when stock_levels out of stock' do
         before do
-          allow_any_instance_of(Spree::StockItem).to receive_messages(backorderable: false)
-          allow_any_instance_of(Spree::StockItem).to receive_messages(count_on_hand: 0)
+          allow_any_instance_of(Spree::StockLevel).to receive_messages(backorderable: false)
+          allow_any_instance_of(Spree::StockLevel).to receive_messages(count_on_hand: 0)
         end
 
-        it 'return false if stock_items out of stock' do
+        it 'return false if stock_levels out of stock' do
           expect(variant.in_stock?).to be false
         end
       end
@@ -945,14 +979,14 @@ describe Spree::Variant, type: :model do
       end
     end
 
-    context 'when stock_items are backorderable' do
+    context 'when stock_levels are backorderable' do
       before do
-        allow_any_instance_of(Spree::StockItem).to receive_messages(backorderable: true)
+        allow_any_instance_of(Spree::StockLevel).to receive_messages(backorderable: true)
       end
 
-      context 'when stock_items out of stock' do
+      context 'when stock_levels out of stock' do
         before do
-          allow_any_instance_of(Spree::StockItem).to receive_messages(count_on_hand: 0)
+          allow_any_instance_of(Spree::StockLevel).to receive_messages(count_on_hand: 0)
         end
 
         it 'in_stock? returns false' do
@@ -978,53 +1012,53 @@ describe Spree::Variant, type: :model do
   end
 
   describe '#purchasable?' do
-    context 'when stock_items are not backorderable' do
+    context 'when stock_levels are not backorderable' do
       before do
-        allow_any_instance_of(Spree::StockItem).to receive_messages(backorderable: false)
+        allow_any_instance_of(Spree::StockLevel).to receive_messages(backorderable: false)
       end
 
-      context 'when stock_items in stock' do
+      context 'when stock_levels in stock' do
         before do
-          variant.stock_items.first.update_column(:count_on_hand, 10)
+          variant.stock_levels.first.update_column(:count_on_hand, 10)
         end
 
-        it 'returns true if stock_items in stock' do
+        it 'returns true if stock_levels in stock' do
           expect(variant.purchasable?).to be true
         end
       end
 
-      context 'when stock_items out of stock' do
+      context 'when stock_levels out of stock' do
         before do
-          allow_any_instance_of(Spree::StockItem).to receive_messages(count_on_hand: 0)
+          allow_any_instance_of(Spree::StockLevel).to receive_messages(count_on_hand: 0)
         end
 
-        it 'return false if stock_items out of stock' do
+        it 'return false if stock_levels out of stock' do
           expect(variant.purchasable?).to be false
         end
       end
     end
 
-    context 'when stock_items are out of stock' do
+    context 'when stock_levels are out of stock' do
       before do
-        allow_any_instance_of(Spree::StockItem).to receive_messages(count_on_hand: 0)
+        allow_any_instance_of(Spree::StockLevel).to receive_messages(count_on_hand: 0)
       end
 
       context 'when stock item are backorderable' do
         before do
-          allow_any_instance_of(Spree::StockItem).to receive_messages(backorderable: true)
+          allow_any_instance_of(Spree::StockLevel).to receive_messages(backorderable: true)
         end
 
-        it 'returns true if stock_items are backorderable' do
+        it 'returns true if stock_levels are backorderable' do
           expect(variant.purchasable?).to be true
         end
       end
 
-      context 'when stock_items are not backorderable' do
+      context 'when stock_levels are not backorderable' do
         before do
-          allow_any_instance_of(Spree::StockItem).to receive_messages(backorderable: false)
+          allow_any_instance_of(Spree::StockLevel).to receive_messages(backorderable: false)
         end
 
-        it 'return false if stock_items are not backorderable' do
+        it 'return false if stock_levels are not backorderable' do
           expect(variant.purchasable?).to be false
         end
       end
@@ -1162,7 +1196,7 @@ describe Spree::Variant, type: :model do
   end
 
   describe 'stock movements' do
-    let!(:movement) { create(:stock_movement, stock_item: variant.stock_items.first) }
+    let!(:movement) { create(:stock_movement, stock_level: variant.stock_levels.first) }
 
     it 'builds out collection just fine through stock items' do
       expect(variant.stock_movements.to_a).not_to be_empty
@@ -1174,7 +1208,7 @@ describe Spree::Variant, type: :model do
       in_stock_variant = create(:variant)
       create(:variant) # out_of_stock_variant
 
-      in_stock_variant.stock_items.first.update_column(:count_on_hand, 10)
+      in_stock_variant.stock_levels.first.update_column(:count_on_hand, 10)
 
       expect(Spree::Variant.in_stock).to eq [in_stock_variant]
     end
@@ -1300,12 +1334,12 @@ describe Spree::Variant, type: :model do
     end
 
     it 'returns false when out of stock and not backorderable' do
-      variant.stock_items.first.update(backorderable: false)
+      variant.stock_levels.first.update(backorderable: false)
       expect(variant.backordered?).to eq(false)
     end
 
     it 'returns false when there is available item in stock' do
-      variant.stock_items.first.update(count_on_hand: 10)
+      variant.stock_levels.first.update(count_on_hand: 10)
       expect(variant.backordered?).to eq(false)
     end
   end
@@ -1514,27 +1548,27 @@ describe Spree::Variant, type: :model do
     end
   end
 
-  describe '#stock_items= (hash array)' do
+  describe '#stock_levels= (hash array)' do
     let!(:stock_location) { Spree::StockLocation.first || create(:stock_location) }
     let!(:stock_location_2) { create(:stock_location, name: 'Warehouse 2') }
 
     context 'on persisted variant' do
       it 'upserts stock by location' do
-        variant.stock_items = [
+        variant.stock_levels = [
           { stock_location_id: stock_location.id, count_on_hand: 50, backorderable: true }
         ]
 
-        si = variant.stock_items.find_by(stock_location: stock_location)
+        si = variant.stock_levels.find_by(stock_location: stock_location)
         expect(si.count_on_hand).to eq(50)
         expect(si.backorderable).to eq(true)
       end
 
       it 'accepts prefixed IDs for stock_location_id' do
-        variant.stock_items = [
+        variant.stock_levels = [
           { stock_location_id: stock_location.prefixed_id, count_on_hand: 30 }
         ]
 
-        si = variant.stock_items.find_by(stock_location: stock_location)
+        si = variant.stock_levels.find_by(stock_location: stock_location)
         expect(si.count_on_hand).to eq(30)
       end
 
@@ -1542,27 +1576,57 @@ describe Spree::Variant, type: :model do
         variant.set_stock(10, false, stock_location)
         variant.set_stock(5, false, stock_location_2)
 
-        variant.stock_items = [
+        variant.stock_levels = [
           { stock_location_id: stock_location.id, count_on_hand: 20 }
         ]
 
-        expect(variant.stock_items.find_by(stock_location: stock_location).count_on_hand).to eq(20)
-        expect(Spree::StockItem.unscoped.find_by(variant: variant, stock_location: stock_location_2).deleted_at).not_to be_nil
+        expect(variant.stock_levels.find_by(stock_location: stock_location).count_on_hand).to eq(20)
+        expect(Spree::StockLevel.unscoped.find_by(variant: variant, stock_location: stock_location_2).deleted_at).not_to be_nil
       end
     end
 
     context 'on new variant' do
       let(:new_variant) { build(:variant, product: variant.product) }
 
-      it 'defers stock_items creation to after_create' do
-        new_variant.stock_items = [
+      it 'defers stock_levels creation to after_create' do
+        new_variant.stock_levels = [
           { stock_location_id: stock_location.prefixed_id, count_on_hand: 99 }
         ]
         new_variant.save!
 
-        si = new_variant.stock_items.find_by(stock_location: stock_location)
+        si = new_variant.stock_levels.find_by(stock_location: stock_location)
         expect(si.count_on_hand).to eq(99)
       end
+    end
+  
+    # #stock_levels_attributes= already skips an id that does not resolve, so
+    # the two write paths must agree rather than one raising a 500.
+    it 'skips a stock location id that does not resolve' do
+      variant = create(:variant)
+
+      expect {
+        variant.stock_levels = [{ stock_location_id: 'sloc_DoesNotExist', count_on_hand: 4 }]
+      }.not_to raise_error
+    end
+
+    # The id resolves globally, so without scoping to the product's own store
+    # this write sets stock in another store's warehouse.
+    it 'does not write stock into a stock location belonging to another store' do
+      foreign_location = create(:stock_location, store: create(:store), name: 'Foreign warehouse')
+
+      variant.stock_levels = [{ stock_location_id: foreign_location.prefixed_id, count_on_hand: 7 }]
+
+      level = Spree::StockLevel.unscoped.find_by(variant: variant, stock_location: foreign_location)
+      expect(level&.count_on_hand).not_to eq(7)
+    end
+
+    it 'does not write it through stock_levels_attributes= either' do
+      foreign_location = create(:stock_location, store: create(:store), name: 'Foreign warehouse')
+
+      variant.stock_levels_attributes = [{ stock_location_id: foreign_location.prefixed_id, count_on_hand: 7 }]
+
+      level = Spree::StockLevel.unscoped.find_by(variant: variant, stock_location: foreign_location)
+      expect(level&.count_on_hand).not_to eq(7)
     end
   end
 

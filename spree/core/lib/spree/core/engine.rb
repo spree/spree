@@ -459,7 +459,7 @@ module Spree
           Spree::Return,
           Spree::Fulfillment,
           Spree::DeliveryMethod,
-          Spree::StockItem,
+          Spree::StockLevel,
           Spree::StockTransfer,
           Spree::Store,
           Spree::StoreCredit,

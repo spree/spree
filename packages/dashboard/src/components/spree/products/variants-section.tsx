@@ -206,7 +206,7 @@ export function VariantsSection({ form, seedFromType = false }: Props) {
       // No options selected — drop all option-bearing variants down to a
       // single default-variant row so the product remains purchasable. Keep
       // a persisted id when possible so the existing default is reused, and
-      // carry stock_items forward. The inventory grid fills any gaps for
+      // carry stock_levels forward. The inventory grid fills any gaps for
       // locations the default doesn't already cover (find-or-create on edit).
       const carry = existing[0]
       const defaultRow: VariantFormValues = {
@@ -224,7 +224,7 @@ export function VariantsSection({ form, seedFromType = false }: Props) {
         track_inventory: carry?.track_inventory ?? true,
         tax_category_id: carry?.tax_category_id ?? null,
         prices: carry?.prices ?? [],
-        stock_items: carry?.stock_items ?? [],
+        stock_levels: carry?.stock_levels ?? [],
       }
       form.setValue('variants', [defaultRow], { shouldDirty: true })
       setOrphanedKeys([])

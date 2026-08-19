@@ -155,7 +155,7 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
         let(:id) { cart.prefixed_id }
 
         before do
-          cart.products.first.stock_items.update_all(count_on_hand: 0, backorderable: false)
+          cart.products.first.stock_levels.update_all(count_on_hand: 0, backorderable: false)
         end
 
         run_test! do |response|

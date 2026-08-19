@@ -13,7 +13,7 @@ module Spree
 
         return success([cart, @messages, @warnings]) if cart.total_quantity.zero? || cart.line_items.none?
 
-        line_items = cart.line_items.includes(variant: [:product, :stock_locations, { stock_items: [:stock_location, :active_stock_reservations] }])
+        line_items = cart.line_items.includes(variant: [:product, :stock_locations, { stock_levels: [:stock_location, :active_stock_reservations] }])
 
         removal_error = nil
 

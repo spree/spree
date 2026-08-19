@@ -7,8 +7,9 @@ const client = createAdminClient({
 
 // region:example
 const { data: variants } = await client.products.variants.list('prod_86Rf07xd4z', {
-  expand: ['prices', 'stock_items'],
+  expand: ['prices', 'stock_levels'],
 })
+
 // endregion:example
 
 export { variants }

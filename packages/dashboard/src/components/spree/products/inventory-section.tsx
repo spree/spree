@@ -13,7 +13,7 @@ import { type UseFormReturn, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useOptionTypes } from '../../../hooks/use-option-types'
 import { useStockLocations } from '../../../hooks/use-stock-locations'
-import type { ProductFormValues, StockItemFormValues } from '../../../schemas/product'
+import type { ProductFormValues, StockLevelFormValues } from '../../../schemas/product'
 import { composeOptionsText } from './variants-matrix'
 
 interface InventoryRow {
@@ -76,11 +76,11 @@ export function InventorySection({ form, storeId }: InventorySectionProps) {
         })
       }
       // Render one row per (variant × location), regardless of whether a
-      // stock_item exists in form state. Mirrors the pricing editor's
+      // stock_level exists in form state. Mirrors the pricing editor's
       // (variant × currency) projection. Missing entries display 0/false and
-      // are created on first edit via findOrCreateStockItem below.
+      // are created on first edit via findOrCreateStockLevel below.
       stockLocations.forEach((loc) => {
-        const existing = (variant.stock_items ?? []).find((si) => si.stock_location_id === loc.id)
+        const existing = (variant.stock_levels ?? []).find((si) => si.stock_location_id === loc.id)
         out.push({
           id: `${variantIndex}.${loc.id}`,
           kind: 'item',
@@ -95,10 +95,10 @@ export function InventorySection({ form, storeId }: InventorySectionProps) {
     return out
   }, [variants, stockLocations, hasMultipleVariants, optionTypes, t])
 
-  // Find-or-create the stock_item entry for (variantIndex, stockLocationId)
+  // Find-or-create the stock_level entry for (variantIndex, stockLocationId)
   // and patch the given field. Uses form.setValue with the full updated
-  // stock_items array so RHF treats this as one atomic edit per cell.
-  const patchStockItem = useCallback(
+  // stock_levels array so RHF treats this as one atomic edit per cell.
+  const patchStockLevel = useCallback(
     (
       variantIndex: number,
       stockLocationId: string,
@@ -106,9 +106,9 @@ export function InventorySection({ form, storeId }: InventorySectionProps) {
       field: 'count_on_hand' | 'backorderable',
       next: number | boolean,
     ) => {
-      const current = form.getValues(`variants.${variantIndex}.stock_items`) ?? []
+      const current = form.getValues(`variants.${variantIndex}.stock_levels`) ?? []
       const existingIdx = current.findIndex((si) => si.stock_location_id === stockLocationId)
-      const nextItems: StockItemFormValues[] = [...current]
+      const nextItems: StockLevelFormValues[] = [...current]
       if (existingIdx === -1) {
         nextItems.push({
           stock_location_id: stockLocationId,
@@ -125,7 +125,7 @@ export function InventorySection({ form, storeId }: InventorySectionProps) {
             : { backorderable: next as boolean }),
         }
       }
-      form.setValue(`variants.${variantIndex}.stock_items`, nextItems, { shouldDirty: true })
+      form.setValue(`variants.${variantIndex}.stock_levels`, nextItems, { shouldDirty: true })
     },
     [form],
   )
@@ -173,7 +173,7 @@ export function InventorySection({ form, storeId }: InventorySectionProps) {
               coords={coords}
               value={value}
               onChange={(next) =>
-                patchStockItem(
+                patchStockLevel(
                   r.variantIndex,
                   r.stockLocationId as string,
                   r.stockLocationName as string,
@@ -201,7 +201,7 @@ export function InventorySection({ form, storeId }: InventorySectionProps) {
               coords={coords}
               value={r.backorderable ?? false}
               onChange={(next) =>
-                patchStockItem(
+                patchStockLevel(
                   r.variantIndex,
                   r.stockLocationId as string,
                   r.stockLocationName as string,
@@ -217,7 +217,7 @@ export function InventorySection({ form, storeId }: InventorySectionProps) {
         },
       },
     ],
-    [patchStockItem, storeId, t],
+    [patchStockLevel, storeId, t],
   )
 
   if (rows.length === 0) {

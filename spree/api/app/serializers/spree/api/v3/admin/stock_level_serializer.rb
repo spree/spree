@@ -2,22 +2,23 @@ module Spree
   module Api
     module V3
       module Admin
-        class StockItemSerializer < V3::StockItemSerializer
+        class StockLevelSerializer < V3::StockLevelSerializer
           typelize metadata: 'Record<string, unknown>',
                    allocated_count: :number, available_count: :number
 
           attributes :metadata,
                      created_at: :iso8601, updated_at: :iso8601
 
-          # Units already allocated to pending shipments. Always 0 in 5.5;
-          # 6.0 Typed Stock Movements wires it up.
-          attribute :allocated_count do |stock_item|
-            stock_item.allocated_count.to_i
+          # Units promised to placed orders but not yet dispatched. Raised by an
+          # `allocated` movement and retired by `released` or `shipped`, so an
+          # oversell reads as this exceeding count_on_hand.
+          attribute :allocated_count do |stock_level|
+            stock_level.allocated_count.to_i
           end
 
-          # Physical stock minus allocated units (per stock_item).
-          attribute :available_count do |stock_item|
-            stock_item.available_count.to_i
+          # Physical stock minus allocated units (per stock_level).
+          attribute :available_count do |stock_level|
+            stock_level.available_count.to_i
           end
 
           one :stock_location,

@@ -37,7 +37,7 @@ RSpec.describe Spree::Carts::RemoveOutOfStockItems do
   end
 
   context 'when product is out of stock' do
-    before { product.stock_items.update_all(count_on_hand: 0, backorderable: false) }
+    before { product.stock_levels.update_all(count_on_hand: 0, backorderable: false) }
 
     it 'removes line item and returns out of stock message' do
       _cart, messages, _warnings = execute.value
@@ -83,12 +83,12 @@ RSpec.describe Spree::Carts::RemoveOutOfStockItems do
 
     before do
       stub_store_preferences(stock_reservations_enabled: true)
-      variant.stock_items.update_all(count_on_hand: 1, backorderable: false)
+      variant.stock_levels.update_all(count_on_hand: 1, backorderable: false)
       line_item.update!(quantity: 1)
-      variant.stock_items.each do |stock_item|
+      variant.stock_levels.each do |stock_level|
         create(
           :stock_reservation,
-          stock_item: stock_item,
+          stock_level: stock_level,
           line_item: line_item,
           cart: cart,
           quantity: 1,

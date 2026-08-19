@@ -1,11 +1,13 @@
 module Spree
   module StockLocations
     module StockItems
-      class CreateJob < Spree::BaseJob
-        queue_as Spree.queues.stock_location_stock_items
-
-        def perform(stock_location)
-          Spree::StockLocations::StockItems::Create.call(stock_location: stock_location)
+      # @deprecated Renamed to Spree::StockLocations::StockLevels::CreateJob in 6.0.
+      #   Subclasses it so jobs enqueued under the old class name before the deploy
+      #   still deserialize and run; removed in 6.1.
+      class CreateJob < StockLevels::CreateJob
+        def perform(*args)
+          Spree::Deprecation.warn('Spree::StockLocations::StockItems::CreateJob is deprecated and will be removed in Spree 6.1. Use Spree::StockLocations::StockLevels::CreateJob instead.')
+          super
         end
       end
     end

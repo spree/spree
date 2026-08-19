@@ -697,7 +697,8 @@ export interface ProductVariantInput {
   options?: VariantOptionPair[]
   /** Per-currency prices. Upserted by currency. */
   prices?: VariantPrice[]
-  stock_items?: VariantStockItem[]
+  /** Stock per location. Upserted by location; omitted locations are removed. */
+  stock_levels?: VariantStockLevel[]
 }
 
 export interface CategoryCreateParams {
@@ -858,9 +859,18 @@ export interface VariantPrice {
   compare_at_amount?: string | number | null
 }
 
-export interface VariantStockItem {
+/** Stock for one variant at one location. */
+export interface VariantStockLevel {
+  /** Prefixed id of the location holding the stock, e.g. `sloc_1234567890`. */
   stock_location_id: string
+  /**
+   * Units physically at the location, not units available to sell — stock
+   * promised to placed orders is still counted here until it ships. Sent as
+   * the count the shelf should end at; the API records the difference as an
+   * adjustment in the stock history.
+   */
   count_on_hand: number
+  /** Whether this location sells the variant beyond what it holds. */
   backorderable?: boolean
 }
 
@@ -890,7 +900,8 @@ export interface VariantCreateParams {
   options: [VariantOptionPair, ...VariantOptionPair[]]
   /** Per-currency prices. Upserted by currency. */
   prices?: VariantPrice[]
-  stock_items?: VariantStockItem[]
+  /** Stock per location. Upserted by location; omitted locations are removed. */
+  stock_levels?: VariantStockLevel[]
 }
 
 export interface VariantUpdateParams {
@@ -915,7 +926,8 @@ export interface VariantUpdateParams {
   options?: VariantOptionPair[]
   /** Per-currency prices. Upserted by currency. */
   prices?: VariantPrice[]
-  stock_items?: VariantStockItem[]
+  /** Stock per location. Upserted by location; omitted locations are removed. */
+  stock_levels?: VariantStockLevel[]
 }
 
 export interface CustomFieldCreateParams {
@@ -1145,9 +1157,19 @@ export interface StockLocationUpdateParams {
   pickup_instructions?: string | null
 }
 
-export interface StockItemUpdateParams {
+/** Corrects one stock level. */
+export interface StockLevelUpdateParams {
+  /**
+   * The count the shelf should end at. The API records the difference as an
+   * `adjusted` movement rather than writing the column, so the correction
+   * appears in the stock history with everything else. Must be a whole number
+   * of zero or more.
+   */
   count_on_hand?: number
+  /** Whether this location sells the variant beyond what it holds. */
   backorderable?: boolean
+  /** Labels the correction in the stock history. Defaults to "Manual adjustment". */
+  reason?: string
   metadata?: Record<string, unknown>
 }
 

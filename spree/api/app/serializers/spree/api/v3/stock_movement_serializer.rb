@@ -4,24 +4,17 @@ module Spree
   module Api
     module V3
       class StockMovementSerializer < BaseSerializer
-        typelize quantity: :number, action: [:string, nullable: true],
-                 originator_type: [:string, nullable: true], originator_id: [:string, nullable: true],
-                 stock_item_id: [:string, nullable: true]
+        # `kind` is nullable for the lifetime of 6.0: a legacy row on an
+        # install that has not run spree:migrate_stock_movements_to_typed_rows
+        # has no kind yet.
+        typelize quantity: :number, kind: [:string, nullable: true],
+                 reason: [:string, nullable: true], stock_level_id: [:string, nullable: true]
 
-        attributes :quantity, :action,
+        attributes :quantity, :kind, :reason,
                    created_at: :iso8601, updated_at: :iso8601
 
-        # `"shipment"` / `"stock_transfer"`, not the polymorphic class name.
-        attribute :originator_type do |movement|
-          Spree::Base.polymorphic_api_type(movement.originator_type)
-        end
-
-        attribute :originator_id do |movement|
-          movement.originator&.prefixed_id
-        end
-
-        attribute :stock_item_id do |movement|
-          movement.stock_item&.prefixed_id
+        attribute :stock_level_id do |movement|
+          movement.stock_level&.prefixed_id
         end
       end
     end

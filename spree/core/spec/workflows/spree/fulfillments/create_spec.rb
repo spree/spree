@@ -84,17 +84,34 @@ module Spree
       let(:other_stock_location) { create(:stock_location, name: 'External 3PL', backorderable_default: true) }
       let(:params) { { order: order, stock_location: other_stock_location } }
 
-      it 'restocks the source location and unstocks the target for tracked variants' do
+      # Moving units between fulfillments moves the promise, not the goods —
+      # the shelf is untouched on both sides until a parcel leaves.
+      it 'carries the allocation from the source location to the target' do
+        stock_location.allocate(variant, 1, source_shipment)
         source_count = stock_location.count_on_hand(variant)
 
         expect(execute.success?).to eq(true)
-        expect(stock_location.reload.count_on_hand(variant)).to eq(source_count + 1)
-        expect(other_stock_location.reload.count_on_hand(variant)).to eq(-1)
+        expect(stock_location.reload.stock_level(variant).allocated_count).to eq(0)
+        expect(other_stock_location.reload.stock_level(variant).allocated_count).to eq(1)
+        expect(stock_location.reload.count_on_hand(variant)).to eq(source_count)
       end
 
-      it 'does not touch stock when the location stays the same' do
+      # Allocation is keyed to the fulfillment, so a split has to carry it
+      # across even when the origin does not change — otherwise the quantity
+      # Fulfillments::Fulfill reads would sit on the wrong fulfillment.
+      it 'carries the allocation across a same-location split' do
+        stock_location.allocate(variant, 1, source_shipment)
         params[:stock_location] = stock_location
+        params[:items] = [{ line_item: line_items.first, quantity: 1 }]
+
+        expect(execute.success?).to eq(true)
+        expect(fulfillment.allocated_quantity).to eq(1)
+        expect(source_shipment.reload.allocated_quantity).to eq(0)
+      end
+
+      it 'carries nothing when the source holds no promise' do
         expect { execute }.not_to change { stock_location.reload.count_on_hand(variant) }
+        expect(other_stock_location.reload.stock_level(variant)&.allocated_count.to_i).to eq(0)
       end
     end
 

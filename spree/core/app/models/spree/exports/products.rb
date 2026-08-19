@@ -9,7 +9,7 @@ module Spree
       end
 
       def variant_includes
-        [:images, :prices, :stock_items, :stock_locations, { option_values: [:option_type] }]
+        [:images, :prices, :stock_levels, :stock_locations, { option_values: [:option_type] }]
       end
 
       def multi_line_csv?

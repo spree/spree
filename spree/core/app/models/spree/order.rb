@@ -591,8 +591,9 @@ module Spree
     def backordered_variants
       variants.
         where(track_inventory: true).
-        joins(:stock_items, :product).
-        where(Spree::StockItem.table_name => { count_on_hand: ..0, backorderable: true })
+        joins(:stock_levels, :product).
+        where(Spree::StockLevel.table_name => { backorderable: true }).
+        where("#{Spree::StockLevel.table_name}.count_on_hand - #{Spree::StockLevel.table_name}.allocated_count <= ?", 0)
     end
 
     def can_ship?

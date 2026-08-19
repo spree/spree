@@ -113,7 +113,18 @@ module Spree
 
         claim.order.fulfillments += @fulfillments
         claim.order.save!
-        @fulfillments.each { |fulfillment| fulfillment.update!(claim.order) }
+        @fulfillments.each { |fulfillment| allocate_replacement_stock(fulfillment) }
+      end
+
+      # See Spree::Exchanges::Fulfill — a replacement that holds no promise
+      # ships without writing a movement, so the shelf never follows the goods.
+      def allocate_replacement_stock(fulfillment)
+        fulfillment.manifest.each do |item|
+          next unless item.variant.track_inventory?
+          next unless item.quantity.positive?
+
+          fulfillment.stock_location.allocate(item.variant, item.quantity, fulfillment)
+        end
       end
 
       def issue_store_credit

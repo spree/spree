@@ -54,7 +54,7 @@ describe Spree::Product, type: :model do
     # Baseline: put every variant out of stock and non-backorderable.
     def all_variants_unavailable(product)
       product.reload.variants.each do |v|
-        v.stock_items.update_all(count_on_hand: 0, backorderable: false)
+        v.stock_levels.update_all(count_on_hand: 0, backorderable: false)
       end
     end
 
@@ -72,9 +72,9 @@ describe Spree::Product, type: :model do
           all_variants_unavailable(product)
 
           if method_name == 'in_stock'
-            variant.stock_items.update_all(count_on_hand: 10)
+            variant.stock_levels.update_all(count_on_hand: 10)
           else
-            variant.stock_items.update_all(backorderable: true)
+            variant.stock_levels.update_all(backorderable: true)
           end
 
           expect(product.reload.send("#{method_name}?")).to eq true
@@ -244,7 +244,7 @@ describe Spree::Product, type: :model do
       end
 
       it 'is false' do
-        product.variants.each { |v| v.stock_items.update_all count_on_hand: 0, backorderable: false }
+        product.variants.each { |v| v.stock_levels.update_all count_on_hand: 0, backorderable: false }
         expect(product.can_supply?).to be(false)
       end
     end
@@ -262,10 +262,10 @@ describe Spree::Product, type: :model do
 
     context 'has stock movements' do
       let(:variant) { product.default_variant }
-      let(:stock_item) { variant.stock_items.first }
+      let(:stock_level) { variant.stock_levels.first }
 
       it 'doesnt raise ReadOnlyRecord error' do
-        Spree::StockMovement.create!(stock_item: stock_item, quantity: 1)
+        Spree::StockMovement.create!(stock_level: stock_level, quantity: 1, kind: 'received')
         expect { product.destroy }.not_to raise_error
       end
     end
@@ -273,8 +273,8 @@ describe Spree::Product, type: :model do
     # Regression test for #3737
     context 'has stock items' do
       it 'can retrieve stock items' do
-        expect(product.default_variant.stock_items.first).not_to be_nil
-        expect(product.stock_items.first).not_to be_nil
+        expect(product.default_variant.stock_levels.first).not_to be_nil
+        expect(product.stock_levels.first).not_to be_nil
       end
     end
 
@@ -335,7 +335,7 @@ describe Spree::Product, type: :model do
       let(:incorrent_total_on_hand) { 15 }
 
       before do
-        product.stock_items.first.set_count_on_hand corrent_total_on_hand
+        product.stock_levels.first.set_count_on_hand corrent_total_on_hand
         product.instance_variable_set(:@total_on_hand, incorrent_total_on_hand)
       end
 
@@ -462,9 +462,9 @@ describe Spree::Product, type: :model do
       it 'creates a default stock item' do
         product.save
         expect(product.default_variant.track_inventory?).to eq(false)
-        expect(product.default_variant.stock_items.count).to eq(1)
-        expect(product.default_variant.stock_items.first.count_on_hand).to eq(0)
-        expect(product.default_variant.stock_items.first.backorderable).to eq(false)
+        expect(product.default_variant.stock_levels.count).to eq(1)
+        expect(product.default_variant.stock_levels.first.count_on_hand).to eq(0)
+        expect(product.default_variant.stock_levels.first.backorderable).to eq(false)
       end
     end
 
@@ -687,13 +687,13 @@ describe Spree::Product, type: :model do
     end
 
     it 'returns sum of stock items count_on_hand' do
-      product.stock_items.first.set_count_on_hand 5
+      product.stock_levels.first.set_count_on_hand 5
       product.variants.reload # force load association
       expect(product.total_on_hand).to be(5)
     end
 
     it 'returns sum of stock items count_on_hand when variants are not loaded' do
-      product.stock_items.first.set_count_on_hand 5
+      product.stock_levels.first.set_count_on_hand 5
       expect(product.reload.total_on_hand).to be(5)
     end
   end
@@ -751,12 +751,12 @@ describe Spree::Product, type: :model do
     end
 
     it 'returns false when out of stock and not backorderable' do
-      product.stock_items.first.update(backorderable: false)
+      product.stock_levels.first.update(backorderable: false)
       expect(product.backordered?).to eq(false)
     end
 
     it 'returns false when there is available item in stock' do
-      product.stock_items.first.update(count_on_hand: 10)
+      product.stock_levels.first.update(count_on_hand: 10)
       expect(product.backordered?).to eq(false)
     end
   end
@@ -1236,7 +1236,7 @@ describe Spree::Product, type: :model do
     subject { product.any_variant_in_stock_or_backorderable? }
 
     let!(:product) { create(:product) }
-    let(:stock_item) { variant.stock_items.first }
+    let(:stock_level) { variant.stock_levels.first }
 
     context 'when only default variant is in stock or backorderable' do
       it { expect(subject).to eq(true) }
@@ -1247,21 +1247,21 @@ describe Spree::Product, type: :model do
       let!(:variant) { create(:variant, product: product) }
 
       before do
-        Spree::StockItem.update_all(backorderable: false)
+        Spree::StockLevel.update_all(backorderable: false)
         product.reload
       end
 
       context 'with at least one option variant stock items count_on_hand > 0' do
         before do
           # make all stock items in stock, also for the default variant
-          Spree::StockItem.all.each { |stock_item| stock_item.set_count_on_hand(1) }
+          Spree::StockLevel.all.each { |stock_level| stock_level.set_count_on_hand(1) }
         end
 
         it { expect(subject).to eq(true) }
       end
 
       context 'when all option variant stock items have count_on_hand <= 0' do
-        before { stock_item.set_count_on_hand(0) }
+        before { stock_level.set_count_on_hand(0) }
 
         it { expect(subject).to eq(false) }
 
@@ -1275,7 +1275,7 @@ describe Spree::Product, type: :model do
           it { expect(subject).to eq(false) }
 
           context 'when all option variant stock items have backorderable = true' do
-            before { stock_item.update(backorderable: true) }
+            before { stock_level.update(backorderable: true) }
 
             it { expect(subject).to eq(true) }
           end
@@ -1287,9 +1287,9 @@ describe Spree::Product, type: :model do
       let!(:variant) { create(:variant, product: product) }
 
       before do
-        Spree::StockItem.update_all(backorderable: false)
-        product.default_variant.stock_items.first.set_count_on_hand(0)
-        variant.stock_items.first.set_count_on_hand(10)
+        Spree::StockLevel.update_all(backorderable: false)
+        product.default_variant.stock_levels.first.set_count_on_hand(0)
+        variant.stock_levels.first.set_count_on_hand(10)
         variant.update_column(:discontinue_on, 1.day.ago)
         product.reload
       end

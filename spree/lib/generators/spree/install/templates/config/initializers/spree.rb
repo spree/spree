@@ -22,7 +22,7 @@ end
 # Spree.queues.default = :default
 # Spree.queues.events = :default  # Event subscribers (Spree::Events::SubscriberJob)
 # Spree.queues.variants = :default
-# Spree.queues.stock_location_stock_items = :default
+# Spree.queues.stock_location_stock_levels = :default
 # Spree.queues.coupon_codes = :default
 
 # Use a CDN host for images, eg. Cloudfront
@@ -107,7 +107,7 @@ end
 # Spree.queues.reports = :default
 # Spree.queues.variants = :default
 # Spree.queues.taxons = :default
-# Spree.queues.stock_location_stock_items = :default
+# Spree.queues.stock_location_stock_levels = :default
 # Spree.queues.coupon_codes = :default
 # Spree.queues.themes = :default
 # Spree.queues.addresses = :default

@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type {
-  StockItem,
+  StockLevel,
   StockLocation,
   StockLocationCreateParams,
   StockLocationUpdateParams,
@@ -56,7 +56,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { useStockItems, useUpdateStockItem } from '../../../../hooks/use-stock-items'
+import { useStockLevels, useUpdateStockLevel } from '../../../../hooks/use-stock-levels'
 import {
   useCreateStockLocation,
   useDeleteStockLocation,
@@ -297,7 +297,7 @@ function EditStockLocationSheet({
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
               <StockLocationFormFields form={form} />
-              <StockItemsPanel stockLocationId={id} />
+              <StockLevelsPanel stockLocationId={id} />
             </div>
             <SheetFooter>
               <Button
@@ -325,14 +325,14 @@ function EditStockLocationSheet({
 }
 
 // ============================================================================
-// Stock Items panel — adjust on-hand counts at this location
+// Stock Levels panel — adjust on-hand counts at this location
 // ============================================================================
 
-function StockItemsPanel({ stockLocationId }: { stockLocationId: string }) {
+function StockLevelsPanel({ stockLocationId }: { stockLocationId: string }) {
   const { t } = useTranslation()
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
-  const { data, isFetching } = useStockItems({
+  const { data, isFetching } = useStockLevels({
     stock_location_id_eq: stockLocationId,
     variant_sku_or_variant_product_name_cont: search.length >= 2 ? search : undefined,
     page,
@@ -344,7 +344,7 @@ function StockItemsPanel({ stockLocationId }: { stockLocationId: string }) {
   // Group by product so multi-variant products read as one card with sub-rows
   // instead of as N unrelated rows. Sort: low stock first, then product name.
   const groups = useMemo(
-    () => groupItemsByProduct(items, t('admin.stock_locations.stock_items.unknown_product')),
+    () => groupItemsByProduct(items, t('admin.stock_locations.stock_levels.unknown_product')),
     [items, t],
   )
 
@@ -352,13 +352,13 @@ function StockItemsPanel({ stockLocationId }: { stockLocationId: string }) {
     <div className="rounded-md border">
       <div className="flex items-center justify-between gap-2 border-b px-4 py-3">
         <div>
-          <h3 className="text-sm font-medium">{t('admin.stock_locations.stock_items.title')}</h3>
+          <h3 className="text-sm font-medium">{t('admin.stock_locations.stock_levels.title')}</h3>
           <p className="text-xs text-muted-foreground">
-            {t('admin.stock_locations.stock_items.help')}
+            {t('admin.stock_locations.stock_levels.help')}
           </p>
         </div>
         <Input
-          placeholder={t('admin.stock_locations.stock_items.search_placeholder')}
+          placeholder={t('admin.stock_locations.stock_levels.search_placeholder')}
           value={search}
           onChange={(e) => {
             setSearch(e.target.value)
@@ -372,8 +372,8 @@ function StockItemsPanel({ stockLocationId }: { stockLocationId: string }) {
       ) : items.length === 0 ? (
         <div className="px-4 py-6 text-sm text-muted-foreground">
           {search
-            ? t('admin.stock_locations.stock_items.empty_search')
-            : t('admin.stock_locations.stock_items.empty')}
+            ? t('admin.stock_locations.stock_levels.empty_search')
+            : t('admin.stock_locations.stock_levels.empty')}
         </div>
       ) : (
         <div className="divide-y">
@@ -413,17 +413,17 @@ function StockItemsPanel({ stockLocationId }: { stockLocationId: string }) {
   )
 }
 
-interface StockItemGroup {
+interface StockLevelGroup {
   productId: string
   productName: string
-  items: StockItem[]
+  items: StockLevel[]
   hasLowStock: boolean
 }
 
 const LOW_STOCK_THRESHOLD = 5
 
-function groupItemsByProduct(items: StockItem[], unknownProductLabel: string): StockItemGroup[] {
-  const map = new Map<string, StockItemGroup>()
+function groupItemsByProduct(items: StockLevel[], unknownProductLabel: string): StockLevelGroup[] {
+  const map = new Map<string, StockLevelGroup>()
   for (const item of items) {
     const productId = item.variant?.product_id ?? '__unknown__'
     const productName = item.variant?.product_name ?? unknownProductLabel
@@ -445,7 +445,7 @@ function groupItemsByProduct(items: StockItem[], unknownProductLabel: string): S
   return groups
 }
 
-function ProductGroup({ group, defaultOpen }: { group: StockItemGroup; defaultOpen: boolean }) {
+function ProductGroup({ group, defaultOpen }: { group: StockLevelGroup; defaultOpen: boolean }) {
   const { t } = useTranslation()
   const [open, setOpen] = useState(defaultOpen)
 
@@ -460,8 +460,8 @@ function ProductGroup({ group, defaultOpen }: { group: StockItemGroup; defaultOp
         <div className="min-w-0 flex-1">
           <div className="truncate text-sm font-medium">{group.productName}</div>
           <div className="truncate text-xs text-muted-foreground">
-            {t('admin.stock_locations.stock_items.variant_count', { count: group.items.length })}
-            {group.hasLowStock && ` · ${t('admin.stock_locations.stock_items.low_stock_marker')}`}
+            {t('admin.stock_locations.stock_levels.variant_count', { count: group.items.length })}
+            {group.hasLowStock && ` · ${t('admin.stock_locations.stock_levels.low_stock_marker')}`}
           </div>
         </div>
       </CollapsibleTrigger>
@@ -469,17 +469,17 @@ function ProductGroup({ group, defaultOpen }: { group: StockItemGroup; defaultOp
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>{t('admin.stock_locations.stock_items.table.variant')}</TableHead>
+              <TableHead>{t('admin.stock_locations.stock_levels.table.variant')}</TableHead>
               <TableHead className="text-right">
-                {t('admin.stock_locations.stock_items.table.on_hand')}
+                {t('admin.stock_locations.stock_levels.table.on_hand')}
               </TableHead>
-              <TableHead>{t('admin.stock_locations.stock_items.table.backorder')}</TableHead>
+              <TableHead>{t('admin.stock_locations.stock_levels.table.backorder')}</TableHead>
               <TableHead className="w-10" />
             </TableRow>
           </TableHeader>
           <TableBody>
             {group.items.map((item) => (
-              <StockItemRow key={item.id} item={item} />
+              <StockLevelRow key={item.id} item={item} />
             ))}
           </TableBody>
         </Table>
@@ -488,10 +488,10 @@ function ProductGroup({ group, defaultOpen }: { group: StockItemGroup; defaultOp
   )
 }
 
-function StockItemRow({ item }: { item: StockItem }) {
+function StockLevelRow({ item }: { item: StockLevel }) {
   const { t } = useTranslation()
   const { storeId } = Route.useParams()
-  const updateMutation = useUpdateStockItem(item.id)
+  const updateMutation = useUpdateStockLevel(item.id)
   const [count, setCount] = useState<number>(item.count_on_hand)
   const [backorderable, setBackorderable] = useState<boolean>(item.backorderable)
 

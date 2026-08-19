@@ -32,7 +32,7 @@ module Spree
       end
 
       it 'fails when the variant has insufficient stock' do
-        variant.stock_items.first.update!(backorderable: false)
+        variant.stock_levels.first.update!(backorderable: false)
 
         result = subject.call(order: order, variant: variant, quantity: 10)
 

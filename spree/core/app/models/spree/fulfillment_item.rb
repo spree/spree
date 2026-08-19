@@ -20,10 +20,10 @@ module Spree
     scope :on_hand_or_backordered, -> { where status: ['backordered', 'on_hand'] }
     scope :shipped, -> { where status: 'shipped' }
     scope :returned, -> { where status: 'returned' }
-    scope :backordered_per_variant, ->(stock_item) do
+    scope :backordered_per_variant, ->(stock_level) do
       includes(:fulfillment, :order).
         where.not(Spree::Fulfillment.table_name => { status: 'canceled' }).
-        where(variant_id: stock_item.variant_id).
+        where(variant_id: stock_level.variant_id).
         where.not(spree_orders: { completed_at: nil }).
         backordered.order('spree_orders.completed_at ASC')
     end
@@ -60,9 +60,9 @@ module Spree
     # objects
     #
     # Returns an array of backordered inventory units as per a given stock item
-    def self.backordered_for_stock_item(stock_item)
-      backordered_per_variant(stock_item).select do |unit|
-        unit.fulfillment.stock_location == stock_item.stock_location
+    def self.backordered_for_stock_level(stock_level)
+      backordered_per_variant(stock_level).select do |unit|
+        unit.fulfillment.stock_location == stock_level.stock_location
       end
     end
 
@@ -70,8 +70,8 @@ module Spree
       update_all(pending: false, updated_at: Time.current)
     end
 
-    def find_stock_item
-      fulfillment.stock_location.stock_item_or_create(variant)
+    def find_stock_level
+      fulfillment.stock_location.stock_level_or_create(variant)
     end
 
     def self.split(original_inventory_unit, extract_quantity)

@@ -2,12 +2,12 @@
 
 require 'spec_helper'
 
-RSpec.describe Spree::Api::V3::StockItemSerializer do
+RSpec.describe Spree::Api::V3::StockLevelSerializer do
   let(:store) { @default_store }
-  let(:stock_item) { create(:stock_item) }
+  let(:stock_level) { create(:stock_level) }
   let(:base_params) { { store: store, currency: 'USD' } }
 
-  subject { described_class.new(stock_item, params: base_params).to_h }
+  subject { described_class.new(stock_level, params: base_params).to_h }
 
   it 'includes all expected attributes' do
     expect(subject.keys).to match_array(%w[
@@ -16,15 +16,15 @@ RSpec.describe Spree::Api::V3::StockItemSerializer do
   end
 
   it 'returns the prefixed id' do
-    expect(subject['id']).to eq(stock_item.prefixed_id)
+    expect(subject['id']).to eq(stock_level.prefixed_id)
   end
 
   it 'returns prefixed stock_location_id' do
-    expect(subject['stock_location_id']).to eq(stock_item.stock_location.prefixed_id)
+    expect(subject['stock_location_id']).to eq(stock_level.stock_location.prefixed_id)
   end
 
   it 'returns prefixed variant_id' do
-    expect(subject['variant_id']).to eq(stock_item.variant.prefixed_id)
+    expect(subject['variant_id']).to eq(stock_level.variant.prefixed_id)
   end
 
   it 'returns count_on_hand as number' do

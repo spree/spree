@@ -57,7 +57,7 @@ function NewProductPage() {
     // Strip the placeholder default variant if the merchant didn't touch it.
     // Spree::Product#variants= auto-creates the canonical default variant
     // server-side when none is provided. Any variant with options, SKU,
-    // prices, or stock_items survives as merchant intent.
+    // prices, or stock_levels survives as merchant intent.
     const meaningful = (variants ?? []).filter((v) => !isPlaceholderDefaultVariant(v))
 
     const payload: ProductCreateParams = {
@@ -122,7 +122,7 @@ function NewProductPage() {
         v.preorderable === true ||
         v.preorder_ships_at != null ||
         v.backorder_limit != null ||
-        (v.stock_items?.length ?? 0) > 0
+        (v.stock_levels?.length ?? 0) > 0
       if (hasVariantOnlyData) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ;(payload as any).variants = [variantToWirePayload(v, 0)]

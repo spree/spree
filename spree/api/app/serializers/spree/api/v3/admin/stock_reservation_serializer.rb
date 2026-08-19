@@ -3,7 +3,7 @@ module Spree
     module V3
       module Admin
         class StockReservationSerializer < V3::StockReservationSerializer
-          typelize stock_item_id: :string,
+          typelize stock_level_id: :string,
                    line_item_id: :string,
                    order_id: :string,
                    variant_id: [:string, nullable: true],
@@ -12,8 +12,8 @@ module Spree
                    expires_at: :string,
                    active: :boolean
 
-          attribute :stock_item_id do |reservation|
-            reservation.stock_item.prefixed_id
+          attribute :stock_level_id do |reservation|
+            reservation.stock_level.prefixed_id
           end
 
           attribute :line_item_id do |reservation|
@@ -25,11 +25,11 @@ module Spree
           end
 
           attribute :variant_id do |reservation|
-            reservation.stock_item&.variant&.prefixed_id
+            reservation.stock_level&.variant&.prefixed_id
           end
 
           attribute :stock_location_id do |reservation|
-            reservation.stock_item&.stock_location&.prefixed_id
+            reservation.stock_level&.stock_location&.prefixed_id
           end
 
           attributes :quantity, expires_at: :iso8601

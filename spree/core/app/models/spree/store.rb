@@ -143,7 +143,7 @@ module Spree
     has_many :products, class_name: 'Spree::Product', dependent: :nullify
     has_many :product_publications, through: :channels, source: :publications, class_name: 'Spree::ProductPublication'
     has_many :variants, through: :products, class_name: 'Spree::Variant', source: :variants
-    has_many :stock_items, through: :variants, class_name: 'Spree::StockItem'
+    has_many :stock_levels, through: :variants, class_name: 'Spree::StockLevel'
     has_many :prices, through: :variants, class_name: 'Spree::Price'
     has_many :price_lists, class_name: 'Spree::PriceList', inverse_of: :store
     has_many :fulfillment_items, through: :variants, class_name: 'Spree::FulfillmentItem'
@@ -171,6 +171,12 @@ module Spree
     def taxons=(value)
       Spree::Deprecation.warn('Spree::Store#taxons= is deprecated and will be removed in Spree 6.1. Use #categories= instead.')
       self.categories = value
+    end
+
+    # @deprecated Use {#stock_levels}; removed in 6.1.
+    def stock_items
+      Spree::Deprecation.warn('Spree::Store#stock_items is deprecated and will be removed in Spree 6.1. Use #stock_levels instead.')
+      stock_levels
     end
 
     has_many :delivery_zones, class_name: 'Spree::DeliveryZone', dependent: :destroy

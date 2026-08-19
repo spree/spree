@@ -99,7 +99,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
           },
           variants: {
             type: :array,
-            description: 'Array of variant payloads. Variants can declare multiple option pairs via `options:` and per-currency prices via `prices:`. Stock counts go in `stock_items:` (per stock location).',
+            description: 'Array of variant payloads. Variants can declare multiple option pairs via `options:` and per-currency prices via `prices:`. Stock counts go in `stock_levels:` (per stock location).',
             items: {
               type: :object,
               properties: {
@@ -129,7 +129,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
                     }
                   }
                 },
-                stock_items: {
+                stock_levels: {
                   type: :array,
                   description: 'Per-stock-location inventory. Upserted by stock_location_id.',
                   items: {
@@ -252,7 +252,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
           },
           variants: {
             type: :array,
-            description: 'Array of variant payloads. Variants can declare multiple option pairs via `options:` and per-currency prices via `prices:`. Stock counts go in `stock_items:` (per stock location).',
+            description: 'Array of variant payloads. Variants can declare multiple option pairs via `options:` and per-currency prices via `prices:`. Stock counts go in `stock_levels:` (per stock location).',
             items: {
               type: :object,
               properties: {
@@ -282,7 +282,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
                     }
                   }
                 },
-                stock_items: {
+                stock_levels: {
                   type: :array,
                   description: 'Per-stock-location inventory. Upserted by stock_location_id.',
                   items: {

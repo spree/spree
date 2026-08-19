@@ -17,13 +17,17 @@ module Spree
       expect(fulfillment.reload).not_to be_canceled
     end
 
-    it 'takes the units back off the shelf' do
+    # Reinstating a fulfillment re-promises its units; nothing physical moves
+    # until the parcel does.
+    it 're-promises the units without touching the shelf' do
       variant = fulfillment.fulfillment_items.first.variant
-      stock_item = fulfillment.stock_location.stock_item(variant)
+      quantity = fulfillment.fulfillment_items.where(variant_id: variant.id).sum(:quantity)
+      stock_level = fulfillment.stock_location.stock_level(variant)
+      count_on_hand_before = stock_level.reload.count_on_hand
 
-      expect { execute }.to change { stock_item.reload.count_on_hand }.by(
-        -fulfillment.fulfillment_items.where(variant_id: variant.id).sum(:quantity)
-      )
+      expect { execute }.to change { stock_level.reload.allocated_count }.by(quantity)
+
+      expect(stock_level.reload.count_on_hand).to eq(count_on_hand_before)
     end
 
     it 'refuses a fulfillment that is not canceled' do
@@ -43,9 +47,9 @@ module Spree
         Spree.hooks.register('fulfillments.resume.validate') { |flow| flow.reject!('stock sold on') }
 
         variant = fulfillment.fulfillment_items.first.variant
-        stock_item = fulfillment.stock_location.stock_item(variant)
+        stock_level = fulfillment.stock_location.stock_level(variant)
 
-        expect { execute }.not_to change { stock_item.reload.count_on_hand }
+        expect { execute }.not_to change { stock_level.reload.count_on_hand }
         expect(fulfillment.reload).to be_canceled
       end
 

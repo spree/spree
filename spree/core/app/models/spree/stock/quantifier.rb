@@ -31,21 +31,14 @@ module Spree
       end
 
       # Physical pool minus already-allocated units, summed across the
-      # variant's active stock items.
-      #
-      # In Spree 5.5 {Spree::StockItem#allocated_count} is a Ruby shim that
-      # always returns 0, so this equals +SUM(count_on_hand)+. In 6.0
-      # (Typed Stock Movements) +allocated_count+ becomes a real column and
-      # the SQL path subtracts it natively.
+      # variant's active stock levels.
       #
       # @return [Integer] units available before checkout reservations
       def available_stock
         if association_loaded?
-          stock_items.sum(&:available_count)
-        elsif self.class.allocated_count_column?
-          stock_items.sum('count_on_hand - allocated_count')
+          stock_levels.sum(&:available_count)
         else
-          stock_items.sum(:count_on_hand)
+          stock_levels.sum('count_on_hand - allocated_count')
         end
       end
 
@@ -53,7 +46,7 @@ module Spree
       # location-filtered stock items. Returns 0 when stock reservations
       # are globally disabled.
       #
-      # Reads through the same {#stock_items} collection as {#available_stock}
+      # Reads through the same {#stock_levels} collection as {#available_stock}
       # so a per-location query (filtered by `stock_location`) only counts
       # reservations that belong to those same stock items — otherwise a
       # multi-location variant would subtract reservations from other
@@ -67,19 +60,19 @@ module Spree
       def reserved_quantity
         return @reserved_quantity if defined?(@reserved_quantity)
         return @reserved_quantity = 0 unless reservations_enabled?
-        return @reserved_quantity = 0 if stock_items.blank?
+        return @reserved_quantity = 0 if stock_levels.blank?
 
         excluded_owner_key = excluded_order.is_a?(Spree::Cart) ? :cart_id : :order_id
         excluded_owner_id = excluded_order&.id
 
         @reserved_quantity = if reservations_preloaded?
-                               stock_items.sum do |si|
+                               stock_levels.sum do |si|
                                  reservations = si.active_stock_reservations
                                  reservations = reservations.reject { |r| r.public_send(excluded_owner_key) == excluded_owner_id } if excluded_owner_id
                                  reservations.sum(&:quantity)
                                end
                              else
-                               reservations = Spree::StockReservation.active.where(stock_item_id: stock_items.map(&:id))
+                               reservations = Spree::StockReservation.active.where(stock_level_id: stock_levels.map(&:id))
                                reservations = reservations.where.not(excluded_owner_key => excluded_owner_id) if excluded_owner_id
                                reservations.sum(:quantity)
                              end
@@ -87,7 +80,7 @@ module Spree
 
       # Check if any of variant stock items is backorderable
       def backorderable?
-        @backorderable ||= stock_items.any?(&:backorderable)
+        @backorderable ||= stock_levels.any?(&:backorderable)
       end
 
       # Whether the requested quantity can be supplied. Beyond on-hand stock a
@@ -114,19 +107,8 @@ module Spree
         supplyable >= required
       end
 
-      def stock_items
-        @stock_items ||= scope_to_location(variant.stock_items)
-      end
-
-      # Memoized schema check so {#available_stock} doesn't introspect the
-      # column list on every call. Flips from false → true when 6.0 Typed
-      # Stock Movements adds the `allocated_count` column.
-      #
-      # @return [Boolean]
-      def self.allocated_count_column?
-        return @allocated_count_column if defined?(@allocated_count_column)
-
-        @allocated_count_column = Spree::StockItem.connection.column_exists?(:spree_stock_items, :allocated_count)
+      def stock_levels
+        @stock_levels ||= scope_to_location(variant.stock_levels)
       end
 
       private
@@ -140,12 +122,12 @@ module Spree
       end
 
       def association_loaded?
-        variant.association(:stock_items).loaded?
+        variant.association(:stock_levels).loaded?
       end
 
       def reservations_preloaded?
         association_loaded? &&
-          stock_items.all? { |si| si.association(:active_stock_reservations).loaded? }
+          stock_levels.all? { |si| si.association(:active_stock_reservations).loaded? }
       end
 
       def scope_to_location(collection)

@@ -34,8 +34,8 @@ module Spree
               :product_type,
               { product_publications: :channel },
               { primary_media: [attachment_attachment: :blob, poster_attachment: :blob] },
-              { default_variant: [:prices, { stock_items: [:stock_location, :active_stock_reservations] }] },
-              { variants: [:prices, { stock_items: [:stock_location, :active_stock_reservations] }] }
+              { default_variant: [:prices, { stock_levels: [:stock_location, :active_stock_reservations] }] },
+              { variants: [:prices, { stock_levels: [:stock_location, :active_stock_reservations] }] }
             ]
           end
         end

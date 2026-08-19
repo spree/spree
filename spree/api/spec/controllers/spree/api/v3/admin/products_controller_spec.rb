@@ -598,7 +598,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         # Mirrors the exact wire shape the dashboard ships from
         # `new.tsx` for a simple product with media + inventory:
         # - status, channels, custom_fields, media, variants[] with empty
-        #   options + stock_items routed to the default variant via apply_variants.
+        #   options + stock_levels routed to the default variant via apply_variants.
         blob1 = ActiveStorage::Blob.create_and_upload!(
           io: File.open(Spree::Core::Engine.root.join('spec', 'fixtures', 'thinking-cat.jpg')),
           filename: 'one.jpg',
@@ -622,7 +622,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
             variants: [
               {
                 position: 1, options: [], sku: '', weight: 0, track_inventory: true,
-                stock_items: [
+                stock_levels: [
                   { stock_location_id: location.prefixed_id, count_on_hand: 10, backorderable: false }
                 ]
               }
@@ -634,7 +634,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect(response).to have_http_status(:created)
         created = Spree::Product.find_by(name: 'test product')
         expect(created.media.count).to eq(2)
-        expect(created.default_variant.stock_items.find_by(stock_location: location).count_on_hand).to eq(10)
+        expect(created.default_variant.stock_levels.find_by(stock_location: location).count_on_hand).to eq(10)
         # Simple product has exactly one variant — the default variant.
         expect(created.variants.count).to eq(1)
       end
@@ -1081,12 +1081,12 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       end
     end
 
-    context 'with nested stock_items updates' do
+    context 'with nested stock_levels updates' do
       let!(:stock_location) { Spree::StockLocation.first || create(:stock_location) }
       let!(:variant_to_update) { create(:variant, product: product) }
-      let!(:stock_item) do
-        variant_to_update.stock_items.find_by(stock_location: stock_location) ||
-          create(:stock_item, variant: variant_to_update, stock_location: stock_location, count_on_hand: 5, backorderable: false)
+      let!(:stock_level) do
+        variant_to_update.stock_levels.find_by(stock_location: stock_location) ||
+          create(:stock_level, variant: variant_to_update, stock_location: stock_location, count_on_hand: 5, backorderable: false)
       end
 
       it 'updates count_on_hand and backorderable per location' do
@@ -1095,7 +1095,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
           variants: [
             {
               id: variant_to_update.prefixed_id,
-              stock_items: [
+              stock_levels: [
                 {
                   stock_location_id: stock_location.prefixed_id,
                   count_on_hand: 42,
@@ -1107,9 +1107,9 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         }, as: :json
 
         expect(response).to have_http_status(:ok)
-        stock_item.reload
-        expect(stock_item.count_on_hand).to eq(42)
-        expect(stock_item.backorderable).to be true
+        stock_level.reload
+        expect(stock_level.count_on_hand).to eq(42)
+        expect(stock_level.backorderable).to be true
       end
     end
 

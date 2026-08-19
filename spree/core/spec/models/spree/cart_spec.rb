@@ -198,7 +198,7 @@ describe Spree::Cart, type: :model do
 
     context 'when an item is out of stock' do
       before do
-        cart.line_items.first.variant.stock_items.update_all(count_on_hand: 0, backorderable: false)
+        cart.line_items.first.variant.stock_levels.update_all(count_on_hand: 0, backorderable: false)
       end
 
       it 'removes the out of stock item' do

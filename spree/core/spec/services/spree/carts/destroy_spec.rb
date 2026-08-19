@@ -68,11 +68,11 @@ module Spree
         context 'with stock reservations' do
           let(:line_item) { cart.line_items.first }
           let!(:reservation) do
-            line_item.variant.stock_items.first.update!(backorderable: false)
-            line_item.variant.stock_items.first.set_count_on_hand(10)
+            line_item.variant.stock_levels.first.update!(backorderable: false)
+            line_item.variant.stock_levels.first.set_count_on_hand(10)
             create(
               :stock_reservation,
-              stock_item: line_item.variant.stock_items.first,
+              stock_level: line_item.variant.stock_levels.first,
               line_item: line_item,
               cart: cart,
               quantity: line_item.quantity,

@@ -1244,11 +1244,11 @@
           "placeholder": "Optional — shown only in the admin"
         },
         "backorderable_default": {
-          "help": "New stock items default to allowing backorders when out of stock.",
+          "help": "New stock levels default to allowing backorders when out of stock.",
           "label": "Backorderable by default"
         },
         "default": {
-          "help": "New stock items propagate here. Only one location can be default.",
+          "help": "New stock levels propagate here. Only one location can be default.",
           "label": "Default location"
         },
         "kind": {
@@ -1273,8 +1273,8 @@
           "label": "Stock policy"
         },
         "propagate_all_variants": {
-          "help": "Create stock items at this location for every product variant.",
-          "label": "Auto-create stock items for all variants"
+          "help": "Create stock levels at this location for every product variant.",
+          "label": "Auto-create stock levels for all variants"
         }
       },
       "store": {
@@ -3036,7 +3036,7 @@
             "refund": "Refund",
             "report": "Report",
             "return": "Return",
-            "stock_item": "Stock item",
+            "stock_level": "Stock level",
             "stock_movement": "Stock movement",
             "stock_reservation": "Stock reservation",
             "stock_transfer": "Stock transfer",
@@ -3872,9 +3872,9 @@
         "roles_required": "Pick at least one role"
       }
     },
-    "stock_items": {
+    "stock_levels": {
       "messages": {
-        "stock_item_deleted": "Stock item deleted",
+        "stock_level_deleted": "Stock level deleted",
         "stock_updated": "Stock updated"
       }
     },
@@ -3894,7 +3894,7 @@
       "create_description": "Add a warehouse, store, or pickup point to fulfill orders from.",
       "create_label": "Create stock location",
       "delete_confirm": {
-        "message": "{{name}} will be removed. Stock items at this location are not deleted.",
+        "message": "{{name}} will be removed. Stock levels at this location are not deleted.",
         "title": "Delete stock location?"
       },
       "edit_description": "Update name, address, pickup, or stock policies.",
@@ -3910,9 +3910,9 @@
       },
       "search_placeholder": "Search by name…",
       "section_pickup": "Pickup",
-      "stock_items": {
-        "empty": "No stock items at this location yet.",
-        "empty_search": "No stock items match your search.",
+      "stock_levels": {
+        "empty": "No stock levels at this location yet.",
+        "empty_search": "No stock levels match your search.",
         "help": "Adjust on-hand and backorderable counts per variant.",
         "low_stock_marker": "low stock",
         "search_placeholder": "Search SKU or product…",
