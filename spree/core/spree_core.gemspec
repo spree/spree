@@ -55,8 +55,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'request_store', '~> 1.5'
   s.add_dependency 'rexml'
 
-  s.add_dependency 'state_machines-activerecord', '~> 0.100'
-  s.add_dependency 'state_machines-activemodel', '~> 0.100'
   s.add_dependency 'stringex'
   s.add_dependency 'tracking_number'
   s.add_dependency 'validates_zipcode'

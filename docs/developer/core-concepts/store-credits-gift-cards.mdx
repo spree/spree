@@ -179,7 +179,7 @@ erDiagram
 
     GiftCard {
         string code
-        string state
+        string status
         decimal amount
         decimal amount_used
         decimal amount_authorized
@@ -204,28 +204,26 @@ erDiagram
 | `code` | Unique redemption code | `abc1234def` |
 | `amount` | Total gift card value | `50.00` |
 | `amount_used` | Amount already redeemed | `0.00` |
-| `state` | Current state | `active` |
+| `status` | Current status | `active` |
 | `currency` | Currency code | `USD` |
 | `expires_at` | Optional expiration date | `2025-12-31` |
 
-### Gift Card States
+### Gift Card Statuses
 
-```mermaid
-stateDiagram-v2
-    [*] --> active: Created
-    active --> partially_redeemed: Partial redemption
-    active --> redeemed: Full redemption
-    active --> canceled: Admin cancels
-    partially_redeemed --> redeemed: Remaining redeemed
-    partially_redeemed --> partially_redeemed: Another partial redemption
-```
+| Status | Description | How it gets there |
+|-------|-------------|-------------------|
+| `active` | Available for redemption | The status a card is created with |
+| `partially_redeemed` | Some value has been redeemed | `Spree::GiftCards::Redeem`, when a balance remains |
+| `redeemed` | Fully redeemed | `Spree::GiftCards::Redeem`, when nothing is left |
+| `canceled` | Voided, and no longer spendable | `Spree::GiftCards::Cancel` |
 
-| State | Description |
-|-------|-------------|
-| `active` | Available for redemption |
-| `partially_redeemed` | Some value has been redeemed |
-| `redeemed` | Fully redeemed |
-| `canceled` | Canceled by admin |
+Redemption does not need the caller to choose: `Spree::GiftCards::Redeem`
+looks at what is left on the card and marks it partially or fully redeemed
+accordingly. A card can be partially redeemed more than once, and each spend
+publishes its own event.
+
+Cancelling is refused once a card has been spent against, so cancellation can
+never take back value a customer has already used.
 
 <Note>
 Gift cards can also be `expired` if `expires_at` date has passed and the card hasn't been fully redeemed.

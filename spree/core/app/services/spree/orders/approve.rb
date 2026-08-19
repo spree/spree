@@ -33,7 +33,7 @@ module Spree
 
         order.publish_event('order.approved')
         success(order.reload)
-      rescue ActiveRecord::RecordInvalid, StateMachines::InvalidTransition
+      rescue ActiveRecord::RecordInvalid
         failure(order)
       end
     end

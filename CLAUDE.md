@@ -189,7 +189,7 @@ Per-request context available in models, controllers, jobs, and services:
 - Include `Spree::Metadata` for JSON metadata support
 - ALWAYS Use string columns instead of enums
 - NEVER use `Struct` for domain value objects — use a plain Ruby class with `ActiveModel::Model` + `ActiveModel::Attributes` (typed attributes, validations) so it behaves like an ActiveRecord object (e.g. `Spree::PickupPointOption`)
-- State machines: legacy models use `state_machines-activerecord` gem, default column `status` (legacy uses `state`, see docs/plans/6.0-normalize-state-to-status.md), all new models should use `has_status` and Workflows instead
+- No state machines. Spree has none since 6.0 and `state_machines-activerecord` is not a dependency — declare statuses with `has_status` (column always `status`) and move records between them with Workflows (see docs/plans/6.0-normalize-state-to-status.md)
 - NEVER cast IDs to integer — always treat as strings (UUID support)
 - Uniqueness validations: ALWAYS use `scope: spree_base_uniqueness_scope`, should be also enforced by database index
 - If needed use paranoia gem for soft delete support (via `acts_as_paranoid`)

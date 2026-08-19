@@ -96,7 +96,6 @@ module Spree
           rescue_from ActiveRecord::RecordInvalid, with: :handle_record_invalid
           rescue_from ArgumentError, with: :handle_argument_error
           rescue_from ActionDispatch::Http::Parameters::ParseError, with: :handle_parse_error
-          rescue_from StateMachines::InvalidTransition, with: :handle_invalid_transition
         end
 
         protected
@@ -233,15 +232,6 @@ module Spree
             code: ERROR_CODES[:invalid_request],
             message: message,
             status: :bad_request
-          )
-        end
-
-        def handle_invalid_transition(exception)
-          Rails.error.report(exception, context: error_context, source: 'spree.api.v3')
-          render_error(
-            code: ERROR_CODES[:cart_cannot_transition],
-            message: exception.message,
-            status: :unprocessable_content
           )
         end
 

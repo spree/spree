@@ -285,6 +285,36 @@ is reported through `Rails.error` so it's visible rather than mysterious.
 | `products.update` | `after_update` | lifecycle | After the product is saved (in transaction) |
 | `products.destroy` | `validate` | validate | Before the product is soft-deleted — refuse a deletion your store shouldn't allow |
 | `products.destroy` | `after_destroy` | lifecycle | After the soft-delete, for host cleanup (in transaction) |
+| `products.activate` | `validate` | validate | Before the product goes on sale — the place to require an image, a price or a category |
+| `products.activate` | `after_activate` | lifecycle | After the status is written (in transaction) |
+| `products.archive` | `validate` | validate | Before the product is taken off sale |
+| `products.archive` | `after_archive` | lifecycle | After the status is written (in transaction) |
+| `products.draft` | `validate` | validate | Before the product returns to draft |
+| `products.draft` | `after_draft` | lifecycle | After the status is written (in transaction) |
+| `gift_cards.apply` | `validate` | validate | Before a card is drawn against — who may spend a card, on what, up to how much |
+| `gift_cards.apply` | `after_apply` | lifecycle | After the store credit and payment exist (in transaction) |
+| `gift_cards.remove` | `validate` | validate | Before a card is taken back off an order |
+| `gift_cards.remove` | `after_remove` | lifecycle | After the balance is returned to the card (in transaction) |
+| `gift_cards.redeem` | `validate` | validate | Before the card is recorded as spent |
+| `gift_cards.redeem` | `after_redeem` | lifecycle | After the status is written (in transaction) |
+| `gift_cards.cancel` | `validate` | validate | Before a card is voided |
+| `gift_cards.cancel` | `after_cancel` | lifecycle | After the card is voided (in transaction) |
+| `price_lists.activate` | `validate` | validate | Before a price list takes effect |
+| `price_lists.activate` | `after_activate` | lifecycle | After the list goes live or is scheduled (in transaction) |
+| `price_lists.deactivate` | `validate` | validate | Before a price list stops applying |
+| `price_lists.deactivate` | `after_deactivate` | lifecycle | After the list is switched off (in transaction) |
+| `invitations.accept` | `validate` | validate | After the expiry and invitee checks pass, before any access is granted |
+| `invitations.accept` | `after_accept` | lifecycle | After the role is granted and the invitation marked accepted (in transaction) |
+| `imports.start_mapping` | `validate` | validate | Before the uploaded file is read |
+| `imports.start_mapping` | `after_start_mapping` | lifecycle | After the column mappings are built (in transaction) |
+| `imports.complete_mapping` | `validate` | validate | Before the mapping is accepted — refuse a mapping your store considers incomplete |
+| `imports.complete_mapping` | `after_complete_mapping` | lifecycle | After the mapping is accepted, before row creation is dispatched (in transaction) |
+| `imports.start_processing` | `validate` | validate | Before the import starts working through its rows |
+| `imports.start_processing` | `after_start_processing` | lifecycle | After the status is written (in transaction) |
+| `imports.complete` | `validate` | validate | Before the import is closed out |
+| `imports.complete` | `after_complete` | lifecycle | After the import is completed and the store touched (in transaction) |
+| `imports.retry_failed_rows` | `validate` | validate | Before failed rows are queued again |
+| `imports.retry_failed_rows` | `after_retry` | lifecycle | After the import returns to processing, before re-dispatch (in transaction) |
 
 `before_cancel` and `before_resume` accept `reject!` like a `validate` hook.
 
@@ -404,10 +434,67 @@ Two rules worth internalising:
 connection open across a network round trip, and a timeout leaves your database
 and the payment processor disagreeing about what happened.
 
-**New models get a plain `status` string, not a state machine.** Transitions are
+**Models get a plain `status` string, not a state machine.** Transitions are
 workflows: `MyStore::Subscriptions::Cancel.call(...)`, not `subscription.cancel!`.
 Transition callbacks hide side effects inside a save, cannot take arguments, and
 have no compensation story.
+
+As of 6.0 this is not just advice for new models — Spree has no state machines
+left. Every status a record can hold is declared with `Spree::HasStatus`, and
+every move between two of them is a workflow you can hook.
+
+## Statuses
+
+`Spree::HasStatus` declares the statuses a model can hold:
+
+```ruby
+class MyStore::Subscription < Spree.base_class
+  include Spree::HasStatus
+  has_status :trialing, :active, :paused, :canceled, default: :trialing
+end
+```
+
+That gives you an inclusion validation, a predicate per value
+(`subscription.paused?`), a scope per value (`Subscription.paused`) and
+`with_status(:active, :trialing)` for several at once. It deliberately does
+*not* give you a transition graph — deciding which moves are legal is the
+workflow's job, which is what lets a transition take arguments, call out to a
+gateway outside a transaction, and undo itself when a later step fails.
+
+Statuses are additive, so an extension can add its own without reopening the
+model:
+
+```ruby
+Spree::GiftCard.add_status(:on_hold, after: :active)
+```
+
+A custom status needs a custom workflow to move records into it. That is the
+design, not a gap: a central place validating transitions would be a state
+machine again.
+
+<Note>
+`has_status` never overwrites something the model already defines. Where a
+status name means more than the column value — `Spree::GiftCard#active?` also
+requires the card not to have expired, and `Spree::GiftCard.active` includes
+partially redeemed cards — the model's own definition wins and the generated
+one is skipped.
+</Note>
+
+### Moving a record between statuses
+
+Call the workflow, not the model:
+
+```ruby
+result = Spree.product_archive_workflow.call(product: product)
+result.success?
+```
+
+Spree ships one workflow per transition — `Spree::Products::Activate`,
+`Spree::GiftCards::Redeem`, `Spree::Imports::Complete`, and so on — each with
+its own `validate` and `after_*` hooks, all in
+[Available hooks](#available-hooks) above. Because the write and the event it
+publishes happen in the same place, registering against a hook is enough to
+see every transition, wherever it was triggered from.
 
 ## Observability
 
