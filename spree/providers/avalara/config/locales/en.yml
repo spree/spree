@@ -1,0 +1,6 @@
+---
+en:
+  spree:
+    integrations:
+      avalara:
+        description: Calculate sales tax, VAT and GST at checkout through your Avalara AvaTax account, and file every order against the same transaction.
