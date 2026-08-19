@@ -21,9 +21,18 @@ module Spree
       #
       # @return [BigDecimal] the persisted payment_total
       def refresh_payment_total!
-        settled = payments.completed.includes(:refunds).sum { |payment| payment.amount - payment.refunds.sum(:amount) }
-        update_column(:payment_total, settled)
-        self.payment_total = settled
+        # One atomic statement: the sum and the write have to be a single
+        # step, or two handlers settling different payments interleave and
+        # the older one writes its smaller total last, leaving the record
+        # short-paid with no further event coming to correct it.
+        #
+        # Deliberately not with_lock, which refuses a record carrying
+        # unsaved changes — callers legitimately hold dirty attributes while
+        # a payment is destroyed (cart teardown, order merging), and this
+        # must never disturb their in-memory state.
+        settled = settled_payments_arel
+        self.class.where(id: id).update_all(payment_total: settled)
+        self.payment_total = self.class.where(id: id).pick(:payment_total)
       end
 
       # @return [Boolean]
@@ -48,6 +57,44 @@ module Spree
       # @return [BigDecimal]
       def fulfillment_discount
         discounts.for_fulfillments.sum(:amount) * -1
+      end
+
+      private
+
+      # Completed payments less their refunds, as a scalar subquery so the
+      # sum and the write are one statement.
+      #
+      # @return [Arel::Nodes::Grouping]
+      def settled_payments_arel
+        payments_table = Spree::Payment.arel_table
+        refunds_table = Spree::Refund.arel_table
+
+        settled = payments_table.project(payments_table[:id]).
+                  where(payments_table[owner_foreign_key].eq(id)).
+                  where(payments_table[:status].eq('completed'))
+
+        captured = payments_table.project(payments_table[:amount].sum).
+                   where(payments_table[owner_foreign_key].eq(id)).
+                   where(payments_table[:status].eq('completed'))
+
+        refunded = refunds_table.project(refunds_table[:amount].sum).
+                   where(refunds_table[:payment_id].in(settled))
+
+        Arel::Nodes::NamedFunction.new(
+          'COALESCE',
+          [
+            Arel::Nodes::Subtraction.new(
+              Arel::Nodes::NamedFunction.new('COALESCE', [Arel::Nodes::Grouping.new(captured), Arel.sql('0')]),
+              Arel::Nodes::NamedFunction.new('COALESCE', [Arel::Nodes::Grouping.new(refunded), Arel.sql('0')])
+            ),
+            Arel.sql('0')
+          ]
+        )
+      end
+
+      # @return [Symbol] the column payments use to point at this record
+      def owner_foreign_key
+        is_a?(Spree::Cart) ? :cart_id : :order_id
       end
     end
   end

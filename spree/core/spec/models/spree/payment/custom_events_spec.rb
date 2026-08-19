@@ -13,7 +13,7 @@ RSpec.describe Spree::Payment::CustomEvents do
 
   describe 'payment.paid event' do
     it 'publishes payment.paid when payment state changes to completed' do
-      allow(order).to receive(:paid?).and_return(false)
+      payment.update!(amount: order.total - 1)
 
       payment.update!(state: 'completed')
 
@@ -37,7 +37,7 @@ RSpec.describe Spree::Payment::CustomEvents do
 
   describe 'order.paid event' do
     it 'publishes order.paid when payment completes and order is fully paid' do
-      allow(order).to receive(:paid?).and_return(true)
+      payment.update!(amount: order.total)
 
       payment.update!(state: 'completed')
 
@@ -46,7 +46,7 @@ RSpec.describe Spree::Payment::CustomEvents do
     end
 
     it 'does not publish order.paid when order still has outstanding balance' do
-      allow(order).to receive(:paid?).and_return(false)
+      payment.update!(amount: order.total - 1)
 
       payment.update!(state: 'completed')
 
