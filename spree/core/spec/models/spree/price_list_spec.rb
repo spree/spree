@@ -12,32 +12,19 @@ describe Spree::PriceList, type: :model do
     end
   end
 
-  describe 'state_machine' do
+  describe 'status' do
     let(:price_list) { create(:price_list) }
+
+    it 'has no state machine' do
+      expect(described_class).not_to respond_to(:state_machines)
+    end
 
     it 'has initial status of draft' do
       expect(price_list.status).to eq('draft')
     end
 
-    describe '#activate' do
-      it 'transitions to active' do
-        price_list.activate
-        expect(price_list.status).to eq('active')
-      end
-    end
-
-    describe '#deactivate' do
-      it 'transitions to inactive' do
-        price_list.deactivate
-        expect(price_list.status).to eq('inactive')
-      end
-    end
-
-    describe '#schedule' do
-      it 'transitions to scheduled' do
-        price_list.schedule
-        expect(price_list.status).to eq('scheduled')
-      end
+    it 'rejects an unknown status' do
+      expect(build(:price_list, status: 'nonsense')).not_to be_valid
     end
   end
 
@@ -113,7 +100,7 @@ describe Spree::PriceList, type: :model do
     let(:context) { Spree::Pricing::Context.new(variant: variant, currency: 'USD', store: store) }
 
     context 'when price list is inactive' do
-      before { price_list.deactivate }
+      before { Spree.price_list_deactivate_workflow.call(price_list: price_list) }
 
       it 'returns false' do
         expect(price_list.applicable?(context)).to be false
