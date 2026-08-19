@@ -32,7 +32,7 @@ export interface StoreUpdateParams {
   preferred_auto_capture?: boolean
   /** @deprecated Use `preferred_capture_method`; removed in 6.1. */
   preferred_auto_capture_on_dispatch?: boolean
-  /** Calculates tax from the shipping address. Off taxes by the billing address instead. */
+  /** Calculates tax from the shipping address. When false, calculates tax from the billing address. */
   preferred_tax_using_ship_address?: boolean
   /** Counts on-hand quantities. Off means everything is treated as always available. */
   preferred_track_inventory_levels?: boolean

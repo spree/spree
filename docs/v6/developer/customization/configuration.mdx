@@ -214,13 +214,14 @@ These were deprecated in Spree 5 and are gone. Assigning one in your initializer
 
 | Setting | What to do instead |
 |---|---|
-| `send_core_emails` | Spree only sends an email when a mailer is called. Remove the mailer call, or override the mailer, to stop one being sent. |
+| `send_core_emails` | The `send_consumer_transactional_emails` setting on the store, which turns a shop's customer emails on and off. |
 | `currency` | Currency belongs to the store and the market. |
 | `address_requires_state` | State requirements come from the address country. |
 | `checkout_zone` | Use [delivery zones](/v6/developer/core-concepts/fulfillments#delivery-methods-and-zones). |
 | `allow_guest_checkout` | Use the `guest_checkout` setting on the store or channel. |
 | `binary_inventory_cache` | A stock change always touches its variant. |
-| `layout`, `logo`, `mailer_logo`, `always_put_site_name_in_title`, `title_site_name_separator`, `max_level_in_taxons_menu`, `show_raw_product_description`, `shipping_instructions`, `show_only_complete_orders_by_default` | These configured the removed Rails storefront and admin. A storefront owns its own presentation. |
+| `logo`, `mailer_logo` | The store's own `logo` and `mailer_logo` images, uploaded in the dashboard. Only the global settings are gone; the images themselves are unchanged. |
+| `layout`, `always_put_site_name_in_title`, `title_site_name_separator`, `max_level_in_taxons_menu`, `show_raw_product_description`, `shipping_instructions`, `show_only_complete_orders_by_default` | These configured the removed Rails storefront and admin. A storefront owns its own presentation. |
 
 ## Related
 
