@@ -67,8 +67,11 @@ module Spree
     delegate :name, :presentation, to: :option_type, prefix: true, allow_nil: true
 
     # Using map here instead of pluck, as these values are translatable via Mobility gem
+    # @deprecated Legacy Tom Select helper for the removed Rails admin. No replacement.
     # @return [Array<Hash>]
     def self.to_tom_select_json
+      Spree::Deprecation.warn('Spree::OptionValue.to_tom_select_json is deprecated and will be removed in Spree 6.1.')
+
       all.map do |ov|
         {
           id: ov.name,
@@ -78,8 +81,11 @@ module Spree
     end
 
     # Returns the presentation with the option type presentation, eg. "Color: Red"
+    # @deprecated No replacement, build the label in the presentation layer instead.
     # @return [String]
     def display_presentation
+      Spree::Deprecation.warn('Spree::OptionValue#display_presentation is deprecated and will be removed in Spree 6.1.')
+
       @display_presentation ||= "#{option_type.presentation}: #{presentation}"
     end
 
