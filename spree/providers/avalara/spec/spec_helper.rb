@@ -35,6 +35,7 @@ require 'spree/testing_support/jobs'
 require 'spree/testing_support/store'
 require 'spree/testing_support/preferences'
 require 'spree/testing_support/rspec_retry_config'
+require 'spree_avalara/factories'
 
 RSpec.configure do |config|
   config.color = true
