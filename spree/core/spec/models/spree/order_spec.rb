@@ -489,7 +489,7 @@ describe Spree::Order, type: :model do
       expect(order.collect_frontend_payment_methods).to include(payment_method)
     end
 
-    it "includes 'both' payment methods" do
+    it 'includes payment methods that are storefront-visible by default' do
       payment_method = store.payment_methods.create!(name: 'Fake', active: true)
       expect(order.collect_frontend_payment_methods).to include(payment_method)
     end
@@ -505,7 +505,7 @@ describe Spree::Order, type: :model do
     end
 
     it 'does not include a payment method that is not suitable for this order' do
-      allow(Spree::PaymentMethod).to receive(:available_on_front_end).and_return(methods)
+      allow(order.store).to receive_message_chain(:payment_methods, :active, :storefront_visible).and_return(methods)
 
       expect(order.collect_frontend_payment_methods).to contain_exactly(ok_method)
     end

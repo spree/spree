@@ -35,7 +35,7 @@ module Spree
       #
       # @return [Array<Spree::PaymentMethod>]
       def payment_methods
-        store.payment_methods.active.available_on_front_end.select { |payment_method| payment_method.available_for_order?(self) }
+        store.payment_methods.active.storefront_visible.select { |payment_method| payment_method.available_for_order?(self) }
       end
 
       # Free checkouts have no money to collect.

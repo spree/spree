@@ -84,8 +84,7 @@ module Spree
     has_many :shipping_rates, class_name: 'Spree::DeliveryRate', foreign_key: :delivery_method_id, deprecated: true
     has_many :shipments, through: :delivery_rates, source: :fulfillment, deprecated: true
 
-    # Real column, so no ransacker is needed — only the allowlist entry the
-    # Spree::DisplayOn concern used to contribute.
+    # Real column, so admin clients filter it directly — no ransacker needed.
     self.whitelisted_ransackable_attributes = %w[storefront_visible]
 
     validates :name, presence: true
