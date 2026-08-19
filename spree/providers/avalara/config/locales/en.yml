@@ -4,3 +4,6 @@ en:
     integrations:
       avalara:
         description: Calculate sales tax, VAT and GST at checkout through your Avalara AvaTax account, and file every order against the same transaction.
+        errors:
+          connection_failed: Could not connect to AvaTax
+          invalid_credentials: Invalid credentials
