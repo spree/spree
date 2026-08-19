@@ -38,20 +38,50 @@ module Spree
 
     money_methods :charged_amount
 
-    # state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
-    state_machine :status, initial: :on_hand do
-      event :fill_backorder do
-        transition to: :on_hand, from: :backordered
-      end
-      after_transition on: :fill_backorder, do: :fulfill_order
+    # No state machine — the moves are driven by the Spree::Fulfillments
+    # workflows and by Spree::StockLevel when stock arrives for a backorder
+    # (docs/plans/6.0-service-workflows.md). Filling a backorder used to
+    # recalculate the whole order from a transition callback, once per item;
+    # the callers now do that themselves, after the loop.
+    include Spree::HasStatus
+    has_status :on_hand, :backordered, :shipped, :returned, default: :on_hand
 
-      event :ship do
-        transition to: :shipped, if: :allow_ship?
-      end
+    # Marks the item dispatched. Normally only stock in hand can leave, but a
+    # forced dispatch ships a backordered item too: departure is a physical
+    # fact, and a parcel the merchant has already handed over is recorded
+    # whatever the shelf says. An item that has already shipped or been
+    # returned is left alone.
+    #
+    # @param force [Boolean] dispatch a backordered item as well
+    # @return [Boolean] whether the item moved
+    def ship!(force: false)
+      return false unless on_hand? || (force && backordered?)
 
-      event :return do
-        transition to: :returned, from: :shipped
-      end
+      update!(status: 'shipped')
+      true
+    end
+
+    # Stock arrived for a backordered item. Callers recalculate the order once
+    # afterwards; this only moves the row.
+    #
+    # @return [Boolean] whether the item moved
+    def fill_backorder!
+      return false unless backordered?
+
+      update!(status: 'on_hand')
+      true
+    end
+    alias fill_backorder fill_backorder!
+
+    # @deprecated Write the status — removed in 6.1. `return` was a state
+    #   machine event name and could never be called as written (it parses as
+    #   the keyword), so this exists only for `send(:return!)`-style callers.
+    def return!
+      Spree::Deprecation.warn('Spree::FulfillmentItem#return! is deprecated and will be removed in Spree 6.1. Write the status instead.')
+      return false unless shipped?
+
+      update!(status: 'returned')
+      true
     end
 
     # This was refactored from a simpler query because the previous implementation
@@ -113,17 +143,6 @@ module Spree
 
     def percentage_of_line_item
       quantity / BigDecimal(line_item.quantity)
-    end
-
-    private
-
-    def allow_ship?
-      on_hand?
-    end
-
-    def fulfill_order
-      reload
-      order.fulfill!
     end
   end
 end

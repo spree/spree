@@ -248,7 +248,7 @@ module Spree
 
       context 'with backordered units' do
         before do
-          source_shipment.inventory_units.update_all(state: 'backordered')
+          source_shipment.inventory_units.update_all(status: 'backordered')
         end
 
         it 'fills backorders before shipping' do

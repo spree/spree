@@ -128,7 +128,7 @@ FactoryBot.define do
             end
 
             order.fulfillments.each do |shipment|
-              shipment.fulfillment_items.update_all state: 'on_hand'
+              shipment.fulfillment_items.update_all status: 'on_hand'
               shipment.update_column(:status, 'unfulfilled')
             end
             order.reload

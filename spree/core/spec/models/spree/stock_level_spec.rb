@@ -167,9 +167,9 @@ describe Spree::StockLevel, type: :model do
         it 'splits inventory to fulfill partial backorder' do
           expect(inventory_unit_2).not_to receive(:split_inventory!)
 
-          expect(split_inventory_unit).to receive(:fill_backorder)
-          expect(inventory_unit).not_to receive(:fill_backorder)
-          expect(inventory_unit_2).not_to receive(:fill_backorder)
+          expect(split_inventory_unit).to receive(:fill_backorder!)
+          expect(inventory_unit).not_to receive(:fill_backorder!)
+          expect(inventory_unit_2).not_to receive(:fill_backorder!)
 
           subject.adjust_count_on_hand(3)
           expect(subject.count_on_hand).to eq(-2)
@@ -190,8 +190,8 @@ describe Spree::StockLevel, type: :model do
 
       # Regression test for #3755
       it 'processes existing backorders, even with negative stock' do
-        expect(inventory_unit).to receive(:fill_backorder)
-        expect(inventory_unit_2).not_to receive(:fill_backorder)
+        expect(inventory_unit).to receive(:fill_backorder!)
+        expect(inventory_unit_2).not_to receive(:fill_backorder!)
         subject.adjust_count_on_hand(1)
         expect(subject.count_on_hand).to eq(-1)
       end
@@ -199,8 +199,8 @@ describe Spree::StockLevel, type: :model do
       # Test for #3755. Only a dispatch may drive the shelf further below zero
       # now, so this says so at the call.
       it 'does not process backorders when stock is adjusted negatively' do
-        expect(inventory_unit).not_to receive(:fill_backorder)
-        expect(inventory_unit_2).not_to receive(:fill_backorder)
+        expect(inventory_unit).not_to receive(:fill_backorder!)
+        expect(inventory_unit_2).not_to receive(:fill_backorder!)
         subject.adjust_count_on_hand(-1, force: true)
         expect(subject.count_on_hand).to eq(-3)
       end
@@ -209,8 +209,8 @@ describe Spree::StockLevel, type: :model do
         before { allow(subject).to receive_messages(backordered_inventory_units: [inventory_unit, inventory_unit_2]) }
 
         it 'fills existing backorders' do
-          expect(inventory_unit).to receive(:fill_backorder)
-          expect(inventory_unit_2).to receive(:fill_backorder)
+          expect(inventory_unit).to receive(:fill_backorder!)
+          expect(inventory_unit_2).to receive(:fill_backorder!)
 
           subject.adjust_count_on_hand(3)
           expect(subject.count_on_hand).to eq(1)
@@ -251,8 +251,8 @@ describe Spree::StockLevel, type: :model do
         end
 
         it 'fills existing backorders' do
-          expect(inventory_unit).to receive(:fill_backorder)
-          expect(inventory_unit_2).to receive(:fill_backorder)
+          expect(inventory_unit).to receive(:fill_backorder!)
+          expect(inventory_unit_2).to receive(:fill_backorder!)
 
           subject.set_count_on_hand(1)
           expect(subject.count_on_hand).to eq(1)

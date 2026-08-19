@@ -324,7 +324,13 @@ module Spree
       # reads it when building the event metadata.
       def mark_fulfilled
         @fulfillment.notify_customer = notify_customer
-        @fulfillment.fulfillment_items.each(&:ship!)
+        # Stock in hand always leaves; a forced dispatch takes backordered
+        # units with it, because the parcel has physically gone.
+        shippable = force ? %w[on_hand backordered] : %w[on_hand]
+        @fulfillment.fulfillment_items.where(status: shippable).update_all(status: 'shipped', updated_at: Time.current)
+        # update_all leaves the loaded association holding the old statuses,
+        # which later steps and hook handlers would read.
+        @fulfillment.fulfillment_items.reset
         @fulfillment.update!(status: 'fulfilled', fulfilled_at: Time.current)
         @fulfillment.publish_fulfillment_fulfilled_event
       end
