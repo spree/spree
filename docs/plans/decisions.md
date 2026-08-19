@@ -226,7 +226,7 @@ to the stock ledger at all. Typed Stock Movements splits the two: placement
 writes an `allocated` movement that raises `allocated_count` and leaves
 `count_on_hand` untouched, and dispatch writes a `shipped` movement that
 decrements `count_on_hand` and retires the allocation with it. On-hand becomes what is on the shelf and
-`StockItem#allocated_count` carries what is promised, which is the model every
+`StockLevel#allocated_count` carries what is promised, which is the model every
 other commerce platform ships.
 
 Three consequences worth naming, because they change existing behavior rather

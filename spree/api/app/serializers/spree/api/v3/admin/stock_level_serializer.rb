@@ -9,8 +9,9 @@ module Spree
           attributes :metadata,
                      created_at: :iso8601, updated_at: :iso8601
 
-          # Units already allocated to pending shipments. Always 0 in 5.5;
-          # 6.0 Typed Stock Movements wires it up.
+          # Units promised to placed orders but not yet dispatched. Raised by an
+          # `allocated` movement and retired by `released` or `shipped`, so an
+          # oversell reads as this exceeding count_on_hand.
           attribute :allocated_count do |stock_level|
             stock_level.allocated_count.to_i
           end

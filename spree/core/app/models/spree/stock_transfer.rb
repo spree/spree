@@ -85,7 +85,8 @@ module Spree
     private
 
     def find_stock_location_with_location_id(location_id)
-      stock_movements.joins(:stock_level).where('spree_stock_levels.stock_location_id' => location_id)
+      stock_movements.joins(:stock_level).
+        where(Spree::StockLevel.table_name => { stock_location_id: location_id })
     end
 
     def source_location_is_not_destination_location

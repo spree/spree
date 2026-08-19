@@ -43,7 +43,7 @@ module Spree
 
       def stock_locations_with_requested_variants
         order.store.stock_locations.active.joins(:stock_levels).
-          where(spree_stock_levels: { variant_id: requested_variant_ids }).distinct
+          where(Spree::StockLevel.table_name => { variant_id: requested_variant_ids }).distinct
       end
 
       # An item may only be allocated from locations its delivery profile

@@ -4,7 +4,7 @@ import { API_PREFIX, createTestClient, paginated } from './helpers'
 import { server } from './mocks/server'
 
 const sampleStockLocation = {
-  id: 'sl_abc123',
+  id: 'sloc_abc123',
   name: 'Main Warehouse',
   default: true,
   active: true,
@@ -17,7 +17,7 @@ const sampleStockLevel = {
   count_on_hand: 42,
   backorderable: false,
   variant_id: 'variant_1',
-  stock_location_id: 'sl_abc123',
+  stock_location_id: 'sloc_abc123',
   created_at: '2026-05-01T00:00:00Z',
   updated_at: '2026-05-01T00:00:00Z',
 }
@@ -40,8 +40,8 @@ const sampleStockMovement = {
 const sampleStockTransfer = {
   id: 'st_abc123',
   number: 'T123456789',
-  source_location_id: 'sl_abc123',
-  destination_location_id: 'sl_def456',
+  source_location_id: 'sloc_abc123',
+  destination_location_id: 'sloc_def456',
   created_at: '2026-05-01T00:00:00Z',
   updated_at: '2026-05-01T00:00:00Z',
 }
@@ -58,7 +58,7 @@ describe('stockLocations', () => {
       const res = await createTestClient().stockLocations.list()
 
       expect(res.data).toHaveLength(1)
-      expect(res.data[0]?.id).toBe('sl_abc123')
+      expect(res.data[0]?.id).toBe('sloc_abc123')
     })
 
     it('wraps Ransack predicates via transformListParams', async () => {
@@ -81,17 +81,17 @@ describe('stockLocations', () => {
     it('GETs /stock_locations/:id and forwards expand params', async () => {
       let url: URL | null = null
       server.use(
-        http.get(`${API_PREFIX}/stock_locations/sl_abc123`, ({ request }) => {
+        http.get(`${API_PREFIX}/stock_locations/sloc_abc123`, ({ request }) => {
           url = new URL(request.url)
           return HttpResponse.json(sampleStockLocation)
         }),
       )
 
-      const res = await createTestClient().stockLocations.get('sl_abc123', {
+      const res = await createTestClient().stockLocations.get('sloc_abc123', {
         expand: ['stock_levels'],
       })
 
-      expect(res.id).toBe('sl_abc123')
+      expect(res.id).toBe('sloc_abc123')
       expect(url!.searchParams.get('expand')).toBe('stock_levels')
     })
   })
@@ -114,13 +114,13 @@ describe('stockLocations', () => {
     it('PATCHes the update body verbatim', async () => {
       let body: Record<string, unknown> | null = null
       server.use(
-        http.patch(`${API_PREFIX}/stock_locations/sl_abc123`, async ({ request }) => {
+        http.patch(`${API_PREFIX}/stock_locations/sloc_abc123`, async ({ request }) => {
           body = (await request.json()) as Record<string, unknown>
           return HttpResponse.json({ ...sampleStockLocation, active: false })
         }),
       )
 
-      const res = await createTestClient().stockLocations.update('sl_abc123', { active: false })
+      const res = await createTestClient().stockLocations.update('sloc_abc123', { active: false })
 
       expect(body).toEqual({ active: false })
       expect(res.active).toBe(false)
@@ -129,13 +129,13 @@ describe('stockLocations', () => {
     it('DELETEs /stock_locations/:id', async () => {
       let hit = false
       server.use(
-        http.delete(`${API_PREFIX}/stock_locations/sl_abc123`, () => {
+        http.delete(`${API_PREFIX}/stock_locations/sloc_abc123`, () => {
           hit = true
           return new HttpResponse(null, { status: 204 })
         }),
       )
 
-      await expect(createTestClient().stockLocations.delete('sl_abc123')).resolves.toBeUndefined()
+      await expect(createTestClient().stockLocations.delete('sloc_abc123')).resolves.toBeUndefined()
       expect(hit).toBe(true)
     })
   })
@@ -166,11 +166,11 @@ describe('stockLevels', () => {
       )
 
       await createTestClient().stockLevels.list({
-        stock_location_id_eq: 'sl_abc123',
+        stock_location_id_eq: 'sloc_abc123',
         variant_id_eq: 'variant_1',
       })
 
-      expect(url!.searchParams.get('q[stock_location_id_eq]')).toBe('sl_abc123')
+      expect(url!.searchParams.get('q[stock_location_id_eq]')).toBe('sloc_abc123')
       expect(url!.searchParams.get('q[variant_id_eq]')).toBe('variant_1')
     })
   })
@@ -249,11 +249,11 @@ describe('stockTransfers', () => {
 
       await createTestClient().stockTransfers.list({
         number_cont: 'T123',
-        source_location_id_eq: 'sl_abc123',
+        source_location_id_eq: 'sloc_abc123',
       })
 
       expect(url!.searchParams.get('q[number_cont]')).toBe('T123')
-      expect(url!.searchParams.get('q[source_location_id_eq]')).toBe('sl_abc123')
+      expect(url!.searchParams.get('q[source_location_id_eq]')).toBe('sloc_abc123')
     })
   })
 
@@ -287,13 +287,13 @@ describe('stockTransfers', () => {
       )
 
       await createTestClient().stockTransfers.create({
-        source_location_id: 'sl_abc123',
-        destination_location_id: 'sl_def456',
+        source_location_id: 'sloc_abc123',
+        destination_location_id: 'sloc_def456',
       })
 
       expect(body).toEqual({
-        source_location_id: 'sl_abc123',
-        destination_location_id: 'sl_def456',
+        source_location_id: 'sloc_abc123',
+        destination_location_id: 'sloc_def456',
       })
     })
 

@@ -325,7 +325,7 @@ function EditStockLocationSheet({
 }
 
 // ============================================================================
-// Stock Items panel — adjust on-hand counts at this location
+// Stock Levels panel — adjust on-hand counts at this location
 // ============================================================================
 
 function StockLevelsPanel({ stockLocationId }: { stockLocationId: string }) {

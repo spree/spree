@@ -1244,11 +1244,11 @@
           "placeholder": "Optional — shown only in the admin"
         },
         "backorderable_default": {
-          "help": "New stock items default to allowing backorders when out of stock.",
+          "help": "New stock levels default to allowing backorders when out of stock.",
           "label": "Backorderable by default"
         },
         "default": {
-          "help": "New stock items propagate here. Only one location can be default.",
+          "help": "New stock levels propagate here. Only one location can be default.",
           "label": "Default location"
         },
         "kind": {
@@ -1273,8 +1273,8 @@
           "label": "Stock policy"
         },
         "propagate_all_variants": {
-          "help": "Create stock items at this location for every product variant.",
-          "label": "Auto-create stock items for all variants"
+          "help": "Create stock levels at this location for every product variant.",
+          "label": "Auto-create stock levels for all variants"
         }
       },
       "store": {
@@ -3894,7 +3894,7 @@
       "create_description": "Add a warehouse, store, or pickup point to fulfill orders from.",
       "create_label": "Create stock location",
       "delete_confirm": {
-        "message": "{{name}} will be removed. Stock items at this location are not deleted.",
+        "message": "{{name}} will be removed. Stock levels at this location are not deleted.",
         "title": "Delete stock location?"
       },
       "edit_description": "Update name, address, pickup, or stock policies.",
