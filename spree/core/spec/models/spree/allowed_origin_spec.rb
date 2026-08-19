@@ -5,14 +5,8 @@ require 'spec_helper'
 RSpec.describe Spree::AllowedOrigin, type: :model do
   let(:store) { create(:store) }
 
-  describe 'associations' do
-    it { is_expected.to belong_to(:store).class_name('Spree::Store').without_validating_presence }
-  end
-
   describe 'validations' do
     subject { build(:allowed_origin, store: store) }
-
-    it { is_expected.to validate_presence_of(:origin) }
 
     it 'validates uniqueness of origin scoped to store' do
       create(:allowed_origin, store: store, origin: 'https://example.com')

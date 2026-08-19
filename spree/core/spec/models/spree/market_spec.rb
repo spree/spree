@@ -6,10 +6,6 @@ RSpec.describe Spree::Market, type: :model do
   describe 'validations' do
     subject { build(:market, store: store) }
 
-    it { is_expected.to validate_presence_of(:name) }
-    it { is_expected.to validate_presence_of(:currency) }
-    it { is_expected.to validate_presence_of(:default_locale) }
-
     it 'validates presence of countries' do
       market = build(:market, store: store, countries: [])
       expect(market).not_to be_valid

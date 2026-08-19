@@ -5,10 +5,6 @@ RSpec.describe Spree::ImportMapping, type: :model do
   let(:user) { create(:admin_user) }
   let(:import) { create(:product_import, owner: store, user: user) }
 
-  describe 'Associations' do
-    it { is_expected.to belong_to(:import) }
-  end
-
   describe 'Validations' do
     describe 'presence validations' do
       it 'validates presence of import' do

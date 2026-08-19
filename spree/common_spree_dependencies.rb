@@ -34,7 +34,6 @@ group :test do
   gem 'webmock'
   gem 'timecop'
   gem 'rails-controller-testing'
-  gem 'shoulda-matchers', '~> 6.0'
 end
 
 group :test, :development do
