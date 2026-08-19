@@ -48,8 +48,12 @@ export interface SearchEntry<T = unknown> {
   getKey: (item: T) => string
   /** Render one result row's inner content (icon/thumbnail + label + badges). */
   renderRow: (item: T) => ReactNode
-  /** Resolve the destination for a clicked result, given the active store. */
-  getRoute: (item: T, storeId: string) => { to: string }
+  /**
+   * Resolve the destination for a clicked result, given the active store.
+   * `search` carries route search params — needed by resources edited in a
+   * deep-linked sheet rather than on a page of their own.
+   */
+  getRoute: (item: T, storeId: string) => { to: string; search?: Record<string, unknown> }
 }
 
 interface SearchMutator {

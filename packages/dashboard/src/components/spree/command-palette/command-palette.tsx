@@ -1,10 +1,12 @@
 import {
+  matchCreateActions,
   type NavEntry,
   type Permissions,
   type SearchGroup,
   type SettingsNavEntry,
   useAuth,
   useCommandPalette,
+  useCreateActions,
   useGlobalSearch,
   useNavEntries,
   usePermissions,
@@ -14,6 +16,7 @@ import {
 import {
   Command,
   CommandEmpty,
+  CommandFooter,
   CommandGroup,
   CommandInput,
   CommandItem,
@@ -26,7 +29,7 @@ import {
   DialogTitle,
 } from '@spree/dashboard-ui'
 import { useNavigate, useParams } from '@tanstack/react-router'
-import { Loader2Icon, LogOutIcon, type LucideIcon, PackageIcon, SettingsIcon } from 'lucide-react'
+import { LogOutIcon, type LucideIcon, PackageIcon, PlusIcon, SettingsIcon } from 'lucide-react'
 import { type ReactNode, useMemo, useState } from 'react'
 
 export function CommandPalette() {
@@ -66,6 +69,17 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
     [main, bottom, settingsNav, permissions, storeId, t],
   )
 
+  // "add product" / "new customer" — matched against the registered create
+  // actions, permission-checked with `create` rather than `read`.
+  const createActions = useCreateActions()
+  const createMatches = useMemo(
+    () =>
+      matchCreateActions({ query: input, entries: createActions, t }).filter(
+        ({ entry }) => !entry.subject || permissions.can('create', entry.subject),
+      ),
+    [input, createActions, permissions, t],
+  )
+
   const q = input.trim().toLowerCase()
   const matches = (label: string) => !q || label.toLowerCase().includes(q)
   const gotoItems = gotoCommands.filter((c) =>
@@ -99,26 +113,54 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
             value={input}
             onValueChange={setInput}
             placeholder={t('admin.components.command_palette.placeholder')}
+            loading={isLoading}
           />
           <CommandList>
             <SearchStatus
               isEnabled={isEnabled}
               isLoading={isLoading}
-              // "No results" must account for goto/logout commands too, not just
-              // resource search — a query can match a nav command while the API
-              // search returns nothing.
-              hasResults={hasResults || gotoItems.length > 0 || showLogout}
+              // "No results" must account for goto/create/logout commands too,
+              // not just resource search — a query can match a nav command while
+              // the API search returns nothing.
+              hasResults={
+                hasResults || createMatches.length > 0 || gotoItems.length > 0 || showLogout
+              }
               query={input}
             />
+
+            {/* Create actions lead: "add product" states an intent, so burying
+                it under products matching the word "add" would be wrong. */}
+            {createMatches.length > 0 && (
+              <CommandGroup heading={t('admin.components.command_palette.create.heading')}>
+                {createMatches.map(({ entry, noun }) => (
+                  <CommandItem
+                    key={`create-${entry.key}`}
+                    value={`create-${entry.key}`}
+                    onSelect={() => {
+                      close()
+                      const route = entry.getRoute(storeId)
+                      navigate({ to: route.to, search: route.search })
+                    }}
+                  >
+                    {entry.icon ? <entry.icon /> : <PlusIcon />}
+                    {t('admin.components.command_palette.create.label', { noun })}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            )}
+
+            {createMatches.length > 0 && (hasResults || gotoItems.length > 0) && (
+              <CommandSeparator />
+            )}
 
             {groups.map((group) => (
               <ResourceGroup
                 key={group.entry.key}
                 group={group}
                 storeId={storeId}
-                onNavigate={(to) => {
+                onNavigate={(route) => {
                   close()
-                  navigate({ to })
+                  navigate({ to: route.to, search: route.search })
                 }}
               />
             ))}
@@ -160,6 +202,7 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
               </CommandGroup>
             )}
           </CommandList>
+          <CommandFooter />
         </Command>
       </DialogContent>
     </Dialog>
@@ -270,7 +313,7 @@ function ResourceGroup({
 }: {
   group: SearchGroup
   storeId: string
-  onNavigate: (to: string) => void
+  onNavigate: (route: { to: string; search?: Record<string, unknown> }) => void
 }): ReactNode {
   const { t } = useTranslation()
   const { entry, items } = group
@@ -280,7 +323,7 @@ function ResourceGroup({
         <CommandItem
           key={`${entry.key}-${entry.getKey(item)}`}
           value={`${entry.key}-${entry.getKey(item)}`}
-          onSelect={() => onNavigate(entry.getRoute(item, storeId).to)}
+          onSelect={() => onNavigate(entry.getRoute(item, storeId))}
         >
           {entry.renderRow(item)}
         </CommandItem>
@@ -301,14 +344,9 @@ function SearchStatus({
   query: string
 }): ReactNode {
   const { t } = useTranslation()
-  if (isEnabled && isLoading) {
-    return (
-      <div className="flex items-center justify-center gap-2 py-6 text-sm text-muted-foreground">
-        <Loader2Icon className="size-4 animate-spin" />
-        {t('admin.common.searching')}
-      </div>
-    )
-  }
+  // A search in flight shows the spinner in the input, not a row here. Bail out
+  // so the list stays empty rather than claiming "no results" mid-request.
+  if (isEnabled && isLoading) return null
   if (isEnabled && !hasResults) {
     return (
       <CommandEmpty>{t('admin.components.command_palette.no_results', { query })}</CommandEmpty>

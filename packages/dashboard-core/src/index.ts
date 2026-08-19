@@ -59,6 +59,7 @@ export * from './hooks/use-host-form'
 export * from './hooks/use-import'
 export * from './hooks/use-resource-mutation'
 export * from './hooks/use-switch-admin-locale'
+export * from './lib/create-action-registry'
 // ---------------------------------------------------------------------------
 // Registries — pluggable extension points (nav, route, slot, table,
 // settings-nav, form fields, custom field components)

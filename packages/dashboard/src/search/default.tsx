@@ -1,15 +1,26 @@
-import type { Category, Collection, Customer, Order, Product, Promotion } from '@spree/admin-sdk'
+import type {
+  Category,
+  Collection,
+  Company,
+  Customer,
+  CustomerGroup,
+  Order,
+  Product,
+  Promotion,
+  Seller,
+} from '@spree/admin-sdk'
 import { adminClient, defineSearchEntry, Subject, searchRegistry } from '@spree/dashboard-core'
-import { cn, StatusBadge } from '@spree/dashboard-ui'
+import { StatusBadge, Thumbnail } from '@spree/dashboard-ui'
 import {
+  Building2Icon,
   FolderTreeIcon,
   LayersIcon,
   ShoppingCartIcon,
-  TagIcon,
+  StoreIcon,
   TicketPercentIcon,
-  UsersIcon,
+  UserIcon,
+  UsersRoundIcon,
 } from 'lucide-react'
-import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 
 // Each entry teaches the command palette how to search one resource: how to
@@ -31,10 +42,10 @@ searchRegistry.add(
     // duplicates ("… 18V" / "… 25V") differ only in stock and price.
     renderRow: (p) => (
       <>
-        <IconOrThumbnail
-          thumbnailUrl={p.primary_media?.mini_url ?? p.thumbnail_url ?? null}
-          icon={<TagIcon />}
-          size="lg"
+        <Thumbnail
+          src={p.primary_media?.mini_url ?? p.thumbnail_url}
+          size="sm"
+          className="self-start"
         />
         <span className="flex min-w-0 flex-1 flex-col gap-0.5">
           <span className="flex items-center gap-2">
@@ -65,9 +76,10 @@ searchRegistry.add(
     getRoute: (c, storeId) => ({ to: `/${storeId}/products/categories/${c.id}` }),
     renderRow: (c) => (
       <>
-        <IconOrThumbnail
-          thumbnailUrl={c.square_image_url ?? c.image_url ?? null}
-          icon={<FolderTreeIcon />}
+        <Thumbnail
+          src={c.square_image_url ?? c.image_url}
+          size="xs"
+          fallback={<FolderTreeIcon />}
         />
         <span className="flex-1 truncate">{c.pretty_name}</span>
       </>
@@ -87,10 +99,7 @@ searchRegistry.add(
     getRoute: (c, storeId) => ({ to: `/${storeId}/products/collections/${c.id}` }),
     renderRow: (c) => (
       <>
-        <IconOrThumbnail
-          thumbnailUrl={c.square_image_url ?? c.image_url ?? null}
-          icon={<LayersIcon />}
-        />
+        <Thumbnail src={c.square_image_url ?? c.image_url} size="xs" fallback={<LayersIcon />} />
         <span className="flex-1 truncate">{c.name}</span>
       </>
     ),
@@ -108,7 +117,7 @@ searchRegistry.add(
     getRoute: (o, storeId) => ({ to: `/${storeId}/orders/${o.id}` }),
     renderRow: (o) => (
       <>
-        <ShoppingCartIcon />
+        <Thumbnail size="xs" fallback={<ShoppingCartIcon />} />
         <span className="flex-1 truncate">
           <span className="font-mono">{o.number}</span>
           {o.email && <span className="ml-2 text-muted-foreground">{o.email}</span>}
@@ -130,11 +139,73 @@ searchRegistry.add(
     getRoute: (c, storeId) => ({ to: `/${storeId}/customers/${c.id}` }),
     renderRow: (c) => (
       <>
-        <UsersIcon />
+        <Thumbnail size="xs" shape="circle" fallback={<UserIcon />} />
         <span className="flex-1 truncate">
           {c.full_name || c.email}
           {c.full_name && <span className="ml-2 text-muted-foreground">{c.email}</span>}
         </span>
+      </>
+    ),
+  }),
+)
+
+searchRegistry.add(
+  defineSearchEntry<CustomerGroup>({
+    key: 'customer_groups',
+    headingKey: 'admin.nav.customer_groups',
+    subject: Subject.CustomerGroup,
+    position: 310,
+    fetch: (search, limit) =>
+      adminClient.customerGroups
+        .list({ name_cont: search, limit, sort: 'name' })
+        .then((r) => r.data),
+    getKey: (g) => g.id,
+    // Groups have no detail page — they are edited in a sheet on the groups
+    // page, which `?edit=` opens directly.
+    getRoute: (g, storeId) => ({ to: `/${storeId}/customers/groups`, search: { edit: g.id } }),
+    renderRow: (g) => (
+      <>
+        <Thumbnail size="xs" fallback={<UsersRoundIcon />} />
+        <span className="flex-1 truncate">{g.name}</span>
+      </>
+    ),
+  }),
+)
+
+searchRegistry.add(
+  defineSearchEntry<Company>({
+    key: 'companies',
+    headingKey: 'admin.nav.companies',
+    subject: Subject.Company,
+    position: 320,
+    fetch: (search, limit) =>
+      adminClient.companies.list({ name_cont: search, limit, sort: 'name' }).then((r) => r.data),
+    getKey: (c) => c.id,
+    getRoute: (c, storeId) => ({ to: `/${storeId}/companies/${c.id}` }),
+    renderRow: (c) => (
+      <>
+        <Thumbnail size="xs" fallback={<Building2Icon />} />
+        <span className="flex-1 truncate">{c.name}</span>
+      </>
+    ),
+  }),
+)
+
+searchRegistry.add(
+  defineSearchEntry<Seller>({
+    key: 'sellers',
+    headingKey: 'admin.nav.sellers',
+    subject: Subject.Seller,
+    position: 330,
+    fetch: (search, limit) =>
+      adminClient.sellers.list({ name_cont: search, limit, sort: 'name' }).then((r) => r.data),
+    getKey: (s) => s.id,
+    getRoute: (s, storeId) => ({ to: `/${storeId}/sellers/${s.id}` }),
+    renderRow: (s) => (
+      <>
+        <Thumbnail src={s.square_logo_url ?? s.logo_url} size="xs" fallback={<StoreIcon />} />
+        <span className="flex-1 truncate">{s.name}</span>
+        <StatusBadge status={s.status} />
       </>
     ),
   }),
@@ -154,7 +225,7 @@ searchRegistry.add(
     getRoute: (p, storeId) => ({ to: `/${storeId}/promotions/${p.id}` }),
     renderRow: (p) => (
       <>
-        <TicketPercentIcon />
+        <Thumbnail size="xs" fallback={<TicketPercentIcon />} />
         <span className="flex-1 truncate">{p.name}</span>
         {p.code && (
           <span className="ml-2 shrink-0 font-mono text-xs text-muted-foreground">{p.code}</span>
@@ -163,40 +234,6 @@ searchRegistry.add(
     ),
   }),
 )
-
-/**
- * A result row's thumbnail, falling back to the resource's own icon.
- *
- * Deliberately not `Thumbnail`: search results without an image show a bare
- * glyph rather than an empty framed box, so a category or a page does not look
- * like a product whose photo failed to load.
- */
-function IconOrThumbnail({
-  thumbnailUrl,
-  icon,
-  size = 'sm',
-}: {
-  thumbnailUrl: string | null
-  icon: ReactNode
-  /** `lg` for the two-line product row, whose taller row a 20px image floats in. */
-  size?: 'sm' | 'lg'
-}) {
-  if (!thumbnailUrl) {
-    // Keep the icon on the first line rather than centred against two.
-    return size === 'lg' ? <span className="self-start pt-0.5">{icon}</span> : icon
-  }
-  return (
-    <img
-      src={thumbnailUrl}
-      alt=""
-      className={cn(
-        'shrink-0 rounded object-cover',
-        size === 'lg' ? 'size-8 self-start' : 'size-5',
-      )}
-      loading="lazy"
-    />
-  )
-}
 
 /** Stock and price beneath a product's name — the pair that tells near-identical
  *  variants apart. Renders nothing when neither is known. */

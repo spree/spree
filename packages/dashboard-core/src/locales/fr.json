@@ -412,7 +412,49 @@
         "no_results": "Aucun résultat pour « {{query}} ».",
         "empty_hint": "Saisissez du texte pour rechercher, ou choisissez une commande ci-dessous.",
         "goto": "Aller à",
-        "goto_label": "Aller à {{label}}"
+        "goto_label": "Aller à {{label}}",
+        "hints": {
+          "navigate": "naviguer",
+          "select": "sélectionner",
+          "close": "fermer",
+          "esc_key": "échap"
+        },
+        "create": {
+          "heading": "Créer",
+          "label": "Nouveau : {{noun}}",
+          "verbs": "nouveau,nouvelle,ajouter,créer",
+          "nouns": {
+            "category": "Catégorie",
+            "category_plural": "Catégories",
+            "collection": "Collection",
+            "collection_plural": "Collections",
+            "company": "Entreprise",
+            "company_plural": "Entreprises",
+            "customer": "Client",
+            "customer_group": "Groupe de clients",
+            "customer_group_plural": "Groupes de clients",
+            "customer_plural": "Clients",
+            "discount": "Remise",
+            "gift_card": "Carte cadeau",
+            "gift_card_plural": "Cartes cadeaux",
+            "option_type": "Option",
+            "option_type_plural": "Options",
+            "order": "Commande",
+            "order_plural": "Commandes",
+            "price_list": "Liste de prix",
+            "price_list_plural": "Listes de prix",
+            "product": "Produit",
+            "product_plural": "Produits",
+            "promotion": "Promotion",
+            "promotion_plural": "Promotions",
+            "seller": "Vendeur",
+            "seller_plural": "Vendeurs",
+            "stock_location": "Entrepôt",
+            "stock_location_plural": "Entrepôts",
+            "stock_transfer": "Transfert",
+            "stock_transfer_plural": "Transferts"
+          }
+        }
       },
       "bulk_action_bar": {
         "selected": "{{count}} sélectionné(s)",

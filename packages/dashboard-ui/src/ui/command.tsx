@@ -1,17 +1,23 @@
 import { Command as CommandPrimitive } from 'cmdk'
 import i18n from 'i18next'
-import { CheckIcon, SearchIcon } from 'lucide-react'
+import {
+  CheckIcon,
+  CornerDownLeftIcon,
+  Loader2Icon,
+  MoveDownIcon,
+  MoveUpIcon,
+  SearchIcon,
+} from 'lucide-react'
 import * as React from 'react'
 import { cn } from '../lib/utils'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './dialog'
-import { InputGroup, InputGroupAddon } from './input-group'
 
 function Command({ className, ...props }: React.ComponentProps<typeof CommandPrimitive>) {
   return (
     <CommandPrimitive
       data-slot="command"
       className={cn(
-        'flex size-full flex-col overflow-hidden rounded-2xl! bg-popover p-1 text-popover-foreground',
+        'flex size-full flex-col overflow-hidden rounded-2xl! bg-popover text-popover-foreground',
         className,
       )}
       {...props}
@@ -50,36 +56,52 @@ function CommandDialog({
 
 function CommandInput({
   className,
+  loading = false,
   ...props
-}: React.ComponentProps<typeof CommandPrimitive.Input>) {
+}: React.ComponentProps<typeof CommandPrimitive.Input> & {
+  /** Shows a spinner at the end of the field while results are in flight. */
+  loading?: boolean
+}) {
   return (
-    <div data-slot="command-input-wrapper" className="p-1 pb-0">
-      {/* One step inside the dialog's own radius, so the field's corners stay
-          concentric with the panel's rather than reading as a tighter shape
-          floating in the padding. */}
-      <InputGroup className="h-8! rounded-xl! border-input/30 bg-input/30 shadow-none! *:data-[slot=input-group-addon]:pl-2!">
-        <CommandPrimitive.Input
-          data-slot="command-input"
-          className={cn(
-            'w-full text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50',
-            className,
-          )}
-          {...props}
+    // The field is the panel's top edge rather than a box floating in padding:
+    // it spans the full width and is separated from the results by one hairline.
+    <div
+      data-slot="command-input-wrapper"
+      className="flex h-14 shrink-0 items-center gap-3 border-b border-border px-5"
+    >
+      <SearchIcon className="size-5 shrink-0 text-muted-foreground" />
+      <CommandPrimitive.Input
+        data-slot="command-input"
+        className={cn(
+          'h-full w-full bg-transparent text-base outline-hidden placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50',
+          className,
+        )}
+        {...props}
+      />
+      {/* Sits in the field rather than the list, so results don't shift down
+          while a search runs and back up when it lands. */}
+      {loading && (
+        <Loader2Icon
+          data-slot="command-input-loading"
+          className="size-4 shrink-0 animate-spin text-muted-foreground"
         />
-        <InputGroupAddon>
-          <SearchIcon className="size-4 shrink-0 opacity-50" />
-        </InputGroupAddon>
-      </InputGroup>
+      )}
     </div>
   )
 }
 
+/**
+ * The results area. Its height is fixed rather than content-driven, so the
+ * panel stays put as results arrive instead of resizing under the cursor on
+ * every keystroke. Pass `className="h-…"` to change it, or `h-auto max-h-…`
+ * for the shrink-to-fit behaviour a short static menu wants.
+ */
 function CommandList({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.List>) {
   return (
     <CommandPrimitive.List
       data-slot="command-list"
       className={cn(
-        'no-scrollbar max-h-72 scroll-py-1 overflow-x-hidden overflow-y-auto outline-none',
+        'h-80 min-h-0 scroll-py-2 overflow-x-hidden overflow-y-auto p-2 outline-none',
         className,
       )}
       {...props}
@@ -94,7 +116,7 @@ function CommandEmpty({
   return (
     <CommandPrimitive.Empty
       data-slot="command-empty"
-      className={cn('py-6 text-center text-sm', className)}
+      className={cn('py-10 text-center text-sm text-muted-foreground', className)}
       {...props}
     />
   )
@@ -108,7 +130,7 @@ function CommandGroup({
     <CommandPrimitive.Group
       data-slot="command-group"
       className={cn(
-        'overflow-hidden p-1 text-foreground **:[[cmdk-group-heading]]:px-2 **:[[cmdk-group-heading]]:py-1.5 **:[[cmdk-group-heading]]:text-xs **:[[cmdk-group-heading]]:font-medium **:[[cmdk-group-heading]]:text-muted-foreground',
+        'overflow-hidden text-foreground not-last:pb-2 **:[[cmdk-group-heading]]:px-3 **:[[cmdk-group-heading]]:pt-2 **:[[cmdk-group-heading]]:pb-1.5 **:[[cmdk-group-heading]]:text-xs **:[[cmdk-group-heading]]:font-medium **:[[cmdk-group-heading]]:text-muted-foreground',
         className,
       )}
       {...props}
@@ -123,7 +145,7 @@ function CommandSeparator({
   return (
     <CommandPrimitive.Separator
       data-slot="command-separator"
-      className={cn('-mx-1 h-px bg-border', className)}
+      className={cn('-mx-2 my-1 h-px bg-border-subtle', className)}
       {...props}
     />
   )
@@ -138,7 +160,7 @@ function CommandItem({
     <CommandPrimitive.Item
       data-slot="command-item"
       className={cn(
-        "group/command-item relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none in-data-[slot=dialog-content]:rounded-lg! data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-selected:bg-muted data-selected:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 data-selected:*:[svg]:text-foreground",
+        "group/command-item relative flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm outline-hidden select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-selected:bg-muted data-selected:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground data-selected:*:[svg]:text-foreground",
         className,
       )}
       {...props}
@@ -162,13 +184,93 @@ function CommandShortcut({ className, ...props }: React.ComponentProps<'span'>) 
   )
 }
 
+/** A single key cap — used for the palette's footer hints and inline shortcuts. */
+function CommandKey({ className, ...props }: React.ComponentProps<'kbd'>) {
+  return (
+    <kbd
+      data-slot="command-key"
+      className={cn(
+        'inline-flex h-6 min-w-6 items-center justify-center rounded-md bg-card border border-border-subtle px-1.5 font-sans text-xs text-muted-foreground',
+        className,
+      )}
+      {...props}
+    />
+  )
+}
+
+/** One key cap (or a pair) followed by the action it performs. */
+function CommandHint({
+  keys,
+  label,
+  className,
+  ...props
+}: Omit<React.ComponentProps<'div'>, 'children'> & {
+  keys: React.ReactNode[]
+  label: React.ReactNode
+}) {
+  return (
+    <div data-slot="command-hint" className={cn('flex items-center gap-1.5', className)} {...props}>
+      <span className="flex items-center gap-1">
+        {keys.map((key, index) => (
+          // Hints are static, ordered, and never reordered — index is a stable key.
+          // biome-ignore lint/suspicious/noArrayIndexKey: static list
+          <CommandKey key={index}>{key}</CommandKey>
+        ))}
+      </span>
+      <span className="text-xs text-muted-foreground">{label}</span>
+    </div>
+  )
+}
+
+/**
+ * Bottom bar of the palette. Renders the default navigate/select/close hints
+ * when given no children, so callers only pass children to replace them.
+ */
+function CommandFooter({ className, children, ...props }: React.ComponentProps<'div'>) {
+  return (
+    <div
+      data-slot="command-footer"
+      className={cn(
+        'flex shrink-0 items-center justify-between gap-4 border-t border-border-subtle bg-muted text-muted-foreground px-4 py-2.5',
+        className,
+      )}
+      {...props}
+    >
+      {children ?? (
+        <>
+          <div className="flex items-center gap-4">
+            <CommandHint
+              keys={[
+                <MoveUpIcon key="up" className="size-3.5" />,
+                <MoveDownIcon key="down" className="size-3.5" />,
+              ]}
+              label={i18n.t('admin.components.command_palette.hints.navigate')}
+            />
+            <CommandHint
+              keys={[<CornerDownLeftIcon key="enter" className="size-3.5" />]}
+              label={i18n.t('admin.components.command_palette.hints.select')}
+            />
+          </div>
+          <CommandHint
+            keys={[i18n.t('admin.components.command_palette.hints.esc_key')]}
+            label={i18n.t('admin.components.command_palette.hints.close')}
+          />
+        </>
+      )}
+    </div>
+  )
+}
+
 export {
   Command,
   CommandDialog,
   CommandEmpty,
+  CommandFooter,
   CommandGroup,
+  CommandHint,
   CommandInput,
   CommandItem,
+  CommandKey,
   CommandList,
   CommandSeparator,
   CommandShortcut,

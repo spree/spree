@@ -25,7 +25,7 @@ function Checkbox({
       disabled={disabled}
       name={name}
       className={cn(
-        'peer relative inline-block size-4 shrink-0 rounded-[4px] border border-input align-[-3px] shadow-xs outline-none transition-shadow',
+        'peer relative inline-block size-4 shrink-0 cursor-pointer rounded-[4px] border border-input align-[-3px] shadow-xs outline-none transition-shadow',
         'focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50',
         'disabled:cursor-not-allowed disabled:opacity-50',
         'aria-invalid:border-destructive aria-invalid:ring-destructive/20',
