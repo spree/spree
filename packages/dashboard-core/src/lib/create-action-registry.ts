@@ -185,6 +185,30 @@ function normalize(value: string): string {
  * Returns an empty array when the query names no verb, so ordinary searches are
  * unaffected.
  */
+/**
+ * The create actions a query names, narrowed to those the signed-in user may
+ * actually create.
+ *
+ * Create is gated on the `create` action rather than `read`: a user who can
+ * list products but not add one should never be offered "New product". Entries
+ * without a subject are ungated.
+ */
+export function permittedCreateActions({
+  query,
+  entries,
+  t,
+  can,
+}: {
+  query: string
+  entries: CreateActionEntry[]
+  t: (key: string) => string
+  can: (action: string, subject: string) => boolean
+}): CreateActionMatch[] {
+  return matchCreateActions({ query, entries, t }).filter(
+    ({ entry }) => !entry.subject || can('create', entry.subject),
+  )
+}
+
 export function matchCreateActions({
   query,
   entries,

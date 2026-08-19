@@ -1,7 +1,7 @@
 import {
-  matchCreateActions,
   type NavEntry,
   type Permissions,
+  permittedCreateActions,
   type SearchGroup,
   type SettingsNavEntry,
   useAuth,
@@ -74,9 +74,12 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
   const createActions = useCreateActions()
   const createMatches = useMemo(
     () =>
-      matchCreateActions({ query: input, entries: createActions, t }).filter(
-        ({ entry }) => !entry.subject || permissions.can('create', entry.subject),
-      ),
+      permittedCreateActions({
+        query: input,
+        entries: createActions,
+        t,
+        can: (action, subject) => permissions.can(action, subject),
+      }),
     [input, createActions, permissions, t],
   )
 

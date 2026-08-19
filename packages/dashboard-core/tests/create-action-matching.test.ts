@@ -4,6 +4,7 @@ import {
   type CreateActionEntry,
   createActionRegistry,
   matchCreateActions,
+  permittedCreateActions,
 } from '../src/lib/create-action-registry'
 
 // A stand-in translator: keys map to their last segment, title-cased, except
@@ -114,6 +115,26 @@ describe('matchCreateActions — unspaced scripts', () => {
     expect(matchCjk('添加订单')).toEqual(['order'])
   })
 
+  it('matches a verb appended after the noun with no space', () => {
+    expect(matchCjk('商品新建')).toEqual(['product'])
+    expect(matchCjk('订单添加')).toEqual(['order'])
+  })
+
+  // Katakana nouns must work as well as kanji — the guard keys off script, not
+  // off any one language.
+  it('matches a katakana noun', () => {
+    const jp: Record<string, string> = {
+      'admin.components.command_palette.create.verbs': '新規,追加',
+      'nouns.customer': 'カスタマー',
+    }
+    const matches = matchCreateActions({
+      query: '追加カスタマー',
+      entries: [entry('customer', 'nouns.customer')],
+      t: (key) => jp[key] ?? key,
+    })
+    expect(matches.map((m) => m.entry.key)).toEqual(['customer'])
+  })
+
   it('still matches when a space is typed', () => {
     expect(matchCjk('新建 商品')).toEqual(['product'])
   })
@@ -147,5 +168,60 @@ describe('createActionRegistry', () => {
     createActionRegistry.add(entry('product', 'nouns.product'))
     createActionRegistry.remove('product')
     expect(() => createActionRegistry.remove('product')).not.toThrow()
+  })
+})
+
+describe('permittedCreateActions', () => {
+  // Entries mirroring the real registry: a subject-gated one and an ungated one.
+  const GATED: CreateActionEntry[] = [
+    {
+      key: 'product',
+      labelKey: 'nouns.product',
+      subject: 'Spree::Product',
+      getRoute: () => ({ to: '/products/new' }),
+    },
+    {
+      key: 'customer',
+      labelKey: 'nouns.customer',
+      subject: 'Spree::Customer',
+      getRoute: (storeId) => ({ to: `/${storeId}/customers`, search: { new: true } }),
+    },
+    { key: 'ungated', labelKey: 'nouns.promotion', getRoute: () => ({ to: '/promotions/new' }) },
+  ]
+  const permitted = (query: string, can: (action: string, subject: string) => boolean) =>
+    permittedCreateActions({ query, entries: GATED, t, can }).map((m) => m.entry.key)
+
+  it('hides an action the user may not create', () => {
+    expect(permitted('add product', () => false)).toEqual([])
+  })
+
+  it('keeps an action the user may create', () => {
+    expect(permitted('add product', () => true)).toEqual(['product'])
+  })
+
+  it('gates on create rather than read', () => {
+    // A user who can list products but not add one must not be offered the row.
+    const readOnly = (action: string) => action === 'read'
+    expect(permitted('add product', readOnly)).toEqual([])
+  })
+
+  it('checks each entry against its own subject', () => {
+    const onlyCustomers = (_action: string, subject: string) => subject === 'Spree::Customer'
+    expect(permitted('new', onlyCustomers)).toEqual(['customer', 'ungated'])
+  })
+
+  it('never gates an entry that declares no subject', () => {
+    expect(permitted('new', () => false)).toEqual(['ungated'])
+  })
+
+  // Two destination shapes ship: a dedicated `/new` route, and an index page
+  // whose create sheet opens from a search param. Both must survive matching.
+  it('carries the route through, search params included', () => {
+    const matches = permittedCreateActions({ query: 'new', entries: GATED, t, can: () => true })
+    const routes = Object.fromEntries(
+      matches.map((m) => [m.entry.key, m.entry.getRoute('store_1')]),
+    )
+    expect(routes.product).toEqual({ to: '/products/new' })
+    expect(routes.customer).toEqual({ to: '/store_1/customers', search: { new: true } })
   })
 })
