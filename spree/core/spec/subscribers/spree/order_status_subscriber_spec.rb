@@ -55,4 +55,48 @@ RSpec.describe Spree::OrderStatusSubscriber do
 
     expect(order.reload.payment_status).to eq('paid')
   end
+
+  # The order used to be updated from two places at once — an after_save
+  # callback on Payment and these events — so one capture recomputed it four
+  # times. The whole duplication was invisible because events are disabled in
+  # the test environment by default; these run with them on.
+  describe 'recomputation count', events: true do
+    let(:order) { create(:order_ready_to_ship, store: @default_store) }
+
+    def count_recomputes
+      count = 0
+      allow_any_instance_of(Spree::Order).to receive(:update_statuses!).and_wrap_original do |method, *args|
+        count += 1
+        method.call(*args)
+      end
+      yield
+      count
+    end
+
+    # Two, not three: payment.captured is skipped as the companion of
+    # payment.completed. The remaining pair (completed + the save's own
+    # updated) is deliberate — see the subscriber's comment.
+    it 'recomputes twice for a capture rather than once per published event' do
+      payment = order.payments.first
+      payment.update_columns(status: 'pending')
+
+      count = count_recomputes { Spree.payment_capture_workflow.call(payment: payment) }
+
+      expect(count).to eq(2)
+      expect(order.reload.payment_status).to eq('paid')
+    end
+
+    it 'counts each settlement when two payments settle in one request' do
+      cart_order = create(:order_with_line_items, store: @default_store, line_items_count: 1)
+      cart_order.update_columns(total: 100, item_total: 100)
+      method = create(:check_payment_method, store: @default_store)
+      first = create(:payment, order: cart_order, payment_method: method, amount: 60, status: 'pending')
+      second = create(:payment, order: cart_order, payment_method: method, amount: 40, status: 'pending')
+
+      first.complete!
+      second.complete!
+
+      expect(cart_order.reload.payment_total).to eq(100)
+    end
+  end
 end

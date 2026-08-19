@@ -24,7 +24,7 @@ module Spree
         expect(payment.reload).to be_completed
       end
 
-      context 'processes all checkout payments along with store credits' do
+      context 'processes all checkout payments along with store credits', events: true do
         context 'with store credits payment method auto capture turned on' do
           it 'order should be paid' do
             store_credit = create(:store_credit_payment, amount: 50, order: order)
@@ -82,7 +82,7 @@ module Spree
         end
       end
 
-      it 'does not go over total for order' do
+      it 'does not go over total for order', events: true do
         payment_1 = create(:payment, amount: 50, order: order)
         payment_2 = create(:payment, amount: 50, order: order)
         payment_3 = create(:payment, amount: 50, order: order)

@@ -113,6 +113,10 @@ module Spree
             end
           end
 
+          # The bookkeeping assigned above is in memory; void! writes status
+          # through a conditional update, so persist the rest first.
+          save! if changed?
+
           case success_state
           when :complete then complete!
           when :pend then pend!

@@ -61,15 +61,20 @@ module Spree
       private
 
       def process_payments_with(action)
-        # Don't run if there is nothing to pay.
-        return if payment_total >= total
+        # Don't run if there is nothing to pay. Read from the database, not
+        # the in-memory attribute: settlements land through the order status
+        # subscriber, which holds its own instance of this record, so the
+        # attribute here goes stale as soon as anything settles. Only that
+        # column is read — reloading the whole record would discard in-memory
+        # state the caller set.
+        return if settled_payment_total >= total
         # Don't run if there are authorized payments
         return if pending_payments.any? && unprocessed_payments.empty?
         # Never complete without a successfully processed payment.
         raise Spree::Core::GatewayError, Spree.t(:no_payment_found) if unprocessed_payments.empty?
 
         unprocessed_payments.each do |payment|
-          break if payment_total >= total
+          break if settled_payment_total >= total
 
           result = Spree.payment_process_workflow.call(payment: payment, action: action)
           raise Spree::Core::GatewayError, result.error.value.to_s if result.failure?
@@ -77,6 +82,11 @@ module Spree
       rescue Spree::Core::GatewayError => e
         errors.add(:base, e.message)
         false
+      end
+
+      # @return [BigDecimal] payment_total as it stands in the database
+      def settled_payment_total
+        persisted? ? self.class.where(id: id).pick(:payment_total).to_d : payment_total.to_d
       end
     end
   end
