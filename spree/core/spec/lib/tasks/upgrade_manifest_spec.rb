@@ -40,10 +40,22 @@ RSpec.describe 'the upgrade manifest' do
       expect(task_classes).to all(be_present)
     end
 
-    it 'registers every task class it names' do
-      manifest['steps'].each do |step|
+    # An optional step's task class ships in the gem that owns it, so it is
+    # absent here by design — that absence is exactly what makes the walk skip
+    # the step instead of failing on an installation without the gem.
+    it 'registers every task class it names, except the optional ones' do
+      manifest['steps'].reject { |step| step['optional'] }.each do |step|
         expect(Spree::MaintenanceTask.find_registered(step['task_class'])).
           to be_present, "#{step['id']} names #{step['task_class']}, which is not registered"
+      end
+    end
+
+    it 'leaves an optional step to the gem that owns it' do
+      optional = manifest['steps'].select { |step| step['optional'] }
+
+      expect(optional).not_to be_empty
+      optional.each do |step|
+        expect(Spree::MaintenanceTask.find_registered(step['task_class'])).to be_nil
       end
     end
 
@@ -179,6 +191,16 @@ RSpec.describe 'the upgrade manifest' do
 
       expect(Spree::MaintenanceTaskRun.last.task_name).
         to eq('Spree::MaintenanceTasks::Upgrade::CaptureMethods')
+    end
+
+    # The gem that owns an optional step is absent here, so the walk has to
+    # skip it — an installation that never had the gem would otherwise fail on
+    # a step that does not apply to it.
+    it 'skips an optional step whose gem is not installed' do
+      runner = Spree::Upgrade::Runner.new(target_version: '6.0', step_id: 'migrate_stripe_webhook_keys')
+
+      expect { runner.call }.to output(/Skipping/).to_stdout
+      expect(Spree::MaintenanceTaskRun.where(task_name: 'SpreeStripe::MaintenanceTasks::MigrateWebhookKeys')).to be_empty
     end
 
     it 'records a run for a rake-backed step of a released manifest' do
