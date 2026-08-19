@@ -43,12 +43,6 @@ module Spree
 
     STATUSES = %w[draft active archived].freeze
 
-    STATUS_TO_WEBHOOK_EVENT = {
-      'active' => 'activated',
-      'draft' => 'drafted',
-      'archived' => 'archived'
-    }.freeze
-
     TRANSLATABLE_FIELDS = %i[name description slug meta_description meta_title].freeze
     RICH_TEXT_TRANSLATABLE_FIELDS = %i[description].freeze
     translates(*TRANSLATABLE_FIELDS, column_fallback: Spree.mobility_column_fallback)
@@ -224,8 +218,6 @@ module Spree
     validate :discontinue_on_must_be_later_than_make_active_at, if: -> { make_active_at && discontinue_on }
 
     scope :for_store, ->(store) { where(store_id: store.id) }
-    scope :draft, -> { where(status: 'draft') }
-    scope :archived, -> { where(status: 'archived') }
     scope :not_archived, -> { where.not(status: 'archived') }
     scope :on_sale, lambda { |currency = nil|
                       currency ||= Spree::Store.default.default_currency
@@ -263,7 +255,6 @@ module Spree
 
     scope :archivable, -> { where(status: %w[active draft]) }
     scope :by_source, ->(source) { send(source) }
-    scope :paused, -> { where(status: 'paused') }
     scope :published, -> { where(status: 'active') }
 
     accepts_nested_attributes_for(
@@ -392,21 +383,30 @@ module Spree
     # written per currency through the default variant's +set_price+.
     delegate :compare_at_price, :track_inventory?, :images, to: :default_variant, allow_nil: true
 
-    state_machine :status, initial: :draft do
-      event :activate do
-        transition to: :active
-      end
-      after_transition to: :active, do: [:after_activate, :publish_product_activated_event]
+    # No state machine — status moves through the Spree::Products workflows
+    # (docs/plans/6.0-service-workflows.md). has_status generates the `draft`
+    # and `archived` scopes and every predicate, but never redefines what the
+    # model already owns: `Product.active` stays the currency-aware scope from
+    # Spree::ProductScopes rather than a plain status lookup.
+    include Spree::HasStatus
+    has_status(*STATUSES, default: :draft)
 
-      event :archive do
-        transition to: :archived
-      end
-      after_transition to: :archived, do: [:after_archive, :publish_product_archived_event]
+    # @deprecated Call Spree.product_activate_workflow — removed in 6.1.
+    def activate!
+      Spree::Deprecation.warn('Spree::Product#activate! is deprecated and will be removed in Spree 6.1. Call Spree.product_activate_workflow instead.')
+      run_status_workflow(Spree.product_activate_workflow)
+    end
 
-      event :draft do
-        transition to: :draft
-      end
-      after_transition to: :draft, do: :after_draft
+    # @deprecated Call Spree.product_archive_workflow — removed in 6.1.
+    def archive!
+      Spree::Deprecation.warn('Spree::Product#archive! is deprecated and will be removed in Spree 6.1. Call Spree.product_archive_workflow instead.')
+      run_status_workflow(Spree.product_archive_workflow)
+    end
+
+    # @deprecated Call Spree.product_draft_workflow — removed in 6.1.
+    def draft!
+      Spree::Deprecation.warn('Spree::Product#draft! is deprecated and will be removed in Spree 6.1. Call Spree.product_draft_workflow instead.')
+      run_status_workflow(Spree.product_draft_workflow)
     end
 
     def self.bulk_auto_match_collections(store, product_ids)
@@ -1080,28 +1080,20 @@ module Spree
       end
     end
 
+    # Mirrors the machine's bang events: an illegal move raised.
+    def run_status_workflow(workflow)
+      result = workflow.call(product: self)
+
+      if result.failure?
+        errors.add(:base, result.error.value.to_s)
+        raise ActiveRecord::RecordInvalid, self
+      end
+
+      true
+    end
+
     def eligible_for_collection_matching?
       previously_new_record? || tag_list_previously_changed? || available_on_previously_changed?
-    end
-
-    def after_activate
-      # Implement your logic here
-    end
-
-    def after_archive
-      # Implement your logic here
-    end
-
-    def after_draft
-      # Implement your logic here
-    end
-
-    def publish_product_activated_event
-      publish_event('product.activated')
-    end
-
-    def publish_product_archived_event
-      publish_event('product.archived')
     end
   end
 end

@@ -1903,6 +1903,33 @@ describe Spree::Product, type: :model do
     end
   end
 
+  describe 'status' do
+    it 'has no state machine' do
+      expect(described_class).not_to respond_to(:state_machines)
+    end
+
+    it 'defaults to draft' do
+      expect(described_class.new.status).to eq('draft')
+    end
+
+    it 'rejects an unknown status' do
+      expect(build(:product, status: 'nonsense')).not_to be_valid
+    end
+
+    # has_status must not shadow this one: Product.active takes a currency and
+    # joins prices, where a plain status lookup would silently return a
+    # different set.
+    it 'keeps the currency-aware active scope' do
+      expect(described_class.active(nil).to_sql).to include(Spree::Price.table_name)
+    end
+
+    it 'generates the plain status scopes and predicates' do
+      expect(described_class.draft.to_sql).to include("'draft'")
+      expect(described_class.archived.to_sql).to include("'archived'")
+      expect(build(:product, status: 'draft')).to be_draft
+    end
+  end
+
   describe 'custom events', events: true do
     describe 'product.activated' do
       let(:product) { create(:product, status: 'draft') }
@@ -1911,7 +1938,7 @@ describe Spree::Product, type: :model do
         expect(product).to receive(:publish_event).with('product.activated')
         allow(product).to receive(:publish_event).with(anything)
 
-        product.activate!
+        Spree::Products::Activate.call(product: product)
       end
     end
 
@@ -1922,7 +1949,7 @@ describe Spree::Product, type: :model do
         expect(product).to receive(:publish_event).with('product.archived')
         allow(product).to receive(:publish_event).with(anything)
 
-        product.archive!
+        Spree::Products::Archive.call(product: product)
       end
     end
   end

@@ -43,7 +43,7 @@ module Spree
 
       context 'when supply is sufficient but product is not active' do
         before do
-          line_item.product.draft!
+          line_item.product.update!(status: 'draft')
         end
 
         it 'shows a message about product status and not quantity' do
