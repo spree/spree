@@ -44,7 +44,7 @@ steps:
 
   - id: migrate_media_class_names
     name: "Rewrite stored Spree::Asset and Spree::Image class names"
-    task: "spree:migrate_media_class_names"
+    task_class: "Spree::MaintenanceTasks::Upgrade::MediaClassNames"
     notes: |
       Spree::Asset and Spree::Image became Spree::Media in 6.0. The table rename
       (spree_assets to spree_media) travels with db:migrate, but the old class
@@ -59,7 +59,7 @@ steps:
 
   - id: migrate_master_images_to_product_media
     name: "Re-home variant-pinned media onto the product"
-    task: "spree:media:migrate_master_images_to_product_media"
+    task_class: "Spree::MaintenanceTasks::Upgrade::MasterImagesToProductMedia"
     notes: |
       Moves images pinned to a variant onto the product's own gallery, linking
       them back to the variants that had them. Enqueues one background job per
@@ -487,7 +487,7 @@ steps:
 
   - id: fold_store_credit_categories
     name: "Fold store credit categories into the memo"
-    task: "spree:upgrade:fold_store_credit_categories"
+    task_class: "Spree::MaintenanceTasks::Upgrade::StoreCreditCategories"
     notes: |
       Store credits no longer carry a category in Spree 6. Their reason is the
       originator (return, exchange, claim, gift card) plus the memo, so this
@@ -497,7 +497,7 @@ steps:
 
   - id: migrate_stripe_webhook_keys
     name: "Move Stripe webhook signing secrets onto the gateway"
-    task: "spree:upgrade:migrate_stripe_webhook_keys"
+    task_class: "SpreeStripe::MaintenanceTasks::MigrateWebhookKeys"
     optional: true
     notes: |
       Only runs when spree_stripe is installed; skipped otherwise.

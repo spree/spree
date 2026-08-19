@@ -16,6 +16,9 @@ module SpreeStripe
     config.after_initialize do
       Rails.application.config.spree.payment_methods << SpreeStripe::Gateway
       Spree.subscribers << SpreeStripe::CustomerUpdatedSubscriber
+      # The upgrade step that moves webhook signing secrets. Registered here so
+      # the manifest's optional step resolves only where this gem is installed.
+      Spree.maintenance_tasks << 'SpreeStripe::MaintenanceTasks::MigrateWebhookKeys'
     end
   end
 end

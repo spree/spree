@@ -545,7 +545,10 @@ module Spree
           'Spree::MaintenanceTasks::Upgrade::StoreSettingsFromConfig',
           'Spree::MaintenanceTasks::Upgrade::CaptureMethods',
           'Spree::MaintenanceTasks::Upgrade::ProductTypes',
-          'Spree::MaintenanceTasks::Upgrade::SearchReindex'
+          'Spree::MaintenanceTasks::Upgrade::SearchReindex',
+          'Spree::MaintenanceTasks::Upgrade::MediaClassNames',
+          'Spree::MaintenanceTasks::Upgrade::MasterImagesToProductMedia',
+          'Spree::MaintenanceTasks::Upgrade::StoreCreditCategories'
         ]
 
         Rails.application.config.spree.validators.addresses = [

@@ -1130,6 +1130,10 @@ en:
           description: Collapse fulfillment statuses onto the 6.0 set
         incomplete_orders_to_carts:
           description: Move incomplete orders onto the Cart model
+        master_images_to_product_media:
+          description: Move variant-pinned images onto product media
+        media_class_names:
+          description: Rename stored Asset class names to Media
         product_types:
           description: Bind product types to the default store and reset counters
         reason_store_ids:
@@ -1144,8 +1148,12 @@ en:
           description: Rebuild the search index
         shipping_to_delivery:
           description: Rename the shipping vocabulary to delivery
+        store_credit_categories:
+          description: Fold store credit categories into the credit memo
         store_settings_from_config:
           description: Copy moved settings from the global config onto each store
+        stripe_webhook_keys:
+          description: Move Stripe webhook signing secrets onto the gateway
         tax_store_ids:
           description: Assign tax categories and rates to the default store
         tax_zones:
