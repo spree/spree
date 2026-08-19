@@ -421,7 +421,7 @@
         },
         "create": {
           "heading": "Créer",
-          "label": "Nouveau : {{noun}}",
+          "label": "Créer : {{noun}}",
           "verbs": "nouveau,nouvelle,ajouter,créer",
           "nouns": {
             "category": "Catégorie",
@@ -435,6 +435,7 @@
             "customer_group_plural": "Groupes de clients",
             "customer_plural": "Clients",
             "discount": "Remise",
+            "discount_plural": "Remises",
             "gift_card": "Carte cadeau",
             "gift_card_plural": "Cartes cadeaux",
             "option_type": "Option",

@@ -422,7 +422,7 @@
         "create": {
           "heading": "Erstellen",
           "label": "Neu: {{noun}}",
-          "verbs": "neu,neue,neuer,neues,hinzufügen,erstellen,anlegen",
+          "verbs": "neu,neue,neuer,neues,neuen,hinzufügen,erstellen,anlegen",
           "nouns": {
             "category": "Kategorie",
             "category_plural": "Kategorien",
@@ -435,6 +435,7 @@
             "customer_group_plural": "Kundengruppen",
             "customer_plural": "Kunden",
             "discount": "Rabatt",
+            "discount_plural": "Rabatte",
             "gift_card": "Geschenkkarte",
             "gift_card_plural": "Geschenkkarten",
             "option_type": "Option",

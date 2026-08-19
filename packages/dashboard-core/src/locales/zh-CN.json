@@ -435,6 +435,7 @@
             "customer_group_plural": "客户组",
             "customer_plural": "客户",
             "discount": "折扣",
+            "discount_plural": "折扣",
             "gift_card": "礼品卡",
             "gift_card_plural": "礼品卡",
             "option_type": "选项",

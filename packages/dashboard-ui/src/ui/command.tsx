@@ -54,6 +54,14 @@ function CommandDialog({
   )
 }
 
+/**
+ * The palette's search field — the top edge of the panel, spanning its full
+ * width above a single hairline.
+ *
+ * While `loading` is set, a spinner sits at the end of the field rather than in
+ * the results list, so rows don't shift down when a search starts and back up
+ * when it lands. The state is announced to screen readers as well as drawn.
+ */
 function CommandInput({
   className,
   loading = false,
@@ -63,8 +71,6 @@ function CommandInput({
   loading?: boolean
 }) {
   return (
-    // The field is the panel's top edge rather than a box floating in padding:
-    // it spans the full width and is separated from the results by one hairline.
     <div
       data-slot="command-input-wrapper"
       className="flex h-14 shrink-0 items-center gap-3 border-b border-border px-5"
@@ -72,20 +78,26 @@ function CommandInput({
       <SearchIcon className="size-5 shrink-0 text-muted-foreground" />
       <CommandPrimitive.Input
         data-slot="command-input"
+        aria-busy={loading || undefined}
         className={cn(
           'h-full w-full bg-transparent text-base outline-hidden placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50',
           className,
         )}
         {...props}
       />
-      {/* Sits in the field rather than the list, so results don't shift down
-          while a search runs and back up when it lands. */}
       {loading && (
         <Loader2Icon
           data-slot="command-input-loading"
+          aria-hidden="true"
           className="size-4 shrink-0 animate-spin text-muted-foreground"
         />
       )}
+      {/* The spinner is decorative, so the progress a sighted user reads from it
+          is announced here instead. Polite: it must not cut off the row count
+          the listbox announces when results land. */}
+      <span role="status" aria-live="polite" className="sr-only">
+        {loading ? i18n.t('admin.common.searching') : ''}
+      </span>
     </div>
   )
 }

@@ -421,7 +421,7 @@
         },
         "create": {
           "heading": "إنشاء",
-          "label": "{{noun}} جديد",
+          "label": "إنشاء {{noun}}",
           "verbs": "إضافة,جديد,جديدة,أضف,إنشاء,انشاء",
           "nouns": {
             "category": "فئة",
@@ -435,6 +435,7 @@
             "customer_group_plural": "مجموعات العملاء",
             "customer_plural": "العملاء",
             "discount": "خصم",
+            "discount_plural": "الخصومات",
             "gift_card": "بطاقة هدايا",
             "gift_card_plural": "بطاقات الهدايا",
             "option_type": "خيار",

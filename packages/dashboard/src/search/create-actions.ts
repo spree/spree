@@ -117,7 +117,7 @@ createActionRegistry.add({
 createActionRegistry.add({
   key: 'promotion',
   labelKey: noun('promotion'),
-  aliasKeys: [noun('promotion_plural'), noun('discount')],
+  aliasKeys: [noun('promotion_plural'), noun('discount'), noun('discount_plural')],
   icon: TicketPercentIcon,
   subject: Subject.Promotion,
   position: 400,

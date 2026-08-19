@@ -421,7 +421,7 @@
         },
         "create": {
           "heading": "Utwórz",
-          "label": "Nowy: {{noun}}",
+          "label": "Utwórz: {{noun}}",
           "verbs": "nowy,nowa,nowe,dodaj,utwórz,stwórz",
           "nouns": {
             "category": "Kategoria",
@@ -435,6 +435,7 @@
             "customer_group_plural": "Grupy klientów",
             "customer_plural": "Klienci",
             "discount": "Rabat",
+            "discount_plural": "Rabaty",
             "gift_card": "Karta podarunkowa",
             "gift_card_plural": "Karty podarunkowe",
             "option_type": "Opcja",

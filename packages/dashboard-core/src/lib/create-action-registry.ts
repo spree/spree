@@ -60,6 +60,15 @@ function notify() {
   for (const l of listeners) l()
 }
 
+/**
+ * The create-action registry. Every mutation notifies subscribers, so a page
+ * rendered through `useCreateActions` reflects it immediately — which is how a
+ * plugin can register its create pages after the app has booted.
+ *
+ * `add` throws on a duplicate key and `update` throws on an unknown one, so a
+ * plugin colliding with a built-in fails loudly instead of silently shadowing
+ * it. `remove` is tolerant, letting teardown run unconditionally.
+ */
 export const createActionRegistry: CreateActionMutator = {
   add(entry) {
     if (entries.some((e) => e.key === entry.key)) {
@@ -129,6 +138,33 @@ export interface CreateActionMatch {
   rank: number
 }
 
+/**
+ * Scripts written without spaces between words. Restricting the unspaced verb
+ * match to these keeps it from firing on space-delimited languages, where
+ * "address" would otherwise read as the verb "add" plus a noun "ress".
+ */
+const UNSPACED_SCRIPT = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u
+
+/**
+ * Strip a leading or trailing verb from an unspaced query, returning the noun
+ * that remains (`''` when the query is just the verb). Returns `null` when the
+ * query carries no verb or isn't written in an unspaced script.
+ */
+function stripUnspacedVerb(query: string, verbs: Set<string>): string | null {
+  if (!UNSPACED_SCRIPT.test(query)) return null
+
+  // Longest first, so a verb that is a prefix of another ("新" vs "新建")
+  // can't strip the shorter match and leave the rest of the verb in the noun.
+  const byLength = [...verbs].sort((a, b) => b.length - a.length)
+
+  for (const verb of byLength) {
+    if (query === verb) return ''
+    if (query.startsWith(verb)) return query.slice(verb.length)
+    if (query.endsWith(verb)) return query.slice(0, -verb.length)
+  }
+  return null
+}
+
 /** Fold case and strip accents so "Rückgabe" matches "ruckgabe". */
 function normalize(value: string): string {
   return value
@@ -171,16 +207,19 @@ export function matchCreateActions({
   // The verb may lead or trail; strip whichever end carries it and treat the
   // rest as the noun. Checking the last word only when the first didn't match
   // keeps "add" + "add-on"-style nouns unambiguous.
-  let rest: string[]
+  let noun: string
   if (verbs.has(words[0])) {
-    rest = words.slice(1)
+    noun = words.slice(1).join(' ')
   } else if (words.length > 1 && verbs.has(words[words.length - 1])) {
-    rest = words.slice(0, -1)
+    noun = words.slice(0, -1).join(' ')
   } else {
-    return []
+    // Languages that don't put spaces between words — Chinese, Japanese —
+    // arrive as one token ("新建商品"), so word equality never matches. Fall
+    // back to stripping the verb as a prefix or suffix of the whole query.
+    const unspaced = stripUnspacedVerb(normalize(query), verbs)
+    if (unspaced === null) return []
+    noun = unspaced
   }
-
-  const noun = rest.join(' ')
   const matches: CreateActionMatch[] = []
 
   for (const entry of entries) {

@@ -17,6 +17,7 @@ const DICT: Record<string, string> = {
   'nouns.customer_group': 'Customer group',
   'nouns.promotion': 'Promotion',
   'nouns.discount': 'Discount',
+  'nouns.discount_plural': 'Discounts',
 }
 const t = (key: string) => DICT[key] ?? key
 
@@ -28,7 +29,7 @@ const ENTRIES = [
   entry('product', 'nouns.product', ['nouns.product_plural']),
   entry('customer', 'nouns.customer', ['nouns.customer_plural']),
   entry('customer_group', 'nouns.customer_group'),
-  entry('promotion', 'nouns.promotion', ['nouns.discount']),
+  entry('promotion', 'nouns.promotion', ['nouns.discount', 'nouns.discount_plural']),
 ]
 
 const match = (query: string) =>
@@ -63,6 +64,10 @@ describe('matchCreateActions', () => {
     expect(matches[0].noun).toBe('Promotion')
   })
 
+  it('matches a plural alias', () => {
+    expect(match('add discounts')).toEqual(['promotion'])
+  })
+
   it('accepts a trailing verb, for languages that put it last', () => {
     expect(match('product add')).toEqual(['product'])
   })
@@ -82,6 +87,43 @@ describe('matchCreateActions', () => {
 
   it('tolerates extra whitespace', () => {
     expect(match('  add   product  ')).toEqual(['product'])
+  })
+
+  it('does not read a verb out of the middle of an ordinary word', () => {
+    // "address" starts with the verb "add" — matching it would hijack search.
+    expect(match('address')).toEqual([])
+    expect(match('newsletter')).toEqual([])
+  })
+})
+
+// Chinese and Japanese are written without spaces between words, so the whole
+// query arrives as a single token and word-equality never finds the verb.
+describe('matchCreateActions — unspaced scripts', () => {
+  const CJK: Record<string, string> = {
+    'admin.components.command_palette.create.verbs': '新建,添加,创建,新增',
+    'nouns.product': '商品',
+    'nouns.order': '订单',
+  }
+  const tCjk = (key: string) => CJK[key] ?? key
+  const cjkEntries = [entry('product', 'nouns.product'), entry('order', 'nouns.order')]
+  const matchCjk = (query: string) =>
+    matchCreateActions({ query, entries: cjkEntries, t: tCjk }).map((m) => m.entry.key)
+
+  it('matches a verb prefixed onto the noun with no space', () => {
+    expect(matchCjk('新建商品')).toEqual(['product'])
+    expect(matchCjk('添加订单')).toEqual(['order'])
+  })
+
+  it('still matches when a space is typed', () => {
+    expect(matchCjk('新建 商品')).toEqual(['product'])
+  })
+
+  it('lists everything creatable for a bare verb', () => {
+    expect(matchCjk('新建')).toEqual(['product', 'order'])
+  })
+
+  it('ignores a query naming no verb', () => {
+    expect(matchCjk('商品')).toEqual([])
   })
 })
 
