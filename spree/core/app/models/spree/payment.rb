@@ -54,12 +54,15 @@ module Spree
     #
     # Callbacks
     before_create :assign_risk_codes_from_source
-    # update the order totals, etc.
-    after_save :update_order, unless: -> { capture_on_dispatch }
     # invalidate previously entered payments
     after_create :invalidate_old_payments
     after_create :create_eligible_credit_event
-    after_destroy :update_order
+    # Every other change reaches the order through payment events, which the
+    # order status subscriber answers. Destruction cannot: Payment is not
+    # paranoid, so the row is gone by the time payment.deleted lands and its
+    # payload carries no owner — nothing can lead the subscriber back to the
+    # order, which still has to stop counting that money.
+    after_destroy :recalculate_owner_totals
 
     attr_accessor :source_attributes, :request_env, :capture_on_dispatch
     attribute :skip_source_requirement, :boolean, default: false
@@ -158,8 +161,30 @@ module Spree
       true
     end
 
-    def void!
-      update!(status: 'void')
+    # The single void writer. A compare-and-swap rather than a plain save:
+    # of two racing voids only the one whose update moves the row publishes
+    # payment.voided, so the loser is an idempotent no-op. Callers that
+    # already asked the gateway pass the authorization it returned.
+    #
+    # @param authorization [String, nil] written only when present — a
+    #   successful void without one must not null the stored reference
+    # @return [Boolean] false when the payment was already void
+    def void!(authorization: nil)
+      if new_record?
+        self.status = 'void'
+        self.response_code = authorization if authorization.present?
+        save!
+        publish_event('payment.voided')
+        return true
+      end
+
+      updates = { status: 'void', updated_at: Time.current }
+      updates[:response_code] = authorization if authorization.present?
+
+      return false unless self.class.where(id: id).where.not(status: 'void').update_all(updates) == 1
+
+      assign_attributes(updates.except(:updated_at))
+      clear_attribute_changes(updates.except(:updated_at).keys)
       publish_event('payment.voided')
       true
     end
@@ -463,14 +488,19 @@ module Spree
 
 
 
-    def update_order
-      return unless completed? || void? || (owner.is_a?(Spree::Order) && owner.completed?)
+    def recalculate_owner_totals
+      return if owner.blank?
 
-      # A payment settling moves only the payment side of the ledger — never
-      # re-sum item/adjustment money here.
-      completed_total = owner.payments.completed.includes(:refunds).sum { |payment| payment.amount - payment.refunds.sum(:amount) }
-      owner.update_column(:payment_total, completed_total)
+      owner.refresh_payment_total!
       owner.update_statuses! if owner.is_a?(Spree::Order) && owner.completed?
+    end
+
+    # @deprecated The order recomputes itself from payment events —
+    #   Spree::Orders::UpdateStatuses writes statuses, the totals workflow
+    #   writes payment_total. Removed in 7.0.
+    def update_order
+      Spree::Deprecation.warn('Spree::Payment#update_order is deprecated and will be removed in Spree 7.0. The order recomputes from payment events; call owner.recalculate_totals! to force it.')
+      owner&.recalculate_totals!
     end
 
     def create_eligible_credit_event
