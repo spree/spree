@@ -1080,7 +1080,7 @@ module Spree
     def collect_payment_methods
       Spree::Deprecation.warn('`Order#collect_payment_methods` is deprecated and will be removed in Spree 6.1. Use `payment_methods` instead.')
 
-      store.payment_methods.storefront_visible.select { |pm| pm.available_for_order?(self) }
+      store.payment_methods.active.storefront_visible.select { |pm| pm.available_for_order?(self) }
     end
 
     def credit_card_nil_payment?(attributes)

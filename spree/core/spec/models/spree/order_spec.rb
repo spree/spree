@@ -476,6 +476,28 @@ describe Spree::Order, type: :model do
     end
   end
 
+  # The deprecated twin of #payment_methods; it must keep matching its
+  # replacement until it is removed in 6.1.
+  describe '#collect_payment_methods' do
+    it 'excludes an inactive method even when it is storefront-visible' do
+      store.payment_methods.create!(name: 'Fake', active: false, storefront_visible: true)
+
+      expect(order.send(:collect_payment_methods)).to be_empty
+    end
+
+    it 'excludes a backoffice-only method' do
+      store.payment_methods.create!(name: 'Fake', active: true, storefront_visible: false)
+
+      expect(order.send(:collect_payment_methods)).to be_empty
+    end
+
+    it 'includes an active storefront-visible method' do
+      payment_method = store.payment_methods.create!(name: 'Fake', active: true, storefront_visible: true)
+
+      expect(order.send(:collect_payment_methods)).to include(payment_method)
+    end
+  end
+
   # Regression test for #4199
   describe '#collect_frontend_payment_methods' do
     let(:ok_method) { double :payment_method, available_for_order?: true, available_for_store?: true, store: store }
