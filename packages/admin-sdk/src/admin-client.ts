@@ -302,7 +302,6 @@ import type {
   StockTransfer,
   Store,
   StoreCredit,
-  StoreCreditCategory,
   TaxCategory,
   TaxExemptionCertificate,
   TaxIdentifier,
@@ -3820,10 +3819,6 @@ export class AdminClient {
       ),
   }
 
-  // ============================================
-  // Store Credit Categories (read-only — for category dropdowns)
-  // ============================================
-
   /**
    * Markets — store-scoped pricing regions. Each market binds one or more
    * countries to a currency, a default locale, and a tax-display policy.
@@ -3854,31 +3849,6 @@ export class AdminClient {
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/markets/${id}`, options),
-  }
-
-  // ============================================
-  // Store Credit Categories
-  // ============================================
-
-  readonly storeCreditCategories = {
-    list: (
-      params?: ListParams & Record<string, unknown>,
-      options?: RequestOptions,
-    ): Promise<PaginatedResponse<StoreCreditCategory>> =>
-      this.request<PaginatedResponse<StoreCreditCategory>>('GET', '/store_credit_categories', {
-        ...options,
-        params: params ? transformListParams(params) : undefined,
-      }),
-
-    get: (
-      id: string,
-      params?: { expand?: string[] },
-      options?: RequestOptions,
-    ): Promise<StoreCreditCategory> =>
-      this.request<StoreCreditCategory>('GET', `/store_credit_categories/${id}`, {
-        ...options,
-        params: getParams(params),
-      }),
   }
 
   // ============================================

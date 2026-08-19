@@ -9,7 +9,6 @@ const client = createAdminClient({
 const credit = await client.customers.storeCredits.create('cus_UkLWZg9DAJ', {
   amount: '25.00',
   currency: 'USD',
-  category_id: 'cat_UkLWZg9DAJ',
   memo: 'Goodwill credit',
 })
 

@@ -84,14 +84,13 @@ RSpec.shared_examples 'a store credits host' do
     end
 
     context 'there are multiple store credits' do
-      context 'they have different credit type priorities' do
+      context 'they were issued at different times' do
         let(:amount_difference) { 100 }
-        let!(:primary_store_credit) { create(:store_credit, amount: (record_total - amount_difference)) }
-        let!(:secondary_store_credit) do
-          create(:store_credit, amount: record_total, user: primary_store_credit.user,
-                                credit_type: create(:secondary_credit_type))
+        let!(:older_store_credit) { create(:store_credit, amount: (record_total - amount_difference), created_at: 2.days.ago) }
+        let!(:newer_store_credit) do
+          create(:store_credit, amount: record_total, user: older_store_credit.user, created_at: 1.day.ago)
         end
-        let(:record) { new_record(user: primary_store_credit.user, total: record_total) }
+        let(:record) { new_record(user: older_store_credit.user, total: record_total) }
 
         before do
           Timecop.scale(3600)
@@ -101,15 +100,15 @@ RSpec.shared_examples 'a store credits host' do
 
         after { Timecop.return }
 
-        it 'uses the primary store credit type over the secondary' do
-          primary_payment = record.payments.first
-          secondary_payment = record.payments.last
+        it 'spends the oldest store credit first' do
+          older_payment = record.payments.first
+          newer_payment = record.payments.last
 
           expect(record.payments.size).to eq 2
-          expect(primary_payment.source).to eq primary_store_credit
-          expect(secondary_payment.source).to eq secondary_store_credit
-          expect(primary_payment.amount).to eq(record_total - amount_difference)
-          expect(secondary_payment.amount).to eq(amount_difference)
+          expect(older_payment.source).to eq older_store_credit
+          expect(newer_payment.source).to eq newer_store_credit
+          expect(older_payment.amount).to eq(record_total - amount_difference)
+          expect(newer_payment.amount).to eq(amount_difference)
         end
       end
     end

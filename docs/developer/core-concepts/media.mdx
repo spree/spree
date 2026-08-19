@@ -1,7 +1,7 @@
 ---
 title: Media
 sidebarTitle: "Media"
-description: Manage product media in Spree — images, videos, named variants, focal points, and how media is uploaded, resized, and served via the Store API.
+description: Manage product media in Spree — images, hosted and external video, named variants, focal points, and how media is uploaded, resized, and served via the Store API.
 ---
 
 import { Since } from '/snippets/since.mdx';
@@ -113,6 +113,103 @@ Variants belonging to a different product are silently dropped — the API rejec
 The Store API's `media` field on a product returns its gallery — product-level media when present, falling back to legacy variant-pinned images during the transition. On a variant, `media` returns the assets linked to that variant via `variant_ids`, falling back to direct variant uploads.
 
 This dual rendering means existing storefronts keep working during the upgrade; new uploads attach to the product, and you opt into a [one-shot migration](/developer/upgrades/5.4-to-5.5) to re-home legacy variant-pinned data when convenient.
+
+### Video <Since version="6.0" />
+
+A product gallery can hold video as well as images. Spree supports both ways merchants usually have it:
+
+| `media_type` | What it is | What it needs |
+|---|---|---|
+| `video` | A video file you upload, served from your own storage | An uploaded file (MP4, WebM, or QuickTime) |
+| `external_video` | A YouTube or Vimeo link | The link, in `external_video_url` |
+
+Spree reads the link once, when it is saved, and rejects anything it cannot embed — so a broken URL is caught at the point a merchant enters it rather than in the storefront. What it derives comes back on the media object:
+
+| Field | Description |
+|---|---|
+| `video_provider` | `youtube` or `vimeo` |
+| `video_embed_url` | Player URL, ready for an `iframe` |
+| `video_url` | The uploaded file itself, for hosted video |
+| `poster_url` | A still frame for the video |
+
+Because the derived fields are on the response, a storefront embeds a video without parsing links itself.
+
+#### Adding an external video
+
+<CodeGroup>
+
+```typescript Admin SDK
+const video = await client.products.media.create('prod_86Rf07xd4z', {
+  media_type: 'external_video',
+  external_video_url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+  alt: 'How it is made',
+})
+
+video.video_embed_url // https://www.youtube.com/embed/dQw4w9WgXcQ
+```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/products/prod_86Rf07xd4z/media' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "media_type": "external_video",
+    "external_video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    "alt": "How it is made"
+  }'
+```
+
+</CodeGroup>
+
+#### Uploading a video file
+
+A hosted video is uploaded the same way an image is, with `media_type` telling Spree what it is. Add `poster_signed_id` to give it a still frame:
+
+```typescript Admin SDK
+const video = await client.products.media.create('prod_86Rf07xd4z', {
+  media_type: 'video',
+  signed_id: signedVideoBlobId,
+  poster_signed_id: signedPosterBlobId,
+  alt: 'Product in use',
+})
+```
+
+A poster can also be added or replaced later, on its own:
+
+```typescript Admin SDK
+await client.products.media.update('prod_86Rf07xd4z', 'media_k5nR8xLq', {
+  poster_signed_id: signedPosterBlobId,
+})
+```
+
+<Info>
+Spree serves an uploaded video as you uploaded it — it does not transcode. Keep files web-friendly (H.264 MP4 or WebM) so they play everywhere, and prefer an external video for long footage so the provider handles streaming.
+</Info>
+
+#### Posters
+
+A video has no image of its own, so its sized URLs (`small_url`, `large_url`, and the rest) resolve to its **poster** — the still shown before the video plays. A gallery that only knows how to draw an image still renders the right picture, and can play the video when the shopper asks for it.
+
+Where the poster comes from, in order:
+
+1. **The one the merchant uploaded** — `poster_signed_id` on write, editable in the dashboard's media editor.
+2. **The provider's own still**, for a YouTube link.
+3. **Nothing**, for a Vimeo link or an uploaded file with no poster — the tile falls back to a placeholder.
+
+Spree does not extract a frame from an uploaded video, so give hosted video and Vimeo links a poster if you want them to show a still.
+
+### Focal Point <Since version="6.0" />
+
+`focal_point_x` and `focal_point_y` mark the part of an image that must stay in frame when a storefront crops it to a different shape. Both are fractions between 0 and 1, measured from the top left, so `{ x: 0.5, y: 0.5 }` is dead centre — which is also what a storefront should assume when they are null.
+
+```typescript Admin SDK
+await client.products.media.update('prod_86Rf07xd4z', 'media_k5nR8xLq', {
+  focal_point_x: 0.25,
+  focal_point_y: 0.4,
+})
+```
+
+Spree stores the focal point and serves it; the cropping itself is the storefront's decision, since only it knows the shape it needs.
 
 ### Named Variant Sizes <Since version="5.3" />
 
@@ -240,6 +337,10 @@ curl 'https://api.mystore.com/api/v3/store/products/spree-tote?expand=media,vari
 | `focal_point_x` | number \| null | Horizontal focal point (0.0–1.0) |
 | `focal_point_y` | number \| null | Vertical focal point (0.0–1.0) |
 | `external_video_url` | string \| null | External video URL (YouTube/Vimeo) |
+| `video_provider` | string \| null | `youtube` or `vimeo`, derived from the link <Since version="6.0" /> |
+| `video_embed_url` | string \| null | Embeddable player URL, derived from the link <Since version="6.0" /> |
+| `video_url` | string \| null | Uploaded video file URL <Since version="6.0" /> |
+| `poster_url` | string \| null | Still frame for a video <Since version="6.0" /> |
 | `original_url` | string \| null | Full-size image URL (inline disposition) |
 | `mini_url` ... `xlarge_url` | string \| null | Named variant URLs |
 | `download_url` | string \| null | Same blob as `original_url` but with `Content-Disposition: attachment`. Admin API only. <Since version="5.5" /> |
@@ -271,6 +372,7 @@ For production deployments, use cloud storage (S3, GCS, Azure) instead of local 
 - **Always provide alt text** for accessibility and SEO
 - **Use named variant sizes** (`mini`, `small`, `medium`, `large`, `xlarge`) for optimal performance
 - **Use a CDN** in production for faster delivery
+- **Give every video a poster** so a gallery has something to show before playback
 
 ## Related Documentation
 

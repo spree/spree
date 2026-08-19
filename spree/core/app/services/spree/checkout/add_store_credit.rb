@@ -56,7 +56,7 @@ module Spree
         payment_method = Spree::PaymentMethod::StoreCredit.available.first
         raise 'Store credit payment method could not be found' unless payment_method
 
-        @order.customer.store_credits.for_store(@order.store).order_by_priority.each do |credit|
+        @order.customer.store_credits.for_store(@order.store).oldest_first.each do |credit|
           break if remaining_total.zero?
           next if credit.amount_remaining.zero?
 

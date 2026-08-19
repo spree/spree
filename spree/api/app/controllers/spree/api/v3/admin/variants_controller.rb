@@ -23,7 +23,7 @@ module Spree
             [
               :prices, stock_levels: :stock_location,
               option_values: :option_type,
-              primary_media: [attachment_attachment: :blob]
+              primary_media: [attachment_attachment: :blob, poster_attachment: :blob]
             ]
           end
         end

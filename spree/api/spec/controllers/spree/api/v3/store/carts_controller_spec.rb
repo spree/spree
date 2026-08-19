@@ -971,7 +971,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
     end
 
     it 'completes the checkout' do
-      create(:payment, cart: order, amount: order.reload.total)
+      create(:payment, cart: order, amount: order.reload.total).tap(&:create_payment_profile)
 
       post :complete, params: { id: order.prefixed_id }
 
@@ -981,7 +981,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
     end
 
     it 'releases stock reservations on successful completion' do
-      create(:payment, cart: order, amount: order.reload.total)
+      create(:payment, cart: order, amount: order.reload.total).tap(&:create_payment_profile)
       line_item = order.line_items.first
       line_item.variant.stock_levels.first.update!(backorderable: false)
       line_item.variant.stock_levels.first.set_count_on_hand(20)
@@ -1053,7 +1053,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         request.headers['Authorization'] = nil
         request.headers['x-spree-token'] = guest_order.token
 
-        create(:payment, cart: guest_order, order: nil, amount: guest_order.reload.total)
+        create(:payment, cart: guest_order, order: nil, amount: guest_order.reload.total).tap(&:create_payment_profile)
 
         post :complete, params: { id: guest_order.prefixed_id }
 

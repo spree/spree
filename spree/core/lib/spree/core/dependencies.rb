@@ -147,8 +147,10 @@ module Spree
 
         payment_create_service: 'Spree::Payments::Create',
         payment_capture_workflow: 'Spree::Payments::Capture',
-        payment_refund_workflow: 'Spree::Payments::Refund',
+        payment_void_workflow: 'Spree::Payments::Void',
+        refund_create_workflow: 'Spree::Refunds::Create',
         payments_handle_webhook_workflow: 'Spree::Payments::HandleWebhook',
+        payment_session_complete_workflow: 'Spree::PaymentSessions::Complete',
 
         # finders
         current_store_finder: 'Spree::Stores::FindDefault',

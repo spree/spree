@@ -17,7 +17,7 @@ namespace :spree do
       puts 'Done!'
     end
 
-    # Enqueues Spree::Media::MigrateProductAssetsJob for every product that
+    # Enqueues Spree::Images::MigrateProductMediaJob for every product that
     # still has at least one variant-pinned asset. The job is idempotent, so
     # re-running this task is safe.
     #
@@ -38,7 +38,7 @@ namespace :spree do
 
       relation = Spree::Product.where(id: variant_product_ids)
       relation.find_each(batch_size: batch_size) do |product|
-        Spree::Media::MigrateProductAssetsJob.perform_later(product.id)
+        Spree::Images::MigrateProductMediaJob.perform_later(product.id)
       end
 
       puts "Enqueued migration jobs for #{relation.count} products on the #{Spree.queues.images} queue."

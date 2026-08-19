@@ -2,12 +2,12 @@ module Spree
   module Purchase
     # Tax location and pre-tax sums shared by Spree::Cart and Spree::Order.
     module Taxation
-      # The address tax is computed against, honoring the
+      # The address tax is computed against, honoring the store's
       # tax_using_ship_address preference.
       #
       # @return [Spree::Address, nil]
       def tax_address
-        Spree::Config[:tax_using_ship_address] ? ship_address : bill_address
+        Spree::StorePreferences.read(store, :tax_using_ship_address) ? ship_address : bill_address
       end
 
       # The country whose tax applies. Before the customer enters an address

@@ -119,9 +119,22 @@ module Spree
       super || (completed_at.present? && !completed_at_changed?)
     end
 
+    # How long a completion attempt may hold the cart before its claim goes
+    # stale — a crashed completion must not brick its cart.
+    COMPLETING_CLAIM_TTL = 5.minutes
+
     # @return [Boolean] whether a completion attempt currently holds this cart
     def completing?
       completing_at.present?
+    end
+
+    # Whether a live completion attempt holds this cart — its totals are fixed
+    # and money may be moving, so mutations must wait until it finishes or the
+    # claim goes stale.
+    #
+    # @return [Boolean]
+    def completion_claimed?
+      completing_at.present? && completing_at > COMPLETING_CLAIM_TTL.ago
     end
 
     # Recomputes and persists money totals (item, tax, promotion, delivery)

@@ -101,7 +101,7 @@ module Spree
     #       in URLs and JSON converts symbols to strings, causing digest mismatches.
     def spree_image_variant_options(options = {})
       format_opt = options[:format]&.to_s
-      saver_options = format_opt == "png" ? png_saver_options : Spree::Asset::WEBP_SAVER_OPTIONS
+      saver_options = format_opt == "png" ? png_saver_options : Spree::Media::WEBP_SAVER_OPTIONS
       format = format_opt || "webp"
 
       # Build hash in alphabetical order to match Active Storage's key ordering

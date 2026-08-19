@@ -14,7 +14,7 @@ module Spree
       def perform(viewable_id, viewable_type, external_url, external_id = nil, position = nil, link_variant_id = nil)
         viewable = viewable_type.safe_constantize.find(viewable_id)
 
-        Spree::Image.ensure_custom_field_definition_exists!(Spree::Image::EXTERNAL_URL_CUSTOM_FIELD_KEY)
+        Spree::Media.ensure_custom_field_definition_exists!(Spree::Media::EXTERNAL_URL_CUSTOM_FIELD_KEY)
 
         external_url = external_url.strip
         external_id = external_id.to_s.downcase.strip if external_id.present?

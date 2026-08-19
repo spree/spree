@@ -629,7 +629,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
             ]
           }, as: :json
         }.to change(Spree::Product, :count).by(1)
-                                           .and change(Spree::Asset, :count).by(2)
+                                           .and change(Spree::Media, :count).by(2)
 
         expect(response).to have_http_status(:created)
         created = Spree::Product.find_by(name: 'test product')
@@ -714,7 +714,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
             ]
           }, as: :json
         }.to change(Spree::Product, :count).by(1)
-                                           .and change(Spree::Asset, :count).by(1)
+                                           .and change(Spree::Media, :count).by(1)
 
         expect(response).to have_http_status(:created)
 
@@ -723,22 +723,42 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         media = created.media.first
         expect(media.alt).to eq('A cat thinking')
         expect(media.attachment).to be_attached
-        expect(media.type).to eq('Spree::Image')
+        expect(media.media_type).to eq('image')
+      end
+
+      it 'attaches an external video inline on create' do
+        expect {
+          post :create, params: {
+            name: 'Product With Video',
+            media: [
+              {
+                media_type: 'external_video',
+                external_video_url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+                position: 1
+              }
+            ]
+          }, as: :json
+        }.to change(Spree::Media, :count).by(1)
+
+        expect(response).to have_http_status(:created)
+
+        media = Spree::Product.find_by(name: 'Product With Video').media.first
+        expect(media.media_type).to eq('external_video')
+        expect(media.attachment).not_to be_attached
+        expect(media.external_video.provider).to eq('youtube')
       end
 
       it 'rejects an unknown media type' do
-        post :create, params: {
-          name: 'Product Bad Type',
-          media: [
-            { signed_id: blob.signed_id, type: 'NotAClass' }
-          ]
-        }, as: :json
+        expect {
+          post :create, params: {
+            name: 'Product Bad Type',
+            media: [
+              { signed_id: blob.signed_id, media_type: 'audio' }
+            ]
+          }, as: :json
+        }.not_to change(Spree::Media, :count)
 
-        # Product created, but the bad media entry was silently skipped —
-        # ApplyMedia is strict about ALLOWED_MEDIA_TYPES.
-        expect(response).to have_http_status(:created)
-        created = Spree::Product.find_by(name: 'Product Bad Type')
-        expect(created.media).to be_empty
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end
@@ -1251,7 +1271,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
               { signed_id: blob.signed_id, alt: 'A cat', position: 1 }
             ]
           }, as: :json
-        }.to change(Spree::Asset, :count).by(1)
+        }.to change(Spree::Media, :count).by(1)
 
         expect(response).to have_http_status(:ok)
         media = product.media.find_by(alt: 'A cat')
@@ -1260,7 +1280,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       end
 
       it 'patches an existing media item by id' do
-        existing = product.media.build(alt: 'Old', position: 1, type: 'Spree::Image')
+        existing = product.media.build(alt: 'Old', position: 1, type: 'Spree::Media')
         existing.attachment.attach(blob)
         existing.save!
 
@@ -1279,7 +1299,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
 
       it 'assigns variant_ids when patching an existing media item' do
         variant = create(:variant, product: product)
-        existing = product.media.build(alt: 'Variant linked', position: 1, type: 'Spree::Image')
+        existing = product.media.build(alt: 'Variant linked', position: 1, type: 'Spree::Media')
         existing.attachment.attach(blob)
         existing.save!
 
@@ -1295,7 +1315,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       end
 
       it 'leaves persisted media untouched when omitted from the payload' do
-        kept = product.media.build(alt: 'Kept', position: 1, type: 'Spree::Image')
+        kept = product.media.build(alt: 'Kept', position: 1, type: 'Spree::Media')
         kept.attachment.attach(blob)
         kept.save!
 
@@ -1306,7 +1326,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
               { signed_id: blob.signed_id, alt: 'New entry', position: 2 }
             ]
           }, as: :json
-        }.to change(Spree::Asset, :count).by(1)
+        }.to change(Spree::Media, :count).by(1)
 
         expect(response).to have_http_status(:ok)
         expect(product.media.where(id: kept.id)).to exist

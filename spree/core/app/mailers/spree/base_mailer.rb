@@ -52,7 +52,6 @@ module Spree
 
     def mail(headers = {}, &block)
       ensure_default_action_mailer_url_host(headers[:store_url])
-      return unless Spree::Config[:send_core_emails]
 
       if @_store_locale_active
         super

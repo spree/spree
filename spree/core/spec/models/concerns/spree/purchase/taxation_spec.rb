@@ -6,11 +6,13 @@ RSpec.shared_examples 'a taxation host' do
   let(:ship_address) { create(:address) }
 
   describe '#tax_address' do
-    it 'honors the tax_using_ship_address preference' do
-      Spree::Config.set(tax_using_ship_address: true)
+    it 'uses the ship address when the store prefers it' do
+      stub_store_preferences(store, tax_using_ship_address: true)
       expect(record.tax_address).to eq(ship_address)
+    end
 
-      Spree::Config.set(tax_using_ship_address: false)
+    it 'uses the bill address when the store prefers it' do
+      stub_store_preferences(store, tax_using_ship_address: false)
       expect(record.tax_address).to eq(bill_address)
     end
   end

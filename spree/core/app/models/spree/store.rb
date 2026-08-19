@@ -82,6 +82,10 @@ module Spree
     # See Spree::CaptureMethod.
     preference :capture_method, :string, default: Spree::CaptureMethod::DEFAULT_CAPTURE_METHOD
     preference :stock_reservations_enabled, :boolean, default: true
+    # Which address a sale's tax is computed against. Stores selling where tax
+    # follows the destination keep this on; billing-address jurisdictions turn
+    # it off.
+    preference :tax_using_ship_address, :boolean, default: true
     # Catalog preferences
     preference :track_inventory_levels, :boolean, default: true
     preference :show_products_without_price, :boolean, default: false

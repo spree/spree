@@ -640,9 +640,9 @@ describe Spree::Product, type: :model do
 
     before do
       images = [
-        Spree::Image.new(params),
-        Spree::Image.new(params.merge(alt: 'position 1', position: 1)),
-        Spree::Image.new(params.merge(viewable_type: 'ThirdParty::Extension', alt: 'position 1', position: 2))
+        Spree::Media.new(params),
+        Spree::Media.new(params.merge(alt: 'position 1', position: 1)),
+        Spree::Media.new(params.merge(viewable_type: 'ThirdParty::Extension', alt: 'position 1', position: 2))
       ]
       images.each_with_index do |image, index|
         image.attachment.attach(io: file, filename: "thinking-cat-#{index + 1}.jpg", content_type: 'image/jpeg')
@@ -2108,12 +2108,12 @@ describe Spree::Product, type: :model do
         image = product.media.find_by(alt: 'A cat')
         expect(image).to be_present
         expect(image.attachment).to be_attached
-        expect(image.type).to eq('Spree::Image')
+        expect(image.media_type).to eq('image')
         expect(image.position).to eq(1)
       end
 
       it 'patches an existing media item by id (alt, position)' do
-        existing = product.media.build(alt: 'Old', position: 1, type: 'Spree::Image')
+        existing = product.media.build(alt: 'Old', position: 1)
         existing.attachment.attach(io: File.open(fixture_path), filename: 'cat.jpg', content_type: 'image/jpeg')
         existing.save!
 
@@ -2124,7 +2124,7 @@ describe Spree::Product, type: :model do
       end
 
       it 'patches variant_ids on an existing media item' do
-        existing = product.media.build(alt: 'Photo', position: 1, type: 'Spree::Image')
+        existing = product.media.build(alt: 'Photo', position: 1)
         existing.attachment.attach(io: File.open(fixture_path), filename: 'cat.jpg', content_type: 'image/jpeg')
         existing.save!
 
@@ -2136,10 +2136,58 @@ describe Spree::Product, type: :model do
         expect(existing.reload.variants).to include(variant)
       end
 
-      it 'silently skips an unknown media type' do
+      it 'rejects an unknown media type' do
         expect {
-          product.media = [{ signed_id: blob.signed_id, type: 'NotAClass' }]
-        }.not_to change(product.media, :count)
+          product.media = [{ signed_id: blob.signed_id, media_type: 'audio' }]
+        }.to raise_error(ActiveRecord::RecordInvalid)
+      end
+
+      it 'adds an external video without a file' do
+        expect {
+          product.media = [
+            { media_type: 'external_video', external_video_url: 'https://vimeo.com/123456789', position: 1 }
+          ]
+        }.to change(product.media, :count).by(1)
+
+        video = product.media.find_by(media_type: 'external_video')
+        expect(video.attachment).not_to be_attached
+        expect(video.external_video.provider).to eq('vimeo')
+      end
+
+      it 'rejects an external video Spree cannot embed' do
+        expect {
+          product.media = [
+            { media_type: 'external_video', external_video_url: 'https://example.com/clip.mp4' }
+          ]
+        }.to raise_error(ActiveRecord::RecordInvalid)
+      end
+
+      it 'attaches a poster to a video through the inline path' do
+        poster = ActiveStorage::Blob.create_and_upload!(
+          io: File.open(fixture_path), filename: 'poster.jpg', content_type: 'image/jpeg'
+        )
+
+        product.media = [
+          {
+            media_type: 'external_video',
+            external_video_url: 'https://vimeo.com/123456789',
+            poster_signed_id: poster.signed_id
+          }
+        ]
+
+        video = product.media.find_by(media_type: 'external_video')
+        expect(video.poster).to be_attached
+        expect(video.still_image).to eq(video.poster)
+      end
+
+      it 'patches the focal point on an existing media item' do
+        existing = product.media.build(alt: 'Photo', position: 1)
+        existing.attachment.attach(io: File.open(fixture_path), filename: 'cat.jpg', content_type: 'image/jpeg')
+        existing.save!
+
+        product.media = [{ id: existing.prefixed_id, focal_point_x: 0.25, focal_point_y: 0.75 }]
+
+        expect(existing.reload.focal_point).to eq({ x: 0.25, y: 0.75 })
       end
 
       it 'silently skips entries with neither id nor signed_id' do
@@ -2155,7 +2203,7 @@ describe Spree::Product, type: :model do
       end
 
       it 'preserves an existing media item omitted from the array (no implicit delete)' do
-        existing = product.media.build(alt: 'Keep me', position: 1, type: 'Spree::Image')
+        existing = product.media.build(alt: 'Keep me', position: 1, type: 'Spree::Media')
         existing.attachment.attach(io: File.open(fixture_path), filename: 'cat.jpg', content_type: 'image/jpeg')
         existing.save!
 
@@ -2177,7 +2225,7 @@ describe Spree::Product, type: :model do
 
         expect {
           new_product.save!
-        }.to change(Spree::Asset, :count).by(1)
+        }.to change(Spree::Media, :count).by(1)
 
         image = new_product.media.find_by(alt: 'Pending')
         expect(image).to be_present

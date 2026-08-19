@@ -192,8 +192,6 @@ en:
         url: Site URL
       spree/store_credit:
         amount_used: Amount used
-      spree/store_credit_category:
-        name: Name
       spree/tax_category:
         description: Description
         name: Name
@@ -282,11 +280,6 @@ en:
           attributes:
             base:
               cannot_destroy_used_gift_card: Can't delete a used gift card
-        spree/image:
-          attributes:
-            attachment:
-              attachment_must_be_present: must be present
-              not_allowed_content_type: has not allowed content type
         spree/import:
           attributes:
             attachment:
@@ -315,6 +308,13 @@ en:
             country:
               already_in_market: is already assigned to another market in this store
               not_in_shipping_zone: is not covered by any shipping zone. Please set up a shipping zone first.
+        spree/media:
+          attributes:
+            attachment:
+              attachment_must_be_present: must be present
+              not_allowed_content_type: has not allowed content type
+            external_video_url:
+              unsupported_video_provider: must be a YouTube or Vimeo link
         spree/payment:
           attributes:
             amount:
@@ -352,10 +352,6 @@ en:
             amount_used:
               cannot_be_greater_than_amount: Cannot be greater than amount.
               greater_than_zero_restrict_delete: is greater than zero. Can not delete store credit.
-        spree/store_credit_category:
-          attributes:
-            base:
-              cannot_destroy_if_used_in_store_credit: Cannot delete store credit categories once they are used in store credit.
         spree/taxon_image:
           attributes:
             attachment:
@@ -510,9 +506,6 @@ en:
       spree/store_credit:
         one: Store Credit
         other: Store Credits
-      spree/store_credit_category:
-        one: Store Credit Category
-        other: Store Credit Categories
       spree/tax_category:
         one: Tax Category
         other: Tax Categories
@@ -676,6 +669,7 @@ en:
     card_number: Card Number
     cart: Cart
     cart_already_updated: The cart has already been updated.
+    cart_completion_in_progress: The cart is being completed. Please retry in a moment.
     cart_line_item:
       currency_unavailable: "%{li_name} is not available in %{currency}"
       delivery_unavailable: "%{li_name} cannot be delivered to the selected address"

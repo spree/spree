@@ -2,7 +2,7 @@
   "admin": {
     "a11y": {
       "delete_image": "删除图片",
-      "edit_media": "编辑图片"
+      "edit_media": "编辑媒体"
     },
     "allowed_origins": {
       "add_cta": "添加允许的来源",
@@ -399,10 +399,9 @@
         "store_credit": {
           "add_description": "向此客户账户发放商店积分。",
           "delete_confirm_message": "删除此商店积分？",
-          "edit_description": "调整金额、类别或备注。已使用的余额无法编辑。",
+          "edit_description": "调整金额或备注。已使用的余额无法编辑。",
           "empty": "未发放商店积分",
           "table": {
-            "category": "类别",
             "memo": "备注",
             "remaining": "剩余",
             "used": "已使用"
@@ -898,6 +897,15 @@
         "alt": {
           "label": "替代文本",
           "placeholder": "为无障碍访问和 SEO 描述该图片"
+        },
+        "external_video_url": {
+          "help": "粘贴 YouTube 或 Vimeo 链接。",
+          "label": "视频链接",
+          "placeholder": "https://www.youtube.com/watch?v=..."
+        },
+        "poster": {
+          "help": "播放前显示的静态图片。留空则使用视频平台自带的封面（如果有）。",
+          "label": "视频封面"
         }
       },
       "option_type": {
@@ -1396,6 +1404,10 @@
             "public": "公开 — 任何人都可以浏览并查看价格"
           }
         },
+        "tax_using_ship_address": {
+          "help": "根据客户的配送地址计算税费。关闭此选项则改用账单地址计税。",
+          "label": "按配送地址计税"
+        },
         "track_inventory_levels": {
           "help": "统计现有库存。关闭后，所有商品都视为始终有货。",
           "label": "跟踪库存数量"
@@ -1408,9 +1420,6 @@
       "store_credit": {
         "amount": {
           "label": "金额"
-        },
-        "category_id": {
-          "label": "类别"
         },
         "currency": {
           "label": "货币"
@@ -3306,14 +3315,22 @@
         "unknown_location": "未知位置"
       },
       "media": {
+        "add_video": "添加视频链接",
+        "add_video_submit": "添加视频",
+        "add_video_title": "添加视频链接",
         "assigned_variants_help": "选择此图片所代表的变体。留空则应用于所有变体。",
         "assigned_variants_label": "关联的变体",
         "delete_confirm": "删除此媒体？此操作无法撤销。",
         "drop_hint": "将媒体拖放到此处，或点击浏览",
         "edit_title": "编辑媒体",
-        "file_types_hint": "PNG、JPG、WebP，最大 10MB",
+        "file_types_hint": "图片（PNG、JPG、WebP）和视频（MP4、WebM、MOV）",
+        "focal_point_help": "点击图片，设置裁剪时需要保留的画面位置。",
+        "focal_point_reset": "重置",
+        "unsupported_file": "有 {{count}} 个文件未添加 — 仅支持图片和视频。",
         "upload_failed": "上传 {{name}} 失败：{{message}}",
-        "upload_status_failed": "失败"
+        "upload_status_failed": "失败",
+        "video_preview_title": "视频预览",
+        "video_url_invalid": "请输入 YouTube 或 Vimeo 链接。"
       },
       "no_categories_found": "未找到分类",
       "no_collections_found": "未找到系列",
@@ -3392,14 +3409,6 @@
         "reference_placeholder": "采购单号、供应商发票……",
         "review_description": "创建前请检查此调拨。创建后将无法更改商品项。",
         "search_items_placeholder": "按名称或 SKU 搜索（3 个以上字符）…"
-      },
-      "variant_media_picker": {
-        "add_count_one": "添加 {{count}} 个",
-        "add_count_other": "添加 {{count}} 个",
-        "empty_all_linked": "所有产品媒体已关联到此变体。",
-        "empty_no_media": "尚无产品媒体 — 请先在产品上上传图片。",
-        "title": "从产品图库选择",
-        "trigger": "从产品图库选择"
       },
       "variants": {
         "add_option": "添加选项",

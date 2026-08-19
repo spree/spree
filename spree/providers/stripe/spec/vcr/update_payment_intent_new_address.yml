@@ -1,0 +1,167 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.stripe.com/v1/payment_intents/pi_3QY2qD2ESifGlJez0VuzXjwK
+    body:
+      encoding: UTF-8
+      string: amount=4000&currency=USD&shipping[address][city]=San+Francisco&shipping[address][country]=US&shipping[address][line1]=100+California+Street&shipping[address][postal_code]=94111&shipping[address][state]=CA&shipping[name]=Jane+Zoe&customer=cus_RQdclxFVLH4oau
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/10.1.0 Spree Stripe/1.0.0 (https://spreecommerce.org)
+      Authorization:
+      - Bearer <STRIPE_SECRET_KEY>
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Stripe-Version:
+      - '2023-10-16'
+      X-Stripe-Client-User-Agent:
+      - "<FILTERED>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Fri, 20 Dec 2024 10:18:36 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '1934'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET, HEAD, PUT, PATCH, POST, DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required,
+        X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Content-Security-Policy:
+      - base-uri 'none'; default-src 'none'; form-action 'none'; frame-ancestors 'none';
+        img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'; upgrade-insecure-requests;
+        report-uri /csp-violation https://q.stripe.com/csp-violation?q=603ir3ms36KSabQcLPYF5CRXTUb0pCgItKwurKLnqqgDZGxyvG-zBAAFRD4io7Abs9beeTumXA%3D%3D
+      Cross-Origin-Opener-Policy-Report-Only:
+      - same-origin; report-to="coop"
+      Idempotency-Key:
+      - afee1ead-424a-4f0b-9d48-06f3fbf0848e
+      Original-Request:
+      - req_dxal6vQ05zQ3ha
+      Report-To:
+      - '{"group":"coop","max_age":8640,"endpoints":[{"url":"https://q.stripe.com/coop-report"}],"include_subdomains":true}'
+      Reporting-Endpoints:
+      - coop="https://q.stripe.com/coop-report"
+      Request-Id:
+      - req_dxal6vQ05zQ3ha
+      Stripe-Should-Retry:
+      - 'false'
+      Stripe-Version:
+      - '2023-10-16'
+      Vary:
+      - Origin
+      X-Content-Type-Options:
+      - nosniff
+      X-Stripe-Priority-Routing-Enabled:
+      - 'true'
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      X-Wc:
+      - AB
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "pi_3QY2qD2ESifGlJez0VuzXjwK",
+          "object": "payment_intent",
+          "amount": 4000,
+          "amount_capturable": 0,
+          "amount_details": {
+            "tip": {}
+          },
+          "amount_received": 0,
+          "application": null,
+          "application_fee_amount": null,
+          "automatic_payment_methods": {
+            "allow_redirects": "always",
+            "enabled": true
+          },
+          "canceled_at": null,
+          "cancellation_reason": null,
+          "capture_method": "automatic",
+          "client_secret": "pi_3QY2qD2ESifGlJez0VuzXjwK_secret_x30uGfPVmhEj3lOCPOTiICqdx",
+          "confirmation_method": "automatic",
+          "created": 1734688193,
+          "currency": "usd",
+          "customer": "cus_RQdclxFVLH4oau",
+          "description": null,
+          "invoice": null,
+          "last_payment_error": null,
+          "latest_charge": null,
+          "livemode": false,
+          "metadata": {
+            "spree_order_id": "4490655f-4ab0-43a2-936e-150bf547c26b"
+          },
+          "next_action": null,
+          "on_behalf_of": null,
+          "payment_method": null,
+          "payment_method_configuration_details": {
+            "id": "pmc_1QVa9x2ESifGlJezRC5fgLVg",
+            "parent": null
+          },
+          "payment_method_options": {
+            "card": {
+              "installments": null,
+              "mandate_options": null,
+              "network": null,
+              "request_three_d_secure": "automatic",
+              "setup_future_usage": "off_session"
+            },
+            "link": {
+              "persistent_token": null
+            }
+          },
+          "payment_method_types": [
+            "card",
+            "link"
+          ],
+          "processing": null,
+          "receipt_email": null,
+          "review": null,
+          "setup_future_usage": null,
+          "shipping": {
+            "address": {
+              "city": "San Francisco",
+              "country": "US",
+              "line1": "100 California Street",
+              "line2": null,
+              "postal_code": "94111",
+              "state": "CA"
+            },
+            "carrier": null,
+            "name": "Jane Zoe",
+            "phone": null,
+            "tracking_number": null
+          },
+          "source": null,
+          "statement_descriptor": null,
+          "statement_descriptor_suffix": "R096430553 John Doe",
+          "status": "requires_payment_method",
+          "transfer_data": null,
+          "transfer_group": "R096430553"
+        }
+  recorded_at: Fri, 20 Dec 2024 10:18:36 GMT
+recorded_with: VCR 6.2.0

@@ -293,7 +293,7 @@ module Spree
       register_resource(:products, group: :catalog, audiences: %i[seller], subjects: -> {
         [Spree::Product, Spree::ProductType, Spree::Variant, Spree::OptionType,
          Spree::OptionValue, Spree::Price, Spree::PriceList, Spree::PriceRule,
-         Spree::Asset, Spree::ProductPublication, Spree::CustomField]
+         Spree::Media, Spree::ProductPublication, Spree::CustomField]
       })
       register_resource(:categories, group: :catalog, subjects: -> {
         [Spree::Category, Spree::ProductCategory]
@@ -324,8 +324,7 @@ module Spree
          Spree::StockLocation, Spree::DeliveryProfile,
          Spree::Market, Spree::TaxCategory, Spree::TaxRate, Spree::AllowedOrigin,
          Spree::RefundReason, Spree::ReturnReason, Spree::ClaimReason, Spree::Channel,
-         Spree::OrderRoutingRule, Spree::CustomFieldDefinition, Spree::Policy,
-         Spree::StoreCreditCategory]
+         Spree::OrderRoutingRule, Spree::CustomFieldDefinition, Spree::Policy]
       })
       register_resource(:webhooks, group: :settings, subjects: -> {
         [Spree::WebhookEndpoint, Spree::WebhookDelivery]

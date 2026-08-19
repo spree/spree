@@ -43,7 +43,7 @@ module Spree
               :seller,
               {
                 product_publications: [],
-                primary_media: [attachment_attachment: :blob],
+                primary_media: [attachment_attachment: :blob, poster_attachment: :blob],
                 default_variant: [:prices, stock_levels: [:stock_location, :active_stock_reservations]],
                 variants: [:prices, :seller, stock_levels: [:stock_location, :active_stock_reservations]]
               }

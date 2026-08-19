@@ -229,10 +229,10 @@ describe Spree::Payment, type: :model do
       context 'when payment method supports profiles' do
         context 'when source is a credit card' do
           let(:source) { create(:credit_card) }
-          let(:payment) { build(:payment, source: source) }
+          let(:payment) { create(:payment, source: source) }
 
           it 'creates a payment profile' do
-            expect { payment.save! }.to change { source.gateway_customer_profile_id }.from(nil).to(/BGS-/)
+            expect { payment.create_payment_profile }.to change { source.gateway_customer_profile_id }.from(nil).to(/BGS-/)
           end
         end
 
@@ -241,10 +241,10 @@ describe Spree::Payment, type: :model do
           let(:order) { create(:order, customer: user, total: 100) }
           let(:gateway) { create(:custom_payment_method) }
           let(:source) { create(:payment_source, customer: user, payment_method: gateway) }
-          let(:payment) { build(:custom_payment, source: source, amount: 100, payment_method: gateway) }
+          let(:payment) { create(:custom_payment, source: source, amount: 100, payment_method: gateway) }
 
           it 'creates a payment profile' do
-            expect { payment.save! }.to change { source.gateway_customer_profile_id }.from(nil).to("CUSTOMER-#{user.id}")
+            expect { payment.create_payment_profile }.to change { source.gateway_customer_profile_id }.from(nil).to("CUSTOMER-#{user.id}")
           end
         end
       end
@@ -539,6 +539,61 @@ describe Spree::Payment, type: :model do
           end
         end
       end
+
+      # The caller reporting actual gateway state overrides the method's
+      # capture timing in both directions.
+      context 'when the funds are captured on a manual-capture method' do
+        let(:capture_method) { 'manual' }
+
+        it 'completes the payment with a capture event' do
+          payment.confirm!(captured: true)
+
+          expect(payment.reload).to be_completed
+          expect(payment.capture_events.count).to eq(1)
+        end
+      end
+
+      context 'when the funds are not captured on a checkout-capture method' do
+        let(:capture_method) { 'checkout' }
+
+        it 'pends the payment' do
+          payment.confirm!(captured: false)
+
+          expect(payment.reload).to be_pending
+          expect(payment.capture_events).to be_empty
+        end
+      end
+    end
+
+    describe 'risk codes from the source (before_create)' do
+      before do
+        allow(gateway).to receive(:risk_codes_for).with(card).and_return(
+          avs_response: 'A', cvv_response_code: 'N'
+        )
+      end
+
+      it 'asks the payment method for risk codes at creation' do
+        payment.save!
+
+        expect(payment.avs_response).to eq('A')
+        expect(payment.cvv_response_code).to eq('N')
+      end
+
+      it 'never overwrites codes the gateway response already set' do
+        payment.avs_response = 'Y'
+        payment.cvv_response_code = 'M'
+        payment.save!
+
+        expect(payment.avs_response).to eq('Y')
+        expect(payment.cvv_response_code).to eq('M')
+      end
+
+      it 'does not ask again on later saves' do
+        payment.save!
+        expect(gateway).not_to receive(:risk_codes_for)
+
+        payment.update!(amount: 4)
+      end
     end
 
     describe '#capture!' do
@@ -565,6 +620,22 @@ describe Spree::Payment, type: :model do
               expect(payment.capture_events.count).to eq(1)
               expect(payment.capture_events.first.amount).to eq(payment.amount)
             end
+          end
+
+          it 'records the capture under the owner row lock' do
+            expect(payment.payment_method).to receive(:capture).and_return(success_response)
+            expect(payment.owner).to receive(:with_lock).and_call_original
+
+            payment.capture!
+          end
+
+          it 'records nothing when another caller already completed the payment' do
+            expect(payment.payment_method).to receive(:capture).and_return(success_response)
+            # Simulates the concurrent winner committing between the gateway
+            # call and the bookkeeping lock.
+            allow(Spree::Payment).to receive_message_chain(:where, :exists?).and_return(true)
+
+            expect { payment.capture! }.not_to change { payment.capture_events.count }
           end
 
           context 'for partial amount' do
@@ -836,67 +907,59 @@ describe Spree::Payment, type: :model do
         allow(payment.source).to receive_messages has_payment_profile?: false
       end
 
-      context 'when there is an error connecting to the gateway' do
-        it 'calls gateway_error' do
-          message = 'gateway_error'
-          connection_error = Spree::PaymentConnectionError.new(message)
-          expect(gateway).to receive(:create_profile).and_raise(connection_error)
-          expect do
-            Spree::Payment.create(
-              amount: 100,
-              order: order,
-              source: card,
-              payment_method: gateway
-            )
-          end.to raise_error(Spree::Core::GatewayError)
-        end
-      end
+      it 'never creates the profile from the save itself' do
+        expect(gateway).not_to receive(:create_profile)
 
-      context 'with multiple payment attempts' do
-        let(:attributes) { attributes_for(:credit_card) }
-
-        it 'does not try to create profiles on old failed payment attempts' do
-          allow_any_instance_of(Spree::Payment).to receive(:payment_method) { gateway }
-
-          order.payments.create!(
-            source_attributes: attributes,
-            payment_method: gateway,
-            amount: 100
-          )
-          expect(gateway).to receive(:create_profile).exactly :once
-          expect(order.payments.count).to eq(1)
-          order.payments.create!(
-            source_attributes: attributes,
-            payment_method: gateway,
-            amount: 100
-          )
-        end
-      end
-
-      context 'when successfully connecting to the gateway' do
-        it 'creates a payment profile' do
-          expect(payment.payment_method).to receive :create_profile
-          Spree::Payment.create(
-            amount: 100,
-            order: order,
-            source: card,
-            payment_method: gateway
-          )
-        end
-      end
-    end
-
-    context 'when profiles are not supported' do
-      before { allow(gateway).to receive_messages payment_profiles_supported?: false }
-
-      it 'does not create a payment profile' do
-        expect(gateway).not_to receive :create_profile
         Spree::Payment.create(
           amount: 100,
           order: order,
           source: card,
           payment_method: gateway
         )
+      end
+
+      context 'when there is an error connecting to the gateway' do
+        it 'calls gateway_error' do
+          connection_error = Spree::PaymentConnectionError.new('gateway_error')
+          expect(gateway).to receive(:create_profile).and_raise(connection_error)
+
+          saved_payment = Spree::Payment.create(
+            amount: 100,
+            order: order,
+            source: card,
+            payment_method: gateway
+          )
+
+          expect { saved_payment.create_payment_profile }.to raise_error(Spree::Core::GatewayError)
+        end
+      end
+
+      context 'with an invalidated payment attempt' do
+        it 'does not try to create a profile' do
+          saved_payment = Spree::Payment.create!(
+            amount: 100,
+            order: order,
+            source: card,
+            payment_method: gateway
+          )
+          saved_payment.invalidate!
+
+          expect(gateway).not_to receive(:create_profile)
+          saved_payment.create_payment_profile
+        end
+      end
+
+      context 'when successfully connecting to the gateway' do
+        it 'creates a payment profile' do
+          expect(gateway).to receive :create_profile
+
+          Spree::Payment.create(
+            amount: 100,
+            order: order,
+            source: card,
+            payment_method: gateway
+          ).create_payment_profile
+        end
       end
     end
   end

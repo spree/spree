@@ -68,7 +68,7 @@ RSpec.describe Spree::VariantMedia, type: :model do
 
 end
 
-RSpec.describe Spree::Asset, type: :model do
+RSpec.describe Spree::Media, type: :model do
   describe '#variant_ids=' do
     let(:product) { create(:product) }
     let(:product_asset) { create(:image, viewable: product) }

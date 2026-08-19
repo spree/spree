@@ -129,7 +129,7 @@ Each secret API key carries a list of **scopes** that grant access to specific r
 | `read_store_credits` / `write_store_credits` | `/customers/:id/store_credits`, `/orders/:id/store_credits` |
 | `read_stock` / `write_stock` | `/stock_locations/*`, `/stock_items/*`, `/stock_transfers/*`, `/stock_reservations/*` |
 | `read_categories` / `write_categories` | `/categories/*` |
-| `read_settings` / `write_settings` | Store configuration — `/store`, `/payment_methods/*`, `/markets/*`, `/channels/*`, `/tax_categories/*`, `/countries`, `/custom_field_definitions/*`, `/store_credit_categories/*`, staff management (`/admin_users`, `/invitations`, `/roles`), `/allowed_origins/*` |
+| `read_settings` / `write_settings` | Store configuration — `/store`, `/payment_methods/*`, `/markets/*`, `/channels/*`, `/tax_categories/*`, `/countries`, `/custom_field_definitions/*`, staff management (`/admin_users`, `/invitations`, `/roles`), `/allowed_origins/*` |
 | `read_webhooks` / `write_webhooks` | `/webhook_endpoints/*` — including delivery logs and redelivery |
 | `read_api_keys` / `write_api_keys` | `/api_keys/*` — creating, revoking, and deleting API keys |
 | `read_dashboard` | `/dashboard/*` (analytics; read-only) |

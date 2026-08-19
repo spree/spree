@@ -19,7 +19,7 @@ RSpec.describe Spree::Products::Duplicator do
 
   before do
     file = File.open(filepath)
-    new_image = Spree::Image.new(default_variant_image_params)
+    new_image = Spree::Media.new(default_variant_image_params)
     new_image.attachment.attach(io: file, filename: File.basename(file))
     new_image.save!
 
@@ -58,14 +58,14 @@ RSpec.describe Spree::Products::Duplicator do
 
   describe 'image duplication' do
     it 'clones images by default' do
-      expect { duplicate }.to change { Spree::Image.count }.by(1)
+      expect { duplicate }.to change { Spree::Media.count }.by(1)
     end
 
     context 'when excluding images from cloning' do
       subject(:duplicate) { described_class.call(product: product, include_images: false) }
 
       it 'doesn\'t clone images' do
-        expect { duplicate }.not_to change(Spree::Image, :count)
+        expect { duplicate }.not_to change(Spree::Media, :count)
       end
     end
   end
@@ -185,25 +185,25 @@ RSpec.describe Spree::Products::Duplicator do
 
       before do
         file = File.open(filepath)
-        variant1_image = Spree::Image.new(variant1_image_params)
+        variant1_image = Spree::Media.new(variant1_image_params)
         variant1_image.attachment.attach(io: file, filename: File.basename(file))
         variant1_image.save!
 
         file = File.open(filepath)
-        variant2_image = Spree::Image.new(variant2_image_params)
+        variant2_image = Spree::Media.new(variant2_image_params)
         variant2_image.attachment.attach(io: file, filename: File.basename(file))
         variant2_image.save!
       end
 
       it 'clones images by default' do
-        expect { duplicate }.to change(Spree::Image, :count).by(3)
+        expect { duplicate }.to change(Spree::Media, :count).by(3)
       end
 
       context 'when excluding images from cloning' do
         subject(:duplicate) { described_class.call(product: product, include_images: false) }
 
         it 'doesn\'t clone images' do
-          expect { duplicate }.not_to change(Spree::Image, :count)
+          expect { duplicate }.not_to change(Spree::Media, :count)
         end
       end
     end

@@ -44,11 +44,6 @@ import {
   RelativeTime,
   ResourceLayout,
   RichTextEditor,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
   Sheet,
   SheetContent,
   SheetDescription,
@@ -114,7 +109,6 @@ import {
   useUpdateCustomerTaxIdentifier,
   useValidateCustomerTaxIdentifier,
 } from '../../../../hooks/use-customers'
-import { useStoreCreditCategories } from '../../../../hooks/use-store-credit-categories'
 import { spreeJsonLinkResolver } from '../../../../lib/json-link-resolver'
 import {
   type CustomerProfileFormValues,
@@ -1143,7 +1137,6 @@ function StoreCreditsCard({ customer }: { customer: Customer }) {
                   <TableHead>{t('admin.fields.amount.label')}</TableHead>
                   <TableHead>{t('admin.customers.detail.store_credit.table.used')}</TableHead>
                   <TableHead>{t('admin.customers.detail.store_credit.table.remaining')}</TableHead>
-                  <TableHead>{t('admin.customers.detail.store_credit.table.category')}</TableHead>
                   <TableHead>{t('admin.customers.detail.store_credit.table.memo')}</TableHead>
                   <TableHead className="w-10" />
                 </TableRow>
@@ -1159,9 +1152,6 @@ function StoreCreditsCard({ customer }: { customer: Customer }) {
                     </TableCell>
                     <TableCell className="tabular-nums">
                       {sc.display_amount_remaining ?? sc.amount_remaining}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {sc.category_name ?? '—'}
                     </TableCell>
                     <TableCell className="text-muted-foreground">{sc.memo ?? '—'}</TableCell>
                     <TableCell className="text-right">
@@ -1221,47 +1211,6 @@ function StoreCreditsCard({ customer }: { customer: Customer }) {
   )
 }
 
-// Base UI's `<SelectValue>` defaults to rendering the raw `value` (the
-// prefixed category ID). Use the children render-prop to look up the
-// matching category's name from the dynamic options list.
-function StoreCreditCategorySelect({
-  id,
-  value,
-  onChange,
-  required,
-}: {
-  id: string
-  value: string
-  onChange: (next: string) => void
-  required?: boolean
-}) {
-  const { t } = useTranslation()
-  const { data, isLoading } = useStoreCreditCategories()
-  const categories = data?.data ?? []
-
-  return (
-    <Select value={value} onValueChange={onChange}>
-      <SelectTrigger id={id} aria-required={required}>
-        <SelectValue
-          placeholder={isLoading ? t('admin.common.loading') : t('admin.common.select_placeholder')}
-        >
-          {(v) => {
-            const category = categories.find((c) => c.id === v)
-            return category ? category.name : (v as string)
-          }}
-        </SelectValue>
-      </SelectTrigger>
-      <SelectContent>
-        {categories.map((c) => (
-          <SelectItem key={c.id} value={c.id}>
-            {c.name}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
-  )
-}
-
 function EditStoreCreditDialog({
   customerId,
   credit,
@@ -1291,7 +1240,6 @@ function EditStoreCreditDialog({
     resolver: zodResolver(editStoreCreditFormSchema) as any,
     defaultValues: {
       amount: credit.amount ? credit.amount.replace('.', decimal) : '',
-      category_id: credit.category_id ?? '',
       memo: credit.memo ?? '',
     },
   })
@@ -1310,8 +1258,6 @@ function EditStoreCreditDialog({
         params.amount = normalizeMoneyInput(amountValue, creditLocale)
       }
     }
-
-    if (values.category_id.trim()) params.category_id = values.category_id
 
     params.memo = values.memo
 
@@ -1368,22 +1314,6 @@ function EditStoreCreditDialog({
                 </Field>
               </div>
               <Field>
-                <FieldLabel htmlFor="edit-sc-category">
-                  {t('admin.fields.store_credit.category_id.label')}
-                </FieldLabel>
-                <Controller
-                  name="category_id"
-                  control={form.control}
-                  render={({ field }) => (
-                    <StoreCreditCategorySelect
-                      id="edit-sc-category"
-                      value={field.value}
-                      onChange={field.onChange}
-                    />
-                  )}
-                />
-              </Field>
-              <Field>
                 <FieldLabel htmlFor="edit-sc-memo">
                   {t('admin.fields.store_credit.memo.label')}
                 </FieldLabel>
@@ -1429,7 +1359,7 @@ function IssueStoreCreditDialog({
   const form = useForm<IssueStoreCreditFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(issueStoreCreditFormSchema) as any,
-    defaultValues: { amount: '', currency: defaultCurrency, category_id: '', memo: '' },
+    defaultValues: { amount: '', currency: defaultCurrency, memo: '' },
   })
   const { errors } = form.formState
 
@@ -1440,7 +1370,7 @@ function IssueStoreCreditDialog({
   // is presented (otherwise stale "Issue $20" values linger across opens).
   useEffect(() => {
     if (open) {
-      form.reset({ amount: '', currency: defaultCurrency, category_id: '', memo: '' })
+      form.reset({ amount: '', currency: defaultCurrency, memo: '' })
     }
   }, [open, form, defaultCurrency])
 
@@ -1471,7 +1401,6 @@ function IssueStoreCreditDialog({
         // expects. The server never parses comma-vs-period.
         amount: normalizeMoneyInput(values.amount, localeForCurrency(values.currency) || 'en'),
         currency: values.currency,
-        category_id: values.category_id,
         memo: values.memo || undefined,
       })
       onOpenChange(false)
@@ -1530,23 +1459,6 @@ function IssueStoreCreditDialog({
                   />
                 </Field>
               </div>
-              <Field>
-                <FieldLabel htmlFor="sc-category">
-                  {t('admin.fields.store_credit.category_id.label')}
-                </FieldLabel>
-                <Controller
-                  name="category_id"
-                  control={form.control}
-                  render={({ field }) => (
-                    <StoreCreditCategorySelect
-                      id="sc-category"
-                      value={field.value}
-                      onChange={field.onChange}
-                      required
-                    />
-                  )}
-                />
-              </Field>
               <Field>
                 <FieldLabel htmlFor="sc-memo">
                   {t('admin.fields.store_credit.memo.label')}

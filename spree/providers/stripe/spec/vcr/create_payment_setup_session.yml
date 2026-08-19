@@ -1,0 +1,350 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.stripe.com/v1/customers
+    body:
+      encoding: UTF-8
+      string: email=fatima_rodriguez%40waters.biz&name=Euna+Schmitt
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/18.4.2 Spree Stripe/5.4.0.beta6 (https://spreecommerce.org)
+        AIAgent/claude_code
+      Authorization:
+      - Bearer <STRIPE_SECRET_KEY>
+      Idempotency-Key:
+      - 873d8de7-5cbb-4605-91e8-ae5c32f63cf8
+      Stripe-Version:
+      - '2023-10-16'
+      X-Stripe-Client-User-Agent:
+      - "<FILTERED>"
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Mon, 04 May 2026 10:22:26 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '677'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET, HEAD, PUT, PATCH, POST, DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required,
+        X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Content-Security-Policy:
+      - base-uri 'none'; default-src 'none'; form-action 'none'; frame-ancestors 'none';
+        img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'; worker-src
+        'none'; upgrade-insecure-requests; report-uri https://q.stripe.com/csp-violation?q=WRoqIgRC7cPEuYssKzbs52TY2w1xZmEK7CqZ1uRyviQ0dbmz4JJKdgpapGFBHCWPlhHILDpo6rnJ7LIV
+      Idempotency-Key:
+      - 873d8de7-5cbb-4605-91e8-ae5c32f63cf8
+      Original-Request:
+      - req_fzIyWsmlvX11Ec
+      Report-To:
+      - '{"group":"csp","max_age":8640,"endpoints":[{"url":"https://q.stripe.com/csp-report-v2?q=WRoqIgRC7cPEuYssKzbs52TY2w1xZmEK7CqZ1uRyviQ0dbmz4JJKdgpapGFBHCWPlhHILDpo6rnJ7LIV&t=1"}],"include_subdomains":true}'
+      Reporting-Endpoints:
+      - csp="https://q.stripe.com/csp-report-v2?q=WRoqIgRC7cPEuYssKzbs52TY2w1xZmEK7CqZ1uRyviQ0dbmz4JJKdgpapGFBHCWPlhHILDpo6rnJ7LIV&t=1"
+      Request-Id:
+      - req_fzIyWsmlvX11Ec
+      Stripe-Should-Retry:
+      - 'false'
+      Stripe-Version:
+      - '2023-10-16'
+      Vary:
+      - Origin
+      X-Stripe-Priority-Routing-Enabled:
+      - 'true'
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      X-Wc:
+      - 3c3
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "cus_USE66TMAPae0UB",
+          "object": "customer",
+          "address": null,
+          "balance": 0,
+          "created": 1777890146,
+          "currency": null,
+          "customer_account": null,
+          "default_source": null,
+          "delinquent": false,
+          "description": null,
+          "discount": null,
+          "email": "fatima_rodriguez@waters.biz",
+          "invoice_prefix": "WCUW0KLR",
+          "invoice_settings": {
+            "custom_fields": null,
+            "default_payment_method": null,
+            "footer": null,
+            "rendering_options": null
+          },
+          "livemode": false,
+          "metadata": {},
+          "name": "Euna Schmitt",
+          "next_invoice_sequence": 1,
+          "phone": null,
+          "preferred_locales": [],
+          "shipping": null,
+          "tax_exempt": "none",
+          "test_clock": null
+        }
+  recorded_at: Mon, 04 May 2026 10:22:26 GMT
+- request:
+    method: post
+    uri: https://api.stripe.com/v1/setup_intents
+    body:
+      encoding: UTF-8
+      string: customer=cus_USE66TMAPae0UB&automatic_payment_methods[enabled]=true
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/18.4.2 Spree Stripe/5.4.0.beta6 (https://spreecommerce.org)
+        AIAgent/claude_code
+      Authorization:
+      - Bearer <STRIPE_SECRET_KEY>
+      X-Stripe-Client-Telemetry:
+      - '{"last_request_metrics":{"request_id":"req_fzIyWsmlvX11Ec","request_duration_ms":471}}'
+      Idempotency-Key:
+      - 03fefee4-56d9-4cec-beea-8f1361f6898c
+      Stripe-Version:
+      - '2023-10-16'
+      X-Stripe-Client-User-Agent:
+      - "<FILTERED>"
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Mon, 04 May 2026 10:22:26 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '1150'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET, HEAD, PUT, PATCH, POST, DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required,
+        X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Content-Security-Policy:
+      - base-uri 'none'; default-src 'none'; form-action 'none'; frame-ancestors 'none';
+        img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'; worker-src
+        'none'; upgrade-insecure-requests; report-uri https://q.stripe.com/csp-violation?q=WRoqIgRC7cPEuYssKzbs52TY2w1xZmEK7CqZ1uRyviQ0dbmz4JJKdgpapGFBHCWPlhHILDpo6rnJ7LIV
+      Idempotency-Key:
+      - 03fefee4-56d9-4cec-beea-8f1361f6898c
+      Original-Request:
+      - req_I3Px2fEQK6YNuy
+      Report-To:
+      - '{"group":"csp","max_age":8640,"endpoints":[{"url":"https://q.stripe.com/csp-report-v2?q=WRoqIgRC7cPEuYssKzbs52TY2w1xZmEK7CqZ1uRyviQ0dbmz4JJKdgpapGFBHCWPlhHILDpo6rnJ7LIV&t=1"}],"include_subdomains":true}'
+      Reporting-Endpoints:
+      - csp="https://q.stripe.com/csp-report-v2?q=WRoqIgRC7cPEuYssKzbs52TY2w1xZmEK7CqZ1uRyviQ0dbmz4JJKdgpapGFBHCWPlhHILDpo6rnJ7LIV&t=1"
+      Request-Id:
+      - req_I3Px2fEQK6YNuy
+      Stripe-Should-Retry:
+      - 'false'
+      Stripe-Version:
+      - '2023-10-16'
+      Vary:
+      - Origin
+      X-Stripe-Priority-Routing-Enabled:
+      - 'true'
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      X-Wc:
+      - 3c3
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "seti_1TTJdu2ESifGlJezDk0Xping",
+          "object": "setup_intent",
+          "application": null,
+          "automatic_payment_methods": {
+            "allow_redirects": "always",
+            "enabled": true
+          },
+          "cancellation_reason": null,
+          "client_secret": "seti_1TTJdu2ESifGlJezDk0Xping_secret_USE6HMjWDP9baDy5OxmvqV1zNcI7G2R",
+          "created": 1777890146,
+          "customer": "cus_USE66TMAPae0UB",
+          "customer_account": null,
+          "description": null,
+          "excluded_payment_method_types": null,
+          "flow_directions": null,
+          "last_setup_error": null,
+          "latest_attempt": null,
+          "livemode": false,
+          "managed_payments": {
+            "enabled": false
+          },
+          "mandate": null,
+          "metadata": {},
+          "next_action": null,
+          "on_behalf_of": null,
+          "payment_method": null,
+          "payment_method_configuration_details": {
+            "id": "pmc_1QVa9x2ESifGlJezRC5fgLVg",
+            "parent": null
+          },
+          "payment_method_options": {
+            "card": {
+              "mandate_options": null,
+              "network": null,
+              "request_three_d_secure": "automatic"
+            }
+          },
+          "payment_method_types": [
+            "card",
+            "klarna",
+            "link"
+          ],
+          "single_use_mandate": null,
+          "status": "requires_payment_method",
+          "usage": "off_session"
+        }
+  recorded_at: Mon, 04 May 2026 10:22:26 GMT
+- request:
+    method: post
+    uri: https://api.stripe.com/v1/ephemeral_keys
+    body:
+      encoding: UTF-8
+      string: customer=cus_USE66TMAPae0UB
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/18.4.2 Spree Stripe/5.4.0.beta6 (https://spreecommerce.org)
+        AIAgent/claude_code
+      Authorization:
+      - Bearer <STRIPE_SECRET_KEY>
+      X-Stripe-Client-Telemetry:
+      - '{"last_request_metrics":{"request_id":"req_I3Px2fEQK6YNuy","request_duration_ms":264}}'
+      Idempotency-Key:
+      - 9a27b606-0db7-4bcb-9bfa-d1ce5f36c98d
+      Stripe-Version:
+      - '2023-10-16'
+      X-Stripe-Client-User-Agent:
+      - "<FILTERED>"
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Mon, 04 May 2026 10:22:26 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '353'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET, HEAD, PUT, PATCH, POST, DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required,
+        X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Content-Security-Policy:
+      - base-uri 'none'; default-src 'none'; form-action 'none'; frame-ancestors 'none';
+        img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'; worker-src
+        'none'; upgrade-insecure-requests; report-uri https://q.stripe.com/csp-violation?q=WRoqIgRC7cPEuYssKzbs52TY2w1xZmEK7CqZ1uRyviQ0dbmz4JJKdgpapGFBHCWPlhHILDpo6rnJ7LIV
+      Idempotency-Key:
+      - 9a27b606-0db7-4bcb-9bfa-d1ce5f36c98d
+      Original-Request:
+      - req_oEeH1fHPnk4EoU
+      Report-To:
+      - '{"group":"csp","max_age":8640,"endpoints":[{"url":"https://q.stripe.com/csp-report-v2?q=WRoqIgRC7cPEuYssKzbs52TY2w1xZmEK7CqZ1uRyviQ0dbmz4JJKdgpapGFBHCWPlhHILDpo6rnJ7LIV&t=1"}],"include_subdomains":true}'
+      Reporting-Endpoints:
+      - csp="https://q.stripe.com/csp-report-v2?q=WRoqIgRC7cPEuYssKzbs52TY2w1xZmEK7CqZ1uRyviQ0dbmz4JJKdgpapGFBHCWPlhHILDpo6rnJ7LIV&t=1"
+      Request-Id:
+      - req_oEeH1fHPnk4EoU
+      Stripe-Should-Retry:
+      - 'false'
+      Stripe-Version:
+      - '2023-10-16'
+      Vary:
+      - Origin
+      X-Stripe-Priority-Routing-Enabled:
+      - 'true'
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      X-Wc:
+      - 3c3
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "ephkey_1TTJdu2ESifGlJezMHmwix65",
+          "object": "ephemeral_key",
+          "associated_objects": [
+            {
+              "id": "cus_USE66TMAPae0UB",
+              "type": "customer"
+            }
+          ],
+          "created": 1777890146,
+          "expires": 1777893746,
+          "livemode": false,
+          "secret": "ek_test_YWNjdF8xUVZhOWsyRVNpZkdsSmV6LHFydWdCR0RQdmJ6MzREMW1uU1lKRmhuWjZZQ2xDZ1U_0049Z6rFbW"
+        }
+  recorded_at: Mon, 04 May 2026 10:22:26 GMT
+recorded_with: VCR 6.4.0

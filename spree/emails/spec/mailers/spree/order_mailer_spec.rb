@@ -298,14 +298,6 @@ describe Spree::OrderMailer, type: :mailer do
     end
   end
 
-  context 'with preference :send_core_emails set to false' do
-    it 'sends no email' do
-      Spree::Config.set(:send_core_emails, false)
-      message = described_class.confirm_email(order)
-      expect(message.body).to be_blank
-    end
-  end
-
   context 'confirm_email comes with data of the store where order was made' do
     it 'shows order store data' do
       confirmation_email = described_class.confirm_email(order)

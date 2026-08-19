@@ -6,8 +6,7 @@ RSpec.describe 'Admin Customer Store Credits API', type: :request, swagger_doc: 
   include_context 'API v3 Admin'
 
   let!(:customer) { create(:user) }
-  let!(:category) { create(:store_credit_category) }
-  let!(:store_credit) { create(:store_credit, customer: customer, store: store, amount: 50.00, category: category) }
+  let!(:store_credit) { create(:store_credit, customer: customer, store: store, amount: 50.00) }
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
 
   path '/api/v3/admin/customers/{customer_id}/store_credits' do
@@ -26,7 +25,7 @@ RSpec.describe 'Admin Customer Store Credits API', type: :request, swagger_doc: 
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :customer_id, in: :path, type: :string, required: true
       parameter name: :expand, in: :query, type: :string, required: false,
-                description: 'Comma-separated associations to expand (e.g., category, store, created_by). Use dot notation for nested expand (max 4 levels).'
+                description: 'Comma-separated associations to expand (e.g., store, created_by). Use dot notation for nested expand (max 4 levels).'
       parameter name: :fields, in: :query, type: :string, required: false,
                 description: 'Comma-separated list of fields to include (e.g., amount,amount_used,memo,currency). id is always included.'
 
@@ -55,18 +54,17 @@ RSpec.describe 'Admin Customer Store Credits API', type: :request, swagger_doc: 
       parameter name: :customer_id, in: :path, type: :string, required: true
       parameter name: :body, in: :body, schema: {
         type: :object,
-        required: %w[amount currency category_id],
+        required: %w[amount currency],
         properties: {
           amount: { type: :string, example: '50.00' },
           currency: { type: :string, example: 'USD' },
-          category_id: { type: :string, description: 'StoreCreditCategory ID' },
           memo: { type: :string }
         }
       }
 
       response '201', 'store credit created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:body) { { amount: '25.00', currency: 'USD', category_id: category.id, memo: 'Goodwill' } }
+        let(:body) { { amount: '25.00', currency: 'USD', memo: 'Goodwill' } }
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -86,7 +84,7 @@ RSpec.describe 'Admin Customer Store Credits API', type: :request, swagger_doc: 
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Update memo / category / amount. The amount can only be changed if `amount_used == 0`.'
+      description 'Update memo / amount. The amount can only be changed if `amount_used == 0`.'
       admin_scope :write, :store_credits
 
       admin_sdk_example 'customer-store-credits/update'
@@ -99,7 +97,6 @@ RSpec.describe 'Admin Customer Store Credits API', type: :request, swagger_doc: 
         type: :object,
         properties: {
           amount: { type: :string, example: '50.00' },
-          category_id: { type: :string },
           memo: { type: :string }
         }
       }

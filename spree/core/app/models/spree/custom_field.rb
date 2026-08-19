@@ -129,10 +129,9 @@ module Spree
     end
 
     # A definition belongs to one resource type; attaching it to a different
-    # one produces a row no lookup for either type would return. STI resources
-    # store their base class in the polymorphic column (an Image row reads
-    # `Spree::Asset`) while definitions name the concrete class, so compare
-    # against the definition's base class too.
+    # one produces a row no lookup for either type would return. An STI row
+    # stores its base class in the polymorphic column while the definition
+    # names the subclass, so compare against the definition's base class too.
     def resource_type_must_match_custom_field_definition
       return if custom_field_definition.blank? || resource_type.blank?
 

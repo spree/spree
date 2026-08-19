@@ -25,7 +25,6 @@ const amountField = z
 export const issueStoreCreditFormSchema = z.object({
   amount: amountField,
   currency: z.string().min(1, { error: requiredMessage('currency') }),
-  category_id: z.string().min(1, { error: requiredMessage('store_credit.category_id') }),
   memo: z.string(),
 })
 
@@ -39,7 +38,6 @@ export const editStoreCreditFormSchema = z.object({
     .refine((v) => v === '' || isPositiveAmountString(v), {
       error: amountPositive,
     }),
-  category_id: z.string(),
   memo: z.string(),
 })
 

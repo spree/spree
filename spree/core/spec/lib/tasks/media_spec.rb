@@ -25,9 +25,9 @@ describe 'spree:media:migrate_master_images_to_product_media' do
     let!(:variant_image) { create(:image, viewable: variant) }
 
     it 'enqueues a job for each product with variant-pinned assets' do
-      expect { subject.invoke }.to have_enqueued_job(Spree::Media::MigrateProductAssetsJob)
+      expect { subject.invoke }.to have_enqueued_job(Spree::Images::MigrateProductMediaJob)
         .with(product_with_master_image.id)
-        .and have_enqueued_job(Spree::Media::MigrateProductAssetsJob)
+        .and have_enqueued_job(Spree::Images::MigrateProductMediaJob)
         .with(product_with_variant_image.id)
     end
 
@@ -43,7 +43,7 @@ describe 'spree:media:migrate_master_images_to_product_media' do
     let!(:product) { create(:product) }
 
     it 'enqueues nothing' do
-      expect { subject.invoke }.not_to have_enqueued_job(Spree::Media::MigrateProductAssetsJob)
+      expect { subject.invoke }.not_to have_enqueued_job(Spree::Images::MigrateProductMediaJob)
     end
   end
 
@@ -59,7 +59,7 @@ describe 'spree:media:migrate_master_images_to_product_media' do
       subject.invoke
       subject.reenable
 
-      expect { subject.invoke }.to have_enqueued_job(Spree::Media::MigrateProductAssetsJob)
+      expect { subject.invoke }.to have_enqueued_job(Spree::Images::MigrateProductMediaJob)
         .with(product.id)
     end
   end

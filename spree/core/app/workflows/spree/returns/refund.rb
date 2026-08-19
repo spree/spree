@@ -104,7 +104,6 @@ module Spree
           customer: return_record.order.customer,
           amount: @amount_to_refund,
           currency: return_record.currency,
-          category: Spree::StoreCreditCategory.default_refund_category,
           created_by: refunder,
           originator: return_record,
           memo: "Return #{return_record.number}"
@@ -112,31 +111,35 @@ module Spree
         @refunds = [credit]
       end
 
-      # Spree::Refund performs the gateway credit in an after_create callback,
-      # so creating it here keeps that call out of any transaction this
-      # workflow opened. Payments are drained newest-first until the amount
-      # is covered — a split-tender order needs more than one refund.
+      # Each refund row commits, then Refund#perform! credits it at the
+      # gateway — explicitly, never from a callback. Payments are drained
+      # newest-first until the amount is covered — a split-tender order needs
+      # more than one refund.
       def refund_at_gateway
         remaining = @amount_to_refund
-
         return_record.order.payments.completed.each do |payment|
           break unless remaining.positive?
 
           creditable = [payment.credit_allowed.to_d, remaining].min
           next unless creditable.positive?
 
-          @refunds << payment.refunds.create!(
+          # One refund path for the whole system: Refunds::Create owns the
+          # row-lock balance check, the gateway credit, the declined-row
+          # compensation, the refund hooks and the payment.refunded event.
+          result = Spree.refund_create_workflow.call(
+            payment: payment,
             amount: creditable,
             reason: Spree::RefundReason.return_processing_reason(return_record.store),
             refunder: refunder,
             originator: return_record
           )
+          failure(return_record, result.error.value) if result.failure?
+
+          @refunds << result.value
           remaining -= creditable
         end
 
         failure(return_record, :no_refundable_payments) if @refunds.empty?
-      rescue Spree::Core::GatewayError => error
-        failure(return_record, error.message)
       end
 
       def mark_refunded

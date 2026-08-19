@@ -1,9 +1,11 @@
 import type { Variant } from '@spree/admin-sdk'
-import { useTranslation } from '@spree/dashboard-core'
+import { ImageUploadField, useTranslation } from '@spree/dashboard-core'
 import {
   Button,
   Field,
+  FieldError,
   FieldLabel,
+  Input,
   Sheet,
   SheetContent,
   SheetFooter,
@@ -12,10 +14,24 @@ import {
   Textarea,
 } from '@spree/dashboard-ui'
 import i18n from 'i18next'
-import { CheckIcon, ImagePlusIcon } from 'lucide-react'
+import { CheckIcon, FilmIcon, ImagePlusIcon } from 'lucide-react'
 import { useCallback, useEffect, useRef } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
+import { parseVideoUrl } from '../../../lib/video-url'
 import type { ProductFormValues } from '../../../schemas/product'
+
+// The fields this sheet edits. Snapshot, cancel-restore and the type all derive
+// from this one list, so a new editable field can't reach the form and then be
+// missed by the restore — which would silently keep an edit the merchant cancelled.
+const EDITED_FIELDS = [
+  'alt',
+  'variant_ids',
+  'external_video_url',
+  'focal_point_x',
+  'focal_point_y',
+  'poster_signed_id',
+  'posterUrl',
+] as const
 
 interface Props {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -43,11 +59,8 @@ export function MediaEditSheet({ form, mediaIndex, variants, open, onOpenChange 
   // freshly-uploaded row that has no id yet we fall back to the current
   // index — uploads don't surface a drag handle so the race is impossible.
   type MediaRow = NonNullable<ProductFormValues['media']>[number]
-  const snapshotRef = useRef<{
-    alt: string | null
-    variant_ids: string[]
-    key: string | null
-  } | null>(null)
+  type Snapshot = Pick<MediaRow, (typeof EDITED_FIELDS)[number]> & { key: string | null }
+  const snapshotRef = useRef<Snapshot | null>(null)
   const rowKey = useCallback(
     (m: MediaRow): string | null => m.id ?? m.signed_id ?? m.uploadId ?? null,
     [],
@@ -62,7 +75,14 @@ export function MediaEditSheet({ form, mediaIndex, variants, open, onOpenChange 
     const row = current[mediaIndex]
     if (!row) return
     snapshotRef.current = {
-      alt: row.alt ?? null,
+      // Copy each value as-is. Normalizing to null would turn an absent
+      // `poster_signed_id` — typed string | undefined — into a value the
+      // schema rejects, so cancelling would break the next save.
+      ...(Object.fromEntries(EDITED_FIELDS.map((field) => [field, row[field]])) as Pick<
+        MediaRow,
+        (typeof EDITED_FIELDS)[number]
+      >),
+      // Copy the array — the snapshot must not alias the row's own value.
       variant_ids: [...(row.variant_ids ?? [])],
       key: rowKey(row),
     }
@@ -71,12 +91,84 @@ export function MediaEditSheet({ form, mediaIndex, variants, open, onOpenChange 
   const entry = form.watch(`media.${mediaIndex}`)
   if (!entry) return null
 
+  // For an image this is the picture itself; for a hosted video it is the file
+  // the merchant just picked (a blob URL) or the URL the API serves it at.
   const previewUrl = entry.previewUrl ?? null
   const alt = entry.alt ?? ''
   const selectedVariantIds = new Set(entry.variant_ids ?? [])
 
   const setAlt = (value: string) => {
     form.setValue(`media.${mediaIndex}.alt`, value, { shouldDirty: true })
+  }
+
+  const mediaType = entry.media_type ?? 'image'
+  const isImage = mediaType === 'image'
+  const isHostedVideo = mediaType === 'video'
+  const isExternalVideo = mediaType === 'external_video'
+  // Mirrors Spree::Media#playable_video? — both kinds want a poster.
+  const isVideo = isHostedVideo || isExternalVideo
+  const externalVideoUrl = entry.external_video_url ?? ''
+  // The video file itself — a blob URL before save, the served file after.
+  const videoUrl = entry.videoUrl ?? null
+  const parsedVideo = parseVideoUrl(externalVideoUrl)
+  const videoUrlInvalid = externalVideoUrl.length > 0 && !parsedVideo
+
+  const focalPoint =
+    entry.focal_point_x != null && entry.focal_point_y != null
+      ? { x: entry.focal_point_x, y: entry.focal_point_y }
+      : null
+
+  const setExternalVideoUrl = (value: string) => {
+    form.setValue(`media.${mediaIndex}.external_video_url`, value, { shouldDirty: true })
+  }
+
+  // Click the image where it should stay in frame when a storefront crops it.
+  const handleFocalPointClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (!isImage) return
+
+    const bounds = event.currentTarget.getBoundingClientRect()
+    if (bounds.width === 0 || bounds.height === 0) return
+
+    const round = (value: number) => Math.round(Math.min(1, Math.max(0, value)) * 1000) / 1000
+
+    form.setValue(
+      `media.${mediaIndex}.focal_point_x`,
+      round((event.clientX - bounds.left) / bounds.width),
+      { shouldDirty: true },
+    )
+    form.setValue(
+      `media.${mediaIndex}.focal_point_y`,
+      round((event.clientY - bounds.top) / bounds.height),
+      { shouldDirty: true },
+    )
+  }
+
+  // The poster is a still the merchant supplies for a video. YouTube provides
+  // one, so this is how the other cases — Vimeo, uploaded files — get a tile
+  // that isn't blank.
+  const posterValue = {
+    signedId: entry.poster_signed_id ?? null,
+    previewUrl: entry.posterUrl ?? null,
+    cleared: entry.poster_signed_id === '',
+  }
+
+  const setPoster = (value: {
+    signedId: string | null
+    previewUrl: string | null
+    cleared: boolean
+  }) => {
+    // An empty string is how the API is told to drop the poster; `undefined`
+    // would fall out of the request body and leave the old one in place.
+    const next = value.cleared ? '' : (value.signedId ?? undefined)
+    form.setValue(`media.${mediaIndex}.poster_signed_id`, next, { shouldDirty: true })
+    form.setValue(`media.${mediaIndex}.posterUrl`, value.cleared ? null : value.previewUrl, {
+      shouldDirty: true,
+    })
+  }
+
+  const clearFocalPoint = () => {
+    form.setValue(`media.${mediaIndex}.focal_point_x`, null, { shouldDirty: true })
+    form.setValue(`media.${mediaIndex}.focal_point_y`, null, { shouldDirty: true })
   }
 
   const toggleVariant = (variantId: string) => {
@@ -100,24 +192,16 @@ export function MediaEditSheet({ form, mediaIndex, variants, open, onOpenChange 
         if (found === -1) return onOpenChange(false)
         targetIndex = found
       }
-      // Restore the two fields the sheet writes to (`alt`, `variant_ids`)
-      // from the open-time snapshot. We deliberately scope to those keys
-      // rather than overwriting the whole `media` array — a sibling card
-      // might have appended a new upload while the sheet was open.
-      //
-      // Use setValue with `shouldDirty: false` to write the snapshot
-      // value back; the UI updates immediately via the form.watch
-      // subscriptions. We accept that the parent form's isDirty bit may
-      // stay true if the user typed and then cancelled (it'll clear on
-      // the parent form's Save round-trip).
-      form.setValue(`media.${targetIndex}.alt`, snap.alt, {
-        shouldDirty: false,
-        shouldTouch: false,
-      })
-      form.setValue(`media.${targetIndex}.variant_ids`, snap.variant_ids, {
-        shouldDirty: false,
-        shouldTouch: false,
-      })
+      // Restore only the fields the sheet writes to — a sibling card might have
+      // appended a new upload while the sheet was open, so overwriting the whole
+      // `media` array would drop it. The parent form's isDirty bit may stay true
+      // after a cancel; it clears on the next Save round-trip.
+      for (const field of EDITED_FIELDS) {
+        form.setValue(`media.${targetIndex}.${field}`, snap[field], {
+          shouldDirty: false,
+          shouldTouch: false,
+        })
+      }
     }
     onOpenChange(false)
   }
@@ -130,15 +214,81 @@ export function MediaEditSheet({ form, mediaIndex, variants, open, onOpenChange 
         </SheetHeader>
 
         <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-5">
-          <div className="group relative overflow-hidden rounded-lg border border-border bg-muted">
-            {previewUrl ? (
-              <img src={previewUrl} alt={alt} className="w-full max-h-[60vh] object-contain" />
-            ) : (
-              <div className="flex aspect-square w-full items-center justify-center text-muted-foreground">
-                <ImagePlusIcon className="size-8" />
-              </div>
-            )}
-          </div>
+          {isExternalVideo && parsedVideo ? (
+            <div className="aspect-video w-full shrink-0 overflow-hidden rounded-lg border border-border bg-black">
+              <iframe
+                src={parsedVideo.embedUrl}
+                title={alt || t('admin.products.media.video_preview_title')}
+                allowFullScreen
+                className="size-full"
+              />
+            </div>
+          ) : isHostedVideo && videoUrl ? (
+            // biome-ignore lint/a11y/useMediaCaption: merchant-supplied product footage has no track
+            <video
+              src={videoUrl}
+              controls
+              className="max-h-[60vh] w-full shrink-0 rounded-lg bg-black"
+            />
+          ) : (
+            <button
+              type="button"
+              disabled={!isImage || !previewUrl}
+              onClick={handleFocalPointClick}
+              className="group relative block w-full shrink-0 overflow-hidden rounded-lg border border-border bg-muted disabled:cursor-default"
+            >
+              {previewUrl ? (
+                <>
+                  <img src={previewUrl} alt={alt} className="w-full max-h-[60vh] object-contain" />
+                  {isImage && focalPoint && (
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute size-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-[0_0_0_2px_rgba(0,0,0,0.4)]"
+                      style={{
+                        left: `${focalPoint.x * 100}%`,
+                        top: `${focalPoint.y * 100}%`,
+                      }}
+                    />
+                  )}
+                </>
+              ) : (
+                <div className="flex aspect-square w-full items-center justify-center text-muted-foreground">
+                  {isImage ? <ImagePlusIcon className="size-8" /> : <FilmIcon className="size-8" />}
+                </div>
+              )}
+            </button>
+          )}
+
+          {isImage && previewUrl && (
+            <div className="flex items-center justify-between gap-2 -mt-3">
+              <p className="text-xs text-muted-foreground">
+                {t('admin.products.media.focal_point_help')}
+              </p>
+              {focalPoint && (
+                <Button type="button" variant="ghost" size="sm" onClick={clearFocalPoint}>
+                  {t('admin.products.media.focal_point_reset')}
+                </Button>
+              )}
+            </div>
+          )}
+
+          {isExternalVideo && (
+            <Field>
+              <FieldLabel htmlFor="media-video-url">
+                {t('admin.fields.media.external_video_url.label')}
+              </FieldLabel>
+              <Input
+                id="media-video-url"
+                value={externalVideoUrl}
+                aria-invalid={videoUrlInvalid || undefined}
+                onChange={(e) => setExternalVideoUrl(e.target.value)}
+                placeholder={t('admin.fields.media.external_video_url.placeholder')}
+              />
+              {videoUrlInvalid && (
+                <FieldError>{t('admin.products.media.video_url_invalid')}</FieldError>
+              )}
+            </Field>
+          )}
 
           <Field>
             <FieldLabel htmlFor="media-alt">{t('admin.fields.media.alt.label')}</FieldLabel>
@@ -150,6 +300,17 @@ export function MediaEditSheet({ form, mediaIndex, variants, open, onOpenChange 
               placeholder={t('admin.fields.media.alt.placeholder')}
             />
           </Field>
+
+          {isVideo && (
+            <Field>
+              <FieldLabel>{t('admin.fields.media.poster.label')}</FieldLabel>
+              <ImageUploadField
+                value={posterValue}
+                onChange={setPoster}
+                help={t('admin.fields.media.poster.help')}
+              />
+            </Field>
+          )}
 
           {variants.length > 0 && (
             <Field>

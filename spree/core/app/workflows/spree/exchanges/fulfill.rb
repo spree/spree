@@ -116,7 +116,6 @@ module Spree
             customer: exchange.order.customer,
             amount: credit_amount,
             currency: exchange.currency,
-            category: Spree::StoreCreditCategory.default_refund_category,
             created_by: refunder,
             originator: exchange,
             memo: "Exchange #{exchange.number}"
@@ -126,23 +125,27 @@ module Spree
 
       def refund_at_gateway
         remaining = credit_amount
-
         exchange.order.payments.completed.each do |payment|
           break unless remaining.positive?
 
           creditable = [payment.credit_allowed.to_d, remaining].min
           next unless creditable.positive?
 
-          @refunds << payment.refunds.create!(
+          # One refund path for the whole system: Refunds::Create owns the
+          # row-lock balance check, the gateway credit, the declined-row
+          # compensation, the refund hooks and the payment.refunded event.
+          result = Spree.refund_create_workflow.call(
+            payment: payment,
             amount: creditable,
             reason: Spree::RefundReason.return_processing_reason(exchange.store),
             refunder: refunder,
             originator: exchange
           )
+          failure(exchange, result.error.value) if result.failure?
+
+          @refunds << result.value
           remaining -= creditable
         end
-      rescue Spree::Core::GatewayError => error
-        failure(exchange, error.message)
       end
 
       def mark_fulfilled
