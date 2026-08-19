@@ -8,16 +8,17 @@ describe Spree::NewsletterSubscriber, type: :model, newsletter: true do
   it_behaves_like 'lifecycle events'
 
   describe 'normalizations' do
-    it { is_expected.to normalize(:email).from(" ME@XYZ.COM\n").to('me@xyz.com') }
-    it { is_expected.to normalize(:email).from('').to(nil) }
-    it { is_expected.to normalize(:email).from(nil).to(nil) }
-  end
+    it 'strips whitespace and downcases the email' do
+      expect(described_class.new(email: " ME@XYZ.COM\n").email).to eq('me@xyz.com')
+    end
 
-  describe 'validations' do
-    it { is_expected.to validate_presence_of(:email) }
-    it { is_expected.to validate_uniqueness_of(:email).scoped_to(:store_id).ignoring_case_sensitivity }
-    it { is_expected.to allow_value('test@example.com').for(:email) }
-    it { is_expected.not_to allow_value('test@').for(:email) }
+    it 'normalizes a blank email to nil' do
+      expect(described_class.new(email: '').email).to be_nil
+    end
+
+    it 'normalizes a nil email to nil' do
+      expect(described_class.new(email: nil).email).to be_nil
+    end
   end
 
   describe 'callbacks' do

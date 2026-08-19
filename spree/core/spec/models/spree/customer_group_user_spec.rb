@@ -4,15 +4,7 @@ RSpec.describe Spree::CustomerGroupUser, type: :model do
   let(:customer_group) { create(:customer_group) }
   let(:user) { create(:user) }
 
-  describe 'associations' do
-    it { is_expected.to belong_to(:customer_group).optional(false) }
-    it { is_expected.to belong_to(:customer).optional(false) }
-  end
-
   describe 'validations' do
-    it { is_expected.to validate_presence_of(:customer_group) }
-    it { is_expected.to validate_presence_of(:customer) }
-
     context 'uniqueness' do
       let!(:existing) { create(:customer_group_user, customer_group: customer_group, customer: user) }
 

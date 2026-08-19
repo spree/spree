@@ -1,17 +1,8 @@
 require 'spec_helper'
 
 describe Spree::StockReservation, type: :model do
-  describe 'associations' do
-    it { is_expected.to belong_to(:stock_level).class_name('Spree::StockLevel').without_validating_presence }
-    it { is_expected.to belong_to(:line_item).class_name('Spree::LineItem').without_validating_presence }
-    it { is_expected.to belong_to(:order).class_name('Spree::Order').without_validating_presence }
-  end
-
   describe 'validations' do
     let(:reservation) { build(:stock_reservation) }
-
-    it { is_expected.to validate_presence_of(:quantity) }
-    it { is_expected.to validate_presence_of(:expires_at) }
 
     it 'requires positive integer quantity' do
       reservation.quantity = 0

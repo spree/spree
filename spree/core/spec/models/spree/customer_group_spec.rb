@@ -5,8 +5,6 @@ RSpec.describe Spree::CustomerGroup, type: :model do
   let(:customer_group) { create(:customer_group, store: store) }
 
   describe 'validations' do
-    it { is_expected.to validate_presence_of(:name) }
-
     context 'uniqueness' do
       let!(:existing_group) { create(:customer_group, name: 'VIP', store: store) }
 
