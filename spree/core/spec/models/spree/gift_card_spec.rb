@@ -28,14 +28,14 @@ RSpec.describe Spree::GiftCard, type: :model do
 
     describe '#ensure_can_be_deleted' do
       it "ensures a used gift card can't be destroyed" do
-        expect(create(:gift_card, state: :redeemed).destroy).to be(false)
-        expect(create(:gift_card, state: :partially_redeemed).destroy).to be(false)
-        expect(create(:gift_card, state: :active).destroy).to be_destroyed
-        expect(create(:gift_card, state: :canceled).destroy).to be_destroyed
+        expect(create(:gift_card, status: :redeemed).destroy).to be(false)
+        expect(create(:gift_card, status: :partially_redeemed).destroy).to be(false)
+        expect(create(:gift_card, status: :active).destroy).to be_destroyed
+        expect(create(:gift_card, status: :canceled).destroy).to be_destroyed
       end
 
       it 'adds an error' do
-        gift_card = create(:gift_card, state: :redeemed)
+        gift_card = create(:gift_card, status: :redeemed)
         gift_card.destroy
 
         expect(gift_card).to_not be_destroyed
@@ -45,10 +45,10 @@ RSpec.describe Spree::GiftCard, type: :model do
   end
 
   describe 'Scopes' do
-    let(:active_gift_card) { create(:gift_card, state: :active) }
-    let(:redeemed_gift_card) { create(:gift_card, state: :redeemed) }
-    let(:partially_redeemed_gift_card) { create(:gift_card, state: :partially_redeemed) }
-    let(:expired_gift_card) { create(:gift_card, expires_at: Date.current, state: :active) }
+    let(:active_gift_card) { create(:gift_card, status: :active) }
+    let(:redeemed_gift_card) { create(:gift_card, status: :redeemed) }
+    let(:partially_redeemed_gift_card) { create(:gift_card, status: :partially_redeemed) }
+    let(:expired_gift_card) { create(:gift_card, expires_at: Date.current, status: :active) }
 
     describe '#active' do
       it 'returns active gift cards' do
@@ -77,7 +77,7 @@ RSpec.describe Spree::GiftCard, type: :model do
 
   describe '#active?' do
     context 'when expired' do
-      let(:gift_card) { build(:gift_card, expires_at: Date.current, state: :active) }
+      let(:gift_card) { build(:gift_card, expires_at: Date.current, status: :active) }
 
       it 'returns false' do
         expect(gift_card.active?).to be(false)
@@ -85,7 +85,7 @@ RSpec.describe Spree::GiftCard, type: :model do
     end
 
     context 'when redeemed' do
-      let(:gift_card) { build(:gift_card, state: :redeemed) }
+      let(:gift_card) { build(:gift_card, status: :redeemed) }
 
       it 'returns false' do
         expect(gift_card.active?).to be(false)
@@ -93,7 +93,7 @@ RSpec.describe Spree::GiftCard, type: :model do
     end
 
     context 'when active' do
-      let(:gift_card) { build(:gift_card, expires_at: 1.day.from_now, state: :active) }
+      let(:gift_card) { build(:gift_card, expires_at: 1.day.from_now, status: :active) }
 
       it 'returns true' do
         expect(gift_card.active?).to be(true)
@@ -103,7 +103,7 @@ RSpec.describe Spree::GiftCard, type: :model do
 
   describe '#amount_remaining' do
     context 'when active' do
-      let(:gift_card) { build(:gift_card, amount: 100, amount_used: 0, amount_authorized: 0, state: :active) }
+      let(:gift_card) { build(:gift_card, amount: 100, amount_used: 0, amount_authorized: 0, status: :active) }
 
       it 'returns the remaining amount' do
         expect(gift_card.amount_remaining).to eq(100)
@@ -111,7 +111,7 @@ RSpec.describe Spree::GiftCard, type: :model do
     end
 
     context 'when redeemed' do
-      let(:gift_card) { build(:gift_card, amount: 100, amount_used: 100, amount_authorized: 0, state: :redeemed) }
+      let(:gift_card) { build(:gift_card, amount: 100, amount_used: 100, amount_authorized: 0, status: :redeemed) }
 
       it 'returns 0' do
         expect(gift_card.amount_remaining).to eq(0)
@@ -119,7 +119,7 @@ RSpec.describe Spree::GiftCard, type: :model do
     end
 
     context 'when authorized' do
-      let(:gift_card) { build(:gift_card, amount: 100, amount_used: 0, amount_authorized: 50, state: :partially_redeemed) }
+      let(:gift_card) { build(:gift_card, amount: 100, amount_used: 0, amount_authorized: 50, status: :partially_redeemed) }
 
       it 'returns the remaining amount' do
         expect(gift_card.amount_remaining).to eq(50)
@@ -127,20 +127,20 @@ RSpec.describe Spree::GiftCard, type: :model do
     end
   end
 
-  describe '#display_state' do
+  describe '#display_status' do
     context 'when expired' do
-      let(:gift_card) { build(:gift_card, expires_at: 1.day.ago, state: :active) }
+      let(:gift_card) { build(:gift_card, expires_at: 1.day.ago, status: :active) }
 
       it 'returns expired' do
-        expect(gift_card.display_state).to eq 'expired'
+        expect(gift_card.display_status).to eq 'expired'
       end
     end
 
     context 'when active' do
-      let(:gift_card) { build(:gift_card, expires_at: 1.day.from_now, state: :active) }
+      let(:gift_card) { build(:gift_card, expires_at: 1.day.from_now, status: :active) }
 
       it 'returns active' do
-        expect(gift_card.display_state).to eq 'active'
+        expect(gift_card.display_status).to eq 'active'
       end
     end
   end
@@ -172,72 +172,56 @@ RSpec.describe Spree::GiftCard, type: :model do
     end
   end
 
-  describe 'State transitions' do
-  let(:store) { Spree::Store.default }
-
-  context 'when active' do
-    let(:gift_card) { create(:gift_card, state: :active, amount: 100, amount_used: 0, store: store) }
-
-    it 'transitions from active to partially_redeemed' do
-      expect { gift_card.partial_redeem! }
-        .to change(gift_card, :state).from('active').to('partially_redeemed')
+  describe 'status' do
+    it 'has no state machine' do
+      expect(described_class).not_to respond_to(:state_machines)
     end
 
-    it 'transitions from active to redeemed' do
-      expect { gift_card.redeem! }
-        .to change(gift_card, :state).from('active').to('redeemed')
+    it 'defaults to active' do
+      expect(described_class.new.status).to eq('active')
+    end
+
+    it 'rejects an unknown status' do
+      expect(build(:gift_card, status: 'nonsense')).not_to be_valid
     end
   end
 
-  context 'when partially_redeemed' do
-    let(:gift_card) { create(:gift_card, state: :partially_redeemed, amount: 100, amount_used: 50, store: store) }
-
-    it 'allows multiple partial redemptions (remains partially_redeemed)' do
-      expect { gift_card.partial_redeem! }
-        .to_not change(gift_card, :state)
-      expect(gift_card.state).to eq('partially_redeemed')
-    end
-
-    it 'transitions from partially_redeemed to redeemed when fully used' do
-      gift_card.update!(amount_used: 100)
-      expect { gift_card.redeem! }
-        .to change(gift_card, :state).from('partially_redeemed').to('redeemed')
-    end
-  end
-
-  context 'when redeemed' do
-    let(:gift_card) { create(:gift_card, state: :redeemed, amount: 100, amount_used: 100, store: store) }
-
-    it 'does not allow further redemption' do
-      expect { gift_card.partial_redeem! }.to raise_error(StateMachines::InvalidTransition)
-      expect { gift_card.redeem! }.to raise_error(StateMachines::InvalidTransition)
-    end
-  end
-  end
-
-  describe 'custom events', events: true do
+  describe 'status scopes and predicates' do
     let(:store) { Spree::Store.default }
+    let!(:active) { create(:gift_card, store: store, amount: 10) }
+    let!(:partial) { create(:gift_card, store: store, amount: 10, status: 'partially_redeemed') }
+    let!(:redeemed) { create(:gift_card, store: store, amount: 10, status: 'redeemed') }
+    let!(:expired) { create(:gift_card, store: store, amount: 10, expires_at: 1.day.ago) }
 
-    describe 'gift_card.redeemed' do
-      let(:gift_card) { create(:gift_card, state: :active, amount: 100, amount_used: 0, store: store) }
-
-      it 'publishes gift_card.redeemed event when fully redeemed' do
-        expect(gift_card).to receive(:publish_event).with('gift_card.redeemed')
-        allow(gift_card).to receive(:publish_event).with(anything)
-
-        gift_card.redeem!
-      end
+    it 'treats a partially redeemed card as still spendable and an expired one as not' do
+      expect(described_class.active).to include(active, partial)
+      expect(described_class.active).not_to include(redeemed, expired)
     end
 
-    describe 'gift_card.partially_redeemed' do
-      let(:gift_card) { create(:gift_card, state: :active, amount: 100, amount_used: 0, store: store) }
+    it 'reports an expired card as inactive even though its status is active' do
+      expect(expired.status).to eq('active')
+      expect(expired).not_to be_active
+      expect(expired).to be_expired
+    end
 
-      it 'publishes gift_card.partially_redeemed event when partially redeemed' do
-        expect(gift_card).to receive(:publish_event).with('gift_card.partially_redeemed')
-        allow(gift_card).to receive(:publish_event).with(anything)
+    it 'exposes the plain column lookup through with_status' do
+      expect(described_class.with_status(:active)).to include(active, expired)
+      expect(described_class.with_status(:active, :redeemed)).to include(active, redeemed)
+    end
+  end
 
-        gift_card.partial_redeem!
-      end
+  describe 'deprecated state bridge' do
+    let(:gift_card) { build(:gift_card, status: :redeemed) }
+
+    it 'reads status' do
+      expect(Spree::Deprecation).to receive(:warn)
+      expect(gift_card.state).to eq('redeemed')
+    end
+
+    it 'writes status' do
+      expect(Spree::Deprecation).to receive(:warn)
+      gift_card.state = 'active'
+      expect(gift_card.status).to eq('active')
     end
   end
 end

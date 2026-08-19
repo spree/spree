@@ -71,7 +71,7 @@ module Spree
 
     def gift_card_hash
       {
-        state: :active,
+        status: :active,
         gift_card_batch_id: id,
         amount: amount,
         currency: currency,

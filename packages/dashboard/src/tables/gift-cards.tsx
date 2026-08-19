@@ -7,9 +7,9 @@ import { adminUserAutocompleteProps } from '../hooks/use-admin-users'
 import { customerAutocompleteProps } from '../hooks/use-customers'
 import { giftCardBatchAutocompleteProps } from '../hooks/use-gift-cards'
 
-// Server `Spree::GiftCard#display_state` exposes "expired" when the card
+// Server `Spree::GiftCard#display_status` exposes "expired" when the card
 // is past its expiration date, even though the underlying column is still
-// "active" — keep this list in sync with the state machine + display_state
+// "active" — keep this list in sync with the statuses + display_status
 // override in `app/models/spree/gift_card.rb`.
 const STATUS_OPTIONS = [
   { value: 'active', label: i18n.t('admin.fields.active.label') },
@@ -61,10 +61,10 @@ defineTable<GiftCard>('gift-cards', {
     {
       key: 'status',
       label: i18n.t('admin.fields.status.label'),
-      // Ransack filters off the underlying `state` column — `display_state`
+      // Ransack filters off the underlying `status` column — `display_status`
       // is a presentation-only override that returns 'expired' for active
-      // cards past their `expires_at`. Server still indexes `state`.
-      ransackAttribute: 'state',
+      // cards past their `expires_at`. Server still indexes `status`.
+      ransackAttribute: 'status',
       filterable: true,
       filterType: 'enum',
       // Spread to narrow the readonly type into ColumnDef's mutable shape.
@@ -137,7 +137,7 @@ defineTable<GiftCard>('gift-cards', {
     {
       key: 'created_by',
       label: i18n.t('admin.gift_cards.columns.issued_by'),
-      // GiftCard whitelists `code`, `user_id`, `state`, `gift_card_batch_id`.
+      // GiftCard whitelists `code`, `user_id`, `status`, `gift_card_batch_id`.
       // `created_by_id` is not whitelisted yet — Ransack will reject the
       // predicate without it; we add it server-side alongside this column.
       ransackAttribute: 'created_by_id',

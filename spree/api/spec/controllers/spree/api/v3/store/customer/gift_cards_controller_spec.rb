@@ -104,7 +104,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::GiftCardsController, type: :cont
     end
 
     context 'with partially redeemed gift card' do
-      let!(:partial_card) { create(:gift_card, customer: user, store: store, state: :partially_redeemed, amount: 50, amount_used: 20) }
+      let!(:partial_card) { create(:gift_card, customer: user, store: store, status: :partially_redeemed, amount: 50, amount_used: 20) }
 
       it 'shows correct state and amounts' do
         get :index

@@ -53,7 +53,7 @@ RSpec.describe Spree::GiftCards::Apply do
       expect { subject }.not_to change(Spree::StoreCredit, :count)
 
       expect(subject).to be_failure
-      expect(subject.value).to eq(:gift_card_using_store_credit_error)
+      expect(subject.error.value).to eq(:gift_card_using_store_credit_error)
 
       expect(order.reload.gift_card).to be_nil
       expect(order.total_applied_store_credit).to eq(10)
@@ -67,7 +67,7 @@ RSpec.describe Spree::GiftCards::Apply do
 
     it 'responds with an error' do
       expect(subject).to be_failure
-      expect(subject.value).to eq(:gift_card_mismatched_currency)
+      expect(subject.error.value).to eq(:gift_card_mismatched_currency)
     end
   end
 
@@ -91,7 +91,7 @@ RSpec.describe Spree::GiftCards::Apply do
     context 'with guest order' do
       it 'responds with an error' do
         expect(subject).to be_failure
-        expect(subject.value).to eq(:gift_card_customer_not_logged_in)
+        expect(subject.error.value).to eq(:gift_card_customer_not_logged_in)
       end
     end
 
@@ -100,7 +100,7 @@ RSpec.describe Spree::GiftCards::Apply do
 
       it 'responds with an error' do
         expect(subject).to be_failure
-        expect(subject.value).to eq(:gift_card_mismatched_customer)
+        expect(subject.error.value).to eq(:gift_card_mismatched_customer)
       end
     end
   end
@@ -141,7 +141,7 @@ RSpec.describe Spree::GiftCards::Apply do
       expect { subject }.not_to change(Spree::StoreCredit, :count)
 
       expect(subject).to be_failure
-      expect(subject.value).to eq(:gift_card_no_amount_remaining)
+      expect(subject.error.value).to eq(:gift_card_no_amount_remaining)
 
       expect(order.reload.gift_card).to be_nil
     end

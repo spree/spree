@@ -8891,7 +8891,7 @@ paths:
       description: |-
         Returns the gift cards issued by the current store. Filter by
         `q[code_cont]` for code search, `q[user_id_eq]` for cards issued
-        to a specific customer, or `q[state_eq]` for status filtering.
+        to a specific customer, or `q[status_eq]` for status filtering.
 
 
         **Required scope:** `read_gift_cards` (for API-key authentication).
@@ -8944,7 +8944,7 @@ paths:
         description: Filter by gift card code (contains)
         schema:
           type: string
-      - name: q[state_eq]
+      - name: q[status_eq]
         in: query
         required: false
         description: Filter by status (active, redeemed, partially_redeemed, canceled)

@@ -46,7 +46,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::GiftCardsController, type: :control
     end
 
     it 'returns error for redeemed gift card' do
-      gift_card.update!(state: :redeemed, redeemed_at: Time.current, amount_used: gift_card.amount)
+      gift_card.update!(status: :redeemed, redeemed_at: Time.current, amount_used: gift_card.amount)
 
       post :create, params: { cart_id: order.prefixed_id, code: 'giftcard123' }
 

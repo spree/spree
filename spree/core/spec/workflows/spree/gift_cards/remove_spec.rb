@@ -35,7 +35,7 @@ RSpec.describe Spree::GiftCards::Remove do
       expect(gift_card.amount_remaining).to eq(50)
 
       expect(store_credit_payment).to be_present
-      expect(store_credit_payment.state).to eq('invalid')
+      expect(store_credit_payment.status).to eq('invalid')
       expect(store_credit_payment.source).to be_deleted
     end
 
@@ -49,7 +49,7 @@ RSpec.describe Spree::GiftCards::Remove do
 
       it 'responds with an error' do
         expect(subject).to be_failure
-        expect(subject.value).to eq(:remove_gift_card_on_completed_order_error)
+        expect(subject.error.value).to eq(:remove_gift_card_on_completed_order_error)
       end
     end
   end

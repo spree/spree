@@ -53,9 +53,10 @@ module Spree
         checkout_remove_store_credit_service: 'Spree::Checkout::RemoveStoreCredit',
 
         # gift cards
-        gift_card_apply_service: 'Spree::GiftCards::Apply',
-        gift_card_remove_service: 'Spree::GiftCards::Remove',
-        gift_card_redeem_service: 'Spree::GiftCards::Redeem',
+        gift_card_apply_workflow: 'Spree::GiftCards::Apply',
+        gift_card_remove_workflow: 'Spree::GiftCards::Remove',
+        gift_card_redeem_workflow: 'Spree::GiftCards::Redeem',
+        gift_card_cancel_workflow: 'Spree::GiftCards::Cancel',
 
         # order
         order_approve_service: 'Spree::Orders::Approve',
@@ -213,7 +214,10 @@ module Spree
       # not interchangeable with what the new call sites pass. Removed in 6.1.
       LEGACY_SERVICE_KEYS = {
         shipment_update_service: :fulfillment_update_workflow,
-        fulfillment_update_service: :fulfillment_update_workflow
+        fulfillment_update_service: :fulfillment_update_workflow,
+        gift_card_apply_service: :gift_card_apply_workflow,
+        gift_card_remove_service: :gift_card_remove_workflow,
+        gift_card_redeem_service: :gift_card_redeem_workflow
       }.freeze
 
       def legacy_workflow_overrides

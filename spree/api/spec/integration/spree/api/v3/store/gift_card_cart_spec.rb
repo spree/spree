@@ -83,7 +83,7 @@ RSpec.describe 'Cart Gift Card API', type: :request, swagger_doc: 'api-reference
       end
 
       response '422', 'gift card already redeemed' do
-        let!(:gift_card) { create(:gift_card, store: store, amount: 50, code: 'redeemedgc', amount_used: 50, state: :redeemed, redeemed_at: Time.current) }
+        let!(:gift_card) { create(:gift_card, store: store, amount: 50, code: 'redeemedgc', amount_used: 50, status: :redeemed, redeemed_at: Time.current) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:body) { { code: 'redeemedgc' } }

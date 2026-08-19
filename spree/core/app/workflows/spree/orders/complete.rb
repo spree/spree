@@ -89,7 +89,7 @@ module Spree
       def redeem_gift_card
         return if order.gift_card.nil?
 
-        Spree.gift_card_redeem_service.call(gift_card: order.gift_card)
+        Spree.gift_card_redeem_workflow.call(gift_card: order.gift_card)
       end
 
       # Providers that opt into auto_fulfill? (digital delivery today) get

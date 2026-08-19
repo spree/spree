@@ -29,7 +29,7 @@ module Spree
           if result.success?
             set_success_code(:gift_card_applied)
           else
-            set_error_code(result.value, result.error.value || {})
+            set_error_code(result.error.value)
           end
 
           return self

@@ -10,26 +10,15 @@ module Spree
     publishes_lifecycle_events
 
     #
-    # State machine
+    # Status
     #
-    state_machine :state, initial: :active do
-      event :cancel do
-        transition active: :canceled
-      end
-
-      event :redeem do
-        transition active: :redeemed
-        transition partially_redeemed: :redeemed
-      end
-      after_transition to: :redeemed, do: :after_redeem
-      after_transition to: :redeemed, do: :publish_gift_card_redeemed_event
-
-      event :partial_redeem do
-        transition active: :partially_redeemed
-        transition partially_redeemed: :partially_redeemed
-      end
-      after_transition to: :partially_redeemed, do: :publish_gift_card_partially_redeemed_event
-    end
+    # No state machine — redemption and cancellation run through the
+    # Spree::GiftCards workflows (docs/plans/6.0-service-workflows.md).
+    # +active?+ is defined below rather than generated: a card past its expiry
+    # date still holds the `active` status but is not usable, and every caller
+    # asking "is this card active" means the latter.
+    include Spree::HasStatus
+    has_status :active, :partially_redeemed, :redeemed, :canceled, default: :active
 
     #
     # Validations
@@ -55,15 +44,19 @@ module Spree
     #
     # Scopes
     #
-    scope :active, -> { where(state: [:active, :partially_redeemed]).where(expires_at: [nil,  Date.tomorrow..]) }
-    scope :expired, -> { where(state: :active).where(expires_at: ..Date.current) }
-    scope :redeemed, -> { where(state: [:redeemed]) }
-    scope :partially_redeemed, -> { where(state: [:partially_redeemed]) }
+    # These deliberately override the plain status scopes has_status generates:
+    # usability is status *and* expiry, and a partially redeemed card is still
+    # spendable.
+    scope :active, -> { where(status: [:active, :partially_redeemed]).where(expires_at: [nil,  Date.tomorrow..]) }
+    scope :expired, -> { where(status: :active).where(expires_at: ..Date.current) }
+    scope :redeemed, -> { where(status: [:redeemed]) }
+    scope :partially_redeemed, -> { where(status: [:partially_redeemed]) }
 
     #
     # Ransack
     #
-    self.whitelisted_ransackable_attributes = %w[code customer_id user_id state gift_card_batch_id created_by_id]
+    ransack_alias :state, :status # @deprecated filter alias — removed in 6.1
+    self.whitelisted_ransackable_attributes = %w[code customer_id user_id status state gift_card_batch_id created_by_id]
     self.whitelisted_ransackable_associations = %w[users orders batch]
     self.whitelisted_ransackable_scopes = %w[active expired redeemed partially_redeemed]
 
@@ -127,17 +120,52 @@ module Spree
     # Checks if the gift card is active, i.e. not expired and not redeemed
     # @return [Boolean]
     def active?
-      super && !expired?
+      status == 'active' && !expired?
     end
 
-    # Displays state as expired if the gift card is expired, otherwise displays the state
+    # Displays status as expired if the gift card is expired, otherwise the
+    # stored status. Expiry is derived from a date rather than stored, so it
+    # never appears in the column.
     # @return [String]
-    def display_state
+    def display_status
       if expired?
         :expired
       else
-        state
+        status
       end.to_s
+    end
+
+    # @deprecated use +display_status+ — removed in 6.1
+    def display_state
+      Spree::Deprecation.warn('Spree::GiftCard#display_state is deprecated and will be removed in Spree 6.1. Use #display_status instead.')
+      display_status
+    end
+
+    # @deprecated read +status+ — removed in 6.1
+    def state
+      Spree::Deprecation.warn('Spree::GiftCard#state is deprecated and will be removed in Spree 6.1. Use #status instead.')
+      status
+    end
+
+    # @deprecated write +status+ — removed in 6.1
+    def state=(value)
+      Spree::Deprecation.warn('Spree::GiftCard#state= is deprecated and will be removed in Spree 6.1. Use #status= instead.')
+      self.status = value
+    end
+
+    # @deprecated Call Spree.gift_card_redeem_workflow — removed in 6.1.
+    #   The workflow decides full versus partial redemption from the balance,
+    #   so both old verbs land on it.
+    def redeem!
+      Spree::Deprecation.warn('Spree::GiftCard#redeem! is deprecated and will be removed in Spree 6.1. Call Spree.gift_card_redeem_workflow instead.')
+      run_gift_card_workflow(Spree.gift_card_redeem_workflow)
+    end
+    alias partial_redeem! redeem!
+
+    # @deprecated Call Spree.gift_card_cancel_workflow — removed in 6.1.
+    def cancel!
+      Spree::Deprecation.warn('Spree::GiftCard#cancel! is deprecated and will be removed in Spree 6.1. Call Spree.gift_card_cancel_workflow instead.')
+      run_gift_card_workflow(Spree.gift_card_cancel_workflow)
     end
 
     def to_csv(_store = nil)
@@ -145,6 +173,19 @@ module Spree
     end
 
     private
+
+    # Mirrors the machine's bang events: an illegal move raised, so a rejected
+    # workflow raises here too rather than returning quietly.
+    def run_gift_card_workflow(workflow)
+      result = workflow.call(gift_card: self)
+
+      if result.failure?
+        errors.add(:base, result.error.value.to_s)
+        raise ActiveRecord::RecordInvalid, self
+      end
+
+      true
+    end
 
     def generate_code
       return if code.present?
@@ -157,18 +198,6 @@ module Spree
 
     def normalize_code
       self.code = code.downcase if code.present?
-    end
-
-    def after_redeem
-      update!(redeemed_at: Time.current)
-    end
-
-    def publish_gift_card_redeemed_event
-      publish_event('gift_card.redeemed')
-    end
-
-    def publish_gift_card_partially_redeemed_event
-      publish_event('gift_card.partially_redeemed')
     end
 
     def ensure_can_be_deleted
