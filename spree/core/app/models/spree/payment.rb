@@ -112,16 +112,21 @@ module Spree
     # Status writes, called from the payments workflows and Processing. The
     # completed/voided events publish here — the one place the status changes —
     # replacing the machine's after_transition callbacks.
-    CLAIMABLE_STATUSES = %w[checkout pending processing].freeze
+    # failed is deliberately claimable: a failure can be transient — a
+    # gateway outage, a network timeout, our own error — and the retry is
+    # simply running the workflow again on the same row. The row must be
+    # reused, not replaced: response_code is unique per order, so a session
+    # payment's intent can only ever live on one payment.
+    CLAIMABLE_STATUSES = %w[checkout pending processing failed].freeze
 
-    # Atomically claims the payment for gateway processing. Only a live
-    # payment can be claimed, so a stale instance can never resurrect a
-    # payment another writer already settled and drive the gateway again.
+    # Atomically claims the payment for gateway processing. Only a live or
+    # retryable payment can be claimed, so a stale instance can never
+    # resurrect a payment another writer already settled and drive the
+    # gateway again.
     #
     # @return [Boolean] false when the payment completed concurrently — the
     #   caller's outcome already exists and the claim must be a no-op
-    # @raise [Spree::Core::GatewayError] for a dead payment (failed, void,
-    #   invalid)
+    # @raise [Spree::Core::GatewayError] for a dead payment (void, invalid)
     def started_processing!
       if new_record?
         self.status = 'processing'

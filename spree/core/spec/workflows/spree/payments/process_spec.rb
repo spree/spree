@@ -79,6 +79,17 @@ RSpec.describe Spree::Payments::Process do
     end
   end
 
+  describe 'retrying' do
+    it 'processes a failed payment again — the failure may have been transient' do
+      payment.update_column(:status, 'failed')
+      allow(gateway).to receive(:capture_at_checkout?).and_return(false)
+      expect(gateway).to receive(:authorize).and_return(success_response)
+
+      expect(described_class.call(payment: payment)).to be_success
+      expect(payment.reload).to be_pending
+    end
+  end
+
   describe 'racing a concurrent settlement' do
     it 'reports success without the gateway when the webhook settled it first' do
       Spree::Payment.find(payment.id).update_columns(status: 'completed')

@@ -46,10 +46,14 @@ module Spree
 
       # An already-captured payment returns success rather than failing:
       # capture is naturally idempotent and double-submitted admin actions
-      # must not surface as errors.
+      # must not surface as errors. A failed payment is capturable — the
+      # failure may have been a gateway outage, and retrying is running
+      # this workflow again.
       def ensure_capturable
         halt!(payment) if payment.completed?
-        failure(payment, :payment_not_capturable) unless payment.pending? || payment.checkout? || payment.processing?
+        return if payment.pending? || payment.checkout? || payment.processing? || payment.failed?
+
+        failure(payment, :payment_not_capturable)
       end
 
       def claim

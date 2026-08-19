@@ -56,6 +56,17 @@ RSpec.describe Spree::Payments::Capture do
       expect(described_class.call(payment: completed)).to be_success
     end
 
+    it 'retries a failed capture — a failure can be a transient gateway outage' do
+      payment.update_column(:status, 'failed')
+      expect(gateway).to receive(:capture).with(4575, '123', anything).and_return(success_response)
+
+      result = described_class.call(payment: payment)
+
+      expect(result).to be_success
+      expect(payment.reload).to be_completed
+      expect(payment.capture_events.sum(:amount)).to eq(45.75)
+    end
+
     it 'fails without calling the gateway when the payment cannot be captured' do
       voided = create(:payment, payment_method: gateway, source: card, status: 'void')
       expect(gateway).not_to receive(:capture)
