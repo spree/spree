@@ -98,7 +98,7 @@ RSpec.describe Spree::Imports::ProcessJob, type: :job do
 
       before do
         allow_any_instance_of(Spree::Import).to receive(:csv_headers).and_return(['slug', 'sku', 'name', 'price', 'option1_name', 'option1_value'])
-        import.create_mappings
+        seed_import_mappings(import)
       end
 
       let!(:product_row) do

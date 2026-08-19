@@ -56,40 +56,14 @@ module Spree
     has_one_attached :attachment, service: Spree.private_storage_service_name
 
     #
-    # State machine
+    # Status
     #
-    state_machine initial: :pending, attribute: :status do
-      event :start_mapping do
-        transition to: :mapping
-      end
-      before_transition to: :mapping, do: :create_mappings
-
-      event :complete_mapping do
-        transition from: :mapping, to: :completed_mapping
-      end
-      after_transition to: :completed_mapping, do: :create_rows_async
-
-      event :start_processing do
-        transition from: :completed_mapping, to: :processing
-      end
-
-      event :complete do
-        transition from: :processing, to: :completed
-      end
-      after_transition to: :completed, do: :touch_store
-      after_transition to: :completed, do: :publish_import_completed_event
-
-      event :fail do
-        transition to: :failed
-      end
-
-      # Re-processes rows that failed: the dispatcher targets pending_and_failed
-      # rows, so retry is just a transition + re-dispatch.
-      event :retry_failed_rows do
-        transition from: :completed, to: :processing, if: ->(import) { import.rows.failed.exists? }
-      end
-      after_transition on: :retry_failed_rows, do: :process_rows_async
-    end
+    # No state machine — the pipeline's steps are the Spree::Imports workflows
+    # (docs/plans/6.0-service-workflows.md), which is also what let the row
+    # dispatch stop tiptoeing around a transition's transaction.
+    include Spree::HasStatus
+    has_status :pending, :mapping, :completed_mapping, :processing, :completed, :failed,
+               default: :pending
 
     #
     # Preferences
@@ -160,6 +134,44 @@ module Spree
     # @return [String, nil]
     def group_column
       nil
+    end
+
+    # @deprecated Call the Spree::Imports workflows — removed in 6.1.
+    def start_mapping!
+      Spree::Deprecation.warn('Spree::Import#start_mapping! is deprecated and will be removed in Spree 6.1. Call Spree.import_start_mapping_workflow instead.')
+      run_pipeline_workflow(Spree.import_start_mapping_workflow)
+    end
+
+    # @deprecated Call Spree.import_complete_mapping_workflow — removed in 6.1.
+    def complete_mapping!
+      Spree::Deprecation.warn('Spree::Import#complete_mapping! is deprecated and will be removed in Spree 6.1. Call Spree.import_complete_mapping_workflow instead.')
+      run_pipeline_workflow(Spree.import_complete_mapping_workflow)
+    end
+
+    # @deprecated Call Spree.import_start_processing_workflow — removed in 6.1.
+    def start_processing!
+      Spree::Deprecation.warn('Spree::Import#start_processing! is deprecated and will be removed in Spree 6.1. Call Spree.import_start_processing_workflow instead.')
+      run_pipeline_workflow(Spree.import_start_processing_workflow)
+    end
+
+    # @deprecated Call Spree.import_complete_workflow — removed in 6.1.
+    def complete!
+      Spree::Deprecation.warn('Spree::Import#complete! is deprecated and will be removed in Spree 6.1. Call Spree.import_complete_workflow instead.')
+      run_pipeline_workflow(Spree.import_complete_workflow)
+    end
+
+    # @deprecated Set the status — removed in 6.1. Failure was never a step of
+    #   its own; the controller records the parse error directly.
+    def fail!
+      Spree::Deprecation.warn('Spree::Import#fail! is deprecated and will be removed in Spree 6.1. Write the status instead.')
+      update!(status: 'failed')
+    end
+
+    # @deprecated Call Spree.import_retry_failed_rows_workflow — removed in 6.1.
+    #   Returns false when there is nothing to retry, as the guarded event did.
+    def retry_failed_rows
+      Spree::Deprecation.warn('Spree::Import#retry_failed_rows is deprecated and will be removed in Spree 6.1. Call Spree.import_retry_failed_rows_workflow instead.')
+      Spree.import_retry_failed_rows_workflow.call(import: self).success?
     end
 
     # Returns true if the import is in mapping state
@@ -305,14 +317,6 @@ module Spree
       "#{Spree.t(type.demodulize.pluralize.downcase)} #{number}"
     end
 
-    def touch_store
-      store.touch
-    end
-
-    def publish_import_completed_event
-      publish_event('import.completed')
-    end
-
     # Returns the headers of the csv file
     # @return [Array<String>]
     def csv_headers
@@ -328,43 +332,6 @@ module Spree
     # @return [String]
     def attachment_file_content
       @attachment_file_content ||= attachment.attached? ? attachment.blob.download&.force_encoding('UTF-8') : nil
-    end
-
-    # Creates mappings from the schema fields
-    # TODO: get mappings from the previous import if it exists, so user won't have to map the same columns again
-    def create_mappings
-      schema_fields.each do |schema_field|
-        mapping = mappings.find_or_create_by!(schema_field: schema_field[:name])
-        mapping.try_to_auto_assign_file_column(csv_headers)
-        mapping.save!
-      end
-    end
-
-    # Creates rows asynchronously
-    # @return [void]
-    def create_rows_async
-      if preferred_inline
-        # The transition callback runs inside the state machine's
-        # transaction and Continuations forbid checkpoints there — the
-        # inline run starts at commit, still before the transition call
-        # returns to the caller.
-        ActiveRecord.after_all_transactions_commit { Spree::Imports::ProcessJob.perform_now(id) }
-        return
-      end
-
-      # The 2s delay lets the attachment settle before the job reads it.
-      Spree::Imports::ProcessJob.set(wait: 2.seconds).perform_later(id)
-    end
-
-    # Processes rows asynchronously
-    # @return [void]
-    def process_rows_async
-      if preferred_inline
-        ActiveRecord.after_all_transactions_commit { Spree::Imports::ProcessJob.perform_now(id, skip_row_creation: true) }
-        return
-      end
-
-      Spree::Imports::ProcessJob.perform_later(id, skip_row_creation: true)
     end
 
     # Returns the store for the import
@@ -472,6 +439,18 @@ module Spree
     end
 
     private
+
+    # Mirrors the machine's bang events: an illegal move raised.
+    def run_pipeline_workflow(workflow)
+      result = workflow.call(import: self)
+
+      if result.failure?
+        errors.add(:base, result.error.value.to_s)
+        raise ActiveRecord::RecordInvalid, self
+      end
+
+      true
+    end
 
     def ensure_whitelisted_type
       return if type.blank?

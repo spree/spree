@@ -29,7 +29,7 @@ module Spree
 
             if @resource.save
               begin
-                @resource.start_mapping!
+                Spree.import_start_mapping_workflow.call(import: @resource)
               rescue ::CSV::MalformedCSVError, EncodingError => e
                 @resource.update_columns(status: 'failed', processing_errors: e.message, updated_at: Time.current)
                 return render_error(
@@ -72,7 +72,7 @@ module Spree
             apply_mappings!(@resource)
 
             if @resource.mapping_done?
-              @resource.complete_mapping!
+              Spree.import_complete_mapping_workflow.call(import: @resource)
               render json: serialize_resource(@resource)
             else
               missing = @resource.required_fields - @resource.mappings.mapped.pluck(:schema_field)
@@ -96,7 +96,9 @@ module Spree
             @resource = find_resource
             authorize_resource!(@resource, :update)
 
-            if @resource.retry_failed_rows
+            result = Spree.import_retry_failed_rows_workflow.call(import: @resource)
+
+            if result.success?
               render json: serialize_resource(@resource)
             else
               render_error(

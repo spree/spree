@@ -204,7 +204,7 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
         imp.attachment.attach(
           io: StringIO.new(csv_content), filename: 'import.csv', content_type: 'text/csv'
         )
-        imp.start_mapping!
+        Spree.import_start_mapping_workflow.call(import: imp)
       end
     end
 

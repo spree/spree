@@ -9,7 +9,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductTranslation, type: :service
   let(:csv_row_headers) { Spree::ImportSchemas::ProductTranslations.new.headers }
 
   before do
-    import.create_mappings
+    Spree.import_start_mapping_workflow.call(import: import)
   end
 
   def csv_row_hash(attrs = {})

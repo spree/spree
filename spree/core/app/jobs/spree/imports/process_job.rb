@@ -25,7 +25,7 @@ module Spree
 
         unless skip_row_creation
           step :begin_processing do
-            @import.start_processing! if @import.status != 'processing'
+            Spree.import_start_processing_workflow.call(import: @import) if @import.status != 'processing'
           end
           step :create_rows, start: 1
           # A permanent CSV failure marked the import failed inside the step

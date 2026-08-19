@@ -15,7 +15,7 @@ RSpec.describe Spree::Imports::ProcessGroupJob, type: :job do
 
   before do
     allow_any_instance_of(Spree::Import).to receive(:csv_headers).and_return(['slug', 'sku', 'name', 'price'])
-    import.create_mappings
+    seed_import_mappings(import)
   end
 
   it 'sets Spree::Current.store from the import' do
@@ -225,7 +225,7 @@ RSpec.describe Spree::Imports::ProcessGroupJob, type: :job do
     before do
       allow_any_instance_of(Spree::Import).to receive(:csv_headers).and_return(['slug', 'sku', 'name', 'price', 'option1_name', 'option1_value'])
       import.mappings.destroy_all
-      import.create_mappings
+      seed_import_mappings(import)
     end
 
     it 'creates product and variant in row_number order' do
@@ -270,7 +270,7 @@ RSpec.describe Spree::Imports::ProcessGroupJob, type: :job do
       before do
         allow_any_instance_of(Spree::Import).to receive(:csv_headers).and_return(['slug', 'sku', 'name', 'price', 'option1_name', 'option1_value'])
         import.mappings.destroy_all
-        import.create_mappings
+        seed_import_mappings(import)
       end
 
       it 'creates product and variant via bulk_process!' do

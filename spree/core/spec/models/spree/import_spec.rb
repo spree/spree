@@ -41,71 +41,20 @@ RSpec.describe Spree::Import, :job, type: :model do
     end
   end
 
-  describe 'State machine' do
+  describe 'status' do
     before { import.save! }
 
-    describe 'initial state' do
-      it 'starts in pending state' do
-        expect(import.status).to eq('pending')
-      end
+    it 'has no state machine' do
+      expect(described_class).not_to respond_to(:state_machines)
     end
 
-    describe 'start_mapping event' do
-      it 'transitions from pending to mapping' do
-        expect { import.start_mapping! }.to change(import, :status).from('pending').to('mapping')
-      end
-
-      it 'creates mappings before transition' do
-        expect { import.start_mapping! }.to change { import.mappings.count }.from(0)
-      end
+    it 'starts in pending status' do
+      expect(import.status).to eq('pending')
     end
 
-    describe 'complete_mapping event' do
-      before { import.start_mapping! }
-
-      it 'transitions from mapping to completed_mapping' do
-        expect { import.complete_mapping! }.to change(import, :status).from('mapping').to('completed_mapping')
-      end
-
-      it 'creates rows asynchronously after transition' do
-        expect(import).to receive(:create_rows_async)
-        import.complete_mapping!
-      end
-    end
-
-    describe 'start_processing event' do
-      before do
-        import.start_mapping!
-        import.complete_mapping!
-      end
-
-      it 'transitions from completed_mapping to processing' do
-        expect { import.start_processing! }.to change(import, :status).from('completed_mapping').to('processing')
-      end
-    end
-
-    describe 'complete event' do
-      before do
-        import.start_mapping!
-        import.complete_mapping!
-        import.start_processing!
-      end
-
-      it 'transitions from processing to completed' do
-        expect { import.complete! }.to change(import, :status).from('processing').to('completed')
-      end
-
-      it 'touches the store' do
-        expect { import.complete! }.to change { store.reload.updated_at }
-      end
-
-      it 'publishes import.completed event' do
-        expect(import).to receive(:publish_import_completed_event)
-        import.complete!
-      end
-
-      # Email and loader updates are now handled by ImportSubscriber
-      # See spec/subscribers/spree/import_subscriber_spec.rb
+    it 'rejects an unknown status' do
+      import.status = 'nonsense'
+      expect(import).not_to be_valid
     end
   end
 
@@ -288,15 +237,15 @@ RSpec.describe Spree::Import, :job, type: :model do
     end
   end
 
-  describe '#create_mappings' do
+  describe 'mapping creation' do
     before { import.save! }
 
     it 'creates mappings for schema fields' do
-      expect { import.create_mappings }.to change { import.mappings.count }.from(0)
+      expect { Spree.import_start_mapping_workflow.call(import: import) }.to change { import.mappings.count }.from(0)
     end
 
     it 'auto-assigns file columns when possible' do
-      import.create_mappings
+      Spree.import_start_mapping_workflow.call(import: import)
       slug_mapping = import.mappings.find_by(schema_field: 'slug')
       expect(slug_mapping.file_column).to eq('slug')
     end
@@ -305,7 +254,7 @@ RSpec.describe Spree::Import, :job, type: :model do
   describe '#unmapped_file_columns' do
     before do
       import.save!
-      import.create_mappings
+      Spree.import_start_mapping_workflow.call(import: import)
       # Map only slug column
       import.mappings.find_by(schema_field: 'slug').update!(file_column: 'slug')
     end
@@ -323,7 +272,7 @@ RSpec.describe Spree::Import, :job, type: :model do
 
     context 'when all required fields are mapped' do
       before do
-        import.create_mappings
+        Spree.import_start_mapping_workflow.call(import: import)
       end
 
       it 'returns true' do
@@ -335,24 +284,6 @@ RSpec.describe Spree::Import, :job, type: :model do
       it 'returns false' do
         expect(import.mapping_done?).to be false
       end
-    end
-  end
-
-  describe '#create_rows_async' do
-    before { import.save! }
-
-    it 'enqueues ProcessJob' do
-      expect { import.create_rows_async }
-        .to have_enqueued_job(Spree::Imports::ProcessJob).with(import.id).on_queue(Spree.queues.imports)
-    end
-  end
-
-  describe '#process_rows_async' do
-    before { import.save! }
-
-    it 'enqueues ProcessJob, skipping row creation' do
-      expect { import.process_rows_async }
-        .to have_enqueued_job(Spree::Imports::ProcessJob).with(import.id, skip_row_creation: true)
     end
   end
 
@@ -455,16 +386,16 @@ RSpec.describe Spree::Import, :job, type: :model do
     describe 'import.completed' do
       before do
         import.save!
-        import.start_mapping!
-        import.complete_mapping!
-        import.start_processing!
+        Spree.import_start_mapping_workflow.call(import: import)
+        Spree.import_complete_mapping_workflow.call(import: import)
+        Spree.import_start_processing_workflow.call(import: import)
       end
 
       it 'publishes import.completed event when completed' do
         expect(import).to receive(:publish_event).with('import.completed')
         allow(import).to receive(:publish_event).with(anything)
 
-        import.complete!
+        Spree.import_complete_workflow.call(import: import)
       end
     end
   end

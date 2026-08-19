@@ -10,7 +10,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
   let(:variant) { subject.process! }
 
   before do
-    import.create_mappings
+    Spree.import_start_mapping_workflow.call(import: import)
     # Manually map fields since there's no CSV file attached
     import.mappings.find_by(schema_field: 'tax_category')&.update(file_column: 'tax_category')
     import.mappings.find_by(schema_field: 'product_type')&.update(file_column: 'product_type')
@@ -641,7 +641,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
 
     # Override the top-level before to create mappings after custom_field definitions exist
     before do
-      import.create_mappings
+      Spree.import_start_mapping_workflow.call(import: import)
     end
 
     let(:product) { subject.process! }

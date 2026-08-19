@@ -25,8 +25,8 @@ module Spree
           inline: inline, skip_events: skip_events
         )
 
-        import.start_mapping
-        import.complete_mapping
+        Spree.import_start_mapping_workflow.call(import: import)
+        Spree.import_complete_mapping_workflow.call(import: import)
 
         success(import.reload)
       end

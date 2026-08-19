@@ -115,7 +115,7 @@ module Spree
         import.reload
 
         if import.completed_groups_count >= import.processing_groups_count && import.rows.in_flight.none?
-          import.complete! if import.status == 'processing'
+          Spree.import_complete_workflow.call(import: import) if import.status == 'processing'
         elsif large && (import.completed_groups_count % 10).zero?
           import.publish_event('import.progress')
         end

@@ -252,7 +252,7 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
 
   path '/api/v3/admin/imports/{id}/complete_mapping' do
     let(:import_in_mapping) do
-      create(:product_import, owner: store, user: admin_user).tap(&:start_mapping!)
+      create(:product_import, owner: store, user: admin_user).tap { |imp| Spree.import_start_mapping_workflow.call(import: imp) }
     end
     let(:id) { import_in_mapping.prefixed_id }
 
