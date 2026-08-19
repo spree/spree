@@ -14,6 +14,13 @@ module Spree
   # makes the deploy window safe: a fulfillment shipped before the task runs
   # never gets an allocation, and dispatch only ships allocated units.
   #
+  # Whether a fulfillment had shipped decides how its history reads. A closed
+  # one's departure was a departure. An open one's was the promise it still
+  # holds, so it types as the allocation and carries the counters with it —
+  # which also means reconciliation finds an allocation already there and
+  # leaves it alone. Reconciliation is left holding the open fulfillments that
+  # recorded no movement at all.
+  #
   # Runs after spree:migrate_shipping_to_delivery, which rewrites the
   # 'Spree::Shipment' originator strings, and after
   # spree:upgrade:migrate_returns, because a legacy authorization id says
@@ -45,10 +52,48 @@ module Spree
 
     def type_history
       Spree::StockMovement.unscoped.where(kind: nil).find_each(batch_size: batch_size) do |movement|
+        # Read before the update rewrites it: the legacy sign is what says which
+        # way the stock went, and a typed row keeps only the magnitude.
+        legacy_quantity = movement.quantity.to_i
         attributes = attributes_for(movement)
-        Spree::StockMovement.unscoped.where(id: movement.id).update_all(attributes.merge(updated_at: Time.current))
+
+        ActiveRecord::Base.transaction do
+          Spree::StockMovement.unscoped.where(id: movement.id).update_all(attributes.merge(updated_at: Time.current))
+          carry_promise(movement.stock_level_id, legacy_quantity) if open_fulfillment_row?(attributes)
+        end
+
         @typed += 1
       end
+    end
+
+    def open_fulfillment_row?(attributes)
+      attributes[:fulfillment_id].present? && open_fulfillment_ids.include?(attributes[:fulfillment_id])
+    end
+
+    # Turning an open fulfillment's placement row into its allocation has to
+    # move the counters with it, because the relabelling above skips callbacks.
+    # Legacy placement took the units off the shelf; under the allocation model
+    # they sit on the shelf and are promised, so both counters move by the same
+    # amount and availability comes out unchanged — which is what makes a
+    # pre-upgrade fulfillment safe to ship or cancel afterwards.
+    def carry_promise(stock_level_id, legacy_quantity)
+      delta = -legacy_quantity
+      return if delta.zero?
+
+      Spree::StockLevel.update_counters(
+        stock_level_id,
+        count_on_hand: delta,
+        allocated_count: delta,
+        touch: true
+      )
+    end
+
+    # Fulfillments still open when the upgrade runs. Read once: every
+    # fulfillment-originated row asks about them, and the set does not change
+    # while the task runs — typing and reconciliation both leave the status
+    # alone.
+    def open_fulfillment_ids
+      @open_fulfillment_ids ||= open_fulfillments.pluck(:id).to_set
     end
 
     def attributes_for(movement)
@@ -65,11 +110,19 @@ module Spree
     # A departure, or the restock of a cancellation or relocation, carrying
     # the order the fulfillment belonged to so "which order was this for?"
     # costs no join.
+    #
+    # A fulfillment still open when the upgrade runs never shipped: the
+    # departure it recorded at placement was the promise, and a promise is an
+    # allocation now — typing it 'shipped' would retire an allocation the
+    # fulfillment still holds, leaving it unable to ship or be cancelled. One
+    # that has already gone out keeps the departure.
     def fulfillment_attributes(movement)
       fulfillment = Spree::Fulfillment.find_by(id: movement.originator_id)
       return by_sign(movement) if fulfillment.nil?
 
-      by_sign(movement, negative: 'shipped', positive: 'released').
+      departure = open_fulfillment_ids.include?(fulfillment.id) ? 'allocated' : 'shipped'
+
+      by_sign(movement, negative: departure, positive: 'released').
         merge(fulfillment_id: fulfillment.id, order_id: fulfillment.order_id)
     end
 

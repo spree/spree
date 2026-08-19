@@ -683,9 +683,17 @@ describe '6.0 data migration tasks' do
       create(:order_ready_to_ship, store: store, line_items_count: 1)
     end
 
+    # A fulfillment that already went out before the upgrade. Its departure was
+    # a real departure, so it types differently from an open one's.
+    def shipped_order
+      order = open_order
+      order.fulfillments.each { |fulfillment| fulfillment.update_columns(status: 'fulfilled') }
+      order
+    end
+
     describe 'typing the history' do
-      it 'types a fulfillment departure and carries its order' do
-        order = open_order
+      it 'types a shipped fulfillment departure and carries its order' do
+        order = shipped_order
         fulfillment = order.fulfillments.first
         movement = legacy_movement(-3, originator_type: 'Spree::Fulfillment', originator_id: fulfillment.id)
 
@@ -698,10 +706,27 @@ describe '6.0 data migration tasks' do
         expect(movement.order_id).to eq(order.id)
       end
 
+      # An open fulfillment never shipped, so its placement row is the promise
+      # it still holds — typing it as a departure would retire that promise and
+      # leave the fulfillment unable to ship or be cancelled.
+      it 'types an open fulfillment departure as the allocation it was' do
+        order = open_order
+        fulfillment = order.fulfillments.first
+        movement = legacy_movement(-3, originator_type: 'Spree::Fulfillment', originator_id: fulfillment.id)
+
+        run_task('spree:migrate_stock_movements_to_typed_rows')
+
+        movement.reload
+        expect(movement.kind).to eq('allocated')
+        expect(movement.quantity).to eq(3)
+        expect(movement.fulfillment_id).to eq(fulfillment.id)
+        expect(movement.order_id).to eq(order.id)
+      end
+
       # Installs whose rows were never rewritten by migrate_shipping_to_delivery
       # still say Spree::Shipment.
       it 'accepts the pre-rename originator string' do
-        fulfillment = open_order.fulfillments.first
+        fulfillment = shipped_order.fulfillments.first
         movement = legacy_movement(-1, originator_type: 'Spree::Shipment', originator_id: fulfillment.id)
 
         run_task('spree:migrate_stock_movements_to_typed_rows')
@@ -711,7 +736,7 @@ describe '6.0 data migration tasks' do
       end
 
       it 'types a fulfillment restock as a release' do
-        fulfillment = open_order.fulfillments.first
+        fulfillment = shipped_order.fulfillments.first
         movement = legacy_movement(2, originator_type: 'Spree::Fulfillment', originator_id: fulfillment.id)
 
         run_task('spree:migrate_stock_movements_to_typed_rows')
@@ -830,6 +855,57 @@ describe '6.0 data migration tasks' do
 
         expect { run_task('spree:migrate_stock_movements_to_typed_rows') }.
           not_to change { [level.reload.count_on_hand, level.allocated_count, Spree::StockMovement.count] }
+      end
+
+      # The shape the two halves of this task meet in production, and the one
+      # neither half was exercised against alone: a placed but unfulfilled order
+      # whose units left the shelf at placement. A real 5.6 row carries no kind
+      # and no allocation, so this strips what modern placement wrote and leaves
+      # only the legacy departure behind.
+      def legacy_placement!
+        Spree::StockMovement.unscoped.where(stock_level_id: level.id).delete_all
+        level.update_columns(allocated_count: 0)
+        legacy_movement(-quantity, originator_type: 'Spree::Fulfillment', originator_id: fulfillment.id, level: level)
+      end
+
+      context 'when the fulfillment carries a legacy placement row' do
+        it 'leaves it holding its promise, with availability unchanged' do
+          legacy_placement!
+          shelf_before = level.reload.count_on_hand
+          available_before = level.available_count
+
+          run_task('spree:migrate_stock_movements_to_typed_rows')
+
+          level.reload
+          expect(fulfillment.reload.allocated_quantities[reconciled_variant.id]).to eq(quantity)
+          expect(level.count_on_hand).to eq(shelf_before + quantity)
+          expect(level.allocated_count).to eq(quantity)
+          expect(level.available_count).to eq(available_before)
+        end
+
+        # Typing the placement row as a departure used to retire the promise, so
+        # dispatch found nothing to ship and the units stayed on the shelf.
+        it 'can still ship its units off the shelf afterwards' do
+          legacy_placement!
+          run_task('spree:migrate_stock_movements_to_typed_rows')
+
+          expect { Spree::Fulfillments::Fulfill.call(fulfillment: fulfillment.reload, notify_customer: false) }.
+            to change { level.reload.count_on_hand }.by(-quantity)
+
+          expect(level.allocated_count).to eq(0)
+        end
+
+        # And cancelling used to release nothing, stranding real stock at zero
+        # availability for good.
+        it 'can still be cancelled back into availability afterwards' do
+          legacy_placement!
+          run_task('spree:migrate_stock_movements_to_typed_rows')
+
+          expect { Spree::Fulfillments::Cancel.call(fulfillment: fulfillment.reload, notify_provider: false) }.
+            to change { level.reload.available_count }.by(quantity)
+
+          expect(level.allocated_count).to eq(0)
+        end
       end
     end
   end
