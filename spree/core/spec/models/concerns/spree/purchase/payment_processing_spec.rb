@@ -78,13 +78,17 @@ RSpec.shared_examples 'a payment processing host' do
       end
     end
 
-    # Regression spec for https://github.com/spree/spree/issues/8148
-    it 'updates the record with correct payment total' do
+    # Regression spec for https://github.com/spree/spree/issues/8148.
+    # events: true — the record learns its payment_total from payment
+    # events now, and they are disabled by default in the test environment.
+    it 'updates the record with correct payment total', events: true do
       stub_store_preferences(capture_method: 'checkout')
       record.process_payments!
 
       expect(payment).to be_completed
-      expect(record.payment_total).to eq payment.amount
+      # reload: the subscriber that writes payment_total holds its own
+      # instance of this record, so the one here does not see the change.
+      expect(record.reload.payment_total).to eq payment.amount
     end
   end
 

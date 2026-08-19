@@ -116,7 +116,16 @@ FactoryBot.define do
           end
 
           after(:create) do |order, evaluator|
-            create(:payment, amount: order.total, order: order, state: 'completed') if evaluator.with_payment
+            if evaluator.with_payment
+              create(:payment, amount: order.total, order: order, status: 'completed')
+              # payment_state above claims the order is paid; payment_total is
+              # what the code actually reads (Fulfillments::Fulfill refuses an
+              # unpaid order). The order learns this from payment events in
+              # real life, and those are disabled in the test environment, so
+              # the factory states it directly rather than leaving the two
+              # halves disagreeing.
+              order.update_column(:payment_total, order.payments.completed.sum(:amount))
+            end
 
             order.fulfillments.each do |shipment|
               shipment.fulfillment_items.update_all state: 'on_hand'

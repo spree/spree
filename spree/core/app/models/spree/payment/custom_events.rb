@@ -26,7 +26,9 @@ module Spree
 
       def publish_payment_paid_event
         publish_event('payment.paid')
-        publish_order_paid_event if order.paid?
+        # order is nil for a cart-owned payment — checkout is still in
+        # flight, so there is no order to declare paid yet.
+        publish_order_paid_event if order&.paid?
       end
 
       def publish_order_paid_event

@@ -69,7 +69,13 @@ module Spree
         raise Spree::Core::GatewayError, Spree.t(:no_payment_found) if unprocessed_payments.empty?
 
         unprocessed_payments.each do |payment|
-          break if payment_total >= total
+          # payment_total is re-read from the database rather than trusted in
+          # memory: each settlement updates it through the order status
+          # subscriber, which holds its own instance of this record, so the
+          # attribute here goes stale after the first payment and the guard
+          # would never fire. Only that column is re-read — reloading the
+          # whole record would discard in-memory state the caller set.
+          break if self.class.where(id: id).pick(:payment_total).to_d >= total
 
           result = Spree.payment_process_workflow.call(payment: payment, action: action)
           raise Spree::Core::GatewayError, result.error.value.to_s if result.failure?

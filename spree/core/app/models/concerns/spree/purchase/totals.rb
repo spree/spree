@@ -10,6 +10,22 @@ module Spree
         line_items.sum(:quantity)
       end
 
+      # Re-sums what the customer has actually paid, and nothing else. A
+      # payment settling moves only the payment side of the ledger — item
+      # and delivery money is the totals workflow's business, and
+      # re-deriving it here would overwrite figures a caller set
+      # deliberately.
+      #
+      # Shared by Cart and Order: both carry payment_total, and payments
+      # settle on a cart during checkout.
+      #
+      # @return [BigDecimal] the persisted payment_total
+      def refresh_payment_total!
+        settled = payments.completed.includes(:refunds).sum { |payment| payment.amount - payment.refunds.sum(:amount) }
+        update_column(:payment_total, settled)
+        self.payment_total = settled
+      end
+
       # @return [Boolean]
       def outstanding_balance?
         outstanding_balance != 0

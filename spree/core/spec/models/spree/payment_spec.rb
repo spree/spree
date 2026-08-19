@@ -209,18 +209,21 @@ describe Spree::Payment, type: :model do
   end
 
   describe 'Callbacks' do
-    describe '#update_order' do
+    # events: true — the order learns about payment changes through events
+    # now, not an after_save callback, and they are disabled by default in
+    # the test environment.
+    describe 'keeping the order in step', events: true do
       let(:payment) { create(:payment, order: order, status: 'completed') }
 
       context 'when destroying completed payment' do
         it 'updates the order' do
-          expect { payment.destroy }.to change { order.payment_total }.by(-payment.amount)
+          expect { payment.destroy }.to change { order.reload.payment_total }.by(-payment.amount)
         end
       end
 
       context 'when voiding a payment' do
         it 'updates the order' do
-          expect { payment.void! }.to change { order.payment_total }.by(-payment.amount)
+          expect { payment.void! }.to change { order.reload.payment_total }.by(-payment.amount)
         end
       end
     end
@@ -854,10 +857,10 @@ describe Spree::Payment, type: :model do
   end
 
   describe '#save' do
-    context 'captured payments' do
+    context 'captured payments', events: true do
       it 'update order payment total' do
         payment = create(:payment, order: order, status: 'completed')
-        expect(order.payment_total).to eq payment.amount
+        expect(order.reload.payment_total).to eq payment.amount
       end
     end
 
