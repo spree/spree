@@ -412,7 +412,50 @@
         "no_results": "لا توجد نتائج لـ \"{{query}}\".",
         "empty_hint": "اكتب للبحث، أو اختر أمرًا أدناه.",
         "goto": "انتقل إلى",
-        "goto_label": "انتقل إلى {{label}}"
+        "goto_label": "انتقل إلى {{label}}",
+        "hints": {
+          "navigate": "التنقل",
+          "select": "اختيار",
+          "close": "إغلاق",
+          "esc_key": "esc"
+        },
+        "create": {
+          "heading": "إنشاء",
+          "label": "إنشاء {{noun}}",
+          "verbs": "إضافة,جديد,جديدة,أضف,إنشاء,انشاء",
+          "nouns": {
+            "category": "فئة",
+            "category_plural": "الفئات",
+            "collection": "مجموعة",
+            "collection_plural": "المجموعات",
+            "company": "شركة",
+            "company_plural": "الشركات",
+            "customer": "عميل",
+            "customer_group": "مجموعة عملاء",
+            "customer_group_plural": "مجموعات العملاء",
+            "customer_plural": "العملاء",
+            "discount": "خصم",
+            "discount_plural": "الخصومات",
+            "gift_card": "بطاقة هدايا",
+            "gift_card_plural": "بطاقات الهدايا",
+            "option_type": "خيار",
+            "option_type_plural": "الخيارات",
+            "order": "طلب",
+            "order_plural": "الطلبات",
+            "price_list": "قائمة أسعار",
+            "price_list_plural": "قوائم الأسعار",
+            "product": "منتج",
+            "product_plural": "المنتجات",
+            "promotion": "عرض ترويجي",
+            "promotion_plural": "العروض الترويجية",
+            "seller": "بائع",
+            "seller_plural": "البائعون",
+            "stock_location": "مستودع",
+            "stock_location_plural": "المستودعات",
+            "stock_transfer": "تحويل",
+            "stock_transfer_plural": "التحويلات"
+          }
+        }
       },
       "bulk_action_bar": {
         "selected": "تم تحديد {{count}}",

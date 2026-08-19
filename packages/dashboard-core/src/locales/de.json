@@ -412,7 +412,50 @@
         "no_results": "Keine Ergebnisse für \"{{query}}\".",
         "empty_hint": "Zum Suchen tippen oder unten einen Befehl auswählen.",
         "goto": "Gehe zu",
-        "goto_label": "Gehe zu {{label}}"
+        "goto_label": "Gehe zu {{label}}",
+        "hints": {
+          "navigate": "navigieren",
+          "select": "auswählen",
+          "close": "schließen",
+          "esc_key": "Esc"
+        },
+        "create": {
+          "heading": "Erstellen",
+          "label": "Neu: {{noun}}",
+          "verbs": "neu,neue,neuer,neues,neuen,hinzufügen,erstellen,anlegen",
+          "nouns": {
+            "category": "Kategorie",
+            "category_plural": "Kategorien",
+            "collection": "Kollektion",
+            "collection_plural": "Kollektionen",
+            "company": "Unternehmen",
+            "company_plural": "Unternehmen",
+            "customer": "Kunde",
+            "customer_group": "Kundengruppe",
+            "customer_group_plural": "Kundengruppen",
+            "customer_plural": "Kunden",
+            "discount": "Rabatt",
+            "discount_plural": "Rabatte",
+            "gift_card": "Geschenkkarte",
+            "gift_card_plural": "Geschenkkarten",
+            "option_type": "Option",
+            "option_type_plural": "Optionen",
+            "order": "Bestellung",
+            "order_plural": "Bestellungen",
+            "price_list": "Preisliste",
+            "price_list_plural": "Preislisten",
+            "product": "Produkt",
+            "product_plural": "Produkte",
+            "promotion": "Aktion",
+            "promotion_plural": "Aktionen",
+            "seller": "Verkäufer",
+            "seller_plural": "Verkäufer",
+            "stock_location": "Lager",
+            "stock_location_plural": "Lager",
+            "stock_transfer": "Umlagerung",
+            "stock_transfer_plural": "Umlagerungen"
+          }
+        }
       },
       "bulk_action_bar": {
         "selected": "{{count}} ausgewählt",

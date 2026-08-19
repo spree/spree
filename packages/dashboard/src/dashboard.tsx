@@ -10,6 +10,7 @@ import { StrictMode } from 'react'
 import './i18n-setup'
 import './nav/default'
 import './nav/settings'
+import './search/create-actions'
 import './search/default'
 
 /**

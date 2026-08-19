@@ -412,7 +412,50 @@
         "no_results": "No results for \"{{query}}\".",
         "empty_hint": "Type to search, or pick a command below.",
         "goto": "Go to",
-        "goto_label": "Go to {{label}}"
+        "goto_label": "Go to {{label}}",
+        "hints": {
+          "navigate": "navigate",
+          "select": "select",
+          "close": "close",
+          "esc_key": "esc"
+        },
+        "create": {
+          "heading": "Create",
+          "label": "New {{noun}}",
+          "verbs": "add,new,create",
+          "nouns": {
+            "category": "Category",
+            "category_plural": "Categories",
+            "collection": "Collection",
+            "collection_plural": "Collections",
+            "company": "Company",
+            "company_plural": "Companies",
+            "customer": "Customer",
+            "customer_group": "Customer group",
+            "customer_group_plural": "Customer groups",
+            "customer_plural": "Customers",
+            "discount": "Discount",
+            "discount_plural": "Discounts",
+            "gift_card": "Gift card",
+            "gift_card_plural": "Gift cards",
+            "option_type": "Option",
+            "option_type_plural": "Options",
+            "order": "Order",
+            "order_plural": "Orders",
+            "price_list": "Price list",
+            "price_list_plural": "Price lists",
+            "product": "Product",
+            "product_plural": "Products",
+            "promotion": "Promotion",
+            "promotion_plural": "Promotions",
+            "seller": "Seller",
+            "seller_plural": "Sellers",
+            "stock_location": "Location",
+            "stock_location_plural": "Locations",
+            "stock_transfer": "Transfer",
+            "stock_transfer_plural": "Transfers"
+          }
+        }
       },
       "bulk_action_bar": {
         "selected": "{{count}} selected",

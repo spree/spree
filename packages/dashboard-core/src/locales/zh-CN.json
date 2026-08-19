@@ -412,7 +412,50 @@
         "no_results": "未找到与“{{query}}”相关的结果。",
         "empty_hint": "输入以搜索，或从下方选择命令。",
         "goto": "前往",
-        "goto_label": "前往 {{label}}"
+        "goto_label": "前往 {{label}}",
+        "hints": {
+          "navigate": "导航",
+          "select": "选择",
+          "close": "关闭",
+          "esc_key": "esc"
+        },
+        "create": {
+          "heading": "创建",
+          "label": "新建{{noun}}",
+          "verbs": "新建,添加,创建,新增",
+          "nouns": {
+            "category": "分类",
+            "category_plural": "分类",
+            "collection": "系列",
+            "collection_plural": "系列",
+            "company": "公司",
+            "company_plural": "公司",
+            "customer": "客户",
+            "customer_group": "客户组",
+            "customer_group_plural": "客户组",
+            "customer_plural": "客户",
+            "discount": "折扣",
+            "discount_plural": "折扣",
+            "gift_card": "礼品卡",
+            "gift_card_plural": "礼品卡",
+            "option_type": "选项",
+            "option_type_plural": "选项",
+            "order": "订单",
+            "order_plural": "订单",
+            "price_list": "价目表",
+            "price_list_plural": "价目表",
+            "product": "商品",
+            "product_plural": "商品",
+            "promotion": "促销",
+            "promotion_plural": "促销",
+            "seller": "卖家",
+            "seller_plural": "卖家",
+            "stock_location": "仓库",
+            "stock_location_plural": "仓库",
+            "stock_transfer": "调拨",
+            "stock_transfer_plural": "调拨"
+          }
+        }
       },
       "bulk_action_bar": {
         "selected": "已选择 {{count}} 项",
