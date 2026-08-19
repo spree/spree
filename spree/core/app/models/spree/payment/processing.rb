@@ -6,7 +6,13 @@ module Spree
     # methods: option serialization, response bookkeeping, error
     # translation and instrumentation. The flows themselves — capture,
     # void, authorize/purchase — live in app/workflows/spree/payments;
-    # the deprecated verb methods below delegate there until 6.1.
+    # the deprecated verb methods below delegate there until 7.0.
+    #
+    # Those five carry a full major's window rather than the usual one
+    # release: they have been the public way to move money since Spree 1,
+    # every payment extension and host override calls them, and the
+    # replacement is a different shape (a workflow result, not a boolean),
+    # so migrating is real work rather than a rename.
     module Processing
       extend ActiveSupport::Concern
       include Spree::InstrumentsGatewayCalls
@@ -16,40 +22,49 @@ module Spree
         self.gateway_options_class = Spree::Payment::GatewayOptions
       end
 
-      # @deprecated Call Spree.payment_process_workflow — removed in 6.1.
+      # @deprecated Call Spree.payment_process_workflow — removed in 7.0.
       def process!
-        Spree::Deprecation.warn('Spree::Payment#process! is deprecated and will be removed in Spree 6.1. Call Spree.payment_process_workflow instead.')
+        Spree::Deprecation.warn('Spree::Payment#process! is deprecated and will be removed in Spree 7.0. Call Spree.payment_process_workflow instead.')
         run_payment_workflow(Spree.payment_process_workflow, payment: self)
       end
 
-      # @deprecated Call Spree.payment_process_workflow — removed in 6.1.
+      # @deprecated Call Spree.payment_process_workflow — removed in 7.0.
       def authorize!
-        Spree::Deprecation.warn('Spree::Payment#authorize! is deprecated and will be removed in Spree 6.1. Call Spree.payment_process_workflow instead.')
+        Spree::Deprecation.warn('Spree::Payment#authorize! is deprecated and will be removed in Spree 7.0. Call Spree.payment_process_workflow instead.')
         run_payment_workflow(Spree.payment_process_workflow, payment: self, action: :authorize)
       end
 
-      # @deprecated Call Spree.payment_process_workflow — removed in 6.1.
+      # @deprecated Call Spree.payment_process_workflow — removed in 7.0.
       def purchase!
-        Spree::Deprecation.warn('Spree::Payment#purchase! is deprecated and will be removed in Spree 6.1. Call Spree.payment_process_workflow instead.')
+        Spree::Deprecation.warn('Spree::Payment#purchase! is deprecated and will be removed in Spree 7.0. Call Spree.payment_process_workflow instead.')
         run_payment_workflow(Spree.payment_process_workflow, payment: self, action: :purchase)
       end
 
-      # @deprecated Call Spree.payment_capture_workflow — removed in 6.1.
+      # @deprecated Call Spree.payment_capture_workflow — removed in 7.0.
       def capture!(amount = nil)
-        Spree::Deprecation.warn('Spree::Payment#capture! is deprecated and will be removed in Spree 6.1. Call Spree.payment_capture_workflow instead.')
+        Spree::Deprecation.warn('Spree::Payment#capture! is deprecated and will be removed in Spree 7.0. Call Spree.payment_capture_workflow instead.')
         run_payment_workflow(Spree.payment_capture_workflow, payment: self, amount: amount)
       end
 
-      # @deprecated Call Spree.payment_void_workflow — removed in 6.1.
+      # @deprecated Call Spree.payment_void_workflow — removed in 7.0.
       def void_transaction!
-        Spree::Deprecation.warn('Spree::Payment#void_transaction! is deprecated and will be removed in Spree 6.1. Call Spree.payment_void_workflow instead.')
+        Spree::Deprecation.warn('Spree::Payment#void_transaction! is deprecated and will be removed in Spree 7.0. Call Spree.payment_void_workflow instead.')
         run_payment_workflow(Spree.payment_void_workflow, payment: self)
       end
 
       # Confirms a payment already authorized or captured on the gateway side
       # (SDK / Drop-in / payment session flows) — the local status move only,
-      # no gateway call. Runs inside the settlement locks, so it must stay
-      # pure database work.
+      # no gateway call.
+      #
+      # Deliberately not a workflow, unlike its siblings: its only caller is
+      # PaymentSession#settle_payment!, which runs inside owner.with_lock —
+      # and a workflow cannot run there (external_step refuses a
+      # workflow-opened transaction, halt! raises inside any transaction).
+      # The lock is what makes settlement exactly-once when the webhook
+      # races the customer's synchronous return, so it stays and this stays
+      # pure database work. There is no gateway call to push behind an
+      # external_step and no compensation to run, so nothing about it earns
+      # the workflow tier.
       #
       # @param captured [Boolean, nil] whether the gateway reports the funds
       #   as captured. Callers who know the gateway state pass it; nil falls
