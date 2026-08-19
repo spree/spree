@@ -733,7 +733,6 @@ require 'spree/analytics'
 require 'spree/events'
 require 'spree/store_scope_guard'
 
-require 'spree/core/partials'
 require 'spree/core/controller_helpers/store'
 require 'spree/core/controller_helpers/strong_parameters'
 
