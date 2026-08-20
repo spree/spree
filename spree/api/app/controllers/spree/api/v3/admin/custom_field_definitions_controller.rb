@@ -10,6 +10,19 @@ module Spree
         class CustomFieldDefinitionsController < ResourceController
           scoped_resource :settings
 
+          # GET /api/v3/admin/custom_field_definitions/resource_types
+          #
+          # What a definition can be attached to, from
+          # `Spree.custom_fields.enabled_resources` — so a resource an
+          # extension registers is offered without the dashboard shipping a
+          # new list, and a merchant is never shown a type the server would
+          # then refuse.
+          def resource_types
+            authorize! :create, model_class
+
+            render json: { data: Spree::CustomFieldDefinition.enabled_resource_types }
+          end
+
           protected
 
           def model_class
@@ -24,6 +37,11 @@ module Spree
             params.permit(*model_additional_permitted_attributes, :namespace, :key, :label, :field_type,
                           :resource_type, :storefront_visible,
                           :searchable, :sortable)
+          end
+
+          # Pure registry discovery — maps to the read scope.
+          def read_actions
+            super + %w[resource_types]
           end
         end
       end
