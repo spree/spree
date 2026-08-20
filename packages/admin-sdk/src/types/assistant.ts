@@ -34,6 +34,9 @@ export interface AssistantToolCall {
   summary: string | null
   arguments: Record<string, unknown>
   result: Record<string, unknown> | null
+  /** Records a completed read found, so a reopened chat shows the same
+   *  clickable list the merchant saw live. Null for changes. */
+  records: AssistantRecord[] | null
   awaiting_approval: boolean
   created_at: string
   resolved_at: string | null

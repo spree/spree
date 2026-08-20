@@ -1,4 +1,14 @@
-import { Badge, Button, cn } from '@spree/dashboard-ui'
+import {
+  Badge,
+  Button,
+  cn,
+  MessageScroller,
+  MessageScrollerButton,
+  MessageScrollerContent,
+  MessageScrollerItem,
+  MessageScrollerProvider,
+  MessageScrollerViewport,
+} from '@spree/dashboard-ui'
 import {
   ArrowUpIcon,
   CheckIcon,
@@ -8,12 +18,14 @@ import {
   WrenchIcon,
   XIcon,
 } from 'lucide-react'
-import { type FormEvent, useEffect, useRef } from 'react'
+import { type FormEvent, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   type AssistantTranscriptEntry,
   useAssistantConversation,
 } from '../../../hooks/use-assistant'
+import { AssistantHistoryMenu } from './assistant-history-menu'
+import { AssistantMarkdown } from './assistant-markdown'
 import { AssistantRecords } from './assistant-records'
 
 interface AssistantPanelProps {
@@ -31,19 +43,10 @@ const SUGGESTIONS = [
 
 export function AssistantPanel({ onClose, expanded, onToggleExpanded }: AssistantPanelProps) {
   const { t } = useTranslation()
-  const { entries, streaming, error, send, resolve, reset } = useAssistantConversation()
+  const { chatId, chatTitle, entries, streaming, error, send, resolve, load, reset } =
+    useAssistantConversation()
   const inputRef = useRef<HTMLTextAreaElement>(null)
-  const bottomRef = useRef<HTMLDivElement>(null)
   const empty = entries.length === 0
-
-  // Follows the answer as it streams in. Depends on both the transcript length
-  // and the streaming flag: with an empty dependency list the ref is still null
-  // on mount (the anchor only renders once there are entries) and the panel
-  // would never scroll at all.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: the deps drive the re-run, the body reads neither
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
-  }, [entries.length, streaming])
 
   function submit(value: string) {
     const text = value.trim()
@@ -63,14 +66,13 @@ export function AssistantPanel({ onClose, expanded, onToggleExpanded }: Assistan
       aria-label={t('admin.assistant.title')}
       className="flex h-full w-full flex-col bg-background"
     >
-      <header className="flex h-header-height shrink-0 items-center justify-between gap-2 px-4">
-        <button
-          type="button"
-          onClick={reset}
-          className="truncate rounded-md px-1 py-0.5 font-medium text-sm hover:bg-accent"
-        >
-          {t('admin.assistant.new_chat')}
-        </button>
+      <header className="flex h-header-height border-b border-border shrink-0 items-center justify-between gap-2 px-4">
+        <AssistantHistoryMenu
+          currentChatId={chatId}
+          currentTitle={chatTitle}
+          onSelect={(id) => void load(id)}
+          onNewChat={reset}
+        />
         <div className="flex items-center gap-1">
           <Button
             variant="ghost"
@@ -97,7 +99,11 @@ export function AssistantPanel({ onClose, expanded, onToggleExpanded }: Assistan
           and recedes the moment a conversation starts. */}
       <div
         className={cn(
-          'flex-1 overflow-y-auto px-4',
+          // `min-h-0` so this flex child may shrink below its content and the
+          // scroller inside it actually scrolls; scrolling itself belongs to
+          // the scroller's viewport, never to this wrapper.
+          'min-h-0 flex-1 px-4',
+          empty && 'overflow-y-auto',
           empty &&
             '[background-image:radial-gradient(theme(colors.border)_1px,transparent_1px)] [background-position:0_0] [background-size:16px_16px]',
         )}
@@ -126,28 +132,45 @@ export function AssistantPanel({ onClose, expanded, onToggleExpanded }: Assistan
             </div>
           </div>
         ) : (
-          <div className="space-y-3 py-4">
-            {entries.map((entry) => (
-              <TranscriptRow key={entry.id} entry={entry} onResolve={resolve} busy={streaming} />
-            ))}
+          // The scroller follows the reply as it streams and offers a
+          // jump-to-latest button when the merchant has scrolled up, so the
+          // panel no longer yanks them back mid-read.
+          <MessageScrollerProvider autoScroll defaultScrollPosition="last-anchor">
+            <MessageScroller className="h-full">
+              <MessageScrollerViewport>
+                <MessageScrollerContent aria-busy={streaming} className="gap-3 py-4">
+                  {entries.map((entry) => (
+                    <MessageScrollerItem
+                      key={entry.id}
+                      messageId={entry.id}
+                      // A merchant's question starts a turn, so anchoring there
+                      // keeps the question in view while the answer arrives.
+                      scrollAnchor={entry.kind === 'user'}
+                    >
+                      <TranscriptRow entry={entry} onResolve={resolve} busy={streaming} />
+                    </MessageScrollerItem>
+                  ))}
 
-            {streaming && (
-              <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                <Loader2Icon className="size-4 animate-spin" />
-                {t('admin.assistant.thinking')}
-              </div>
-            )}
+                  {streaming && (
+                    <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                      <Loader2Icon className="size-4 animate-spin" />
+                      {t('admin.assistant.thinking')}
+                    </div>
+                  )}
 
-            {error && <p className="text-destructive text-sm">{error}</p>}
-            <div ref={bottomRef} />
-          </div>
+                  {error && <p className="text-destructive text-sm">{error}</p>}
+                </MessageScrollerContent>
+              </MessageScrollerViewport>
+              <MessageScrollerButton />
+            </MessageScroller>
+          </MessageScrollerProvider>
         )}
       </div>
 
       <div className="shrink-0 p-3">
         <form
           onSubmit={handleSubmit}
-          className="rounded-xl border bg-background p-2 shadow-sm focus-within:ring-1 focus-within:ring-ring"
+          className="rounded-xl border bg-card p-2 shadow-sm focus-within:ring-1 focus-within:ring-ring"
         >
           <textarea
             ref={inputRef}
@@ -201,7 +224,7 @@ function TranscriptRow({
   }
 
   if (entry.kind === 'assistant') {
-    return <div className="max-w-[85%] whitespace-pre-wrap text-sm">{entry.text}</div>
+    return <AssistantMarkdown text={entry.text ?? ''} />
   }
 
   if (entry.kind === 'activity') {

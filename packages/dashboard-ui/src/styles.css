@@ -1143,3 +1143,11 @@
     animation-iteration-count: infinite;
   }
 }
+
+/* The message-scroller fades its top edge so a long transcript reads as
+   continuing rather than cut off. Scrollbar styling is not repeated here —
+   `themed-scrollbar` above already does it, theme-aware and with a reserved
+   gutter. */
+@utility scroll-fade-b {
+  mask-image: linear-gradient(to bottom, transparent 0, black 1.5rem, black 100%);
+}

@@ -7,6 +7,7 @@ import type {
 } from '@spree/admin-sdk'
 import { adminClient, useStore } from '@spree/dashboard-core'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import i18n from 'i18next'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 /** What the panel renders: the conversation so far, plus anything in flight. */
@@ -63,6 +64,7 @@ export function useAssistantConversation() {
   const { storeId } = useStore()
   const queryClient = useQueryClient()
   const [chatId, setChatId] = useState<string | null>(null)
+  const [chatTitle, setChatTitle] = useState<string | null>(null)
   const [entries, setEntries] = useState<AssistantTranscriptEntry[]>([])
   const [streaming, setStreaming] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -112,7 +114,7 @@ export function useAssistantConversation() {
           if (event.data.text) append({ kind: 'assistant', text: event.data.text })
           break
         case 'turn.failed':
-          setError(event.data.message ?? 'Something went wrong.')
+          setError(event.data.message ?? i18n.t('admin.assistant.errors.turn_failed'))
           break
         default:
           break
@@ -139,6 +141,7 @@ export function useAssistantConversation() {
 
       try {
         const id = await ensureChat()
+        setChatTitle((current) => current ?? content.trim().slice(0, 60))
         abortRef.current = new AbortController()
         await adminClient.streamAssistantTurn(
           `/assistant/chats/${id}/messages`,
@@ -147,8 +150,11 @@ export function useAssistantConversation() {
           abortRef.current.signal,
         )
       } catch (streamError) {
+        // A raw fetch/HTTP message is an untranslated internal; the merchant
+        // gets a sentence, and the detail goes to the console for us.
         if ((streamError as Error).name !== 'AbortError') {
-          setError((streamError as Error).message)
+          console.error('[assistant] turn failed', streamError)
+          setError(i18n.t('admin.assistant.errors.turn_failed'))
         }
       } finally {
         setStreaming(false)
@@ -173,7 +179,8 @@ export function useAssistantConversation() {
         )
       } catch (streamError) {
         if ((streamError as Error).name !== 'AbortError') {
-          setError((streamError as Error).message)
+          console.error('[assistant] decision failed', streamError)
+          setError(i18n.t('admin.assistant.errors.turn_failed'))
         }
       } finally {
         setStreaming(false)
@@ -185,6 +192,7 @@ export function useAssistantConversation() {
   const load = useCallback(async (id: string) => {
     const chat = (await adminClient.assistant.chats.get(id)).data
     setChatId(chat.id)
+    setChatTitle(chat.title ?? null)
     counter.current = 0
     setEntries(
       (chat.messages ?? []).flatMap<AssistantTranscriptEntry>((message) => {
@@ -197,7 +205,19 @@ export function useAssistantConversation() {
           })
         }
         for (const toolCall of message.tool_calls ?? []) {
-          rows.push({ id: `tc-${toolCall.id}`, kind: 'proposal', toolCall })
+          // A completed read replays as the record list the merchant saw
+          // live; only an actual change replays as a decision card. Without
+          // this a reopened chat showed reads as raw argument dumps.
+          if (toolCall.records?.length) {
+            rows.push({
+              id: `tc-${toolCall.id}`,
+              kind: 'records',
+              records: toolCall.records as AssistantRecord[],
+              total: (toolCall.result?.total as number | undefined) ?? toolCall.records.length,
+            })
+          } else {
+            rows.push({ id: `tc-${toolCall.id}`, kind: 'proposal', toolCall })
+          }
         }
         return rows
       }),
@@ -212,10 +232,11 @@ export function useAssistantConversation() {
   const reset = useCallback(() => {
     abortRef.current?.abort()
     setChatId(null)
+    setChatTitle(null)
     setEntries([])
     setError(null)
     counter.current = 0
   }, [])
 
-  return { chatId, entries, streaming, error, send, resolve, load, reset }
+  return { chatId, chatTitle, entries, streaming, error, send, resolve, load, reset }
 }
