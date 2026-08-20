@@ -18,56 +18,13 @@ module Spree
     has_many :products, -> { distinct }, through: :variants, source: :product
     alias price_list_products products
 
-    # Override default nested attributes to use bulk_update_prices for performance
-    attr_reader :prices_attributes
-
-    # Sets the prices attributes for bulk update
-    # @param attributes [Array<Hash>] array of price attributes with :id, :amount, :compare_at_amount
-    # @return [Array<Hash>] array of price attributes with :id, :amount, :compare_at_amount
-    def prices_attributes=(attributes)
-      @prices_attributes = attributes.values
-    end
-
-    after_update :process_bulk_prices_update
     after_save :apply_pending_rules
-    after_save :apply_pending_product_ids
-    after_save :apply_pending_prices
 
     # @return [Array<String>] prefixed product ids in this list,
     #   encoded inline to avoid hydrating N Product records.
     def product_prefixed_ids
       prefix = Spree::Product._prefix_id_prefix
       product_ids.sort.map { |pk| "#{prefix}_#{Spree::PrefixedId::SQIDS.encode([pk])}" }
-    end
-
-    # Reconciles list membership. Removes prices for products no longer
-    # in `ids` and adds placeholder prices for the new ones.
-    #
-    # @param ids [Array<String>] raw product PKs (prefixed strings are
-    #   resolved upstream by `Spree::Base#assign_attributes`).
-    # @return [void]
-    def product_ids=(ids)
-      @pending_product_ids = Array(ids).compact.uniq
-    end
-
-    # Flat-payload writer for `prices`. Bulk-upserts the listed rows in
-    # `after_save` so newly-added products have their placeholder rows
-    # materialized first. Nullability contract:
-    #   - `nil` → no-op
-    #   - `[]`  → clear every override on this list
-    #   - `[…]` → upsert listed rows, leave the rest alone
-    #
-    # @param rows [Array<Hash>, Array<Spree::Price>, nil]
-    # @return [void]
-    def prices=(rows)
-      first = Array(rows).first
-      return super(rows) if first.is_a?(Spree::Price)
-      return if rows.nil?
-
-      @pending_prices = Array(rows).map do |row|
-        row.respond_to?(:to_unsafe_h) ? row.to_unsafe_h.with_indifferent_access : row.with_indifferent_access
-      end
-      @pending_prices_clear = rows.empty?
     end
 
     # Flat-payload writer for `rules`. See
@@ -293,78 +250,8 @@ module Spree
 
     private
 
-    # Processes the bulk prices update
-    # @return [void]
-    def process_bulk_prices_update
-      return if @prices_attributes.blank?
-
-      bulk_update_prices(@prices_attributes)
-      @prices_attributes = nil
-    end
-
     def apply_pending_rules
       flush_pending_typed_association(:price_rules)
-    end
-
-    def apply_pending_product_ids
-      return unless @pending_product_ids
-
-      desired = @pending_product_ids
-      @pending_product_ids = nil
-
-      current = product_ids
-      to_remove = current - desired
-      to_add = desired - current
-
-      return unless to_remove.any? || to_add.any?
-
-      remove_products(to_remove) if to_remove.any?
-      add_products(to_add) if to_add.any?
-
-      # Membership is changed via raw `upsert_all`/`delete_all` on `prices`,
-      # which bypasses the `variants`/`products` association caches (and the
-      # `product_ids` ids-reader memo `current` populated above). Reset them so
-      # a same-request read — e.g. the serializer's `product_ids` — reflects the
-      # new membership instead of the pre-change set.
-      association(:variants).reset
-      association(:products).reset
-    end
-
-    def apply_pending_prices
-      pending = @pending_prices
-      cleared = @pending_prices_clear
-      return if pending.nil?
-
-      @pending_prices = nil
-      @pending_prices_clear = nil
-
-      if cleared
-        variant_ids = prices.distinct.pluck(:variant_id)
-        prices.update_all(amount: nil, compare_at_amount: nil, updated_at: Time.current)
-        touch_variants(variant_ids)
-        return
-      end
-
-      rows = pending.filter_map do |row|
-        # `variant_id` may arrive as a prefixed string (legacy callers,
-        # console) or already decoded (the controller's `permitted_params`
-        # runs through `normalize_params`). Handle both.
-        raw = row[:variant_id]
-        variant_id = Spree::PrefixedId.prefixed_id?(raw) ? Spree::PrefixedId.decode_prefixed_id(raw) : raw
-        next if variant_id.blank? || row[:currency].blank?
-
-        {
-          variant_id: variant_id,
-          currency: row[:currency],
-          price_list_id: id,
-          amount: row[:amount],
-          compare_at_amount: row[:compare_at_amount]
-        }
-      end
-      return if rows.empty?
-
-      Spree::Prices::BulkUpsert.call(rows: rows)
-      touch_variants(rows.map { |r| r[:variant_id] }.uniq)
     end
 
     # Touches the variants in a background job

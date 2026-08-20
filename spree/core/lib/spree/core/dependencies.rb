@@ -134,6 +134,8 @@ module Spree
         product_draft_workflow: 'Spree::Products::Draft',
 
         # price lists
+        price_list_create_workflow: 'Spree::PriceLists::Create',
+        price_list_update_workflow: 'Spree::PriceLists::Update',
         price_list_activate_workflow: 'Spree::PriceLists::Activate',
         price_list_deactivate_workflow: 'Spree::PriceLists::Deactivate',
 
