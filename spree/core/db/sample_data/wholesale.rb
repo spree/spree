@@ -68,4 +68,4 @@ if blank_prices.any?
   price_list.bulk_update_prices(rows) if rows.any?
 end
 
-price_list.activate if price_list.can_activate?
+Spree.price_list_activate_workflow.call(price_list: price_list) unless price_list.active?

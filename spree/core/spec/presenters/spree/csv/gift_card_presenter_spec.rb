@@ -9,7 +9,7 @@ RSpec.describe Spree::CSV::GiftCardPresenter, type: :model do
            amount: 50.00,
            amount_used: 10.00,
            currency: 'USD',
-           state: 'active',
+           status: 'active',
            expires_at: Date.new(Time.current.year, 12, 31),
            user: user,
            store: store)

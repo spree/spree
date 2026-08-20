@@ -36,6 +36,11 @@ module Spree
         validates :status, inclusion: { in: ->(record) { record.class.statuses } }
 
         values.each { |value| define_status_methods(value) }
+
+        # Multi-value lookup, replacing what state_machines-activerecord
+        # generated. The single-value scopes read better for one status;
+        # this exists for the "any of these" case.
+        scope :with_status, ->(*wanted) { where(status: wanted.flatten.map(&:to_s)) }
       end
 
       # Appends a status. Additive by design: core workflows guard on core

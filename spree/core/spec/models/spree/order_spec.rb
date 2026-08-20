@@ -1094,7 +1094,7 @@ describe Spree::Order, type: :model do
 
       context 'when shipped' do
         before do
-          inventory_unit.update_column(:state, 'shipped')
+          inventory_unit.update_column(:status, 'shipped')
         end
 
         it 'does not delete inventory_unit' do
@@ -1105,7 +1105,7 @@ describe Spree::Order, type: :model do
 
       context 'when returned' do
         before do
-          inventory_unit.update_column(:state, 'returned')
+          inventory_unit.update_column(:status, 'returned')
         end
 
         it 'does not delete inventory_unit' do
@@ -1116,7 +1116,7 @@ describe Spree::Order, type: :model do
 
       context 'when on_hand' do
         before do
-          inventory_unit.update_column(:state, 'on_hand')
+          inventory_unit.update_column(:status, 'on_hand')
         end
 
         it 'deletes inventory_unit' do
@@ -1127,7 +1127,7 @@ describe Spree::Order, type: :model do
 
       context 'when backordered' do
         before do
-          inventory_unit.update_column(:state, 'backordered')
+          inventory_unit.update_column(:status, 'backordered')
         end
 
         it 'deletes inventory_unit' do
@@ -1242,7 +1242,7 @@ describe Spree::Order, type: :model do
     let(:order) { create(:order_with_line_items, line_items_count: 3) }
 
     context 'all inventory units are returned' do
-      before { order.inventory_units.update_all(state: 'returned') }
+      before { order.inventory_units.update_all(status: 'returned') }
 
       it 'is true' do
         expect(subject).to eq true

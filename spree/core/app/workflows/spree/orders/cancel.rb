@@ -57,7 +57,7 @@ module Spree
         step :update_statuses, with: -> { Spree.order_update_statuses_service }
         order.publish_event('order.canceled', order.event_payload.merge(notify_customer: notify_customer))
         success(order.reload)
-      rescue ActiveRecord::RecordInvalid, StateMachines::InvalidTransition
+      rescue ActiveRecord::RecordInvalid
         failure(order)
       end
 

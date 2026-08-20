@@ -76,4 +76,44 @@ RSpec.describe Spree::Api::V3::ResourceController, type: :controller do
       Spree::TaxCategory.additional_permitted_attributes = original
     end
   end
+
+  # build_resource builds through the owner's association so a record carries
+  # its tenancy from where it was built. The association is found by asking the
+  # reflections which one points at the model, not by inflecting its name.
+  #
+  # Drives the controller's own method rather than a copy of it, so a
+  # regression in the production logic fails these examples.
+  describe '#store_association' do
+    def resolve(model_class)
+      allow(controller).to receive(:model_class).and_return(model_class)
+      controller.send(:store_association)
+    end
+
+    it 'resolves a model whose association is the plural of its name' do
+      expect(resolve(Spree::Product)).to eq(:products)
+      expect(resolve(Spree::PriceList)).to eq(:price_lists)
+    end
+
+    # Store#prices goes through variants through products, which Rails makes
+    # readonly — building on it raises, so those build on the class.
+    it 'declines a doubly-nested has_many through' do
+      expect(resolve(Spree::Price)).to be_nil
+    end
+
+    # Several associations reach these, including the deprecated twins this
+    # release introduced; the conventional name picks the right one.
+    it 'breaks a tie with the conventional name' do
+      expect(resolve(Spree::Fulfillment)).to eq(:fulfillments)
+      expect(resolve(Spree::CustomField)).to eq(:custom_fields)
+    end
+
+    it 'resolves an order to orders' do
+      expect(resolve(Spree::Order)).to eq(:orders)
+    end
+
+    # Global data has no store association at all, so it builds on the class.
+    it 'declines a model the store does not own' do
+      expect(resolve(Spree::OptionType)).to be_nil
+    end
+  end
 end

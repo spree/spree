@@ -25,7 +25,7 @@ module Spree
         step :update_statuses, with: -> { Spree.order_update_statuses_service }
         order.publish_event('order.resumed')
         success(order.reload)
-      rescue ActiveRecord::RecordInvalid, StateMachines::InvalidTransition
+      rescue ActiveRecord::RecordInvalid
         failure(order)
       end
 

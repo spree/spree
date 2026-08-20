@@ -31,7 +31,7 @@ module Spree
           gift_card.display_amount_used,
           gift_card.display_amount_remaining,
           gift_card.currency,
-          gift_card.display_state,
+          gift_card.display_status,
           gift_card.expires_at&.strftime('%Y-%m-%d'),
           gift_card.customer&.email,
           gift_card.customer&.first_name,

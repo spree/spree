@@ -53,7 +53,7 @@ RSpec.describe Spree::GiftCards::Apply do
       expect { subject }.not_to change(Spree::StoreCredit, :count)
 
       expect(subject).to be_failure
-      expect(subject.value).to eq(:gift_card_using_store_credit_error)
+      expect(subject.error.value).to eq(:gift_card_using_store_credit_error)
 
       expect(order.reload.gift_card).to be_nil
       expect(order.total_applied_store_credit).to eq(10)
@@ -67,7 +67,7 @@ RSpec.describe Spree::GiftCards::Apply do
 
     it 'responds with an error' do
       expect(subject).to be_failure
-      expect(subject.value).to eq(:gift_card_mismatched_currency)
+      expect(subject.error.value).to eq(:gift_card_mismatched_currency)
     end
   end
 
@@ -91,7 +91,7 @@ RSpec.describe Spree::GiftCards::Apply do
     context 'with guest order' do
       it 'responds with an error' do
         expect(subject).to be_failure
-        expect(subject.value).to eq(:gift_card_customer_not_logged_in)
+        expect(subject.error.value).to eq(:gift_card_customer_not_logged_in)
       end
     end
 
@@ -100,7 +100,7 @@ RSpec.describe Spree::GiftCards::Apply do
 
       it 'responds with an error' do
         expect(subject).to be_failure
-        expect(subject.value).to eq(:gift_card_mismatched_customer)
+        expect(subject.error.value).to eq(:gift_card_mismatched_customer)
       end
     end
   end
@@ -134,6 +134,31 @@ RSpec.describe Spree::GiftCards::Apply do
     end
   end
 
+  # The store controllers check these at the edge, but the workflow is the
+  # shared entry point, so it refuses a card that cannot be spent.
+  context 'when the gift card cannot be spent' do
+    it 'refuses an expired card' do
+      gift_card.update!(expires_at: 1.day.ago)
+
+      expect(subject).not_to be_success
+      expect(subject.error.value).to eq(:gift_card_expired)
+    end
+
+    it 'refuses a canceled card' do
+      gift_card.update!(status: 'canceled')
+
+      expect(subject).not_to be_success
+      expect(subject.error.value).to eq(:gift_card_canceled)
+    end
+
+    it 'refuses a redeemed card' do
+      gift_card.update!(status: 'redeemed')
+
+      expect(subject).not_to be_success
+      expect(subject.error.value).to eq(:gift_card_already_redeemed)
+    end
+  end
+
   context 'when the gift card has no amount remaining' do
     before { gift_card.update!(amount_used: gift_card.amount) }
 
@@ -141,7 +166,7 @@ RSpec.describe Spree::GiftCards::Apply do
       expect { subject }.not_to change(Spree::StoreCredit, :count)
 
       expect(subject).to be_failure
-      expect(subject.value).to eq(:gift_card_no_amount_remaining)
+      expect(subject.error.value).to eq(:gift_card_no_amount_remaining)
 
       expect(order.reload.gift_card).to be_nil
     end

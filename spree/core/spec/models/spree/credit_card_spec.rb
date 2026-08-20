@@ -18,10 +18,6 @@ describe Spree::CreditCard, type: :model do
 
   before { allow(payment).to receive_messages payment_method: payment_method }
 
-  def self.payment_states
-    Spree::Payment.state_machine.states.keys
-  end
-
   describe '#can_capture?' do
     shared_examples 'can be captured' do
       it 'can be captured' do

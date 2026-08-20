@@ -167,6 +167,7 @@ module Spree
       return unless number.positive?
 
       units = backordered_inventory_units.first(number) # We can process atmost n backorders
+      filled_units = []
 
       units.each do |unit|
         break unless number.positive?
@@ -181,12 +182,17 @@ module Spree
           # if required quantity is greater than available
           # split off and fulfill that
           split = unit.split_inventory!(number)
-          split.fill_backorder
+          filled_units << split if split.fill_backorder!
         else
-          unit.fill_backorder
+          filled_units << unit if unit.fill_backorder!
         end
         number -= filled
       end
+
+      # One recalculation per affected order, after the whole arrival is
+      # allocated — filling five backorders on one order is one order update,
+      # not five.
+      filled_units.filter_map(&:order).uniq.each(&:fulfill!)
     end
   end
 end

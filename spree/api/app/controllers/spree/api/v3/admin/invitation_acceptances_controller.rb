@@ -32,13 +32,13 @@ module Spree
             return if performed?
 
             @invitation.invitee = user
-            @invitation.accept!
+            result = Spree.invitation_accept_workflow.call(invitation: @invitation)
+
+            return render_service_error(result.error) unless result.success?
 
             refresh_token = Spree::RefreshToken.create_for(user, audience: JWT_AUDIENCE_ADMIN, request_env: request_env_for_token)
             set_refresh_cookie(refresh_token)
             render json: auth_response(user)
-          rescue ActiveRecord::RecordInvalid => e
-            render_validation_error(e.record.errors)
           end
 
           private

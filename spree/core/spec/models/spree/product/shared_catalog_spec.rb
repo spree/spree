@@ -8,7 +8,7 @@ describe Spree::Product, type: :model do
   let(:seller) { create(:seller, :approved, store: store) }
   let(:other_seller) { create(:seller, :approved, store: store) }
 
-  describe '#variants= on a master product' do
+  describe 'nested variants on a master product' do
     let(:product) { create(:product, store: store) }
     let!(:mine) { create(:variant, product: product, seller: seller, sku: 'MINE-1') }
     let!(:theirs) { create(:variant, product: product, seller: other_seller, sku: 'THEIRS-1') }
@@ -18,7 +18,9 @@ describe Spree::Product, type: :model do
     # on purpose; a seller's own writes go through the seller branch, which
     # scope-fetches at the controller (Decision 10).
     it 'lets the operator edit and remove any seller\'s variant' do
-      product.variants = [{ id: mine.prefixed_id, sku: 'MINE-2' }]
+      Spree.product_update_workflow.call(
+        product: product, attributes: { variants: [{ id: mine.prefixed_id, sku: 'MINE-2' }] }
+      )
 
       expect(mine.reload.sku).to eq('MINE-2')
       expect(product.variants.reload).not_to include(theirs)

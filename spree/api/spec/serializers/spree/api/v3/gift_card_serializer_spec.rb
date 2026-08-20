@@ -91,7 +91,7 @@ RSpec.describe Spree::Api::V3::GiftCardSerializer do
   end
 
   context 'with partially redeemed gift card' do
-    let(:gift_card) { create(:gift_card, store: store, state: :partially_redeemed, amount: 100, amount_used: 40) }
+    let(:gift_card) { create(:gift_card, store: store, status: :partially_redeemed, amount: 100, amount_used: 40) }
 
     it 'returns partially_redeemed status' do
       expect(subject['status']).to eq('partially_redeemed')

@@ -63,6 +63,7 @@ require 'spree/testing_support/lifecycle_events'
 require 'spree/testing_support/preferences'
 require 'spree/testing_support/url_helpers'
 require 'spree/testing_support/kernel'
+require 'spree/testing_support/imports'
 require 'spree/testing_support/rspec_retry_config'
 require 'spree/testing_support/next_instance_of'
 
@@ -102,6 +103,7 @@ RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
   config.include Spree::TestingSupport::Preferences
   config.include Spree::TestingSupport::Kernel
+  config.include Spree::TestingSupport::Imports
 
   config.order = :random
   Kernel.srand config.seed

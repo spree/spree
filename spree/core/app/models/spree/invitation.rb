@@ -37,20 +37,15 @@ module Spree
     scope :not_expired, -> { where('expires_at > ?', Time.current) }
 
     #
-    # State Machine
+    # Status
     #
-    state_machine initial: :pending, attribute: :status do
-      state :accepted do
-        validate :accept_invitation_within_time_limit
-        validates :invitee, presence: true
-      end
-
-      event :accept do
-        transition pending: :accepted
-      end
-      after_transition to: :accepted, do: :after_accept
-      after_transition to: :accepted, do: :publish_invitation_accepted_event
-    end
+    # No state machine — acceptance runs through Spree::Invitations::Accept
+    # (docs/plans/6.0-service-workflows.md), which checks the expiry window
+    # and the invitee before it writes. Those were state-scoped validations
+    # on the machine's `accepted` state; as workflow guards they refuse the
+    # acceptance outright instead of leaving a record that fails to save.
+    include Spree::HasStatus
+    has_status :pending, :accepted, default: :pending
 
     #
     # Callbacks
@@ -81,6 +76,27 @@ module Spree
       expires_at < Time.current
     end
 
+    # @deprecated Call Spree.invitation_accept_workflow — removed in 6.1.
+    def accept
+      Spree::Deprecation.warn('Spree::Invitation#accept is deprecated and will be removed in Spree 6.1. Call Spree.invitation_accept_workflow instead.')
+      Spree.invitation_accept_workflow.call(invitation: self).success?
+    end
+
+    # @deprecated Call Spree.invitation_accept_workflow — removed in 6.1.
+    def accept!
+      Spree::Deprecation.warn('Spree::Invitation#accept! is deprecated and will be removed in Spree 6.1. Call Spree.invitation_accept_workflow instead.')
+      result = Spree.invitation_accept_workflow.call(invitation: self)
+
+      if result.failure?
+        # ResultError#to_s unwraps an ActiveModel::Errors into its full
+        # messages; its `value` would inspect the object into the message.
+        errors.add(:base, result.error.to_s)
+        raise ActiveRecord::RecordInvalid, self
+      end
+
+      true
+    end
+
     # Resends the invitation email if the invitation is pending and not expired
     def resend!
       return if expired? || deleted? || accepted?
@@ -89,16 +105,6 @@ module Spree
     end
 
     private
-
-    # this method can be extended by developers now
-    def after_accept
-      create_role_user
-      set_accepted_at
-    end
-
-    def publish_invitation_accepted_event
-      publish_event('invitation.accepted')
-    end
 
     def publish_invitation_created_event
       publish_event('invitation.created')
@@ -150,28 +156,10 @@ module Spree
       end
     end
 
-    def set_accepted_at
-      update!(accepted_at: Time.current)
-    end
-
-    def create_role_user
-      return if invitee.blank?
-
-      role_user = resource.add_user(invitee, role)
-      self.role_user = role_user
-      save!
-    end
-
     def set_invitee_from_email
       return if invitee.present?
 
       self.invitee = Spree.admin_user_class.find_by(email: email)
-    end
-
-    def accept_invitation_within_time_limit
-      if Time.current > expires_at
-        errors.add(:base, 'Invitation expired')
-      end
     end
   end
 end

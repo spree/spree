@@ -17,7 +17,7 @@ RSpec.describe 'Admin Gift Cards API', type: :request, swagger_doc: 'api-referen
       description <<~DESC
         Returns the gift cards issued by the current store. Filter by
         `q[code_cont]` for code search, `q[user_id_eq]` for cards issued
-        to a specific customer, or `q[state_eq]` for status filtering.
+        to a specific customer, or `q[status_eq]` for status filtering.
       DESC
       admin_scope :read, :gift_cards
 
@@ -30,7 +30,7 @@ RSpec.describe 'Admin Gift Cards API', type: :request, swagger_doc: 'api-referen
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
       parameter name: :'q[code_cont]', in: :query, type: :string, required: false,
                 description: 'Filter by gift card code (contains)'
-      parameter name: :'q[state_eq]', in: :query, type: :string, required: false,
+      parameter name: :'q[status_eq]', in: :query, type: :string, required: false,
                 description: 'Filter by status (active, redeemed, partially_redeemed, canceled)'
       parameter name: :sort, in: :query, type: :string, required: false,
                 description: 'Sort by field. Prefix with `-` for descending (e.g., `-created_at`).'

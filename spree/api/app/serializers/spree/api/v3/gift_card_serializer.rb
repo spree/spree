@@ -22,7 +22,7 @@ module Spree
         end
 
         attribute :status do |gift_card|
-          gift_card.display_state
+          gift_card.display_status
         end
 
         attributes :currency

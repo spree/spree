@@ -1,11 +1,11 @@
 FactoryBot.define do
   factory :gift_card, class: Spree::GiftCard do
-    state { :active }
+    status { :active }
     amount { 10.00 }
     store { Spree::Store.default || create(:store) }
 
     trait :redeemed do
-      state { :redeemed }
+      status { :redeemed }
       redeemed_at { Time.current }
       amount_used { amount }
     end

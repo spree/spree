@@ -26,7 +26,6 @@ require 'rails-html-sanitizer'
 require 'paranoia'
 require 'request_store'
 require 'ransack'
-require 'state_machines-activerecord'
 require 'active_storage_validations'
 require 'wannabe_bool'
 require 'geocoder'
@@ -34,10 +33,6 @@ require 'geocoder'
 require 'safely_block'
 require 'ar_lazy_preload'
 require 'sqids'
-
-# This is required because ActiveModel::Validations#invalid? conflicts with the
-# invalid state of a Payment. In the future this should be removed.
-StateMachines::Machine.ignore_method_conflicts = true
 
 module Spree
   mattr_accessor :base_class, :customer_class, :admin_user_class,

@@ -1002,13 +1002,16 @@ en:
     general: General
     generate_code: Generate coupon code
     gift_card: Gift Card
+    gift_card_already_canceled: The Gift Card has already been canceled.
     gift_card_already_redeemed: The Gift Card has already been redeemed.
     gift_card_applied: The Gift Card was successfully applied to your order!
     gift_card_batch: Gift Card Batch
+    gift_card_canceled: The Gift Card has been canceled.
     gift_card_customer_not_logged_in: Gift Card cannot be applied with guest user.
     gift_card_expired: The Gift Card has expired.
     gift_card_mismatched_currency: Gift Card cannot be applied with current currency.
     gift_card_mismatched_customer: This gift card is associated with another user.
+    gift_card_not_applied: The Gift Card could not be applied.
     gift_card_not_found: The Gift Card was not found.
     gift_card_removed: The Gift Card was successfully removed from your order
     gift_card_using_store_credit_error: You can't apply the Gift Card after you applied the store credit.

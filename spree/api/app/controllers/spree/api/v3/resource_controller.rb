@@ -32,23 +32,40 @@ module Spree
         end
 
         # POST /api/v3/resource
+        #
+        # A controller whose resource is written through a workflow declares it
+        # with `create_workflow` and gets this action unchanged — same
+        # authorization, same rendering. Without one the record saves directly.
         def create
           @resource = build_resource
           authorize_resource!(@resource, :create)
 
-          if @resource.save
+          return save_and_render(@resource, status: :created) if create_workflow.nil?
+
+          result = create_workflow.call(**create_workflow_arguments)
+
+          if result.success?
+            @resource = result.value
             render json: serialize_resource(@resource), status: :created
           else
-            render_errors(@resource.errors)
+            render_result_error(result)
           end
         end
 
         # PATCH /api/v3/resource/:id
         def update
-          if @resource.update(permitted_params)
+          if update_workflow.nil?
+            @resource.assign_attributes(permitted_params)
+            return save_and_render(@resource)
+          end
+
+          result = update_workflow.call(**update_workflow_arguments)
+
+          if result.success?
+            @resource = result.value
             render json: serialize_resource(@resource)
           else
-            render_errors(@resource.errors)
+            render_result_error(result)
           end
         end
 
@@ -107,15 +124,100 @@ module Spree
         end
 
         # Builds a new resource, using parent association when @parent is set
+        # The workflow that writes this resource, or nil to save the record
+        # directly. Declaring one is all a controller needs to do — `create`
+        # and `update` keep their authorization and rendering.
+        #
+        # @return [#call, nil]
+        def create_workflow
+          nil
+        end
+
+        # @return [#call, nil]
+        def update_workflow
+          nil
+        end
+
+        # Keywords passed to `create_workflow`. The default suits a workflow
+        # taking `store:` and `attributes:`; override for anything else.
+        #
+        # @return [Hash]
+        def create_workflow_arguments
+          { store: current_store, attributes: permitted_params }
+        end
+
+        # Keywords passed to `update_workflow`, keyed by the resource's own
+        # name — `product:`, `price_list:` — which is how the workflows in
+        # app/workflows name their subject. `element` rather than `singular`,
+        # which would carry the `spree_` prefix.
+        #
+        # @return [Hash]
+        def update_workflow_arguments
+          { model_class.model_name.element.to_sym => @resource, attributes: permitted_params }
+        end
+
+        def save_and_render(resource, status: :ok)
+          if resource.save
+            render json: serialize_resource(resource), status: status
+          else
+            render_errors(resource.errors)
+          end
+        end
+
+        # Builds the record a create writes, through its owner's association so
+        # tenancy comes from where the record was built rather than from an
+        # attribute assigned afterwards.
+        #
+        # A workflow-written resource gets the bare scoped record: the workflow
+        # assigns the payload itself, and assigning it here would only be for
+        # the authorization check — which reads the record's owner, not its
+        # attributes — while raising on any bulk payload the model has no
+        # setter for (`product_ids`, `variants`).
         def build_resource
-          resource = if @parent.present?
-                       @parent.send(parent_association).build(permitted_params)
-                     else
-                       model_class.new(permitted_params)
-                     end
-          resource.store = current_store if resource.respond_to?(:store_id) && resource.store_id.blank?
+          resource = resource_scope.new
+          resource.assign_attributes(permitted_params) if create_workflow.nil?
           resource.created_by = try_spree_current_user if resource.respond_to?(:created_by_id)
           resource
+        end
+
+        # The relation a new record is built on: a nested resource's parent
+        # association, the store's own association for this model, or the
+        # class itself for genuinely global data (countries, roles).
+        #
+        # @return [ActiveRecord::Relation, Class]
+        def resource_scope
+          return @parent.send(parent_association) if @parent.present?
+          return model_class unless store_association
+
+          current_store.public_send(store_association)
+        end
+
+        # The store association a new record of this model builds on, or nil
+        # when there is none it can build through.
+        #
+        # Found by asking the reflections which association actually points at
+        # this model rather than by inflecting its name, so a model whose
+        # association is not the plural of its own name still resolves. Two
+        # cases yield nil and build on the class instead, taking their tenancy
+        # from the record they belong to: a doubly-nested has_many :through
+        # (Store#prices, through variants through products) is readonly, and
+        # genuinely global data (countries, roles) has no store association.
+        #
+        # @return [Symbol, nil]
+        def store_association
+          reflections = current_store.class.reflect_on_all_associations(:has_many).select do |reflection|
+            !reflection.nested? && reflection.klass == model_class
+          rescue NameError
+            # A reflection naming a class this installation does not load.
+            false
+          end
+          return reflections.first&.name if reflections.one?
+
+          # More than one association reaches this model — a deprecated twin
+          # such as `shipments` beside `fulfillments` — so the conventional
+          # name decides which one a create belongs on.
+          conventional = model_class.model_name.element.pluralize.to_sym
+          reflections.find { |reflection| reflection.name == conventional }&.name
         end
 
         # Finds a single resource within scope using prefixed ID

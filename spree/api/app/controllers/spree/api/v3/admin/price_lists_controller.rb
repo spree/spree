@@ -43,17 +43,17 @@ module Spree
 
           # PATCH /api/v3/admin/price_lists/:id/activate
           #
-          # State transition: draft|inactive → active (or → scheduled when
-          # `starts_at` is in the future). Mirrors the old Rails admin's
-          # "Activate" button which automatically scheduled future lists.
+          # draft|inactive → active, or → scheduled when `starts_at` is in the
+          # future. The workflow decides which, so a caller never has to.
           def activate
             authorize! :update, @resource
-            event = @resource.starts_at.present? && @resource.starts_at.future? ? :schedule : :activate
 
-            if @resource.send(event)
+            result = Spree.price_list_activate_workflow.call(price_list: @resource)
+
+            if result.success?
               render json: serialize_resource(@resource)
             else
-              render_validation_error(@resource.errors)
+              render_service_error(result.error)
             end
           end
 
@@ -61,10 +61,12 @@ module Spree
           def deactivate
             authorize! :update, @resource
 
-            if @resource.deactivate
+            result = Spree.price_list_deactivate_workflow.call(price_list: @resource)
+
+            if result.success?
               render json: serialize_resource(@resource)
             else
-              render_validation_error(@resource.errors)
+              render_service_error(result.error)
             end
           end
 
@@ -98,6 +100,14 @@ module Spree
 
           def serializer_class
             Spree.api.admin_price_list_serializer
+          end
+
+          def create_workflow
+            Spree.price_list_create_workflow
+          end
+
+          def update_workflow
+            Spree.price_list_update_workflow
           end
 
           def scope

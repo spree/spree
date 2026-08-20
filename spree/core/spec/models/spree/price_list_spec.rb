@@ -12,32 +12,19 @@ describe Spree::PriceList, type: :model do
     end
   end
 
-  describe 'state_machine' do
+  describe 'status' do
     let(:price_list) { create(:price_list) }
+
+    it 'has no state machine' do
+      expect(described_class).not_to respond_to(:state_machines)
+    end
 
     it 'has initial status of draft' do
       expect(price_list.status).to eq('draft')
     end
 
-    describe '#activate' do
-      it 'transitions to active' do
-        price_list.activate
-        expect(price_list.status).to eq('active')
-      end
-    end
-
-    describe '#deactivate' do
-      it 'transitions to inactive' do
-        price_list.deactivate
-        expect(price_list.status).to eq('inactive')
-      end
-    end
-
-    describe '#schedule' do
-      it 'transitions to scheduled' do
-        price_list.schedule
-        expect(price_list.status).to eq('scheduled')
-      end
+    it 'rejects an unknown status' do
+      expect(build(:price_list, status: 'nonsense')).not_to be_valid
     end
   end
 
@@ -113,7 +100,7 @@ describe Spree::PriceList, type: :model do
     let(:context) { Spree::Pricing::Context.new(variant: variant, currency: 'USD', store: store) }
 
     context 'when price list is inactive' do
-      before { price_list.deactivate }
+      before { Spree.price_list_deactivate_workflow.call(price_list: price_list) }
 
       it 'returns false' do
         expect(price_list.applicable?(context)).to be false
@@ -173,19 +160,20 @@ describe Spree::PriceList, type: :model do
     end
   end
 
-  describe '#product_ids=' do
+  describe 'product membership' do
     let(:store) { create(:store, supported_currencies: 'USD,EUR,GBP') }
     let(:price_list) { create(:price_list, store: store) }
     let(:product1) { create(:product) }
     let(:product2) { create(:product) }
 
-    # Guards the POST/PATCH /price_lists response: membership is reconciled in
-    # an after_save via raw upsert_all/delete_all (bypassing the products
-    # association cache), so `product_ids` / `product_prefixed_ids` — which the
+    # Guards the POST/PATCH /price_lists response: membership is reconciled
+    # through raw upsert_all/delete_all, which bypasses the products
+    # association cache, so `product_ids` / `product_prefixed_ids` — which the
     # serializer renders — must reflect the change WITHOUT a reload.
     it 'reflects assigned products in product_ids without reload' do
-      price_list.product_ids = [product1.id, product2.id]
-      price_list.save!
+      Spree.price_list_update_workflow.call(
+        price_list: price_list, attributes: { product_ids: [product1.id, product2.id] }
+      )
 
       expect(price_list.product_ids).to match_array([product1.id, product2.id])
       expect(price_list.product_prefixed_ids).to match_array(
@@ -194,11 +182,12 @@ describe Spree::PriceList, type: :model do
     end
 
     it 'reflects a partial removal in product_ids without reload' do
-      price_list.product_ids = [product1.id, product2.id]
-      price_list.save!
-
-      price_list.product_ids = [product1.id]
-      price_list.save!
+      Spree.price_list_update_workflow.call(
+        price_list: price_list, attributes: { product_ids: [product1.id, product2.id] }
+      )
+      Spree.price_list_update_workflow.call(
+        price_list: price_list, attributes: { product_ids: [product1.id] }
+      )
 
       expect(price_list.product_ids).to eq([product1.id])
     end

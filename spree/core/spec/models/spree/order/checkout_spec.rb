@@ -78,7 +78,7 @@ describe Spree::Order, type: :model do
 
       it 'redeems the gift card' do
         expect(gift_card.redeemed_at).to be_nil
-        expect { order.finalize! }.to change { gift_card.reload.state }.from('active').to('redeemed')
+        expect { order.finalize! }.to change { gift_card.reload.status }.from('active').to('redeemed')
         expect(gift_card.amount_used).to eq(order.total)
         expect(gift_card.amount_remaining).to eq(0)
         expect(gift_card.redeemed_at).to be_present
@@ -88,7 +88,7 @@ describe Spree::Order, type: :model do
         let(:gift_card) { create(:gift_card, amount: order.total + 1, store: store) }
 
         it 'partially redeems the gift card' do
-          expect { order.finalize! }.to change { gift_card.reload.state }.from('active').to('partially_redeemed')
+          expect { order.finalize! }.to change { gift_card.reload.status }.from('active').to('partially_redeemed')
           expect(gift_card.amount_used).to eq(order.total)
           expect(gift_card.amount_remaining).to eq(1)
           expect(gift_card.redeemed_at).to be_nil

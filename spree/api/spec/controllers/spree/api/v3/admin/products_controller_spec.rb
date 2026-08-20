@@ -1474,7 +1474,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       end
     end
 
-    Spree::Product.state_machine.states.map(&:name).each do |from_status|
+    Spree::Product.statuses.each do |from_status|
       context "when product is in #{from_status} status" do
         it_behaves_like 'updates status to active', from_status
       end

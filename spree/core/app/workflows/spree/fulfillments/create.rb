@@ -313,7 +313,7 @@ module Spree
       # is forced — the goods already left, so refusing on an unpaid order
       # would just refuse to record history.
       def mark_shipped(fulfillment)
-        fulfillment.fulfillment_items.backordered.each(&:fill_backorder!)
+        fulfillment.fulfillment_items.backordered.update_all(status: 'on_hand', updated_at: Time.current)
         fulfillment.reload
         Spree.fulfillment_fulfill_workflow.call(fulfillment: fulfillment, force: true)
       end

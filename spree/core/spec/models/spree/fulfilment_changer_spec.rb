@@ -263,7 +263,7 @@ describe Spree::FulfilmentChanger do
           let(:backordered_units)  { 6 }
 
           before do
-            current_shipment.inventory_units.limit(backordered_units).update_all(state: :backordered)
+            current_shipment.inventory_units.limit(backordered_units).update_all(status: :backordered)
             current_stock_level.update_column(:count_on_hand, -backordered_units)
           end
 

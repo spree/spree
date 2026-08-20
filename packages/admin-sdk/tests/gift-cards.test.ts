@@ -10,7 +10,7 @@ const sampleGiftCard = {
   amount_used: '0.0',
   amount_remaining: '100.0',
   currency: 'USD',
-  state: 'active',
+  status: 'active',
   expires_at: null,
   created_at: '2026-05-01T00:00:00Z',
   updated_at: '2026-05-01T00:00:00Z',
@@ -48,9 +48,9 @@ describe('giftCards', () => {
         }),
       )
 
-      await createTestClient().giftCards.list({ state_eq: 'active', code_cont: 'ABCD' })
+      await createTestClient().giftCards.list({ status_eq: 'active', code_cont: 'ABCD' })
 
-      expect(url!.searchParams.get('q[state_eq]')).toBe('active')
+      expect(url!.searchParams.get('q[status_eq]')).toBe('active')
       expect(url!.searchParams.get('q[code_cont]')).toBe('ABCD')
     })
   })

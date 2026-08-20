@@ -991,7 +991,7 @@
                       "developer/core-concepts/taxes",
                       "v6/developer/core-concepts/taxes-discounts-fees",
                       "v6/developer/core-concepts/promotions",
-                      "developer/core-concepts/store-credits-gift-cards"
+                      "v6/developer/core-concepts/store-credits-gift-cards"
                     ]
                   },
                   {
@@ -1013,7 +1013,7 @@
                       "developer/core-concepts/translations",
                       "developer/core-concepts/slugs",
                       "developer/core-concepts/metafields",
-                      "developer/core-concepts/imports-exports"
+                      "v6/developer/core-concepts/imports-exports"
                     ]
                   }
                 ]

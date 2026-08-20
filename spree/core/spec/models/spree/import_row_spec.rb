@@ -39,47 +39,20 @@ RSpec.describe Spree::ImportRow, :job, type: :model do
     end
   end
 
-  describe 'State machine' do
+  describe 'status' do
     before { import_row.save! }
 
-    describe 'initial state' do
-      it 'starts in pending state' do
-        expect(import_row.status).to eq('pending')
-      end
+    it 'has no state machine' do
+      expect(described_class).not_to respond_to(:state_machines)
     end
 
-    describe 'start_processing event' do
-      it 'transitions from pending to processing' do
-        expect { import_row.start_processing! }.to change(import_row, :status).from('pending').to('processing')
-      end
+    it 'starts in pending status' do
+      expect(import_row.status).to eq('pending')
     end
 
-    describe 'fail event' do
-      before { import_row.start_processing! }
-
-      it 'transitions from processing to failed' do
-        expect { import_row.fail! }.to change(import_row, :status).from('processing').to('failed')
-      end
-
-      it 'publishes import_row.fail event' do
-        expect(import_row).to receive(:publish_import_row_failed_event)
-        import_row.fail!
-      end
-
-    end
-
-    describe 'complete event' do
-      before { import_row.start_processing! }
-
-      it 'transitions from processing to completed' do
-        expect { import_row.complete! }.to change(import_row, :status).from('processing').to('completed')
-      end
-
-      it 'publishes import_row.complete event' do
-        expect(import_row).to receive(:publish_import_row_completed_event)
-        import_row.complete!
-      end
-
+    it 'rejects an unknown status' do
+      import_row.status = 'nonsense'
+      expect(import_row).not_to be_valid
     end
   end
 
@@ -145,7 +118,7 @@ RSpec.describe Spree::ImportRow, :job, type: :model do
 
   describe '#to_schema_hash' do
     before do
-      import.create_mappings
+      Spree.import_start_mapping_workflow.call(import: import)
     end
 
     it 'returns attributes mapped to schema fields' do
@@ -157,7 +130,7 @@ RSpec.describe Spree::ImportRow, :job, type: :model do
 
   describe '#attribute_by_schema_field' do
     before do
-      import.create_mappings
+      Spree.import_start_mapping_workflow.call(import: import)
     end
 
     it 'returns the mapped attribute value' do
@@ -199,6 +172,13 @@ RSpec.describe Spree::ImportRow, :job, type: :model do
 
       it 'transitions to failed' do
         expect { import_row.process! }.to change(import_row, :status).from('pending').to('failed')
+      end
+
+      it 'publishes import_row.failed', events: true do
+        allow(import_row).to receive(:publish_event).with(anything)
+        expect(import_row).to receive(:publish_event).with('import_row.failed')
+
+        import_row.process!
       end
 
       it 'sets validation errors' do

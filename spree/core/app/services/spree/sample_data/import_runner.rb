@@ -25,8 +25,11 @@ module Spree
           inline: inline, skip_events: skip_events
         )
 
-        import.start_mapping
-        import.complete_mapping
+        mapping = Spree.import_start_mapping_workflow.call(import: import)
+        return failure(import, mapping.error) if mapping.failure?
+
+        completed = Spree.import_complete_mapping_workflow.call(import: import)
+        return failure(import, completed.error) if completed.failure?
 
         success(import.reload)
       end

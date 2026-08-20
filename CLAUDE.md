@@ -189,7 +189,7 @@ Per-request context available in models, controllers, jobs, and services:
 - Include `Spree::Metadata` for JSON metadata support
 - ALWAYS Use string columns instead of enums
 - NEVER use `Struct` for domain value objects — use a plain Ruby class with `ActiveModel::Model` + `ActiveModel::Attributes` (typed attributes, validations) so it behaves like an ActiveRecord object (e.g. `Spree::PickupPointOption`)
-- State machines: legacy models use `state_machines-activerecord` gem, default column `status` (legacy uses `state`, see docs/plans/6.0-normalize-state-to-status.md), all new models should use `has_status` and Workflows instead
+- No state machines. Spree has none since 6.0 and `state_machines-activerecord` is not a dependency — declare statuses with `has_status` (column always `status`) and move records between them with Workflows (see docs/plans/6.0-normalize-state-to-status.md)
 - NEVER cast IDs to integer — always treat as strings (UUID support)
 - Uniqueness validations: ALWAYS use `scope: spree_base_uniqueness_scope`, should be also enforced by database index
 - If needed use paranoia gem for soft delete support (via `acts_as_paranoid`)
@@ -265,6 +265,10 @@ The Store API (customer-facing) and Admin API (back-office) are two halves of th
 #### Key overridable methods
 
 `model_class`, `serializer_class` (use `Spree.api.serializer_name`), `scope` (call `super` and chain), `find_resource`, `permitted_params`, `collection_includes`
+
+**A resource written through a workflow declares it, never re-implements the action.** Override `create_workflow` / `update_workflow` to return the workflow, and the inherited `create`/`update` keep their authorization, their result handling and their rendering — hand-writing those actions is how a controller silently loses the record-level `authorize_resource!` the base class does. Override `create_workflow_arguments` / `update_workflow_arguments` when the workflow's keywords differ from the defaults (`store:`/`attributes:` and `<resource>:`/`attributes:`).
+
+`build_resource` builds through the owner's association — `current_store.products`, or a nested resource's parent — so a new record carries its tenancy from where it was built rather than from an attribute assigned afterwards. A model the store has no association for falls back to the class. When a `create_workflow` is declared the record is left bare, since the workflow assigns the payload and the authorization check reads the record's owner rather than its attributes.
 
 #### Flat request/response structure
 

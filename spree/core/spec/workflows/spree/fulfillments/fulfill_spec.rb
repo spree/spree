@@ -240,6 +240,18 @@ module Spree
         expect(stock_level.reload.count_on_hand).to eq(0)
       end
 
+      # Same doctrine one level down: the items go with the parcel. The old
+      # machine's guarded `ship` event raised here instead, aborting a
+      # dispatch the merchant had explicitly forced.
+      it 'ships backordered items on a forced dispatch' do
+        fulfillment.fulfillment_items.each { |item| item.update_columns(status: 'backordered') }
+
+        result = subject.call(fulfillment: fulfillment, force: true)
+
+        expect(result.success?).to eq(true)
+        expect(fulfillment.reload.fulfillment_items.map(&:status).uniq).to eq(['shipped'])
+      end
+
       # Departure is a physical fact: a forced dispatch records the parcel even
       # when the shelf says the goods were never there. Availability is
       # untouched on the way through — the promise had already been subtracted.

@@ -53,9 +53,10 @@ module Spree
         checkout_remove_store_credit_service: 'Spree::Checkout::RemoveStoreCredit',
 
         # gift cards
-        gift_card_apply_service: 'Spree::GiftCards::Apply',
-        gift_card_remove_service: 'Spree::GiftCards::Remove',
-        gift_card_redeem_service: 'Spree::GiftCards::Redeem',
+        gift_card_apply_workflow: 'Spree::GiftCards::Apply',
+        gift_card_remove_workflow: 'Spree::GiftCards::Remove',
+        gift_card_redeem_workflow: 'Spree::GiftCards::Redeem',
+        gift_card_cancel_workflow: 'Spree::GiftCards::Cancel',
 
         # order
         order_approve_service: 'Spree::Orders::Approve',
@@ -128,6 +129,25 @@ module Spree
         product_create_workflow: 'Spree::Products::Create',
         product_update_workflow: 'Spree::Products::Update',
         product_destroy_workflow: 'Spree::Products::Destroy',
+        product_activate_workflow: 'Spree::Products::Activate',
+        product_archive_workflow: 'Spree::Products::Archive',
+        product_draft_workflow: 'Spree::Products::Draft',
+
+        # price lists
+        price_list_create_workflow: 'Spree::PriceLists::Create',
+        price_list_update_workflow: 'Spree::PriceLists::Update',
+        price_list_activate_workflow: 'Spree::PriceLists::Activate',
+        price_list_deactivate_workflow: 'Spree::PriceLists::Deactivate',
+
+        # invitations
+        invitation_accept_workflow: 'Spree::Invitations::Accept',
+
+        # imports — the CSV pipeline's steps
+        import_start_mapping_workflow: 'Spree::Imports::StartMapping',
+        import_complete_mapping_workflow: 'Spree::Imports::CompleteMapping',
+        import_start_processing_workflow: 'Spree::Imports::StartProcessing',
+        import_complete_workflow: 'Spree::Imports::Complete',
+        import_retry_failed_rows_workflow: 'Spree::Imports::RetryFailedRows',
 
         # which of a product's variants it leads with when sellers share the
         # listing. Ranking is marketplace policy — swap this to weight seller
@@ -196,7 +216,10 @@ module Spree
       # not interchangeable with what the new call sites pass. Removed in 6.1.
       LEGACY_SERVICE_KEYS = {
         shipment_update_service: :fulfillment_update_workflow,
-        fulfillment_update_service: :fulfillment_update_workflow
+        fulfillment_update_service: :fulfillment_update_workflow,
+        gift_card_apply_service: :gift_card_apply_workflow,
+        gift_card_remove_service: :gift_card_remove_workflow,
+        gift_card_redeem_service: :gift_card_redeem_workflow
       }.freeze
 
       def legacy_workflow_overrides

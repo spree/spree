@@ -43,12 +43,6 @@ module Spree
 
     STATUSES = %w[draft active archived].freeze
 
-    STATUS_TO_WEBHOOK_EVENT = {
-      'active' => 'activated',
-      'draft' => 'drafted',
-      'archived' => 'archived'
-    }.freeze
-
     TRANSLATABLE_FIELDS = %i[name description slug meta_description meta_title].freeze
     RICH_TEXT_TRANSLATABLE_FIELDS = %i[description].freeze
     translates(*TRANSLATABLE_FIELDS, column_fallback: Spree.mobility_column_fallback)
@@ -198,10 +192,8 @@ module Spree
 
     after_create :sync_associations_from_product_type
     after_update :sync_associations_from_product_type, if: :saved_change_to_product_type_id?
-    after_create :apply_pending_variants, if: :pending_variants?
     after_create :ensure_default_variant
     after_create :set_default_variant
-    after_save :apply_pending_media, if: :pending_media?
 
     after_save :auto_promote_default_variant
     after_save :run_touch_callbacks, if: :saved_changes?
@@ -224,8 +216,6 @@ module Spree
     validate :discontinue_on_must_be_later_than_make_active_at, if: -> { make_active_at && discontinue_on }
 
     scope :for_store, ->(store) { where(store_id: store.id) }
-    scope :draft, -> { where(status: 'draft') }
-    scope :archived, -> { where(status: 'archived') }
     scope :not_archived, -> { where.not(status: 'archived') }
     scope :on_sale, lambda { |currency = nil|
                       currency ||= Spree::Store.default.default_currency
@@ -263,7 +253,6 @@ module Spree
 
     scope :archivable, -> { where(status: %w[active draft]) }
     scope :by_source, ->(source) { send(source) }
-    scope :paused, -> { where(status: 'paused') }
     scope :published, -> { where(status: 'active') }
 
     accepts_nested_attributes_for(
@@ -323,49 +312,6 @@ module Spree
       super(manual_ids | collections.automatic.ids)
     end
 
-    # Sync media inline. Entries with `id` patch the existing asset
-    # (alt/position/variant_ids); entries with `signed_id` create + attach a
-    # fresh upload; missing items are left alone (delete still goes through
-    # the dedicated DELETE /media endpoint to avoid accidental data loss when
-    # a form ships stale state).
-    #
-    # Deferred: ActiveStorage attaches require a persisted record, so on new
-    # records we stash the params and replay them in `after_create`.
-    # @param media_params [Array<Hash>]
-    # @return [void]
-    def media=(media_params)
-      # Blank input is a no-op — never call `super` with an empty array,
-      # because the ActiveRecord collection setter would replace media with
-      # `[]` and trigger `dependent: :destroy` on every persisted asset.
-      # Explicit deletes go through the dedicated DELETE /media endpoint.
-      return if media_params.blank?
-      return super if media_params.first.is_a?(Spree::Media)
-
-      if new_record?
-        @pending_media_params = media_params
-        return
-      end
-
-      apply_media(media_params)
-    end
-
-    # Syncs variants from an array of hashes.
-    # Creates new variants, updates existing ones (matched by :id), and removes unlisted ones.
-    # Must be called on a persisted product (use after_save or call explicitly after create).
-    # @param variants_params [Array<Hash>] array of variant attribute hashes
-    # @return [void]
-    def variants=(variants_params)
-      return super if variants_params.blank? || variants_params.first.is_a?(Spree::Variant)
-
-      # Store for deferred processing if product is not yet persisted
-      if new_record?
-        @pending_variants_params = variants_params
-        return
-      end
-
-      apply_variants(variants_params)
-    end
-
     self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status available_on created_at updated_at seller_id]
     self.whitelisted_ransackable_associations = %w[categories collections store channels variants default_variant tags labels
                                                    product_type product_categories option_types seller]
@@ -392,21 +338,30 @@ module Spree
     # written per currency through the default variant's +set_price+.
     delegate :compare_at_price, :track_inventory?, :images, to: :default_variant, allow_nil: true
 
-    state_machine :status, initial: :draft do
-      event :activate do
-        transition to: :active
-      end
-      after_transition to: :active, do: [:after_activate, :publish_product_activated_event]
+    # No state machine — status moves through the Spree::Products workflows
+    # (docs/plans/6.0-service-workflows.md). has_status generates the `draft`
+    # and `archived` scopes and every predicate, but never redefines what the
+    # model already owns: `Product.active` stays the currency-aware scope from
+    # Spree::ProductScopes rather than a plain status lookup.
+    include Spree::HasStatus
+    has_status(*STATUSES, default: :draft)
 
-      event :archive do
-        transition to: :archived
-      end
-      after_transition to: :archived, do: [:after_archive, :publish_product_archived_event]
+    # @deprecated Call Spree.product_activate_workflow — removed in 6.1.
+    def activate!
+      Spree::Deprecation.warn('Spree::Product#activate! is deprecated and will be removed in Spree 6.1. Call Spree.product_activate_workflow instead.')
+      run_status_workflow(Spree.product_activate_workflow)
+    end
 
-      event :draft do
-        transition to: :draft
-      end
-      after_transition to: :draft, do: :after_draft
+    # @deprecated Call Spree.product_archive_workflow — removed in 6.1.
+    def archive!
+      Spree::Deprecation.warn('Spree::Product#archive! is deprecated and will be removed in Spree 6.1. Call Spree.product_archive_workflow instead.')
+      run_status_workflow(Spree.product_archive_workflow)
+    end
+
+    # @deprecated Call Spree.product_draft_workflow — removed in 6.1.
+    def draft!
+      Spree::Deprecation.warn('Spree::Product#draft! is deprecated and will be removed in Spree 6.1. Call Spree.product_draft_workflow instead.')
+      run_status_workflow(Spree.product_draft_workflow)
     end
 
     def self.bulk_auto_match_collections(store, product_ids)
@@ -837,124 +792,6 @@ module Spree
       nil
     end
 
-    def pending_variants?
-      @pending_variants_params.present?
-    end
-
-    def apply_pending_variants
-      return unless @pending_variants_params
-
-      apply_variants(@pending_variants_params)
-      @pending_variants_params = nil
-    end
-
-    def pending_media?
-      @pending_media_params.present?
-    end
-
-    def apply_pending_media
-      return unless @pending_media_params
-
-      apply_media(@pending_media_params)
-      @pending_media_params = nil
-    end
-
-    def apply_media(media_params)
-      media_params.each do |raw|
-        attrs = raw.respond_to?(:to_h) ? raw.to_h : raw
-        attrs = attrs.with_indifferent_access
-
-        # Upsert path: entries with an `id` patch an existing asset (alt,
-        # position, variant_ids, focal point, video URL). Entries with a
-        # `signed_id` create+attach; external videos create with neither.
-        # Omitting an entry leaves it alone — explicit DELETE on the dedicated
-        # media endpoint is still the only way to remove an asset.
-        asset_id = attrs.delete(:id)
-        if asset_id.present?
-          asset = media.find_by_param(asset_id) || next
-          asset.update!(attrs.except(:signed_id))
-          next
-        end
-
-        signed_id = attrs.delete(:signed_id)
-        # An external video carries a URL instead of a file, so it's the one
-        # kind of new row that legitimately arrives without a signed id.
-        next if signed_id.blank? && attrs[:media_type] != 'external_video'
-
-        asset = media.build(attrs.except(:id))
-        asset.attachment.attach(signed_id) if signed_id.present?
-        asset.save!
-      end
-    end
-
-    def apply_variants(variants_params)
-      variant_ids_in_payload = []
-      mutated = false
-
-      variants_params.each do |variant_data|
-        variant_data = variant_data.to_h.with_indifferent_access
-        variant_id = variant_data.delete(:id)
-
-        variant =
-          if variant_id.present?
-            variants.find_by_param!(variant_id)
-          elsif reuse_default_variant_for?(variant_data, variant_ids_in_payload)
-            # An id-less, option-less entry targets the product's existing
-            # option-less default variant (the simple-product case) — update it in
-            # place rather than building a new row, so its id, order-line
-            # references, and unspecified prices/stock survive.
-            default_variant
-          else
-            variants.build
-          end
-
-        variant.assign_attributes(variant_data)
-        variant.save!
-
-        variant_ids_in_payload << variant.id
-        mutated = true
-      end
-
-      # Full replacement: variants not in the payload are removed. The payload
-      # is the writer's whole intent, and this write path is the operator's —
-      # who sees and writes every seller's variants on a master product, so
-      # nothing here narrows by seller. A seller's own write path (the seller
-      # branch, Phase 3) scope-fetches through `current_seller` at the
-      # controller, per docs/plans/6.0-multi-vendor-marketplace.md Decision 10;
-      # it never reaches this method with a payload naming another seller's rows.
-      if variant_ids_in_payload.any?
-        removed = variants.where.not(id: variant_ids_in_payload).destroy_all
-        mutated ||= removed.any?
-      end
-
-      sync_variant_state! if mutated
-    end
-
-    # True when an id-less variant payload should update the product's existing
-    # option-less default variant instead of building a new one: the entry carries
-    # no options, a default variant exists and is itself option-less, and it hasn't
-    # already been claimed by an earlier entry in this payload.
-    def reuse_default_variant_for?(variant_data, consumed_ids)
-      variant_data[:options].blank? &&
-        variant_data[:option_value_variants_attributes].blank? &&
-        default_variant.present? &&
-        default_variant.option_values.empty? &&
-        consumed_ids.exclude?(default_variant.id)
-    end
-
-    # Re-syncs the in-memory derived variant state after `apply_variants`
-    # mutates variants out-of-band. `variant_count` is bumped via
-    # `Spree::Product.increment_counter` in a Variant callback, so the in-memory
-    # attribute is stale; the `default_variant` association is also cached.
-    # Without this, a freshly built/updated product serialized in the same
-    # request returns a stale `variant_count` and `price`.
-    # @return [void]
-    def sync_variant_state!
-      self[:variant_count] = self.class.where(id: id).pick(:variant_count)
-      variants.reset
-      association(:default_variant).reset
-    end
-
     # Additive, unlike the legacy prototype callback which replaced both sets —
     # the type seeds the product when attached (creation, later assignment,
     # reassignment) and never removes anything; detaching seeds nothing.
@@ -1080,28 +917,22 @@ module Spree
       end
     end
 
+    # Mirrors the machine's bang events: an illegal move raised.
+    def run_status_workflow(workflow)
+      result = workflow.call(product: self)
+
+      if result.failure?
+        # ResultError#to_s unwraps an ActiveModel::Errors into its full
+        # messages; its `value` would inspect the object into the message.
+        errors.add(:base, result.error.to_s)
+        raise ActiveRecord::RecordInvalid, self
+      end
+
+      true
+    end
+
     def eligible_for_collection_matching?
       previously_new_record? || tag_list_previously_changed? || available_on_previously_changed?
-    end
-
-    def after_activate
-      # Implement your logic here
-    end
-
-    def after_archive
-      # Implement your logic here
-    end
-
-    def after_draft
-      # Implement your logic here
-    end
-
-    def publish_product_activated_event
-      publish_event('product.activated')
-    end
-
-    def publish_product_archived_event
-      publish_event('product.archived')
     end
   end
 end

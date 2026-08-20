@@ -27,17 +27,20 @@ module Spree
 
       # @param gift_card [Spree::GiftCard]
       def apply_gift_card(gift_card)
-        Spree.gift_card_apply_service.call(gift_card: gift_card, order: self)
+        Spree.gift_card_apply_workflow.call(gift_card: gift_card, order: self)
       end
 
       def remove_gift_card
-        Spree.gift_card_remove_service.call(order: self)
+        Spree.gift_card_remove_workflow.call(order: self)
       end
 
+      # @return [Spree::ServiceModule::Result, nil] the caller decides what a
+      #   refusal means; Orders::Complete reports it rather than failing the
+      #   order, since the card was already drawn down when it was applied.
       def redeem_gift_card
         return unless gift_card.present?
 
-        Spree.gift_card_redeem_service.call(gift_card: gift_card)
+        Spree.gift_card_redeem_workflow.call(gift_card: gift_card)
       end
 
       # In-lock read-compute-write keeping the gift-card payment amount in
