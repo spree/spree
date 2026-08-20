@@ -105,9 +105,12 @@ RSpec.describe Spree::Api::V3::ResourceController, type: :controller do
     # Several associations reach these, including the deprecated twins this
     # release introduced; the conventional name picks the right one.
     it 'breaks a tie with the conventional name' do
-      expect(resolve(Spree::Order)).to eq(:orders)
       expect(resolve(Spree::Fulfillment)).to eq(:fulfillments)
       expect(resolve(Spree::CustomField)).to eq(:custom_fields)
+    end
+
+    it 'resolves an order to orders' do
+      expect(resolve(Spree::Order)).to eq(:orders)
     end
 
     # Global data has no store association at all, so it builds on the class.

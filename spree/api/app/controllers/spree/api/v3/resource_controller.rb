@@ -213,8 +213,8 @@ module Spree
           end
           return reflections.first&.name if reflections.one?
 
-          # More than one association reaches this model — Store has both
-          # `orders` and `checkouts` for Spree::Order — so the conventional
+          # More than one association reaches this model — a deprecated twin
+          # such as `shipments` beside `fulfillments` — so the conventional
           # name decides which one a create belongs on.
           conventional = model_class.model_name.element.pluralize.to_sym
           reflections.find { |reflection| reflection.name == conventional }&.name
