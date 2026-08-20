@@ -52,28 +52,63 @@ module Spree
     # @param metadata [Hash] gateway-specific metadata
     # @return [Spree::Payment] the payment record
     def find_or_create_payment!(metadata = {})
-      # Session payments carry no Spree-side source (the gateway holds the
-      # instrument), so the requirement is skipped on every load, not just at
-      # creation — a later capture webhook transitions the same row and would
-      # otherwise fail source validation.
+      # An unsaved session has no identity to key a payment to, and nothing
+      # has settled against it.
+      return unless persisted?
+
+      # Session payments carry no Spree-side source unless the gateway builds
+      # one, so the requirement is skipped on every load, not just at creation
+      # — a later capture webhook transitions the same row and would otherwise
+      # fail source validation.
       return skip_source_requirement(payment) if payment.present?
 
-      skip_source_requirement(
-        owner.payments.find_or_create_by!(
-          payment_method: payment_method,
-          response_code: external_id,
-        ) do |p|
-          p.amount = amount
-          p.skip_source_requirement = true
-        end
-      )
+      # Keyed on the gateway's own identifier alone. Never on the amount: a
+      # session whose amount moved is still the same intent, and a second row
+      # for it would both double the order's money and collide with the unique
+      # index on (owner, payment_method, response_code).
+      created = owner.payments.find_or_create_by!(
+        payment_method: payment_method,
+        response_code: external_id
+      ) do |new_payment|
+        new_payment.amount = amount
+        new_payment.skip_source_requirement = true
+        new_payment.source = payment_source_for_settlement
+        apply_settlement_metadata(new_payment, metadata)
+      end
+
+      skip_source_requirement(created)
     rescue ActiveRecord::RecordNotUnique
+      # The webhook and the customer's synchronous return race by design;
+      # whoever loses the insert finds the row the winner created.
       skip_source_requirement(
         owner.payments.find_by!(
           payment_method: payment_method,
           response_code: external_id
         )
       )
+    end
+
+    # The payment source to attach when the payment row is first created.
+    # Gateways holding the instrument (a card, a mandate) build one here so
+    # the payment shows a brand and last four digits; those with nothing to
+    # represent return nil and the payment stands on its own.
+    #
+    # Called inside the settlement lock, so it must not perform provider I/O
+    # — warm anything it needs in +prepare_for_settlement!+.
+    #
+    # @return [Spree::PaymentSource, nil]
+    def payment_source_for_settlement
+      nil
+    end
+
+    # Records gateway-specific detail on the new payment. Overridden by
+    # gateways that carry references worth keeping (a charge id, a mandate).
+    #
+    # @param payment [Spree::Payment] unsaved
+    # @param metadata [Hash] whatever the settling caller passed
+    # @return [void]
+    def apply_settlement_metadata(payment, metadata)
+      payment.metadata.merge!(metadata.stringify_keys) if metadata.present?
     end
 
     # Fetches whatever settlement will need from the provider, so a caller

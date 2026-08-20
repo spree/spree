@@ -1,6 +1,14 @@
 module SpreeStripe
-  # Builds the Spree::Payment for a completed payment session, together with the
-  # Stripe-specific payment source.
+  # @deprecated Unused since 6.0 and removed in 7.0. Core's
+  #   Spree::PaymentSession#find_or_create_payment! creates the payment now;
+  #   this gem only supplies the source, through
+  #   Spree::PaymentSessions::Stripe#payment_source_for_settlement.
+  #
+  #   It diverged from core in three ways that this consolidation fixed: it
+  #   never set skip_source_requirement (so a session with no charge raised
+  #   "Source can't be blank"), it keyed idempotency on the amount as well as
+  #   the intent (so an amount change minted a second payment), and it did not
+  #   rescue RecordNotUnique (so the webhook/return race could crash).
   class CreatePayment
     # @param owner [Spree::Cart, Spree::Order]
     # @param payment_session [Spree::PaymentSessions::Stripe]

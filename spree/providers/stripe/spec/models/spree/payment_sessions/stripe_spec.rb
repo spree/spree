@@ -157,25 +157,41 @@ RSpec.describe Spree::PaymentSessions::Stripe, type: :model do
       expect(payment_session.reload.find_or_create_payment!).to eq(payment)
     end
 
-    it 'creates payment via CreatePayment service' do
-      mock_payment = build(:payment, order: order, payment_method: gateway)
-      service = instance_double(SpreeStripe::CreatePayment, call: mock_payment)
-      expect(SpreeStripe::CreatePayment).to receive(:new).with(
-        owner: order,
-        payment_session: payment_session,
-        gateway: gateway,
-        amount: payment_session.amount
-      ).and_return(service)
+    # Core creates the payment now; this gem contributes the source and the
+    # charge reference.
+    it 'creates the payment keyed on the intent, with the Stripe source' do
+      allow(payment_session).to receive(:stripe_charge).and_return(nil)
+      allow(payment_session).to receive(:charge_not_required?).and_return(false)
 
-      expect(payment_session.find_or_create_payment!).to eq(mock_payment)
+      payment = payment_session.find_or_create_payment!
+
+      expect(payment).to be_persisted
+      expect(payment.response_code).to eq(payment_session.external_id)
+      expect(payment.amount).to eq(payment_session.amount)
     end
 
-    it 'accepts metadata argument without error' do
-      mock_payment = build(:payment, order: order, payment_method: gateway)
-      service = instance_double(SpreeStripe::CreatePayment, call: mock_payment)
-      allow(SpreeStripe::CreatePayment).to receive(:new).and_return(service)
+    it 'records the caller metadata on the new payment' do
+      allow(payment_session).to receive(:stripe_charge).and_return(nil)
+      allow(payment_session).to receive(:charge_not_required?).and_return(false)
 
-      expect(payment_session.find_or_create_payment!(charge_id: 'ch_123')).to eq(mock_payment)
+      payment = payment_session.find_or_create_payment!(charge_id: 'ch_123')
+
+      expect(payment.metadata['charge_id']).to eq('ch_123')
+    end
+
+    # Regression: the old gem-side implementation keyed idempotency on the
+    # amount too, so a session whose amount moved minted a second payment for
+    # the same intent — doubling the order's money.
+    it 'does not mint a second payment when the amount changes' do
+      allow(payment_session).to receive(:stripe_charge).and_return(nil)
+      allow(payment_session).to receive(:charge_not_required?).and_return(false)
+
+      first = payment_session.find_or_create_payment!
+      payment_session.update!(amount: payment_session.amount - 10)
+      second = payment_session.reload.find_or_create_payment!
+
+      expect(second.id).to eq(first.id)
+      expect(order.payments.count).to eq(1)
     end
   end
 

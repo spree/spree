@@ -46,18 +46,42 @@ module Spree
       self
     end
 
-    # Builds the payment together with a Stripe-specific source (card, Klarna,
-    # SEPA, …), which core's generic implementation cannot do.
-    def find_or_create_payment!(metadata = {})
-      return unless persisted?
-      return payment if payment.present?
+    # Core creates the payment; Stripe only says what instrument it was paid
+    # with. The charge and customer are already warmed by
+    # +prepare_for_settlement!+, so this does no Stripe I/O inside the lock.
+    #
+    # @return [Spree::PaymentSource, nil]
+    def payment_source_for_settlement
+      charge = stripe_charge
 
-      SpreeStripe::CreatePayment.new(
-        owner: owner,
-        payment_session: self,
-        gateway: payment_method,
-        amount: amount
-      ).call
+      if charge.present?
+        SpreeStripe::CreateSource.new(
+          owner: owner,
+          stripe_payment_method_details: charge.payment_method_details,
+          stripe_payment_method_id: charge.payment_method,
+          stripe_billing_details: charge.billing_details,
+          gateway: payment_method
+        ).call
+      elsif charge_not_required?
+        # Bank transfers settle with no charge object, so the instrument has
+        # to come off the intent instead.
+        intent = stripe_payment_intent
+
+        SpreeStripe::CreateSource.new(
+          owner: owner,
+          stripe_payment_method_details: intent.payment_method,
+          stripe_payment_method_id: intent.payment_method.id,
+          stripe_billing_details: nil,
+          gateway: payment_method
+        ).call
+      end
+    end
+
+    # Keeps the charge reference alongside whatever the caller passed.
+    def apply_settlement_metadata(payment, metadata)
+      super
+      charge = stripe_charge
+      payment.metadata['stripe_charge_id'] = charge.id if charge.present?
     end
   end
 end
