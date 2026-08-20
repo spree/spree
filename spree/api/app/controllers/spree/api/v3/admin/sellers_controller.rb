@@ -116,7 +116,7 @@ module Spree
           # every seller on the page, so it loads once. Applied to the scope
           # rather than the collection so a single-seller read gets it too.
           def scope_includes
-            [:billing_address, :returns_address, :requirement_submissions,
+            [:billing_address, :requirement_submissions, { stock_locations: [] },
              { store: :seller_requirements, logo_attachment: :blob, cover_photo_attachment: :blob }]
           end
 
@@ -143,11 +143,17 @@ module Spree
                             :logo, :square_logo, :cover_photo,
                             :tax_remittance, :payouts_schedule_interval, :minimum_payout_amount,
                             :holiday_mode_until,
+                            :legal_name, :registration_number,
                             metadata: {},
                             billing_address: ADDRESS_KEYS,
-                            returns_address: ADDRESS_KEYS,
                             custom_fields: [:id, :custom_field_definition_id, :value, { value: [] }, { value: {} }])
             )
+          end
+
+          # Creating a seller provisions their stock location too, so it goes
+          # through the workflow rather than the base class's plain build.
+          def create_workflow
+            Spree.seller_create_workflow
           end
 
           # `onboarding` is a read of the seller — it changes nothing.

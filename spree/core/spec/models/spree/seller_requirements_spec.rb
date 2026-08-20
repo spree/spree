@@ -114,7 +114,7 @@ RSpec.describe 'seller requirement kinds', type: :model do
     it 'is met once an address is saved' do
       expect(requirement.satisfied?(seller)).to be false
 
-      seller.update!(billing_address: create(:address))
+      seller.update!(billing_address: build(:business_address))
 
       expect(requirement.satisfied?(seller.reload)).to be true
     end
@@ -205,4 +205,27 @@ RSpec.describe 'seller requirement kinds', type: :model do
       expect(requirement.satisfied?(seller)).to be true
     end
   end
+  describe Spree::SellerRequirements::ReturnsAddress do
+    let(:requirement) { create(:returns_address_requirement, store: store) }
+
+    # A location with no address on it tells a shopper nothing about where to
+    # post the parcel, so having the row is not the same as being ready.
+    it 'is unmet while the seller location has no address' do
+      seller.stock_locations.create!(store: store, name: 'Warehouse', default: true)
+
+      expect(requirement.satisfied?(seller.reload)).to be false
+    end
+
+    it 'is met once the returns location can be posted to' do
+      seller.stock_locations.create!(store: store, name: 'Warehouse', default: true,
+                                     address1: '1 Seller Way', city: 'London', country_code: 'GB')
+
+      expect(requirement.satisfied?(seller.reload)).to be true
+    end
+
+    it 'is unmet when the seller has no location at all' do
+      expect(requirement.satisfied?(seller)).to be false
+    end
+  end
+
 end

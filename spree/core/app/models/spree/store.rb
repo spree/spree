@@ -443,11 +443,16 @@ module Spree
       country_codes.filter_map { |code| Spree::Country.by_iso(code) }.sort_by(&:name)
     end
 
-    # Returns the default stock location for the store or creates a new one if it doesn't exist
+    # The store's own default stock location, created if it does not exist yet.
+    #
+    # Scoped to this store's first-party locations on both counts: unscoped it
+    # answered with any store's default, and on a marketplace it would answer
+    # with a seller's — putting the operator's stock on someone else's shelf.
+    #
     # @return [Spree::StockLocation]
     def default_stock_location
       @default_stock_location ||= begin
-        stock_location_scope = Spree::StockLocation.where(default: true)
+        stock_location_scope = stock_locations.first_party.where(default: true)
         stock_location_scope.first || ActiveRecord::Base.connected_to(role: :writing) do
           stock_location_scope.create(default: true, name: Spree.t(:default_stock_location_name),
                                       country_code: default_country&.iso)

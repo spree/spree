@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@spree/dashboard-ui'
-import type { Profile } from '@spree/seller-sdk'
+import type { Profile, SellerAddressParams } from '@spree/seller-sdk'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
 import { PencilIcon, PlusIcon } from 'lucide-react'
@@ -18,24 +18,23 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { sellerClient } from '../api-client'
 
-export type SellerAddressKey = 'billing_address' | 'returns_address'
-
 /**
- * One of the seller's two addresses — where they are invoiced, and where
- * customer returns go — read as a block, edited in the shared address dialog.
+ * Where the seller is invoiced — read as a block, edited in the shared
+ * address dialog.
  *
  * Used both on the profile page and inline in the onboarding checklist, so a
  * seller working through setup fills the address where they are told about
  * it rather than being sent somewhere else and losing their place. Same
  * component either way, so the two can never diverge.
+ *
+ * Returns are not here: they go to a stock location, which is a record of its
+ * own — see `SellerReturnsLocationCard`.
  */
 export function SellerAddressCard({
   profile,
-  addressKey,
   headless = false,
 }: {
   profile: Profile
-  addressKey: SellerAddressKey
   /** Render just the body — the onboarding checklist supplies its own frame. */
   headless?: boolean
 }) {
@@ -44,13 +43,14 @@ export function SellerAddressCard({
   const queryClient = useQueryClient()
   const [editing, setEditing] = useState(false)
 
-  const address = profile[addressKey]
-  const title = t(`profile.${addressKey}`)
+  const address = profile.billing_address
+  const title = t('profile.billing_address')
 
   const save = useMutation({
-    // Only the address being edited is sent: the other is untouched, and
-    // posting both would rewrite a record the seller never opened.
-    mutationFn: (values: unknown) => sellerClient().profile.update({ [addressKey]: values }),
+    // Only the billing address is sent: the rest of the profile is untouched,
+    // and posting it all would rewrite fields the seller never opened.
+    mutationFn: (values: SellerAddressParams) =>
+      sellerClient().profile.update({ billing_address: values }),
     onSuccess: (updated) => {
       queryClient.setQueryData(['seller', sellerId, 'profile'], updated)
       // The checklist reads addresses too, so it has to re-evaluate.
@@ -79,6 +79,7 @@ export function SellerAddressCard({
       title={title}
       address={address}
       open
+      business
       onOpenChange={setEditing}
       onSave={(values) => save.mutate(values)}
       isPending={save.isPending}

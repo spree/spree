@@ -201,17 +201,49 @@ describe Spree::Seller do
     let(:seller) { create(:seller) }
 
     it 'writes an address from nested attributes' do
-      seller.update!(billing_address: { first_name: 'Ada', last_name: 'Lovelace',
+      seller.update!(billing_address: { company: 'Sparks Trading Ltd',
                                         address1: '1 Seller Way', city: 'London',
                                         postal_code: 'EC1A 1BB', country_code: 'GB', phone: '555' })
 
       expect(seller.reload.billing_address.address1).to eq('1 Seller Way')
     end
 
+    # A commission invoice is addressed to the business, so the company is the
+    # part that cannot be left out and a personal name is not asked for.
+    it 'requires the company and not a personal name' do
+      seller.update!(billing_address: { company: 'Sparks Trading Ltd', address1: '1 Seller Way',
+                                        city: 'London', postal_code: 'EC1A 1BB', country_code: 'GB' })
+
+      expect(seller.reload.billing_address.firstname).to be_blank
+    end
+
+    it 'refuses a billing address with no company' do
+      expect {
+        seller.update!(billing_address: { first_name: 'Ada', last_name: 'Lovelace',
+                                          address1: '1 Seller Way', city: 'London',
+                                          postal_code: 'EC1A 1BB', country_code: 'GB' })
+      }.to raise_error(ActiveRecord::RecordInvalid, /company/i)
+    end
+
+    # Loaded through the association, so a seller read fresh still gets the
+    # business rules — editing one field of a saved address must not fail on a
+    # personal name nobody was ever asked for.
+    it 'reads a saved billing address back as a business address' do
+      seller.update!(billing_address: { company: 'Sparks Trading Ltd', address1: '1 Seller Way',
+                                        city: 'London', postal_code: 'EC1A 1BB', country_code: 'GB' })
+
+      reloaded = described_class.find(seller.id)
+      expect(reloaded.billing_address).to be_a(Spree::BusinessAddress)
+      expect(reloaded.update(billing_address: { city: 'Manchester' })).to be(true)
+    end
+
     # A seller is paranoid, so destroy is a soft delete. Taking the addresses
     # with it would hard-delete rows a restored seller still points at.
     it 'keeps its addresses when soft-deleted, and finds them again on restore' do
-      seller.update!(billing_address: create(:address))
+      seller.update!(billing_address: Spree::BusinessAddress.create!(
+        company: 'Sparks Trading Ltd', address1: '1 Seller Way', city: 'London',
+        zipcode: 'EC1A 1BB', country_code: 'GB'
+      ))
       address_id = seller.billing_address_id
 
       seller.destroy

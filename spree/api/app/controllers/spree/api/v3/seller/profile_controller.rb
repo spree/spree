@@ -66,8 +66,7 @@ module Spree
             normalize_params(
               params.permit(:name, :contact_email, :billing_email, :about,
                             :logo, :square_logo, :cover_photo,
-                            billing_address: ADDRESS_KEYS,
-                            returns_address: ADDRESS_KEYS)
+                            billing_address: ADDRESS_KEYS)
             )
           end
 

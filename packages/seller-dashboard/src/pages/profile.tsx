@@ -32,6 +32,7 @@ import { toast } from 'sonner'
 import { sellerClient } from '../api-client'
 import { CenteredMessage } from '../components/centered-message'
 import { SellerAddressCard } from '../components/seller-address-card'
+import { SellerReturnsLocationCard } from '../components/seller-returns-location-card'
 
 interface ProfileValues {
   name: string
@@ -91,8 +92,8 @@ export function ProfilePage() {
             <StandingCard profile={profile} />
             <AtAGlanceCard profile={profile} teamCount={team?.data?.length} />
             <ContactCard profile={profile} onEdit={() => setEditing(true)} />
-            <SellerAddressCard profile={profile} addressKey="billing_address" />
-            <SellerAddressCard profile={profile} addressKey="returns_address" />
+            <SellerAddressCard profile={profile} />
+            <SellerReturnsLocationCard />
             <SettlementCard profile={profile} />
           </>
         }

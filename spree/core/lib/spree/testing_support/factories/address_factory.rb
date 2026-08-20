@@ -37,5 +37,13 @@ FactoryBot.define do
     # rejected everywhere else. Specs that care about a particular code pass
     # one; the rest just need something the country accepts.
     zipcode { Spree::TestingSupport::CountryPool.postal_code_for(country&.iso) }
+
+    # An address addressed to a company rather than a person — a seller's
+    # billing address. Shares the table with its parent, so the only
+    # difference is which fields it asks for.
+    factory :business_address, class: Spree::BusinessAddress do
+      firstname { nil }
+      lastname  { nil }
+    end
   end
 end

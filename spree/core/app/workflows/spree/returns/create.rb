@@ -99,9 +99,14 @@ module Spree
         failure(@return_record) unless @return_record.save
       end
 
+      # Where the goods should physically come back to. The fulfillment's own
+      # location is the best answer — it is where they left from — then the
+      # seller's returns location on a marketplace order, so a seller's goods
+      # never come back to the operator's warehouse.
       def default_stock_location
         @normalized_items.first[:fulfillment_item].fulfillment&.stock_location ||
-          order.store.stock_locations.first
+          (order.respond_to?(:seller) ? order.seller&.returns_location : nil) ||
+          order.store.default_stock_location
       end
     end
   end

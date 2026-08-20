@@ -15,6 +15,7 @@ export type {
   RequirementSubmissionParams,
   SellerAddressParams,
   SellerCountry,
+  StockLocationParams,
 } from './seller-client'
 // Client class, for advanced use and subclassing
 export { SellerClient } from './seller-client'

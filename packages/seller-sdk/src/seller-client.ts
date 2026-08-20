@@ -8,6 +8,7 @@ import type {
   RequirementStatus,
   RequirementSubmission,
   SellerSummary,
+  StockLocation,
   TeamMember,
 } from './types'
 
@@ -217,6 +218,56 @@ export class SellerClient {
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/products/${id}`, options),
   }
+
+  /**
+   * Where this seller keeps stock, and so where their returns are sent.
+   *
+   * No delete: a location holds stock levels and is named on historical
+   * fulfillments, so a seller retires one by setting `active` to false.
+   */
+  readonly stockLocations = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<ListResponse<StockLocation>> =>
+      this.request<ListResponse<StockLocation>>('GET', '/stock_locations', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<StockLocation> =>
+      this.request<StockLocation>('GET', `/stock_locations/${id}`, options),
+
+    create: (params: StockLocationParams, options?: RequestOptions): Promise<StockLocation> =>
+      this.request<StockLocation>('POST', '/stock_locations', { ...options, body: params }),
+
+    update: (
+      id: string,
+      params: StockLocationParams,
+      options?: RequestOptions,
+    ): Promise<StockLocation> =>
+      this.request<StockLocation>('PATCH', `/stock_locations/${id}`, {
+        ...options,
+        body: params,
+      }),
+  }
+}
+
+/** What a seller may write on one of their stock locations. */
+export interface StockLocationParams {
+  name?: string
+  company?: string | null
+  address1?: string | null
+  address2?: string | null
+  city?: string | null
+  zipcode?: string | null
+  country_code?: string | null
+  state_code?: string | null
+  state_name?: string | null
+  phone?: string | null
+  active?: boolean
+  default?: boolean
+  kind?: string
 }
 
 /** A country as the address form needs it. */

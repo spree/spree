@@ -3,11 +3,17 @@ module Spree
   # Handed to a tax provider through {Spree::TaxProvider::Base#estimate}, where
   # it is what makes EU B2B reverse charge possible.
   #
-  # Three owners, exactly one per row: a customer (the durable profile value), a
-  # cart (an override entered during checkout) or an order (the frozen snapshot
-  # taken at completion). Orders keep a copy rather than a reference because a
-  # registration can be changed or withdrawn later, and an invoice must still
-  # show what was true when it was issued.
+  # Owners, exactly one per row: a customer (the durable profile value), a
+  # company (the business a customer buys for), a cart (an override entered
+  # during checkout) or an order (the frozen snapshot taken at completion).
+  # Orders keep a copy rather than a reference because a registration can be
+  # changed or withdrawn later, and an invoice must still show what was true
+  # when it was issued.
+  #
+  # A **seller** owns one too, and it faces the other way: the others say how
+  # the buyer is taxed, while a seller's registration is what the marketplace's
+  # own commission invoice is made out to, and what makes EU reverse charge on
+  # that fee possible (docs/plans/6.0-multi-vendor-marketplace.md Decision 12).
   #
   # == The +kind+ column
   #
@@ -41,6 +47,7 @@ module Spree
     # Owner — exactly one
     belongs_to :customer, class_name: Spree.customer_class.to_s, optional: true, inverse_of: :tax_identifiers
     belongs_to :company, class_name: 'Spree::Company', optional: true, inverse_of: :tax_identifiers
+    belongs_to :seller, class_name: 'Spree::Seller', optional: true, inverse_of: :tax_identifiers
     belongs_to :cart, class_name: 'Spree::Cart', optional: true, inverse_of: :tax_identifier
     belongs_to :order, class_name: 'Spree::Order', optional: true, inverse_of: :tax_identifier
 
@@ -64,6 +71,7 @@ module Spree
     # own associations.
     validates :kind, uniqueness: { scope: :customer_id }, if: -> { customer_id.present? }
     validates :kind, uniqueness: { scope: :company_id }, if: -> { company_id.present? }
+    validates :kind, uniqueness: { scope: :seller_id }, if: -> { seller_id.present? }
     # Data hygiene, not a format claim — no tax regime issues numbers this long.
     validates :value, length: { maximum: 64 }
     validates :validation_status, inclusion: { in: VALIDATION_STATUSES }, allow_nil: true
@@ -80,9 +88,9 @@ module Spree
       persisted? && order_id.present?
     end
 
-    # @return [Spree::Customer, Spree::Company, Spree::Cart, Spree::Order, nil]
+    # @return [Spree::Customer, Spree::Company, Spree::Seller, Spree::Cart, Spree::Order, nil]
     def owner
-      customer || company || cart || order
+      customer || company || seller || cart || order
     end
 
     def verified?
@@ -142,7 +150,7 @@ module Spree
     end
 
     def exactly_one_owner
-      return if [customer, company, cart, order].compact.one?
+      return if [customer, company, seller, cart, order].compact.one?
 
       errors.add(:base, Spree.t('errors.messages.exactly_one_tax_identifier_owner'))
     end
