@@ -78,17 +78,14 @@ module Spree
 
           # Per-subclass permitted params: the controller's own allowlist plus
           # whatever the concrete subclass declares through
-          # `additional_permitted_attributes`. The two are merged rather than
-          # concatenated so a subclass redeclaring a nested key (`preferences`,
-          # `metadata`) widens it instead of replacing the controller's filter.
-          # Controllers can override this hook directly if their subclasses
-          # expose extras through a different mechanism.
+          # `additional_permitted_attributes`. Controllers can override this
+          # hook directly if their subclasses expose extras through a different
+          # mechanism.
           def permitted_params_for(klass)
             extras = klass.respond_to?(:additional_permitted_attributes) ? klass.additional_permitted_attributes : []
             return permitted_params if extras.blank?
 
-            merged = Spree::Api::V3::PermitFragments.merge([:type, { preferences: {} }], extras)
-            permitted_params.merge(params.permit(*merged))
+            permitted_params.merge(params.permit(:type, *extras, preferences: {}))
           end
 
           # Default build: top-level resource. Nested controllers (actions,

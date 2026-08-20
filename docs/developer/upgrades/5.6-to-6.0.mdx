@@ -451,6 +451,10 @@ another extension already added. `<<` raises a `FrozenError`: the default is a
 frozen shared array, so mutating it in place would leak your attribute onto every
 other model.
 
+Declare only attributes of your own. Redeclaring a key the controller already
+permits (`metadata`, `prices`) does not widen it — strong parameters keeps the
+last filter for that key, so the controller's own would be replaced by yours.
+
 Entries are `params.permit` fragments, so collections and nested structures keep
 the shapes you already know: `[:brand_id, { region_ids: [] }]`.
 

@@ -338,10 +338,7 @@ module Spree
         # declared on the model. Override +resource_permitted_attributes+ rather
         # than this, so the extension union is not lost.
         def permitted_attributes
-          Spree::Api::V3::PermitFragments.merge(
-            resource_permitted_attributes,
-            model_additional_permitted_attributes
-          )
+          resource_permitted_attributes + model_additional_permitted_attributes
         end
 
         # Override in subclass to declare the resource's writable attributes.

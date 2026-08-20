@@ -107,10 +107,9 @@ module Spree
 
             def permitted_params
               params.permit(
-                *Spree::Api::V3::PermitFragments.merge(
-                  [:id, :variant_id, :quantity, { metadata: {}, options: {} }],
-                  Spree::LineItem.additional_permitted_attributes
-                )
+                :id, :variant_id, :quantity,
+                *Spree::LineItem.additional_permitted_attributes,
+                { metadata: {}, options: {} }
               )
             end
           end
