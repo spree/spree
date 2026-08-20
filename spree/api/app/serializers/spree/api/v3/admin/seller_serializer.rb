@@ -16,6 +16,8 @@ module Spree
                    deleted_at: [:string, nullable: true],
                    on_holiday: :boolean, sellable: :boolean,
                    products_count: :number, users_count: :number,
+                   onboarding_progress: '{ done: number; total: number; percentage: number }',
+                   onboarding_complete: :boolean,
                    metadata: 'Record<string, unknown> | null'
 
           attributes :status, :contact_email, :billing_email,
@@ -41,16 +43,27 @@ module Spree
           end
 
           # Saves the dashboard a request per row for the two counts its list
-          # and header show. `count`, not `size`: a seller's catalog is the one association here
-          # that can run to thousands of rows, and the list only ever renders
-          # the number. Costs one COUNT per row, which is cheaper than loading
-          # the catalog into memory to measure it.
+          # and header show. Read off the seller, which memoizes the SQL count
+          # so the minimum-products requirement asks the same question free.
           attribute :products_count do |seller|
-            seller.products.count
+            seller.products_count
           end
 
           attribute :users_count do |seller|
             seller.users.size
+          end
+
+          # How far through the marketplace's checklist this seller is — what
+          # the list's progress column and the profile's badge render. The
+          # requirements themselves, with their submissions, stay on the
+          # heavier `onboarding` action; a list of sellers needs the number,
+          # not the rows behind it.
+          attribute :onboarding_progress do |seller|
+            seller.onboarding_progress
+          end
+
+          attribute :onboarding_complete do |seller|
+            seller.onboarding_complete?
           end
 
           one :billing_address,

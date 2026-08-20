@@ -129,6 +129,7 @@ import type {
   CustomFieldDefinitionCreateParams,
   CustomFieldDefinitionUpdateParams,
   CustomFieldOwnerType,
+  CustomFieldResourceType,
   CustomFieldUpdateParams,
   DeliveryMethodParams,
   DeliveryOriginGroupParams,
@@ -205,9 +206,17 @@ import type {
   ReturnUpdateParams,
   RoleCreateParams,
   RoleUpdateParams,
+  SellerApproveParams,
   SellerCreateParams,
   SellerInviteParams,
+  SellerOnboarding,
   SellerRejectParams,
+  SellerReopenOnboardingParams,
+  SellerRequirementCreateParams,
+  SellerRequirementReviewParams,
+  SellerRequirementType,
+  SellerRequirementUpdateParams,
+  SellerRequirementWaiveParams,
   SellerSuspendParams,
   SellerUpdateParams,
   SetupCountries,
@@ -296,6 +305,8 @@ import type {
   ReturnReason,
   Role,
   Seller,
+  SellerRequirement,
+  SellerRequirementSubmission,
   StockLevel,
   StockLocation,
   StockMovement,
@@ -478,6 +489,17 @@ export class AdminClient {
 
     get: (id: string, options?: RequestOptions): Promise<CustomFieldDefinition> =>
       this.request<CustomFieldDefinition>('GET', `/custom_field_definitions/${id}`, options),
+
+    /**
+     * What a definition can be attached to. Comes from the server's registry,
+     * so a resource an extension adds is offered without a dashboard release.
+     */
+    resourceTypes: (options?: RequestOptions): Promise<{ data: CustomFieldResourceType[] }> =>
+      this.request<{ data: CustomFieldResourceType[] }>(
+        'GET',
+        '/custom_field_definitions/resource_types',
+        options,
+      ),
 
     create: (
       params: CustomFieldDefinitionCreateParams,
@@ -2393,9 +2415,93 @@ export class AdminClient {
     invite: (id: string, params: SellerInviteParams, options?: RequestOptions): Promise<Seller> =>
       this.request<Seller>('POST', `/sellers/${id}/invite`, { ...options, body: params }),
 
-    /** Lets the seller trade — also the way back from suspended or rejected. */
-    approve: (id: string, options?: RequestOptions): Promise<Seller> =>
-      this.request<Seller>('PATCH', `/sellers/${id}/approve`, options),
+    /**
+     * Lets the seller trade — also the way back from suspended or rejected.
+     * Refused while a required onboarding requirement is unmet, unless
+     * `override_requirements` says the operator means it anyway.
+     */
+    approve: (
+      id: string,
+      params?: SellerApproveParams,
+      options?: RequestOptions,
+    ): Promise<Seller> =>
+      this.request<Seller>('PATCH', `/sellers/${id}/approve`, { ...options, body: params }),
+
+    /** Where this seller stands against the marketplace's checklist. */
+    onboarding: (id: string, options?: RequestOptions): Promise<SellerOnboarding> =>
+      this.request<SellerOnboarding>('GET', `/sellers/${id}/onboarding`, options),
+
+    /** Sends a seller awaiting review back to onboarding, with a note. */
+    reopenOnboarding: (
+      id: string,
+      params?: SellerReopenOnboardingParams,
+      options?: RequestOptions,
+    ): Promise<Seller> =>
+      this.request<Seller>('PATCH', `/sellers/${id}/reopen_onboarding`, {
+        ...options,
+        body: params,
+      }),
+
+    /** What this seller submitted about the requirements, and its decisions. */
+    requirementSubmissions: {
+      list: (
+        sellerId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<SellerRequirementSubmission>> =>
+        this.request<PaginatedResponse<SellerRequirementSubmission>>(
+          'GET',
+          `/sellers/${sellerId}/requirement_submissions`,
+          { ...options, params: params ? transformListParams(params) : undefined },
+        ),
+
+      get: (
+        sellerId: string,
+        id: string,
+        options?: RequestOptions,
+      ): Promise<SellerRequirementSubmission> =>
+        this.request<SellerRequirementSubmission>(
+          'GET',
+          `/sellers/${sellerId}/requirement_submissions/${id}`,
+          options,
+        ),
+
+      accept: (
+        sellerId: string,
+        id: string,
+        params?: SellerRequirementReviewParams,
+        options?: RequestOptions,
+      ): Promise<SellerRequirementSubmission> =>
+        this.request<SellerRequirementSubmission>(
+          'PATCH',
+          `/sellers/${sellerId}/requirement_submissions/${id}/accept`,
+          { ...options, body: params },
+        ),
+
+      reject: (
+        sellerId: string,
+        id: string,
+        params?: SellerRequirementReviewParams,
+        options?: RequestOptions,
+      ): Promise<SellerRequirementSubmission> =>
+        this.request<SellerRequirementSubmission>(
+          'PATCH',
+          `/sellers/${sellerId}/requirement_submissions/${id}/reject`,
+          { ...options, body: params },
+        ),
+
+      /** Excuses this seller from one requirement the store asks of everyone. */
+      waive: (
+        sellerId: string,
+        params: SellerRequirementWaiveParams,
+        options?: RequestOptions,
+      ): Promise<SellerRequirementSubmission> =>
+        this.request<SellerRequirementSubmission>(
+          'POST',
+          `/sellers/${sellerId}/requirement_submissions`,
+          { ...options, body: params },
+        ),
+    },
 
     suspend: (
       id: string,
@@ -2406,6 +2512,53 @@ export class AdminClient {
 
     reject: (id: string, params?: SellerRejectParams, options?: RequestOptions): Promise<Seller> =>
       this.request<Seller>('PATCH', `/sellers/${id}/reject`, { ...options, body: params }),
+  }
+
+  // ============================================
+  // Seller onboarding requirements
+  // ============================================
+
+  /**
+   * What this marketplace asks of a seller before it will let them trade.
+   * Rows the operator composes from registered kinds — `types()` is what a
+   * picker renders, and a marketplace's own kinds appear there as soon as
+   * they are registered server-side.
+   */
+  readonly sellerRequirements = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<SellerRequirement>> =>
+      this.request<PaginatedResponse<SellerRequirement>>('GET', '/seller_requirements', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<SellerRequirement> =>
+      this.request<SellerRequirement>('GET', `/seller_requirements/${id}`, options),
+
+    create: (
+      params: SellerRequirementCreateParams,
+      options?: RequestOptions,
+    ): Promise<SellerRequirement> =>
+      this.request<SellerRequirement>('POST', '/seller_requirements', { ...options, body: params }),
+
+    update: (
+      id: string,
+      params: SellerRequirementUpdateParams,
+      options?: RequestOptions,
+    ): Promise<SellerRequirement> =>
+      this.request<SellerRequirement>('PATCH', `/seller_requirements/${id}`, {
+        ...options,
+        body: params,
+      }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/seller_requirements/${id}`, options),
+
+    /** The kinds an operator can add, with each one's configuration shape. */
+    types: (options?: RequestOptions): Promise<{ data: SellerRequirementType[] }> =>
+      this.request<{ data: SellerRequirementType[] }>('GET', '/seller_requirements/types', options),
   }
 
   // ============================================
