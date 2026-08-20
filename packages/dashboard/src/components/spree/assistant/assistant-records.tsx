@@ -7,8 +7,8 @@ import { useTranslation } from 'react-i18next'
 
 interface AssistantRecordsProps {
   records: AssistantRecord[]
-  /** Total the tool reported, which can exceed the rows shown. */
-  count?: number
+  /** Records that matched, which can exceed the rows shown. */
+  total?: number
 }
 
 /**
@@ -17,11 +17,11 @@ interface AssistantRecordsProps {
  * The point of showing them rather than letting the assistant describe them:
  * an answer about a product is usually the start of working on that product.
  */
-export function AssistantRecords({ records, count }: AssistantRecordsProps) {
+export function AssistantRecords({ records, total }: AssistantRecordsProps) {
   const { t } = useTranslation()
   const { storeId } = useStore()
   const navigate = useNavigate()
-  const hidden = (count ?? records.length) - records.length
+  const hidden = Math.max((total ?? records.length) - records.length, 0)
 
   return (
     <div className="overflow-hidden rounded-lg border">

@@ -45,7 +45,9 @@ class CreateSpreeAssistantTables < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :spree_assistant_tool_calls, :tool_call_id, unique: true
+    # Unique within a conversation, not globally: the id is the AI provider's
+    # and two stores can be handed the same string.
+    add_index :spree_assistant_tool_calls, %i[message_id tool_call_id], unique: true
     add_index :spree_assistant_tool_calls, :name
   end
 end

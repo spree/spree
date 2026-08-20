@@ -26,7 +26,8 @@ module Spree
             # as something the merchant can click through to.
             record: entry.serializer_class.new(record).to_h,
             records: [Spree::Assistant::RecordSummary.call(entry: entry, record: record)],
-            count: 1
+            count: 1,
+            total: 1
           }
         end
 
@@ -42,7 +43,10 @@ module Spree
           scope = entry.scope_for(context.store)
 
           scope.find_by_prefix_id(id) || find_by_natural_key(scope, id)
-        rescue StandardError
+        # Only the prefixed-id decode is expected to fail here (the model may
+        # pass a slug or an order number); anything else is a real error and
+        # must not be swallowed into a confusing nil.
+        rescue ArgumentError, NoMethodError
           find_by_natural_key(scope, id)
         end
 

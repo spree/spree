@@ -10,7 +10,8 @@ module Spree
 
             # GET /api/v3/admin/assistant/chats
             def index
-              chats = chats_scope.recent_first.limit(50)
+              # Counted in one query rather than one per chat.
+              chats = chats_scope.recent_first.limit(50).includes(:assistant_messages)
 
               render json: { data: chats.map { |chat| serialize(chat) } }
             end

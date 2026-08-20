@@ -36,10 +36,15 @@ module Spree
           unrecognised = unrecognised_filters(entry, applied)
           return invalid_filters(entry, unrecognised) if unrecognised.any?
 
-          records = search(entry, applied, sort, limit)
+          query = build_query(entry, applied, sort)
+          records = query.result.limit(capped_limit(limit)).to_a
 
           {
             resource: entry.key,
+            # How many matched, not how many were returned. The assistant is
+            # asked to say how many there are, so handing it the page size would
+            # have it state "10 products" for a store holding hundreds.
+            total: query.result.count,
             count: records.size,
             records: records.map { |record| Spree::Assistant::RecordSummary.call(entry: entry, record: record) }
           }
@@ -51,11 +56,10 @@ module Spree
 
         private
 
-        def search(entry, filters, sort, limit)
+        def build_query(entry, filters, sort)
           query = entry.scope_for(context.store).ransack(filters)
           query.sorts = sort if sort.present?
-
-          query.result.limit(capped_limit(limit)).to_a
+          query
         end
 
         # A filter key is `<attribute>_<predicate>`; Ransack accepts it only if

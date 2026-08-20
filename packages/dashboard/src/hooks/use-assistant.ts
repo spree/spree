@@ -7,7 +7,7 @@ import type {
 } from '@spree/admin-sdk'
 import { adminClient, useStore } from '@spree/dashboard-core'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 /** What the panel renders: the conversation so far, plus anything in flight. */
 export interface AssistantTranscriptEntry {
@@ -17,8 +17,8 @@ export interface AssistantTranscriptEntry {
   toolCall?: AssistantToolCall
   records?: AssistantRecord[]
   resource?: string
-  /** Total the tool reported, which can exceed the rows it returned. */
-  count?: number
+  /** Records that matched, which can exceed the rows shown. */
+  total?: number
 }
 
 export function useAssistantStatus() {
@@ -90,7 +90,7 @@ export function useAssistantConversation() {
               kind: 'records',
               records: event.data.records,
               resource: event.data.resource,
-              count: event.data.count,
+              total: event.data.total,
             })
           } else if (event.data.error) {
             append({ kind: 'activity', text: event.data.error })
@@ -203,6 +203,11 @@ export function useAssistantConversation() {
       }),
     )
   }, [])
+
+  // A turn can outlive the component that started it (the panel is closed, the
+  // admin navigates away). Without this the reader loop keeps running and sets
+  // state on a tree that is gone.
+  useEffect(() => () => abortRef.current?.abort(), [])
 
   const reset = useCallback(() => {
     abortRef.current?.abort()

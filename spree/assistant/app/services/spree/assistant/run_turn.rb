@@ -32,9 +32,6 @@ module Spree
         reply = llm_chat.complete
 
         finish(turn, reply)
-      rescue Spree::Assistant::ProviderError => e
-        emit(:'turn.failed', message: e.message)
-        raise
       end
 
       private
@@ -146,6 +143,7 @@ module Spree
         {
           resource: result[:resource],
           count: result[:count],
+          total: result[:total],
           records: result[:records],
           error: result[:error]
         }.compact

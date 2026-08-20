@@ -41,14 +41,31 @@ module Spree
             define_method(:name) { tool.tool_name }
 
             define_method(:execute) do |**arguments|
-              # Refused rather than raised: the model reads this as a result and
-              # answers with what it already has, instead of the turn dying.
+              # Every problem below is returned as a result, never raised: the
+              # model reads it, corrects itself and carries on. Raising would
+              # abort the turn and leave the merchant with a generic failure.
               unless turn.tool_budget_available?
                 next { error: 'Tool call limit reached for this turn. Answer with the information you already have.' }
               end
 
+              # The library skips its own argument checking here, because this
+              # `execute` accepts bare keywords and its validator reads the
+              # method signature. Without this, a missing or invented argument
+              # reaches the tool and raises ArgumentError out of the turn.
+              missing = tool.params.filter_map do |param_name, options|
+                param_name if options[:required] && arguments[param_name].blank?
+              end
+              next { error: "Missing required argument(s): #{missing.join(', ')}" } if missing.any?
+
+              unknown = arguments.keys - tool.params.keys
+              next { error: "Unknown argument(s): #{unknown.join(', ')}" } if unknown.any?
+
               if tool.mutating?
-                turn.propose!(tool: tool, arguments: arguments)
+                unless turn.propose!(tool: tool, arguments: arguments)
+                  next { error: 'Another change is already waiting for the merchant to approve. ' \
+                                'Ask again once they have decided on it.' }
+                end
+
                 # Persisted as this call's tool result, so the conversation stays
                 # valid; approval overwrites it with the real outcome.
                 halt(Spree::Assistant::AWAITING_APPROVAL_MARKER)

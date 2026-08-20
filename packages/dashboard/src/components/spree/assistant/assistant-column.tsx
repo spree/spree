@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { AssistantPanel } from './assistant-panel'
 import { useAssistant } from './assistant-provider'
 
@@ -11,11 +11,19 @@ import { useAssistant } from './assistant-provider'
 export function AssistantColumn() {
   const { open, close } = useAssistant()
   const [expanded, setExpanded] = useState(false)
+  // Nothing is mounted until the merchant first opens the assistant, so a
+  // dashboard nobody asks pays nothing for it.
+  const everOpened = useRef(false)
+  if (open) everOpened.current = true
 
-  if (!open) return null
+  // After that it is hidden rather than unmounted: the panel owns the live
+  // conversation, and a merchant who closes it to look at a record the
+  // assistant just named would otherwise come back to an empty chat.
+  if (!everOpened.current) return null
 
   return (
     <div
+      hidden={!open}
       className={
         expanded
           ? 'fixed inset-0 z-40 border-l lg:static lg:z-auto lg:w-[640px] lg:shrink-0 xl:w-[760px]'

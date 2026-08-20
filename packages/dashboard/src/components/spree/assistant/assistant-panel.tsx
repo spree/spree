@@ -36,9 +36,14 @@ export function AssistantPanel({ onClose, expanded, onToggleExpanded }: Assistan
   const bottomRef = useRef<HTMLDivElement>(null)
   const empty = entries.length === 0
 
+  // Follows the answer as it streams in. Depends on both the transcript length
+  // and the streaming flag: with an empty dependency list the ref is still null
+  // on mount (the anchor only renders once there are entries) and the panel
+  // would never scroll at all.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: the deps drive the re-run, the body reads neither
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [])
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+  }, [entries.length, streaming])
 
   function submit(value: string) {
     const text = value.trim()
@@ -209,7 +214,7 @@ function TranscriptRow({
   }
 
   if (entry.kind === 'records') {
-    return <AssistantRecords records={entry.records ?? []} count={entry.count} />
+    return <AssistantRecords records={entry.records ?? []} total={entry.total} />
   }
 
   const toolCall = entry.toolCall

@@ -33,11 +33,23 @@ module Spree
       # Recorded by the tool adapter when a mutating tool is reached, instead of
       # executing it.
       #
+      # Records a change the model wants approved.
+      #
+      # Only the first is kept. Every tool call in a response runs before the
+      # halt takes effect, so a request like "archive both of these" would
+      # otherwise overwrite the first proposal and show one card — and the
+      # merchant would approve one change believing they had approved both.
+      # The rest are refused, and the model is told to ask again once this one
+      # is decided.
+      #
       # @param tool [Spree::Assistant::Tool]
       # @param arguments [Hash]
-      # @return [void]
+      # @return [Boolean] whether this proposal was the one recorded
       def propose!(tool:, arguments:)
+        return false if @proposal.present?
+
         @proposal = { tool: tool, arguments: arguments }
+        true
       end
 
       # @return [Hash, nil]

@@ -48,7 +48,7 @@ module Spree
           scope = context.store.products
 
           scope.find_by_prefix_id(id) || scope.find_by(slug: id)
-        rescue StandardError
+        rescue ArgumentError, NoMethodError
           scope.find_by(slug: id)
         end
       end

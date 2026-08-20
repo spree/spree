@@ -40,15 +40,20 @@ module Spree
       update(title: text.to_s.strip.truncate(60))
     end
 
-    # The tool call currently blocking this conversation, if any. A chat holds
-    # at most one: the turn halts on the first mutation proposed.
+    # The tool call currently blocking this conversation, if any. A turn halts
+    # on the first mutation, but a merchant who ignores a card and simply keeps
+    # typing can leave more than one outstanding, so the newest wins.
     #
     # @return [Spree::AssistantToolCall, nil]
     def pending_tool_call
       Spree::AssistantToolCall
         .joins(:message)
         .where(spree_assistant_messages: { chat_id: id })
-        .find_by(status: Spree::AssistantToolCall::PROPOSED)
+        .where(status: Spree::AssistantToolCall::PROPOSED)
+        # ordered so a chat holding more than one outstanding proposal always
+        # resolves the newest, rather than whatever the database returns first
+        .order(id: :desc)
+        .first
     end
   end
 end

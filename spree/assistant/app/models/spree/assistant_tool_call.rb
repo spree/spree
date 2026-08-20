@@ -32,7 +32,12 @@ module Spree
                class_name: Spree.admin_user_class.to_s,
                optional: true
 
-    validates :tool_call_id, presence: true, uniqueness: true
+    # Scoped to the message rather than globally: the id comes from the AI
+    # provider and is only meaningful inside one conversation, so two stores
+    # could legitimately be handed the same string. `spree_base_uniqueness_scope`
+    # is empty for this model (it holds no store_id — it reaches the store
+    # through its chat), so it would not have scoped anything.
+    validates :tool_call_id, presence: true, uniqueness: { scope: :message_id }
     validates :name, presence: true
     validates :status, inclusion: { in: STATUSES }, allow_nil: true
 

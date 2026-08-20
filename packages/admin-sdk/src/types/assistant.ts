@@ -92,7 +92,10 @@ export interface AssistantEvent {
     awaiting_approval?: boolean
     tool_call?: AssistantToolCall
     resource?: string
+    /** Rows returned. */
     count?: number
+    /** Records that matched, which can exceed the rows returned. */
+    total?: number
     records?: AssistantRecord[]
     error?: string
   }

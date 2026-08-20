@@ -41,10 +41,13 @@ module Spree
       rescue ForbiddenError, AlreadyResolvedError
         raise
       rescue StandardError => e
-        # The model is told the tool failed so it can explain itself, rather
-        # than the turn dying and the merchant seeing nothing.
+        # Recorded as the tool's result rather than re-raised: the turn then
+        # continues and the assistant explains what went wrong. Raising here
+        # would abort before the model ever saw the failure, leaving the
+        # merchant with a generic "could not finish that" and an approval they
+        # believe went through.
+        Rails.logger.error("[Spree Assistant] tool #{tool_call.name} failed: #{e.class}: #{e.message}")
         finish(status: Spree::AssistantToolCall::FAILED, result: { error: e.message })
-        raise
       end
 
       def reject!
