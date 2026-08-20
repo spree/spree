@@ -192,8 +192,6 @@ module Spree
         Entry.new(key: 'return_reasons', model_name: 'Spree::ReturnReason',
                   permission: 'read_settings', serializer_name: 'Spree::Api::V3::Admin::ReturnReasonSerializer',
                   dashboard_path: '/settings/reasons'),
-        Entry.new(key: 'webhook_endpoints', model_name: 'Spree::WebhookEndpoint',
-                  permission: 'read_webhooks', serializer_name: 'Spree::Api::V3::Admin::WebhookEndpointSerializer'),
         Entry.new(key: 'allowed_origins', model_name: 'Spree::AllowedOrigin',
                   permission: 'read_settings', serializer_name: 'Spree::Api::V3::Admin::AllowedOriginSerializer',
                   dashboard_path: '/settings/allowed-origins'),
@@ -203,14 +201,35 @@ module Spree
         Entry.new(key: 'exports', model_name: 'Spree::Export',
                   permission: 'read_settings', serializer_name: 'Spree::Api::V3::Admin::ExportSerializer'),
 
-        # Deliberately absent, and not for lack of a page:
+        # Every settings page that can be exposed safely and correctly is
+        # above. The six that are not, and why — so this is not re-litigated:
+        #
         #   api_keys      — the serializer exposes `plaintext_token`, so
         #                   listing them would send live credentials to an AI
         #                   vendor.
         #   integrations  — same shape of risk; the preferences blob is where
         #                   every provider credential lives.
-        #   staff, custom_field_definitions — neither model is store-scoped,
-        #                   so `for_store` would return every store's rows.
+        #   webhook_endpoints
+        #                 — the serializer declares `secret_key`, the shared
+        #                   secret that signs deliveries. It reads nil today
+        #                   behind a per-instance reveal flag, but a signing
+        #                   secret is not something to expose to an AI vendor
+        #                   on the strength of a flag staying put.
+        #   gift_cards    — the serializer exposes `code`, which is the bearer
+        #                   instrument itself. Balances could be answered by a
+        #                   purpose-built tool that never emits the code.
+        #   staff,
+        #   custom_field_definitions
+        #                 — neither model is store-scoped, so `for_store` falls
+        #                   through to the unscoped class and would return every
+        #                   store's rows. Addable once each gains real scoping
+        #                   (see 6.0-store-scoped-custom-field-definitions.md).
+        #   store, emails — not collections. `Spree::Store` is a single row this
+        #                   map's shape does not fit (and `for_store` on it
+        #                   returns every store); the emails page configures
+        #                   mailer settings, not records. A merchant asking
+        #                   "what's our support email?" wants a small dedicated
+        #                   tool, not a resource entry.
 
         # Marketing
         Entry.new(key: 'promotions', model_name: 'Spree::Promotion',
