@@ -30,8 +30,11 @@ module Spree
           step :provision_stock_location
         end
 
+        # No explicit `seller.created` here: `publishes_lifecycle_events` on the
+        # model already emits it on commit, and publishing again would run every
+        # subscriber and webhook twice per seller. The sibling workflows publish
+        # names the concern does not emit, which is why they do it themselves.
         run_hooks :after_create
-        seller.publish_event('seller.created')
         success(seller.reload)
       end
 

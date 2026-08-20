@@ -42,7 +42,20 @@ import { NavIcon } from './nav-main'
  * Hidden below `lg` regardless of `open` — settings on narrow viewports
  * still need a separate solution.
  */
-export function SettingsSidebar({ open }: { open: boolean }) {
+export function SettingsSidebar({
+  open,
+  tenantId,
+}: {
+  open: boolean
+  /**
+   * The id the settings links are built under — a store for the operator's
+   * dashboard, a seller for the marketplace panel. Falls back to reading
+   * `storeId` from the route so the operator's dashboard needs no change;
+   * a panel routed on anything else passes its own, exactly as `useNavItems`
+   * takes one.
+   */
+  tenantId?: string
+}) {
   const { t } = useTranslation()
   const { storeId } = useParams({ strict: false }) as { storeId?: string }
 
@@ -76,7 +89,7 @@ export function SettingsSidebar({ open }: { open: boolean }) {
             store switcher opposite, so the two line up. */}
         <div className="flex h-header-height items-center gap-1 px-2">
           <Link
-            to={`/${storeId}` as never}
+            to={`/${tenantId ?? storeId}` as never}
             tabIndex={open ? 0 : -1}
             aria-label={t('admin.settings_page.back_to_dashboard')}
             className="inline-flex size-8 shrink-0 items-center justify-center rounded-lg text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
@@ -86,7 +99,7 @@ export function SettingsSidebar({ open }: { open: boolean }) {
           <span className="truncate font-medium text-sm">{t('admin.settings_page.title')}</span>
         </div>
 
-        <SettingsNavBody tabIndex={open ? 0 : -1} />
+        <SettingsNavBody tabIndex={open ? 0 : -1} tenantId={tenantId} />
       </div>
     </aside>
   )
@@ -175,14 +188,17 @@ export function SettingsNavSheet({
 function SettingsNavBody({
   tabIndex,
   onNavigate,
+  tenantId,
 }: {
   tabIndex: number
   /** Called when an entry is tapped — closes the mobile sheet. */
   onNavigate?: () => void
+  /** See `SettingsSidebar` — a seller id on the marketplace panel. */
+  tenantId?: string
 }) {
   const { t } = useTranslation()
   const { storeId } = useParams({ strict: false }) as { storeId?: string }
-  const id = storeId ?? 'default'
+  const id = tenantId ?? storeId ?? 'default'
   const snapshot = useSettingsNav()
   const { permissions } = usePermissions()
   const [query, setQuery] = useState('')

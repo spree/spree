@@ -1,5 +1,49 @@
 {
   "admin": {
+    "a11y": {
+      "breadcrumb": "Fil d'Ariane",
+      "breadcrumb_more": "Plus",
+      "bulk_actions": "Actions groupées",
+      "change_color": "Changer la couleur ({{value}})",
+      "clear_date": "Effacer la date",
+      "clear_selection": "Effacer la sélection",
+      "collapse_all": "Tout réduire",
+      "delete_image": "Supprimer l'image",
+      "drag_to_reorder": "Faire glisser pour réorganiser",
+      "edit_media": "Modifier le média",
+      "expand_all": "Tout développer",
+      "hide_value": "Masquer la valeur",
+      "pick_color": "Choisir une couleur",
+      "refetch": "Recharger",
+      "remove_image": "Retirer l'image",
+      "remove_value": "Retirer la valeur",
+      "reorder": "Réorganiser",
+      "select_all_rows": "Sélectionner toutes les lignes de cette page",
+      "select_row": "Sélectionner la ligne",
+      "settings_navigation": "Navigation des paramètres",
+      "show_value": "Afficher la valeur",
+      "sidebar": "Barre latérale",
+      "sidebar_description": "Affiche la barre latérale mobile.",
+      "stock_at_locations": "Stock par emplacement",
+      "store_switcher": "Changer de boutique",
+      "toggle_sidebar": "Afficher/masquer la barre latérale",
+      "upload_image": "Téléverser une image",
+      "user_menu": "Menu utilisateur",
+      "view_image": "Voir l'image"
+    },
+    "account": {
+      "community": "Communauté",
+      "contact_support": "Contacter le support",
+      "documentation": "Documentation",
+      "edit_profile": "Modifier le profil",
+      "language": {
+        "label": "Langue",
+        "update_failed": "Impossible d’enregistrer votre préférence de langue. Veuillez réessayer."
+      },
+      "log_out": "Se déconnecter",
+      "preferences": "Préférences",
+      "view_store": "Voir la boutique"
+    },
     "actions": {
       "actions_menu": "Actions",
       "add": "Ajouter",
@@ -46,403 +90,100 @@
       "view_all": "Tout afficher",
       "view_details": "Voir les détails"
     },
-    "media_picker": {
-      "title": "Médiathèque",
-      "description": "Choisissez des fichiers déjà dans votre médiathèque, ou importez-en de nouveaux.",
-      "search_placeholder": "Rechercher par nom…",
-      "upload": "Importer",
-      "empty": "Votre médiathèque est vide. Importez un fichier pour commencer.",
-      "no_results": "Aucun fichier ne correspond à votre recherche.",
-      "confirm": "Ajouter la sélection",
-      "selected_count_one": "{{count}} sélectionné",
-      "selected_count_other": "{{count}} sélectionnés"
-    },
-    "row_actions": {
-      "menu_label": "Ouvrir les actions",
-      "edit": "Modifier",
-      "clone": "Dupliquer",
-      "delete": "Supprimer"
-    },
-    "a11y": {
-      "breadcrumb": "Fil d'Ariane",
-      "toggle_sidebar": "Afficher/masquer la barre latérale",
-      "settings_navigation": "Navigation des paramètres",
-      "user_menu": "Menu utilisateur",
-      "drag_to_reorder": "Faire glisser pour réorganiser",
-      "reorder": "Réorganiser",
-      "select_all_rows": "Sélectionner toutes les lignes de cette page",
-      "select_row": "Sélectionner la ligne",
-      "clear_date": "Effacer la date",
-      "clear_selection": "Effacer la sélection",
-      "expand_all": "Tout développer",
-      "collapse_all": "Tout réduire",
-      "refetch": "Recharger",
-      "hide_value": "Masquer la valeur",
-      "show_value": "Afficher la valeur",
-      "pick_color": "Choisir une couleur",
-      "change_color": "Changer la couleur ({{value}})",
-      "stock_at_locations": "Stock par emplacement",
-      "edit_media": "Modifier le média",
-      "delete_image": "Supprimer l'image",
-      "remove_image": "Retirer l'image",
-      "view_image": "Voir l'image",
-      "upload_image": "Téléverser une image",
-      "remove_value": "Retirer la valeur",
-      "breadcrumb_more": "Plus",
-      "sidebar": "Barre latérale",
-      "sidebar_description": "Affiche la barre latérale mobile.",
-      "store_switcher": "Changer de boutique",
-      "bulk_actions": "Actions groupées"
-    },
-    "common": {
-      "loading": "Chargement…",
-      "searching": "Recherche…",
-      "no_results": "Aucun résultat",
-      "optional": "Facultatif",
-      "required": "Obligatoire",
-      "yes": "Oui",
-      "no": "Non",
-      "or": "ou",
-      "and": "et",
-      "all": "Tout",
-      "none": "Aucun",
-      "page_of": "Page {{page}} sur {{total}}",
-      "prev": "Précédent",
-      "next": "Suivant",
-      "select_placeholder": "Sélectionner…",
-      "search_placeholder": "Rechercher…",
-      "pick_date": "Choisir une date",
-      "comma_separated_hint": "Séparez les valeurs par des virgules.",
-      "are_you_sure": "Êtes-vous sûr ?",
-      "remove_question": "Supprimer ?",
-      "deleted": "Supprimé",
-      "unsaved_changes": "Vous avez des modifications non enregistrées.",
-      "prices": "Prix",
-      "delete_confirm_message": "Êtes-vous sûr ? Cette action est irréversible.",
-      "adjust_search_or_filters": "Essayez d’ajuster votre recherche ou vos filtres",
-      "default": "Par défaut",
-      "cancel": "Annuler",
-      "empty_value": "—",
-      "retry": "Réessayer",
-      "clear": "Effacer"
+    "auth": {
+      "back_to_login": "Retour à la connexion",
+      "forgot_password": {
+        "error": "Une erreur s'est produite. Veuillez réessayer.",
+        "link": "Mot de passe oublié ?",
+        "sending": "Envoi…",
+        "sent_subtitle": "Si un compte existe pour cet e-mail, un lien de réinitialisation du mot de passe est en route.",
+        "sent_title": "Vérifiez vos e-mails",
+        "submit": "Envoyer le lien de réinitialisation",
+        "subtitle": "Saisissez votre e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+        "title": "Réinitialiser votre mot de passe"
+      },
+      "login": {
+        "account_not_provisioned": "Ce compte n'est pas autorisé pour cette boutique. Demandez une invitation à un administrateur.",
+        "divider": "ou",
+        "invalid_oauth_state": "Cette session de connexion a expiré ou n'était pas valide. Veuillez recommencer.",
+        "providers_error_message": "Impossible de charger les options de connexion. Veuillez actualiser la page ou contacter votre administrateur.",
+        "providers_error_title": "Connexion indisponible",
+        "rate_limit_exceeded": "Trop de tentatives de connexion. Veuillez patienter un instant et réessayer.",
+        "sso_button": "Continuer avec {{provider}}",
+        "sso_failed": "Nous n'avons pas pu vous connecter avec ce fournisseur. Veuillez réessayer.",
+        "subtitle": "Connectez-vous à votre compte administrateur",
+        "title": "Bon retour"
+      },
+      "logout": "Se déconnecter",
+      "reset_password": {
+        "confirm_password_label": "Confirmer le nouveau mot de passe",
+        "error": "Une erreur s'est produite. Veuillez réessayer.",
+        "missing_token_message": "Il manque le jeton à ce lien de réinitialisation du mot de passe.",
+        "missing_token_title": "Lien de réinitialisation invalide",
+        "new_password_label": "Nouveau mot de passe",
+        "request_new_link": "Demander un nouveau lien de réinitialisation",
+        "submit": "Réinitialiser le mot de passe",
+        "submitting": "Réinitialisation…",
+        "subtitle": "Saisissez un nouveau mot de passe pour votre compte administrateur.",
+        "title": "Choisir un nouveau mot de passe",
+        "token_invalid": "Ce lien de réinitialisation est invalide ou a expiré. Demandez-en un nouveau."
+      }
     },
     "color_picker": {
       "no_color": "Aucune couleur"
     },
-    "messages": {
-      "saved": "Enregistré",
-      "created": "Créé",
-      "updated": "Mis à jour",
-      "removed": "Supprimé",
-      "settings_updated": "Paramètres mis à jour",
-      "store_settings_updated": "Paramètres de la boutique mis à jour",
-      "invitation_sent": "Invitation envoyée",
-      "invitation_resent": "Invitation renvoyée",
-      "invitation_accepted": "Bienvenue sur Spree",
-      "key_created": "Clé créée",
-      "key_updated": "Clé mise à jour",
-      "key_revoked": "Clé révoquée",
-      "key_deleted": "Clé supprimée",
-      "product_saved": "Produit enregistré",
-      "product_created": "Produit créé",
-      "product_deleted": "Produit supprimé",
-      "order_saved": "Commande enregistrée",
-      "customer_saved": "Client enregistré",
-      "customer_deleted": "Client supprimé",
-      "payment_method_saved": "Moyen de paiement enregistré",
-      "tax_category_saved": "Catégorie de taxe enregistrée",
-      "stock_location_saved": "Emplacement de stock enregistré",
-      "promotion_created": "Promotion créée",
-      "promotion_saved": "Promotion enregistrée",
-      "promotion_deleted": "Promotion supprimée",
-      "gift_card_created": "Carte cadeau créée",
-      "address_saved": "Adresse enregistrée",
-      "address_removed": "Adresse supprimée",
-      "store_credit_saved": "Avoir enregistré",
-      "store_credit_removed": "Avoir supprimé",
-      "copied_to_clipboard": "Copié dans le presse-papiers",
-      "profile_updated": "Profil mis à jour"
-    },
-    "errors": {
-      "required": "Ce champ est obligatoire",
-      "generic": "Une erreur s'est produite",
-      "unexpected": "Une erreur inattendue s'est produite",
-      "failed_to_load": "Échec du chargement",
-      "failed_to_save": "Échec de l'enregistrement",
-      "failed_to_update": "Échec de la mise à jour",
-      "failed_to_create": "Échec de la création",
-      "failed_to_delete": "Échec de la suppression",
-      "failed_to_load_customer": "Échec du chargement du client",
-      "failed_to_load_order": "Échec du chargement de la commande",
-      "failed_to_load_product": "Échec du chargement du produit",
-      "failed_to_send_invitation": "Échec de l'envoi de l'invitation",
-      "failed_to_revoke_key": "Échec de la révocation de la clé",
-      "failed_to_update_store": "Échec de la mise à jour des paramètres de la boutique",
-      "failed_to_update_staff": "Échec de la mise à jour du personnel",
-      "network": "Erreur réseau — veuillez réessayer",
-      "unauthorized": "Vous n'avez pas l'autorisation d'effectuer cette action",
-      "not_found": "Introuvable",
-      "failed_to_update_profile": "Échec de la mise à jour du profil",
-      "unexpected_retry": "Une erreur inattendue s’est produite. Veuillez réessayer."
-    },
-    "auth": {
-      "login": {
-        "title": "Bon retour",
-        "subtitle": "Connectez-vous à votre compte administrateur",
-        "divider": "ou",
-        "sso_button": "Continuer avec {{provider}}",
-        "providers_error_title": "Connexion indisponible",
-        "providers_error_message": "Impossible de charger les options de connexion. Veuillez actualiser la page ou contacter votre administrateur.",
-        "account_not_provisioned": "Ce compte n'est pas autorisé pour cette boutique. Demandez une invitation à un administrateur.",
-        "sso_failed": "Nous n'avons pas pu vous connecter avec ce fournisseur. Veuillez réessayer.",
-        "invalid_oauth_state": "Cette session de connexion a expiré ou n'était pas valide. Veuillez recommencer.",
-        "rate_limit_exceeded": "Trop de tentatives de connexion. Veuillez patienter un instant et réessayer."
-      },
-      "forgot_password": {
-        "link": "Mot de passe oublié ?",
-        "title": "Réinitialiser votre mot de passe",
-        "subtitle": "Saisissez votre e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
-        "submit": "Envoyer le lien de réinitialisation",
-        "sending": "Envoi…",
-        "sent_title": "Vérifiez vos e-mails",
-        "sent_subtitle": "Si un compte existe pour cet e-mail, un lien de réinitialisation du mot de passe est en route.",
-        "error": "Une erreur s'est produite. Veuillez réessayer."
-      },
-      "reset_password": {
-        "title": "Choisir un nouveau mot de passe",
-        "subtitle": "Saisissez un nouveau mot de passe pour votre compte administrateur.",
-        "new_password_label": "Nouveau mot de passe",
-        "confirm_password_label": "Confirmer le nouveau mot de passe",
-        "submit": "Réinitialiser le mot de passe",
-        "submitting": "Réinitialisation…",
-        "token_invalid": "Ce lien de réinitialisation est invalide ou a expiré. Demandez-en un nouveau.",
-        "error": "Une erreur s'est produite. Veuillez réessayer.",
-        "missing_token_title": "Lien de réinitialisation invalide",
-        "missing_token_message": "Il manque le jeton à ce lien de réinitialisation du mot de passe.",
-        "request_new_link": "Demander un nouveau lien de réinitialisation"
-      },
-      "logout": "Se déconnecter",
-      "back_to_login": "Retour à la connexion"
-    },
-    "fields": {
-      "name": {
-        "label": "Nom"
-      },
-      "label": {
-        "label": "Libellé"
-      },
-      "description": {
-        "label": "Description"
-      },
-      "code": {
-        "label": "Code"
-      },
-      "email": {
-        "label": "E-mail"
-      },
-      "password": {
-        "label": "Mot de passe"
-      },
-      "first_name": {
-        "label": "Prénom"
-      },
-      "last_name": {
-        "label": "Nom de famille"
-      },
-      "phone": {
-        "label": "Téléphone"
-      },
-      "company": {
-        "label": "Société"
-      },
-      "address1": {
-        "label": "Adresse ligne 1"
-      },
-      "address2": {
-        "label": "Adresse ligne 2"
-      },
-      "city": {
-        "label": "Ville"
-      },
-      "zipcode": {
-        "label": "Code postal"
-      },
-      "country_code": {
-        "label": "Pays"
-      },
-      "state_code": {
-        "label": "État / Province"
-      },
-      "state_name": {
-        "label": "État / Province"
-      },
-      "starts_at": {
-        "label": "Début"
-      },
-      "ends_at": {
-        "label": "Fin"
-      },
-      "expires_at": {
-        "label": "Expiration"
-      },
-      "active": {
-        "label": "Actif"
-      },
-      "kind": {
-        "label": "Type"
-      },
-      "amount": {
-        "label": "Montant"
-      },
-      "currency": {
-        "label": "Devise"
-      },
-      "quantity": {
-        "label": "Quantité"
-      },
-      "slug": {
-        "label": "Slug"
-      },
-      "meta_title": {
-        "label": "Méta-titre"
-      },
-      "meta_description": {
-        "label": "Méta-description"
-      },
-      "status": {
-        "label": "Statut"
-      },
-      "created_at": {
-        "label": "Créé le"
-      },
-      "updated_at": {
-        "label": "Mis à jour le"
-      },
-      "completed_at": {
-        "label": "Terminé le"
-      },
-      "total": {
-        "label": "Total"
-      },
-      "subtotal": {
-        "label": "Sous-total"
-      },
-      "tax": {
-        "label": "Taxe"
-      },
-      "shipping": {
-        "label": "Livraison"
-      },
-      "discount": {
-        "label": "Remise"
-      },
-      "login": {
-        "email": {
-          "placeholder": "admin@example.com"
-        }
-      },
-      "address": {
-        "label": {
-          "label": "Libellé",
-          "placeholder": "ex. Domicile, Bureau"
-        },
-        "address1": {
-          "label": "Adresse"
-        },
-        "address2": {
-          "label": "Appartement, bureau, etc."
-        },
-        "postal_code": {
-          "label": "Code postal"
-        },
-        "is_default_billing": {
-          "label": "Adresse de facturation par défaut"
-        },
-        "is_default_shipping": {
-          "label": "Adresse de livraison par défaut"
-        }
-      },
-      "media": {
-        "alt": {
-          "label": "Texte alternatif",
-          "placeholder": "Décrivez l'image pour l'accessibilité et le SEO"
-        }
-      },
-      "storefront_visible": {
-        "label": "Visible sur la boutique",
-        "help": "Si désactivé, seuls les administrateurs voient cette option (commandes back-office, saisie manuelle)."
-      },
-      "pretty_name": {
-        "label": "Nom complet"
-      },
-      "permalink": {
-        "label": "Lien permanent"
-      },
-      "number": {
-        "label": "Numéro"
-      },
-      "contact_email": {
-        "label": "E-mail de contact"
-      },
-      "enabled": {
-        "label": "Activé"
-      }
+    "common": {
+      "adjust_search_or_filters": "Essayez d’ajuster votre recherche ou vos filtres",
+      "all": "Tout",
+      "and": "et",
+      "are_you_sure": "Êtes-vous sûr ?",
+      "cancel": "Annuler",
+      "clear": "Effacer",
+      "comma_separated_hint": "Séparez les valeurs par des virgules.",
+      "default": "Par défaut",
+      "delete_confirm_message": "Êtes-vous sûr ? Cette action est irréversible.",
+      "deleted": "Supprimé",
+      "empty_value": "—",
+      "loading": "Chargement…",
+      "next": "Suivant",
+      "no": "Non",
+      "no_results": "Aucun résultat",
+      "none": "Aucun",
+      "optional": "Facultatif",
+      "or": "ou",
+      "page_of": "Page {{page}} sur {{total}}",
+      "pick_date": "Choisir une date",
+      "prev": "Précédent",
+      "prices": "Prix",
+      "remove_question": "Supprimer ?",
+      "required": "Obligatoire",
+      "retry": "Réessayer",
+      "search_placeholder": "Rechercher…",
+      "searching": "Recherche…",
+      "select_placeholder": "Sélectionner…",
+      "unsaved_changes": "Vous avez des modifications non enregistrées.",
+      "yes": "Oui"
     },
     "components": {
-      "currency_select": {
-        "placeholder": "Sélectionner une devise",
-        "search_placeholder": "Rechercher des devises…",
-        "empty": "Aucune devise trouvée"
+      "address_block": {
+        "not_provided": "Non renseigné"
+      },
+      "address_form_dialog": {
+        "description": "Mettre à jour les détails de l’adresse.",
+        "edit_title": "Modifier l’adresse"
+      },
+      "bulk_action_bar": {
+        "default_error": "L’opération groupée a échoué",
+        "default_success": "{n} enregistrements mis à jour",
+        "selected": "{{count}} sélectionné(s)"
       },
       "channel_select": {
         "placeholder": "Sélectionner un canal de vente"
       },
-      "file_upload": {
-        "attached": "Fichier joint",
-        "browse": "Parcourir les fichiers",
-        "drop_image_label": "Déposez une image ici ou cliquez pour parcourir",
-        "drop_label": "Déposez un fichier ici ou cliquez pour parcourir",
-        "invalid_type": "Ce type de fichier n'est pas accepté (attendu : {{accept}})",
-        "upload_failed": "Échec du téléversement : {{message}}",
-        "uploading": "Téléversement…"
-      },
-      "locale_select": {
-        "placeholder": "Sélectionner une langue",
-        "multi_placeholder": "Ajouter des langues…",
-        "search_placeholder": "Rechercher des langues…",
-        "empty": "Aucune langue trouvée"
-      },
-      "country_combobox": {
-        "placeholder": "Sélectionner un pays",
-        "search_placeholder": "Rechercher des pays…",
-        "empty": "Aucun pays trouvé"
-      },
-      "media_preview": {
-        "video_title": "Aperçu de la vidéo"
-      },
-      "state_combobox": {
-        "placeholder": "Sélectionner une région",
-        "search_placeholder": "Rechercher des régions…",
-        "empty": "Aucune région trouvée"
-      },
       "command_palette": {
-        "placeholder": "Rechercher des produits, des commandes, des clients…",
-        "title": "Recherche et commandes",
-        "description": "Effectuez une recherche parmi les produits, les commandes et les clients, ou exécutez une commande.",
-        "no_results": "Aucun résultat pour « {{query}} ».",
-        "empty_hint": "Saisissez du texte pour rechercher, ou choisissez une commande ci-dessous.",
-        "goto": "Aller à",
-        "goto_label": "Aller à {{label}}",
-        "hints": {
-          "navigate": "naviguer",
-          "select": "sélectionner",
-          "close": "fermer",
-          "esc_key": "échap"
-        },
         "create": {
           "heading": "Créer",
           "label": "Créer : {{noun}}",
-          "verbs": "nouveau,nouvelle,ajouter,créer",
           "nouns": {
             "category": "Catégorie",
             "category_plural": "Catégories",
@@ -474,248 +215,616 @@
             "stock_location_plural": "Entrepôts",
             "stock_transfer": "Transfert",
             "stock_transfer_plural": "Transferts"
-          }
-        }
-      },
-      "bulk_action_bar": {
-        "selected": "{{count}} sélectionné(s)",
-        "default_success": "{n} enregistrements mis à jour",
-        "default_error": "L’opération groupée a échoué"
-      },
-      "preferences_form": {
-        "comma_separated_hint": "Séparez les valeurs par des virgules.",
-        "tiers": {
-          "label": "Paliers",
-          "header_threshold": "Total de la commande ≥",
-          "header_value": "Remise",
-          "empty": "Aucun palier pour le moment. Le taux de base s’applique jusqu’à l’ajout d’un palier.",
-          "add_tier": "Ajouter un palier",
-          "remove_tier": "Supprimer le palier"
+          },
+          "verbs": "nouveau,nouvelle,ajouter,créer"
         },
-        "unlimited": "Illimité"
+        "description": "Effectuez une recherche parmi les produits, les commandes et les clients, ou exécutez une commande.",
+        "empty_hint": "Saisissez du texte pour rechercher, ou choisissez une commande ci-dessous.",
+        "goto": "Aller à",
+        "goto_label": "Aller à {{label}}",
+        "hints": {
+          "close": "fermer",
+          "esc_key": "échap",
+          "navigate": "naviguer",
+          "select": "sélectionner"
+        },
+        "no_results": "Aucun résultat pour « {{query}} ».",
+        "placeholder": "Rechercher des produits, des commandes, des clients…",
+        "title": "Recherche et commandes"
       },
       "confirm_dialog": {
         "title": "Êtes-vous sûr ?"
       },
-      "table_toolbar": {
-        "search_placeholder": "Rechercher…",
-        "filter_select_placeholder": "Sélectionner…",
-        "filter_date_placeholder": "Choisir une date",
-        "filter_text_placeholder": "Filtrer…",
-        "filters_button": "Filtres",
-        "sort_by": "Trier par",
-        "sort_tooltip": "Trier",
-        "order": "Ordre",
-        "ascending": "Croissant",
-        "descending": "Décroissant",
-        "columns_tooltip": "Colonnes",
-        "visible_columns": "Colonnes visibles",
-        "reset_to_default": "Réinitialiser",
-        "clear_all": "Tout effacer",
-        "remove_filter": "Supprimer le filtre",
-        "no_filters": "Aucun filtre. Cliquez ci-dessous pour en ajouter un.",
-        "add_filter": "Ajouter un filtre",
-        "operators": {
-          "contains": "contient",
-          "equals": "est égal à",
-          "does_not_equal": "n'est pas égal à",
-          "starts_with": "commence par",
-          "ends_with": "se termine par",
-          "is_set": "est défini",
-          "is_not_set": "n'est pas défini",
-          "is": "est",
-          "is_not": "n'est pas",
-          "is_any_of": "est l'un de",
-          "is_none_of": "n'est aucun de",
-          "greater_than": "supérieur à",
-          "greater_than_or_equal": "supérieur ou égal à",
-          "less_than": "inférieur à",
-          "less_than_or_equal": "inférieur ou égal à",
-          "after": "après",
-          "before": "avant",
-          "on_or_after": "le ou après",
-          "on_or_before": "le ou avant"
-        }
+      "country_combobox": {
+        "empty": "Aucun pays trouvé",
+        "placeholder": "Sélectionner un pays",
+        "search_placeholder": "Rechercher des pays…"
       },
-      "media": {
-        "remove_tooltip": "Supprimer l’image"
+      "currency_select": {
+        "empty": "Aucune devise trouvée",
+        "placeholder": "Sélectionner une devise",
+        "search_placeholder": "Rechercher des devises…"
       },
       "custom_fields": {
         "json_placeholder": "{ \"example\": \"value\" }"
       },
-      "export_button": {
-        "title": "Exporter au format CSV",
-        "description": "Nous préparons votre fichier CSV en arrière-plan et le téléchargeons dès qu'il est prêt. Si cela prend un certain temps, vous recevrez également un lien par e-mail.",
-        "filtered": {
-          "title": "Filtre actuel",
-          "no_filter": "Aucun filtre actif — équivaut à exporter tous les enregistrements.",
-          "unknown_count": "Exportez les enregistrements correspondant à votre filtre actuel.",
-          "count_one": "Exportez l'enregistrement {{formattedCount}} correspondant à votre filtre actuel.",
-          "count_other": "Exportez les {{formattedCount}} enregistrements correspondant à votre filtre actuel.",
-          "count_few": "Exportez les {{formattedCount}} enregistrements correspondant à votre filtre actuel.",
-          "count_many": "Exportez les {{formattedCount}} enregistrements correspondant à votre filtre actuel."
-        },
-        "all": {
-          "title": "Tous les enregistrements",
-          "description": "Ignorer les filtres et tout exporter dans cette boutique."
-        },
-        "preparing": "Préparation de l’export…",
-        "downloaded": "Export téléchargé",
-        "email_fallback": "Toujours en cours — nous vous enverrons un lien par e-mail dès qu’il sera prêt.",
-        "failed": "Échec de l’export : {{message}}"
-      },
-      "import_button": {
-        "title": "Importer depuis un CSV",
-        "description": "Téléversez un fichier CSV. Vous associerez ses colonnes aux champs à l'étape suivante.",
-        "drop_label": "Déposez un fichier CSV ici ou cliquez pour parcourir",
-        "delimiter_label": "Séparateur de colonnes",
-        "delimiters": {
-          "comma": "Virgule (,)",
-          "semicolon": "Point-virgule (;)",
-          "pipe": "Barre verticale (|)",
-          "tab": "Tabulation"
-        },
-        "download_template": "Télécharger le modèle CSV",
-        "template_failed": "Échec du téléchargement du modèle : {{message}}",
-        "submit": "Continuer",
-        "failed": "Échec de l'import : {{message}}"
-      },
-      "metadata_card": {
-        "title": "Métadonnées",
-        "empty_title": "Aucune métadonnée",
-        "empty_description": "Les applications et intégrations remplissent ceci automatiquement."
-      },
-      "rich_text_editor": {
-        "placeholder": "Écrivez quelque chose…",
-        "link_url_prompt": "URL",
-        "bold": "Gras",
-        "italic": "Italique",
-        "strikethrough": "Barré",
-        "bullet_list": "Liste à puces",
-        "ordered_list": "Liste numérotée",
-        "blockquote": "Citation",
-        "link": "Lien",
-        "image": "Image",
-        "undo": "Annuler",
-        "redo": "Rétablir"
-      },
       "date_range_picker": {
         "presets": {
-          "last_7_days": "7 derniers jours",
           "last_14_days": "14 derniers jours",
           "last_30_days": "30 derniers jours",
+          "last_7_days": "7 derniers jours",
           "last_90_days": "90 derniers jours",
           "this_month": "Ce mois-ci",
           "year_to_date": "Depuis le début de l'année"
         }
       },
-      "pagination": {
-        "range": "{{from}}–{{to}} sur {{count}}",
-        "rows_per_page": "Lignes par page",
-        "first_page": "Aller à la première page",
-        "previous_page": "Aller à la page précédente",
-        "next_page": "Aller à la page suivante",
-        "last_page": "Aller à la dernière page"
-      },
-      "theme_toggle": {
-        "label": "Thème",
-        "light": "Clair",
-        "dark": "Sombre",
-        "system": "Système"
-      },
-      "json_preview_drawer": {
-        "copied": "Copié",
-        "copy_all": "Tout copier",
-        "open_raw": "Ouvrir la réponse brute",
-        "raw": "Brut",
-        "failed_to_load": "Échec du chargement : {{message}}",
-        "collapse_depth": "Profondeur de réduction",
-        "depth": "Profondeur {{level}}",
-        "title": "JSON"
-      },
-      "page_header": {
-        "view_as_json": "Voir en JSON",
-        "copy_id": "Copier l'ID",
-        "copy_number": "Copier le numéro"
-      },
-      "secret_input": {
-        "replace": "Remplacer",
-        "stored_help": "Stocké sur le serveur. Cliquez sur Remplacer pour le faire pivoter.",
-        "new_value_placeholder": "Nouvelle valeur"
-      },
-      "tag_combobox": {
-        "placeholder": "Saisir des tags…",
-        "empty_hint": "Saisissez et appuyez sur Entrée pour créer un tag",
-        "create_option": "Créer « {{tag}} »"
-      },
-      "address_form_dialog": {
-        "edit_title": "Modifier l’adresse",
-        "description": "Mettre à jour les détails de l’adresse."
-      },
       "error_state": {
         "retry": "Réessayer"
       },
-      "address_block": {
-        "not_provided": "Non renseigné"
+      "export_button": {
+        "all": {
+          "description": "Ignorer les filtres et tout exporter dans cette boutique.",
+          "title": "Tous les enregistrements"
+        },
+        "description": "Nous préparons votre fichier CSV en arrière-plan et le téléchargeons dès qu'il est prêt. Si cela prend un certain temps, vous recevrez également un lien par e-mail.",
+        "downloaded": "Export téléchargé",
+        "email_fallback": "Toujours en cours — nous vous enverrons un lien par e-mail dès qu’il sera prêt.",
+        "failed": "Échec de l’export : {{message}}",
+        "filtered": {
+          "count_few": "Exportez les {{formattedCount}} enregistrements correspondant à votre filtre actuel.",
+          "count_many": "Exportez les {{formattedCount}} enregistrements correspondant à votre filtre actuel.",
+          "count_one": "Exportez l'enregistrement {{formattedCount}} correspondant à votre filtre actuel.",
+          "count_other": "Exportez les {{formattedCount}} enregistrements correspondant à votre filtre actuel.",
+          "no_filter": "Aucun filtre actif — équivaut à exporter tous les enregistrements.",
+          "title": "Filtre actuel",
+          "unknown_count": "Exportez les enregistrements correspondant à votre filtre actuel."
+        },
+        "preparing": "Préparation de l’export…",
+        "title": "Exporter au format CSV"
+      },
+      "file_upload": {
+        "attached": "Fichier joint",
+        "browse": "Parcourir les fichiers",
+        "drop_image_label": "Déposez une image ici ou cliquez pour parcourir",
+        "drop_label": "Déposez un fichier ici ou cliquez pour parcourir",
+        "invalid_type": "Ce type de fichier n'est pas accepté (attendu : {{accept}})",
+        "upload_failed": "Échec du téléversement : {{message}}",
+        "uploading": "Téléversement…"
+      },
+      "import_button": {
+        "delimiter_label": "Séparateur de colonnes",
+        "delimiters": {
+          "comma": "Virgule (,)",
+          "pipe": "Barre verticale (|)",
+          "semicolon": "Point-virgule (;)",
+          "tab": "Tabulation"
+        },
+        "description": "Téléversez un fichier CSV. Vous associerez ses colonnes aux champs à l'étape suivante.",
+        "download_template": "Télécharger le modèle CSV",
+        "drop_label": "Déposez un fichier CSV ici ou cliquez pour parcourir",
+        "failed": "Échec de l'import : {{message}}",
+        "submit": "Continuer",
+        "template_failed": "Échec du téléchargement du modèle : {{message}}",
+        "title": "Importer depuis un CSV"
+      },
+      "json_preview_drawer": {
+        "collapse_depth": "Profondeur de réduction",
+        "copied": "Copié",
+        "copy_all": "Tout copier",
+        "depth": "Profondeur {{level}}",
+        "failed_to_load": "Échec du chargement : {{message}}",
+        "open_raw": "Ouvrir la réponse brute",
+        "raw": "Brut",
+        "title": "JSON"
+      },
+      "locale_select": {
+        "empty": "Aucune langue trouvée",
+        "multi_placeholder": "Ajouter des langues…",
+        "placeholder": "Sélectionner une langue",
+        "search_placeholder": "Rechercher des langues…"
+      },
+      "media": {
+        "remove_tooltip": "Supprimer l’image"
+      },
+      "media_preview": {
+        "video_title": "Aperçu de la vidéo"
+      },
+      "metadata_card": {
+        "empty_description": "Les applications et intégrations remplissent ceci automatiquement.",
+        "empty_title": "Aucune métadonnée",
+        "title": "Métadonnées"
+      },
+      "page_header": {
+        "copy_id": "Copier l'ID",
+        "copy_number": "Copier le numéro",
+        "view_as_json": "Voir en JSON"
+      },
+      "pagination": {
+        "first_page": "Aller à la première page",
+        "last_page": "Aller à la dernière page",
+        "next_page": "Aller à la page suivante",
+        "previous_page": "Aller à la page précédente",
+        "range": "{{from}}–{{to}} sur {{count}}",
+        "rows_per_page": "Lignes par page"
+      },
+      "preferences_form": {
+        "comma_separated_hint": "Séparez les valeurs par des virgules.",
+        "tiers": {
+          "add_tier": "Ajouter un palier",
+          "empty": "Aucun palier pour le moment. Le taux de base s’applique jusqu’à l’ajout d’un palier.",
+          "header_threshold": "Total de la commande ≥",
+          "header_value": "Remise",
+          "label": "Paliers",
+          "remove_tier": "Supprimer le palier"
+        },
+        "unlimited": "Illimité"
+      },
+      "rich_text_editor": {
+        "blockquote": "Citation",
+        "bold": "Gras",
+        "bullet_list": "Liste à puces",
+        "image": "Image",
+        "italic": "Italique",
+        "link": "Lien",
+        "link_url_prompt": "URL",
+        "ordered_list": "Liste numérotée",
+        "placeholder": "Écrivez quelque chose…",
+        "redo": "Rétablir",
+        "strikethrough": "Barré",
+        "undo": "Annuler"
+      },
+      "secret_input": {
+        "new_value_placeholder": "Nouvelle valeur",
+        "replace": "Remplacer",
+        "stored_help": "Stocké sur le serveur. Cliquez sur Remplacer pour le faire pivoter."
+      },
+      "state_combobox": {
+        "empty": "Aucune région trouvée",
+        "placeholder": "Sélectionner une région",
+        "search_placeholder": "Rechercher des régions…"
+      },
+      "table_toolbar": {
+        "add_filter": "Ajouter un filtre",
+        "ascending": "Croissant",
+        "clear_all": "Tout effacer",
+        "columns_tooltip": "Colonnes",
+        "descending": "Décroissant",
+        "filter_date_placeholder": "Choisir une date",
+        "filter_select_placeholder": "Sélectionner…",
+        "filter_text_placeholder": "Filtrer…",
+        "filters_button": "Filtres",
+        "no_filters": "Aucun filtre. Cliquez ci-dessous pour en ajouter un.",
+        "operators": {
+          "after": "après",
+          "before": "avant",
+          "contains": "contient",
+          "does_not_equal": "n'est pas égal à",
+          "ends_with": "se termine par",
+          "equals": "est égal à",
+          "greater_than": "supérieur à",
+          "greater_than_or_equal": "supérieur ou égal à",
+          "is": "est",
+          "is_any_of": "est l'un de",
+          "is_none_of": "n'est aucun de",
+          "is_not": "n'est pas",
+          "is_not_set": "n'est pas défini",
+          "is_set": "est défini",
+          "less_than": "inférieur à",
+          "less_than_or_equal": "inférieur ou égal à",
+          "on_or_after": "le ou après",
+          "on_or_before": "le ou avant",
+          "starts_with": "commence par"
+        },
+        "order": "Ordre",
+        "remove_filter": "Supprimer le filtre",
+        "reset_to_default": "Réinitialiser",
+        "search_placeholder": "Rechercher…",
+        "sort_by": "Trier par",
+        "sort_tooltip": "Trier",
+        "visible_columns": "Colonnes visibles"
+      },
+      "tag_combobox": {
+        "create_option": "Créer « {{tag}} »",
+        "empty_hint": "Saisissez et appuyez sur Entrée pour créer un tag",
+        "placeholder": "Saisir des tags…"
+      },
+      "theme_toggle": {
+        "dark": "Sombre",
+        "label": "Thème",
+        "light": "Clair",
+        "system": "Système"
       }
     },
-    "validation": {
-      "required": "{{field}} est obligatoire",
-      "positive_number": "{{field}} doit être supérieur à 0",
-      "min_length": "{{field}} doit comporter au moins {{count}} caractères",
-      "passwords_dont_match": "Les mots de passe ne correspondent pas",
-      "invalid_email_or_password": "E-mail ou mot de passe invalide",
-      "invalid_email": "Saisissez une adresse e-mail valide",
-      "invalid_hex_color": "Couleur hexadécimale invalide",
-      "invalid_password": "Mot de passe invalide",
-      "password_required": "Le mot de passe est obligatoire",
-      "first_name_required": "Le prénom est obligatoire",
-      "last_name_required": "Le nom est obligatoire",
-      "store_name_required": "Le nom de la boutique est requis",
-      "country_required": "Le pays est requis",
-      "currency_required": "La devise est requise"
-    },
-    "account": {
-      "edit_profile": "Modifier le profil",
-      "preferences": "Préférences",
-      "language": {
-        "label": "Langue",
-        "update_failed": "Impossible d’enregistrer votre préférence de langue. Veuillez réessayer."
-      },
-      "view_store": "Voir la boutique",
-      "documentation": "Documentation",
-      "community": "Communauté",
-      "contact_support": "Contacter le support",
-      "log_out": "Se déconnecter"
-    },
     "custom_field_definitions": {
-      "messages": {
-        "created": "Champ personnalisé créé",
-        "updated": "Champ personnalisé mis à jour",
-        "deleted": "Champ personnalisé supprimé"
-      },
       "errors": {
         "failed_to_create": "Impossible de créer le champ personnalisé",
-        "failed_to_update": "Impossible de mettre à jour le champ personnalisé",
-        "failed_to_delete": "Impossible de supprimer le champ personnalisé"
+        "failed_to_delete": "Impossible de supprimer le champ personnalisé",
+        "failed_to_update": "Impossible de mettre à jour le champ personnalisé"
+      },
+      "messages": {
+        "created": "Champ personnalisé créé",
+        "deleted": "Champ personnalisé supprimé",
+        "updated": "Champ personnalisé mis à jour"
+      }
+    },
+    "errors": {
+      "failed_to_create": "Échec de la création",
+      "failed_to_delete": "Échec de la suppression",
+      "failed_to_load": "Échec du chargement",
+      "failed_to_load_customer": "Échec du chargement du client",
+      "failed_to_load_order": "Échec du chargement de la commande",
+      "failed_to_load_product": "Échec du chargement du produit",
+      "failed_to_revoke_key": "Échec de la révocation de la clé",
+      "failed_to_save": "Échec de l'enregistrement",
+      "failed_to_send_invitation": "Échec de l'envoi de l'invitation",
+      "failed_to_update": "Échec de la mise à jour",
+      "failed_to_update_profile": "Échec de la mise à jour du profil",
+      "failed_to_update_staff": "Échec de la mise à jour du personnel",
+      "failed_to_update_store": "Échec de la mise à jour des paramètres de la boutique",
+      "generic": "Une erreur s'est produite",
+      "network": "Erreur réseau — veuillez réessayer",
+      "not_found": "Introuvable",
+      "required": "Ce champ est obligatoire",
+      "unauthorized": "Vous n'avez pas l'autorisation d'effectuer cette action",
+      "unexpected": "Une erreur inattendue s'est produite",
+      "unexpected_retry": "Une erreur inattendue s’est produite. Veuillez réessayer."
+    },
+    "fields": {
+      "active": {
+        "label": "Actif"
+      },
+      "address": {
+        "address1": {
+          "label": "Adresse"
+        },
+        "address2": {
+          "label": "Appartement, bureau, etc."
+        },
+        "is_default_billing": {
+          "label": "Adresse de facturation par défaut"
+        },
+        "is_default_shipping": {
+          "label": "Adresse de livraison par défaut"
+        },
+        "label": {
+          "label": "Libellé",
+          "placeholder": "ex. Domicile, Bureau"
+        },
+        "postal_code": {
+          "label": "Code postal"
+        }
+      },
+      "address1": {
+        "label": "Adresse ligne 1"
+      },
+      "address2": {
+        "label": "Adresse ligne 2"
+      },
+      "amount": {
+        "label": "Montant"
+      },
+      "city": {
+        "label": "Ville"
+      },
+      "code": {
+        "label": "Code"
+      },
+      "company": {
+        "label": "Société"
+      },
+      "completed_at": {
+        "label": "Terminé le"
+      },
+      "contact_email": {
+        "label": "E-mail de contact"
+      },
+      "country_code": {
+        "label": "Pays"
+      },
+      "created_at": {
+        "label": "Créé le"
+      },
+      "currency": {
+        "label": "Devise"
+      },
+      "description": {
+        "label": "Description"
+      },
+      "discount": {
+        "label": "Remise"
+      },
+      "email": {
+        "label": "E-mail"
+      },
+      "enabled": {
+        "label": "Activé"
+      },
+      "ends_at": {
+        "label": "Fin"
+      },
+      "expires_at": {
+        "label": "Expiration"
+      },
+      "first_name": {
+        "label": "Prénom"
+      },
+      "kind": {
+        "label": "Type"
+      },
+      "label": {
+        "label": "Libellé"
+      },
+      "last_name": {
+        "label": "Nom de famille"
+      },
+      "login": {
+        "email": {
+          "placeholder": "admin@example.com"
+        }
+      },
+      "media": {
+        "alt": {
+          "label": "Texte alternatif",
+          "placeholder": "Décrivez l'image pour l'accessibilité et le SEO"
+        }
+      },
+      "meta_description": {
+        "label": "Méta-description"
+      },
+      "meta_title": {
+        "label": "Méta-titre"
+      },
+      "name": {
+        "label": "Nom"
+      },
+      "number": {
+        "label": "Numéro"
+      },
+      "password": {
+        "label": "Mot de passe"
+      },
+      "permalink": {
+        "label": "Lien permanent"
+      },
+      "phone": {
+        "label": "Téléphone"
+      },
+      "pretty_name": {
+        "label": "Nom complet"
+      },
+      "quantity": {
+        "label": "Quantité"
+      },
+      "shipping": {
+        "label": "Livraison"
+      },
+      "slug": {
+        "label": "Slug"
+      },
+      "starts_at": {
+        "label": "Début"
+      },
+      "state_code": {
+        "label": "État / Province"
+      },
+      "state_name": {
+        "label": "État / Province"
+      },
+      "status": {
+        "label": "Statut"
+      },
+      "stock_location": {
+        "active": {
+          "help": "Les emplacements inactifs n'apparaissent pas dans la sélection d'expédition.",
+          "label": "Actif"
+        },
+        "admin_name": {
+          "label": "Nom interne",
+          "placeholder": "Facultatif — affiché uniquement dans l'administration"
+        },
+        "backorderable_default": {
+          "help": "Les nouveaux articles en stock autorisent par défaut les commandes en attente en cas de rupture de stock.",
+          "label": "Réapprovisionnable par défaut"
+        },
+        "default": {
+          "help": "Les nouveaux articles en stock sont propagés ici. Un seul emplacement peut être défini par défaut.",
+          "label": "Emplacement par défaut"
+        },
+        "kind": {
+          "label": "Type"
+        },
+        "name": {
+          "placeholder": "Entrepôt de Brooklyn"
+        },
+        "pickup_enabled": {
+          "help": "Les clients peuvent retirer leurs commandes à cet emplacement lors du paiement.",
+          "label": "Autoriser le retrait par le client"
+        },
+        "pickup_instructions": {
+          "label": "Instructions de retrait",
+          "placeholder": "Où le client doit se rendre pour récupérer sa commande."
+        },
+        "pickup_ready_in_minutes": {
+          "label": "Prêt dans (minutes)",
+          "placeholder": "60"
+        },
+        "pickup_stock_policy": {
+          "label": "Règle de stock"
+        },
+        "propagate_all_variants": {
+          "help": "Créer des articles en stock à cet emplacement pour chaque variante de produit.",
+          "label": "Créer automatiquement des articles en stock pour toutes les variantes"
+        }
+      },
+      "storefront_visible": {
+        "help": "Si désactivé, seuls les administrateurs voient cette option (commandes back-office, saisie manuelle).",
+        "label": "Visible sur la boutique"
+      },
+      "subtotal": {
+        "label": "Sous-total"
+      },
+      "tax": {
+        "label": "Taxe"
+      },
+      "total": {
+        "label": "Total"
+      },
+      "updated_at": {
+        "label": "Mis à jour le"
+      },
+      "zipcode": {
+        "label": "Code postal"
+      }
+    },
+    "image_upload": {
+      "remove_cta": "Retirer",
+      "replace_cta": "Remplacer l'image",
+      "upload_cta": "Téléverser une image",
+      "upload_failed": "Échec du téléversement de l'image",
+      "uploading": "Téléversement…"
+    },
+    "media_picker": {
+      "confirm": "Ajouter la sélection",
+      "description": "Choisissez des fichiers déjà dans votre médiathèque, ou importez-en de nouveaux.",
+      "empty": "Votre médiathèque est vide. Importez un fichier pour commencer.",
+      "no_results": "Aucun fichier ne correspond à votre recherche.",
+      "search_placeholder": "Rechercher par nom…",
+      "selected_count_one": "{{count}} sélectionné",
+      "selected_count_other": "{{count}} sélectionnés",
+      "title": "Médiathèque",
+      "upload": "Importer"
+    },
+    "messages": {
+      "address_removed": "Adresse supprimée",
+      "address_saved": "Adresse enregistrée",
+      "copied_to_clipboard": "Copié dans le presse-papiers",
+      "created": "Créé",
+      "customer_deleted": "Client supprimé",
+      "customer_saved": "Client enregistré",
+      "gift_card_created": "Carte cadeau créée",
+      "invitation_accepted": "Bienvenue sur Spree",
+      "invitation_resent": "Invitation renvoyée",
+      "invitation_sent": "Invitation envoyée",
+      "key_created": "Clé créée",
+      "key_deleted": "Clé supprimée",
+      "key_revoked": "Clé révoquée",
+      "key_updated": "Clé mise à jour",
+      "order_saved": "Commande enregistrée",
+      "payment_method_saved": "Moyen de paiement enregistré",
+      "product_created": "Produit créé",
+      "product_deleted": "Produit supprimé",
+      "product_saved": "Produit enregistré",
+      "profile_updated": "Profil mis à jour",
+      "promotion_created": "Promotion créée",
+      "promotion_deleted": "Promotion supprimée",
+      "promotion_saved": "Promotion enregistrée",
+      "removed": "Supprimé",
+      "saved": "Enregistré",
+      "settings_updated": "Paramètres mis à jour",
+      "stock_location_saved": "Emplacement de stock enregistré",
+      "store_credit_removed": "Avoir supprimé",
+      "store_credit_saved": "Avoir enregistré",
+      "store_settings_updated": "Paramètres de la boutique mis à jour",
+      "tax_category_saved": "Catégorie de taxe enregistrée",
+      "updated": "Mis à jour"
+    },
+    "pages": {
+      "settings": {
+        "stock_locations": {
+          "add_sheet_title": "Ajouter un emplacement de stock",
+          "edit_sheet_title": "Modifier l'emplacement de stock",
+          "search_placeholder": "Rechercher des emplacements de stock…"
+        }
       }
     },
     "resource_picker": {
-      "title": "Ajouter des produits",
-      "search_placeholder": "Rechercher…",
-      "empty": "Aucun résultat trouvé.",
+      "add_count_one": "Ajouter {{count}}",
+      "add_count_other": "Ajouter {{count}}",
       "already_added": "Ajouté",
+      "empty": "Aucun résultat trouvé.",
+      "search_placeholder": "Rechercher…",
       "selected_count_one": "{{count}} sélectionné",
       "selected_count_other": "{{count}} sélectionnés",
-      "add_count_one": "Ajouter {{count}}",
-      "add_count_other": "Ajouter {{count}}"
+      "title": "Ajouter des produits"
     },
-    "image_upload": {
-      "upload_cta": "Téléverser une image",
-      "replace_cta": "Remplacer l'image",
-      "remove_cta": "Retirer",
-      "uploading": "Téléversement…",
-      "upload_failed": "Échec du téléversement de l'image"
+    "row_actions": {
+      "clone": "Dupliquer",
+      "delete": "Supprimer",
+      "edit": "Modifier",
+      "menu_label": "Ouvrir les actions"
+    },
+    "settings_nav": {
+      "groups": {
+        "fulfillment": "Traitement des commandes"
+      },
+      "items": {
+        "stock_locations": "Emplacements de stock"
+      }
+    },
+    "stock_locations": {
+      "add_cta": "Ajouter un emplacement de stock",
+      "badges": {
+        "default": "Par défaut",
+        "enabled": "Activé",
+        "inactive": "Inactif"
+      },
+      "columns": {
+        "default": "Par défaut",
+        "location": "Emplacement",
+        "pickup": "Retrait",
+        "type": "Type"
+      },
+      "create_description": "Ajoutez un entrepôt, un magasin ou un point de retrait pour traiter les commandes.",
+      "create_label": "Créer un emplacement de stock",
+      "delete_confirm": {
+        "message": "{{name}} sera supprimé. Les articles en stock à cet emplacement ne sont pas supprimés.",
+        "title": "Supprimer l'emplacement de stock ?"
+      },
+      "edit_description": "Mettez à jour le nom, l'adresse, le retrait ou les politiques de stock.",
+      "empty": "Aucun emplacement de stock pour le moment",
+      "kinds": {
+        "fulfillment_center": "Centre de distribution",
+        "store": "Magasin",
+        "warehouse": "Entrepôt"
+      },
+      "pickup_stock_policies": {
+        "any": "Autoriser les transferts depuis d'autres emplacements",
+        "local": "Uniquement les articles à cet emplacement"
+      },
+      "search_placeholder": "Rechercher par nom…",
+      "section_pickup": "Retrait",
+      "stock_levels": {
+        "empty": "Aucun niveau de stock à cet emplacement pour le moment.",
+        "empty_search": "Aucun niveau de stock ne correspond à votre recherche.",
+        "help": "Ajustez les quantités disponibles et en réassort par variante.",
+        "low_stock_marker": "stock faible",
+        "search_placeholder": "Rechercher un SKU ou un produit…",
+        "table": {
+          "backorder": "Réassort",
+          "on_hand": "Disponible",
+          "variant": "Variante"
+        },
+        "title": "Stock à cet emplacement",
+        "unknown_product": "Produit inconnu",
+        "variant_count_one": "{{count}} variante",
+        "variant_count_other": "{{count}} variantes"
+      }
+    },
+    "validation": {
+      "country_required": "Le pays est requis",
+      "currency_required": "La devise est requise",
+      "first_name_required": "Le prénom est obligatoire",
+      "invalid_email": "Saisissez une adresse e-mail valide",
+      "invalid_email_or_password": "E-mail ou mot de passe invalide",
+      "invalid_hex_color": "Couleur hexadécimale invalide",
+      "invalid_password": "Mot de passe invalide",
+      "last_name_required": "Le nom est obligatoire",
+      "min_length": "{{field}} doit comporter au moins {{count}} caractères",
+      "password_required": "Le mot de passe est obligatoire",
+      "passwords_dont_match": "Les mots de passe ne correspondent pas",
+      "positive_number": "{{field}} doit être supérieur à 0",
+      "required": "{{field}} est obligatoire",
+      "store_name_required": "Le nom de la boutique est requis"
     }
   }
 }

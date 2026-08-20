@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { DeliveryOriginGroup } from '@spree/admin-sdk'
-import { mapSpreeErrorsToForm } from '@spree/dashboard-core'
+import { mapSpreeErrorsToForm, useStockLocations } from '@spree/dashboard-core'
 import {
   Button,
   Dialog,
@@ -22,7 +22,6 @@ import {
   useCreateDeliveryOriginGroup,
   useUpdateDeliveryOriginGroup,
 } from '../../../hooks/use-delivery-origin-groups'
-import { useStockLocations } from '../../../hooks/use-stock-locations'
 import {
   DELIVERY_ORIGIN_GROUP_DEFAULTS,
   type DeliveryOriginGroupFormValues,

@@ -1,3 +1,4 @@
+import { useStockLocations } from '@spree/dashboard-core'
 import {
   DataGrid,
   editableRowIndex,
@@ -12,7 +13,6 @@ import { useCallback, useMemo } from 'react'
 import { type UseFormReturn, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useOptionTypes } from '../../../hooks/use-option-types'
-import { useStockLocations } from '../../../hooks/use-stock-locations'
 import type { ProductFormValues, StockLevelFormValues } from '../../../schemas/product'
 import { composeOptionsText } from './variants-matrix'
 

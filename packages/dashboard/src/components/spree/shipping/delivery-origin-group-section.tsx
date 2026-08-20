@@ -4,13 +4,12 @@ import type {
   DeliveryProfile,
   DeliveryZone,
 } from '@spree/admin-sdk'
-import { Can, Subject, usePermissions } from '@spree/dashboard-core'
+import { Can, Subject, usePermissions, useStockLocations } from '@spree/dashboard-core'
 import { Button, RowActions, useConfirm } from '@spree/dashboard-ui'
 import { PlusIcon, WarehouseIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDeleteDeliveryOriginGroup } from '../../../hooks/use-delivery-origin-groups'
-import { useStockLocations } from '../../../hooks/use-stock-locations'
 import { DeliveryOriginGroupDialog } from './delivery-origin-group-dialog'
 import { DeliveryZoneCard, UnrestrictedMethodsCard } from './delivery-zone-card'
 

@@ -323,6 +323,11 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
   )
 }
 
+/** Kinds the seller satisfies by filling an address, rendered inline. */
+function isAddressKind(kind: string): boolean {
+  return kind === 'billing_address' || kind === 'returns_address'
+}
+
 /**
  * Where in this panel a seller goes to satisfy a kind.
  *
@@ -331,11 +336,6 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
  * kind that is not here renders its description and any `action_url`, which
  * is what makes a provider's kind useful before this file knows it exists.
  */
-/** Kinds the seller satisfies by filling an address, rendered inline. */
-function isAddressKind(kind: string): boolean {
-  return kind === 'billing_address' || kind === 'returns_address'
-}
-
 function panelRoute(kind: string): string | undefined {
   switch (kind) {
     case 'complete_profile':

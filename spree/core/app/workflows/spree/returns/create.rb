@@ -99,14 +99,23 @@ module Spree
         failure(@return_record) unless @return_record.save
       end
 
-      # Where the goods should physically come back to. The fulfillment's own
-      # location is the best answer — it is where they left from — then the
-      # seller's returns location on a marketplace order, so a seller's goods
-      # never come back to the operator's warehouse.
+      # Where the goods should physically come back to.
+      #
+      # The fulfillment's own location is the best answer — it is where they
+      # left from. Failing that, the seller of the items being returned, read
+      # off the line item rather than the order: `Order` carries no seller of
+      # its own, and after the marketplace split every line on one order
+      # belongs to the same seller anyway.
       def default_stock_location
         @normalized_items.first[:fulfillment_item].fulfillment&.stock_location ||
-          (order.respond_to?(:seller) ? order.seller&.returns_location : nil) ||
+          seller_returns_location ||
           order.store.default_stock_location
+      end
+
+      def seller_returns_location
+        @normalized_items.
+          filter_map { |item| item[:fulfillment_item].line_item&.seller }.
+          first&.returns_location
       end
     end
   end

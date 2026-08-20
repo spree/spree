@@ -1,26 +1,26 @@
 import type { QueryKey } from '@tanstack/react-query'
 import { useCallback } from 'react'
-import { useStore } from '../providers/store-provider'
+import { useTenantId } from '../providers/tenant-provider'
 
 /**
  * Canonical TanStack query-key shape for every dashboard resource:
  *
- *     [resource, storeId, ...rest]
+ *     [resource, tenantId, ...rest]
  *
  * Use `useResourceKey` (the hook) from inside React components to build
- * store-scoped keys — it reads `storeId` from `<StoreProvider>` so callers
- * never spell it themselves:
+ * tenant-scoped keys — it reads the id from `<TenantProvider>` (falling back
+ * to `<StoreProvider>`) so callers never spell it themselves:
  *
  *     useQuery({ queryKey: useResourceKey('channels', id), ... })
  *
- * The bare `resourceKey()` helper is the same builder without the storeId
+ * The bare `resourceKey()` helper is the same builder without the tenant id
  * dependency — keep it for non-hook contexts (tests, build-time defaults).
  *
  * Lists: `useResourceKey('channels')`
  * Singletons: `useResourceKey('channels', id)`
  * Nested: `useResourceKey('products', productId, 'variants')`
  *
- * For invalidation inside `useResourceMutation`, the storeId is auto-injected
+ * For invalidation inside `useResourceMutation`, the tenant id is auto-injected
  * — pass the logical key without it:
  *
  *     invalidate: [['channels'], ['channels', id]]
@@ -30,12 +30,12 @@ export function resourceKey(resource: string, ...rest: ReadonlyArray<unknown>): 
 }
 
 /**
- * Hook variant of `resourceKey` that auto-injects the current `storeId` from
- * `<StoreProvider>`. The default way to build query keys in dashboard hooks.
+ * Hook variant of `resourceKey` that auto-injects the current tenant id from
+ * `<TenantProvider>`. The default way to build query keys in dashboard hooks.
  */
 export function useResourceKey(resource: string, ...rest: ReadonlyArray<unknown>): QueryKey {
-  const { storeId } = useStore()
-  return [resource, storeId, ...rest]
+  const tenantId = useTenantId()
+  return [resource, tenantId, ...rest]
 }
 
 /**
@@ -50,10 +50,10 @@ export function useResourceKey(resource: string, ...rest: ReadonlyArray<unknown>
  *     })
  */
 export function useResourceKeyBuilder() {
-  const { storeId } = useStore()
+  const tenantId = useTenantId()
   return useCallback(
-    (resource: string, ...rest: ReadonlyArray<unknown>): QueryKey => [resource, storeId, ...rest],
-    [storeId],
+    (resource: string, ...rest: ReadonlyArray<unknown>): QueryKey => [resource, tenantId, ...rest],
+    [tenantId],
   )
 }
 

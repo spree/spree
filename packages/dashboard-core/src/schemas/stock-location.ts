@@ -1,11 +1,7 @@
-import type {
-  StockLocation,
-  StockLocationCreateParams,
-  StockLocationUpdateParams,
-} from '@spree/admin-sdk'
-import { blankToUndefined, emptyToUndefined } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
+import type { PanelStockLocation, PanelStockLocationCreateParams } from '../api-client'
+import { blankToUndefined, emptyToUndefined } from '../lib/form-mappers'
 
 // Labels live in `en.json` under `admin.stock_locations.kinds.*` and
 // `admin.stock_locations.pickup_stock_policies.*`. Consumers map these
@@ -68,7 +64,7 @@ export const STOCK_LOCATION_DEFAULTS: StockLocationFormValues = {
   pickup_instructions: '',
 }
 
-export function stockLocationToFormValues(sl: StockLocation): StockLocationFormValues {
+export function stockLocationToFormValues(sl: PanelStockLocation): StockLocationFormValues {
   return {
     name: sl.name,
     admin_name: sl.admin_name ?? '',
@@ -77,8 +73,8 @@ export function stockLocationToFormValues(sl: StockLocation): StockLocationFormV
       : 'warehouse',
     active: sl.active,
     default: sl.default,
-    propagate_all_variants: sl.propagate_all_variants,
-    backorderable_default: sl.backorderable_default,
+    propagate_all_variants: sl.propagate_all_variants ?? false,
+    backorderable_default: sl.backorderable_default ?? false,
     address1: sl.address1 ?? '',
     address2: sl.address2 ?? '',
     city: sl.city ?? '',
@@ -88,7 +84,7 @@ export function stockLocationToFormValues(sl: StockLocation): StockLocationFormV
     country_code: sl.country_code ?? '',
     state_code: sl.state_code ?? '',
     state_name: sl.state_name ?? '',
-    pickup_enabled: sl.pickup_enabled,
+    pickup_enabled: sl.pickup_enabled ?? false,
     pickup_stock_policy: PICKUP_STOCK_POLICIES.includes(sl.pickup_stock_policy as PickupStockPolicy)
       ? (sl.pickup_stock_policy as PickupStockPolicy)
       : 'local',
@@ -98,9 +94,7 @@ export function stockLocationToFormValues(sl: StockLocation): StockLocationFormV
 }
 
 // Drops blank strings → undefined so we don't overwrite null fields with "".
-export function formValuesToParams(
-  v: StockLocationFormValues,
-): StockLocationCreateParams & StockLocationUpdateParams {
+export function formValuesToParams(v: StockLocationFormValues): PanelStockLocationCreateParams {
   return {
     name: v.name,
     admin_name: blankToUndefined(v.admin_name),
