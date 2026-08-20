@@ -43,12 +43,19 @@ module Spree
             Spree.api.admin_payment_method_serializer
           end
 
-          # Explicit allowlist per the v3 convention — flat params, no
-          # reach into the global `Spree::PermittedAttributes` registry
-          # (which is the legacy Rails admin's surface). `type` and
+          # Explicit allowlist per the v3 convention — flat params. `type` and
           # `preferences` are added by `SubclassedResource` on top.
+          # Deliberately NOT routed through `normalize_params`: gateway
+          # `preferences` are opaque provider values, and prefixed-ID resolution
+          # recurses into nested hashes — a Stripe `webhook_endpoint_id` like
+          # `we_1MqJ8b...` matches the prefixed-ID shape and would be decoded to
+          # an integer. `type` and `preferences` are added by `SubclassedResource`.
           def permitted_params
-            params.permit(:name, :description, :active, :storefront_visible, :auto_capture, :capture_method, :position, metadata: {}, preferences: {})
+            params.permit(
+              :name, :description, :active, :storefront_visible, :auto_capture, :capture_method, :position,
+              *model_additional_permitted_attributes,
+              metadata: {}, preferences: {}
+            )
           end
 
           # `types` is read-only discovery — maps to the read scope + :show ability.

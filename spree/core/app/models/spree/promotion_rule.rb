@@ -14,14 +14,6 @@ module Spree
     validates :promotion, presence: true
     validates :type, uniqueness: { scope: [:promotion_id, *spree_base_uniqueness_scope] }
 
-    # Per-subclass permitted attributes beyond `type` and `preferences`.
-    # Override in STI subclasses that accept association IDs (e.g.
-    # Rules::Product needs `product_ids`). The Admin API merges these
-    # into its `params.permit(...)` allowlist.
-    def self.additional_permitted_attributes
-      []
-    end
-
     def self.for(promotable)
       all.select { |rule| rule.applicable?(promotable) }
     end

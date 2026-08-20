@@ -51,6 +51,7 @@ module Spree
 
           def permitted_params
             attrs = params.permit(
+              *model_additional_permitted_attributes,
               :name,
               :delivery_profile_id,
               option_type_ids: [],

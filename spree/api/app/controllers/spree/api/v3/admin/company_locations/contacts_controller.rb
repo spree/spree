@@ -49,7 +49,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:customer_id, :role)
+              params.permit(*model_additional_permitted_attributes, :customer_id, :role)
             end
           end
         end

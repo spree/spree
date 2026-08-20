@@ -46,7 +46,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:name, :position, stock_location_ids: [])
+              params.permit(*model_additional_permitted_attributes, :name, :position, stock_location_ids: [])
             end
 
             def collection_includes

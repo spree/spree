@@ -29,11 +29,7 @@ module Spree
           # every built-in rule/action's expected keys. Plugin-defined
           # subclasses can add to it — see `additional_permitted_attributes`
           # below.
-          def permitted_params
-            normalize_params(params.permit(*permitted_attributes))
-          end
-
-          def permitted_attributes
+          def resource_permitted_attributes
             [
               :name, :description, :code, :path,
               :starts_at, :expires_at, :usage_limit, :match_policy,

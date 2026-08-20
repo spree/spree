@@ -9,9 +9,7 @@ module Spree
 
         before_validation -> { self.calculator ||= Calculator::FlatPercentItemTotal.new }
 
-        def self.additional_permitted_attributes
-          [calculator: [:type, { preferences: {} }]]
-        end
+        self.additional_permitted_attributes = [calculator: [:type, { preferences: {} }]]
 
         def discount_scope
           :order

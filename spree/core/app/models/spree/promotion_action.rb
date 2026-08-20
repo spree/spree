@@ -14,15 +14,6 @@ module Spree
 
     scope :of_type, ->(t) { where(type: t) }
 
-    # Per-subclass permitted attributes beyond `type` and `preferences`.
-    # Override in STI subclasses that accept nested attributes (e.g.
-    # CreateLineItems needs `promotion_action_line_items_attributes`,
-    # CreateAdjustment needs `calculator_type` + `calculator_attributes`).
-    # The Admin API merges these into its `params.permit(...)` allowlist.
-    def self.additional_permitted_attributes
-      []
-    end
-
     # This method should be overridden in subclass
     # Updates the state of the order or performs some other action depending on the subclass
     # options will contain the payload from the event that activated the promotion. This will include

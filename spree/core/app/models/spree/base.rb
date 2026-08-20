@@ -10,6 +10,18 @@ class Spree::Base < ApplicationRecord
   include Spree::HasIsoGeography
   include Spree::TypedAssociations
 
+  # Extra writable attributes contributed by extensions, appended to the v3
+  # controller allowlist for this resource. Core attributes belong in the
+  # controller's own list — this exists so an extension that adds a column can
+  # make it writable without decorating a controller:
+  #
+  #   Spree::Product.additional_permitted_attributes += [:brand_id]
+  #
+  # Entries are `params.permit` fragments: bare symbols, or hashes for
+  # collections and nested structures (`{ region_ids: [] }`). Append with `+=`
+  # rather than assigning, so extensions don't clobber each other.
+  class_attribute :additional_permitted_attributes, instance_writer: false, default: [].freeze
+
   # Backfills preferences added to the class after this row was last saved, so
   # a reader never sees nil for a newly defined preference. Assigning
   # unconditionally would dirty every record on load: `preferences` is a

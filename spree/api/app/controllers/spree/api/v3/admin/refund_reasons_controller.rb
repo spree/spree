@@ -16,7 +16,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(:name, :active)
+            params.permit(*model_additional_permitted_attributes, :name, :active)
           end
         end
       end

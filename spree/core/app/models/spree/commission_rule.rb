@@ -47,15 +47,6 @@ module Spree
 
     registers_subclasses_via { Spree.commission_rules }
 
-    # Extra params a subclass accepts beyond `type` and `preferences` —
-    # association-backed config declares itself here so the nested rules API
-    # stays generic (mirrors Spree::DeliveryMethodRule).
-    #
-    # @return [Array]
-    def self.additional_permitted_attributes
-      []
-    end
-
     # @return [String] the name an operator picks this rule kind by
     def self.human_name
       Spree.t("commission_rule_types.#{api_type}.name", default: name.demodulize.titleize)

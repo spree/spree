@@ -7,7 +7,6 @@ module Spree
 
         include ActiveStorage::SetCurrent
         include CanCan::ControllerAdditions
-        include Spree::Core::ControllerHelpers::StrongParameters
         include Spree::Core::ControllerHelpers::Store
         include Spree::Api::V3::LocaleAndCurrency
         include Spree::Api::V3::JwtAuthentication

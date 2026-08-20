@@ -25,15 +25,6 @@ module Spree
 
     scope :active, -> { where(active: true) }
 
-    # Extra params a subclass accepts beyond `type`/`active`/`preferences` —
-    # association-backed config declares itself here so the nested rules API
-    # stays generic (mirrors {Spree::PromotionRule.additional_permitted_attributes}).
-    #
-    # @return [Array]
-    def self.additional_permitted_attributes
-      []
-    end
-
     registers_subclasses_via { Spree.delivery_method_rules }
 
     # @return [String] localized display name for the rule kind, used by admin pickers

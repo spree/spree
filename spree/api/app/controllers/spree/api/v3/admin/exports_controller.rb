@@ -98,7 +98,7 @@ module Spree
           # is intentionally dropped — only CSV is supported and Rails' request
           # format would otherwise overwrite the model's enum.
           def permitted_params
-            attrs = params.permit(:type, :record_selection, :results_url)
+            attrs = params.permit(*model_additional_permitted_attributes, :type, :record_selection, :results_url)
             raw = params[:search_params]
             attrs[:search_params] = raw.respond_to?(:to_unsafe_h) ? raw.to_unsafe_h : raw if raw.present?
             attrs

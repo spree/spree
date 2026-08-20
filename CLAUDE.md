@@ -268,7 +268,15 @@ The Store API (customer-facing) and Admin API (back-office) are two halves of th
 
 #### Flat request/response structure
 
-API v3 uses flat params — no nested Rails-style wrapping. **For new controllers, prefer enumerating attributes directly with `params.permit(...)`** rather than reaching into `Spree::PermittedAttributes`. Existing controllers that use the global allowlist remain valid until migrated as part of the 6.0 transition.
+API v3 uses flat params — no nested Rails-style wrapping. Declare a controller's writable attributes by overriding **`resource_permitted_attributes`** (a plain list). The base `permitted_attributes` appends extension-contributed attributes to it, and `permitted_params` permits and normalizes the result. `Spree::PermittedAttributes` and its model-name inference are **removed in 6.0** — a controller that declares neither `resource_permitted_attributes` nor `permitted_params` raises `NotImplementedError` on its first write.
+
+Extensions add writable attributes to a core resource from an initializer, appending to the model's `additional_permitted_attributes` (a `class_attribute` on `Spree::Base`, default `[]`): `Spree::Product.additional_permitted_attributes += [:brand_id]`. Always `+=`, never `=` — assigning replaces what another extension added. Core STI subclasses set theirs with `self.additional_permitted_attributes = [...]` in the class body. Three rules that matter:
+
+- **Override `resource_permitted_attributes`, never `permitted_attributes`** — the latter is where the extension union happens, so overriding it silently drops extension attributes.
+- **A controller that overrides `permitted_params` outright opts out of the union.** If it needs both, splat `model_additional_permitted_attributes` into its own `params.permit`.
+- **`normalize_params` is not free.** It recurses into nested hashes decoding anything matching the prefixed-ID shape, so a controller carrying opaque provider values (gateway `preferences`, merchant `metadata`) must NOT normalize — a Stripe `we_1MqJ8b...` id would be decoded to an integer. `Admin::PaymentMethodsController` is the worked example. Conversely, a controller that *does* normalize receives already-decoded primary keys, so read raw `params` when you need a prefix-checked `find_by_prefix_id!`.
+
+Prefer Custom Fields for merchant-managed data; the hook is for extensions adding real columns.
 
 ```ruby
 # ✅ Flat params

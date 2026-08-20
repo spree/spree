@@ -8,9 +8,7 @@ module Spree
 
         before_validation -> { self.calculator ||= Calculator::PercentOnLineItem.new }
 
-        def self.additional_permitted_attributes
-          [calculator: [:type, { preferences: {} }]]
-        end
+        self.additional_permitted_attributes = [calculator: [:type, { preferences: {} }]]
 
         def discount_scope
           :line_item

@@ -18,9 +18,7 @@ module Spree
       # of the serializer.
       validate :products_belong_to_the_store
 
-      def self.additional_permitted_attributes
-        [product_ids: []]
-      end
+      self.additional_permitted_attributes = [product_ids: []]
 
       # The chosen products in prefixed form, read through the association so
       # a soft-deleted product drops out — a client resubmitting this list must

@@ -2169,4 +2169,42 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       expect(product.reload.deleted_at).to be_nil
     end
   end
+
+  # The documented extension path: declare the attribute on the model, and every
+  # v3 endpoint that writes it accepts the attribute. Products is the worked
+  # example in the docs AND a controller that builds its allowlist by hand, so
+  # it is the regression that matters.
+  describe 'extension-contributed attributes' do
+    before { request.headers.merge!(headers) }
+
+    around do |example|
+      original = Spree::Product.additional_permitted_attributes
+      example.run
+      Spree::Product.additional_permitted_attributes = original
+    end
+
+    it 'permits an attribute the model declares' do
+      # The documented extension contract, exercised for real.
+      Spree::Product.additional_permitted_attributes += [:brand_id]
+
+      expect_any_instance_of(described_class).to receive(:permitted_params).at_least(:once).and_wrap_original do |original|
+        result = original.call
+        expect(result.keys).to include('brand_id')
+        result.except('brand_id')
+      end
+
+      patch :update, params: { id: product.prefixed_id, brand_id: 'acme' }, as: :json
+    end
+
+    it 'drops an attribute nobody declared' do
+      expect_any_instance_of(described_class).to receive(:permitted_params).at_least(:once).and_wrap_original do |original|
+        result = original.call
+        expect(result.keys).not_to include('sneaky')
+        result
+      end
+
+      patch :update, params: { id: product.prefixed_id, sneaky: 'nope' }, as: :json
+    end
+  end
+
 end

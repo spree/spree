@@ -162,6 +162,7 @@ module Spree
 
           def permitted_params
             params.permit(
+              *model_additional_permitted_attributes,
               :email,
               :customer_note,
               :market_id,

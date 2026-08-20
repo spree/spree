@@ -201,6 +201,7 @@ module Spree
             # variant, so they ship prices alongside name/status and the
             # `Spree::Product#prices=` setter forwards them to it.
             params.permit(
+              *model_additional_permitted_attributes,
               :name, :description, :slug, :status,
               :meta_title, :meta_description, :meta_keywords,
               :tax_category_id, :product_type_id, :delivery_profile_id,

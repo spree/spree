@@ -58,7 +58,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(:name, :description, permissions: [])
+            params.permit(*model_additional_permitted_attributes, :name, :description, permissions: [])
           end
 
           private

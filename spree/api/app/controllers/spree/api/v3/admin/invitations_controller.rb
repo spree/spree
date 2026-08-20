@@ -69,6 +69,8 @@ module Spree
           end
 
           # `email` and `role_id` are flat — `role_id` accepts a prefixed ID.
+          # No extension union: an invitation carries only the role grant, which is
+          # the authorization surface itself, not extensible resource data.
           def permitted_params
             attrs = params.permit(:email, :role_id)
             if attrs[:role_id].present? && Spree::PrefixedId.prefixed_id?(attrs[:role_id])

@@ -126,6 +126,7 @@ module Spree
           # sheet in one round-trip.
           def permitted_params
             params.permit(
+              *model_additional_permitted_attributes,
               :name, :admin_name, :code, :fulfillment_provider,
               :pickup_point_provider, :rate_provider, :storefront_visible, :tracking_url,
               :estimated_transit_business_days_min, :estimated_transit_business_days_max,

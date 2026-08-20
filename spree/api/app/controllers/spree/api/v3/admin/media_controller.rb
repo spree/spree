@@ -77,6 +77,7 @@ module Spree
           # attributes — everything a client can set lives on the model.
           def permitted_params
             params.permit(
+              *model_additional_permitted_attributes,
               *Spree::Media::WRITABLE_ATTRIBUTES,
               :attachment, :url, :signed_id,
               variant_ids: []

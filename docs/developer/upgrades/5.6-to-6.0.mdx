@@ -394,9 +394,122 @@ The `compare_at_price` **reader** (which resolves against `cost_currency`) is un
 Also note:
 
 - **Ransack:** `default_price` is no longer a searchable association on `Variant`; query `prices` instead.
-- **`Spree::PermittedAttributes`:** the dead `:price` and `:compare_at_price` entries are dropped from `product_attributes` and `variant_attributes`. Prices were already written as nested `prices: [{ amount:, currency: }]` under variants — the top-level keys had no writer behind them.
+- **Prices in permitted params:** the dead `:price` and `:compare_at_price` entries are gone. Prices were already written as nested `prices: [{ amount:, currency: }]` under variants — the top-level keys had no writer behind them. (`Spree::PermittedAttributes` itself is removed in 6.0 — see below.)
 - Localized number parsing still happens: `Spree::Price#amount=` runs `Spree::LocalizedNumber.parse`, so `set_price(currency, '1,599.99')` works as `price=` did.
 - The variant validation that inferred a missing price from the product's default variant is gone. Set prices explicitly (the product and variant factories already do).
+
+### `Spree::PermittedAttributes` is removed
+
+The global permitted-attributes registry is gone, with no deprecation bridge. It
+existed so the Rails admin and storefront could share one allowlist; both are
+removed in 6.0, and API v3 declares its attributes in the controller.
+
+Removed alongside it: `Spree::Core::ControllerHelpers::StrongParameters` (the
+`permitted_*_attributes` helper methods it mixed into controllers) and the
+fallback that inferred an attribute list from the model name.
+
+Attributes you pushed from an initializer are now declared on the model, and
+standard resource endpoints append them to their own allowlist — so one
+declaration still covers the model's create and update endpoints.
+
+#### How to migrate
+
+**1. Find every call site.** The constant and the helper methods are both gone,
+so a missed reference raises `NameError` or `NoMethodError` the first time that
+code runs — loudly, but not necessarily at boot:
+
+```bash
+grep -rn "PermittedAttributes" app config lib
+grep -rnE "permitted_[[:alnum:]_]+_attributes" app config lib
+```
+
+The second pattern is deliberately broad: the helper module generated one
+`permitted_*_attributes` method per registry key, so there were dozens of them.
+
+**2. Decide what each attribute actually is.** Most fall into one of three
+buckets, and only the last needs this hook:
+
+| What you were adding | Where it goes in 6.0 |
+| --- | --- |
+| A merchant-managed field (text, number, dropdown) | [Custom Fields](/developer/core-concepts/custom-fields) — no code, and filterable/sortable |
+| Config for an STI type you register (promotion rule, delivery method rule, …) | `additional_permitted_attributes` on that subclass, as before — unchanged |
+| A real database column your extension added to a core model | `additional_permitted_attributes` on the model |
+
+**3. Point each declaration at the model.** It stays in your initializer — only
+the receiver changes, from the global registry to the model itself:
+
+```ruby config/initializers/spree.rb
+# Before
+Spree::PermittedAttributes.product_attributes << :brand_id
+
+# After
+Spree::Product.additional_permitted_attributes += [:brand_id]
+```
+
+Use `+=`, not `=` — the list is per model, and assigning replaces whatever
+another extension already added. `<<` raises a `FrozenError`: the default is a
+frozen shared array, so mutating it in place would leak your attribute onto every
+other model.
+
+Declare only attributes of your own. Redeclaring a key the controller already
+permits (`metadata`, `prices`) does not widen it — strong parameters keeps the
+last filter for that key, so the controller's own would be replaced by yours.
+
+Entries are `params.permit` fragments, so collections and nested structures keep
+the shapes you already know: `[:brand_id, { region_ids: [] }]`.
+
+**4. Fix your own controllers.** If you subclassed a Spree v3 resource
+controller and relied on the attribute list being inferred from the model name,
+declare it now:
+
+```ruby
+class BrandsController < Spree::Api::V3::Admin::ResourceController
+  protected
+
+  def model_class
+    Spree::Brand
+  end
+
+  # Before: no such method — the base class inferred `brand_attributes`
+  # from the model name. Now you say what you accept.
+  def resource_permitted_attributes
+    [:name, :slug, :description]
+  end
+end
+```
+
+Declaring neither `resource_permitted_attributes` nor `permitted_params` raises
+`NotImplementedError` on the first write, so this surfaces in your test suite
+rather than silently permitting a stale list.
+
+**5. Verify a write actually persists.** A declaration that never reaches a
+controller fails silently — strong parameters drop the unpermitted key, the
+request still returns 200, and the column keeps its old value. Assert on the
+saved record, not the response status:
+
+```ruby
+patch "/api/v3/admin/products/#{product.prefixed_id}",
+      params: { brand_id: brand.id }, headers: headers
+
+expect(product.reload.brand_id).to eq(brand.id)
+```
+
+If that assertion fails, the endpoint is not consulting your declaration. Check
+whether the controller overrides `permitted_attributes` — that method is where
+the extension attributes are appended, so overriding it replaces them. Override
+`resource_permitted_attributes` instead.
+
+<Warning>
+  Two endpoints deliberately ignore the hook because their parameters are
+  authorization data rather than resource data: API keys (`scopes`, `key_type`)
+  and invitations (`role_id`). Adding attributes there needs a controller
+  decorator, not a model declaration.
+</Warning>
+
+STI types registered through a Spree registry (promotion rules and actions,
+delivery method rules, commission rules) already used
+`additional_permitted_attributes` and need no changes — the hook simply moved up
+to `Spree::Base`.
 
 ### `StateChange` and `LogEntry` are gone
 

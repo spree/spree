@@ -31,8 +31,8 @@ module Spree
             Spree.api.wishlist_serializer
           end
 
-          def permitted_params
-            params.permit(Spree::PermittedAttributes.wishlist_attributes)
+          def resource_permitted_attributes
+            [:name, :is_default, :is_private]
           end
         end
       end

@@ -93,7 +93,7 @@ module Spree
           # optional so an audit requirement never turns an existing endpoint
           # into a 422; omitting it falls back to a translated default.
           def permitted_params
-            params.permit(:count_on_hand, :backorderable, :reason, metadata: {})
+            params.permit(*model_additional_permitted_attributes, :count_on_hand, :backorderable, :reason, metadata: {})
           end
         end
       end

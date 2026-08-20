@@ -47,7 +47,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(:type, :active, preferences: {})
+            params.permit(*model_additional_permitted_attributes, :type, :active, preferences: {})
           end
 
           # `types` is read-only discovery — maps to the read scope.

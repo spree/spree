@@ -14,6 +14,10 @@ module Spree
           def serializer_class
             Spree.api.admin_tax_category_serializer
           end
+
+          def resource_permitted_attributes
+            [:name, :tax_code, :description, :is_default]
+          end
         end
       end
     end

@@ -27,6 +27,7 @@ module Spree
 
           def permitted_params
             params.permit(
+              *model_additional_permitted_attributes,
               :name, :admin_name, :active, :default,
               :kind, :propagate_all_variants, :backorderable_default,
               :address1, :address2, :city, :zipcode, :phone, :company,

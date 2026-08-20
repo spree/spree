@@ -107,6 +107,48 @@ describe Spree::Base do
     it { expect(Spree::Address.json_api_permitted_attributes).to contain_exactly('firstname', 'lastname', 'address1', 'address2', 'city', 'zipcode', 'phone', 'country_code', 'state_code', 'state_name', 'alternative_phone', 'company', 'country_id', 'state_id', 'created_at', 'updated_at', 'customer_id', 'deleted_at', 'label', 'metadata', 'quick_checkout', 'latitude', 'longitude') }
   end
 
+  describe '.additional_permitted_attributes' do
+    it 'defaults to an empty list' do
+      expect(Spree::Product.additional_permitted_attributes).to eq([])
+    end
+
+    it 'is inherited by the STI rule base classes that used to define their own' do
+      expect(Spree::PromotionRule.additional_permitted_attributes).to eq([])
+      expect(Spree::PromotionAction.additional_permitted_attributes).to eq([])
+      expect(Spree::DeliveryMethodRule.additional_permitted_attributes).to eq([])
+      expect(Spree::CommissionRule.additional_permitted_attributes).to eq([])
+    end
+
+    it 'lets a subclass declare its own without affecting siblings' do
+      expect(Spree::Promotion::Rules::Product.additional_permitted_attributes).to eq([product_ids: []])
+      expect(Spree::PromotionRule.additional_permitted_attributes).to eq([])
+    end
+
+    # The documented extension contract: append from an initializer.
+    context 'when an extension appends to it' do
+      around do |example|
+        original = Spree::Product.additional_permitted_attributes
+        example.run
+        Spree::Product.additional_permitted_attributes = original
+      end
+
+      it 'adds the attribute without touching other models' do
+        Spree::Product.additional_permitted_attributes += [:brand_id]
+
+        expect(Spree::Product.additional_permitted_attributes).to eq([:brand_id])
+        expect(Spree::Variant.additional_permitted_attributes).to eq([])
+        expect(Spree::Base.additional_permitted_attributes).to eq([])
+      end
+
+      it 'accumulates across extensions rather than replacing' do
+        Spree::Product.additional_permitted_attributes += [:brand_id]
+        Spree::Product.additional_permitted_attributes += [{ region_ids: [] }]
+
+        expect(Spree::Product.additional_permitted_attributes).to eq([:brand_id, { region_ids: [] }])
+      end
+    end
+  end
+
   describe 'preference defaults on load' do
     let(:store) { Spree::Store.default }
 

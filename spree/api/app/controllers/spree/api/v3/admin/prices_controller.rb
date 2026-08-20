@@ -101,7 +101,7 @@ module Spree
           # scopes so a foreign or unknown id 404s instead of binding the
           # price to another store's record.
           def permitted_params
-            permitted = params.permit(:variant_id, :currency, :amount, :compare_at_amount, :price_list_id)
+            permitted = params.permit(*model_additional_permitted_attributes, :variant_id, :currency, :amount, :compare_at_amount, :price_list_id)
             permitted[:variant_id] = store_variants.find_by_prefix_id!(permitted[:variant_id]).id if permitted[:variant_id].present?
             permitted[:price_list_id] = store_price_lists.find_by_prefix_id!(permitted[:price_list_id]).id if permitted[:price_list_id].present?
             permitted

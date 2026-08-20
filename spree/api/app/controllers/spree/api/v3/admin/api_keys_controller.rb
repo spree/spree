@@ -98,6 +98,8 @@ module Spree
           # lives on Spree::ApiKey); update is limited to the human-facing `name`.
           # Stripping them here keeps them out of mass assignment so a rename
           # returns 200 rather than 422.
+          # No extension union: an API key's scopes and type are the authorization
+          # surface itself, not extensible resource data.
           def permitted_params
             return params.permit(:name) if action_name == 'update'
 

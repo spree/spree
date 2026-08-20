@@ -22,7 +22,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(:name, :description, customer_ids: [])
+            params.permit(*model_additional_permitted_attributes, :name, :description, customer_ids: [])
           end
         end
       end

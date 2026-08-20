@@ -14,9 +14,7 @@ module Spree
                                              dependent: :destroy
         has_many :categories, through: :promotion_rule_categories, class_name: 'Spree::Category', source: :category
 
-        def self.additional_permitted_attributes
-          [category_ids: []]
-        end
+        self.additional_permitted_attributes = [category_ids: []]
 
         # Wire-format shorthand is `category`. `key` (instance) cascades through `api_type`.
         def self.api_type

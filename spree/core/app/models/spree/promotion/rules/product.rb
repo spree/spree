@@ -13,9 +13,7 @@ module Spree
                                            dependent: :destroy
         has_many :products, through: :product_promotion_rules, class_name: 'Spree::Product'
 
-        def self.additional_permitted_attributes
-          [product_ids: []]
-        end
+        self.additional_permitted_attributes = [product_ids: []]
 
         #
         # Preferences

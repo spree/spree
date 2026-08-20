@@ -11,9 +11,7 @@ module Spree
                inverse_of: :delivery_method_rule
       has_many :products, class_name: 'Spree::Product', through: :delivery_method_rule_products
 
-      def self.additional_permitted_attributes
-        [product_ids: []]
-      end
+      self.additional_permitted_attributes = [product_ids: []]
 
       # Excluded product ids in prefixed form. Plucked rather than hydrating N
       # Product rows just to re-encode their ids, but read through the products

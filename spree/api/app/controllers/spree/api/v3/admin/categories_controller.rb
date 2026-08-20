@@ -67,6 +67,7 @@ module Spree
           # can't be targeted).
           def permitted_params
             permitted = params.permit(
+              *model_additional_permitted_attributes,
               :name, :description, :permalink,
               :meta_title, :meta_description, :meta_keywords,
               :image, :square_image,

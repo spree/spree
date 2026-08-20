@@ -1,6 +1,9 @@
 module Spree
   module Carts
     class AddItem < Spree::Workflow
+      # Line item attributes a caller may set through `options`.
+      ITEM_OPTIONS = [:id, :variant_id, :quantity].freeze
+
       hooks :validate, :after_item_added
 
       # Hook handlers read these plus the argument readers. Both are nil
@@ -45,9 +48,15 @@ module Spree
         @line_item_created = @line_item.nil?
 
         if @line_item.nil?
-          opts = ::Spree::PermittedAttributes.line_item_attributes.flatten.each_with_object({}) do |attribute, result|
-            result[attribute] = item_options[attribute]
-          end.merge(currency: cart.currency).delete_if { |_key, value| value.nil? }
+          # `LineItem#options=` mass-assigns, so the caller's hash is narrowed
+          # first — `options` must not be a way to set arbitrary attributes.
+          # Extensions widen this through the model's permitted attributes.
+          writable = ITEM_OPTIONS +
+                     ::Spree::LineItem.additional_permitted_attributes.flat_map { |a| a.is_a?(Hash) ? a.keys : a }
+
+          opts = item_options.symbolize_keys.slice(*writable).
+                 merge(currency: cart.currency).
+                 delete_if { |_key, value| value.nil? }
 
           @line_item = cart.line_items.new(quantity: requested_quantity,
                                            variant: variant,

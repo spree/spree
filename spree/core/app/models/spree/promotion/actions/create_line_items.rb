@@ -8,9 +8,7 @@ module Spree
 
         after_save :handle_promotion_action_line_items
 
-        def self.additional_permitted_attributes
-          [line_items: [:variant_id, :quantity]]
-        end
+        self.additional_permitted_attributes = [line_items: [:variant_id, :quantity]]
 
         # API v3 flat alias for `promotion_action_line_items_attributes`.
         # Accepts an array of `{ variant_id:, quantity: }` rows; the list
