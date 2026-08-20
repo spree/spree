@@ -420,8 +420,11 @@ code runs — loudly, but not necessarily at boot:
 
 ```bash
 grep -rn "PermittedAttributes" app config lib
-grep -rn "permitted_\(payment\|checkout\|order\|product\|store\)_attributes" app lib
+grep -rnE "permitted_[[:alnum:]_]+_attributes" app config lib
 ```
+
+The second pattern is deliberately broad: the helper module generated one
+`permitted_*_attributes` method per registry key, so there were dozens of them.
 
 **2. Decide what each attribute actually is.** Most fall into one of three
 buckets, and only the last needs this hook:

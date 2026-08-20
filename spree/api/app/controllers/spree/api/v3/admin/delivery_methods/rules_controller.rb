@@ -24,6 +24,7 @@ module Spree
               @resource = rule_class.new(delivery_method: parent, active: active_param)
               assign_rule_preferences(@resource)
               assign_rule_products(@resource)
+              assign_extension_attributes(@resource)
               authorize_resource!(@resource, :create)
 
               if @resource.save
@@ -37,6 +38,7 @@ module Spree
               @resource.active = active_param unless params[:active].nil?
               assign_rule_preferences(@resource)
               assign_rule_products(@resource)
+              assign_extension_attributes(@resource)
 
               if @resource.save
                 render json: serialize_resource(@resource)
@@ -71,6 +73,16 @@ module Spree
 
             def active_param
               params[:active].nil? ? true : params[:active].to_b
+            end
+
+            # This controller assigns each field by hand rather than mass-assigning,
+            # so attributes an extension contributed have to be forwarded too or
+            # permitting them would have no effect.
+            def assign_extension_attributes(rule)
+              keys = model_additional_permitted_attributes.flat_map { |a| a.is_a?(Hash) ? a.keys : a }
+              return if keys.empty?
+
+              rule.assign_attributes(permitted_params.to_h.slice(*keys.map(&:to_s)))
             end
 
             def assign_rule_preferences(rule)

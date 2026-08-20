@@ -17,7 +17,7 @@ module Spree
                   variant: variant,
                   quantity: permitted_params[:quantity] || 1,
                   metadata: permitted_params[:metadata] || {},
-                  options: permitted_params[:options] || {}
+                  options: item_options
                 )
 
                 if result.success?
@@ -96,11 +96,21 @@ module Spree
               @variant ||= current_store.variants.find_by_prefix_id!(permitted_params[:variant_id])
             end
 
+            # Extension attributes ride in `options`, which is how AddItem
+            # forwards per-line-item values onto the record.
+            def item_options
+              keys = Spree::LineItem.additional_permitted_attributes.flat_map { |a| a.is_a?(Hash) ? a.keys : a }
+              extras = permitted_params.to_h.slice(*keys.map(&:to_s)).symbolize_keys
+
+              (permitted_params[:options] || {}).to_h.symbolize_keys.merge(extras)
+            end
+
             def permitted_params
               params.permit(
-                *Spree::LineItem::WRITABLE_ATTRIBUTES,
-                *Spree::LineItem.additional_permitted_attributes,
-                { metadata: {}, options: {} }
+                *Spree::Api::V3::PermitFragments.merge(
+                  [:id, :variant_id, :quantity, { metadata: {}, options: {} }],
+                  Spree::LineItem.additional_permitted_attributes
+                )
               )
             end
           end
