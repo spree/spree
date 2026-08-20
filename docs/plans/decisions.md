@@ -4877,6 +4877,85 @@ a README console snippet; new 6.0 upgrade steps are born as task classes;
 jobs (the primitive is for operator-triggered work). Plan:
 `6.0-maintenance-tasks.md`.
 
+## 2026-08-20 — Dashboard assistant: Spree-owned tool registry on RubyLLM; every mutation human-approved; MCP later, over the same registry
+
+The 6.0 dashboard ships an embedded AI chat assistant (plan:
+`6.0-dashboard-assistant.md`, new optional top-level gem
+`spree/assistant`). Four decisions here bind other work:
+
+**The LLM client is RubyLLM, and Claude is the default model in every
+configuration path.** Provider choice (Anthropic/OpenAI/Gemini/Bedrock/
+Ollama) is merchant configuration, matching the pluggable-provider house
+architecture; nothing outside `spree/assistant`'s configuration may assume
+a specific vendor. The tool registry, prompts and approval flow are
+Spree-owned so the client library stays swappable plumbing.
+
+**Tools are a first-class Spree registry, not LLM-library classes and not
+generated endpoint wrappers.** `Spree::Assistant.tools` entries declare
+name, description, params schema, required RBAC permission key, and a
+mutating flag; executors receive `{user, ability, store}` and run through
+the same scoped lookups, services and workflows the Admin API uses. The
+tool list handed to the model is filtered to the signed-in admin's
+permission keys — there is no assistant service account and no separate
+assistant permission model. The generic read vocabulary
+(`search_resources`/`get_resource`/`describe_resource`) is deliberately
+shared with the `5.5-admin-api-cli.md` design.
+
+**Every mutating tool call halts the loop for explicit human approval** in
+the dashboard panel (persisted on the tool-call row, ability re-checked at
+execution time). This is the prompt-injection defense: untrusted text in
+catalog or order data can never silently mutate a store. Reads
+auto-execute. No risk-tiering in v1.
+
+**No MCP in 6.0, and MCP is never the embedded assistant's internal
+transport** (that would force a public MCP endpoint per install to power
+its own chat). A future MCP server is a thin protocol adapter mounted over
+the same tool registry, authenticating with secret API keys + scopes, in
+its own plan.
+
+Also settled: AI providers follow the established provider-registry
+pattern — `Spree.assistant_providers` keyed provider classes (copied from
+`Spree.tax_providers`/`Spree.delivery_rate_providers`), each backed by its
+own `Spree::Integration` subclass (`SpreeAssistant::Integrations::Anthropic`,
+`::OpenAI`, …) under a new `ai` integration group so every provider is its
+own gallery card, per the integrations-admin rule (no env-var credential
+contracts for per-store providers). Which provider a store uses is the
+`assistant_provider` Store preference (default `'anthropic'`), a picker in
+store settings. The surface is JWT-only (secret keys get no assistant
+access); turns stream as SSE from `ActionController::Live`; conversations
+are store-scoped, user-owned, deletable data.
+
+## 2026-08-20 — Dashboard assistant phase 0: the approval gate works; pin ruby_llm 1.x and keep it behind the adapter
+
+The phase 0 spike (`docs/plans/spikes/6.0-dashboard-assistant/`, 21 checks,
+stubbed provider so it needs no API key) proved the approval gate against
+ruby_llm 1.16.0: a mutating tool halts the loop with nothing written, the
+call and its arguments persist for the approval card, approval executes and
+the conversation resumes with the model receiving the real result, rejection
+reports back as declined, and the tool list is filtered by permissions.
+**Verdict GO** — the fallback to the official `anthropic` gem is not needed.
+
+**Pin `ruby_llm ~> 1.16.0`.** RubyLLM 2.0 (merged upstream, unreleased)
+deletes `Tool::Halt` — the mechanism the gate stands on — and replaces it
+with a first-class `requires_approval` that parks the call, returns cleanly
+with `awaiting_approval?`, and persists the decision on the tool-call record
+across process restarts. That is strictly closer to this design, so the
+upgrade is wanted, not feared; it just must cost one file.
+
+**Therefore no RubyLLM type crosses the adapter boundary** — not
+`Tool::Halt`, not the polymorphic `ask` return, not `RubyLLM::Message`.
+`Spree::Assistant::RunTurn` returns a Spree value object. This is the
+Spree-owned-registry decision made concrete, and the spike priced what
+ignoring it would cost.
+
+**One trap worth repeating because it fails silently:** resuming after
+approval must reload the chat record, not merely rebuild the in-memory
+chat. The replay reads a cached association, so without the reload the
+model is re-sent the stale awaiting-approval placeholder and confirms work
+it never saw performed — a plausible-looking wrong answer, invisible unless
+a test asserts on the outbound provider payload. Any approve/resume test
+asserts on what the provider actually received.
+
 ## 2026-08-24 — Media library reuses files by sharing blobs, never by a shared asset entity
 
 The 6.0 media library is a store-scoped view over `Spree::Media` (which gains a

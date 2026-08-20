@@ -1,0 +1,6 @@
+source 'https://rubygems.org'
+
+gem 'ruby_llm', '1.16.0'
+gem 'activerecord', '~> 8.0'
+gem 'sqlite3'
+gem 'webmock'
