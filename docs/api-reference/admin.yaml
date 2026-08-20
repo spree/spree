@@ -92,7 +92,7 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjE3NmVlN2M3LWJkYzktNGM1MS1hMzFiLTEwMDYxOTc3NGZmNCIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDc4NzAwfQ.t4sBqJCtgn1Ww6o_sUUdRiL1sUF3aK-bpQNBkBVfNjQ
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjE3NmVlN2M3LWJkYzktNGM1MS1hMzFiLTEwMDYxOTc3NGZmNCIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDc4NzAwfQ.9pQGTgpJWNRjgHMNL1NyYyzXQO3DGDFJoyqGEpagqOc
                 user:
                   id: adm_UkLWZg9DAJ
                   email: admin@example.com
@@ -204,7 +204,7 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6ImFiN2M4YjAxLTY0MGYtNDJhZi1hZTY1LTQxY2NmOTk1YmVlMCIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDc4NzAwfQ.QSVm-Fge_dvjki3TVfaFHZAOwHOtDTX55usdDgTMJSE
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6ImFiN2M4YjAxLTY0MGYtNDJhZi1hZTY1LTQxY2NmOTk1YmVlMCIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDc4NzAwfQ.QU8nFbRJyZvwm767ZE11LEcEb6o1XFUtMPzxt44VsfU
                 user:
                   id: adm_UkLWZg9DAJ
                   email: admin@example.com
@@ -638,7 +638,7 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjBiZTdhM2RmLWEyYzYtNDZkOC1hNTZiLWE4NDg4MGIyZGZiNCIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDgyMDAwfQ.im6r-eLsMyncHhKJBdUc31ek8kPN37htiTWO_-T2TXE
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjBiZTdhM2RmLWEyYzYtNDZkOC1hNTZiLWE4NDg4MGIyZGZiNCIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDgyMDAwfQ.mg4dd453GEVaW_UKXKNljMp-9oH_ifm8_g8brYwaz_o
                 user:
                   id: adm_UkLWZg9DAJ
                   email: admin@example.com
@@ -716,7 +716,7 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjZjMjg1ODk5LTExMzUtNDBhMi1hNDBiLTE4NjNiODcwZDRjYyIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDc4NzAwfQ.-3TXNB4thifTF3dCUfDtyN8M188-pzLOIe2QFGe1zlY
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjZjMjg1ODk5LTExMzUtNDBhMi1hNDBiLTE4NjNiODcwZDRjYyIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDc4NzAwfQ.a7U6YjCy9lvVMaMa275pugdP_5WITU-y_0W5PQ1VEZk
                 user:
                   id: adm_UkLWZg9DAJ
                   email: owner@example.com
@@ -3051,6 +3051,7 @@ paths:
                   is_root: true
                   is_child: false
                   is_leaf: true
+                  external_references: {}
                   metadata: {}
                   pretty_name: Clothing
                   lft: 1
@@ -3126,6 +3127,7 @@ paths:
                 is_root: false
                 is_child: true
                 is_leaf: true
+                external_references: {}
                 metadata: {}
                 pretty_name: Clothing -> Shirts
                 lft: 2
@@ -3233,6 +3235,7 @@ paths:
                 is_root: true
                 is_child: false
                 is_leaf: true
+                external_references: {}
                 metadata: {}
                 pretty_name: Clothing
                 lft: 1
@@ -3304,6 +3307,7 @@ paths:
                 is_root: true
                 is_child: false
                 is_leaf: true
+                external_references: {}
                 metadata: {}
                 pretty_name: Apparel
                 lft: 1
@@ -3420,6 +3424,7 @@ paths:
                 is_root: false
                 is_child: true
                 is_leaf: true
+                external_references: {}
                 metadata: {}
                 pretty_name: Clothing -> Footwear
                 lft: 2
@@ -3592,6 +3597,7 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                 original_price:
                 seller_id:
+                external_references: {}
                 status: active
                 metadata: {}
                 deleted_at:
@@ -13009,6 +13015,7 @@ paths:
                   tax_provider:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                external_references: {}
                 status: draft
                 last_ip_address:
                 considered_risky: false
@@ -13253,6 +13260,7 @@ paths:
                     tax_provider:
                     created_at: '2026-01-15T12:00:00.000Z'
                     updated_at: '2026-01-15T12:00:00.000Z'
+                  external_references: {}
                   status: draft
                   last_ip_address:
                   considered_risky: false
@@ -13474,6 +13482,7 @@ paths:
                   tax_provider:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                external_references: {}
                 status: draft
                 last_ip_address:
                 considered_risky: false
@@ -13728,6 +13737,7 @@ paths:
                   tax_provider:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                external_references: {}
                 status: draft
                 last_ip_address:
                 considered_risky: false
@@ -13870,6 +13880,7 @@ paths:
                   tax_provider:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                external_references: {}
                 status: draft
                 last_ip_address:
                 considered_risky: false
@@ -14124,6 +14135,7 @@ paths:
                   tax_provider:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                external_references: {}
                 status: placed
                 last_ip_address:
                 considered_risky: false
@@ -14278,6 +14290,7 @@ paths:
                   tax_provider:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                external_references: {}
                 status: canceled
                 last_ip_address:
                 considered_risky: false
@@ -14416,6 +14429,7 @@ paths:
                   tax_provider:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                external_references: {}
                 status: placed
                 last_ip_address:
                 considered_risky: false
@@ -14545,6 +14559,7 @@ paths:
                   tax_provider:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                external_references: {}
                 status: placed
                 last_ip_address:
                 considered_risky: false
@@ -14674,6 +14689,7 @@ paths:
                   tax_provider:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                external_references: {}
                 status: placed
                 last_ip_address:
                 considered_risky: false
@@ -17313,6 +17329,7 @@ paths:
                     updated_at: '2026-01-15T12:00:00.000Z'
                   original_price:
                   seller_id:
+                  external_references: {}
                   status: active
                   metadata: {}
                   deleted_at:
@@ -17455,6 +17472,7 @@ paths:
                 price:
                 original_price:
                 seller_id:
+                external_references: {}
                 status: draft
                 metadata: {}
                 deleted_at:
@@ -17703,6 +17721,7 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                 original_price:
                 seller_id:
+                external_references: {}
                 status: active
                 metadata: {}
                 deleted_at:
@@ -17825,6 +17844,7 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                 original_price:
                 seller_id:
+                external_references: {}
                 status: active
                 metadata: {}
                 deleted_at:
@@ -19991,15 +20011,15 @@ paths:
                   label: Country
                   description:
                   preference_schema:
-                  - key: country_codes
-                    type: array
-                    default: []
                   - key: country_id
                     type: integer
                     default:
                   - key: country_code
                     type: string
                     default:
+                  - key: country_codes
+                    type: array
+                    default: []
                 - type: currency
                   label: Currency
                   description:
@@ -20026,6 +20046,9 @@ paths:
                   label: Item total
                   description:
                   preference_schema:
+                  - key: operator_max
+                    type: string
+                    default: "<"
                   - key: amount_min
                     type: decimal
                     default: 100.0
@@ -20035,9 +20058,6 @@ paths:
                   - key: amount_max
                     type: decimal
                     default:
-                  - key: operator_max
-                    type: string
-                    default: "<"
                 - type: market
                   label: Market(s)
                   description:
@@ -20347,6 +20367,10 @@ paths:
                 preferred_show_products_without_price: false
                 preferred_disable_sku_validation: false
                 preferred_order_routing_strategy: Spree::OrderRouting::Strategy::Rules
+                preferred_pricing_provider: internal
+                preferred_inventory_provider: internal
+                preferred_pricing_provider_failure_policy: strict
+                preferred_inventory_provider_failure_policy: fallback
                 preferred_document_number_format: sequential
                 preferred_order_number_prefix: R
                 preferred_order_number_suffix: ''
@@ -20664,6 +20688,10 @@ paths:
                 preferred_show_products_without_price: false
                 preferred_disable_sku_validation: false
                 preferred_order_routing_strategy: Spree::OrderRouting::Strategy::Rules
+                preferred_pricing_provider: internal
+                preferred_inventory_provider: internal
+                preferred_pricing_provider_failure_policy: strict
+                preferred_inventory_provider_failure_policy: fallback
                 preferred_document_number_format: sequential
                 preferred_order_number_prefix: R
                 preferred_order_number_suffix: ''
@@ -22839,6 +22867,7 @@ paths:
                   state_text: AL
                   pickup_ready_in_minutes:
                   pickup_instructions:
+                  external_references: {}
                   admin_name:
                   address2:
                   state_name:
@@ -22954,6 +22983,7 @@ paths:
                 state_text:
                 pickup_ready_in_minutes: 30
                 pickup_instructions:
+                external_references: {}
                 admin_name:
                 address2:
                 state_name:
@@ -23132,6 +23162,7 @@ paths:
                 state_text: AL
                 pickup_ready_in_minutes:
                 pickup_instructions:
+                external_references: {}
                 admin_name:
                 address2:
                 state_name:
@@ -23222,6 +23253,7 @@ paths:
                 state_text: AL
                 pickup_ready_in_minutes: 45
                 pickup_instructions:
+                external_references: {}
                 admin_name:
                 address2:
                 state_name:
@@ -23444,7 +23476,7 @@ paths:
                 data:
                 - id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-132
+                  sku: SKU-136
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -23471,6 +23503,7 @@ paths:
                   original_price:
                   seller_id:
                   option_values: []
+                  external_references: {}
                   metadata: {}
                   position: 1
                   cost_price: '17.0'
@@ -23490,11 +23523,11 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 1096804
+                  product_name: Product 1116804
                   delivery_profile_id: fp_UkLWZg9DAJ
                 - id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-133
+                  sku: SKU-137
                   options_text: 'Size: S'
                   track_inventory: true
                   media_count: 0
@@ -23523,16 +23556,17 @@ paths:
                   option_values:
                   - id: optval_UkLWZg9DAJ
                     option_type_id: opt_UkLWZg9DAJ
-                    name: size-23
+                    name: size-25
                     label: S
                     position: 1
                     color_code:
-                    option_type_name: foo-size-32
+                    option_type_name: foo-size-34
                     option_type_label: Size
                     image_url:
                     metadata: {}
                     created_at: '2026-01-15T12:00:00.000Z'
                     updated_at: '2026-01-15T12:00:00.000Z'
+                  external_references: {}
                   metadata: {}
                   position: 2
                   cost_price: '17.0'
@@ -23552,7 +23586,7 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 1096804
+                  product_name: Product 1116804
                   delivery_profile_id: fp_UkLWZg9DAJ
                 meta:
                   page: 1
@@ -23670,6 +23704,7 @@ paths:
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                external_references: {}
                 metadata: {}
                 position: 3
                 cost_price:
@@ -23689,7 +23724,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 1101771
+                product_name: Product 1121771
                 delivery_profile_id: fp_UkLWZg9DAJ
         '422':
           description: validation error
@@ -23868,7 +23903,7 @@ paths:
               example:
                 id: variant_gbHJdmfrXB
                 product_id: prod_UkLWZg9DAJ
-                sku: SKU-139
+                sku: SKU-143
                 options_text: 'Size: S'
                 track_inventory: true
                 media_count: 0
@@ -23897,16 +23932,17 @@ paths:
                 option_values:
                 - id: optval_UkLWZg9DAJ
                   option_type_id: opt_UkLWZg9DAJ
-                  name: size-26
+                  name: size-28
                   label: S
                   position: 1
                   color_code:
-                  option_type_name: foo-size-35
+                  option_type_name: foo-size-37
                   option_type_label: Size
                   image_url:
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                external_references: {}
                 metadata: {}
                 position: 2
                 cost_price: '17.0'
@@ -23926,7 +23962,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 1124025
+                product_name: Product 1144025
                 delivery_profile_id: fp_UkLWZg9DAJ
         '404':
           description: variant not found
@@ -24028,16 +24064,17 @@ paths:
                 option_values:
                 - id: optval_UkLWZg9DAJ
                   option_type_id: opt_UkLWZg9DAJ
-                  name: size-28
+                  name: size-30
                   label: S
                   position: 1
                   color_code:
-                  option_type_name: foo-size-37
+                  option_type_name: foo-size-39
                   option_type_label: Size
                   image_url:
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                external_references: {}
                 metadata: {}
                 position: 2
                 cost_price: '17.0'
@@ -24057,7 +24094,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 1145672
+                product_name: Product 1165672
                 delivery_profile_id: fp_UkLWZg9DAJ
       requestBody:
         content:
@@ -25806,6 +25843,7 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                 original_price:
                 seller_id:
+                external_references: {}
                 status: active
                 metadata: {}
                 deleted_at:
@@ -26580,10 +26618,10 @@ paths:
                   name: Sale value
                   description: Charges this rate only on sales within a value range
                   preference_schema:
-                  - key: min_amount
+                  - key: max_amount
                     type: decimal
                     default:
-                  - key: max_amount
+                  - key: min_amount
                     type: decimal
                     default:
                   association_fields: []
@@ -26894,8 +26932,8 @@ paths:
               example:
                 data:
                 - id: cloc_UkLWZg9DAJ
+                  external_references: {}
                   name: Berlin
-                  external_id:
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -26974,8 +27012,8 @@ paths:
             application/json:
               example:
                 id: cloc_gbHJdmfrXB
+                external_references: {}
                 name: Hamburg warehouse
-                external_id:
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -27103,8 +27141,8 @@ paths:
             application/json:
               example:
                 id: cloc_UkLWZg9DAJ
+                external_references: {}
                 name: Berlin
-                external_id:
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -27150,8 +27188,8 @@ paths:
             application/json:
               example:
                 id: cloc_UkLWZg9DAJ
+                external_references: {}
                 name: Berlin Mitte
-                external_id:
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -27893,7 +27931,8 @@ paths:
                 data:
                 - id: comp_UkLWZg9DAJ
                   name: Acme Industrial
-                  external_id: ACME-1
+                  external_references:
+                    erp: ACME-1
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -27932,11 +27971,11 @@ paths:
 
           const company = await client.companies.create({
             name: 'Globex Corporation',
-            external_id: 'GLBX-42',
+            external_references: { erp: 'GLBX-42' },
           })
       - lang: bash
         label: Spree CLI
-        source: spree api post /companies -d '{"name":"Globex Corporation","external_id":"GLBX-42"}'
+        source: spree api post /companies -d '{"name":"Globex Corporation","external_references":{"erp":"GLBX-42"}}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -27956,7 +27995,8 @@ paths:
               example:
                 id: comp_gbHJdmfrXB
                 name: Globex Corporation
-                external_id: GLBX-42
+                external_references:
+                  erp: GLBX-42
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -27981,12 +28021,24 @@ paths:
                 name:
                   type: string
                   example: Globex Corporation
-                external_id:
-                  type: string
-                  nullable: true
-                  description: Your own reference for this business, unique within
-                    the store.
-                  example: GLBX-42
+                external_references:
+                  type: array
+                  description: Identities this business has in your own systems. A
+                    system you do not name keeps the reference it already has, and
+                    creating with a reference that already exists updates that business
+                    instead.
+                  items:
+                    type: object
+                    properties:
+                      system:
+                        type: string
+                        example: erp
+                      external_id:
+                        type: string
+                        example: GLBX-42
+                    required:
+                    - system
+                    - external_id
               required:
               - name
   "/api/v3/admin/company_locations/{company_location_id}/contacts":
@@ -29039,12 +29091,12 @@ paths:
                   - key: normal_amount
                     type: decimal
                     default: 0
-                  - key: discount_amount
-                    type: decimal
-                    default: 0
                   - key: currency
                     type: string
                     default: USD
+                  - key: discount_amount
+                    type: decimal
+                    default: 0
                 - type: Spree::Calculator::Shipping::DigitalDelivery
                   name: Digital Delivery
                   preference_schema:
@@ -31523,6 +31575,143 @@ paths:
                 reason:
                   type: string
                   example: Incomplete paperwork
+  "/api/v3/admin/stock_levels/bulk_upsert":
+    post:
+      summary: Bulk-upsert stock levels
+      tags:
+      - Stock
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Sets stock levels for many (variant, location) pairs at once — what a
+        warehouse or ERP feed posts on a schedule.
+
+        Each row names its variant and stock location either by Spree id
+        (`variant_id`, `stock_location_id`) or by the key the feeding system
+        holds (`"variant": { "external_id": { "erp": "MAT-100" } }`), so a
+        feed can address records without first looking up Spree's own ids.
+
+        A row carries either `count_on_hand` — the absolute level the external
+        system reports — or `adjustment`, a relative change for feeds that
+        report movements instead. Every change is written as a stock movement,
+        so a merchant can still see why a figure moved.
+
+        The response carries `stock_item_count`: how many pairs were processed.
+
+
+        **Required scope:** `write_stock` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { stock_level_count } = await client.stockLevels.bulkUpsert({
+            stock_levels: [
+              {
+                variant_id: 'variant_xxx',
+                stock_location_id: 'sloc_xxx',
+                count_on_hand: 42,
+              },
+              // Rows may instead name records by the key the feeding system holds.
+              {
+                variant: { external_id: { erp: 'MAT-100' } },
+                stock_location: { external_id: { erp: 'WH-1' } },
+                count_on_hand: 7,
+              },
+            ],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /stock_levels/bulk_upsert -d '{"stock_levels":[{"variant_id":"variant_xxx","stock_location_id":"sloc_xxx","count_on_hand":42},{"variant":{"external_id":{"erp":"MAT-100"}},"stock_location":{"external_id":{"erp":"WH-1"}},"count_on_hand":7}]}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: stock levels updated
+          content:
+            application/json:
+              example:
+                stock_level_count: 1
+        '422':
+          description: row is missing a level
+          content:
+            application/json:
+              example:
+                error:
+                  code: invalid_stock_levels
+                  message: Each row must name a variant and stock location in this
+                    store, and either a count_on_hand or an adjustment.
+                  details:
+                    rows:
+                    - index: 0
+                      missing:
+                      - count_on_hand
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - stock_levels
+              properties:
+                stock_levels:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      variant_id:
+                        type: string
+                        nullable: true
+                        example: variant_xY9
+                      variant:
+                        type: object
+                        nullable: true
+                        description: Addresses the variant by an external key instead
+                          of its Spree id.
+                        properties:
+                          external_id:
+                            type: object
+                            additionalProperties:
+                              type: string
+                      stock_location_id:
+                        type: string
+                        nullable: true
+                        example: sloc_aBc
+                      stock_location:
+                        type: object
+                        nullable: true
+                        properties:
+                          external_id:
+                            type: object
+                            additionalProperties:
+                              type: string
+                      count_on_hand:
+                        type: integer
+                        nullable: true
+                        example: 42
+                      adjustment:
+                        type: integer
+                        nullable: true
+                        example: -3
+                      backorderable:
+                        type: boolean
+                        nullable: true
   "/api/v3/admin/stock_movements":
     get:
       summary: List stock movements
@@ -32655,6 +32844,8 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/CustomField"
+        external_references:
+          type: object
         translations:
           type: object
         metadata:
@@ -32689,6 +32880,7 @@ components:
       - is_root
       - is_child
       - is_leaf
+      - external_references
       - metadata
       - pretty_name
       - lft
@@ -33199,11 +33391,10 @@ components:
       properties:
         id:
           type: string
+        external_references:
+          type: object
         name:
           type: string
-        external_id:
-          type: string
-          nullable: true
         metadata:
           type: object
           nullable: true
@@ -33225,8 +33416,8 @@ components:
             "$ref": "#/components/schemas/CompanyContact"
       required:
       - id
+      - external_references
       - name
-      - external_id
       - metadata
       - created_at
       - updated_at
@@ -33242,9 +33433,8 @@ components:
           type: string
         name:
           type: string
-        external_id:
-          type: string
-          nullable: true
+        external_references:
+          type: object
         metadata:
           type: object
           nullable: true
@@ -33261,7 +33451,7 @@ components:
       required:
       - id
       - name
-      - external_id
+      - external_references
       - metadata
       - created_at
       - updated_at
@@ -35037,6 +35227,9 @@ components:
         external_video_url:
           type: string
           nullable: true
+        external_media_url:
+          type: string
+          nullable: true
         video_provider:
           type: string
           nullable: true
@@ -35070,6 +35263,8 @@ components:
         og_image_url:
           type: string
           nullable: true
+        external_references:
+          type: object
         created_at:
           type: string
         updated_at:
@@ -35093,6 +35288,7 @@ components:
       - focal_point_x
       - focal_point_y
       - external_video_url
+      - external_media_url
       - video_provider
       - video_embed_url
       - video_url
@@ -35104,6 +35300,7 @@ components:
       - large_url
       - xlarge_url
       - og_image_url
+      - external_references
       - created_at
       - updated_at
       - viewable_id
@@ -35464,6 +35661,8 @@ components:
           allOf:
           - "$ref": "#/components/schemas/Market"
           nullable: true
+        external_references:
+          type: object
         status:
           type: string
         last_ip_address:
@@ -35606,6 +35805,7 @@ components:
       - covered_by_store_credit
       - gift_card
       - market
+      - external_references
       - status
       - last_ip_address
       - considered_risky
@@ -36153,6 +36353,8 @@ components:
           allOf:
           - "$ref": "#/components/schemas/PriceHistory"
           nullable: true
+        external_references:
+          type: object
         translations:
           type: object
         status:
@@ -36216,6 +36418,7 @@ components:
       - price
       - original_price
       - seller_id
+      - external_references
       - status
       - metadata
       - deleted_at
@@ -37030,6 +37233,8 @@ components:
         variant_id:
           type: string
           nullable: true
+        external_references:
+          type: object
         metadata:
           type: object
         created_at:
@@ -37050,6 +37255,7 @@ components:
       - backorderable
       - stock_location_id
       - variant_id
+      - external_references
       - metadata
       - created_at
       - updated_at
@@ -37090,6 +37296,8 @@ components:
         pickup_instructions:
           type: string
           nullable: true
+        external_references:
+          type: object
         admin_name:
           type: string
           nullable: true
@@ -37135,6 +37343,7 @@ components:
       - state_text
       - pickup_ready_in_minutes
       - pickup_instructions
+      - external_references
       - admin_name
       - address2
       - state_name
@@ -37397,6 +37606,14 @@ components:
           type: boolean
         preferred_order_routing_strategy:
           type: string
+        preferred_pricing_provider:
+          type: string
+        preferred_inventory_provider:
+          type: string
+        preferred_pricing_provider_failure_policy:
+          type: string
+        preferred_inventory_provider_failure_policy:
+          type: string
         preferred_document_number_format:
           type: string
         preferred_order_number_prefix:
@@ -37470,6 +37687,10 @@ components:
       - preferred_show_products_without_price
       - preferred_disable_sku_validation
       - preferred_order_routing_strategy
+      - preferred_pricing_provider
+      - preferred_inventory_provider
+      - preferred_pricing_provider_failure_policy
+      - preferred_inventory_provider_failure_policy
       - preferred_document_number_format
       - preferred_order_number_prefix
       - preferred_order_number_suffix
@@ -37831,6 +38052,8 @@ components:
           allOf:
           - "$ref": "#/components/schemas/PriceHistory"
           nullable: true
+        external_references:
+          type: object
         metadata:
           type: object
         position:
@@ -37916,6 +38139,7 @@ components:
       - original_price
       - seller_id
       - option_values
+      - external_references
       - metadata
       - position
       - cost_price
