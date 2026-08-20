@@ -40,7 +40,9 @@ module Spree
             return if performed?
 
             @invitation.invitee = user
-            @invitation.accept!
+            result = Spree.invitation_accept_workflow.call(invitation: @invitation)
+
+            return render_service_error(result.error) unless result.success?
 
             set_refresh_cookie(
               Spree::RefreshToken.create_for(
@@ -51,8 +53,6 @@ module Spree
             )
 
             render json: auth_response(user)
-          rescue ActiveRecord::RecordInvalid => e
-            render_validation_error(e.record.errors)
           end
 
           private
