@@ -42,7 +42,27 @@ namespace :spree do
         seller.invitations.create!(email: invitee, role: seller.default_user_role, inviter: owner)
       end
 
+      # A checklist to work through, so the panel's onboarding page and its
+      # nav counter have something to show. Skipped when the marketplace
+      # already defines its own.
+      if store.seller_requirements.none?
+        Spree::SellerRequirements::AcceptTerms.create!(store: store, position: 1, active: true, required: true)
+        Spree::SellerRequirements::BillingAddress.create!(store: store, position: 2, active: true, required: true)
+        Spree::SellerRequirements::ReturnsAddress.create!(store: store, position: 3, active: true, required: true)
+        Spree::SellerRequirements::Attestation.create!(
+          store: store, position: 4, active: true, required: true,
+          name: 'Confirm you can ship within two working days'
+        )
+        Spree::SellerRequirements::OperatorReview.create!(
+          store: store, position: 5, active: true, required: false,
+          name: 'Marketplace background check'
+        )
+      end
+
+      progress = Spree::Sellers::Requirements.new(seller.reload).progress
+
       puts "Seller:   #{seller.name} (#{seller.prefixed_id}, #{seller.status})"
+      puts "Checklist: #{progress[:done]}/#{progress[:total]} done"
       puts "Sign in:  #{email}"
       puts "Pending:  #{seller.invitations.pending.pluck(:email).join(', ')}"
     end

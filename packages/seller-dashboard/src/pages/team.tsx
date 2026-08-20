@@ -85,7 +85,7 @@ export function TeamPage() {
   const pending = invitations.data?.data ?? []
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-6">
+    <div className="flex flex-col gap-6">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="font-medium text-2xl">{t('team.title')}</h1>

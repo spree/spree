@@ -66,7 +66,7 @@ export function OnboardingPage() {
   const submitted = status === 'ready_for_review'
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-6">
+    <div className="flex flex-col gap-6">
       <div>
         <h1 className="font-medium text-2xl">{t('onboarding.title')}</h1>
         <p className="text-muted-foreground text-sm">{t('onboarding.subtitle')}</p>
