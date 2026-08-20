@@ -466,6 +466,23 @@ Spree::Dependencies.cart_add_item_service = 'Spree::Cart::AddItem'
 - Use `Spree.t` for translations
 - Keep translations in `config/locales/en.yml` — no duplication across files
 
+### Time zones
+
+- Parsing or formatting a date **for a store** uses that store's zone, never
+  the server's: `Time.find_zone(store.preferred_timezone)` (which answers `nil`
+  for a zone it does not know, so fall back with `|| Time.zone`), or
+  `.in_time_zone(store.preferred_timezone)` on an existing time. A merchant who
+  types `2026-01-01` means midnight where they trade — read in the server's
+  zone that deadline moves by hours for every store that is not on it.
+  Precedents: `Spree::CollectionRules::AvailableOn`, `Spree::Report`,
+  `Spree::PriceList`.
+- Stamping *now* (`Time.current`) needs no zone — it is an instant, stored as
+  UTC, and reading it back in a store's zone is the display layer's job.
+- Never `Time.zone.parse` operator input where a fixed instant is meant:
+  `parse` fills in whatever the value omits, so `"09:00"` becomes today at nine
+  and the stored threshold moves every midnight. Use `iso8601`, which refuses
+  anything that is not a complete date.
+
 ### Documentation
 
 - Re-generate OpenAPI spec after API changes: `bundle exec rake rswag:specs:swaggerize`
