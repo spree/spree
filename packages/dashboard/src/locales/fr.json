@@ -1583,11 +1583,13 @@
           "not_connected": "Connectez cette intégration pour l’utiliser",
           "pricing_provider": {
             "label": "Les prix proviennent de",
-            "help": "Spree calcule les prix depuis votre catalogue et vos listes de prix, sauf si un système externe répond."
+            "help": "Spree calcule les prix depuis votre catalogue et vos listes de prix, sauf si un système externe répond.",
+            "docs_link": "Créer un fournisseur de prix"
           },
           "inventory_provider": {
             "label": "Les stocks proviennent de",
-            "help": "Une source externe est interrogée à l’ajout au panier et au paiement. Les listes affichent toujours vos propres stocks."
+            "help": "Une source externe est interrogée à l’ajout au panier et au paiement. Les listes affichent toujours vos propres stocks.",
+            "docs_link": "Créer un fournisseur de stock"
           },
           "pricing_failure_policy": {
             "label": "Si les prix ne peuvent être confirmés",
@@ -1604,7 +1606,8 @@
             "fallback": {
               "label": "Utiliser les chiffres de Spree"
             }
-          }
+          },
+          "description": "Spree fournit les prix et les stocks à partir de ses propres enregistrements. Connectez un ERP, un PIM ou un système d'entrepôt pour qu'il réponde à la place."
         }
       },
       "store_credit": {

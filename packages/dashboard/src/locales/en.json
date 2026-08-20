@@ -1583,11 +1583,13 @@
           "not_connected": "Connect this integration to use it",
           "pricing_provider": {
             "label": "Prices come from",
-            "help": "Spree prices from your catalog and price lists unless an external system answers instead."
+            "help": "Spree prices from your catalog and price lists unless an external system answers instead.",
+            "docs_link": "Build a pricing provider"
           },
           "inventory_provider": {
             "label": "Stock levels come from",
-            "help": "An external source is asked when an item is added to a cart and at checkout. Listings always show your own stock records."
+            "help": "An external source is asked when an item is added to a cart and at checkout. Listings always show your own stock records.",
+            "docs_link": "Build an inventory provider"
           },
           "pricing_failure_policy": {
             "label": "If prices cannot be confirmed",
@@ -1604,7 +1606,8 @@
             "fallback": {
               "label": "Use Spree's own figures"
             }
-          }
+          },
+          "description": "Spree serves prices and stock from its own records. Connect an ERP, PIM or warehouse system to have it answer instead."
         }
       },
       "store_credit": {

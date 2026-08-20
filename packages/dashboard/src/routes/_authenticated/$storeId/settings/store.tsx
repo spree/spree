@@ -14,6 +14,7 @@ import {
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
   ErrorState,
@@ -35,7 +36,8 @@ import {
   useFormSubmitShortcut,
 } from '@spree/dashboard-ui'
 import { createFileRoute } from '@tanstack/react-router'
-import { useCallback, useEffect, useMemo } from 'react'
+import { ExternalLinkIcon } from 'lucide-react'
+import { type ReactNode, useCallback, useEffect, useMemo } from 'react'
 import {
   type Control,
   Controller,
@@ -68,6 +70,25 @@ import {
 export const Route = createFileRoute('/_authenticated/$storeId/settings/store')({
   component: StoreSettingsPage,
 })
+
+const PRICING_PROVIDER_DOCS_URL =
+  'https://spreecommerce.org/docs/v6/developer/how-to/custom-pricing-provider'
+const INVENTORY_PROVIDER_DOCS_URL =
+  'https://spreecommerce.org/docs/v6/developer/how-to/custom-inventory-provider'
+
+function DocsLink({ href, children }: { href: string; children: ReactNode }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center gap-1 text-primary text-sm hover:underline"
+    >
+      {children}
+      <ExternalLinkIcon className="size-3.5" />
+    </a>
+  )
+}
 
 const TIMEZONES: string[] = (() => {
   try {
@@ -169,13 +190,6 @@ function StoreSettingsForm({ store }: { store: Store }) {
   const updateMutation = useUpdateStoreSettings()
   const switchAdminLocale = useSwitchAdminLocale()
   const { data: dataSources } = useStoreDataSources()
-
-  // The card stays hidden until a connector gem is installed: a store with
-  // only Spree's own engines has nothing to choose between, and a select with
-  // one option is noise on a settings page.
-  const hasExternalDataSources =
-    (dataSources?.pricing_providers.length ?? 0) + (dataSources?.inventory_providers.length ?? 0) >
-    2
 
   const form = useForm<StoreSettingsFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -700,49 +714,58 @@ function StoreSettingsForm({ store }: { store: Store }) {
                   </FieldGroup>
                 </CardContent>
               </Card>
-              {hasExternalDataSources && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>{t('admin.pages.settings.store.tab_data_sources')}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <FieldGroup>
-                      <SelectField
-                        id="store-pricing-provider"
-                        label={t('admin.fields.store.data_sources.pricing_provider.label')}
-                        help={t('admin.fields.store.data_sources.pricing_provider.help')}
-                        name="preferred_pricing_provider"
-                        control={form.control}
-                        options={providerOptions(dataSources?.pricing_providers)}
-                      />
-                      <SelectField
-                        id="store-pricing-failure-policy"
-                        label={t('admin.fields.store.data_sources.pricing_failure_policy.label')}
-                        help={t('admin.fields.store.data_sources.pricing_failure_policy.help')}
-                        name="preferred_pricing_provider_failure_policy"
-                        control={form.control}
-                        options={failurePolicyOptions}
-                      />
-                      <SelectField
-                        id="store-inventory-provider"
-                        label={t('admin.fields.store.data_sources.inventory_provider.label')}
-                        help={t('admin.fields.store.data_sources.inventory_provider.help')}
-                        name="preferred_inventory_provider"
-                        control={form.control}
-                        options={providerOptions(dataSources?.inventory_providers)}
-                      />
-                      <SelectField
-                        id="store-inventory-failure-policy"
-                        label={t('admin.fields.store.data_sources.inventory_failure_policy.label')}
-                        help={t('admin.fields.store.data_sources.inventory_failure_policy.help')}
-                        name="preferred_inventory_provider_failure_policy"
-                        control={form.control}
-                        options={failurePolicyOptions}
-                      />
-                    </FieldGroup>
-                  </CardContent>
-                </Card>
-              )}
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('admin.pages.settings.store.tab_data_sources')}</CardTitle>
+                  <CardDescription>
+                    {t('admin.fields.store.data_sources.description')}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <FieldGroup>
+                    <SelectField
+                      id="store-pricing-provider"
+                      label={t('admin.fields.store.data_sources.pricing_provider.label')}
+                      help={t('admin.fields.store.data_sources.pricing_provider.help')}
+                      name="preferred_pricing_provider"
+                      control={form.control}
+                      options={providerOptions(dataSources?.pricing_providers)}
+                    />
+                    <SelectField
+                      id="store-pricing-failure-policy"
+                      label={t('admin.fields.store.data_sources.pricing_failure_policy.label')}
+                      help={t('admin.fields.store.data_sources.pricing_failure_policy.help')}
+                      name="preferred_pricing_provider_failure_policy"
+                      control={form.control}
+                      options={failurePolicyOptions}
+                    />
+                    <SelectField
+                      id="store-inventory-provider"
+                      label={t('admin.fields.store.data_sources.inventory_provider.label')}
+                      help={t('admin.fields.store.data_sources.inventory_provider.help')}
+                      name="preferred_inventory_provider"
+                      control={form.control}
+                      options={providerOptions(dataSources?.inventory_providers)}
+                    />
+                    <SelectField
+                      id="store-inventory-failure-policy"
+                      label={t('admin.fields.store.data_sources.inventory_failure_policy.label')}
+                      help={t('admin.fields.store.data_sources.inventory_failure_policy.help')}
+                      name="preferred_inventory_provider_failure_policy"
+                      control={form.control}
+                      options={failurePolicyOptions}
+                    />
+                  </FieldGroup>
+                  <div className="mt-6 flex flex-col gap-2 border-t pt-4 sm:flex-row sm:gap-6">
+                    <DocsLink href={PRICING_PROVIDER_DOCS_URL}>
+                      {t('admin.fields.store.data_sources.pricing_provider.docs_link')}
+                    </DocsLink>
+                    <DocsLink href={INVENTORY_PROVIDER_DOCS_URL}>
+                      {t('admin.fields.store.data_sources.inventory_provider.docs_link')}
+                    </DocsLink>
+                  </div>
+                </CardContent>
+              </Card>
               <Card>
                 <CardHeader>
                   <CardTitle>{t('admin.pages.settings.store.tab_catalog')}</CardTitle>
