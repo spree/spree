@@ -1,0 +1,79 @@
+/**
+ * Dashboard assistant types.
+ *
+ * Hand-written rather than generated: the assistant ships in an optional gem,
+ * so its serializers are not part of the core type generation run.
+ */
+
+export interface AssistantStatus {
+  /** Whether this admin can chat right now — drives whether the panel renders. */
+  available: boolean
+  provider: string | null
+  provider_name: string | null
+  model: string | null
+  providers: AssistantProviderOption[]
+}
+
+export interface AssistantProviderOption {
+  id: string
+  key: string
+  name: string
+  default_model: string
+  integration_type: string | null
+  /** Whether this vendor has an active integration on the current store. */
+  available: boolean
+}
+
+export type AssistantToolCallStatus = 'proposed' | 'approved' | 'rejected' | 'executed' | 'failed'
+
+export interface AssistantToolCall {
+  id: string
+  name: string
+  status: AssistantToolCallStatus | null
+  /** One line a merchant can judge the change by, without reading arguments. */
+  summary: string | null
+  arguments: Record<string, unknown>
+  result: Record<string, unknown> | null
+  awaiting_approval: boolean
+  created_at: string
+  resolved_at: string | null
+}
+
+export interface AssistantMessage {
+  id: string
+  role: 'user' | 'assistant' | 'tool'
+  content: string | null
+  tool_calls: AssistantToolCall[]
+  created_at: string
+}
+
+export interface AssistantChat {
+  id: string
+  title: string | null
+  message_count: number
+  messages?: AssistantMessage[]
+  created_at: string
+  updated_at: string
+}
+
+/** Events the turn endpoints stream. Additive-only — this is public API. */
+export type AssistantEventName =
+  | 'tool_call.started'
+  | 'tool_call.proposed'
+  | 'tool_call.resolved'
+  | 'message.completed'
+  | 'turn.finished'
+  | 'turn.failed'
+
+export interface AssistantEvent {
+  event: AssistantEventName
+  data: {
+    text?: string
+    name?: string
+    summary?: string
+    mutating?: boolean
+    message?: string
+    awaiting_approval?: boolean
+    tool_call?: AssistantToolCall
+  }
+}

@@ -9,6 +9,7 @@ import {
 } from '@spree/dashboard-core'
 import { createFileRoute, Outlet, useRouterState } from '@tanstack/react-router'
 import { useCallback, useMemo, useState } from 'react'
+import { AssistantProvider } from '../../components/spree/assistant/assistant-provider'
 import { CommandPalette } from '../../components/spree/command-palette/command-palette'
 import { FeedbackDialog } from '../../components/spree/feedback-dialog'
 import { GettingStartedWidget } from '../../components/spree/getting-started-widget'
@@ -61,9 +62,11 @@ function StoreLayout() {
           onSendFeedback={sendFeedback}
         >
           <CommandPaletteProvider>
-            <AppShellProvider>
-              <StoreShell storeId={storeId} inSettings={inSettings} />
-            </AppShellProvider>
+            <AssistantProvider>
+              <AppShellProvider>
+                <StoreShell storeId={storeId} inSettings={inSettings} />
+              </AppShellProvider>
+            </AssistantProvider>
             <CommandPalette />
             <FeedbackDialog
               open={feedback.open}

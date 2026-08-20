@@ -1,0 +1,22 @@
+en:
+  spree:
+    assistant:
+      errors:
+        not_configured: The assistant is not set up for this store yet. Connect an AI provider in Settings → Integrations.
+        api_key_missing: Enter an API key before activating this provider.
+        jwt_only: The assistant is only available to signed-in staff.
+        forbidden: You do not have permission to use the assistant.
+        turn_failed: The assistant could not finish that. Please try again.
+        permission_lost: You no longer have permission to make that change.
+        already_resolved: That change has already been decided.
+      tool_calls:
+        declined: The merchant declined this change.
+    integrations:
+      anthropic:
+        description: Run the dashboard assistant on Claude.
+      open_ai:
+        description: Run the dashboard assistant on OpenAI models.
+      gemini:
+        description: Run the dashboard assistant on Google Gemini models.
+    integration_groups:
+      ai: AI

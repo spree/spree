@@ -1,0 +1,11 @@
+require 'spree_core'
+require 'spree_api'
+require 'ruby_llm'
+
+require 'spree/assistant'
+require 'spree/assistant/context'
+require 'spree/assistant/registry'
+require 'spree/assistant/resource_map'
+require 'spree/assistant/tool'
+require 'spree/assistant/tool_adapter'
+require 'spree/assistant/engine'
