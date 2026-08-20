@@ -1148,6 +1148,8 @@ en:
           description: Rebuild the search index
         shipping_to_delivery:
           description: Rename the shipping vocabulary to delivery
+        stock_movements_to_typed_rows:
+          description: Type stock movements and reconcile open fulfillments
         store_credit_categories:
           description: Fold store credit categories into the credit memo
         store_settings_from_config:

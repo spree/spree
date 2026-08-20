@@ -307,7 +307,7 @@ steps:
 
   - id: migrate_stock_movements_to_typed_rows
     name: "Type stock movements and reconcile open fulfillments"
-    task: "spree:migrate_stock_movements_to_typed_rows"
+    task_class: "Spree::MaintenanceTasks::Upgrade::StockMovementsToTypedRows"
     notes: |
       Gives every pre-6.0 stock movement a kind and a concrete cause key
       derived from its polymorphic originator: a fulfillment originator
