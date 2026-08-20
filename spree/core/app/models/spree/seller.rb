@@ -97,6 +97,12 @@ module Spree
     # be worse than no record at all.
     has_many :commission_lines, class_name: 'Spree::CommissionLine', dependent: nil
 
+    # What this seller has done about the marketplace's requirements — their
+    # attestations, the documents they uploaded, what the operator made of
+    # them. Goes with the seller, since it means nothing without them.
+    has_many :requirement_submissions, class_name: 'Spree::SellerRequirementSubmission',
+                                       dependent: :destroy, inverse_of: :seller
+
     #
     # Attachments
     #
@@ -158,6 +164,61 @@ module Spree
     # @return [Boolean]
     def terms_accepted?
       terms_accepted_at.present?
+    end
+
+    # How many products this seller lists. Memoized because two readers ask
+    # on every list row — the operator's column and the minimum-products
+    # requirement — and a catalog is the one thing here that can run to
+    # thousands, so it is counted in SQL once rather than loaded or counted
+    # twice.
+    #
+    # @return [Integer]
+    def products_count
+      @products_count ||= products.count
+    end
+
+    # Where this seller stands against the marketplace's checklist
+    # (docs/plans/6.0-seller-onboarding-requirements.md), for the operator's
+    # views of them. Computed on read, never stored: a column would be wrong
+    # the moment a product was deleted or a document sent back.
+    #
+    # Memoized per instance, like the store's own setup checklist: one seller
+    # page reads it several times — the badge, the bar, the list.
+    #
+    # Reads the store's checklist off its loaded association when the store
+    # was eager-loaded with it (the admin list and profile do), so a page of
+    # sellers loads the rows once; a seller reached any other way queries.
+    #
+    # @return [Array<Spree::SellerRequirementStatus>]
+    def onboarding_requirements
+      @onboarding_requirements ||= Spree::Sellers::Requirements.new(
+        self, preloaded: store&.association(:seller_requirements)&.loaded? || false
+      ).statuses
+    end
+
+    # @return [Hash{Symbol => Integer}] done, total and percentage over the
+    #   whole checklist, optional requirements included
+    def onboarding_progress
+      @onboarding_progress ||= Spree::Sellers::Requirements.progress_of(onboarding_requirements)
+    end
+
+    # @return [Integer] 0..100
+    def onboarding_percentage
+      onboarding_progress[:percentage]
+    end
+
+    # @return [Boolean] whether nothing required is outstanding
+    def onboarding_complete?
+      onboarding_requirements.none?(&:blocking?)
+    end
+
+    # Drops the memoized checklist with the rest of the instance's state, so a
+    # flow that changes something and re-reads within one request sees it.
+    def reload(options = nil)
+      @onboarding_requirements = nil
+      @onboarding_progress = nil
+      @products_count = nil
+      super
     end
 
     private

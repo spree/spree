@@ -110,6 +110,13 @@ module Spree
         seller_approve_workflow: 'Spree::Sellers::Approve',
         seller_suspend_workflow: 'Spree::Sellers::Suspend',
         seller_reject_workflow: 'Spree::Sellers::Reject',
+        seller_start_onboarding_workflow: 'Spree::Sellers::StartOnboarding',
+        seller_submit_for_review_workflow: 'Spree::Sellers::SubmitForReview',
+        seller_reopen_onboarding_workflow: 'Spree::Sellers::ReopenOnboarding',
+        seller_requirement_submission_create_workflow: 'Spree::SellerRequirementSubmissions::Create',
+        seller_requirement_submission_accept_workflow: 'Spree::SellerRequirementSubmissions::Accept',
+        seller_requirement_submission_reject_workflow: 'Spree::SellerRequirementSubmissions::Reject',
+        seller_requirement_submission_waive_workflow: 'Spree::SellerRequirementSubmissions::Waive',
 
         # commissions — what a marketplace charges its sellers. Swappable
         # because the pricing of a marketplace's own service is exactly the
