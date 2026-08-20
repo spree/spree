@@ -5,6 +5,10 @@ module Spree
     #
     # Reading the file is where a malformed CSV shows up, so the caller sees
     # the parse error from here rather than from a later step.
+    #
+    # Deliberately not guarded on `pending`: mappings are extended as columns
+    # are discovered — the product importer re-runs this to pick up custom
+    # field columns — and `find_or_create_by!` makes a second pass additive.
     class StartMapping < Spree::Workflow
       hooks :validate, :after_start_mapping
 

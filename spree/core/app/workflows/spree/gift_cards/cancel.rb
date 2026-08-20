@@ -27,9 +27,12 @@ module Spree
 
       def ensure_cancellable
         failure(gift_card, :gift_card_already_canceled) if gift_card.canceled?
-        return if gift_card.status == 'active'
+        failure(gift_card, :gift_card_already_redeemed) unless gift_card.status == 'active'
 
-        failure(gift_card, :gift_card_already_redeemed)
+        # A card drawn against by Spree::GiftCards::Apply keeps the active
+        # status until the order that spent it completes, so status alone
+        # would let a card funding a live checkout be cancelled underneath it.
+        failure(gift_card, :gift_card_already_redeemed) unless gift_card.amount_used.zero?
       end
 
       def mark_canceled

@@ -78,17 +78,15 @@ RSpec.describe Spree::Api::V3::ResourceController, type: :controller do
   end
 
   # build_resource builds through the owner's association so a record carries
-  # its tenancy from where it was built. The association is found by asking
-  # the reflections which one points at the model, not by inflecting its name.
-  describe 'store association resolution' do
+  # its tenancy from where it was built. The association is found by asking the
+  # reflections which one points at the model, not by inflecting its name.
+  #
+  # Drives the controller's own method rather than a copy of it, so a
+  # regression in the production logic fails these examples.
+  describe '#store_association' do
     def resolve(model_class)
-      reflections = Spree::Store.reflect_on_all_associations(:has_many).select do |reflection|
-        !reflection.nested? && (reflection.klass == model_class rescue false)
-      end
-      return reflections.first&.name if reflections.one?
-
-      conventional = model_class.model_name.element.pluralize.to_sym
-      reflections.find { |reflection| reflection.name == conventional }&.name
+      allow(controller).to receive(:model_class).and_return(model_class)
+      controller.send(:store_association)
     end
 
     it 'resolves a model whose association is the plural of its name' do

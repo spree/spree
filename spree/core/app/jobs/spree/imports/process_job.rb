@@ -25,7 +25,13 @@ module Spree
 
         unless skip_row_creation
           step :begin_processing do
-            Spree.import_start_processing_workflow.call(import: @import) if @import.status != 'processing'
+            if @import.status != 'processing'
+              result = Spree.import_start_processing_workflow.call(import: @import)
+              # Row creation must not start from an import the workflow
+              # refused to move; raising fails the job rather than building
+              # rows against a status that never advanced.
+              raise ActiveRecord::RecordInvalid, @import if result.failure?
+            end
           end
           step :create_rows, start: 1
           # A permanent CSV failure marked the import failed inside the step

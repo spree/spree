@@ -26,6 +26,17 @@ RSpec.describe Spree::GiftCards::Cancel do
     end
   end
 
+  # Apply draws the balance down but leaves the status active until the order
+  # completes, so a card funding a live checkout must not be cancellable.
+  context 'when the card has been drawn against but not yet redeemed' do
+    before { gift_card.update!(amount_used: 20) }
+
+    it 'refuses' do
+      expect(subject).not_to be_success
+      expect(gift_card.reload.status).to eq('active')
+    end
+  end
+
   context 'when already canceled' do
     before { gift_card.update!(status: 'canceled') }
 
