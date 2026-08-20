@@ -18,6 +18,7 @@ module Spree
                                :stock_splitters,
                                :commission_rules,
                                :delivery_method_rules,
+                               :seller_requirements,
                                :delivery_rate_providers,
                                :delivery_profile_types,
                                :order_routing,
@@ -136,6 +137,12 @@ module Spree
 
       initializer 'spree.register.delivery_method_rules', before: :load_config_initializers do |app|
         app.config.spree.delivery_method_rules = []
+      end
+
+      # Seeded early like the other kind registries: an initializer file adds
+      # a marketplace's own requirement kinds, core's concatenate after.
+      initializer 'spree.register.seller_requirements', before: :load_config_initializers do |app|
+        app.config.spree.seller_requirements = []
       end
 
       initializer 'spree.register.delivery_rate_providers', before: :load_config_initializers do |app|
@@ -298,6 +305,20 @@ module Spree
           Spree::CommissionRules::CategoryRule,
           Spree::CommissionRules::ProductRule,
           Spree::CommissionRules::ItemTotalRule
+        ]
+
+        # Seller onboarding requirement kinds
+        # (docs/plans/6.0-seller-onboarding-requirements.md).
+        Rails.application.config.spree.seller_requirements.concat [
+          Spree::SellerRequirements::AcceptTerms,
+          Spree::SellerRequirements::CompleteProfile,
+          Spree::SellerRequirements::BillingAddress,
+          Spree::SellerRequirements::ReturnsAddress,
+          Spree::SellerRequirements::MinimumProducts,
+          Spree::SellerRequirements::RequiredCustomFields,
+          Spree::SellerRequirements::Attestation,
+          Spree::SellerRequirements::OperatorReview,
+          Spree::SellerRequirements::Document
         ]
 
         # Delivery-method eligibility rule kinds (docs/plans/6.0-delivery-method-rules.md).
@@ -514,6 +535,7 @@ module Spree
           Spree::ExportSubscriber,
           Spree::ReportSubscriber,
           Spree::InvitationEmailSubscriber,
+          Spree::SellerOnboardingSubscriber,
           Spree::AdminUserEmailSubscriber,
           Spree::ProductMetricsSubscriber,
           Spree::TaxIdentifierValidationSubscriber

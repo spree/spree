@@ -289,6 +289,93 @@
       },
       "title": "系列"
     },
+    "commission_rates": {
+      "add_cta": "添加佣金费率",
+      "applies_to_everything": "所有销售",
+      "create_description": "设置平台向卖家收取的费用，以及适用于哪些销售。",
+      "create_label": "创建佣金费率",
+      "delete_confirm": {
+        "message": "将删除 {{name}}。已收取的佣金不受影响。",
+        "title": "删除佣金费率？"
+      },
+      "edit_description": "更新费用、上下限以及适用的销售范围。",
+      "empty": "暂无佣金费率",
+      "messages": {
+        "created": "佣金费率已创建",
+        "deleted": "佣金费率已删除",
+        "updated": "佣金费率已更新"
+      },
+      "search_placeholder": "按名称搜索…",
+      "order_hint": "新费率会添加到列表顶部，首个匹配的费率生效——拖动可调整顺序。",
+      "conditions": {
+        "add": "添加条件",
+        "title": "条件"
+      }
+    },
+    "companies": {
+      "add_cta": "添加企业",
+      "add_sheet_title": "新建企业",
+      "create_description": "企业客户通过分支机构下单。创建企业后即可添加分支机构、税务登记号和免税证明。",
+      "create_label": "创建企业",
+      "delete_confirm": {
+        "message": "将删除 {{name}} 及其所有分支机构、采购人和证明。此操作无法撤销。",
+        "title": "删除企业？"
+      },
+      "detail": {
+        "delete_label": "删除企业",
+        "load_error": "无法加载该企业",
+        "profile": "企业"
+      },
+      "empty": "暂无企业",
+      "locations_column": "分支机构",
+      "messages": {
+        "created": "企业已创建",
+        "deleted": "企业已删除",
+        "updated": "企业已更新"
+      },
+      "search_placeholder": "搜索企业"
+    },
+    "company_contacts": {
+      "add_cta": "添加采购人",
+      "add_title": "授权采购人",
+      "dialog_description": "为该分支机构下单的客户。若客户只为一个分支机构采购，其订单会自动归属该机构。",
+      "empty": "尚未授权任何采购人",
+      "messages": {
+        "created": "采购人已添加",
+        "deleted": "采购人已移除"
+      },
+      "remove_action": "移除采购人",
+      "remove_confirm": {
+        "message": "{{email}} 将不再为该分支机构采购。其客户账户不受影响。",
+        "title": "移除该采购人？"
+      },
+      "roles_enterprise_help": "在此添加的采购人可为该分支机构下单。角色、审批流程和支出限额由 Spree Enterprise 提供。",
+      "roles_enterprise_title": "角色与审批为 Enterprise 功能",
+      "title": "采购人"
+    },
+    "company_locations": {
+      "add_cta": "添加分支机构",
+      "add_title": "新建分支机构",
+      "addresses": "地址",
+      "billing_address": "账单地址",
+      "contacts_count_one": "{{count}} 位采购人",
+      "contacts_count_other": "{{count}} 位采购人",
+      "detail": {
+        "delete_label": "删除分支机构",
+        "load_error": "无法加载该分支机构"
+      },
+      "dialog_description": "分支机构是开具发票和收货的地点。地址为选填，但一旦填写则需要姓名和国家/地区。",
+      "edit_title": "编辑分支机构",
+      "empty": "暂无分支机构",
+      "messages": {
+        "created": "分支机构已创建",
+        "deleted": "分支机构已删除",
+        "updated": "分支机构已更新"
+      },
+      "shipping_address": "收货地址",
+      "shipping_same_as_billing": "收货地址与账单地址相同",
+      "title": "分支机构"
+    },
     "components": {
       "adjustment_action_editor": {
         "calculator_label": "计算器",
@@ -547,6 +634,67 @@
       "split_description": "从第二个仓库发运相同的商品，并为其设置独立的区域和费率。",
       "split_title": "拆分发货地"
     },
+    "delivery_profiles": {
+      "add_cta": "添加配置方案",
+      "add_dialog_title": "新建配送方案",
+      "all_locations": "所有地点",
+      "capabilities": {
+        "digital": "数字交付",
+        "pickup": "自提",
+        "ships": "配送"
+      },
+      "create_description": "将配送方式相同的商品归为一组，并为其设置独立的发货地点、区域和配送方式。",
+      "create_label": "创建配置方案",
+      "default_badge": "默认",
+      "default_confirm": {
+        "message": "未单独指定配置方案的商品今后将使用“{{name}}”配送。",
+        "title": "设为默认配置方案"
+      },
+      "delete_confirm": {
+        "message": "确定删除“{{name}}”吗？其区域和配送方式将一并删除。",
+        "title": "删除配送配置方案"
+      },
+      "detail": {
+        "add_digital_method": "添加数字交付方式",
+        "add_method": "添加配送方式",
+        "collect_from": "自提地点",
+        "collect_from_hint": "顾客可以前往自提的地点。更改立即生效。",
+        "delete_label": "删除配置方案",
+        "digital_empty": "尚无数字交付方式。",
+        "digital_hint": "无需配送或自提即可交付。",
+        "digital_title": "数字交付",
+        "general_title": "基本信息",
+        "hidden_badge": "已隐藏",
+        "load_failed_title": "无法加载此配送配置方案",
+        "no_methods": "此处暂无配送方式。",
+        "no_stock_locations": "尚无地点，请在“设置 → 地点”中添加。",
+        "no_zone_hint": "这些配送方式在此配置方案覆盖的所有地区均可用。",
+        "no_zone_title": "不限区域",
+        "no_zones": "暂无区域 — 添加一个即可开始提供配送方式。",
+        "offer_pickup": "提供自提",
+        "origins_title": "发货地点",
+        "pickup_empty": "尚无自提方式，顾客无法在此方案中自提订单。",
+        "pickup_hint": "顾客亲自领取这些订单。自提没有配送目的地，因此不适用区域。",
+        "pickup_title": "到店自提",
+        "zones_title": "区域与配送方式"
+      },
+      "empty": "尚无配送方案。",
+      "is_default_hint": "未单独指定配置方案的商品将使用此方案配送。",
+      "kind_immutable_hint": "类型在创建配置方案时确定，之后不可更改。",
+      "kinds": {
+        "digital": "数字交付",
+        "shipping": "实物配送"
+      },
+      "locations_count": "{{count}} 个地点",
+      "make_default": "设为默认",
+      "messages": {
+        "created": "配送配置方案已创建",
+        "deleted": "配送配置方案已删除",
+        "updated": "配送配置方案已更新"
+      },
+      "search_placeholder": "搜索配送方案…",
+      "selected_locations": "选定地点"
+    },
     "delivery_zones": {
       "add_countries_in_markets": "在“市场”中添加更多国家",
       "add_cta": "添加配送区域",
@@ -586,6 +734,9 @@
       "states_summary": "{{total}} 个省/州中已选 {{selected}} 个",
       "to_placeholder": "止",
       "toggle_states": "显示 {{country}} 的省/州"
+    },
+    "enterprise": {
+      "learn_more": "了解 Spree Enterprise"
     },
     "errors": {
       "forbidden_description": "您没有权限查看此页面。",
@@ -1715,67 +1866,6 @@
         }
       }
     },
-    "delivery_profiles": {
-      "add_cta": "添加配置方案",
-      "add_dialog_title": "新建配送方案",
-      "all_locations": "所有地点",
-      "capabilities": {
-        "digital": "数字交付",
-        "pickup": "自提",
-        "ships": "配送"
-      },
-      "create_description": "将配送方式相同的商品归为一组，并为其设置独立的发货地点、区域和配送方式。",
-      "create_label": "创建配置方案",
-      "default_badge": "默认",
-      "default_confirm": {
-        "message": "未单独指定配置方案的商品今后将使用“{{name}}”配送。",
-        "title": "设为默认配置方案"
-      },
-      "delete_confirm": {
-        "message": "确定删除“{{name}}”吗？其区域和配送方式将一并删除。",
-        "title": "删除配送配置方案"
-      },
-      "detail": {
-        "add_digital_method": "添加数字交付方式",
-        "add_method": "添加配送方式",
-        "collect_from": "自提地点",
-        "collect_from_hint": "顾客可以前往自提的地点。更改立即生效。",
-        "delete_label": "删除配置方案",
-        "digital_empty": "尚无数字交付方式。",
-        "digital_hint": "无需配送或自提即可交付。",
-        "digital_title": "数字交付",
-        "general_title": "基本信息",
-        "hidden_badge": "已隐藏",
-        "load_failed_title": "无法加载此配送配置方案",
-        "no_methods": "此处暂无配送方式。",
-        "no_stock_locations": "尚无地点，请在“设置 → 地点”中添加。",
-        "no_zone_hint": "这些配送方式在此配置方案覆盖的所有地区均可用。",
-        "no_zone_title": "不限区域",
-        "no_zones": "暂无区域 — 添加一个即可开始提供配送方式。",
-        "offer_pickup": "提供自提",
-        "origins_title": "发货地点",
-        "pickup_empty": "尚无自提方式，顾客无法在此方案中自提订单。",
-        "pickup_hint": "顾客亲自领取这些订单。自提没有配送目的地，因此不适用区域。",
-        "pickup_title": "到店自提",
-        "zones_title": "区域与配送方式"
-      },
-      "empty": "尚无配送方案。",
-      "is_default_hint": "未单独指定配置方案的商品将使用此方案配送。",
-      "kind_immutable_hint": "类型在创建配置方案时确定，之后不可更改。",
-      "kinds": {
-        "digital": "数字交付",
-        "shipping": "实物配送"
-      },
-      "locations_count": "{{count}} 个地点",
-      "make_default": "设为默认",
-      "messages": {
-        "created": "配送配置方案已创建",
-        "deleted": "配送配置方案已删除",
-        "updated": "配送配置方案已更新"
-      },
-      "search_placeholder": "搜索配送方案…",
-      "selected_locations": "选定地点"
-    },
     "gift_cards": {
       "batch_autocomplete": {
         "empty": "无匹配的批次",
@@ -1935,6 +2025,9 @@
       "not_found_title": "未找到邀请",
       "sign_in_and_accept": "登录并接受",
       "sign_in_to_accept": "。登录以接受。"
+    },
+    "jurisdiction": {
+      "everywhere": "所有地区"
     },
     "markets": {
       "add_cta": "添加市场",
@@ -3770,6 +3863,240 @@
         "name_required": "名称为必填项"
       }
     },
+    "seller_requirements": {
+      "title": "卖家要求",
+      "search_placeholder": "搜索要求",
+      "empty": "尚无要求。卖家可以立即申请审核。",
+      "add_cta": "添加要求",
+      "add_title": "添加要求",
+      "edit_title": "编辑要求",
+      "columns": {
+        "kind": "类型",
+        "required": "必需"
+      },
+      "required": {
+        "yes": "必需",
+        "no": "建议"
+      },
+      "status": {
+        "disabled": "已关闭"
+      },
+      "fields": {
+        "accepted_files": {
+          "label": "可上传文件",
+          "help": "卖家可上传：{{types}}"
+        },
+        "active": {
+          "label": "启用",
+          "help": "关闭即可停止要求，而不删除它。"
+        },
+        "custom_fields": {
+          "label": "自定义字段",
+          "help": "卖家必须填写你选择的每个字段。",
+          "placeholder": "搜索字段",
+          "empty": "未找到卖家自定义字段。请在设置 → 自定义字段中创建。"
+        },
+        "description": {
+          "label": "说明",
+          "placeholder": "告诉卖家你需要什么以及原因"
+        },
+        "kind": {
+          "label": "类型",
+          "placeholder": "选择你要求的内容"
+        },
+        "name": {
+          "label": "名称",
+          "label_required": "名称（必填）",
+          "help": "卖家在清单上看到的内容。"
+        },
+        "required": {
+          "label": "必需",
+          "help": "必需项在批准前必须完成，其余项显示为建议。"
+        }
+      },
+      "delete_confirm": {
+        "title": "删除要求？",
+        "message": "将不再向卖家索取“{{name}}”。他们已提交的内容也会一并删除。"
+      },
+      "messages": {
+        "created": "已添加要求",
+        "updated": "已保存要求",
+        "deleted": "已删除要求",
+        "submission_accepted": "已接受",
+        "submission_rejected": "已退回给卖家",
+        "waived": "已豁免该卖家的此项要求"
+      },
+      "kinds": {
+        "accept_terms": "接受条款",
+        "complete_profile": "完善资料",
+        "billing_address": "账单地址",
+        "returns_address": "退货地址",
+        "minimum_products": "最少商品数",
+        "required_custom_fields": "必填自定义字段",
+        "attestation": "卖家确认",
+        "operator_review": "人工核查",
+        "document": "文件"
+      }
+    },
+    "sellers": {
+      "actions": {
+        "invite": "邀请",
+        "reinvite": "重新发送",
+        "send_invitation": "发送邀请",
+        "approve": "批准",
+        "reinstate": "恢复",
+        "suspend": "暂停",
+        "reject": "拒绝",
+        "reopen_onboarding": "退回入驻流程"
+      },
+      "add_cta": "添加卖家",
+      "add_sheet_title": "新建卖家",
+      "address": {
+        "filled": "已填写",
+        "not_filled": "未填写",
+        "not_provided_by_seller": "卖家尚未提供",
+        "not_located_yet": "定位完成后将显示地图。"
+      },
+      "approve_override_confirm": {
+        "title": "仍要批准吗？",
+        "message": "该卖家尚未完成：{{names}}。现在批准将允许其照常经营，此决定会被记录。",
+        "action": "仍然批准"
+      },
+      "autocomplete": {
+        "placeholder": "搜索卖家",
+        "empty": "未找到卖家"
+      },
+      "create_description": "先创建卖家记录，然后在卖家页面邀请、批准并设置结算。",
+      "create_label": "创建卖家",
+      "delete_confirm": {
+        "title": "删除卖家？",
+        "message": "这会将 {{name}} 从市场中移除。其商品会保留在目录中但不再归属任何卖家。此操作无法撤销。"
+      },
+      "detail": {
+        "load_error": "无法加载该卖家",
+        "delete_label": "删除卖家",
+        "status": "状态",
+        "settlement": "结算与税务",
+        "at_a_glance": "概览",
+        "contact": "联系方式",
+        "edit_profile": "编辑资料",
+        "edit_profile_description": "卖家在自己的面板中维护这些信息。在这里的修改代表卖家进行。",
+        "edit_settlement": "编辑结算与税务",
+        "edit_settlement_description": "只有你能查看和修改这些设置，卖家无法编辑。",
+        "no_about": "该卖家尚未填写简介。",
+        "billing_address": "账单地址",
+        "returns_address": "退货地址"
+      },
+      "empty": "暂无卖家",
+      "images": {
+        "logo_label": "标志",
+        "logo_help": "建议使用正方形。会在卖家出现的各处显示在其旁边。",
+        "square_logo_label": "方形标志",
+        "square_logo_help": "用于需要严格正方形的位置，例如头像。",
+        "cover_photo_label": "封面图",
+        "cover_photo_help": "卖家资料页顶部的宽幅横幅。"
+      },
+      "invite_sheet": {
+        "title": "邀请卖家",
+        "description": "对方接受后即加入卖家团队，并可登录自己的面板。",
+        "email_help": "邀请将发送到该邮箱。"
+      },
+      "messages": {
+        "created": "卖家已创建",
+        "create_failed": "无法创建卖家",
+        "updated": "卖家已更新",
+        "update_failed": "无法更新卖家",
+        "deleted": "卖家已删除",
+        "delete_failed": "无法删除卖家",
+        "invited": "邀请已发送",
+        "invite_failed": "无法发送邀请",
+        "approved": "卖家已批准",
+        "approve_failed": "无法批准卖家",
+        "suspended": "卖家已暂停",
+        "suspend_failed": "无法暂停卖家",
+        "rejected": "卖家已拒绝",
+        "reject_failed": "无法拒绝卖家",
+        "onboarding_reopened": "已退回入驻流程"
+      },
+      "not_provided": "未填写",
+      "on_holiday_notice": "该卖家处于休假状态。商品仍然可见，但无法购买。",
+      "onboarding": {
+        "title": "入驻",
+        "progress": "已完成 {{done}} / {{total}}",
+        "waived": "已豁免",
+        "download": "下载文件",
+        "seller_note": "卖家：{{note}}",
+        "review_note": "你的备注：{{note}}",
+        "actions": {
+          "accept": "接受",
+          "reject": "退回",
+          "waive": "为该卖家豁免"
+        },
+        "reject_confirm": {
+          "title": "退回？",
+          "message": "将再次向卖家索取“{{name}}”。"
+        },
+        "waive_confirm": {
+          "title": "豁免此要求？",
+          "message": "“{{name}}”将仅对该卖家视为已满足。"
+        },
+        "all_done": "全部完成 🎉",
+        "status": {
+          "complete": "已完成",
+          "pending": "审核中",
+          "rejected": "已退回",
+          "incomplete": "待办"
+        }
+      },
+      "onboarding_column": "入驻",
+      "payout_interval": {
+        "inherit": "使用商店默认值",
+        "daily": "每天",
+        "weekly": "每周",
+        "biweekly": "每两周",
+        "monthly": "每月",
+        "manual": "手动"
+      },
+      "products_column": "商品",
+      "reject_confirm": {
+        "title": "拒绝卖家？",
+        "message": "{{name}} 将不会进入市场。如有需要，之后仍可批准。"
+      },
+      "reopen_onboarding_confirm": {
+        "title": "退回入驻流程？",
+        "message": "{{name}} 将可以修改资料并再次申请审核。"
+      },
+      "search_placeholder": "搜索卖家",
+      "status": {
+        "pending": "待处理",
+        "invited": "已邀请",
+        "onboarding": "入驻中",
+        "ready_for_review": "待审核",
+        "approved": "已批准",
+        "suspended": "已暂停",
+        "rejected": "已拒绝",
+        "canceled": "已取消"
+      },
+      "status_help": {
+        "pending": "已创建，但尚未邀请任何人。",
+        "invited": "等待对方接受邀请。",
+        "onboarding": "正在填写资料。",
+        "ready_for_review": "等待你的批准。",
+        "approved": "正在市场中销售。",
+        "suspended": "已停止销售。恢复后可继续经营。",
+        "rejected": "未获准进入市场。",
+        "canceled": "在加入前已退出。"
+      },
+      "suspend_confirm": {
+        "title": "暂停卖家？",
+        "message": "{{name}} 将立即停止销售。商品和历史记录会保留，之后可以恢复。"
+      },
+      "tax_remittance": {
+        "seller": "卖家申报",
+        "platform": "市场申报"
+      },
+      "team_column": "团队"
+    },
     "settings": {
       "webhooks": {
         "errors": {
@@ -3794,6 +4121,7 @@
         "allowed_origins": "允许的来源",
         "api_keys": "API 密钥",
         "channels": "销售渠道",
+        "commission_rates": "佣金费率",
         "custom_field_definitions": "自定义字段",
         "delivery_profiles": "配送方案",
         "emails": "邮件",
@@ -3805,13 +4133,13 @@
         "profile": "个人资料",
         "reasons": "退货与原因",
         "roles": "角色",
+        "seller_requirements": "卖家要求",
         "staff": "员工",
         "stock_locations": "库存地点",
         "store": "店铺",
         "tax_categories": "税收类别",
         "tax_rates": "税率",
-        "webhooks": "Webhooks",
-        "commission_rates": "佣金费率"
+        "webhooks": "Webhooks"
       }
     },
     "setup": {
@@ -3976,130 +4304,6 @@
       },
       "search_placeholder": "按名称搜索…"
     },
-    "translations": {
-      "coverage_summary": "已翻译 {{total}} 种语言中的 {{translated}} 种",
-      "dirty_summary": "{{count}} 项未保存的更改",
-      "discard_confirm": {
-        "message": "您有 {{count}} 项未保存的翻译更改。要放弃吗？",
-        "title": "放弃更改？"
-      },
-      "field": "字段",
-      "load_error": "无法加载翻译",
-      "locale": "语言",
-      "manage": "管理翻译",
-      "no_locales": "向您的商店添加更多语言以翻译此产品。",
-      "original": "原文",
-      "save": "保存翻译",
-      "save_error": "无法保存翻译",
-      "saved": "翻译已保存",
-      "source": "源",
-      "title": "翻译"
-    },
-    "jurisdiction": {
-      "everywhere": "所有地区"
-    },
-    "companies": {
-      "add_cta": "添加企业",
-      "add_sheet_title": "新建企业",
-      "create_description": "企业客户通过分支机构下单。创建企业后即可添加分支机构、税务登记号和免税证明。",
-      "create_label": "创建企业",
-      "delete_confirm": {
-        "message": "将删除 {{name}} 及其所有分支机构、采购人和证明。此操作无法撤销。",
-        "title": "删除企业？"
-      },
-      "detail": {
-        "delete_label": "删除企业",
-        "load_error": "无法加载该企业",
-        "profile": "企业"
-      },
-      "empty": "暂无企业",
-      "locations_column": "分支机构",
-      "messages": {
-        "created": "企业已创建",
-        "deleted": "企业已删除",
-        "updated": "企业已更新"
-      },
-      "search_placeholder": "搜索企业"
-    },
-    "company_locations": {
-      "add_cta": "添加分支机构",
-      "add_title": "新建分支机构",
-      "addresses": "地址",
-      "billing_address": "账单地址",
-      "contacts_count_one": "{{count}} 位采购人",
-      "contacts_count_other": "{{count}} 位采购人",
-      "detail": {
-        "delete_label": "删除分支机构",
-        "load_error": "无法加载该分支机构"
-      },
-      "dialog_description": "分支机构是开具发票和收货的地点。地址为选填，但一旦填写则需要姓名和国家/地区。",
-      "edit_title": "编辑分支机构",
-      "empty": "暂无分支机构",
-      "messages": {
-        "created": "分支机构已创建",
-        "deleted": "分支机构已删除",
-        "updated": "分支机构已更新"
-      },
-      "shipping_address": "收货地址",
-      "shipping_same_as_billing": "收货地址与账单地址相同",
-      "title": "分支机构"
-    },
-    "company_contacts": {
-      "add_cta": "添加采购人",
-      "add_title": "授权采购人",
-      "dialog_description": "为该分支机构下单的客户。若客户只为一个分支机构采购，其订单会自动归属该机构。",
-      "empty": "尚未授权任何采购人",
-      "messages": {
-        "created": "采购人已添加",
-        "deleted": "采购人已移除"
-      },
-      "remove_action": "移除采购人",
-      "remove_confirm": {
-        "message": "{{email}} 将不再为该分支机构采购。其客户账户不受影响。",
-        "title": "移除该采购人？"
-      },
-      "roles_enterprise_help": "在此添加的采购人可为该分支机构下单。角色、审批流程和支出限额由 Spree Enterprise 提供。",
-      "roles_enterprise_title": "角色与审批为 Enterprise 功能",
-      "title": "采购人"
-    },
-    "tax_identifiers": {
-      "add_cta": "添加登记号",
-      "add_title": "添加税务登记号",
-      "checked_prefix": "核验于",
-      "delete_confirm": {
-        "message": "将移除 {{value}}。已完成的订单仍保留开票时使用的号码。",
-        "title": "删除该登记号？"
-      },
-      "dialog_description": "发票上显示的增值税号或企业税号。欧盟企业间交易的反向征收机制依赖于它。",
-      "edit_title": "编辑税务登记号",
-      "empty": "尚未填写税务登记号",
-      "kinds": {
-        "au_abn": "澳大利亚企业号",
-        "ch_vat": "瑞士增值税号",
-        "eu_vat": "欧盟增值税号",
-        "gb_vat": "英国增值税号",
-        "us_ein": "美国雇主识别号"
-      },
-      "messages": {
-        "created": "登记号已添加",
-        "deleted": "登记号已删除",
-        "updated": "登记号已更新",
-        "validation_failed": "无法核验该号码",
-        "validation_requested": "正在向登记机构核验该号码"
-      },
-      "not_validatable": "该类型未配置校验方式，将按填写的内容直接使用。",
-      "select_kind": "选择类型",
-      "title": "税务登记号",
-      "validate_action": "向登记机构核验",
-      "validation_status": {
-        "not_checked": "未核验",
-        "pending": "核验中",
-        "unavailable": "登记机构不可用",
-        "unsupported": "无法核验",
-        "unverified": "无效",
-        "verified": "已核验"
-      }
-    },
     "tax_exemption_certificates": {
       "add_cta": "添加证明",
       "add_title": "添加免税证明",
@@ -4145,6 +4349,50 @@
       "verified_at": "接受日期",
       "verify_action": "接受"
     },
+    "tax_identifiers": {
+      "add_cta": "添加登记号",
+      "add_title": "添加税务登记号",
+      "checked_prefix": "核验于",
+      "delete_confirm": {
+        "message": "将移除 {{value}}。已完成的订单仍保留开票时使用的号码。",
+        "title": "删除该登记号？"
+      },
+      "dialog_description": "发票上显示的增值税号或企业税号。欧盟企业间交易的反向征收机制依赖于它。",
+      "edit_title": "编辑税务登记号",
+      "empty": "尚未填写税务登记号",
+      "kinds": {
+        "au_abn": "澳大利亚企业号",
+        "ch_vat": "瑞士增值税号",
+        "eu_vat": "欧盟增值税号",
+        "gb_vat": "英国增值税号",
+        "us_ein": "美国雇主识别号"
+      },
+      "messages": {
+        "created": "登记号已添加",
+        "deleted": "登记号已删除",
+        "updated": "登记号已更新",
+        "validation_failed": "无法核验该号码",
+        "validation_requested": "正在向登记机构核验该号码"
+      },
+      "not_validatable": "该类型未配置校验方式，将按填写的内容直接使用。",
+      "select_kind": "选择类型",
+      "title": "税务登记号",
+      "validate_action": "向登记机构核验",
+      "validation_status": {
+        "not_checked": "未核验",
+        "pending": "核验中",
+        "unavailable": "登记机构不可用",
+        "unsupported": "无法核验",
+        "unverified": "无效",
+        "verified": "已核验"
+      }
+    },
+    "tax_providers": {
+      "limitations_title": "{{name}} 不支持",
+      "unavailable_option": "{{name}}（未配置）",
+      "use_default": "使用默认计算引擎",
+      "use_default_named": "默认（{{name}}）"
+    },
     "tax_rates": {
       "add_cta": "添加税率",
       "all_categories": "所有类别",
@@ -4166,148 +4414,24 @@
       "search_placeholder": "搜索税率",
       "select_category": "选择类别"
     },
-    "tax_providers": {
-      "limitations_title": "{{name}} 不支持",
-      "unavailable_option": "{{name}}（未配置）",
-      "use_default": "使用默认计算引擎",
-      "use_default_named": "默认（{{name}}）"
-    },
-    "enterprise": {
-      "learn_more": "了解 Spree Enterprise"
-    },
-    "sellers": {
-      "add_cta": "添加卖家",
-      "add_sheet_title": "新建卖家",
-      "create_description": "先创建卖家记录，然后在卖家页面邀请、批准并设置结算。",
-      "create_label": "创建卖家",
-      "search_placeholder": "搜索卖家",
-      "empty": "暂无卖家",
-      "products_column": "商品",
-      "team_column": "团队",
-      "on_holiday_notice": "该卖家处于休假状态。商品仍然可见，但无法购买。",
-      "delete_confirm": {
-        "title": "删除卖家？",
-        "message": "这会将 {{name}} 从市场中移除。其商品会保留在目录中但不再归属任何卖家。此操作无法撤销。"
+    "translations": {
+      "coverage_summary": "已翻译 {{total}} 种语言中的 {{translated}} 种",
+      "dirty_summary": "{{count}} 项未保存的更改",
+      "discard_confirm": {
+        "message": "您有 {{count}} 项未保存的翻译更改。要放弃吗？",
+        "title": "放弃更改？"
       },
-      "suspend_confirm": {
-        "title": "暂停卖家？",
-        "message": "{{name}} 将立即停止销售。商品和历史记录会保留，之后可以恢复。"
-      },
-      "reject_confirm": {
-        "title": "拒绝卖家？",
-        "message": "{{name}} 将不会进入市场。如有需要，之后仍可批准。"
-      },
-      "invite_sheet": {
-        "title": "邀请卖家",
-        "description": "对方接受后即加入卖家团队，并可登录自己的面板。",
-        "email_help": "邀请将发送到该邮箱。"
-      },
-      "actions": {
-        "invite": "邀请",
-        "reinvite": "重新发送",
-        "send_invitation": "发送邀请",
-        "approve": "批准",
-        "reinstate": "恢复",
-        "suspend": "暂停",
-        "reject": "拒绝"
-      },
-      "detail": {
-        "load_error": "无法加载该卖家",
-        "delete_label": "删除卖家",
-        "status": "状态",
-        "settlement": "结算与税务",
-        "at_a_glance": "概览",
-        "contact": "联系方式",
-        "edit_profile": "编辑资料",
-        "edit_profile_description": "卖家在自己的面板中维护这些信息。在这里的修改代表卖家进行。",
-        "edit_settlement": "编辑结算与税务",
-        "edit_settlement_description": "只有你能查看和修改这些设置，卖家无法编辑。",
-        "no_about": "该卖家尚未填写简介。"
-      },
-      "status": {
-        "pending": "待处理",
-        "invited": "已邀请",
-        "onboarding": "入驻中",
-        "ready_for_review": "待审核",
-        "approved": "已批准",
-        "suspended": "已暂停",
-        "rejected": "已拒绝",
-        "canceled": "已取消"
-      },
-      "status_help": {
-        "pending": "已创建，但尚未邀请任何人。",
-        "invited": "等待对方接受邀请。",
-        "onboarding": "正在填写资料。",
-        "ready_for_review": "等待你的批准。",
-        "approved": "正在市场中销售。",
-        "suspended": "已停止销售。恢复后可继续经营。",
-        "rejected": "未获准进入市场。",
-        "canceled": "在加入前已退出。"
-      },
-      "tax_remittance": {
-        "seller": "卖家申报",
-        "platform": "市场申报"
-      },
-      "payout_interval": {
-        "inherit": "使用商店默认值",
-        "daily": "每天",
-        "weekly": "每周",
-        "biweekly": "每两周",
-        "monthly": "每月",
-        "manual": "手动"
-      },
-      "messages": {
-        "created": "卖家已创建",
-        "create_failed": "无法创建卖家",
-        "updated": "卖家已更新",
-        "update_failed": "无法更新卖家",
-        "deleted": "卖家已删除",
-        "delete_failed": "无法删除卖家",
-        "invited": "邀请已发送",
-        "invite_failed": "无法发送邀请",
-        "approved": "卖家已批准",
-        "approve_failed": "无法批准卖家",
-        "suspended": "卖家已暂停",
-        "suspend_failed": "无法暂停卖家",
-        "rejected": "卖家已拒绝",
-        "reject_failed": "无法拒绝卖家"
-      },
-      "not_provided": "未填写",
-      "images": {
-        "logo_label": "标志",
-        "logo_help": "建议使用正方形。会在卖家出现的各处显示在其旁边。",
-        "square_logo_label": "方形标志",
-        "square_logo_help": "用于需要严格正方形的位置，例如头像。",
-        "cover_photo_label": "封面图",
-        "cover_photo_help": "卖家资料页顶部的宽幅横幅。"
-      },
-      "autocomplete": {
-        "placeholder": "搜索卖家",
-        "empty": "未找到卖家"
-      }
-    },
-    "commission_rates": {
-      "add_cta": "添加佣金费率",
-      "applies_to_everything": "所有销售",
-      "create_description": "设置平台向卖家收取的费用，以及适用于哪些销售。",
-      "create_label": "创建佣金费率",
-      "delete_confirm": {
-        "message": "将删除 {{name}}。已收取的佣金不受影响。",
-        "title": "删除佣金费率？"
-      },
-      "edit_description": "更新费用、上下限以及适用的销售范围。",
-      "empty": "暂无佣金费率",
-      "messages": {
-        "created": "佣金费率已创建",
-        "deleted": "佣金费率已删除",
-        "updated": "佣金费率已更新"
-      },
-      "search_placeholder": "按名称搜索…",
-      "order_hint": "新费率会添加到列表顶部，首个匹配的费率生效——拖动可调整顺序。",
-      "conditions": {
-        "add": "添加条件",
-        "title": "条件"
-      }
+      "field": "字段",
+      "load_error": "无法加载翻译",
+      "locale": "语言",
+      "manage": "管理翻译",
+      "no_locales": "向您的商店添加更多语言以翻译此产品。",
+      "original": "原文",
+      "save": "保存翻译",
+      "save_error": "无法保存翻译",
+      "saved": "翻译已保存",
+      "source": "源",
+      "title": "翻译"
     }
   }
 }

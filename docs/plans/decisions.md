@@ -3575,3 +3575,40 @@ existing tables (warning on instantiation; `default_refund_category` and
 / `type_id` stay as frozen columns — never written — so extensions
 referencing the constants fail loudly and the fold step has its source. 6.1
 drops the two tables, the two columns and the shells.
+
+## 2026-08-18 — Seller onboarding is an operator-configured requirement checklist, not a code-defined task list
+
+The previous marketplace module decided what a seller must do before approval
+in one Ruby method on the seller. Nothing in that shape lets an operator add,
+drop, reorder or relax a step, and a developer adding a check had to override
+the whole list. Spree 6.0 makes the checklist data: `Spree::SellerRequirement`
+rows owned by the store, each an instance of a registered **requirement kind**
+(an STI class with a preference schema, discovered through the same
+`registers_subclasses_via` + `PreferenceSchema` types endpoint that delivery
+method rules and payment methods use), with `position`, `active` and
+`required`. Kinds complete in three ways — computed from seller data, attested
+by the seller, or verified by the operator or a provider — and the last two
+share one persisted `Spree::SellerRequirementSubmission` row (`pending |
+accepted | rejected | waived`, optional private file). Evaluation happens on
+read through `Spree::Sellers::Requirements`; nothing is denormalized onto
+`spree_sellers`.
+
+**Enforcement is deliberately narrow:** `Sellers::SubmitForReview` refuses
+while a required requirement is unmet, `Sellers::Approve` refuses unless the
+operator passes `override_requirements: true` (recorded on the event), and
+that is all. `Seller#sellable?` does not read the checklist; a payout account
+gates payouts through its provider, not through the checklist; an approved
+seller who later fails a requirement is shown as such, never suspended by
+core. Automatic approval is a store preference (`auto_approve_sellers`, off).
+
+**Why:** the operator, not the developer, owns admission policy, and the
+requirements that matter most in practice — documents, manual business checks,
+payout-account status — are per-seller facts with a reviewer, which a computed
+boolean cannot carry. Two gates keep the checklist an admission tool rather than
+a hidden purchasability rule.
+
+**Consequences:** the marketplace plan's "onboarding task registry" paragraph
+is superseded; `Spree.store_setup_tasks` stays code-only for the merchant's own
+Getting Started list. Never add `Seller#onboarding_completed?`-style predicates
+or step-done columns; a new admission check is a kind or a `validate` hook on
+the seller workflows. Plan: `6.0-seller-onboarding-requirements.md`.

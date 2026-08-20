@@ -1,11 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { CompanyLocation } from '@spree/admin-sdk'
-import {
-  CountryCombobox,
-  mapSpreeErrorsToForm,
-  StateCombobox,
-  useCountryStates,
-} from '@spree/dashboard-core'
+import { mapSpreeErrorsToForm } from '@spree/dashboard-core'
 import {
   Button,
   Checkbox,
@@ -23,7 +18,7 @@ import {
   SheetTitle,
 } from '@spree/dashboard-ui'
 import { useEffect } from 'react'
-import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useCreateCompanyLocation, useUpdateCompanyLocation } from '../../hooks/use-companies'
 import {
@@ -33,6 +28,7 @@ import {
   companyLocationFormSchema,
   companyLocationValuesToParams,
 } from '../../schemas/company'
+import { AddressFieldset } from './address-fieldset'
 
 /**
  * Creates a branch under a company, or edits one addressed by its own id. A
@@ -212,103 +208,4 @@ function addressToForm(address: CompanyLocation['billing_address'] | undefined) 
     country_code: address?.country_code ?? '',
     state_code: address?.state_code ?? '',
   }
-}
-
-function AddressFieldset({
-  form,
-  prefix,
-  legend,
-}: {
-  form: UseFormReturn<CompanyLocationFormValues>
-  prefix: 'billing_address' | 'shipping_address'
-  legend: string
-}) {
-  const { t } = useTranslation()
-  const countryCode = form.watch(`${prefix}.country_code`)
-  const { states } = useCountryStates(countryCode)
-
-  return (
-    <fieldset className="flex flex-col gap-4 rounded-md border p-4">
-      <legend className="px-1 font-medium text-sm">{legend}</legend>
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Field>
-          <FieldLabel htmlFor={`${prefix}-first-name`}>
-            {t('admin.fields.first_name.label')}
-          </FieldLabel>
-          <Input id={`${prefix}-first-name`} {...form.register(`${prefix}.first_name`)} />
-        </Field>
-        <Field>
-          <FieldLabel htmlFor={`${prefix}-last-name`}>
-            {t('admin.fields.last_name.label')}
-          </FieldLabel>
-          <Input id={`${prefix}-last-name`} {...form.register(`${prefix}.last_name`)} />
-        </Field>
-      </div>
-
-      <Field>
-        <FieldLabel htmlFor={`${prefix}-address1`}>{t('admin.fields.address1.label')}</FieldLabel>
-        <Input id={`${prefix}-address1`} {...form.register(`${prefix}.address1`)} />
-      </Field>
-
-      <Field>
-        <FieldLabel htmlFor={`${prefix}-address2`}>{t('admin.fields.address2.label')}</FieldLabel>
-        <Input id={`${prefix}-address2`} {...form.register(`${prefix}.address2`)} />
-      </Field>
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Field>
-          <FieldLabel htmlFor={`${prefix}-city`}>{t('admin.fields.city.label')}</FieldLabel>
-          <Input id={`${prefix}-city`} {...form.register(`${prefix}.city`)} />
-        </Field>
-        <Field>
-          <FieldLabel htmlFor={`${prefix}-postal-code`}>
-            {t('admin.fields.postal_code.label')}
-          </FieldLabel>
-          <Input id={`${prefix}-postal-code`} {...form.register(`${prefix}.postal_code`)} />
-        </Field>
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Field>
-          <FieldLabel htmlFor={`${prefix}-country`}>{t('admin.fields.country.label')}</FieldLabel>
-          <Controller
-            name={`${prefix}.country_code`}
-            control={form.control}
-            render={({ field }) => (
-              <CountryCombobox
-                value={field.value}
-                onValueChange={(iso) => {
-                  field.onChange(iso)
-                  form.setValue(`${prefix}.state_code`, '', { shouldDirty: true })
-                }}
-              />
-            )}
-          />
-        </Field>
-        {countryCode && states.length > 0 && (
-          <Field>
-            <FieldLabel htmlFor={`${prefix}-state`}>{t('admin.fields.state.label')}</FieldLabel>
-            <Controller
-              name={`${prefix}.state_code`}
-              control={form.control}
-              render={({ field }) => (
-                <StateCombobox
-                  countryCode={countryCode}
-                  states={states}
-                  value={field.value}
-                  onValueChange={field.onChange}
-                />
-              )}
-            />
-          </Field>
-        )}
-      </div>
-
-      <Field>
-        <FieldLabel htmlFor={`${prefix}-phone`}>{t('admin.fields.phone.label')}</FieldLabel>
-        <Input id={`${prefix}-phone`} {...form.register(`${prefix}.phone`)} />
-      </Field>
-    </fieldset>
-  )
 }

@@ -1,5 +1,6 @@
 import { Subject, settingsNav } from '@spree/dashboard-core'
 import {
+  ClipboardCheckIcon,
   CreditCardIcon,
   GlobeIcon,
   GlobeLockIcon,
@@ -112,6 +113,16 @@ settingsNav.add({
   group: 'payments',
   position: 275,
   subject: Subject.CommissionRate,
+})
+
+settingsNav.add({
+  key: 'settings.seller-requirements',
+  labelKey: 'admin.settings_nav.items.seller_requirements',
+  path: '/seller-requirements',
+  icon: ClipboardCheckIcon,
+  group: 'payments',
+  position: 280,
+  subject: Subject.Seller,
 })
 
 settingsNav.add({

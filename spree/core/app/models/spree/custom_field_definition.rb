@@ -111,6 +111,32 @@ module Spree
       self.storefront_visible = value.to_s != 'back_end'
     end
 
+    # What a definition can be attached to: every registered resource, named
+    # as the API names it, so a client renders a picker rather than carrying
+    # its own list that drifts from the registry.
+    #
+    # `Spree::Category` reports itself as `Spree::Taxon`: existing category
+    # definitions are stored under the old class name, and offering the new
+    # one would file a merchant's next definition somewhere the category card
+    # does not read. Drops with the alias in 6.1.
+    #
+    # @return [Array<Hash{Symbol => String}>] `resource_type` + `name`
+    def self.enabled_resource_types
+      # Through `available_resources`, not the registry directly: that is the
+      # accessor the rest of the class reads, so discovery and validation
+      # cannot disagree about what a host app has made available.
+      Array(available_resources).filter_map do |resource|
+        next if resource.nil?
+
+        # The label follows the class a merchant knows; the wire value follows
+        # where the rows are actually stored.
+        name = resource.to_s.demodulize.titleize.pluralize
+        resource_type = resource.to_s == 'Spree::Category' ? 'Spree::Taxon' : resource.to_s
+
+        { resource_type: resource_type, name: name }
+      end.uniq { |entry| entry[:resource_type] }.sort_by { |entry| entry[:name] }
+    end
+
     # Returns the full key with namespace
     # @return [String] eg. custom.id
     def full_key
@@ -157,8 +183,14 @@ module Spree
       errors.add(:field_type, :inclusion)
     end
 
+    # Both the registry's own names and the ones discovery offers: a value a
+    # client was offered has to be accepted, and the two differ where a class
+    # has been renamed (categories are stored under Spree::Taxon while the
+    # registry holds Spree::Category). Existing callers name either, so
+    # narrowing to one would reject definitions that already work.
     def valid_available_resources
-      self.class.available_resources.map(&:to_s)
+      self.class.available_resources.map(&:to_s) |
+        self.class.enabled_resource_types.map { |resource| resource[:resource_type] }
     end
 
     def set_default_type

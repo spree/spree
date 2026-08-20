@@ -66,6 +66,11 @@ module Spree
     # the tax provider names one. Zero by default: a marketplace outside the EU
     # charges no tax on its fee, and inventing one would overcharge sellers.
     preference :default_commission_tax_rate, :decimal, default: 0
+    # Admit a seller the moment they finish the checklist, without waiting for
+    # anyone to look at them. Off by default: a marketplace decides who trades
+    # under its name, and letting that happen by omission is the wrong
+    # default for the operator who never thought about it.
+    preference :auto_approve_sellers, :boolean, default: false
     # Checkout preferences
     # Store-level fallback for the channel-owned `guest_checkout` preference
     # (see Spree::Channel::Gating). Retained so existing accessors keep working.
@@ -195,6 +200,9 @@ module Spree
 
     has_many :sellers, class_name: 'Spree::Seller', dependent: :destroy, inverse_of: :store
     has_many :commission_rates, class_name: 'Spree::CommissionRate', dependent: :destroy, inverse_of: :store
+    # What this marketplace asks of a seller before it will let them trade.
+    has_many :seller_requirements, -> { order(:position, :id) }, class_name: 'Spree::SellerRequirement',
+                                                                dependent: :destroy, inverse_of: :store
 
     has_many :wishlists, class_name: 'Spree::Wishlist'
 

@@ -236,4 +236,49 @@ describe Spree::Seller do
       expect(Spree::Invitation.where(resource: seller)).to be_empty
     end
   end
+
+  describe 'onboarding progress' do
+    let(:store) { @default_store }
+    let(:seller) { create(:seller, :onboarding, store: store) }
+
+    before { store.seller_requirements.destroy_all }
+
+    it 'reads as finished when the marketplace asks for nothing' do
+      expect(seller.onboarding_percentage).to eq(100)
+      expect(seller).to be_onboarding_complete
+    end
+
+    it 'counts what is done over what is asked' do
+      create(:accept_terms_requirement, store: store)
+      create(:billing_address_requirement, store: store)
+      seller.update!(terms_accepted_at: Time.current)
+
+      seller.reload
+      expect(seller.onboarding_progress).to eq(done: 1, total: 2, percentage: 50)
+      expect(seller.onboarding_percentage).to eq(50)
+      expect(seller).not_to be_onboarding_complete
+    end
+
+    it 'is complete once every required requirement is met, whatever the optional ones say' do
+      create(:accept_terms_requirement, store: store, required: true)
+      create(:billing_address_requirement, store: store, required: false)
+      seller.update!(terms_accepted_at: Time.current)
+
+      seller.reload
+      expect(seller).to be_onboarding_complete
+      expect(seller.onboarding_percentage).to eq(50)
+    end
+
+    it 'forgets what it computed on reload' do
+      create(:accept_terms_requirement, store: store)
+      seller.reload
+      expect(seller.onboarding_percentage).to eq(0)
+
+      seller.update!(terms_accepted_at: Time.current)
+      seller.reload
+
+      expect(seller.onboarding_percentage).to eq(100)
+    end
+  end
+
 end

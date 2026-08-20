@@ -43,13 +43,14 @@ export function AddressBlock({
   title,
   address,
 }: {
-  title: string
+  /** Omitted where the surrounding card already names the address. */
+  title?: string
   address: AddressBlockValue | null | undefined
 }) {
   const { t, i18n } = useTranslation()
   return (
     <div>
-      <h6 className="font-semibold text-sm mb-1.5">{title}</h6>
+      {title && <h6 className="font-semibold text-sm mb-1.5">{title}</h6>}
       {address ? (
         <div className="text-sm text-muted-foreground flex flex-col gap-0.5">
           <div>{address.full_name}</div>

@@ -907,6 +907,7 @@ en:
         invalid_order_routing_rule: is not a registered order routing rule
         invalid_order_routing_strategy: is not a registered order routing strategy
         invalid_refund_method: must be one of original_payment, store_credit
+        invalid_seller_requirement: is not a registered seller requirement
         invalid_storefront_access: is not a valid storefront access level
         must_be_greater_than_min_amount: must be greater than or equal to the minimum
         must_be_origin_only: must be an origin (scheme and host) without path, query, or fragment
@@ -921,6 +922,7 @@ en:
         promotion_discount_not_editable: promotion discounts are managed by recalculation and cannot be edited
         rate_provider_requires_shipping: "%{provider} quotes shipments, so this method must ship to an address"
         rate_provider_unavailable: is not available for this store — connect its integration first
+        seller_requirement_store_mismatch: must belong to the same store as the seller
         store_association_can_not_be_changed: The store association can not be changed
         store_is_already_set: Store is already set
       services:
@@ -1521,6 +1523,38 @@ en:
         message: Selling on %{store_name} has been paused for your account. Your products and order history are unaffected.
         subject: Your %{store_name} account has been suspended
     seller_membership_required: This account does not belong to any seller.
+    seller_requirement_types:
+      accept_terms:
+        description: The seller has accepted your marketplace terms
+        name: Accept terms
+      attestation:
+        description: Something you ask the seller to confirm themselves
+        name: Seller confirmation
+      billing_address:
+        description: The seller has given a billing address
+        name: Billing address
+      complete_profile:
+        description: The seller has filled in their public profile
+        name: Complete profile
+      document:
+        description: A file the seller uploads and you review
+        name: Document
+      minimum_products:
+        description: The seller has listed at least this many products
+        name: Minimum products
+      operator_review:
+        description: Something you check by hand before admitting the seller
+        name: Manual check
+      required_custom_fields:
+        description: The seller has filled in the custom fields you ask for
+        name: Required custom fields
+      returns_address:
+        description: The seller has given an address for customer returns
+        name: Returns address
+    seller_requirements:
+      file_required: A file is required for this requirement
+      file_type_not_accepted: This requirement accepts %{types}
+      incomplete: "%{name} is not complete"
     send_consumer_transactional_emails: Send Customer Transactional Emails
     seo: SEO
     seo_title: SEO Title

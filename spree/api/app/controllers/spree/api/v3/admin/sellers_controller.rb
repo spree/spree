@@ -16,7 +16,8 @@ module Spree
           # panel — managing sellers is the operator's job.
           scoped_resource :sellers
 
-          before_action :set_resource, only: [:show, :update, :destroy, :invite, :approve, :suspend, :reject]
+          before_action :set_resource, only: [:show, :update, :destroy, :invite, :approve, :suspend, :reject,
+                                              :onboarding, :reopen_onboarding]
 
           # POST /api/v3/admin/sellers/:id/invite
           #
@@ -37,9 +38,43 @@ module Spree
             end
           end
 
+          # GET /api/v3/admin/sellers/:id/onboarding
+          #
+          # Where this seller stands against the marketplace's checklist. Its
+          # own action rather than a field on the seller: evaluating it costs
+          # a handful of queries per seller, which a list of twenty-five must
+          # not pay for a column most operators are not looking at.
+          def onboarding
+            authorize_resource!(@resource, :show)
+
+            requirements = Spree::Sellers::Requirements.new(@resource)
+
+            render json: {
+              status: @resource.status,
+              progress: requirements.progress,
+              requirements: serialize_requirement_statuses(requirements.statuses)
+            }
+          end
+
           # PATCH /api/v3/admin/sellers/:id/approve
+          #
+          # `override_requirements` admits a seller whose checklist is not
+          # finished — the operator's deliberate exception, which the event
+          # records alongside what was outstanding.
           def approve
-            run_workflow(Spree.seller_approve_workflow, approver: try_spree_current_user)
+            run_workflow(Spree.seller_approve_workflow,
+                         approver: try_spree_current_user,
+                         override_requirements: ActiveModel::Type::Boolean.new.cast(params[:override_requirements]))
+          end
+
+          # PATCH /api/v3/admin/sellers/:id/reopen_onboarding
+          #
+          # Sends a seller awaiting review back to onboarding with a note.
+          # Distinct from reject, which turns them away.
+          def reopen_onboarding
+            run_workflow(Spree.seller_reopen_onboarding_workflow,
+                         note: params[:note],
+                         reopened_by: try_spree_current_user)
           end
 
           # PATCH /api/v3/admin/sellers/:id/suspend
@@ -71,7 +106,18 @@ module Spree
           # catalog can run to thousands, so the serializer counts it in SQL
           # rather than materializing it just to measure it.
           def collection_includes
-            [:billing_address, :returns_address, :users]
+            [:users]
+          end
+
+          # What the serializer's onboarding progress reads for every seller,
+          # on the list and on the profile alike: the checklist's kinds look
+          # at addresses, branding and the seller's own submissions, and the
+          # requirements themselves hang off the store — one row shared by
+          # every seller on the page, so it loads once. Applied to the scope
+          # rather than the collection so a single-seller read gets it too.
+          def scope_includes
+            [:billing_address, :returns_address, :requirement_submissions,
+             { store: :seller_requirements, logo_attachment: :blob, cover_photo_attachment: :blob }]
           end
 
           # Enumerated rather than borrowing the legacy global list, which
@@ -104,7 +150,18 @@ module Spree
             )
           end
 
+          # `onboarding` is a read of the seller — it changes nothing.
+          def read_actions
+            super + %w[onboarding]
+          end
+
           private
+
+          def serialize_requirement_statuses(statuses)
+            serializer = Spree.api.admin_seller_requirement_status_serializer
+
+            statuses.map { |status| serializer.new(status, params: serializer_params).to_h }
+          end
 
           def run_workflow(workflow, **arguments)
             result = workflow.call(seller: @resource, **arguments)

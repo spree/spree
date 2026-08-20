@@ -12,6 +12,7 @@ import {
 } from '@spree/dashboard-ui'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { useCustomFieldResourceTypes } from '../../../hooks/use-custom-field-resource-types'
 import {
   type CustomFieldDefinitionFormValues,
   DEFAULT_RESOURCE_TYPES,
@@ -69,10 +70,15 @@ export function DefinitionFormFields({
     label: fieldTypeLabel(value),
   }))
 
-  const resourceTypeItems = DEFAULT_RESOURCE_TYPES.map((value) => ({
-    value,
-    label: resourceTypeLabel(value),
-  }))
+  // From the server's registry. `DEFAULT_RESOURCE_TYPES` covers the first
+  // render while that request is in flight, so the select is never empty.
+  const { data: resourceTypesResponse } = useCustomFieldResourceTypes()
+  const resourceTypeItems = resourceTypesResponse
+    ? resourceTypesResponse.data.map(({ resource_type, name }) => ({
+        value: resource_type,
+        label: name,
+      }))
+    : DEFAULT_RESOURCE_TYPES.map((value) => ({ value, label: resourceTypeLabel(value) }))
 
   return (
     <div className="flex flex-col gap-4">

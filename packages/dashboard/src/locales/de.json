@@ -289,6 +289,93 @@
       },
       "title": "Kollektionen"
     },
+    "commission_rates": {
+      "add_cta": "Provisionssatz hinzufügen",
+      "applies_to_everything": "Jeder Verkauf",
+      "create_description": "Legen Sie fest, was der Marktplatz Verkäufern berechnet und für welche Verkäufe das gilt.",
+      "create_label": "Provisionssatz erstellen",
+      "delete_confirm": {
+        "message": "{{name}} wird entfernt. Bereits berechnete Provisionen bleiben unverändert.",
+        "title": "Provisionssatz löschen?"
+      },
+      "edit_description": "Gebühr, Grenzen und betroffene Verkäufe aktualisieren.",
+      "empty": "Noch keine Provisionssätze",
+      "messages": {
+        "created": "Provisionssatz erstellt",
+        "deleted": "Provisionssatz gelöscht",
+        "updated": "Provisionssatz aktualisiert"
+      },
+      "search_placeholder": "Nach Namen suchen…",
+      "order_hint": "Neue Sätze stehen oben in der Liste, und der erste passende gilt — zum Umsortieren ziehen.",
+      "conditions": {
+        "add": "Bedingung hinzufügen",
+        "title": "Bedingungen"
+      }
+    },
+    "companies": {
+      "add_cta": "Firma hinzufügen",
+      "add_sheet_title": "Neue Firma",
+      "create_description": "Geschäftskunden kaufen über Niederlassungen ein. Niederlassungen, Steuernummer und Freistellungsbescheinigungen können Sie hinzufügen, sobald die Firma angelegt ist.",
+      "create_label": "Firma anlegen",
+      "delete_confirm": {
+        "message": "Damit werden {{name}} sowie alle Niederlassungen, Einkäufer und Bescheinigungen gelöscht. Das lässt sich nicht rückgängig machen.",
+        "title": "Firma löschen?"
+      },
+      "detail": {
+        "delete_label": "Firma löschen",
+        "load_error": "Diese Firma konnte nicht geladen werden",
+        "profile": "Firma"
+      },
+      "empty": "Noch keine Firmen",
+      "locations_column": "Niederlassungen",
+      "messages": {
+        "created": "Firma angelegt",
+        "deleted": "Firma gelöscht",
+        "updated": "Firma aktualisiert"
+      },
+      "search_placeholder": "Firmen suchen"
+    },
+    "company_contacts": {
+      "add_cta": "Einkäufer hinzufügen",
+      "add_title": "Einkäufer berechtigen",
+      "dialog_description": "Ein Kunde, der für diese Niederlassung einkauft. Wer für genau eine Niederlassung einkauft, dessen Bestellungen werden ihr automatisch zugeordnet.",
+      "empty": "Noch keine Einkäufer berechtigt",
+      "messages": {
+        "created": "Einkäufer hinzugefügt",
+        "deleted": "Einkäufer entfernt"
+      },
+      "remove_action": "Einkäufer entfernen",
+      "remove_confirm": {
+        "message": "{{email}} kauft dann nicht mehr für diese Niederlassung ein. Das Kundenkonto bleibt bestehen.",
+        "title": "Diesen Einkäufer entfernen?"
+      },
+      "roles_enterprise_help": "Hier hinzugefügte Einkäufer können für diese Niederlassung bestellen. Rollen, Freigabeprozesse und Ausgabenlimits gehören zu Spree Enterprise.",
+      "roles_enterprise_title": "Rollen und Freigaben sind eine Enterprise-Funktion",
+      "title": "Einkäufer"
+    },
+    "company_locations": {
+      "add_cta": "Niederlassung hinzufügen",
+      "add_title": "Neue Niederlassung",
+      "addresses": "Adressen",
+      "billing_address": "Rechnungsadresse",
+      "contacts_count_one": "{{count}} Einkäufer",
+      "contacts_count_other": "{{count}} Einkäufer",
+      "detail": {
+        "delete_label": "Niederlassung löschen",
+        "load_error": "Diese Niederlassung konnte nicht geladen werden"
+      },
+      "dialog_description": "Eine Niederlassung ist der Ort, an den die Rechnung geht und an den geliefert wird. Adressen sind optional, benötigen aber Name und Land, sobald sie ausgefüllt werden.",
+      "edit_title": "Niederlassung bearbeiten",
+      "empty": "Noch keine Niederlassungen",
+      "messages": {
+        "created": "Niederlassung angelegt",
+        "deleted": "Niederlassung gelöscht",
+        "updated": "Niederlassung aktualisiert"
+      },
+      "shipping_address": "Lieferadresse",
+      "shipping_same_as_billing": "Lieferadresse entspricht der Rechnungsadresse",
+      "title": "Niederlassungen"
+    },
     "components": {
       "adjustment_action_editor": {
         "calculator_label": "Kalkulator",
@@ -547,6 +634,67 @@
       "split_description": "Versenden Sie dieselben Produkte aus einem zweiten Lager mit eigenen Zonen und Tarifen.",
       "split_title": "Versandstandorte aufteilen"
     },
+    "delivery_profiles": {
+      "add_cta": "Profil hinzufügen",
+      "add_dialog_title": "Neues Lieferprofil",
+      "all_locations": "Alle Lagerorte",
+      "capabilities": {
+        "digital": "Digital",
+        "pickup": "Abholung",
+        "ships": "Versand"
+      },
+      "create_description": "Fassen Sie Produkte mit gleichem Versand zusammen — mit eigenen Lagerorten, Zonen und Versandarten.",
+      "create_label": "Profil erstellen",
+      "default_badge": "Standard",
+      "default_confirm": {
+        "message": "Produkte ohne eigenes Profil werden künftig über „{{name}}“ versendet.",
+        "title": "Als Standardprofil festlegen"
+      },
+      "delete_confirm": {
+        "message": "„{{name}}“ löschen? Die zugehörigen Zonen und Versandarten werden mitgelöscht.",
+        "title": "Versandprofil löschen"
+      },
+      "detail": {
+        "add_digital_method": "Digitale Methode hinzufügen",
+        "add_method": "Versandart hinzufügen",
+        "collect_from": "Abholen bei",
+        "collect_from_hint": "Standorte, an denen abgeholt werden kann. Änderungen gelten sofort.",
+        "delete_label": "Profil löschen",
+        "digital_empty": "Noch keine digitale Liefermethode.",
+        "digital_hint": "Wird ohne Versand oder Abholung geliefert.",
+        "digital_title": "Digitale Lieferung",
+        "general_title": "Allgemein",
+        "hidden_badge": "Ausgeblendet",
+        "load_failed_title": "Dieses Versandprofil konnte nicht geladen werden",
+        "no_methods": "Hier gibt es noch keine Versandarten.",
+        "no_stock_locations": "Noch keine Standorte — legen Sie einen unter Einstellungen → Standorte an.",
+        "no_zone_hint": "Diese Versandarten gelten überall, wohin dieses Profil reicht.",
+        "no_zone_title": "Keine Zonenbeschränkung",
+        "no_zones": "Noch keine Zonen — legen Sie eine an, um Versandarten anzubieten.",
+        "offer_pickup": "Abholung anbieten",
+        "origins_title": "Versand ab",
+        "pickup_empty": "Noch keine Abholmethode — auf diesem Profil ist keine Abholung möglich.",
+        "pickup_hint": "Kundinnen und Kunden holen diese Bestellungen persönlich ab. Abholung hat kein Ziel, daher gelten keine Zonen.",
+        "pickup_title": "Abholung",
+        "zones_title": "Zonen und Versandarten"
+      },
+      "empty": "Noch keine Lieferprofile.",
+      "is_default_hint": "Produkte ohne eigenes Profil werden über dieses Profil versendet.",
+      "kind_immutable_hint": "Die Art wird beim Erstellen des Profils festgelegt.",
+      "kinds": {
+        "digital": "Digital",
+        "shipping": "Versand"
+      },
+      "locations_count": "{{count}} Lagerorte",
+      "make_default": "Als Standard festlegen",
+      "messages": {
+        "created": "Versandprofil erstellt",
+        "deleted": "Versandprofil gelöscht",
+        "updated": "Versandprofil aktualisiert"
+      },
+      "search_placeholder": "Lieferprofile suchen…",
+      "selected_locations": "Ausgewählte Lagerorte"
+    },
     "delivery_zones": {
       "add_countries_in_markets": "Weitere Länder unter Märkte hinzufügen",
       "add_cta": "Lieferzone hinzufügen",
@@ -589,6 +737,9 @@
       "states_summary": "{{selected}} von {{total}} Bundesländern",
       "to_placeholder": "Bis",
       "toggle_states": "Bundesländer von {{country}} anzeigen"
+    },
+    "enterprise": {
+      "learn_more": "Mehr über Spree Enterprise erfahren"
     },
     "errors": {
       "forbidden_description": "Sie haben keine Berechtigung, diese Seite anzuzeigen.",
@@ -1718,67 +1869,6 @@
         }
       }
     },
-    "delivery_profiles": {
-      "add_cta": "Profil hinzufügen",
-      "add_dialog_title": "Neues Lieferprofil",
-      "all_locations": "Alle Lagerorte",
-      "capabilities": {
-        "digital": "Digital",
-        "pickup": "Abholung",
-        "ships": "Versand"
-      },
-      "create_description": "Fassen Sie Produkte mit gleichem Versand zusammen — mit eigenen Lagerorten, Zonen und Versandarten.",
-      "create_label": "Profil erstellen",
-      "default_badge": "Standard",
-      "default_confirm": {
-        "message": "Produkte ohne eigenes Profil werden künftig über „{{name}}“ versendet.",
-        "title": "Als Standardprofil festlegen"
-      },
-      "delete_confirm": {
-        "message": "„{{name}}“ löschen? Die zugehörigen Zonen und Versandarten werden mitgelöscht.",
-        "title": "Versandprofil löschen"
-      },
-      "detail": {
-        "add_digital_method": "Digitale Methode hinzufügen",
-        "add_method": "Versandart hinzufügen",
-        "collect_from": "Abholen bei",
-        "collect_from_hint": "Standorte, an denen abgeholt werden kann. Änderungen gelten sofort.",
-        "delete_label": "Profil löschen",
-        "digital_empty": "Noch keine digitale Liefermethode.",
-        "digital_hint": "Wird ohne Versand oder Abholung geliefert.",
-        "digital_title": "Digitale Lieferung",
-        "general_title": "Allgemein",
-        "hidden_badge": "Ausgeblendet",
-        "load_failed_title": "Dieses Versandprofil konnte nicht geladen werden",
-        "no_methods": "Hier gibt es noch keine Versandarten.",
-        "no_stock_locations": "Noch keine Standorte — legen Sie einen unter Einstellungen → Standorte an.",
-        "no_zone_hint": "Diese Versandarten gelten überall, wohin dieses Profil reicht.",
-        "no_zone_title": "Keine Zonenbeschränkung",
-        "no_zones": "Noch keine Zonen — legen Sie eine an, um Versandarten anzubieten.",
-        "offer_pickup": "Abholung anbieten",
-        "origins_title": "Versand ab",
-        "pickup_empty": "Noch keine Abholmethode — auf diesem Profil ist keine Abholung möglich.",
-        "pickup_hint": "Kundinnen und Kunden holen diese Bestellungen persönlich ab. Abholung hat kein Ziel, daher gelten keine Zonen.",
-        "pickup_title": "Abholung",
-        "zones_title": "Zonen und Versandarten"
-      },
-      "empty": "Noch keine Lieferprofile.",
-      "is_default_hint": "Produkte ohne eigenes Profil werden über dieses Profil versendet.",
-      "kind_immutable_hint": "Die Art wird beim Erstellen des Profils festgelegt.",
-      "kinds": {
-        "digital": "Digital",
-        "shipping": "Versand"
-      },
-      "locations_count": "{{count}} Lagerorte",
-      "make_default": "Als Standard festlegen",
-      "messages": {
-        "created": "Versandprofil erstellt",
-        "deleted": "Versandprofil gelöscht",
-        "updated": "Versandprofil aktualisiert"
-      },
-      "search_placeholder": "Lieferprofile suchen…",
-      "selected_locations": "Ausgewählte Lagerorte"
-    },
     "gift_cards": {
       "batch_autocomplete": {
         "empty": "Keine passenden Chargen",
@@ -1938,6 +2028,9 @@
       "not_found_title": "Einladung nicht gefunden",
       "sign_in_and_accept": "Anmelden & annehmen",
       "sign_in_to_accept": ". Melden Sie sich an, um anzunehmen."
+    },
+    "jurisdiction": {
+      "everywhere": "Überall"
     },
     "markets": {
       "add_cta": "Markt hinzufügen",
@@ -3775,6 +3868,240 @@
         "name_required": "Name ist erforderlich"
       }
     },
+    "seller_requirements": {
+      "title": "Verkäuferanforderungen",
+      "search_placeholder": "Anforderungen suchen",
+      "empty": "Noch keine Anforderungen. Verkäufer können sofort um Prüfung bitten.",
+      "add_cta": "Anforderung hinzufügen",
+      "add_title": "Anforderung hinzufügen",
+      "edit_title": "Anforderung bearbeiten",
+      "columns": {
+        "kind": "Typ",
+        "required": "Erforderlich"
+      },
+      "required": {
+        "yes": "Erforderlich",
+        "no": "Empfohlen"
+      },
+      "status": {
+        "disabled": "Aus"
+      },
+      "fields": {
+        "accepted_files": {
+          "label": "Zulässige Dateien",
+          "help": "Verkäufer können hochladen: {{types}}"
+        },
+        "active": {
+          "label": "Aktiv",
+          "help": "Ausschalten, um dies nicht mehr zu verlangen, ohne es zu löschen."
+        },
+        "custom_fields": {
+          "label": "Benutzerdefinierte Felder",
+          "help": "Der Verkäufer muss jedes gewählte Feld ausfüllen.",
+          "placeholder": "Felder suchen",
+          "empty": "Keine Verkäuferfelder gefunden. Legen Sie sie unter Einstellungen → Benutzerdefinierte Felder an."
+        },
+        "description": {
+          "label": "Hinweise",
+          "placeholder": "Erklären Sie dem Verkäufer, was Sie brauchen und warum"
+        },
+        "kind": {
+          "label": "Typ",
+          "placeholder": "Wählen Sie, was Sie verlangen"
+        },
+        "name": {
+          "label": "Name",
+          "label_required": "Name (erforderlich)",
+          "help": "Was der Verkäufer auf seiner Liste sieht."
+        },
+        "required": {
+          "label": "Erforderlich",
+          "help": "Erforderliche Punkte müssen vor der Freigabe erledigt sein. Andere gelten als empfohlen."
+        }
+      },
+      "delete_confirm": {
+        "title": "Anforderung löschen?",
+        "message": "Verkäufer werden nicht mehr nach „{{name}}\" gefragt. Bereits Eingereichtes wird ebenfalls gelöscht."
+      },
+      "messages": {
+        "created": "Anforderung hinzugefügt",
+        "updated": "Anforderung gespeichert",
+        "deleted": "Anforderung gelöscht",
+        "submission_accepted": "Angenommen",
+        "submission_rejected": "An den Verkäufer zurückgeschickt",
+        "waived": "Anforderung für diesen Verkäufer erlassen"
+      },
+      "kinds": {
+        "accept_terms": "Bedingungen akzeptieren",
+        "complete_profile": "Profil vervollständigen",
+        "billing_address": "Rechnungsadresse",
+        "returns_address": "Retourenadresse",
+        "minimum_products": "Mindestanzahl Produkte",
+        "required_custom_fields": "Erforderliche benutzerdefinierte Felder",
+        "attestation": "Bestätigung des Verkäufers",
+        "operator_review": "Manuelle Prüfung",
+        "document": "Dokument"
+      }
+    },
+    "sellers": {
+      "actions": {
+        "invite": "Einladen",
+        "reinvite": "Erneut senden",
+        "send_invitation": "Einladung senden",
+        "approve": "Freigeben",
+        "reinstate": "Sperre aufheben",
+        "suspend": "Sperren",
+        "reject": "Ablehnen",
+        "reopen_onboarding": "Zurück zur Einrichtung"
+      },
+      "add_cta": "Verkäufer hinzufügen",
+      "add_sheet_title": "Neuer Verkäufer",
+      "address": {
+        "filled": "Ausgefüllt",
+        "not_filled": "Nicht ausgefüllt",
+        "not_provided_by_seller": "Vom Verkäufer noch nicht angegeben",
+        "not_located_yet": "Die Karte erscheint, sobald diese Adresse gefunden wurde."
+      },
+      "approve_override_confirm": {
+        "title": "Trotzdem freigeben?",
+        "message": "Dieser Verkäufer hat Folgendes nicht erledigt: {{names}}. Eine Freigabe jetzt erlaubt den Verkauf trotzdem, und die Entscheidung wird festgehalten.",
+        "action": "Trotzdem freigeben"
+      },
+      "autocomplete": {
+        "placeholder": "Verkäufer suchen",
+        "empty": "Keine Verkäufer gefunden"
+      },
+      "create_description": "Legen Sie zuerst den Verkäufer an. Einladung, Freigabe und Auszahlungen richten Sie danach auf seiner Seite ein.",
+      "create_label": "Verkäufer anlegen",
+      "delete_confirm": {
+        "title": "Verkäufer löschen?",
+        "message": "Damit wird {{name}} vom Marktplatz entfernt. Die Produkte bleiben ohne Verkäufer im Katalog. Das lässt sich nicht rückgängig machen."
+      },
+      "detail": {
+        "load_error": "Dieser Verkäufer konnte nicht geladen werden",
+        "delete_label": "Verkäufer löschen",
+        "status": "Status",
+        "settlement": "Auszahlungen und Steuern",
+        "at_a_glance": "Auf einen Blick",
+        "contact": "Kontakt",
+        "edit_profile": "Profil bearbeiten",
+        "edit_profile_description": "Der Verkäufer pflegt das in seinem eigenen Bereich. Änderungen hier erfolgen in seinem Namen.",
+        "edit_settlement": "Auszahlungen und Steuern bearbeiten",
+        "edit_settlement_description": "Nur Sie sehen und ändern diese Angaben. Der Verkäufer bearbeitet sie nie.",
+        "no_about": "Dieser Verkäufer hat noch keine Beschreibung verfasst.",
+        "billing_address": "Rechnungsadresse",
+        "returns_address": "Retourenadresse"
+      },
+      "empty": "Noch keine Verkäufer",
+      "images": {
+        "logo_label": "Logo",
+        "logo_help": "Quadratisch passt am besten. Wird überall neben dem Verkäufer angezeigt.",
+        "square_logo_label": "Quadratisches Logo",
+        "square_logo_help": "Für Stellen, die ein enges Quadrat brauchen, etwa ein Profilbild.",
+        "cover_photo_label": "Titelbild",
+        "cover_photo_help": "Ein breites Banner oben auf dem Verkäuferprofil."
+      },
+      "invite_sheet": {
+        "title": "Verkäufer einladen",
+        "description": "Mit der Annahme tritt die Person dem Verkäuferteam bei und kann sich in ihrem eigenen Bereich anmelden.",
+        "email_help": "Die Einladung geht an diese Adresse."
+      },
+      "messages": {
+        "created": "Verkäufer angelegt",
+        "create_failed": "Verkäufer konnte nicht angelegt werden",
+        "updated": "Verkäufer aktualisiert",
+        "update_failed": "Verkäufer konnte nicht aktualisiert werden",
+        "deleted": "Verkäufer gelöscht",
+        "delete_failed": "Verkäufer konnte nicht gelöscht werden",
+        "invited": "Einladung gesendet",
+        "invite_failed": "Einladung konnte nicht gesendet werden",
+        "approved": "Verkäufer freigegeben",
+        "approve_failed": "Verkäufer konnte nicht freigegeben werden",
+        "suspended": "Verkäufer gesperrt",
+        "suspend_failed": "Verkäufer konnte nicht gesperrt werden",
+        "rejected": "Verkäufer abgelehnt",
+        "reject_failed": "Verkäufer konnte nicht abgelehnt werden",
+        "onboarding_reopened": "Zurück zur Einrichtung geschickt"
+      },
+      "not_provided": "Nicht angegeben",
+      "on_holiday_notice": "Dieser Verkäufer ist abwesend. Sein Katalog bleibt sichtbar, es kann aber nichts gekauft werden.",
+      "onboarding": {
+        "title": "Einrichtung",
+        "progress": "{{done}} von {{total}} erledigt",
+        "waived": "Erlassen",
+        "download": "Datei herunterladen",
+        "seller_note": "Verkäufer: {{note}}",
+        "review_note": "Ihre Notiz: {{note}}",
+        "actions": {
+          "accept": "Annehmen",
+          "reject": "Zurückschicken",
+          "waive": "Für diesen Verkäufer erlassen"
+        },
+        "reject_confirm": {
+          "title": "Zurückschicken?",
+          "message": "Der Verkäufer wird erneut nach „{{name}}\" gefragt."
+        },
+        "waive_confirm": {
+          "title": "Anforderung erlassen?",
+          "message": "„{{name}}\" gilt nur für diesen Verkäufer als erfüllt."
+        },
+        "all_done": "Alles erledigt 🎉",
+        "status": {
+          "complete": "Erledigt",
+          "pending": "In Prüfung",
+          "rejected": "Zurückgeschickt",
+          "incomplete": "Ausstehend"
+        }
+      },
+      "onboarding_column": "Einrichtung",
+      "payout_interval": {
+        "inherit": "Standard des Shops",
+        "daily": "Täglich",
+        "weekly": "Wöchentlich",
+        "biweekly": "Alle zwei Wochen",
+        "monthly": "Monatlich",
+        "manual": "Manuell"
+      },
+      "products_column": "Produkte",
+      "reject_confirm": {
+        "title": "Verkäufer ablehnen?",
+        "message": "{{name}} wird nicht zum Marktplatz zugelassen. Sie können ihn später trotzdem freigeben."
+      },
+      "reopen_onboarding_confirm": {
+        "title": "Zurück zur Einrichtung schicken?",
+        "message": "{{name}} kann die Angaben ändern und erneut um Prüfung bitten."
+      },
+      "search_placeholder": "Verkäufer suchen",
+      "status": {
+        "pending": "Offen",
+        "invited": "Eingeladen",
+        "onboarding": "In Einrichtung",
+        "ready_for_review": "Zur Prüfung bereit",
+        "approved": "Freigegeben",
+        "suspended": "Gesperrt",
+        "rejected": "Abgelehnt",
+        "canceled": "Abgebrochen"
+      },
+      "status_help": {
+        "pending": "Angelegt, aber noch niemand eingeladen.",
+        "invited": "Wartet darauf, dass jemand die Einladung annimmt.",
+        "onboarding": "Trägt gerade seine Daten ein.",
+        "ready_for_review": "Wartet auf Ihre Freigabe.",
+        "approved": "Verkauft auf dem Marktplatz.",
+        "suspended": "Vom Verkauf ausgeschlossen. Heben Sie die Sperre auf, um wieder zu handeln.",
+        "rejected": "Nicht zum Marktplatz zugelassen.",
+        "canceled": "Hat vor dem Beitritt zurückgezogen."
+      },
+      "suspend_confirm": {
+        "title": "Verkäufer sperren?",
+        "message": "{{name}} kann sofort nicht mehr verkaufen. Katalog und Historie bleiben erhalten, und Sie können die Sperre später aufheben."
+      },
+      "tax_remittance": {
+        "seller": "Verkäufer führt ab",
+        "platform": "Marktplatz führt ab"
+      },
+      "team_column": "Team"
+    },
     "settings": {
       "webhooks": {
         "errors": {
@@ -3799,6 +4126,7 @@
         "allowed_origins": "Zugelassene Ursprünge",
         "api_keys": "API-Schlüssel",
         "channels": "Verkaufskanäle",
+        "commission_rates": "Provisionssätze",
         "custom_field_definitions": "Benutzerdefinierte Felder",
         "delivery_profiles": "Lieferprofile",
         "emails": "E-Mails",
@@ -3810,13 +4138,13 @@
         "profile": "Profil",
         "reasons": "Rücksendungen & Gründe",
         "roles": "Rollen",
+        "seller_requirements": "Verkäuferanforderungen",
         "staff": "Mitarbeiter",
         "stock_locations": "Lagerstandorte",
         "store": "Shop",
         "tax_categories": "Steuerkategorien",
         "tax_rates": "Steuersätze",
-        "webhooks": "Webhooks",
-        "commission_rates": "Provisionssätze"
+        "webhooks": "Webhooks"
       }
     },
     "setup": {
@@ -3981,130 +4309,6 @@
       },
       "search_placeholder": "Nach Name suchen…"
     },
-    "translations": {
-      "coverage_summary": "{{translated}} von {{total}} Sprachen übersetzt",
-      "dirty_summary": "{{count}} nicht gespeicherte Änderung(en)",
-      "discard_confirm": {
-        "message": "Sie haben {{count}} nicht gespeicherte Übersetzungsänderung(en). Verwerfen?",
-        "title": "Änderungen verwerfen?"
-      },
-      "field": "Feld",
-      "load_error": "Übersetzungen konnten nicht geladen werden",
-      "locale": "Sprache",
-      "manage": "Übersetzungen verwalten",
-      "no_locales": "Fügen Sie Ihrem Shop weitere Sprachen hinzu, um dieses Produkt zu übersetzen.",
-      "original": "Original",
-      "save": "Übersetzungen speichern",
-      "save_error": "Übersetzungen konnten nicht gespeichert werden",
-      "saved": "Übersetzungen gespeichert",
-      "source": "Quelle",
-      "title": "Übersetzungen"
-    },
-    "jurisdiction": {
-      "everywhere": "Überall"
-    },
-    "companies": {
-      "add_cta": "Firma hinzufügen",
-      "add_sheet_title": "Neue Firma",
-      "create_description": "Geschäftskunden kaufen über Niederlassungen ein. Niederlassungen, Steuernummer und Freistellungsbescheinigungen können Sie hinzufügen, sobald die Firma angelegt ist.",
-      "create_label": "Firma anlegen",
-      "delete_confirm": {
-        "message": "Damit werden {{name}} sowie alle Niederlassungen, Einkäufer und Bescheinigungen gelöscht. Das lässt sich nicht rückgängig machen.",
-        "title": "Firma löschen?"
-      },
-      "detail": {
-        "delete_label": "Firma löschen",
-        "load_error": "Diese Firma konnte nicht geladen werden",
-        "profile": "Firma"
-      },
-      "empty": "Noch keine Firmen",
-      "locations_column": "Niederlassungen",
-      "messages": {
-        "created": "Firma angelegt",
-        "deleted": "Firma gelöscht",
-        "updated": "Firma aktualisiert"
-      },
-      "search_placeholder": "Firmen suchen"
-    },
-    "company_locations": {
-      "add_cta": "Niederlassung hinzufügen",
-      "add_title": "Neue Niederlassung",
-      "addresses": "Adressen",
-      "billing_address": "Rechnungsadresse",
-      "contacts_count_one": "{{count}} Einkäufer",
-      "contacts_count_other": "{{count}} Einkäufer",
-      "detail": {
-        "delete_label": "Niederlassung löschen",
-        "load_error": "Diese Niederlassung konnte nicht geladen werden"
-      },
-      "dialog_description": "Eine Niederlassung ist der Ort, an den die Rechnung geht und an den geliefert wird. Adressen sind optional, benötigen aber Name und Land, sobald sie ausgefüllt werden.",
-      "edit_title": "Niederlassung bearbeiten",
-      "empty": "Noch keine Niederlassungen",
-      "messages": {
-        "created": "Niederlassung angelegt",
-        "deleted": "Niederlassung gelöscht",
-        "updated": "Niederlassung aktualisiert"
-      },
-      "shipping_address": "Lieferadresse",
-      "shipping_same_as_billing": "Lieferadresse entspricht der Rechnungsadresse",
-      "title": "Niederlassungen"
-    },
-    "company_contacts": {
-      "add_cta": "Einkäufer hinzufügen",
-      "add_title": "Einkäufer berechtigen",
-      "dialog_description": "Ein Kunde, der für diese Niederlassung einkauft. Wer für genau eine Niederlassung einkauft, dessen Bestellungen werden ihr automatisch zugeordnet.",
-      "empty": "Noch keine Einkäufer berechtigt",
-      "messages": {
-        "created": "Einkäufer hinzugefügt",
-        "deleted": "Einkäufer entfernt"
-      },
-      "remove_action": "Einkäufer entfernen",
-      "remove_confirm": {
-        "message": "{{email}} kauft dann nicht mehr für diese Niederlassung ein. Das Kundenkonto bleibt bestehen.",
-        "title": "Diesen Einkäufer entfernen?"
-      },
-      "roles_enterprise_help": "Hier hinzugefügte Einkäufer können für diese Niederlassung bestellen. Rollen, Freigabeprozesse und Ausgabenlimits gehören zu Spree Enterprise.",
-      "roles_enterprise_title": "Rollen und Freigaben sind eine Enterprise-Funktion",
-      "title": "Einkäufer"
-    },
-    "tax_identifiers": {
-      "add_cta": "Nummer hinzufügen",
-      "add_title": "Steuernummer hinzufügen",
-      "checked_prefix": "Geprüft",
-      "delete_confirm": {
-        "message": "{{value}} wird entfernt. Bereits abgeschlossene Bestellungen behalten die Nummer, mit der sie abgerechnet wurden.",
-        "title": "Diese Nummer löschen?"
-      },
-      "dialog_description": "Die Umsatzsteuer-Identifikationsnummer, die auf Rechnungen erscheint. Sie macht das Reverse-Charge-Verfahren im EU-B2B-Handel möglich.",
-      "edit_title": "Steuernummer bearbeiten",
-      "empty": "Keine Steuernummer hinterlegt",
-      "kinds": {
-        "au_abn": "Australische Unternehmensnummer",
-        "ch_vat": "Schweizer MWST-Nr.",
-        "eu_vat": "EU-USt-IdNr.",
-        "gb_vat": "UK-USt-IdNr.",
-        "us_ein": "US-EIN"
-      },
-      "messages": {
-        "created": "Nummer hinzugefügt",
-        "deleted": "Nummer gelöscht",
-        "updated": "Nummer aktualisiert",
-        "validation_failed": "Die Nummer konnte nicht geprüft werden",
-        "validation_requested": "Die Nummer wird beim Register geprüft"
-      },
-      "not_validatable": "Für diese Art ist keine Prüfung eingerichtet, die Nummer wird wie eingegeben verwendet.",
-      "select_kind": "Art wählen",
-      "title": "Steuernummer",
-      "validate_action": "Beim Register prüfen",
-      "validation_status": {
-        "not_checked": "Nicht geprüft",
-        "pending": "Wird geprüft",
-        "unavailable": "Register nicht erreichbar",
-        "unsupported": "Nicht prüfbar",
-        "unverified": "Ungültig",
-        "verified": "Bestätigt"
-      }
-    },
     "tax_exemption_certificates": {
       "add_cta": "Bescheinigung hinzufügen",
       "add_title": "Freistellungsbescheinigung hinzufügen",
@@ -4150,6 +4354,50 @@
       "verified_at": "Angenommen am",
       "verify_action": "Annehmen"
     },
+    "tax_identifiers": {
+      "add_cta": "Nummer hinzufügen",
+      "add_title": "Steuernummer hinzufügen",
+      "checked_prefix": "Geprüft",
+      "delete_confirm": {
+        "message": "{{value}} wird entfernt. Bereits abgeschlossene Bestellungen behalten die Nummer, mit der sie abgerechnet wurden.",
+        "title": "Diese Nummer löschen?"
+      },
+      "dialog_description": "Die Umsatzsteuer-Identifikationsnummer, die auf Rechnungen erscheint. Sie macht das Reverse-Charge-Verfahren im EU-B2B-Handel möglich.",
+      "edit_title": "Steuernummer bearbeiten",
+      "empty": "Keine Steuernummer hinterlegt",
+      "kinds": {
+        "au_abn": "Australische Unternehmensnummer",
+        "ch_vat": "Schweizer MWST-Nr.",
+        "eu_vat": "EU-USt-IdNr.",
+        "gb_vat": "UK-USt-IdNr.",
+        "us_ein": "US-EIN"
+      },
+      "messages": {
+        "created": "Nummer hinzugefügt",
+        "deleted": "Nummer gelöscht",
+        "updated": "Nummer aktualisiert",
+        "validation_failed": "Die Nummer konnte nicht geprüft werden",
+        "validation_requested": "Die Nummer wird beim Register geprüft"
+      },
+      "not_validatable": "Für diese Art ist keine Prüfung eingerichtet, die Nummer wird wie eingegeben verwendet.",
+      "select_kind": "Art wählen",
+      "title": "Steuernummer",
+      "validate_action": "Beim Register prüfen",
+      "validation_status": {
+        "not_checked": "Nicht geprüft",
+        "pending": "Wird geprüft",
+        "unavailable": "Register nicht erreichbar",
+        "unsupported": "Nicht prüfbar",
+        "unverified": "Ungültig",
+        "verified": "Bestätigt"
+      }
+    },
+    "tax_providers": {
+      "limitations_title": "{{name}} deckt Folgendes nicht ab",
+      "unavailable_option": "{{name}} (nicht eingerichtet)",
+      "use_default": "Standardberechnung verwenden",
+      "use_default_named": "Standard ({{name}})"
+    },
     "tax_rates": {
       "add_cta": "Steuersatz hinzufügen",
       "all_categories": "Alle Kategorien",
@@ -4171,148 +4419,24 @@
       "search_placeholder": "Steuersätze suchen",
       "select_category": "Kategorie wählen"
     },
-    "tax_providers": {
-      "limitations_title": "{{name}} deckt Folgendes nicht ab",
-      "unavailable_option": "{{name}} (nicht eingerichtet)",
-      "use_default": "Standardberechnung verwenden",
-      "use_default_named": "Standard ({{name}})"
-    },
-    "enterprise": {
-      "learn_more": "Mehr über Spree Enterprise erfahren"
-    },
-    "sellers": {
-      "add_cta": "Verkäufer hinzufügen",
-      "add_sheet_title": "Neuer Verkäufer",
-      "create_description": "Legen Sie zuerst den Verkäufer an. Einladung, Freigabe und Auszahlungen richten Sie danach auf seiner Seite ein.",
-      "create_label": "Verkäufer anlegen",
-      "search_placeholder": "Verkäufer suchen",
-      "empty": "Noch keine Verkäufer",
-      "products_column": "Produkte",
-      "team_column": "Team",
-      "on_holiday_notice": "Dieser Verkäufer ist abwesend. Sein Katalog bleibt sichtbar, es kann aber nichts gekauft werden.",
-      "delete_confirm": {
-        "title": "Verkäufer löschen?",
-        "message": "Damit wird {{name}} vom Marktplatz entfernt. Die Produkte bleiben ohne Verkäufer im Katalog. Das lässt sich nicht rückgängig machen."
+    "translations": {
+      "coverage_summary": "{{translated}} von {{total}} Sprachen übersetzt",
+      "dirty_summary": "{{count}} nicht gespeicherte Änderung(en)",
+      "discard_confirm": {
+        "message": "Sie haben {{count}} nicht gespeicherte Übersetzungsänderung(en). Verwerfen?",
+        "title": "Änderungen verwerfen?"
       },
-      "suspend_confirm": {
-        "title": "Verkäufer sperren?",
-        "message": "{{name}} kann sofort nicht mehr verkaufen. Katalog und Historie bleiben erhalten, und Sie können die Sperre später aufheben."
-      },
-      "reject_confirm": {
-        "title": "Verkäufer ablehnen?",
-        "message": "{{name}} wird nicht zum Marktplatz zugelassen. Sie können ihn später trotzdem freigeben."
-      },
-      "invite_sheet": {
-        "title": "Verkäufer einladen",
-        "description": "Mit der Annahme tritt die Person dem Verkäuferteam bei und kann sich in ihrem eigenen Bereich anmelden.",
-        "email_help": "Die Einladung geht an diese Adresse."
-      },
-      "actions": {
-        "invite": "Einladen",
-        "reinvite": "Erneut senden",
-        "send_invitation": "Einladung senden",
-        "approve": "Freigeben",
-        "reinstate": "Sperre aufheben",
-        "suspend": "Sperren",
-        "reject": "Ablehnen"
-      },
-      "detail": {
-        "load_error": "Dieser Verkäufer konnte nicht geladen werden",
-        "delete_label": "Verkäufer löschen",
-        "status": "Status",
-        "settlement": "Auszahlungen und Steuern",
-        "at_a_glance": "Auf einen Blick",
-        "contact": "Kontakt",
-        "edit_profile": "Profil bearbeiten",
-        "edit_profile_description": "Der Verkäufer pflegt das in seinem eigenen Bereich. Änderungen hier erfolgen in seinem Namen.",
-        "edit_settlement": "Auszahlungen und Steuern bearbeiten",
-        "edit_settlement_description": "Nur Sie sehen und ändern diese Angaben. Der Verkäufer bearbeitet sie nie.",
-        "no_about": "Dieser Verkäufer hat noch keine Beschreibung verfasst."
-      },
-      "status": {
-        "pending": "Offen",
-        "invited": "Eingeladen",
-        "onboarding": "In Einrichtung",
-        "ready_for_review": "Zur Prüfung bereit",
-        "approved": "Freigegeben",
-        "suspended": "Gesperrt",
-        "rejected": "Abgelehnt",
-        "canceled": "Abgebrochen"
-      },
-      "status_help": {
-        "pending": "Angelegt, aber noch niemand eingeladen.",
-        "invited": "Wartet darauf, dass jemand die Einladung annimmt.",
-        "onboarding": "Trägt gerade seine Daten ein.",
-        "ready_for_review": "Wartet auf Ihre Freigabe.",
-        "approved": "Verkauft auf dem Marktplatz.",
-        "suspended": "Vom Verkauf ausgeschlossen. Heben Sie die Sperre auf, um wieder zu handeln.",
-        "rejected": "Nicht zum Marktplatz zugelassen.",
-        "canceled": "Hat vor dem Beitritt zurückgezogen."
-      },
-      "tax_remittance": {
-        "seller": "Verkäufer führt ab",
-        "platform": "Marktplatz führt ab"
-      },
-      "payout_interval": {
-        "inherit": "Standard des Shops",
-        "daily": "Täglich",
-        "weekly": "Wöchentlich",
-        "biweekly": "Alle zwei Wochen",
-        "monthly": "Monatlich",
-        "manual": "Manuell"
-      },
-      "messages": {
-        "created": "Verkäufer angelegt",
-        "create_failed": "Verkäufer konnte nicht angelegt werden",
-        "updated": "Verkäufer aktualisiert",
-        "update_failed": "Verkäufer konnte nicht aktualisiert werden",
-        "deleted": "Verkäufer gelöscht",
-        "delete_failed": "Verkäufer konnte nicht gelöscht werden",
-        "invited": "Einladung gesendet",
-        "invite_failed": "Einladung konnte nicht gesendet werden",
-        "approved": "Verkäufer freigegeben",
-        "approve_failed": "Verkäufer konnte nicht freigegeben werden",
-        "suspended": "Verkäufer gesperrt",
-        "suspend_failed": "Verkäufer konnte nicht gesperrt werden",
-        "rejected": "Verkäufer abgelehnt",
-        "reject_failed": "Verkäufer konnte nicht abgelehnt werden"
-      },
-      "not_provided": "Nicht angegeben",
-      "images": {
-        "logo_label": "Logo",
-        "logo_help": "Quadratisch passt am besten. Wird überall neben dem Verkäufer angezeigt.",
-        "square_logo_label": "Quadratisches Logo",
-        "square_logo_help": "Für Stellen, die ein enges Quadrat brauchen, etwa ein Profilbild.",
-        "cover_photo_label": "Titelbild",
-        "cover_photo_help": "Ein breites Banner oben auf dem Verkäuferprofil."
-      },
-      "autocomplete": {
-        "placeholder": "Verkäufer suchen",
-        "empty": "Keine Verkäufer gefunden"
-      }
-    },
-    "commission_rates": {
-      "add_cta": "Provisionssatz hinzufügen",
-      "applies_to_everything": "Jeder Verkauf",
-      "create_description": "Legen Sie fest, was der Marktplatz Verkäufern berechnet und für welche Verkäufe das gilt.",
-      "create_label": "Provisionssatz erstellen",
-      "delete_confirm": {
-        "message": "{{name}} wird entfernt. Bereits berechnete Provisionen bleiben unverändert.",
-        "title": "Provisionssatz löschen?"
-      },
-      "edit_description": "Gebühr, Grenzen und betroffene Verkäufe aktualisieren.",
-      "empty": "Noch keine Provisionssätze",
-      "messages": {
-        "created": "Provisionssatz erstellt",
-        "deleted": "Provisionssatz gelöscht",
-        "updated": "Provisionssatz aktualisiert"
-      },
-      "search_placeholder": "Nach Namen suchen…",
-      "order_hint": "Neue Sätze stehen oben in der Liste, und der erste passende gilt — zum Umsortieren ziehen.",
-      "conditions": {
-        "add": "Bedingung hinzufügen",
-        "title": "Bedingungen"
-      }
+      "field": "Feld",
+      "load_error": "Übersetzungen konnten nicht geladen werden",
+      "locale": "Sprache",
+      "manage": "Übersetzungen verwalten",
+      "no_locales": "Fügen Sie Ihrem Shop weitere Sprachen hinzu, um dieses Produkt zu übersetzen.",
+      "original": "Original",
+      "save": "Übersetzungen speichern",
+      "save_error": "Übersetzungen konnten nicht gespeichert werden",
+      "saved": "Übersetzungen gespeichert",
+      "source": "Quelle",
+      "title": "Übersetzungen"
     }
   }
 }

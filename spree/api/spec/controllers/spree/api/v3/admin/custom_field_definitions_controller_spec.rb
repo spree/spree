@@ -210,4 +210,59 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldDefinitionsController, type: :c
       end
     end
   end
+
+  describe 'GET #resource_types' do
+    it 'offers everything the registry allows, not a list the dashboard carries' do
+      get :resource_types, as: :json
+
+      expect(response).to have_http_status(:ok)
+      types = json_response['data']
+      values = types.map { |t| t['resource_type'] }
+
+      # A resource is offered because core registered it — sellers included,
+      # which is what a marketplace needs to ask for a VAT number.
+      expect(values).to include('Spree::Seller', 'Spree::Product', 'Spree::Order')
+      expect(values.size).to be > 6
+    end
+
+    it 'names categories as a merchant does while storing them where they live' do
+      get :resource_types, as: :json
+
+      category = json_response['data'].find { |t| t['resource_type'] == 'Spree::Taxon' }
+
+      # The label follows the class a merchant knows; the value follows where
+      # existing definitions are actually filed.
+      expect(category['name']).to eq('Categories')
+      expect(json_response['data'].map { |t| t['resource_type'] }).not_to include('Spree::Category')
+    end
+
+    it 'accepts the category type it offers, which is stored under the old class name' do
+      get :resource_types, as: :json
+      category = json_response['data'].find { |t| t['name'] == 'Categories' }
+
+      post :create, params: {
+        namespace: 'merch', key: 'aisle', label: 'Aisle',
+        field_type: 'Spree::CustomFields::ShortText',
+        resource_type: category['resource_type']
+      }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['resource_type']).to eq('Spree::Taxon')
+    end
+
+    it 'accepts a type it offered' do
+      get :resource_types, as: :json
+      seller_type = json_response['data'].find { |t| t['resource_type'] == 'Spree::Seller' }
+
+      post :create, params: {
+        namespace: 'compliance', key: 'vat_number', label: 'VAT number',
+        field_type: 'Spree::CustomFields::ShortText',
+        resource_type: seller_type['resource_type']
+      }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['resource_type']).to eq('Spree::Seller')
+    end
+  end
+
 end

@@ -197,4 +197,52 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
       end
     end
   end
+
+  path '/api/v3/admin/custom_field_definitions/resource_types' do
+    get 'List what custom fields can be attached to' do
+      tags 'Custom Field Definitions'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        The resources a definition can describe, from the server's own
+        registry (`Spree.custom_fields.enabled_resources`).
+
+        Read this rather than carrying a list: a resource an extension
+        registers appears here without a client release, and a `resource_type`
+        that is not listed is refused on create.
+
+        `resource_type` is the value to send; `name` is what a merchant calls
+        it. The two differ where a class has been renamed — categories are
+        stored under `Spree::Taxon` and shown as "Categories" — so send the
+        value back verbatim rather than deriving it from the name.
+      DESC
+      admin_scope :read, :settings
+
+      admin_sdk_example 'custom-field-definitions/resource-types'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+
+      response '200', 'resource types found' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+
+        schema type: :object,
+               properties: {
+                 data: {
+                   type: :array,
+                   items: {
+                     type: :object,
+                     properties: {
+                       resource_type: { type: :string, example: 'Spree::Seller' },
+                       name: { type: :string, example: 'Sellers' }
+                     }
+                   }
+                 }
+               }
+
+        run_test!
+      end
+    end
+  end
+
 end

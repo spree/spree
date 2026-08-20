@@ -147,7 +147,12 @@ Spree::Core::Engine.add_routes do
         end
 
         # Definitions are per resource type, not per instance.
-        resources :custom_field_definitions
+        resources :custom_field_definitions do
+          collection do
+            # What a definition can be attached to, from the registry.
+            get :resource_types
+          end
+        end
 
         # Translation discovery: the translatable-resources registry and the
         # store's supported locales. See docs/plans/5.5-6.0-resource-translations-api.md.
@@ -436,6 +441,31 @@ Spree::Core::Engine.add_routes do
             patch :approve
             patch :suspend
             patch :reject
+            # Where the seller stands against the marketplace's checklist,
+            # and the way back to onboarding when something has to be redone.
+            get :onboarding
+            patch :reopen_onboarding
+          end
+
+          # What this seller submitted about the requirements, and the
+          # operator's decisions on it. Nested, because a submission means
+          # nothing outside the seller it belongs to.
+          resources :requirement_submissions, only: [:index, :show, :create],
+                                              controller: 'seller_requirement_submissions' do
+            member do
+              patch :accept
+              patch :reject
+              get :download
+            end
+          end
+        end
+
+        # What this marketplace asks of a seller before it will let them
+        # trade. Configuration, so it hangs off the store rather than a
+        # seller.
+        resources :seller_requirements do
+          collection do
+            get :types
           end
         end
 

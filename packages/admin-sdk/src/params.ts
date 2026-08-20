@@ -1,6 +1,8 @@
 // Request parameter types for Admin API endpoints
 // Based on the Admin API OpenAPI specification
 
+import type { SellerRequirementStatus } from './types'
+
 export interface StoreUpdateParams {
   name?: string
   preferred_admin_locale?: string
@@ -1476,6 +1478,92 @@ export interface SellerSuspendParams {
 
 export interface SellerRejectParams {
   reason?: string
+}
+
+/**
+ * Admitting a seller. `override_requirements` admits one whose onboarding
+ * checklist is unfinished — the operator's deliberate exception, which the
+ * seller.approved event records along with what was outstanding.
+ */
+export interface SellerApproveParams {
+  override_requirements?: boolean
+}
+
+/** Sending a seller back to onboarding, with what they have to fix. */
+export interface SellerReopenOnboardingParams {
+  note?: string
+}
+
+/** A resource a custom field definition can be attached to. */
+export interface CustomFieldResourceType {
+  /** The value to send as `resource_type`. */
+  resource_type: string
+  /** What a merchant calls it, e.g. "Sellers". */
+  name: string
+}
+
+/** One configured entry on the marketplace's seller onboarding checklist. */
+export interface SellerRequirementCreateParams {
+  /** The kind, from `sellerRequirements.types()` — e.g. `document`. */
+  type: string
+  /** Custom field definitions this requirement asks the seller to fill in. */
+  custom_field_definition_ids?: string[]
+  name?: string
+  description?: string
+  position?: number
+  active?: boolean
+  required?: boolean
+  preferences?: Record<string, unknown>
+  metadata?: Record<string, unknown>
+}
+
+/** `type` is absent: a saved row's kind never changes. */
+export interface SellerRequirementUpdateParams {
+  custom_field_definition_ids?: string[]
+  name?: string
+  description?: string
+  position?: number
+  active?: boolean
+  required?: boolean
+  preferences?: Record<string, unknown>
+  metadata?: Record<string, unknown>
+}
+
+/** A requirement kind an operator can add, and the shape of its form. */
+export interface SellerRequirementType {
+  type: string
+  name: string
+  description: string
+  allow_multiple: boolean
+  accepts_submissions: boolean
+  reviewed_by_operator: boolean
+  /** Whether this store already has one — single-instance kinds only. */
+  configured: boolean
+  /** Whether the operator may add one now; the server owns the rule. */
+  addable: boolean
+  /** What a seller may upload, for kinds that collect a file. */
+  accepted_content_types: string[]
+  /** Association-backed config this kind takes beyond its preferences. */
+  association_fields: string[]
+  preference_schema: Array<Record<string, unknown>>
+}
+
+/** Excusing one seller from one requirement. */
+export interface SellerRequirementWaiveParams {
+  requirement_id: string
+  review_note?: string
+}
+
+/** Accepting or rejecting what a seller submitted. */
+export interface SellerRequirementReviewParams {
+  review_note?: string
+}
+
+/** A seller's evaluated onboarding checklist. */
+export interface SellerOnboarding {
+  status: string
+  progress: { done: number; total: number; percentage: number }
+  requirements: SellerRequirementStatus[]
 }
 
 /**
