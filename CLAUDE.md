@@ -266,6 +266,10 @@ The Store API (customer-facing) and Admin API (back-office) are two halves of th
 
 `model_class`, `serializer_class` (use `Spree.api.serializer_name`), `scope` (call `super` and chain), `find_resource`, `permitted_params`, `collection_includes`
 
+**A resource written through a workflow declares it, never re-implements the action.** Override `create_workflow` / `update_workflow` to return the workflow, and the inherited `create`/`update` keep their authorization, their result handling and their rendering — hand-writing those actions is how a controller silently loses the record-level `authorize_resource!` the base class does. Override `create_workflow_arguments` / `update_workflow_arguments` when the workflow's keywords differ from the defaults (`store:`/`attributes:` and `<resource>:`/`attributes:`).
+
+`build_resource` builds through the owner's association — `current_store.products`, or a nested resource's parent — so a new record carries its tenancy from where it was built rather than from an attribute assigned afterwards. A model the store has no association for falls back to the class. When a `create_workflow` is declared the record is left bare, since the workflow assigns the payload and the authorization check reads the record's owner rather than its attributes.
+
 #### Flat request/response structure
 
 API v3 uses flat params — no nested Rails-style wrapping. Declare a controller's writable attributes by overriding **`resource_permitted_attributes`** (a plain list). The base `permitted_attributes` appends extension-contributed attributes to it, and `permitted_params` permits and normalizes the result. `Spree::PermittedAttributes` and its model-name inference are **removed in 6.0** — a controller that declares neither `resource_permitted_attributes` nor `permitted_params` raises `NotImplementedError` on its first write.

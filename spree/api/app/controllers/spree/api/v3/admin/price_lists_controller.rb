@@ -70,30 +70,6 @@ module Spree
             end
           end
 
-          # POST /api/v3/admin/price_lists
-          def create
-            authorize! :create, model_class
-
-            result = Spree.price_list_create_workflow.call(store: current_store, attributes: permitted_params)
-
-            if result.success?
-              render json: serialize_resource(result.value), status: :created
-            else
-              render_result_error(result)
-            end
-          end
-
-          # PATCH /api/v3/admin/price_lists/:id
-          def update
-            result = Spree.price_list_update_workflow.call(price_list: @resource, attributes: permitted_params)
-
-            if result.success?
-              render json: serialize_resource(result.value)
-            else
-              render_result_error(result)
-            end
-          end
-
           # GET /api/v3/admin/price_lists/:id/prices
           #
           # The spreadsheet editor's data source. Returns every Price row
@@ -124,6 +100,14 @@ module Spree
 
           def serializer_class
             Spree.api.admin_price_list_serializer
+          end
+
+          def create_workflow
+            Spree.price_list_create_workflow
+          end
+
+          def update_workflow
+            Spree.price_list_update_workflow
           end
 
           def scope

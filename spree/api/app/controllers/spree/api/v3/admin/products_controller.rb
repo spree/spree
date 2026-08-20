@@ -116,30 +116,6 @@ module Spree
             render json: { product_count: destroyed }
           end
 
-          # POST /api/v3/admin/products
-          def create
-            authorize! :create, model_class
-
-            result = Spree.product_create_workflow.call(store: current_store, attributes: permitted_params)
-
-            if result.success?
-              render json: serialize_resource(result.value), status: :created
-            else
-              render_result_error(result)
-            end
-          end
-
-          # PATCH /api/v3/admin/products/:id
-          def update
-            result = Spree.product_update_workflow.call(product: @resource, attributes: permitted_params)
-
-            if result.success?
-              render json: serialize_resource(result.value)
-            else
-              render_result_error(result)
-            end
-          end
-
           # DELETE /api/v3/admin/products/:id
           def destroy
             result = Spree.product_destroy_workflow.call(product: @resource)
@@ -159,6 +135,14 @@ module Spree
 
           def serializer_class
             Spree.api.admin_product_serializer
+          end
+
+          def create_workflow
+            Spree.product_create_workflow
+          end
+
+          def update_workflow
+            Spree.product_update_workflow
           end
 
           # Use SearchProvider::Database for collection to handle price/best_selling
