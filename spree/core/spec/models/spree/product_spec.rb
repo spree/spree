@@ -484,13 +484,16 @@ describe Spree::Product, type: :model do
 
     context 'a product supplied with nested variants' do
       let(:product) do
-        build(:empty_product).tap do |p|
-          p.variants = [
-            { sku: 'TEE-S', options: [{ name: 'size', value: 'Small' }] },
-            { sku: 'TEE-M', options: [{ name: 'size', value: 'Medium' }] }
-          ]
-          Spree.product_create_workflow.call(store: store, record: p)
-        end
+        Spree.product_create_workflow.call(
+          store: store,
+          attributes: {
+            name: 'Tee',
+            variants: [
+              { sku: 'TEE-S', options: [{ name: 'size', value: 'Small' }] },
+              { sku: 'TEE-M', options: [{ name: 'size', value: 'Medium' }] }
+            ]
+          }
+        ).value
       end
 
       it 'creates exactly the supplied variants — no phantom default' do
@@ -610,7 +613,7 @@ describe Spree::Product, type: :model do
 
     context 'with an id-less, option-less entry (simple-product update)' do
       it 'updates the existing default variant in place instead of replacing it' do
-        product.variants = [{ sku: 'UPDATED-SKU' }]
+        Spree.product_update_workflow.call(product: product, attributes: { variants: [{ sku: 'UPDATED-SKU' }] })
         product.reload
 
         # The original variant is upserted — same row, not replaced — so its id
@@ -623,7 +626,7 @@ describe Spree::Product, type: :model do
 
     context 'with an option-bearing entry' do
       it 'builds a new variant and drops the option-less placeholder' do
-        product.variants = [{ sku: 'TEE-S', options: [{ name: 'size', value: 'Small' }] }]
+        Spree.product_update_workflow.call(product: product, attributes: { variants: [{ sku: 'TEE-S', options: [{ name: 'size', value: 'Small' }] }] })
         product.reload
 
         expect(product.variants.pluck(:sku)).to contain_exactly('TEE-S')
@@ -2011,15 +2014,15 @@ describe Spree::Product, type: :model do
     end
   end
 
-  describe '#variants=' do
+  describe 'nested variants' do
     let(:product) { create(:product) }
 
     context 'with hash params' do
       it 'creates new variants' do
-        product.variants = [
+        Spree.product_update_workflow.call(product: product, attributes: { variants: [
           { sku: 'V1', prices: [{ amount: 10, currency: 'USD' }], options: [{ name: 'Size', value: 'S' }] },
           { sku: 'V2', prices: [{ amount: 20, currency: 'USD' }], options: [{ name: 'Size', value: 'M' }] }
-        ]
+        ] })
 
         expect(product.variants.count).to eq(2)
         expect(product.variants.pluck(:sku)).to match_array(%w[V1 V2])
@@ -2027,7 +2030,7 @@ describe Spree::Product, type: :model do
 
       it 'updates existing variants by prefixed id' do
         variant = create(:variant, product: product)
-        product.variants = [{ id: variant.prefixed_id, sku: 'UPDATED' }]
+        Spree.product_update_workflow.call(product: product, attributes: { variants: [{ id: variant.prefixed_id, sku: 'UPDATED' }] })
 
         expect(variant.reload.sku).to eq('UPDATED')
       end
@@ -2036,19 +2039,17 @@ describe Spree::Product, type: :model do
         v1 = create(:variant, product: product)
         v2 = create(:variant, product: product)
 
-        product.variants = [{ id: v1.prefixed_id, sku: v1.sku }]
+        Spree.product_update_workflow.call(product: product, attributes: { variants: [{ id: v1.prefixed_id, sku: v1.sku }] })
 
         expect(product.variants.reload).to include(v1)
         expect(product.variants).not_to include(v2)
       end
 
       it 'defers creation on new records' do
-        new_product = Spree::Product.new(
-          name: 'Deferred',
+        new_product = Spree.product_create_workflow.call(
           store: store,
-          variants: [{ sku: 'DEF-1', options: [{ name: 'Color', value: 'Red' }] }]
-        )
-        Spree.product_create_workflow.call(store: store, record: new_product)
+          attributes: { name: 'Deferred', variants: [{ sku: 'DEF-1', options: [{ name: 'Color', value: 'Red' }] }] }
+        ).value
 
         expect(new_product.variants.count).to eq(1)
         expect(new_product.variants.first.sku).to eq('DEF-1')
@@ -2058,12 +2059,10 @@ describe Spree::Product, type: :model do
         # Simple-product flow: the merchant edits SKU + weight on the default
         # variant without adding options. The payload ships a single variant
         # with options:[] and the backend creates exactly that one variant.
-        new_product = Spree::Product.new(
-          name: 'Simple SKU',
+        new_product = Spree.product_create_workflow.call(
           store: store,
-          variants: [{ sku: 'SIMPLE-1', weight: 2, options: [] }]
-        )
-        Spree.product_create_workflow.call(store: store, record: new_product)
+          attributes: { name: 'Simple SKU', variants: [{ sku: 'SIMPLE-1', weight: 2, options: [] }] }
+        ).value
 
         expect(new_product.variants.count).to eq(1)
         expect(new_product.default_variant.sku).to eq('SIMPLE-1')
@@ -2085,15 +2084,16 @@ describe Spree::Product, type: :model do
     # same in-memory product it just saved.
     context 'in-memory derived state after build + save (no reload)' do
       it 'reflects new option-bearing variants in variant_count and default_variant' do
-        new_product = Spree::Product.new(
-          name: 'Fresh Variants',
+        new_product = Spree.product_create_workflow.call(
           store: store,
-          variants: [
-            { sku: 'FV-1', prices: [{ amount: 10, currency: 'USD' }], options: [{ name: 'Size', value: 'S' }] },
-            { sku: 'FV-2', prices: [{ amount: 20, currency: 'USD' }], options: [{ name: 'Size', value: 'M' }] }
-          ]
-        )
-        Spree.product_create_workflow.call(store: store, record: new_product)
+          attributes: {
+            name: 'Fresh Variants',
+            variants: [
+              { sku: 'FV-1', prices: [{ amount: 10, currency: 'USD' }], options: [{ name: 'Size', value: 'S' }] },
+              { sku: 'FV-2', prices: [{ amount: 20, currency: 'USD' }], options: [{ name: 'Size', value: 'M' }] }
+            ]
+          }
+        ).value
 
         expect(new_product.variant_count).to eq(2)
         expect(new_product.default_variant.sku).to eq('FV-1')
@@ -2101,12 +2101,10 @@ describe Spree::Product, type: :model do
       end
 
       it 'reflects an options-less default variant in default_variant and price' do
-        new_product = Spree::Product.new(
-          name: 'Fresh Simple',
+        new_product = Spree.product_create_workflow.call(
           store: store,
-          variants: [{ sku: 'FS-1', prices: [{ amount: 15, currency: 'USD' }], options: [] }]
-        )
-        Spree.product_create_workflow.call(store: store, record: new_product)
+          attributes: { name: 'Fresh Simple', variants: [{ sku: 'FS-1', prices: [{ amount: 15, currency: 'USD' }], options: [] }] }
+        ).value
 
         expect(new_product.variant_count).to eq(1)
         expect(new_product.default_variant.sku).to eq('FS-1')
@@ -2115,7 +2113,7 @@ describe Spree::Product, type: :model do
     end
   end
 
-  describe '#media=' do
+  describe 'nested media' do
     let(:product) { create(:product) }
     let(:fixture_path) { File.expand_path('../../fixtures/thinking-cat.jpg', __dir__) }
     let(:blob) do
@@ -2129,7 +2127,7 @@ describe Spree::Product, type: :model do
     context 'on a persisted record' do
       it 'attaches a new media item from a signed_id' do
         expect {
-          product.media = [{ signed_id: blob.signed_id, alt: 'A cat', position: 1 }]
+          Spree.product_update_workflow.call(product: product, attributes: { media: [{ signed_id: blob.signed_id, alt: 'A cat', position: 1 }] })
         }.to change(product.media, :count).by(1)
 
         image = product.media.find_by(alt: 'A cat')
@@ -2144,7 +2142,7 @@ describe Spree::Product, type: :model do
         existing.attachment.attach(io: File.open(fixture_path), filename: 'cat.jpg', content_type: 'image/jpeg')
         existing.save!
 
-        product.media = [{ id: existing.prefixed_id, alt: 'New alt', position: 5 }]
+        Spree.product_update_workflow.call(product: product, attributes: { media: [{ id: existing.prefixed_id, alt: 'New alt', position: 5 }] })
 
         expect(existing.reload.alt).to eq('New alt')
         expect(existing.position).to eq(5)
@@ -2158,22 +2156,22 @@ describe Spree::Product, type: :model do
         variant = create(:variant, product: product)
         product.reload # refresh the variants cache so the out-of-band variant resolves
 
-        product.media = [{ id: existing.prefixed_id, variant_ids: [variant.id] }]
+        Spree.product_update_workflow.call(product: product, attributes: { media: [{ id: existing.prefixed_id, variant_ids: [variant.id] }] })
 
         expect(existing.reload.variants).to include(variant)
       end
 
       it 'rejects an unknown media type' do
         expect {
-          product.media = [{ signed_id: blob.signed_id, media_type: 'audio' }]
+          Spree.product_update_workflow.call(product: product, attributes: { media: [{ signed_id: blob.signed_id, media_type: 'audio' }] })
         }.to raise_error(ActiveRecord::RecordInvalid)
       end
 
       it 'adds an external video without a file' do
         expect {
-          product.media = [
+          Spree.product_update_workflow.call(product: product, attributes: { media: [
             { media_type: 'external_video', external_video_url: 'https://vimeo.com/123456789', position: 1 }
-          ]
+          ] })
         }.to change(product.media, :count).by(1)
 
         video = product.media.find_by(media_type: 'external_video')
@@ -2183,9 +2181,9 @@ describe Spree::Product, type: :model do
 
       it 'rejects an external video Spree cannot embed' do
         expect {
-          product.media = [
+          Spree.product_update_workflow.call(product: product, attributes: { media: [
             { media_type: 'external_video', external_video_url: 'https://example.com/clip.mp4' }
-          ]
+          ] })
         }.to raise_error(ActiveRecord::RecordInvalid)
       end
 
@@ -2194,13 +2192,13 @@ describe Spree::Product, type: :model do
           io: File.open(fixture_path), filename: 'poster.jpg', content_type: 'image/jpeg'
         )
 
-        product.media = [
+        Spree.product_update_workflow.call(product: product, attributes: { media: [
           {
             media_type: 'external_video',
             external_video_url: 'https://vimeo.com/123456789',
             poster_signed_id: poster.signed_id
           }
-        ]
+        ] })
 
         video = product.media.find_by(media_type: 'external_video')
         expect(video.poster).to be_attached
@@ -2212,20 +2210,20 @@ describe Spree::Product, type: :model do
         existing.attachment.attach(io: File.open(fixture_path), filename: 'cat.jpg', content_type: 'image/jpeg')
         existing.save!
 
-        product.media = [{ id: existing.prefixed_id, focal_point_x: 0.25, focal_point_y: 0.75 }]
+        Spree.product_update_workflow.call(product: product, attributes: { media: [{ id: existing.prefixed_id, focal_point_x: 0.25, focal_point_y: 0.75 }] })
 
         expect(existing.reload.focal_point).to eq({ x: 0.25, y: 0.75 })
       end
 
       it 'silently skips entries with neither id nor signed_id' do
         expect {
-          product.media = [{ alt: 'nothing-to-attach' }]
+          Spree.product_update_workflow.call(product: product, attributes: { media: [{ alt: 'nothing-to-attach' }] })
         }.not_to change(product.media, :count)
       end
 
       it 'silently skips id entries that do not match an existing media item' do
         expect {
-          product.media = [{ id: 'asset_doesnotexist', alt: 'ignored' }]
+          Spree.product_update_workflow.call(product: product, attributes: { media: [{ id: 'asset_doesnotexist', alt: 'ignored' }] })
         }.not_to change(product.media, :count)
       end
 
@@ -2235,7 +2233,7 @@ describe Spree::Product, type: :model do
         existing.save!
 
         expect {
-          product.media = [{ signed_id: blob.signed_id, alt: 'New entry', position: 2 }]
+          Spree.product_update_workflow.call(product: product, attributes: { media: [{ signed_id: blob.signed_id, alt: 'New entry', position: 2 }] })
         }.to change(product.media, :count).by(1)
 
         expect(product.media.find_by(id: existing.id)).to be_present
@@ -2244,14 +2242,13 @@ describe Spree::Product, type: :model do
 
     context 'on a new record' do
       it 'defers attachment until after the product is saved' do
-        new_product = Spree::Product.new(
-          name: 'Deferred Media',
-          store: store,
-          media: [{ signed_id: blob.signed_id, alt: 'Pending', position: 1 }]
-        )
+        new_product = nil
 
         expect {
-          Spree.product_create_workflow.call(store: store, record: new_product)
+          new_product = Spree.product_create_workflow.call(
+            store: store,
+            attributes: { name: 'Deferred Media', media: [{ signed_id: blob.signed_id, alt: 'Pending', position: 1 }] }
+          ).value
         }.to change(Spree::Media, :count).by(1)
 
         image = new_product.media.find_by(alt: 'Pending')

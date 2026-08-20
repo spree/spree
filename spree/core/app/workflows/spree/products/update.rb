@@ -1,12 +1,15 @@
 module Spree
   module Products
-    # Updates a product. Nested data is assigned by the model's own setters
-    # (see Spree::Products::Create); this exists for the veto point.
+    # Updates a product, reconciling the variants and media the payload
+    # carries (see Spree::Products::NestedAttributes — both are full
+    # replacements).
     #
     # Handlers reading `product.changes` in :validate see the pending edit
     # before it is written, which is what makes rules like "price may not
     # drop below cost" expressible without a model validation.
     class Update < Spree::Workflow
+      include Spree::Products::NestedAttributes
+
       hooks :validate, :after_update
 
       # `product` — the record with the pending attributes assigned, so a
@@ -23,7 +26,7 @@ module Spree
 
         ApplicationRecord.transaction do
           step :save_product
-          step :apply_deferred_nested_attributes
+          step :apply_nested_attributes
           run_hooks :after_update
         end
 
@@ -33,17 +36,21 @@ module Spree
       private
 
       def assign_attributes
-        product.assign_attributes(attributes)
+        # Held back: variants and media are reconciled after the save, so a
+        # :validate handler reads `product.changes` describing the edit itself
+        # rather than a half-applied collection.
+        @variants_params = attributes[:variants]
+        @media_params = attributes[:media]
+        product.assign_attributes(attributes.except(:variants, :media))
       end
 
       def save_product
         failure(product) unless product.save
       end
 
-      # A no-op on a persisted product, whose setters apply immediately; here
-      # so both write paths read the same.
-      def apply_deferred_nested_attributes
-        product.apply_deferred_nested_attributes
+      def apply_nested_attributes
+        apply_variants(product, @variants_params)
+        apply_media(product, @media_params)
       end
     end
   end

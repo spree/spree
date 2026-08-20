@@ -1,32 +1,35 @@
 require 'spec_helper'
 
-# Variants and media a product arrives with cannot be written before it has an
-# id, so the model stashes them and the workflow replays them as a step. These
-# guard the POST /products response, which serializes the same in-memory
-# product it just created.
-RSpec.describe 'Spree::Products deferred nested attributes' do
+# Variants and media are reconciled by the workflow, not by the model: the
+# payload is the writer's whole intent, so it is a replacement rather than an
+# assignment. These guard the POST /products response, which serializes the
+# same in-memory product it just created.
+RSpec.describe 'Spree::Products nested attributes' do
   let(:store) { Spree::Store.default }
 
-  it 'creates the variants the product was built with' do
-    product = Spree::Product.new(
-      name: 'Deferred', store: store,
-      variants: [{ sku: 'DEF-1', options: [{ name: 'Color', value: 'Red' }] }]
+  it 'creates the variants the payload carries' do
+    result = Spree.product_create_workflow.call(
+      store: store,
+      attributes: {
+        name: 'Deferred',
+        variants: [{ sku: 'DEF-1', options: [{ name: 'Color', value: 'Red' }] }]
+      }
     )
 
-    result = Spree.product_create_workflow.call(store: store, record: product)
-
     expect(result).to be_success
-    expect(product.variants.count).to eq(1)
-    expect(product.variants.first.sku).to eq('DEF-1')
+    expect(result.value.variants.count).to eq(1)
+    expect(result.value.variants.first.sku).to eq('DEF-1')
   end
 
   it 'reflects them in derived state without a reload' do
-    product = Spree::Product.new(
-      name: 'Fresh', store: store,
-      variants: [{ sku: 'FV-1', prices: [{ amount: 10, currency: 'USD' }], options: [] }]
+    result = Spree.product_create_workflow.call(
+      store: store,
+      attributes: {
+        name: 'Fresh',
+        variants: [{ sku: 'FV-1', prices: [{ amount: 10, currency: 'USD' }], options: [] }]
+      }
     )
-
-    Spree.product_create_workflow.call(store: store, record: product)
+    product = result.value
 
     expect(product.variant_count).to eq(1)
     expect(product.default_variant.sku).to eq('FV-1')
@@ -39,16 +42,26 @@ RSpec.describe 'Spree::Products deferred nested attributes' do
     Spree.hooks.clear!
     Spree.hooks.register('products.create.validate') { |workflow| workflow.reject!('nope') }
 
-    product = Spree::Product.new(
-      name: 'Vetoed', store: store,
-      variants: [{ sku: 'VETO-1', options: [] }]
-    )
-
     expect {
-      expect(Spree.product_create_workflow.call(store: store, record: product)).not_to be_success
+      result = Spree.product_create_workflow.call(
+        store: store,
+        attributes: { name: 'Vetoed', variants: [{ sku: 'VETO-1', options: [] }] }
+      )
+      expect(result).not_to be_success
     }.not_to change(Spree::Variant, :count)
   ensure
     Spree.hooks.clear!
+  end
+
+  it 'enqueues a download for media given as an external url' do
+    product = create(:product, store: store)
+
+    expect {
+      Spree.product_update_workflow.call(
+        product: product,
+        attributes: { media: [{ external_url: 'https://example.com/a.jpg', position: 1 }] }
+      )
+    }.to have_enqueued_job(Spree::Images::SaveFromUrlJob)
   end
 end
 

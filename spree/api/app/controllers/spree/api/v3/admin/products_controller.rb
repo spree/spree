@@ -232,7 +232,11 @@ module Spree
               # Entries with `signed_id` create + attach a fresh upload; an
               # external video creates with a URL and no file. Lets the
               # dashboard ship media changes alongside the rest of the product
-              # form. See `Spree::Product#media=`.
+              # form. See `Spree::Products::NestedAttributes`.
+              #
+              # `external_url` is deliberately not permitted here: it makes the
+              # server fetch a URL the caller chose, so it belongs to trusted
+              # importers rather than to a request body.
               media: [*Spree::Media::WRITABLE_ATTRIBUTES, :id, :signed_id, { variant_ids: [] }],
               product_publications: [:id, :channel_id, :published_at, :unpublished_at],
               variants: [
