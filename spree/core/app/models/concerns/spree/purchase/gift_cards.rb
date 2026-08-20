@@ -34,6 +34,9 @@ module Spree
         Spree.gift_card_remove_workflow.call(order: self)
       end
 
+      # @return [Spree::ServiceModule::Result, nil] the caller decides what a
+      #   refusal means; Orders::Complete reports it rather than failing the
+      #   order, since the card was already drawn down when it was applied.
       def redeem_gift_card
         return unless gift_card.present?
 

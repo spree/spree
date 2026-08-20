@@ -53,6 +53,19 @@ RSpec.describe 'Spree::Products nested attributes' do
     Spree.hooks.clear!
   end
 
+  # These are public entry points: a host app or importer passing a plain
+  # string-keyed hash must not have its nested payload fall through to the
+  # ActiveRecord collection setter, which rejects hashes.
+  it 'accepts a string-keyed payload' do
+    result = Spree.product_create_workflow.call(
+      store: store,
+      attributes: { 'name' => 'StringKeys', 'variants' => [{ 'sku' => 'SK-1', 'options' => [] }] }
+    )
+
+    expect(result).to be_success
+    expect(result.value.variants.first.sku).to eq('SK-1')
+  end
+
   it 'enqueues a download for media given as an external url' do
     product = create(:product, store: store)
 

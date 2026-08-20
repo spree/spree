@@ -55,11 +55,16 @@ module Spree
         @product.store = store
         return if attributes.blank?
 
+        # Indifferent access because this is a public entry point: a host app
+        # or importer passing a plain string-keyed hash must not have its
+        # nested payloads fall through to the ActiveRecord collection setters.
+        attrs = attributes.to_h.with_indifferent_access
+
         # Held back from the record: these are reconciled after the insert,
         # against a product that has an id.
-        @variants_params = attributes[:variants]
-        @media_params = attributes[:media]
-        @product.assign_attributes(attributes.except(:variants, :media))
+        @variants_params = attrs[:variants]
+        @media_params = attrs[:media]
+        @product.assign_attributes(attrs.except(:variants, :media))
       end
 
       def save_product

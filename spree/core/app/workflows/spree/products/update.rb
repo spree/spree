@@ -36,12 +36,17 @@ module Spree
       private
 
       def assign_attributes
+        # See Spree::Products::Create — string-keyed hashes reach this from
+        # host apps and importers, and a missed key would send the nested
+        # payload to the ActiveRecord collection setter instead.
+        attrs = attributes.to_h.with_indifferent_access
+
         # Held back: variants and media are reconciled after the save, so a
         # :validate handler reads `product.changes` describing the edit itself
         # rather than a half-applied collection.
-        @variants_params = attributes[:variants]
-        @media_params = attributes[:media]
-        product.assign_attributes(attributes.except(:variants, :media))
+        @variants_params = attrs[:variants]
+        @media_params = attrs[:media]
+        product.assign_attributes(attrs.except(:variants, :media))
       end
 
       def save_product

@@ -39,6 +39,13 @@ RSpec.describe 'Spree::PriceLists write workflows' do
       expect(price_list.reload.name).to eq('Renamed')
     end
 
+    it 'accepts a string-keyed payload' do
+      result = described_class.call(price_list: price_list, attributes: { 'name' => 'StringKeys' })
+
+      expect(result).to be_success
+      expect(price_list.reload.name).to eq('StringKeys')
+    end
+
     it 'adds and removes products' do
       other = create(:product, store: store)
 

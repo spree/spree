@@ -54,6 +54,20 @@ RSpec.describe 'deprecated transition verbs' do
     end
   end
 
+  # A workflow failure carries an ActiveModel::Errors; inspecting it into the
+  # message is what leaks "#<ActiveModel::Errors:0x...>" into an API 422.
+  describe 'the message a refusal raises' do
+    it 'reads the errors rather than inspecting them' do
+      product = create(:product, store: store, status: 'draft')
+      allow(product).to receive(:save).and_return(false)
+      product.errors.add(:name, 'is bad')
+
+      expect { product.activate! }.to raise_error(ActiveRecord::RecordInvalid) do |error|
+        expect(error.message).not_to include('ActiveModel::Errors')
+      end
+    end
+  end
+
   describe Spree::PriceList do
     let(:price_list) { create(:price_list, store: store) }
 

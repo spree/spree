@@ -107,3 +107,29 @@ RSpec.describe 'Spree::Imports pipeline workflows' do
     end
   end
 end
+
+# The state machine guarded these transitions with `from:`; the workflows must
+# keep those guards or a failed import can flip to completed and announce
+# itself as done.
+RSpec.describe 'Spree::Imports status guards' do
+  let(:store) { Spree::Store.default }
+  let(:import) { create(:product_import, owner: store) }
+
+  it 'refuses to complete an import that is not processing' do
+    import.update!(status: 'failed')
+
+    result = Spree.import_complete_workflow.call(import: import)
+
+    expect(result).not_to be_success
+    expect(result.error.value).to eq(:import_not_processing)
+    expect(import.reload.status).to eq('failed')
+  end
+
+  it 'refuses to start processing before the mapping is accepted' do
+    result = Spree.import_start_processing_workflow.call(import: import)
+
+    expect(result).not_to be_success
+    expect(result.error.value).to eq(:import_mapping_not_completed)
+    expect(import.reload.status).to eq('pending')
+  end
+end

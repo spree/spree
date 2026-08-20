@@ -86,10 +86,22 @@ module Spree
         Spree::CouponCodes::CouponCodesHandler.new(order: order).use_all_codes
       end
 
+      # A refused redemption does not fail the order: the card was already
+      # drawn down when it was applied, and the customer's order is placed.
+      # It is reported rather than swallowed, because a card that cannot be
+      # marked spent is a discrepancy someone has to look at.
       def redeem_gift_card
         return if order.gift_card.nil?
 
-        Spree.gift_card_redeem_workflow.call(gift_card: order.gift_card)
+        result = Spree.gift_card_redeem_workflow.call(gift_card: order.gift_card)
+        return if result.success?
+
+        Rails.error.report(
+          Spree::Core::GatewayError.new("Gift card #{order.gift_card.id} could not be redeemed: #{result.error}"),
+          handled: true,
+          context: { order_id: order.id, gift_card_id: order.gift_card.id },
+          source: 'spree.core'
+        )
       end
 
       # Providers that opt into auto_fulfill? (digital delivery today) get

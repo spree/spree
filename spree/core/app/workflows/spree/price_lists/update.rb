@@ -36,10 +36,14 @@ module Spree
       # The bulk payloads are held back rather than assigned, so the record
       # saves as a plain row and the collections are reconciled afterwards.
       def assign_attributes
-        @product_ids = attributes.key?(:product_ids) ? Array(attributes[:product_ids]).compact.uniq : nil
-        @prices = attributes.key?(:prices) ? attributes[:prices] : nil
+        # Indifferent access: a host app or importer may pass string keys, and
+        # a missed key would send the bulk payload to the association setter.
+        attrs = attributes.to_h.with_indifferent_access
 
-        price_list.assign_attributes(attributes.except(:product_ids, :prices))
+        @product_ids = attrs.key?(:product_ids) ? Array(attrs[:product_ids]).compact.uniq : nil
+        @prices = attrs.key?(:prices) ? attrs[:prices] : nil
+
+        price_list.assign_attributes(attrs.except(:product_ids, :prices))
       end
 
       def save_price_list

@@ -922,7 +922,9 @@ module Spree
       result = workflow.call(product: self)
 
       if result.failure?
-        errors.add(:base, result.error.value.to_s)
+        # ResultError#to_s unwraps an ActiveModel::Errors into its full
+        # messages; its `value` would inspect the object into the message.
+        errors.add(:base, result.error.to_s)
         raise ActiveRecord::RecordInvalid, self
       end
 

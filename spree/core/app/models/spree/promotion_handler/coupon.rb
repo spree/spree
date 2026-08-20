@@ -29,7 +29,18 @@ module Spree
           if result.success?
             set_success_code(:gift_card_applied)
           else
-            set_error_code(result.error.value)
+            # A workflow failure carries a symbolic code, but a hook rejection
+            # carries an ActiveModel::Errors — translating that would render
+            # the object's inspect string to the shopper.
+            error = result.error.value
+            if error.is_a?(Symbol)
+              set_error_code(error)
+            else
+              @status_code = :gift_card_not_applied
+              # The rejection message is what the hook author wrote for the
+              # shopper; fall back to the generic string if it says nothing.
+              @error = result.error.to_s.presence || Spree.t(:gift_card_not_applied)
+            end
           end
 
           return self

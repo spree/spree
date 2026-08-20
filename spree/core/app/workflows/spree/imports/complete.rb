@@ -9,6 +9,7 @@ module Spree
       def perform(import:)
         super
 
+        step :ensure_processing
         run_hooks :validate
 
         ApplicationRecord.transaction do
@@ -22,6 +23,13 @@ module Spree
       end
 
       private
+
+      # Only an import that is working through its rows can finish. Without
+      # this a failed or half-mapped import would flip to completed, touch the
+      # store and announce itself as done.
+      def ensure_processing
+        failure(import, :import_not_processing) unless import.status == 'processing'
+      end
 
       def mark_completed
         failure(import) unless import.update(status: 'completed')

@@ -32,8 +32,11 @@ module Spree
       # Held back from the new record so it saves as a plain row; the
       # collections are reconciled once it has an id.
       def build_price_list
-        @bulk_payloads = attributes.slice(:product_ids, :prices)
-        @price_list = store.price_lists.new(attributes.except(:product_ids, :prices))
+        # See Spree::PriceLists::Update on the indifferent access.
+        attrs = attributes.to_h.with_indifferent_access
+
+        @bulk_payloads = attrs.slice(:product_ids, :prices)
+        @price_list = store.price_lists.new(attrs.except(:product_ids, :prices))
       end
 
       def save_price_list
