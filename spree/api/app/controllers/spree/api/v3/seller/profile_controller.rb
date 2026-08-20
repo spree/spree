@@ -25,7 +25,7 @@ module Spree
           end
 
           def update
-            if current_seller.update(permitted_params)
+            if current_seller.update(permitted_params.merge(terms_attributes))
               render json: serialize_seller
             else
               render_validation_error(current_seller.errors)
@@ -49,6 +49,18 @@ module Spree
             :first_name, :last_name, :company, :address1, :address2, :city,
             :postal_code, :zipcode, :phone, :country_code, :state_code, :state_name, :label
           ].freeze
+
+          # Accepting the marketplace's terms is a profile write, not an endpoint
+          # of its own: `accept_terms: true` stamps the time, which is what the
+          # AcceptTerms requirement reads. Deliberately one-way — a seller
+          # cannot un-accept by sending `false`, since the stamp is a record
+          # that it happened.
+          def terms_attributes
+            return {} unless ActiveModel::Type::Boolean.new.cast(params[:accept_terms])
+            return {} if current_seller.terms_accepted_at.present?
+
+            { terms_accepted_at: Time.current }
+          end
 
           def permitted_params
             normalize_params(

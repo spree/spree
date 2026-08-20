@@ -160,6 +160,8 @@ module Spree
         seller_team_member_serializer: 'Spree::Api::V3::Seller::TeamMemberSerializer',
         seller_invitation_serializer: 'Spree::Api::V3::Seller::InvitationSerializer',
         seller_product_serializer: 'Spree::Api::V3::Seller::ProductSerializer',
+        seller_requirement_status_serializer: 'Spree::Api::V3::Seller::RequirementStatusSerializer',
+        seller_requirement_submission_serializer: 'Spree::Api::V3::Seller::RequirementSubmissionSerializer',
         admin_seller_serializer: 'Spree::Api::V3::Admin::SellerSerializer',
         admin_seller_requirement_serializer: 'Spree::Api::V3::Admin::SellerRequirementSerializer',
         admin_seller_requirement_submission_serializer: 'Spree::Api::V3::Admin::SellerRequirementSubmissionSerializer',

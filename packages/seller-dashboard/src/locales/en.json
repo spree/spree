@@ -33,7 +33,35 @@
   "nav": {
     "profile": "Profile",
     "team": "Team",
-    "sign_out": "Sign out"
+    "sign_out": "Sign out",
+    "onboarding": "Getting set up"
+  },
+  "onboarding": {
+    "title": "Getting set up",
+    "subtitle": "What this marketplace asks for before you can start selling.",
+    "progress_title": "Your progress",
+    "progress_count": "{{done}} of {{total}} done",
+    "remaining_one": "{{count}} thing still to do before you can submit",
+    "remaining_other": "{{count}} things still to do before you can submit",
+    "ready": "Everything required is done.",
+    "submit": "Submit for review",
+    "submitting": "Submitting…",
+    "submitted": "Sent for review",
+    "under_review": "The marketplace is reviewing your application. We will email you when there is news.",
+    "optional": "Optional",
+    "done": "This one is done.",
+    "awaiting_review": "Waiting for the marketplace to review this.",
+    "accept_terms": "Accept the terms",
+    "terms_accepted": "Terms accepted",
+    "confirm": "Confirm",
+    "note_placeholder": "Anything the marketplace should know (optional)",
+    "submitted_requirement": "Sent",
+    "go": "Go there",
+    "status": {
+      "complete": "Done",
+      "pending": "In review",
+      "rejected": "Needs another look"
+    }
   },
   "profile": {
     "title": "Your profile",

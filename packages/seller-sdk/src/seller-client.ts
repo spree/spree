@@ -1,6 +1,15 @@
 import type { ListParams, ListResponse, RequestFn, RequestOptions } from '@spree/sdk-core'
 import { transformListParams } from '@spree/sdk-core'
-import type { AuthTokens, Invitation, Product, Profile, SellerSummary, TeamMember } from './types'
+import type {
+  AuthTokens,
+  Invitation,
+  Product,
+  Profile,
+  RequirementStatus,
+  RequirementSubmission,
+  SellerSummary,
+  TeamMember,
+} from './types'
 
 /**
  * Resource methods for the Spree Seller API — the marketplace seller panel.
@@ -114,6 +123,44 @@ export class SellerClient {
   }
 
   /**
+   * What the marketplace asks of this seller before it will admit them.
+   *
+   * Singular: the checklist is always the acting seller's. Every answer is
+   * computed server-side by the one evaluator the operator's view also uses,
+   * so the panel and the operator cannot show different progress.
+   */
+  readonly onboarding = {
+    get: (options?: RequestOptions): Promise<OnboardingResponse> =>
+      this.request<OnboardingResponse>('GET', '/onboarding', options),
+
+    /**
+     * Says the seller is ready. Refused with the blocking requirements named
+     * when something required is still outstanding.
+     */
+    submitForReview: (options?: RequestOptions): Promise<OnboardingResponse> =>
+      this.request<OnboardingResponse>('POST', '/onboarding/submit_for_review', options),
+  }
+
+  /**
+   * What the seller submits about one requirement: an attestation they tick,
+   * a document they upload, a reference they paste.
+   *
+   * Create only — a submission records what was said and when, so the seller
+   * submits again rather than editing, and the latest one counts.
+   */
+  readonly requirementSubmissions = {
+    create: (
+      requirementId: string,
+      params: RequirementSubmissionParams,
+      options?: RequestOptions,
+    ): Promise<RequirementSubmission> =>
+      this.request<RequirementSubmission>('POST', `/requirements/${requirementId}/submissions`, {
+        ...options,
+        body: params,
+      }),
+  }
+
+  /**
    * Offers nobody has accepted yet.
    *
    * Sending one lives on `team` — that is hiring — while chasing or
@@ -161,6 +208,23 @@ export class SellerClient {
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/products/${id}`, options),
   }
+}
+
+/** What `/seller/onboarding` answers. */
+export interface OnboardingResponse {
+  /** The seller's lifecycle status, e.g. `onboarding`, `ready_for_review`. */
+  status: string
+  /** Optional requirements included — this is how far along, not how close to approval. */
+  progress: { done: number; total: number; percentage: number }
+  requirements: RequirementStatus[]
+}
+
+/** What a seller says about one requirement. */
+export interface RequirementSubmissionParams {
+  note?: string
+  reference?: string
+  /** A direct-upload signed blob id, for kinds that ask for a document. */
+  file?: string
 }
 
 /** The fields a seller may set on their own product. */
@@ -217,6 +281,11 @@ export interface ProfileUpdateParams {
   cover_photo?: string | null
   billing_address?: SellerAddressParams
   returns_address?: SellerAddressParams
+  /**
+   * Accepts the marketplace's terms, stamping the moment. One-way: the stamp
+   * records that it happened, so sending `false` does not unmake it.
+   */
+  accept_terms?: boolean
 }
 
 export interface SellerAddressParams {

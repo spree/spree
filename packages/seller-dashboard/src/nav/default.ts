@@ -1,5 +1,6 @@
 import { i18n, nav } from '@spree/dashboard-core'
-import { StoreIcon, UsersIcon } from 'lucide-react'
+import { ClipboardCheckIcon, StoreIcon, UsersIcon } from 'lucide-react'
+import { OnboardingNavBadge } from '../components/onboarding-nav-badge'
 
 // The panel's built-in sidebar. Registered into the same registry a plugin
 // writes to, so a marketplace can remove, reorder or add beside these with
@@ -19,6 +20,19 @@ nav.add({
   icon: StoreIcon,
   position: 100,
   subject: 'seller_profile',
+})
+
+// First in the rail while a seller is still being admitted: it is the only
+// thing that matters until they are approved. A marketplace that admits
+// sellers some other way removes it like any other entry.
+nav.add({
+  key: 'onboarding',
+  label: i18n.t('nav.onboarding'),
+  path: '/onboarding',
+  icon: ClipboardCheckIcon,
+  position: 150,
+  subject: 'seller_profile',
+  badge: OnboardingNavBadge,
 })
 
 nav.add({
