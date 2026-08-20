@@ -53,6 +53,16 @@ module Spree
       def record_activity(entry)
         @activity << entry
       end
+
+      # A model that misreads a tool result can ask for the same lookup forever.
+      # Nothing in the library bounds that, so the turn counts calls itself and
+      # refuses past the limit — the model is told to answer with what it has.
+      MAX_TOOL_CALLS = 12
+
+      # @return [Boolean] whether another tool call is still allowed
+      def tool_budget_available?
+        @activity.size < MAX_TOOL_CALLS
+      end
     end
   end
 end

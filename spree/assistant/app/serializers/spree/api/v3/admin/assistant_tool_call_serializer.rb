@@ -14,6 +14,7 @@ module Spree
                    summary: [:string, nullable: true],
                    arguments: 'Record<string, unknown>',
                    result: 'Record<string, unknown> | null',
+                   records: 'Array<Record<string, unknown>> | null',
                    awaiting_approval: :boolean
 
           attributes :name, :status, :summary, :arguments,
@@ -27,6 +28,14 @@ module Spree
           # and the placeholder is an implementation detail.
           attribute :result do |tool_call|
             tool_call.awaiting_approval? ? nil : tool_call.result
+          end
+
+          # Records a read found, so reopening a saved chat shows the same
+          # clickable list the merchant saw live rather than a bare tool name.
+          attribute :records do |tool_call|
+            next if tool_call.awaiting_approval?
+
+            (tool_call.result || {})['records']
           end
         end
       end

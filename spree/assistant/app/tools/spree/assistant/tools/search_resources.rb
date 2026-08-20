@@ -28,16 +28,21 @@ module Spree
           return unknown_resource(resource) if entry.nil?
           return forbidden(entry) unless context.permitted?(entry.permission)
 
-          records = search(entry, filters, sort, limit)
+          applied = sanitize_filters(filters)
+          # Ransack silently drops filters it does not recognise, so an invented
+          # field would quietly widen the search to everything and the assistant
+          # would report the result as a match. Reject it instead, and say which
+          # fields exist so the model can correct itself.
+          unrecognised = unrecognised_filters(entry, applied)
+          return invalid_filters(entry, unrecognised) if unrecognised.any?
+
+          records = search(entry, applied, sort, limit)
 
           {
             resource: entry.key,
             count: records.size,
-            records: records.map { |record| summarize(entry, record) }
+            records: records.map { |record| Spree::Assistant::RecordSummary.call(entry: entry, record: record) }
           }
-        rescue StandardError => e
-          # A bad filter is the model's mistake to correct, not a dead turn.
-          { error: e.message, hint: 'Call describe_resource to see valid fields.' }
         end
 
         def summary(arguments)
@@ -47,10 +52,28 @@ module Spree
         private
 
         def search(entry, filters, sort, limit)
-          query = entry.scope_for(context.store).ransack(sanitize_filters(filters))
+          query = entry.scope_for(context.store).ransack(filters)
           query.sorts = sort if sort.present?
 
           query.result.limit(capped_limit(limit)).to_a
+        end
+
+        # A filter key is `<attribute>_<predicate>`; Ransack accepts it only if
+        # the attribute is on the model's allowlist. Matching the longest
+        # attribute first keeps names containing underscores intact.
+        def unrecognised_filters(entry, filters)
+          allowed = entry.filterable_fields
+
+          filters.keys.reject do |key|
+            allowed.any? { |field| key.to_s == field || key.to_s.start_with?("#{field}_") }
+          end
+        end
+
+        def invalid_filters(entry, keys)
+          {
+            error: "Unknown filter(s): #{keys.join(', ')}",
+            filterable_fields: entry.filterable_fields
+          }
         end
 
         # Ransack raises on unknown predicates, which is the behaviour we want —
@@ -63,26 +86,6 @@ module Spree
           return DEFAULT_LIMIT if limit.blank?
 
           [[limit.to_i, 1].max, MAX_LIMIT].min
-        end
-
-        # A compact, model-readable row. Prefixed ids only, so anything the
-        # assistant repeats back is a valid dashboard link.
-        def summarize(entry, record)
-          serializer = entry.serializer_class.new(record)
-          attributes = serializer.to_h
-
-          attributes.slice(*summary_keys(attributes)).merge(id: record.prefixed_id)
-        rescue StandardError
-          { id: record.prefixed_id, label: record.try(:name) || record.try(:number) || record.to_s }
-        end
-
-        SUMMARY_KEYS = %w[
-          id name slug number status email total display_total currency
-          created_at completed_at available_on price display_price
-        ].freeze
-
-        def summary_keys(attributes)
-          SUMMARY_KEYS.select { |key| attributes.key?(key) }
         end
 
         def unknown_resource(resource)

@@ -41,6 +41,12 @@ module Spree
             define_method(:name) { tool.tool_name }
 
             define_method(:execute) do |**arguments|
+              # Refused rather than raised: the model reads this as a result and
+              # answers with what it already has, instead of the turn dying.
+              unless turn.tool_budget_available?
+                next { error: 'Tool call limit reached for this turn. Answer with the information you already have.' }
+              end
+
               if tool.mutating?
                 turn.propose!(tool: tool, arguments: arguments)
                 # Persisted as this call's tool result, so the conversation stays

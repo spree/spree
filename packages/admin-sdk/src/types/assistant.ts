@@ -56,9 +56,25 @@ export interface AssistantChat {
   updated_at: string
 }
 
+/**
+ * A record a read tool found, in the shape the panel renders: enough to show a
+ * row, plus where it lives in the dashboard so the row can be clicked through.
+ */
+export interface AssistantRecord {
+  id: string
+  resource: string
+  title: string
+  subtitle?: string
+  status?: string
+  image_url?: string
+  /** Store-relative dashboard path, e.g. `/products/prod_86Rf07xd4z`. */
+  path?: string
+}
+
 /** Events the turn endpoints stream. Additive-only — this is public API. */
 export type AssistantEventName =
   | 'tool_call.started'
+  | 'tool_call.result'
   | 'tool_call.proposed'
   | 'tool_call.resolved'
   | 'message.completed'
@@ -75,5 +91,9 @@ export interface AssistantEvent {
     message?: string
     awaiting_approval?: boolean
     tool_call?: AssistantToolCall
+    resource?: string
+    count?: number
+    records?: AssistantRecord[]
+    error?: string
   }
 }

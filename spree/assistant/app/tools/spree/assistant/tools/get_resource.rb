@@ -19,7 +19,15 @@ module Spree
           record = find_record(entry, id)
           return { error: "No #{entry.key.singularize} found for #{id.inspect}" } if record.nil?
 
-          { resource: entry.key, record: entry.serializer_class.new(record).to_h }
+          {
+            resource: entry.key,
+            # The full record for the model to answer from, plus the same
+            # compact row `search_resources` returns so the panel can show it
+            # as something the merchant can click through to.
+            record: entry.serializer_class.new(record).to_h,
+            records: [Spree::Assistant::RecordSummary.call(entry: entry, record: record)],
+            count: 1
+          }
         end
 
         def summary(arguments)

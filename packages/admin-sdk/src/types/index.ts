@@ -30,6 +30,7 @@ export type {
   AssistantEventName,
   AssistantMessage,
   AssistantProviderOption,
+  AssistantRecord,
   AssistantStatus,
   AssistantToolCall,
   AssistantToolCallStatus,

@@ -66,18 +66,89 @@ module Spree
         llm_chat
       end
 
-      # Streams text to the panel and records tool activity as it happens.
+      # Streams tool activity to the panel as it happens: what is running, and
+      # then what it found. The result callback reports no tool name of its own,
+      # so the pair is tracked here — calls run one at a time, so the tool
+      # recorded on the way in is the one whose result comes back.
       def instrument(llm_chat, turn, tools)
         by_name = tools.index_by(&:tool_name)
+        in_flight = nil
 
         llm_chat.before_tool_call do |tool_call|
           tool = by_name[tool_call.name.to_s]
+          in_flight = [tool, tool_call]
           turn.record_activity(name: tool_call.name, arguments: tool_call.arguments)
           emit(:'tool_call.started',
                name: tool_call.name,
                summary: tool&.summary(tool_call.arguments.symbolize_keys),
                mutating: tool&.mutating? || false)
         end
+
+        llm_chat.after_tool_result do |result|
+          tool, tool_call = in_flight
+          in_flight = nil
+          # A halted mutation is persisted by PersistProposal instead, which
+          # writes the approval card's placeholder in the same slot.
+          next if tool.nil? || tool.mutating?
+
+          # Recorded now, written once the turn finishes: the library keeps its
+          # own in-memory copy for the rest of this turn, so persisting here
+          # would show the model the same result twice.
+          completed_calls << [tool_call, result]
+          emit(:'tool_call.result', name: tool.tool_name, **presentable(result))
+        end
+      end
+
+      # Read tool calls that ran to completion this turn, pending persistence.
+      def completed_calls
+        @completed_calls ||= []
+      end
+
+      # Writes the pairs completed tool calls leave behind: the assistant
+      # message that made each call, and the result answering it. Without these
+      # the conversation forgets the lookup ever happened, and the next turn
+      # runs the same tool again instead of using what it already found.
+      def persist_completed_calls!
+        completed_calls.each { |tool_call, result| persist_tool_exchange!(tool_call, result) }
+        completed_calls.clear
+      end
+
+      def persist_tool_exchange!(tool_call, result)
+        return if tool_call.nil?
+
+        Spree::AssistantToolCall.transaction do
+          call_message = chat.assistant_messages.create!(
+            role: Spree::AssistantMessage::ASSISTANT,
+            content: ''
+          )
+
+          record = call_message.tool_calls.create!(
+            tool_call_id: tool_call.id,
+            name: tool_call.name,
+            arguments: tool_call.arguments || {},
+            status: Spree::AssistantToolCall::EXECUTED,
+            result: result.is_a?(Hash) ? result : { value: result.to_s }
+          )
+
+          chat.assistant_messages.create!(
+            role: Spree::AssistantMessage::TOOL,
+            content: result.to_json,
+            tool_call: record
+          )
+        end
+      end
+
+      # The part of a tool result the panel can render. Records become clickable
+      # rows; anything else is left to the assistant to put into words.
+      def presentable(result)
+        return {} unless result.is_a?(Hash)
+
+        {
+          resource: result[:resource],
+          count: result[:count],
+          records: result[:records],
+          error: result[:error]
+        }.compact
       end
 
       # Loads the conversation as it now stands in the database. Read fresh on
@@ -109,6 +180,11 @@ module Spree
       # the turn ran to completion, a halt marker when a mutation stopped it.
       # Both are unwrapped here so nothing downstream ever sees a library type.
       def finish(turn, reply)
+        # Before anything else, so the reads that informed this turn are stored
+        # in the order they happened — ahead of the reply that used them, and
+        # ahead of any approval card.
+        persist_completed_calls!
+
         if turn.proposal.present?
           turn.pending_tool_call = PersistProposal.new(chat: chat, turn: turn).call
           emit(:'tool_call.proposed', tool_call: turn.pending_tool_call)

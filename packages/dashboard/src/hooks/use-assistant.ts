@@ -1,6 +1,7 @@
 import type {
   AssistantChat,
   AssistantEvent,
+  AssistantRecord,
   AssistantStatus,
   AssistantToolCall,
 } from '@spree/admin-sdk'
@@ -11,9 +12,13 @@ import { useCallback, useRef, useState } from 'react'
 /** What the panel renders: the conversation so far, plus anything in flight. */
 export interface AssistantTranscriptEntry {
   id: string
-  kind: 'user' | 'assistant' | 'activity' | 'proposal'
+  kind: 'user' | 'assistant' | 'activity' | 'records' | 'proposal'
   text?: string
   toolCall?: AssistantToolCall
+  records?: AssistantRecord[]
+  resource?: string
+  /** Total the tool reported, which can exceed the rows it returned. */
+  count?: number
 }
 
 export function useAssistantStatus() {
@@ -77,6 +82,18 @@ export function useAssistantConversation() {
           // Only reads reach here; a mutation arrives as a proposal instead.
           if (!event.data.mutating) {
             append({ kind: 'activity', text: event.data.summary || event.data.name })
+          }
+          break
+        case 'tool_call.result':
+          if (event.data.records?.length) {
+            append({
+              kind: 'records',
+              records: event.data.records,
+              resource: event.data.resource,
+              count: event.data.count,
+            })
+          } else if (event.data.error) {
+            append({ kind: 'activity', text: event.data.error })
           }
           break
         case 'tool_call.proposed':

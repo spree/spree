@@ -30,7 +30,9 @@ module Spree
             something, say so plainly rather than describing what you would have done.
           - Any change to the store must be approved by the merchant before it happens.
             When you request one, say what you are about to change and wait.
-          - Link to records using dashboard paths, for example /orders/<id> or /products/<id>.
+          - Records you look up are ALREADY SHOWN to the merchant as a clickable list
+            directly above your reply. Do not repeat them as a list, a table, or a set
+            of links. Summarise instead: say how many there are and what stands out.
           - Prices and totals are already formatted in tool results — repeat them as given.
 
           Answer in #{locale_name}. Be brief and concrete. Prefer a short answer with the

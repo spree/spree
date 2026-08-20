@@ -14,6 +14,7 @@ import {
   type AssistantTranscriptEntry,
   useAssistantConversation,
 } from '../../../hooks/use-assistant'
+import { AssistantRecords } from './assistant-records'
 
 interface AssistantPanelProps {
   onClose: () => void
@@ -205,6 +206,10 @@ function TranscriptRow({
         {entry.text}
       </div>
     )
+  }
+
+  if (entry.kind === 'records') {
+    return <AssistantRecords records={entry.records ?? []} count={entry.count} />
   }
 
   const toolCall = entry.toolCall
