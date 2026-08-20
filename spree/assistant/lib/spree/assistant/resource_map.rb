@@ -9,7 +9,10 @@ module Spree
     #
     # Permissions mirror the controllers rather than inventing keys: the
     # catalog has no `read_price_lists`, and the price-lists controller rides
-    # `read_products`, so this does too.
+    # `read_products`, so this does too. Where a resource DOES have its own
+    # key, it must use it — a looser key here would let an admin ask the
+    # assistant for something the dashboard would refuse them. Enforced by a
+    # spec that compares every entry against its controller's scoped_resource.
     class ResourceMap
       # A registered resource whose model has no store scoping. Raised rather
       # than quietly leaking another store's records.
@@ -109,10 +112,10 @@ module Spree
                   permission: 'read_products', serializer_name: 'Spree::Api::V3::Admin::ProductSerializer',
                   dashboard_path: '/products/%<id>s'),
         Entry.new(key: 'categories', model_name: 'Spree::Category',
-                  permission: 'read_products', serializer_name: 'Spree::Api::V3::Admin::CategorySerializer',
+                  permission: 'read_categories', serializer_name: 'Spree::Api::V3::Admin::CategorySerializer',
                   dashboard_path: '/products/categories/%<id>s'),
         Entry.new(key: 'collections', model_name: 'Spree::Collection',
-                  permission: 'read_products', serializer_name: 'Spree::Api::V3::Admin::CollectionSerializer',
+                  permission: 'read_collections', serializer_name: 'Spree::Api::V3::Admin::CollectionSerializer',
                   dashboard_path: '/products/collections/%<id>s'),
         # Price lists have no catalog key of their own; the Admin API rides
         # `read_products`, so this does too.
@@ -162,7 +165,7 @@ module Spree
                   permission: 'read_settings', serializer_name: 'Spree::Api::V3::Admin::PaymentMethodSerializer',
                   dashboard_path: '/settings/payment-methods'),
         Entry.new(key: 'delivery_methods', model_name: 'Spree::DeliveryMethod',
-                  permission: 'read_settings', serializer_name: 'Spree::Api::V3::Admin::DeliveryMethodSerializer'),
+                  permission: 'read_delivery_methods', serializer_name: 'Spree::Api::V3::Admin::DeliveryMethodSerializer'),
         Entry.new(key: 'delivery_profiles', model_name: 'Spree::DeliveryProfile',
                   permission: 'read_settings', serializer_name: 'Spree::Api::V3::Admin::DeliveryProfileSerializer',
                   dashboard_path: '/settings/delivery-profiles'),
@@ -178,10 +181,10 @@ module Spree
                   permission: 'read_settings', serializer_name: 'Spree::Api::V3::Admin::TaxRateSerializer',
                   dashboard_path: '/settings/tax-rates'),
         Entry.new(key: 'product_types', model_name: 'Spree::ProductType',
-                  permission: 'read_products', serializer_name: 'Spree::Api::V3::Admin::ProductTypeSerializer',
+                  permission: 'read_product_types', serializer_name: 'Spree::Api::V3::Admin::ProductTypeSerializer',
                   dashboard_path: '/settings/product-types'),
         Entry.new(key: 'commission_rates', model_name: 'Spree::CommissionRate',
-                  permission: 'read_sellers', serializer_name: 'Spree::Api::V3::Admin::CommissionRateSerializer',
+                  permission: 'read_commissions', serializer_name: 'Spree::Api::V3::Admin::CommissionRateSerializer',
                   dashboard_path: '/settings/commission-rates'),
         Entry.new(key: 'roles', model_name: 'Spree::Role',
                   permission: 'read_staff', serializer_name: 'Spree::Api::V3::Admin::RoleSerializer',
@@ -190,7 +193,7 @@ module Spree
                   permission: 'read_settings', serializer_name: 'Spree::Api::V3::Admin::ReturnReasonSerializer',
                   dashboard_path: '/settings/reasons'),
         Entry.new(key: 'webhook_endpoints', model_name: 'Spree::WebhookEndpoint',
-                  permission: 'read_settings', serializer_name: 'Spree::Api::V3::Admin::WebhookEndpointSerializer'),
+                  permission: 'read_webhooks', serializer_name: 'Spree::Api::V3::Admin::WebhookEndpointSerializer'),
         Entry.new(key: 'allowed_origins', model_name: 'Spree::AllowedOrigin',
                   permission: 'read_settings', serializer_name: 'Spree::Api::V3::Admin::AllowedOriginSerializer',
                   dashboard_path: '/settings/allowed-origins'),
@@ -213,8 +216,11 @@ module Spree
         Entry.new(key: 'promotions', model_name: 'Spree::Promotion',
                   permission: 'read_promotions', serializer_name: 'Spree::Api::V3::Admin::PromotionSerializer',
                   dashboard_path: '/promotions/%<id>s'),
-        Entry.new(key: 'gift_cards', model_name: 'Spree::GiftCard',
-                  permission: 'read_gift_cards', serializer_name: 'Spree::Api::V3::Admin::GiftCardSerializer')
+        # Gift cards are deliberately absent. The serializer exposes `code`,
+        # which is the bearer instrument itself — anyone holding it can spend
+        # the balance — and every tool result is transmitted to a third-party
+        # AI vendor and stored in chat history. Balances and expiry could be
+        # answered by a purpose-built tool that never emits the code.
       ].freeze
 
       class << self

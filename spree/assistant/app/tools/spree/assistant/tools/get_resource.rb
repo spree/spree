@@ -24,7 +24,12 @@ module Spree
             # The full record for the model to answer from, plus the same
             # compact row `search_resources` returns so the panel can show it
             # as something the merchant can click through to.
-            record: entry.serializer_class.new(record).to_h,
+            #
+            # Sanitized like every other outbound record: this is the one tool
+            # that emits a whole serializer hash, so without the filter a
+            # serializer that gains a token field would send it straight to the
+            # AI vendor — the exact case the filter exists for.
+            record: Spree::Assistant::RecordSummary.sanitize(entry.serializer_class.new(record).to_h),
             records: [Spree::Assistant::RecordSummary.call(entry: entry, record: record)],
             count: 1,
             total: 1

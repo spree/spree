@@ -18,7 +18,7 @@ module Spree
 
       # @return [Spree::AssistantToolCall]
       def call
-        raise AlreadyResolvedError unless tool_call.awaiting_approval?
+        claim!
 
         approve ? execute! : reject!
         tool_call
@@ -28,13 +28,45 @@ module Spree
 
       attr_reader :tool_call, :context, :approve
 
+      # Takes the decision atomically, before the tool runs.
+      #
+      # A read-then-act check let two concurrent approvals both pass and both
+      # execute — one human approval producing two writes. Harmless for a status
+      # change, but the approval gate's whole promise is that a merchant
+      # authorises exactly one change, and the tools this gate is built for are
+      # prices and refunds. The conditional UPDATE is the same pre-claim the
+      # payment workflows use before touching a gateway: exactly one caller can
+      # move the row out of `proposed`, and the loser is told it was already
+      # decided.
+      def claim!
+        claimed = Spree::AssistantToolCall
+                  .where(id: tool_call.id, status: Spree::AssistantToolCall::PROPOSED)
+                  .update_all(
+                    status: approve ? Spree::AssistantToolCall::APPROVED : Spree::AssistantToolCall::REJECTED,
+                    updated_at: Time.current
+                  )
+
+        raise AlreadyResolvedError if claimed.zero?
+
+        # The in-memory copy predates the claim, so refresh it before anything
+        # reads a status or writes alongside one.
+        tool_call.reload
+      end
+
       def execute!
         tool = build_tool
 
         # Re-checked at execution rather than trusted from proposal time: the
         # card may be approved minutes later, and the admin's roles can change
         # in between.
-        raise ForbiddenError unless tool.permitted?
+        unless tool.permitted?
+          # Recorded before raising: the row is already claimed, so leaving it
+          # `approved` would strand a change that never ran and can never be
+          # decided again.
+          finish(status: Spree::AssistantToolCall::FAILED,
+                 result: { error: Spree.t('assistant.errors.permission_lost') })
+          raise ForbiddenError
+        end
 
         result = tool.call(**tool_call.call_arguments)
         finish(status: Spree::AssistantToolCall::EXECUTED, result: result)

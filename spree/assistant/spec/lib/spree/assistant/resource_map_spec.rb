@@ -62,3 +62,45 @@ RSpec.describe Spree::Assistant::ResourceMap do
     end
   end
 end
+
+RSpec.describe Spree::Assistant::ResourceMap, 'permission alignment' do
+  # A resource must not be reachable through the assistant on a looser key than
+  # the Admin API demands for the same records — otherwise an admin can ask the
+  # assistant for something the dashboard would refuse them, and the permission
+  # layer (the one an operator reads and reasons about) is silently wrong.
+  #
+  # Derived from the map rather than a hand-kept list: a list only covers the
+  # resources someone remembered to add, so a permission renamed in core drifts
+  # silently on every resource outside it — which is exactly how
+  # `delivery_methods` came to sit on `read_settings` while its controller
+  # demanded `read_delivery_methods`.
+  #
+  # Resources whose controller resolves its permission per record (imports and
+  # exports, keyed by import type) have nothing static to compare against, and
+  # ones the Admin API serves from a differently-named controller are named
+  # here with the controller that actually answers for them.
+  DYNAMIC_PERMISSION = %w[imports exports].freeze
+  CONTROLLER_OVERRIDES = { 'draft_orders' => 'OrdersController' }.freeze
+
+  described_class.all.each do |entry|
+    next if DYNAMIC_PERMISSION.include?(entry.key)
+
+    controller_name = CONTROLLER_OVERRIDES.fetch(entry.key) { "#{entry.key.camelize}Controller" }
+
+    it "`#{entry.key}` uses the same permission as #{controller_name}" do
+      controller = "Spree::Api::V3::Admin::#{controller_name}".safe_constantize
+      skip("#{controller_name} not found") if controller.nil?
+
+      scoped = controller._scoped_resource
+      skip("#{controller_name} declares no scoped_resource") if scoped.blank?
+
+      expect(entry.permission).to eq("read_#{scoped}")
+    end
+  end
+
+  it 'points every resource at a permission the catalog actually defines' do
+    unknown = described_class.all.reject { |entry| Spree.permissions.key?(entry.permission) }
+
+    expect(unknown.map(&:key)).to be_empty
+  end
+end
