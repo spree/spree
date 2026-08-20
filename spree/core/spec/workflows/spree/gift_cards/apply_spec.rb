@@ -134,6 +134,31 @@ RSpec.describe Spree::GiftCards::Apply do
     end
   end
 
+  # The store controllers check these at the edge, but the workflow is the
+  # shared entry point, so it refuses a card that cannot be spent.
+  context 'when the gift card cannot be spent' do
+    it 'refuses an expired card' do
+      gift_card.update!(expires_at: 1.day.ago)
+
+      expect(subject).not_to be_success
+      expect(subject.error.value).to eq(:gift_card_expired)
+    end
+
+    it 'refuses a canceled card' do
+      gift_card.update!(status: 'canceled')
+
+      expect(subject).not_to be_success
+      expect(subject.error.value).to eq(:gift_card_canceled)
+    end
+
+    it 'refuses a redeemed card' do
+      gift_card.update!(status: 'redeemed')
+
+      expect(subject).not_to be_success
+      expect(subject.error.value).to eq(:gift_card_already_redeemed)
+    end
+  end
+
   context 'when the gift card has no amount remaining' do
     before { gift_card.update!(amount_used: gift_card.amount) }
 

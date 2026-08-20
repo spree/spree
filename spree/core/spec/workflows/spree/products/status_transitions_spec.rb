@@ -76,6 +76,23 @@ RSpec.describe 'Spree::Products nested attributes' do
       )
     }.to have_enqueued_job(Spree::Images::SaveFromUrlJob)
   end
+
+  # The job loads the product by id, so a worker must not see it before the
+  # transaction that created it has committed.
+  it 'does not enqueue the download until the transaction commits' do
+    enqueued_mid_transaction = nil
+
+    ApplicationRecord.transaction do
+      Spree.product_create_workflow.call(
+        store: store,
+        attributes: { name: 'Deferred Media', media: [{ external_url: 'https://example.com/b.jpg' }] }
+      )
+      enqueued_mid_transaction = enqueued_jobs.count { |job| job['job_class'] == 'Spree::Images::SaveFromUrlJob' }
+    end
+
+    expect(enqueued_mid_transaction).to eq(0)
+    expect(enqueued_jobs.count { |job| job['job_class'] == 'Spree::Images::SaveFromUrlJob' }).to eq(1)
+  end
 end
 
 RSpec.describe 'Spree::Products status workflows' do

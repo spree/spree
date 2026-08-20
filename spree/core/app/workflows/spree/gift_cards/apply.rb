@@ -45,6 +45,13 @@ module Spree
         failure(order, :gift_card_using_store_credit_error) if order.using_store_credit?
         failure(order, :gift_card_mismatched_currency) if gift_card.currency != order.currency
 
+        # The store controllers check these before they get here, but this
+        # workflow is the shared entry point every caller now uses, so a card
+        # that cannot be spent is refused here rather than only at the edge.
+        failure(order, :gift_card_expired) if gift_card.expired?
+        failure(order, :gift_card_already_redeemed) if gift_card.redeemed?
+        failure(order, :gift_card_canceled) if gift_card.canceled?
+
         return if gift_card.customer.blank?
 
         # A card issued to someone is theirs alone.

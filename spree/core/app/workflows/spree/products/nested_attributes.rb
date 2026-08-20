@@ -118,18 +118,26 @@ module Spree
       # SSRF filtering, a size cap, and skipping a URL this product has
       # already fetched.
       #
+      # Enqueued after the transaction commits, because the job loads the
+      # product by id: a worker picking it up mid-transaction would not find
+      # a product that is not visible to its connection yet.
+      #
       # The asset is always attached to the product so one file is not
       # downloaded once per variant; `variant_id` links the resulting asset to
       # a variant afterwards.
       def enqueue_media_download(product, external_url, attrs)
-        Spree::Images::SaveFromUrlJob.perform_later(
+        arguments = [
           product.id,
           'Spree::Product',
           external_url,
           attrs[:external_id],
           attrs[:position],
           attrs[:variant_id]
-        )
+        ]
+
+        ActiveRecord.after_all_transactions_commit do
+          Spree::Images::SaveFromUrlJob.perform_later(*arguments)
+        end
       end
     end
   end
