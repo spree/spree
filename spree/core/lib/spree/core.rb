@@ -390,6 +390,18 @@ module Spree
     Rails.application.config.spree.commission_rules = value
   end
 
+  # Seller onboarding requirement kinds an operator can configure
+  # (docs/plans/6.0-seller-onboarding-requirements.md).
+  #
+  # @return [Array<Class>]
+  def self.seller_requirements
+    Rails.application.config.spree.seller_requirements
+  end
+
+  def self.seller_requirements=(value)
+    Rails.application.config.spree.seller_requirements = value
+  end
+
   def self.delivery_method_rules
     Rails.application.config.spree.delivery_method_rules
   end

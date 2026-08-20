@@ -37,6 +37,9 @@ module Spree
             # The marketplace's catch-all rate, at the bottom of the list so
             # narrower rates added later resolve ahead of it.
             CommissionRates.call
+            # What a new seller has to do before this marketplace will let
+            # them trade. Runs after stores for the same reason roles do.
+            SellerRequirements.call
             ApiKeys.call
             AllowedOrigins.call
           end

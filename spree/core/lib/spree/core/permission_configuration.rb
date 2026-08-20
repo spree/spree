@@ -339,7 +339,12 @@ module Spree
       # Running the marketplace: admitting sellers, approving them, suspending
       # them. Deliberately not opened to the seller audience — a seller
       # administering other sellers is the one thing this key must not allow.
-      register_resource(:sellers, group: :access, subjects: -> { [Spree::Seller] })
+      # The seller records themselves, plus what the marketplace asks of them
+      # before admitting them: who decides admission is who admits, so the
+      # checklist rides the same key rather than becoming a settings matter.
+      register_resource(:sellers, group: :access, subjects: -> {
+        [Spree::Seller, Spree::SellerRequirement, Spree::SellerRequirementSubmission]
+      })
 
       # What the marketplace charges its sellers. Its own resource rather than
       # part of `settings`, and closed to the seller audience for the same
