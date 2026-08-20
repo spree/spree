@@ -164,11 +164,19 @@ function ViewStoreLink() {
 // User menu
 // ---------------------------------------------------------------------------
 
-function TopBarUser({
-  uiLocales,
+/**
+ * The account menu: who is signed in, theme and language, and sign out.
+ *
+ * Exported because it is the one piece of the top bar that needs nothing but
+ * `useAuth` — no store, no command palette — so a panel with different chrome
+ * (the seller panel) mounts this rather than forking a second user menu that
+ * would then drift.
+ */
+export function TopBarUser({
+  uiLocales = [],
   onEditProfile,
 }: {
-  uiLocales: ReadonlyArray<{ code: string; name: string }>
+  uiLocales?: ReadonlyArray<{ code: string; name: string }>
   onEditProfile?: () => void
 }) {
   const { t } = useTranslation()

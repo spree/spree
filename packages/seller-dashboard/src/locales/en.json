@@ -30,6 +30,9 @@
     "subtitle": "You run more than one. Pick which to manage.",
     "status": "Status"
   },
+  "seller_switcher": {
+    "label": "Switch seller"
+  },
   "nav": {
     "profile": "Profile",
     "team": "Team",
@@ -64,9 +67,7 @@
     }
   },
   "profile": {
-    "title": "Your profile",
     "subtitle": "How your storefront presents you, and how the marketplace reaches you.",
-    "section_presentation": "Presentation",
     "section_contact": "Contact",
     "section_standing": "Standing",
     "section_settlement": "Payouts and tax",
@@ -74,10 +75,6 @@
     "about": "About",
     "contact_email": "Contact email",
     "billing_email": "Billing email",
-    "handle": "Storefront address",
-    "status": "Status",
-    "sellable": "Currently selling",
-    "not_sellable": "Not currently selling",
     "products_count": "Products",
     "tax_remittance": "Tax remitted by",
     "payout_schedule": "Payout schedule",
@@ -86,7 +83,24 @@
     "save": "Save changes",
     "saving": "Saving…",
     "saved": "Profile saved",
-    "not_provided": "Not provided"
+    "not_provided": "Not provided",
+    "edit": "Edit",
+    "edit_title": "Edit your profile",
+    "no_about": "You have not written a description yet.",
+    "at_a_glance": "At a glance",
+    "team_count": "Team members",
+    "joined": "Joined",
+    "on_holiday_notice": "Holiday mode is on, so your products are visible but cannot be bought.",
+    "status_help": {
+      "pending": "The marketplace has not started your application yet.",
+      "invited": "You have been invited. Finish getting set up to apply.",
+      "onboarding": "Work through your checklist, then submit for review.",
+      "ready_for_review": "The marketplace is reviewing your application.",
+      "approved": "You are approved and can sell on this marketplace.",
+      "suspended": "Selling is paused. Contact the marketplace to find out more.",
+      "rejected": "Your application was not accepted. Contact the marketplace to find out more.",
+      "canceled": "This seller account is closed."
+    }
   },
   "team": {
     "title": "Your team",

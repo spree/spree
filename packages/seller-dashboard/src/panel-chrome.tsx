@@ -1,59 +1,58 @@
-import { NavMain, useAuth, useNavItems } from '@spree/dashboard-core'
+import { NavMain, StickyHeaderProvider, TopBarUser, useNavItems } from '@spree/dashboard-core'
 import {
-  Button,
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
   SidebarInset,
   SidebarProvider,
+  SidebarTrigger,
 } from '@spree/dashboard-ui'
-import { Link, useParams } from '@tanstack/react-router'
+import { useParams } from '@tanstack/react-router'
 import type { ReactNode } from 'react'
-import { useTranslation } from 'react-i18next'
+import { SellerSwitcher } from './components/seller-switcher'
 
 /**
- * The panel's frame: the sidebar and a content column.
+ * The panel's frame: the sidebar and a content column under a top bar.
  *
- * Built on the same sidebar primitives and the same nav registry as the
- * operator's dashboard, so a marketplace customises this panel the way it
- * customises that one — `defineDashboardPlugin({ nav, slots, ... })` — rather
- * than forking the chrome. `useNavItems` resolves the registry against the
- * seller id: entries are prefixed with it, `if` gates evaluated, and items the
- * member cannot act on hidden by the same permission filter.
+ * Built on the same primitives, the same nav registry and the same account
+ * menu as the operator's dashboard, so a seller who has used one recognises
+ * the other and a fix to the shared pieces reaches both.
  *
- * Deliberately without the operator's store switcher, settings sidebar and
- * command palette. A seller has one tenant at a time (switching is a link
- * back to the picker) and nothing here yet earns a palette.
+ * The store switcher's counterpart is the seller switcher in the header.
+ * What the operator's chrome has that this does not: a settings sub-shell,
+ * and the command palette — the latter needs a search surface this panel does
+ * not have yet, and mounting the provider for an empty palette would be
+ * chrome that does nothing.
  */
 export function PanelChrome({ children }: { children: ReactNode }) {
-  const { t } = useTranslation()
-  const { logout } = useAuth()
   const { sellerId } = useParams({ from: '/_authenticated/$sellerId' })
   const { navItems, bottomItems } = useNavItems(sellerId)
 
   return (
-    <SidebarProvider>
-      <Sidebar collapsible="icon">
-        <SidebarHeader className="px-4 py-3">
-          <p className="truncate font-medium text-sm">{t('app.name')}</p>
-        </SidebarHeader>
-        <SidebarContent>
-          <NavMain items={navItems} bottomItems={bottomItems} />
-        </SidebarContent>
-        <SidebarFooter className="flex flex-col gap-1 p-2">
-          <Button variant="ghost" size="sm" className="justify-start" asChild>
-            <Link to="/">{t('seller_picker.title')}</Link>
-          </Button>
-          <Button variant="ghost" size="sm" className="justify-start" onClick={() => logout()}>
-            {t('nav.sign_out')}
-          </Button>
-        </SidebarFooter>
-      </Sidebar>
+    <StickyHeaderProvider>
+      <SidebarProvider>
+        <Sidebar collapsible="icon">
+          <SidebarHeader>
+            <SellerSwitcher />
+          </SidebarHeader>
+          <SidebarContent>
+            <NavMain items={navItems} bottomItems={bottomItems} />
+          </SidebarContent>
+        </Sidebar>
 
-      <SidebarInset>
-        <div className="container mx-auto flex flex-1 flex-col gap-4 p-4 lg:p-6">{children}</div>
-      </SidebarInset>
-    </SidebarProvider>
+        <SidebarInset>
+          {/* The account menu carries sign-out, so the sidebar footer no
+              longer does. */}
+          <header className="flex h-14 shrink-0 items-center gap-2 border-border-subtle border-b px-4">
+            <SidebarTrigger />
+            <div className="ml-auto flex items-center gap-2">
+              <TopBarUser />
+            </div>
+          </header>
+
+          <div className="flex flex-1 flex-col gap-4 p-4 lg:p-6">{children}</div>
+        </SidebarInset>
+      </SidebarProvider>
+    </StickyHeaderProvider>
   )
 }
