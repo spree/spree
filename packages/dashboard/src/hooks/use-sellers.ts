@@ -1,9 +1,11 @@
 import type {
   ListParams,
   Seller,
+  SellerApproveParams,
   SellerCreateParams,
   SellerInviteParams,
   SellerRejectParams,
+  SellerReopenOnboardingParams,
   SellerSuspendParams,
   SellerUpdateParams,
 } from '@spree/admin-sdk'
@@ -90,12 +92,37 @@ export function useInviteSeller(id: string) {
   })
 }
 
+/**
+ * Admits a seller. The server refuses while a required onboarding requirement
+ * is unmet, so pass `override_requirements` to admit one anyway — the page
+ * turns that into a confirm dialog naming what is outstanding, and the
+ * `seller.approved` event records the override.
+ *
+ * Invalidates the seller's onboarding query as well as the seller itself,
+ * since approving can change what the checklist reports.
+ */
 export function useApproveSeller(id: string) {
-  return useResourceMutation<Seller, Error, void>({
-    mutationFn: () => adminClient.sellers.approve(id),
-    invalidate: [['sellers'], ['sellers', id]],
+  return useResourceMutation<Seller, Error, SellerApproveParams | undefined>({
+    mutationFn: (params) => adminClient.sellers.approve(id, params ?? undefined),
+    invalidate: [['sellers'], ['sellers', id], ['sellers', id, 'onboarding']],
     successMessage: i18n.t('admin.sellers.messages.approved'),
     errorMessage: i18n.t('admin.sellers.messages.approve_failed'),
+  })
+}
+
+/**
+ * Sends a seller awaiting review back to onboarding, optionally with a note
+ * saying what to fix. Distinct from rejecting them, which turns them away.
+ *
+ * Invalidates the onboarding query too, because the seller's standing against
+ * the checklist changes with their status.
+ */
+export function useReopenSellerOnboarding(id: string) {
+  return useResourceMutation<Seller, Error, SellerReopenOnboardingParams | undefined>({
+    mutationFn: (params) => adminClient.sellers.reopenOnboarding(id, params ?? undefined),
+    invalidate: [['sellers'], ['sellers', id], ['sellers', id, 'onboarding']],
+    successMessage: i18n.t('admin.sellers.messages.onboarding_reopened'),
+    errorMessage: i18n.t('admin.errors.failed_to_update'),
   })
 }
 

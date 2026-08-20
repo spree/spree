@@ -295,6 +295,95 @@
       },
       "title": "Kolekcje"
     },
+    "commission_rates": {
+      "add_cta": "Dodaj stawkę prowizji",
+      "applies_to_everything": "Każda sprzedaż",
+      "create_description": "Określ, ile marketplace pobiera od sprzedawców i których sprzedaży to dotyczy.",
+      "create_label": "Utwórz stawkę prowizji",
+      "delete_confirm": {
+        "message": "{{name}} zostanie usunięta. Naliczone już prowizje pozostaną bez zmian.",
+        "title": "Usunąć stawkę prowizji?"
+      },
+      "edit_description": "Zaktualizuj opłatę, jej limity i objęte nią sprzedaże.",
+      "empty": "Brak stawek prowizji",
+      "messages": {
+        "created": "Utworzono stawkę prowizji",
+        "deleted": "Usunięto stawkę prowizji",
+        "updated": "Zaktualizowano stawkę prowizji"
+      },
+      "search_placeholder": "Szukaj po nazwie…",
+      "order_hint": "Nowe stawki trafiają na górę listy, a wygrywa pierwsza pasująca — przeciągnij, aby zmienić kolejność.",
+      "conditions": {
+        "add": "Dodaj warunek",
+        "title": "Warunki"
+      }
+    },
+    "companies": {
+      "add_cta": "Dodaj firmę",
+      "add_sheet_title": "Nowa firma",
+      "create_description": "Klienci biznesowi kupują przez oddziały. Oddziały, numer podatkowy i certyfikaty zwolnienia dodasz po utworzeniu firmy.",
+      "create_label": "Utwórz firmę",
+      "delete_confirm": {
+        "message": "Spowoduje to usunięcie {{name}} wraz z oddziałami, kupującymi i certyfikatami. Tej operacji nie można cofnąć.",
+        "title": "Usunąć firmę?"
+      },
+      "detail": {
+        "delete_label": "Usuń firmę",
+        "load_error": "Nie udało się wczytać tej firmy",
+        "profile": "Firma"
+      },
+      "empty": "Nie ma jeszcze żadnych firm",
+      "locations_column": "Oddziały",
+      "messages": {
+        "created": "Firma utworzona",
+        "deleted": "Firma usunięta",
+        "updated": "Firma zaktualizowana"
+      },
+      "search_placeholder": "Szukaj firm"
+    },
+    "company_contacts": {
+      "add_cta": "Dodaj kupującego",
+      "add_title": "Uprawnij kupującego",
+      "dialog_description": "Klient, który kupuje dla tego oddziału. Jeśli kupuje tylko dla jednego oddziału, jego zamówienia trafiają do niego automatycznie.",
+      "empty": "Nie uprawniono jeszcze żadnych kupujących",
+      "messages": {
+        "created": "Kupujący dodany",
+        "deleted": "Kupujący usunięty"
+      },
+      "remove_action": "Usuń kupującego",
+      "remove_confirm": {
+        "message": "{{email}} nie będzie już kupować dla tego oddziału. Konto klienta pozostaje bez zmian.",
+        "title": "Usunąć tego kupującego?"
+      },
+      "roles_enterprise_help": "Dodani tutaj kupujący mogą składać zamówienia dla tego oddziału. Role, procesy akceptacji i limity wydatków są częścią Spree Enterprise.",
+      "roles_enterprise_title": "Role i akceptacje to funkcja Enterprise",
+      "title": "Kupujący"
+    },
+    "company_locations": {
+      "add_cta": "Dodaj oddział",
+      "add_title": "Nowy oddział",
+      "addresses": "Adresy",
+      "billing_address": "Adres rozliczeniowy",
+      "contacts_count_few": "{{count}} kupujących",
+      "contacts_count_many": "{{count}} kupujących",
+      "contacts_count_one": "{{count}} kupujący",
+      "contacts_count_other": "{{count}} kupujących",
+      "detail": {
+        "delete_label": "Usuń oddział",
+        "load_error": "Nie udało się wczytać tego oddziału"
+      },
+      "dialog_description": "Oddział to miejsce, na które wystawiana jest faktura i pod które trafia dostawa. Adresy są opcjonalne, ale wypełniony adres wymaga imienia, nazwiska i kraju.",
+      "edit_title": "Edytuj oddział",
+      "empty": "Nie ma jeszcze żadnych oddziałów",
+      "messages": {
+        "created": "Oddział utworzony",
+        "deleted": "Oddział usunięty",
+        "updated": "Oddział zaktualizowany"
+      },
+      "shipping_address": "Adres dostawy",
+      "shipping_same_as_billing": "Adres dostawy taki sam jak rozliczeniowy",
+      "title": "Oddziały"
+    },
     "components": {
       "adjustment_action_editor": {
         "calculator_label": "Kalkulator",
@@ -555,6 +644,67 @@
       "split_description": "Wysyłaj te same produkty z drugiego magazynu z własnymi strefami i stawkami.",
       "split_title": "Podziel miejsca wysyłki"
     },
+    "delivery_profiles": {
+      "add_cta": "Dodaj profil",
+      "add_dialog_title": "Nowy profil dostawy",
+      "all_locations": "Wszystkie lokalizacje",
+      "capabilities": {
+        "digital": "Cyfrowa",
+        "pickup": "Odbiór",
+        "ships": "Wysyłka"
+      },
+      "create_description": "Zgrupuj produkty wysyłane w ten sam sposób, z własnymi lokalizacjami, strefami i metodami dostawy.",
+      "create_label": "Utwórz profil",
+      "default_badge": "Domyślny",
+      "default_confirm": {
+        "message": "Produkty bez własnego profilu będą wysyłane według profilu „{{name}}”.",
+        "title": "Ustaw jako profil domyślny"
+      },
+      "delete_confirm": {
+        "message": "Usunąć „{{name}}”? Jego strefy i metody dostawy zostaną usunięte razem z nim.",
+        "title": "Usuń profil wysyłki"
+      },
+      "detail": {
+        "add_digital_method": "Dodaj metodę cyfrową",
+        "add_method": "Dodaj metodę",
+        "collect_from": "Odbiór z",
+        "collect_from_hint": "Lokalizacje, z których klienci mogą odbierać zamówienia. Zmiany działają natychmiast.",
+        "delete_label": "Usuń profil",
+        "digital_empty": "Brak metody dostawy cyfrowej.",
+        "digital_hint": "Dostarczane bez wysyłki i odbioru.",
+        "digital_title": "Dostawa cyfrowa",
+        "general_title": "Ogólne",
+        "hidden_badge": "Ukryta",
+        "load_failed_title": "Nie udało się wczytać tego profilu wysyłki",
+        "no_methods": "Brak metod dostawy w tym miejscu.",
+        "no_stock_locations": "Brak lokalizacji — dodaj jedną w Ustawienia → Lokalizacje.",
+        "no_zone_hint": "Te metody są oferowane wszędzie, gdzie sięga ten profil.",
+        "no_zone_title": "Bez ograniczenia strefy",
+        "no_zones": "Brak stref — dodaj jedną, aby oferować metody dostawy.",
+        "offer_pickup": "Zaoferuj odbiór",
+        "origins_title": "Wysyłka z",
+        "pickup_empty": "Brak metody odbioru — klienci nie mogą odbierać zamówień w tym profilu.",
+        "pickup_hint": "Klienci odbierają te zamówienia osobiście. Odbiór nie ma miejsca docelowego, więc strefy nie mają zastosowania.",
+        "pickup_title": "Odbiór osobisty",
+        "zones_title": "Strefy i metody dostawy"
+      },
+      "empty": "Brak profili dostawy.",
+      "is_default_hint": "Produkty bez własnego profilu są wysyłane według tego profilu.",
+      "kind_immutable_hint": "Rodzaj jest ustalany przy tworzeniu profilu.",
+      "kinds": {
+        "digital": "Cyfrowa",
+        "shipping": "Wysyłka"
+      },
+      "locations_count": "Lokalizacje: {{count}}",
+      "make_default": "Ustaw jako domyślny",
+      "messages": {
+        "created": "Utworzono profil wysyłki",
+        "deleted": "Usunięto profil wysyłki",
+        "updated": "Zaktualizowano profil wysyłki"
+      },
+      "search_placeholder": "Szukaj profili dostawy…",
+      "selected_locations": "Wybrane lokalizacje"
+    },
     "delivery_zones": {
       "add_countries_in_markets": "Dodaj więcej krajów w sekcji Rynki",
       "add_cta": "Dodaj strefę dostawy",
@@ -603,6 +753,9 @@
       "states_summary": "{{selected}} z {{total}} regionów",
       "to_placeholder": "Do",
       "toggle_states": "Pokaż regiony kraju {{country}}"
+    },
+    "enterprise": {
+      "learn_more": "Dowiedz się więcej o Spree Enterprise"
     },
     "errors": {
       "forbidden_description": "Nie masz uprawnień do wyświetlenia tej strony.",
@@ -1732,67 +1885,6 @@
         }
       }
     },
-    "delivery_profiles": {
-      "add_cta": "Dodaj profil",
-      "add_dialog_title": "Nowy profil dostawy",
-      "all_locations": "Wszystkie lokalizacje",
-      "capabilities": {
-        "digital": "Cyfrowa",
-        "pickup": "Odbiór",
-        "ships": "Wysyłka"
-      },
-      "create_description": "Zgrupuj produkty wysyłane w ten sam sposób, z własnymi lokalizacjami, strefami i metodami dostawy.",
-      "create_label": "Utwórz profil",
-      "default_badge": "Domyślny",
-      "default_confirm": {
-        "message": "Produkty bez własnego profilu będą wysyłane według profilu „{{name}}”.",
-        "title": "Ustaw jako profil domyślny"
-      },
-      "delete_confirm": {
-        "message": "Usunąć „{{name}}”? Jego strefy i metody dostawy zostaną usunięte razem z nim.",
-        "title": "Usuń profil wysyłki"
-      },
-      "detail": {
-        "add_digital_method": "Dodaj metodę cyfrową",
-        "add_method": "Dodaj metodę",
-        "collect_from": "Odbiór z",
-        "collect_from_hint": "Lokalizacje, z których klienci mogą odbierać zamówienia. Zmiany działają natychmiast.",
-        "delete_label": "Usuń profil",
-        "digital_empty": "Brak metody dostawy cyfrowej.",
-        "digital_hint": "Dostarczane bez wysyłki i odbioru.",
-        "digital_title": "Dostawa cyfrowa",
-        "general_title": "Ogólne",
-        "hidden_badge": "Ukryta",
-        "load_failed_title": "Nie udało się wczytać tego profilu wysyłki",
-        "no_methods": "Brak metod dostawy w tym miejscu.",
-        "no_stock_locations": "Brak lokalizacji — dodaj jedną w Ustawienia → Lokalizacje.",
-        "no_zone_hint": "Te metody są oferowane wszędzie, gdzie sięga ten profil.",
-        "no_zone_title": "Bez ograniczenia strefy",
-        "no_zones": "Brak stref — dodaj jedną, aby oferować metody dostawy.",
-        "offer_pickup": "Zaoferuj odbiór",
-        "origins_title": "Wysyłka z",
-        "pickup_empty": "Brak metody odbioru — klienci nie mogą odbierać zamówień w tym profilu.",
-        "pickup_hint": "Klienci odbierają te zamówienia osobiście. Odbiór nie ma miejsca docelowego, więc strefy nie mają zastosowania.",
-        "pickup_title": "Odbiór osobisty",
-        "zones_title": "Strefy i metody dostawy"
-      },
-      "empty": "Brak profili dostawy.",
-      "is_default_hint": "Produkty bez własnego profilu są wysyłane według tego profilu.",
-      "kind_immutable_hint": "Rodzaj jest ustalany przy tworzeniu profilu.",
-      "kinds": {
-        "digital": "Cyfrowa",
-        "shipping": "Wysyłka"
-      },
-      "locations_count": "Lokalizacje: {{count}}",
-      "make_default": "Ustaw jako domyślny",
-      "messages": {
-        "created": "Utworzono profil wysyłki",
-        "deleted": "Usunięto profil wysyłki",
-        "updated": "Zaktualizowano profil wysyłki"
-      },
-      "search_placeholder": "Szukaj profili dostawy…",
-      "selected_locations": "Wybrane lokalizacje"
-    },
     "gift_cards": {
       "batch_autocomplete": {
         "empty": "Brak pasujących partii",
@@ -1952,6 +2044,9 @@
       "not_found_title": "Nie znaleziono zaproszenia",
       "sign_in_and_accept": "Zaloguj się i zaakceptuj",
       "sign_in_to_accept": ". Zaloguj się, aby zaakceptować."
+    },
+    "jurisdiction": {
+      "everywhere": "Wszędzie"
     },
     "markets": {
       "add_cta": "Dodaj rynek",
@@ -3829,6 +3924,240 @@
         "name_required": "Nazwa jest wymagana"
       }
     },
+    "seller_requirements": {
+      "title": "Wymagania dla sprzedawców",
+      "search_placeholder": "Szukaj wymagań",
+      "empty": "Brak wymagań. Sprzedawcy mogą od razu poprosić o weryfikację.",
+      "add_cta": "Dodaj wymaganie",
+      "add_title": "Dodaj wymaganie",
+      "edit_title": "Edytuj wymaganie",
+      "columns": {
+        "kind": "Typ",
+        "required": "Wymagane"
+      },
+      "required": {
+        "yes": "Wymagane",
+        "no": "Zalecane"
+      },
+      "status": {
+        "disabled": "Wyłączone"
+      },
+      "fields": {
+        "accepted_files": {
+          "label": "Dozwolone pliki",
+          "help": "Sprzedawcy mogą przesłać: {{types}}"
+        },
+        "active": {
+          "label": "Aktywne",
+          "help": "Wyłącz, aby przestać tego wymagać, bez usuwania."
+        },
+        "custom_fields": {
+          "label": "Pola niestandardowe",
+          "help": "Sprzedawca musi wypełnić każde wybrane pole.",
+          "placeholder": "Szukaj pól",
+          "empty": "Brak pól sprzedawcy. Utwórz je w Ustawienia → Pola niestandardowe."
+        },
+        "description": {
+          "label": "Instrukcje",
+          "placeholder": "Wyjaśnij sprzedawcy, czego potrzebujesz i dlaczego"
+        },
+        "kind": {
+          "label": "Typ",
+          "placeholder": "Wybierz, czego wymagasz"
+        },
+        "name": {
+          "label": "Nazwa",
+          "label_required": "Nazwa (wymagana)",
+          "help": "To, co sprzedawca widzi na swojej liście."
+        },
+        "required": {
+          "label": "Wymagane",
+          "help": "Wymagane pozycje trzeba wykonać przed zatwierdzeniem. Pozostałe są zalecane."
+        }
+      },
+      "delete_confirm": {
+        "title": "Usunąć wymaganie?",
+        "message": "Sprzedawcy nie będą już proszeni o „{{name}}\". To, co już przesłali, także zostanie usunięte."
+      },
+      "messages": {
+        "created": "Dodano wymaganie",
+        "updated": "Zapisano wymaganie",
+        "deleted": "Usunięto wymaganie",
+        "submission_accepted": "Zaakceptowano",
+        "submission_rejected": "Odesłano do sprzedawcy",
+        "waived": "Odstąpiono od wymagania dla tego sprzedawcy"
+      },
+      "kinds": {
+        "accept_terms": "Akceptacja regulaminu",
+        "complete_profile": "Uzupełnienie profilu",
+        "billing_address": "Adres rozliczeniowy",
+        "returns_address": "Adres zwrotów",
+        "minimum_products": "Minimalna liczba produktów",
+        "required_custom_fields": "Wymagane pola niestandardowe",
+        "attestation": "Potwierdzenie sprzedawcy",
+        "operator_review": "Weryfikacja ręczna",
+        "document": "Dokument"
+      }
+    },
+    "sellers": {
+      "actions": {
+        "invite": "Zaproś",
+        "reinvite": "Wyślij ponownie",
+        "send_invitation": "Wyślij zaproszenie",
+        "approve": "Zaakceptuj",
+        "reinstate": "Przywróć",
+        "suspend": "Zawieś",
+        "reject": "Odrzuć",
+        "reopen_onboarding": "Odeślij do uzupełnienia"
+      },
+      "add_cta": "Dodaj sprzedawcę",
+      "add_sheet_title": "Nowy sprzedawca",
+      "address": {
+        "filled": "Uzupełniony",
+        "not_filled": "Nieuzupełniony",
+        "not_provided_by_seller": "Sprzedawca jeszcze go nie podał",
+        "not_located_yet": "Mapa pojawi się, gdy adres zostanie zlokalizowany."
+      },
+      "approve_override_confirm": {
+        "title": "Zatwierdzić mimo to?",
+        "message": "Ten sprzedawca nie ukończył: {{names}}. Zatwierdzenie teraz i tak pozwoli mu sprzedawać, a decyzja zostanie odnotowana.",
+        "action": "Zatwierdź mimo to"
+      },
+      "autocomplete": {
+        "placeholder": "Szukaj sprzedawców",
+        "empty": "Nie znaleziono sprzedawców"
+      },
+      "create_description": "Najpierw utwórz sprzedawcę. Zaproszenie, akceptację i wypłaty ustawisz na jego stronie.",
+      "create_label": "Utwórz sprzedawcę",
+      "delete_confirm": {
+        "title": "Usunąć sprzedawcę?",
+        "message": "To usunie {{name}} z marketplace. Jego produkty zostaną w katalogu bez sprzedawcy. Tej operacji nie można cofnąć."
+      },
+      "detail": {
+        "load_error": "Nie udało się wczytać tego sprzedawcy",
+        "delete_label": "Usuń sprzedawcę",
+        "status": "Status",
+        "settlement": "Wypłaty i podatki",
+        "at_a_glance": "W skrócie",
+        "contact": "Kontakt",
+        "edit_profile": "Edytuj profil",
+        "edit_profile_description": "Sprzedawca prowadzi to w swoim panelu. Zmiany tutaj wprowadzasz w jego imieniu.",
+        "edit_settlement": "Edytuj wypłaty i podatki",
+        "edit_settlement_description": "Tylko Ty widzisz i zmieniasz te ustawienia. Sprzedawca ich nie edytuje.",
+        "no_about": "Ten sprzedawca nie napisał jeszcze opisu.",
+        "billing_address": "Adres rozliczeniowy",
+        "returns_address": "Adres zwrotów"
+      },
+      "empty": "Nie ma jeszcze sprzedawców",
+      "images": {
+        "logo_label": "Logo",
+        "logo_help": "Najlepiej sprawdza się kwadrat. Widoczne przy sprzedawcy wszędzie tam, gdzie się pojawia.",
+        "square_logo_label": "Logo kwadratowe",
+        "square_logo_help": "Do miejsc wymagających ścisłego kwadratu, na przykład awatara.",
+        "cover_photo_label": "Zdjęcie w tle",
+        "cover_photo_help": "Szeroki baner u góry profilu sprzedawcy."
+      },
+      "invite_sheet": {
+        "title": "Zaproś sprzedawcę",
+        "description": "Po przyjęciu zaproszenia osoba dołącza do zespołu sprzedawcy i może zalogować się do własnego panelu.",
+        "email_help": "Zaproszenie trafi na ten adres."
+      },
+      "messages": {
+        "created": "Sprzedawca utworzony",
+        "create_failed": "Nie udało się utworzyć sprzedawcy",
+        "updated": "Sprzedawca zaktualizowany",
+        "update_failed": "Nie udało się zaktualizować sprzedawcy",
+        "deleted": "Sprzedawca usunięty",
+        "delete_failed": "Nie udało się usunąć sprzedawcy",
+        "invited": "Zaproszenie wysłane",
+        "invite_failed": "Nie udało się wysłać zaproszenia",
+        "approved": "Sprzedawca zaakceptowany",
+        "approve_failed": "Nie udało się zaakceptować sprzedawcy",
+        "suspended": "Sprzedawca zawieszony",
+        "suspend_failed": "Nie udało się zawiesić sprzedawcy",
+        "rejected": "Sprzedawca odrzucony",
+        "reject_failed": "Nie udało się odrzucić sprzedawcy",
+        "onboarding_reopened": "Odesłano do uzupełnienia"
+      },
+      "not_provided": "Nie podano",
+      "on_holiday_notice": "Ten sprzedawca jest nieobecny. Jego katalog pozostaje widoczny, ale nic nie da się kupić.",
+      "onboarding": {
+        "title": "Wdrożenie",
+        "progress": "Ukończono {{done}} z {{total}}",
+        "waived": "Odstąpiono",
+        "download": "Pobierz plik",
+        "seller_note": "Sprzedawca: {{note}}",
+        "review_note": "Twoja notatka: {{note}}",
+        "actions": {
+          "accept": "Akceptuj",
+          "reject": "Odeślij",
+          "waive": "Odstąp dla tego sprzedawcy"
+        },
+        "reject_confirm": {
+          "title": "Odesłać?",
+          "message": "Sprzedawca zostanie ponownie poproszony o „{{name}}\"."
+        },
+        "waive_confirm": {
+          "title": "Odstąpić od wymagania?",
+          "message": "„{{name}}\" będzie uznane za spełnione tylko dla tego sprzedawcy."
+        },
+        "all_done": "Wszystko gotowe 🎉",
+        "status": {
+          "complete": "Gotowe",
+          "pending": "W weryfikacji",
+          "rejected": "Odesłane",
+          "incomplete": "Oczekuje"
+        }
+      },
+      "onboarding_column": "Wdrożenie",
+      "payout_interval": {
+        "inherit": "Domyślne ustawienie sklepu",
+        "daily": "Codziennie",
+        "weekly": "Co tydzień",
+        "biweekly": "Co dwa tygodnie",
+        "monthly": "Co miesiąc",
+        "manual": "Ręcznie"
+      },
+      "products_column": "Produkty",
+      "reject_confirm": {
+        "title": "Odrzucić sprzedawcę?",
+        "message": "{{name}} nie zostanie przyjęty do marketplace. Nadal możesz go później zaakceptować."
+      },
+      "reopen_onboarding_confirm": {
+        "title": "Odesłać do uzupełnienia?",
+        "message": "{{name}} będzie mógł zmienić dane i ponownie poprosić o weryfikację."
+      },
+      "search_placeholder": "Szukaj sprzedawców",
+      "status": {
+        "pending": "Oczekuje",
+        "invited": "Zaproszony",
+        "onboarding": "Konfiguracja",
+        "ready_for_review": "Do sprawdzenia",
+        "approved": "Zaakceptowany",
+        "suspended": "Zawieszony",
+        "rejected": "Odrzucony",
+        "canceled": "Anulowany"
+      },
+      "status_help": {
+        "pending": "Utworzony, ale nikt nie został jeszcze zaproszony.",
+        "invited": "Czeka na przyjęcie zaproszenia.",
+        "onboarding": "Uzupełnia swoje dane.",
+        "ready_for_review": "Czeka na Twoją akceptację.",
+        "approved": "Sprzedaje w marketplace.",
+        "suspended": "Nie może sprzedawać. Przywróć, aby wrócił do handlu.",
+        "rejected": "Nieprzyjęty do marketplace.",
+        "canceled": "Wycofał się przed dołączeniem."
+      },
+      "suspend_confirm": {
+        "title": "Zawiesić sprzedawcę?",
+        "message": "{{name}} natychmiast przestanie sprzedawać. Katalog i historia zostaną zachowane, a zawieszenie możesz później cofnąć."
+      },
+      "tax_remittance": {
+        "seller": "Rozlicza sprzedawca",
+        "platform": "Rozlicza marketplace"
+      },
+      "team_column": "Zespół"
+    },
     "settings": {
       "webhooks": {
         "errors": {
@@ -3853,6 +4182,7 @@
         "allowed_origins": "Dozwolone źródła",
         "api_keys": "Klucze API",
         "channels": "Kanały sprzedaży",
+        "commission_rates": "Stawki prowizji",
         "custom_field_definitions": "Pola niestandardowe",
         "delivery_profiles": "Profile dostawy",
         "emails": "Wiadomości e-mail",
@@ -3864,13 +4194,13 @@
         "profile": "Profil",
         "reasons": "Zwroty i powody",
         "roles": "Role",
+        "seller_requirements": "Wymagania dla sprzedawców",
         "staff": "Zespół",
         "stock_locations": "Lokalizacje magazynowe",
         "store": "Sklep",
         "tax_categories": "Kategorie podatkowe",
         "tax_rates": "Stawki podatku",
-        "webhooks": "Webhooki",
-        "commission_rates": "Stawki prowizji"
+        "webhooks": "Webhooki"
       }
     },
     "setup": {
@@ -4035,132 +4365,6 @@
       },
       "search_placeholder": "Szukaj według nazwy…"
     },
-    "translations": {
-      "coverage_summary": "Przetłumaczono {{translated}} z {{total}} języków",
-      "dirty_summary": "{{count}} niezapisanych zmian",
-      "discard_confirm": {
-        "message": "Masz {{count}} niezapisanych zmian tłumaczeń. Odrzucić je?",
-        "title": "Odrzucić zmiany?"
-      },
-      "field": "Pole",
-      "load_error": "Nie można załadować tłumaczeń",
-      "locale": "Język",
-      "manage": "Zarządzaj tłumaczeniami",
-      "no_locales": "Dodaj więcej języków do swojego sklepu, aby przetłumaczyć ten produkt.",
-      "original": "Oryginał",
-      "save": "Zapisz tłumaczenia",
-      "save_error": "Nie można zapisać tłumaczeń",
-      "saved": "Tłumaczenia zapisane",
-      "source": "Źródło",
-      "title": "Tłumaczenia"
-    },
-    "jurisdiction": {
-      "everywhere": "Wszędzie"
-    },
-    "companies": {
-      "add_cta": "Dodaj firmę",
-      "add_sheet_title": "Nowa firma",
-      "create_description": "Klienci biznesowi kupują przez oddziały. Oddziały, numer podatkowy i certyfikaty zwolnienia dodasz po utworzeniu firmy.",
-      "create_label": "Utwórz firmę",
-      "delete_confirm": {
-        "message": "Spowoduje to usunięcie {{name}} wraz z oddziałami, kupującymi i certyfikatami. Tej operacji nie można cofnąć.",
-        "title": "Usunąć firmę?"
-      },
-      "detail": {
-        "delete_label": "Usuń firmę",
-        "load_error": "Nie udało się wczytać tej firmy",
-        "profile": "Firma"
-      },
-      "empty": "Nie ma jeszcze żadnych firm",
-      "locations_column": "Oddziały",
-      "messages": {
-        "created": "Firma utworzona",
-        "deleted": "Firma usunięta",
-        "updated": "Firma zaktualizowana"
-      },
-      "search_placeholder": "Szukaj firm"
-    },
-    "company_locations": {
-      "add_cta": "Dodaj oddział",
-      "add_title": "Nowy oddział",
-      "addresses": "Adresy",
-      "billing_address": "Adres rozliczeniowy",
-      "contacts_count_few": "{{count}} kupujących",
-      "contacts_count_many": "{{count}} kupujących",
-      "contacts_count_one": "{{count}} kupujący",
-      "contacts_count_other": "{{count}} kupujących",
-      "detail": {
-        "delete_label": "Usuń oddział",
-        "load_error": "Nie udało się wczytać tego oddziału"
-      },
-      "dialog_description": "Oddział to miejsce, na które wystawiana jest faktura i pod które trafia dostawa. Adresy są opcjonalne, ale wypełniony adres wymaga imienia, nazwiska i kraju.",
-      "edit_title": "Edytuj oddział",
-      "empty": "Nie ma jeszcze żadnych oddziałów",
-      "messages": {
-        "created": "Oddział utworzony",
-        "deleted": "Oddział usunięty",
-        "updated": "Oddział zaktualizowany"
-      },
-      "shipping_address": "Adres dostawy",
-      "shipping_same_as_billing": "Adres dostawy taki sam jak rozliczeniowy",
-      "title": "Oddziały"
-    },
-    "company_contacts": {
-      "add_cta": "Dodaj kupującego",
-      "add_title": "Uprawnij kupującego",
-      "dialog_description": "Klient, który kupuje dla tego oddziału. Jeśli kupuje tylko dla jednego oddziału, jego zamówienia trafiają do niego automatycznie.",
-      "empty": "Nie uprawniono jeszcze żadnych kupujących",
-      "messages": {
-        "created": "Kupujący dodany",
-        "deleted": "Kupujący usunięty"
-      },
-      "remove_action": "Usuń kupującego",
-      "remove_confirm": {
-        "message": "{{email}} nie będzie już kupować dla tego oddziału. Konto klienta pozostaje bez zmian.",
-        "title": "Usunąć tego kupującego?"
-      },
-      "roles_enterprise_help": "Dodani tutaj kupujący mogą składać zamówienia dla tego oddziału. Role, procesy akceptacji i limity wydatków są częścią Spree Enterprise.",
-      "roles_enterprise_title": "Role i akceptacje to funkcja Enterprise",
-      "title": "Kupujący"
-    },
-    "tax_identifiers": {
-      "add_cta": "Dodaj numer",
-      "add_title": "Dodaj numer podatkowy",
-      "checked_prefix": "Sprawdzono",
-      "delete_confirm": {
-        "message": "{{value}} zostanie usunięty. Złożone już zamówienia zachowują numer, którym je zafakturowano.",
-        "title": "Usunąć ten numer?"
-      },
-      "dialog_description": "Numer VAT lub firmowy, który pojawia się na fakturach. To on umożliwia odwrotne obciążenie w handlu B2B w UE.",
-      "edit_title": "Edytuj numer podatkowy",
-      "empty": "Brak zapisanego numeru podatkowego",
-      "kinds": {
-        "au_abn": "Australijski numer firmy",
-        "ch_vat": "VAT Szwajcaria",
-        "eu_vat": "VAT UE",
-        "gb_vat": "VAT Wielka Brytania",
-        "us_ein": "EIN (USA)"
-      },
-      "messages": {
-        "created": "Numer dodany",
-        "deleted": "Numer usunięty",
-        "updated": "Numer zaktualizowany",
-        "validation_failed": "Nie udało się sprawdzić numeru",
-        "validation_requested": "Trwa sprawdzanie numeru w rejestrze"
-      },
-      "not_validatable": "Dla tego rodzaju nie skonfigurowano weryfikacji, numer jest używany tak, jak go wpisano.",
-      "select_kind": "Wybierz rodzaj",
-      "title": "Numer podatkowy",
-      "validate_action": "Sprawdź w rejestrze",
-      "validation_status": {
-        "not_checked": "Niesprawdzony",
-        "pending": "Sprawdzanie",
-        "unavailable": "Rejestr niedostępny",
-        "unsupported": "Nie można sprawdzić",
-        "unverified": "Nieprawidłowy",
-        "verified": "Potwierdzony"
-      }
-    },
     "tax_exemption_certificates": {
       "add_cta": "Dodaj certyfikat",
       "add_title": "Dodaj certyfikat zwolnienia",
@@ -4206,6 +4410,50 @@
       "verified_at": "Zaakceptowano",
       "verify_action": "Zaakceptuj"
     },
+    "tax_identifiers": {
+      "add_cta": "Dodaj numer",
+      "add_title": "Dodaj numer podatkowy",
+      "checked_prefix": "Sprawdzono",
+      "delete_confirm": {
+        "message": "{{value}} zostanie usunięty. Złożone już zamówienia zachowują numer, którym je zafakturowano.",
+        "title": "Usunąć ten numer?"
+      },
+      "dialog_description": "Numer VAT lub firmowy, który pojawia się na fakturach. To on umożliwia odwrotne obciążenie w handlu B2B w UE.",
+      "edit_title": "Edytuj numer podatkowy",
+      "empty": "Brak zapisanego numeru podatkowego",
+      "kinds": {
+        "au_abn": "Australijski numer firmy",
+        "ch_vat": "VAT Szwajcaria",
+        "eu_vat": "VAT UE",
+        "gb_vat": "VAT Wielka Brytania",
+        "us_ein": "EIN (USA)"
+      },
+      "messages": {
+        "created": "Numer dodany",
+        "deleted": "Numer usunięty",
+        "updated": "Numer zaktualizowany",
+        "validation_failed": "Nie udało się sprawdzić numeru",
+        "validation_requested": "Trwa sprawdzanie numeru w rejestrze"
+      },
+      "not_validatable": "Dla tego rodzaju nie skonfigurowano weryfikacji, numer jest używany tak, jak go wpisano.",
+      "select_kind": "Wybierz rodzaj",
+      "title": "Numer podatkowy",
+      "validate_action": "Sprawdź w rejestrze",
+      "validation_status": {
+        "not_checked": "Niesprawdzony",
+        "pending": "Sprawdzanie",
+        "unavailable": "Rejestr niedostępny",
+        "unsupported": "Nie można sprawdzić",
+        "unverified": "Nieprawidłowy",
+        "verified": "Potwierdzony"
+      }
+    },
+    "tax_providers": {
+      "limitations_title": "{{name}} nie obsługuje",
+      "unavailable_option": "{{name}} (nieskonfigurowany)",
+      "use_default": "Użyj domyślnego mechanizmu",
+      "use_default_named": "Domyślny ({{name}})"
+    },
     "tax_rates": {
       "add_cta": "Dodaj stawkę",
       "all_categories": "Wszystkie kategorie",
@@ -4227,148 +4475,24 @@
       "search_placeholder": "Szukaj stawek",
       "select_category": "Wybierz kategorię"
     },
-    "tax_providers": {
-      "limitations_title": "{{name}} nie obsługuje",
-      "unavailable_option": "{{name}} (nieskonfigurowany)",
-      "use_default": "Użyj domyślnego mechanizmu",
-      "use_default_named": "Domyślny ({{name}})"
-    },
-    "enterprise": {
-      "learn_more": "Dowiedz się więcej o Spree Enterprise"
-    },
-    "sellers": {
-      "add_cta": "Dodaj sprzedawcę",
-      "add_sheet_title": "Nowy sprzedawca",
-      "create_description": "Najpierw utwórz sprzedawcę. Zaproszenie, akceptację i wypłaty ustawisz na jego stronie.",
-      "create_label": "Utwórz sprzedawcę",
-      "search_placeholder": "Szukaj sprzedawców",
-      "empty": "Nie ma jeszcze sprzedawców",
-      "products_column": "Produkty",
-      "team_column": "Zespół",
-      "on_holiday_notice": "Ten sprzedawca jest nieobecny. Jego katalog pozostaje widoczny, ale nic nie da się kupić.",
-      "delete_confirm": {
-        "title": "Usunąć sprzedawcę?",
-        "message": "To usunie {{name}} z marketplace. Jego produkty zostaną w katalogu bez sprzedawcy. Tej operacji nie można cofnąć."
+    "translations": {
+      "coverage_summary": "Przetłumaczono {{translated}} z {{total}} języków",
+      "dirty_summary": "{{count}} niezapisanych zmian",
+      "discard_confirm": {
+        "message": "Masz {{count}} niezapisanych zmian tłumaczeń. Odrzucić je?",
+        "title": "Odrzucić zmiany?"
       },
-      "suspend_confirm": {
-        "title": "Zawiesić sprzedawcę?",
-        "message": "{{name}} natychmiast przestanie sprzedawać. Katalog i historia zostaną zachowane, a zawieszenie możesz później cofnąć."
-      },
-      "reject_confirm": {
-        "title": "Odrzucić sprzedawcę?",
-        "message": "{{name}} nie zostanie przyjęty do marketplace. Nadal możesz go później zaakceptować."
-      },
-      "invite_sheet": {
-        "title": "Zaproś sprzedawcę",
-        "description": "Po przyjęciu zaproszenia osoba dołącza do zespołu sprzedawcy i może zalogować się do własnego panelu.",
-        "email_help": "Zaproszenie trafi na ten adres."
-      },
-      "actions": {
-        "invite": "Zaproś",
-        "reinvite": "Wyślij ponownie",
-        "send_invitation": "Wyślij zaproszenie",
-        "approve": "Zaakceptuj",
-        "reinstate": "Przywróć",
-        "suspend": "Zawieś",
-        "reject": "Odrzuć"
-      },
-      "detail": {
-        "load_error": "Nie udało się wczytać tego sprzedawcy",
-        "delete_label": "Usuń sprzedawcę",
-        "status": "Status",
-        "settlement": "Wypłaty i podatki",
-        "at_a_glance": "W skrócie",
-        "contact": "Kontakt",
-        "edit_profile": "Edytuj profil",
-        "edit_profile_description": "Sprzedawca prowadzi to w swoim panelu. Zmiany tutaj wprowadzasz w jego imieniu.",
-        "edit_settlement": "Edytuj wypłaty i podatki",
-        "edit_settlement_description": "Tylko Ty widzisz i zmieniasz te ustawienia. Sprzedawca ich nie edytuje.",
-        "no_about": "Ten sprzedawca nie napisał jeszcze opisu."
-      },
-      "status": {
-        "pending": "Oczekuje",
-        "invited": "Zaproszony",
-        "onboarding": "Konfiguracja",
-        "ready_for_review": "Do sprawdzenia",
-        "approved": "Zaakceptowany",
-        "suspended": "Zawieszony",
-        "rejected": "Odrzucony",
-        "canceled": "Anulowany"
-      },
-      "status_help": {
-        "pending": "Utworzony, ale nikt nie został jeszcze zaproszony.",
-        "invited": "Czeka na przyjęcie zaproszenia.",
-        "onboarding": "Uzupełnia swoje dane.",
-        "ready_for_review": "Czeka na Twoją akceptację.",
-        "approved": "Sprzedaje w marketplace.",
-        "suspended": "Nie może sprzedawać. Przywróć, aby wrócił do handlu.",
-        "rejected": "Nieprzyjęty do marketplace.",
-        "canceled": "Wycofał się przed dołączeniem."
-      },
-      "tax_remittance": {
-        "seller": "Rozlicza sprzedawca",
-        "platform": "Rozlicza marketplace"
-      },
-      "payout_interval": {
-        "inherit": "Domyślne ustawienie sklepu",
-        "daily": "Codziennie",
-        "weekly": "Co tydzień",
-        "biweekly": "Co dwa tygodnie",
-        "monthly": "Co miesiąc",
-        "manual": "Ręcznie"
-      },
-      "messages": {
-        "created": "Sprzedawca utworzony",
-        "create_failed": "Nie udało się utworzyć sprzedawcy",
-        "updated": "Sprzedawca zaktualizowany",
-        "update_failed": "Nie udało się zaktualizować sprzedawcy",
-        "deleted": "Sprzedawca usunięty",
-        "delete_failed": "Nie udało się usunąć sprzedawcy",
-        "invited": "Zaproszenie wysłane",
-        "invite_failed": "Nie udało się wysłać zaproszenia",
-        "approved": "Sprzedawca zaakceptowany",
-        "approve_failed": "Nie udało się zaakceptować sprzedawcy",
-        "suspended": "Sprzedawca zawieszony",
-        "suspend_failed": "Nie udało się zawiesić sprzedawcy",
-        "rejected": "Sprzedawca odrzucony",
-        "reject_failed": "Nie udało się odrzucić sprzedawcy"
-      },
-      "not_provided": "Nie podano",
-      "images": {
-        "logo_label": "Logo",
-        "logo_help": "Najlepiej sprawdza się kwadrat. Widoczne przy sprzedawcy wszędzie tam, gdzie się pojawia.",
-        "square_logo_label": "Logo kwadratowe",
-        "square_logo_help": "Do miejsc wymagających ścisłego kwadratu, na przykład awatara.",
-        "cover_photo_label": "Zdjęcie w tle",
-        "cover_photo_help": "Szeroki baner u góry profilu sprzedawcy."
-      },
-      "autocomplete": {
-        "placeholder": "Szukaj sprzedawców",
-        "empty": "Nie znaleziono sprzedawców"
-      }
-    },
-    "commission_rates": {
-      "add_cta": "Dodaj stawkę prowizji",
-      "applies_to_everything": "Każda sprzedaż",
-      "create_description": "Określ, ile marketplace pobiera od sprzedawców i których sprzedaży to dotyczy.",
-      "create_label": "Utwórz stawkę prowizji",
-      "delete_confirm": {
-        "message": "{{name}} zostanie usunięta. Naliczone już prowizje pozostaną bez zmian.",
-        "title": "Usunąć stawkę prowizji?"
-      },
-      "edit_description": "Zaktualizuj opłatę, jej limity i objęte nią sprzedaże.",
-      "empty": "Brak stawek prowizji",
-      "messages": {
-        "created": "Utworzono stawkę prowizji",
-        "deleted": "Usunięto stawkę prowizji",
-        "updated": "Zaktualizowano stawkę prowizji"
-      },
-      "search_placeholder": "Szukaj po nazwie…",
-      "order_hint": "Nowe stawki trafiają na górę listy, a wygrywa pierwsza pasująca — przeciągnij, aby zmienić kolejność.",
-      "conditions": {
-        "add": "Dodaj warunek",
-        "title": "Warunki"
-      }
+      "field": "Pole",
+      "load_error": "Nie można załadować tłumaczeń",
+      "locale": "Język",
+      "manage": "Zarządzaj tłumaczeniami",
+      "no_locales": "Dodaj więcej języków do swojego sklepu, aby przetłumaczyć ten produkt.",
+      "original": "Oryginał",
+      "save": "Zapisz tłumaczenia",
+      "save_error": "Nie można zapisać tłumaczeń",
+      "saved": "Tłumaczenia zapisane",
+      "source": "Źródło",
+      "title": "Tłumaczenia"
     }
   }
 }

@@ -9,6 +9,7 @@ import {
   usePermissions,
 } from '@spree/dashboard-core'
 import {
+  Badge,
   Button,
   Card,
   CardAction,
@@ -48,6 +49,7 @@ import {
   PauseIcon,
   PencilIcon,
   StoreIcon,
+  UndoIcon,
   UsersIcon,
 } from 'lucide-react'
 import { type ReactNode, useEffect, useState } from 'react'
@@ -55,11 +57,15 @@ import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { ResourceImageField } from '../../../../components/spree/resource-image-field'
 import { ResourceDetailSkeleton } from '../../../../components/spree/route-pending'
+import { SellerAddressCard } from '../../../../components/spree/sellers/seller-address-card'
+import { SellerOnboardingCard } from '../../../../components/spree/sellers/seller-onboarding-card'
+import { useSellerOnboarding } from '../../../../hooks/use-seller-requirements'
 import {
   useApproveSeller,
   useDeleteSeller,
   useInviteSeller,
   useRejectSeller,
+  useReopenSellerOnboarding,
   useSeller,
   useSuspendSeller,
   useUpdateSeller,
@@ -118,6 +124,10 @@ function SellerBody({ seller }: { seller: Seller }) {
   const [inviting, setInviting] = useState(false)
 
   const approveMutation = useApproveSeller(seller.id)
+  const reopenMutation = useReopenSellerOnboarding(seller.id)
+  // Read here as well as in the card: approving has to know what is still
+  // outstanding so it can say so before the operator overrides it.
+  const { data: onboarding } = useSellerOnboarding(seller.id)
   const suspendMutation = useSuspendSeller(seller.id)
   const rejectMutation = useRejectSeller(seller.id)
 
@@ -161,19 +171,57 @@ function SellerBody({ seller }: { seller: Seller }) {
     await rejectMutation.mutateAsync(undefined).catch(() => undefined)
   }
 
+  // Admitting a seller whose checklist is unfinished is allowed, but never by
+  // accident: the operator is shown exactly what is outstanding and has to
+  // say they mean it. The server refuses without the override, so this dialog
+  // is the only way past it.
+  async function handleApprove() {
+    if (!onboarding) return
+
+    // `blocking` comes from the server, which is also what the approval gate
+    // reads — deriving it here again would let the warning and the refusal
+    // disagree.
+    const blocking = onboarding.requirements.filter((requirement) => requirement.blocking)
+
+    if (blocking.length > 0) {
+      const ok = await confirm({
+        title: t('admin.sellers.approve_override_confirm.title'),
+        message: t('admin.sellers.approve_override_confirm.message', {
+          names: blocking.map((requirement) => requirement.name).join(', '),
+        }),
+        variant: 'destructive',
+        confirmLabel: t('admin.sellers.approve_override_confirm.action'),
+      })
+      if (!ok) return
+
+      await approveMutation.mutateAsync({ override_requirements: true }).catch(() => undefined)
+      return
+    }
+
+    await approveMutation.mutateAsync(undefined).catch(() => undefined)
+  }
+
+  async function handleReopenOnboarding() {
+    const ok = await confirm({
+      title: t('admin.sellers.reopen_onboarding_confirm.title'),
+      message: t('admin.sellers.reopen_onboarding_confirm.message', { name: seller.name }),
+      confirmLabel: t('admin.sellers.actions.reopen_onboarding'),
+    })
+    if (!ok) return
+
+    await reopenMutation.mutateAsync(undefined).catch(() => undefined)
+  }
+
   // Approving is the move an operator comes here to make, so it is the button;
   // the rest live in the dropdown beside it.
   const primaryAction = canEdit ? (
     <>
+      {/* Without the checklist, approving cannot tell "nothing is blocking"
+          from "we were never told", so the button waits for it — a failed
+          query leaves `isPending` false with no data, which is why this gates
+          on the data rather than the loading flag. */}
       {canApprove && (
-        <Button
-          size="sm"
-          disabled={busy}
-          // The hook already surfaces the failure; catching keeps a rejected
-          // request from also becoming an unhandled promise rejection, as the
-          // suspend and reject handlers do.
-          onClick={() => approveMutation.mutateAsync().catch(() => undefined)}
-        >
+        <Button size="sm" disabled={busy || !onboarding} onClick={handleApprove}>
           {status === 'suspended'
             ? t('admin.sellers.actions.reinstate')
             : t('admin.sellers.actions.approve')}
@@ -203,6 +251,12 @@ function SellerBody({ seller }: { seller: Seller }) {
           {t('admin.sellers.actions.suspend')}
         </DropdownMenuItem>
       )}
+      {status === 'ready_for_review' && (
+        <DropdownMenuItem onClick={handleReopenOnboarding}>
+          <UndoIcon className="size-4" />
+          {t('admin.sellers.actions.reopen_onboarding')}
+        </DropdownMenuItem>
+      )}
       {canReject && (
         <DropdownMenuItem onClick={handleReject}>
           <BanIcon className="size-4" />
@@ -220,7 +274,19 @@ function SellerBody({ seller }: { seller: Seller }) {
             title={seller.name}
             subtitle={seller.contact_email ?? undefined}
             backTo="sellers"
-            badges={<StatusBadge status={status} label={t(`admin.sellers.status.${status}`)} />}
+            badges={
+              <>
+                <StatusBadge status={status} label={t(`admin.sellers.status.${status}`)} />
+                {seller.onboarding_progress.total > 0 && !seller.onboarding_complete && (
+                  <Badge variant="secondary">
+                    {t('admin.sellers.onboarding.progress', {
+                      done: seller.onboarding_progress.done,
+                      total: seller.onboarding_progress.total,
+                    })}
+                  </Badge>
+                )}
+              </>
+            }
             actions={primaryAction}
             dropdownItems={dropdownItems}
             resource={{ id: seller.id }}
@@ -235,6 +301,7 @@ function SellerBody({ seller }: { seller: Seller }) {
               canEdit={canEdit}
               onEdit={() => setEditingProfile(true)}
             />
+            <SellerOnboardingCard seller={seller} canEdit={canEdit} />
             <Slot name="seller.form_main" context={{ seller, canEdit }} />
           </>
         }
@@ -242,7 +309,13 @@ function SellerBody({ seller }: { seller: Seller }) {
           <>
             <SellerStatusCard seller={seller} />
             <SellerAtAGlanceCard seller={seller} />
-            <SellerContactCard seller={seller} />
+            <SellerContactCard
+              seller={seller}
+              canEdit={canEdit}
+              onEdit={() => setEditingProfile(true)}
+            />
+            <SellerAddressCard seller={seller} addressKey="billing_address" canEdit={canEdit} />
+            <SellerAddressCard seller={seller} addressKey="returns_address" canEdit={canEdit} />
             <SellerSettlementCard
               seller={seller}
               canEdit={canEdit}
@@ -301,7 +374,7 @@ function SellerBrandCard({
         {seller.cover_photo_url ? (
           <img src={seller.cover_photo_url} alt="" className="h-40 w-full bg-accent object-cover" />
         ) : (
-          <div className="h-20 w-full border-border border-b bg-accent" />
+          <div className="h-20 w-full border-border border-b bg-muted" />
         )}
         {canEdit && (
           <Button size="sm" variant="outline" className="absolute top-3 right-3" onClick={onEdit}>
@@ -411,13 +484,29 @@ function SellerAtAGlanceCard({ seller }: { seller: Seller }) {
   )
 }
 
-function SellerContactCard({ seller }: { seller: Seller }) {
+function SellerContactCard({
+  seller,
+  canEdit,
+  onEdit,
+}: {
+  seller: Seller
+  canEdit: boolean
+  onEdit: () => void
+}) {
   const { t } = useTranslation()
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>{t('admin.sellers.detail.contact')}</CardTitle>
+        {canEdit && (
+          <CardAction>
+            <Button variant="outline" size="sm" onClick={onEdit}>
+              <PencilIcon className="size-4" />
+              {t('admin.actions.edit')}
+            </Button>
+          </CardAction>
+        )}
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         <ReadRow label={t('admin.fields.contact_email.label')}>

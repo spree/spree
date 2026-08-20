@@ -1,6 +1,6 @@
 import type { Seller } from '@spree/admin-sdk'
 import { defineTable } from '@spree/dashboard-core'
-import { RelativeTime, StatusBadge } from '@spree/dashboard-ui'
+import { Progress, RelativeTime, StatusBadge } from '@spree/dashboard-ui'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
 import { StoreIcon } from 'lucide-react'
@@ -55,6 +55,29 @@ defineTable<Seller>('sellers', {
       filterable: true,
       default: true,
       render: (seller) => seller.contact_email ?? <span className="text-muted-foreground">—</span>,
+    },
+    {
+      key: 'onboarding',
+      label: i18n.t('admin.sellers.onboarding_column'),
+      default: true,
+      // "n of m done" over a bar, as the operator's list has always shown
+      // it. Nothing to show for a marketplace that asks for nothing.
+      render: (seller) => {
+        const progress = seller.onboarding_progress
+        if (progress.total === 0) return <span className="text-muted-foreground">—</span>
+
+        return (
+          <div className="flex min-w-32 flex-col gap-1">
+            <span className="text-muted-foreground text-xs">
+              {i18n.t('admin.sellers.onboarding.progress', {
+                done: progress.done,
+                total: progress.total,
+              })}
+            </span>
+            <Progress value={progress.percentage} />
+          </div>
+        )
+      },
     },
     {
       key: 'products_count',

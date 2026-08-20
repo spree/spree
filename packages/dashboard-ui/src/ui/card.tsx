@@ -32,7 +32,9 @@ function CardTitle({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot="card-title"
-      className={cn('text-lg font-medium flex items-center gap-2', className)}
+      // Same size and weight as SheetTitle and DialogTitle: a card, a sheet
+      // and a dialog heading are the same rank of thing.
+      className={cn('text-base font-medium flex items-center gap-2', className)}
       {...props}
     />
   )

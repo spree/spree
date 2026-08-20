@@ -3,6 +3,7 @@ import { PageHeader, Slot, useStore } from '@spree/dashboard-core'
 import {
   Button,
   Card,
+  CardTitle,
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
@@ -96,7 +97,7 @@ function GettingStartedPage() {
                   ) : (
                     <CircleIcon className="size-5 shrink-0 text-muted-foreground" />
                   )}
-                  <span className="grow font-medium">{taskCopy(task, 'title')}</span>
+                  <CardTitle className="grow">{taskCopy(task, 'title')}</CardTitle>
                   <ChevronDownIcon className="size-4 shrink-0 text-muted-foreground transition-transform group-data-[panel-open]:rotate-180" />
                 </CollapsibleTrigger>
                 {/* keepMounted so slot components mount even while their card is

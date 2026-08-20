@@ -289,6 +289,97 @@
       },
       "title": "المجموعات"
     },
+    "commission_rates": {
+      "add_cta": "إضافة نسبة عمولة",
+      "applies_to_everything": "كل عملية بيع",
+      "create_description": "حدّد ما يتقاضاه السوق من البائعين، وعلى أي مبيعات ينطبق.",
+      "create_label": "إنشاء نسبة العمولة",
+      "delete_confirm": {
+        "message": "سيتم حذف {{name}}. العمولات المحتسبة سابقًا لن تتأثر.",
+        "title": "حذف نسبة العمولة؟"
+      },
+      "edit_description": "حدّث الرسوم وحدودها والمبيعات التي تنطبق عليها.",
+      "empty": "لا توجد نسب عمولة بعد",
+      "messages": {
+        "created": "تم إنشاء نسبة العمولة",
+        "deleted": "تم حذف نسبة العمولة",
+        "updated": "تم تحديث نسبة العمولة"
+      },
+      "search_placeholder": "البحث بالاسم…",
+      "order_hint": "تُضاف النسب الجديدة إلى أعلى القائمة، وتفوز أول نسبة مطابقة — اسحب لإعادة الترتيب.",
+      "conditions": {
+        "add": "إضافة شرط",
+        "title": "الشروط"
+      }
+    },
+    "companies": {
+      "add_cta": "إضافة شركة",
+      "add_sheet_title": "شركة جديدة",
+      "create_description": "يشتري العملاء من الشركات عبر الفروع. يمكنك إضافة الفروع والرقم الضريبي وشهادات الإعفاء بعد إنشاء الشركة.",
+      "create_label": "إنشاء الشركة",
+      "delete_confirm": {
+        "message": "سيؤدي هذا إلى حذف {{name}} مع فروعها ومشترييها وشهاداتها. لا يمكن التراجع عن هذا الإجراء.",
+        "title": "حذف الشركة؟"
+      },
+      "detail": {
+        "delete_label": "حذف الشركة",
+        "load_error": "تعذر تحميل هذه الشركة",
+        "profile": "الشركة"
+      },
+      "empty": "لا توجد شركات بعد",
+      "locations_column": "الفروع",
+      "messages": {
+        "created": "تم إنشاء الشركة",
+        "deleted": "تم حذف الشركة",
+        "updated": "تم تحديث الشركة"
+      },
+      "search_placeholder": "البحث في الشركات"
+    },
+    "company_contacts": {
+      "add_cta": "إضافة مشترٍ",
+      "add_title": "تخويل مشترٍ",
+      "dialog_description": "عميل يشتري لهذا الفرع. من يشتري لفرع واحد فقط تُنسب طلباته إليه تلقائياً.",
+      "empty": "لم يتم تخويل أي مشترٍ بعد",
+      "messages": {
+        "created": "تمت إضافة المشتري",
+        "deleted": "تمت إزالة المشتري"
+      },
+      "remove_action": "إزالة المشتري",
+      "remove_confirm": {
+        "message": "لن يعود {{email}} يشتري لهذا الفرع. لن يتأثر حساب العميل.",
+        "title": "إزالة هذا المشتري؟"
+      },
+      "roles_enterprise_help": "يمكن للمشترين المضافين هنا تقديم الطلبات لهذا الفرع. الأدوار ومسارات الموافقة وحدود الإنفاق تأتي مع Spree Enterprise.",
+      "roles_enterprise_title": "الأدوار والموافقات من مزايا Enterprise",
+      "title": "المشترون"
+    },
+    "company_locations": {
+      "add_cta": "إضافة فرع",
+      "add_title": "فرع جديد",
+      "addresses": "العناوين",
+      "billing_address": "عنوان الفوترة",
+      "contacts_count_few": "{{count}} مشترين",
+      "contacts_count_many": "{{count}} مشترياً",
+      "contacts_count_one": "مشترٍ واحد",
+      "contacts_count_other": "{{count}} مشترٍ",
+      "contacts_count_two": "مشتريان",
+      "contacts_count_zero": "لا مشترين",
+      "detail": {
+        "delete_label": "حذف الفرع",
+        "load_error": "تعذر تحميل هذا الفرع"
+      },
+      "dialog_description": "الفرع هو الجهة التي تُصدر لها الفاتورة وتُشحن إليها الطلبات. العناوين اختيارية، لكن أي عنوان تبدأ بتعبئته يتطلب الاسم والدولة.",
+      "edit_title": "تعديل الفرع",
+      "empty": "لا توجد فروع بعد",
+      "messages": {
+        "created": "تم إنشاء الفرع",
+        "deleted": "تم حذف الفرع",
+        "updated": "تم تحديث الفرع"
+      },
+      "shipping_address": "عنوان الشحن",
+      "shipping_same_as_billing": "عنوان الشحن هو نفسه عنوان الفوترة",
+      "title": "الفروع"
+    },
     "components": {
       "adjustment_action_editor": {
         "calculator_label": "آلة حاسبة",
@@ -547,6 +638,67 @@
       "split_description": "اشحن المنتجات نفسها من مستودع ثانٍ له مناطقه وأسعاره الخاصة.",
       "split_title": "تقسيم مصادر الشحن"
     },
+    "delivery_profiles": {
+      "add_cta": "إضافة ملف",
+      "add_dialog_title": "ملف توصيل جديد",
+      "all_locations": "جميع المواقع",
+      "capabilities": {
+        "digital": "رقمي",
+        "pickup": "استلام",
+        "ships": "شحن"
+      },
+      "create_description": "اجمع المنتجات التي تُشحن بالطريقة نفسها، مع مواقع ومناطق وطرق توصيل خاصة بها.",
+      "create_label": "إنشاء الملف",
+      "default_badge": "افتراضي",
+      "default_confirm": {
+        "message": "ستُشحن المنتجات التي لا ملف خاص لها عبر «{{name}}».",
+        "title": "تعيينه ملفًا افتراضيًا"
+      },
+      "delete_confirm": {
+        "message": "هل تريد حذف «{{name}}»؟ ستُحذف معه مناطقه وطرق التوصيل الخاصة به.",
+        "title": "حذف ملف الشحن"
+      },
+      "detail": {
+        "add_digital_method": "إضافة طريقة رقمية",
+        "add_method": "إضافة طريقة",
+        "collect_from": "الاستلام من",
+        "collect_from_hint": "المواقع التي يمكن للعملاء الاستلام منها. تسري التغييرات فورًا.",
+        "delete_label": "حذف الملف",
+        "digital_empty": "لا توجد طريقة تسليم رقمي بعد.",
+        "digital_hint": "يُسلَّم دون شحن أو استلام.",
+        "digital_title": "التسليم الرقمي",
+        "general_title": "عام",
+        "hidden_badge": "مخفية",
+        "load_failed_title": "تعذّر تحميل ملف الشحن هذا",
+        "no_methods": "لا توجد طرق توصيل هنا بعد.",
+        "no_stock_locations": "لا توجد مواقع بعد — أضف موقعًا من الإعدادات ← المواقع.",
+        "no_zone_hint": "تُعرض هذه الطرق في كل مكان يغطيه هذا الملف.",
+        "no_zone_title": "بدون تقييد بمنطقة",
+        "no_zones": "لا توجد مناطق بعد — أضف واحدة لتبدأ بعرض طرق التوصيل.",
+        "offer_pickup": "إتاحة الاستلام",
+        "origins_title": "الشحن من",
+        "pickup_empty": "لا توجد طريقة استلام بعد — لا يمكن للعملاء استلام الطلبات في هذا الملف.",
+        "pickup_hint": "يستلم العملاء هذه الطلبات بأنفسهم. الاستلام ليس له وجهة، لذا لا تنطبق المناطق.",
+        "pickup_title": "الاستلام من المتجر",
+        "zones_title": "المناطق وطرق التوصيل"
+      },
+      "empty": "لا توجد ملفات توصيل بعد.",
+      "is_default_hint": "المنتجات التي لا ملف خاص لها تُشحن عبر هذا الملف.",
+      "kind_immutable_hint": "يُحدَّد النوع عند إنشاء الملف ولا يمكن تغييره.",
+      "kinds": {
+        "digital": "رقمي",
+        "shipping": "شحن"
+      },
+      "locations_count": "{{count}} مواقع",
+      "make_default": "تعيين كافتراضي",
+      "messages": {
+        "created": "تم إنشاء ملف الشحن",
+        "deleted": "تم حذف ملف الشحن",
+        "updated": "تم تحديث ملف الشحن"
+      },
+      "search_placeholder": "ابحث في ملفات التوصيل…",
+      "selected_locations": "المواقع المحددة"
+    },
     "delivery_zones": {
       "add_countries_in_markets": "أضف المزيد من البلدان في الأسواق",
       "add_cta": "إضافة منطقة توصيل",
@@ -600,6 +752,9 @@
       "states_summary": "{{selected}} من {{total}} منطقة",
       "to_placeholder": "إلى",
       "toggle_states": "عرض مناطق {{country}}"
+    },
+    "enterprise": {
+      "learn_more": "تعرّف على Spree Enterprise"
     },
     "errors": {
       "forbidden_description": "ليس لديك إذن لعرض هذه الصفحة.",
@@ -1729,67 +1884,6 @@
         }
       }
     },
-    "delivery_profiles": {
-      "add_cta": "إضافة ملف",
-      "add_dialog_title": "ملف توصيل جديد",
-      "all_locations": "جميع المواقع",
-      "capabilities": {
-        "digital": "رقمي",
-        "pickup": "استلام",
-        "ships": "شحن"
-      },
-      "create_description": "اجمع المنتجات التي تُشحن بالطريقة نفسها، مع مواقع ومناطق وطرق توصيل خاصة بها.",
-      "create_label": "إنشاء الملف",
-      "default_badge": "افتراضي",
-      "default_confirm": {
-        "message": "ستُشحن المنتجات التي لا ملف خاص لها عبر «{{name}}».",
-        "title": "تعيينه ملفًا افتراضيًا"
-      },
-      "delete_confirm": {
-        "message": "هل تريد حذف «{{name}}»؟ ستُحذف معه مناطقه وطرق التوصيل الخاصة به.",
-        "title": "حذف ملف الشحن"
-      },
-      "detail": {
-        "add_digital_method": "إضافة طريقة رقمية",
-        "add_method": "إضافة طريقة",
-        "collect_from": "الاستلام من",
-        "collect_from_hint": "المواقع التي يمكن للعملاء الاستلام منها. تسري التغييرات فورًا.",
-        "delete_label": "حذف الملف",
-        "digital_empty": "لا توجد طريقة تسليم رقمي بعد.",
-        "digital_hint": "يُسلَّم دون شحن أو استلام.",
-        "digital_title": "التسليم الرقمي",
-        "general_title": "عام",
-        "hidden_badge": "مخفية",
-        "load_failed_title": "تعذّر تحميل ملف الشحن هذا",
-        "no_methods": "لا توجد طرق توصيل هنا بعد.",
-        "no_stock_locations": "لا توجد مواقع بعد — أضف موقعًا من الإعدادات ← المواقع.",
-        "no_zone_hint": "تُعرض هذه الطرق في كل مكان يغطيه هذا الملف.",
-        "no_zone_title": "بدون تقييد بمنطقة",
-        "no_zones": "لا توجد مناطق بعد — أضف واحدة لتبدأ بعرض طرق التوصيل.",
-        "offer_pickup": "إتاحة الاستلام",
-        "origins_title": "الشحن من",
-        "pickup_empty": "لا توجد طريقة استلام بعد — لا يمكن للعملاء استلام الطلبات في هذا الملف.",
-        "pickup_hint": "يستلم العملاء هذه الطلبات بأنفسهم. الاستلام ليس له وجهة، لذا لا تنطبق المناطق.",
-        "pickup_title": "الاستلام من المتجر",
-        "zones_title": "المناطق وطرق التوصيل"
-      },
-      "empty": "لا توجد ملفات توصيل بعد.",
-      "is_default_hint": "المنتجات التي لا ملف خاص لها تُشحن عبر هذا الملف.",
-      "kind_immutable_hint": "يُحدَّد النوع عند إنشاء الملف ولا يمكن تغييره.",
-      "kinds": {
-        "digital": "رقمي",
-        "shipping": "شحن"
-      },
-      "locations_count": "{{count}} مواقع",
-      "make_default": "تعيين كافتراضي",
-      "messages": {
-        "created": "تم إنشاء ملف الشحن",
-        "deleted": "تم حذف ملف الشحن",
-        "updated": "تم تحديث ملف الشحن"
-      },
-      "search_placeholder": "ابحث في ملفات التوصيل…",
-      "selected_locations": "المواقع المحددة"
-    },
     "gift_cards": {
       "batch_autocomplete": {
         "empty": "لا توجد دفعات مطابقة",
@@ -1949,6 +2043,9 @@
       "not_found_title": "لم يتم العثور على الدعوة",
       "sign_in_and_accept": "Sign in & accept",
       "sign_in_to_accept": ". قم بتسجيل الدخول للقبول."
+    },
+    "jurisdiction": {
+      "everywhere": "كل المناطق"
     },
     "markets": {
       "add_cta": "إضافة سوق",
@@ -3790,6 +3887,240 @@
         "name_required": "الاسم مطلوب"
       }
     },
+    "seller_requirements": {
+      "title": "متطلبات البائعين",
+      "search_placeholder": "ابحث في المتطلبات",
+      "empty": "لا توجد متطلبات بعد. يمكن للبائعين طلب المراجعة فورًا.",
+      "add_cta": "إضافة متطلب",
+      "add_title": "إضافة متطلب",
+      "edit_title": "تعديل المتطلب",
+      "columns": {
+        "kind": "النوع",
+        "required": "مطلوب"
+      },
+      "required": {
+        "yes": "مطلوب",
+        "no": "موصى به"
+      },
+      "status": {
+        "disabled": "متوقف"
+      },
+      "fields": {
+        "accepted_files": {
+          "label": "الملفات المقبولة",
+          "help": "يمكن للبائعين رفع: {{types}}"
+        },
+        "active": {
+          "label": "مفعّل",
+          "help": "أوقفه للتوقف عن طلبه دون حذفه."
+        },
+        "custom_fields": {
+          "label": "الحقول المخصصة",
+          "help": "على البائع تعبئة كل حقل تختاره.",
+          "placeholder": "ابحث عن الحقول",
+          "empty": "لا توجد حقول للبائعين. أنشئها من الإعدادات ← الحقول المخصصة."
+        },
+        "description": {
+          "label": "التعليمات",
+          "placeholder": "اشرح للبائع ما تحتاجه ولماذا"
+        },
+        "kind": {
+          "label": "النوع",
+          "placeholder": "اختر ما تطلبه"
+        },
+        "name": {
+          "label": "الاسم",
+          "label_required": "الاسم (مطلوب)",
+          "help": "ما يراه البائع في قائمته."
+        },
+        "required": {
+          "label": "مطلوب",
+          "help": "يجب إنجاز العناصر المطلوبة قبل الموافقة. أما الباقي فيُعرض كموصى به."
+        }
+      },
+      "delete_confirm": {
+        "title": "حذف المتطلب؟",
+        "message": "لن يُطلب من البائعين «{{name}}» بعد الآن. كما سيُحذف ما قدّموه بشأنه."
+      },
+      "messages": {
+        "created": "تمت إضافة المتطلب",
+        "updated": "تم حفظ المتطلب",
+        "deleted": "تم حذف المتطلب",
+        "submission_accepted": "تم القبول",
+        "submission_rejected": "أُعيد إلى البائع",
+        "waived": "تم إعفاء هذا البائع من المتطلب"
+      },
+      "kinds": {
+        "accept_terms": "قبول الشروط",
+        "complete_profile": "استكمال الملف",
+        "billing_address": "عنوان الفوترة",
+        "returns_address": "عنوان المرتجعات",
+        "minimum_products": "الحد الأدنى للمنتجات",
+        "required_custom_fields": "الحقول المخصصة المطلوبة",
+        "attestation": "إقرار البائع",
+        "operator_review": "مراجعة يدوية",
+        "document": "مستند"
+      }
+    },
+    "sellers": {
+      "actions": {
+        "invite": "دعوة",
+        "reinvite": "إعادة الإرسال",
+        "send_invitation": "إرسال الدعوة",
+        "approve": "الموافقة",
+        "reinstate": "إعادة التفعيل",
+        "suspend": "تعليق",
+        "reject": "رفض",
+        "reopen_onboarding": "إعادة إلى الإعداد"
+      },
+      "add_cta": "إضافة بائع",
+      "add_sheet_title": "بائع جديد",
+      "address": {
+        "filled": "مكتمل",
+        "not_filled": "غير مكتمل",
+        "not_provided_by_seller": "لم يقدّمه البائع بعد",
+        "not_located_yet": "تظهر الخريطة بعد تحديد موقع هذا العنوان."
+      },
+      "approve_override_confirm": {
+        "title": "الموافقة رغم ذلك؟",
+        "message": "لم يُكمل هذا البائع: {{names}}. الموافقة الآن تتيح له البيع رغم ذلك، وسيُسجَّل القرار.",
+        "action": "وافق رغم ذلك"
+      },
+      "autocomplete": {
+        "placeholder": "ابحث عن بائعين",
+        "empty": "لم يُعثر على بائعين"
+      },
+      "create_description": "أنشئ سجل البائع أولاً، ثم ادعُه ووافق عليه واضبط الدفعات من صفحته.",
+      "create_label": "إنشاء البائع",
+      "delete_confirm": {
+        "title": "حذف البائع؟",
+        "message": "سيؤدي هذا إلى إزالة {{name}} من السوق. تبقى منتجاته في الكتالوج بلا بائع. لا يمكن التراجع عن ذلك."
+      },
+      "detail": {
+        "load_error": "تعذّر تحميل هذا البائع",
+        "delete_label": "حذف البائع",
+        "status": "الحالة",
+        "settlement": "الدفعات والضرائب",
+        "at_a_glance": "لمحة سريعة",
+        "contact": "التواصل",
+        "edit_profile": "تعديل الملف",
+        "edit_profile_description": "يحرّر البائع هذه البيانات من لوحته الخاصة، وما تعدّله هنا يجري نيابةً عنه.",
+        "edit_settlement": "تعديل الدفعات والضرائب",
+        "edit_settlement_description": "أنت وحدك من يرى هذه الإعدادات ويغيّرها، ولا يحرّرها البائع.",
+        "no_about": "لم يكتب هذا البائع نبذة بعد.",
+        "billing_address": "عنوان الفوترة",
+        "returns_address": "عنوان المرتجعات"
+      },
+      "empty": "لا يوجد بائعون بعد",
+      "images": {
+        "logo_label": "الشعار",
+        "logo_help": "يُفضَّل الشكل المربّع. يظهر بجوار البائع في كل مكان يرد فيه.",
+        "square_logo_label": "شعار مربّع",
+        "square_logo_help": "للمواضع التي تتطلب مربّعاً دقيقاً، مثل الصورة الرمزية.",
+        "cover_photo_label": "صورة الغلاف",
+        "cover_photo_help": "لافتة عريضة أعلى ملف البائع."
+      },
+      "invite_sheet": {
+        "title": "دعوة بائع",
+        "description": "ينضم الشخص إلى فريق البائع عند قبول الدعوة، ويمكنه بعدها الدخول إلى لوحته الخاصة.",
+        "email_help": "سترسل الدعوة إلى هذا العنوان."
+      },
+      "messages": {
+        "created": "تم إنشاء البائع",
+        "create_failed": "تعذّر إنشاء البائع",
+        "updated": "تم تحديث البائع",
+        "update_failed": "تعذّر تحديث البائع",
+        "deleted": "تم حذف البائع",
+        "delete_failed": "تعذّر حذف البائع",
+        "invited": "تم إرسال الدعوة",
+        "invite_failed": "تعذّر إرسال الدعوة",
+        "approved": "تمت الموافقة على البائع",
+        "approve_failed": "تعذّرت الموافقة على البائع",
+        "suspended": "تم تعليق البائع",
+        "suspend_failed": "تعذّر تعليق البائع",
+        "rejected": "تم رفض البائع",
+        "reject_failed": "تعذّر رفض البائع",
+        "onboarding_reopened": "أُعيد إلى الإعداد"
+      },
+      "not_provided": "غير محدد",
+      "on_holiday_notice": "هذا البائع في إجازة. تبقى منتجاته ظاهرة لكن لا يمكن شراء أي منها.",
+      "onboarding": {
+        "title": "الإعداد",
+        "progress": "اكتمل {{done}} من {{total}}",
+        "waived": "مُعفى",
+        "download": "تنزيل الملف",
+        "seller_note": "البائع: {{note}}",
+        "review_note": "ملاحظتك: {{note}}",
+        "actions": {
+          "accept": "قبول",
+          "reject": "إعادة",
+          "waive": "إعفاء هذا البائع"
+        },
+        "reject_confirm": {
+          "title": "إعادته؟",
+          "message": "سيُطلب من البائع «{{name}}» مرة أخرى."
+        },
+        "waive_confirm": {
+          "title": "إعفاء من هذا المتطلب؟",
+          "message": "سيُعدّ «{{name}}» مستوفىً لهذا البائع فقط."
+        },
+        "all_done": "اكتمل كل شيء 🎉",
+        "status": {
+          "complete": "تم",
+          "pending": "قيد المراجعة",
+          "rejected": "أُعيد",
+          "incomplete": "معلّق"
+        }
+      },
+      "onboarding_column": "الإعداد",
+      "payout_interval": {
+        "inherit": "الإعداد الافتراضي للمتجر",
+        "daily": "يومياً",
+        "weekly": "أسبوعياً",
+        "biweekly": "كل أسبوعين",
+        "monthly": "شهرياً",
+        "manual": "يدوي"
+      },
+      "products_column": "المنتجات",
+      "reject_confirm": {
+        "title": "رفض البائع؟",
+        "message": "لن يُقبل {{name}} في السوق. يمكنك الموافقة عليه لاحقاً إذا لزم الأمر."
+      },
+      "reopen_onboarding_confirm": {
+        "title": "إعادته إلى الإعداد؟",
+        "message": "سيتمكن {{name}} من تعديل بياناته وطلب المراجعة مجددًا."
+      },
+      "search_placeholder": "ابحث عن بائعين",
+      "status": {
+        "pending": "قيد الانتظار",
+        "invited": "مدعو",
+        "onboarding": "قيد الإعداد",
+        "ready_for_review": "جاهز للمراجعة",
+        "approved": "معتمد",
+        "suspended": "معلّق",
+        "rejected": "مرفوض",
+        "canceled": "ملغى"
+      },
+      "status_help": {
+        "pending": "تم الإنشاء، ولم تُرسل أي دعوة بعد.",
+        "invited": "في انتظار قبول الدعوة.",
+        "onboarding": "يستكمل بياناته.",
+        "ready_for_review": "في انتظار موافقتك.",
+        "approved": "يبيع في السوق.",
+        "suspended": "موقوف عن البيع. أعد تفعيله ليتاجر من جديد.",
+        "rejected": "غير مقبول في السوق.",
+        "canceled": "انسحب قبل الانضمام."
+      },
+      "suspend_confirm": {
+        "title": "تعليق البائع؟",
+        "message": "سيتوقف {{name}} عن البيع فوراً. يبقى الكتالوج والسجل، ويمكنك إعادته لاحقاً."
+      },
+      "tax_remittance": {
+        "seller": "البائع يورّد الضريبة",
+        "platform": "السوق يورّد الضريبة"
+      },
+      "team_column": "الفريق"
+    },
     "settings": {
       "webhooks": {
         "errors": {
@@ -3814,6 +4145,7 @@
         "allowed_origins": "المصادر المسموح بها",
         "api_keys": "مفاتيح API",
         "channels": "قنوات البيع",
+        "commission_rates": "نسب العمولة",
         "custom_field_definitions": "الحقول المخصصة",
         "delivery_profiles": "ملفات التوصيل",
         "emails": "البريد الإلكتروني",
@@ -3825,13 +4157,13 @@
         "profile": "الملف الشخصي",
         "reasons": "المرتجعات والأسباب",
         "roles": "الأدوار",
+        "seller_requirements": "متطلبات البائعين",
         "staff": "الموظفون",
         "stock_locations": "مواقع المخزون",
         "store": "المتجر",
         "tax_categories": "فئات الضريبة",
         "tax_rates": "نسب الضريبة",
-        "webhooks": "Webhooks",
-        "commission_rates": "نسب العمولة"
+        "webhooks": "Webhooks"
       }
     },
     "setup": {
@@ -3996,134 +4328,6 @@
       },
       "search_placeholder": "البحث بالاسم…"
     },
-    "translations": {
-      "coverage_summary": "تمت ترجمة {{translated}} من {{total}} لغة",
-      "dirty_summary": "{{count}} تغيير(ات) غير محفوظة",
-      "discard_confirm": {
-        "message": "لديك {{count}} تغيير(ات) ترجمة غير محفوظة. هل تريد تجاهلها؟",
-        "title": "تجاهل التغييرات؟"
-      },
-      "field": "الحقل",
-      "load_error": "تعذر تحميل الترجمات",
-      "locale": "اللغة",
-      "manage": "إدارة الترجمات",
-      "no_locales": "أضف المزيد من اللغات إلى متجرك لترجمة هذا المنتج.",
-      "original": "الأصل",
-      "save": "حفظ الترجمات",
-      "save_error": "تعذر حفظ الترجمات",
-      "saved": "تم حفظ الترجمات",
-      "source": "المصدر",
-      "title": "الترجمات"
-    },
-    "jurisdiction": {
-      "everywhere": "كل المناطق"
-    },
-    "companies": {
-      "add_cta": "إضافة شركة",
-      "add_sheet_title": "شركة جديدة",
-      "create_description": "يشتري العملاء من الشركات عبر الفروع. يمكنك إضافة الفروع والرقم الضريبي وشهادات الإعفاء بعد إنشاء الشركة.",
-      "create_label": "إنشاء الشركة",
-      "delete_confirm": {
-        "message": "سيؤدي هذا إلى حذف {{name}} مع فروعها ومشترييها وشهاداتها. لا يمكن التراجع عن هذا الإجراء.",
-        "title": "حذف الشركة؟"
-      },
-      "detail": {
-        "delete_label": "حذف الشركة",
-        "load_error": "تعذر تحميل هذه الشركة",
-        "profile": "الشركة"
-      },
-      "empty": "لا توجد شركات بعد",
-      "locations_column": "الفروع",
-      "messages": {
-        "created": "تم إنشاء الشركة",
-        "deleted": "تم حذف الشركة",
-        "updated": "تم تحديث الشركة"
-      },
-      "search_placeholder": "البحث في الشركات"
-    },
-    "company_locations": {
-      "add_cta": "إضافة فرع",
-      "add_title": "فرع جديد",
-      "addresses": "العناوين",
-      "billing_address": "عنوان الفوترة",
-      "contacts_count_few": "{{count}} مشترين",
-      "contacts_count_many": "{{count}} مشترياً",
-      "contacts_count_one": "مشترٍ واحد",
-      "contacts_count_other": "{{count}} مشترٍ",
-      "contacts_count_two": "مشتريان",
-      "contacts_count_zero": "لا مشترين",
-      "detail": {
-        "delete_label": "حذف الفرع",
-        "load_error": "تعذر تحميل هذا الفرع"
-      },
-      "dialog_description": "الفرع هو الجهة التي تُصدر لها الفاتورة وتُشحن إليها الطلبات. العناوين اختيارية، لكن أي عنوان تبدأ بتعبئته يتطلب الاسم والدولة.",
-      "edit_title": "تعديل الفرع",
-      "empty": "لا توجد فروع بعد",
-      "messages": {
-        "created": "تم إنشاء الفرع",
-        "deleted": "تم حذف الفرع",
-        "updated": "تم تحديث الفرع"
-      },
-      "shipping_address": "عنوان الشحن",
-      "shipping_same_as_billing": "عنوان الشحن هو نفسه عنوان الفوترة",
-      "title": "الفروع"
-    },
-    "company_contacts": {
-      "add_cta": "إضافة مشترٍ",
-      "add_title": "تخويل مشترٍ",
-      "dialog_description": "عميل يشتري لهذا الفرع. من يشتري لفرع واحد فقط تُنسب طلباته إليه تلقائياً.",
-      "empty": "لم يتم تخويل أي مشترٍ بعد",
-      "messages": {
-        "created": "تمت إضافة المشتري",
-        "deleted": "تمت إزالة المشتري"
-      },
-      "remove_action": "إزالة المشتري",
-      "remove_confirm": {
-        "message": "لن يعود {{email}} يشتري لهذا الفرع. لن يتأثر حساب العميل.",
-        "title": "إزالة هذا المشتري؟"
-      },
-      "roles_enterprise_help": "يمكن للمشترين المضافين هنا تقديم الطلبات لهذا الفرع. الأدوار ومسارات الموافقة وحدود الإنفاق تأتي مع Spree Enterprise.",
-      "roles_enterprise_title": "الأدوار والموافقات من مزايا Enterprise",
-      "title": "المشترون"
-    },
-    "tax_identifiers": {
-      "add_cta": "إضافة رقم",
-      "add_title": "إضافة رقم ضريبي",
-      "checked_prefix": "تم التحقق",
-      "delete_confirm": {
-        "message": "ستتم إزالة {{value}}. تحتفظ الطلبات المكتملة بالرقم الذي فُوترت به.",
-        "title": "حذف هذا الرقم؟"
-      },
-      "dialog_description": "رقم ضريبة القيمة المضافة أو رقم الشركة الذي يظهر على الفواتير، وهو ما يتيح آلية الاحتساب العكسي بين الشركات في الاتحاد الأوروبي.",
-      "edit_title": "تعديل الرقم الضريبي",
-      "empty": "لا يوجد رقم ضريبي مسجل",
-      "kinds": {
-        "au_abn": "رقم الشركة الأسترالي",
-        "ch_vat": "ضريبة القيمة المضافة (سويسرا)",
-        "eu_vat": "ضريبة القيمة المضافة (الاتحاد الأوروبي)",
-        "gb_vat": "ضريبة القيمة المضافة (المملكة المتحدة)",
-        "us_ein": "رقم صاحب العمل (الولايات المتحدة)"
-      },
-      "messages": {
-        "created": "تمت إضافة الرقم",
-        "deleted": "تم حذف الرقم",
-        "updated": "تم تحديث الرقم",
-        "validation_failed": "تعذر التحقق من الرقم",
-        "validation_requested": "جارٍ التحقق من الرقم لدى السجل"
-      },
-      "not_validatable": "لا يوجد تحقق مُعد لهذا النوع، لذا يُستخدم الرقم كما أُدخل.",
-      "select_kind": "اختر النوع",
-      "title": "الرقم الضريبي",
-      "validate_action": "التحقق لدى السجل",
-      "validation_status": {
-        "not_checked": "لم يُتحقق منه",
-        "pending": "جارٍ التحقق",
-        "unavailable": "السجل غير متاح",
-        "unsupported": "يتعذر التحقق منه",
-        "unverified": "غير صالح",
-        "verified": "تم التحقق"
-      }
-    },
     "tax_exemption_certificates": {
       "add_cta": "إضافة شهادة",
       "add_title": "إضافة شهادة إعفاء",
@@ -4169,6 +4373,50 @@
       "verified_at": "تاريخ القبول",
       "verify_action": "قبول"
     },
+    "tax_identifiers": {
+      "add_cta": "إضافة رقم",
+      "add_title": "إضافة رقم ضريبي",
+      "checked_prefix": "تم التحقق",
+      "delete_confirm": {
+        "message": "ستتم إزالة {{value}}. تحتفظ الطلبات المكتملة بالرقم الذي فُوترت به.",
+        "title": "حذف هذا الرقم؟"
+      },
+      "dialog_description": "رقم ضريبة القيمة المضافة أو رقم الشركة الذي يظهر على الفواتير، وهو ما يتيح آلية الاحتساب العكسي بين الشركات في الاتحاد الأوروبي.",
+      "edit_title": "تعديل الرقم الضريبي",
+      "empty": "لا يوجد رقم ضريبي مسجل",
+      "kinds": {
+        "au_abn": "رقم الشركة الأسترالي",
+        "ch_vat": "ضريبة القيمة المضافة (سويسرا)",
+        "eu_vat": "ضريبة القيمة المضافة (الاتحاد الأوروبي)",
+        "gb_vat": "ضريبة القيمة المضافة (المملكة المتحدة)",
+        "us_ein": "رقم صاحب العمل (الولايات المتحدة)"
+      },
+      "messages": {
+        "created": "تمت إضافة الرقم",
+        "deleted": "تم حذف الرقم",
+        "updated": "تم تحديث الرقم",
+        "validation_failed": "تعذر التحقق من الرقم",
+        "validation_requested": "جارٍ التحقق من الرقم لدى السجل"
+      },
+      "not_validatable": "لا يوجد تحقق مُعد لهذا النوع، لذا يُستخدم الرقم كما أُدخل.",
+      "select_kind": "اختر النوع",
+      "title": "الرقم الضريبي",
+      "validate_action": "التحقق لدى السجل",
+      "validation_status": {
+        "not_checked": "لم يُتحقق منه",
+        "pending": "جارٍ التحقق",
+        "unavailable": "السجل غير متاح",
+        "unsupported": "يتعذر التحقق منه",
+        "unverified": "غير صالح",
+        "verified": "تم التحقق"
+      }
+    },
+    "tax_providers": {
+      "limitations_title": "{{name}} لا يغطي",
+      "unavailable_option": "{{name}} (غير مُعد)",
+      "use_default": "استخدام المحرك الافتراضي",
+      "use_default_named": "الافتراضي ({{name}})"
+    },
     "tax_rates": {
       "add_cta": "إضافة نسبة ضريبة",
       "all_categories": "كل الفئات",
@@ -4190,148 +4438,24 @@
       "search_placeholder": "البحث في نسب الضريبة",
       "select_category": "اختر فئة"
     },
-    "tax_providers": {
-      "limitations_title": "{{name}} لا يغطي",
-      "unavailable_option": "{{name}} (غير مُعد)",
-      "use_default": "استخدام المحرك الافتراضي",
-      "use_default_named": "الافتراضي ({{name}})"
-    },
-    "enterprise": {
-      "learn_more": "تعرّف على Spree Enterprise"
-    },
-    "sellers": {
-      "add_cta": "إضافة بائع",
-      "add_sheet_title": "بائع جديد",
-      "create_description": "أنشئ سجل البائع أولاً، ثم ادعُه ووافق عليه واضبط الدفعات من صفحته.",
-      "create_label": "إنشاء البائع",
-      "search_placeholder": "ابحث عن بائعين",
-      "empty": "لا يوجد بائعون بعد",
-      "products_column": "المنتجات",
-      "team_column": "الفريق",
-      "on_holiday_notice": "هذا البائع في إجازة. تبقى منتجاته ظاهرة لكن لا يمكن شراء أي منها.",
-      "delete_confirm": {
-        "title": "حذف البائع؟",
-        "message": "سيؤدي هذا إلى إزالة {{name}} من السوق. تبقى منتجاته في الكتالوج بلا بائع. لا يمكن التراجع عن ذلك."
+    "translations": {
+      "coverage_summary": "تمت ترجمة {{translated}} من {{total}} لغة",
+      "dirty_summary": "{{count}} تغيير(ات) غير محفوظة",
+      "discard_confirm": {
+        "message": "لديك {{count}} تغيير(ات) ترجمة غير محفوظة. هل تريد تجاهلها؟",
+        "title": "تجاهل التغييرات؟"
       },
-      "suspend_confirm": {
-        "title": "تعليق البائع؟",
-        "message": "سيتوقف {{name}} عن البيع فوراً. يبقى الكتالوج والسجل، ويمكنك إعادته لاحقاً."
-      },
-      "reject_confirm": {
-        "title": "رفض البائع؟",
-        "message": "لن يُقبل {{name}} في السوق. يمكنك الموافقة عليه لاحقاً إذا لزم الأمر."
-      },
-      "invite_sheet": {
-        "title": "دعوة بائع",
-        "description": "ينضم الشخص إلى فريق البائع عند قبول الدعوة، ويمكنه بعدها الدخول إلى لوحته الخاصة.",
-        "email_help": "سترسل الدعوة إلى هذا العنوان."
-      },
-      "actions": {
-        "invite": "دعوة",
-        "reinvite": "إعادة الإرسال",
-        "send_invitation": "إرسال الدعوة",
-        "approve": "الموافقة",
-        "reinstate": "إعادة التفعيل",
-        "suspend": "تعليق",
-        "reject": "رفض"
-      },
-      "detail": {
-        "load_error": "تعذّر تحميل هذا البائع",
-        "delete_label": "حذف البائع",
-        "status": "الحالة",
-        "settlement": "الدفعات والضرائب",
-        "at_a_glance": "لمحة سريعة",
-        "contact": "التواصل",
-        "edit_profile": "تعديل الملف",
-        "edit_profile_description": "يحرّر البائع هذه البيانات من لوحته الخاصة، وما تعدّله هنا يجري نيابةً عنه.",
-        "edit_settlement": "تعديل الدفعات والضرائب",
-        "edit_settlement_description": "أنت وحدك من يرى هذه الإعدادات ويغيّرها، ولا يحرّرها البائع.",
-        "no_about": "لم يكتب هذا البائع نبذة بعد."
-      },
-      "status": {
-        "pending": "قيد الانتظار",
-        "invited": "مدعو",
-        "onboarding": "قيد الإعداد",
-        "ready_for_review": "جاهز للمراجعة",
-        "approved": "معتمد",
-        "suspended": "معلّق",
-        "rejected": "مرفوض",
-        "canceled": "ملغى"
-      },
-      "status_help": {
-        "pending": "تم الإنشاء، ولم تُرسل أي دعوة بعد.",
-        "invited": "في انتظار قبول الدعوة.",
-        "onboarding": "يستكمل بياناته.",
-        "ready_for_review": "في انتظار موافقتك.",
-        "approved": "يبيع في السوق.",
-        "suspended": "موقوف عن البيع. أعد تفعيله ليتاجر من جديد.",
-        "rejected": "غير مقبول في السوق.",
-        "canceled": "انسحب قبل الانضمام."
-      },
-      "tax_remittance": {
-        "seller": "البائع يورّد الضريبة",
-        "platform": "السوق يورّد الضريبة"
-      },
-      "payout_interval": {
-        "inherit": "الإعداد الافتراضي للمتجر",
-        "daily": "يومياً",
-        "weekly": "أسبوعياً",
-        "biweekly": "كل أسبوعين",
-        "monthly": "شهرياً",
-        "manual": "يدوي"
-      },
-      "messages": {
-        "created": "تم إنشاء البائع",
-        "create_failed": "تعذّر إنشاء البائع",
-        "updated": "تم تحديث البائع",
-        "update_failed": "تعذّر تحديث البائع",
-        "deleted": "تم حذف البائع",
-        "delete_failed": "تعذّر حذف البائع",
-        "invited": "تم إرسال الدعوة",
-        "invite_failed": "تعذّر إرسال الدعوة",
-        "approved": "تمت الموافقة على البائع",
-        "approve_failed": "تعذّرت الموافقة على البائع",
-        "suspended": "تم تعليق البائع",
-        "suspend_failed": "تعذّر تعليق البائع",
-        "rejected": "تم رفض البائع",
-        "reject_failed": "تعذّر رفض البائع"
-      },
-      "not_provided": "غير محدد",
-      "images": {
-        "logo_label": "الشعار",
-        "logo_help": "يُفضَّل الشكل المربّع. يظهر بجوار البائع في كل مكان يرد فيه.",
-        "square_logo_label": "شعار مربّع",
-        "square_logo_help": "للمواضع التي تتطلب مربّعاً دقيقاً، مثل الصورة الرمزية.",
-        "cover_photo_label": "صورة الغلاف",
-        "cover_photo_help": "لافتة عريضة أعلى ملف البائع."
-      },
-      "autocomplete": {
-        "placeholder": "ابحث عن بائعين",
-        "empty": "لم يُعثر على بائعين"
-      }
-    },
-    "commission_rates": {
-      "add_cta": "إضافة نسبة عمولة",
-      "applies_to_everything": "كل عملية بيع",
-      "create_description": "حدّد ما يتقاضاه السوق من البائعين، وعلى أي مبيعات ينطبق.",
-      "create_label": "إنشاء نسبة العمولة",
-      "delete_confirm": {
-        "message": "سيتم حذف {{name}}. العمولات المحتسبة سابقًا لن تتأثر.",
-        "title": "حذف نسبة العمولة؟"
-      },
-      "edit_description": "حدّث الرسوم وحدودها والمبيعات التي تنطبق عليها.",
-      "empty": "لا توجد نسب عمولة بعد",
-      "messages": {
-        "created": "تم إنشاء نسبة العمولة",
-        "deleted": "تم حذف نسبة العمولة",
-        "updated": "تم تحديث نسبة العمولة"
-      },
-      "search_placeholder": "البحث بالاسم…",
-      "order_hint": "تُضاف النسب الجديدة إلى أعلى القائمة، وتفوز أول نسبة مطابقة — اسحب لإعادة الترتيب.",
-      "conditions": {
-        "add": "إضافة شرط",
-        "title": "الشروط"
-      }
+      "field": "الحقل",
+      "load_error": "تعذر تحميل الترجمات",
+      "locale": "اللغة",
+      "manage": "إدارة الترجمات",
+      "no_locales": "أضف المزيد من اللغات إلى متجرك لترجمة هذا المنتج.",
+      "original": "الأصل",
+      "save": "حفظ الترجمات",
+      "save_error": "تعذر حفظ الترجمات",
+      "saved": "تم حفظ الترجمات",
+      "source": "المصدر",
+      "title": "الترجمات"
     }
   }
 }

@@ -289,6 +289,93 @@
       },
       "title": "Collections"
     },
+    "commission_rates": {
+      "add_cta": "Add commission rate",
+      "applies_to_everything": "Every sale",
+      "create_description": "Set what the marketplace charges sellers, and which sales it applies to.",
+      "create_label": "Create commission rate",
+      "delete_confirm": {
+        "message": "{{name}} will be removed. Commission already charged is unaffected.",
+        "title": "Delete commission rate?"
+      },
+      "edit_description": "Update the charge, its limits, and which sales it applies to.",
+      "empty": "No commission rates yet",
+      "messages": {
+        "created": "Commission rate created",
+        "deleted": "Commission rate deleted",
+        "updated": "Commission rate updated"
+      },
+      "search_placeholder": "Search by name…",
+      "order_hint": "New rates go to the top of the list, and the first one that matches a sale wins — drag to reorder.",
+      "conditions": {
+        "add": "Add condition",
+        "title": "Conditions"
+      }
+    },
+    "companies": {
+      "add_cta": "Add company",
+      "add_sheet_title": "New company",
+      "create_description": "Business customers buy through branches. You can add branches, tax registration and exemption certificates once the company exists.",
+      "create_label": "Create company",
+      "delete_confirm": {
+        "message": "This deletes {{name}} along with its branches, buyers and certificates. This cannot be undone.",
+        "title": "Delete company?"
+      },
+      "detail": {
+        "delete_label": "Delete company",
+        "load_error": "Could not load this company",
+        "profile": "Company"
+      },
+      "empty": "No companies yet",
+      "locations_column": "Branches",
+      "messages": {
+        "created": "Company created",
+        "deleted": "Company deleted",
+        "updated": "Company updated"
+      },
+      "search_placeholder": "Search companies"
+    },
+    "company_contacts": {
+      "add_cta": "Add buyer",
+      "add_title": "Authorise a buyer",
+      "dialog_description": "A customer who buys for this branch. Someone who buys for exactly one branch has their orders attributed to it automatically.",
+      "empty": "No buyers authorised yet",
+      "messages": {
+        "created": "Buyer added",
+        "deleted": "Buyer removed"
+      },
+      "remove_action": "Remove buyer",
+      "remove_confirm": {
+        "message": "{{email}} will no longer buy for this branch. Their customer account is not affected.",
+        "title": "Remove this buyer?"
+      },
+      "roles_enterprise_help": "Buyers you add here can place orders for this branch. Roles, approval workflows and spending limits come with Spree Enterprise.",
+      "roles_enterprise_title": "Roles and approvals are an Enterprise feature",
+      "title": "Buyers"
+    },
+    "company_locations": {
+      "add_cta": "Add branch",
+      "add_title": "New branch",
+      "addresses": "Addresses",
+      "billing_address": "Billing address",
+      "contacts_count_one": "{{count}} buyer",
+      "contacts_count_other": "{{count}} buyers",
+      "detail": {
+        "delete_label": "Delete branch",
+        "load_error": "Could not load this branch"
+      },
+      "dialog_description": "A branch is where the business is invoiced and where its orders ship. Addresses are optional, but a partial address needs a name and country.",
+      "edit_title": "Edit branch",
+      "empty": "No branches yet",
+      "messages": {
+        "created": "Branch created",
+        "deleted": "Branch deleted",
+        "updated": "Branch updated"
+      },
+      "shipping_address": "Shipping address",
+      "shipping_same_as_billing": "Shipping address is the same as billing",
+      "title": "Branches"
+    },
     "components": {
       "adjustment_action_editor": {
         "calculator_label": "Calculator",
@@ -547,6 +634,67 @@
       "split_description": "Ship the same products from a second warehouse with its own zones and rates.",
       "split_title": "Split shipping origins"
     },
+    "delivery_profiles": {
+      "add_cta": "Add profile",
+      "add_dialog_title": "New delivery profile",
+      "all_locations": "All locations",
+      "capabilities": {
+        "digital": "Digital",
+        "pickup": "Pickup",
+        "ships": "Ships"
+      },
+      "create_description": "Group products that ship the same way, with their own locations, zones and delivery methods.",
+      "create_label": "Create profile",
+      "default_badge": "Default",
+      "default_confirm": {
+        "message": "Products without a profile of their own will start shipping on “{{name}}”.",
+        "title": "Make this the default profile"
+      },
+      "delete_confirm": {
+        "message": "Delete “{{name}}”? Its zones and delivery methods go with it.",
+        "title": "Delete shipping profile"
+      },
+      "detail": {
+        "add_digital_method": "Add digital method",
+        "add_method": "Add method",
+        "collect_from": "Collect from",
+        "collect_from_hint": "Locations customers can collect from. Changes take effect immediately.",
+        "delete_label": "Delete profile",
+        "digital_empty": "No digital delivery method yet.",
+        "digital_hint": "Delivered without shipping or collection.",
+        "digital_title": "Digital delivery",
+        "general_title": "General",
+        "hidden_badge": "Hidden",
+        "load_failed_title": "Could not load this shipping profile",
+        "no_methods": "No delivery methods here yet.",
+        "no_stock_locations": "No locations yet — add one under Settings → Locations.",
+        "no_zone_hint": "These methods are offered wherever this profile reaches.",
+        "no_zone_title": "No zone restriction",
+        "no_zones": "No zones yet — add one to start offering delivery methods.",
+        "offer_pickup": "Offer pickup",
+        "origins_title": "Ships from",
+        "pickup_empty": "No pickup method yet — customers cannot collect orders on this profile.",
+        "pickup_hint": "Customers collect these orders in person. Pickup has no destination, so zones do not apply.",
+        "pickup_title": "Pickup",
+        "zones_title": "Zones and delivery methods"
+      },
+      "empty": "No delivery profiles yet.",
+      "is_default_hint": "Products without a profile of their own ship on this one.",
+      "kind_immutable_hint": "The kind is fixed when the profile is created.",
+      "kinds": {
+        "digital": "Digital",
+        "shipping": "Shipping"
+      },
+      "locations_count": "{{count}} locations",
+      "make_default": "Make default",
+      "messages": {
+        "created": "Shipping profile created",
+        "deleted": "Shipping profile deleted",
+        "updated": "Shipping profile updated"
+      },
+      "search_placeholder": "Search delivery profiles…",
+      "selected_locations": "Selected locations"
+    },
     "delivery_zones": {
       "add_countries_in_markets": "Add more countries in Markets",
       "add_cta": "Add delivery zone",
@@ -589,6 +737,9 @@
       "states_summary": "{{selected}} of {{total}} states",
       "to_placeholder": "To",
       "toggle_states": "Show states of {{country}}"
+    },
+    "enterprise": {
+      "learn_more": "Learn about Spree Enterprise"
     },
     "errors": {
       "forbidden_description": "You don’t have permission to view this page.",
@@ -1718,67 +1869,6 @@
         }
       }
     },
-    "delivery_profiles": {
-      "add_cta": "Add profile",
-      "add_dialog_title": "New delivery profile",
-      "all_locations": "All locations",
-      "capabilities": {
-        "digital": "Digital",
-        "pickup": "Pickup",
-        "ships": "Ships"
-      },
-      "create_description": "Group products that ship the same way, with their own locations, zones and delivery methods.",
-      "create_label": "Create profile",
-      "default_badge": "Default",
-      "default_confirm": {
-        "message": "Products without a profile of their own will start shipping on “{{name}}”.",
-        "title": "Make this the default profile"
-      },
-      "delete_confirm": {
-        "message": "Delete “{{name}}”? Its zones and delivery methods go with it.",
-        "title": "Delete shipping profile"
-      },
-      "detail": {
-        "add_digital_method": "Add digital method",
-        "add_method": "Add method",
-        "collect_from": "Collect from",
-        "collect_from_hint": "Locations customers can collect from. Changes take effect immediately.",
-        "delete_label": "Delete profile",
-        "digital_empty": "No digital delivery method yet.",
-        "digital_hint": "Delivered without shipping or collection.",
-        "digital_title": "Digital delivery",
-        "general_title": "General",
-        "hidden_badge": "Hidden",
-        "load_failed_title": "Could not load this shipping profile",
-        "no_methods": "No delivery methods here yet.",
-        "no_stock_locations": "No locations yet — add one under Settings → Locations.",
-        "no_zone_hint": "These methods are offered wherever this profile reaches.",
-        "no_zone_title": "No zone restriction",
-        "no_zones": "No zones yet — add one to start offering delivery methods.",
-        "offer_pickup": "Offer pickup",
-        "origins_title": "Ships from",
-        "pickup_empty": "No pickup method yet — customers cannot collect orders on this profile.",
-        "pickup_hint": "Customers collect these orders in person. Pickup has no destination, so zones do not apply.",
-        "pickup_title": "Pickup",
-        "zones_title": "Zones and delivery methods"
-      },
-      "empty": "No delivery profiles yet.",
-      "is_default_hint": "Products without a profile of their own ship on this one.",
-      "kind_immutable_hint": "The kind is fixed when the profile is created.",
-      "kinds": {
-        "digital": "Digital",
-        "shipping": "Shipping"
-      },
-      "locations_count": "{{count}} locations",
-      "make_default": "Make default",
-      "messages": {
-        "created": "Shipping profile created",
-        "deleted": "Shipping profile deleted",
-        "updated": "Shipping profile updated"
-      },
-      "search_placeholder": "Search delivery profiles…",
-      "selected_locations": "Selected locations"
-    },
     "gift_cards": {
       "batch_autocomplete": {
         "empty": "No batches match",
@@ -1938,6 +2028,9 @@
       "not_found_title": "Invitation not found",
       "sign_in_and_accept": "Sign in & accept",
       "sign_in_to_accept": ". Sign in to accept."
+    },
+    "jurisdiction": {
+      "everywhere": "Everywhere"
     },
     "markets": {
       "add_cta": "Add market",
@@ -3775,6 +3868,240 @@
         "name_required": "Name is required"
       }
     },
+    "seller_requirements": {
+      "title": "Seller requirements",
+      "search_placeholder": "Search requirements",
+      "empty": "No requirements yet. Sellers can ask to be reviewed straight away.",
+      "add_cta": "Add requirement",
+      "add_title": "Add a requirement",
+      "edit_title": "Edit requirement",
+      "columns": {
+        "kind": "Type",
+        "required": "Required"
+      },
+      "required": {
+        "yes": "Required",
+        "no": "Recommended"
+      },
+      "status": {
+        "disabled": "Off"
+      },
+      "fields": {
+        "accepted_files": {
+          "label": "Accepted files",
+          "help": "Sellers can upload: {{types}}"
+        },
+        "active": {
+          "label": "Active",
+          "help": "Switch off to stop asking for this without deleting it."
+        },
+        "custom_fields": {
+          "label": "Custom fields",
+          "help": "The seller must fill in every field you choose.",
+          "placeholder": "Search custom fields",
+          "empty": "No seller custom fields found. Create them in Settings → Custom fields."
+        },
+        "description": {
+          "label": "Instructions",
+          "placeholder": "Tell the seller what you need and why"
+        },
+        "kind": {
+          "label": "Type",
+          "placeholder": "Choose what to ask for"
+        },
+        "name": {
+          "label": "Name",
+          "label_required": "Name (required)",
+          "help": "What the seller sees on their checklist."
+        },
+        "required": {
+          "label": "Required",
+          "help": "Required items must be done before a seller can be approved. Others are shown as recommended."
+        }
+      },
+      "delete_confirm": {
+        "title": "Delete requirement?",
+        "message": "Sellers will no longer be asked for \"{{name}}\". Anything they already submitted for it is deleted too."
+      },
+      "messages": {
+        "created": "Requirement added",
+        "updated": "Requirement saved",
+        "deleted": "Requirement deleted",
+        "submission_accepted": "Accepted",
+        "submission_rejected": "Sent back to the seller",
+        "waived": "Requirement waived for this seller"
+      },
+      "kinds": {
+        "accept_terms": "Accept terms",
+        "complete_profile": "Complete profile",
+        "billing_address": "Billing address",
+        "returns_address": "Returns address",
+        "minimum_products": "Minimum products",
+        "required_custom_fields": "Required custom fields",
+        "attestation": "Seller confirmation",
+        "operator_review": "Manual check",
+        "document": "Document"
+      }
+    },
+    "sellers": {
+      "actions": {
+        "invite": "Invite",
+        "reinvite": "Send again",
+        "send_invitation": "Send invitation",
+        "approve": "Approve",
+        "reinstate": "Reinstate",
+        "suspend": "Suspend",
+        "reject": "Reject",
+        "reopen_onboarding": "Send back to onboarding"
+      },
+      "add_cta": "Add seller",
+      "add_sheet_title": "New seller",
+      "address": {
+        "filled": "Filled",
+        "not_filled": "Not filled",
+        "not_provided_by_seller": "Not yet provided by the seller",
+        "not_located_yet": "The map appears once this address has been located."
+      },
+      "approve_override_confirm": {
+        "title": "Approve anyway?",
+        "message": "This seller has not finished: {{names}}. Approving now lets them trade regardless, and the decision is recorded.",
+        "action": "Approve anyway"
+      },
+      "autocomplete": {
+        "placeholder": "Search sellers",
+        "empty": "No sellers found"
+      },
+      "create_description": "Create the seller record first. You can invite them, approve them and set up payouts from their page.",
+      "create_label": "Create seller",
+      "delete_confirm": {
+        "title": "Delete seller?",
+        "message": "This removes {{name}} from the marketplace. Their products stay in your catalog without a seller. This cannot be undone."
+      },
+      "detail": {
+        "load_error": "Could not load this seller",
+        "delete_label": "Delete seller",
+        "status": "Status",
+        "settlement": "Payouts and tax",
+        "at_a_glance": "At a glance",
+        "contact": "Contact",
+        "edit_profile": "Edit profile",
+        "edit_profile_description": "The seller maintains this from their own panel. Edits here apply on their behalf.",
+        "edit_settlement": "Edit payouts and tax",
+        "edit_settlement_description": "Only you can see or change these. The seller never edits them.",
+        "no_about": "This seller has not written a description yet.",
+        "billing_address": "Billing address",
+        "returns_address": "Returns address"
+      },
+      "empty": "No sellers yet",
+      "images": {
+        "logo_label": "Logo",
+        "logo_help": "Square works best. Shown beside the seller everywhere they appear.",
+        "square_logo_label": "Square logo",
+        "square_logo_help": "Used where a tight square is needed, such as an avatar.",
+        "cover_photo_label": "Cover photo",
+        "cover_photo_help": "A wide banner across the top of the seller profile."
+      },
+      "invite_sheet": {
+        "title": "Invite seller",
+        "description": "They join the seller team when they accept and can then sign in to their own panel.",
+        "email_help": "The invitation goes to this address."
+      },
+      "messages": {
+        "created": "Seller created",
+        "create_failed": "Could not create the seller",
+        "updated": "Seller updated",
+        "update_failed": "Could not update the seller",
+        "deleted": "Seller deleted",
+        "delete_failed": "Could not delete the seller",
+        "invited": "Invitation sent",
+        "invite_failed": "Could not send the invitation",
+        "approved": "Seller approved",
+        "approve_failed": "Could not approve the seller",
+        "suspended": "Seller suspended",
+        "suspend_failed": "Could not suspend the seller",
+        "rejected": "Seller rejected",
+        "reject_failed": "Could not reject the seller",
+        "onboarding_reopened": "Sent back to onboarding"
+      },
+      "not_provided": "Not provided",
+      "on_holiday_notice": "This seller is away. Their catalog stays visible but nothing can be bought from them.",
+      "onboarding": {
+        "title": "Onboarding",
+        "progress": "{{done}} of {{total}} done",
+        "waived": "Waived",
+        "download": "Download file",
+        "seller_note": "Seller: {{note}}",
+        "review_note": "Your note: {{note}}",
+        "actions": {
+          "accept": "Accept",
+          "reject": "Send back",
+          "waive": "Waive for this seller"
+        },
+        "reject_confirm": {
+          "title": "Send back?",
+          "message": "The seller will be asked for \"{{name}}\" again."
+        },
+        "waive_confirm": {
+          "title": "Waive this requirement?",
+          "message": "\"{{name}}\" will count as met for this seller only."
+        },
+        "all_done": "All done 🎉",
+        "status": {
+          "complete": "Done",
+          "pending": "Under review",
+          "rejected": "Sent back",
+          "incomplete": "Pending"
+        }
+      },
+      "onboarding_column": "Onboarding",
+      "payout_interval": {
+        "inherit": "Use store default",
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "biweekly": "Every two weeks",
+        "monthly": "Monthly",
+        "manual": "Manual"
+      },
+      "products_column": "Products",
+      "reject_confirm": {
+        "title": "Reject seller?",
+        "message": "{{name}} will not be admitted to the marketplace. You can still approve them later if this was a mistake."
+      },
+      "reopen_onboarding_confirm": {
+        "title": "Send back to onboarding?",
+        "message": "{{name}} will be able to change their details and ask for review again."
+      },
+      "search_placeholder": "Search sellers",
+      "status": {
+        "pending": "Pending",
+        "invited": "Invited",
+        "onboarding": "Onboarding",
+        "ready_for_review": "Ready for review",
+        "approved": "Approved",
+        "suspended": "Suspended",
+        "rejected": "Rejected",
+        "canceled": "Canceled"
+      },
+      "status_help": {
+        "pending": "Created, but nobody has been invited yet.",
+        "invited": "Waiting for someone to accept the invitation.",
+        "onboarding": "Filling in their details.",
+        "ready_for_review": "Waiting for you to approve them.",
+        "approved": "Selling on the marketplace.",
+        "suspended": "Stopped from selling. Reinstate to let them trade again.",
+        "rejected": "Not admitted to the marketplace.",
+        "canceled": "They withdrew before joining."
+      },
+      "suspend_confirm": {
+        "title": "Suspend seller?",
+        "message": "{{name}} stops selling immediately. Their catalog and history stay, and you can reinstate them later."
+      },
+      "tax_remittance": {
+        "seller": "Seller remits",
+        "platform": "Marketplace remits"
+      },
+      "team_column": "Team"
+    },
     "settings": {
       "webhooks": {
         "errors": {
@@ -3799,6 +4126,7 @@
         "allowed_origins": "Allowed origins",
         "api_keys": "API keys",
         "channels": "Sales channels",
+        "commission_rates": "Commission rates",
         "custom_field_definitions": "Custom fields",
         "delivery_profiles": "Delivery profiles",
         "emails": "Emails",
@@ -3810,13 +4138,13 @@
         "profile": "Profile",
         "reasons": "Returns & reasons",
         "roles": "Roles",
+        "seller_requirements": "Seller requirements",
         "staff": "Staff",
         "stock_locations": "Stock locations",
         "store": "Store",
         "tax_categories": "Tax categories",
         "tax_rates": "Tax rates",
-        "webhooks": "Webhooks",
-        "commission_rates": "Commission rates"
+        "webhooks": "Webhooks"
       }
     },
     "setup": {
@@ -3981,130 +4309,6 @@
       },
       "search_placeholder": "Search by name…"
     },
-    "translations": {
-      "coverage_summary": "{{translated}} of {{total}} locales translated",
-      "dirty_summary": "{{count}} unsaved change(s)",
-      "discard_confirm": {
-        "message": "You have {{count}} unsaved translation change(s). Discard them?",
-        "title": "Discard changes?"
-      },
-      "field": "Field",
-      "load_error": "Could not load translations",
-      "locale": "Locale",
-      "manage": "Manage translations",
-      "no_locales": "Add more locales to your store to translate this product.",
-      "original": "Original",
-      "save": "Save translations",
-      "save_error": "Could not save translations",
-      "saved": "Translations saved",
-      "source": "Source",
-      "title": "Translations"
-    },
-    "jurisdiction": {
-      "everywhere": "Everywhere"
-    },
-    "companies": {
-      "add_cta": "Add company",
-      "add_sheet_title": "New company",
-      "create_description": "Business customers buy through branches. You can add branches, tax registration and exemption certificates once the company exists.",
-      "create_label": "Create company",
-      "delete_confirm": {
-        "message": "This deletes {{name}} along with its branches, buyers and certificates. This cannot be undone.",
-        "title": "Delete company?"
-      },
-      "detail": {
-        "delete_label": "Delete company",
-        "load_error": "Could not load this company",
-        "profile": "Company"
-      },
-      "empty": "No companies yet",
-      "locations_column": "Branches",
-      "messages": {
-        "created": "Company created",
-        "deleted": "Company deleted",
-        "updated": "Company updated"
-      },
-      "search_placeholder": "Search companies"
-    },
-    "company_locations": {
-      "add_cta": "Add branch",
-      "add_title": "New branch",
-      "addresses": "Addresses",
-      "billing_address": "Billing address",
-      "contacts_count_one": "{{count}} buyer",
-      "contacts_count_other": "{{count}} buyers",
-      "detail": {
-        "delete_label": "Delete branch",
-        "load_error": "Could not load this branch"
-      },
-      "dialog_description": "A branch is where the business is invoiced and where its orders ship. Addresses are optional, but a partial address needs a name and country.",
-      "edit_title": "Edit branch",
-      "empty": "No branches yet",
-      "messages": {
-        "created": "Branch created",
-        "deleted": "Branch deleted",
-        "updated": "Branch updated"
-      },
-      "shipping_address": "Shipping address",
-      "shipping_same_as_billing": "Shipping address is the same as billing",
-      "title": "Branches"
-    },
-    "company_contacts": {
-      "add_cta": "Add buyer",
-      "add_title": "Authorise a buyer",
-      "dialog_description": "A customer who buys for this branch. Someone who buys for exactly one branch has their orders attributed to it automatically.",
-      "empty": "No buyers authorised yet",
-      "messages": {
-        "created": "Buyer added",
-        "deleted": "Buyer removed"
-      },
-      "remove_action": "Remove buyer",
-      "remove_confirm": {
-        "message": "{{email}} will no longer buy for this branch. Their customer account is not affected.",
-        "title": "Remove this buyer?"
-      },
-      "roles_enterprise_help": "Buyers you add here can place orders for this branch. Roles, approval workflows and spending limits come with Spree Enterprise.",
-      "roles_enterprise_title": "Roles and approvals are an Enterprise feature",
-      "title": "Buyers"
-    },
-    "tax_identifiers": {
-      "add_cta": "Add registration",
-      "add_title": "Add tax registration",
-      "checked_prefix": "Checked",
-      "delete_confirm": {
-        "message": "{{value}} will be removed. Orders already placed keep the number they were invoiced with.",
-        "title": "Delete this registration?"
-      },
-      "dialog_description": "The VAT or business number that appears on invoices. It is what makes EU B2B reverse charge possible.",
-      "edit_title": "Edit tax registration",
-      "empty": "No tax registration on file",
-      "kinds": {
-        "au_abn": "Australian Business Number",
-        "ch_vat": "Swiss VAT",
-        "eu_vat": "EU VAT",
-        "gb_vat": "UK VAT",
-        "us_ein": "US EIN"
-      },
-      "messages": {
-        "created": "Registration added",
-        "deleted": "Registration deleted",
-        "updated": "Registration updated",
-        "validation_failed": "Could not check the number",
-        "validation_requested": "Checking the number with the registry"
-      },
-      "not_validatable": "No validator is set up for this kind, so the number is used as entered.",
-      "select_kind": "Select a kind",
-      "title": "Tax registration",
-      "validate_action": "Check with registry",
-      "validation_status": {
-        "not_checked": "Not checked",
-        "pending": "Checking",
-        "unavailable": "Registry unavailable",
-        "unsupported": "Cannot be checked",
-        "unverified": "Not valid",
-        "verified": "Verified"
-      }
-    },
     "tax_exemption_certificates": {
       "add_cta": "Add certificate",
       "add_title": "Add exemption certificate",
@@ -4150,6 +4354,50 @@
       "verified_at": "Accepted on",
       "verify_action": "Accept"
     },
+    "tax_identifiers": {
+      "add_cta": "Add registration",
+      "add_title": "Add tax registration",
+      "checked_prefix": "Checked",
+      "delete_confirm": {
+        "message": "{{value}} will be removed. Orders already placed keep the number they were invoiced with.",
+        "title": "Delete this registration?"
+      },
+      "dialog_description": "The VAT or business number that appears on invoices. It is what makes EU B2B reverse charge possible.",
+      "edit_title": "Edit tax registration",
+      "empty": "No tax registration on file",
+      "kinds": {
+        "au_abn": "Australian Business Number",
+        "ch_vat": "Swiss VAT",
+        "eu_vat": "EU VAT",
+        "gb_vat": "UK VAT",
+        "us_ein": "US EIN"
+      },
+      "messages": {
+        "created": "Registration added",
+        "deleted": "Registration deleted",
+        "updated": "Registration updated",
+        "validation_failed": "Could not check the number",
+        "validation_requested": "Checking the number with the registry"
+      },
+      "not_validatable": "No validator is set up for this kind, so the number is used as entered.",
+      "select_kind": "Select a kind",
+      "title": "Tax registration",
+      "validate_action": "Check with registry",
+      "validation_status": {
+        "not_checked": "Not checked",
+        "pending": "Checking",
+        "unavailable": "Registry unavailable",
+        "unsupported": "Cannot be checked",
+        "unverified": "Not valid",
+        "verified": "Verified"
+      }
+    },
+    "tax_providers": {
+      "limitations_title": "{{name}} does not handle",
+      "unavailable_option": "{{name}} (not configured)",
+      "use_default": "Use the default engine",
+      "use_default_named": "Default ({{name}})"
+    },
     "tax_rates": {
       "add_cta": "Add tax rate",
       "all_categories": "All categories",
@@ -4171,148 +4419,24 @@
       "search_placeholder": "Search tax rates",
       "select_category": "Select a category"
     },
-    "tax_providers": {
-      "limitations_title": "{{name}} does not handle",
-      "unavailable_option": "{{name}} (not configured)",
-      "use_default": "Use the default engine",
-      "use_default_named": "Default ({{name}})"
-    },
-    "enterprise": {
-      "learn_more": "Learn about Spree Enterprise"
-    },
-    "sellers": {
-      "add_cta": "Add seller",
-      "add_sheet_title": "New seller",
-      "create_description": "Create the seller record first. You can invite them, approve them and set up payouts from their page.",
-      "create_label": "Create seller",
-      "search_placeholder": "Search sellers",
-      "empty": "No sellers yet",
-      "products_column": "Products",
-      "team_column": "Team",
-      "on_holiday_notice": "This seller is away. Their catalog stays visible but nothing can be bought from them.",
-      "delete_confirm": {
-        "title": "Delete seller?",
-        "message": "This removes {{name}} from the marketplace. Their products stay in your catalog without a seller. This cannot be undone."
+    "translations": {
+      "coverage_summary": "{{translated}} of {{total}} locales translated",
+      "dirty_summary": "{{count}} unsaved change(s)",
+      "discard_confirm": {
+        "message": "You have {{count}} unsaved translation change(s). Discard them?",
+        "title": "Discard changes?"
       },
-      "suspend_confirm": {
-        "title": "Suspend seller?",
-        "message": "{{name}} stops selling immediately. Their catalog and history stay, and you can reinstate them later."
-      },
-      "reject_confirm": {
-        "title": "Reject seller?",
-        "message": "{{name}} will not be admitted to the marketplace. You can still approve them later if this was a mistake."
-      },
-      "invite_sheet": {
-        "title": "Invite seller",
-        "description": "They join the seller team when they accept and can then sign in to their own panel.",
-        "email_help": "The invitation goes to this address."
-      },
-      "actions": {
-        "invite": "Invite",
-        "reinvite": "Send again",
-        "send_invitation": "Send invitation",
-        "approve": "Approve",
-        "reinstate": "Reinstate",
-        "suspend": "Suspend",
-        "reject": "Reject"
-      },
-      "detail": {
-        "load_error": "Could not load this seller",
-        "delete_label": "Delete seller",
-        "status": "Status",
-        "settlement": "Payouts and tax",
-        "at_a_glance": "At a glance",
-        "contact": "Contact",
-        "edit_profile": "Edit profile",
-        "edit_profile_description": "The seller maintains this from their own panel. Edits here apply on their behalf.",
-        "edit_settlement": "Edit payouts and tax",
-        "edit_settlement_description": "Only you can see or change these. The seller never edits them.",
-        "no_about": "This seller has not written a description yet."
-      },
-      "status": {
-        "pending": "Pending",
-        "invited": "Invited",
-        "onboarding": "Onboarding",
-        "ready_for_review": "Ready for review",
-        "approved": "Approved",
-        "suspended": "Suspended",
-        "rejected": "Rejected",
-        "canceled": "Canceled"
-      },
-      "status_help": {
-        "pending": "Created, but nobody has been invited yet.",
-        "invited": "Waiting for someone to accept the invitation.",
-        "onboarding": "Filling in their details.",
-        "ready_for_review": "Waiting for you to approve them.",
-        "approved": "Selling on the marketplace.",
-        "suspended": "Stopped from selling. Reinstate to let them trade again.",
-        "rejected": "Not admitted to the marketplace.",
-        "canceled": "They withdrew before joining."
-      },
-      "tax_remittance": {
-        "seller": "Seller remits",
-        "platform": "Marketplace remits"
-      },
-      "payout_interval": {
-        "inherit": "Use store default",
-        "daily": "Daily",
-        "weekly": "Weekly",
-        "biweekly": "Every two weeks",
-        "monthly": "Monthly",
-        "manual": "Manual"
-      },
-      "messages": {
-        "created": "Seller created",
-        "create_failed": "Could not create the seller",
-        "updated": "Seller updated",
-        "update_failed": "Could not update the seller",
-        "deleted": "Seller deleted",
-        "delete_failed": "Could not delete the seller",
-        "invited": "Invitation sent",
-        "invite_failed": "Could not send the invitation",
-        "approved": "Seller approved",
-        "approve_failed": "Could not approve the seller",
-        "suspended": "Seller suspended",
-        "suspend_failed": "Could not suspend the seller",
-        "rejected": "Seller rejected",
-        "reject_failed": "Could not reject the seller"
-      },
-      "not_provided": "Not provided",
-      "images": {
-        "logo_label": "Logo",
-        "logo_help": "Square works best. Shown beside the seller everywhere they appear.",
-        "square_logo_label": "Square logo",
-        "square_logo_help": "Used where a tight square is needed, such as an avatar.",
-        "cover_photo_label": "Cover photo",
-        "cover_photo_help": "A wide banner across the top of the seller profile."
-      },
-      "autocomplete": {
-        "placeholder": "Search sellers",
-        "empty": "No sellers found"
-      }
-    },
-    "commission_rates": {
-      "add_cta": "Add commission rate",
-      "applies_to_everything": "Every sale",
-      "create_description": "Set what the marketplace charges sellers, and which sales it applies to.",
-      "create_label": "Create commission rate",
-      "delete_confirm": {
-        "message": "{{name}} will be removed. Commission already charged is unaffected.",
-        "title": "Delete commission rate?"
-      },
-      "edit_description": "Update the charge, its limits, and which sales it applies to.",
-      "empty": "No commission rates yet",
-      "messages": {
-        "created": "Commission rate created",
-        "deleted": "Commission rate deleted",
-        "updated": "Commission rate updated"
-      },
-      "search_placeholder": "Search by name…",
-      "order_hint": "New rates go to the top of the list, and the first one that matches a sale wins — drag to reorder.",
-      "conditions": {
-        "add": "Add condition",
-        "title": "Conditions"
-      }
+      "field": "Field",
+      "load_error": "Could not load translations",
+      "locale": "Locale",
+      "manage": "Manage translations",
+      "no_locales": "Add more locales to your store to translate this product.",
+      "original": "Original",
+      "save": "Save translations",
+      "save_error": "Could not save translations",
+      "saved": "Translations saved",
+      "source": "Source",
+      "title": "Translations"
     }
   }
 }
