@@ -186,16 +186,23 @@ describe Spree::StoreCredits::Apply, type: :service do
     let(:mixed_customer) { create(:customer) }
     let(:mixed_order) { create(:order_with_line_items, store: store, customer: mixed_customer) }
 
+    # Derived, never hard-coded: the order's currency comes from its store, so
+    # naming a fixed code here risks the "foreign" credit matching the order
+    # and the example passing without exercising the filter at all.
+    let(:foreign_currency) { mixed_order.currency == 'EUR' ? 'USD' : 'EUR' }
+
     before do
       create(:store_credit_payment_method)
       mixed_order.update_columns(total: 100, item_total: 100, payment_total: 0)
       create(:store_credit, customer: mixed_customer, amount: 50, store: store,
-                            currency: 'EUR', created_at: 2.days.ago)
+                            currency: foreign_currency, created_at: 2.days.ago)
       create(:store_credit, customer: mixed_customer, amount: 30, store: store,
                             currency: mixed_order.currency, created_at: 1.day.ago)
     end
 
     it 'draws only against the credit in the order currency' do
+      expect(foreign_currency).not_to eq(mixed_order.currency)
+
       described_class.call(order: mixed_order)
 
       payments = mixed_order.reload.payments.store_credits
