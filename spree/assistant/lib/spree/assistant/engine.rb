@@ -44,6 +44,10 @@ module Spree
           Spree::Assistant::Tools::SearchResources
           Spree::Assistant::Tools::GetResource
           Spree::Assistant::Tools::UpdateProductStatus
+          Spree::Assistant::Tools::GetImportStatus
+          Spree::Assistant::Tools::DescribeImportMapping
+          Spree::Assistant::Tools::ProposeImportMapping
+          Spree::Assistant::Tools::CreateExport
         ].each { |tool_class| Spree::Assistant.tools << tool_class }
 
         Spree.integrations.concat(
