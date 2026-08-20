@@ -1583,11 +1583,13 @@
           "not_connected": "Verbinden Sie diese Integration, um sie zu nutzen",
           "pricing_provider": {
             "label": "Preise stammen aus",
-            "help": "Spree berechnet Preise aus Ihrem Katalog und Ihren Preislisten, sofern kein externes System antwortet."
+            "help": "Spree berechnet Preise aus Ihrem Katalog und Ihren Preislisten, sofern kein externes System antwortet.",
+            "docs_link": "Einen Preis-Provider erstellen"
           },
           "inventory_provider": {
             "label": "Bestände stammen aus",
-            "help": "Eine externe Quelle wird beim Hinzufügen zum Warenkorb und an der Kasse gefragt. Listen zeigen immer Ihre eigenen Bestände."
+            "help": "Eine externe Quelle wird beim Hinzufügen zum Warenkorb und an der Kasse gefragt. Listen zeigen immer Ihre eigenen Bestände.",
+            "docs_link": "Einen Bestands-Provider erstellen"
           },
           "pricing_failure_policy": {
             "label": "Wenn Preise nicht bestätigt werden können",
@@ -1604,7 +1606,8 @@
             "fallback": {
               "label": "Sprees eigene Zahlen verwenden"
             }
-          }
+          },
+          "description": "Spree liefert Preise und Bestände aus den eigenen Datensätzen. Verbinden Sie ein ERP-, PIM- oder Lagersystem, damit dieses stattdessen antwortet."
         }
       },
       "store_credit": {

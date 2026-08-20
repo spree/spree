@@ -1580,11 +1580,13 @@
           "not_connected": "连接此集成后方可使用",
           "pricing_provider": {
             "label": "价格来源",
-            "help": "除非有外部系统作答，否则 Spree 按您的目录和价格表定价。"
+            "help": "除非有外部系统作答，否则 Spree 按您的目录和价格表定价。",
+            "docs_link": "构建价格数据源"
           },
           "inventory_provider": {
             "label": "库存来源",
-            "help": "加入购物车和结账时会询问外部来源。列表始终显示您自己的库存记录。"
+            "help": "加入购物车和结账时会询问外部来源。列表始终显示您自己的库存记录。",
+            "docs_link": "构建库存数据源"
           },
           "pricing_failure_policy": {
             "label": "无法确认价格时",
@@ -1601,7 +1603,8 @@
             "fallback": {
               "label": "使用 Spree 自己的数据"
             }
-          }
+          },
+          "description": "Spree 使用自身记录提供价格和库存。连接 ERP、PIM 或仓储系统后，可改由其提供数据。"
         }
       },
       "store_credit": {

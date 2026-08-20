@@ -1599,11 +1599,13 @@
           "not_connected": "Połącz tę integrację, aby jej użyć",
           "pricing_provider": {
             "label": "Źródło cen",
-            "help": "Spree wylicza ceny z katalogu i cenników, chyba że odpowiada system zewnętrzny."
+            "help": "Spree wylicza ceny z katalogu i cenników, chyba że odpowiada system zewnętrzny.",
+            "docs_link": "Zbuduj dostawcę cen"
           },
           "inventory_provider": {
             "label": "Źródło stanów magazynowych",
-            "help": "Źródło zewnętrzne jest pytane przy dodaniu do koszyka i przy zamówieniu. Listy zawsze pokazują Twoje własne stany."
+            "help": "Źródło zewnętrzne jest pytane przy dodaniu do koszyka i przy zamówieniu. Listy zawsze pokazują Twoje własne stany.",
+            "docs_link": "Zbuduj dostawcę stanów magazynowych"
           },
           "pricing_failure_policy": {
             "label": "Gdy nie można potwierdzić cen",
@@ -1620,7 +1622,8 @@
             "fallback": {
               "label": "Użyj danych Spree"
             }
-          }
+          },
+          "description": "Spree podaje ceny i stany magazynowe z własnych danych. Podłącz system ERP, PIM lub magazynowy, aby to on udzielał odpowiedzi."
         }
       },
       "store_credit": {
