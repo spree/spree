@@ -52,6 +52,9 @@ export function createSellerApiClient({
       // did) left every `<Can>` on the panel answering false — silently.
       return { rules: response.permissions ?? [], keys: response.permission_keys ?? [] }
     },
+    // The shared address form reads countries through the registered client,
+    // so it works in a panel that has no admin credential.
+    listCountries: () => sellerClient().countries.list(),
   })
 
   return client

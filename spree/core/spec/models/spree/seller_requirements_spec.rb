@@ -11,6 +11,18 @@ RSpec.describe 'seller requirement kinds', type: :model do
       expect(requirement.satisfied?(seller)).to be false
     end
 
+    # The seller panel renders this as "Read the terms" beside the accept
+    # button — accepting something they cannot read is not consent.
+    it 'points at the terms when the marketplace configured a link' do
+      requirement.update!(preferred_terms_url: 'https://example.com/terms')
+
+      expect(requirement.action_url(seller)).to eq('https://example.com/terms')
+    end
+
+    it 'has no link when none is configured' do
+      expect(requirement.action_url(seller)).to be_nil
+    end
+
     it 'is met once they have' do
       seller.update!(terms_accepted_at: Time.current)
 

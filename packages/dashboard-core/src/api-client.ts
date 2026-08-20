@@ -58,6 +58,30 @@ export interface PanelApiClient {
    * and keys, the seller `/me` returns keys scoped to the selected seller.
    */
   fetchPermissions(): Promise<PanelPermissions>
+  /**
+   * Countries (with their states) for the shared address form.
+   *
+   * Registered rather than imported, for the same reason as everything else
+   * here: reaching for `adminClient` would make the one address form work
+   * only in the operator's panel, and a seller filling in a billing address
+   * would get an empty country list.
+   */
+  listCountries?(): Promise<{ data: PanelCountry[] }>
+}
+
+/**
+ * A country as the address form needs it. Structural, not the Admin SDK's
+ * `Country`: both panels' country endpoints answer this shape, and typing
+ * the wider one here would bind core to a package a seller's panel does not
+ * install.
+ */
+export interface PanelCountry {
+  iso: string
+  iso3: string
+  name: string
+  states_required?: boolean
+  zipcode_required?: boolean
+  states?: Array<{ abbr: string; name: string }>
 }
 
 /** What a sign-in returns, whichever panel asked. */

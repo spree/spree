@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { Address } from '@spree/admin-sdk'
 import {
   Button,
   Checkbox,
@@ -74,7 +73,32 @@ const addressFormSchema = z.object({
 
 type AddressFormValues = z.infer<typeof addressFormSchema>
 
-function buildDefaults(address: Address | null | undefined): AddressFormValues {
+/**
+ * Just the fields this dialog reads.
+ *
+ * Structural rather than the Admin SDK's `Address`, which carries operator
+ * data (metadata, customer_id, timestamps) that a seller's serializer
+ * deliberately withholds — binding core to the wider type would stop the
+ * seller panel from reusing the one address form.
+ */
+export interface EditableAddress {
+  /** Re-seeds the form when the dialog is pointed at a different address. */
+  id?: string
+  first_name?: string | null
+  last_name?: string | null
+  address1?: string | null
+  address2?: string | null
+  city?: string | null
+  postal_code?: string | null
+  country_code?: string | null
+  state_code?: string | null
+  phone?: string | null
+  label?: string | null
+  is_default_billing?: boolean | null
+  is_default_shipping?: boolean | null
+}
+
+function buildDefaults(address: EditableAddress | null | undefined): AddressFormValues {
   return {
     first_name: address?.first_name ?? '',
     last_name: address?.last_name ?? '',
@@ -101,7 +125,7 @@ export function AddressFormDialog({
   showLabel = false,
   showDefaultFlags = false,
 }: {
-  address: Address | null | undefined
+  address: EditableAddress | null | undefined
   open: boolean
   onOpenChange: (open: boolean) => void
   onSave: (address: AddressParams) => void | Promise<void>

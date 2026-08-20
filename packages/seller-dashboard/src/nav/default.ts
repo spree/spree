@@ -1,5 +1,5 @@
 import { i18n, nav } from '@spree/dashboard-core'
-import { ClipboardCheckIcon, StoreIcon, UsersIcon } from 'lucide-react'
+import { ClipboardCheckIcon, HomeIcon, StoreIcon, UsersIcon } from 'lucide-react'
 import { OnboardingNavBadge } from '../components/onboarding-nav-badge'
 
 // The panel's built-in sidebar. Registered into the same registry a plugin
@@ -14,9 +14,18 @@ import { OnboardingNavBadge } from '../components/onboarding-nav-badge'
 // permission filter the operator's sidebar uses.
 
 nav.add({
+  key: 'home',
+  label: i18n.t('nav.home'),
+  path: '/',
+  icon: HomeIcon,
+  position: 50,
+  subject: 'seller_profile',
+})
+
+nav.add({
   key: 'profile',
   label: i18n.t('nav.profile'),
-  path: '/',
+  path: '/profile',
   icon: StoreIcon,
   position: 100,
   subject: 'seller_profile',

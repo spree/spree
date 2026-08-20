@@ -18,4 +18,5 @@ setApiClient({
 
     return { rules: response.permissions, keys: response.permission_keys ?? [] }
   },
+  listCountries: () => adminClient.countries.list({ expand: ['states'] }),
 })

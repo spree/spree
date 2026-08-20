@@ -34,13 +34,27 @@
     "label": "Switch seller"
   },
   "nav": {
+    "home": "Home",
     "profile": "Profile",
     "team": "Team",
     "sign_out": "Sign out",
-    "onboarding": "Getting set up"
+    "onboarding": "Setup"
+  },
+  "home": {
+    "title": "Hello, {{name}}",
+    "subtitle": "How you stand with this marketplace.",
+    "setup_title": "Finish setting up",
+    "setup_description": "{{done}} of {{total}} done — complete these to start selling.",
+    "setup_cta": "Continue setup",
+    "status": "Status",
+    "products": "Products",
+    "team": "Team members",
+    "selling_title": "Selling",
+    "selling_yes": "Your products are on sale.",
+    "selling_no": "Your products are not on sale yet."
   },
   "onboarding": {
-    "title": "Getting set up",
+    "title": "Setup",
     "subtitle": "What this marketplace asks for before you can start selling.",
     "progress_title": "Your progress",
     "progress_count": "{{done}} of {{total}} done",
@@ -64,7 +78,8 @@
       "complete": "Done",
       "pending": "In review",
       "rejected": "Needs another look"
-    }
+    },
+    "read_terms": "Read the terms"
   },
   "profile": {
     "subtitle": "How your storefront presents you, and how the marketplace reaches you.",
@@ -100,7 +115,13 @@
       "suspended": "Selling is paused. Contact the marketplace to find out more.",
       "rejected": "Your application was not accepted. Contact the marketplace to find out more.",
       "canceled": "This seller account is closed."
-    }
+    },
+    "billing_address": "Billing address",
+    "returns_address": "Returns address",
+    "address_filled": "Added",
+    "address_missing": "Not added",
+    "address_not_provided": "No address yet.",
+    "add_address": "Add address"
   },
   "team": {
     "title": "Your team",
