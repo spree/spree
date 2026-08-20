@@ -156,4 +156,25 @@ describe Spree::StoreCredits::Apply, type: :service do
       end
     end
   end
+
+  # Regression: outstanding_balance is zero or negative on a paid or overpaid
+  # order, and this service runs on every recalculation. The loop used to
+  # break only on exactly zero, so a negative balance wrote a store credit
+  # payment for a negative amount.
+  context 'when the order is already overpaid' do
+    let(:overpaid_customer) { create(:customer) }
+    let(:overpaid_order) { create(:order_with_line_items, store: store, customer: overpaid_customer) }
+
+    before do
+      create(:store_credit_payment_method)
+      create(:store_credit, customer: overpaid_customer, amount: 50, store: store)
+      overpaid_order.update_columns(total: 10, item_total: 10, payment_total: 40)
+    end
+
+    it 'writes no store credit payment' do
+      described_class.call(order: overpaid_order)
+
+      expect(overpaid_order.reload.payments.store_credits).to be_empty
+    end
+  end
 end

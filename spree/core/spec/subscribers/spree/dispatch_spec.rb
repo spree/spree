@@ -79,7 +79,13 @@ RSpec.describe 'subscriber dispatch', events: true do
                                  payment_method: create(:check_payment_method, store: store),
                                  status: 'checkout')
 
-      expect { perform_enqueued_jobs { payment.complete! } }.not_to raise_error
+      # The subscriber has to actually run: without asserting delivery this
+      # would still pass if it were never registered, and the money assertion
+      # below would be proving nothing.
+      expect(reaches_handler?(Spree::OrderStatusSubscriber, :handle, 'payment.completed') do
+        payment.complete!
+      end).to be(true)
+
       expect(cart.reload.payment_total).to eq(10)
     end
   end

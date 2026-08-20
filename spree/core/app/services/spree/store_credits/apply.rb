@@ -7,7 +7,11 @@ module Spree
         @order = order
         return failed unless @order
 
-        remaining_total = amount ? [amount, @order.outstanding_balance].min : @order.outstanding_balance
+        # Never negative: a paid or overpaid order has a zero-or-negative
+        # outstanding balance, and this service runs on every recalculation.
+        # Without the clamp the loop below would keep going and write a store
+        # credit payment for a negative amount.
+        remaining_total = [amount ? [amount, @order.outstanding_balance].min : @order.outstanding_balance, 0].max
 
         return failure(nil, Spree.t(:error_user_does_not_have_any_store_credits)) unless @order.customer&.store_credits&.any?
 
@@ -57,7 +61,7 @@ module Spree
         raise 'Store credit payment method could not be found' unless payment_method
 
         @order.customer.store_credits.for_store(@order.store).oldest_first.each do |credit|
-          break if remaining_total.zero?
+          break unless remaining_total.positive?
           next if credit.amount_remaining.zero?
 
           amount_to_take = store_credit_amount(credit, remaining_total)
