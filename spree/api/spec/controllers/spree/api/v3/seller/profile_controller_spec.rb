@@ -88,6 +88,27 @@ RSpec.describe Spree::Api::V3::Seller::ProfileController, type: :controller do
     end
 
     # Renaming the storefront address breaks every link pointing at it.
+    # Accepting terms is a profile write, not an endpoint of its own — the
+    # AcceptTerms requirement reads the stamp this sets.
+    it 'stamps the moment the seller accepts the terms' do
+      seller.update!(terms_accepted_at: nil)
+
+      expect {
+        patch :update, params: { accept_terms: true }, as: :json
+      }.to change { seller.reload.terms_accepted_at }.from(nil)
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    # The stamp records that it happened; sending false does not unmake it.
+    it 'does not let a seller un-accept the terms' do
+      accepted = 3.days.ago.change(usec: 0)
+      seller.update!(terms_accepted_at: accepted)
+
+      patch :update, params: { accept_terms: false }, as: :json
+
+      expect(seller.reload.terms_accepted_at).to be_within(1.second).of(accepted)
+    end
     it 'cannot change its own slug' do
       original = seller.slug
 

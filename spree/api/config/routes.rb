@@ -685,6 +685,23 @@ Spree::Core::Engine.add_routes do
         # A seller's own catalog. The first collection on this branch, and the
         # shape every later one follows — rooted in the seller by the anchor.
         resources :products, only: [:index, :show, :create, :update, :destroy]
+
+        # What the marketplace asks of this seller. Singular: the checklist is
+        # always `current_seller`'s, never an id from the request.
+        resource :onboarding, only: [:show], controller: 'onboarding' do
+          post :submit_for_review
+        end
+
+        # Submissions are created against a requirement and read back through
+        # the seller who made them.
+        resources :requirements, only: [] do
+          resources :submissions, only: [:create], controller: 'requirement_submissions'
+        end
+        resources :requirement_submissions, only: [] do
+          member do
+            get :download
+          end
+        end
       end
 
       # Webhooks (outside of store namespace — no API key authentication)

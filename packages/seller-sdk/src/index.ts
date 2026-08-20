@@ -8,9 +8,11 @@ export type { Client, Client as SellerApiClient, SellerClientConfig } from './cl
 export { createSellerClient } from './client'
 export type {
   MeResponse,
+  OnboardingResponse,
   PermissionRule,
   ProductParams,
   ProfileUpdateParams,
+  RequirementSubmissionParams,
   SellerAddressParams,
 } from './seller-client'
 // Client class, for advanced use and subclassing
