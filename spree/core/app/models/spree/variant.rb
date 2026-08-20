@@ -8,6 +8,7 @@ module Spree
     include Spree::MemoizedData
     include Spree::HasCustomFields
     include Spree::Metadata
+    include Spree::HasExternalReferences
     include Spree::Searchable
     include Spree::StorePreferences
 
@@ -705,7 +706,8 @@ module Spree
     def set_price(currency, amount, compare_at_amount = nil)
       # When the prices association is already loaded (eager-loaded for
       # serialization), reuse the cached base-price instance so readers that
-      # branch on `prices.loaded?` (Pricing::Resolver, #price_in, serializers)
+      # branch on `prices.loaded?` (the Internal provider's resolution,
+      # #price_in, serializers)
       # observe the write without a reload. `base_prices.find_or_initialize_by`
       # would issue a fresh query and return a detached object, leaving the
       # loaded collection — and the serialized response — stale.
@@ -740,8 +742,13 @@ module Spree
     end
 
     # Returns the price for the given context or options.
+    #
+    # Answered by the store's pricing provider, which is Spree's own resolver
+    # unless a connector has been configured. An external provider's price is
+    # an unsaved, readonly Spree::Price — see Spree::PricingProvider::Base.
+    #
     # @param context_or_options [Spree::Pricing::Context|Hash] the context or options to get the price for
-    # @return [Spree::Price] the price for the given context or options
+    # @return [Spree::Price, nil] the price for the given context or options
     def price_for(context_or_options)
       context = if context_or_options.is_a?(Spree::Pricing::Context)
                   context_or_options
@@ -751,7 +758,7 @@ module Spree
                   raise ArgumentError, 'Must provide a Pricing::Context or options hash'
                 end
 
-      Spree::Pricing::Resolver.new(context).resolve
+      Spree::Pricing::PriceResolution.call(context)
     end
 
     # Sets the count at a location. The correction goes through an `adjusted`

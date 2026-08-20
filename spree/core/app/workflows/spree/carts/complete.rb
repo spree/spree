@@ -40,6 +40,11 @@ module Spree
         # P1 — replay: a double-clicked Place Order must get the order back.
         step :replay_completed
 
+        # Last chance to catch a contract price that moved while the customer
+        # was in checkout. Outside the lock, since an external provider is a
+        # network call and the lock is held across the whole placement.
+        external_step :confirm_prices
+
         cart.with_lock do
           step :guard_concurrent_completion
           step :recalculate_in_lock
@@ -110,7 +115,21 @@ module Spree
 
       # In-lock recalculation — the totals about to be charged are computed
       # here, not trusted from earlier requests.
+      # Only external pricing is re-confirmed: Spree's own catalog is read
+      # inside the lock by the recalculation anyway, so asking twice would buy
+      # nothing.
+      def confirm_prices
+        return if cart.store.nil? || cart.store.internal_pricing?
+        return if cart.is_a?(Spree::Order) && cart.completed?
+
+        result = Spree::Carts::PriceItems.new.call(cart: cart)
+        failure(cart, code: 'provider_unavailable', message: result.error.to_s) if result.failure?
+
+        @confirmed_prices = result.value
+      end
+
       def recalculate_in_lock
+        Spree::Carts::PriceItems.apply(@confirmed_prices) if @confirmed_prices.present?
         cart.recalculate_totals!
       end
 

@@ -37,6 +37,12 @@ module Spree
         step :resolve_items
         return success(cart) if resolved_items.empty?
 
+        # Before the transaction: both may be external systems, and a database
+        # transaction held open across a network call is how a slow warehouse
+        # becomes a table of stuck locks.
+        external_step :check_availability
+        external_step :resolve_prices
+
         ApplicationRecord.transaction do
           step :apply_items
           step :handle_stock_reservations if cart.in_checkout?
@@ -93,6 +99,61 @@ module Spree
         end
       end
 
+      # Only external inventory is asked here: Spree's own records are already
+      # checked by the line item's availability validator on save, and two
+      # answers that can disagree is worse than one.
+      def check_availability
+        return if cart.store.nil? || cart.store.internal_inventory?
+
+        return if additions.empty?
+
+        result = Spree::Carts::CheckAvailability.call(
+          cart: cart, items: additions.map { |item| { variant: item.variant, quantity: item.quantity } }
+        )
+        failure(cart, result.error) if result.failure?
+
+        @unsupplyable_variant_ids = Array(result.value).map { |variant, _quantity| variant.id }.to_set
+      end
+
+      # One provider round per batch rather than one per line: a fifty-line
+      # cart restore must not become fifty calls to an ERP.
+      def resolve_prices
+        return if additions.empty?
+
+        # Detached, not cart.line_items.new: that appends the stand-in to the
+        # association, and the line-item finder would then find it and treat a
+        # row that was never meant to exist as the one to update.
+        probes = additions.map do |item|
+          Spree::LineItem.new(variant: item.variant, quantity: item.quantity, currency: cart.currency)
+        end
+
+        result = Spree::Carts::PriceItems.new.call(cart: cart, line_items: probes)
+        failure(cart, result.error) if result.failure?
+
+        @resolved_prices = Array(result.value).index_by { |probe, _price, _source| probe.variant_id }
+      end
+
+      def additions
+        @additions ||= resolved_items.reject(&:remove?)
+      end
+
+      def apply_resolved_price(line_item)
+        resolution = resolved_prices[line_item.variant_id]
+        return if resolution.blank?
+
+        _probe, price, source = resolution
+        Spree::Carts::PriceItems.apply([[line_item, price, source]], persist: false)
+      end
+
+      def resolved_prices
+        @resolved_prices ||= {}
+      end
+
+      def unsupplyable?(item)
+        @unsupplyable_variant_ids ||= Set.new
+        @unsupplyable_variant_ids.include?(item.variant.id)
+      end
+
       def apply_items
         resolved_items.each_with_index do |item, index|
           next unless validated?(item, index)
@@ -104,11 +165,22 @@ module Spree
             next
           end
 
-          if item.variant.amount_in(cart.currency).nil?
+          # A provider that already quoted this line is proof the currency is
+          # sellable, even when the local catalog holds no price for it — an
+          # external system can be the only source for a currency.
+          if resolved_prices[item.variant.id]&.at(1)&.amount.nil? && item.variant.amount_in(cart.currency).nil?
             message = Spree.t('cart_line_item.currency_unavailable', li_name: item.variant.name, currency: cart.currency)
             failure(item.variant, message) unless partial_success?
 
             warn(index, item, :currency_unavailable, message)
+            next
+          end
+
+          if unsupplyable?(item)
+            message = Spree.t(:selected_quantity_not_available, item: item.variant.name.inspect)
+            failure(item.variant, message) unless partial_success?
+
+            warn(index, item, :selected_quantity_not_available, message)
             next
           end
 
@@ -160,6 +232,9 @@ module Spree
         end
 
         created = line_item.new_record?
+        # Before the save, so the resolved price rides the same write and the
+        # quantity-change callback sees the line as already priced.
+        apply_resolved_price(line_item)
 
         # A line that won't save — most often the stock availability
         # validator — is this item's problem, not the batch's. Failing here
@@ -173,7 +248,7 @@ module Spree
           return
         end
 
-        line_item.reload.recalculate_price
+        line_item.reload
         return unless created
 
         # Per-market provider rather than a global one, and carrying the same

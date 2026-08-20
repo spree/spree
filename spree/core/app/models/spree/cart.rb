@@ -225,11 +225,18 @@ module Spree
     # recalculation-on-write replacement for transition-triggered rebuilds.
     # Called by Carts::Update after address/market changes.
     def recalculate_for_address_change!
-      # recalculate_price, not update_price: the latter only assigns, and nothing
-      # here saves the line items — rebuild_fulfillments! and recalculate_totals!
-      # reset the association cache and drop the new figures. Order#update_line_item_prices!
-      # gets away with update_price because it follows it with save!.
-      line_items.reload.each(&:recalculate_price)
+      # One provider round for the whole cart, and persisted: a per-item loop
+      # would ask an external pricing system once per line, and nothing here
+      # saves the line items — rebuild_fulfillments! and recalculate_totals!
+      # reset the association cache and would drop assigned-but-unsaved
+      # figures.
+      # A strict store would rather refuse than reprice on a figure it cannot
+      # stand behind, so a pricing failure stops the recalculation instead of
+      # carrying on with stale prices and a rebuilt delivery quote around them.
+      result = Spree::Carts::PriceItems.new.call(cart: self, line_items: line_items.reload)
+      raise Spree::Pricing::PriceResolution::ProviderUnavailable, result.error.to_s if result.failure?
+
+      Spree::Carts::PriceItems.apply(result.value)
       rebuild_fulfillments!
       set_fulfillments_cost
       recalculate_totals!

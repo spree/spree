@@ -352,6 +352,29 @@ module Spree
     Rails.application.config.spree.tax_providers = value
   end
 
+  # Pricing engines a store can be pointed at. Connector gems append their own,
+  # so a merchant picks from what is actually installed.
+  #
+  # @return [Array<Class>]
+  def self.pricing_providers
+    Rails.application.config.spree.pricing_providers
+  end
+
+  def self.pricing_providers=(value)
+    Rails.application.config.spree.pricing_providers = value
+  end
+
+  # Inventory sources a store can be pointed at.
+  #
+  # @return [Array<Class>]
+  def self.inventory_providers
+    Rails.application.config.spree.inventory_providers
+  end
+
+  def self.inventory_providers=(value)
+    Rails.application.config.spree.inventory_providers = value
+  end
+
   # Validator enforcing the password policy on the default auth models
   # ({Spree::Customer}, {Spree::AdminUser}). Defaults to
   # {Spree::PasswordLengthValidator}, which reads the configurable length bounds.
@@ -768,4 +791,4 @@ require 'spree/core/preferences/masking'
 require 'spree/core/permission_configuration'
 require 'spree/core/ransack_configuration'
 require 'spree/core/pricing/context'
-require 'spree/core/pricing/resolver'
+require 'spree/core/pricing/price_resolution'
