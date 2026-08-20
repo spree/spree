@@ -72,7 +72,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::GiftCardsController, type: :contro
       let!(:order) { create(:order_with_line_items, store: store, customer: customer) }
       let!(:store_credit) { create(:store_credit, store: store, customer: customer, amount: 100) }
 
-      before { Spree.checkout_add_store_credit_service.call(order: order) }
+      before { Spree.store_credit_apply_service.call(order: order) }
 
       it 'returns 422 (cannot mix gift card and store credit)' do
         post :create, params: { order_id: order.prefixed_id, code: gift_card.code }, as: :json

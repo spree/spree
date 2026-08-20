@@ -697,7 +697,8 @@ module Spree
 
       Spree::Dependencies.class::INJECTION_POINTS.include?(name) ||
         Spree::Dependencies.class::LEGACY_WORKFLOW_KEYS.key?(name) ||
-        Spree::Dependencies.class::LEGACY_SERVICE_KEYS.key?(name)
+        Spree::Dependencies.class::LEGACY_SERVICE_KEYS.key?(name) ||
+        Spree::Dependencies.class::RENAMED_SERVICE_KEYS.key?(name)
     end
   end
 

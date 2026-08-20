@@ -14,7 +14,7 @@ module Spree
             # credit up to the order total.
             def create
               with_order_lock do
-                result = Spree.checkout_add_store_credit_service.call(
+                result = Spree.store_credit_apply_service.call(
                   order: @parent,
                   amount: params[:amount].try(:to_f)
                 )
@@ -30,7 +30,7 @@ module Spree
             # DELETE /api/v3/admin/orders/:order_id/store_credits
             def destroy
               with_order_lock do
-                result = Spree.checkout_remove_store_credit_service.call(order: @parent)
+                result = Spree.store_credit_remove_service.call(order: @parent)
 
                 if result.success?
                   head :no_content

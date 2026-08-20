@@ -4,11 +4,11 @@ module Spree
     # Spree::Order (carts reach user through the customer alias).
     module StoreCredits
       def add_store_credit_payments(amount = nil)
-        Spree.checkout_add_store_credit_service.call(order: self, amount: amount)
+        Spree.store_credit_apply_service.call(order: self, amount: amount)
       end
 
       def remove_store_credit_payments
-        Spree.checkout_remove_store_credit_service.call(order: self)
+        Spree.store_credit_remove_service.call(order: self)
       end
 
       def covered_by_store_credit?

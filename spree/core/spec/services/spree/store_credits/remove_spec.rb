@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Checkout::RemoveStoreCredit, type: :service do
+describe Spree::StoreCredits::Remove, type: :service do
   describe '#call' do
     subject { described_class.call(order: order) }
 

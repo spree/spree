@@ -65,7 +65,7 @@ RSpec.describe 'Admin Order Store Credits API', type: :request, swagger_doc: 'ap
       response '204', 'store credit removed' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
 
-        before { Spree.checkout_add_store_credit_service.call(order: order) }
+        before { Spree.store_credit_apply_service.call(order: order) }
 
         run_test!
       end

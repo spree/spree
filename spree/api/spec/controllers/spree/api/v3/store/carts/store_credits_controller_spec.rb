@@ -50,7 +50,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::StoreCreditsController, type: :cont
 
   describe 'DELETE #destroy' do
     it 'removes store credit and returns updated cart' do
-      Spree.checkout_add_store_credit_service.call(order: order, amount: 10)
+      Spree.store_credit_apply_service.call(order: order, amount: 10)
 
       delete :destroy, params: { cart_id: order.prefixed_id }
 

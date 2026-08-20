@@ -49,8 +49,8 @@ module Spree
 
         # checkout
         checkout_advance_service: 'Spree::Checkout::Advance',
-        checkout_add_store_credit_service: 'Spree::Checkout::AddStoreCredit',
-        checkout_remove_store_credit_service: 'Spree::Checkout::RemoveStoreCredit',
+        store_credit_apply_service: 'Spree::StoreCredits::Apply',
+        store_credit_remove_service: 'Spree::StoreCredits::Remove',
 
         # gift cards
         gift_card_apply_workflow: 'Spree::GiftCards::Apply',
@@ -221,6 +221,43 @@ module Spree
         gift_card_remove_service: :gift_card_remove_workflow,
         gift_card_redeem_service: :gift_card_redeem_workflow
       }.freeze
+
+      # Pure renames: the class, its contract and its keyword vocabulary are
+      # unchanged, so unlike LEGACY_WORKFLOW_KEYS an override written against
+      # the old name IS applied — there is nothing incompatible about it.
+      # Removed in 6.1.
+      RENAMED_SERVICE_KEYS = {
+        checkout_add_store_credit_service: :store_credit_apply_service,
+        checkout_remove_store_credit_service: :store_credit_remove_service
+      }.freeze
+
+      RENAMED_SERVICE_KEYS.each do |legacy, current|
+        define_method("#{legacy}=") do |value|
+          Spree::Deprecation.warn(
+            "Spree::Dependencies##{legacy}= is deprecated and will be removed in Spree 6.1. " \
+            "Use #{current}= instead."
+          )
+          send("#{current}=", value)
+        end
+
+        define_method(legacy) do
+          Spree::Deprecation.warn(
+            "Spree::Dependencies##{legacy} is deprecated and will be removed in Spree 6.1. " \
+            "Use #{current} instead."
+          )
+          send(current)
+        end
+
+        # Spree.<name> resolves through <name>_class, so the rename needs the
+        # constantized reader too.
+        define_method("#{legacy}_class") do
+          Spree::Deprecation.warn(
+            "Spree::Dependencies##{legacy} is deprecated and will be removed in Spree 6.1. " \
+            "Use #{current} instead."
+          )
+          send("#{current}_class")
+        end
+      end
 
       def legacy_workflow_overrides
         @legacy_workflow_overrides ||= {}

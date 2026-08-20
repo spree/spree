@@ -1,6 +1,6 @@
 module Spree
-  module Checkout
-    class AddStoreCredit
+  module StoreCredits
+    class Apply
       prepend Spree::ServiceModule::Base
 
       def call(order:, amount: nil)
@@ -71,7 +71,7 @@ module Spree
           source: credit,
           payment_method: payment_method,
           amount: amount,
-          state: 'checkout',
+          status: 'checkout',
           response_code: credit.generate_authorization_code
         )
       end

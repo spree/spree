@@ -1,6 +1,6 @@
 module Spree
-  module Checkout
-    class RemoveStoreCredit
+  module StoreCredits
+    class Remove
       prepend Spree::ServiceModule::Base
 
       def call(order:)
