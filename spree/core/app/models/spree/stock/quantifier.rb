@@ -1,17 +1,21 @@
 module Spree
   module Stock
     class Quantifier
-      attr_reader :variant, :stock_location, :excluded_order
+      attr_reader :variant, :stock_location, :excluded_order, :provided_stock_levels
 
       # @param excluded_order [Spree::Cart, Spree::Order, nil] when given,
       #   reservations belonging to this cart/order are not counted against
       #   availability. Used when checking a cart's own line items so the
       #   customer's own checkout hold doesn't make their item look out of
       #   stock.
-      def initialize(variant, stock_location = nil, excluded_order: nil)
+      # @param stock_levels [Enumerable<Spree::StockLevel>, nil] rows to count
+      #   instead of the variant's own. Passed by the inventory provider when
+      #   stock lives in an external system; the rows may be unsaved.
+      def initialize(variant, stock_location = nil, excluded_order: nil, stock_levels: nil)
         @variant         = variant
         @stock_location  = stock_location
         @excluded_order  = excluded_order
+        @provided_stock_levels = stock_levels
       end
 
       # Units a customer can purchase right now: physical pool minus
@@ -72,7 +76,7 @@ module Spree
                                  reservations.sum(&:quantity)
                                end
                              else
-                               reservations = Spree::StockReservation.active.where(stock_level_id: stock_levels.map(&:id))
+                               reservations = Spree::StockReservation.active.where(stock_level_id: persisted_stock_level_ids)
                                reservations = reservations.where.not(excluded_owner_key => excluded_owner_id) if excluded_owner_id
                                reservations.sum(:quantity)
                              end
@@ -108,7 +112,24 @@ module Spree
       end
 
       def stock_levels
-        @stock_levels ||= scope_to_location(variant.stock_levels)
+        @stock_levels ||= scope_to_location(provided_stock_levels || variant.stock_levels)
+      end
+
+      # Reservations hang off Spree's own rows, so an external provider's
+      # unsaved rows carry no id to match on. Resolve them by (variant,
+      # location) instead: a checkout hold is Spree's to honour whoever owns
+      # the stock figure, and matching on a nil id would silently subtract
+      # nothing and oversell the hold.
+      #
+      # @return [Array<Integer>]
+      def persisted_stock_level_ids
+        ids = stock_levels.map(&:id).compact
+        return ids if ids.length == stock_levels.size
+
+        locations = stock_levels.map(&:stock_location_id).compact
+        return ids if locations.empty?
+
+        ids | Spree::StockLevel.where(variant_id: variant.id, stock_location_id: locations).ids
       end
 
       private
@@ -121,13 +142,25 @@ module Spree
         Spree::StorePreferences.read(store, :stock_reservations_enabled)
       end
 
+      # Whether the rows being counted are already in memory. Injected provider
+      # rows always are — they are a plain Array with no association to ask, and
+      # an empty one is a complete answer (the variant is unknown to that
+      # system), not a signal to fall back to the local records.
       def association_loaded?
+        return true unless provided_stock_levels.nil?
+
         variant.association(:stock_levels).loaded?
       end
 
+      # association_loaded? first: it is a memory check, while stock_levels
+      # loads the relation. An external provider's rows are new records whose
+      # reservation association reads as empty rather than unloaded, which
+      # would count every local hold as zero — force those down the query path.
       def reservations_preloaded?
-        association_loaded? &&
-          stock_levels.all? { |si| si.association(:active_stock_reservations).loaded? }
+        return false unless association_loaded?
+        return false if stock_levels.any?(&:new_record?)
+
+        stock_levels.all? { |si| si.association(:active_stock_reservations).loaded? }
       end
 
       def scope_to_location(collection)
