@@ -31,7 +31,37 @@ module Spree
             end
           end
 
+          # GET /api/v3/admin/store/data_sources
+          #
+          # The pricing and inventory engines this store can choose between,
+          # with whether each is usable — a provider whose integration is not
+          # connected is listed but not selectable, so the dashboard can say
+          # why rather than hiding it.
+          def data_sources
+            authorize! :show, current_store
+
+            render json: {
+              data: {
+                pricing_providers: describe(Spree.pricing_providers),
+                inventory_providers: describe(Spree.inventory_providers),
+                failure_policies: Spree::ProviderFailurePolicy::VALUES
+              }
+            }
+          end
+
           private
+
+          def describe(provider_classes)
+            provider_classes.map do |provider_class|
+              {
+                key: provider_class.key,
+                name: provider_class.provider_name,
+                integration_class: provider_class.integration_class,
+                integration_type: provider_class.integration_class.presence&.safe_constantize&.api_type,
+                available: provider_class.available_for_store?(current_store)
+              }
+            end
+          end
 
           def serialize_store
             serializer_class.new(current_store, params: serializer_params).to_h
@@ -70,6 +100,10 @@ module Spree
               :preferred_show_products_without_price,
               :preferred_disable_sku_validation,
               :preferred_order_routing_strategy,
+              :preferred_pricing_provider,
+              :preferred_inventory_provider,
+              :preferred_pricing_provider_failure_policy,
+              :preferred_inventory_provider_failure_policy,
               :preferred_document_number_format,
               :preferred_order_number_prefix,
               :preferred_order_number_suffix,

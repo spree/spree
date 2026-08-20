@@ -34,6 +34,10 @@ const NUMBER_AFFIX_PATTERN = /^[A-Z0-9#-]*$/
 // concrete value. Labels live in `en.json` under
 // `admin.fields.store.capture_method.options.*`.
 export const CAPTURE_METHODS = ['checkout', 'on_dispatch', 'manual'] as const
+/** What a store does when its pricing or inventory provider cannot answer. */
+export const PROVIDER_FAILURE_POLICIES = ['strict', 'fallback'] as const
+/** Spree's own catalog and stock records — the default for both providers. */
+export const INTERNAL_PROVIDER_KEY = 'internal'
 
 export const storeSettingsFormSchema = z.object({
   name: z.string().min(1, { error: requiredMessage('store.name') }),
@@ -50,6 +54,10 @@ export const storeSettingsFormSchema = z.object({
   preferred_company_field_enabled: z.boolean(),
   preferred_address_requires_phone: z.boolean(),
   preferred_capture_method: z.enum(CAPTURE_METHODS),
+  preferred_pricing_provider: z.string(),
+  preferred_inventory_provider: z.string(),
+  preferred_pricing_provider_failure_policy: z.enum(PROVIDER_FAILURE_POLICIES),
+  preferred_inventory_provider_failure_policy: z.enum(PROVIDER_FAILURE_POLICIES),
   preferred_tax_using_ship_address: z.boolean(),
   preferred_track_inventory_levels: z.boolean(),
   preferred_stock_reservations_enabled: z.boolean(),
