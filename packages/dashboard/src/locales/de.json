@@ -292,6 +292,10 @@
     "commission_rates": {
       "add_cta": "Provisionssatz hinzufügen",
       "applies_to_everything": "Jeder Verkauf",
+      "conditions": {
+        "add": "Bedingung hinzufügen",
+        "title": "Bedingungen"
+      },
       "create_description": "Legen Sie fest, was der Marktplatz Verkäufern berechnet und für welche Verkäufe das gilt.",
       "create_label": "Provisionssatz erstellen",
       "delete_confirm": {
@@ -305,12 +309,8 @@
         "deleted": "Provisionssatz gelöscht",
         "updated": "Provisionssatz aktualisiert"
       },
-      "search_placeholder": "Nach Namen suchen…",
       "order_hint": "Neue Sätze stehen oben in der Liste, und der erste passende gilt — zum Umsortieren ziehen.",
-      "conditions": {
-        "add": "Bedingung hinzufügen",
-        "title": "Bedingungen"
-      }
+      "search_placeholder": "Nach Namen suchen…"
     },
     "companies": {
       "add_cta": "Firma hinzufügen",
@@ -558,6 +558,8 @@
       "cards": {
         "estimate": "Lieferschätzung"
       },
+      "carrier_rates": "Carrier-Tarife",
+      "carrier_rates_hint": "Die Preise kommen beim Checkout von {{name}} und werden für jede Bestellung live ermittelt.",
       "carrier_services": {
         "add_service": "Service hinzufügen",
         "all_hint": "Alle vom Carrier zurückgegebenen Services werden angeboten, benannt vom Carrier.",
@@ -600,9 +602,8 @@
         "amount_in_currency": "Betrag in {{currency}}",
         "currency_amounts_help": "Währungen ohne Betrag wird diese Versandart nicht angeboten."
       },
-      "carrier_rates": "Carrier-Tarife",
-      "provider_unavailable": "{{name}} (nicht verfügbar)",
       "provider_needs_connection": "{{name}} verbinden, um es zu nutzen",
+      "provider_unavailable": "{{name}} (nicht verfügbar)",
       "rule_summary": {
         "separator": " · ",
         "total_between": "{{min}}–{{max}}",
@@ -611,8 +612,7 @@
         "weight_between": "{{min}}–{{max}} {{unit}}",
         "weight_max": "Unter {{max}} {{unit}}",
         "weight_min": "Ab {{min}} {{unit}}"
-      },
-      "carrier_rates_hint": "Die Preise kommen beim Checkout von {{name}} und werden für jede Bestellung live ermittelt."
+      }
     },
     "delivery_origin_groups": {
       "delete_confirm": {
@@ -774,6 +774,13 @@
           "label": "Geltungsbereiche"
         }
       },
+      "certificate_document": {
+        "help": "PDF oder Bild, bis 10 MB. Nur Mitarbeiter können es herunterladen.",
+        "label": "Dokument"
+      },
+      "certificate_number": {
+        "label": "Bescheinigungsnummer"
+      },
       "channel": {
         "active": {
           "help": "Inaktive Verkaufskanäle nehmen keine Bestellungen mehr an und werden vom X-Spree-Channel-Header nicht erkannt.",
@@ -826,6 +833,86 @@
             "public": "Öffentlich – alle können stöbern und Preise sehen"
           }
         }
+      },
+      "commission_rate": {
+        "amounts": {
+          "help": "Wird für jede verkaufte Einheit berechnet. Eine leer gelassene Währung berechnet dieser Satz nicht — solche Verkäufe fallen an den nächsten Satz.",
+          "label": "Pauschale"
+        },
+        "bounds": {
+          "help": "Nie weniger als der erste und nie mehr als der zweite Betrag. Jeder gilt nur für Verkäufe in seiner eigenen Währung; eine leer gelassene Währung wird unbegrenzt berechnet.",
+          "label": "Unter- und Obergrenze (optional)"
+        },
+        "code": {
+          "help": "Ihre eigene Kennung für diesen Satz.",
+          "label": "Code",
+          "placeholder": "standard"
+        },
+        "commission_tax_rate": {
+          "help": "Umsatzsteuer auf die Provision selbst, als eigene Leistung an den Verkäufer. Leer lassen, um Ihre Steuereinstellungen zu verwenden.",
+          "label": "Steuer auf die Provision (%)",
+          "placeholder": "Aus Ihren Steuereinstellungen"
+        },
+        "enabled": {
+          "help": "Deaktivierte Sätze werden bei der Berechnung übersprungen."
+        },
+        "include_shipping": {
+          "help": "Provision auch auf die Versanderlöse des Verkäufers berechnen.",
+          "label": "Auf Versand berechnen"
+        },
+        "kind": {
+          "label": "Gebühr",
+          "options": {
+            "fixed": "Pauschale",
+            "percentage": "Prozent vom Verkauf"
+          }
+        },
+        "max_amount": {
+          "label": "Maximum"
+        },
+        "min_amount": {
+          "label": "Minimum"
+        },
+        "name": {
+          "placeholder": "Standardprovision"
+        },
+        "rules": {
+          "help": "Jede Bedingung muss zutreffen; nennt eine Bedingung mehrere Einträge, genügt einer davon. Ein Satz ohne Bedingungen gilt für jeden Verkauf.",
+          "label": "Bedingungen"
+        },
+        "tax_inclusive": {
+          "help": "Auf den Preis inklusive Kundensteuer berechnen. Ausgeschaltet wird die Provision auf den Nettoerlös des Verkäufers berechnet — die übliche Grundlage, wenn die Gebühr als eigene Leistung besteuert wird.",
+          "label": "Auf den Bruttopreis berechnen"
+        },
+        "value": {
+          "help_percentage": "Prozentsatz des Verkaufs, der dem Verkäufer berechnet wird.",
+          "label": "Wert"
+        }
+      },
+      "company": {
+        "external_id": {
+          "help": "Ihre eigene Referenz für diese Firma, eindeutig innerhalb des Shops.",
+          "placeholder": "ACME-001"
+        },
+        "name": {
+          "placeholder": "Acme Industries"
+        }
+      },
+      "company_contact": {
+        "role": {
+          "label": "Rolle"
+        }
+      },
+      "company_location": {
+        "external_id": {
+          "help": "Ihre eigene Referenz für diese Niederlassung."
+        },
+        "name": {
+          "placeholder": "Hauptsitz"
+        }
+      },
+      "country": {
+        "label": "Land"
       },
       "custom_field_definition": {
         "field_type": {
@@ -980,6 +1067,9 @@
           "label": "Zonen"
         }
       },
+      "external_id": {
+        "label": "Referenz"
+      },
       "gift_card": {
         "amount": {
           "label": "Betrag"
@@ -1010,6 +1100,12 @@
         "password_confirmation": {
           "label": "Passwort bestätigen"
         }
+      },
+      "issued_at": {
+        "label": "Ausgestellt am"
+      },
+      "issuing_authority": {
+        "label": "Ausstellende Behörde"
       },
       "market": {
         "country_codes": {
@@ -1133,10 +1229,10 @@
           "label": "Aktiv"
         },
         "capture_method": {
-          "label": "Wann Kunden belastet werden",
           "help": "Überschreibt die Store-Einstellung nur für diese Zahlungsart.",
           "inherit": "Store-Einstellung verwenden",
-          "inherited": "Store-Einstellung verwenden ({{value}})"
+          "inherited": "Store-Einstellung verwenden ({{value}})",
+          "label": "Wann Kunden belastet werden"
         },
         "description": {
           "placeholder": "Kundenseitige Beschreibung, die beim Checkout angezeigt wird"
@@ -1152,6 +1248,9 @@
           "label": "Anbieter",
           "placeholder": "Anbieter auswählen"
         }
+      },
+      "postal_code": {
+        "label": "Postleitzahl"
       },
       "price_list": {
         "description": {
@@ -1226,16 +1325,16 @@
           "help": "Hier lassen sich nur manuelle Kollektionen setzen; automatische folgen ihren Regeln.",
           "label": "Kollektionen"
         },
+        "delivery_profile_id": {
+          "help": "Bestimmt, welche Zonen und Versandarten dieses Produkt erreichen.",
+          "label": "Versandprofil"
+        },
         "description": {
           "label": "Beschreibung",
           "placeholder": "Schreiben Sie eine Produktbeschreibung…"
         },
         "discontinue_on": {
           "label": "Einstellen am"
-        },
-        "delivery_profile_id": {
-          "help": "Bestimmt, welche Zonen und Versandarten dieses Produkt erreichen.",
-          "label": "Versandprofil"
         },
         "make_active_at": {
           "label": "Aktiv schalten am"
@@ -1248,12 +1347,12 @@
           "help": "Bestimmt, welche Lieferoptionen im Checkout angeboten werden.",
           "label": "Produkttyp"
         },
+        "seller": {
+          "first_party": "Eigener Verkauf",
+          "label": "Verkäufer"
+        },
         "tags": {
           "label": "Tags"
-        },
-        "seller": {
-          "label": "Verkäufer",
-          "first_party": "Eigener Verkauf"
         }
       },
       "product_publication": {
@@ -1355,6 +1454,10 @@
           "placeholder": "Unbegrenzt"
         }
       },
+      "reason_code": {
+        "help": "Wird als Verwendungszweck an die Steuerberechnung übergeben.",
+        "label": "Grund"
+      },
       "role": {
         "description": {
           "label": "Beschreibung",
@@ -1371,70 +1474,67 @@
       "role_ids": {
         "label": "Rollen"
       },
+      "seller": {
+        "about": {
+          "help": "Wird im Storefront-Profil des Verkäufers angezeigt.",
+          "label": "Über"
+        },
+        "billing_email": {
+          "help": "Hierhin gehen Provisionsrechnungen und Auszahlungsmitteilungen, falls abweichend.",
+          "label": "Rechnungs-E-Mail"
+        },
+        "contact_email": {
+          "help": "Hierhin gehen Einladungen und Mitteilungen des Marktplatzes.",
+          "placeholder": "hallo@sparks.example"
+        },
+        "holiday_mode_until": {
+          "help": "Der Katalog bleibt sichtbar, es kann bis dahin aber nichts gekauft werden.",
+          "label": "Abwesend bis",
+          "placeholder": "Datum wählen"
+        },
+        "minimum_payout_amount": {
+          "help": "Kleinere Beträge werden auf die nächste Auszahlung übertragen.",
+          "label": "Mindestauszahlung"
+        },
+        "name": {
+          "placeholder": "Sparks Audio"
+        },
+        "payouts_schedule_interval": {
+          "help": "Wie oft dieser Verkäufer ausgezahlt wird.",
+          "label": "Auszahlungsrhythmus"
+        },
+        "slug": {
+          "help": "Teil der Storefront-Adresse des Verkäufers. Wird aus dem Namen abgeleitet, wenn leer."
+        },
+        "tax_remittance": {
+          "help": "Wer die Verbrauchsteuer auf die Verkäufe dieses Verkäufers abführt.",
+          "label": "Steuer abgeführt von"
+        }
+      },
       "setup": {
+        "country_code": {
+          "help": "Von wo Sie versenden. Ihr Shop kann weltweit verkaufen — dies legt nur Startwährung, Lager und Liefergebiete fest, alle später änderbar.",
+          "label": "Land",
+          "placeholder": "Länder durchsuchen"
+        },
+        "currency": {
+          "help": "Ihre Standardwährung. Jederzeit erweiterbar.",
+          "label": "Währung",
+          "placeholder": "Währungen durchsuchen"
+        },
+        "locale": {
+          "help": "Ihre Standardsprache. Jederzeit erweiterbar.",
+          "label": "Sprache"
+        },
         "password_confirmation": {
           "label": "Passwort bestätigen"
         },
         "store_name": {
           "label": "Shopname"
-        },
-        "country_code": {
-          "label": "Land",
-          "placeholder": "Länder durchsuchen",
-          "help": "Von wo Sie versenden. Ihr Shop kann weltweit verkaufen — dies legt nur Startwährung, Lager und Liefergebiete fest, alle später änderbar."
-        },
-        "locale": {
-          "label": "Sprache",
-          "help": "Ihre Standardsprache. Jederzeit erweiterbar."
-        },
-        "currency": {
-          "label": "Währung",
-          "placeholder": "Währungen durchsuchen",
-          "help": "Ihre Standardwährung. Jederzeit erweiterbar."
         }
       },
-      "stock_location": {
-        "active": {
-          "help": "Inaktive Standorte erscheinen nicht in der Fulfillment-Auswahl.",
-          "label": "Aktiv"
-        },
-        "admin_name": {
-          "label": "Interner Name",
-          "placeholder": "Optional — wird nur im Admin angezeigt"
-        },
-        "backorderable_default": {
-          "help": "Neue Lagerbestände erlauben standardmäßig Nachbestellungen, wenn der Bestand erschöpft ist.",
-          "label": "Standardmäßig nachbestellbar"
-        },
-        "default": {
-          "help": "Neue Lagerbestände werden hierher übernommen. Nur ein Standort kann Standard sein.",
-          "label": "Standardstandort"
-        },
-        "kind": {
-          "label": "Art"
-        },
-        "name": {
-          "placeholder": "Lager Brooklyn"
-        },
-        "pickup_enabled": {
-          "help": "Kunden können Bestellungen an diesem Standort beim Checkout abholen.",
-          "label": "Abholung durch Kunden erlauben"
-        },
-        "pickup_instructions": {
-          "label": "Abholhinweise",
-          "placeholder": "Wohin der Kunde gehen soll, um seine Bestellung abzuholen."
-        },
-        "pickup_ready_in_minutes": {
-          "label": "Bereit in (Minuten)",
-          "placeholder": "60"
-        },
-        "pickup_stock_policy": {
-          "label": "Bestandsrichtlinie"
-        },
-        "propagate_all_variants": {
-          "help": "Lagerbestände an diesem Standort für jede Produktvariante anlegen.",
-          "label": "Lagerbestände für alle Varianten automatisch anlegen"
-        }
+      "state": {
+        "label": "Bundesland"
       },
       "store": {
         "address_requires_phone": {
@@ -1442,20 +1542,20 @@
           "label": "Telefonnummer erforderlich"
         },
         "capture_method": {
-          "label": "Wann Kunden belastet werden",
           "help": "Die Vorgabe für jede Zahlungsart. Eine einzelne Zahlungsart kann sie überschreiben.",
+          "label": "Wann Kunden belastet werden",
           "options": {
             "checkout": {
-              "label": "Beim Bezahlen",
-              "description": "Den Betrag einziehen, sobald die Bestellung aufgegeben wird."
-            },
-            "on_dispatch": {
-              "label": "Bei Versand",
-              "description": "Den Betrag beim Bezahlen reservieren und einziehen, wenn die Ware rausgeht."
+              "description": "Den Betrag einziehen, sobald die Bestellung aufgegeben wird.",
+              "label": "Beim Bezahlen"
             },
             "manual": {
-              "label": "Manuell",
-              "description": "Den Betrag beim Bezahlen reservieren und später vom Team einziehen lassen."
+              "description": "Den Betrag beim Bezahlen reservieren und später vom Team einziehen lassen.",
+              "label": "Manuell"
+            },
+            "on_dispatch": {
+              "description": "Den Betrag beim Bezahlen reservieren und einziehen, wenn die Ware rausgeht.",
+              "label": "Bei Versand"
             }
           }
         },
@@ -1473,11 +1573,11 @@
           "label": "Doppelte SKUs erlauben"
         },
         "document_number_format": {
-          "label": "Nummerierungsformat",
           "help": "Gilt für alle nummerierten Dokumente. Fortlaufende Nummern zählen hoch und lassen sich leichter vorlesen; zufällige Nummern verraten nicht, wie viele Bestellungen Ihr Shop erhalten hat.",
+          "label": "Nummerierungsformat",
           "options": {
-            "sequential": "Fortlaufend — zählt von einem Startwert hoch",
-            "random": "Zufällig — unvorhersehbare Ziffern"
+            "random": "Zufällig — unvorhersehbare Ziffern",
+            "sequential": "Fortlaufend — zählt von einem Startwert hoch"
           }
         },
         "guest_checkout": {
@@ -1502,23 +1602,23 @@
           "placeholder": "ops@yourstore.com"
         },
         "order_number_prefix": {
-          "label": "Präfix",
           "help": "Steht vor jeder Bestellnummer.",
-          "invalid": "Nur Großbuchstaben, Ziffern, Bindestriche und # verwenden."
+          "invalid": "Nur Großbuchstaben, Ziffern, Bindestriche und # verwenden.",
+          "label": "Präfix"
         },
         "order_number_preview": {
-          "label": "Vorschau",
-          "help": "Änderungen gelten nur für künftige Bestellungen. Bereits vergebene Nummern ändern sich nie."
+          "help": "Änderungen gelten nur für künftige Bestellungen. Bereits vergebene Nummern ändern sich nie.",
+          "label": "Vorschau"
         },
         "order_number_sequence_start": {
-          "label": "Nummerierung beginnen bei",
           "help": "Gilt nur vor Ihrer ersten Bestellung. Eine spätere Änderung nummeriert bestehende Bestellungen nicht neu.",
+          "label": "Nummerierung beginnen bei",
           "locked": "Die Nummerierung hat bereits begonnen, daher gilt dies nicht mehr. Bestehende Bestellnummern ändern sich nie."
         },
         "order_number_suffix": {
-          "label": "Suffix",
           "help": "Steht am Ende jeder Bestellnummer.",
-          "invalid": "Nur Großbuchstaben, Ziffern, Bindestriche und # verwenden."
+          "invalid": "Nur Großbuchstaben, Ziffern, Bindestriche und # verwenden.",
+          "label": "Suffix"
         },
         "preferred_admin_locale": {
           "label": "Admin-Sprache",
@@ -1613,6 +1713,55 @@
       "tax_category_id": {
         "label": "Steuerkategorie"
       },
+      "tax_exemption_certificate": {
+        "country_code": {
+          "help": "Leer lassen für eine Bescheinigung, die überall gilt."
+        },
+        "expires_at": {
+          "help": "Leer lassen für eine Bescheinigung ohne Ablaufdatum."
+        }
+      },
+      "tax_identifier": {
+        "kind": {
+          "help": "Um welche Nummer es sich handelt. Sie muss zur eingerichteten Prüfung passen, die Schreibweise ist also wichtig.",
+          "label": "Art"
+        },
+        "value": {
+          "label": "Nummer",
+          "placeholder": "DE123456789"
+        }
+      },
+      "tax_rate": {
+        "amount": {
+          "help": "In Prozent. Für 20 % geben Sie 20 ein.",
+          "label": "Satz"
+        },
+        "country_code": {
+          "help": "Leer lassen, um jedes Land zu besteuern."
+        },
+        "included_in_price": {
+          "help": "Die Preise enthalten diese Steuer bereits, sie wird herausgerechnet statt aufgeschlagen.",
+          "label": "Im Preis enthalten",
+          "short": "Enthalten"
+        },
+        "jurisdiction": {
+          "label": "Gilt für"
+        },
+        "name": {
+          "placeholder": "Regelsteuersatz"
+        },
+        "show_rate_in_label": {
+          "help": "Ergänzt die Steuerzeile für den Kunden um den Prozentsatz.",
+          "label": "Satz in der Steuerbezeichnung anzeigen"
+        },
+        "state_code": {
+          "help": "Leer lassen, um das ganze Land zu besteuern."
+        },
+        "tax_category_id": {
+          "help": "Welche Produkte dieser Satz besteuert.",
+          "label": "Steuerkategorie"
+        }
+      },
       "variant": {
         "backorder_limit": {
           "help": "Maximale Anzahl an Einheiten, die über den verfügbaren Bestand hinaus verkauft werden — begrenzt Nachbestellungen und Vorbestellungen. Leer lassen für unbegrenzt.",
@@ -1682,198 +1831,6 @@
         "url": {
           "label": "Ziel-URL",
           "placeholder": "https://example.com/webhooks"
-        }
-      },
-      "external_id": {
-        "label": "Referenz"
-      },
-      "country": {
-        "label": "Land"
-      },
-      "state": {
-        "label": "Bundesland"
-      },
-      "postal_code": {
-        "label": "Postleitzahl"
-      },
-      "certificate_number": {
-        "label": "Bescheinigungsnummer"
-      },
-      "reason_code": {
-        "help": "Wird als Verwendungszweck an die Steuerberechnung übergeben.",
-        "label": "Grund"
-      },
-      "issued_at": {
-        "label": "Ausgestellt am"
-      },
-      "issuing_authority": {
-        "label": "Ausstellende Behörde"
-      },
-      "certificate_document": {
-        "help": "PDF oder Bild, bis 10 MB. Nur Mitarbeiter können es herunterladen.",
-        "label": "Dokument"
-      },
-      "company": {
-        "name": {
-          "placeholder": "Acme Industries"
-        },
-        "external_id": {
-          "help": "Ihre eigene Referenz für diese Firma, eindeutig innerhalb des Shops.",
-          "placeholder": "ACME-001"
-        }
-      },
-      "company_location": {
-        "name": {
-          "placeholder": "Hauptsitz"
-        },
-        "external_id": {
-          "help": "Ihre eigene Referenz für diese Niederlassung."
-        }
-      },
-      "company_contact": {
-        "role": {
-          "label": "Rolle"
-        }
-      },
-      "tax_identifier": {
-        "kind": {
-          "help": "Um welche Nummer es sich handelt. Sie muss zur eingerichteten Prüfung passen, die Schreibweise ist also wichtig.",
-          "label": "Art"
-        },
-        "value": {
-          "label": "Nummer",
-          "placeholder": "DE123456789"
-        }
-      },
-      "tax_rate": {
-        "name": {
-          "placeholder": "Regelsteuersatz"
-        },
-        "amount": {
-          "help": "In Prozent. Für 20 % geben Sie 20 ein.",
-          "label": "Satz"
-        },
-        "jurisdiction": {
-          "label": "Gilt für"
-        },
-        "country_code": {
-          "help": "Leer lassen, um jedes Land zu besteuern."
-        },
-        "state_code": {
-          "help": "Leer lassen, um das ganze Land zu besteuern."
-        },
-        "tax_category_id": {
-          "help": "Welche Produkte dieser Satz besteuert.",
-          "label": "Steuerkategorie"
-        },
-        "included_in_price": {
-          "help": "Die Preise enthalten diese Steuer bereits, sie wird herausgerechnet statt aufgeschlagen.",
-          "label": "Im Preis enthalten",
-          "short": "Enthalten"
-        },
-        "show_rate_in_label": {
-          "help": "Ergänzt die Steuerzeile für den Kunden um den Prozentsatz.",
-          "label": "Satz in der Steuerbezeichnung anzeigen"
-        }
-      },
-      "tax_exemption_certificate": {
-        "country_code": {
-          "help": "Leer lassen für eine Bescheinigung, die überall gilt."
-        },
-        "expires_at": {
-          "help": "Leer lassen für eine Bescheinigung ohne Ablaufdatum."
-        }
-      },
-      "seller": {
-        "name": {
-          "placeholder": "Sparks Audio"
-        },
-        "slug": {
-          "help": "Teil der Storefront-Adresse des Verkäufers. Wird aus dem Namen abgeleitet, wenn leer."
-        },
-        "contact_email": {
-          "placeholder": "hallo@sparks.example",
-          "help": "Hierhin gehen Einladungen und Mitteilungen des Marktplatzes."
-        },
-        "billing_email": {
-          "label": "Rechnungs-E-Mail",
-          "help": "Hierhin gehen Provisionsrechnungen und Auszahlungsmitteilungen, falls abweichend."
-        },
-        "about": {
-          "label": "Über",
-          "help": "Wird im Storefront-Profil des Verkäufers angezeigt."
-        },
-        "tax_remittance": {
-          "label": "Steuer abgeführt von",
-          "help": "Wer die Verbrauchsteuer auf die Verkäufe dieses Verkäufers abführt."
-        },
-        "payouts_schedule_interval": {
-          "label": "Auszahlungsrhythmus",
-          "help": "Wie oft dieser Verkäufer ausgezahlt wird."
-        },
-        "minimum_payout_amount": {
-          "label": "Mindestauszahlung",
-          "help": "Kleinere Beträge werden auf die nächste Auszahlung übertragen."
-        },
-        "holiday_mode_until": {
-          "label": "Abwesend bis",
-          "placeholder": "Datum wählen",
-          "help": "Der Katalog bleibt sichtbar, es kann bis dahin aber nichts gekauft werden."
-        }
-      },
-      "commission_rate": {
-        "name": {
-          "placeholder": "Standardprovision"
-        },
-        "code": {
-          "label": "Code",
-          "placeholder": "standard",
-          "help": "Ihre eigene Kennung für diesen Satz."
-        },
-        "kind": {
-          "label": "Gebühr",
-          "options": {
-            "percentage": "Prozent vom Verkauf",
-            "fixed": "Pauschale"
-          }
-        },
-        "value": {
-          "label": "Wert",
-          "help_percentage": "Prozentsatz des Verkaufs, der dem Verkäufer berechnet wird."
-        },
-        "rules": {
-          "label": "Bedingungen",
-          "help": "Jede Bedingung muss zutreffen; nennt eine Bedingung mehrere Einträge, genügt einer davon. Ein Satz ohne Bedingungen gilt für jeden Verkauf."
-        },
-        "min_amount": {
-          "label": "Minimum"
-        },
-        "max_amount": {
-          "label": "Maximum"
-        },
-        "commission_tax_rate": {
-          "label": "Steuer auf die Provision (%)",
-          "placeholder": "Aus Ihren Steuereinstellungen",
-          "help": "Umsatzsteuer auf die Provision selbst, als eigene Leistung an den Verkäufer. Leer lassen, um Ihre Steuereinstellungen zu verwenden."
-        },
-        "include_shipping": {
-          "label": "Auf Versand berechnen",
-          "help": "Provision auch auf die Versanderlöse des Verkäufers berechnen."
-        },
-        "tax_inclusive": {
-          "label": "Auf den Bruttopreis berechnen",
-          "help": "Auf den Preis inklusive Kundensteuer berechnen. Ausgeschaltet wird die Provision auf den Nettoerlös des Verkäufers berechnet — die übliche Grundlage, wenn die Gebühr als eigene Leistung besteuert wird."
-        },
-        "enabled": {
-          "help": "Deaktivierte Sätze werden bei der Berechnung übersprungen."
-        },
-        "amounts": {
-          "help": "Wird für jede verkaufte Einheit berechnet. Eine leer gelassene Währung berechnet dieser Satz nicht — solche Verkäufe fallen an den nächsten Satz.",
-          "label": "Pauschale"
-        },
-        "bounds": {
-          "help": "Nie weniger als der erste und nie mehr als der zweite Betrag. Jeder gilt nur für Verkäufe in seiner eigenen Währung; eine leer gelassene Währung wird unbegrenzt berechnet.",
-          "label": "Unter- und Obergrenze (optional)"
         }
       }
     },
@@ -2087,9 +2044,9 @@
       "promotions": "Aktionen",
       "reports": "Berichte",
       "returns": "Retouren",
+      "sellers": "Verkäufer",
       "settings": "Einstellungen",
-      "transfers": "Umlagerungen",
-      "sellers": "Verkäufer"
+      "transfers": "Umlagerungen"
     },
     "option_types": {
       "columns": {
@@ -2229,6 +2186,13 @@
           "resume_failed": "Auftrag konnte nicht wieder aufgenommen werden"
         },
         "fulfillments": {
+          "add_tracking": "Sendungsverfolgung hinzufügen",
+          "add_tracking_title": "Sendungsverfolgung hinzufügen",
+          "buy_label": "Label kaufen",
+          "buy_label_confirm": "Versandlabel für diese Sendung kaufen? Ihr Versanddienstleister-Konto wird belastet, sobald das Label ausgestellt ist.",
+          "buy_label_confirm_rate": "Label {{rate}} für {{cost}} kaufen? Ihr Versanddienstleister-Konto wird belastet, sobald das Label ausgestellt ist.",
+          "carrier_auto": "Automatisch erkennen",
+          "carrier_label": "Versanddienstleister",
           "confirm_split": "Diese Einheiten in eine neue Sendung verschieben? Die Änderung wird sofort wirksam.",
           "create_description": "Erstellt eine Sendung und verschiebt die gewählten Mengen hinein.",
           "create_items": "Artikel",
@@ -2236,12 +2200,18 @@
           "delivery_method": "Versandart",
           "edit_description": "Ändern Sie, von wo diese Sendung versandt wird und welche Versandart sie befördert.",
           "edit_title": "Sendung bearbeiten",
+          "edit_tracking_title": "Sendungsverfolgung bearbeiten",
           "empty": "Noch keine Sendungen für diese Bestellung.",
           "free": "Kostenlos",
+          "mark_delivered": "Als zugestellt markieren",
           "move_and_requote": "Verschieben und neu berechnen",
           "no_rates": "Für diese Sendung liegen keine Versandarten vor.",
           "out_of_stock": "Nicht auf Lager",
+          "packing_slip_title": "Lieferschein — Bestellung {{number}}",
+          "print_label": "Label drucken",
+          "print_packing_slip": "Lieferschein drucken",
           "rates_pending_origin": "Speichern Sie den neuen Ursprung, um die dort verfügbaren Versandarten zu sehen.",
+          "ship_to": "Lieferadresse",
           "ships_from": "Versand ab",
           "split": "Aufteilen",
           "split_description": "Verschieben Sie einzelne Einheiten in eine neue Sendung. Ein Produkt nach dem anderen.",
@@ -2249,22 +2219,9 @@
           "split_quantity": "Zu verschiebende Menge",
           "split_title": "Sendung aufteilen",
           "split_would_empty": "Lassen Sie mindestens eine Einheit zurück oder ändern Sie stattdessen den Ursprung der gesamten Sendung.",
-          "unfulfilled_one": "Nicht versandt ({{count}})",
-          "unfulfilled_other": "Nicht versandt ({{count}})",
-          "mark_delivered": "Als zugestellt markieren",
-          "add_tracking": "Sendungsverfolgung hinzufügen",
-          "edit_tracking_title": "Sendungsverfolgung bearbeiten",
-          "add_tracking_title": "Sendungsverfolgung hinzufügen",
           "tracking_description": "Die Sendungsnummer des Zustellers oder ein vollständiger Tracking-Link.",
-          "carrier_label": "Versanddienstleister",
-          "carrier_auto": "Automatisch erkennen",
-          "buy_label_confirm": "Versandlabel für diese Sendung kaufen? Ihr Versanddienstleister-Konto wird belastet, sobald das Label ausgestellt ist.",
-          "buy_label_confirm_rate": "Label {{rate}} für {{cost}} kaufen? Ihr Versanddienstleister-Konto wird belastet, sobald das Label ausgestellt ist.",
-          "buy_label": "Label kaufen",
-          "print_label": "Label drucken",
-          "print_packing_slip": "Lieferschein drucken",
-          "packing_slip_title": "Lieferschein — Bestellung {{number}}",
-          "ship_to": "Lieferadresse"
+          "unfulfilled_one": "Nicht versandt ({{count}})",
+          "unfulfilled_other": "Nicht versandt ({{count}})"
         },
         "gift_card_section": {
           "applied_suffix": "angewendet",
@@ -2340,9 +2297,15 @@
         "action_label": "Bestellung bearbeiten",
         "actions": {
           "add_product": "Produkt hinzufügen",
-          "remove_item": "{{name}} entfernen",
           "quantity_for": "Menge von {{name}}",
+          "remove_item": "{{name}} entfernen",
           "restore_item": "{{name}} behalten"
+        },
+        "badges": {
+          "fulfilled_count_one": "{{count}} abgewickelt",
+          "fulfilled_count_other": "{{count}} abgewickelt",
+          "pending": "Nicht gespeichert",
+          "removed": "Wird entfernt"
         },
         "columns": {
           "line_total": "Positionssumme",
@@ -2350,22 +2313,16 @@
           "unit_price": "Einzelpreis"
         },
         "empty": "Diese Bestellung enthält keine Artikel.",
+        "fully_fulfilled": "Diese Bestellung ist vollständig abgewickelt und kann nicht mehr bearbeitet werden.",
         "items_title": "Artikel",
         "subtitle": "Bestellung {{number}}",
         "title": "Bestellung bearbeiten",
         "totals_hint": "Die Summen werden nach dem Speichern vom Server neu berechnet.",
         "totals_title": "Summen",
-        "badges": {
-          "pending": "Nicht gespeichert",
-          "removed": "Wird entfernt",
-          "fulfilled_count_one": "{{count}} abgewickelt",
-          "fulfilled_count_other": "{{count}} abgewickelt"
-        },
         "validation": {
           "below_fulfilled_one": "Darf {{count}} abgewickelte Einheit nicht unterschreiten",
           "below_fulfilled_other": "Darf {{count}} abgewickelte Einheiten nicht unterschreiten"
-        },
-        "fully_fulfilled": "Diese Bestellung ist vollständig abgewickelt und kann nicht mehr bearbeitet werden."
+        }
       },
       "fulfill": {
         "action": "Als versendet markieren",
@@ -2386,12 +2343,12 @@
       "fulfillment_statuses": {
         "backorder": "Lieferrückstand",
         "canceled": "Storniert",
+        "delivered": "Zugestellt",
         "fulfilled": "Abgewickelt",
         "partial": "Teilweise",
         "pending": "Ausstehend",
         "ready": "Bereit",
-        "unfulfilled": "Nicht abgewickelt",
-        "delivered": "Zugestellt"
+        "unfulfilled": "Nicht abgewickelt"
       },
       "item_count_one": "{{count}} Artikel",
       "item_count_other": "{{count}} Artikel",
@@ -3000,6 +2957,10 @@
           },
           "title": "API-Schlüssel"
         },
+        "commission_rates": {
+          "add_sheet_title": "Provisionssatz hinzufügen",
+          "edit_sheet_title": "Provisionssatz bearbeiten"
+        },
         "custom_field_definitions": {
           "add_sheet_title": "Benutzerdefiniertes Feld hinzufügen",
           "edit_sheet_title": "Benutzerdefiniertes Feld bearbeiten"
@@ -3037,11 +2998,6 @@
           "add_sheet_title": "Zahlungsmethode hinzufügen",
           "edit_sheet_title": "Zahlungsmethode bearbeiten"
         },
-        "stock_locations": {
-          "add_sheet_title": "Lagerstandort hinzufügen",
-          "edit_sheet_title": "Lagerstandort bearbeiten",
-          "search_placeholder": "Lagerstandorte suchen…"
-        },
         "store": {
           "default_package_description": "Der Karton, in dem Sie üblicherweise versenden. Carrier-Tarifanbieter addieren sein Gewicht zu jedem Paket und nutzen seine Abmessungen für Volumengewicht-Preise.",
           "subtitle": "Allgemeine Konfiguration und shopweite Standardwerte.",
@@ -3059,6 +3015,10 @@
         "tax_categories": {
           "add_sheet_title": "Steuerkategorie hinzufügen",
           "edit_sheet_title": "Steuerkategorie bearbeiten"
+        },
+        "tax_rates": {
+          "add_sheet_title": "Neuer Steuersatz",
+          "edit_sheet_title": "Steuersatz bearbeiten"
         },
         "webhooks": {
           "actions": {
@@ -3189,14 +3149,6 @@
             "url": "URL"
           },
           "title": "Webhooks"
-        },
-        "tax_rates": {
-          "add_sheet_title": "Neuer Steuersatz",
-          "edit_sheet_title": "Steuersatz bearbeiten"
-        },
-        "commission_rates": {
-          "add_sheet_title": "Provisionssatz hinzufügen",
-          "edit_sheet_title": "Provisionssatz bearbeiten"
         }
       },
       "staff": {
@@ -3881,37 +3833,32 @@
       }
     },
     "seller_requirements": {
-      "title": "Verkäuferanforderungen",
-      "search_placeholder": "Anforderungen suchen",
-      "empty": "Noch keine Anforderungen. Verkäufer können sofort um Prüfung bitten.",
       "add_cta": "Anforderung hinzufügen",
       "add_title": "Anforderung hinzufügen",
-      "edit_title": "Anforderung bearbeiten",
       "columns": {
         "kind": "Typ",
         "required": "Erforderlich"
       },
-      "required": {
-        "yes": "Erforderlich",
-        "no": "Empfohlen"
+      "delete_confirm": {
+        "message": "Verkäufer werden nicht mehr nach „{{name}}\" gefragt. Bereits Eingereichtes wird ebenfalls gelöscht.",
+        "title": "Anforderung löschen?"
       },
-      "status": {
-        "disabled": "Aus"
-      },
+      "edit_title": "Anforderung bearbeiten",
+      "empty": "Noch keine Anforderungen. Verkäufer können sofort um Prüfung bitten.",
       "fields": {
         "accepted_files": {
-          "label": "Zulässige Dateien",
-          "help": "Verkäufer können hochladen: {{types}}"
+          "help": "Verkäufer können hochladen: {{types}}",
+          "label": "Zulässige Dateien"
         },
         "active": {
-          "label": "Aktiv",
-          "help": "Ausschalten, um dies nicht mehr zu verlangen, ohne es zu löschen."
+          "help": "Ausschalten, um dies nicht mehr zu verlangen, ohne es zu löschen.",
+          "label": "Aktiv"
         },
         "custom_fields": {
-          "label": "Benutzerdefinierte Felder",
+          "empty": "Keine Verkäuferfelder gefunden. Legen Sie sie unter Einstellungen → Benutzerdefinierte Felder an.",
           "help": "Der Verkäufer muss jedes gewählte Feld ausfüllen.",
-          "placeholder": "Felder suchen",
-          "empty": "Keine Verkäuferfelder gefunden. Legen Sie sie unter Einstellungen → Benutzerdefinierte Felder an."
+          "label": "Benutzerdefinierte Felder",
+          "placeholder": "Felder suchen"
         },
         "description": {
           "label": "Hinweise",
@@ -3922,195 +3869,200 @@
           "placeholder": "Wählen Sie, was Sie verlangen"
         },
         "name": {
+          "help": "Was der Verkäufer auf seiner Liste sieht.",
           "label": "Name",
-          "label_required": "Name (erforderlich)",
-          "help": "Was der Verkäufer auf seiner Liste sieht."
+          "label_required": "Name (erforderlich)"
         },
         "required": {
-          "label": "Erforderlich",
-          "help": "Erforderliche Punkte müssen vor der Freigabe erledigt sein. Andere gelten als empfohlen."
+          "help": "Erforderliche Punkte müssen vor der Freigabe erledigt sein. Andere gelten als empfohlen.",
+          "label": "Erforderlich"
         }
-      },
-      "delete_confirm": {
-        "title": "Anforderung löschen?",
-        "message": "Verkäufer werden nicht mehr nach „{{name}}\" gefragt. Bereits Eingereichtes wird ebenfalls gelöscht."
-      },
-      "messages": {
-        "created": "Anforderung hinzugefügt",
-        "updated": "Anforderung gespeichert",
-        "deleted": "Anforderung gelöscht",
-        "submission_accepted": "Angenommen",
-        "submission_rejected": "An den Verkäufer zurückgeschickt",
-        "waived": "Anforderung für diesen Verkäufer erlassen"
       },
       "kinds": {
         "accept_terms": "Bedingungen akzeptieren",
-        "complete_profile": "Profil vervollständigen",
-        "billing_address": "Rechnungsadresse",
-        "returns_address": "Retourenadresse",
-        "minimum_products": "Mindestanzahl Produkte",
-        "required_custom_fields": "Erforderliche benutzerdefinierte Felder",
         "attestation": "Bestätigung des Verkäufers",
+        "billing_address": "Rechnungsadresse",
+        "complete_profile": "Profil vervollständigen",
+        "document": "Dokument",
+        "minimum_products": "Mindestanzahl Produkte",
         "operator_review": "Manuelle Prüfung",
-        "document": "Dokument"
-      }
+        "required_custom_fields": "Erforderliche benutzerdefinierte Felder",
+        "returns_address": "Retourenadresse"
+      },
+      "messages": {
+        "created": "Anforderung hinzugefügt",
+        "deleted": "Anforderung gelöscht",
+        "submission_accepted": "Angenommen",
+        "submission_rejected": "An den Verkäufer zurückgeschickt",
+        "updated": "Anforderung gespeichert",
+        "waived": "Anforderung für diesen Verkäufer erlassen"
+      },
+      "required": {
+        "no": "Empfohlen",
+        "yes": "Erforderlich"
+      },
+      "search_placeholder": "Anforderungen suchen",
+      "status": {
+        "disabled": "Aus"
+      },
+      "title": "Verkäuferanforderungen"
     },
     "sellers": {
       "actions": {
-        "invite": "Einladen",
-        "reinvite": "Erneut senden",
-        "send_invitation": "Einladung senden",
         "approve": "Freigeben",
+        "invite": "Einladen",
         "reinstate": "Sperre aufheben",
-        "suspend": "Sperren",
+        "reinvite": "Erneut senden",
         "reject": "Ablehnen",
-        "reopen_onboarding": "Zurück zur Einrichtung"
+        "reopen_onboarding": "Zurück zur Einrichtung",
+        "send_invitation": "Einladung senden",
+        "suspend": "Sperren"
       },
       "add_cta": "Verkäufer hinzufügen",
       "add_sheet_title": "Neuer Verkäufer",
       "address": {
         "filled": "Ausgefüllt",
         "not_filled": "Nicht ausgefüllt",
-        "not_provided_by_seller": "Vom Verkäufer noch nicht angegeben",
-        "not_located_yet": "Die Karte erscheint, sobald diese Adresse gefunden wurde."
+        "not_located_yet": "Die Karte erscheint, sobald diese Adresse gefunden wurde.",
+        "not_provided_by_seller": "Vom Verkäufer noch nicht angegeben"
       },
       "approve_override_confirm": {
-        "title": "Trotzdem freigeben?",
+        "action": "Trotzdem freigeben",
         "message": "Dieser Verkäufer hat Folgendes nicht erledigt: {{names}}. Eine Freigabe jetzt erlaubt den Verkauf trotzdem, und die Entscheidung wird festgehalten.",
-        "action": "Trotzdem freigeben"
+        "title": "Trotzdem freigeben?"
       },
       "autocomplete": {
-        "placeholder": "Verkäufer suchen",
-        "empty": "Keine Verkäufer gefunden"
+        "empty": "Keine Verkäufer gefunden",
+        "placeholder": "Verkäufer suchen"
       },
       "create_description": "Legen Sie zuerst den Verkäufer an. Einladung, Freigabe und Auszahlungen richten Sie danach auf seiner Seite ein.",
       "create_label": "Verkäufer anlegen",
       "delete_confirm": {
-        "title": "Verkäufer löschen?",
-        "message": "Damit wird {{name}} vom Marktplatz entfernt. Die Produkte bleiben ohne Verkäufer im Katalog. Das lässt sich nicht rückgängig machen."
+        "message": "Damit wird {{name}} vom Marktplatz entfernt. Die Produkte bleiben ohne Verkäufer im Katalog. Das lässt sich nicht rückgängig machen.",
+        "title": "Verkäufer löschen?"
       },
       "detail": {
-        "load_error": "Dieser Verkäufer konnte nicht geladen werden",
-        "delete_label": "Verkäufer löschen",
-        "status": "Status",
-        "settlement": "Auszahlungen und Steuern",
         "at_a_glance": "Auf einen Blick",
+        "billing_address": "Rechnungsadresse",
         "contact": "Kontakt",
+        "delete_label": "Verkäufer löschen",
         "edit_profile": "Profil bearbeiten",
         "edit_profile_description": "Der Verkäufer pflegt das in seinem eigenen Bereich. Änderungen hier erfolgen in seinem Namen.",
         "edit_settlement": "Auszahlungen und Steuern bearbeiten",
         "edit_settlement_description": "Nur Sie sehen und ändern diese Angaben. Der Verkäufer bearbeitet sie nie.",
+        "load_error": "Dieser Verkäufer konnte nicht geladen werden",
         "no_about": "Dieser Verkäufer hat noch keine Beschreibung verfasst.",
-        "billing_address": "Rechnungsadresse",
-        "returns_address": "Retourenadresse"
+        "returns_address": "Retourenadresse",
+        "settlement": "Auszahlungen und Steuern",
+        "status": "Status"
       },
       "empty": "Noch keine Verkäufer",
       "images": {
-        "logo_label": "Logo",
-        "logo_help": "Quadratisch passt am besten. Wird überall neben dem Verkäufer angezeigt.",
-        "square_logo_label": "Quadratisches Logo",
-        "square_logo_help": "Für Stellen, die ein enges Quadrat brauchen, etwa ein Profilbild.",
+        "cover_photo_help": "Ein breites Banner oben auf dem Verkäuferprofil.",
         "cover_photo_label": "Titelbild",
-        "cover_photo_help": "Ein breites Banner oben auf dem Verkäuferprofil."
+        "logo_help": "Quadratisch passt am besten. Wird überall neben dem Verkäufer angezeigt.",
+        "logo_label": "Logo",
+        "square_logo_help": "Für Stellen, die ein enges Quadrat brauchen, etwa ein Profilbild.",
+        "square_logo_label": "Quadratisches Logo"
       },
       "invite_sheet": {
-        "title": "Verkäufer einladen",
         "description": "Mit der Annahme tritt die Person dem Verkäuferteam bei und kann sich in ihrem eigenen Bereich anmelden.",
-        "email_help": "Die Einladung geht an diese Adresse."
+        "email_help": "Die Einladung geht an diese Adresse.",
+        "title": "Verkäufer einladen"
       },
       "messages": {
-        "created": "Verkäufer angelegt",
-        "create_failed": "Verkäufer konnte nicht angelegt werden",
-        "updated": "Verkäufer aktualisiert",
-        "update_failed": "Verkäufer konnte nicht aktualisiert werden",
-        "deleted": "Verkäufer gelöscht",
-        "delete_failed": "Verkäufer konnte nicht gelöscht werden",
-        "invited": "Einladung gesendet",
-        "invite_failed": "Einladung konnte nicht gesendet werden",
-        "approved": "Verkäufer freigegeben",
         "approve_failed": "Verkäufer konnte nicht freigegeben werden",
-        "suspended": "Verkäufer gesperrt",
-        "suspend_failed": "Verkäufer konnte nicht gesperrt werden",
-        "rejected": "Verkäufer abgelehnt",
+        "approved": "Verkäufer freigegeben",
+        "create_failed": "Verkäufer konnte nicht angelegt werden",
+        "created": "Verkäufer angelegt",
+        "delete_failed": "Verkäufer konnte nicht gelöscht werden",
+        "deleted": "Verkäufer gelöscht",
+        "invite_failed": "Einladung konnte nicht gesendet werden",
+        "invited": "Einladung gesendet",
+        "onboarding_reopened": "Zurück zur Einrichtung geschickt",
         "reject_failed": "Verkäufer konnte nicht abgelehnt werden",
-        "onboarding_reopened": "Zurück zur Einrichtung geschickt"
+        "rejected": "Verkäufer abgelehnt",
+        "suspend_failed": "Verkäufer konnte nicht gesperrt werden",
+        "suspended": "Verkäufer gesperrt",
+        "update_failed": "Verkäufer konnte nicht aktualisiert werden",
+        "updated": "Verkäufer aktualisiert"
       },
       "not_provided": "Nicht angegeben",
       "on_holiday_notice": "Dieser Verkäufer ist abwesend. Sein Katalog bleibt sichtbar, es kann aber nichts gekauft werden.",
       "onboarding": {
-        "title": "Einrichtung",
-        "progress": "{{done}} von {{total}} erledigt",
-        "waived": "Erlassen",
-        "download": "Datei herunterladen",
-        "seller_note": "Verkäufer: {{note}}",
-        "review_note": "Ihre Notiz: {{note}}",
         "actions": {
           "accept": "Annehmen",
           "reject": "Zurückschicken",
           "waive": "Für diesen Verkäufer erlassen"
         },
-        "reject_confirm": {
-          "title": "Zurückschicken?",
-          "message": "Der Verkäufer wird erneut nach „{{name}}\" gefragt."
-        },
-        "waive_confirm": {
-          "title": "Anforderung erlassen?",
-          "message": "„{{name}}\" gilt nur für diesen Verkäufer als erfüllt."
-        },
         "all_done": "Alles erledigt 🎉",
+        "download": "Datei herunterladen",
+        "progress": "{{done}} von {{total}} erledigt",
+        "reject_confirm": {
+          "message": "Der Verkäufer wird erneut nach „{{name}}\" gefragt.",
+          "title": "Zurückschicken?"
+        },
+        "review_note": "Ihre Notiz: {{note}}",
+        "seller_note": "Verkäufer: {{note}}",
         "status": {
           "complete": "Erledigt",
+          "incomplete": "Ausstehend",
           "pending": "In Prüfung",
-          "rejected": "Zurückgeschickt",
-          "incomplete": "Ausstehend"
-        }
+          "rejected": "Zurückgeschickt"
+        },
+        "title": "Einrichtung",
+        "waive_confirm": {
+          "message": "„{{name}}\" gilt nur für diesen Verkäufer als erfüllt.",
+          "title": "Anforderung erlassen?"
+        },
+        "waived": "Erlassen"
       },
       "onboarding_column": "Einrichtung",
       "payout_interval": {
-        "inherit": "Standard des Shops",
-        "daily": "Täglich",
-        "weekly": "Wöchentlich",
         "biweekly": "Alle zwei Wochen",
+        "daily": "Täglich",
+        "inherit": "Standard des Shops",
+        "manual": "Manuell",
         "monthly": "Monatlich",
-        "manual": "Manuell"
+        "weekly": "Wöchentlich"
       },
       "products_column": "Produkte",
       "reject_confirm": {
-        "title": "Verkäufer ablehnen?",
-        "message": "{{name}} wird nicht zum Marktplatz zugelassen. Sie können ihn später trotzdem freigeben."
+        "message": "{{name}} wird nicht zum Marktplatz zugelassen. Sie können ihn später trotzdem freigeben.",
+        "title": "Verkäufer ablehnen?"
       },
       "reopen_onboarding_confirm": {
-        "title": "Zurück zur Einrichtung schicken?",
-        "message": "{{name}} kann die Angaben ändern und erneut um Prüfung bitten."
+        "message": "{{name}} kann die Angaben ändern und erneut um Prüfung bitten.",
+        "title": "Zurück zur Einrichtung schicken?"
       },
       "search_placeholder": "Verkäufer suchen",
       "status": {
-        "pending": "Offen",
+        "approved": "Freigegeben",
+        "canceled": "Abgebrochen",
         "invited": "Eingeladen",
         "onboarding": "In Einrichtung",
+        "pending": "Offen",
         "ready_for_review": "Zur Prüfung bereit",
-        "approved": "Freigegeben",
-        "suspended": "Gesperrt",
         "rejected": "Abgelehnt",
-        "canceled": "Abgebrochen"
+        "suspended": "Gesperrt"
       },
       "status_help": {
-        "pending": "Angelegt, aber noch niemand eingeladen.",
+        "approved": "Verkauft auf dem Marktplatz.",
+        "canceled": "Hat vor dem Beitritt zurückgezogen.",
         "invited": "Wartet darauf, dass jemand die Einladung annimmt.",
         "onboarding": "Trägt gerade seine Daten ein.",
+        "pending": "Angelegt, aber noch niemand eingeladen.",
         "ready_for_review": "Wartet auf Ihre Freigabe.",
-        "approved": "Verkauft auf dem Marktplatz.",
-        "suspended": "Vom Verkauf ausgeschlossen. Heben Sie die Sperre auf, um wieder zu handeln.",
         "rejected": "Nicht zum Marktplatz zugelassen.",
-        "canceled": "Hat vor dem Beitritt zurückgezogen."
+        "suspended": "Vom Verkauf ausgeschlossen. Heben Sie die Sperre auf, um wieder zu handeln."
       },
       "suspend_confirm": {
-        "title": "Verkäufer sperren?",
-        "message": "{{name}} kann sofort nicht mehr verkaufen. Katalog und Historie bleiben erhalten, und Sie können die Sperre später aufheben."
+        "message": "{{name}} kann sofort nicht mehr verkaufen. Katalog und Historie bleiben erhalten, und Sie können die Sperre später aufheben.",
+        "title": "Verkäufer sperren?"
       },
       "tax_remittance": {
-        "seller": "Verkäufer führt ab",
-        "platform": "Marktplatz führt ab"
+        "platform": "Marktplatz führt ab",
+        "seller": "Verkäufer führt ab"
       },
       "team_column": "Team"
     },
@@ -4129,7 +4081,6 @@
     "settings_nav": {
       "groups": {
         "audit": "Audit",
-        "fulfillment": "Fulfillment",
         "payments": "Zahlungen & Steuern",
         "store": "Shop",
         "team": "Team & Zugriff"
@@ -4152,7 +4103,6 @@
         "roles": "Rollen",
         "seller_requirements": "Verkäuferanforderungen",
         "staff": "Mitarbeiter",
-        "stock_locations": "Lagerstandorte",
         "store": "Shop",
         "tax_categories": "Steuerkategorien",
         "tax_rates": "Steuersätze",
@@ -4160,21 +4110,21 @@
       }
     },
     "setup": {
-      "title": "Spree einrichten",
-      "subtitle": "Erstellen Sie Ihr Administratorkonto und beschreiben Sie Ihren Shop. Alles hier lässt sich später ändern.",
-      "loading": "Setup-Status wird geprüft…",
-      "missing_token_title": "Setup-Link erforderlich",
-      "missing_token_message": "Öffnen Sie den bei der Installation ausgegebenen Setup-Link — er enthält das einmalige Setup-Token. Mit \"bin/rails spree:setup:token\" können Sie einen neuen ausgeben.",
-      "not_available_title": "Setup ist nicht verfügbar",
-      "not_available_message": "Diese Installation ist bereits eingerichtet. Melden Sie sich stattdessen mit Ihrem Administratorkonto an.",
-      "could_not_complete": "Setup konnte nicht abgeschlossen werden",
-      "completing": "Wird eingerichtet…",
-      "complete": "Setup abschließen",
       "back_to_login": "Zurück zur Anmeldung",
-      "required_notice_title": "Diese Installation ist noch nicht eingerichtet",
-      "required_notice_message": "Es existiert noch kein Administratorkonto. Verwenden Sie den Setup-Link aus der Installationsausgabe, um eines zu erstellen.",
+      "complete": "Setup abschließen",
+      "completing": "Wird eingerichtet…",
+      "could_not_complete": "Setup konnte nicht abgeschlossen werden",
+      "countries_failed": "Die Länderliste konnte nicht geladen werden.",
+      "loading": "Setup-Status wird geprüft…",
+      "missing_token_message": "Öffnen Sie den bei der Installation ausgegebenen Setup-Link — er enthält das einmalige Setup-Token. Mit \"bin/rails spree:setup:token\" können Sie einen neuen ausgeben.",
+      "missing_token_title": "Setup-Link erforderlich",
+      "not_available_message": "Diese Installation ist bereits eingerichtet. Melden Sie sich stattdessen mit Ihrem Administratorkonto an.",
+      "not_available_title": "Setup ist nicht verfügbar",
       "required_notice_link": "Zum Setup",
-      "countries_failed": "Die Länderliste konnte nicht geladen werden."
+      "required_notice_message": "Es existiert noch kein Administratorkonto. Verwenden Sie den Setup-Link aus der Installationsausgabe, um eines zu erstellen.",
+      "required_notice_title": "Diese Installation ist noch nicht eingerichtet",
+      "subtitle": "Erstellen Sie Ihr Administratorkonto und beschreiben Sie Ihren Shop. Alles hier lässt sich später ändern.",
+      "title": "Spree einrichten"
     },
     "staff": {
       "actions": {
@@ -4216,55 +4166,6 @@
       "messages": {
         "stock_level_deleted": "Lagerbestand gelöscht",
         "stock_updated": "Bestand aktualisiert"
-      }
-    },
-    "stock_locations": {
-      "add_cta": "Lagerort hinzufügen",
-      "badges": {
-        "default": "Standard",
-        "enabled": "Aktiviert",
-        "inactive": "Inaktiv"
-      },
-      "columns": {
-        "default": "Standard",
-        "location": "Standort",
-        "pickup": "Abholung",
-        "type": "Typ"
-      },
-      "create_description": "Fügen Sie ein Lager, ein Geschäft oder einen Abholpunkt hinzu, von dem aus Bestellungen abgewickelt werden.",
-      "create_label": "Lagerort erstellen",
-      "delete_confirm": {
-        "message": "{{name}} wird entfernt. Bestandsartikel an diesem Standort werden nicht gelöscht.",
-        "title": "Lagerort löschen?"
-      },
-      "edit_description": "Aktualisieren Sie Name, Adresse, Abholung oder Bestandsrichtlinien.",
-      "empty": "Noch keine Lagerstandorte",
-      "kinds": {
-        "fulfillment_center": "Fulfillment-Center",
-        "store": "Geschäft",
-        "warehouse": "Lager"
-      },
-      "pickup_stock_policies": {
-        "any": "Übertragungen von anderen Standorten zulassen",
-        "local": "Nur Artikel an diesem Standort"
-      },
-      "search_placeholder": "Nach Name suchen…",
-      "section_pickup": "Abholung",
-      "stock_levels": {
-        "empty": "An diesem Standort sind noch keine Lagerbestände vorhanden.",
-        "empty_search": "Keine Lagerbestände entsprechen Ihrer Suche.",
-        "help": "Passen Sie die verfügbaren und nachbestellbaren Mengen pro Variante an.",
-        "low_stock_marker": "niedriger Bestand",
-        "search_placeholder": "SKU oder Produkt suchen…",
-        "table": {
-          "backorder": "Nachbestellung",
-          "on_hand": "Verfügbar",
-          "variant": "Variante"
-        },
-        "title": "Bestand an diesem Standort",
-        "unknown_product": "Unbekanntes Produkt",
-        "variant_count_one": "{{count}} Variante",
-        "variant_count_other": "{{count}} Varianten"
       }
     },
     "stock_transfers": {

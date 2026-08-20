@@ -8,6 +8,7 @@ import {
   resourceSearchSchema,
   Subject,
   usePermissions,
+  useStockLocations,
   useStore,
 } from '@spree/dashboard-core'
 import {
@@ -47,7 +48,6 @@ import {
   useDeleteChannel,
   useUpdateChannel,
 } from '../../../../hooks/use-channels'
-import { useStockLocations } from '../../../../hooks/use-stock-locations'
 import { slugify } from '../../../../lib/slugify'
 import {
   CHANNEL_DEFAULTS,

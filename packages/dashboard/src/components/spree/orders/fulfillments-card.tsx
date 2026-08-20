@@ -1,4 +1,5 @@
 import type { Fulfillment, Order } from '@spree/admin-sdk'
+import { useStockLocations } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -50,7 +51,6 @@ import {
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useFulfillmentActions } from '../../../hooks/use-fulfillments'
-import { useStockLocations } from '../../../hooks/use-stock-locations'
 import {
   type FulfillmentItemRow,
   fulfillmentItemRows,

@@ -32,10 +32,23 @@ import { NavIcon } from './nav-main'
  * Hidden below `lg` regardless of `open` — settings on narrow viewports
  * still need a separate solution.
  */
-export function SettingsSidebar({ open }: { open: boolean }) {
+export function SettingsSidebar({
+  open,
+  tenantId,
+}: {
+  open: boolean
+  /**
+   * The id the settings links are built under — a store for the operator's
+   * dashboard, a seller for the marketplace panel. Falls back to reading
+   * `storeId` from the route so the operator's dashboard needs no change;
+   * a panel routed on anything else passes its own, exactly as `useNavItems`
+   * takes one.
+   */
+  tenantId?: string
+}) {
   const { t } = useTranslation()
   const { storeId } = useParams({ strict: false }) as { storeId?: string }
-  const id = storeId ?? 'default'
+  const id = tenantId ?? storeId ?? 'default'
   const snapshot = useSettingsNav()
   const { permissions } = usePermissions()
   const visible = filterByPermissions(snapshot, permissions)

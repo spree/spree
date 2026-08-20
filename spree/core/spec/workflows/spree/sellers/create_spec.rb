@@ -64,6 +64,7 @@ RSpec.describe Spree::Sellers::Create do
     expect(duplicate).not_to be_valid
   end
 
+
   it 'fails without a name, and writes no location' do
     result = described_class.call(store: store, attributes: { name: '' })
 

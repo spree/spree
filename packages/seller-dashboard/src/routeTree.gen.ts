@@ -16,8 +16,10 @@ import { Route as acceptInvitationDotinvitationIdRouteImport } from './routes/ac
 import { Route as authenticatedSellerIdRouteImport } from './routes/_authenticated/$sellerId'
 import { Route as IndexRouteImport } from './routes/_authenticated/$sellerId/index'
 import { Route as TeamRouteImport } from './routes/_authenticated/$sellerId/team'
+import { Route as SettingsRouteImport } from './routes/_authenticated/$sellerId/settings'
 import { Route as ProfileRouteImport } from './routes/_authenticated/$sellerId/profile'
 import { Route as OnboardingRouteImport } from './routes/_authenticated/$sellerId/onboarding'
+import { Route as SettingsStockLocationsRouteImport } from './routes/_authenticated/$sellerId/settings/stock-locations'
 
 const loginRoute = loginRouteImport.update({
   id: '/login',
@@ -54,6 +56,11 @@ const TeamRoute = TeamRouteImport.update({
   path: '/team',
   getParentRoute: () => authenticatedSellerIdRoute,
 } as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => authenticatedSellerIdRoute,
+} as any)
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -64,6 +71,11 @@ const OnboardingRoute = OnboardingRouteImport.update({
   path: '/onboarding',
   getParentRoute: () => authenticatedSellerIdRoute,
 } as any)
+const SettingsStockLocationsRoute = SettingsStockLocationsRouteImport.update({
+  id: '/stock-locations',
+  path: '/stock-locations',
+  getParentRoute: () => SettingsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof authenticatedIndexRoute
@@ -72,8 +84,10 @@ export interface FileRoutesByFullPath {
   '/accept-invitation/$invitationId': typeof acceptInvitationDotinvitationIdRoute
   '/$sellerId/onboarding': typeof OnboardingRoute
   '/$sellerId/profile': typeof ProfileRoute
+  '/$sellerId/settings': typeof SettingsRouteWithChildren
   '/$sellerId/team': typeof TeamRoute
   '/$sellerId/': typeof IndexRoute
+  '/$sellerId/settings/stock-locations': typeof SettingsStockLocationsRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof loginRoute
@@ -81,8 +95,10 @@ export interface FileRoutesByTo {
   '/': typeof authenticatedIndexRoute
   '/$sellerId/onboarding': typeof OnboardingRoute
   '/$sellerId/profile': typeof ProfileRoute
+  '/$sellerId/settings': typeof SettingsRouteWithChildren
   '/$sellerId/team': typeof TeamRoute
   '/$sellerId': typeof IndexRoute
+  '/$sellerId/settings/stock-locations': typeof SettingsStockLocationsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -93,8 +109,10 @@ export interface FileRoutesById {
   '/_authenticated/': typeof authenticatedIndexRoute
   '/_authenticated/$sellerId/onboarding': typeof OnboardingRoute
   '/_authenticated/$sellerId/profile': typeof ProfileRoute
+  '/_authenticated/$sellerId/settings': typeof SettingsRouteWithChildren
   '/_authenticated/$sellerId/team': typeof TeamRoute
   '/_authenticated/$sellerId/': typeof IndexRoute
+  '/_authenticated/$sellerId/settings/stock-locations': typeof SettingsStockLocationsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -105,8 +123,10 @@ export interface FileRouteTypes {
     | '/accept-invitation/$invitationId'
     | '/$sellerId/onboarding'
     | '/$sellerId/profile'
+    | '/$sellerId/settings'
     | '/$sellerId/team'
     | '/$sellerId/'
+    | '/$sellerId/settings/stock-locations'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -114,8 +134,10 @@ export interface FileRouteTypes {
     | '/'
     | '/$sellerId/onboarding'
     | '/$sellerId/profile'
+    | '/$sellerId/settings'
     | '/$sellerId/team'
     | '/$sellerId'
+    | '/$sellerId/settings/stock-locations'
   id:
     | '__root__'
     | '/_authenticated'
@@ -125,8 +147,10 @@ export interface FileRouteTypes {
     | '/_authenticated/'
     | '/_authenticated/$sellerId/onboarding'
     | '/_authenticated/$sellerId/profile'
+    | '/_authenticated/$sellerId/settings'
     | '/_authenticated/$sellerId/team'
     | '/_authenticated/$sellerId/'
+    | '/_authenticated/$sellerId/settings/stock-locations'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -186,6 +210,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TeamRouteImport
       parentRoute: typeof authenticatedSellerIdRoute
     }
+    '/_authenticated/$sellerId/settings': {
+      id: '/_authenticated/$sellerId/settings'
+      path: '/settings'
+      fullPath: '/$sellerId/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof authenticatedSellerIdRoute
+    }
     '/_authenticated/$sellerId/profile': {
       id: '/_authenticated/$sellerId/profile'
       path: '/profile'
@@ -200,12 +231,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OnboardingRouteImport
       parentRoute: typeof authenticatedSellerIdRoute
     }
+    '/_authenticated/$sellerId/settings/stock-locations': {
+      id: '/_authenticated/$sellerId/settings/stock-locations'
+      path: '/stock-locations'
+      fullPath: '/$sellerId/settings/stock-locations'
+      preLoaderRoute: typeof SettingsStockLocationsRouteImport
+      parentRoute: typeof SettingsRoute
+    }
   }
 }
+
+interface SettingsRouteChildren {
+  SettingsStockLocationsRoute: typeof SettingsStockLocationsRoute
+}
+
+const SettingsRouteChildren: SettingsRouteChildren = {
+  SettingsStockLocationsRoute: SettingsStockLocationsRoute,
+}
+
+const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
+  SettingsRouteChildren,
+)
 
 interface authenticatedSellerIdRouteChildren {
   OnboardingRoute: typeof OnboardingRoute
   ProfileRoute: typeof ProfileRoute
+  SettingsRoute: typeof SettingsRouteWithChildren
   TeamRoute: typeof TeamRoute
   IndexRoute: typeof IndexRoute
 }
@@ -213,6 +264,7 @@ interface authenticatedSellerIdRouteChildren {
 const authenticatedSellerIdRouteChildren: authenticatedSellerIdRouteChildren = {
   OnboardingRoute: OnboardingRoute,
   ProfileRoute: ProfileRoute,
+  SettingsRoute: SettingsRouteWithChildren,
   TeamRoute: TeamRoute,
   IndexRoute: IndexRoute,
 }

@@ -97,6 +97,39 @@ RSpec.describe Spree::Api::V3::Seller::StockLocationsController, type: :controll
       expect(response).to have_http_status(:not_found)
       expect(theirs.reload.city).not_to eq('Manchester')
     end
+
+    # The shared dashboard form posts every one of these. A field missing from
+    # `permitted_params` is dropped without a word, so the sheet closes on a
+    # 200 and the change is silently gone — which is exactly how this was
+    # found.
+    it 'accepts every field the shared form sends' do
+      patch :update, params: {
+        id: mine.prefixed_id,
+        name: 'Main depot', admin_name: 'Internal', kind: 'fulfillment_center',
+        active: true, default: true,
+        propagate_all_variants: true, backorderable_default: true,
+        address1: '2 Depot Road', address2: 'Unit 4', city: 'Leeds',
+        zipcode: 'LS1 1AA', phone: '555', company: 'Sparks Ltd',
+        country_code: 'GB', state_name: 'West Yorkshire',
+        pickup_enabled: true, pickup_stock_policy: 'any',
+        pickup_ready_in_minutes: 30, pickup_instructions: 'Ring the bell'
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      written = mine.reload.attributes.symbolize_keys.slice(
+        :name, :admin_name, :kind, :propagate_all_variants, :backorderable_default,
+        :address2, :city, :zipcode, :phone, :company, :state_name,
+        :pickup_enabled, :pickup_stock_policy, :pickup_ready_in_minutes, :pickup_instructions
+      )
+      expect(written).to eq(
+        name: 'Main depot', admin_name: 'Internal', kind: 'fulfillment_center',
+        propagate_all_variants: true, backorderable_default: true,
+        address2: 'Unit 4', city: 'Leeds', zipcode: 'LS1 1AA', phone: '555',
+        company: 'Sparks Ltd', state_name: 'West Yorkshire',
+        pickup_enabled: true, pickup_stock_policy: 'any',
+        pickup_ready_in_minutes: 30, pickup_instructions: 'Ring the bell'
+      )
+    end
   end
 
   # A location holds stock levels and is named on historical fulfillments, so

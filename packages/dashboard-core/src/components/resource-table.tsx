@@ -61,7 +61,7 @@ import {
   getTable,
   type SortOption,
 } from '../lib/table-registry'
-import { useStore } from '../providers/store-provider'
+import { useTenantId } from '../providers/tenant-provider'
 import { type BulkAction, BulkActionBar } from './bulk-action-bar'
 import { TableToolbar } from './table-toolbar'
 
@@ -129,9 +129,9 @@ interface ResourceTableProps<T> {
   /** Registry key (e.g., 'products') */
   tableKey: string
   /**
-   * TanStack Query key prefix. The table auto-injects the current storeId so
-   * mutation hooks that invalidate `['<key>', storeId]` always match — pages
-   * never need to thread storeId through themselves. A plain string is
+   * TanStack Query key prefix. The table auto-injects the current tenant id so
+   * mutation hooks that invalidate `['<key>', tenantId]` always match — pages
+   * never need to thread it through themselves. A plain string is
    * shorthand for `[string]`; pass an array to add further scope (e.g.
    * `[webhookDeliveriesTableKey(endpointId)]`).
    */
@@ -277,13 +277,13 @@ export function ResourceTable<T extends Record<string, any>>({
   // Build API params
   const sortString = dir === 'desc' ? `-${sort}` : sort
 
-  const { storeId } = useStore()
-  // Auto-inject storeId so every list query — and the matching mutation
-  // invalidation — is store-scoped without each page re-implementing it.
+  const tenantId = useTenantId()
+  // Auto-inject the tenant id so every list query — and the matching mutation
+  // invalidation — is tenant-scoped without each page re-implementing it.
   // Goes through +withStoreScope+ so the slot ordering matches +useResourceKey+
-  // and +useResourceMutation+'s invalidations (storeId at position 1).
+  // and +useResourceMutation+'s invalidations (tenant id at position 1).
   const userPrefix = Array.isArray(queryKey) ? queryKey : [queryKey]
-  const queryKeyPrefix = withStoreScope(userPrefix, storeId)
+  const queryKeyPrefix = withStoreScope(userPrefix, tenantId)
 
   const { data, isLoading } = useQuery({
     queryKey: [

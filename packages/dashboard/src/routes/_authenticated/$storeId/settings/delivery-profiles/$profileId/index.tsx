@@ -12,7 +12,9 @@ import {
   PageHeader,
   Subject,
   usePermissions,
+  useStockLocations,
   useStore,
+  useUpdateStockLocationById,
 } from '@spree/dashboard-core'
 import {
   Badge,
@@ -68,10 +70,6 @@ import {
   useDeleteDeliveryZone,
   useProfileDeliveryZones,
 } from '../../../../../../hooks/use-delivery-zones'
-import {
-  useStockLocations,
-  useUpdateStockLocationById,
-} from '../../../../../../hooks/use-stock-locations'
 import {
   flatAmount,
   formatAmount,

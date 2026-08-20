@@ -39,8 +39,13 @@ export function SellerReturnsLocationCard({ headless = false }: { headless?: boo
     queryFn: () => sellerClient().stockLocations.list({ per_page: 100 }),
   })
 
-  // The default one is where returns go, matching `Seller#returns_location`.
-  const location = locations?.data.find((candidate) => candidate.default) ?? locations?.data[0]
+  // Must match `Seller#returns_location` exactly — active only, default
+  // first, then by name. Ignoring `active` here would present a deactivated
+  // location as the returns address while the server had already moved
+  // returns somewhere else, with nothing on screen saying so.
+  const location = (locations?.data ?? [])
+    .filter((candidate) => candidate.active)
+    .sort((a, b) => Number(b.default) - Number(a.default) || a.name.localeCompare(b.name))[0]
   const hasAddress = Boolean(location?.address1)
   const title = t('profile.returns_address')
 

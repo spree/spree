@@ -67,7 +67,79 @@ export interface PanelApiClient {
    * would get an empty country list.
    */
   listCountries?(): Promise<{ data: PanelCountry[] }>
+  /**
+   * Stock locations, for the shared management page.
+   *
+   * Both panels manage the same records against their own branch — the
+   * operator every location in the store, a seller only their own, scoped
+   * server-side. `delete` is optional because a seller's API does not offer
+   * it: a location holds stock levels and is named on historical
+   * fulfillments, so they retire one by deactivating it.
+   */
+  stockLocations?: {
+    list(params?: Record<string, unknown>): Promise<{ data: PanelStockLocation[]; meta?: unknown }>
+    get(id: string): Promise<PanelStockLocation>
+    create(params: PanelStockLocationCreateParams): Promise<PanelStockLocation>
+    update(id: string, params: PanelStockLocationParams): Promise<PanelStockLocation>
+    delete?(id: string): Promise<void>
+  }
 }
+
+/**
+ * A stock location as the shared page reads it.
+ *
+ * Structural rather than either SDK's type: the two serializers overlap on
+ * everything this page shows, and the fields only one of them carries
+ * (`admin_name`, `propagate_all_variants`) are optional here so the page can
+ * hide what a panel does not send.
+ */
+export interface PanelStockLocation {
+  id: string
+  name: string
+  admin_name?: string | null
+  kind: string
+  active: boolean
+  default: boolean
+  propagate_all_variants?: boolean
+  backorderable_default?: boolean
+  address1?: string | null
+  address2?: string | null
+  city?: string | null
+  zipcode?: string | null
+  phone?: string | null
+  company?: string | null
+  country_code?: string | null
+  state_code?: string | null
+  state_name?: string | null
+  /** Rendered read-only in the table; either panel's serializer derives it. */
+  state_text?: string | null
+  pickup_enabled?: boolean
+  /** Open on read — a serializer answers whatever is stored. */
+  pickup_stock_policy?: string
+  pickup_ready_in_minutes?: number | null
+  pickup_instructions?: string | null
+}
+
+/**
+ * What either panel accepts when updating one — every field optional, since
+ * a caller may be writing a single toggle.
+ */
+export type PanelStockLocationParams = Partial<
+  Omit<PanelStockLocation, 'id' | 'pickup_stock_policy'>
+> & {
+  /**
+   * Narrowed on write where the read type is open: `kind` stays a free string
+   * because plugins register their own, but the pickup policy is a fixed pair
+   * the server validates, and both SDKs type it that way.
+   */
+  pickup_stock_policy?: 'local' | 'any'
+}
+
+/**
+ * Creating one additionally requires a name, matching both APIs: a location
+ * without one cannot exist, and neither SDK makes it optional.
+ */
+export type PanelStockLocationCreateParams = PanelStockLocationParams & { name: string }
 
 /**
  * A country as the address form needs it. Structural, not the Admin SDK's

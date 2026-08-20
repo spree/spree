@@ -19,4 +19,12 @@ setApiClient({
     return { rules: response.permissions, keys: response.permission_keys ?? [] }
   },
   listCountries: () => adminClient.countries.list({ expand: ['states'] }),
+  // Backs the shared stock-locations page, which both panels render.
+  stockLocations: {
+    list: (params) => adminClient.stockLocations.list(params),
+    get: (id) => adminClient.stockLocations.get(id),
+    create: (params) => adminClient.stockLocations.create(params),
+    update: (id, params) => adminClient.stockLocations.update(id, params),
+    delete: (id) => adminClient.stockLocations.delete(id),
+  },
 })

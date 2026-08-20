@@ -55,6 +55,15 @@ export function createSellerApiClient({
     // The shared address form reads countries through the registered client,
     // so it works in a panel that has no admin credential.
     listCountries: () => sellerClient().countries.list(),
+    // Backs the shared stock-locations page. No `delete`: a location holds
+    // stock levels and is named on historical fulfillments, so the Seller API
+    // does not offer it and the page hides the action accordingly.
+    stockLocations: {
+      list: (params) => sellerClient().stockLocations.list(params),
+      get: (id) => sellerClient().stockLocations.get(id),
+      create: (params) => sellerClient().stockLocations.create(params),
+      update: (id, params) => sellerClient().stockLocations.update(id, params),
+    },
   })
 
   return client

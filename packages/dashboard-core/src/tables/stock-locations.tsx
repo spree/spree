@@ -1,10 +1,10 @@
-import type { StockLocation } from '@spree/admin-sdk'
-import { defineTable } from '@spree/dashboard-core'
 import { ActiveBadge, ResourceNameCell } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { WarehouseIcon } from 'lucide-react'
+import type { PanelStockLocation } from '../api-client'
+import { defineTable } from '../lib/table-registry'
 
-defineTable<StockLocation>('stock-locations', {
+defineTable<PanelStockLocation>('stock-locations', {
   title: i18n.t('admin.settings_nav.items.stock_locations'),
   searchParam: 'name_cont',
   searchPlaceholder: i18n.t('admin.stock_locations.search_placeholder'),

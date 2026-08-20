@@ -7,6 +7,7 @@ import './i18n'
 // labels are translated at registration time — and before any host plugin
 // runs, so a plugin's `nav.remove('team')` finds the entry to remove.
 import './nav/default'
+import './nav/settings'
 
 // Plugin facade re-export — lets a marketplace register in-app customisations
 // (nav entries, slot widgets, table columns) without declaring

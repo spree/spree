@@ -15,7 +15,14 @@ module Spree
         # fulfillments, so removing one is an inventory operation rather than
         # a delete. A seller retires a location by deactivating it.
         class StockLocationsController < Seller::ResourceController
-          scoped_resource :stock_locations
+          # `:stock`, the catalog resource that lists `Spree::StockLocation`
+          # among its subjects — there is no `stock_locations` resource, and a
+          # name the catalog does not know skips the key gate entirely rather
+          # than failing loudly. Writes take `write_stock` here where the
+          # operator's twin takes `write_settings`: another seller's warehouse
+          # is store-wide administration, but a seller's own is just their
+          # stock.
+          scoped_resource :stock
 
           protected
 
@@ -27,11 +34,19 @@ module Spree
             Spree.api.seller_stock_location_serializer
           end
 
+          # The same set the operator's controller permits: a seller runs
+          # their own warehouse, so every field on the shared form is theirs to
+          # set. Anything missing here is dropped by `permit` without a word,
+          # and the form would appear to save while quietly discarding it.
           def permitted_params
             params.permit(
-              :name, :company, :address1, :address2, :city, :zipcode,
-              :country_code, :state_code, :state_name, :phone,
-              :active, :default, :kind
+              *model_additional_permitted_attributes,
+              :name, :admin_name, :active, :default,
+              :kind, :propagate_all_variants, :backorderable_default,
+              :address1, :address2, :city, :zipcode, :phone, :company,
+              :country_code, :state_code, :state_name,
+              :pickup_enabled, :pickup_stock_policy,
+              :pickup_ready_in_minutes, :pickup_instructions
             )
           end
 
