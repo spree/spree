@@ -2,6 +2,17 @@ require_dependency 'spree/payment/gateway_options'
 
 module Spree
   class Payment < Spree.base_class
+    # Gateway mechanics shared by the payments workflows and the payment
+    # methods: option serialization, response bookkeeping, error
+    # translation and instrumentation. The flows themselves — capture,
+    # void, authorize/purchase — live in app/workflows/spree/payments;
+    # the deprecated verb methods below delegate there until 7.0.
+    #
+    # Those five carry a full major's window rather than the usual one
+    # release: they have been the public way to move money since Spree 1,
+    # every payment extension and host override calls them, and the
+    # replacement is a different shape (a workflow result, not a boolean),
+    # so migrating is real work rather than a rename.
     module Processing
       extend ActiveSupport::Concern
       include Spree::InstrumentsGatewayCalls
@@ -11,30 +22,53 @@ module Spree
         self.gateway_options_class = Spree::Payment::GatewayOptions
       end
 
+      # @deprecated Call Spree.payment_process_workflow — removed in 7.0.
       def process!
-        if payment_method&.capture_at_checkout?
-          purchase!
-        else
-          authorize!
-        end
+        Spree::Deprecation.warn('Spree::Payment#process! is deprecated and will be removed in Spree 7.0. Call Spree.payment_process_workflow instead.')
+        run_payment_workflow(Spree.payment_process_workflow, payment: self)
       end
 
+      # @deprecated Call Spree.payment_process_workflow — removed in 7.0.
       def authorize!
-        handle_payment_preconditions { process_authorization }
+        Spree::Deprecation.warn('Spree::Payment#authorize! is deprecated and will be removed in Spree 7.0. Call Spree.payment_process_workflow instead.')
+        run_payment_workflow(Spree.payment_process_workflow, payment: self, action: :authorize)
       end
 
-      # Captures the entire amount of a payment.
+      # @deprecated Call Spree.payment_process_workflow — removed in 7.0.
       def purchase!
-        handle_payment_preconditions { process_purchase }
+        Spree::Deprecation.warn('Spree::Payment#purchase! is deprecated and will be removed in Spree 7.0. Call Spree.payment_process_workflow instead.')
+        run_payment_workflow(Spree.payment_process_workflow, payment: self, action: :purchase)
+      end
+
+      # @deprecated Call Spree.payment_capture_workflow — removed in 7.0.
+      def capture!(amount = nil)
+        Spree::Deprecation.warn('Spree::Payment#capture! is deprecated and will be removed in Spree 7.0. Call Spree.payment_capture_workflow instead.')
+        run_payment_workflow(Spree.payment_capture_workflow, payment: self, amount: amount)
+      end
+
+      # @deprecated Call Spree.payment_void_workflow — removed in 7.0.
+      def void_transaction!
+        Spree::Deprecation.warn('Spree::Payment#void_transaction! is deprecated and will be removed in Spree 7.0. Call Spree.payment_void_workflow instead.')
+        run_payment_workflow(Spree.payment_void_workflow, payment: self)
       end
 
       # Confirms a payment already authorized or captured on the gateway side
-      # (SDK / Drop-in / payment session flows) — the local state move only, no
-      # gateway call.
+      # (SDK / Drop-in / payment session flows) — the local status move only,
+      # no gateway call.
       #
-      # @param captured [Boolean, nil] whether the gateway reports the funds as
-      #   captured. Callers who know the gateway state pass it; nil falls back
-      #   to when the payment method charges.
+      # Deliberately not a workflow, unlike its siblings: its only caller is
+      # PaymentSession#settle_payment!, which runs inside owner.with_lock —
+      # and a workflow cannot run there (external_step refuses a
+      # workflow-opened transaction, halt! raises inside any transaction).
+      # The lock is what makes settlement exactly-once when the webhook
+      # races the customer's synchronous return, so it stays and this stays
+      # pure database work. There is no gateway call to push behind an
+      # external_step and no compensation to run, so nothing about it earns
+      # the workflow tier.
+      #
+      # @param captured [Boolean, nil] whether the gateway reports the funds
+      #   as captured. Callers who know the gateway state pass it; nil falls
+      #   back to when the payment method charges.
       def confirm!(captured: nil)
         captured = payment_method&.capture_at_checkout? if captured.nil?
 
@@ -48,89 +82,14 @@ module Spree
         end
       end
 
-      # Takes the amount in cents to capture.
-      # Can be used to capture partial amounts of a payment, and will create
-      # a new pending payment record for the remaining amount to capture later.
-      #
-      # The gateway call runs outside any lock (capture is idempotent at the
-      # provider — an already-captured intent comes back as success); the
-      # bookkeeping runs under the owner's row lock with a recheck, so a
-      # concurrent capture — or the webhook settling the same payment —
-      # records the capture event exactly once.
-      def capture!(amount = nil)
-        return true if completed?
-
-        amount ||= money.amount_in_cents
-        started_processing!
-        protect_from_connection_error do
-          # Capture the payment amount
-          response = instrument_gateway_call(:capture, payment_method) do
-            payment_method.capture(
-              amount,
-              response_code,
-              gateway_options
-            )
-          end
-
-          # A failed response writes no money records, so it needs no lock —
-          # and handle_response raises, which inside the lock's transaction
-          # would roll the failure state back.
-          handle_response(response, :complete, :failure) unless response.success?
-
-          already_captured = false
-          remainder = nil
-          owner.with_lock do
-            # DB-state recheck, deliberately not a reload — reload would
-            # discard the in-memory source (card numbers never persist).
-            if self.class.where(id: id, state: 'completed').exists?
-              already_captured = true
-            else
-              capture_events.create!(amount: ::Money.new(amount, currency).to_f)
-              # Split before completing, so payment.completed publishes with
-              # the captured amount and the order recomputes from correct rows.
-              remainder = split_uncaptured_amount
-              handle_response(response, :complete, :failure)
-            end
-          end
-          return true if already_captured
-
-          # Authorizes the remainder at the gateway — its own network call,
-          # so it stays outside the lock.
-          remainder&.authorize!
-          true
-        end
-      end
-
-      def void_transaction!
-        return true if void?
-        return void if response_code.blank?
-
-        protect_from_connection_error do
-          response = instrument_gateway_call(:void, payment_method) do
-            if payment_method.payment_profiles_supported?
-              # Gateways supporting payment profiles will need access to credit card object because this stores the payment profile information
-              # so supply the authorization itself as well as the credit card, rather than just the authorization code
-              payment_method.void(response_code, source, gateway_options)
-            else
-              # Standard void usage
-              payment_method.void(response_code, gateway_options)
-            end
-          end
-
-          if response.success?
-            self.response_code = response.authorization
-            void
-          else
-            gateway_error(response)
-          end
-        end
-      end
-
+      # Settles the payment for a canceled order: releases an uncaptured
+      # authorization, refunds a captured one. The gateway decides which —
+      # payment_method.cancel routes refunds through Refunds::Create.
       def cancel!
         response = instrument_gateway_call(:cancel, payment_method) do
           payment_method.cancel(response_code, self)
         end
-        handle_response(response, :void, :failure)
+        handle_response(response, :void)
       end
 
       def gateway_options
@@ -138,55 +97,11 @@ module Spree
         gateway_options_class.new(self).to_hash
       end
 
-      private
-
-      def process_authorization
-        started_processing!
-        gateway_action(source, :authorize, :pend)
-      end
-
-      def process_purchase
-        started_processing!
-        result = gateway_action(source, :purchase, :complete)
-        # This won't be called if gateway_action raises a GatewayError
-        capture_events.create!(amount: amount)
-      end
-
-      def handle_payment_preconditions
-        unless block_given?
-          raise ArgumentError, 'handle_payment_preconditions must be called with a block'
-        end
-
-        if payment_method&.source_required?
-          if source
-            unless processing?
-              if payment_method.supports?(source) || token_based?
-                yield
-              else
-                invalidate!
-                raise Core::GatewayError, Spree.t(:payment_method_not_supported)
-              end
-            end
-          else
-            raise Core::GatewayError, Spree.t(:payment_processing_failed)
-          end
-        else
-          yield unless processing?
-        end
-      end
-
-      def gateway_action(source, action, success_state)
-        protect_from_connection_error do
-          response = instrument_gateway_call(action, payment_method) do
-            payment_method.send(action, money.amount_in_cents,
-                                source,
-                                gateway_options)
-          end
-          handle_response(response, success_state, :failure)
-        end
-      end
-
-      def handle_response(response, success_state, failure_state)
+      # Records a gateway response on the payment: bookkeeping (response
+      # code, AVS/CVV results) plus the status write. A failed response
+      # writes `failed` non-raising — gateway_error below is the exception
+      # this path reports, and a validation problem must not preempt it.
+      def handle_response(response, success_state, _failure_state = :failure)
         if response.success?
           unless response.authorization.nil?
             self.response_code = response.authorization
@@ -197,9 +112,20 @@ module Spree
               self.cvv_response_message = response.cvv_result['message']
             end
           end
-          send("#{success_state}!")
+
+          # The bookkeeping assigned above is in memory; void! writes status
+          # through a conditional update, so persist the rest first.
+          save! if changed?
+
+          case success_state
+          when :complete then complete!
+          when :pend then pend!
+          when :void then void!
+          else raise ArgumentError, "Unknown payment success state: #{success_state.inspect}"
+          end
         else
-          send(failure_state)
+          self.status = 'failed'
+          save
           gateway_error(response)
         end
       end
@@ -226,6 +152,17 @@ module Spree
 
       def token_based?
         source.gateway_customer_profile_id.present? || source.gateway_payment_profile_id.present?
+      end
+
+      private
+
+      # Preserves the retired verbs' contract: true on success, GatewayError
+      # on failure.
+      def run_payment_workflow(workflow, **arguments)
+        result = workflow.call(**arguments)
+        raise Spree::Core::GatewayError, result.error.value.to_s if result.failure?
+
+        true
       end
     end
   end

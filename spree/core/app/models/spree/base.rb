@@ -148,7 +148,10 @@ class Spree::Base < ApplicationRecord
     type.to_s.demodulize.underscore
   end
 
+  # @deprecated Legacy Tom Select helper for the removed Rails admin. No replacement.
   def self.to_tom_select_json
+    Spree::Deprecation.warn('Spree::Base.to_tom_select_json is deprecated and will be removed in Spree 6.1.')
+
     pluck(:name, :id).map do |name, id|
       {
         id: id,

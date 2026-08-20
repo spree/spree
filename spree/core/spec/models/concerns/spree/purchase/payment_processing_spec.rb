@@ -4,7 +4,7 @@ RSpec.shared_examples 'a payment processing host' do
   describe '#process_payments!' do
     let!(:record) { new_record_with_line_items }
     let!(:payment) do
-      payment = create_payment(record, amount: 10, state: payment_state)
+      payment = create_payment(record, amount: 10, status: payment_state)
       record.payments << payment
       payment
     end
@@ -23,14 +23,14 @@ RSpec.shared_examples 'a payment processing host' do
     end
 
     it 'processes the payments' do
-      expect(payment).to receive(:process!)
+      expect(Spree::Payments::Process).to receive(:call).with(payment: payment, action: nil).and_return(double(failure?: false))
       expect(record.process_payments!).to be_truthy
     end
 
     # Regression spec for https://github.com/spree/spree/issues/5436
     it 'raises an error if there are no payments to process' do
       allow(record).to receive_messages unprocessed_payments: []
-      expect(payment).not_to receive(:process!)
+      expect(Spree::Payments::Process).not_to receive(:call)
       expect(record.process_payments!).to be_falsey
     end
 
@@ -40,12 +40,12 @@ RSpec.shared_examples 'a payment processing host' do
       let(:unprocessed_payments) { [] }
 
       it 'skips processing the payments' do
-        expect(payment).not_to receive(:process!)
+        expect(Spree::Payments::Process).not_to receive(:call)
         expect(record.process_payments!).to be_nil
       end
 
       context 'when there is other unprocessed payment' do
-        let(:other_payment) { create_payment(record, amount: 5, state: 'checkout') }
+        let(:other_payment) { create_payment(record, amount: 5, status: 'checkout') }
         let(:unprocessed_payments) { [other_payment] }
 
         before do
@@ -53,8 +53,8 @@ RSpec.shared_examples 'a payment processing host' do
         end
 
         it 'processes only the other payment' do
-          expect(payment).not_to receive(:process!)
-          expect(other_payment).to receive(:process!)
+          expect(Spree::Payments::Process).to receive(:call).once
+            .with(payment: other_payment, action: nil).and_return(double(failure?: false))
 
           expect(record.process_payments!).to be_truthy
         end
@@ -62,7 +62,10 @@ RSpec.shared_examples 'a payment processing host' do
     end
 
     context 'when a payment raises a GatewayError' do
-      before { expect(payment).to receive(:process!).and_raise(Spree::Core::GatewayError) }
+      before do
+      expect(Spree::Payments::Process).to receive(:call)
+        .and_return(double(failure?: true, error: double(value: 'card declined')))
+    end
 
       it 'returns false' do
         expect(record.process_payments!).to be false
@@ -75,13 +78,17 @@ RSpec.shared_examples 'a payment processing host' do
       end
     end
 
-    # Regression spec for https://github.com/spree/spree/issues/8148
-    it 'updates the record with correct payment total' do
+    # Regression spec for https://github.com/spree/spree/issues/8148.
+    # events: true — the record learns its payment_total from payment
+    # events now, and they are disabled by default in the test environment.
+    it 'updates the record with correct payment total', events: true do
       stub_store_preferences(capture_method: 'checkout')
       record.process_payments!
 
       expect(payment).to be_completed
-      expect(record.payment_total).to eq payment.amount
+      # reload: the subscriber that writes payment_total holds its own
+      # instance of this record, so the one here does not see the change.
+      expect(record.reload.payment_total).to eq payment.amount
     end
   end
 
@@ -94,7 +101,7 @@ RSpec.shared_examples 'a payment processing host' do
     before { allow(record).to receive_messages unprocessed_payments: [payment], total: 10 }
 
     it 'processes payments with authorize!' do
-      expect(payment).to receive(:authorize!)
+      expect(Spree::Payments::Process).to receive(:call).with(payment: payment, action: :authorize).and_return(double(failure?: false))
       subject
     end
 
@@ -110,7 +117,7 @@ RSpec.shared_examples 'a payment processing host' do
     before { allow(record).to receive_messages unprocessed_payments: [payment], total: 10 }
 
     it 'processes payments with purchase!' do
-      expect(payment).to receive(:purchase!)
+      expect(Spree::Payments::Process).to receive(:call).with(payment: payment, action: :purchase).and_return(double(failure?: false))
       subject
     end
 
@@ -123,8 +130,8 @@ RSpec.shared_examples 'a payment processing host' do
     it 'partitions payments by state' do
       # Pending first — creating a new payment invalidates existing
       # checkout-state payments (Payment#invalidate_old_payments).
-      pending_payment = create_payment(record, amount: 5, state: 'pending')
-      checkout_payment = create_payment(record, amount: 5, state: 'checkout')
+      pending_payment = create_payment(record, amount: 5, status: 'pending')
+      checkout_payment = create_payment(record, amount: 5, status: 'checkout')
 
       expect(record.pending_payments).to contain_exactly(pending_payment)
       expect(record.unprocessed_payments).to contain_exactly(checkout_payment)

@@ -107,20 +107,18 @@ module Spree
     end
 
     def load_sample_data
-      return unless Spree::Core::Engine.sample_available?
-
       if @load_sample_data
         # Sample-data imports need an admin as their owner. Without explicit
         # credentials the seed mints none (first-run setup does), so loading
         # now would raise mid-install.
         if admin_account_available?
           say_status :loading, 'sample data'
-          rake 'spree_sample:load'
+          rake 'spree:load_sample_data'
         else
           say_status :skipping, 'sample data (needs an admin account — finish setup, then run bin/rails spree:load_sample_data)'
         end
       else
-        say_status :skipping, 'sample data (you can always run rake spree_sample:load)'
+        say_status :skipping, 'sample data (you can always run bin/rails spree:load_sample_data)'
       end
     end
 

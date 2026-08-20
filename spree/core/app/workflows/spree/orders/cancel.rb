@@ -125,7 +125,13 @@ module Spree
           order.payments.completed.store_credits.each(&:void!)
         else
           order.payments.completed.each(&:cancel!)
-          order.payments.incomplete.not_store_credits.each(&:void_transaction!)
+          order.payments.incomplete.not_store_credits.each do |payment|
+            # Failed and invalid payments hold nothing to release.
+            next unless payment.can_void?
+
+            result = Spree.payment_void_workflow.call(payment: payment)
+            raise Spree::Core::GatewayError, result.error.value.to_s if result.failure?
+          end
           order.payments.store_credits.pending.each(&:void!)
         end
       end

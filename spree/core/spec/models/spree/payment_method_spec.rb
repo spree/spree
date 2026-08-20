@@ -18,50 +18,50 @@ describe Spree::PaymentMethod, type: :model do
   end
 
   context 'visibility scopes' do
-    before do
-      ['both', 'front_end', 'back_end'].each do |display_on|
-        store.payment_methods.create(
-          type: 'Spree::Gateway::Test',
-          name: 'Display Both',
-          display_on: display_on,
-          active: true,
-          description: 'foofah'
-        )
+    let!(:visible_method) do
+      store.payment_methods.create!(
+        type: 'Spree::Gateway::Test', name: 'Visible', active: true, description: 'foofah'
+      )
+    end
+
+    let!(:admin_only_method) do
+      store.payment_methods.create!(
+        type: 'Spree::Gateway::Test', name: 'Admin only', active: true,
+        storefront_visible: false, description: 'foofah'
+      )
+    end
+
+    it 'defaults to visible on the storefront' do
+      expect(visible_method.storefront_visible).to be true
+    end
+
+    describe '.storefront_visible' do
+      it 'returns only customer-facing methods' do
+        expect(Spree::PaymentMethod.storefront_visible).to contain_exactly(visible_method)
       end
     end
 
-    it 'has 5 total methods' do
-      expect(Spree::PaymentMethod.count).to eq(3)
-    end
-
-    describe '#available' do
-      it 'returns all methods available to front-end/back-end' do
-        methods = Spree::PaymentMethod.available
-        expect(methods.size).to eq(3)
-        expect(methods.pluck(:display_on)).to match_array(['both', 'front_end', 'back_end'])
+    describe '.admin_only' do
+      it 'returns only backoffice methods' do
+        expect(Spree::PaymentMethod.admin_only).to contain_exactly(admin_only_method)
       end
     end
 
-    describe '#available_on_front_end' do
-      it 'returns all methods available to front-end' do
-        methods = Spree::PaymentMethod.available_on_front_end
-        expect(methods.size).to eq(2)
-        expect(methods.pluck(:display_on)).to match_array(['both', 'front_end'])
+    describe '.available' do
+      it 'returns every active method regardless of storefront visibility' do
+        expect(Spree::PaymentMethod.available).to contain_exactly(visible_method, admin_only_method)
+      end
+
+      it 'excludes inactive methods' do
+        visible_method.update!(active: false)
+        expect(Spree::PaymentMethod.available).to contain_exactly(admin_only_method)
       end
     end
 
-    describe '#available_on_back_end' do
-      it 'returns all methods available to back-end' do
-        methods = Spree::PaymentMethod.available_on_back_end
-        expect(methods.size).to eq(2)
-        expect(methods.pluck(:display_on)).to match_array(['both', 'back_end'])
-      end
-    end
-
-    describe '#for_store' do
-      it 'returns all methods available to front-end/back-end for a store' do
+    describe '.for_store' do
+      it 'excludes methods belonging to another store' do
         store_2 = create(:store)
-        method_from_other_store = store_2.payment_methods.create(
+        method_from_other_store = store_2.payment_methods.create!(
           type: 'Spree::Gateway::Test',
           name: 'Display Both',
           active: true,
@@ -69,8 +69,36 @@ describe Spree::PaymentMethod, type: :model do
         )
         methods = Spree::PaymentMethod.for_store(store)
         expect(methods).not_to include(method_from_other_store)
-        expect(methods.size).to eq(3)
+        expect(methods).to contain_exactly(visible_method, admin_only_method)
       end
+    end
+  end
+
+  describe 'legacy display_on bridge' do
+    let(:visible_method) { build(:check_payment_method) }
+    let(:admin_only_method) { build(:check_payment_method, storefront_visible: false) }
+
+    it 'reads the boolean back as the old tri-state value' do
+      expect(visible_method.display_on).to eq('both')
+      expect(admin_only_method.display_on).to eq('back_end')
+    end
+
+    it 'writes back_end as hidden and every other value as visible' do
+      method = build(:check_payment_method)
+
+      method.display_on = 'back_end'
+      expect(method.storefront_visible).to be false
+
+      method.display_on = 'front_end'
+      expect(method.storefront_visible).to be true
+
+      method.display_on = 'both'
+      expect(method.storefront_visible).to be true
+    end
+
+    it 'maps available_on_front_end? onto storefront visibility' do
+      expect(visible_method.available_on_front_end?).to be true
+      expect(admin_only_method.available_on_front_end?).to be false
     end
   end
 

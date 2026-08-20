@@ -66,7 +66,7 @@ describe Spree::Order, type: :model do
       end
 
       context "state == 'failed'" do
-        let(:order) { FactoryBot.create(:order, payments: [FactoryBot.create(:payment, state: 'failed')]) }
+        let(:order) { FactoryBot.create(:order, payments: [FactoryBot.create(:payment, status: 'failed')]) }
 
         it "returns true if the order has state == 'failed'" do
           expect(order.is_risky?).to eq(true)

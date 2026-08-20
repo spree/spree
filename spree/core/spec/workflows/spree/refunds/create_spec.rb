@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Refunds::Create do
-  let(:payment) { create(:payment, state: 'completed', amount: 45.75) }
+  let(:payment) { create(:payment, status: 'completed', amount: 45.75) }
 
   before do
     Spree.hooks.clear!
@@ -37,7 +37,7 @@ RSpec.describe Spree::Refunds::Create do
     end
 
     it 'refuses to refund a payment that was never captured' do
-      pending_payment = create(:payment, state: 'pending')
+      pending_payment = create(:payment, status: 'pending')
 
       result = described_class.call(payment: pending_payment)
 

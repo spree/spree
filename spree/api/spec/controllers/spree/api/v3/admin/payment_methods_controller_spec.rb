@@ -188,14 +188,12 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
     end
   end
 
-  # `storefront_visible` is the wire-level visibility flag. The
-  # underlying `display_on` column lives on until 6.0 (see
-  # docs/plans/5.5-6.0-display-on-to-boolean.md) but is no longer
-  # exposed or accepted by the Admin API — clients read/write only the
-  # boolean.
+  # `storefront_visible` is the only visibility flag on the wire; the
+  # tri-state `display_on` column was dropped in 6.0 (see
+  # docs/plans/5.5-6.0-display-on-to-boolean.md).
   describe 'storefront_visible' do
     context 'GET #show' do
-      it 'returns storefront_visible: false when display_on is back_end' do
+      it 'returns false for a backoffice-only method' do
         payment_method.update!(storefront_visible: false)
 
         get :show, params: { id: payment_method.prefixed_id }, as: :json
@@ -204,8 +202,8 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
         expect(json_response).not_to have_key('display_on')
       end
 
-      it 'returns storefront_visible: true when display_on is both' do
-        payment_method.update!(display_on: 'both')
+      it 'returns true for a customer-facing method' do
+        payment_method.update!(storefront_visible: true)
 
         get :show, params: { id: payment_method.prefixed_id }, as: :json
 
@@ -214,16 +212,16 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
     end
 
     context 'PATCH #update' do
-      it 'maps storefront_visible: false to display_on: back_end' do
+      it 'hides the method from the storefront' do
         patch :update,
               params: { id: payment_method.prefixed_id, storefront_visible: false },
               as: :json
 
         expect(response).to have_http_status(:ok)
-        expect(payment_method.reload.display_on).to eq('back_end')
+        expect(payment_method.reload.storefront_visible).to be false
       end
 
-      it 'maps storefront_visible: true to display_on: both' do
+      it 'shows the method on the storefront' do
         payment_method.update!(storefront_visible: false)
 
         patch :update,
@@ -231,7 +229,7 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
               as: :json
 
         expect(response).to have_http_status(:ok)
-        expect(payment_method.reload.display_on).to eq('both')
+        expect(payment_method.reload.storefront_visible).to be true
       end
     end
   end

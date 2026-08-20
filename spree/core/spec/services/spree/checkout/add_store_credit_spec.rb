@@ -114,7 +114,7 @@ describe Spree::Checkout::AddStoreCredit, type: :service do
         described_class.call(order: order.reload)
         order.reload
 
-        expect(order.payments.where(state: 'invalid').count).to eq(0)
+        expect(order.payments.where(status: 'invalid').count).to eq(0)
       end
 
       it 'adjusts amount when order total changes' do

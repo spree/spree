@@ -2,12 +2,12 @@ module Spree
   module Payments
     # Voids an authorized payment at the gateway.
     #
-    # In the workflow tier because the void is network I/O — the external_step
-    # keeps it out of any transaction the workflow opened. Money movement
-    # stays in the model (Payment#void_transaction! and the state machine are
-    # unchanged); this owns the boundary, the guards and the extension points
-    # around it.
+    # Owns the flow end to end; Spree::Payment keeps only gateway
+    # mechanics. The payment.voided event publishes from the void! write
+    # itself.
     class Void < Spree::Workflow
+      include Spree::InstrumentsGatewayCalls
+
       hooks :validate, :before_void, :after_void
 
       # @param payment [Spree::Payment] an already-void payment is a no-op
@@ -22,7 +22,7 @@ module Spree
         external_step :void_at_gateway
 
         run_hooks :after_void
-        success(payment.reload)
+        success(payment)
       end
 
       private
@@ -35,9 +35,35 @@ module Spree
         failure(payment, :payment_not_voidable) unless payment.can_void?
       end
 
-      # The payment.voided event publishes from the state transition itself.
       def void_at_gateway
-        payment.void_transaction!
+        # Nothing ever reached the gateway, so there is nothing to release.
+        if payment.response_code.blank?
+          payment.void!
+          return
+        end
+
+        response = payment.protect_from_connection_error do
+          instrument_gateway_call(:void, payment.payment_method) do
+            if payment.payment_method.payment_profiles_supported?
+              # Profile gateways need the source: it carries the stored
+              # payment profile, not just the authorization code.
+              payment.payment_method.void(payment.response_code, payment.source, payment.gateway_options)
+            else
+              payment.payment_method.void(payment.response_code, payment.gateway_options)
+            end
+          end
+        end
+
+        if response.success?
+          # Payment#void! is the compare-and-swap — of two racing voids only
+          # one moves the row and publishes. There is no pre-gateway claim
+          # here, unlike capture: the gateway is the authority on whether
+          # the authorization can still be released, so only the terminal
+          # write must never double.
+          payment.void!(authorization: response.authorization)
+        else
+          payment.gateway_error(response)
+        end
       rescue Spree::Core::GatewayError => error
         failure(payment, error.message)
       end

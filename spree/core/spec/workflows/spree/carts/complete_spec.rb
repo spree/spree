@@ -292,7 +292,7 @@ module Spree
       let(:order) { create(:order_with_line_items) }
 
       it 'finalizes a draft order through the same service' do
-        create(:payment, order: order, amount: order.total, state: 'pending')
+        create(:payment, order: order, amount: order.total, status: 'pending')
 
         result = described_class.call(cart: order)
         expect(result).to be_success
@@ -312,7 +312,7 @@ module Spree
       it 'rolls the draft order back and re-points money records to the cart' do
         # A payment that never completes: processing is a no-op, so coverage
         # stays below total and the pre-capture rollback arm fires.
-        allow_any_instance_of(Spree::Payment).to receive(:process!)
+        allow(Spree::Payments::Process).to receive(:call).and_return(double(failure?: false))
         payment = ready_cart.payments.first
 
         result = described_class.call(cart: ready_cart)
@@ -339,7 +339,7 @@ module Spree
       end
 
       it 'completes without capturing when the payment is authorized but pending' do
-        uncovered_cart.payments.create!(payment_method: Spree::PaymentMethod.first, amount: uncovered_cart.total, state: 'pending')
+        uncovered_cart.payments.create!(payment_method: Spree::PaymentMethod.first, amount: uncovered_cart.total, status: 'pending')
 
         result = described_class.call(cart: uncovered_cart, payment_pending: true)
 

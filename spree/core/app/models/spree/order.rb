@@ -943,7 +943,7 @@ module Spree
     end
 
     def collect_backend_payment_methods
-      store.payment_methods.active.available_on_back_end.select { |pm| pm.available_for_order?(self) }
+      store.payment_methods.active.select { |pm| pm.available_for_order?(self) }
     end
 
 
@@ -1080,7 +1080,7 @@ module Spree
     def collect_payment_methods
       Spree::Deprecation.warn('`Order#collect_payment_methods` is deprecated and will be removed in Spree 6.1. Use `payment_methods` instead.')
 
-      store.payment_methods.available_on_front_end.select { |pm| pm.available_for_order?(self) }
+      store.payment_methods.active.storefront_visible.select { |pm| pm.available_for_order?(self) }
     end
 
     def credit_card_nil_payment?(attributes)
