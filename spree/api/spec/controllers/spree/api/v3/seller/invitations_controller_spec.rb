@@ -42,7 +42,7 @@ RSpec.describe Spree::Api::V3::Seller::InvitationsController, type: :controller 
     # separately — showing it here would double-count the person.
     it 'omits invitations that were accepted' do
       invitation.invitee = create(:admin_user, email: invitation.email)
-      invitation.accept!
+      Spree.invitation_accept_workflow.call(invitation: invitation)
 
       get :index, as: :json
 
