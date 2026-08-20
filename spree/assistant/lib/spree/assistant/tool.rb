@@ -91,14 +91,21 @@ module Spree
         raise NotImplementedError, 'Assistant tools must implement #call'
       end
 
-      # One-line description of what approving this call would do, shown on the
-      # approval card. Mutating tools should override it — the merchant reads
-      # this, not the raw arguments.
+      # One line saying what approving this call would do. It is the entire
+      # approval card — the merchant decides on this sentence and nothing else,
+      # so every mutating tool should override it with something that reads
+      # like an instruction ("Set Blue Shirt to draft"), naming the record
+      # rather than its id.
+      #
+      # The fallback spells the arguments out rather than dumping JSON, so a
+      # tool that forgets to override is merely terse instead of unreadable.
       #
       # @param arguments [Hash]
       # @return [String]
       def summary(arguments)
-        "#{tool_name} #{arguments.to_json}"
+        described = arguments.map { |key, value| "#{key.to_s.humanize.downcase} #{value}" }.join(', ')
+
+        [tool_name.humanize, described.presence].compact.join(': ')
       end
 
       # Whether the asking user may use this tool at all.

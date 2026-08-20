@@ -223,14 +223,10 @@ function TranscriptRow({
   return (
     <div className="rounded-lg border p-3">
       <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0">
-          <p className="font-medium text-sm">{toolCall.summary || toolCall.name}</p>
-          {/* The exact arguments, for a merchant who wants to check before
-              approving rather than trust the summary. */}
-          <pre className="mt-1 overflow-x-auto text-muted-foreground text-xs">
-            {JSON.stringify(toolCall.arguments, null, 2)}
-          </pre>
-        </div>
+        {/* The summary is the whole card: it already says what will change in
+            words the merchant reads. Printing the raw arguments underneath
+            restated the same thing in a form nobody should have to parse. */}
+        <p className="min-w-0 font-medium text-sm">{toolCall.summary || toolCall.name}</p>
         <StatusBadge status={toolCall.status} awaiting={toolCall.awaiting_approval} />
       </div>
 

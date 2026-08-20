@@ -1,3 +1,4 @@
+import { cn } from '@spree/dashboard-ui'
 import { useRef, useState } from 'react'
 import { AssistantPanel } from './assistant-panel'
 import { useAssistant } from './assistant-provider'
@@ -24,11 +25,16 @@ export function AssistantColumn() {
   return (
     <div
       hidden={!open}
-      className={
-        expanded
-          ? 'fixed inset-0 z-40 border-l lg:static lg:z-auto lg:w-[640px] lg:shrink-0 xl:w-[760px]'
-          : 'fixed inset-0 z-40 border-l lg:static lg:z-auto lg:w-[400px] lg:shrink-0 xl:w-[460px]'
-      }
+      // `sticky` + viewport height rather than `static`: as a plain flex child
+      // the column stretches to the height of the page, so on a long dashboard
+      // the composer ends up below the fold and the transcript scrolls the
+      // whole window instead of itself. Pinned to the viewport, the panel is
+      // always exactly one screen tall and scrolls internally.
+      className={cn(
+        'fixed inset-0 z-40 border-l',
+        'lg:sticky lg:top-0 lg:z-auto lg:h-svh lg:shrink-0',
+        expanded ? 'lg:w-[640px] xl:w-[760px]' : 'lg:w-[400px] xl:w-[460px]',
+      )}
     >
       <AssistantPanel
         onClose={close}
