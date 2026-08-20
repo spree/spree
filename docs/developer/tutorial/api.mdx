@@ -605,7 +605,7 @@ end
 
 ```ruby config/initializers/spree.rb
 # Permit brand_id in product params (from Extending Core Models tutorial)
-Spree::Product.additional_permitted_attributes += [:brand_id]
+Spree::PermittedAttributes.product_attributes << :brand_id
 
 # Swap in custom product serializer with brand support
 Spree::Api::Dependencies.product_serializer = 'MyApp::ProductSerializer'

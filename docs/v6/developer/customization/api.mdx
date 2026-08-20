@@ -173,19 +173,48 @@ end
 
 ### Permitted Attributes
 
-For endpoints that accept writes (create/update), add your attributes:
-
-```ruby config/initializers/spree.rb
-Spree::PermittedAttributes.brand_attributes = [:name, :slug, :description, :logo]
-```
-
-Or override `permitted_params` in the controller:
+For endpoints that accept writes (create/update), declare the attributes in your
+controller:
 
 ```ruby
-def permitted_params
-  params.permit(:name, :slug, :description, :logo)
+def resource_permitted_attributes
+  [:name, :slug, :description, :logo]
 end
 ```
+
+Entries are `params.permit` fragments, so collections and nested structures use
+the shapes you would pass there directly — `[:name, { region_ids: [] }]`.
+
+<Note>
+  Declare `resource_permitted_attributes`, not `permitted_attributes`. The
+  latter is what appends extension-contributed attributes to your list, so
+  overriding it replaces them.
+</Note>
+
+### Adding an Attribute to a Core Resource
+
+To make a new column writable on a Spree model without decorating the
+controllers that write it, append to the model's permitted attributes:
+
+```ruby config/initializers/spree.rb
+Spree::Product.additional_permitted_attributes += [:brand_id]
+```
+
+Standard resource endpoints append these to their own allowlist, so one
+declaration covers the model's create and update endpoints.
+
+Use `+=`, never `=` — assigning replaces what another extension added — and
+declare only attributes of your own, since redeclaring a key the controller
+already permits replaces its filter rather than widening it.
+
+<Note>
+  For merchant-managed data, prefer [Custom Fields](/developer/core-concepts/metafields),
+  which need no code and are filterable and sortable. This is for extensions
+  that add real database columns.
+</Note>
+
+Two endpoints deliberately ignore this hook because their parameters are
+authorization data rather than resource data: API keys and invitations.
 
 ## Consuming Custom Endpoints with the SDK
 

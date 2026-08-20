@@ -200,27 +200,15 @@ end
 
 ## Step 5: Permit the Brand Parameter
 
-For the API to save the brand association, we need to permit the `brand_id` parameter.
+For the admin form to save the brand association, we need to permit the `brand_id` parameter.
 
-Add it to the model's permitted attributes in your Spree initializer. The
-product create and update endpoints pick it up automatically — no controller
-decorator needed:
+Add to your Spree initializer:
 
 ```ruby config/initializers/spree.rb {3}
 # .. other code ..
 
-Spree::Product.additional_permitted_attributes += [:brand_id]
+Spree::PermittedAttributes.product_attributes << :brand_id
 ```
-
-Use `+=` rather than `=`, so you append to the list instead of replacing what
-another extension already added. For collections and nested structures, use the
-same shapes `params.permit` accepts — `[{ region_ids: [] }]`.
-
-<Note>
-  For merchant-managed data, prefer [Custom Fields](/developer/core-concepts/custom-fields),
-  which need no code at all and are filterable and sortable out of the box.
-  `additional_permitted_attributes` is for extensions that add real database columns.
-</Note>
 
 ## Step 6: Add Brand Selector to Product Admin Form
 
@@ -390,11 +378,11 @@ end
   SEO features like slugs, meta titles, and FriendlyId are covered in the [Slugs](/developer/core-concepts/slugs) documentation.
 </Info>
 
-### Permitting the Brand Parameter
+### Spree Initializer Additions
 
 ```ruby config/initializers/spree.rb
-# Permit brand_id on the API v3 endpoints that write a product
-Spree::Product.additional_permitted_attributes += [:brand_id]
+# Permit brand_id in product params
+Spree::PermittedAttributes.product_attributes << :brand_id
 ```
 
 <Tabs>

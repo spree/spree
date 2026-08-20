@@ -1095,7 +1095,7 @@
                       "v6/developer/customization/permissions",
                       "developer/customization/workflows",
                       "developer/customization/validations",
-                      "developer/customization/api",
+                      "v6/developer/customization/api",
                       "developer/customization/model-preferences",
                       "developer/customization/metadata",
                       "v6/developer/customization/dependencies",
