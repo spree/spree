@@ -299,6 +299,10 @@ is reported through `Rails.error` so it's visible rather than mysterious.
 | `gift_cards.redeem` | `after_redeem` | lifecycle | After the status is written (in transaction) |
 | `gift_cards.cancel` | `validate` | validate | Before a card is voided |
 | `gift_cards.cancel` | `after_cancel` | lifecycle | After the card is voided (in transaction) |
+| `price_lists.create` | `validate` | validate | After the list is built, before it is saved |
+| `price_lists.create` | `after_create` | lifecycle | After the list and its product membership exist (in transaction) |
+| `price_lists.update` | `validate` | validate | With the pending attributes assigned, before anything is written |
+| `price_lists.update` | `after_update` | lifecycle | After membership and price overrides are applied (in transaction) |
 | `price_lists.activate` | `validate` | validate | Before a price list takes effect |
 | `price_lists.activate` | `after_activate` | lifecycle | After the list goes live or is scheduled (in transaction) |
 | `price_lists.deactivate` | `validate` | validate | Before a price list stops applying |

@@ -1,5 +1,57 @@
 require 'spec_helper'
 
+# Variants and media a product arrives with cannot be written before it has an
+# id, so the model stashes them and the workflow replays them as a step. These
+# guard the POST /products response, which serializes the same in-memory
+# product it just created.
+RSpec.describe 'Spree::Products deferred nested attributes' do
+  let(:store) { Spree::Store.default }
+
+  it 'creates the variants the product was built with' do
+    product = Spree::Product.new(
+      name: 'Deferred', store: store,
+      variants: [{ sku: 'DEF-1', options: [{ name: 'Color', value: 'Red' }] }]
+    )
+
+    result = Spree.product_create_workflow.call(store: store, record: product)
+
+    expect(result).to be_success
+    expect(product.variants.count).to eq(1)
+    expect(product.variants.first.sku).to eq('DEF-1')
+  end
+
+  it 'reflects them in derived state without a reload' do
+    product = Spree::Product.new(
+      name: 'Fresh', store: store,
+      variants: [{ sku: 'FV-1', prices: [{ amount: 10, currency: 'USD' }], options: [] }]
+    )
+
+    Spree.product_create_workflow.call(store: store, record: product)
+
+    expect(product.variant_count).to eq(1)
+    expect(product.default_variant.sku).to eq('FV-1')
+    expect(product.price_in('USD').amount).to eq(10)
+  end
+
+  # The veto has to land before the insert, or a rejected create would leave
+  # variants and images behind with no product to hang them on.
+  it 'writes no nested data when a validate handler rejects' do
+    Spree.hooks.clear!
+    Spree.hooks.register('products.create.validate') { |workflow| workflow.reject!('nope') }
+
+    product = Spree::Product.new(
+      name: 'Vetoed', store: store,
+      variants: [{ sku: 'VETO-1', options: [] }]
+    )
+
+    expect {
+      expect(Spree.product_create_workflow.call(store: store, record: product)).not_to be_success
+    }.not_to change(Spree::Variant, :count)
+  ensure
+    Spree.hooks.clear!
+  end
+end
+
 RSpec.describe 'Spree::Products status workflows' do
   let(:store) { Spree::Store.default }
 

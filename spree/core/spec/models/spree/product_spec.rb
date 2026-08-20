@@ -489,7 +489,7 @@ describe Spree::Product, type: :model do
             { sku: 'TEE-S', options: [{ name: 'size', value: 'Small' }] },
             { sku: 'TEE-M', options: [{ name: 'size', value: 'Medium' }] }
           ]
-          p.save!
+          Spree.product_create_workflow.call(store: store, record: p)
         end
       end
 
@@ -2048,7 +2048,7 @@ describe Spree::Product, type: :model do
           store: store,
           variants: [{ sku: 'DEF-1', options: [{ name: 'Color', value: 'Red' }] }]
         )
-        new_product.save!
+        Spree.product_create_workflow.call(store: store, record: new_product)
 
         expect(new_product.variants.count).to eq(1)
         expect(new_product.variants.first.sku).to eq('DEF-1')
@@ -2063,7 +2063,7 @@ describe Spree::Product, type: :model do
           store: store,
           variants: [{ sku: 'SIMPLE-1', weight: 2, options: [] }]
         )
-        new_product.save!
+        Spree.product_create_workflow.call(store: store, record: new_product)
 
         expect(new_product.variants.count).to eq(1)
         expect(new_product.default_variant.sku).to eq('SIMPLE-1')
@@ -2093,7 +2093,7 @@ describe Spree::Product, type: :model do
             { sku: 'FV-2', prices: [{ amount: 20, currency: 'USD' }], options: [{ name: 'Size', value: 'M' }] }
           ]
         )
-        new_product.save!
+        Spree.product_create_workflow.call(store: store, record: new_product)
 
         expect(new_product.variant_count).to eq(2)
         expect(new_product.default_variant.sku).to eq('FV-1')
@@ -2106,7 +2106,7 @@ describe Spree::Product, type: :model do
           store: store,
           variants: [{ sku: 'FS-1', prices: [{ amount: 15, currency: 'USD' }], options: [] }]
         )
-        new_product.save!
+        Spree.product_create_workflow.call(store: store, record: new_product)
 
         expect(new_product.variant_count).to eq(1)
         expect(new_product.default_variant.sku).to eq('FS-1')
@@ -2251,7 +2251,7 @@ describe Spree::Product, type: :model do
         )
 
         expect {
-          new_product.save!
+          Spree.product_create_workflow.call(store: store, record: new_product)
         }.to change(Spree::Media, :count).by(1)
 
         image = new_product.media.find_by(alt: 'Pending')

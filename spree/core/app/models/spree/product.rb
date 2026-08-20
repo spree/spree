@@ -192,10 +192,8 @@ module Spree
 
     after_create :sync_associations_from_product_type
     after_update :sync_associations_from_product_type, if: :saved_change_to_product_type_id?
-    after_create :apply_pending_variants, if: :pending_variants?
     after_create :ensure_default_variant
     after_create :set_default_variant
-    after_save :apply_pending_media, if: :pending_media?
 
     after_save :auto_promote_default_variant
     after_save :run_touch_callbacks, if: :saved_changes?
@@ -321,7 +319,7 @@ module Spree
     # a form ships stale state).
     #
     # Deferred: ActiveStorage attaches require a persisted record, so on new
-    # records we stash the params and replay them in `after_create`.
+    # records we stash the params — see +apply_deferred_nested_attributes+.
     # @param media_params [Array<Hash>]
     # @return [void]
     def media=(media_params)
@@ -340,9 +338,31 @@ module Spree
       apply_media(media_params)
     end
 
+    # Applies the nested payloads that had to wait for the product to exist.
+    #
+    # ActiveStorage cannot attach to an unsaved record and a variant needs a
+    # product id, so `media=` and `variants=` stash hash payloads given to a
+    # new record instead of applying them. The Spree::Products workflows call
+    # this once the insert has happened. On a persisted product the setters
+    # apply immediately and this is a no-op.
+    #
+    # @return [void]
+    def apply_deferred_nested_attributes
+      if @pending_variants_params
+        apply_variants(@pending_variants_params)
+        @pending_variants_params = nil
+      end
+
+      return unless @pending_media_params
+
+      apply_media(@pending_media_params)
+      @pending_media_params = nil
+    end
+
     # Syncs variants from an array of hashes.
     # Creates new variants, updates existing ones (matched by :id), and removes unlisted ones.
-    # Must be called on a persisted product (use after_save or call explicitly after create).
+    # On a new record the payload is stashed until the product exists — see
+    # +apply_deferred_nested_attributes+.
     # @param variants_params [Array<Hash>] array of variant attribute hashes
     # @return [void]
     def variants=(variants_params)
@@ -835,28 +855,6 @@ module Spree
       return find_variant_with_images if has_media?
 
       nil
-    end
-
-    def pending_variants?
-      @pending_variants_params.present?
-    end
-
-    def apply_pending_variants
-      return unless @pending_variants_params
-
-      apply_variants(@pending_variants_params)
-      @pending_variants_params = nil
-    end
-
-    def pending_media?
-      @pending_media_params.present?
-    end
-
-    def apply_pending_media
-      return unless @pending_media_params
-
-      apply_media(@pending_media_params)
-      @pending_media_params = nil
     end
 
     def apply_media(media_params)

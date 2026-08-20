@@ -5,14 +5,15 @@ module Spree
     # handler sees every product a store gains rather than only the ones
     # typed into the dashboard.
     #
-    # Deliberately thin. Assigning a product's nested data — variants, media,
-    # prices, custom fields, categories — belongs to the model's setters and
-    # its after_create/after_save callbacks, and stays there: every caller
-    # gets that behavior, workflow or not. What the workflow adds is the veto
-    # point, and where it sits matters. Those setters stash their input and
-    # replay it once the product exists, so :validate runs before the insert
-    # and therefore before any variant, image or custom field is written —
-    # a rejection leaves nothing behind to clean up.
+    # Nested data a product arrives with — variants, media — cannot be
+    # written until the product has an id, so the model's setters stash hash
+    # payloads given to a new record and this replays them as a step of its
+    # own. It used to be an after_create callback; as a step the two phases of
+    # a create are visible where the flow is described rather than hidden in
+    # the save.
+    #
+    # :validate still runs before the insert, and therefore before any
+    # variant or image exists, so a rejection leaves nothing to clean up.
     class Create < Spree::Workflow
       hooks :validate, :after_create
 
@@ -36,6 +37,7 @@ module Spree
 
         ApplicationRecord.transaction do
           step :save_product
+          step :apply_deferred_nested_attributes
           run_hooks :after_create
         end
 
@@ -56,6 +58,12 @@ module Spree
 
       def save_product
         failure(product) unless product.save
+      end
+
+      # Variants and media the caller sent as hashes, which had to wait for
+      # the product to exist.
+      def apply_deferred_nested_attributes
+        product.apply_deferred_nested_attributes
       end
     end
   end
