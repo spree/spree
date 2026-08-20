@@ -686,6 +686,11 @@ Spree::Core::Engine.add_routes do
         # shape every later one follows — rooted in the seller by the anchor.
         resources :products, only: [:index, :show, :create, :update, :destroy]
 
+        # Where this seller keeps stock, and so where their returns are sent.
+        # No destroy: a location holds stock levels and is named on historical
+        # fulfillments, so a seller retires one by deactivating it.
+        resources :stock_locations, only: [:index, :show, :create, :update]
+
         # Reference data for the panel's address forms — the same list the
         # storefront serves, not narrowed to the marketplace's markets.
         resources :countries, only: [:index]

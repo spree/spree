@@ -16,9 +16,20 @@ namespace :spree do
       email = ENV.fetch('SELLER_EMAIL', 'seller@example.com')
       password = ENV.fetch('SELLER_PASSWORD', 'spree123')
 
-      seller = Spree::Seller.find_or_initialize_by(name: ENV.fetch('SELLER_NAME', 'Bright Sparks'), store: store)
-      seller.status = 'approved' if seller.new_record?
-      seller.save! if seller.new_record?
+      seller_name = ENV.fetch('SELLER_NAME', 'Bright Sparks')
+      seller = Spree::Seller.find_by(name: seller_name, store: store)
+
+      # Through the workflow, so the sample seller gets the stock location a
+      # real one does — without it their returns have nowhere to go and the
+      # checklist can never be finished.
+      if seller.nil?
+        result = Spree.seller_create_workflow.call(
+          store: store, attributes: { name: seller_name, status: 'approved' }
+        )
+        abort "Could not create the sample seller: #{result.value.errors.full_messages.to_sentence}" unless result.success?
+
+        seller = result.value
+      end
 
       owner = Spree.admin_user_class.find_by(email: email)
 

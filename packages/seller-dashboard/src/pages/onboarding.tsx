@@ -24,7 +24,8 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { sellerClient } from '../api-client'
 import { CenteredMessage } from '../components/centered-message'
-import { SellerAddressCard, type SellerAddressKey } from '../components/seller-address-card'
+import { SellerAddressCard } from '../components/seller-address-card'
+import { SellerReturnsLocationCard } from '../components/seller-returns-location-card'
 
 /**
  * What the marketplace asks of this seller before admitting them.
@@ -188,7 +189,7 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
   const { data: profile } = useQuery({
     queryKey: ['seller', sellerId, 'profile'],
     queryFn: () => sellerClient().profile.get(),
-    enabled: Boolean(addressKeyFor(requirement.kind)),
+    enabled: isAddressKind(requirement.kind),
   })
 
   const invalidate = () =>
@@ -282,13 +283,14 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
       {/* Addresses are filled in here rather than on the profile page: a
           seller working through setup should not be sent away and lose their
           place. Same card either way, so the two cannot diverge. */}
-      {addressKeyFor(requirement.kind) && profile && (
-        <SellerAddressCard
-          profile={profile}
-          addressKey={addressKeyFor(requirement.kind)!}
-          headless
-        />
+      {requirement.kind === 'billing_address' && profile && (
+        <SellerAddressCard profile={profile} headless />
       )}
+
+      {/* Returns go to a stock location rather than a loose address, so this
+          one writes a different record — the seller still just sees an
+          address form. */}
+      {requirement.kind === 'returns_address' && <SellerReturnsLocationCard headless />}
 
       {/* Kinds whose work happens on a page this panel already has. The
           server cannot supply these: `action_url` is for somewhere it knows
@@ -330,9 +332,8 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
  * is what makes a provider's kind useful before this file knows it exists.
  */
 /** Kinds the seller satisfies by filling an address, rendered inline. */
-function addressKeyFor(kind: string): SellerAddressKey | undefined {
-  if (kind === 'billing_address' || kind === 'returns_address') return kind
-  return undefined
+function isAddressKind(kind: string): boolean {
+  return kind === 'billing_address' || kind === 'returns_address'
 }
 
 function panelRoute(kind: string): string | undefined {

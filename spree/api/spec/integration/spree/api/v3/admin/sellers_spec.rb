@@ -241,7 +241,7 @@ RSpec.describe 'Admin Sellers API', type: :request, swagger_doc: 'api-reference/
         let(:body) do
           {
             billing_address: {
-              first_name: 'Ada', last_name: 'Lovelace', address1: '1 Seller Way',
+              company: 'Sparks Trading Ltd', address1: '1 Seller Way',
               city: 'London', postal_code: 'EC1A 1BB', country_code: 'GB', phone: '555'
             }
           }

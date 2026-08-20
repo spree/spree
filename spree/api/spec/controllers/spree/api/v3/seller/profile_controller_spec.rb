@@ -59,15 +59,26 @@ RSpec.describe Spree::Api::V3::Seller::ProfileController, type: :controller do
       expect(seller.contact_email).to eq('hello@sparks.example')
     end
 
-    it 'writes an address inline' do
+    it 'writes its billing address inline' do
       patch :update, params: {
-        returns_address: { first_name: 'Ada', last_name: 'Lovelace', address1: '1 Seller Way',
+        billing_address: { company: 'Sparks Trading Ltd', address1: '1 Seller Way',
                            city: 'London', postal_code: 'EC1A 1BB', country_code: 'GB',
                            phone: '555' }
       }, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(seller.reload.returns_address.address1).to eq('1 Seller Way')
+      expect(seller.reload.billing_address.address1).to eq('1 Seller Way')
+    end
+
+    # Returns go to a stock location, which has its own endpoint — a seller
+    # cannot write one through the profile.
+    it 'does not accept a returns address' do
+      patch :update, params: {
+        returns_address: { address1: '1 Seller Way', city: 'London', country_code: 'GB' }
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(seller.reload.returns_address).to be_nil
     end
 
     # The lifecycle belongs to the operator's workflows. A seller approving
