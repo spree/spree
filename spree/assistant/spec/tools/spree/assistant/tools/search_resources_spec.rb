@@ -101,3 +101,51 @@ RSpec.describe Spree::Assistant::Tools::SearchResources do
     end
   end
 end
+
+RSpec.describe Spree::Assistant::Tools::SearchResources, 'filter validation' do
+  subject(:tool) { described_class.new(context) }
+
+  let(:store) { @default_store }
+  let(:admin) { create(:admin_user) }
+  let(:context) { Spree::Assistant::Context.new(store: store, user: admin, ability: ability) }
+  let(:ability) do
+    Class.new do
+      include CanCan::Ability
+      def initialize = can(:manage, :all)
+      def permission_keys = Spree.permissions.catalog_keys
+    end.new
+  end
+
+  let!(:products) { create_list(:product, 3, store: store, status: 'active') }
+
+  # Ransack runs with `ignore_unknown_conditions` on, so a key it cannot parse
+  # is dropped and the search returns everything — which the assistant then
+  # reports as the answer. Checking only the attribute half let this through.
+  it 'refuses a real attribute with an invented predicate' do
+    result = tool.call(resource: 'products', filters: { 'status_notarealpredicate' => 'x' })
+
+    expect(result[:error]).to include('status_notarealpredicate')
+    expect(result[:total]).to be_nil
+  end
+
+  it 'still accepts every real predicate' do
+    %w[name_cont status_eq created_at_gteq].each do |key|
+      result = tool.call(resource: 'products', filters: { key => 'active' })
+
+      expect(result[:error]).to be_nil, "#{key} was rejected: #{result[:error]}"
+    end
+  end
+
+  it 'accepts a bare attribute, which Ransack reads as eq' do
+    expect(tool.call(resource: 'products', filters: { 'status' => 'active' })[:error]).to be_nil
+  end
+
+  it 'keeps `false` as a filter value rather than discarding it' do
+    # `compact_blank` threw this away, so the search silently returned
+    # everything instead of filtering.
+    result = tool.call(resource: 'products', filters: { 'out_of_stock' => false })
+
+    expect(result[:error]).to be_nil
+    expect(result[:total]).to eq(store.products.out_of_stock(false).count)
+  end
+end

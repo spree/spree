@@ -23,17 +23,29 @@ module Spree
     #     end
     #   end
     class Tool
+      # Declarations live in class attributes rather than plain class-level
+      # instance variables so a subclass inherits them. Subclassing a tool to
+      # tweak it is the documented extension path, and with bare ivars the
+      # subclass would come back `mutating? == false` — writing to the store
+      # immediately, with no approval card, no permission gate and no argument
+      # validation. Inheritance here is a safety property, not a convenience.
+      class_attribute :declared_tool_name, instance_accessor: false
+      class_attribute :declared_description, instance_accessor: false
+      class_attribute :declared_permission, instance_accessor: false
+      class_attribute :declared_mutating, instance_accessor: false, default: false
+      class_attribute :declared_params, instance_accessor: false, default: {}.freeze
+
       class << self
         # @return [String] the name the model calls this tool by
         def tool_name(value = nil)
-          @tool_name = value if value
-          @tool_name
+          self.declared_tool_name = value if value
+          declared_tool_name
         end
 
         # @return [String] what the tool does, read by the model when choosing
         def description(value = nil)
-          @description = value if value
-          @description
+          self.declared_description = value if value
+          declared_description
         end
 
         # RBAC permission key required to use this tool. A user without it never
@@ -41,8 +53,8 @@ module Spree
         #
         # @return [String]
         def permission(value = nil)
-          @permission = value if value
-          @permission
+          self.declared_permission = value if value
+          declared_permission
         end
 
         # Declares that this tool changes store data, so the turn halts for
@@ -50,12 +62,12 @@ module Spree
         #
         # @return [void]
         def mutating!
-          @mutating = true
+          self.declared_mutating = true
         end
 
         # @return [Boolean]
         def mutating?
-          @mutating == true
+          declared_mutating == true
         end
 
         # @param name [Symbol]
@@ -64,12 +76,16 @@ module Spree
         # @param required [Boolean]
         # @return [void]
         def param(name, type: :string, description: nil, required: false)
-          params[name] = { type: type, description: description, required: required }
+          # Reassigned rather than mutated, so declaring a param on a subclass
+          # does not reach back and change the parent's list.
+          self.declared_params = declared_params.merge(
+            name => { type: type, description: description, required: required }
+          ).freeze
         end
 
         # @return [Hash{Symbol => Hash}]
         def params
-          @params ||= {}
+          declared_params
         end
       end
 

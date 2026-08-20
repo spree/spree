@@ -85,3 +85,31 @@ RSpec.describe Spree::Assistant::ToolAdapter do
     end
   end
 end
+
+RSpec.describe 'tool declaration inheritance' do
+  # Subclassing a tool is the documented extension path. With declarations in
+  # bare class-level ivars, a subclass came back `mutating? == false` — so a
+  # host tweaking a write tool got one that skipped the approval card, the
+  # permission gate and argument validation all at once.
+  let(:subclass) { Class.new(Spree::Assistant::Tools::UpdateProductStatus) }
+
+  it 'keeps the mutating flag, so the approval gate still applies' do
+    expect(subclass.mutating?).to be(true)
+  end
+
+  it 'keeps the permission gate' do
+    expect(subclass.permission).to eq('write_products')
+  end
+
+  it 'keeps the name and params' do
+    expect(subclass.tool_name).to eq('update_product_status')
+    expect(subclass.params.keys).to contain_exactly(:id, :status)
+  end
+
+  it 'does not leak a subclass param back onto its parent' do
+    subclass.param(:extra, description: 'only here')
+
+    expect(subclass.params).to have_key(:extra)
+    expect(Spree::Assistant::Tools::UpdateProductStatus.params).not_to have_key(:extra)
+  end
+end

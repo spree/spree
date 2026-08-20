@@ -39,14 +39,19 @@ module Spree
           return invalid_filters(entry, unrecognised) if unrecognised.any?
 
           query = build_query(entry, applied, sort)
-          records = query.result.limit(capped_limit(limit)).to_a
+          # `accessible_by` builds LEFT JOINs for an association condition
+          # (`can :read, Product, categories: {...}`), so without `distinct` a
+          # record repeats once per matching row and the count is inflated —
+          # and the assistant states that count as fact.
+          result = query.result.distinct
+          records = result.limit(capped_limit(limit)).to_a
 
           {
             resource: entry.key,
             # How many matched, not how many were returned. The assistant is
             # asked to say how many there are, so handing it the page size would
             # have it state "10 products" for a store holding hundreds.
-            total: query.result.count,
+            total: result.count,
             count: records.size,
             records: records.map { |record| Spree::Assistant::RecordSummary.call(entry: entry, record: record) }
           }
@@ -65,16 +70,38 @@ module Spree
         end
 
         # A filter key is either a named scope (`out_of_stock`) or an
-        # `<attribute>_<predicate>` pair, which Ransack accepts only if the
-        # attribute is on the model's allowlist.
+        # `<attribute>_<predicate>` pair. BOTH halves must be checked: Ransack
+        # runs with `ignore_unknown_conditions` on, so it silently drops a key
+        # it cannot parse and returns the whole collection — which the
+        # assistant then reports as the answer ("you have 38 products with
+        # status notreal"). Checking only the attribute prefix let exactly that
+        # through.
         def unrecognised_filters(entry, filters)
-          allowed = entry.filterable_fields
           scopes = entry.filterable_scopes
 
           filters.keys.reject do |key|
             name = key.to_s
-            scopes.include?(name) || allowed.any? { |field| name == field || name.start_with?("#{field}_") }
+            scopes.include?(name) || valid_attribute_predicate?(entry, name)
           end
+        end
+
+        # Longest attribute first, so a field whose name is a prefix of another
+        # (`name` vs `name_of_thing`) does not shadow it.
+        def valid_attribute_predicate?(entry, key)
+          entry.filterable_fields.sort_by { |field| -field.length }.any? do |field|
+            next false unless key.start_with?(field)
+            # A bare attribute means Ransack's default `eq`.
+            next true if key == field
+
+            predicate = key.delete_prefix("#{field}_")
+            ransack_predicates.include?(predicate)
+          end
+        end
+
+        # Every predicate Ransack knows, including the compound `_any`/`_all`
+        # suffixes it generates.
+        def ransack_predicates
+          @ransack_predicates ||= Ransack.predicates.keys.to_set
         end
 
         def invalid_filters(entry, keys)
@@ -85,10 +112,11 @@ module Spree
           }
         end
 
-        # Ransack raises on unknown predicates, which is the behaviour we want —
-        # but blank values silently match everything, so they are dropped.
+        # Empty values match everything, so they are dropped — but `false` is a
+        # real filter value (`{"out_of_stock": false}`), and `compact_blank`
+        # would have thrown it away and quietly returned the whole collection.
         def sanitize_filters(filters)
-          (filters || {}).to_h.compact_blank
+          (filters || {}).to_h.reject { |_key, value| value.nil? || value == '' }
         end
 
         def capped_limit(limit)

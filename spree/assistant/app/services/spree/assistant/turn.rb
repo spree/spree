@@ -71,9 +71,13 @@ module Spree
       # refuses past the limit — the model is told to answer with what it has.
       MAX_TOOL_CALLS = 12
 
+      # The call being checked has already been recorded by `before_tool_call`,
+      # so the comparison allows for it — otherwise the budget cuts one call
+      # short of what it advertises.
+      #
       # @return [Boolean] whether another tool call is still allowed
       def tool_budget_available?
-        @activity.size < MAX_TOOL_CALLS
+        @activity.size <= MAX_TOOL_CALLS
       end
     end
   end

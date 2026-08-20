@@ -76,10 +76,25 @@ function renderToken(token: string, index: number): ReactNode {
   return token
 }
 
+/** Schemes safe to put behind a click. Everything else renders as plain text. */
+const SAFE_SCHEMES = ['http:', 'https:', 'mailto:']
+
+function isSafeExternalHref(href: string): boolean {
+  try {
+    return SAFE_SCHEMES.includes(new URL(href, window.location.origin).protocol)
+  } catch {
+    return false
+  }
+}
+
 /**
- * A dashboard path routes in-app; anything else opens externally. An assistant
- * cannot be trusted to only ever produce internal links, so an off-site URL is
- * treated as untrusted and opened in a new tab without referrer.
+ * A dashboard path routes in-app; a plain web address opens externally.
+ * Anything else is shown as text, never as a link.
+ *
+ * The link text comes from the model, and the model reads store data — a
+ * product description can ask it to emit `[Refund status](javascript:...)`,
+ * which would otherwise render as a clickable script inside an authenticated
+ * admin session. This is the same threat the approval gate exists for.
  */
 function MarkdownLink({ label, href }: { label: string; href: string }) {
   const { storeId } = useStore()
@@ -97,6 +112,10 @@ function MarkdownLink({ label, href }: { label: string; href: string }) {
         {label}
       </button>
     )
+  }
+
+  if (!isSafeExternalHref(href)) {
+    return <>{label}</>
   }
 
   return (

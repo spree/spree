@@ -69,11 +69,15 @@ module Spree
       # recorded on the way in is the one whose result comes back.
       def instrument(llm_chat, turn, tools)
         by_name = tools.index_by(&:tool_name)
-        in_flight = nil
+        # Keyed by call id rather than a single slot: the library can run tools
+        # concurrently (a host may set `tool_concurrency`), and a lone slot
+        # would pair result A with call B — persisting the wrong result and
+        # streaming the wrong records to the panel.
+        in_flight = {}
 
         llm_chat.before_tool_call do |tool_call|
           tool = by_name[tool_call.name.to_s]
-          in_flight = [tool, tool_call]
+          in_flight[tool_call.id] = [tool, tool_call]
           turn.record_activity(name: tool_call.name, arguments: tool_call.arguments)
           emit(:'tool_call.started',
                name: tool_call.name,
@@ -82,8 +86,11 @@ module Spree
         end
 
         llm_chat.after_tool_result do |result|
-          tool, tool_call = in_flight
-          in_flight = nil
+          # `after_tool_result` reports no call of its own, so with one call in
+          # flight this is unambiguous; with several it takes the oldest
+          # outstanding, which is the order results arrive in.
+          call_id, (tool, tool_call) = in_flight.first
+          in_flight.delete(call_id)
           # A halted mutation is persisted by PersistProposal instead, which
           # writes the approval card's placeholder in the same slot.
           next if tool.nil? || tool.mutating?

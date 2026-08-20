@@ -37,7 +37,9 @@ module Spree
     def title_from!(text)
       return if title.present? || text.blank?
 
-      update(title: text.to_s.strip.truncate(60))
+      # `update!` because the guard above means a silent failure is never
+      # retried — the chat would stay untitled for good.
+      update!(title: text.to_s.strip.truncate(60))
     end
 
     # The tool call currently blocking this conversation, if any. A turn halts

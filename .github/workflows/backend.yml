@@ -52,7 +52,7 @@ jobs:
 
       - name: Install all project dependencies
         run: |
-          for project in core api emails providers/easypost providers/meilisearch providers/paypal providers/stripe dashboard mcp opentelemetry; do
+          for project in core api emails providers/easypost providers/meilisearch providers/paypal providers/stripe dashboard mcp opentelemetry assistant; do
             echo "--- Installing gems for $project ---"
             cd spree/$project
             bundle config set --local path ${{ github.workspace }}/vendor/bundle
@@ -101,7 +101,7 @@ jobs:
 
       - name: Install all project dependencies
         run: |
-          for project in core api emails providers/easypost providers/meilisearch providers/paypal providers/stripe dashboard mcp opentelemetry; do
+          for project in core api emails providers/easypost providers/meilisearch providers/paypal providers/stripe dashboard mcp opentelemetry assistant; do
             echo "--- Installing gems for $project ---"
             cd spree/$project
             bundle config set --local path ${{ github.workspace }}/vendor/bundle
@@ -134,10 +134,10 @@ jobs:
           # they saved. This is also the only job with the Meilisearch service,
           # so spree_meilisearch's integration spec runs here.
           - { project: providers, dirs: "providers/easypost providers/meilisearch providers/paypal providers/stripe", shard: 1, total_shards: 1, procs: 2 }
-          # optional-gems: 1 runner × 2 procs — dashboard, mcp and opentelemetry
+          # optional-gems: 1 runner × 2 procs — dashboard, mcp, opentelemetry and assistant
           # share a lane. Each suite runs in seconds, far less than a runner's
           # setup, so a runner each only added queue time.
-          - { project: optional-gems, dirs: "dashboard mcp opentelemetry", flags: dashboard, shard: 1, total_shards: 1, procs: 2 }
+          - { project: optional-gems, dirs: "dashboard mcp opentelemetry assistant", flags: dashboard, shard: 1, total_shards: 1, procs: 2 }
     services:
       postgres:
         image: postgres:16
@@ -301,10 +301,10 @@ jobs:
           # No Meilisearch service here, so spree_meilisearch's integration spec
           # skips itself; its unit specs still run against MySQL.
           - { project: providers, dirs: "providers/easypost providers/meilisearch providers/paypal providers/stripe", shard: 1, total_shards: 1, procs: 2 }
-          # optional-gems: 1 runner × 2 procs — dashboard, mcp and opentelemetry
+          # optional-gems: 1 runner × 2 procs — dashboard, mcp, opentelemetry and assistant
           # share a lane. Each suite runs in seconds, far less than a runner's
           # setup, so a runner each only added queue time.
-          - { project: optional-gems, dirs: "dashboard mcp opentelemetry", flags: dashboard, shard: 1, total_shards: 1, procs: 2 }
+          - { project: optional-gems, dirs: "dashboard mcp opentelemetry assistant", flags: dashboard, shard: 1, total_shards: 1, procs: 2 }
     services:
       mysql:
         image: mysql:8.0

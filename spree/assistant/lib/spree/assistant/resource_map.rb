@@ -11,6 +11,10 @@ module Spree
     # catalog has no `read_price_lists`, and the price-lists controller rides
     # `read_products`, so this does too.
     class ResourceMap
+      # A registered resource whose model has no store scoping. Raised rather
+      # than quietly leaking another store's records.
+      UnscopedResourceError = Class.new(StandardError)
+
       Entry = Struct.new(:key, :model_name, :permission, :serializer_name,
                          :dashboard_path, :scope_name, keyword_init: true) do
         # Where this record lives in the dashboard, so an answer links to it
@@ -42,11 +46,35 @@ module Spree
         # @return [ActiveRecord::Relation]
         def scope_for(context, action = :show)
           relation = model_class.for_store(context.store)
+
+          # `Spree::Base.for_store` falls back to the bare class when a model
+          # has no matching Store association, returning EVERY store's rows.
+          # A model that defines its own `for_store` has made a deliberate
+          # choice (customers are global by design, and Spree::Customer says
+          # so); inheriting the fallback is an accident. Only the accident is
+          # refused, because serving another store's records to an assistant
+          # that reads them aloud is worse than a missing resource.
+          if model_class.method(:for_store).owner == Spree::Base.singleton_class && relation.equal?(model_class)
+            raise UnscopedResourceError, key
+          end
+
           # A resource that is a slice of a model rather than the whole of it
           # (draft orders among orders) narrows further.
           relation = relation.public_send(scope_name) if scope_name.present?
 
           context.accessible(relation, action)
+        end
+
+        # Whether this resource's scoping is deliberate — either a real
+        # store relation, or a model that owns its `for_store` and has decided
+        # it is global.
+        #
+        # @return [Boolean]
+        def store_scoped?
+          model_class.method(:for_store).owner != Spree::Base.singleton_class ||
+            !model_class.for_store(Spree::Store.new).equal?(model_class)
+        rescue StandardError
+          false
         end
 
         # @return [Class] the admin serializer for this resource
@@ -91,11 +119,12 @@ module Spree
         Entry.new(key: 'price_lists', model_name: 'Spree::PriceList',
                   permission: 'read_products', serializer_name: 'Spree::Api::V3::Admin::PriceListSerializer',
                   dashboard_path: '/products/price-lists/%<id>s'),
-        # Index-only pages in the dashboard, so no per-record link.
-        Entry.new(key: 'option_types', model_name: 'Spree::OptionType',
-                  permission: 'read_products', serializer_name: 'Spree::Api::V3::Admin::OptionTypeSerializer'),
-        Entry.new(key: 'transfers', model_name: 'Spree::StockTransfer',
-                  permission: 'read_stock', serializer_name: 'Spree::Api::V3::Admin::StockTransferSerializer'),
+        # Option types and stock transfers are deliberately absent. Neither
+        # model has a Store association, so `for_store` falls through to the
+        # unscoped class and would hand this store's assistant every store's
+        # rows. They can be listed the moment their models are genuinely
+        # store-scoped; until then a missing resource is better than a leaking
+        # one.
 
         # Orders
         Entry.new(key: 'orders', model_name: 'Spree::Order',
