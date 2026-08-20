@@ -686,6 +686,10 @@ Spree::Core::Engine.add_routes do
         # shape every later one follows — rooted in the seller by the anchor.
         resources :products, only: [:index, :show, :create, :update, :destroy]
 
+        # Reference data for the panel's address forms — the same list the
+        # storefront serves, not narrowed to the marketplace's markets.
+        resources :countries, only: [:index]
+
         # What the marketplace asks of this seller. Singular: the checklist is
         # always `current_seller`'s, never an id from the request.
         resource :onboarding, only: [:show], controller: 'onboarding' do

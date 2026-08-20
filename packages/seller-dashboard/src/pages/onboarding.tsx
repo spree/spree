@@ -24,6 +24,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { sellerClient } from '../api-client'
 import { CenteredMessage } from '../components/centered-message'
+import { SellerAddressCard, type SellerAddressKey } from '../components/seller-address-card'
 
 /**
  * What the marketplace asks of this seller before admitting them.
@@ -182,6 +183,14 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
   const queryClient = useQueryClient()
   const [note, setNote] = useState('')
 
+  // Only the address kinds need it, and it is already loaded by the profile
+  // page and the sidebar switcher — this reads the same cache entry.
+  const { data: profile } = useQuery({
+    queryKey: ['seller', sellerId, 'profile'],
+    queryFn: () => sellerClient().profile.get(),
+    enabled: Boolean(addressKeyFor(requirement.kind)),
+  })
+
   const invalidate = () =>
     queryClient.invalidateQueries({ queryKey: ['seller', sellerId, 'onboarding'] })
 
@@ -237,7 +246,17 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
       {rejection}
 
       {requirement.kind === 'accept_terms' && (
-        <div className="flex justify-start">
+        <div className="flex flex-wrap items-center gap-2">
+          {/* The terms themselves, when the marketplace configured a link.
+              Accepting something a seller cannot read is not consent. */}
+          {requirement.action_url && (
+            <Button size="sm" variant="outline" asChild>
+              <a href={requirement.action_url} target="_blank" rel="noreferrer">
+                {t('onboarding.read_terms')}
+                <ExternalLinkIcon className="size-4" />
+              </a>
+            </Button>
+          )}
           <Button size="sm" disabled={acceptTerms.isPending} onClick={() => acceptTerms.mutate()}>
             {t('onboarding.accept_terms')}
           </Button>
@@ -260,6 +279,17 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
         </div>
       )}
 
+      {/* Addresses are filled in here rather than on the profile page: a
+          seller working through setup should not be sent away and lose their
+          place. Same card either way, so the two cannot diverge. */}
+      {addressKeyFor(requirement.kind) && profile && (
+        <SellerAddressCard
+          profile={profile}
+          addressKey={addressKeyFor(requirement.kind)!}
+          headless
+        />
+      )}
+
       {/* Kinds whose work happens on a page this panel already has. The
           server cannot supply these: `action_url` is for somewhere it knows
           about (a provider's hosted flow), and it has no idea how this panel
@@ -276,7 +306,8 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
         </div>
       )}
 
-      {requirement.action_url && (
+      {/* `accept_terms` renders its own link above, with different words. */}
+      {requirement.action_url && requirement.kind !== 'accept_terms' && (
         <div className="flex justify-start">
           <Button size="sm" variant="outline" asChild>
             <a href={requirement.action_url} target="_blank" rel="noreferrer">
@@ -298,13 +329,17 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
  * kind that is not here renders its description and any `action_url`, which
  * is what makes a provider's kind useful before this file knows it exists.
  */
+/** Kinds the seller satisfies by filling an address, rendered inline. */
+function addressKeyFor(kind: string): SellerAddressKey | undefined {
+  if (kind === 'billing_address' || kind === 'returns_address') return kind
+  return undefined
+}
+
 function panelRoute(kind: string): string | undefined {
   switch (kind) {
-    case 'billing_address':
-    case 'returns_address':
     case 'complete_profile':
     case 'required_custom_fields':
-      return '/$sellerId'
+      return '/$sellerId/profile'
     // `minimum_products` belongs here too, once the panel has a products
     // page — until then it falls through and reads as a plain instruction
     // rather than a link to nowhere.

@@ -123,6 +123,15 @@ export class SellerClient {
   }
 
   /**
+   * Countries for the panel's address forms — public reference data, the same
+   * list the storefront serves.
+   */
+  readonly countries = {
+    list: (options?: RequestOptions): Promise<{ data: SellerCountry[] }> =>
+      this.request<{ data: SellerCountry[] }>('GET', '/countries', options),
+  }
+
+  /**
    * What the marketplace asks of this seller before it will admit them.
    *
    * Singular: the checklist is always the acting seller's. Every answer is
@@ -208,6 +217,16 @@ export class SellerClient {
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/products/${id}`, options),
   }
+}
+
+/** A country as the address form needs it. */
+export interface SellerCountry {
+  iso: string
+  iso3: string
+  name: string
+  states_required?: boolean
+  zipcode_required?: boolean
+  states?: Array<{ abbr: string; name: string }>
 }
 
 /** What `/seller/onboarding` answers. */

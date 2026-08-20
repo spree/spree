@@ -16,6 +16,7 @@ import { Route as acceptInvitationDotinvitationIdRouteImport } from './routes/ac
 import { Route as authenticatedSellerIdRouteImport } from './routes/_authenticated/$sellerId'
 import { Route as IndexRouteImport } from './routes/_authenticated/$sellerId/index'
 import { Route as TeamRouteImport } from './routes/_authenticated/$sellerId/team'
+import { Route as ProfileRouteImport } from './routes/_authenticated/$sellerId/profile'
 import { Route as OnboardingRouteImport } from './routes/_authenticated/$sellerId/onboarding'
 
 const loginRoute = loginRouteImport.update({
@@ -53,6 +54,11 @@ const TeamRoute = TeamRouteImport.update({
   path: '/team',
   getParentRoute: () => authenticatedSellerIdRoute,
 } as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => authenticatedSellerIdRoute,
+} as any)
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/$sellerId': typeof authenticatedSellerIdRouteWithChildren
   '/accept-invitation/$invitationId': typeof acceptInvitationDotinvitationIdRoute
   '/$sellerId/onboarding': typeof OnboardingRoute
+  '/$sellerId/profile': typeof ProfileRoute
   '/$sellerId/team': typeof TeamRoute
   '/$sellerId/': typeof IndexRoute
 }
@@ -73,6 +80,7 @@ export interface FileRoutesByTo {
   '/accept-invitation/$invitationId': typeof acceptInvitationDotinvitationIdRoute
   '/': typeof authenticatedIndexRoute
   '/$sellerId/onboarding': typeof OnboardingRoute
+  '/$sellerId/profile': typeof ProfileRoute
   '/$sellerId/team': typeof TeamRoute
   '/$sellerId': typeof IndexRoute
 }
@@ -84,6 +92,7 @@ export interface FileRoutesById {
   '/accept-invitation/$invitationId': typeof acceptInvitationDotinvitationIdRoute
   '/_authenticated/': typeof authenticatedIndexRoute
   '/_authenticated/$sellerId/onboarding': typeof OnboardingRoute
+  '/_authenticated/$sellerId/profile': typeof ProfileRoute
   '/_authenticated/$sellerId/team': typeof TeamRoute
   '/_authenticated/$sellerId/': typeof IndexRoute
 }
@@ -95,6 +104,7 @@ export interface FileRouteTypes {
     | '/$sellerId'
     | '/accept-invitation/$invitationId'
     | '/$sellerId/onboarding'
+    | '/$sellerId/profile'
     | '/$sellerId/team'
     | '/$sellerId/'
   fileRoutesByTo: FileRoutesByTo
@@ -103,6 +113,7 @@ export interface FileRouteTypes {
     | '/accept-invitation/$invitationId'
     | '/'
     | '/$sellerId/onboarding'
+    | '/$sellerId/profile'
     | '/$sellerId/team'
     | '/$sellerId'
   id:
@@ -113,6 +124,7 @@ export interface FileRouteTypes {
     | '/accept-invitation/$invitationId'
     | '/_authenticated/'
     | '/_authenticated/$sellerId/onboarding'
+    | '/_authenticated/$sellerId/profile'
     | '/_authenticated/$sellerId/team'
     | '/_authenticated/$sellerId/'
   fileRoutesById: FileRoutesById
@@ -174,6 +186,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TeamRouteImport
       parentRoute: typeof authenticatedSellerIdRoute
     }
+    '/_authenticated/$sellerId/profile': {
+      id: '/_authenticated/$sellerId/profile'
+      path: '/profile'
+      fullPath: '/$sellerId/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof authenticatedSellerIdRoute
+    }
     '/_authenticated/$sellerId/onboarding': {
       id: '/_authenticated/$sellerId/onboarding'
       path: '/onboarding'
@@ -186,12 +205,14 @@ declare module '@tanstack/react-router' {
 
 interface authenticatedSellerIdRouteChildren {
   OnboardingRoute: typeof OnboardingRoute
+  ProfileRoute: typeof ProfileRoute
   TeamRoute: typeof TeamRoute
   IndexRoute: typeof IndexRoute
 }
 
 const authenticatedSellerIdRouteChildren: authenticatedSellerIdRouteChildren = {
   OnboardingRoute: OnboardingRoute,
+  ProfileRoute: ProfileRoute,
   TeamRoute: TeamRoute,
   IndexRoute: IndexRoute,
 }
