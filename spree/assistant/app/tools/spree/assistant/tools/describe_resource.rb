@@ -35,7 +35,12 @@ module Spree
           {
             resource: entry.key,
             filterable_fields: entry.filterable_fields,
-            usage: 'Filters use Ransack predicates, e.g. name_cont, created_at_gteq, status_eq.'
+            # Named queries answer things no column can — stock levels live
+            # across warehouses, so "out of stock" is a scope, not a field.
+            filterable_scopes: entry.filterable_scopes,
+            usage: 'Attribute filters use Ransack predicates, e.g. name_cont, created_at_gteq, ' \
+                   'status_eq. Named scopes are passed as a bare key set to true, e.g. ' \
+                   '{"out_of_stock": true}.'
           }
         end
       end

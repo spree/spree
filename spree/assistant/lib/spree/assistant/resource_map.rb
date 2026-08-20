@@ -48,6 +48,17 @@ module Spree
         def filterable_fields
           model_class.ransackable_attributes.sort
         end
+
+        # Named queries the model exposes — `in_stock`, `out_of_stock`,
+        # `price_lte` and so on. These answer the questions merchants actually
+        # ask ("what's out of stock?") and cannot be expressed as an attribute
+        # filter, because the answer lives across stock levels rather than in a
+        # column. Passed as bare keys rather than `field_predicate` pairs.
+        #
+        # @return [Array<String>]
+        def filterable_scopes
+          model_class.ransackable_scopes.map(&:to_s).sort
+        end
       end
 
       ENTRIES = [

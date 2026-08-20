@@ -12,8 +12,10 @@ module Spree
 
         tool_name 'search_resources'
         description 'Search the store for records: products, orders, promotions or categories. ' \
-                    'Filters use Ransack predicates (name_cont, created_at_gteq, status_eq). ' \
-                    'Use describe_resource first if unsure which fields exist.'
+                    'Filters are Ransack predicates (name_cont, created_at_gteq, status_eq) or ' \
+                    'named scopes passed as a bare key, e.g. {"out_of_stock": true} or ' \
+                    '{"in_stock": true} for stock questions, {"price_lte": 20} for price. ' \
+                    'Call describe_resource to see every field and scope a resource supports.'
         # Per-resource permissions are enforced per call — this tool is offered
         # whenever the admin can read anything at all.
         permission nil
@@ -62,21 +64,24 @@ module Spree
           query
         end
 
-        # A filter key is `<attribute>_<predicate>`; Ransack accepts it only if
-        # the attribute is on the model's allowlist. Matching the longest
-        # attribute first keeps names containing underscores intact.
+        # A filter key is either a named scope (`out_of_stock`) or an
+        # `<attribute>_<predicate>` pair, which Ransack accepts only if the
+        # attribute is on the model's allowlist.
         def unrecognised_filters(entry, filters)
           allowed = entry.filterable_fields
+          scopes = entry.filterable_scopes
 
           filters.keys.reject do |key|
-            allowed.any? { |field| key.to_s == field || key.to_s.start_with?("#{field}_") }
+            name = key.to_s
+            scopes.include?(name) || allowed.any? { |field| name == field || name.start_with?("#{field}_") }
           end
         end
 
         def invalid_filters(entry, keys)
           {
             error: "Unknown filter(s): #{keys.join(', ')}",
-            filterable_fields: entry.filterable_fields
+            filterable_fields: entry.filterable_fields,
+            filterable_scopes: entry.filterable_scopes
           }
         end
 
