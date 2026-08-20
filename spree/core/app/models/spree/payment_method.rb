@@ -12,7 +12,6 @@ module Spree
     include Spree::StorePreferences
     include Spree::HasCustomFields
     include Spree::Metadata
-    include Spree::DisplayOn
     include Spree::CaptureMethod
     if defined?(Spree::Security::PaymentMethods)
       include Spree::Security::PaymentMethods
@@ -36,13 +35,24 @@ module Spree
     end
 
     scope :active,    -> { where(active: true).order(position: :asc) }
-    scope :available, -> { active.where(display_on: [:front_end, :back_end, :both]) }
+    # Every tri-state display_on value passed the old filter, so availability
+    # only ever meant "active".
+    scope :available, -> { active }
     scope :store_credit, -> { where(type: 'Spree::PaymentMethod::StoreCredit') }
+
+    # Customer-facing methods vs backoffice-only ones (manual check entry,
+    # internal wire transfers). The backoffice always sees every method.
+    scope :storefront_visible, -> { where(storefront_visible: true) }
+    scope :admin_only, -> { where(storefront_visible: false) }
+
+    # Real column, so admin clients filter it directly — no ransacker needed.
+    self.whitelisted_ransackable_attributes = %w[storefront_visible]
 
     after_initialize :set_name, if: :new_record?
 
     validates :name, presence: true
     validates :store, presence: true
+    validates :storefront_visible, inclusion: { in: [true, false] }
     normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
 
     belongs_to :store, class_name: 'Spree::Store'
@@ -266,6 +276,24 @@ module Spree
       public_preference_keys.each_with_object({}) do |key, hash|
         hash[key] = preferences[key]
       end
+    end
+
+    # @deprecated Use {#storefront_visible?}; removed in 6.1.
+    def available_on_front_end?
+      Spree::Deprecation.warn('Spree::PaymentMethod#available_on_front_end? is deprecated and will be removed in Spree 6.1. Use #storefront_visible? instead.')
+      storefront_visible?
+    end
+
+    # @deprecated Use {#storefront_visible}; removed in 6.1.
+    def display_on
+      Spree::Deprecation.warn('Spree::PaymentMethod#display_on is deprecated and will be removed in Spree 6.1. Use #storefront_visible instead.')
+      storefront_visible? ? 'both' : 'back_end'
+    end
+
+    # @deprecated Use {#storefront_visible=}; removed in 6.1.
+    def display_on=(value)
+      Spree::Deprecation.warn('Spree::PaymentMethod#display_on= is deprecated and will be removed in Spree 6.1. Use #storefront_visible= instead.')
+      self.storefront_visible = value.to_s != 'back_end'
     end
 
     protected

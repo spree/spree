@@ -5,7 +5,7 @@ Spree::Store.all.find_each do |store|
     description: 'Bogus payment gateway.',
     active: true
   )
-  cc_payment_method.display_on = 'back_end'
+  cc_payment_method.storefront_visible = false
   cc_payment_method.save!
 
   check_payment_method = store.payment_methods.find_or_initialize_by(
@@ -14,6 +14,6 @@ Spree::Store.all.find_each do |store|
     description: 'Pay by check.',
     active: true
   )
-  check_payment_method.display_on = 'back_end'
+  check_payment_method.storefront_visible = false
   check_payment_method.save!
 end
