@@ -17,12 +17,13 @@ module Spree
         # @return [Hash]
         def call(entry:, record:)
           attributes = serialize(entry, record)
+          title = title_for(record, attributes)
 
           {
             id: record.prefixed_id,
             resource: entry.key,
-            title: title_for(record, attributes),
-            subtitle: subtitle_for(attributes),
+            title: title,
+            subtitle: subtitle_for(attributes, title),
             status: attributes['status'],
             image_url: attributes['thumbnail_url'],
             # The dashboard route this record lives at, so the panel links
@@ -48,8 +49,11 @@ module Spree
             record.to_s
         end
 
-        def subtitle_for(attributes)
-          SUBTITLE_FIELDS.filter_map { |field| formatted(attributes[field]) }.first
+        def subtitle_for(attributes, title)
+          value = SUBTITLE_FIELDS.filter_map { |field| formatted(attributes[field]) }.first
+          # A subtitle that repeats the title (a customer whose name IS their
+          # email) is a wasted line.
+          value unless value == title
         end
 
         def formatted(value)

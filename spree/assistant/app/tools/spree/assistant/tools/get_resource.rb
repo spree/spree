@@ -8,7 +8,7 @@ module Spree
         description 'Fetch one record in full by its id, e.g. prod_86Rf07xd4z or an order number.'
         permission nil
 
-        param :resource, description: 'One of: products, orders, promotions, categories', required: true
+        param :resource, description: 'Resource key — call describe_resource for the list', required: true
         param :id, description: 'The record id as shown in search results', required: true
 
         def call(resource:, id:)

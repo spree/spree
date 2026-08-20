@@ -3,13 +3,16 @@ module Spree
     # What the generic read tools are allowed to look at.
     #
     # An allowlist rather than "any model": the assistant reaches store data
-    # through the same relations the Admin API uses, and a model that is not
+    # through the same relation the Admin API uses — `for_store`, which is how
+    # every admin controller scopes its collection — and a model that is not
     # listed here simply does not exist as far as the assistant is concerned.
-    # Each entry names the association to scope through, so every lookup starts
-    # from the current store rather than a bare model class.
+    #
+    # Permissions mirror the controllers rather than inventing keys: the
+    # catalog has no `read_price_lists`, and the price-lists controller rides
+    # `read_products`, so this does too.
     class ResourceMap
-      Entry = Struct.new(:key, :model_name, :store_association, :permission, :serializer_name,
-                         :dashboard_path, keyword_init: true) do
+      Entry = Struct.new(:key, :model_name, :permission, :serializer_name,
+                         :dashboard_path, :scope_name, keyword_init: true) do
         # Where this record lives in the dashboard, so an answer links to it
         # rather than describing where to look. Store-relative — the panel
         # prefixes the current store segment.
@@ -38,7 +41,12 @@ module Spree
         # @param action [Symbol]
         # @return [ActiveRecord::Relation]
         def scope_for(context, action = :show)
-          context.accessible(context.store.public_send(store_association), action)
+          relation = model_class.for_store(context.store)
+          # A resource that is a slice of a model rather than the whole of it
+          # (draft orders among orders) narrows further.
+          relation = relation.public_send(scope_name) if scope_name.present?
+
+          context.accessible(relation, action)
         end
 
         # @return [Class] the admin serializer for this resource
@@ -68,22 +76,56 @@ module Spree
       end
 
       ENTRIES = [
-        Entry.new(key: 'products', model_name: 'Spree::Product', store_association: :products,
+        # Catalog
+        Entry.new(key: 'products', model_name: 'Spree::Product',
                   permission: 'read_products', serializer_name: 'Spree::Api::V3::Admin::ProductSerializer',
                   dashboard_path: '/products/%<id>s'),
-        Entry.new(key: 'orders', model_name: 'Spree::Order', store_association: :orders,
+        Entry.new(key: 'categories', model_name: 'Spree::Category',
+                  permission: 'read_products', serializer_name: 'Spree::Api::V3::Admin::CategorySerializer',
+                  dashboard_path: '/products/categories/%<id>s'),
+        Entry.new(key: 'collections', model_name: 'Spree::Collection',
+                  permission: 'read_products', serializer_name: 'Spree::Api::V3::Admin::CollectionSerializer',
+                  dashboard_path: '/products/collections/%<id>s'),
+        # Price lists have no catalog key of their own; the Admin API rides
+        # `read_products`, so this does too.
+        Entry.new(key: 'price_lists', model_name: 'Spree::PriceList',
+                  permission: 'read_products', serializer_name: 'Spree::Api::V3::Admin::PriceListSerializer',
+                  dashboard_path: '/products/price-lists/%<id>s'),
+        # Index-only pages in the dashboard, so no per-record link.
+        Entry.new(key: 'option_types', model_name: 'Spree::OptionType',
+                  permission: 'read_products', serializer_name: 'Spree::Api::V3::Admin::OptionTypeSerializer'),
+        Entry.new(key: 'transfers', model_name: 'Spree::StockTransfer',
+                  permission: 'read_stock', serializer_name: 'Spree::Api::V3::Admin::StockTransferSerializer'),
+
+        # Orders
+        Entry.new(key: 'orders', model_name: 'Spree::Order',
                   permission: 'read_orders', serializer_name: 'Spree::Api::V3::Admin::OrderSerializer',
                   dashboard_path: '/orders/%<id>s'),
-        # Customers are deliberately absent: they are global rather than
-        # store-owned, so there is no store association to scope through, and
-        # inventing one for a surface that returns personal data is not a phase 1
-        # decision. They arrive with a reviewed scoping path of their own.
-        Entry.new(key: 'promotions', model_name: 'Spree::Promotion', store_association: :promotions,
+        Entry.new(key: 'draft_orders', model_name: 'Spree::Order', scope_name: :drafts,
+                  permission: 'read_orders', serializer_name: 'Spree::Api::V3::Admin::OrderSerializer',
+                  dashboard_path: '/orders/%<id>s'),
+
+        # People. Customers are store-scoped through `for_store` — the same
+        # relation the Admin API uses — rather than a Store association, which
+        # they do not have.
+        Entry.new(key: 'customers', model_name: 'Spree::Customer',
+                  permission: 'read_customers', serializer_name: 'Spree::Api::V3::Admin::CustomerSerializer',
+                  dashboard_path: '/customers/%<id>s'),
+        Entry.new(key: 'customer_groups', model_name: 'Spree::CustomerGroup',
+                  permission: 'read_customers', serializer_name: 'Spree::Api::V3::Admin::CustomerGroupSerializer'),
+        Entry.new(key: 'companies', model_name: 'Spree::Company',
+                  permission: 'read_customers', serializer_name: 'Spree::Api::V3::Admin::CompanySerializer',
+                  dashboard_path: '/companies/%<id>s'),
+        Entry.new(key: 'sellers', model_name: 'Spree::Seller',
+                  permission: 'read_sellers', serializer_name: 'Spree::Api::V3::Admin::SellerSerializer',
+                  dashboard_path: '/sellers/%<id>s'),
+
+        # Marketing
+        Entry.new(key: 'promotions', model_name: 'Spree::Promotion',
                   permission: 'read_promotions', serializer_name: 'Spree::Api::V3::Admin::PromotionSerializer',
                   dashboard_path: '/promotions/%<id>s'),
-        Entry.new(key: 'categories', model_name: 'Spree::Category', store_association: :categories,
-                  permission: 'read_products', serializer_name: 'Spree::Api::V3::Admin::CategorySerializer',
-                  dashboard_path: '/products/categories/%<id>s')
+        Entry.new(key: 'gift_cards', model_name: 'Spree::GiftCard',
+                  permission: 'read_gift_cards', serializer_name: 'Spree::Api::V3::Admin::GiftCardSerializer')
       ].freeze
 
       class << self

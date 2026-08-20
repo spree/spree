@@ -11,16 +11,16 @@ module Spree
         MAX_LIMIT = 25
 
         tool_name 'search_resources'
-        description 'Search the store for records: products, orders, promotions or categories. ' \
-                    'Filters are Ransack predicates (name_cont, created_at_gteq, status_eq) or ' \
-                    'named scopes passed as a bare key, e.g. {"out_of_stock": true} or ' \
-                    '{"in_stock": true} for stock questions, {"price_lte": 20} for price. ' \
-                    'Call describe_resource to see every field and scope a resource supports.'
+        description 'Search the store. Filters are Ransack predicates ' \
+                    '(name_cont, created_at_gteq, status_eq) or named scopes passed as a ' \
+                    'bare key, e.g. {"out_of_stock": true} for stock questions or ' \
+                    '{"price_lte": 20} for price. Call describe_resource to see every ' \
+                    'resource, field and scope available.'
         # Per-resource permissions are enforced per call — this tool is offered
         # whenever the admin can read anything at all.
         permission nil
 
-        param :resource, description: 'One of: products, orders, promotions, categories', required: true
+        param :resource, description: 'Resource key — call describe_resource for the list', required: true
         param :filters, type: :object, description: 'Ransack filter hash, e.g. {"name_cont": "shirt"}'
         param :sort, description: 'Sort, e.g. "created_at desc"'
         param :limit, type: :integer, description: "Max records to return (default #{DEFAULT_LIMIT})"
