@@ -10,31 +10,44 @@ module Spree
     class Registry
       include Enumerable
 
-      def initialize(tool_classes = [])
-        @tool_classes = tool_classes
+      def initialize(tool_names = [])
+        @tool_names = tool_names.map(&:to_s)
       end
 
-      # @param tool_class [Class<Spree::Assistant::Tool>]
+      # Registered by name, resolved on use.
+      #
+      # Holding the class itself would pin the copy loaded at boot, so in
+      # development every edit to a tool's description, params or permission
+      # needed a restart to take effect — and tuning those descriptions is how
+      # the assistant's behaviour is shaped. Names survive reloading, which is
+      # the same reason `Spree.integrations` stores strings.
+      #
+      # @param tool_class [Class<Spree::Assistant::Tool>, String]
       # @return [self]
       def <<(tool_class)
-        @tool_classes << tool_class unless @tool_classes.include?(tool_class)
+        name = tool_class.to_s
+        @tool_names << name unless @tool_names.include?(name)
         self
       end
       alias add <<
 
       def each(&)
-        @tool_classes.each(&)
+        to_a.each(&)
       end
 
       # @return [Array<Class<Spree::Assistant::Tool>>]
       def to_a
-        @tool_classes.dup
+        @tool_names.filter_map do |name|
+          name.safe_constantize.tap do |klass|
+            Rails.logger.warn("[Spree Assistant] registered tool #{name} does not exist") if klass.nil?
+          end
+        end
       end
 
       # @param name [String]
       # @return [Class<Spree::Assistant::Tool>, nil]
       def find_by_name(name)
-        @tool_classes.find { |tool_class| tool_class.tool_name == name.to_s }
+        to_a.find { |tool_class| tool_class.tool_name == name.to_s }
       end
 
       # Tools the given admin may actually use, instantiated for this context.
@@ -44,7 +57,7 @@ module Spree
       # @param context [Spree::Assistant::Context]
       # @return [Array<Spree::Assistant::Tool>]
       def available_for(context)
-        @tool_classes.map { |tool_class| tool_class.new(context) }.select(&:permitted?)
+        to_a.map { |tool_class| tool_class.new(context) }.select(&:permitted?)
       end
     end
   end

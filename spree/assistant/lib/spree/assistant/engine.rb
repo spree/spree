@@ -36,10 +36,13 @@ module Spree
           ]
         )
 
-        [
-          Spree::Assistant::Tools::DescribeResource,
-          Spree::Assistant::Tools::SearchResources,
-          Spree::Assistant::Tools::GetResource,
+        # Names, not classes: the registry resolves them per use, so editing a
+        # tool's description or params in development takes effect on the next
+        # request instead of the next boot.
+        %w[
+          Spree::Assistant::Tools::DescribeResource
+          Spree::Assistant::Tools::SearchResources
+          Spree::Assistant::Tools::GetResource
           Spree::Assistant::Tools::UpdateProductStatus
         ].each { |tool_class| Spree::Assistant.tools << tool_class }
 

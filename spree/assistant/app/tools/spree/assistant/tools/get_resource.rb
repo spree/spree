@@ -31,8 +31,16 @@ module Spree
           }
         end
 
+        # Named, not identified: "Look up Rotary Shaver 9000" is what the
+        # merchant is watching happen. A prefixed id is our plumbing.
         def summary(arguments)
-          "Look up #{arguments[:resource]} #{arguments[:id]}"
+          entry = Spree::Assistant::ResourceMap.find(arguments[:resource])
+          record = entry && find_record(entry, arguments[:id])
+          label = record && Spree::Assistant::RecordSummary.call(entry: entry, record: record)[:title]
+
+          "Look up #{label.presence || arguments[:id]}"
+        rescue StandardError
+          "Look up #{arguments[:resource]}"
         end
 
         private

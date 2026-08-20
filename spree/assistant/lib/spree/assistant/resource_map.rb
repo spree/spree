@@ -149,6 +149,66 @@ module Spree
                   permission: 'read_sellers', serializer_name: 'Spree::Api::V3::Admin::SellerSerializer',
                   dashboard_path: '/sellers/%<id>s'),
 
+
+        # Settings. Configuration a merchant asks about ("which payment methods
+        # are on?", "what markets do we sell to?") rather than transacts on.
+        Entry.new(key: 'channels', model_name: 'Spree::Channel',
+                  permission: 'read_settings', serializer_name: 'Spree::Api::V3::Admin::ChannelSerializer',
+                  dashboard_path: '/settings/channels'),
+        Entry.new(key: 'markets', model_name: 'Spree::Market',
+                  permission: 'read_settings', serializer_name: 'Spree::Api::V3::Admin::MarketSerializer',
+                  dashboard_path: '/settings/markets'),
+        Entry.new(key: 'payment_methods', model_name: 'Spree::PaymentMethod',
+                  permission: 'read_settings', serializer_name: 'Spree::Api::V3::Admin::PaymentMethodSerializer',
+                  dashboard_path: '/settings/payment-methods'),
+        Entry.new(key: 'delivery_methods', model_name: 'Spree::DeliveryMethod',
+                  permission: 'read_settings', serializer_name: 'Spree::Api::V3::Admin::DeliveryMethodSerializer'),
+        Entry.new(key: 'delivery_profiles', model_name: 'Spree::DeliveryProfile',
+                  permission: 'read_settings', serializer_name: 'Spree::Api::V3::Admin::DeliveryProfileSerializer',
+                  dashboard_path: '/settings/delivery-profiles'),
+        Entry.new(key: 'delivery_zones', model_name: 'Spree::DeliveryZone',
+                  permission: 'read_settings', serializer_name: 'Spree::Api::V3::Admin::DeliveryZoneSerializer'),
+        Entry.new(key: 'stock_locations', model_name: 'Spree::StockLocation',
+                  permission: 'read_stock', serializer_name: 'Spree::Api::V3::Admin::StockLocationSerializer',
+                  dashboard_path: '/settings/stock-locations'),
+        Entry.new(key: 'tax_categories', model_name: 'Spree::TaxCategory',
+                  permission: 'read_settings', serializer_name: 'Spree::Api::V3::Admin::TaxCategorySerializer',
+                  dashboard_path: '/settings/tax-categories'),
+        Entry.new(key: 'tax_rates', model_name: 'Spree::TaxRate',
+                  permission: 'read_settings', serializer_name: 'Spree::Api::V3::Admin::TaxRateSerializer',
+                  dashboard_path: '/settings/tax-rates'),
+        Entry.new(key: 'product_types', model_name: 'Spree::ProductType',
+                  permission: 'read_products', serializer_name: 'Spree::Api::V3::Admin::ProductTypeSerializer',
+                  dashboard_path: '/settings/product-types'),
+        Entry.new(key: 'commission_rates', model_name: 'Spree::CommissionRate',
+                  permission: 'read_sellers', serializer_name: 'Spree::Api::V3::Admin::CommissionRateSerializer',
+                  dashboard_path: '/settings/commission-rates'),
+        Entry.new(key: 'roles', model_name: 'Spree::Role',
+                  permission: 'read_staff', serializer_name: 'Spree::Api::V3::Admin::RoleSerializer',
+                  dashboard_path: '/settings/roles'),
+        Entry.new(key: 'return_reasons', model_name: 'Spree::ReturnReason',
+                  permission: 'read_settings', serializer_name: 'Spree::Api::V3::Admin::ReturnReasonSerializer',
+                  dashboard_path: '/settings/reasons'),
+        Entry.new(key: 'webhook_endpoints', model_name: 'Spree::WebhookEndpoint',
+                  permission: 'read_settings', serializer_name: 'Spree::Api::V3::Admin::WebhookEndpointSerializer'),
+        Entry.new(key: 'allowed_origins', model_name: 'Spree::AllowedOrigin',
+                  permission: 'read_settings', serializer_name: 'Spree::Api::V3::Admin::AllowedOriginSerializer',
+                  dashboard_path: '/settings/allowed-origins'),
+        Entry.new(key: 'imports', model_name: 'Spree::Import',
+                  permission: 'read_settings', serializer_name: 'Spree::Api::V3::Admin::ImportSerializer',
+                  dashboard_path: '/settings/imports'),
+        Entry.new(key: 'exports', model_name: 'Spree::Export',
+                  permission: 'read_settings', serializer_name: 'Spree::Api::V3::Admin::ExportSerializer'),
+
+        # Deliberately absent, and not for lack of a page:
+        #   api_keys      — the serializer exposes `plaintext_token`, so
+        #                   listing them would send live credentials to an AI
+        #                   vendor.
+        #   integrations  — same shape of risk; the preferences blob is where
+        #                   every provider credential lives.
+        #   staff, custom_field_definitions — neither model is store-scoped,
+        #                   so `for_store` would return every store's rows.
+
         # Marketing
         Entry.new(key: 'promotions', model_name: 'Spree::Promotion',
                   permission: 'read_promotions', serializer_name: 'Spree::Api::V3::Admin::PromotionSerializer',

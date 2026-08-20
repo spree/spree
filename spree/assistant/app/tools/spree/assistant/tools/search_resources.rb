@@ -58,7 +58,14 @@ module Spree
         end
 
         def summary(arguments)
-          "Search #{arguments[:resource]}"
+          label = arguments[:resource].to_s.tr('_', ' ')
+          filters = arguments[:filters]
+          return "Search #{label}" if filters.blank?
+
+          # Name the filter in words, so the activity line says what is being
+          # looked for rather than only where.
+          described = filters.keys.map { |key| key.to_s.tr('_', ' ') }.join(', ')
+          "Search #{label} by #{described}"
         end
 
         private

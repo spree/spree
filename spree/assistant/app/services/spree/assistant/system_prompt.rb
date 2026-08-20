@@ -34,6 +34,9 @@ module Spree
             directly above your reply. Do not repeat them as a list, a table, or a set
             of links. Summarise instead: say how many there are and what stands out.
           - Prices and totals are already formatted in tool results — repeat them as given.
+          - Write for a shopkeeper, not a developer. Never show field names, ids,
+            JSON or code from a tool result. Say "out of stock", not
+            `"in_stock" => false`; say the product's name, not its id.
 
           Answer in #{locale_name}. Be brief and concrete. Prefer a short answer with the
           specific records over a long explanation.

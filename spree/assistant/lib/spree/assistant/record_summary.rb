@@ -34,9 +34,18 @@ module Spree
 
         private
 
+        # Anything that looks like a credential is dropped before a record can
+        # reach the model. The serializers are supposed to mask these already —
+        # this is the second lock, because a serializer that gains a field
+        # later would otherwise send live secrets to an AI vendor with no
+        # code change here at all.
+        SECRET_PATTERN = /(token|secret|password|api_key|access_key|private)/i.freeze
+
         def serialize(entry, record)
-          entry.serializer_class.new(record).to_h.stringify_keys
-        rescue StandardError
+          attributes = entry.serializer_class.new(record).to_h.stringify_keys
+          attributes.reject { |key, _| key.match?(SECRET_PATTERN) }
+        rescue StandardError => e
+          Rails.logger.warn("[Spree Assistant] #{entry.key} serializer failed: #{e.class}: #{e.message}")
           {}
         end
 
