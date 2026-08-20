@@ -604,8 +604,8 @@ end
 ### Initializer
 
 ```ruby config/initializers/spree.rb
-# `brand_id` is permitted on the model itself, via
-# `additional_permitted_attributes` — see the Extending Core Models tutorial.
+# Permit brand_id in product params (from Extending Core Models tutorial)
+Spree::Product.additional_permitted_attributes += [:brand_id]
 
 # Swap in custom product serializer with brand support
 Spree::Api::Dependencies.product_serializer = 'MyApp::ProductSerializer'

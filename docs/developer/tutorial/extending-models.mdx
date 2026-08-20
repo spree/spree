@@ -202,28 +202,19 @@ end
 
 For the API to save the brand association, we need to permit the `brand_id` parameter.
 
-Declare it on the model you extended. The product create and update endpoints
-pick the attribute up automatically — no controller decorator, and no
-initializer:
+Add it to the model's permitted attributes in your Spree initializer. The
+product create and update endpoints pick it up automatically — no controller
+decorator needed:
 
-```ruby app/models/spree/product_decorator.rb {5-7}
-module Spree
-  module ProductDecorator
-    def self.prepended(base)
-      base.belongs_to :brand, class_name: 'Brand', optional: true
+```ruby config/initializers/spree.rb {3}
+# .. other code ..
 
-      def base.additional_permitted_attributes
-        [:brand_id]
-      end
-    end
-  end
-end
-
-Spree::Product.prepend(Spree::ProductDecorator)
+Spree::Product.additional_permitted_attributes += [:brand_id]
 ```
 
-Return the full list your extension contributes. For collections and nested
-structures, use the same shapes `params.permit` accepts — `[{ region_ids: [] }]`.
+Use `+=` rather than `=`, so you append to the list instead of replacing what
+another extension already added. For collections and nested structures, use the
+same shapes `params.permit` accepts — `[{ region_ids: [] }]`.
 
 <Note>
   For merchant-managed data, prefer [Custom Fields](/developer/core-concepts/custom-fields),
@@ -401,11 +392,9 @@ end
 
 ### Permitting the Brand Parameter
 
-```ruby app/models/spree/product_decorator.rb
-# Permit brand_id on every API v3 endpoint that writes a product
-def base.additional_permitted_attributes
-  [:brand_id]
-end
+```ruby config/initializers/spree.rb
+# Permit brand_id on the API v3 endpoints that write a product
+Spree::Product.additional_permitted_attributes += [:brand_id]
 ```
 
 <Tabs>
