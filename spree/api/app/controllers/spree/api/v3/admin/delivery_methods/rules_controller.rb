@@ -60,7 +60,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:type, :active, preferences: {}, product_ids: [])
+              params.permit(*model_additional_permitted_attributes, :type, :active, preferences: {}, product_ids: [])
             end
 
             private

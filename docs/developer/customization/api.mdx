@@ -173,19 +173,39 @@ end
 
 ### Permitted Attributes
 
-For endpoints that accept writes (create/update), add your attributes:
-
-```ruby config/initializers/spree.rb
-Spree::PermittedAttributes.brand_attributes = [:name, :slug, :description, :logo]
-```
-
-Or override `permitted_params` in the controller:
+For endpoints that accept writes (create/update), declare the attributes in your
+controller:
 
 ```ruby
-def permitted_params
-  params.permit(:name, :slug, :description, :logo)
+def permitted_attributes
+  [:name, :slug, :description, :logo]
 end
 ```
+
+Entries are `params.permit` fragments, so collections and nested structures use
+the shapes you would pass there directly — `[:name, { region_ids: [] }]`.
+
+To add a writable attribute to a **core** Spree resource without decorating its
+controller, declare it on the model instead:
+
+```ruby
+Spree::Product.class_eval do
+  def self.additional_permitted_attributes
+    [:brand_id]
+  end
+end
+```
+
+Standard resource endpoints append these to their own allowlist, so one
+declaration covers the model's create and update endpoints. A handful of
+endpoints build their parameters by hand for provider-specific reasons (payment
+method credentials, for one) and do not consult the hook — if an attribute you
+declared is being ignored, check whether that controller overrides
+`permitted_params` instead of `resource_permitted_attributes`.
+
+Prefer [Custom Fields](/developer/core-concepts/custom-fields) for
+merchant-managed data — this hook is for extensions that add real database
+columns.
 
 ## Consuming Custom Endpoints with the SDK
 

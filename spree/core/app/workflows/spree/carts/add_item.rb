@@ -45,7 +45,7 @@ module Spree
         @line_item_created = @line_item.nil?
 
         if @line_item.nil?
-          opts = ::Spree::PermittedAttributes.line_item_attributes.flatten.each_with_object({}) do |attribute, result|
+          opts = ::Spree::LineItem::WRITABLE_ATTRIBUTES.each_with_object({}) do |attribute, result|
             result[attribute] = item_options[attribute]
           end.merge(currency: cart.currency).delete_if { |_key, value| value.nil? }
 

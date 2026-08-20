@@ -86,7 +86,7 @@ module Spree
           # `custom_field_definition_id` is an alias_attribute on Spree::CustomField;
           # AR resolves the prefixed-ID and the alias to the canonical FK on assign.
           def permitted_params
-            params.permit(:custom_field_definition_id, :value)
+            params.permit(*model_additional_permitted_attributes, :custom_field_definition_id, :value)
           end
 
           def update_permitted_params

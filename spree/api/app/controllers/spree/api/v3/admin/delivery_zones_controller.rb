@@ -51,6 +51,7 @@ module Spree
 
           def permitted_params
             params.permit(
+              *model_additional_permitted_attributes,
               :name, :description, :delivery_profile_id, :delivery_origin_group_id,
               members: [:member_type, :country_code, :state_code, :postal_code_prefix, :postal_code_from, :postal_code_to]
             )

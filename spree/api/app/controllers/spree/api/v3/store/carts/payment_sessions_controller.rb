@@ -85,7 +85,11 @@ module Spree
             end
 
             def permitted_params
-              params.permit(Spree::PermittedAttributes.payment_session_attributes)
+              params.permit(
+                :amount, :payment_method_id,
+                *Spree::PaymentSession.additional_permitted_attributes,
+                { external_data: {} }
+              )
             end
 
             def complete_params

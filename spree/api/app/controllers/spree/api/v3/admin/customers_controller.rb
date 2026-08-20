@@ -91,6 +91,7 @@ module Spree
 
           def permitted_params
             params.permit(
+              *model_additional_permitted_attributes,
               :email, :first_name, :last_name, :phone,
               :password, :password_confirmation, :selected_locale,
               :avatar, :accepts_email_marketing, :internal_note,

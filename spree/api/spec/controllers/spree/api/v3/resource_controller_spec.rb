@@ -45,4 +45,35 @@ RSpec.describe Spree::Api::V3::ResourceController, type: :controller do
       expect(controller.scope.klass).to eq(Spree::PromotionRule)
     end
   end
+
+  # A controller that declares neither must fail loudly on its first write
+  # rather than silently permitting a list inferred from the model name.
+  describe '#resource_permitted_attributes' do
+    it 'raises unless the subclass declares one' do
+      expect { controller.send(:resource_permitted_attributes) }.to raise_error(NotImplementedError)
+    end
+  end
+
+  # Extensions declare extra writable attributes on the model rather than
+  # decorating every controller that writes it — see Spree::Base.
+  describe '#permitted_attributes' do
+    before do
+      allow(controller).to receive(:resource_permitted_attributes).and_return([:name])
+    end
+
+    it 'is just the resource list when the model declares nothing extra' do
+      expect(controller.send(:permitted_attributes)).to eq([:name])
+    end
+
+    # Exercises the real extension contract rather than stubbing the reader:
+    # an initializer appends to the model's class_attribute.
+    it 'appends attributes the model contributes' do
+      original = Spree::TaxCategory.additional_permitted_attributes
+      Spree::TaxCategory.additional_permitted_attributes += [:brand_id]
+
+      expect(controller.send(:permitted_attributes)).to eq([:name, :brand_id])
+    ensure
+      Spree::TaxCategory.additional_permitted_attributes = original
+    end
+  end
 end

@@ -10,8 +10,11 @@ module Spree
       #    to Rails `_attributes` format (e.g. `variants_attributes: [...]`) based on
       #    the model's `accepts_nested_attributes_for` declarations.
       #
-      # Uses `prepend` so it always wraps `permitted_params` regardless of which
-      # controller in the hierarchy defines it — no manual calls needed.
+      # `normalize_params` is called explicitly by a controller's
+      # `permitted_params`. It is deliberately NOT applied to every write: it
+      # recurses into nested hashes decoding anything shaped like a prefixed ID,
+      # which would corrupt opaque provider values (see
+      # Admin::PaymentMethodsController).
       module ParamsNormalizer
         extend ActiveSupport::Concern
 

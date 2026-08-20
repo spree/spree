@@ -21,7 +21,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(:namespace, :key, :label, :field_type,
+            params.permit(*model_additional_permitted_attributes, :namespace, :key, :label, :field_type,
                           :resource_type, :storefront_visible,
                           :searchable, :sortable)
           end

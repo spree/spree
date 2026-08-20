@@ -114,4 +114,5 @@ RSpec.describe Spree::Api::V3::ParamsNormalizer do
       expect(result).to eq(hash)
     end
   end
+
 end

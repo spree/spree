@@ -63,6 +63,7 @@ module Spree
 
             def permitted_params
               params.permit(
+                *model_additional_permitted_attributes,
                 :first_name, :last_name, :address1, :address2, :city,
                 # country_iso and state_abbr are the legacy write names, accepted until 6.1.
                 :postal_code, :phone, :company, :country_code, :country_iso, :state_code, :state_abbr, :state_name,

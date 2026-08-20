@@ -97,7 +97,11 @@ module Spree
             end
 
             def permitted_params
-              params.permit(Spree::PermittedAttributes.line_item_attributes + [{ options: {} }])
+              params.permit(
+                *Spree::LineItem::WRITABLE_ATTRIBUTES,
+                *Spree::LineItem.additional_permitted_attributes,
+                { metadata: {}, options: {} }
+              )
             end
           end
         end

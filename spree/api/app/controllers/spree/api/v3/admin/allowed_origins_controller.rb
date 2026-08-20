@@ -16,7 +16,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(:origin)
+            params.permit(*model_additional_permitted_attributes, :origin)
           end
         end
       end

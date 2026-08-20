@@ -21,6 +21,7 @@ module Spree
 
           def permitted_params
             params.permit(
+              *model_additional_permitted_attributes,
               :name, :label, :position, :filterable, :kind,
               option_values: [
                 :id, :name, :label, :position, :color_code, :image

@@ -13,9 +13,7 @@ module Spree
         # Customers, not admin users — the rule keys off `Spree::Order#customer_id`.
         # The data layer keeps the `users` association name (deferred model rename);
         # the API exposes the same set as `customer_ids`.
-        def self.additional_permitted_attributes
-          [customer_ids: []]
-        end
+        self.additional_permitted_attributes = [customer_ids: []]
 
         # Wire-format shorthand is `customer` (the model is still `User`
         # pre-6.0 rename, see docs/plans/6.0-platform-auth.md).

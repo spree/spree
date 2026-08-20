@@ -330,25 +330,38 @@ module Spree
           raise NotImplementedError, 'Subclass must implement serializer_class'
         end
 
-        # Permit flat parameters based on model class
-        # Automatically infers attribute list from Spree::PermittedAttributes
-        # e.g., ProductsController -> Spree::PermittedAttributes.product_attributes
-        #
-        # Override in subclass for custom parameter handling
         def permitted_params
-          normalize_params(params.permit(permitted_attributes))
+          normalize_params(params.permit(*permitted_attributes))
         end
 
-        # Returns the permitted attributes list for the model
-        # Override in subclass for custom attributes
+        # This resource's writable attributes, plus anything extensions have
+        # declared on the model. Override +resource_permitted_attributes+ rather
+        # than this, so the extension union is not lost.
         def permitted_attributes
-          Spree::PermittedAttributes.public_send(permitted_attributes_key)
+          resource_permitted_attributes + model_additional_permitted_attributes
         end
 
-        # Infers the PermittedAttributes key from model class
-        # e.g., Spree::Product -> :product_attributes
-        def permitted_attributes_key
-          :"#{model_class.model_name.element}_attributes"
+        # Override in subclass to declare the resource's writable attributes.
+        def resource_permitted_attributes
+          raise NotImplementedError, 'Subclass must implement resource_permitted_attributes or permitted_params'
+        end
+
+        # Attributes extensions have declared on the model via
+        # +Spree::Product.additional_permitted_attributes += [...]+.
+        #
+        # Guarded on both sides: a controller need not define +model_class+
+        # (and one that does may raise NotImplementedError), and
+        # `Spree.base_class` is host-overridable, so the class_attribute is not
+        # guaranteed to be inherited from Spree::Base.
+        def model_additional_permitted_attributes
+          return [] unless respond_to?(:model_class, true)
+
+          model = model_class
+          return [] unless model.respond_to?(:additional_permitted_attributes)
+
+          Array(model.additional_permitted_attributes)
+        rescue NotImplementedError
+          []
         end
       end
     end

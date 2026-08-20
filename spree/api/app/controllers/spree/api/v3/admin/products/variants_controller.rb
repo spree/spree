@@ -31,6 +31,7 @@ module Spree
 
             def permitted_params
               params.permit(
+                *model_additional_permitted_attributes,
                 :sku, :barcode,
                 :cost_price, :cost_currency,
                 :weight, :height, :width, :depth, :weight_unit, :dimensions_unit,

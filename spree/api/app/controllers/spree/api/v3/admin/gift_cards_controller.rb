@@ -24,7 +24,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(:code, :amount, :expires_at, :user_id, :currency)
+            params.permit(*model_additional_permitted_attributes, :code, :amount, :expires_at, :user_id, :currency)
           end
         end
       end

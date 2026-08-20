@@ -26,8 +26,8 @@ module Spree
             Spree.api.wished_item_serializer
           end
 
-          def permitted_params
-            params.permit(Spree::PermittedAttributes.wished_item_attributes)
+          def resource_permitted_attributes
+            [:variant_id, :quantity]
           end
         end
       end

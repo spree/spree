@@ -7,6 +7,11 @@ module Spree
 
     publishes_lifecycle_events
 
+    # Attributes a client may set when adding or updating an item. Shared by the
+    # Store API items controller and Spree::Carts::AddItem, which filters the
+    # incoming options hash down to these keys.
+    WRITABLE_ATTRIBUTES = [:id, :variant_id, :quantity].freeze
+
     attribute :quantity, :integer, default: 1
 
     before_validation :ensure_valid_quantity
