@@ -177,4 +177,31 @@ describe Spree::StoreCredits::Apply, type: :service do
       expect(overpaid_order.reload.payments.store_credits).to be_empty
     end
   end
+
+  # Regression: credits were drawn oldest-first with no currency filter, so an
+  # older credit in another currency was picked ahead of a usable one. Being
+  # unusable it overshot the order's allowed amount and raised, aborting the
+  # whole apply transaction.
+  context 'when an older credit is in another currency' do
+    let(:mixed_customer) { create(:customer) }
+    let(:mixed_order) { create(:order_with_line_items, store: store, customer: mixed_customer) }
+
+    before do
+      create(:store_credit_payment_method)
+      mixed_order.update_columns(total: 100, item_total: 100, payment_total: 0)
+      create(:store_credit, customer: mixed_customer, amount: 50, store: store,
+                            currency: 'EUR', created_at: 2.days.ago)
+      create(:store_credit, customer: mixed_customer, amount: 30, store: store,
+                            currency: mixed_order.currency, created_at: 1.day.ago)
+    end
+
+    it 'draws only against the credit in the order currency' do
+      described_class.call(order: mixed_order)
+
+      payments = mixed_order.reload.payments.store_credits
+      expect(payments.count).to eq(1)
+      expect(payments.first.source.currency).to eq(mixed_order.currency)
+      expect(payments.first.amount).to eq(30)
+    end
+  end
 end

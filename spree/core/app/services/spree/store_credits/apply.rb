@@ -60,7 +60,12 @@ module Spree
         payment_method = Spree::PaymentMethod::StoreCredit.available.first
         raise 'Store credit payment method could not be found' unless payment_method
 
-        @order.customer.store_credits.for_store(@order.store).oldest_first.each do |credit|
+        # Only credits in the order's own currency: an older credit in another
+        # currency would be drawn against first and, being unusable, either
+        # overshoot the allowed amount or persist a payment that fails later
+        # at authorization. This matches what the order already counts as
+        # available (Purchase::StoreCredits#total_available_store_credit).
+        @order.customer.store_credits.for_store(@order.store).where(currency: @order.currency).oldest_first.each do |credit|
           break unless remaining_total.positive?
           next if credit.amount_remaining.zero?
 
