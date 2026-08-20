@@ -24,6 +24,36 @@ module Spree
         @ability = ability || Spree::Dependencies.ability_class.constantize.new(user, store: store)
       end
 
+      # Narrows a relation to the records this admin may act on, the same way an
+      # Admin API controller does.
+      #
+      # Permission keys answer "may this admin touch products at all"; they do
+      # not answer "which products". A host app that registers a record-level
+      # rule (`can :read, Spree::Order, seller_id: ...`) is honoured by the
+      # Admin API, and must be honoured here too — otherwise the assistant
+      # shows a seller every order in the store.
+      #
+      # @param relation [ActiveRecord::Relation]
+      # @param action [Symbol]
+      # @return [ActiveRecord::Relation]
+      def accessible(relation, action = :show)
+        return relation unless relation.respond_to?(:accessible_by)
+
+        relation.accessible_by(ability, action)
+      end
+
+      # Whether this admin may take an action on a specific record.
+      #
+      # Checked at execution rather than at proposal time: an approval card may
+      # be decided minutes later, and roles can change in between.
+      #
+      # @param record [Object]
+      # @param action [Symbol]
+      # @return [Boolean]
+      def can?(action, record)
+        ability.can?(action, record)
+      end
+
       # @param permission_key [String, nil]
       # @return [Boolean] whether the asking user holds this permission
       def permitted?(permission_key)

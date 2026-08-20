@@ -6,7 +6,25 @@ RSpec.describe Spree::Assistant::Tools::SearchResources do
   let(:store) { @default_store }
   let(:admin) { create(:admin_user) }
   let(:context) { Spree::Assistant::Context.new(store: store, user: admin, ability: ability) }
-  let(:ability) { instance_double(Spree::Ability, permission_keys: Spree.permissions.catalog_keys) }
+  let(:ability) { full_ability_for(admin) }
+  # A real ability rather than a double: the tools now call `accessible_by`,
+  # which needs CanCanCan's actual machinery. `admin` here is a full admin, so
+  # this grants everything — record-level narrowing is exercised in
+  # spec/authorization_spec.rb.
+  def full_ability_for(user)
+    Class.new do
+      include CanCan::Ability
+
+      def initialize
+        can :manage, :all
+      end
+
+      def permission_keys
+        Spree.permissions.catalog_keys
+      end
+    end.new
+  end
+
 
   let!(:products) { create_list(:product, 3, store: store, status: 'active') }
 
@@ -66,7 +84,15 @@ RSpec.describe Spree::Assistant::Tools::SearchResources do
   end
 
   describe 'permissions' do
-    let(:ability) { instance_double(Spree::Ability, permission_keys: %w[read_products]) }
+    # Can read products but holds no order permission — the tool must refuse
+    # the resource before it ever builds a query.
+    let(:ability) do
+      Class.new do
+        include CanCan::Ability
+        def initialize = can(:manage, :all)
+        def permission_keys = %w[read_products]
+      end.new
+    end
 
     it 'refuses a resource the admin may not read' do
       result = tool.call(resource: 'orders')

@@ -27,12 +27,18 @@ module Spree
           model_name.constantize
         end
 
-        # Records of this kind belonging to the given store.
+        # Records of this kind the asking admin may see.
         #
-        # @param store [Spree::Store]
+        # Takes the context rather than the store so the ability filter cannot
+        # be skipped by forgetting to apply it: store scoping answers tenancy,
+        # `accessible` answers which records within that tenant — the same two
+        # steps an Admin API controller takes.
+        #
+        # @param context [Spree::Assistant::Context]
+        # @param action [Symbol]
         # @return [ActiveRecord::Relation]
-        def scope_for(store)
-          store.public_send(store_association)
+        def scope_for(context, action = :show)
+          context.accessible(context.store.public_send(store_association), action)
         end
 
         # @return [Class] the admin serializer for this resource

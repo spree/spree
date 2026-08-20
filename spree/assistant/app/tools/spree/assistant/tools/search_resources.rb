@@ -59,7 +59,7 @@ module Spree
         private
 
         def build_query(entry, filters, sort)
-          query = entry.scope_for(context.store).ransack(filters)
+          query = entry.scope_for(context).ransack(filters)
           query.sorts = sort if sort.present?
           query
         end

@@ -114,6 +114,26 @@ module Spree
       def permitted?
         context.permitted?(permission)
       end
+
+      protected
+
+      # Refuses unless this admin may take `action` on `record`.
+      #
+      # Holding `write_products` says an admin may edit products; it does not
+      # say they may edit *this* one. A host app can narrow that with a
+      # record-level rule, and the Admin API honours it — so any tool that
+      # changes a record must ask here first. Returns an error the model reads
+      # rather than raising, so the assistant explains itself instead of the
+      # turn dying.
+      #
+      # @param action [Symbol]
+      # @param record [Object]
+      # @return [Hash, nil] an error result to return, or nil when allowed
+      def unauthorized(action, record)
+        return if context.can?(action, record)
+
+        { error: "You do not have permission to #{action} this #{record.class.name.demodulize.underscore.humanize.downcase}." }
+      end
     end
   end
 end

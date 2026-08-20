@@ -26,6 +26,12 @@ module Spree
           product = find_product(id)
           return { error: "No product found for #{id.inspect}" } if product.nil?
 
+          # The permission key got this tool offered; this asks whether the
+          # admin may change THIS product. Checked here rather than at proposal
+          # time, since approval can come minutes later.
+          refusal = unauthorized(:update, product)
+          return refusal if refusal
+
           result = Spree::Products::Update.call(product: product, attributes: { status: status.to_s })
 
           if result.success?
@@ -45,7 +51,7 @@ module Spree
         private
 
         def find_product(id)
-          scope = context.store.products
+          scope = context.accessible(context.store.products, :show)
 
           scope.find_by_prefix_id(id) || scope.find_by(slug: id)
         rescue ArgumentError, NoMethodError

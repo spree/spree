@@ -7,11 +7,25 @@ RSpec.describe Spree::Assistant::RunTurn do
   let(:chat) { Spree::AssistantChat.create!(store: store, admin_user: admin) }
   let!(:product) { create(:product, store: store, name: 'Blue Shirt', status: 'active') }
 
-  # The assistant filters tools by permission; these specs are about the turn,
-  # so the asking admin holds everything.
-  let(:full_ability) do
-    instance_double(Spree::Ability, permission_keys: Spree.permissions.catalog_keys)
+  let(:full_ability) { full_ability_for(admin) }
+  # A real ability rather than a double: the tools now call `accessible_by`,
+  # which needs CanCanCan's actual machinery. `admin` here is a full admin, so
+  # this grants everything — record-level narrowing is exercised in
+  # spec/authorization_spec.rb.
+  def full_ability_for(user)
+    Class.new do
+      include CanCan::Ability
+
+      def initialize
+        can :manage, :all
+      end
+
+      def permission_keys
+        Spree.permissions.catalog_keys
+      end
+    end.new
   end
+
 
   before do
     integration = Spree::Integrations::Anthropic.new(store: store)

@@ -40,7 +40,7 @@ module Spree
         # Scoped through the store, so an id belonging to another store is a
         # miss rather than a leak.
         def find_record(entry, id)
-          scope = entry.scope_for(context.store)
+          scope = entry.scope_for(context)
 
           scope.find_by_prefix_id(id) || find_by_natural_key(scope, id)
         # Only the prefixed-id decode is expected to fail here (the model may
