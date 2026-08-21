@@ -95,9 +95,27 @@ module Spree
       # thresholds, free shipping) reads these attributes, so they must
       # reflect the current line items — not the previous recalculation.
       def refresh_money_inputs
-        cart.payment_total = cart.payments.completed.includes(:refunds).inject(0) { |sum, payment| sum + payment.amount - payment.refunds.sum(:amount) }
+        cart.payment_total = paid_so_far
         cart.item_total = cart.line_items.to_a.sum(&:amount)
         cart.delivery_total = cart.fulfillments.to_a.sum(&:cost)
+      end
+
+      # What has actually been paid towards this record.
+      #
+      # An order placed in a split checkout owns no payments — the customer
+      # paid once, against the group — so its position is the sum of its
+      # shares. Reading its own payments would persist nothing paid and report
+      # the whole total as outstanding.
+      #
+      # @return [BigDecimal]
+      def paid_so_far
+        if cart.is_a?(Spree::Order) && cart.grouped?
+          return cart.payment_splits.to_a.sum(&:net_captured_amount)
+        end
+
+        cart.payments.completed.includes(:refunds).inject(0) do |sum, payment|
+          sum + payment.amount - payment.refunds.sum(:amount)
+        end
       end
 
       def refresh_grand_total

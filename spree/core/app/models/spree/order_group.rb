@@ -167,6 +167,14 @@ module Spree
     def forget_derived_money
       @rolled_up_totals = nil
       @payment_total = nil
+      # The figures are summed in Ruby off these associations, so dropping the
+      # memo alone would recompute from the same stale rows — a payment that
+      # settled after they were loaded would go unnoticed, which is the exact
+      # case refresh_payment_total! exists to answer.
+      return unless persisted?
+
+      association(:payments).reset
+      association(:orders).reset
     end
 
     # @return [BigDecimal] still to collect across the whole checkout
@@ -177,6 +185,18 @@ module Spree
     # @return [Boolean]
     def paid?
       total.positive? && payment_total >= total
+    end
+
+    # The gift card this checkout was paid with, if any.
+    #
+    # A group holds no card of its own — the children carry it, each copied
+    # from the one cart — so it answers with theirs. A payment method asks its
+    # owner this when deciding whether it may be used, and the owner of a
+    # grouped payment is this record.
+    #
+    # @return [Spree::GiftCard, nil]
+    def gift_card
+      orders.filter_map(&:gift_card).first
     end
 
     # A group only ever exists because a checkout finished, so it is completed

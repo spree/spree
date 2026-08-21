@@ -24,10 +24,15 @@ module Spree
 
         ApplicationRecord.transaction do
           claim_payments(group)
-          weights = orders.map { |order| Spree::Money::Rounding.to_minor_units(order.total, group.currency) }
+          # What each child still needs covering. Payments draw this down as
+          # they are allocated, so several payments cannot each round in the
+          # same direction and leave one child a penny over and another under —
+          # every child ends up with exactly its own total.
+          outstanding = orders.map { |order| Spree::Money::Rounding.to_minor_units(order.total, group.currency) }
 
           group.payments.reload.each do |payment|
-            allocate(payment, orders, weights)
+            taken = allocate(payment, orders, outstanding)
+            outstanding = outstanding.each_with_index.map { |amount, index| amount - taken[index] }
           end
         end
 
@@ -59,12 +64,17 @@ module Spree
       # every child of a fully paid checkout as merely authorised. So a
       # completed payment's shares are born captured, and one still pending is
       # captured later, as each seller dispatches.
-      def allocate(payment, orders, weights)
+      #
+      # @param outstanding [Array<Integer>] what each child still needs, in
+      #   minor units, so this payment covers what is left rather than
+      #   re-dividing the whole basket
+      # @return [Array<Integer>] what each child took from this payment
+      def allocate(payment, orders, outstanding)
         # A basket worth nothing — fully discounted, wholly gift-carded — has
         # nothing to divide by. Every child still gets a share saying so,
         # rather than none at all, so each reads as settled instead of waiting
         # on money that was never owed.
-        weights = Array.new(orders.size, 1) if weights.sum <= 0
+        weights = outstanding.sum.positive? ? outstanding : Array.new(orders.size, 1)
 
         currency = payment.currency
         shares = Spree::Adjusters::LargestRemainder.largest_remainder_shares(
@@ -82,6 +92,8 @@ module Spree
           split.captured_amount = captured ? share : 0
           split.save!
         end
+
+        shares
       end
 
     end

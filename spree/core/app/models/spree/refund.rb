@@ -31,6 +31,7 @@ module Spree
       validates :amount, numericality: { greater_than: 0, allow_nil: true }
     end
     validate :amount_is_less_than_or_equal_to_allowed_amount, on: :create, if: :amount
+    validate :order_is_covered_by_payment, on: :create
 
     attr_reader :response
 
@@ -65,9 +66,12 @@ module Spree
 
     # Returns true if the refund is editable.
     #
+    # Read through the refund's own order: a payment shared by a split checkout
+    # belongs to no single order, so asking the payment would answer nil.
+    #
     # @return [Boolean]
     def editable?
-      !payment.order.canceled?
+      order.present? && !order.canceled?
     end
 
     # Credits the refund back at the gateway — the money movement, called
@@ -97,6 +101,23 @@ module Spree
     # order it is refunding.
     def assign_order_from_payment
       self.order_id ||= payment&.order_id
+    end
+
+    # A refund may only put right an order the payment actually paid for.
+    # Without this a caller can name any order: the gateway credits this
+    # payment while the totals of an unrelated one are recomputed, and on a
+    # shared payment the share that should have recorded the refund is never
+    # found.
+    def order_is_covered_by_payment
+      return if payment.blank? || order_id.blank?
+
+      covered = if payment.grouped?
+                  payment.payment_splits.exists?(order_id: order_id)
+                else
+                  payment.order_id == order_id
+                end
+
+      errors.add(:order, :invalid) unless covered
     end
 
     # return a payment response object if successful or else raise an error

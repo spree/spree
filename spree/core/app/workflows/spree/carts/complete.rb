@@ -392,13 +392,17 @@ module Spree
         failure(cart, code: 'split_failed', message: result.error) if result.failure?
 
         @order_group = result.value
-        @order = order_group.orders.first
+        # Ordered, because which child comes first decides which one carries
+        # the confirmation email — that must not depend on how the rows come
+        # back.
+        @order = order_group.orders.order(:id).first
       end
 
       def allocate_payment_splits
         return if order_group.nil?
 
-        Spree::OrderGroups::AllocatePayments.call(group: order_group)
+        result = Spree::OrderGroups::AllocatePayments.call(group: order_group)
+        failure(cart, code: 'split_failed', message: result.error) if result.failure?
       end
 
       # Places what the checkout produced — the children of a split, or the one

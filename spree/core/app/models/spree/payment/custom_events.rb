@@ -60,8 +60,23 @@ module Spree
           child = split.order
           next if child.nil? || child.total.to_d <= 0
 
-          settled = child.payment_splits.sum { |row| row.captured_amount - row.refunded_amount }
-          child.publish_event('order.paid') if settled >= child.total.to_d
+          child.publish_event('order.paid') if settled_for(child) >= child.total.to_d
+        end
+      end
+
+      # What a child has settled, counting this payment's share as taken.
+      #
+      # This runs before payment.completed reaches the subscriber that marks
+      # the shares captured, so the column still reads zero for the payment
+      # that just settled — asking it would decide no child had been paid.
+      # Its share is therefore counted from what it authorised, and the other
+      # payments from what they have actually drawn.
+      #
+      # @return [BigDecimal]
+      def settled_for(child)
+        child.payment_splits.sum do |row|
+          taken = row.payment_id == id ? row.authorized_amount : row.captured_amount
+          taken - row.refunded_amount
         end
       end
     end

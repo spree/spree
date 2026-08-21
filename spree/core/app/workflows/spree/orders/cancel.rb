@@ -138,6 +138,17 @@ module Spree
         end
       end
 
+      # What this order has actually been paid. An order placed in a split
+      # checkout holds no payments of its own — the customer paid once, against
+      # the group — so its position is the sum of its shares.
+      #
+      # @return [BigDecimal]
+      def amount_paid
+        return order.payment_total unless order.grouped?
+
+        order.payment_splits.sum(&:net_captured_amount)
+      end
+
       # Canceling one order of a split checkout gives back that order's money
       # and nothing else: the payment is shared, so voiding it would release
       # the siblings' authorization too and un-pay sellers who are still
@@ -150,24 +161,20 @@ module Spree
       # and being wrong about it releases an authorization a seller is still
       # relying on. Writing the share down leaves the payment voidable by
       # whoever cancels last, which reaches the same end without the risk.
-      # What this order has actually been paid. An order placed in a split
-      # checkout holds no payments of its own — the customer paid once, against
-      # the group — so its position is the sum of its shares.
       #
-      # @return [BigDecimal]
-      def amount_paid
-        return order.payment_total unless order.grouped?
-
-        order.payment_splits.sum(&:net_captured_amount)
-      end
-
+      # Store credit and gift cards are refunded like any other share rather
+      # than voided: a void releases a whole payment, which on a shared one is
+      # the siblings' money too. The credit comes back to the customer either
+      # way, and the refund path is the one that can return a part.
       def settle_grouped_payments
         remaining = @amount_to_refund
 
         order.payment_splits.includes(:payment).each do |split|
           # Release what this order had reserved but never drew, always — the
-          # authorization is no longer for anything.
-          split.update!(authorized_amount: split.captured_amount)
+          # authorization is no longer for anything. Under the row's lock, so
+          # a dispatch claiming the same share concurrently either draws before
+          # the release or finds nothing left.
+          split.with_lock { split.update!(authorized_amount: split.captured_amount) }
 
           # Give money back only when the caller asked for it, and only up to
           # what they asked for, exactly as the ungrouped path does.

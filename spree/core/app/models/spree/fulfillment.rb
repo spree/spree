@@ -785,12 +785,25 @@ module Spree
       begin
         capture_at_gateway(payment, bounded)
       rescue StandardError
-        # The money never moved, so the claim must not stand.
-        split.with_lock { split.update!(captured_amount: split.captured_amount - bounded) }
+        # Released only when the money truly never moved. The capture workflow
+        # keeps working after the charge commits — it authorizes the remainder
+        # of a partially captured payment — so a failure at that point is not a
+        # failure to capture, and giving the claim back would let this order
+        # draw the same money again.
+        release_share(split, bounded) unless payment.reload.completed?
         raise
       end
 
       bounded
+    end
+
+    # Hands a claim back after a capture that never happened. Failures here are
+    # reported rather than raised: the caller is already raising the reason the
+    # capture failed, and losing that to a bookkeeping error would hide it.
+    def release_share(split, amount)
+      split.with_lock { split.update!(captured_amount: split.captured_amount - amount) }
+    rescue StandardError => e
+      Rails.error.report(e, handled: true, context: { payment_split_id: split.id }, source: 'spree.core')
     end
 
     # @return [BigDecimal] how much of the share this parcel may take, marked

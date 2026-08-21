@@ -192,7 +192,13 @@ module Spree
       # nothing here has to divide anything.
       def divide_delivery_cost(original, replacement, weights)
         total_cost = original.cost.to_d
-        return if total_cost.zero? || weights.sum <= 0
+        return if total_cost.zero?
+
+        # Both halves worth nothing — a free sample boxed with paid goods —
+        # still has to divide the charge, or the cost stays whole on each and
+        # the customer is billed for delivery twice. Splitting it evenly is
+        # the only honest answer when value cannot say.
+        weights = [1, 1] if weights.sum <= 0
 
         shares = Spree::Adjusters::LargestRemainder.largest_remainder_shares(to_minor_units(total_cost), weights)
 

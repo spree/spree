@@ -58,6 +58,28 @@ RSpec.describe Spree::PaymentSplitSubscriber, :events, type: :model do
     expect(seller_split.reload.refunded_amount).to eq(15)
   end
 
+  # order.paid is public webhook API, and it is published from the payment's
+  # own after_commit — which runs before the subscriber marks the shares
+  # captured, so the figure it reads has to count this payment's share itself.
+  it 'declares each child paid when the shared payment settles' do
+    pending_payment = create(:payment, order: nil, cart: nil, order_group: group,
+                                       amount: 100, status: 'pending')
+    create(:payment_split, payment: pending_payment, order: seller_order, authorized_amount: 40)
+    create(:payment_split, payment: pending_payment, order: first_party_order, authorized_amount: 60)
+    seller_split.destroy!
+    first_party_split.destroy!
+
+    published = []
+    allow(Spree::Events).to receive(:publish).and_wrap_original do |original, name, *rest|
+      published << name
+      original.call(name, *rest)
+    end
+
+    pending_payment.complete!
+
+    expect(published.count { |name| name == 'order.paid' }).to eq(2)
+  end
+
   it 'leaves an ungrouped order alone' do
     plain_order = create(:order, store: store, total: 20)
     plain_payment = create(:payment, order: plain_order, amount: 20, status: 'completed')
