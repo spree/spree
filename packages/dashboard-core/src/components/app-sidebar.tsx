@@ -1,7 +1,7 @@
 import { Sidebar, SidebarContent, SidebarHeader } from '@spree/dashboard-ui'
 import { useParams } from '@tanstack/react-router'
 import { PackageIcon } from 'lucide-react'
-import type { ComponentProps } from 'react'
+import type { ComponentProps, ReactNode } from 'react'
 import { useAuth } from '../hooks/use-auth'
 import { primarySidebarSide, useTranslation } from '../lib/i18n'
 import { type NavEntry, useNavEntries } from '../lib/nav-registry'
@@ -71,16 +71,36 @@ export function useNavItems(tenantId: string): { navItems: NavItem[]; bottomItem
   return { navItems, bottomItems }
 }
 
-export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
+/**
+ * The primary sidebar: registry-driven nav under a tenant switcher.
+ *
+ * Shared by every panel. The two things that genuinely differ are which
+ * tenant the links are built under and what sits in the header — a store
+ * switcher for the operator, a seller switcher for the marketplace panel — so
+ * both are props. Everything else (side-by-language, collapsible rail,
+ * permission filtering) is the same in either, and a panel that copied this to
+ * change the header would silently miss every later fix to the rest.
+ */
+export function AppSidebar({
+  tenantId,
+  header,
+  ...props
+}: ComponentProps<typeof Sidebar> & {
+  /**
+   * The id the nav links are prefixed with. Defaults to the route's `storeId`,
+   * so the operator's dashboard passes nothing.
+   */
+  tenantId?: string
+  /** Rendered in the header. Defaults to the store switcher. */
+  header?: ReactNode
+}) {
   const { i18n } = useTranslation()
   const { storeId } = useParams({ strict: false }) as { storeId?: string }
-  const { navItems, bottomItems } = useNavItems(storeId || 'default')
+  const { navItems, bottomItems } = useNavItems(tenantId ?? storeId ?? 'default')
 
   return (
     <Sidebar collapsible="icon" side={primarySidebarSide(i18n.language)} {...props}>
-      <SidebarHeader>
-        <StoreSwitcher />
-      </SidebarHeader>
+      <SidebarHeader>{header ?? <StoreSwitcher />}</SidebarHeader>
       <SidebarContent>
         <NavMain items={navItems} bottomItems={bottomItems} />
       </SidebarContent>
