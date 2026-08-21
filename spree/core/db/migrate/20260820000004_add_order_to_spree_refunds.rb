@@ -15,11 +15,14 @@ class AddOrderToSpreeRefunds < ActiveRecord::Migration[8.1]
 
     reversible do |direction|
       direction.up do
+        # A correlated UPDATE rather than Active Record: the same statement
+        # runs on every adapter, and a migration should not depend on models
+        # that may be renamed long after it has run.
         execute <<~SQL.squish
-          UPDATE #{Spree::Refund.table_name}
+          UPDATE spree_refunds
           SET order_id = (
-            SELECT order_id FROM #{Spree::Payment.table_name}
-            WHERE #{Spree::Payment.table_name}.id = #{Spree::Refund.table_name}.payment_id
+            SELECT order_id FROM spree_payments
+            WHERE spree_payments.id = spree_refunds.payment_id
           )
           WHERE order_id IS NULL
         SQL
