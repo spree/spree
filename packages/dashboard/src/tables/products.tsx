@@ -134,8 +134,11 @@ defineTable('products', {
     // emitted is `taxons_id_in`. We don't render a categories cell on the
     // index to avoid expanding categories on every list refetch; users can
     // see attached categories on the product edit page.
-    // Only meaningful on a marketplace: a first-party product has no seller,
-    // so the cell reads as the store's own rather than blank.
+    // On a marketplace this list holds the operator's own products and every
+    // seller's together, so a row has to say which it is — shown by default
+    // for the same reason the stock-locations list shows it. A dash means the
+    // product is the marketplace's own, matching how the other columns render
+    // an absent value.
     {
       key: 'seller',
       label: i18n.t('admin.fields.product.seller.label'),
@@ -143,7 +146,7 @@ defineTable('products', {
       filterType: 'resource',
       filterResource: sellerAutocompleteProps('products-table-seller-filter'),
       ransackAttribute: 'seller_id',
-      default: false,
+      default: true,
       render: (product) =>
         product.seller_id ? (
           <Link
@@ -154,9 +157,7 @@ defineTable('products', {
             {product.seller_name}
           </Link>
         ) : (
-          <span className="text-muted-foreground">
-            {i18n.t('admin.fields.product.seller.first_party')}
-          </span>
+          '—'
         ),
     },
     {

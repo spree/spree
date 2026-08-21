@@ -1351,7 +1351,6 @@
           "label": "Product type"
         },
         "seller": {
-          "first_party": "Sold by you",
           "label": "Seller"
         },
         "tags": {

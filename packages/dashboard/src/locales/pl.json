@@ -1367,7 +1367,6 @@
           "label": "Typ produktu"
         },
         "seller": {
-          "first_party": "Sprzedajesz Ty",
           "label": "Sprzedawca"
         },
         "tags": {
