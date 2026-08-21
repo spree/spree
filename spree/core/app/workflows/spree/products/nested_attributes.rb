@@ -30,9 +30,7 @@ module Spree
           variant_data = raw.to_h.with_indifferent_access
           variant_id = variant_data.delete(:id)
 
-          variant = resolve_variant(product, variant_data, variant_id, variant_ids_in_payload)
-          variant.assign_attributes(variant_data)
-          variant.save!
+          variant = write_variant(product, variant_data, variant_id, variant_ids_in_payload)
 
           variant_ids_in_payload << variant.id
           mutated = true
@@ -46,6 +44,29 @@ module Spree
         sync_variant_state(product) if mutated
       end
 
+      # Delegates to the variant workflows rather than assigning and saving
+      # here, so a variant written as part of a product payload passes the
+      # same gate — and the same :validate handlers — as one written through
+      # the variants endpoint.
+      def write_variant(product, variant_data, variant_id, consumed_ids)
+        existing = resolve_variant(product, variant_data, variant_id, consumed_ids)
+
+        result =
+          if existing
+            Spree.variant_update_workflow.call(variant: existing, attributes: variant_data)
+          else
+            Spree.variant_create_workflow.call(product: product, attributes: variant_data)
+          end
+
+        # A rejection inside the nested write is the product write failing;
+        # raising rolls the whole payload back rather than leaving a product
+        # with half its variants.
+        raise ActiveRecord::RecordInvalid, result.value if result.failure?
+
+        result.value
+      end
+
+      # The variant this entry names, or nil when it describes a new one.
       def resolve_variant(product, variant_data, variant_id, consumed_ids)
         return product.variants.find_by_param!(variant_id) if variant_id.present?
 
@@ -53,11 +74,8 @@ module Spree
         # option-less default variant — the simple-product case. Updating it in
         # place keeps its id, the order lines referencing it, and any prices or
         # stock the payload does not mention.
-        if reuse_default_variant?(product, variant_data, consumed_ids)
-          product.default_variant
-        else
-          product.variants.build
-        end
+        # nil means "a new variant", which Spree::Variants::Create builds.
+        reuse_default_variant?(product, variant_data, consumed_ids) ? product.default_variant : nil
       end
 
       def reuse_default_variant?(product, variant_data, consumed_ids)

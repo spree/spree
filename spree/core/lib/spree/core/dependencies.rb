@@ -137,6 +137,11 @@ module Spree
         product_update_workflow: 'Spree::Products::Update',
         product_destroy_workflow: 'Spree::Products::Destroy',
         product_activate_workflow: 'Spree::Products::Activate',
+
+        # variants — every write path runs through these, so a :validate
+        # handler sees a nested payload and the variants endpoint alike
+        variant_create_workflow: 'Spree::Variants::Create',
+        variant_update_workflow: 'Spree::Variants::Update',
         product_archive_workflow: 'Spree::Products::Archive',
         product_draft_workflow: 'Spree::Products::Draft',
 
