@@ -1348,7 +1348,6 @@
           "label": "Produkttyp"
         },
         "seller": {
-          "first_party": "Eigener Verkauf",
           "label": "Verkäufer"
         },
         "tags": {

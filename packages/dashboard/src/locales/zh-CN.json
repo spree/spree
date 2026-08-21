@@ -1345,7 +1345,6 @@
           "label": "商品类型"
         },
         "seller": {
-          "first_party": "自营",
           "label": "卖家"
         },
         "tags": {
