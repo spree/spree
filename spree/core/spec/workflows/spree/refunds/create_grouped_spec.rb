@@ -47,6 +47,16 @@ RSpec.describe Spree::Refunds::Create, 'against a shared payment' do
     expect(result).to be_failure
   end
 
+  # Nothing can fill this in afterwards: a shared payment cannot say which of
+  # its orders is being put right, so a refund without one would credit the
+  # gateway while no child's totals or share moved.
+  it 'refuses a refund that names no order' do
+    result = described_class.call(payment: payment, amount: 10)
+
+    expect(result).to be_failure
+    expect(payment.reload.refunds).to be_empty
+  end
+
   it 'stamps the refund with the order it put right' do
     refund = described_class.call(payment: payment, amount: 10, order: seller_order).value
 

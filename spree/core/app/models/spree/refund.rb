@@ -109,7 +109,15 @@ module Spree
     # shared payment the share that should have recorded the refund is never
     # found.
     def order_is_covered_by_payment
-      return if payment.blank? || order_id.blank?
+      return if payment.blank?
+
+      # A shared payment cannot say which of its orders is being put right, so
+      # the caller has to — and nothing can fill it in afterwards. Left blank,
+      # the gateway would be credited while no child's totals or share moved.
+      if order_id.blank?
+        errors.add(:order, :blank) if payment.grouped?
+        return
+      end
 
       covered = if payment.grouped?
                   payment.payment_splits.exists?(order_id: order_id)

@@ -46,6 +46,34 @@ RSpec.describe Spree::Orders::Cancel, 'an order placed in a split checkout' do
     end
   end
 
+  # A parcel marks its share taken before asking the gateway, so a share can
+  # read captured while the charge is still in flight. Settling through that
+  # would release an authorization about to be drawn, or refund money nobody
+  # took.
+  context 'while a capture is still in flight' do
+    let(:in_flight_payment) do
+      create(:payment, order: nil, cart: nil, order_group: group, amount: 40, status: 'processing')
+    end
+    let!(:claimed_split) do
+      create(:payment_split, payment: in_flight_payment, order: seller_order,
+                             authorized_amount: 40, captured_amount: 40)
+    end
+
+    before { seller_split.destroy! }
+
+    it 'leaves the claimed share alone rather than releasing it' do
+      described_class.call(order: seller_order)
+
+      expect(claimed_split.reload.authorized_amount).to eq(40)
+    end
+
+    it 'refunds nothing the gateway has not confirmed' do
+      expect {
+        described_class.call(order: seller_order, refund_payments: true)
+      }.not_to change { Spree::Refund.count }
+    end
+  end
+
   context 'with refund_payments' do
     it 'gives back what this order was actually paid' do
       described_class.call(order: seller_order, refund_payments: true)

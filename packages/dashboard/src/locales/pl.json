@@ -2310,7 +2310,7 @@
           "voided": "Płatność unieważniona"
         },
         "no_customer": "Brak informacji o kliencie",
-        "order_group_help": "To zamówienie zostało złożone razem z innymi w jednym zamówieniu.",
+        "order_group_help": "To zamówienie zostało złożone razem z innymi w ramach jednego zakupu.",
         "order_group_part_of": "Część większego zakupu",
         "order_group_view_all": "Zobacz wszystkie zamówienia z tego zakupu",
         "payment_form": {

@@ -170,7 +170,15 @@ module Spree
         remaining = @amount_to_refund
 
         order.payment_splits.includes(:payment).each do |split|
-          # Release what this order had reserved but never drew, always — the
+          # A parcel dispatching marks its share taken *before* asking the
+          # gateway, so a share can read captured while the charge is still in
+          # flight. Settling against that would release an authorization the
+          # gateway is about to draw on, or hand back money it never took —
+          # so a payment mid-capture is left for the operator rather than
+          # guessed at.
+          next if capture_in_flight?(split)
+
+          # Release what this order had reserved but never drew — the
           # authorization is no longer for anything. Under the row's lock, so
           # a dispatch claiming the same share concurrently either draws before
           # the release or finds nothing left.
@@ -190,6 +198,34 @@ module Spree
 
           remaining -= refundable if remaining
         end
+      end
+
+      # Whether this share claims money the gateway has not confirmed.
+      #
+      # The claim is written before the charge so two parcels cannot draw the
+      # same share, which leaves a window where the split says captured and the
+      # payment does not. Reported rather than settled silently: cancelling
+      # through it would either release an authorization about to be drawn or
+      # refund money nobody took.
+      #
+      # @return [Boolean]
+      def capture_in_flight?(split)
+        payment = split.payment
+        return false if payment.nil? || split.captured_amount <= 0
+        # A payment settled at checkout carries no capture events and its
+        # shares are captured by definition; only one still being drawn on can
+        # be caught mid-charge.
+        return false if payment.completed?
+
+        return false if split.captured_amount <= payment.captured_amount.to_d
+
+        Rails.error.report(
+          Spree::Core::GatewayError.new('Payment share is mid-capture; cancellation left it for manual settlement'),
+          handled: true,
+          context: { order_id: order.id, payment_split_id: split.id },
+          source: 'spree.core'
+        )
+        true
       end
 
       # Reverses the filed tax document. The canceled sale must stop appearing
