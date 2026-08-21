@@ -48,10 +48,10 @@ interface CurrencySelectProps {
    */
   options?: string[]
   /**
-   * Announces the field as required to screen readers. Enforcement is the
-   * form's job — every caller validates through react-hook-form, and the
-   * button trigger is not a form-associated control, so this never blocks a
-   * submit on its own.
+   * Announces the field as required to assistive technology (`aria-required`).
+   * It does not enforce anything: the trigger is a button, so there is no
+   * native constraint validation behind it. The consuming form owns
+   * enforcement.
    */
   required?: boolean
   disabled?: boolean
