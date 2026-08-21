@@ -20,7 +20,7 @@ module Spree
       order = refund.order
       return if order.nil? || order.seller_id.blank?
 
-      Spree.seller_transfer_reverse_workflow.call(order: order, amount: refund.amount)
+      Spree.seller_transfer_reverse_workflow.call(order: order, amount: refund.amount, refund: refund)
     end
   end
 end

@@ -109,4 +109,65 @@ RSpec.describe Spree::SellerPayouts::Sweep do
       expect(seller.balance('USD')).to eq(0)
     end
   end
+
+  # A payout is created by the sweep and by nothing else, so earnings left
+  # stamped to a failed one would be unreachable — skipped by every later
+  # sweep while the balance still says the seller is owed them.
+  describe 'when the provider will not pay' do
+    before do
+      allow_any_instance_of(Spree::PayoutProvider::System).to receive(:pay!).and_raise(StandardError, 'gateway down')
+    end
+
+    it 'reports the failure' do
+      earn(40)
+
+      expect(described_class.call(seller: seller, currency: 'USD')).to be_failure
+    end
+
+    it 'releases the earnings so the next sweep is the retry' do
+      earn(40)
+      described_class.call(seller: seller, currency: 'USD')
+
+      expect(seller.seller_transfers.unsettled.sum(:amount)).to eq(40)
+    end
+
+    it 'still owes the seller their money' do
+      earn(40)
+      described_class.call(seller: seller, currency: 'USD')
+
+      expect(seller.balance('USD')).to eq(40)
+    end
+
+    it 'settles them on the next run' do
+      earn(40)
+      described_class.call(seller: seller, currency: 'USD')
+      allow_any_instance_of(Spree::PayoutProvider::System).to receive(:pay!).and_call_original
+
+      expect(described_class.call(seller: seller.reload, currency: 'USD').value.amount).to eq(40)
+    end
+  end
+
+  # A concurrent sweep can claim rows this one counted, leaving it holding
+  # nothing. Asking a provider to move zero is not a settlement.
+  describe 'when another sweep claimed everything first' do
+    let(:workflow) { described_class.new }
+
+    before do
+      earn(40)
+      # The other sweep wins the race: it takes the rows between this one
+      # counting them and claiming them.
+      allow(Spree::SellerTransfer).to receive(:where).and_return(Spree::SellerTransfer.none)
+    end
+
+    it 'sends nothing' do
+      expect_any_instance_of(Spree::PayoutProvider::System).not_to receive(:pay!)
+
+      described_class.call(seller: seller, currency: 'USD')
+    end
+
+    it 'keeps no empty settlement behind' do
+      expect { described_class.call(seller: seller, currency: 'USD') }.
+        not_to change { Spree::SellerPayout.count }
+    end
+  end
 end

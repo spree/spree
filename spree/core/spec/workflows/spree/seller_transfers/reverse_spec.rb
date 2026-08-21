@@ -56,6 +56,59 @@ RSpec.describe Spree::SellerTransfers::Reverse do
     end
   end
 
+  # A subscriber job retries on error, so the same refund can be handled more
+  # than once. Without a key tying a reversal to its cause, each attempt would
+  # take the money back again.
+  describe 'when the same refund arrives twice' do
+    let(:refund) { create(:refund, amount: 30) }
+
+    it 'takes the money back once' do
+      earn(80)
+      described_class.call(order: order, amount: 30, refund: refund)
+
+      expect { described_class.call(order: order, amount: 30, refund: refund) }.
+        not_to change { Spree::SellerTransfer.count }
+
+      expect(seller.balance('USD')).to eq(50)
+    end
+
+    it 'answers with the reversal that was already written' do
+      earn(80)
+      first = described_class.call(order: order, amount: 30, refund: refund).value
+
+      expect(described_class.call(order: order, amount: 30, refund: refund).value).to eq(first)
+    end
+
+    # The read guard is not enough on its own — two deliveries can pass it
+    # together — so the database has the last word.
+    it 'refuses a second row even when the read guard is bypassed' do
+      earning = earn(80)
+
+      expect do
+        Spree::SellerTransfer.create!(
+          seller: seller, order: order, reversed_from: earning, refund: refund,
+          amount: -30, currency: 'USD', kind: 'refund_reversal', provider: 'system', status: 'pending'
+        )
+        Spree::SellerTransfer.create!(
+          seller: seller, order: order, reversed_from: earning, refund: refund,
+          amount: -30, currency: 'USD', kind: 'refund_reversal', provider: 'system', status: 'pending'
+        )
+      end.to raise_error(ActiveRecord::RecordNotUnique)
+    end
+  end
+
+  describe 'when two different refunds land on one order' do
+    it 'never takes back more than was credited between them' do
+      earn(80)
+
+      described_class.call(order: order, amount: 60, refund: create(:refund, amount: 30))
+      described_class.call(order: order, amount: 60, refund: create(:refund, amount: 30))
+
+      expect(seller.balance('USD')).to eq(0)
+      expect(Spree::SellerTransfer.reversals_only.sum(:amount)).to eq(-80)
+    end
+  end
+
   # A settlement that has happened is never rewritten: the reversal is simply
   # unsettled, so the next sweep nets it off what comes after.
   describe 'when the earning was already settled' do

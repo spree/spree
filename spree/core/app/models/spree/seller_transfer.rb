@@ -33,6 +33,9 @@ module Spree
     # a re-run sweep can never batch the same earning twice.
     belongs_to :payout, class_name: 'Spree::SellerPayout', optional: true, inverse_of: :transfers
     belongs_to :reversed_from, class_name: 'Spree::SellerTransfer', optional: true, inverse_of: :reversals
+    # What caused a reversal. Nil on an earning, and the reversal's natural
+    # key: one clawback per refund, enforced by a unique index.
+    belongs_to :refund, class_name: 'Spree::Refund', optional: true
     has_many :reversals, class_name: 'Spree::SellerTransfer', foreign_key: :reversed_from_id,
                          inverse_of: :reversed_from, dependent: :nullify
 

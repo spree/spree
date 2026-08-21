@@ -88,18 +88,42 @@ module Spree
           # lie, so this payout takes only what it actually claimed.
           restate_amount if claimed != @transfers.size
         end
+
+        # The threshold was checked against what this sweep hoped to claim. If
+        # a concurrent one took some of it the figure has changed, and a
+        # restated payout can even come to nothing — which must not be sent: a
+        # provider asked to move zero either errors or moves nothing, and
+        # either way it is not a settlement.
+        discard_empty_payout if @payout.amount <= 0
       end
 
       def restate_amount
         @payout.update!(amount: @payout.transfers.sum(:amount))
       end
 
+      # Nothing was claimed, so there is nothing to release and nothing to
+      # record. The earnings this sweep meant to take are already in the payout
+      # that won them.
+      def discard_empty_payout
+        @payout.transfers.update_all(payout_id: nil, updated_at: Time.current)
+        @payout.destroy!
+        halt!(seller)
+      end
+
       def execute_payout
         provider.pay!(payout)
       rescue StandardError => e
-        # The transfers stay stamped deliberately: retrying means re-sending
-        # this payout, never sweeping the same earnings into a second one.
-        payout.update!(status: 'failed')
+        # Releasing the transfers is what makes a failure recoverable. A payout
+        # is created by the sweep and by nothing else, so transfers left
+        # stamped to a failed one are unreachable: the next sweep skips them
+        # (`unsettled` means unstamped) while the balance still reports them
+        # owed, and the seller is never paid. Released, they simply fall into
+        # the next sweep — which is the retry.
+        payout.transaction do
+          payout.transfers.update_all(payout_id: nil, updated_at: Time.current)
+          payout.update!(status: 'failed', amount: 0)
+        end
+
         Rails.error.report(e, handled: true, context: { seller_payout_id: payout.id }, source: 'spree.core')
         failure(payout, e.message)
       end

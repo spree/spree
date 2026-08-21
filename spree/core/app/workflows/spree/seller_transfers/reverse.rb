@@ -18,13 +18,15 @@ module Spree
       # @param order [Spree::Order] the seller order being refunded
       # @param amount [BigDecimal, Numeric] how much of the earning to take
       #   back; capped at what is left of it
+      # @param refund [Spree::Refund, nil] what caused the clawback. The
+      #   reversal's natural key, so a redelivered event reverses once.
       # @return [Spree::ServiceModule::Result] value is the reversal, or the
       #   order when there was nothing to reverse
-      def perform(order:, amount:)
+      def perform(order:, amount:, refund: nil)
         super
 
         step :find_earning
-        step :bound_amount
+        step :replay_existing
         run_hooks :validate
 
         step :build_reversal
@@ -43,25 +45,46 @@ module Spree
         halt!(order) if @earning.nil?
       end
 
-      # Never more than is left of the earning, however many times an order is
-      # refunded: a marketplace cannot claw back more than it credited.
-      def bound_amount
-        @bounded = [amount.to_d.abs, @earning.reversible_amount].min
-        halt!(order) if @bounded <= 0
+      # An event can be delivered twice, and a job can retry.
+      def replay_existing
+        return if refund.nil?
+
+        existing = Spree::SellerTransfer.reversals_only.find_by(refund_id: refund.id)
+        halt!(existing) if existing.present?
       end
 
+      # Bounded and written under the earning's own lock, so two refunds
+      # landing together cannot each read the same untouched earning and each
+      # take the whole of it. The unique index on `refund_id` covers the other
+      # race — the same refund arriving twice — and resolves to the row that
+      # won rather than failing the caller.
       def build_reversal
-        @reversal = Spree::SellerTransfer.create!(
-          seller: @earning.seller,
-          order: order,
-          reversed_from: @earning,
-          # Negative, so what a seller has earned is the plain sum of the rows.
-          amount: -@bounded,
-          currency: @earning.currency,
-          kind: 'refund_reversal',
-          provider: @earning.provider,
-          status: 'pending'
-        )
+        @reversal = write_reversal
+        halt!(order) if @reversal.nil?
+      rescue ActiveRecord::RecordNotUnique
+        halt!(Spree::SellerTransfer.reversals_only.find_by!(refund_id: refund.id))
+      end
+
+      # Nil when there is nothing left to take back, which the caller turns
+      # into a halt outside the transaction — `halt!` refuses to run inside one.
+      def write_reversal
+        @earning.with_lock do
+          bounded = [amount.to_d.abs, @earning.reversible_amount].min
+          next nil if bounded <= 0
+
+          Spree::SellerTransfer.create!(
+            seller: @earning.seller,
+            order: order,
+            reversed_from: @earning,
+            refund: refund,
+            # Negative, so what a seller has earned is the plain sum of the rows.
+            amount: -bounded,
+            currency: @earning.currency,
+            kind: 'refund_reversal',
+            provider: @earning.provider,
+            status: 'pending'
+          )
+        end
       end
 
       def execute_reversal

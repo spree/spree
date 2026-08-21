@@ -9,6 +9,9 @@ class CreateSpreeSellerTransfers < ActiveRecord::Migration[8.1]
       t.references :payout, index: true
       # The earning this row reverses, when a refund gave money back.
       t.references :reversed_from, index: true
+      # Which refund caused it. The reversal's natural key — see the index
+      # below.
+      t.references :refund, index: false
 
       t.decimal :amount, precision: 10, scale: 2, null: false, default: 0
       t.string :currency, null: false
@@ -34,9 +37,17 @@ class CreateSpreeSellerTransfers < ActiveRecord::Migration[8.1]
     add_index :spree_seller_transfers, [:seller_id, :currency, :status]
     add_index :spree_seller_transfers, [:seller_id, :created_at]
 
+    # One reversal per refund. An order can be refunded many times, so the
+    # order cannot be the key here — but a single refund must claw back once
+    # however many times its event is delivered, and two refunds arriving
+    # together must not each read the same untouched earning and both take the
+    # whole of it.
+    add_index :spree_seller_transfers, :refund_id, unique: true,
+                                                  name: 'index_seller_transfers_on_refund'
+
     # A re-fired fulfillment event must find the existing row rather than
     # credit the seller twice. Reversals are deliberately outside the
-    # constraint: an order can be refunded more than once.
+    # order constraint: an order can be refunded more than once.
     if connection.supports_partial_index?
       add_index :spree_seller_transfers, :order_id, unique: true,
                                                     where: "kind = 'earning'",

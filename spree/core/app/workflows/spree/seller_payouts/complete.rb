@@ -31,16 +31,27 @@ module Spree
 
       private
 
-      # A webhook can arrive twice, and an operator can double-click.
+      # A webhook can arrive twice, and an operator can double-click. The cheap
+      # read catches the ordinary case; the write below catches the race.
       def replay_completed
-        halt!(seller_payout) if seller_payout.completed?
+        halt!(seller_payout) if seller_payout.reload.completed?
       end
 
+      # Compare-and-swap on the terminal write, because an operator marking a
+      # bank transfer sent can race the provider's own webhook saying the same
+      # thing. Both would pass the read above, both would write `completed`,
+      # and the completion event — public API a subscriber may act on — would
+      # fire twice for one settlement.
       def mark_completed
-        attributes = { status: 'completed' }
+        attributes = { status: 'completed', updated_at: Time.current }
         attributes[:reference] = reference if reference.present?
 
-        seller_payout.update!(attributes)
+        claimed = Spree::SellerPayout.where(id: seller_payout.id, status: %w[pending processing]).
+                  update_all(attributes)
+
+        halt!(seller_payout.reload) if claimed.zero?
+
+        seller_payout.reload
       end
     end
   end
