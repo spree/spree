@@ -194,9 +194,8 @@ export interface AddressInput {
 
 /**
  * Fill the shared `<AddressFormDialog>` Sheet ("Add address" / "Edit address").
- * The country picker is a Base UI Combobox; we drive it by typing into the
- * input (placeholder "Search countries...") and clicking the matching option.
- * Same pattern for the state combobox when the country needs one.
+ * The country and state pickers are button-triggered comboboxes: open the
+ * field, type into the search box inside the popup, then click the option.
  */
 export async function fillAddressForm(page: Page, address: AddressInput) {
   if (address.label !== undefined) await page.locator('#addr-label').fill(address.label)
@@ -207,10 +206,12 @@ export async function fillAddressForm(page: Page, address: AddressInput) {
   if (address.postalCode !== undefined) await page.locator('#addr-zip').fill(address.postalCode)
   if (address.phone !== undefined) await page.locator('#addr-phone').fill(address.phone)
   if (address.country) {
+    await page.locator('#addr-country').click()
     await page.getByPlaceholder(/^search countries/i).fill(address.country)
     await page.getByRole('option', { name: address.country }).first().click()
   }
   if (address.state) {
+    await page.locator('#addr-state').click()
     await page.getByPlaceholder(/^search states/i).fill(address.state)
     await page.getByRole('option', { name: address.state }).first().click()
   }

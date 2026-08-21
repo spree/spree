@@ -378,6 +378,7 @@
     "components": {
       "currency_select": {
         "placeholder": "选择货币",
+        "search_placeholder": "搜索货币…",
         "empty": "未找到货币"
       },
       "channel_select": {
@@ -395,13 +396,16 @@
       "locale_select": {
         "placeholder": "选择语言区域",
         "multi_placeholder": "添加语言区域…",
+        "search_placeholder": "搜索语言…",
         "empty": "未找到语言区域"
       },
       "country_combobox": {
+        "placeholder": "选择国家/地区",
         "search_placeholder": "搜索国家/地区…",
         "empty": "未找到国家/地区"
       },
       "state_combobox": {
+        "placeholder": "选择州/省",
         "search_placeholder": "搜索州/省…",
         "empty": "未找到州/省"
       },

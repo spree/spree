@@ -378,6 +378,7 @@
     "components": {
       "currency_select": {
         "placeholder": "Select a currency",
+        "search_placeholder": "Search currencies…",
         "empty": "No currencies found"
       },
       "channel_select": {
@@ -395,13 +396,16 @@
       "locale_select": {
         "placeholder": "Select a locale",
         "multi_placeholder": "Add locales…",
+        "search_placeholder": "Search languages…",
         "empty": "No locales found"
       },
       "country_combobox": {
+        "placeholder": "Select a country",
         "search_placeholder": "Search countries…",
         "empty": "No countries found"
       },
       "state_combobox": {
+        "placeholder": "Select a state",
         "search_placeholder": "Search states…",
         "empty": "No states found"
       },

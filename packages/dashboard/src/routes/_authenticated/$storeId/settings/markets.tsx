@@ -343,7 +343,9 @@ function MarketFormFields({ form }: { form: UseFormReturn<MarketFormValues> }) {
             <CurrencySelect
               id="market-currency"
               required
+              invalid={!!errors.currency}
               value={field.value}
+              onBlur={field.onBlur}
               onChange={field.onChange}
               options={ALL_CURRENCY_CODES}
             />
@@ -366,7 +368,9 @@ function MarketFormFields({ form }: { form: UseFormReturn<MarketFormValues> }) {
             <LocaleSelect
               id="market-default-locale"
               required
+              invalid={!!errors.default_locale}
               value={field.value}
+              onBlur={field.onBlur}
               onChange={field.onChange}
               options={availableLocales}
             />

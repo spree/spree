@@ -1,19 +1,16 @@
 import {
   Combobox,
+  ComboboxButtonTrigger,
   ComboboxChip,
   ComboboxChips,
   ComboboxChipsInput,
   ComboboxContent,
   ComboboxEmpty,
-  ComboboxInput,
   ComboboxItem,
   ComboboxList,
+  ComboboxSearch,
+  ComboboxTriggerPlaceholder,
   ComboboxValue,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
   useComboboxAnchor,
 } from '@spree/dashboard-ui'
 import { useMemo, useState } from 'react'
@@ -26,7 +23,12 @@ interface BaseProps {
   options?: string[]
   /** Locale to filter out (e.g. the default locale when picking additional supported ones). */
   excludeCode?: string
-  /** Marks the field required for screen readers + native form submission. */
+  /**
+   * Announces the field as required to assistive technology (`aria-required`).
+   * It does not enforce anything: the trigger is a button, so there is no
+   * native constraint validation behind it. The consuming form owns
+   * enforcement.
+   */
   required?: boolean
   disabled?: boolean
   placeholder?: string
@@ -34,10 +36,23 @@ interface BaseProps {
   id?: string
 }
 
+/**
+ * Single-select only, by design — the multi-select deliberately does not
+ * support these. Its search box is the chips input itself rather than a box
+ * inside the popup, and its validity is a property of the whole selection
+ * rather than of one control. Declaring them here rather than on `BaseProps`
+ * makes passing them to a `multiple` picker a compile error instead of a prop
+ * that is silently dropped.
+ */
 interface SingleProps extends BaseProps {
   multiple?: false
   value: string | null | undefined
   onChange: (locale: string) => void
+  /** Text in the dropdown's search box. */
+  searchPlaceholder?: string
+  invalid?: boolean
+  /** Forwarded to the trigger so RHF's `<Controller>` can track touched state. */
+  onBlur?: () => void
 }
 
 interface MultiProps extends BaseProps {
@@ -58,15 +73,15 @@ function useLocaleDisplayName() {
   return (code: string) => displayName(code) ?? code
 }
 
-/** Mirrors `CurrencySelect`'s row format: `CODE — Localized Name`. */
+/**
+ * Mirrors `CurrencySelect`'s row format: `CODE — Localized Name`. Codes the
+ * runtime cannot name (`Intl.DisplayNames` returns the code back, as it does
+ * for `dz`) render as the bare upper-cased code rather than `DZ — dz`.
+ */
 function formatOption(code: string, name: string) {
   const upper = code.toUpperCase()
-  return name === code ? upper : `${upper} — ${name}`
+  return !name || name.toLowerCase() === code.toLowerCase() ? upper : `${upper} — ${name}`
 }
-
-/** Above this many options a plain `<Select>` is unwieldy — switch to a
- *  searchable combobox. Matches `CurrencySelect`. */
-const SEARCHABLE_THRESHOLD = 12
 
 /**
  * Combobox `filter` factory shared by the single- and multi-select pickers:
@@ -100,6 +115,11 @@ export function LocaleLabel({ code }: { code: string }) {
  * `Intl.DisplayNames` against the store's `default_locale`. Use this anywhere
  * the merchant is choosing a storefront language (market default, supported
  * locales list, customer preference, etc.).
+ *
+ * The single-select field is a button showing the current locale, with the
+ * search box inside the dropdown; it is always searchable, whatever the list
+ * length, so the field behaves the same on a store with three locales as on
+ * one offering the full translatable set.
  */
 export function LocaleSelect(props: LocaleSelectProps) {
   const { t } = useTranslation()
@@ -153,52 +173,45 @@ export function LocaleSelect(props: LocaleSelectProps) {
   const value = props.value ?? ''
   const placeholder = props.placeholder ?? t('admin.components.locale_select.placeholder')
 
-  // Long lists (e.g. the full set of translatable locales) are unusable as a
-  // plain dropdown — switch to a searchable combobox, matching `CurrencySelect`.
-  if (items.length > SEARCHABLE_THRESHOLD) {
-    return (
-      <Combobox
-        items={items}
-        value={value}
-        onValueChange={(next: string | null) => props.onChange(next ?? '')}
-        itemToStringLabel={(locale: string | null) => (locale ? labelFor(locale) : '')}
-        itemToStringValue={(locale: string | null) => locale ?? ''}
-        filter={localeFilter(labelFor)}
-        disabled={props.disabled}
-      >
-        <ComboboxInput id={props.id} aria-required={props.required} placeholder={placeholder} />
-        <ComboboxContent>
-          <ComboboxEmpty>{t('admin.components.locale_select.empty')}</ComboboxEmpty>
-          <ComboboxList>
-            {(locale: string) => (
-              <ComboboxItem key={locale} value={locale}>
-                {labelFor(locale)}
-              </ComboboxItem>
-            )}
-          </ComboboxList>
-        </ComboboxContent>
-      </Combobox>
-    )
-  }
-
   return (
-    <Select value={value} onValueChange={props.onChange} disabled={props.disabled}>
-      <SelectTrigger id={props.id} aria-required={props.required}>
-        {/* Base UI's `<SelectValue>` defaults to the raw locale code. Use
-            the children render-prop so the trigger shows the same
-            `CODE — Name` as the items. */}
-        <SelectValue placeholder={placeholder}>
-          {(v) => (v ? labelFor(v as string) : (v as string))}
-        </SelectValue>
-      </SelectTrigger>
-      <SelectContent>
-        {items.map((locale) => (
-          <SelectItem key={locale} value={locale}>
-            {labelFor(locale)}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+    <Combobox
+      items={items}
+      value={value}
+      onValueChange={(next: string | null) => props.onChange(next ?? '')}
+      itemToStringLabel={(locale: string | null) => (locale ? labelFor(locale) : '')}
+      itemToStringValue={(locale: string | null) => locale ?? ''}
+      filter={localeFilter(labelFor)}
+      disabled={props.disabled}
+    >
+      <ComboboxButtonTrigger
+        id={props.id}
+        onBlur={props.onBlur}
+        disabled={props.disabled}
+        aria-required={props.required}
+        aria-invalid={props.invalid || undefined}
+      >
+        {value ? (
+          <span className="truncate">{labelFor(value)}</span>
+        ) : (
+          <ComboboxTriggerPlaceholder>{placeholder}</ComboboxTriggerPlaceholder>
+        )}
+      </ComboboxButtonTrigger>
+      <ComboboxContent>
+        <ComboboxSearch
+          placeholder={
+            props.searchPlaceholder ?? t('admin.components.locale_select.search_placeholder')
+          }
+        />
+        <ComboboxEmpty>{t('admin.components.locale_select.empty')}</ComboboxEmpty>
+        <ComboboxList>
+          {(locale: string) => (
+            <ComboboxItem key={locale} value={locale}>
+              {labelFor(locale)}
+            </ComboboxItem>
+          )}
+        </ComboboxList>
+      </ComboboxContent>
+    </Combobox>
   )
 }
 

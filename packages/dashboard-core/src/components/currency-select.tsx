@@ -1,15 +1,12 @@
 import {
   Combobox,
+  ComboboxButtonTrigger,
   ComboboxContent,
   ComboboxEmpty,
-  ComboboxInput,
   ComboboxItem,
   ComboboxList,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  ComboboxSearch,
+  ComboboxTriggerPlaceholder,
 } from '@spree/dashboard-ui'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -47,17 +44,23 @@ interface CurrencySelectProps {
    * Currency codes to pick from. Defaults to the current store's
    * `supported_currencies`. Pass `ALL_CURRENCY_CODES` (or any custom list) for
    * contexts where the merchant chooses a currency the store doesn't yet
-   * support — e.g. a market's currency. Large lists switch to a searchable
-   * combobox automatically.
+   * support — e.g. a market's currency.
    */
   options?: string[]
-  /** Marks the field required for screen readers + native form submission. */
+  /**
+   * Announces the field as required to assistive technology (`aria-required`).
+   * It does not enforce anything: the trigger is a button, so there is no
+   * native constraint validation behind it. The consuming form owns
+   * enforcement.
+   */
   required?: boolean
   disabled?: boolean
+  /** Text in the dropdown's search box. */
+  searchPlaceholder?: string
+  invalid?: boolean
+  /** Forwarded to the trigger so RHF's `<Controller>` can track touched state. */
+  onBlur?: () => void
 }
-
-/** Above this many options a plain `<Select>` is unwieldy — switch to search. */
-const SEARCHABLE_THRESHOLD = 12
 
 /**
  * Picker for a currency code. Defaults to the current store's
@@ -66,7 +69,11 @@ const SEARCHABLE_THRESHOLD = 12
  * Pass `options` (e.g. `ALL_CURRENCY_CODES`) when the merchant may pick any
  * currency, such as a market's currency. Each option reads `CODE — Full Name`
  * (e.g. `USD — US Dollar`), with the name localized to the admin UI language.
- * Long option lists render a searchable combobox.
+ *
+ * Always searchable, whatever the list length. The picker used to fall back to
+ * a plain `<Select>` under a dozen options, which meant the same field behaved
+ * differently from one store to the next — typing to filter worked on a store
+ * with many currencies and did nothing on a store with three.
  */
 export function CurrencySelect({
   id,
@@ -77,6 +84,9 @@ export function CurrencySelect({
   options,
   required,
   disabled,
+  searchPlaceholder,
+  invalid,
+  onBlur,
 }: CurrencySelectProps) {
   const { t } = useTranslation()
   const { currencies, defaultCurrency } = useStore()
@@ -120,62 +130,51 @@ export function CurrencySelect({
 
   const hiddenInput = name ? <input type="hidden" name={name} value={value} /> : null
 
-  if (items.length > SEARCHABLE_THRESHOLD) {
-    return (
-      <>
-        {hiddenInput}
-        <Combobox
-          items={items}
-          value={value}
-          onValueChange={(next: string | null) => handleChange(next ?? '')}
-          itemToStringLabel={(code: string | null) => (code ? renderOption(code) : '')}
-          itemToStringValue={(code: string | null) => code ?? ''}
-          filter={filter}
-          disabled={disabled}
-        >
-          <ComboboxInput
-            id={id}
-            aria-required={required}
-            placeholder={t('admin.components.currency_select.placeholder')}
-            disabled={disabled}
-          />
-          <ComboboxContent>
-            <ComboboxEmpty>{t('admin.components.currency_select.empty')}</ComboboxEmpty>
-            <ComboboxList>
-              {(code: string) => (
-                <ComboboxItem key={code} value={code}>
-                  {renderOption(code)}
-                </ComboboxItem>
-              )}
-            </ComboboxList>
-          </ComboboxContent>
-        </Combobox>
-      </>
-    )
-  }
-
   return (
     <>
       {/* Hidden input keeps the parent `<form>` submit / FormData path working
           without each caller having to thread the value through state. */}
       {hiddenInput}
-      <Select value={value} onValueChange={handleChange} disabled={disabled}>
-        <SelectTrigger id={id} aria-required={required}>
-          {/* Base UI's `<SelectValue>` defaults to rendering the raw `value`
-              (the bare ISO code). Use the children render-prop so the
-              trigger shows the same `CODE — Full Name` as the items. */}
-          <SelectValue placeholder={t('admin.components.currency_select.placeholder')}>
-            {(v) => (v ? renderOption(v as string) : (v as string))}
-          </SelectValue>
-        </SelectTrigger>
-        <SelectContent>
-          {items.map((currency) => (
-            <SelectItem key={currency} value={currency}>
-              {renderOption(currency)}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <Combobox
+        items={items}
+        value={value}
+        onValueChange={(next: string | null) => handleChange(next ?? '')}
+        itemToStringLabel={(code: string | null) => (code ? renderOption(code) : '')}
+        itemToStringValue={(code: string | null) => code ?? ''}
+        filter={filter}
+        disabled={disabled}
+      >
+        <ComboboxButtonTrigger
+          id={id}
+          onBlur={onBlur}
+          disabled={disabled}
+          aria-required={required}
+          aria-invalid={invalid || undefined}
+        >
+          {value ? (
+            <span className="truncate">{renderOption(value)}</span>
+          ) : (
+            <ComboboxTriggerPlaceholder>
+              {t('admin.components.currency_select.placeholder')}
+            </ComboboxTriggerPlaceholder>
+          )}
+        </ComboboxButtonTrigger>
+        <ComboboxContent>
+          <ComboboxSearch
+            placeholder={
+              searchPlaceholder ?? t('admin.components.currency_select.search_placeholder')
+            }
+          />
+          <ComboboxEmpty>{t('admin.components.currency_select.empty')}</ComboboxEmpty>
+          <ComboboxList>
+            {(code: string) => (
+              <ComboboxItem key={code} value={code}>
+                {renderOption(code)}
+              </ComboboxItem>
+            )}
+          </ComboboxList>
+        </ComboboxContent>
+      </Combobox>
     </>
   )
 }

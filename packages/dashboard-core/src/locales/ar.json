@@ -378,6 +378,7 @@
     "components": {
       "currency_select": {
         "placeholder": "اختر عملة",
+        "search_placeholder": "البحث في العملات…",
         "empty": "لم يتم العثور على عملات"
       },
       "channel_select": {
@@ -395,13 +396,16 @@
       "locale_select": {
         "placeholder": "اختر لغة",
         "multi_placeholder": "إضافة لغات…",
+        "search_placeholder": "البحث في اللغات…",
         "empty": "لم يتم العثور على لغات"
       },
       "country_combobox": {
+        "placeholder": "اختر بلداً",
         "search_placeholder": "البحث في البلدان…",
         "empty": "لم يتم العثور على بلدان"
       },
       "state_combobox": {
+        "placeholder": "اختر ولاية",
         "search_placeholder": "البحث في الولايات…",
         "empty": "لم يتم العثور على ولايات"
       },

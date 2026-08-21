@@ -1,16 +1,17 @@
 import {
   Combobox,
+  ComboboxButtonTrigger,
   ComboboxChip,
   ComboboxChips,
   ComboboxChipsInput,
   ComboboxContent,
   ComboboxEmpty,
-  ComboboxInput,
   ComboboxItem,
   ComboboxList,
+  ComboboxSearch,
+  ComboboxTriggerPlaceholder,
   ComboboxValue,
   CountryFlag,
-  InputGroupAddon,
   useComboboxAnchor,
 } from '@spree/dashboard-ui'
 import { useCallback, useMemo, useState } from 'react'
@@ -87,34 +88,50 @@ function CountryRow({ country, label }: { country: CountryOption; label: string 
   )
 }
 
+/** Maps the cached country list onto the flat option shape both pickers use. */
+function useCountryOptions(): CountryOption[] {
+  const { countries } = useCountries()
+  return useMemo(
+    () => countries.map((c) => ({ iso: c.iso, iso3: c.iso3, name: c.name })),
+    [countries],
+  )
+}
+
 /**
  * Searchable single-select country picker. Value is the 2-letter ISO code
- * (so the field round-trips cleanly with the Spree API). Renders the country
- * name + flag in the trigger and `<CountryRow>` in the dropdown.
+ * (so the field round-trips cleanly with the Spree API).
+ *
+ * The field itself is a button showing the selected flag + name, with the
+ * search box inside the dropdown — see `<ComboboxButtonTrigger>` for why a
+ * text input is the wrong trigger for an address-adjacent picker.
  */
 export function CountryCombobox({
   id,
   value,
   onValueChange,
+  onBlur,
   placeholder,
+  searchPlaceholder,
+  invalid,
   disabled = false,
 }: {
-  /** Forwarded to the text input so a `<FieldLabel htmlFor>` can target it. */
+  /** Forwarded to the trigger so a `<FieldLabel htmlFor>` can target it. */
   id?: string
   value: string | null | undefined
   onValueChange: (iso: string) => void
+  /** Forwarded to the trigger so RHF's `<Controller>` can track touched state. */
+  onBlur?: () => void
+  /** Trigger text while nothing is selected. */
   placeholder?: string
+  /** Text in the dropdown's search box. */
+  searchPlaceholder?: string
+  invalid?: boolean
   disabled?: boolean
 }) {
   const { t } = useTranslation()
-  const { countries } = useCountries()
+  const items = useCountryOptions()
   const countryName = useCountryDisplayName()
   const filter = useCountryFilter()
-
-  const items: CountryOption[] = useMemo(
-    () => countries.map((c) => ({ iso: c.iso, iso3: c.iso3, name: c.name })),
-    [countries],
-  )
 
   // The Combobox holds the selected object internally; we adapt to a flat ISO
   // string at the boundary so callers don't have to thread the option shape.
@@ -132,22 +149,29 @@ export function CountryCombobox({
       // "Allemagne", "Germany", "DE", or "DEU" all find the country.
       filter={filter}
     >
-      <ComboboxInput
+      <ComboboxButtonTrigger
         id={id}
-        placeholder={placeholder ?? t('admin.components.country_combobox.search_placeholder')}
+        onBlur={onBlur}
         disabled={disabled}
+        aria-invalid={invalid || undefined}
       >
-        {/* When a country is picked the InputGroup gets a leading flag —
-            mirrors the dropdown items so the trigger shows the same shape.
-            Hidden while empty so the input doesn't lurch when typing a new
-            search query. */}
-        {selected?.iso && (
-          <InputGroupAddon align="inline-start">
+        {selected ? (
+          <>
             <CountryFlag iso={selected.iso} />
-          </InputGroupAddon>
+            <span className="truncate">{countryName(selected)}</span>
+          </>
+        ) : (
+          <ComboboxTriggerPlaceholder>
+            {placeholder ?? t('admin.components.country_combobox.placeholder')}
+          </ComboboxTriggerPlaceholder>
         )}
-      </ComboboxInput>
+      </ComboboxButtonTrigger>
       <ComboboxContent>
+        <ComboboxSearch
+          placeholder={
+            searchPlaceholder ?? t('admin.components.country_combobox.search_placeholder')
+          }
+        />
         <ComboboxEmpty>{t('admin.components.country_combobox.empty')}</ComboboxEmpty>
         <ComboboxList>
           {(country: CountryOption) => (
@@ -164,9 +188,13 @@ export function CountryCombobox({
 /**
  * Searchable multi-select country picker. Value is an array of 2-letter ISO
  * codes. Renders a flag + name per chip and `<CountryRow>` per dropdown row;
- * filters the cached `useCountries()` list client-side via `countryFilter`
- * (name + both ISO codes). Reused anywhere the admin picks multiple
+ * filters the cached `useCountries()` list client-side (localized name, raw
+ * name, and both ISO codes). Reused anywhere the admin picks multiple
  * countries (promotion Country rule, market/zone editors, …).
+ *
+ * Keeps the chips-with-inline-input shape rather than a button trigger: the
+ * chips are the selection display, and typing beside them is how a
+ * multi-select is expected to work.
  */
 export function CountryMultiCombobox({
   value,
@@ -184,16 +212,11 @@ export function CountryMultiCombobox({
   disabled?: boolean
 }) {
   const { t } = useTranslation()
-  const { countries } = useCountries()
+  const items = useCountryOptions()
   const countryName = useCountryDisplayName()
   const filter = useCountryFilter()
   const anchorRef = useComboboxAnchor()
   const [inputValue, setInputValue] = useState('')
-
-  const items: CountryOption[] = useMemo(
-    () => countries.map((c) => ({ iso: c.iso, iso3: c.iso3, name: c.name })),
-    [countries],
-  )
 
   // The Combobox holds full option objects; selection round-trips as ISO
   // strings. Selected ISOs not yet present in `items` (list still loading)
@@ -230,13 +253,13 @@ export function CountryMultiCombobox({
           }
         </ComboboxValue>
         <ComboboxChipsInput
-          placeholder={placeholder ?? t('admin.promotions.rules.country.search_placeholder')}
+          placeholder={placeholder ?? t('admin.components.country_combobox.search_placeholder')}
           value={inputValue}
           onChange={(e) => setInputValue((e.target as HTMLInputElement).value)}
         />
       </ComboboxChips>
       <ComboboxContent anchor={anchorRef}>
-        <ComboboxEmpty>{emptyText ?? t('admin.promotions.rules.country.empty')}</ComboboxEmpty>
+        <ComboboxEmpty>{emptyText ?? t('admin.components.country_combobox.empty')}</ComboboxEmpty>
         <ComboboxList>
           {(country: CountryOption) => (
             <ComboboxItem key={country.iso} value={country}>
