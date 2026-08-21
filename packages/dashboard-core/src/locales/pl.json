@@ -767,7 +767,6 @@
       },
       "edit_description": "Zaktualizuj nazwę, adres, odbiór lub zasady dotyczące zapasów.",
       "empty": "Brak lokalizacji magazynowych",
-      "first_party": "Marketplace",
       "kinds": {
         "fulfillment_center": "Centrum realizacji zamówień",
         "store": "Sklep",

@@ -767,7 +767,6 @@
       },
       "edit_description": "Aktualisieren Sie Name, Adresse, Abholung oder Bestandsrichtlinien.",
       "empty": "Noch keine Lagerstandorte",
-      "first_party": "Marktplatz",
       "kinds": {
         "fulfillment_center": "Fulfillment-Center",
         "store": "Geschäft",

@@ -767,7 +767,6 @@
       },
       "edit_description": "Mettez à jour le nom, l'adresse, le retrait ou les politiques de stock.",
       "empty": "Aucun emplacement de stock pour le moment",
-      "first_party": "Place de marché",
       "kinds": {
         "fulfillment_center": "Centre de distribution",
         "store": "Magasin",

@@ -769,7 +769,6 @@
       },
       "edit_description": "Update name, address, pickup, or stock policies.",
       "empty": "No stock locations yet",
-      "first_party": "Marketplace",
       "kinds": {
         "fulfillment_center": "Fulfillment center",
         "store": "Store",
