@@ -53,7 +53,12 @@ module Spree
           # seller cannot repair themselves.
           def destroy
             removed = current_seller.with_lock do
-              next false if current_seller.users.count <= 1
+              # `distinct`: `users` reaches through role_users, so a member
+              # holding two roles on this seller is counted twice — while
+              # `remove_user` deletes every one of their roles at once. Without
+              # it, a two-role seller with one person reads as a team of two
+              # and this check would let them remove themselves.
+              next false if current_seller.users.distinct.count <= 1
 
               current_seller.remove_user(@member)
               true

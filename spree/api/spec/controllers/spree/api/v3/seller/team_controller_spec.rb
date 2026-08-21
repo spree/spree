@@ -97,6 +97,20 @@ RSpec.describe Spree::Api::V3::Seller::TeamController, type: :controller do
       expect(seller.reload.users).to include(seller_user)
     end
 
+    # `users` reaches through role_users, so one person holding two roles is
+    # two rows — while removing them deletes both at once. Counted without
+    # `distinct`, a one-person team would read as two and let them go.
+    it 'refuses to remove the last member even when they hold two roles' do
+      second_role = seller.roles.create!(name: "Packer #{SecureRandom.hex(3)}")
+      seller.add_user(seller_user, second_role)
+      expect(seller.reload.users.count).to eq(2)
+
+      delete :destroy, params: { id: seller_user.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(seller.reload.users).to include(seller_user)
+    end
+
     # Counted and removed under a lock on the seller. Unlocked, two concurrent
     # deletes against a two-member team both observe two and both proceed,
     # leaving a seller nobody can sign in to — a state only an operator can
