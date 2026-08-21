@@ -403,6 +403,16 @@ module Spree
         [Spree::CommissionRate, Spree::CommissionRule, Spree::CommissionLine]
       })
 
+      # What the marketplace owes its sellers, and what it has sent them.
+      # Separate from `commissions` because they are opposite directions of the
+      # same relationship, and a finance operator often needs one without the
+      # other. Closed to the seller audience: a seller reads their own earnings
+      # through their own branch, scope-fetched, never through a key that could
+      # reach the whole ledger.
+      register_resource(:payouts, group: :access, subjects: -> {
+        [Spree::SellerTransfer, Spree::SellerPayout]
+      })
+
       # A seller editing their own record: profile, branding, addresses,
       # onboarding.
       #

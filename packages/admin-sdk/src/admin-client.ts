@@ -313,9 +313,11 @@ import type {
   ReturnReason,
   Role,
   Seller,
+  SellerPayout,
   SellerRequirement,
   SellerRequirementSubmission,
   SellerTeamMember,
+  SellerTransfer,
   StockLevel,
   StockLocation,
   StockMovement,
@@ -2707,6 +2709,73 @@ export class AdminClient {
       this.request<CommissionLine>('GET', `/commission_lines/${id}`, {
         ...options,
         params: getParams(params),
+      }),
+  }
+
+  // ============================================
+  // Seller fund ledger
+  // ============================================
+
+  /**
+   * Read-only view of `Spree::SellerTransfer` — what one order earned one
+   * seller, credited when the goods went out. There is no write path: a
+   * refund writes a reversal, which is another row rather than an edit.
+   */
+  readonly sellerTransfers = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<SellerTransfer>> =>
+      this.request<PaginatedResponse<SellerTransfer>>('GET', '/seller_transfers', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<SellerTransfer> =>
+      this.request<SellerTransfer>('GET', `/seller_transfers/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+  }
+
+  /**
+   * `Spree::SellerPayout` — one settlement to one seller. Created by the
+   * sweep on that seller's own schedule rather than by a caller, so there is
+   * no create or update. `complete` is what the built-in provider waits for:
+   * the operator saying the bank transfer went out.
+   */
+  readonly sellerPayouts = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<SellerPayout>> =>
+      this.request<PaginatedResponse<SellerPayout>>('GET', '/seller_payouts', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<SellerPayout> =>
+      this.request<SellerPayout>('GET', `/seller_payouts/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+
+    complete: (
+      id: string,
+      data?: { reference?: string },
+      options?: RequestOptions,
+    ): Promise<SellerPayout> =>
+      this.request<SellerPayout>('PATCH', `/seller_payouts/${id}/complete`, {
+        ...options,
+        body: data,
       }),
   }
 
