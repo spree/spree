@@ -54,6 +54,45 @@ RSpec.describe 'Spree::PriceLists write workflows' do
       expect(price_list.product_ids).to eq([product.id])
     end
 
+    # A prefix only encodes a number, so a variant's id decodes to an integer
+    # that names a product just as readily. Resolving through the store's own
+    # products is what stops one standing in for the other.
+    it 'ignores an id that does not name a product in this store' do
+      Spree.price_list_update_workflow.call(price_list: price_list, attributes: { product_ids: [product.id] })
+      foreign = create(:product, store: create(:store))
+
+      described_class.call(price_list: price_list, attributes: { product_ids: [product.id, foreign.id] })
+
+      expect(price_list.reload.product_ids).to eq([product.id])
+    end
+
+    # Array(nil) is [], so without a guard a nil payload reads as the empty
+    # array that means "clear the list".
+    it 'leaves membership alone when product_ids is nil' do
+      Spree.price_list_update_workflow.call(price_list: price_list, attributes: { product_ids: [product.id] })
+
+      described_class.call(price_list: price_list, attributes: { product_ids: nil })
+
+      expect(price_list.reload.product_ids).to eq([product.id])
+    end
+
+    # Malformed input is not the same instruction as an empty array.
+    it 'leaves membership alone when every id is blank' do
+      Spree.price_list_update_workflow.call(price_list: price_list, attributes: { product_ids: [product.id] })
+
+      described_class.call(price_list: price_list, attributes: { product_ids: ['', '  ', nil] })
+
+      expect(price_list.reload.product_ids).to eq([product.id])
+    end
+
+    it 'clears membership when given an empty array' do
+      Spree.price_list_update_workflow.call(price_list: price_list, attributes: { product_ids: [product.id] })
+
+      described_class.call(price_list: price_list, attributes: { product_ids: [] })
+
+      expect(price_list.reload.product_ids).to be_empty
+    end
+
     it 'adds and removes products' do
       other = create(:product, store: store)
 

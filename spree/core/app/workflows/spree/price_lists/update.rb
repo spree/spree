@@ -91,13 +91,31 @@ module Spree
 
       # Ids arrive prefixed from the console and legacy callers, already
       # decoded from a controller that ran normalize_params — the same two
-      # shapes price_rows handles for variant_id. Comparing a prefixed string
-      # against an integer primary key would read as "every current member
-      # removed, none added".
+      # shapes price_rows handles for variant_id.
+      #
+      # Resolved against the store's own products rather than decoded and
+      # trusted. A prefix only encodes a number, so `variant_xxx` decodes to
+      # an integer that names a product just as readily; and a blank entry
+      # matches nothing, which would otherwise read as "remove every current
+      # member and add none".
       def decoded_product_ids(ids)
-        Array(ids).compact.filter_map do |id|
+        # `nil` is not a list: Array(nil) is [], which would otherwise read as
+        # the empty array that means "clear the list".
+        return nil if ids.nil?
+
+        given = Array(ids)
+        candidates = given.filter_map do |id|
+          next if id.blank?
+
           Spree::PrefixedId.prefixed_id?(id) ? Spree::PrefixedId.decode_prefixed_id(id) : id
-        end.uniq
+        end
+
+        # An empty array clears the list; an array of blanks is malformed
+        # input and must not read as the same instruction.
+        return nil if candidates.empty? && given.any?
+        return [] if candidates.empty?
+
+        price_list.store.products.where(id: candidates).ids
       end
 
       def price_rows

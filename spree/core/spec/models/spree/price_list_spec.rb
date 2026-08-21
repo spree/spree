@@ -163,8 +163,10 @@ describe Spree::PriceList, type: :model do
   describe 'product membership' do
     let(:store) { create(:store, supported_currencies: 'USD,EUR,GBP') }
     let(:price_list) { create(:price_list, store: store) }
-    let(:product1) { create(:product) }
-    let(:product2) { create(:product) }
+    # Same store as the list: membership resolves through the store's own
+    # products, so a product from another store is not a member to be had.
+    let(:product1) { create(:product, store: store) }
+    let(:product2) { create(:product, store: store) }
 
     # Guards the POST/PATCH /price_lists response: membership is reconciled
     # through raw upsert_all/delete_all, which bypasses the products
