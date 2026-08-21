@@ -29,6 +29,22 @@ module Spree
               [:prices, stock_levels: :stock_location]
             end
 
+            def create_workflow
+              Spree.variant_create_workflow
+            end
+
+            def update_workflow
+              Spree.variant_update_workflow
+            end
+
+            # A variant belongs to a product, not directly to a store, and
+            # everything nested in the payload is resolved through it — an
+            # option value attaches its option type to the product, a stock
+            # location is scoped to the product's store.
+            def create_workflow_arguments
+              { product: @parent, attributes: permitted_params }
+            end
+
             def permitted_params
               params.permit(
                 *model_additional_permitted_attributes,
