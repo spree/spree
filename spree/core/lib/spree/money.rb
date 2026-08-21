@@ -49,6 +49,30 @@ module Spree
       def quantize(amount, precision)
         BigDecimal(amount.to_s).round(precision, BigDecimal::ROUND_HALF_UP)
       end
+
+      # An amount as a whole number of the currency's smallest unit — cents for
+      # most currencies, whole yen for one written without decimals.
+      #
+      # Apportionment works in these units because integers divide exactly:
+      # shares computed from them can be made to sum to the original, which is
+      # what keeps a divided charge equal to the one the customer agreed to.
+      # Hardcoding a hundredth here instead would give a yen sale a hundred
+      # times its weight and hand back a figure with decimals the currency does
+      # not have.
+      #
+      # @param amount [Numeric, String, nil]
+      # @param currency [String, ::Money::Currency, nil]
+      # @return [Integer]
+      def to_minor_units(amount, currency)
+        (BigDecimal(amount.to_s) * (10**precision(currency))).round.to_i
+      end
+
+      # @param units [Integer] whole minor units, as {#to_minor_units} returns
+      # @param currency [String, ::Money::Currency, nil]
+      # @return [BigDecimal]
+      def from_minor_units(units, currency)
+        BigDecimal(units) / (10**precision(currency))
+      end
     end
 
     include Comparable

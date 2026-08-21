@@ -128,6 +128,7 @@ module Spree
     #
     has_many :carts, class_name: 'Spree::Cart', inverse_of: :store, dependent: :destroy
     has_many :orders, class_name: 'Spree::Order'
+    has_many :order_groups, class_name: 'Spree::OrderGroup'
     has_many :line_items, through: :orders, class_name: 'Spree::LineItem'
     has_many :digital_links, through: :line_items, class_name: 'Spree::DigitalLink'
     has_many :fulfillments, through: :orders, class_name: 'Spree::Fulfillment'

@@ -27,6 +27,11 @@ module Spree
       def publish_payment_paid_event
         publish_event('payment.paid')
 
+        # A payment shared by a split checkout belongs to no single order, so
+        # each child is asked about its own share. order.paid is a public
+        # webhook; a marketplace order must announce itself paid like any other.
+        return publish_grouped_paid_events if grouped?
+
         # order is nil for a cart-owned payment — checkout is still in
         # flight, so there is no order to declare paid yet.
         return if order.nil?
@@ -45,6 +50,19 @@ module Spree
 
         settled = order.payments.completed.includes(:refunds).sum { |payment| payment.amount - payment.refunds.sum(:amount) }
         settled >= order.total.to_d
+      end
+
+      # Declares each child of a split checkout paid once its own shares cover
+      # its total — which is not all at once, since one seller can be captured
+      # on dispatch while another is still waiting.
+      def publish_grouped_paid_events
+        payment_splits.includes(:order).each do |split|
+          child = split.order
+          next if child.nil? || child.total.to_d <= 0
+
+          settled = child.payment_splits.sum { |row| row.captured_amount - row.refunded_amount }
+          child.publish_event('order.paid') if settled >= child.total.to_d
+        end
       end
     end
   end

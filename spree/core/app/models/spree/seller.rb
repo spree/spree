@@ -97,6 +97,13 @@ module Spree
     # be worse than no record at all.
     has_many :commission_lines, class_name: 'Spree::CommissionLine', dependent: nil
 
+    # This seller's own orders — the child orders a split checkout produced,
+    # and whole orders on a single-seller checkout. Left alone when the seller
+    # goes, for the same reason as commission lines: a completed sale outlives
+    # the party that made it.
+    has_many :orders, class_name: 'Spree::Order', dependent: nil
+    has_many :payment_splits, through: :orders, class_name: 'Spree::PaymentSplit', source: :payment_splits
+
     # What this seller has done about the marketplace's requirements — their
     # attestations, the documents they uploaded, what the operator made of
     # them. Goes with the seller, since it means nothing without them.

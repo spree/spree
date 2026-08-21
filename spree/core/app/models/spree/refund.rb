@@ -12,6 +12,11 @@ module Spree
     publishes_lifecycle_events
 
     belongs_to :payment, inverse_of: :refunds
+    # Which order is being put right. A refund against an ordinary payment
+    # takes the payment's order automatically; one against a payment shared by
+    # a split checkout must name the child order it applies to, since the
+    # payment covers several and only one of them is being refunded.
+    belongs_to :order, class_name: 'Spree::Order', optional: true, inverse_of: :refunds
     belongs_to :reason, class_name: 'Spree::RefundReason', foreign_key: :refund_reason_id
     belongs_to :refunder, class_name: Spree.admin_user_class.to_s, optional: true
     # What triggered this refund — a Spree::Return today, later an Exchange
@@ -29,7 +34,12 @@ module Spree
 
     attr_reader :response
 
-    delegate :order, :currency, to: :payment
+    delegate :currency, to: :payment
+
+    # A refund always knows its order, so every reader — the scopes, the
+    # ledger, the split's share — can rely on the column rather than walking
+    # back through a payment that may belong to several orders.
+    before_validation :assign_order_from_payment, on: :create
 
     def amount=(amount)
       self[:amount] = Spree::LocalizedNumber.parse(amount)
@@ -82,6 +92,13 @@ module Spree
 
     private
 
+    # A payment belonging to one order answers this for itself; a payment
+    # shared by a split checkout cannot, so the caller has to have said which
+    # order it is refunding.
+    def assign_order_from_payment
+      self.order_id ||= payment&.order_id
+    end
+
     # return a payment response object if successful or else raise an error
     def process!(credit_cents)
       refund_total_in_cents = calculate_refund_amount(credit_cents)
@@ -123,8 +140,11 @@ module Spree
       end
     end
 
+    # Re-sums the order this refund put right. Read through the refund's own
+    # order rather than the payment's: a payment shared by a split checkout
+    # belongs to no single order, and it is this one order's money that moved.
     def update_order
-      payment.order.recalculate_totals!
+      order&.recalculate_totals!
     end
   end
 end

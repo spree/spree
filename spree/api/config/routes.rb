@@ -479,6 +479,10 @@ Spree::Core::Engine.add_routes do
         end
         resources :commission_lines, only: [:index, :show]
 
+        # What one checkout produced when it reached several sellers. Read-only:
+        # everything an operator acts on lives on the orders inside it.
+        resources :order_groups, only: [:index, :show]
+
         # Business customers. Branches and their buyers are created under their
         # parent and then addressed directly, so a caller holding a branch id
         # does not have to know which company it belongs to.

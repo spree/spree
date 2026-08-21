@@ -23,7 +23,14 @@ module Spree
       attr_reader :tax_line_context
 
       # @param cart [Spree::Cart, Spree::Order]
-      def perform(cart:)
+      # @param resum_only [Boolean] re-sum the rows the record already carries
+      #   without regenerating them. A placed order is frozen by its own
+      #   lifecycle, but an order can also hold rows that must not be
+      #   re-derived before it is placed — the seller split moves already-costed
+      #   rows onto child orders that are still drafts, and re-running the
+      #   promotion and tax engines against one seller's subset would answer a
+      #   question the checkout already answered against the whole basket.
+      def perform(cart:, resum_only: false)
         super
 
         step :reset_association_caches
@@ -121,7 +128,7 @@ module Spree
       end
 
       def money_frozen?
-        cart.is_a?(Spree::Order) && cart.completed?
+        resum_only || (cart.is_a?(Spree::Order) && cart.completed?)
       end
 
       # Pass one of the two-pass recalculation: persist per-adjustable

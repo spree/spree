@@ -14,7 +14,7 @@ module Spree
             # prevent. Refund#perform! is a no-op on a credited refund, so a
             # double submit cannot credit twice.
             def create
-              payment = @parent.payments.accessible_by(current_ability, :update).find_by_prefix_id!(params[:payment_id])
+              payment = settlement_payments.accessible_by(current_ability, :update).find_by_prefix_id!(params[:payment_id])
               # Scoped to the store, not just the ability — a reason id from
               # another store must 404, not attach.
               reason = current_store.refund_reasons.accessible_by(current_ability, :show).find_by_prefix_id!(params[:refund_reason_id]) if params[:refund_reason_id].present?
@@ -26,7 +26,11 @@ module Spree
                 payment: payment,
                 amount: params[:amount],
                 reason: reason,
-                refunder: try_spree_current_user
+                refunder: try_spree_current_user,
+                # Names which order is being refunded. Only matters when the
+                # payment is shared by a split checkout, where it covers several
+                # and the payment cannot say which one this is for.
+                order: @parent
               )
 
               if result.success?
@@ -46,8 +50,17 @@ module Spree
               Spree.api.admin_refund_serializer
             end
 
+            # Every refund names the order it put right, so this reads the same
+            # for an ordinary order and for one placed in a split checkout,
+            # whose payments belong to its group rather than to itself.
             def scope
-              Spree::Refund.where(payment_id: @parent.payment_ids)
+              Spree::Refund.where(order_id: @parent.id)
+            end
+
+            # The payments that can settle this order — its own, or its group's
+            # when it was placed alongside others.
+            def settlement_payments
+              @parent.settlement_payments
             end
 
             def collection_includes

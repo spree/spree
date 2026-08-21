@@ -112,12 +112,15 @@ module Spree
         purchase.token.present? && token == purchase.token
       end
 
+      # An order group is a purchase for access purposes: it carries the same
+      # customer and guest token, and a guest who split their basket across
+      # sellers has to be able to see what they bought.
       def purchase?(record)
-        record.is_a?(Spree::Cart) || record.is_a?(Spree::Order)
+        record.is_a?(Spree::Cart) || record.is_a?(Spree::Order) || record.is_a?(Spree::OrderGroup)
       end
 
       def purchase_class?(klass)
-        klass <= Spree::Cart || klass <= Spree::Order
+        klass <= Spree::Cart || klass <= Spree::Order || klass <= Spree::OrderGroup
       end
 
       # --- everything else: ownership ---

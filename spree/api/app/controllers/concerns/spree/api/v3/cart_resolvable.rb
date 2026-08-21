@@ -45,9 +45,18 @@ module Spree
           render json: Spree.api.cart_serializer.new(@cart, params: serializer_params).to_h, status: status
         end
 
-        # Render the order as JSON using the order serializer (for complete action).
+        # Render what the checkout produced (for the complete action).
+        #
+        # A checkout spanning several sellers produced a group of orders rather
+        # than one order, and the group is what the customer bought — so it is
+        # what comes back, with the per-seller orders nested inside it. A
+        # storefront that knows nothing about groups still finds every order it
+        # needs there.
         def render_order(status: :ok)
-          render json: Spree.api.order_serializer.new(@cart.reload, params: serializer_params).to_h, status: status
+          record = @cart.reload
+          serializer = record.is_a?(Spree::OrderGroup) ? Spree.api.order_group_serializer : Spree.api.order_serializer
+
+          render json: serializer.new(record, params: serializer_params).to_h, status: status
         end
 
         # Return the cart token from the request headers.

@@ -41,7 +41,7 @@ module Spree
 
         @decided_at = canceled_at || Time.current
         @amount_to_refund = refund_amount
-        @amount_to_refund ||= order.payment_total if refund_payments
+        @amount_to_refund ||= amount_paid if refund_payments
 
         ApplicationRecord.transaction do
           step :record_cancellation
@@ -121,6 +121,8 @@ module Spree
       # never refunded; everything else cancels captured payments (void or
       # refund at the gateway's discretion) and voids what never completed.
       def settle_payments
+        return settle_grouped_payments if order.grouped?
+
         if order.gift_card.present? && order.covered_by_store_credit?
           order.payments.completed.store_credits.each(&:void!)
         else
@@ -133,6 +135,53 @@ module Spree
             raise Spree::Core::GatewayError, result.error.value.to_s if result.failure?
           end
           order.payments.store_credits.pending.each(&:void!)
+        end
+      end
+
+      # Canceling one order of a split checkout gives back that order's money
+      # and nothing else: the payment is shared, so voiding it would release
+      # the siblings' authorization too and un-pay sellers who are still
+      # shipping. What comes back is this order's own share — refunded where it
+      # has been captured, and simply written down where it has not, since
+      # there is nothing to give back until it is drawn.
+      #
+      # Deliberately not "void the payment when every sibling is canceled too":
+      # that reads the siblings' state to decide what to do with shared money,
+      # and being wrong about it releases an authorization a seller is still
+      # relying on. Writing the share down leaves the payment voidable by
+      # whoever cancels last, which reaches the same end without the risk.
+      # What this order has actually been paid. An order placed in a split
+      # checkout holds no payments of its own — the customer paid once, against
+      # the group — so its position is the sum of its shares.
+      #
+      # @return [BigDecimal]
+      def amount_paid
+        return order.payment_total unless order.grouped?
+
+        order.payment_splits.sum(&:net_captured_amount)
+      end
+
+      def settle_grouped_payments
+        remaining = @amount_to_refund
+
+        order.payment_splits.includes(:payment).each do |split|
+          # Release what this order had reserved but never drew, always — the
+          # authorization is no longer for anything.
+          split.update!(authorized_amount: split.captured_amount)
+
+          # Give money back only when the caller asked for it, and only up to
+          # what they asked for, exactly as the ungrouped path does.
+          next unless refund_payments
+
+          refundable = [split.net_captured_amount, remaining].compact.min
+          next if refundable <= 0
+
+          result = Spree.refund_create_workflow.call(
+            payment: split.payment, amount: refundable, order: order, refunder: canceler
+          )
+          raise Spree::Core::GatewayError, result.error.value.to_s if result.failure?
+
+          remaining -= refundable if remaining
         end
       end
 

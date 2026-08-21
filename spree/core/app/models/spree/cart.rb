@@ -88,6 +88,9 @@ module Spree
     has_many :payment_sessions, class_name: 'Spree::PaymentSession', inverse_of: :cart, dependent: :destroy
     has_many :stock_reservations, class_name: 'Spree::StockReservation', inverse_of: :cart, dependent: :destroy
     has_one :order, class_name: 'Spree::Order', inverse_of: :cart
+    # A cart spanning more than one seller completes into a group of orders
+    # instead of a single one — exactly one of these two is ever set.
+    has_one :order_group, class_name: 'Spree::OrderGroup', inverse_of: :cart
 
     alias items line_items
 

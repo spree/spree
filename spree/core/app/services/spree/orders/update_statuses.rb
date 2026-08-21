@@ -28,9 +28,7 @@ module Spree
         currency = ::Money::Currency.find(order.currency) || ::Money::Currency.find('USD')
         precision = currency.exponent
 
-        captured = quantize(order.payments.valid.completed.sum(:amount), precision)
-        authorized = quantize(order.payments.valid.pending.sum(:amount), precision)
-        refunded = quantize(order.refunds.sum(:amount), precision)
+        captured, authorized, refunded = money_for(order).map { |amount| quantize(amount, precision) }
         target = quantize(order.total, precision) - refunded
         net_captured = captured - refunded
 
@@ -51,6 +49,34 @@ module Spree
         else
           'partially_paid'
         end
+      end
+
+      # What has been authorised, captured and refunded against this order.
+      #
+      # An order placed in a split checkout owns no payments — the customer
+      # made one payment against the group — so its figures come from its share
+      # of them. That is precisely what a payment split records, and it is why
+      # the shares are stored rather than recomputed: once one seller has
+      # shipped and been captured while another has not, no proportion of the
+      # group's totals can describe either.
+      #
+      # @return [Array(BigDecimal, BigDecimal, BigDecimal)] captured,
+      #   authorized and refunded, in that order
+      def money_for(order)
+        unless order.order_group_id.present?
+          return [
+            order.payments.valid.completed.sum(:amount),
+            order.payments.valid.pending.sum(:amount),
+            order.refunds.sum(:amount)
+          ]
+        end
+
+        splits = order.payment_splits.to_a
+        captured = splits.sum(&:captured_amount)
+
+        # Authorized means still to draw: what the shares allow, less what has
+        # already been taken against them.
+        [captured, splits.sum(&:authorized_amount) - captured, splits.sum(&:refunded_amount)]
       end
 
       # Rolls the fulfillments up into one word for filtering and display.
