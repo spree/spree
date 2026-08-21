@@ -67,11 +67,16 @@ RSpec.describe Spree::Api::V3::Seller::RequirementSubmissionsController, type: :
   describe 'GET #download' do
     let(:requirement) { create(:document_requirement, store: store) }
 
+    # Real PDF magic bytes, not just a .pdf name: the model decides a file's
+    # type by reading it, so a plain string declared as a PDF is refused.
+    PDF_BYTES = "%PDF-1.4\npassport"
+
     def submission_for(target_seller)
       create(:seller_requirement_submission, seller: target_seller, requirement: requirement).tap do |submission|
         submission.file.attach(
-          io: StringIO.new('passport'), filename: 'id.pdf', content_type: 'application/pdf'
+          io: StringIO.new(PDF_BYTES), filename: 'id.pdf', content_type: 'application/pdf'
         )
+        submission.save!
       end
     end
 
@@ -81,7 +86,7 @@ RSpec.describe Spree::Api::V3::Seller::RequirementSubmissionsController, type: :
       get :download, params: { id: submission.prefixed_id }
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to eq('passport')
+      expect(response.body).to eq(PDF_BYTES)
     end
 
     # Identity documents: one seller reading another's is the thing this

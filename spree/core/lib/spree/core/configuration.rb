@@ -99,6 +99,11 @@ module Spree
 
       # Maximum size of an uploaded product video, in bytes.
       preference :max_video_upload_size, :integer, default: 524_288_000 # 500 MB
+
+      # Maximum size of a document a seller uploads for an onboarding
+      # requirement, in bytes. Small on purpose: these are certificates and
+      # registrations, and an unbounded upload is a way to fill a disk.
+      preference :max_seller_document_upload_size, :integer, default: 20_971_520 # 20 MB
       preference :non_expiring_credit_types, :array, default: [], deprecated: 'Nothing reads this in Spree 6 — store credits no longer carry a category, and expiry lives on Spree::GiftCard'
       preference :products_per_page, :integer, default: 12, deprecated: 'Nothing reads this in Spree 6 — pass per_page to the API instead'
       preference :restock_inventory, :boolean, default: true, deprecated: 'Restocking is decided per line item by Spree::ReturnLineItem#resellable'

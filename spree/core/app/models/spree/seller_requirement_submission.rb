@@ -43,6 +43,27 @@ module Spree
     #
     validate :requirement_belongs_to_sellers_store
 
+    # Sellers are the marketplace's lower-trust writers, and these files are
+    # opened by an operator on their own machine — so the bytes decide what a
+    # file is, not the header the uploader sent.
+    #
+    # `spoofing_protection` is what makes that true: without it the gem takes
+    # the declared type and filename at face value, and a script named
+    # `certificate.pdf` passes. With it, Marcel reads the magic bytes and the
+    # two must agree.
+    #
+    # The list belongs to the kind that asks for files, which already
+    # publishes it and whose value the seller API serializes so the panel's
+    # picker can hint it. Resolved in a lambda rather than referenced at
+    # class-definition time, which would pin the autoload order.
+    validates :file,
+              content_type: {
+                in: ->(_record) { Spree::SellerRequirements::Document::ACCEPTED_CONTENT_TYPES },
+                spoofing_protection: true
+              },
+              size: { less_than_or_equal_to: ->(_record) { Spree::Config.max_seller_document_upload_size } },
+              if: -> { file.attached? }
+
     #
     # Scopes
     #
