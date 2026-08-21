@@ -47,7 +47,12 @@ interface CurrencySelectProps {
    * support — e.g. a market's currency.
    */
   options?: string[]
-  /** Marks the field required for screen readers + native form submission. */
+  /**
+   * Announces the field as required to screen readers. Enforcement is the
+   * form's job — every caller validates through react-hook-form, and the
+   * button trigger is not a form-associated control, so this never blocks a
+   * submit on its own.
+   */
   required?: boolean
   disabled?: boolean
   /** Text in the dropdown's search box. */

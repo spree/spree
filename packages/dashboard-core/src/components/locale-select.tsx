@@ -23,23 +23,35 @@ interface BaseProps {
   options?: string[]
   /** Locale to filter out (e.g. the default locale when picking additional supported ones). */
   excludeCode?: string
-  /** Marks the field required for screen readers + native form submission. */
+  /**
+   * Announces the field as required to screen readers. Enforcement is the
+   * form's job — every caller validates through react-hook-form, and the
+   * button trigger is not a form-associated control, so this never blocks a
+   * submit on its own.
+   */
   required?: boolean
   disabled?: boolean
   placeholder?: string
-  /** Text in the dropdown's search box (single-select only). */
-  searchPlaceholder?: string
-  invalid?: boolean
-  /** Forwarded to the trigger so RHF's `<Controller>` can track touched state. */
-  onBlur?: () => void
   /** ID for the trigger / chips input — paired with the parent `<FieldLabel htmlFor>`. */
   id?: string
 }
 
+/**
+ * Single-select only. The multi-select renders chips rather than one trigger,
+ * so it has no single control to mark invalid or to blur, and no in-popup
+ * search box of its own — the chips input is the search box. Declaring these
+ * here rather than on `BaseProps` makes passing them to a `multiple` picker a
+ * compile error instead of a prop that is silently dropped.
+ */
 interface SingleProps extends BaseProps {
   multiple?: false
   value: string | null | undefined
   onChange: (locale: string) => void
+  /** Text in the dropdown's search box. */
+  searchPlaceholder?: string
+  invalid?: boolean
+  /** Forwarded to the trigger so RHF's `<Controller>` can track touched state. */
+  onBlur?: () => void
 }
 
 interface MultiProps extends BaseProps {

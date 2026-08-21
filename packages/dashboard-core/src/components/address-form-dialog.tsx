@@ -253,6 +253,7 @@ export function AddressFormDialog({
                       id="addr-country"
                       invalid={!!errors.country_code}
                       value={field.value}
+                      onBlur={field.onBlur}
                       onValueChange={(iso) => {
                         field.onChange(iso)
                         form.setValue('state_code', '', { shouldDirty: true })
@@ -287,6 +288,7 @@ export function AddressFormDialog({
                           countryCode={countryCode}
                           states={states}
                           value={field.value}
+                          onBlur={field.onBlur}
                           onValueChange={field.onChange}
                         />
                       )}
