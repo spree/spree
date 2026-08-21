@@ -134,6 +134,13 @@ module Spree
     has_many :orders, class_name: 'Spree::Order', dependent: nil
     has_many :payment_splits, through: :orders, class_name: 'Spree::PaymentSplit', source: :payment_splits
 
+    # The two levels of the fund ledger: what this seller has earned, and what
+    # has been settled to them. Left alone when the seller goes, for the same
+    # reason as their orders and commission — money that moved is a fact about
+    # the past.
+    has_many :seller_transfers, class_name: 'Spree::SellerTransfer', dependent: nil
+    has_many :seller_payouts, class_name: 'Spree::SellerPayout', dependent: nil
+
     # What this seller has done about the marketplace's requirements — their
     # attestations, the documents they uploaded, what the operator made of
     # them. Goes with the seller, since it means nothing without them.
@@ -205,6 +212,48 @@ module Spree
     # @return [Boolean]
     def terms_accepted?
       terms_accepted_at.present?
+    end
+
+    # What the marketplace still owes this seller in one currency.
+    #
+    # Derived rather than stored: it is the whole point of keeping both ledger
+    # levels, and a column would be a second answer that could disagree with
+    # the rows. Per currency because nothing is ever converted — a seller
+    # trading in two currencies accrues two balances and is paid twice.
+    #
+    # @param currency [String]
+    # @return [BigDecimal]
+    def balance(currency)
+      earned = seller_transfers.completed.where(currency: currency).sum(:amount)
+      settled = seller_payouts.completed.where(currency: currency).sum(:amount)
+
+      earned - settled
+    end
+
+    # Whether a provider says this seller may be sent money yet.
+    #
+    # A marketplace settling offline never asks, so a seller with no account
+    # reference is payable by definition — it is only a provider that executes
+    # transfers which can refuse one.
+    #
+    # @return [Boolean]
+    def payouts_enabled?
+      payouts_enabled_at.present?
+    end
+
+    # What this seller's settlement schedule is, falling back to the store's.
+    #
+    # @return [String]
+    def resolved_payouts_schedule_interval
+      payouts_schedule_interval.presence || store.preferred_default_payouts_schedule_interval
+    end
+
+    # The balance a settlement must reach before it is worth sending, falling
+    # back to the store's. Below it, the balance simply carries to next time.
+    #
+    # @return [BigDecimal]
+    def resolved_minimum_payout_amount
+      (minimum_payout_amount || store.preferred_default_minimum_payout_amount).to_d
     end
 
     # Where customers send returns — this seller's default stock location.

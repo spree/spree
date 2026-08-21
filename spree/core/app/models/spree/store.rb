@@ -76,6 +76,18 @@ module Spree
     # same reason as auto_approve_sellers: what the marketplace lists is what
     # it vouches for.
     preference :auto_approve_seller_products, :boolean, default: false
+    # Who pays this store's sellers. Blank means core's record-only provider,
+    # so a marketplace that has connected nothing still keeps a correct ledger
+    # and settles by hand.
+    preference :payout_provider, :string, default: nil
+    # How often sellers are settled, unless one carries its own schedule.
+    # Monthly by default because it is the interval that needs least of an
+    # operator paying by hand, which is what the built-in provider expects.
+    preference :default_payouts_schedule_interval, :string, default: 'monthly'
+    # What a seller's balance must reach before a settlement is worth sending;
+    # below it the balance carries to the next period. Zero pays whatever is
+    # owed, which is right for a provider that moves money for free.
+    preference :default_minimum_payout_amount, :decimal, default: 0
     # Checkout preferences
     # Store-level fallback for the channel-owned `guest_checkout` preference
     # (see Spree::Channel::Gating). Retained so existing accessors keep working.
@@ -376,6 +388,17 @@ module Spree
 
     def unique_name
       @unique_name ||= "#{name} (#{code})"
+    end
+
+    # Who pays this store's sellers, ready to be asked.
+    #
+    # Resolved per call rather than memoized, so a marketplace that connects a
+    # provider mid-process starts using it without a restart — the same shape
+    # markets use for tax.
+    #
+    # @return [Spree::PayoutProvider::Base]
+    def payout_provider_instance
+      (preferred_payout_provider.presence || Spree.default_payout_provider.to_s).constantize.new
     end
 
     def formatted_url

@@ -375,6 +375,30 @@ module Spree
     Rails.application.config.spree.inventory_providers = value
   end
 
+  # How sellers get paid. Core ships {Spree::PayoutProvider::System}, which
+  # keeps the books and leaves the operator to settle; a provider gem appends
+  # one that moves the money itself.
+  #
+  # @return [Array<Class>]
+  def self.payout_providers
+    Rails.application.config.spree.payout_providers
+  end
+
+  def self.payout_providers=(value)
+    Rails.application.config.spree.payout_providers = value
+  end
+
+  # The provider a store pays through when it has named none.
+  #
+  # @return [Class]
+  def self.default_payout_provider
+    Rails.application.config.spree.default_payout_provider
+  end
+
+  def self.default_payout_provider=(value)
+    Rails.application.config.spree.default_payout_provider = value
+  end
+
   # Validator enforcing the password policy on the default auth models
   # ({Spree::Customer}, {Spree::AdminUser}). Defaults to
   # {Spree::PasswordLengthValidator}, which reads the configurable length bounds.

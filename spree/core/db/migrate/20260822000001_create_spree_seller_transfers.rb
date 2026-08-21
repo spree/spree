@@ -1,0 +1,66 @@
+class CreateSpreeSellerTransfers < ActiveRecord::Migration[8.1]
+  def change
+    create_table :spree_seller_transfers do |t|
+      t.references :seller, null: false
+      # The child order this earning came from. One earning per order — see the
+      # partial index below.
+      t.references :order, null: false
+      # Nil until a payout sweeps this transfer up and settles it.
+      t.references :payout, index: true
+      # The earning this row reverses, when a refund gave money back.
+      t.references :reversed_from, index: true
+
+      t.decimal :amount, precision: 10, scale: 2, null: false, default: 0
+      t.string :currency, null: false
+      # earning | refund_reversal
+      t.string :kind, null: false
+      t.string :status, null: false # no DB default: set by the creating workflow
+
+      # Which provider moved (or recorded) the money, and what it called the
+      # movement. A `system` transfer has no reference — the operator settles
+      # offline.
+      t.string :provider, null: false
+      t.string :reference
+
+      if t.respond_to?(:jsonb)
+        t.jsonb :metadata
+      else
+        t.json :metadata
+      end
+
+      t.timestamps
+    end
+
+    add_index :spree_seller_transfers, [:seller_id, :currency, :status]
+    add_index :spree_seller_transfers, [:seller_id, :created_at]
+
+    # A re-fired fulfillment event must find the existing row rather than
+    # credit the seller twice. Reversals are deliberately outside the
+    # constraint: an order can be refunded more than once.
+    if connection.supports_partial_index?
+      add_index :spree_seller_transfers, :order_id, unique: true,
+                                                    where: "kind = 'earning'",
+                                                    name: 'index_seller_transfers_on_order_earning'
+    else
+      # MySQL has no partial index. Indexing the id together with the row's own
+      # primary key for every other kind gives the same guarantee: earnings
+      # collide on the order, reversals never collide at all.
+      execute <<~SQL.squish
+        CREATE UNIQUE INDEX index_seller_transfers_on_order_earning
+        ON spree_seller_transfers(order_id, (CASE WHEN kind = 'earning' THEN 0 ELSE id END))
+      SQL
+    end
+
+    # A provider's own id for the movement, unique where one exists: a retry
+    # whose idempotency key returned the same external transfer must re-sync
+    # this row rather than create a second.
+    if connection.supports_partial_index?
+      add_index :spree_seller_transfers, [:provider, :reference], unique: true,
+                                                                 where: 'reference IS NOT NULL',
+                                                                 name: 'index_seller_transfers_on_provider_reference'
+    else
+      add_index :spree_seller_transfers, [:provider, :reference],
+                name: 'index_seller_transfers_on_provider_reference'
+    end
+  end
+end

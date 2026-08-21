@@ -360,4 +360,60 @@ describe Spree::Seller do
       expect(ability).not_to be_can(:manage, seller)
     end
   end
+
+  describe '#balance' do
+    let(:store) { @default_store }
+    let(:seller) { create(:seller, :approved, store: store) }
+
+    def earn(amount, currency: 'USD', status: 'completed')
+      create(:seller_transfer, seller: seller, currency: currency, amount: amount, status: status,
+                               order: create(:order, store: store, seller: seller, currency: currency))
+    end
+
+    it 'is what has been earned less what has been settled' do
+      earn(40)
+      earn(30)
+      create(:seller_payout, :completed, seller: seller, amount: 50)
+
+      expect(seller.balance('USD')).to eq(20)
+    end
+
+    it 'counts only confirmed earnings' do
+      earn(40)
+      earn(25, status: 'pending')
+
+      expect(seller.balance('USD')).to eq(40)
+    end
+
+    # Nothing is ever converted, so a seller trading in two currencies accrues
+    # two balances and is settled in each.
+    it 'keeps each currency separate' do
+      earn(40)
+      earn(30, currency: 'EUR')
+
+      expect(seller.balance('USD')).to eq(40)
+      expect(seller.balance('EUR')).to eq(30)
+    end
+
+    it 'is nothing for a seller who has earned nothing' do
+      expect(seller.balance('USD')).to eq(0)
+    end
+  end
+
+  describe 'settlement configuration' do
+    let(:store) { @default_store }
+    let(:seller) { create(:seller, :approved, store: store) }
+
+    it 'falls back to the store’s schedule and threshold' do
+      expect(seller.resolved_payouts_schedule_interval).to eq('monthly')
+      expect(seller.resolved_minimum_payout_amount).to eq(0)
+    end
+
+    it 'prefers its own once it deviates' do
+      seller.update!(payouts_schedule_interval: 'weekly', minimum_payout_amount: 25)
+
+      expect(seller.resolved_payouts_schedule_interval).to eq('weekly')
+      expect(seller.resolved_minimum_payout_amount).to eq(25)
+    end
+  end
 end

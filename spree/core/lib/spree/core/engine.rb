@@ -15,6 +15,8 @@ module Spree
                                :tax_providers,
                                :pricing_providers,
                                :inventory_providers,
+                               :default_payout_provider,
+                               :payout_providers,
                                :password_validator,
                                :fulfillment_providers,
                                :tracking_carriers,
@@ -168,6 +170,13 @@ module Spree
         app.config.spree.inventory_providers = []
       end
 
+      # How sellers get paid. A provider gem — the Stripe Connect one, or a
+      # marketplace's own — registers from an initializer file; core's
+      # record-only System concatenates below.
+      initializer 'spree.register.payout_providers', before: :load_config_initializers do |app|
+        app.config.spree.payout_providers = []
+      end
+
       initializer 'spree.register.delivery_profile_types', before: :load_config_initializers do |app|
         app.config.spree.delivery_profile_types = []
       end
@@ -263,6 +272,12 @@ module Spree
         # what is installed (see docs/plans/6.0-third-party-pricing-inventory.md).
         Rails.application.config.spree.pricing_providers.concat [Spree::PricingProvider::Internal]
         Rails.application.config.spree.inventory_providers.concat [Spree::InventoryProvider::Internal]
+
+        # How sellers are paid when a store names nothing: the books are kept
+        # and the operator settles offline. Assigned only if an initializer has
+        # not already chosen one.
+        Rails.application.config.spree.default_payout_provider ||= Spree::PayoutProvider::System
+        Rails.application.config.spree.payout_providers.concat [Spree::PayoutProvider::System]
 
         # Password policy for the default auth models. Swap for corporate rules,
         # breach-list lookups or entropy scoring.
