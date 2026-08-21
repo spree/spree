@@ -107,10 +107,10 @@ module Spree
     # Rails auto-locking must not raise on internal saves.
     self.lock_optimistically = false
 
-    self.whitelisted_ransackable_associations = %w[fulfillments shipments customer created_by approver canceler promotions bill_address ship_address line_items store channel tags]
+    self.whitelisted_ransackable_associations = %w[fulfillments shipments customer created_by approver canceler promotions bill_address ship_address line_items store channel tags seller order_group]
     self.whitelisted_ransackable_attributes = %w[
       completed_at email number status payment_status payment_state fulfillment_status shipment_state delivery_total
-      total item_total total_quantity considered_risky channel_id currency coupon_code
+      total item_total total_quantity considered_risky channel_id currency coupon_code seller_id order_group_id
     ]
     self.whitelisted_ransackable_scopes = %w[complete incomplete refunded partially_refunded search multi_search]
 

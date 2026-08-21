@@ -4,6 +4,8 @@ import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
 import { ShoppingCartIcon } from 'lucide-react'
 import { channelAutocompleteProps } from '../hooks/use-channels'
+import { sellerAutocompleteProps } from '../hooks/use-sellers'
+import { orderGroupSearch } from '../lib/order-group-search'
 
 /**
  * Localized label for an order status code, resolved from the given namespace
@@ -147,6 +149,57 @@ defineTable('orders', {
       filterType: 'currency',
       default: false,
       render: (order) => order.currency ?? '—',
+    },
+    // Only meaningful on a marketplace: an order for the operator's own goods
+    // has no seller, so the cell says so rather than reading blank.
+    {
+      key: 'seller',
+      label: i18n.t('admin.fields.order.seller.label'),
+      filterable: true,
+      filterType: 'resource',
+      filterResource: sellerAutocompleteProps('orders-table-seller-filter'),
+      ransackAttribute: 'seller_id',
+      // Requested only while the column is on — ResourceTable unions the
+      // expands of visible columns into the list request.
+      expand: 'seller',
+      default: false,
+      render: (order) =>
+        order.seller_id ? (
+          <Link
+            to={'/$storeId/sellers/$sellerId' as string}
+            params={{ sellerId: order.seller_id }}
+            className="no-underline"
+          >
+            {order.seller?.name ?? order.seller_id}
+          </Link>
+        ) : (
+          <span className="text-muted-foreground">
+            {i18n.t('admin.fields.order.seller.first_party')}
+          </span>
+        ),
+    },
+    // Which purchase this order was part of, when a basket spanning several
+    // sellers became several orders. Clicking it narrows the list to that
+    // purchase's orders.
+    {
+      key: 'order_group',
+      label: i18n.t('admin.fields.order.order_group.label'),
+      filterable: true,
+      ransackAttribute: 'order_group_id',
+      default: false,
+      className: 'text-sm text-muted-foreground',
+      render: (order) =>
+        order.order_group_id ? (
+          <Link
+            to={'/$storeId/orders' as string}
+            search={orderGroupSearch(order.order_group_id)}
+            className="no-underline"
+          >
+            {i18n.t('admin.fields.order.order_group.view')}
+          </Link>
+        ) : (
+          '—'
+        ),
     },
     {
       key: 'status',

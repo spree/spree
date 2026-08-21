@@ -1133,6 +1133,14 @@
         },
         "internal_note": {
           "label": "Notatka wewnętrzna (tylko dla personelu)"
+        },
+        "order_group": {
+          "label": "Zakup",
+          "view": "Zobacz zakup"
+        },
+        "seller": {
+          "label": "Sprzedawca",
+          "first_party": "Sprzedajesz Ty"
         }
       },
       "payment_method": {
@@ -2302,6 +2310,9 @@
           "voided": "Płatność unieważniona"
         },
         "no_customer": "Brak informacji o kliencie",
+        "order_group_help": "To zamówienie zostało złożone razem z innymi w jednym zamówieniu.",
+        "order_group_part_of": "Część większego zakupu",
+        "order_group_view_all": "Zobacz wszystkie zamówienia z tego zakupu",
         "payment_form": {
           "amount_help": "Pozostaw puste, aby użyć domyślnie pozostałego salda.",
           "capture_immediately": "Pobierz natychmiast",
@@ -2321,6 +2332,7 @@
         },
         "section_customer_note": "Specjalne instrukcje",
         "section_internal_note": "Notatka wewnętrzna",
+        "section_seller": "Sprzedawca",
         "summary": {
           "adjustments": "Korekty",
           "approved_by": "Zatwierdzone przez",

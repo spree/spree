@@ -1132,6 +1132,14 @@
         },
         "internal_note": {
           "label": "ملاحظة داخلية (للموظفين فقط)"
+        },
+        "order_group": {
+          "label": "عملية الشراء",
+          "view": "عرض عملية الشراء"
+        },
+        "seller": {
+          "label": "البائع",
+          "first_party": "تبيعه بنفسك"
         }
       },
       "payment_method": {
@@ -2296,6 +2304,9 @@
           "voided": "تم إلغاء الدفع"
         },
         "no_customer": "لا توجد معلومات العميل",
+        "order_group_help": "تم تقديم هذا الطلب مع طلبات أخرى في عملية دفع واحدة.",
+        "order_group_part_of": "جزء من عملية شراء أكبر",
+        "order_group_view_all": "عرض كل الطلبات في عملية الشراء هذه",
         "payment_form": {
           "amount_help": "اتركه فارغًا لتقصير الرصيد المستحق.",
           "capture_immediately": "التقط على الفور",
@@ -2315,6 +2326,7 @@
         },
         "section_customer_note": "Special Instructions",
         "section_internal_note": "Internal Note",
+        "section_seller": "البائع",
         "summary": {
           "adjustments": "التعديلات",
           "approved_by": "تمت الموافقة عليه من قبل",

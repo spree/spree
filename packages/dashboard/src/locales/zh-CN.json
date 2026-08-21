@@ -1114,6 +1114,14 @@
         },
         "internal_note": {
           "label": "内部备注（仅员工可见）"
+        },
+        "order_group": {
+          "label": "本次购买",
+          "view": "查看本次购买"
+        },
+        "seller": {
+          "label": "卖家",
+          "first_party": "自营"
         }
       },
       "payment_method": {
@@ -2278,6 +2286,9 @@
           "voided": "付款已作废"
         },
         "no_customer": "无客户信息",
+        "order_group_help": "该订单与其他订单在同一次结账中下单。",
+        "order_group_part_of": "属于一次更大的购买",
+        "order_group_view_all": "查看本次购买的所有订单",
         "payment_form": {
           "amount_help": "留空则默认为未结清的余额。",
           "capture_immediately": "立即扣款",
@@ -2297,6 +2308,7 @@
         },
         "section_customer_note": "特别说明",
         "section_internal_note": "内部备注",
+        "section_seller": "卖家",
         "summary": {
           "adjustments": "调整",
           "approved_by": "审批人",

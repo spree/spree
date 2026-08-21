@@ -20,6 +20,7 @@ import {
 import { CustomerCard } from '../../../../../components/spree/orders/order-customer-card'
 import { DiscountsCard } from '../../../../../components/spree/orders/order-discounts-sidebar-card'
 import { OrderHeader } from '../../../../../components/spree/orders/order-header'
+import { MarketplaceCard } from '../../../../../components/spree/orders/order-marketplace-card'
 import {
   InternalNoteCard,
   SpecialInstructionsCard,
@@ -84,6 +85,7 @@ function OrderDetailPage() {
       sidebar={
         <>
           <CustomerCard order={order} />
+          <MarketplaceCard order={order} />
           <TagsCard order={order} />
           <DiscountsCard order={order} />
           <SpecialInstructionsCard order={order} />
