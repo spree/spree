@@ -65,7 +65,7 @@ module Spree
     scope :unsettled, -> { completed.where(payout_id: nil) }
 
     self.whitelisted_ransackable_attributes = %w[amount currency kind status provider reference created_at]
-    self.whitelisted_ransackable_associations = %w[seller order payout]
+    self.whitelisted_ransackable_associations = %w[seller order payout refund]
 
     extend Spree::DisplayMoney
     money_methods :amount
