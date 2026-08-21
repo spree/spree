@@ -1,5 +1,5 @@
-import { i18n, nav } from '@spree/dashboard-core'
-import { ClipboardCheckIcon, HomeIcon, StoreIcon, UsersIcon } from 'lucide-react'
+import { hasVisibleSettingsEntries, i18n, nav } from '@spree/dashboard-core'
+import { ClipboardCheckIcon, HomeIcon, SettingsIcon, StoreIcon } from 'lucide-react'
 import { OnboardingNavBadge } from '../components/onboarding-nav-badge'
 
 // The panel's built-in sidebar. Registered into the same registry a plugin
@@ -22,34 +22,38 @@ nav.add({
   subject: 'seller_profile',
 })
 
-nav.add({
-  key: 'profile',
-  label: i18n.t('nav.profile'),
-  path: '/profile',
-  icon: StoreIcon,
-  position: 100,
-  subject: 'seller_profile',
-})
-
-// First in the rail while a seller is still being admitted: it is the only
-// thing that matters until they are approved. A marketplace that admits
+// High in the rail while a seller is still being admitted: until they are
+// approved it is the only thing that matters. A marketplace that admits
 // sellers some other way removes it like any other entry.
 nav.add({
   key: 'onboarding',
   label: i18n.t('nav.onboarding'),
   path: '/onboarding',
   icon: ClipboardCheckIcon,
-  position: 150,
+  position: 100,
   subject: 'seller_profile',
   badge: OnboardingNavBadge,
 })
 
 nav.add({
-  key: 'team',
-  label: i18n.t('nav.team'),
-  path: '/team',
-  icon: UsersIcon,
-  position: 200,
+  key: 'profile',
+  label: i18n.t('nav.profile'),
+  path: '/profile',
+  icon: StoreIcon,
+  position: 150,
   subject: 'seller_profile',
-  action: 'update',
+})
+
+// Settings is a launcher for the secondary rail, not a page: the entries
+// inside it live in `nav/settings.ts`. Bottom section and gated on there
+// being something to see, exactly as the operator's dashboard does it — a
+// member with no settings authority never opens an empty shell.
+nav.add({
+  key: 'settings',
+  label: i18n.t('nav.settings'),
+  path: '/settings',
+  icon: SettingsIcon,
+  if: ({ permissions }) => hasVisibleSettingsEntries(permissions),
+  section: 'bottom',
+  position: 100,
 })

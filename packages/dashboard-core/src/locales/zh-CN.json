@@ -755,7 +755,8 @@
     },
     "settings_nav": {
       "groups": {
-        "fulfillment": "履约"
+        "fulfillment": "履约",
+        "team": "团队与权限"
       },
       "items": {
         "stock_locations": "库存地点"

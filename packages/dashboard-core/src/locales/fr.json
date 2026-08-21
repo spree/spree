@@ -755,7 +755,8 @@
     },
     "settings_nav": {
       "groups": {
-        "fulfillment": "Traitement des commandes"
+        "fulfillment": "Traitement des commandes",
+        "team": "Équipe et accès"
       },
       "items": {
         "stock_locations": "Emplacements de stock"

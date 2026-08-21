@@ -755,7 +755,8 @@
     },
     "settings_nav": {
       "groups": {
-        "fulfillment": "Fulfillment"
+        "fulfillment": "Fulfillment",
+        "team": "Team & Zugriff"
       },
       "items": {
         "stock_locations": "Lagerstandorte"

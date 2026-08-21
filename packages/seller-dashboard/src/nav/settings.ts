@@ -1,5 +1,5 @@
-import { settingsNav } from '@spree/dashboard-core'
-import { WarehouseIcon } from 'lucide-react'
+import { i18n, settingsNav } from '@spree/dashboard-core'
+import { UsersRoundIcon, WarehouseIcon } from 'lucide-react'
 
 // The panel's settings rail, registered into the same registry the operator's
 // dashboard writes to — so a marketplace adds, removes or reorders entries
@@ -15,6 +15,12 @@ settingsNav.addGroup({
   position: 200,
 })
 
+settingsNav.addGroup({
+  key: 'team',
+  labelKey: 'admin.settings_nav.groups.team',
+  position: 300,
+})
+
 settingsNav.add({
   key: 'settings.stock-locations',
   labelKey: 'admin.settings_nav.items.stock_locations',
@@ -25,4 +31,18 @@ settingsNav.add({
   // The seller-branch subject the API's `/me` serializes. A member without
   // stock permission never sees the entry.
   subject: 'Spree::StockLocation',
+})
+
+// Who runs this seller. Under settings rather than in the main rail, matching
+// where the operator's dashboard puts its own staff page: managing people is
+// configuration, not day-to-day selling.
+settingsNav.add({
+  key: 'settings.team',
+  label: i18n.t('nav.team'),
+  path: '/team',
+  icon: UsersRoundIcon,
+  group: 'team',
+  position: 100,
+  subject: 'seller_profile',
+  action: 'update',
 })
