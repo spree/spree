@@ -39,6 +39,21 @@ module Spree
         expect(result.value.line_items.map(&:seller_id).uniq).to eq([seller.id])
       end
 
+      # Nothing to divide, but the sale is still that seller's — and their own
+      # order list reads the column, not the line items.
+      it 'stamps a single-seller order with its seller' do
+        result = described_class.call(cart: cart_for(seller, seller))
+
+        expect(result.value.seller).to eq(seller)
+        expect(seller.orders).to include(result.value)
+      end
+
+      it 'leaves an all-first-party order with no seller' do
+        result = described_class.call(cart: cart_for(nil, nil))
+
+        expect(result.value.seller_id).to be_nil
+      end
+
       it 'splits a cart holding two sellers' do
         result = described_class.call(cart: cart_for(seller, other_seller))
 

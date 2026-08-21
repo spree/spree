@@ -377,7 +377,16 @@ module Spree
         return if order.placed?
 
         partitions = Spree::Carts::PartitionBySeller.call(purchase: order).value
-        return if partitions.size < 2
+
+        if partitions.one?
+          # Nothing to divide, but the sale still belongs to whoever made it:
+          # a basket entirely from one seller is that seller's order, and the
+          # column is what their own order list reads.
+          order.update_columns(seller_id: partitions.first.seller_id) if order.seller_id != partitions.first.seller_id
+          return
+        end
+
+        return if partitions.empty?
 
         result = Spree::Carts::SplitBySeller.call(cart: cart, order: order, partitions: partitions)
         failure(cart, code: 'split_failed', message: result.error) if result.failure?
