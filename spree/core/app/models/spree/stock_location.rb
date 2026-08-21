@@ -48,7 +48,9 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[
       name active default kind pickup_enabled
       country_code state_code created_at updated_at
+      seller_id
     ]
+    self.whitelisted_ransackable_associations = %w[seller]
 
     scope :active, -> { where(active: true) }
     scope :pickup_enabled, -> { where(pickup_enabled: true) }

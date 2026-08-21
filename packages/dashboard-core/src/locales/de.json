@@ -773,6 +773,7 @@
         "default": "Standard",
         "location": "Standort",
         "pickup": "Abholung",
+        "seller": "Verkäufer",
         "type": "Typ"
       },
       "create_description": "Fügen Sie ein Lager, ein Geschäft oder einen Abholpunkt hinzu, von dem aus Bestellungen abgewickelt werden.",
@@ -783,6 +784,7 @@
       },
       "edit_description": "Aktualisieren Sie Name, Adresse, Abholung oder Bestandsrichtlinien.",
       "empty": "Noch keine Lagerstandorte",
+      "first_party": "Marktplatz",
       "kinds": {
         "fulfillment_center": "Fulfillment-Center",
         "store": "Geschäft",

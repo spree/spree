@@ -773,6 +773,7 @@
         "default": "Par défaut",
         "location": "Emplacement",
         "pickup": "Retrait",
+        "seller": "Vendeur",
         "type": "Type"
       },
       "create_description": "Ajoutez un entrepôt, un magasin ou un point de retrait pour traiter les commandes.",
@@ -783,6 +784,7 @@
       },
       "edit_description": "Mettez à jour le nom, l'adresse, le retrait ou les politiques de stock.",
       "empty": "Aucun emplacement de stock pour le moment",
+      "first_party": "Place de marché",
       "kinds": {
         "fulfillment_center": "Centre de distribution",
         "store": "Magasin",

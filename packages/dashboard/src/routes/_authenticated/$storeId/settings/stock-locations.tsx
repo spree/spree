@@ -2,6 +2,8 @@ import { StockLocationsPage, stockLocationsSearchSchema } from '@spree/dashboard
 import { createFileRoute } from '@tanstack/react-router'
 import type { z } from 'zod/v4'
 import { StockLevelsPanel } from '../../../../components/spree/stock-levels-panel'
+// Adds the seller column to the shared table — operator-only, see the file.
+import '../../../../tables/stock-locations'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/stock-locations')({
   validateSearch: stockLocationsSearchSchema,

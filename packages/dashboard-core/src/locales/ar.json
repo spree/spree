@@ -773,6 +773,7 @@
         "default": "تقصير",
         "location": "موقع",
         "pickup": "يلتقط",
+        "seller": "البائع",
         "type": "يكتب"
       },
       "create_description": "أضف مستودعًا أو متجرًا أو نقطة استلام لتلبية الطلبات منها.",
@@ -783,6 +784,7 @@
       },
       "edit_description": "تحديث الاسم أو العنوان أو الالتقاط أو سياسات المخزون.",
       "empty": "لا توجد مواقع المخزون حتى الآن",
+      "first_party": "السوق",
       "kinds": {
         "fulfillment_center": "Fulfillment center",
         "store": "محل",
