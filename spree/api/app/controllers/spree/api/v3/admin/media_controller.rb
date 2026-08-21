@@ -28,6 +28,14 @@ module Spree
 
           protected
 
+          # `url` and `signed_id` say how to *fetch* the bytes; neither is an
+          # attribute on the row. A re-synced asset already has its file, so
+          # the replay only carries them as leftovers from the create shape.
+          def normalize_upsert_params!
+            params.delete(:url)
+            params.delete(:signed_id)
+          end
+
           def model_class
             Spree::Media
           end

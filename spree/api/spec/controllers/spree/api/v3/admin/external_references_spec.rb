@@ -170,6 +170,57 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, 'upsert by external id',
   end
 end
 
+RSpec.describe Spree::Api::V3::Admin::MediaController, 'upsert by external id', type: :controller do
+  render_views
+
+  include_context 'API v3 Admin authenticated'
+
+  let!(:product) { create(:product) }
+
+  before { request.headers.merge!(headers) }
+
+  # `url` and `signed_id` say how to fetch the bytes; neither is an attribute
+  # on the row. A DAM re-posting an asset it already synced must not have them
+  # reinterpreted as attributes by the update action.
+  it 'accepts a replay carrying the create payload\'s fetch keys' do
+    media = create(:image, viewable: product)
+    media.set_external_id('dam', 'ASSET-1')
+
+    expect do
+      post :create, params: {
+        product_id: product.prefixed_id,
+        url: 'https://dam.example.com/asset-1.jpg',
+        alt: 'A widget',
+        external_references: { dam: 'ASSET-1' }
+      }, as: :json
+    end.not_to change(Spree::Media, :count)
+
+    expect(response).to have_http_status(:ok)
+    expect(media.reload.alt).to eq('A widget')
+  end
+end
+
+RSpec.describe Spree::Api::V3::Admin::CategoriesController, 'conflicting external id', type: :controller do
+  render_views
+
+  include_context 'API v3 Admin authenticated'
+
+  before { request.headers.merge!(headers) }
+
+  it 'reports a key that already names another record rather than raising' do
+    taken = create(:category)
+    taken.set_external_id('pim', 'CAT-1')
+
+    patch :update, params: {
+      id: create(:category).prefixed_id,
+      external_references: { pim: 'CAT-1' }
+    }, as: :json
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(json_response['error']['code']).to eq('conflicting_external_reference')
+  end
+end
+
 RSpec.describe Spree::Api::V3::Admin::CompanyLocationsController, type: :controller do
   render_views
 

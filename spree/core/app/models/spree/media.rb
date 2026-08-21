@@ -18,6 +18,10 @@ module Spree
     # mean two systems disagreeing about what the current image is.
     MEDIA_TYPES = %w[image video external_video external_image].freeze
 
+    # Types whose bytes live elsewhere: the row holds an address, so there is
+    # no attachment to require on any write path.
+    HOSTED_MEDIA_TYPES = %w[external_video external_image].freeze
+
     # Domain attributes a client may write, shared by every write path — the
     # media endpoints and the inline `media:` list on a product. Each path adds
     # its own transport keys (an upload's signed id, a row id) on top. Adding a
@@ -48,6 +52,7 @@ module Spree
     validates :external_video_url, presence: true, if: :external_video?
     validates :external_media_url, presence: true, if: :external_image?
     validate :external_video_url_is_supported, if: -> { external_video? && external_video_url.present? }
+    validate :external_media_url_is_addressable, if: -> { external_image? && external_media_url.present? }
     validate :poster_signed_id_is_resolvable, if: -> { @poster_signed_id.present? }
 
     WEBP_SAVER_OPTIONS = {
@@ -283,6 +288,18 @@ module Spree
       return if Spree::ExternalVideo.supported?(external_video_url)
 
       errors.add(:external_video_url, :unsupported_video_provider)
+    end
+
+    # The stored value is emitted straight into an <img src>, so it has to be
+    # an address a browser will fetch over the wire — not a javascript: or
+    # data: payload, and not a bare string.
+    def external_media_url_is_addressable
+      uri = URI.parse(external_media_url)
+      return if uri.is_a?(URI::HTTP) && uri.host.present?
+
+      errors.add(:external_media_url, :invalid_media_url)
+    rescue URI::InvalidURIError
+      errors.add(:external_media_url, :invalid_media_url)
     end
 
     def touch_product_variants

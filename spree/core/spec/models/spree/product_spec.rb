@@ -2179,6 +2179,18 @@ describe Spree::Product, type: :model do
         expect(video.external_video.provider).to eq('vimeo')
       end
 
+      it 'adds a DAM-hosted image without a file' do
+        expect {
+          Spree.product_update_workflow.call(product: product, attributes: { media: [
+            { media_type: 'external_image', external_media_url: 'https://dam.example.com/a.jpg', position: 1 }
+          ] })
+        }.to change(product.media, :count).by(1)
+
+        image = product.media.find_by(media_type: 'external_image')
+        expect(image.attachment).not_to be_attached
+        expect(image.hosted_still_url).to eq('https://dam.example.com/a.jpg')
+      end
+
       it 'rejects an external video Spree cannot embed' do
         expect {
           Spree.product_update_workflow.call(product: product, attributes: { media: [
