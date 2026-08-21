@@ -784,7 +784,6 @@
       },
       "edit_description": "تحديث الاسم أو العنوان أو الالتقاط أو سياسات المخزون.",
       "empty": "لا توجد مواقع المخزون حتى الآن",
-      "first_party": "السوق",
       "kinds": {
         "fulfillment_center": "Fulfillment center",
         "store": "محل",

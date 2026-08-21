@@ -28,11 +28,5 @@ tables['stock-locations'].addColumn<StockLocation>({
   ransackAttribute: 'seller_id',
   filterResource: sellerAutocompleteProps('stock-location-seller-picker'),
   render: (location) =>
-    location.seller_name ? (
-      <Badge variant="outline">{location.seller_name}</Badge>
-    ) : (
-      // Not a dash: "no seller" is a positive fact here — the location is the
-      // marketplace's own — and a dash would read as missing data.
-      <span className="text-muted-foreground">{i18n.t('admin.stock_locations.first_party')}</span>
-    ),
+    location.seller_name ? <Badge variant="outline">{location.seller_name}</Badge> : '—',
 })
