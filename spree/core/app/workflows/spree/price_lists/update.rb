@@ -40,7 +40,7 @@ module Spree
         # a missed key would send the bulk payload to the association setter.
         attrs = attributes.to_h.with_indifferent_access
 
-        @product_ids = attrs.key?(:product_ids) ? Array(attrs[:product_ids]).compact.uniq : nil
+        @product_ids = attrs.key?(:product_ids) ? decoded_product_ids(attrs[:product_ids]) : nil
         @prices = attrs.key?(:prices) ? attrs[:prices] : nil
 
         price_list.assign_attributes(attrs.except(:product_ids, :prices))
@@ -87,6 +87,35 @@ module Spree
         variant_ids = price_list.prices.distinct.pluck(:variant_id)
         price_list.prices.update_all(amount: nil, compare_at_amount: nil, updated_at: Time.current)
         touch_variants(variant_ids)
+      end
+
+      # Ids arrive prefixed from the console and legacy callers, already
+      # decoded from a controller that ran normalize_params — the same two
+      # shapes price_rows handles for variant_id.
+      #
+      # Resolved against the store's own products rather than decoded and
+      # trusted. A prefix only encodes a number, so `variant_xxx` decodes to
+      # an integer that names a product just as readily; and a blank entry
+      # matches nothing, which would otherwise read as "remove every current
+      # member and add none".
+      def decoded_product_ids(ids)
+        # `nil` is not a list: Array(nil) is [], which would otherwise read as
+        # the empty array that means "clear the list".
+        return nil if ids.nil?
+
+        given = Array(ids)
+        candidates = given.filter_map do |id|
+          next if id.blank?
+
+          Spree::PrefixedId.prefixed_id?(id) ? Spree::PrefixedId.decode_prefixed_id(id) : id
+        end
+
+        # An empty array clears the list; an array of blanks is malformed
+        # input and must not read as the same instruction.
+        return nil if candidates.empty? && given.any?
+        return [] if candidates.empty?
+
+        price_list.store.products.where(id: candidates).ids
       end
 
       def price_rows
