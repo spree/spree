@@ -368,7 +368,10 @@ module Spree
       return unless grouped?
 
       payment_splits.each do |split|
-        outstanding = split.authorized_amount - split.captured_amount
+        # What is genuinely still to draw — money a parcel has reserved is
+        # mid-charge against *this* payment, so carrying it to the remainder
+        # would hand that order its share a second time.
+        outstanding = split.undrawn_amount
         next if outstanding <= 0
 
         Spree::PaymentSplit.create!(
@@ -377,7 +380,7 @@ module Spree
           currency: split.currency,
           authorized_amount: outstanding
         )
-        split.update!(authorized_amount: split.captured_amount)
+        split.update!(authorized_amount: split.authorized_amount - outstanding)
       end
     end
 

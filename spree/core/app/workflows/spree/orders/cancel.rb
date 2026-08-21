@@ -200,24 +200,17 @@ module Spree
         end
       end
 
-      # Whether this share claims money the gateway has not confirmed.
+      # Whether a charge against this share is still in flight.
       #
-      # The claim is written before the charge so two parcels cannot draw the
-      # same share, which leaves a window where the split says captured and the
-      # payment does not. Reported rather than settled silently: cancelling
-      # through it would either release an authorization about to be drawn or
-      # refund money nobody took.
+      # The share itself knows: a parcel reserves what it is about to draw
+      # before asking the gateway, and that reservation only becomes captured
+      # money once the charge lands. Settling through it would either release
+      # an authorization about to be drawn or refund money nobody took, so it
+      # is reported for the operator rather than guessed at.
       #
       # @return [Boolean]
       def capture_in_flight?(split)
-        payment = split.payment
-        return false if payment.nil? || split.captured_amount <= 0
-        # A payment settled at checkout carries no capture events and its
-        # shares are captured by definition; only one still being drawn on can
-        # be caught mid-charge.
-        return false if payment.completed?
-
-        return false if split.captured_amount <= payment.captured_amount.to_d
+        return false unless split.capture_in_flight?
 
         Rails.error.report(
           Spree::Core::GatewayError.new('Payment share is mid-capture; cancellation left it for manual settlement'),

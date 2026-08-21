@@ -46,17 +46,18 @@ RSpec.describe Spree::Orders::Cancel, 'an order placed in a split checkout' do
     end
   end
 
-  # A parcel marks its share taken before asking the gateway, so a share can
-  # read captured while the charge is still in flight. Settling through that
-  # would release an authorization about to be drawn, or refund money nobody
-  # took.
+  # A parcel reserves what it is about to draw before asking the gateway, so a
+  # share can hold a claim while the charge is still in flight. Settling
+  # through that would release an authorization about to be drawn, or refund
+  # money nobody took — and it must hold even when a sibling's capture has
+  # already completed the shared payment.
   context 'while a capture is still in flight' do
     let(:in_flight_payment) do
-      create(:payment, order: nil, cart: nil, order_group: group, amount: 40, status: 'processing')
+      create(:payment, order: nil, cart: nil, order_group: group, amount: 40, status: 'completed')
     end
     let!(:claimed_split) do
       create(:payment_split, payment: in_flight_payment, order: seller_order,
-                             authorized_amount: 40, captured_amount: 40)
+                             authorized_amount: 40, claimed_amount: 40)
     end
 
     before { seller_split.destroy! }
@@ -65,6 +66,16 @@ RSpec.describe Spree::Orders::Cancel, 'an order placed in a split checkout' do
       described_class.call(order: seller_order)
 
       expect(claimed_split.reload.authorized_amount).to eq(40)
+    end
+
+    # The payment reads completed because a *sibling's* capture finished it —
+    # which says nothing about whether this share's charge landed.
+    it 'holds even when a sibling’s capture completed the shared payment' do
+      in_flight_payment.capture_events.create!(amount: 40)
+
+      expect {
+        described_class.call(order: seller_order, refund_payments: true)
+      }.not_to change { claimed_split.reload.authorized_amount }
     end
 
     it 'refunds nothing the gateway has not confirmed' do

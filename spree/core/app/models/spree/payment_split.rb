@@ -47,5 +47,22 @@ module Spree
     def net_captured_amount
       captured_amount - refunded_amount
     end
+
+    # What is left of this share for a parcel to draw on.
+    #
+    # Counts money already taken and money another parcel has reserved but not
+    # yet drawn, so two dispatching at once cannot both reach for the same
+    # amount.
+    #
+    # @return [BigDecimal]
+    def undrawn_amount
+      authorized_amount - captured_amount - claimed_amount
+    end
+
+    # @return [Boolean] whether a charge for this share is still in flight —
+    #   reserved by a parcel, and not yet confirmed by the gateway
+    def capture_in_flight?
+      claimed_amount.positive?
+    end
   end
 end

@@ -790,18 +790,24 @@ module Spree
         # of a partially captured payment — so a failure at that point is not a
         # failure to capture, and giving the claim back would let this order
         # draw the same money again.
-        release_share(split, bounded) unless payment.reload.completed?
+        settle_share(split, bounded, captured: payment.reload.completed?)
         raise
       end
 
+      settle_share(split, bounded, captured: true)
       bounded
     end
 
-    # Hands a claim back after a capture that never happened. Failures here are
-    # reported rather than raised: the caller is already raising the reason the
-    # capture failed, and losing that to a bookkeeping error would hide it.
-    def release_share(split, amount)
-      split.with_lock { split.update!(captured_amount: split.captured_amount - amount) }
+    # Turns a claim into the thing it turned out to be: money the gateway took,
+    # or nothing at all. Failures here are reported rather than raised — a
+    # caller in the rescue path is already raising the reason the capture
+    # failed, and losing that to a bookkeeping error would hide it.
+    def settle_share(split, amount, captured:)
+      split.with_lock do
+        attributes = { claimed_amount: split.claimed_amount - amount }
+        attributes[:captured_amount] = split.captured_amount + amount if captured
+        split.update!(attributes)
+      end
     rescue StandardError => e
       Rails.error.report(e, handled: true, context: { payment_split_id: split.id }, source: 'spree.core')
     end
@@ -810,10 +816,13 @@ module Spree
     #   as taken; zero when nothing is left
     def claim_share(split, capturable_amount)
       split.with_lock do
-        bounded = [capturable_amount, split.authorized_amount - split.captured_amount].min
+        # What is left to draw counts money already taken *and* money another
+        # parcel has reserved but not yet drawn, so two dispatching at once
+        # cannot both reach for the same amount.
+        bounded = [capturable_amount, split.undrawn_amount].min
         next 0 if bounded <= 0
 
-        split.update!(captured_amount: split.captured_amount + bounded)
+        split.update!(claimed_amount: split.claimed_amount + bounded)
         bounded
       end
     end
