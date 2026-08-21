@@ -3,6 +3,14 @@ require 'spec_helper'
 RSpec.describe Spree::Sellers::Create do
   let(:store) { @default_store }
 
+  # `Store#default_stock_location` memoizes, and creates the row when there is
+  # none. The suite shares one store instance, so an example that creates it
+  # leaves the memo pointing at a row the next example's rollback has already
+  # removed — and `reload` then raises RecordNotFound on PostgreSQL, where
+  # examples run inside a transaction. Dropping the memo makes each example
+  # ask the database again.
+  before { store.remove_instance_variable(:@default_stock_location) if store.instance_variable_defined?(:@default_stock_location) }
+
   subject { described_class.call(store: store, attributes: attributes) }
 
   let(:attributes) { { name: 'Sparks' } }
