@@ -14,11 +14,14 @@ module Spree
       queue_as Spree.queues.payouts
 
       def perform
-        Spree::Seller.where(status: 'approved').find_each do |seller|
+        # Preloaded because the schedule falls back to the store's default, so
+        # every seller would otherwise reload its own.
+        Spree::Seller.where(status: 'approved').includes(:store).find_each do |seller|
           next if seller.resolved_payouts_schedule_interval == 'manual'
-          next unless due?(seller)
 
           currencies_owed(seller).each do |currency|
+            next unless due?(seller, currency)
+
             Spree.seller_payout_sweep_workflow.call(seller: seller, currency: currency)
           end
         end
@@ -26,14 +29,21 @@ module Spree
 
       private
 
-      # Whether enough time has passed since this seller was last settled.
-      # A seller who has never been paid is due as soon as they have earned
-      # anything — their first settlement should not wait a whole period.
-      def due?(seller)
-        last = seller.seller_payouts.order(:created_at).last
-        return true if last.nil?
+      # Whether enough time has passed since this seller was last settled in
+      # this currency. A seller who has never been paid is due as soon as they
+      # have earned anything — their first settlement should not wait a whole
+      # period.
+      #
+      # Asked per currency, because settlements are made per currency. Reading
+      # the seller's most recent payout across all of them would let an
+      # out-of-band settlement in one currency reset the clock for every other
+      # — a monthly seller paid early in dollars would have their euro balance
+      # skipped for another month.
+      def due?(seller, currency)
+        settled_at = seller.seller_payouts.where(currency: currency).maximum(:created_at)
+        return true if settled_at.nil?
 
-        last.created_at <= interval_ago(seller.resolved_payouts_schedule_interval)
+        settled_at <= interval_ago(seller.resolved_payouts_schedule_interval)
       end
 
       def interval_ago(interval)

@@ -16,15 +16,24 @@ RSpec.describe Spree::SellerTransfers::Reverse do
       result = described_class.call(order: order, amount: 30)
 
       expect(result).to be_success
-      expect(result.value.amount).to eq(-30)
       expect(earning.reload.amount).to eq(80)
+    end
+
+    # A refund is the customer's gross figure; the seller only ever received
+    # their net cut, so taking the gross back would charge them the
+    # marketplace's commission on goods that came back.
+    it 'takes back only the seller’s share of what was refunded' do
+      earn
+
+      # 30 refunded on a 100 order that earned the seller 80.
+      expect(described_class.call(order: order, amount: 30).value.amount).to eq(-24)
     end
 
     it 'leaves the seller with what is left' do
       earn
       described_class.call(order: order, amount: 30)
 
-      expect(seller.balance('USD')).to eq(50)
+      expect(seller.balance('USD')).to eq(56)
     end
 
     it 'links the reversal to what it reverses' do
@@ -43,7 +52,8 @@ RSpec.describe Spree::SellerTransfers::Reverse do
 
     it 'takes nothing once the earning is fully reversed' do
       earn(80)
-      described_class.call(order: order, amount: 80)
+      # The whole order refunded takes the whole earning back.
+      described_class.call(order: order, amount: 100)
 
       expect { described_class.call(order: order, amount: 20) }.
         not_to change { Spree::SellerTransfer.count }
@@ -69,7 +79,7 @@ RSpec.describe Spree::SellerTransfers::Reverse do
       expect { described_class.call(order: order, amount: 30, refund: refund) }.
         not_to change { Spree::SellerTransfer.count }
 
-      expect(seller.balance('USD')).to eq(50)
+      expect(seller.balance('USD')).to eq(56)
     end
 
     it 'answers with the reversal that was already written' do
@@ -104,6 +114,8 @@ RSpec.describe Spree::SellerTransfers::Reverse do
       described_class.call(order: order, amount: 60, refund: create(:refund, amount: 30))
       described_class.call(order: order, amount: 60, refund: create(:refund, amount: 30))
 
+      # Two 60 refunds on a 100 order: 48 each against an 80 earning, floored
+      # at what was credited.
       expect(seller.balance('USD')).to eq(0)
       expect(Spree::SellerTransfer.reversals_only.sum(:amount)).to eq(-80)
     end

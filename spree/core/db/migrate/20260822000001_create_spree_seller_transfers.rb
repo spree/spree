@@ -54,13 +54,19 @@ class CreateSpreeSellerTransfers < ActiveRecord::Migration[8.1]
                                                     where: "kind = 'earning'",
                                                     name: 'index_seller_transfers_on_order_earning'
     else
-      # MySQL has no partial index. Indexing the id together with the row's own
-      # primary key for every other kind gives the same guarantee: earnings
-      # collide on the order, reversals never collide at all.
+      # MySQL and MariaDB have no partial index, and functional indexes are
+      # MySQL-only — MariaDB rejects the expression outright. A stored
+      # generated column is the one spelling both accept: it holds the order
+      # for an earning and the row's own id otherwise, so earnings collide on
+      # the order while reversals never collide at all.
       execute <<~SQL.squish
-        CREATE UNIQUE INDEX index_seller_transfers_on_order_earning
-        ON spree_seller_transfers(order_id, (CASE WHEN kind = 'earning' THEN 0 ELSE id END))
+        ALTER TABLE spree_seller_transfers
+        ADD COLUMN earning_key BIGINT
+        AS (CASE WHEN kind = 'earning' THEN order_id ELSE -id END) STORED
       SQL
+
+      add_index :spree_seller_transfers, :earning_key, unique: true,
+                                                       name: 'index_seller_transfers_on_order_earning'
     end
 
     # A provider's own id for the movement, unique where one exists: a retry

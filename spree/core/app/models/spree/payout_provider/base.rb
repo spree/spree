@@ -29,6 +29,18 @@ module Spree
         name.demodulize.titleize
       end
 
+      # What a ledger row records as having moved its money.
+      #
+      # The full class name rather than its last segment: every provider gem
+      # calls its class `PayoutProvider`, so the leaf alone identifies nothing
+      # and would make two gems' rows indistinguishable — including to the
+      # unique index on (provider, reference) that guards retries.
+      #
+      # @return [String]
+      def self.provider_key
+        name
+      end
+
       # Whether this provider can be selected for a store — an external one
       # overrides it to require connected credentials.
       #

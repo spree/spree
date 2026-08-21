@@ -65,11 +65,28 @@ module Spree
         halt!(Spree::SellerTransfer.reversals_only.find_by!(refund_id: refund.id))
       end
 
+      # The seller's share of a refunded amount.
+      #
+      # A refund is the customer's gross figure — it carries the tax and the
+      # marketplace's commission, while the seller only ever received their net
+      # cut. Taking the gross back would charge them the commission on goods
+      # that came back, so it is scaled by what the order earned them against
+      # what the customer paid. A full refund still nets to the whole earning.
+      def seller_share_of(refunded)
+        paid = order.total.to_d
+        return refunded.to_d.abs if paid.zero?
+
+        Spree::Money::Rounding.quantize(
+          refunded.to_d.abs * (@earning.amount / paid),
+          Spree::Money::Rounding.precision(@earning.currency)
+        )
+      end
+
       # Nil when there is nothing left to take back, which the caller turns
       # into a halt outside the transaction — `halt!` refuses to run inside one.
       def write_reversal
         @earning.with_lock do
-          bounded = [amount.to_d.abs, @earning.reversible_amount].min
+          bounded = [seller_share_of(amount), @earning.reversible_amount].min
           next nil if bounded <= 0
 
           Spree::SellerTransfer.create!(
