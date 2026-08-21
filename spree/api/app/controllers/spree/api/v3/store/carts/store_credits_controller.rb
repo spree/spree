@@ -13,7 +13,7 @@ module Spree
             # POST /api/v3/store/carts/:cart_id/store_credits
             def create
               with_order_lock do
-                result = Spree.checkout_add_store_credit_service.call(
+                result = Spree.store_credit_apply_service.call(
                   order: @cart,
                   amount: params[:amount].try(:to_f)
                 )
@@ -29,7 +29,7 @@ module Spree
             # DELETE /api/v3/store/carts/:cart_id/store_credits
             def destroy
               with_order_lock do
-                result = Spree.checkout_remove_store_credit_service.call(order: @cart)
+                result = Spree.store_credit_remove_service.call(order: @cart)
 
                 if result.success?
                   render_cart

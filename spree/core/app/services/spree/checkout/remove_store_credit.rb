@@ -1,17 +1,12 @@
 module Spree
   module Checkout
-    class RemoveStoreCredit
-      prepend Spree::ServiceModule::Base
+    # Deprecation alias for Spree::StoreCredits::Remove — see
+    # Spree::Checkout::AddStoreCredit. Removed in 6.1.
+    RemoveStoreCredit = Spree::StoreCredits::Remove
 
-      def call(order:)
-        return failed unless order
-
-        ApplicationRecord.transaction do
-          order.payments.checkout.store_credits.map(&:invalidate!) unless order.completed?
-        end
-
-        order.reload.payments.store_credits.valid.any? ? failure(order) : success(order)
-      end
-    end
+    Spree::Deprecation.warn(
+      'Spree::Checkout::RemoveStoreCredit is deprecated and will be removed in Spree 6.1. ' \
+      'Use Spree::StoreCredits::Remove instead.'
+    )
   end
 end

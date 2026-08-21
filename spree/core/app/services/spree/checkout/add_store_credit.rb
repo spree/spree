@@ -1,84 +1,15 @@
 module Spree
   module Checkout
-    class AddStoreCredit
-      prepend Spree::ServiceModule::Base
+    # Deprecation alias for Spree::StoreCredits::Apply, renamed in 6.0 for
+    # symmetry with Spree::GiftCards::Apply. Retained one release so existing
+    # code and extensions keep working. A constant assignment rather than a
+    # subclass, so is_a? and class_name: references keep resolving; the file
+    # is named for the constant because Zeitwerk requires it. Removed in 6.1.
+    AddStoreCredit = Spree::StoreCredits::Apply
 
-      def call(order:, amount: nil)
-        @order = order
-        return failed unless @order
-
-        remaining_total = amount ? [amount, @order.outstanding_balance].min : @order.outstanding_balance
-
-        return failure(nil, Spree.t(:error_user_does_not_have_any_store_credits)) unless @order.customer&.store_credits&.any?
-
-        ApplicationRecord.transaction do
-          existing = @order.payments.store_credits.where(status: :checkout)
-
-          if existing.any?
-            update_existing_payments(existing, remaining_total)
-          else
-            apply_store_credits(remaining_total)
-          end
-        end
-
-        if @order.reload.payments.store_credits.valid.any?
-          # Legacy update hooks are an order-side extension seam; carts have none.
-          @order.update_hooks.each { |hook| @order.send(hook) } if @order.respond_to?(:update_hooks)
-          success(@order)
-        else
-          failure(@order)
-        end
-      end
-
-      private
-
-      # Update existing checkout store credit payments in place to avoid
-      # creating unnecessary invalid payment records on every recalculation.
-      def update_existing_payments(payments, remaining_total)
-        payments.each do |payment|
-          credit = payment.source
-          available = credit.amount_remaining + payment.amount
-          new_amount = [available, remaining_total].min
-
-          if new_amount.positive?
-            payment.update_column(:amount, new_amount)
-            remaining_total -= new_amount
-          else
-            payment.invalidate!
-          end
-        end
-
-        # If there's still remaining total, apply from additional store credits
-        apply_store_credits(remaining_total) if remaining_total.positive?
-      end
-
-      def apply_store_credits(remaining_total)
-        payment_method = Spree::PaymentMethod::StoreCredit.available.first
-        raise 'Store credit payment method could not be found' unless payment_method
-
-        @order.customer.store_credits.for_store(@order.store).oldest_first.each do |credit|
-          break if remaining_total.zero?
-          next if credit.amount_remaining.zero?
-
-          amount_to_take = store_credit_amount(credit, remaining_total)
-          create_store_credit_payment(payment_method, credit, amount_to_take)
-          remaining_total -= amount_to_take
-        end
-      end
-
-      def create_store_credit_payment(payment_method, credit, amount)
-        @order.payments.create!(
-          source: credit,
-          payment_method: payment_method,
-          amount: amount,
-          state: 'checkout',
-          response_code: credit.generate_authorization_code
-        )
-      end
-
-      def store_credit_amount(credit, total)
-        [credit.amount_remaining, total].min
-      end
-    end
+    Spree::Deprecation.warn(
+      'Spree::Checkout::AddStoreCredit is deprecated and will be removed in Spree 6.1. ' \
+      'Use Spree::StoreCredits::Apply instead.'
+    )
   end
 end

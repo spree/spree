@@ -77,7 +77,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::StoreCreditsController, type: :con
   describe 'DELETE #destroy' do
     context 'when store credit was applied' do
       before do
-        Spree.checkout_add_store_credit_service.call(order: order)
+        Spree.store_credit_apply_service.call(order: order)
       end
 
       it 'removes store credit from the order' do

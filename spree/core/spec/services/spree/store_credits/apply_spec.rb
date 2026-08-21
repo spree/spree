@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe Spree::Checkout::AddStoreCredit, type: :service do
+describe Spree::StoreCredits::Apply, type: :service do
   let(:store) { @default_store }
 
   describe '#call' do
@@ -154,6 +154,61 @@ describe Spree::Checkout::AddStoreCredit, type: :service do
         expect(older_payment.amount).to eq(order_total - amount_difference)
         expect(newer_payment.amount).to eq(amount_difference)
       end
+    end
+  end
+
+  # Regression: outstanding_balance is zero or negative on a paid or overpaid
+  # order, and this service runs on every recalculation. The loop used to
+  # break only on exactly zero, so a negative balance wrote a store credit
+  # payment for a negative amount.
+  context 'when the order is already overpaid' do
+    let(:overpaid_customer) { create(:customer) }
+    let(:overpaid_order) { create(:order_with_line_items, store: store, customer: overpaid_customer) }
+
+    before do
+      create(:store_credit_payment_method)
+      create(:store_credit, customer: overpaid_customer, amount: 50, store: store)
+      overpaid_order.update_columns(total: 10, item_total: 10, payment_total: 40)
+    end
+
+    it 'writes no store credit payment' do
+      described_class.call(order: overpaid_order)
+
+      expect(overpaid_order.reload.payments.store_credits).to be_empty
+    end
+  end
+
+  # Regression: credits were drawn oldest-first with no currency filter, so an
+  # older credit in another currency was picked ahead of a usable one. Being
+  # unusable it overshot the order's allowed amount and raised, aborting the
+  # whole apply transaction.
+  context 'when an older credit is in another currency' do
+    let(:mixed_customer) { create(:customer) }
+    let(:mixed_order) { create(:order_with_line_items, store: store, customer: mixed_customer) }
+
+    # Derived, never hard-coded: the order's currency comes from its store, so
+    # naming a fixed code here risks the "foreign" credit matching the order
+    # and the example passing without exercising the filter at all.
+    let(:foreign_currency) { mixed_order.currency == 'EUR' ? 'USD' : 'EUR' }
+
+    before do
+      create(:store_credit_payment_method)
+      mixed_order.update_columns(total: 100, item_total: 100, payment_total: 0)
+      create(:store_credit, customer: mixed_customer, amount: 50, store: store,
+                            currency: foreign_currency, created_at: 2.days.ago)
+      create(:store_credit, customer: mixed_customer, amount: 30, store: store,
+                            currency: mixed_order.currency, created_at: 1.day.ago)
+    end
+
+    it 'draws only against the credit in the order currency' do
+      expect(foreign_currency).not_to eq(mixed_order.currency)
+
+      described_class.call(order: mixed_order)
+
+      payments = mixed_order.reload.payments.store_credits
+      expect(payments.count).to eq(1)
+      expect(payments.first.source.currency).to eq(mixed_order.currency)
+      expect(payments.first.amount).to eq(30)
     end
   end
 end
