@@ -591,6 +591,18 @@ module Spree
       order_group_id.present?
     end
 
+    # This order and any placed alongside it in the same checkout.
+    #
+    # The set anything counting *checkouts* rather than orders works from — a
+    # promotion's usage limit, for one, which must not be spent several times
+    # over because a basket happened to span several sellers.
+    #
+    # @return [Array<Integer>]
+    def sibling_order_ids
+      return [id] unless grouped?
+
+      order_group.orders.ids
+    end
 
     # This order's share of one payment made against its group.
     #

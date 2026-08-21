@@ -254,9 +254,12 @@ module Spree
                       # never part of credits_count — nothing to subtract.
                       0
                     when Order
-                      credits.where(order_id: promotable.id).select(:order_id).distinct.count
+                      # A checkout that divided across sellers left a discount
+                      # row on every child, so what this promotable already
+                      # accounts for is its whole group, not just itself.
+                      checkouts_credited(credits.where(order_id: promotable.sibling_order_ids))
                     else
-                      credits.where(line_item_id: promotable.id).select(:order_id).distinct.count
+                      checkouts_credited(credits.where(line_item_id: promotable.id))
                     end
       credits_count - own_credits
     end
@@ -265,8 +268,14 @@ module Spree
       Spree::Discount.promotion.where(promotion_action_id: actions.map(&:id))
     end
 
+    # How many times this promotion has been redeemed.
+    #
+    # Counted in checkouts rather than orders: a basket spanning several
+    # sellers becomes several orders, each carrying its own discount rows, and
+    # counting those as separate uses would spend a limited promotion two or
+    # three times over on one customer's single redemption.
     def credits_count
-      credits.select(:order_id).distinct.count
+      checkouts_credited(credits)
     end
 
     def line_item_actionable?(order, line_item)
@@ -284,9 +293,17 @@ module Spree
       end
     end
 
+    # @param excluded_orders [Array<Spree::Order>] orders whose own use does
+    #   not count — an order asking on its own behalf. Excluding one of a split
+    #   checkout's orders excludes its siblings too, since they are one
+    #   redemption between them rather than several.
     def used_by?(user, excluded_orders = [])
+      # A cart is not an order and has no siblings; it simply has nothing to
+      # exclude, since its own discounts carry no order_id.
+      excluded_ids = excluded_orders.flat_map { |record| record.try(:sibling_order_ids) || [] }.uniq
+
       user.orders.complete.joins(:discounts).
-        where.not(spree_orders: { id: excluded_orders.map(&:id) }).
+        where.not(spree_orders: { id: excluded_ids }).
         where(Spree::Discount.table_name => { promotion_id: id, kind: 'promotion' }).any?
     end
 
@@ -307,6 +324,22 @@ module Spree
     end
 
     private
+
+    # Counts distinct checkouts behind a set of discount rows.
+    #
+    # An order placed on its own is one checkout; the several orders a split
+    # checkout produced are one between them, which is what their shared group
+    # identifies. Collapsing on the group is what makes a redemption cost the
+    # same whether the customer bought from one seller or four.
+    #
+    # @param scope [ActiveRecord::Relation<Spree::Discount>]
+    # @return [Integer]
+    def checkouts_credited(scope)
+      orders = Spree::Order.arel_table
+      checkout = Arel::Nodes::NamedFunction.new('COALESCE', [orders[:order_group_id], orders[:id]])
+
+      scope.joins(:order).distinct.count(checkout)
+    end
 
     def apply_pending_rules_and_actions
       flush_pending_typed_association(:promotion_rules)
