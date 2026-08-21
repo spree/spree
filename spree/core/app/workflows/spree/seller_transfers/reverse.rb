@@ -73,6 +73,7 @@ module Spree
           next nil if bounded <= 0
 
           Spree::SellerTransfer.create!(
+            store: @earning.store,
             seller: @earning.seller,
             order: order,
             reversed_from: @earning,

@@ -1,6 +1,7 @@
 class CreateSpreeSellerPayouts < ActiveRecord::Migration[8.1]
   def change
     create_table :spree_seller_payouts do |t|
+      t.references :store, null: false
       t.references :seller, null: false
 
       # The sum of the transfers this payout settles, fixed when it is

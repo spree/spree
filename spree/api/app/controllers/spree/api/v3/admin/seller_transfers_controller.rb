@@ -20,10 +20,8 @@ module Spree
             Spree.api.admin_seller_transfer_serializer
           end
 
-          # Reached through the store's own sellers: a transfer carries no
-          # store of its own, and the seller is what ties it to one.
           def scope
-            super.where(seller_id: current_store.sellers.select(:id))
+            super.for_store(current_store)
           end
 
           def collection_includes

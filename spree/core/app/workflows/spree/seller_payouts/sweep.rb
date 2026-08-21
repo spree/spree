@@ -70,6 +70,7 @@ module Spree
       def claim_transfers
         ApplicationRecord.transaction do
           @payout = Spree::SellerPayout.create!(
+            store: seller.store,
             seller: seller,
             amount: @amount,
             currency: currency,

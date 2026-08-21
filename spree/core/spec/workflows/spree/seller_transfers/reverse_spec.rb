@@ -86,11 +86,11 @@ RSpec.describe Spree::SellerTransfers::Reverse do
 
       expect do
         Spree::SellerTransfer.create!(
-          seller: seller, order: order, reversed_from: earning, refund: refund,
+          store: store, seller: seller, order: order, reversed_from: earning, refund: refund,
           amount: -30, currency: 'USD', kind: 'refund_reversal', provider: 'system', status: 'pending'
         )
         Spree::SellerTransfer.create!(
-          seller: seller, order: order, reversed_from: earning, refund: refund,
+          store: store, seller: seller, order: order, reversed_from: earning, refund: refund,
           amount: -30, currency: 'USD', kind: 'refund_reversal', provider: 'system', status: 'pending'
         )
       end.to raise_error(ActiveRecord::RecordNotUnique)

@@ -21,6 +21,12 @@ module Spree
     has_prefix_id :vtr
 
     include Spree::Metadata
+    # Denormalized from the seller, which never changes store — so the copy
+    # cannot drift, and tenancy is structural rather than a subquery every
+    # consumer must remember. Always set explicitly from the seller: ledger
+    # rows are written by jobs and subscribers, where the request-scoped
+    # default store is absent or wrong.
+    include Spree::SingleStoreResource
 
     KINDS = %w[earning refund_reversal].freeze
 

@@ -1,6 +1,7 @@
 class CreateSpreeSellerTransfers < ActiveRecord::Migration[8.1]
   def change
     create_table :spree_seller_transfers do |t|
+      t.references :store, null: false
       t.references :seller, null: false
       # The child order this earning came from. One earning per order — see the
       # partial index below.

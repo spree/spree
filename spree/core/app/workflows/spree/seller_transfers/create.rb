@@ -53,6 +53,7 @@ module Spree
 
       def build_transfer
         @seller_transfer = Spree::SellerTransfer.create!(
+          store: order.seller.store,
           seller: order.seller,
           order: order,
           amount: earned_amount,

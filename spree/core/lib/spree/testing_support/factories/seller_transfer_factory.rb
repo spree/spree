@@ -1,6 +1,7 @@
 FactoryBot.define do
   factory :seller_transfer, class: Spree::SellerTransfer do
     seller
+    store { seller.store }
     order
     amount { BigDecimal(20) }
     currency { 'USD' }
