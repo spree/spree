@@ -1117,6 +1117,14 @@
         },
         "internal_note": {
           "label": "Interne Notiz (nur Mitarbeiter)"
+        },
+        "order_group": {
+          "label": "Einkauf",
+          "view": "Einkauf anzeigen"
+        },
+        "seller": {
+          "label": "Verkäufer",
+          "first_party": "Eigener Verkauf"
         }
       },
       "payment_method": {
@@ -2282,6 +2290,9 @@
           "voided": "Zahlung storniert"
         },
         "no_customer": "Keine Kundeninformationen",
+        "order_group_help": "Diese Bestellung wurde zusammen mit anderen in einem Checkout aufgegeben.",
+        "order_group_part_of": "Teil eines größeren Einkaufs",
+        "order_group_view_all": "Alle Bestellungen dieses Einkaufs anzeigen",
         "payment_form": {
           "amount_help": "Leer lassen, um standardmäßig den offenen Saldo zu verwenden.",
           "capture_immediately": "Sofort einziehen",
@@ -2301,6 +2312,7 @@
         },
         "section_customer_note": "Besondere Anweisungen",
         "section_internal_note": "Interne Notiz",
+        "section_seller": "Verkäufer",
         "summary": {
           "adjustments": "Anpassungen",
           "approved_by": "Genehmigt von",

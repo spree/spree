@@ -107,10 +107,10 @@ module Spree
     # Rails auto-locking must not raise on internal saves.
     self.lock_optimistically = false
 
-    self.whitelisted_ransackable_associations = %w[fulfillments shipments customer created_by approver canceler promotions bill_address ship_address line_items store channel tags]
+    self.whitelisted_ransackable_associations = %w[fulfillments shipments customer created_by approver canceler promotions bill_address ship_address line_items store channel tags seller order_group]
     self.whitelisted_ransackable_attributes = %w[
       completed_at email number status payment_status payment_state fulfillment_status shipment_state delivery_total
-      total item_total total_quantity considered_risky channel_id currency coupon_code
+      total item_total total_quantity considered_risky channel_id currency coupon_code seller_id order_group_id
     ]
     self.whitelisted_ransackable_scopes = %w[complete incomplete refunded partially_refunded search multi_search]
 
@@ -149,6 +149,13 @@ module Spree
     # The cart this order was completed from (unique — the completion
     # idempotency key). Backoffice draft orders have no cart.
     belongs_to :cart, class_name: 'Spree::Cart', optional: true, inverse_of: :order
+    # The checkout this order was placed in, when it was placed alongside
+    # others — one per seller on a marketplace. A single-seller or first-party
+    # only checkout produces a bare order and no group.
+    belongs_to :order_group, class_name: 'Spree::OrderGroup', optional: true, inverse_of: :orders
+    # Whose sale this is. Nil on the operator's own goods, including the
+    # first-party child of a mixed marketplace checkout.
+    belongs_to :seller, class_name: 'Spree::Seller', optional: true
     belongs_to :created_by, class_name: "::#{Spree.admin_user_class}", optional: true
     belongs_to :approver, class_name: "::#{Spree.admin_user_class}", optional: true
     belongs_to :canceler, class_name: "::#{Spree.admin_user_class}", optional: true
@@ -171,7 +178,11 @@ module Spree
     has_many :return_line_items, through: :returns, class_name: 'Spree::ReturnLineItem', source: :return_line_items
     has_many :variants, through: :line_items
     has_many :products, through: :variants
-    has_many :refunds, through: :payments
+    # Every refund names the order it puts right — its own payments' refunds
+    # stamp it automatically, and a refund against a payment shared by a split
+    # checkout names the one child being refunded. Keyed on that column rather
+    # than walked through payments, which a grouped order does not own.
+    has_many :refunds, class_name: 'Spree::Refund', inverse_of: :order, dependent: :nullify
 
     # Typed adjustment rows owned by this order (line-, fulfillment- and
     # order-level). See docs/plans/6.0-6.1-split-adjustments.md.
@@ -186,6 +197,10 @@ module Spree
     # design: commission never reaches a total the customer pays, so this is a
     # ledger the order merely hosts. See docs/plans/6.0-multi-vendor-marketplace.md.
     has_many :commission_lines, class_name: 'Spree::CommissionLine', dependent: :destroy, inverse_of: :order
+
+    # This order's share of the payments made against its group. Empty on an
+    # ungrouped order, whose payments are its own (see #settlement_payments).
+    has_many :payment_splits, class_name: 'Spree::PaymentSplit', dependent: :destroy, inverse_of: :order
 
     has_many :line_item_tax_lines, through: :line_items, source: :tax_lines
     has_many :line_item_discounts, through: :line_items, source: :discounts
@@ -556,6 +571,46 @@ module Spree
       end
     end
 
+
+    # The payments that settle this order.
+    #
+    # An order placed in a split checkout has none of its own: the customer
+    # made one payment for the whole basket, against the group. Anything asking
+    # what money exists for this order — capture on dispatch, refunds, the
+    # admin payments panel — reads it here, and reads its own share of it from
+    # {#payment_splits}.
+    #
+    # @return [ActiveRecord::Relation<Spree::Payment>]
+    def settlement_payments
+      order_group_id.present? ? order_group.payments : payments
+    end
+
+    # @return [Boolean] whether this order was placed alongside others in one
+    #   checkout, and therefore shares their payment
+    def grouped?
+      order_group_id.present?
+    end
+
+    # This order and any placed alongside it in the same checkout.
+    #
+    # The set anything counting *checkouts* rather than orders works from — a
+    # promotion's usage limit, for one, which must not be spent several times
+    # over because a basket happened to span several sellers.
+    #
+    # @return [Array<Integer>]
+    def sibling_order_ids
+      return [id] unless grouped?
+
+      order_group.orders.ids
+    end
+
+    # This order's share of one payment made against its group.
+    #
+    # @param payment [Spree::Payment]
+    # @return [Spree::PaymentSplit, nil]
+    def payment_split_for(payment)
+      payment_splits.find_by(payment_id: payment.id)
+    end
 
     def name
       if (address = bill_address || ship_address)

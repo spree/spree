@@ -127,17 +127,29 @@ module Spree
               )
             end
           rescue ActiveRecord::RecordNotFound
-            # Gateway-race retry with the ORDER id: the webhook completed the
-            # cart and the client re-posts with the id it got back. Foreign
-            # prefixes never decode against carts, so this only fires for
-            # order_ ids (or genuinely unknown ids, which 404 below).
-            @cart = current_store.orders.complete.find_by_prefix_id!(params[:id])
+            # Gateway-race retry with the id the client got back: the webhook
+            # completed the cart and the client re-posts. Foreign prefixes never
+            # decode against carts, so this only fires for an order or group id
+            # (or a genuinely unknown one, which 404s below). A split checkout
+            # handed the client a group, so both have to resolve here.
+            @cart = find_completed_result!
             authorize_storefront_read!(@cart, token: cart_token)
 
             render_order
           end
 
           protected
+
+          # The completed result behind an id the client is retrying with —
+          # either the single order a plain checkout produced, or the group a
+          # split one did.
+          #
+          # @return [Spree::Order, Spree::OrderGroup]
+          def find_completed_result!
+            current_store.orders.complete.find_by_prefix_id!(params[:id])
+          rescue ActiveRecord::RecordNotFound
+            current_store.order_groups.find_by_prefix_id!(params[:id])
+          end
 
           def model_class
             Spree::Order

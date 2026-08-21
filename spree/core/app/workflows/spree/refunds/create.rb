@@ -22,7 +22,11 @@ module Spree
       # @param refunder [Object, nil] the admin issuing the refund
       # @param originator [Object, nil] what triggered the refund — a
       #   Spree::Return, Exchange or Claim; nil for a manual refund
-      def perform(payment:, amount: nil, reason: nil, refunder: nil, originator: nil)
+      # @param order [Spree::Order, nil] which order is being put right.
+      #   Required only when the payment is shared by a split checkout, where
+      #   it covers several orders and the payment cannot say which one this
+      #   refund is for; otherwise the payment's own order is taken.
+      def perform(payment:, amount: nil, reason: nil, refunder: nil, originator: nil, order: nil)
         super
 
         step :ensure_refundable
@@ -49,9 +53,32 @@ module Spree
       end
 
       def ensure_amount_within_balance
-        return if @amount_to_refund.to_d.positive? && @amount_to_refund.to_d <= payment.credit_allowed.to_d
+        amount = @amount_to_refund.to_d
+        return if amount.positive? && amount <= payment.credit_allowed.to_d && amount <= refundable_share
 
         failure(payment, :refund_amount_exceeds_balance)
+      end
+
+      # What the named order may take back from this payment.
+      #
+      # A payment shared by a split checkout holds several orders' money, and
+      # the whole-payment balance says nothing about whose. Without this bound,
+      # refunding one seller's order for more than it was paid would quietly
+      # spend a sibling's captured share — the money would go back to the
+      # customer, and the other seller would find nothing left to draw.
+      #
+      # @return [BigDecimal] the payment's own balance when it is not shared
+      def refundable_share
+        return payment.credit_allowed.to_d unless payment.grouped?
+
+        split = order && payment.payment_splits.find_by(order_id: order.id)
+        return 0 if split.nil?
+
+        # Refunds already written are counted from the rows rather than from
+        # the split's own figure, which a subscriber updates after the fact —
+        # two refunds in quick succession must not each see an unrefunded share.
+        already_refunded = Spree::Refund.where(payment_id: payment.id, order_id: order.id).sum(:amount)
+        split.captured_amount - already_refunded
       end
 
       # The row is what reserves the balance — credit_allowed sums refund rows —
@@ -62,11 +89,20 @@ module Spree
         payment.with_lock do
           @refund = payment.refunds.create!(
             amount: @amount_to_refund,
-            reason: reason || Spree::RefundReason.return_processing_reason(payment.order&.store),
+            order: order || payment.order,
+            reason: reason || Spree::RefundReason.return_processing_reason(refund_store),
             refunder: refunder,
             originator: originator
           )
         end
+      end
+
+      # The store the default reason belongs to. A payment shared by a split
+      # checkout has no order of its own, so it is asked through whichever
+      # order is being refunded — and failing that the current store, since a
+      # store-less reason would be created global and reused everywhere.
+      def refund_store
+        (order || payment.order)&.store || payment.owner&.store || Spree::Current.store
       end
 
       def credit_at_gateway

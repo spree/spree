@@ -21,7 +21,8 @@ module Spree
       hooks :validate, :before_finalize, :after_finalize
 
       # Hook handlers read this plus the argument readers.
-      attr_reader :order
+      # +order_group+ is set only when the cart spanned more than one seller.
+      attr_reader :order, :order_group
 
       # @param cart [Spree::Cart, Spree::Order] a draft order funnels into
       #   the same finalize semantics
@@ -53,7 +54,9 @@ module Spree
         run_hooks :before_finalize
         step :finalize_completion
         run_hooks :after_finalize
-        success(order)
+        # A split checkout answers with the group: it is what the customer
+        # bought, and the orders inside it are how it will be fulfilled.
+        success(order_group || order)
       rescue ActiveRecord::RecordNotUnique
         # Concurrent completion lost the unique orders.cart_id race —
         # re-enter: the replay step returns the winner's order (or the TTL
@@ -76,17 +79,29 @@ module Spree
       # (idempotent, and the only healer for the crash window between the
       # order commit and the cart stamp).
       def replay_completed
-        order = completion_result(cart)
-        return if order.nil?
+        result = completion_result(cart)
+        return if result.nil?
 
-        halt!(order) if order.canceled?
+        return replay_group(result) if result.is_a?(Spree::OrderGroup)
 
-        if !order.placed? && order.payment_required? && !payment_covered?(order)
+        halt!(result) if result.canceled?
+
+        if !result.placed? && result.payment_required? && !payment_covered?(result)
           failure(cart, code: 'payment_failed', message: Spree.t(:payment_processing_failed))
         end
 
+        finalize!(cart, result)
+        halt!(result)
+      end
+
+      # The split already ran, so the money and the division are settled — what
+      # may not have finished is placing the children. Re-running finalize
+      # against the group picks up wherever it stopped.
+      def replay_group(group)
+        @order_group = group
+        @order = group.orders.first
         finalize!(cart, order)
-        halt!(order)
+        halt!(group)
       end
 
       def guard_concurrent_completion
@@ -143,6 +158,11 @@ module Spree
       # or completion could still finalize.
       def rollback_draft_order
         return if order.nil?
+        # Once the checkout has divided, this is no longer a lone draft that can
+        # be thrown away: its money sits on the group and its siblings hold the
+        # rest of the basket. A failure after that point resumes through the
+        # sweeper like any other finalize failure.
+        return if order_group.present?
         return if order.payments.valid.completed.any? || payment_covered?(order)
 
         ApplicationRecord.transaction do
@@ -155,10 +175,10 @@ module Spree
         end
       end
 
-      # Exactly one of cart.order (single partition) or, later, the
-      # multi-seller order group.
+      # Exactly one of these is ever set: the bare order a single-partition
+      # cart completed into, or the group a multi-seller one did.
       def completion_result(cart)
-        cart.order
+        cart.order_group || cart.order
       end
 
       # P7 — the copy contract: the order receives copies (line items with
@@ -326,20 +346,106 @@ module Spree
 
       # The FINALIZE phase: the order-side completion workflow owns the
       # placement side effects; the two cart-side stamps follow.
+      #
+      # A cart spanning several sellers divides here rather than earlier: the
+      # customer authorised one amount against one basket, so the money is
+      # taken first and the bookkeeping follows it. A crash between the two
+      # resumes like any other finalize failure.
       def finalize!(cart, order)
         @order = order
-        step :complete_order, with: -> { Spree.order_complete_workflow }
+        step :split_by_seller
+        step :allocate_payment_splits
+        step :complete_orders
         step :complete_cart
         step :mark_coupon_codes_used
         external_step :commit_tax
+      end
+
+      # Divides the paid draft order into one order per seller, under a group.
+      # A cart of one partition — all first-party, or all one seller — is left
+      # exactly as it is: no group, no splits, and the order it already built
+      # is the order the customer gets.
+      #
+      # The draft order built in PREPARE becomes the group's first child rather
+      # than being replaced. It is the record the payment was taken against and
+      # the row carrying the unique cart_id that makes completion replayable,
+      # so it is kept and narrowed to its own partition; the remaining
+      # partitions become new siblings beside it.
+      def split_by_seller
+        @order_group = cart.order_group
+        return if order_group.present?
+        return if order.placed?
+
+        partitions = Spree::Carts::PartitionBySeller.call(purchase: order).value
+
+        if partitions.one?
+          # Nothing to divide, but the sale still belongs to whoever made it:
+          # a basket entirely from one seller is that seller's order, and the
+          # column is what their own order list reads.
+          order.update_columns(seller_id: partitions.first.seller_id) if order.seller_id != partitions.first.seller_id
+          return
+        end
+
+        return if partitions.empty?
+
+        result = Spree::Carts::SplitBySeller.call(cart: cart, order: order, partitions: partitions)
+        failure(cart, code: 'split_failed', message: result.error) if result.failure?
+
+        @order_group = result.value
+        # Ordered, because which child comes first decides which one carries
+        # the confirmation email — that must not depend on how the rows come
+        # back.
+        @order = order_group.orders.order(:id).first
+      end
+
+      def allocate_payment_splits
+        return if order_group.nil?
+
+        result = Spree::OrderGroups::AllocatePayments.call(group: order_group)
+        failure(cart, code: 'split_failed', message: result.error) if result.failure?
+      end
+
+      # Places what the checkout produced — the children of a split, or the one
+      # order otherwise. Each child publishes its own order.placed, which is
+      # what gets every seller their own commission lines with no marketplace
+      # code in the commission engine.
+      #
+      # A split checkout's payments were already taken against the whole basket
+      # and moved onto the group, so the children place without processing them
+      # again. One purchase means one confirmation email: the first child
+      # carries the notification and its siblings place silently.
+      def complete_orders
+        split = order_group.present?
+
+        placed_orders.each_with_index do |child, index|
+          result = Spree.order_complete_workflow.call(
+            order: child,
+            payment_pending: split,
+            notify_customer: split && !index.zero? ? false : nil
+          )
+          failure(cart, code: 'completion_failed', message: result.error) if result.failure?
+        end
+
+        order_group&.publish_event('order_group.completed')
       end
 
       # Tells the tax engine the sale is final. A no-op for the built-in
       # provider, whose rows are already the record; external engines file the
       # document that a tax return is later built from. Outside the
       # transaction — a remote call must not hold the completion open.
+      #
+      # Every order of a split checkout is filed, not just the first: each is a
+      # separate sale with its own tax, and an unfiled sibling is a hole in the
+      # merchant's return that only surfaces at filing time.
       def commit_tax
-        order.tax_provider.commit(order)
+        placed_orders.each { |placed| placed.tax_provider.commit(placed) }
+      end
+
+      # What this checkout produced: the children of a split, or the one order
+      # otherwise. The single answer to "which orders came out of here", so
+      # placement and tax filing can never disagree about the set.
+      def placed_orders
+        order_group.present? ? order_group.orders.to_a : [order]
       end
 
       def complete_cart

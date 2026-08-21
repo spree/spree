@@ -1117,6 +1117,14 @@
         },
         "internal_note": {
           "label": "Note interne (personnel uniquement)"
+        },
+        "order_group": {
+          "label": "Achat",
+          "view": "Voir l'achat"
+        },
+        "seller": {
+          "label": "Vendeur",
+          "first_party": "Vendu par vous"
         }
       },
       "payment_method": {
@@ -2282,6 +2290,9 @@
           "voided": "Paiement annulé"
         },
         "no_customer": "Aucune information client",
+        "order_group_help": "Cette commande a été passée avec d’autres lors d’un même paiement.",
+        "order_group_part_of": "Fait partie d'un achat plus large",
+        "order_group_view_all": "Voir toutes les commandes de cet achat",
         "payment_form": {
           "amount_help": "Laissez vide pour utiliser par défaut le solde restant dû.",
           "capture_immediately": "Capturer immédiatement",
@@ -2301,6 +2312,7 @@
         },
         "section_customer_note": "Instructions spéciales",
         "section_internal_note": "Note interne",
+        "section_seller": "Vendeur",
         "summary": {
           "adjustments": "Ajustements",
           "approved_by": "Approuvé par",

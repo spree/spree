@@ -278,11 +278,11 @@ module Spree
     # rubocop:disable Metrics/MethodLength
     def register_default_resources
       register_resource(:orders, group: :orders, audiences: %i[seller], subjects: -> {
-        [Spree::Order, Spree::LineItem, Spree::TaxLine, Spree::Discount, Spree::Fee,
+        [Spree::Order, Spree::OrderGroup, Spree::LineItem, Spree::TaxLine, Spree::Discount, Spree::Fee,
          Spree::Return, Spree::Exchange, Spree::Claim, Spree::TaxIdentifier,
          Spree::CustomField]
       })
-      register_resource(:payments, group: :orders, subjects: -> { [Spree::Payment] })
+      register_resource(:payments, group: :orders, subjects: -> { [Spree::Payment, Spree::PaymentSplit] })
       register_resource(:fulfillments, group: :orders, audiences: %i[seller], subjects: -> { [Spree::Fulfillment] })
       register_resource(:refunds, group: :orders, subjects: -> { [Spree::Refund] })
       register_resource(:gift_cards, group: :orders, subjects: -> {

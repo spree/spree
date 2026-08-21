@@ -36,6 +36,7 @@ export { NewsletterSubscriberSchema, type NewsletterSubscriber } from './Newslet
 export { OptionTypeSchema, type OptionType } from './OptionType';
 export { OptionValueSchema, type OptionValue } from './OptionValue';
 export { OrderSchema, type Order } from './Order';
+export { OrderGroupSchema, type OrderGroup } from './OrderGroup';
 export { PaymentSchema, type Payment } from './Payment';
 export { PaymentMethodSchema, type PaymentMethod } from './PaymentMethod';
 export { PaymentSessionSchema, type PaymentSession } from './PaymentSession';

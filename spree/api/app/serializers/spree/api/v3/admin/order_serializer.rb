@@ -7,7 +7,9 @@ module Spree
         class OrderSerializer < V3::OrderSerializer
 
           typelize company_location_id: [:string, nullable: true],
-                   company_id: [:string, nullable: true]
+                   company_id: [:string, nullable: true],
+                   seller_id: [:string, nullable: true],
+                   order_group_id: [:string, nullable: true]
 
           # The Admin API has no guest gating — money fields inherited from the
           # store serializer are always present, so override their nullability.
@@ -54,6 +56,27 @@ module Spree
           # a placed order must report what it was stamped with.
           attribute :company_location_id do |order|
             order.company_location&.prefixed_id
+          end
+
+          # Whose sale this is — nil on the operator's own goods. The full
+          # profile is `?expand=seller`.
+          attribute :seller_id do |order|
+            order.seller&.prefixed_id
+          end
+
+          one :seller,
+              resource: proc { Spree.api.admin_seller_serializer },
+              if: proc { expand?('seller') }
+
+          # The checkout this order was placed in, when it was placed alongside
+          # others.
+          #
+          # Deliberately an id and no expand: the group serializer renders the
+          # orders it holds, so expanding it from an order would render this
+          # order again inside itself. A client wanting the group fetches
+          # /order_groups/:id, which is what that endpoint is for.
+          attribute :order_group_id do |order|
+            Spree::OrderGroup.prefixed_id_for(order.order_group_id)
           end
 
           attribute :company_id do |order|

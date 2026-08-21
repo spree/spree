@@ -447,9 +447,16 @@ module Spree
     # Read through +owner+ rather than +order+: a fulfillment can still belong
     # to a cart, and both carry pending_payments.
     #
+    # An order placed in a split checkout has no payments of its own — the
+    # customer paid once, against the group — so the pool comes from there
+    # instead. What this parcel may draw from it is still bounded by its own
+    # order's share; see {#process_order_payments}.
+    #
     # @return [Array<Spree::Payment>]
     def payments_to_capture_on_dispatch
-      Array(owner&.pending_payments).select { |payment| payment.payment_method&.capture_on_dispatch? }
+      pool = grouped_owner? ? owner.settlement_payments.pending : Array(owner&.pending_payments)
+
+      Array(pool).select { |payment| payment.payment_method&.capture_on_dispatch? }
     end
 
     def process_order_payments
@@ -473,11 +480,8 @@ module Spree
                               payment.amount
                             end
 
-        cents = (capturable_amount * 100).to_i
-        result = Spree.payment_capture_workflow.call(payment: payment, amount: cents)
-        raise Spree::Core::GatewayError, result.error.value.to_s if result.failure?
-
-        shipment_to_pay -= capturable_amount
+        captured = capture_from(payment, capturable_amount)
+        shipment_to_pay -= captured
       end
     end
 
@@ -749,6 +753,94 @@ module Spree
     end
 
     private
+
+    # @return [Boolean] whether this parcel's order shares its payment with
+    #   others placed in the same checkout
+    # Draws one parcel's worth from a payment and reports what it took.
+    #
+    # A payment shared by a split checkout is only ever drawn on up to this
+    # order's own share of it — without the bound, the first seller to ship
+    # would capture against the whole basket and leave nothing authorised for
+    # the rest. The bound is read and written **inside the share's lock**, so
+    # two parcels of the same order dispatching at once cannot both read the
+    # same remaining share and each capture it.
+    #
+    # @return [BigDecimal] what was actually captured
+    def capture_from(payment, capturable_amount)
+      return capture_at_gateway(payment, capturable_amount) unless grouped_owner?
+
+      split = owner.payment_split_for(payment)
+      return 0 if split.nil?
+
+      # Claimed before the gateway, and in its own short transaction rather
+      # than one held across the network call. Two reasons the claim comes
+      # first: two parcels of the same order dispatching at once would
+      # otherwise both read the same remaining share, and capturing part of a
+      # shared payment forks the remainder, carrying each order's
+      # still-uncaptured share across — a share not yet marked taken would be
+      # carried over in full and paid to this order twice.
+      bounded = claim_share(split, capturable_amount)
+      return 0 if bounded <= 0
+
+      begin
+        capture_at_gateway(payment, bounded)
+      rescue StandardError
+        # Released only when the money truly never moved. The capture workflow
+        # keeps working after the charge commits — it authorizes the remainder
+        # of a partially captured payment — so a failure at that point is not a
+        # failure to capture, and giving the claim back would let this order
+        # draw the same money again.
+        settle_share(split, bounded, captured: payment.reload.completed?)
+        raise
+      end
+
+      settle_share(split, bounded, captured: true)
+      bounded
+    end
+
+    # Turns a claim into the thing it turned out to be: money the gateway took,
+    # or nothing at all. Failures here are reported rather than raised — a
+    # caller in the rescue path is already raising the reason the capture
+    # failed, and losing that to a bookkeeping error would hide it.
+    def settle_share(split, amount, captured:)
+      split.with_lock do
+        attributes = { claimed_amount: split.claimed_amount - amount }
+        attributes[:captured_amount] = split.captured_amount + amount if captured
+        split.update!(attributes)
+      end
+    rescue StandardError => e
+      Rails.error.report(e, handled: true, context: { payment_split_id: split.id }, source: 'spree.core')
+    end
+
+    # @return [BigDecimal] how much of the share this parcel may take, marked
+    #   as taken; zero when nothing is left
+    def claim_share(split, capturable_amount)
+      split.with_lock do
+        # What is left to draw counts money already taken *and* money another
+        # parcel has reserved but not yet drawn, so two dispatching at once
+        # cannot both reach for the same amount.
+        bounded = [capturable_amount, split.undrawn_amount].min
+        next 0 if bounded <= 0
+
+        split.update!(claimed_amount: split.claimed_amount + bounded)
+        bounded
+      end
+    end
+
+    # @return [BigDecimal] the amount captured, so callers can draw it down
+    def capture_at_gateway(payment, amount)
+      return 0 if amount <= 0
+
+      units = Spree::Money::Rounding.to_minor_units(amount, payment.currency)
+      result = Spree.payment_capture_workflow.call(payment: payment, amount: units)
+      raise Spree::Core::GatewayError, result.error.value.to_s if result.failure?
+
+      amount
+    end
+
+    def grouped_owner?
+      owner.is_a?(Spree::Order) && owner.grouped?
+    end
 
     # Inlined from the removed ShipmentHandler (its name-constantize factory
     # could never match a real subclass); FulfillmentProvider takes over the

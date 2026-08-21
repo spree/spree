@@ -180,4 +180,36 @@ describe Spree::Money do
       expect(money.as_json(options)).to eq('$10.00')
     end
   end
+
+  # Apportionment divides money in whole minor units, because integers divide
+  # exactly and can be made to add back up to the amount they came from.
+  describe Spree::Money::Rounding do
+    describe '.to_minor_units' do
+      it 'counts cents for a currency written in them' do
+        expect(described_class.to_minor_units(BigDecimal('12.34'), 'USD')).to eq(1234)
+      end
+
+      it 'counts whole yen, which are written without decimals' do
+        expect(described_class.to_minor_units(BigDecimal('1234'), 'JPY')).to eq(1234)
+      end
+
+      it 'counts thousandths for a three-decimal currency' do
+        expect(described_class.to_minor_units(BigDecimal('1.234'), 'BHD')).to eq(1234)
+      end
+
+      it 'rounds half up rather than truncating' do
+        expect(described_class.to_minor_units(BigDecimal('0.005'), 'USD')).to eq(1)
+      end
+    end
+
+    describe '.from_minor_units' do
+      it 'is the inverse for each currency' do
+        { 'USD' => '12.34', 'JPY' => '1234', 'BHD' => '1.234' }.each do |currency, amount|
+          units = described_class.to_minor_units(BigDecimal(amount), currency)
+
+          expect(described_class.from_minor_units(units, currency)).to eq(BigDecimal(amount))
+        end
+      end
+    end
+  end
 end

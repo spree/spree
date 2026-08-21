@@ -28,8 +28,13 @@ module Spree
     with_options inverse_of: :payments do
       belongs_to :order, class_name: 'Spree::Order', touch: true, optional: true
       belongs_to :cart, class_name: 'Spree::Cart', optional: true
+      # A grouped checkout's payment belongs to the group: there is one charge
+      # for the whole basket, and the per-order shares are payment_splits.
+      belongs_to :order_group, class_name: 'Spree::OrderGroup', optional: true
       belongs_to :payment_method, -> { with_deleted }, class_name: 'Spree::PaymentMethod'
     end
+
+    has_many :payment_splits, class_name: 'Spree::PaymentSplit', dependent: :destroy, inverse_of: :payment
     belongs_to :source, polymorphic: true
 
     validate :exactly_one_owner
@@ -344,8 +349,39 @@ module Spree
         status: 'pending',
         capture_on_dispatch: true
       )
-      update(amount: captured_amount)
+      carry_splits_to(remainder)
+      # Bang: a silent failure here would leave this payment at its full amount
+      # beside a remainder that also exists, so the group would hold more money
+      # than the customer was ever charged.
+      update!(amount: captured_amount)
       remainder
+    end
+
+    # Hands each order's still-uncaptured share over to the remainder payment.
+    #
+    # A shared payment covers several orders, so capturing one seller's share
+    # shrinks a payment the others are still relying on. Their shares have to
+    # move to the remainder with the money, or the sellers who have not shipped
+    # would be left pointing at an authorization that no longer holds their
+    # amount — unable to capture, and reading as unpaid forever.
+    def carry_splits_to(remainder)
+      return unless grouped?
+
+      payment_splits.each do |split|
+        # What is genuinely still to draw — money a parcel has reserved is
+        # mid-charge against *this* payment, so carrying it to the remainder
+        # would hand that order its share a second time.
+        outstanding = split.undrawn_amount
+        next if outstanding <= 0
+
+        Spree::PaymentSplit.create!(
+          payment: remainder,
+          order_id: split.order_id,
+          currency: split.currency,
+          authorized_amount: outstanding
+        )
+        split.update!(authorized_amount: split.authorized_amount - outstanding)
+      end
     end
 
     def editable?
@@ -395,9 +431,20 @@ module Spree
       has_invalid_status?
     end
 
-    # @return [Spree::Cart, Spree::Order, nil]
+    # What this payment was made against — a cart mid-checkout, a single order,
+    # or the group a split checkout produced. Everything reading totals,
+    # currency or gateway options goes through here rather than through #order,
+    # which is nil on a grouped payment.
+    #
+    # @return [Spree::Cart, Spree::Order, Spree::OrderGroup, nil]
     def owner
-      order || cart
+      order || cart || order_group
+    end
+
+    # @return [Boolean] whether this payment covers several orders placed in one
+    #   checkout, in which case its per-order shares are {#payment_splits}
+    def grouped?
+      order_group_id.present?
     end
 
     # Bridge for legacy callers assigning +current_order+ (now a Spree::Cart)
@@ -451,7 +498,7 @@ module Spree
     end
 
     def exactly_one_owner
-      errors.add(:base, Spree.t('errors.messages.exactly_one_of_cart_or_order')) unless [order, cart].compact.one?
+      errors.add(:base, Spree.t('errors.messages.exactly_one_of_cart_or_order')) unless [order, cart, order_group].compact.one?
     end
 
     def set_amount

@@ -23,7 +23,14 @@ module Spree
       attr_reader :tax_line_context
 
       # @param cart [Spree::Cart, Spree::Order]
-      def perform(cart:)
+      # @param resum_only [Boolean] re-sum the rows the record already carries
+      #   without regenerating them. A placed order is frozen by its own
+      #   lifecycle, but an order can also hold rows that must not be
+      #   re-derived before it is placed — the seller split moves already-costed
+      #   rows onto child orders that are still drafts, and re-running the
+      #   promotion and tax engines against one seller's subset would answer a
+      #   question the checkout already answered against the whole basket.
+      def perform(cart:, resum_only: false)
         super
 
         step :reset_association_caches
@@ -88,9 +95,27 @@ module Spree
       # thresholds, free shipping) reads these attributes, so they must
       # reflect the current line items — not the previous recalculation.
       def refresh_money_inputs
-        cart.payment_total = cart.payments.completed.includes(:refunds).inject(0) { |sum, payment| sum + payment.amount - payment.refunds.sum(:amount) }
+        cart.payment_total = paid_so_far
         cart.item_total = cart.line_items.to_a.sum(&:amount)
         cart.delivery_total = cart.fulfillments.to_a.sum(&:cost)
+      end
+
+      # What has actually been paid towards this record.
+      #
+      # An order placed in a split checkout owns no payments — the customer
+      # paid once, against the group — so its position is the sum of its
+      # shares. Reading its own payments would persist nothing paid and report
+      # the whole total as outstanding.
+      #
+      # @return [BigDecimal]
+      def paid_so_far
+        if cart.is_a?(Spree::Order) && cart.grouped?
+          return cart.payment_splits.to_a.sum(&:net_captured_amount)
+        end
+
+        cart.payments.completed.includes(:refunds).inject(0) do |sum, payment|
+          sum + payment.amount - payment.refunds.sum(:amount)
+        end
       end
 
       def refresh_grand_total
@@ -121,7 +146,7 @@ module Spree
       end
 
       def money_frozen?
-        cart.is_a?(Spree::Order) && cart.completed?
+        resum_only || (cart.is_a?(Spree::Order) && cart.completed?)
       end
 
       # Pass one of the two-pass recalculation: persist per-adjustable

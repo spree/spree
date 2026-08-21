@@ -137,8 +137,11 @@ module Spree
             authorize!(mapped_action, resource)
           end
 
+          # seller is preloaded because its id is read on every row and an
+          # expanded list renders the whole profile; order_group is not, since
+          # only its id is reported and that comes off the order's own column.
           def collection_includes
-            [:line_items, :customer, :channel]
+            [:line_items, :customer, :channel, :seller]
           end
 
           private
