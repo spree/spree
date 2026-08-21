@@ -83,11 +83,13 @@ RSpec.describe Spree::Api::V3::Seller::ProfileController, type: :controller do
 
     # The lifecycle belongs to the operator's workflows. A seller approving
     # themselves would skip the mail, the payouts and every extension hook.
+    # A status the seller does not already hold, so this fails if `status`
+    # ever becomes permitted — sending the one they are on would pass either
+    # way and prove nothing.
     it 'refuses to move its own status' do
-      patch :update, params: { status: 'approved' }, as: :json
+      patch :update, params: { status: 'suspended' }, as: :json
 
-      expect(seller.reload).to be_approved # was already approved
-      expect(seller.status).to eq('approved')
+      expect(seller.reload).to be_approved
     end
 
     it 'cannot change its own settlement terms' do
@@ -120,6 +122,20 @@ RSpec.describe Spree::Api::V3::Seller::ProfileController, type: :controller do
 
       expect(seller.reload.terms_accepted_at).to be_within(1.second).of(accepted)
     end
+    # A marketplace that rewrites its terms advances the requirement's
+    # `terms_effective_from`, which puts everyone who accepted before that
+    # date back on the checklist. A seller who could not re-accept would be
+    # stuck there with nothing to click.
+    it 'lets a seller accept revised terms' do
+      seller.update!(terms_accepted_at: 1.year.ago)
+
+      expect {
+        patch :update, params: { accept_terms: true }, as: :json
+      }.to change { seller.reload.terms_accepted_at }
+
+      expect(seller.terms_accepted_at).to be_within(5.seconds).of(Time.current)
+    end
+
     it 'cannot change its own slug' do
       original = seller.slug
 

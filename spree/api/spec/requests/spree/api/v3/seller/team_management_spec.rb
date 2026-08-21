@@ -3,7 +3,7 @@ require 'spec_helper'
 # The team screen's whole loop over HTTP: invite, see it pending, resend,
 # revoke — then invite again and accept, and watch it move from the pending
 # list into the member list.
-RSpec.describe 'seller team management', type: :request do
+RSpec.describe 'Seller team management', type: :request do
   let(:store) { @default_store }
   let(:seller) { create(:seller, :approved, store: store) }
   let(:owner) { create(:admin_user, :without_admin_role).tap { |u| seller.add_user(u) } }

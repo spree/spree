@@ -17,12 +17,14 @@ module Spree
 
           # POST /api/v3/seller/requirements/:requirement_id/submissions
           def create
+            attributes = permitted_params
+
             result = Spree.seller_requirement_submission_create_workflow.call(
               seller: current_seller,
               requirement: @requirement,
-              note: params[:note],
-              reference: params[:reference],
-              file: params[:file],
+              note: attributes[:note],
+              reference: attributes[:reference],
+              file: attributes[:file],
               submitted_by: try_spree_current_user
             )
 
@@ -54,6 +56,13 @@ module Spree
           end
 
           protected
+
+          # What a seller may say about a requirement. `file` is a direct-upload
+          # signed id, so it is a string like the rest — the bytes are already
+          # in storage by the time this runs.
+          def permitted_params
+            params.permit(:note, :reference, :file)
+          end
 
           def read_actions
             %w[download]
