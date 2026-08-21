@@ -1013,6 +1013,7 @@ en:
     gift_card_expired: The Gift Card has expired.
     gift_card_mismatched_currency: Gift Card cannot be applied with current currency.
     gift_card_mismatched_customer: This gift card is associated with another user.
+    gift_card_no_amount_remaining: The Gift Card has no amount remaining.
     gift_card_not_applied: The Gift Card could not be applied.
     gift_card_not_found: The Gift Card was not found.
     gift_card_removed: The Gift Card was successfully removed from your order
@@ -1034,6 +1035,7 @@ en:
     implement_eligible_for_return: 'Must implement #eligible_for_return? for your EligibilityValidator.'
     implement_requires_manual_intervention: 'Must implement #requires_manual_intervention? for your EligibilityValidator.'
     import: Import
+    import_has_no_failed_rows: This import has no failed rows to retry.
     import_mailer:
       greeting: Hi %{user_name},
       import_done:
@@ -1041,6 +1043,9 @@ en:
         message: Your import has finished. %{completed_count} rows were imported successfully.
         subject: Your import %{import_number} has finished processing
         view_results: View import report
+    import_mapping_not_completed: The import's column mapping is not complete yet.
+    import_not_mapping: This import is not being mapped.
+    import_not_processing: This import is not processing.
     in_stock: In Stock
     inactive: Inactive
     incl: incl.
@@ -1056,6 +1061,9 @@ en:
     invalid_exchange_variant: Invalid exchange variant.
     inventory: Inventory
     invitation_accepted: Invitation accepted!
+    invitation_already_accepted: This invitation has already been accepted.
+    invitation_expired: This invitation has expired.
+    invitation_invitee_missing: This invitation has no invitee.
     invitation_mailer:
       greeting: Hi %{user_name},
       invitation_accepted:

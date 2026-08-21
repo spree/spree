@@ -46,6 +46,14 @@ RSpec.describe 'Spree::PriceLists write workflows' do
       expect(price_list.reload.name).to eq('StringKeys')
     end
 
+    # Prefixed ids arrive from the console and legacy callers; comparing them
+    # against integer primary keys would read as "remove everything".
+    it 'accepts prefixed product ids' do
+      described_class.call(price_list: price_list, attributes: { product_ids: [product.prefixed_id] })
+
+      expect(price_list.product_ids).to eq([product.id])
+    end
+
     it 'adds and removes products' do
       other = create(:product, store: store)
 

@@ -133,6 +133,11 @@ module Spree
             render_validation_error(error, code: code)
           elsif error.is_a?(String)
             render_error(code: code, message: error, status: status)
+          elsif error.is_a?(Symbol)
+            # Workflows reject with a symbol naming the reason. Translate it,
+            # falling back to the symbol so a missing key is visible rather
+            # than silently blank.
+            render_error(code: code, message: Spree.t(error, default: error.to_s.humanize), status: status)
           else
             render_error(code: code, message: error.to_s, status: status)
           end

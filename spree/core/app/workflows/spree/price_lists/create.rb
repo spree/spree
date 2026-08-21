@@ -47,7 +47,10 @@ module Spree
         return if @bulk_payloads.empty?
 
         result = Spree.price_list_update_workflow.call(price_list: price_list, attributes: @bulk_payloads)
-        failure(price_list, result.error) unless result.success?
+        # `result.error` is already a ResultError; passing it whole would wrap
+        # it in a second one and hide the ActiveModel::Errors that
+        # render_result_error reads to build a 422 with field details.
+        failure(price_list, result.error.value) unless result.success?
       end
     end
   end

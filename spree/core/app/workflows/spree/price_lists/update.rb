@@ -40,7 +40,7 @@ module Spree
         # a missed key would send the bulk payload to the association setter.
         attrs = attributes.to_h.with_indifferent_access
 
-        @product_ids = attrs.key?(:product_ids) ? Array(attrs[:product_ids]).compact.uniq : nil
+        @product_ids = attrs.key?(:product_ids) ? decoded_product_ids(attrs[:product_ids]) : nil
         @prices = attrs.key?(:prices) ? attrs[:prices] : nil
 
         price_list.assign_attributes(attrs.except(:product_ids, :prices))
@@ -87,6 +87,17 @@ module Spree
         variant_ids = price_list.prices.distinct.pluck(:variant_id)
         price_list.prices.update_all(amount: nil, compare_at_amount: nil, updated_at: Time.current)
         touch_variants(variant_ids)
+      end
+
+      # Ids arrive prefixed from the console and legacy callers, already
+      # decoded from a controller that ran normalize_params — the same two
+      # shapes price_rows handles for variant_id. Comparing a prefixed string
+      # against an integer primary key would read as "every current member
+      # removed, none added".
+      def decoded_product_ids(ids)
+        Array(ids).compact.filter_map do |id|
+          Spree::PrefixedId.prefixed_id?(id) ? Spree::PrefixedId.decode_prefixed_id(id) : id
+        end.uniq
       end
 
       def price_rows
