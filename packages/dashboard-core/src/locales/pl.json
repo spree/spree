@@ -378,6 +378,7 @@
     "components": {
       "currency_select": {
         "placeholder": "Wybierz walutę",
+        "search_placeholder": "Szukaj walut…",
         "empty": "Nie znaleziono walut"
       },
       "channel_select": {
@@ -395,13 +396,16 @@
       "locale_select": {
         "placeholder": "Wybierz język",
         "multi_placeholder": "Dodaj języki…",
+        "search_placeholder": "Szukaj języków…",
         "empty": "Nie znaleziono języków"
       },
       "country_combobox": {
+        "placeholder": "Wybierz kraj",
         "search_placeholder": "Szukaj krajów…",
         "empty": "Nie znaleziono krajów"
       },
       "state_combobox": {
+        "placeholder": "Wybierz województwo",
         "search_placeholder": "Szukaj województw…",
         "empty": "Nie znaleziono województw"
       },

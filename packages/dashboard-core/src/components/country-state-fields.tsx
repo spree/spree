@@ -1,11 +1,13 @@
 import type { State } from '@spree/admin-sdk'
 import {
   Combobox,
+  ComboboxButtonTrigger,
   ComboboxContent,
   ComboboxEmpty,
-  ComboboxInput,
   ComboboxItem,
   ComboboxList,
+  ComboboxSearch,
+  ComboboxTriggerPlaceholder,
 } from '@spree/dashboard-ui'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -35,23 +37,39 @@ export function useCountryStates(countryCode: string | null | undefined) {
  * abbreviation (e.g. "CA"). Callers should hide this and render a free-text
  * Input when `useCountryStates(...).states` is empty.
  *
+ * Shares the country picker's button-trigger shape — the two sit side by side
+ * in every address form, so they have to look alike, and the state field is
+ * exactly as prone to being buried by the browser's saved-address panel.
+ *
  * Keyed on `countryCode` so the internal state is reset when the country
  * changes — prevents a stale highlight from a previous country.
  */
 export function StateCombobox({
+  id,
   countryCode,
   states,
   value,
   onValueChange,
+  onBlur,
   placeholder,
+  searchPlaceholder,
+  invalid,
   disabled = false,
 }: {
+  /** Forwarded to the trigger so a `<FieldLabel htmlFor>` can target it. */
+  id?: string
   countryCode: string | null | undefined
   /** State list for the active country (typically from `useCountryStates`). */
   states: Pick<State, 'abbr' | 'name'>[]
   value: string | null | undefined
   onValueChange: (abbr: string) => void
+  /** Forwarded to the trigger so RHF's `<Controller>` can track touched state. */
+  onBlur?: () => void
+  /** Trigger text while nothing is selected. */
   placeholder?: string
+  /** Text in the dropdown's search box. */
+  searchPlaceholder?: string
+  invalid?: boolean
   disabled?: boolean
 }) {
   const { t } = useTranslation()
@@ -66,12 +84,26 @@ export function StateCombobox({
       onValueChange={(s: StateOption | null) => onValueChange(s?.abbr ?? '')}
       itemToStringLabel={(s: StateOption | null) => s?.name ?? ''}
       itemToStringValue={(s: StateOption | null) => s?.abbr ?? ''}
+      disabled={disabled}
     >
-      <ComboboxInput
-        placeholder={placeholder ?? t('admin.components.state_combobox.search_placeholder')}
+      <ComboboxButtonTrigger
+        id={id}
+        onBlur={onBlur}
         disabled={disabled}
-      />
+        aria-invalid={invalid || undefined}
+      >
+        {selected ? (
+          <span className="truncate">{selected.name}</span>
+        ) : (
+          <ComboboxTriggerPlaceholder>
+            {placeholder ?? t('admin.components.state_combobox.placeholder')}
+          </ComboboxTriggerPlaceholder>
+        )}
+      </ComboboxButtonTrigger>
       <ComboboxContent>
+        <ComboboxSearch
+          placeholder={searchPlaceholder ?? t('admin.components.state_combobox.search_placeholder')}
+        />
         <ComboboxEmpty>{t('admin.components.state_combobox.empty')}</ComboboxEmpty>
         <ComboboxList>
           {(state: StateOption) => (

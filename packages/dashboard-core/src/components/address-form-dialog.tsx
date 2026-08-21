@@ -242,12 +242,16 @@ export function AddressFormDialog({
                 <FieldError errors={[errors.address2]} />
               </Field>
               <Field>
-                <FieldLabel>{t('admin.fields.country_code.label')}</FieldLabel>
+                <FieldLabel htmlFor="addr-country">
+                  {t('admin.fields.country_code.label')}
+                </FieldLabel>
                 <Controller
                   name="country_code"
                   control={form.control}
                   render={({ field }) => (
                     <CountryCombobox
+                      id="addr-country"
+                      invalid={!!errors.country_code}
                       value={field.value}
                       onValueChange={(iso) => {
                         field.onChange(iso)
@@ -270,12 +274,16 @@ export function AddressFormDialog({
                 </Field>
                 {useStateCombobox ? (
                   <Field>
-                    <FieldLabel>{t('admin.fields.state_code.label')}</FieldLabel>
+                    <FieldLabel htmlFor="addr-state">
+                      {t('admin.fields.state_code.label')}
+                    </FieldLabel>
                     <Controller
                       name="state_code"
                       control={form.control}
                       render={({ field }) => (
                         <StateCombobox
+                          id="addr-state"
+                          invalid={!!errors.state_code}
                           countryCode={countryCode}
                           states={states}
                           value={field.value}

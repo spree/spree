@@ -10,12 +10,13 @@ import {
 import {
   Button,
   Combobox,
+  ComboboxButtonTrigger,
   ComboboxContent,
   ComboboxEmpty,
-  ComboboxInput,
   ComboboxItem,
   ComboboxList,
-  ComboboxTrigger,
+  ComboboxSearch,
+  ComboboxTriggerPlaceholder,
   CountryFlag,
   Input,
   Label,
@@ -328,45 +329,24 @@ function SetupForm({ token }: { token: string }) {
                 itemToStringValue={(country: SetupCountry | null) => country?.code ?? ''}
                 disabled={countriesQuery.isPending}
               >
-                {/* A button, not a text input. Chrome decides a field is part
-                    of an address form from its value and its neighbours, not
-                    just its name — "United States" sitting above Email was
-                    enough, and no combination of autocomplete attributes
-                    stopped the saved-address panel covering this list. There
-                    is nothing to autofill into a button. The search box lives
-                    inside the popup, where the address heuristics don't reach
-                    because it is outside the form's field flow. */}
-                <ComboboxTrigger
+                <ComboboxButtonTrigger
                   id="setup-country-search"
-                  className="flex min-h-8.5 w-full items-center justify-between gap-1.5 rounded-lg border border-border bg-card py-1.5 pr-2 pl-2.5 text-base leading-normal shadow-xs outline-none focus:border-blue-500 focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] aria-invalid:border-destructive"
                   onBlur={field.onBlur}
                   aria-invalid={!!errors.country_code || undefined}
                 >
                   {selectedCountry ? (
-                    <span className="flex items-center gap-2">
+                    <>
                       <CountryFlag iso={selectedCountry.code} />
-                      {selectedCountry.name}
-                    </span>
+                      <span className="truncate">{selectedCountry.name}</span>
+                    </>
                   ) : (
-                    <span className="text-muted-foreground">
+                    <ComboboxTriggerPlaceholder>
                       {t('admin.fields.setup.country_code.placeholder')}
-                    </span>
+                    </ComboboxTriggerPlaceholder>
                   )}
-                </ComboboxTrigger>
+                </ComboboxButtonTrigger>
                 <ComboboxContent>
-                  <div className="border-b border-border p-1">
-                    <ComboboxInput
-                      className="min-h-8.5 border-0 shadow-none has-[[data-slot=input-group-control]:focus-visible]:border-transparent has-[[data-slot=input-group-control]:focus-visible]:shadow-none"
-                      autoComplete="off"
-                      autoCorrect="off"
-                      autoCapitalize="off"
-                      spellCheck={false}
-                      data-1p-ignore
-                      data-lpignore="true"
-                      showTrigger={false}
-                      placeholder={t('admin.fields.setup.country_code.placeholder')}
-                    />
-                  </div>
+                  <ComboboxSearch placeholder={t('admin.fields.setup.country_code.placeholder')} />
                   <ComboboxEmpty>{t('admin.common.no_results')}</ComboboxEmpty>
                   <ComboboxList>
                     {(country: SetupCountry) => (
@@ -434,37 +414,23 @@ function SetupForm({ token }: { token: string }) {
                   itemToStringLabel={(code: string | null) => (code ? currencyLabel(code) : '')}
                   itemToStringValue={(code: string | null) => code ?? ''}
                 >
-                  {/* Same shape as the country field: a button trigger keeps
-                      the browser's address autofill out, and matches the
-                      select beside it at min-h-8.5. */}
-                  <ComboboxTrigger
+                  {/* Same shape as the country field, so the two read as one
+                      pair of fields. */}
+                  <ComboboxButtonTrigger
                     id="setup-currency-search"
-                    className="flex min-h-8.5 w-full items-center justify-between gap-1.5 rounded-lg border border-border bg-card py-1.5 pr-2 pl-2.5 text-base leading-normal shadow-xs outline-none focus:border-blue-500 focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] aria-invalid:border-destructive"
                     onBlur={field.onBlur}
                     aria-invalid={!!errors.currency || undefined}
                   >
                     {field.value ? (
-                      currencyLabel(field.value)
+                      <span className="truncate">{currencyLabel(field.value)}</span>
                     ) : (
-                      <span className="text-muted-foreground">
+                      <ComboboxTriggerPlaceholder>
                         {t('admin.fields.setup.currency.placeholder')}
-                      </span>
+                      </ComboboxTriggerPlaceholder>
                     )}
-                  </ComboboxTrigger>
+                  </ComboboxButtonTrigger>
                   <ComboboxContent>
-                    <div className="border-b border-border p-1">
-                      <ComboboxInput
-                        className="min-h-8.5 border-0 shadow-none has-[[data-slot=input-group-control]:focus-visible]:border-transparent has-[[data-slot=input-group-control]:focus-visible]:shadow-none"
-                        autoComplete="off"
-                        autoCorrect="off"
-                        autoCapitalize="off"
-                        spellCheck={false}
-                        data-1p-ignore
-                        data-lpignore="true"
-                        showTrigger={false}
-                        placeholder={t('admin.fields.setup.currency.placeholder')}
-                      />
-                    </div>
+                    <ComboboxSearch placeholder={t('admin.fields.setup.currency.placeholder')} />
                     <ComboboxEmpty>{t('admin.common.no_results')}</ComboboxEmpty>
                     <ComboboxList>
                       {(code: string) => (

@@ -366,7 +366,9 @@ function MarketFormFields({ form }: { form: UseFormReturn<MarketFormValues> }) {
             <LocaleSelect
               id="market-default-locale"
               required
+              invalid={!!errors.default_locale}
               value={field.value}
+              onBlur={field.onBlur}
               onChange={field.onChange}
               options={availableLocales}
             />

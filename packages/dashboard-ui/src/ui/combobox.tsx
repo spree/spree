@@ -27,6 +27,82 @@ function ComboboxTrigger({ className, children, ...props }: ComboboxPrimitive.Tr
   )
 }
 
+/**
+ * Button-shaped trigger for a searchable picker: the field renders the current
+ * selection (flag, formatted label) and the search box lives inside the popup,
+ * next to the results it filters.
+ *
+ * Preferred over the editable-input trigger (`<ComboboxInput>`) whenever the
+ * selection has a richer display than the raw query text. A text input has to
+ * show the typed query, so it erases the selected label the moment the user
+ * types, and the browser's address autofill treats a text field named after a
+ * country as part of an address form and covers the list with saved addresses.
+ * A button has nothing to autofill into, and the search box inside the popup
+ * sits outside the form's field flow where those heuristics don't reach.
+ *
+ * Deliberately matches `<SelectTrigger>` so a picker sitting beside a plain
+ * select is indistinguishable from it until opened.
+ */
+function ComboboxButtonTrigger({ className, children, ...props }: ComboboxPrimitive.Trigger.Props) {
+  return (
+    <ComboboxPrimitive.Trigger
+      data-slot="combobox-button-trigger"
+      className={cn(
+        "flex w-full min-h-8.5 cursor-pointer items-center justify-between gap-1.5 rounded-lg border border-border bg-card py-1.5 pr-2 pl-2.5 text-base font-normal leading-normal text-foreground shadow-xs transition-all duration-100 ease-in-out outline-none select-none focus:border-blue-500 focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-muted disabled:border-border disabled:text-muted-foreground disabled:shadow-none aria-invalid:border-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        className,
+      )}
+      {...props}
+    >
+      <span className="flex min-w-0 items-center gap-2 truncate">{children}</span>
+      <ChevronDownIcon className="pointer-events-none size-4 shrink-0 text-muted-foreground" />
+    </ComboboxPrimitive.Trigger>
+  )
+}
+
+/**
+ * Placeholder text for a `<ComboboxButtonTrigger>` with nothing selected.
+ * A span rather than the trigger's own `data-placeholder`, because the
+ * trigger renders arbitrary children (a flag beside a name) rather than a
+ * single value string.
+ */
+function ComboboxTriggerPlaceholder({ className, ...props }: React.ComponentProps<'span'>) {
+  return (
+    <span
+      data-slot="combobox-trigger-placeholder"
+      className={cn('truncate text-muted-foreground', className)}
+      {...props}
+    />
+  )
+}
+
+/**
+ * Search box for a button-triggered picker, rendered at the top of the popup.
+ * Autofill and spell-check are turned off across the board: this filters an
+ * on-screen list, so a password manager or a saved-address panel covering it
+ * is pure interference.
+ */
+function ComboboxSearch({ className, ...props }: ComboboxPrimitive.Input.Props) {
+  return (
+    <div className="border-b border-border p-1">
+      <ComboboxInput
+        data-slot="combobox-search"
+        className={cn(
+          'min-h-8.5 border-0 shadow-none has-[[data-slot=input-group-control]:focus-visible]:border-transparent has-[[data-slot=input-group-control]:focus-visible]:shadow-none',
+          className,
+        )}
+        autoComplete="off"
+        autoCorrect="off"
+        autoCapitalize="off"
+        spellCheck={false}
+        data-1p-ignore
+        data-lpignore="true"
+        showTrigger={false}
+        {...props}
+      />
+    </div>
+  )
+}
+
 function ComboboxClear({ className, ...props }: ComboboxPrimitive.Clear.Props) {
   return (
     <ComboboxPrimitive.Clear
@@ -275,6 +351,7 @@ function useComboboxAnchor() {
 
 export {
   Combobox,
+  ComboboxButtonTrigger,
   ComboboxChip,
   ComboboxChips,
   ComboboxChipsInput,
@@ -286,8 +363,10 @@ export {
   ComboboxItem,
   ComboboxLabel,
   ComboboxList,
+  ComboboxSearch,
   ComboboxSeparator,
   ComboboxTrigger,
+  ComboboxTriggerPlaceholder,
   ComboboxValue,
   useComboboxAnchor,
 }
