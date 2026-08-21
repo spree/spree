@@ -12,6 +12,7 @@ const { data: orders, meta } = await client.orders.list({
   sort: '-completed_at',
   limit: 25,
 })
+
 // endregion:example
 
-export { orders, meta }
+export { meta, orders }

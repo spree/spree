@@ -48,7 +48,8 @@ const blackFriday = await client.promotions.create({
     { type: 'free_shipping' },
   ],
 })
+
 // endregion:example
 
 // Suppress unused-binding warnings — these are display-only example values.
-export { promotion, blackFriday }
+export { blackFriday, promotion }

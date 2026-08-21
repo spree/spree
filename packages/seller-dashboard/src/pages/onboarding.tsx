@@ -1,10 +1,18 @@
 import {
+  EMPTY_FILE_UPLOAD_VALUE,
+  FileUploadField,
+  type FileUploadValue,
+} from '@spree/dashboard-core'
+import {
   Badge,
   Button,
   Card,
   CardContent,
   CardHeader,
   CardTitle,
+  Field,
+  FieldLabel,
+  Input,
   Progress,
   Textarea,
 } from '@spree/dashboard-ui'
@@ -183,6 +191,8 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
   const { sellerId } = useParams({ from: '/_authenticated/$sellerId' })
   const queryClient = useQueryClient()
   const [note, setNote] = useState('')
+  const [file, setFile] = useState<FileUploadValue>(EMPTY_FILE_UPLOAD_VALUE)
+  const [fields, setFields] = useState<Record<string, string>>({})
 
   // Only the address kinds need it, and it is already loaded by the profile
   // page and the sidebar switcher — this reads the same cache entry.
@@ -204,12 +214,36 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
     onError: (err) => toast.error(err instanceof Error ? err.message : t('common.error')),
   })
 
-  const attest = useMutation({
+  // One submit for every kind that takes one — an attestation the seller
+  // ticks, a document they upload, a manual check they say is ready. What
+  // differs is which controls render above it, not what posting means.
+  const submit = useMutation({
     mutationFn: () =>
-      sellerClient().requirementSubmissions.create(requirement.id, { note: note || undefined }),
+      sellerClient().requirementSubmissions.create(requirement.id, {
+        note: note || undefined,
+        file: file.signedId || undefined,
+      }),
     onSuccess: () => {
       setNote('')
+      setFile(EMPTY_FILE_UPLOAD_VALUE)
       toast.success(t('onboarding.submitted_requirement'))
+      void invalidate()
+    },
+    onError: (err) => toast.error(err instanceof Error ? err.message : t('common.error')),
+  })
+
+  // Custom fields are the seller's own profile data, so they save through the
+  // profile like the addresses do rather than as a submission.
+  const saveFields = useMutation({
+    mutationFn: () =>
+      sellerClient().profile.update({
+        custom_fields: Object.entries(fields).map(([id, value]) => ({
+          custom_field_definition_id: id,
+          value,
+        })),
+      }),
+    onSuccess: () => {
+      toast.success(t('profile.saved'))
       void invalidate()
     },
     onError: (err) => toast.error(err instanceof Error ? err.message : t('common.error')),
@@ -264,17 +298,69 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
         </div>
       )}
 
-      {requirement.kind === 'attestation' && (
-        <div className="flex flex-col gap-2">
+      {/* Every kind that takes a submission gets the same form: a note, a
+          file picker when the kind asks for one, and one button. Keyed off
+          what the server says the kind accepts rather than off its name, so a
+          kind a gem adds is usable without this file knowing about it. */}
+      {requirement.accepts_submissions && requirement.kind !== 'accept_terms' && (
+        <div className="flex flex-col gap-3">
+          {requirement.requires_file && (
+            <FileUploadField
+              value={file}
+              onChange={setFile}
+              accept={requirement.accepted_content_types?.join(',')}
+              label={t('onboarding.document_label')}
+              help={t('onboarding.document_help')}
+            />
+          )}
+
           <Textarea
             rows={2}
             value={note}
             placeholder={t('onboarding.note_placeholder')}
             onChange={(event) => setNote(event.target.value)}
           />
+
           <div className="flex justify-start">
-            <Button size="sm" disabled={attest.isPending} onClick={() => attest.mutate()}>
-              {t('onboarding.confirm')}
+            <Button
+              size="sm"
+              // A document requirement with nothing attached is an empty
+              // submission the operator can only reject.
+              disabled={submit.isPending || (requirement.requires_file && !file.signedId)}
+              onClick={() => submit.mutate()}
+            >
+              {requirement.requires_file
+                ? t('onboarding.submit_document')
+                : t('onboarding.confirm')}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* The fields the marketplace asks this seller to fill in, rendered
+          here rather than behind a link: the checklist is where they were
+          asked, so it is where they answer. */}
+      {requirement.custom_fields && requirement.custom_fields.length > 0 && (
+        <div className="flex flex-col gap-3">
+          {requirement.custom_fields.map((field) => (
+            <Field key={field.id}>
+              <FieldLabel htmlFor={`cf-${field.id}`}>{field.label}</FieldLabel>
+              <Input
+                id={`cf-${field.id}`}
+                value={fields[field.id] ?? (field.value == null ? '' : String(field.value))}
+                onChange={(event) =>
+                  setFields((current) => ({ ...current, [field.id]: event.target.value }))
+                }
+              />
+            </Field>
+          ))}
+          <div className="flex justify-start">
+            <Button
+              size="sm"
+              disabled={saveFields.isPending || Object.keys(fields).length === 0}
+              onClick={() => saveFields.mutate()}
+            >
+              {t('common.save')}
             </Button>
           </div>
         </div>
@@ -339,11 +425,13 @@ function isAddressKind(kind: string): boolean {
 function panelRoute(kind: string): string | undefined {
   switch (kind) {
     case 'complete_profile':
-    case 'required_custom_fields':
       return '/$sellerId/profile'
-    // `minimum_products` belongs here too, once the panel has a products
-    // page — until then it falls through and reads as a plain instruction
-    // rather than a link to nowhere.
+    // `required_custom_fields` is not here: it renders its own fields inline,
+    // so a link away would offer a second, worse route to the same thing.
+    //
+    // `minimum_products` belongs here once the panel has a products page —
+    // until then it falls through and reads as a plain instruction rather
+    // than a link to nowhere.
     default:
       return undefined
   }

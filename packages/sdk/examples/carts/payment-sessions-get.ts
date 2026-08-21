@@ -9,6 +9,7 @@ const client = createClient({
 const session = await client.carts.paymentSessions.get('cart_abc123', 'ps_abc123', {
   token: '<token>',
 })
+
 // endregion:example
 
 export { session }

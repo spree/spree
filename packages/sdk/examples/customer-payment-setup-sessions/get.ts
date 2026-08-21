@@ -9,6 +9,7 @@ const client = createClient({
 const session = await client.customer.paymentSetupSessions.get('pss_abc123', {
   token: '<token>',
 })
+
 // endregion:example
 
 export { session }

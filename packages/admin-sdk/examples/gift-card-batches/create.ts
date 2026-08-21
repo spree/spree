@@ -13,6 +13,7 @@ const batch = await client.giftCardBatches.create({
   codes_count: 100,
   expires_at: '2030-12-31',
 })
+
 // endregion:example
 
 export { batch }

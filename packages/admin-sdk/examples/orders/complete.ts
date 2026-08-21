@@ -9,6 +9,7 @@ const client = createAdminClient({
 const order = await client.orders.complete('or_UkLWZg9DAJ', {
   notify_customer: true,
 })
+
 // endregion:example
 
 export { order }

@@ -114,7 +114,9 @@ module Spree
           position: requirement.position,
           status: requirement.status_for(seller),
           action_url: requirement.action_url(seller),
-          submission: requirement.latest_submission(seller)
+          submission: requirement.latest_submission(seller),
+          requirement: requirement,
+          seller: seller
         )
       end
     end

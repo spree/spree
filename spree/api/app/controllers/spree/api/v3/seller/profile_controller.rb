@@ -25,7 +25,21 @@ module Spree
           end
 
           def update
-            if current_seller.update(permitted_params.merge(terms_attributes))
+            attributes = permitted_params.merge(terms_attributes)
+            # `normalize_params` rewrites `custom_fields` to the nested-attributes
+            # key. Narrow it, then hand it back under the original name: the
+            # model's `custom_fields=` upserts by definition, while the nested
+            # writer builds a row every time — so a seller correcting a value
+            # they had already saved would hit the uniqueness index instead.
+            if attributes.key?(:custom_fields_attributes)
+              attributes[:custom_fields] =
+                requested_custom_fields(attributes.delete(:custom_fields_attributes))
+            end
+
+            tax_identifier = attributes.delete(:tax_identifier)
+
+            if current_seller.update(attributes)
+              upsert_tax_identifier(tax_identifier) if tax_identifier.present?
               render json: serialize_seller
             else
               render_validation_error(current_seller.errors)
@@ -62,11 +76,60 @@ module Spree
             { terms_accepted_at: Time.current }
           end
 
+          # One registration per kind, so re-sending a kind corrects the number
+          # rather than stacking a second row the model would reject.
+          #
+          # A changed number drops its verdict — the validator's answer was
+          # about the old one, and carrying it over would show a number as
+          # verified that nobody has checked.
+          def upsert_tax_identifier(attributes)
+            kind = attributes[:kind].presence
+            value = attributes[:value]
+            return if kind.blank?
+
+            identifier = current_seller.tax_identifiers.find_or_initialize_by(kind: kind)
+
+            if value.blank?
+              identifier.destroy if identifier.persisted?
+              return
+            end
+
+            identifier.value = value
+            identifier.save
+          end
+
+          # Narrowed to the definitions this marketplace's onboarding actually
+          # asks this seller for.
+          #
+          # Custom fields on `Spree::Seller` are the operator's schema, and
+          # some of them are the operator's own — an internal risk note, a
+          # compliance flag. A seller may fill in what they were asked for;
+          # permitting the association wholesale would let them write, and
+          # then read back, every field the operator defined.
+          def requested_custom_fields(submitted)
+            return [] if submitted.blank?
+
+            allowed = Spree::SellerRequirementCustomField.
+                      joins(:seller_requirement).
+                      where(Spree::SellerRequirement.table_name => {
+                              store_id: current_store.id, active: true
+                            }).
+                      pluck(:custom_field_definition_id).to_set
+
+            Array(submitted).select do |field|
+              allowed.include?(field[:custom_field_definition_id])
+            end
+          end
+
           def permitted_params
             normalize_params(
               params.permit(:name, :contact_email, :billing_email, :about,
+                            :legal_name, :registration_number,
                             :logo, :square_logo, :cover_photo,
-                            billing_address: ADDRESS_KEYS)
+                            tax_identifier: [:kind, :value],
+                            billing_address: ADDRESS_KEYS,
+                            custom_fields: [:id, :custom_field_definition_id, :value,
+                                            { value: [] }, { value: {} }])
             )
           end
 

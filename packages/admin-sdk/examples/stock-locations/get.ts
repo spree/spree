@@ -7,6 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const stockLocation = await client.stockLocations.get('sloc_UkLWZg9DAJ')
+
 // endregion:example
 
 export { stockLocation }

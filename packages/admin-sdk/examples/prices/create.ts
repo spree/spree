@@ -11,6 +11,7 @@ const price = await client.prices.create({
   currency: 'USD',
   amount: '19.99',
 })
+
 // endregion:example
 
 export { price }

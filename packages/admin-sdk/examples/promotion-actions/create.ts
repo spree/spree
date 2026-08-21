@@ -9,6 +9,7 @@ const client = createAdminClient({
 const action = await client.promotions.actions.create('promo_UkLWZg9DAJ', {
   type: 'free_shipping',
 })
+
 // endregion:example
 
 export { action }

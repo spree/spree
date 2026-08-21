@@ -7,6 +7,7 @@ const client = createClient({
 
 // region:example
 const currencies = await client.currencies.list()
+
 // endregion:example
 
 export { currencies }

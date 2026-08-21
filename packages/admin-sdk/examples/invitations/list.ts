@@ -7,6 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const { data: invitations } = await client.invitations.list()
+
 // endregion:example
 
 export { invitations }

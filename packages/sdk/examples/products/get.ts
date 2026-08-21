@@ -9,6 +9,7 @@ const client = createClient({
 const product = await client.products.get('spree-tote', {
   expand: ['variants', 'media'],
 })
+
 // endregion:example
 
 export { product }

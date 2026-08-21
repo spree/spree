@@ -6,9 +6,13 @@ const client = createClient({
 })
 
 // region:example
-const cards = await client.customer.creditCards.list({}, {
-  token: '<token>',
-})
+const cards = await client.customer.creditCards.list(
+  {},
+  {
+    token: '<token>',
+  },
+)
+
 // endregion:example
 
 export { cards }

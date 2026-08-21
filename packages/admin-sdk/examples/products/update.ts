@@ -11,6 +11,7 @@ const product = await client.products.update('prod_86Rf07xd4z', {
   status: 'active',
   tags: ['eco', 'sale'],
 })
+
 // endregion:example
 
 export { product }

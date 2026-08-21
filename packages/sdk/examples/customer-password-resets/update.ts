@@ -6,13 +6,11 @@ const client = createClient({
 })
 
 // region:example
-const auth = await client.passwordResets.update(
-  'reset-token-from-email',
-  {
-    password: 'newsecurepassword',
-    password_confirmation: 'newsecurepassword',
-  }
-)
+const auth = await client.passwordResets.update('reset-token-from-email', {
+  password: 'newsecurepassword',
+  password_confirmation: 'newsecurepassword',
+})
+
 // endregion:example
 
 export { auth }

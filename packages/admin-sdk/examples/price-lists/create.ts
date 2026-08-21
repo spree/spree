@@ -41,6 +41,7 @@ const priceList = await client.priceLists.create({
     },
   ],
 })
+
 // endregion:example
 
 export { priceList }

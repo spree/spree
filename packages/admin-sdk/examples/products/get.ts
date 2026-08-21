@@ -9,6 +9,7 @@ const client = createAdminClient({
 const product = await client.products.get('prod_86Rf07xd4z', {
   expand: ['variants', 'option_types'],
 })
+
 // endregion:example
 
 export { product }

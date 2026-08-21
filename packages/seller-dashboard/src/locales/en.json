@@ -19,7 +19,8 @@
     "cancel": "Cancel",
     "error": "Something went wrong.",
     "loading": "Loading…",
-    "retry": "Try again"
+    "retry": "Try again",
+    "save": "Save"
   },
   "home": {
     "products": "Products",
@@ -56,6 +57,8 @@
     "accept_terms": "Accept the terms",
     "awaiting_review": "Waiting for the marketplace to review this.",
     "confirm": "Confirm",
+    "document_help": "PDF or an image of the document.",
+    "document_label": "Document",
     "done": "This one is done.",
     "go": "Go there",
     "note_placeholder": "Anything the marketplace should know (optional)",
@@ -72,6 +75,7 @@
       "rejected": "Needs another look"
     },
     "submit": "Submit for review",
+    "submit_document": "Submit for review",
     "submitted": "Sent for review",
     "submitted_requirement": "Sent",
     "submitting": "Submitting…",
@@ -89,10 +93,12 @@
     "at_a_glance": "At a glance",
     "billing_address": "Billing address",
     "billing_email": "Billing email",
+    "business_details": "Business details",
     "contact_email": "Contact email",
     "edit": "Edit",
     "edit_title": "Edit your profile",
     "joined": "Joined",
+    "legal_name": "Legal name",
     "minimum_payout": "Minimum payout",
     "name": "Name",
     "no_about": "You have not written a description yet.",
@@ -101,6 +107,7 @@
     "operator_managed": "Set by the marketplace",
     "payout_schedule": "Payout schedule",
     "products_count": "Products",
+    "registration_number": "Registration number",
     "returns_address": "Returns address",
     "save": "Save changes",
     "saved": "Profile saved",
@@ -120,7 +127,14 @@
     },
     "subtitle": "How your storefront presents you, and how the marketplace reaches you.",
     "tax_remittance": "Tax remitted by",
-    "team_count": "Team members"
+    "team_count": "Team members",
+    "vat_number": "VAT number",
+    "vat_status": {
+      "pending": "We are checking this number.",
+      "unavailable": "The registry could not be reached — we will try again.",
+      "unsupported": "This number is recorded as entered; we cannot check it automatically.",
+      "unverified": "This number could not be verified."
+    }
   },
   "seller_picker": {
     "status": "Status",

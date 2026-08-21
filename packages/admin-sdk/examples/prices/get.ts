@@ -7,6 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const price = await client.prices.get('price_xxx')
+
 // endregion:example
 
 export { price }

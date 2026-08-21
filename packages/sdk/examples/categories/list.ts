@@ -10,6 +10,7 @@ const categories = await client.categories.list({
   page: 1,
   limit: 25,
 })
+
 // endregion:example
 
 export { categories }

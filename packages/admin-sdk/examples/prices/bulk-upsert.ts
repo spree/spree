@@ -22,6 +22,7 @@ const { price_count } = await client.prices.bulkUpsert({
     },
   ],
 })
+
 // endregion:example
 
 export { price_count }

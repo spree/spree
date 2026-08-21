@@ -686,6 +686,9 @@ Spree::Core::Engine.add_routes do
         # shape every later one follows — rooted in the seller by the anchor.
         resources :products, only: [:index, :show, :create, :update, :destroy]
 
+        # Presigning for the documents onboarding asks a seller to upload.
+        resources :direct_uploads, only: [:create]
+
         # Where this seller keeps stock, and so where their returns are sent.
         # No destroy: a location holds stock levels and is named on historical
         # fulfillments, so a seller retires one by deactivating it.

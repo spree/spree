@@ -9,6 +9,7 @@ const client = createAdminClient({
 const { data: definitions } = await client.customFieldDefinitions.list({
   q: { resource_type_eq: 'Spree::Product' },
 })
+
 // endregion:example
 
 export { definitions }

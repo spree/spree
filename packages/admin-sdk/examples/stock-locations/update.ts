@@ -11,6 +11,7 @@ const stockLocation = await client.stockLocations.update('sloc_UkLWZg9DAJ', {
   pickup_ready_in_minutes: 45,
   pickup_instructions: 'Enter through the back door, ring the bell.',
 })
+
 // endregion:example
 
 export { stockLocation }

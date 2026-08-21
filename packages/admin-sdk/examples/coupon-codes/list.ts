@@ -7,6 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const { data: coupons } = await client.promotions.couponCodes.list('promo_UkLWZg9DAJ')
+
 // endregion:example
 
 export { coupons }

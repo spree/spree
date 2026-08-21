@@ -2,18 +2,10 @@ module Spree
   module Api
     module V3
       module Seller
-        # A seller's own record, as they see it.
-        #
-        # Sits between the two existing views: more than the shopper's public
-        # profile (the seller needs their contact details and where they stand
-        # in the marketplace), less than the operator's (they read their
-        # settlement terms but never the operator's private notes).
-        #
-        # `status` and `sellable` are readable but not writable — a seller
-        # should know they are suspended; moving between states is the
-        # operator's decision, made through workflows.
         class ProfileSerializer < V3::SellerSerializer
           typelize status: :string,
+                   legal_name: [:string, nullable: true],
+                   registration_number: [:string, nullable: true],
                    contact_email: [:string, nullable: true],
                    billing_email: [:string, nullable: true],
                    tax_remittance: :string,
@@ -24,7 +16,8 @@ module Spree
                    on_holiday: :boolean, sellable: :boolean,
                    products_count: :number
 
-          attributes :status, :contact_email, :billing_email,
+          attributes :status, :legal_name, :registration_number,
+                     :contact_email, :billing_email,
                      :tax_remittance, :payouts_schedule_interval,
                      holiday_mode_until: :iso8601,
                      terms_accepted_at: :iso8601,
@@ -45,6 +38,9 @@ module Spree
           attribute :products_count do |seller|
             seller.products.count
           end
+
+          many :tax_identifiers,
+               resource: proc { Spree.api.seller_tax_identifier_serializer }
 
           one :billing_address,
               resource: proc { Spree.api.address_serializer },

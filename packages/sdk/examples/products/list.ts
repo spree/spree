@@ -16,6 +16,7 @@ const products = await client.products.list({
   with_option_value_ids: ['optval_abc', 'optval_def'],
   expand: ['variants', 'media'],
 })
+
 // endregion:example
 
 export { products }

@@ -7,6 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const { data: staff } = await client.adminUsers.list()
+
 // endregion:example
 
 export { staff }

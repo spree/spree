@@ -9,6 +9,7 @@ const client = createClient({
 const subscriber = await client.newsletterSubscribers.verify({
   token: 'abc123def456',
 })
+
 // endregion:example
 
 export { subscriber }

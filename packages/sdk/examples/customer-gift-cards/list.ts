@@ -6,9 +6,13 @@ const client = createClient({
 })
 
 // region:example
-const giftCards = await client.customer.giftCards.list({}, {
-  token: '<token>',
-})
+const giftCards = await client.customer.giftCards.list(
+  {},
+  {
+    token: '<token>',
+  },
+)
+
 // endregion:example
 
 export { giftCards }

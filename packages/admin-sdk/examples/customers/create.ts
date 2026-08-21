@@ -14,6 +14,7 @@ const customer = await client.customers.create({
   tags: ['wholesale'],
   accepts_email_marketing: true,
 })
+
 // endregion:example
 
 export { customer }

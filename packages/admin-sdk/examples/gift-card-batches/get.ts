@@ -7,6 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const batch = await client.giftCardBatches.get('gcb_K3zr8x')
+
 // endregion:example
 
 export { batch }

@@ -7,6 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const { data: stockLocations } = await client.stockLocations.list()
+
 // endregion:example
 
 export { stockLocations }
