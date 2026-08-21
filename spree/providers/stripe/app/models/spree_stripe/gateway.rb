@@ -6,6 +6,7 @@ module SpreeStripe
     include SpreeStripe::Gateway::PaymentSessions
     include SpreeStripe::Gateway::PaymentSetupSessions
     include SpreeStripe::Gateway::Webhooks
+    include SpreeStripe::Gateway::Connect
 
     preference :publishable_key, :password
     preference :secret_key, :password
