@@ -79,6 +79,7 @@ module Spree
         # read and the write must be one step: computing it outside the lock
         # lets two concurrent feeds both measure the same stale count and land
         # the shelf on neither figure.
+        moved = false
         stock_level.with_lock do
           delta = delta_for(row, stock_level)
           next if delta.blank? || delta.zero?
@@ -87,9 +88,9 @@ module Spree
           # hand: it types the row as an adjustment and records the reason, so a
           # feed's correction reads like every other change in the history.
           stock_level.stock_location.adjust(stock_level.variant, delta, reason: FEED_REASON)
+          moved = true
         end
-
-        true
+        moved
       end
 
       def delta_for(row, stock_level)
