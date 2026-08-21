@@ -1,0 +1,108 @@
+require 'spec_helper'
+
+RSpec.describe Spree::SellerTransfers::Create do
+  let(:store) { @default_store }
+  let(:seller) { create(:seller, :approved, store: store) }
+
+  # A shipped seller order worth 100, on which the marketplace charged 12
+  # including the VAT it charges the seller on its fee.
+  def shipped_order(total: 100, commission: 12, tax_remittance: 'seller', tax: 0)
+    order = create(:order, store: store, seller: seller)
+    line_item = create(:line_item, order: order)
+    create(:fulfillment, order: order, cart: nil, status: 'fulfilled')
+    seller.update!(tax_remittance: tax_remittance)
+
+    if commission.positive?
+      create(:commission_line, order: order, seller: seller, line_item: line_item,
+                               amount: commission, tax_amount: 0, total: commission, currency: order.currency)
+    end
+
+    # Written last and directly: the workflow reads the order's own totals, and
+    # letting recalculation derive them from the factory's line items would be
+    # testing the totals workflow rather than the ledger.
+    order.update_columns(total: total, additional_tax_total: tax, status: 'placed',
+                         completed_at: Time.current)
+
+    order.reload
+  end
+
+  describe 'what the seller earned' do
+    it 'is the sale less what the marketplace charged them' do
+      result = described_class.call(order: shipped_order)
+
+      expect(result).to be_success
+      expect(result.value.amount).to eq(88)
+    end
+
+    it 'credits nothing below zero when commission outruns the sale' do
+      result = described_class.call(order: shipped_order(total: 10, commission: 40))
+
+      expect(result.value.amount).to eq(0)
+    end
+
+    # The marketplace files the consumer tax under facilitator rules, so it is
+    # never the seller's to receive.
+    it 'withholds consumer tax from a platform-remitted seller' do
+      result = described_class.call(order: shipped_order(total: 100, commission: 12, tax_remittance: 'platform', tax: 20))
+
+      expect(result.value.amount).to eq(68)
+    end
+
+    it 'leaves consumer tax with a seller who remits it themselves' do
+      result = described_class.call(order: shipped_order(total: 100, commission: 12, tax: 20))
+
+      expect(result.value.amount).to eq(88)
+    end
+  end
+
+  describe 'what it refuses to credit' do
+    it 'ignores the operator’s own order' do
+      order = create(:order, store: store, status: 'placed', completed_at: Time.current)
+      create(:fulfillment, order: order, cart: nil, status: 'fulfilled')
+
+      expect { described_class.call(order: order.reload) }.not_to change { Spree::SellerTransfer.count }
+    end
+
+    it 'ignores an order whose goods have not gone out' do
+      order = create(:order, store: store, seller: seller, total: 50)
+      create(:fulfillment, order: order, cart: nil, status: 'unfulfilled')
+
+      expect { described_class.call(order: order.reload) }.not_to change { Spree::SellerTransfer.count }
+    end
+
+    # fully_fulfilled? answers true for an order with no fulfillments, since
+    # none of nothing is outstanding — which must not read as shipped.
+    it 'ignores an order with nothing to fulfil' do
+      order = create(:order, store: store, seller: seller, total: 50)
+
+      expect { described_class.call(order: order) }.not_to change { Spree::SellerTransfer.count }
+    end
+  end
+
+  describe 'replay' do
+    it 'returns the earning that exists rather than crediting twice' do
+      order = shipped_order
+      first = described_class.call(order: order).value
+
+      second = described_class.call(order: order.reload)
+
+      expect(second.value.id).to eq(first.id)
+      expect(Spree::SellerTransfer.count).to eq(1)
+    end
+  end
+
+  describe 'with the record-only provider' do
+    it 'confirms the earning immediately, since nothing has to be sent' do
+      result = described_class.call(order: shipped_order)
+
+      expect(result.value).to be_completed
+      expect(result.value.provider).to eq('system')
+    end
+
+    it 'counts toward the seller’s balance' do
+      described_class.call(order: shipped_order)
+
+      expect(seller.balance('USD')).to eq(88)
+    end
+  end
+end

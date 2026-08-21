@@ -123,7 +123,8 @@ module Spree
       api_keys: :default,
       search: :default,
       stock_reservations: :default,
-      tax_identifiers: :default
+      tax_identifiers: :default,
+      payouts: :default
     ).tap do |queues|
       # @deprecated The taxons queue was renamed to categories in 6.0; removed in 6.1.
       queues.define_singleton_method(:taxons) do

@@ -580,6 +580,8 @@ module Spree
           Spree::OrderCommissionSubscriber,
           Spree::OrderStatusSubscriber,
           Spree::PaymentSplitSubscriber,
+          Spree::SellerTransferSubscriber,
+          Spree::SellerTransferReversalSubscriber,
           Spree::ExportSubscriber,
           Spree::ReportSubscriber,
           Spree::InvitationEmailSubscriber,
