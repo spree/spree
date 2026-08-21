@@ -15,10 +15,11 @@ import { Route as authenticatedIndexRouteImport } from './../../seller-dashboard
 import { Route as acceptInvitationDotinvitationIdRouteImport } from './../../seller-dashboard/src/routes/accept-invitation.$invitationId'
 import { Route as authenticatedSellerIdRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId'
 import { Route as IndexRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/index'
-import { Route as TeamRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/team'
 import { Route as SettingsRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/settings'
 import { Route as ProfileRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/profile'
 import { Route as OnboardingRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/onboarding'
+import { Route as SettingsIndexRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/settings/index'
+import { Route as SettingsTeamRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/settings/team'
 import { Route as SettingsStockLocationsRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/settings/stock-locations'
 
 const loginRoute = loginRouteImport.update({
@@ -51,11 +52,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => authenticatedSellerIdRoute,
 } as any)
-const TeamRoute = TeamRouteImport.update({
-  id: '/team',
-  path: '/team',
-  getParentRoute: () => authenticatedSellerIdRoute,
-} as any)
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -71,6 +67,16 @@ const OnboardingRoute = OnboardingRouteImport.update({
   path: '/onboarding',
   getParentRoute: () => authenticatedSellerIdRoute,
 } as any)
+const SettingsIndexRoute = SettingsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsTeamRoute = SettingsTeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => SettingsRoute,
+} as any)
 const SettingsStockLocationsRoute = SettingsStockLocationsRouteImport.update({
   id: '/stock-locations',
   path: '/stock-locations',
@@ -85,9 +91,10 @@ export interface FileRoutesByFullPath {
   '/$sellerId/onboarding': typeof OnboardingRoute
   '/$sellerId/profile': typeof ProfileRoute
   '/$sellerId/settings': typeof SettingsRouteWithChildren
-  '/$sellerId/team': typeof TeamRoute
   '/$sellerId/': typeof IndexRoute
   '/$sellerId/settings/stock-locations': typeof SettingsStockLocationsRoute
+  '/$sellerId/settings/team': typeof SettingsTeamRoute
+  '/$sellerId/settings/': typeof SettingsIndexRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof loginRoute
@@ -95,10 +102,10 @@ export interface FileRoutesByTo {
   '/': typeof authenticatedIndexRoute
   '/$sellerId/onboarding': typeof OnboardingRoute
   '/$sellerId/profile': typeof ProfileRoute
-  '/$sellerId/settings': typeof SettingsRouteWithChildren
-  '/$sellerId/team': typeof TeamRoute
   '/$sellerId': typeof IndexRoute
   '/$sellerId/settings/stock-locations': typeof SettingsStockLocationsRoute
+  '/$sellerId/settings/team': typeof SettingsTeamRoute
+  '/$sellerId/settings': typeof SettingsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -110,9 +117,10 @@ export interface FileRoutesById {
   '/_authenticated/$sellerId/onboarding': typeof OnboardingRoute
   '/_authenticated/$sellerId/profile': typeof ProfileRoute
   '/_authenticated/$sellerId/settings': typeof SettingsRouteWithChildren
-  '/_authenticated/$sellerId/team': typeof TeamRoute
   '/_authenticated/$sellerId/': typeof IndexRoute
   '/_authenticated/$sellerId/settings/stock-locations': typeof SettingsStockLocationsRoute
+  '/_authenticated/$sellerId/settings/team': typeof SettingsTeamRoute
+  '/_authenticated/$sellerId/settings/': typeof SettingsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -124,9 +132,10 @@ export interface FileRouteTypes {
     | '/$sellerId/onboarding'
     | '/$sellerId/profile'
     | '/$sellerId/settings'
-    | '/$sellerId/team'
     | '/$sellerId/'
     | '/$sellerId/settings/stock-locations'
+    | '/$sellerId/settings/team'
+    | '/$sellerId/settings/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -134,10 +143,10 @@ export interface FileRouteTypes {
     | '/'
     | '/$sellerId/onboarding'
     | '/$sellerId/profile'
-    | '/$sellerId/settings'
-    | '/$sellerId/team'
     | '/$sellerId'
     | '/$sellerId/settings/stock-locations'
+    | '/$sellerId/settings/team'
+    | '/$sellerId/settings'
   id:
     | '__root__'
     | '/_authenticated'
@@ -148,9 +157,10 @@ export interface FileRouteTypes {
     | '/_authenticated/$sellerId/onboarding'
     | '/_authenticated/$sellerId/profile'
     | '/_authenticated/$sellerId/settings'
-    | '/_authenticated/$sellerId/team'
     | '/_authenticated/$sellerId/'
     | '/_authenticated/$sellerId/settings/stock-locations'
+    | '/_authenticated/$sellerId/settings/team'
+    | '/_authenticated/$sellerId/settings/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -203,13 +213,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof authenticatedSellerIdRoute
     }
-    '/_authenticated/$sellerId/team': {
-      id: '/_authenticated/$sellerId/team'
-      path: '/team'
-      fullPath: '/$sellerId/team'
-      preLoaderRoute: typeof TeamRouteImport
-      parentRoute: typeof authenticatedSellerIdRoute
-    }
     '/_authenticated/$sellerId/settings': {
       id: '/_authenticated/$sellerId/settings'
       path: '/settings'
@@ -231,6 +234,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OnboardingRouteImport
       parentRoute: typeof authenticatedSellerIdRoute
     }
+    '/_authenticated/$sellerId/settings/': {
+      id: '/_authenticated/$sellerId/settings/'
+      path: '/'
+      fullPath: '/$sellerId/settings/'
+      preLoaderRoute: typeof SettingsIndexRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/_authenticated/$sellerId/settings/team': {
+      id: '/_authenticated/$sellerId/settings/team'
+      path: '/team'
+      fullPath: '/$sellerId/settings/team'
+      preLoaderRoute: typeof SettingsTeamRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/_authenticated/$sellerId/settings/stock-locations': {
       id: '/_authenticated/$sellerId/settings/stock-locations'
       path: '/stock-locations'
@@ -243,10 +260,14 @@ declare module '@tanstack/react-router' {
 
 interface SettingsRouteChildren {
   SettingsStockLocationsRoute: typeof SettingsStockLocationsRoute
+  SettingsTeamRoute: typeof SettingsTeamRoute
+  SettingsIndexRoute: typeof SettingsIndexRoute
 }
 
 const SettingsRouteChildren: SettingsRouteChildren = {
   SettingsStockLocationsRoute: SettingsStockLocationsRoute,
+  SettingsTeamRoute: SettingsTeamRoute,
+  SettingsIndexRoute: SettingsIndexRoute,
 }
 
 const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
@@ -257,7 +278,6 @@ interface authenticatedSellerIdRouteChildren {
   OnboardingRoute: typeof OnboardingRoute
   ProfileRoute: typeof ProfileRoute
   SettingsRoute: typeof SettingsRouteWithChildren
-  TeamRoute: typeof TeamRoute
   IndexRoute: typeof IndexRoute
 }
 
@@ -265,7 +285,6 @@ const authenticatedSellerIdRouteChildren: authenticatedSellerIdRouteChildren = {
   OnboardingRoute: OnboardingRoute,
   ProfileRoute: ProfileRoute,
   SettingsRoute: SettingsRouteWithChildren,
-  TeamRoute: TeamRoute,
   IndexRoute: IndexRoute,
 }
 

@@ -4077,8 +4077,7 @@
       "groups": {
         "audit": "审计",
         "payments": "支付与税务",
-        "store": "店铺",
-        "team": "团队与权限"
+        "store": "店铺"
       },
       "items": {
         "allowed_origins": "允许的来源",

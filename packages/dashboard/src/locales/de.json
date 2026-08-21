@@ -4082,8 +4082,7 @@
       "groups": {
         "audit": "Audit",
         "payments": "Zahlungen & Steuern",
-        "store": "Shop",
-        "team": "Team & Zugriff"
+        "store": "Shop"
       },
       "items": {
         "allowed_origins": "Zugelassene Ursprünge",

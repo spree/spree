@@ -738,7 +738,8 @@
     },
     "settings_nav": {
       "groups": {
-        "fulfillment": "التنفيذ"
+        "fulfillment": "التنفيذ",
+        "team": "الفريق والوصول"
       },
       "items": {
         "stock_locations": "مواقع المخزون"

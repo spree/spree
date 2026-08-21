@@ -738,7 +738,8 @@
     },
     "settings_nav": {
       "groups": {
-        "fulfillment": "Realizacja zamówień"
+        "fulfillment": "Realizacja zamówień",
+        "team": "Zespół i dostęp"
       },
       "items": {
         "stock_locations": "Lokalizacje magazynowe"

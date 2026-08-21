@@ -4138,8 +4138,7 @@
       "groups": {
         "audit": "Audyt",
         "payments": "Płatności i podatki",
-        "store": "Sklep",
-        "team": "Zespół i dostęp"
+        "store": "Sklep"
       },
       "items": {
         "allowed_origins": "Dozwolone źródła",

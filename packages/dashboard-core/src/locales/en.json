@@ -740,7 +740,8 @@
     },
     "settings_nav": {
       "groups": {
-        "fulfillment": "Fulfillment"
+        "fulfillment": "Fulfillment",
+        "team": "Team & access"
       },
       "items": {
         "stock_locations": "Stock locations"

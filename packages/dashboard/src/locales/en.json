@@ -4082,8 +4082,7 @@
       "groups": {
         "audit": "Audit",
         "payments": "Payments & taxes",
-        "store": "Store",
-        "team": "Team & access"
+        "store": "Store"
       },
       "items": {
         "allowed_origins": "Allowed origins",
