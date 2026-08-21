@@ -3,7 +3,7 @@ require 'spec_helper'
 # End-to-end over real HTTP: the link in the email, then the two endpoints it
 # leads to. Unit specs cover the controller in isolation; this proves the
 # routes are mounted and reachable as the mail addresses them.
-RSpec.describe 'seller invitation flow', type: :request do
+RSpec.describe 'Seller invitation flow', type: :request do
   let(:store) { @default_store }
   let(:seller) { create(:seller, :approved, store: store) }
   # Carries the seller's seeded role, exactly as `Seller::TeamController`

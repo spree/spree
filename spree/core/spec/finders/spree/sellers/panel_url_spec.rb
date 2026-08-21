@@ -3,9 +3,15 @@ require 'spec_helper'
 RSpec.describe Spree::Sellers::PanelUrl do
   let(:store) { @default_store }
 
-  after do
-    Spree::Config[:seller_panel_url] = nil
-    Spree::Config[:dashboard_url] = nil
+  # Captured and put back rather than reset to nil: a suite that configured
+  # either of these would silently lose it for every example after this file.
+  around do |example|
+    panel = Spree::Config[:seller_panel_url]
+    dashboard = Spree::Config[:dashboard_url]
+    example.run
+  ensure
+    Spree::Config[:seller_panel_url] = panel
+    Spree::Config[:dashboard_url] = dashboard
   end
 
   it 'prefers an explicitly configured panel origin' do
