@@ -6,11 +6,16 @@ const client = createClient({
 })
 
 // region:example
-const address = await client.customer.addresses.update('addr_abc123', {
-  city: 'Los Angeles',
-}, {
-  token: '<token>',
-})
+const address = await client.customer.addresses.update(
+  'addr_abc123',
+  {
+    city: 'Los Angeles',
+  },
+  {
+    token: '<token>',
+  },
+)
+
 // endregion:example
 
 export { address }

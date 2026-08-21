@@ -6,9 +6,13 @@ const client = createClient({
 })
 
 // region:example
-const wishlists = await client.wishlists.list({}, {
-  token: '<token>',
-})
+const wishlists = await client.wishlists.list(
+  {},
+  {
+    token: '<token>',
+  },
+)
+
 // endregion:example
 
 export { wishlists }

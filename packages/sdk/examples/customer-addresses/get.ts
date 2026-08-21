@@ -9,6 +9,7 @@ const client = createClient({
 const address = await client.customer.addresses.get('addr_abc123', {
   token: '<token>',
 })
+
 // endregion:example
 
 export { address }

@@ -7,6 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const key = await client.apiKeys.revoke('key_xxx')
+
 // endregion:example
 
 export { key }

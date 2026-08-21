@@ -7,6 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const optionType = await client.optionTypes.get('ot_UkLWZg9DAJ')
+
 // endregion:example
 
 export { optionType }

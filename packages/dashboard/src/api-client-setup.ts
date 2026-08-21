@@ -19,6 +19,7 @@ setApiClient({
     return { rules: response.permissions, keys: response.permission_keys ?? [] }
   },
   listCountries: () => adminClient.countries.list({ expand: ['states'] }),
+  createDirectUpload: (params) => adminClient.directUploads.create(params),
   // Backs the shared stock-locations page, which both panels render.
   stockLocations: {
     list: (params) => adminClient.stockLocations.list(params),

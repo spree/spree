@@ -7,6 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const priceList = await client.priceLists.activate('pl_xxx')
+
 // endregion:example
 
 export { priceList }

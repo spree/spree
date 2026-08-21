@@ -7,6 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const store = await client.store.get()
+
 // endregion:example
 
 export { store }

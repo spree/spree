@@ -7,6 +7,7 @@ const client = createClient({
 
 // region:example
 const policies = await client.policies.list()
+
 // endregion:example
 
 export { policies }

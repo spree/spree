@@ -34,6 +34,41 @@ module Spree
     # @return [Spree::SellerRequirementSubmission, nil]
     attr_accessor :submission
 
+    # The requirement this was evaluated from.
+    #
+    # Carried so a serializer can ask the kind its own questions — which
+    # custom fields it names, whether it takes a file — without re-fetching a
+    # row the evaluator has already loaded. Not serialized itself: what a
+    # client needs is the answers, not the configuration row.
+    #
+    # @return [Spree::SellerRequirement, nil]
+    attr_accessor :requirement
+
+    # The seller this was evaluated against, so kind-specific readers can ask
+    # about them without the caller passing them a second time.
+    #
+    # @return [Spree::Seller, nil]
+    attr_accessor :seller
+
+    # The custom fields this line asks for, each paired with the seller's
+    # current answer — empty for every kind that asks for none.
+    #
+    # Built here rather than in the serializer because it is the answer to
+    # "what does this requirement want", which is the value object's job; the
+    # serializer only decides how to render it.
+    #
+    # @return [Array<Hash>] `{ definition:, custom_field: }` pairs
+    def custom_fields
+      return [] unless requirement.respond_to?(:custom_field_definitions)
+      return [] if seller.nil?
+
+      answered = seller.custom_fields.index_by(&:custom_field_definition_id)
+
+      requirement.custom_field_definitions.map do |definition|
+        { definition: definition, custom_field: answered[definition.id] }
+      end
+    end
+
     # ActiveModel::Attributes gives readers, not predicates.
     def required?
       !!required

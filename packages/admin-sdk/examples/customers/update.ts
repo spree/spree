@@ -10,6 +10,7 @@ const customer = await client.customers.update('cus_UkLWZg9DAJ', {
   first_name: 'Updated',
   tags: ['wholesale', 'vip'],
 })
+
 // endregion:example
 
 export { customer }

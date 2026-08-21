@@ -9,6 +9,7 @@ const client = createClient({
 const auth = await client.auth.refresh({
   refresh_token: 'rt_xxx',
 })
+
 // endregion:example
 
 export { auth }

@@ -12,6 +12,7 @@ const { data: products } = await client.products.list({
   sort: '-created_at',
   limit: 25,
 })
+
 // endregion:example
 
 export { products }

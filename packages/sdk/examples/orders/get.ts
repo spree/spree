@@ -6,9 +6,14 @@ const client = createClient({
 })
 
 // region:example
-const order = await client.orders.get('or_abc123', {}, {
-  token: '<token>',
-})
+const order = await client.orders.get(
+  'or_abc123',
+  {},
+  {
+    token: '<token>',
+  },
+)
+
 // endregion:example
 
 export { order }

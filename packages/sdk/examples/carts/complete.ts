@@ -9,6 +9,7 @@ const client = createClient({
 const order = await client.carts.complete('cart_abc123', {
   token: '<token>',
 })
+
 // endregion:example
 
 export { order }

@@ -8,8 +8,9 @@ const client = createAdminClient({
 // region:example
 const staff = await client.adminUsers.update('admin_xxx', {
   first_name: 'Ada',
-  role_ids: ['role_xxx']
+  role_ids: ['role_xxx'],
 })
+
 // endregion:example
 
 export { staff }

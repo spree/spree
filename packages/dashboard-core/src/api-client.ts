@@ -76,6 +76,20 @@ export interface PanelApiClient {
    * it: a location holds stock levels and is named on historical
    * fulfillments, so they retire one by deactivating it.
    */
+  /**
+   * Exchanges blob metadata for a presigned upload URL.
+   *
+   * Registered rather than imported for the same reason as everything else
+   * here: the shared upload field would otherwise work only in the
+   * operator's panel, and a seller uploading an onboarding document would
+   * get a 401 from an API they hold no key for.
+   */
+  createDirectUpload?(params: {
+    blob: { filename: string; byte_size: number; checksum: string; content_type: string }
+  }): Promise<{
+    direct_upload: { url: string; headers: Record<string, string> }
+    signed_id: string
+  }>
   stockLocations?: {
     list(params?: Record<string, unknown>): Promise<{ data: PanelStockLocation[]; meta?: unknown }>
     get(id: string): Promise<PanelStockLocation>

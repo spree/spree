@@ -6,11 +6,16 @@ const client = createClient({
 })
 
 // region:example
-const wishlist = await client.wishlists.update('wl_abc123', {
-  name: 'Updated Name',
-}, {
-  token: '<token>',
-})
+const wishlist = await client.wishlists.update(
+  'wl_abc123',
+  {
+    name: 'Updated Name',
+  },
+  {
+    token: '<token>',
+  },
+)
+
 // endregion:example
 
 export { wishlist }

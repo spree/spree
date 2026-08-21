@@ -220,6 +220,23 @@ export class SellerClient {
   }
 
   /**
+   * Presigning for the documents onboarding asks for. Exchange the blob's
+   * metadata for an upload URL, PUT the file to it, then post the returned
+   * `signed_id` as a submission's `file`.
+   */
+  readonly directUploads = {
+    create: (
+      params: {
+        blob: { filename: string; byte_size: number; checksum: string; content_type: string }
+      },
+      options?: RequestOptions,
+    ): Promise<{
+      direct_upload: { url: string; headers: Record<string, string> }
+      signed_id: string
+    }> => this.request('POST', '/direct_uploads', { ...options, body: params }),
+  }
+
+  /**
    * Where this seller keeps stock, and so where their returns are sent.
    *
    * No delete: a location holds stock levels and is named on historical
@@ -349,8 +366,23 @@ export interface ProfileUpdateParams {
   logo?: string | null
   square_logo?: string | null
   cover_photo?: string | null
+  /** The business a commission invoice is made out to. */
+  legal_name?: string | null
+  registration_number?: string | null
+  /**
+   * The seller's tax registration. One per kind — re-sending a kind corrects
+   * the number, and an empty value removes it. A changed number drops its
+   * validation verdict, since that answer was about the old one.
+   */
+  tax_identifier?: { kind: string; value: string }
   billing_address?: SellerAddressParams
   returns_address?: SellerAddressParams
+  /**
+   * Answers to the custom fields this marketplace's onboarding asks for.
+   * Narrowed server-side to those definitions — a field nothing asked for is
+   * ignored rather than written.
+   */
+  custom_fields?: Array<{ custom_field_definition_id: string; value: unknown }>
   /**
    * Accepts the marketplace's terms, stamping the moment. One-way: the stamp
    * records that it happened, so sending `false` does not unmake it.

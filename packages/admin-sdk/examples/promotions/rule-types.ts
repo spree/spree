@@ -7,6 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const { data: ruleTypes } = await client.promotionRules.types()
+
 // endregion:example
 
 export { ruleTypes }

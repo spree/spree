@@ -9,6 +9,7 @@ const client = createAdminClient({
 const giftCard = await client.giftCards.get('gc_K3zr8x', {
   expand: ['customer', 'created_by', 'orders'],
 })
+
 // endregion:example
 
 export { giftCard }

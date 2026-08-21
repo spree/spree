@@ -19,10 +19,6 @@ module Spree
                      :pickup_ready_in_minutes, :pickup_instructions,
                      created_at: :iso8601, updated_at: :iso8601
 
-          # Whose shelf this is — nil for the marketplace's own. On a
-          # marketplace the operator's list holds both, and without this the
-          # two are indistinguishable. The name rides along so the list can
-          # show it without expanding; the full profile is `?expand=seller`.
           attribute :seller_id do |stock_location|
             stock_location.seller&.prefixed_id
           end

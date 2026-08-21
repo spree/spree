@@ -9,6 +9,7 @@ const client = createAdminClient({
 const price = await client.prices.update('price_xxx', {
   amount: '12.34',
 })
+
 // endregion:example
 
 export { price }

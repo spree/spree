@@ -9,6 +9,7 @@ const client = createAdminClient({
 const { price_count } = await client.prices.bulkDestroy({
   ids: ['price_xxx', 'price_yyy'],
 })
+
 // endregion:example
 
 export { price_count }

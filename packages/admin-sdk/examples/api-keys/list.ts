@@ -7,6 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const { data: keys } = await client.apiKeys.list()
+
 // endregion:example
 
 export { keys }
