@@ -86,14 +86,50 @@ RSpec.describe SpreeStripe::Gateway::Connect do
     context 'payout.failed' do
       let!(:payout) { create(:seller_payout, seller: seller, currency: 'USD') }
 
-      it 'marks the settlement failed so it is visible rather than silently stuck' do
+      before do
         allow(Stripe::Webhook).to receive(:construct_event).and_return(
           stripe_event('payout.failed', { id: 'po_1', currency: 'usd' }, account: 'acct_seller')
         )
+      end
 
+      it 'marks the settlement failed so it is visible rather than silently stuck' do
         gateway.handle_payout_webhook(raw_body, headers)
 
         expect(payout.reload).to be_failed
+      end
+
+      # Left stamped to a failed settlement the earnings are unreachable: the
+      # sweep only ever collects unstamped rows, while the balance still says
+      # the seller is owed them.
+      it 'releases the earnings so the next sweep is the retry' do
+        create(:seller_transfer, :completed, seller: seller, payout: payout, amount: 40,
+                                             order: create(:order, store: store, seller: seller))
+
+        gateway.handle_payout_webhook(raw_body, headers)
+
+        expect(seller.seller_transfers.unsettled.sum(:amount)).to eq(40)
+      end
+    end
+
+    # Stripe redelivers on any non-2xx or timeout. Without matching on its own
+    # payout id, a second delivery would skip the settlement it already
+    # completed and land on the next one still owed.
+    context 'when payout.paid is delivered twice' do
+      let!(:first) { create(:seller_payout, seller: seller, currency: 'USD', amount: 40) }
+      let!(:second) { create(:seller_payout, seller: seller, currency: 'USD', amount: 60) }
+
+      before do
+        allow(Stripe::Webhook).to receive(:construct_event).and_return(
+          stripe_event('payout.paid', { id: 'po_1', currency: 'usd' }, account: 'acct_seller')
+        )
+      end
+
+      it 'leaves the settlement it did not name alone' do
+        gateway.handle_payout_webhook(raw_body, headers)
+        gateway.handle_payout_webhook(raw_body, headers)
+
+        expect(first.reload).to be_completed
+        expect(second.reload).to be_pending
       end
     end
 

@@ -76,11 +76,6 @@ module SpreeStripe
         ).url
       end
 
-      # @return [Hash] what every Stripe call from this gateway is signed with
-      def api_options
-        { api_key: preferred_secret_key }
-      end
-
       # Where Stripe sends events originating in sellers' connected accounts.
       # @return [String, nil]
       def connect_webhook_url
@@ -124,25 +119,39 @@ module SpreeStripe
         seller = store.sellers.find_by(payout_account_reference: account.id)
         return if seller.nil?
 
+        became_payable = account.payouts_enabled && seller.payouts_enabled_at.nil?
         seller.update!(payouts_enabled_at: account.payouts_enabled ? (seller.payouts_enabled_at || Time.current) : nil)
+
+        # Anything they earned while unverified is owed and still pending, and
+        # this is the moment it can finally be sent.
+        Spree::SellerTransfers::ExecutePendingJob.perform_later(seller.id) if became_payable
       end
 
       # Stripe's payout belongs to a connected account rather than to one of
-      # our settlements, so the seller is found by the account the event names
-      # and the settlement by being the one still owed in that currency.
+      # our settlements, so the seller is found by the account the event names.
+      #
+      # Matching the settlement is by Stripe's own id first. Stripe redelivers
+      # a webhook on any non-2xx or timeout, and without that match a second
+      # delivery would skip the settlement it already completed and land on the
+      # next one still owed — marking an unrelated payout paid.
       def handle_payout(event, status)
         object = event.data.object
         seller = store.sellers.find_by(payout_account_reference: event.account)
         return if seller.nil?
 
-        payout = seller.seller_payouts.owed.where(currency: object.currency.to_s.upcase).order(:created_at).first
-        return if payout.nil?
+        payout = find_payout(seller, object)
+        return if payout.nil? || payout.completed?
 
         if status == 'paid'
           Spree.seller_payout_complete_workflow.call(seller_payout: payout, reference: object.id)
         else
-          payout.update!(status: 'failed')
+          payout.fail!
         end
+      end
+
+      def find_payout(seller, object)
+        seller.seller_payouts.find_by(reference: object.id) ||
+          seller.seller_payouts.owed.where(currency: object.currency.to_s.upcase).order(:created_at).first
       end
 
       def verify_connect_webhook_signature(raw_body, headers)
@@ -167,13 +176,16 @@ module SpreeStripe
         secrets.select(&:present?)
       end
 
-      # Only registered once the store actually has sellers: an ordinary
-      # merchant account has no connected accounts to hear about, and the
-      # endpoint would receive nothing. Also the loop guard, as on the payment
-      # endpoint — registration writes the secret back through `update!`.
+      # The stored secret is the loop guard, as on the payment endpoint —
+      # registration writes it back through `update!`, which re-runs this.
+      #
+      # Deliberately not gated on the store having sellers. The ordinary setup
+      # order is to connect Stripe first and invite sellers afterwards, and
+      # nothing about creating a seller saves the gateway — so that guard meant
+      # the endpoint was never registered at all, and `account.updated` never
+      # arrived to say who could be paid.
       def create_connect_webhook_endpoint_async
         return if preferred_connect_webhook_signing_secret.present?
-        return unless store&.sellers&.exists?
 
         SpreeStripe::CreateWebhookEndpointJob.perform_later(id, connect: true)
       end

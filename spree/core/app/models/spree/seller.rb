@@ -238,6 +238,8 @@ module Spree
     #
     # @return [Boolean]
     def payouts_enabled?
+      return true unless store.payout_provider_class.requires_payout_account?
+
       payouts_enabled_at.present?
     end
 

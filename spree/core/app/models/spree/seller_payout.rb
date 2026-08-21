@@ -68,5 +68,30 @@ module Spree
     def transfers_total
       transfers.sum(:amount)
     end
+
+    # Gives up on this settlement and puts its earnings back.
+    #
+    # Releasing them is what makes a failure recoverable, and it is the one
+    # thing a caller must not forget: a sweep only ever collects unstamped
+    # rows, so earnings left stamped to a failed payout are invisible to every
+    # later sweep while the balance still reports the seller as owed them.
+    # Released, they simply fall into the next one.
+    #
+    # Lives here rather than in the flows that call it — core's sweep and any
+    # provider's failure webhook — because the association and the status both
+    # belong to the payout, and a provider gem should not have to know the
+    # invariant to honour it.
+    def fail!
+      transaction do
+        release_transfers
+        update!(status: 'failed', amount: 0)
+      end
+    end
+
+    # Hands the earnings back to the next sweep without recording a failure —
+    # for a settlement that never had anything to send.
+    def release_transfers
+      transfers.update_all(payout_id: nil, updated_at: Time.current)
+    end
   end
 end

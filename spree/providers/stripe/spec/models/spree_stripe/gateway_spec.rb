@@ -1102,16 +1102,31 @@ RSpec.describe SpreeStripe::Gateway do
     end
   end
 
+  # Two endpoints, registered independently: the payment one for the
+  # marketplace's own charges, the Connect one for events originating inside
+  # sellers' accounts. Each holds its own signing secret, and each secret is
+  # the guard against registering that endpoint twice.
   describe 'webhook endpoint registration' do
-    it 'enqueues the registration job on create' do
-      expect { gateway }.to have_enqueued_job(SpreeStripe::CreateWebhookEndpointJob)
+    it 'enqueues the payment registration job on create' do
+      expect { gateway }.to have_enqueued_job(SpreeStripe::CreateWebhookEndpointJob).with(anything, connect: false)
     end
 
-    context 'when the signing secret is already stored' do
-      it 'does not enqueue the registration job' do
+    it 'enqueues the Connect registration job on create' do
+      expect { gateway }.to have_enqueued_job(SpreeStripe::CreateWebhookEndpointJob).with(anything, connect: true)
+    end
+
+    context 'when the payment signing secret is already stored' do
+      it 'does not register the payment endpoint again' do
         expect do
           create(:stripe_gateway, :with_webhook_signing_secret, store: store)
-        end.not_to have_enqueued_job(SpreeStripe::CreateWebhookEndpointJob)
+        end.not_to have_enqueued_job(SpreeStripe::CreateWebhookEndpointJob).with(anything, connect: false)
+      end
+
+      # The Connect endpoint has its own secret, so it is still outstanding.
+      it 'still registers the Connect endpoint' do
+        expect do
+          create(:stripe_gateway, :with_webhook_signing_secret, store: store)
+        end.to have_enqueued_job(SpreeStripe::CreateWebhookEndpointJob).with(anything, connect: true)
       end
     end
   end

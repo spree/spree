@@ -45,8 +45,10 @@ module Spree
             super.for_store(current_store)
           end
 
+          # Deliberately without `transfers`: the serializer wants their number,
+          # not the rows, and a monthly settlement can hold hundreds.
           def collection_includes
-            [:seller, :transfers]
+            [:seller]
           end
         end
       end

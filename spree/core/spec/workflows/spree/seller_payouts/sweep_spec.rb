@@ -47,7 +47,10 @@ RSpec.describe Spree::SellerPayouts::Sweep do
       expect(described_class.call(seller: seller, currency: 'USD').value.amount).to eq(30)
     end
 
-    it 'ignores an earning that is not yet confirmed' do
+    # A pending earning is one the provider has not confirmed. Clearing those
+    # is `SellerTransfers::ExecutePendingJob`'s job, driven by the seller
+    # becoming payable rather than by the calendar.
+    it 'leaves an earning the provider has not confirmed' do
       earn(40)
       earn(30, status: 'pending')
 

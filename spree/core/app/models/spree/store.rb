@@ -84,6 +84,8 @@ module Spree
     # Monthly by default because it is the interval that needs least of an
     # operator paying by hand, which is what the built-in provider expects.
     preference :default_payouts_schedule_interval, :string, default: 'monthly'
+    validates :preferred_default_payouts_schedule_interval,
+              inclusion: { in: Spree::Seller::PAYOUT_INTERVALS }, allow_blank: true
     # What a seller's balance must reach before a settlement is worth sending;
     # below it the balance carries to the next period. Zero pays whatever is
     # owed, which is right for a provider that moves money for free.
@@ -392,13 +394,31 @@ module Spree
 
     # Who pays this store's sellers, ready to be asked.
     #
-    # Resolved per call rather than memoized, so a marketplace that connects a
-    # provider mid-process starts using it without a restart — the same shape
-    # markets use for tax.
+    # Who moves money to this store's sellers.
+    #
+    # Memoized per record, not per process: a store reloaded after an operator
+    # changes the setting resolves afresh, so a marketplace that connects a
+    # provider mid-process still starts using it without a restart.
     #
     # @return [Spree::PayoutProvider::Base]
     def payout_provider_instance
-      (preferred_payout_provider.presence || Spree.default_payout_provider.to_s).constantize.new
+      @payout_provider_instance ||= payout_provider_class.new
+    end
+
+    # The class alone, for the questions that are about the provider rather
+    # than about a movement — there is no need to build one to ask what it
+    # requires.
+    #
+    # @return [Class]
+    def payout_provider_class
+      configured = preferred_payout_provider.presence
+      # A name no longer in the registry — a typo, or a gem since removed —
+      # would otherwise raise inside a subscriber on every fulfillment and stop
+      # the ledger recording anything. The built-in provider keeps the books
+      # until an operator fixes the setting.
+      configured = nil unless Spree.payout_providers.any? { |provider| provider.to_s == configured }
+
+      (configured || Spree.default_payout_provider.to_s).constantize
     end
 
     def formatted_url

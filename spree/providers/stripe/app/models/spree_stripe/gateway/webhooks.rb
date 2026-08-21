@@ -96,7 +96,7 @@ module SpreeStripe
       def create_webhook_endpoint_async
         return if preferred_webhook_signing_secret.present?
 
-        SpreeStripe::CreateWebhookEndpointJob.perform_later(id)
+        SpreeStripe::CreateWebhookEndpointJob.perform_later(id, connect: false)
       end
     end
   end

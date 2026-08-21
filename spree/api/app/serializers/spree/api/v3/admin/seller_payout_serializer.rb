@@ -31,7 +31,7 @@ module Spree
 
           # How many earnings this settlement covers, so a list answers "what
           # is in this deposit" without loading every transfer.
-          attribute(:transfers_count) { |payout| payout.transfers.size }
+          attribute(:transfers_count) { |payout| payout.transfers.count }
         end
       end
     end

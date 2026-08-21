@@ -43,7 +43,6 @@ module Spree
         halt!(order) if order.seller_id.blank?
         halt!(order) if order.fulfillments.empty?
         halt!(order) unless order.fully_fulfilled?
-        halt!(order) unless payable_seller?
       end
 
       def replay_existing
@@ -71,6 +70,12 @@ module Spree
       # Outside any transaction: a provider that moves money makes a network
       # call here, and a row lock must not be held across it.
       def execute_transfer
+        # A seller the provider cannot pay yet keeps the earning as a pending
+        # row. Verification can take days, and an account can lose the
+        # capability again — either way the money is owed, and
+        # `SellerTransfers::ExecutePendingJob` sends it once they are payable.
+        return unless order.seller.payouts_enabled?
+
         provider.transfer!(seller_transfer)
       rescue StandardError => e
         # The money may or may not have moved — that is precisely what an
@@ -94,20 +99,12 @@ module Spree
         [base - order.commission_lines.sum(:total).to_d, 0].max
       end
 
-      # A provider that executes transfers cannot pay a seller it has no
-      # account for — crediting them would promise money nothing can send.
-      def payable_seller?
-        return true unless provider.class.requires_payout_account?
-
-        order.seller.payouts_enabled?
-      end
-
       def provider
         @provider ||= order.store.payout_provider_instance
       end
 
       def provider_name
-        provider.class.name.demodulize.underscore
+        provider.class.provider_key
       end
     end
   end

@@ -45,8 +45,6 @@ module Spree
       # The earnings simply stay unsettled until one exists — they are not
       # lost, and the next sweep will find them.
       def ensure_payable
-        return unless provider.class.requires_payout_account?
-
         halt!(seller) unless seller.payouts_enabled?
       end
 
@@ -99,14 +97,14 @@ module Spree
       end
 
       def restate_amount
-        @payout.update!(amount: @payout.transfers.sum(:amount))
+        @payout.update!(amount: @payout.transfers_total)
       end
 
       # Nothing was claimed, so there is nothing to release and nothing to
       # record. The earnings this sweep meant to take are already in the payout
       # that won them.
       def discard_empty_payout
-        @payout.transfers.update_all(payout_id: nil, updated_at: Time.current)
+        @payout.release_transfers
         @payout.destroy!
         halt!(seller)
       end
@@ -114,17 +112,7 @@ module Spree
       def execute_payout
         provider.pay!(payout)
       rescue StandardError => e
-        # Releasing the transfers is what makes a failure recoverable. A payout
-        # is created by the sweep and by nothing else, so transfers left
-        # stamped to a failed one are unreachable: the next sweep skips them
-        # (`unsettled` means unstamped) while the balance still reports them
-        # owed, and the seller is never paid. Released, they simply fall into
-        # the next sweep — which is the retry.
-        payout.transaction do
-          payout.transfers.update_all(payout_id: nil, updated_at: Time.current)
-          payout.update!(status: 'failed', amount: 0)
-        end
-
+        payout.fail!
         Rails.error.report(e, handled: true, context: { seller_payout_id: payout.id }, source: 'spree.core')
         failure(payout, e.message)
       end
@@ -134,7 +122,7 @@ module Spree
       end
 
       def provider_name
-        provider.class.name.demodulize.underscore
+        provider.class.provider_key
       end
     end
   end

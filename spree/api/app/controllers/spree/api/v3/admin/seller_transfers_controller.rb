@@ -24,8 +24,10 @@ module Spree
             super.for_store(current_store)
           end
 
+          # Every association the serializer reads, so a page of rows costs a
+          # fixed number of queries rather than one per row.
           def collection_includes
-            [:seller, :order, :payout]
+            [:seller, :order, :payout, :reversed_from, :refund]
           end
         end
       end

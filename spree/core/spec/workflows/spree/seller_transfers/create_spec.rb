@@ -79,6 +79,30 @@ RSpec.describe Spree::SellerTransfers::Create do
     end
   end
 
+  # A seller whose account is still being verified has earned all the same.
+  # `order.fulfilled` fires once and nothing re-drives it, so refusing to
+  # write the row would lose the earning outright.
+  describe 'when the provider cannot pay the seller yet' do
+    before do
+      allow_any_instance_of(Spree::PayoutProvider::System).to receive(:requires_payout_account?).and_return(true)
+      allow(Spree::PayoutProvider::System).to receive(:requires_payout_account?).and_return(true)
+    end
+
+    it 'still records what they earned' do
+      expect { described_class.call(order: shipped_order) }.to change { Spree::SellerTransfer.count }.by(1)
+    end
+
+    it 'leaves it pending rather than claiming the money moved' do
+      expect(described_class.call(order: shipped_order).value).to be_pending
+    end
+
+    it 'never asks the provider to send it' do
+      expect_any_instance_of(Spree::PayoutProvider::System).not_to receive(:transfer!)
+
+      described_class.call(order: shipped_order)
+    end
+  end
+
   describe 'replay' do
     it 'returns the earning that exists rather than crediting twice' do
       order = shipped_order
@@ -96,7 +120,7 @@ RSpec.describe Spree::SellerTransfers::Create do
       result = described_class.call(order: shipped_order)
 
       expect(result.value).to be_completed
-      expect(result.value.provider).to eq('system')
+      expect(result.value.provider).to eq('Spree::PayoutProvider::System')
     end
 
     it 'counts toward the seller’s balance' do
