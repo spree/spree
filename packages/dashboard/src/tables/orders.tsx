@@ -150,8 +150,11 @@ defineTable('orders', {
       default: false,
       render: (order) => order.currency ?? '—',
     },
-    // Only meaningful on a marketplace: an order for the operator's own goods
-    // has no seller, so the cell says so rather than reading blank.
+    // On a marketplace this list holds the operator's own orders and every
+    // seller's together, so a row has to say which it is — shown by default
+    // for the same reason the products and stock-locations lists show it. A
+    // dash means the order is the marketplace's own, matching how the other
+    // columns render an absent value.
     {
       key: 'seller',
       label: i18n.t('admin.fields.order.seller.label'),
@@ -162,7 +165,7 @@ defineTable('orders', {
       // Requested only while the column is on — ResourceTable unions the
       // expands of visible columns into the list request.
       expand: 'seller',
-      default: false,
+      default: true,
       render: (order) =>
         order.seller_id ? (
           <Link
@@ -173,9 +176,7 @@ defineTable('orders', {
             {order.seller?.name ?? order.seller_id}
           </Link>
         ) : (
-          <span className="text-muted-foreground">
-            {i18n.t('admin.fields.order.seller.first_party')}
-          </span>
+          '—'
         ),
     },
     // Which purchase this order was part of, when a basket spanning several
