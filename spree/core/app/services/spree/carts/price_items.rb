@@ -58,13 +58,15 @@ module Spree
           amount = price.price_including_vat_for(
             address: owner&.tax_address, country: owner&.tax_country, market: owner&.market
           )
+          # Marked before the blank guard: the provider has already answered,
+          # so a restatement that comes back blank must still not send the
+          # after_save callback back to the provider from inside the caller's
+          # transaction. Only the assign-for-a-coming-save case needs it — a
+          # persisted write goes through update_columns and fires no callbacks.
+          line_item.price_resolved = true unless persist
           next if amount.blank?
 
           line_item.assign_attributes(price: amount, price_list_id: price.price_list_id, price_source: source)
-          # Only the assign-for-a-coming-save case marks the line: the caller
-          # is about to save it, and that save must not re-price. A persisted
-          # write goes through update_columns and fires no callbacks.
-          line_item.price_resolved = true unless persist
           next unless persist && line_item.persisted? && line_item.changed?
 
           line_item.update_columns(line_item.changes.transform_values(&:last).merge(updated_at: Time.current))
