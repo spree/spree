@@ -150,10 +150,18 @@ module Spree
         expect(rates).to all(be_present)
       end
 
-      it 'leaves no row pointing at an order that no longer owns it' do
-        order_ids = group.orders.map(&:id)
+      # Scoped to the orders' own rows rather than the whole table: completion
+      # leaves the cart's fulfillment items where they are, as it does its line
+      # items, and those still name the order they were copied to.
+      it 'leaves every moved row on the order that owns it' do
+        group.orders.each do |order|
+          order.fulfillments.each do |fulfillment|
+            expect(fulfillment.fulfillment_items.map(&:order_id).uniq).to eq([order.id])
+          end
+        end
+      end
 
-        expect(Spree::FulfillmentItem.where.not(order_id: order_ids)).to be_empty
+      it 'leaves no line item stranded between owners' do
         expect(Spree::LineItem.where(order_id: nil, cart_id: nil)).to be_empty
       end
 
