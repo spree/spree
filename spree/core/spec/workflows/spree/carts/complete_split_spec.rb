@@ -264,6 +264,57 @@ module Spree
           expect(order.payment_status).to eq('paid')
         end
       end
+
+      # A gift card becomes a store-credit payment beside the card charge, and
+      # both divide the same way — one attribution rule for every source, no
+      # priority ordering. A seller's order is therefore not "paid by card" or
+      # "paid by gift card" but by its portion of each, which is what stops a
+      # part-credited basket overstating what the gateway holds against one
+      # seller.
+      context 'when a gift card pays part of it' do
+        let(:customer) { create(:user) }
+        let(:gift_card) { create(:gift_card, store: store, amount: 12, customer: customer) }
+
+        let(:cart) do
+          built = create(:cart_ready_for_delivery, store: store, line_items_count: 2, customer: customer)
+          seller_line = built.line_items.reload.last
+          seller_line.variant.update!(seller: seller)
+          seller_line.update_columns(seller_id: seller.id)
+
+          create(:store_credit_payment_method, store: store) if Spree::PaymentMethod::StoreCredit.none?
+          built.apply_gift_card(gift_card)
+          built.reload.recalculate_totals!
+
+          outstanding = built.total - built.payments.sum(:amount)
+          if outstanding.positive?
+            card = Spree::PaymentMethod.where.not(type: 'Spree::PaymentMethod::StoreCredit').first
+            create(:payment, cart: built, order: nil, payment_method: card, amount: outstanding)
+          end
+
+          built.reload
+        end
+
+        it 'takes both payments onto the group' do
+          expect(group.payments.count).to be >= 2
+          expect(group.orders.flat_map(&:payments)).to be_empty
+        end
+
+        it 'divides every payment across both children rather than one each' do
+          group.payments.each do |payment|
+            expect(payment.payment_splits.map(&:order_id).uniq).to match_array(group.orders.map(&:id))
+          end
+        end
+
+        it 'gives each child shares across all payments adding up to its own total' do
+          group.orders.each do |order|
+            expect(order.payment_splits.sum(:authorized_amount)).to eq(order.total)
+          end
+        end
+
+        it 'shares out every penny the customer paid, by whatever means' do
+          expect(group.payment_splits.sum(:authorized_amount)).to eq(group.payments.sum(:amount))
+        end
+      end
     end
 
     # The commission engine listens for order.placed, which every child
