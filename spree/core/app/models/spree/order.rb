@@ -553,7 +553,18 @@ module Spree
       tax_provider.estimate(self, fulfillments.to_a, **tax_estimate_inputs) if fulfillments.any?
     end
 
+    # Re-prices every line from the catalog.
+    #
+    # A completed order's money is frozen — re-pricing would rewrite what the
+    # customer was actually charged — so this refuses rather than reporting a
+    # success it did not deliver. Post-placement price changes belong to the
+    # order-change substrate (docs/plans/6.1-order-change-substrate.md).
+    #
+    # @raise [RuntimeError] when the order is already completed
+    # @return [void]
     def update_line_item_prices!
+      raise 'cannot re-price a completed order' if completed?
+
       transaction do
         line_items.reload.each(&:update_price)
         save!
