@@ -756,6 +756,7 @@
         "default": "Domyślna",
         "location": "Lokalizacja",
         "pickup": "Odbiór",
+        "seller": "Sprzedawca",
         "type": "Typ"
       },
       "create_description": "Dodaj magazyn, sklep lub punkt odbioru, z którego będą realizowane zamówienia.",
@@ -766,6 +767,7 @@
       },
       "edit_description": "Zaktualizuj nazwę, adres, odbiór lub zasady dotyczące zapasów.",
       "empty": "Brak lokalizacji magazynowych",
+      "first_party": "Marketplace",
       "kinds": {
         "fulfillment_center": "Centrum realizacji zamówień",
         "store": "Sklep",

@@ -756,6 +756,7 @@
         "default": "默认",
         "location": "地点",
         "pickup": "自提",
+        "seller": "卖家",
         "type": "类型"
       },
       "create_description": "添加仓库、门店或自提点，用于履行订单。",
@@ -766,6 +767,7 @@
       },
       "edit_description": "更新名称、地址、自提或库存策略。",
       "empty": "暂无库存地点",
+      "first_party": "平台自营",
       "kinds": {
         "fulfillment_center": "履约中心",
         "store": "门店",
