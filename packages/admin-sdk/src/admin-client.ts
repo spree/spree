@@ -4104,8 +4104,6 @@ export class AdminClient {
       this.request('POST', '/stock_levels/bulk_upsert', { ...options, body: params }),
   }
 
-  //   }
-
   // ============================================
   // Stock Movements
   // ============================================
