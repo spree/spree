@@ -30,8 +30,20 @@ module Spree
           module ExternalReferences
             extend ActiveSupport::Concern
 
+            # Raised when a payload's external id already names a different
+            # record in this store.
+            class ConflictingReference < StandardError; end
+
             included do
               before_action :update_instead_when_external_id_known, only: :create
+
+              rescue_from ConflictingReference do |error|
+                render_error(
+                  code: 'conflicting_external_reference',
+                  message: error.message,
+                  status: :unprocessable_content
+                )
+              end
             end
 
             protected
@@ -152,6 +164,12 @@ module Spree
 
               resource.assign_external_references(external_reference_params)
               resource.external_references.reload
+            rescue ActiveRecord::RecordInvalid => e
+              # The key already names a different record in this store. The
+              # resource itself is written by now, so this reports what could
+              # not be recorded rather than pretending the write failed.
+              raise Spree::Api::V3::Admin::Concerns::ExternalReferences::ConflictingReference,
+                    e.record.errors.full_messages.to_sentence
             end
           end
         end

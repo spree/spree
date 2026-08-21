@@ -383,6 +383,7 @@ module Spree
       errors.add(:external_video_url, :unsupported_video_provider)
     end
 
+
     def touch_product_variants
       product = viewable.is_a?(Spree::Product) ? viewable : viewable.product
       product.variants.touch_all
