@@ -136,11 +136,13 @@ module Spree
       # exception, so the workflow can fail the step; a catalog read (no
       # order) gets nil, which the serializers already render as "no price".
       def handle_failure(error)
+        policy = store&.pricing_failure_policy
         Spree::ProviderFailurePolicy.report_fallback(
-          kind: 'pricing', provider: provider.class.key, store: store, error: error
+          kind: 'pricing', provider: provider.class.key, store: store, error: error,
+          policy: policy || Spree::ProviderFailurePolicy::DEFAULT_PRICING_POLICY
         )
 
-        return internal_price unless store&.pricing_failure_policy == 'strict'
+        return internal_price unless policy == 'strict'
         return nil if context.order.blank?
 
         raise ProviderUnavailable.new(error.message, provider_key: provider.class.key)

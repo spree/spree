@@ -15,23 +15,29 @@ module Spree
     DEFAULT_PRICING_POLICY = 'strict'.freeze
     DEFAULT_INVENTORY_POLICY = 'fallback'.freeze
 
-    # Records that a provider could not answer and Spree used its own figure
-    # instead. Emitted from one place because the payload keys are public API
+    # Records that a provider could not answer, and what Spree did about it.
+    # Emitted from one place because the payload keys are public API
     # (docs/plans/6.0-opentelemetry.md) and must stay PII-safe — an error
     # message can carry order or customer detail, so only its class is sent.
+    #
+    # `policy` distinguishes the two outcomes: a store on `fallback` traded on
+    # Spree's own figure, while a `strict` store refused. Alerting cannot treat
+    # a silent substitution and a refused sale as the same event.
     #
     # @param kind [String] 'pricing' or 'inventory'
     # @param provider [String, nil] the provider's registry key
     # @param store [Spree::Store, nil]
     # @param error [StandardError]
+    # @param policy [String] the policy that decided the outcome
     # @return [void]
-    def self.report_fallback(kind:, provider:, store:, error:)
+    def self.report_fallback(kind:, provider:, store:, error:, policy:)
       ActiveSupport::Notifications.instrument(
         'provider.fallback.spree',
         provider: provider,
         kind: kind,
         store_id: store&.id,
-        reason: error.class.name
+        reason: error.class.name,
+        policy: policy
       )
     end
   end
