@@ -54,15 +54,17 @@ module Spree
         raise error if error.is_a?(Spree::ServiceModule::ResultError)
 
         store = cart&.store
+        policy = store&.inventory_failure_policy
         Spree::ProviderFailurePolicy.report_fallback(
           kind: 'inventory', provider: store&.inventory_provider_instance&.class&.key,
-          store: store, error: error
+          store: store, error: error,
+          policy: policy || Spree::ProviderFailurePolicy::DEFAULT_INVENTORY_POLICY
         )
 
         # Strict stores would rather refuse than sell on a figure they cannot
         # confirm; the default is to trust the local snapshot, since an
         # oversell is recoverable and a blocked checkout is not.
-        return failure(cart, error.message) if store&.inventory_failure_policy == 'strict'
+        return failure(cart, error.message) if policy == 'strict'
 
         success([])
       end
