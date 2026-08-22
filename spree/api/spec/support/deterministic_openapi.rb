@@ -32,6 +32,12 @@ if ENV['OPENAPI'] == 'true'
       # unique ones then collide on a real index.
       RANDOM_SEED = 20_260_115
 
+      # Signing secret for the JWTs shown in the examples. It signs nothing
+      # real — these tokens are documentation, generated against a throwaway
+      # dummy app — but it has to be the same everywhere for the signatures
+      # to match across machines.
+      JWT_SECRET = 'openapi-example-signing-secret'
+
       # SecureRandom bypasses the global PRNG (it reads from the OS), so seeding
       # alone leaves API keys, invitation tokens and JWT ids churning. These
       # counter-backed replacements produce values with the right shape and
@@ -130,6 +136,17 @@ if ENV['OPENAPI'] == 'true'
       srand(example_seed)
       FFaker::Random.seed = example_seed
       Spree::OpenAPIDeterminism::PredictableSecureRandom.scope!(example_key)
+
+      # The examples include signed JWTs. Their payloads are already stable
+      # (a frozen clock fixes `exp`, the SecureRandom override fixes `jti`),
+      # but the signature also depends on the signing secret, which otherwise
+      # falls through to the dummy app's `secret_key_base` — generated when
+      # that app is built and so different on every machine. Without this the
+      # specs reproduce for whoever generated them and for nobody else.
+      #
+      # Set per example, not once for the suite: the suite resets Spree's
+      # preferences before every example, which would wipe a one-off value.
+      Spree::Api::Config[:jwt_secret_key] = Spree::OpenAPIDeterminism::JWT_SECRET
     end
   end
 end
