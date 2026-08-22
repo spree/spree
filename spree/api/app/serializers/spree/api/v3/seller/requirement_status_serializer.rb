@@ -28,7 +28,7 @@ module Spree
           end
 
           attribute :accepted_content_types do |status|
-            status.requirement.class.requires_file? ? status.requirement.class.accepted_content_types : []
+            status.requirement.accepted_content_types
           end
 
           one :submission,
@@ -37,7 +37,7 @@ module Spree
 
           many :custom_fields,
                resource: proc { Spree.api.seller_requirement_custom_field_serializer },
-               if: proc { |status| status.respond_to?(:custom_fields) && status.custom_fields.any? } do |status|
+               if: proc { |status| status.custom_fields.any? } do |status|
             status.custom_fields
           end
         end

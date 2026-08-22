@@ -34,13 +34,7 @@ module Spree
         end
 
         def rule_has_conditions?(rule)
-          return true if rule.block.present?
-
-          conditions = rule.conditions
-          return false if conditions.nil?
-          return !conditions.empty? if conditions.respond_to?(:empty?)
-
-          true
+          rule.block.present? || rule.conditions.present?
         end
       end
     end

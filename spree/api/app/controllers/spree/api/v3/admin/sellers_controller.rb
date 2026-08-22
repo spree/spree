@@ -123,11 +123,6 @@ module Spree
           # Enumerated rather than borrowing the legacy global list, which
           # permits :id, :user_id and :deleted_at — the first of which would
           # reintroduce the address-by-id hole below.
-          ADDRESS_KEYS = [
-            :first_name, :last_name, :company, :address1, :address2, :city,
-            :postal_code, :zipcode, :phone, :country_code, :state_code, :state_name, :label
-          ].freeze
-
           # The seller's own profile fields, plus the settlement and tax
           # configuration only the operator sets. `status` is absent by
           # design — see the class comment.
@@ -145,7 +140,7 @@ module Spree
                             :holiday_mode_until,
                             :legal_name, :registration_number,
                             metadata: {},
-                            billing_address: ADDRESS_KEYS,
+                            billing_address: Spree::Api::V3::AddressParams::ADDRESS_KEYS,
                             custom_fields: [:id, :custom_field_definition_id, :value, { value: [] }, { value: {} }])
             )
           end

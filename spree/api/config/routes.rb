@@ -666,46 +666,34 @@ Spree::Core::Engine.add_routes do
 
         get 'me', to: 'me#show'
 
-        # The seller's own record. Singular — there is exactly one seller in
-        # play and it is `current_seller`, never an id from the request.
+        # Singular: the seller in play is always `current_seller`.
         resource :profile, only: [:show, :update], controller: 'profile'
 
-        # Who runs this seller. Inviting reuses the operator's workflow, so
-        # there is one invitation rail and one set of hooks.
         resources :team, only: [:index, :create, :destroy], controller: 'team'
 
-        # Offers not yet accepted. Creating one is hiring, so it lives on
-        # `team`; chasing or withdrawing one is bookkeeping on the offer.
+        # Creating an invitation is hiring, so it lives on `team`; chasing or
+        # withdrawing one is bookkeeping on the offer.
         resources :invitations, only: [:index, :destroy], controller: 'invitations' do
           member do
             patch :resend
           end
         end
 
-        # A seller's own catalog. The first collection on this branch, and the
-        # shape every later one follows — rooted in the seller by the anchor.
         resources :products, only: [:index, :show, :create, :update, :destroy]
 
-        # Presigning for the documents onboarding asks a seller to upload.
         resources :direct_uploads, only: [:create]
 
-        # Where this seller keeps stock, and so where their returns are sent.
         # No destroy: a location holds stock levels and is named on historical
         # fulfillments, so a seller retires one by deactivating it.
         resources :stock_locations, only: [:index, :show, :create, :update]
 
-        # Reference data for the panel's address forms — the same list the
-        # storefront serves, not narrowed to the marketplace's markets.
         resources :countries, only: [:index]
 
-        # What the marketplace asks of this seller. Singular: the checklist is
-        # always `current_seller`'s, never an id from the request.
+        # Singular: the checklist is always `current_seller`'s.
         resource :onboarding, only: [:show], controller: 'onboarding' do
           post :submit_for_review
         end
 
-        # Submissions are created against a requirement and read back through
-        # the seller who made them.
         resources :requirements, only: [] do
           resources :submissions, only: [:create], controller: 'requirement_submissions'
         end

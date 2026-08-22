@@ -49,11 +49,6 @@ module Spree
               :pickup_ready_in_minutes, :pickup_instructions
             )
           end
-
-          # A new location is this seller's, and its store follows them.
-          def build_resource
-            current_seller.stock_locations.new(permitted_params.merge(store: current_store))
-          end
         end
       end
     end

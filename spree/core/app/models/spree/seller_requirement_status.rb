@@ -59,12 +59,12 @@ module Spree
     #
     # @return [Array<Hash>] `{ definition:, custom_field: }` pairs
     def custom_fields
-      return [] unless requirement.respond_to?(:custom_field_definitions)
-      return [] if seller.nil?
+      return @custom_fields if defined?(@custom_fields)
+      return @custom_fields = [] if seller.nil? || !requirement.respond_to?(:custom_field_definitions)
 
       answered = seller.custom_fields.index_by(&:custom_field_definition_id)
 
-      requirement.custom_field_definitions.map do |definition|
+      @custom_fields = requirement.custom_field_definitions.map do |definition|
         { definition: definition, custom_field: answered[definition.id] }
       end
     end
