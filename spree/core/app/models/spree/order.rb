@@ -189,7 +189,8 @@ module Spree
     has_many :tax_lines, class_name: 'Spree::TaxLine', dependent: :destroy, inverse_of: :order
     # delete, not destroy: the snapshot is readonly once written, and destroy
     # refuses readonly records. It has no dependents of its own.
-    has_one :tax_identifier, class_name: 'Spree::TaxIdentifier', dependent: :delete, inverse_of: :order
+    has_one :tax_identifier, class_name: 'Spree::TaxIdentifier', as: :owner,
+                             dependent: :delete, inverse_of: :owner
     has_many :discounts, class_name: 'Spree::Discount', dependent: :destroy, inverse_of: :order
     has_many :fees, class_name: 'Spree::Fee', dependent: :destroy, inverse_of: :order
 

@@ -11,7 +11,7 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxIdentifiersController, type:
 
   describe 'GET #index' do
     it 'lists the business registrations' do
-      create(:tax_identifier, customer: nil, company: company, kind: 'eu_vat', value: 'DE123456789')
+      create(:tax_identifier, owner: company, kind: 'eu_vat', value: 'DE123456789')
 
       get :index, params: { company_id: company.prefixed_id }, as: :json
 
@@ -41,17 +41,17 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxIdentifiersController, type:
     end
 
     it 'takes effect on a sale for that business' do
-      create(:tax_identifier, customer: nil, company: company, kind: 'eu_vat', value: 'DE222222222')
+      create(:tax_identifier, owner: company, kind: 'eu_vat', value: 'DE222222222')
       location = create(:company_location, company: company)
       customer = create(:customer)
-      create(:tax_identifier, customer: customer, kind: 'eu_vat', value: 'DE111111111')
+      create(:tax_identifier, owner: customer, kind: 'eu_vat', value: 'DE111111111')
       cart = create(:cart, store: store, customer: customer, company_location: location)
 
       expect(cart.resolved_tax_identifier.value).to eq('DE222222222')
     end
 
     it 'holds one registration per kind' do
-      create(:tax_identifier, customer: nil, company: company, kind: 'eu_vat', value: 'DE123456789')
+      create(:tax_identifier, owner: company, kind: 'eu_vat', value: 'DE123456789')
 
       post :create, params: { company_id: company.prefixed_id, kind: 'eu_vat', value: 'DE999999999' }, as: :json
 
@@ -83,7 +83,7 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxIdentifiersController, type:
 
   describe 'PATCH #update' do
     it 'corrects the number' do
-      identifier = create(:tax_identifier, customer: nil, company: company, kind: 'eu_vat', value: 'DE123456789')
+      identifier = create(:tax_identifier, owner: company, kind: 'eu_vat', value: 'DE123456789')
 
       patch :update, params: { company_id: company.prefixed_id, id: identifier.prefixed_id, value: 'DE987654321' }, as: :json
 
@@ -94,7 +94,7 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxIdentifiersController, type:
 
   describe 'DELETE #destroy' do
     it 'removes the registration' do
-      identifier = create(:tax_identifier, customer: nil, company: company, kind: 'eu_vat')
+      identifier = create(:tax_identifier, owner: company, kind: 'eu_vat')
 
       delete :destroy, params: { company_id: company.prefixed_id, id: identifier.prefixed_id }, as: :json
 
@@ -105,7 +105,7 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxIdentifiersController, type:
 
   describe 'POST #validate' do
     it 'reports when no validator is installed for the kind' do
-      identifier = create(:tax_identifier, customer: nil, company: company, kind: 'eu_vat')
+      identifier = create(:tax_identifier, owner: company, kind: 'eu_vat')
 
       post :validate, params: { company_id: company.prefixed_id, id: identifier.prefixed_id }, as: :json
 

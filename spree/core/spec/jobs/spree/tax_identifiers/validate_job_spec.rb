@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::TaxIdentifiers::ValidateJob do
   let(:customer) { create(:user) }
-  let(:tax_identifier) { create(:tax_identifier, customer: customer, kind: 'eu_vat') }
+  let(:tax_identifier) { create(:tax_identifier, owner: customer, kind: 'eu_vat') }
 
   before do
     stub_const('SpecJobValidator', Class.new(Spree::TaxIdentifiers::Validator::Base) do

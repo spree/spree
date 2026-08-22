@@ -289,7 +289,7 @@ module Spree
         identifier = source_order.tax_identifier
         return if identifier.nil?
 
-        attributes = identifier.attributes.except('id', 'order_id', 'customer_id', 'company_id', 'cart_id',
+        attributes = identifier.attributes.except('id', 'owner_type', 'owner_id',
                                                   'created_at', 'updated_at')
         sibling.create_tax_identifier!(attributes)
       end

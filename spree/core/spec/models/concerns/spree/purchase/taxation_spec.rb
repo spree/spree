@@ -36,14 +36,14 @@ RSpec.shared_examples 'a taxation host' do
     end
 
     it 'falls back to the customer registration' do
-      identifier = create(:tax_identifier, customer: customer)
+      identifier = create(:tax_identifier, owner: customer)
 
       expect(record.resolved_tax_identifier).to eq(identifier)
     end
 
     it 'prefers a verified registration over a newer unverified one' do
-      verified = create(:tax_identifier, :verified, customer: customer, kind: 'eu_vat')
-      create(:tax_identifier, customer: customer, kind: 'gb_vat')
+      verified = create(:tax_identifier, :verified, owner: customer, kind: 'eu_vat')
+      create(:tax_identifier, owner: customer, kind: 'gb_vat')
 
       expect(record.resolved_tax_identifier).to eq(verified)
     end
@@ -56,31 +56,30 @@ RSpec.shared_examples 'a taxation host' do
 
       # The invoice is addressed to the entity, so its registration wins.
       it 'prefers the company registration over the buyer own' do
-        create(:tax_identifier, customer: customer, kind: 'eu_vat', value: 'DE111111111')
-        company_identifier = create(:tax_identifier, customer: nil, company: company,
+        create(:tax_identifier, owner: customer, kind: 'eu_vat', value: 'DE111111111')
+        company_identifier = create(:tax_identifier, owner: company,
                                                      kind: 'eu_vat', value: 'DE222222222')
 
         expect(record.resolved_tax_identifier).to eq(company_identifier)
       end
 
       it 'still falls back to the buyer when the company has none' do
-        identifier = create(:tax_identifier, customer: customer)
+        identifier = create(:tax_identifier, owner: customer)
 
         expect(record.resolved_tax_identifier).to eq(identifier)
       end
 
       it 'prefers a verified company registration' do
-        verified = create(:tax_identifier, :verified, customer: nil, company: company, kind: 'eu_vat')
-        create(:tax_identifier, customer: nil, company: company, kind: 'gb_vat')
+        verified = create(:tax_identifier, :verified, owner: company, kind: 'eu_vat')
+        create(:tax_identifier, owner: company, kind: 'gb_vat')
 
         expect(record.resolved_tax_identifier).to eq(verified)
       end
     end
 
     it 'prefers the record own override over the customer registration' do
-      create(:tax_identifier, customer: customer)
-      owner_key = record.is_a?(Spree::Cart) ? :cart : :order
-      override = create(:tax_identifier, { customer: nil, kind: 'eu_vat', value: 'DE555555555', owner_key => record })
+      create(:tax_identifier, owner: customer)
+      override = create(:tax_identifier, kind: 'eu_vat', value: 'DE555555555', owner: record)
 
       expect(record.resolved_tax_identifier).to eq(override)
     end
@@ -92,7 +91,7 @@ RSpec.shared_examples 'a taxation host' do
     before { record.update!(customer: customer) }
 
     it 'carries the effective date, the buyer registration and the exemptions' do
-      identifier = create(:tax_identifier, customer: customer)
+      identifier = create(:tax_identifier, owner: customer)
       exemption = Spree::TaxExemption.new(reason_code: 'resale')
       allow(Spree.tax_resolve_exemptions_service).to receive(:new).
         and_return(instance_double(Spree::Tax::ResolveExemptions,
@@ -196,11 +195,11 @@ RSpec.describe Spree::Purchase::Taxation do
       let(:record) { create(:completed_order_with_totals, customer: customer) }
 
       it 'reads its own snapshot and never re-resolves' do
-        create(:tax_identifier, customer: customer)
+        create(:tax_identifier, owner: customer)
 
         expect(record.resolved_tax_identifier).to be_nil
 
-        snapshot = create(:tax_identifier, :on_order, order: record)
+        snapshot = create(:tax_identifier, :on_order, owner: record)
         expect(record.reload.resolved_tax_identifier).to eq(snapshot)
       end
     end

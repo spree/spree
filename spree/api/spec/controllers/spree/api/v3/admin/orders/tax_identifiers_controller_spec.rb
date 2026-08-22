@@ -11,7 +11,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::TaxIdentifiersController, type: :c
 
   describe 'GET #show' do
     it 'returns the snapshot with the verdict and the evidence behind it' do
-      create(:tax_identifier, :on_order, :verified, order: order, kind: 'eu_vat', value: 'DE123456789')
+      create(:tax_identifier, :on_order, :verified, owner: order, kind: 'eu_vat', value: 'DE123456789')
 
       get :show, params: { order_id: order.prefixed_id }, as: :json
 
@@ -33,7 +33,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::TaxIdentifiersController, type: :c
 
     it '404s on an order from another store' do
       other_order = create(:completed_order_with_totals, store: create(:store))
-      create(:tax_identifier, :on_order, order: other_order)
+      create(:tax_identifier, :on_order, owner: other_order)
 
       get :show, params: { order_id: other_order.prefixed_id }, as: :json
 

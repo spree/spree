@@ -21,8 +21,8 @@ module Spree
     has_many :company_locations, class_name: 'Spree::CompanyLocation', dependent: :destroy,
                                  inverse_of: :company
     has_many :company_contacts, through: :company_locations
-    has_many :tax_identifiers, class_name: 'Spree::TaxIdentifier', dependent: :destroy,
-                               inverse_of: :company
+    has_many :tax_identifiers, class_name: 'Spree::TaxIdentifier', as: :owner,
+                               dependent: :destroy, inverse_of: :owner
     has_many :tax_exemption_certificates, class_name: 'Spree::TaxExemptionCertificate',
                                           dependent: :destroy, inverse_of: :company
 
