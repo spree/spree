@@ -1,12 +1,15 @@
 name: Security audit
 
-# Covers the gap Dependabot can't fill on this pnpm workspace: its
-# npm_and_yarn updater fails security updates with `Unsupported protocol
-# "workspace:"` (dependabot-core#13177), so flagged advisories never get an
-# automated PR. This job runs `pnpm audit --fix` on a schedule — pinning
-# patched versions via overrides while honoring the supply-chain settings in
-# pnpm-workspace.yaml (minimumReleaseAge, trustPolicy) — and opens a PR with
-# the result for review.
+# Covers the gap Dependabot leaves on this pnpm workspace: transitive
+# advisories, which is nearly all of ours. Its fallback for them
+# (dependabot-core#14589) is gated behind the `enable_audit_fix_fallback`
+# flag, and while dependabot-core#15104 is open it desynchronizes the lockfile
+# from package.json in a way our frozen-lockfile CI rejects.
+#
+# This job runs `pnpm audit --fix` on a schedule — pinning patched versions via
+# overrides while honoring the supply-chain settings in pnpm-workspace.yaml
+# (minimumReleaseAge, trustPolicy) — and opens a PR with the result for review.
+# See the npm entry in .github/dependabot.yml for the full rationale.
 
 on:
   schedule:
@@ -36,8 +39,14 @@ jobs:
         run: pnpm audit --audit-level=low || true
 
       - name: Pin available fixes via overrides
+        # `--fix` must be given an explicit method: pnpm 11 rejects both the
+        # documented bare `--fix` and `--fix --ignore-unfixable` (it binds the
+        # next flag as the method and errors out). No `|| true` here — a broken
+        # invocation must fail the job rather than silently open an empty PR.
+        # Deliberately unfixed advisories live in `auditConfig.ignoreGhsas` in
+        # pnpm-workspace.yaml, so they are not re-proposed here every week.
         run: |
-          pnpm audit --fix --ignore-unfixable || true
+          pnpm audit --ignore-unfixable --fix=override
           pnpm install --lockfile-only
 
       - name: Collect remaining advisories

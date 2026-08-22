@@ -46,7 +46,7 @@ allowBuilds:
 overrides:
   esbuild: ^0.28.1
   vite: ^8.0.16
-  js-yaml: ^4.2.0
+  js-yaml: ^4.3.1
   # js-yaml ^4 drops the safeLoad API that read-yaml-file@1 calls; bump
   # read-yaml-file (transitive via changesets) to its js-yaml-4 line so
   # the js-yaml pin above doesn't break the release tooling.
@@ -57,11 +57,38 @@ overrides:
   #   hono           — CORS/cookie/path-traversal cluster (transitive via shadcn's MCP SDK)
   #   qs             — DoS in qs.stringify (transitive via shadcn's MCP SDK -> express)
   #   brace-expansion — ReDoS bypassing the documented max guard (transitive via shadcn -> ts-morph)
-  # @babel/core (GHSA-4x5r-pxfx-6jf8, low) is intentionally not pinned: every
-  # 7.x line depends on semver@^6, and forcing the bump re-resolves semver@6.3.1
-  # which trips our trustPolicy: no-downgrade guard. Low severity + build-only +
-  # requires an attacker-controlled source map, so not worth defeating the guard.
   rollup: ^4.59.0
-  hono: ^4.12.25
+  hono: ^4.12.34
   qs: ^6.15.2
-  brace-expansion: ^5.0.6
+  brace-expansion: ^5.0.9
+  # Third wave. Each of these resolves to a single version line in the tree,
+  # so a plain caret pin is enough — no per-advisory range keys needed.
+  #   nanoid          — unbounded loop on a negative or zero size
+  #   postcss         — source-map path traversal reads arbitrary .map files
+  #   fast-uri        — host confusion via backslash/IDN authority parsing
+  #   ip-address      — octal/IPv4-mapped parsing gaps that bypass SSRF checks
+  #   body-parser     — invalid limit value silently disables the size cap
+  #   @hono/node-server — serve-static path traversal on Windows via %5C
+  nanoid: ^3.3.18
+  postcss: ^8.5.23
+  fast-uri: ^3.1.5
+  ip-address: ^10.3.1
+  body-parser: ^2.3.0
+  '@hono/node-server': ^1.19.15
+
+# auditConfig: advisories we have reviewed and decided not to fix. The weekly
+# security-audit workflow honors this list, so an entry here also stops the job
+# from re-proposing the same pin every week.
+#
+#   @babel/core (GHSA-4x5r-pxfx-6jf8, low) — patched in 7.29.6, but pinning it
+#   fails the install outright: our consumers (shadcn, @tanstack/router-plugin)
+#   require @babel/core ^7, every 7.x needs semver@^6.3.1, and 6.3.1 is the only
+#   6.x satisfying that. It published without the provenance its predecessors
+#   had, so trustPolicy: no-downgrade rejects it — verified, not assumed. Moving
+#   to @babel/core 8 (which uses semver@^7) would break both consumers.
+#   Build-time only and needs an attacker-controlled source map to exploit.
+#   Owner: @damianlegawiec. Review by 2026-11-22, or sooner if either consumer
+#   widens its range to @babel/core 8 or semver@6.3.1 regains provenance.
+auditConfig:
+  ignoreGhsas:
+    - GHSA-4x5r-pxfx-6jf8
