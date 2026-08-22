@@ -22,13 +22,13 @@ RSpec.describe Spree::Sellers::PanelUrl do
   end
 
   # The single-node topology: Spree serves the panel itself at /sellers, so a
-  # link there works without any hostname of its own. `Spree::SellerPanel`
+  # link there works without any hostname of its own. `Spree::Dashboard`
   # ships in the optional spree_dashboard gem, which core's suite does not
   # load — hence the resolver's `defined?` guard, and this stand-in.
   context 'when this app serves a seller panel bundle' do
     before do
-      stub_const('Spree::SellerPanel', Module.new do
-        def self.dist_path = '/tmp/panel-dist'
+      stub_const('Spree::Dashboard', Module.new do
+        def self.seller_panel_dist_path = '/tmp/panel-dist'
       end)
     end
 
