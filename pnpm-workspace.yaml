@@ -78,12 +78,17 @@ overrides:
 
 # auditConfig: advisories we have reviewed and decided not to fix. The weekly
 # security-audit workflow honors this list, so an entry here also stops the job
-# from re-proposing the same pin every week. Revisit when upstream moves.
+# from re-proposing the same pin every week.
 #
-#   @babel/core (GHSA-4x5r-pxfx-6jf8, low) — every 7.x line depends on
-#   semver@^6, so forcing the bump re-resolves semver@6.3.1 and trips our
-#   trustPolicy: no-downgrade guard. Low severity, build-only, and needs an
-#   attacker-controlled source map — not worth defeating the guard.
+#   @babel/core (GHSA-4x5r-pxfx-6jf8, low) — patched in 7.29.6, but pinning it
+#   fails the install outright: our consumers (shadcn, @tanstack/router-plugin)
+#   require @babel/core ^7, every 7.x needs semver@^6.3.1, and 6.3.1 is the only
+#   6.x satisfying that. It published without the provenance its predecessors
+#   had, so trustPolicy: no-downgrade rejects it — verified, not assumed. Moving
+#   to @babel/core 8 (which uses semver@^7) would break both consumers.
+#   Build-time only and needs an attacker-controlled source map to exploit.
+#   Owner: @damianlegawiec. Review by 2026-11-22, or sooner if either consumer
+#   widens its range to @babel/core 8 or semver@6.3.1 regains provenance.
 auditConfig:
   ignoreGhsas:
     - GHSA-4x5r-pxfx-6jf8

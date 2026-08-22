@@ -31,13 +31,18 @@ updates:
 
   # JavaScript/TypeScript (pnpm workspace — single root lockfile)
   #
-  # Heads up: Dependabot cannot fix vulnerable *transitive* npm dependencies
-  # here — it does not support that for pnpm at all and bails with
-  # "Dependabot doesn't support the 'updating transitive dependencies' feature
-  # for pnpm package_manager" (dependabot-core#13177). Nearly every advisory we
-  # get is transitive, so those fixes are pinned via `overrides:` in
-  # pnpm-workspace.yaml by the weekly `.github/workflows/security-audit.yml`
-  # job. Do not delete that workflow expecting Dependabot to cover it.
+  # Heads up: do not rely on Dependabot for vulnerable *transitive* npm
+  # dependencies, which is nearly every advisory we get. It rejected them
+  # outright until dependabot-core#13177 closed; the replacement (#14589) falls
+  # back to `pnpm audit --fix` but sits behind the `enable_audit_fix_fallback`
+  # flag, so we cannot count on it running. When it does run, #15104 is still
+  # open: it rewrites lockfile `specifier:` entries without the matching
+  # package.json change, which our frozen-lockfile CI rejects.
+  #
+  # So those fixes are pinned via `overrides:` in pnpm-workspace.yaml by the
+  # weekly `.github/workflows/security-audit.yml` job. Keep that workflow as
+  # the fallback even if Dependabot starts opening some of these PRs; revisit
+  # only once #15104 is fixed and the flag is on by default.
   #
   # The direct-dependency version updates below are unaffected. `cooldown`
   # mirrors the `minimumReleaseAge` in pnpm-workspace.yaml — without it
