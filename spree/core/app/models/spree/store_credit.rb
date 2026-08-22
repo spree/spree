@@ -19,7 +19,9 @@ module Spree
     ALLOCATION_ACTION = 'allocation'.freeze
 
     belongs_to :store, class_name: 'Spree::Store'
-    belongs_to :customer, class_name: "::#{Spree.customer_class}"
+    # A gift card applied to a guest cart issues store credit with no customer
+    # to attach it to.
+    belongs_to :customer, class_name: "::#{Spree.customer_class}", optional: true
     include Spree::DeprecatedCustomerAlias
     belongs_to :created_by, class_name: Spree.admin_user_class.to_s, foreign_key: 'created_by_id', optional: true
     belongs_to :originator, polymorphic: true, optional: true

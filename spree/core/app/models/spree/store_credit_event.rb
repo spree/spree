@@ -7,7 +7,7 @@ module Spree
     #
     # Associations
     belongs_to :store_credit
-    belongs_to :originator, polymorphic: true
+    belongs_to :originator, polymorphic: true, optional: true
     has_one :payment, -> { where(source_type: Spree::StoreCredit.to_s) }, foreign_key: :response_code, primary_key: :authorization_code
     has_one :order, through: :payment
 

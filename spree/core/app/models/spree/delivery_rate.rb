@@ -8,7 +8,7 @@ module Spree
     serialize :metadata, coder: Spree::Metadata::HashSerializer
 
     belongs_to :fulfillment, class_name: 'Spree::Fulfillment'
-    belongs_to :tax_rate, -> { with_deleted }, class_name: 'Spree::TaxRate'
+    belongs_to :tax_rate, -> { with_deleted }, class_name: 'Spree::TaxRate', optional: true
     belongs_to :delivery_method, -> { with_deleted }, class_name: 'Spree::DeliveryMethod', inverse_of: :delivery_rates
     # Legacy names — removed in 6.1.
     belongs_to :shipment, class_name: 'Spree::Fulfillment', foreign_key: :fulfillment_id, optional: true, deprecated: true
