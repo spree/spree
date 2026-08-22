@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe Spree::Commissions::ResolveTaxRate do
   let(:store) { @default_store }
-  let(:billing_address) { create(:address, country_iso: 'DE') }
+  let(:billing_address) { create(:business_address, country_iso: 'DE') }
   let(:seller) { create(:seller, :approved, store: store, billing_address: billing_address) }
   let(:order) { create(:order, store: store) }
   let(:rate) { create(:commission_rate, store: store) }
