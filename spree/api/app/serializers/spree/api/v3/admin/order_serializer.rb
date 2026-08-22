@@ -5,6 +5,8 @@ module Spree
         # Admin API Order Serializer
         # Full order data including admin-only fields
         class OrderSerializer < V3::OrderSerializer
+          include Concerns::ExternalReferencesAttribute
+
 
           typelize company_location_id: [:string, nullable: true],
                    company_id: [:string, nullable: true],

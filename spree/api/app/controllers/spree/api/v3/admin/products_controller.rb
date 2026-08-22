@@ -3,6 +3,7 @@ module Spree
     module V3
       module Admin
         class ProductsController < ResourceController
+          include Spree::Api::V3::Admin::Concerns::ExternalReferences
           include Spree::Api::V3::BulkOperations
           include Spree::Api::V3::Admin::ProductListing
 

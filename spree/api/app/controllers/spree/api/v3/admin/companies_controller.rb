@@ -5,6 +5,7 @@ module Spree
         # Business customers. A company is a customer record, so it answers to
         # the customer scopes rather than earning one of its own.
         class CompaniesController < ResourceController
+          include Spree::Api::V3::Admin::Concerns::ExternalReferences
           scoped_resource :customers
 
           protected
@@ -22,11 +23,11 @@ module Spree
           end
 
           def collection_includes
-            [:company_locations]
+            [:company_locations, :external_references]
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :name, :external_id, metadata: {})
+            params.permit(*model_additional_permitted_attributes, :name, metadata: {})
           end
         end
       end

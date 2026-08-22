@@ -9,6 +9,7 @@ module Spree
         # collection-bound attributes (automatic, sort_order, rules) are
         # readable or writable here.
         class CategoriesController < ResourceController
+          include Spree::Api::V3::Admin::Concerns::ExternalReferences
           scoped_resource :categories
 
           # PATCH /api/v3/admin/categories/:id/reposition

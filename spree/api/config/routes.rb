@@ -202,7 +202,9 @@ Spree::Core::Engine.add_routes do
         patch 'me', to: 'me#update'
 
         # Store Settings
-        resource :store, only: [:show, :update], controller: 'store'
+        resource :store, only: [:show, :update], controller: 'store' do
+          get :data_sources
+        end
 
         # Staff & access (invitations, admin users, roles, API keys)
         resources :admin_users, only: [:index, :show, :update, :destroy]
@@ -342,7 +344,11 @@ Spree::Core::Engine.add_routes do
         # Inventory
         resources :stock_locations
         resources :stock_reservations, only: [:index, :show]
-        resources :stock_levels, only: [:index, :show, :update, :destroy]
+        resources :stock_levels, only: [:index, :show, :update, :destroy] do
+          collection do
+            post :bulk_upsert
+          end
+        end
         resources :stock_movements, only: [:index, :show]
         resources :stock_transfers, only: [:index, :show, :create, :destroy]
 

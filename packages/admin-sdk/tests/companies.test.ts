@@ -6,7 +6,7 @@ import { server } from './mocks/server'
 const sampleCompany = {
   id: 'comp_abc123',
   name: 'Acme Industrial',
-  external_id: 'ACME-1',
+  external_references: { erp: 'ACME-1' },
   locations_count: 2,
   metadata: {},
   created_at: '2026-08-01T00:00:00Z',
@@ -17,7 +17,7 @@ const sampleLocation = {
   id: 'cloc_abc123',
   company_id: 'comp_abc123',
   name: 'Berlin',
-  external_id: null,
+  external_references: {},
   contacts_count: 1,
   billing_address: null,
   shipping_address: null,
@@ -81,11 +81,17 @@ describe('companies', () => {
     )
 
     const client = createTestClient()
-    await client.companies.create({ name: 'Globex Corporation', external_id: 'GLBX' })
+    await client.companies.create({
+      name: 'Globex Corporation',
+      external_references: { erp: 'GLBX' },
+    })
     await client.companies.update('comp_abc123', { name: 'Acme Global' })
     await client.companies.delete('comp_abc123')
 
-    expect(created).toEqual({ name: 'Globex Corporation', external_id: 'GLBX' })
+    expect(created).toEqual({
+      name: 'Globex Corporation',
+      external_references: { erp: 'GLBX' },
+    })
     expect(patched).toEqual({ name: 'Acme Global' })
     expect(deleted).toBe(true)
   })

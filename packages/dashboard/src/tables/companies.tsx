@@ -36,12 +36,13 @@ defineTable<Company>('companies', {
       render: (company) => company.locations_count,
     },
     {
-      key: 'external_id',
-      label: i18n.t('admin.fields.external_id.label'),
-      sortable: true,
+      // Off by default: only a merchant reconciling against an ERP or PIM
+      // wants a column of foreign keys, and they can switch it on.
+      key: 'external_references',
+      label: i18n.t('admin.fields.external_references.label'),
       filterable: true,
-      default: true,
-      render: (company) => company.external_id ?? '—',
+      default: false,
+      render: (company) => Object.values(company.external_references ?? {}).join(', ') || '—',
     },
     {
       key: 'created_at',

@@ -7,6 +7,7 @@ module Spree
           # deleting a branch are addressed directly, since a caller holding a
           # branch id shouldn't have to know its company.
           class LocationsController < BaseController
+            include Spree::Api::V3::Admin::Concerns::ExternalReferences
             include Spree::Api::V3::Admin::Concerns::CompanyLocationParams
 
             before_action :authorize_parent_access!

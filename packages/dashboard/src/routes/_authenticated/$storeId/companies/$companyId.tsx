@@ -17,7 +17,6 @@ import {
   CardTitle,
   ErrorState,
   Field,
-  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -45,6 +44,7 @@ import {
   useUpdateCompanyTaxIdentifier,
   useValidateCompanyTaxIdentifier,
 } from '../../../../hooks/use-companies'
+import { spreeJsonLinkResolver } from '../../../../lib/json-link-resolver'
 import {
   COMPANY_DEFAULTS,
   type CompanyFormValues,
@@ -94,10 +94,17 @@ function CompanyBody({ company }: { company: Company }) {
       header={
         <PageHeader
           title={company.name}
-          subtitle={company.external_id ?? undefined}
           backTo="companies"
           resource={{ id: company.id }}
           onDelete={permissions.can('destroy', Subject.Company) ? handleDelete : undefined}
+          jsonPreview={{
+            title: `Company ${company.name}`,
+            // Reuse what `useCompany` already loaded — opening the drawer
+            // shouldn't trigger a duplicate fetch.
+            fetch: () => Promise.resolve(company),
+            endpoint: `/api/v3/admin/companies/${company.id}`,
+            resolveLink: spreeJsonLinkResolver(storeId),
+          }}
           deleteLabel={t('admin.companies.detail.delete_label')}
         />
       }
@@ -132,7 +139,7 @@ function CompanyProfileCard({ company, canEdit }: { company: Company; canEdit: b
   })
 
   useEffect(() => {
-    form.reset({ name: company.name, external_id: company.external_id ?? '' })
+    form.reset({ name: company.name })
   }, [company, form])
 
   async function onSubmit(values: CompanyFormValues) {
@@ -167,19 +174,6 @@ function CompanyProfileCard({ company, canEdit }: { company: Company; canEdit: b
               {...form.register('name')}
             />
             <FieldError errors={[errors.name]} />
-          </Field>
-          <Field>
-            <FieldLabel htmlFor="company-external-id">
-              {t('admin.fields.external_id.label')}
-            </FieldLabel>
-            <Input
-              id="company-external-id"
-              disabled={!canEdit}
-              aria-invalid={!!errors.external_id || undefined}
-              {...form.register('external_id')}
-            />
-            <FieldDescription>{t('admin.fields.company.external_id.help')}</FieldDescription>
-            <FieldError errors={[errors.external_id]} />
           </Field>
           {canEdit && (
             <div className="flex justify-end">

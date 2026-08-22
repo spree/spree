@@ -1577,6 +1577,34 @@
         "track_price_history": {
           "help": "Keep past prices so the storefront can show the lowest price of the last 30 days, as EU rules require.",
           "label": "Record price history"
+        },
+        "data_sources": {
+          "internal": "Spree (built in)",
+          "not_connected": "Connect this integration to use it",
+          "pricing_provider": {
+            "label": "Prices come from",
+            "help": "Spree prices from your catalog and price lists unless an external system answers instead."
+          },
+          "inventory_provider": {
+            "label": "Stock levels come from",
+            "help": "An external source is asked when an item is added to a cart and at checkout. Listings always show your own stock records."
+          },
+          "pricing_failure_policy": {
+            "label": "If prices cannot be confirmed",
+            "help": "Charging the wrong price is hard to undo, so refusing is the safer default."
+          },
+          "inventory_failure_policy": {
+            "label": "If stock cannot be confirmed",
+            "help": "Selling an item that turns out to be unavailable is recoverable, so falling back keeps you trading."
+          },
+          "policies": {
+            "strict": {
+              "label": "Refuse and ask the customer to retry"
+            },
+            "fallback": {
+              "label": "Use Spree's own figures"
+            }
+          }
         }
       },
       "store_credit": {
@@ -1716,18 +1744,11 @@
       "company": {
         "name": {
           "placeholder": "Acme Industries"
-        },
-        "external_id": {
-          "help": "Your own reference for this business, unique within the store.",
-          "placeholder": "ACME-001"
         }
       },
       "company_location": {
         "name": {
           "placeholder": "Head office"
-        },
-        "external_id": {
-          "help": "Your own reference for this branch."
         }
       },
       "company_contact": {
@@ -1875,6 +1896,9 @@
           "help": "Never charge less than the first, or more than the second. Each applies only to sales in its own currency; leave a currency empty to charge it unbounded.",
           "label": "Floor and cap (optional)"
         }
+      },
+      "external_references": {
+        "label": "External references"
       }
     },
     "gift_cards": {
@@ -3054,7 +3078,8 @@
           "tab_payments": "Payments",
           "tab_standards": "Standards and formats",
           "tab_storefront_access": "Storefront access",
-          "title": "Store settings"
+          "title": "Store settings",
+          "tab_data_sources": "Pricing and inventory sources"
         },
         "tax_categories": {
           "add_sheet_title": "Add tax category",

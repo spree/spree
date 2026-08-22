@@ -5,7 +5,9 @@ RSpec.describe Spree::Api::V3::Admin::CompaniesController, type: :controller do
 
   include_context 'API v3 Admin authenticated'
 
-  let!(:company) { create(:company, store: store, name: 'Acme Industrial', external_id: 'ACME-1') }
+  let!(:company) do
+    create(:company, store: store, name: 'Acme Industrial').tap { |record| record.set_external_id('erp', 'ACME-1') }
+  end
 
   before { request.headers.merge!(headers) }
 
@@ -17,7 +19,7 @@ RSpec.describe Spree::Api::V3::Admin::CompaniesController, type: :controller do
       row = json_response['data'].first
       expect(row['id']).to start_with('comp_')
       expect(row['name']).to eq('Acme Industrial')
-      expect(row['external_id']).to eq('ACME-1')
+      expect(row['external_references']).to eq('erp' => 'ACME-1')
     end
 
     it 'hides companies belonging to another store' do
@@ -57,21 +59,32 @@ RSpec.describe Spree::Api::V3::Admin::CompaniesController, type: :controller do
 
   describe 'POST #create' do
     it 'creates a company bound to the current store' do
-      post :create, params: { name: 'Globex', external_id: 'GLBX' }, as: :json
+      post :create, params: { name: 'Globex' }, as: :json
 
       expect(response).to have_http_status(:created)
       expect(json_response['name']).to eq('Globex')
       expect(Spree::Company.find_by(name: 'Globex').store).to eq(store)
     end
 
-    it 'rejects a duplicate reference with a validation error, not a crash' do
-      post :create, params: { name: 'Acme Again', external_id: 'ACME-1' }, as: :json
+    it 'records the external identity the connector sent' do
+      post :create, params: { name: 'Globex', external_references: [{ system: 'erp', external_id: 'GLBX' }] }, as: :json
 
-      expect(response).to have_http_status(:unprocessable_content)
+      expect(response).to have_http_status(:created)
+      expect(json_response['external_references']).to eq('erp' => 'GLBX')
+      expect(Spree::Company.find_by(name: 'Globex').external_id_for('erp')).to eq('GLBX')
+    end
+
+    it 'updates the existing record when the external id is already known' do
+      expect do
+        post :create, params: { name: 'Acme Renamed', external_references: [{ system: 'erp', external_id: 'ACME-1' }] },
+                      as: :json
+      end.not_to change(Spree::Company, :count)
+
+      expect(company.reload.name).to eq('Acme Renamed')
     end
 
     it 'rejects a company with no name' do
-      post :create, params: { external_id: 'X' }, as: :json
+      post :create, params: {}, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
     end
@@ -83,6 +96,33 @@ RSpec.describe Spree::Api::V3::Admin::CompaniesController, type: :controller do
 
       expect(response).to have_http_status(:ok)
       expect(company.reload.name).to eq('Acme Global')
+    end
+
+    it 'addresses the company by the identity the external system knows' do
+      patch :update, params: { id: 'external:erp:ACME-1', name: 'Acme Via ERP' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(company.reload.name).to eq('Acme Via ERP')
+    end
+
+    it 'leaves other systems alone when one connector writes its key' do
+      company.set_external_id('crm', 'CUST-9')
+
+      patch :update, params: { id: company.prefixed_id,
+                               external_references: [{ system: 'erp', external_id: 'ACME-2' }] }, as: :json
+
+      expect(company.reload.external_id_for('erp')).to eq('ACME-2')
+      expect(company.external_id_for('crm')).to eq('CUST-9')
+    end
+
+    it 'does not reach a company in another store through its external id' do
+      other = create(:company, store: create(:store))
+      other.set_external_id('erp', 'OTHER-1')
+
+      patch :update, params: { id: 'external:erp:OTHER-1', name: 'Hijacked' }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(other.reload.name).not_to eq('Hijacked')
     end
   end
 

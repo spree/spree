@@ -8,11 +8,13 @@ module Spree
         # emits one TS type per serializer, and an abstract one would reach the
         # admin SDK without any endpoint returning it.
         class CompanyLocationSerializer < V3::BaseSerializer
-          typelize name: :string, external_id: [:string, nullable: true],
+          include Concerns::ExternalReferencesAttribute
+
+          typelize name: :string,
                    company_id: :string, contacts_count: :number,
                    metadata: 'Record<string, unknown> | null'
 
-          attributes :name, :external_id, :metadata,
+          attributes :name, :metadata,
                      created_at: :iso8601, updated_at: :iso8601
 
           # A branch always belongs to a company, so this is never null.

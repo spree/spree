@@ -222,11 +222,13 @@ import type {
   SetupCountries,
   SetupParams,
   SetupStatus,
+  StockLevelBulkUpsertRow,
   StockLevelUpdateParams,
   StockLocationCreateParams,
   StockLocationUpdateParams,
   StockTransferCreateParams,
   StoreCreditApplyParams,
+  StoreDataSources,
   StoreUpdateParams,
   TaxCategoryCreateParams,
   TaxCategoryUpdateParams,
@@ -679,6 +681,16 @@ export class AdminClient {
 
     update: (params: StoreUpdateParams, options?: RequestOptions): Promise<Store> =>
       this.request<Store>('PATCH', '/store', { ...options, body: params }),
+
+    /**
+     * The pricing and inventory engines this store can choose between, and
+     * whether each is usable — a provider whose integration is not connected
+     * is listed but not selectable.
+     */
+    dataSources: (options?: RequestOptions): Promise<StoreDataSources> =>
+      this.request<{ data: StoreDataSources }>('GET', '/store/data_sources', options).then(
+        (r) => r.data,
+      ),
   }
 
   /** The locales a merchant can translate content into for the current store. */
@@ -4075,7 +4087,24 @@ export class AdminClient {
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/stock_levels/${id}`, options),
+
+    /**
+     * Sets stock levels for many (variant, location) pairs at once — what a
+     * warehouse feed posts on a schedule. Rows name their variant and location
+     * either by Spree id or by an external reference, so a feed can use the
+     * keys it already holds.
+     *
+     * Each change is recorded as a stock movement, so the history stays
+     * intact. Response is `{ stock_level_count }`.
+     */
+    bulkUpsert: (
+      params: { stock_levels: StockLevelBulkUpsertRow[] },
+      options?: RequestOptions,
+    ): Promise<{ stock_level_count: number }> =>
+      this.request('POST', '/stock_levels/bulk_upsert', { ...options, body: params }),
   }
+
+  //   }
 
   // ============================================
   // Stock Movements

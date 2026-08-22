@@ -7,7 +7,9 @@ RSpec.describe 'Admin Companies API', type: :request, swagger_doc: 'api-referenc
 
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
 
-  let!(:company) { create(:company, store: store, name: 'Acme Industrial', external_id: 'ACME-1') }
+  let!(:company) do
+    create(:company, store: store, name: 'Acme Industrial').tap { |record| record.set_external_id('erp', 'ACME-1') }
+  end
 
   path '/api/v3/admin/companies' do
     get 'List companies' do
@@ -48,9 +50,20 @@ RSpec.describe 'Admin Companies API', type: :request, swagger_doc: 'api-referenc
         type: :object,
         properties: {
           name: { type: :string, example: 'Globex Corporation' },
-          external_id: { type: :string, nullable: true,
-                         description: 'Your own reference for this business, unique within the store.',
-                         example: 'GLBX-42' }
+          external_references: {
+            type: :array,
+            description: 'Identities this business has in your own systems. A system you do ' \
+                         'not name keeps the reference it already has, and creating with a ' \
+                         'reference that already exists updates that business instead.',
+            items: {
+              type: :object,
+              properties: {
+                system: { type: :string, example: 'erp' },
+                external_id: { type: :string, example: 'GLBX-42' }
+              },
+              required: %w[system external_id]
+            }
+          }
         },
         required: ['name']
       }
@@ -58,7 +71,9 @@ RSpec.describe 'Admin Companies API', type: :request, swagger_doc: 'api-referenc
       let(:'x-spree-api-key') { secret_api_key.plaintext_token }
 
       response '201', 'company created' do
-        let(:body) { { name: 'Globex Corporation', external_id: 'GLBX-42' } }
+        let(:body) do
+          { name: 'Globex Corporation', external_references: [{ system: 'erp', external_id: 'GLBX-42' }] }
+        end
 
         run_test! do |response|
           expect(JSON.parse(response.body)['name']).to eq('Globex Corporation')
@@ -66,7 +81,7 @@ RSpec.describe 'Admin Companies API', type: :request, swagger_doc: 'api-referenc
       end
 
       response '422', 'invalid request' do
-        let(:body) { { external_id: 'NO-NAME' } }
+        let(:body) { { external_references: [{ system: 'erp', external_id: 'NO-NAME' }] } }
 
         run_test!
       end
