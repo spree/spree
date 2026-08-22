@@ -10,6 +10,7 @@ const result = await client.customers.bulkRemoveFromGroups({
   ids: ['cus_UkLWZg9DAJ'],
   customer_group_ids: ['cg_UkLWZg9DAJ'],
 })
+
 // endregion:example
 
 export { result }

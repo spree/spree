@@ -32,6 +32,13 @@ module Spree
       # initializer — the setup link is printed by `db:seed`, before there is
       # any way to configure a running app.
       preference :dashboard_url, :string, default: nil, env: 'SPREE_DASHBOARD_URL'
+      # Origin where the seller panel is hosted (e.g. `https://sellers.shop.com`).
+      # Separate from `dashboard_url` because the two are different apps for
+      # different audiences: a seller invitation sent to the staff dashboard
+      # lands on a page that authenticates against the Admin API, which no
+      # seller may call. Unset on a marketplace that runs no panel, in which
+      # case seller invitations fall back to the dashboard origin.
+      preference :seller_panel_url, :string, default: nil, env: 'SPREE_SELLER_PANEL_URL'
       preference :allow_checkout_on_gateway_error, :boolean, default: false, deprecated: 'Nothing reads this in Spree 6 — completion checks whether payments cover the total, so a failed gateway call never completes an order'
       preference :allow_empty_price_amount, :boolean, default: false
       preference :alternative_shipping_phone, :boolean, default: false, deprecated: 'Nothing reads this in Spree 6'
@@ -92,6 +99,11 @@ module Spree
 
       # Maximum size of an uploaded product video, in bytes.
       preference :max_video_upload_size, :integer, default: 524_288_000 # 500 MB
+
+      # Maximum size of a document a seller uploads for an onboarding
+      # requirement, in bytes. Small on purpose: these are certificates and
+      # registrations, and an unbounded upload is a way to fill a disk.
+      preference :max_seller_document_upload_size, :integer, default: 20_971_520 # 20 MB
       preference :non_expiring_credit_types, :array, default: [], deprecated: 'Nothing reads this in Spree 6 — store credits no longer carry a category, and expiry lives on Spree::GiftCard'
       preference :products_per_page, :integer, default: 12, deprecated: 'Nothing reads this in Spree 6 — pass per_page to the API instead'
       preference :restock_inventory, :boolean, default: true, deprecated: 'Restocking is decided per line item by Spree::ReturnLineItem#resellable'

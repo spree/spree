@@ -7,6 +7,34 @@ module Spree
     # Whether that settles the requirement or only queues it depends on the
     # kind: an attestation is the seller's word and is taken at face value, a
     # document or a manual check waits for someone to look at it.
+    #
+    # == Scanning an uploaded document
+    #
+    # Hook `after_create` and reject what the scanner does not like:
+    #
+    #   Spree.hooks.register('seller_requirement_submissions.create.after_create') do |workflow|
+    #     submission = workflow.submission
+    #     next unless submission.file.attached?
+    #
+    #     verdict = MyScanner.scan(submission.file.download)
+    #     if verdict.infected?
+    #       submission.update!(status: 'rejected', review_note: 'Failed a virus scan.')
+    #     end
+    #   end
+    #
+    # `after_create` rather than `validate`, which is where a rejection would
+    # normally go: at validate time the blob is built but not yet uploaded, so
+    # there is nothing in storage for a scanner to read. By `after_create` the
+    # bytes are there, and the submission is `pending` — a state no operator
+    # acts on — so moving it to `rejected` settles it before anyone opens it.
+    # A scanner that answers slowly should do the same from a background job
+    # keyed on the submission.
+    #
+    # Core ships no scanner: which one a marketplace runs is a deployment
+    # decision, and the hook is the whole contract. What core does guarantee
+    # is that a file's *type* is decided by its bytes rather than the header
+    # the uploader sent, and that its size is bounded — see
+    # Spree::SellerRequirementSubmission.
     class Create < Spree::Workflow
       hooks :validate, :after_create
 
@@ -61,22 +89,16 @@ module Spree
       # it is refused here rather than reaching a reviewer empty — and a file
       # in a format the operator said they cannot open is refused with it,
       # since the setting is shown to sellers as a promise.
+      # Only that a file is here at all. What the file *is* — its real type
+      # and its size — is the model's business, where the validation reads
+      # the bytes rather than the header the uploader sent; repeating a
+      # weaker version of that check here is how the two drift apart.
       def ensure_file_acceptable
         return unless requirement.class.requires_file?
+        return if submission.file.attached?
 
-        unless submission.file.attached?
-          errors.add(:file, :blank, message: Spree.t('seller_requirements.file_required',
-                                                     default: 'A file is required for this requirement'))
-          failure(submission, errors)
-        end
-
-        accepted = requirement.accepted_content_types
-        return if accepted.blank? || accepted.include?(submission.file.content_type)
-
-        errors.add(:file, :invalid,
-                   message: Spree.t('seller_requirements.file_type_not_accepted',
-                                    types: accepted.join(', '),
-                                    default: "This requirement accepts #{accepted.join(', ')}"))
+        errors.add(:file, :blank, message: Spree.t('seller_requirements.file_required',
+                                                   default: 'A file is required for this requirement'))
         failure(submission, errors)
       end
 

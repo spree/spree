@@ -7,6 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const { data: rules } = await client.promotions.rules.list('promo_UkLWZg9DAJ')
+
 // endregion:example
 
 export { rules }

@@ -1,0 +1,8 @@
+/* CSS entry. The Spree stylesheet chain provides Tailwind v4 layers, design
+ * tokens, and base styles; the Vite plugin appends `@source` directives here
+ * at build time so Tailwind scans every Spree dashboard package for class
+ * usage.
+ *
+ * Add your own styles below the import. */
+
+@import "@spree/seller-dashboard/styles.css";

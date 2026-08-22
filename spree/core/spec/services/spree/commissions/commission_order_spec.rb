@@ -169,7 +169,7 @@ RSpec.describe Spree::Commissions::CommissionOrder do
     # be able to see why their fee was taxed the way it was.
     it 'records the treatment and jurisdiction on the line' do
       line_for(seller)
-      seller.update!(billing_address: create(:address, country_iso: 'DE'))
+      seller.update!(billing_address: build(:business_address, country_iso: 'DE'))
       allow_any_instance_of(Spree::TaxProvider::Internal).to receive(:service_tax_rate).and_return(0.19)
 
       line = commission.first

@@ -6,7 +6,7 @@ import type {
   SetupParams,
 } from '@spree/admin-sdk'
 import { createContext, type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
-import { adminClient } from '../client'
+import { getApiClient, type PanelSession } from '../api-client'
 import { ADMIN_LOCALE_STORAGE_KEY, switchLocale } from '../lib/i18n'
 
 interface AuthContextValue {
@@ -49,6 +49,27 @@ export const AuthContext = createContext<AuthContextValue | null>(null)
 // Refresh ~30s before the JWT expires (default 5min TTL).
 const REFRESH_INTERVAL_MS = 4 * 60 * 1000 + 30 * 1000
 
+/**
+ * Reaches an admin-only sign-in flow. A seller's panel has none of these, so
+ * calling one there is a bug in the host rather than a runtime condition to
+ * handle — it fails here with a name rather than as `undefined is not a
+ * function` somewhere further away.
+ */
+function requireAuthMethod<K extends 'acceptInvitation' | 'resetPassword' | 'completeSetup'>(
+  name: K,
+  // The three flows take different arguments; their concrete types live on
+  // each panel's own client, so this signature stays deliberately loose.
+): (...args: any[]) => Promise<PanelSession> {
+  const method = getApiClient().auth[name] as
+    | ((...args: any[]) => Promise<PanelSession>)
+    | undefined
+  if (typeof method !== 'function') {
+    throw new Error(`@spree/dashboard-core: this panel's API client has no auth.${name}()`)
+  }
+
+  return method.bind(getApiClient().auth) as (...args: any[]) => Promise<PanelSession>
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(null)
   const [user, setUser] = useState<AdminUser | null>(null)
@@ -66,7 +87,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const applySession = useCallback((accessToken: string, authUser: AdminUser) => {
-    adminClient.setToken(accessToken)
+    getApiClient().setToken(accessToken)
     setToken(accessToken)
     setUser(authUser)
     // The account's saved admin language is the source of truth across devices.
@@ -86,11 +107,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const clearSession = useCallback(() => {
-    adminClient.setToken('')
-    // The store header is session state too — left set, it would ride into
-    // the next admin's first requests (permissions, the index redirect) and
-    // 403 them against a store they may hold no role on.
-    adminClient.setStore('')
+    const client = getApiClient()
+    client.setToken('')
+    // The tenant header is session state too — the store on the admin panel,
+    // the seller on a seller's. Left set, it would ride into the next
+    // principal's first requests (permissions, the index redirect) and 403
+    // them against a tenant they may hold no role on.
+    client.clearTenant?.()
     setToken(null)
     setUser(null)
     clearRefreshTimer()
@@ -98,7 +121,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const doRefresh = useCallback(async (): Promise<boolean> => {
     try {
-      const res = await adminClient.auth.refresh()
+      const res = await getApiClient().auth.refresh()
       applySession(res.token, res.user)
       return true
     } catch {
@@ -143,30 +166,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   )
 
   const login = useCallback(
-    (email: string, password: string) => establish(adminClient.auth.login({ email, password })),
+    (email: string, password: string) => establish(getApiClient().auth.login({ email, password })),
     [establish],
   )
 
   const acceptInvitation = useCallback(
     (id: string, token: string, params: InvitationAcceptParams) =>
-      establish(adminClient.auth.acceptInvitation(id, token, params)),
+      establish(requireAuthMethod('acceptInvitation')(id, token, params)),
     [establish],
   )
 
   const resetPassword = useCallback(
     (token: string, params: PasswordResetParams) =>
-      establish(adminClient.auth.resetPassword(token, params)),
+      establish(requireAuthMethod('resetPassword')(token, params)),
     [establish],
   )
 
   const completeSetup = useCallback(
-    (params: SetupParams) => establish(adminClient.auth.completeSetup(params)),
+    (params: SetupParams) => establish(requireAuthMethod('completeSetup')(params)),
     [establish],
   )
 
   const logout = useCallback(async () => {
     try {
-      await adminClient.auth.logout()
+      await getApiClient().auth.logout()
     } catch {
       // Server unreachable — clear locally; the row will expire naturally.
     } finally {
@@ -176,7 +199,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: only run on mount
   useEffect(() => {
-    adminClient.onUnauthorized(async () => {
+    getApiClient().onUnauthorized(async () => {
       const success = await refreshAccessToken()
       if (success) scheduleRefresh()
       return success

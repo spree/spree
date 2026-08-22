@@ -7,6 +7,7 @@ const client = createClient({
 
 // region:example
 const locales = await client.locales.list()
+
 // endregion:example
 
 export { locales }

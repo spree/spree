@@ -9,6 +9,7 @@ const client = createClient({
 const customer = await client.customer.get({
   token: '<token>',
 })
+
 // endregion:example
 
 export { customer }

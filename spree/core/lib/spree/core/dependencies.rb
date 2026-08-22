@@ -106,6 +106,7 @@ module Spree
         claim_cancel_workflow: 'Spree::Claims::Cancel',
 
         # sellers
+        seller_create_workflow: 'Spree::Sellers::Create',
         seller_invite_workflow: 'Spree::Sellers::Invite',
         seller_approve_workflow: 'Spree::Sellers::Approve',
         seller_suspend_workflow: 'Spree::Sellers::Suspend',

@@ -1,0 +1,186 @@
+{
+  "accept_invitation": {
+    "failed": "That invitation could not be accepted. It may have expired, or the password was wrong.",
+    "first_name": "First name",
+    "invalid_link": "This link is missing its token. Open the link from your invitation email.",
+    "last_name": "Last name",
+    "not_found": "This invitation is no longer valid. Ask whoever invited you to send a new one.",
+    "password": "Password",
+    "password_confirmation": "Confirm password",
+    "submit": "Accept invitation",
+    "submitting": "Accepting…",
+    "subtitle": "You were invited as {{email}}. Set a password to finish.",
+    "title": "Join the team"
+  },
+  "app": {
+    "name": "Seller panel"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "error": "Something went wrong.",
+    "loading": "Loading…",
+    "retry": "Try again",
+    "save": "Save"
+  },
+  "home": {
+    "products": "Products",
+    "selling_no": "Your products are not on sale yet.",
+    "selling_title": "Selling",
+    "selling_yes": "Your products are on sale.",
+    "setup_cta": "Continue setup",
+    "setup_description": "{{done}} of {{total}} done — complete these to start selling.",
+    "setup_title": "Finish setting up",
+    "status": "Status",
+    "subtitle": "How you stand with this marketplace.",
+    "team": "Team members",
+    "title": "Hello, {{name}}"
+  },
+  "login": {
+    "email": "Email",
+    "failed": "That email and password did not match a seller account.",
+    "no_seller": "This account does not run a seller on this marketplace.",
+    "password": "Password",
+    "submit": "Sign in",
+    "submitting": "Signing in…",
+    "subtitle": "Manage your storefront, team and payouts.",
+    "title": "Sign in to your seller panel"
+  },
+  "nav": {
+    "home": "Home",
+    "onboarding": "Setup",
+    "profile": "Profile",
+    "settings": "Settings",
+    "sign_out": "Sign out",
+    "team": "Team"
+  },
+  "onboarding": {
+    "accept_terms": "Accept the terms",
+    "awaiting_review": "Waiting for the marketplace to review this.",
+    "confirm": "Confirm",
+    "document_help": "PDF or an image of the document.",
+    "document_label": "Document",
+    "done": "This one is done.",
+    "go": "Go there",
+    "note_placeholder": "Anything the marketplace should know (optional)",
+    "optional": "Optional",
+    "progress_count": "{{done}} of {{total}} done",
+    "progress_title": "Your progress",
+    "read_terms": "Read the terms",
+    "ready": "Everything required is done.",
+    "remaining_one": "{{count}} thing still to do before you can submit",
+    "remaining_other": "{{count}} things still to do before you can submit",
+    "status": {
+      "complete": "Done",
+      "pending": "In review",
+      "rejected": "Needs another look"
+    },
+    "submit": "Submit for review",
+    "submit_document": "Submit for review",
+    "submitted": "Sent for review",
+    "submitted_requirement": "Sent",
+    "submitting": "Submitting…",
+    "subtitle": "What this marketplace asks for before you can start selling.",
+    "terms_accepted": "Terms accepted",
+    "title": "Setup",
+    "under_review": "The marketplace is reviewing your application. We will email you when there is news."
+  },
+  "profile": {
+    "about": "About",
+    "add_address": "Add address",
+    "address_filled": "Added",
+    "address_missing": "Not added",
+    "address_not_provided": "No address yet.",
+    "at_a_glance": "At a glance",
+    "billing_address": "Billing address",
+    "billing_email": "Billing email",
+    "business_details": "Business details",
+    "contact_email": "Contact email",
+    "edit": "Edit",
+    "edit_title": "Edit your profile",
+    "joined": "Joined",
+    "legal_name": "Legal name",
+    "minimum_payout": "Minimum payout",
+    "name": "Name",
+    "no_about": "You have not written a description yet.",
+    "not_provided": "Not provided",
+    "on_holiday_notice": "Holiday mode is on, so your products are visible but cannot be bought.",
+    "operator_managed": "Set by the marketplace",
+    "payout_schedule": "Payout schedule",
+    "products_count": "Products",
+    "registration_number": "Registration number",
+    "returns_address": "Returns address",
+    "save": "Save changes",
+    "saved": "Profile saved",
+    "saving": "Saving…",
+    "section_contact": "Contact",
+    "section_settlement": "Payouts and tax",
+    "section_standing": "Standing",
+    "status_help": {
+      "approved": "You are approved and can sell on this marketplace.",
+      "canceled": "This seller account is closed.",
+      "invited": "You have been invited. Finish getting set up to apply.",
+      "onboarding": "Work through your checklist, then submit for review.",
+      "pending": "The marketplace has not started your application yet.",
+      "ready_for_review": "The marketplace is reviewing your application.",
+      "rejected": "Your application was not accepted. Contact the marketplace to find out more.",
+      "suspended": "Selling is paused. Contact the marketplace to find out more."
+    },
+    "subtitle": "How your storefront presents you, and how the marketplace reaches you.",
+    "tax_remittance": "Tax remitted by",
+    "team_count": "Team members",
+    "vat_number": "VAT number",
+    "vat_status": {
+      "pending": "We are checking this number.",
+      "unavailable": "The registry could not be reached — we will try again.",
+      "unsupported": "This number is recorded as entered; we cannot check it automatically.",
+      "unverified": "This number could not be verified."
+    }
+  },
+  "seller_picker": {
+    "status": "Status",
+    "subtitle": "You run more than one. Pick which to manage.",
+    "title": "Choose a seller"
+  },
+  "seller_switcher": {
+    "label": "Switch seller"
+  },
+  "team": {
+    "actions": {
+      "copy_link": "Copy invitation link",
+      "remove": "Remove",
+      "resend": "Resend invitation",
+      "revoke": "Revoke"
+    },
+    "confirm": {
+      "remove_message": "{{name}} will lose access to this seller immediately.",
+      "remove_title": "Remove member",
+      "revoke_message": "The invitation to {{email}} will stop working.",
+      "revoke_title": "Revoke invitation"
+    },
+    "empty": "Nobody on the team yet",
+    "empty_description": "Invite a colleague and they will appear here once they accept.",
+    "invitations_section": "Pending invitations",
+    "invite_cta": "Invite member",
+    "invite_description": "They will get an email with a link to join this seller.",
+    "invite_email": "Email",
+    "invite_email_placeholder": "colleague@example.com",
+    "invite_sending": "Sending…",
+    "invite_submit": "Send invitation",
+    "invite_title": "Invite a colleague",
+    "members_section": "Members",
+    "messages": {
+      "invited": "Invitation sent",
+      "link_copied": "Invitation link copied",
+      "removed": "Member removed",
+      "resent": "Invitation sent again",
+      "revoked": "Invitation revoked"
+    },
+    "subtitle": "The people who can sign in and manage this seller.",
+    "table": {
+      "email": "Email",
+      "expires": "Expires",
+      "member": "Member"
+    },
+    "title": "Your team"
+  }
+}

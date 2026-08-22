@@ -14,13 +14,13 @@ const exp = _exp as { download_url: string; filename: string }
 // region:example
 // Fetch with the Bearer token, then drive the browser download:
 const res = await fetch(exp.download_url, {
-  headers: { Authorization: `Bearer ${token}` }
+  headers: { Authorization: `Bearer ${token}` },
 })
 const blob = await res.blob()
 const url = URL.createObjectURL(blob)
 const a = Object.assign(document.createElement('a'), {
   href: url,
-  download: exp.filename
+  download: exp.filename,
 })
 a.click()
 URL.revokeObjectURL(url)

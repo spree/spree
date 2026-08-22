@@ -9,6 +9,7 @@ const client = createAdminClient({
 const item = await client.orders.items.update('or_UkLWZg9DAJ', 'li_UkLWZg9DAJ', {
   quantity: 5,
 })
+
 // endregion:example
 
 export { item }

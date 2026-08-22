@@ -11,6 +11,7 @@
 //     import { AuthProvider } from '@spree/dashboard-core/providers/auth-provider'
 //     import { useResourceMutation } from '@spree/dashboard-core/hooks/use-resource-mutation'
 
+export * from './api-client'
 // ---------------------------------------------------------------------------
 // Admin SDK client (Vite-aware singleton; reads VITE_SPREE_API_URL at build)
 // ---------------------------------------------------------------------------
@@ -58,6 +59,7 @@ export * from './hooks/use-global-search'
 export * from './hooks/use-host-form'
 export * from './hooks/use-import'
 export * from './hooks/use-resource-mutation'
+export * from './hooks/use-stock-locations'
 export * from './hooks/use-switch-admin-locale'
 export * from './lib/create-action-registry'
 // ---------------------------------------------------------------------------
@@ -88,6 +90,7 @@ export * from './lib/settings-nav-registry'
 export * from './lib/slot-registry'
 export * from './lib/table-registry'
 export { ensureTimestampColumns } from './lib/timestamp-columns'
+export * from './pages/stock-locations'
 // ---------------------------------------------------------------------------
 // Plugin facade — re-exported for convenience; same API as `/plugin` subpath
 // ---------------------------------------------------------------------------
@@ -99,3 +102,5 @@ export * from './providers/auth-provider'
 export * from './providers/permission-provider'
 export * from './providers/sticky-header-provider'
 export * from './providers/store-provider'
+export * from './providers/tenant-provider'
+export * from './schemas/stock-location'

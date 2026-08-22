@@ -12,7 +12,6 @@ module Spree
     PICKUP_STOCK_POLICIES = %w[local any].freeze
 
     include Spree::SingleStoreResource
-    include Spree::UniqueName
     if defined?(Spree::Security::StockLocations)
       include Spree::Security::StockLocations
     end
@@ -27,6 +26,18 @@ module Spree
 
     has_iso_geography
 
+    # Whose shelf this is. Nil is the operator's own — the only case in a store
+    # that is not a marketplace.
+    belongs_to :seller, class_name: 'Spree::Seller', optional: true, inverse_of: :stock_locations
+
+    # Name uniqueness is per owner rather than per store (see UniqueName, which
+    # this deliberately does not include): an operator and each of their sellers
+    # may each have a "Warehouse", which is what a marketplace looks like.
+    normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
+    validates :name, presence: true,
+                     uniqueness: { case_sensitive: false, allow_blank: true,
+                                   scope: [*spree_base_uniqueness_scope, :store_id, :seller_id] }
+
     validates :kind, presence: true
     validates :pickup_stock_policy, inclusion: { in: PICKUP_STOCK_POLICIES }
     validates :pickup_ready_in_minutes,
@@ -36,11 +47,16 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[
       name active default kind pickup_enabled
       country_code state_code created_at updated_at
+      seller_id
     ]
+    self.whitelisted_ransackable_associations = %w[seller]
 
     scope :active, -> { where(active: true) }
     scope :pickup_enabled, -> { where(pickup_enabled: true) }
     scope :order_default, -> { order(default: :desc, name: :asc) }
+    # The operator's own locations — a marketplace's first-party stock.
+    scope :first_party, -> { where(seller_id: nil) }
+    scope :owned_by, ->(store_id:, seller_id:) { where(store_id: store_id, seller_id: seller_id) }
 
     after_create :create_stock_levels, if: :propagate_all_variants?
     after_save :ensure_one_default
@@ -275,13 +291,15 @@ module Spree
       Spree::StockLocations::StockLevels::CreateJob.perform_later(self)
     end
 
-    # One default per STORE — scoping to the whole table would let one
-    # store's default demote every other store's.
+    # One default per OWNER, not per store: on a marketplace the operator has a
+    # default and so does every seller, so scoping this to the store would let
+    # a seller saving their own default silently demote the operator's.
     def ensure_one_default
-      if default
-        store.stock_locations.where(default: true).where.not(id: id).update_all(default: false)
-        store.stock_locations.where.not(id: id).update_all(updated_at: Time.current)
-      end
+      return unless default
+
+      siblings = self.class.owned_by(store_id: store_id, seller_id: seller_id).where.not(id: id)
+      siblings.where(default: true).update_all(default: false)
+      siblings.update_all(updated_at: Time.current)
     end
 
     def conditional_touch_records

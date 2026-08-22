@@ -119,7 +119,10 @@ module Spree
       # Match on identity alone: folding the other attributes into the finder
       # made re-running fail once anything edited them.
       def provision_stock_location
-        location = store.stock_locations.where(name: Spree.t(:default_stock_location_name)).first_or_initialize
+        # first_party, so a seller who happened to name a location the same
+        # thing is never adopted as the store's own.
+        location = store.stock_locations.first_party.
+                   where(name: Spree.t(:default_stock_location_name)).first_or_initialize
         location.propagate_all_variants = false if location.new_record?
         location.country_code = country.iso
         location.active = true
@@ -191,10 +194,10 @@ module Spree
 
         # A counter to collect from is what makes pickup real, so the store's
         # default location opens for collection unless one already has.
-        if store.stock_locations.where(pickup_enabled: true).none?
-          store.stock_locations.find_by(default: true)&.update!(pickup_enabled: true)
+        if store.stock_locations.first_party.where(pickup_enabled: true).none?
+          store.stock_locations.first_party.find_by(default: true)&.update!(pickup_enabled: true)
         end
-        return if store.stock_locations.where(pickup_enabled: true).none?
+        return if store.stock_locations.first_party.where(pickup_enabled: true).none?
 
         delivery_method = store.delivery_methods.where(name: Spree.t('pickup.store_pickup')).first_or_initialize
         delivery_method.delivery_profile = profile

@@ -7,6 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const { data: batches } = await client.giftCardBatches.list({ page: 1, limit: 25 })
+
 // endregion:example
 
 export { batches }

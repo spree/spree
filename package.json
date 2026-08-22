@@ -14,6 +14,7 @@
     "server:create": "git clone --depth 1 --branch 6-0-dev https://github.com/spree/spree-starter.git server && rm -rf server/.git server/.gitignore && printf 'SPREE_PATH=..\\nSECRET_KEY_BASE=%s\\n' \"$(openssl rand -hex 64)\" > server/.env",
     "server:setup": "bash scripts/server-setup.sh",
     "server:dashboard": "turbo build --filter=@spree/dashboard && VITE_BASE_PATH=/dashboard/ pnpm --dir packages/dashboard-starter build",
+    "server:seller": "turbo build --filter=@spree/seller-dashboard && VITE_BASE_PATH=/sellers/ pnpm --dir packages/seller-dashboard-starter build",
     "server:dev": "SPREE_PATH=$PWD docker compose -f server/docker-compose.dev.yml -f scripts/docker-compose.edge.yml ${SPREE_MEILISEARCH:+-f scripts/docker-compose.meilisearch.yml} up --force-recreate --remove-orphans web",
     "server:build": "bash scripts/server-build.sh",
     "server:restart": "SPREE_PATH=$PWD docker compose -f server/docker-compose.dev.yml -f scripts/docker-compose.edge.yml restart web",
@@ -26,6 +27,7 @@
     "wt:template": "scripts/worktree/make-template.sh",
     "wt:dev": "scripts/worktree/dev.sh",
     "wt:dashboard": "scripts/worktree/dev-dashboard.sh",
+    "wt:seller": "scripts/worktree/dev-seller.sh",
     "wt:e2e": "scripts/worktree/e2e.sh",
     "changeset": "changeset",
     "version:preview": "changeset version --ignore @spree/sdk"

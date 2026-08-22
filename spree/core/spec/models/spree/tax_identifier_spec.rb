@@ -198,4 +198,32 @@ describe Spree::TaxIdentifier, type: :model do
       expect(identifier.owner).to eq(company)
     end
   end
+  # A seller's registration faces the other way from the rest: it is what the
+  # marketplace's own commission invoice is made out to, and what makes EU
+  # reverse charge on that fee possible.
+  describe 'a seller owner' do
+    let(:seller) { create(:seller) }
+
+    it 'is a valid owner' do
+      identifier = described_class.new(seller: seller, kind: 'eu_vat', value: 'GB123456789')
+
+      expect(identifier).to be_valid
+      expect(identifier.owner).to eq(seller)
+    end
+
+    it 'holds one registration per kind' do
+      described_class.create!(seller: seller, kind: 'eu_vat', value: 'GB123456789')
+      duplicate = described_class.new(seller: seller, kind: 'eu_vat', value: 'GB987654321')
+
+      expect(duplicate).not_to be_valid
+    end
+
+    it 'cannot also belong to somebody else' do
+      identifier = described_class.new(seller: seller, company: create(:company),
+                                       kind: 'eu_vat', value: 'GB123456789')
+
+      expect(identifier).not_to be_valid
+    end
+  end
+
 end

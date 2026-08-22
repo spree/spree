@@ -6,11 +6,15 @@ const client = createClient({
 })
 
 // region:example
-const session = await client.customer.paymentSetupSessions.create({
-  payment_method_id: 'pm_abc123',
-}, {
-  token: '<token>',
-})
+const session = await client.customer.paymentSetupSessions.create(
+  {
+    payment_method_id: 'pm_abc123',
+  },
+  {
+    token: '<token>',
+  },
+)
+
 // endregion:example
 
 export { session }

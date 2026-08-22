@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Fulfillment, Order } from '@spree/admin-sdk'
-import { mapSpreeErrorsToForm } from '@spree/dashboard-core'
+import { mapSpreeErrorsToForm, useStockLocations } from '@spree/dashboard-core'
 import {
   Button,
   Dialog,
@@ -25,7 +25,6 @@ import { z } from 'zod'
 import { useFulfillmentActions } from '../../../hooks/use-fulfillments'
 import { useOrder } from '../../../hooks/use-order'
 import { useStockCoverage } from '../../../hooks/use-stock-coverage'
-import { useStockLocations } from '../../../hooks/use-stock-locations'
 
 const fulfillmentEditSchema = z.object({
   stock_location_id: z.string().min(1),

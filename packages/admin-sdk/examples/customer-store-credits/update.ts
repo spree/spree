@@ -6,11 +6,10 @@ const client = createAdminClient({
 })
 
 // region:example
-const credit = await client.customers.storeCredits.update(
-  'cus_UkLWZg9DAJ',
-  'sc_UkLWZg9DAJ',
-  { memo: 'Reissued for damaged shipment' },
-)
+const credit = await client.customers.storeCredits.update('cus_UkLWZg9DAJ', 'sc_UkLWZg9DAJ', {
+  memo: 'Reissued for damaged shipment',
+})
+
 // endregion:example
 
 export { credit }

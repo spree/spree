@@ -1,5 +1,10 @@
-import { describe, it, expect } from 'vitest'
-import { convertContent, resolveImports, extractFrontmatter, rewriteLinks } from '../scripts/convert.js'
+import { describe, expect, it } from 'vitest'
+import {
+  convertContent,
+  extractFrontmatter,
+  resolveImports,
+  rewriteLinks,
+} from '../scripts/convert.js'
 
 // ---------------------------------------------------------------------------
 // extractFrontmatter
@@ -168,7 +173,8 @@ describe('convertContent — accordion', () => {
 
 describe('convertContent — cards', () => {
   it('converts Card with title and href to link', () => {
-    const input = '<Card title="Products" href="/developer/core-concepts/products">Product docs</Card>'
+    const input =
+      '<Card title="Products" href="/developer/core-concepts/products">Product docs</Card>'
     const result = convertContent(input)
     expect(result).toContain('- [Products](/developer/core-concepts/products) — Product docs')
   })

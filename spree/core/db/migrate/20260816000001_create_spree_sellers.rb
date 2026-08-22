@@ -9,7 +9,8 @@ class CreateSpreeSellers < ActiveRecord::Migration[8.1]
       t.string :billing_email
       t.text :about
       t.references :billing_address
-      t.references :returns_address
+      # No returns_address: returns route to a seller-owned stock location, so
+      # received goods restock somewhere inventory can see (Decision 12).
 
       # Seller acceptance of the store's seller terms — the timestamp is the
       # record of it, so onboarding can ask again when the terms change.

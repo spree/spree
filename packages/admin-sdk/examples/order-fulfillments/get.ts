@@ -7,6 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const fulfillment = await client.orders.fulfillments.get('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ')
+
 // endregion:example
 
 export { fulfillment }

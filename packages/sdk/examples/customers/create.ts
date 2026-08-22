@@ -16,6 +16,7 @@ const auth = await client.customers.create({
   accepts_email_marketing: true,
   metadata: { source: 'storefront' },
 })
+
 // endregion:example
 
 export { auth }

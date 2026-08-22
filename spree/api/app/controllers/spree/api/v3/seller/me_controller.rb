@@ -10,6 +10,8 @@ module Spree
         # is chosen. Sending the header still narrows `permission_keys` to that
         # seller.
         class MeController < Seller::BaseController
+          include Spree::Api::V3::PermissionSerialization
+
           skip_scope_check!
           skip_before_action :set_current_seller_context
           before_action :require_current_user!
@@ -22,9 +24,14 @@ module Spree
 
           def me_response
             {
-              user: Spree.api.admin_user_serializer.new(current_user, params: serializer_params).to_h,
+              user: Spree.api.seller_team_member_serializer.new(current_user, params: serializer_params).to_h,
               sellers: serialized_sellers,
-              permission_keys: permission_keys
+              # Both shapes, exactly as the admin `/me`: the panel's `<Can>`
+              # reads CanCanCan rules, the key gate reads keys. Sending only
+              # keys left `<Can>` answering false for everything on the seller
+              # panel — silently, since nothing gated on it yet.
+              permissions: serialize_permissions(seller_ability),
+              permission_keys: serialize_permission_keys(seller_ability)
             }
           end
 
@@ -35,12 +42,13 @@ module Spree
           end
 
           # Empty until a seller is named: capability is per seller, so there is
-          # no meaningful answer spanning all of them.
-          def permission_keys
-            return [] if current_seller.nil?
+          # no meaningful answer spanning all of them. A bare ability (no
+          # resource) serializes to nothing rather than raising, so the panel
+          # can call `/me` before choosing a seller.
+          def seller_ability
+            return Spree::Ability.new(nil) if current_seller.nil?
 
-            ability = current_ability
-            ability.respond_to?(:permission_keys) ? ability.permission_keys : []
+            current_ability
           end
 
           def serializer_params

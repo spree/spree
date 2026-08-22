@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
 import SparkMD5 from 'spark-md5'
-import { adminClient } from '../client'
+import { getApiClient } from '../api-client'
 
 function computeMD5Checksum(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -62,7 +62,10 @@ export function useDirectUpload() {
         signed_id: string
       }
       try {
-        response = await adminClient.directUploads.create({
+        const presign = getApiClient().createDirectUpload
+        if (!presign) throw new Error('This panel cannot upload files.')
+
+        response = await presign({
           blob: {
             filename: file.name,
             byte_size: file.size,

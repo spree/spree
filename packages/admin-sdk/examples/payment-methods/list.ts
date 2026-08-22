@@ -7,6 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const { data: paymentMethods } = await client.paymentMethods.list()
+
 // endregion:example
 
 export { paymentMethods }

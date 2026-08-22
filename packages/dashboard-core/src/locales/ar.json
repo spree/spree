@@ -1,5 +1,48 @@
 {
   "admin": {
+    "a11y": {
+      "breadcrumb": "مسار التنقل",
+      "breadcrumb_more": "المزيد",
+      "change_color": "تغيير اللون ({{value}})",
+      "clear_date": "مسح التاريخ",
+      "clear_selection": "مسح التحديد",
+      "collapse_all": "طي الكل",
+      "delete_image": "حذف الصورة",
+      "drag_to_reorder": "اسحب لإعادة الترتيب",
+      "edit_media": "تعديل الوسائط",
+      "expand_all": "توسيع الكل",
+      "hide_value": "إخفاء القيمة",
+      "pick_color": "اختر لونًا",
+      "refetch": "إعادة الجلب",
+      "remove_image": "إزالة الصورة",
+      "remove_value": "إزالة القيمة",
+      "reorder": "إعادة الترتيب",
+      "select_all_rows": "تحديد جميع الصفوف في هذه الصفحة",
+      "select_row": "تحديد الصف",
+      "settings_navigation": "تنقل الإعدادات",
+      "show_value": "إظهار القيمة",
+      "sidebar": "الشريط الجانبي",
+      "sidebar_description": "يعرض الشريط الجانبي للجوال.",
+      "stock_at_locations": "المخزون في المواقع",
+      "store_switcher": "تبديل المتجر",
+      "toggle_sidebar": "تبديل الشريط الجانبي",
+      "upload_image": "رفع صورة",
+      "user_menu": "قائمة المستخدم",
+      "view_image": "عرض الصورة"
+    },
+    "account": {
+      "community": "المجتمع",
+      "contact_support": "الاتصال بالدعم",
+      "documentation": "التوثيق",
+      "edit_profile": "تعديل الملف الشخصي",
+      "language": {
+        "label": "اللغة",
+        "update_failed": "تعذّر حفظ تفضيل اللغة. يرجى المحاولة مجددًا."
+      },
+      "log_out": "تسجيل الخروج",
+      "preferences": "التفضيلات",
+      "view_store": "عرض المتجر"
+    },
     "actions": {
       "actions_menu": "الإجراءات",
       "add": "إضافة",
@@ -46,387 +89,99 @@
       "view_all": "عرض الكل",
       "view_details": "عرض التفاصيل"
     },
-    "row_actions": {
-      "menu_label": "فتح الإجراءات",
-      "edit": "تعديل",
-      "clone": "تكرار",
-      "delete": "حذف"
-    },
-    "a11y": {
-      "breadcrumb": "مسار التنقل",
-      "toggle_sidebar": "تبديل الشريط الجانبي",
-      "settings_navigation": "تنقل الإعدادات",
-      "user_menu": "قائمة المستخدم",
-      "drag_to_reorder": "اسحب لإعادة الترتيب",
-      "reorder": "إعادة الترتيب",
-      "select_all_rows": "تحديد جميع الصفوف في هذه الصفحة",
-      "select_row": "تحديد الصف",
-      "clear_date": "مسح التاريخ",
-      "clear_selection": "مسح التحديد",
-      "expand_all": "توسيع الكل",
-      "collapse_all": "طي الكل",
-      "refetch": "إعادة الجلب",
-      "hide_value": "إخفاء القيمة",
-      "show_value": "إظهار القيمة",
-      "pick_color": "اختر لونًا",
-      "change_color": "تغيير اللون ({{value}})",
-      "stock_at_locations": "المخزون في المواقع",
-      "edit_media": "تعديل الوسائط",
-      "delete_image": "حذف الصورة",
-      "remove_image": "إزالة الصورة",
-      "view_image": "عرض الصورة",
-      "upload_image": "رفع صورة",
-      "remove_value": "إزالة القيمة",
-      "breadcrumb_more": "المزيد",
-      "sidebar": "الشريط الجانبي",
-      "sidebar_description": "يعرض الشريط الجانبي للجوال.",
-      "store_switcher": "تبديل المتجر"
-    },
-    "common": {
-      "loading": "جارٍ التحميل…",
-      "searching": "جارٍ البحث…",
-      "no_results": "لا توجد نتائج",
-      "optional": "اختياري",
-      "required": "مطلوب",
-      "yes": "نعم",
-      "no": "لا",
-      "or": "أو",
-      "and": "و",
-      "all": "الكل",
-      "none": "لا شيء",
-      "page_of": "صفحة {{page}} من {{total}}",
-      "prev": "السابق",
-      "next": "التالي",
-      "select_placeholder": "اختر…",
-      "search_placeholder": "بحث…",
-      "pick_date": "اختر تاريخًا",
-      "comma_separated_hint": "افصل القيم بفواصل.",
-      "are_you_sure": "هل أنت متأكد؟",
-      "remove_question": "إزالة؟",
-      "deleted": "تم الحذف",
-      "unsaved_changes": "لديك تغييرات غير محفوظة.",
-      "prices": "الأسعار",
-      "delete_confirm_message": "هل أنت متأكد؟ لا يمكن التراجع عن هذا الإجراء.",
-      "adjust_search_or_filters": "جرّب تعديل البحث أو عوامل التصفية",
-      "default": "افتراضي",
-      "cancel": "إلغاء",
-      "empty_value": "—",
-      "retry": "أعد المحاولة"
+    "auth": {
+      "back_to_login": "العودة إلى تسجيل الدخول",
+      "forgot_password": {
+        "error": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+        "link": "هل نسيت كلمة المرور؟",
+        "sending": "جارٍ الإرسال…",
+        "sent_subtitle": "إذا كان هناك حساب مرتبط بهذا البريد الإلكتروني، فإن رابط إعادة تعيين كلمة المرور في طريقه إليك.",
+        "sent_title": "تحقق من بريدك الإلكتروني",
+        "submit": "إرسال رابط إعادة التعيين",
+        "subtitle": "أدخل بريدك الإلكتروني وسنرسل لك رابطًا لإعادة تعيين كلمة المرور.",
+        "title": "إعادة تعيين كلمة المرور"
+      },
+      "login": {
+        "account_not_provisioned": "هذا الحساب غير مصرح له بالوصول إلى هذا المتجر. اطلب دعوة من المسؤول.",
+        "divider": "أو",
+        "invalid_oauth_state": "انتهت صلاحية جلسة تسجيل الدخول أو أنها غير صالحة. يرجى بدء تسجيل الدخول من جديد.",
+        "providers_error_message": "تعذر تحميل خيارات تسجيل الدخول. يرجى تحديث الصفحة أو الاتصال بالمسؤول.",
+        "providers_error_title": "تسجيل الدخول غير متاح",
+        "rate_limit_exceeded": "عدد كبير جدًا من محاولات تسجيل الدخول. يرجى الانتظار قليلاً ثم المحاولة مرة أخرى.",
+        "sso_button": "المتابعة باستخدام {{provider}}",
+        "sso_failed": "تعذر تسجيل دخولك باستخدام هذا المزود. يرجى المحاولة مرة أخرى.",
+        "subtitle": "سجّل الدخول إلى حساب الإدارة",
+        "title": "مرحبًا بعودتك"
+      },
+      "logout": "تسجيل الخروج",
+      "reset_password": {
+        "confirm_password_label": "تأكيد كلمة المرور الجديدة",
+        "error": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+        "missing_token_message": "رابط إعادة تعيين كلمة المرور هذا يفتقد الرمز المميز.",
+        "missing_token_title": "رابط إعادة التعيين غير صالح",
+        "new_password_label": "كلمة المرور الجديدة",
+        "request_new_link": "اطلب رابط إعادة تعيين جديدًا",
+        "submit": "إعادة تعيين كلمة المرور",
+        "submitting": "جارٍ إعادة التعيين…",
+        "subtitle": "أدخل كلمة مرور جديدة لحساب المشرف الخاص بك.",
+        "title": "اختر كلمة مرور جديدة",
+        "token_invalid": "رابط إعادة التعيين هذا غير صالح أو انتهت صلاحيته. اطلب رابطًا جديدًا."
+      }
     },
     "color_picker": {
       "no_color": "بدون لون"
     },
-    "messages": {
-      "saved": "تم الحفظ",
-      "created": "تم الإنشاء",
-      "updated": "تم التحديث",
-      "removed": "تمت الإزالة",
-      "settings_updated": "تم تحديث الإعدادات",
-      "store_settings_updated": "تم تحديث إعدادات المتجر",
-      "invitation_sent": "تم إرسال الدعوة",
-      "invitation_resent": "تم إعادة إرسال الدعوة",
-      "invitation_accepted": "مرحبًا بك في Spree",
-      "key_created": "تم إنشاء المفتاح",
-      "key_updated": "تم تحديث المفتاح",
-      "key_revoked": "تم إلغاء تفويض المفتاح",
-      "key_deleted": "تم حذف المفتاح",
-      "product_saved": "تم حفظ المنتج",
-      "product_created": "تم إنشاء المنتج",
-      "product_deleted": "تم حذف المنتج",
-      "order_saved": "تم حفظ الطلب",
-      "customer_saved": "تم حفظ العميل",
-      "customer_deleted": "تم حذف العميل",
-      "payment_method_saved": "تم حفظ طريقة الدفع",
-      "tax_category_saved": "تم حفظ فئة الضريبة",
-      "stock_location_saved": "تم حفظ موقع المخزون",
-      "promotion_created": "تم إنشاء العرض الترويجي",
-      "promotion_saved": "تم حفظ العرض الترويجي",
-      "promotion_deleted": "تم حذف العرض الترويجي",
-      "gift_card_created": "تم إنشاء بطاقة الهدايا",
-      "address_saved": "تم حفظ العنوان",
-      "address_removed": "تمت إزالة العنوان",
-      "store_credit_saved": "تم حفظ رصيد المتجر",
-      "store_credit_removed": "تمت إزالة رصيد المتجر",
-      "copied_to_clipboard": "تم النسخ إلى الحافظة",
-      "profile_updated": "تم تحديث الملف الشخصي"
-    },
-    "errors": {
-      "required": "هذا الحقل مطلوب",
-      "generic": "حدث خطأ ما",
-      "unexpected": "حدث خطأ غير متوقع",
-      "failed_to_load": "فشل التحميل",
-      "failed_to_save": "فشل الحفظ",
-      "failed_to_update": "فشل التحديث",
-      "failed_to_create": "فشل الإنشاء",
-      "failed_to_delete": "فشل الحذف",
-      "failed_to_load_customer": "فشل تحميل العميل",
-      "failed_to_load_order": "فشل تحميل الطلب",
-      "failed_to_load_product": "فشل تحميل المنتج",
-      "failed_to_send_invitation": "فشل إرسال الدعوة",
-      "failed_to_revoke_key": "فشل إلغاء تفويض المفتاح",
-      "failed_to_update_store": "فشل تحديث إعدادات المتجر",
-      "failed_to_update_staff": "فشل تحديث الموظف",
-      "network": "خطأ في الشبكة — يرجى المحاولة مجددًا",
-      "unauthorized": "ليس لديك صلاحية للقيام بذلك",
-      "not_found": "غير موجود",
-      "failed_to_update_profile": "فشل تحديث الملف الشخصي",
-      "unexpected_retry": "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى."
-    },
-    "auth": {
-      "login": {
-        "title": "مرحبًا بعودتك",
-        "subtitle": "سجّل الدخول إلى حساب الإدارة",
-        "divider": "أو",
-        "sso_button": "المتابعة باستخدام {{provider}}",
-        "providers_error_title": "تسجيل الدخول غير متاح",
-        "providers_error_message": "تعذر تحميل خيارات تسجيل الدخول. يرجى تحديث الصفحة أو الاتصال بالمسؤول.",
-        "account_not_provisioned": "هذا الحساب غير مصرح له بالوصول إلى هذا المتجر. اطلب دعوة من المسؤول.",
-        "sso_failed": "تعذر تسجيل دخولك باستخدام هذا المزود. يرجى المحاولة مرة أخرى.",
-        "invalid_oauth_state": "انتهت صلاحية جلسة تسجيل الدخول أو أنها غير صالحة. يرجى بدء تسجيل الدخول من جديد.",
-        "rate_limit_exceeded": "عدد كبير جدًا من محاولات تسجيل الدخول. يرجى الانتظار قليلاً ثم المحاولة مرة أخرى."
-      },
-      "forgot_password": {
-        "link": "هل نسيت كلمة المرور؟",
-        "title": "إعادة تعيين كلمة المرور",
-        "subtitle": "أدخل بريدك الإلكتروني وسنرسل لك رابطًا لإعادة تعيين كلمة المرور.",
-        "submit": "إرسال رابط إعادة التعيين",
-        "sending": "جارٍ الإرسال…",
-        "sent_title": "تحقق من بريدك الإلكتروني",
-        "sent_subtitle": "إذا كان هناك حساب مرتبط بهذا البريد الإلكتروني، فإن رابط إعادة تعيين كلمة المرور في طريقه إليك.",
-        "error": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
-      },
-      "reset_password": {
-        "title": "اختر كلمة مرور جديدة",
-        "subtitle": "أدخل كلمة مرور جديدة لحساب المشرف الخاص بك.",
-        "new_password_label": "كلمة المرور الجديدة",
-        "confirm_password_label": "تأكيد كلمة المرور الجديدة",
-        "submit": "إعادة تعيين كلمة المرور",
-        "submitting": "جارٍ إعادة التعيين…",
-        "token_invalid": "رابط إعادة التعيين هذا غير صالح أو انتهت صلاحيته. اطلب رابطًا جديدًا.",
-        "error": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
-        "missing_token_title": "رابط إعادة التعيين غير صالح",
-        "missing_token_message": "رابط إعادة تعيين كلمة المرور هذا يفتقد الرمز المميز.",
-        "request_new_link": "اطلب رابط إعادة تعيين جديدًا"
-      },
-      "logout": "تسجيل الخروج",
-      "back_to_login": "العودة إلى تسجيل الدخول"
-    },
-    "fields": {
-      "name": {
-        "label": "الاسم"
-      },
-      "label": {
-        "label": "التسمية"
-      },
-      "description": {
-        "label": "الوصف"
-      },
-      "code": {
-        "label": "الرمز"
-      },
-      "email": {
-        "label": "البريد الإلكتروني"
-      },
-      "password": {
-        "label": "كلمة المرور"
-      },
-      "first_name": {
-        "label": "الاسم الأول"
-      },
-      "last_name": {
-        "label": "اسم العائلة"
-      },
-      "phone": {
-        "label": "الهاتف"
-      },
-      "company": {
-        "label": "الشركة"
-      },
-      "address1": {
-        "label": "سطر العنوان 1"
-      },
-      "address2": {
-        "label": "سطر العنوان 2"
-      },
-      "city": {
-        "label": "المدينة"
-      },
-      "zipcode": {
-        "label": "الرمز البريدي"
-      },
-      "country_code": {
-        "label": "البلد"
-      },
-      "state_code": {
-        "label": "الولاية / المقاطعة"
-      },
-      "state_name": {
-        "label": "الولاية / المقاطعة"
-      },
-      "starts_at": {
-        "label": "يبدأ"
-      },
-      "ends_at": {
-        "label": "ينتهي"
-      },
-      "expires_at": {
-        "label": "ينتهي في"
-      },
-      "active": {
-        "label": "نشط"
-      },
-      "kind": {
-        "label": "النوع"
-      },
-      "amount": {
-        "label": "المبلغ"
-      },
-      "currency": {
-        "label": "العملة"
-      },
-      "quantity": {
-        "label": "الكمية"
-      },
-      "slug": {
-        "label": "Slug"
-      },
-      "meta_title": {
-        "label": "عنوان Meta"
-      },
-      "meta_description": {
-        "label": "وصف Meta"
-      },
-      "status": {
-        "label": "الحالة"
-      },
-      "created_at": {
-        "label": "تاريخ الإنشاء"
-      },
-      "updated_at": {
-        "label": "تاريخ التحديث"
-      },
-      "completed_at": {
-        "label": "تاريخ الإكمال"
-      },
-      "total": {
-        "label": "الإجمالي"
-      },
-      "subtotal": {
-        "label": "المجموع الفرعي"
-      },
-      "tax": {
-        "label": "الضريبة"
-      },
-      "shipping": {
-        "label": "الشحن"
-      },
-      "discount": {
-        "label": "الخصم"
-      },
-      "login": {
-        "email": {
-          "placeholder": "admin@example.com"
-        }
-      },
-      "address": {
-        "label": {
-          "label": "التسمية",
-          "placeholder": "مثال: المنزل، المكتب"
-        },
-        "address1": {
-          "label": "العنوان"
-        },
-        "address2": {
-          "label": "الشقة، الجناح، إلخ."
-        },
-        "postal_code": {
-          "label": "الرمز البريدي"
-        },
-        "is_default_billing": {
-          "label": "عنوان الفوترة الافتراضي"
-        },
-        "is_default_shipping": {
-          "label": "عنوان الشحن الافتراضي"
-        }
-      },
-      "media": {
-        "alt": {
-          "label": "النص البديل",
-          "placeholder": "صف الصورة لإمكانية الوصول و SEO"
-        }
-      },
-      "storefront_visible": {
-        "label": "مرئي في المتجر",
-        "help": "عند الإيقاف، يرى موظفو الإدارة فقط هذا الخيار (طلبات المكتب الخلفي، الإدخال اليدوي)."
-      },
-      "pretty_name": {
-        "label": "الاسم الكامل"
-      },
-      "permalink": {
-        "label": "الرابط الدائم"
-      },
-      "number": {
-        "label": "الرقم"
-      },
-      "contact_email": {
-        "label": "البريد الإلكتروني للتواصل"
-      },
-      "enabled": {
-        "label": "مُفعّل"
-      }
+    "common": {
+      "adjust_search_or_filters": "جرّب تعديل البحث أو عوامل التصفية",
+      "all": "الكل",
+      "and": "و",
+      "are_you_sure": "هل أنت متأكد؟",
+      "cancel": "إلغاء",
+      "comma_separated_hint": "افصل القيم بفواصل.",
+      "default": "افتراضي",
+      "delete_confirm_message": "هل أنت متأكد؟ لا يمكن التراجع عن هذا الإجراء.",
+      "deleted": "تم الحذف",
+      "empty_value": "—",
+      "loading": "جارٍ التحميل…",
+      "next": "التالي",
+      "no": "لا",
+      "no_results": "لا توجد نتائج",
+      "none": "لا شيء",
+      "optional": "اختياري",
+      "or": "أو",
+      "page_of": "صفحة {{page}} من {{total}}",
+      "pick_date": "اختر تاريخًا",
+      "prev": "السابق",
+      "prices": "الأسعار",
+      "remove_question": "إزالة؟",
+      "required": "مطلوب",
+      "retry": "أعد المحاولة",
+      "search_placeholder": "بحث…",
+      "searching": "جارٍ البحث…",
+      "select_placeholder": "اختر…",
+      "unsaved_changes": "لديك تغييرات غير محفوظة.",
+      "yes": "نعم"
     },
     "components": {
-      "currency_select": {
-        "placeholder": "اختر عملة",
-        "search_placeholder": "البحث في العملات…",
-        "empty": "لم يتم العثور على عملات"
+      "address_block": {
+        "not_provided": "غير مُقدَّم"
+      },
+      "address_form_dialog": {
+        "description": "تحديث تفاصيل العنوان.",
+        "edit_title": "تعديل العنوان"
+      },
+      "bulk_action_bar": {
+        "default_error": "فشلت العملية الجماعية",
+        "default_success": "تم تحديث {n} سجل",
+        "selected": "تم تحديد {{count}}"
       },
       "channel_select": {
         "placeholder": "اختر قناة مبيعات"
       },
-      "file_upload": {
-        "attached": "ملف مرفق",
-        "browse": "استعراض الملفات",
-        "drop_image_label": "أسقط صورة هنا، أو انقر للاستعراض",
-        "drop_label": "أسقط ملفًا هنا، أو انقر للاستعراض",
-        "invalid_type": "نوع الملف هذا غير مقبول (المتوقع: {{accept}})",
-        "upload_failed": "فشل الرفع: {{message}}",
-        "uploading": "جارٍ الرفع…"
-      },
-      "locale_select": {
-        "placeholder": "اختر لغة",
-        "multi_placeholder": "إضافة لغات…",
-        "search_placeholder": "البحث في اللغات…",
-        "empty": "لم يتم العثور على لغات"
-      },
-      "country_combobox": {
-        "placeholder": "اختر بلداً",
-        "search_placeholder": "البحث في البلدان…",
-        "empty": "لم يتم العثور على بلدان"
-      },
-      "state_combobox": {
-        "placeholder": "اختر ولاية",
-        "search_placeholder": "البحث في الولايات…",
-        "empty": "لم يتم العثور على ولايات"
-      },
       "command_palette": {
-        "placeholder": "البحث في المنتجات والطلبات والعملاء…",
-        "title": "البحث والأوامر",
-        "description": "ابحث في المنتجات والطلبات والعملاء، أو نفّذ أمرًا.",
-        "no_results": "لا توجد نتائج لـ \"{{query}}\".",
-        "empty_hint": "اكتب للبحث، أو اختر أمرًا أدناه.",
-        "goto": "انتقل إلى",
-        "goto_label": "انتقل إلى {{label}}",
-        "hints": {
-          "navigate": "التنقل",
-          "select": "اختيار",
-          "close": "إغلاق",
-          "esc_key": "esc"
-        },
         "create": {
           "heading": "إنشاء",
           "label": "إنشاء {{noun}}",
-          "verbs": "إضافة,جديد,جديدة,أضف,إنشاء,انشاء",
           "nouns": {
             "category": "فئة",
             "category_plural": "الفئات",
@@ -458,247 +213,603 @@
             "stock_location_plural": "المستودعات",
             "stock_transfer": "تحويل",
             "stock_transfer_plural": "التحويلات"
-          }
-        }
-      },
-      "bulk_action_bar": {
-        "selected": "تم تحديد {{count}}",
-        "default_success": "تم تحديث {n} سجل",
-        "default_error": "فشلت العملية الجماعية"
-      },
-      "preferences_form": {
-        "comma_separated_hint": "افصل القيم بفواصل.",
-        "tiers": {
-          "label": "المستويات",
-          "header_threshold": "إجمالي الطلب ≥",
-          "header_value": "الخصم",
-          "empty": "لا توجد مستويات بعد. ينطبق السعر الأساسي حتى تضيف مستوى.",
-          "add_tier": "إضافة مستوى",
-          "remove_tier": "إزالة المستوى"
+          },
+          "verbs": "إضافة,جديد,جديدة,أضف,إنشاء,انشاء"
         },
-        "unlimited": "غير محدود"
+        "description": "ابحث في المنتجات والطلبات والعملاء، أو نفّذ أمرًا.",
+        "empty_hint": "اكتب للبحث، أو اختر أمرًا أدناه.",
+        "goto": "انتقل إلى",
+        "goto_label": "انتقل إلى {{label}}",
+        "hints": {
+          "close": "إغلاق",
+          "esc_key": "esc",
+          "navigate": "التنقل",
+          "select": "اختيار"
+        },
+        "no_results": "لا توجد نتائج لـ \"{{query}}\".",
+        "placeholder": "البحث في المنتجات والطلبات والعملاء…",
+        "title": "البحث والأوامر"
       },
       "confirm_dialog": {
         "title": "هل أنت متأكد؟"
       },
-      "table_toolbar": {
-        "search_placeholder": "بحث…",
-        "filter_select_placeholder": "اختر…",
-        "filter_date_placeholder": "اختر تاريخًا",
-        "filter_text_placeholder": "تصفية…",
-        "filters_button": "الفلاتر",
-        "sort_by": "ترتيب حسب",
-        "sort_tooltip": "ترتيب",
-        "order": "الترتيب",
-        "ascending": "تصاعدي",
-        "descending": "تنازلي",
-        "columns_tooltip": "الأعمدة",
-        "visible_columns": "الأعمدة المرئية",
-        "reset_to_default": "إعادة إلى الافتراضي",
-        "clear_all": "مسح الكل",
-        "remove_filter": "إزالة الفلتر",
-        "no_filters": "لا توجد فلاتر. انقر أدناه لإضافة واحد.",
-        "add_filter": "إضافة فلتر",
-        "operators": {
-          "contains": "يحتوي على",
-          "equals": "يساوي",
-          "does_not_equal": "لا يساوي",
-          "starts_with": "يبدأ بـ",
-          "ends_with": "ينتهي بـ",
-          "is_set": "محدّد",
-          "is_not_set": "غير محدّد",
-          "is": "هو",
-          "is_not": "ليس",
-          "is_any_of": "أي من",
-          "is_none_of": "لا شيء من",
-          "greater_than": "أكبر من",
-          "greater_than_or_equal": "أكبر من أو يساوي",
-          "less_than": "أقل من",
-          "less_than_or_equal": "أقل من أو يساوي",
-          "after": "بعد",
-          "before": "قبل",
-          "on_or_after": "في أو بعد",
-          "on_or_before": "في أو قبل"
-        }
+      "country_combobox": {
+        "empty": "لم يتم العثور على بلدان",
+        "placeholder": "اختر بلداً",
+        "search_placeholder": "البحث في البلدان…"
       },
-      "media": {
-        "remove_tooltip": "إزالة الصورة"
+      "currency_select": {
+        "empty": "لم يتم العثور على عملات",
+        "placeholder": "اختر عملة",
+        "search_placeholder": "البحث في العملات…"
       },
       "custom_fields": {
         "json_placeholder": "{ \"example\": \"value\" }"
       },
-      "export_button": {
-        "title": "تصدير إلى CSV",
-        "description": "سنجهّز ملف CSV في الخلفية ونحمّله فور جاهزيته. إذا استغرق الأمر وقتًا طويلًا، ستصلك أيضًا رابط عبر البريد الإلكتروني.",
-        "filtered": {
-          "title": "الفلتر الحالي",
-          "no_filter": "لا يوجد فلتر نشط — نفس تصدير جميع السجلات.",
-          "unknown_count": "تصدير السجلات المطابقة للفلتر الحالي.",
-          "count_one": "تصدير السجل {{formattedCount}} المطابق للفلتر الحالي.",
-          "count_other": "تصدير {{formattedCount}} سجل مطابق للفلتر الحالي.",
-          "count_few": "تصدير {{formattedCount}} سجلات مطابقة للفلتر الحالي.",
-          "count_many": "تصدير {{formattedCount}} سجلًا مطابقًا للفلتر الحالي."
-        },
-        "all": {
-          "title": "جميع السجلات",
-          "description": "تجاهل الفلاتر وتصدير كل شيء في هذا المتجر."
-        },
-        "preparing": "جارٍ تحضير التصدير…",
-        "downloaded": "تم تنزيل التصدير",
-        "email_fallback": "لا يزال قيد المعالجة — سنرسل لك رابطًا بالبريد عند الجاهزية.",
-        "failed": "فشل التصدير: {{message}}"
-      },
-      "import_button": {
-        "title": "استيراد من CSV",
-        "description": "قم برفع ملف CSV. ستقوم بمطابقة أعمدته مع الحقول في الخطوة التالية.",
-        "drop_label": "أسقط ملف CSV هنا، أو انقر للاستعراض",
-        "delimiter_label": "فاصل الأعمدة",
-        "delimiters": {
-          "comma": "فاصلة (,)",
-          "semicolon": "فاصلة منقوطة (;)",
-          "pipe": "خط عمودي (|)",
-          "tab": "مسافة جدولة"
-        },
-        "download_template": "تنزيل قالب CSV",
-        "template_failed": "فشل تنزيل القالب: {{message}}",
-        "submit": "متابعة",
-        "failed": "فشل الاستيراد: {{message}}"
-      },
-      "metadata_card": {
-        "title": "البيانات الوصفية",
-        "empty_title": "لا توجد بيانات وصفية",
-        "empty_description": "تملأ التطبيقات والتكاملات هذا تلقائيًا."
-      },
-      "rich_text_editor": {
-        "placeholder": "اكتب شيئًا…",
-        "link_url_prompt": "URL",
-        "bold": "عريض",
-        "italic": "مائل",
-        "strikethrough": "يتوسطه خط",
-        "bullet_list": "قائمة نقطية",
-        "ordered_list": "قائمة مرقمة",
-        "blockquote": "اقتباس",
-        "link": "رابط",
-        "undo": "تراجع",
-        "redo": "إعادة"
-      },
       "date_range_picker": {
         "presets": {
-          "last_7_days": "آخر 7 أيام",
           "last_14_days": "آخر 14 يومًا",
           "last_30_days": "آخر 30 يومًا",
+          "last_7_days": "آخر 7 أيام",
           "last_90_days": "آخر 90 يومًا",
           "this_month": "هذا الشهر",
           "year_to_date": "منذ بداية العام"
         }
       },
-      "pagination": {
-        "range": "{{from}}–{{to}} من {{count}}",
-        "rows_per_page": "صفوف لكل صفحة",
-        "first_page": "الانتقال إلى الصفحة الأولى",
-        "previous_page": "الانتقال إلى الصفحة السابقة",
-        "next_page": "الانتقال إلى الصفحة التالية",
-        "last_page": "الانتقال إلى الصفحة الأخيرة"
-      },
-      "theme_toggle": {
-        "label": "المظهر",
-        "light": "فاتح",
-        "dark": "داكن",
-        "system": "النظام"
-      },
-      "json_preview_drawer": {
-        "copied": "تم النسخ",
-        "copy_all": "نسخ الكل",
-        "open_raw": "فتح الاستجابة الخام",
-        "raw": "خام",
-        "failed_to_load": "فشل التحميل: {{message}}",
-        "collapse_depth": "عمق الطي",
-        "depth": "العمق {{level}}",
-        "title": "JSON"
-      },
-      "page_header": {
-        "view_as_json": "عرض كـ JSON",
-        "copy_id": "نسخ ID",
-        "copy_number": "نسخ الرقم"
-      },
-      "secret_input": {
-        "replace": "استبدال",
-        "stored_help": "مخزّن على الخادم. انقر استبدال للتدوير.",
-        "new_value_placeholder": "قيمة جديدة"
-      },
-      "tag_combobox": {
-        "placeholder": "اكتب لإضافة وسوم…",
-        "empty_hint": "اكتب واضغط Enter لإنشاء وسم",
-        "create_option": "إنشاء «{{tag}}»"
-      },
-      "address_form_dialog": {
-        "edit_title": "تعديل العنوان",
-        "description": "تحديث تفاصيل العنوان."
-      },
       "error_state": {
         "retry": "إعادة المحاولة"
       },
-      "address_block": {
-        "not_provided": "غير مُقدَّم"
+      "export_button": {
+        "all": {
+          "description": "تجاهل الفلاتر وتصدير كل شيء في هذا المتجر.",
+          "title": "جميع السجلات"
+        },
+        "description": "سنجهّز ملف CSV في الخلفية ونحمّله فور جاهزيته. إذا استغرق الأمر وقتًا طويلًا، ستصلك أيضًا رابط عبر البريد الإلكتروني.",
+        "downloaded": "تم تنزيل التصدير",
+        "email_fallback": "لا يزال قيد المعالجة — سنرسل لك رابطًا بالبريد عند الجاهزية.",
+        "failed": "فشل التصدير: {{message}}",
+        "filtered": {
+          "count_few": "تصدير {{formattedCount}} سجلات مطابقة للفلتر الحالي.",
+          "count_many": "تصدير {{formattedCount}} سجلًا مطابقًا للفلتر الحالي.",
+          "count_one": "تصدير السجل {{formattedCount}} المطابق للفلتر الحالي.",
+          "count_other": "تصدير {{formattedCount}} سجل مطابق للفلتر الحالي.",
+          "no_filter": "لا يوجد فلتر نشط — نفس تصدير جميع السجلات.",
+          "title": "الفلتر الحالي",
+          "unknown_count": "تصدير السجلات المطابقة للفلتر الحالي."
+        },
+        "preparing": "جارٍ تحضير التصدير…",
+        "title": "تصدير إلى CSV"
+      },
+      "file_upload": {
+        "attached": "ملف مرفق",
+        "browse": "استعراض الملفات",
+        "drop_image_label": "أسقط صورة هنا، أو انقر للاستعراض",
+        "drop_label": "أسقط ملفًا هنا، أو انقر للاستعراض",
+        "invalid_type": "نوع الملف هذا غير مقبول (المتوقع: {{accept}})",
+        "upload_failed": "فشل الرفع: {{message}}",
+        "uploading": "جارٍ الرفع…"
+      },
+      "import_button": {
+        "delimiter_label": "فاصل الأعمدة",
+        "delimiters": {
+          "comma": "فاصلة (,)",
+          "pipe": "خط عمودي (|)",
+          "semicolon": "فاصلة منقوطة (;)",
+          "tab": "مسافة جدولة"
+        },
+        "description": "قم برفع ملف CSV. ستقوم بمطابقة أعمدته مع الحقول في الخطوة التالية.",
+        "download_template": "تنزيل قالب CSV",
+        "drop_label": "أسقط ملف CSV هنا، أو انقر للاستعراض",
+        "failed": "فشل الاستيراد: {{message}}",
+        "submit": "متابعة",
+        "template_failed": "فشل تنزيل القالب: {{message}}",
+        "title": "استيراد من CSV"
+      },
+      "json_preview_drawer": {
+        "collapse_depth": "عمق الطي",
+        "copied": "تم النسخ",
+        "copy_all": "نسخ الكل",
+        "depth": "العمق {{level}}",
+        "failed_to_load": "فشل التحميل: {{message}}",
+        "open_raw": "فتح الاستجابة الخام",
+        "raw": "خام",
+        "title": "JSON"
+      },
+      "locale_select": {
+        "empty": "لم يتم العثور على لغات",
+        "multi_placeholder": "إضافة لغات…",
+        "placeholder": "اختر لغة",
+        "search_placeholder": "البحث في اللغات…"
+      },
+      "media": {
+        "remove_tooltip": "إزالة الصورة"
+      },
+      "metadata_card": {
+        "empty_description": "تملأ التطبيقات والتكاملات هذا تلقائيًا.",
+        "empty_title": "لا توجد بيانات وصفية",
+        "title": "البيانات الوصفية"
+      },
+      "page_header": {
+        "copy_id": "نسخ ID",
+        "copy_number": "نسخ الرقم",
+        "view_as_json": "عرض كـ JSON"
+      },
+      "pagination": {
+        "first_page": "الانتقال إلى الصفحة الأولى",
+        "last_page": "الانتقال إلى الصفحة الأخيرة",
+        "next_page": "الانتقال إلى الصفحة التالية",
+        "previous_page": "الانتقال إلى الصفحة السابقة",
+        "range": "{{from}}–{{to}} من {{count}}",
+        "rows_per_page": "صفوف لكل صفحة"
+      },
+      "preferences_form": {
+        "comma_separated_hint": "افصل القيم بفواصل.",
+        "tiers": {
+          "add_tier": "إضافة مستوى",
+          "empty": "لا توجد مستويات بعد. ينطبق السعر الأساسي حتى تضيف مستوى.",
+          "header_threshold": "إجمالي الطلب ≥",
+          "header_value": "الخصم",
+          "label": "المستويات",
+          "remove_tier": "إزالة المستوى"
+        },
+        "unlimited": "غير محدود"
+      },
+      "rich_text_editor": {
+        "blockquote": "اقتباس",
+        "bold": "عريض",
+        "bullet_list": "قائمة نقطية",
+        "italic": "مائل",
+        "link": "رابط",
+        "link_url_prompt": "URL",
+        "ordered_list": "قائمة مرقمة",
+        "placeholder": "اكتب شيئًا…",
+        "redo": "إعادة",
+        "strikethrough": "يتوسطه خط",
+        "undo": "تراجع"
+      },
+      "secret_input": {
+        "new_value_placeholder": "قيمة جديدة",
+        "replace": "استبدال",
+        "stored_help": "مخزّن على الخادم. انقر استبدال للتدوير."
+      },
+      "state_combobox": {
+        "empty": "لم يتم العثور على ولايات",
+        "placeholder": "اختر ولاية",
+        "search_placeholder": "البحث في الولايات…"
+      },
+      "table_toolbar": {
+        "add_filter": "إضافة فلتر",
+        "ascending": "تصاعدي",
+        "clear_all": "مسح الكل",
+        "columns_tooltip": "الأعمدة",
+        "descending": "تنازلي",
+        "filter_date_placeholder": "اختر تاريخًا",
+        "filter_select_placeholder": "اختر…",
+        "filter_text_placeholder": "تصفية…",
+        "filters_button": "الفلاتر",
+        "no_filters": "لا توجد فلاتر. انقر أدناه لإضافة واحد.",
+        "operators": {
+          "after": "بعد",
+          "before": "قبل",
+          "contains": "يحتوي على",
+          "does_not_equal": "لا يساوي",
+          "ends_with": "ينتهي بـ",
+          "equals": "يساوي",
+          "greater_than": "أكبر من",
+          "greater_than_or_equal": "أكبر من أو يساوي",
+          "is": "هو",
+          "is_any_of": "أي من",
+          "is_none_of": "لا شيء من",
+          "is_not": "ليس",
+          "is_not_set": "غير محدّد",
+          "is_set": "محدّد",
+          "less_than": "أقل من",
+          "less_than_or_equal": "أقل من أو يساوي",
+          "on_or_after": "في أو بعد",
+          "on_or_before": "في أو قبل",
+          "starts_with": "يبدأ بـ"
+        },
+        "order": "الترتيب",
+        "remove_filter": "إزالة الفلتر",
+        "reset_to_default": "إعادة إلى الافتراضي",
+        "search_placeholder": "بحث…",
+        "sort_by": "ترتيب حسب",
+        "sort_tooltip": "ترتيب",
+        "visible_columns": "الأعمدة المرئية"
+      },
+      "tag_combobox": {
+        "create_option": "إنشاء «{{tag}}»",
+        "empty_hint": "اكتب واضغط Enter لإنشاء وسم",
+        "placeholder": "اكتب لإضافة وسوم…"
+      },
+      "theme_toggle": {
+        "dark": "داكن",
+        "label": "المظهر",
+        "light": "فاتح",
+        "system": "النظام"
       }
     },
-    "validation": {
-      "required": "{{field}} مطلوب",
-      "positive_number": "يجب أن يكون {{field}} أكبر من 0",
-      "min_length": "يجب أن يكون {{field}} {{count}} أحرف على الأقل",
-      "passwords_dont_match": "كلمتا المرور غير متطابقتين",
-      "invalid_email_or_password": "بريد إلكتروني أو كلمة مرور غير صالحة",
-      "invalid_email": "أدخل بريدًا إلكترونيًا صالحًا",
-      "invalid_hex_color": "لون hex غير صالح",
-      "invalid_password": "كلمة مرور غير صالحة",
-      "password_required": "كلمة المرور مطلوبة",
-      "first_name_required": "الاسم الأول مطلوب",
-      "last_name_required": "اسم العائلة مطلوب",
-      "store_name_required": "اسم المتجر مطلوب",
-      "country_required": "البلد مطلوب",
-      "currency_required": "العملة مطلوبة"
-    },
-    "account": {
-      "edit_profile": "تعديل الملف الشخصي",
-      "preferences": "التفضيلات",
-      "language": {
-        "label": "اللغة",
-        "update_failed": "تعذّر حفظ تفضيل اللغة. يرجى المحاولة مجددًا."
-      },
-      "view_store": "عرض المتجر",
-      "documentation": "التوثيق",
-      "community": "المجتمع",
-      "contact_support": "الاتصال بالدعم",
-      "log_out": "تسجيل الخروج"
-    },
     "custom_field_definitions": {
-      "messages": {
-        "created": "تم إنشاء تعريف الحقل المخصص",
-        "updated": "تم تحديث تعريف الحقل المخصص",
-        "deleted": "تم حذف تعريف الحقل المخصص"
-      },
       "errors": {
         "failed_to_create": "فشل إنشاء تعريف الحقل المخصص",
-        "failed_to_update": "فشل تحديث تعريف الحقل المخصص",
-        "failed_to_delete": "فشل حذف تعريف الحقل المخصص"
+        "failed_to_delete": "فشل حذف تعريف الحقل المخصص",
+        "failed_to_update": "فشل تحديث تعريف الحقل المخصص"
+      },
+      "messages": {
+        "created": "تم إنشاء تعريف الحقل المخصص",
+        "deleted": "تم حذف تعريف الحقل المخصص",
+        "updated": "تم تحديث تعريف الحقل المخصص"
+      }
+    },
+    "errors": {
+      "failed_to_create": "فشل الإنشاء",
+      "failed_to_delete": "فشل الحذف",
+      "failed_to_load": "فشل التحميل",
+      "failed_to_load_customer": "فشل تحميل العميل",
+      "failed_to_load_order": "فشل تحميل الطلب",
+      "failed_to_load_product": "فشل تحميل المنتج",
+      "failed_to_revoke_key": "فشل إلغاء تفويض المفتاح",
+      "failed_to_save": "فشل الحفظ",
+      "failed_to_send_invitation": "فشل إرسال الدعوة",
+      "failed_to_update": "فشل التحديث",
+      "failed_to_update_profile": "فشل تحديث الملف الشخصي",
+      "failed_to_update_staff": "فشل تحديث الموظف",
+      "failed_to_update_store": "فشل تحديث إعدادات المتجر",
+      "generic": "حدث خطأ ما",
+      "network": "خطأ في الشبكة — يرجى المحاولة مجددًا",
+      "not_found": "غير موجود",
+      "required": "هذا الحقل مطلوب",
+      "unauthorized": "ليس لديك صلاحية للقيام بذلك",
+      "unexpected": "حدث خطأ غير متوقع",
+      "unexpected_retry": "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى."
+    },
+    "fields": {
+      "active": {
+        "label": "نشط"
+      },
+      "address": {
+        "address1": {
+          "label": "العنوان"
+        },
+        "address2": {
+          "label": "الشقة، الجناح، إلخ."
+        },
+        "is_default_billing": {
+          "label": "عنوان الفوترة الافتراضي"
+        },
+        "is_default_shipping": {
+          "label": "عنوان الشحن الافتراضي"
+        },
+        "label": {
+          "label": "التسمية",
+          "placeholder": "مثال: المنزل، المكتب"
+        },
+        "postal_code": {
+          "label": "الرمز البريدي"
+        }
+      },
+      "address1": {
+        "label": "سطر العنوان 1"
+      },
+      "address2": {
+        "label": "سطر العنوان 2"
+      },
+      "amount": {
+        "label": "المبلغ"
+      },
+      "city": {
+        "label": "المدينة"
+      },
+      "code": {
+        "label": "الرمز"
+      },
+      "company": {
+        "label": "الشركة"
+      },
+      "completed_at": {
+        "label": "تاريخ الإكمال"
+      },
+      "contact_email": {
+        "label": "البريد الإلكتروني للتواصل"
+      },
+      "country_code": {
+        "label": "البلد"
+      },
+      "created_at": {
+        "label": "تاريخ الإنشاء"
+      },
+      "currency": {
+        "label": "العملة"
+      },
+      "description": {
+        "label": "الوصف"
+      },
+      "discount": {
+        "label": "الخصم"
+      },
+      "email": {
+        "label": "البريد الإلكتروني"
+      },
+      "enabled": {
+        "label": "مُفعّل"
+      },
+      "ends_at": {
+        "label": "ينتهي"
+      },
+      "expires_at": {
+        "label": "ينتهي في"
+      },
+      "first_name": {
+        "label": "الاسم الأول"
+      },
+      "kind": {
+        "label": "النوع"
+      },
+      "label": {
+        "label": "التسمية"
+      },
+      "last_name": {
+        "label": "اسم العائلة"
+      },
+      "login": {
+        "email": {
+          "placeholder": "admin@example.com"
+        }
+      },
+      "media": {
+        "alt": {
+          "label": "النص البديل",
+          "placeholder": "صف الصورة لإمكانية الوصول و SEO"
+        }
+      },
+      "meta_description": {
+        "label": "وصف Meta"
+      },
+      "meta_title": {
+        "label": "عنوان Meta"
+      },
+      "name": {
+        "label": "الاسم"
+      },
+      "number": {
+        "label": "الرقم"
+      },
+      "password": {
+        "label": "كلمة المرور"
+      },
+      "permalink": {
+        "label": "الرابط الدائم"
+      },
+      "phone": {
+        "label": "الهاتف"
+      },
+      "pretty_name": {
+        "label": "الاسم الكامل"
+      },
+      "quantity": {
+        "label": "الكمية"
+      },
+      "shipping": {
+        "label": "الشحن"
+      },
+      "slug": {
+        "label": "Slug"
+      },
+      "starts_at": {
+        "label": "يبدأ"
+      },
+      "state_code": {
+        "label": "الولاية / المقاطعة"
+      },
+      "state_name": {
+        "label": "الولاية / المقاطعة"
+      },
+      "status": {
+        "label": "الحالة"
+      },
+      "stock_location": {
+        "active": {
+          "help": "المواقع غير النشطة لا تظهر في اختيار التنفيذ.",
+          "label": "نشط"
+        },
+        "admin_name": {
+          "label": "الاسم الداخلي",
+          "placeholder": "اختياري — يُعرض في لوحة الإدارة فقط"
+        },
+        "backorderable_default": {
+          "help": "عناصر المخزون الجديدة تسمح بالطلب المسبق عند نفاد المخزون.",
+          "label": "قابل للطلب المسبق افتراضيًا"
+        },
+        "default": {
+          "help": "عناصر المخزون الجديدة تُنشأ هنا. موقع واحد فقط يمكن أن يكون افتراضيًا.",
+          "label": "الموقع الافتراضي"
+        },
+        "kind": {
+          "label": "النوع"
+        },
+        "name": {
+          "placeholder": "Brooklyn warehouse"
+        },
+        "pickup_enabled": {
+          "help": "يمكن للعملاء استلام الطلبات من هذا الموقع عند الدفع.",
+          "label": "السماح بالاستلام من العميل"
+        },
+        "pickup_instructions": {
+          "label": "تعليمات الاستلام",
+          "placeholder": "أين يذهب العميل لاستلام طلبه."
+        },
+        "pickup_ready_in_minutes": {
+          "label": "جاهز خلال (دقائق)",
+          "placeholder": "60"
+        },
+        "pickup_stock_policy": {
+          "label": "سياسة المخزون"
+        },
+        "propagate_all_variants": {
+          "help": "إنشاء عناصر مخزون في هذا الموقع لكل متغير منتج.",
+          "label": "إنشاء عناصر مخزون تلقائيًا لجميع المتغيرات"
+        }
+      },
+      "storefront_visible": {
+        "help": "عند الإيقاف، يرى موظفو الإدارة فقط هذا الخيار (طلبات المكتب الخلفي، الإدخال اليدوي).",
+        "label": "مرئي في المتجر"
+      },
+      "subtotal": {
+        "label": "المجموع الفرعي"
+      },
+      "tax": {
+        "label": "الضريبة"
+      },
+      "total": {
+        "label": "الإجمالي"
+      },
+      "updated_at": {
+        "label": "تاريخ التحديث"
+      },
+      "zipcode": {
+        "label": "الرمز البريدي"
+      }
+    },
+    "image_upload": {
+      "remove_cta": "إزالة",
+      "replace_cta": "استبدال الصورة",
+      "upload_cta": "رفع صورة",
+      "upload_failed": "فشل رفع الصورة",
+      "uploading": "جارٍ الرفع…"
+    },
+    "messages": {
+      "address_removed": "تمت إزالة العنوان",
+      "address_saved": "تم حفظ العنوان",
+      "copied_to_clipboard": "تم النسخ إلى الحافظة",
+      "created": "تم الإنشاء",
+      "customer_deleted": "تم حذف العميل",
+      "customer_saved": "تم حفظ العميل",
+      "gift_card_created": "تم إنشاء بطاقة الهدايا",
+      "invitation_accepted": "مرحبًا بك في Spree",
+      "invitation_resent": "تم إعادة إرسال الدعوة",
+      "invitation_sent": "تم إرسال الدعوة",
+      "key_created": "تم إنشاء المفتاح",
+      "key_deleted": "تم حذف المفتاح",
+      "key_revoked": "تم إلغاء تفويض المفتاح",
+      "key_updated": "تم تحديث المفتاح",
+      "order_saved": "تم حفظ الطلب",
+      "payment_method_saved": "تم حفظ طريقة الدفع",
+      "product_created": "تم إنشاء المنتج",
+      "product_deleted": "تم حذف المنتج",
+      "product_saved": "تم حفظ المنتج",
+      "profile_updated": "تم تحديث الملف الشخصي",
+      "promotion_created": "تم إنشاء العرض الترويجي",
+      "promotion_deleted": "تم حذف العرض الترويجي",
+      "promotion_saved": "تم حفظ العرض الترويجي",
+      "removed": "تمت الإزالة",
+      "saved": "تم الحفظ",
+      "settings_updated": "تم تحديث الإعدادات",
+      "stock_location_saved": "تم حفظ موقع المخزون",
+      "store_credit_removed": "تمت إزالة رصيد المتجر",
+      "store_credit_saved": "تم حفظ رصيد المتجر",
+      "store_settings_updated": "تم تحديث إعدادات المتجر",
+      "tax_category_saved": "تم حفظ فئة الضريبة",
+      "updated": "تم التحديث"
+    },
+    "pages": {
+      "settings": {
+        "stock_locations": {
+          "add_sheet_title": "إضافة موقع المخزون",
+          "edit_sheet_title": "تحرير موقع المخزون",
+          "search_placeholder": "البحث عن مواقع المخزون…"
+        }
       }
     },
     "resource_picker": {
-      "title": "إضافة منتجات",
-      "search_placeholder": "بحث…",
-      "empty": "لم يتم العثور على نتائج.",
+      "add_count_one": "إضافة {{count}}",
+      "add_count_other": "إضافة {{count}}",
       "already_added": "مُضاف",
+      "empty": "لم يتم العثور على نتائج.",
+      "search_placeholder": "بحث…",
       "selected_count_one": "تم تحديد {{count}}",
       "selected_count_other": "تم تحديد {{count}}",
-      "add_count_one": "إضافة {{count}}",
-      "add_count_other": "إضافة {{count}}"
+      "title": "إضافة منتجات"
     },
-    "image_upload": {
-      "upload_cta": "رفع صورة",
-      "replace_cta": "استبدال الصورة",
-      "remove_cta": "إزالة",
-      "uploading": "جارٍ الرفع…",
-      "upload_failed": "فشل رفع الصورة"
+    "row_actions": {
+      "clone": "تكرار",
+      "delete": "حذف",
+      "edit": "تعديل",
+      "menu_label": "فتح الإجراءات"
+    },
+    "settings_nav": {
+      "groups": {
+        "fulfillment": "التنفيذ",
+        "team": "الفريق والوصول"
+      },
+      "items": {
+        "stock_locations": "مواقع المخزون"
+      }
+    },
+    "stock_locations": {
+      "add_cta": "إضافة موقع المخزون",
+      "badges": {
+        "default": "تقصير",
+        "enabled": "ممكّن",
+        "inactive": "غير نشط"
+      },
+      "columns": {
+        "default": "تقصير",
+        "location": "موقع",
+        "pickup": "يلتقط",
+        "seller": "البائع",
+        "type": "يكتب"
+      },
+      "create_description": "أضف مستودعًا أو متجرًا أو نقطة استلام لتلبية الطلبات منها.",
+      "create_label": "إنشاء موقع المخزون",
+      "delete_confirm": {
+        "message": "ستتم إزالة {{name}}. لا يتم حذف عناصر المخزون في هذا الموقع.",
+        "title": "هل تريد حذف موقع المخزون؟"
+      },
+      "edit_description": "تحديث الاسم أو العنوان أو الالتقاط أو سياسات المخزون.",
+      "empty": "لا توجد مواقع المخزون حتى الآن",
+      "kinds": {
+        "fulfillment_center": "Fulfillment center",
+        "store": "محل",
+        "warehouse": "مستودع"
+      },
+      "pickup_stock_policies": {
+        "any": "السماح بالتحويلات من مواقع أخرى",
+        "local": "العناصر فقط في هذا الموقع"
+      },
+      "search_placeholder": "البحث بالاسم…",
+      "section_pickup": "يلتقط",
+      "stock_levels": {
+        "empty": "لا توجد مستويات مخزون في هذا الموقع حتى الآن.",
+        "empty_search": "لا توجد مستويات مخزون تطابق بحثك.",
+        "help": "اضبط الأعداد المتاحة والقابلة للطلب الخلفي لكل متغير.",
+        "low_stock_marker": "مخزون منخفض",
+        "search_placeholder": "ابحث عن SKU أو المنتج…",
+        "table": {
+          "backorder": "طلب متأخر",
+          "on_hand": "في متناول اليد",
+          "variant": "البديل"
+        },
+        "title": "المخزون في هذا الموقع",
+        "unknown_product": "منتج غير معروف",
+        "variant_count_one": "{{count}} متغير",
+        "variant_count_other": "{{count}} متغيرات"
+      }
+    },
+    "validation": {
+      "country_required": "البلد مطلوب",
+      "currency_required": "العملة مطلوبة",
+      "first_name_required": "الاسم الأول مطلوب",
+      "invalid_email": "أدخل بريدًا إلكترونيًا صالحًا",
+      "invalid_email_or_password": "بريد إلكتروني أو كلمة مرور غير صالحة",
+      "invalid_hex_color": "لون hex غير صالح",
+      "invalid_password": "كلمة مرور غير صالحة",
+      "last_name_required": "اسم العائلة مطلوب",
+      "min_length": "يجب أن يكون {{field}} {{count}} أحرف على الأقل",
+      "password_required": "كلمة المرور مطلوبة",
+      "passwords_dont_match": "كلمتا المرور غير متطابقتين",
+      "positive_number": "يجب أن يكون {{field}} أكبر من 0",
+      "required": "{{field}} مطلوب",
+      "store_name_required": "اسم المتجر مطلوب"
     }
   }
 }

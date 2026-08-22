@@ -12,6 +12,7 @@ const group = await client.customerGroups.update('cg_UkLWZg9DAJ', {
   name: 'VIP customers (Q1)',
   customer_ids: ['cus_UkLWZg9DAJ'],
 })
+
 // endregion:example
 
 export { group }

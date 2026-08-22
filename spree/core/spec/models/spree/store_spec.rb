@@ -820,10 +820,25 @@ describe Spree::Store, type: :model, without_global_store: true do
     before { Spree::Current.store = subject }
 
     context 'with default stock location' do
-      let!(:default_stock_location) { create(:stock_location, default: true) }
+      let!(:default_stock_location) { create(:stock_location, store: subject, default: true) }
 
       it 'returns the default stock location' do
         expect(subject.default_stock_location).to eq(default_stock_location)
+      end
+
+      # The lookup is scoped to this store's own locations on both counts —
+      # another store's default is not this one's, and neither is a seller's.
+      it 'ignores a default belonging to another store' do
+        create(:stock_location, store: create(:store), default: true)
+
+        expect(subject.default_stock_location).to eq(default_stock_location)
+      end
+
+      it 'ignores a seller default' do
+        seller = create(:seller, store: subject)
+        seller.stock_locations.create!(store: subject, name: 'Seller warehouse', default: true)
+
+        expect(subject.default_stock_location).to eq(default_stock_location.reload)
       end
     end
 

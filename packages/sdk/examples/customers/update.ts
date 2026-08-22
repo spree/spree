@@ -6,13 +6,17 @@ const client = createClient({
 })
 
 // region:example
-const customer = await client.customer.update({
-  first_name: 'John',
-  last_name: 'Doe',
-  metadata: { preferred_contact: 'email' },
-}, {
-  token: '<token>',
-})
+const customer = await client.customer.update(
+  {
+    first_name: 'John',
+    last_name: 'Doe',
+    metadata: { preferred_contact: 'email' },
+  },
+  {
+    token: '<token>',
+  },
+)
+
 // endregion:example
 
 export { customer }

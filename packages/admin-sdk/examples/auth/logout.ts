@@ -8,5 +8,3 @@ const client = createAdminClient({
 // region:example
 await client.auth.logout()
 // endregion:example
-
-export {}

@@ -6,9 +6,13 @@ const client = createClient({
 })
 
 // region:example
-const addresses = await client.customer.addresses.list({}, {
-  token: '<token>',
-})
+const addresses = await client.customer.addresses.list(
+  {},
+  {
+    token: '<token>',
+  },
+)
+
 // endregion:example
 
 export { addresses }

@@ -11,6 +11,7 @@ const { data: prices } = await client.prices.list({
   currency_eq: 'USD',
   expand: ['variant'],
 })
+
 // endregion:example
 
 export { prices }

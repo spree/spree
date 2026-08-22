@@ -292,6 +292,10 @@
     "commission_rates": {
       "add_cta": "Add commission rate",
       "applies_to_everything": "Every sale",
+      "conditions": {
+        "add": "Add condition",
+        "title": "Conditions"
+      },
       "create_description": "Set what the marketplace charges sellers, and which sales it applies to.",
       "create_label": "Create commission rate",
       "delete_confirm": {
@@ -305,12 +309,8 @@
         "deleted": "Commission rate deleted",
         "updated": "Commission rate updated"
       },
-      "search_placeholder": "Search by name…",
       "order_hint": "New rates go to the top of the list, and the first one that matches a sale wins — drag to reorder.",
-      "conditions": {
-        "add": "Add condition",
-        "title": "Conditions"
-      }
+      "search_placeholder": "Search by name…"
     },
     "companies": {
       "add_cta": "Add company",
@@ -558,6 +558,8 @@
       "cards": {
         "estimate": "Delivery estimate"
       },
+      "carrier_rates": "Carrier rates",
+      "carrier_rates_hint": "Prices come from {{name}} at checkout, quoted live for each order.",
       "carrier_services": {
         "add_service": "Add service",
         "all_hint": "Every service the carrier returns is offered, named by the carrier.",
@@ -600,9 +602,8 @@
         "amount_in_currency": "Amount in {{currency}}",
         "currency_amounts_help": "Currencies left blank are not offered this delivery method."
       },
-      "carrier_rates": "Carrier rates",
-      "provider_unavailable": "{{name}} (unavailable)",
       "provider_needs_connection": "Connect {{name}} to use it",
+      "provider_unavailable": "{{name}} (unavailable)",
       "rule_summary": {
         "separator": " · ",
         "total_between": "{{min}}–{{max}}",
@@ -611,8 +612,7 @@
         "weight_between": "{{min}}–{{max}}{{unit}}",
         "weight_max": "Under {{max}}{{unit}}",
         "weight_min": "{{min}}{{unit}} and up"
-      },
-      "carrier_rates_hint": "Prices come from {{name}} at checkout, quoted live for each order."
+      }
     },
     "delivery_origin_groups": {
       "delete_confirm": {
@@ -774,6 +774,13 @@
           "label": "Scopes"
         }
       },
+      "certificate_document": {
+        "help": "PDF or image, up to 10 MB. Only staff can download it.",
+        "label": "Certificate document"
+      },
+      "certificate_number": {
+        "label": "Certificate number"
+      },
       "channel": {
         "active": {
           "help": "Inactive sales channels stop accepting orders and aren't matched by the X-Spree-Channel header.",
@@ -826,6 +833,86 @@
             "public": "Public — anyone can browse and see prices"
           }
         }
+      },
+      "commission_rate": {
+        "amounts": {
+          "help": "Charged for every unit sold. A currency left empty is one this rate does not charge — those sales fall to the next rate.",
+          "label": "Flat fee"
+        },
+        "bounds": {
+          "help": "Never charge less than the first, or more than the second. Each applies only to sales in its own currency; leave a currency empty to charge it unbounded.",
+          "label": "Floor and cap (optional)"
+        },
+        "code": {
+          "help": "Your own identifier for this rate.",
+          "label": "Code",
+          "placeholder": "standard"
+        },
+        "commission_tax_rate": {
+          "help": "VAT charged on the commission itself, as a separate supply to the seller. Leave empty to use your tax settings.",
+          "label": "Tax on commission (%)",
+          "placeholder": "From your tax settings"
+        },
+        "enabled": {
+          "help": "Disabled rates are skipped when charging a sale."
+        },
+        "include_shipping": {
+          "help": "Also charge commission on the seller's delivery revenue.",
+          "label": "Charge on delivery"
+        },
+        "kind": {
+          "label": "Charge",
+          "options": {
+            "fixed": "Flat fee",
+            "percentage": "Percentage of the sale"
+          }
+        },
+        "max_amount": {
+          "label": "Maximum"
+        },
+        "min_amount": {
+          "label": "Minimum"
+        },
+        "name": {
+          "placeholder": "Standard commission"
+        },
+        "rules": {
+          "help": "Every condition has to hold, and a condition naming several records means any of them. A rate with no conditions charges every sale.",
+          "label": "Conditions"
+        },
+        "tax_inclusive": {
+          "help": "Charge on the price including the customer's VAT. Left off, commission is charged on the seller's net revenue, which is the usual basis where the fee is taxed as its own supply.",
+          "label": "Charge on the gross price"
+        },
+        "value": {
+          "help_percentage": "Percent of the sale charged to the seller.",
+          "label": "Value"
+        }
+      },
+      "company": {
+        "external_id": {
+          "help": "Your own reference for this business, unique within the store.",
+          "placeholder": "ACME-001"
+        },
+        "name": {
+          "placeholder": "Acme Industries"
+        }
+      },
+      "company_contact": {
+        "role": {
+          "label": "Role"
+        }
+      },
+      "company_location": {
+        "external_id": {
+          "help": "Your own reference for this branch."
+        },
+        "name": {
+          "placeholder": "Head office"
+        }
+      },
+      "country": {
+        "label": "Country"
       },
       "custom_field_definition": {
         "field_type": {
@@ -980,6 +1067,9 @@
           "label": "Zones"
         }
       },
+      "external_id": {
+        "label": "Reference"
+      },
       "gift_card": {
         "amount": {
           "label": "Amount"
@@ -1010,6 +1100,12 @@
         "password_confirmation": {
           "label": "Confirm password"
         }
+      },
+      "issued_at": {
+        "label": "Issued on"
+      },
+      "issuing_authority": {
+        "label": "Issuing authority"
       },
       "market": {
         "country_codes": {
@@ -1133,10 +1229,10 @@
           "label": "Active"
         },
         "capture_method": {
-          "label": "When to charge customers",
           "help": "Overrides the store setting for this payment method only.",
           "inherit": "Use the store setting",
-          "inherited": "Use the store setting ({{value}})"
+          "inherited": "Use the store setting ({{value}})",
+          "label": "When to charge customers"
         },
         "description": {
           "placeholder": "Customer-facing description shown at checkout"
@@ -1152,6 +1248,9 @@
           "label": "Provider",
           "placeholder": "Select a provider"
         }
+      },
+      "postal_code": {
+        "label": "Postal code"
       },
       "price_list": {
         "description": {
@@ -1226,16 +1325,16 @@
           "help": "Only manual collections can be set here; automatic ones follow their rules.",
           "label": "Collections"
         },
+        "delivery_profile_id": {
+          "help": "Decides which zones and delivery methods reach this product.",
+          "label": "Shipping profile"
+        },
         "description": {
           "label": "Description",
           "placeholder": "Write a product description…"
         },
         "discontinue_on": {
           "label": "Discontinue on"
-        },
-        "delivery_profile_id": {
-          "help": "Decides which zones and delivery methods reach this product.",
-          "label": "Shipping profile"
         },
         "make_active_at": {
           "label": "Make active at"
@@ -1248,12 +1347,11 @@
           "help": "Controls which delivery options are offered at checkout.",
           "label": "Product type"
         },
+        "seller": {
+          "label": "Seller"
+        },
         "tags": {
           "label": "Tags"
-        },
-        "seller": {
-          "label": "Seller",
-          "first_party": "Sold by you"
         }
       },
       "product_publication": {
@@ -1355,6 +1453,10 @@
           "placeholder": "Unlimited"
         }
       },
+      "reason_code": {
+        "help": "Becomes the tax engine's entity use code.",
+        "label": "Reason"
+      },
       "role": {
         "description": {
           "label": "Description",
@@ -1371,70 +1473,67 @@
       "role_ids": {
         "label": "Roles"
       },
+      "seller": {
+        "about": {
+          "help": "Shown on the seller’s storefront profile.",
+          "label": "About"
+        },
+        "billing_email": {
+          "help": "Where commission invoices and payout notices go, if different.",
+          "label": "Billing email"
+        },
+        "contact_email": {
+          "help": "Where invitations and marketplace notices go.",
+          "placeholder": "hello@sparks.example"
+        },
+        "holiday_mode_until": {
+          "help": "The catalog stays visible but nothing can be bought until then.",
+          "label": "Away until",
+          "placeholder": "Pick a date"
+        },
+        "minimum_payout_amount": {
+          "help": "Balances below this carry over to the next payout.",
+          "label": "Minimum payout"
+        },
+        "name": {
+          "placeholder": "Sparks Audio"
+        },
+        "payouts_schedule_interval": {
+          "help": "How often this seller is paid.",
+          "label": "Payout schedule"
+        },
+        "slug": {
+          "help": "Used in the seller’s storefront address. Derived from the name when left empty."
+        },
+        "tax_remittance": {
+          "help": "Who accounts for consumer tax on this seller’s sales.",
+          "label": "Tax remitted by"
+        }
+      },
       "setup": {
+        "country_code": {
+          "help": "Where you ship from. Your store can sell worldwide — this just sets the starting currency, warehouse and delivery zones, all editable later.",
+          "label": "Country",
+          "placeholder": "Search countries"
+        },
+        "currency": {
+          "help": "Your default currency. Add more anytime.",
+          "label": "Currency",
+          "placeholder": "Search currencies"
+        },
+        "locale": {
+          "help": "Your default language. Add more anytime.",
+          "label": "Language"
+        },
         "password_confirmation": {
           "label": "Confirm password"
         },
         "store_name": {
           "label": "Store name"
-        },
-        "country_code": {
-          "label": "Country",
-          "placeholder": "Search countries",
-          "help": "Where you ship from. Your store can sell worldwide — this just sets the starting currency, warehouse and delivery zones, all editable later."
-        },
-        "locale": {
-          "label": "Language",
-          "help": "Your default language. Add more anytime."
-        },
-        "currency": {
-          "label": "Currency",
-          "placeholder": "Search currencies",
-          "help": "Your default currency. Add more anytime."
         }
       },
-      "stock_location": {
-        "active": {
-          "help": "Inactive locations don't appear in fulfillment selection.",
-          "label": "Active"
-        },
-        "admin_name": {
-          "label": "Internal name",
-          "placeholder": "Optional — shown only in the admin"
-        },
-        "backorderable_default": {
-          "help": "New stock levels default to allowing backorders when out of stock.",
-          "label": "Backorderable by default"
-        },
-        "default": {
-          "help": "New stock levels propagate here. Only one location can be default.",
-          "label": "Default location"
-        },
-        "kind": {
-          "label": "Kind"
-        },
-        "name": {
-          "placeholder": "Brooklyn warehouse"
-        },
-        "pickup_enabled": {
-          "help": "Customers can pick orders up from this location at checkout.",
-          "label": "Allow customer pickup"
-        },
-        "pickup_instructions": {
-          "label": "Pickup instructions",
-          "placeholder": "Where the customer should go to collect their order."
-        },
-        "pickup_ready_in_minutes": {
-          "label": "Ready in (minutes)",
-          "placeholder": "60"
-        },
-        "pickup_stock_policy": {
-          "label": "Stock policy"
-        },
-        "propagate_all_variants": {
-          "help": "Create stock levels at this location for every product variant.",
-          "label": "Auto-create stock levels for all variants"
-        }
+      "state": {
+        "label": "State"
       },
       "store": {
         "address_requires_phone": {
@@ -1442,20 +1541,20 @@
           "label": "Require phone number"
         },
         "capture_method": {
-          "label": "When to charge customers",
           "help": "The default for every payment method. An individual payment method can override it.",
+          "label": "When to charge customers",
           "options": {
             "checkout": {
-              "label": "At checkout",
-              "description": "Take the money as soon as the order is placed."
-            },
-            "on_dispatch": {
-              "label": "On dispatch",
-              "description": "Reserve the amount at checkout and take it when the goods go out."
+              "description": "Take the money as soon as the order is placed.",
+              "label": "At checkout"
             },
             "manual": {
-              "label": "Manually",
-              "description": "Reserve the amount at checkout and let staff take it later."
+              "description": "Reserve the amount at checkout and let staff take it later.",
+              "label": "Manually"
+            },
+            "on_dispatch": {
+              "description": "Reserve the amount at checkout and take it when the goods go out.",
+              "label": "On dispatch"
             }
           }
         },
@@ -1473,11 +1572,11 @@
           "label": "Allow duplicate SKUs"
         },
         "document_number_format": {
-          "label": "Numbering format",
           "help": "Applies to every numbered document. Sequential numbers count up and are easier to read back; random numbers do not reveal how many orders your store has taken.",
+          "label": "Numbering format",
           "options": {
-            "sequential": "Sequential — count up from a starting number",
-            "random": "Random — unpredictable digits"
+            "random": "Random — unpredictable digits",
+            "sequential": "Sequential — count up from a starting number"
           }
         },
         "guest_checkout": {
@@ -1502,23 +1601,23 @@
           "placeholder": "ops@yourstore.com"
         },
         "order_number_prefix": {
-          "label": "Prefix",
           "help": "Leads every order number.",
-          "invalid": "Use only uppercase letters, digits, dashes and #."
+          "invalid": "Use only uppercase letters, digits, dashes and #.",
+          "label": "Prefix"
         },
         "order_number_preview": {
-          "label": "Preview",
-          "help": "Changes apply to future orders only. Numbers already issued never change."
+          "help": "Changes apply to future orders only. Numbers already issued never change.",
+          "label": "Preview"
         },
         "order_number_sequence_start": {
-          "label": "Start numbering at",
           "help": "Only applies before your first order. Changing it later does not renumber existing orders.",
+          "label": "Start numbering at",
           "locked": "Numbering has already started, so this no longer applies. Existing order numbers never change."
         },
         "order_number_suffix": {
-          "label": "Suffix",
           "help": "Ends every order number.",
-          "invalid": "Use only uppercase letters, digits, dashes and #."
+          "invalid": "Use only uppercase letters, digits, dashes and #.",
+          "label": "Suffix"
         },
         "preferred_admin_locale": {
           "label": "Admin language",
@@ -1613,6 +1712,55 @@
       "tax_category_id": {
         "label": "Tax category"
       },
+      "tax_exemption_certificate": {
+        "country_code": {
+          "help": "Leave empty for a certificate that holds everywhere."
+        },
+        "expires_at": {
+          "help": "Leave empty for a certificate that does not expire."
+        }
+      },
+      "tax_identifier": {
+        "kind": {
+          "help": "Which registration this is. It has to match the validator registered for it, so spelling matters.",
+          "label": "Kind"
+        },
+        "value": {
+          "label": "Number",
+          "placeholder": "DE123456789"
+        }
+      },
+      "tax_rate": {
+        "amount": {
+          "help": "As a percentage. Enter 20 for 20%.",
+          "label": "Rate"
+        },
+        "country_code": {
+          "help": "Leave empty to tax every country."
+        },
+        "included_in_price": {
+          "help": "Prices already carry this tax, so it is backed out rather than added.",
+          "label": "Included in price",
+          "short": "Included"
+        },
+        "jurisdiction": {
+          "label": "Applies to"
+        },
+        "name": {
+          "placeholder": "Standard VAT"
+        },
+        "show_rate_in_label": {
+          "help": "Adds the percentage to the tax line the customer sees.",
+          "label": "Show rate in the tax label"
+        },
+        "state_code": {
+          "help": "Leave empty to tax the whole country."
+        },
+        "tax_category_id": {
+          "help": "Which products this rate taxes.",
+          "label": "Tax category"
+        }
+      },
       "variant": {
         "backorder_limit": {
           "help": "Maximum number of units sold beyond available stock — caps backorders and pre-orders. Leave blank for unlimited.",
@@ -1682,198 +1830,6 @@
         "url": {
           "label": "Destination URL",
           "placeholder": "https://example.com/webhooks"
-        }
-      },
-      "external_id": {
-        "label": "Reference"
-      },
-      "country": {
-        "label": "Country"
-      },
-      "state": {
-        "label": "State"
-      },
-      "postal_code": {
-        "label": "Postal code"
-      },
-      "certificate_number": {
-        "label": "Certificate number"
-      },
-      "reason_code": {
-        "help": "Becomes the tax engine's entity use code.",
-        "label": "Reason"
-      },
-      "issued_at": {
-        "label": "Issued on"
-      },
-      "issuing_authority": {
-        "label": "Issuing authority"
-      },
-      "certificate_document": {
-        "help": "PDF or image, up to 10 MB. Only staff can download it.",
-        "label": "Certificate document"
-      },
-      "company": {
-        "name": {
-          "placeholder": "Acme Industries"
-        },
-        "external_id": {
-          "help": "Your own reference for this business, unique within the store.",
-          "placeholder": "ACME-001"
-        }
-      },
-      "company_location": {
-        "name": {
-          "placeholder": "Head office"
-        },
-        "external_id": {
-          "help": "Your own reference for this branch."
-        }
-      },
-      "company_contact": {
-        "role": {
-          "label": "Role"
-        }
-      },
-      "tax_identifier": {
-        "kind": {
-          "help": "Which registration this is. It has to match the validator registered for it, so spelling matters.",
-          "label": "Kind"
-        },
-        "value": {
-          "label": "Number",
-          "placeholder": "DE123456789"
-        }
-      },
-      "tax_rate": {
-        "name": {
-          "placeholder": "Standard VAT"
-        },
-        "amount": {
-          "help": "As a percentage. Enter 20 for 20%.",
-          "label": "Rate"
-        },
-        "jurisdiction": {
-          "label": "Applies to"
-        },
-        "country_code": {
-          "help": "Leave empty to tax every country."
-        },
-        "state_code": {
-          "help": "Leave empty to tax the whole country."
-        },
-        "tax_category_id": {
-          "help": "Which products this rate taxes.",
-          "label": "Tax category"
-        },
-        "included_in_price": {
-          "help": "Prices already carry this tax, so it is backed out rather than added.",
-          "label": "Included in price",
-          "short": "Included"
-        },
-        "show_rate_in_label": {
-          "help": "Adds the percentage to the tax line the customer sees.",
-          "label": "Show rate in the tax label"
-        }
-      },
-      "tax_exemption_certificate": {
-        "country_code": {
-          "help": "Leave empty for a certificate that holds everywhere."
-        },
-        "expires_at": {
-          "help": "Leave empty for a certificate that does not expire."
-        }
-      },
-      "seller": {
-        "name": {
-          "placeholder": "Sparks Audio"
-        },
-        "slug": {
-          "help": "Used in the seller’s storefront address. Derived from the name when left empty."
-        },
-        "contact_email": {
-          "placeholder": "hello@sparks.example",
-          "help": "Where invitations and marketplace notices go."
-        },
-        "billing_email": {
-          "label": "Billing email",
-          "help": "Where commission invoices and payout notices go, if different."
-        },
-        "about": {
-          "label": "About",
-          "help": "Shown on the seller’s storefront profile."
-        },
-        "tax_remittance": {
-          "label": "Tax remitted by",
-          "help": "Who accounts for consumer tax on this seller’s sales."
-        },
-        "payouts_schedule_interval": {
-          "label": "Payout schedule",
-          "help": "How often this seller is paid."
-        },
-        "minimum_payout_amount": {
-          "label": "Minimum payout",
-          "help": "Balances below this carry over to the next payout."
-        },
-        "holiday_mode_until": {
-          "label": "Away until",
-          "placeholder": "Pick a date",
-          "help": "The catalog stays visible but nothing can be bought until then."
-        }
-      },
-      "commission_rate": {
-        "name": {
-          "placeholder": "Standard commission"
-        },
-        "code": {
-          "label": "Code",
-          "placeholder": "standard",
-          "help": "Your own identifier for this rate."
-        },
-        "kind": {
-          "label": "Charge",
-          "options": {
-            "percentage": "Percentage of the sale",
-            "fixed": "Flat fee"
-          }
-        },
-        "value": {
-          "label": "Value",
-          "help_percentage": "Percent of the sale charged to the seller."
-        },
-        "rules": {
-          "label": "Conditions",
-          "help": "Every condition has to hold, and a condition naming several records means any of them. A rate with no conditions charges every sale."
-        },
-        "min_amount": {
-          "label": "Minimum"
-        },
-        "max_amount": {
-          "label": "Maximum"
-        },
-        "commission_tax_rate": {
-          "label": "Tax on commission (%)",
-          "placeholder": "From your tax settings",
-          "help": "VAT charged on the commission itself, as a separate supply to the seller. Leave empty to use your tax settings."
-        },
-        "include_shipping": {
-          "label": "Charge on delivery",
-          "help": "Also charge commission on the seller's delivery revenue."
-        },
-        "tax_inclusive": {
-          "label": "Charge on the gross price",
-          "help": "Charge on the price including the customer's VAT. Left off, commission is charged on the seller's net revenue, which is the usual basis where the fee is taxed as its own supply."
-        },
-        "enabled": {
-          "help": "Disabled rates are skipped when charging a sale."
-        },
-        "amounts": {
-          "help": "Charged for every unit sold. A currency left empty is one this rate does not charge — those sales fall to the next rate.",
-          "label": "Flat fee"
-        },
-        "bounds": {
-          "help": "Never charge less than the first, or more than the second. Each applies only to sales in its own currency; leave a currency empty to charge it unbounded.",
-          "label": "Floor and cap (optional)"
         }
       }
     },
@@ -2087,9 +2043,9 @@
       "promotions": "Promotions",
       "reports": "Reports",
       "returns": "Returns",
+      "sellers": "Sellers",
       "settings": "Settings",
-      "transfers": "Transfers",
-      "sellers": "Sellers"
+      "transfers": "Transfers"
     },
     "option_types": {
       "columns": {
@@ -2229,6 +2185,13 @@
           "resume_failed": "Failed to resume order"
         },
         "fulfillments": {
+          "add_tracking": "Add tracking",
+          "add_tracking_title": "Add tracking",
+          "buy_label": "Buy label",
+          "buy_label_confirm": "Buy a shipping label for this fulfillment? Your carrier account is charged as soon as the label is issued.",
+          "buy_label_confirm_rate": "Buy a {{rate}} label for {{cost}}? Your carrier account is charged as soon as the label is issued.",
+          "carrier_auto": "Detect automatically",
+          "carrier_label": "Shipping carrier",
           "confirm_split": "Move these units into a new fulfillment? This takes effect immediately.",
           "create_description": "Creates a fulfillment and moves the chosen quantities into it.",
           "create_items": "Items",
@@ -2236,12 +2199,18 @@
           "delivery_method": "Delivery method",
           "edit_description": "Change where this fulfillment ships from and which delivery method carries it.",
           "edit_title": "Edit fulfillment",
+          "edit_tracking_title": "Edit tracking",
           "empty": "No fulfillments on this order yet.",
           "free": "Free",
+          "mark_delivered": "Mark as delivered",
           "move_and_requote": "Move and re-quote",
           "no_rates": "No delivery methods are quoted for this fulfillment.",
           "out_of_stock": "Out of stock",
+          "packing_slip_title": "Packing slip — order {{number}}",
+          "print_label": "Print label",
+          "print_packing_slip": "Print packing slip",
           "rates_pending_origin": "Save the new origin to see the delivery methods it offers.",
+          "ship_to": "Ship to",
           "ships_from": "Ships from",
           "split": "Split",
           "split_description": "Move some units into a new fulfillment. One product at a time.",
@@ -2249,22 +2218,9 @@
           "split_quantity": "Quantity to move",
           "split_title": "Split fulfillment",
           "split_would_empty": "Leave at least one unit behind, or change the origin of the whole fulfillment instead.",
-          "unfulfilled_one": "Unfulfilled ({{count}})",
-          "unfulfilled_other": "Unfulfilled ({{count}})",
-          "mark_delivered": "Mark as delivered",
-          "add_tracking": "Add tracking",
-          "edit_tracking_title": "Edit tracking",
-          "add_tracking_title": "Add tracking",
           "tracking_description": "The carrier tracking number, or a full tracking link.",
-          "carrier_label": "Shipping carrier",
-          "carrier_auto": "Detect automatically",
-          "buy_label_confirm": "Buy a shipping label for this fulfillment? Your carrier account is charged as soon as the label is issued.",
-          "buy_label_confirm_rate": "Buy a {{rate}} label for {{cost}}? Your carrier account is charged as soon as the label is issued.",
-          "buy_label": "Buy label",
-          "print_label": "Print label",
-          "print_packing_slip": "Print packing slip",
-          "packing_slip_title": "Packing slip — order {{number}}",
-          "ship_to": "Ship to"
+          "unfulfilled_one": "Unfulfilled ({{count}})",
+          "unfulfilled_other": "Unfulfilled ({{count}})"
         },
         "gift_card_section": {
           "applied_suffix": "applied",
@@ -2340,9 +2296,15 @@
         "action_label": "Edit order",
         "actions": {
           "add_product": "Add product",
-          "remove_item": "Remove {{name}}",
           "quantity_for": "Quantity of {{name}}",
+          "remove_item": "Remove {{name}}",
           "restore_item": "Keep {{name}}"
+        },
+        "badges": {
+          "fulfilled_count_one": "{{count}} fulfilled",
+          "fulfilled_count_other": "{{count}} fulfilled",
+          "pending": "Not saved",
+          "removed": "Removing"
         },
         "columns": {
           "line_total": "Line total",
@@ -2350,22 +2312,16 @@
           "unit_price": "Unit price"
         },
         "empty": "This order has no items.",
+        "fully_fulfilled": "This order is fully fulfilled and can no longer be edited.",
         "items_title": "Items",
         "subtitle": "Order {{number}}",
         "title": "Edit order",
         "totals_hint": "Totals are recalculated by the server after you save.",
         "totals_title": "Totals",
-        "badges": {
-          "pending": "Not saved",
-          "removed": "Removing",
-          "fulfilled_count_one": "{{count}} fulfilled",
-          "fulfilled_count_other": "{{count}} fulfilled"
-        },
         "validation": {
           "below_fulfilled_one": "Can't go below {{count}} fulfilled unit",
           "below_fulfilled_other": "Can't go below {{count}} fulfilled units"
-        },
-        "fully_fulfilled": "This order is fully fulfilled and can no longer be edited."
+        }
       },
       "fulfill": {
         "action": "Mark as fulfilled",
@@ -2386,12 +2342,12 @@
       "fulfillment_statuses": {
         "backorder": "Backorder",
         "canceled": "Canceled",
+        "delivered": "Delivered",
         "fulfilled": "Fulfilled",
         "partial": "Partial",
         "pending": "Pending",
         "ready": "Ready",
-        "unfulfilled": "Unfulfilled",
-        "delivered": "Delivered"
+        "unfulfilled": "Unfulfilled"
       },
       "item_count_one": "{{count}} item",
       "item_count_other": "{{count}} items",
@@ -3000,6 +2956,10 @@
           },
           "title": "API keys"
         },
+        "commission_rates": {
+          "add_sheet_title": "Add commission rate",
+          "edit_sheet_title": "Edit commission rate"
+        },
         "custom_field_definitions": {
           "add_sheet_title": "Add custom field",
           "edit_sheet_title": "Edit custom field"
@@ -3037,11 +2997,6 @@
           "add_sheet_title": "Add payment method",
           "edit_sheet_title": "Edit payment method"
         },
-        "stock_locations": {
-          "add_sheet_title": "Add stock location",
-          "edit_sheet_title": "Edit stock location",
-          "search_placeholder": "Search stock locations…"
-        },
         "store": {
           "default_package_description": "The box you usually ship in. Carrier rate providers add its weight to every package and use its dimensions for dimensional-weight pricing.",
           "subtitle": "General configuration and store-wide defaults.",
@@ -3059,6 +3014,10 @@
         "tax_categories": {
           "add_sheet_title": "Add tax category",
           "edit_sheet_title": "Edit tax category"
+        },
+        "tax_rates": {
+          "add_sheet_title": "New tax rate",
+          "edit_sheet_title": "Edit tax rate"
         },
         "webhooks": {
           "actions": {
@@ -3189,14 +3148,6 @@
             "url": "URL"
           },
           "title": "Webhooks"
-        },
-        "tax_rates": {
-          "add_sheet_title": "New tax rate",
-          "edit_sheet_title": "Edit tax rate"
-        },
-        "commission_rates": {
-          "add_sheet_title": "Add commission rate",
-          "edit_sheet_title": "Edit commission rate"
         }
       },
       "staff": {
@@ -3881,37 +3832,32 @@
       }
     },
     "seller_requirements": {
-      "title": "Seller requirements",
-      "search_placeholder": "Search requirements",
-      "empty": "No requirements yet. Sellers can ask to be reviewed straight away.",
       "add_cta": "Add requirement",
       "add_title": "Add a requirement",
-      "edit_title": "Edit requirement",
       "columns": {
         "kind": "Type",
         "required": "Required"
       },
-      "required": {
-        "yes": "Required",
-        "no": "Recommended"
+      "delete_confirm": {
+        "message": "Sellers will no longer be asked for \"{{name}}\". Anything they already submitted for it is deleted too.",
+        "title": "Delete requirement?"
       },
-      "status": {
-        "disabled": "Off"
-      },
+      "edit_title": "Edit requirement",
+      "empty": "No requirements yet. Sellers can ask to be reviewed straight away.",
       "fields": {
         "accepted_files": {
-          "label": "Accepted files",
-          "help": "Sellers can upload: {{types}}"
+          "help": "Sellers can upload: {{types}}",
+          "label": "Accepted files"
         },
         "active": {
-          "label": "Active",
-          "help": "Switch off to stop asking for this without deleting it."
+          "help": "Switch off to stop asking for this without deleting it.",
+          "label": "Active"
         },
         "custom_fields": {
-          "label": "Custom fields",
+          "empty": "No seller custom fields found. Create them in Settings → Custom fields.",
           "help": "The seller must fill in every field you choose.",
-          "placeholder": "Search custom fields",
-          "empty": "No seller custom fields found. Create them in Settings → Custom fields."
+          "label": "Custom fields",
+          "placeholder": "Search custom fields"
         },
         "description": {
           "label": "Instructions",
@@ -3922,195 +3868,200 @@
           "placeholder": "Choose what to ask for"
         },
         "name": {
+          "help": "What the seller sees on their checklist.",
           "label": "Name",
-          "label_required": "Name (required)",
-          "help": "What the seller sees on their checklist."
+          "label_required": "Name (required)"
         },
         "required": {
-          "label": "Required",
-          "help": "Required items must be done before a seller can be approved. Others are shown as recommended."
+          "help": "Required items must be done before a seller can be approved. Others are shown as recommended.",
+          "label": "Required"
         }
-      },
-      "delete_confirm": {
-        "title": "Delete requirement?",
-        "message": "Sellers will no longer be asked for \"{{name}}\". Anything they already submitted for it is deleted too."
-      },
-      "messages": {
-        "created": "Requirement added",
-        "updated": "Requirement saved",
-        "deleted": "Requirement deleted",
-        "submission_accepted": "Accepted",
-        "submission_rejected": "Sent back to the seller",
-        "waived": "Requirement waived for this seller"
       },
       "kinds": {
         "accept_terms": "Accept terms",
-        "complete_profile": "Complete profile",
-        "billing_address": "Billing address",
-        "returns_address": "Returns address",
-        "minimum_products": "Minimum products",
-        "required_custom_fields": "Required custom fields",
         "attestation": "Seller confirmation",
+        "billing_address": "Billing address",
+        "complete_profile": "Complete profile",
+        "document": "Document",
+        "minimum_products": "Minimum products",
         "operator_review": "Manual check",
-        "document": "Document"
-      }
+        "required_custom_fields": "Required custom fields",
+        "returns_address": "Returns address"
+      },
+      "messages": {
+        "created": "Requirement added",
+        "deleted": "Requirement deleted",
+        "submission_accepted": "Accepted",
+        "submission_rejected": "Sent back to the seller",
+        "updated": "Requirement saved",
+        "waived": "Requirement waived for this seller"
+      },
+      "required": {
+        "no": "Recommended",
+        "yes": "Required"
+      },
+      "search_placeholder": "Search requirements",
+      "status": {
+        "disabled": "Off"
+      },
+      "title": "Seller requirements"
     },
     "sellers": {
       "actions": {
-        "invite": "Invite",
-        "reinvite": "Send again",
-        "send_invitation": "Send invitation",
         "approve": "Approve",
+        "invite": "Invite",
         "reinstate": "Reinstate",
-        "suspend": "Suspend",
+        "reinvite": "Send again",
         "reject": "Reject",
-        "reopen_onboarding": "Send back to onboarding"
+        "reopen_onboarding": "Send back to onboarding",
+        "send_invitation": "Send invitation",
+        "suspend": "Suspend"
       },
       "add_cta": "Add seller",
       "add_sheet_title": "New seller",
       "address": {
         "filled": "Filled",
         "not_filled": "Not filled",
-        "not_provided_by_seller": "Not yet provided by the seller",
-        "not_located_yet": "The map appears once this address has been located."
+        "not_located_yet": "The map appears once this address has been located.",
+        "not_provided_by_seller": "Not yet provided by the seller"
       },
       "approve_override_confirm": {
-        "title": "Approve anyway?",
+        "action": "Approve anyway",
         "message": "This seller has not finished: {{names}}. Approving now lets them trade regardless, and the decision is recorded.",
-        "action": "Approve anyway"
+        "title": "Approve anyway?"
       },
       "autocomplete": {
-        "placeholder": "Search sellers",
-        "empty": "No sellers found"
+        "empty": "No sellers found",
+        "placeholder": "Search sellers"
       },
       "create_description": "Create the seller record first. You can invite them, approve them and set up payouts from their page.",
       "create_label": "Create seller",
       "delete_confirm": {
-        "title": "Delete seller?",
-        "message": "This removes {{name}} from the marketplace. Their products stay in your catalog without a seller. This cannot be undone."
+        "message": "This removes {{name}} from the marketplace. Their products stay in your catalog without a seller. This cannot be undone.",
+        "title": "Delete seller?"
       },
       "detail": {
-        "load_error": "Could not load this seller",
-        "delete_label": "Delete seller",
-        "status": "Status",
-        "settlement": "Payouts and tax",
         "at_a_glance": "At a glance",
+        "billing_address": "Billing address",
         "contact": "Contact",
+        "delete_label": "Delete seller",
         "edit_profile": "Edit profile",
         "edit_profile_description": "The seller maintains this from their own panel. Edits here apply on their behalf.",
         "edit_settlement": "Edit payouts and tax",
         "edit_settlement_description": "Only you can see or change these. The seller never edits them.",
+        "load_error": "Could not load this seller",
         "no_about": "This seller has not written a description yet.",
-        "billing_address": "Billing address",
-        "returns_address": "Returns address"
+        "returns_address": "Returns address",
+        "settlement": "Payouts and tax",
+        "status": "Status"
       },
       "empty": "No sellers yet",
       "images": {
-        "logo_label": "Logo",
-        "logo_help": "Square works best. Shown beside the seller everywhere they appear.",
-        "square_logo_label": "Square logo",
-        "square_logo_help": "Used where a tight square is needed, such as an avatar.",
+        "cover_photo_help": "A wide banner across the top of the seller profile.",
         "cover_photo_label": "Cover photo",
-        "cover_photo_help": "A wide banner across the top of the seller profile."
+        "logo_help": "Square works best. Shown beside the seller everywhere they appear.",
+        "logo_label": "Logo",
+        "square_logo_help": "Used where a tight square is needed, such as an avatar.",
+        "square_logo_label": "Square logo"
       },
       "invite_sheet": {
-        "title": "Invite seller",
         "description": "They join the seller team when they accept and can then sign in to their own panel.",
-        "email_help": "The invitation goes to this address."
+        "email_help": "The invitation goes to this address.",
+        "title": "Invite seller"
       },
       "messages": {
-        "created": "Seller created",
-        "create_failed": "Could not create the seller",
-        "updated": "Seller updated",
-        "update_failed": "Could not update the seller",
-        "deleted": "Seller deleted",
-        "delete_failed": "Could not delete the seller",
-        "invited": "Invitation sent",
-        "invite_failed": "Could not send the invitation",
-        "approved": "Seller approved",
         "approve_failed": "Could not approve the seller",
-        "suspended": "Seller suspended",
-        "suspend_failed": "Could not suspend the seller",
-        "rejected": "Seller rejected",
+        "approved": "Seller approved",
+        "create_failed": "Could not create the seller",
+        "created": "Seller created",
+        "delete_failed": "Could not delete the seller",
+        "deleted": "Seller deleted",
+        "invite_failed": "Could not send the invitation",
+        "invited": "Invitation sent",
+        "onboarding_reopened": "Sent back to onboarding",
         "reject_failed": "Could not reject the seller",
-        "onboarding_reopened": "Sent back to onboarding"
+        "rejected": "Seller rejected",
+        "suspend_failed": "Could not suspend the seller",
+        "suspended": "Seller suspended",
+        "update_failed": "Could not update the seller",
+        "updated": "Seller updated"
       },
       "not_provided": "Not provided",
       "on_holiday_notice": "This seller is away. Their catalog stays visible but nothing can be bought from them.",
       "onboarding": {
-        "title": "Onboarding",
-        "progress": "{{done}} of {{total}} done",
-        "waived": "Waived",
-        "download": "Download file",
-        "seller_note": "Seller: {{note}}",
-        "review_note": "Your note: {{note}}",
         "actions": {
           "accept": "Accept",
           "reject": "Send back",
           "waive": "Waive for this seller"
         },
-        "reject_confirm": {
-          "title": "Send back?",
-          "message": "The seller will be asked for \"{{name}}\" again."
-        },
-        "waive_confirm": {
-          "title": "Waive this requirement?",
-          "message": "\"{{name}}\" will count as met for this seller only."
-        },
         "all_done": "All done 🎉",
+        "download": "Download file",
+        "progress": "{{done}} of {{total}} done",
+        "reject_confirm": {
+          "message": "The seller will be asked for \"{{name}}\" again.",
+          "title": "Send back?"
+        },
+        "review_note": "Your note: {{note}}",
+        "seller_note": "Seller: {{note}}",
         "status": {
           "complete": "Done",
+          "incomplete": "Pending",
           "pending": "Under review",
-          "rejected": "Sent back",
-          "incomplete": "Pending"
-        }
+          "rejected": "Sent back"
+        },
+        "title": "Onboarding",
+        "waive_confirm": {
+          "message": "\"{{name}}\" will count as met for this seller only.",
+          "title": "Waive this requirement?"
+        },
+        "waived": "Waived"
       },
       "onboarding_column": "Onboarding",
       "payout_interval": {
-        "inherit": "Use store default",
-        "daily": "Daily",
-        "weekly": "Weekly",
         "biweekly": "Every two weeks",
+        "daily": "Daily",
+        "inherit": "Use store default",
+        "manual": "Manual",
         "monthly": "Monthly",
-        "manual": "Manual"
+        "weekly": "Weekly"
       },
       "products_column": "Products",
       "reject_confirm": {
-        "title": "Reject seller?",
-        "message": "{{name}} will not be admitted to the marketplace. You can still approve them later if this was a mistake."
+        "message": "{{name}} will not be admitted to the marketplace. You can still approve them later if this was a mistake.",
+        "title": "Reject seller?"
       },
       "reopen_onboarding_confirm": {
-        "title": "Send back to onboarding?",
-        "message": "{{name}} will be able to change their details and ask for review again."
+        "message": "{{name}} will be able to change their details and ask for review again.",
+        "title": "Send back to onboarding?"
       },
       "search_placeholder": "Search sellers",
       "status": {
-        "pending": "Pending",
+        "approved": "Approved",
+        "canceled": "Canceled",
         "invited": "Invited",
         "onboarding": "Onboarding",
+        "pending": "Pending",
         "ready_for_review": "Ready for review",
-        "approved": "Approved",
-        "suspended": "Suspended",
         "rejected": "Rejected",
-        "canceled": "Canceled"
+        "suspended": "Suspended"
       },
       "status_help": {
-        "pending": "Created, but nobody has been invited yet.",
+        "approved": "Selling on the marketplace.",
+        "canceled": "They withdrew before joining.",
         "invited": "Waiting for someone to accept the invitation.",
         "onboarding": "Filling in their details.",
+        "pending": "Created, but nobody has been invited yet.",
         "ready_for_review": "Waiting for you to approve them.",
-        "approved": "Selling on the marketplace.",
-        "suspended": "Stopped from selling. Reinstate to let them trade again.",
         "rejected": "Not admitted to the marketplace.",
-        "canceled": "They withdrew before joining."
+        "suspended": "Stopped from selling. Reinstate to let them trade again."
       },
       "suspend_confirm": {
-        "title": "Suspend seller?",
-        "message": "{{name}} stops selling immediately. Their catalog and history stay, and you can reinstate them later."
+        "message": "{{name}} stops selling immediately. Their catalog and history stay, and you can reinstate them later.",
+        "title": "Suspend seller?"
       },
       "tax_remittance": {
-        "seller": "Seller remits",
-        "platform": "Marketplace remits"
+        "platform": "Marketplace remits",
+        "seller": "Seller remits"
       },
       "team_column": "Team"
     },
@@ -4129,10 +4080,8 @@
     "settings_nav": {
       "groups": {
         "audit": "Audit",
-        "fulfillment": "Fulfillment",
         "payments": "Payments & taxes",
-        "store": "Store",
-        "team": "Team & access"
+        "store": "Store"
       },
       "items": {
         "allowed_origins": "Allowed origins",
@@ -4152,7 +4101,6 @@
         "roles": "Roles",
         "seller_requirements": "Seller requirements",
         "staff": "Staff",
-        "stock_locations": "Stock locations",
         "store": "Store",
         "tax_categories": "Tax categories",
         "tax_rates": "Tax rates",
@@ -4160,21 +4108,21 @@
       }
     },
     "setup": {
-      "title": "Set up Spree",
-      "subtitle": "Create your admin account and tell us about your store. Everything here can be changed later.",
-      "loading": "Checking setup status…",
-      "missing_token_title": "Setup link required",
-      "missing_token_message": "Open the setup link printed during installation — it contains the one-time setup token. Run \"bin/rails spree:setup:token\" to print a fresh one.",
-      "not_available_title": "Setup is not available",
-      "not_available_message": "This installation is already set up. Sign in with your admin account instead.",
-      "could_not_complete": "Could not complete setup",
-      "completing": "Setting up…",
-      "complete": "Complete setup",
       "back_to_login": "Back to sign in",
-      "required_notice_title": "This installation isn't set up yet",
-      "required_notice_message": "No admin account exists. Use the setup link from the install output to create one.",
+      "complete": "Complete setup",
+      "completing": "Setting up…",
+      "could_not_complete": "Could not complete setup",
+      "countries_failed": "Couldn't load the list of countries.",
+      "loading": "Checking setup status…",
+      "missing_token_message": "Open the setup link printed during installation — it contains the one-time setup token. Run \"bin/rails spree:setup:token\" to print a fresh one.",
+      "missing_token_title": "Setup link required",
+      "not_available_message": "This installation is already set up. Sign in with your admin account instead.",
+      "not_available_title": "Setup is not available",
       "required_notice_link": "Go to setup",
-      "countries_failed": "Couldn't load the list of countries."
+      "required_notice_message": "No admin account exists. Use the setup link from the install output to create one.",
+      "required_notice_title": "This installation isn't set up yet",
+      "subtitle": "Create your admin account and tell us about your store. Everything here can be changed later.",
+      "title": "Set up Spree"
     },
     "staff": {
       "actions": {
@@ -4216,55 +4164,6 @@
       "messages": {
         "stock_level_deleted": "Stock level deleted",
         "stock_updated": "Stock updated"
-      }
-    },
-    "stock_locations": {
-      "add_cta": "Add stock location",
-      "badges": {
-        "default": "Default",
-        "enabled": "Enabled",
-        "inactive": "Inactive"
-      },
-      "columns": {
-        "default": "Default",
-        "location": "Location",
-        "pickup": "Pickup",
-        "type": "Type"
-      },
-      "create_description": "Add a warehouse, store, or pickup point to fulfill orders from.",
-      "create_label": "Create stock location",
-      "delete_confirm": {
-        "message": "{{name}} will be removed. Stock levels at this location are not deleted.",
-        "title": "Delete stock location?"
-      },
-      "edit_description": "Update name, address, pickup, or stock policies.",
-      "empty": "No stock locations yet",
-      "kinds": {
-        "fulfillment_center": "Fulfillment center",
-        "store": "Store",
-        "warehouse": "Warehouse"
-      },
-      "pickup_stock_policies": {
-        "any": "Allow transfers from other locations",
-        "local": "Only items at this location"
-      },
-      "search_placeholder": "Search by name…",
-      "section_pickup": "Pickup",
-      "stock_levels": {
-        "empty": "No stock levels at this location yet.",
-        "empty_search": "No stock levels match your search.",
-        "help": "Adjust on-hand and backorderable counts per variant.",
-        "low_stock_marker": "low stock",
-        "search_placeholder": "Search SKU or product…",
-        "table": {
-          "backorder": "Backorder",
-          "on_hand": "On hand",
-          "variant": "Variant"
-        },
-        "title": "Stock at this location",
-        "unknown_product": "Unknown product",
-        "variant_count_one": "{{count}} variant",
-        "variant_count_other": "{{count}} variants"
       }
     },
     "stock_transfers": {

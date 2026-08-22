@@ -8,14 +8,14 @@ import {
 import { toast } from 'sonner'
 import { i18n } from '../lib/i18n'
 import { withStoreScope } from '../lib/query-keys'
-import { useStore } from '../providers/store-provider'
+import { useTenantId } from '../providers/tenant-provider'
 
 interface UseResourceMutationOptions<TData, TError, TVariables>
   extends Omit<UseMutationOptions<TData, TError, TVariables>, 'onSuccess' | 'onError'> {
   /**
    * Query keys to invalidate after success. Pass logical keys without
-   * storeId (e.g. `[['channels'], ['channels', id]]`) — the hook injects the
-   * current storeId at position 1 automatically so invalidation matches the
+   * tenant id (e.g. `[['channels'], ['channels', id]]`) — the hook injects the
+   * current tenant id at position 1 automatically so invalidation matches the
    * store-scoped keys used by `ResourceTable` and other queries.
    *
    * Mutations that change setup-task state (see `Spree.store_setup_tasks` on
@@ -59,7 +59,7 @@ export function useResourceMutation<TData = unknown, TError = Error, TVariables 
   options: UseResourceMutationOptions<TData, TError, TVariables>,
 ) {
   const queryClient = useQueryClient()
-  const { storeId } = useStore()
+  const tenantId = useTenantId()
   const {
     invalidate,
     successMessage = i18n.t('admin.messages.saved'),
@@ -74,7 +74,7 @@ export function useResourceMutation<TData = unknown, TError = Error, TVariables 
     onSuccess: (data, variables, onMutateResult, ctx) => {
       if (invalidate) {
         for (const key of invalidate) {
-          queryClient.invalidateQueries({ queryKey: withStoreScope(key, storeId) })
+          queryClient.invalidateQueries({ queryKey: withStoreScope(key, tenantId) })
         }
       }
       if (successMessage !== false) {

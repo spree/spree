@@ -41,9 +41,18 @@ Rails.application.routes.draw do
     end
   end
   # Used by admin mailers; the SPA derives the URL from `window.location.origin` instead.
+  #
+  # Which app the link opens follows what the invitation is *to*. An
+  # invitation onto a seller has to land on the seller panel: the dashboard's
+  # acceptance page authenticates through the Admin API, which no seller may
+  # call, so a seller sent there could read the invitation and never accept it.
   direct :admin_invitation_acceptance do |invitation, _options = {}|
     path = "/accept-invitation/#{invitation.prefixed_id}?token=#{invitation.token}"
-    base = Spree::Stores::DashboardUrl.call(store: invitation.store)
+    base = if invitation.resource.is_a?(Spree::Seller)
+             Spree::Sellers::PanelUrl.call(store: invitation.store)
+           else
+             Spree::Stores::DashboardUrl.call(store: invitation.store)
+           end
 
     base.present? ? "#{base}#{path}" : path
   end
