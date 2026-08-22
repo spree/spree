@@ -5,6 +5,7 @@ module Spree
         # A branch addressed directly. Reached through the store's companies so a
         # branch of another tenant's company is a 404.
         class CompanyLocationsController < ResourceController
+          include Spree::Api::V3::Admin::Concerns::ExternalReferences
           include Spree::Api::V3::Admin::Concerns::CompanyLocationParams
 
           scoped_resource :customers

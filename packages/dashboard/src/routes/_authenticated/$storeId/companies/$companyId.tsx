@@ -18,7 +18,6 @@ import {
   CardTitle,
   ErrorState,
   Field,
-  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -96,7 +95,6 @@ function CompanyBody({ company }: { company: Company }) {
       header={
         <PageHeader
           title={company.name}
-          subtitle={company.external_id ?? undefined}
           backTo="companies"
           resource={{ id: company.id }}
           jsonPreview={{
@@ -140,7 +138,7 @@ function CompanyProfileCard({ company, canEdit }: { company: Company; canEdit: b
   })
 
   useEffect(() => {
-    form.reset({ name: company.name, external_id: company.external_id ?? '' })
+    form.reset({ name: company.name })
   }, [company, form])
 
   async function onSubmit(values: CompanyFormValues) {
@@ -175,19 +173,6 @@ function CompanyProfileCard({ company, canEdit }: { company: Company; canEdit: b
               {...form.register('name')}
             />
             <FieldError errors={[errors.name]} />
-          </Field>
-          <Field>
-            <FieldLabel htmlFor="company-external-id">
-              {t('admin.fields.external_id.label')}
-            </FieldLabel>
-            <Input
-              id="company-external-id"
-              disabled={!canEdit}
-              aria-invalid={!!errors.external_id || undefined}
-              {...form.register('external_id')}
-            />
-            <FieldDescription>{t('admin.fields.company.external_id.help')}</FieldDescription>
-            <FieldError errors={[errors.external_id]} />
           </Field>
           {canEdit && (
             <div className="flex justify-end">

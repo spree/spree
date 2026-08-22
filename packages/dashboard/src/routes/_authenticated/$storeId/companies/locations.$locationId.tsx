@@ -104,7 +104,6 @@ function CompanyLocationBody({ location }: { location: CompanyLocation }) {
         header={
           <PageHeader
             title={location.name}
-            subtitle={location.external_id ?? undefined}
             backTo={`companies/${location.company_id}`}
             resource={{ id: location.id }}
             jsonPreview={{

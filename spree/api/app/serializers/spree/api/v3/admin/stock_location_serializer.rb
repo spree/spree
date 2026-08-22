@@ -3,6 +3,8 @@ module Spree
     module V3
       module Admin
         class StockLocationSerializer < V3::StockLocationSerializer
+          include Concerns::ExternalReferencesAttribute
+
           typelize active: :boolean, default: :boolean, backorderable_default: :boolean,
                    propagate_all_variants: :boolean, pickup_enabled: :boolean,
                    admin_name: [:string, nullable: true],

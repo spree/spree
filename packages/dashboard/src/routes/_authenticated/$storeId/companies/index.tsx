@@ -12,7 +12,6 @@ import {
 import {
   Button,
   Field,
-  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -191,18 +190,6 @@ function CreateCompanySheet({
                   {...form.register('name')}
                 />
                 <FieldError errors={[errors.name]} />
-              </Field>
-
-              <Field>
-                <FieldLabel htmlFor="external_id">{t('admin.fields.external_id.label')}</FieldLabel>
-                <Input
-                  id="external_id"
-                  placeholder={t('admin.fields.company.external_id.placeholder')}
-                  aria-invalid={!!errors.external_id || undefined}
-                  {...form.register('external_id')}
-                />
-                <FieldDescription>{t('admin.fields.company.external_id.help')}</FieldDescription>
-                <FieldError errors={[errors.external_id]} />
               </Field>
             </FieldGroup>
           </div>

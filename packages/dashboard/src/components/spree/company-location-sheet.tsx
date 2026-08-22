@@ -5,7 +5,6 @@ import {
   Button,
   Checkbox,
   Field,
-  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -67,7 +66,6 @@ export function CompanyLocationSheet({
     const shipping = addressToForm(location.shipping_address)
     form.reset({
       name: location.name,
-      external_id: location.external_id ?? '',
       billing_address: billing,
       shipping_address: shipping,
       // A branch saved with matching addresses reopens with the box ticked, so
@@ -130,16 +128,6 @@ export function CompanyLocationSheet({
                   {...form.register('name')}
                 />
                 <FieldError errors={[errors.name]} />
-              </Field>
-
-              <Field>
-                <FieldLabel htmlFor="location-external-id">
-                  {t('admin.fields.external_id.label')}
-                </FieldLabel>
-                <Input id="location-external-id" {...form.register('external_id')} />
-                <FieldDescription>
-                  {t('admin.fields.company_location.external_id.help')}
-                </FieldDescription>
               </Field>
 
               <AddressFieldset

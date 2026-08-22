@@ -1593,6 +1593,34 @@
         "track_price_history": {
           "help": "Przechowuj poprzednie ceny, aby sklep mógł pokazać najniższą cenę z ostatnich 30 dni, zgodnie z przepisami UE.",
           "label": "Zapisuj historię cen"
+        },
+        "data_sources": {
+          "internal": "Spree (wbudowane)",
+          "not_connected": "Połącz tę integrację, aby jej użyć",
+          "pricing_provider": {
+            "label": "Źródło cen",
+            "help": "Spree wylicza ceny z katalogu i cenników, chyba że odpowiada system zewnętrzny."
+          },
+          "inventory_provider": {
+            "label": "Źródło stanów magazynowych",
+            "help": "Źródło zewnętrzne jest pytane przy dodaniu do koszyka i przy zamówieniu. Listy zawsze pokazują Twoje własne stany."
+          },
+          "pricing_failure_policy": {
+            "label": "Gdy nie można potwierdzić cen",
+            "help": "Naliczenie złej ceny trudno cofnąć, dlatego bezpieczniej jest odmówić."
+          },
+          "inventory_failure_policy": {
+            "label": "Gdy nie można potwierdzić stanów",
+            "help": "Sprzedaż niedostępnego towaru da się naprawić, więc wycofanie pozwala dalej sprzedawać."
+          },
+          "policies": {
+            "strict": {
+              "label": "Odmów i poproś klienta o ponowną próbę"
+            },
+            "fallback": {
+              "label": "Użyj danych Spree"
+            }
+          }
         }
       },
       "store_credit": {
@@ -1732,18 +1760,11 @@
       "company": {
         "name": {
           "placeholder": "Acme Industries"
-        },
-        "external_id": {
-          "help": "Twój własny identyfikator tej firmy, unikalny w sklepie.",
-          "placeholder": "ACME-001"
         }
       },
       "company_location": {
         "name": {
           "placeholder": "Siedziba główna"
-        },
-        "external_id": {
-          "help": "Twój własny identyfikator tego oddziału."
         }
       },
       "company_contact": {
@@ -1891,6 +1912,9 @@
           "help": "Nigdy nie naliczaj mniej niż pierwsza kwota ani więcej niż druga. Każda dotyczy tylko sprzedaży w swojej walucie; waluta pozostawiona pusta jest naliczana bez ograniczeń.",
           "label": "Dolna i górna granica (opcjonalnie)"
         }
+      },
+      "external_references": {
+        "label": "Odniesienia zewnętrzne"
       }
     },
     "gift_cards": {
@@ -3159,7 +3183,8 @@
           "tab_payments": "Płatności",
           "tab_standards": "Standardy i formaty",
           "tab_storefront_access": "Dostęp do sklepu",
-          "title": "Ustawienia sklepu"
+          "title": "Ustawienia sklepu",
+          "tab_data_sources": "Źródła cen i stanów magazynowych"
         },
         "tax_categories": {
           "add_sheet_title": "Dodaj kategorię podatkową",

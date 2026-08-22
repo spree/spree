@@ -3,6 +3,8 @@ module Spree
     module V3
       module Admin
         class CompanySerializer < V3::CompanySerializer
+          include Concerns::ExternalReferencesAttribute
+
           typelize locations_count: :number, metadata: 'Record<string, unknown> | null'
 
           attributes :metadata, created_at: :iso8601, updated_at: :iso8601

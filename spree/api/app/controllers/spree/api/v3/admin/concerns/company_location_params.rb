@@ -19,7 +19,7 @@ module Spree
 
             def permitted_params
               params.permit(
-                :name, :external_id,
+                :name,
                 metadata: {},
                 billing_address: ADDRESS_KEYS,
                 shipping_address: ADDRESS_KEYS

@@ -8,7 +8,7 @@ const client = createAdminClient({
 // region:example
 const company = await client.companies.create({
   name: 'Globex Corporation',
-  external_id: 'GLBX-42',
+  external_references: { erp: 'GLBX-42' },
 })
 
 // endregion:example

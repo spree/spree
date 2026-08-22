@@ -1577,6 +1577,34 @@
         "track_price_history": {
           "help": "Frühere Preise speichern, damit der Shop den niedrigsten Preis der letzten 30 Tage anzeigen kann, wie es EU-Regeln verlangen.",
           "label": "Preisverlauf aufzeichnen"
+        },
+        "data_sources": {
+          "internal": "Spree (integriert)",
+          "not_connected": "Verbinden Sie diese Integration, um sie zu nutzen",
+          "pricing_provider": {
+            "label": "Preise stammen aus",
+            "help": "Spree berechnet Preise aus Ihrem Katalog und Ihren Preislisten, sofern kein externes System antwortet."
+          },
+          "inventory_provider": {
+            "label": "Bestände stammen aus",
+            "help": "Eine externe Quelle wird beim Hinzufügen zum Warenkorb und an der Kasse gefragt. Listen zeigen immer Ihre eigenen Bestände."
+          },
+          "pricing_failure_policy": {
+            "label": "Wenn Preise nicht bestätigt werden können",
+            "help": "Ein falscher Preis lässt sich schwer rückgängig machen, daher ist Ablehnen die sicherere Voreinstellung."
+          },
+          "inventory_failure_policy": {
+            "label": "Wenn Bestände nicht bestätigt werden können",
+            "help": "Ein Verkauf ohne Ware ist korrigierbar, daher hält der Rückfall Ihren Verkauf am Laufen."
+          },
+          "policies": {
+            "strict": {
+              "label": "Ablehnen und Kunden um erneuten Versuch bitten"
+            },
+            "fallback": {
+              "label": "Sprees eigene Zahlen verwenden"
+            }
+          }
         }
       },
       "store_credit": {
@@ -1716,18 +1744,11 @@
       "company": {
         "name": {
           "placeholder": "Acme Industries"
-        },
-        "external_id": {
-          "help": "Ihre eigene Referenz für diese Firma, eindeutig innerhalb des Shops.",
-          "placeholder": "ACME-001"
         }
       },
       "company_location": {
         "name": {
           "placeholder": "Hauptsitz"
-        },
-        "external_id": {
-          "help": "Ihre eigene Referenz für diese Niederlassung."
         }
       },
       "company_contact": {
@@ -1875,6 +1896,9 @@
           "help": "Nie weniger als der erste und nie mehr als der zweite Betrag. Jeder gilt nur für Verkäufe in seiner eigenen Währung; eine leer gelassene Währung wird unbegrenzt berechnet.",
           "label": "Unter- und Obergrenze (optional)"
         }
+      },
+      "external_references": {
+        "label": "Externe Referenzen"
       }
     },
     "gift_cards": {
@@ -3115,7 +3139,8 @@
           "tab_payments": "Zahlungen",
           "tab_standards": "Standards und Formate",
           "tab_storefront_access": "Storefront-Zugriff",
-          "title": "Shop-Einstellungen"
+          "title": "Shop-Einstellungen",
+          "tab_data_sources": "Preis- und Bestandsquellen"
         },
         "tax_categories": {
           "add_sheet_title": "Steuerkategorie hinzufügen",
