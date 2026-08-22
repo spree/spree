@@ -10,6 +10,7 @@ module Spree
 
     include Spree::HasCustomFields
     include Spree::Metadata
+    include Spree::HasExternalReferences
 
     belongs_to :company, class_name: 'Spree::Company', inverse_of: :company_locations
     belongs_to :billing_address, class_name: 'Spree::Address', optional: true, dependent: :destroy
@@ -36,6 +37,7 @@ module Spree
 
     delegate :store, :store_id, to: :company
 
-    self.whitelisted_ransackable_attributes = %w[name external_id]
+    self.whitelisted_ransackable_attributes = %w[name]
+    self.whitelisted_ransackable_associations = %w[external_references]
   end
 end
