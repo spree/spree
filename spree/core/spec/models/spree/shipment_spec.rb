@@ -237,7 +237,9 @@ describe Spree::Shipment, type: :model do
     it 'equals line items final amount with tax' do
       shipment = create(:shipment, order: create(:order_with_line_item_quantity, line_items_quantity: 2))
       shipment.order.line_items.first.update_columns(adjustment_total: 2.0, additional_tax_total: 2.0)
-      expect(shipment.item_cost).to eq(22.0)
+      # update_columns writes behind the loaded associations, so the manifest
+      # has to re-read the line items to see the tax.
+      expect(shipment.reload.item_cost).to eq(22.0)
     end
   end
 
@@ -807,7 +809,8 @@ describe Spree::Shipment, type: :model do
     let(:shipment) { Spree::Shipment.create order_id: order.id, stock_location: create(:stock_location) }
 
     let(:shipping_rate) do
-      Spree::ShippingRate.create shipment_id: shipment.id, cost: 10
+      Spree::ShippingRate.create shipment_id: shipment.id, cost: 10,
+                                 delivery_method: create(:delivery_method)
     end
 
     before do
