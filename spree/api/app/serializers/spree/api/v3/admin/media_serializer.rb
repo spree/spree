@@ -3,6 +3,8 @@ module Spree
     module V3
       module Admin
         class MediaSerializer < V3::MediaSerializer
+          include Concerns::ExternalReferencesAttribute
+
           typelize viewable_type: :string, viewable_id: :string,
                    metadata: 'Record<string, unknown>',
                    download_url: [:string, nullable: true]

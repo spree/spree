@@ -8,18 +8,26 @@ module Spree
     include Rails.application.routes.url_helpers
     include Spree::HasCustomFields
     include Spree::Metadata
+    include Spree::HasExternalReferences
 
     publishes_lifecycle_events
 
     EXTERNAL_URL_CUSTOM_FIELD_KEY = 'external.url'
-    MEDIA_TYPES = %w[image video external_video].freeze
+    # external_image is a picture Spree points at rather than stores — a DAM
+    # keeps the master and its renditions, and copying the bytes here would
+    # mean two systems disagreeing about what the current image is.
+    MEDIA_TYPES = %w[image video external_video external_image].freeze
+
+    # Types whose bytes live elsewhere: the row holds an address, so there is
+    # no attachment to require on any write path.
+    HOSTED_MEDIA_TYPES = %w[external_video external_image].freeze
 
     # Domain attributes a client may write, shared by every write path — the
     # media endpoints and the inline `media:` list on a product. Each path adds
     # its own transport keys (an upload's signed id, a row id) on top. Adding a
     # field here reaches both, so it can't be dropped on the one a client uses.
     WRITABLE_ATTRIBUTES = %i[
-      alt position media_type external_video_url poster_signed_id
+      alt position media_type external_video_url external_media_url poster_signed_id
       focal_point_x focal_point_y
     ].freeze
 
@@ -42,7 +50,9 @@ module Spree
     validates :poster, content_type: Rails.application.config.active_storage.web_image_content_types,
               if: -> { poster.attached? }
     validates :external_video_url, presence: true, if: :external_video?
+    validates :external_media_url, presence: true, if: :external_image?
     validate :external_video_url_is_supported, if: -> { external_video? && external_video_url.present? }
+    validate :external_media_url_is_addressable, if: -> { external_image? && external_media_url.present? }
     validate :poster_signed_id_is_resolvable, if: -> { @poster_signed_id.present? }
 
     WEBP_SAVER_OPTIONS = {
@@ -121,6 +131,10 @@ module Spree
       media_type == 'external_video'
     end
 
+    def external_image?
+      media_type == 'external_image'
+    end
+
     # @return [Boolean] whether this row plays as video, hosted or embedded
     def playable_video?
       video? || external_video?
@@ -151,6 +165,10 @@ module Spree
       super(url.is_a?(String) ? url.strip.presence : url)
     end
 
+    def external_media_url=(url)
+      super(url.is_a?(String) ? url.strip.presence : url)
+    end
+
     # The one definition of "which image represents this row": an image is its
     # own attachment, a video is its poster. Nil for a video with no poster —
     # ask #provider_still_url for the provider's own thumbnail, which isn't an
@@ -167,13 +185,26 @@ module Spree
       external_video&.thumbnail_url
     end
 
+    # A still whose bytes live somewhere else — an external image's own
+    # address, or an external video's provider thumbnail. Not ours to resize,
+    # so every requested size resolves to this one URL. Callers that turn a
+    # row into a picture ask this rather than comparing media_type to a
+    # string, so a new externally hosted kind changes nothing at the call
+    # sites.
+    # @return [String, nil]
+    def hosted_still_url
+      return external_media_url.presence if external_image?
+
+      provider_still_url
+    end
+
     # Whether this row can stand in as a thumbnail. A video qualifies only once
     # it has a still — otherwise a gallery's first tile, and every listing that
     # renders `thumbnail_url` in an <img>, would come back empty or with a raw
     # video file.
     # @return [Boolean]
     def renderable_as_image?
-      still_image.present? || provider_still_url.present?
+      still_image.present? || hosted_still_url.present?
     end
 
     def product
@@ -257,6 +288,18 @@ module Spree
       return if Spree::ExternalVideo.supported?(external_video_url)
 
       errors.add(:external_video_url, :unsupported_video_provider)
+    end
+
+    # The stored value is emitted straight into an <img src>, so it has to be
+    # an address a browser will fetch over the wire — not a javascript: or
+    # data: payload, and not a bare string.
+    def external_media_url_is_addressable
+      uri = URI.parse(external_media_url)
+      return if uri.is_a?(URI::HTTP) && uri.host.present?
+
+      errors.add(:external_media_url, :invalid_media_url)
+    rescue URI::InvalidURIError
+      errors.add(:external_media_url, :invalid_media_url)
     end
 
     def touch_product_variants

@@ -13,6 +13,7 @@ module Spree
     include Spree::SingleStoreResource
     include Spree::HasCustomFields
     include Spree::Metadata
+    include Spree::HasExternalReferences
 
     publishes_lifecycle_events
 
@@ -27,13 +28,9 @@ module Spree
                                           dependent: :destroy, inverse_of: :company
 
     validates :name, presence: true
-    # Paired with the partial unique index, per the convention — without it a
-    # duplicate reference reaches the database and surfaces as a 500 rather
-    # than a validation error. Nil is exempt on both sides.
-    validates :external_id, uniqueness: { scope: [:store_id, *spree_base_uniqueness_scope] }, allow_nil: true
 
-    self.whitelisted_ransackable_attributes = %w[name external_id]
-    self.whitelisted_ransackable_associations = %w[company_locations]
+    self.whitelisted_ransackable_attributes = %w[name]
+    self.whitelisted_ransackable_associations = %w[company_locations external_references]
 
     def event_serializer_class
       'Spree::Api::V3::CompanySerializer'.safe_constantize

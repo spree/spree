@@ -3,6 +3,8 @@ module Spree
     module V3
       module Admin
         class StockLevelSerializer < V3::StockLevelSerializer
+          include Concerns::ExternalReferencesAttribute
+
           typelize metadata: 'Record<string, unknown>',
                    allocated_count: :number, available_count: :number
 

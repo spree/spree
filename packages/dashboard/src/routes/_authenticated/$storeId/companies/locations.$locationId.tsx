@@ -48,6 +48,7 @@ import {
   useDeleteCompanyLocation,
 } from '../../../../hooks/use-companies'
 import { customerAutocompleteProps } from '../../../../hooks/use-customers'
+import { spreeJsonLinkResolver } from '../../../../lib/json-link-resolver'
 
 export const Route = createFileRoute('/_authenticated/$storeId/companies/locations/$locationId')({
   component: CompanyLocationDetailPage,
@@ -96,9 +97,14 @@ function CompanyLocationBody({ location }: { location: CompanyLocation }) {
         header={
           <PageHeader
             title={location.name}
-            subtitle={location.external_id ?? undefined}
             backTo={`companies/${location.company_id}`}
             resource={{ id: location.id }}
+            jsonPreview={{
+              title: `Company location ${location.name}`,
+              fetch: () => Promise.resolve(location),
+              endpoint: `/api/v3/admin/company_locations/${location.id}`,
+              resolveLink: spreeJsonLinkResolver(storeId),
+            }}
             actions={
               canEdit ? (
                 <Button size="sm" variant="outline" onClick={() => setEditOpen(true)}>

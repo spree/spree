@@ -1,0 +1,208 @@
+---
+title: Build a Custom Pricing Provider
+description: Let an ERP or contract-pricing system decide what a variant costs for a given shopper, while Spree keeps rendering prices from its own catalog for everyone else.
+---
+
+## Overview
+
+A pricing provider decides **where a variant's price comes from**. Spree ships with one built-in provider, `Spree::PricingProvider::Internal`, which walks the store's price lists and falls back to the variant's base price. That is the default, and a store that never connects anything keeps using it.
+
+A custom provider replaces that answer with one from outside Spree — typically negotiated pricing that lives in an ERP, where a signed-in business customer's contract rate is not something you want to copy into the catalog for every account.
+
+Before you reach for a provider, check whether Spree's own tools already cover you:
+
+- **A different price for a group of customers, a market or a channel** — use a price list with rules. No code.
+- **Different arithmetic on values Spree already has** — a price list rule or a promotion.
+- **A price that only an external system knows, decided at the moment of asking** — a provider.
+
+The last case is the one this guide is for.
+
+## How a provider is used
+
+A provider answers one question: given a `Spree::Pricing::Context` — the variant, currency, store, market, channel, signed-in customer and quantity — what is the price? It returns a `Spree::Price`.
+
+Returning an Active Record object is deliberate. Everything downstream — the tax-inclusive restatement for a market, the `discounted?` check, the serializers — keeps working without knowing where the number came from. Your price is **unsaved and marked readonly** by Spree before it goes anywhere, so a remote figure can never be written back into the catalog by accident.
+
+Two things about *when* a provider is asked matter more than anything else in this guide.
+
+**Pricing sits on the catalog read path.** The Store API prices every tile of every listing. If your provider makes a network call for each one, a 48-product page is 48 ERP calls, and an ERP outage takes the storefront down with it. Spree gives you two tools for this and expects you to use both: `handles?` to decline contexts you have no special answer for, and `cache_ttl` so the answers you do give are reused.
+
+**Failure is handled by the store, not by you.** When your provider raises, Spree applies the store's pricing failure policy. The default is `strict`: in a checkout flow the step fails and the customer is asked to retry; on a catalog read the tile shows no price rather than a number you did not confirm. A store can opt into `fallback`, where Spree's own catalog answers instead. Either way, a provider that cannot answer **must raise, never guess** — quietly returning the wrong price is worse than refusing.
+
+## What you will build
+
+| Piece | Responsibility |
+|---|---|
+| `Spree::Integration` subclass | Holds the store's credentials, managed from the admin dashboard |
+| `Spree::PricingProvider::Base` subclass | Answers a price for a context, or declines |
+| An initializer | Registers both so a store can select them |
+
+Providers are stateless and built without arguments. Everything request-specific arrives in the context, and credentials come from the integration.
+
+## 1. Store credentials in an integration
+
+```ruby
+module SpreeAcmeErp
+  class Integration < Spree::Integration
+    preference :api_key, :password
+    preference :account_id, :string
+
+    def self.integration_group = 'erp'
+
+    # Called when an admin activates the integration. Returning false blocks
+    # activation and shows your message in the dashboard.
+    def can_connect?
+      client.ping
+      true
+    rescue StandardError => e
+      self.connection_error_message = e.message
+      false
+    end
+
+    def client
+      @client ||= AcmeErp::Client.new(api_key: preferred_api_key, account: preferred_account_id)
+    end
+  end
+end
+```
+
+Declare secrets as `:password` preferences. Spree masks them on read and guards the round-trip on write, so an API key never leaves the server in plain text.
+
+## 2. Implement the provider
+
+```ruby
+module SpreeAcmeErp
+  class PricingProvider < Spree::PricingProvider::Base
+    def self.integration_class = 'SpreeAcmeErp::Integration'
+
+    # Decline everything that is not a business customer with a contract.
+    # Anonymous browsing, and buyers whose company the ERP does not know, get
+    # Spree's own catalog price without this provider being asked — which is
+    # what keeps a product listing from becoming an ERP call per tile.
+    def handles?(context)
+      erp_account_for(context).present?
+    end
+
+    # Answers are reused for five minutes per (variant, currency, store,
+    # country, market, channel, user, quantity). Spree owns the cache and the
+    # key; you only say how long an answer stays good.
+    def cache_ttl = 5.minutes
+
+    def price_for(context)
+      quote = integration_for(context.store).client.price(
+        sku: context.variant.sku,
+        account: erp_account_for(context),
+        currency: context.currency,
+        quantity: context.quantity || 1
+      )
+      return nil if quote.nil?
+
+      Spree::Price.new(
+        variant: context.variant,
+        currency: context.currency,
+        amount: quote.unit_price
+      )
+    end
+
+    private
+
+    # The company a sale is for lives on the cart, not the customer: a buyer
+    # may act for several businesses, and Spree resolves to none rather than
+    # guess. The external reference is the identity your ERP connector wrote
+    # when it synced the company — so a company the ERP has never seen never
+    # reaches it.
+    def erp_account_for(context)
+      context.order&.company&.external_id_for('acme_erp')
+    end
+  end
+end
+```
+
+A few things in that example are load-bearing.
+
+**`handles?` is your scoping rule, and it runs before any network call.** Spree checks it first; when it returns `false`, the internal resolver answers and your `price_for` is never invoked. Put your cheapest, most exclusive test here.
+
+**Read the company off the cart, not the customer.** `context.order` is the cart or order being priced; its `company` is resolved from the branch the sale is for. A context built for a catalog read carries no order, so `handles?` returns `false` there and the catalog answers — which is precisely the behaviour you want on listings. If you need contract prices visible on product pages for a signed-in buyer, that is the one case where you would resolve the company from `context.user` yourself; do it with care, because a buyer acting for several companies has no single answer, and pricing them as one of them is a dispute waiting to happen.
+
+**Return `nil` when you have no price**, and Spree treats it as "no price" — it will not silently substitute the catalog's. If you want the catalog to answer in that case, decline via `handles?` instead.
+
+**Raise on failure; do not rescue to a guess.** A timeout, a 5xx, an unparseable response — let it propagate. The store's failure policy decides what happens, and it is the merchant's decision, not yours. Report it if you like, but the raise is what the policy keys on.
+
+**Set the variant.** Spree fills it in from the context if you forget, but the restatement for tax-inclusive markets reads `price.variant`, and being explicit costs nothing.
+
+**`cache_ttl` is mandatory for anything remote.** Returning `nil` means no caching, which is only right for a provider reading the local database. Spree builds the cache key — variant, currency, store, country, market, channel, user and quantity — so two shoppers with different contracts never share an entry, and two requests from the same shopper a second apart do.
+
+### Tax-inclusive markets
+
+If the store sells in a market where prices include VAT, return the amount **as your system quotes it** and let Spree restate. The same `price_including_vat_for` pass that catalog prices go through applies to yours, so a net contract price is grossed up for the destination exactly as a catalog price would be. Do not pre-compute tax into the amount.
+
+### What you get on the line item
+
+When your price is applied to a cart line, Spree records which provider answered in `spree_line_items.price_source` — your provider's key, or `NULL` when the catalog priced it. An order can therefore always say why it charged what it charged, even years later, and a fallback to the catalog is never misattributed to you.
+
+## 3. Register both classes
+
+```ruby
+# config/initializers/spree.rb
+Spree.pricing_providers << 'SpreeAcmeErp::PricingProvider'.constantize
+Spree.integrations << 'SpreeAcmeErp::Integration'
+```
+
+Your provider's **key** is derived from its class name — `SpreeAcmeErp::PricingProvider` registers as `pricing_provider`, which is not useful. Override it so the key names your system, since it is what the store preference stores and what appears in `price_source` on every line you priced:
+
+```ruby
+def self.key = 'acme_erp'
+```
+
+## 4. Select it for a store
+
+A store chooses its pricing source through two preferences:
+
+| Preference | Values | Default |
+|---|---|---|
+| `pricing_provider` | a registered provider key, or `internal` | `internal` |
+| `pricing_provider_failure_policy` | `strict` or `fallback` | `strict` |
+
+Set them through the Admin API:
+
+```bash
+PATCH /api/v3/admin/store
+{ "preferences": { "pricing_provider": "acme_erp" } }
+```
+
+A store whose preference names a provider that is no longer installed falls back to `internal` rather than failing — removing your gem must never take checkout down.
+
+The merchant connects your integration under **Settings → Integrations** first; Spree derives availability from `integration_class`, so the provider is rejected for a store whose integration is not connected.
+
+## Testing
+
+Your provider is a plain object, so test it directly with a context:
+
+```ruby
+RSpec.describe SpreeAcmeErp::PricingProvider do
+  let(:store) { create(:store) }
+  let(:cart) { create(:cart, store: store, company_location: branch_known_to_erp) }
+  let(:context) { Spree::Pricing::Context.from_order(variant, cart, quantity: 10) }
+
+  it 'declines anonymous browsing so the catalog answers' do
+    anonymous = Spree::Pricing::Context.new(variant: variant, currency: 'USD', store: store)
+
+    expect(described_class.new.handles?(anonymous)).to be(false)
+  end
+
+  it 'quotes a contract price for a known account' do
+    price = described_class.new.price_for(context)
+
+    expect(price.amount).to eq(7.50)
+    expect(price.variant).to eq(variant)
+  end
+
+  it 'raises when the ERP cannot answer, so the store policy decides' do
+    stub_erp_timeout
+
+    expect { described_class.new.price_for(context) }.to raise_error(AcmeErp::Timeout)
+  end
+end
+```
+
+Stub the ERP client rather than calling it. And write the `handles?` test first — it is the one that protects your storefront, and it is the one most easily left untested because nothing breaks when it is too permissive. The storefront just gets slower, and nobody notices until the ERP has a bad day.

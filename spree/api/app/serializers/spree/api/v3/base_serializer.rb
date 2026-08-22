@@ -124,6 +124,16 @@ module Spree
 
         def image_url_for(image)
           return nil if image.nil?
+
+          # A hosted still — an external image, a provider thumbnail — has no
+          # attachment to build a variant from and answers with its own URL.
+          # Asked only when the row holds no still of its own, so a video
+          # with an uploaded poster still resolves to that poster.
+          if image.respond_to?(:hosted_still_url) && image.respond_to?(:still_image) && image.still_image.nil?
+            hosted = image.hosted_still_url
+            return hosted if hosted.present?
+          end
+
           return nil unless image.respond_to?(:attached?) && image.attached?
 
           # Handle Spree::Media rows, which keep the file in `attachment`

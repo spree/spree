@@ -1,6 +1,9 @@
 require 'spec_helper'
 
-describe Spree::Pricing::Resolver do
+# The price-list walk that backs Spree's own pricing. Exercised directly
+# rather than through Internal#price_for so a failure names the rule that
+# broke; the provider's own contract is covered in pricing_provider_spec.rb.
+describe Spree::PricingProvider::Internal::Resolution do
   let(:variant) { create(:variant) }
   let(:store) { create(:store) }
   let(:currency) { 'USD' }

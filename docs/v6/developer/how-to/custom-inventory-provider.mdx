@@ -1,0 +1,213 @@
+---
+title: Build a Custom Inventory Provider
+description: Let a warehouse or ERP system answer how much stock exists at decision moments — add-to-cart, reservations, checkout — while Spree's own stock records keep serving every listing.
+---
+
+## Overview
+
+An inventory provider decides **where a variant's stock figure comes from** when Spree needs to decide whether it can sell. Spree ships with one built-in provider, `Spree::InventoryProvider::Internal`, which reads the store's own stock levels. That is the default, and a store that never connects anything keeps using it.
+
+A custom provider asks an external system instead — a warehouse management system, an ERP, a 3PL — so the answer at the moment a customer adds an item reflects what the warehouse actually holds, not what Spree's last sync said.
+
+This guide is for that case. If your system can push stock levels to Spree on a schedule, you may not need a provider at all: the stock bulk endpoint (`POST /api/v3/admin/stock_levels/bulk_upsert`) and the stock CSV import both accept a warehouse's levels and write them as movements, and Spree's own records then answer every question. A provider is for when the figure must be **asked, not synced** — high-velocity stock, shared pools across channels, or a warehouse that will not push.
+
+## The most important rule
+
+**An inventory provider is never consulted on a catalog read.** Listings, product pages, search, the `in_stock` badge, the `purchasable` flag — all of these read Spree's own stock records, always. A provider is asked only at three decision moments:
+
+- when an item is added to a cart (or its quantity changed),
+- when a checkout reservation is taken,
+- at order completion.
+
+This is not a limitation to work around; it is the point. A provider on the read path would mean one remote call per product tile, and it would take the storefront down with the remote system. Keep the sync feed running so the local snapshot is fresh for display, and let the provider confirm at the moments that matter.
+
+## How a provider is used
+
+A provider answers: for this variant, what stock levels exist and where? It returns `Spree::StockLevel` rows — one per stock location the variant is stocked at, carrying `count_on_hand` and `backorderable`.
+
+Returning the Active Record shape is deliberate. `Spree::Stock::Quantifier` does the arithmetic over whatever rows it is handed, so backorder limits, preorders, and the rest behave identically whether the rows came from the database or from your warehouse. Your rows are **unsaved**: Spree never writes a remote figure into its own stock records from a live check.
+
+One consequence of that shape is worth understanding before you write a line. **Local checkout reservations still apply against your rows.** Your warehouse does not know about Spree's carts, so when one customer has an item reserved at checkout and another asks to add the last unit, Spree subtracts the hold from the count *you* returned. Those reservations are matched by stock location, since your unsaved rows carry no id — which is why each row you return must name its `stock_location`.
+
+**Failure is handled by the store, not by you.** When your provider raises, Spree applies the store's inventory failure policy. The default is `fallback`: Spree's own stock records answer, and the sale goes ahead on the local figure. A store can opt into `strict`, where the step fails and the customer is told to retry. The default differs from pricing on purpose — selling stock that turns out not to exist is recoverable, charging the wrong price is a dispute. Either way, **raise when you cannot answer; never guess.**
+
+## What you will build
+
+| Piece | Responsibility |
+|---|---|
+| `Spree::Integration` subclass | Holds the store's credentials, managed from the admin dashboard |
+| `Spree::InventoryProvider::Base` subclass | Returns stock levels for a variant |
+| An initializer | Registers both so a store can select them |
+
+Providers are stateless and built without arguments. Credentials come from the integration.
+
+## 1. Store credentials in an integration
+
+```ruby
+module SpreeAcmeWms
+  class Integration < Spree::Integration
+    preference :api_key, :password
+    preference :warehouse_code, :string
+
+    def self.integration_group = 'erp'
+
+    def can_connect?
+      client.ping
+      true
+    rescue StandardError => e
+      self.connection_error_message = e.message
+      false
+    end
+
+    def client
+      @client ||= AcmeWms::Client.new(api_key: preferred_api_key)
+    end
+  end
+end
+```
+
+Declare secrets as `:password` preferences. Spree masks them on read and guards the round-trip on write.
+
+## 2. Implement the provider
+
+```ruby
+module SpreeAcmeWms
+  class InventoryProvider < Spree::InventoryProvider::Base
+    def self.integration_class = 'SpreeAcmeWms::Integration'
+    def self.key = 'acme_wms'
+
+    # Answers are reused for a short while. Stock moves fast, so keep this
+    # brief — but keep it, since an add-to-cart followed by a checkout
+    # reservation should not ask the warehouse twice in the same minute.
+    def cache_ttl = 1.minute
+
+    # @param variant [Spree::Variant]
+    # @param stock_location [Spree::StockLocation, nil] narrow to one location
+    # @return [Array<Spree::StockLevel>] unsaved rows, one per location
+    def stock_levels_for(variant, stock_location: nil)
+      store = variant.product.store
+      locations = stock_location ? [stock_location] : store.stock_locations.active
+      external_sku = variant.external_id_for('acme_wms') || variant.sku
+
+      # Both sides of the question are addressed by the keys YOUR system
+      # knows: the warehouse's own id for the SKU, and its own id for each
+      # location — written by your connector when it synced them.
+      warehouses = locations.index_by { |location| location.external_id_for('acme_wms') }.compact
+      levels = integration_for(store).client.levels(sku: external_sku, warehouses: warehouses.keys)
+
+      warehouses.filter_map do |warehouse_id, location|
+        level = levels[warehouse_id]
+        next if level.nil?
+
+        Spree::StockLevel.new(
+          variant: variant,
+          stock_location: location,
+          count_on_hand: level.available,
+          backorderable: level.backorderable?
+        )
+      end
+    end
+  end
+end
+```
+
+What matters in that example:
+
+**Every row names its stock location.** This is how Spree matches local checkout reservations against your figures, and how a multi-location store knows which warehouse a unit would ship from. A row with no `stock_location` is a row Spree cannot use.
+
+**Returning no rows means zero, not "I don't know."** If your system has never heard of the variant, return `[]`. Spree treats that as a complete answer — nothing in stock anywhere — rather than falling back to local records. A variant unknown to the warehouse cannot be sold; if you want the catalog to answer for unknown SKUs, look them up and raise instead, so the store's failure policy decides.
+
+**Raise on failure; do not rescue to a guess.** A timeout or an unparseable response should propagate. Under the default `fallback` policy Spree sells on the local snapshot; under `strict` it refuses. That is the merchant's call.
+
+**Address records by the identity your system knows.** `variant.external_id_for('acme_wms')` and `location.external_id_for('acme_wms')` read the references your connector wrote when it synced the catalog and the warehouses — a stock location Spree has not been told the warehouse's id for is simply not asked about. See [External references](/v6/developer/core-concepts/external-references) for how those are written.
+
+**Set `cache_ttl`, but keep it short.** Stock changes faster than prices. A minute reuses the answer across an add-to-cart and the reservation that follows it without reflecting a figure that is no longer true at completion.
+
+### Narrowing to a location
+
+`stock_location:` is passed when Spree is asking about one warehouse specifically — a pickup check, a location-pinned fulfillment. Honour it by returning only that location's row; you can save a call by asking your system for one warehouse instead of all of them.
+
+## 3. Register both classes
+
+```ruby
+# config/initializers/spree.rb
+Spree.inventory_providers << 'SpreeAcmeWms::InventoryProvider'.constantize
+Spree.integrations << 'SpreeAcmeWms::Integration'
+```
+
+Override `self.key` as shown above so the store preference stores a name for your system rather than the generic `inventory_provider` derived from the class name.
+
+## 4. Select it for a store
+
+| Preference | Values | Default |
+|---|---|---|
+| `inventory_provider` | a registered provider key, or `internal` | `internal` |
+| `inventory_provider_failure_policy` | `fallback` or `strict` | `fallback` |
+
+Set them through the Admin API:
+
+```bash
+PATCH /api/v3/admin/store
+{ "preferences": { "inventory_provider": "acme_wms" } }
+```
+
+A store whose preference names a provider that is no longer installed falls back to `internal` rather than failing. The merchant connects your integration under **Settings → Integrations** first; Spree derives availability from `integration_class`.
+
+## Keeping the snapshot fresh
+
+A provider confirms at decision moments. It does not update what the storefront shows. Pair it with a sync so `in_stock` badges and listings stay honest:
+
+- **Push on change** — call `POST /api/v3/admin/stock_levels/bulk_upsert` when your system's levels move. Rows can name variants and locations by your own keys (`"variant": { "external_id": { "acme_wms": "SKU-1" } }`), and every change is written as a stock movement so the merchant can see why a figure moved.
+- **Import on a schedule** — the stock CSV import accepts a warehouse export keyed by SKU or external id.
+
+Spree deliberately does **not** write your live answers back into its records. The snapshot is the sync's to own; a live check racing the feed is how two systems end up disagreeing about a number.
+
+## Testing
+
+Your provider is a plain object, so test it directly:
+
+```ruby
+RSpec.describe SpreeAcmeWms::InventoryProvider do
+  let(:store) { create(:store) }
+  let(:warehouse) { create(:stock_location, store: store).tap { |it| it.set_external_id('acme_wms', 'WH-1') } }
+  let(:variant) { create(:variant) }
+
+  it 'returns a level per warehouse the system reports' do
+    warehouse
+    stub_wms(levels: { 'WH-1' => { available: 12, backorderable: false } })
+
+    rows = described_class.new.stock_levels_for(variant)
+
+    expect(rows.map(&:count_on_hand)).to eq([12])
+    expect(rows.first.stock_location).to eq(warehouse)
+    expect(rows.first).to be_new_record
+  end
+
+  it 'reports nothing for a variant the warehouse has never seen' do
+    stub_wms(levels: {})
+
+    expect(described_class.new.stock_levels_for(variant)).to eq([])
+  end
+
+  it 'raises when the warehouse cannot answer, so the store policy decides' do
+    stub_wms_timeout
+
+    expect { described_class.new.stock_levels_for(variant) }.to raise_error(AcmeWms::Timeout)
+  end
+end
+```
+
+To see your rows counted the way Spree counts them — reservations subtracted, backorder limits applied — hand them to the quantifier directly:
+
+```ruby
+it 'lets a local checkout hold reduce what the warehouse reports' do
+  create(:stock_reservation, stock_level: local_level_at(warehouse), quantity: 4)
+  rows = described_class.new.stock_levels_for(variant)  # warehouse says 12
+
+  quantifier = Spree::Stock::Quantifier.new(variant, stock_levels: rows)
+
+  expect(quantifier.total_on_hand).to eq(8)
+end
+```
+
+Stub the warehouse client rather than calling it — this runs on every add-to-cart.

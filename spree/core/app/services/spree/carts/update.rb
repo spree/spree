@@ -25,6 +25,27 @@ module Spree
         success(cart)
       rescue ActiveRecord::RecordNotFound
         raise
+      rescue Spree::Pricing::PriceResolution::ProviderUnavailable => e
+        # A strict store could not confirm a price. The transaction has rolled
+        # back, so the address change is not committed either — better than
+        # saving a destination whose prices nobody stood behind.
+        #
+        # The in-memory cart still holds the rolled-back attributes, though, so
+        # a caller that renders the object it passed in would show the customer
+        # an address the database never accepted. Reload it to match what was
+        # actually kept, carrying the transient warnings across as try_advance
+        # does.
+        Rails.error.report(e, context: { order_id: cart.id }, source: 'spree.checkout')
+
+        warnings = cart.warnings
+        begin
+          cart.reload
+        rescue StandardError # rubocop:disable Lint/SuppressedException
+          # a reload failure must not mask the pricing failure being reported
+        end
+        cart.warnings |= warnings if warnings.present?
+
+        failure(cart, Spree.t('cart_line_item.pricing_unavailable'))
       rescue ActiveRecord::RecordInvalid => e
         failure(cart, e.record.errors.full_messages.to_sentence)
       rescue StandardError => e
@@ -182,6 +203,11 @@ module Spree
         else
           cart.recalculate_totals!
         end
+      rescue Spree::Pricing::PriceResolution::ProviderUnavailable
+        # Deliberately not swallowed like the rest: a strict store refusing to
+        # price must roll the whole update back, so `call` sees it and the
+        # address change does not commit around unconfirmed prices.
+        raise
       rescue StandardError => e
         Rails.error.report(e, context: { order_id: cart.id }, source: 'spree.checkout')
       ensure

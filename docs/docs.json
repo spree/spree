@@ -990,6 +990,7 @@
                       "developer/core-concepts/payments",
                       "developer/core-concepts/taxes",
                       "v6/developer/core-concepts/taxes-discounts-fees",
+                      "v6/developer/core-concepts/external-references",
                       "v6/developer/core-concepts/promotions",
                       "v6/developer/core-concepts/store-credits-gift-cards"
                     ]
@@ -1142,6 +1143,14 @@
                     "icon": "truck",
                     "pages": [
                       "v6/developer/how-to/custom-delivery-rate-provider"
+                    ]
+                  },
+                  {
+                    "group": "Pricing & Inventory",
+                    "icon": "boxes-stacked",
+                    "pages": [
+                      "v6/developer/how-to/custom-pricing-provider",
+                      "v6/developer/how-to/custom-inventory-provider"
                     ]
                   },
                   {

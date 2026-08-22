@@ -8,6 +8,33 @@ module Spree
         class StockLevelsController < ResourceController
           scoped_resource :stock
 
+          before_action :require_stock_levels!, only: [:bulk_upsert]
+
+          def bulk_upsert
+            authorize! :update, Spree::StockLevel
+
+            rows = Array(params[:stock_levels]).map { |row| decode_stock_row(row) }
+
+            invalid = rows.each_with_index.filter_map do |row, index|
+              missing = %i[variant_id stock_location_id].reject { |key| row[key].present? }
+              missing << :count_on_hand if row[:count_on_hand].blank? && row[:adjustment].blank?
+              { index: index, missing: missing } if missing.any?
+            end
+
+            if invalid.any?
+              return render_error(
+                code: 'invalid_stock_levels',
+                message: 'Each row must name a variant and stock location in this store, ' \
+                         'and either a count_on_hand or an adjustment.',
+                status: :unprocessable_content,
+                details: { rows: invalid }
+              )
+            end
+
+            result = Spree::StockLevels::BulkUpsert.call(rows: rows)
+            render json: result.value
+          end
+
           # PATCH /api/v3/admin/stock_levels/:id
           #
           # A count edit is a correction, so it is written as an `adjusted`
@@ -94,6 +121,61 @@ module Spree
           # into a 422; omitting it falls back to a translated default.
           def permitted_params
             params.permit(*model_additional_permitted_attributes, :count_on_hand, :backorderable, :reason, metadata: {})
+          end
+
+          private
+
+          def bulk_record_count_key
+            :stock_level_count
+          end
+
+          def require_stock_levels!
+            return if params.key?(:stock_levels)
+
+            render_error(
+              code: 'missing_stock_levels',
+              message: 'stock_levels is required (send an empty array to no-op).',
+              status: :unprocessable_content
+            )
+          end
+
+          # Every id is resolved through the current store's own scopes, so a
+          # variant or location belonging to another store is simply not found
+          # rather than quietly written to.
+          def decode_stock_row(row)
+            row = row.respond_to?(:to_unsafe_h) ? row.to_unsafe_h : row.to_h
+            row = row.with_indifferent_access
+
+            {
+              variant_id: resolve_id(store_variants, row[:variant_id], row[:variant]),
+              stock_location_id: resolve_id(store_stock_locations, row[:stock_location_id], row[:stock_location]),
+              count_on_hand: row[:count_on_hand],
+              adjustment: row[:adjustment],
+              backorderable: row[:backorderable]
+            }.compact
+          end
+
+          def resolve_id(scope, prefixed_id, reference)
+            return scope.find_by_prefix_id(prefixed_id)&.id if prefixed_id.present?
+
+            external = reference.is_a?(Hash) ? reference[:external_id] : nil
+            return if external.blank?
+
+            # Only the `{ system => id }` map addresses a record; a bare string
+            # names no system, so it resolves to nothing and the row is
+            # reported as invalid rather than raising.
+            return unless external.respond_to?(:to_h) && !external.is_a?(String)
+
+            system, external_id = external.to_h.first
+            scope.find_by_external_id(system, external_id)&.id
+          end
+
+          def store_variants
+            current_store.variants.accessible_by(current_ability, :update)
+          end
+
+          def store_stock_locations
+            current_store.stock_locations.accessible_by(current_ability, :update)
           end
         end
       end

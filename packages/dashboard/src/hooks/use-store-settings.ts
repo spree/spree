@@ -16,6 +16,19 @@ export function useStoreSettings() {
   })
 }
 
+/**
+ * The pricing and inventory engines this store can choose between. Static for
+ * the life of a deploy — the list changes only when a connector gem is
+ * installed or an integration is connected — so it is cached generously.
+ */
+export function useStoreDataSources() {
+  return useQuery({
+    queryKey: useResourceKey(STORE_QUERY_RESOURCE, 'data-sources'),
+    queryFn: () => adminClient.store.dataSources(),
+    staleTime: 5 * 60 * 1000,
+  })
+}
+
 export function useUpdateStoreSettings() {
   return useResourceMutation<unknown, Error, StoreUpdateParams>({
     mutationFn: (params) => adminClient.store.update(params),

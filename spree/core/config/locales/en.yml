@@ -313,6 +313,8 @@ en:
             attachment:
               attachment_must_be_present: must be present
               not_allowed_content_type: has not allowed content type
+            external_media_url:
+              invalid_media_url: must be an http or https address
             external_video_url:
               unsupported_video_provider: must be a YouTube or Vimeo link
         spree/payment:
@@ -540,6 +542,7 @@ en:
     messages:
       already_confirmed: was already confirmed
       invalid_document_number_affix: 'can only contain uppercase letters, digits, dashes and #'
+      invalid_system_key: can only contain lowercase letters, digits and underscores
       locked_after_first_number: cannot change once numbering has started
       not_a_number: is not a number
       not_found: not found
@@ -675,6 +678,7 @@ en:
       delivery_unavailable: "%{li_name} cannot be delivered to the selected address"
       discontinued: "%{li_name} was removed because it was discontinued"
       out_of_stock: "%{li_name} was removed because it was sold out"
+      pricing_unavailable: Prices could not be confirmed. Please try again.
       quantity_must_be_positive: Quantity must be at least 1. Use DELETE to remove the item.
     categories: Categories
     category: Category

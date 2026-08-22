@@ -848,5 +848,44 @@ module Spree
       end
 
     end
+
+    describe 'when a strict store cannot confirm prices' do
+      let(:store) { @default_store }
+      let(:cart) { create(:cart, store: store) }
+      let(:variant) { create(:variant, price: 20) }
+
+      let(:failing_provider) do
+        Class.new(Spree::PricingProvider::Base) do
+          def self.key = 'contract'
+          def price_for(_context) = raise(Timeout::Error)
+        end
+      end
+
+      before do
+        create(:line_item, order: cart, variant: variant, quantity: 1)
+        Spree.pricing_providers << failing_provider
+        stub_store_preferences(store, pricing_provider: 'contract')
+      end
+
+      after { Spree.pricing_providers.delete(failing_provider) }
+
+      # The address change and the prices are one decision: committing a new
+      # destination while refusing to price for it would leave the cart showing
+      # figures nobody stood behind.
+      it 'rolls the address change back rather than committing it unpriced' do
+        result = described_class.call(
+          cart: cart,
+          params: { shipping_address: { firstname: 'Ada', lastname: 'Lovelace', address1: '1 Main St',
+                                        city: 'New York', zipcode: '10001', phone: '555-0100',
+                                        country_code: 'US', state_code: 'NY' } }
+        )
+
+        expect(result).to be_failure
+        # The object handed back must not still carry the rolled-back address:
+        # a caller that renders it would show an address the database refused.
+        expect(cart.ship_address_id).to be_nil
+        expect(cart.reload.shipping_address).to be_nil
+      end
+    end
   end
 end

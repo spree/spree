@@ -54,6 +54,7 @@ import {
   useWebhookDelivery,
   useWebhookEndpoint,
 } from '../../../../../hooks/use-webhook-endpoints'
+import { spreeJsonLinkResolver } from '../../../../../lib/json-link-resolver'
 import { webhookEndpointHealth, webhookHealthBadgeVariant } from '../../../../../lib/webhook-health'
 import {
   DEFAULT_WEBHOOK_ENDPOINT_VALUES,
@@ -226,6 +227,12 @@ function WebhookEndpointDetailBody({ endpoint }: { endpoint: WebhookEndpoint }) 
             subtitle={endpoint.name ? <CopyableUrl url={endpoint.url} /> : undefined}
             backTo="settings/webhooks"
             resource={{ id: endpoint.id }}
+            jsonPreview={{
+              title: `Webhook ${endpoint.name || endpoint.url}`,
+              fetch: () => Promise.resolve(endpoint),
+              endpoint: `/api/v3/admin/webhook_endpoints/${endpoint.id}`,
+              resolveLink: spreeJsonLinkResolver(storeId),
+            }}
             onDelete={handleDelete}
             deleteLabel={t('admin.pages.settings.webhooks.detail.delete_label')}
             actions={

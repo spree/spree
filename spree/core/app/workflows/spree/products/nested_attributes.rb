@@ -123,7 +123,9 @@ module Spree
           next enqueue_media_download(product, external_url, attrs) if external_url.present?
 
           signed_id = attrs.delete(:signed_id)
-          next if signed_id.blank? && attrs[:media_type] != 'external_video'
+          # A row Spree only points at — an external video, a DAM-hosted image —
+          # carries its address instead of bytes, so it needs no attachment.
+          next if signed_id.blank? && !Spree::Media::HOSTED_MEDIA_TYPES.include?(attrs[:media_type])
 
           asset = product.media.build(attrs)
           asset.attachment.attach(signed_id) if signed_id.present?

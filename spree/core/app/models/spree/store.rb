@@ -13,6 +13,7 @@ module Spree
     include Spree::Stores::Setup
     include Spree::Stores::Markets
     include Spree::Stores::Channels
+    include Spree::StoreDataSources
     include Spree::Security::Stores if defined?(Spree::Security::Stores)
     include Spree::UserManagement
     include Spree::OrderRouting::HasStrategyPreference
@@ -91,6 +92,15 @@ module Spree
     # follows the destination keep this on; billing-address jurisdictions turn
     # it off.
     preference :tax_using_ship_address, :boolean, default: true
+    # Where prices and stock levels come from. 'internal' is Spree's own
+    # catalog and stock records; a connector gem registers others.
+    preference :pricing_provider, :string, default: 'internal'
+    preference :inventory_provider, :string, default: 'internal'
+    # What happens when an external source cannot be reached.
+    preference :pricing_provider_failure_policy, :string,
+               default: Spree::ProviderFailurePolicy::DEFAULT_PRICING_POLICY
+    preference :inventory_provider_failure_policy, :string,
+               default: Spree::ProviderFailurePolicy::DEFAULT_INVENTORY_POLICY
     # Catalog preferences
     preference :track_inventory_levels, :boolean, default: true
     preference :show_products_without_price, :boolean, default: false
@@ -234,6 +244,7 @@ module Spree
     has_many :customer_groups, class_name: 'Spree::CustomerGroup', dependent: :destroy, inverse_of: :store
 
     has_many :companies, class_name: 'Spree::Company', dependent: :destroy, inverse_of: :store
+    has_many :external_references, class_name: 'Spree::ExternalReference', dependent: :destroy, inverse_of: :store
 
     has_many :api_keys, class_name: 'Spree::ApiKey', dependent: :destroy
     has_many :allowed_origins, class_name: 'Spree::AllowedOrigin', dependent: :destroy

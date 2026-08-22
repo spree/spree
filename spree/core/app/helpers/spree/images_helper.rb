@@ -3,15 +3,26 @@ module Spree
     # render an image tag with a spree image variant
     # it also automatically scales the width and height by 2x to look great on retina screens
     #
-    # @param image [ActiveStorage::Attachment] the image to render
+    # @param image [ActiveStorage::Attachment, Spree::Media] the image to render.
+    #   A Spree::Media row whose bytes live elsewhere (a DAM-hosted image, an
+    #   external video's provider thumbnail) renders at the address its host
+    #   serves, since there is no attachment to build a variant from.
     # @param options [Hash] options for the image tag
     # @option options [Integer] :width the width of the image
     # @option options [Integer] :height the height of the image
     # @option options [Symbol] :variant use a preprocessed named variant (e.g., :mini, :small, :medium, :large, :xlarge)
+    # @return [String, nil] the image tag, or nil when there is nothing to render
     def spree_image_tag(image, options = {})
       return unless image
-      return unless image.variable?
-      return if image.respond_to?(:attached?) && !image.attached?
+
+      # A hosted still has no attachment to vary, so the variable?/attached?
+      # guards below would reject it — spree_image_url answers it directly.
+      hosted = image.respond_to?(:hosted_still_url) && image.still_image.nil? && image.hosted_still_url.present?
+
+      unless hosted
+        return unless image.variable?
+        return if image.respond_to?(:attached?) && !image.attached?
+      end
 
       url_options = if options[:variant].present?
                       { variant: options[:variant] }
@@ -25,8 +36,27 @@ module Spree
       )
     end
 
+    # The URL for a spree image at the requested size.
+    #
+    # @param image [ActiveStorage::Attachment, Spree::Media] the image to address.
+    #   Media hosted elsewhere answers with its host's own address at every
+    #   size — the host keeps the renditions, so there is nothing to resize.
+    # @param options [Hash] options for the variant
+    # @option options [Integer] :width the width of the image
+    # @option options [Integer] :height the height of the image
+    # @option options [Symbol] :variant use a preprocessed named variant
+    # @option options [String] :format the image format (defaults to webp)
+    # @return [String, nil] the URL, or nil when there is nothing to address
     def spree_image_url(image, options = {})
       return unless image
+
+      # A hosted still is never variable — the host keeps its own renditions
+      # and serves one address for all of them.
+      if image.respond_to?(:hosted_still_url) && image.still_image.nil?
+        hosted = image.hosted_still_url
+        return hosted if hosted.present?
+      end
+
       return unless image.variable?
       return if image.respond_to?(:attached?) && !image.attached?
 

@@ -6,9 +6,9 @@ module Spree
       # ExportSerializer sit in this namespace. The admin serializer extends it
       # so back-office fields stay in one place.
       class CompanySerializer < BaseSerializer
-        typelize name: :string, external_id: [:string, nullable: true]
+        typelize name: :string
 
-        attributes :name, :external_id
+        attributes :name
       end
     end
   end

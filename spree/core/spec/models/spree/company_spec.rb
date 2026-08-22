@@ -22,23 +22,36 @@ describe Spree::Company, type: :model do
     end
   end
 
-  describe 'external_id' do
-    it 'is unique per store' do
-      create(:company, store: store, external_id: 'ACME')
+  # The former external_id column moved to Spree::ExternalReference so a company
+  # can be known to an ERP and a CRM at once (docs/plans/6.0-third-party-pricing-inventory.md).
+  describe 'external references' do
+    it 'is unique per store and system' do
+      create(:company, store: store).set_external_id('erp', 'ACME')
+      duplicate = create(:company, store: store)
 
-      expect(build(:company, store: store, external_id: 'ACME')).not_to be_valid
+      expect { duplicate.set_external_id('erp', 'ACME') }.to raise_error(ActiveRecord::RecordInvalid)
     end
 
     it 'allows the same reference in another store' do
-      create(:company, store: store, external_id: 'ACME')
+      create(:company, store: store).set_external_id('erp', 'ACME')
+      elsewhere = create(:company, store: create(:store))
 
-      expect(build(:company, store: create(:store), external_id: 'ACME')).to be_valid
+      expect(elsewhere.set_external_id('erp', 'ACME')).to be_persisted
     end
 
     it 'lets several companies carry no reference' do
-      create(:company, store: store, external_id: nil)
+      create(:company, store: store)
 
-      expect(build(:company, store: store, external_id: nil)).to be_valid
+      expect(build(:company, store: store)).to be_valid
+    end
+
+    it 'carries one identity per external system' do
+      company = create(:company, store: store)
+      company.set_external_id('erp', 'ACME')
+      company.set_external_id('crm', 'CUST-1')
+
+      expect(company.external_id_for('erp')).to eq('ACME')
+      expect(company.external_id_for('crm')).to eq('CUST-1')
     end
   end
 

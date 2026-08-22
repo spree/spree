@@ -12,6 +12,7 @@ module Spree
     PICKUP_STOCK_POLICIES = %w[local any].freeze
 
     include Spree::SingleStoreResource
+    include Spree::HasExternalReferences
     include Spree::UniqueName
     if defined?(Spree::Security::StockLocations)
       include Spree::Security::StockLocations

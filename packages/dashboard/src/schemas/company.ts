@@ -10,17 +10,15 @@ import { z } from 'zod/v4'
 
 export const companyFormSchema = z.object({
   name: z.string().min(1, { error: requiredMessage('name') }),
-  external_id: z.string().optional(),
 })
 
 export type CompanyFormValues = z.infer<typeof companyFormSchema>
 
-export const COMPANY_DEFAULTS: CompanyFormValues = { name: '', external_id: '' }
+export const COMPANY_DEFAULTS: CompanyFormValues = { name: '' }
 
 export function companyValuesToParams(values: CompanyFormValues): CompanyParams {
   return {
     name: values.name,
-    external_id: blankToNull(values.external_id),
   }
 }
 
@@ -39,7 +37,6 @@ const addressSchema = z.object({
 
 export const companyLocationFormSchema = z.object({
   name: z.string().min(1, { error: requiredMessage('name') }),
-  external_id: z.string().optional(),
   billing_address: addressSchema,
   // Kept separate from billing rather than merged on submit, so a branch that
   // ships somewhere other than it is invoiced stays expressible.
@@ -66,7 +63,6 @@ const EMPTY_ADDRESS = {
 
 export const COMPANY_LOCATION_DEFAULTS: CompanyLocationFormValues = {
   name: '',
-  external_id: '',
   billing_address: { ...EMPTY_ADDRESS },
   shipping_address: { ...EMPTY_ADDRESS },
   shipping_same_as_billing: true,
@@ -80,7 +76,6 @@ export function companyLocationValuesToParams(
 
   return {
     name: values.name,
-    external_id: blankToNull(values.external_id),
     // A branch may have no address at all, but an address that exists must be
     // complete — so an untouched fieldset is omitted rather than sent empty,
     // which would fail the address record's own validations.

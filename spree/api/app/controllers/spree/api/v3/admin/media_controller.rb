@@ -3,6 +3,7 @@ module Spree
     module V3
       module Admin
         class MediaController < ResourceController
+          include Spree::Api::V3::Admin::Concerns::ExternalReferences
           scoped_resource :products
 
           def create
@@ -26,6 +27,14 @@ module Spree
           end
 
           protected
+
+          # `url` and `signed_id` say how to *fetch* the bytes; neither is an
+          # attribute on the row. A re-synced asset already has its file, so
+          # the replay only carries them as leftovers from the create shape.
+          def normalize_upsert_params!
+            params.delete(:url)
+            params.delete(:signed_id)
+          end
 
           def model_class
             Spree::Media
@@ -94,11 +103,17 @@ module Spree
             url = permitted_params[:url]
             position = permitted_params[:position]
 
+            # The job runs later, so the identities the connector sent ride
+            # along and are written on the media once it exists. All of them:
+            # a DAM and a PIM may both name the same asset.
+            references = external_reference_params.map { |entry| entry.transform_keys(&:to_s) }
+            references = references.presence
+
             Spree::Images::SaveFromUrlJob.perform_later(
               @parent.id,
               @parent.class.name,
               url,
-              nil,
+              references,
               position
             )
 
