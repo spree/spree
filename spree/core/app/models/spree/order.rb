@@ -46,6 +46,7 @@ module Spree
     publishes_lifecycle_events
     include Spree::HasCustomFields
     include Spree::Metadata
+    include Spree::HasExternalReferences
     include Spree::Searchable
     if defined?(Spree::Security::Orders)
       include Spree::Security::Orders

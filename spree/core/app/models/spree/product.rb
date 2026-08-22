@@ -28,6 +28,7 @@ module Spree
     include Spree::HasCustomFields
     include Spree::CustomFieldFilterable
     include Spree::Metadata
+    include Spree::HasExternalReferences
     include Spree::Searchable
     include Spree::Product::Slugs
     include Spree::Product::Channels
