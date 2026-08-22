@@ -8,7 +8,7 @@ module Spree
 
     belongs_to :collection, class_name: 'Spree::Collection', inverse_of: :rules, touch: true
 
-    validates :collection, :type, :value, presence: true
+    validates :type, :value, presence: true
     validates :match_policy, inclusion: { in: MATCH_POLICIES }, presence: true
 
     after_commit :regenerate_collection_products,

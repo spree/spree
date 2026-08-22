@@ -6,7 +6,6 @@ module Spree
 
     has_iso_geography state: false
 
-    validates :market, presence: true
     validates :country_code, presence: true
     validates :country_code, uniqueness: { scope: spree_base_uniqueness_scope + [:market_id] }
     validate :country_covered_by_shipping_zone

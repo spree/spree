@@ -30,7 +30,7 @@ module Spree
     #
     # Validations
     #
-    validates :format, :store, :type, presence: true
+    validates :format, :type, presence: true
 
     #
     # Enums

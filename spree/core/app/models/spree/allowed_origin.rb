@@ -12,7 +12,7 @@ module Spree
 
     belongs_to :store, class_name: 'Spree::Store'
 
-    validates :store, :origin, presence: true
+    validates :origin, presence: true
     validates :origin, uniqueness: { scope: [:store_id, *spree_base_uniqueness_scope] }
     validate :origin_must_be_valid_http_url
 

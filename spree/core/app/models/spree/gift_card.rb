@@ -24,7 +24,7 @@ module Spree
     # Validations
     #
     validates :code, presence: true, uniqueness: { scope: :store_id }
-    validates :store, :currency, presence: true
+    validates :currency, presence: true
     validates :amount, presence: true, numericality: { greater_than: 0 }
     validates :amount_used, :amount_authorized, presence: true, numericality: { greater_than_or_equal_to: 0 }
 

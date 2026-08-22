@@ -10,7 +10,7 @@ module Spree
     #
     # Validations
     #
-    validates :import, :schema_field, presence: true
+    validates :schema_field, presence: true
     validates :schema_field, uniqueness: { scope: [:import_id] }
     validates :file_column, uniqueness: { scope: [:import_id] }, allow_blank: true
 

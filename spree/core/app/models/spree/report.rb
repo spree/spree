@@ -25,7 +25,7 @@ module Spree
     #
     # Validations
     #
-    validates :store, :date_from, :date_to, :currency, presence: true
+    validates :date_from, :date_to, :currency, presence: true
 
     #
     # Attachments

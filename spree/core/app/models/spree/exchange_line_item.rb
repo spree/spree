@@ -10,7 +10,6 @@ module Spree
     belongs_to :original_variant, -> { with_deleted }, class_name: 'Spree::Variant'
     belongs_to :new_variant, -> { with_deleted }, class_name: 'Spree::Variant'
 
-    validates :fulfillment_item, :line_item, :original_variant, :new_variant, presence: true
     validates :quantity, numericality: { greater_than: 0 }
     validates :received_quantity, numericality: { greater_than_or_equal_to: 0 }
 

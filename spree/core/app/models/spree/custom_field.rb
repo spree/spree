@@ -63,7 +63,7 @@ module Spree
     #
     # Validations
     #
-    validates :custom_field_definition, :type, :resource, :value, presence: true
+    validates :type, :resource, :value, presence: true
     validates :custom_field_definition_id, uniqueness: { scope: [:resource_type, :resource_id] }
     validate :type_must_match_custom_field_definition
     validate :resource_type_must_match_custom_field_definition

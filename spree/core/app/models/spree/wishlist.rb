@@ -22,7 +22,7 @@ module Spree
     has_many :products, -> { distinct }, through: :variants, source: :product, class_name: 'Spree::Product'
 
     after_commit :ensure_default_exists_and_is_unique
-    validates :name, :store, :customer, presence: true
+    validates :name, presence: true
 
     def include?(variant_id)
       wished_items.exists?(variant_id: variant_id)

@@ -11,7 +11,6 @@ module Spree
 
     scope :of_type, ->(t) { where(type: t) }
 
-    validates :promotion, presence: true
     validates :type, uniqueness: { scope: [:promotion_id, *spree_base_uniqueness_scope] }
 
     def self.for(promotable)

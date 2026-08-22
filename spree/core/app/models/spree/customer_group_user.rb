@@ -12,7 +12,6 @@ module Spree
     #
     # Validations
     #
-    validates :customer_group, presence: true
     validates :customer, presence: true
     validates :customer_group_id, uniqueness: { scope: [:customer_id, :customer_type] }
   end

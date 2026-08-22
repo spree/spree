@@ -37,7 +37,7 @@ module Spree
     before_validation :backfill_code_from_name, if: -> { code.blank? && name.present? }
     before_validation :promote_first_channel_to_default
 
-    validates :name, :store, presence: true
+    validates :name, presence: true
     validates :code, presence: true, uniqueness: { scope: spree_base_uniqueness_scope + [:store_id] }
 
     # Demote any prior default in the same transaction so the partial unique

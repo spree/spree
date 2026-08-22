@@ -14,7 +14,7 @@ module Spree
     belongs_to :payment_method, class_name: 'Spree::PaymentMethod'
     belongs_to :payment_source, polymorphic: true, optional: true
 
-    validates :payment_method, :status, presence: true
+    validates :status, presence: true
     validates :external_id, uniqueness: { scope: :payment_method_id }, allow_nil: true
 
     include Spree::PaymentSessionTransitions

@@ -30,7 +30,7 @@ module Spree
     has_many :payments, as: :source, class_name: 'Spree::Payment'
     has_many :orders, through: :payments, class_name: 'Spree::Order'
 
-    validates :currency, :store, presence: true
+    validates :currency, presence: true
     validates :amount, numericality: { greater_than: 0 }
     validates :amount_used, numericality: { greater_than_or_equal_to: 0 }
     validate :amount_used_less_than_or_equal_to_amount

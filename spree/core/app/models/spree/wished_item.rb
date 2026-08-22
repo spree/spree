@@ -12,7 +12,6 @@ module Spree
 
     has_one :product, class_name: 'Spree::Product', through: :variant
 
-    validates :variant, :wishlist, presence: true
     validates :variant, uniqueness: { scope: [:wishlist] }
     validates :quantity, numericality: { only_integer: true, greater_than: 0 }
 

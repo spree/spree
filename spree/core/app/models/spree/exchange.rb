@@ -32,7 +32,6 @@ module Spree
                                    dependent: :destroy, inverse_of: :exchange
     has_many :refunds, class_name: 'Spree::Refund', as: :originator, dependent: :nullify
 
-    validates :order, :stock_location, presence: true
     validates :exchange_line_items, presence: true, on: :create
 
     accepts_nested_attributes_for :exchange_line_items, allow_destroy: true

@@ -38,7 +38,6 @@ module Spree
     before_validation :copy_tax_category
     before_validation :copy_seller
 
-    validates :variant, presence: true
     validate :exactly_one_owner
 
     DB_INTEGER_MAX = (2**31) - 1
