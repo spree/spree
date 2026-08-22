@@ -261,7 +261,7 @@ module Spree
         resolved = cart.resolved_tax_identifier
         return if resolved.nil?
 
-        attributes = resolved.attributes.except('id', 'customer_id', 'company_id', 'cart_id',
+        attributes = resolved.attributes.except('id', 'owner_type', 'owner_id',
                                                 'created_at', 'updated_at')
         order.create_tax_identifier!(attributes.merge('source' => source_of(resolved)))
       end
@@ -269,10 +269,11 @@ module Spree
       # Which link of the chain produced the snapshot, so a placed order's tax
       # treatment names its own reason.
       def source_of(resolved)
-        return 'override' if resolved.cart_id.present?
-        return 'company' if resolved.company_id.present?
-
-        'customer'
+        case resolved.owner
+        when Spree::Cart then 'override'
+        when Spree::Company then 'company'
+        else 'customer'
+        end
       end
 
       # Copies carry skip_tax_estimation: the cart's tax rows are copied onto the

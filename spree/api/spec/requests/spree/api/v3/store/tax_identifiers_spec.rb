@@ -36,8 +36,8 @@ RSpec.describe 'Store tax identifiers', type: :request do
     # be told which one. Guessing meant a DELETE removed whichever row came back
     # first — not the buyer's choice, and not predictable.
     it 'refuses to guess which registration was meant' do
-      create(:tax_identifier, customer: user, kind: 'eu_vat', value: 'DE123456789')
-      create(:tax_identifier, customer: user, kind: 'gb_vat', value: 'GB123456789')
+      create(:tax_identifier, owner: user, kind: 'eu_vat', value: 'DE123456789')
+      create(:tax_identifier, owner: user, kind: 'gb_vat', value: 'GB123456789')
 
       delete '/api/v3/store/customers/me/tax_identifier', headers: headers, as: :json
 
@@ -51,7 +51,7 @@ RSpec.describe 'Store tax identifiers', type: :request do
     let(:cart) { create(:cart_with_line_items, line_items_count: 1, store: store, customer: user) }
 
     it 'reads the customer registration when the cart has no override' do
-      create(:tax_identifier, customer: user, kind: 'eu_vat', value: 'DE123456789')
+      create(:tax_identifier, owner: user, kind: 'eu_vat', value: 'DE123456789')
 
       get "/api/v3/store/carts/#{cart.prefixed_id}/tax_identifier",
           headers: headers.merge('x-spree-token' => cart.token), as: :json
@@ -62,8 +62,8 @@ RSpec.describe 'Store tax identifiers', type: :request do
     end
 
     it 'prefers the cart override over the customer registration' do
-      create(:tax_identifier, customer: user, kind: 'eu_vat', value: 'DE123456789')
-      create(:tax_identifier, customer: nil, cart: cart, kind: 'eu_vat', value: 'DE999999999')
+      create(:tax_identifier, owner: user, kind: 'eu_vat', value: 'DE123456789')
+      create(:tax_identifier, owner: cart, kind: 'eu_vat', value: 'DE999999999')
 
       get "/api/v3/store/carts/#{cart.prefixed_id}/tax_identifier",
           headers: headers.merge('x-spree-token' => cart.token), as: :json
@@ -72,8 +72,8 @@ RSpec.describe 'Store tax identifiers', type: :request do
     end
 
     it 'clears only the override, leaving the customer registration alone' do
-      profile = create(:tax_identifier, customer: user, kind: 'eu_vat', value: 'DE123456789')
-      create(:tax_identifier, customer: nil, cart: cart, kind: 'eu_vat', value: 'DE999999999')
+      profile = create(:tax_identifier, owner: user, kind: 'eu_vat', value: 'DE123456789')
+      create(:tax_identifier, owner: cart, kind: 'eu_vat', value: 'DE999999999')
 
       delete "/api/v3/store/carts/#{cart.prefixed_id}/tax_identifier",
              headers: headers.merge('x-spree-token' => cart.token), as: :json
@@ -84,7 +84,7 @@ RSpec.describe 'Store tax identifiers', type: :request do
     end
 
     it 'has nothing of its own to delete when the registration is inherited' do
-      create(:tax_identifier, customer: user, kind: 'eu_vat', value: 'DE123456789')
+      create(:tax_identifier, owner: user, kind: 'eu_vat', value: 'DE123456789')
 
       delete "/api/v3/store/carts/#{cart.prefixed_id}/tax_identifier",
              headers: headers.merge('x-spree-token' => cart.token), as: :json
@@ -97,7 +97,7 @@ RSpec.describe 'Store tax identifiers', type: :request do
     # used to relabel the number already there under a regime it was not issued
     # for.
     it 'refuses to relabel the existing number under a new kind' do
-      create(:tax_identifier, customer: nil, cart: cart, kind: 'eu_vat', value: 'DE999999999')
+      create(:tax_identifier, owner: cart, kind: 'eu_vat', value: 'DE999999999')
 
       put "/api/v3/store/carts/#{cart.prefixed_id}/tax_identifier",
           params: { kind: 'gb_vat' },
@@ -149,7 +149,7 @@ RSpec.describe 'Store tax identifiers', type: :request do
       end
 
       it 'happens when the override is cleared' do
-        create(:tax_identifier, customer: nil, cart: cart, kind: 'eu_vat', value: 'DE999999999')
+        create(:tax_identifier, owner: cart, kind: 'eu_vat', value: 'DE999999999')
 
         delete "/api/v3/store/carts/#{cart.prefixed_id}/tax_identifier",
                headers: headers.merge('x-spree-token' => cart.token), as: :json
@@ -182,7 +182,7 @@ RSpec.describe 'Store tax identifiers', type: :request do
     let(:order) { create(:completed_order_with_totals, store: store, customer: user) }
 
     it 'is readable and cannot be written' do
-      create(:tax_identifier, :on_order, order: order, value: 'DE111111111')
+      create(:tax_identifier, :on_order, owner: order, value: 'DE111111111')
 
       get "/api/v3/store/orders/#{order.prefixed_id}/tax_identifier", headers: headers, as: :json
 
@@ -192,7 +192,7 @@ RSpec.describe 'Store tax identifiers', type: :request do
       put "/api/v3/store/orders/#{order.prefixed_id}/tax_identifier",
           params: { kind: 'eu_vat', value: 'DE222222222' }, headers: headers, as: :json
       expect(response).to have_http_status(:not_found)
-      expect(order.tax_identifier.reload.value).to eq('DE111111111')
+      expect(order.reload.tax_identifier.value).to eq('DE111111111')
     end
   end
 end

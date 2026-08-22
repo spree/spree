@@ -19,7 +19,7 @@ module Spree
     include Spree::MemoizedData
     include Spree::SanitizableRichText
 
-    MEMOIZED_METHODS = %w[onboarding_requirements].freeze
+    MEMOIZED_METHODS = %w[onboarding_requirements onboarding_progress products_count returns_location].freeze
 
     publishes_lifecycle_events
 
@@ -60,9 +60,11 @@ module Spree
     # Associations
     #
     belongs_to :store, class_name: 'Spree::Store'
-    # Not `dependent: :destroy`: a seller is paranoid, so destroy is a soft
-    # delete, and taking the address with it would hard-delete a row the
-    # seller's historical commission invoices still point at.
+    # Typed as the subclass so a saved address is read back with the business
+    # rules — otherwise editing one field of it would fail on a personal name
+    # nobody was ever asked for. Not `dependent: :destroy`: a seller is
+    # paranoid, so destroy is a soft delete, and taking the address with it
+    # would hard-delete a row historical commission invoices still point at.
     belongs_to :billing_address, class_name: 'Spree::BusinessAddress', optional: true
 
     # `update_only` edits the existing row rather than building a replacement
@@ -73,11 +75,19 @@ module Spree
     # The API reads and writes this under one name, so the writer takes the
     # attributes a client sends as well as a record. Never an id: an address
     # carries no store of its own, so binding one by id would reach another
-    # store's rows.
+    # store's rows. A plain Spree::Address is accepted too — the two share
+    # `spree_addresses` and differ only in which fields they insist on, so a
+    # valid row should not be refused over its Ruby class.
     def billing_address=(value)
-      return super unless value.is_a?(Hash) || value.is_a?(ActionController::Parameters)
-
-      self.billing_address_attributes = value
+      case value
+      when Hash, ActionController::Parameters
+        super(Spree::BusinessAddress.new) if billing_address.nil?
+        self.billing_address_attributes = value
+      when Spree::Address
+        super(value.becomes(Spree::BusinessAddress))
+      else
+        super
+      end
     end
 
     # Where this seller keeps stock, and so where their returns land. Released
@@ -94,8 +104,8 @@ module Spree
     # delete, while a TaxIdentifier is not — cascading would permanently
     # erase the evidence behind commission invoices already issued, which is
     # exactly what it exists to preserve.
-    has_many :tax_identifiers, class_name: 'Spree::TaxIdentifier', dependent: nil,
-                               inverse_of: :seller
+    has_many :tax_identifiers, class_name: 'Spree::TaxIdentifier', as: :owner,
+                               dependent: nil, inverse_of: :owner
 
     # Products and stock survive the seller leaving: the operator decides what
     # happens to a departed seller's catalog, so it is never cascade-deleted.
@@ -172,12 +182,10 @@ module Spree
     #
     # @return [Spree::Role]
     def default_user_role
-      roles.for_resource(self).find_by(name: Spree::Role::ADMIN_ROLE) ||
-        roles.create!(
-          name: Spree::Role::ADMIN_ROLE,
-          mutable: false,
-          permissions: Spree.permissions.grantable_keys(:seller)
-        )
+      roles.for_resource(self).find_or_create_by!(name: Spree::Role::ADMIN_ROLE) do |role|
+        role.mutable = false
+        role.permissions = Spree.permissions.grantable_keys(:seller)
+      end
     end
 
     # Whether the seller is currently away. The catalog stays visible; what
@@ -206,15 +214,9 @@ module Spree
     # restock somewhere the catalog believes in: stock movements anchor to a
     # location, so an address alone would leave the goods arriving nowhere.
     #
-    # Filtered and sorted in Ruby rather than SQL so a preloaded
-    # `stock_locations` is actually used — an `.active` scope here would issue
-    # a fresh query per seller and quietly undo the admin list's preload.
-    # Memoized because the serializer asks twice: once to decide whether to
-    # render the address at all, once to render it.
-    #
     # @return [Spree::StockLocation, nil]
     def returns_location
-      stock_locations.active.order_default.first
+      @returns_location ||= stock_locations.active.order_default.first
     end
 
     # The postal address a shopper is given for returns.
@@ -231,24 +233,15 @@ module Spree
       location.address
     end
 
-    # How many products this seller lists. Memoized because two readers ask
-    # on every list row — the operator's column and the minimum-products
-    # requirement — and a catalog is the one thing here that can run to
-    # thousands, so it is counted in SQL once rather than loaded or counted
-    # twice.
-    #
-    # @return [Integer]
+    # @return [Integer] how many products this seller lists
     def products_count
-      products.count
+      @products_count ||= products.count
     end
 
     # Where this seller stands against the marketplace's checklist
     # (docs/plans/6.0-seller-onboarding-requirements.md), for the operator's
     # views of them. Computed on read, never stored: a column would be wrong
     # the moment a product was deleted or a document sent back.
-    #
-    # Memoized per instance, like the store's own setup checklist: one seller
-    # page reads it several times — the badge, the bar, the list.
     #
     # Reads the store's checklist off its loaded association when the store
     # was eager-loaded with it (the admin list and profile do), so a page of
@@ -264,7 +257,7 @@ module Spree
     # @return [Hash{Symbol => Integer}] done, total and percentage over the
     #   whole checklist, optional requirements included
     def onboarding_progress
-      Spree::Sellers::Requirements.progress_of(onboarding_requirements)
+      @onboarding_progress ||= Spree::Sellers::Requirements.progress_of(onboarding_requirements)
     end
 
     # @return [Integer] 0..100

@@ -1,14 +1,9 @@
 module Spree
-  # An address belonging to a business rather than a person — a seller's
-  # billing address, as a commission invoice must address it.
+  # A seller's billing address, as a commission invoice must address it: no
+  # person to name, and the company is the part that cannot be left out.
   #
-  # Shares `spree_addresses` with its parent rather than being STI: the table
-  # has no `type` column, and adding one to reach every order, customer and
-  # company row would be a heavy migration to record what the owning
-  # association already says.
-  #
-  # What differs is who the address names. There is no person to ask for, and
-  # the company is the part that cannot be left out.
+  # Shares `spree_addresses` rather than being STI — the table has no `type`
+  # column, and the owning association already says which kind this is.
   class BusinessAddress < Spree::Address
     def require_name?
       false

@@ -898,7 +898,6 @@ en:
         exactly_one_adjustable: must be attached to exactly one adjustable
         exactly_one_of_cart_or_order: must belong to exactly one of cart or order
         exactly_one_of_line_item_or_fulfillment: must be charged against exactly one of a line item or a fulfillment
-        exactly_one_tax_identifier_owner: must belong to exactly one of customer, company, seller, cart or order
         flat_fee_cannot_charge_delivery: is not available on a flat fee, which already charges for the sale the delivery belongs to — add a separate rate to charge delivery
         integration_connection_failed: could not connect with the saved credentials
         integration_type_not_registered: is not a registered integration

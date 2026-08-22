@@ -7,12 +7,10 @@ class CreateSpreeTaxIdentifiers < ActiveRecord::Migration[8.1]
     # No store_id: the row belongs to a customer, cart or order that already
     # carries the store, matching spree_tax_lines.
     create_table :spree_tax_identifiers do |t|
-      # Owner — exactly one (enforced at model level). The customer row is the
-      # durable profile value, the cart row a checkout-time override, the order
-      # row a frozen completion snapshot.
-      t.references :customer, null: true
-      t.references :cart, null: true
-      t.references :order, null: true
+      # Whoever holds this registration. A customer, company or seller holds
+      # one per kind — the durable profile value; a cart holds a checkout-time
+      # override and an order the frozen completion snapshot.
+      t.references :owner, polymorphic: true, null: false
 
       t.string :kind, null: false
       t.string :value, null: false
@@ -34,10 +32,10 @@ class CreateSpreeTaxIdentifiers < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    # One registration per kind for a customer. Cart and order rows leave
-    # customer_id null, and NULLs never collide in a unique index, so this
-    # constrains the profile rows only — which is where duplicates would make
-    # resolution ambiguous.
-    add_index :spree_tax_identifiers, [:customer_id, :kind], unique: true
+    # One registration per kind per owner, which is what makes resolution
+    # unambiguous. Cart and order owners hold a single row each through their
+    # associations and are covered by the same rule.
+    add_index :spree_tax_identifiers, [:owner_type, :owner_id, :kind],
+              unique: true, name: 'index_spree_tax_identifiers_on_owner_and_kind'
   end
 end

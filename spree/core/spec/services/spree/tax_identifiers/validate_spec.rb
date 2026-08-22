@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::TaxIdentifiers::Validate do
   let(:customer) { create(:user) }
-  let(:tax_identifier) { create(:tax_identifier, customer: customer, kind: 'eu_vat', value: 'DE123456789') }
+  let(:tax_identifier) { create(:tax_identifier, owner: customer, kind: 'eu_vat', value: 'DE123456789') }
 
   def register(validator_class)
     stub_const('SpecRegistryValidator', validator_class)
