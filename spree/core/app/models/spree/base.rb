@@ -48,10 +48,6 @@ class Spree::Base < ApplicationRecord
     select("#{klass.table_name}.*").select(*(fields || klass::TRANSLATABLE_FIELDS))
   }
 
-  def self.belongs_to_required_by_default
-    false
-  end
-
   def self.for_store(store)
     plural_model_name = model_name.plural.gsub(/spree_/, '').to_sym
 

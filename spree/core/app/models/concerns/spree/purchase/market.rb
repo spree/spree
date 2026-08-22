@@ -6,9 +6,6 @@ module Spree
       included do
         belongs_to :market, class_name: 'Spree::Market'
 
-        validates :market, presence: true
-
-
         attr_accessor :skip_market_resolution
 
         before_validation :ensure_market_presence

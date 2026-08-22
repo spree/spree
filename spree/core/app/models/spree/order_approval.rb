@@ -9,7 +9,6 @@ module Spree
     belongs_to :order, class_name: 'Spree::Order', inverse_of: :approvals
     belongs_to :approver, polymorphic: true, optional: true
 
-    validates :order, presence: true
     validates :status, presence: true, inclusion: { in: STATUSES }
 
     scope :approved, -> { where(status: 'approved') }

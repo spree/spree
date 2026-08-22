@@ -11,7 +11,6 @@ module Spree
     delegate :name, :description, :code, to: :promotion
     delegate :currency, to: :owner
 
-    validates :promotion, presence: true
     validates :order, uniqueness: { scope: :promotion }, allow_nil: true
     validates :cart, uniqueness: { scope: :promotion }, allow_nil: true
     validate :exactly_one_owner

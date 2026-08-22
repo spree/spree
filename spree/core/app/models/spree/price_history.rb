@@ -3,7 +3,7 @@
 module Spree
   class PriceHistory < Spree.base_class
     belongs_to :price, class_name: 'Spree::Price'
-    belongs_to :variant, class_name: 'Spree::Variant'
+    belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant'
 
     validates :amount, presence: true, numericality: { greater_than_or_equal_to: 0 }
     validates :currency, presence: true

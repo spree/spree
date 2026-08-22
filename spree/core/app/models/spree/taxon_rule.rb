@@ -13,7 +13,7 @@ module Spree
     # manual in 6.0), so this is a plain belongs_to. Data-only until 6.1.
     belongs_to :taxon, class_name: 'Spree::Category', touch: true
 
-    validates :taxon, :type, :value, presence: true
+    validates :type, :value, presence: true
     validates :match_policy, inclusion: { in: MATCH_POLICIES }, presence: true
 
     delegate :store, to: :taxon

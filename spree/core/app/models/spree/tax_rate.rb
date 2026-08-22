@@ -25,7 +25,7 @@ module Spree
 
     with_options presence: true do
       validates :amount, numericality: { allow_nil: true }
-      validates :tax_category, :name
+      validates :name
     end
 
     # The jurisdiction this rate applies in, held as codes: a blank country_code

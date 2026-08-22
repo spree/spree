@@ -35,7 +35,7 @@ module Spree
     end
 
     has_many :payment_splits, class_name: 'Spree::PaymentSplit', dependent: :destroy, inverse_of: :payment
-    belongs_to :source, polymorphic: true
+    belongs_to :source, polymorphic: true, optional: true
 
     validate :exactly_one_owner
 

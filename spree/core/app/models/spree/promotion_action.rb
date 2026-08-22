@@ -10,7 +10,7 @@ module Spree
 
     belongs_to :promotion, class_name: 'Spree::Promotion', touch: true
 
-    validates :promotion, :type, presence: true
+    validates :type, presence: true
 
     scope :of_type, ->(t) { where(type: t) }
 

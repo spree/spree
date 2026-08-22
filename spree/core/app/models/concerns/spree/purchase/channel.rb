@@ -6,8 +6,6 @@ module Spree
       included do
         belongs_to :channel, class_name: 'Spree::Channel'
 
-        validates :channel, presence: true
-
         before_validation :ensure_channel_presence
       end
 

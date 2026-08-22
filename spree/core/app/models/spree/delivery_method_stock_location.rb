@@ -6,7 +6,6 @@ module Spree
     belongs_to :delivery_method, class_name: 'Spree::DeliveryMethod', inverse_of: :delivery_method_stock_locations
     belongs_to :stock_location, class_name: 'Spree::StockLocation'
 
-    validates :delivery_method, :stock_location, presence: true
     validates :stock_location_id, uniqueness: { scope: :delivery_method_id }
   end
 end

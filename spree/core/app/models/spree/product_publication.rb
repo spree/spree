@@ -13,7 +13,6 @@ module Spree
     belongs_to :product, class_name: 'Spree::Product', touch: true
     belongs_to :channel, class_name: 'Spree::Channel'
 
-    validates :product, :channel, presence: true
     validates :product_id, uniqueness: { scope: :channel_id }
     validate :unpublished_at_after_published_at, if: -> { published_at && unpublished_at }
 

@@ -11,7 +11,6 @@ module Spree
       belongs_to :category, class_name: 'Spree::Category'
     end
 
-    validates :category, :product, presence: true
     validates :position, numericality: { only_integer: true, allow_blank: true, allow_nil: true }
     # For #3494
     validates :category_id, uniqueness: { scope: :product_id, message: :already_linked, allow_blank: true }

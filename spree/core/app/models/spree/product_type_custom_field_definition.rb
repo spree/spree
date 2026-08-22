@@ -10,7 +10,6 @@ module Spree
     # still named CustomFieldDefinition until the rename wave lands.
     belongs_to :custom_field_definition, class_name: 'Spree::CustomFieldDefinition'
 
-    validates :product_type, :custom_field_definition, presence: true
     validates :custom_field_definition_id, uniqueness: { scope: :product_type_id }
     validate :custom_field_definition_applies_to_products
 

@@ -25,7 +25,7 @@ module Spree
 
     after_initialize { self.media_type ||= 'image' }
 
-    belongs_to :viewable, polymorphic: true, touch: true
+    belongs_to :viewable, polymorphic: true, touch: true, optional: true
     has_many :variant_media, class_name: 'Spree::VariantMedia', foreign_key: :media_id,
              dependent: :destroy, inverse_of: :asset
     has_many :variants, through: :variant_media, source: :variant, class_name: 'Spree::Variant'

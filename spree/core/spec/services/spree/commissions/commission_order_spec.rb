@@ -95,7 +95,9 @@ RSpec.describe Spree::Commissions::CommissionOrder do
     def fulfillment_carrying(*line_items, cost: 20)
       fulfillment = create(:fulfillment, order: order, cost: cost)
       fulfillment.fulfillment_items.destroy_all
-      line_items.each { |line_item| fulfillment.fulfillment_items.create!(line_item: line_item, quantity: 1) }
+      line_items.each do |line_item|
+        fulfillment.fulfillment_items.create!(line_item: line_item, variant: line_item.variant, quantity: 1)
+      end
       fulfillment
     end
 

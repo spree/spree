@@ -41,7 +41,7 @@ module Spree
 
     after_create :apply_to_stock_level
 
-    validates :stock_level, :quantity, :kind, presence: true
+    validates :quantity, :kind, presence: true
     validates :kind, inclusion: { in: KINDS }, allow_blank: true
     validates :quantity, numericality: {
       other_than: 0,

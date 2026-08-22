@@ -16,7 +16,7 @@ module Spree
       belongs_to :cart, class_name: 'Spree::Cart', touch: true, optional: true
       belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant'
     end
-    belongs_to :tax_category, -> { with_deleted }, class_name: 'Spree::TaxCategory'
+    belongs_to :tax_category, -> { with_deleted }, class_name: 'Spree::TaxCategory', optional: true
     belongs_to :price_list, class_name: 'Spree::PriceList', optional: true
     # Snapshotted from the variant when the line is added — see copy_seller.
     # Nil is the operator's own first-party item.
@@ -38,7 +38,6 @@ module Spree
     before_validation :copy_tax_category
     before_validation :copy_seller
 
-    validates :variant, presence: true
     validate :exactly_one_owner
 
     DB_INTEGER_MAX = (2**31) - 1

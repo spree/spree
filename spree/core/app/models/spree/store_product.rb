@@ -11,7 +11,7 @@ module Spree
   class StoreProduct < Spree.base_class
     self.table_name = 'spree_products_stores'
 
-    belongs_to :product, class_name: 'Spree::Product'
-    belongs_to :store, class_name: 'Spree::Store'
+    belongs_to :product, class_name: 'Spree::Product', optional: true
+    belongs_to :store, class_name: 'Spree::Store', optional: true
   end
 end

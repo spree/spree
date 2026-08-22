@@ -363,11 +363,30 @@ A store or channel still carrying `preferred_order_routing_strategy: 'Spree::Ord
 
 `Spree::Stock::Coordinator` itself stays — cart fulfillment building, exchanges, and claims still use it.
 
+### `belongs_to` is required by default
+
+Spree models followed Rails' pre-5 rule, where a `belongs_to` was optional
+unless you said otherwise. They now follow the modern default: a `belongs_to`
+is **required** unless it is declared `optional: true`.
+
+Two consequences for an application built on Spree:
+
+- **Your own models change with it.** Anything inheriting from `Spree::Base`
+  picks up the new default, so an association that is legitimately blank now
+  needs `optional: true` on it. A model that relied on the old behaviour will
+  start failing validation until you say which associations are optional.
+- **The message changed.** A missing association reports `"must exist"` rather
+  than `"can't be blank"`. Code that matches on the old wording — a test, or a
+  client reading `details` out of a 422 — needs updating.
+
+Setting a record's association to `nil` and saving it is the quickest way to
+tell whether an association is required.
+
 ### `Store.default` no longer builds a store
 
 `Spree::Store.default` returned an **unpersisted** `Store.new(default: true)` when no default store existed. It now returns `nil`.
 
-This matters more than it looks: `Spree::Current.store` falls back to `Store.default`, and every `Spree::SingleStoreResource` model resolves its own `store` from `Spree::Current.store`. Without a default store, those records now fail validation with "Store can't be blank" instead of silently attaching to a throwaway store.
+This matters more than it looks: `Spree::Current.store` falls back to `Store.default`, and every `Spree::SingleStoreResource` model resolves its own `store` from `Spree::Current.store`. Without a default store, those records now fail validation with "Store must exist" instead of silently attaching to a throwaway store.
 
 Make sure a default store exists before creating store-scoped records, and set `Spree::Current.store` in jobs, rake tasks, and tests that run outside a request.
 

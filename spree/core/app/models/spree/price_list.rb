@@ -33,7 +33,7 @@ module Spree
       assign_typed_association(:price_rules, rows)
     end
 
-    validates :name, :store, presence: true
+    validates :name, presence: true
     validates :match_policy, presence: true, inclusion: { in: MATCH_POLICIES }
     validate :starts_at_before_ends_at
 

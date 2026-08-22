@@ -38,7 +38,7 @@ module Spree
     #
     # @deprecated Read only by the 5.6 -> 6.0 upgrade task, which needs the
     #   column to find the rows it migrates. Removed in 6.1 with Spree::Taxonomy.
-    belongs_to :taxonomy, class_name: 'Spree::Taxonomy', inverse_of: :taxons, deprecated: true
+    belongs_to :taxonomy, class_name: 'Spree::Taxonomy', inverse_of: :taxons, optional: true, deprecated: true
     has_many :product_categories, -> { order(:position) }, class_name: 'Spree::ProductCategory', dependent: :destroy_async, inverse_of: :category
     has_many :products, through: :product_categories
 

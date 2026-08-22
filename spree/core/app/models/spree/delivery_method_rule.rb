@@ -17,7 +17,7 @@ module Spree
 
     attribute :active, :boolean, default: true
 
-    validates :type, :delivery_method, presence: true
+    validates :type, presence: true
     # One instance of each rule kind per method — duplicates would either be
     # a no-op or contradict themselves under AND semantics.
     validates :type, uniqueness: { scope: [:delivery_method_id, *spree_base_uniqueness_scope] }

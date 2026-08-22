@@ -75,7 +75,8 @@ describe Spree::InventoryUnit, type: :model do
     it "does not find inventory units that aren't backordered" do
       on_hand_unit = shipment.inventory_units.build
       on_hand_unit.state = 'on_hand'
-      on_hand_unit.variant_id = 1
+      on_hand_unit.variant = create(:variant)
+      on_hand_unit.line_item = order.line_items.first
       on_hand_unit.save!
 
       expect(Spree::InventoryUnit.backordered_for_stock_level(stock_level)).not_to include(on_hand_unit)
@@ -85,6 +86,7 @@ describe Spree::InventoryUnit, type: :model do
       other_variant_unit = shipment.inventory_units.build
       other_variant_unit.state = 'backordered'
       other_variant_unit.variant = create(:variant)
+      other_variant_unit.line_item = order.line_items.first
       other_variant_unit.save!
 
       expect(Spree::InventoryUnit.backordered_for_stock_level(stock_level)).not_to include(other_variant_unit)
@@ -101,7 +103,8 @@ describe Spree::InventoryUnit, type: :model do
       let(:other_order) do
         order = create(:order)
         order.completed_at = nil
-        order.completed_at = nil
+        create(:line_item, order: order, variant: stock_level.variant)
+        order.line_items.reload
         order.tap(&:save!)
       end
 
@@ -120,6 +123,7 @@ describe Spree::InventoryUnit, type: :model do
         unit.state = 'backordered'
         unit.variant_id = stock_level.variant.id
         unit.order_id = other_order.id
+        unit.line_item = other_order.line_items.first
         unit.tap(&:save!)
       end
 

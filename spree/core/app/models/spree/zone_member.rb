@@ -6,6 +6,5 @@ module Spree
     # tables by the data-migration tasks.
     belongs_to :zone, class_name: 'Spree::Zone', inverse_of: :zone_members
 
-    validates :zone, presence: true
   end
 end

@@ -19,7 +19,7 @@ module Spree
             foreign_key: :response_code,
             primary_key: :external_id
 
-    validates :payment_method, :external_id, :status, :currency, presence: true
+    validates :external_id, :status, :currency, presence: true
     validate :exactly_one_owner
     validates :external_id, uniqueness: { scope: [:order_id, :payment_method_id] }
     validates :amount, presence: true, numericality: { greater_than: 0 }
