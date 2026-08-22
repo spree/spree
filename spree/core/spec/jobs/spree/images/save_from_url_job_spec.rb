@@ -62,6 +62,45 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
       end
     end
 
+    context 'when the source system names the media' do
+      let(:external_id) { { 'system' => 'dam', 'external_id' => 'ASSET-9' } }
+
+      it 'records that identity on the media' do
+        subject
+
+        expect(image.external_id_for('dam')).to eq('ASSET-9')
+      end
+
+      # A DAM may move the file and keep the id; matching on the URL would
+      # then import a second copy of the same asset.
+      it 'finds the media again by that identity even when the URL changed' do
+        subject
+        first = image
+
+        expect(SsrfFilter).to receive(:get).once.and_return(response)
+        described_class.new(viewable_id, viewable_type, 'https://cdn.example.com/moved.jpg', external_id, position).perform_now
+
+        expect(variant.images.reload.count).to eq(1)
+        expect(first.reload.external_url).to eq('https://cdn.example.com/moved.jpg')
+      end
+
+      it 'records every system that names the same asset' do
+        described_class.new(viewable_id, viewable_type, external_url,
+                            [{ 'system' => 'dam', 'external_id' => 'ASSET-9' },
+                             { 'system' => 'pim', 'external_id' => 'SKU-2' }], position).perform_now
+        media = variant.images.last
+
+        expect(media.external_id_for('dam')).to eq('ASSET-9')
+        expect(media.external_id_for('pim')).to eq('SKU-2')
+      end
+
+      it 'files a bare id under the default system' do
+        described_class.new(viewable_id, viewable_type, external_url, 'ASSET-1', position).perform_now
+
+        expect(variant.images.last.external_id_for(described_class::DEFAULT_EXTERNAL_SYSTEM)).to eq('ASSET-1')
+      end
+    end
+
     context 'when skip_import? returns true' do
       before do
         allow(image).to receive(:skip_import?).and_return(true)

@@ -60,6 +60,31 @@ RSpec.describe Spree::Api::V3::Admin::MediaController, type: :controller do
 
         expect(response).to have_http_status(:accepted)
       end
+
+      it 'passes the identity a DAM sent along to the fetch job' do
+        expect {
+          post :create, params: {
+            product_id: product.prefixed_id,
+            url: 'https://example.com/image.jpg',
+            external_references: { dam: 'ASSET-9' }
+          }, as: :json
+        }.to have_enqueued_job(Spree::Images::SaveFromUrlJob).with(
+          product.id, 'Spree::Product', 'https://example.com/image.jpg',
+          [{ 'system' => 'dam', 'external_id' => 'ASSET-9' }], nil
+        )
+      end
+
+      it 'records the identity on media created directly' do
+        post :create, params: {
+          product_id: product.prefixed_id,
+          media_type: 'external_video',
+          external_video_url: 'https://vimeo.com/123456789',
+          external_references: { dam: 'ASSET-1' }
+        }, as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(json_response['external_references']).to eq('dam' => 'ASSET-1')
+      end
     end
 
     describe 'PATCH #update' do

@@ -3,6 +3,8 @@ module Spree
     module V3
       module Admin
         class MediaSerializer < V3::MediaSerializer
+          include Concerns::ExternalReferencesAttribute
+
           # Both are null for a library file that has not been placed yet.
           typelize viewable_type: [:string, nullable: true],
                    viewable_id: [:string, nullable: true],

@@ -11,6 +11,7 @@ export const MediaSchema = z.object({
   focal_point_x: z.number().nullable(),
   focal_point_y: z.number().nullable(),
   external_video_url: z.string().nullable(),
+  external_media_url: z.string().nullable(),
   video_provider: z.string().nullable(),
   video_embed_url: z.string().nullable(),
   video_url: z.string().nullable(),
