@@ -9,6 +9,7 @@ module Spree
                  focal_point_x: [:number, nullable: true],
                  focal_point_y: [:number, nullable: true],
                  external_video_url: [:string, nullable: true],
+                 external_media_url: [:string, nullable: true],
                  video_provider: [:string, nullable: true],
                  video_embed_url: [:string, nullable: true],
                  video_url: [:string, nullable: true],
@@ -35,7 +36,7 @@ module Spree
         end
 
         attributes :position, :alt, :media_type,
-                   :focal_point_x, :focal_point_y, :external_video_url
+                   :focal_point_x, :focal_point_y, :external_video_url, :external_media_url
 
         # Spree parses the YouTube/Vimeo link once, here, so no storefront has
         # to reimplement it. Nil on anything that isn't an external video.
@@ -83,12 +84,12 @@ module Spree
 
         # The row's still frame, sized when it's an attachment we control — an
         # image's own file, or a video's poster, so a gallery that only knows
-        # how to draw an image still renders the right picture. A provider's
-        # thumbnail is served as-is: it isn't ours to resize, so every size
-        # resolves to the same URL.
+        # how to draw an image still renders the right picture. A hosted still
+        # (an external image, a provider's thumbnail) is served as-is: it isn't
+        # ours to resize, so every size resolves to the same URL.
         def still_url(asset, variant_name = nil)
           source = asset&.still_image
-          return asset&.provider_still_url if source.nil?
+          return asset&.hosted_still_url if source.nil?
 
           url_helpers.cdn_image_url(variant_name ? source.variant(variant_name) : source)
         end

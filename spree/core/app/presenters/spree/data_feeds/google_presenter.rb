@@ -116,6 +116,11 @@ module Spree
         image = variant.primary_media || product.primary_media
         return if image.nil?
 
+        # A DAM-hosted image has no attachment to build a variant from — it
+        # answers with the address its host serves.
+        return image.hosted_still_url if image.still_image.nil? && image.hosted_still_url.present?
+        return unless image.attachment.attached?
+
         Rails.application.routes.url_helpers.cdn_image_url(image.attachment.variant(:xlarge))
       end
 

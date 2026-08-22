@@ -368,4 +368,35 @@ describe Spree::Media, type: :model do
       end
     end
   end
+
+  describe 'an image hosted elsewhere' do
+    let(:product) { create(:product) }
+    let(:hosted) do
+      Spree::Media.create!(viewable: product, media_type: 'external_image',
+                           external_media_url: '  https://cdn.example.com/widget.jpg ')
+    end
+
+    it 'keeps the address, stripped, and needs no attachment' do
+      expect(hosted).to be_persisted
+      expect(hosted.external_media_url).to eq('https://cdn.example.com/widget.jpg')
+    end
+
+    # Its host keeps the renditions; consumers get one address whatever size
+    # they ask for, through the same hook a provider thumbnail uses.
+    it 'offers its address as the hosted still' do
+      expect(hosted.hosted_still_url).to eq('https://cdn.example.com/widget.jpg')
+      expect(hosted).to be_renderable_as_image
+    end
+
+    it 'requires the address' do
+      expect(Spree::Media.new(viewable: product, media_type: 'external_image')).not_to be_valid
+    end
+
+    it 'leaves media Spree stores itself to its own attachment handling' do
+      own = create(:image, viewable: product)
+
+      expect(own.hosted_still_url).to be_nil
+      expect(own.still_image).to be_present
+    end
+  end
 end
