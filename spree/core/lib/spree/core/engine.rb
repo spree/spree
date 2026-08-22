@@ -397,6 +397,7 @@ module Spree
           Spree::Imports::ProductTranslations,
           Spree::Imports::Customers,
           Spree::Imports::StockLevels,
+          Spree::Imports::Prices,
         ]
 
         Rails.application.config.spree.taxon_rules = [
