@@ -166,11 +166,15 @@ module Spree
       fulfillments.delete_all
       fulfillment_items.reset
 
-      self.fulfillments = Spree::Stock::Coordinator.new(self).fulfillments.map do |fulfillment|
+      # Appended rather than assigned: setting `cart` on each proposal already
+      # files it under this cart's `fulfillments` (the association is
+      # inverse_of it), so a collection assignment sees the rows as already
+      # present, writes none of them, and the cart ends up with no proposals at
+      # all.
+      Spree::Stock::Coordinator.new(self).fulfillments.each do |fulfillment|
         fulfillment.address_id = ship_address_id
         fulfillment.order = nil
-        fulfillment.cart = self
-        fulfillment
+        fulfillments << fulfillment
       end
       prune_undeliverable_fulfillments!
       fulfillments.reload
