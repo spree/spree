@@ -57,6 +57,7 @@ import {
   usePromotionCouponCodes,
   usePromotionRuleTypes,
 } from '../../../hooks/use-promotions'
+import { spreeJsonLinkResolver } from '../../../lib/json-link-resolver'
 import { typeDescription, typeLabel } from '../../../lib/type-labels'
 import {
   MATCH_POLICIES,
@@ -155,6 +156,7 @@ export function PromotionForm({
   deletePending = false,
 }: PromotionFormProps) {
   const { t } = useTranslation()
+  const { storeId } = useStore()
   const form = useForm<PromotionFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(promotionFormSchema) as any,
@@ -227,6 +229,18 @@ export function PromotionForm({
           <PageHeader
             title={
               mode === 'create' ? t('admin.pages.promotions.new_title') : (promotion?.name ?? '')
+            }
+            jsonPreview={
+              // Edit mode only: a record that hasn't been created yet has no
+              // payload to show.
+              promotion
+                ? {
+                    title: `Promotion ${promotion.name}`,
+                    fetch: () => Promise.resolve(promotion),
+                    endpoint: `/api/v3/admin/promotions/${promotion.id}`,
+                    resolveLink: spreeJsonLinkResolver(storeId),
+                  }
+                : undefined
             }
             backTo="promotions"
             actions={

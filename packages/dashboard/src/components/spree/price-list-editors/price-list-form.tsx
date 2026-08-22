@@ -22,6 +22,7 @@ import {
 import { useEffect, useState } from 'react'
 import { Controller, type UseFormReturn, useFieldArray, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { spreeJsonLinkResolver } from '../../../lib/json-link-resolver'
 import { BulkPriceEditorDialog } from '../bulk-price-editor/bulk-price-editor-dialog'
 import { PriceListStatusBadge } from './status-badge'
 // Side-effect import — registers per-rule editors (customer, customer
@@ -102,6 +103,7 @@ export function PriceListForm({
   deletePending = false,
 }: PriceListFormProps) {
   const { t } = useTranslation()
+  const { storeId } = useStore()
 
   const form = useForm<PriceListFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -160,6 +162,18 @@ export function PriceListForm({
             }
             backTo="products/price-lists"
             badges={priceList && <PriceListStatusBadge priceList={priceList} />}
+            jsonPreview={
+              // Edit mode only: a record that hasn't been created yet has no
+              // payload to show.
+              priceList
+                ? {
+                    title: `Price list ${priceList.name}`,
+                    fetch: () => Promise.resolve(priceList),
+                    endpoint: `/api/v3/admin/price_lists/${priceList.id}`,
+                    resolveLink: spreeJsonLinkResolver(storeId),
+                  }
+                : undefined
+            }
             actions={
               <div className="flex gap-2">
                 {mode === 'edit' && priceList && <ActivationButtons priceList={priceList} />}
