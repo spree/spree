@@ -722,7 +722,7 @@ importers:
         version: 19.2.6(react@19.2.6)
       tsup:
         specifier: ^8.5.0
-        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.21.0)(typescript@6.0.3)(yaml@2.8.4)
+        version: 8.5.1(jiti@2.7.0)(postcss@8.5.26)(tsx@4.21.0)(typescript@6.0.3)(yaml@2.8.4)
       typescript:
         specifier: ~6.0.3
         version: 6.0.3
@@ -786,7 +786,7 @@ importers:
         version: 2.14.3(@types/node@25.6.0)(typescript@6.0.3)
       tsup:
         specifier: ^8.0.0
-        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.21.0)(typescript@6.0.3)(yaml@2.8.4)
+        version: 8.5.1(jiti@2.7.0)(postcss@8.5.26)(tsx@4.21.0)(typescript@6.0.3)(yaml@2.8.4)
       tsx:
         specifier: ^4.0.0
         version: 4.21.0
