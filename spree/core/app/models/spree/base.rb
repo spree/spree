@@ -66,11 +66,6 @@ class Spree::Base < ApplicationRecord
     ApplicationRecord.try(:spree_base_uniqueness_scope) || []
   end
 
-  # FIXME: https://github.com/rails/rails/issues/40943
-  def self.has_many_inversing
-    false
-  end
-
   # this can overridden in subclasses to disallow deletion
   def can_be_deleted?
     true
