@@ -11,7 +11,7 @@ RSpec.describe 'Hosted seller panel', type: :request do
 
   after do
     FileUtils.remove_entry(dist)
-    Spree::SellerPanel.dist_path = nil
+    Spree::Dashboard.seller_panel_dist_path = nil
     Spree::Dashboard.dist_path = nil
   end
 
@@ -25,7 +25,7 @@ RSpec.describe 'Hosted seller panel', type: :request do
   end
 
   context 'when a bundle is configured' do
-    before { Spree::SellerPanel.dist_path = dist }
+    before { Spree::Dashboard.seller_panel_dist_path = dist }
 
     it 'serves the shell at the mount root' do
       get '/sellers'
@@ -62,7 +62,7 @@ RSpec.describe 'Hosted seller panel', type: :request do
     # other, or a marketplace with no seller panel would hand sellers the
     # operator's dashboard.
     it 'does not serve the dashboard bundle' do
-      Spree::SellerPanel.dist_path = nil
+      Spree::Dashboard.seller_panel_dist_path = nil
       Spree::Dashboard.dist_path = dist
 
       get '/sellers'
