@@ -28,14 +28,14 @@ jobs:
       BUNDLE_JOBS: 4
       BUNDLE_RETRY: 3
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '4.0'
 
       - name: Cache Ruby gems
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: vendor/bundle
           key: gems-${{ runner.os }}-ruby4.0-postgres-${{ hashFiles('spree/**/*.gemspec', 'spree/**/Gemfile') }}
@@ -73,14 +73,14 @@ jobs:
       BUNDLE_JOBS: 4
       BUNDLE_RETRY: 3
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '4.0'
 
       - name: Cache Ruby gems
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: vendor/bundle
           key: gems-${{ runner.os }}-ruby4.0-mysql-${{ hashFiles('spree/**/*.gemspec', 'spree/**/Gemfile') }}
@@ -177,14 +177,14 @@ jobs:
       COVERAGE_DIR: ${{ github.workspace }}/coverage
       CI_SHARD: ${{ matrix.shard }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '4.0'
 
       - name: Restore gem cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: vendor/bundle
           key: gems-${{ runner.os }}-ruby4.0-postgres-${{ hashFiles('spree/**/*.gemspec', 'spree/**/Gemfile') }}
@@ -249,7 +249,7 @@ jobs:
 
       - name: Upload coverage to Codecov
         if: always() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: ${{ github.workspace }}/coverage
@@ -259,7 +259,7 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: test-results-postgres-${{ matrix.project }}-${{ matrix.shard }}
           path: tmp/test-results/
@@ -267,7 +267,7 @@ jobs:
 
       - name: Upload failed test screenshots
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: failed-screenshots-postgres-${{ matrix.project }}-${{ matrix.shard }}
           path: /tmp/test-artifacts/
@@ -320,14 +320,14 @@ jobs:
       BUNDLE_JOBS: 4
       BUNDLE_RETRY: 3
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '4.0'
 
       - name: Restore gem cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: vendor/bundle
           key: gems-${{ runner.os }}-ruby4.0-mysql-${{ hashFiles('spree/**/*.gemspec', 'spree/**/Gemfile') }}
@@ -392,7 +392,7 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: test-results-mysql-${{ matrix.project }}-${{ matrix.shard }}
           path: tmp/test-results/
@@ -400,7 +400,7 @@ jobs:
 
       - name: Upload failed test screenshots
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: failed-screenshots-mysql-${{ matrix.project }}-${{ matrix.shard }}
           path: /tmp/test-artifacts/
@@ -415,14 +415,14 @@ jobs:
       BUNDLE_JOBS: 4
       BUNDLE_RETRY: 3
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '4.0'
 
       - name: Restore gem cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: vendor/bundle
           key: gems-${{ runner.os }}-ruby4.0-postgres-${{ hashFiles('spree/**/*.gemspec', 'spree/**/Gemfile') }}
@@ -445,7 +445,7 @@ jobs:
 
       - name: Upload Brakeman reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: brakeman-reports
           path: spree/brakeman-*.*
