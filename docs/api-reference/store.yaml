@@ -87,7 +87,7 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6ImRlZmM5YWZhLTUzOTYtNDEwYy1hZDY4LTE4YTBiN2M5MmMwMyIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzY4NDgyMDAwfQ.akOKNDAyxSYPdQ7hQBFm_w36ArJ087ekUpMmP19m0BM
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6ImRlZmM5YWZhLTUzOTYtNDEwYy1hZDY4LTE4YTBiN2M5MmMwMyIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzY4NDgyMDAwfQ.Bz5ge0pVDmdW6rYhdZDbVeRzyLG7WWr16xcKpneSY60
                 refresh_token: CxKP3VYWQzkXqrfxTmPLB446
                 user:
                   id: cust_UkLWZg9DAJ
@@ -194,7 +194,7 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6IjFmMzM5OGY2LTczZDgtNDdjNi1hNDk4LTUxNDc3MGUxYTUyNSIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzY4NDgyMDAwfQ.73sLD9Vh5WdgsHDOPwZWz2C2nwroY8xEgfTTLNK9shc
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6IjFmMzM5OGY2LTczZDgtNDdjNi1hNDk4LTUxNDc3MGUxYTUyNSIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzY4NDgyMDAwfQ.nNjwmcsrJzmce-RBTfmUB7zzbM-3wtnJnwk34phxSlQ
                 refresh_token: mWbQ77onTSsXQta8Z4SAVaTU
                 user:
                   id: cust_UkLWZg9DAJ
@@ -393,7 +393,7 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6IjdlOGI2Njc5LTBjNzYtNDQ1Mi1hMWMyLWJhY2U0MWNhN2IyMCIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzY4NDgyMDAwfQ.6EFpedkEaJ4XJpv5fAEqv2UANfrh8_SXIAiubf_E5ss
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6IjdlOGI2Njc5LTBjNzYtNDQ1Mi1hMWMyLWJhY2U0MWNhN2IyMCIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzY4NDgyMDAwfQ.E0GBuR8FwhE_pIYcELMMJXhDLDLfO2iInD8CfFlEfdg
                 refresh_token: JNJKeT5cELhdSfb2tWHj3ctp
                 user:
                   id: cust_UkLWZg9DAJ
@@ -7086,7 +7086,7 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6IjY0OWM2NTkzLTBhZWQtNDA5Ny1hYTI3LThhMjVmYTU4OGI3OSIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzY4NDgyMDAwfQ.wQpdI2FvcK9dEVIZdwEyePE8Vb-oBq6vsfwPpvnwR3o
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6IjY0OWM2NTkzLTBhZWQtNDA5Ny1hYTI3LThhMjVmYTU4OGI3OSIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzY4NDgyMDAwfQ.8vdwrheaFW6cBhv-S-mouEVc8G-iT6z_qfoVM5ubZyg
                 refresh_token: mLm6vdSzLUgPhw8SCzDiagfL
                 user:
                   id: cust_UkLWZg9DAJ
@@ -9740,52 +9740,6 @@ paths:
                   message: Policy not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
-  "/api/v3/store/digitals/{token}":
-    get:
-      summary: Download a digital product
-      tags:
-      - Digitals
-      description: |
-        Downloads a digital product file using the digital link token.
-        The token is provided via the `download_url` field on digital links
-        returned with order line items. No API key or authentication required —
-        the token itself grants access.
-        Each download increments the access counter. Downloads may be limited by
-        store settings (number of downloads and/or time-based expiration).
-      parameters:
-      - name: token
-        in: path
-        required: true
-        description: Digital link token
-        schema:
-          type: string
-      responses:
-        '200':
-          description: file downloaded
-          content:
-            application/json: {}
-        '403':
-          description: download link expired or limit exceeded
-          content:
-            application/json:
-              example:
-                error:
-                  code: digital_link_expired
-                  message: Download link expired or invalid
-            application/octet-stream:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-        '404':
-          description: digital link not found
-          content:
-            application/json:
-              example:
-                error:
-                  code: record_not_found
-                  message: Digital link not found
-            application/octet-stream:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/channel":
     get:
       summary: Get the current channel
@@ -9972,6 +9926,51 @@ paths:
                   state_text: AL
                   pickup_ready_in_minutes:
                   pickup_instructions:
+  "/api/v3/store/digital_links/{token}":
+    get:
+      summary: Download a digital product
+      tags:
+      - Digital Links
+      description: |
+        Downloads a digital product file using the digital link token.
+        The token is provided via the `download_url` field on digital links
+        returned with order line items. No API key or authentication required —
+        the token itself grants access.
+
+        Responds with a redirect to a short-lived download URL; follow it to
+        fetch the file. Each download increments the access counter. Downloads
+        may be limited by the asset's own settings, falling back to the store's
+        (number of downloads and/or time-based expiration).
+      parameters:
+      - name: token
+        in: path
+        required: true
+        description: Digital link token
+        schema:
+          type: string
+      responses:
+        '302':
+          description: redirect to the file download
+        '403':
+          description: download link expired or limit exceeded
+          content:
+            application/json:
+              example:
+                error:
+                  code: digital_link_expired
+                  message: Download link expired or invalid
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        '404':
+          description: digital link not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Digital link not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/sellers":
     get:
       summary: List sellers
@@ -11401,6 +11400,26 @@ components:
       - name
       - description
       x-typelizer: true
+    DigitalAsset:
+      type: object
+      properties:
+        id:
+          type: string
+        variant_id:
+          type: string
+          nullable: true
+        filename:
+          type: string
+          nullable: true
+        content_type:
+          type: string
+          nullable: true
+      required:
+      - id
+      - variant_id
+      - filename
+      - content_type
+      x-typelizer: true
     DigitalLink:
       type: object
       properties:
@@ -11414,6 +11433,9 @@ components:
           type: string
         download_url:
           type: string
+        expires_at:
+          type: string
+          nullable: true
         authorizable:
           type: boolean
         expired:
@@ -11426,27 +11448,10 @@ components:
       - filename
       - content_type
       - download_url
+      - expires_at
       - authorizable
       - expired
       - access_limit_exceeded
-      x-typelizer: true
-    Digital:
-      type: object
-      properties:
-        id:
-          type: string
-        created_at:
-          type: string
-        updated_at:
-          type: string
-        variant_id:
-          type: string
-          nullable: true
-      required:
-      - id
-      - created_at
-      - updated_at
-      - variant_id
       x-typelizer: true
     Discount:
       type: object

@@ -92,7 +92,7 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjE3NmVlN2M3LWJkYzktNGM1MS1hMzFiLTEwMDYxOTc3NGZmNCIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDc4NzAwfQ.t4sBqJCtgn1Ww6o_sUUdRiL1sUF3aK-bpQNBkBVfNjQ
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjE3NmVlN2M3LWJkYzktNGM1MS1hMzFiLTEwMDYxOTc3NGZmNCIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDc4NzAwfQ.NgTvdqmLnBi-TC5iEBipSNONFq7LeJ1lNGpEEI9v4cY
                 user:
                   id: adm_UkLWZg9DAJ
                   email: admin@example.com
@@ -204,7 +204,7 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6ImFiN2M4YjAxLTY0MGYtNDJhZi1hZTY1LTQxY2NmOTk1YmVlMCIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDc4NzAwfQ.QSVm-Fge_dvjki3TVfaFHZAOwHOtDTX55usdDgTMJSE
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6ImFiN2M4YjAxLTY0MGYtNDJhZi1hZTY1LTQxY2NmOTk1YmVlMCIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDc4NzAwfQ.HDG1BV-hgZrQS8riFSm_c4Ds-sh7zqto0QA31tGJscA
                 user:
                   id: adm_UkLWZg9DAJ
                   email: admin@example.com
@@ -638,7 +638,7 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjBiZTdhM2RmLWEyYzYtNDZkOC1hNTZiLWE4NDg4MGIyZGZiNCIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDgyMDAwfQ.im6r-eLsMyncHhKJBdUc31ek8kPN37htiTWO_-T2TXE
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjBiZTdhM2RmLWEyYzYtNDZkOC1hNTZiLWE4NDg4MGIyZGZiNCIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDgyMDAwfQ.y__VP0JXaT_1I5pABzbJqNx0qietwxRNwHspBRnhDps
                 user:
                   id: adm_UkLWZg9DAJ
                   email: admin@example.com
@@ -716,7 +716,7 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjZjMjg1ODk5LTExMzUtNDBhMi1hNDBiLTE4NjNiODcwZDRjYyIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDc4NzAwfQ.-3TXNB4thifTF3dCUfDtyN8M188-pzLOIe2QFGe1zlY
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjZjMjg1ODk5LTExMzUtNDBhMi1hNDBiLTE4NjNiODcwZDRjYyIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDc4NzAwfQ.hN0vxXbv-3XNTTHUpXLuAAWB6i5J33TeYColpjh7e5Y
                 user:
                   id: adm_UkLWZg9DAJ
                   email: owner@example.com
@@ -20057,12 +20057,12 @@ paths:
                   label: Option Value(s)
                   description:
                   preference_schema:
-                  - key: eligible_values
-                    type: array
-                    default: []
                   - key: match_policy
                     type: string
                     default: any
+                  - key: eligible_values
+                    type: array
+                    default: []
                 - type: product
                   label: Product(s)
                   description:
@@ -20351,6 +20351,10 @@ paths:
                 preferred_order_number_prefix: R
                 preferred_order_number_suffix: ''
                 preferred_order_number_sequence_start: 1001
+                preferred_limit_digital_download_count: true
+                preferred_digital_asset_authorized_clicks: 5
+                preferred_limit_digital_download_days: true
+                preferred_digital_asset_authorized_days: 7
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 order_number_sequence_started: false
@@ -20668,6 +20672,10 @@ paths:
                 preferred_order_number_prefix: R
                 preferred_order_number_suffix: ''
                 preferred_order_number_sequence_start: 1001
+                preferred_limit_digital_download_count: true
+                preferred_digital_asset_authorized_clicks: 5
+                preferred_limit_digital_download_days: true
+                preferred_digital_asset_authorized_days: 7
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 order_number_sequence_started: false
@@ -29039,12 +29047,12 @@ paths:
                   - key: normal_amount
                     type: decimal
                     default: 0
-                  - key: discount_amount
-                    type: decimal
-                    default: 0
                   - key: currency
                     type: string
                     default: USD
+                  - key: discount_amount
+                    type: decimal
+                    default: 0
                 - type: Spree::Calculator::Shipping::DigitalDelivery
                   name: Digital Delivery
                   preference_schema:
@@ -34021,6 +34029,64 @@ components:
       - delivery_origin_group_id
       - delivery_method_ids
       x-typelizer: true
+    DigitalAsset:
+      type: object
+      properties:
+        id:
+          type: string
+        variant_id:
+          type: string
+          nullable: true
+        filename:
+          type: string
+          nullable: true
+        content_type:
+          type: string
+          nullable: true
+        authorized_clicks:
+          type: number
+          nullable: true
+        authorized_days:
+          type: number
+          nullable: true
+        byte_size:
+          type: number
+          nullable: true
+        provider_type:
+          type: string
+          nullable: true
+        provider_settings:
+          type: object
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        provider_name:
+          type: string
+        download_url:
+          type: string
+          nullable: true
+        effective_authorized_clicks:
+          type: number
+        effective_authorized_days:
+          type: number
+      required:
+      - id
+      - variant_id
+      - filename
+      - content_type
+      - authorized_clicks
+      - authorized_days
+      - byte_size
+      - provider_type
+      - provider_settings
+      - created_at
+      - updated_at
+      - provider_name
+      - download_url
+      - effective_authorized_clicks
+      - effective_authorized_days
+      x-typelizer: true
     DigitalLink:
       type: object
       properties:
@@ -34034,6 +34100,9 @@ components:
           type: string
         download_url:
           type: string
+        expires_at:
+          type: string
+          nullable: true
         authorizable:
           type: boolean
         expired:
@@ -34050,6 +34119,7 @@ components:
       - filename
       - content_type
       - download_url
+      - expires_at
       - authorizable
       - expired
       - access_limit_exceeded
@@ -36178,6 +36248,10 @@ components:
         tax_category_id:
           type: string
           nullable: true
+        digital_assets:
+          type: array
+          items:
+            "$ref": "#/components/schemas/DigitalAsset"
         collections:
           type: array
           items:
@@ -37405,6 +37479,14 @@ components:
           type: string
         preferred_order_number_sequence_start:
           type: number
+        preferred_limit_digital_download_count:
+          type: boolean
+        preferred_digital_asset_authorized_clicks:
+          type: number
+        preferred_limit_digital_download_days:
+          type: boolean
+        preferred_digital_asset_authorized_days:
+          type: number
         created_at:
           type: string
         updated_at:
@@ -37474,6 +37556,10 @@ components:
       - preferred_order_number_prefix
       - preferred_order_number_suffix
       - preferred_order_number_sequence_start
+      - preferred_limit_digital_download_count
+      - preferred_digital_asset_authorized_clicks
+      - preferred_limit_digital_download_days
+      - preferred_digital_asset_authorized_days
       - created_at
       - updated_at
       - order_number_sequence_started
