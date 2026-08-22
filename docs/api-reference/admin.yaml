@@ -92,7 +92,7 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjE3NmVlN2M3LWJkYzktNGM1MS1hMzFiLTEwMDYxOTc3NGZmNCIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDc4NzAwfQ.t4sBqJCtgn1Ww6o_sUUdRiL1sUF3aK-bpQNBkBVfNjQ
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjE3NmVlN2M3LWJkYzktNGM1MS1hMzFiLTEwMDYxOTc3NGZmNCIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDc4NzAwfQ.vRnZcTpIj75rosHta3Yd2PtpMOfiMCaIyIL0XmFCGz0
                 user:
                   id: adm_UkLWZg9DAJ
                   email: admin@example.com
@@ -204,7 +204,7 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6ImFiN2M4YjAxLTY0MGYtNDJhZi1hZTY1LTQxY2NmOTk1YmVlMCIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDc4NzAwfQ.QSVm-Fge_dvjki3TVfaFHZAOwHOtDTX55usdDgTMJSE
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6ImFiN2M4YjAxLTY0MGYtNDJhZi1hZTY1LTQxY2NmOTk1YmVlMCIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDc4NzAwfQ.npIuc1sK0rMobSBJXdlY22X10689FWwTitCKYzKfPXs
                 user:
                   id: adm_UkLWZg9DAJ
                   email: admin@example.com
@@ -368,6 +368,8 @@ paths:
                 - write_webhooks
                 - read_integrations
                 - write_integrations
+                - read_maintenance_tasks
+                - write_maintenance_tasks
                 - read_api_keys
                 - write_api_keys
                 - read_staff
@@ -491,6 +493,8 @@ paths:
                 - write_webhooks
                 - read_integrations
                 - write_integrations
+                - read_maintenance_tasks
+                - write_maintenance_tasks
                 - read_api_keys
                 - write_api_keys
                 - read_staff
@@ -638,7 +642,7 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjBiZTdhM2RmLWEyYzYtNDZkOC1hNTZiLWE4NDg4MGIyZGZiNCIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDgyMDAwfQ.im6r-eLsMyncHhKJBdUc31ek8kPN37htiTWO_-T2TXE
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjBiZTdhM2RmLWEyYzYtNDZkOC1hNTZiLWE4NDg4MGIyZGZiNCIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDgyMDAwfQ.TROGy91ZynEf5Spb4G7t_Mca1Oh3tiELfz1m6YHoUpQ
                 user:
                   id: adm_UkLWZg9DAJ
                   email: admin@example.com
@@ -716,7 +720,7 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjZjMjg1ODk5LTExMzUtNDBhMi1hNDBiLTE4NjNiODcwZDRjYyIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDc4NzAwfQ.-3TXNB4thifTF3dCUfDtyN8M188-pzLOIe2QFGe1zlY
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjZjMjg1ODk5LTExMzUtNDBhMi1hNDBiLTE4NjNiODcwZDRjYyIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDc4NzAwfQ.5uWF5F_ERryVqVgfA19Q8W6UCZj8wjnNMzFxoMovoys
                 user:
                   id: adm_UkLWZg9DAJ
                   email: owner@example.com
@@ -10888,6 +10892,826 @@ paths:
                   in: 1
                   previous:
                   next:
+  "/api/v3/admin/maintenance_tasks":
+    get:
+      summary: List maintenance tasks
+      tags:
+      - Maintenance Tasks
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns the maintenance tasks this installation can run — data
+        corrections, backfills and reindexes that ship with the store's code
+        (see `docs/plans/6.0-maintenance-tasks.md`).
+
+        A task is a deployed class rather than a record, so it is identified by
+        its class name. Each entry carries the `parameters` schema a run form is
+        built from, whether it `supports_dry_run`, whether its rows come from a
+        `csv` upload, and how its last run went.
+
+
+        **Required scope:** `read_maintenance_tasks` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: tasks } = await client.maintenanceTasks.list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /maintenance_tasks
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: maintenance tasks found
+          content:
+            application/json:
+              example:
+                data:
+                - name: Spree::MaintenanceTasks::Upgrade::AdjustmentsToTypedRows
+                  description: Map adjustments onto tax lines, discounts and fees
+                  parameters: []
+                  supports_dry_run: false
+                  no_collection: true
+                  csv: false
+                  upgrade_step: true
+                  active_run:
+                  last_run:
+                - name: Spree::MaintenanceTasks::Upgrade::BackfillOrderMarkets
+                  description: Assign a market to orders placed before markets existed
+                  parameters: []
+                  supports_dry_run: true
+                  no_collection: false
+                  csv: false
+                  upgrade_step: true
+                  active_run:
+                  last_run:
+                - name: Spree::MaintenanceTasks::Upgrade::CalculatorBoundsToDeliveryMethodRules
+                  description: Convert calculator bounds into delivery method rules
+                  parameters: []
+                  supports_dry_run: false
+                  no_collection: true
+                  csv: false
+                  upgrade_step: true
+                  active_run:
+                  last_run:
+                - name: Spree::MaintenanceTasks::Upgrade::CaptureMethods
+                  description: Convert payment method auto capture into capture methods
+                  parameters: []
+                  supports_dry_run: true
+                  no_collection: false
+                  csv: false
+                  upgrade_step: true
+                  active_run:
+                  last_run:
+                - name: Spree::MaintenanceTasks::Upgrade::ConsolidateMetadata
+                  description: Check for leftover split metadata columns
+                  parameters: []
+                  supports_dry_run: false
+                  no_collection: true
+                  csv: false
+                  upgrade_step: true
+                  active_run:
+                  last_run:
+                - name: Spree::MaintenanceTasks::Upgrade::CountryStateCodes
+                  description: Fill ISO country and state codes from the legacy records
+                  parameters: []
+                  supports_dry_run: false
+                  no_collection: true
+                  csv: false
+                  upgrade_step: true
+                  active_run:
+                  last_run:
+                - name: Spree::MaintenanceTasks::Upgrade::DeliveryAndStockStoreIds
+                  description: Assign delivery methods and stock locations to the
+                    default store
+                  parameters: []
+                  supports_dry_run: false
+                  no_collection: true
+                  csv: false
+                  upgrade_step: true
+                  active_run:
+                  last_run:
+                - name: Spree::MaintenanceTasks::Upgrade::DeliveryProfiles
+                  description: Convert shipping categories into delivery profiles
+                  parameters: []
+                  supports_dry_run: false
+                  no_collection: true
+                  csv: false
+                  upgrade_step: true
+                  active_run:
+                  last_run:
+                - name: Spree::MaintenanceTasks::Upgrade::FulfillmentStatuses
+                  description: Collapse fulfillment statuses onto the 6.0 set
+                  parameters: []
+                  supports_dry_run: false
+                  no_collection: true
+                  csv: false
+                  upgrade_step: true
+                  active_run:
+                  last_run:
+                - name: Spree::MaintenanceTasks::Upgrade::IncompleteOrdersToCarts
+                  description: Move incomplete orders onto the Cart model
+                  parameters: []
+                  supports_dry_run: false
+                  no_collection: true
+                  csv: false
+                  upgrade_step: true
+                  active_run:
+                  last_run:
+                - name: Spree::MaintenanceTasks::Upgrade::MasterImagesToProductMedia
+                  description: Move variant-pinned images onto product media
+                  parameters: []
+                  supports_dry_run: false
+                  no_collection: true
+                  csv: false
+                  upgrade_step: true
+                  active_run:
+                  last_run:
+                - name: Spree::MaintenanceTasks::Upgrade::MediaClassNames
+                  description: Rename stored Asset class names to Media
+                  parameters: []
+                  supports_dry_run: false
+                  no_collection: true
+                  csv: false
+                  upgrade_step: true
+                  active_run:
+                  last_run:
+                - name: Spree::MaintenanceTasks::Upgrade::ProductTypes
+                  description: Bind product types to the default store and reset counters
+                  parameters: []
+                  supports_dry_run: false
+                  no_collection: true
+                  csv: false
+                  upgrade_step: true
+                  active_run:
+                  last_run:
+                - name: Spree::MaintenanceTasks::Upgrade::ReasonStoreIds
+                  description: Assign return and refund reasons to the default store
+                  parameters: []
+                  supports_dry_run: false
+                  no_collection: true
+                  csv: false
+                  upgrade_step: true
+                  active_run:
+                  last_run:
+                - name: Spree::MaintenanceTasks::Upgrade::RemoveMasterVariant
+                  description: Migrate products off the master variant
+                  parameters: []
+                  supports_dry_run: false
+                  no_collection: true
+                  csv: false
+                  upgrade_step: true
+                  active_run:
+                  last_run:
+                - name: Spree::MaintenanceTasks::Upgrade::Returns
+                  description: Move return authorizations onto the Return and Exchange
+                    models
+                  parameters:
+                  - name: skip_failed_rows
+                    type: boolean
+                    required: false
+                    options:
+                    masked: false
+                    default: false
+                  - name: batch_size
+                    type: integer
+                    required: false
+                    options:
+                    masked: false
+                    default: 500
+                  supports_dry_run: false
+                  no_collection: true
+                  csv: false
+                  upgrade_step: true
+                  active_run:
+                  last_run:
+                - name: Spree::MaintenanceTasks::Upgrade::RichTextToColumns
+                  description: Move rich text out of Action Text into its own columns
+                  parameters: []
+                  supports_dry_run: false
+                  no_collection: true
+                  csv: false
+                  upgrade_step: true
+                  active_run:
+                  last_run:
+                - name: Spree::MaintenanceTasks::Upgrade::SearchReindex
+                  description: Rebuild the search index
+                  parameters: []
+                  supports_dry_run: false
+                  no_collection: true
+                  csv: false
+                  upgrade_step: true
+                  active_run:
+                  last_run:
+                - name: Spree::MaintenanceTasks::Upgrade::ShippingToDelivery
+                  description: Rename the shipping vocabulary to delivery
+                  parameters: []
+                  supports_dry_run: false
+                  no_collection: true
+                  csv: false
+                  upgrade_step: true
+                  active_run:
+                  last_run:
+                - name: Spree::MaintenanceTasks::Upgrade::StockMovementsToTypedRows
+                  description: Type stock movements and reconcile open fulfillments
+                  parameters: []
+                  supports_dry_run: false
+                  no_collection: true
+                  csv: false
+                  upgrade_step: true
+                  active_run:
+                  last_run:
+                - name: Spree::MaintenanceTasks::Upgrade::StoreCreditCategories
+                  description: Fold store credit categories into the credit memo
+                  parameters: []
+                  supports_dry_run: false
+                  no_collection: true
+                  csv: false
+                  upgrade_step: true
+                  active_run:
+                  last_run:
+                - name: Spree::MaintenanceTasks::Upgrade::StoreSettingsFromConfig
+                  description: Copy moved settings from the global config onto each
+                    store
+                  parameters: []
+                  supports_dry_run: false
+                  no_collection: true
+                  csv: false
+                  upgrade_step: true
+                  active_run:
+                  last_run:
+                - name: Spree::MaintenanceTasks::Upgrade::TaxStoreIds
+                  description: Assign tax categories and rates to the default store
+                  parameters: []
+                  supports_dry_run: false
+                  no_collection: true
+                  csv: false
+                  upgrade_step: true
+                  active_run:
+                  last_run:
+                - name: Spree::MaintenanceTasks::Upgrade::TaxZones
+                  description: Convert zone-scoped tax rates to country and state
+                    codes
+                  parameters: []
+                  supports_dry_run: false
+                  no_collection: true
+                  csv: false
+                  upgrade_step: true
+                  active_run:
+                  last_run:
+                - name: Spree::MaintenanceTasks::Upgrade::TaxonsToCategoriesAndCollections
+                  description: Migrate taxons to categories and collections
+                  parameters: []
+                  supports_dry_run: false
+                  no_collection: true
+                  csv: false
+                  upgrade_step: true
+                  active_run:
+                  last_run:
+                - name: Spree::MaintenanceTasks::Upgrade::UsersToCustomers
+                  description: Move users onto the gem-owned customer model
+                  parameters:
+                  - name: confirm_no_pepper
+                    type: boolean
+                    required: false
+                    options:
+                    masked: false
+                    default: false
+                  - name: skip_invalid_rows
+                    type: boolean
+                    required: false
+                    options:
+                    masked: false
+                    default: false
+                  - name: source_user_table
+                    type: string
+                    required: false
+                    options:
+                    masked: false
+                    default:
+                  - name: source_user_type
+                    type: string
+                    required: false
+                    options:
+                    masked: false
+                    default:
+                  - name: batch_size
+                    type: integer
+                    required: false
+                    options:
+                    masked: false
+                    default: 1000
+                  supports_dry_run: false
+                  no_collection: true
+                  csv: false
+                  upgrade_step: true
+                  active_run:
+                  last_run:
+                - name: Spree::MaintenanceTasks::Upgrade::ZonesToDeliveryZones
+                  description: Convert shipping zones into delivery zones
+                  parameters: []
+                  supports_dry_run: false
+                  no_collection: true
+                  csv: false
+                  upgrade_step: true
+                  active_run:
+                  last_run:
+                - name: Spree::MaintenanceTasks::UpgradeStep
+                  description: Run one step of the upgrade manifest
+                  parameters:
+                  - name: step_id
+                    type: string
+                    required: true
+                    options:
+                    masked: false
+                    default:
+                  supports_dry_run: false
+                  no_collection: true
+                  csv: false
+                  upgrade_step: true
+                  active_run:
+                  last_run:
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              example:
+                error:
+                  code: authentication_required
+                  message: Authentication required
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/admin/maintenance_task_runs":
+    get:
+      summary: List maintenance task runs
+      tags:
+      - Maintenance Tasks
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        The record of every maintenance task run: who started it, with which
+        arguments, how far it got and how it ended.
+
+        Runs are installation-wide rather than per store — a backfill walks
+        every store's data — so this list is not filtered by the store the
+        request is made against. The `store_id` on a run records where the
+        operator was working when they started it.
+
+
+        **Required scope:** `read_maintenance_tasks` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: runs } = await client.maintenanceTaskRuns.list({ status_eq: 'succeeded' })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /maintenance_task_runs -d '{"status_eq":"succeeded"}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Number of records per page
+        schema:
+          type: integer
+      - name: q[task_name_cont]
+        in: query
+        required: false
+        description: Filter by task name (contains)
+        schema:
+          type: string
+      - name: q[status_eq]
+        in: query
+        required: false
+        description: Filter by status (enqueued, running, paused, succeeded, errored,
+          cancelled, …)
+        schema:
+          type: string
+      - name: sort
+        in: query
+        required: false
+        description: Sort by field. Prefix with `-` for descending (e.g., `-created_at`).
+        schema:
+          type: string
+      responses:
+        '200':
+          description: maintenance task runs found
+          content:
+            application/json:
+              example:
+                data:
+                - id: mtr_UkLWZg9DAJ
+                  task_name: Spree::MaintenanceTasks::Upgrade::CaptureMethods
+                  status: succeeded
+                  dry_run: false
+                  initiated_via: dashboard
+                  cursor:
+                  tick_count: 0
+                  tick_total:
+                  error_class:
+                  error_message:
+                  started_at:
+                  ended_at:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  progress:
+                  duration: 0.0
+                  tallies: {}
+                  arguments: {}
+                  error_backtrace:
+                  resumable: false
+                  cancelable: false
+                  active: false
+                  store_id:
+                  parent_run_id:
+                  admin_user:
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/MaintenanceTaskRun"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              example:
+                error:
+                  code: authentication_required
+                  message: Authentication required
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    post:
+      summary: Start a maintenance task
+      tags:
+      - Maintenance Tasks
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Starts a run of a registered maintenance task and returns it. The run
+        is enqueued, so poll it while `active` is true.
+
+        `arguments` are validated by the task's own Active Model validations,
+        so a bad value is rejected here rather than failing on the first
+        record. `dry_run` is honored only by tasks whose `supports_dry_run` is
+        true — recording a run as a preview that would in fact have written
+        would misrepresent what happened.
+
+        Only one run of a task can be in flight at a time: two would race over
+        the same records and their cursors would leapfrog.
+
+
+        **Required scope:** `write_maintenance_tasks` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const run = await client.maintenanceTaskRuns.create({
+            task_name: 'Spree::MaintenanceTasks::Upgrade::CaptureMethods',
+            dry_run: true,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /maintenance_task_runs -d '{"task_name":"Spree::MaintenanceTasks::Upgrade::CaptureMethods","dry_run":true}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '201':
+          description: maintenance task started
+          content:
+            application/json:
+              example:
+                id: mtr_UkLWZg9DAJ
+                task_name: Spree::MaintenanceTasks::Upgrade::CaptureMethods
+                status: enqueued
+                dry_run: true
+                initiated_via: dashboard
+                cursor:
+                tick_count: 0
+                tick_total:
+                error_class:
+                error_message:
+                started_at:
+                ended_at:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                progress:
+                duration: 0.0
+                tallies: {}
+                arguments: {}
+                error_backtrace:
+                resumable: false
+                cancelable: true
+                active: true
+                store_id: store_UkLWZg9DAJ
+                parent_run_id:
+                admin_user:
+                  id: adm_UkLWZg9DAJ
+                  email: lizette.erdman@kuhnlegros.name
+                  first_name: Donnell
+                  last_name: Langworth
+              schema:
+                "$ref": "#/components/schemas/MaintenanceTaskRun"
+        '422':
+          description: task is not registered
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Task name Nope::Task is not a registered maintenance task
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                task_name:
+                  type: string
+                  example: Spree::MaintenanceTasks::Upgrade::CaptureMethods
+                arguments:
+                  type: object
+                  example: {}
+                dry_run:
+                  type: boolean
+                  example: true
+                csv_file:
+                  type: string
+                  description: Signed id of an uploaded blob, for tasks whose rows
+                    come from a CSV
+              required:
+              - task_name
+  "/api/v3/admin/maintenance_task_runs/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: Maintenance task run ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Retrieve a maintenance task run
+      tags:
+      - Maintenance Tasks
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        A single run, with the progress a dashboard polls while it works.
+
+        `progress` is `0..1` when the task could count its collection and
+        `null` when it could not, in which case `tick_count` alone reports what
+        has been processed. `arguments` are rendered through the task's masking
+        rules, so a secret passed as a parameter is stored for reproducibility
+        but never echoed back.
+
+
+        **Required scope:** `read_maintenance_tasks` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const run = await client.maintenanceTaskRuns.get('mtr_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /maintenance_task_runs/{id}
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: maintenance task run found
+          content:
+            application/json:
+              example:
+                id: mtr_UkLWZg9DAJ
+                task_name: Spree::MaintenanceTasks::Upgrade::CaptureMethods
+                status: running
+                dry_run: false
+                initiated_via: api
+                cursor:
+                tick_count: 5
+                tick_total: 20
+                error_class:
+                error_message:
+                started_at:
+                ended_at:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                progress: 0.25
+                duration: 0.0
+                tallies: {}
+                arguments: {}
+                error_backtrace:
+                resumable: false
+                cancelable: true
+                active: true
+                store_id:
+                parent_run_id:
+                admin_user:
+              schema:
+                "$ref": "#/components/schemas/MaintenanceTaskRun"
+        '404':
+          description: maintenance task run not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Maintenance task run not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/admin/maintenance_task_runs/{id}/cancel":
+    parameters:
+    - name: id
+      in: path
+      description: Maintenance task run ID
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Cancel a maintenance task run
+      tags:
+      - Maintenance Tasks
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Asks the runner to stop for good at its next checkpoint.
+
+        Cancelling is not a rollback — work already committed stays committed.
+        What a cancelled run keeps is its cursor, so an operator can see how
+        far it got. Use `pause` instead to stop a run that should be resumed
+        later, and `resume` to pick a paused or failed run back up.
+
+
+        **Required scope:** `write_maintenance_tasks` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const run = await client.maintenanceTaskRuns.cancel('mtr_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /maintenance_task_runs/{id}/cancel -d '{ ... }'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: maintenance task run cancelling
+          content:
+            application/json:
+              example:
+                id: mtr_UkLWZg9DAJ
+                task_name: Spree::MaintenanceTasks::Upgrade::CaptureMethods
+                status: cancelling
+                dry_run: false
+                initiated_via: api
+                cursor:
+                tick_count: 0
+                tick_total:
+                error_class:
+                error_message:
+                started_at:
+                ended_at:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                progress:
+                duration: 0.0
+                tallies: {}
+                arguments: {}
+                error_backtrace:
+                resumable: false
+                cancelable: false
+                active: true
+                store_id:
+                parent_run_id:
+                admin_user:
+              schema:
+                "$ref": "#/components/schemas/MaintenanceTaskRun"
+        '422':
+          description: maintenance task run cannot be cancelled
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: a run with status succeeded cannot be cancelled
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/markets":
     get:
       summary: List markets
@@ -14833,12 +15657,12 @@ paths:
                   label: Bogus
                   description:
                   preference_schema:
-                  - key: dummy_key
-                    type: string
-                    default: PUBLICKEY123
                   - key: dummy_secret_key
                     type: password
                     default:
+                  - key: dummy_key
+                    type: string
+                    default: PUBLICKEY123
                 - type: custom_payment_source_method
                   label: Custom Payment Source Method
                   description:
@@ -22325,6 +23149,20 @@ paths:
                   group_label: Settings
                   label: Integrations
                   description: ''
+                - key: read_maintenance_tasks
+                  resource: maintenance_tasks
+                  kind: read
+                  group: access
+                  group_label: Access
+                  label: Maintenance tasks
+                  description: ''
+                - key: write_maintenance_tasks
+                  resource: maintenance_tasks
+                  kind: write
+                  group: access
+                  group_label: Access
+                  label: Maintenance tasks
+                  description: ''
                 - key: read_api_keys
                   resource: api_keys
                   kind: read
@@ -22403,7 +23241,7 @@ paths:
                   label: Analytics dashboard
                   description: Sales and performance analytics
                 meta:
-                  count: 41
+                  count: 43
   "/api/v3/admin/roles":
     get:
       summary: List roles
@@ -22485,6 +23323,8 @@ paths:
                   - write_webhooks
                   - read_integrations
                   - write_integrations
+                  - read_maintenance_tasks
+                  - write_maintenance_tasks
                   - read_api_keys
                   - write_api_keys
                   - read_staff
@@ -28798,9 +29638,9 @@ paths:
                   stock_location_ids: []
                   calculator_type: Spree::Calculator::Shipping::FlatRate
                   calculator_preferences:
+                    currency: USD
                     amounts: {}
                     amount: '10.0'
-                    currency: USD
                 meta:
                   page: 1
                   limit: 25
@@ -28887,9 +29727,9 @@ paths:
                 stock_location_ids: []
                 calculator_type: Spree::Calculator::Shipping::FlatRate
                 calculator_preferences:
+                  currency: USD
                   amounts: {}
                   amount: '12.5'
-                  currency: USD
       requestBody:
         content:
           application/json:
@@ -28994,18 +29834,21 @@ paths:
                 - type: Spree::Calculator::Shipping::FlatRate
                   name: Flat rate
                   preference_schema:
+                  - key: currency
+                    type: string
+                    default: USD
                   - key: amounts
                     type: hash
                     default: {}
                   - key: amount
                     type: decimal
                     default: 0
-                  - key: currency
-                    type: string
-                    default: USD
                 - type: Spree::Calculator::Shipping::FlexiRate
                   name: Flexible Rate per package item
                   preference_schema:
+                  - key: currency
+                    type: string
+                    default: USD
                   - key: first_item
                     type: decimal
                     default: 0.0
@@ -29015,48 +29858,45 @@ paths:
                   - key: max_items
                     type: integer
                     default: 0
-                  - key: currency
-                    type: string
-                    default: USD
                 - type: Spree::Calculator::Shipping::PerItem
                   name: Flat rate per package item
                   preference_schema:
+                  - key: currency
+                    type: string
+                    default: USD
                   - key: amounts
                     type: hash
                     default: {}
                   - key: amount
                     type: decimal
                     default: 0
-                  - key: currency
-                    type: string
-                    default: USD
                 - type: Spree::Calculator::Shipping::PriceSack
                   name: Price sack
                   preference_schema:
-                  - key: minimal_amount
-                    type: decimal
-                    default: 0
-                  - key: normal_amount
-                    type: decimal
-                    default: 0
                   - key: discount_amount
                     type: decimal
                     default: 0
                   - key: currency
                     type: string
                     default: USD
+                  - key: minimal_amount
+                    type: decimal
+                    default: 0
+                  - key: normal_amount
+                    type: decimal
+                    default: 0
                 - type: Spree::Calculator::Shipping::DigitalDelivery
                   name: Digital Delivery
                   preference_schema:
+                  - key: currency
+                    type: string
+                    default: USD
                   - key: amounts
                     type: hash
                     default: {}
                   - key: amount
                     type: decimal
                     default: 0
-                  - key: currency
-                    type: string
-                    default: USD
   "/api/v3/admin/delivery_zones":
     post:
       summary: Create delivery zone
@@ -29240,14 +30080,14 @@ paths:
                   type: carrier
                   group: shipping
                   preferences:
-                    api_key: "•••••cret"
                     account_number: '42'
+                    api_key: "•••••cret"
                   preference_schema:
-                  - key: api_key
-                    type: password
-                    default:
                   - key: account_number
                     type: string
+                    default:
+                  - key: api_key
+                    type: password
                     default:
                 meta:
                   page: 1
@@ -29313,14 +30153,14 @@ paths:
                 type: carrier
                 group: shipping
                 preferences:
-                  api_key: "•••••cret"
                   account_number:
+                  api_key: "•••••cret"
                 preference_schema:
-                - key: api_key
-                  type: password
-                  default:
                 - key: account_number
                   type: string
+                  default:
+                - key: api_key
+                  type: password
                   default:
       requestBody:
         content:
@@ -29393,11 +30233,11 @@ paths:
                   description:
                   logo_url:
                   preference_schema:
-                  - key: api_key
-                    type: password
-                    default:
                   - key: account_number
                     type: string
+                    default:
+                  - key: api_key
+                    type: password
                     default:
   "/api/v3/admin/integrations/{id}/test":
     post:
@@ -31782,6 +32622,9 @@ tags:
 - name: Imports
   description: Async CSV imports of admin resources, with per-row status and failed-row
     retry
+- name: Maintenance Tasks
+  description: Operator-run data work — backfills, reindexes and upgrade steps — and
+    the record of every run
 - name: Markets
   description: Markets — geographic groupings of countries used for pricing, tax,
     and fulfillment rules
@@ -34961,6 +35804,98 @@ components:
       - updated_at
       - cost_price
       - tax_category_id
+      x-typelizer: true
+    MaintenanceTaskRun:
+      type: object
+      properties:
+        id:
+          type: string
+        task_name:
+          type: string
+        status:
+          type: string
+        dry_run:
+          type: boolean
+        initiated_via:
+          type: string
+        cursor:
+          type: string
+          nullable: true
+        tick_count:
+          type: number
+        tick_total:
+          type: number
+          nullable: true
+        error_class:
+          type: string
+          nullable: true
+        error_message:
+          type: string
+          nullable: true
+        started_at:
+          type: string
+          nullable: true
+        ended_at:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        progress:
+          type: number
+          nullable: true
+        duration:
+          type: number
+          nullable: true
+        tallies:
+          type: object
+        arguments:
+          type: object
+        error_backtrace:
+          type: string
+          nullable: true
+        resumable:
+          type: boolean
+        cancelable:
+          type: boolean
+        active:
+          type: boolean
+        store_id:
+          type: string
+          nullable: true
+        parent_run_id:
+          type: string
+          nullable: true
+        admin_user:
+          type: object
+          nullable: true
+      required:
+      - id
+      - task_name
+      - status
+      - dry_run
+      - initiated_via
+      - cursor
+      - tick_count
+      - tick_total
+      - error_class
+      - error_message
+      - started_at
+      - ended_at
+      - created_at
+      - updated_at
+      - progress
+      - duration
+      - tallies
+      - arguments
+      - error_backtrace
+      - resumable
+      - cancelable
+      - active
+      - store_id
+      - parent_run_id
+      - admin_user
       x-typelizer: true
     Market:
       type: object

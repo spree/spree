@@ -170,6 +170,7 @@ RSpec.configure do |config|
         { name: 'Fulfillments', description: 'Order fulfillments — shipments, fulfill, cancel, resume, split' },
         { name: 'Gift Cards', description: 'Gift cards and gift card batches' },
         { name: 'Imports', description: 'Async CSV imports of admin resources, with per-row status and failed-row retry' },
+        { name: 'Maintenance Tasks', description: 'Operator-run data work — backfills, reindexes and upgrade steps — and the record of every run' },
         { name: 'Markets', description: 'Markets — geographic groupings of countries used for pricing, tax, and fulfillment rules' },
         { name: 'Option Types', description: 'Option types and option values used to build product variants (e.g. Size, Color)' },
         { name: 'Orders', description: 'Orders, order items, applied gift cards, and applied store credits' },

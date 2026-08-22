@@ -38,8 +38,11 @@ module Spree
 
           attribute :progress, &:progress
 
+          # to_f before rounding: the column is a decimal, and a BigDecimal
+          # serializes as a quoted string — a client reading `duration` wants a
+          # number, and the schema says it gets one.
           attribute :duration do |run|
-            run.duration&.round(3)
+            run.duration&.to_f&.round(3)
           end
 
           attribute :tallies do |run|
