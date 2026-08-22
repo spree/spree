@@ -1,26 +1,54 @@
 version: 2
 updates:
-  # Ruby gems (under spree/ engine directories)
+  # Ruby gems — every engine that ships its own Gemfile/gemspec.
   - package-ecosystem: bundler
-    directory: "/spree/core"
+    directories:
+      - "/spree/core"
+      - "/spree/api"
+      - "/spree/dashboard"
+      - "/spree/emails"
+      - "/spree/opentelemetry"
+      - "/spree/providers/*"
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    groups:
+      ruby-gems:
+        patterns:
+          - "*"
+
+  # GitHub Actions — pinned by commit SHA across our workflows, so without
+  # this they never move, including for security releases.
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      github-actions:
+        patterns:
+          - "*"
 
   # JavaScript/TypeScript (pnpm workspace — single root lockfile)
   #
-  # Heads up: Dependabot's npm_and_yarn updater cannot resolve our manifests
-  # during *security* updates — it fails with `Unsupported protocol "workspace:"`
-  # because several packages reference each other via pnpm's `workspace:` protocol
-  # (dependabot-core#13177). Until that's fixed upstream, security fixes for
-  # transitive deps are pinned by hand via `overrides:` in pnpm-workspace.yaml.
-  # The weekly version updates below (run from the root, against the single
-  # lockfile) are unaffected.
+  # Heads up: Dependabot cannot fix vulnerable *transitive* npm dependencies
+  # here — it does not support that for pnpm at all and bails with
+  # "Dependabot doesn't support the 'updating transitive dependencies' feature
+  # for pnpm package_manager" (dependabot-core#13177). Nearly every advisory we
+  # get is transitive, so those fixes are pinned via `overrides:` in
+  # pnpm-workspace.yaml by the weekly `.github/workflows/security-audit.yml`
+  # job. Do not delete that workflow expecting Dependabot to cover it.
+  #
+  # The direct-dependency version updates below are unaffected. `cooldown`
+  # mirrors the `minimumReleaseAge` in pnpm-workspace.yaml — without it
+  # Dependabot proposes versions that pnpm then refuses to install.
   - package-ecosystem: npm
     directory: "/"
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    cooldown:
+      default-days: 2
     groups:
       typescript-packages:
         patterns:

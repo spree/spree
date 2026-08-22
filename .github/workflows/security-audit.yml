@@ -36,8 +36,14 @@ jobs:
         run: pnpm audit --audit-level=low || true
 
       - name: Pin available fixes via overrides
+        # `--fix` must be given an explicit method: pnpm 11 rejects both the
+        # documented bare `--fix` and `--fix --ignore-unfixable` (it binds the
+        # next flag as the method and errors out). No `|| true` here — a broken
+        # invocation must fail the job rather than silently open an empty PR.
+        # Deliberately unfixed advisories live in `auditConfig.ignoreGhsas` in
+        # pnpm-workspace.yaml, so they are not re-proposed here every week.
         run: |
-          pnpm audit --fix --ignore-unfixable || true
+          pnpm audit --ignore-unfixable --fix=override
           pnpm install --lockfile-only
 
       - name: Collect remaining advisories
