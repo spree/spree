@@ -10,19 +10,14 @@ module Spree
 
             # Enumerated rather than borrowing the legacy global list, which
             # permits :id, :user_id and :deleted_at.
-            ADDRESS_KEYS = [
-              :first_name, :last_name, :company, :address1, :address2, :city,
-              :postal_code, :zipcode, :phone, :country_code, :state_code, :state_name, :label
-            ].freeze
-
             protected
 
             def permitted_params
               params.permit(
                 :name, :external_id,
                 metadata: {},
-                billing_address: ADDRESS_KEYS,
-                shipping_address: ADDRESS_KEYS
+                billing_address: Spree::Api::V3::AddressParams::ADDRESS_KEYS,
+                shipping_address: Spree::Api::V3::AddressParams::ADDRESS_KEYS
               )
             end
           end

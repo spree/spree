@@ -30,9 +30,9 @@ module Spree
     # that is not a marketplace.
     belongs_to :seller, class_name: 'Spree::Seller', optional: true, inverse_of: :stock_locations
 
-    # Name uniqueness is per owner rather than per store (see UniqueName, which
-    # this deliberately does not include): an operator and each of their sellers
-    # may each have a "Warehouse", which is what a marketplace looks like.
+    # Per owner rather than per store, which is why UniqueName is not included
+    # here: an operator and each of their sellers may each have a "Warehouse",
+    # which is what a marketplace looks like.
     normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
     validates :name, presence: true,
                      uniqueness: { case_sensitive: false, allow_blank: true,

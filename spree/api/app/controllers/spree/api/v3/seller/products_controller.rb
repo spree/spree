@@ -43,12 +43,6 @@ module Spree
             )
           end
 
-          # A new product is this seller's, whatever the payload says — the
-          # anchor's scope makes it findable, and the store follows the seller.
-          def build_resource
-            current_seller.products.new(permitted_params.merge(store: current_store))
-          end
-
           def collection_includes
             [:default_variant, :primary_media]
           end

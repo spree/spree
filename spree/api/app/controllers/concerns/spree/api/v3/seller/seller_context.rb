@@ -12,8 +12,8 @@ module Spree
         # all, which is an error rather than a default.
         #
         # Included into both branch anchors (BaseController and
-        # ResourceController): they are parallel inheritance chains, so a
-        # concern on one is not on the other.
+        # ResourceController) — parallel chains, so a concern on one is not on
+        # the other.
         module SellerContext
           extend ActiveSupport::Concern
 
@@ -36,18 +36,13 @@ module Spree
           # the caller belongs to.
           #
           # @return [Spree::Seller, nil]
+          # `||=` rather than a `defined?` memo on purpose: a nil must not
+          # stick. The locale/currency chain reads `current_store` — and so
+          # this — before authentication has run, and caching that first miss
+          # would leave a controller which skips the context callback
+          # (MeController) permanently seller-less even with a valid header.
           def current_seller
-            return @current_seller if defined?(@current_seller) && !@current_seller.nil?
-
-            # Deliberately not memoising a nil: the locale/currency chain reads
-            # `current_store` — and so this — before authentication has run, and
-            # caching that first miss would leave a controller which skips the
-            # context callback (MeController) permanently without a seller even with
-            # a valid header.
-            resolved = resolve_current_seller
-            @current_seller = resolved if resolved
-
-            resolved
+            @current_seller ||= resolve_current_seller
           end
 
           # Derived from the seller, so a seller can never widen their reach by

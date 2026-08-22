@@ -114,6 +114,7 @@ module Spree
 
       def seller_returns_location
         @normalized_items.
+          lazy.
           filter_map { |item| item[:fulfillment_item].line_item&.seller }.
           first&.returns_location
       end

@@ -59,11 +59,6 @@ module Spree
 
           # Enumerated rather than borrowing the legacy global list, which
           # permits :id, :user_id and :deleted_at.
-          ADDRESS_KEYS = [
-            :first_name, :last_name, :company, :address1, :address2, :city,
-            :postal_code, :zipcode, :phone, :country_code, :state_code, :state_name, :label
-          ].freeze
-
           # Accepting the marketplace's terms is a profile write, not an endpoint
           # of its own: `accept_terms: true` stamps the time, which is what the
           # AcceptTerms requirement reads.
@@ -90,18 +85,12 @@ module Spree
           # verified that nobody has checked.
           def upsert_tax_identifier(attributes)
             kind = attributes[:kind].presence
-            value = attributes[:value]
             return if kind.blank?
 
-            identifier = current_seller.tax_identifiers.find_or_initialize_by(kind: kind)
+            value = attributes[:value]
+            return current_seller.tax_identifiers.find_by(kind: kind)&.destroy if value.blank?
 
-            if value.blank?
-              identifier.destroy if identifier.persisted?
-              return
-            end
-
-            identifier.value = value
-            identifier.save
+            current_seller.tax_identifiers.find_or_initialize_by(kind: kind).update(value: value)
           end
 
           # Narrowed to the definitions this marketplace's onboarding actually
@@ -133,7 +122,7 @@ module Spree
                             :legal_name, :registration_number,
                             :logo, :square_logo, :cover_photo,
                             tax_identifier: [:kind, :value],
-                            billing_address: ADDRESS_KEYS,
+                            billing_address: Spree::Api::V3::AddressParams::ADDRESS_KEYS,
                             custom_fields: [:id, :custom_field_definition_id, :value,
                                             { value: [] }, { value: {} }])
             )
