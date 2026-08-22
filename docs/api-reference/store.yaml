@@ -87,7 +87,7 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6ImRlZmM5YWZhLTUzOTYtNDEwYy1hZDY4LTE4YTBiN2M5MmMwMyIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzY4NDgyMDAwfQ.akOKNDAyxSYPdQ7hQBFm_w36ArJ087ekUpMmP19m0BM
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6ImRlZmM5YWZhLTUzOTYtNDEwYy1hZDY4LTE4YTBiN2M5MmMwMyIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzY4NDgyMDAwfQ.UoBNByNaMUC2-VzGDNPgplfShgCxchuErdydrdIu0-8
                 refresh_token: CxKP3VYWQzkXqrfxTmPLB446
                 user:
                   id: cust_UkLWZg9DAJ
@@ -194,7 +194,7 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6IjFmMzM5OGY2LTczZDgtNDdjNi1hNDk4LTUxNDc3MGUxYTUyNSIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzY4NDgyMDAwfQ.73sLD9Vh5WdgsHDOPwZWz2C2nwroY8xEgfTTLNK9shc
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6IjFmMzM5OGY2LTczZDgtNDdjNi1hNDk4LTUxNDc3MGUxYTUyNSIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzY4NDgyMDAwfQ.DwbsKlEpTmdysxzJR0rwrTaQecj76ZKnaXuYfTA5FXo
                 refresh_token: mWbQ77onTSsXQta8Z4SAVaTU
                 user:
                   id: cust_UkLWZg9DAJ
@@ -368,13 +368,10 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const auth = await client.passwordResets.update(
-            'reset-token-from-email',
-            {
-              password: 'newsecurepassword',
-              password_confirmation: 'newsecurepassword',
-            }
-          )
+          const auth = await client.passwordResets.update('reset-token-from-email', {
+            password: 'newsecurepassword',
+            password_confirmation: 'newsecurepassword',
+          })
       parameters:
       - name: x-spree-api-key
         in: header
@@ -393,7 +390,7 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6IjdlOGI2Njc5LTBjNzYtNDQ1Mi1hMWMyLWJhY2U0MWNhN2IyMCIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzY4NDgyMDAwfQ.6EFpedkEaJ4XJpv5fAEqv2UANfrh8_SXIAiubf_E5ss
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6IjdlOGI2Njc5LTBjNzYtNDQ1Mi1hMWMyLWJhY2U0MWNhN2IyMCIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzY4NDgyMDAwfQ.JjLOtF5gDI3N69UCUOfmcYAjcKCbQ7O6dHQYSrfODqA
                 refresh_token: JNJKeT5cELhdSfb2tWHj3ctp
                 user:
                   id: cust_UkLWZg9DAJ
@@ -1760,9 +1757,7 @@ paths:
 
           // Create a cart with items
           const cartWithItems = await client.carts.create({
-            items: [
-              { variant_id: 'variant_abc123', quantity: 2 },
-            ],
+            items: [{ variant_id: 'variant_abc123', quantity: 2 }],
           })
       parameters:
       - name: x-spree-api-key
@@ -3249,11 +3244,16 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const cart = await client.carts.fulfillments.update('cart_abc123', 'ful_abc123', {
-            selected_delivery_rate_id: 'dr_abc123',
-          }, {
-            token: '<token>',
-          })
+          const cart = await client.carts.fulfillments.update(
+            'cart_abc123',
+            'ful_abc123',
+            {
+              selected_delivery_rate_id: 'dr_abc123',
+            },
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -3966,12 +3966,16 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const cart = await client.carts.items.create('cart_abc123', {
-            variant_id: 'variant_abc123',
-            quantity: 2,
-          }, {
-            token: '<token>',
-          })
+          const cart = await client.carts.items.create(
+            'cart_abc123',
+            {
+              variant_id: 'variant_abc123',
+              quantity: 2,
+            },
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -4217,11 +4221,16 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const cart = await client.carts.items.update('cart_abc123', 'li_abc123', {
-            quantity: 5,
-          }, {
-            token: '<token>',
-          })
+          const cart = await client.carts.items.update(
+            'cart_abc123',
+            'li_abc123',
+            {
+              quantity: 5,
+            },
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -4542,11 +4551,15 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const session = await client.carts.paymentSessions.create('cart_abc123', {
-            payment_method_id: 'pm_abc123',
-          }, {
-            token: '<token>',
-          })
+          const session = await client.carts.paymentSessions.create(
+            'cart_abc123',
+            {
+              payment_method_id: 'pm_abc123',
+            },
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -4735,11 +4748,16 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const session = await client.carts.paymentSessions.update('cart_abc123', 'ps_abc123', {
-            amount: '50.00',
-          }, {
-            token: '<token>',
-          })
+          const session = await client.carts.paymentSessions.update(
+            'cart_abc123',
+            'ps_abc123',
+            {
+              amount: '50.00',
+            },
+            {
+              token: '<token>',
+            },
+          )
       parameters: []
       responses:
         '200':
@@ -4832,11 +4850,16 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const session = await client.carts.paymentSessions.complete('cart_abc123', 'ps_abc123', {
-            session_result: 'success',
-          }, {
-            token: '<token>',
-          })
+          const session = await client.carts.paymentSessions.complete(
+            'cart_abc123',
+            'ps_abc123',
+            {
+              session_result: 'success',
+            },
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: Idempotency-Key
         in: header
@@ -4915,11 +4938,15 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const payment = await client.carts.payments.create('cart_abc123', {
-            payment_method_id: 'pm_abc123',
-          }, {
-            token: '<token>',
-          })
+          const payment = await client.carts.payments.create(
+            'cart_abc123',
+            {
+              payment_method_id: 'pm_abc123',
+            },
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -5388,9 +5415,13 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const order = await client.orders.get('or_abc123', {}, {
-            token: '<token>',
-          })
+          const order = await client.orders.get(
+            'or_abc123',
+            {},
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -5675,9 +5706,12 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const addresses = await client.customer.addresses.list({}, {
-            token: '<token>',
-          })
+          const addresses = await client.customer.addresses.list(
+            {},
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -6059,11 +6093,15 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const address = await client.customer.addresses.update('addr_abc123', {
-            city: 'Los Angeles',
-          }, {
-            token: '<token>',
-          })
+          const address = await client.customer.addresses.update(
+            'addr_abc123',
+            {
+              city: 'Los Angeles',
+            },
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -6205,9 +6243,12 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const cards = await client.customer.creditCards.list({}, {
-            token: '<token>',
-          })
+          const cards = await client.customer.creditCards.list(
+            {},
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -6785,9 +6826,13 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const order = await client.customer.orders.get('or_abc123', {}, {
-            token: '<token>',
-          })
+          const order = await client.customer.orders.get(
+            'or_abc123',
+            {},
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -7086,7 +7131,7 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6IjY0OWM2NTkzLTBhZWQtNDA5Ny1hYTI3LThhMjVmYTU4OGI3OSIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzY4NDgyMDAwfQ.wQpdI2FvcK9dEVIZdwEyePE8Vb-oBq6vsfwPpvnwR3o
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6IjY0OWM2NTkzLTBhZWQtNDA5Ny1hYTI3LThhMjVmYTU4OGI3OSIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzY4NDgyMDAwfQ.PQHxw_2OhXvXJO9arRvlWFGl0kRTEolWP6okhYYYi-g
                 refresh_token: mLm6vdSzLUgPhw8SCzDiagfL
                 user:
                   id: cust_UkLWZg9DAJ
@@ -7334,13 +7379,16 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const customer = await client.customer.update({
-            first_name: 'John',
-            last_name: 'Doe',
-            metadata: { preferred_contact: 'email' },
-          }, {
-            token: '<token>',
-          })
+          const customer = await client.customer.update(
+            {
+              first_name: 'John',
+              last_name: 'Doe',
+              metadata: { preferred_contact: 'email' },
+            },
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -7519,9 +7567,12 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const giftCards = await client.customer.giftCards.list({}, {
-            token: '<token>',
-          })
+          const giftCards = await client.customer.giftCards.list(
+            {},
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -7702,11 +7753,14 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const session = await client.customer.paymentSetupSessions.create({
-            payment_method_id: 'pm_abc123',
-          }, {
-            token: '<token>',
-          })
+          const session = await client.customer.paymentSetupSessions.create(
+            {
+              payment_method_id: 'pm_abc123',
+            },
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -7891,9 +7945,13 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const session = await client.customer.paymentSetupSessions.complete('pss_abc123', {}, {
-            token: '<token>',
-          })
+          const session = await client.customer.paymentSetupSessions.complete(
+            'pss_abc123',
+            {},
+            {
+              token: '<token>',
+            },
+          )
       parameters: []
       responses:
         '200':
@@ -7960,9 +8018,12 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const credits = await client.customer.storeCredits.list({}, {
-            token: '<token>',
-          })
+          const credits = await client.customer.storeCredits.list(
+            {},
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -8808,9 +8869,12 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const wishlists = await client.wishlists.list({}, {
-            token: '<token>',
-          })
+          const wishlists = await client.wishlists.list(
+            {},
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -8899,12 +8963,15 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const wishlist = await client.wishlists.create({
-            name: 'Birthday Ideas',
-            is_private: true,
-          }, {
-            token: '<token>',
-          })
+          const wishlist = await client.wishlists.create(
+            {
+              name: 'Birthday Ideas',
+              is_private: true,
+            },
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -9058,11 +9125,15 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const wishlist = await client.wishlists.update('wl_abc123', {
-            name: 'Updated Name',
-          }, {
-            token: '<token>',
-          })
+          const wishlist = await client.wishlists.update(
+            'wl_abc123',
+            {
+              name: 'Updated Name',
+            },
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -9167,12 +9238,16 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const item = await client.wishlists.items.create('wl_abc123', {
-            variant_id: 'variant_abc123',
-            quantity: 1,
-          }, {
-            token: '<token>',
-          })
+          const item = await client.wishlists.items.create(
+            'wl_abc123',
+            {
+              variant_id: 'variant_abc123',
+              quantity: 1,
+            },
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header

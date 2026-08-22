@@ -92,7 +92,7 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjE3NmVlN2M3LWJkYzktNGM1MS1hMzFiLTEwMDYxOTc3NGZmNCIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDc4NzAwfQ.t4sBqJCtgn1Ww6o_sUUdRiL1sUF3aK-bpQNBkBVfNjQ
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjE3NmVlN2M3LWJkYzktNGM1MS1hMzFiLTEwMDYxOTc3NGZmNCIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDc4NzAwfQ.47lUrfIVZRBqCO9HImTU4lP1jtBgI4SIx6zdoF_t8OA
                 user:
                   id: adm_UkLWZg9DAJ
                   email: admin@example.com
@@ -204,7 +204,7 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6ImFiN2M4YjAxLTY0MGYtNDJhZi1hZTY1LTQxY2NmOTk1YmVlMCIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDc4NzAwfQ.QSVm-Fge_dvjki3TVfaFHZAOwHOtDTX55usdDgTMJSE
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6ImFiN2M4YjAxLTY0MGYtNDJhZi1hZTY1LTQxY2NmOTk1YmVlMCIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDc4NzAwfQ.7SvKgaHjC1U_sDMXcy-ksMP8rA5Ynbthl_P8oQK0QGs
                 user:
                   id: adm_UkLWZg9DAJ
                   email: admin@example.com
@@ -289,7 +289,11 @@ paths:
           })
 
           const me = await client.me.get()
-          if (me.permissions.some((r) => r.allow && r.actions.includes('manage') && r.subjects.includes('Spree::Product'))) {
+          if (
+            me.permissions.some(
+              (r) => r.allow && r.actions.includes('manage') && r.subjects.includes('Spree::Product'),
+            )
+          ) {
             // show "Create product" button
           }
       - lang: bash
@@ -638,7 +642,7 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjBiZTdhM2RmLWEyYzYtNDZkOC1hNTZiLWE4NDg4MGIyZGZiNCIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDgyMDAwfQ.im6r-eLsMyncHhKJBdUc31ek8kPN37htiTWO_-T2TXE
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjBiZTdhM2RmLWEyYzYtNDZkOC1hNTZiLWE4NDg4MGIyZGZiNCIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDgyMDAwfQ.rVVStEBWbZNiwsgJ9in_Irc-FDFWNioGd-bNEDye7Ds
                 user:
                   id: adm_UkLWZg9DAJ
                   email: admin@example.com
@@ -716,7 +720,7 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjZjMjg1ODk5LTExMzUtNDBhMi1hNDBiLTE4NjNiODcwZDRjYyIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDc4NzAwfQ.-3TXNB4thifTF3dCUfDtyN8M188-pzLOIe2QFGe1zlY
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjZjMjg1ODk5LTExMzUtNDBhMi1hNDBiLTE4NjNiODcwZDRjYyIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDc4NzAwfQ.X-nw2D7ipw9ghUo_vNiIrJNOoo15C2GmA6dG7chP3N4
                 user:
                   id: adm_UkLWZg9DAJ
                   email: owner@example.com
@@ -2626,8 +2630,9 @@ paths:
           const key = await client.apiKeys.create({
             name: 'Backend integration',
             key_type: 'secret',
-            scopes: ['read_orders', 'write_orders']
+            scopes: ['read_orders', 'write_orders'],
           })
+
           // `key.plaintext_token` is available only on this response.
       - lang: bash
         label: Spree CLI
@@ -5705,11 +5710,9 @@ paths:
             secretKey: 'sk_xxx',
           })
 
-          const address = await client.customers.addresses.update(
-            'cus_UkLWZg9DAJ',
-            'addr_UkLWZg9DAJ',
-            { city: 'Manhattan' },
-          )
+          const address = await client.customers.addresses.update('cus_UkLWZg9DAJ', 'addr_UkLWZg9DAJ', {
+            city: 'Manhattan',
+          })
       - lang: bash
         label: Spree CLI
         source: spree api patch /customers/{customer_id}/addresses/{id} -d '{"city":"Manhattan"}'
@@ -6242,11 +6245,9 @@ paths:
             secretKey: 'sk_xxx',
           })
 
-          const credit = await client.customers.storeCredits.update(
-            'cus_UkLWZg9DAJ',
-            'sc_UkLWZg9DAJ',
-            { memo: 'Reissued for damaged shipment' },
-          )
+          const credit = await client.customers.storeCredits.update('cus_UkLWZg9DAJ', 'sc_UkLWZg9DAJ', {
+            memo: 'Reissued for damaged shipment',
+          })
       - lang: bash
         label: Spree CLI
         source: spree api patch /customers/{customer_id}/store_credits/{id} -d '{"memo":"Reissued
@@ -7216,7 +7217,7 @@ paths:
 
           const exp = await client.exports.create({
             type: 'Spree::Exports::Products',
-            search_params: { name_cont: 'shirt' }
+            search_params: { name_cont: 'shirt' },
           })
       - lang: bash
         label: Spree CLI
@@ -7419,13 +7420,13 @@ paths:
 
           // Fetch with the Bearer token, then drive the browser download:
           const res = await fetch(exp.download_url, {
-            headers: { Authorization: `Bearer ${token}` }
+            headers: { Authorization: `Bearer ${token}` },
           })
           const blob = await res.blob()
           const url = URL.createObjectURL(blob)
           const a = Object.assign(document.createElement('a'), {
             href: url,
-            download: exp.filename
+            download: exp.filename,
           })
           a.click()
           URL.revokeObjectURL(url)
@@ -19991,15 +19992,15 @@ paths:
                   label: Country
                   description:
                   preference_schema:
-                  - key: country_codes
-                    type: array
-                    default: []
                   - key: country_id
                     type: integer
                     default:
                   - key: country_code
                     type: string
                     default:
+                  - key: country_codes
+                    type: array
+                    default: []
                 - type: currency
                   label: Currency
                   description:
@@ -20026,6 +20027,9 @@ paths:
                   label: Item total
                   description:
                   preference_schema:
+                  - key: operator_max
+                    type: string
+                    default: "<"
                   - key: amount_min
                     type: decimal
                     default: 100.0
@@ -20035,9 +20039,6 @@ paths:
                   - key: amount_max
                     type: decimal
                     default:
-                  - key: operator_max
-                    type: string
-                    default: "<"
                 - type: market
                   label: Market(s)
                   description:
@@ -20609,7 +20610,7 @@ paths:
           })
 
           const store = await client.store.update({
-            name: 'My Store'
+            name: 'My Store',
           })
       - lang: bash
         label: Spree CLI
@@ -21716,7 +21717,7 @@ paths:
 
           const staff = await client.adminUsers.update('admin_xxx', {
             first_name: 'Ada',
-            role_ids: ['role_xxx']
+            role_ids: ['role_xxx'],
           })
       - lang: bash
         label: Spree CLI
@@ -21913,7 +21914,7 @@ paths:
 
           const invitation = await client.invitations.create({
             email: 'ada@example.com',
-            role_id: 'role_xxx'
+            role_id: 'role_xxx',
           })
       - lang: bash
         label: Spree CLI
@@ -22853,6 +22854,8 @@ paths:
                   pickup_stock_policy: local
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  seller_id:
+                  seller_name:
                 meta:
                   page: 1
                   limit: 25
@@ -22968,6 +22971,8 @@ paths:
                 pickup_stock_policy: local
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                seller_id:
+                seller_name:
               schema:
                 "$ref": "#/components/schemas/StockLocation"
         '422':
@@ -23146,6 +23151,8 @@ paths:
                 pickup_stock_policy: local
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                seller_id:
+                seller_name:
               schema:
                 "$ref": "#/components/schemas/StockLocation"
         '404':
@@ -23236,6 +23243,8 @@ paths:
                 pickup_stock_policy: local
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                seller_id:
+                seller_name:
               schema:
                 "$ref": "#/components/schemas/StockLocation"
         '422':
@@ -28798,9 +28807,9 @@ paths:
                   stock_location_ids: []
                   calculator_type: Spree::Calculator::Shipping::FlatRate
                   calculator_preferences:
+                    currency: USD
                     amounts: {}
                     amount: '10.0'
-                    currency: USD
                 meta:
                   page: 1
                   limit: 25
@@ -28887,9 +28896,9 @@ paths:
                 stock_location_ids: []
                 calculator_type: Spree::Calculator::Shipping::FlatRate
                 calculator_preferences:
+                  currency: USD
                   amounts: {}
                   amount: '12.5'
-                  currency: USD
       requestBody:
         content:
           application/json:
@@ -28994,18 +29003,21 @@ paths:
                 - type: Spree::Calculator::Shipping::FlatRate
                   name: Flat rate
                   preference_schema:
+                  - key: currency
+                    type: string
+                    default: USD
                   - key: amounts
                     type: hash
                     default: {}
                   - key: amount
                     type: decimal
                     default: 0
-                  - key: currency
-                    type: string
-                    default: USD
                 - type: Spree::Calculator::Shipping::FlexiRate
                   name: Flexible Rate per package item
                   preference_schema:
+                  - key: currency
+                    type: string
+                    default: USD
                   - key: first_item
                     type: decimal
                     default: 0.0
@@ -29015,48 +29027,45 @@ paths:
                   - key: max_items
                     type: integer
                     default: 0
-                  - key: currency
-                    type: string
-                    default: USD
                 - type: Spree::Calculator::Shipping::PerItem
                   name: Flat rate per package item
                   preference_schema:
+                  - key: currency
+                    type: string
+                    default: USD
                   - key: amounts
                     type: hash
                     default: {}
                   - key: amount
                     type: decimal
                     default: 0
-                  - key: currency
-                    type: string
-                    default: USD
                 - type: Spree::Calculator::Shipping::PriceSack
                   name: Price sack
                   preference_schema:
-                  - key: minimal_amount
-                    type: decimal
-                    default: 0
-                  - key: normal_amount
-                    type: decimal
-                    default: 0
                   - key: discount_amount
                     type: decimal
                     default: 0
                   - key: currency
                     type: string
                     default: USD
+                  - key: minimal_amount
+                    type: decimal
+                    default: 0
+                  - key: normal_amount
+                    type: decimal
+                    default: 0
                 - type: Spree::Calculator::Shipping::DigitalDelivery
                   name: Digital Delivery
                   preference_schema:
+                  - key: currency
+                    type: string
+                    default: USD
                   - key: amounts
                     type: hash
                     default: {}
                   - key: amount
                     type: decimal
                     default: 0
-                  - key: currency
-                    type: string
-                    default: USD
   "/api/v3/admin/delivery_zones":
     post:
       summary: Create delivery zone
@@ -29922,6 +29931,7 @@ paths:
                   description: The seller has accepted your marketplace terms
                   preferences:
                     terms_effective_from:
+                    terms_url:
                   custom_field_definition_ids: []
                   allow_multiple: false
                   accepts_submissions: false
@@ -30144,6 +30154,9 @@ paths:
                   association_fields: []
                   preference_schema:
                   - key: terms_effective_from
+                    type: string
+                    default:
+                  - key: terms_url
                     type: string
                     default:
                 - type: complete_profile
@@ -30555,6 +30568,8 @@ paths:
                     total: 0
                     percentage: 100
                   onboarding_complete: true
+                  legal_name:
+                  registration_number:
                 meta:
                   page: 1
                   limit: 25
@@ -30670,6 +30685,8 @@ paths:
                   total: 0
                   percentage: 100
                 onboarding_complete: true
+                legal_name:
+                registration_number:
               schema:
                 "$ref": "#/components/schemas/Seller"
         '422':
@@ -30813,6 +30830,8 @@ paths:
                   total: 0
                   percentage: 100
                 onboarding_complete: true
+                legal_name:
+                registration_number:
               schema:
                 "$ref": "#/components/schemas/Seller"
         '404':
@@ -30906,17 +30925,19 @@ paths:
                   total: 0
                   percentage: 100
                 onboarding_complete: true
+                legal_name:
+                registration_number:
                 billing_address:
                   id: addr_UkLWZg9DAJ
-                  first_name: Ada
-                  last_name: Lovelace
-                  full_name: Ada Lovelace
+                  first_name:
+                  last_name:
+                  full_name: ''
                   address1: 1 Seller Way
                   address2:
                   postal_code: EC1A 1BB
                   city: London
                   phone: '555'
-                  company:
+                  company: Sparks Trading Ltd
                   country_name: United Kingdom
                   country_code: GB
                   state_text:
@@ -31211,6 +31232,8 @@ paths:
                   total: 0
                   percentage: 100
                 onboarding_complete: true
+                legal_name:
+                registration_number:
               schema:
                 "$ref": "#/components/schemas/Seller"
       requestBody:
@@ -31313,6 +31336,8 @@ paths:
                   total: 0
                   percentage: 100
                 onboarding_complete: true
+                legal_name:
+                registration_number:
               schema:
                 "$ref": "#/components/schemas/Seller"
         '422':
@@ -31414,6 +31439,8 @@ paths:
                   total: 0
                   percentage: 100
                 onboarding_complete: true
+                legal_name:
+                registration_number:
               schema:
                 "$ref": "#/components/schemas/Seller"
       requestBody:
@@ -31512,6 +31539,8 @@ paths:
                   total: 0
                   percentage: 100
                 onboarding_complete: true
+                legal_name:
+                registration_number:
               schema:
                 "$ref": "#/components/schemas/Seller"
       requestBody:
@@ -36961,6 +36990,12 @@ components:
           type: object
         onboarding_complete:
           type: boolean
+        legal_name:
+          type: string
+          nullable: true
+        registration_number:
+          type: string
+          nullable: true
         billing_address:
           "$ref": "#/components/schemas/Address"
         returns_address:
@@ -36992,6 +37027,8 @@ components:
       - users_count
       - onboarding_progress
       - onboarding_complete
+      - legal_name
+      - registration_number
       x-typelizer: true
     SetupTask:
       type: object
@@ -37123,6 +37160,14 @@ components:
           type: string
         updated_at:
           type: string
+        seller_id:
+          type: string
+          nullable: true
+        seller_name:
+          type: string
+          nullable: true
+        seller:
+          "$ref": "#/components/schemas/Seller"
       required:
       - id
       - name
@@ -37149,6 +37194,8 @@ components:
       - pickup_stock_policy
       - created_at
       - updated_at
+      - seller_id
+      - seller_name
       x-typelizer: true
     StockMovement:
       type: object
