@@ -489,6 +489,8 @@ Spree::Dependencies.cart_add_item_service = 'Spree::Cart::AddItem'
 - OpenAPI spec: `docs/api-reference/store.yaml` (generated from `spree/api/spec/integration`)
 - Update developer docs in `docs/developer/` when relevant
 - DO NOT edit the OpenAPI specs manually, it is generated from the integration tests. If you need to change the spec, change the integration tests instead and run swaggerize to regenerate the spec.
+- Regeneration is **deterministic**: the clock is frozen and every random name, email and token is seeded, so re-running swaggerize without changing the API produces a byte-identical file and an empty diff. A diff in `docs/api-reference/*.yaml` therefore means the API response actually changed — review it. The pinning lives in `spree/api/spec/support/deterministic_openapi.rb` and applies only under `OPENAPI=true` (set by the rake task), so normal spec runs keep their random data and real clock.
+- Because the clock is frozen, a factory whose record must already be in effect cannot rely on `Time.current` as its start: `starts_at < Time.current` is false when the two are the same instant. Give such factories a start slightly in the past (see the `:promotion` factory).
 
 ---
 

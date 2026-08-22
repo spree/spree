@@ -21,6 +21,10 @@ FactoryBot.define do
     sequence :code do |n|
       "CODE-#{n}"
     end
+    # A promotion is only redeemable once its start has passed, and the model
+    # defaults `starts_at` to the current time. Starting it a moment ago keeps
+    # the factory usable under a frozen clock, where "now" is not yet past.
+    starts_at { 1.hour.ago }
 
     trait :with_line_item_adjustment do
       transient do
