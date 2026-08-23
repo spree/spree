@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Seller } from '@spree/admin-sdk'
 import {
+  adminClient,
   mapSpreeErrorsToForm,
   PageHeader,
   Slot,
@@ -70,6 +71,7 @@ import {
   useSuspendSeller,
   useUpdateSeller,
 } from '../../../../hooks/use-sellers'
+import { spreeJsonLinkResolver } from '../../../../lib/json-link-resolver'
 import {
   PAYOUT_INTERVALS,
   SELLER_DEFAULTS,
@@ -289,6 +291,12 @@ function SellerBody({ seller }: { seller: Seller }) {
             actions={primaryAction}
             dropdownItems={dropdownItems}
             resource={{ id: seller.id }}
+            jsonPreview={{
+              title: `Seller ${seller.name}`,
+              fetch: () => adminClient.sellers.get(seller.id),
+              endpoint: `/api/v3/admin/sellers/${seller.id}`,
+              resolveLink: spreeJsonLinkResolver(storeId),
+            }}
             onDelete={permissions.can('destroy', Subject.Seller) ? handleDelete : undefined}
             deleteLabel={t('admin.sellers.detail.delete_label')}
           />

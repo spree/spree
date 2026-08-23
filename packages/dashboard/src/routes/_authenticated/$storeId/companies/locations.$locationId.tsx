@@ -4,7 +4,14 @@ import type {
   CompanyLocation,
   Customer,
 } from '@spree/admin-sdk'
-import { PageHeader, ResourceCombobox, Slot, Subject, usePermissions } from '@spree/dashboard-core'
+import {
+  adminClient,
+  PageHeader,
+  ResourceCombobox,
+  Slot,
+  Subject,
+  usePermissions,
+} from '@spree/dashboard-core'
 import {
   AddressBlock,
   Badge,
@@ -48,6 +55,7 @@ import {
   useDeleteCompanyLocation,
 } from '../../../../hooks/use-companies'
 import { customerAutocompleteProps } from '../../../../hooks/use-customers'
+import { spreeJsonLinkResolver } from '../../../../lib/json-link-resolver'
 
 export const Route = createFileRoute('/_authenticated/$storeId/companies/locations/$locationId')({
   component: CompanyLocationDetailPage,
@@ -99,6 +107,12 @@ function CompanyLocationBody({ location }: { location: CompanyLocation }) {
             subtitle={location.external_id ?? undefined}
             backTo={`companies/${location.company_id}`}
             resource={{ id: location.id }}
+            jsonPreview={{
+              title: `Location ${location.name}`,
+              fetch: () => adminClient.companyLocations.get(location.id),
+              endpoint: `/api/v3/admin/company_locations/${location.id}`,
+              resolveLink: spreeJsonLinkResolver(storeId),
+            }}
             actions={
               canEdit ? (
                 <Button
