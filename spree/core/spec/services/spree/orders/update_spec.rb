@@ -212,6 +212,39 @@ module Spree
           end
         end
 
+        # Every spelling is removed from the payload, so a client sending both
+        # never leaves one behind for `update` to hand to the belongs_to writer.
+        context 'when the payload carries both spellings' do
+          let(:params) do
+            {
+              shipping_address: attributes_for(:address).merge(address1: '1 Public Way'),
+              ship_address: attributes_for(:address).merge(address1: '2 Column Way')
+            }
+          end
+
+          it 'applies the public name and ignores the column name' do
+            expect(subject).to be_success
+            expect(order.reload.ship_address.address1).to eq('1 Public Way')
+          end
+        end
+
+        # The address rows are written before the order itself is saved, so a
+        # failure afterwards has to take them with it.
+        context 'when a scalar attribute is invalid alongside a valid address' do
+          let(:params) do
+            {
+              shipping_address: attributes_for(:address).merge(address1: '9 Rolled Back Rd'),
+              payment_status: 'not-a-real-status'
+            }
+          end
+
+          it 'fails and leaves no address behind' do
+            expect(subject).to be_failure
+            expect(order.reload.ship_address.address1).not_to eq('9 Rolled Back Rd')
+            expect(Spree::Address.where(address1: '9 Rolled Back Rd')).to be_empty
+          end
+        end
+
         context 'when neither items nor shipping address change' do
           let(:params) { { customer_note: 'whatever' } }
 
