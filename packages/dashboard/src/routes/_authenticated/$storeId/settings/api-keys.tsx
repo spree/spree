@@ -116,7 +116,7 @@ function ApiKeysSettingsPage() {
         title={t('admin.pages.settings.api_keys.title')}
         subtitle={t('admin.pages.settings.api_keys.subtitle')}
         actions={
-          <Button size="sm" onClick={() => setCreateOpen(true)}>
+          <Button onClick={() => setCreateOpen(true)}>
             <PlusIcon className="size-4" />
             {t('admin.pages.settings.api_keys.new_cta')}
           </Button>

@@ -73,7 +73,7 @@ function RolesSettingsPage() {
         subtitle={t('admin.pages.roles.subtitle')}
         actions={
           permissions.can('create', 'Spree::Role') && (
-            <Button size="sm" onClick={() => openCreate()}>
+            <Button onClick={() => openCreate()}>
               <PlusIcon className="size-4" />
               {t('admin.pages.roles.add_cta')}
             </Button>

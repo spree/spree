@@ -250,12 +250,7 @@ function OrderEditPage() {
               backTo={`${storeId}/orders/${orderId}`}
               actions={
                 <>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setAddingItem(true)}
-                  >
+                  <Button type="button" variant="outline" onClick={() => setAddingItem(true)}>
                     <PlusIcon className="size-4" />
                     {t('admin.orders.edit.actions.add_product')}
                   </Button>

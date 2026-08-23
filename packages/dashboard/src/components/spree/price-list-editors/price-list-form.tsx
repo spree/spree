@@ -167,7 +167,6 @@ export function PriceListForm({
                   <Can I="destroy" a={Subject.PriceList}>
                     <Button
                       type="button"
-                      size="sm"
                       variant="ghost"
                       onClick={onDelete}
                       disabled={deletePending}
@@ -179,7 +178,6 @@ export function PriceListForm({
                 )}
                 <Button
                   type="submit"
-                  size="sm"
                   disabled={
                     form.formState.isSubmitting || (mode === 'edit' && !form.formState.isDirty)
                   }

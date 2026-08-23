@@ -101,7 +101,7 @@ function CompanyLocationBody({ location }: { location: CompanyLocation }) {
             resource={{ id: location.id }}
             actions={
               canEdit ? (
-                <Button size="sm" variant="outline" onClick={() => setEditOpen(true)}>
+                <Button variant="outline" onClick={() => setEditOpen(true)}>
                   <PencilIcon className="size-4" />
                   {t('admin.actions.edit')}
                 </Button>

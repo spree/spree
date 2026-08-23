@@ -236,7 +236,6 @@ function WebhookEndpointDetailBody({ endpoint }: { endpoint: WebhookEndpoint }) 
             actions={
               <Can I="update" a={Subject.WebhookEndpoint}>
                 <Button
-                  size="sm"
                   variant="outline"
                   onClick={handleSendTest}
                   disabled={sendTestMutation.isPending || !!endpoint.disabled_at}
@@ -244,7 +243,7 @@ function WebhookEndpointDetailBody({ endpoint }: { endpoint: WebhookEndpoint }) 
                   <PlayIcon className="size-4" />
                   {t('admin.pages.settings.webhooks.actions.send_test')}
                 </Button>
-                <Button size="sm" variant="outline" onClick={openEdit}>
+                <Button variant="outline" onClick={openEdit}>
                   <PencilIcon className="size-4" />
                   {t('admin.actions.edit')}
                 </Button>

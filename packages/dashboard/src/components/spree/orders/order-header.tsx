@@ -162,7 +162,7 @@ export function OrderHeader({ order }: { order: Order }) {
           {/* Fully fulfilled means every unit has shipped, so there is
               nothing left an edit could lawfully change. */}
           {!GONE_STATUSES.includes(order.fulfillment_status ?? '') && (
-            <Button variant="outline" size="sm" asChild>
+            <Button variant="outline" asChild>
               <Link to="/$storeId/orders/$orderId/edit" params={{ storeId, orderId }}>
                 <PencilIcon className="size-4" />
                 {t('admin.orders.edit.action_label')}
@@ -172,7 +172,6 @@ export function OrderHeader({ order }: { order: Order }) {
 
           {order.status === 'draft' && (
             <Button
-              size="sm"
               onClick={async () => {
                 if (
                   await confirm({

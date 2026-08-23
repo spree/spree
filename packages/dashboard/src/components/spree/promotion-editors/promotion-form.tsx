@@ -235,7 +235,6 @@ export function PromotionForm({
                   <Can I="destroy" a={Subject.Promotion}>
                     <Button
                       type="button"
-                      size="sm"
                       variant="ghost"
                       onClick={onDelete}
                       disabled={deletePending}
@@ -247,7 +246,6 @@ export function PromotionForm({
                 )}
                 <Button
                   type="submit"
-                  size="sm"
                   disabled={
                     form.formState.isSubmitting || (mode === 'edit' && !form.formState.isDirty)
                   }

@@ -101,7 +101,7 @@ function StaffSettingsPage() {
         title={t('admin.pages.staff.title')}
         subtitle={t('admin.pages.staff.subtitle')}
         actions={
-          <Button size="sm" onClick={() => setInviteOpen(true)}>
+          <Button onClick={() => setInviteOpen(true)}>
             <PlusIcon className="size-4" />
             {t('admin.pages.staff.invite_cta')}
           </Button>
