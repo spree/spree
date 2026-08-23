@@ -46,14 +46,19 @@ function SettingsIndexPage() {
         subtitle={t('admin.settings_page.description')}
       />
 
-      <SearchInput
-        value={query}
-        onValueChange={setQuery}
-        placeholder={t('admin.settings_page.search_placeholder')}
-        aria-label={t('admin.settings_page.search_placeholder')}
-        clearLabel={t('admin.common.clear')}
-        className="h-11 max-w-md md:h-9"
-      />
+      {/* Hidden from `lg`, where the settings sidebar is on screen listing the
+          same entries and carrying the same search. Below that the sidebar is
+          gone, so this is the only way to filter — and the only navigation. */}
+      <div className="lg:hidden">
+        <SearchInput
+          value={query}
+          onValueChange={setQuery}
+          placeholder={t('admin.settings_page.search_placeholder')}
+          aria-label={t('admin.settings_page.search_placeholder')}
+          clearLabel={t('admin.common.clear')}
+          className="h-11 max-w-md"
+        />
+      </div>
 
       {groups.length === 0 ? (
         <p className="text-sm text-muted-foreground">
@@ -94,7 +99,7 @@ function SettingsCard({ entry }: { entry: SettingsNavEntry }) {
         to={`/${storeId}/settings${entry.path}` as never}
         className="flex h-full items-start gap-3 rounded-xl p-4 outline-none"
       >
-        <Icon className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+        <Icon className="mt-0.5 size-6 shrink-0 text-muted-foreground opacity-80 hover:opacity-100" />
         <span className="flex min-w-0 flex-col gap-1">
           <span className="text-sm font-medium leading-none">{label}</span>
           {description && <span className="text-sm text-muted-foreground">{description}</span>}

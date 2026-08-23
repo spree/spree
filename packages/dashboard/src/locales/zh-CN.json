@@ -4179,6 +4179,7 @@
       }
     },
     "settings_page": {
+      "back_to_dashboard": "返回控制台",
       "description": "管理店铺、销售配置与团队。",
       "no_results": "没有与“{{query}}”匹配的设置。",
       "search_placeholder": "搜索设置",

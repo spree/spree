@@ -4184,6 +4184,7 @@
       }
     },
     "settings_page": {
+      "back_to_dashboard": "Zurück zum Dashboard",
       "description": "Verwalten Sie Shop, Verkaufseinrichtung und Team.",
       "no_results": "Keine Einstellungen für „{{query}}“.",
       "search_placeholder": "Einstellungen durchsuchen",

@@ -4240,6 +4240,7 @@
       }
     },
     "settings_page": {
+      "back_to_dashboard": "Powrót do panelu",
       "description": "Zarządzaj sklepem, konfiguracją sprzedaży i zespołem.",
       "no_results": "Brak ustawień pasujących do „{{query}}”.",
       "search_placeholder": "Szukaj w ustawieniach",

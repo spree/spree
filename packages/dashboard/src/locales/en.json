@@ -4184,6 +4184,7 @@
       }
     },
     "settings_page": {
+      "back_to_dashboard": "Back to dashboard",
       "description": "Manage your store, selling setup and team.",
       "no_results": "No settings match “{{query}}”.",
       "search_placeholder": "Search settings",

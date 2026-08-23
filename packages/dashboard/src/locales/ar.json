@@ -4203,6 +4203,7 @@
       }
     },
     "settings_page": {
+      "back_to_dashboard": "العودة إلى لوحة التحكم",
       "description": "أدر متجرك وإعداد البيع والفريق.",
       "no_results": "لا توجد إعدادات تطابق «{{query}}».",
       "search_placeholder": "ابحث في الإعدادات",

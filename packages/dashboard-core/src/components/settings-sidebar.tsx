@@ -15,7 +15,7 @@ import {
   SidebarMenuItem,
 } from '@spree/dashboard-ui'
 import { Link, useParams, useRouterState } from '@tanstack/react-router'
-import { PackageIcon } from 'lucide-react'
+import { ArrowLeftIcon, PackageIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { isPathWithin, resolveNavLabel } from '../lib/nav-registry'
@@ -44,6 +44,7 @@ import { NavIcon } from './nav-main'
  */
 export function SettingsSidebar({ open }: { open: boolean }) {
   const { t } = useTranslation()
+  const { storeId } = useParams({ strict: false }) as { storeId?: string }
 
   // `sticky top-0 h-svh` keeps the nav at full viewport height as the page
   // scrolls. `overflow-hidden` clips the inner fixed-width content while the
@@ -68,6 +69,23 @@ export function SettingsSidebar({ open }: { open: boolean }) {
           open ? 'opacity-100 delay-100' : 'pointer-events-none opacity-0',
         )}
       >
+        {/* Names the area and offers the way out. Without it this panel is
+            visually identical to the primary sidebar, so nothing says the
+            merchant has entered a different part of the app — and the only
+            exit is the icon rail beside it. `h-header-height` matches the
+            store switcher opposite, so the two line up. */}
+        <div className="flex h-header-height items-center gap-1 px-2">
+          <Link
+            to={`/${storeId}` as never}
+            tabIndex={open ? 0 : -1}
+            aria-label={t('admin.settings_page.back_to_dashboard')}
+            className="inline-flex size-8 shrink-0 items-center justify-center rounded-lg text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
+          >
+            <ArrowLeftIcon className="size-4" />
+          </Link>
+          <span className="truncate font-medium text-sm">{t('admin.settings_page.title')}</span>
+        </div>
+
         <SettingsNavBody tabIndex={open ? 0 : -1} />
       </div>
     </aside>

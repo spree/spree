@@ -4184,6 +4184,7 @@
       }
     },
     "settings_page": {
+      "back_to_dashboard": "Retour au tableau de bord",
       "description": "Gérez votre boutique, votre configuration de vente et votre équipe.",
       "no_results": "Aucun paramètre ne correspond à « {{query}} ».",
       "search_placeholder": "Rechercher dans les paramètres",
