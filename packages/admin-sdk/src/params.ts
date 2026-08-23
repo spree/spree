@@ -402,8 +402,8 @@ export interface OrderUpdateParams {
   customer_note?: string
   /** Rich text HTML. Reads come back as this plus `internal_note_html`. */
   internal_note?: string
-  ship_address?: AddressInputParams
-  bill_address?: AddressInputParams
+  shipping_address?: AddressInputParams
+  billing_address?: AddressInputParams
   /**
    * Line items to upsert, keyed by variant. An entry sets that variant's
    * quantity, creating the line item when the order has none; `quantity: 0`

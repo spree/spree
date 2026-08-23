@@ -38,7 +38,7 @@ export function CustomerCard({ order }: { order: Order }) {
     mutationFn: (params: {
       type: 'shipping_address' | 'billing_address'
       address: AddressParams
-    }) => adminClient.orders.update(orderId, { [params.type]: params.address } as any),
+    }) => adminClient.orders.update(orderId, { [params.type]: params.address }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['order', orderId] })
       setEditAddress(null)
