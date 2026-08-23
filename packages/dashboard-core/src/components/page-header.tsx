@@ -242,7 +242,7 @@ function PageActionsDropdown({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button size="icon-sm" variant="outline" aria-label={t('admin.actions.more_actions')}>
+        <Button size="icon" variant="outline" aria-label={t('admin.actions.more_actions')}>
           <EllipsisVerticalIcon className="size-4" />
         </Button>
       </DropdownMenuTrigger>
