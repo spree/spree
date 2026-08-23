@@ -2367,6 +2367,9 @@
         },
         "fully_fulfilled": "This order is fully fulfilled and can no longer be edited."
       },
+      "errors": {
+        "failed_to_update_address": "Failed to update address"
+      },
       "fulfill": {
         "action": "Mark as fulfilled",
         "empty": "This fulfillment holds no items that can be shipped.",

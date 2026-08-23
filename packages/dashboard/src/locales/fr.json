@@ -2367,6 +2367,9 @@
         },
         "fully_fulfilled": "Cette commande est entièrement traitée et ne peut plus être modifiée."
       },
+      "errors": {
+        "failed_to_update_address": "Échec de la mise à jour de l'adresse"
+      },
       "fulfill": {
         "action": "Marquer comme expédié",
         "empty": "Cette expédition ne contient aucun article expédiable.",

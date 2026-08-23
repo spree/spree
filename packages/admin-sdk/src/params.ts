@@ -402,7 +402,12 @@ export interface OrderUpdateParams {
   customer_note?: string
   /** Rich text HTML. Reads come back as this plus `internal_note_html`. */
   internal_note?: string
+  /**
+   * Replaces the order's shipping address. The legacy `ship_address` spelling
+   * is still accepted by the API; send only one of the two.
+   */
   shipping_address?: AddressInputParams
+  /** Replaces the order's billing address. See {@link OrderUpdateParams.shipping_address}. */
   billing_address?: AddressInputParams
   /**
    * Line items to upsert, keyed by variant. An entry sets that variant's
