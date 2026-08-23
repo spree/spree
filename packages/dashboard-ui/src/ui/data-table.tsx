@@ -132,7 +132,7 @@ function Table({
   const tableClasses = cn('w-max min-w-full align-top text-foreground', roundedClasses, className)
 
   return (
-    <div className="relative">
+    <div className="relative min-w-0">
       {/* Zero-height sticky wrapper: the pinned header overlays the sizer row
           below instead of occupying its own band. The inner div clips the
           horizontal overhang the translateX mirror produces. */}
@@ -148,7 +148,11 @@ function Table({
           </table>
         </div>
       </div>
-      <div ref={scrollRef} className="themed-scrollbar overflow-x-auto">
+      {/* `min-w-0`: without it this scroller keeps its default
+          `min-width: auto`, refuses to shrink below the table's intrinsic
+          width, and the overflow escapes to the document instead of scrolling
+          here — the whole page then lays out wider than the viewport. */}
+      <div ref={scrollRef} className="themed-scrollbar min-w-0 overflow-x-auto">
         <table ref={bodyTableRef} className={tableClasses} {...props}>
           {cloneElement(headerElement, {
             // The sizer: reserves the header row and drives column widths. It
@@ -259,7 +263,11 @@ function TableEmpty({ children, colSpan }: { children: ReactNode; colSpan: numbe
   return (
     <tr>
       <td colSpan={colSpan} className="py-12 text-center text-muted-foreground">
-        {children}
+        {/* `sticky left-0` with the viewport's own width: the cell spans the
+            full scroll width of a wide table, so centring inside it puts the
+            message off-screen on a narrow viewport. This keeps it centred on
+            what the merchant can actually see, wherever the table is scrolled. */}
+        <div className="sticky left-0 mx-auto w-screen max-w-full">{children}</div>
       </td>
     </tr>
   )
