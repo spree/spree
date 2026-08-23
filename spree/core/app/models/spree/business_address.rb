@@ -1,11 +1,9 @@
 module Spree
-  # The address of a business entity — a seller's billing address, a company
-  # location's branch. No person to name, and the company is the part that
-  # cannot be left out.
+  # A seller's billing address, as a commission invoice must address it: no
+  # person to name, and the company is the part that cannot be left out.
   #
-  # STI rather than a class picked by the owning association, so the rules
-  # travel with the row: copied onto a base-typed association such as a cart's
-  # bill_address, it still loads and validates as a business address.
+  # Shares `spree_addresses` rather than being STI — the table has no `type`
+  # column, and the owning association already says which kind this is.
   class BusinessAddress < Spree::Address
     def require_name?
       false

@@ -75,11 +75,19 @@ module Spree
     # The API reads and writes this under one name, so the writer takes the
     # attributes a client sends as well as a record. Never an id: an address
     # carries no store of its own, so binding one by id would reach another
-    # store's rows.
+    # store's rows. A plain Spree::Address is accepted too — the two share
+    # `spree_addresses` and differ only in which fields they insist on, so a
+    # valid row should not be refused over its Ruby class.
     def billing_address=(value)
-      return super unless value.is_a?(Hash) || value.is_a?(ActionController::Parameters)
-
-      self.billing_address_attributes = value
+      case value
+      when Hash, ActionController::Parameters
+        super(Spree::BusinessAddress.new) if billing_address.nil?
+        self.billing_address_attributes = value
+      when Spree::Address
+        super(value.becomes(Spree::BusinessAddress))
+      else
+        super
+      end
     end
 
     # Where this seller keeps stock, and so where their returns land. Released

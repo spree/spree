@@ -16,7 +16,7 @@ describe Spree::CompanyLocation, type: :model do
   describe 'addresses' do
     it 'creates them inline from nested attributes' do
       location = create(:company_location, company: company,
-                                           billing_address_attributes: build(:address).attributes.except('id', 'type', 'created_at', 'updated_at'))
+                                           billing_address_attributes: build(:address).attributes.except('id', 'created_at', 'updated_at'))
 
       expect(location.billing_address).to be_present
     end
@@ -25,8 +25,8 @@ describe Spree::CompanyLocation, type: :model do
     # shared is taken away.
     it 'destroys its own address rows with it' do
       location = create(:company_location, company: company,
-                                           billing_address: create(:business_address),
-                                           shipping_address: create(:business_address))
+                                           billing_address: create(:address),
+                                           shipping_address: create(:address))
 
       expect { location.destroy }.to change(Spree::Address, :count).by(-2)
     end

@@ -27,11 +27,6 @@ module Spree
     # those attributes depending of the logic of their applications
     ADDRESS_FIELDS = %w(firstname lastname company address1 address2 city state zipcode country phone)
     EXCLUDED_KEYS_FOR_COMPARISON = %w(id updated_at created_at deleted_at label customer_id metadata)
-    # Blankness is about what somebody typed, so bookkeeping columns and the
-    # STI type are ignored. Comparison and dedup deliberately keep `type`: the
-    # same postal facts under different validation rules are different
-    # addresses, and a business one must never merge into a personal twin.
-    EXCLUDED_KEYS_FOR_BLANKNESS = %w(id type created_at updated_at country_id country_code).freeze
     if defined?(Spree::Security::Addresses)
       include Spree::Security::Addresses
     end
@@ -239,7 +234,7 @@ module Spree
     # A country alone doesn't make an address — a new one is pre-filled with the
     # store's default, so both the code and the association are ignored here.
     def empty?
-      attributes.except(*EXCLUDED_KEYS_FOR_BLANKNESS).all? { |_, v| v.nil? }
+      attributes.except('id', 'created_at', 'updated_at', 'country_id', 'country_code').all? { |_, v| v.nil? }
     end
 
     # Generates an address hash for payment gateway options

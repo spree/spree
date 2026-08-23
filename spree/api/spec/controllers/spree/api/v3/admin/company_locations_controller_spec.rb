@@ -36,7 +36,7 @@ RSpec.describe Spree::Api::V3::Admin::CompanyLocationsController, type: :control
     end
 
     context 'with an address already on file' do
-      let!(:existing) { create(:business_address, address1: 'Alte Str 1', city: 'Berlin') }
+      let!(:existing) { create(:address, address1: 'Alte Str 1', city: 'Berlin') }
 
       before { location.update!(billing_address: existing) }
 
@@ -75,7 +75,7 @@ RSpec.describe Spree::Api::V3::Admin::CompanyLocationsController, type: :control
 
   describe 'DELETE #destroy' do
     it 'removes the branch and the address it owned' do
-      location.update!(billing_address: create(:business_address))
+      location.update!(billing_address: create(:address))
 
       expect { delete :destroy, params: { id: location.prefixed_id }, as: :json }.
         to change(Spree::Address, :count).by(-1)

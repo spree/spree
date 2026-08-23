@@ -13,19 +13,17 @@ module Spree
     include Spree::HasExternalReferences
 
     belongs_to :company, class_name: 'Spree::Company', inverse_of: :company_locations
-    belongs_to :billing_address, class_name: 'Spree::BusinessAddress', optional: true, dependent: :destroy
-    belongs_to :shipping_address, class_name: 'Spree::BusinessAddress', optional: true, dependent: :destroy
+    belongs_to :billing_address, class_name: 'Spree::Address', optional: true, dependent: :destroy
+    belongs_to :shipping_address, class_name: 'Spree::Address', optional: true, dependent: :destroy
 
     # update_only, so editing one field of an existing address changes that
     # row instead of building a replacement and orphaning the old one.
     accepts_nested_attributes_for :billing_address, update_only: true
     accepts_nested_attributes_for :shipping_address, update_only: true
 
-    ADDRESS_ASSOCIATIONS = %i[billing_address shipping_address].freeze
-
     # The API reads and writes these under the same name, so the writer takes
     # either a record or the nested hash a client sends.
-    ADDRESS_ASSOCIATIONS.each do |name|
+    %i[billing_address shipping_address].each do |name|
       define_method(:"#{name}=") do |value|
         value.is_a?(Hash) || value.is_a?(ActionController::Parameters) ? send(:"#{name}_attributes=", value) : super(value)
       end
@@ -35,33 +33,11 @@ module Spree
                                 inverse_of: :company_location
     has_many :customers, through: :company_contacts, source: :customer
 
-    # A business address insists on its company line, but the branch already
-    # knows whose it is — so a payload without one gets the owning company's
-    # name stamped in, as a snapshot the invoice can print even if the
-    # company later renames. Only when an address is actually being written:
-    # otherwise every unrelated save would load both of them to ask.
-    before_validation :default_address_company, if: :address_being_written?
-
     validates :name, presence: true
 
     delegate :store, :store_id, to: :company
 
     self.whitelisted_ransackable_attributes = %w[name]
     self.whitelisted_ransackable_associations = %w[external_references]
-
-    private
-
-    def address_being_written?
-      ADDRESS_ASSOCIATIONS.any? do |name|
-        association(name).loaded? || public_send(:"#{name}_id_changed?")
-      end
-    end
-
-    def default_address_company
-      ADDRESS_ASSOCIATIONS.each do |name|
-        address = public_send(name)
-        address.company = company&.name if address && address.company.blank?
-      end
-    end
   end
 end
