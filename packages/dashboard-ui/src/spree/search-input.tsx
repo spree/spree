@@ -11,7 +11,9 @@ import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '
  * that control is unstyleable, ignores the design tokens, renders at a size no
  * touch guideline would accept, and Safari on iOS omits it entirely — so on a
  * phone the field could not be cleared at all. The input stays `type="text"`
- * to keep the native affordance from rendering alongside this one.
+ * to keep the native affordance from rendering alongside this one, and carries
+ * `role="searchbox"` so it still announces as a search field — the role a
+ * `type="search"` input would have given it for free.
  *
  * Clearing returns focus to the field, since the user is almost always about
  * to type a different query.
@@ -42,6 +44,7 @@ export function SearchInput({
       <InputGroupInput
         ref={inputRef}
         type="text"
+        role="searchbox"
         value={value}
         onChange={(event) => onValueChange(event.target.value)}
         className="h-full"
