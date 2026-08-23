@@ -106,7 +106,6 @@ export function OnboardingPage() {
                   : t('onboarding.remaining', { count: blocking.length })}
               </p>
               <Button
-                size="sm"
                 disabled={blocking.length > 0 || submit.isPending}
                 onClick={() => submit.mutate()}
               >
@@ -301,14 +300,14 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
           {/* The terms themselves, when the marketplace configured a link.
               Accepting something a seller cannot read is not consent. */}
           {requirement.action_url && (
-            <Button size="sm" variant="outline" asChild>
+            <Button variant="outline" asChild>
               <a href={requirement.action_url} target="_blank" rel="noreferrer">
                 {t('onboarding.read_terms')}
                 <ExternalLinkIcon className="size-4" />
               </a>
             </Button>
           )}
-          <Button size="sm" disabled={acceptTerms.isPending} onClick={() => acceptTerms.mutate()}>
+          <Button disabled={acceptTerms.isPending} onClick={() => acceptTerms.mutate()}>
             {t('onboarding.accept_terms')}
           </Button>
         </div>
@@ -339,7 +338,6 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
 
           <div className="flex justify-start">
             <Button
-              size="sm"
               // A document requirement with nothing attached is an empty
               // submission the operator can only reject.
               disabled={submit.isPending || (requirement.requires_file && !file.signedId)}
@@ -372,7 +370,6 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
           ))}
           <div className="flex justify-start">
             <Button
-              size="sm"
               disabled={saveFields.isPending || Object.keys(fields).length === 0}
               onClick={() => saveFields.mutate()}
             >
@@ -401,7 +398,7 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
           kind added by a gem still gets a way in without this file changing. */}
       {panelRoute(requirement.kind) && (
         <div className="flex justify-start">
-          <Button size="sm" asChild>
+          <Button asChild>
             <Link to={panelRoute(requirement.kind)!} params={{ sellerId }}>
               {t('onboarding.go')}
               <ChevronRightIcon className="size-4" />
@@ -413,7 +410,7 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
       {/* `accept_terms` renders its own link above, with different words. */}
       {requirement.action_url && requirement.kind !== 'accept_terms' && (
         <div className="flex justify-start">
-          <Button size="sm" variant="outline" asChild>
+          <Button variant="outline" asChild>
             <a href={requirement.action_url} target="_blank" rel="noreferrer">
               {t('onboarding.go')}
               <ExternalLinkIcon className="size-4" />
