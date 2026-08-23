@@ -482,9 +482,14 @@ function EditableHeaderActions() {
 
   if (!mode.isEditing) {
     return (
-      <Button type="button" variant="outline" size="sm" onClick={mode.startEdit}>
+      <Button
+        variant="ghost"
+        size="icon-sm"
+        type="button"
+        onClick={mode.startEdit}
+        aria-label={t('admin.actions.edit')}
+      >
         <PencilIcon className="size-4" />
-        {t('admin.actions.edit')}
       </Button>
     )
   }

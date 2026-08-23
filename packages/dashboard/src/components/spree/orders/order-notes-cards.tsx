@@ -39,9 +39,13 @@ export function SpecialInstructionsCard({ order }: { order: Order }) {
       <CardHeader>
         <CardTitle>{t('admin.orders.detail.section_customer_note')}</CardTitle>
         <CardAction>
-          <Button variant="ghost" size="icon-xs" onClick={() => setEditing(!editing)}>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => setEditing(!editing)}
+            aria-label={t('admin.actions.edit')}
+          >
             <PencilIcon className="size-4" />
-            <span className="sr-only">{t('admin.actions.edit')}</span>
           </Button>
         </CardAction>
       </CardHeader>
@@ -85,14 +89,14 @@ export function TagsCard({ order }: { order: Order }) {
         <CardAction>
           <Button
             variant="ghost"
-            size="icon-xs"
+            size="icon-sm"
             onClick={() => {
               setTags(order.tags ?? [])
               setEditing(!editing)
             }}
+            aria-label={t('admin.actions.edit')}
           >
             <PencilIcon className="size-4" />
-            <span className="sr-only">{t('admin.actions.edit')}</span>
           </Button>
         </CardAction>
       </CardHeader>
@@ -160,9 +164,13 @@ export function InternalNoteCard({ order }: { order: Order }) {
       <CardHeader>
         <CardTitle>{t('admin.orders.detail.section_internal_note')}</CardTitle>
         <CardAction>
-          <Button variant="ghost" size="icon-xs" onClick={() => setEditing(!editing)}>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => setEditing(!editing)}
+            aria-label={t('admin.actions.edit')}
+          >
             <PencilIcon className="size-4" />
-            <span className="sr-only">{t('admin.actions.edit')}</span>
           </Button>
         </CardAction>
       </CardHeader>

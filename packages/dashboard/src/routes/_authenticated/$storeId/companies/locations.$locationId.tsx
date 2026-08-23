@@ -101,9 +101,13 @@ function CompanyLocationBody({ location }: { location: CompanyLocation }) {
             resource={{ id: location.id }}
             actions={
               canEdit ? (
-                <Button variant="outline" onClick={() => setEditOpen(true)}>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={() => setEditOpen(true)}
+                  aria-label={t('admin.actions.edit')}
+                >
                   <PencilIcon className="size-4" />
-                  {t('admin.actions.edit')}
                 </Button>
               ) : undefined
             }

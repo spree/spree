@@ -221,7 +221,7 @@ function SellerBody({ seller }: { seller: Seller }) {
           query leaves `isPending` false with no data, which is why this gates
           on the data rather than the loading flag. */}
       {canApprove && (
-        <Button size="sm" disabled={busy || !onboarding} onClick={handleApprove}>
+        <Button disabled={busy || !onboarding} onClick={handleApprove}>
           {status === 'suspended'
             ? t('admin.sellers.actions.reinstate')
             : t('admin.sellers.actions.approve')}
@@ -229,7 +229,6 @@ function SellerBody({ seller }: { seller: Seller }) {
       )}
       {canInvite && (
         <Button
-          size="sm"
           variant={canApprove ? 'outline' : 'default'}
           disabled={busy}
           onClick={() => setInviting(true)}
@@ -377,9 +376,14 @@ function SellerBrandCard({
           <div className="h-20 w-full border-border border-b bg-muted" />
         )}
         {canEdit && (
-          <Button size="sm" variant="outline" className="absolute top-3 right-3" onClick={onEdit}>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            className="absolute top-3 right-3 bg-background/80 backdrop-blur-sm hover:bg-background"
+            onClick={onEdit}
+            aria-label={t('admin.actions.edit')}
+          >
             <PencilIcon className="size-4" />
-            {t('admin.actions.edit')}
           </Button>
         )}
       </div>
@@ -501,9 +505,13 @@ function SellerContactCard({
         <CardTitle>{t('admin.sellers.detail.contact')}</CardTitle>
         {canEdit && (
           <CardAction>
-            <Button variant="outline" size="sm" onClick={onEdit}>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={onEdit}
+              aria-label={t('admin.actions.edit')}
+            >
               <PencilIcon className="size-4" />
-              {t('admin.actions.edit')}
             </Button>
           </CardAction>
         )}
@@ -542,9 +550,13 @@ function SellerSettlementCard({
         <CardTitle>{t('admin.sellers.detail.settlement')}</CardTitle>
         {canEdit && (
           <CardAction>
-            <Button size="sm" variant="outline" onClick={onEdit}>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={onEdit}
+              aria-label={t('admin.actions.edit')}
+            >
               <PencilIcon className="size-4" />
-              {t('admin.actions.edit')}
             </Button>
           </CardAction>
         )}

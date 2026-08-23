@@ -243,9 +243,13 @@ function WebhookEndpointDetailBody({ endpoint }: { endpoint: WebhookEndpoint }) 
                   <PlayIcon className="size-4" />
                   {t('admin.pages.settings.webhooks.actions.send_test')}
                 </Button>
-                <Button variant="outline" onClick={openEdit}>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={openEdit}
+                  aria-label={t('admin.actions.edit')}
+                >
                   <PencilIcon className="size-4" />
-                  {t('admin.actions.edit')}
                 </Button>
               </Can>
             }
