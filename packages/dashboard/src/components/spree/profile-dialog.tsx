@@ -253,7 +253,6 @@ function ProfileForm({
         <Button
           type="button"
           variant="outline"
-          size="sm"
           onClick={() => onOpenChange(false)}
           disabled={isSubmitting}
         >
@@ -262,7 +261,7 @@ function ProfileForm({
         {/* Gated on `isDirty` to match `FormActions` (what the page this
             replaced used) — without it a pristine Save PATCHes and toasts
             success having changed nothing. */}
-        <Button type="submit" size="sm" disabled={!isDirty || isSubmitting}>
+        <Button type="submit" disabled={!isDirty || isSubmitting}>
           {isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
         </Button>
       </DialogFooter>

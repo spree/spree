@@ -725,7 +725,6 @@ function CreateDefinitionSheet({
             <Button
               type="button"
               variant="outline"
-              size="sm"
               // Reset through the same path as the Sheet's onOpenChange wrapper
               // so reopening doesn't show stale input or server errors.
               onClick={() => {
@@ -736,7 +735,7 @@ function CreateDefinitionSheet({
             >
               {t('admin.actions.cancel')}
             </Button>
-            <Button type="submit" size="sm" disabled={create.isPending}>
+            <Button type="submit" disabled={create.isPending}>
               {create.isPending && <Loader2Icon className="size-4 animate-spin" />}
               {t('admin.custom_field_definitions.create_label')}
             </Button>

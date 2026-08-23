@@ -217,7 +217,6 @@ export function DeliveryMethodSheet({
               <Button
                 type="button"
                 variant="outline"
-                size="sm"
                 onClick={() => onOpenChange(false)}
                 disabled={form.formState.isSubmitting}
               >
@@ -225,7 +224,6 @@ export function DeliveryMethodSheet({
               </Button>
               <Button
                 type="submit"
-                size="sm"
                 disabled={form.formState.isSubmitting || (editing && !form.formState.isDirty)}
               >
                 {form.formState.isSubmitting

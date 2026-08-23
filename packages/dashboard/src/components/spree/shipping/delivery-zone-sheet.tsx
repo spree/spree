@@ -160,7 +160,6 @@ export function DeliveryZoneSheet({
               <Button
                 type="button"
                 variant="outline"
-                size="sm"
                 onClick={() => onOpenChange(false)}
                 disabled={form.formState.isSubmitting}
               >
@@ -168,7 +167,6 @@ export function DeliveryZoneSheet({
               </Button>
               <Button
                 type="submit"
-                size="sm"
                 disabled={form.formState.isSubmitting || (editing && !form.formState.isDirty)}
               >
                 {form.formState.isSubmitting

@@ -201,13 +201,12 @@ function CreateChannelSheet({
             <Button
               type="button"
               variant="outline"
-              size="sm"
               onClick={() => onOpenChange(false)}
               disabled={form.formState.isSubmitting}
             >
               {t('admin.actions.cancel')}
             </Button>
-            <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
+            <Button type="submit" disabled={form.formState.isSubmitting}>
               {form.formState.isSubmitting
                 ? t('admin.actions.creating')
                 : t('admin.pages.channels.create_label')}
@@ -293,7 +292,6 @@ function EditChannelSheet({
               <Button
                 type="button"
                 variant="outline"
-                size="sm"
                 onClick={() => onOpenChange(false)}
                 disabled={form.formState.isSubmitting}
               >
@@ -301,7 +299,6 @@ function EditChannelSheet({
               </Button>
               <Button
                 type="submit"
-                size="sm"
                 disabled={form.formState.isSubmitting || !form.formState.isDirty}
               >
                 {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}

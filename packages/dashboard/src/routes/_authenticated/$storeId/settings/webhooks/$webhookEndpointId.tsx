@@ -521,17 +521,12 @@ function EditEndpointSheet({
             <Button
               type="button"
               variant="outline"
-              size="sm"
               onClick={() => onOpenChange(false)}
               disabled={form.formState.isSubmitting}
             >
               {t('admin.actions.cancel')}
             </Button>
-            <Button
-              type="submit"
-              size="sm"
-              disabled={form.formState.isSubmitting || !form.formState.isDirty}
-            >
+            <Button type="submit" disabled={form.formState.isSubmitting || !form.formState.isDirty}>
               {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
             </Button>
           </SheetFooter>
@@ -717,7 +712,6 @@ function DeliveryDetailSheet({
           <SheetFooter>
             <Button
               type="button"
-              size="sm"
               onClick={() =>
                 redeliver
                   .mutateAsync(deliveryId)

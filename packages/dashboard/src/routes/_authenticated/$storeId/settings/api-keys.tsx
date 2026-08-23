@@ -661,13 +661,12 @@ function CreateApiKeyDialog({
             <Button
               type="button"
               variant="outline"
-              size="sm"
               onClick={() => onOpenChange(false)}
               disabled={form.formState.isSubmitting}
             >
               {t('admin.actions.cancel')}
             </Button>
-            <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
+            <Button type="submit" disabled={form.formState.isSubmitting}>
               {form.formState.isSubmitting
                 ? t('admin.actions.creating')
                 : t('admin.api_keys.create_key_cta')}
@@ -757,13 +756,12 @@ function EditApiKeyDialog({
             <Button
               type="button"
               variant="outline"
-              size="sm"
               onClick={() => onOpenChange(false)}
               disabled={form.formState.isSubmitting}
             >
               {t('admin.actions.cancel')}
             </Button>
-            <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
+            <Button type="submit" disabled={form.formState.isSubmitting}>
               {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
             </Button>
           </SheetFooter>
@@ -990,9 +988,7 @@ function TokenRevealDialog({
           )}
         </DialogBody>
         <DialogFooter>
-          <Button size="sm" onClick={() => onOpenChange(false)}>
-            {t('admin.actions.done')}
-          </Button>
+          <Button onClick={() => onOpenChange(false)}>{t('admin.actions.done')}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -245,13 +245,12 @@ export function FulfillmentEditDialog({
             <Button
               type="button"
               variant="outline"
-              size="sm"
               onClick={() => onOpenChange(false)}
               disabled={isSubmitting}
             >
               {t('admin.actions.cancel')}
             </Button>
-            <Button type="submit" size="sm" disabled={isSubmitting}>
+            <Button type="submit" disabled={isSubmitting}>
               {isSubmitting
                 ? t('admin.actions.saving')
                 : originMoved

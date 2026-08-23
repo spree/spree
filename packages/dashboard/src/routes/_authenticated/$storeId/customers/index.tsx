@@ -530,13 +530,12 @@ function NewCustomerSheet({
             <Button
               type="button"
               variant="outline"
-              size="sm"
               onClick={() => onOpenChange(false)}
               disabled={createMutation.isPending}
             >
               {t('admin.actions.cancel')}
             </Button>
-            <Button type="submit" size="sm" disabled={createMutation.isPending}>
+            <Button type="submit" disabled={createMutation.isPending}>
               {createMutation.isPending
                 ? t('admin.actions.creating')
                 : t('admin.pages.customers.create_label')}

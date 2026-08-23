@@ -223,17 +223,11 @@ export function ImportButton({
           </div>
 
           <SheetFooter>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => handleOpenChange(false)}
-            >
+            <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>
               {t('admin.actions.cancel')}
             </Button>
             <Button
               type="button"
-              size="sm"
               onClick={handleSubmit}
               disabled={!file.signedId || createImport.isPending}
             >

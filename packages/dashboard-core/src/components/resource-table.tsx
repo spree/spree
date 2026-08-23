@@ -478,7 +478,7 @@ export function ResourceTable<T extends Record<string, any>>({
     // the gutter the page container applies, and the frame drops to a plain
     // surface — background only, no border, radius or shadow. Scoped to this
     // card so every other card on the page keeps its frame.
-    <Card className="-mx-4 rounded-none border-x-0 shadow-none sm:mx-0 sm:rounded-xl sm:border-x sm:shadow-sm">
+    <Card className="-mx-4 rounded-none border-0 bg-transparent sm:bg-card shadow-none sm:mx-0 sm:rounded-xl sm:border sm:shadow-sm">
       <TableToolbar
         columns={displayableColumns}
         visibleColumns={visibleColumnKeys}
@@ -522,7 +522,7 @@ export function ResourceTable<T extends Record<string, any>>({
                     )}
                   </TableHeaderRow>
                 </TableHeader>
-                <TableBody>
+                <TableBody className="bg-card">
                   {isLoading ? (
                     <TableSkeletonRows
                       colSpan={visibleColumns.length + 1 + (rowActionsEnabled ? 1 : 0)}
@@ -666,7 +666,7 @@ export function ResourceTable<T extends Record<string, any>>({
                   )}
                 </TableHeaderRow>
               </TableHeader>
-              <TableBody>
+              <TableBody className="bg-card">
                 {isLoading ? (
                   <TableSkeletonRows
                     colSpan={

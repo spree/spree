@@ -30,10 +30,10 @@ export function EditorShell({
     <>
       <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4">{children}</div>
       <SheetFooter>
-        <Button type="button" variant="outline" size="sm" onClick={onCancel} disabled={pending}>
+        <Button type="button" variant="outline" onClick={onCancel} disabled={pending}>
           {t('admin.actions.cancel')}
         </Button>
-        <Button type="button" size="sm" onClick={() => onSave()} disabled={pending || saveDisabled}>
+        <Button type="button" onClick={() => onSave()} disabled={pending || saveDisabled}>
           {pending ? t('admin.actions.saving') : resolvedSaveLabel}
         </Button>
       </SheetFooter>

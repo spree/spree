@@ -386,7 +386,6 @@ function CreateStockTransferSheet({
           <Button
             type="button"
             variant="outline"
-            size="sm"
             onClick={() => onOpenChange(false)}
             disabled={createMutation.isPending}
           >
@@ -394,7 +393,6 @@ function CreateStockTransferSheet({
           </Button>
           <Button
             type="button"
-            size="sm"
             onClick={handleSubmit}
             disabled={!canSubmit || createMutation.isPending}
           >
@@ -512,7 +510,7 @@ function ViewStockTransferSheet({
         )}
 
         <SheetFooter>
-          <Button type="button" variant="outline" size="sm" onClick={() => onOpenChange(false)}>
+          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
             {t('admin.actions.close')}
           </Button>
         </SheetFooter>

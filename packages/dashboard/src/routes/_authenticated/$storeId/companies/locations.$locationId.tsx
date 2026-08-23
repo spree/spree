@@ -340,7 +340,6 @@ function AddContactDialog({
           <Button
             type="button"
             variant="outline"
-            size="sm"
             onClick={() => onOpenChange(false)}
             disabled={createMutation.isPending}
           >
@@ -348,7 +347,6 @@ function AddContactDialog({
           </Button>
           <Button
             type="button"
-            size="sm"
             disabled={createMutation.isPending || !customerId}
             onClick={handleSubmit}
           >

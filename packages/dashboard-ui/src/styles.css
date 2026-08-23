@@ -461,29 +461,10 @@
    *
    * `pointer: coarse` rather than a width breakpoint: this is about the input
    * method, and a small window on a laptop should keep the compact type. */
-  /* Buttons are `size="sm"` almost everywhere in this app — 322 call sites
-   * against one default — so `sm` is effectively the standard button and it
-   * lays out at 28px, well under the 44pt touch minimum. Icon-only buttons are
-   * worse at 24–28px square. Raising the floor here rather than changing 322
-   * call sites: the density is a deliberate desktop choice, and this keeps it
-   * there while making the same markup usable on a phone.
-   *
-   * `min-height`, not `height`: a button whose content needs more room (a
-   * wrapped label) must still be free to grow. */
+  /* Nav rows and menu labels read small on a phone at the desktop 14px.
+   * 16px is the size the platform uses for a primary list row. Sizing is left
+   * to the components themselves — buttons carry their own touch targets. */
   @media (pointer: coarse) {
-    [data-slot='button'] {
-      min-height: 2.75rem !important;
-      font-size: max(0.875rem, var(--text-sm)) !important;
-    }
-
-    /* Icon-only buttons are square, so the width has to come up with the
-     * height or the target stays a thin column. */
-    [data-slot='button']:is([class*='size-6'], [class*='size-7'], [class*='size-8'], [class*='size-9']) {
-      min-width: 2.75rem !important;
-    }
-
-    /* Nav rows and menu labels read small on a phone at the desktop 14px.
-     * 16px is the size the platform uses for a primary list row. */
     [data-slot='sidebar-menu-button'],
     [data-slot='sidebar-menu-sub-button'],
     [data-slot='dropdown-menu-item'],

@@ -950,7 +950,7 @@ function RulePickerSheet({
           )}
         </div>
         <SheetFooter>
-          <Button type="button" variant="outline" size="sm" onClick={() => onOpenChange(false)}>
+          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
             {t('admin.actions.cancel')}
           </Button>
         </SheetFooter>
@@ -1214,7 +1214,7 @@ function ActionPickerSheet({
           ))}
         </div>
         <SheetFooter>
-          <Button type="button" variant="outline" size="sm" onClick={() => onOpenChange(false)}>
+          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
             {t('admin.actions.cancel')}
           </Button>
         </SheetFooter>
@@ -1401,7 +1401,6 @@ function CouponCodesSheet({
           {totalCount > 0 && (
             <Button
               type="button"
-              size="sm"
               variant="outline"
               onClick={handleExport}
               disabled={exportMutation.isPending}
@@ -1412,7 +1411,7 @@ function CouponCodesSheet({
                 : t('admin.promotions.coupon_codes.export_csv')}
             </Button>
           )}
-          <Button type="button" size="sm" variant="outline" onClick={() => onOpenChange(false)}>
+          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
             {t('admin.actions.close')}
           </Button>
         </SheetFooter>

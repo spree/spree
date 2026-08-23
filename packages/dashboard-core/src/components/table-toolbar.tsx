@@ -181,7 +181,7 @@ export function TableToolbar({
       {/* A phone shows the title and the controls only — search lives in the
           TopBar there. From `lg` the search field joins them on one row. */}
       <div className="flex flex-col gap-2 border-b border-border-subtle p-3 pl-4 lg:flex-row lg:items-center lg:justify-between">
-        {title && <CardTitle>{title}</CardTitle>}
+        {title && <CardTitle className="text-lg">{title}</CardTitle>}
         {/* Hidden on a phone: the TopBar already carries a search field there,
             and two search boxes stacked in one column is the more confusing
             cost. Any term already set stays visible as a removable chip below,

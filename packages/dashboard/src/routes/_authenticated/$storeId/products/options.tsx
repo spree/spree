@@ -253,13 +253,12 @@ function CreateOptionTypeSheet({
             <Button
               type="button"
               variant="outline"
-              size="sm"
               onClick={() => onOpenChange(false)}
               disabled={form.formState.isSubmitting}
             >
               {t('admin.actions.cancel')}
             </Button>
-            <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
+            <Button type="submit" disabled={form.formState.isSubmitting}>
               {form.formState.isSubmitting
                 ? t('admin.actions.creating')
                 : t('admin.products.options.create_label')}
@@ -372,7 +371,6 @@ function EditOptionTypeSheet({
               <Button
                 type="button"
                 variant="outline"
-                size="sm"
                 onClick={() => onOpenChange(false)}
                 disabled={form.formState.isSubmitting}
               >
@@ -380,7 +378,6 @@ function EditOptionTypeSheet({
               </Button>
               <Button
                 type="submit"
-                size="sm"
                 disabled={form.formState.isSubmitting || !form.formState.isDirty}
               >
                 {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}

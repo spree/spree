@@ -205,13 +205,12 @@ function CreateMarketSheet({
             <Button
               type="button"
               variant="outline"
-              size="sm"
               onClick={() => onOpenChange(false)}
               disabled={form.formState.isSubmitting}
             >
               {t('admin.actions.cancel')}
             </Button>
-            <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
+            <Button type="submit" disabled={form.formState.isSubmitting}>
               {form.formState.isSubmitting
                 ? t('admin.actions.creating')
                 : t('admin.markets.create_label')}
@@ -287,7 +286,6 @@ function EditMarketSheet({
               <Button
                 type="button"
                 variant="outline"
-                size="sm"
                 onClick={() => onOpenChange(false)}
                 disabled={form.formState.isSubmitting}
               >
@@ -295,7 +293,6 @@ function EditMarketSheet({
               </Button>
               <Button
                 type="submit"
-                size="sm"
                 disabled={form.formState.isSubmitting || !form.formState.isDirty}
               >
                 {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}

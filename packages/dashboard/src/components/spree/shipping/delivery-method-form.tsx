@@ -885,7 +885,7 @@ function ServiceOverridesSheet({
           </Field>
         </div>
         <SheetFooter>
-          <Button type="button" size="sm" onClick={onClose}>
+          <Button type="button" onClick={onClose}>
             {t('admin.actions.done')}
           </Button>
         </SheetFooter>

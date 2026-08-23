@@ -429,13 +429,12 @@ function EditProfileSheet({
             <Button
               type="button"
               variant="outline"
-              size="sm"
               onClick={() => onOpenChange(false)}
               disabled={mutation.isPending}
             >
               {t('admin.actions.cancel')}
             </Button>
-            <Button type="submit" size="sm" disabled={mutation.isPending}>
+            <Button type="submit" disabled={mutation.isPending}>
               {mutation.isPending ? t('admin.actions.saving') : t('admin.actions.save')}
             </Button>
           </SheetFooter>
@@ -562,13 +561,12 @@ function EditGroupsSheet({
           <Button
             type="button"
             variant="outline"
-            size="sm"
             onClick={() => onOpenChange(false)}
             disabled={isPending}
           >
             {t('admin.actions.cancel')}
           </Button>
-          <Button type="button" size="sm" onClick={handleSave} disabled={isPending || !dirty}>
+          <Button type="button" onClick={handleSave} disabled={isPending || !dirty}>
             {isPending ? t('admin.actions.saving') : t('admin.actions.save')}
           </Button>
         </SheetFooter>
