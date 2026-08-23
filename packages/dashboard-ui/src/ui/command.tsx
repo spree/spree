@@ -45,7 +45,14 @@ function CommandDialog({
         <DialogDescription>{description}</DialogDescription>
       </DialogHeader>
       <DialogContent
-        className={cn('top-1/3 translate-y-0 overflow-hidden rounded-xl! p-0', className)}
+        // `-translate-x-1/2` must be restated alongside `translate-y-0`: in
+        // Tailwind v4 both compile to the standalone `translate` property, so
+        // setting only the Y axis wipes the base dialog's horizontal centring
+        // and the panel drifts off both edges of a narrow screen.
+        className={cn(
+          'top-1/3 -translate-x-1/2 translate-y-0 overflow-hidden rounded-xl! p-0',
+          className,
+        )}
         showCloseButton={showCloseButton}
       >
         {children}
@@ -243,7 +250,9 @@ function CommandFooter({ className, children, ...props }: React.ComponentProps<'
     <div
       data-slot="command-footer"
       className={cn(
-        'flex shrink-0 items-center justify-between gap-4 border-t border-border-subtle bg-muted text-muted-foreground px-4 py-2.5',
+        // Hidden on touch: the footer documents arrow/enter/esc shortcuts,
+        // which a phone has no keys for, and it costs 45px of a short viewport.
+        'hidden shrink-0 items-center justify-between gap-4 border-t border-border-subtle bg-muted px-4 py-2.5 text-muted-foreground md:flex',
         className,
       )}
       {...props}
