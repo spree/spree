@@ -472,7 +472,13 @@ export function ResourceTable<T extends Record<string, any>>({
       : actions
 
   return (
-    <Card className="rounded-xl">
+    // Below `sm` the table spans the full width: the page gutter plus the
+    // card's own border spends ~34px of a 390px screen on chrome, and a table
+    // is the one place that width is worth reclaiming. Negative margins cancel
+    // the gutter the page container applies, and the frame drops to a plain
+    // surface — background only, no border, radius or shadow. Scoped to this
+    // card so every other card on the page keeps its frame.
+    <Card className="-mx-4 rounded-none border-x-0 shadow-none sm:mx-0 sm:rounded-xl sm:border-x sm:shadow-sm">
       <TableToolbar
         columns={displayableColumns}
         visibleColumns={visibleColumnKeys}
