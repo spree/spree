@@ -39,22 +39,24 @@ module Spree
 
       private
 
+      # The spellings each address accepts, in the order they win. The public
+      # name is the documented one; the others are what older callers send.
+      ADDRESS_PARAM_ALIASES = {
+        ship_address: %i[shipping_address ship_address ship_address_attributes],
+        bill_address: %i[billing_address bill_address bill_address_attributes]
+      }.freeze
+
       # Addresses are pulled out of the attribute payload and applied through
       # the deduplicating writers, the way Orders::Create does. Handing a hash
       # to `update` would reach the belongs_to writer and raise instead.
-      # Both the public names and the column names are accepted; every spelling
-      # is removed even when unused, so a payload carrying both never leaves one
-      # behind for `update` to choke on. The public name wins.
+      #
+      # Every spelling is removed even when unused: one left behind is either
+      # a hash for `update` to choke on, or an `_attributes` key that quietly
+      # overwrites the address assigned here.
       def extract_address_params
-        shipping_address = @params.delete(:shipping_address)
-        ship_address = @params.delete(:ship_address)
-        billing_address = @params.delete(:billing_address)
-        bill_address = @params.delete(:bill_address)
-
-        {
-          ship_address: shipping_address.presence || ship_address.presence,
-          bill_address: billing_address.presence || bill_address.presence
-        }.compact_blank
+        ADDRESS_PARAM_ALIASES.transform_values do |aliases|
+          aliases.map { |key| @params.delete(key) }.compact.find(&:present?)
+        end.compact_blank
       end
 
       def assign_addresses(address_params)

@@ -212,19 +212,36 @@ module Spree
           end
         end
 
-        # Every spelling is removed from the payload, so a client sending both
-        # never leaves one behind for `update` to hand to the belongs_to writer.
-        context 'when the payload carries both spellings' do
+        # Every spelling is removed from the payload, so a client sending more
+        # than one never leaves a key behind: a stray hash would reach the
+        # belongs_to writer, and a stray `_attributes` key would quietly
+        # overwrite the address applied here.
+        context 'when the payload carries several spellings' do
           let(:params) do
             {
               shipping_address: attributes_for(:address).merge(address1: '1 Public Way'),
-              ship_address: attributes_for(:address).merge(address1: '2 Column Way')
+              ship_address: attributes_for(:address).merge(address1: '2 Column Way'),
+              ship_address_attributes: attributes_for(:address).merge(address1: '3 Nested Way')
             }
           end
 
-          it 'applies the public name and ignores the column name' do
+          it 'applies the public name and ignores the rest' do
             expect(subject).to be_success
             expect(order.reload.ship_address.address1).to eq('1 Public Way')
+          end
+        end
+
+        context 'when only the column and nested spellings are sent' do
+          let(:params) do
+            {
+              ship_address: attributes_for(:address).merge(address1: '2 Column Way'),
+              ship_address_attributes: attributes_for(:address).merge(address1: '3 Nested Way')
+            }
+          end
+
+          it 'prefers the column name' do
+            expect(subject).to be_success
+            expect(order.reload.ship_address.address1).to eq('2 Column Way')
           end
         end
 
