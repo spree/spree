@@ -9,7 +9,6 @@ module Spree
     belongs_to :seller_requirement, class_name: 'Spree::SellerRequirement'
     belongs_to :custom_field_definition, class_name: 'Spree::CustomFieldDefinition'
 
-    validates :seller_requirement, :custom_field_definition, presence: true
     validates :custom_field_definition_id, uniqueness: { scope: :seller_requirement_id }, allow_nil: true
     validate :definition_must_describe_a_seller
 

@@ -41,7 +41,7 @@ module Spree
 
     after_create :apply_to_stock_level
 
-    validates :stock_level, :quantity, :kind, presence: true
+    validates :quantity, :kind, presence: true
     validates :kind, inclusion: { in: KINDS }, allow_blank: true
     validates :quantity, numericality: {
       other_than: 0,
@@ -90,8 +90,14 @@ module Spree
       Spree.t('stock_movement.reasons.manual_adjustment', locale: :en)
     end
 
+    # A movement is an immutable audit row: once written, nothing may rewrite
+    # it. The guard is against an *update*, so it reads `persisted?` at the
+    # moment the save begins rather than afterwards — a parent's autosave can
+    # insert this row while its own save is still in flight (the stock level
+    # holds it through `inverse_of`), which leaves it persisted mid-insert. That
+    # row is being created, not updated, so it must still be allowed to finish.
     def readonly?
-      persisted?
+      persisted? && !being_created?
     end
 
     # @deprecated Use {#stock_level}; removed in 6.1.
@@ -107,6 +113,21 @@ module Spree
     end
 
     private
+
+    # Re-entrant: a parent's autosave can call this again from inside the outer
+    # save, and the inner call must not clear the outer one's guard.
+    def create_or_update(...)
+      @create_depth = @create_depth.to_i + 1
+      @being_created = true if new_record?
+      super
+    ensure
+      @create_depth -= 1
+      @being_created = false if @create_depth.zero?
+    end
+
+    def being_created?
+      @being_created.present?
+    end
 
     # The single place count_on_hand and allocated_count change.
     #

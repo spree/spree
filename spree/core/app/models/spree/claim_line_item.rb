@@ -13,7 +13,6 @@ module Spree
     # Photographic evidence of damage, supplied by the customer.
     has_many_attached :images
 
-    validates :line_item, :variant, presence: true
     validates :quantity, numericality: { greater_than: 0 }
     validates :refund_amount, numericality: { greater_than_or_equal_to: 0 }
 

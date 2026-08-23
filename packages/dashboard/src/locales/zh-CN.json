@@ -2363,6 +2363,9 @@
         },
         "fully_fulfilled": "此订单已全部履行，无法再编辑。"
       },
+      "errors": {
+        "failed_to_update_address": "更新地址失败"
+      },
       "fulfill": {
         "action": "标记为已发货",
         "empty": "此发货单中没有可发货的商品。",

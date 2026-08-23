@@ -34,7 +34,7 @@ module Spree
     # position would 422. Default to the end of the channel's list instead.
     before_validation :set_position_to_end, on: :create, if: -> { position.blank? && channel.present? }
 
-    validates :type, :channel, presence: true
+    validates :type, presence: true
     # One instance of each rule kind per channel — a duplicate signal would
     # either be a no-op or fight itself in the reducer walk.
     validates :type, uniqueness: { scope: [:channel_id, *spree_base_uniqueness_scope] }

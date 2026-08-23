@@ -115,6 +115,7 @@ if method
   end
 
   credit_card = Spree::CreditCard.find_or_initialize_by(gateway_customer_profile_id: 'BGS-1234')
+  credit_card.payment_method = method
   credit_card.cc_type = 'visa'
   credit_card.month = 12
   credit_card.year = 2.years.from_now.year

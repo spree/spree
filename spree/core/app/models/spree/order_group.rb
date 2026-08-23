@@ -144,9 +144,15 @@ module Spree
     #
 
     # @return [BigDecimal] completed payments on this group, less their refunds
+    #
+    # Reads the persisted rows rather than filtering the loaded association: a
+    # payment still being validated is already held by `payments` (the
+    # association is inverse_of this group), and counting it here would have the
+    # group treat money it has not taken yet as settled — which is what
+    # `max_amount` then subtracts from the total.
     def payment_total
       @payment_total ||= begin
-        settled = payments.select { |payment| payment.status == 'completed' }
+        settled = payments.completed.to_a
         settled.sum(&:amount) - Spree::Refund.where(payment_id: settled.map(&:id)).sum(:amount)
       end
     end

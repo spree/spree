@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test'
-import { FIXTURE_PROMO_PRODUCT, login } from './helpers'
+import { FIXTURE_PROMO_PRODUCT, fillAddressForm, login } from './helpers'
 
 const ORDERS_PATH = (storeId: string) => `/${storeId}/orders`
 const DRAFTS_PATH = (storeId: string) => `/${storeId}/orders/drafts`
@@ -135,5 +135,53 @@ test.describe('order editing', () => {
     await page.getByRole('button', { name: /^save$/i }).click()
 
     await expect(page).toHaveURL(orderUrl, { timeout: 15_000 })
+  })
+})
+
+test.describe('order addresses', () => {
+  // Regression: the dashboard sent `shipping_address` while the API permitted
+  // only `ship_address`, so the request succeeded and the address never
+  // changed. Asserting on the rendered card is what catches that — the
+  // mutation itself resolved happily throughout.
+  test('saves an edited shipping address onto the order', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(NEW_ORDER_PATH(creds.store_id))
+    await expect(page.getByRole('heading', { name: CTA })).toBeVisible({ timeout: 15_000 })
+
+    await fillNewOrderForm(page, `e2e-order-address-${Date.now()}@example.com`)
+    await page.locator('button[type="submit"]').click()
+    await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/orders/or_[^/]+$`), {
+      timeout: 15_000,
+    })
+
+    // Several cards on the order page carry an Actions menu, so reach the
+    // customer card's through the heading that names it.
+    const customerCard = page.locator('[data-slot="card"]').filter({
+      has: page.locator('[data-slot="card-title"]', { hasText: /^Customer$/ }),
+    })
+    await customerCard.getByRole('button', { name: /actions/i }).click()
+    await page.getByRole('menuitem', { name: /edit shipping address/i }).click()
+
+    // Named, because the country and state comboboxes inside the sheet are
+    // themselves dialogs.
+    const dialog = page.getByRole('dialog', { name: /edit shipping address/i })
+    await expect(dialog).toBeVisible({ timeout: 15_000 })
+
+    const street = `${Date.now()} Vine Street`
+    await fillAddressForm(page, {
+      firstName: 'Ada',
+      lastName: 'Lovelace',
+      address1: street,
+      city: 'Brooklyn',
+      postalCode: '11201',
+      phone: '555-0142',
+      country: 'United States',
+      state: 'New York',
+    })
+
+    await dialog.getByRole('button', { name: /^save$/i }).click()
+
+    await expect(dialog).toBeHidden({ timeout: 15_000 })
+    await expect(page.getByText(street)).toBeVisible({ timeout: 15_000 })
   })
 })

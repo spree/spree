@@ -119,7 +119,7 @@ module Spree
                                                              class_name: 'Spree::Promotion',
                                                              source: :promotion
 
-    belongs_to :tax_category, class_name: 'Spree::TaxCategory'
+    belongs_to :tax_category, class_name: 'Spree::TaxCategory', optional: true
     belongs_to :product_type, class_name: 'Spree::ProductType', optional: true, counter_cache: :products_count
     # The seller this product belongs to on a marketplace. Nil is the
     # operator's own catalog — which is everything, on a store selling only

@@ -7,7 +7,6 @@ module Spree
     belongs_to :variant, class_name: 'Spree::Variant', touch: true
     belongs_to :asset, class_name: 'Spree::Media', foreign_key: :media_id, inverse_of: :variant_media
 
-    validates :variant, :asset, presence: true
     validates :media_id, uniqueness: { scope: :variant_id }
     validate :asset_belongs_to_variant_product
 

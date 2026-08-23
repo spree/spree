@@ -6,7 +6,6 @@ module Spree
     belongs_to :promotion_rule, class_name: 'Spree::PromotionRule'
     belongs_to :category, class_name: 'Spree::Category'
 
-    validates :promotion_rule, :category, presence: true
     validates :promotion_rule_id, uniqueness: { scope: :category_id }, allow_nil: true
 
     # @deprecated Use #category / #category=; removed in 6.1.

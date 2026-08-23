@@ -10,7 +10,6 @@ module Spree
     has_one_attached :attachment, service: Spree.private_storage_service_name
 
     validates :attachment, attached: true
-    validates :variant, presence: true
 
     delegate :product, to: :variant
     delegate :filename, :content_type, to: :attachment

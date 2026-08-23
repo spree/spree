@@ -231,7 +231,7 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
             type: :string,
             description: "Stock Location ID to prefer for fulfillment. Re-runs Order Routing's PreferredLocation rule on subsequent shipment rebuilds."
           },
-          ship_address: {
+          shipping_address: {
             type: :object,
             properties: {
               firstname: { type: :string },
@@ -244,7 +244,7 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
               phone: { type: :string }
             }
           },
-          bill_address: {
+          billing_address: {
             type: :object,
             properties: {
               firstname: { type: :string },

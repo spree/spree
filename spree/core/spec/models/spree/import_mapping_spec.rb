@@ -10,7 +10,7 @@ RSpec.describe Spree::ImportMapping, type: :model do
       it 'validates presence of import' do
         mapping = build(:import_mapping, import: nil)
         expect(mapping).not_to be_valid
-        expect(mapping.errors[:import]).to include("can't be blank")
+        expect(mapping.errors[:import]).to include('must exist')
       end
 
       it 'validates presence of schema_field' do

@@ -933,4 +933,43 @@ describe Spree::Address, type: :model do
       end
     end
   end
+
+  describe '.find_duplicate' do
+    let(:country) { create(:country, iso: 'US') }
+    let(:state) { create(:state, country: country, abbr: 'NY', name: 'New York') }
+    let!(:address) { create(:address, country: country, state: state, address1: '1 Dup Lane') }
+
+    it 'finds an address matching the given attributes' do
+      attributes = address.attributes.symbolize_keys.slice(:firstname, :lastname, :address1, :city, :zipcode, :country_code, :state_code)
+
+      expect(described_class.find_duplicate(attributes)).to eq(address)
+    end
+
+    it 'matches a state given by name rather than code' do
+      attributes = address.attributes.symbolize_keys.
+                   slice(:firstname, :lastname, :address1, :city, :zipcode, :country_code).
+                   merge(state_name: 'New York')
+
+      expect(described_class.find_duplicate(attributes)).to eq(address)
+    end
+
+    it 'ignores identity and timestamp keys' do
+      attributes = address.attributes.symbolize_keys.
+                   slice(:firstname, :lastname, :address1, :city, :zipcode, :country_code, :state_code).
+                   merge(id: 0, created_at: 1.day.ago, updated_at: 1.day.ago)
+
+      expect(described_class.find_duplicate(attributes)).to eq(address)
+    end
+
+    it 'does not match a deleted address' do
+      address.update_column(:deleted_at, Time.current)
+      attributes = address.attributes.symbolize_keys.slice(:firstname, :lastname, :address1, :city, :zipcode, :country_code, :state_code)
+
+      expect(described_class.find_duplicate(attributes)).to be_nil
+    end
+
+    it 'returns nil when nothing matches' do
+      expect(described_class.find_duplicate(address1: 'nowhere at all')).to be_nil
+    end
+  end
 end

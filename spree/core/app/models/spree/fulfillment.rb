@@ -46,7 +46,6 @@ module Spree
     before_validation :set_cost_zero_when_nil
     before_save :detect_tracking_carrier, if: -> { will_save_change_to_tracking? && tracking_carrier.blank? }
 
-    validates :stock_location, presence: true
     validate :exactly_one_owner
 
     attr_accessor :special_instructions

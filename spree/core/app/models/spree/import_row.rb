@@ -15,7 +15,7 @@ module Spree
     #
     # Validations
     #
-    validates :import, :data, presence: true
+    validates :data, presence: true
     validates :row_number, uniqueness: { scope: :import_id }, numericality: { only_integer: true, greater_than: 0 }, presence: true
 
     #

@@ -38,7 +38,6 @@ module Spree
     has_many :refunds, class_name: 'Spree::Refund', as: :originator, dependent: :nullify
     has_many :store_credits, class_name: 'Spree::StoreCredit', as: :originator, dependent: :nullify
 
-    validates :order, :stock_location, presence: true
     validates :return_line_items, presence: true, on: :create
 
     accepts_nested_attributes_for :return_line_items, allow_destroy: true

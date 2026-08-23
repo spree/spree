@@ -29,7 +29,7 @@ module Spree
     end
 
     validates :code, presence: true, uniqueness: { scope: spree_base_uniqueness_scope, conditions: -> { where(deleted_at: nil) } }
-    validates :state, :promotion, presence: true
+    validates :state, presence: true
 
     self.whitelisted_ransackable_attributes = %w[state code promotion_id]
     self.whitelisted_ransackable_associations = %w[promotion]

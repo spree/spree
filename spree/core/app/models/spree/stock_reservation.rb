@@ -11,7 +11,7 @@ module Spree
 
     alias_attribute :stock_item_id, :stock_level_id
 
-    validates :stock_level, :line_item, :quantity, :expires_at, presence: true
+    validates :quantity, :expires_at, presence: true
     validate :exactly_one_owner
     validates :quantity, numericality: { greater_than: 0, only_integer: true }, presence: true
     validates :line_item_id, uniqueness: { scope: :stock_level_id }, presence: true

@@ -25,7 +25,6 @@ module Spree
     belongs_to :originator, polymorphic: true, optional: true
 
     with_options presence: true do
-      validates :payment, :reason
       # not required on create — perform! sets it after the gateway credit
       validates :transaction_id, on: :update
       validates :amount, numericality: { greater_than: 0, allow_nil: true }

@@ -2391,6 +2391,9 @@
         },
         "fully_fulfilled": "To zamówienie jest w pełni zrealizowane i nie można go już edytować."
       },
+      "errors": {
+        "failed_to_update_address": "Nie udało się zaktualizować adresu"
+      },
       "fulfill": {
         "action": "Oznacz jako wysłane",
         "empty": "Ta przesyłka nie zawiera pozycji, które można wysłać.",

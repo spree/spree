@@ -22,7 +22,7 @@ module Spree
       greater_than: 0,
       less_than_or_equal_to: ->(_record) { Spree::Config[:gift_card_batch_limit].to_i }
     }
-    validates :store, :currency, presence: true
+    validates :currency, presence: true
     validates :amount, numericality: { greater_than: 0 }
 
     #

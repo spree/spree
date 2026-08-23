@@ -4,7 +4,6 @@ module Spree
     belongs_to :customer, class_name: "::#{Spree.customer_class}"
     include Spree::DeprecatedCustomerAlias
 
-    validates :user, :promotion_rule, presence: true
     validates :user_id, uniqueness: { scope: :promotion_rule_id }, allow_nil: true
   end
 end

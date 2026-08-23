@@ -13,7 +13,6 @@ module Spree
     #
     # Validations
     #
-    validates :role, presence: true
     validates :user, presence: true
     validates :role_id, uniqueness: { scope: [:user_id, :user_type] }
 

@@ -182,7 +182,7 @@ module Spree
               country_code: other_country.iso, state_abbr: other_state.abbr
             }
           end
-          let(:params) { { ship_address_attributes: new_address_attrs } }
+          let(:params) { { shipping_address: new_address_attrs } }
 
           it 'rebuilds shipments against the new address' do
             old_shipment_ids = order.shipments.map(&:id)
@@ -196,6 +196,69 @@ module Spree
             new_shipment_ids = order.shipments.map(&:id)
             expect(new_shipment_ids).not_to be_empty
             expect(new_shipment_ids & old_shipment_ids).to be_empty
+          end
+        end
+
+        # The admin controller sends the public names; the column names and the
+        # Rails nested-attributes key stay accepted for existing callers.
+        %i[shipping_address ship_address ship_address_attributes].each do |key|
+          context "when the shipping address arrives as #{key}" do
+            let(:params) { { key => attributes_for(:address).merge(address1: '1 Accepted Way') } }
+
+            it 'applies the address' do
+              expect(subject).to be_success
+              expect(order.reload.ship_address.address1).to eq('1 Accepted Way')
+            end
+          end
+        end
+
+        # Every spelling is removed from the payload, so a client sending more
+        # than one never leaves a key behind: a stray hash would reach the
+        # belongs_to writer, and a stray `_attributes` key would quietly
+        # overwrite the address applied here.
+        context 'when the payload carries several spellings' do
+          let(:params) do
+            {
+              shipping_address: attributes_for(:address).merge(address1: '1 Public Way'),
+              ship_address: attributes_for(:address).merge(address1: '2 Column Way'),
+              ship_address_attributes: attributes_for(:address).merge(address1: '3 Nested Way')
+            }
+          end
+
+          it 'applies the public name and ignores the rest' do
+            expect(subject).to be_success
+            expect(order.reload.ship_address.address1).to eq('1 Public Way')
+          end
+        end
+
+        context 'when only the column and nested spellings are sent' do
+          let(:params) do
+            {
+              ship_address: attributes_for(:address).merge(address1: '2 Column Way'),
+              ship_address_attributes: attributes_for(:address).merge(address1: '3 Nested Way')
+            }
+          end
+
+          it 'prefers the column name' do
+            expect(subject).to be_success
+            expect(order.reload.ship_address.address1).to eq('2 Column Way')
+          end
+        end
+
+        # The address rows are written before the order itself is saved, so a
+        # failure afterwards has to take them with it.
+        context 'when a scalar attribute is invalid alongside a valid address' do
+          let(:params) do
+            {
+              shipping_address: attributes_for(:address).merge(address1: '9 Rolled Back Rd'),
+              payment_status: 'not-a-real-status'
+            }
+          end
+
+          it 'fails and leaves no address behind' do
+            expect(subject).to be_failure
+            expect(order.reload.ship_address.address1).not_to eq('9 Rolled Back Rd')
+            expect(Spree::Address.where(address1: '9 Rolled Back Rd')).to be_empty
           end
         end
 
@@ -249,7 +312,7 @@ module Spree
 
           # Move to a different country — shipments rebuild, promo must re-apply
           described_class.call(order: order, params: {
-            ship_address_attributes: {
+            shipping_address: {
               firstname: 'Bob', lastname: 'Stone',
               address1: '99 New Street', city: 'Other City',
               zipcode: Spree::TestingSupport::CountryPool.postal_code_for(other_country.iso),

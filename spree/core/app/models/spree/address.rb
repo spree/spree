@@ -151,6 +151,22 @@ module Spree
       params
     end
 
+    # Finds an existing, undeleted address matching the given attributes, so a
+    # customer re-entering an address they already have reuses that row rather
+    # than accumulating duplicates. Geography is matched by code, and a state
+    # given by name is resolved to the codes it could mean.
+    #
+    # @param attributes [Hash]
+    # @return [Spree::Address, nil]
+    def self.find_duplicate(attributes)
+      attributes = resolve_geo_params(attributes.except(:id, :updated_at, :created_at))
+      state_name = attributes[:state_name]
+
+      scope = not_deleted.where(attributes.except(:state_name))
+      scope = scope.by_state_name_or_abbr(state_name) if state_name.present?
+      scope.first
+    end
+
     self.whitelisted_ransackable_attributes = ADDRESS_FIELDS + %w[country_code state_code]
     self.whitelisted_ransackable_associations = %w[customer]
 
@@ -270,12 +286,6 @@ module Spree
 
     def can_be_deleted?
       shipments.empty? && Order.complete.where('bill_address_id = ? OR ship_address_id = ?', id, id).none?
-    end
-
-    def check
-      attrs = attributes.except('id', 'updated_at', 'created_at')
-      the_same_address = customer&.addresses&.find_by(attrs)
-      the_same_address || self
     end
 
     def destroy

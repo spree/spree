@@ -18,7 +18,6 @@ module Spree
     belongs_to :line_item
 
     before_validation :set_defaults, on: :create
-    validates :digital, :line_item, presence: true
     validates :access_counter, numericality: { greater_than_or_equal_to: 0 }
 
     delegate :filename, :content_type, to: :digital

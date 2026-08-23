@@ -15,6 +15,11 @@ module Spree
         belongs_to :bill_address, class_name: 'Spree::Address', optional: true, dependent: :destroy
         belongs_to :ship_address, class_name: 'Spree::Address', optional: true, dependent: :destroy
 
+        # The writers these generate are shadowed by the hand-written ones
+        # below, which deduplicate address rows. The declarations still earn
+        # their place: ParamsNormalizer reads nested_attributes_options to
+        # rewrite an incoming `ship_address` hash to `ship_address_attributes`,
+        # so dropping them sends a raw hash to the belongs_to writer instead.
         accepts_nested_attributes_for :bill_address
         accepts_nested_attributes_for :ship_address
 
@@ -200,22 +205,7 @@ module Spree
         attributes = attributes.except(:id, :updated_at, :created_at)
         attributes[:customer_id] = customer&.id
 
-        existing_address = find_existing_address(attributes)
-        return existing_address if existing_address
-
-        ::Spree::Address.create(attributes)
-      end
-
-      def find_existing_address(attributes)
-        # Geography is matched by code.
-        attributes = Spree::Address.resolve_geo_params(attributes)
-
-        state_name = attributes[:state_name]
-        address_attributes = attributes.except(:state_name)
-
-        scope = Spree::Address.not_deleted.where(address_attributes)
-        scope = scope.by_state_name_or_abbr(state_name) if state_name.present?
-        scope.first
+        ::Spree::Address.find_duplicate(attributes) || ::Spree::Address.create(attributes)
       end
 
       def quick_checkout_address?(quick_checkout_param)

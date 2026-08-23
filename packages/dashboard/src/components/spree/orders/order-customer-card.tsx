@@ -20,30 +20,30 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@spree/dashboard-ui'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { EllipsisVerticalIcon, PencilIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+import { useOrderMutation } from '../../../hooks/use-order'
 
+/**
+ * Who the order is for and where it is going. The only place a placed order's
+ * addresses can be changed, so each save writes straight through rather than
+ * waiting for a page-level submit.
+ */
 export function CustomerCard({ order }: { order: Order }) {
   const { t } = useTranslation()
   const orderId = order.id
-  const queryClient = useQueryClient()
   const customer = order.customer
   const [editAddress, setEditAddress] = useState<'shipping_address' | 'billing_address' | null>(
     null,
   )
 
-  const addressMutation = useMutation({
-    mutationFn: (params: {
-      type: 'shipping_address' | 'billing_address'
-      address: AddressParams
-    }) => adminClient.orders.update(orderId, { [params.type]: params.address } as any),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['order', orderId] })
-      setEditAddress(null)
-    },
-  })
+  const addressMutation = useOrderMutation(
+    orderId,
+    (params: { type: 'shipping_address' | 'billing_address'; address: AddressParams }) =>
+      adminClient.orders.update(orderId, { [params.type]: params.address }),
+  )
 
   const editTitle =
     editAddress === 'shipping_address'
@@ -115,7 +115,22 @@ export function CustomerCard({ order }: { order: Order }) {
           }
           open={!!editAddress}
           onOpenChange={(open) => !open && setEditAddress(null)}
-          onSave={(address) => addressMutation.mutate({ type: editAddress, address })}
+          onSave={(address) =>
+            addressMutation.mutate(
+              { type: editAddress, address },
+              {
+                onSuccess: () => setEditAddress(null),
+                // The dialog stays open on failure so the entered address is
+                // not lost and can be corrected and resubmitted.
+                onError: (error) =>
+                  toast.error(
+                    error instanceof Error
+                      ? error.message
+                      : t('admin.orders.errors.failed_to_update_address'),
+                  ),
+              },
+            )
+          }
           isPending={addressMutation.isPending}
         />
       )}

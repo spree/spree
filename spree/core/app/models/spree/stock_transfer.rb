@@ -24,7 +24,6 @@ module Spree
 
     validate :source_location_is_not_destination_location
     validate :stock_movements_not_empty
-    validates :destination_location, presence: true
 
     # Transfers have no store of their own — they belong to the warehouses
     # they move stock between, and those are store-scoped. Used by

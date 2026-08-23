@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::CreditCard, type: :model do
   it_behaves_like 'metadata'
 
-  let(:credit_card) { Spree::CreditCard.new }
+  let(:credit_card) { Spree::CreditCard.new(payment_method: payment_method) }
   let(:valid_credit_card_attributes) do
     {
       number: '4111111111111111',

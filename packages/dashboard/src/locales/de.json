@@ -2367,6 +2367,9 @@
         },
         "fully_fulfilled": "Diese Bestellung ist vollständig abgewickelt und kann nicht mehr bearbeitet werden."
       },
+      "errors": {
+        "failed_to_update_address": "Adresse konnte nicht aktualisiert werden"
+      },
       "fulfill": {
         "action": "Als versendet markieren",
         "empty": "Diese Sendung enthält keine versandfähigen Artikel.",
