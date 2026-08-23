@@ -97,7 +97,11 @@ function SettingsCard({ entry }: { entry: SettingsNavEntry }) {
           checked against the generated route tree. */}
       <Link
         to={`/${storeId}/settings${entry.path}` as never}
-        className="flex h-full items-start gap-3 rounded-xl p-4 outline-none"
+        // The whole card is the target, so without a replacement for the
+        // suppressed outline a keyboard user tabbing the grid cannot tell which
+        // card they are on. A solid ring rather than the border pair buttons
+        // use: this link draws no border of its own to recolour.
+        className="flex h-full items-start gap-3 rounded-xl p-4 outline-none focus-visible:shadow-[0_0_0_2px_var(--ring)]"
       >
         <Icon className="mt-0.5 size-6 shrink-0 text-muted-foreground opacity-80 hover:opacity-100" />
         <span className="flex min-w-0 flex-col gap-1">
