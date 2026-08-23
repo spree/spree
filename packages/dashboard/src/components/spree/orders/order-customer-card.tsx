@@ -20,30 +20,24 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@spree/dashboard-ui'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { EllipsisVerticalIcon, PencilIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useOrderMutation } from '../../../hooks/use-order'
 
 export function CustomerCard({ order }: { order: Order }) {
   const { t } = useTranslation()
   const orderId = order.id
-  const queryClient = useQueryClient()
   const customer = order.customer
   const [editAddress, setEditAddress] = useState<'shipping_address' | 'billing_address' | null>(
     null,
   )
 
-  const addressMutation = useMutation({
-    mutationFn: (params: {
-      type: 'shipping_address' | 'billing_address'
-      address: AddressParams
-    }) => adminClient.orders.update(orderId, { [params.type]: params.address }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['order', orderId] })
-      setEditAddress(null)
-    },
-  })
+  const addressMutation = useOrderMutation(
+    orderId,
+    (params: { type: 'shipping_address' | 'billing_address'; address: AddressParams }) =>
+      adminClient.orders.update(orderId, { [params.type]: params.address }),
+  )
 
   const editTitle =
     editAddress === 'shipping_address'
@@ -115,7 +109,12 @@ export function CustomerCard({ order }: { order: Order }) {
           }
           open={!!editAddress}
           onOpenChange={(open) => !open && setEditAddress(null)}
-          onSave={(address) => addressMutation.mutate({ type: editAddress, address })}
+          onSave={(address) =>
+            addressMutation.mutate(
+              { type: editAddress, address },
+              { onSuccess: () => setEditAddress(null) },
+            )
+          }
           isPending={addressMutation.isPending}
         />
       )}
