@@ -272,12 +272,6 @@ module Spree
       shipments.empty? && Order.complete.where('bill_address_id = ? OR ship_address_id = ?', id, id).none?
     end
 
-    def check
-      attrs = attributes.except('id', 'updated_at', 'created_at')
-      the_same_address = customer&.addresses&.find_by(attrs)
-      the_same_address || self
-    end
-
     def destroy
       assign_new_default_address_to_user
 

@@ -15,6 +15,11 @@ module Spree
         belongs_to :bill_address, class_name: 'Spree::Address', optional: true, dependent: :destroy
         belongs_to :ship_address, class_name: 'Spree::Address', optional: true, dependent: :destroy
 
+        # The writers these generate are shadowed by the hand-written ones
+        # below, which deduplicate address rows. The declarations still earn
+        # their place: ParamsNormalizer reads nested_attributes_options to
+        # rewrite an incoming `ship_address` hash to `ship_address_attributes`,
+        # so dropping them sends a raw hash to the belongs_to writer instead.
         accepts_nested_attributes_for :bill_address
         accepts_nested_attributes_for :ship_address
 
