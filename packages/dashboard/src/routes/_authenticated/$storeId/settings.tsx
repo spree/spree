@@ -8,6 +8,11 @@ export const Route = createFileRoute('/_authenticated/$storeId/settings')({
  * Settings content padding. The secondary sidebar lives one level up, in
  * `_authenticated/$storeId.tsx`, so it can extend full-height beside the
  * TopBar. This layout owns only the right-side content padding.
+ *
+ * Every settings page inherits the container from here — a page must NOT add
+ * its own `p-4`/`container`/`mx-auto`, or it double-pads and drifts from the
+ * rest of the area. Start a settings page at `<div className="flex flex-col
+ * gap-6">`.
  */
 function SettingsLayout() {
   return (

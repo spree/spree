@@ -136,7 +136,6 @@ export function ConfigureIntegrationSheet({
                 <Button
                   type="button"
                   variant="destructive"
-                  size="sm"
                   onClick={handleDisconnect}
                   disabled={deleteMutation.isPending || saving}
                   className="mr-auto"
@@ -148,14 +147,13 @@ export function ConfigureIntegrationSheet({
             <Button
               type="button"
               variant="outline"
-              size="sm"
               onClick={() => onOpenChange(false)}
               disabled={saving}
             >
               {t('admin.actions.cancel')}
             </Button>
             <Can I={integration ? 'update' : 'create'} a={Subject.Integration}>
-              <Button type="button" size="sm" onClick={handleSave} disabled={saving}>
+              <Button type="button" onClick={handleSave} disabled={saving}>
                 {saving
                   ? t('admin.actions.saving')
                   : integration

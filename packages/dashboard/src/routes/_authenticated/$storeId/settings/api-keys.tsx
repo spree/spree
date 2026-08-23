@@ -54,6 +54,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  toastManager,
   useConfirm,
   useCopyToClipboard,
 } from '@spree/dashboard-ui'
@@ -71,7 +72,6 @@ import {
 import { useEffect, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { z } from 'zod/v4'
 import { PermissionGrid } from '../../../../components/spree/permission-picker'
 import {
@@ -116,7 +116,7 @@ function ApiKeysSettingsPage() {
         title={t('admin.pages.settings.api_keys.title')}
         subtitle={t('admin.pages.settings.api_keys.subtitle')}
         actions={
-          <Button size="sm" onClick={() => setCreateOpen(true)}>
+          <Button onClick={() => setCreateOpen(true)}>
             <PlusIcon className="size-4" />
             {t('admin.pages.settings.api_keys.new_cta')}
           </Button>
@@ -298,9 +298,12 @@ function ApiKeyRow({
 
     try {
       await revokeMutation.mutateAsync(apiKey.id)
-      toast.success(t('admin.messages.key_revoked'))
+      toastManager.add({ type: 'success', title: t('admin.messages.key_revoked') })
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : t('admin.errors.failed_to_revoke_key'))
+      toastManager.add({
+        type: 'error',
+        title: err instanceof Error ? err.message : t('admin.errors.failed_to_revoke_key'),
+      })
     }
   }
 
@@ -315,9 +318,12 @@ function ApiKeyRow({
 
     try {
       await deleteMutation.mutateAsync(apiKey.id)
-      toast.success(t('admin.messages.key_deleted'))
+      toastManager.add({ type: 'success', title: t('admin.messages.key_deleted') })
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : t('admin.api_keys.errors.failed_to_delete'))
+      toastManager.add({
+        type: 'error',
+        title: err instanceof Error ? err.message : t('admin.api_keys.errors.failed_to_delete'),
+      })
     }
   }
 
@@ -563,13 +569,16 @@ function CreateApiKeyDialog({
     }
     try {
       const key = await createMutation.mutateAsync(params)
-      toast.success(t('admin.messages.key_created'))
+      toastManager.add({ type: 'success', title: t('admin.messages.key_created') })
       form.reset({ name: '', key_type: 'secret', scopes: [], channel_id: '' })
       onCreated(key)
     } catch (err) {
       if (mapSpreeErrorsToForm(err, form.setError)) return
       if (err instanceof SpreeError) throw err
-      toast.error(err instanceof Error ? err.message : t('admin.api_keys.errors.failed_to_create'))
+      toastManager.add({
+        type: 'error',
+        title: err instanceof Error ? err.message : t('admin.api_keys.errors.failed_to_create'),
+      })
     }
   }
 
@@ -661,13 +670,12 @@ function CreateApiKeyDialog({
             <Button
               type="button"
               variant="outline"
-              size="sm"
               onClick={() => onOpenChange(false)}
               disabled={form.formState.isSubmitting}
             >
               {t('admin.actions.cancel')}
             </Button>
-            <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
+            <Button type="submit" disabled={form.formState.isSubmitting}>
               {form.formState.isSubmitting
                 ? t('admin.actions.creating')
                 : t('admin.api_keys.create_key_cta')}
@@ -716,12 +724,15 @@ function EditApiKeyDialog({
     if (!apiKey) return
     try {
       await updateMutation.mutateAsync({ id: apiKey.id, params: { name: values.name } })
-      toast.success(t('admin.messages.key_updated'))
+      toastManager.add({ type: 'success', title: t('admin.messages.key_updated') })
       onOpenChange(false)
     } catch (err) {
       if (mapSpreeErrorsToForm(err, form.setError)) return
       if (err instanceof SpreeError) throw err
-      toast.error(err instanceof Error ? err.message : t('admin.api_keys.errors.failed_to_update'))
+      toastManager.add({
+        type: 'error',
+        title: err instanceof Error ? err.message : t('admin.api_keys.errors.failed_to_update'),
+      })
     }
   }
 
@@ -757,13 +768,12 @@ function EditApiKeyDialog({
             <Button
               type="button"
               variant="outline"
-              size="sm"
               onClick={() => onOpenChange(false)}
               disabled={form.formState.isSubmitting}
             >
               {t('admin.actions.cancel')}
             </Button>
-            <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
+            <Button type="submit" disabled={form.formState.isSubmitting}>
               {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
             </Button>
           </SheetFooter>
@@ -990,9 +1000,7 @@ function TokenRevealDialog({
           )}
         </DialogBody>
         <DialogFooter>
-          <Button size="sm" onClick={() => onOpenChange(false)}>
-            {t('admin.actions.done')}
-          </Button>
+          <Button onClick={() => onOpenChange(false)}>{t('admin.actions.done')}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

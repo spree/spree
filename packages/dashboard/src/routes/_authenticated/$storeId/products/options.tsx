@@ -60,6 +60,7 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
+  toastManager,
   useConfirm,
   useRowClickBridge,
 } from '@spree/dashboard-ui'
@@ -82,7 +83,6 @@ import {
   useForm,
 } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { z } from 'zod/v4'
 import { ResourceTranslationsDialog } from '../../../../components/spree/translations/resource-translations-dialog'
 import {
@@ -253,13 +253,12 @@ function CreateOptionTypeSheet({
             <Button
               type="button"
               variant="outline"
-              size="sm"
               onClick={() => onOpenChange(false)}
               disabled={form.formState.isSubmitting}
             >
               {t('admin.actions.cancel')}
             </Button>
-            <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
+            <Button type="submit" disabled={form.formState.isSubmitting}>
               {form.formState.isSubmitting
                 ? t('admin.actions.creating')
                 : t('admin.products.options.create_label')}
@@ -372,7 +371,6 @@ function EditOptionTypeSheet({
               <Button
                 type="button"
                 variant="outline"
-                size="sm"
                 onClick={() => onOpenChange(false)}
                 disabled={form.formState.isSubmitting}
               >
@@ -380,7 +378,6 @@ function EditOptionTypeSheet({
               </Button>
               <Button
                 type="submit"
-                size="sm"
                 disabled={form.formState.isSubmitting || !form.formState.isDirty}
               >
                 {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
@@ -576,7 +573,7 @@ function OptionValuesFieldArray({
                   />
                 ))}
                 <TableRow className="hover:bg-transparent">
-                  <TableCell colSpan={totalColCount} className="p-0">
+                  <TableCell colSpan={totalColCount} className="h-auto p-0">
                     <button
                       type="button"
                       onClick={() =>
@@ -761,7 +758,7 @@ function OptionValueImageField({
     } catch (err) {
       const message =
         err instanceof Error ? err.message : t('admin.products.options.image_upload_failed')
-      toast.error(message)
+      toastManager.add({ type: 'error', title: message })
     } finally {
       setUploading(false)
       if (fileInputRef.current) fileInputRef.current.value = ''

@@ -42,7 +42,6 @@ import { AlertTriangleIcon, PencilIcon, PlayIcon, RotateCcwIcon } from 'lucide-r
 import { lazy, Suspense } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { z } from 'zod/v4'
 import { WebhookEndpointFormFields } from '../../../../../components/spree/webhook-endpoint-form'
 import {
@@ -61,6 +60,8 @@ import {
   webhookEndpointFormSchema,
 } from '../../../../../schemas/webhook-endpoint'
 import '../../../../../tables/webhook-deliveries'
+import { toastManager } from '@spree/dashboard-ui'
+import { spreeJsonLinkResolver } from '../../../../../lib/json-link-resolver'
 
 // `<JsonValueView>` pulls in `@uiw/react-json-view` (~30 KB gzip). Lazy-loading
 // it keeps the route's entry chunk small — the renderer only matters when an
@@ -165,13 +166,18 @@ function WebhookEndpointDetailBody({ endpoint }: { endpoint: WebhookEndpoint }) 
   async function handleSendTest() {
     try {
       await sendTestMutation.mutateAsync(endpoint.id)
-      toast.success(t('admin.pages.settings.webhooks.deliveries.test_sent'))
+      toastManager.add({
+        type: 'success',
+        title: t('admin.pages.settings.webhooks.deliveries.test_sent'),
+      })
     } catch (err) {
-      toast.error(
-        err instanceof Error
-          ? err.message
-          : t('admin.pages.settings.webhooks.deliveries.test_failed'),
-      )
+      toastManager.add({
+        type: 'error',
+        title:
+          err instanceof Error
+            ? err.message
+            : t('admin.pages.settings.webhooks.deliveries.test_failed'),
+      })
     }
   }
 
@@ -226,12 +232,17 @@ function WebhookEndpointDetailBody({ endpoint }: { endpoint: WebhookEndpoint }) 
             subtitle={endpoint.name ? <CopyableUrl url={endpoint.url} /> : undefined}
             backTo="settings/webhooks"
             resource={{ id: endpoint.id }}
+            jsonPreview={{
+              title: `Webhook ${endpoint.url}`,
+              fetch: () => adminClient.webhookEndpoints.get(endpoint.id),
+              endpoint: `/api/v3/admin/webhook_endpoints/${endpoint.id}`,
+              resolveLink: spreeJsonLinkResolver(storeId),
+            }}
             onDelete={handleDelete}
             deleteLabel={t('admin.pages.settings.webhooks.detail.delete_label')}
             actions={
               <Can I="update" a={Subject.WebhookEndpoint}>
                 <Button
-                  size="sm"
                   variant="outline"
                   onClick={handleSendTest}
                   disabled={sendTestMutation.isPending || !!endpoint.disabled_at}
@@ -239,9 +250,13 @@ function WebhookEndpointDetailBody({ endpoint }: { endpoint: WebhookEndpoint }) 
                   <PlayIcon className="size-4" />
                   {t('admin.pages.settings.webhooks.actions.send_test')}
                 </Button>
-                <Button size="sm" variant="outline" onClick={openEdit}>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={openEdit}
+                  aria-label={t('admin.actions.edit')}
+                >
                   <PencilIcon className="size-4" />
-                  {t('admin.actions.edit')}
                 </Button>
               </Can>
             }
@@ -521,17 +536,12 @@ function EditEndpointSheet({
             <Button
               type="button"
               variant="outline"
-              size="sm"
               onClick={() => onOpenChange(false)}
               disabled={form.formState.isSubmitting}
             >
               {t('admin.actions.cancel')}
             </Button>
-            <Button
-              type="submit"
-              size="sm"
-              disabled={form.formState.isSubmitting || !form.formState.isDirty}
-            >
+            <Button type="submit" disabled={form.formState.isSubmitting || !form.formState.isDirty}>
               {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
             </Button>
           </SheetFooter>
@@ -717,12 +727,14 @@ function DeliveryDetailSheet({
           <SheetFooter>
             <Button
               type="button"
-              size="sm"
               onClick={() =>
                 redeliver
                   .mutateAsync(deliveryId)
                   .then(() =>
-                    toast.success(t('admin.pages.settings.webhooks.deliveries.redeliver_queued')),
+                    toastManager.add({
+                      type: 'success',
+                      title: t('admin.pages.settings.webhooks.deliveries.redeliver_queued'),
+                    }),
                   )
                   .catch(() => undefined)
               }

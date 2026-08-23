@@ -133,6 +133,16 @@ describe('nav child mutators', () => {
     expect(() => nav.updateChild('products', 'nope', { label: 'X' })).toThrow(/not found/)
   })
 
+  it('leaves the entry untouched when an update would strip its label', () => {
+    const before = __getNavEntries().find((e) => e.key === 'products')?.label
+
+    expect(() => nav.update('products', { label: undefined, labelKey: undefined })).toThrow()
+
+    // A rejected patch must not be half-applied: an entry left with no label
+    // renders as its raw key on every surface that reads the registry.
+    expect(__getNavEntries().find((e) => e.key === 'products')?.label).toBe(before)
+  })
+
   it('addChild rejects a duplicate child key', () => {
     expect(() =>
       nav.addChild('products', {

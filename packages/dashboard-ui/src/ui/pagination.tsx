@@ -38,16 +38,16 @@ export function Pagination({
 
   return (
     <div className="flex items-center justify-between border-t border-border-subtle pr-3 pl-4 py-2">
-      <div className="text-sm text-muted-foreground">
+      <div className="whitespace-nowrap text-sm text-muted-foreground">
         {t('admin.components.pagination.range', {
           from: meta.from,
           to: meta.to,
           count: meta.count,
         })}
       </div>
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-2 sm:gap-6">
         {onPageSizeChange && (
-          <div className="flex items-center gap-2">
+          <div className="hidden items-center gap-2 sm:flex">
             <span className="text-sm text-muted-foreground">
               {t('admin.components.pagination.rows_per_page')}
             </span>
@@ -70,7 +70,7 @@ export function Pagination({
         )}
         {meta.pages > 1 && (
           <>
-            <span className="text-sm text-muted-foreground">
+            <span className="hidden whitespace-nowrap text-sm text-muted-foreground sm:inline">
               {t('admin.common.page_of', { page: meta.page, total: meta.pages })}
             </span>
             <div className="flex items-center gap-1">
@@ -87,6 +87,7 @@ export function Pagination({
               <Button
                 size="icon-sm"
                 variant="outline"
+                className="size-9 sm:size-8"
                 disabled={!meta.previous}
                 onClick={() => meta.previous && onPageChange(meta.previous)}
               >
@@ -96,6 +97,7 @@ export function Pagination({
               <Button
                 size="icon-sm"
                 variant="outline"
+                className="size-9 sm:size-8"
                 disabled={!meta.next}
                 onClick={() => meta.next && onPageChange(meta.next)}
               >

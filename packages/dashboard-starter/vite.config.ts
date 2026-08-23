@@ -27,9 +27,18 @@ export default defineConfig(({ mode }) => {
     // target, not VITE_SPREE_API_URL — that switches the SDK to absolute
     // cross-origin URLs and bypasses this proxy (see .env.example).
     server: {
+      // Reachable from a phone on the same network (`vite --host`) or through
+      // a tunnel: Vite otherwise rejects any request whose Host header it does
+      // not recognise. Dev server only — this file is not used for builds.
+      allowedHosts: ['.localhost', '.trycloudflare.com', '.ngrok-free.app'],
       proxy: {
-        '/api': { target: proxyTarget, changeOrigin: true },
-        '/rails': { target: proxyTarget, changeOrigin: true },
+        // `secure: false`: the worktree's Rails URL is served by portless
+        // behind a self-signed certificate, which Node refuses by default —
+        // the proxy fails with "self-signed certificate in certificate
+        // chain". Scoped to these two dev-only proxy routes rather than
+        // disabling TLS verification for the whole process.
+        '/api': { target: proxyTarget, changeOrigin: true, secure: false },
+        '/rails': { target: proxyTarget, changeOrigin: true, secure: false },
       },
     },
   }

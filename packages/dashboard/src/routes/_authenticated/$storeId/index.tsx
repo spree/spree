@@ -94,20 +94,20 @@ function AnalyticsChart({ data }: { data: DashboardAnalytics }) {
 
   return (
     <Card>
-      <CardHeader className="flex h-auto flex-col border-b p-0 sm:flex-row gap-0">
+      <CardHeader className="flex h-auto flex-row border-b p-0 gap-0">
         {CHART_METRICS.map((metric) => (
           <button
             key={metric}
             type="button"
             onClick={() => setActiveMetric(metric)}
-            className={`relative flex flex-1 flex-col justify-center gap-1 px-6 py-4 text-left ${
-              activeMetric === metric ? 'bg-muted/50' : 'hover:bg-muted/25'
-            } sm:border-l sm:first:border-l-0`}
+            className="relative flex min-w-0 flex-1 flex-col justify-center gap-1 border-l px-3 py-3 text-left transition-colors first:border-l-0 hover:bg-muted/40 sm:px-6 sm:py-4"
           >
-            <span className="text-xs text-muted-foreground">
+            <span className="truncate text-xs text-muted-foreground">
               {t(`admin.pages.home.metrics.${metric}`)}
             </span>
-            <span className="text-lg font-bold leading-none">{summaryValues[metric]}</span>
+            <span className="truncate text-base font-bold leading-none sm:text-lg">
+              {summaryValues[metric]}
+            </span>
             {activeMetric === metric && (
               <span className="absolute inset-x-0 bottom-0 h-0.5 bg-primary" />
             )}

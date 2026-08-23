@@ -4130,12 +4130,36 @@
       }
     },
     "settings_nav": {
+      "descriptions": {
+        "allowed_origins": "Domaines autorisés à appeler votre API boutique",
+        "api_keys": "Clés qui autorisent les applications et intégrations",
+        "channels": "Canaux de vente et lieux où vos produits sont proposés",
+        "commission_rates": "Ce que votre place de marché facture aux vendeurs",
+        "custom_field_definitions": "Champs supplémentaires sur les produits, commandes et clients",
+        "delivery_profiles": "Méthodes de livraison, zones et frais de port",
+        "emails": "Adresses d'expéditeur et paramètres des e-mails transactionnels",
+        "imports": "Historique des imports CSV et leurs résultats",
+        "integrations": "Connecter des prestataires d'expédition, de taxe et autres",
+        "markets": "Pays où vous vendez et leurs devises",
+        "payment_methods": "Passerelles de paiement et mode de capture",
+        "product_types": "Modèles qui préremplissent les nouveaux produits",
+        "reasons": "Motifs proposés pour retours, remboursements et réclamations",
+        "roles": "Ensembles d'autorisations attribués au personnel",
+        "seller_requirements": "Liste à compléter par les vendeurs avant validation",
+        "staff": "Personnes ayant accès à ce tableau de bord",
+        "stock_locations": "Entrepôts et points de retrait qui détiennent du stock",
+        "store": "Nom de la boutique, fuseau horaire, unités et valeurs régionales",
+        "tax_categories": "Classes de taxe attribuées aux produits",
+        "tax_rates": "Taux appliqués par marché et région",
+        "webhooks": "Points de terminaison notifiés lors d'événements"
+      },
       "groups": {
-        "audit": "Audit",
-        "fulfillment": "Traitement des commandes",
-        "payments": "Paiements et taxes",
+        "developer": "Développeur",
+        "post_sale": "Retours et vendeurs",
+        "selling": "Vente",
+        "shipping": "Expédition et livraison",
         "store": "Boutique",
-        "team": "Équipe et accès"
+        "team": "Utilisateurs et autorisations"
       },
       "items": {
         "allowed_origins": "Origines autorisées",
@@ -4161,6 +4185,13 @@
         "tax_rates": "Taux de taxe",
         "webhooks": "Webhooks"
       }
+    },
+    "settings_page": {
+      "back_to_dashboard": "Retour au tableau de bord",
+      "description": "Gérez votre boutique, votre configuration de vente et votre équipe.",
+      "no_results": "Aucun paramètre ne correspond à « {{query}} ».",
+      "search_placeholder": "Rechercher dans les paramètres",
+      "title": "Paramètres"
     },
     "setup": {
       "title": "Configurer Spree",

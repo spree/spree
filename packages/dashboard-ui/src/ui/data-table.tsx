@@ -116,7 +116,7 @@ function Table({
       // visible`, so sticky resolves against the page instead. Narrow viewports
       // keep `auto`, where scrolling a wide table sideways matters more than a
       // sticky header.
-      <div className="overflow-x-auto md:overflow-x-clip">
+      <div className="@container/table-scroll overflow-x-auto md:overflow-x-clip">
         <table
           className={cn('w-full align-top text-foreground', roundedClasses, className)}
           {...props}
@@ -132,7 +132,7 @@ function Table({
   const tableClasses = cn('w-max min-w-full align-top text-foreground', roundedClasses, className)
 
   return (
-    <div className="relative">
+    <div className="relative min-w-0">
       {/* Zero-height sticky wrapper: the pinned header overlays the sizer row
           below instead of occupying its own band. The inner div clips the
           horizontal overhang the translateX mirror produces. */}
@@ -148,7 +148,16 @@ function Table({
           </table>
         </div>
       </div>
-      <div ref={scrollRef} className="themed-scrollbar overflow-x-auto">
+      {/* `min-w-0`: without it this scroller keeps its default
+          `min-width: auto`, refuses to shrink below the table's intrinsic
+          width, and the overflow escapes to the document instead of scrolling
+          here — the whole page then lays out wider than the viewport. */}
+      <div
+        ref={scrollRef}
+        // `@container/table-scroll`: the empty-state row sizes itself to this
+        // element's width rather than the viewport's.
+        className="@container/table-scroll themed-scrollbar min-w-0 overflow-x-auto"
+      >
         <table ref={bodyTableRef} className={tableClasses} {...props}>
           {cloneElement(headerElement, {
             // The sizer: reserves the header row and drives column widths. It
@@ -218,7 +227,7 @@ function TableHead({ className, ...props }: React.ComponentProps<'th'>) {
   return (
     <th
       className={cn(
-        'text-left text-sm font-medium text-muted-foreground bg-muted p-2 whitespace-nowrap first:pl-4 last:pr-4',
+        'text-left text-sm font-medium text-muted-foreground bg-muted px-3 py-2.5 sm:p-2 whitespace-nowrap first:pl-4 last:pr-4',
         'shadow-[inset_0_-1px_0_0_var(--border-subtle)]',
         className,
       )}
@@ -247,7 +256,10 @@ function TableCell({ className, ...props }: React.ComponentProps<'td'>) {
   return (
     <td
       className={cn(
-        'py-3 px-2 border-b border-border-subtle align-middle first:pl-4 last:pr-4',
+        // `h-16` on touch is a floor, not a fixed height: a table cell treats
+        // `height` as a minimum, so a row with a thumbnail or a wrapped
+        // second line still grows past it.
+        'h-16 py-3 px-3 sm:h-auto sm:py-3 sm:px-2 border-b border-border-subtle align-middle first:pl-4 last:pr-4',
         className,
       )}
       {...props}
@@ -259,7 +271,14 @@ function TableEmpty({ children, colSpan }: { children: ReactNode; colSpan: numbe
   return (
     <tr>
       <td colSpan={colSpan} className="py-12 text-center text-muted-foreground">
-        {children}
+        {/* The cell spans the table's full scroll width, so centring inside it
+            puts the message off-screen once the table is wider than its
+            container. `sticky left-0` pins this to the scroller's left edge and
+            `100cqw` sizes it to the scroller rather than the viewport — sizing
+            it to the viewport made the row itself the widest thing in the
+            table and produced a scrollbar on a list that had nothing to
+            scroll. */}
+        <div className="sticky left-0 flex w-[100cqw] justify-center">{children}</div>
       </td>
     </tr>
   )

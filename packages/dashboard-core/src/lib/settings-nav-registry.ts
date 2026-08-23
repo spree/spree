@@ -1,5 +1,6 @@
 import type { LucideIcon } from 'lucide-react'
 import { useSyncExternalStore } from 'react'
+import { ensureLabelled, resolveNavDescription, resolveNavLabel } from './nav-registry'
 import type { ActionName, SubjectName } from './permissions'
 
 /**
@@ -22,6 +23,19 @@ export interface SettingsNavEntry {
   label?: string
   /** i18n key passed to `t(...)` at render time. Takes precedence over `label`. */
   labelKey?: string
+  /**
+   * One-line summary of what the page is for. Shown on the settings landing
+   * page under the entry's label; the sidebar ignores it.
+   */
+  description?: string
+  /** i18n key for `description`, resolved at render. Takes precedence over it. */
+  descriptionKey?: string
+  /**
+   * Extra terms that match this entry in settings search, beyond its label.
+   * Merchants search for the word they know ("VAT", "SKU", "CORS") rather than
+   * the page's name, so list those synonyms here.
+   */
+  keywords?: string[]
   /**
    * Path template, prefixed with `/$storeId/settings` at render time. Pass paths
    * like `'/general'` or `'/staff'`, NOT `/store_abc/settings/general`. The
@@ -88,9 +102,7 @@ function notify() {
 
 export const settingsNav: SettingsNavMutator = {
   add(entry) {
-    if (!entry.label && !entry.labelKey) {
-      throw new Error(`Settings nav entry "${entry.key}" must define either "label" or "labelKey".`)
-    }
+    ensureLabelled(entry, 'Settings nav entry')
     if (entries.some((e) => e.key === entry.key)) {
       throw new Error(`Settings nav entry "${entry.key}" already registered.`)
     }
@@ -106,17 +118,14 @@ export const settingsNav: SettingsNavMutator = {
   update(key, patch) {
     const e = entries.find((x) => x.key === key)
     if (!e) throw new Error(`Settings nav entry "${key}" not found.`)
+    // Validate a copy before touching the stored entry: a patch that removes
+    // both label fields must leave the registry as it was, not half-applied.
+    ensureLabelled({ ...e, ...patch }, 'Settings nav entry')
     Object.assign(e, patch)
-    // Re-validate the merged entry — the patch could remove both label fields.
-    if (!e.label && !e.labelKey) {
-      throw new Error(`Settings nav entry "${e.key}" must define either "label" or "labelKey".`)
-    }
     notify()
   },
   addGroup(group) {
-    if (!group.label && !group.labelKey) {
-      throw new Error(`Settings nav group "${group.key}" must define either "label" or "labelKey".`)
-    }
+    ensureLabelled(group, 'Settings nav group')
     if (groups.some((g) => g.key === group.key)) {
       throw new Error(`Settings nav group "${group.key}" already registered.`)
     }
@@ -155,6 +164,68 @@ function getSnapshot() {
 
 export function useSettingsNav() {
   return useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
+}
+
+/**
+ * Whether a settings entry matches a search term. Label, description and the
+ * entry's own `keywords` all count, so the word a merchant knows ("VAT",
+ * "CORS") reaches the page named something else. Shared by the settings
+ * sidebar and the settings landing page so both filter identically.
+ *
+ * @param entry Entry to test.
+ * @param term Search text; matching is case-insensitive and ignores surrounding space.
+ * @param t Translation function used to resolve `labelKey`/`descriptionKey`.
+ * @returns True when the entry matches, or when the term is blank.
+ */
+export function settingsEntryMatches(
+  entry: SettingsNavEntry,
+  term: string,
+  t: (key: string) => string,
+): boolean {
+  const needle = term.trim().toLowerCase()
+  if (!needle) return true
+
+  const haystack = [
+    resolveNavLabel(entry, t),
+    resolveNavDescription(entry, t),
+    ...(entry.keywords ?? []),
+  ]
+  return haystack.some((value) => value?.toLowerCase().includes(needle))
+}
+
+/**
+ * Drop entries the current staff member cannot reach. Exported because the
+ * sidebar and the settings landing page must agree on what a role can see —
+ * a private copy on either surface is how one starts showing a card the other
+ * hides.
+ */
+export function filterSettingsByPermissions(
+  snapshot: SettingsNavSnapshot,
+  permissions: { can: (action: string, subject: string) => boolean },
+): SettingsNavSnapshot {
+  return regroup(snapshot, (entry) =>
+    !entry.subject ? true : permissions.can(entry.action ?? 'read', entry.subject),
+  )
+}
+
+/** Narrow the nav to entries matching the merchant's search. */
+export function filterSettingsByQuery(
+  snapshot: SettingsNavSnapshot,
+  query: string,
+  t: (key: string) => string,
+): SettingsNavSnapshot {
+  return regroup(snapshot, (entry) => settingsEntryMatches(entry, query, t))
+}
+
+/** Rebuild a snapshot from the entries passing `keep`, dropping emptied groups. */
+function regroup(
+  snapshot: SettingsNavSnapshot,
+  keep: (entry: SettingsNavEntry) => boolean,
+): SettingsNavSnapshot {
+  const groups = snapshot.groups
+    .map(({ group, entries }) => ({ group, entries: entries.filter(keep) }))
+    .filter((g) => g.entries.length > 0)
+  return { groups, all: groups.flatMap((g) => g.entries) }
 }
 
 /**

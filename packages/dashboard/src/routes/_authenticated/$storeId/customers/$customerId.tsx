@@ -247,9 +247,13 @@ function ProfileCard({ customer }: { customer: Customer }) {
         <CardHeader>
           <CardTitle>{t('admin.pages.customers.detail.section_profile')}</CardTitle>
           <CardAction>
-            <Button size="sm" variant="outline" onClick={() => setEditOpen(true)}>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => setEditOpen(true)}
+              aria-label={t('admin.actions.edit')}
+            >
               <PencilIcon className="size-4" />
-              {t('admin.actions.edit')}
             </Button>
           </CardAction>
         </CardHeader>
@@ -429,13 +433,12 @@ function EditProfileSheet({
             <Button
               type="button"
               variant="outline"
-              size="sm"
               onClick={() => onOpenChange(false)}
               disabled={mutation.isPending}
             >
               {t('admin.actions.cancel')}
             </Button>
-            <Button type="submit" size="sm" disabled={mutation.isPending}>
+            <Button type="submit" disabled={mutation.isPending}>
               {mutation.isPending ? t('admin.actions.saving') : t('admin.actions.save')}
             </Button>
           </SheetFooter>
@@ -463,9 +466,13 @@ function CustomerGroupsCard({ customer }: { customer: Customer }) {
             {groups.length > 0 && <Badge variant="outline">{groups.length}</Badge>}
           </CardTitle>
           <CardAction>
-            <Button size="sm" variant="outline" onClick={() => setEditOpen(true)}>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => setEditOpen(true)}
+              aria-label={t('admin.actions.edit')}
+            >
               <PencilIcon className="size-4" />
-              {t('admin.actions.edit')}
             </Button>
           </CardAction>
         </CardHeader>
@@ -562,13 +569,12 @@ function EditGroupsSheet({
           <Button
             type="button"
             variant="outline"
-            size="sm"
             onClick={() => onOpenChange(false)}
             disabled={isPending}
           >
             {t('admin.actions.cancel')}
           </Button>
-          <Button type="button" size="sm" onClick={handleSave} disabled={isPending || !dirty}>
+          <Button type="button" onClick={handleSave} disabled={isPending || !dirty}>
             {isPending ? t('admin.actions.saving') : t('admin.actions.save')}
           </Button>
         </SheetFooter>
@@ -804,9 +810,13 @@ function InternalNoteCard({ customer }: { customer: Customer }) {
         <CardTitle>{t('admin.pages.customers.detail.section_internal_note')}</CardTitle>
         {!editing && (
           <CardAction>
-            <Button size="sm" variant="outline" onClick={() => setEditing(true)}>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => setEditing(true)}
+              aria-label={t('admin.actions.edit')}
+            >
               <PencilIcon className="size-4" />
-              {t('admin.actions.edit')}
             </Button>
           </CardAction>
         )}

@@ -450,7 +450,7 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
         </div>
 
         <SheetFooter>
-          <Button type="button" variant="ghost" onClick={handleCancel}>
+          <Button type="button" variant="outline" onClick={handleCancel}>
             {t('admin.actions.cancel')}
           </Button>
           <Button type="button" onClick={handleDone}>

@@ -4125,12 +4125,36 @@
       }
     },
     "settings_nav": {
+      "descriptions": {
+        "allowed_origins": "允许调用店铺 API 的域名",
+        "api_keys": "授权应用与集成的密钥",
+        "channels": "销售渠道以及商品的展示位置",
+        "commission_rates": "平台向卖家收取的费用",
+        "custom_field_definitions": "商品、订单和客户的额外字段",
+        "delivery_profiles": "配送方式、区域与运费",
+        "emails": "发件地址与交易邮件设置",
+        "imports": "CSV 导入历史与结果",
+        "integrations": "连接物流、税务及其他服务商",
+        "markets": "销售的国家/地区及其货币",
+        "payment_methods": "支付网关与收款方式",
+        "product_types": "用于预填新商品的模板",
+        "reasons": "退货、退款与索赔的可选原因",
+        "roles": "分配给员工的权限组",
+        "seller_requirements": "卖家通过审核前需完成的清单",
+        "staff": "可访问此后台的人员",
+        "stock_locations": "存放库存的仓库与自提点",
+        "store": "店铺名称、时区、单位与区域默认值",
+        "tax_categories": "分配给商品的税务类别",
+        "tax_rates": "按市场和地区适用的税率",
+        "webhooks": "事件发生时接收通知的端点"
+      },
       "groups": {
-        "audit": "审计",
-        "fulfillment": "履约",
-        "payments": "支付与税务",
+        "developer": "开发者",
+        "post_sale": "退货与卖家",
+        "selling": "销售",
+        "shipping": "配送与物流",
         "store": "店铺",
-        "team": "团队与权限"
+        "team": "用户与权限"
       },
       "items": {
         "allowed_origins": "允许的来源",
@@ -4156,6 +4180,13 @@
         "tax_rates": "税率",
         "webhooks": "Webhooks"
       }
+    },
+    "settings_page": {
+      "back_to_dashboard": "返回控制台",
+      "description": "管理店铺、销售配置与团队。",
+      "no_results": "没有与“{{query}}”匹配的设置。",
+      "search_placeholder": "搜索设置",
+      "title": "设置"
     },
     "setup": {
       "title": "设置 Spree",

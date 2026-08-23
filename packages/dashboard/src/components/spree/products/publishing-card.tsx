@@ -393,7 +393,7 @@ function ManageChannelsSheet({
             })}
         </div>
         <SheetFooter>
-          <Button type="button" size="sm" onClick={() => onOpenChange(false)}>
+          <Button type="button" onClick={() => onOpenChange(false)}>
             {t('admin.actions.done')}
           </Button>
         </SheetFooter>

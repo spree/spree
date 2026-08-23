@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Company, CompanyLocation } from '@spree/admin-sdk'
 import {
+  adminClient,
   mapSpreeErrorsToForm,
   PageHeader,
   Slot,
@@ -45,6 +46,7 @@ import {
   useUpdateCompanyTaxIdentifier,
   useValidateCompanyTaxIdentifier,
 } from '../../../../hooks/use-companies'
+import { spreeJsonLinkResolver } from '../../../../lib/json-link-resolver'
 import {
   COMPANY_DEFAULTS,
   type CompanyFormValues,
@@ -97,6 +99,12 @@ function CompanyBody({ company }: { company: Company }) {
           subtitle={company.external_id ?? undefined}
           backTo="companies"
           resource={{ id: company.id }}
+          jsonPreview={{
+            title: `Company ${company.name}`,
+            fetch: () => adminClient.companies.get(company.id),
+            endpoint: `/api/v3/admin/companies/${company.id}`,
+            resolveLink: spreeJsonLinkResolver(storeId),
+          }}
           onDelete={permissions.can('destroy', Subject.Company) ? handleDelete : undefined}
           deleteLabel={t('admin.companies.detail.delete_label')}
         />

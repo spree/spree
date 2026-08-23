@@ -34,7 +34,6 @@ import { AlertTriangleIcon, BanIcon, CheckIcon, CopyIcon, PlayIcon, PlusIcon } f
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { z } from 'zod/v4'
 import { WebhookEndpointFormFields } from '../../../../../components/spree/webhook-endpoint-form'
 import {
@@ -49,6 +48,7 @@ import {
   webhookEndpointFormSchema,
 } from '../../../../../schemas/webhook-endpoint'
 import '../../../../../tables/webhook-endpoints'
+import { toastManager } from '@spree/dashboard-ui'
 
 const webhooksSearchSchema = resourceSearchSchema.extend({
   new: z.coerce.boolean().optional(),
@@ -112,13 +112,18 @@ function WebhooksPage() {
   async function handleSendTest(endpoint: WebhookEndpoint) {
     try {
       await sendTestMutation.mutateAsync(endpoint.id)
-      toast.success(t('admin.pages.settings.webhooks.deliveries.test_sent'))
+      toastManager.add({
+        type: 'success',
+        title: t('admin.pages.settings.webhooks.deliveries.test_sent'),
+      })
     } catch (err) {
-      toast.error(
-        err instanceof Error
-          ? err.message
-          : t('admin.pages.settings.webhooks.deliveries.test_failed'),
-      )
+      toastManager.add({
+        type: 'error',
+        title:
+          err instanceof Error
+            ? err.message
+            : t('admin.pages.settings.webhooks.deliveries.test_failed'),
+      })
     }
   }
 
@@ -270,13 +275,12 @@ function CreateEndpointSheet({
             <Button
               type="button"
               variant="outline"
-              size="sm"
               onClick={() => onOpenChange(false)}
               disabled={form.formState.isSubmitting}
             >
               {t('admin.actions.cancel')}
             </Button>
-            <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
+            <Button type="submit" disabled={form.formState.isSubmitting}>
               {form.formState.isSubmitting
                 ? t('admin.actions.creating')
                 : t('admin.actions.create')}
@@ -327,9 +331,7 @@ function SecretRevealDialog({
           )}
         </DialogBody>
         <DialogFooter>
-          <Button size="sm" onClick={() => onOpenChange(false)}>
-            {t('admin.actions.done')}
-          </Button>
+          <Button onClick={() => onOpenChange(false)}>{t('admin.actions.done')}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -154,7 +154,7 @@ export function BulkPriceEditorDialog({
             <Button
               type="button"
               size="sm"
-              variant="ghost"
+              variant="outline"
               disabled={!isDirty || isSaving}
               onClick={editorState.discard}
             >

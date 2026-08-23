@@ -9,15 +9,24 @@ import type {
   ResourceTypeDefinition,
 } from '@spree/admin-sdk'
 import { Can, PageHeader, PreferencesForm, StoreDatePicker } from '@spree/dashboard-core'
-import { formatCalculatorSummary, useConfirm } from '@spree/dashboard-ui'
+import { DropdownMenuItem, formatCalculatorSummary, useConfirm } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { DownloadIcon, PlusIcon, SparklesIcon, TrashIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Controller, type UseFormReturn, useFieldArray, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { spreeJsonLinkResolver } from '../../../lib/json-link-resolver'
 import { EditorShell } from './editor-shell'
 import './register'
-import { mapSpreeErrorsToForm, Slot, Subject, useExport, useStore } from '@spree/dashboard-core'
+import {
+  adminClient,
+  mapSpreeErrorsToForm,
+  Slot,
+  Subject,
+  useExport,
+  usePermissions,
+  useStore,
+} from '@spree/dashboard-core'
 import {
   ActiveBadge,
   Badge,
@@ -155,6 +164,11 @@ export function PromotionForm({
   deletePending = false,
 }: PromotionFormProps) {
   const { t } = useTranslation()
+  const { storeId } = useStore()
+  const { permissions } = usePermissions()
+  // `Can` is a component, and the header takes a callback rather than markup —
+  // so the same permission is checked as a predicate here.
+  const canDelete = permissions.can('destroy', Subject.Promotion)
   const form = useForm<PromotionFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(promotionFormSchema) as any,
@@ -229,25 +243,33 @@ export function PromotionForm({
               mode === 'create' ? t('admin.pages.promotions.new_title') : (promotion?.name ?? '')
             }
             backTo="promotions"
+            // Delete lives in the more-actions menu, not beside Save: a
+            // destructive action next to the primary one is easy to hit by
+            // mistake, and the menu is where every other record page puts it.
+            // `dropdownItems` rather than `onDelete`: the caller already runs
+            // its own confirm, naming the promotion being deleted, and
+            // `onDelete` would stack the header's generic prompt in front of it.
+            dropdownItems={
+              mode === 'edit' && onDelete && canDelete ? (
+                <DropdownMenuItem variant="destructive" disabled={deletePending} onClick={onDelete}>
+                  {t('admin.actions.delete')}
+                </DropdownMenuItem>
+              ) : undefined
+            }
+            jsonPreview={
+              mode === 'edit' && promotion
+                ? {
+                    title: `Promotion ${promotion.name}`,
+                    fetch: () => adminClient.promotions.get(promotion.id),
+                    endpoint: `/api/v3/admin/promotions/${promotion.id}`,
+                    resolveLink: spreeJsonLinkResolver(storeId),
+                  }
+                : undefined
+            }
             actions={
               <div className="flex gap-2">
-                {mode === 'edit' && onDelete && (
-                  <Can I="destroy" a={Subject.Promotion}>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="ghost"
-                      onClick={onDelete}
-                      disabled={deletePending}
-                      className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                    >
-                      {t('admin.actions.delete')}
-                    </Button>
-                  </Can>
-                )}
                 <Button
                   type="submit"
-                  size="sm"
                   disabled={
                     form.formState.isSubmitting || (mode === 'edit' && !form.formState.isDirty)
                   }
@@ -950,7 +972,7 @@ function RulePickerSheet({
           )}
         </div>
         <SheetFooter>
-          <Button type="button" variant="outline" size="sm" onClick={() => onOpenChange(false)}>
+          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
             {t('admin.actions.cancel')}
           </Button>
         </SheetFooter>
@@ -1214,7 +1236,7 @@ function ActionPickerSheet({
           ))}
         </div>
         <SheetFooter>
-          <Button type="button" variant="outline" size="sm" onClick={() => onOpenChange(false)}>
+          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
             {t('admin.actions.cancel')}
           </Button>
         </SheetFooter>
@@ -1401,7 +1423,6 @@ function CouponCodesSheet({
           {totalCount > 0 && (
             <Button
               type="button"
-              size="sm"
               variant="outline"
               onClick={handleExport}
               disabled={exportMutation.isPending}
@@ -1412,7 +1433,7 @@ function CouponCodesSheet({
                 : t('admin.promotions.coupon_codes.export_csv')}
             </Button>
           )}
-          <Button type="button" size="sm" variant="outline" onClick={() => onOpenChange(false)}>
+          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
             {t('admin.actions.close')}
           </Button>
         </SheetFooter>

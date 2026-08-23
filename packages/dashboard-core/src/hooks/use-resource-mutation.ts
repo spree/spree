@@ -1,11 +1,11 @@
 import { SpreeError } from '@spree/admin-sdk'
+import { toastManager } from '@spree/dashboard-ui'
 import {
   type QueryKey,
   type UseMutationOptions,
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query'
-import { toast } from 'sonner'
 import { i18n } from '../lib/i18n'
 import { withStoreScope } from '../lib/query-keys'
 import { useStore } from '../providers/store-provider'
@@ -78,13 +78,13 @@ export function useResourceMutation<TData = unknown, TError = Error, TVariables 
         }
       }
       if (successMessage !== false) {
-        toast.success(successMessage)
+        toastManager.add({ type: 'success', title: successMessage })
       }
       return onSuccess?.(data, variables, onMutateResult, ctx)
     },
     onError: (error, variables, onMutateResult, ctx) => {
       if (errorMessage !== false && !isValidationError(error)) {
-        toast.error(errorMessage)
+        toastManager.add({ type: 'error', title: errorMessage })
       }
       return onError?.(error, variables, onMutateResult, ctx)
     },

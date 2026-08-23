@@ -57,10 +57,10 @@ export function BulkDialog({
             <FieldGroup>{children}</FieldGroup>
           </DialogBody>
           <DialogFooter>
-            <Button type="button" variant="outline" size="sm" onClick={onCancel}>
+            <Button type="button" variant="outline" onClick={onCancel}>
               {t('admin.actions.cancel')}
             </Button>
-            <Button type="submit" size="sm" disabled={submitDisabled}>
+            <Button type="submit" disabled={submitDisabled}>
               {submitLabel}
             </Button>
           </DialogFooter>

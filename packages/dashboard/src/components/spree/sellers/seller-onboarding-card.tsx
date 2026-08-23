@@ -20,7 +20,7 @@ import {
   CircleIcon,
   ClockIcon,
   DownloadIcon,
-  MoreHorizontalIcon,
+  EllipsisVerticalIcon,
   XCircleIcon,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -198,7 +198,7 @@ function RequirementRow({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button size="icon-sm" variant="ghost" disabled={busy}>
-                <MoreHorizontalIcon className="size-4" />
+                <EllipsisVerticalIcon className="size-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">

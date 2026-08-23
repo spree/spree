@@ -4,7 +4,14 @@ import type {
   CompanyLocation,
   Customer,
 } from '@spree/admin-sdk'
-import { PageHeader, ResourceCombobox, Slot, Subject, usePermissions } from '@spree/dashboard-core'
+import {
+  adminClient,
+  PageHeader,
+  ResourceCombobox,
+  Slot,
+  Subject,
+  usePermissions,
+} from '@spree/dashboard-core'
 import {
   AddressBlock,
   Badge,
@@ -48,6 +55,7 @@ import {
   useDeleteCompanyLocation,
 } from '../../../../hooks/use-companies'
 import { customerAutocompleteProps } from '../../../../hooks/use-customers'
+import { spreeJsonLinkResolver } from '../../../../lib/json-link-resolver'
 
 export const Route = createFileRoute('/_authenticated/$storeId/companies/locations/$locationId')({
   component: CompanyLocationDetailPage,
@@ -99,11 +107,21 @@ function CompanyLocationBody({ location }: { location: CompanyLocation }) {
             subtitle={location.external_id ?? undefined}
             backTo={`companies/${location.company_id}`}
             resource={{ id: location.id }}
+            jsonPreview={{
+              title: `Location ${location.name}`,
+              fetch: () => adminClient.companyLocations.get(location.id),
+              endpoint: `/api/v3/admin/company_locations/${location.id}`,
+              resolveLink: spreeJsonLinkResolver(storeId),
+            }}
             actions={
               canEdit ? (
-                <Button size="sm" variant="outline" onClick={() => setEditOpen(true)}>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={() => setEditOpen(true)}
+                  aria-label={t('admin.actions.edit')}
+                >
                   <PencilIcon className="size-4" />
-                  {t('admin.actions.edit')}
                 </Button>
               ) : undefined
             }
@@ -340,7 +358,6 @@ function AddContactDialog({
           <Button
             type="button"
             variant="outline"
-            size="sm"
             onClick={() => onOpenChange(false)}
             disabled={createMutation.isPending}
           >
@@ -348,7 +365,6 @@ function AddContactDialog({
           </Button>
           <Button
             type="button"
-            size="sm"
             disabled={createMutation.isPending || !customerId}
             onClick={handleSubmit}
           >

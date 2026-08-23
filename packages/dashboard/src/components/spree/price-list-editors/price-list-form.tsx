@@ -9,7 +9,7 @@ import {
   ResourceMultiAutocomplete,
   useStore,
 } from '@spree/dashboard-core'
-import { useConfirm } from '@spree/dashboard-ui'
+import { DropdownMenuItem, useConfirm } from '@spree/dashboard-ui'
 import {
   CalendarOffIcon,
   PauseIcon,
@@ -22,13 +22,20 @@ import {
 import { useEffect, useState } from 'react'
 import { Controller, type UseFormReturn, useFieldArray, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { spreeJsonLinkResolver } from '../../../lib/json-link-resolver'
 import { BulkPriceEditorDialog } from '../bulk-price-editor/bulk-price-editor-dialog'
 import { PriceListStatusBadge } from './status-badge'
 // Side-effect import — registers per-rule editors (customer, customer
 // group, …) into the slot registry. Must run before any RuleEditSheet
 // mounts.
 import './register'
-import { mapSpreeErrorsToForm, Slot, StoreDatePicker, Subject } from '@spree/dashboard-core'
+import {
+  mapSpreeErrorsToForm,
+  Slot,
+  StoreDatePicker,
+  Subject,
+  usePermissions,
+} from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -102,6 +109,9 @@ export function PriceListForm({
   deletePending = false,
 }: PriceListFormProps) {
   const { t } = useTranslation()
+  const { storeId } = useStore()
+  const { permissions } = usePermissions()
+  const canDelete = permissions.can('destroy', Subject.PriceList)
 
   const form = useForm<PriceListFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -160,26 +170,31 @@ export function PriceListForm({
             }
             backTo="products/price-lists"
             badges={priceList && <PriceListStatusBadge priceList={priceList} />}
+            // `dropdownItems` rather than `onDelete`: the caller already runs
+            // its own confirm, naming the price list being deleted, and
+            // `onDelete` would stack the header's generic prompt in front of it.
+            dropdownItems={
+              mode === 'edit' && onDelete && canDelete ? (
+                <DropdownMenuItem variant="destructive" disabled={deletePending} onClick={onDelete}>
+                  {t('admin.actions.delete')}
+                </DropdownMenuItem>
+              ) : undefined
+            }
+            jsonPreview={
+              mode === 'edit' && priceList
+                ? {
+                    title: `Price list ${priceList.name}`,
+                    fetch: () => adminClient.priceLists.get(priceList.id),
+                    endpoint: `/api/v3/admin/price_lists/${priceList.id}`,
+                    resolveLink: spreeJsonLinkResolver(storeId),
+                  }
+                : undefined
+            }
             actions={
               <div className="flex gap-2">
                 {mode === 'edit' && priceList && <ActivationButtons priceList={priceList} />}
-                {mode === 'edit' && onDelete && (
-                  <Can I="destroy" a={Subject.PriceList}>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="ghost"
-                      onClick={onDelete}
-                      disabled={deletePending}
-                      className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                    >
-                      {t('admin.actions.delete')}
-                    </Button>
-                  </Can>
-                )}
                 <Button
                   type="submit"
-                  size="sm"
                   disabled={
                     form.formState.isSubmitting || (mode === 'edit' && !form.formState.isDirty)
                   }
@@ -400,7 +415,6 @@ function ActivationButtons({ priceList }: { priceList: PriceList }) {
         <Button
           type="button"
           variant="outline"
-          size="sm"
           onClick={handleDeactivate}
           disabled={deactivate.isPending}
         >
@@ -425,7 +439,6 @@ function ActivationButtons({ priceList }: { priceList: PriceList }) {
       <Button
         type="button"
         variant="outline"
-        size="sm"
         onClick={() => handleActivate(willSchedule)}
         disabled={activate.isPending}
       >

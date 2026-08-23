@@ -196,7 +196,7 @@ export function BulkVariantsDialog({ form, open, onOpenChange }: Props) {
             {t('admin.products.variants.bulk_edit.title')}
           </DialogTitle>
           <div className="flex items-center gap-2">
-            <Button type="button" size="sm" variant="ghost" onClick={handleCancel}>
+            <Button type="button" size="sm" variant="outline" onClick={handleCancel}>
               {t('admin.actions.cancel')}
             </Button>
             <Button type="button" size="sm" onClick={handleDone}>

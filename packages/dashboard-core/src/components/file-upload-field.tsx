@@ -10,11 +10,11 @@ import {
   Field,
   FieldDescription,
   FieldLabel,
+  toastManager,
 } from '@spree/dashboard-ui'
 import { FileIcon, UploadCloudIcon, XIcon } from 'lucide-react'
 import { type ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { useDirectUpload } from '../hooks/use-direct-upload'
 
 /**
@@ -126,7 +126,10 @@ export function FileUploadField({
   async function handlePicked(picked: File) {
     if (disabled || pending) return
     if (!matchesAccept(picked)) {
-      toast.error(t('admin.components.file_upload.invalid_type', { accept }))
+      toastManager.add({
+        type: 'error',
+        title: t('admin.components.file_upload.invalid_type', { accept }),
+      })
       return
     }
 
@@ -146,11 +149,12 @@ export function FileUploadField({
         byteSize: file.size,
       })
     } catch (err) {
-      toast.error(
-        t('admin.components.file_upload.upload_failed', {
+      toastManager.add({
+        type: 'error',
+        title: t('admin.components.file_upload.upload_failed', {
           message: err instanceof Error ? err.message : String(err),
         }),
-      )
+      })
     } finally {
       setPending(null)
     }

@@ -150,7 +150,11 @@ export function PageHeader({
     // the same hairline used elsewhere in the app.
     <header
       className={cn(
-        'sticky top-header-height z-20 -mx-4 -mt-4 flex items-start gap-3 bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/75 px-4 pt-4 pb-3 lg:-mx-6 lg:-mt-6 lg:px-6 lg:pt-6',
+        // One row at every width. The title truncates rather than wrapping,
+        // so it yields space to the actions instead of pushing them onto a
+        // second row — a page with only a Save button was spending two rows
+        // of a short viewport on chrome.
+        'sticky top-header-height z-20 -mx-4 -mt-4 flex flex-row items-start gap-2 bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/75 px-4 pt-4 pb-3 sm:gap-3 lg:-mx-6 lg:-mt-6 lg:px-6 lg:pt-6',
         // `translate` is listed explicitly: Tailwind v4 compiles
         // `-translate-y-*` to the standalone `translate` property, so a
         // `transform`-only transition never animates it and the header would
@@ -165,21 +169,38 @@ export function PageHeader({
         scrolled && 'after:opacity-100 shadow-xs',
       )}
     >
-      {backTo && <BackButton fallback={backTo} />}
+      {/* Row one: back button beside the title, so the arrow keeps its
+          relationship to the heading rather than floating above it. */}
+      <div className="flex min-w-0 flex-1 items-start gap-3">
+        {backTo && <BackButton fallback={backTo} />}
 
-      {/* Title + badges share the first row; subtitle drops to its own line
-          underneath so descriptive prose doesn't get crammed alongside the
-          heading. Short metadata subtitles (customer location, order status
-          hint) read fine on the second line too. */}
-      <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-          <h1 className="text-2xl font-medium leading-tight">{title}</h1>
-          {badges}
+        {/* Title + badges share a line; subtitle drops underneath so
+            descriptive prose doesn't get crammed alongside the heading. Short
+            metadata subtitles (customer location, order status hint) read fine
+            on the second line too. */}
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            {/* Smaller and clipped on a phone: sharing the row with the
+                actions leaves a long product name too little width to wrap
+                into anything readable. */}
+            <h1 className="min-w-0 truncate font-medium text-xl leading-tight sm:text-2xl sm:whitespace-normal">
+              {title}
+            </h1>
+            {badges}
+          </div>
+          {/* Clamped on a phone: a two line description beside the actions
+              makes the sticky band tall enough to eat the content below it. */}
+          {subtitle && (
+            <span className="line-clamp-2 text-sm text-muted-foreground sm:line-clamp-none">
+              {subtitle}
+            </span>
+          )}
         </div>
-        {subtitle && <span className="text-sm text-muted-foreground">{subtitle}</span>}
       </div>
 
-      <div className="ml-auto flex items-center gap-2">
+      {/* Pinned to the end of the row. `shrink-0` so the actions keep their
+          full width and the title absorbs the shortfall. */}
+      <div className="flex shrink-0 items-center justify-end gap-2 sm:ml-auto">
         <Slot name="page.actions" context={slotCtx} />
         {actions}
         {showDropdown && (
@@ -230,7 +251,7 @@ function PageActionsDropdown({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button size="icon-sm" variant="outline" aria-label={t('admin.actions.more_actions')}>
+        <Button size="icon" variant="outline" aria-label={t('admin.actions.more_actions')}>
           <EllipsisVerticalIcon className="size-4" />
         </Button>
       </DropdownMenuTrigger>

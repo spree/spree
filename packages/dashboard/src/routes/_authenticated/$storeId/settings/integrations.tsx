@@ -70,7 +70,7 @@ function IntegrationsPage() {
   const configuringType = types.find((type) => type.type === search.configure)
 
   return (
-    <div className="flex flex-col gap-6 p-4">
+    <div className="flex flex-col gap-6">
       <PageHeader
         title={t('admin.integrations.title')}
         subtitle={t('admin.integrations.description')}

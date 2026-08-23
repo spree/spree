@@ -80,7 +80,8 @@
       "breadcrumb_more": "Mehr",
       "sidebar": "Seitenleiste",
       "sidebar_description": "Zeigt die mobile Seitenleiste an.",
-      "store_switcher": "Store wechseln"
+      "store_switcher": "Store wechseln",
+      "bulk_actions": "Massenaktionen"
     },
     "common": {
       "loading": "Wird geladen…",
@@ -111,7 +112,8 @@
       "default": "Standard",
       "cancel": "Abbrechen",
       "empty_value": "—",
-      "retry": "Erneut versuchen"
+      "retry": "Erneut versuchen",
+      "clear": "Löschen"
     },
     "color_picker": {
       "no_color": "Keine Farbe"

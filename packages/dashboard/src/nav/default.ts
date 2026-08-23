@@ -1,5 +1,7 @@
 import type { Store } from '@spree/admin-sdk'
-import { hasVisibleSettingsEntries, i18n, nav, Subject } from '@spree/dashboard-core'
+// Entries use `labelKey` rather than a resolved `label` so the sidebar
+// re-renders on language change — see app-sidebar.tsx for resolution.
+import { hasVisibleSettingsEntries, nav, Subject } from '@spree/dashboard-core'
 import {
   BarChart3Icon,
   HomeIcon,
@@ -20,7 +22,7 @@ import {
 
 nav.add({
   key: 'getting-started',
-  label: i18n.t('admin.nav.getting_started'),
+  labelKey: 'admin.nav.getting_started',
   path: '/getting-started',
   icon: MapIcon,
   position: 50,
@@ -35,7 +37,7 @@ nav.add({
 
 nav.add({
   key: 'home',
-  label: i18n.t('admin.nav.home'),
+  labelKey: 'admin.nav.home',
   path: '/',
   icon: HomeIcon,
   position: 100,
@@ -43,7 +45,7 @@ nav.add({
 
 nav.add({
   key: 'orders',
-  label: i18n.t('admin.nav.orders'),
+  labelKey: 'admin.nav.orders',
   path: '/orders',
   icon: InboxIcon,
   subject: Subject.Order,
@@ -51,7 +53,7 @@ nav.add({
   children: [
     {
       key: 'orders.drafts',
-      label: i18n.t('admin.nav.draft_orders'),
+      labelKey: 'admin.nav.draft_orders',
       path: '/orders/drafts',
       subject: Subject.Order,
       position: 100,
@@ -61,7 +63,7 @@ nav.add({
     // what came back from them.
     {
       key: 'returns',
-      label: i18n.t('admin.nav.returns'),
+      labelKey: 'admin.nav.returns',
       path: '/returns',
       subject: Subject.Order,
       position: 200,
@@ -69,7 +71,7 @@ nav.add({
     },
     {
       key: 'exchanges',
-      label: i18n.t('admin.nav.exchanges'),
+      labelKey: 'admin.nav.exchanges',
       path: '/exchanges',
       subject: Subject.Order,
       position: 300,
@@ -77,7 +79,7 @@ nav.add({
     },
     {
       key: 'claims',
-      label: i18n.t('admin.nav.claims'),
+      labelKey: 'admin.nav.claims',
       path: '/claims',
       subject: Subject.Order,
       position: 400,
@@ -88,7 +90,7 @@ nav.add({
 
 nav.add({
   key: 'products',
-  label: i18n.t('admin.nav.products'),
+  labelKey: 'admin.nav.products',
   path: '/products',
   icon: PackageIcon,
   subject: Subject.Product,
@@ -96,35 +98,35 @@ nav.add({
   children: [
     {
       key: 'products.price-lists',
-      label: i18n.t('admin.nav.price_lists'),
+      labelKey: 'admin.nav.price_lists',
       path: '/products/price-lists',
       subject: Subject.PriceList,
       position: 100,
     },
     {
       key: 'products.categories',
-      label: i18n.t('admin.nav.categories'),
+      labelKey: 'admin.nav.categories',
       path: '/products/categories',
       subject: Subject.Category,
       position: 300,
     },
     {
       key: 'products.collections',
-      label: i18n.t('admin.nav.collections'),
+      labelKey: 'admin.nav.collections',
       path: '/products/collections',
       subject: Subject.Collection,
       position: 350,
     },
     {
       key: 'products.options',
-      label: i18n.t('admin.nav.options'),
+      labelKey: 'admin.nav.options',
       path: '/products/options',
       subject: Subject.OptionType,
       position: 400,
     },
     {
       key: 'products.transfers',
-      label: i18n.t('admin.nav.transfers'),
+      labelKey: 'admin.nav.transfers',
       path: '/products/transfers',
       subject: Subject.StockTransfer,
       position: 500,
@@ -134,7 +136,7 @@ nav.add({
 
 nav.add({
   key: 'customers',
-  label: i18n.t('admin.nav.customers'),
+  labelKey: 'admin.nav.customers',
   path: '/customers',
   icon: UsersIcon,
   subject: Subject.Customer,
@@ -142,14 +144,14 @@ nav.add({
   children: [
     {
       key: 'customers.groups',
-      label: i18n.t('admin.nav.customer_groups'),
+      labelKey: 'admin.nav.customer_groups',
       path: '/customers/groups',
       subject: Subject.CustomerGroup,
       position: 100,
     },
     {
       key: 'customers.companies',
-      label: i18n.t('admin.nav.companies'),
+      labelKey: 'admin.nav.companies',
       path: '/companies',
       subject: Subject.Company,
       position: 200,
@@ -161,7 +163,7 @@ nav.add({
 // staff hold no seller permission at all.
 nav.add({
   key: 'sellers',
-  label: i18n.t('admin.nav.sellers'),
+  labelKey: 'admin.nav.sellers',
   path: '/sellers',
   icon: StoreIcon,
   subject: Subject.Seller,
@@ -170,7 +172,7 @@ nav.add({
 
 nav.add({
   key: 'promotions',
-  label: i18n.t('admin.nav.promotions'),
+  labelKey: 'admin.nav.promotions',
   path: '/promotions',
   icon: TagIcon,
   subject: Subject.Promotion,
@@ -178,7 +180,7 @@ nav.add({
   children: [
     {
       key: 'promotions.gift-cards',
-      label: i18n.t('admin.nav.gift_cards'),
+      labelKey: 'admin.nav.gift_cards',
       path: '/promotions/gift-cards',
       subject: Subject.GiftCard,
       position: 100,
@@ -188,7 +190,7 @@ nav.add({
 
 nav.add({
   key: 'reports',
-  label: i18n.t('admin.nav.reports'),
+  labelKey: 'admin.nav.reports',
   path: '/reports',
   icon: BarChart3Icon,
   position: 600,
@@ -196,7 +198,7 @@ nav.add({
 
 nav.add({
   key: 'settings',
-  label: i18n.t('admin.nav.settings'),
+  labelKey: 'admin.nav.settings',
   path: '/settings',
   icon: SettingsIcon,
   // No `subject`: every staff member can read the store record (shell data),

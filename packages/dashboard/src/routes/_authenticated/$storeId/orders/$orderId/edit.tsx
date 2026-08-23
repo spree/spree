@@ -14,6 +14,7 @@ import {
   FormActions,
   ResourceLayout,
   Separator,
+  toastManager,
   useFormSubmitShortcut,
 } from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
@@ -21,7 +22,6 @@ import { InfoIcon, PlusIcon } from 'lucide-react'
 import { type ReactNode, useEffect, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { AddLineItemDialog } from '../../../../../components/spree/orders/line-item-dialogs'
 import { OrderEditItemsTable } from '../../../../../components/spree/orders/order-edit-items-table'
 import { useOrder, useOrderMutation } from '../../../../../hooks/use-order'
@@ -154,7 +154,7 @@ function OrderEditPage() {
     } catch (err) {
       if (mapSpreeErrorsToForm(err, form.setError)) return
       if (err instanceof SpreeError) throw err
-      toast.error(t('admin.errors.failed_to_save'))
+      toastManager.add({ type: 'error', title: t('admin.errors.failed_to_save') })
     }
   }
 
@@ -250,12 +250,7 @@ function OrderEditPage() {
               backTo={`${storeId}/orders/${orderId}`}
               actions={
                 <>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setAddingItem(true)}
-                  >
+                  <Button type="button" variant="outline" onClick={() => setAddingItem(true)}>
                     <PlusIcon className="size-4" />
                     {t('admin.orders.edit.actions.add_product')}
                   </Button>

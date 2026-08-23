@@ -80,7 +80,8 @@
       "breadcrumb_more": "更多",
       "sidebar": "侧边栏",
       "sidebar_description": "显示移动端侧边栏。",
-      "store_switcher": "切换店铺"
+      "store_switcher": "切换店铺",
+      "bulk_actions": "批量操作"
     },
     "common": {
       "loading": "加载中…",
@@ -111,7 +112,8 @@
       "default": "默认",
       "cancel": "取消",
       "empty_value": "—",
-      "retry": "重试"
+      "retry": "重试",
+      "clear": "清除"
     },
     "color_picker": {
       "no_color": "无颜色"

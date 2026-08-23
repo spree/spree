@@ -286,7 +286,7 @@ function ComboboxChips({
         // resize lets the positioner follow the anchor smoothly; making it
         // instant jumps the open popup out from under the pointer, so the next
         // option click lands on nothing.
-        'flex flex-wrap items-center gap-1 rounded-lg border border-border bg-card text-foreground shadow-xs px-2.5 py-1.5 text-base transition-all duration-100 ease-out focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] has-aria-invalid:border-destructive has-data-[slot=combobox-chip]:px-1',
+        'flex flex-wrap items-center gap-1.5 rounded-lg border border-border bg-card text-foreground shadow-xs px-2.5 py-1.5 text-base transition-all duration-100 ease-out focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] has-aria-invalid:border-destructive has-data-[slot=combobox-chip]:p-1.5',
         className,
       )}
       {...props}
@@ -306,7 +306,10 @@ function ComboboxChip({
     <ComboboxPrimitive.Chip
       data-slot="combobox-chip"
       className={cn(
-        'flex h-[calc(--spacing(5.25))] w-fit max-w-full items-center justify-center gap-1 rounded-sm bg-muted px-1.5 text-xs font-medium text-foreground has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-disabled:opacity-50 has-data-[slot=combobox-chip-remove]:pr-0',
+        // Height comes from the content rather than a fixed 21px: the old value
+        // was shorter than the remove button inside it, and left the label with
+        // no vertical breathing room at any screen size.
+        'flex min-h-8 w-fit max-w-full items-center justify-center gap-1 rounded-md bg-muted py-1 pl-2.5 pr-2 text-sm font-medium text-foreground has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-disabled:opacity-50 has-data-[slot=combobox-chip-remove]:pr-1',
         className,
       )}
       {...props}
@@ -314,8 +317,8 @@ function ComboboxChip({
       <span className="min-w-0 truncate">{children}</span>
       {showRemove && (
         <ComboboxPrimitive.ChipRemove
-          render={<Button variant="ghost" size="icon-xs" />}
-          className="opacity-50 hover:opacity-100"
+          render={<Button variant="ghost" size="icon-sm" />}
+          className="size-6 shrink-0 opacity-50 hover:opacity-100"
           data-slot="combobox-chip-remove"
           // Names the chip it clears ("Remove Wholesale") rather than a bare
           // "Remove": several sit side by side, and a dialog's own submit

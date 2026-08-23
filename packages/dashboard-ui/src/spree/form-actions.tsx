@@ -31,7 +31,7 @@ export function FormSaveButton<TFieldValues extends FieldValues>({
   const { isDirty, isSubmitting } = useFormState({ control: form.control })
 
   return (
-    <Button type="submit" size="sm" disabled={!isDirty || isSubmitting}>
+    <Button type="submit" disabled={!isDirty || isSubmitting}>
       {isSubmitting && <Loader2Icon className="animate-spin" />}
       {isSubmitting
         ? (savingLabel ?? t('admin.actions.saving'))
@@ -65,7 +65,6 @@ export function FormDiscardButton<TFieldValues extends FieldValues>({
   return (
     <Button
       type="button"
-      size="sm"
       variant="outline"
       disabled={isSubmitting}
       onClick={onDiscard ?? (() => form.reset())}

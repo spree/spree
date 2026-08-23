@@ -34,6 +34,7 @@ import { i18n } from '../lib/i18n'
 import { storefrontHref } from '../lib/storefront'
 import { useStickyHeader } from '../providers/sticky-header-provider'
 import { useStore } from '../providers/store-provider'
+import { TopBarBreadcrumbs } from './top-bar-breadcrumbs'
 
 const IS_MAC = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform ?? '')
 
@@ -90,7 +91,15 @@ export function TopBar({
           and overriding the box would shrink the target to 20px. */}
       <SidebarTrigger className="-ml-1 opacity-50 hover:bg-accent hover:opacity-100 [&_svg]:size-5" />
 
-      <div className="flex flex-1 justify-center">
+      {/* A three-column grid keeps the search optically centred whatever the
+          trail's length, with the trail truncating rather than pushing it. The
+          third column is the grid's own empty track — no spacer element.
+          Breadcrumbs hide below `md`, where they would crowd out the search
+          box; `MobileBreadcrumbBar` carries the trail there instead. */}
+      <div className="grid flex-1 grid-cols-1 items-center md:grid-cols-[1fr_minmax(0,28rem)_1fr]">
+        <div className="hidden min-w-0 md:block">
+          <TopBarBreadcrumbs />
+        </div>
         <SearchTrigger />
       </div>
 
@@ -117,7 +126,7 @@ function SearchTrigger() {
       // Focus matches the form inputs — the soft blue glow from `--ring`,
       // rather than a hard offset ring. It looks like a search field, so it
       // should focus like one.
-      className="flex w-full max-w-md cursor-pointer items-center gap-1 rounded-xl border border-border px-2 py-1.5 text-sm text-muted-foreground outline-none transition-[color,background-color,border-color,box-shadow] duration-100 ease-out hover:bg-accent focus-visible:border-ring focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)]"
+      className="flex w-full max-w-md shrink cursor-pointer items-center gap-1 rounded-xl border border-border p-2 md:py-1.5 text-sm text-muted-foreground outline-none transition-[color,background-color,border-color,box-shadow] duration-100 ease-out hover:bg-accent focus-visible:border-ring focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)]"
     >
       <SearchIcon className="size-4" />
       <span className="flex-1 text-left">{t('admin.components.command_palette.placeholder')}</span>

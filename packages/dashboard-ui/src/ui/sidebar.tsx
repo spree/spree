@@ -15,7 +15,20 @@ import { Tooltip, TooltipContent, TooltipTrigger } from './tooltip'
 const SIDEBAR_COOKIE_NAME = 'sidebar_state'
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
 const SIDEBAR_WIDTH = '220px'
-const SIDEBAR_WIDTH_MOBILE = '220px'
+/**
+ * Width of any nav drawer on a phone: near-full-width, capped so it doesn't
+ * stretch on a tablet. The desktop rail's 220px leaves ~45% of a phone screen
+ * unused while still cramping the labels. Exported so a second drawer (the
+ * settings nav sheet) matches this one instead of re-inlining the number.
+ */
+export const SIDEBAR_WIDTH_MOBILE = 'min(86vw, 360px)'
+
+/**
+ * Shared chrome for a mobile nav drawer — touch sizing, safe-area insets and
+ * the sidebar surface colours. Both drawers use it so a fix lands in one place.
+ */
+export const mobileDrawerClassName =
+  'touch-manipulation bg-sidebar p-0 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] text-sidebar-foreground'
 const SIDEBAR_WIDTH_ICON = '59px'
 const SIDEBAR_KEYBOARD_SHORTCUT = 'b'
 
@@ -199,7 +212,7 @@ function Sidebar({
           data-sidebar="sidebar"
           data-slot="sidebar"
           data-mobile="true"
-          className="w-(--sidebar-width) bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
+          className={cn(mobileDrawerClassName, 'w-(--sidebar-width) [&>button]:hidden')}
           style={
             {
               '--sidebar-width': SIDEBAR_WIDTH_MOBILE,
@@ -211,7 +224,11 @@ function Sidebar({
             <SheetTitle>{i18n.t('admin.a11y.sidebar')}</SheetTitle>
             <SheetDescription>{i18n.t('admin.a11y.sidebar_description')}</SheetDescription>
           </SheetHeader>
-          <div className="flex h-full w-full flex-col">{children}</div>
+          {/* `min-h-0` rather than `h-full`: the sheet carries safe-area
+              padding, and `h-full` resolves against its border box, so the
+              column ran past the bottom edge and clipped its last nav item
+              instead of letting `SidebarContent` scroll to it. */}
+          <div className="flex min-h-0 w-full flex-1 flex-col">{children}</div>
         </SheetContent>
       </Sheet>
     )
@@ -344,7 +361,9 @@ function SidebarHeader({ className, ...props }: React.ComponentProps<'div'>) {
       data-slot="sidebar-header"
       data-sidebar="header"
       className={cn(
-        'flex flex-col gap-0 px-2 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center',
+        // In the drawer the switcher is the only thing above the nav, so it
+        // needs a rule under it to read as a header rather than a first row.
+        'flex flex-col gap-0 px-2 in-data-[mobile=true]:border-b in-data-[mobile=true]:border-border-subtle in-data-[mobile=true]:pb-2 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center',
         className,
       )}
       {...props}
@@ -462,7 +481,9 @@ function SidebarMenu({ className, ...props }: React.ComponentProps<'ul'>) {
       data-slot="sidebar-menu"
       data-sidebar="menu"
       className={cn(
-        'flex w-full min-w-0 flex-col gap-1 group-data-[collapsible=icon]:items-center',
+        // `gap-2` on touch: adjacent tap targets need 8px between them, and
+        // the rail's 4px is a pointer-precision value.
+        'flex w-full min-w-0 flex-col gap-1 in-data-[mobile=true]:gap-2 group-data-[collapsible=icon]:items-center',
         className,
       )}
       {...props}
@@ -496,8 +517,12 @@ const sidebarMenuButtonVariants = cva(
           'bg-background shadow-[0_0_0_1px_hsl(var(--sidebar-border))] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-[0_0_0_1px_hsl(var(--sidebar-accent))]',
       },
       size: {
-        default: 'h-8 text-base',
-        sm: 'h-7 text-xs',
+        // Inside the mobile drawer every row grows to a 48px touch target
+        // (iOS wants 44pt, Android 48dp) with a wider glyph to match. The
+        // desktop rail keeps its compact pointer-sized rows.
+        default:
+          'h-8 text-base in-data-[mobile=true]:h-12 in-data-[mobile=true]:px-2 in-data-[mobile=true]:[&_svg]:size-5',
+        sm: 'h-7 text-xs in-data-[mobile=true]:h-11 in-data-[mobile=true]:text-sm',
         lg: 'h-12 text-base group-data-[collapsible=icon]:p-0!',
       },
     },
@@ -676,7 +701,7 @@ function SidebarMenuSubButton({
       data-size={size}
       data-active={isActive}
       className={cn(
-        'relative flex h-7 min-w-0 items-center gap-2 overflow-hidden rounded-xl p-1 text-sidebar-foreground/80 outline-hidden group-data-[collapsible=icon]:hidden hover:bg-sidebar-accent hover:text-sidebar-foreground focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[size=md]:text-base data-[size=sm]:text-xs data-active:font-semibold data-active:text-foreground data-active:bg-transparent data-active:shadow-none data-active:before:absolute data-active:before:-left-4 data-active:before:top-[10%] data-active:before:h-[80%] data-active:before:w-[3px] data-active:before:rounded-sm data-active:before:bg-foreground [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0',
+        'relative flex h-7 in-data-[mobile=true]:h-11 in-data-[mobile=true]:px-2 min-w-0 items-center gap-2 overflow-hidden rounded-xl p-1 text-sidebar-foreground/80 outline-hidden group-data-[collapsible=icon]:hidden hover:bg-sidebar-accent hover:text-sidebar-foreground focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[size=md]:text-base data-[size=sm]:text-xs data-active:font-semibold data-active:text-foreground data-active:bg-transparent data-active:shadow-none data-active:before:absolute data-active:before:-left-4 data-active:before:top-[10%] data-active:before:h-[80%] data-active:before:w-[3px] data-active:before:rounded-sm data-active:before:bg-foreground [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0',
         className,
       )}
       {...props}

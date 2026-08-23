@@ -1,4 +1,5 @@
 import {
+  cn,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -16,6 +17,7 @@ import {
 import { Link, useRouterState } from '@tanstack/react-router'
 import type { LucideIcon } from 'lucide-react'
 import { type ComponentType, useCallback, useEffect, useRef, useState } from 'react'
+import { isPathWithin } from '../lib/nav-registry'
 import type { ActionName, SubjectName } from '../lib/permissions'
 
 export type NavItem = {
@@ -194,21 +196,24 @@ function NavItemContent({
   item,
   currentPath,
   isCollapsed,
+  isMobile,
   hoverMenu,
 }: {
   item: NavItem
   currentPath: string
   isCollapsed: boolean
+  isMobile: boolean
   hoverMenu: HoverMenuController
 }) {
   const isExactActive = currentPath === item.url || currentPath === `${item.url}/`
   // Only prefix-match for items with a sub-path after the storeId segment (e.g. /store_abc/orders)
   const hasSubPath = item.url.split('/').filter(Boolean).length > 1
-  const isActive = isExactActive || (hasSubPath && currentPath.startsWith(item.url))
-  const hasActiveChild = item.items?.some(
-    (sub) => currentPath === sub.url || currentPath.startsWith(sub.url),
-  )
-  const showSubmenu = isActive || hasActiveChild
+  const isActive = isExactActive || (hasSubPath && isPathWithin(currentPath, item.url))
+  const hasActiveChild = item.items?.some((sub) => isPathWithin(currentPath, sub.url))
+  // Desktop reveals children on hover or when the section is active. Touch has
+  // no hover, and the drawer closes on navigation, so a collapsed child would
+  // take three taps to reach — show every child up front instead.
+  const showSubmenu = isMobile || isActive || hasActiveChild
   const itemIsActive = isActive || !!hasActiveChild
 
   const button = (
@@ -252,7 +257,7 @@ function NavItemContent({
       {item.items && showSubmenu && (
         <SidebarMenuSub>
           {item.items.map((subItem) => {
-            const subActive = currentPath === subItem.url || currentPath.startsWith(subItem.url)
+            const subActive = isPathWithin(currentPath, subItem.url)
             return (
               <SidebarMenuSubItem key={subItem.title}>
                 <SidebarMenuSubButton asChild isActive={subActive}>
@@ -277,8 +282,17 @@ function NavItemContent({
 export function NavMain({ items, bottomItems }: { items: NavItem[]; bottomItems?: NavItem[] }) {
   const routerState = useRouterState()
   const currentPath = routerState.location.pathname
-  const { state } = useSidebar()
+  const { state, isMobile, setOpenMobile } = useSidebar()
   const isCollapsed = state === 'collapsed'
+  // Close the drawer as the link is tapped. Done here rather than in an effect
+  // watching the path: this tree renders *inside* the Sheet, so it remounts on
+  // every open and an effect could not tell "just opened" from "just navigated".
+  const handleLinkTap = useCallback(
+    (event: React.MouseEvent) => {
+      if (isMobile && (event.target as HTMLElement).closest('a')) setOpenMobile(false)
+    },
+    [isMobile, setOpenMobile],
+  )
   // One controller for the whole rail so only a single hover menu is ever open.
   const hoverMenu = useHoverMenuController()
 
@@ -290,7 +304,13 @@ export function NavMain({ items, bottomItems }: { items: NavItem[]; bottomItems?
   }, [isCollapsed, closeNow])
 
   return (
-    <>
+    // The close handler sits on the list rather than each `<Link>`: those links
+    // are rendered through nested `asChild` Slots (Tooltip → SidebarMenuButton),
+    // which clone their own `onClick` over anything the child declares. A
+    // bubble-phase listener here sees the tap regardless.
+    // biome-ignore lint/a11y/noStaticElementInteractions: delegated link taps only
+    // biome-ignore lint/a11y/useKeyWithClickEvents: links keep their own keyboard behaviour
+    <div onClick={handleLinkTap} className="contents">
       <SidebarGroup>
         <SidebarMenu>
           {items.map((item) => (
@@ -299,6 +319,7 @@ export function NavMain({ items, bottomItems }: { items: NavItem[]; bottomItems?
               item={item}
               currentPath={currentPath}
               isCollapsed={isCollapsed}
+              isMobile={isMobile}
               hoverMenu={hoverMenu}
             />
           ))}
@@ -306,11 +327,15 @@ export function NavMain({ items, bottomItems }: { items: NavItem[]; bottomItems?
       </SidebarGroup>
 
       {bottomItems && bottomItems.length > 0 && (
-        <SidebarGroup className="mt-auto mb-2">
+        // `mt-auto` pins Settings to the foot of the desktop rail. In a
+        // full-height drawer that strands it alone below a screen of empty
+        // space, so on mobile it simply follows the list.
+        <SidebarGroup className={cn('mb-2', !isMobile && 'mt-auto')}>
           <SidebarMenu>
             {bottomItems.map((item) => {
               const isActive =
-                currentPath === item.url || (item.url !== '/' && currentPath.startsWith(item.url))
+                currentPath === item.url ||
+                (item.url !== '/' && isPathWithin(currentPath, item.url))
 
               return (
                 <SidebarMenuItem key={item.title}>
@@ -329,6 +354,6 @@ export function NavMain({ items, bottomItems }: { items: NavItem[]; bottomItems?
           </SidebarMenu>
         </SidebarGroup>
       )}
-    </>
+    </div>
   )
 }

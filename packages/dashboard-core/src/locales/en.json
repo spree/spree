@@ -80,7 +80,8 @@
       "breadcrumb_more": "More",
       "sidebar": "Sidebar",
       "sidebar_description": "Displays the mobile sidebar.",
-      "store_switcher": "Switch store"
+      "store_switcher": "Switch store",
+      "bulk_actions": "Bulk actions"
     },
     "common": {
       "loading": "Loading…",
@@ -111,7 +112,8 @@
       "default": "Default",
       "cancel": "Cancel",
       "empty_value": "—",
-      "retry": "Try again"
+      "retry": "Try again",
+      "clear": "Clear"
     },
     "color_picker": {
       "no_color": "No color"

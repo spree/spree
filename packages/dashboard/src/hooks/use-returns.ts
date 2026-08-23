@@ -1,6 +1,6 @@
 import { adminClient, useResourceKey, useResourceKeyBuilder } from '@spree/dashboard-core'
+import { toastManager } from '@spree/dashboard-ui'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
 
 /**
  * Returns on an order. Fetched separately from the order itself so the order
@@ -40,7 +40,10 @@ function useReturnMutation<TParams>(
     onError: (error) => {
       // Without this a rejected workflow — a claim with nothing to refund, a
       // return that cannot be cancelled — looked like a dead button.
-      toast.error(error instanceof Error ? error.message : String(error))
+      toastManager.add({
+        type: 'error',
+        title: error instanceof Error ? error.message : String(error),
+      })
     },
   })
 }

@@ -1,8 +1,8 @@
 import type { Import, ImportCompleteMappingParams } from '@spree/admin-sdk'
 import { adminClient, useResourceKey, useResourceKeyBuilder } from '@spree/dashboard-core'
+import { toastManager } from '@spree/dashboard-ui'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
-import { toast } from 'sonner'
 import { isImportActive } from '../lib/import-types'
 
 export { isImportActive }
@@ -102,7 +102,7 @@ export function useRetryFailedRows(id: string) {
       queryClient.invalidateQueries({ queryKey: buildKey('imports'), refetchType: 'none' })
     },
     onError: (err) => {
-      toast.error(err instanceof Error ? err.message : String(err))
+      toastManager.add({ type: 'error', title: err instanceof Error ? err.message : String(err) })
     },
   })
 }
@@ -118,7 +118,7 @@ export function useDeleteImport() {
       queryClient.invalidateQueries({ queryKey: buildKey('imports') })
     },
     onError: (err) => {
-      toast.error(err instanceof Error ? err.message : String(err))
+      toastManager.add({ type: 'error', title: err instanceof Error ? err.message : String(err) })
     },
   })
 }

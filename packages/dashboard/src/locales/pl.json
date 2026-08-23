@@ -4186,12 +4186,36 @@
       }
     },
     "settings_nav": {
+      "descriptions": {
+        "allowed_origins": "Domeny uprawnione do wywoływania API sklepu",
+        "api_keys": "Klucze autoryzujące aplikacje i integracje",
+        "channels": "Kanały sprzedaży i miejsca oferowania produktów",
+        "commission_rates": "Opłaty pobierane od sprzedawców",
+        "custom_field_definitions": "Dodatkowe pola produktów, zamówień i klientów",
+        "delivery_profiles": "Metody dostawy, strefy i koszty wysyłki",
+        "emails": "Adresy nadawcy i ustawienia e-maili transakcyjnych",
+        "imports": "Historia importów CSV i ich wyniki",
+        "integrations": "Podłącz dostawców wysyłki, podatków i innych usług",
+        "markets": "Kraje, do których sprzedajesz, i ich waluty",
+        "payment_methods": "Bramki płatnicze i sposób pobierania płatności",
+        "product_types": "Szablony wstępnie wypełniające nowe produkty",
+        "reasons": "Powody zwrotów, refundacji i reklamacji",
+        "roles": "Zestawy uprawnień przypisywane pracownikom",
+        "seller_requirements": "Lista wymagań przed zatwierdzeniem sprzedawcy",
+        "staff": "Osoby z dostępem do tego panelu",
+        "stock_locations": "Magazyny i punkty odbioru przechowujące towar",
+        "store": "Nazwa sklepu, strefa czasowa, jednostki i ustawienia regionalne",
+        "tax_categories": "Klasy podatkowe przypisane do produktów",
+        "tax_rates": "Stawki stosowane według rynku i regionu",
+        "webhooks": "Adresy powiadamiane o zdarzeniach"
+      },
       "groups": {
-        "audit": "Audyt",
-        "fulfillment": "Realizacja zamówień",
-        "payments": "Płatności i podatki",
+        "developer": "Deweloper",
+        "post_sale": "Zwroty i sprzedawcy",
+        "selling": "Sprzedaż",
+        "shipping": "Wysyłka i dostawa",
         "store": "Sklep",
-        "team": "Zespół i dostęp"
+        "team": "Użytkownicy i uprawnienia"
       },
       "items": {
         "allowed_origins": "Dozwolone źródła",
@@ -4217,6 +4241,13 @@
         "tax_rates": "Stawki podatku",
         "webhooks": "Webhooki"
       }
+    },
+    "settings_page": {
+      "back_to_dashboard": "Powrót do panelu",
+      "description": "Zarządzaj sklepem, konfiguracją sprzedaży i zespołem.",
+      "no_results": "Brak ustawień pasujących do „{{query}}”.",
+      "search_placeholder": "Szukaj w ustawieniach",
+      "title": "Ustawienia"
     },
     "setup": {
       "title": "Skonfiguruj Spree",

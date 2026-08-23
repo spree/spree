@@ -1,10 +1,9 @@
 import type { PriceBulkUpsertRow } from '@spree/admin-sdk'
 import { adminClient, useResourceKey } from '@spree/dashboard-core'
-import { type BulkPriceRow, BulkPriceTable } from '@spree/dashboard-ui'
+import { type BulkPriceRow, BulkPriceTable, toastManager } from '@spree/dashboard-ui'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useDeferredValue, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { useCurrencyLocale } from '../../../hooks/use-currency-locale'
 import { useBulkUpsertPrices } from '../../../hooks/use-prices'
 import { currencyParts } from './currency-parts'
@@ -276,9 +275,12 @@ export function BulkPriceEditor({
     })
     try {
       const res = await bulkUpsertAsync({ prices: payload })
-      toast.success(
-        t('admin.pages.products.price_lists.edit_prices.save_success', { count: res.price_count }),
-      )
+      toastManager.add({
+        type: 'success',
+        title: t('admin.pages.products.price_lists.edit_prices.save_success', {
+          count: res.price_count,
+        }),
+      })
       setEdits((prev) => {
         const out = new Map(prev)
         for (const key of savedKeys) out.delete(key)
@@ -290,7 +292,7 @@ export function BulkPriceEditor({
         err instanceof Error
           ? err.message
           : t('admin.pages.products.price_lists.edit_prices.save_failed')
-      toast.error(message)
+      toastManager.add({ type: 'error', title: message })
       return false
     }
   }, [edits, currency, priceListId, bulkUpsertAsync, marketLocale, t])

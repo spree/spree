@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Seller } from '@spree/admin-sdk'
 import {
+  adminClient,
   mapSpreeErrorsToForm,
   PageHeader,
   Slot,
@@ -70,6 +71,7 @@ import {
   useSuspendSeller,
   useUpdateSeller,
 } from '../../../../hooks/use-sellers'
+import { spreeJsonLinkResolver } from '../../../../lib/json-link-resolver'
 import {
   PAYOUT_INTERVALS,
   SELLER_DEFAULTS,
@@ -221,7 +223,7 @@ function SellerBody({ seller }: { seller: Seller }) {
           query leaves `isPending` false with no data, which is why this gates
           on the data rather than the loading flag. */}
       {canApprove && (
-        <Button size="sm" disabled={busy || !onboarding} onClick={handleApprove}>
+        <Button disabled={busy || !onboarding} onClick={handleApprove}>
           {status === 'suspended'
             ? t('admin.sellers.actions.reinstate')
             : t('admin.sellers.actions.approve')}
@@ -229,7 +231,6 @@ function SellerBody({ seller }: { seller: Seller }) {
       )}
       {canInvite && (
         <Button
-          size="sm"
           variant={canApprove ? 'outline' : 'default'}
           disabled={busy}
           onClick={() => setInviting(true)}
@@ -290,6 +291,12 @@ function SellerBody({ seller }: { seller: Seller }) {
             actions={primaryAction}
             dropdownItems={dropdownItems}
             resource={{ id: seller.id }}
+            jsonPreview={{
+              title: `Seller ${seller.name}`,
+              fetch: () => adminClient.sellers.get(seller.id),
+              endpoint: `/api/v3/admin/sellers/${seller.id}`,
+              resolveLink: spreeJsonLinkResolver(storeId),
+            }}
             onDelete={permissions.can('destroy', Subject.Seller) ? handleDelete : undefined}
             deleteLabel={t('admin.sellers.detail.delete_label')}
           />
@@ -377,9 +384,14 @@ function SellerBrandCard({
           <div className="h-20 w-full border-border border-b bg-muted" />
         )}
         {canEdit && (
-          <Button size="sm" variant="outline" className="absolute top-3 right-3" onClick={onEdit}>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            className="absolute top-3 right-3 bg-background/80 backdrop-blur-sm hover:bg-background"
+            onClick={onEdit}
+            aria-label={t('admin.actions.edit')}
+          >
             <PencilIcon className="size-4" />
-            {t('admin.actions.edit')}
           </Button>
         )}
       </div>
@@ -501,9 +513,13 @@ function SellerContactCard({
         <CardTitle>{t('admin.sellers.detail.contact')}</CardTitle>
         {canEdit && (
           <CardAction>
-            <Button variant="outline" size="sm" onClick={onEdit}>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={onEdit}
+              aria-label={t('admin.actions.edit')}
+            >
               <PencilIcon className="size-4" />
-              {t('admin.actions.edit')}
             </Button>
           </CardAction>
         )}
@@ -542,9 +558,13 @@ function SellerSettlementCard({
         <CardTitle>{t('admin.sellers.detail.settlement')}</CardTitle>
         {canEdit && (
           <CardAction>
-            <Button size="sm" variant="outline" onClick={onEdit}>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={onEdit}
+              aria-label={t('admin.actions.edit')}
+            >
               <PencilIcon className="size-4" />
-              {t('admin.actions.edit')}
             </Button>
           </CardAction>
         )}
@@ -750,13 +770,12 @@ function EditProfileSheet({
             <Button
               type="button"
               variant="outline"
-              size="sm"
               onClick={() => onOpenChange(false)}
               disabled={form.formState.isSubmitting}
             >
               {t('admin.actions.cancel')}
             </Button>
-            <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
+            <Button type="submit" disabled={form.formState.isSubmitting}>
               {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
             </Button>
           </SheetFooter>
@@ -954,13 +973,12 @@ function EditSettlementSheet({
             <Button
               type="button"
               variant="outline"
-              size="sm"
               onClick={() => onOpenChange(false)}
               disabled={form.formState.isSubmitting}
             >
               {t('admin.actions.cancel')}
             </Button>
-            <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
+            <Button type="submit" disabled={form.formState.isSubmitting}>
               {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
             </Button>
           </SheetFooter>
@@ -1039,13 +1057,12 @@ function InviteSellerSheet({
             <Button
               type="button"
               variant="outline"
-              size="sm"
               onClick={() => onOpenChange(false)}
               disabled={form.formState.isSubmitting}
             >
               {t('admin.actions.cancel')}
             </Button>
-            <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
+            <Button type="submit" disabled={form.formState.isSubmitting}>
               {form.formState.isSubmitting
                 ? t('admin.actions.saving')
                 : t('admin.sellers.actions.send_invitation')}

@@ -7,6 +7,7 @@ import type {
   DeliveryZoneMember,
 } from '@spree/admin-sdk'
 import {
+  adminClient,
   Can,
   mapSpreeErrorsToForm,
   PageHeader,
@@ -77,6 +78,7 @@ import {
   formatAmount,
   summarizeRules,
 } from '../../../../../../lib/delivery-method-summary'
+import { spreeJsonLinkResolver } from '../../../../../../lib/json-link-resolver'
 import {
   type DeliveryProfileGeneralValues,
   type DeliveryProfileLocationsValues,
@@ -198,6 +200,12 @@ function DeliveryProfileDetailBody({ profile }: { profile: DeliveryProfile }) {
           title={profile.name}
           backTo="settings/delivery-profiles"
           resource={{ id: profile.id }}
+          jsonPreview={{
+            title: `Delivery profile ${profile.name}`,
+            fetch: () => adminClient.deliveryProfiles.get(profile.id),
+            endpoint: `/api/v3/admin/delivery_profiles/${profile.id}`,
+            resolveLink: spreeJsonLinkResolver(storeId),
+          }}
           onDelete={profile.default ? undefined : handleDelete}
           deleteLabel={t('admin.delivery_profiles.detail.delete_label')}
         />

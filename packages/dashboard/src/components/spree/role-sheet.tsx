@@ -16,12 +16,12 @@ import {
   SheetTitle,
   Skeleton,
   Textarea,
+  toastManager,
 } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { useEffect, useMemo } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { z } from 'zod/v4'
 import { useCreateRole, usePermissionCatalog, useRole, useUpdateRole } from '../../hooks/use-roles'
 import { allReadKeys, allWriteKeys, PermissionGrid } from './permission-picker'
@@ -149,20 +149,20 @@ export function RoleSheet({
     try {
       if (roleId) {
         await updateMutation.mutateAsync({ id: roleId, params })
-        toast.success(t('admin.roles.messages.updated'))
+        toastManager.add({ type: 'success', title: t('admin.roles.messages.updated') })
       } else {
         await createMutation.mutateAsync(params)
-        toast.success(t('admin.roles.messages.created'))
+        toastManager.add({ type: 'success', title: t('admin.roles.messages.created') })
       }
       form.reset(ROLE_DEFAULTS)
       onOpenChange(false)
     } catch (err) {
       if (mapSpreeErrorsToForm(err, form.setError)) return
       if (err instanceof SpreeError) {
-        toast.error(err.message)
+        toastManager.add({ type: 'error', title: err.message })
         return
       }
-      toast.error(t('admin.roles.errors.failed_to_save'))
+      toastManager.add({ type: 'error', title: t('admin.roles.errors.failed_to_save') })
     }
   }
 
@@ -311,14 +311,13 @@ export function RoleSheet({
               <Button
                 type="button"
                 variant="outline"
-                size="sm"
                 onClick={() => onOpenChange(false)}
                 disabled={form.formState.isSubmitting}
               >
                 {t('admin.actions.cancel')}
               </Button>
               {!readOnly && (
-                <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
+                <Button type="submit" disabled={form.formState.isSubmitting}>
                   {form.formState.isSubmitting
                     ? t('admin.actions.saving')
                     : t('admin.actions.save')}

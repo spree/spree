@@ -57,13 +57,13 @@ import {
   Skeleton,
   Switch,
   Textarea,
+  toastManager,
 } from '@spree/dashboard-ui'
 import { Link, useParams } from '@tanstack/react-router'
 import { Loader2Icon, PencilIcon, PlusIcon, TagIcon } from 'lucide-react'
 import { createContext, type ReactNode, useCallback, useContext, useMemo, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import {
   CUSTOM_FIELD_DEFINITION_DEFAULTS,
   type CustomFieldDefinitionFormValues,
@@ -367,7 +367,10 @@ export function EditableApiCustomFieldsProvider({
 
       const failed = tasks.filter((_, i) => results[i].status === 'rejected')
       if (failed.length === 0) {
-        toast.success(t('admin.components.custom_fields.values_saved'))
+        toastManager.add({
+          type: 'success',
+          title: t('admin.components.custom_fields.values_saved'),
+        })
         setDrafts(null)
         setIsEditing(false)
         return
@@ -376,18 +379,19 @@ export function EditableApiCustomFieldsProvider({
       // Some saved, some didn't. Keep edit mode with drafts intact so the user
       // can retry — the refetched baseline means the succeeded fields now equal
       // their persisted value, so a retry only re-sends the failures.
-      toast.error(
-        t('admin.components.custom_fields.values_save_partial_failed', {
+      toastManager.add({
+        type: 'error',
+        title: t('admin.components.custom_fields.values_save_partial_failed', {
           fields: failed.map(({ def }) => def.label || def.key).join(', '),
         }),
-      )
+      })
     } catch (err) {
       // refetch() itself failed (network) — the saves may still have landed.
       const message =
         err instanceof Error
           ? err.message
           : t('admin.components.custom_fields.errors.failed_to_save')
-      toast.error(message)
+      toastManager.add({ type: 'error', title: message })
     } finally {
       setSaving(false)
     }
@@ -478,9 +482,14 @@ function EditableHeaderActions() {
 
   if (!mode.isEditing) {
     return (
-      <Button type="button" variant="outline" size="sm" onClick={mode.startEdit}>
+      <Button
+        variant="ghost"
+        size="icon-sm"
+        type="button"
+        onClick={mode.startEdit}
+        aria-label={t('admin.actions.edit')}
+      >
         <PencilIcon className="size-4" />
-        {t('admin.actions.edit')}
       </Button>
     )
   }
@@ -725,7 +734,6 @@ function CreateDefinitionSheet({
             <Button
               type="button"
               variant="outline"
-              size="sm"
               // Reset through the same path as the Sheet's onOpenChange wrapper
               // so reopening doesn't show stale input or server errors.
               onClick={() => {
@@ -736,7 +744,7 @@ function CreateDefinitionSheet({
             >
               {t('admin.actions.cancel')}
             </Button>
-            <Button type="submit" size="sm" disabled={create.isPending}>
+            <Button type="submit" disabled={create.isPending}>
               {create.isPending && <Loader2Icon className="size-4 animate-spin" />}
               {t('admin.custom_field_definitions.create_label')}
             </Button>

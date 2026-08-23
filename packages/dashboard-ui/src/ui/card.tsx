@@ -7,7 +7,12 @@ function Card({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot="card"
       className={cn(
-        'group/card flex flex-col min-w-0 break-words bg-card text-card-foreground border border-border rounded-xl shadow-sm',
+        // `overflow-x-clip`: a wide child (a table sized to its columns) otherwise
+        // propagates its width up through every `overflow: visible` ancestor to
+        // the document, laying the whole page out wider than the viewport. `clip`
+        // rather than `hidden` so `overflow-y` stays `visible` and sticky
+        // descendants keep resolving against the page.
+        'group/card flex flex-col min-w-0 overflow-x-clip break-words bg-card text-card-foreground border border-border rounded-xl shadow-xs',
         className,
       )}
       {...props}

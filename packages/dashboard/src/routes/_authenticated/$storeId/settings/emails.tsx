@@ -17,12 +17,12 @@ import {
   ResourceLayout,
   Skeleton,
   Switch,
+  toastManager,
   useFormSubmitShortcut,
 } from '@spree/dashboard-ui'
 import { createFileRoute } from '@tanstack/react-router'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { useStoreSettings, useUpdateStoreSettings } from '../../../../hooks/use-store-settings'
 import { type StoreEmailsFormValues, storeEmailsFormSchema } from '../../../../schemas/store-emails'
 
@@ -103,7 +103,7 @@ function EmailSettingsForm({ store }: { store: Store }) {
   const onSubmit = async (values: StoreEmailsFormValues) => {
     try {
       await updateMutation.mutateAsync(formValuesToApiParams(values))
-      toast.success(t('admin.messages.store_settings_updated'))
+      toastManager.add({ type: 'success', title: t('admin.messages.store_settings_updated') })
       // Re-seed the form from `values` so dirty state collapses; the next render
       // will reflect the server's mailer_logo_url through `store`.
       form.reset({
@@ -115,7 +115,10 @@ function EmailSettingsForm({ store }: { store: Store }) {
     } catch (err) {
       if (mapSpreeErrorsToForm(err, form.setError)) return
       if (err instanceof SpreeError) throw err
-      toast.error(err instanceof Error ? err.message : t('admin.errors.failed_to_update_store'))
+      toastManager.add({
+        type: 'error',
+        title: err instanceof Error ? err.message : t('admin.errors.failed_to_update_store'),
+      })
     }
   }
 

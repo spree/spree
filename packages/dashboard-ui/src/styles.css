@@ -454,6 +454,57 @@
     outline: none;
   }
 
+  /* iOS Safari zooms the viewport when a focused text field's font is under
+   * 16px, and this app's `text-base` is 14px — so tapping any input on an
+   * iPhone jumped the page and left it zoomed. Raise the rendered size on
+   * coarse pointers only; the desktop density is unchanged.
+   *
+   * `pointer: coarse` rather than a width breakpoint: this is about the input
+   * method, and a small window on a laptop should keep the compact type. */
+  /* Nav rows and menu labels read small on a phone at the desktop 14px.
+   * 16px is the size the platform uses for a primary list row. Sizing is left
+   * to the components themselves — buttons carry their own touch targets. */
+  @media (pointer: coarse) {
+    [data-slot='sidebar-menu-button'],
+    [data-slot='sidebar-menu-sub-button'],
+    [data-slot='dropdown-menu-item'],
+    [data-slot='select-item'],
+    [data-slot='command-item'] {
+      font-size: 1rem !important;
+    }
+  }
+
+  /* Menu and listbox rows are sized for a pointer — roughly 29px, against a
+   * 44pt touch minimum — so on a phone they are hard to hit and easy to hit
+   * wrongly. Raise them on coarse pointers only; the dense desktop menus are
+   * unchanged. Same `!important` reasoning as the font-size rule below: these
+   * rows carry utility classes that outrank any selector written here. */
+  @media (pointer: coarse) {
+    [data-slot='dropdown-menu-item'],
+    [data-slot='dropdown-menu-checkbox-item'],
+    [data-slot='dropdown-menu-radio-item'],
+    [data-slot='dropdown-menu-sub-trigger'],
+    [data-slot='select-item'],
+    [data-slot='command-item'],
+    [data-slot='combobox-item'] {
+      min-height: 2.75rem !important;
+    }
+  }
+
+  @media (pointer: coarse) {
+    /* `!important` is load-bearing here, not laziness: these controls carry a
+     * `text-*` utility class, which outranks any element selector this rule
+     * could write. Without it the declaration loses to `.text-base` and the
+     * zoom still happens. The rule is deliberately narrow — one property, on
+     * text-entry controls, under a coarse pointer. */
+    input:not([type='checkbox']):not([type='radio']),
+    textarea,
+    select,
+    [contenteditable] {
+      font-size: max(1rem, var(--text-base)) !important;
+    }
+  }
+
   html {
     @apply font-sans antialiased;
     text-rendering: optimizeLegibility;

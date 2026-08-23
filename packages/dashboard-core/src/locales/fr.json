@@ -80,7 +80,8 @@
       "breadcrumb_more": "Plus",
       "sidebar": "Barre latérale",
       "sidebar_description": "Affiche la barre latérale mobile.",
-      "store_switcher": "Changer de boutique"
+      "store_switcher": "Changer de boutique",
+      "bulk_actions": "Actions groupées"
     },
     "common": {
       "loading": "Chargement…",
@@ -111,7 +112,8 @@
       "default": "Par défaut",
       "cancel": "Annuler",
       "empty_value": "—",
-      "retry": "Réessayer"
+      "retry": "Réessayer",
+      "clear": "Effacer"
     },
     "color_picker": {
       "no_color": "Aucune couleur"

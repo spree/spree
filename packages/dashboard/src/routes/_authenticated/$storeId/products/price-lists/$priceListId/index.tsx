@@ -1,7 +1,6 @@
-import { useConfirm } from '@spree/dashboard-ui'
+import { toastManager, useConfirm } from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { PriceListForm } from '../../../../../../components/spree/price-list-editors/price-list-form'
 import {
   useDeletePriceList,
@@ -41,7 +40,10 @@ function EditPriceListPage() {
     } catch (err) {
       // Surface failure as a toast and stay on the page — navigating away
       // would tell the user the row vanished when it didn't.
-      toast.error(err instanceof Error ? err.message : t('admin.errors.failed_to_delete'))
+      toastManager.add({
+        type: 'error',
+        title: err instanceof Error ? err.message : t('admin.errors.failed_to_delete'),
+      })
       return
     }
     navigate({ to: '/$storeId/products/price-lists', params: { storeId } })

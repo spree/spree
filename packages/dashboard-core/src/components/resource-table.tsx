@@ -37,6 +37,7 @@ import {
   TableHeader,
   TableHeaderRow,
   TableRow,
+  useIsMobile,
 } from '@spree/dashboard-ui'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
@@ -49,9 +50,11 @@ import {
   useMemo,
   useState,
 } from 'react'
+import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { useAuth } from '../hooks/use-auth'
+import { useVisualViewportOffset } from '../hooks/use-visual-viewport-offset'
 import { filtersToRansack } from '../lib/filters-to-ransack'
 import { withStoreScope } from '../lib/query-keys'
 import {
@@ -221,6 +224,10 @@ export function ResourceTable<T extends Record<string, any>>({
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set())
   // Whether the bulk bar is covering the column labels.
   const bulkActive = selectionEnabled && selectedIds.size > 0
+  // Only one bulk bar is mounted at a time. Rendering both and hiding one
+  // with `md:` leaves its text in the accessibility tree, so "2 selected"
+  // and every action label match twice.
+  const isMobile = useIsMobile()
 
   const {
     page,
@@ -266,6 +273,10 @@ export function ResourceTable<T extends Record<string, any>>({
     [displayableColumns, visibleColumnKeys],
   )
 
+  // Built from every displayable column, not the visible subset: the column
+  // picker is a desktop control (it is hidden on a phone), so the card should
+  // not inherit a selection the merchant cannot see or change there.
+
   // Expands requested by currently-visible columns (e.g. custom field
   // columns need `expand=custom_fields` to render their values). Sorted so
   // the query key stays stable regardless of column order.
@@ -284,6 +295,15 @@ export function ResourceTable<T extends Record<string, any>>({
   // and +useResourceMutation+'s invalidations (storeId at position 1).
   const userPrefix = Array.isArray(queryKey) ? queryKey : [queryKey]
   const queryKeyPrefix = withStoreScope(userPrefix, storeId)
+
+  // Both bulk bars (desktop overlay, mobile bottom bar) reset through here so
+  // they cannot drift apart.
+  const visualViewportOffset = useVisualViewportOffset(bulkActive)
+
+  const clearSelection = useCallback(() => {
+    setSelectedIds(new Set())
+    queryClient.invalidateQueries({ queryKey: queryKeyPrefix })
+  }, [queryClient, queryKeyPrefix])
 
   const { data, isLoading } = useQuery({
     queryKey: [
@@ -457,7 +477,13 @@ export function ResourceTable<T extends Record<string, any>>({
       : actions
 
   return (
-    <Card className="rounded-xl">
+    // Below `sm` the table spans the full width: the page gutter plus the
+    // card's own border spends ~34px of a 390px screen on chrome, and a table
+    // is the one place that width is worth reclaiming. Negative margins cancel
+    // the gutter the page container applies, and the frame drops to a plain
+    // surface — background only, no border, radius or shadow. Scoped to this
+    // card so every other card on the page keeps its frame.
+    <Card className="-mx-4 rounded-none border-0 bg-transparent sm:bg-card shadow-none sm:mx-0 sm:rounded-xl sm:border sm:shadow-sm">
       <TableToolbar
         columns={displayableColumns}
         visibleColumns={visibleColumnKeys}
@@ -501,7 +527,7 @@ export function ResourceTable<T extends Record<string, any>>({
                     )}
                   </TableHeaderRow>
                 </TableHeader>
-                <TableBody>
+                <TableBody className="bg-card">
                   {isLoading ? (
                     <TableSkeletonRows
                       colSpan={visibleColumns.length + 1 + (rowActionsEnabled ? 1 : 0)}
@@ -548,7 +574,7 @@ export function ResourceTable<T extends Record<string, any>>({
                 the same sticky offset as the pinned header keeps the two
                 travelling together; the start padding clears the select-all
                 checkbox, which stays visible and interactive underneath. */}
-            {bulkActive && (
+            {bulkActive && !isMobile && (
               // `pointer-events-none` on the overlay, re-enabled only on the
               // bar itself: the start-padding gutter is part of this div and
               // would otherwise swallow every click aimed at the select-all
@@ -560,15 +586,51 @@ export function ResourceTable<T extends Record<string, any>>({
                     <BulkActionBar
                       selectedIds={Array.from(selectedIds)}
                       actions={bulkActions!}
-                      onDone={() => {
-                        setSelectedIds(new Set())
-                        queryClient.invalidateQueries({ queryKey: queryKeyPrefix })
-                      }}
+                      onDone={clearSelection}
                     />
                   </div>
                 </div>
               </div>
             )}
+
+            {/* On a phone the header-row overlay is the wrong home for this: it
+                scrolls sideways with a wide table and sits at the top, far from
+                the thumb. A fixed bottom bar stays put and in reach while the
+                merchant scrolls the list picking rows. */}
+            {bulkActive &&
+              isMobile &&
+              // Portalled to `document.body`: `SidebarInset` is `relative z-0`,
+              // which opens a stacking context, and a `fixed` child of it can
+              // only stack against its siblings there — page content painted
+              // later covered the bar until the merchant scrolled past it.
+              createPortal(
+                <section
+                  className="fixed inset-x-0 z-50 border-t border-border bg-card px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-lg"
+                  // `bottom` anchors to the *layout* viewport. Pinch-zoom (and
+                  // a mobile URL bar) makes the visual viewport a smaller
+                  // window onto it, leaving the bar off-screen until the
+                  // merchant pans down — the offset lifts it back into view.
+                  style={{ bottom: visualViewportOffset }}
+                  aria-label={t('admin.a11y.bulk_actions')}
+                >
+                  <div className="flex items-center gap-3">
+                    <Checkbox
+                      checked={allPageSelected}
+                      indeterminate={somePageSelected}
+                      onCheckedChange={togglePage}
+                      aria-label={t('admin.a11y.select_all_rows')}
+                    />
+                    <div className="min-w-0 flex-1">
+                      <BulkActionBar
+                        selectedIds={Array.from(selectedIds)}
+                        actions={bulkActions!}
+                        onDone={clearSelection}
+                      />
+                    </div>
+                  </div>
+                </section>,
+                document.body,
+              )}
             <Table stickyHeader>
               <TableHeader>
                 {/* Column headers stay mounted with rows selected, and the bulk
@@ -596,8 +658,10 @@ export function ResourceTable<T extends Record<string, any>>({
                         // Hide the text, not the cell: `opacity-0` would erase
                         // the cell's muted background and bottom rule too,
                         // leaving rows visible through the band behind the
-                        // bulk actions overlay.
-                        bulkActive && 'text-transparent select-none',
+                        // bulk actions overlay. Only where that overlay is
+                        // drawn — on a phone the bar is at the foot of the
+                        // screen and the column labels stay readable.
+                        bulkActive && !isMobile && 'text-transparent select-none',
                       )}
                     >
                       {col.label}
@@ -610,7 +674,7 @@ export function ResourceTable<T extends Record<string, any>>({
                   )}
                 </TableHeaderRow>
               </TableHeader>
-              <TableBody>
+              <TableBody className="bg-card">
                 {isLoading ? (
                   <TableSkeletonRows
                     colSpan={
@@ -679,6 +743,16 @@ export function ResourceTable<T extends Record<string, any>>({
               </TableBody>
             </Table>
           </>
+        )}
+        {/* Clears the fixed bottom bar so it can't cover the pagination or the
+            last row while a selection is active. Carries the same safe-area
+            inset the bar pads itself by, or the home indicator's worth of bar
+            still overlaps the last row. */}
+        {bulkActive && isMobile && (
+          <div
+            className="h-[calc(4rem+max(0px,env(safe-area-inset-bottom)-0.75rem))]"
+            aria-hidden
+          />
         )}
         {meta && (
           <Pagination

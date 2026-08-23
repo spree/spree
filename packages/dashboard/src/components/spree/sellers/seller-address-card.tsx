@@ -55,9 +55,13 @@ export function SellerAddressCard({
           </CardTitle>
           {canEdit && (
             <CardAction>
-              <Button variant="outline" size="sm" onClick={() => setEditing(true)}>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                onClick={() => setEditing(true)}
+                aria-label={t('admin.actions.edit')}
+              >
                 <PencilIcon className="size-4" />
-                {t('admin.actions.edit')}
               </Button>
             </CardAction>
           )}

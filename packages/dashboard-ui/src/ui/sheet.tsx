@@ -144,7 +144,13 @@ function SheetContent({
           <SheetPrimitive.Close
             data-slot="sheet-close"
             render={
-              <Button variant="ghost" className="absolute top-3 right-3" size="icon-sm">
+              // `size-11` on touch: at `icon-sm`'s 28px this is well under the
+              // 44px minimum, and on a nav sheet it is the primary way out.
+              <Button
+                variant="ghost"
+                className="absolute top-2 right-2 size-11 md:top-3 md:right-3 md:size-7"
+                size="icon-sm"
+              >
                 <XIcon />
                 <span className="sr-only">{i18n.t('admin.actions.close')}</span>
               </Button>
@@ -157,6 +163,14 @@ function SheetContent({
 }
 
 function SheetHeader({ className, ...props }: React.ComponentProps<'div'>) {
+  // A caller passing `sr-only` wants the title announced but not drawn. Merging
+  // it with the visible chrome does not achieve that: `cn` keeps `flex` (a
+  // different utility group from `sr-only`'s `absolute`), so the element stays
+  // a laid-out box — a 33px bar with a border, above the nav. Detect the intent
+  // and render the bare utility instead.
+  const srOnly = className?.split(' ').includes('sr-only')
+  if (srOnly) return <div data-slot="sheet-header" className={className} {...props} />
+
   return (
     <div
       data-slot="sheet-header"
@@ -186,7 +200,7 @@ function SheetTitle({ className, ...props }: React.ComponentProps<typeof SheetPr
   return (
     <SheetPrimitive.Title
       data-slot="sheet-title"
-      className={cn('text-base font-medium', className)}
+      className={cn('text-lg font-medium', className)}
       {...props}
     />
   )

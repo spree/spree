@@ -27,11 +27,11 @@ import {
   SelectTrigger,
   SelectValue,
   Skeleton,
+  toastManager,
 } from '@spree/dashboard-ui'
 import { useEffect, useMemo } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { useProfile, useUpdateProfile } from '../../hooks/use-profile'
 import { getAvailableUiLocales } from '../../i18n-setup'
 import { type MeFormValues, meFormSchema, meToForm, meToParams } from '../../schemas/me'
@@ -137,7 +137,7 @@ function ProfileForm({
       // Reflect the new name/locale/avatar in the auth context (top-bar, etc.)
       // immediately instead of waiting for the next token refresh.
       updateUser(updated.user)
-      toast.success(t('admin.messages.profile_updated'))
+      toastManager.add({ type: 'success', title: t('admin.messages.profile_updated') })
       // Closing unmounts the form, so the avatar state doesn't need preserving
       // across the save — the reopened dialog re-hydrates from the mutation
       // response that `useUpdateProfile` writes into the cache.
@@ -149,7 +149,10 @@ function ProfileForm({
     } catch (err) {
       if (mapSpreeErrorsToForm(err, form.setError)) return
       if (err instanceof SpreeError) throw err
-      toast.error(err instanceof Error ? err.message : t('admin.errors.failed_to_update_profile'))
+      toastManager.add({
+        type: 'error',
+        title: err instanceof Error ? err.message : t('admin.errors.failed_to_update_profile'),
+      })
     }
   }
 
@@ -253,7 +256,6 @@ function ProfileForm({
         <Button
           type="button"
           variant="outline"
-          size="sm"
           onClick={() => onOpenChange(false)}
           disabled={isSubmitting}
         >
@@ -262,7 +264,7 @@ function ProfileForm({
         {/* Gated on `isDirty` to match `FormActions` (what the page this
             replaced used) — without it a pristine Save PATCHes and toasts
             success having changed nothing. */}
-        <Button type="submit" size="sm" disabled={!isDirty || isSubmitting}>
+        <Button type="submit" disabled={!isDirty || isSubmitting}>
           {isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
         </Button>
       </DialogFooter>
