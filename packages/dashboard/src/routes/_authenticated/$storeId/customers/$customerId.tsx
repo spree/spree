@@ -833,7 +833,7 @@ function InternalNoteCard({ customer }: { customer: Customer }) {
             <div className="flex gap-2 justify-end">
               <Button
                 type="button"
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 onClick={() => {
                   setEditing(false)
