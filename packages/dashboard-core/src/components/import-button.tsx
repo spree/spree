@@ -144,10 +144,12 @@ export function ImportButton({
 
   return (
     <Can I="create" a={subject}>
+      {/* Desktop only: the wizard needs a file from disk and column
+          mapping across a wide grid, neither of which works on a phone. */}
       <Button
         size={size ?? 'sm'}
         variant={variant ?? 'outline'}
-        className="h-[2.125rem]"
+        className="hidden h-[2.125rem] lg:inline-flex"
         onClick={() => setOpen(true)}
         disabled={createImport.isPending}
       >

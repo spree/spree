@@ -180,8 +180,8 @@ export function TableToolbar({
     <>
       {/* A phone shows the title and the controls only — search lives in the
           TopBar there. From `lg` the search field joins them on one row. */}
-      <div className="flex flex-col gap-2 border-b border-border-subtle p-3 pl-4 lg:flex-row lg:items-center lg:justify-between">
-        {title && <CardTitle className="text-lg">{title}</CardTitle>}
+      <div className="flex flex-row items-center gap-2 border-b border-border-subtle p-3 pl-4 lg:justify-between">
+        {title && <CardTitle className="min-w-0 truncate text-lg">{title}</CardTitle>}
         {/* Hidden on a phone: the TopBar already carries a search field there,
             and two search boxes stacked in one column is the more confusing
             cost. Any term already set stays visible as a removable chip below,
@@ -199,10 +199,10 @@ export function TableToolbar({
           />
         </div>
 
-        {/* `flex-wrap`: a table with several actions (Import + Export + New)
-            cannot fit them beside the filter controls on a phone, and without
-            wrapping the last one overhangs the viewport. */}
-        <div className="flex flex-wrap items-center gap-2">
+        {/* One row at every width, controls pinned to the end. Import and
+            Export drop their labels on a phone so the row still fits; the
+            title truncates ahead of them rather than pushing them off. */}
+        <div className="ml-auto flex shrink-0 items-center gap-2">
           {/* Filter button */}
           {filterableColumns.length > 0 && (
             <Popover open={filterOpen} onOpenChange={setFilterOpen}>

@@ -65,10 +65,13 @@ export function ExportButton({
 
   return (
     <>
+      {/* Desktop only: picking a dataset, waiting on the job and opening
+          the file is desk work, and the button is one of the things that
+          pushed the toolbar onto a third row on a phone. */}
       <Button
         size="sm"
         variant="outline"
-        className="h-[2.125rem]"
+        className="hidden h-[2.125rem] lg:inline-flex"
         onClick={() => setOpen(true)}
         disabled={exportMutation.isPending}
       >
