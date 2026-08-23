@@ -573,7 +573,7 @@ function OptionValuesFieldArray({
                   />
                 ))}
                 <TableRow className="hover:bg-transparent">
-                  <TableCell colSpan={totalColCount} className="p-0">
+                  <TableCell colSpan={totalColCount} className="h-auto p-0">
                     <button
                       type="button"
                       onClick={() =>

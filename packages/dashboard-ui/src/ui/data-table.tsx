@@ -227,7 +227,7 @@ function TableHead({ className, ...props }: React.ComponentProps<'th'>) {
   return (
     <th
       className={cn(
-        'text-left text-sm font-medium text-muted-foreground bg-muted p-2 whitespace-nowrap first:pl-4 last:pr-4',
+        'text-left text-sm font-medium text-muted-foreground bg-muted px-3 py-2.5 sm:p-2 whitespace-nowrap first:pl-4 last:pr-4',
         'shadow-[inset_0_-1px_0_0_var(--border-subtle)]',
         className,
       )}
@@ -256,7 +256,10 @@ function TableCell({ className, ...props }: React.ComponentProps<'td'>) {
   return (
     <td
       className={cn(
-        'py-3 px-2 border-b border-border-subtle align-middle first:pl-4 last:pr-4',
+        // `h-16` on touch is a floor, not a fixed height: a table cell treats
+        // `height` as a minimum, so a row with a thumbnail or a wrapped
+        // second line still grows past it.
+        'h-16 py-3 px-3 sm:h-auto sm:py-3 sm:px-2 border-b border-border-subtle align-middle first:pl-4 last:pr-4',
         className,
       )}
       {...props}
