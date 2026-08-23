@@ -118,9 +118,10 @@ export const settingsNav: SettingsNavMutator = {
   update(key, patch) {
     const e = entries.find((x) => x.key === key)
     if (!e) throw new Error(`Settings nav entry "${key}" not found.`)
+    // Validate a copy before touching the stored entry: a patch that removes
+    // both label fields must leave the registry as it was, not half-applied.
+    ensureLabelled({ ...e, ...patch }, 'Settings nav entry')
     Object.assign(e, patch)
-    // Re-validate the merged entry — the patch could remove both label fields.
-    ensureLabelled(e, 'Settings nav entry')
     notify()
   },
   addGroup(group) {

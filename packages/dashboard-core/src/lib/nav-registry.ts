@@ -172,9 +172,10 @@ export const nav: NavMutator = {
   update(key, patch) {
     const e = entries.find((x) => x.key === key)
     if (!e) throw new Error(`Nav entry "${key}" not found.`)
+    // Validate a copy before touching the stored entry: a patch that removes
+    // both label fields must leave the registry as it was, not half-applied.
+    ensureLabelled({ ...e, ...patch })
     Object.assign(e, patch)
-    // Re-validate the merged entry — the patch could remove both label fields.
-    ensureLabelled(e)
     notify()
   },
   insertBefore(targetKey, entry) {
