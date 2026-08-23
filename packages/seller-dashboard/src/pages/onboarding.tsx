@@ -15,6 +15,7 @@ import {
   Input,
   Progress,
   Textarea,
+  toastManager,
 } from '@spree/dashboard-ui'
 import type { RequirementStatus } from '@spree/seller-sdk'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -29,7 +30,6 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { sellerClient } from '../api-client'
 import { CenteredMessage } from '../components/centered-message'
 import { SellerAddressCard } from '../components/seller-address-card'
@@ -61,11 +61,15 @@ export function OnboardingPage() {
     mutationFn: () => sellerClient().onboarding.submitForReview(),
     onSuccess: (next) => {
       queryClient.setQueryData(['seller', sellerId, 'onboarding'], next)
-      toast.success(t('onboarding.submitted'))
+      toastManager.add({ type: 'success', title: t('onboarding.submitted') })
     },
     // The server names what is outstanding; showing our own wording instead
     // would tell the seller less than the API already knows.
-    onError: (err) => toast.error(err instanceof Error ? err.message : t('common.error')),
+    onError: (err) =>
+      toastManager.add({
+        type: 'error',
+        title: err instanceof Error ? err.message : t('common.error'),
+      }),
   })
 
   if (isLoading) return <CenteredMessage>{t('common.loading')}</CenteredMessage>
@@ -208,10 +212,14 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
   const acceptTerms = useMutation({
     mutationFn: () => sellerClient().profile.update({ accept_terms: true }),
     onSuccess: () => {
-      toast.success(t('onboarding.terms_accepted'))
+      toastManager.add({ type: 'success', title: t('onboarding.terms_accepted') })
       void invalidate()
     },
-    onError: (err) => toast.error(err instanceof Error ? err.message : t('common.error')),
+    onError: (err) =>
+      toastManager.add({
+        type: 'error',
+        title: err instanceof Error ? err.message : t('common.error'),
+      }),
   })
 
   // One submit for every kind that takes one — an attestation the seller
@@ -226,10 +234,14 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
     onSuccess: () => {
       setNote('')
       setFile(EMPTY_FILE_UPLOAD_VALUE)
-      toast.success(t('onboarding.submitted_requirement'))
+      toastManager.add({ type: 'success', title: t('onboarding.submitted_requirement') })
       void invalidate()
     },
-    onError: (err) => toast.error(err instanceof Error ? err.message : t('common.error')),
+    onError: (err) =>
+      toastManager.add({
+        type: 'error',
+        title: err instanceof Error ? err.message : t('common.error'),
+      }),
   })
 
   // Custom fields are the seller's own profile data, so they save through the
@@ -243,10 +255,14 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
         })),
       }),
     onSuccess: () => {
-      toast.success(t('profile.saved'))
+      toastManager.add({ type: 'success', title: t('profile.saved') })
       void invalidate()
     },
-    onError: (err) => toast.error(err instanceof Error ? err.message : t('common.error')),
+    onError: (err) =>
+      toastManager.add({
+        type: 'error',
+        title: err instanceof Error ? err.message : t('common.error'),
+      }),
   })
 
   const submission = requirement.submission

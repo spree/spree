@@ -9,7 +9,7 @@ function RootLayout() {
   return (
     <>
       <Outlet />
-      <Toaster position="bottom-right" />
+      <Toaster />
     </>
   )
 }

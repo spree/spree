@@ -19,6 +19,7 @@ import {
   SheetTitle,
   StatusBadge,
   Textarea,
+  toastManager,
 } from '@spree/dashboard-ui'
 import type { Profile } from '@spree/seller-sdk'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -28,7 +29,6 @@ import type { ReactNode } from 'react'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { sellerClient } from '../api-client'
 import { CenteredMessage } from '../components/centered-message'
 import { SellerAddressCard } from '../components/seller-address-card'
@@ -320,9 +320,13 @@ function EditProfileSheet({
     onSuccess: (updated) => {
       queryClient.setQueryData(['seller', sellerId, 'profile'], updated)
       onOpenChange(false)
-      toast.success(t('profile.saved'))
+      toastManager.add({ type: 'success', title: t('profile.saved') })
     },
-    onError: (err) => toast.error(err instanceof Error ? err.message : t('common.error')),
+    onError: (err) =>
+      toastManager.add({
+        type: 'error',
+        title: err instanceof Error ? err.message : t('common.error'),
+      }),
   })
 
   const { errors } = form.formState

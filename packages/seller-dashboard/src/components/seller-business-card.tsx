@@ -13,6 +13,7 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
+  toastManager,
 } from '@spree/dashboard-ui'
 import type { Profile } from '@spree/seller-sdk'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
@@ -20,7 +21,6 @@ import { useParams } from '@tanstack/react-router'
 import { PencilIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { sellerClient } from '../api-client'
 
 /** The registration kind this panel collects. */
@@ -59,9 +59,13 @@ export function SellerBusinessCard({ profile }: { profile: Profile }) {
       // A checklist kind may read these, so it has to re-evaluate.
       void queryClient.invalidateQueries({ queryKey: ['seller', sellerId, 'onboarding'] })
       setEditing(false)
-      toast.success(t('profile.saved'))
+      toastManager.add({ type: 'success', title: t('profile.saved') })
     },
-    onError: (err) => toast.error(err instanceof Error ? err.message : t('common.error')),
+    onError: (err) =>
+      toastManager.add({
+        type: 'error',
+        title: err instanceof Error ? err.message : t('common.error'),
+      }),
   })
 
   const rows = [

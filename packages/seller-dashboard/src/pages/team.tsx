@@ -33,6 +33,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  toastManager,
   useConfirm,
   useCopyToClipboard,
 } from '@spree/dashboard-ui'
@@ -52,7 +53,6 @@ import {
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { sellerClient } from '../api-client'
 
 /**
@@ -177,12 +177,16 @@ function MemberRow({ member, lastOne }: { member: TeamMember; lastOne: boolean }
   const remove = useMutation({
     mutationFn: (id: string) => sellerClient().team.remove(id),
     onSuccess: () => {
-      toast.success(t('team.messages.removed'))
+      toastManager.add({ type: 'success', title: t('team.messages.removed') })
       void queryClient.invalidateQueries({ queryKey: ['seller', sellerId, 'team'] })
     },
     // Read the server's own message rather than assuming which rule was hit —
     // "last member" is one refusal among several the API may grow.
-    onError: (err) => toast.error(err instanceof Error ? err.message : t('common.error')),
+    onError: (err) =>
+      toastManager.add({
+        type: 'error',
+        title: err instanceof Error ? err.message : t('common.error'),
+      }),
   })
 
   async function handleRemove() {
@@ -286,19 +290,27 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
   const resend = useMutation({
     mutationFn: (id: string) => sellerClient().invitations.resend(id),
     onSuccess: () => {
-      toast.success(t('team.messages.resent'))
+      toastManager.add({ type: 'success', title: t('team.messages.resent') })
       void invalidate()
     },
-    onError: (err) => toast.error(err instanceof Error ? err.message : t('common.error')),
+    onError: (err) =>
+      toastManager.add({
+        type: 'error',
+        title: err instanceof Error ? err.message : t('common.error'),
+      }),
   })
 
   const revoke = useMutation({
     mutationFn: (id: string) => sellerClient().invitations.revoke(id),
     onSuccess: () => {
-      toast.success(t('team.messages.revoked'))
+      toastManager.add({ type: 'success', title: t('team.messages.revoked') })
       void invalidate()
     },
-    onError: (err) => toast.error(err instanceof Error ? err.message : t('common.error')),
+    onError: (err) =>
+      toastManager.add({
+        type: 'error',
+        title: err instanceof Error ? err.message : t('common.error'),
+      }),
   })
 
   async function handleCopyLink() {
@@ -314,7 +326,7 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
       : invitation.acceptance_url
 
     await copy(url)
-    toast.success(t('team.messages.link_copied'))
+    toastManager.add({ type: 'success', title: t('team.messages.link_copied') })
   }
 
   async function handleRevoke() {
@@ -393,12 +405,16 @@ function InviteDialog({
     onSuccess: () => {
       form.reset({ email: '' })
       onOpenChange(false)
-      toast.success(t('team.messages.invited'))
+      toastManager.add({ type: 'success', title: t('team.messages.invited') })
       // The new row lands in pending invitations, not in members — they are
       // not a member until they accept.
       void queryClient.invalidateQueries({ queryKey: ['seller', sellerId, 'invitations'] })
     },
-    onError: (err) => toast.error(err instanceof Error ? err.message : t('common.error')),
+    onError: (err) =>
+      toastManager.add({
+        type: 'error',
+        title: err instanceof Error ? err.message : t('common.error'),
+      }),
   })
 
   const { errors } = form.formState

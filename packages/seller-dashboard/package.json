@@ -39,7 +39,6 @@
     "lucide-react": "^0.545.0",
     "react-hook-form": "^7.65.0",
     "react-i18next": "^17.0.8",
-    "sonner": "^2.0.7",
     "zod": "^4.4.3"
   },
   "peerDependencies": {
