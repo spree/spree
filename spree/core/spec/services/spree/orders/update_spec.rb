@@ -182,7 +182,7 @@ module Spree
               country_code: other_country.iso, state_abbr: other_state.abbr
             }
           end
-          let(:params) { { ship_address_attributes: new_address_attrs } }
+          let(:params) { { shipping_address: new_address_attrs } }
 
           it 'rebuilds shipments against the new address' do
             old_shipment_ids = order.shipments.map(&:id)
@@ -196,6 +196,19 @@ module Spree
             new_shipment_ids = order.shipments.map(&:id)
             expect(new_shipment_ids).not_to be_empty
             expect(new_shipment_ids & old_shipment_ids).to be_empty
+          end
+        end
+
+        # The admin controller sends the public names; the column names and the
+        # Rails nested-attributes key stay accepted for existing callers.
+        %i[shipping_address ship_address ship_address_attributes].each do |key|
+          context "when the shipping address arrives as #{key}" do
+            let(:params) { { key => attributes_for(:address).merge(address1: '1 Accepted Way') } }
+
+            it 'applies the address' do
+              expect(subject).to be_success
+              expect(order.reload.ship_address.address1).to eq('1 Accepted Way')
+            end
           end
         end
 
@@ -249,7 +262,7 @@ module Spree
 
           # Move to a different country — shipments rebuild, promo must re-apply
           described_class.call(order: order, params: {
-            ship_address_attributes: {
+            shipping_address: {
               firstname: 'Bob', lastname: 'Stone',
               address1: '99 New Street', city: 'Other City',
               zipcode: Spree::TestingSupport::CountryPool.postal_code_for(other_country.iso),
