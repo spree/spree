@@ -27,10 +27,8 @@ import {
   Checkbox,
   cn,
   DragHandle,
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
   Pagination,
+  SearchInput,
   Table,
   TableBody,
   TableCell,
@@ -41,7 +39,7 @@ import {
   useConfirm,
 } from '@spree/dashboard-ui'
 import { Link } from '@tanstack/react-router'
-import { PlusIcon, SearchIcon, Trash2Icon, XIcon } from 'lucide-react'
+import { PlusIcon, Trash2Icon, XIcon } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -271,18 +269,13 @@ export function ProductMembershipCard({
         ) : (
           <>
             <div className="border-border border-b p-3">
-              <InputGroup>
-                <InputGroupAddon>
-                  <SearchIcon className="size-4 text-muted-foreground" />
-                </InputGroupAddon>
-                <InputGroupInput
-                  type="search"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
-                  placeholder={tr('filter_placeholder')}
-                />
-              </InputGroup>
+              <SearchInput
+                value={query}
+                onValueChange={setQuery}
+                onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
+                placeholder={tr('filter_placeholder')}
+                clearLabel={t('admin.common.clear')}
+              />
             </div>
             {visible.length === 0 ? (
               <p className="p-6 text-muted-foreground text-sm">{tr('no_matches')}</p>

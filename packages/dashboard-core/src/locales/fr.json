@@ -111,7 +111,8 @@
       "default": "Par défaut",
       "cancel": "Annuler",
       "empty_value": "—",
-      "retry": "Réessayer"
+      "retry": "Réessayer",
+      "clear": "Effacer"
     },
     "color_picker": {
       "no_color": "Aucune couleur"

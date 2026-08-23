@@ -111,7 +111,8 @@
       "default": "Standard",
       "cancel": "Abbrechen",
       "empty_value": "—",
-      "retry": "Erneut versuchen"
+      "retry": "Erneut versuchen",
+      "clear": "Löschen"
     },
     "color_picker": {
       "no_color": "Keine Farbe"

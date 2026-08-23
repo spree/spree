@@ -111,7 +111,8 @@
       "default": "默认",
       "cancel": "取消",
       "empty_value": "—",
-      "retry": "重试"
+      "retry": "重试",
+      "clear": "清除"
     },
     "color_picker": {
       "no_color": "无颜色"

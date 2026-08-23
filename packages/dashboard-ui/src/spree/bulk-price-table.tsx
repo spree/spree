@@ -1,8 +1,8 @@
 import type { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
 import { Button } from '../ui/button'
-import { Input } from '../ui/input'
 import { DataGrid, editableRowIndex, MoneyCell, ReadOnlyCell } from './data-grid'
+import { SearchInput } from './search-input'
 
 export interface BulkPriceRow {
   // Unique row id. For header rows use a synthetic key (e.g. `header:<groupId>`);
@@ -33,6 +33,8 @@ export interface BulkPriceTableLabels {
   variantDefault: string
   /** Placeholder text for the search input. Omit to hide the search input. */
   searchPlaceholder?: string
+  /** Accessible name for the search field's clear button. */
+  clearSearch?: string
   /** A short message shown above the grid summarising the matching row count. */
   countSummary?: string
   /** Shown when the loading flag is set. */
@@ -187,11 +189,11 @@ export function BulkPriceTable({
             <p className="text-xs text-muted-foreground">{labels.countSummary}</p>
           )}
           {onSearchChange !== undefined && labels.searchPlaceholder !== undefined && (
-            <Input
-              type="search"
+            <SearchInput
               placeholder={labels.searchPlaceholder}
               value={search ?? ''}
-              onChange={(e) => onSearchChange(e.target.value)}
+              onValueChange={onSearchChange}
+              clearLabel={labels.clearSearch}
               className="h-9 max-w-sm"
             />
           )}

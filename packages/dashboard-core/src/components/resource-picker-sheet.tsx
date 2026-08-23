@@ -1,9 +1,7 @@
 import {
   Button,
   Checkbox,
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
+  SearchInput,
   Sheet,
   SheetContent,
   SheetDescription,
@@ -13,7 +11,7 @@ import {
   Thumbnail,
 } from '@spree/dashboard-ui'
 import { useQuery } from '@tanstack/react-query'
-import { Loader2Icon, SearchIcon, XIcon } from 'lucide-react'
+import { Loader2Icon, XIcon } from 'lucide-react'
 import { useDeferredValue, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -137,19 +135,14 @@ export function ResourcePickerSheet<T extends PickerOption>({
         </SheetHeader>
 
         <div className="border-b border-border p-4">
-          <InputGroup>
-            <InputGroupAddon>
-              <SearchIcon className="size-4 text-muted-foreground" />
-            </InputGroupAddon>
-            <InputGroupInput
-              type="search"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              // Enter has no action here; swallow it so it can't submit a host form.
-              onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
-              placeholder={searchPlaceholder ?? t('admin.resource_picker.search_placeholder')}
-            />
-          </InputGroup>
+          <SearchInput
+            value={input}
+            onValueChange={setInput}
+            // Enter has no action here; swallow it so it can't submit a host form.
+            onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
+            placeholder={searchPlaceholder ?? t('admin.resource_picker.search_placeholder')}
+            clearLabel={t('admin.common.clear')}
+          />
           {staged.size > 0 && (
             <p className="mt-2 text-muted-foreground text-xs">
               {t('admin.resource_picker.selected_count', { count: staged.size })}

@@ -111,7 +111,8 @@
       "default": "Domyślny",
       "cancel": "Anuluj",
       "empty_value": "—",
-      "retry": "Spróbuj ponownie"
+      "retry": "Spróbuj ponownie",
+      "clear": "Wyczyść"
     },
     "color_picker": {
       "no_color": "Brak koloru"
