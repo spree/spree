@@ -16,7 +16,7 @@ import {
 } from '@spree/dashboard-ui'
 import { Link, useParams, useRouterState } from '@tanstack/react-router'
 import { ArrowLeftIcon, PackageIcon } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useSyncExternalStore } from 'react'
 import { useTranslation } from 'react-i18next'
 import { isPathWithin, resolveNavLabel } from '../lib/nav-registry'
 import {
@@ -101,6 +101,27 @@ export function SettingsSidebar({ open }: { open: boolean }) {
  * needs the full width on a phone; `data-mobile` opts its rows into the same
  * touch sizing the primary drawer uses.
  */
+/**
+ * Tracks the `lg` breakpoint the settings sheet is bounded by. `useIsMobile`
+ * cannot stand in: it is fixed at 768px, and closing the sheet there would
+ * strand it open across the 768-1024px band where it is still the only way to
+ * navigate settings.
+ */
+const SETTINGS_SHEET_BREAKPOINT = 1024
+
+function useIsSettingsSheetHidden() {
+  return useSyncExternalStore(
+    (onChange) => {
+      const query = window.matchMedia(`(min-width: ${SETTINGS_SHEET_BREAKPOINT}px)`)
+      query.addEventListener('change', onChange)
+      return () => query.removeEventListener('change', onChange)
+    },
+    () => window.matchMedia(`(min-width: ${SETTINGS_SHEET_BREAKPOINT}px)`).matches,
+    // Server render: assume the narrow layout so the sheet stays mountable.
+    () => false,
+  )
+}
+
 export function SettingsNavSheet({
   open,
   onOpenChange,
@@ -109,13 +130,25 @@ export function SettingsNavSheet({
   onOpenChange: (open: boolean) => void
 }) {
   const { t } = useTranslation()
+  // Unmounted above `lg` rather than hidden with a utility class: `lg:hidden`
+  // would hide the panel but leave the portal's overlay painted and the modal
+  // focus trap armed, with nothing on screen to close it. Widening past the
+  // breakpoint while the sheet is open also reports the close, so the caller's
+  // state does not stay stuck open behind a desktop layout.
+  const isDesktop = useIsSettingsSheetHidden()
+
+  useEffect(() => {
+    if (isDesktop && open) onOpenChange(false)
+  }, [isDesktop, open, onOpenChange])
+
+  if (isDesktop) return null
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="left"
         data-mobile="true"
-        className={cn(mobileDrawerClassName, 'gap-0 lg:hidden')}
+        className={cn(mobileDrawerClassName, 'gap-0')}
         style={{ width: SIDEBAR_WIDTH_MOBILE }}
       >
         {/* `h-header-height` matches the store header in the primary drawer, so
