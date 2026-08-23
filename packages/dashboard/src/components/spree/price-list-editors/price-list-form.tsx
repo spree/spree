@@ -9,7 +9,7 @@ import {
   ResourceMultiAutocomplete,
   useStore,
 } from '@spree/dashboard-core'
-import { useConfirm } from '@spree/dashboard-ui'
+import { DropdownMenuItem, useConfirm } from '@spree/dashboard-ui'
 import {
   CalendarOffIcon,
   PauseIcon,
@@ -170,10 +170,16 @@ export function PriceListForm({
             }
             backTo="products/price-lists"
             badges={priceList && <PriceListStatusBadge priceList={priceList} />}
-            onDelete={
-              mode === 'edit' && onDelete && canDelete && !deletePending ? onDelete : undefined
+            // `dropdownItems` rather than `onDelete`: the caller already runs
+            // its own confirm, naming the price list being deleted, and
+            // `onDelete` would stack the header's generic prompt in front of it.
+            dropdownItems={
+              mode === 'edit' && onDelete && canDelete ? (
+                <DropdownMenuItem variant="destructive" disabled={deletePending} onClick={onDelete}>
+                  {t('admin.actions.delete')}
+                </DropdownMenuItem>
+              ) : undefined
             }
-            deleteLabel={t('admin.actions.delete')}
             jsonPreview={
               mode === 'edit' && priceList
                 ? {

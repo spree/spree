@@ -9,7 +9,7 @@ import type {
   ResourceTypeDefinition,
 } from '@spree/admin-sdk'
 import { Can, PageHeader, PreferencesForm, StoreDatePicker } from '@spree/dashboard-core'
-import { formatCalculatorSummary, useConfirm } from '@spree/dashboard-ui'
+import { DropdownMenuItem, formatCalculatorSummary, useConfirm } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { DownloadIcon, PlusIcon, SparklesIcon, TrashIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -246,10 +246,16 @@ export function PromotionForm({
             // Delete lives in the more-actions menu, not beside Save: a
             // destructive action next to the primary one is easy to hit by
             // mistake, and the menu is where every other record page puts it.
-            onDelete={
-              mode === 'edit' && onDelete && canDelete && !deletePending ? onDelete : undefined
+            // `dropdownItems` rather than `onDelete`: the caller already runs
+            // its own confirm, naming the promotion being deleted, and
+            // `onDelete` would stack the header's generic prompt in front of it.
+            dropdownItems={
+              mode === 'edit' && onDelete && canDelete ? (
+                <DropdownMenuItem variant="destructive" disabled={deletePending} onClick={onDelete}>
+                  {t('admin.actions.delete')}
+                </DropdownMenuItem>
+              ) : undefined
             }
-            deleteLabel={t('admin.actions.delete')}
             jsonPreview={
               mode === 'edit' && promotion
                 ? {
