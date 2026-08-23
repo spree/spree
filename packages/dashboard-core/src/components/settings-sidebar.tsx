@@ -1,6 +1,13 @@
 import {
   Badge,
   cn,
+  mobileDrawerClassName,
+  SearchInput,
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SIDEBAR_WIDTH_MOBILE,
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
@@ -9,13 +16,16 @@ import {
 } from '@spree/dashboard-ui'
 import { Link, useParams, useRouterState } from '@tanstack/react-router'
 import { PackageIcon } from 'lucide-react'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { isPathWithin, resolveNavLabel } from '../lib/nav-registry'
 import {
+  filterSettingsByPermissions,
+  filterSettingsByQuery,
   type SettingsNavEntry,
-  type SettingsNavSnapshot,
   useSettingsNav,
 } from '../lib/settings-nav-registry'
-import { type Permissions, usePermissions } from '../providers/permission-provider'
+import { usePermissions } from '../providers/permission-provider'
 import { NavIcon } from './nav-main'
 
 /**
@@ -34,11 +44,6 @@ import { NavIcon } from './nav-main'
  */
 export function SettingsSidebar({ open }: { open: boolean }) {
   const { t } = useTranslation()
-  const { storeId } = useParams({ strict: false }) as { storeId?: string }
-  const id = storeId ?? 'default'
-  const snapshot = useSettingsNav()
-  const { permissions } = usePermissions()
-  const visible = filterByPermissions(snapshot, permissions)
 
   // `sticky top-0 h-svh` keeps the nav at full viewport height as the page
   // scrolls. `overflow-hidden` clips the inner fixed-width content while the
@@ -59,31 +64,128 @@ export function SettingsSidebar({ open }: { open: boolean }) {
           scrollbar cuts a heavy grey stripe down the middle of the chrome. */}
       <div
         className={cn(
-          'quiet-scrollbar flex h-full w-(--spacing-sidebar-width) flex-col gap-2 overflow-y-auto py-2 transition-opacity duration-200',
+          'quiet-scrollbar h-full w-(--spacing-sidebar-width) overflow-y-auto transition-opacity duration-200',
           open ? 'opacity-100 delay-100' : 'pointer-events-none opacity-0',
         )}
       >
-        {visible.groups.map(({ group, entries }) => (
-          <SidebarGroup key={group.key}>
-            <SidebarGroupLabel>
-              {group.labelKey ? t(group.labelKey) : group.label}
-            </SidebarGroupLabel>
-            <SidebarMenu>
-              {entries.map((entry) => (
-                <SettingsItem
-                  key={entry.key}
-                  entry={entry}
-                  storeId={id}
-                  // While closed, keep the items out of the tab order — the
-                  // `aria-hidden` above does not, by itself, prevent focus.
-                  tabIndex={open ? 0 : -1}
-                />
-              ))}
-            </SidebarMenu>
-          </SidebarGroup>
-        ))}
+        <SettingsNavBody tabIndex={open ? 0 : -1} />
       </div>
     </aside>
+  )
+}
+
+/**
+ * The settings nav on a narrow screen, where `SettingsSidebar` is hidden.
+ * Without it the only way between two settings pages is a round trip through
+ * the landing page.
+ *
+ * Rendered as a sheet rather than an inline panel because the settings content
+ * needs the full width on a phone; `data-mobile` opts its rows into the same
+ * touch sizing the primary drawer uses.
+ */
+export function SettingsNavSheet({
+  open,
+  onOpenChange,
+}: {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}) {
+  const { t } = useTranslation()
+
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent
+        side="left"
+        data-mobile="true"
+        className={cn(mobileDrawerClassName, 'gap-0 lg:hidden')}
+        style={{ width: SIDEBAR_WIDTH_MOBILE }}
+      >
+        {/* `h-header-height` matches the store header in the primary drawer, so
+            the two nav sheets open to the same silhouette — and it gives the
+            close button a full-height touch target rather than a 42px band. */}
+        <SheetHeader className="h-header-height justify-center border-b border-sidebar-border px-4 py-0">
+          <SheetTitle className="text-base">{t('admin.settings_page.title')}</SheetTitle>
+        </SheetHeader>
+        <div className="quiet-scrollbar flex-1 overflow-y-auto">
+          {/* Close as the link is tapped rather than from an effect watching the
+              path: this body renders inside the Sheet, so it remounts on every
+              open and an effect could not tell "just opened" from "navigated". */}
+          <SettingsNavBody tabIndex={0} onNavigate={() => onOpenChange(false)} />
+        </div>
+      </SheetContent>
+    </Sheet>
+  )
+}
+
+/** Search box plus grouped entries — shared by the desktop aside and the sheet. */
+function SettingsNavBody({
+  tabIndex,
+  onNavigate,
+}: {
+  tabIndex: number
+  /** Called when an entry is tapped — closes the mobile sheet. */
+  onNavigate?: () => void
+}) {
+  const { t } = useTranslation()
+  const { storeId } = useParams({ strict: false }) as { storeId?: string }
+  const id = storeId ?? 'default'
+  const snapshot = useSettingsNav()
+  const { permissions } = usePermissions()
+  const [query, setQuery] = useState('')
+  // Permission filtering depends only on the snapshot, so it survives typing.
+  const allowed = useMemo(
+    () => filterSettingsByPermissions(snapshot, permissions),
+    [snapshot, permissions],
+  )
+  const visible = useMemo(() => filterSettingsByQuery(allowed, query, t), [allowed, query, t])
+
+  return (
+    // Delegated rather than per-link: entries render through `asChild` Slots
+    // that clone their own `onClick` over the child's.
+    // biome-ignore lint/a11y/noStaticElementInteractions: delegated link taps only
+    // biome-ignore lint/a11y/useKeyWithClickEvents: links keep their own keyboard behaviour
+    <div
+      className="flex flex-col gap-2 py-2"
+      onClick={(event) => {
+        if ((event.target as HTMLElement).closest('a')) onNavigate?.()
+      }}
+    >
+      <div className="px-2">
+        <SearchInput
+          value={query}
+          onValueChange={setQuery}
+          placeholder={t('admin.settings_page.search_placeholder')}
+          aria-label={t('admin.settings_page.search_placeholder')}
+          clearLabel={t('admin.common.clear')}
+          tabIndex={tabIndex}
+          className="h-8 bg-sidebar text-sm in-data-[mobile=true]:h-11 in-data-[mobile=true]:text-base"
+        />
+      </div>
+
+      {visible.groups.length === 0 && (
+        <p className="px-4 py-2 text-sm text-sidebar-foreground/70">
+          {t('admin.settings_page.no_results', { query: query.trim() })}
+        </p>
+      )}
+
+      {visible.groups.map(({ group, entries }) => (
+        <SidebarGroup key={group.key}>
+          <SidebarGroupLabel>{resolveNavLabel(group, t)}</SidebarGroupLabel>
+          <SidebarMenu>
+            {entries.map((entry) => (
+              <SettingsItem
+                key={entry.key}
+                entry={entry}
+                storeId={id}
+                // While the desktop panel is closed, keep items out of the tab
+                // order — `aria-hidden` does not, by itself, prevent focus.
+                tabIndex={tabIndex}
+              />
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
+      ))}
+    </div>
   )
 }
 
@@ -100,9 +202,9 @@ function SettingsItem({
   const routerState = useRouterState()
   const currentPath = routerState.location.pathname
   const url = `/${storeId}/settings${entry.path}`
-  const isActive = currentPath === url || currentPath.startsWith(`${url}/`)
+  const isActive = isPathWithin(currentPath, url)
   const Icon = entry.icon ?? PackageIcon
-  const label = entry.labelKey ? t(entry.labelKey) : entry.label
+  const label = resolveNavLabel(entry, t)
 
   return (
     <SidebarMenuItem>
@@ -121,20 +223,4 @@ function SettingsItem({
       </SidebarMenuButton>
     </SidebarMenuItem>
   )
-}
-
-function filterByPermissions(
-  snapshot: SettingsNavSnapshot,
-  permissions: Permissions,
-): SettingsNavSnapshot {
-  const groups = snapshot.groups
-    .map(({ group, entries }) => ({
-      group,
-      entries: entries.filter((e) => !e.subject || permissions.can(e.action ?? 'read', e.subject)),
-    }))
-    .filter((g) => g.entries.length > 0)
-  return {
-    groups,
-    all: groups.flatMap((g) => g.entries),
-  }
 }

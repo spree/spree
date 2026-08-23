@@ -2,6 +2,8 @@ import {
   AppSidebar,
   adminClient,
   CommandPaletteProvider,
+  MobileBreadcrumbBar,
+  SettingsNavSheet,
   SettingsSidebar,
   StickyHeaderProvider,
   StoreProvider,
@@ -75,6 +77,9 @@ function StoreShell({ inSettings }: { inSettings: boolean }) {
   // open state — the trigger sits in the TopBar's user menu, which is mounted
   // here and stays put across route changes.
   const [profileOpen, setProfileOpen] = useState(false)
+  // Below `lg` the settings sidebar is hidden, so its sheet is the only way
+  // between two settings pages. The trigger lives in the mobile breadcrumb bar.
+  const [settingsNavOpen, setSettingsNavOpen] = useState(false)
 
   return (
     <>
@@ -86,6 +91,8 @@ function StoreShell({ inSettings }: { inSettings: boolean }) {
         <SettingsSidebar open={inSettings} />
         <div className="flex min-w-0 flex-1 flex-col">
           <TopBar uiLocales={UI_LOCALES} onEditProfile={() => setProfileOpen(true)} />
+          <MobileBreadcrumbBar onOpenSettingsNav={() => setSettingsNavOpen(true)} />
+          <SettingsNavSheet open={settingsNavOpen} onOpenChange={setSettingsNavOpen} />
           <ProfileDialog open={profileOpen} onOpenChange={setProfileOpen} />
           {inSettings ? (
             <Outlet />

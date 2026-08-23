@@ -43,6 +43,7 @@ export * from './components/store-switcher'
 export * from './components/table-toolbar'
 export * from './components/tag-combobox'
 export * from './components/top-bar'
+export * from './components/top-bar-breadcrumbs'
 // ---------------------------------------------------------------------------
 // Infra hooks
 // ---------------------------------------------------------------------------
@@ -59,6 +60,7 @@ export * from './hooks/use-host-form'
 export * from './hooks/use-import'
 export * from './hooks/use-resource-mutation'
 export * from './hooks/use-switch-admin-locale'
+export * from './hooks/use-visual-viewport-offset'
 export * from './lib/create-action-registry'
 // ---------------------------------------------------------------------------
 // Registries — pluggable extension points (nav, route, slot, table,
