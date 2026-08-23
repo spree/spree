@@ -116,7 +116,7 @@ function Table({
       // visible`, so sticky resolves against the page instead. Narrow viewports
       // keep `auto`, where scrolling a wide table sideways matters more than a
       // sticky header.
-      <div className="overflow-x-auto md:overflow-x-clip">
+      <div className="@container/table-scroll overflow-x-auto md:overflow-x-clip">
         <table
           className={cn('w-full align-top text-foreground', roundedClasses, className)}
           {...props}
@@ -152,7 +152,12 @@ function Table({
           `min-width: auto`, refuses to shrink below the table's intrinsic
           width, and the overflow escapes to the document instead of scrolling
           here — the whole page then lays out wider than the viewport. */}
-      <div ref={scrollRef} className="themed-scrollbar min-w-0 overflow-x-auto">
+      <div
+        ref={scrollRef}
+        // `@container/table-scroll`: the empty-state row sizes itself to this
+        // element's width rather than the viewport's.
+        className="@container/table-scroll themed-scrollbar min-w-0 overflow-x-auto"
+      >
         <table ref={bodyTableRef} className={tableClasses} {...props}>
           {cloneElement(headerElement, {
             // The sizer: reserves the header row and drives column widths. It
@@ -263,11 +268,14 @@ function TableEmpty({ children, colSpan }: { children: ReactNode; colSpan: numbe
   return (
     <tr>
       <td colSpan={colSpan} className="py-12 text-center text-muted-foreground">
-        {/* `sticky left-0` with the viewport's own width: the cell spans the
-            full scroll width of a wide table, so centring inside it puts the
-            message off-screen on a narrow viewport. This keeps it centred on
-            what the merchant can actually see, wherever the table is scrolled. */}
-        <div className="sticky left-0 mx-auto w-screen max-w-full">{children}</div>
+        {/* The cell spans the table's full scroll width, so centring inside it
+            puts the message off-screen once the table is wider than its
+            container. `sticky left-0` pins this to the scroller's left edge and
+            `100cqw` sizes it to the scroller rather than the viewport — sizing
+            it to the viewport made the row itself the widest thing in the
+            table and produced a scrollbar on a list that had nothing to
+            scroll. */}
+        <div className="sticky left-0 flex w-[100cqw] justify-center">{children}</div>
       </td>
     </tr>
   )
