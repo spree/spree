@@ -26,7 +26,10 @@ import { useStore } from '../providers/store-provider'
 export function StoreSwitcher() {
   const { t } = useTranslation()
   const { isMobile, state } = useSidebar()
-  const isCollapsed = state === 'collapsed'
+  // `collapsed` is the desktop rail's icon mode. The mobile drawer is full
+  // width whatever that state says — and the rail auto-collapses inside the
+  // settings area — so honouring it there hides the store name for no reason.
+  const isCollapsed = state === 'collapsed' && !isMobile
 
   const { store, isLoading } = useStore()
   const { user } = useAuth()
