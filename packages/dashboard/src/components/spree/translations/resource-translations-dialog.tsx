@@ -230,7 +230,7 @@ export function ResourceTranslationsDialog({
             <Button
               type="button"
               size="sm"
-              variant="ghost"
+              variant="outline"
               disabled={dirtyCount === 0 || saving}
               onClick={() => setEdits(new Map())}
             >

@@ -11,7 +11,7 @@ import {
   Thumbnail,
 } from '@spree/dashboard-ui'
 import { useQuery } from '@tanstack/react-query'
-import { Loader2Icon, XIcon } from 'lucide-react'
+import { Loader2Icon } from 'lucide-react'
 import { useDeferredValue, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -202,8 +202,7 @@ export function ResourcePickerSheet<T extends PickerOption>({
         </div>
 
         <SheetFooter className="flex-row items-center justify-between border-t border-border">
-          <Button type="button" variant="ghost" onClick={() => handleOpenChange(false)}>
-            <XIcon className="size-4" />
+          <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>
             {t('admin.actions.cancel')}
           </Button>
           <Button type="button" onClick={confirm} disabled={staged.size === 0 || submitting}>

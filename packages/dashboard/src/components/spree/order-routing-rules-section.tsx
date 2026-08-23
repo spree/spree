@@ -332,7 +332,7 @@ function RuleTypePicker({
           </button>
         )
       })}
-      <Button type="button" variant="ghost" size="sm" className="self-start" onClick={onCancel}>
+      <Button type="button" variant="outline" size="sm" className="self-start" onClick={onCancel}>
         {t('admin.actions.cancel')}
       </Button>
     </div>

@@ -108,7 +108,7 @@ export function SecretInput({
           <Button
             type="button"
             size="sm"
-            variant="ghost"
+            variant="outline"
             onClick={() => {
               onChange(pendingMask)
               setPendingMask(null)

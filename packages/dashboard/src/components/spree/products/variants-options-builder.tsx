@@ -252,7 +252,7 @@ function AddOptionForm({ availableTypes, allOptionTypes, onSave, onCancel }: Add
             <PlusIcon />
             {t('admin.products.variants.create_option_type')}
           </Button>
-          <Button type="button" variant="ghost" size="sm" onClick={onCancel}>
+          <Button type="button" variant="outline" size="sm" onClick={onCancel}>
             {t('admin.actions.cancel')}
           </Button>
         </div>
@@ -385,7 +385,7 @@ function OptionPicker({ optionType, initialValues, onSave, onCancel }: OptionPic
         </button>
       </div>
       <div className="flex items-center justify-end gap-2">
-        <Button type="button" variant="ghost" size="sm" onClick={onCancel}>
+        <Button type="button" variant="outline" size="sm" onClick={onCancel}>
           {t('admin.actions.cancel')}
         </Button>
         <Button type="button" size="sm" onClick={handleSave} disabled={pickedNames.size === 0}>
@@ -473,7 +473,7 @@ function CreateOptionTypeInline({
         />
       </Field>
       <div className="flex items-center justify-end gap-2">
-        <Button type="button" variant="ghost" size="sm" onClick={onCancel} disabled={isPending}>
+        <Button type="button" variant="outline" size="sm" onClick={onCancel} disabled={isPending}>
           {t('admin.actions.cancel')}
         </Button>
         <Button type="button" size="sm" onClick={submit} disabled={isPending || !label.trim()}>
@@ -540,7 +540,7 @@ function CreateOptionValueInline({ onCancel, onCreate, isPending }: CreateOption
         />
       </Field>
       <div className="flex items-center justify-end gap-2">
-        <Button type="button" variant="ghost" size="sm" onClick={onCancel} disabled={isPending}>
+        <Button type="button" variant="outline" size="sm" onClick={onCancel} disabled={isPending}>
           {t('admin.actions.cancel')}
         </Button>
         <Button type="button" size="sm" onClick={submit} disabled={isPending || !label.trim()}>
