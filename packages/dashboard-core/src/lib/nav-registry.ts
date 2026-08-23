@@ -18,8 +18,15 @@ export interface NavVisibilityContext {
 export interface NavEntry {
   /** Stable identifier — used for register/remove/update and as the React key. */
   key: string
-  /** Visible label. */
-  label: string
+  /**
+   * Visible label. Built-in entries should prefer `labelKey` so the sidebar
+   * re-renders on language change; a literal `label` is resolved once at
+   * registration and then frozen. Plugins without translation bundles of their
+   * own can still pass a literal.
+   */
+  label?: string
+  /** i18n key passed to `t(...)` at render time. Takes precedence over `label`. */
+  labelKey?: string
   /**
    * Path template, prefixed with `/$storeId` at render time. Pass paths like
    * `'/orders'`, NOT `/store_abc/orders`. The leading slash is required.
@@ -99,6 +106,52 @@ function ensureUniqueKey(key: string) {
   }
 }
 
+/**
+ * The label shape both nav registries share: a translation key, or a literal
+ * for plugins that ship no translation bundle of their own.
+ */
+export interface LabelledEntry {
+  key: string
+  label?: string
+  labelKey?: string
+}
+
+/** Throws unless the entry can produce a visible label. */
+export function ensureLabelled(entry: LabelledEntry, kind = 'Nav entry') {
+  if (!entry.label && !entry.labelKey) {
+    throw new Error(`${kind} "${entry.key}" must define either "label" or "labelKey".`)
+  }
+}
+
+/**
+ * Resolve an entry's visible label. Prefer this over inlining the ternary —
+ * the fallbacks used to disagree between call sites, so an entry registered
+ * with neither field rendered blank on one surface and its key on another.
+ *
+ * @param entry Entry from either nav registry.
+ * @param t Translation function used to resolve `labelKey`.
+ * @returns The translated label, the literal, or the key as a last resort.
+ */
+export function resolveNavLabel(entry: LabelledEntry, t: (key: string) => string): string {
+  return entry.labelKey ? t(entry.labelKey) : (entry.label ?? entry.key)
+}
+
+/** Same contract as `resolveNavLabel` for the optional description pair. */
+export function resolveNavDescription(
+  entry: { description?: string; descriptionKey?: string },
+  t: (key: string) => string,
+): string | undefined {
+  return entry.descriptionKey ? t(entry.descriptionKey) : entry.description
+}
+
+/**
+ * Whether `pathname` is `url` or sits beneath it. The `/` boundary matters:
+ * a bare `startsWith` makes `/orders` match `/orders-archive`.
+ */
+export function isPathWithin(pathname: string, url: string): boolean {
+  return pathname === url || pathname.startsWith(`${url}/`)
+}
+
 // ============================================================================
 // Public API
 // ============================================================================
@@ -106,6 +159,7 @@ function ensureUniqueKey(key: string) {
 export const nav: NavMutator = {
   add(entry) {
     ensureUniqueKey(entry.key)
+    ensureLabelled(entry)
     entries.push(entry)
     notify()
   },
@@ -119,12 +173,15 @@ export const nav: NavMutator = {
     const e = entries.find((x) => x.key === key)
     if (!e) throw new Error(`Nav entry "${key}" not found.`)
     Object.assign(e, patch)
+    // Re-validate the merged entry — the patch could remove both label fields.
+    ensureLabelled(e)
     notify()
   },
   insertBefore(targetKey, entry) {
     const i = findIndex(targetKey)
     if (i === -1) throw new Error(`Nav entry "${targetKey}" not found.`)
     ensureUniqueKey(entry.key)
+    ensureLabelled(entry)
     // Inherit target's position so the relative order survives `getNavEntries`'s sort.
     const target = entries[i]
     const adjusted: NavEntry = {
@@ -138,6 +195,7 @@ export const nav: NavMutator = {
     const i = findIndex(targetKey)
     if (i === -1) throw new Error(`Nav entry "${targetKey}" not found.`)
     ensureUniqueKey(entry.key)
+    ensureLabelled(entry)
     const target = entries[i]
     const adjusted: NavEntry = {
       ...entry,
@@ -148,6 +206,7 @@ export const nav: NavMutator = {
   },
   addChild(parentKey, child) {
     const parent = requireEntry(parentKey)
+    ensureLabelled(child)
     if (parent.children?.some((c) => c.key === child.key)) {
       throw new Error(
         `Nav child "${child.key}" already exists under "${parentKey}". Use nav.updateChild().`,
@@ -175,6 +234,7 @@ export const nav: NavMutator = {
     // reference-equality memoization on the item component.
     const next = [...parent.children]
     next[idx] = { ...next[idx], ...patch }
+    ensureLabelled(next[idx])
     parent.children = next
     notify()
   },
