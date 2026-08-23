@@ -182,8 +182,8 @@ module Spree
                 :preferred_stock_location_id, :company_location_id,
                 metadata: {},
                 tags: [],
-                ship_address: address_permitted_keys,
-                bill_address: address_permitted_keys,
+                shipping_address: address_permitted_keys,
+                billing_address: address_permitted_keys,
                 items: item_permitted_keys
               )
             )

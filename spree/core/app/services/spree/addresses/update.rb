@@ -103,12 +103,11 @@ module Spree
         )
       end
 
-      # +find_or_create_by+ builds a WHERE clause from every key, so the ISO
-      # handles have to be resolved to the columns they stand for first.
       def new_address(address_params = {})
-        @new_address ||= ::Spree::Address.not_deleted.find_or_create_by(
-          Spree::Address.resolve_geo_params(address_params.except(:id, :updated_at, :created_at))
-        )
+        @new_address ||= ::Spree::Address.find_duplicate(address_params) ||
+                         ::Spree::Address.create(
+                           Spree::Address.resolve_geo_params(address_params.except(:id, :updated_at, :created_at))
+                         )
       end
     end
   end

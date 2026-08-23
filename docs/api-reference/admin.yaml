@@ -13914,7 +13914,7 @@ paths:
                   description: Stock Location ID to prefer for fulfillment. Re-runs
                     Order Routing's PreferredLocation rule on subsequent shipment
                     rebuilds.
-                ship_address:
+                shipping_address:
                   type: object
                   properties:
                     firstname:
@@ -13933,7 +13933,7 @@ paths:
                       type: string
                     phone:
                       type: string
-                bill_address:
+                billing_address:
                   type: object
                   properties:
                     firstname:
@@ -21171,10 +21171,10 @@ paths:
               example:
                 error:
                   code: validation_error
-                  message: Tax category can't be blank and Name can't be blank
+                  message: Tax category must exist and Name can't be blank
                   details:
                     tax_category:
-                    - can't be blank
+                    - must exist
                     name:
                     - can't be blank
               schema:
