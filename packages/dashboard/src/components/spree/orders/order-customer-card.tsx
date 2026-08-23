@@ -19,11 +19,11 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  toastManager,
 } from '@spree/dashboard-ui'
 import { EllipsisVerticalIcon, PencilIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { useOrderMutation } from '../../../hooks/use-order'
 
 /**
@@ -123,11 +123,13 @@ export function CustomerCard({ order }: { order: Order }) {
                 // The dialog stays open on failure so the entered address is
                 // not lost and can be corrected and resubmitted.
                 onError: (error) =>
-                  toast.error(
-                    error instanceof Error
-                      ? error.message
-                      : t('admin.orders.errors.failed_to_update_address'),
-                  ),
+                  toastManager.add({
+                    type: 'error',
+                    title:
+                      error instanceof Error
+                        ? error.message
+                        : t('admin.orders.errors.failed_to_update_address'),
+                  }),
               },
             )
           }
