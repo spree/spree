@@ -461,6 +461,23 @@
    *
    * `pointer: coarse` rather than a width breakpoint: this is about the input
    * method, and a small window on a laptop should keep the compact type. */
+  /* Menu and listbox rows are sized for a pointer — roughly 29px, against a
+   * 44pt touch minimum — so on a phone they are hard to hit and easy to hit
+   * wrongly. Raise them on coarse pointers only; the dense desktop menus are
+   * unchanged. Same `!important` reasoning as the font-size rule below: these
+   * rows carry utility classes that outrank any selector written here. */
+  @media (pointer: coarse) {
+    [data-slot='dropdown-menu-item'],
+    [data-slot='dropdown-menu-checkbox-item'],
+    [data-slot='dropdown-menu-radio-item'],
+    [data-slot='dropdown-menu-sub-trigger'],
+    [data-slot='select-item'],
+    [data-slot='command-item'],
+    [data-slot='combobox-item'] {
+      min-height: 2.75rem !important;
+    }
+  }
+
   @media (pointer: coarse) {
     /* `!important` is load-bearing here, not laziness: these controls carry a
      * `text-*` utility class, which outranks any element selector this rule
