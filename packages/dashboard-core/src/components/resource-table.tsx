@@ -737,8 +737,15 @@ export function ResourceTable<T extends Record<string, any>>({
           </>
         )}
         {/* Clears the fixed bottom bar so it can't cover the pagination or the
-            last row while a selection is active. */}
-        {bulkActive && <div className="h-16 md:hidden" aria-hidden />}
+            last row while a selection is active. Carries the same safe-area
+            inset the bar pads itself by, or the home indicator's worth of bar
+            still overlaps the last row. */}
+        {bulkActive && (
+          <div
+            className="h-[calc(4rem+max(0px,env(safe-area-inset-bottom)-0.75rem))] md:hidden"
+            aria-hidden
+          />
+        )}
         {meta && (
           <Pagination
             meta={meta}
