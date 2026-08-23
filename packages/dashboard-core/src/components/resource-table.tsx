@@ -37,6 +37,7 @@ import {
   TableHeader,
   TableHeaderRow,
   TableRow,
+  useIsMobile,
 } from '@spree/dashboard-ui'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
@@ -223,6 +224,10 @@ export function ResourceTable<T extends Record<string, any>>({
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set())
   // Whether the bulk bar is covering the column labels.
   const bulkActive = selectionEnabled && selectedIds.size > 0
+  // Only one bulk bar is mounted at a time. Rendering both and hiding one
+  // with `md:` leaves its text in the accessibility tree, so "2 selected"
+  // and every action label match twice.
+  const isMobile = useIsMobile()
 
   const {
     page,
@@ -569,13 +574,13 @@ export function ResourceTable<T extends Record<string, any>>({
                 the same sticky offset as the pinned header keeps the two
                 travelling together; the start padding clears the select-all
                 checkbox, which stays visible and interactive underneath. */}
-            {bulkActive && (
+            {bulkActive && !isMobile && (
               // `pointer-events-none` on the overlay, re-enabled only on the
               // bar itself: the start-padding gutter is part of this div and
               // would otherwise swallow every click aimed at the select-all
               // checkbox sitting beneath it — checking once, then never
               // unchecking.
-              <div className="pointer-events-none sticky top-header-height z-30 hidden h-0 md:block">
+              <div className="pointer-events-none sticky top-header-height z-30 h-0">
                 <div className="flex h-[2.1875rem] items-center ps-10 pe-4">
                   <div className="pointer-events-auto min-w-0 flex-1">
                     <BulkActionBar
@@ -593,13 +598,14 @@ export function ResourceTable<T extends Record<string, any>>({
                 the thumb. A fixed bottom bar stays put and in reach while the
                 merchant scrolls the list picking rows. */}
             {bulkActive &&
+              isMobile &&
               // Portalled to `document.body`: `SidebarInset` is `relative z-0`,
               // which opens a stacking context, and a `fixed` child of it can
               // only stack against its siblings there — page content painted
               // later covered the bar until the merchant scrolled past it.
               createPortal(
                 <section
-                  className="fixed inset-x-0 z-50 border-t border-border bg-card px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-lg md:hidden"
+                  className="fixed inset-x-0 z-50 border-t border-border bg-card px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-lg"
                   // `bottom` anchors to the *layout* viewport. Pinch-zoom (and
                   // a mobile URL bar) makes the visual viewport a smaller
                   // window onto it, leaving the bar off-screen until the
@@ -652,8 +658,10 @@ export function ResourceTable<T extends Record<string, any>>({
                         // Hide the text, not the cell: `opacity-0` would erase
                         // the cell's muted background and bottom rule too,
                         // leaving rows visible through the band behind the
-                        // bulk actions overlay.
-                        bulkActive && 'text-transparent select-none',
+                        // bulk actions overlay. Only where that overlay is
+                        // drawn — on a phone the bar is at the foot of the
+                        // screen and the column labels stay readable.
+                        bulkActive && !isMobile && 'text-transparent select-none',
                       )}
                     >
                       {col.label}
@@ -740,9 +748,9 @@ export function ResourceTable<T extends Record<string, any>>({
             last row while a selection is active. Carries the same safe-area
             inset the bar pads itself by, or the home indicator's worth of bar
             still overlaps the last row. */}
-        {bulkActive && (
+        {bulkActive && isMobile && (
           <div
-            className="h-[calc(4rem+max(0px,env(safe-area-inset-bottom)-0.75rem))] md:hidden"
+            className="h-[calc(4rem+max(0px,env(safe-area-inset-bottom)-0.75rem))]"
             aria-hidden
           />
         )}
