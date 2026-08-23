@@ -454,6 +454,27 @@
     outline: none;
   }
 
+  /* iOS Safari zooms the viewport when a focused text field's font is under
+   * 16px, and this app's `text-base` is 14px — so tapping any input on an
+   * iPhone jumped the page and left it zoomed. Raise the rendered size on
+   * coarse pointers only; the desktop density is unchanged.
+   *
+   * `pointer: coarse` rather than a width breakpoint: this is about the input
+   * method, and a small window on a laptop should keep the compact type. */
+  @media (pointer: coarse) {
+    /* `!important` is load-bearing here, not laziness: these controls carry a
+     * `text-*` utility class, which outranks any element selector this rule
+     * could write. Without it the declaration loses to `.text-base` and the
+     * zoom still happens. The rule is deliberately narrow — one property, on
+     * text-entry controls, under a coarse pointer. */
+    input:not([type='checkbox']):not([type='radio']),
+    textarea,
+    select,
+    [contenteditable] {
+      font-size: max(1rem, var(--text-base)) !important;
+    }
+  }
+
   html {
     @apply font-sans antialiased;
     text-rendering: optimizeLegibility;
