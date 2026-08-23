@@ -93,7 +93,11 @@ export function Toaster({ children }: { children?: React.ReactNode }) {
       <ToastPrimitive.Portal>
         <ToastPrimitive.Viewport
           className={cn(
-            'fixed right-4 z-[1000] flex w-[min(22rem,calc(100vw-2rem))] flex-col gap-2',
+            // Below the overlay layer (`z-50`) rather than above everything:
+            // the stack sits bottom-right, which is exactly where a side
+            // sheet's footer buttons are, and a toast drifting over Save is
+            // both unclickable and a click the merchant did not intend.
+            'fixed right-4 z-40 flex w-[min(22rem,calc(100vw-2rem))] flex-col gap-2',
             // `pointer-events-none` on the column so the empty space above the
             // stack never blocks the page; each toast takes them back.
             'pointer-events-none',

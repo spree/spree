@@ -341,7 +341,9 @@ test.describe('promotions', () => {
     await startNewPromotion(page, creds.store_id, name)
     await submitCreate(page, name)
 
-    await page.getByRole('button', { name: /^delete$/i }).click()
+    // Delete lives in the header's more-actions menu, away from Save.
+    await page.getByRole('button', { name: /more actions/i }).click()
+    await page.getByRole('menuitem', { name: /^delete$/i }).click()
     await expect(page.getByRole('heading', { name: /delete promotion\?/i })).toBeVisible()
     await page
       .getByRole('dialog')
