@@ -5602,6 +5602,7 @@
         "emails": "Adresy nadawcy i ustawienia e-maili transakcyjnych",
         "imports": "Historia importów CSV i ich wyniki",
         "integrations": "Podłącz dostawców wysyłki, podatków i innych usług",
+        "maintenance_tasks": "Uzupełnienia, przebudowy indeksów i kroki aktualizacji wraz z zapisem każdego uruchomienia",
         "markets": "Kraje, do których sprzedajesz, i ich waluty",
         "payment_methods": "Bramki płatnicze i sposób pobierania płatności",
         "policies": "Regulamin, prywatność, zwroty i wysyłka",

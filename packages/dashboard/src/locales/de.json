@@ -5536,6 +5536,7 @@
         "emails": "Absenderadressen und Einstellungen für Transaktions-E-Mails",
         "imports": "Verlauf der CSV-Importe und ihre Ergebnisse",
         "integrations": "Versand-, Steuer- und andere Anbieter verbinden",
+        "maintenance_tasks": "Nachbefüllungen, Neuindizierungen und Upgrade-Schritte samt Protokoll jedes Laufs",
         "markets": "Länder, in die Sie verkaufen, und ihre Währungen",
         "payment_methods": "Zahlungsanbieter und wie Zahlungen eingezogen werden",
         "policies": "AGB, Datenschutz, Rückgabe und Versand",

@@ -420,9 +420,11 @@ settingsNav.add({
 settingsNav.add({
   key: 'settings.maintenance-tasks',
   labelKey: 'admin.settings_nav.items.maintenance_tasks',
+  descriptionKey: 'admin.settings_nav.descriptions.maintenance_tasks',
+  keywords: ['backfill', 'reindex', 'upgrade', 'migration', 'data'],
   path: '/maintenance-tasks',
   icon: WrenchIcon,
-  group: 'audit',
-  position: 200,
+  group: 'developer',
+  position: 500,
   subject: Subject.MaintenanceTaskRun,
 })

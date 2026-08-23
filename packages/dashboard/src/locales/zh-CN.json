@@ -5524,6 +5524,7 @@
         "emails": "发件地址与交易邮件设置",
         "imports": "CSV 导入历史与结果",
         "integrations": "连接物流、税务及其他服务商",
+        "maintenance_tasks": "回填、重建索引与升级步骤，并记录每次运行",
         "markets": "销售的国家/地区及其货币",
         "payment_methods": "支付网关与收款方式",
         "policies": "条款、隐私、退货与配送文件",

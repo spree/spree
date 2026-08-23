@@ -5536,6 +5536,7 @@
         "emails": "Sender addresses and transactional email settings",
         "imports": "History of CSV imports and their results",
         "integrations": "Connect shipping, tax and other providers",
+        "maintenance_tasks": "Backfills, reindexes and upgrade steps, with a record of every run",
         "markets": "Countries you sell to and their currencies",
         "payment_methods": "Payment gateways and how payments are captured",
         "policies": "Terms, privacy, returns and shipping documents",

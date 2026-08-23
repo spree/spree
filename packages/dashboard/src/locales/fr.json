@@ -5537,6 +5537,7 @@
         "emails": "Adresses d'expéditeur et paramètres des e-mails transactionnels",
         "imports": "Historique des imports CSV et leurs résultats",
         "integrations": "Connecter des prestataires d'expédition, de taxe et autres",
+        "maintenance_tasks": "Remplissages, réindexations et étapes de mise à niveau, avec le journal de chaque exécution",
         "markets": "Pays où vous vendez et leurs devises",
         "payment_methods": "Passerelles de paiement et mode de capture",
         "policies": "Conditions, confidentialité, retours et livraison",
