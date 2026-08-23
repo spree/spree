@@ -138,9 +138,12 @@ function useIsSettingsSheetHidden() {
 export function SettingsNavSheet({
   open,
   onOpenChange,
+  tenantId,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
+  /** See `SettingsSidebar` — a seller id on the marketplace panel. */
+  tenantId?: string
 }) {
   const { t } = useTranslation()
   // Unmounted above `lg` rather than hidden with a utility class: `lg:hidden`
@@ -177,7 +180,11 @@ export function SettingsNavSheet({
           {/* Close as the link is tapped rather than from an effect watching the
               path: this body renders inside the Sheet, so it remounts on every
               open and an effect could not tell "just opened" from "navigated". */}
-          <SettingsNavBody tabIndex={0} onNavigate={() => onOpenChange(false)} />
+          <SettingsNavBody
+            tabIndex={0}
+            onNavigate={() => onOpenChange(false)}
+            tenantId={tenantId}
+          />
         </div>
       </SheetContent>
     </Sheet>

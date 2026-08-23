@@ -1,5 +1,7 @@
 import {
   AppSidebar,
+  MobileBreadcrumbBar,
+  SettingsNavSheet,
   SettingsSidebar,
   StickyHeaderProvider,
   TenantProvider,
@@ -8,7 +10,7 @@ import {
 } from '@spree/dashboard-core'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@spree/dashboard-ui'
 import { useParams, useRouterState } from '@tanstack/react-router'
-import type { ReactNode } from 'react'
+import { type ReactNode, useState } from 'react'
 import { SellerSwitcher } from './components/seller-switcher'
 
 /**
@@ -61,6 +63,10 @@ function PanelShell({
 }) {
   useAutoCollapseSidebar(inSettings)
 
+  // Below `lg` the settings rail is hidden, so its sheet is the only way
+  // between two settings pages. The trigger lives in the breadcrumb bar.
+  const [settingsNavOpen, setSettingsNavOpen] = useState(false)
+
   return (
     <>
       <AppSidebar tenantId={sellerId} header={<SellerSwitcher />} />
@@ -78,6 +84,16 @@ function PanelShell({
               <TopBarUser />
             </div>
           </header>
+
+          <MobileBreadcrumbBar
+            tenantId={sellerId}
+            onOpenSettingsNav={() => setSettingsNavOpen(true)}
+          />
+          <SettingsNavSheet
+            open={settingsNavOpen}
+            onOpenChange={setSettingsNavOpen}
+            tenantId={sellerId}
+          />
 
           {/* Settings pages bring their own padding, matching the dashboard. */}
           {inSettings ? (

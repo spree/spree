@@ -30,8 +30,8 @@ interface Crumb {
  * worse than a shorter trail, and the page's own `PageHeader` carries the
  * record's title anyway.
  */
-export function TopBarBreadcrumbs() {
-  const trail = useCrumbs()
+export function TopBarBreadcrumbs({ tenantId }: { tenantId?: string } = {}) {
+  const trail = useCrumbs(tenantId)
   if (!trail) return null
 
   return <CrumbTrail crumbs={trail.crumbs} pathname={trail.pathname} className="min-w-0" />
@@ -49,8 +49,15 @@ export function TopBarBreadcrumbs() {
  * the settings nav sheet, which is the fastest way between two settings pages
  * on a screen with no settings sidebar.
  */
-export function MobileBreadcrumbBar({ onOpenSettingsNav }: { onOpenSettingsNav?: () => void }) {
-  const trail = useCrumbs()
+export function MobileBreadcrumbBar({
+  onOpenSettingsNav,
+  tenantId,
+}: {
+  onOpenSettingsNav?: () => void
+  /** See `SettingsSidebar` — a seller id on the marketplace panel. */
+  tenantId?: string
+}) {
+  const trail = useCrumbs(tenantId)
   if (!trail) return null
 
   const { crumbs, pathname, inSettings } = trail
@@ -133,9 +140,14 @@ function CrumbTrail({
 }
 
 /** Resolves the trail for the current path, or null when there is nothing worth showing. */
-function useCrumbs(): { crumbs: Crumb[]; pathname: string; inSettings: boolean } | null {
+function useCrumbs(tenantId?: string): {
+  crumbs: Crumb[]
+  pathname: string
+  inSettings: boolean
+} | null {
   const { t } = useTranslation()
-  const { storeId } = useParams({ strict: false }) as { storeId?: string }
+  const { storeId: routeStoreId } = useParams({ strict: false }) as { storeId?: string }
+  const storeId = tenantId ?? routeStoreId
   const pathname = useRouterState({ select: (s) => s.location.pathname })
   const { main, bottom } = useNavEntries()
   const settings = useSettingsNav()
