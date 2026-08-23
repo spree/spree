@@ -150,7 +150,10 @@ export function PageHeader({
     // the same hairline used elsewhere in the app.
     <header
       className={cn(
-        'sticky top-header-height z-20 -mx-4 -mt-4 flex items-start gap-3 bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/75 px-4 pt-4 pb-3 lg:-mx-6 lg:-mt-6 lg:px-6 lg:pt-6',
+        // Two rows on a phone — title, then actions — collapsing to one row
+        // from `sm`. Inline, a long product name wraps to three lines while
+        // the buttons squeeze into what is left of the width.
+        'sticky top-header-height z-20 -mx-4 -mt-4 flex flex-col items-stretch gap-2 bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/75 px-4 pt-4 pb-3 sm:flex-row sm:items-start sm:gap-3 lg:-mx-6 lg:-mt-6 lg:px-6 lg:pt-6',
         // `translate` is listed explicitly: Tailwind v4 compiles
         // `-translate-y-*` to the standalone `translate` property, so a
         // `transform`-only transition never animates it and the header would
@@ -165,21 +168,30 @@ export function PageHeader({
         scrolled && 'after:opacity-100 shadow-xs',
       )}
     >
-      {backTo && <BackButton fallback={backTo} />}
+      {/* Row one: back button beside the title, so the arrow keeps its
+          relationship to the heading rather than floating above it. */}
+      <div className="flex min-w-0 flex-1 items-start gap-3">
+        {backTo && <BackButton fallback={backTo} />}
 
-      {/* Title + badges share the first row; subtitle drops to its own line
-          underneath so descriptive prose doesn't get crammed alongside the
-          heading. Short metadata subtitles (customer location, order status
-          hint) read fine on the second line too. */}
-      <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-          <h1 className="text-2xl font-medium leading-tight">{title}</h1>
-          {badges}
+        {/* Title + badges share a line; subtitle drops underneath so
+            descriptive prose doesn't get crammed alongside the heading. Short
+            metadata subtitles (customer location, order status hint) read fine
+            on the second line too. */}
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            {/* Smaller on a phone: a two-row header already costs more of a
+                short viewport, and `text-2xl` turns a product name into three
+                wrapped lines. */}
+            <h1 className="font-medium text-xl leading-tight sm:text-2xl">{title}</h1>
+            {badges}
+          </div>
+          {subtitle && <span className="text-sm text-muted-foreground">{subtitle}</span>}
         </div>
-        {subtitle && <span className="text-sm text-muted-foreground">{subtitle}</span>}
       </div>
 
-      <div className="ml-auto flex items-center gap-2">
+      {/* Row two on a phone. `justify-end` keeps the buttons right-aligned
+          there, matching where they sit once the rows merge. */}
+      <div className="flex items-center justify-end gap-2 sm:ml-auto">
         <Slot name="page.actions" context={slotCtx} />
         {actions}
         {showDropdown && (
