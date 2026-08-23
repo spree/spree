@@ -2,8 +2,8 @@ import {
   type NavEntry,
   type Permissions,
   permittedCreateActions,
+  resolveNavLabel,
   type SearchGroup,
-  type SettingsNavEntry,
   useAuth,
   useCommandPalette,
   useCreateActions,
@@ -102,7 +102,14 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
         <DialogDescription>{t('admin.components.command_palette.description')}</DialogDescription>
       </DialogHeader>
       <DialogContent
-        className="top-1/3 translate-y-0 overflow-hidden rounded-2xl p-0 sm:max-w-2xl"
+        // `-translate-x-1/2 translate-y-0`, not a bare `translate-y-0`: in
+        // Tailwind v4 these compile to the standalone `translate` property, so
+        // setting only the Y axis wipes the base dialog's horizontal centring
+        // and the panel drifts off both edges of a narrow screen.
+        // `min(42rem, calc(100%-2rem))` rather than a bare `sm:max-w-2xl`: the
+        // `sm` breakpoint is 640px, so the 42rem cap takes over well before the
+        // viewport can hold it and the panel overhangs both edges on a phone.
+        className="top-1/3 -translate-x-1/2 translate-y-0 overflow-hidden rounded-2xl p-0 sm:max-w-[min(42rem,calc(100%-2rem))]"
         showCloseButton={false}
         // Don't restore focus to the trigger after navigating — the trigger is
         // gone (we navigated away) and focus would land on the first sidebar
@@ -265,7 +272,7 @@ function buildGotoCommands({
     if (!canRead(entry.subject, permissions)) continue
     commands.push({
       key: `nav:${entry.key}`,
-      label: entry.label,
+      label: resolveNavLabel(entry, t),
       icon: entry.icon ?? PackageIcon,
       url: pathFor(entry.path),
     })
@@ -273,7 +280,7 @@ function buildGotoCommands({
       if (!canRead(child.subject, permissions)) continue
       commands.push({
         key: `nav:${entry.key}:${child.key}`,
-        label: child.label,
+        label: resolveNavLabel(child, t),
         // Children render no icon in the sidebar; inherit the parent's so the
         // palette row still has a glyph.
         icon: entry.icon ?? PackageIcon,
@@ -291,17 +298,13 @@ function buildGotoCommands({
     if (!canRead(entry.subject, permissions)) continue
     commands.push({
       key: `settings:${entry.key}`,
-      label: settingsLabel(entry, t),
+      label: resolveNavLabel(entry, t),
       icon: entry.icon ?? SettingsIcon,
       url: `/${storeId}/settings${entry.path}`,
     })
   }
 
   return commands
-}
-
-function settingsLabel(entry: SettingsNavEntry, t: ReturnType<typeof useTranslation>['t']): string {
-  return entry.labelKey ? t(entry.labelKey) : (entry.label ?? entry.key)
 }
 
 /**
