@@ -122,6 +122,9 @@ export function SettingsNavSheet({
             the two nav sheets open to the same silhouette — and it gives the
             close button a full-height touch target rather than a 42px band. */}
         <SheetHeader className="h-header-height justify-center border-b border-sidebar-border px-4 py-0">
+          {/* Held at the default body size rather than the larger sheet
+              title: this is a nav band matched to the store header, not a
+              dialog heading. */}
           <SheetTitle className="text-base">{t('admin.settings_page.title')}</SheetTitle>
         </SheetHeader>
         <div className="quiet-scrollbar flex-1 overflow-y-auto">
