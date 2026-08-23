@@ -21171,10 +21171,10 @@ paths:
               example:
                 error:
                   code: validation_error
-                  message: Tax category can't be blank and Name can't be blank
+                  message: Tax category must exist and Name can't be blank
                   details:
                     tax_category:
-                    - can't be blank
+                    - must exist
                     name:
                     - can't be blank
               schema:
