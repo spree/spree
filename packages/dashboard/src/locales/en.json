@@ -4127,12 +4127,36 @@
       }
     },
     "settings_nav": {
+      "descriptions": {
+        "allowed_origins": "Domains permitted to call your storefront API",
+        "api_keys": "Keys that authorize apps and integrations",
+        "channels": "Sales channels and where your products are offered",
+        "commission_rates": "What your marketplace charges sellers",
+        "custom_field_definitions": "Extra fields on products, orders and customers",
+        "delivery_profiles": "Delivery methods, zones and shipping rates",
+        "emails": "Sender addresses and transactional email settings",
+        "imports": "History of CSV imports and their results",
+        "integrations": "Connect shipping, tax and other providers",
+        "markets": "Countries you sell to and their currencies",
+        "payment_methods": "Payment gateways and how payments are captured",
+        "product_types": "Templates that pre-fill new products",
+        "reasons": "Reasons offered for returns, refunds and claims",
+        "roles": "Permission sets you assign to staff",
+        "seller_requirements": "Checklist sellers complete before approval",
+        "staff": "People with access to this dashboard",
+        "stock_locations": "Warehouses and pickup points that hold stock",
+        "store": "Store name, timezone, units and regional defaults",
+        "tax_categories": "Tax classes assigned to products",
+        "tax_rates": "Rates applied per market and region",
+        "webhooks": "Endpoints notified when events happen"
+      },
       "groups": {
-        "audit": "Audit",
-        "fulfillment": "Fulfillment",
-        "payments": "Payments & taxes",
+        "developer": "Developer",
+        "post_sale": "Returns & sellers",
+        "selling": "Selling",
+        "shipping": "Shipping & delivery",
         "store": "Store",
-        "team": "Team & access"
+        "team": "Users & permissions"
       },
       "items": {
         "allowed_origins": "Allowed origins",
@@ -4158,6 +4182,12 @@
         "tax_rates": "Tax rates",
         "webhooks": "Webhooks"
       }
+    },
+    "settings_page": {
+      "description": "Manage your store, selling setup and team.",
+      "no_results": "No settings match “{{query}}”.",
+      "search_placeholder": "Search settings",
+      "title": "Settings"
     },
     "setup": {
       "title": "Set up Spree",

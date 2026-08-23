@@ -4127,12 +4127,36 @@
       }
     },
     "settings_nav": {
+      "descriptions": {
+        "allowed_origins": "Domains, die Ihre Storefront-API aufrufen dürfen",
+        "api_keys": "Schlüssel, die Apps und Integrationen autorisieren",
+        "channels": "Vertriebskanäle und wo Ihre Produkte angeboten werden",
+        "commission_rates": "Was Ihr Marktplatz Verkäufern berechnet",
+        "custom_field_definitions": "Zusätzliche Felder für Produkte, Bestellungen und Kunden",
+        "delivery_profiles": "Liefermethoden, Zonen und Versandkosten",
+        "emails": "Absenderadressen und Einstellungen für Transaktions-E-Mails",
+        "imports": "Verlauf der CSV-Importe und ihre Ergebnisse",
+        "integrations": "Versand-, Steuer- und andere Anbieter verbinden",
+        "markets": "Länder, in die Sie verkaufen, und ihre Währungen",
+        "payment_methods": "Zahlungsanbieter und wie Zahlungen eingezogen werden",
+        "product_types": "Vorlagen, die neue Produkte vorbefüllen",
+        "reasons": "Gründe für Retouren, Rückerstattungen und Reklamationen",
+        "roles": "Berechtigungssätze, die Sie Mitarbeitenden zuweisen",
+        "seller_requirements": "Checkliste, die Verkäufer vor der Freigabe erfüllen",
+        "staff": "Personen mit Zugriff auf dieses Dashboard",
+        "stock_locations": "Lager und Abholpunkte mit Beständen",
+        "store": "Shopname, Zeitzone, Einheiten und regionale Standards",
+        "tax_categories": "Steuerklassen für Produkte",
+        "tax_rates": "Sätze pro Markt und Region",
+        "webhooks": "Endpunkte, die bei Ereignissen benachrichtigt werden"
+      },
       "groups": {
-        "audit": "Audit",
-        "fulfillment": "Fulfillment",
-        "payments": "Zahlungen & Steuern",
+        "developer": "Entwickler",
+        "post_sale": "Retouren & Verkäufer",
+        "selling": "Verkauf",
+        "shipping": "Versand & Lieferung",
         "store": "Shop",
-        "team": "Team & Zugriff"
+        "team": "Benutzer & Berechtigungen"
       },
       "items": {
         "allowed_origins": "Zugelassene Ursprünge",
@@ -4158,6 +4182,12 @@
         "tax_rates": "Steuersätze",
         "webhooks": "Webhooks"
       }
+    },
+    "settings_page": {
+      "description": "Verwalten Sie Shop, Verkaufseinrichtung und Team.",
+      "no_results": "Keine Einstellungen für „{{query}}“.",
+      "search_placeholder": "Einstellungen durchsuchen",
+      "title": "Einstellungen"
     },
     "setup": {
       "title": "Spree einrichten",
