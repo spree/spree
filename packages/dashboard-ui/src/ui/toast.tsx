@@ -40,6 +40,11 @@ function ToastList() {
     <ToastPrimitive.Root
       key={toast.id}
       toast={toast}
+      // Base UI types a toast as `dialog`, which puts every transient
+      // notification in the same bucket as real modals — a `getByRole('dialog')`
+      // lookup, ours or a screen reader user's, matches whatever toast happens
+      // to be on screen. `status` is what a passive notification should expose.
+      role={toast.type === 'error' ? 'alert' : 'status'}
       // `--toast-index` / `--toast-offset-y` drive the stacked-card effect:
       // toasts behind the front one scale down and sit slightly higher.
       className={cn(
