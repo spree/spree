@@ -9,7 +9,7 @@ import {
 } from '@spree/dashboard-ui'
 import type { QueryKey } from '@tanstack/react-query'
 import { useQueryClient } from '@tanstack/react-query'
-import { MoreHorizontalIcon } from 'lucide-react'
+import { EllipsisVerticalIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -320,7 +320,7 @@ function BulkActionBarLayout({
                 size="icon-sm"
                 aria-label={t('admin.actions.more_actions')}
               >
-                <MoreHorizontalIcon className="size-4" />
+                <EllipsisVerticalIcon className="size-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
