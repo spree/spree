@@ -48,7 +48,7 @@ module Spree
     # per owner: there is one relationship here with two cardinalities — a
     # customer, company or seller holds one per kind, a cart or order holds
     # one — and a further owner should cost no schema change.
-    belongs_to :owner, polymorphic: true, optional: false
+    belongs_to :owner, polymorphic: true
 
     # Whitespace and case only. Punctuation is deliberately kept: for several
     # kinds it is part of the canonical number (Switzerland's CHE-123.456.789
