@@ -32,6 +32,7 @@ import {
   SelectValue,
   Skeleton,
   Switch,
+  toastManager,
   useFormSubmitShortcut,
 } from '@spree/dashboard-ui'
 import { createFileRoute } from '@tanstack/react-router'
@@ -45,7 +46,6 @@ import {
   useForm,
 } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { ChoiceCardPicker } from '../../../../components/spree/choice-card-picker'
 import { useStoreSettings, useUpdateStoreSettings } from '../../../../hooks/use-store-settings'
 import { getAvailableUiLocales } from '../../../../i18n-setup'
@@ -229,7 +229,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
         preferred_order_number_sequence_start: values.preferred_order_number_sequence_start,
         ...extensionValues,
       })
-      toast.success(t('admin.messages.store_settings_updated'))
+      toastManager.add({ type: 'success', title: t('admin.messages.store_settings_updated') })
       // Reset FIRST so the form is no longer dirty — otherwise the language
       // switch below reloads the page while the `beforeunload` dirty-guard is
       // still armed, triggering the browser's "unsaved changes" prompt.
@@ -255,7 +255,10 @@ function StoreSettingsForm({ store }: { store: Store }) {
     } catch (err) {
       if (mapSpreeErrorsToForm(err, form.setError)) return
       if (err instanceof SpreeError) throw err
-      toast.error(err instanceof Error ? err.message : t('admin.errors.failed_to_update_store'))
+      toastManager.add({
+        type: 'error',
+        title: err instanceof Error ? err.message : t('admin.errors.failed_to_update_store'),
+      })
     }
   }
 

@@ -14,11 +14,11 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
+  toastManager,
 } from '@spree/dashboard-ui'
 import { DownloadIcon, FileSpreadsheetIcon, UploadIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import {
   useCreateImport,
   useDownloadImportExample,
@@ -105,11 +105,12 @@ export function ImportButton({
           onCreated(imp)
         },
         onError: (err) => {
-          toast.error(
-            t('admin.components.import_button.failed', {
+          toastManager.add({
+            type: 'error',
+            title: t('admin.components.import_button.failed', {
               message: err instanceof Error ? err.message : String(err),
             }),
-          )
+          })
         },
       },
     )
@@ -118,11 +119,12 @@ export function ImportButton({
   function handleTemplateDownload() {
     downloadTemplate.mutate(type, {
       onError: (err) => {
-        toast.error(
-          t('admin.components.import_button.template_failed', {
+        toastManager.add({
+          type: 'error',
+          title: t('admin.components.import_button.template_failed', {
             message: err instanceof Error ? err.message : String(err),
           }),
-        )
+        })
       },
     })
   }
@@ -130,11 +132,12 @@ export function ImportButton({
   function handleExampleDownload() {
     downloadExample.mutate(type, {
       onError: (err) => {
-        toast.error(
-          t('admin.components.import_button.example_failed', {
+        toastManager.add({
+          type: 'error',
+          title: t('admin.components.import_button.example_failed', {
             message: err instanceof Error ? err.message : String(err),
           }),
-        )
+        })
       },
     })
   }

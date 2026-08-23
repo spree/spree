@@ -5,8 +5,8 @@ import {
   SpreeError,
 } from '@spree/admin-sdk'
 import { adminClient, useResourceKeyBuilder } from '@spree/dashboard-core'
+import { toastManager } from '@spree/dashboard-ui'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
 
 /**
  * A fulfillment mutation refreshes the order itself — every one of these moves
@@ -30,7 +30,10 @@ function useFulfillmentMutation<TParams>(
     },
     onError: (error) => {
       if (error instanceof SpreeError && error.status === 422) return
-      toast.error(error instanceof Error ? error.message : String(error))
+      toastManager.add({
+        type: 'error',
+        title: error instanceof Error ? error.message : String(error),
+      })
     },
   })
 }

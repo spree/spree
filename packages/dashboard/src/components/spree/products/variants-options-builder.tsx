@@ -10,11 +10,11 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  toastManager,
 } from '@spree/dashboard-ui'
 import { CheckIcon, PencilIcon, PlusIcon, XIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import {
   useCreateOptionType,
   useOptionTypes,
@@ -336,7 +336,7 @@ function OptionPicker({ optionType, initialValues, onSave, onCancel }: OptionPic
         err instanceof Error
           ? err.message
           : t('admin.products.variants.errors.failed_to_create_value')
-      toast.error(message)
+      toastManager.add({ type: 'error', title: message })
     }
   }
 
@@ -433,7 +433,7 @@ function CreateOptionTypeInline({
         err instanceof Error
           ? err.message
           : t('admin.products.variants.errors.failed_to_create_option_type')
-      toast.error(message)
+      toastManager.add({ type: 'error', title: message })
     }
   }
 

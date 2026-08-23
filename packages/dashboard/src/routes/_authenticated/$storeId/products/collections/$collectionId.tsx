@@ -13,6 +13,7 @@ import {
   FormActions,
   ResourceLayout,
   Skeleton,
+  toastManager,
   useConfirm,
   useFormSubmitShortcut,
 } from '@spree/dashboard-ui'
@@ -20,7 +21,6 @@ import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import {
   CollectionMain,
   CollectionSidebar,
@@ -106,7 +106,7 @@ function CollectionDetail({ collectionId, storeId }: { collectionId: string; sto
     } catch (err) {
       if (mapSpreeErrorsToForm(err, form.setError)) return
       if (err instanceof SpreeError) throw err
-      toast.error(t('admin.errors.failed_to_save'))
+      toastManager.add({ type: 'error', title: t('admin.errors.failed_to_save') })
     }
   }
 
@@ -123,7 +123,7 @@ function CollectionDetail({ collectionId, storeId }: { collectionId: string; sto
       await deleteCollection.mutateAsync(collectionId)
       await router.navigate({ to: '/$storeId/products/collections', params: { storeId } })
     } catch {
-      toast.error(t('admin.errors.failed_to_delete'))
+      toastManager.add({ type: 'error', title: t('admin.errors.failed_to_delete') })
     }
   }
 

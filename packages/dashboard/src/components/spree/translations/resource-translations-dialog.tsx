@@ -22,12 +22,12 @@ import {
   SelectValue,
   Skeleton,
   Textarea,
+  toastManager,
   useConfirm,
 } from '@spree/dashboard-ui'
 import { XIcon } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import {
   type TranslatableResourceType,
   useLocales,
@@ -164,7 +164,7 @@ export function ResourceTranslationsDialog({
     setSaving(true)
     try {
       await adminClient.translations.batch(Array.from(byResource.values()))
-      toast.success(t('admin.translations.saved'))
+      toastManager.add({ type: 'success', title: t('admin.translations.saved') })
       setEdits(new Map())
       refetch()
     } catch (err) {
@@ -172,7 +172,7 @@ export function ResourceTranslationsDialog({
       // server's validation message (if any) in the toast rather than the
       // generic fallback.
       const message = err instanceof SpreeError ? err.message : undefined
-      toast.error(message || t('admin.translations.save_error'))
+      toastManager.add({ type: 'error', title: message || t('admin.translations.save_error') })
     } finally {
       setSaving(false)
     }

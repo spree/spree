@@ -42,7 +42,6 @@ import { AlertTriangleIcon, PencilIcon, PlayIcon, RotateCcwIcon } from 'lucide-r
 import { lazy, Suspense } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { z } from 'zod/v4'
 import { WebhookEndpointFormFields } from '../../../../../components/spree/webhook-endpoint-form'
 import {
@@ -61,6 +60,7 @@ import {
   webhookEndpointFormSchema,
 } from '../../../../../schemas/webhook-endpoint'
 import '../../../../../tables/webhook-deliveries'
+import { toastManager } from '@spree/dashboard-ui'
 
 // `<JsonValueView>` pulls in `@uiw/react-json-view` (~30 KB gzip). Lazy-loading
 // it keeps the route's entry chunk small — the renderer only matters when an
@@ -165,13 +165,18 @@ function WebhookEndpointDetailBody({ endpoint }: { endpoint: WebhookEndpoint }) 
   async function handleSendTest() {
     try {
       await sendTestMutation.mutateAsync(endpoint.id)
-      toast.success(t('admin.pages.settings.webhooks.deliveries.test_sent'))
+      toastManager.add({
+        type: 'success',
+        title: t('admin.pages.settings.webhooks.deliveries.test_sent'),
+      })
     } catch (err) {
-      toast.error(
-        err instanceof Error
-          ? err.message
-          : t('admin.pages.settings.webhooks.deliveries.test_failed'),
-      )
+      toastManager.add({
+        type: 'error',
+        title:
+          err instanceof Error
+            ? err.message
+            : t('admin.pages.settings.webhooks.deliveries.test_failed'),
+      })
     }
   }
 
@@ -716,7 +721,10 @@ function DeliveryDetailSheet({
                 redeliver
                   .mutateAsync(deliveryId)
                   .then(() =>
-                    toast.success(t('admin.pages.settings.webhooks.deliveries.redeliver_queued')),
+                    toastManager.add({
+                      type: 'success',
+                      title: t('admin.pages.settings.webhooks.deliveries.redeliver_queued'),
+                    }),
                   )
                   .catch(() => undefined)
               }

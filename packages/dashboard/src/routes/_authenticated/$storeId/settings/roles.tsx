@@ -18,12 +18,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  toastManager,
   useConfirm,
 } from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { CopyIcon, LockIcon, PlusIcon, ShieldIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { z } from 'zod/v4'
 import { permissionKeyLabel } from '../../../../components/spree/permission-picker'
 import { RoleSheet } from '../../../../components/spree/role-sheet'
@@ -160,9 +160,12 @@ function RoleRow({
 
     try {
       await deleteMutation.mutateAsync(role.id)
-      toast.success(t('admin.roles.messages.deleted'))
+      toastManager.add({ type: 'success', title: t('admin.roles.messages.deleted') })
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : t('admin.roles.errors.failed_to_delete'))
+      toastManager.add({
+        type: 'error',
+        title: err instanceof Error ? err.message : t('admin.roles.errors.failed_to_delete'),
+      })
     }
   }
 

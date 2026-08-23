@@ -66,8 +66,7 @@
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-hook-form": "^7.75.0",
-    "react-i18next": "^17.0.8",
-    "sonner": "^2.0.7"
+    "react-i18next": "^17.0.8"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

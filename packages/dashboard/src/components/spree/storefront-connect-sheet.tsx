@@ -10,11 +10,11 @@ import {
   SheetHeader,
   SheetTitle,
   Skeleton,
+  toastManager,
 } from '@spree/dashboard-ui'
 import { ExternalLinkIcon, EyeIcon, EyeOffIcon } from 'lucide-react'
 import { type ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { useStorefrontPublishableKey } from '../../hooks/use-api-keys'
 import { useConnectStorefront } from '../../hooks/use-store-settings'
 
@@ -111,17 +111,26 @@ export function StorefrontConnectSheet({
   const handleSave = () => {
     const origin = normalizeOrigin(url)
     if (!origin) {
-      toast.error(t('admin.pages.getting_started.storefront_sheet.invalid_url'))
+      toastManager.add({
+        type: 'error',
+        title: t('admin.pages.getting_started.storefront_sheet.invalid_url'),
+      })
       return
     }
 
     connect.mutate(origin, {
       onSuccess: () => {
-        toast.success(t('admin.pages.getting_started.storefront_sheet.saved', { url: origin }))
+        toastManager.add({
+          type: 'success',
+          title: t('admin.pages.getting_started.storefront_sheet.saved', { url: origin }),
+        })
         onOpenChange(false)
       },
       onError: (error) => {
-        toast.error(error instanceof Error ? error.message : String(error))
+        toastManager.add({
+          type: 'error',
+          title: error instanceof Error ? error.message : String(error),
+        })
       },
     })
   }

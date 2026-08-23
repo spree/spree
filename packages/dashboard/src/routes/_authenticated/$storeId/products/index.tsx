@@ -38,7 +38,6 @@ import {
 } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { z } from 'zod/v4'
 import { ImportWizardDialog } from '../../../../components/spree/imports/import-wizard-dialog'
 import { categoryAutocompleteProps, useCategories } from '../../../../hooks/use-categories'
@@ -59,6 +58,7 @@ import {
   useCloneProduct,
 } from '../../../../hooks/use-products'
 import '../../../../tables/products'
+import { toastManager } from '@spree/dashboard-ui'
 
 // `import` carries the prefixed id of the import whose wizard dialog is open
 // over the table — deep-linkable and refresh-safe.
@@ -423,9 +423,9 @@ function ProductRowActions({ product, storeId }: { product: Product; storeId: st
 
     try {
       await deleteMutation.mutateAsync(product.id)
-      toast.success(t('admin.pages.products.delete_succeeded'))
+      toastManager.add({ type: 'success', title: t('admin.pages.products.delete_succeeded') })
     } catch {
-      toast.error(t('admin.pages.products.delete_failed'))
+      toastManager.add({ type: 'error', title: t('admin.pages.products.delete_failed') })
     }
   }
 

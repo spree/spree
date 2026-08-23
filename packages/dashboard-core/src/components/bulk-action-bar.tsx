@@ -4,6 +4,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  toastManager,
   useConfirm,
 } from '@spree/dashboard-ui'
 import type { QueryKey } from '@tanstack/react-query'
@@ -12,7 +13,6 @@ import { MoreHorizontalIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { usePermissions } from '../providers/permission-provider'
 
 /**
@@ -136,17 +136,18 @@ export function BulkActionBar({ selectedIds, actions, onDone }: BulkActionBarPro
       for (const key of action.invalidate ?? []) {
         queryClient.invalidateQueries({ queryKey: key })
       }
-      toast.success(
-        interpolate(
+      toastManager.add({
+        type: 'success',
+        title: interpolate(
           action.successMessage ?? t('admin.components.bulk_action_bar.default_success'),
           count,
         ),
-      )
+      })
       onDone()
     } catch (err) {
       const message =
         err instanceof Error ? err.message : t('admin.components.bulk_action_bar.default_error')
-      toast.error(action.errorMessage ?? message)
+      toastManager.add({ type: 'error', title: action.errorMessage ?? message })
     } finally {
       setRunning(false)
     }

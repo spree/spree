@@ -15,6 +15,7 @@ import {
   ResourceLayout,
   Skeleton,
   StatusBadge,
+  toastManager,
   useConfirm,
   useFormSubmitShortcut,
 } from '@spree/dashboard-ui'
@@ -23,7 +24,6 @@ import i18n from 'i18next'
 import { useEffect } from 'react'
 import { FormProvider, useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { CustomFieldsInlineCard } from '../../../../components/spree/custom-fields/custom-fields-inline'
 import { ProductCustomFieldsProvider } from '../../../../components/spree/products/product-custom-fields-provider'
 import {
@@ -393,11 +393,11 @@ function ProductForm({ product }: { product: Product }) {
         ),
       }
       form.reset(baseline)
-      toast.success(t('admin.messages.product_saved'))
+      toastManager.add({ type: 'success', title: t('admin.messages.product_saved') })
     } catch (err) {
       if (mapSpreeErrorsToForm(err, form.setError)) return
       if (err instanceof SpreeError) throw err
-      toast.error(t('admin.errors.failed_to_save'))
+      toastManager.add({ type: 'error', title: t('admin.errors.failed_to_save') })
     }
   }
 
@@ -412,14 +412,14 @@ function ProductForm({ product }: { product: Product }) {
     if (!confirmed) return
     try {
       await deleteProduct.mutateAsync(productId)
-      toast.success(t('admin.messages.product_deleted'))
+      toastManager.add({ type: 'success', title: t('admin.messages.product_deleted') })
       await router.navigate({
         to: '/$storeId/products',
         params: { storeId },
         search: { filters: [], columns: [] },
       })
     } catch {
-      toast.error(t('admin.errors.failed_to_delete'))
+      toastManager.add({ type: 'error', title: t('admin.errors.failed_to_delete') })
     }
   }
 

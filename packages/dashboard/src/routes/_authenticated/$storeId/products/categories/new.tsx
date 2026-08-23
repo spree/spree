@@ -6,11 +6,15 @@ import {
   mapSpreeErrorsToForm,
   PageHeader,
 } from '@spree/dashboard-core'
-import { FormActions, ResourceLayout, useFormSubmitShortcut } from '@spree/dashboard-ui'
+import {
+  FormActions,
+  ResourceLayout,
+  toastManager,
+  useFormSubmitShortcut,
+} from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import {
   CategoryMain,
   CategorySidebar,
@@ -56,7 +60,7 @@ function NewCategoryPage() {
     } catch (err) {
       if (mapSpreeErrorsToForm(err, form.setError)) return
       if (err instanceof SpreeError) throw err
-      toast.error(t('admin.errors.failed_to_create'))
+      toastManager.add({ type: 'error', title: t('admin.errors.failed_to_create') })
     }
   }
 

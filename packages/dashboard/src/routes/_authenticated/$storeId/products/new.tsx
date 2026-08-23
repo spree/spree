@@ -6,11 +6,15 @@ import {
   mapSpreeErrorsToForm,
   PageHeader,
 } from '@spree/dashboard-core'
-import { FormActions, ResourceLayout, useFormSubmitShortcut } from '@spree/dashboard-ui'
+import {
+  FormActions,
+  ResourceLayout,
+  toastManager,
+  useFormSubmitShortcut,
+} from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { CustomFieldsInlineCard } from '../../../../components/spree/custom-fields/custom-fields-inline'
 import { ProductCustomFieldsProvider } from '../../../../components/spree/products/product-custom-fields-provider'
 import {
@@ -139,7 +143,7 @@ function NewProductPage() {
 
     try {
       const product = await create.mutateAsync(payload)
-      toast.success(t('admin.pages.products.new.create_succeeded'))
+      toastManager.add({ type: 'success', title: t('admin.pages.products.new.create_succeeded') })
       // Replace history rather than pushing — otherwise the edit page's back
       // button lands the merchant back on the (now-stale) new product form.
       navigate({
@@ -150,7 +154,7 @@ function NewProductPage() {
     } catch (err) {
       if (mapSpreeErrorsToForm(err, form.setError)) return
       if (err instanceof SpreeError) throw err
-      toast.error(t('admin.pages.products.new.create_failed'))
+      toastManager.add({ type: 'error', title: t('admin.pages.products.new.create_failed') })
     }
   }
 

@@ -49,6 +49,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  toastManager,
   useConfirm,
   useCopyToClipboard,
 } from '@spree/dashboard-ui'
@@ -66,7 +67,6 @@ import {
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { z } from 'zod/v4'
 import {
   useCreateInvitation,
@@ -188,9 +188,12 @@ function StaffRow({ member }: { member: AdminUser }) {
 
     try {
       await removeMutation.mutateAsync(member.id)
-      toast.success(t('admin.pages.staff.messages.removed'))
+      toastManager.add({ type: 'success', title: t('admin.pages.staff.messages.removed') })
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : t('admin.staff.errors.failed_to_remove'))
+      toastManager.add({
+        type: 'error',
+        title: err instanceof Error ? err.message : t('admin.staff.errors.failed_to_remove'),
+      })
     }
   }
 
@@ -305,15 +308,18 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
       ? `${window.location.origin}${invitation.acceptance_url}`
       : invitation.acceptance_url
     await copy(url)
-    toast.success(t('admin.staff.actions.invitation_link_copied'))
+    toastManager.add({ type: 'success', title: t('admin.staff.actions.invitation_link_copied') })
   }
 
   async function handleResend() {
     try {
       await resendMutation.mutateAsync(invitation.id)
-      toast.success(t('admin.messages.invitation_resent'))
+      toastManager.add({ type: 'success', title: t('admin.messages.invitation_resent') })
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : t('admin.staff.errors.failed_to_resend'))
+      toastManager.add({
+        type: 'error',
+        title: err instanceof Error ? err.message : t('admin.staff.errors.failed_to_resend'),
+      })
     }
   }
 
@@ -328,9 +334,12 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
 
     try {
       await deleteMutation.mutateAsync(invitation.id)
-      toast.success(t('admin.pages.staff.messages.revoked'))
+      toastManager.add({ type: 'success', title: t('admin.pages.staff.messages.revoked') })
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : t('admin.staff.errors.failed_to_revoke'))
+      toastManager.add({
+        type: 'error',
+        title: err instanceof Error ? err.message : t('admin.staff.errors.failed_to_revoke'),
+      })
     }
   }
 
@@ -423,13 +432,16 @@ function InviteDialog({
   async function onSubmit(values: InviteFormValues) {
     try {
       await createMutation.mutateAsync(values)
-      toast.success(t('admin.messages.invitation_sent'))
+      toastManager.add({ type: 'success', title: t('admin.messages.invitation_sent') })
       form.reset({ email: '', role_id: '' })
       onOpenChange(false)
     } catch (err) {
       if (mapSpreeErrorsToForm(err, form.setError)) return
       if (err instanceof SpreeError) throw err
-      toast.error(err instanceof Error ? err.message : t('admin.errors.failed_to_send_invitation'))
+      toastManager.add({
+        type: 'error',
+        title: err instanceof Error ? err.message : t('admin.errors.failed_to_send_invitation'),
+      })
     }
   }
 
@@ -577,12 +589,15 @@ function EditStaffSheet({
           role_ids: values.role_ids,
         },
       })
-      toast.success(t('admin.pages.staff.messages.updated'))
+      toastManager.add({ type: 'success', title: t('admin.pages.staff.messages.updated') })
       onOpenChange(false)
     } catch (err) {
       if (mapSpreeErrorsToForm(err, form.setError)) return
       if (err instanceof SpreeError) throw err
-      toast.error(err instanceof Error ? err.message : t('admin.errors.failed_to_update_staff'))
+      toastManager.add({
+        type: 'error',
+        title: err instanceof Error ? err.message : t('admin.errors.failed_to_update_staff'),
+      })
     }
   }
 

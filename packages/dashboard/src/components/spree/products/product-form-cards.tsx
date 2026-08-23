@@ -37,13 +37,13 @@ import {
   SelectTrigger,
   SelectValue,
   Textarea,
+  toastManager,
   useConfirm,
 } from '@spree/dashboard-ui'
 import { FilmIcon, ImagePlusIcon, Loader2Icon, PencilIcon, PlayIcon, TrashIcon } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, type UseFormReturn, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { categoryAutocompleteProps, useCategories } from '../../../hooks/use-categories'
 import { collectionAutocompleteProps, useCollections } from '../../../hooks/use-collections'
 import { useDeliveryProfiles } from '../../../hooks/use-delivery-profiles'
@@ -279,7 +279,10 @@ export function MediaCard({
             prev.map((p) => (p.id === uploadId ? { ...p, progress: 'error' as const } : p)),
           )
           const message = err instanceof Error ? err.message : t('admin.errors.unexpected')
-          toast.error(t('admin.products.media.upload_failed', { name: file.name, message }))
+          toastManager.add({
+            type: 'error',
+            title: t('admin.products.media.upload_failed', { name: file.name, message }),
+          })
         }
       }
     },
@@ -292,7 +295,11 @@ export function MediaCard({
       const accepted = Array.from(e.dataTransfer.files).filter(isAcceptedMedia)
       const rejected = e.dataTransfer.files.length - accepted.length
 
-      if (rejected > 0) toast.error(t('admin.products.media.unsupported_file', { count: rejected }))
+      if (rejected > 0)
+        toastManager.add({
+          type: 'error',
+          title: t('admin.products.media.unsupported_file', { count: rejected }),
+        })
       if (accepted.length > 0) handleFiles(accepted)
     },
     [handleFiles, t],
@@ -344,7 +351,7 @@ export function MediaCard({
         try {
           await deleteMedia.mutateAsync(entry.id)
         } catch {
-          toast.error(t('admin.errors.failed_to_delete'))
+          toastManager.add({ type: 'error', title: t('admin.errors.failed_to_delete') })
           return
         }
       }

@@ -11,9 +11,9 @@ import { Button, RowActions, useConfirm, useRowClickBridge } from '@spree/dashbo
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { useDeletePriceList } from '../../../../../hooks/use-price-lists'
 import '../../../../../tables/price-lists'
+import { toastManager } from '@spree/dashboard-ui'
 
 export const Route = createFileRoute('/_authenticated/$storeId/products/price-lists/')({
   validateSearch: resourceSearchSchema,
@@ -53,7 +53,10 @@ function PriceListsPage() {
     try {
       await deleteMutation.mutateAsync(list.id)
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : t('admin.errors.failed_to_delete'))
+      toastManager.add({
+        type: 'error',
+        title: err instanceof Error ? err.message : t('admin.errors.failed_to_delete'),
+      })
     }
   }
 

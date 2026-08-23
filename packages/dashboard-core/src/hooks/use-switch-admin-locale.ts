@@ -1,5 +1,5 @@
+import { toastManager } from '@spree/dashboard-ui'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { adminClient } from '../client'
 import { i18n, markGenuineLocaleChoice, switchLocale } from '../lib/i18n'
 import { useAuth } from './use-auth'
@@ -49,7 +49,7 @@ export function useSwitchAdminLocale() {
         markGenuineLocaleChoice(code)
       }
     } catch {
-      toast.error(t('admin.account.language.update_failed'))
+      toastManager.add({ type: 'error', title: t('admin.account.language.update_failed') })
     }
   }
 }

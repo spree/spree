@@ -60,6 +60,7 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
+  toastManager,
   useConfirm,
   useRowClickBridge,
 } from '@spree/dashboard-ui'
@@ -82,7 +83,6 @@ import {
   useForm,
 } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { z } from 'zod/v4'
 import { ResourceTranslationsDialog } from '../../../../components/spree/translations/resource-translations-dialog'
 import {
@@ -758,7 +758,7 @@ function OptionValueImageField({
     } catch (err) {
       const message =
         err instanceof Error ? err.message : t('admin.products.options.image_upload_failed')
-      toast.error(message)
+      toastManager.add({ type: 'error', title: message })
     } finally {
       setUploading(false)
       if (fileInputRef.current) fileInputRef.current.value = ''
