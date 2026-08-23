@@ -80,7 +80,8 @@
       "breadcrumb_more": "المزيد",
       "sidebar": "الشريط الجانبي",
       "sidebar_description": "يعرض الشريط الجانبي للجوال.",
-      "store_switcher": "تبديل المتجر"
+      "store_switcher": "تبديل المتجر",
+      "bulk_actions": "إجراءات جماعية"
     },
     "common": {
       "loading": "جارٍ التحميل…",

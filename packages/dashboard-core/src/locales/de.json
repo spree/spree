@@ -80,7 +80,8 @@
       "breadcrumb_more": "Mehr",
       "sidebar": "Seitenleiste",
       "sidebar_description": "Zeigt die mobile Seitenleiste an.",
-      "store_switcher": "Store wechseln"
+      "store_switcher": "Store wechseln",
+      "bulk_actions": "Massenaktionen"
     },
     "common": {
       "loading": "Wird geladen…",

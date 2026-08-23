@@ -14,6 +14,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  SearchInput,
   Select,
   SelectContent,
   SelectItem,
@@ -29,11 +30,10 @@ import {
   Columns3Icon,
   FilterIcon,
   PlusIcon,
-  SearchIcon,
   Trash2Icon,
   XIcon,
 } from 'lucide-react'
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   type ColumnDef,
@@ -167,7 +167,6 @@ export function TableToolbar({
 }: TableToolbarProps) {
   const { t } = useTranslation()
   const [filterOpen, setFilterOpen] = useState(false)
-  const searchRef = useRef<HTMLInputElement>(null)
 
   const allCols = allColumns ?? columns
   // Memoize so `FilterPanel`'s `useMemo` deps stay stable across parent
@@ -179,37 +178,31 @@ export function TableToolbar({
 
   return (
     <>
-      <div className="flex flex-col lg:flex-row gap-2 items-start lg:items-center justify-between p-3 pl-4 border-b border-border-subtle">
+      {/* A phone shows the title and the controls only — search lives in the
+          TopBar there. From `lg` the search field joins them on one row. */}
+      <div className="flex flex-col gap-2 border-b border-border-subtle p-3 pl-4 lg:flex-row lg:items-center lg:justify-between">
         {title && <CardTitle>{title}</CardTitle>}
-        <div className="flex gap-2 items-center flex-wrap ml-auto">
-          {/* Search */}
-          <div className="flex items-center gap-2 border border-border bg-card rounded-lg shadow-xs px-2.5 h-[2.125rem] lg:w-[300px] focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] transition-all duration-100 ease-in-out">
-            <SearchIcon className="size-4 text-muted-foreground shrink-0" />
-            <input
-              ref={searchRef}
-              placeholder={
-                searchPlaceholder ?? t('admin.components.table_toolbar.search_placeholder')
-              }
-              value={search}
-              onChange={(e) => onSearchChange(e.target.value)}
-              className="h-full w-full border-0 bg-transparent p-0 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-0"
-            />
-            {search && (
-              <button
-                type="button"
-                className="p-0.5 text-muted-foreground hover:text-foreground shrink-0"
-                onClick={() => {
-                  onSearchChange('')
-                  searchRef.current?.focus()
-                }}
-              >
-                <XIcon className="size-3.5" />
-              </button>
-            )}
-          </div>
+        {/* Hidden on a phone: the TopBar already carries a search field there,
+            and two search boxes stacked in one column is the more confusing
+            cost. Any term already set stays visible as a removable chip below,
+            so a search made on desktop is never silently filtering a list the
+            merchant cannot see it on. */}
+        <div className="hidden items-center gap-2 lg:ml-auto lg:flex">
+          <SearchInput
+            value={search}
+            onValueChange={onSearchChange}
+            placeholder={
+              searchPlaceholder ?? t('admin.components.table_toolbar.search_placeholder')
+            }
+            clearLabel={t('admin.common.clear')}
+            className="h-11 w-full bg-card text-sm lg:h-[2.125rem] lg:w-[300px]"
+          />
         </div>
 
-        <div className="flex gap-2 items-center">
+        {/* `flex-wrap`: a table with several actions (Import + Export + New)
+            cannot fit them beside the filter controls on a phone, and without
+            wrapping the last one overhangs the viewport. */}
+        <div className="flex flex-wrap items-center gap-2">
           {/* Filter button */}
           {filterableColumns.length > 0 && (
             <Popover open={filterOpen} onOpenChange={setFilterOpen}>
@@ -219,7 +212,7 @@ export function TableToolbar({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-[2.125rem]"
+                      className="h-11 lg:h-[2.125rem]"
                       aria-label={t('admin.components.table_toolbar.filters_button')}
                     >
                       <FilterIcon className="size-4" />
@@ -235,7 +228,10 @@ export function TableToolbar({
                   {t('admin.components.table_toolbar.filters_button')}
                 </TooltipContent>
               </Tooltip>
-              <PopoverContent align="end" className="w-[480px] p-0">
+              {/* `min(480px, …)` rather than a flat 480px: the panel is wider
+                  than a phone, so a fixed width runs its right edge and the
+                  Apply button off the screen. */}
+              <PopoverContent align="end" className="w-[min(480px,calc(100vw-1rem))] p-0">
                 <FilterPanel
                   columns={filterableColumns}
                   filters={filters}
@@ -254,20 +250,42 @@ export function TableToolbar({
             <SortDropdown columns={sortableColumns} sort={sort} onSortChange={onSortChange} />
           )}
 
-          {/* Column selector */}
-          <ColumnSelector
-            columns={columns.filter((c) => c.default !== undefined)}
-            visibleColumns={visibleColumns}
-            onVisibleColumnsChange={onVisibleColumnsChange}
-          />
+          {/* Column selector — hidden on a phone, where too few columns are
+              visible at once for choosing between them to mean anything. */}
+          <div className="hidden lg:contents">
+            <ColumnSelector
+              columns={columns.filter((c) => c.default !== undefined)}
+              visibleColumns={visibleColumns}
+              onVisibleColumnsChange={onVisibleColumnsChange}
+            />
+          </div>
 
           {actions}
         </div>
       </div>
 
       {/* Active filter badges */}
-      {filters.length > 0 && (
+      {(filters.length > 0 || search) && (
         <div className="flex flex-wrap items-center gap-2 border-b border-border-subtle px-3 py-2">
+          {/* The search term as a chip, mobile only — the field it came from is
+              hidden there, so this is the only way to see or clear it. */}
+          {search && (
+            <Badge variant="outline" className="h-7 gap-1.5 pr-1 pl-2.5 text-sm lg:hidden">
+              <span className="font-medium">
+                {t('admin.components.table_toolbar.search_placeholder')}
+              </span>
+              <span className="truncate">{search}</span>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                aria-label={t('admin.common.clear')}
+                onClick={() => onSearchChange('')}
+              >
+                <XIcon className="size-3.5" />
+              </Button>
+            </Badge>
+          )}
           {filters.map((filter) => (
             <FilterChip
               key={filter.id}
@@ -276,15 +294,17 @@ export function TableToolbar({
               onRemove={() => onFiltersChange(filters.filter((f) => f.id !== filter.id))}
             />
           ))}
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            className="text-muted-foreground hover:text-foreground"
-            onClick={() => onFiltersChange([])}
-          >
-            {t('admin.components.table_toolbar.clear_all')}
-          </Button>
+          {filters.length > 0 && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="text-muted-foreground hover:text-foreground"
+              onClick={() => onFiltersChange([])}
+            >
+              {t('admin.components.table_toolbar.clear_all')}
+            </Button>
+          )}
         </div>
       )}
     </>
@@ -483,7 +503,7 @@ function SortDropdown({
             <Button
               variant="ghost"
               size="sm"
-              className="h-[2.125rem]"
+              className="h-11 lg:h-[2.125rem]"
               aria-label={t('admin.components.table_toolbar.sort_tooltip')}
             >
               <ArrowUpDownIcon className="size-4" />
@@ -682,7 +702,10 @@ function FilterPanel({
           }))
 
           return (
-            <div key={filter.id} className="flex min-w-0 items-center gap-1.5">
+            // `flex-wrap` with a `basis` floor on each control: field,
+            // operator and value cannot share one line on a phone, so they
+            // stack instead of squeezing every control below legibility.
+            <div key={filter.id} className="flex min-w-0 flex-wrap items-center gap-1.5">
               <Select
                 items={fieldItems}
                 value={filter.field}
@@ -696,7 +719,7 @@ function FilterPanel({
                   })
                 }}
               >
-                <SelectTrigger size="sm" className="flex-1">
+                <SelectTrigger size="sm" className="min-w-[8rem] flex-1">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -713,7 +736,7 @@ function FilterPanel({
                 value={filter.operator}
                 onValueChange={(val) => updateFilter(filter.id, { operator: val })}
               >
-                <SelectTrigger size="sm" className="w-[120px] shrink-0">
+                <SelectTrigger size="sm" className="w-[120px] shrink-0 max-sm:flex-1">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -755,7 +778,7 @@ function FilterPanel({
                     value={filter.value || undefined}
                     onValueChange={(val) => updateFilter(filter.id, { value: val })}
                   >
-                    <SelectTrigger size="sm" className="flex-1">
+                    <SelectTrigger size="sm" className="min-w-[8rem] flex-1">
                       <SelectValue
                         placeholder={t('admin.components.table_toolbar.filter_select_placeholder')}
                       />
@@ -780,7 +803,7 @@ function FilterPanel({
                     value={filter.value || undefined}
                     onValueChange={(val) => updateFilter(filter.id, { value: val })}
                   >
-                    <SelectTrigger size="sm" className="flex-1">
+                    <SelectTrigger size="sm" className="min-w-[8rem] flex-1">
                       <SelectValue
                         placeholder={t('admin.components.table_toolbar.filter_select_placeholder')}
                       />

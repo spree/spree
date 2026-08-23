@@ -80,7 +80,8 @@
       "breadcrumb_more": "Więcej",
       "sidebar": "Panel boczny",
       "sidebar_description": "Wyświetla mobilny panel boczny.",
-      "store_switcher": "Przełącz sklep"
+      "store_switcher": "Przełącz sklep",
+      "bulk_actions": "Akcje zbiorcze"
     },
     "common": {
       "loading": "Ładowanie…",

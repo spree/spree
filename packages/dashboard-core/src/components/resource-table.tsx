@@ -49,9 +49,11 @@ import {
   useMemo,
   useState,
 } from 'react'
+import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { useAuth } from '../hooks/use-auth'
+import { useVisualViewportOffset } from '../hooks/use-visual-viewport-offset'
 import { filtersToRansack } from '../lib/filters-to-ransack'
 import { withStoreScope } from '../lib/query-keys'
 import {
@@ -266,6 +268,10 @@ export function ResourceTable<T extends Record<string, any>>({
     [displayableColumns, visibleColumnKeys],
   )
 
+  // Built from every displayable column, not the visible subset: the column
+  // picker is a desktop control (it is hidden on a phone), so the card should
+  // not inherit a selection the merchant cannot see or change there.
+
   // Expands requested by currently-visible columns (e.g. custom field
   // columns need `expand=custom_fields` to render their values). Sorted so
   // the query key stays stable regardless of column order.
@@ -284,6 +290,15 @@ export function ResourceTable<T extends Record<string, any>>({
   // and +useResourceMutation+'s invalidations (storeId at position 1).
   const userPrefix = Array.isArray(queryKey) ? queryKey : [queryKey]
   const queryKeyPrefix = withStoreScope(userPrefix, storeId)
+
+  // Both bulk bars (desktop overlay, mobile bottom bar) reset through here so
+  // they cannot drift apart.
+  const visualViewportOffset = useVisualViewportOffset(bulkActive)
+
+  const clearSelection = useCallback(() => {
+    setSelectedIds(new Set())
+    queryClient.invalidateQueries({ queryKey: queryKeyPrefix })
+  }, [queryClient, queryKeyPrefix])
 
   const { data, isLoading } = useQuery({
     queryKey: [
@@ -554,21 +569,56 @@ export function ResourceTable<T extends Record<string, any>>({
               // would otherwise swallow every click aimed at the select-all
               // checkbox sitting beneath it — checking once, then never
               // unchecking.
-              <div className="pointer-events-none sticky top-header-height z-30 h-0">
+              <div className="pointer-events-none sticky top-header-height z-30 hidden h-0 md:block">
                 <div className="flex h-[2.1875rem] items-center ps-10 pe-4">
                   <div className="pointer-events-auto min-w-0 flex-1">
                     <BulkActionBar
                       selectedIds={Array.from(selectedIds)}
                       actions={bulkActions!}
-                      onDone={() => {
-                        setSelectedIds(new Set())
-                        queryClient.invalidateQueries({ queryKey: queryKeyPrefix })
-                      }}
+                      onDone={clearSelection}
                     />
                   </div>
                 </div>
               </div>
             )}
+
+            {/* On a phone the header-row overlay is the wrong home for this: it
+                scrolls sideways with a wide table and sits at the top, far from
+                the thumb. A fixed bottom bar stays put and in reach while the
+                merchant scrolls the list picking rows. */}
+            {bulkActive &&
+              // Portalled to `document.body`: `SidebarInset` is `relative z-0`,
+              // which opens a stacking context, and a `fixed` child of it can
+              // only stack against its siblings there — page content painted
+              // later covered the bar until the merchant scrolled past it.
+              createPortal(
+                <section
+                  className="fixed inset-x-0 z-50 border-t border-border bg-card px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-lg md:hidden"
+                  // `bottom` anchors to the *layout* viewport. Pinch-zoom (and
+                  // a mobile URL bar) makes the visual viewport a smaller
+                  // window onto it, leaving the bar off-screen until the
+                  // merchant pans down — the offset lifts it back into view.
+                  style={{ bottom: visualViewportOffset }}
+                  aria-label={t('admin.a11y.bulk_actions')}
+                >
+                  <div className="flex items-center gap-3">
+                    <Checkbox
+                      checked={allPageSelected}
+                      indeterminate={somePageSelected}
+                      onCheckedChange={togglePage}
+                      aria-label={t('admin.a11y.select_all_rows')}
+                    />
+                    <div className="min-w-0 flex-1">
+                      <BulkActionBar
+                        selectedIds={Array.from(selectedIds)}
+                        actions={bulkActions!}
+                        onDone={clearSelection}
+                      />
+                    </div>
+                  </div>
+                </section>,
+                document.body,
+              )}
             <Table stickyHeader>
               <TableHeader>
                 {/* Column headers stay mounted with rows selected, and the bulk
@@ -680,6 +730,9 @@ export function ResourceTable<T extends Record<string, any>>({
             </Table>
           </>
         )}
+        {/* Clears the fixed bottom bar so it can't cover the pagination or the
+            last row while a selection is active. */}
+        {bulkActive && <div className="h-16 md:hidden" aria-hidden />}
         {meta && (
           <Pagination
             meta={meta}

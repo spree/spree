@@ -80,7 +80,8 @@
       "breadcrumb_more": "More",
       "sidebar": "Sidebar",
       "sidebar_description": "Displays the mobile sidebar.",
-      "store_switcher": "Switch store"
+      "store_switcher": "Switch store",
+      "bulk_actions": "Bulk actions"
     },
     "common": {
       "loading": "Loading…",
