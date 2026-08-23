@@ -12,7 +12,7 @@ function Card({ className, ...props }: React.ComponentProps<'div'>) {
         // the document, laying the whole page out wider than the viewport. `clip`
         // rather than `hidden` so `overflow-y` stays `visible` and sticky
         // descendants keep resolving against the page.
-        'group/card flex flex-col min-w-0 overflow-x-clip break-words bg-card text-card-foreground border border-border rounded-xl shadow-sm',
+        'group/card flex flex-col min-w-0 overflow-x-clip break-words bg-card text-card-foreground border border-border rounded-xl shadow-xs',
         className,
       )}
       {...props}
