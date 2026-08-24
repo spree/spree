@@ -65,15 +65,15 @@ RSpec.describe Spree::HasExternalReferences do
     end
   end
 
-  describe '.find_by_external_id' do
+  describe '.with_external_id' do
     it 'finds the record the external system knows' do
       product.set_external_id('erp', 'MAT-100')
 
-      expect(Spree::Product.find_by_external_id('erp', 'MAT-100')).to eq(product)
+      expect(Spree::Product.with_external_id('erp', 'MAT-100').take).to eq(product)
     end
 
-    it 'returns nil when no reference matches' do
-      expect(Spree::Product.find_by_external_id('erp', 'NOPE')).to be_nil
+    it 'matches nothing when no reference matches' do
+      expect(Spree::Product.with_external_id('erp', 'NOPE')).to be_empty
     end
 
     it 'honours the scope it is chained onto, so another store is invisible' do
@@ -81,8 +81,8 @@ RSpec.describe Spree::HasExternalReferences do
       other_product = create(:product, store: other_store)
       other_product.set_external_id('erp', 'MAT-100')
 
-      expect(store.products.find_by_external_id('erp', 'MAT-100')).to be_nil
-      expect(other_store.products.find_by_external_id('erp', 'MAT-100')).to eq(other_product)
+      expect(store.products.with_external_id('erp', 'MAT-100')).to be_empty
+      expect(other_store.products.with_external_id('erp', 'MAT-100').take).to eq(other_product)
     end
   end
 

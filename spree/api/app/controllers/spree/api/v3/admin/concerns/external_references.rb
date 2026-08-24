@@ -129,21 +129,21 @@ module Spree
               return super unless external_id_lookup?
 
               _prefix, system, external_id = params[:id].split(':', 3)
-              scope.find_by_external_id!(system, external_id)
+              scope.with_external_id(system, external_id).take!
             end
 
             def external_id_lookup?
               params[:id].to_s.start_with?(EXTERNAL_ID_PREFIX) &&
-                model_class.respond_to?(:find_by_external_id) &&
+                model_class.respond_to?(:with_external_id) &&
                 params[:id].to_s.split(':', 3).length == 3
             end
 
             def find_by_external_reference_params
               return if external_reference_params.blank?
-              return unless model_class.respond_to?(:find_by_external_id)
+              return unless model_class.respond_to?(:with_external_id)
 
               external_reference_params.each do |entry|
-                match = scope.find_by_external_id(entry[:system], entry[:external_id])
+                match = scope.with_external_id(entry[:system], entry[:external_id]).take
                 return match if match.present?
               end
 

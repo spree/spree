@@ -121,7 +121,7 @@ module Spree
       # second copy.
       def find_or_initialize_image(viewable, external_url, references = [])
         Array(references).each do |reference|
-          existing = image_scope(viewable).find_by_external_id(reference[:system], reference[:external_id])
+          existing = image_scope(viewable).with_external_id(reference[:system], reference[:external_id]).take
           return existing if existing.present?
         end
 

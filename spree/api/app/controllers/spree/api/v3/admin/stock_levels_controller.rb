@@ -167,7 +167,7 @@ module Spree
             return unless external.respond_to?(:to_h) && !external.is_a?(String)
 
             system, external_id = external.to_h.first
-            scope.find_by_external_id(system, external_id)&.id
+            scope.with_external_id(system, external_id).take&.id
           end
 
           def store_variants

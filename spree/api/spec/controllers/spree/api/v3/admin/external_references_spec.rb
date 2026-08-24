@@ -103,7 +103,7 @@ RSpec.describe 'Admin API external references', type: :controller do
                                 external_references: [{ system: 'erp', external_id: 'WH-2' }] }, as: :json
       end.to change(Spree::StockLocation, :count).by(1)
 
-      expect(Spree::StockLocation.find_by_external_id('erp', 'WH-2')).to be_present
+      expect(Spree::StockLocation.with_external_id('erp', 'WH-2')).to exist
     end
 
     it 'does not treat another store external id as a match, so the feed creates its own row' do
@@ -114,7 +114,7 @@ RSpec.describe 'Admin API external references', type: :controller do
         post :create, params: { name: 'Ours', external_references: [{ system: 'erp', external_id: 'WH-9' }] }, as: :json
       end.to change { store.stock_locations.count }.by(1)
 
-      expect(store.stock_locations.find_by_external_id('erp', 'WH-9').name).to eq('Ours')
+      expect(store.stock_locations.with_external_id('erp', 'WH-9').take.name).to eq('Ours')
     end
   end
 end

@@ -20,27 +20,6 @@ module Spree
           }
         )
       }
-
-      scope :with_external_system, lambda { |system|
-        joins(:external_references).where(spree_external_references: { system: system.to_s.strip.downcase })
-      }
-    end
-
-    class_methods do
-      # @param system [String, Symbol] the external system's key
-      # @param external_id [String] the identifier that system knows the record by
-      # @return [Spree::Base, nil] the record, or nil when no reference matches
-      def find_by_external_id(system, external_id)
-        with_external_id(system, external_id).first
-      end
-
-      # @raise [ActiveRecord::RecordNotFound] when no reference matches
-      # @return [Spree::Base]
-      def find_by_external_id!(system, external_id)
-        find_by_external_id(system, external_id) ||
-          raise(ActiveRecord::RecordNotFound,
-                "Couldn't find #{name} with external_id #{external_id.inspect} in system #{system.to_s.inspect}")
-      end
     end
 
     # @param system [String, Symbol] the external system's key
