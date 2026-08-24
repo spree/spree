@@ -78,14 +78,13 @@ module Spree
         end
       end
 
-      # A record is this store's if it says so. One that carries no store at all
-      # (the store record itself, a global) is reported — it is not another
-      # tenant's data.
+      # Ownership must be proven, never assumed. A Spree::Store carries no
+      # store_id of its own, so a blank one is not evidence the record is
+      # local — treating it as such reported another tenant's logo as a use.
       def owned_by_store?(owner, store_id)
-        owner_store_id = owner.try(:store_id)
-        return true if owner_store_id.blank?
+        return owner.id == store_id if owner.is_a?(Spree::Store)
 
-        owner_store_id == store_id
+        owner.try(:store_id) == store_id
       end
 
       def build_reference(owner, field)

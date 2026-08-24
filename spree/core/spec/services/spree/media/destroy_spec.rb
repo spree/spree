@@ -67,6 +67,37 @@ describe Spree::Media::Destroy do
     expect(category.reload.image).to be_attached
   end
 
+  # A Spree::Store has no store_id of its own, so a blank one must not read as
+  # "mine" — deleting one store's file was stripping another store's logo.
+  it 'leaves another store logo on the same file alone' do
+    foreign_store = create(:store)
+    foreign_store.logo.attach(media.attachment.blob)
+    foreign_store.save!
+
+    perform_enqueued_jobs { described_class.call(media: media) }
+
+    expect(foreign_store.reload.logo).to be_attached
+  end
+
+  # A poster is a still another row may use as its own picture, so deleting a
+  # video must not take that independent image with it.
+  it 'leaves an image reusing the video poster alone' do
+    video = create(:video_media, viewable: product)
+    video.poster.attach(
+      io: File.new(Spree::Core::Engine.root + 'spec/fixtures' + 'thinking-cat.jpg'),
+      filename: 'still.jpg'
+    )
+    video.save!
+
+    reuse = Spree::Media.new(store: product.store, viewable: product, media_type: 'image')
+    reuse.attachment.attach(video.poster.blob)
+    reuse.save!
+
+    described_class.call(media: video)
+
+    expect(Spree::Media.exists?(reuse.id)).to be(true)
+  end
+
   it 'leaves unrelated files alone' do
     unrelated = create(:image, viewable: create(:product))
 

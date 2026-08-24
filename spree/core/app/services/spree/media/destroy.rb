@@ -18,7 +18,11 @@ module Spree
       # @param media [Spree::Media] the library row being deleted
       # @return [Spree::ServiceModule::Result]
       def call(media:)
-        blob_ids = [media.attachment_blob&.id, media.poster_blob&.id].compact
+        # Only the file this row *is*, never its poster: a poster is a still
+        # another row may legitimately use as its own picture, and deleting a
+        # video must not take that image with it. The row's own poster goes
+        # when the row does.
+        blob_ids = [media.attachment_blob&.id].compact
 
         # Detaching is collected inside the transaction and enqueued after it
         # commits: purge_later hands the file to a worker that may run before
@@ -71,11 +75,13 @@ module Spree
         end
       end
 
-      # Same rule as Spree::Media::Usage: a record that carries no store at all
-      # (the store itself) is this store's to manage.
+      # Ownership must be proven, never assumed. A Spree::Store has no
+      # store_id of its own, so treating a blank one as "mine" made every
+      # other store's logo look local — and deleting a file would strip it.
       def owned_by_store?(owner, store_id)
-        owner_store_id = owner.try(:store_id)
-        owner_store_id.blank? || owner_store_id == store_id
+        return owner.id == store_id if owner.is_a?(Spree::Store)
+
+        owner.try(:store_id) == store_id
       end
     end
   end

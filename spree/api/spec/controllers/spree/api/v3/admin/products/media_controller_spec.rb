@@ -387,6 +387,22 @@ RSpec.describe Spree::Api::V3::Admin::MediaController, type: :controller do
       expect(target.media.last.alt).to eq('Same shot, different product')
     end
 
+    # `attachment` is a way of getting at a file, like the other transport
+    # keys — honouring it here would overwrite the shared blob with an upload.
+    it 'ignores an attachment sent alongside the source' do
+      post :create, params: {
+        product_id: target.prefixed_id,
+        source_media_id: image.prefixed_id,
+        attachment: Rack::Test::UploadedFile.new(
+          Spree::Core::Engine.root + 'spec/fixtures' + 'thinking-cat.jpg',
+          'image/jpeg'
+        )
+      }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(target.media.last.attachment.blob).to eq(image.attachment.blob)
+    end
+
     it 'leaves the source where it was' do
       post :create, params: {
         product_id: target.prefixed_id,

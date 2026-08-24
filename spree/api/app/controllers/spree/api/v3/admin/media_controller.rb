@@ -68,11 +68,13 @@ module Spree
             @parent.send(parent_association).build(media_attributes)
           end
 
-          # Everything the client sent minus the transport keys — the file, the
-          # URL to fetch one from, and the library row to copy are ways of
-          # getting at a file, not attributes of the row.
+          # Everything the client sent minus the transport keys — a direct file,
+          # the URL to fetch one from, and the library row to copy are ways of
+          # getting at a file, not attributes of the row. Leaving `attachment`
+          # in let a request carrying it alongside `source_media_id` overwrite
+          # the shared blob with an upload, defeating the reuse.
           def media_attributes
-            permitted_params.except(:url, :signed_id, :source_media_id)
+            permitted_params.except(:attachment, :url, :signed_id, :source_media_id)
           end
 
           # The media file, a URL to fetch one from, and the library row to copy

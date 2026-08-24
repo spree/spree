@@ -74,6 +74,29 @@ describe Spree::Media, type: :model do
     end
   end
 
+  describe 'a row that predates the store column' do
+    # Between db:migrate and spree:upgrade:backfill_media_store_ids every
+    # existing row carries nil. Editing one must not fail validation.
+    it 'adopts a store on its next save' do
+      media = create(:image, viewable: create(:product))
+      described_class.unscoped.where(id: media.id).update_all(store_id: nil)
+
+      legacy = described_class.find(media.id)
+      legacy.alt = 'Edited'
+
+      expect(legacy.save).to be(true)
+      expect(legacy.reload.store_id).to be_present
+    end
+
+    it 'still refuses moving a row between stores' do
+      media = create(:image, viewable: create(:product))
+      media.store = create(:store)
+
+      expect(media.save).to be(false)
+      expect(media.errors[:store]).to be_present
+    end
+  end
+
   describe 'library scopes' do
     let!(:placed) { create(:image, viewable: create(:product)) }
     let!(:unplaced) { create(:image, viewable: nil) }
@@ -104,6 +127,15 @@ describe Spree::Media, type: :model do
       result = described_class.distinct_by_file.where(id: [source.id, other.id])
 
       expect(result).to contain_exactly(source, other)
+    end
+
+    # Grouping globally let another tenant's row win, which hid the file from
+    # the library that owns it entirely.
+    it 'keeps a file visible in its own store when another store shares it' do
+      other_store = create(:store)
+      source.duplicate_for(create(:product, store: other_store)).save!
+
+      expect(source.store.media.distinct_by_file).to include(source)
     end
 
     # An external video has no attachment to group by, so it can't be folded

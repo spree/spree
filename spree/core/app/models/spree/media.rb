@@ -14,6 +14,17 @@ module Spree
     # upgrade could not reach; new rows always carry a store.
     include Spree::SingleStoreResource
 
+    # SingleStoreResource refuses any store change on a persisted record. Media
+    # predates its store column, so a legacy row carries nil until the upgrade
+    # task fills it in — and between db:migrate and that task, every edit of an
+    # existing row would otherwise fail validation. Adopting a store is not
+    # changing one.
+    def ensure_store_association_is_not_changed
+      return if store_id_was.nil?
+
+      super
+    end
+
     publishes_lifecycle_events
 
     EXTERNAL_URL_CUSTOM_FIELD_KEY = 'external.url'
@@ -70,10 +81,14 @@ module Spree
     #
     # Rows with no attachment at all (an external video) have no blob to group
     # by and are always kept.
+    # Grouped over the rows this scope already covers, not over every store's:
+    # a global winner can belong to another tenant, which hid the file from the
+    # library that owns it — not listed, not searchable, not deletable.
     scope :distinct_by_file, lambda {
       attachments = ActiveStorage::Attachment.arel_table
       newest_per_blob = ActiveStorage::Attachment
                           .where(record_type: name, name: 'attachment')
+                          .where(record_id: unscope(:order).select(:id))
                           .group(:blob_id)
                           .select(attachments[:record_id].maximum)
 

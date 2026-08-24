@@ -35,9 +35,7 @@ describe Spree::Media::Usage do
   # A file picked for a store logo shares the blob without going through
   # Spree::Media at all, so usage has to be a question about the blob.
   it 'reports a plain attachment sharing the blob' do
-    # A dedicated store, not the suite-wide default — attaching a logo to the
-    # shared record would leak into every later spec.
-    store = create(:store)
+    store = media.store
     store.logo.attach(media.attachment.blob)
     store.save!
 
@@ -45,6 +43,16 @@ describe Spree::Media::Usage do
 
     expect(reference).to be_present
     expect(reference.field).to eq('logo')
+  end
+
+  # A Spree::Store has no store_id of its own, so a blank one must not read as
+  # "mine" — that reported another tenant's logo, and the delete stripped it.
+  it 'ignores another store using the same file for its logo' do
+    foreign_store = create(:store, name: 'Another tenant')
+    foreign_store.logo.attach(media.attachment.blob)
+    foreign_store.save!
+
+    expect(usage.select { |candidate| candidate.kind == 'attachment' }).to be_empty
   end
 
   # A category holds a file twice — its image slot and the slot's library

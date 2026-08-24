@@ -46,7 +46,13 @@ module Spree
             result = Spree::Media::Destroy.call(media: @resource)
             return head :no_content if result.success?
 
-            render_service_error(result.error)
+            # A rolled-back delete carries no validation errors, so
+            # render_service_error would produce an empty message.
+            render_error(
+              code: ERROR_CODES[:processing_error],
+              message: Spree.t('api.errors.media_not_deleted'),
+              status: :unprocessable_content
+            )
           end
 
           # Where this file is in use — other products it has been placed on,
@@ -102,8 +108,15 @@ module Spree
           # and `usage` says where each one appears. But a row the grouping
           # hides is still a real record a client may hold the id of, so
           # narrowing every lookup would 404 it on show or destroy.
+          # The library has no parent, so this is the one media endpoint where
+          # the admin base's `accessible_by` would apply — a role's
+          # record-level rules must still filter it. `super` is skipped
+          # deliberately: the parent controller's scope reads @product, which
+          # a library request does not have.
           def scope
-            media = current_store.media.order(created_at: :desc)
+            media = current_store.media
+                                 .accessible_by(current_ability, ability_action_for_request)
+                                 .order(created_at: :desc)
             listing? ? media.distinct_by_file : media
           end
 
