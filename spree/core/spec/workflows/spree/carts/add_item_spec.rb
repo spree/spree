@@ -335,5 +335,41 @@ module Spree
         end
       end
     end
+
+    context 'with an external pricing provider' do
+      let(:store) { @default_store }
+      let(:cart) { create(:cart, store: store) }
+      let(:provider_class) do
+        Class.new(Spree::PricingProvider::Base) do
+          class << self; attr_accessor :calls; end
+          self.calls = 0
+          def self.key = 'contract'
+          def price_for(context)
+            self.class.calls += 1
+            Spree::Price.new(variant: context.variant, currency: context.currency, amount: 5)
+          end
+        end
+      end
+
+      before do
+        Spree.pricing_providers << provider_class
+        stub_store_preferences(store, pricing_provider: 'contract')
+      end
+
+      after { Spree.pricing_providers.delete(provider_class) }
+
+      # The second add increments an existing line; the quantity-change
+      # callback used to ask the provider again from inside the transaction.
+      it 'asks the provider once per add, even when incrementing an existing line' do
+        subject.call(cart: cart, variant: variant, quantity: 1)
+        provider_class.calls = 0
+
+        subject.call(cart: cart, variant: variant, quantity: 1)
+
+        expect(provider_class.calls).to eq(1)
+        expect(cart.line_items.reload.first.price).to eq(5)
+        expect(cart.line_items.first.quantity).to eq(2)
+      end
+    end
   end
 end
