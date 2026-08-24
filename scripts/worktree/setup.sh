@@ -24,8 +24,11 @@ SECRET_KEY_BASE=$(openssl rand -hex 64)
 DATABASE_NAME=$(db_name)
 DATABASE_NAME_TEST=$(test_db_name)
 SPREE_DASHBOARD_URL=$(dashboard_url)
+SPREE_SELLER_PANEL_URL=$(seller_url)
 RAILS_HOST=$(rails_host)
 RAILS_PROTOCOL=https
+SMTP_HOST=$MAILPIT_HOST
+SMTP_PORT=$MAILPIT_SMTP_PORT
 EOF
 fi
 
@@ -45,6 +48,19 @@ fi
 
 if ! grep -q '^RAILS_PROTOCOL=' server/.env; then
   printf 'RAILS_PROTOCOL=%s\n' 'https' >> server/.env
+fi
+
+# Mail goes to Mailpit, as it does in the starter's Docker stack. Without
+# SMTP_HOST the starter falls back to a delivery method that does not exist,
+# so every email raises rather than being delivered anywhere.
+if ! grep -q '^SMTP_HOST=' server/.env; then
+  printf 'SMTP_HOST=%s\nSMTP_PORT=%s\n' "$MAILPIT_HOST" "$MAILPIT_SMTP_PORT" >> server/.env
+fi
+
+# Backfill likewise: without it a seller's invitation links to the operator's
+# dashboard, where accepting issues an admin session rather than a seller one.
+if ! grep -q '^SPREE_SELLER_PANEL_URL=' server/.env; then
+  printf 'SPREE_SELLER_PANEL_URL=%s\n' "$(seller_url)" >> server/.env
 fi
 
 require_current_starter
@@ -77,3 +93,6 @@ printf 'VITE_API_PROXY_TARGET=%s\n' "$(rails_url)" > packages/dashboard-starter/
 echo "✓ Worktree ready"
 echo "  rails:     $(rails_url)   (pnpm wt:dev)"
 echo "  dashboard: $(dashboard_url)   (pnpm wt:dashboard)"
+echo "  seller:    $(seller_url)   (pnpm wt:seller)"
+echo "  mail:      $(mailpit_url)"
+warn_unless_mailpit

@@ -107,3 +107,18 @@ require_portless() {
     exit 1
   }
 }
+
+# Mailpit catches every email the dev server sends, the same way it does in the
+# starter's Docker stack. One instance serves every worktree, like Postgres.
+MAILPIT_HOST="${MAILPIT_HOST:-localhost}"
+MAILPIT_SMTP_PORT="${MAILPIT_SMTP_PORT:-1025}"
+MAILPIT_UI_PORT="${MAILPIT_UI_PORT:-8025}"
+mailpit_url() { echo "http://localhost:$MAILPIT_UI_PORT"; }
+
+# A warning rather than a hard failure: a worktree is still usable without it,
+# and only the screens that send mail are affected.
+warn_unless_mailpit() {
+  port_free "$MAILPIT_SMTP_PORT" || return 0
+  echo "  ! Mailpit is not running — email will fail to deliver."
+  echo "    brew install mailpit && brew services start mailpit"
+}
