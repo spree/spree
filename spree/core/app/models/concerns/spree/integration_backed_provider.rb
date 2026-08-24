@@ -11,6 +11,15 @@ module Spree
     extend ActiveSupport::Concern
 
     class_methods do
+      # The registry key a merchant's store preference stores (and, for
+      # pricing, the value written to +spree_line_items.price_source+).
+      # Gems override it to name their system: 'acme_erp', not 'pricing_provider'.
+      #
+      # @return [String]
+      def key
+        name.demodulize.underscore
+      end
+
       # The Spree::Integration subclass holding this provider's credentials,
       # as a class name string. Internal providers need none.
       #
@@ -53,18 +62,18 @@ module Spree
     end
 
     # The connected, active integration carrying this provider's credentials.
-    # Memoizes the missing case too — an unconnected integration must not cost
-    # a query per call on a hot path.
+    #
+    # No memoization: provider instances are built fresh per resolution, so an
+    # instance-level cache never gets a second hit. A provider consulting this
+    # on the catalog read path should do so inside +price_for+ (whose answers
+    # {Spree::Pricing::PriceResolution} caches by +cache_ttl+), not +handles?+.
     #
     # @param store [Spree::Store, nil]
     # @return [Spree::Integration, nil]
     def integration_for(store)
       return if self.class.integration_class.blank?
 
-      @integration_for ||= {}
-      return @integration_for[store&.id] if @integration_for.key?(store&.id)
-
-      @integration_for[store&.id] = store&.integrations&.active&.find_by(type: self.class.integration_class)
+      store&.integrations&.active&.find_by(type: self.class.integration_class)
     end
   end
 end

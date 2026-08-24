@@ -25,9 +25,9 @@ module Spree
               end
             end
 
-            # The customer is returning to a cart that may have sat for days,
-            # so this is where anything they can no longer buy is dropped.
-            render_cart(sweep: true)
+            # The customer is returning to a cart that may have sat for days.
+            sweep_unbuyable_lines!
+            render_cart
           end
 
           # POST /api/v3/store/carts
@@ -101,7 +101,8 @@ module Spree
 
             if result.success?
               # Signing in hands back a cart built earlier, possibly long ago.
-              render_cart(sweep: true)
+              sweep_unbuyable_lines!
+              render_cart
             else
               render_service_error(result.error.to_s)
             end

@@ -46,14 +46,6 @@ module Spree
         nil
       end
 
-      # The key a merchant's store preference stores, and the value written to
-      # +spree_line_items.price_source+ so an order can say where its price
-      # came from.
-      #
-      # @return [String]
-      def self.key
-        name.demodulize.underscore
-      end
     end
   end
 end

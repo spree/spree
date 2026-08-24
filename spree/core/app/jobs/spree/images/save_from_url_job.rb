@@ -128,22 +128,23 @@ module Spree
         image_scope(viewable).with_external_url(external_url).first || viewable_assets(viewable).new
       end
 
-      # Normalises the caller's external ids — a bare string, a
-      # `{ system:, external_id: }` hash, or a list of either — into one shape.
+      # Normalises the caller's external ids into the shared entry shape.
+      # This job's own additions over {Spree::ExternalReference.normalize_references}
+      # are the legacy bare-string form and a default system for entries that
+      # name none — everything else parses identically to the API.
       def external_references_from(external_id)
         return [] if external_id.blank?
 
-        entries = external_id.is_a?(Array) ? external_id : [external_id]
-        entries.filter_map do |entry|
+        entries = (external_id.is_a?(Array) ? external_id : [external_id]).map do |entry|
           if entry.is_a?(Hash)
             hash = entry.to_h.symbolize_keys
-            next if hash[:external_id].blank?
-
-            { system: hash[:system].presence || DEFAULT_EXTERNAL_SYSTEM, external_id: hash[:external_id].to_s.strip }
+            hash[:system].present? ? hash : hash.merge(system: DEFAULT_EXTERNAL_SYSTEM)
           elsif entry.present?
-            { system: DEFAULT_EXTERNAL_SYSTEM, external_id: entry.to_s.strip }
+            { system: DEFAULT_EXTERNAL_SYSTEM, external_id: entry.to_s }
           end
         end
+
+        Spree::ExternalReference.normalize_references(entries.compact)
       end
 
       def record_external_references(image, references)

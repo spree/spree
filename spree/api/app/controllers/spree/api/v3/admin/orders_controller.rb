@@ -3,7 +3,6 @@ module Spree
     module V3
       module Admin
         class OrdersController < ResourceController
-          include Spree::Api::V3::Admin::Concerns::ExternalReferences
           include Spree::Api::V3::OrderLock
 
           scoped_resource :orders

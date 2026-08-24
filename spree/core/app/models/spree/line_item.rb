@@ -152,13 +152,10 @@ module Spree
     # country (its market's own), and without it a cross-border cart is taxed
     # for the destination at a price quoted for home, leaving the merchant to
     # absorb the difference.
+    # persist: false — runs mid-build and from callers that save the record
+    # themselves.
     def update_price
-      return if owner.blank?
-
-      result = Spree::Carts::PriceItems.new.call(cart: owner, line_items: [self])
-      # persist: false — this runs mid-build and from callers that save the
-      # record themselves.
-      Spree::Carts::PriceItems.apply(result.value, persist: false) if result.success?
+      reprice(persist: false)
     end
 
     # Assigns the price the local catalog gives for this line, with no pricing
@@ -172,13 +169,9 @@ module Spree
       price_record = Spree::PricingProvider::Internal.new.price_for(context)
       return if price_record.blank?
 
-      amount = price_record.price_including_vat_for(
-        address: owner&.tax_address, country: owner&.tax_country, market: owner&.market
-      )
-      return if amount.blank?
-
-      self.price = amount
-      self.price_list_id = price_record.price_list_id
+      # Through the same writer every resolved price goes through, so the
+      # tax-inclusive restatement inputs are stated once.
+      Spree::Carts::PriceItems.apply([[self, price_record]], persist: false)
     end
 
     def copy_tax_category
@@ -383,13 +376,17 @@ module Spree
     #
     # @return [void]
     def recalculate_price
-      return if owner.blank?
-
-      result = Spree::Carts::PriceItems.new.call(cart: owner, line_items: [self])
-      Spree::Carts::PriceItems.apply(result.value) if result.success?
+      reprice(persist: true)
     end
 
     private
+
+    def reprice(persist:)
+      return if owner.blank?
+
+      result = Spree::Carts::PriceItems.new.call(cart: owner, line_items: [self])
+      Spree::Carts::PriceItems.apply(result.value, persist: persist) if result.success?
+    end
 
     def ensure_valid_quantity
       self.quantity = 0 if quantity.nil? || quantity < 0

@@ -3,7 +3,6 @@ module Spree
     module V3
       module Admin
         class VariantsController < ResourceController
-          include Spree::Api::V3::Admin::Concerns::ExternalReferences
           scoped_resource :products
 
           protected

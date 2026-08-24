@@ -25,20 +25,6 @@ module Spree
         raise NotImplementedError, "#{self.class} must implement #stock_levels_for"
       end
 
-      # How long an answer may be cached. nil means no caching, which is only
-      # correct for a provider reading the local database.
-      #
-      # @return [ActiveSupport::Duration, Integer, nil]
-      def cache_ttl
-        nil
-      end
-
-      # The key a merchant's store preference stores.
-      #
-      # @return [String]
-      def self.key
-        name.demodulize.underscore
-      end
     end
   end
 end

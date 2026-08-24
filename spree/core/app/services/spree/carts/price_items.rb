@@ -28,14 +28,11 @@ module Spree
         items = items.reject(&:persisted?) if money_frozen?(cart)
         return success([]) if items.empty?
 
-        # The source comes from the answer, not the store's setting: a
-        # provider that declined the context, or fell back, priced from the
-        # catalog and the line must say so.
         resolutions = items.filter_map do |line_item|
           price = resolve_price(line_item, cart)
           next if price.blank?
 
-          [line_item, price, price.price_source]
+          [line_item, price]
         end
 
         success(resolutions)
@@ -45,10 +42,25 @@ module Spree
         failure(cart, e.message)
       end
 
+      # A stand-in line item for pricing a line that does not exist yet.
+      #
+      # Built detached rather than through +cart.line_items.new+: that appends
+      # the stand-in to the association, and the line-item finder would then
+      # find it and add quantity to a row that was never meant to exist. The
+      # cart still rides along (as the association target only) so the
+      # resolution can read the owner without loading anything.
+      #
+      # @return [Spree::LineItem] unsaved, not on the cart's association
+      def self.probe(cart:, variant:, quantity:)
+        Spree::LineItem.new(variant: variant, quantity: quantity, currency: cart.currency).tap do |probe|
+          probe.association(:cart).target = cart
+        end
+      end
+
       # Writes resolved prices. Safe inside a transaction — no provider is
       # consulted here.
       #
-      # @param resolutions [Array<Array>] triples from {#call}
+      # @param resolutions [Array<Array>] +[line_item, price]+ pairs from {#call}
       # @param persist [Boolean] false assigns without saving, for callers
       #   that save the record themselves
       # @return [void]
@@ -62,7 +74,7 @@ module Spree
         owner = resolutions.first.first.owner
         vat_inputs = { address: owner&.tax_address, country: owner&.tax_country, market: owner&.market }
 
-        resolutions.each do |line_item, price, source|
+        resolutions.each do |line_item, price|
           amount = price.price_including_vat_for(**vat_inputs)
           # Marked before the blank guard: the provider has already answered,
           # so a restatement that comes back blank must still not send the
@@ -72,7 +84,10 @@ module Spree
           line_item.price_resolved = true unless persist
           next if amount.blank?
 
-          line_item.assign_attributes(price: amount, price_list_id: price.price_list_id, price_source: source)
+          # The source comes from the answer, not the store's setting: a
+          # provider that declined the context, or fell back, priced from the
+          # catalog and the line must say so.
+          line_item.assign_attributes(price: amount, price_list_id: price.price_list_id, price_source: price.price_source)
           next unless persist && line_item.persisted? && line_item.changed?
 
           line_item.update_columns(line_item.changes.transform_values(&:last).merge(updated_at: Time.current))

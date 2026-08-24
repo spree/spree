@@ -121,17 +121,14 @@ module Spree
       def resolve_prices
         return if additions.empty?
 
-        # Detached, not cart.line_items.new: that appends the stand-in to the
-        # association, and the line-item finder would then find it and treat a
-        # row that was never meant to exist as the one to update.
         probes = additions.map do |item|
-          Spree::LineItem.new(variant: item.variant, quantity: item.quantity, currency: cart.currency)
+          Spree::Carts::PriceItems.probe(cart: cart, variant: item.variant, quantity: item.quantity)
         end
 
         result = Spree::Carts::PriceItems.new.call(cart: cart, line_items: probes)
         failure(cart, result.error) if result.failure?
 
-        @resolved_prices = Array(result.value).index_by { |probe, _price, _source| probe.variant_id }
+        @resolved_prices = Array(result.value).index_by { |probe, _price| probe.variant_id }
       end
 
       def additions
@@ -142,8 +139,8 @@ module Spree
         resolution = resolved_prices[line_item.variant_id]
         return if resolution.blank?
 
-        _probe, price, source = resolution
-        Spree::Carts::PriceItems.apply([[line_item, price, source]], persist: false)
+        _probe, price = resolution
+        Spree::Carts::PriceItems.apply([[line_item, price]], persist: false)
       end
 
       def resolved_prices

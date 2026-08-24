@@ -27,15 +27,13 @@ module Spree
         end
         return success([]) if entries.empty?
 
+        @cart = cart
         @provider = cart&.store&.inventory_provider_instance
-        provider = @provider
-        return success([]) if provider.blank?
+        return success([]) if @provider.blank?
 
-        internal = provider.is_a?(Spree::InventoryProvider::Internal)
+        @internal = @provider.is_a?(Spree::InventoryProvider::Internal)
 
-        unsupplyable = entries.reject do |variant, quantity|
-          supplyable?(variant, quantity, cart: cart, provider: provider, internal: internal)
-        end
+        unsupplyable = entries.reject { |variant, quantity| supplyable?(variant, quantity) }
 
         success(unsupplyable)
       rescue StandardError => e
@@ -44,10 +42,10 @@ module Spree
 
       private
 
-      def supplyable?(variant, quantity, cart:, provider:, internal:)
-        stock_levels = internal ? nil : provider.stock_levels_for(variant)
+      def supplyable?(variant, quantity)
+        stock_levels = @internal ? nil : @provider.stock_levels_for(variant)
 
-        Spree::Stock::Quantifier.new(variant, excluded_order: cart, stock_levels: stock_levels).
+        Spree::Stock::Quantifier.new(variant, excluded_order: @cart, stock_levels: stock_levels).
           can_supply?(quantity)
       end
 

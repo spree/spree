@@ -19,7 +19,7 @@ module Spree
     belongs_to :store, class_name: 'Spree::Store', inverse_of: :external_references
     belongs_to :resource, polymorphic: true
 
-    normalizes :system, with: ->(value) { value.to_s.strip.downcase }
+    normalizes :system, with: ->(value) { normalize_system(value) }
     normalizes :external_id, with: ->(value) { value.to_s.strip }
 
     # Turns either shape a caller may hold — the `{ system => external_id }`
@@ -32,6 +32,15 @@ module Spree
     #
     # @param references [Hash, Array<Hash>, nil]
     # @return [Array<Hash>] entries with :system, :external_id and optional :metadata
+    # The one statement of what a system key looks like: every lookup and
+    # write normalizes through here, or a writer's key and a reader's key
+    # could disagree about the same row.
+    #
+    # @return [String]
+    def self.normalize_system(value)
+      value.to_s.strip.downcase
+    end
+
     def self.normalize_references(references)
       return [] if references.blank?
 
@@ -63,6 +72,6 @@ module Spree
 
     self.whitelisted_ransackable_attributes = %w[system external_id resource_type]
 
-    scope :for_system, ->(system) { where(system: system.to_s.strip.downcase) }
+    scope :for_system, ->(system) { where(system: normalize_system(system)) }
   end
 end

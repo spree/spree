@@ -5,7 +5,6 @@ module Spree
         # Business customers. A company is a customer record, so it answers to
         # the customer scopes rather than earning one of its own.
         class CompaniesController < ResourceController
-          include Spree::Api::V3::Admin::Concerns::ExternalReferences
           scoped_resource :customers
 
           protected

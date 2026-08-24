@@ -124,19 +124,11 @@ module Spree
         @resolved_price = result.value.first
       end
 
-      # The provider is asked about a line item that does not exist yet, so the
-      # answer arrives against a stand-in and is transferred onto the real row
-      # once it does.
-      #
-      # Built detached rather than through +cart.line_items.new+: that appends
-      # the stand-in to the association, and the line-item finder would then
-      # find it and add the new quantity to a row that was never meant to
-      # exist.
+      # The provider is asked about a line item that does not exist yet, so
+      # the answer arrives against a stand-in and is transferred onto the real
+      # row once it does.
       def pricing_probe_line_item
-        Spree::LineItem.new(variant: variant, quantity: resulting_quantity,
-                            currency: cart.currency).tap do |probe|
-          probe.association(:cart).target = cart if probe.respond_to?(:cart)
-        end
+        Spree::Carts::PriceItems.probe(cart: cart, variant: variant, quantity: resulting_quantity)
       end
 
       # The amount the pricing step actually resolved, or nil when nothing
@@ -148,8 +140,8 @@ module Spree
       def apply_resolved_price
         return if @resolved_price.blank?
 
-        _probe, price, source = @resolved_price
-        Spree::Carts::PriceItems.apply([[@line_item, price, source]], persist: false)
+        _probe, price = @resolved_price
+        Spree::Carts::PriceItems.apply([[@line_item, price]], persist: false)
       end
 
       # What the line will hold once this add is applied. Volume pricing and

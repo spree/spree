@@ -32,22 +32,12 @@ module Spree
 
         # Returns the best price for the variant
         # @return [Spree::Price]
+        # A price-list match wins; the base price (no price_list_id) backstops.
         def resolve
-          find_best_price
+          find_price_from_lists || find_base_price
         end
 
         private
-
-        # Returns the best price for the variant
-        # @return [Spree::Price]
-        def find_best_price
-          # Try to find a price from applicable price lists first
-          price_from_list = find_price_from_lists
-          return price_from_list if price_from_list
-
-          # Fall back to base price (no price_list_id)
-          find_base_price
-        end
 
         # Returns the price from applicable price lists
         # @return [Spree::Price]

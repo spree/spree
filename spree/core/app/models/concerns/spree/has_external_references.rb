@@ -15,7 +15,7 @@ module Spree
       scope :with_external_id, lambda { |system, external_id|
         joins(:external_references).where(
           spree_external_references: {
-            system: system.to_s.strip.downcase,
+            system: Spree::ExternalReference.normalize_system(system),
             external_id: external_id.to_s.strip
           }
         )
@@ -25,7 +25,7 @@ module Spree
     # @param system [String, Symbol] the external system's key
     # @return [String, nil] the identifier that system knows this record by
     def external_id_for(system)
-      key = system.to_s.strip.downcase
+      key = Spree::ExternalReference.normalize_system(system)
 
       if external_references.loaded?
         external_references.detect { |reference| reference.system == key }&.external_id
@@ -41,7 +41,7 @@ module Spree
     # @param metadata [Hash, nil] connector bookkeeping (version, etag, synced at)
     # @return [Spree::ExternalReference, nil] nil when the reference was removed
     def set_external_id(system, external_id, metadata: nil)
-      key = system.to_s.strip.downcase
+      key = Spree::ExternalReference.normalize_system(system)
       reference = external_references.for_system(key).first
 
       if external_id.to_s.strip.blank?
@@ -54,7 +54,9 @@ module Spree
       reference.external_id = external_id
       reference.metadata = metadata if metadata.present?
       reference.store ||= external_reference_store
-      reference.save!
+      # A connector re-sending what it read is the steady state; an unchanged
+      # reference must not pay the two uniqueness SELECTs a save costs.
+      reference.save! if reference.new_record? || reference.changed?
       # Reset rather than reload: the next reader refetches, and a batch of
       # writes pays for one SELECT at the end instead of one per system.
       external_references.reset

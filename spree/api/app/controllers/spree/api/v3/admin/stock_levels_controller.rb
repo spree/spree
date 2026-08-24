@@ -13,7 +13,11 @@ module Spree
           def bulk_upsert
             authorize! :update, Spree::StockLevel
 
-            rows = Array(params[:stock_levels]).map { |row| decode_stock_row(row) }
+            raw_rows = Array(params[:stock_levels]).map do |row|
+              row = row.respond_to?(:to_unsafe_h) ? row.to_unsafe_h : row.to_h
+              row.with_indifferent_access
+            end
+            rows = decode_stock_rows(raw_rows)
 
             invalid = rows.each_with_index.filter_map do |row, index|
               missing = %i[variant_id stock_location_id].reject { |key| row[key].present? }
@@ -140,17 +144,32 @@ module Spree
           # rather than quietly written to. Rows name records by Spree's own
           # ids alone — this endpoint upserts stock levels, nothing more; a
           # connector resolves its keys through the member paths first.
-          def decode_stock_row(row)
-            row = row.respond_to?(:to_unsafe_h) ? row.to_unsafe_h : row.to_h
-            row = row.with_indifferent_access
+          #
+          # Resolved as a batch: decoding a prefixed id is pure Ruby, so a
+          # thousand-row feed costs two SELECTs here, not two per row — and a
+          # feed repeats its stock location on nearly every row.
+          def decode_stock_rows(raw_rows)
+            variant_ids = resolve_ids(store_variants, Spree::Variant, raw_rows.map { |row| row[:variant_id] })
+            location_ids = resolve_ids(store_stock_locations, Spree::StockLocation, raw_rows.map { |row| row[:stock_location_id] })
 
-            {
-              variant_id: store_variants.find_by_prefix_id(row[:variant_id])&.id,
-              stock_location_id: store_stock_locations.find_by_prefix_id(row[:stock_location_id])&.id,
-              count_on_hand: row[:count_on_hand],
-              adjustment: row[:adjustment],
-              backorderable: row[:backorderable]
-            }.compact
+            raw_rows.map do |row|
+              {
+                variant_id: variant_ids[row[:variant_id]],
+                stock_location_id: location_ids[row[:stock_location_id]],
+                count_on_hand: row[:count_on_hand],
+                adjustment: row[:adjustment],
+                backorderable: row[:backorderable]
+              }.compact
+            end
+          end
+
+          # @return [Hash{String=>Integer}] prefixed id => id, for the ids the
+          #   scope can actually see; unknown or foreign ids resolve to nothing
+          def resolve_ids(scope, model, prefixed_ids)
+            decoded = prefixed_ids.uniq.index_with { |value| model.decode_own_prefixed_id(value) }
+            found = scope.where(id: decoded.values.compact).pluck(:id).to_set
+
+            decoded.transform_values { |id| id if id && found.include?(id) }
           end
 
           def store_variants
