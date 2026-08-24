@@ -18,7 +18,7 @@ module Spree
                    deleted_at: [:string, nullable: true],
                    on_holiday: :boolean, sellable: :boolean,
                    products_count: :number, users_count: :number,
-                   onboarding_progress: '{ done: number; total: number; percentage: number }',
+                   onboarding_progress: '{ done: number; total: number }',
                    onboarding_complete: :boolean,
                    metadata: 'Record<string, unknown> | null'
 

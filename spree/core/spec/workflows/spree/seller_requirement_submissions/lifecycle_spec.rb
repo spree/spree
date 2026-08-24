@@ -263,7 +263,7 @@ RSpec.describe 'seller requirement submission workflows' do
 
       described_class.call(seller: seller, requirement: requirement, reviewed_by: staff)
 
-      expect(seller.reload.onboarding_progress).to eq(done: 1, total: 2, percentage: 50)
+      expect(seller.reload.onboarding_progress).to eq(done: 1, total: 2)
     end
   end
 end

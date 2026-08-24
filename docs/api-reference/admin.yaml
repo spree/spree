@@ -30986,7 +30986,6 @@ paths:
                   onboarding_progress:
                     done: 0
                     total: 0
-                    percentage: 100
                   onboarding_complete: true
                 meta:
                   page: 1
@@ -31101,7 +31100,6 @@ paths:
                 onboarding_progress:
                   done: 0
                   total: 0
-                  percentage: 100
                 onboarding_complete: true
               schema:
                 "$ref": "#/components/schemas/Seller"
@@ -31244,7 +31242,6 @@ paths:
                 onboarding_progress:
                   done: 0
                   total: 0
-                  percentage: 100
                 onboarding_complete: true
               schema:
                 "$ref": "#/components/schemas/Seller"
@@ -31337,7 +31334,6 @@ paths:
                 onboarding_progress:
                   done: 0
                   total: 0
-                  percentage: 100
                 onboarding_complete: true
                 billing_address:
                   id: addr_UkLWZg9DAJ
@@ -31642,7 +31638,6 @@ paths:
                 onboarding_progress:
                   done: 0
                   total: 0
-                  percentage: 100
                 onboarding_complete: true
               schema:
                 "$ref": "#/components/schemas/Seller"
@@ -31744,7 +31739,6 @@ paths:
                 onboarding_progress:
                   done: 0
                   total: 0
-                  percentage: 100
                 onboarding_complete: true
               schema:
                 "$ref": "#/components/schemas/Seller"
@@ -31845,7 +31839,6 @@ paths:
                 onboarding_progress:
                   done: 0
                   total: 0
-                  percentage: 100
                 onboarding_complete: true
               schema:
                 "$ref": "#/components/schemas/Seller"
@@ -31943,7 +31936,6 @@ paths:
                 onboarding_progress:
                   done: 0
                   total: 0
-                  percentage: 100
                 onboarding_complete: true
               schema:
                 "$ref": "#/components/schemas/Seller"

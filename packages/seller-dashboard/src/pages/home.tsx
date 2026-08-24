@@ -1,3 +1,4 @@
+import { progressPercentage } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -70,7 +71,7 @@ export function HomePage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
-            <Progress value={progress.percentage} />
+            <Progress value={progressPercentage(progress)} />
             <div>
               <Button size="sm" asChild>
                 <Link to="/$sellerId/onboarding" params={{ sellerId }}>

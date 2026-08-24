@@ -2,6 +2,7 @@ import {
   EMPTY_FILE_UPLOAD_VALUE,
   FileUploadField,
   type FileUploadValue,
+  progressPercentage,
 } from '@spree/dashboard-core'
 import {
   Badge,
@@ -89,12 +90,12 @@ export function OnboardingPage() {
       <Card>
         <CardHeader className="flex-row items-center justify-between gap-4">
           <CardTitle>{t('onboarding.progress_title')}</CardTitle>
-          <Badge variant={progress.percentage === 100 ? 'success' : 'secondary'}>
+          <Badge variant={progress.done >= progress.total ? 'success' : 'secondary'}>
             {t('onboarding.progress_count', { done: progress.done, total: progress.total })}
           </Badge>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
-          <Progress value={progress.percentage} />
+          <Progress value={progressPercentage(progress)} />
 
           {submitted ? (
             <p className="text-muted-foreground text-sm">{t('onboarding.under_review')}</p>

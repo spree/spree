@@ -254,15 +254,10 @@ module Spree
       ).statuses
     end
 
-    # @return [Hash{Symbol => Integer}] done, total and percentage over the
-    #   whole checklist, optional requirements included
+    # @return [Hash{Symbol => Integer}] done and total over the whole
+    #   checklist, optional requirements included
     def onboarding_progress
       @onboarding_progress ||= Spree::Sellers::Requirements.progress_of(onboarding_requirements)
-    end
-
-    # @return [Integer] 0..100
-    def onboarding_percentage
-      onboarding_progress[:percentage]
     end
 
     # @return [Boolean] whether nothing required is outstanding

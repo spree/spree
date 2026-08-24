@@ -26,7 +26,7 @@ RSpec.describe Spree::Api::V3::Seller::OnboardingController, type: :controller d
       get :show, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['progress']).to include('done' => 0, 'total' => 0, 'percentage' => 100)
+      expect(json_response['progress']).to include('done' => 0, 'total' => 0)
       expect(json_response['requirements']).to eq([])
     end
 
@@ -38,7 +38,7 @@ RSpec.describe Spree::Api::V3::Seller::OnboardingController, type: :controller d
       get :show, as: :json
 
       expect(json_response['status']).to eq('onboarding')
-      expect(json_response['progress']).to include('done' => 1, 'total' => 2, 'percentage' => 50)
+      expect(json_response['progress']).to include('done' => 1, 'total' => 2)
 
       terms, billing = json_response['requirements'].sort_by { |r| r['position'] }
       expect(terms).to include('kind' => 'accept_terms', 'status' => 'complete', 'blocking' => false)

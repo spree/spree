@@ -21,7 +21,7 @@ RSpec.describe Spree::Api::V3::Admin::SellersController, 'onboarding', type: :co
 
       expect(response).to have_http_status(:ok)
       expect(json_response['status']).to eq('onboarding')
-      expect(json_response['progress']).to eq('done' => 0, 'total' => 2, 'percentage' => 0)
+      expect(json_response['progress']).to eq('done' => 0, 'total' => 2)
 
       rows = json_response['requirements']
       expect(rows.map { |r| r['kind'] }).to eq(%w[accept_terms billing_address])
@@ -37,7 +37,7 @@ RSpec.describe Spree::Api::V3::Admin::SellersController, 'onboarding', type: :co
       get :onboarding, params: { id: seller.prefixed_id }, as: :json
 
       expect(json_response['requirements'].first['status']).to eq('complete')
-      expect(json_response['progress']['percentage']).to eq(100)
+      expect(json_response['progress']).to eq('done' => 1, 'total' => 1)
     end
 
     it 'carries the submission a reviewer has to look at' do

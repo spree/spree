@@ -1,4 +1,5 @@
 import type { Seller, SellerRequirementStatus } from '@spree/admin-sdk'
+import { progressPercentage } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -71,7 +72,7 @@ export function SellerOnboardingCard({ seller, canEdit }: { seller: Seller; canE
 
         <CollapsibleContent>
           <div className="flex flex-col gap-4 border-t p-4">
-            <Progress value={progress.percentage} />
+            <Progress value={progressPercentage(progress)} />
 
             {data ? (
               <ul className="flex flex-col divide-y">

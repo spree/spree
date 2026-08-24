@@ -276,7 +276,7 @@ describe Spree::Seller do
     before { store.seller_requirements.destroy_all }
 
     it 'reads as finished when the marketplace asks for nothing' do
-      expect(seller.onboarding_percentage).to eq(100)
+      expect(seller.onboarding_progress).to eq(done: 0, total: 0)
       expect(seller).to be_onboarding_complete
     end
 
@@ -286,8 +286,7 @@ describe Spree::Seller do
       seller.update!(terms_accepted_at: Time.current)
 
       seller.reload
-      expect(seller.onboarding_progress).to eq(done: 1, total: 2, percentage: 50)
-      expect(seller.onboarding_percentage).to eq(50)
+      expect(seller.onboarding_progress).to eq(done: 1, total: 2)
       expect(seller).not_to be_onboarding_complete
     end
 
@@ -298,18 +297,18 @@ describe Spree::Seller do
 
       seller.reload
       expect(seller).to be_onboarding_complete
-      expect(seller.onboarding_percentage).to eq(50)
+      expect(seller.onboarding_progress).to eq(done: 1, total: 2)
     end
 
     it 'forgets what it computed on reload' do
       create(:accept_terms_requirement, store: store)
       seller.reload
-      expect(seller.onboarding_percentage).to eq(0)
+      expect(seller.onboarding_progress).to eq(done: 0, total: 1)
 
       seller.update!(terms_accepted_at: Time.current)
       seller.reload
 
-      expect(seller.onboarding_percentage).to eq(100)
+      expect(seller.onboarding_progress).to eq(done: 1, total: 1)
     end
   end
 
