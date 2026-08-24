@@ -33,6 +33,7 @@ import {
   ContextMenuItem,
   ContextMenuSeparator,
   ContextMenuTrigger,
+  DragHandle,
   Field,
   FieldError,
   FieldLabel,
@@ -47,6 +48,7 @@ import {
   useConfirm,
 } from '@spree/dashboard-ui'
 import {
+  DownloadIcon,
   FilmIcon,
   ImagePlusIcon,
   LibraryIcon,
@@ -451,6 +453,7 @@ export function MediaCard({
                       key={sortableIds[index]}
                       sortableId={sortableIds[index]}
                       previewUrl={media.previewUrl ?? null}
+                      downloadUrl={media.downloadUrl}
                       alt={media.alt ?? ''}
                       mediaType={media.media_type ?? 'image'}
                       onEdit={() => setEditingIndex(index)}
@@ -563,6 +566,7 @@ function SortableMediaThumbnail({
   previewUrl,
   alt,
   mediaType,
+  downloadUrl,
   onEdit,
   onDelete,
 }: {
@@ -570,6 +574,8 @@ function SortableMediaThumbnail({
   previewUrl: string | null
   alt: string
   mediaType: MediaType
+  /** Absent until the row is saved — a pre-save upload has no server URL. */
+  downloadUrl?: string | null
   onEdit: () => void
   onDelete: () => void
 }) {
@@ -587,13 +593,23 @@ function SortableMediaThumbnail({
     <ContextMenu>
       <ContextMenuTrigger
         render={
+          // Clicking opens the edit sheet; dragging is the corner grip's job.
+          // The whole tile being the drag surface left no way to click it.
+          // biome-ignore lint/a11y/useSemanticElements: the grip inside rules out a <button>
           <div
             ref={setNodeRef}
             style={style}
             data-slot="media-thumbnail"
-            {...attributes}
-            {...listeners}
-            className={`group relative aspect-square cursor-grab overflow-hidden rounded-md border border-border bg-muted touch-none active:cursor-grabbing ${
+            role="button"
+            tabIndex={0}
+            onClick={onEdit}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                onEdit()
+              }
+            }}
+            className={`group relative aspect-square cursor-pointer overflow-hidden rounded-md border border-border bg-muted focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 ${
               isDragging ? 'opacity-40 ring-2 ring-primary/40' : ''
             }`}
           />
@@ -632,45 +648,36 @@ function SortableMediaThumbnail({
           </span>
         )}
 
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex justify-end gap-1 p-1.5 opacity-0 translate-y-1 transition-all duration-200 ease-out group-hover:pointer-events-auto group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-focus-within:translate-y-0">
-          <Button
-            type="button"
-            variant="outline"
-            size="icon-sm"
-            aria-label={t('admin.a11y.edit_media')}
-            onPointerDown={(e) => e.stopPropagation()}
-            onClick={(e) => {
-              e.stopPropagation()
-              onEdit()
-            }}
-            className="shadow-sm"
-          >
-            <PencilIcon />
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            size="icon-sm"
-            aria-label={t('admin.a11y.delete_image')}
-            onPointerDown={(e) => e.stopPropagation()}
-            onClick={(e) => {
-              e.stopPropagation()
-              onDelete()
-            }}
-            className="shadow-sm hover:text-destructive"
-          >
-            <TrashIcon />
-          </Button>
-        </div>
+        <DragHandle
+          attributes={attributes}
+          listeners={listeners}
+          // Stop the click reaching the tile behind it, or picking the grip up
+          // would also open the sheet. touch-none lets a touch drag start
+          // without the browser treating it as a scroll.
+          onClick={(e) => e.stopPropagation()}
+          className="absolute right-1.5 top-1.5 z-10 h-auto w-auto touch-none rounded-md bg-background/80 p-1 opacity-0 shadow-sm backdrop-blur transition-opacity group-hover:opacity-100 group-focus-within:opacity-100"
+        />
       </ContextMenuTrigger>
 
-      {/* The same actions as the hover buttons, for merchants who reach for
-          right-click. Neither is the only way in. */}
+      {/* Right-click is the way in here; clicking a tile drags it, and the
+          edit sheet is reachable from this menu. */}
       <ContextMenuContent>
         <ContextMenuItem onClick={onEdit}>
           <PencilIcon />
           {t('admin.actions.edit')}
         </ContextMenuItem>
+        {downloadUrl && (
+          // The URL carries a Content-Disposition attachment header, so
+          // navigating to it downloads rather than opening a page.
+          <ContextMenuItem
+            onClick={() => {
+              window.location.href = downloadUrl
+            }}
+          >
+            <DownloadIcon />
+            {t('admin.media_library.download')}
+          </ContextMenuItem>
+        )}
         <ContextMenuSeparator />
         <ContextMenuItem variant="destructive" onClick={onDelete}>
           <TrashIcon />

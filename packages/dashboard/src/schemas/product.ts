@@ -102,6 +102,8 @@ export const mediaFormSchema = z
     focal_point_y: z.number().min(0).max(1).nullable().optional(),
     // UI-only — strip at submit.
     previewUrl: z.string().optional(),
+    // Server URL for downloading the original; absent until the row is saved.
+    downloadUrl: z.string().nullable().optional(),
     uploadId: z.string().optional(),
   })
   // The server rejects a link it can't embed, and that failure aborts the whole
