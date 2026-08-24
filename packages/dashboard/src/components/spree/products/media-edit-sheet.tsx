@@ -93,7 +93,9 @@ export function MediaEditSheet({ form, mediaIndex, variants, open, onOpenChange 
 
   // For an image this is the picture itself; for a hosted video it is the file
   // the merchant just picked (a blob URL) or the URL the API serves it at.
-  const previewUrl = entry.previewUrl ?? null
+  // The sheet is far wider than a grid cell, so it wants the large rendition.
+  // A pre-save row has no server URL yet, but its blob URL is the original.
+  const previewUrl = entry.fullPreviewUrl ?? entry.previewUrl ?? null
   const alt = entry.alt ?? ''
   const selectedVariantIds = new Set(entry.variant_ids ?? [])
 

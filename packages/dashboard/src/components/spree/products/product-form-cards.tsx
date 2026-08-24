@@ -609,7 +609,7 @@ function SortableMediaThumbnail({
                 onEdit()
               }
             }}
-            className={`group relative aspect-square cursor-pointer overflow-hidden rounded-md border border-border bg-muted focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 ${
+            className={`group relative aspect-square cursor-pointer bg-muted overflow-hidden rounded-md border border-border transition-colors hover:border-muted-foreground focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 ${
               isDragging ? 'opacity-40 ring-2 ring-primary/40' : ''
             }`}
           />

@@ -126,6 +126,10 @@ function mediaToFormValues(media: Media, index: number) {
     // Video rows have no image of their own, so the poster is the preview.
     previewUrl:
       media.small_url ?? media.mini_url ?? media.poster_url ?? media.original_url ?? undefined,
+    // Only the square renditions: the focal point is picked against the
+    // rendered box, and original_url is uncropped, so mixing them in would
+    // move the point the merchant set.
+    fullPreviewUrl: media.large_url ?? media.xlarge_url ?? media.poster_url ?? null,
     posterUrl: media.poster_url,
     // The file itself, so an uploaded video can actually play. Every sized URL
     // on a video row resolves to its poster, so none of them work here.
@@ -360,7 +364,10 @@ function ProductForm({ product }: { product: Product }) {
     // before removing an entry from form state.
     if (media && media.length > 0) {
       payload.media = media.map(
-        ({ previewUrl, posterUrl, videoUrl, downloadUrl, uploadId, ...rest }, i) => ({
+        (
+          { previewUrl, fullPreviewUrl, posterUrl, videoUrl, downloadUrl, uploadId, ...rest },
+          i,
+        ) => ({
           ...rest,
           position: i + 1,
         }),
@@ -390,6 +397,7 @@ function ProductForm({ product }: { product: Product }) {
             source_media_id: _smid,
             poster_signed_id: _psid,
             previewUrl: _p,
+            fullPreviewUrl: _fp,
             posterUrl: _pu,
             videoUrl: _vu,
             downloadUrl: _du,

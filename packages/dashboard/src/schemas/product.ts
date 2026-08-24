@@ -102,6 +102,10 @@ export const mediaFormSchema = z
     focal_point_y: z.number().min(0).max(1).nullable().optional(),
     // UI-only — strip at submit.
     previewUrl: z.string().optional(),
+    // Larger rendition for the edit sheet; previewUrl is grid-sized and
+    // visibly pixelates when blown up. Absent before save, where the blob URL
+    // in previewUrl is full resolution anyway.
+    fullPreviewUrl: z.string().nullable().optional(),
     // Server URL for downloading the original; absent until the row is saved.
     downloadUrl: z.string().nullable().optional(),
     uploadId: z.string().optional(),

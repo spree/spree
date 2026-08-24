@@ -315,7 +315,7 @@ function MediaLibraryPage() {
                       <button
                         type="button"
                         onClick={() => setSelected(media)}
-                        className="block w-full overflow-hidden rounded-md border border-border text-left transition-colors hover:border-muted-foreground"
+                        className="block w-full cursor-pointer text-left overflow-hidden rounded-md border border-border transition-colors hover:border-muted-foreground focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
                       />
                     }
                   >

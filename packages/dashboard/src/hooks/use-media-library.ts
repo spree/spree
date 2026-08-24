@@ -99,7 +99,11 @@ export function mediaThumbnailUrl(media: Media): string | null {
 
 /**
  * A larger rendition for surfaces that show one file at a time — the detail
- * panel, the edit sheet. The grid's 256px thumbnail pixelates at that width.
+ * panel, the picker. The grid's 256px thumbnail pixelates at that width.
+ *
+ * Falls back to the uncropped original, which is fine here: nothing in the
+ * library picks a focal point against this image. The product edit sheet does,
+ * so it stays on the square renditions.
  */
 export function mediaPreviewUrl(media: Media): string | null {
   return media.large_url ?? media.poster_url ?? media.original_url ?? mediaThumbnailUrl(media)
