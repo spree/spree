@@ -3654,7 +3654,7 @@ the endpoint left the picker silently dropping its files. A new media write
 path must accept it or reuse breaks on that path alone.
 
 Live use then reshaped two boundaries. **Category and Collection are real
-Media viewables** (`Media::VIEWABLE_TYPES` allowlist: Product, Variant,
+Media viewables** (`Spree.media_viewable_types` registry: Product, Variant,
 Category, Collection): their `image`/`square_image` slots reconcile into
 placements via `Spree::HasLibraryMedia` on save — the slots stay the
 operational storage, the placements are the library's view, clearing a slot

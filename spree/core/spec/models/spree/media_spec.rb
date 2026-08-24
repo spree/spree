@@ -74,6 +74,36 @@ describe Spree::Media, type: :model do
     end
   end
 
+  describe 'viewable types' do
+    def media_on(type)
+      build(:image, viewable: nil).tap do |media|
+        media.viewable_type = type
+        media.viewable_id = 1
+      end
+    end
+
+    # The polymorphic column would otherwise accept any constant name, and an
+    # unknown one raises on load rather than reaching this validation.
+    it 'rejects a type that is not registered' do
+      media = media_on('Nope::Model')
+
+      expect(media).not_to be_valid
+      expect(media.errors[:viewable_type]).to be_present
+    end
+
+    it 'accepts a type an extension registered' do
+      original = Spree.media_viewable_types
+      Spree.media_viewable_types += ['MyApp::Lookbook']
+
+      media = media_on('MyApp::Lookbook')
+      media.valid?
+
+      expect(media.errors[:viewable_type]).to be_empty
+    ensure
+      Spree.media_viewable_types = original
+    end
+  end
+
   describe 'a row that predates the store column' do
     # Between db:migrate and spree:upgrade:backfill_media_store_ids every
     # existing row carries nil. Editing one must not fail validation.

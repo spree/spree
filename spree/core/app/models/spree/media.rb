@@ -30,14 +30,6 @@ module Spree
     EXTERNAL_URL_CUSTOM_FIELD_KEY = 'external.url'
     MEDIA_TYPES = %w[image video external_video].freeze
 
-    # What a file can be placed on. Product and Variant carry galleries;
-    # Category and Collection place their image slots here so the library sees
-    # them (a future category gallery is additive rows on the same
-    # association). An allowlist because the column is polymorphic: without it
-    # any constant name could be written, and everything downstream — store
-    # resolution, counters, the usage panel — reasons about the known set.
-    VIEWABLE_TYPES = %w[Spree::Product Spree::Variant Spree::Category Spree::Collection].freeze
-
     # Domain attributes a client may write, shared by every write path — the
     # media endpoints and the inline `media:` list on a product. Each path adds
     # its own transport keys (an upload's signed id, a row id) on top. Adding a
@@ -103,14 +95,10 @@ module Spree
 
     delegate :key, :attached?, :variant, :variable?, :blob, :filename, :variation, to: :attachment
 
-    # Additive for extensions placing media on their own models, like
-    # additional_permitted_attributes: always `+=`, never `=`.
-    #
-    #   Spree::Media.viewable_types += ['MyApp::Lookbook']
-    class_attribute :viewable_types, instance_writer: false, default: VIEWABLE_TYPES
-
     validates :media_type, inclusion: { in: MEDIA_TYPES }
-    validates :viewable_type, inclusion: { in: ->(record) { record.class.viewable_types } },
+    # Registered in Spree.media_viewable_types — an extension placing media on
+    # its own model appends there rather than editing this list.
+    validates :viewable_type, inclusion: { in: -> (_record) { Spree.media_viewable_types } },
               allow_nil: true
     validates :attachment, attached: true, content_type: Rails.application.config.active_storage.web_image_content_types,
               if: :image?
@@ -357,8 +345,12 @@ module Spree
     # is for: media follows the thing it is a picture of. A library upload has
     # no viewable yet, so it falls back to the concern's current-store default.
     def ensure_store
+      # An unregistered viewable_type raises on load rather than reaching the
+      # inclusion validation, which is the thing that should reject it.
       self.store_id = viewable.try(:store_id) || product&.store_id
       super unless store_id?
+    rescue NameError
+      super
     end
 
     private

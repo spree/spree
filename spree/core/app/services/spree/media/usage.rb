@@ -114,29 +114,19 @@ module Spree
       # almost certainly embedding that file. Searched with LIKE, which no index
       # can serve — a deliberate cost paid on one admin screen, never in a
       # listing, and only over the store's own rows.
+      #
+      # Every model declaring rich text is searched. Which editors can embed a
+      # file is the dashboard's decision — only the product, category and
+      # collection descriptions use the picker-backed editor — so a second
+      # list here would only restate that, and go stale when it changes.
       def rich_text_references(media, blob_ids)
         keys = ActiveStorage::Blob.where(id: blob_ids).pluck(:key)
         return [] if keys.empty?
 
-        searchable_models.flat_map do |model, attributes|
+        Spree::SanitizableRichText.declaring_models.flat_map do |model, attributes|
           attributes.flat_map { |attribute| rich_text_matches(media, model, attribute, keys) }
         end
       end
-
-      # Rich text a merchant writes about their catalog, which is where an
-      # embedded library image can plausibly appear.
-      #
-      # Deliberately not every model declaring rich text: an internal note on an
-      # order or a customer is staff correspondence, not content, and those are
-      # the two largest tables in the schema — scanning them unindexed on an
-      # admin click costs far more than the answer is worth.
-      def searchable_models
-        Spree::SanitizableRichText.declaring_models.select do |model, _attributes|
-          CONTENT_MODELS.include?(model.name)
-        end
-      end
-
-      CONTENT_MODELS = %w[Spree::Product Spree::Category Spree::Collection Spree::Seller].freeze
 
       def rich_text_matches(media, model, attribute, keys)
         return [] unless model.column_names.include?(attribute)

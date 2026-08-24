@@ -644,10 +644,10 @@ describe Spree::Product, type: :model do
     # An extension placing media on its own model registers the type; the
     # allowlist rejects unregistered constants.
     around do |example|
-      original = Spree::Media.viewable_types
-      Spree::Media.viewable_types += ['ThirdParty::Extension']
+      original = Spree.media_viewable_types
+      Spree.media_viewable_types += ['ThirdParty::Extension']
       example.run
-      Spree::Media.viewable_types = original
+      Spree.media_viewable_types = original
     end
 
     before do
