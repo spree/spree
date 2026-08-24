@@ -310,23 +310,12 @@ function MediaLibraryPage() {
             {files.map((media) => (
               <li key={media.id}>
                 <ContextMenu>
-                  {/* A div, not a button: the hover actions are buttons and
-                      cannot nest inside one. Keyboard access comes from the
-                      explicit role and key handler. */}
                   <ContextMenuTrigger
                     render={
-                      // biome-ignore lint/a11y/useSemanticElements: nested action buttons rule out a <button>
-                      <div
-                        role="button"
-                        tabIndex={0}
+                      <button
+                        type="button"
                         onClick={() => setSelected(media)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault()
-                            setSelected(media)
-                          }
-                        }}
-                        className="group relative block w-full cursor-pointer overflow-hidden rounded-md border border-border text-left transition-colors hover:border-muted-foreground focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
+                        className="block w-full overflow-hidden rounded-md border border-border text-left transition-colors hover:border-muted-foreground"
                       />
                     }
                   >
@@ -334,40 +323,6 @@ function MediaLibraryPage() {
                     <span className="block truncate px-2 py-1.5 text-xs">
                       {media.alt || media.filename || ''}
                     </span>
-
-                    {/* Same hover affordance as the product gallery, so the two
-                        grids behave alike. Right-click offers the same actions
-                        plus download. */}
-                    {canWrite && (
-                      <span className="pointer-events-none absolute inset-x-0 top-0 z-10 flex justify-end gap-1 p-1.5 opacity-0 transition-opacity duration-200 ease-out group-hover:opacity-100 group-focus-within:opacity-100">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon-sm"
-                          aria-label={t('admin.a11y.edit_media')}
-                          className="pointer-events-auto shadow-sm"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            setSelected(media)
-                          }}
-                        >
-                          <PencilIcon />
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon-sm"
-                          aria-label={t('admin.a11y.delete_image')}
-                          className="pointer-events-auto shadow-sm hover:text-destructive"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleDeleteFromGrid(media)
-                          }}
-                        >
-                          <TrashIcon />
-                        </Button>
-                      </span>
-                    )}
                   </ContextMenuTrigger>
 
                   {/* A shortcut to what the detail panel already offers —
@@ -378,16 +333,18 @@ function MediaLibraryPage() {
                       {t('admin.actions.edit')}
                     </ContextMenuItem>
                     {media.download_url && (
+                      // A click rather than an anchor: Base UI's `render`
+                      // replaces the item, and the URL already carries a
+                      // Content-Disposition attachment header, so navigating
+                      // to it downloads rather than opening a page.
                       <ContextMenuItem
-                        render={
-                          // download alone is ignored cross-origin; the URL
-                          // already carries a Content-Disposition attachment.
-                          <a href={media.download_url} download={media.filename ?? undefined}>
-                            <DownloadIcon />
-                            {t('admin.media_library.download')}
-                          </a>
-                        }
-                      />
+                        onClick={() => {
+                          window.location.href = media.download_url as string
+                        }}
+                      >
+                        <DownloadIcon />
+                        {t('admin.media_library.download')}
+                      </ContextMenuItem>
                     )}
                     {canWrite && (
                       <>
