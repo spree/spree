@@ -53,11 +53,17 @@ module Spree
       #   that save the record themselves
       # @return [void]
       def self.apply(resolutions, persist: true)
-        Array(resolutions).each do |line_item, price, source|
-          owner = line_item.owner
-          amount = price.price_including_vat_for(
-            address: owner&.tax_address, country: owner&.tax_country, market: owner&.market
-          )
+        resolutions = Array(resolutions)
+        return if resolutions.empty?
+
+        # One derivation for the batch: every line in a resolution set belongs
+        # to the same cart, and tax_address / tax_country walk associations and
+        # a store preference that would otherwise be re-read per line.
+        owner = resolutions.first.first.owner
+        vat_inputs = { address: owner&.tax_address, country: owner&.tax_country, market: owner&.market }
+
+        resolutions.each do |line_item, price, source|
+          amount = price.price_including_vat_for(**vat_inputs)
           # Marked before the blank guard: the provider has already answered,
           # so a restatement that comes back blank must still not send the
           # after_save callback back to the provider from inside the caller's

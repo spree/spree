@@ -46,8 +46,6 @@ module Spree
         return internal_price unless external_provider?
 
         provider_price
-      rescue ProviderUnavailable
-        raise
       rescue StandardError => e
         handle_failure(e)
       end

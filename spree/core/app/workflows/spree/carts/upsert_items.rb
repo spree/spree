@@ -103,6 +103,7 @@ module Spree
       # checked by the line item's availability validator on save, and two
       # answers that can disagree is worse than one.
       def check_availability
+        @unsupplyable_variant_ids = Set.new
         return if cart.store.nil? || cart.store.internal_inventory?
 
         return if additions.empty?
@@ -150,7 +151,6 @@ module Spree
       end
 
       def unsupplyable?(item)
-        @unsupplyable_variant_ids ||= Set.new
         @unsupplyable_variant_ids.include?(item.variant.id)
       end
 

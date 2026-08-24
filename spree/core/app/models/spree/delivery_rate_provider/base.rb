@@ -12,29 +12,11 @@ module Spree
     # External providers resolve credentials through the delivery method's
     # store integration — they never store credentials themselves.
     class Base
+      include Spree::IntegrationBackedProvider
+
       attr_reader :delivery_method
 
       class << self
-        # Human-readable name for admin UIs. Provider gems follow the
-        # `SpreeEasyPost::DeliveryRateProvider` convention, where demodulizing
-        # yields the useless class name ("Delivery Rate Provider") — so those
-        # derive the label from the gem's outer module instead
-        # (`SpreeEasyPost` → "EasyPost"), matching Spree::Integration.api_type.
-        #
-        # @return [String]
-        def provider_name
-          leaf = name.demodulize
-          outer = name.deconstantize.delete_prefix('Spree')
-
-          return leaf.titleize if outer.blank? || !leaf.end_with?('Provider')
-
-          # Not `titleize` — it would split the gem's own casing
-          # ("SpreeEasyPost" → "Easy Post"). Brands that need more than the
-          # module name override this method.
-          outer.delete_prefix('::')
-        end
-
-        # Fulfillment types this provider can quote, so admin UIs narrow the
         # Whether this provider quotes real shipments to an address — true
         # for carriers, which therefore can only price methods whose
         # fulfillment provider ships. The Internal (calculator) provider
@@ -53,27 +35,6 @@ module Spree
         # @return [Boolean]
         def uses_calculator?
           false
-        end
-
-        # The Spree::Integration subclass holding this provider's credentials,
-        # as a class name string. Internal providers need none.
-        #
-        # @return [String, nil]
-        def integration_class
-          nil
-        end
-
-        # Whether the store can use this provider at all — admin UIs hide
-        # providers whose integration isn't connected, and DeliveryMethod
-        # validates the choice on save. Derived from +integration_class+ so
-        # carrier providers get the right answer by declaring only that.
-        #
-        # @param store [Spree::Store, nil]
-        # @return [Boolean]
-        def available_for_store?(store)
-          return true if integration_class.blank?
-
-          store.present? && store.integrations.active.exists?(type: integration_class)
         end
 
         # The carrier services this store can offer, for the admin service

@@ -22,6 +22,32 @@ module Spree
     normalizes :system, with: ->(value) { value.to_s.strip.downcase }
     normalizes :external_id, with: ->(value) { value.to_s.strip }
 
+    # Turns either shape a caller may hold — the `{ system => external_id }`
+    # map the admin serializers render, or a `[{ system:, external_id: }]`
+    # list — into symbolized entries, dropping any that name no system.
+    #
+    # The single definition of the accepted shapes: the write path
+    # ({Spree::HasExternalReferences#assign_external_references}) and the API
+    # concern's upsert lookup both parse payloads through here.
+    #
+    # @param references [Hash, Array<Hash>, nil]
+    # @return [Array<Hash>] entries with :system, :external_id and optional :metadata
+    def self.normalize_references(references)
+      return [] if references.blank?
+
+      entries =
+        if references.is_a?(Hash) && !references.key?(:system) && !references.key?('system')
+          references.map { |system, external_id| { system: system, external_id: external_id } }
+        else
+          Array(references).map { |entry| entry.respond_to?(:to_unsafe_h) ? entry.to_unsafe_h : entry }
+        end
+
+      entries.filter_map do |entry|
+        entry = entry.to_h.symbolize_keys.slice(:system, :external_id, :metadata)
+        entry[:system].blank? ? nil : entry
+      end
+    end
+
     validates :system, :external_id, presence: true
     validates :system,
               format: { with: /\A[a-z0-9_]+\z/, message: :invalid_system_key },

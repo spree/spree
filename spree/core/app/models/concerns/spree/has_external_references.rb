@@ -46,7 +46,7 @@ module Spree
 
       if external_id.to_s.strip.blank?
         reference&.destroy
-        external_references.reload if external_references.loaded?
+        external_references.reset
         return nil
       end
 
@@ -55,7 +55,9 @@ module Spree
       reference.metadata = metadata if metadata.present?
       reference.store ||= external_reference_store
       reference.save!
-      external_references.reload if external_references.loaded?
+      # Reset rather than reload: the next reader refetches, and a batch of
+      # writes pays for one SELECT at the end instead of one per system.
+      external_references.reset
       reference
     end
 
@@ -67,17 +69,7 @@ module Spree
     # @param references [Hash{String,Symbol=>String}, Array<Hash>]
     # @return [void]
     def assign_external_references(references)
-      entries =
-        if references.is_a?(Hash) && !references.key?(:system) && !references.key?('system')
-          references.map { |system, external_id| { system: system, external_id: external_id } }
-        else
-          Array(references)
-        end
-
-      entries.each do |reference|
-        reference = reference.to_h.symbolize_keys
-        next if reference[:system].blank?
-
+      Spree::ExternalReference.normalize_references(references).each do |reference|
         set_external_id(reference[:system], reference[:external_id], metadata: reference[:metadata])
       end
     end
@@ -86,15 +78,16 @@ module Spree
 
     # A reference belongs to the same store as the record it identifies.
     #
-    # Store-owning models answer directly (and CompanyLocation delegates).
-    # Variants and stock items carry no store of their own and reach it
-    # through the product; anything else falls back to the request's store the
-    # way {Spree::SingleStoreResource} does.
+    # Store-owning models answer directly (and CompanyLocation delegates);
+    # variants and stock levels carry no store of their own and reach it
+    # through the product. Anything else is left nil here — the reference
+    # includes {Spree::SingleStoreResource}, whose ensure_store callback
+    # falls back to the request's store, and stating that fallback twice
+    # would let the two quietly diverge.
     def external_reference_store
       return store if respond_to?(:store) && store.present?
-      return product.store if respond_to?(:product) && product&.store.present?
 
-      Spree::Current.store
+      product.store if respond_to?(:product) && product&.store.present?
     end
   end
 end

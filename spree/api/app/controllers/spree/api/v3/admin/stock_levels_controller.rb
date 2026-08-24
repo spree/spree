@@ -125,10 +125,6 @@ module Spree
 
           private
 
-          def bulk_record_count_key
-            :stock_level_count
-          end
-
           def require_stock_levels!
             return if params.key?(:stock_levels)
 

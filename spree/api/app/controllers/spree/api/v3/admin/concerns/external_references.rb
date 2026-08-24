@@ -96,22 +96,8 @@ module Spree
               return @external_reference_params if defined?(@external_reference_params)
 
               raw = params[:external_references]
-              return @external_reference_params = [] if raw.blank?
-
               raw = raw.to_unsafe_h if raw.respond_to?(:to_unsafe_h)
-              entries =
-                if raw.is_a?(Hash) && !raw.key?(:system) && !raw.key?('system')
-                  raw.map { |system, external_id| { system: system, external_id: external_id } }
-                else
-                  Array(raw).map { |entry| entry.respond_to?(:to_unsafe_h) ? entry.to_unsafe_h : entry.to_h }
-                end
-
-              @external_reference_params = entries.filter_map do |entry|
-                entry = entry.to_h.symbolize_keys.slice(:system, :external_id)
-                next if entry[:system].blank?
-
-                entry
-              end
+              @external_reference_params = Spree::ExternalReference.normalize_references(raw)
             end
 
             # A member path may address the record by an external identity
@@ -162,8 +148,9 @@ module Spree
               return unless resource.respond_to?(:assign_external_references)
               return unless resource.persisted?
 
+              # No reload needed: set_external_id resets the association, so
+              # the serializer's read fetches the fresh rows.
               resource.assign_external_references(external_reference_params)
-              resource.external_references.reload
             rescue ActiveRecord::RecordInvalid => e
               # The key already names a different record in this store. The
               # resource itself is written by now, so this reports what could

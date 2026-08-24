@@ -27,7 +27,8 @@ module Spree
         end
         return success([]) if entries.empty?
 
-        provider = cart&.store&.inventory_provider_instance
+        @provider = cart&.store&.inventory_provider_instance
+        provider = @provider
         return success([]) if provider.blank?
 
         internal = provider.is_a?(Spree::InventoryProvider::Internal)
@@ -56,7 +57,7 @@ module Spree
         store = cart&.store
         policy = store&.inventory_failure_policy
         Spree::ProviderFailurePolicy.report_fallback(
-          kind: 'inventory', provider: store&.inventory_provider_instance&.class&.key,
+          kind: 'inventory', provider: @provider&.class&.key,
           store: store, error: error,
           policy: policy || Spree::ProviderFailurePolicy::DEFAULT_INVENTORY_POLICY
         )

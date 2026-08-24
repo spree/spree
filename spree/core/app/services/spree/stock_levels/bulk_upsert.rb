@@ -39,33 +39,6 @@ module Spree
         success(stock_level_count: count)
       end
 
-      # How much a feed's row moves the shelf, stated once for both the bulk
-      # endpoint and the CSV import: a feed reports either the absolute level
-      # its system holds, or a relative movement.
-      #
-      # @param row [Hash] with +adjustment+ or +count_on_hand+
-      # @param current [Integer] what Spree holds now
-      # @return [Integer, nil] nil when the row states neither
-      def self.delta_for(row, current)
-        row = row.with_indifferent_access
-        return integer!('adjustment', row[:adjustment]) if row[:adjustment].present?
-        return nil if row[:count_on_hand].blank?
-
-        integer!('count_on_hand', row[:count_on_hand]) - current.to_i
-      end
-
-      # `to_i` turns "abc" into 0 and "1O" into 1, so a typo in a feed would
-      # zero a shelf or set it to a number nobody sent, with no error to notice.
-      # A feed must say what it means.
-      #
-      # @return [Integer]
-      # @raise [ArgumentError] when the value is not a whole number
-      def self.integer!(column, value)
-        Integer(value.to_s.strip, 10)
-      rescue ArgumentError, TypeError
-        raise ArgumentError, "#{column} must be a whole number, got #{value.inspect}"
-      end
-
       private
 
       def apply_row(row)
@@ -93,8 +66,27 @@ module Spree
         moved
       end
 
+      # How much a feed's row moves the shelf: a feed reports either the
+      # absolute level its system holds, or a relative movement.
+      #
+      # @return [Integer, nil] nil when the row states neither
       def delta_for(row, stock_level)
-        self.class.delta_for(row, stock_level.count_on_hand)
+        current = stock_level.count_on_hand
+        return integer!('adjustment', row[:adjustment]) if row[:adjustment].present?
+        return nil if row[:count_on_hand].blank?
+
+        integer!('count_on_hand', row[:count_on_hand]) - current.to_i
+      end
+
+      # `to_i` turns "abc" into 0 and "1O" into 1, so a typo in a feed would
+      # zero a shelf or set it to a number nobody sent, with no error to
+      # notice. A feed must say what it means.
+      #
+      # @raise [ArgumentError] when the value is not a whole number
+      def integer!(column, value)
+        Integer(value.to_s.strip, 10)
+      rescue ArgumentError, TypeError
+        raise ArgumentError, "#{column} must be a whole number, got #{value.inspect}"
       end
     end
   end
