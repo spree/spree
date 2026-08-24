@@ -14,6 +14,11 @@ module Spree
         # `source_media_id` works here too, and means "copy this file into the
         # library again" — an unplaced row sharing the original's blob.
         class MediaLibraryController < MediaController
+          # The library reaches across products, categories and collections, so
+          # it is not a product endpoint. The nested gallery routes keep
+          # `products` — those are one product's own media, reached through a
+          # product the caller can already see.
+          scoped_resource :media
           # Restates the base class's member actions with `usage` added — a
           # second `before_action :set_resource` would replace that filter
           # rather than extend it, leaving show/update/destroy without a record.

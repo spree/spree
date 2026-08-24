@@ -352,6 +352,8 @@ paths:
                 - write_store_credits
                 - read_products
                 - write_products
+                - read_media
+                - write_media
                 - read_categories
                 - write_categories
                 - read_collections
@@ -475,6 +477,8 @@ paths:
                 - write_store_credits
                 - read_products
                 - write_products
+                - read_media
+                - write_media
                 - read_categories
                 - write_categories
                 - read_collections
@@ -22213,6 +22217,20 @@ paths:
                   group_label: Catalog
                   label: Products
                   description: Products, variants, options, prices and media
+                - key: read_media
+                  resource: media
+                  kind: read
+                  group: catalog
+                  group_label: Catalog
+                  label: Media
+                  description: ''
+                - key: write_media
+                  resource: media
+                  kind: write
+                  group: catalog
+                  group_label: Catalog
+                  label: Media
+                  description: ''
                 - key: read_categories
                   resource: categories
                   kind: read
@@ -22403,7 +22421,7 @@ paths:
                   label: Analytics dashboard
                   description: Sales and performance analytics
                 meta:
-                  count: 41
+                  count: 43
   "/api/v3/admin/roles":
     get:
       summary: List roles
@@ -22469,6 +22487,8 @@ paths:
                   - write_store_credits
                   - read_products
                   - write_products
+                  - read_media
+                  - write_media
                   - read_categories
                   - write_categories
                   - read_collections
@@ -29465,7 +29485,7 @@ paths:
         `q[filename_cont]` to search by file name.
 
 
-        **Required scope:** `read_products` (for API-key authentication).
+        **Required scope:** `read_media` (for API-key authentication).
       parameters:
       - name: x-spree-api-key
         in: header
@@ -29565,7 +29585,7 @@ paths:
         this record's id as `source_media_id`.
 
 
-        **Required scope:** `write_products` (for API-key authentication).
+        **Required scope:** `write_media` (for API-key authentication).
       parameters:
       - name: x-spree-api-key
         in: header
@@ -29666,7 +29686,7 @@ paths:
         not proof the file is unused.
 
 
-        **Required scope:** `read_products` (for API-key authentication).
+        **Required scope:** `read_media` (for API-key authentication).
       parameters:
       - name: x-spree-api-key
         in: header

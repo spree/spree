@@ -20,7 +20,7 @@ RSpec.describe 'Admin Media Library API', type: :request, swagger_doc: 'api-refe
         yet in use, `q[media_type_eq]` for images or video, and
         `q[filename_cont]` to search by file name.
       DESC
-      admin_scope :read, :products
+      admin_scope :read, :media
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
@@ -51,7 +51,7 @@ RSpec.describe 'Admin Media Library API', type: :request, swagger_doc: 'api-refe
         here. Put the file on a product by posting to that product's media with
         this record's id as `source_media_id`.
       DESC
-      admin_scope :write, :products
+      admin_scope :write, :media
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
@@ -103,7 +103,7 @@ RSpec.describe 'Admin Media Library API', type: :request, swagger_doc: 'api-refe
         with nothing recording it, so treat an empty result as "nothing found",
         not proof the file is unused.
       DESC
-      admin_scope :read, :products
+      admin_scope :read, :media
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,

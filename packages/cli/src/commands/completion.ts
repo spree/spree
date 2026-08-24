@@ -50,6 +50,8 @@ const SCOPES = [
   'write_orders',
   'read_products',
   'write_products',
+  'read_media',
+  'write_media',
   'read_promotions',
   'write_promotions',
   'read_customers',

@@ -187,7 +187,7 @@ RSpec.describe Spree::Api::V3::Admin::MediaLibraryController, type: :controller 
     # alias covers only index and show, so without the action mapping a
     # staffer who can view media is refused.
     context 'as staff with read access only' do
-      let(:reader_role) { create(:role, name: 'Reader', permissions: %w[read_products]) }
+      let(:reader_role) { create(:role, name: 'Reader', permissions: %w[read_media]) }
       let(:reader) { create(:admin_user, :without_admin_role) }
 
       # JWT only. The shared context's headers also carry a full-scope secret
@@ -205,6 +205,34 @@ RSpec.describe Spree::Api::V3::Admin::MediaLibraryController, type: :controller 
         get :usage, params: { id: placed.prefixed_id }, as: :json
 
         expect(response).to have_http_status(:ok)
+      end
+    end
+
+    # The library spans products, categories and collections, so it is not a
+    # product endpoint: product permissions alone must not name a category or
+    # delete its image.
+    context 'as staff holding only product permissions' do
+      let(:products_role) { create(:role, name: 'Products', permissions: %w[read_products write_products]) }
+      let(:products_user) { create(:admin_user, :without_admin_role) }
+      let(:products_jwt) do
+        Spree::Api::V3::TestingSupport.generate_jwt(
+          products_user, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN
+        )
+      end
+      let(:headers) { { 'Authorization' => "Bearer #{products_jwt}" } }
+
+      before { store.add_user(products_user, products_role) }
+
+      it 'refuses reading where a file is used' do
+        get :usage, params: { id: placed.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+      end
+
+      it 'refuses listing the library' do
+        get :index, as: :json
+
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end
