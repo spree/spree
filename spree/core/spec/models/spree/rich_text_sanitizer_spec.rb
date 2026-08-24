@@ -92,23 +92,39 @@ describe Spree::RichTextSanitizer do
       end
     end
 
+    # Images embedded from the media library, which the editor writes as a
+    # plain img pointing at a rendition of the file.
     context 'with an image' do
-      let(:html) { '<p>a</p><img src="https://example.com/a.png" alt="a">' }
+      let(:html) { '<p>a</p><img src="https://example.com/a.png" alt="a" width="800" height="600">' }
 
-      it { is_expected.to eq('<p>a</p>') }
+      it { is_expected.to include('src="https://example.com/a.png"', 'alt="a"') }
+      it { is_expected.to include('width="800"', 'height="600"') }
 
-      context 'when img is added to the allowlist' do
-        around do |example|
-          original_tags = described_class.allowed_tags
-          original_attributes = described_class.allowed_attributes
-          described_class.allowed_tags = original_tags + %w[img]
-          described_class.allowed_attributes = original_attributes + %w[src alt]
-          example.run
-          described_class.allowed_tags = original_tags
-          described_class.allowed_attributes = original_attributes
-        end
+      context 'with a relative source, as a same-host rendition URL is' do
+        let(:html) { '<img src="/rails/active_storage/blob/embed.webp" alt="a">' }
 
-        it { is_expected.to include('src="https://example.com/a.png"', 'alt="a"') }
+        it { is_expected.to include('src="/rails/active_storage/blob/embed.webp"') }
+      end
+
+      # An img is a way to smuggle a script in if its source is allowed to be
+      # anything: the permit scrubber drops the attribute rather than the tag,
+      # so the image breaks and nothing executes.
+      context 'with a javascript: source' do
+        let(:html) { '<img src="javascript:alert(1)" alt="a">' }
+
+        it { is_expected.not_to include('javascript') }
+      end
+
+      context 'with a data: source' do
+        let(:html) { '<img src="data:text/html;base64,PHNjcmlwdD4=" alt="a">' }
+
+        it { is_expected.not_to include('data:') }
+      end
+
+      context 'with an event handler' do
+        let(:html) { '<img src="https://example.com/a.png" onerror="alert(1)">' }
+
+        it { is_expected.not_to include('onerror') }
       end
     end
 

@@ -11,7 +11,6 @@ import {
   FieldLabel,
   Input,
   MetadataCard,
-  RichTextEditor,
   Textarea,
 } from '@spree/dashboard-ui'
 import type { UseFormReturn } from 'react-hook-form'
@@ -23,6 +22,7 @@ import {
   CustomFieldsInlineCard,
   FormBackedCustomFieldsProvider,
 } from '../custom-fields/custom-fields-inline'
+import { MediaRichTextEditor } from '../media-rich-text-editor'
 import { ResourceImageField } from '../resource-image-field'
 import { ResourceTranslationsCard } from '../translations/resource-translations-card'
 import { CategoryProductsCard } from './category-products-card'
@@ -72,7 +72,7 @@ export function CategoryMain({
                 control={form.control}
                 name="description"
                 render={({ field }) => (
-                  <RichTextEditor
+                  <MediaRichTextEditor
                     id="category-description"
                     ariaLabel={t('admin.fields.description.label')}
                     value={field.value}

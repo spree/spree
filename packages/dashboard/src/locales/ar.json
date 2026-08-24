@@ -2082,6 +2082,63 @@
       "tax_exclusive": "غير شامل",
       "tax_inclusive": "شامل"
     },
+    "media_library": {
+      "choose_from_library": "اختر من المكتبة",
+      "delete_confirm": {
+        "title": "حذف هذا الملف؟",
+        "message": "حذف «{{name}}» يزيله من مكتبتك. وكل مكان لا يزال يستخدمه سيفقد الصورة.",
+        "in_use_message_one": "حذف «{{name}}» يزيله من مكتبتك ومن المكان الذي يستخدمه. الأوصاف التي تضمّنه ستفقد الصورة.",
+        "in_use_message_other": "حذف «{{name}}» يزيله من مكتبتك ومن جميع الأماكن ({{count}}) التي تستخدمه. الأوصاف التي تضمّنه ستفقد الصورة."
+      },
+      "delete_failed": "تعذّر حذف الملف",
+      "deleted": "تم حذف الملف",
+      "description": "جميع الصور ومقاطع الفيديو في متجرك. ارفع الملفات هنا لإعادة استخدامها في عدة منتجات.",
+      "discard_confirm": {
+        "title": "تجاهل التغييرات؟",
+        "message": "لم يتم حفظ تغييراتك على هذا الملف.",
+        "confirm": "تجاهل"
+      },
+      "download": "تنزيل",
+      "empty": "لا توجد ملفات بعد. ارفع ملفًا للبدء.",
+      "facts": {
+        "type": "النوع",
+        "size": "الحجم"
+      },
+      "file": "ملف",
+      "no_results": "لا توجد ملفات تطابق عوامل التصفية.",
+      "placement": {
+        "all": "جميع الملفات",
+        "attached": "قيد الاستخدام",
+        "unattached": "غير مستخدم بعد"
+      },
+      "search_placeholder": "البحث باسم الملف…",
+      "title": "الوسائط",
+      "type": {
+        "all": "جميع الأنواع",
+        "image": "الصور",
+        "video": "مقاطع الفيديو",
+        "external_video": "روابط الفيديو"
+      },
+      "upload": "رفع ملفات",
+      "upload_failed": "تعذّر رفع {{name}}",
+      "upload_succeeded_one": "تم رفع ملف واحد",
+      "upload_succeeded_other": "تم رفع {{count}} ملفات",
+      "usage": {
+        "title": "مستخدم في",
+        "empty": "هذا الملف غير مستخدم في أي مكان.",
+        "kind": {
+          "media": "منتج",
+          "attachment": "حقل صورة",
+          "rich_text": "الوصف"
+        },
+        "owner": {
+          "product": "منتج",
+          "variant": "متغير",
+          "category": "فئة",
+          "collection": "مجموعة"
+        }
+      }
+    },
     "nav": {
       "account": "الحساب",
       "categories": "الفئات",
@@ -2095,6 +2152,7 @@
       "getting_started": "البدء",
       "gift_cards": "بطاقات الهدايا",
       "home": "الرئيسية",
+      "media": "الوسائط",
       "options": "الخيارات",
       "orders": "الطلبات",
       "price_lists": "قوائم الأسعار",
@@ -3447,6 +3505,7 @@
         "unknown_location": "موقع غير معروف"
       },
       "media": {
+        "add_from_library": "إضافة من المكتبة",
         "add_video": "إضافة رابط فيديو",
         "add_video_submit": "إضافة الفيديو",
         "add_video_title": "إضافة رابط فيديو",

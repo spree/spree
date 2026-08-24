@@ -46,6 +46,17 @@
       "view_all": "Zobacz wszystko",
       "view_details": "Zobacz szczegóły"
     },
+    "media_picker": {
+      "title": "Biblioteka multimediów",
+      "description": "Wybierz pliki z biblioteki lub prześlij nowe.",
+      "search_placeholder": "Szukaj według nazwy…",
+      "upload": "Prześlij",
+      "empty": "Twoja biblioteka jest pusta. Prześlij plik, aby zacząć.",
+      "no_results": "Żaden plik nie pasuje do wyszukiwania.",
+      "confirm": "Dodaj wybrane",
+      "selected_count_one": "Wybrano {{count}}",
+      "selected_count_other": "Wybrano {{count}}"
+    },
     "row_actions": {
       "menu_label": "Otwórz akcje",
       "edit": "Edytuj",
@@ -406,6 +417,9 @@
         "search_placeholder": "Szukaj krajów…",
         "empty": "Nie znaleziono krajów"
       },
+      "media_preview": {
+        "video_title": "Podgląd wideo"
+      },
       "state_combobox": {
         "placeholder": "Wybierz województwo",
         "search_placeholder": "Szukaj województw…",
@@ -581,6 +595,7 @@
         "ordered_list": "Lista numerowana",
         "blockquote": "Cytat blokowy",
         "link": "Łącze",
+        "image": "Obraz",
         "undo": "Cofnij",
         "redo": "Ponów"
       },

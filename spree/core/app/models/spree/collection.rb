@@ -27,6 +27,7 @@ module Spree
     include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::SanitizableRichText
+    include Spree::HasLibraryMedia
 
     #
     # Slug / permalink — FriendlyId with history (mirrors Spree::Category; flat, no hierarchy).
@@ -71,6 +72,9 @@ module Spree
     #
     has_one_attached :image, service: Spree.public_storage_service_name
     has_one_attached :square_image, service: Spree.public_storage_service_name
+    # The slots double as media-library placements, so an upload here is
+    # visible and reusable there (Spree::HasLibraryMedia).
+    has_library_media :image, :square_image
 
     #
     # Positioning (flat, store-scoped)

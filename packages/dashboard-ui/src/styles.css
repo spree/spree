@@ -43,7 +43,7 @@
   --brand-blue: oklch(0.5967 0.2212 258); /* #0077ff — site accent */
   --brand-blue-strong: oklch(0.5106 0.1868 257.7); /* #0060ce — site link hover */
 
-  --background: oklch(0.97 0 0); /* neutral-100 */
+  --background: oklch(98.5% 0 none); /* neutral-100 */
   --foreground: oklch(0.145 0 0); /* neutral-950 */
   --card: oklch(1 0 0); /* white cards, one step above the page */
   --card-foreground: oklch(0.145 0 0);
@@ -89,7 +89,7 @@
   --radius: 0.75rem;
 
   /* Sidebar — one step off the page, so it reads as its own surface. */
-  --sidebar: oklch(0.97 0 0); /* neutral-100 */
+  --sidebar: oklch(98.5% 0 none); /* neutral-100 */
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.145 0 0);
   --sidebar-primary-foreground: oklch(1 0 0);

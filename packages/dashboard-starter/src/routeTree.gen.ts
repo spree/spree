@@ -57,6 +57,7 @@ import { Route as PromotionsPromotionIdRouteImport } from './../../dashboard/src
 import { Route as ProductsTransfersRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/products/transfers'
 import { Route as ProductsOptionsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/products/options'
 import { Route as ProductsNewRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/products/new'
+import { Route as ProductsMediaRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/products/media'
 import { Route as ProductsProductIdRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/products/$productId'
 import { Route as OrdersNewRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/orders/new'
 import { Route as OrdersDraftsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/orders/drafts'
@@ -326,6 +327,11 @@ const ProductsNewRoute = ProductsNewRouteImport.update({
   path: '/products/new',
   getParentRoute: () => authenticatedStoreIdRoute,
 } as any)
+const ProductsMediaRoute = ProductsMediaRouteImport.update({
+  id: '/products/media',
+  path: '/products/media',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
 const ProductsProductIdRoute = ProductsProductIdRouteImport.update({
   id: '/products/$productId',
   path: '/products/$productId',
@@ -489,6 +495,7 @@ export interface FileRoutesByFullPath {
   '/$storeId/orders/drafts': typeof OrdersDraftsRoute
   '/$storeId/orders/new': typeof OrdersNewRoute
   '/$storeId/products/$productId': typeof ProductsProductIdRoute
+  '/$storeId/products/media': typeof ProductsMediaRoute
   '/$storeId/products/new': typeof ProductsNewRoute
   '/$storeId/products/options': typeof ProductsOptionsRoute
   '/$storeId/products/transfers': typeof ProductsTransfersRoute
@@ -562,6 +569,7 @@ export interface FileRoutesByTo {
   '/$storeId/orders/drafts': typeof OrdersDraftsRoute
   '/$storeId/orders/new': typeof OrdersNewRoute
   '/$storeId/products/$productId': typeof ProductsProductIdRoute
+  '/$storeId/products/media': typeof ProductsMediaRoute
   '/$storeId/products/new': typeof ProductsNewRoute
   '/$storeId/products/options': typeof ProductsOptionsRoute
   '/$storeId/products/transfers': typeof ProductsTransfersRoute
@@ -639,6 +647,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/orders/drafts': typeof OrdersDraftsRoute
   '/_authenticated/$storeId/orders/new': typeof OrdersNewRoute
   '/_authenticated/$storeId/products/$productId': typeof ProductsProductIdRoute
+  '/_authenticated/$storeId/products/media': typeof ProductsMediaRoute
   '/_authenticated/$storeId/products/new': typeof ProductsNewRoute
   '/_authenticated/$storeId/products/options': typeof ProductsOptionsRoute
   '/_authenticated/$storeId/products/transfers': typeof ProductsTransfersRoute
@@ -716,6 +725,7 @@ export interface FileRouteTypes {
     | '/$storeId/orders/drafts'
     | '/$storeId/orders/new'
     | '/$storeId/products/$productId'
+    | '/$storeId/products/media'
     | '/$storeId/products/new'
     | '/$storeId/products/options'
     | '/$storeId/products/transfers'
@@ -789,6 +799,7 @@ export interface FileRouteTypes {
     | '/$storeId/orders/drafts'
     | '/$storeId/orders/new'
     | '/$storeId/products/$productId'
+    | '/$storeId/products/media'
     | '/$storeId/products/new'
     | '/$storeId/products/options'
     | '/$storeId/products/transfers'
@@ -865,6 +876,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/orders/drafts'
     | '/_authenticated/$storeId/orders/new'
     | '/_authenticated/$storeId/products/$productId'
+    | '/_authenticated/$storeId/products/media'
     | '/_authenticated/$storeId/products/new'
     | '/_authenticated/$storeId/products/options'
     | '/_authenticated/$storeId/products/transfers'
@@ -1266,6 +1278,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductsNewRouteImport
       parentRoute: typeof authenticatedStoreIdRoute
     }
+    '/_authenticated/$storeId/products/media': {
+      id: '/_authenticated/$storeId/products/media'
+      path: '/products/media'
+      fullPath: '/$storeId/products/media'
+      preLoaderRoute: typeof ProductsMediaRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
+    }
     '/_authenticated/$storeId/products/$productId': {
       id: '/_authenticated/$storeId/products/$productId'
       path: '/products/$productId'
@@ -1532,6 +1551,7 @@ interface authenticatedStoreIdRouteChildren {
   OrdersDraftsRoute: typeof OrdersDraftsRoute
   OrdersNewRoute: typeof OrdersNewRoute
   ProductsProductIdRoute: typeof ProductsProductIdRoute
+  ProductsMediaRoute: typeof ProductsMediaRoute
   ProductsNewRoute: typeof ProductsNewRoute
   ProductsOptionsRoute: typeof ProductsOptionsRoute
   ProductsTransfersRoute: typeof ProductsTransfersRoute
@@ -1575,6 +1595,7 @@ const authenticatedStoreIdRouteChildren: authenticatedStoreIdRouteChildren = {
   OrdersDraftsRoute: OrdersDraftsRoute,
   OrdersNewRoute: OrdersNewRoute,
   ProductsProductIdRoute: ProductsProductIdRoute,
+  ProductsMediaRoute: ProductsMediaRoute,
   ProductsNewRoute: ProductsNewRoute,
   ProductsOptionsRoute: ProductsOptionsRoute,
   ProductsTransfersRoute: ProductsTransfersRoute,

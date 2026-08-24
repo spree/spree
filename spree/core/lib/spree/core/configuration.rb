@@ -81,6 +81,21 @@ module Spree
         }
       end
 
+      # Bounding box for the rendition used by images embedded in rich text,
+      # as [width, height].
+      #
+      # Separate from product_image_variant_sizes because it is the one
+      # rendition that must not crop: those sizes are resize_to_fill, which
+      # squares off whatever it is given — right for a gallery grid, wrong for
+      # a diagram or a size chart inside a description, where the merchant
+      # chose the aspect ratio. This bounds the longest side instead and leaves
+      # the shape alone.
+      attr_writer :rich_text_image_size
+
+      def rich_text_image_size
+        @rich_text_image_size ||= [1200, 1200]
+      end
+
       # Content types accepted for uploaded product videos (media_type 'video').
       # Kept deliberately narrow — these three play natively in every current
       # browser, so a merchant never uploads a file their shoppers can't watch.

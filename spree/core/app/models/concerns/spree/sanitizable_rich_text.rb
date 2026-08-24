@@ -11,6 +11,31 @@ module Spree
   module SanitizableRichText
     extend ActiveSupport::Concern
 
+    included do
+      # Which attributes on this class hold rich text. Lets callers that need
+      # to search stored markup — the media library's "where is this file
+      # used" — find the columns without hardcoding a list that goes stale the
+      # moment a model gains a field.
+      class_attribute :spree_rich_text_attributes, instance_writer: false, default: [].freeze
+    end
+
+    # Every model declaring rich text, with the attributes it declared.
+    #
+    # Walks descendants of the base class rather than keeping a registry: a
+    # registry populated at class-definition time is empty under Rails' lazy
+    # loading until something references each model.
+    #
+    # @return [Hash{Class => Array<String>}]
+    def self.declaring_models
+      Spree.base_class.descendants.each_with_object({}) do |model, found|
+        next if model.abstract_class?
+        next unless model.respond_to?(:spree_rich_text_attributes)
+
+        attributes = model.spree_rich_text_attributes
+        found[model] = attributes if attributes.present?
+      end
+    end
+
     class_methods do
       # Declares a rich text attribute: sanitized on save, and readable as
       # +field_html+ for the raw markup. This is what a model wants.
@@ -45,6 +70,12 @@ module Spree
       # @return [void]
       def sanitizes_rich_text(*attributes)
         attributes = attributes.map(&:to_s)
+
+        if respond_to?(:spree_rich_text_attributes)
+          # Union, not assignment — a decorator declaring one more field must
+          # not drop what the class already declared.
+          self.spree_rich_text_attributes = (spree_rich_text_attributes | attributes).freeze
+        end
 
         before_save do
           attributes.each do |attribute|

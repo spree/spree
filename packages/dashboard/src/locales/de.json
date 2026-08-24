@@ -2067,6 +2067,63 @@
       "tax_exclusive": "Exklusive",
       "tax_inclusive": "Inklusive"
     },
+    "media_library": {
+      "choose_from_library": "Aus Bibliothek wählen",
+      "delete_confirm": {
+        "title": "Diese Datei löschen?",
+        "message": "Beim Löschen von „{{name}}“ wird die Datei aus Ihrer Bibliothek entfernt. Überall dort, wo sie noch verwendet wird, fehlt dann das Bild.",
+        "in_use_message_one": "Beim Löschen von „{{name}}“ wird die Datei aus Ihrer Bibliothek und von der {{count}} Stelle entfernt, die sie verwendet. Beschreibungen, die sie einbetten, verlieren das Bild.",
+        "in_use_message_other": "Beim Löschen von „{{name}}“ wird die Datei aus Ihrer Bibliothek und von allen {{count}} Stellen entfernt, die sie verwenden. Beschreibungen, die sie einbetten, verlieren das Bild."
+      },
+      "delete_failed": "Die Datei konnte nicht gelöscht werden",
+      "deleted": "Datei gelöscht",
+      "description": "Alle Bilder und Videos Ihres Shops. Laden Sie Dateien hier hoch, um sie in mehreren Produkten zu verwenden.",
+      "discard_confirm": {
+        "title": "Änderungen verwerfen?",
+        "message": "Ihre Änderungen an dieser Datei wurden nicht gespeichert.",
+        "confirm": "Verwerfen"
+      },
+      "download": "Herunterladen",
+      "empty": "Noch keine Dateien. Laden Sie eine hoch, um zu beginnen.",
+      "facts": {
+        "type": "Typ",
+        "size": "Größe"
+      },
+      "file": "Datei",
+      "no_results": "Keine Dateien entsprechen Ihren Filtern.",
+      "placement": {
+        "all": "Alle Dateien",
+        "attached": "In Verwendung",
+        "unattached": "Noch nicht verwendet"
+      },
+      "search_placeholder": "Nach Dateinamen suchen…",
+      "title": "Medien",
+      "type": {
+        "all": "Alle Typen",
+        "image": "Bilder",
+        "video": "Videos",
+        "external_video": "Video-Links"
+      },
+      "upload": "Dateien hochladen",
+      "upload_failed": "{{name}} konnte nicht hochgeladen werden",
+      "upload_succeeded_one": "{{count}} Datei hochgeladen",
+      "upload_succeeded_other": "{{count}} Dateien hochgeladen",
+      "usage": {
+        "title": "Verwendet in",
+        "empty": "Diese Datei wird nirgendwo verwendet.",
+        "kind": {
+          "media": "Produkt",
+          "attachment": "Bildfeld",
+          "rich_text": "Beschreibung"
+        },
+        "owner": {
+          "product": "Produkt",
+          "variant": "Variante",
+          "category": "Kategorie",
+          "collection": "Kollektion"
+        }
+      }
+    },
     "nav": {
       "account": "Konto",
       "categories": "Kategorien",
@@ -2080,6 +2137,7 @@
       "getting_started": "Erste Schritte",
       "gift_cards": "Geschenkkarten",
       "home": "Startseite",
+      "media": "Medien",
       "options": "Optionen",
       "orders": "Bestellungen",
       "price_lists": "Preislisten",
@@ -3427,6 +3485,7 @@
         "unknown_location": "Unbekannter Standort"
       },
       "media": {
+        "add_from_library": "Aus Bibliothek hinzufügen",
         "add_video": "Videolink hinzufügen",
         "add_video_submit": "Video hinzufügen",
         "add_video_title": "Videolink hinzufügen",

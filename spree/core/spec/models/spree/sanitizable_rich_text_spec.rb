@@ -44,4 +44,23 @@ describe Spree::SanitizableRichText do
       expect(product).not_to respond_to(:description_html=)
     end
   end
+
+  # Lets the media library find embedded images without a hardcoded list of
+  # models that goes stale the moment one gains a rich text field.
+  describe '.declaring_models' do
+    it 'reports each declared attribute against its model' do
+      expect(Spree::Product.spree_rich_text_attributes).to include('description')
+
+      # Referenced so lazy loading has defined them before descendants is read.
+      [Spree::Product, Spree::Category, Spree::Collection]
+      declared = Spree::SanitizableRichText.declaring_models
+
+      expect(declared[Spree::Product]).to include('description')
+      expect(declared[Spree::Category]).to include('description')
+    end
+
+    it 'omits models that declare none' do
+      expect(Spree::SanitizableRichText.declaring_models).not_to have_key(Spree::Media)
+    end
+  end
 end

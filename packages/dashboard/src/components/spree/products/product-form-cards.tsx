@@ -13,8 +13,10 @@ import {
   useSortable,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import type { Product, Variant } from '@spree/admin-sdk'
+import type { Media, Product, Variant } from '@spree/admin-sdk'
 import {
+  adminClient,
+  MediaPickerSheet,
   ResourceMultiAutocomplete,
   TagCombobox,
   useDirectUpload,
@@ -26,11 +28,16 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+  DragHandle,
   Field,
   FieldError,
   FieldLabel,
   Input,
-  RichTextEditor,
   Select,
   SelectContent,
   SelectItem,
@@ -40,7 +47,16 @@ import {
   toastManager,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { FilmIcon, ImagePlusIcon, Loader2Icon, PencilIcon, PlayIcon, TrashIcon } from 'lucide-react'
+import {
+  DownloadIcon,
+  FilmIcon,
+  ImagePlusIcon,
+  LibraryIcon,
+  Loader2Icon,
+  PencilIcon,
+  PlayIcon,
+  TrashIcon,
+} from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, type UseFormReturn, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -54,6 +70,7 @@ import { useTaxCategories } from '../../../hooks/use-tax-categories'
 import { parseVideoUrl } from '../../../lib/video-url'
 import type { MediaType, ProductFormValues } from '../../../schemas/product'
 import { ProductBulkPriceEditor } from '../bulk-price-editor/product-bulk-price-editor'
+import { MediaRichTextEditor } from '../media-rich-text-editor'
 import { AddVideoDialog } from './add-video-dialog'
 import { InventorySection } from './inventory-section'
 import { MediaEditSheet } from './media-edit-sheet'
@@ -93,7 +110,7 @@ export function GeneralCard({ form }: FormCardProps) {
             name="description"
             control={form.control}
             render={({ field }) => (
-              <RichTextEditor
+              <MediaRichTextEditor
                 id="product-description"
                 ariaLabel={t('admin.fields.description.label')}
                 value={field.value}
@@ -206,6 +223,7 @@ export function MediaCard({
   const [pending, setPending] = useState<PendingUpload[]>([])
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
   const [addingVideo, setAddingVideo] = useState(false)
+  const [pickingFromLibrary, setPickingFromLibrary] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const items = useWatch({ control: form.control, name: 'media' }) ?? []
@@ -332,6 +350,33 @@ export function MediaCard({
     [form],
   )
 
+  // Files picked from the library become ordinary form entries carrying the
+  // source's id. The product save places them, sharing the file rather than
+  // uploading a second copy.
+  const handleAddFromLibrary = useCallback(
+    (picked: Media[]) => {
+      const current = form.getValues('media') ?? []
+      form.setValue(
+        'media',
+        [
+          ...current,
+          ...picked.map((media, index) => ({
+            source_media_id: media.id,
+            alt: media.alt ?? undefined,
+            media_type: (media.media_type ?? 'image') as MediaType,
+            position: current.length + index + 1,
+            previewUrl: media.small_url ?? media.original_url ?? undefined,
+            videoUrl: media.video_url ?? null,
+            posterUrl: media.poster_url ?? null,
+            uploadId: crypto.randomUUID(),
+          })),
+        ],
+        { shouldDirty: true },
+      )
+    },
+    [form],
+  )
+
   const handleDelete = useCallback(
     async (index: number) => {
       const current = form.getValues('media') ?? []
@@ -408,6 +453,7 @@ export function MediaCard({
                       key={sortableIds[index]}
                       sortableId={sortableIds[index]}
                       previewUrl={media.previewUrl ?? null}
+                      downloadUrl={media.downloadUrl}
                       alt={media.alt ?? ''}
                       mediaType={media.media_type ?? 'image'}
                       onEdit={() => setEditingIndex(index)}
@@ -474,18 +520,32 @@ export function MediaCard({
             onChange={(e) => e.target.files && handleFiles(e.target.files)}
           />
 
-          <Button
-            type="button"
-            variant="outline"
-            className="self-start"
-            onClick={() => setAddingVideo(true)}
-          >
-            <FilmIcon />
-            {t('admin.products.media.add_video')}
-          </Button>
+          <div className="flex flex-wrap gap-2 self-start">
+            <Button type="button" variant="outline" onClick={() => setPickingFromLibrary(true)}>
+              <LibraryIcon />
+              {t('admin.products.media.add_from_library')}
+            </Button>
+
+            <Button type="button" variant="outline" onClick={() => setAddingVideo(true)}>
+              <FilmIcon />
+              {t('admin.products.media.add_video')}
+            </Button>
+          </div>
         </CardContent>
       </Card>
       <AddVideoDialog open={addingVideo} onOpenChange={setAddingVideo} onAdd={handleAddVideo} />
+      <MediaPickerSheet<Media>
+        open={pickingFromLibrary}
+        onOpenChange={setPickingFromLibrary}
+        queryKey="product-media-library"
+        search={(query) =>
+          adminClient.media.list({
+            limit: 48,
+            ...(query ? { filename_cont: query } : {}),
+          })
+        }
+        onConfirm={handleAddFromLibrary}
+      />
       {editingEntry && editingIndex !== null && (
         <MediaEditSheet
           form={form}
@@ -506,6 +566,7 @@ function SortableMediaThumbnail({
   previewUrl,
   alt,
   mediaType,
+  downloadUrl,
   onEdit,
   onDelete,
 }: {
@@ -513,6 +574,8 @@ function SortableMediaThumbnail({
   previewUrl: string | null
   alt: string
   mediaType: MediaType
+  /** Absent until the row is saved — a pre-save upload has no server URL. */
+  downloadUrl?: string | null
   onEdit: () => void
   onDelete: () => void
 }) {
@@ -527,80 +590,101 @@ function SortableMediaThumbnail({
   }
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      data-slot="media-thumbnail"
-      {...attributes}
-      {...listeners}
-      className={`group relative aspect-square cursor-grab overflow-hidden rounded-md border border-border bg-muted touch-none active:cursor-grabbing ${
-        isDragging ? 'opacity-40 ring-2 ring-primary/40' : ''
-      }`}
-    >
-      {previewUrl && mediaType === 'video' ? (
-        // An uploaded video has no still until a poster is set, so its own
-        // first frame stands in — an <img> would render a broken icon.
-        <video
-          src={previewUrl}
-          muted
-          playsInline
-          preload="metadata"
-          className="pointer-events-none size-full object-cover"
-        />
-      ) : previewUrl ? (
-        <img
-          src={previewUrl}
-          alt={alt}
-          draggable={false}
-          className="pointer-events-none size-full object-cover"
-        />
-      ) : (
-        <div className="flex size-full items-center justify-center text-muted-foreground">
-          {mediaType === 'image' ? (
-            <ImagePlusIcon className="size-6" />
-          ) : (
-            <FilmIcon className="size-6" />
-          )}
-        </div>
-      )}
+    <ContextMenu>
+      <ContextMenuTrigger
+        render={
+          // Clicking opens the edit sheet; dragging is the corner grip's job.
+          // The whole tile being the drag surface left no way to click it.
+          // biome-ignore lint/a11y/useSemanticElements: the grip inside rules out a <button>
+          <div
+            ref={setNodeRef}
+            style={style}
+            data-slot="media-thumbnail"
+            role="button"
+            tabIndex={0}
+            onClick={onEdit}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                onEdit()
+              }
+            }}
+            className={`group relative aspect-square cursor-pointer bg-muted overflow-hidden rounded-md border border-border transition-colors hover:border-muted-foreground focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 ${
+              isDragging ? 'opacity-40 ring-2 ring-primary/40' : ''
+            }`}
+          />
+        }
+      >
+        {previewUrl && mediaType === 'video' ? (
+          // An uploaded video has no still until a poster is set, so its own
+          // first frame stands in — an <img> would render a broken icon.
+          <video
+            src={previewUrl}
+            muted
+            playsInline
+            preload="metadata"
+            className="pointer-events-none size-full object-cover"
+          />
+        ) : previewUrl ? (
+          <img
+            src={previewUrl}
+            alt={alt}
+            draggable={false}
+            className="pointer-events-none size-full object-cover"
+          />
+        ) : (
+          <div className="flex size-full items-center justify-center text-muted-foreground">
+            {mediaType === 'image' ? (
+              <ImagePlusIcon className="size-6" />
+            ) : (
+              <FilmIcon className="size-6" />
+            )}
+          </div>
+        )}
 
-      {mediaType !== 'image' && (
-        <span className="pointer-events-none absolute left-1.5 top-1.5 z-10 flex size-6 items-center justify-center rounded-full bg-black/60 text-white">
-          <PlayIcon className="size-3 fill-current" />
-        </span>
-      )}
+        {mediaType !== 'image' && (
+          <span className="pointer-events-none absolute left-1.5 top-1.5 z-10 flex size-6 items-center justify-center rounded-full bg-black/60 text-white">
+            <PlayIcon className="size-3 fill-current" />
+          </span>
+        )}
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex justify-end gap-1 p-1.5 opacity-0 translate-y-1 transition-all duration-200 ease-out group-hover:pointer-events-auto group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-focus-within:translate-y-0">
-        <Button
-          type="button"
-          variant="outline"
-          size="icon-sm"
-          aria-label={t('admin.a11y.edit_media')}
-          onPointerDown={(e) => e.stopPropagation()}
-          onClick={(e) => {
-            e.stopPropagation()
-            onEdit()
-          }}
-          className="shadow-sm"
-        >
+        <DragHandle
+          attributes={attributes}
+          listeners={listeners}
+          // Stop the click reaching the tile behind it, or picking the grip up
+          // would also open the sheet. touch-none lets a touch drag start
+          // without the browser treating it as a scroll.
+          onClick={(e) => e.stopPropagation()}
+          className="absolute right-1.5 top-1.5 z-10 h-auto w-auto touch-none rounded-md bg-background/80 p-1 opacity-0 shadow-sm backdrop-blur transition-opacity group-hover:opacity-100 group-focus-within:opacity-100"
+        />
+      </ContextMenuTrigger>
+
+      {/* Right-click is the way in here; clicking a tile drags it, and the
+          edit sheet is reachable from this menu. */}
+      <ContextMenuContent>
+        <ContextMenuItem onClick={onEdit}>
           <PencilIcon />
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          size="icon-sm"
-          aria-label={t('admin.a11y.delete_image')}
-          onPointerDown={(e) => e.stopPropagation()}
-          onClick={(e) => {
-            e.stopPropagation()
-            onDelete()
-          }}
-          className="shadow-sm hover:text-destructive"
-        >
+          {t('admin.actions.edit')}
+        </ContextMenuItem>
+        {downloadUrl && (
+          // The URL carries a Content-Disposition attachment header, so
+          // navigating to it downloads rather than opening a page.
+          <ContextMenuItem
+            onClick={() => {
+              window.location.href = downloadUrl
+            }}
+          >
+            <DownloadIcon />
+            {t('admin.media_library.download')}
+          </ContextMenuItem>
+        )}
+        <ContextMenuSeparator />
+        <ContextMenuItem variant="destructive" onClick={onDelete}>
           <TrashIcon />
-        </Button>
-      </div>
-    </div>
+          {t('admin.actions.delete')}
+        </ContextMenuItem>
+      </ContextMenuContent>
+    </ContextMenu>
   )
 }
 

@@ -2067,6 +2067,63 @@
       "tax_exclusive": "Exclusive",
       "tax_inclusive": "Inclusive"
     },
+    "media_library": {
+      "choose_from_library": "Choose from library",
+      "delete_confirm": {
+        "title": "Delete this file?",
+        "message": "Deleting “{{name}}” removes it from your library. Anywhere it is still used will lose the image.",
+        "in_use_message_one": "Deleting “{{name}}” removes it from your library and from the {{count}} place using it. Descriptions that embed it will lose the image.",
+        "in_use_message_other": "Deleting “{{name}}” removes it from your library and from all {{count}} places using it. Descriptions that embed it will lose the image."
+      },
+      "delete_failed": "The file could not be deleted",
+      "deleted": "File deleted",
+      "description": "Every image and video in your store. Upload files here to reuse them across products.",
+      "discard_confirm": {
+        "title": "Discard changes?",
+        "message": "Your changes to this file have not been saved.",
+        "confirm": "Discard"
+      },
+      "download": "Download",
+      "empty": "No files yet. Upload one to get started.",
+      "facts": {
+        "type": "Type",
+        "size": "Size"
+      },
+      "file": "File",
+      "no_results": "No files match your filters.",
+      "placement": {
+        "all": "All files",
+        "attached": "In use",
+        "unattached": "Not used yet"
+      },
+      "search_placeholder": "Search by file name…",
+      "title": "Media",
+      "type": {
+        "all": "All types",
+        "image": "Images",
+        "video": "Videos",
+        "external_video": "Video links"
+      },
+      "upload": "Upload files",
+      "upload_failed": "{{name}} could not be uploaded",
+      "upload_succeeded_one": "{{count}} file uploaded",
+      "upload_succeeded_other": "{{count}} files uploaded",
+      "usage": {
+        "title": "Used in",
+        "empty": "This file is not used anywhere.",
+        "kind": {
+          "media": "Product",
+          "attachment": "Image field",
+          "rich_text": "Description"
+        },
+        "owner": {
+          "product": "Product",
+          "variant": "Variant",
+          "category": "Category",
+          "collection": "Collection"
+        }
+      }
+    },
     "nav": {
       "account": "Account",
       "categories": "Categories",
@@ -2080,6 +2137,7 @@
       "getting_started": "Getting Started",
       "gift_cards": "Gift Cards",
       "home": "Home",
+      "media": "Media",
       "options": "Options",
       "orders": "Orders",
       "price_lists": "Price Lists",
@@ -3427,6 +3485,7 @@
         "unknown_location": "Unknown location"
       },
       "media": {
+        "add_from_library": "Add from library",
         "add_video": "Add video link",
         "add_video_submit": "Add video",
         "add_video_title": "Add a video link",

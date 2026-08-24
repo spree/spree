@@ -126,10 +126,15 @@ function mediaToFormValues(media: Media, index: number) {
     // Video rows have no image of their own, so the poster is the preview.
     previewUrl:
       media.small_url ?? media.mini_url ?? media.poster_url ?? media.original_url ?? undefined,
+    // Only the square renditions: the focal point is picked against the
+    // rendered box, and original_url is uncropped, so mixing them in would
+    // move the point the merchant set.
+    fullPreviewUrl: media.large_url ?? media.xlarge_url ?? media.poster_url ?? null,
     posterUrl: media.poster_url,
     // The file itself, so an uploaded video can actually play. Every sized URL
     // on a video row resolves to its poster, so none of them work here.
     videoUrl: media.video_url,
+    downloadUrl: media.download_url,
   }
 }
 
@@ -358,10 +363,15 @@ function ProductForm({ product }: { product: Product }) {
     // dedicated DELETE /media endpoint, which the MediaCard already calls
     // before removing an entry from form state.
     if (media && media.length > 0) {
-      payload.media = media.map(({ previewUrl, posterUrl, videoUrl, uploadId, ...rest }, i) => ({
-        ...rest,
-        position: i + 1,
-      }))
+      payload.media = media.map(
+        (
+          { previewUrl, fullPreviewUrl, posterUrl, videoUrl, downloadUrl, uploadId, ...rest },
+          i,
+        ) => ({
+          ...rest,
+          position: i + 1,
+        }),
+      )
     }
 
     try {
@@ -371,10 +381,11 @@ function ProductForm({ product }: { product: Product }) {
       // hydration effect would otherwise keep isDirty true forever (since
       // we then skip the refetch's reset).
       //
-      // Strip `signed_id` and the UI-only fields from baseline media so a
-      // subsequent save before the mediaResponse refetch lands can't re-ship
-      // the same signed_id and create a duplicate Asset. The persisted media
-      // ids will hydrate on the next refetch.
+      // Strip the file-transport keys and the UI-only fields from baseline
+      // media so a subsequent save before the mediaResponse refetch lands
+      // can't re-ship them and create a duplicate Asset — `signed_id` would
+      // re-attach the upload, `source_media_id` would place the library file a
+      // second time. The persisted media ids hydrate on the next refetch.
       const baseline: ProductFormValues = {
         ...data,
         // `data` is the parsed (extension-stripped) shape — put extension
@@ -383,10 +394,13 @@ function ProductForm({ product }: { product: Product }) {
         media: (data.media ?? []).map(
           ({
             signed_id: _sid,
+            source_media_id: _smid,
             poster_signed_id: _psid,
             previewUrl: _p,
+            fullPreviewUrl: _fp,
             posterUrl: _pu,
             videoUrl: _vu,
+            downloadUrl: _du,
             uploadId: _u,
             ...rest
           }) => rest,

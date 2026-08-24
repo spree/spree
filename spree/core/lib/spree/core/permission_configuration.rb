@@ -293,7 +293,16 @@ module Spree
       register_resource(:products, group: :catalog, audiences: %i[seller], subjects: -> {
         [Spree::Product, Spree::ProductType, Spree::Variant, Spree::OptionType,
          Spree::OptionValue, Spree::Price, Spree::PriceList, Spree::PriceRule,
-         Spree::Media, Spree::ProductPublication, Spree::CustomField]
+         Spree::ProductPublication, Spree::CustomField]
+      })
+      # Media is its own resource because a file is no longer a product's
+      # alone: one row can be placed on a category or collection, and the
+      # library lists, traces and deletes across all of them. Reaching a file
+      # *through* a product still needs only `products` — the nested gallery
+      # endpoints are that product's own media — but enumerating the library,
+      # asking where a file is used, or deleting one everywhere is this key.
+      register_resource(:media, group: :catalog, audiences: %i[seller], subjects: -> {
+        [Spree::Media]
       })
       register_resource(:categories, group: :catalog, subjects: -> {
         [Spree::Category, Spree::ProductCategory]

@@ -46,6 +46,17 @@
       "view_all": "View all",
       "view_details": "View details"
     },
+    "media_picker": {
+      "title": "Media library",
+      "description": "Pick files already in your library, or upload new ones.",
+      "search_placeholder": "Search by name…",
+      "upload": "Upload",
+      "empty": "Your library is empty. Upload a file to get started.",
+      "no_results": "No files match your search.",
+      "confirm": "Add selected",
+      "selected_count_one": "{{count}} selected",
+      "selected_count_other": "{{count}} selected"
+    },
     "row_actions": {
       "menu_label": "Open actions",
       "edit": "Edit",
@@ -406,6 +417,9 @@
         "search_placeholder": "Search countries…",
         "empty": "No countries found"
       },
+      "media_preview": {
+        "video_title": "Video preview"
+      },
       "state_combobox": {
         "placeholder": "Select a state",
         "search_placeholder": "Search states…",
@@ -583,6 +597,7 @@
         "ordered_list": "Ordered list",
         "blockquote": "Blockquote",
         "link": "Link",
+        "image": "Image",
         "undo": "Undo",
         "redo": "Redo"
       },

@@ -8,6 +8,22 @@ module Spree
     include Rails.application.routes.url_helpers
     include Spree::HasCustomFields
     include Spree::Metadata
+    # Media is store-owned rather than reaching its store through the viewable:
+    # a library upload has no viewable until someone places it, so there is
+    # nothing to derive tenancy from. The column stays nullable for rows the
+    # upgrade could not reach; new rows always carry a store.
+    include Spree::SingleStoreResource
+
+    # SingleStoreResource refuses any store change on a persisted record. Media
+    # predates its store column, so a legacy row carries nil until the upgrade
+    # task fills it in — and between db:migrate and that task, every edit of an
+    # existing row would otherwise fail validation. Adopting a store is not
+    # changing one.
+    def ensure_store_association_is_not_changed
+      return if store_id_was.nil?
+
+      super
+    end
 
     publishes_lifecycle_events
 
@@ -29,11 +45,61 @@ module Spree
     has_many :variant_media, class_name: 'Spree::VariantMedia', foreign_key: :media_id,
              dependent: :destroy, inverse_of: :asset
     has_many :variants, through: :variant_media, source: :variant, class_name: 'Spree::Variant'
-    acts_as_list scope: [:viewable_id, :viewable_type]
+    # store_id is in the scope for the library's sake: an unplaced row has no
+    # viewable, so without it every store's uploads would share one list and
+    # their positions would bleed across tenants.
+    acts_as_list scope: [:store_id, :viewable_id, :viewable_type]
+
+    # Whether this row is in use, or sitting in the library waiting to be
+    # placed. Not a flag — an unplaced row simply has no viewable.
+    scope :attached, -> { where.not(viewable_id: nil) }
+    scope :unattached, -> { where(viewable_id: nil) }
+
+    # Filename search for the library. The name lives on the blob rather than
+    # on this row, so it is a join rather than a column match.
+    scope :filename_cont, lambda { |term|
+      next all if term.blank?
+
+      joins(attachment_attachment: :blob)
+        .where(ActiveStorage::Blob.arel_table[:filename].matches("%#{term}%"))
+    }
+
+    # One row per file, for the library — which shows files, not placements.
+    #
+    # Reuse shares a blob across rows, so a file placed on three products is
+    # three rows of the same picture; listing them all reads as three copies a
+    # merchant then has to tell apart. The newest row of each blob stands in,
+    # and its `usage` lists everywhere the file actually appears.
+    #
+    # Rows with no attachment at all (an external video) have no blob to group
+    # by and are always kept.
+    # Grouped over the rows this scope already covers, not over every store's:
+    # a global winner can belong to another tenant, which hid the file from the
+    # library that owns it — not listed, not searchable, not deletable.
+    scope :distinct_by_file, lambda {
+      attachments = ActiveStorage::Attachment.arel_table
+      newest_per_blob = ActiveStorage::Attachment
+                          .where(record_type: name, name: 'attachment')
+                          .where(record_id: unscope(:order).select(:id))
+                          .group(:blob_id)
+                          .select(attachments[:record_id].maximum)
+
+      where(
+        arel_table[:id].in(Arel.sql(newest_per_blob.to_sql)).
+          or(arel_table[:media_type].eq('external_video'))
+      )
+    }
+
+    self.whitelisted_ransackable_attributes = %w[alt media_type created_at updated_at]
+    self.whitelisted_ransackable_scopes = %w[attached unattached filename_cont]
 
     delegate :key, :attached?, :variant, :variable?, :blob, :filename, :variation, to: :attachment
 
     validates :media_type, inclusion: { in: MEDIA_TYPES }
+    # Registered in Spree.media_viewable_types — an extension placing media on
+    # its own model appends there rather than editing this list.
+    validates :viewable_type, inclusion: { in: -> (_record) { Spree.media_viewable_types } },
+              allow_nil: true
     validates :attachment, attached: true, content_type: Rails.application.config.active_storage.web_image_content_types,
               if: :image?
     validates :attachment, attached: true, content_type: ->(_record) { Spree::Config.video_content_types },
@@ -69,6 +135,15 @@ module Spree
                            saver: WEBP_SAVER_OPTIONS,
                            preprocessed: true
       end
+
+      # Rich text embeds: bounded, never cropped, so the merchant's chosen
+      # aspect ratio survives. Not preprocessed — most files are never embedded
+      # in a description, so this is generated on first use instead of on every
+      # upload.
+      attachable.variant :embed,
+                         format: "webp",
+                         resize_to_limit: Spree::Config.rich_text_image_size,
+                         saver: WEBP_SAVER_OPTIONS
     end
 
     # Still frame shown wherever a video can't play — gallery tiles, emails,
@@ -216,6 +291,39 @@ module Spree
       set_custom_field(EXTERNAL_URL_CUSTOM_FIELD_KEY, url.strip)
     end
 
+    # Places a copy of this file on another product or variant, sharing the
+    # blob rather than copying the file. The copy is an ordinary new row, so it
+    # carries its own position, variant links and list placement in the new
+    # context, and every callback (counter caches, thumbnails) fires normally.
+    #
+    # Nothing is written to storage: both records point at the same blob, and
+    # the already-generated renditions are keyed on that blob, so a reused file
+    # needs no reprocessing either. Deleting one copy leaves the file intact —
+    # the foreign key from active_storage_attachments blocks purging a blob
+    # another attachment still references, and ActiveStorage::PurgeJob discards
+    # on exactly that violation.
+    #
+    # The copy belongs to whichever store owns its new home, not to the store
+    # the source came from — media follows the thing it is a picture of.
+    #
+    # @param viewable [Spree::Product, Spree::Variant, Spree::Category, Spree::Collection, nil]
+    #   the new owner, or nil for an unplaced library copy
+    # @return [Spree::Media] an unsaved copy
+    def duplicate_for(viewable)
+      copy = self.class.new(
+        viewable: viewable,
+        media_type: media_type,
+        alt: alt,
+        external_video_url: external_video_url,
+        focal_point_x: focal_point_x,
+        focal_point_y: focal_point_y
+      )
+
+      copy.attachment.attach(attachment.blob) if attachment.attached?
+      copy.poster.attach(poster.blob) if poster.attached?
+      copy
+    end
+
     def skip_import?
       false
     end
@@ -228,6 +336,21 @@ module Spree
     # payload with every image size. Events carry the lean shape instead.
     def event_serializer_class
       'Spree::Api::V3::MediaEventSerializer'.safe_constantize
+    end
+
+    protected
+
+    # A placed row belongs to whichever store owns its home — the category's
+    # own store, or the product's for a variant — whichever store the request
+    # is for: media follows the thing it is a picture of. A library upload has
+    # no viewable yet, so it falls back to the concern's current-store default.
+    def ensure_store
+      # An unregistered viewable_type raises on load rather than reaching the
+      # inclusion validation, which is the thing that should reject it.
+      self.store_id = viewable.try(:store_id) || product&.store_id
+      super unless store_id?
+    rescue NameError
+      super
     end
 
     private

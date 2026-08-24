@@ -569,6 +569,12 @@ export interface MediaCreateParams {
   url?: string
   /** Direct-upload signed id for the media file itself. */
   signed_id?: string
+  /**
+   * Place a file that is already in the library. The new row shares the
+   * source's file rather than copying it, and takes its own alt, position and
+   * variant links from here.
+   */
+  source_media_id?: string
   /** Direct-upload signed id for a video's poster frame. */
   poster_signed_id?: string
   focal_point_x?: number | null
@@ -576,6 +582,30 @@ export interface MediaCreateParams {
   // Prefixed or raw variant IDs to link this product-level media to. Variants
   // not on the same product are silently dropped server-side.
   variant_ids?: Array<string>
+}
+
+/** Creating a file in the library, before it is placed on anything. */
+export interface MediaLibraryCreateParams {
+  alt?: string
+  media_type?: MediaType
+  external_video_url?: string
+  signed_id?: string
+  poster_signed_id?: string
+}
+
+/** Where one library file is in use. */
+export interface MediaUsageReference {
+  /**
+   * `media` — placed on a product or variant; `attachment` — picked for a
+   * plain image field such as a category or store logo; `rich_text` — embedded
+   * in a description. Rich text matches are best-effort: an embed is a plain
+   * URL, so nothing records it.
+   */
+  kind: 'media' | 'attachment' | 'rich_text'
+  name: string | null
+  owner_type: string
+  owner_id: string | null
+  field: string | null
 }
 
 /**

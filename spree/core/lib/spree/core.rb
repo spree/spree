@@ -299,6 +299,24 @@ module Spree
     Rails.application.config.spree.adjusters = value
   end
 
+  # Model names a {Spree::Media} row may be placed on — where a file *lives*.
+  # The viewable column is polymorphic, so this is what keeps it from accepting
+  # any constant, and what store resolution, counter caches and the usage panel
+  # reason about.
+  #
+  # Append, never assign, so an extension does not drop what another added:
+  #
+  #   Spree.media_viewable_types += ['MyApp::Lookbook']
+  #
+  # @return [Array<String>]
+  def self.media_viewable_types
+    Rails.application.config.spree.media_viewable_types
+  end
+
+  def self.media_viewable_types=(value)
+    Rails.application.config.spree.media_viewable_types = value
+  end
+
   # The tax engine used when a market names none — the fallback behind
   # {Spree::Purchase::Taxation#tax_provider}, which is what call sites actually
   # use. Defaults to {Spree::TaxProvider::Internal}.

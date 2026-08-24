@@ -10,6 +10,7 @@ module Spree
                                :dependencies,
                                :payment_methods,
                                :adjusters,
+                               :media_viewable_types,
                                :default_tax_provider,
                                :tax_providers,
                                :password_validator,
@@ -222,6 +223,19 @@ module Spree
         Rails.application.config.spree.adjusters = [
           Spree::Adjusters::Promotion
         ]
+
+        # What a media file can be placed on. The polymorphic viewable column
+        # would otherwise accept any constant name, and everything downstream —
+        # store resolution, counter caches, the usage panel — reasons about the
+        # registered set. An extension placing media on its own model appends
+        # to this from an initializer.
+        Rails.application.config.spree.media_viewable_types = %w[
+          Spree::Product
+          Spree::Variant
+          Spree::Category
+          Spree::Collection
+        ]
+
 
         # The fallback engine when a market names none (see docs/plans/6.0-tax-provider.md).
         # Assigned only if an initializer file has not already named one — an app

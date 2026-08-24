@@ -66,6 +66,59 @@ RSpec.describe 'Spree::Products nested attributes' do
     expect(result.value.variants.first.sku).to eq('SK-1')
   end
 
+  describe 'media given as a library file' do
+    let(:product) { create(:product, store: store) }
+    let(:library_file) { create(:image, viewable: create(:product, store: store)) }
+
+    it 'places a copy sharing the source file' do
+      expect {
+        Spree.product_update_workflow.call(
+          product: product,
+          attributes: { media: [{ source_media_id: library_file.prefixed_id, alt: 'Reused' }] }
+        )
+      }.to change { product.media.count }.by(1)
+
+      placed = product.media.reload.last
+      expect(placed.attachment.blob).to eq(library_file.attachment.blob)
+      expect(placed.alt).to eq('Reused')
+    end
+
+    it 'uploads nothing' do
+      library_file # created before the block, so only the copy is counted
+
+      expect {
+        Spree.product_update_workflow.call(
+          product: product,
+          attributes: { media: [{ source_media_id: library_file.prefixed_id }] }
+        )
+      }.not_to change(ActiveStorage::Blob, :count)
+    end
+
+    # Both keys are permitted on the inline list, so a client can send both.
+    # Whichever branch runs must not see the other's key as an attribute.
+    it 'ignores a signed_id sent alongside the source' do
+      result = Spree.product_update_workflow.call(
+        product: product,
+        attributes: { media: [{ source_media_id: library_file.prefixed_id, signed_id: 'abc' }] }
+      )
+
+      expect(result).to be_success
+      expect(product.media.reload.last.attachment.blob).to eq(library_file.attachment.blob)
+    end
+
+    # The same tenancy rule the media endpoint enforces with a 404.
+    it 'ignores a file from another store' do
+      foreign = create(:image, viewable: create(:product, store: create(:store)))
+
+      expect {
+        Spree.product_update_workflow.call(
+          product: product,
+          attributes: { media: [{ source_media_id: foreign.prefixed_id }] }
+        )
+      }.not_to change { product.media.count }
+    end
+  end
+
   it 'enqueues a download for media given as an external url' do
     product = create(:product, store: store)
 

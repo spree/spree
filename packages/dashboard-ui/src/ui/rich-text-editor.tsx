@@ -1,9 +1,11 @@
+import Image from '@tiptap/extension-image'
 import Link from '@tiptap/extension-link'
 import Placeholder from '@tiptap/extension-placeholder'
 import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import {
   BoldIcon,
+  ImageIcon,
   ItalicIcon,
   LinkIcon,
   ListIcon,
@@ -17,7 +19,7 @@ import { useCallback, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { cn } from '../lib/utils'
 
-interface RichTextEditorProps {
+export interface RichTextEditorProps {
   value?: string
   onChange?: (html: string) => void
   /**
@@ -37,6 +39,16 @@ interface RichTextEditorProps {
    * test locators.
    */
   id?: string
+  /**
+   * Asks the caller for an image to insert, resolving to its URL and alt text
+   * (or null if the merchant backs out). Supplying it puts an image button in
+   * the toolbar; without it the editor has no way to add one.
+   *
+   * The editor stays headless — the media library lives in the app, so
+   * choosing the picture is the caller's job and this component only places
+   * what comes back.
+   */
+  onRequestImage?: () => Promise<{ url: string; alt?: string | null } | null>
 }
 
 export function RichTextEditor({
@@ -48,6 +60,7 @@ export function RichTextEditor({
   disabled = false,
   ariaLabel,
   id,
+  onRequestImage,
 }: RichTextEditorProps) {
   const { t } = useTranslation()
   const resolvedPlaceholder = placeholder ?? t('admin.components.rich_text_editor.placeholder')
@@ -70,6 +83,9 @@ export function RichTextEditor({
       StarterKit.configure({ link: false }),
       Placeholder.configure({ placeholder: resolvedPlaceholder }),
       Link.configure({ openOnClick: false }),
+      // Inline (not block) so an image can sit inside a paragraph, which is
+      // how the sanitizer's allowlist expects to find it.
+      Image.configure({ inline: true }),
     ],
     content: value,
     editable: !disabled,
@@ -132,6 +148,19 @@ export function RichTextEditor({
       editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
     }
   }, [editor, t])
+
+  const insertImage = useCallback(async () => {
+    if (!editor || !onRequestImage) return
+
+    const picked = await onRequestImage()
+    if (!picked) return
+
+    editor
+      .chain()
+      .focus()
+      .setImage({ src: picked.url, alt: picked.alt ?? undefined })
+      .run()
+  }, [editor, onRequestImage])
 
   if (!editor) return null
 
@@ -202,6 +231,12 @@ export function RichTextEditor({
           <LinkIcon className="size-4" />
         </ToolbarButton>
 
+        {onRequestImage && (
+          <ToolbarButton onClick={insertImage} title={t('admin.components.rich_text_editor.image')}>
+            <ImageIcon className="size-4" />
+          </ToolbarButton>
+        )}
+
         <div className="ml-auto flex items-center gap-0.5">
           <ToolbarButton
             onClick={() => editor.chain().focus().undo().run()}
@@ -223,7 +258,7 @@ export function RichTextEditor({
       {/* Editor */}
       <EditorContent
         editor={editor}
-        className="prose prose-sm max-w-none px-3 py-2 dark:prose-invert [&_.tiptap]:min-h-32 [&_.tiptap]:outline-none [&_.tiptap.is-editor-empty:first-child::before]:text-muted-foreground [&_.tiptap.is-editor-empty:first-child::before]:content-[attr(data-placeholder)] [&_.tiptap.is-editor-empty:first-child::before]:float-left [&_.tiptap.is-editor-empty:first-child::before]:h-0 [&_.tiptap.is-editor-empty:first-child::before]:pointer-events-none"
+        className="prose prose-sm max-w-none px-3 py-2 dark:prose-invert [&_.tiptap]:min-h-32 [&_.tiptap]:outline-none [&_.tiptap.is-editor-empty:first-child::before]:text-muted-foreground [&_.tiptap.is-editor-empty:first-child::before]:content-[attr(data-placeholder)] [&_.tiptap.is-editor-empty:first-child::before]:float-left [&_.tiptap.is-editor-empty:first-child::before]:h-0 [&_.tiptap.is-editor-empty:first-child::before]:pointer-events-none [&_.tiptap_img]:max-w-full [&_.tiptap_img]:rounded-md [&_.tiptap_img.ProseMirror-selectednode]:outline-2 [&_.tiptap_img.ProseMirror-selectednode]:outline-blue-500"
       />
     </div>
   )

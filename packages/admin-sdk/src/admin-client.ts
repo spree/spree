@@ -162,7 +162,9 @@ import type {
   MarketCreateParams,
   MarketUpdateParams,
   MediaCreateParams,
+  MediaLibraryCreateParams,
   MediaUpdateParams,
+  MediaUsageReference,
   MeUpdateParams,
   OptionTypeCreateParams,
   OptionTypeUpdateParams,
@@ -3480,6 +3482,52 @@ export class AdminClient {
   // ============================================
   // Categories
   // ============================================
+
+  /**
+   * The media library — every file in the store, whether or not it has been
+   * placed on a product. Files are put ON a product through
+   * `products.media.create` with a `source_media_id`; this is where they are
+   * uploaded, browsed and deleted.
+   */
+  readonly media = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Media>> =>
+      this.request<PaginatedResponse<Media>>('GET', '/media', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<Media> =>
+      this.request<Media>('GET', `/media/${id}`, options),
+
+    /** Upload a file before deciding where it goes. */
+    create: (params: MediaLibraryCreateParams, options?: RequestOptions): Promise<Media> =>
+      this.request<Media>('POST', '/media', { ...options, body: params }),
+
+    update: (id: string, params: MediaUpdateParams, options?: RequestOptions): Promise<Media> =>
+      this.request<Media>('PATCH', `/media/${id}`, { ...options, body: params }),
+
+    /**
+     * Deletes the file. A file still in use is refused (422 with its usage)
+     * unless `detach` is set, which removes it from every place using it —
+     * product galleries, category and collection images — in one pass.
+     * Descriptions embedding it keep a URL that no longer resolves.
+     */
+    delete: (id: string, params?: { detach?: boolean }, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/media/${id}`, {
+        ...options,
+        params: params?.detach ? { detach: 'true' } : undefined,
+      }),
+
+    /**
+     * Where this file is in use. Worth showing before a delete: reuse shares
+     * the file, so removing one placement can leave others pointing at it.
+     */
+    usage: (id: string, options?: RequestOptions): Promise<{ data: MediaUsageReference[] }> =>
+      this.request<{ data: MediaUsageReference[] }>('GET', `/media/${id}/usage`, options),
+  }
 
   readonly categories = {
     list: (
