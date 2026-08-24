@@ -4092,7 +4092,6 @@
       "address": {
         "filled": "مكتمل",
         "not_filled": "غير مكتمل",
-        "not_located_yet": "تظهر الخريطة بعد تحديد موقع هذا العنوان.",
         "not_provided_by_seller": "لم يقدّمه البائع بعد"
       },
       "approve_override_confirm": {

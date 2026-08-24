@@ -90,6 +90,9 @@
       "view_all": "عرض الكل",
       "view_details": "عرض التفاصيل"
     },
+    "address": {
+      "not_located_yet": "تظهر الخريطة بعد تحديد موقع هذا العنوان."
+    },
     "auth": {
       "back_to_login": "العودة إلى تسجيل الدخول",
       "forgot_password": {

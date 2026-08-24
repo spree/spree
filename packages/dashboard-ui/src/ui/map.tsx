@@ -4,9 +4,6 @@ import type { MarkerOptions, PopupOptions } from 'maplibre-gl'
 import * as MapLibreGL from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
-// `cn` lives in the design system here rather than a local lib/utils, which
-// is the one edit made to this vendored registry component.
-import { cn } from '@spree/dashboard-ui'
 import type * as GeoJSON from 'geojson'
 import { Loader2, Locate, Maximize, Minus, Plus, X } from 'lucide-react'
 // `?worker&url` hands the file to the bundler, which emits it as its own chunk
@@ -26,6 +23,7 @@ import {
   useState,
 } from 'react'
 import { createPortal } from 'react-dom'
+import { cn } from '../lib/utils'
 
 // The worker ships in the package, so it is bundled and served from this
 // origin. The registry's default fetches it from unpkg at runtime, which means

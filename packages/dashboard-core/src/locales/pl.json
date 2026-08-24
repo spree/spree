@@ -90,6 +90,9 @@
       "view_all": "Zobacz wszystko",
       "view_details": "Zobacz szczegóły"
     },
+    "address": {
+      "not_located_yet": "Mapa pojawi się, gdy adres zostanie zlokalizowany."
+    },
     "auth": {
       "back_to_login": "Powrót do logowania",
       "forgot_password": {

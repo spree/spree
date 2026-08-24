@@ -4066,7 +4066,6 @@
       "address": {
         "filled": "已填写",
         "not_filled": "未填写",
-        "not_located_yet": "定位完成后将显示地图。",
         "not_provided_by_seller": "卖家尚未提供"
       },
       "approve_override_confirm": {

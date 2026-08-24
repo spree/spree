@@ -4133,7 +4133,6 @@
       "address": {
         "filled": "Uzupełniony",
         "not_filled": "Nieuzupełniony",
-        "not_located_yet": "Mapa pojawi się, gdy adres zostanie zlokalizowany.",
         "not_provided_by_seller": "Sprzedawca jeszcze go nie podał"
       },
       "approve_override_confirm": {

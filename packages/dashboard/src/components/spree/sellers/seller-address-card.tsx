@@ -2,6 +2,7 @@ import type { Seller } from '@spree/admin-sdk'
 import { AddressFormDialog } from '@spree/dashboard-core'
 import {
   AddressBlock,
+  AddressMap,
   Badge,
   Button,
   Card,
@@ -14,7 +15,6 @@ import { PencilIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useUpdateSeller } from '../../../hooks/use-sellers'
-import { SellerAddressMap } from './seller-address-map'
 
 type AddressKey = 'billing_address' | 'returns_address'
 
@@ -77,7 +77,7 @@ export function SellerAddressCard({
             <>
               {/* No title: the card header already names it. */}
               <AddressBlock address={address} />
-              <SellerAddressMap address={address} label={seller.name} />
+              <AddressMap address={address} label={seller.name} />
             </>
           ) : (
             <p className="py-4 text-center text-muted-foreground text-sm">

@@ -90,6 +90,9 @@
       "view_all": "Tout afficher",
       "view_details": "Voir les détails"
     },
+    "address": {
+      "not_located_yet": "La carte apparaît une fois cette adresse localisée."
+    },
     "auth": {
       "back_to_login": "Retour à la connexion",
       "forgot_password": {

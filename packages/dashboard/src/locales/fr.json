@@ -4073,7 +4073,6 @@
       "address": {
         "filled": "Renseignée",
         "not_filled": "Non renseignée",
-        "not_located_yet": "La carte apparaît une fois cette adresse localisée.",
         "not_provided_by_seller": "Pas encore fournie par le vendeur"
       },
       "approve_override_confirm": {

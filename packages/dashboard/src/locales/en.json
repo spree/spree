@@ -4073,7 +4073,6 @@
       "address": {
         "filled": "Filled",
         "not_filled": "Not filled",
-        "not_located_yet": "The map appears once this address has been located.",
         "not_provided_by_seller": "Not yet provided by the seller"
       },
       "approve_override_confirm": {

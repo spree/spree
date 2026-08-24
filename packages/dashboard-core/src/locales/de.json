@@ -90,6 +90,9 @@
       "view_all": "Alle anzeigen",
       "view_details": "Details anzeigen"
     },
+    "address": {
+      "not_located_yet": "Die Karte erscheint, sobald diese Adresse gefunden wurde."
+    },
     "auth": {
       "back_to_login": "Zurück zur Anmeldung",
       "forgot_password": {
