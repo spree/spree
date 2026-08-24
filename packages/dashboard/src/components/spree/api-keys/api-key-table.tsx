@@ -29,29 +29,82 @@ import {
   useCopyToClipboard,
 } from '@spree/dashboard-ui'
 import { BanIcon, CheckIcon, CopyIcon, KeyRoundIcon, PencilIcon } from 'lucide-react'
+import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDeleteApiKey, useRevokeApiKey } from '../../../hooks/use-api-keys'
 
-export function ApiKeyTable({
+/**
+ * The two kinds of key are listed side by side but answer different questions:
+ * a publishable key is defined by the channel it is bound to, a secret key by
+ * the scopes it carries. Each has its own table below rather than one table
+ * with flags, so neither has to describe the other.
+ */
+
+type ApiKeyTableProps = {
+  keys: ApiKey[]
+  loading: boolean
+  onEdit: (key: ApiKey) => void
+}
+
+export function PublishableApiKeyTable({
+  channelName,
+  ...props
+}: ApiKeyTableProps & {
+  channelName: (channelId: string | null) => string | undefined
+}) {
+  const { t } = useTranslation()
+
+  return (
+    <ApiKeyTableFrame
+      {...props}
+      title={t('admin.pages.settings.api_keys.publishable_section')}
+      description={t('admin.pages.settings.api_keys.publishable_help')}
+      emptyMessage={t('admin.pages.settings.api_keys.empty_publishable')}
+      column={<TableHead>{t('admin.pages.settings.api_keys.table.channel')}</TableHead>}
+      cell={(key) => <ChannelCell channelName={channelName(key.channel_id)} />}
+    />
+  )
+}
+
+export function SecretApiKeyTable(props: ApiKeyTableProps) {
+  const { t } = useTranslation()
+
+  return (
+    <ApiKeyTableFrame
+      {...props}
+      title={t('admin.pages.settings.api_keys.secret_section')}
+      description={t('admin.pages.settings.api_keys.secret_help')}
+      emptyMessage={t('admin.pages.settings.api_keys.empty_secret')}
+      column={<TableHead>{t('admin.pages.settings.api_keys.table.scopes')}</TableHead>}
+      cell={(key) => (
+        <TableCell>
+          <ScopeList scopes={key.scopes} />
+        </TableCell>
+      )}
+    />
+  )
+}
+
+/**
+ * The card, loading and empty states both tables share. `column` and `cell`
+ * carry the one column that differs; `cell` takes the row's key because it
+ * renders per row, which is what render props are for.
+ */
+function ApiKeyTableFrame({
   title,
   description,
   keys,
   loading,
-  showScopes,
-  showChannel = false,
   emptyMessage,
   onEdit,
-  channelName,
-}: {
+  column,
+  cell,
+}: ApiKeyTableProps & {
   title: string
   description: string
-  keys: ApiKey[]
-  loading: boolean
-  showScopes: boolean
-  showChannel?: boolean
   emptyMessage: string
-  onEdit: (key: ApiKey) => void
-  channelName?: (channelId: string | null) => string | undefined
+  column: ReactNode
+  cell: (key: ApiKey) => ReactNode
 }) {
   const { t } = useTranslation()
   return (
@@ -81,12 +134,7 @@ export function ApiKeyTable({
               <TableRow>
                 <TableHead>{t('admin.fields.name.label')}</TableHead>
                 <TableHead>{t('admin.pages.settings.api_keys.table.key')}</TableHead>
-                {showScopes && (
-                  <TableHead>{t('admin.pages.settings.api_keys.table.scopes')}</TableHead>
-                )}
-                {showChannel && (
-                  <TableHead>{t('admin.pages.settings.api_keys.table.channel')}</TableHead>
-                )}
+                {column}
                 <TableHead>{t('admin.pages.settings.api_keys.table.last_used_at')}</TableHead>
                 <TableHead>{t('admin.fields.created_at.label')}</TableHead>
                 <TableHead className="w-12" />
@@ -94,14 +142,9 @@ export function ApiKeyTable({
             </TableHeader>
             <TableBody>
               {keys.map((key) => (
-                <ApiKeyRow
-                  key={key.id}
-                  apiKey={key}
-                  showScopes={showScopes}
-                  showChannel={showChannel}
-                  onEdit={onEdit}
-                  channelName={channelName}
-                />
+                <ApiKeyRow key={key.id} apiKey={key} onEdit={onEdit}>
+                  {cell(key)}
+                </ApiKeyRow>
               ))}
             </TableBody>
           </Table>
@@ -111,18 +154,30 @@ export function ApiKeyTable({
   )
 }
 
+function ChannelCell({ channelName }: { channelName: string | undefined }) {
+  const { t } = useTranslation()
+  return (
+    <TableCell className="text-sm whitespace-nowrap">
+      {/* The name may not have loaded yet (channels query pending) — fall back
+          to the store-wide label rather than the raw ID. */}
+      {channelName ?? (
+        <span className="text-muted-foreground">
+          {t('admin.pages.settings.api_keys.table.all_channels')}
+        </span>
+      )}
+    </TableCell>
+  )
+}
+
+/** `children` is the table cell for whichever column its table declared. */
 function ApiKeyRow({
   apiKey,
-  showScopes,
   onEdit,
-  showChannel,
-  channelName,
+  children,
 }: {
   apiKey: ApiKey
-  showScopes: boolean
-  showChannel: boolean
   onEdit: (key: ApiKey) => void
-  channelName?: (channelId: string | null) => string | undefined
+  children: ReactNode
 }) {
   const { t } = useTranslation()
   const revokeMutation = useRevokeApiKey()
@@ -135,9 +190,6 @@ function ApiKeyRow({
   // exposed); secret keys only return `token_prefix` after the one-shot
   // create response.
   const visibleToken = apiKey.plaintext_token ?? apiKey.token_prefix ?? ''
-  // Bound publishable keys show their channel; the name may not have loaded yet
-  // (channels query pending) — fall back to nothing rather than the raw ID.
-  const boundChannelName = channelName?.(apiKey.channel_id)
 
   async function handleRevoke() {
     const ok = await confirm({
@@ -202,20 +254,7 @@ function ApiKeyRow({
           )}
         </div>
       </TableCell>
-      {showScopes && (
-        <TableCell>
-          <ScopeList scopes={apiKey.scopes} />
-        </TableCell>
-      )}
-      {showChannel && (
-        <TableCell className="text-sm whitespace-nowrap">
-          {boundChannelName ?? (
-            <span className="text-muted-foreground">
-              {t('admin.pages.settings.api_keys.table.all_channels')}
-            </span>
-          )}
-        </TableCell>
-      )}
+      {children}
       <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
         {/* `last_used_at` is throttled to update at most hourly (see
             ApiKeyAuthentication#touch_api_key_if_needed), so the timestamp

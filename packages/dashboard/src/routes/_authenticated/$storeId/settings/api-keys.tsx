@@ -7,7 +7,10 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CreateApiKeyDialog } from '../../../../components/spree/api-keys/api-key-create-sheet'
 import { EditApiKeyDialog } from '../../../../components/spree/api-keys/api-key-edit-sheet'
-import { ApiKeyTable } from '../../../../components/spree/api-keys/api-key-table'
+import {
+  PublishableApiKeyTable,
+  SecretApiKeyTable,
+} from '../../../../components/spree/api-keys/api-key-table'
 import { TokenRevealDialog } from '../../../../components/spree/api-keys/api-key-token-reveal-dialog'
 import { useApiKeys } from '../../../../hooks/use-api-keys'
 import { useChannels } from '../../../../hooks/use-channels'
@@ -47,27 +50,14 @@ function ApiKeysSettingsPage() {
         }
       />
 
-      <ApiKeyTable
-        title={t('admin.pages.settings.api_keys.publishable_section')}
-        description={t('admin.pages.settings.api_keys.publishable_help')}
+      <PublishableApiKeyTable
         keys={publishable}
         loading={isLoading}
-        showScopes={false}
-        showChannel
-        emptyMessage={t('admin.pages.settings.api_keys.empty_publishable')}
         onEdit={setEditKey}
         channelName={channelName}
       />
 
-      <ApiKeyTable
-        title={t('admin.pages.settings.api_keys.secret_section')}
-        description={t('admin.pages.settings.api_keys.secret_help')}
-        keys={secret}
-        loading={isLoading}
-        showScopes
-        emptyMessage={t('admin.pages.settings.api_keys.empty_secret')}
-        onEdit={setEditKey}
-      />
+      <SecretApiKeyTable keys={secret} loading={isLoading} onEdit={setEditKey} />
 
       <CreateApiKeyDialog
         open={createOpen}
