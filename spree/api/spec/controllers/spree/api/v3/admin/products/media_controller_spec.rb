@@ -351,6 +351,57 @@ RSpec.describe Spree::Api::V3::Admin::MediaController, type: :controller do
     end
   end
 
+  # A product's gallery is part of the product: the media keys govern the
+  # library, not this product's own pictures. Both directions matter — media
+  # permissions must not become a back door into editing products either.
+  describe 'authorization through the product' do
+    let(:user) { create(:admin_user, :without_admin_role) }
+    let(:jwt) do
+      Spree::Api::V3::TestingSupport.generate_jwt(
+        user, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN
+      )
+    end
+    let(:headers) { { 'Authorization' => "Bearer #{jwt}" } }
+
+    before { store.add_user(user, role) }
+
+    def add_external_video
+      post :create, params: {
+        product_id: product.prefixed_id,
+        media_type: 'external_video',
+        external_video_url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+      }, as: :json
+    end
+
+    context 'with product permissions' do
+      let(:role) { create(:role, name: 'Products', permissions: %w[read_products write_products]) }
+
+      it 'allows adding to the gallery' do
+        add_external_video
+
+        expect(response).to have_http_status(:created)
+      end
+
+      it 'allows fetching an image by URL' do
+        post :create, params: {
+          product_id: product.prefixed_id, url: 'https://example.com/a.jpg'
+        }, as: :json
+
+        expect(response).to have_http_status(:accepted)
+      end
+    end
+
+    context 'with media permissions only' do
+      let(:role) { create(:role, name: 'Media', permissions: %w[read_media write_media]) }
+
+      it 'refuses adding to the gallery' do
+        add_external_video
+
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
+  end
+
   describe 'placing a library file on a product' do
     let!(:target) { create(:product) }
 

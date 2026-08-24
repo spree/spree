@@ -30,6 +30,12 @@ module Spree
             Spree.api.admin_media_serializer
           end
 
+          # A product's gallery is part of the product: authorizing the product
+          # here is the whole check, and the per-record hook stays a no-op so a
+          # media key is never required to manage a product's own pictures.
+          # The media keys govern the library.
+          def authorize_resource!(resource = @resource, action = action_name.to_sym); end
+
           def set_parent
             @product = current_store.products.find_by_prefix_id!(params[:product_id])
             authorize!(:update, @product)
@@ -94,8 +100,6 @@ module Spree
           end
 
           def create_from_url
-            authorize!(:create, Spree::Media)
-
             url = permitted_params[:url]
             position = permitted_params[:position]
 

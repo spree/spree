@@ -95,8 +95,12 @@ module Spree
             super + %w[usage]
           end
 
+          # The library authorizes the media record itself; the product-nested
+          # controller authorizes its product instead, so this restores the
+          # per-record check its no-op skips. `usage` maps to `:show` because
+          # CanCanCan's `:read` alias covers only index and show.
           def authorize_resource!(resource = @resource, action = action_name.to_sym)
-            super(resource, action == :usage ? :show : action)
+            authorize!(action == :usage ? :show : action, resource || Spree::Media)
           end
 
           # No parent to resolve. The library is the store's own collection, so
