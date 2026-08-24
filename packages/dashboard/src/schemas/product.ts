@@ -70,11 +70,11 @@ export const customFieldFormSchema = z.object({
 
 export type CustomFieldFormValues = z.infer<typeof customFieldFormSchema>
 
-// Media in form state. Persisted entries carry an `id`; pre-save entries
-// carry a `signed_id` (from a completed ActiveStorage direct upload). Both
-// can hold edits to alt, position, and variant_ids that the parent product
-// PATCH/POST ships inline. previewUrl + uploadId are UI-only; stripped at
-// submit.
+// Media in form state. Persisted entries carry an `id`; pre-save entries carry
+// a `signed_id` (from a completed ActiveStorage direct upload) or a
+// `source_media_id` (a file picked from the library). All can hold edits to
+// alt, position, and variant_ids that the parent product PATCH/POST ships
+// inline. previewUrl + uploadId are UI-only; stripped at submit.
 export const MEDIA_TYPES = ['image', 'video', 'external_video'] as const
 
 export type MediaType = (typeof MEDIA_TYPES)[number]
@@ -83,6 +83,9 @@ export const mediaFormSchema = z
   .object({
     id: z.string().optional(),
     signed_id: z.string().optional(),
+    // A file picked from the library. The save places a copy sharing the
+    // source's file rather than uploading a second one.
+    source_media_id: z.string().optional(),
     alt: z.string().nullable().optional(),
     position: z.number().int().nonnegative().optional(),
     variant_ids: z.array(z.string()).optional(),

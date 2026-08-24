@@ -287,6 +287,15 @@ Spree::Core::Engine.add_routes do
           resources :media, controller: 'media', only: [:index, :create, :update, :destroy]
         end
 
+        # Media library — every file in the store, placed or not. Files are put
+        # ON a product through the nested media routes above; this is where they
+        # are uploaded, browsed and deleted.
+        resources :media, controller: 'media_library', only: [:index, :show, :create, :update, :destroy] do
+          member do
+            get :usage
+          end
+        end
+
         # Categories
         resources :categories, concerns: [:custom_fieldable, :translatable] do
           member do

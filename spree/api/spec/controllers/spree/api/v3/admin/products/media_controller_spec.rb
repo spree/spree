@@ -350,4 +350,64 @@ RSpec.describe Spree::Api::V3::Admin::MediaController, type: :controller do
       end
     end
   end
+
+  describe 'placing a library file on a product' do
+    let!(:target) { create(:product) }
+
+    it 'creates a row sharing the source file' do
+      expect {
+        post :create, params: {
+          product_id: target.prefixed_id,
+          source_media_id: image.prefixed_id
+        }, as: :json
+      }.to change(target.media, :count).by(1)
+
+      expect(response).to have_http_status(:created)
+      expect(target.media.last.attachment.blob).to eq(image.attachment.blob)
+    end
+
+    # No second file lands in storage — that is what makes reuse cheap.
+    it 'uploads nothing' do
+      expect {
+        post :create, params: {
+          product_id: target.prefixed_id,
+          source_media_id: image.prefixed_id
+        }, as: :json
+      }.not_to change(ActiveStorage::Blob, :count)
+    end
+
+    it 'accepts attributes for the new placement alongside the source' do
+      post :create, params: {
+        product_id: target.prefixed_id,
+        source_media_id: image.prefixed_id,
+        alt: 'Same shot, different product'
+      }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(target.media.last.alt).to eq('Same shot, different product')
+    end
+
+    it 'leaves the source where it was' do
+      post :create, params: {
+        product_id: target.prefixed_id,
+        source_media_id: image.prefixed_id
+      }, as: :json
+
+      expect(image.reload.viewable).to eq(product)
+    end
+
+    context 'with a source from another store' do
+      let(:other_store) { create(:store) }
+      let(:foreign_image) { create(:image, viewable: create(:product, store: other_store)) }
+
+      it 'returns 404 rather than copying across stores' do
+        post :create, params: {
+          product_id: target.prefixed_id,
+          source_media_id: foreign_image.prefixed_id
+        }, as: :json
+
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+  end
 end

@@ -8,6 +8,9 @@ export const Subject = {
   All: 'all',
   Product: 'Spree::Product',
   ProductType: 'Spree::ProductType',
+  // The media library. Authorized as product imagery — a merchant who can edit
+  // products can manage the files that illustrate them.
+  Media: 'Spree::Media',
   Variant: 'Spree::Variant',
   Order: 'Spree::Order',
   Customer: 'Spree::User',

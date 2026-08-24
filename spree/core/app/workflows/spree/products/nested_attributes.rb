@@ -96,12 +96,13 @@ module Spree
         product.association(:default_variant).reset
       end
 
-      # Media entries come in four kinds: an `id` patches an existing asset, a
-      # `signed_id` attaches an already-uploaded blob, an `external_url` hands
-      # the fetch to a background job, and an external video carries a URL
-      # instead of a file. Omitting an entry leaves it alone — removal is the
-      # dedicated DELETE endpoint's job, so a form shipping stale state cannot
-      # destroy a merchant's images.
+      # Media entries come in five kinds: an `id` patches an existing asset, a
+      # `signed_id` attaches an already-uploaded blob, a `source_media_id`
+      # places a file already in the library, an `external_url` hands the fetch
+      # to a background job, and an external video carries a URL instead of a
+      # file. Omitting an entry leaves it alone — removal is the dedicated
+      # DELETE endpoint's job, so a form shipping stale state cannot destroy a
+      # merchant's images.
       #
       # @param product [Spree::Product]
       # @param media_params [Array<Hash>, nil]
@@ -112,23 +113,49 @@ module Spree
         media_params.each do |raw|
           attrs = (raw.respond_to?(:to_h) ? raw.to_h : raw).with_indifferent_access
 
+          # Every way of getting at a file comes off first, so whichever branch
+          # runs is left with attributes alone. Pulling one out inside its own
+          # branch leaves the others in the hash, and an entry carrying two of
+          # them reaches assign_attributes with a key no column matches.
           asset_id = attrs.delete(:id)
+          source_media_id = attrs.delete(:source_media_id)
+          external_url = attrs.delete(:external_url)
+          signed_id = attrs.delete(:signed_id)
+
           if asset_id.present?
             asset = product.media.find_by_param(asset_id) || next
-            asset.update!(attrs.except(:signed_id, :external_url))
+            asset.update!(attrs)
             next
           end
 
-          external_url = attrs.delete(:external_url)
+          next place_from_library(product, source_media_id, attrs) if source_media_id.present?
           next enqueue_media_download(product, external_url, attrs) if external_url.present?
-
-          signed_id = attrs.delete(:signed_id)
           next if signed_id.blank? && attrs[:media_type] != 'external_video'
 
           asset = product.media.build(attrs)
           asset.attachment.attach(signed_id) if signed_id.present?
           asset.save!
         end
+      end
+
+      # Places a file already in the store's library onto this product. The new
+      # row shares the source's blob rather than copying the file.
+      #
+      # The source is looked up through the product's own store, so an id from
+      # another store is ignored rather than copying a file across the tenancy
+      # boundary — the same rule the media endpoint enforces with a 404.
+      #
+      # @param product [Spree::Product]
+      # @param source_media_id [String] prefixed or raw id of the library row
+      # @param attrs [Hash] attributes for the new placement
+      # @return [void]
+      def place_from_library(product, source_media_id, attrs)
+        source = product.store&.media&.find_by_param(source_media_id)
+        return if source.blank?
+
+        copy = source.duplicate_for(product)
+        copy.assign_attributes(attrs)
+        copy.save!
       end
 
       # Downloading is a job rather than a step: it reaches out over the

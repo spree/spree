@@ -46,6 +46,17 @@
       "view_all": "Tout afficher",
       "view_details": "Voir les détails"
     },
+    "media_picker": {
+      "title": "Médiathèque",
+      "description": "Choisissez des fichiers déjà dans votre médiathèque, ou importez-en de nouveaux.",
+      "search_placeholder": "Rechercher par nom…",
+      "upload": "Importer",
+      "empty": "Votre médiathèque est vide. Importez un fichier pour commencer.",
+      "no_results": "Aucun fichier ne correspond à votre recherche.",
+      "confirm": "Ajouter la sélection",
+      "selected_count_one": "{{count}} sélectionné",
+      "selected_count_other": "{{count}} sélectionnés"
+    },
     "row_actions": {
       "menu_label": "Ouvrir les actions",
       "edit": "Modifier",
@@ -406,6 +417,9 @@
         "search_placeholder": "Rechercher des pays…",
         "empty": "Aucun pays trouvé"
       },
+      "media_preview": {
+        "video_title": "Aperçu de la vidéo"
+      },
       "state_combobox": {
         "placeholder": "Sélectionner une région",
         "search_placeholder": "Rechercher des régions…",
@@ -581,6 +595,7 @@
         "ordered_list": "Liste numérotée",
         "blockquote": "Citation",
         "link": "Lien",
+        "image": "Image",
         "undo": "Annuler",
         "redo": "Rétablir"
       },

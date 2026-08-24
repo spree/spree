@@ -46,6 +46,17 @@
       "view_all": "عرض الكل",
       "view_details": "عرض التفاصيل"
     },
+    "media_picker": {
+      "title": "مكتبة الوسائط",
+      "description": "اختر ملفات موجودة في مكتبتك، أو ارفع ملفات جديدة.",
+      "search_placeholder": "البحث بالاسم…",
+      "upload": "رفع",
+      "empty": "مكتبتك فارغة. ارفع ملفًا للبدء.",
+      "no_results": "لا توجد ملفات تطابق بحثك.",
+      "confirm": "إضافة المحدد",
+      "selected_count_one": "تم تحديد {{count}}",
+      "selected_count_other": "تم تحديد {{count}}"
+    },
     "row_actions": {
       "menu_label": "فتح الإجراءات",
       "edit": "تعديل",
@@ -406,6 +417,9 @@
         "search_placeholder": "البحث في البلدان…",
         "empty": "لم يتم العثور على بلدان"
       },
+      "media_preview": {
+        "video_title": "معاينة الفيديو"
+      },
       "state_combobox": {
         "placeholder": "اختر ولاية",
         "search_placeholder": "البحث في الولايات…",
@@ -581,6 +595,7 @@
         "ordered_list": "قائمة مرقمة",
         "blockquote": "اقتباس",
         "link": "رابط",
+        "image": "صورة",
         "undo": "تراجع",
         "redo": "إعادة"
       },

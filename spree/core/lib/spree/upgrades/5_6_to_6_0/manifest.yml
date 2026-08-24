@@ -63,6 +63,40 @@ steps:
 
       Idempotent — re-running skips products that are already migrated.
 
+  - id: backfill_media_store_ids
+    name: "Assign a store to media rows that predate the store binding"
+    task: "spree:upgrade:backfill_media_store_ids"
+    notes: |
+      Spree 6.0 gives every media row its own store_id so the media library can
+      list files that are not yet attached to anything. Media used to reach its
+      store through its viewable; a file uploaded before anyone has decided
+      where it goes has no viewable to ask.
+
+      Each row is matched to its product's store. Media whose viewable was
+      deleted out from under it goes to the default store — a row with no store
+      is invisible to every library query and would otherwise sit in storage
+      with no way to find or delete it.
+
+      Run this AFTER spree:media:migrate_master_images_to_product_media and let
+      its jobs drain: that step moves media between viewables, and a row
+      re-homed afterwards would keep the store stamped here.
+
+      Idempotent — rows that already carry a store_id are skipped, so an
+      interrupted run resumes for free.
+
+  - id: backfill_library_media_placements
+    name: "Place existing category and collection images in the media library"
+    task: "spree:upgrade:backfill_library_media_placements"
+    notes: |
+      Category and collection images used to exist only as attachments —
+      in storage but invisible to the media library. New uploads create their
+      library placement on save; this walks the records that predate that.
+
+      Runs after backfill_media_store_ids so the library the placements land
+      in is already store-scoped.
+
+      Idempotent — slots that already have their placement are skipped.
+
   - id: remove_master_variant
     name: "Migrate products off the master variant"
     task: "spree:remove_master_variant"

@@ -6,15 +6,15 @@ import {
   FieldError,
   FieldLabel,
   Input,
+  MediaPreview,
   Sheet,
   SheetContent,
   SheetFooter,
   SheetHeader,
   SheetTitle,
-  Textarea,
 } from '@spree/dashboard-ui'
 import i18n from 'i18next'
-import { CheckIcon, FilmIcon, ImagePlusIcon } from 'lucide-react'
+import { CheckIcon } from 'lucide-react'
 import { useCallback, useEffect, useRef } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 import { parseVideoUrl } from '../../../lib/video-url'
@@ -123,7 +123,7 @@ export function MediaEditSheet({ form, mediaIndex, variants, open, onOpenChange 
   }
 
   // Click the image where it should stay in frame when a storefront crops it.
-  const handleFocalPointClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleFocalPointClick = (event: React.MouseEvent<HTMLElement>) => {
     if (!isImage) return
 
     const bounds = event.currentTarget.getBoundingClientRect()
@@ -214,50 +214,15 @@ export function MediaEditSheet({ form, mediaIndex, variants, open, onOpenChange 
         </SheetHeader>
 
         <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-5">
-          {isExternalVideo && parsedVideo ? (
-            <div className="aspect-video w-full shrink-0 overflow-hidden rounded-lg border border-border bg-black">
-              <iframe
-                src={parsedVideo.embedUrl}
-                title={alt || t('admin.products.media.video_preview_title')}
-                allowFullScreen
-                className="size-full"
-              />
-            </div>
-          ) : isHostedVideo && videoUrl ? (
-            // biome-ignore lint/a11y/useMediaCaption: merchant-supplied product footage has no track
-            <video
-              src={videoUrl}
-              controls
-              className="max-h-[60vh] w-full shrink-0 rounded-lg bg-black"
-            />
-          ) : (
-            <button
-              type="button"
-              disabled={!isImage || !previewUrl}
-              onClick={handleFocalPointClick}
-              className="group relative block w-full shrink-0 overflow-hidden rounded-lg border border-border bg-muted disabled:cursor-default"
-            >
-              {previewUrl ? (
-                <>
-                  <img src={previewUrl} alt={alt} className="w-full max-h-[60vh] object-contain" />
-                  {isImage && focalPoint && (
-                    <span
-                      aria-hidden
-                      className="pointer-events-none absolute size-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-[0_0_0_2px_rgba(0,0,0,0.4)]"
-                      style={{
-                        left: `${focalPoint.x * 100}%`,
-                        top: `${focalPoint.y * 100}%`,
-                      }}
-                    />
-                  )}
-                </>
-              ) : (
-                <div className="flex aspect-square w-full items-center justify-center text-muted-foreground">
-                  {isImage ? <ImagePlusIcon className="size-8" /> : <FilmIcon className="size-8" />}
-                </div>
-              )}
-            </button>
-          )}
+          <MediaPreview
+            mediaType={entry.media_type}
+            previewUrl={previewUrl}
+            videoUrl={videoUrl}
+            embedUrl={parsedVideo?.embedUrl}
+            alt={alt}
+            focalPoint={focalPoint}
+            onFocalPointClick={handleFocalPointClick}
+          />
 
           {isImage && previewUrl && (
             <div className="flex items-center justify-between gap-2 -mt-3">
@@ -292,11 +257,10 @@ export function MediaEditSheet({ form, mediaIndex, variants, open, onOpenChange 
 
           <Field>
             <FieldLabel htmlFor="media-alt">{t('admin.fields.media.alt.label')}</FieldLabel>
-            <Textarea
+            <Input
               id="media-alt"
               value={alt}
               onChange={(e) => setAlt(e.target.value)}
-              rows={3}
               placeholder={t('admin.fields.media.alt.placeholder')}
             />
           </Field>

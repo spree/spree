@@ -8,8 +8,25 @@ describe Spree::Media, type: :model do
     let(:reflection) { described_class.attachment_reflections['attachment'] }
 
     it 'defines preprocessed variants based on config' do
-      expected_variants = Spree::Config.product_image_variant_sizes.keys
+      expected_variants = Spree::Config.product_image_variant_sizes.keys + [:embed]
       expect(reflection.named_variants.keys).to match_array(expected_variants)
+    end
+
+    describe ':embed' do
+      let(:named_variant) { reflection.named_variants[:embed] }
+
+      # The gallery sizes crop to a square; an image inside a description keeps
+      # whatever shape the merchant gave it.
+      it 'bounds the image without cropping it' do
+        expect(named_variant.transformations[:resize_to_limit]).to eq(Spree::Config.rich_text_image_size)
+        expect(named_variant.transformations).not_to have_key(:resize_to_fill)
+      end
+
+      # Most files are never embedded in a description, so this one is built on
+      # first use rather than on every upload.
+      it 'is not preprocessed' do
+        expect(named_variant.instance_variable_get(:@preprocessed)).to be_falsey
+      end
     end
 
     Spree::Config.product_image_variant_sizes.each do |name, (width, height)|
@@ -19,6 +36,164 @@ describe Spree::Media, type: :model do
         expect(named_variant.transformations[:resize_to_fill]).to eq([width, height])
         expect(named_variant.transformations[:format]).to eq('webp')
         expect(named_variant.instance_variable_get(:@preprocessed)).to eq(true)
+      end
+    end
+  end
+
+  describe 'store' do
+    it 'follows the product it is placed on' do
+      product = create(:product)
+      media = create(:image, viewable: product)
+
+      expect(media.store).to eq(product.store)
+    end
+
+    it 'follows the variant product for a variant-pinned row' do
+      variant = create(:variant)
+      media = create(:asset, viewable: variant)
+
+      expect(media.store).to eq(variant.product.store)
+    end
+
+    # A library upload has no viewable to follow, so it belongs to the store
+    # whose dashboard uploaded it.
+    it 'falls back to the current store when unplaced' do
+      media = create(:image, viewable: nil)
+
+      expect(media.viewable).to be_nil
+      expect(media.store).to eq(Spree::Store.default)
+    end
+
+    it 'is required' do
+      media = build(:image, viewable: nil)
+      media.store = nil
+      allow(Spree::Current).to receive(:store).and_return(nil)
+
+      expect(media).not_to be_valid
+      expect(media.errors[:store]).to be_present
+    end
+  end
+
+  describe 'library scopes' do
+    let!(:placed) { create(:image, viewable: create(:product)) }
+    let!(:unplaced) { create(:image, viewable: nil) }
+
+    it 'separates placed rows from library uploads' do
+      expect(described_class.attached).to include(placed)
+      expect(described_class.attached).not_to include(unplaced)
+      expect(described_class.unattached).to include(unplaced)
+      expect(described_class.unattached).not_to include(placed)
+    end
+  end
+
+  describe '.distinct_by_file' do
+    let(:source) { create(:image, viewable: create(:product)) }
+
+    it 'keeps one row per shared file' do
+      copy = source.duplicate_for(create(:product))
+      copy.save!
+
+      result = described_class.distinct_by_file.where(id: [source.id, copy.id])
+
+      expect(result).to contain_exactly(copy)
+    end
+
+    it 'keeps rows whose files differ' do
+      other = create(:image, viewable: create(:product))
+
+      result = described_class.distinct_by_file.where(id: [source.id, other.id])
+
+      expect(result).to contain_exactly(source, other)
+    end
+
+    # An external video has no attachment to group by, so it can't be folded
+    # into another row's file.
+    it 'keeps external videos' do
+      video = create(:external_video_media, viewable: create(:product))
+
+      expect(described_class.distinct_by_file).to include(video)
+    end
+  end
+
+  describe '#duplicate_for' do
+    let(:source) { create(:image, viewable: create(:product), alt: 'Front view') }
+    let(:target) { create(:product) }
+
+    # The whole point of the design: placing a file elsewhere costs a row, not
+    # a second copy of the file.
+    it 'shares the blob rather than uploading a second copy' do
+      copy = source.duplicate_for(target)
+
+      expect { copy.save! }.not_to change(ActiveStorage::Blob, :count)
+      expect(copy.attachment.blob).to eq(source.attachment.blob)
+    end
+
+    it 'copies the descriptive attributes' do
+      source.update!(focal_point_x: 0.25, focal_point_y: 0.75)
+      copy = source.duplicate_for(target)
+
+      expect(copy.alt).to eq('Front view')
+      expect(copy.media_type).to eq(source.media_type)
+      expect(copy.focal_point).to eq({ x: 0.25, y: 0.75 })
+    end
+
+    it 'belongs to the new owner, leaving the source in place' do
+      copy = source.duplicate_for(target)
+      copy.save!
+
+      expect(copy.viewable).to eq(target)
+      expect(source.reload.viewable).not_to eq(target)
+    end
+
+    # Media follows the thing it is a picture of, so a copy takes the target's
+    # store rather than inheriting the one the source came from.
+    it 'belongs to the target product store' do
+      other_store = create(:store)
+      target = create(:product, store: other_store)
+
+      copy = source.duplicate_for(target)
+      copy.save!
+
+      expect(copy.store).to eq(other_store)
+    end
+
+    it 'takes no variant links from the source' do
+      product = source.product
+      variant = create(:variant, product: product)
+      source.update!(variant_ids: [variant.id])
+
+      copy = source.duplicate_for(target)
+      copy.save!
+
+      expect(copy.variants).to be_empty
+    end
+
+    # Deleting one placement must not pull the file out from under the others.
+    it 'leaves the file intact when one copy is destroyed' do
+      copy = source.duplicate_for(target)
+      copy.save!
+      blob = source.attachment.blob
+
+      perform_enqueued_jobs { copy.destroy! }
+
+      expect(ActiveStorage::Blob.exists?(blob.id)).to be(true)
+      expect(source.reload.attachment).to be_attached
+    end
+
+    context 'with a video and its poster' do
+      let(:source) { create(:video_media, viewable: create(:product)) }
+
+      it 'shares the poster blob too' do
+        source.poster.attach(
+          io: File.new(Spree::Core::Engine.root + 'spec/fixtures' + 'thinking-cat.jpg'),
+          filename: 'thinking-cat.jpg'
+        )
+        source.save!
+
+        copy = source.duplicate_for(target)
+        copy.save!
+
+        expect(copy.poster.blob).to eq(source.poster.blob)
       end
     end
   end

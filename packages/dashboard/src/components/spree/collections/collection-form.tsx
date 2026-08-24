@@ -11,7 +11,6 @@ import {
   FieldLabel,
   Input,
   MetadataCard,
-  RichTextEditor,
   Select,
   SelectContent,
   SelectItem,
@@ -31,6 +30,7 @@ import {
   CustomFieldsInlineCard,
   FormBackedCustomFieldsProvider,
 } from '../custom-fields/custom-fields-inline'
+import { MediaRichTextEditor } from '../media-rich-text-editor'
 import { ResourceImageField } from '../resource-image-field'
 import { ResourceTranslationsCard } from '../translations/resource-translations-card'
 import { CollectionProductsCard } from './collection-products-card'
@@ -77,7 +77,7 @@ export function CollectionMain({
                 control={form.control}
                 name="description"
                 render={({ field }) => (
-                  <RichTextEditor
+                  <MediaRichTextEditor
                     id="collection-description"
                     ariaLabel={t('admin.fields.description.label')}
                     value={field.value}

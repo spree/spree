@@ -2067,6 +2067,63 @@
       "tax_exclusive": "HT",
       "tax_inclusive": "TTC"
     },
+    "media_library": {
+      "choose_from_library": "Choisir dans la médiathèque",
+      "delete_confirm": {
+        "title": "Supprimer ce fichier ?",
+        "message": "Supprimer « {{name}} » le retire de votre médiathèque. Partout où il est encore utilisé, l’image disparaîtra.",
+        "in_use_message_one": "Supprimer « {{name}} » le retire de votre médiathèque et de l’emplacement qui l’utilise. Les descriptions qui l’intègrent perdront l’image.",
+        "in_use_message_other": "Supprimer « {{name}} » le retire de votre médiathèque et des {{count}} emplacements qui l’utilisent. Les descriptions qui l’intègrent perdront l’image."
+      },
+      "delete_failed": "Le fichier n’a pas pu être supprimé",
+      "deleted": "Fichier supprimé",
+      "description": "Toutes les images et vidéos de votre boutique. Importez des fichiers ici pour les réutiliser sur plusieurs produits.",
+      "discard_confirm": {
+        "title": "Abandonner les modifications ?",
+        "message": "Vos modifications de ce fichier n’ont pas été enregistrées.",
+        "confirm": "Abandonner"
+      },
+      "download": "Télécharger",
+      "empty": "Aucun fichier pour le moment. Importez-en un pour commencer.",
+      "facts": {
+        "type": "Type",
+        "size": "Taille"
+      },
+      "file": "Fichier",
+      "no_results": "Aucun fichier ne correspond à vos filtres.",
+      "placement": {
+        "all": "Tous les fichiers",
+        "attached": "Utilisé",
+        "unattached": "Pas encore utilisé"
+      },
+      "search_placeholder": "Rechercher par nom de fichier…",
+      "title": "Médias",
+      "type": {
+        "all": "Tous les types",
+        "image": "Images",
+        "video": "Vidéos",
+        "external_video": "Liens vidéo"
+      },
+      "upload": "Importer des fichiers",
+      "upload_failed": "{{name}} n’a pas pu être importé",
+      "upload_succeeded_one": "{{count}} fichier importé",
+      "upload_succeeded_other": "{{count}} fichiers importés",
+      "usage": {
+        "title": "Utilisé dans",
+        "empty": "Ce fichier n'est utilisé nulle part.",
+        "kind": {
+          "media": "Produit",
+          "attachment": "Champ image",
+          "rich_text": "Description"
+        },
+        "owner": {
+          "product": "Produit",
+          "variant": "Variante",
+          "category": "Catégorie",
+          "collection": "Collection"
+        }
+      }
+    },
     "nav": {
       "account": "Compte",
       "categories": "Catégories",
@@ -2080,6 +2137,7 @@
       "getting_started": "Premiers pas",
       "gift_cards": "Cartes cadeaux",
       "home": "Accueil",
+      "media": "Médias",
       "options": "Options",
       "orders": "Commandes",
       "price_lists": "Listes de prix",
@@ -3427,6 +3485,7 @@
         "unknown_location": "Emplacement inconnu"
       },
       "media": {
+        "add_from_library": "Ajouter depuis la médiathèque",
         "add_video": "Ajouter un lien vidéo",
         "add_video_submit": "Ajouter la vidéo",
         "add_video_title": "Ajouter un lien vidéo",

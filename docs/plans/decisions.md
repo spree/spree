@@ -3612,3 +3612,71 @@ is superseded; `Spree.store_setup_tasks` stays code-only for the merchant's own
 Getting Started list. Never add `Seller#onboarding_completed?`-style predicates
 or step-done columns; a new admission check is a kind or a `validate` hook on
 the seller workflows. Plan: `6.0-seller-onboarding-requirements.md`.
+
+## 2026-08-24 — Media library reuses files by sharing blobs, never by a shared asset entity
+
+The 6.0 media library is a store-scoped view over `Spree::Media` (which gains a
+`store_id`, backfilled from the viewable's product), with upload-first
+unattached rows (`viewable_id: nil`). Reusing a file elsewhere duplicates the
+`Media` row and attaches the **same** `ActiveStorage::Blob` — no second file,
+processed renditions shared, per-context alt/position/variant links kept. The
+reuse API is `source_media_id` on the existing nested media create; the
+library picker also hands out blob `signed_id`s so bare attachment fields
+(category, collection, store, seller images) can adopt an existing file
+through their unchanged endpoints. Rich text embeds are plain `<img>` URLs to
+a new non-cropping rendition — no reference-tracking tables.
+
+**Why:** the ownership model (`viewable`, `acts_as_list`, counter caches,
+thumbnail denormalization, the variant-link boundary) all assume one owner per
+row; a Vendure-style shared-asset join model reworks all of it for a benefit
+blob sharing already delivers at the storage layer. Deletion stays safe
+because the Rails foreign key from `active_storage_attachments` to
+`active_storage_blobs` blocks purging a shared blob and
+`ActiveStorage::PurgeJob` discards on that violation — reference counting for
+free.
+
+**Consequences:** that FK is load-bearing (the no-FK convention covers Spree's
+own tables only — never strip it); media deletion paths must use
+`purge_later`, never synchronous `purge`; new contexts needing a file get
+their own `Media` row sharing the blob, never a join table onto `Media`; and
+`img` enters `RichTextSanitizer.allowed_tags` only in the same change that
+gives the dashboard editor its image node.
+
+Two things the implementation settled. A copy takes the **target's** store,
+never the source's — `duplicate_for` leaves `store_id` unset so
+`SingleStoreResource` resolves it from the new owner's product, because media
+follows the thing it is a picture of; copying the source's store wrote rows
+into the wrong tenant whenever a placement crossed stores, which the
+controller's scoped lookup hid. And `source_media_id` is honored by **both**
+product write paths — the nested media create and the inline `media:` list —
+since the dashboard's product Save uses the inline list, so supporting only
+the endpoint left the picker silently dropping its files. A new media write
+path must accept it or reuse breaks on that path alone.
+
+Live use then reshaped two boundaries. **Category and Collection are real
+Media viewables** (`Media::VIEWABLE_TYPES` allowlist: Product, Variant,
+Category, Collection): their `image`/`square_image` slots reconcile into
+placements via `Spree::HasLibraryMedia` on save — the slots stay the
+operational storage, the placements are the library's view, clearing a slot
+unplaces (never destroys) its row, and the future category gallery is additive
+rows on the same association. Until that gallery exists, reconciliation owns
+every placement on these records. Sellers and stores stay bare attachments —
+branding, not merchandising media. And **library delete detaches on
+confirmation**: a file in use returns 422 with its usage list, and
+`detach=true` runs `Spree::MediaDeletion` — removing it from every placement
+and plain attachment in its store, then deleting the row so the blob purges.
+The refusal stays the default so an API client cannot pull a file out from
+under a catalog by accident; only the nested gallery destroy removes a single
+placement.
+
+Review then caught two tenancy holes worth stating as rules. `acts_as_list`
+needed `store_id` in its scope: an unplaced library row has no viewable, so
+without it every store's uploads shared one list and their positions bled
+across tenants. And `Spree::MediaUsage` had to scope all three of its sources
+to the file's own store — a shared blob reaches other tenants' records, and
+reporting them named another store's data to a merchant who cannot see it
+anywhere else; its rich text search covers content models only, never order or
+customer internal notes. Both are the general shape: **a store-owned model
+whose rows can exist unattached needs `store_id` wherever tenancy was
+previously implied by a parent.**
+Plan: `6.0-media-library.md`.

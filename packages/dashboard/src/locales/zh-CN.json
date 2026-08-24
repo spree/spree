@@ -2064,6 +2064,61 @@
       "tax_exclusive": "不含税",
       "tax_inclusive": "含税"
     },
+    "media_library": {
+      "choose_from_library": "从媒体库选择",
+      "delete_confirm": {
+        "title": "删除此文件？",
+        "message": "删除“{{name}}”会将其从媒体库中移除。仍在使用它的位置将失去该图片。",
+        "in_use_message_other": "删除“{{name}}”会将其从媒体库以及使用它的 {{count}} 个位置中移除。嵌入它的描述将失去该图片。"
+      },
+      "delete_failed": "无法删除该文件",
+      "deleted": "文件已删除",
+      "description": "店铺中的所有图片和视频。在此上传文件，即可在多个商品中重复使用。",
+      "discard_confirm": {
+        "title": "放弃更改？",
+        "message": "对该文件的更改尚未保存。",
+        "confirm": "放弃"
+      },
+      "download": "下载",
+      "empty": "暂无文件。上传一个文件即可开始。",
+      "facts": {
+        "type": "类型",
+        "size": "大小"
+      },
+      "file": "文件",
+      "no_results": "没有文件符合筛选条件。",
+      "placement": {
+        "all": "全部文件",
+        "attached": "使用中",
+        "unattached": "尚未使用"
+      },
+      "search_placeholder": "按文件名搜索…",
+      "title": "媒体",
+      "type": {
+        "all": "全部类型",
+        "image": "图片",
+        "video": "视频",
+        "external_video": "视频链接"
+      },
+      "upload": "上传文件",
+      "upload_failed": "{{name}} 上传失败",
+      "upload_succeeded_other": "已上传 {{count}} 个文件",
+      "usage": {
+        "title": "使用于",
+        "empty": "该文件未在任何位置使用。",
+        "kind": {
+          "media": "商品",
+          "attachment": "图片字段",
+          "rich_text": "描述"
+        },
+        "owner": {
+          "product": "商品",
+          "variant": "变体",
+          "category": "分类",
+          "collection": "系列"
+        }
+      }
+    },
     "nav": {
       "account": "账户",
       "categories": "分类",
@@ -2077,6 +2132,7 @@
       "getting_started": "快速入门",
       "gift_cards": "礼品卡",
       "home": "首页",
+      "media": "媒体",
       "options": "选项",
       "orders": "订单",
       "price_lists": "价格表",
@@ -3423,6 +3479,7 @@
         "unknown_location": "未知位置"
       },
       "media": {
+        "add_from_library": "从媒体库添加",
         "add_video": "添加视频链接",
         "add_video_submit": "添加视频",
         "add_video_title": "添加视频链接",

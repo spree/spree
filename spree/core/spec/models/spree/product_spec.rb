@@ -641,6 +641,15 @@ describe Spree::Product, type: :model do
     let(:file) { File.open(File.expand_path('../../fixtures/thinking-cat.jpg', __dir__)) }
     let(:params) { { viewable_id: product.default_variant.id, viewable_type: 'Spree::Variant', alt: 'position 2', position: 2 } }
 
+    # An extension placing media on its own model registers the type; the
+    # allowlist rejects unregistered constants.
+    around do |example|
+      original = Spree::Media.viewable_types
+      Spree::Media.viewable_types += ['ThirdParty::Extension']
+      example.run
+      Spree::Media.viewable_types = original
+    end
+
     before do
       images = [
         Spree::Media.new(params),

@@ -25,6 +25,7 @@ DATABASE_NAME=$(db_name)
 DATABASE_NAME_TEST=$(test_db_name)
 SPREE_DASHBOARD_URL=$(dashboard_url)
 RAILS_HOST=$(rails_host)
+RAILS_PROTOCOL=https
 EOF
 fi
 
@@ -34,10 +35,16 @@ if ! grep -q '^SPREE_DASHBOARD_URL=' server/.env; then
   printf 'SPREE_DASHBOARD_URL=%s\n' "$(dashboard_url)" >> server/.env
 fi
 
-# Backfill likewise: without it, attachment URLs in API payloads fall back to
-# the store's seeded `localhost:3000`, so dashboard images 404.
+# Backfill likewise: without these, attachment URLs in API payloads fall back
+# to the store's seeded `localhost:3000`, so dashboard images 404. portless
+# terminates TLS in front of the dev server, so the public scheme is https even
+# though Rails itself is serving plain http.
 if ! grep -q '^RAILS_HOST=' server/.env; then
   printf 'RAILS_HOST=%s\n' "$(rails_host)" >> server/.env
+fi
+
+if ! grep -q '^RAILS_PROTOCOL=' server/.env; then
+  printf 'RAILS_PROTOCOL=%s\n' 'https' >> server/.env
 fi
 
 require_current_starter

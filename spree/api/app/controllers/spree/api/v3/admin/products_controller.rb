@@ -221,7 +221,7 @@ module Spree
               # `external_url` is deliberately not permitted here: it makes the
               # server fetch a URL the caller chose, so it belongs to trusted
               # importers rather than to a request body.
-              media: [*Spree::Media::WRITABLE_ATTRIBUTES, :id, :signed_id, { variant_ids: [] }],
+              media: [*Spree::Media::WRITABLE_ATTRIBUTES, :id, :signed_id, :source_media_id, { variant_ids: [] }],
               product_publications: [:id, :channel_id, :published_at, :unpublished_at],
               variants: [
                 :id, :sku, :barcode,

@@ -12,28 +12,34 @@ module Spree
   #
   # Widening it is a deliberate act, not a default: an editor gaining a node
   # type widens the allowlist in the same change. Merchants whose legacy
-  # descriptions embed richer markup — tables, images or video +iframe+s from
-  # the pre-6.0 TinyMCE admin — can re-permit it from an initializer, and
-  # should, because content is re-sanitized on its next save:
+  # descriptions embed richer markup — tables or video +iframe+s from the
+  # pre-6.0 TinyMCE admin — can re-permit it from an initializer, and should,
+  # because content is re-sanitized on its next save:
   #
-  #   Spree::RichTextSanitizer.allowed_tags += %w[table thead tbody tr th td img]
-  #   Spree::RichTextSanitizer.allowed_attributes += %w[src alt colspan rowspan]
+  #   Spree::RichTextSanitizer.allowed_tags += %w[table thead tbody tr th td]
+  #   Spree::RichTextSanitizer.allowed_attributes += %w[colspan rowspan]
   class RichTextSanitizer
     # Tiptap StarterKit (paragraph, headings, hard break, horizontal rule,
     # bold, italic, strike, underline, code, code block, blockquote, lists)
-    # plus Link. Verified against each extension's +renderHTML+.
+    # plus Link and Image. Verified against each extension's +renderHTML+.
     class_attribute :allowed_tags,
                     default: %w[
                       p br hr
                       h1 h2 h3 h4 h5 h6
                       strong em s u code pre
-                      blockquote ul ol li a
+                      blockquote ul ol li a img
                     ].freeze
 
-    # +href+/+target+/+rel+/+title+ come from Link. +class+ is permitted only
-    # because a code block carries +language-*+ on its inner +code+ element;
-    # the class scrubber below is what keeps that from being a free-for-all.
-    class_attribute :allowed_attributes, default: %w[href target rel title class].freeze
+    # +href+/+target+/+rel+/+title+ come from Link; +src+/+alt+/+width+/+height+
+    # from Image. +class+ is permitted only because a code block carries
+    # +language-*+ on its inner +code+ element; the class scrubber below is what
+    # keeps that from being a free-for-all.
+    #
+    # +src+ needs no protocol allowlist of its own: the permit scrubber drops an
+    # attribute whose value carries an unsafe scheme, so +data:+ and
+    # +javascript:+ URIs are stripped while https and relative URLs survive.
+    class_attribute :allowed_attributes,
+                    default: %w[href target rel title class src alt width height].freeze
 
     # Classes surviving on +code+ elements. Tiptap writes +language-<name>+
     # from its +languageClassPrefix+; nothing else in the editor emits a class,

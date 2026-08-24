@@ -125,6 +125,13 @@ nav.add({
       position: 400,
     },
     {
+      key: 'products.media',
+      labelKey: 'admin.nav.media',
+      path: '/products/media',
+      subject: Subject.Media,
+      position: 450,
+    },
+    {
       key: 'products.transfers',
       labelKey: 'admin.nav.transfers',
       path: '/products/transfers',

@@ -146,6 +146,9 @@ module Spree
     has_many :payment_methods, class_name: 'Spree::PaymentMethod', dependent: :nullify
 
     has_many :products, class_name: 'Spree::Product', dependent: :nullify
+    # The media library: every file uploaded to this store, whether or not it
+    # has been placed on a product yet.
+    has_many :media, class_name: 'Spree::Media', dependent: :destroy_async
     has_many :product_publications, through: :channels, source: :publications, class_name: 'Spree::ProductPublication'
     has_many :variants, through: :products, class_name: 'Spree::Variant', source: :variants
     has_many :stock_levels, through: :variants, class_name: 'Spree::StockLevel'

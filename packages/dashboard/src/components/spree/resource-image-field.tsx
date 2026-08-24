@@ -1,7 +1,16 @@
-import { ImageUploadField } from '@spree/dashboard-core'
-import { useMemo } from 'react'
+import type { Media } from '@spree/admin-sdk'
+import {
+  adminClient,
+  ImageUploadField,
+  MediaPickerSheet,
+  useDirectUpload,
+} from '@spree/dashboard-core'
+import { Button } from '@spree/dashboard-ui'
+import { LibraryIcon } from 'lucide-react'
+import { useMemo, useState } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { useCreateMediaLibraryFile } from '../../hooks/use-media-library'
 
 /**
  * The form fields backing one image: a freshly direct-uploaded blob
@@ -63,6 +72,9 @@ export function ResourceImageField<Name extends string, T extends ImageFieldsFor
   helpKey?: string
 }) {
   const { t } = useTranslation()
+  const [picking, setPicking] = useState(false)
+  const directUpload = useDirectUpload()
+  const createLibraryFile = useCreateMediaLibraryFile()
 
   // The adapter only ever touches this one image triple, and always by the
   // three names derived from `kind`. Narrow to a concrete triple so the
@@ -79,21 +91,58 @@ export function ResourceImageField<Name extends string, T extends ImageFieldsFor
   const resolvedHelpKey = helpKey ?? (square ? 'square_help' : 'help')
 
   return (
-    <ImageUploadField
-      square={square}
-      serverUrl={serverUrl}
-      label={t(`${translationNamespace}.images.${resolvedLabelKey}`)}
-      help={t(`${translationNamespace}.images.${resolvedHelpKey}`)}
-      value={{
-        signedId: imageForm.watch(signedIdField),
-        previewUrl: imageForm.watch(previewField),
-        cleared: imageForm.watch(clearedField),
-      }}
-      onChange={(next) => {
-        imageForm.setValue(signedIdField, next.signedId, { shouldDirty: true })
-        imageForm.setValue(previewField, next.previewUrl, { shouldDirty: true })
-        imageForm.setValue(clearedField, next.cleared, { shouldDirty: true })
-      }}
-    />
+    <div className="space-y-2">
+      <ImageUploadField
+        square={square}
+        serverUrl={serverUrl}
+        label={t(`${translationNamespace}.images.${resolvedLabelKey}`)}
+        help={t(`${translationNamespace}.images.${resolvedHelpKey}`)}
+        value={{
+          signedId: imageForm.watch(signedIdField),
+          previewUrl: imageForm.watch(previewField),
+          cleared: imageForm.watch(clearedField),
+        }}
+        onChange={(next) => {
+          imageForm.setValue(signedIdField, next.signedId, { shouldDirty: true })
+          imageForm.setValue(previewField, next.previewUrl, { shouldDirty: true })
+          imageForm.setValue(clearedField, next.cleared, { shouldDirty: true })
+        }}
+      />
+
+      <Button type="button" variant="outline" size="sm" onClick={() => setPicking(true)}>
+        <LibraryIcon className="size-4" />
+        {t('admin.media_library.choose_from_library')}
+      </Button>
+
+      <MediaPickerSheet<Media>
+        open={picking}
+        onOpenChange={setPicking}
+        multiple={false}
+        queryKey={`image-field-${kind}`}
+        search={(query) =>
+          adminClient.media.list({
+            limit: 48,
+            media_type_eq: 'image',
+            ...(query ? { filename_cont: query } : {}),
+          })
+        }
+        onUpload={async (file) => {
+          const upload = await directUpload.mutateAsync(file)
+          return createLibraryFile.mutateAsync({ signed_id: upload.signedId, alt: file.name })
+        }}
+        // Picking hands over the file's own blob, so this field and the library
+        // row point at one file — no upload, no second copy in storage.
+        onConfirm={(picked) => {
+          const media = picked[0]
+          if (!media?.signed_id) return
+
+          imageForm.setValue(signedIdField, media.signed_id, { shouldDirty: true })
+          imageForm.setValue(previewField, media.small_url ?? media.original_url ?? null, {
+            shouldDirty: true,
+          })
+          imageForm.setValue(clearedField, false, { shouldDirty: true })
+        }}
+      />
+    </div>
   )
 }

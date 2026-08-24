@@ -371,10 +371,11 @@ function ProductForm({ product }: { product: Product }) {
       // hydration effect would otherwise keep isDirty true forever (since
       // we then skip the refetch's reset).
       //
-      // Strip `signed_id` and the UI-only fields from baseline media so a
-      // subsequent save before the mediaResponse refetch lands can't re-ship
-      // the same signed_id and create a duplicate Asset. The persisted media
-      // ids will hydrate on the next refetch.
+      // Strip the file-transport keys and the UI-only fields from baseline
+      // media so a subsequent save before the mediaResponse refetch lands
+      // can't re-ship them and create a duplicate Asset — `signed_id` would
+      // re-attach the upload, `source_media_id` would place the library file a
+      // second time. The persisted media ids hydrate on the next refetch.
       const baseline: ProductFormValues = {
         ...data,
         // `data` is the parsed (extension-stripped) shape — put extension
@@ -383,6 +384,7 @@ function ProductForm({ product }: { product: Product }) {
         media: (data.media ?? []).map(
           ({
             signed_id: _sid,
+            source_media_id: _smid,
             poster_signed_id: _psid,
             previewUrl: _p,
             posterUrl: _pu,

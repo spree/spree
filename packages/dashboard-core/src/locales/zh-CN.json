@@ -46,6 +46,17 @@
       "view_all": "查看全部",
       "view_details": "查看详情"
     },
+    "media_picker": {
+      "title": "媒体库",
+      "description": "从媒体库中选择文件，或上传新文件。",
+      "search_placeholder": "按名称搜索…",
+      "upload": "上传",
+      "empty": "媒体库为空。请上传文件以开始。",
+      "no_results": "没有文件符合您的搜索。",
+      "confirm": "添加所选",
+      "selected_count_one": "已选择 {{count}} 个",
+      "selected_count_other": "已选择 {{count}} 个"
+    },
     "row_actions": {
       "menu_label": "打开操作",
       "edit": "编辑",
@@ -406,6 +417,9 @@
         "search_placeholder": "搜索国家/地区…",
         "empty": "未找到国家/地区"
       },
+      "media_preview": {
+        "video_title": "视频预览"
+      },
       "state_combobox": {
         "placeholder": "选择州/省",
         "search_placeholder": "搜索州/省…",
@@ -581,6 +595,7 @@
         "ordered_list": "有序列表",
         "blockquote": "引用",
         "link": "链接",
+        "image": "图片",
         "undo": "撤销",
         "redo": "重做"
       },

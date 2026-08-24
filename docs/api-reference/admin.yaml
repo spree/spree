@@ -12450,8 +12450,8 @@ paths:
                   preorder_ships_at:
                   quantity: 2
                   currency: USD
-                  name: Product 359180
-                  slug: product-359180
+                  name: Product 409180
+                  slug: product-409180
                   options_text: 'Size: S'
                   price: '10.0'
                   display_price: "$10.00"
@@ -12561,8 +12561,8 @@ paths:
                 preorder_ships_at:
                 quantity: 3
                 currency: USD
-                name: Product 3799
-                slug: product-3799
+                name: Product 4299
+                slug: product-4299
                 options_text: 'Size: S'
                 price: '19.99'
                 display_price: "$19.99"
@@ -12694,8 +12694,8 @@ paths:
                 preorder_ships_at:
                 quantity: 2
                 currency: USD
-                name: Product 382714
-                slug: product-382714
+                name: Product 432714
+                slug: product-432714
                 options_text: 'Size: S'
                 price: '10.0'
                 display_price: "$10.00"
@@ -12800,8 +12800,8 @@ paths:
                 preorder_ships_at:
                 quantity: 5
                 currency: USD
-                name: Product 399758
-                slug: product-399758
+                name: Product 449758
+                slug: product-449758
                 options_text: 'Size: S'
                 price: '19.99'
                 display_price: "$19.99"
@@ -14833,12 +14833,12 @@ paths:
                   label: Bogus
                   description:
                   preference_schema:
-                  - key: dummy_key
-                    type: string
-                    default: PUBLICKEY123
                   - key: dummy_secret_key
                     type: password
                     default:
+                  - key: dummy_key
+                    type: string
+                    default: PUBLICKEY123
                 - type: custom_payment_source_method
                   label: Custom Payment Source Method
                   description:
@@ -17275,8 +17275,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 806550
-                  slug: product-806550
+                  name: Product 856550
+                  slug: product-856550
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -17667,8 +17667,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 842061
-                slug: product-842061
+                name: Product 892061
+                slug: product-892061
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -17780,7 +17780,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Updated Name
-                slug: product-865339
+                slug: product-915339
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -20026,18 +20026,18 @@ paths:
                   label: Item total
                   description:
                   preference_schema:
-                  - key: amount_min
-                    type: decimal
-                    default: 100.0
-                  - key: operator_min
-                    type: string
-                    default: ">"
                   - key: amount_max
                     type: decimal
                     default:
                   - key: operator_max
                     type: string
                     default: "<"
+                  - key: amount_min
+                    type: decimal
+                    default: 100.0
+                  - key: operator_min
+                    type: string
+                    default: ">"
                 - type: market
                   label: Market(s)
                   description:
@@ -23444,7 +23444,7 @@ paths:
                 data:
                 - id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-132
+                  sku: SKU-137
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -23490,11 +23490,11 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 1096804
+                  product_name: Product 1146804
                   delivery_profile_id: fp_UkLWZg9DAJ
                 - id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-133
+                  sku: SKU-138
                   options_text: 'Size: S'
                   track_inventory: true
                   media_count: 0
@@ -23552,7 +23552,7 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 1096804
+                  product_name: Product 1146804
                   delivery_profile_id: fp_UkLWZg9DAJ
                 meta:
                   page: 1
@@ -23689,7 +23689,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 1101771
+                product_name: Product 1151771
                 delivery_profile_id: fp_UkLWZg9DAJ
         '422':
           description: validation error
@@ -23868,7 +23868,7 @@ paths:
               example:
                 id: variant_gbHJdmfrXB
                 product_id: prod_UkLWZg9DAJ
-                sku: SKU-139
+                sku: SKU-144
                 options_text: 'Size: S'
                 track_inventory: true
                 media_count: 0
@@ -23926,7 +23926,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 1124025
+                product_name: Product 1174025
                 delivery_profile_id: fp_UkLWZg9DAJ
         '404':
           description: variant not found
@@ -24057,7 +24057,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 1145672
+                product_name: Product 1195672
                 delivery_profile_id: fp_UkLWZg9DAJ
       requestBody:
         content:
@@ -28798,9 +28798,9 @@ paths:
                   stock_location_ids: []
                   calculator_type: Spree::Calculator::Shipping::FlatRate
                   calculator_preferences:
+                    currency: USD
                     amounts: {}
                     amount: '10.0'
-                    currency: USD
                 meta:
                   page: 1
                   limit: 25
@@ -28887,9 +28887,9 @@ paths:
                 stock_location_ids: []
                 calculator_type: Spree::Calculator::Shipping::FlatRate
                 calculator_preferences:
+                  currency: USD
                   amounts: {}
                   amount: '12.5'
-                  currency: USD
       requestBody:
         content:
           application/json:
@@ -28994,18 +28994,21 @@ paths:
                 - type: Spree::Calculator::Shipping::FlatRate
                   name: Flat rate
                   preference_schema:
+                  - key: currency
+                    type: string
+                    default: USD
                   - key: amounts
                     type: hash
                     default: {}
                   - key: amount
                     type: decimal
                     default: 0
-                  - key: currency
-                    type: string
-                    default: USD
                 - type: Spree::Calculator::Shipping::FlexiRate
                   name: Flexible Rate per package item
                   preference_schema:
+                  - key: currency
+                    type: string
+                    default: USD
                   - key: first_item
                     type: decimal
                     default: 0.0
@@ -29015,48 +29018,45 @@ paths:
                   - key: max_items
                     type: integer
                     default: 0
-                  - key: currency
-                    type: string
-                    default: USD
                 - type: Spree::Calculator::Shipping::PerItem
                   name: Flat rate per package item
                   preference_schema:
+                  - key: currency
+                    type: string
+                    default: USD
                   - key: amounts
                     type: hash
                     default: {}
                   - key: amount
                     type: decimal
                     default: 0
-                  - key: currency
-                    type: string
-                    default: USD
                 - type: Spree::Calculator::Shipping::PriceSack
                   name: Price sack
                   preference_schema:
-                  - key: minimal_amount
-                    type: decimal
-                    default: 0
-                  - key: normal_amount
-                    type: decimal
-                    default: 0
                   - key: discount_amount
                     type: decimal
                     default: 0
                   - key: currency
                     type: string
                     default: USD
+                  - key: minimal_amount
+                    type: decimal
+                    default: 0
+                  - key: normal_amount
+                    type: decimal
+                    default: 0
                 - type: Spree::Calculator::Shipping::DigitalDelivery
                   name: Digital Delivery
                   preference_schema:
+                  - key: currency
+                    type: string
+                    default: USD
                   - key: amounts
                     type: hash
                     default: {}
                   - key: amount
                     type: decimal
                     default: 0
-                  - key: currency
-                    type: string
-                    default: USD
   "/api/v3/admin/delivery_zones":
     post:
       summary: Create delivery zone
@@ -29450,6 +29450,364 @@ paths:
               example:
                 connected: true
                 error_message:
+  "/api/v3/admin/media":
+    get:
+      summary: List media
+      tags:
+      - Media
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns every file in the store's media library, whether or not it has
+        been placed on a product. Filter with `q[unattached]=true` for files not
+        yet in use, `q[media_type_eq]` for images or video, and
+        `q[filename_cont]` to search by file name.
+
+
+        **Required scope:** `read_products` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Number of records per page
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: media found
+          content:
+            application/json:
+              example:
+                data:
+                - id: media_UkLWZg9DAJ
+                  product_id: prod_UkLWZg9DAJ
+                  variant_ids: []
+                  position: 1
+                  alt: Front view
+                  media_type: image
+                  focal_point_x:
+                  focal_point_y:
+                  external_video_url:
+                  video_provider:
+                  video_embed_url:
+                  video_url:
+                  poster_url:
+                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a792d5a7c0bb0465b7334e556143bf49de071ef2/thinking-cat.jpg
+                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a792d5a7c0bb0465b7334e556143bf49de071ef2/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--4f200ab0b31df07a77c26a9423e15aea92045d0b/thinking-cat.jpg
+                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a792d5a7c0bb0465b7334e556143bf49de071ef2/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--c83053ed088ef874d7af5067245721a0d9c15aba/thinking-cat.jpg
+                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a792d5a7c0bb0465b7334e556143bf49de071ef2/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1906e13dc9156a73cbf6e0a40dfeac71ce6fee4b/thinking-cat.jpg
+                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a792d5a7c0bb0465b7334e556143bf49de071ef2/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--356a9ced96523bddc490297754c06fa29358d82b/thinking-cat.jpg
+                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a792d5a7c0bb0465b7334e556143bf49de071ef2/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--db73eb756e69ad3d72cf8e97f23a1691e87f3398/thinking-cat.jpg
+                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a792d5a7c0bb0465b7334e556143bf49de071ef2/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--12ba0b816a73971c6da36274c5907dce76dded29/thinking-cat.jpg
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  attached: true
+                  filename: thinking-cat.jpg
+                  content_type: image/jpeg
+                  byte_size: 18090
+                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a792d5a7c0bb0465b7334e556143bf49de071ef2/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--979ebd6663109efe9af3dc8ea025c7baa58a6570/thinking-cat.jpg
+                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a792d5a7c0bb0465b7334e556143bf49de071ef2
+                  viewable_id: prod_UkLWZg9DAJ
+                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a792d5a7c0bb0465b7334e556143bf49de071ef2/thinking-cat.jpg?disposition=attachment
+                  metadata: {}
+                  viewable_type: product
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Media"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+    post:
+      summary: Upload a file to the library
+      tags:
+      - Media
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Adds a file to the library without placing it on anything. Upload the
+        file first through the direct-upload endpoint, then send the signed id
+        here. Put the file on a product by posting to that product's media with
+        this record's id as `source_media_id`.
+
+
+        **Required scope:** `write_products` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '201':
+          description: file added
+          content:
+            application/json:
+              example:
+                id: media_gbHJdmfrXB
+                product_id:
+                variant_ids: []
+                position: 1
+                alt: Folded on a table
+                media_type: image
+                focal_point_x:
+                focal_point_y:
+                external_video_url:
+                video_provider:
+                video_embed_url:
+                video_url:
+                poster_url:
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--2957d56510d970386e79ea5ddcec47e7b4c4f84c/library-upload.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--2957d56510d970386e79ea5ddcec47e7b4c4f84c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--4f200ab0b31df07a77c26a9423e15aea92045d0b/library-upload.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--2957d56510d970386e79ea5ddcec47e7b4c4f84c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--c83053ed088ef874d7af5067245721a0d9c15aba/library-upload.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--2957d56510d970386e79ea5ddcec47e7b4c4f84c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1906e13dc9156a73cbf6e0a40dfeac71ce6fee4b/library-upload.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--2957d56510d970386e79ea5ddcec47e7b4c4f84c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--356a9ced96523bddc490297754c06fa29358d82b/library-upload.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--2957d56510d970386e79ea5ddcec47e7b4c4f84c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--db73eb756e69ad3d72cf8e97f23a1691e87f3398/library-upload.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--2957d56510d970386e79ea5ddcec47e7b4c4f84c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--12ba0b816a73971c6da36274c5907dce76dded29/library-upload.jpg
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                attached: false
+                filename: library-upload.jpg
+                content_type: image/jpeg
+                byte_size: 18090
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--2957d56510d970386e79ea5ddcec47e7b4c4f84c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--979ebd6663109efe9af3dc8ea025c7baa58a6570/library-upload.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--2957d56510d970386e79ea5ddcec47e7b4c4f84c
+                viewable_id:
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--2957d56510d970386e79ea5ddcec47e7b4c4f84c/library-upload.jpg?disposition=attachment
+                metadata: {}
+                viewable_type:
+              schema:
+                "$ref": "#/components/schemas/Media"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                signed_id:
+                  type: string
+                  description: Direct-upload signed id for the file.
+                alt:
+                  type: string
+                  example: Folded on a table
+                media_type:
+                  type: string
+                  enum:
+                  - image
+                  - video
+                  - external_video
+                  example: image
+                external_video_url:
+                  type: string
+                  description: YouTube or Vimeo link, for an external video.
+  "/api/v3/admin/media/{id}/usage":
+    parameters:
+    - name: id
+      in: path
+      description: Media ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Where a file is used
+      tags:
+      - Media
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Lists everywhere this file appears: products it is placed on, image
+        fields that picked it, and descriptions embedding it. Reusing a file
+        shares it rather than copying it, so deleting one placement can leave
+        others pointing at the same file — check this first.
+
+        Description matches are best-effort: an embedded image is a plain URL
+        with nothing recording it, so treat an empty result as "nothing found",
+        not proof the file is unused.
+
+
+        **Required scope:** `read_products` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: usage found
+          content:
+            application/json:
+              example:
+                data:
+                - kind: media
+                  name: Product 153397
+                  owner_type: Spree::Product
+                  owner_id: prod_UkLWZg9DAJ
+                  field: attachment
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        kind:
+                          type: string
+                          enum:
+                          - media
+                          - attachment
+                          - rich_text
+                        name:
+                          type: string
+                          nullable: true
+                        owner_type:
+                          type: string
+                        owner_id:
+                          type: string
+                          nullable: true
+                        field:
+                          type: string
+                          nullable: true
+  "/api/v3/admin/products/{product_id}/media":
+    parameters:
+    - name: product_id
+      in: path
+      description: Product ID
+      required: true
+      schema:
+        type: string
+    post:
+      summary: Place a library file on a product
+      tags:
+      - Media
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Puts a file that is already in the library onto this product. The new
+        record shares the source's file rather than copying it, so nothing is
+        uploaded and no image is reprocessed; it carries its own alt text,
+        position and variant links from here on.
+
+
+        **Required scope:** `write_products` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '201':
+          description: file placed
+          content:
+            application/json:
+              example:
+                id: media_gbHJdmfrXB
+                product_id: prod_gbHJdmfrXB
+                variant_ids: []
+                position: 1
+                alt: Front view
+                media_type: image
+                focal_point_x:
+                focal_point_y:
+                external_video_url:
+                video_provider:
+                video_embed_url:
+                video_url:
+                poster_url:
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a792d5a7c0bb0465b7334e556143bf49de071ef2/thinking-cat.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a792d5a7c0bb0465b7334e556143bf49de071ef2/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--4f200ab0b31df07a77c26a9423e15aea92045d0b/thinking-cat.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a792d5a7c0bb0465b7334e556143bf49de071ef2/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--c83053ed088ef874d7af5067245721a0d9c15aba/thinking-cat.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a792d5a7c0bb0465b7334e556143bf49de071ef2/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1906e13dc9156a73cbf6e0a40dfeac71ce6fee4b/thinking-cat.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a792d5a7c0bb0465b7334e556143bf49de071ef2/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--356a9ced96523bddc490297754c06fa29358d82b/thinking-cat.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a792d5a7c0bb0465b7334e556143bf49de071ef2/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--db73eb756e69ad3d72cf8e97f23a1691e87f3398/thinking-cat.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a792d5a7c0bb0465b7334e556143bf49de071ef2/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--12ba0b816a73971c6da36274c5907dce76dded29/thinking-cat.jpg
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                attached: true
+                filename: thinking-cat.jpg
+                content_type: image/jpeg
+                byte_size: 18090
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a792d5a7c0bb0465b7334e556143bf49de071ef2/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--979ebd6663109efe9af3dc8ea025c7baa58a6570/thinking-cat.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a792d5a7c0bb0465b7334e556143bf49de071ef2
+                viewable_id: prod_gbHJdmfrXB
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a792d5a7c0bb0465b7334e556143bf49de071ef2/thinking-cat.jpg?disposition=attachment
+                metadata: {}
+                viewable_type: product
+              schema:
+                "$ref": "#/components/schemas/Media"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                source_media_id:
+                  type: string
+                  description: A media record already in the library.
+                alt:
+                  type: string
+                  example: Front view
+                position:
+                  type: integer
+                  example: 1
+              required:
+              - source_media_id
   "/api/v3/admin/product_types":
     get:
       summary: List product types
@@ -35074,8 +35432,26 @@ components:
           type: string
         updated_at:
           type: string
+        attached:
+          type: boolean
+        filename:
+          type: string
+          nullable: true
+        content_type:
+          type: string
+          nullable: true
+        byte_size:
+          type: number
+          nullable: true
+        embed_url:
+          type: string
+          nullable: true
+        signed_id:
+          type: string
+          nullable: true
         viewable_id:
           type: string
+          nullable: true
         download_url:
           type: string
           nullable: true
@@ -35083,6 +35459,7 @@ components:
           type: object
         viewable_type:
           type: string
+          nullable: true
       required:
       - id
       - product_id
@@ -35106,6 +35483,12 @@ components:
       - og_image_url
       - created_at
       - updated_at
+      - attached
+      - filename
+      - content_type
+      - byte_size
+      - embed_url
+      - signed_id
       - viewable_id
       - download_url
       - metadata

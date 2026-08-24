@@ -2083,6 +2083,67 @@
       "tax_exclusive": "Bez podatku",
       "tax_inclusive": "Z podatkiem"
     },
+    "media_library": {
+      "choose_from_library": "Wybierz z biblioteki",
+      "delete_confirm": {
+        "title": "Usunąć ten plik?",
+        "message": "Usunięcie „{{name}}” wyjmie go z biblioteki. Wszędzie tam, gdzie jest nadal używany, zabraknie obrazu.",
+        "in_use_message_one": "Usunięcie „{{name}}” wyjmie plik z biblioteki i z {{count}} miejsca, które go używa. Opisy z osadzonym obrazem go utracą.",
+        "in_use_message_few": "Usunięcie „{{name}}” wyjmie plik z biblioteki i z {{count}} miejsc, które go używają. Opisy z osadzonym obrazem go utracą.",
+        "in_use_message_many": "Usunięcie „{{name}}” wyjmie plik z biblioteki i z {{count}} miejsc, które go używają. Opisy z osadzonym obrazem go utracą.",
+        "in_use_message_other": "Usunięcie „{{name}}” wyjmie plik z biblioteki i z {{count}} miejsc, które go używają. Opisy z osadzonym obrazem go utracą."
+      },
+      "delete_failed": "Nie udało się usunąć pliku",
+      "deleted": "Plik usunięty",
+      "description": "Wszystkie obrazy i filmy w Twoim sklepie. Prześlij pliki tutaj, aby używać ich w wielu produktach.",
+      "discard_confirm": {
+        "title": "Odrzucić zmiany?",
+        "message": "Twoje zmiany w tym pliku nie zostały zapisane.",
+        "confirm": "Odrzuć"
+      },
+      "download": "Pobierz",
+      "empty": "Brak plików. Prześlij pierwszy, aby zacząć.",
+      "facts": {
+        "type": "Typ",
+        "size": "Rozmiar"
+      },
+      "file": "Plik",
+      "no_results": "Żaden plik nie pasuje do filtrów.",
+      "placement": {
+        "all": "Wszystkie pliki",
+        "attached": "W użyciu",
+        "unattached": "Jeszcze nieużyty"
+      },
+      "search_placeholder": "Szukaj według nazwy pliku…",
+      "title": "Multimedia",
+      "type": {
+        "all": "Wszystkie typy",
+        "image": "Obrazy",
+        "video": "Filmy",
+        "external_video": "Linki do filmów"
+      },
+      "upload": "Prześlij pliki",
+      "upload_failed": "Nie udało się przesłać pliku {{name}}",
+      "upload_succeeded_few": "Przesłano {{count}} pliki",
+      "upload_succeeded_many": "Przesłano {{count}} plików",
+      "upload_succeeded_one": "Przesłano {{count}} plik",
+      "upload_succeeded_other": "Przesłano {{count}} plików",
+      "usage": {
+        "title": "Używany w",
+        "empty": "Ten plik nie jest nigdzie używany.",
+        "kind": {
+          "media": "Produkt",
+          "attachment": "Pole obrazu",
+          "rich_text": "Opis"
+        },
+        "owner": {
+          "product": "Produkt",
+          "variant": "Wariant",
+          "category": "Kategoria",
+          "collection": "Kolekcja"
+        }
+      }
+    },
     "nav": {
       "account": "Konto",
       "categories": "Kategorie",
@@ -2096,6 +2157,7 @@
       "getting_started": "Pierwsze kroki",
       "gift_cards": "Karty podarunkowe",
       "home": "Strona główna",
+      "media": "Multimedia",
       "options": "Opcje",
       "orders": "Zamówienia",
       "price_lists": "Cenniki",
@@ -3477,6 +3539,7 @@
         "unknown_location": "Nieznana lokalizacja"
       },
       "media": {
+        "add_from_library": "Dodaj z biblioteki",
         "add_video": "Dodaj link do wideo",
         "add_video_submit": "Dodaj wideo",
         "add_video_title": "Dodaj link do wideo",
