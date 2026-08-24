@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::MediaUsage do
+describe Spree::Media::Usage do
   subject(:usage) { described_class.call(media: media).value }
 
   let(:product) { create(:product, name: 'Original product') }

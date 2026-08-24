@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::MediaDeletion do
+describe Spree::Media::Destroy do
   let(:product) { create(:product) }
   let(:media) { create(:image, viewable: product) }
 

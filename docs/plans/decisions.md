@@ -3663,7 +3663,7 @@ rows on the same association. Until that gallery exists, reconciliation owns
 every placement on these records. Sellers and stores stay bare attachments —
 branding, not merchandising media. And **library delete detaches on
 confirmation**: a file in use returns 422 with its usage list, and
-`detach=true` runs `Spree::MediaDeletion` — removing it from every placement
+`detach=true` runs `Spree::Media::Destroy` — removing it from every placement
 and plain attachment in its store, then deleting the row so the blob purges.
 The refusal stays the default so an API client cannot pull a file out from
 under a catalog by accident; only the nested gallery destroy removes a single
@@ -3672,7 +3672,7 @@ placement.
 Review then caught two tenancy holes worth stating as rules. `acts_as_list`
 needed `store_id` in its scope: an unplaced library row has no viewable, so
 without it every store's uploads shared one list and their positions bled
-across tenants. And `Spree::MediaUsage` had to scope all three of its sources
+across tenants. And `Spree::Media::Usage` had to scope all three of its sources
 to the file's own store — a shared blob reaches other tenants' records, and
 reporting them named another store's data to a merchant who cannot see it
 anywhere else; its rich text search covers content models only, never order or

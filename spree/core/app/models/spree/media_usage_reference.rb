@@ -1,6 +1,6 @@
 module Spree
   # One place a media file is in use. Ephemeral — computed by
-  # +Spree::MediaUsage+ from the blob's attachment rows, never persisted.
+  # +Spree::Media::Usage+ from the blob's attachment rows, never persisted.
   #
   # A file is "in use" more broadly than a media row suggests: reusing a file
   # on another product shares its blob, and so does picking it for a category

@@ -28,7 +28,7 @@ module Spree
           # product's gallery is the nested endpoint's destroy, which stays
           # unguarded: that is removing a placement, not the file.
           def destroy
-            references = Spree::MediaUsage.call(media: @resource).value
+            references = Spree::Media::Usage.call(media: @resource).value
             return super if references.empty?
 
             unless detach_requested?
@@ -43,7 +43,7 @@ module Spree
               )
             end
 
-            result = Spree::MediaDeletion.call(media: @resource)
+            result = Spree::Media::Destroy.call(media: @resource)
             return head :no_content if result.success?
 
             render_service_error(result.error)
@@ -53,7 +53,7 @@ module Spree
           # plain image fields sharing it, and descriptions embedding it. What
           # the dashboard shows before a merchant deletes something.
           def usage
-            references = Spree::MediaUsage.call(media: @resource).value
+            references = Spree::Media::Usage.call(media: @resource).value
 
             render json: { data: references.map { |reference| reference_payload(reference) } }
           end
