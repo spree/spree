@@ -25,8 +25,6 @@ const profileDetailSearchSchema = z.object({
   provider: z.enum(['pickup', 'digital']).optional(),
 })
 
-type ProfileDetailSearch = z.infer<typeof profileDetailSearchSchema>
-
 export const Route = createFileRoute(
   '/_authenticated/$storeId/settings/delivery-profiles/$profileId/',
 )({
@@ -57,7 +55,7 @@ function DeliveryProfileDetailPage() {
 function DeliveryProfileDetailBody({ profile }: { profile: DeliveryProfile }) {
   const { t } = useTranslation()
   const { storeId } = Route.useParams()
-  const search = Route.useSearch() as ProfileDetailSearch
+  const search = Route.useSearch()
   const navigate = useNavigate()
   const confirm = useConfirm()
   const deleteMutation = useDeleteDeliveryProfile()

@@ -90,6 +90,10 @@ function EditGroupsSheet({
   // Surface the store's groups on focus (preloaded, 5-min cache) and re-seed
   // the selection whenever the sheet re-opens so a prior cancelled edit or an
   // external membership change is reflected.
+  //
+  // This tracks `currentIds` rather than only the open transition: the picker
+  // holds a selection, not typed text, and it has to pick up the membership a
+  // save just wrote before the sheet is opened again.
   const { data: groupsData } = useCustomerGroups()
   useEffect(() => {
     if (open) {

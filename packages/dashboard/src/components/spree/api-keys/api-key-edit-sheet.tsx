@@ -13,11 +13,11 @@ import {
   SheetTitle,
   toastManager,
 } from '@spree/dashboard-ui'
-import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { useUpdateApiKey } from '../../../hooks/use-api-keys'
+import { useOnSheetOpen } from '../../../hooks/use-on-sheet-open'
 import { ApiKeyNameField, FormErrorBanner } from './api-key-form-fields'
 import { ScopePicker } from './api-key-scope-picker'
 
@@ -43,12 +43,13 @@ export function EditApiKeyDialog({
     defaultValues: { name: '' },
   })
 
-  // Re-sync the form when a different key is opened. `defaultValues` alone won't
-  // update across opens (the dialog is mounted once and reused), so reset
-  // explicitly when the key changes.
-  useEffect(() => {
+  // Re-sync the form every time the sheet opens. `defaultValues` alone won't
+  // update across opens (the sheet is mounted once and reused), and keying on
+  // the key object would skip a re-open of the same cached row, leaving the
+  // previous unsaved name in the field.
+  useOnSheetOpen(!!apiKey, () => {
     if (apiKey) form.reset({ name: apiKey.name })
-  }, [apiKey, form])
+  })
 
   async function onSubmit(values: EditFormValues) {
     if (!apiKey) return

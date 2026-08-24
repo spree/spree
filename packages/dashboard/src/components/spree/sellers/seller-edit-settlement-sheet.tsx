@@ -21,9 +21,9 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@spree/dashboard-ui'
-import { useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { useOnSheetOpen } from '../../../hooks/use-on-sheet-open'
 import { useUpdateSeller } from '../../../hooks/use-sellers'
 import {
   PAYOUT_INTERVALS,
@@ -52,9 +52,7 @@ export function SellerEditSettlementSheet({
     defaultValues: SELLER_DEFAULTS,
   })
 
-  useEffect(() => {
-    if (!open) return
-
+  useOnSheetOpen(open, () => {
     form.reset({
       ...SELLER_DEFAULTS,
       // Carried so the schema's required `name` still validates; the submit
@@ -66,7 +64,7 @@ export function SellerEditSettlementSheet({
       minimum_payout_amount: seller.minimum_payout_amount ?? '',
       holiday_mode_until: seller.holiday_mode_until ?? '',
     })
-  }, [open, seller, form])
+  })
 
   async function onSubmit(values: SellerFormValues) {
     try {

@@ -23,10 +23,11 @@ import {
   SheetTitle,
 } from '@spree/dashboard-ui'
 import { MailIcon, PencilIcon, PhoneIcon, StarIcon } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useUpdateCustomer } from '../../../hooks/use-customers'
+import { useOnSheetOpen } from '../../../hooks/use-on-sheet-open'
 import {
   type CustomerProfileFormValues,
   customerProfileFormSchema,
@@ -111,21 +112,18 @@ function EditProfileSheet({
   const { errors } = form.formState
   const mutation = useUpdateCustomer(customer.id)
 
-  // Sheet stays mounted across opens; re-seed form with the latest server
-  // values whenever the dialog re-opens or the underlying record refreshes,
-  // so stale edits from a previous session are discarded.
-  useEffect(() => {
-    if (open) {
-      form.reset({
-        email: customer.email,
-        first_name: customer.first_name ?? '',
-        last_name: customer.last_name ?? '',
-        phone: customer.phone ?? '',
-        tags: customer.tags ?? [],
-        accepts_email_marketing: customer.accepts_email_marketing,
-      })
-    }
-  }, [open, customer, form])
+  // Re-seed from the latest server values each time the sheet opens, so stale
+  // edits from a previous session are discarded.
+  useOnSheetOpen(open, () => {
+    form.reset({
+      email: customer.email,
+      first_name: customer.first_name ?? '',
+      last_name: customer.last_name ?? '',
+      phone: customer.phone ?? '',
+      tags: customer.tags ?? [],
+      accepts_email_marketing: customer.accepts_email_marketing,
+    })
+  })
 
   async function onSubmit(values: CustomerProfileFormValues) {
     try {

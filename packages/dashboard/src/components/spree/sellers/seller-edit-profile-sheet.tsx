@@ -17,9 +17,9 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@spree/dashboard-ui'
-import { useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { useOnSheetOpen } from '../../../hooks/use-on-sheet-open'
 import { useUpdateSeller } from '../../../hooks/use-sellers'
 import {
   SELLER_DEFAULTS,
@@ -49,14 +49,12 @@ export function SellerEditProfileSheet({
     defaultValues: SELLER_DEFAULTS,
   })
 
-  // The sheet stays mounted across opens, so re-seed from the latest record
-  // each time it opens rather than only on first mount.
-  useEffect(() => {
-    if (!open) return
-
-    // Images reset to the empty triple: the persisted ones are passed to the
-    // field as `serverUrl`, and the triple only carries what the operator
-    // changes this time round.
+  // Re-seed from the latest record each time the sheet opens.
+  //
+  // Images reset to the empty triple: the persisted ones are passed to the
+  // field as `serverUrl`, and the triple only carries what the operator
+  // changes this time round.
+  useOnSheetOpen(open, () => {
     form.reset({
       ...SELLER_DEFAULTS,
       name: seller.name,
@@ -65,7 +63,7 @@ export function SellerEditProfileSheet({
       billing_email: seller.billing_email ?? '',
       about: seller.about_html ?? '',
     })
-  }, [open, seller, form])
+  })
 
   async function onSubmit(values: SellerFormValues) {
     try {
