@@ -25,7 +25,9 @@ module Spree
               end
             end
 
-            render_cart
+            # The customer is returning to a cart that may have sat for days,
+            # so this is where anything they can no longer buy is dropped.
+            render_cart(sweep: true)
           end
 
           # POST /api/v3/store/carts
@@ -98,7 +100,8 @@ module Spree
             result = Spree.cart_associate_service.call(guest_cart: @cart, customer: current_user, guest_only: true)
 
             if result.success?
-              render_cart
+              # Signing in hands back a cart built earlier, possibly long ago.
+              render_cart(sweep: true)
             else
               render_service_error(result.error.to_s)
             end

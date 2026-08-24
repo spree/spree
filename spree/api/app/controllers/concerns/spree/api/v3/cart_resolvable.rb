@@ -40,8 +40,16 @@ module Spree
         end
 
         # Render the cart as JSON using the cart serializer.
-        def render_cart(status: :ok)
-          @cart = @cart.remove_out_of_stock_items!
+        #
+        # +sweep+ drops lines the customer can no longer buy — a discontinued
+        # product, or stock that ran out while the cart sat idle. It belongs to
+        # reads of a cart the customer is returning to, not to the write that
+        # just happened: an add that a stock check already approved must not be
+        # second-guessed by a sweep in the same request, and an external
+        # inventory provider makes that contradiction routine, since the
+        # provider answers the write while the sweep reads Spree's own rows.
+        def render_cart(status: :ok, sweep: false)
+          @cart = @cart.remove_out_of_stock_items! if sweep
           render json: Spree.api.cart_serializer.new(@cart, params: serializer_params).to_h, status: status
         end
 
