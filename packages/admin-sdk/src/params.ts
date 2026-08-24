@@ -1256,20 +1256,9 @@ export type ExternalReferencesParams =
   | Record<string, string>
   | Array<{ system: string; external_id: string }>
 
-/** How a feed names the record it is reporting on, when it does not hold Spree's id. */
-export interface ExternalReferenceLookup {
-  /** `{ system: external_id }`, e.g. `{ erp: 'MAT-100' }`. */
-  external_id: Record<string, string>
-}
-
 export interface StockLevelBulkUpsertRow {
-  /** Spree's own id. Use this or `variant`. */
-  variant_id?: string
-  /** Address the variant by the key the feeding system holds. */
-  variant?: ExternalReferenceLookup
-  /** Spree's own id. Use this or `stock_location`. */
-  stock_location_id?: string
-  stock_location?: ExternalReferenceLookup
+  variant_id: string
+  stock_location_id: string
   /** The absolute level the external system reports. */
   count_on_hand?: number
   /** A relative change, for feeds that report movements rather than levels. */

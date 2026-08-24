@@ -20,17 +20,15 @@ RSpec.describe 'Admin Stock Levels API', type: :request, swagger_doc: 'api-refer
         Sets stock levels for many (variant, location) pairs at once — what a
         warehouse or ERP feed posts on a schedule.
 
-        Each row names its variant and stock location either by Spree id
-        (`variant_id`, `stock_location_id`) or by the key the feeding system
-        holds (`"variant": { "external_id": { "erp": "MAT-100" } }`), so a
-        feed can address records without first looking up Spree's own ids.
+        Each row names its variant and stock location by Spree id
+        (`variant_id`, `stock_location_id`).
 
         A row carries either `count_on_hand` — the absolute level the external
         system reports — or `adjustment`, a relative change for feeds that
         report movements instead. Every change is written as a stock movement,
         so a merchant can still see why a figure moved.
 
-        The response carries `stock_item_count`: how many pairs were processed.
+        The response carries `stock_level_count`: how many rows moved a shelf.
       DESC
       admin_scope :write, :stock
 
@@ -46,18 +44,10 @@ RSpec.describe 'Admin Stock Levels API', type: :request, swagger_doc: 'api-refer
             type: :array,
             items: {
               type: :object,
+              required: %w[variant_id stock_location_id],
               properties: {
-                variant_id: { type: :string, nullable: true, example: 'variant_xY9' },
-                variant: {
-                  type: :object, nullable: true,
-                  description: 'Addresses the variant by an external key instead of its Spree id.',
-                  properties: { external_id: { type: :object, additionalProperties: { type: :string } } }
-                },
-                stock_location_id: { type: :string, nullable: true, example: 'sloc_aBc' },
-                stock_location: {
-                  type: :object, nullable: true,
-                  properties: { external_id: { type: :object, additionalProperties: { type: :string } } }
-                },
+                variant_id: { type: :string, example: 'variant_xY9' },
+                stock_location_id: { type: :string, example: 'sloc_aBc' },
                 count_on_hand: { type: :integer, nullable: true, example: 42 },
                 adjustment: { type: :integer, nullable: true, example: -3 },
                 backorderable: { type: :boolean, nullable: true }

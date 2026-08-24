@@ -13,12 +13,6 @@ const { stock_level_count } = await client.stockLevels.bulkUpsert({
       stock_location_id: 'sloc_xxx',
       count_on_hand: 42,
     },
-    // Rows may instead name records by the key the feeding system holds.
-    {
-      variant: { external_id: { erp: 'MAT-100' } },
-      stock_location: { external_id: { erp: 'WH-1' } },
-      count_on_hand: 7,
-    },
   ],
 })
 

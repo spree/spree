@@ -137,33 +137,20 @@ module Spree
 
           # Every id is resolved through the current store's own scopes, so a
           # variant or location belonging to another store is simply not found
-          # rather than quietly written to.
+          # rather than quietly written to. Rows name records by Spree's own
+          # ids alone — this endpoint upserts stock levels, nothing more; a
+          # connector resolves its keys through the member paths first.
           def decode_stock_row(row)
             row = row.respond_to?(:to_unsafe_h) ? row.to_unsafe_h : row.to_h
             row = row.with_indifferent_access
 
             {
-              variant_id: resolve_id(store_variants, row[:variant_id], row[:variant]),
-              stock_location_id: resolve_id(store_stock_locations, row[:stock_location_id], row[:stock_location]),
+              variant_id: store_variants.find_by_prefix_id(row[:variant_id])&.id,
+              stock_location_id: store_stock_locations.find_by_prefix_id(row[:stock_location_id])&.id,
               count_on_hand: row[:count_on_hand],
               adjustment: row[:adjustment],
               backorderable: row[:backorderable]
             }.compact
-          end
-
-          def resolve_id(scope, prefixed_id, reference)
-            return scope.find_by_prefix_id(prefixed_id)&.id if prefixed_id.present?
-
-            external = reference.is_a?(Hash) ? reference[:external_id] : nil
-            return if external.blank?
-
-            # Only the `{ system => id }` map addresses a record; a bare string
-            # names no system, so it resolves to nothing and the row is
-            # reported as invalid rather than raising.
-            return unless external.respond_to?(:to_h) && !external.is_a?(String)
-
-            system, external_id = external.to_h.first
-            scope.with_external_id(system, external_id).take&.id
           end
 
           def store_variants

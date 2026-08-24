@@ -170,20 +170,6 @@ RSpec.describe Spree::Api::V3::Admin::StockLevelsController, type: :controller d
       expect(stock_level.count_on_hand).to eq(3)
     end
 
-    it 'addresses records by the keys the external system holds' do
-      variant.set_external_id('erp', 'MAT-100')
-      stock_location.set_external_id('erp', 'WH-1')
-
-      post :bulk_upsert, params: {
-        stock_levels: [{ variant: { external_id: { erp: 'MAT-100' } },
-                        stock_location: { external_id: { erp: 'WH-1' } },
-                        count_on_hand: 9 }]
-      }, as: :json
-
-      expect(response).to have_http_status(:ok)
-      expect(stock_level.count_on_hand).to eq(9)
-    end
-
     it 'writes many pairs in one call' do
       second = create(:variant)
       second.stock_levels.destroy_all
