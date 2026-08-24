@@ -305,4 +305,23 @@ RSpec.describe Spree::Current do
       expect(described_class.provider_cache).to eq({})
     end
   end
+
+  describe '#integrations' do
+    it 'loads the current store\'s active integrations once and serves the snapshot' do
+      active = create(:integration, store: @default_store, active: true)
+
+      expect(described_class.integrations).to eq([active])
+      expect(described_class.integrations.object_id).to eq(described_class.integrations.object_id)
+    end
+
+    # The activate-and-verify flow writes an integration mid-request; later
+    # reads must see it rather than the snapshot taken before.
+    it 'drops the snapshot when an integration is written' do
+      expect(described_class.integrations).to eq([])
+
+      connected = create(:integration, store: @default_store, active: true)
+
+      expect(described_class.integrations).to eq([connected])
+    end
+  end
 end

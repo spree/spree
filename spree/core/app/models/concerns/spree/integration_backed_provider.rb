@@ -36,7 +36,20 @@ module Spree
       def available_for_store?(store)
         return true if integration_class.blank?
 
-        store.present? && store.integrations.active.exists?(type: integration_class)
+        active_integrations(store).any? { |integration| integration.type == integration_class }
+      end
+
+      # The store's active integrations — through {Spree::Current} for the
+      # request's own store, so a whole registry's availability checks and
+      # every provider's credential lookup share one query per request.
+      #
+      # @param store [Spree::Store, nil]
+      # @return [Array<Spree::Integration>]
+      def active_integrations(store)
+        return [] if store.nil?
+        return Spree::Current.integrations if store.id == Spree::Current.store&.id
+
+        store.integrations.active.to_a
       end
 
       # The name a merchant sees when choosing a provider.
@@ -62,18 +75,15 @@ module Spree
     end
 
     # The connected, active integration carrying this provider's credentials.
-    #
-    # No memoization: provider instances are built fresh per resolution, so an
-    # instance-level cache never gets a second hit. A provider consulting this
-    # on the catalog read path should do so inside +price_for+ (whose answers
-    # {Spree::Pricing::PriceResolution} caches by +cache_ttl+), not +handles?+.
+    # Request-cached via {Spree::Current.integrations}, so a provider asking
+    # per catalog row costs one query per request, not one per row.
     #
     # @param store [Spree::Store, nil]
     # @return [Spree::Integration, nil]
     def integration_for(store)
       return if self.class.integration_class.blank?
 
-      store&.integrations&.active&.find_by(type: self.class.integration_class)
+      self.class.active_integrations(store).find { |integration| integration.type == self.class.integration_class }
     end
   end
 end

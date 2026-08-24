@@ -11,6 +11,11 @@ module Spree
     include Spree::SingleStoreResource
     include Spree::PreferenceSchema
 
+    # Spree::Current.integrations snapshots the active set for the request;
+    # connecting or deactivating one mid-request (the activate-and-verify
+    # flow does) must not leave later reads serving the stale snapshot.
+    after_commit -> { Spree::Current.integrations = nil }
+
     registers_subclasses_via { registered_classes }
 
     # Integration classes registered via +Spree.integrations+. Entries may be
