@@ -84,19 +84,6 @@ steps:
       Idempotent — rows that already carry a store_id are skipped, so an
       interrupted run resumes for free.
 
-  - id: backfill_library_media_placements
-    name: "Place existing category and collection images in the media library"
-    task: "spree:upgrade:backfill_library_media_placements"
-    notes: |
-      Category and collection images used to exist only as attachments —
-      in storage but invisible to the media library. New uploads create their
-      library placement on save; this walks the records that predate that.
-
-      Runs after backfill_media_store_ids so the library the placements land
-      in is already store-scoped.
-
-      Idempotent — slots that already have their placement are skipped.
-
   - id: remove_master_variant
     name: "Migrate products off the master variant"
     task: "spree:remove_master_variant"
@@ -129,6 +116,22 @@ steps:
 
       Idempotent. Multi-tenant installs run the per-tenant override shipped by
       spree_multi_tenant.
+
+  - id: backfill_library_media_placements
+    name: "Place existing category and collection images in the media library"
+    task: "spree:upgrade:backfill_library_media_placements"
+    notes: |
+      Category and collection images used to exist only as attachments —
+      in storage but invisible to the media library. New uploads create their
+      library placement on save; this walks the records that predate that.
+
+      Runs after backfill_media_store_ids so the library the placements land
+      in is already store-scoped, and after
+      migrate_taxons_to_categories_and_collections, which moves image
+      attachments onto collections with a callback-bypassing write — a
+      placement created before that step would be left behind on the category.
+
+      Idempotent — slots that already have their placement are skipped.
 
   - id: migrate_users_to_customers
     name: "Move users onto the gem-owned Customer/AdminUser models"

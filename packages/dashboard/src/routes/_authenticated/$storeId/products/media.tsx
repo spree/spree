@@ -435,6 +435,10 @@ function MediaDetailSheet({
   const updateFile = useUpdateMediaLibraryFile()
   const usage = useMediaUsage(media?.id ?? null)
   const [alt, setAlt] = useState('')
+  // Compared against what was last saved, not against the record the sheet
+  // opened with: that snapshot never refreshes, so after a successful save it
+  // would still hold the old alt and every close would ask to discard.
+  const [savedAlt, setSavedAlt] = useState('')
   const [poster, setPoster] = useState<{
     signedId: string | null
     previewUrl: string | null
@@ -447,22 +451,27 @@ function MediaDetailSheet({
   if (media && seededFor !== media.id) {
     setSeededFor(media.id)
     setAlt(media.alt ?? '')
+    setSavedAlt(media.alt ?? '')
     setPoster({ signedId: null, previewUrl: null, cleared: false })
   }
 
   const references = usage.data?.data ?? []
 
-  const isDirty = !!media && alt !== (media.alt ?? '')
+  const isDirty = !!media && alt !== savedAlt
 
   // An explicit save, not save-on-blur: blur is invisible, so a merchant had
   // no way to tell whether their edit stuck.
   function saveAlt() {
     if (!media || !isDirty) return
 
+    const submitted = alt
     updateFile.mutate(
-      { id: media.id, alt },
+      { id: media.id, alt: submitted },
       {
-        onSuccess: () => toastManager.add({ type: 'success', title: t('admin.messages.saved') }),
+        onSuccess: () => {
+          setSavedAlt(submitted)
+          toastManager.add({ type: 'success', title: t('admin.messages.saved') })
+        },
         onError: () => toastManager.add({ type: 'error', title: t('admin.errors.failed_to_save') }),
       },
     )

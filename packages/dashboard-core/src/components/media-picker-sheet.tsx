@@ -82,6 +82,10 @@ export function MediaPickerSheet<T extends MediaPickerOption>({
   const [submitting, setSubmitting] = useState(false)
   const [uploading, setUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  // Bumped whenever the sheet closes. An upload started in an earlier session
+  // must not confirm into a host that has already moved on — closing mid-upload
+  // would otherwise still set the field the merchant cancelled.
+  const sessionRef = useRef(0)
 
   // The store id is part of the key: a library is one store's, and without it
   // reopening the picker after a store switch serves the previous store's
@@ -128,12 +132,17 @@ export function MediaPickerSheet<T extends MediaPickerOption>({
   async function handleUpload(files: FileList | null) {
     if (!files?.length || !onUpload) return
 
+    const session = sessionRef.current
     setUploading(true)
     try {
       const uploaded: T[] = []
       for (const file of Array.from(files)) {
         uploaded.push(await onUpload(file))
       }
+      // The file is in the library either way — only the confirmation is
+      // abandoned, so nothing the merchant uploaded is lost.
+      if (session !== sessionRef.current) return
+
       await refetch()
 
       if (multiple) {
@@ -159,7 +168,10 @@ export function MediaPickerSheet<T extends MediaPickerOption>({
   }
 
   function handleOpenChange(next: boolean) {
-    if (!next) reset()
+    if (!next) {
+      sessionRef.current += 1
+      reset()
+    }
     onOpenChange(next)
   }
 
