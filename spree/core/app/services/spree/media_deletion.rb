@@ -18,11 +18,24 @@ module Spree
     def call(media:)
       blob_ids = [media.attachment_blob&.id, media.poster_blob&.id].compact
 
+      # Detaching is collected inside the transaction and enqueued after it
+      # commits: purge_later hands the file to a worker that may run before
+      # the transaction ends, so a rollback would leave the rows intact with
+      # their file already gone.
+      detachable = nil
+
       ApplicationRecord.transaction do
         destroy_placements(media, blob_ids)
-        detach_plain_attachments(media, blob_ids)
+        detachable = plain_attachments(media, blob_ids)
         media.destroy!
       end
+
+      # ActiveRecord::Rollback is swallowed by the transaction block, so a
+      # surviving row is how a rolled-back delete reports itself. Detaching
+      # then would strip the file from records the delete did not remove.
+      return failure(media) if media.persisted?
+
+      detachable.each(&:purge_later)
 
       success(media)
     end
@@ -43,13 +56,16 @@ module Spree
         .find_each(&:destroy!)
     end
 
-    def detach_plain_attachments(media, blob_ids)
-      ActiveStorage::Attachment.where(blob_id: blob_ids).find_each do |attachment|
+    # The plain attachments this store holds on the file — a category image
+    # slot, a store logo. Media rows are handled by destroy_placements.
+    #
+    # @return [Array<ActiveStorage::Attachment>]
+    def plain_attachments(media, blob_ids)
+      ActiveStorage::Attachment.where(blob_id: blob_ids).select do |attachment|
         owner = attachment.record
-        next if owner.blank? || owner.is_a?(Spree::Media)
-        next unless owned_by_store?(owner, media.store_id)
+        next false if owner.blank? || owner.is_a?(Spree::Media)
 
-        attachment.purge_later
+        owned_by_store?(owner, media.store_id)
       end
     end
 

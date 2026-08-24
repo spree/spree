@@ -51,6 +51,22 @@ describe Spree::MediaDeletion do
     expect(ActiveStorage::Blob.exists?(blob.id)).to be(true)
   end
 
+  # purge_later hands the file to a worker that can run before the transaction
+  # ends, so enqueueing inside it would destroy the file of a delete that then
+  # rolled back.
+  it 'does not detach anything when the deletion fails' do
+    category = create(:category)
+    category.image.attach(media.attachment.blob)
+    category.save!
+    allow(media).to receive(:destroy!).and_raise(ActiveRecord::Rollback)
+
+    perform_enqueued_jobs do
+      described_class.call(media: media) rescue nil
+    end
+
+    expect(category.reload.image).to be_attached
+  end
+
   it 'leaves unrelated files alone' do
     unrelated = create(:image, viewable: create(:product))
 
