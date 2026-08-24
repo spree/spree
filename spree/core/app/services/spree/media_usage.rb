@@ -42,10 +42,14 @@ module Spree
     # reference per owner, preferring the placement, which is the library's
     # own representation of the use and what the dashboard links.
     def attachment_references(media, blob_ids)
-      attachments = ActiveStorage::Attachment.where(blob_id: blob_ids)
+      # `record` is polymorphic, so preload it per type — reading it row by row
+      # is a query each, and a widely-reused file has many rows. Media owners
+      # additionally need their viewable, which build_reference reads.
+      attachments = ActiveStorage::Attachment.where(blob_id: blob_ids).to_a
+      owners = preloaded_owners(attachments)
 
       references = attachments.filter_map do |attachment|
-        owner = attachment.record
+        owner = owners[[attachment.record_type, attachment.record_id]]
         next if owner.blank?
         next unless owned_by_store?(owner, media.store_id)
 
@@ -55,6 +59,22 @@ module Spree
       references
         .group_by { |reference| [reference.owner_type, reference.owner_id] }
         .map { |_owner, group| group.find { |reference| reference.kind == 'media' } || group.first }
+    end
+
+    # @return [Hash{Array(String, Integer) => ActiveRecord::Base}] owners by [type, id]
+    def preloaded_owners(attachments)
+      attachments.group_by(&:record_type).each_with_object({}) do |(type, rows), owners|
+        model = type.safe_constantize
+        next if model.blank?
+
+        scope = model.all
+        # A media owner's own viewable is what build_reference reports.
+        scope = scope.includes(:viewable) if model <= Spree::Media
+
+        scope.where(id: rows.map(&:record_id)).each do |record|
+          owners[[type, record.id]] = record
+        end
+      end
     end
 
     # A record is this store's if it says so. One that carries no store at all

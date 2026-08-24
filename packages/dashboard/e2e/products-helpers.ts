@@ -114,26 +114,25 @@ export const variantsCard = (page: Page) => card(page, /^Variants$/)
 export const mediaCard = (page: Page) => card(page, /^Media$/)
 
 /**
- * Click a hover-revealed action on the first media thumbnail. Scrolls the
- * Media card below the sticky TopBar + PageHeader stack first — restoring
- * sticky headers (PR #14218) made Playwright's default scroll-into-view land
- * the bottom overlay buttons under the header chrome.
+ * Act on the first media thumbnail: clicking a tile opens its edit sheet, and
+ * every other action lives in the tile's right-click menu.
+ *
+ * Scrolls the Media card below the sticky TopBar + PageHeader stack first —
+ * restoring sticky headers (PR #14218) made Playwright's default
+ * scroll-into-view land the tile under the header chrome.
  */
 export async function clickMediaThumbnailAction(
   media: Locator,
   action: 'edit' | 'delete',
 ): Promise<void> {
-  // Hover the tile itself, not its image — a video with no poster renders an
+  // Target the tile itself, not its image — a video with no poster renders an
   // icon instead, and waiting on an <img> would hang.
   const thumb = media.locator('[data-slot="media-thumbnail"]').first()
-  const button = media.getByRole('button', {
-    name: action === 'edit' ? /^edit media$/i : /^delete image$/i,
-  })
 
   await thumb.scrollIntoViewIfNeeded()
   // Keep the card below the stacked sticky TopBar + PageHeader. Playwright's
-  // default click scrolls the target back into view, so we also force-click
-  // after hover — otherwise the header chrome intercepts pointer events.
+  // default click scrolls the target back into view, so we force-click after
+  // positioning — otherwise the header chrome intercepts pointer events.
   await media.evaluate((el) => {
     const headerHeight =
       Number.parseFloat(
@@ -144,9 +143,15 @@ export async function clickMediaThumbnailAction(
     if (top < stickyOffset) window.scrollBy(0, top - stickyOffset)
   })
 
-  await thumb.hover()
-  await expect(button).toBeVisible()
-  await button.click({ force: true })
+  if (action === 'edit') {
+    await thumb.click({ force: true })
+    return
+  }
+
+  await thumb.click({ button: 'right', force: true })
+  const item = media.page().getByRole('menuitem', { name: /^delete$/i })
+  await expect(item).toBeVisible()
+  await item.click()
 }
 export const customFieldsCard = (page: Page) => card(page, /^Custom fields$/)
 export const inventoryCard = (page: Page) => card(page, /^Inventory$/)

@@ -49,9 +49,14 @@ test.describe('product media — video', () => {
     await dialog.getByLabel(/video link/i).fill('https://vimeo.com/123456789')
     await dialog.getByRole('button', { name: /^add video$/i }).click()
 
+    // The add-video dialog must be gone before the edit sheet opens, or
+    // `getByRole('dialog')` resolves whichever is still mounted.
+    await expect(dialog).toBeHidden()
+
     // Open the tile's editor and upload the still.
     await clickMediaThumbnailAction(media, 'edit')
     const sheet = page.getByRole('dialog')
+    await expect(sheet.getByText(/edit media/i)).toBeVisible()
     await sheet.locator('input[type="file"]').setInputFiles(FIXTURE_IMAGE)
     await expect(sheet.locator('img[src]').first()).toBeVisible({ timeout: 15_000 })
     await sheet.getByRole('button', { name: /^done$/i }).click()
