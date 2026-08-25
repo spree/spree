@@ -17,7 +17,9 @@ module Spree
                    quantity: :number,
                    currency: :string,
                    variant_id: [:string, nullable: true],
-                   thumbnail_url: [:string, nullable: true]
+                   thumbnail_url: [:string, nullable: true],
+                   price: [:string, nullable: true], display_price: [:string, nullable: true],
+                   total: [:string, nullable: true], display_total: [:string, nullable: true]
 
           attributes :name, :options_text, :quantity, :currency
 

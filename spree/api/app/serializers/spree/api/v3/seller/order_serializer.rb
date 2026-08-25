@@ -20,7 +20,10 @@ module Spree
                    total_quantity: :number,
                    fulfillment_status: [:string, nullable: true],
                    payment_status: [:string, nullable: true],
-                   status: :string
+                   status: :string,
+                   item_total: [:string, nullable: true], display_item_total: [:string, nullable: true],
+                   tax_total: [:string, nullable: true], display_tax_total: [:string, nullable: true],
+                   total: [:string, nullable: true], display_total: [:string, nullable: true]
 
           attributes :number, :email, :customer_note, :currency, :total_quantity,
                      :status, :fulfillment_status, :payment_status,
