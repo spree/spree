@@ -32,7 +32,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(
+            attrs = params.permit(
               :name, :description, :slug, :status,
               :meta_title, :meta_description, :meta_keywords,
               :product_type_id,
@@ -41,6 +41,23 @@ module Spree
               metadata: {},
               prices: [:amount, :compare_at_amount, :currency]
             )
+
+            default_price_currency(attrs)
+          end
+
+          # A price with no currency is priced in the store's, not in whatever
+          # the client happened to assume. `Variant#prices=` passes the value
+          # through untouched and drops base prices for currencies absent from
+          # the payload, so a wrong guess does not merely add a stray price —
+          # it removes the right one.
+          def default_price_currency(attrs)
+            return attrs if attrs[:prices].blank?
+
+            attrs[:prices] = attrs[:prices].map do |price|
+              price[:currency].present? ? price : price.merge(currency: Spree::Current.currency)
+            end
+
+            attrs
           end
 
           def collection_includes

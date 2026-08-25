@@ -389,7 +389,15 @@ export interface ProductParams {
   tags?: string[]
   category_ids?: string[]
   metadata?: Record<string, unknown>
-  prices?: Array<{ amount: string | number; compare_at_amount?: string | number; currency: string }>
+  /**
+   * Omit `currency` and the price is recorded in the store's, which is the
+   * only place that knows it. A seller has no currency of their own to read.
+   */
+  prices?: Array<{
+    amount: string | number
+    compare_at_amount?: string | number
+    currency?: string
+  }>
 }
 
 /** What `/seller/me` answers. */

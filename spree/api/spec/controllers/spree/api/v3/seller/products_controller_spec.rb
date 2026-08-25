@@ -77,6 +77,34 @@ RSpec.describe Spree::Api::V3::Seller::ProductsController, type: :controller do
       expect(product.seller).to eq(seller)
       expect(product.store).to eq(store)
     end
+
+    # A seller has no currency of their own to send, and `Variant#prices=`
+    # drops base prices for currencies absent from the payload — so guessing
+    # here would not merely add a stray price, it would remove the right one.
+    it "prices in the store's currency when the payload names none" do
+      # Deliberately not the store factory's USD: a spec asserting USD here
+      # would pass just as well against a hardcoded fallback.
+      allow(Spree::Current).to receive(:currency).and_return('GBP')
+
+      post :create,
+           params: { name: 'Unpriced Lamp', prices: [{ amount: '19.99' }] },
+           as: :json
+
+      expect(response).to have_http_status(:created)
+      price = Spree::Product.find_by(name: 'Unpriced Lamp').default_variant.prices.first
+      expect(price.currency).to eq('GBP')
+      expect(price.amount).to eq(19.99)
+    end
+
+    it 'honours a currency the payload does name' do
+      post :create,
+           params: { name: 'Euro Lamp', prices: [{ amount: '19.99', currency: 'EUR' }] },
+           as: :json
+
+      expect(response).to have_http_status(:created)
+      currencies = Spree::Product.find_by(name: 'Euro Lamp').default_variant.prices.map(&:currency)
+      expect(currencies).to eq(['EUR'])
+    end
   end
 
   describe 'PATCH #update' do

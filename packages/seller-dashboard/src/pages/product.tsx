@@ -50,7 +50,12 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
 
-  const { data: product, isLoading } = useQuery({
+  const {
+    data: product,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: ['seller', sellerId, 'product', productId],
     queryFn: () => sellerClient().products.get(productId as string),
     enabled: !!productId,
@@ -83,9 +88,11 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
       // Only sent when the seller typed one: an empty box means "leave the
       // price alone", not "price this at nothing".
       if (values.amount.trim()) {
-        payload.prices = [
-          { amount: values.amount.trim(), currency: product?.price?.currency ?? 'USD' },
-        ]
+        // No currency on a new listing: the server prices it in the store's,
+        // which is the only place that knows it. Guessing here can persist a
+        // price in the wrong currency and drop the right one.
+        const currency = product?.price?.currency
+        payload.prices = [{ amount: values.amount.trim(), ...(currency ? { currency } : {}) }]
       }
 
       return productId
@@ -119,6 +126,18 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
   }
 
   if (mode === 'edit' && isLoading) return <CenteredMessage>{t('common.loading')}</CenteredMessage>
+  // Same distinction as the order page: a failed request is not a missing
+  // product, and only one of the two is worth retrying.
+  if (mode === 'edit' && isError) {
+    return (
+      <CenteredMessage>
+        {t('common.error')}{' '}
+        <Button variant="outline" onClick={() => refetch()}>
+          {t('common.retry')}
+        </Button>
+      </CenteredMessage>
+    )
+  }
   if (mode === 'edit' && !product)
     return <CenteredMessage>{t('products.not_found')}</CenteredMessage>
 
