@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :tax_identifier, class: Spree::TaxIdentifier do
-    customer
+    owner factory: :customer
     kind { 'eu_vat' }
     sequence(:value) { |n| "DE#{123_456_780 + n}" }
 
@@ -12,15 +12,21 @@ FactoryBot.define do
 
     # A number entered during checkout, overriding the customer's own.
     trait :on_cart do
-      customer { nil }
-      cart
+      owner factory: :cart
     end
 
     # The frozen snapshot taken when the order was placed.
     trait :on_order do
-      customer { nil }
-      order
+      owner factory: :order
       source { 'customer' }
+    end
+
+    trait :on_company do
+      owner factory: :company
+    end
+
+    trait :on_seller do
+      owner factory: :seller
     end
   end
 end

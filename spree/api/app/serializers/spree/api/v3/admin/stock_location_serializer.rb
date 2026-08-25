@@ -5,7 +5,8 @@ module Spree
         class StockLocationSerializer < V3::StockLocationSerializer
           include Concerns::ExternalReferencesAttribute
 
-          typelize active: :boolean, default: :boolean, backorderable_default: :boolean,
+          typelize seller_id: [:string, nullable: true], seller_name: [:string, nullable: true],
+                   active: :boolean, default: :boolean, backorderable_default: :boolean,
                    propagate_all_variants: :boolean, pickup_enabled: :boolean,
                    admin_name: [:string, nullable: true],
                    address2: [:string, nullable: true], state_name: [:string, nullable: true],
@@ -19,6 +20,18 @@ module Spree
                      :kind, :pickup_enabled, :pickup_stock_policy,
                      :pickup_ready_in_minutes, :pickup_instructions,
                      created_at: :iso8601, updated_at: :iso8601
+
+          attribute :seller_id do |stock_location|
+            stock_location.seller&.prefixed_id
+          end
+
+          attribute :seller_name do |stock_location|
+            stock_location.seller&.name
+          end
+
+          one :seller,
+              resource: proc { Spree.api.admin_seller_serializer },
+              if: proc { expand?('seller') }
         end
       end
     end

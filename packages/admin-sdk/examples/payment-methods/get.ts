@@ -7,6 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const paymentMethod = await client.paymentMethods.get('pm_UkLWZg9DAJ')
+
 // endregion:example
 
 export { paymentMethod }

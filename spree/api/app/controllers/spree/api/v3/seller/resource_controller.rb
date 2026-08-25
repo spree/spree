@@ -34,6 +34,20 @@ module Spree
             model_class.include?(Spree::TranslatableResource) ? base_scope.i18n : base_scope
           end
 
+          # A new record is this seller's, whatever the payload says, and its
+          # store follows the seller rather than the request.
+          def resource_scope
+            return super if @parent.present?
+
+            current_seller.public_send(seller_association)
+          end
+
+          def build_resource
+            resource = super
+            resource.store = current_store if resource.respond_to?(:store=)
+            resource
+          end
+
           # The seller association this controller reads through, defaulting to
           # the model's plural name (`Spree::Product` -> `products`). Override
           # when the association is named differently.

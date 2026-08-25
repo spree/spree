@@ -898,7 +898,6 @@ en:
         exactly_one_adjustable: must be attached to exactly one adjustable
         exactly_one_of_cart_or_order: must belong to exactly one of cart or order
         exactly_one_of_line_item_or_fulfillment: must be charged against exactly one of a line item or a fulfillment
-        exactly_one_tax_identifier_owner: must belong to exactly one of customer, cart or order
         flat_fee_cannot_charge_delivery: is not available on a flat fee, which already charges for the sale the delivery belongs to — add a separate rate to charge delivery
         integration_connection_failed: could not connect with the saved credentials
         integration_type_not_registered: is not a registered integration
@@ -1061,10 +1060,11 @@ en:
     internationalization: Internationalization
     invalid_credit_card: Invalid credit card.
     invalid_exchange_variant: Invalid exchange variant.
+    invalid_password: Invalid password.
     inventory: Inventory
     invitation_accepted: Invitation accepted!
     invitation_already_accepted: This invitation has already been accepted.
-    invitation_expired: This invitation has expired.
+    invitation_expired: This invitation has expired. Invite them again to send a new one.
     invitation_invitee_missing: This invitation has no invitee.
     invitation_mailer:
       greeting: Hi %{user_name},
@@ -1076,6 +1076,7 @@ en:
         link_description: 'To accept this invitation, please click the link below:'
         subject: Invitation to join %{resource_name}
       thanks: Thank you,
+    invitation_not_acceptable: Invitation not found, expired, or already accepted.
     invitation_role_resource_mismatch: must belong to the same store or seller as the invitation
     invitations: Invitations
     invited_by: Invited by
@@ -1243,6 +1244,7 @@ en:
     page: Page
     pages: Pages
     password: Password
+    password_required_to_create_account: Password is required to create your account.
     path: Path
     pay: Pay
     payment: Payment
@@ -1565,6 +1567,8 @@ en:
       file_required: A file is required for this requirement
       file_type_not_accepted: This requirement accepts %{types}
       incomplete: "%{name} is not complete"
+    seller_submission_no_file: This submission has no attached file.
+    seller_team_last_member: A seller needs at least one team member. Invite someone else before removing this one.
     send_consumer_transactional_emails: Send Customer Transactional Emails
     seo: SEO
     seo_title: SEO Title

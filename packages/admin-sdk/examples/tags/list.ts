@@ -10,6 +10,7 @@ const { data: tags } = await client.tags.list({
   taggable_type: 'Spree::User',
   q: 'vip',
 })
+
 // endregion:example
 
 export { tags }

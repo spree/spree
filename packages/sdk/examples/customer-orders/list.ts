@@ -13,6 +13,7 @@ const orders = await client.customer.orders.list(
   },
   { token: '<token>' },
 )
+
 // endregion:example
 
 export { orders }

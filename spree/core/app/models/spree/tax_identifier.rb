@@ -3,11 +3,17 @@ module Spree
   # Handed to a tax provider through {Spree::TaxProvider::Base#estimate}, where
   # it is what makes EU B2B reverse charge possible.
   #
-  # Three owners, exactly one per row: a customer (the durable profile value), a
-  # cart (an override entered during checkout) or an order (the frozen snapshot
-  # taken at completion). Orders keep a copy rather than a reference because a
-  # registration can be changed or withdrawn later, and an invoice must still
-  # show what was true when it was issued.
+  # Owners, exactly one per row: a customer (the durable profile value), a
+  # company (the business a customer buys for), a cart (an override entered
+  # during checkout) or an order (the frozen snapshot taken at completion).
+  # Orders keep a copy rather than a reference because a registration can be
+  # changed or withdrawn later, and an invoice must still show what was true
+  # when it was issued.
+  #
+  # A **seller** owns one too, and it faces the other way: the others say how
+  # the buyer is taxed, while a seller's registration is what the marketplace's
+  # own commission invoice is made out to, and what makes EU reverse charge on
+  # that fee possible (docs/plans/6.0-multi-vendor-marketplace.md Decision 12).
   #
   # == The +kind+ column
   #
@@ -38,11 +44,11 @@ module Spree
     # Which link of the resolution chain produced an order's snapshot.
     SOURCES = %w[override company customer].freeze
 
-    # Owner — exactly one
-    belongs_to :customer, class_name: Spree.customer_class.to_s, optional: true, inverse_of: :tax_identifiers
-    belongs_to :company, class_name: 'Spree::Company', optional: true, inverse_of: :tax_identifiers
-    belongs_to :cart, class_name: 'Spree::Cart', optional: true, inverse_of: :tax_identifier
-    belongs_to :order, class_name: 'Spree::Order', optional: true, inverse_of: :tax_identifier
+    # Whoever holds this registration. Polymorphic rather than one nullable FK
+    # per owner: there is one relationship here with two cardinalities — a
+    # customer, company or seller holds one per kind, a cart or order holds
+    # one — and a further owner should cost no schema change.
+    belongs_to :owner, polymorphic: true
 
     # Whitespace and case only. Punctuation is deliberately kept: for several
     # kinds it is part of the canonical number (Switzerland's CHE-123.456.789
@@ -59,16 +65,13 @@ module Spree
     after_commit :publish_number_changed, on: %i[create update]
 
     validates :kind, :value, presence: true
-    # One per kind for a customer — what the storefront upsert assumes, and what
-    # makes resolution deterministic. Cart and order rows are singular by their
-    # own associations.
-    validates :kind, uniqueness: { scope: :customer_id }, if: -> { customer_id.present? }
-    validates :kind, uniqueness: { scope: :company_id }, if: -> { company_id.present? }
+    # One per kind per owner — what the storefront upsert assumes, and what
+    # makes resolution deterministic.
+    validates :kind, uniqueness: { scope: [:owner_type, :owner_id] }
     # Data hygiene, not a format claim — no tax regime issues numbers this long.
     validates :value, length: { maximum: 64 }
     validates :validation_status, inclusion: { in: VALIDATION_STATUSES }, allow_nil: true
     validates :source, inclusion: { in: SOURCES }, allow_nil: true
-    validate :exactly_one_owner
     validate :value_format
 
     scope :for_kind, ->(kind) { where(kind: kind) }
@@ -77,12 +80,7 @@ module Spree
     # An order-owned row is a completion snapshot: immutable once written, so
     # the tax treatment of a placed order can always be explained.
     def readonly?
-      persisted? && order_id.present?
-    end
-
-    # @return [Spree::Customer, Spree::Company, Spree::Cart, Spree::Order, nil]
-    def owner
-      customer || company || cart || order
+      persisted? && order_owned?
     end
 
     def verified?
@@ -95,10 +93,16 @@ module Spree
     #
     # @return [Boolean]
     def validatable?
-      order_id.nil? && Spree.tax_identifier_validators.key?(kind)
+      !order_owned? && Spree.tax_identifier_validators.key?(kind)
     end
 
     private
+
+    # An order-owned row is the frozen completion snapshot, which is what makes
+    # it immutable and exempt from re-validation.
+    def order_owned?
+      owner_type == 'Spree::Order'
+    end
 
     # Format knowledge lives entirely in the registered validator. Core asserts
     # nothing about the shape of a number whose rules live in someone else's
@@ -114,7 +118,7 @@ module Spree
     end
 
     def number_changing?
-      order_id.nil? && (will_save_change_to_value? || will_save_change_to_kind?)
+      !order_owned? && (will_save_change_to_value? || will_save_change_to_kind?)
     end
 
     # `pending` when something here can answer for the new number, and nothing at
@@ -139,12 +143,6 @@ module Spree
       return unless saved_changes.key?('value') || saved_changes.key?('kind')
 
       publish_event('tax_identifier.number_changed')
-    end
-
-    def exactly_one_owner
-      return if [customer, company, cart, order].compact.one?
-
-      errors.add(:base, Spree.t('errors.messages.exactly_one_tax_identifier_owner'))
     end
   end
 end

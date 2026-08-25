@@ -1,0 +1,60 @@
+{
+  "name": "@spree/seller-dashboard",
+  "version": "0.1.0",
+  "license": "MIT",
+  "type": "module",
+  "description": "Spree marketplace seller panel \u2014 the seller-facing counterpart to the admin dashboard.",
+  "exports": {
+    ".": "./src/index.ts",
+    "./styles.css": "./src/styles.css",
+    "./vite": {
+      "types": "./src/vite/index.ts",
+      "default": "./dist/vite-plugin/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "dist/vite-plugin",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "pnpm generate:routes && tsup",
+    "typecheck": "tsc -b",
+    "lint": "biome check .",
+    "lint:fix": "biome check --fix .",
+    "format": "biome format --write .",
+    "generate:routes": "node scripts/generate-routes.mjs"
+  },
+  "dependencies": {
+    "@spree/dashboard-core": "workspace:*",
+    "@spree/dashboard-ui": "workspace:*",
+    "@spree/seller-sdk": "workspace:*",
+    "@tanstack/react-query": "^5.90.2",
+    "@tanstack/react-router": "^1.133.32",
+    "@tanstack/router-plugin": "^1.167.35",
+    "@tanstack/virtual-file-routes": "^1.162.0",
+    "i18next": "^26.2.0",
+    "lucide-react": "^0.545.0",
+    "react-hook-form": "^7.65.0",
+    "react-i18next": "^17.0.8",
+    "zod": "^4.4.3"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.4.13",
+    "@types/node": "^25.6.0",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.1",
+    "@vitejs/plugin-react": "^6.0.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "tsup": "^8.5.0",
+    "typescript": "~6.0.3",
+    "vite": "^8.0.0"
+  }
+}

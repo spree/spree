@@ -12,6 +12,17 @@ module Spree
       def dist_path
         @dist_path.presence || ENV.fetch('SPREE_DASHBOARD_DIST_PATH', nil)
       end
+
+      # Directory holding a built marketplace seller panel, served at
+      # /sellers. A separate bundle rather than the dashboard's: it is a
+      # different app — its own entry point, router and API client — so
+      # pointing both mounts at one directory would serve sellers the
+      # operator's back office. Unset, /sellers responds 404.
+      attr_writer :seller_panel_dist_path
+
+      def seller_panel_dist_path
+        @seller_panel_dist_path.presence || ENV.fetch('SPREE_SELLER_PANEL_DIST_PATH', nil)
+      end
     end
   end
 end

@@ -9,6 +9,7 @@ const client = createAdminClient({
 const order = await client.orders.get('or_UkLWZg9DAJ', {
   expand: ['items', 'fulfillments', 'payments', 'customer'],
 })
+
 // endregion:example
 
 export { order }

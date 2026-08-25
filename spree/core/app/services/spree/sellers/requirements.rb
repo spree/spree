@@ -69,21 +69,17 @@ module Spree
         self.class.progress_of(statuses)
       end
 
-      # The one definition of "how far along", so the evaluator and the
-      # seller's own readers cannot drift apart. A checklist that asks for
-      # nothing reads as finished.
+      # How many of the checklist's requirements are met. Deliberately just the
+      # two counts: a percentage is arithmetic over them, which a client can do
+      # and which would be a second definition of the same fact here.
       #
       # @param statuses [Array<Spree::SellerRequirementStatus>]
-      # @return [Hash{Symbol => Integer}]
+      # @return [Hash{Symbol => Integer}] done and total
       def self.progress_of(statuses)
         total = statuses.size
         done = statuses.count(&:complete?)
 
-        {
-          done: done,
-          total: total,
-          percentage: total.zero? ? 100 : (done / total.to_f * 100).round
-        }
+        { done: done, total: total }
       end
 
       private
@@ -114,7 +110,9 @@ module Spree
           position: requirement.position,
           status: requirement.status_for(seller),
           action_url: requirement.action_url(seller),
-          submission: requirement.latest_submission(seller)
+          submission: requirement.latest_submission(seller),
+          requirement: requirement,
+          seller: seller
         )
       end
     end

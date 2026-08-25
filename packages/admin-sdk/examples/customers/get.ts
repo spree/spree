@@ -9,6 +9,7 @@ const client = createAdminClient({
 const customer = await client.customers.get('cus_UkLWZg9DAJ', {
   expand: ['addresses', 'store_credits'],
 })
+
 // endregion:example
 
 export { customer }

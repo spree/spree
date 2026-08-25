@@ -201,17 +201,49 @@ describe Spree::Seller do
     let(:seller) { create(:seller) }
 
     it 'writes an address from nested attributes' do
-      seller.update!(billing_address: { first_name: 'Ada', last_name: 'Lovelace',
+      seller.update!(billing_address: { company: 'Sparks Trading Ltd',
                                         address1: '1 Seller Way', city: 'London',
                                         postal_code: 'EC1A 1BB', country_code: 'GB', phone: '555' })
 
       expect(seller.reload.billing_address.address1).to eq('1 Seller Way')
     end
 
+    # A commission invoice is addressed to the business, so the company is the
+    # part that cannot be left out and a personal name is not asked for.
+    it 'requires the company and not a personal name' do
+      seller.update!(billing_address: { company: 'Sparks Trading Ltd', address1: '1 Seller Way',
+                                        city: 'London', postal_code: 'EC1A 1BB', country_code: 'GB' })
+
+      expect(seller.reload.billing_address.firstname).to be_blank
+    end
+
+    it 'refuses a billing address with no company' do
+      expect {
+        seller.update!(billing_address: { first_name: 'Ada', last_name: 'Lovelace',
+                                          address1: '1 Seller Way', city: 'London',
+                                          postal_code: 'EC1A 1BB', country_code: 'GB' })
+      }.to raise_error(ActiveRecord::RecordInvalid, /company/i)
+    end
+
+    # Loaded through the association, so a seller read fresh still gets the
+    # business rules — editing one field of a saved address must not fail on a
+    # personal name nobody was ever asked for.
+    it 'reads a saved billing address back as a business address' do
+      seller.update!(billing_address: { company: 'Sparks Trading Ltd', address1: '1 Seller Way',
+                                        city: 'London', postal_code: 'EC1A 1BB', country_code: 'GB' })
+
+      reloaded = described_class.find(seller.id)
+      expect(reloaded.billing_address).to be_a(Spree::BusinessAddress)
+      expect(reloaded.update(billing_address: { city: 'Manchester' })).to be(true)
+    end
+
     # A seller is paranoid, so destroy is a soft delete. Taking the addresses
     # with it would hard-delete rows a restored seller still points at.
     it 'keeps its addresses when soft-deleted, and finds them again on restore' do
-      seller.update!(billing_address: create(:address))
+      seller.update!(billing_address: Spree::BusinessAddress.create!(
+        company: 'Sparks Trading Ltd', address1: '1 Seller Way', city: 'London',
+        zipcode: 'EC1A 1BB', country_code: 'GB'
+      ))
       address_id = seller.billing_address_id
 
       seller.destroy
@@ -244,7 +276,7 @@ describe Spree::Seller do
     before { store.seller_requirements.destroy_all }
 
     it 'reads as finished when the marketplace asks for nothing' do
-      expect(seller.onboarding_percentage).to eq(100)
+      expect(seller.onboarding_progress).to eq(done: 0, total: 0)
       expect(seller).to be_onboarding_complete
     end
 
@@ -254,8 +286,7 @@ describe Spree::Seller do
       seller.update!(terms_accepted_at: Time.current)
 
       seller.reload
-      expect(seller.onboarding_progress).to eq(done: 1, total: 2, percentage: 50)
-      expect(seller.onboarding_percentage).to eq(50)
+      expect(seller.onboarding_progress).to eq(done: 1, total: 2)
       expect(seller).not_to be_onboarding_complete
     end
 
@@ -266,19 +297,66 @@ describe Spree::Seller do
 
       seller.reload
       expect(seller).to be_onboarding_complete
-      expect(seller.onboarding_percentage).to eq(50)
+      expect(seller.onboarding_progress).to eq(done: 1, total: 2)
     end
 
     it 'forgets what it computed on reload' do
       create(:accept_terms_requirement, store: store)
       seller.reload
-      expect(seller.onboarding_percentage).to eq(0)
+      expect(seller.onboarding_progress).to eq(done: 0, total: 1)
 
       seller.update!(terms_accepted_at: Time.current)
       seller.reload
 
-      expect(seller.onboarding_percentage).to eq(100)
+      expect(seller.onboarding_progress).to eq(done: 1, total: 1)
     end
   end
 
+
+  describe '#default_user_role' do
+    let(:seller) { create(:seller) }
+
+    # A store's admin role short-circuits through `activate_full_access`; a
+    # seller's cannot (`Role#admin?` requires `staff?`), so without seeding the
+    # person running the seller would hold nothing at all.
+    it 'grants the whole seller vocabulary' do
+      expect(seller.default_user_role.permissions).
+        to match_array(Spree.permissions.grantable_keys(:seller))
+    end
+
+    it 'is immutable, like the store role it mirrors' do
+      expect(seller.default_user_role).not_to be_mutable
+    end
+
+    it 'returns the same role rather than creating another' do
+      first = seller.default_user_role
+
+      expect(seller.default_user_role).to eq(first)
+      expect(seller.roles.count).to eq(1)
+    end
+
+    # An invitation fills in its own default role, and the operator's invite
+    # workflow sends none — so the invitation, not the seller, is what creates
+    # the role first. Seeded there too, or whoever accepts holds nothing and
+    # every endpoint on their own panel refuses them.
+    it 'is seeded even when an invitation creates the role first' do
+      invitation = seller.invitations.create!(email: 'hired@example.com', inviter: create(:admin_user))
+
+      expect(invitation.role.permissions).
+        to match_array(Spree.permissions.grantable_keys(:seller))
+      expect(invitation.role).to eq(seller.default_user_role)
+    end
+
+    # The operator's `sellers` key is not in the seller vocabulary, so holding
+    # this role never lets a seller administer sellers — their own included.
+    it 'does not let its holder manage the seller record' do
+      user = create(:admin_user)
+      seller.add_user(user)
+
+      ability = Spree::Ability.new(user, resource: seller)
+
+      expect(ability).to be_can(:manage, :seller_profile)
+      expect(ability).not_to be_can(:manage, seller)
+    end
+  end
 end

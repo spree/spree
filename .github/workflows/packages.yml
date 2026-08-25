@@ -144,8 +144,13 @@ jobs:
       # SPA (`vite preview`, E2E_PREVIEW below): fresh browser contexts have
       # empty caches, so the dev server would re-serve hundreds of on-demand
       # modules on every page load in every test.
+      #
+      # The seller panel is served alongside it, because accepting a seller
+      # invitation happens there rather than in the dashboard. Its starter's
+      # vite config imports `@spree/seller-dashboard/vite`, which resolves to
+      # that package's `dist/`, so it must be built even to load the config.
       - name: Build dashboard packages
-        run: pnpm turbo build --filter=@spree/dashboard --cache-dir=.turbo
+        run: pnpm turbo build --filter=@spree/dashboard --filter=@spree/seller-dashboard-starter --cache-dir=.turbo
 
       - name: Setup dummy Rails app
         working-directory: spree/api

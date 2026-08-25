@@ -10,6 +10,7 @@ const item = await client.orders.items.create('or_UkLWZg9DAJ', {
   variant_id: 'variant_k5nR8xLq',
   quantity: 2,
 })
+
 // endregion:example
 
 export { item }

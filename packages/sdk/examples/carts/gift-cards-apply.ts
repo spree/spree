@@ -9,6 +9,7 @@ const client = createClient({
 const cart = await client.carts.giftCards.apply('cart_abc123', 'GC-ABCD-1234', {
   token: '<token>',
 })
+
 // endregion:example
 
 export { cart }

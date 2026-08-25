@@ -5,8 +5,8 @@ RSpec.describe Spree::Api::V3::Store::Customer::TaxIdentifiersController, type: 
 
   include_context 'API v3 Store'
 
-  let!(:eu) { create(:tax_identifier, customer: user, kind: 'eu_vat', value: 'DE123456789') }
-  let!(:gb) { create(:tax_identifier, customer: user, kind: 'gb_vat', value: 'GB123456789') }
+  let!(:eu) { create(:tax_identifier, owner: user, kind: 'eu_vat', value: 'DE123456789') }
+  let!(:gb) { create(:tax_identifier, owner: user, kind: 'gb_vat', value: 'GB123456789') }
 
   before do
     request.headers['X-Spree-Api-Key'] = api_key.token
@@ -25,7 +25,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::TaxIdentifiersController, type: 
     end
 
     it 'lists nobody else\'s' do
-      create(:tax_identifier, customer: create(:user), kind: 'eu_vat', value: 'FR999999999')
+      create(:tax_identifier, owner: create(:user), kind: 'eu_vat', value: 'FR999999999')
 
       get :index
 
@@ -33,7 +33,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::TaxIdentifiersController, type: 
     end
 
     it 'returns an empty list for a buyer with none' do
-      Spree::TaxIdentifier.where(customer_id: user.id).destroy_all
+      user.tax_identifiers.destroy_all
 
       get :index
 

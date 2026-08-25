@@ -10,6 +10,7 @@ const result = await client.customers.bulkRemoveTags({
   ids: ['cus_UkLWZg9DAJ'],
   tags: ['vip'],
 })
+
 // endregion:example
 
 export { result }

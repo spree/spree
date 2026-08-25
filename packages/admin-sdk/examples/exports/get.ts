@@ -7,6 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const exp = await client.exports.get('exp_xxx')
+
 // endregion:example
 
 export { exp }

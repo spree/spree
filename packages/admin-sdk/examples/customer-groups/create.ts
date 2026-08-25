@@ -11,6 +11,7 @@ const group = await client.customerGroups.create({
   description: 'Top spenders, eligible for early access',
   customer_ids: ['cus_UkLWZg9DAJ', 'cus_QrLWXg9CAJ'],
 })
+
 // endregion:example
 
 export { group }

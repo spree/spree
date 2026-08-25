@@ -56,7 +56,100 @@ RSpec.describe 'seller requirement submission workflows' do
       )
 
       expect(result).to be_failure
-      expect(result.error.value.full_messages.join).to match(/accepts/i)
+      expect(result.error.value.full_messages.join).to match(/invalid content type/i)
+    end
+
+    # The header is the uploader's word for what a file is. A seller is the
+    # marketplace's lower-trust writer and an operator opens these documents
+    # on their own machine, so the bytes have to decide.
+    it 'refuses a script wearing a PDF content type and filename' do
+      requirement = create(:document_requirement, store: store)
+
+      result = described_class.call(
+        seller: seller,
+        requirement: requirement,
+        file: {
+          io: StringIO.new("#!/bin/sh\nrm -rf /\n"),
+          filename: 'certificate.pdf',
+          content_type: 'application/pdf'
+        }
+      )
+
+      expect(result).to be_failure
+      expect(result.error.value.full_messages.join).to match(/content type/i)
+    end
+
+    it 'refuses a document larger than the configured limit' do
+      requirement = create(:document_requirement, store: store)
+      allow(Spree::Config).to receive(:max_seller_document_upload_size).and_return(64)
+
+      result = described_class.call(
+        seller: seller,
+        requirement: requirement,
+        file: {
+          io: StringIO.new("%PDF-1.4\n#{'a' * 500}"),
+          filename: 'big.pdf',
+          content_type: 'application/pdf'
+        }
+      )
+
+      expect(result).to be_failure
+      expect(result.error.value.full_messages.join).to match(/size|large/i)
+    end
+
+    context 'with a scanner registered' do
+      # Registrations outlive an example, so this one is torn down rather than
+      # left firing inside every test that follows.
+      after { Spree.hooks.clear! }
+
+      # The documented injection point for a virus scanner. Proven here so the
+      # example in the workflow's own docs is one that runs.
+      #
+      # `after_create` rather than `validate`: at validate time the blob is
+      # built but not yet uploaded, so a scanner has nothing in storage to
+      # read. By here the bytes are there — and the submission is `pending`,
+      # a state no operator acts on, so quarantining it is a status change
+      # rather than a race.
+      it 'lets a handler quarantine a file it has read' do
+        requirement = create(:document_requirement, store: store)
+        scanned = nil
+
+        Spree.hooks.register('seller_requirement_submissions.create.after_create') do |workflow|
+          scanned = workflow.submission.file.download
+          workflow.submission.update!(status: 'rejected', review_note: 'Failed a virus scan.')
+        end
+
+        result = described_class.call(
+          seller: seller,
+          requirement: requirement,
+          file: {
+            io: StringIO.new("%PDF-1.4\ninfected"),
+            filename: 'certificate.pdf',
+            content_type: 'application/pdf'
+          }
+        )
+
+        expect(result).to be_success
+        expect(scanned).to include('infected')
+        expect(result.value.reload).to be_rejected
+      end
+    end
+
+    it 'accepts a real PDF' do
+      requirement = create(:document_requirement, store: store)
+
+      result = described_class.call(
+        seller: seller,
+        requirement: requirement,
+        file: {
+          io: StringIO.new("%PDF-1.4\ntrailer<</Root 1 0 R>>"),
+          filename: 'certificate.pdf',
+          content_type: 'application/pdf'
+        }
+      )
+
+      expect(result).to be_success
+      expect(result.value.file).to be_attached
     end
 
     it 'takes a scan of one' do
@@ -170,7 +263,7 @@ RSpec.describe 'seller requirement submission workflows' do
 
       described_class.call(seller: seller, requirement: requirement, reviewed_by: staff)
 
-      expect(seller.reload.onboarding_progress).to eq(done: 1, total: 2, percentage: 50)
+      expect(seller.reload.onboarding_progress).to eq(done: 1, total: 2)
     end
   end
 end

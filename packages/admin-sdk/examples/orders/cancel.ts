@@ -7,6 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const order = await client.orders.cancel('or_UkLWZg9DAJ')
+
 // endregion:example
 
 export { order }

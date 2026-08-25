@@ -7,6 +7,8 @@ module Spree
         # tax configuration only the operator sets.
         class SellerSerializer < V3::SellerSerializer
           typelize status: :string,
+                   legal_name: [:string, nullable: true],
+                   registration_number: [:string, nullable: true],
                    contact_email: [:string, nullable: true], billing_email: [:string, nullable: true],
                    tax_remittance: :string,
                    payouts_schedule_interval: [:string, nullable: true],
@@ -16,7 +18,7 @@ module Spree
                    deleted_at: [:string, nullable: true],
                    on_holiday: :boolean, sellable: :boolean,
                    products_count: :number, users_count: :number,
-                   onboarding_progress: '{ done: number; total: number; percentage: number }',
+                   onboarding_progress: '{ done: number; total: number }',
                    onboarding_complete: :boolean,
                    metadata: 'Record<string, unknown> | null'
 
@@ -65,6 +67,9 @@ module Spree
           attribute :onboarding_complete do |seller|
             seller.onboarding_complete?
           end
+
+          attribute :legal_name, &:legal_name
+          attribute :registration_number, &:registration_number
 
           one :billing_address,
               resource: proc { Spree.api.admin_address_serializer },

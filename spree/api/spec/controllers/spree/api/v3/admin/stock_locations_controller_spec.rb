@@ -22,6 +22,34 @@ RSpec.describe Spree::Api::V3::Admin::StockLocationsController, type: :controlle
       expect(ids).to include(stock_location.prefixed_id, other_location.prefixed_id)
     end
 
+    # On a marketplace this list holds the operator's own locations and every
+    # seller's together, so each row has to say which it is.
+    context 'with seller-owned locations' do
+      let(:seller) { create(:seller, store: store, name: 'Bright Sparks') }
+      let!(:seller_location) do
+        seller.stock_locations.create!(store: store, name: 'Seller Depot')
+      end
+
+      it 'names the seller on their rows and leaves the operator rows blank' do
+        get :index, as: :json
+
+        rows = json_response['data'].index_by { |sl| sl['id'] }
+        expect(rows[seller_location.prefixed_id]).to include(
+          'seller_id' => seller.prefixed_id, 'seller_name' => 'Bright Sparks'
+        )
+        expect(rows[stock_location.prefixed_id]).to include(
+          'seller_id' => nil, 'seller_name' => nil
+        )
+      end
+
+      it 'filters to one seller' do
+        get :index, params: { q: { seller_id_in: [seller.id] } }, as: :json
+
+        ids = json_response['data'].map { |sl| sl['id'] }
+        expect(ids).to eq([seller_location.prefixed_id])
+      end
+    end
+
     it 'includes the new pickup attributes' do
       get :index, as: :json
 

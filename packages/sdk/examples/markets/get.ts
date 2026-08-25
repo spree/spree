@@ -7,6 +7,7 @@ const client = createClient({
 
 // region:example
 const market = await client.markets.get('mkt_xxx')
+
 // endregion:example
 
 export { market }

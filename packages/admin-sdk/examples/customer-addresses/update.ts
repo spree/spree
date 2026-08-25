@@ -6,11 +6,10 @@ const client = createAdminClient({
 })
 
 // region:example
-const address = await client.customers.addresses.update(
-  'cus_UkLWZg9DAJ',
-  'addr_UkLWZg9DAJ',
-  { city: 'Manhattan' },
-)
+const address = await client.customers.addresses.update('cus_UkLWZg9DAJ', 'addr_UkLWZg9DAJ', {
+  city: 'Manhattan',
+})
+
 // endregion:example
 
 export { address }

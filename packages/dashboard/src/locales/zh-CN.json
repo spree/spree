@@ -292,6 +292,10 @@
     "commission_rates": {
       "add_cta": "添加佣金费率",
       "applies_to_everything": "所有销售",
+      "conditions": {
+        "add": "添加条件",
+        "title": "条件"
+      },
       "create_description": "设置平台向卖家收取的费用，以及适用于哪些销售。",
       "create_label": "创建佣金费率",
       "delete_confirm": {
@@ -305,12 +309,8 @@
         "deleted": "佣金费率已删除",
         "updated": "佣金费率已更新"
       },
-      "search_placeholder": "按名称搜索…",
       "order_hint": "新费率会添加到列表顶部，首个匹配的费率生效——拖动可调整顺序。",
-      "conditions": {
-        "add": "添加条件",
-        "title": "条件"
-      }
+      "search_placeholder": "按名称搜索…"
     },
     "companies": {
       "add_cta": "添加企业",
@@ -399,10 +399,6 @@
         "set_up": "设置自定义字段",
         "values_save_partial_failed": "部分自定义字段无法保存：{{fields}}",
         "values_saved": "自定义字段已保存"
-      },
-      "market_combobox": {
-        "empty": "没有匹配的市场",
-        "search_placeholder": "搜索市场…"
       }
     },
     "custom_field_definitions": {
@@ -558,6 +554,8 @@
       "cards": {
         "estimate": "预计送达"
       },
+      "carrier_rates": "承运商费率",
+      "carrier_rates_hint": "结账时由 {{name}} 提供价格,按每笔订单实时报价。",
       "carrier_services": {
         "add_service": "添加服务",
         "all_hint": "提供承运商返回的所有服务，名称由承运商提供。",
@@ -600,9 +598,8 @@
         "amount_in_currency": "{{currency}} 金额",
         "currency_amounts_help": "未填写金额的币种将不会提供该配送方式。"
       },
-      "carrier_rates": "承运商费率",
-      "provider_unavailable": "{{name}}(不可用)",
       "provider_needs_connection": "连接 {{name}} 后即可使用",
+      "provider_unavailable": "{{name}}(不可用)",
       "rule_summary": {
         "separator": " · ",
         "total_between": "{{min}}–{{max}}",
@@ -611,8 +608,7 @@
         "weight_between": "{{min}}–{{max}} {{unit}}",
         "weight_max": "低于 {{max}} {{unit}}",
         "weight_min": "{{min}} {{unit}} 及以上"
-      },
-      "carrier_rates_hint": "结账时由 {{name}} 提供价格,按每笔订单实时报价。"
+      }
     },
     "delivery_origin_groups": {
       "delete_confirm": {
@@ -771,6 +767,13 @@
           "label": "权限范围"
         }
       },
+      "certificate_document": {
+        "help": "PDF 或图片，最大 10 MB。仅员工可下载。",
+        "label": "证明文件"
+      },
+      "certificate_number": {
+        "label": "证明编号"
+      },
       "channel": {
         "active": {
           "help": "已停用的销售渠道将停止接受订单，且不会被 X-Spree-Channel header 匹配。",
@@ -823,6 +826,86 @@
             "public": "公开 — 任何人都可以浏览并查看价格"
           }
         }
+      },
+      "commission_rate": {
+        "amounts": {
+          "help": "按售出的每件商品收取。留空的货币不由该费率收费，这些销售将适用下一条费率。",
+          "label": "固定费用"
+        },
+        "bounds": {
+          "help": "收费不低于前者，也不高于后者。每项仅适用于其对应货币的销售；留空的货币将不受限制地收费。",
+          "label": "下限与上限（可选）"
+        },
+        "code": {
+          "help": "你为该费率设定的标识。",
+          "label": "代码",
+          "placeholder": "standard"
+        },
+        "commission_tax_rate": {
+          "help": "对佣金本身征收的增值税，属于面向卖家的独立服务。留空则使用你的税务设置。",
+          "label": "佣金税率（%）",
+          "placeholder": "使用税务设置"
+        },
+        "enabled": {
+          "help": "停用的费率在计费时会被跳过。"
+        },
+        "include_shipping": {
+          "help": "同时对卖家的配送收入收取佣金。",
+          "label": "对配送收费"
+        },
+        "kind": {
+          "label": "收费方式",
+          "options": {
+            "fixed": "固定费用",
+            "percentage": "按销售额百分比"
+          }
+        },
+        "max_amount": {
+          "label": "最高"
+        },
+        "min_amount": {
+          "label": "最低"
+        },
+        "name": {
+          "placeholder": "标准佣金"
+        },
+        "rules": {
+          "help": "所有条件都必须满足；某个条件列出多个对象时，符合其中之一即可。没有条件的费率适用于所有销售。",
+          "label": "条件"
+        },
+        "tax_inclusive": {
+          "help": "按含客户增值税的价格计算。关闭后，佣金按卖家净收入计算——当该费用作为独立应税服务处理时，这是通常采用的计算基础。",
+          "label": "按含税价计算"
+        },
+        "value": {
+          "help_percentage": "向卖家收取的销售额百分比。",
+          "label": "数值"
+        }
+      },
+      "company": {
+        "external_id": {
+          "help": "您为该企业设定的编号，在本店内唯一。",
+          "placeholder": "ACME-001"
+        },
+        "name": {
+          "placeholder": "Acme Industries"
+        }
+      },
+      "company_contact": {
+        "role": {
+          "label": "职务"
+        }
+      },
+      "company_location": {
+        "external_id": {
+          "help": "您为该分支机构设定的编号。"
+        },
+        "name": {
+          "placeholder": "总部"
+        }
+      },
+      "country": {
+        "label": "国家/地区"
       },
       "custom_field_definition": {
         "field_type": {
@@ -977,6 +1060,12 @@
           "label": "区域"
         }
       },
+      "external_id": {
+        "label": "外部编号"
+      },
+      "external_references": {
+        "label": "外部引用"
+      },
       "gift_card": {
         "amount": {
           "label": "金额"
@@ -1007,6 +1096,12 @@
         "password_confirmation": {
           "label": "确认密码"
         }
+      },
+      "issued_at": {
+        "label": "签发日期"
+      },
+      "issuing_authority": {
+        "label": "签发机构"
       },
       "market": {
         "country_codes": {
@@ -1120,8 +1215,8 @@
           "view": "查看本次购买"
         },
         "seller": {
-          "label": "卖家",
-          "first_party": "自营"
+          "first_party": "自营",
+          "label": "卖家"
         }
       },
       "payment_method": {
@@ -1130,10 +1225,10 @@
           "label": "启用"
         },
         "capture_method": {
-          "label": "何时向客户收款",
           "help": "仅针对此支付方式覆盖店铺设置。",
           "inherit": "使用店铺设置",
-          "inherited": "使用店铺设置（{{value}}）"
+          "inherited": "使用店铺设置（{{value}}）",
+          "label": "何时向客户收款"
         },
         "description": {
           "placeholder": "结账时向客户展示的描述"
@@ -1149,6 +1244,9 @@
           "label": "服务商",
           "placeholder": "选择服务商"
         }
+      },
+      "postal_code": {
+        "label": "邮政编码"
       },
       "price_list": {
         "description": {
@@ -1223,16 +1321,16 @@
           "help": "此处仅可设置手动系列；自动系列由其规则决定。",
           "label": "系列"
         },
+        "delivery_profile_id": {
+          "help": "决定哪些区域和配送方式适用于该商品。",
+          "label": "配送配置方案"
+        },
         "description": {
           "label": "描述",
           "placeholder": "撰写产品描述…"
         },
         "discontinue_on": {
           "label": "下架日期"
-        },
-        "delivery_profile_id": {
-          "help": "决定哪些区域和配送方式适用于该商品。",
-          "label": "配送配置方案"
         },
         "make_active_at": {
           "label": "激活日期"
@@ -1245,12 +1343,11 @@
           "help": "决定结账时提供哪些配送选项。",
           "label": "商品类型"
         },
+        "seller": {
+          "label": "卖家"
+        },
         "tags": {
           "label": "标签"
-        },
-        "seller": {
-          "label": "卖家",
-          "first_party": "自营"
         }
       },
       "product_publication": {
@@ -1352,6 +1449,10 @@
           "placeholder": "不限"
         }
       },
+      "reason_code": {
+        "help": "作为用途代码传递给税费计算引擎。",
+        "label": "事由"
+      },
       "role": {
         "description": {
           "label": "描述",
@@ -1368,27 +1469,67 @@
       "role_ids": {
         "label": "角色"
       },
+      "seller": {
+        "about": {
+          "help": "显示在卖家的店铺资料页。",
+          "label": "简介"
+        },
+        "billing_email": {
+          "help": "佣金发票和结算通知的接收邮箱（如果不同）。",
+          "label": "账单邮箱"
+        },
+        "contact_email": {
+          "help": "邀请和市场通知会发送到这里。",
+          "placeholder": "hello@sparks.example"
+        },
+        "holiday_mode_until": {
+          "help": "在此之前商品仍然可见，但无法购买。",
+          "label": "休假至",
+          "placeholder": "选择日期"
+        },
+        "minimum_payout_amount": {
+          "help": "低于此金额的余额会顺延到下次结算。",
+          "label": "最低结算金额"
+        },
+        "name": {
+          "placeholder": "Sparks Audio"
+        },
+        "payouts_schedule_interval": {
+          "help": "该卖家多久收到一次款项。",
+          "label": "结算周期"
+        },
+        "slug": {
+          "help": "用于卖家店铺地址。留空时根据名称生成。"
+        },
+        "tax_remittance": {
+          "help": "由谁为该卖家的销售申报消费税。",
+          "label": "税务申报方"
+        }
+      },
       "setup": {
+        "country_code": {
+          "help": "您的发货地。您的商店可以面向全球销售——这只设置初始货币、仓库和配送区域，之后均可修改。",
+          "label": "国家/地区",
+          "placeholder": "搜索国家/地区"
+        },
+        "currency": {
+          "help": "您的默认货币。随时可添加更多。",
+          "label": "货币",
+          "placeholder": "搜索货币"
+        },
+        "locale": {
+          "help": "您的默认语言。随时可添加更多。",
+          "label": "语言"
+        },
         "password_confirmation": {
           "label": "确认密码"
         },
         "store_name": {
           "label": "商店名称"
-        },
-        "country_code": {
-          "label": "国家/地区",
-          "placeholder": "搜索国家/地区",
-          "help": "您的发货地。您的商店可以面向全球销售——这只设置初始货币、仓库和配送区域，之后均可修改。"
-        },
-        "locale": {
-          "label": "语言",
-          "help": "您的默认语言。随时可添加更多。"
-        },
-        "currency": {
-          "label": "货币",
-          "placeholder": "搜索货币",
-          "help": "您的默认货币。随时可添加更多。"
         }
+      },
+      "state": {
+        "label": "省/州"
       },
       "stock_location": {
         "active": {
@@ -1439,20 +1580,20 @@
           "label": "要求填写电话号码"
         },
         "capture_method": {
-          "label": "何时向客户收款",
           "help": "所有支付方式的默认设置。单个支付方式可覆盖此设置。",
+          "label": "何时向客户收款",
           "options": {
             "checkout": {
-              "label": "结账时",
-              "description": "下单后立即收取款项。"
-            },
-            "on_dispatch": {
-              "label": "发货时",
-              "description": "结账时预授权金额，发货时收取。"
+              "description": "下单后立即收取款项。",
+              "label": "结账时"
             },
             "manual": {
-              "label": "手动",
-              "description": "结账时预授权金额，由员工稍后收取。"
+              "description": "结账时预授权金额，由员工稍后收取。",
+              "label": "手动"
+            },
+            "on_dispatch": {
+              "description": "结账时预授权金额，发货时收取。",
+              "label": "发货时"
             }
           }
         },
@@ -1465,16 +1606,54 @@
           "label": "客户支持邮箱",
           "placeholder": "support@yourstore.com"
         },
+        "data_sources": {
+          "internal": "Spree（内置）",
+          "inventory": {
+            "description": "连接仓储或 ERP 系统，由其代替 Spree 自身记录来提供库存。",
+            "title": "库存来源"
+          },
+          "inventory_failure_policy": {
+            "help": "售出后发现缺货尚可补救，因此回退可让您继续交易。",
+            "label": "无法确认库存时"
+          },
+          "inventory_provider": {
+            "docs_link": "构建库存数据源",
+            "help": "加入购物车和结账时会询问外部来源。列表始终显示您自己的库存记录。",
+            "label": "库存来源"
+          },
+          "not_connected": "连接此集成后方可使用",
+          "policies": {
+            "fallback": {
+              "label": "使用 Spree 自己的数据"
+            },
+            "strict": {
+              "label": "拒绝并请顾客重试"
+            }
+          },
+          "pricing": {
+            "description": "连接 ERP 或合同定价系统，由其代替 Spree 目录来提供价格。",
+            "title": "价格来源"
+          },
+          "pricing_failure_policy": {
+            "help": "收错价格难以撤销，因此拒绝是更安全的默认设置。",
+            "label": "无法确认价格时"
+          },
+          "pricing_provider": {
+            "docs_link": "构建价格数据源",
+            "help": "除非有外部系统作答，否则 Spree 按您的目录和价格表定价。",
+            "label": "价格来源"
+          }
+        },
         "disable_sku_validation": {
           "help": "允许多个变体使用相同的 SKU。",
           "label": "允许重复 SKU"
         },
         "document_number_format": {
-          "label": "编号格式",
           "help": "适用于所有带编号的单据。顺序编号依次递增、更便于口头核对；随机编号则不会透露店铺的订单量。",
+          "label": "编号格式",
           "options": {
-            "sequential": "顺序编号 — 从起始号依次递增",
-            "random": "随机编号 — 不可预测的数字"
+            "random": "随机编号 — 不可预测的数字",
+            "sequential": "顺序编号 — 从起始号依次递增"
           }
         },
         "guest_checkout": {
@@ -1499,23 +1678,23 @@
           "placeholder": "ops@yourstore.com"
         },
         "order_number_prefix": {
-          "label": "前缀",
           "help": "位于每个订单编号的开头。",
-          "invalid": "只能使用大写字母、数字、连字符和 #。"
+          "invalid": "只能使用大写字母、数字、连字符和 #。",
+          "label": "前缀"
         },
         "order_number_preview": {
-          "label": "预览",
-          "help": "更改仅影响后续订单。已生成的编号永远不会改变。"
+          "help": "更改仅影响后续订单。已生成的编号永远不会改变。",
+          "label": "预览"
         },
         "order_number_sequence_start": {
-          "label": "起始编号",
           "help": "仅在首个订单之前生效。之后修改不会为已有订单重新编号。",
+          "label": "起始编号",
           "locked": "编号已经开始，因此该设置不再生效。已有订单编号永远不会改变。"
         },
         "order_number_suffix": {
-          "label": "后缀",
           "help": "位于每个订单编号的末尾。",
-          "invalid": "只能使用大写字母、数字、连字符和 #。"
+          "invalid": "只能使用大写字母、数字、连字符和 #。",
+          "label": "后缀"
         },
         "preferred_admin_locale": {
           "label": "后台语言",
@@ -1574,44 +1753,6 @@
         "track_price_history": {
           "help": "保留历史价格，以便店铺按欧盟规定显示最近 30 天的最低价。",
           "label": "记录价格历史"
-        },
-        "data_sources": {
-          "internal": "Spree（内置）",
-          "not_connected": "连接此集成后方可使用",
-          "pricing_provider": {
-            "label": "价格来源",
-            "help": "除非有外部系统作答，否则 Spree 按您的目录和价格表定价。",
-            "docs_link": "构建价格数据源"
-          },
-          "inventory_provider": {
-            "label": "库存来源",
-            "help": "加入购物车和结账时会询问外部来源。列表始终显示您自己的库存记录。",
-            "docs_link": "构建库存数据源"
-          },
-          "pricing_failure_policy": {
-            "label": "无法确认价格时",
-            "help": "收错价格难以撤销，因此拒绝是更安全的默认设置。"
-          },
-          "inventory_failure_policy": {
-            "label": "无法确认库存时",
-            "help": "售出后发现缺货尚可补救，因此回退可让您继续交易。"
-          },
-          "policies": {
-            "strict": {
-              "label": "拒绝并请顾客重试"
-            },
-            "fallback": {
-              "label": "使用 Spree 自己的数据"
-            }
-          },
-          "pricing": {
-            "title": "价格来源",
-            "description": "连接 ERP 或合同定价系统，由其代替 Spree 目录来提供价格。"
-          },
-          "inventory": {
-            "title": "库存来源",
-            "description": "连接仓储或 ERP 系统，由其代替 Spree 自身记录来提供库存。"
-          }
         }
       },
       "store_credit": {
@@ -1647,6 +1788,55 @@
       },
       "tax_category_id": {
         "label": "税务类别"
+      },
+      "tax_exemption_certificate": {
+        "country_code": {
+          "help": "留空表示该证明在所有地区有效。"
+        },
+        "expires_at": {
+          "help": "留空表示该证明长期有效。"
+        }
+      },
+      "tax_identifier": {
+        "kind": {
+          "help": "该号码的类型。必须与配置的校验方式一致，因此拼写很重要。",
+          "label": "类型"
+        },
+        "value": {
+          "label": "号码",
+          "placeholder": "DE123456789"
+        }
+      },
+      "tax_rate": {
+        "amount": {
+          "help": "按百分比填写。20% 请填 20。",
+          "label": "税率"
+        },
+        "country_code": {
+          "help": "留空表示对所有国家征税。"
+        },
+        "included_in_price": {
+          "help": "价格已包含该税费，因此从价格中拆分而非另行加收。",
+          "label": "价格含税",
+          "short": "含税"
+        },
+        "jurisdiction": {
+          "label": "适用范围"
+        },
+        "name": {
+          "placeholder": "标准增值税"
+        },
+        "show_rate_in_label": {
+          "help": "在客户看到的税费行中加上百分比。",
+          "label": "在税费名称中显示税率"
+        },
+        "state_code": {
+          "help": "留空表示对整个国家征税。"
+        },
+        "tax_category_id": {
+          "help": "该税率适用于哪些商品。",
+          "label": "税务类别"
+        }
       },
       "variant": {
         "backorder_limit": {
@@ -1718,194 +1908,6 @@
           "label": "目标 URL",
           "placeholder": "https://example.com/webhooks"
         }
-      },
-      "external_id": {
-        "label": "外部编号"
-      },
-      "country": {
-        "label": "国家/地区"
-      },
-      "state": {
-        "label": "省/州"
-      },
-      "postal_code": {
-        "label": "邮政编码"
-      },
-      "certificate_number": {
-        "label": "证明编号"
-      },
-      "reason_code": {
-        "help": "作为用途代码传递给税费计算引擎。",
-        "label": "事由"
-      },
-      "issued_at": {
-        "label": "签发日期"
-      },
-      "issuing_authority": {
-        "label": "签发机构"
-      },
-      "certificate_document": {
-        "help": "PDF 或图片，最大 10 MB。仅员工可下载。",
-        "label": "证明文件"
-      },
-      "company": {
-        "name": {
-          "placeholder": "Acme Industries"
-        }
-      },
-      "company_location": {
-        "name": {
-          "placeholder": "总部"
-        }
-      },
-      "company_contact": {
-        "role": {
-          "label": "职务"
-        }
-      },
-      "tax_identifier": {
-        "kind": {
-          "help": "该号码的类型。必须与配置的校验方式一致，因此拼写很重要。",
-          "label": "类型"
-        },
-        "value": {
-          "label": "号码",
-          "placeholder": "DE123456789"
-        }
-      },
-      "tax_rate": {
-        "name": {
-          "placeholder": "标准增值税"
-        },
-        "amount": {
-          "help": "按百分比填写。20% 请填 20。",
-          "label": "税率"
-        },
-        "jurisdiction": {
-          "label": "适用范围"
-        },
-        "country_code": {
-          "help": "留空表示对所有国家征税。"
-        },
-        "state_code": {
-          "help": "留空表示对整个国家征税。"
-        },
-        "tax_category_id": {
-          "help": "该税率适用于哪些商品。",
-          "label": "税务类别"
-        },
-        "included_in_price": {
-          "help": "价格已包含该税费，因此从价格中拆分而非另行加收。",
-          "label": "价格含税",
-          "short": "含税"
-        },
-        "show_rate_in_label": {
-          "help": "在客户看到的税费行中加上百分比。",
-          "label": "在税费名称中显示税率"
-        }
-      },
-      "tax_exemption_certificate": {
-        "country_code": {
-          "help": "留空表示该证明在所有地区有效。"
-        },
-        "expires_at": {
-          "help": "留空表示该证明长期有效。"
-        }
-      },
-      "seller": {
-        "name": {
-          "placeholder": "Sparks Audio"
-        },
-        "slug": {
-          "help": "用于卖家店铺地址。留空时根据名称生成。"
-        },
-        "contact_email": {
-          "placeholder": "hello@sparks.example",
-          "help": "邀请和市场通知会发送到这里。"
-        },
-        "billing_email": {
-          "label": "账单邮箱",
-          "help": "佣金发票和结算通知的接收邮箱（如果不同）。"
-        },
-        "about": {
-          "label": "简介",
-          "help": "显示在卖家的店铺资料页。"
-        },
-        "tax_remittance": {
-          "label": "税务申报方",
-          "help": "由谁为该卖家的销售申报消费税。"
-        },
-        "payouts_schedule_interval": {
-          "label": "结算周期",
-          "help": "该卖家多久收到一次款项。"
-        },
-        "minimum_payout_amount": {
-          "label": "最低结算金额",
-          "help": "低于此金额的余额会顺延到下次结算。"
-        },
-        "holiday_mode_until": {
-          "label": "休假至",
-          "placeholder": "选择日期",
-          "help": "在此之前商品仍然可见，但无法购买。"
-        }
-      },
-      "commission_rate": {
-        "name": {
-          "placeholder": "标准佣金"
-        },
-        "code": {
-          "label": "代码",
-          "placeholder": "standard",
-          "help": "你为该费率设定的标识。"
-        },
-        "kind": {
-          "label": "收费方式",
-          "options": {
-            "percentage": "按销售额百分比",
-            "fixed": "固定费用"
-          }
-        },
-        "value": {
-          "label": "数值",
-          "help_percentage": "向卖家收取的销售额百分比。"
-        },
-        "rules": {
-          "label": "条件",
-          "help": "所有条件都必须满足；某个条件列出多个对象时，符合其中之一即可。没有条件的费率适用于所有销售。"
-        },
-        "min_amount": {
-          "label": "最低"
-        },
-        "max_amount": {
-          "label": "最高"
-        },
-        "commission_tax_rate": {
-          "label": "佣金税率（%）",
-          "placeholder": "使用税务设置",
-          "help": "对佣金本身征收的增值税，属于面向卖家的独立服务。留空则使用你的税务设置。"
-        },
-        "include_shipping": {
-          "label": "对配送收费",
-          "help": "同时对卖家的配送收入收取佣金。"
-        },
-        "tax_inclusive": {
-          "label": "按含税价计算",
-          "help": "按含客户增值税的价格计算。关闭后，佣金按卖家净收入计算——当该费用作为独立应税服务处理时，这是通常采用的计算基础。"
-        },
-        "enabled": {
-          "help": "停用的费率在计费时会被跳过。"
-        },
-        "amounts": {
-          "help": "按售出的每件商品收取。留空的货币不由该费率收费，这些销售将适用下一条费率。",
-          "label": "固定费用"
-        },
-        "bounds": {
-          "help": "收费不低于前者，也不高于后者。每项仅适用于其对应货币的销售；留空的货币将不受限制地收费。",
-          "label": "下限与上限（可选）"
-        }
-      },
-      "external_references": {
-        "label": "外部引用"
       }
     },
     "gift_cards": {
@@ -2101,23 +2103,23 @@
     "media_library": {
       "choose_from_library": "从媒体库选择",
       "delete_confirm": {
-        "title": "删除此文件？",
+        "in_use_message_other": "删除“{{name}}”会将其从媒体库以及使用它的 {{count}} 个位置中移除。嵌入它的描述将失去该图片。",
         "message": "删除“{{name}}”会将其从媒体库中移除。仍在使用它的位置将失去该图片。",
-        "in_use_message_other": "删除“{{name}}”会将其从媒体库以及使用它的 {{count}} 个位置中移除。嵌入它的描述将失去该图片。"
+        "title": "删除此文件？"
       },
       "delete_failed": "无法删除该文件",
       "deleted": "文件已删除",
       "description": "店铺中的所有图片和视频。在此上传文件，即可在多个商品中重复使用。",
       "discard_confirm": {
-        "title": "放弃更改？",
+        "confirm": "放弃",
         "message": "对该文件的更改尚未保存。",
-        "confirm": "放弃"
+        "title": "放弃更改？"
       },
       "download": "下载",
       "empty": "暂无文件。上传一个文件即可开始。",
       "facts": {
-        "type": "类型",
-        "size": "大小"
+        "size": "大小",
+        "type": "类型"
       },
       "file": "文件",
       "no_results": "没有文件符合筛选条件。",
@@ -2130,27 +2132,27 @@
       "title": "媒体",
       "type": {
         "all": "全部类型",
+        "external_video": "视频链接",
         "image": "图片",
-        "video": "视频",
-        "external_video": "视频链接"
+        "video": "视频"
       },
       "upload": "上传文件",
       "upload_failed": "{{name}} 上传失败",
       "upload_succeeded_other": "已上传 {{count}} 个文件",
       "usage": {
-        "title": "使用于",
         "empty": "该文件未在任何位置使用。",
         "kind": {
-          "media": "商品",
           "attachment": "图片字段",
+          "media": "商品",
           "rich_text": "描述"
         },
         "owner": {
-          "product": "商品",
-          "variant": "变体",
           "category": "分类",
-          "collection": "系列"
-        }
+          "collection": "系列",
+          "product": "商品",
+          "variant": "变体"
+        },
+        "title": "使用于"
       }
     },
     "nav": {
@@ -2174,9 +2176,9 @@
       "promotions": "促销",
       "reports": "报表",
       "returns": "退货",
+      "sellers": "卖家",
       "settings": "设置",
-      "transfers": "调拨",
-      "sellers": "卖家"
+      "transfers": "调拨"
     },
     "option_types": {
       "columns": {
@@ -2316,6 +2318,13 @@
           "resume_failed": "恢复订单失败"
         },
         "fulfillments": {
+          "add_tracking": "添加物流跟踪",
+          "add_tracking_title": "添加物流跟踪",
+          "buy_label": "购买面单",
+          "buy_label_confirm": "为此包裹购买运输面单?面单签发后将立即从您的承运商账户扣费。",
+          "buy_label_confirm_rate": "以 {{cost}} 购买 {{rate}} 面单?面单签发后将立即从您的承运商账户扣费。",
+          "carrier_auto": "自动识别",
+          "carrier_label": "承运商",
           "confirm_split": "将这些数量移入新的发货单？此操作立即生效。",
           "create_description": "创建发货单并将所选数量移入其中。",
           "create_items": "商品项",
@@ -2323,12 +2332,18 @@
           "delivery_method": "配送方式",
           "edit_description": "修改此发货单的发货地以及承运的配送方式。",
           "edit_title": "编辑发货单",
+          "edit_tracking_title": "编辑物流跟踪",
           "empty": "此订单暂无发货单。",
           "free": "免费",
+          "mark_delivered": "标记为已送达",
           "move_and_requote": "移动并重新报价",
           "no_rates": "此发货单暂无可用的配送方式。",
           "out_of_stock": "无库存",
+          "packing_slip_title": "装箱单 — 订单 {{number}}",
+          "print_label": "打印面单",
+          "print_packing_slip": "打印装箱单",
           "rates_pending_origin": "保存新的发货地后即可查看该地可用的配送方式。",
+          "ship_to": "收货地址",
           "ships_from": "发货地",
           "split": "拆分",
           "split_description": "将部分数量移入新的发货单。每次操作一个商品。",
@@ -2336,21 +2351,8 @@
           "split_quantity": "移动数量",
           "split_title": "拆分发货单",
           "split_would_empty": "请至少保留一件，或改为修改整个发货单的发货地。",
-          "unfulfilled_other": "未发货（{{count}}）",
-          "mark_delivered": "标记为已送达",
-          "add_tracking": "添加物流跟踪",
-          "edit_tracking_title": "编辑物流跟踪",
-          "add_tracking_title": "添加物流跟踪",
           "tracking_description": "承运商的物流单号，或完整的跟踪链接。",
-          "carrier_label": "承运商",
-          "carrier_auto": "自动识别",
-          "buy_label_confirm": "为此包裹购买运输面单?面单签发后将立即从您的承运商账户扣费。",
-          "buy_label_confirm_rate": "以 {{cost}} 购买 {{rate}} 面单?面单签发后将立即从您的承运商账户扣费。",
-          "buy_label": "购买面单",
-          "print_label": "打印面单",
-          "print_packing_slip": "打印装箱单",
-          "packing_slip_title": "装箱单 — 订单 {{number}}",
-          "ship_to": "收货地址"
+          "unfulfilled_other": "未发货（{{count}}）"
         },
         "gift_card_section": {
           "applied_suffix": "已应用",
@@ -2426,9 +2428,15 @@
         "action_label": "编辑订单",
         "actions": {
           "add_product": "添加商品",
-          "remove_item": "移除 {{name}}",
           "quantity_for": "{{name}} 的数量",
+          "remove_item": "移除 {{name}}",
           "restore_item": "保留 {{name}}"
+        },
+        "badges": {
+          "fulfilled_count_one": "已履行 {{count}} 件",
+          "fulfilled_count_other": "已履行 {{count}} 件",
+          "pending": "未保存",
+          "removed": "待移除"
         },
         "columns": {
           "line_total": "小计",
@@ -2436,22 +2444,16 @@
           "unit_price": "单价"
         },
         "empty": "此订单没有商品。",
+        "fully_fulfilled": "此订单已全部履行，无法再编辑。",
         "items_title": "商品",
         "subtitle": "订单 {{number}}",
         "title": "编辑订单",
         "totals_hint": "保存后，服务器会重新计算金额。",
         "totals_title": "金额",
-        "badges": {
-          "pending": "未保存",
-          "removed": "待移除",
-          "fulfilled_count_one": "已履行 {{count}} 件",
-          "fulfilled_count_other": "已履行 {{count}} 件"
-        },
         "validation": {
           "below_fulfilled_one": "不能低于已履行的 {{count}} 件",
           "below_fulfilled_other": "不能低于已履行的 {{count}} 件"
-        },
-        "fully_fulfilled": "此订单已全部履行，无法再编辑。"
+        }
       },
       "errors": {
         "failed_to_update_address": "更新地址失败"
@@ -2475,12 +2477,12 @@
       "fulfillment_statuses": {
         "backorder": "缺货补订",
         "canceled": "已取消",
+        "delivered": "已送达",
         "fulfilled": "已履行",
         "partial": "部分完成",
         "pending": "待处理",
         "ready": "已就绪",
-        "unfulfilled": "未履行",
-        "delivered": "已送达"
+        "unfulfilled": "未履行"
       },
       "item_count_one": "{{count}} 件商品",
       "item_count_other": "{{count}} 件商品",
@@ -3089,6 +3091,10 @@
           },
           "title": "API 密钥"
         },
+        "commission_rates": {
+          "add_sheet_title": "添加佣金费率",
+          "edit_sheet_title": "编辑佣金费率"
+        },
         "custom_field_definitions": {
           "add_sheet_title": "添加自定义字段",
           "edit_sheet_title": "编辑自定义字段"
@@ -3148,6 +3154,10 @@
         "tax_categories": {
           "add_sheet_title": "添加税收类别",
           "edit_sheet_title": "编辑税收类别"
+        },
+        "tax_rates": {
+          "add_sheet_title": "新建税率",
+          "edit_sheet_title": "编辑税率"
         },
         "webhooks": {
           "actions": {
@@ -3278,14 +3288,6 @@
             "url": "URL"
           },
           "title": "Webhooks"
-        },
-        "tax_rates": {
-          "add_sheet_title": "新建税率",
-          "edit_sheet_title": "编辑税率"
-        },
-        "commission_rates": {
-          "add_sheet_title": "添加佣金费率",
-          "edit_sheet_title": "编辑佣金费率"
         }
       },
       "staff": {
@@ -3970,37 +3972,32 @@
       }
     },
     "seller_requirements": {
-      "title": "卖家要求",
-      "search_placeholder": "搜索要求",
-      "empty": "尚无要求。卖家可以立即申请审核。",
       "add_cta": "添加要求",
       "add_title": "添加要求",
-      "edit_title": "编辑要求",
       "columns": {
         "kind": "类型",
         "required": "必需"
       },
-      "required": {
-        "yes": "必需",
-        "no": "建议"
+      "delete_confirm": {
+        "message": "将不再向卖家索取“{{name}}”。他们已提交的内容也会一并删除。",
+        "title": "删除要求？"
       },
-      "status": {
-        "disabled": "已关闭"
-      },
+      "edit_title": "编辑要求",
+      "empty": "尚无要求。卖家可以立即申请审核。",
       "fields": {
         "accepted_files": {
-          "label": "可上传文件",
-          "help": "卖家可上传：{{types}}"
+          "help": "卖家可上传：{{types}}",
+          "label": "可上传文件"
         },
         "active": {
-          "label": "启用",
-          "help": "关闭即可停止要求，而不删除它。"
+          "help": "关闭即可停止要求，而不删除它。",
+          "label": "启用"
         },
         "custom_fields": {
-          "label": "自定义字段",
+          "empty": "未找到卖家自定义字段。请在设置 → 自定义字段中创建。",
           "help": "卖家必须填写你选择的每个字段。",
-          "placeholder": "搜索字段",
-          "empty": "未找到卖家自定义字段。请在设置 → 自定义字段中创建。"
+          "label": "自定义字段",
+          "placeholder": "搜索字段"
         },
         "description": {
           "label": "说明",
@@ -4011,195 +4008,221 @@
           "placeholder": "选择你要求的内容"
         },
         "name": {
+          "help": "卖家在清单上看到的内容。",
           "label": "名称",
-          "label_required": "名称（必填）",
-          "help": "卖家在清单上看到的内容。"
+          "label_required": "名称（必填）"
         },
         "required": {
-          "label": "必需",
-          "help": "必需项在批准前必须完成，其余项显示为建议。"
+          "help": "必需项在批准前必须完成，其余项显示为建议。",
+          "label": "必需"
         }
-      },
-      "delete_confirm": {
-        "title": "删除要求？",
-        "message": "将不再向卖家索取“{{name}}”。他们已提交的内容也会一并删除。"
-      },
-      "messages": {
-        "created": "已添加要求",
-        "updated": "已保存要求",
-        "deleted": "已删除要求",
-        "submission_accepted": "已接受",
-        "submission_rejected": "已退回给卖家",
-        "waived": "已豁免该卖家的此项要求"
       },
       "kinds": {
         "accept_terms": "接受条款",
-        "complete_profile": "完善资料",
-        "billing_address": "账单地址",
-        "returns_address": "退货地址",
-        "minimum_products": "最少商品数",
-        "required_custom_fields": "必填自定义字段",
         "attestation": "卖家确认",
+        "billing_address": "账单地址",
+        "complete_profile": "完善资料",
+        "document": "文件",
+        "minimum_products": "最少商品数",
         "operator_review": "人工核查",
-        "document": "文件"
-      }
+        "required_custom_fields": "必填自定义字段",
+        "returns_address": "退货地址"
+      },
+      "messages": {
+        "created": "已添加要求",
+        "deleted": "已删除要求",
+        "submission_accepted": "已接受",
+        "submission_rejected": "已退回给卖家",
+        "updated": "已保存要求",
+        "waived": "已豁免该卖家的此项要求"
+      },
+      "required": {
+        "no": "建议",
+        "yes": "必需"
+      },
+      "search_placeholder": "搜索要求",
+      "status": {
+        "disabled": "已关闭"
+      },
+      "title": "卖家要求"
     },
     "sellers": {
       "actions": {
-        "invite": "邀请",
-        "reinvite": "重新发送",
-        "send_invitation": "发送邀请",
         "approve": "批准",
+        "invite": "邀请",
         "reinstate": "恢复",
-        "suspend": "暂停",
+        "reinvite": "重新发送",
         "reject": "拒绝",
-        "reopen_onboarding": "退回入驻流程"
+        "reopen_onboarding": "退回入驻流程",
+        "send_invitation": "发送邀请",
+        "suspend": "暂停"
       },
       "add_cta": "添加卖家",
       "add_sheet_title": "新建卖家",
       "address": {
         "filled": "已填写",
         "not_filled": "未填写",
-        "not_provided_by_seller": "卖家尚未提供",
-        "not_located_yet": "定位完成后将显示地图。"
+        "not_provided_by_seller": "卖家尚未提供"
       },
       "approve_override_confirm": {
-        "title": "仍要批准吗？",
+        "action": "仍然批准",
         "message": "该卖家尚未完成：{{names}}。现在批准将允许其照常经营，此决定会被记录。",
-        "action": "仍然批准"
+        "title": "仍要批准吗？"
       },
       "autocomplete": {
-        "placeholder": "搜索卖家",
-        "empty": "未找到卖家"
+        "empty": "未找到卖家",
+        "placeholder": "搜索卖家"
       },
       "create_description": "先创建卖家记录，然后在卖家页面邀请、批准并设置结算。",
       "create_label": "创建卖家",
       "delete_confirm": {
-        "title": "删除卖家？",
-        "message": "这会将 {{name}} 从市场中移除。其商品会保留在目录中但不再归属任何卖家。此操作无法撤销。"
+        "message": "这会将 {{name}} 从市场中移除。其商品会保留在目录中但不再归属任何卖家。此操作无法撤销。",
+        "title": "删除卖家？"
       },
       "detail": {
-        "load_error": "无法加载该卖家",
-        "delete_label": "删除卖家",
-        "status": "状态",
-        "settlement": "结算与税务",
         "at_a_glance": "概览",
+        "billing_address": "账单地址",
         "contact": "联系方式",
+        "delete_label": "删除卖家",
         "edit_profile": "编辑资料",
         "edit_profile_description": "卖家在自己的面板中维护这些信息。在这里的修改代表卖家进行。",
         "edit_settlement": "编辑结算与税务",
         "edit_settlement_description": "只有你能查看和修改这些设置，卖家无法编辑。",
+        "load_error": "无法加载该卖家",
         "no_about": "该卖家尚未填写简介。",
-        "billing_address": "账单地址",
-        "returns_address": "退货地址"
+        "returns_address": "退货地址",
+        "settlement": "结算与税务",
+        "status": "状态"
       },
       "empty": "暂无卖家",
       "images": {
-        "logo_label": "标志",
-        "logo_help": "建议使用正方形。会在卖家出现的各处显示在其旁边。",
-        "square_logo_label": "方形标志",
-        "square_logo_help": "用于需要严格正方形的位置，例如头像。",
+        "cover_photo_help": "卖家资料页顶部的宽幅横幅。",
         "cover_photo_label": "封面图",
-        "cover_photo_help": "卖家资料页顶部的宽幅横幅。"
+        "logo_help": "建议使用正方形。会在卖家出现的各处显示在其旁边。",
+        "logo_label": "标志",
+        "square_logo_help": "用于需要严格正方形的位置，例如头像。",
+        "square_logo_label": "方形标志"
       },
       "invite_sheet": {
-        "title": "邀请卖家",
         "description": "对方接受后即加入卖家团队，并可登录自己的面板。",
-        "email_help": "邀请将发送到该邮箱。"
+        "email_help": "邀请将发送到该邮箱。",
+        "title": "邀请卖家"
       },
       "messages": {
-        "created": "卖家已创建",
-        "create_failed": "无法创建卖家",
-        "updated": "卖家已更新",
-        "update_failed": "无法更新卖家",
-        "deleted": "卖家已删除",
-        "delete_failed": "无法删除卖家",
-        "invited": "邀请已发送",
-        "invite_failed": "无法发送邀请",
-        "approved": "卖家已批准",
         "approve_failed": "无法批准卖家",
-        "suspended": "卖家已暂停",
-        "suspend_failed": "无法暂停卖家",
-        "rejected": "卖家已拒绝",
+        "approved": "卖家已批准",
+        "create_failed": "无法创建卖家",
+        "created": "卖家已创建",
+        "delete_failed": "无法删除卖家",
+        "deleted": "卖家已删除",
+        "invite_failed": "无法发送邀请",
+        "invited": "邀请已发送",
+        "onboarding_reopened": "已退回入驻流程",
         "reject_failed": "无法拒绝卖家",
-        "onboarding_reopened": "已退回入驻流程"
+        "rejected": "卖家已拒绝",
+        "suspend_failed": "无法暂停卖家",
+        "suspended": "卖家已暂停",
+        "update_failed": "无法更新卖家",
+        "updated": "卖家已更新"
       },
       "not_provided": "未填写",
       "on_holiday_notice": "该卖家处于休假状态。商品仍然可见，但无法购买。",
       "onboarding": {
-        "title": "入驻",
-        "progress": "已完成 {{done}} / {{total}}",
-        "waived": "已豁免",
-        "download": "下载文件",
-        "seller_note": "卖家：{{note}}",
-        "review_note": "你的备注：{{note}}",
         "actions": {
           "accept": "接受",
           "reject": "退回",
           "waive": "为该卖家豁免"
         },
-        "reject_confirm": {
-          "title": "退回？",
-          "message": "将再次向卖家索取“{{name}}”。"
-        },
-        "waive_confirm": {
-          "title": "豁免此要求？",
-          "message": "“{{name}}”将仅对该卖家视为已满足。"
-        },
         "all_done": "全部完成 🎉",
+        "download": "下载文件",
+        "progress": "已完成 {{done}} / {{total}}",
+        "reject_confirm": {
+          "message": "将再次向卖家索取“{{name}}”。",
+          "title": "退回？"
+        },
+        "review_note": "你的备注：{{note}}",
+        "seller_note": "卖家：{{note}}",
         "status": {
           "complete": "已完成",
+          "incomplete": "待办",
           "pending": "审核中",
-          "rejected": "已退回",
-          "incomplete": "待办"
-        }
+          "rejected": "已退回"
+        },
+        "title": "入驻",
+        "waive_confirm": {
+          "message": "“{{name}}”将仅对该卖家视为已满足。",
+          "title": "豁免此要求？"
+        },
+        "waived": "已豁免"
       },
       "onboarding_column": "入驻",
       "payout_interval": {
-        "inherit": "使用商店默认值",
-        "daily": "每天",
-        "weekly": "每周",
         "biweekly": "每两周",
+        "daily": "每天",
+        "inherit": "使用商店默认值",
+        "manual": "手动",
         "monthly": "每月",
-        "manual": "手动"
+        "weekly": "每周"
       },
       "products_column": "商品",
       "reject_confirm": {
-        "title": "拒绝卖家？",
-        "message": "{{name}} 将不会进入市场。如有需要，之后仍可批准。"
+        "message": "{{name}} 将不会进入市场。如有需要，之后仍可批准。",
+        "title": "拒绝卖家？"
       },
       "reopen_onboarding_confirm": {
-        "title": "退回入驻流程？",
-        "message": "{{name}} 将可以修改资料并再次申请审核。"
+        "message": "{{name}} 将可以修改资料并再次申请审核。",
+        "title": "退回入驻流程？"
       },
       "search_placeholder": "搜索卖家",
       "status": {
-        "pending": "待处理",
+        "approved": "已批准",
+        "canceled": "已取消",
         "invited": "已邀请",
         "onboarding": "入驻中",
+        "pending": "待处理",
         "ready_for_review": "待审核",
-        "approved": "已批准",
-        "suspended": "已暂停",
         "rejected": "已拒绝",
-        "canceled": "已取消"
+        "suspended": "已暂停"
       },
       "status_help": {
-        "pending": "已创建，但尚未邀请任何人。",
+        "approved": "正在市场中销售。",
+        "canceled": "在加入前已退出。",
         "invited": "等待对方接受邀请。",
         "onboarding": "正在填写资料。",
+        "pending": "已创建，但尚未邀请任何人。",
         "ready_for_review": "等待你的批准。",
-        "approved": "正在市场中销售。",
-        "suspended": "已停止销售。恢复后可继续经营。",
         "rejected": "未获准进入市场。",
-        "canceled": "在加入前已退出。"
+        "suspended": "已停止销售。恢复后可继续经营。"
       },
       "suspend_confirm": {
-        "title": "暂停卖家？",
-        "message": "{{name}} 将立即停止销售。商品和历史记录会保留，之后可以恢复。"
+        "message": "{{name}} 将立即停止销售。商品和历史记录会保留，之后可以恢复。",
+        "title": "暂停卖家？"
       },
       "tax_remittance": {
-        "seller": "卖家申报",
-        "platform": "市场申报"
+        "platform": "市场申报",
+        "seller": "卖家申报"
+      },
+      "team": {
+        "empty": "尚无人管理该卖家。",
+        "invite": "邀请",
+        "invited": "已邀请",
+        "messages": {
+          "invitation_resent": "已再次发送邀请",
+          "invitation_revoked": "已撤销邀请",
+          "removed": "已移除团队成员"
+        },
+        "pending": "待接受的邀请",
+        "remove_confirm": {
+          "message": "{{name}} 将失去对该卖家的访问权限。",
+          "title": "移除团队成员？"
+        },
+        "resend": "重新发送",
+        "revoke": "撤销",
+        "revoke_confirm": {
+          "message": "发送给 {{email}} 的邀请将失效。",
+          "title": "撤销邀请？"
+        },
+        "title": "团队"
       },
       "team_column": "团队"
     },
@@ -4240,7 +4263,9 @@
         "webhooks": "事件发生时接收通知的端点"
       },
       "groups": {
+        "audit": "审计",
         "developer": "开发者",
+        "payments": "支付与税务",
         "post_sale": "退货与卖家",
         "selling": "销售",
         "shipping": "配送与物流",
@@ -4272,29 +4297,22 @@
         "webhooks": "Webhooks"
       }
     },
-    "settings_page": {
-      "back_to_dashboard": "返回控制台",
-      "description": "管理店铺、销售配置与团队。",
-      "no_results": "没有与“{{query}}”匹配的设置。",
-      "search_placeholder": "搜索设置",
-      "title": "设置"
-    },
     "setup": {
-      "title": "设置 Spree",
-      "subtitle": "创建您的管理员账户并介绍您的商店。此处的所有设置之后均可更改。",
-      "loading": "正在检查设置状态…",
-      "missing_token_title": "需要设置链接",
-      "missing_token_message": "请打开安装时输出的设置链接——其中包含一次性设置令牌。运行 \"bin/rails spree:setup:token\" 可重新生成。",
-      "not_available_title": "设置不可用",
-      "not_available_message": "此安装已完成设置。请使用您的管理员账户登录。",
-      "could_not_complete": "无法完成设置",
-      "completing": "正在设置…",
-      "complete": "完成设置",
       "back_to_login": "返回登录",
-      "required_notice_title": "此安装尚未完成设置",
-      "required_notice_message": "尚无管理员账户。请使用安装输出中的设置链接创建。",
+      "complete": "完成设置",
+      "completing": "正在设置…",
+      "could_not_complete": "无法完成设置",
+      "countries_failed": "无法加载国家/地区列表。",
+      "loading": "正在检查设置状态…",
+      "missing_token_message": "请打开安装时输出的设置链接——其中包含一次性设置令牌。运行 \"bin/rails spree:setup:token\" 可重新生成。",
+      "missing_token_title": "需要设置链接",
+      "not_available_message": "此安装已完成设置。请使用您的管理员账户登录。",
+      "not_available_title": "设置不可用",
       "required_notice_link": "前往设置",
-      "countries_failed": "无法加载国家/地区列表。"
+      "required_notice_message": "尚无管理员账户。请使用安装输出中的设置链接创建。",
+      "required_notice_title": "此安装尚未完成设置",
+      "subtitle": "创建您的管理员账户并介绍您的商店。此处的所有设置之后均可更改。",
+      "title": "设置 Spree"
     },
     "staff": {
       "actions": {

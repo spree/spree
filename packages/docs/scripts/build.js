@@ -7,25 +7,19 @@
  * - Outputs clean .md files to dist/
  */
 
-import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, statSync } from 'fs'
-import { join, dirname, relative, resolve } from 'path'
-import { convertContent, resolveImports, extractFrontmatter, rewriteLinks } from './convert.js'
+import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'fs'
+import { dirname, join, relative, resolve } from 'path'
+import { convertContent, extractFrontmatter, resolveImports, rewriteLinks } from './convert.js'
 
 const ROOT = resolve(import.meta.dirname, '..', '..', '..')
 const DOCS_DIR = join(ROOT, 'docs')
 const DIST_DIR = resolve(import.meta.dirname, '..', 'dist')
 
 // Directories to include in the output
-const INCLUDE_DIRS = [
-  'developer',
-  'api-reference',
-  'integrations',
-]
+const INCLUDE_DIRS = ['developer', 'api-reference', 'integrations']
 
 // Paths to exclude (relative to DOCS_DIR)
-const EXCLUDE_PATHS = [
-  'developer/storefront/rails',
-]
+const EXCLUDE_PATHS = ['developer/storefront/rails']
 
 // ---------------------------------------------------------------------------
 // Snippet resolution (uses filesystem — not in convert.js)
@@ -54,7 +48,7 @@ function resolveSnippet(importPath) {
 // ---------------------------------------------------------------------------
 
 function processFile(filePath) {
-  let content = readFileSync(filePath, 'utf-8')
+  const content = readFileSync(filePath, 'utf-8')
 
   const { frontmatter, body } = extractFrontmatter(content)
   const fileRelDir = dirname(relative(DOCS_DIR, filePath))
@@ -117,9 +111,7 @@ for (const dir of INCLUDE_DIRS) {
 // Copy OpenAPI specs
 // ---------------------------------------------------------------------------
 
-const OPENAPI_FILES = [
-  'api-reference/store.yaml',
-]
+const OPENAPI_FILES = ['api-reference/store.yaml']
 
 for (const file of OPENAPI_FILES) {
   const src = join(DOCS_DIR, file)

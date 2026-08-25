@@ -7,6 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const { data: types } = await client.paymentMethods.types()
+
 // endregion:example
 
 export { types }

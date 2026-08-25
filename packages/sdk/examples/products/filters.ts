@@ -9,6 +9,7 @@ const client = createClient({
 const filters = await client.products.filters({
   category_id: 'ctg_abc123',
 })
+
 // endregion:example
 
 export { filters }

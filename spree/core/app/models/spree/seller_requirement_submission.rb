@@ -43,6 +43,21 @@ module Spree
     #
     validate :requirement_belongs_to_sellers_store
 
+    # Sellers are the marketplace's lower-trust writers and an operator opens
+    # these files on their own machine, so the bytes decide what a file is,
+    # not the header the uploader sent. `spoofing_protection` is what makes
+    # that true: without it a script named `certificate.pdf` passes.
+    #
+    # The accepted list comes from the requirement's own kind, the same value
+    # the seller API serializes so the panel's picker can hint it.
+    validates :file,
+              content_type: {
+                in: ->(record) { record.requirement&.accepted_content_types || [] },
+                spoofing_protection: true
+              },
+              size: { less_than_or_equal_to: ->(_record) { Spree::Config.max_seller_document_upload_size } },
+              if: -> { file.attached? }
+
     #
     # Scopes
     #

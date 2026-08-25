@@ -74,6 +74,13 @@ module Spree
     # The resource's own super-role, created on first ask. Each owns one:
     # "admin" means everything in *this* store, so it cannot be shared.
     #
+    # Permissions come from the audience the resource grants to, so a role is
+    # born holding them whichever caller asks first — an invitation filling in
+    # its default role, or the resource seeding its own team. A store's stays
+    # empty by design: its super-role is short-circuited by
+    # `Ability#activate_full_access` and needs no keys, while a seller's is an
+    # ordinary role that would otherwise be refused by every endpoint.
+    #
     # @param resource [Spree::Store, Object] defaults to the current store
     # @return [Spree::Role]
     def self.default_admin_role(resource = nil)
@@ -81,7 +88,16 @@ module Spree
 
       for_resource(resource).find_or_create_by(name: ADMIN_ROLE) do |role|
         role.mutable = false
+        role.permissions = default_admin_permissions_for(resource)
       end
+    end
+
+    # @return [Array<String>] the keys a resource's own super-role is born with
+    def self.default_admin_permissions_for(resource)
+      audience = resource.try(:role_audience)
+      return [] if audience.blank?
+
+      Spree.permissions.grantable_keys(audience)
     end
 
     # The protected super-role: everything in this store. Guarded by the owning

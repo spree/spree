@@ -15,6 +15,7 @@ import {
   ResourceMultiAutocomplete,
   Subject,
   useResourceKey,
+  useStockLocations,
   useStore,
 } from '@spree/dashboard-core'
 import {
@@ -56,7 +57,6 @@ import {
 } from '../../../hooks/use-delivery-methods'
 import { useIntegrations, useIntegrationTypes } from '../../../hooks/use-integrations'
 import { productAutocompleteProps } from '../../../hooks/use-products'
-import { useStockLocations } from '../../../hooks/use-stock-locations'
 import { useTaxCategories } from '../../../hooks/use-tax-categories'
 import type { DeliveryMethodFormValues } from '../../../schemas/delivery-method'
 import { ConfigureIntegrationSheet } from '../integrations/configure-integration-sheet'

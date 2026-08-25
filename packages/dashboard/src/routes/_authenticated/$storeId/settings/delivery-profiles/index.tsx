@@ -8,6 +8,7 @@ import {
   resourceSearchSchema,
   Subject,
   usePermissions,
+  useStockLocations,
 } from '@spree/dashboard-core'
 import {
   Button,
@@ -45,7 +46,6 @@ import {
   useDeleteDeliveryProfile,
   useDeliveryProfileKinds,
 } from '../../../../../hooks/use-delivery-profiles'
-import { useStockLocations } from '../../../../../hooks/use-stock-locations'
 import {
   DELIVERY_PROFILE_CREATE_DEFAULTS,
   type DeliveryProfileCreateValues,

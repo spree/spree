@@ -7,6 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const { data: cards } = await client.customers.creditCards.list('cus_UkLWZg9DAJ')
+
 // endregion:example
 
 export { cards }

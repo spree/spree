@@ -24,6 +24,7 @@ import { SellerInviteSheet } from '../../../../components/spree/sellers/seller-i
 import { SellerOnboardingCard } from '../../../../components/spree/sellers/seller-onboarding-card'
 import { SellerSettlementCard } from '../../../../components/spree/sellers/seller-settlement-card'
 import { SellerStatusCard } from '../../../../components/spree/sellers/seller-status-card'
+import { SellerTeamCard } from '../../../../components/spree/sellers/seller-team-card'
 import { useSellerOnboarding } from '../../../../hooks/use-seller-requirements'
 import {
   useApproveSeller,
@@ -260,6 +261,7 @@ function SellerBody({ seller }: { seller: Seller }) {
               onEdit={() => setEditingProfile(true)}
             />
             <SellerOnboardingCard seller={seller} canEdit={canEdit} />
+            <SellerTeamCard seller={seller} onInvite={() => setInviting(true)} />
             <Slot name="seller.form_main" context={{ seller, canEdit }} />
           </>
         }

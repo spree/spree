@@ -22,16 +22,19 @@ module Spree
             tax_identifier.validatable?
           end
 
+          # The owner, reported under the name of what it is, so a client can
+          # tell a customer's durable registration from a cart override or an
+          # order's snapshot without reading a type string.
           attribute :customer_id do |tax_identifier|
-            tax_identifier.customer&.prefixed_id
+            tax_identifier.owner&.prefixed_id if tax_identifier.owner.is_a?(Spree.customer_class)
           end
 
           attribute :cart_id do |tax_identifier|
-            tax_identifier.cart&.prefixed_id
+            tax_identifier.owner&.prefixed_id if tax_identifier.owner.is_a?(Spree::Cart)
           end
 
           attribute :order_id do |tax_identifier|
-            tax_identifier.order&.prefixed_id
+            tax_identifier.owner&.prefixed_id if tax_identifier.owner.is_a?(Spree::Order)
           end
         end
       end

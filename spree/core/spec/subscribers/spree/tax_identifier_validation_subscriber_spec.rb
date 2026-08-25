@@ -22,7 +22,7 @@ RSpec.describe Spree::TaxIdentifierValidationSubscriber do
   end
 
   describe '#call' do
-    let(:identifier) { create(:tax_identifier, customer: customer, kind: 'eu_vat') }
+    let(:identifier) { create(:tax_identifier, owner: customer, kind: 'eu_vat') }
     let(:event) { Spree::Event.new(name: 'tax_identifier.number_changed', payload: { 'id' => identifier.prefixed_id }) }
 
     it 'queues the registry check' do
@@ -38,7 +38,7 @@ RSpec.describe Spree::TaxIdentifierValidationSubscriber do
     # A placed order's number is a snapshot: re-checking it could contradict
     # what the order was taxed under.
     it 'does nothing for an order snapshot' do
-      snapshot = create(:tax_identifier, :on_order, order: create(:order, store: store), kind: 'eu_vat')
+      snapshot = create(:tax_identifier, :on_order, owner: create(:order, store: store), kind: 'eu_vat')
       snapshot_event = Spree::Event.new(name: 'tax_identifier.number_changed', payload: { 'id' => snapshot.prefixed_id })
 
       expect { described_class.new.call(snapshot_event) }.not_to have_enqueued_job(Spree::TaxIdentifiers::ValidateJob)

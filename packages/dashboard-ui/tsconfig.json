@@ -1,6 +1,10 @@
 {
   "compilerOptions": {
     "target": "ES2022",
+    // The map primitive imports maplibre's stylesheet and its worker through
+    // Vite's `?worker&url`, both of which are typed by vite/client. The
+    // package is source-only, so the consumer's bundler resolves them.
+    "types": ["vite/client"],
     "ignoreDeprecations": "6.0",
     "useDefineForClassFields": true,
     "lib": ["ES2022", "DOM", "DOM.Iterable"],

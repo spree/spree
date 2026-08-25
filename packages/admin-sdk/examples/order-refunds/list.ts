@@ -7,6 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const { data: refunds } = await client.orders.refunds.list('or_UkLWZg9DAJ')
+
 // endregion:example
 
 export { refunds }

@@ -9,6 +9,7 @@ const client = createClient({
 const cart = await client.carts.storeCredits.remove('cart_abc123', {
   token: '<token>',
 })
+
 // endregion:example
 
 export { cart }

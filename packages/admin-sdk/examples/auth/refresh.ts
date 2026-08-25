@@ -8,6 +8,7 @@ const client = createAdminClient({
 // region:example
 // Driven entirely by the HttpOnly refresh-token cookie + CSRF header (set by the SDK).
 const auth = await client.auth.refresh()
+
 // endregion:example
 
 export { auth }

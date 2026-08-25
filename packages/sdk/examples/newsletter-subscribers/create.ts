@@ -10,6 +10,7 @@ const subscriber = await client.newsletterSubscribers.create({
   email: 'subscriber@example.com',
   redirect_url: 'https://your-store.com/newsletter/confirm',
 })
+
 // endregion:example
 
 export { subscriber }

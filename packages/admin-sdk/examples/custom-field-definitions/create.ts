@@ -14,6 +14,7 @@ const definition = await client.customFieldDefinitions.create({
   resource_type: 'Spree::Product',
   storefront_visible: true,
 })
+
 // endregion:example
 
 export { definition }

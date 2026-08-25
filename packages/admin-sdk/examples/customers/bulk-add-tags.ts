@@ -10,6 +10,7 @@ const result = await client.customers.bulkAddTags({
   ids: ['cus_UkLWZg9DAJ', 'cus_QrLWXg9CAJ'],
   tags: ['vip', 'newsletter'],
 })
+
 // endregion:example
 
 export { result }

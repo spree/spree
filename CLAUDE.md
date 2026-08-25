@@ -114,6 +114,7 @@ Development happens in **git worktrees** — every worktree is a self-contained 
 wt switch -c feature-x       # create worktree + provisioned environment (~20 s)
 pnpm wt:dev                  # Rails → https://feature-x.spree.localhost  (/up, /api/v3, /jobs; jobs run inside Puma via Solid Queue)
 pnpm wt:dashboard            # admin UI → https://admin.feature-x.spree.localhost
+pnpm wt:seller               # seller panel → https://sellers.feature-x.spree.localhost
 pnpm wt:e2e [spec...]        # Playwright on this worktree's own port block
 pnpm wt:template             # rebuild the template DB after schema-changing pulls
 wt merge main                # ship + clean up (worktree, branch and databases all removed)
@@ -122,7 +123,7 @@ wt remove                    # abandon instead of shipping
 
 Admin login: `spree@example.com` / `spree123`. Both dev scripts run in the foreground and stream logs; `server/log/development.log` has the Rails log if the server runs detached. Start servers only in worktrees you're actively looking at — rspec/vitest/tsc need no servers.
 
-One-time machine setup: Homebrew `postgresql@18` running on :5432 (with a `postgres` superuser role), Ruby per `server/.ruby-version` (mise or rbenv), Node ≥ 24 with `npm i -g portless` (start the proxy once with `portless proxy start`, accepting sudo for :443), worktrunk, then `pnpm wt:template`.
+One-time machine setup: Homebrew `postgresql@18` running on :5432 (with a `postgres` superuser role), `mailpit` (`brew services start mailpit` — one instance serves every worktree), Ruby per `server/.ruby-version` (mise or rbenv), Node ≥ 24 with `npm i -g portless` (start the proxy once with `portless proxy start`, accepting sudo for :443), worktrunk, then `pnpm wt:template`.
 
 | What changed | What to run (inside the worktree) |
 |---|---|
@@ -132,8 +133,10 @@ One-time machine setup: Homebrew `postgresql@18` running on :5432 (with a `postg
 | Need sample data (products + images) | `cd server && bin/rails spree:load_sample_data` — per worktree, on demand; takes minutes and hits the network |
 | Rails console / database | `cd server && bin/rails console`; the DB is `spree_dev_<branch>` on `localhost:5432` |
 | E2E prerequisites | Once per worktree: `cd spree/api && bundle install && bundle exec rake test_app` (then `pnpm wt:e2e`) |
+| Read an email the app sent | Mailpit catches everything: <http://localhost:8025>. `brew install mailpit && brew services start mailpit` if it is not running — without it the starter falls back to a delivery method that does not exist and every send raises |
 | Meilisearch search provider | Optional: `brew install meilisearch`, run it, set `MEILISEARCH_URL` in `server/.env`, `bin/rails spree:search:reindex` |
 | Hosted dashboard at `/dashboard` (single-node test) | `pnpm server:dashboard` to build `packages/dashboard-starter/dist`, set `SPREE_DASHBOARD_DIST_PATH=<monorepo>/packages/dashboard-starter/dist` in `server/.env` |
+| Hosted seller panel at `/sellers` (single-node test) | `pnpm server:seller` to build `packages/seller-dashboard-starter/dist`, set `SPREE_SELLER_PANEL_DIST_PATH=<monorepo>/packages/seller-dashboard-starter/dist` in `server/.env` |
 | Broken beyond repair | `wt remove` and recreate — or `dropdb spree_dev_<branch>`, delete `server/`, re-run `pnpm wt:setup` |
 
 **The legacy Docker compose flow (`pnpm server:setup` / `server:dev` / `server:stop` etc.) is deprecated — never use it.** It exists only for spree-starter parity; it fights the worktree stack for ports and its teardown scripts wipe shared state.
@@ -563,6 +566,11 @@ pnpm wt:dev             # foreground; streams logs — https://<branch>.spree.lo
 
 # 2. Boot the admin (separate terminal)
 pnpm wt:dashboard       # https://admin.<branch>.spree.localhost (proxies /api/* to this worktree's Rails)
+
+# 3. Boot the marketplace seller panel (third terminal, optional)
+pnpm wt:seller          # https://sellers.<branch>.spree.localhost
+#    Seed a seller to sign in as:
+#    cd server && bin/rails spree:sellers:sample_data   → seller@example.com / spree123
 ```
 
 The starter is the canonical host — the same app `spree add dashboard` scaffolds — so local dev exercises the real consumer path (shell + plugin pipeline) while still hot-reloading `@spree/dashboard`/`-core`/`-ui` source through the workspace. Building the workspace deps first matters on a fresh worktree: the starter's `vite.config.ts` resolves the compiled Node-side Vite entries (`@spree/dashboard/vite`, `@spree/dashboard-core/vite`) from `dist/` — `pnpm wt:dashboard` handles this (turbo builds the dependency graph, then starts Vite on the portless-assigned port).

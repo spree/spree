@@ -7,8 +7,9 @@ const client = createAdminClient({
 
 // region:example
 const store = await client.store.update({
-  name: 'My Store'
+  name: 'My Store',
 })
+
 // endregion:example
 
 export { store }

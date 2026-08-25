@@ -9,6 +9,7 @@ const client = createClient({
 const card = await client.customer.creditCards.get('card_abc123', {
   token: '<token>',
 })
+
 // endregion:example
 
 export { card }

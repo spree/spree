@@ -6,7 +6,7 @@ RSpec.describe Spree::Api::V3::Admin::Customers::TaxIdentifiersController, type:
   include_context 'API v3 Admin authenticated'
 
   let!(:customer) { create(:user) }
-  let!(:tax_identifier) { create(:tax_identifier, :verified, customer: customer, kind: 'eu_vat', value: 'DE123456789') }
+  let!(:tax_identifier) { create(:tax_identifier, :verified, owner: customer, kind: 'eu_vat', value: 'DE123456789') }
 
   before { request.headers.merge!(headers) }
 

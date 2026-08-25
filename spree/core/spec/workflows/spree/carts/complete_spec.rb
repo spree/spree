@@ -226,7 +226,7 @@ module Spree
       before { ready_cart.update!(customer: customer) }
 
       it 'freezes the customer registration onto the order' do
-        create(:tax_identifier, customer: customer, kind: 'eu_vat', value: 'DE123456789')
+        create(:tax_identifier, owner: customer, kind: 'eu_vat', value: 'DE123456789')
 
         order = described_class.call(cart: ready_cart).value
 
@@ -237,8 +237,8 @@ module Spree
       end
 
       it 'records a checkout override as such' do
-        create(:tax_identifier, customer: customer, kind: 'eu_vat', value: 'DE123456789')
-        create(:tax_identifier, customer: nil, cart: ready_cart, kind: 'eu_vat', value: 'DE999999999')
+        create(:tax_identifier, owner: customer, kind: 'eu_vat', value: 'DE123456789')
+        create(:tax_identifier, owner: ready_cart, kind: 'eu_vat', value: 'DE999999999')
 
         order = described_class.call(cart: ready_cart).value
 
@@ -250,15 +250,14 @@ module Spree
         company = create(:company, store: store)
         location = create(:company_location, company: company)
         ready_cart.update!(company_location: location)
-        create(:tax_identifier, customer: nil, company: company, kind: 'eu_vat', value: 'DE777777777')
+        create(:tax_identifier, owner: company, kind: 'eu_vat', value: 'DE777777777')
 
         order = described_class.call(cart: ready_cart).value
 
         expect(order.tax_identifier.value).to eq('DE777777777')
         expect(order.tax_identifier.source).to eq('company')
-        # The copy must not carry the company along, or the order row would
-        # have two owners.
-        expect(order.tax_identifier.company_id).to be_nil
+        # The copy belongs to the order, not the company it was resolved from.
+        expect(order.tax_identifier.owner).to eq(order)
       end
 
       it 'copies nothing for a consumer sale' do

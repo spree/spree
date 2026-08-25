@@ -1,11 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { DeliveryProfile } from '@spree/admin-sdk'
-import { Can, mapSpreeErrorsToForm, Subject } from '@spree/dashboard-core'
+import { Can, mapSpreeErrorsToForm, Subject, useStockLocations } from '@spree/dashboard-core'
 import { Button, Card, CardContent, CardHeader, CardTitle } from '@spree/dashboard-ui'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useUpdateDeliveryProfile } from '../../../hooks/use-delivery-profiles'
-import { useStockLocations } from '../../../hooks/use-stock-locations'
 import {
   type DeliveryProfileLocationsValues,
   deliveryProfileLocationsSchema,

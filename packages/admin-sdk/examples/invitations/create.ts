@@ -8,8 +8,9 @@ const client = createAdminClient({
 // region:example
 const invitation = await client.invitations.create({
   email: 'ada@example.com',
-  role_id: 'role_xxx'
+  role_id: 'role_xxx',
 })
+
 // endregion:example
 
 export { invitation }

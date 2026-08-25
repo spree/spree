@@ -462,6 +462,16 @@ Spree::Core::Engine.add_routes do
             patch :reopen_onboarding
           end
 
+          # Who runs this seller, and the offers nobody has accepted yet.
+          # The operator is the only one who can repair a seller whose team
+          # has locked itself out, which the seller's own panel cannot do.
+          resources :team, only: [:index, :destroy], controller: 'sellers/team'
+          resources :invitations, only: [:index, :destroy], controller: 'sellers/invitations' do
+            member do
+              patch :resend
+            end
+          end
+
           # What this seller submitted about the requirements, and the
           # operator's decisions on it. Nested, because a submission means
           # nothing outside the seller it belongs to.
@@ -659,7 +669,49 @@ Spree::Core::Engine.add_routes do
         post 'auth/logout', to: 'auth#logout'
         get 'auth/providers', to: 'auth#providers'
 
+        # Public invitation acceptance — unauthenticated; the prefixed ID +
+        # token in the emailed link are the credential.
+        get 'auth/invitations/:id/lookup', to: 'invitation_acceptances#lookup'
+        post 'auth/invitations/:id/accept', to: 'invitation_acceptances#accept'
+
         get 'me', to: 'me#show'
+
+        # Singular: the seller in play is always `current_seller`.
+        resource :profile, only: [:show, :update], controller: 'profile'
+
+        resources :team, only: [:index, :create, :destroy], controller: 'team'
+
+        # Creating an invitation is hiring, so it lives on `team`; chasing or
+        # withdrawing one is bookkeeping on the offer.
+        resources :invitations, only: [:index, :destroy], controller: 'invitations' do
+          member do
+            patch :resend
+          end
+        end
+
+        resources :products, only: [:index, :show, :create, :update, :destroy]
+
+        resources :direct_uploads, only: [:create]
+
+        # No destroy: a location holds stock levels and is named on historical
+        # fulfillments, so a seller retires one by deactivating it.
+        resources :stock_locations, only: [:index, :show, :create, :update]
+
+        resources :countries, only: [:index]
+
+        # Singular: the checklist is always `current_seller`'s.
+        resource :onboarding, only: [:show], controller: 'onboarding' do
+          post :submit_for_review
+        end
+
+        resources :requirements, only: [] do
+          resources :submissions, only: [:create], controller: 'requirement_submissions'
+        end
+        resources :requirement_submissions, only: [] do
+          member do
+            get :download
+          end
+        end
       end
 
       # Webhooks (outside of store namespace — no API key authentication)

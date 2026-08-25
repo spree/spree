@@ -7,6 +7,7 @@ const client = createClient({
 
 // region:example
 const country = await client.countries.get('US')
+
 // endregion:example
 
 export { country }

@@ -6,11 +6,17 @@ const client = createClient({
 })
 
 // region:example
-const cart = await client.carts.items.update('cart_abc123', 'li_abc123', {
-  quantity: 5,
-}, {
-  token: '<token>',
-})
+const cart = await client.carts.items.update(
+  'cart_abc123',
+  'li_abc123',
+  {
+    quantity: 5,
+  },
+  {
+    token: '<token>',
+  },
+)
+
 // endregion:example
 
 export { cart }

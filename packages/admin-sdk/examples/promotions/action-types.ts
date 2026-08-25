@@ -7,6 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const { data: actionTypes } = await client.promotionActions.types()
+
 // endregion:example
 
 export { actionTypes }

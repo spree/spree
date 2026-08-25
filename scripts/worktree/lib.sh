@@ -74,6 +74,10 @@ rails_name() { echo "$(branch_slug).spree"; }
 dashboard_name() { echo "admin.$(branch_slug).spree"; }
 rails_url() { echo "https://$(rails_name).localhost$(url_suffix)"; }
 dashboard_url() { echo "https://$(dashboard_name).localhost$(url_suffix)"; }
+# The marketplace seller panel — a separate app from the operator's dashboard,
+# so it gets its own host rather than a route inside it.
+seller_name() { echo "sellers.$(branch_slug).spree"; }
+seller_url() { echo "https://$(seller_name).localhost$(url_suffix)"; }
 # RAILS_HOST wants a bare host with an optional port, no scheme.
 rails_host() { echo "$(rails_name).localhost$(url_suffix)"; }
 
@@ -102,4 +106,19 @@ require_portless() {
     echo "portless not found — install with: npm install -g portless (Node >= 24)" >&2
     exit 1
   }
+}
+
+# Mailpit catches every email the dev server sends, the same way it does in the
+# starter's Docker stack. One instance serves every worktree, like Postgres.
+MAILPIT_HOST="${MAILPIT_HOST:-localhost}"
+MAILPIT_SMTP_PORT="${MAILPIT_SMTP_PORT:-1025}"
+MAILPIT_UI_PORT="${MAILPIT_UI_PORT:-8025}"
+mailpit_url() { echo "http://localhost:$MAILPIT_UI_PORT"; }
+
+# A warning rather than a hard failure: a worktree is still usable without it,
+# and only the screens that send mail are affected.
+warn_unless_mailpit() {
+  port_free "$MAILPIT_SMTP_PORT" || return 0
+  echo "  ! Mailpit is not running — email will fail to deliver."
+  echo "    brew install mailpit && brew services start mailpit"
 }

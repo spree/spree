@@ -6,11 +6,17 @@ const client = createClient({
 })
 
 // region:example
-const session = await client.carts.paymentSessions.complete('cart_abc123', 'ps_abc123', {
-  session_result: 'success',
-}, {
-  token: '<token>',
-})
+const session = await client.carts.paymentSessions.complete(
+  'cart_abc123',
+  'ps_abc123',
+  {
+    session_result: 'success',
+  },
+  {
+    token: '<token>',
+  },
+)
+
 // endregion:example
 
 export { session }

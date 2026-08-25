@@ -11,12 +11,10 @@ describe Spree::TaxIdentifier, type: :model do
     expect(build(:tax_identifier, value: nil)).not_to be_valid
   end
 
-  it 'belongs to exactly one owner' do
-    expect(build(:tax_identifier, customer: customer)).to be_valid
-    expect(build(:tax_identifier, customer: nil, cart: cart)).to be_valid
-
-    expect(build(:tax_identifier, customer: customer, cart: cart)).not_to be_valid
-    expect(build(:tax_identifier, customer: nil)).not_to be_valid
+  it 'requires an owner' do
+    expect(build(:tax_identifier, owner: customer)).to be_valid
+    expect(build(:tax_identifier, owner: cart)).to be_valid
+    expect(build(:tax_identifier, owner: nil)).not_to be_valid
   end
 
   it 'rejects a validation status the platform never sets' do
@@ -27,25 +25,25 @@ describe Spree::TaxIdentifier, type: :model do
 
   describe 'the order snapshot' do
     it 'is immutable once written' do
-      snapshot = create(:tax_identifier, :on_order, order: order)
+      snapshot = create(:tax_identifier, :on_order, owner: order)
 
       expect(snapshot).to be_readonly
       expect { snapshot.update!(value: 'DE999999999') }.to raise_error(ActiveRecord::ReadOnlyRecord)
     end
 
     it 'is writable while unsaved' do
-      expect(build(:tax_identifier, :on_order, order: order)).not_to be_readonly
+      expect(build(:tax_identifier, :on_order, owner: order)).not_to be_readonly
     end
   end
 
   it 'is editable while owned by a customer or a cart' do
-    expect(create(:tax_identifier, customer: customer)).not_to be_readonly
-    expect(create(:tax_identifier, :on_cart, cart: cart)).not_to be_readonly
+    expect(create(:tax_identifier, owner: customer)).not_to be_readonly
+    expect(create(:tax_identifier, :on_cart, owner: cart)).not_to be_readonly
   end
 
   describe 'normalization' do
     it 'strips whitespace and upcases, keeping punctuation' do
-      identifier = create(:tax_identifier, customer: customer, kind: 'ch_vat', value: ' che-123.456.789 mwst ')
+      identifier = create(:tax_identifier, owner: customer, kind: 'ch_vat', value: ' che-123.456.789 mwst ')
 
       expect(identifier.value).to eq('CHE-123.456.789MWST')
     end
@@ -71,18 +69,18 @@ describe Spree::TaxIdentifier, type: :model do
     end
 
     it 'rejects a malformed number as a typo to fix' do
-      identifier = build(:tax_identifier, customer: customer, kind: 'eu_vat', value: '123456789')
+      identifier = build(:tax_identifier, owner: customer, kind: 'eu_vat', value: '123456789')
 
       expect(identifier).not_to be_valid
       expect(identifier.errors[:value]).to be_present
     end
 
     it 'accepts a well-formed one' do
-      expect(build(:tax_identifier, customer: customer, kind: 'eu_vat', value: 'DE123456789')).to be_valid
+      expect(build(:tax_identifier, owner: customer, kind: 'eu_vat', value: 'DE123456789')).to be_valid
     end
 
     it 'accepts any number for a kind nothing here can check' do
-      expect(build(:tax_identifier, customer: customer, kind: 'au_abn', value: 'anything')).to be_valid
+      expect(build(:tax_identifier, owner: customer, kind: 'au_abn', value: 'anything')).to be_valid
     end
   end
 
@@ -96,20 +94,20 @@ describe Spree::TaxIdentifier, type: :model do
     it 'is queued when a checkable number is entered, and marked pending' do
       identifier = nil
 
-      expect { identifier = create(:tax_identifier, customer: customer, kind: 'eu_vat') }.to(
+      expect { identifier = create(:tax_identifier, owner: customer, kind: 'eu_vat') }.to(
         have_enqueued_job(Spree::TaxIdentifiers::ValidateJob)
       )
       expect(identifier.reload.validation_status).to eq('pending')
     end
 
     it 'is not queued again when something else on the row changes' do
-      identifier = create(:tax_identifier, customer: customer, kind: 'eu_vat')
+      identifier = create(:tax_identifier, owner: customer, kind: 'eu_vat')
 
       expect { identifier.update!(source: nil) }.not_to have_enqueued_job(Spree::TaxIdentifiers::ValidateJob)
     end
 
     it 'is queued again when the number changes' do
-      identifier = create(:tax_identifier, customer: customer, kind: 'eu_vat')
+      identifier = create(:tax_identifier, owner: customer, kind: 'eu_vat')
 
       expect { identifier.update!(value: 'DE987654321') }.to have_enqueued_job(Spree::TaxIdentifiers::ValidateJob)
     end
@@ -118,7 +116,7 @@ describe Spree::TaxIdentifier, type: :model do
     # the request that changed the number must not report a stale verdict, and it
     # must hold even where the event bus is switched off.
     it 'marks the row pending on the object that was saved, without reloading' do
-      identifier = Spree::Events.disable { create(:tax_identifier, customer: customer, kind: 'eu_vat') }
+      identifier = Spree::Events.disable { create(:tax_identifier, owner: customer, kind: 'eu_vat') }
 
       expect(identifier.validation_status).to eq('pending')
       expect(identifier.validated_at).to be_nil
@@ -127,7 +125,7 @@ describe Spree::TaxIdentifier, type: :model do
     # Purchase::Taxation#best_of prefers a verified row, so a verdict left behind
     # on a kind nothing can check would be actively chosen to decide tax.
     it 'clears the verdict when the kind becomes one nothing can check' do
-      identifier = create(:tax_identifier, customer: customer, kind: 'eu_vat')
+      identifier = create(:tax_identifier, owner: customer, kind: 'eu_vat')
       identifier.update_columns(validation_status: 'verified', validated_at: Time.current)
 
       identifier.update!(kind: 'au_abn', value: '51824753556')
@@ -139,7 +137,7 @@ describe Spree::TaxIdentifier, type: :model do
     end
 
     it 'clears an earlier verdict when the number changes' do
-      identifier = create(:tax_identifier, customer: customer, kind: 'eu_vat')
+      identifier = create(:tax_identifier, owner: customer, kind: 'eu_vat')
       identifier.update_columns(validation_status: 'verified', validated_at: Time.current)
 
       identifier.update!(value: 'DE987654321')
@@ -149,14 +147,14 @@ describe Spree::TaxIdentifier, type: :model do
     end
 
     it 'is skipped for a kind nothing here can check' do
-      expect { create(:tax_identifier, customer: customer, kind: 'au_abn') }.not_to(
+      expect { create(:tax_identifier, owner: customer, kind: 'au_abn') }.not_to(
         have_enqueued_job(Spree::TaxIdentifiers::ValidateJob)
       )
       expect(described_class.last.validation_status).to be_nil
     end
 
     it 'is skipped for an order snapshot, frozen by definition' do
-      expect { create(:tax_identifier, :on_order, order: order, kind: 'eu_vat') }.not_to(
+      expect { create(:tax_identifier, :on_order, owner: order, kind: 'eu_vat') }.not_to(
         have_enqueued_job(Spree::TaxIdentifiers::ValidateJob)
       )
     end
@@ -164,7 +162,7 @@ describe Spree::TaxIdentifier, type: :model do
 
   describe '#validatable?' do
     it 'reports whether this installation can check the kind' do
-      identifier = create(:tax_identifier, customer: customer, kind: 'eu_vat')
+      identifier = create(:tax_identifier, owner: customer, kind: 'eu_vat')
       expect(identifier).not_to be_validatable
 
       with_tax_identifier_validator('eu_vat', 'Spree::TaxIdentifiers::Validator::Base') do
@@ -177,25 +175,40 @@ describe Spree::TaxIdentifier, type: :model do
     let(:company) { create(:company, store: @default_store) }
 
     it 'is a valid sole owner' do
-      expect(build(:tax_identifier, customer: nil, company: company)).to be_valid
-    end
-
-    it 'is rejected alongside another owner' do
-      identifier = build(:tax_identifier, company: company, customer: create(:customer))
-
-      expect(identifier).not_to be_valid
+      expect(build(:tax_identifier, owner: company)).to be_valid
     end
 
     it 'holds one registration per kind' do
-      create(:tax_identifier, customer: nil, company: company, kind: 'eu_vat')
+      create(:tax_identifier, owner: company, kind: 'eu_vat')
 
-      expect(build(:tax_identifier, customer: nil, company: company, kind: 'eu_vat')).not_to be_valid
+      expect(build(:tax_identifier, owner: company, kind: 'eu_vat')).not_to be_valid
     end
 
     it 'reports the company as its owner' do
-      identifier = create(:tax_identifier, customer: nil, company: company)
+      identifier = create(:tax_identifier, owner: company)
 
       expect(identifier.owner).to eq(company)
     end
   end
+  # A seller's registration faces the other way from the rest: it is what the
+  # marketplace's own commission invoice is made out to, and what makes EU
+  # reverse charge on that fee possible.
+  describe 'a seller owner' do
+    let(:seller) { create(:seller) }
+
+    it 'is a valid owner' do
+      identifier = described_class.new(owner: seller, kind: 'eu_vat', value: 'GB123456789')
+
+      expect(identifier).to be_valid
+      expect(identifier.owner).to eq(seller)
+    end
+
+    it 'holds one registration per kind' do
+      described_class.create!(owner: seller, kind: 'eu_vat', value: 'GB123456789')
+      duplicate = described_class.new(owner: seller, kind: 'eu_vat', value: 'GB987654321')
+
+      expect(duplicate).not_to be_valid
+    end
+  end
+
 end

@@ -9,6 +9,7 @@ const client = createClient({
 const category = await client.categories.get('categories/clothing/shirts', {
   expand: ['children'],
 })
+
 // endregion:example
 
 export { category }

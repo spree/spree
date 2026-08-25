@@ -8,7 +8,7 @@ RSpec.describe 'Admin Company Tax Identifiers API', type: :request, swagger_doc:
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
   let!(:company) { create(:company, store: store) }
   let!(:tax_identifier) do
-    create(:tax_identifier, customer: nil, company: company, kind: 'eu_vat', value: 'DE123456789')
+    create(:tax_identifier, owner: company, kind: 'eu_vat', value: 'DE123456789')
   end
 
   path '/api/v3/admin/companies/{company_id}/tax_identifiers' do

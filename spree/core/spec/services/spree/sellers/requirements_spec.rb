@@ -60,11 +60,11 @@ RSpec.describe Spree::Sellers::Requirements do
       create(:billing_address_requirement, store: store, required: false)
       seller.update!(terms_accepted_at: Time.current)
 
-      expect(described_class.new(seller.reload).progress).to eq(done: 1, total: 2, percentage: 50)
+      expect(described_class.new(seller.reload).progress).to eq(done: 1, total: 2)
     end
 
     it 'reads as finished when nothing is asked' do
-      expect(requirements.progress).to eq(done: 0, total: 0, percentage: 100)
+      expect(requirements.progress).to eq(done: 0, total: 0)
     end
   end
 end

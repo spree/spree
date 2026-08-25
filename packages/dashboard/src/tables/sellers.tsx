@@ -1,5 +1,5 @@
 import type { Seller } from '@spree/admin-sdk'
-import { defineTable } from '@spree/dashboard-core'
+import { defineTable, progressPercentage } from '@spree/dashboard-core'
 import { Progress, RelativeTime, StatusBadge } from '@spree/dashboard-ui'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
@@ -74,7 +74,7 @@ defineTable<Seller>('sellers', {
                 total: progress.total,
               })}
             </span>
-            <Progress value={progress.percentage} />
+            <Progress value={progressPercentage(progress)} />
           </div>
         )
       },

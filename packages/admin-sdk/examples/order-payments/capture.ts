@@ -7,6 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const payment = await client.orders.payments.capture('or_UkLWZg9DAJ', 'pay_UkLWZg9DAJ')
+
 // endregion:example
 
 export { payment }

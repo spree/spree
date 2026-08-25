@@ -7,9 +7,14 @@ const client = createAdminClient({
 
 // region:example
 const me = await client.me.get()
-if (me.permissions.some((r) => r.allow && r.actions.includes('manage') && r.subjects.includes('Spree::Product'))) {
+if (
+  me.permissions.some(
+    (r) => r.allow && r.actions.includes('manage') && r.subjects.includes('Spree::Product'),
+  )
+) {
   // show "Create product" button
 }
+
 // endregion:example
 
 export { me }

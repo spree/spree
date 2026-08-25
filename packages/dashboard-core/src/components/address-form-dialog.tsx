@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { Address } from '@spree/admin-sdk'
 import {
   Button,
   Checkbox,
@@ -27,6 +26,7 @@ import { StateCombobox, useCountryStates } from './country-state-fields'
 export interface AddressParams {
   first_name: string
   last_name: string
+  company?: string
   address1: string
   address2: string
   city: string
@@ -39,15 +39,7 @@ export interface AddressParams {
   is_default_shipping?: boolean
 }
 
-const addressFormSchema = z.object({
-  first_name: z
-    .string()
-    .trim()
-    .min(1, { error: requiredMessage('first_name') }),
-  last_name: z
-    .string()
-    .trim()
-    .min(1, { error: requiredMessage('last_name') }),
+const addressFormFields = {
   address1: z
     .string()
     .trim()
@@ -70,14 +62,73 @@ const addressFormSchema = z.object({
   label: z.string(),
   is_default_billing: z.boolean(),
   is_default_shipping: z.boolean(),
+}
+
+/**
+ * Whose address this is.
+ *
+ * A person's address is addressed to them, so it needs their name. A
+ * business's is addressed to the company — there is no person to name, and
+ * the company is the part that cannot be left out. Mirrors the same
+ * distinction `Spree::Address` makes server-side, so the form asks for
+ * exactly what the model will accept.
+ */
+const personalSchema = z.object({
+  ...addressFormFields,
+  first_name: z
+    .string()
+    .trim()
+    .min(1, { error: requiredMessage('first_name') }),
+  last_name: z
+    .string()
+    .trim()
+    .min(1, { error: requiredMessage('last_name') }),
+  company: z.string(),
 })
 
-type AddressFormValues = z.infer<typeof addressFormSchema>
+const businessSchema = z.object({
+  ...addressFormFields,
+  first_name: z.string(),
+  last_name: z.string(),
+  company: z
+    .string()
+    .trim()
+    .min(1, { error: requiredMessage('company') }),
+})
 
-function buildDefaults(address: Address | null | undefined): AddressFormValues {
+type AddressFormValues = z.infer<typeof personalSchema>
+
+/**
+ * Just the fields this dialog reads.
+ *
+ * Structural rather than the Admin SDK's `Address`, which carries operator
+ * data (metadata, customer_id, timestamps) that a seller's serializer
+ * deliberately withholds — binding core to the wider type would stop the
+ * seller panel from reusing the one address form.
+ */
+export interface EditableAddress {
+  /** Re-seeds the form when the dialog is pointed at a different address. */
+  id?: string
+  first_name?: string | null
+  last_name?: string | null
+  company?: string | null
+  address1?: string | null
+  address2?: string | null
+  city?: string | null
+  postal_code?: string | null
+  country_code?: string | null
+  state_code?: string | null
+  phone?: string | null
+  label?: string | null
+  is_default_billing?: boolean | null
+  is_default_shipping?: boolean | null
+}
+
+function buildDefaults(address: EditableAddress | null | undefined): AddressFormValues {
   return {
     first_name: address?.first_name ?? '',
     last_name: address?.last_name ?? '',
+    company: address?.company ?? '',
     address1: address?.address1 ?? '',
     address2: address?.address2 ?? '',
     city: address?.city ?? '',
@@ -100,8 +151,9 @@ export function AddressFormDialog({
   isPending = false,
   showLabel = false,
   showDefaultFlags = false,
+  business = false,
 }: {
-  address: Address | null | undefined
+  address: EditableAddress | null | undefined
   open: boolean
   onOpenChange: (open: boolean) => void
   onSave: (address: AddressParams) => void | Promise<void>
@@ -109,12 +161,14 @@ export function AddressFormDialog({
   isPending?: boolean
   showLabel?: boolean
   showDefaultFlags?: boolean
+  /** Addressed to a company rather than a person — see the schemas above. */
+  business?: boolean
 }) {
   const { t } = useTranslation()
   const resolvedTitle = title ?? t('admin.components.address_form_dialog.edit_title')
   const form = useForm<AddressFormValues>({
     defaultValues: buildDefaults(address),
-    resolver: zodResolver(addressFormSchema),
+    resolver: zodResolver(business ? businessSchema : personalSchema),
   })
   const { errors } = form.formState
 
@@ -140,6 +194,7 @@ export function AddressFormDialog({
       await onSave({
         first_name: values.first_name,
         last_name: values.last_name,
+        company: values.company,
         address1: values.address1,
         address2: values.address2,
         city: values.city,
@@ -199,26 +254,38 @@ export function AddressFormDialog({
                   />
                 </Field>
               )}
-              <div className="grid grid-cols-2 gap-3">
+              {business ? (
                 <Field>
-                  <FieldLabel htmlFor="addr-fn">{t('admin.fields.first_name.label')}</FieldLabel>
+                  <FieldLabel htmlFor="addr-co">{t('admin.fields.company.label')}</FieldLabel>
                   <Input
-                    id="addr-fn"
-                    aria-invalid={!!errors.first_name || undefined}
-                    {...form.register('first_name')}
+                    id="addr-co"
+                    aria-invalid={!!errors.company || undefined}
+                    {...form.register('company')}
                   />
-                  <FieldError errors={[errors.first_name]} />
+                  <FieldError errors={[errors.company]} />
                 </Field>
-                <Field>
-                  <FieldLabel htmlFor="addr-ln">{t('admin.fields.last_name.label')}</FieldLabel>
-                  <Input
-                    id="addr-ln"
-                    aria-invalid={!!errors.last_name || undefined}
-                    {...form.register('last_name')}
-                  />
-                  <FieldError errors={[errors.last_name]} />
-                </Field>
-              </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-3">
+                  <Field>
+                    <FieldLabel htmlFor="addr-fn">{t('admin.fields.first_name.label')}</FieldLabel>
+                    <Input
+                      id="addr-fn"
+                      aria-invalid={!!errors.first_name || undefined}
+                      {...form.register('first_name')}
+                    />
+                    <FieldError errors={[errors.first_name]} />
+                  </Field>
+                  <Field>
+                    <FieldLabel htmlFor="addr-ln">{t('admin.fields.last_name.label')}</FieldLabel>
+                    <Input
+                      id="addr-ln"
+                      aria-invalid={!!errors.last_name || undefined}
+                      {...form.register('last_name')}
+                    />
+                    <FieldError errors={[errors.last_name]} />
+                  </Field>
+                </div>
+              )}
               <Field>
                 <FieldLabel htmlFor="addr-a1">
                   {t('admin.fields.address.address1.label')}

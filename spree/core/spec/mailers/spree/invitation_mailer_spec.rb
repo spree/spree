@@ -88,6 +88,38 @@ RSpec.describe Spree::InvitationMailer, type: :mailer do
           "https://admin.example.com/accept-invitation/#{invitation.prefixed_id}"
         )
       end
+
+      # An invitation onto a seller has to open the seller panel: the
+      # dashboard's acceptance page authenticates through the Admin API,
+      # which no seller may call.
+      context 'for an invitation onto a seller' do
+        let(:seller) { create(:seller, store: store) }
+        let(:invitation) do
+          create(:invitation, email: 'invited@example.com', inviter: inviter,
+                              resource: seller, skip_email: true)
+        end
+
+        before { Spree::Config[:seller_panel_url] = 'https://sellers.example.com' }
+        after { Spree::Config[:seller_panel_url] = nil }
+
+        it 'points at the seller panel rather than the dashboard' do
+          expect(mail.body.encoded).to include(
+            "https://sellers.example.com/accept-invitation/#{invitation.prefixed_id}"
+          )
+          expect(mail.body.encoded).not_to include('https://admin.example.com/accept-invitation')
+        end
+      end
+
+      # A marketplace that has not deployed a panel still has to send a
+      # working link, and the dashboard at least exists.
+      it 'falls back to the dashboard when no seller panel is configured' do
+        seller = create(:seller, store: store)
+        seller_invitation = create(:invitation, email: 'invited@example.com', inviter: inviter,
+                                                resource: seller, skip_email: true)
+
+        expect(Rails.application.routes.url_helpers.admin_invitation_acceptance_url(seller_invitation)).
+          to start_with('https://admin.example.com/accept-invitation')
+      end
     end
 
     context 'when neither the legacy gem nor admin_url is configured' do

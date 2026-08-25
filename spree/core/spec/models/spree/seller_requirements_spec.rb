@@ -11,6 +11,18 @@ RSpec.describe 'seller requirement kinds', type: :model do
       expect(requirement.satisfied?(seller)).to be false
     end
 
+    # The seller panel renders this as "Read the terms" beside the accept
+    # button — accepting something they cannot read is not consent.
+    it 'points at the terms when the marketplace configured a link' do
+      requirement.update!(preferred_terms_url: 'https://example.com/terms')
+
+      expect(requirement.action_url(seller)).to eq('https://example.com/terms')
+    end
+
+    it 'has no link when none is configured' do
+      expect(requirement.action_url(seller)).to be_nil
+    end
+
     it 'is met once they have' do
       seller.update!(terms_accepted_at: Time.current)
 
@@ -102,7 +114,7 @@ RSpec.describe 'seller requirement kinds', type: :model do
     it 'is met once an address is saved' do
       expect(requirement.satisfied?(seller)).to be false
 
-      seller.update!(billing_address: create(:address))
+      seller.update!(billing_address: build(:business_address))
 
       expect(requirement.satisfied?(seller.reload)).to be true
     end
@@ -193,4 +205,27 @@ RSpec.describe 'seller requirement kinds', type: :model do
       expect(requirement.satisfied?(seller)).to be true
     end
   end
+  describe Spree::SellerRequirements::ReturnsAddress do
+    let(:requirement) { create(:returns_address_requirement, store: store) }
+
+    # A location with no address on it tells a shopper nothing about where to
+    # post the parcel, so having the row is not the same as being ready.
+    it 'is unmet while the seller location has no address' do
+      seller.stock_locations.create!(store: store, name: 'Warehouse', default: true)
+
+      expect(requirement.satisfied?(seller.reload)).to be false
+    end
+
+    it 'is met once the returns location can be posted to' do
+      seller.stock_locations.create!(store: store, name: 'Warehouse', default: true,
+                                     address1: '1 Seller Way', city: 'London', country_code: 'GB')
+
+      expect(requirement.satisfied?(seller.reload)).to be true
+    end
+
+    it 'is unmet when the seller has no location at all' do
+      expect(requirement.satisfied?(seller)).to be false
+    end
+  end
+
 end
