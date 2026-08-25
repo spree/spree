@@ -368,13 +368,10 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const auth = await client.passwordResets.update(
-            'reset-token-from-email',
-            {
-              password: 'newsecurepassword',
-              password_confirmation: 'newsecurepassword',
-            }
-          )
+          const auth = await client.passwordResets.update('reset-token-from-email', {
+            password: 'newsecurepassword',
+            password_confirmation: 'newsecurepassword',
+          })
       parameters:
       - name: x-spree-api-key
         in: header
@@ -879,8 +876,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1496979
-                  slug: product-1496979
+                  name: Product 1576979
+                  slug: product-1576979
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1054,8 +1051,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1949085
-                  slug: product-1949085
+                  name: Product 2029085
+                  slug: product-2029085
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1086,8 +1083,8 @@ paths:
                   original_price:
                   seller_id:
                 - id: prod_gbHJdmfrXB
-                  name: Product 1958209
-                  slug: product-1958209
+                  name: Product 2038209
+                  slug: product-2038209
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1215,8 +1212,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 2226885
-                slug: product-2226885
+                name: Product 2306885
+                slug: product-2306885
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -1565,8 +1562,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 123715
-                    slug: product-123715
+                    name: Product 131715
+                    slug: product-131715
                     options_text: ''
                     price: '10.0'
                     display_price: "$10.00"
@@ -1674,8 +1671,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 1242171
-                    slug: product-1242171
+                    name: Product 1322171
+                    slug: product-1322171
                     options_text: ''
                     price: '10.0'
                     display_price: "$10.00"
@@ -1760,9 +1757,7 @@ paths:
 
           // Create a cart with items
           const cartWithItems = await client.carts.create({
-            items: [
-              { variant_id: 'variant_abc123', quantity: 2 },
-            ],
+            items: [{ variant_id: 'variant_abc123', quantity: 2 }],
           })
       parameters:
       - name: x-spree-api-key
@@ -1969,7 +1964,7 @@ paths:
                 total_quantity: 0
                 warnings:
                 - code: line_item_removed
-                  message: Product 128307 was removed because it was sold out
+                  message: Product 136307 was removed because it was sold out
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                 coupon_code:
@@ -2177,8 +2172,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1293263
-                  slug: product-1293263
+                  name: Product 1373263
+                  slug: product-1373263
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -2453,8 +2448,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1318992
-                  slug: product-1318992
+                  name: Product 1398992
+                  slug: product-1398992
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -2657,8 +2652,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1344794
-                  slug: product-1344794
+                  name: Product 1424794
+                  slug: product-1424794
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -2986,8 +2981,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1604241
-                  slug: product-1604241
+                  name: Product 1684241
+                  slug: product-1684241
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3175,8 +3170,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1623461
-                  slug: product-1623461
+                  name: Product 1703461
+                  slug: product-1703461
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3249,11 +3244,16 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const cart = await client.carts.fulfillments.update('cart_abc123', 'ful_abc123', {
-            selected_delivery_rate_id: 'dr_abc123',
-          }, {
-            token: '<token>',
-          })
+          const cart = await client.carts.fulfillments.update(
+            'cart_abc123',
+            'ful_abc123',
+            {
+              selected_delivery_rate_id: 'dr_abc123',
+            },
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -3347,8 +3347,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1648182
-                  slug: product-1648182
+                  name: Product 1728182
+                  slug: product-1728182
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3633,8 +3633,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1665702
-                  slug: product-1665702
+                  name: Product 1745702
+                  slug: product-1745702
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3877,8 +3877,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1709569
-                  slug: product-1709569
+                  name: Product 1789569
+                  slug: product-1789569
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3966,12 +3966,16 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const cart = await client.carts.items.create('cart_abc123', {
-            variant_id: 'variant_abc123',
-            quantity: 2,
-          }, {
-            token: '<token>',
-          })
+          const cart = await client.carts.items.create(
+            'cart_abc123',
+            {
+              variant_id: 'variant_abc123',
+              quantity: 2,
+            },
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -4021,10 +4025,10 @@ paths:
                 total_quantity: 2
                 warnings:
                 - code: delivery_unavailable
-                  message: Product 17363 cannot be delivered to the selected address
+                  message: Product 18163 cannot be delivered to the selected address
                   line_item_id: li_UkLWZg9DAJ
                 - code: delivery_unavailable
-                  message: Product 174298 cannot be delivered to the selected address
+                  message: Product 182298 cannot be delivered to the selected address
                   line_item_id: li_gbHJdmfrXB
                 coupon_code:
                 item_total: '29.99'
@@ -4078,8 +4082,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 17363
-                  slug: product-17363
+                  name: Product 18163
+                  slug: product-18163
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -4109,8 +4113,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 174298
-                  slug: product-174298
+                  name: Product 182298
+                  slug: product-182298
                   options_text: ''
                   price: '19.99'
                   display_price: "$19.99"
@@ -4217,11 +4221,16 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const cart = await client.carts.items.update('cart_abc123', 'li_abc123', {
-            quantity: 5,
-          }, {
-            token: '<token>',
-          })
+          const cart = await client.carts.items.update(
+            'cart_abc123',
+            'li_abc123',
+            {
+              quantity: 5,
+            },
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -4324,8 +4333,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1809165
-                  slug: product-1809165
+                  name: Product 1889165
+                  slug: product-1889165
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -4542,11 +4551,15 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const session = await client.carts.paymentSessions.create('cart_abc123', {
-            payment_method_id: 'pm_abc123',
-          }, {
-            token: '<token>',
-          })
+          const session = await client.carts.paymentSessions.create(
+            'cart_abc123',
+            {
+              payment_method_id: 'pm_abc123',
+            },
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -4735,11 +4748,16 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const session = await client.carts.paymentSessions.update('cart_abc123', 'ps_abc123', {
-            amount: '50.00',
-          }, {
-            token: '<token>',
-          })
+          const session = await client.carts.paymentSessions.update(
+            'cart_abc123',
+            'ps_abc123',
+            {
+              amount: '50.00',
+            },
+            {
+              token: '<token>',
+            },
+          )
       parameters: []
       responses:
         '200':
@@ -4832,11 +4850,16 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const session = await client.carts.paymentSessions.complete('cart_abc123', 'ps_abc123', {
-            session_result: 'success',
-          }, {
-            token: '<token>',
-          })
+          const session = await client.carts.paymentSessions.complete(
+            'cart_abc123',
+            'ps_abc123',
+            {
+              session_result: 'success',
+            },
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: Idempotency-Key
         in: header
@@ -4915,11 +4938,15 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const payment = await client.carts.payments.create('cart_abc123', {
-            payment_method_id: 'pm_abc123',
-          }, {
-            token: '<token>',
-          })
+          const payment = await client.carts.payments.create(
+            'cart_abc123',
+            {
+              payment_method_id: 'pm_abc123',
+            },
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -5116,8 +5143,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2429789
-                  slug: product-2429789
+                  name: Product 2509789
+                  slug: product-2509789
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5324,8 +5351,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 244179
-                  slug: product-244179
+                  name: Product 252179
+                  slug: product-252179
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5388,9 +5415,13 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const order = await client.orders.get('or_abc123', {}, {
-            token: '<token>',
-          })
+          const order = await client.orders.get(
+            'or_abc123',
+            {},
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -5485,8 +5516,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 184496
-                  slug: product-184496
+                  name: Product 192496
+                  slug: product-192496
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5675,9 +5706,12 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const addresses = await client.customer.addresses.list({}, {
-            token: '<token>',
-          })
+          const addresses = await client.customer.addresses.list(
+            {},
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -6059,11 +6093,15 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const address = await client.customer.addresses.update('addr_abc123', {
-            city: 'Los Angeles',
-          }, {
-            token: '<token>',
-          })
+          const address = await client.customer.addresses.update(
+            'addr_abc123',
+            {
+              city: 'Los Angeles',
+            },
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -6205,9 +6243,12 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const cards = await client.customer.creditCards.list({}, {
-            token: '<token>',
-          })
+          const cards = await client.customer.creditCards.list(
+            {},
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -6575,8 +6616,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 1505270
-                    slug: product-1505270
+                    name: Product 1585270
+                    slug: product-1585270
                     options_text: ''
                     price: '10.0'
                     display_price: "$10.00"
@@ -6785,9 +6826,13 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const order = await client.customer.orders.get('or_abc123', {}, {
-            token: '<token>',
-          })
+          const order = await client.customer.orders.get(
+            'or_abc123',
+            {},
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -6875,8 +6920,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1525633
-                  slug: product-1525633
+                  name: Product 1605633
+                  slug: product-1605633
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -7334,13 +7379,16 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const customer = await client.customer.update({
-            first_name: 'John',
-            last_name: 'Doe',
-            metadata: { preferred_contact: 'email' },
-          }, {
-            token: '<token>',
-          })
+          const customer = await client.customer.update(
+            {
+              first_name: 'John',
+              last_name: 'Doe',
+              metadata: { preferred_contact: 'email' },
+            },
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -7519,9 +7567,12 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const giftCards = await client.customer.giftCards.list({}, {
-            token: '<token>',
-          })
+          const giftCards = await client.customer.giftCards.list(
+            {},
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -7702,11 +7753,14 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const session = await client.customer.paymentSetupSessions.create({
-            payment_method_id: 'pm_abc123',
-          }, {
-            token: '<token>',
-          })
+          const session = await client.customer.paymentSetupSessions.create(
+            {
+              payment_method_id: 'pm_abc123',
+            },
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -7891,9 +7945,13 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const session = await client.customer.paymentSetupSessions.complete('pss_abc123', {}, {
-            token: '<token>',
-          })
+          const session = await client.customer.paymentSetupSessions.complete(
+            'pss_abc123',
+            {},
+            {
+              token: '<token>',
+            },
+          )
       parameters: []
       responses:
         '200':
@@ -7960,9 +8018,12 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const credits = await client.customer.storeCredits.list({}, {
-            token: '<token>',
-          })
+          const credits = await client.customer.storeCredits.list(
+            {},
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -8808,9 +8869,12 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const wishlists = await client.wishlists.list({}, {
-            token: '<token>',
-          })
+          const wishlists = await client.wishlists.list(
+            {},
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -8899,12 +8963,15 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const wishlist = await client.wishlists.create({
-            name: 'Birthday Ideas',
-            is_private: true,
-          }, {
-            token: '<token>',
-          })
+          const wishlist = await client.wishlists.create(
+            {
+              name: 'Birthday Ideas',
+              is_private: true,
+            },
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -9058,11 +9125,15 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const wishlist = await client.wishlists.update('wl_abc123', {
-            name: 'Updated Name',
-          }, {
-            token: '<token>',
-          })
+          const wishlist = await client.wishlists.update(
+            'wl_abc123',
+            {
+              name: 'Updated Name',
+            },
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -9167,12 +9238,16 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const item = await client.wishlists.items.create('wl_abc123', {
-            variant_id: 'variant_abc123',
-            quantity: 1,
-          }, {
-            token: '<token>',
-          })
+          const item = await client.wishlists.items.create(
+            'wl_abc123',
+            {
+              variant_id: 'variant_abc123',
+              quantity: 1,
+            },
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -9203,7 +9278,7 @@ paths:
                 variant:
                   id: variant_gbHJdmfrXB
                   product_id: prod_gbHJdmfrXB
-                  sku: SKU-298
+                  sku: SKU-306
                   options_text: ''
                   track_inventory: true
                   media_count: 0

@@ -846,6 +846,28 @@
                 ]
               },
               {
+                "item": "Seller API",
+                "icon": "shop",
+                "description": "REST API for the marketplace seller panel",
+                "groups": [
+                  {
+                    "group": "API basics",
+                    "pages": [
+                      "api-reference/seller-api/introduction",
+                      "api-reference/seller-api/authentication",
+                      "api-reference/seller-api/errors"
+                    ]
+                  },
+                  {
+                    "group": "Endpoints",
+                    "openapi": {
+                      "source": "api-reference/seller.yaml",
+                      "directory": "api-reference/seller-api"
+                    }
+                  }
+                ]
+              },
+              {
                 "item": "Webhooks",
                 "icon": "webhook",
                 "description": "Event payloads and delivery reference",
@@ -2331,6 +2353,28 @@
                 "openapi": {
                   "source": "api-reference/admin.yaml",
                   "directory": "api-reference/admin-api"
+                }
+              }
+            ]
+          },
+          {
+            "item": "Seller API",
+            "icon": "shop",
+            "description": "REST API for the marketplace seller panel",
+            "groups": [
+              {
+                "group": "API basics",
+                "pages": [
+                  "api-reference/seller-api/introduction",
+                  "api-reference/seller-api/authentication",
+                  "api-reference/seller-api/errors"
+                ]
+              },
+              {
+                "group": "Endpoints",
+                "openapi": {
+                  "source": "api-reference/seller.yaml",
+                  "directory": "api-reference/seller-api"
                 }
               }
             ]

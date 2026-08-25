@@ -1,0 +1,115 @@
+---
+title: "Authenticate Seller API requests with JWTs and the seller header"
+sidebarTitle: "Authentication"
+description: "Authenticate Spree Seller API requests with a seller-audience JWT and select which seller to act as using the X-Spree-Seller-Id header."
+---
+
+The Seller API has exactly one authentication method: a **JWT issued to a signed-in seller**. There is deliberately no secret API key on this branch — a credential that could act as a seller without a seller signing in is exactly what the separate token audience exists to prevent.
+
+## Two things every request needs
+
+1. `Authorization: Bearer <token>` — the JWT returned by login.
+2. `X-Spree-Seller-Id: <seller_id>` — which seller the signed-in user is acting as.
+
+The only authenticated endpoint that does not need the second is `GET /api/v3/seller/me`, because that is what tells the panel which seller to name.
+
+## Signing in
+
+```typescript
+import { createSellerClient } from '@spree/seller-sdk'
+
+const client = createSellerClient({ baseUrl: 'https://store.example.com' })
+
+const { token, user, sellers } = await client.auth.login({
+  email: 'seller@example.com',
+  password: 'password123',
+})
+```
+
+The response carries three things: the access token, the team member who signed in, and **every seller this user may act for**.
+
+<Note>
+The refresh token is **not** in the response body. It is set as an HttpOnly cookie scoped to `/api/v3/seller/auth`, so a session issued for the seller panel cannot be redeemed on any other surface.
+</Note>
+
+### Membership is required, not just credentials
+
+A marketplace's own staff share the same user class as sellers. Authenticating is therefore not enough: a user who runs no seller is refused with `401`, because issuing a token would hand out an audience its holder can do nothing with.
+
+## Choosing a seller
+
+A person may run more than one seller — so capability is per seller, and a request that names none has no tenant at all.
+
+```typescript
+client.setToken(token)
+client.setSeller(sellers[0].id)
+
+// Every subsequent call now carries both headers
+const { data: products } = await client.products.list()
+```
+
+Sending a seller ID the caller has no role on resolves to nothing, so it reads as **"no such seller"** rather than "denied" — which is also what stops the header being used to enumerate the marketplace's sellers.
+
+<Warning>
+A request with a valid token but no `X-Spree-Seller-Id` header — or one naming a seller the caller does not belong to — is rejected with `403`. There is no fallback to a default seller.
+</Warning>
+
+## Token audiences
+
+Every Spree JWT carries an audience, and each surface accepts only its own:
+
+| Surface | Audience | Accepted by |
+|---|---|---|
+| Storefront | `store_api` | Store API |
+| Back office | `admin_api` | Admin API |
+| Seller panel | `seller_api` | Seller API |
+
+An admin token presented to the Seller API is a `401`, and a seller token presented to the Admin API is likewise refused. The refresh endpoint narrows by audience too, so a refresh token minted elsewhere cannot be exchanged for a seller session.
+
+## Refreshing a session
+
+```typescript
+const { token } = await client.auth.refresh()
+client.setToken(token)
+```
+
+No request body and no `Authorization` header — the cookie alone authenticates the call, and a fresh refresh cookie is rotated in.
+
+Membership is re-checked here, so a user whose last seller role was revoked mid-session is refused at their next refresh rather than continuing until the access token happens to expire.
+
+## Signing out
+
+```typescript
+await client.auth.logout()
+```
+
+Revokes the refresh token server-side and clears the cookie.
+
+## Accepting an invitation
+
+Someone invited onto a seller's team arrives through an emailed link carrying an invitation ID and a token. Both acceptance endpoints are unauthenticated — the link **is** the credential.
+
+```typescript
+// Read the invitation to decide what to ask for
+const invitation = await client.auth.lookupInvitation(invitationId, token)
+
+// Accept, and land in the panel already signed in
+const { token: jwt, sellers } = await client.auth.acceptInvitation(invitationId, token, {
+  password: 'password123',
+  password_confirmation: 'password123',
+  first_name: 'Robin',
+  last_name: 'Ellis',
+})
+```
+
+The invited email address is never taken from the request — it always comes from the invitation itself, which is what stops the link being redirected to another address.
+
+`password` sets a new password when no account exists for that address; when one does, the same field is how the person proves the account is theirs.
+
+<Note>
+A wrong token is indistinguishable from an unknown invitation: both answer `404`. So does an invitation onto the marketplace's own staff rather than a seller.
+</Note>
+
+## Rate limiting
+
+Sign-in, refresh, provider discovery, and invitation acceptance are all rate limited, and answer `429` with a `rate_limit_exceeded` code when a client exceeds the window.
