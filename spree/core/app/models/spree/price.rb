@@ -1,5 +1,12 @@
 module Spree
   class Price < Spree.base_class
+    # Which engine produced this answer — nil for Spree's own catalog, a
+    # provider's registry key otherwise. Transient: set by
+    # Spree::Pricing::PriceResolution on the way out and copied onto the line
+    # item as price_source. Not a column, because a catalog row is the same
+    # row whoever asked for it.
+    attr_accessor :price_source
+
     has_prefix_id :price
 
     include Spree::VatPriceCalculation

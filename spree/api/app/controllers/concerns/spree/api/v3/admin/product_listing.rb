@@ -32,6 +32,7 @@ module Spree
             [
               :tax_category,
               :product_type,
+              :external_references,
               { product_publications: :channel },
               { primary_media: [attachment_attachment: :blob, poster_attachment: :blob] },
               { default_variant: [:prices, { stock_levels: [:stock_location, :active_stock_reservations] }] },

@@ -26,6 +26,12 @@ module Spree
         # rejection costs no rollback.
         run_hooks :validate
 
+        # Both providers are consulted before the transaction opens: they may
+        # be external systems, and a database transaction held open across a
+        # network call is how a slow warehouse becomes a table of stuck locks.
+        external_step :check_availability
+        external_step :resolve_price
+
         ApplicationRecord.transaction do
           step :add_to_line_item
           step :handle_stock_reservations if cart.in_checkout?
@@ -42,9 +48,16 @@ module Spree
         item_options = options || {}
         requested_quantity = quantity || 1
 
-        failure(variant, "#{variant.name} is not available in #{cart.currency}") if variant.amount_in(cart.currency).nil?
+        # A provider that quoted a real amount is proof the currency is
+        # sellable, even when the local catalog holds no price for it — an
+        # external system can be the only source for a currency. The internal
+        # resolver returns a placeholder with a nil amount when it has none,
+        # which is not a quote.
+        if resolved_amount.nil? && variant.amount_in(cart.currency).nil?
+          failure(variant, "#{variant.name} is not available in #{cart.currency}")
+        end
 
-        @line_item = Spree.line_item_by_variant_finder.new.execute(cart: cart, variant: variant, options: item_options)
+        @line_item = existing_line_item
         @line_item_created = @line_item.nil?
 
         if @line_item.nil?
@@ -72,14 +85,79 @@ module Spree
 
         @line_item.metadata = metadata.to_h if metadata.present?
 
+        # Before the save, so the resolved price rides the same write and the
+        # quantity-change callback sees the line as already priced.
+        apply_resolved_price
         failure(@line_item) unless @line_item.save
 
-        @line_item.reload.recalculate_price
+        @line_item.reload
 
         return unless @line_item_created
 
         owner = @line_item.owner
         owner.tax_provider.estimate(owner, [@line_item], **owner.tax_estimate_inputs)
+      end
+
+      # Only external inventory needs asking here — Spree's own stock records
+      # are already checked by the line item's availability validator on save,
+      # and duplicating that would mean two answers that can disagree.
+      def check_availability
+        return if cart.store.nil? || cart.store.internal_inventory?
+
+        result = Spree::Carts::CheckAvailability.call(
+          cart: cart, items: [{ variant: variant, quantity: resulting_quantity }]
+        )
+        failure(variant, result.error) if result.failure?
+
+        return if result.value.blank?
+
+        failure(variant, Spree.t(:selected_quantity_not_available, item: variant.name.inspect))
+      end
+
+      # Asked before the item exists, so the context carries the quantity the
+      # line will end up at — a volume price must reflect the whole line, not
+      # the increment.
+      def resolve_price
+        result = Spree::Carts::PriceItems.new.call(cart: cart, line_items: [pricing_probe_line_item])
+        failure(variant, result.error) if result.failure?
+
+        @resolved_price = result.value.first
+      end
+
+      # The provider is asked about a line item that does not exist yet, so
+      # the answer arrives against a stand-in and is transferred onto the real
+      # row once it does.
+      def pricing_probe_line_item
+        Spree::Carts::PriceItems.probe(cart: cart, variant: variant, quantity: resulting_quantity)
+      end
+
+      # The amount the pricing step actually resolved, or nil when nothing
+      # priced this line.
+      def resolved_amount
+        @resolved_price&.at(1)&.amount
+      end
+
+      def apply_resolved_price
+        return if @resolved_price.blank?
+
+        _probe, price = @resolved_price
+        Spree::Carts::PriceItems.apply([[@line_item, price]], persist: false)
+      end
+
+      # What the line will hold once this add is applied. Volume pricing and
+      # the availability check both care about the whole line, not the
+      # increment. +to_i+ because quantity arrives off a request as a string.
+      def resulting_quantity
+        existing_line_item&.quantity.to_i + (quantity.presence || 1).to_i
+      end
+
+      # Memoized because the price and availability steps ask for it before
+      # the transaction, and +add_to_line_item+ needs the same row inside it.
+      def existing_line_item
+        return @existing_line_item if defined?(@existing_line_item)
+
+        @existing_line_item = Spree.line_item_by_variant_finder.new.
+          execute(cart: cart, variant: variant, options: options || {})
       end
 
       def handle_stock_reservations

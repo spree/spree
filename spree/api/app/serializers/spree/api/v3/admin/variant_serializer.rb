@@ -5,6 +5,8 @@ module Spree
         # Admin API Variant Serializer
         # Full variant data including admin-only fields
         class VariantSerializer < V3::VariantSerializer
+          include Concerns::ExternalReferencesAttribute
+
 
           typelize product_name: :string,
                    position: :number, tax_category_id: [:string, nullable: true],

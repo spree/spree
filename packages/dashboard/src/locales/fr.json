@@ -1577,6 +1577,44 @@
         "track_price_history": {
           "help": "Conserver les anciens prix afin d’afficher le prix le plus bas des 30 derniers jours, comme l’exige la réglementation européenne.",
           "label": "Enregistrer l’historique des prix"
+        },
+        "data_sources": {
+          "internal": "Spree (intégré)",
+          "not_connected": "Connectez cette intégration pour l’utiliser",
+          "pricing_provider": {
+            "label": "Les prix proviennent de",
+            "help": "Spree calcule les prix depuis votre catalogue et vos listes de prix, sauf si un système externe répond.",
+            "docs_link": "Créer un fournisseur de prix"
+          },
+          "inventory_provider": {
+            "label": "Les stocks proviennent de",
+            "help": "Une source externe est interrogée à l’ajout au panier et au paiement. Les listes affichent toujours vos propres stocks.",
+            "docs_link": "Créer un fournisseur de stock"
+          },
+          "pricing_failure_policy": {
+            "label": "Si les prix ne peuvent être confirmés",
+            "help": "Facturer un mauvais prix se corrige difficilement : refuser est la valeur par défaut la plus sûre."
+          },
+          "inventory_failure_policy": {
+            "label": "Si les stocks ne peuvent être confirmés",
+            "help": "Vendre un article finalement indisponible se rattrape : le repli vous permet de continuer à vendre."
+          },
+          "policies": {
+            "strict": {
+              "label": "Refuser et demander au client de réessayer"
+            },
+            "fallback": {
+              "label": "Utiliser les chiffres de Spree"
+            }
+          },
+          "pricing": {
+            "title": "Source des prix",
+            "description": "Connectez un ERP ou un système de prix contractuels pour répondre aux prix à la place du catalogue Spree."
+          },
+          "inventory": {
+            "title": "Source des stocks",
+            "description": "Connectez un système d'entrepôt ou un ERP pour répondre aux stocks à la place des enregistrements de Spree."
+          }
         }
       },
       "store_credit": {
@@ -1716,18 +1754,11 @@
       "company": {
         "name": {
           "placeholder": "Acme Industries"
-        },
-        "external_id": {
-          "help": "Votre propre référence pour cette entreprise, unique dans la boutique.",
-          "placeholder": "ACME-001"
         }
       },
       "company_location": {
         "name": {
           "placeholder": "Siège social"
-        },
-        "external_id": {
-          "help": "Votre propre référence pour cet établissement."
         }
       },
       "company_contact": {
@@ -1875,6 +1906,9 @@
           "help": "Ne jamais facturer moins que le premier, ni plus que le second. Chacun ne s'applique qu'aux ventes dans sa propre devise ; une devise laissée vide est facturée sans limite.",
           "label": "Plancher et plafond (facultatif)"
         }
+      },
+      "external_references": {
+        "label": "Références externes"
       }
     },
     "gift_cards": {

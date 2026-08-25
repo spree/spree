@@ -39,10 +39,22 @@ module Spree
           scope.find_by_prefix_id!(cart_id)
         end
 
-        # Render the cart as JSON using the cart serializer.
+        # Render the cart as JSON using the cart serializer. Rendering never
+        # mutates: an action that wants unbuyable lines swept calls
+        # +sweep_unbuyable_lines!+ itself first.
         def render_cart(status: :ok)
-          @cart = @cart.remove_out_of_stock_items!
           render json: Spree.api.cart_serializer.new(@cart, params: serializer_params).to_h, status: status
+        end
+
+        # Drops lines the customer can no longer buy — a discontinued product,
+        # or stock that ran out while the cart sat idle. For reads of a cart
+        # the customer is returning to, never for the write that just
+        # happened: an add a stock check already approved must not be
+        # second-guessed in the same request, and an external inventory
+        # provider makes that contradiction routine, since the provider
+        # answers the write while the sweep reads Spree's own rows.
+        def sweep_unbuyable_lines!
+          @cart = @cart.remove_out_of_stock_items!
         end
 
         # Render what the checkout produced (for the complete action).

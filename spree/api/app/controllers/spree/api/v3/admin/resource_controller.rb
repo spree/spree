@@ -9,6 +9,13 @@ module Spree
           include Spree::Api::V3::Admin::StoreContext
           include Spree::Api::V3::AdminAuthentication
           include Spree::Api::V3::ScopedAuthorization
+          # External-identity addressing for every admin resource whose model
+          # opts in via Spree::HasExternalReferences — the concern's guards
+          # no-op for everything else. Sitting here rather than per controller
+          # means a newly synced resource cannot ship the half-supported state
+          # (readable references, unaddressable member paths) by forgetting an
+          # include.
+          include Spree::Api::V3::Admin::Concerns::ExternalReferences
 
           protected
 

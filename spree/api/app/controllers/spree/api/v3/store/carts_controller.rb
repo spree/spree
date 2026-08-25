@@ -25,6 +25,8 @@ module Spree
               end
             end
 
+            # The customer is returning to a cart that may have sat for days.
+            sweep_unbuyable_lines!
             render_cart
           end
 
@@ -98,6 +100,8 @@ module Spree
             result = Spree.cart_associate_service.call(guest_cart: @cart, customer: current_user, guest_only: true)
 
             if result.success?
+              # Signing in hands back a cart built earlier, possibly long ago.
+              sweep_unbuyable_lines!
               render_cart
             else
               render_service_error(result.error.to_s)

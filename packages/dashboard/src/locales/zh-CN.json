@@ -1574,6 +1574,44 @@
         "track_price_history": {
           "help": "保留历史价格，以便店铺按欧盟规定显示最近 30 天的最低价。",
           "label": "记录价格历史"
+        },
+        "data_sources": {
+          "internal": "Spree（内置）",
+          "not_connected": "连接此集成后方可使用",
+          "pricing_provider": {
+            "label": "价格来源",
+            "help": "除非有外部系统作答，否则 Spree 按您的目录和价格表定价。",
+            "docs_link": "构建价格数据源"
+          },
+          "inventory_provider": {
+            "label": "库存来源",
+            "help": "加入购物车和结账时会询问外部来源。列表始终显示您自己的库存记录。",
+            "docs_link": "构建库存数据源"
+          },
+          "pricing_failure_policy": {
+            "label": "无法确认价格时",
+            "help": "收错价格难以撤销，因此拒绝是更安全的默认设置。"
+          },
+          "inventory_failure_policy": {
+            "label": "无法确认库存时",
+            "help": "售出后发现缺货尚可补救，因此回退可让您继续交易。"
+          },
+          "policies": {
+            "strict": {
+              "label": "拒绝并请顾客重试"
+            },
+            "fallback": {
+              "label": "使用 Spree 自己的数据"
+            }
+          },
+          "pricing": {
+            "title": "价格来源",
+            "description": "连接 ERP 或合同定价系统，由其代替 Spree 目录来提供价格。"
+          },
+          "inventory": {
+            "title": "库存来源",
+            "description": "连接仓储或 ERP 系统，由其代替 Spree 自身记录来提供库存。"
+          }
         }
       },
       "store_credit": {
@@ -1713,18 +1751,11 @@
       "company": {
         "name": {
           "placeholder": "Acme Industries"
-        },
-        "external_id": {
-          "help": "您为该企业设定的编号，在本店内唯一。",
-          "placeholder": "ACME-001"
         }
       },
       "company_location": {
         "name": {
           "placeholder": "总部"
-        },
-        "external_id": {
-          "help": "您为该分支机构设定的编号。"
         }
       },
       "company_contact": {
@@ -1872,6 +1903,9 @@
           "help": "收费不低于前者，也不高于后者。每项仅适用于其对应货币的销售；留空的货币将不受限制地收费。",
           "label": "下限与上限（可选）"
         }
+      },
+      "external_references": {
+        "label": "外部引用"
       }
     },
     "gift_cards": {

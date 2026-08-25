@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { SpreeError, type Store } from '@spree/admin-sdk'
+import { SpreeError, type Store, type StoreDataSourceProvider } from '@spree/admin-sdk'
 import {
   extensionFormValues,
   extensionSubmitValues,
@@ -14,6 +14,7 @@ import {
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
   ErrorState,
@@ -36,7 +37,8 @@ import {
   useFormSubmitShortcut,
 } from '@spree/dashboard-ui'
 import { createFileRoute } from '@tanstack/react-router'
-import { useEffect, useMemo } from 'react'
+import { ExternalLinkIcon } from 'lucide-react'
+import { type ReactNode, useCallback, useEffect, useMemo } from 'react'
 import {
   type Control,
   Controller,
@@ -47,11 +49,17 @@ import {
 } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { ChoiceCardPicker } from '../../../../components/spree/choice-card-picker'
-import { useStoreSettings, useUpdateStoreSettings } from '../../../../hooks/use-store-settings'
+import {
+  useStoreDataSources,
+  useStoreSettings,
+  useUpdateStoreSettings,
+} from '../../../../hooks/use-store-settings'
 import { getAvailableUiLocales } from '../../../../i18n-setup'
 import {
   CAPTURE_METHODS,
   DOCUMENT_NUMBER_FORMATS,
+  INTERNAL_PROVIDER_KEY,
+  PROVIDER_FAILURE_POLICIES,
   STOREFRONT_ACCESS_LEVELS,
   type StoreSettingsFormValues,
   storeSettingsFormSchema,
@@ -62,6 +70,23 @@ import {
 export const Route = createFileRoute('/_authenticated/$storeId/settings/store')({
   component: StoreSettingsPage,
 })
+
+const PRICING_PROVIDER_DOCS_URL = 'https://spreecommerce.org/docs/developer/providers/pim'
+const INVENTORY_PROVIDER_DOCS_URL = 'https://spreecommerce.org/docs/developer/providers/erp'
+
+function DocsLink({ href, children }: { href: string; children: ReactNode }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center gap-1 text-primary text-sm hover:underline"
+    >
+      {children}
+      <ExternalLinkIcon className="size-3.5" />
+    </a>
+  )
+}
 
 const TIMEZONES: string[] = (() => {
   try {
@@ -101,6 +126,14 @@ function storeToFormValues(store: Store): StoreSettingsFormValues {
     preferred_address_requires_phone: store.preferred_address_requires_phone ?? false,
     preferred_capture_method:
       (store.preferred_capture_method as (typeof CAPTURE_METHODS)[number]) ?? 'checkout',
+    preferred_pricing_provider: store.preferred_pricing_provider || INTERNAL_PROVIDER_KEY,
+    preferred_inventory_provider: store.preferred_inventory_provider || INTERNAL_PROVIDER_KEY,
+    preferred_pricing_provider_failure_policy:
+      (store.preferred_pricing_provider_failure_policy as (typeof PROVIDER_FAILURE_POLICIES)[number]) ??
+      'strict',
+    preferred_inventory_provider_failure_policy:
+      (store.preferred_inventory_provider_failure_policy as (typeof PROVIDER_FAILURE_POLICIES)[number]) ??
+      'fallback',
     preferred_tax_using_ship_address: store.preferred_tax_using_ship_address ?? true,
     preferred_track_inventory_levels: store.preferred_track_inventory_levels ?? true,
     preferred_stock_reservations_enabled: store.preferred_stock_reservations_enabled ?? true,
@@ -154,6 +187,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
   const { storeId } = useStore()
   const updateMutation = useUpdateStoreSettings()
   const switchAdminLocale = useSwitchAdminLocale()
+  const { data: dataSources } = useStoreDataSources()
 
   const form = useForm<StoreSettingsFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -168,6 +202,12 @@ function StoreSettingsForm({ store }: { store: Store }) {
   // Once the counter has issued its first number the starting value is inert,
   // so the field says so rather than accepting a value that does nothing.
   const sequenceStarted = store.order_number_sequence_started ?? false
+  // The failure-policy selects only render for a provider that can fail —
+  // Spree's own records cannot, so 'internal' has no policy to choose.
+  const externalPricingSelected = form.watch('preferred_pricing_provider') !== INTERNAL_PROVIDER_KEY
+  const externalInventorySelected =
+    form.watch('preferred_inventory_provider') !== INTERNAL_PROVIDER_KEY
+
   const numberFormat = form.watch('preferred_document_number_format')
   const numberPrefix = form.watch('preferred_order_number_prefix')
   const numberSuffix = form.watch('preferred_order_number_suffix')
@@ -217,6 +257,11 @@ function StoreSettingsForm({ store }: { store: Store }) {
         preferred_company_field_enabled: values.preferred_company_field_enabled,
         preferred_address_requires_phone: values.preferred_address_requires_phone,
         preferred_capture_method: values.preferred_capture_method,
+        preferred_pricing_provider: values.preferred_pricing_provider,
+        preferred_inventory_provider: values.preferred_inventory_provider,
+        preferred_pricing_provider_failure_policy: values.preferred_pricing_provider_failure_policy,
+        preferred_inventory_provider_failure_policy:
+          values.preferred_inventory_provider_failure_policy,
         preferred_tax_using_ship_address: values.preferred_tax_using_ship_address,
         preferred_track_inventory_levels: values.preferred_track_inventory_levels,
         preferred_stock_reservations_enabled: values.preferred_stock_reservations_enabled,
@@ -292,6 +337,32 @@ function StoreSettingsForm({ store }: { store: Store }) {
       DOCUMENT_NUMBER_FORMATS.map((value) => ({
         value,
         label: t(`admin.fields.store.document_number_format.options.${value}`),
+      })),
+    [t],
+  )
+  // A provider whose integration is not connected stays in the list but is
+  // not selectable — hiding it would leave a merchant wondering where the ERP
+  // they just installed went.
+  const providerOptions = useCallback(
+    (providers: StoreDataSourceProvider[] | undefined) =>
+      (providers ?? []).map((provider) => ({
+        value: provider.key,
+        label:
+          provider.key === INTERNAL_PROVIDER_KEY
+            ? t('admin.fields.store.data_sources.internal')
+            : provider.name,
+        disabled: !provider.available,
+        description: provider.available
+          ? undefined
+          : t('admin.fields.store.data_sources.not_connected'),
+      })),
+    [t],
+  )
+  const failurePolicyOptions = useMemo(
+    () =>
+      PROVIDER_FAILURE_POLICIES.map((value) => ({
+        value,
+        label: t(`admin.fields.store.data_sources.policies.${value}.label`),
       })),
     [t],
   )
@@ -648,6 +719,79 @@ function StoreSettingsForm({ store }: { store: Store }) {
                       control={form.control}
                     />
                   </FieldGroup>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('admin.fields.store.data_sources.pricing.title')}</CardTitle>
+                  <CardDescription>
+                    {t('admin.fields.store.data_sources.pricing.description')}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <FieldGroup>
+                    <SelectField
+                      id="store-pricing-provider"
+                      label={t('admin.fields.store.data_sources.pricing_provider.label')}
+                      help={t('admin.fields.store.data_sources.pricing_provider.help')}
+                      name="preferred_pricing_provider"
+                      control={form.control}
+                      options={providerOptions(dataSources?.pricing_providers)}
+                    />
+                    {/* Spree's own catalog cannot fail to answer, so there is
+                        no failure to have a policy about until an external
+                        provider is selected. */}
+                    {externalPricingSelected && (
+                      <SelectField
+                        id="store-pricing-failure-policy"
+                        label={t('admin.fields.store.data_sources.pricing_failure_policy.label')}
+                        help={t('admin.fields.store.data_sources.pricing_failure_policy.help')}
+                        name="preferred_pricing_provider_failure_policy"
+                        control={form.control}
+                        options={failurePolicyOptions}
+                      />
+                    )}
+                  </FieldGroup>
+                  <div className="mt-6 border-t pt-4">
+                    <DocsLink href={PRICING_PROVIDER_DOCS_URL}>
+                      {t('admin.fields.store.data_sources.pricing_provider.docs_link')}
+                    </DocsLink>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('admin.fields.store.data_sources.inventory.title')}</CardTitle>
+                  <CardDescription>
+                    {t('admin.fields.store.data_sources.inventory.description')}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <FieldGroup>
+                    <SelectField
+                      id="store-inventory-provider"
+                      label={t('admin.fields.store.data_sources.inventory_provider.label')}
+                      help={t('admin.fields.store.data_sources.inventory_provider.help')}
+                      name="preferred_inventory_provider"
+                      control={form.control}
+                      options={providerOptions(dataSources?.inventory_providers)}
+                    />
+                    {externalInventorySelected && (
+                      <SelectField
+                        id="store-inventory-failure-policy"
+                        label={t('admin.fields.store.data_sources.inventory_failure_policy.label')}
+                        help={t('admin.fields.store.data_sources.inventory_failure_policy.help')}
+                        name="preferred_inventory_provider_failure_policy"
+                        control={form.control}
+                        options={failurePolicyOptions}
+                      />
+                    )}
+                  </FieldGroup>
+                  <div className="mt-6 border-t pt-4">
+                    <DocsLink href={INVENTORY_PROVIDER_DOCS_URL}>
+                      {t('admin.fields.store.data_sources.inventory_provider.docs_link')}
+                    </DocsLink>
+                  </div>
                 </CardContent>
               </Card>
               <Card>

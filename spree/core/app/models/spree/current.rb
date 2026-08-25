@@ -4,7 +4,7 @@ module Spree
   # All attributes are automatically reset between requests by Rails.
   # Fallback chains ensure sensible defaults when attributes are not explicitly set.
   class Current < ::ActiveSupport::CurrentAttributes
-    attribute :store, :channel, :market, :currency, :locale, :content_locale, :tax_country, :price_lists, :global_pricing_context, :provider_cache
+    attribute :store, :channel, :market, :currency, :locale, :content_locale, :tax_country, :price_lists, :global_pricing_context, :provider_cache, :integrations
 
     # Scratch space for provider strategies to memoize a call across the
     # request — part of the delivery rate provider contract (nothing in core
@@ -69,6 +69,16 @@ module Spree
     # @return [Spree::Country, nil]
     def tax_country
       super || (self.tax_country = market&.default_country || store&.default_country)
+    end
+
+    # The current store's active integrations, loaded once per request.
+    # Lazy — a request that never asks pays nothing — and assigned on first
+    # read the way #tax_country is, because several consumers ask per request:
+    # every integration-backed provider resolving credentials, and the
+    # settings page checking availability across the whole registry.
+    # @return [Array<Spree::Integration>]
+    def integrations
+      super || (self.integrations = store ? store.integrations.active.to_a : [])
     end
 
     # Returns the current price lists for the global pricing context.

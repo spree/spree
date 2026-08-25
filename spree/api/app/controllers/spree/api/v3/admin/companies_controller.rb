@@ -22,11 +22,11 @@ module Spree
           end
 
           def collection_includes
-            [:company_locations]
+            [:company_locations, :external_references]
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :name, :external_id, metadata: {})
+            params.permit(*model_additional_permitted_attributes, :name, metadata: {})
           end
         end
       end

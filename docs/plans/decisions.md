@@ -3540,6 +3540,83 @@ the suites. `docs/user/vendors/` and the rest of the published documentation
 are **not** renamed here; they are part of the 6.0 stable docs overhaul. Plan:
 `6.0-multi-vendor-marketplace.md`.
 
+## 2026-08-18 — ERP / PIM / DAM: sync what is shown, call live only for what is decided
+
+Damian asked what Spree's workflow should be for larger merchants who run a
+dedicated ERP (inventory), PIM (product content, base pricing) and DAM (media):
+plain sync into Spree, or pluggable third-party providers. Recorded in
+`6.0-third-party-pricing-inventory.md`; the parts other plans need to know:
+
+**The rule.** Spree is the system of record for what the shopper *sees*; the
+external system is the system of record for what is *true*. Product content,
+media references, base prices, price lists and stock levels are synced in and
+rendered from Spree's copy. Live calls happen only at decision moments —
+pricing a line item, add-to-cart, taking a checkout hold, completion — through
+`Spree::PricingProvider` and `Spree::InventoryProvider` contracts whose
+`Internal` defaults wrap today's price resolution and `Stock::Quantifier`
+(the price-list walk moved into `PricingProvider::Internal::Resolution` — it is
+that provider's implementation, not a seam of its own; `Pricing::Context`
+stays outside, since it is the question every provider is asked).
+External providers return unsaved `readonly!` `Spree::Price` / `Spree::StockItem`
+instances — the AR shape is the contract, no new value-object type.
+
+**Identity mapping is `Spree::ExternalReference`, not a column.** One
+polymorphic, store-scoped table (metafields precedent) so a product can carry a
+PIM key and an ERP key at once and an order can carry the ERP number written
+back after the push; unique in both directions; `system` is a string key (an
+Integration's `api_type` by convention), never an FK. **No new `external_id`
+columns on any model** — `Company#external_id` on the unreleased B2B branch
+switches to this model.
+
+**Two things the code forced.** (1) The pricing resolver is on the catalog read
+path — the Store API serializers call `price_for` on every listing — so an
+external pricing provider must cache by `Pricing::Context#cache_key` and route
+anonymous traffic to `Internal`; the inventory read path (`in_stock?`,
+`purchasable?`, `ProductScopes`) stays local, full stop. (2) Live calls cannot
+hide inside `LineItem#recalculate_price` / `#sufficient_stock?` — they move to
+`external_step`s in `AddItem` / `UpsertItems` / `Recalculate` / `Complete` via
+new `Carts::PriceItems` / `Carts::CheckAvailability` services, and line items
+record `price_source`.
+
+Selection and failure policy are Store preferences (`pricing_provider`,
+`inventory_provider`, `*_failure_policy` — `strict` default for pricing,
+`fallback` for inventory); credentials live on `Spree::Integration`. ERP-side
+soft allocation and per-market provider selection are deferred, additive.
+
+## 2026-08-18 — Identity mapping, and where a provider call is allowed to happen
+
+Implementing `6.0-third-party-pricing-inventory.md` settled three things other
+plans will run into.
+
+**`Spree::ExternalReference` replaces every `external_id` column.** One
+polymorphic, store-scoped table, unique in both directions. No model gets its
+own column any more — include `Spree::HasExternalReferences`. `Company` and
+`CompanyLocation` lost theirs in the same commit. Note the name collision this
+surfaced: `Spree::Media#external_url` already means where an imported image was
+fetched *from*, and main's `external_video_url` is parsed as a video link, so
+a DAM-hosted picture gets its own `external_media_url` — named for media
+rather than images, since the same column will hold a self-hosted video file,
+with `media_type` saying what it is — and rides
+`Media#hosted_still_url` — the same "a URL that isn't ours to resize" slot a
+provider thumbnail uses.
+
+**The inventory read path stays local, the pricing read path is cached.** Store
+API serializers price every row of every listing, so `PricingProvider` runs on
+catalog reads and must declare a `cache_ttl` and use `handles?` to route
+anonymous traffic to `Internal`. `Variant#in_stock?`/`purchasable?` and
+`ProductScopes` never consult a provider at all — only add-to-cart,
+reservations and completion do.
+
+**Provider calls are `external_step`s, and stand-ins must be detached.** A
+network call inside a database transaction is how a slow ERP becomes a table of
+stuck locks, so pricing and availability resolve through
+`Spree::Carts::PriceItems` / `CheckAvailability` before the transaction opens
+and are written inside it. Two traps found the hard way: a stand-in line item
+built with `cart.line_items.new` is found by the line-item finder and doubles
+the quantity on the next add; and `Quantifier` subtracts reservations by
+`stock_item_id`, which is nil on an external provider's unsaved rows — matching
+by `(variant, location)` is what stops every local checkout hold counting as
+zero and overselling.
 ## 2026-08-18 — Store credits lose their category and type
 
 `Spree::StoreCreditCategory` and `Spree::StoreCreditType` are retired.

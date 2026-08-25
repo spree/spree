@@ -13,6 +13,7 @@ module Spree
     # nothing to derive tenancy from. The column stays nullable for rows the
     # upgrade could not reach; new rows always carry a store.
     include Spree::SingleStoreResource
+    include Spree::HasExternalReferences
 
     # SingleStoreResource refuses any store change on a persisted record. Media
     # predates its store column, so a legacy row carries nil until the upgrade
@@ -381,6 +382,7 @@ module Spree
 
       errors.add(:external_video_url, :unsupported_video_provider)
     end
+
 
     def touch_product_variants
       product = viewable.is_a?(Spree::Product) ? viewable : viewable.product

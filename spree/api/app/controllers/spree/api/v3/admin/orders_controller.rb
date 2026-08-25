@@ -120,8 +120,12 @@ module Spree
             base.where(cart_id: nil).or(base.where.not(status: 'draft'))
           end
 
+          # Through find_resource, not find_by_prefix_id! directly, so the
+          # external:<system>:<id> addressing the concern provides reaches
+          # orders — an ERP that pushed its order number wants to read the
+          # order back by it.
           def set_resource
-            @resource = scope.find_by_prefix_id!(params[:id])
+            @resource = find_resource
             @order = @resource # needed for OrderLock
             authorize_resource!(@resource)
           end
@@ -141,7 +145,7 @@ module Spree
           # expanded list renders the whole profile; order_group is not, since
           # only its id is reported and that comes off the order's own column.
           def collection_includes
-            [:line_items, :customer, :channel, :seller]
+            [:line_items, :customer, :channel, :seller, :external_references]
           end
 
           private
@@ -153,6 +157,15 @@ module Spree
             Spree.customer_class.
               accessible_by(current_ability, :show).
               find_by_prefix_id!(customer_param)
+          end
+
+          # An upsert arrives on the create action, so addresses come in under
+          # the create names. Translate them to the ones update accepts, or a
+          # replayed feed row would silently lose the address it sent.
+          def normalize_upsert_params!
+            # update runs under with_order_lock, which reads @order — normally
+            # set by set_resource, which the create path never runs.
+            @order = @resource
           end
 
           def order_create_params

@@ -34,6 +34,13 @@ module Spree
     has_many :digital_links, dependent: :destroy
     has_many :stock_reservations, class_name: 'Spree::StockReservation', inverse_of: :line_item, dependent: :destroy
 
+    # Set by Spree::Carts::PriceItems when a workflow has already resolved
+    # this line's price outside the transaction. The quantity-change callback
+    # then stands down rather than asking the provider a second time from
+    # inside the save — which is the network-call-in-transaction the workflow
+    # split exists to prevent, and would overwrite the fresher answer.
+    attr_accessor :price_resolved
+
     before_validation :copy_price
     before_validation :copy_tax_category
     before_validation :copy_seller
@@ -127,26 +134,44 @@ module Spree
 
     def copy_price
       if variant
-        update_price if price.nil?
+        # Local catalog only: this runs inside a save, and the workflows have
+        # already priced the line through the provider before the transaction
+        # opened. Reaching a provider from a validation callback would put a
+        # network call inside every line-item save.
+        copy_catalog_price if price.nil?
         self.cost_price = variant.cost_price if cost_price.nil?
         self.currency = owner.currency if currency.nil? && owner
       end
     end
 
+    # Assigns the current price without saving — the caller is expected to.
+    # {#recalculate_price} persists instead.
+    #
+    # Restatement for a tax-inclusive market happens inside
+    # {Spree::Carts::PriceItems}: an address-less cart still has a taxing
+    # country (its market's own), and without it a cross-border cart is taxed
+    # for the destination at a price quoted for home, leaving the merchant to
+    # absorb the difference.
+    # persist: false — runs mid-build and from callers that save the record
+    # themselves.
     def update_price
-      context = Spree::Pricing::Context.from_order(variant, owner, quantity: quantity)
-      currency_price = variant.price_for(context)
+      reprice(persist: false)
+    end
 
-      # country:, not just address: — an address-less cart still has a taxing
-      # country (the market's own), and the provider already estimates against it.
-      # Without it a cross-border cart is taxed for the destination at a price
-      # quoted for home, and the merchant silently absorbs the rate difference.
-      if currency_price.present?
-        self.price = currency_price.price_including_vat_for(
-          address: owner&.tax_address, country: owner&.tax_country, market: owner&.market
-        )
-      end
-      self.price_list_id = currency_price.price_list_id if currency_price.present?
+    # Assigns the price the local catalog gives for this line, with no pricing
+    # provider consulted — the fallback for a line built outside a workflow
+    # (seeds, console, an extension) that would otherwise be saved with no
+    # price at all. Assigns without saving; the caller is mid-save.
+    #
+    # @return [void]
+    def copy_catalog_price
+      context = Spree::Pricing::Context.from_order(variant, owner, quantity: quantity)
+      price_record = Spree::PricingProvider::Internal.new.price_for(context)
+      return if price_record.blank?
+
+      # Through the same writer every resolved price goes through, so the
+      # tax-inclusive restatement inputs are stated once.
+      Spree::Carts::PriceItems.apply([[self, price_record]], persist: false)
     end
 
     def copy_tax_category
@@ -341,30 +366,27 @@ module Spree
       variant.with_digital_assets?
     end
 
-    # Recalculates and persists the price based on the current quantity and pricing context
-    # This is used for volume-based pricing and other price list rules
+    # Recalculates and persists the price based on the current quantity and
+    # pricing context — volume breaks, price list rules, contract pricing.
+    #
+    # A thin delegate to {Spree::Carts::PriceItems}, which is where a store's
+    # pricing provider is consulted. Prefer calling that service directly for
+    # anything touching more than one line: it asks the provider once for the
+    # batch, while this asks once per item.
+    #
     # @return [void]
     def recalculate_price
-      context = Spree::Pricing::Context.from_order(variant, owner, quantity: quantity)
-      currency_price = variant.price_for(context)
-
-      return unless currency_price.present?
-
-      new_price = currency_price.price_including_vat_for(
-        address: owner&.tax_address, country: owner&.tax_country, market: owner&.market
-      )
-
-      return unless new_price.present?
-
-      new_price_list_id = currency_price.price_list_id
-
-      # Only update if price or price list changed
-      if new_price != price || new_price_list_id != price_list_id
-        update_columns(price: new_price, price_list_id: new_price_list_id, updated_at: Time.current)
-      end
+      reprice(persist: true)
     end
 
     private
+
+    def reprice(persist:)
+      return if owner.blank?
+
+      result = Spree::Carts::PriceItems.new.call(cart: owner, line_items: [self])
+      Spree::Carts::PriceItems.apply(result.value, persist: persist) if result.success?
+    end
 
     def ensure_valid_quantity
       self.quantity = 0 if quantity.nil? || quantity < 0
@@ -409,8 +431,14 @@ module Spree
       # recalculation, which every cart/checkout flow runs after the save —
       # recalculating from here would cache the owner's associations
       # mid-mutation and hide later changes from that run.
+      # One-shot: the mark covers the save that is happening now, not the
+      # instance forever, or a later quantity change on the same object would
+      # never re-price.
+      already_priced = price_resolved
+      self.price_resolved = false
+
       if saved_change_to_quantity? && owner&.persisted? && !owner.completed?
-        recalculate_price if should_update_price? && !previously_new_record?
+        recalculate_price if should_update_price? && !previously_new_record? && !already_priced
       end
     end
 

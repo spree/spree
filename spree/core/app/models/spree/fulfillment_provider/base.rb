@@ -5,6 +5,8 @@ module Spree
     # time; registered via Spree.fulfillment_providers. Replaces the legacy
     # ShipmentHandler name-constantize mechanism.
     class Base
+      include Spree::IntegrationBackedProvider
+
       class << self
         # Behavior predicates — the class hierarchy IS the vocabulary.
         # Subclasses override the one that describes their mechanics; admin
@@ -27,47 +29,6 @@ module Spree
           false
         end
 
-        # Human-readable name for admin UIs. Provider gems follow the
-        # `SpreeEasyPost::DeliveryRateProvider` convention, where demodulizing
-        # yields the useless class name ("Delivery Rate Provider") — so those
-        # derive the label from the gem's outer module instead
-        # (`SpreeEasyPost` → "EasyPost"), matching Spree::Integration.api_type.
-        #
-        # @return [String]
-        def provider_name
-          leaf = name.demodulize
-          outer = name.deconstantize.delete_prefix('Spree')
-
-          return leaf.titleize if outer.blank? || !leaf.end_with?('Provider')
-
-          # Not `titleize` — it would split the gem's own casing
-          # ("SpreeEasyPost" → "Easy Post"). Brands that need more than the
-          # module name override this method.
-          outer.delete_prefix('::')
-        end
-
-        # The Spree::Integration subclass holding this provider's credentials,
-        # as a class name string — same contract as
-        # {Spree::DeliveryRateProvider::Base.integration_class}. Providers
-        # without external credentials leave it nil.
-        #
-        # @return [String, nil]
-        def integration_class
-          nil
-        end
-
-        # Whether the store can use this provider — false while a carrier
-        # provider's integration is unconnected. Admin UIs surface it as a
-        # connect prompt rather than hiding the provider, so the merchant can
-        # see what a connection would unlock.
-        #
-        # @param store [Spree::Store, nil]
-        # @return [Boolean]
-        def available_for_store?(store)
-          return true if integration_class.blank?
-
-          store.present? && store.integrations.active.exists?(type: integration_class)
-        end
       end
 
       # @return [Boolean] whether the fulfillment may transition to fulfilled
