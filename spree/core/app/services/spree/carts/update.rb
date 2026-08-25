@@ -75,6 +75,21 @@ module Spree
         cart.metadata = cart.metadata.merge(params[:metadata].to_h) if params[:metadata].present?
         cart.use_shipping = params[:use_shipping] if params.key?(:use_shipping)
         assign_preferred_stock_location if params.key?(:preferred_stock_location_id)
+        assign_company if params.key?(:company_id)
+      end
+
+      # Which company node the purchase is for. Resolved through the cart's
+      # store so a foreign node 404s; the model validates that the cart's
+      # customer has standing over it.
+      def assign_company
+        value = params[:company_id]
+
+        if value.blank?
+          cart.company_id = nil
+          return
+        end
+
+        cart.company_id = cart.store.companies.find_by_prefix_id!(value).id
       end
 
       # Storefront pickup selection: resolves the public prefixed ID (or raw

@@ -29,7 +29,18 @@ module Spree
           end
 
           def scope
-            super.available(Time.current, Spree::Current.currency, include_preorderable: true)
+            base = super.available(Time.current, Spree::Current.currency, include_preorderable: true)
+
+            # Catalog narrowing for the buyer: their company's effective
+            # catalogs, their group's, or the channel default — union of
+            # assortments, resolved in one place
+            # (docs/plans/6.0-b2b-companies-and-catalogs.md).
+            Spree.products_for_context_service.call(
+              store: current_store,
+              channel: current_channel,
+              customer: current_user,
+              base: base
+            ).value
           end
 
           # these scopes are not automatically picked by ar_lazy_preload gem and we need to explicitly include them

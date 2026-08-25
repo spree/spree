@@ -48,6 +48,42 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
     end
   end
 
+  describe 'catalog narrowing' do
+    let(:user) { create(:customer) }
+    let(:company) { create(:company, store: store) }
+    let(:catalog) { create(:catalog, store: store) }
+
+    before do
+      create(:catalog_assignment, catalog: catalog, assignable: company)
+      catalog.add_products([product.id])
+    end
+
+    it 'narrows a sole-standing buyer to their effective catalogs' do
+      create(:company_membership, company: company, customer: user)
+      request.headers['Authorization'] = "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(user)}"
+
+      get :index, as: :json
+
+      expect(json_response['data'].map { |row| row['id'] }).to contain_exactly(product.prefixed_id)
+    end
+
+    it 'leaves anonymous buyers un-narrowed' do
+      get :index, as: :json
+
+      ids = json_response['data'].map { |row| row['id'] }
+      expect(ids).to include(product.prefixed_id, product2.prefixed_id)
+    end
+
+    it 'hides a catalog-only 404 from show for buyers outside the assortment' do
+      create(:company_membership, company: company, customer: user)
+      request.headers['Authorization'] = "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(user)}"
+
+      get :show, params: { id: product2.slug }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
   describe 'GET #index' do
     it 'returns a list of products' do
       get :index

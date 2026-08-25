@@ -8,6 +8,7 @@ module Spree
                  number: :string, email: :string,
                  customer_note: [:string, nullable: true],
                  market_id: [:string, nullable: true], channel_id: [:string, nullable: true],
+                 company_id: [:string, nullable: true], company_name: [:string, nullable: true],
                  currency: :string, locale: [:string, nullable: true], total_quantity: :number,
                  coupon_code: [:string, nullable: true],
                  fulfillment_status: [:string, nullable: true], payment_status: [:string, nullable: true],
@@ -42,6 +43,15 @@ module Spree
 
         attribute :channel_id do |order|
           order.channel&.prefixed_id
+        end
+
+        # Which company node the order was placed for — frozen at completion.
+        attribute :company_id do |order|
+          order.company&.prefixed_id
+        end
+
+        attribute :company_name do |order|
+          order.company&.name
         end
 
         attributes :number, :email, :customer_note,
