@@ -4232,6 +4232,28 @@
         "platform": "السوق يورّد الضريبة",
         "seller": "البائع يورّد الضريبة"
       },
+      "team": {
+        "empty": "لا أحد يدير هذا البائع بعد.",
+        "invite": "دعوة",
+        "invited": "مدعو",
+        "messages": {
+          "invitation_resent": "تم إرسال الدعوة مرة أخرى",
+          "invitation_revoked": "تم إلغاء الدعوة",
+          "removed": "تمت إزالة عضو الفريق"
+        },
+        "pending": "دعوات معلقة",
+        "remove_confirm": {
+          "message": "سيفقد {{name}} الوصول إلى هذا البائع.",
+          "title": "إزالة عضو الفريق؟"
+        },
+        "resend": "إعادة الإرسال",
+        "revoke": "إلغاء",
+        "revoke_confirm": {
+          "message": "سيتوقف العرض المرسل إلى {{email}} عن العمل.",
+          "title": "إلغاء الدعوة؟"
+        },
+        "title": "الفريق"
+      },
       "team_column": "الفريق"
     },
     "settings": {

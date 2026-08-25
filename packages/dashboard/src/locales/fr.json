@@ -4213,6 +4213,28 @@
         "platform": "La place de marché reverse",
         "seller": "Le vendeur reverse"
       },
+      "team": {
+        "empty": "Personne ne gère encore ce vendeur.",
+        "invite": "Inviter",
+        "invited": "Invité",
+        "messages": {
+          "invitation_resent": "Invitation renvoyée",
+          "invitation_revoked": "Invitation révoquée",
+          "removed": "Membre retiré"
+        },
+        "pending": "Invitations en attente",
+        "remove_confirm": {
+          "message": "{{name}} perdra l'accès à ce vendeur.",
+          "title": "Retirer ce membre ?"
+        },
+        "resend": "Renvoyer",
+        "revoke": "Révoquer",
+        "revoke_confirm": {
+          "message": "L'offre envoyée à {{email}} cessera de fonctionner.",
+          "title": "Révoquer l'invitation ?"
+        },
+        "title": "Équipe"
+      },
       "team_column": "Équipe"
     },
     "settings": {

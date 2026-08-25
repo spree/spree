@@ -4213,6 +4213,28 @@
         "platform": "Marketplace remits",
         "seller": "Seller remits"
       },
+      "team": {
+        "empty": "Nobody runs this seller yet.",
+        "invite": "Invite",
+        "invited": "Invited",
+        "messages": {
+          "invitation_resent": "Invitation sent again",
+          "invitation_revoked": "Invitation revoked",
+          "removed": "Team member removed"
+        },
+        "pending": "Pending invitations",
+        "remove_confirm": {
+          "message": "{{name}} will lose access to this seller.",
+          "title": "Remove team member?"
+        },
+        "resend": "Resend",
+        "revoke": "Revoke",
+        "revoke_confirm": {
+          "message": "The offer sent to {{email}} will stop working.",
+          "title": "Revoke invitation?"
+        },
+        "title": "Team"
+      },
       "team_column": "Team"
     },
     "settings": {

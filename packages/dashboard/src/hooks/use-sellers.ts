@@ -1,4 +1,5 @@
 import type {
+  Invitation,
   ListParams,
   Seller,
   SellerApproveParams,
@@ -141,5 +142,49 @@ export function useRejectSeller(id: string) {
     invalidate: [['sellers'], ['sellers', id]],
     successMessage: i18n.t('admin.sellers.messages.rejected'),
     errorMessage: i18n.t('admin.sellers.messages.reject_failed'),
+  })
+}
+
+export function useSellerTeam(sellerId: string) {
+  return useQuery({
+    queryKey: useResourceKey('sellers', sellerId, 'team'),
+    queryFn: () => adminClient.sellers.team.list(sellerId),
+  })
+}
+
+export function useRemoveSellerTeamMember(sellerId: string) {
+  return useResourceMutation<void, Error, string>({
+    mutationFn: (id) => adminClient.sellers.team.remove(sellerId, id),
+    invalidate: [
+      ['sellers', sellerId, 'team'],
+      ['sellers', sellerId],
+    ],
+    successMessage: i18n.t('admin.sellers.team.messages.removed'),
+    errorMessage: i18n.t('admin.errors.failed_to_delete'),
+  })
+}
+
+export function useSellerInvitations(sellerId: string) {
+  return useQuery({
+    queryKey: useResourceKey('sellers', sellerId, 'invitations'),
+    queryFn: () => adminClient.sellers.invitations.list(sellerId),
+  })
+}
+
+export function useRevokeSellerInvitation(sellerId: string) {
+  return useResourceMutation<void, Error, string>({
+    mutationFn: (id) => adminClient.sellers.invitations.remove(sellerId, id),
+    invalidate: [['sellers', sellerId, 'invitations']],
+    successMessage: i18n.t('admin.sellers.team.messages.invitation_revoked'),
+    errorMessage: i18n.t('admin.errors.failed_to_delete'),
+  })
+}
+
+export function useResendSellerInvitation(sellerId: string) {
+  return useResourceMutation<Invitation, Error, string>({
+    mutationFn: (id) => adminClient.sellers.invitations.resend(sellerId, id),
+    invalidate: [['sellers', sellerId, 'invitations']],
+    successMessage: i18n.t('admin.sellers.team.messages.invitation_resent'),
+    errorMessage: i18n.t('admin.errors.failed_to_update'),
   })
 }

@@ -4213,6 +4213,28 @@
         "platform": "Marktplatz führt ab",
         "seller": "Verkäufer führt ab"
       },
+      "team": {
+        "empty": "Diesen Verkäufer betreibt noch niemand.",
+        "invite": "Einladen",
+        "invited": "Eingeladen",
+        "messages": {
+          "invitation_resent": "Einladung erneut gesendet",
+          "invitation_revoked": "Einladung widerrufen",
+          "removed": "Teammitglied entfernt"
+        },
+        "pending": "Ausstehende Einladungen",
+        "remove_confirm": {
+          "message": "{{name}} verliert den Zugriff auf diesen Verkäufer.",
+          "title": "Teammitglied entfernen?"
+        },
+        "resend": "Erneut senden",
+        "revoke": "Widerrufen",
+        "revoke_confirm": {
+          "message": "Das an {{email}} gesendete Angebot wird ungültig.",
+          "title": "Einladung widerrufen?"
+        },
+        "title": "Team"
+      },
       "team_column": "Team"
     },
     "settings": {

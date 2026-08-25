@@ -462,6 +462,16 @@ Spree::Core::Engine.add_routes do
             patch :reopen_onboarding
           end
 
+          # Who runs this seller, and the offers nobody has accepted yet.
+          # The operator is the only one who can repair a seller whose team
+          # has locked itself out, which the seller's own panel cannot do.
+          resources :team, only: [:index, :destroy], controller: 'sellers/team'
+          resources :invitations, only: [:index, :destroy], controller: 'sellers/invitations' do
+            member do
+              patch :resend
+            end
+          end
+
           # What this seller submitted about the requirements, and the
           # operator's decisions on it. Nested, because a submission means
           # nothing outside the seller it belongs to.

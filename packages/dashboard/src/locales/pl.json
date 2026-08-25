@@ -4273,6 +4273,28 @@
         "platform": "Rozlicza marketplace",
         "seller": "Rozlicza sprzedawca"
       },
+      "team": {
+        "empty": "Nikt jeszcze nie prowadzi tego sprzedawcy.",
+        "invite": "Zaproś",
+        "invited": "Zaproszony",
+        "messages": {
+          "invitation_resent": "Zaproszenie wysłane ponownie",
+          "invitation_revoked": "Unieważniono zaproszenie",
+          "removed": "Usunięto członka zespołu"
+        },
+        "pending": "Oczekujące zaproszenia",
+        "remove_confirm": {
+          "message": "{{name}} straci dostęp do tego sprzedawcy.",
+          "title": "Usunąć członka zespołu?"
+        },
+        "resend": "Wyślij ponownie",
+        "revoke": "Unieważnij",
+        "revoke_confirm": {
+          "message": "Oferta wysłana do {{email}} przestanie działać.",
+          "title": "Unieważnić zaproszenie?"
+        },
+        "title": "Zespół"
+      },
       "team_column": "Zespół"
     },
     "settings": {

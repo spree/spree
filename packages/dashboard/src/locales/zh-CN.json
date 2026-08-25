@@ -4206,6 +4206,28 @@
         "platform": "市场申报",
         "seller": "卖家申报"
       },
+      "team": {
+        "empty": "尚无人管理该卖家。",
+        "invite": "邀请",
+        "invited": "已邀请",
+        "messages": {
+          "invitation_resent": "已再次发送邀请",
+          "invitation_revoked": "已撤销邀请",
+          "removed": "已移除团队成员"
+        },
+        "pending": "待接受的邀请",
+        "remove_confirm": {
+          "message": "{{name}} 将失去对该卖家的访问权限。",
+          "title": "移除团队成员？"
+        },
+        "resend": "重新发送",
+        "revoke": "撤销",
+        "revoke_confirm": {
+          "message": "发送给 {{email}} 的邀请将失效。",
+          "title": "撤销邀请？"
+        },
+        "title": "团队"
+      },
       "team_column": "团队"
     },
     "settings": {

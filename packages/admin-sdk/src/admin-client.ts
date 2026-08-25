@@ -311,6 +311,7 @@ import type {
   Seller,
   SellerRequirement,
   SellerRequirementSubmission,
+  SellerTeamMember,
   StockLevel,
   StockLocation,
   StockMovement,
@@ -2455,6 +2456,34 @@ export class AdminClient {
         ...options,
         body: params,
       }),
+
+    /**
+     * Who runs this seller. The operator's view of what the seller panel
+     * manages for itself — and the only way to repair a seller whose team has
+     * locked itself out.
+     */
+    team: {
+      list: (sellerId: string, options?: RequestOptions): Promise<{ data: SellerTeamMember[] }> =>
+        this.request<{ data: SellerTeamMember[] }>('GET', `/sellers/${sellerId}/team`, options),
+
+      /** Revokes a member's access. */
+      remove: (sellerId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/sellers/${sellerId}/team/${id}`, options),
+    },
+
+    /** Offers to join this seller that nobody has accepted yet. */
+    invitations: {
+      list: (sellerId: string, options?: RequestOptions): Promise<{ data: Invitation[] }> =>
+        this.request<{ data: Invitation[] }>('GET', `/sellers/${sellerId}/invitations`, options),
+
+      /** Withdraws an offer. */
+      remove: (sellerId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/sellers/${sellerId}/invitations/${id}`, options),
+
+      /** Sends the email again; refused once the offer has lapsed. */
+      resend: (sellerId: string, id: string, options?: RequestOptions): Promise<Invitation> =>
+        this.request<Invitation>('PATCH', `/sellers/${sellerId}/invitations/${id}/resend`, options),
+    },
 
     /** What this seller submitted about the requirements, and its decisions. */
     requirementSubmissions: {
