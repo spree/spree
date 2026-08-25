@@ -92,4 +92,48 @@ RSpec.describe Spree::Api::V3::Seller::OnboardingController, type: :controller d
       expect(seller.reload).to be_onboarding
     end
   end
+
+  describe 'POST #payout_account' do
+    let(:urls) { { refresh_url: 'https://panel/onboarding', return_url: 'https://panel/onboarding?done=1' } }
+
+    # An operator settling by hand collects bank details themselves, so there
+    # is nowhere to send the seller.
+    it 'answers with nothing when the provider hosts no onboarding' do
+      post :payout_account, params: urls, as: :json
+
+      expect(response).to have_http_status(:no_content)
+    end
+
+    context 'with a provider that hosts its own onboarding' do
+      before do
+        allow_any_instance_of(Spree::PayoutProvider::System).to receive(:onboarding_url).
+          and_return('https://provider.example/setup/abc')
+      end
+
+      it 'answers with a fresh link' do
+        post :payout_account, params: urls, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['url']).to eq('https://provider.example/setup/abc')
+      end
+
+      # The panel says where to come back to — core does not know its routes.
+      it 'sends the panel’s own return addresses to the provider' do
+        expect_any_instance_of(Spree::PayoutProvider::System).to receive(:onboarding_url).
+          with(anything, hash_including(refresh_url: urls[:refresh_url], return_url: urls[:return_url])).
+          and_return('https://provider.example/setup/abc')
+
+        post :payout_account, params: urls, as: :json
+      end
+
+      it 'reports a provider that refuses rather than raising' do
+        allow_any_instance_of(Spree::PayoutProvider::System).to receive(:onboarding_url).
+          and_raise(Spree::Core::GatewayError, 'not configured')
+
+        post :payout_account, params: urls, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+    end
+  end
 end

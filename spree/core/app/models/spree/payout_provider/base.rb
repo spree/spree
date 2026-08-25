@@ -73,6 +73,36 @@ module Spree
         false
       end
 
+      # Where a seller goes to give this provider what it needs before it will
+      # pay them — bank details, identity documents, whatever it asks.
+      #
+      # Nil when there is nowhere to send them, which is the built-in
+      # provider's answer: an operator paying by bank transfer collects those
+      # details themselves, so the requirement is met by the operator marking
+      # it so rather than by the seller going anywhere.
+      #
+      # Implementations mint the link per call — hosted onboarding links are
+      # short-lived and single-use by design, so one is never stored.
+      #
+      # @param seller [Spree::Seller]
+      # @param refresh_url [String] where the provider sends a seller whose
+      #   link expired before they finished
+      # @param return_url [String] where it sends them when they are done
+      # @return [String, nil]
+      def onboarding_url(_seller, refresh_url:, return_url:)
+        nil
+      end
+
+      # Whether this provider will now accept money for a seller. Asked of the
+      # provider rather than read off the seller, because only the provider
+      # knows — and its answer can change without anything happening in Spree.
+      #
+      # @param seller [Spree::Seller]
+      # @return [Boolean]
+      def onboarded?(seller)
+        !self.class.requires_payout_account? || seller.payouts_enabled?
+      end
+
       # Credits a seller for one fulfilled order.
       #
       # @param seller_transfer [Spree::SellerTransfer]

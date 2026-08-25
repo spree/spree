@@ -362,6 +362,7 @@ module Spree
           Spree::SellerRequirements::BillingAddress,
           Spree::SellerRequirements::ReturnsAddress,
           Spree::SellerRequirements::MinimumProducts,
+          Spree::SellerRequirements::PayoutAccount,
           Spree::SellerRequirements::RequiredCustomFields,
           Spree::SellerRequirements::Attestation,
           Spree::SellerRequirements::OperatorReview,

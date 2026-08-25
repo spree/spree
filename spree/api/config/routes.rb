@@ -781,6 +781,10 @@ Spree::Core::Engine.add_routes do
         # Singular: the checklist is always `current_seller`'s.
         resource :onboarding, only: [:show], controller: 'onboarding' do
           post :submit_for_review
+          # A fresh link to the payout provider's own onboarding. A POST
+          # because asking for one creates the account at the provider if the
+          # seller has none.
+          post :payout_account
         end
 
         resources :requirements, only: [] do

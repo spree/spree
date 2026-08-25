@@ -47,6 +47,17 @@ module SpreeStripe
       store.payment_methods.active.find { |method| method.is_a?(SpreeStripe::Gateway) }
     end
 
+    # Stripe's own hosted onboarding, where the seller gives Stripe their
+    # identity and bank details directly — so the marketplace never handles
+    # them and inherits Stripe's checks rather than building its own.
+    def onboarding_url(seller, refresh_url:, return_url:)
+      gateway_for(seller.store).create_connect_account_link(
+        seller: seller,
+        refresh_url: refresh_url,
+        return_url: return_url
+      )
+    end
+
     # Moves one seller's earning to their connected account.
     def transfer!(seller_transfer)
       seller = seller_transfer.seller

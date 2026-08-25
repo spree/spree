@@ -33,6 +33,33 @@ module Spree
             render json: onboarding_payload
           end
 
+          # POST /api/v3/seller/onboarding/payout_account
+          #
+          # A fresh link to wherever the provider collects what it needs before
+          # it will pay this seller. Minted per request rather than rendered
+          # with the checklist, because these links are short-lived and
+          # single-use — one made while drawing a page is often dead by the
+          # time the seller clicks it.
+          #
+          # The panel says where to come back to. Core does not know the
+          # panel's routes, and a marketplace may host it anywhere.
+          def payout_account
+            provider = current_store.payout_provider_instance
+            url = provider.onboarding_url(
+              current_seller,
+              refresh_url: params.require(:refresh_url),
+              return_url: params.require(:return_url)
+            )
+
+            # No link means there is nowhere to send them — an operator paying
+            # by hand collects these details themselves.
+            return head :no_content if url.blank?
+
+            render json: { url: url }
+          rescue Spree::Core::GatewayError => e
+            render_service_error(e.message)
+          end
+
           protected
 
           def read_actions
