@@ -220,6 +220,17 @@ html:not(.dark) h4 {
   opacity: 1;
 }
 
+/* The almond theme floats a rounded white panel on the shell; its default
+   border is a cool grey against our warm sand, which is what makes the header
+   and sidebar look like a different colour from the content. */
+#content-container {
+  border-color: var(--spree-border) !important;
+}
+
+.dark #content-container {
+  border-color: #3f3e3c !important;
+}
+
 /* --- Content width ------------------------------------------------------- */
 /* Mintlify caps the article at max-w-xl (576px) and then pads the wrapper by
    another 48px, so on a wide screen most of the page is empty. Widen the
@@ -246,8 +257,87 @@ html:not(.dark) h4 {
   max-width: 52rem;
 }
 
+/* --- Navbar --------------------------------------------------------------- */
+/* The header is transparent by default and only picks up a background once the
+   page scrolls — on the custom-mode homepage it never does, so the bar floats
+   over the content. Give it a solid surface and a hairline at all times. */
+
+/* The almond theme lays a 3% black wash (#almond-background-color) across the
+   viewport at -z-10. The header paints its own opaque background above it, so
+   it renders lighter than the sidebar, which sits on the washed body — the two
+   look like different colours despite computing identically. Drop the wash and
+   let the sand body show through everywhere. */
+#almond-background-color {
+  background-color: transparent !important;
+}
+
+#navbar {
+  background-color: var(--spree-sand-50);
+}
+
+.dark #navbar {
+  background-color: var(--spree-dark-sand-800);
+}
+
+/* Only the homepage needs the rule: docs pages already read as separated,
+   because the white content panel meets the sand header at its own edge.
+   Mintlify marks custom-mode pages on the header itself. */
+#navbar.is-custom {
+  border-bottom: 1px solid var(--spree-border);
+}
+
+.dark #navbar.is-custom {
+  border-bottom-color: #3f3e3c;
+}
+
+/* Mintlify fades its own backdrop layer in on scroll; with a solid bar behind
+   it that would double up, so keep it out of the way. */
+#navbar > .absolute.inset-0 {
+  display: none;
+}
+
+/* --- Homepage bands ------------------------------------------------------- */
+/* The homepage alternates white bands on the sand body. These are plain CSS
+   classes because utility classes passed through an MDX component prop are NOT
+   compiled by Mintlify (literal JSX classes are) — a dark: variant sent that
+   way silently produces no CSS. */
+
+.home-band {
+  background: #ffffff;
+}
+
+.dark .home-band {
+  background: var(--spree-dark-sand-700);
+}
+
+.home-band-end {
+  border-bottom: 1px solid rgb(233 229 221 / 0.8);
+}
+
+.dark .home-band-end {
+  border-bottom-color: #3f3e3c;
+}
+
 /* --- Accents ------------------------------------------------------------- */
 
-html:not(.dark) a:not([class]):hover {
-  color: var(--spree-accent-strong);
+/* Body links: blue text, no rule beneath it. Mintlify styles `a.link` as dark
+   text with a 1px blue border-bottom, which reads as an underline. */
+/* Scoped to the article: the navbar tabs carry the same `.link` class and must
+   keep their own colours. */
+#content-container .link {
+  border-bottom: 0 !important;
+  color: var(--spree-accent) !important;
+  text-decoration: none !important;
+}
+
+#content-container .link:hover {
+  color: var(--spree-accent-strong) !important;
+}
+
+.dark #content-container .link {
+  color: #4d9fff !important;
+}
+
+.dark #content-container .link:hover {
+  color: #7fb8ff !important;
 }
