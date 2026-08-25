@@ -326,6 +326,10 @@
         "placeholder": "Sprache auswählen",
         "search_placeholder": "Sprachen suchen…"
       },
+      "market_combobox": {
+        "empty": "Keine passenden Märkte",
+        "search_placeholder": "Märkte suchen…"
+      },
       "media": {
         "remove_tooltip": "Bild entfernen"
       },
@@ -764,6 +768,13 @@
       "items": {
         "stock_locations": "Lagerstandorte"
       }
+    },
+    "settings_page": {
+      "back_to_dashboard": "Zurück zum Dashboard",
+      "description": "Verwalten Sie Shop, Verkaufseinrichtung und Team.",
+      "no_results": "Keine Einstellungen für „{{query}}“.",
+      "search_placeholder": "Einstellungen durchsuchen",
+      "title": "Einstellungen"
     },
     "stock_locations": {
       "add_cta": "Lagerort hinzufügen",

@@ -399,10 +399,6 @@
         "set_up": "Configurer les champs personnalisés",
         "values_save_partial_failed": "Certains champs personnalisés n’ont pas pu être enregistrés : {{fields}}",
         "values_saved": "Champs personnalisés enregistrés"
-      },
-      "market_combobox": {
-        "empty": "Aucun marché ne correspond",
-        "search_placeholder": "Rechercher des marchés…"
       }
     },
     "custom_field_definitions": {
@@ -4307,13 +4303,6 @@
         "tax_rates": "Taux de taxe",
         "webhooks": "Webhooks"
       }
-    },
-    "settings_page": {
-      "back_to_dashboard": "Retour au tableau de bord",
-      "description": "Gérez votre boutique, votre configuration de vente et votre équipe.",
-      "no_results": "Aucun paramètre ne correspond à « {{query}} ».",
-      "search_placeholder": "Rechercher dans les paramètres",
-      "title": "Paramètres"
     },
     "setup": {
       "back_to_login": "Retour à la connexion",

@@ -72,6 +72,13 @@ test.describe('seller invitation lifecycle', () => {
       // is exactly what a role carrying no permission keys looks like.
       await expect(inviteePage.getByText(/selling/i).first()).toBeVisible({ timeout: 20_000 })
       await expect(inviteePage.getByText(/something went wrong/i)).toHaveCount(0)
+
+      // The settings rail is shared from dashboard-core, whose strings the
+      // panel has to carry too — keys defined only in the operator's bundle
+      // render as their own name here.
+      await inviteePage.goto(`${SELLER_PANEL}${new URL(inviteePage.url()).pathname}/settings`)
+      await expect(inviteePage.getByText('Settings').first()).toBeVisible({ timeout: 20_000 })
+      await expect(inviteePage.getByText(/admin\.settings_page/)).toHaveCount(0)
     } finally {
       await inviteeContext.close()
     }

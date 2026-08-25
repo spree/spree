@@ -403,10 +403,6 @@
         "set_up": "إعداد الحقول المخصصة",
         "values_save_partial_failed": "تعذّر حفظ بعض الحقول المخصصة: {{fields}}",
         "values_saved": "تم حفظ الحقول المخصصة"
-      },
-      "market_combobox": {
-        "empty": "لا توجد أسواق تتطابق",
-        "search_placeholder": "بحث في الأسواق…"
       }
     },
     "custom_field_definitions": {
@@ -4326,13 +4322,6 @@
         "tax_rates": "نسب الضريبة",
         "webhooks": "Webhooks"
       }
-    },
-    "settings_page": {
-      "back_to_dashboard": "العودة إلى لوحة التحكم",
-      "description": "أدر متجرك وإعداد البيع والفريق.",
-      "no_results": "لا توجد إعدادات تطابق «{{query}}».",
-      "search_placeholder": "ابحث في الإعدادات",
-      "title": "الإعدادات"
     },
     "setup": {
       "back_to_login": "العودة إلى تسجيل الدخول",

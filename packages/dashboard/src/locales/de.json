@@ -399,10 +399,6 @@
         "set_up": "Benutzerdefinierte Felder einrichten",
         "values_save_partial_failed": "Einige benutzerdefinierte Felder konnten nicht gespeichert werden: {{fields}}",
         "values_saved": "Benutzerdefinierte Felder gespeichert"
-      },
-      "market_combobox": {
-        "empty": "Keine passenden Märkte",
-        "search_placeholder": "Märkte suchen…"
       }
     },
     "custom_field_definitions": {
@@ -4307,13 +4303,6 @@
         "tax_rates": "Steuersätze",
         "webhooks": "Webhooks"
       }
-    },
-    "settings_page": {
-      "back_to_dashboard": "Zurück zum Dashboard",
-      "description": "Verwalten Sie Shop, Verkaufseinrichtung und Team.",
-      "no_results": "Keine Einstellungen für „{{query}}“.",
-      "search_placeholder": "Einstellungen durchsuchen",
-      "title": "Einstellungen"
     },
     "setup": {
       "back_to_login": "Zurück zur Anmeldung",

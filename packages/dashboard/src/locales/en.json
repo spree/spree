@@ -399,10 +399,6 @@
         "set_up": "Set up custom fields",
         "values_save_partial_failed": "Some custom fields could not be saved: {{fields}}",
         "values_saved": "Custom fields saved"
-      },
-      "market_combobox": {
-        "empty": "No markets match",
-        "search_placeholder": "Search markets…"
       }
     },
     "custom_field_definitions": {
@@ -4307,13 +4303,6 @@
         "tax_rates": "Tax rates",
         "webhooks": "Webhooks"
       }
-    },
-    "settings_page": {
-      "back_to_dashboard": "Back to dashboard",
-      "description": "Manage your store, selling setup and team.",
-      "no_results": "No settings match “{{query}}”.",
-      "search_placeholder": "Search settings",
-      "title": "Settings"
     },
     "setup": {
       "back_to_login": "Back to sign in",

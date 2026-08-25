@@ -326,6 +326,10 @@
         "placeholder": "اختر لغة",
         "search_placeholder": "البحث في اللغات…"
       },
+      "market_combobox": {
+        "empty": "لا توجد أسواق تتطابق",
+        "search_placeholder": "بحث في الأسواق…"
+      },
       "media": {
         "remove_tooltip": "إزالة الصورة"
       },
@@ -764,6 +768,13 @@
       "items": {
         "stock_locations": "مواقع المخزون"
       }
+    },
+    "settings_page": {
+      "back_to_dashboard": "العودة إلى لوحة التحكم",
+      "description": "أدر متجرك وإعداد البيع والفريق.",
+      "no_results": "لا توجد إعدادات تطابق «{{query}}».",
+      "search_placeholder": "ابحث في الإعدادات",
+      "title": "الإعدادات"
     },
     "stock_locations": {
       "add_cta": "إضافة موقع المخزون",

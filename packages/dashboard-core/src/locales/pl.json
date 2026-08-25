@@ -326,6 +326,10 @@
         "placeholder": "Wybierz język",
         "search_placeholder": "Szukaj języków…"
       },
+      "market_combobox": {
+        "empty": "Brak pasujących rynków",
+        "search_placeholder": "Szukaj rynków…"
+      },
       "media": {
         "remove_tooltip": "Usuń zdjęcie"
       },
@@ -764,6 +768,13 @@
       "items": {
         "stock_locations": "Lokalizacje magazynowe"
       }
+    },
+    "settings_page": {
+      "back_to_dashboard": "Powrót do panelu",
+      "description": "Zarządzaj sklepem, konfiguracją sprzedaży i zespołem.",
+      "no_results": "Brak ustawień pasujących do „{{query}}”.",
+      "search_placeholder": "Szukaj w ustawieniach",
+      "title": "Ustawienia"
     },
     "stock_locations": {
       "add_cta": "Dodaj lokalizację magazynową",

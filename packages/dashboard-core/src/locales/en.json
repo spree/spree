@@ -328,6 +328,10 @@
         "placeholder": "Select a locale",
         "search_placeholder": "Search languages…"
       },
+      "market_combobox": {
+        "empty": "No markets match",
+        "search_placeholder": "Search markets…"
+      },
       "media": {
         "remove_tooltip": "Remove image"
       },
@@ -766,6 +770,13 @@
       "items": {
         "stock_locations": "Stock locations"
       }
+    },
+    "settings_page": {
+      "back_to_dashboard": "Back to dashboard",
+      "description": "Manage your store, selling setup and team.",
+      "no_results": "No settings match “{{query}}”.",
+      "search_placeholder": "Search settings",
+      "title": "Settings"
     },
     "stock_locations": {
       "add_cta": "Add stock location",

@@ -407,10 +407,6 @@
         "set_up": "Skonfiguruj pola niestandardowe",
         "values_save_partial_failed": "Niektórych pól niestandardowych nie udało się zapisać: {{fields}}",
         "values_saved": "Pola niestandardowe zapisane"
-      },
-      "market_combobox": {
-        "empty": "Brak pasujących rynków",
-        "search_placeholder": "Szukaj rynków…"
       }
     },
     "custom_field_definitions": {
@@ -4367,13 +4363,6 @@
         "tax_rates": "Stawki podatku",
         "webhooks": "Webhooki"
       }
-    },
-    "settings_page": {
-      "back_to_dashboard": "Powrót do panelu",
-      "description": "Zarządzaj sklepem, konfiguracją sprzedaży i zespołem.",
-      "no_results": "Brak ustawień pasujących do „{{query}}”.",
-      "search_placeholder": "Szukaj w ustawieniach",
-      "title": "Ustawienia"
     },
     "setup": {
       "back_to_login": "Wróć do logowania",
