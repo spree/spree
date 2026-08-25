@@ -71,7 +71,7 @@ erDiagram
     CatalogAssignment }o--|| Channel : "or"
 ```
 
-- **Assortment** — a positioned product join. A catalog with no price list is assortment-only: it narrows what is visible, and base prices apply.
+- **Assortment** — a positioned product join. A catalog with no price list is assortment-only: it narrows what is visible, and base prices apply. Selecting a price list on a catalog whose assortment is still empty seeds the assortment from the list's products — one step for the common "the wholesale range is already priced" flow; a curated assortment is never touched.
 - **Audiences** — assignments to a channel, a customer group, a market, or a company node. A company assignment covers the node's **subtree**: assign the group-wide catalog once at the root, and a branch adds its own extra catalog without re-assigning the shared one.
 - **Visibility** — a buyer resolving to a company node sees the union of the effective catalogs on the node and its ancestors; otherwise their customer group's catalogs apply; otherwise every channel listing (narrowed to the channel's default catalog when one is set). Gated storefront access runs first — a login-gated guest never reaches this resolution.
 - **Pricing** — the effective catalogs' price lists are checked nearest node first (the purchase node's own assignments before its parent's), then the ordinary rule-matched price lists, then base prices. A price list attached to a catalog applies *because the catalog applies* — its own rules are not consulted, and it is excluded from generic rule matching so a rule-less list cannot leak to every shopper.

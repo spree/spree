@@ -874,7 +874,7 @@
         },
         "price_list": {
           "empty": "Aucune liste de prix trouvée",
-          "help": "Optionnel. Sans liste, le catalogue ne restreint que l’assortiment et les prix de base s’appliquent.",
+          "help": "Optionnel. Sans liste, le catalogue ne restreint que l’assortiment et les prix de base s’appliquent. Choisir une liste quand l’assortiment est vide importe ses produits.",
           "label": "Liste de prix",
           "placeholder": "Prix de base"
         }

@@ -892,7 +892,7 @@
         },
         "price_list": {
           "empty": "Nie znaleziono cenników",
-          "help": "Opcjonalny. Bez cennika katalog zawęża tylko asortyment i obowiązują ceny podstawowe.",
+          "help": "Opcjonalny. Bez cennika katalog zawęża tylko asortyment i obowiązują ceny podstawowe. Wybór cennika przy pustym asortymencie importuje jego produkty.",
           "label": "Cennik",
           "placeholder": "Ceny podstawowe"
         }

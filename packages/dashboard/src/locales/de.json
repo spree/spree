@@ -874,7 +874,7 @@
         },
         "price_list": {
           "empty": "Keine Preislisten gefunden",
-          "help": "Optional. Ohne Preisliste schränkt der Katalog nur das Sortiment ein; es gelten die Basispreise.",
+          "help": "Optional. Ohne Preisliste schränkt der Katalog nur das Sortiment ein; es gelten die Basispreise. Die Wahl einer Liste bei leerem Sortiment importiert deren Produkte.",
           "label": "Preisliste",
           "placeholder": "Basispreise"
         }

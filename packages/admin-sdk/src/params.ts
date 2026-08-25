@@ -2455,7 +2455,12 @@ export interface CatalogParams {
   name?: string
   active?: boolean
   position?: number
-  /** Price list (pl_...) pricing this catalog; null = assortment-only, base prices. */
+  /**
+   * Price list (pl_...) pricing this catalog; null = assortment-only, base
+   * prices. Selecting a list on a catalog whose assortment is empty seeds
+   * the assortment from the list's products; a curated assortment is never
+   * touched.
+   */
   price_list_id?: string | null
   metadata?: Record<string, unknown>
 }

@@ -874,7 +874,7 @@
         },
         "price_list": {
           "empty": "No price lists found",
-          "help": "Optional. Without one, the catalog only narrows the assortment and base prices apply.",
+          "help": "Optional. Without one, the catalog only narrows the assortment and base prices apply. Picking a list while the assortment is empty imports its products.",
           "label": "Price list",
           "placeholder": "Base prices"
         }

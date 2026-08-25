@@ -98,6 +98,45 @@ describe Spree::Catalog, type: :model do
     end
   end
 
+  describe 'seeding the assortment from a price list' do
+    let(:product) { create(:product, store: store, price: 100) }
+    let(:price_list) do
+      create(:price_list, store: store).tap { |list| list.add_products([product.id]) }
+    end
+
+    it 'imports the list products when the assortment is empty' do
+      catalog = create(:catalog, store: store)
+
+      catalog.update!(price_list: price_list)
+
+      expect(catalog.products.reload).to contain_exactly(product)
+    end
+
+    it 'seeds on create with a price list' do
+      catalog = create(:catalog, store: store, price_list: price_list)
+
+      expect(catalog.products.reload).to contain_exactly(product)
+    end
+
+    it 'never touches a curated assortment' do
+      catalog = create(:catalog, store: store)
+      curated = create(:product, store: store)
+      catalog.add_products([curated.id])
+
+      catalog.update!(price_list: price_list)
+
+      expect(catalog.products.reload).to contain_exactly(curated)
+    end
+
+    it 'removes nothing when the list is cleared' do
+      catalog = create(:catalog, store: store, price_list: price_list)
+
+      catalog.update!(price_list: nil)
+
+      expect(catalog.products.reload).to contain_exactly(product)
+    end
+  end
+
   it 'keeps the catalog when its price list is deleted' do
     price_list = create(:price_list, store: store)
     catalog = create(:catalog, store: store, price_list: price_list)
