@@ -39,7 +39,7 @@ erDiagram
 Three ideas carry the whole model:
 
 - **The tree is structure.** `Spree::Company` is self-referential (`parent_id`), store-scoped, and shallow — depth is capped at five levels. How many ship-to sites a node has never dictates how many nodes exist; addresses are just an address book.
-- **Nodes are typed, and the type decides tax.** A `company` node is a legal entity; a `division` is an organizational unit. Tax registrations and exemption certificates exist only on legal entities, and a purchase's tax always resolves through the node's `legal_entity` — the nearest self-or-ancestor `company` node. A division *is* its legal entity; a subsidiary never borrows its parent's registration.
+- **Nodes are typed, and the type decides tax.** A `company` node is a legal entity; a `division` is an organizational unit. Tax registrations and exemption certificates exist only on legal entities, and a purchase's tax always resolves through the node's `legal_entity` — for a `company` that is the node itself, and for a `division` it is its nearest `company` ancestor, whose registrations then cover the division's purchases. The walk stops at that first `company` node whether or not it holds any registration, so a subsidiary with no VAT number of its own has none — it never borrows its parent's.
 - **Membership is standing over a subtree.** A `CompanyMembership` joins a customer to a node, and that standing covers the node and everything below it. Any authorization question — "may this customer act for node N?" — is a membership check on N and its ancestors, never an equality check on one node.
 
 ## Members and invitations

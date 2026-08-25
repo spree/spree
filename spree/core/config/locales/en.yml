@@ -261,6 +261,8 @@ en:
               already_linked: is already linked to this product
         spree/company:
           attributes:
+            base:
+              cannot_destroy_with_orders: Cannot delete a company that has placed orders, or whose divisions have.
             kind:
               anchors_descendant_divisions: cannot become a division while divisions below it anchor their tax identity here
               holds_tax_registrations: cannot become a division while holding tax registrations or exemption certificates
@@ -748,6 +750,7 @@ en:
     companies: Companies
     company: Company
     company_invitations:
+      email_mismatch: This invitation was sent to a different email address.
       not_pending: This invitation is no longer pending and cannot be revoked.
     company_mailer:
       invitation_email:

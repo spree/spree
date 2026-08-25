@@ -734,7 +734,9 @@ function PendingInvitations({ company, canEdit }: { company: Company; canEdit: b
   const { data } = useCompanyInvitations(company.id, page)
   const revokeMutation = useRevokeCompanyInvitation(company.id)
 
-  const pending = (data?.data ?? []).filter((invitation) => invitation.status === 'pending')
+  // The endpoint returns pending invitations only, so the count and pages
+  // describe the same set the panel renders.
+  const pending = data?.data ?? []
   const meta = data?.meta
 
   if (pending.length === 0) return null

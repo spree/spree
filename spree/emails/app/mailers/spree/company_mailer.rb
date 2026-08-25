@@ -13,6 +13,11 @@ module Spree
     # @param invitation [Spree::CompanyInvitation, Integer]
     def invitation_email(invitation)
       @invitation = invitation.respond_to?(:id) ? invitation : Spree::CompanyInvitation.find(invitation)
+      # Re-checked here, not only where the job was enqueued: a queue can sit
+      # for minutes, and an invitation revoked in that window must not still
+      # arrive carrying a working token.
+      return message.perform_deliveries = false unless @invitation.reload.pending?
+
       @company = @invitation.company
       store = @company.store
       @accept_url = append_token(invitation_base_url(store), @invitation.token)

@@ -48,22 +48,33 @@ module Spree
 
       private
 
+      # The node a buyer browses as when they name none: the single node they
+      # hold a membership on.
+      #
+      # Deliberately the membership node rather than
+      # +Customer#company_standing+, which expands to the whole subtree — a
+      # buyer with one membership over a parent with three divisions has
+      # standing for four nodes but is still unambiguous, and counting the
+      # expansion would refuse to resolve. Where standing covers several
+      # nodes the buyer picks one on the cart, and catalogs follow that
+      # choice; matches +Purchase::Company#resolved_company+ exactly, so
+      # what they browse and what they are charged agree.
       def sole_standing_company(store, customer)
         return nil if customer.nil?
 
-        memberships = customer.company_memberships.
-                      joins(:company).
-                      merge(Spree::Company.where(store_id: store.id)).
-                      to_a.uniq
+        companies = customer.company_memberships.
+                    joins(:company).
+                    merge(Spree::Company.where(store_id: store.id)).
+                    map(&:company).uniq
 
-        memberships.one? ? memberships.first.company : nil
+        companies.one? ? companies.first : nil
       end
 
       def customer_group_catalogs(store, customer)
         return [] if customer.nil?
 
         groups = customer.customer_groups.where(store_id: store.id)
-        Spree::Catalog.effective_for_customer_groups(groups)
+        Spree::Catalog.effective_for_customer_groups(groups, store: store)
       end
     end
   end

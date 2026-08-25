@@ -49,8 +49,13 @@ module Spree
       return [] if company.nil?
 
       nodes = company.self_and_ancestors
+      # Constrained to the company's own store as well as its nodes: the
+      # assignment validates same-store on write, but a read that trusts the
+      # write path would hand another tenant's catalog to this buyer if a row
+      # ever arrived past it (raw SQL, an import, a bypass).
       assignments = Spree::CatalogAssignment.
                     where(assignable_type: 'Spree::Company', assignable_id: nodes.map(&:id)).
+                    where(catalog_id: for_store(company.store).select(:id)).
                     includes(:catalog).
                     group_by(&:assignable_id)
 
@@ -62,13 +67,20 @@ module Spree
     # The catalogs assigned to any of the given customer groups, by position.
     #
     # @param customer_groups [Enumerable<Spree::CustomerGroup>]
+    # @param store [Spree::Store, nil] narrows to that store's catalogs;
+    #   defaults to the groups' own store, which is the same thing whenever
+    #   the caller passed one store's groups
     # @return [Array<Spree::Catalog>]
-    def self.effective_for_customer_groups(customer_groups)
-      ids = Array(customer_groups).map(&:id)
+    def self.effective_for_customer_groups(customer_groups, store: nil)
+      groups = Array(customer_groups)
+      ids = groups.map(&:id)
       return [] if ids.empty?
+
+      store ||= groups.first.store
 
       Spree::CatalogAssignment.
         where(assignable_type: 'Spree::CustomerGroup', assignable_id: ids).
+        where(catalog_id: for_store(store).select(:id)).
         includes(:catalog).
         map(&:catalog).select(&:active?).sort_by { |catalog| catalog.position.to_i }.uniq
     end

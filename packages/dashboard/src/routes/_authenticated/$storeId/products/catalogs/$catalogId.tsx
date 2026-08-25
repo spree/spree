@@ -67,6 +67,7 @@ import {
   catalogValuesToParams,
 } from '../../../../../schemas/catalog'
 
+/** One catalog: its assortment, pricing and the audiences that see it. */
 export const Route = createFileRoute('/_authenticated/$storeId/products/catalogs/$catalogId')({
   component: CatalogDetailPage,
 })

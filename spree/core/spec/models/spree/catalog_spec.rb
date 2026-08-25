@@ -98,6 +98,27 @@ describe Spree::Catalog, type: :model do
     end
   end
 
+  # The assignment validates same-store on write; the read must not trust it,
+  # or a row that arrived past the validation would hand another tenant's
+  # catalog to this buyer.
+  describe 'store scoping in resolution' do
+    it 'ignores an assignment pointing at another store catalog' do
+      company = create(:company, store: store)
+      foreign_catalog = create(:catalog, store: create(:store))
+      Spree::CatalogAssignment.new(catalog: foreign_catalog, assignable: company).save(validate: false)
+
+      expect(described_class.effective_for_company(company)).to eq([])
+    end
+
+    it 'ignores a foreign catalog assigned to a customer group' do
+      group = create(:customer_group, store: store)
+      foreign_catalog = create(:catalog, store: create(:store))
+      Spree::CatalogAssignment.new(catalog: foreign_catalog, assignable: group).save(validate: false)
+
+      expect(described_class.effective_for_customer_groups([group], store: store)).to eq([])
+    end
+  end
+
   describe '#import_products_from_price_list' do
     let(:product) { create(:product, store: store, price: 100) }
     let(:price_list) do

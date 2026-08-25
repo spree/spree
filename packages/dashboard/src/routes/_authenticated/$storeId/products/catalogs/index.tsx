@@ -44,6 +44,7 @@ const catalogsSearchSchema = resourceSearchSchema.extend({
   new: z.coerce.boolean().optional(),
 })
 
+/** Catalogs list: assortments and their audiences, under Products. */
 export const Route = createFileRoute('/_authenticated/$storeId/products/catalogs/')({
   validateSearch: catalogsSearchSchema,
   component: CatalogsPage,
@@ -120,11 +121,18 @@ function CatalogsPage() {
             </Button>
           </Can>
         }
-        reorder={{
-          onReorder: async (id, position) => {
-            await adminClient.catalogs.update(id, { position })
-          },
-        }}
+        // Dragging fires an update request, so offer it only to callers who
+        // may actually update — otherwise the row moves and springs back on
+        // the 403.
+        reorder={
+          permissions.can('update', Subject.Catalog)
+            ? {
+                onReorder: async (id, position) => {
+                  await adminClient.catalogs.update(id, { position })
+                },
+              }
+            : undefined
+        }
       />
 
       {isCreating && <CreateCatalogSheet open onOpenChange={(o) => !o && closeSheet()} />}

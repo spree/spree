@@ -3,6 +3,7 @@ import { blankToNull } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 
+/** Validation for the catalog create sheet and settings card. */
 export const catalogFormSchema = z.object({
   name: z.string().min(1, { error: requiredMessage('name') }),
   active: z.boolean(),
@@ -10,10 +11,16 @@ export const catalogFormSchema = z.object({
   price_list_id: z.string().optional(),
 })
 
+/** Values the catalog form holds. */
 export type CatalogFormValues = z.infer<typeof catalogFormSchema>
 
+/** A new catalog: named on create, active, priced by base prices. */
 export const CATALOG_DEFAULTS: CatalogFormValues = { name: '', active: true, price_list_id: '' }
 
+/**
+ * Maps form values to the Admin API payload; a blank price list means
+ * "no list", which leaves the catalog pricing through base prices.
+ */
 export function catalogValuesToParams(values: CatalogFormValues): CatalogParams {
   return {
     name: values.name,

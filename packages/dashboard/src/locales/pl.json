@@ -150,7 +150,7 @@
         "remove_confirm": {
           "message_few": "Usunąć {{count}} produkty z tego katalogu? Zmiana działa natychmiast. Produkty pozostają w sklepie.",
           "message_many": "Usunąć {{count}} produktów z tego katalogu? Zmiana działa natychmiast. Produkty pozostają w sklepie.",
-          "message_named": "Usunąć „{{name}}\" z tego katalogu? Zmiana działa natychmiast. Produkt pozostaje w sklepie.",
+          "message_named": "Usunąć „{{name}}” z tego katalogu? Zmiana działa natychmiast. Produkt pozostaje w sklepie.",
           "message_one": "Usunąć {{count}} produkt z tego katalogu? Zmiana działa natychmiast. Produkty pozostają w sklepie.",
           "message_other": "Usunąć {{count}} produktów z tego katalogu? Zmiana działa natychmiast. Produkty pozostają w sklepie.",
           "title": "Usuń z katalogu"

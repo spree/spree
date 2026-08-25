@@ -86,11 +86,17 @@ module Spree
             'market' => ->(store) { store.markets }
           }.freeze
 
+          # Scoped by the store AND by what this caller may see: a role that
+          # reaches only some companies must not be able to assign a catalog
+          # to one it cannot read, and an unreadable record is not-found
+          # rather than refused so its existence does not leak.
           def find_assignable
             scope_builder = ASSIGNABLE_SCOPES[params.require(:assignable_type).to_s]
             raise ActiveRecord::RecordNotFound if scope_builder.nil?
 
-            scope_builder.call(current_store).find_by_prefix_id!(params.require(:assignable_id))
+            scope_builder.call(current_store).
+              accessible_by(current_ability, :show).
+              find_by_prefix_id!(params.require(:assignable_id))
           end
         end
       end

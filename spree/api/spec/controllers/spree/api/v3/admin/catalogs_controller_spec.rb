@@ -98,6 +98,18 @@ RSpec.describe Spree::Api::V3::Admin::CatalogsController, type: :controller do
       expect(response).to have_http_status(:not_found)
     end
 
+    # Store scope is not enough: a role that cannot see a company must not be
+    # able to assign a catalog to it, and not-found keeps its existence quiet.
+    it '404s an audience the caller may not see' do
+      company = create(:company, store: store)
+      allow_any_instance_of(described_class).to receive(:current_ability).
+        and_return(Spree::Ability.new(nil))
+
+      post :assign, params: { id: catalog.prefixed_id, assignable_type: 'company', assignable_id: company.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+
     it '404s an unknown audience type' do
       post :assign, params: { id: catalog.prefixed_id, assignable_type: 'order', assignable_id: 'x' }, as: :json
 

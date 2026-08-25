@@ -59,6 +59,12 @@ module Spree
     validate :depth_within_cap
     validate :kind_change_keeps_tax_anchor
 
+    # prepend: `dependent: :destroy` on children registers its own
+    # before_destroy when the association is declared, so without this the
+    # subtree would already be deleted by the time the guard reads it — and
+    # each child skips its own guard as destroyed_by_association.
+    before_destroy :ensure_can_be_deleted, prepend: true
+
     scope :roots, -> { where(parent_id: nil) }
 
     # The subtree rooted at the given node(s) — the node itself plus every
@@ -149,6 +155,18 @@ module Spree
       ancestors.length + 1
     end
 
+    # Whether the node can be destroyed. Deleting takes the whole subtree
+    # (+dependent: :destroy+ on children), and there is no foreign key behind
+    # +spree_orders.company_id+ — so a placed order anywhere below would be
+    # left pointing at nothing, losing the tax anchor that explains how it
+    # was taxed. Carts are not counted: an in-flight basket is not a record
+    # anyone has to explain later, and the column simply clears.
+    #
+    # @return [Boolean]
+    def can_be_deleted?
+      !Spree::Order.where(company_id: self_and_descendants.select(:id)).exists?
+    end
+
     # The default billing/shipping rows for checkout prefill, falling back to
     # the nearest ancestor's when this node has none. Nothing is resolved
     # implicitly at order time — the order's own address columns are the truth.
@@ -164,6 +182,17 @@ module Spree
     end
 
     private
+
+    def ensure_can_be_deleted
+      # Descendants are destroyed by the association, and the root's own guard
+      # already covered the whole subtree; the store's destruction cascades
+      # past this the same way it does for markets.
+      return if destroyed_by_association
+      return if can_be_deleted?
+
+      errors.add(:base, :cannot_destroy_with_orders)
+      throw(:abort)
+    end
 
     def default_address(flag)
       self_and_ancestors.each do |node|

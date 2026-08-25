@@ -88,6 +88,7 @@ export function useCompanyAddresses(companyId: string | undefined, page = 1, lim
   })
 }
 
+/** Adds a labeled address to the node; the address row is owned by the entry. */
 export function useCreateCompanyAddress(companyId: string) {
   return useResourceMutation<CompanyAddress, Error, CompanyAddressParams>({
     mutationFn: (params) => adminClient.companies.addresses.create(companyId, params),
@@ -97,6 +98,7 @@ export function useCreateCompanyAddress(companyId: string) {
   })
 }
 
+/** Edits an entry in place — the address row is updated, never replaced. */
 export function useUpdateCompanyAddress(companyId: string) {
   return useResourceMutation<CompanyAddress, Error, { id: string; params: CompanyAddressParams }>({
     mutationFn: ({ id, params }) => adminClient.companyAddresses.update(id, params),
@@ -106,6 +108,7 @@ export function useUpdateCompanyAddress(companyId: string) {
   })
 }
 
+/** Removes an entry and the address row it owned. */
 export function useDeleteCompanyAddress(companyId: string) {
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.companyAddresses.delete(id),
@@ -149,6 +152,7 @@ export function useAddCompanyMember(companyId: string) {
   })
 }
 
+/** Withdraws a member's standing; the customer account is untouched. */
 export function useDeleteCompanyMembership(companyId: string) {
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.companyMemberships.delete(id),
@@ -171,6 +175,7 @@ export function useCompanyInvitations(companyId: string | undefined, page = 1, l
   })
 }
 
+/** Revokes a pending invitation, so its emailed token stops resolving. */
 export function useRevokeCompanyInvitation(companyId: string) {
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.companyInvitations.delete(id),

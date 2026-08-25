@@ -19,6 +19,16 @@ describe Spree::CompanyMailer, type: :mailer do
       expect(message.subject).to include('Acme Industrial')
     end
 
+    # The queue can sit for minutes; an invitation revoked in that window must
+    # not still arrive carrying a working token.
+    it 'sends nothing when the invitation stopped being pending after enqueue' do
+      invitation.revoke!
+
+      expect {
+        described_class.invitation_email(invitation.id).deliver_now
+      }.not_to change { ActionMailer::Base.deliveries.count }
+    end
+
     it 'links to the storefront acceptance page with the token appended' do
       message = described_class.invitation_email(invitation)
 

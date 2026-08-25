@@ -229,6 +229,39 @@ describe Spree::Company, type: :model do
     end
   end
 
+  describe 'deletion' do
+    # There is no foreign key behind spree_orders.company_id and children are
+    # destroyed with the node, so an unguarded delete would strand a placed
+    # order — losing the anchor that explains how it was taxed.
+    it 'refuses while an order was placed for the node' do
+      company = create(:company, store: store)
+      order = create(:completed_order_with_totals, store: store)
+      order.update_columns(company_id: company.id)
+
+      expect(company.destroy).to be(false)
+      expect(company.errors[:base]).to be_present
+      expect(Spree::Company.where(id: company.id)).to exist
+    end
+
+    it 'refuses while a division below it has orders' do
+      root = create(:company, store: store)
+      division = create(:company, store: store, kind: 'division', parent: root)
+      order = create(:completed_order_with_totals, store: store)
+      order.update_columns(company_id: division.id)
+
+      expect(root.destroy).to be(false)
+      expect(Spree::Company.where(id: division.id)).to exist
+    end
+
+    # An in-flight basket is not a record anyone has to explain later.
+    it 'allows deletion with only carts attached' do
+      company = create(:company, store: store)
+      create(:cart, store: store).update_columns(company_id: company.id)
+
+      expect(company.destroy).to be_truthy
+    end
+  end
+
   it 'destroys its memberships, addresses and invitations' do
     company = create(:company, store: store)
     create(:company_membership, company: company)

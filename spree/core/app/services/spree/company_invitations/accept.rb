@@ -16,6 +16,11 @@ module Spree
       #   Spree::CompanyMembership
       def call(invitation:, customer: nil, customer_attributes: nil)
         return failure(invitation, :invitation_not_pending) unless invitation.pending?
+        # The token names one person. Without this, anyone holding it could
+        # spend it from an unrelated signed-in account and take standing over
+        # the company — which authorizes buying, reading the subtree's orders
+        # and revoking the other members' invitations.
+        return failure(invitation, :invitation_email_mismatch) unless invited_email?(invitation, customer)
 
         if customer.nil?
           result = Spree.customer_create_workflow.call(
@@ -38,6 +43,17 @@ module Spree
         success(membership)
       rescue ActiveRecord::RecordInvalid => e
         failure(e.record)
+      end
+
+      private
+
+      # Compared the way the invitation stores it — normalized, since a
+      # customer signed up as "Buyer@Example.com" is the same person the
+      # invitation went to.
+      def invited_email?(invitation, customer)
+        return true if customer.nil?
+
+        customer.email.to_s.strip.downcase == invitation.email
       end
     end
   end
