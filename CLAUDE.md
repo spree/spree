@@ -105,6 +105,7 @@ Shipped plans:
 | `packages/cli` | `@spree/cli` — Docker-based project management CLI |
 | `packages/create-spree-app` | `create-spree-app` — project scaffolding |
 | `server/` | Rails app cloned from `spree/spree-starter` (.gitignored, provisioned per worktree by `scripts/worktree/setup.sh`) |
+| `storefront/` | Next.js storefront cloned from `spree/storefront` branch `6-0-dev` (.gitignored, provisioned per worktree; keeps its `.git` — commit and push from inside it) |
 
 ## Development Server (worktrees)
 
@@ -115,13 +116,20 @@ wt switch -c feature-x       # create worktree + provisioned environment (~20 s)
 pnpm wt:dev                  # Rails → https://feature-x.spree.localhost  (/up, /api/v3, /jobs; jobs run inside Puma via Solid Queue)
 pnpm wt:dashboard            # admin UI → https://admin.feature-x.spree.localhost
 pnpm wt:seller               # seller panel → https://sellers.feature-x.spree.localhost
+pnpm wt:storefront           # Next.js storefront → https://store.feature-x.spree.localhost
 pnpm wt:e2e [spec...]        # Playwright on this worktree's own port block
 pnpm wt:template             # rebuild the template DB after schema-changing pulls
 wt merge main                # ship + clean up (worktree, branch and databases all removed)
 wt remove                    # abandon instead of shipping
 ```
 
-Admin login: `spree@example.com` / `spree123`. Both dev scripts run in the foreground and stream logs; `server/log/development.log` has the Rails log if the server runs detached. Start servers only in worktrees you're actively looking at — rspec/vitest/tsc need no servers.
+Admin login: `spree@example.com` / `spree123`. The dev scripts run in the foreground and stream logs; `server/log/development.log` has the Rails log if the server runs detached. Start servers only in worktrees you're actively looking at — rspec/vitest/tsc need no servers.
+
+**Storefront (`pnpm wt:storefront`).** The Next.js storefront is a separate repo (`spree/storefront`) cloned per worktree into a gitignored `storefront/`, on its **`6-0-dev`** branch — `main` stays on the released Store API for people forking or deploying it. Unlike `server/`, the clone keeps its `.git`: commit and push storefront work from inside it, and push before `wt remove`, which deletes the clone with the worktree.
+
+It is deliberately **not** a member of this pnpm workspace — one lockfile and one set of global overrides cannot serve both Next 16 and the dashboard's Vite tree. It instead points `@spree/sdk` at this worktree's `packages/sdk` through its own `.pnpmfile.cjs`, which rewrites the dependency only when `SPREE_SDK_PATH` is set (the JavaScript twin of `SPREE_PATH`), so a standalone clone still installs the published SDK. The rewrite uses `file:` and not `link:`, because the storefront pins module resolution to its own directory (`turbopack.root`, `output: "standalone"`) and lists the SDK in `transpilePackages` — a symlink pointing outside the project fails to resolve, and every `@spree/sdk` import breaks. Two consequences: the storefront's `pnpm-lock.yaml` will show a local path — never commit it — and because the SDK is **copied**, picking up a change to it means rebuilding and reinstalling, which is exactly what re-running `pnpm wt:storefront` does.
+
+`storefront/.env.local` is regenerated on every boot with this worktree's API URL and the seeded publishable keys (read straight from Postgres — publishable tokens are plaintext), so a reseeded database can't leave a stale key behind. Anything you add below the marker line is preserved.
 
 One-time machine setup: Homebrew `postgresql@18` running on :5432 (with a `postgres` superuser role), `mailpit` (`brew services start mailpit` — one instance serves every worktree), Ruby per `server/.ruby-version` (mise or rbenv), Node ≥ 24 with `npm i -g portless` (start the proxy once with `portless proxy start`, accepting sudo for :443), worktrunk, then `pnpm wt:template`.
 
@@ -134,6 +142,7 @@ One-time machine setup: Homebrew `postgresql@18` running on :5432 (with a `postg
 | Rails console / database | `cd server && bin/rails console`; the DB is `spree_dev_<branch>` on `localhost:5432` |
 | E2E prerequisites | Once per worktree: `cd spree/api && bundle install && bundle exec rake test_app` (then `pnpm wt:e2e`) |
 | Read an email the app sent | Mailpit catches everything: <http://localhost:8025>. `brew install mailpit && brew services start mailpit` if it is not running — without it the starter falls back to a delivery method that does not exist and every send raises |
+| Store API serializers or SDK code, and the storefront is running | Re-run `pnpm wt:storefront` — it rebuilds the SDK and copies it in. Run the [type generation pipeline](#type-generation-pipeline) first if you changed serializers |
 | Meilisearch search provider | Optional: `brew install meilisearch`, run it, set `MEILISEARCH_URL` in `server/.env`, `bin/rails spree:search:reindex` |
 | Hosted dashboard at `/dashboard` (single-node test) | `pnpm server:dashboard` to build `packages/dashboard-starter/dist`, set `SPREE_DASHBOARD_DIST_PATH=<monorepo>/packages/dashboard-starter/dist` in `server/.env` |
 | Hosted seller panel at `/sellers` (single-node test) | `pnpm server:seller` to build `packages/seller-dashboard-starter/dist`, set `SPREE_SELLER_PANEL_DIST_PATH=<monorepo>/packages/seller-dashboard-starter/dist` in `server/.env` |

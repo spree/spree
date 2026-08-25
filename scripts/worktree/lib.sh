@@ -7,6 +7,10 @@
 set -euo pipefail
 
 TEMPLATE_DB="spree_worktree_template"
+# The storefront's 6.0 line. Its main branch stays on the released Store API for
+# people forking or deploying it; 6-0-dev tracks the unreleased one we build here.
+STOREFRONT_REPO="https://github.com/spree/storefront.git"
+STOREFRONT_BRANCH="6-0-dev"
 # Same defaults as the starter's config/database.yml, so the psql tools and
 # Rails always agree on which server they are talking to. teardown runs after
 # the worktree (and its bundled Rails) is gone, so these cannot come from Rails.
@@ -72,8 +76,10 @@ url_suffix() { [ "$(portless_port)" = "443" ] && echo "" || echo ":$(portless_po
 
 rails_name() { echo "$(branch_slug).spree"; }
 dashboard_name() { echo "admin.$(branch_slug).spree"; }
+storefront_name() { echo "store.$(branch_slug).spree"; }
 rails_url() { echo "https://$(rails_name).localhost$(url_suffix)"; }
 dashboard_url() { echo "https://$(dashboard_name).localhost$(url_suffix)"; }
+storefront_url() { echo "https://$(storefront_name).localhost$(url_suffix)"; }
 # The marketplace seller panel — a separate app from the operator's dashboard,
 # so it gets its own host rather than a route inside it.
 seller_name() { echo "sellers.$(branch_slug).spree"; }
@@ -82,6 +88,37 @@ seller_url() { echo "https://$(seller_name).localhost$(url_suffix)"; }
 rails_host() { echo "$(rails_name).localhost$(url_suffix)"; }
 
 port_free() { ! lsof -iTCP:"$1" -sTCP:LISTEN -n -P >/dev/null 2>&1; }
+
+# Publishable API keys of the default store, read straight from Postgres — the
+# token column is plaintext for publishable keys (only secret keys are hashed),
+# so the storefront can be wired up without booting Rails.
+#
+# $1 selects the channel binding: "default" for the unbound key the DTC
+# storefront uses, or a channel code for a bound one (the wholesale portal).
+# Prints nothing when there is no such key, which callers treat as "skip".
+publishable_key() {
+  local binding="${1:-default}" filter
+
+  if [ "$binding" = "default" ]; then
+    filter="k.channel_id IS NULL"
+  else
+    filter="c.code = '${binding//\'/\'\'}'"
+  fi
+
+  psql "${PG_ARGS[@]}" -d "$(db_name)" -tAc "
+    SELECT k.token
+    FROM spree_api_keys k
+    JOIN spree_stores s ON s.id = k.store_id
+    LEFT JOIN spree_channels c ON c.id = k.channel_id
+    WHERE k.key_type = 'publishable'
+      AND k.revoked_at IS NULL
+      AND k.token IS NOT NULL
+      AND s.default
+      AND $filter
+    ORDER BY k.id
+    LIMIT 1;
+  " 2>/dev/null | tr -d '[:space:]'
+}
 
 # Even-numbered base in 20000-29999 (rails = base, vite = base+1), derived from
 # the branch so repeat runs reuse it. The hash space is smaller than the set of
@@ -99,6 +136,52 @@ e2e_base_port() {
   done
   echo "No free e2e port pair in 20000-29999." >&2
   return 1
+}
+
+# Write storefront/.env.local from this worktree's Rails URL and seeded keys.
+#
+# Called on every storefront boot, not just at provisioning: the publishable key
+# lives in the worktree's database, so it changes whenever the database is
+# reseeded or recreated from a newer template. A stale key authenticates as
+# another store — or nothing at all — which reads as a broken storefront rather
+# than a stale config, so it is cheaper to rewrite the file than to detect drift.
+# Anything a developer adds below the generated block is preserved.
+write_storefront_env() {
+  local env_file="storefront/.env.local" key wholesale_key
+  local marker="# --- your own settings below; everything above is regenerated on boot ---"
+
+  key="$(publishable_key default)"
+  if [ -z "$key" ]; then
+    echo "  ! No publishable API key in $(db_name) — storefront will not authenticate." >&2
+    echo "    Seed the database (cd server && bin/rails db:seed), then re-run." >&2
+  fi
+  wholesale_key="$(publishable_key wholesale)"
+
+  # Keep whatever the developer put below the marker (Stripe test keys, GTM, a
+  # different wholesale channel). grep -F and awk index() both match literally,
+  # so the marker needs no regex escaping.
+  local custom=""
+  if [ -f "$env_file" ] && grep -qF "$marker" "$env_file"; then
+    custom=$(awk -v m="$marker" 'found { print } index($0, m) { found = 1 }' "$env_file")
+  fi
+
+  {
+    printf 'SPREE_API_URL=%s\n' "$(rails_url)"
+    printf 'SPREE_PUBLISHABLE_KEY=%s\n' "$key"
+    printf 'NEXT_PUBLIC_SITE_URL=%s\n' "$(storefront_url)"
+    # The wholesale channel only exists in seeded databases; without the code the
+    # storefront runs DTC-only and its /wholesale routes 404 by design.
+    if [ -n "$wholesale_key" ]; then
+      printf 'SPREE_WHOLESALE_CHANNEL=wholesale\n'
+      printf 'SPREE_WHOLESALE_PUBLISHABLE_KEY=%s\n' "$wholesale_key"
+    fi
+    printf '\n%s\n' "$marker"
+    # printf '%s\n' rather than '%s': $(...) strips trailing newlines, so the
+    # last custom line would otherwise lose its own and merge with whatever a
+    # later append writes.
+    [ -n "$custom" ] && printf '%s\n' "$custom"
+  } > "$env_file.tmp"
+  mv "$env_file.tmp" "$env_file"
 }
 
 require_portless() {
