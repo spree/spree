@@ -1,136 +1,87 @@
 ---
 title: "Returns Processing"
-description: "Learn how to process returns in Spree Commerce."
+description: "Learn how to process returns, exchanges, and claims in Spree Commerce."
 ---
 
-Spree supports native returns processing, giving you full control over how refunds, exchanges, and restocking are handled directly from the admin dashboard. The workflow is designed to be flexible, with clear steps for managing each stage of the return process.
+Spree 6 handles everything that happens after a sale with three records, each covering a different situation:
 
-This guide walks you through the full lifecycle of a return: from authorization, to customer return, to final reimbursement.
+- **Return** — the customer sends items back and gets their money back.
+- **Exchange** — the customer sends items back and gets different items instead, such as another size or colour.
+- **Claim** — something went wrong with the delivery. The item arrived damaged, never arrived, or was the wrong product. You can send a replacement, refund the customer, or both, without asking for the original item back.
 
-## 1) Create a Return Authorization (RA)
-
-Returns are initiated from the order, not from the Returns tab, so navigate to the Orders tab and open the relevant order.
-
-![](/docs/images/user/returns/returns-processing/1.order_page.png)
+Each one belongs directly to an order, so opening an order shows you everything that has happened to it.
 
 <Note>
-  Alternatively, find the customer in the Customers tab and access their order from there.
+  This replaces the older three-step flow of Return Authorization, Customer Return, and Reimbursement. One record now covers the whole operation from request through to refund.
 </Note>
 
-Click the three-dot menu in the top-right corner and select **New Return Authorization**.
+## Returns
 
-![](/docs/images/user/returns/returns-processing/2.new_return_auth.png)
+### 1. Open the return
 
-This will open the Return Authorization form.
+Find the order and create a return against it, choosing the items coming back and how many units of each. You can also record the reason for the return, which stock location the goods are returning to, and an internal memo.
 
-![](/docs/images/user/returns/returns-processing/3.ra_form.png)
+Customers can also open returns themselves from their account, if your storefront offers it. Those arrive with the status **requested**.
 
-Here you’ll see a table of line items from the order. For each item, configure the following:
+### 2. Approve it
 
-- **Include in RA**: check the box to include this item in the return
-- **Product**: name and variant (read-only)
-- **Status**: shipment status (e.g., "shipped", read-only)
-- **Charged**: amount originally charged to the customer
-- **Return Quantity**: set how many units should be returned (0 if not returning)
-- **Pre-tax Refund Amount**: amount to be refunded per item
-- **Reimbursement Type**: choose from: Exchange, Store Credit, Credit, Original Payment
-- **Exchange for**: if Exchange is selected, choose the replacement variant from the dropdown
+Approving a return tells the customer it is authorised.
 
-Below the table, you’ll see a dynamic refund summary showing the Total Pre-Tax Refund amount (e.g., $35.00).
+<Note>
+  Spree does not generate prepaid return labels yet. That arrives with the carrier integrations, which is where the label actually comes from. Until then, most merchants send a label from their carrier's own tools and paste the link into the return's notes.
+</Note>
 
-At the bottom of the form complete the additional fields:
+### 3. Receive the goods
 
-- **Location**: stock location the item should be returned to (required)
-- **Reason**: select an RMA reason (required)
-- **Memo**: optional internal note
+When the parcel arrives, record what actually turned up. Partial returns are normal, so you enter the quantity received for each line rather than assuming everything the customer said they would send has arrived.
 
-Click **Create** to finalize the Return Authorization.
+You also mark each line as resellable or not. Resellable items go back into stock automatically at the return's stock location; damaged items do not.
 
-You’ll be redirected back to the order overview, where a Return Authorizations section will now appear under the Shipments section. You can edit the RA at any time.
+### 4. Refund the customer
 
-![](/docs/images/user/returns/returns-processing/4.ra_section.png)
+Refund the return to either the original payment method or store credit. You can refund the full amount or part of it, and you can refund in more than one step — part to store credit and part back to the card, for example.
 
-The RA will also now be listed in the **Returns → Return Authorizations** tab.
+Once the refund goes through, the customer receives an email confirming it.
 
-![](/docs/images/user/returns/returns-processing/5.ra_tab.png)
+<Note>
+  A return can be cancelled at any point before the goods are received. Cancelling restocks nothing.
+</Note>
 
-## 2) Create a Customer Return
+## Exchanges
 
-With an RA in place, you're ready to log the return of the physical item.
+An exchange follows the same path as a return — open, approve, receive — but instead of refunding the customer at the end, you fulfil the replacement items.
 
-From the same order overview page, click the three-dot menu again and select **New Customer Return**.
+When you fulfil an exchange, Spree creates the replacement shipment for the quantities that were actually received, and checks the replacements are in stock first.
 
-![](/docs/images/user/returns/returns-processing/6.new_customer_return.png)
+If the replacement items are worth less than what came back, the difference is returned to the customer as store credit or refunded to their original payment method. If the replacements are worth more, Spree records the difference but does not charge the customer automatically — collecting that balance is up to you, so nobody's card is charged without them agreeing to it.
 
-This will open the Customer Return form. 
+## Claims
 
-![](/docs/images/user/returns/returns-processing/7.cr_form.png)
+A claim starts when a customer reports a problem. Claims record what went wrong — damaged, missing, wrong item, or another reason you define — and the customer can attach photographs as evidence.
 
-The form lists each item from the order. For each item, configure:
+When you resolve a claim you choose what to do:
 
-- **Include in return**: check if the item has been returned
-- **Product**: name and variant (read-only)
-- **SKU**: stock keeping unit (read-only)
-- **Pre-tax Amount**: non-zero if part of the RA, 0 if not included (read-only)
-- **Exchange for**: variant selected for exchange (if applicable) (read-only)
-- **Resellable**: check if the item can be restocked; unchecked items won’t be returned to inventory
+- **Refund** — money back, with no items required in return.
+- **Replacement** — ship the item again, either the same variant or a different one.
+- **Refund and replacement** — both.
 
-Below the table, select:
+You can also deny a claim if it does not hold up, or cancel it.
 
-- **Location**: confirm the stock location the items are being returned to
+## Where to find them
 
-Click **Create** to finalize the Customer Return.
+Returns, exchanges, and claims each have their own section in the dashboard, so you can see everything in progress across all orders. Individual records also appear on the order they belong to, giving you the full history of that order in one place.
 
-You’ll then be returned to the order overview page again, and a new Customer Returns section will appear above the Return Authorizations section.
+## Reasons
 
-![](/docs/images/user/returns/returns-processing/8.cr_section.png)
+Spree keeps two separate lists of reasons, managed under **Settings → Returns & reasons** and seeded when your store is created:
 
-The return will also now be visible in the Returns tab and can be edited from either location.
+- **Return reasons** explain why a customer is sending something back — "wrong size", "changed my mind", "no longer needed". These apply to both returns and exchanges.
+- **Claim reasons** explain what went wrong on your end — "arrived damaged", "never arrived", "wrong item sent".
 
-![](/docs/images/user/returns/returns-processing/9.returns_tab.png)
+They are kept separate because they answer different questions, and mixing them makes reporting less useful. See [Settings → Returns Configuration](/user/settings/returns-configuration) for how to manage them.
 
-## 3) Reimburse the Customer
+## Return policy
 
-Once a customer return has been logged, you can process the refund or exchange.
+Spree does not enforce a return window, restocking fee, or final-sale rule out of the box. Every merchant's policy differs, and the rules often vary by country for legal reasons.
 
-In the Customer Returns section, click the three-dot menu and select **Create Reimbursement**.
-
-![](/docs/images/user/returns/returns-processing/10.new_reimbursement.png)
-
-This will create the reimbursement immediately and redirect you to the reimbursement form.
-
-![](/docs/images/user/returns/returns-processing/11.reimbursement_form.png)
-
-Here you can review the items to be reimbursed, and override the reimbursement type or the exchange variant if necessary (e.g., reimburse with store credits instead of the original payment).
-
-Click **Reimburse** to finalize the return process:
-
-- If it’s a refund, the customer will be reimbursed via the selected method.
-- If it’s an exchange, a new shipment will be created on the order and can be fulfilled like any other shipment.
-
-![](/docs/images/user/returns/returns-processing/12.customer_reimbursed.png)
-
-### Alternative Method
-
-If you’d like to review the Customer Return before reimbursing the customer, you can instead select **Edit** from the three-dot menu, or just click on the Customer Return itself.
-
-This will redirect you to a Customer Return summary that includes a Reimbursements section.
-
-![](/docs/images/user/returns/returns-processing/13.updated_cr_form.png)
-
-This form displays:
-
-- Customer name
-- Order number
-- Reimbursement status
-- Pre-tax total
-- Line item details:
-  - Product
-  - Amount
-  - Reimbursement Type 
-  - Exchange For
-  - Acceptance Errors
-
-At the bottom of the page you’ll find the **Reimbursements** section.
-
-Simply click **Create Reimbursement** and follow the steps outlined previously.
+Instead, your developers can attach your policy to the point where a return is created. A common setup enforces the policy for customers opening returns themselves, while still letting your staff override it — so a supervisor can accept a return outside the window for a good customer without needing a code change.

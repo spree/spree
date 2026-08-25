@@ -1,0 +1,219 @@
+---
+title: Telemetry
+description: Distributed tracing with OpenTelemetry — one gem, standard OTEL_* environment variables, and every checkout becomes a trace from HTTP request to gateway call to webhook delivery.
+canonical: "https://spreecommerce.org/docs/v5/developer/deployment/telemetry"
+---
+
+Spree supports [OpenTelemetry](https://opentelemetry.io), the open standard for
+distributed tracing. Install the optional `spree_opentelemetry` gem, point it
+at your collector with the same environment variables every other
+OpenTelemetry service uses, and Spree exports traces — no code changes, no
+vendor lock-in. Traces flow to any OpenTelemetry-compatible backend: Grafana
+Tempo, Jaeger, Datadog, Honeycomb, New Relic, Dynatrace, and others.
+
+## Setup
+
+Add the gem to your application's Gemfile:
+
+```ruby
+gem 'spree_opentelemetry'
+```
+
+Then configure the exporter through the standard OpenTelemetry environment
+variables:
+
+```bash
+OTEL_SERVICE_NAME=spree
+OTEL_EXPORTER_OTLP_ENDPOINT=http://collector:4318
+```
+
+That is the entire setup. Without an exporter configured, the gem stays
+dormant and adds no overhead. `OTEL_SDK_DISABLED=true` turns telemetry off
+regardless of any other setting.
+
+Other standard variables work as documented in the
+[OpenTelemetry SDK configuration reference](https://opentelemetry.io/docs/languages/sdk-configuration/),
+including sampling:
+
+```bash
+# Sample 10% of traces (children follow their parent's decision)
+OTEL_TRACES_SAMPLER=parentbased_traceidratio
+OTEL_TRACES_SAMPLER_ARG=0.1
+```
+
+## What gets traced
+
+Two layers combine into one trace per request or job.
+
+**Framework spans** come from the official Rails auto-instrumentation: HTTP
+requests, controller actions, database queries, background job enqueues and
+executions, mail deliveries, and outbound HTTP calls. Trace context carries
+across the job boundary, so work that happens in a background job stays
+connected to the request that caused it.
+
+**Commerce spans** come from Spree itself:
+
+| Span | Kind | What it covers |
+|---|---|---|
+| `carts.complete` (any workflow key) | internal | One span per workflow run, with its outcome |
+| `carts.complete process_payments` (any step) | internal / client | One span per workflow step; steps declared as external I/O become client spans |
+| `carts.add_item hooks validate` | internal | Extension hook dispatch, only when handlers are registered |
+| `order.placed dispatch` | internal | Event delivery to each subscriber, showing whether it ran inline or was enqueued |
+| `spree.webhook.deliver order.placed` | client | Each webhook POST, with the destination host and response code |
+| `spree.gateway.purchase` (any gateway action) | client | Each payment gateway call — authorize, purchase, capture, void, credit, and payment session operations |
+
+A completed checkout, for example, produces one trace containing the HTTP
+request, the `carts.complete` workflow and its steps, the payment gateway
+call, the database work, and — linked from it — the background jobs and
+webhook deliveries the order triggered.
+
+Spree also propagates
+[W3C Trace Context](https://www.w3.org/TR/trace-context/) headers on outbound
+webhooks, so a system receiving your webhooks can join its own spans to the
+trace that produced the event.
+
+## Span attributes and personal data
+
+Span attributes never contain personal or sensitive data. They are limited to
+workflow and step names, gateway action names, payment method class names,
+event names, webhook destination hosts, and HTTP status codes. Order contents,
+customer emails, addresses, payment details, and webhook payloads are never
+attached to spans.
+
+## Metrics
+
+Spree exports the trace signal. Request rates, error rates, and latency
+percentiles per endpoint, workflow, or gateway are derived from spans in the
+OpenTelemetry Collector with the
+[span metrics connector](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/connector/spanmetricsconnector):
+
+```yaml
+# otel-collector config
+connectors:
+  spanmetrics:
+    dimensions:
+      - name: spree.workflow
+      - name: spree.gateway.action
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      exporters: [spanmetrics, otlp]
+    metrics:
+      receivers: [spanmetrics]
+      exporters: [prometheusremotewrite]
+```
+
+## Using with Sentry
+
+Sentry and OpenTelemetry are complementary — Sentry's error capture works
+independently of tracing, so having both installed (as spree-starter does)
+requires no special setup. For traces there are three arrangements:
+
+**Sentry for errors, OpenTelemetry for traces (default).** Nothing to
+configure. Just don't *also* enable Sentry's own performance tracing
+(`traces_sample_rate`) — that would instrument every request twice and
+produce two disconnected trace systems.
+
+**Sentry as the trace backend.** Sentry ingests OpenTelemetry spans directly
+through its [OTLP integration](https://docs.sentry.io/platforms/ruby/guides/rails/integrations/otlp/).
+Order matters here: Sentry registers its span processor inside `Sentry.init`,
+which only works if the OpenTelemetry SDK is already installed — so install
+Spree's telemetry explicitly at the top of the same initializer:
+
+```ruby
+# Gemfile
+gem 'sentry-opentelemetry'
+
+# config/initializers/sentry.rb
+SpreeOpenTelemetry.configure { |config| config.enabled = true }
+SpreeOpenTelemetry.install!
+
+Sentry.init do |config|
+  config.dsn = ENV['SENTRY_DSN']
+  config.otlp.enabled = true
+  # Do not set traces_sample_rate or instrumenter — OpenTelemetry owns tracing.
+end
+```
+
+```bash
+# Sentry provides the exporter (derived from the DSN) — tell the SDK not to
+# wire its own default OTLP exporter alongside it.
+OTEL_TRACES_EXPORTER=none
+```
+
+A DSN alone does **not** enable tracing; `config.otlp.enabled` is the
+explicit opt-in (Sentry bills for ingested spans, so error capture never
+silently becomes span ingestion).
+
+Spree's commerce spans — workflows, gateway calls, webhook deliveries — show
+up in Sentry's trace view, and Sentry errors are linked automatically to the
+span that was active when they were captured.
+
+**Both, via the collector.** Point Spree at an OpenTelemetry Collector and
+fan out from there — one pipeline exporting to your tracing backend and
+another to Sentry's OTLP endpoint. This is the most flexible arrangement for
+teams that want Grafana/Jaeger for latency work and Sentry for error triage
+over the same traces.
+
+## Correlating logs
+
+To connect log lines to traces, tag your Rails logs with the current trace:
+
+```ruby
+# config/environments/production.rb
+config.log_tags = [
+  ->(_request) { "trace_id=#{OpenTelemetry::Trace.current_span.context.hex_trace_id}" }
+]
+```
+
+## Trying it locally
+
+Run Jaeger with an OTLP receiver and point Spree at it:
+
+```bash
+docker run --rm -p 16686:16686 -p 4318:4318 jaegertracing/jaeger:latest
+```
+
+```bash
+OTEL_SERVICE_NAME=spree \
+OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318 \
+bin/rails server
+```
+
+Place a test order and open [http://localhost:16686](http://localhost:16686)
+to see the trace.
+
+## Code-level configuration
+
+Everything routine is controlled by environment variables. A
+`SpreeOpenTelemetry.configure` block exists for the rest — adding
+instrumentation for libraries your app uses, removing a default, or advanced
+SDK tuning:
+
+```ruby
+# config/initializers/opentelemetry.rb
+SpreeOpenTelemetry.configure do |config|
+  config.use 'OpenTelemetry::Instrumentation::Redis'          # add an instrumentation
+  config.skip 'OpenTelemetry::Instrumentation::ActionMailer'  # remove a default
+  config.with_sdk { |otel| otel.add_span_processor(my_processor) }
+end
+```
+
+## Instrumenting your own code
+
+Spree's spans are built on `ActiveSupport::Notifications`, and yours can be
+too — or use the OpenTelemetry API directly:
+
+```ruby
+tracer = OpenTelemetry.tracer_provider.tracer('my_app')
+
+tracer.in_span('loyalty.award_points', attributes: { 'loyalty.points' => 50 }) do
+  # your code
+end
+```
+
+Custom workflows get traced automatically: every `Spree::Workflow` run, step,
+and hook dispatch is instrumented by the framework, including workflows your
+application or extensions define.

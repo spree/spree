@@ -82,7 +82,7 @@ erDiagram
 - **Stock Item** → Tracks quantity (`count_on_hand`) for a specific Variant at a specific Stock Location
 - **Stock Movement** → Records changes to Stock Item quantities (purchases, returns, transfers)
 - **Stock Transfer** → Moves inventory between Stock Locations, creating Stock Movements at source and destination
-- **Inventory Unit** → Represents individual units in [Orders](/developer/core-concepts/orders) and [Shipments](/developer/core-concepts/shipments)
+- **Inventory Unit** → Represents individual units in [Orders](/developer/core-concepts/orders) and [Shipments](/developer/core-concepts/fulfillments)
 - **Stock Reservation** → Time-limited soft hold on a Stock Item during checkout, scoped to a specific Order and Line Item
 
 ## Inventory Management
@@ -284,7 +284,7 @@ When a cart change in checkout would push the order beyond available stock, the 
 
 ### Background expiry
 
-Abandoned checkouts leave behind expired reservation rows. Spree provides a job to clean them up but does **not** auto-schedule it — your application's job runner needs to invoke it periodically (every minute is typical). See the [5.4 to 5.5 upgrade guide](/developer/upgrades/5.4-to-5.5#schedule-the-stock-reservations-expiry-job) for sidekiq-cron, solid_queue, and good_job snippets.
+Abandoned checkouts leave behind expired reservation rows. Spree provides a job to clean them up but does **not** auto-schedule it — your application's job runner needs to invoke it periodically (every minute is typical). See the [5.4 to 5.5 upgrade guide](/v5/developer/upgrades/5.4-to-5.5#schedule-the-stock-reservations-expiry-job) for sidekiq-cron, solid_queue, and good_job snippets.
 
 ### Backorderable items
 
@@ -329,7 +329,7 @@ If you don't need to track inventory, you can disable it:
 ## Related Documentation
 
 - [Products](/developer/core-concepts/products) - Product and variant management
-- [Shipments](/developer/core-concepts/shipments) - How inventory relates to shipments
+- [Shipments](/developer/core-concepts/fulfillments) - How inventory relates to shipments
 - [Orders](/developer/core-concepts/orders) - How inventory is allocated to orders
 - [Admin SDK resources](/developer/sdk/admin/resources) - `stockLocations`, `stockItems`, and `stockTransfers` methods used in the examples above
 - [Admin API authentication](/api-reference/admin-api/authentication) - How to obtain and scope the secret key (`sk_xxx`) used by these calls

@@ -1,0 +1,164 @@
+---
+title: Deployment
+description: Deploy the Spree Next.js Storefront to Vercel, Docker, or any Node.js host
+canonical: "https://spreecommerce.org/docs/developer/storefront/nextjs/deployment"
+---
+
+## Environment Variables
+
+At minimum, set `SPREE_API_URL` and `SPREE_PUBLISHABLE_KEY` in your hosting platform's dashboard or `.env` file. See [Environment Variables](/v5/developer/storefront/nextjs/environment-variables) for the full reference — analytics, error tracking, wholesale, emails, and SEO.
+
+## Production Build
+
+```bash
+npm run build
+npm start
+```
+
+The build output is a standalone Next.js application. The `npm start` command starts the production server.
+
+## Vercel
+
+Vercel is the recommended deployment platform for Next.js applications.
+
+### One-Click Deploy
+
+1. Push your code to GitHub
+2. Go to [vercel.com/new](https://vercel.com/new) and import your repository
+3. Add environment variables:
+   - `SPREE_API_URL` and `SPREE_PUBLISHABLE_KEY` (required)
+   - `SPREE_WEBHOOK_SECRET`, `RESEND_API_KEY`, `EMAIL_FROM` — for [transactional emails](/v5/developer/storefront/nextjs/emails)
+   - `GTM_ID` — optional, Google Tag Manager
+   - `SENTRY_DSN`, `SENTRY_ORG`, `SENTRY_PROJECT`, `SENTRY_AUTH_TOKEN` — optional, error tracking with readable stack traces
+
+   See the [Environment Variables reference](/v5/developer/storefront/nextjs/environment-variables) for the full list.
+4. Click **Deploy**
+
+Vercel automatically detects the Next.js framework and configures the build settings.
+
+### Vercel CLI
+
+```bash
+npm i -g vercel
+vercel
+```
+
+### Preview Deployments
+
+Every pull request gets a unique preview URL, making it easy to test storefront changes before merging. Add your Spree API environment variables to the Vercel project settings so previews connect to your staging API.
+
+## Docker
+
+A multi-stage `Dockerfile` ships at the repo root. It uses Next.js standalone output to produce a small (~240 MB) image on `node:22-alpine`, runs as a non-root user, and exposes port `3001`.
+
+<Note>
+  `SPREE_API_URL` and `SPREE_PUBLISHABLE_KEY` are required at **build time** — the storefront prerenders pages against the Spree API. Point them at a Spree instance reachable from wherever you run `docker build` (hosted Spree, a tunnel, or `host.docker.internal` for a local backend on Docker Desktop).
+</Note>
+
+Build and run:
+
+```bash
+docker build \
+  --build-arg SPREE_API_URL=https://your-spree.example.com \
+  --build-arg SPREE_PUBLISHABLE_KEY=your_publishable_key \
+  -t spree-storefront .
+
+docker run -p 3001:3001 --env-file .env.local spree-storefront
+```
+
+### Sentry source maps at build time
+
+`SENTRY_AUTH_TOKEN` is passed via a BuildKit secret so it never lands in image layers or the build cache. The other Sentry vars are regular build args:
+
+```bash
+SENTRY_AUTH_TOKEN=... docker build \
+  --build-arg SPREE_API_URL=... \
+  --build-arg SPREE_PUBLISHABLE_KEY=... \
+  --build-arg SENTRY_DSN=... \
+  --build-arg SENTRY_ORG=... \
+  --build-arg SENTRY_PROJECT=... \
+  --secret id=sentry_auth_token,env=SENTRY_AUTH_TOKEN \
+  -t spree-storefront .
+```
+
+### Building against a local Spree backend
+
+On Docker Desktop (macOS/Windows), reach the host's Spree via `host.docker.internal`:
+
+```bash
+docker build \
+  --add-host=host.docker.internal:host-gateway \
+  --build-arg SPREE_API_URL=http://host.docker.internal:3000 \
+  --build-arg SPREE_PUBLISHABLE_KEY=your_publishable_key \
+  -t spree-storefront .
+
+docker run -p 3001:3001 \
+  --add-host=host.docker.internal:host-gateway \
+  --env-file .env.local \
+  spree-storefront
+```
+
+## Self-Hosted Node.js
+
+For any platform that supports Node.js (Render, Railway, Fly.io, AWS, etc.):
+
+1. Install dependencies and build:
+
+```bash
+npm ci
+npm run build
+```
+
+2. Start the production server:
+
+```bash
+npm start
+```
+
+The server listens on port `3001`. Set the `PORT` environment variable to change it.
+
+## CI/CD
+
+### GitHub Actions
+
+```yaml
+name: Deploy Storefront
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      # Add your deployment step here
+      # Example for Vercel:
+      # - uses: amondnet/vercel-action@v25
+      #   with:
+      #     vercel-token: ${{ secrets.VERCEL_TOKEN }}
+      #     vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+      #     vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+      #     vercel-args: --prod
+```
+
+## Performance Checklist
+
+Before going to production, verify:
+
+- **API URL** points to your production Spree instance (not `localhost`)
+- **HTTPS** is enabled on both the storefront and the Spree API
+- **CORS** is configured on your Spree API to allow requests from your storefront domain
+- **Sentry** is configured for error monitoring (`SENTRY_DSN`)
+- **GTM/GA4** is set up for analytics (`GTM_ID`)
+- **Cookie security** — the storefront uses `secure: true` for cookies in production (`NODE_ENV=production`)
+- **Caching** — Next.js cache tags are used for efficient revalidation; review your caching strategy for high-traffic stores

@@ -112,7 +112,7 @@ Variants belonging to a different product are silently dropped — the API rejec
 
 The Store API's `media` field on a product returns its gallery — product-level media when present, falling back to legacy variant-pinned images during the transition. On a variant, `media` returns the assets linked to that variant via `variant_ids`, falling back to direct variant uploads.
 
-This dual rendering means existing storefronts keep working during the upgrade; new uploads attach to the product, and you opt into a [one-shot migration](/developer/upgrades/5.4-to-5.5) to re-home legacy variant-pinned data when convenient.
+This dual rendering means existing storefronts keep working during the upgrade; new uploads attach to the product, and you opt into a [one-shot migration](/v5/developer/upgrades/5.4-to-5.5) to re-home legacy variant-pinned data when convenient.
 
 ### Video <Since version="6.0" />
 

@@ -1,188 +1,217 @@
 ---
 title: Quickstart
 og:title: Spree Customization Quickstart
-description: Recommended ways to customize Spree — store settings, configuration, events, webhooks, dependencies, admin extensions, and decorators as a last resort.
+description: Recommended ways to customize the Spree 6 backend — configuration, workflow hooks, events, checkout steps, providers, dependencies, and decorators as a last resort.
 ---
 
-Spree is a flexible platform allowing you to customize every part of it to suit your business needs. This guide presents customization options **in order of recommendation** - start from the top and only move down if simpler options don't meet your needs.
+Spree is designed to be customized without forking it. This guide presents the options **in order of recommendation** — start at the top and only move down when a simpler option doesn't fit.
 
-## Quick Reference
+<Note>
+Business logic is extended through **workflow hooks** rather than by replacing classes wholesale, and the admin is a React application with its own extension points rather than a Rails engine extended through partials.
+</Note>
+
+## Quick reference
 
 | What you want to do | Recommended approach |
-|---------------------|---------------------|
-| Change store settings (currency, zones, languages) | [Store Settings](#store-settings) |
+|---|---|
+| Change store settings (currency, markets, languages) | [Store settings](#store-settings) |
 | Tweak Spree behavior globally | [Configuration](#configuration) |
-| React to model changes (sync, notifications) | [Events & Subscribers](#events-and-subscribers) |
+| Run your own logic inside checkout, cancellation, refunds | [Workflow hooks](#workflow-hooks) |
+| Block an operation from happening | [Workflow hooks](#workflow-hooks) — `validate` |
+| React after something happened (sync, notifications) | [Events & subscribers](#events-and-subscribers) |
+| Add or reorder checkout steps | [Checkout registry](#checkout-steps) |
+| Swap tax, delivery rate, search or fulfillment behavior | [Providers](#providers) |
+| Add searchable/filterable fields | [Search & filtering](#search-and-filtering) |
+| Use your own user model or identity provider | [Authentication](#authentication) |
 | Notify external services | [Webhooks](#webhooks) |
-| Swap core services (cart, checkout, etc.) | [Dependencies](#dependencies) |
-| Add admin menu items | [Admin Navigation](#admin-extensions) |
-| Add sections to admin forms | [Admin Partials](#admin-extensions) |
-| Add searchable/filterable fields | [Ransack Configuration](#search-and-filtering) |
+| Replace a whole workflow or service | [Dependencies](#dependencies) |
 | Add associations/validations to models | [Decorators](#decorators) (last resort) |
+
+<Info>
+**Customizing the admin?** This page covers the backend — models, API and business logic. The Spree 6 admin is a separate React application with its own extension points. See [Dashboard Customization](/developer/dashboard/customization/quickstart).
+</Info>
 
 <AccordionGroup>
   <Accordion title="Store settings" defaultOpen>
-    **Best for:** Changing currency, shipping zones, languages, and other business settings.
+    **Best for:** currency, markets, delivery zones, languages, and other business settings.
 
-    There's a lot of Store settings you can change in the admin panel without touching the code.
-
-    Go to **Admin > Settings**
-
-    <img src="/images/spree_admin_store_settings.png" alt="Spree Admin Store Settings" />
+    Most day-to-day configuration is data, not code. Change it in the dashboard under **Settings** — no deploy required.
   </Accordion>
-
   <Accordion title="Configuration">
-    **Best for:** Tweaking Spree's behavior globally without modifying source code.
-
-    Global application configuration allows you to customize various aspects of Spree:
+    **Best for:** tweaking Spree's behavior globally.
 
     ```ruby config/initializers/spree.rb
     Spree.config do |config|
-      config.allow_guest_checkout = false
-      config.products_per_page = 20
+      config.minimum_password_length = 10
     end
     ```
 
-    Please see [Configuration](/developer/customization/configuration) section for more information.
+    See [Configuration](/developer/customization/configuration).
   </Accordion>
-
-  <Accordion title="Events and Subscribers">
-    **Best for:** Reacting to model changes, syncing with external services, sending notifications, audit logging.
+  <Accordion title="Workflow hooks">
+    **Best for:** running your own logic *inside* a core flow — checkout completion, order cancellation, refunds, fulfillment creation.
 
     <Info>
-      Events are the **recommended way** to add behavior when something happens in Spree, replacing the need for decorator callbacks.
+      Hooks are the **headline extension point in Spree 6**. Before them, customizing a flow meant replacing the entire class and keeping your copy in sync with core forever.
     </Info>
 
-    Spree's event system lets you subscribe to events like `order.completed`, `product.updated`, `payment.paid`, etc.:
+    Register a handler against a hook key — `<workflow key>.<hook name>`:
 
-    ```ruby app/subscribers/order_completed_subscriber.rb
-    class OrderCompletedSubscriber < Spree::Subscriber
-      subscribes_to 'order.completed'
+    ```ruby config/initializers/spree.rb
+    Spree.hooks.register('carts.complete.validate') do |flow|
+      flow.reject!('We cannot deliver to this region') unless deliverable?(flow.cart)
+    end
+    ```
 
-      def handle(event)
-        order = Spree::Order.find_by_prefix_id(event.payload['id'])
-        return unless order
+    Pass a class instead of a block for anything longer than a line:
 
-        # Sync to external service, send notification, etc.
-        ExternalService.notify_order_placed(order)
+    ```ruby
+    Spree.hooks.register('carts.complete.after_finalize', 'MyApp::PushOrderToERP')
+    ```
+
+    There are three families of hook:
+
+    | Family | Naming | What it can do |
+    |---|---|---|
+    | **validate** | `validate` | Veto the operation with `flow.reject!(message)` |
+    | **lifecycle** | past tense — `after_finalize`, `after_cancel` | React to what happened; read-only |
+    | **context** | `set_*_context`, `get_provider_data` | Return a hash that gets merged into the flow's data |
+
+    Hook keys are validated after boot, so a typo fails startup rather than silently never running.
+
+    See [Services & Workflows](/developer/customization/workflows) for the full list of flows and their hooks.
+  </Accordion>
+  <Accordion title="Events and subscribers">
+    **Best for:** reacting *after* something happened — syncing to external systems, notifications, audit logging.
+
+    ```ruby app/subscribers/spree/order_placed_subscriber.rb
+    module Spree
+      class OrderPlacedSubscriber < Spree::Subscriber
+        subscribes_to 'order.placed'
+
+        def handle(event)
+          order = Spree::Order.find_by_prefix_id(event.payload['id'])
+          return unless order
+
+          MyApp::ERP.push(order)
+        end
       end
     end
     ```
 
-    **Key benefits:**
-    - Loose coupling - your code doesn't depend on Spree internals
-    - Async by default - keeps requests fast
-    - Easier testing and upgrades
+    **Events or hooks?** A hook runs *inside* the flow and can influence or block it. An event fires *after* the fact and cannot. Reach for an event unless you need to change the outcome.
 
-    Please see [Events](/developer/core-concepts/events) section for more information.
+    See [Events](/developer/core-concepts/events).
   </Accordion>
+  <Accordion title="Checkout steps">
+    **Best for:** adding, removing or reordering checkout steps.
 
-  <Accordion title="Webhooks">
-    **Best for:** Notifying external services (ERPs, CRMs, fulfillment systems) when events occur.
-
-    Webhooks send HTTP POST requests to external URLs when Spree events happen:
-
-    - Order completed → Notify fulfillment system
-    - Product updated → Sync with PIM
-    - Customer created → Add to CRM
-
-    Configure webhooks in **Admin > Developers > Webhooks** or via the API.
-
-    Please see [Webhooks](/developer/core-concepts/webhooks) section for more information.
-  </Accordion>
-
-  <Accordion title="Dependencies">
-    **Best for:** Swapping core services, serializers, and abilities with your own implementations.
-
-    Spree allows you to replace core classes without modifying them:
+    Spree 6 has no checkout state machine. A cart reports what it still needs, and you can add to that list:
 
     ```ruby config/initializers/spree.rb
-    Spree::Dependencies.cart_add_item_service = "MyCartAddItemService"
-    Spree::Dependencies.cart_remove_item_service = "MyCartRemoveItemService"
+    Spree::Checkout::Registry.register_step(
+      name: :loyalty,
+      before: :payment,
+      satisfied: ->(cart) { cart.metadata['loyalty_number'].present? },
+      requirements: ->(cart) {
+        [{ step: 'loyalty', field: 'loyalty_number', message: 'Loyalty number is required' }]
+      }
+    )
     ```
 
-    This is cleaner than decorating services because you provide a complete replacement rather than patching behavior.
+    Or attach a requirement to an existing step:
 
-    Please see [Dependencies](dependencies) section for more information.
+    ```ruby
+    Spree::Checkout::Registry.add_requirement(
+      step: :payment,
+      field: :po_number,
+      message: 'PO number is required',
+      satisfied: ->(cart) { cart.metadata['po_number'].present? }
+    )
+    ```
+
+    Registered requirements appear in the Cart API's `requirements` array, so your storefront renders them without duplicating any rules.
+
+    See [Carts](/developer/core-concepts/carts#checkout-requirements).
   </Accordion>
+  <Accordion title="Providers">
+    **Best for:** swapping a whole area of behavior for your own implementation.
 
-  <Accordion title="Admin Extensions">
-    **Best for:** Adding menu items, form sections, dashboard widgets, and other UI elements to the admin panel.
+    Spree 6 exposes pluggable providers for the domains that vary most between businesses:
 
-    Spree provides declarative APIs for extending the admin without decorators or view overrides:
+    | Provider | Controls |
+    |---|---|
+    | Tax provider | How tax is calculated, per market |
+    | Delivery rate provider | How delivery is priced — flat rates or live carrier rates |
+    | Fulfillment provider | How a delivery type behaves — shipping, digital, pickup |
+    | Search provider | Database or Meilisearch |
+    | Payout provider | Where marketplace payouts go |
 
-    **Navigation API** - Add menu items:
-    ```ruby config/initializers/spree.rb
-    Rails.application.config.after_initialize do
-      Spree.admin.navigation.sidebar.add :brands,
-        label: :brands,
-        url: :admin_brands_path,
-        icon: 'award',
-        position: 35
-    end
-    ```
+    Each is a class you register and select on the relevant record, so no conditional code lands in core.
 
-    **Partials API** - Add sections to forms:
-    ```ruby config/initializers/spree.rb
-    Spree.admin.partials.product_form << 'spree/admin/products/erp_section'
-    ```
-
-    Please see:
-    - [Admin Navigation](/developer/admin/navigation) - For adding menu items
-    - [Admin Partials](/developer/admin/extending-ui) - For extending UI
-    - [Admin Tables](/developer/admin/tables) - For customizing list views
+    See [Fulfillments](/developer/core-concepts/fulfillments#delivery-types) and [Taxes](/developer/core-concepts/taxes).
   </Accordion>
-
-  <Accordion title="Search and Filtering">
-    **Best for:** Making custom fields searchable/sortable in the admin and API.
-
-    Instead of decorating models to add `ransackable_attributes`, use the Ransack configuration API:
+  <Accordion title="Search and filtering">
+    **Best for:** making custom fields searchable and sortable in the dashboard and API.
 
     ```ruby config/initializers/spree.rb
-    Spree.ransack.add_attribute :product, :erp_id
-    Spree.ransack.add_association :product, :brand
+    Spree.ransack.add_attribute(Spree::Product, :erp_id)
+    Spree.ransack.add_association(Spree::Product, :brand)
+    Spree.ransack.add_scope(Spree::Product, :featured)
     ```
 
-    Please see [Search & Filtering](/developer/core-concepts/search-filtering#extending-ransackable-configuration) section for more information.
+    See [Search & Filtering](/developer/core-concepts/search-filtering).
   </Accordion>
-
   <Accordion title="Authentication">
-    **Best for:** Using your own user model or authentication system.
+    **Best for:** using your own user model or identity provider.
 
-    Spree allows you to use your own authentication system instead of the default Devise-based one.
+    Spree 6 owns its authentication stack rather than depending on Devise, and separates the customer identity from the staff identity. Point Spree at your own classes with `Spree.user_class` and `Spree.admin_user_class`.
 
-    You can find more information in the [Authentication](authentication) section.
+    See [Authentication](/developer/providers/sso).
   </Accordion>
+  <Accordion title="Webhooks">
+    **Best for:** notifying external services — ERPs, CRMs, fulfillment systems — without writing Ruby.
 
-  <Accordion title="Checkout flow">
-    **Best for:** Customizing checkout steps and flow.
+    Configure them in the dashboard under **Settings → Webhooks**, or through the Admin API.
 
-    With Spree you can change the checkout flow to fit your business needs - add steps, remove steps, or change the order.
-
-    Please see [Checkout flow customization section](checkout) for more information.
+    See [Webhooks](/developer/core-concepts/webhooks).
   </Accordion>
+  <Accordion title="Dependencies">
+    **Best for:** replacing an entire workflow or service with your own class.
 
-  <Accordion title="Decorators">
-    **Best for:** Adding associations, validations, scopes, and methods to Spree models. Use as a last resort.
+    ```ruby config/initializers/spree.rb
+    Spree::Dependencies.cart_add_item_workflow = 'MyApp::Carts::AddItem'
+    ```
 
     <Warning>
-      Decorators should be used **only when no other option works**. They tightly couple your code to Spree internals and can break during upgrades.
-
-      **Do NOT use decorators for:**
-      - After-save callbacks → Use [Events](/developer/core-concepts/events) instead
-      - External service sync → Use [Webhooks](/developer/core-concepts/webhooks) instead
-      - Custom service logic → Use [Dependencies](dependencies) instead
-      - Admin UI changes → Use [Admin Extensions](#admin-extensions) instead
+      Seam names end in `_workflow` in Spree 6. The old `*_service` names still resolve for one release with a warning, but **writes to them are ignored** — a class written against the old service contract isn't interchangeable with a workflow. Update the key when you upgrade.
     </Warning>
 
-    Decorators are still appropriate for structural changes:
+    Prefer a hook when you only need to add behavior. Replace the class only when you need to change what the flow fundamentally does.
+
+    See [Dependencies](/developer/customization/dependencies).
+  </Accordion>
+  <Accordion title="Decorators">
+    **Best for:** adding associations, validations and scopes to Spree models. Use as a last resort.
+
+    <Warning>
+      Decorators couple your code to Spree internals and are the most common cause of painful upgrades.
+
+      **Do not use decorators for:**
+      - Logic inside a core flow → use [workflow hooks](#workflow-hooks)
+      - After-save callbacks → use [events](#events-and-subscribers)
+      - External service sync → use [webhooks](#webhooks)
+      - Replacing a service → use [dependencies](#dependencies)
+      - Admin UI changes → use [dashboard customization](/developer/dashboard/customization/quickstart)
+    </Warning>
+
+    They remain appropriate for structural additions:
 
     ```ruby app/models/spree/product_decorator.rb
     module Spree
       module ProductDecorator
         def self.prepended(base)
           base.belongs_to :brand, class_name: 'MyApp::Brand', optional: true
-          base.validates :external_id, presence: true
           base.scope :featured, -> { where(featured: true) }
         end
 
@@ -195,6 +224,28 @@ Spree is a flexible platform allowing you to customize every part of it to suit 
     end
     ```
 
-    Please see [Decorators](decorators) section for more information.
+    See [Decorators](/developer/customization/decorators).
   </Accordion>
 </AccordionGroup>
+
+## Choosing between hooks, events and dependencies
+
+These three overlap, and picking the wrong one is the most common source of upgrade pain:
+
+<Steps>
+  <Step title="Do you need to block or change the outcome?">
+    Use a **workflow hook**. Only `validate` hooks can stop an operation, and only they run early enough to do so safely — before money moves.
+  </Step>
+  <Step title="Do you just need to know it happened?">
+    Use an **event subscriber**. It's decoupled, testable, and survives upgrades untouched.
+  </Step>
+  <Step title="Do you need the flow to do something fundamentally different?">
+    Use **dependencies** to replace the class — and accept that you now own keeping it current.
+  </Step>
+</Steps>
+
+## Related
+
+- [Services & Workflows](/developer/customization/workflows) — the workflow model and every hook
+- [Carts](/developer/core-concepts/carts) — checkout requirements and completion
+- [Dashboard Customization](/developer/dashboard/customization/quickstart) — extending the admin

@@ -59,11 +59,11 @@ flowchart TB
 
 2. **Shopping** — Customers add Variants to their cart, creating an [Order](/developer/core-concepts/orders) with Line Items
 
-3. **Checkout** — The Order collects [Addresses](/developer/core-concepts/addresses), calculates [Shipping](/developer/core-concepts/shipments) options, and processes [Payments](/developer/core-concepts/payments)
+3. **Checkout** — The Order collects [Addresses](/developer/core-concepts/addresses), calculates [Shipping](/developer/core-concepts/fulfillments) options, and processes [Payments](/developer/core-concepts/payments)
 
-4. **Fulfillment** — [Shipments](/developer/core-concepts/shipments) are created from Stock Locations, tracking individual [Inventory Units](/developer/core-concepts/inventory#inventory-units)
+4. **Fulfillment** — [Shipments](/developer/core-concepts/fulfillments) are created from Stock Locations, tracking individual [Inventory Units](/developer/core-concepts/inventory#inventory-units)
 
-5. **Pricing & Adjustments** — [Taxes](/developer/core-concepts/taxes) and [Promotions](/developer/core-concepts/promotions) create [Adjustments](/developer/core-concepts/adjustments) that modify order totals
+5. **Pricing & Adjustments** — [Taxes](/developer/core-concepts/taxes) and [Promotions](/developer/core-concepts/promotions) create [Adjustments](/developer/core-concepts/taxes-discounts-fees) that modify order totals
 
 ## Core Model Relationships
 
@@ -176,5 +176,5 @@ Spree is distributed as a set of packages:
 - [Products](/developer/core-concepts/products) — Product catalog and variants
 - [Orders](/developer/core-concepts/orders) — Order lifecycle and state machine
 - [Payments](/developer/core-concepts/payments) — Payment processing
-- [Shipments](/developer/core-concepts/shipments) — Shipping and fulfillment
+- [Shipments](/developer/core-concepts/fulfillments) — Shipping and fulfillment
 - [Customization Quickstart](/developer/customization/quickstart) — How to extend Spree

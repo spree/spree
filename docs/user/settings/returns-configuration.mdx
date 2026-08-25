@@ -1,127 +1,59 @@
 ---
 title: "Returns Configuration"
-description: "Learn how to define return authorization reasons, refund reasons, and reimbursement types."
+description: "Learn how to define return reasons, claim reasons, and refund reasons."
 ---
 
 Returns management is a crucial part of ecommerce operations. It builds customer trust, streamlines support workflows, and helps maintain clarity around inventory and financial adjustments.
 
-Not all eCommerce platforms offer built-in tools for managing returns, but fortunately Spree does - no extra plugins or custom development needed.
+Not all ecommerce platforms offer built-in tools for managing returns, but fortunately Spree does — no extra plugins or custom development needed.
 
-To get started with Returns, navigate to the Returns tab of the Settings menu.
+Before you start processing returns, it is worth setting up the three lists of reasons Spree uses. Each answers a different question, which is why they are kept apart: mixing them together makes your reporting far less useful.
 
-![](/images/user/settings/returns-configuration/1.returns.png)
+## Return Reasons
 
-Here you’ll notice three subtabs for managing Return Authorization Reasons, Refund Reasons, and Reimbursement Types. Let’s look at each in detail:
+Return reasons record why a customer is sending something back. They apply to both returns and exchanges.
 
-## Return Authorization Reasons
+Typical examples are "Wrong size", "No longer needed", "Different from description", and "Arrived too late".
 
-![](/images/user/settings/returns-configuration/2.return_authorizations.png)
+Each reason has two fields:
 
-Return Merchandise Authorizations (RMAs) specify the reasons a customer provides when requesting to return an item. These reasons help categorize returns for internal reporting and customer service workflows.
+- **Name**: the reason itself, as your team and customers will see it.
+- **Status**: whether the reason is available for use. Setting a reason to inactive hides it from new returns without deleting the history of returns that already used it.
 
-RMAs only have two fields:
+## Claim Reasons
 
-- **Name**: The visible reason for the return (e.g., Wrong size, No longer needed).
-- **Status**: Toggle whether the reason is available for use in the returns flow. Inactive reasons are hidden but not deleted.
+Claim reasons record what went wrong with a delivery — problems on your end rather than a customer changing their mind.
 
-### Add New Return Authorization
+Typical examples are "Arrived damaged", "Never arrived", "Wrong item sent", and "Missing item from order".
 
-To add a new return authorization reason, click ‘New RMA Reason’ in the top right corner and you’ll be redirected to the RMA reason creation form.
+They have the same two fields as return reasons: a name and a status.
 
-![](/images/user/settings/returns-configuration/3.new_rma.png)
-
-Simply enter the name, set the status, and click Create to save the new RMA reason.
-
-### Edit Return Authorization
-
-To edit an RMA reason, simply click on the RMA’s row in the overview.
-
-![](/images/user/settings/returns-configuration/4.edit_rma.png)
-
-The Edit form looks more or less identical to the Create form, but with pre-filled data, and Update buttons rather than Create buttons.
-
-Simply update fields as needed and then click Update to save changes.
-
-### Delete Return Authorization
-
-To delete an RMA reason, simply open the Edit form as shown above and click Delete.
+<Note>
+  Claims also have a separate **type** field — damaged, missing, wrong item, or other — which is a broader grouping than the reason. Your developers can add more types if the standard four do not fit your business.
+</Note>
 
 ## Refund Reasons
 
-![](/images/user/settings/returns-configuration/5.refund_reasons.png)
+Refund reasons explain why money was sent back. They are used internally for tracking, reporting, and communication across teams, and they apply to any refund, whether or not a return was involved.
 
-Refund Reasons are used internally to explain why a refund was issued. These help with tracking, reporting, and communication across teams.
+Typical examples are "Return processing" and "Order cancelled".
 
-Refund reasons also have two fields:
+## Managing reasons
 
-- **Name**: A label for the reason (e.g., Return processing, Order cancelled).
-- **Status**: Toggle whether the reason is available for use in the returns flow. Inactive reasons are hidden but not deleted.
+All three lists live together under **Settings → Returns & reasons**. Spree seeds a starting set when your store is created, so returns, claims, and refunds work out of the box, and you can add, rename, deactivate, or delete entries from there.
 
-### Add New Refund Reason
+Each reason has two fields: its **name**, and whether it is **available on new records**. Turning that switch off retires a reason — it stops appearing when staff open a new return, claim, or refund, while every record that already used it keeps its explanation.
 
-To add a new refund reason, click ‘New Refund Reason’ in the top right corner and you’ll be redirected to the refund reason creation form.
+A reason that is already attached to a record cannot be deleted, because the records that used it would lose their explanation. Those reasons are marked **In use**. Deactivate one instead to retire it, and rename it at any time — every record pointing at it follows the new name.
 
-![](/images/user/settings/returns-configuration/6.new_refund_reason.png)
+## What about return windows and restocking fees?
 
-Simply enter the name, set the status, and click Create to save the new refund reason.
+Spree does not ship with a fixed return window, restocking fee, or final-sale setting. Return policy varies enormously between merchants, and often has to differ by country for legal reasons — the European Union, for example, requires a minimum withdrawal period that many other markets do not.
 
-### Edit Refund Reason
-
-To edit a refund reason, simply click on its row in the overview.
-
-![](/images/user/settings/returns-configuration/7.edit_refund_reason.png)
-
-The Edit form looks more or less identical to the Create form, but with pre-filled data, and Update buttons rather than Create buttons.
-
-Simply update fields as needed and then click Update to save changes.
-
-### Delete Refund Reason
-
-To delete a refund reason, simply open the Edit form as shown above and click Delete.
-
-## Reimbursement Types
-
-![](/images/user/settings/returns-configuration/8.reimbursement_types.png)
-
-Reimbursement Types define how refunds are paid back to the customer. These options help determine whether a refund goes back to the original payment method, a store credit, or is handled through an exchange.
-
-Reimbursement types have four fields:
-
-- **Name**: The label for this type (e.g., Store credit, Exchange).
-- **Type**: The method of reimbursement:
-  - Credit
-  - Original payment (e.g., debit card)
-  - Exchange
-  - Store credit
-- **Status**: Toggle whether the reason is available for use in the returns flow. Inactive reasons are hidden but not deleted.
-- **Mutable**: If set to Yes, the reimbursement type can be changed after it's assigned, otherwise it's locked it in.
-
-### Add New Reimbursement Type
-
-To add a reimbursement type, click ‘New Reimbursement Type’’ in the top right corner and you’ll be redirected to the reimbursement type creation form.
-
-![](/images/user/settings/returns-configuration/9.new_reimbursement.png)
-
-Simply enter the name, set the status, and click Create to save the new reimbursement type.
-
-### Edit Reimbursement Type
-
-To edit a reimbursement type, simply click on its row in the overview.
-
-![](/images/user/settings/returns-configuration/10.edit_reimbursement.png)
-
-The Edit form looks more or less identical to the Create form, but with pre-filled data, and Update buttons rather than Create buttons.
-
-Simply update fields as needed and then click Update to save changes.
-
-### Delete Reimbursement Type
-
-To delete a reimbursement type, simply open the Edit form as shown above and click **Delete**.
+Rather than guessing, Spree gives your developers a place to attach your own policy when a return is created. A common arrangement enforces the policy for customers opening returns themselves, while letting your staff override it, so a supervisor can accept a late return for a loyal customer without needing any code changes.
 
 ## Processing Returns
 
-Now that you’ve defined all of your RMA reasons, refund reasons, and reimbursement types, you’ll be ready to process returns in the event that a customer requests them.
+Once your reasons are set up, you are ready to handle returns, exchanges, and claims.
 
-To learn how to process returns, please refer to [Returns → Returns Processing](https://spreecommerce.org/docs/user/returns/returns-processing).
-
-
+To learn how, see [Returns → Returns Processing](/user/returns/returns-processing).

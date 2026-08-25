@@ -1,18 +1,17 @@
 ---
 title: Build Custom Promotion Rules & Actions
-description: Step-by-step guide to creating custom promotion rules and actions for business-specific eligibility logic and discount behaviors.
+description: Step-by-step guide to creating custom promotion rules, discount actions, and adjusters for business-specific eligibility logic and charges.
 ---
 
 ## Overview
 
-Spree's promotion system is built around two extension points: **Rules** (eligibility conditions) and **Actions** (what happens when a promotion applies). While Spree ships with a comprehensive set of [built-in rules and actions](/developer/core-concepts/promotions#rules), you can create custom ones for business-specific logic.
+Spree's promotion system has three extension points:
 
-This guide covers:
-- Creating a custom promotion rule with admin UI
-- Creating a custom promotion action with a calculator
-- Understanding the `eligible?`, `actionable?`, and `perform` contracts
+- **Rules** — conditions that decide when a promotion applies
+- **Actions** — what an applied promotion does, usually writing [Discount](/developer/core-concepts/taxes-discounts-fees#discounts) rows
+- **Adjusters** — for discounts and fees that aren't promotions at all (loyalty pricing, gift wrap fees, payment surcharges)
 
-Before starting, make sure you understand [how promotions work in Spree](/developer/core-concepts/promotions).
+Spree ships with a comprehensive set of [built-in rules and actions](/developer/core-concepts/promotions#rules). This guide shows how to build your own of each kind.
 
 ## Custom Promotion Rules
 
@@ -30,7 +29,7 @@ module Spree
         preference :quantity, :integer, default: 5
 
         def applicable?(promotable)
-          promotable.is_a?(Spree::Order)
+          promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
         end
 
         def eligible?(order, options = {})
@@ -56,11 +55,15 @@ end
 
 | Method | Required | Description |
 |--------|----------|-------------|
-| `applicable?(promotable)` | Yes | Returns `true` if this rule type can evaluate the promotable (usually `promotable.is_a?(Spree::Order)`) |
+| `applicable?(promotable)` | Yes | Returns `true` if this rule type can evaluate the promotable — accept both carts and orders (see the note below) |
 | `eligible?(promotable, options = {})` | Yes | Returns `true` if the promotable meets this rule's conditions. Add messages to `eligibility_errors` to explain why not. |
-| `actionable?(line_item)` | No | Returns `true` if a specific line item should receive the promotion's action. Defaults to `true`. Override this for rules that target specific items (like product or category rules). |
+| `actionable?(line_item)` | No | Returns `true` if a specific line item should receive the promotion's discount. Defaults to `true`. Override this for rules that target specific items (like product or category rules). |
 
 The `options` hash passed to `eligible?` can include `:user`, `:email`, and other context from the checkout flow.
+
+<Warning>
+Accept **both** `Spree::Cart` and `Spree::Order` in `applicable?`. Promotions are evaluated on every cart change, long before the cart becomes an order, and in Spree 6 a cart is its own model rather than an unfinished order. A rule guarding on `Spree::Order` alone silently never applies during checkout — the promotion just appears not to work. Every built-in rule accepts both.
+</Warning>
 
 #### Using Preferences
 
@@ -81,43 +84,30 @@ Available types: `:string`, `:integer`, `:decimal`, `:boolean`, `:array`.
 
 ### Step 2: Register the Rule
 
-Add your rule to the promotion configuration so it appears in the admin panel:
-
 ```ruby config/initializers/spree.rb
 Rails.application.config.after_initialize do
   Spree.promotions.rules << Spree::Promotion::Rules::MinimumQuantity
 end
 ```
 
-### Step 3: Create the Admin Partial
+Registered rules are discoverable at `/api/v3/admin/promotion_rules/types` together with their preference schema, and the dashboard's promotion editor is built on that endpoint — your rule appears there with a generated preferences form, no UI work needed.
 
-Create a form partial so admins can configure the rule's preferences. The partial name must match the rule class name in underscore format:
+### Step 3: Add Translations
 
-```erb app/views/spree/admin/promotions/rules/_minimum_quantity.html.erb
-<div class="row mb-3">
-  <%= f.spree_number_field :preferred_quantity, label: Spree.t(:minimum_quantity) %>
-</div>
-```
-
-### Step 4: Add Translations
+The rule's display name and description in the dashboard come from your locale file:
 
 ```yaml config/locales/en.yml
 en:
   spree:
-    minimum_quantity: Minimum Quantity
     promotion_rule_types:
       minimum_quantity:
         name: Minimum Quantity
         description: Order must contain at least X items
 ```
 
-### Step 5: Restart and Test
-
-After restarting your application, the new rule will be available in **Admin > Promotions** when adding rules to a promotion.
-
 ### Example: Rule with `actionable?`
 
-When your rule targets specific line items (not the whole order), implement `actionable?` so that actions like `CreateItemAdjustments` only discount matching items:
+When your rule targets specific line items (not the whole order), implement `actionable?` so that item-level actions only discount matching items:
 
 ```ruby app/models/spree/promotion/rules/brand.rb
 module Spree
@@ -127,7 +117,7 @@ module Spree
         preference :brand_names, :array, default: []
 
         def applicable?(promotable)
-          promotable.is_a?(Spree::Order)
+          promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
         end
 
         def eligible?(order, options = {})
@@ -153,13 +143,17 @@ end
 
 ## Custom Promotion Actions
 
-Actions define what happens when a promotion is applied. Most actions create [adjustments](/developer/core-concepts/adjustments) on orders or line items.
+Actions define what happens when a promotion is applied. A discount action doesn't write rows itself — it declares **where** its discount belongs and **how much** it is, and Spree's promotion engine does the rest: running the competition between promotions, clamping amounts so nothing goes below zero, writing the winning Discount rows, and removing stale ones on every recalculation.
 
-### Step 1: Create the Action Class
+### Discount Action (with Calculator)
 
-#### Discount Action (with Calculator)
+Three declarations make a discount action:
 
-For actions that create monetary adjustments, include `Spree::CalculatedAdjustments` and `Spree::AdjustmentSource`:
+| Method | Description |
+|--------|-------------|
+| `discount_scope` | Where the discount belongs: `:line_item` (per matching item), `:fulfillment` (per delivery), or `:order` (whole order, distributed proportionally across items) |
+| `compute_amount(adjustable)` | The discount for one adjustable — a line item, fulfillment, or the order, matching your scope. Return a **negative** amount, or zero for "no discount". |
+| `perform(options = {})` | Called when the promotion is activated. For discount actions, delegate to `apply_via_adjuster(options)`. |
 
 ```ruby app/models/spree/promotion/actions/tiered_discount.rb
 module Spree
@@ -167,15 +161,15 @@ module Spree
     module Actions
       class TieredDiscount < Spree::PromotionAction
         include Spree::CalculatedAdjustments
-        include Spree::AdjustmentSource
 
         before_validation -> { self.calculator ||= Calculator::FlatRate.new }
 
-        def perform(options = {})
-          order = options[:order]
-          return false unless order.present?
+        def discount_scope
+          :order
+        end
 
-          create_unique_adjustment(order, order)
+        def perform(options = {})
+          apply_via_adjuster(options)
         end
 
         def compute_amount(order)
@@ -186,8 +180,7 @@ module Spree
                      else 0
                      end
 
-          # Must return negative amount for discounts
-          # Cap at order total to prevent negative orders
+          # Negative for discounts, capped at the order total
           [discount, order.item_total].min * -1
         end
       end
@@ -196,9 +189,15 @@ module Spree
 end
 ```
 
-#### Non-Discount Action
+With `discount_scope :order`, the winning amount is shared out proportionally across the line items — you never handle the distribution yourself. With `:line_item`, `compute_amount` is called once per line item, and only items passing your rules' `actionable?` receive rows.
 
-For actions that don't create adjustments (e.g., awarding points, sending notifications):
+<Note>
+There is nothing to clean up either. If the promotion stops being eligible — the cart shrinks below the threshold, the code is removed — the next recalculation deletes its rows. If your action loses to a better promotion, its candidate simply isn't written that round, and it competes again on the next one.
+</Note>
+
+### Non-Discount Action
+
+For actions that don't create discounts (awarding points, sending notifications), implement `perform` alone:
 
 ```ruby app/models/spree/promotion/actions/add_loyalty_points.rb
 module Spree
@@ -220,53 +219,15 @@ module Spree
 end
 ```
 
-#### Key Methods to Implement
+`perform` receives `:order` and `:promotion` in its options and should return `true` if the action was applied. Optionally implement `revert(options = {})` to undo side effects when the promotion is deactivated.
 
-| Method | Required | Description |
-|--------|----------|-------------|
-| `perform(options = {})` | Yes | Called when the promotion is activated. `options` includes `:order` and `:promotion`. Return `true` if the action was applied. |
-| `compute_amount(adjustable)` | For discount actions | Return the adjustment amount (negative for discounts). Cap at the adjustable's total to prevent negative amounts. |
-| `revert(options = {})` | No | Called when a promotion is deactivated. Use to undo side effects (e.g., remove added line items). |
-
-#### Available Helper Methods
-
-When you include `Spree::AdjustmentSource`, you get:
-
-```ruby
-# Create a single adjustment (e.g., on the order)
-create_unique_adjustment(order, adjustable)
-
-# Create adjustments on multiple items (e.g., all line items)
-create_unique_adjustments(order, order.line_items)
-
-# With a filter block (e.g., only actionable line items)
-create_unique_adjustments(order, order.line_items) do |line_item|
-  promotion.line_item_actionable?(order, line_item)
-end
-```
-
-When you include `Spree::CalculatedAdjustments`, you get:
-
-```ruby
-# Delegate to the calculator
-compute(adjustable)  # calls calculator.compute(adjustable)
-
-# Set calculator by class name
-self.calculator_type = 'Spree::Calculator::FlatRate'
-
-# List available calculators for this action type
-self.class.calculators
-```
-
-### Step 2: Register the Action
+### Register and Translate
 
 ```ruby config/initializers/spree.rb
 Rails.application.config.after_initialize do
   Spree.promotions.actions << Spree::Promotion::Actions::TieredDiscount
 end
 ```
-
-### Step 3: Add Translations
 
 ```yaml config/locales/en.yml
 en:
@@ -277,39 +238,43 @@ en:
         description: Different discount amounts based on order total tiers
 ```
 
-### Step 4: Restart and Test
+Like rules, registered actions surface automatically in the dashboard's promotion editor via `/api/v3/admin/promotion_actions/types`.
 
-After restarting, the new action will be available in **Admin > Promotions** when adding actions to a promotion.
+## Custom Adjusters
 
-## How Rules and Actions Work Together
+Not every charge or reduction is a promotion. A gift wrap fee, a payment surcharge, or loyalty pricing has no rules, no coupon codes, and no competition — it just needs to be on the order whenever it applies. That's an **adjuster**: a class invoked on every recalculation that owns a family of [Fee or Discount](/developer/core-concepts/taxes-discounts-fees) rows.
 
-Understanding how Spree evaluates promotions helps you build better custom rules and actions:
-
-```mermaid
-flowchart TD
-    A[Order Updated] --> B[PromotionHandler::Cart]
-    B --> C{For each promotion}
-    C --> D{Check dates & usage}
-    D -->|expired/exceeded| E[Deactivate]
-    D -->|valid| F{Evaluate rules}
-    F -->|match_policy: all| G[ALL rules must pass]
-    F -->|match_policy: any| H[ANY rule must pass]
-    G -->|eligible| I[Run actions]
-    H -->|eligible| I
-    G -->|ineligible| E
-    H -->|ineligible| E
-    I --> J[action.perform for each action]
-    J --> K[Create adjustments]
-    K --> L[Best promotion wins]
+```ruby app/models/my_app/adjusters/gift_wrap.rb
+module MyApp
+  module Adjusters
+    class GiftWrap < Spree::Adjusters::Base
+      def update
+        if order.gift_wrap?
+          order.fees.find_or_initialize_by(kind: 'gift_wrap').update!(
+            amount: 5.99, label: 'Gift wrapping'
+          )
+        else
+          order.fees.where(kind: 'gift_wrap').destroy_all
+        end
+      end
+    end
+  end
+end
 ```
 
-**Key points:**
-- `match_policy: 'all'` means every rule must return `eligible? == true`
-- `match_policy: 'any'` means at least one rule must return `eligible? == true`
-- For item-level actions (`CreateItemAdjustments`), `actionable?(line_item)` on each rule filters which line items get the discount
-- When multiple promotions compete, Spree picks the best one (largest discount) and marks others as ineligible
+```ruby config/initializers/spree.rb
+Rails.application.config.after_initialize do
+  Spree.adjusters << MyApp::Adjusters::GiftWrap
+end
+```
 
-## Testing Custom Rules and Actions
+The contract is one method: `update`. It runs on every recalculation, so it must be idempotent — write the rows that should exist, remove the ones that shouldn't (that's why the example uses `find_or_initialize_by` keyed by `kind` rather than `create`). The `order` it receives is the cart during checkout and the order after placement, and rows attach to it either way.
+
+There's no totals bookkeeping to do: after all adjusters run, Spree re-sums the typed rows into the order totals and the tax provider estimates tax on the result — a fee you write here gets taxed in the same pass, like any other fee.
+
+Custom discounts work the same way, writing `order.discounts` rows with your own `kind` (e.g. `'loyalty'`). Use a kind other than `'promotion'` — promotion rows belong to the promotion engine, which removes any it didn't write itself.
+
+## Testing
 
 ```ruby spec/models/spree/promotion/rules/minimum_quantity_spec.rb
 require 'spec_helper'
@@ -367,7 +332,7 @@ end
 
 ## Related Documentation
 
-- [Promotions](/developer/core-concepts/promotions) - Promotion architecture and built-in rules/actions
-- [Calculators](/developer/core-concepts/calculators) - Available calculator types for promotion actions
-- [Adjustments](/developer/core-concepts/adjustments) - How adjustments work on orders and line items
-- [Events](/developer/core-concepts/events) - Subscribe to promotion events
+- [Promotions](/developer/core-concepts/promotions) — promotion architecture and built-in rules and actions
+- [Taxes, Discounts & Fees](/developer/core-concepts/taxes-discounts-fees) — the typed rows actions and adjusters write
+- [Calculators](/developer/core-concepts/calculators) — available calculator types for promotion actions
+- [Events](/developer/core-concepts/events) — subscribe to promotion events

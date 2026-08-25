@@ -1,19 +1,343 @@
+/* ---------------------------------------------------------------------------
+   Spree documentation theme.
+
+   Colour tokens are copied from the marketing site's design tokens
+   (website/src/styles/global.css), which are generated from the Figma
+   variable set. Keep the two in sync — this file is the docs' only styling
+   hook, so a token that drifts here shows up as a visible seam between
+   spreecommerce.org and spreecommerce.org/docs.
+--------------------------------------------------------------------------- */
+
+:root {
+  /* Brand */
+  --spree-accent: #0077ff;
+  --spree-accent-strong: #0060ce;
+
+  /* Sand — the warm surface ramp the marketing site is built on */
+  --spree-sand-50: #fcfaf7;
+  --spree-sand-100: #f7f5f2;
+  --spree-sand-150: #e9e5dd;
+  --spree-sand-200: #e2dfd8;
+
+  /* Dark sand — warm darks for inverted surfaces */
+  --spree-dark-sand-500: #32302e;
+  --spree-dark-sand-600: #272626;
+  --spree-dark-sand-700: #1e1c1b;
+  --spree-dark-sand-800: #191818;
+
+  /* Neutral ramp for text and borders */
+  --spree-neutral-100: #eaeaea;
+  --spree-neutral-200: #d5d5d5;
+  --spree-neutral-400: #999999;
+  --spree-neutral-600: #666666;
+  --spree-neutral-700: #4d4d4d;
+  --spree-neutral-900: #1a1a1a;
+
+  /* Semantic */
+  --spree-ink: #1a1a1a;
+  --spree-heading: #061932;
+  --spree-ink-muted: #666666;
+  --spree-border: #e2dfd8;
+
+  /* Sidebar (dashboard-like): neutral pills, not accent-tinted */
+  --spree-sidebar-hover: rgb(0 0 0 / 0.04);
+  --spree-sidebar-active: rgb(0 0 0 / 0.06);
+  --spree-sidebar-radius: 0.625rem;
+  --spree-guide: #d8d4cb;
+}
+
+.dark {
+  --spree-sidebar-hover: rgb(255 255 255 / 0.06);
+  --spree-sidebar-active: rgb(255 255 255 / 0.10);
+  --spree-border: #3f3e3c;
+  --spree-guide: #3f3e3c;
+}
+
+/* --- Surfaces ------------------------------------------------------------ */
+
+html:not(.dark) body {
+  background: var(--spree-sand-50);
+}
+
+html.dark body {
+  background: var(--spree-dark-sand-800);
+}
+
+/* Headings pick up the site's navy rather than pure black. */
+html:not(.dark) h1,
+html:not(.dark) h2,
+html:not(.dark) h3,
+html:not(.dark) h4 {
+  color: var(--spree-heading);
+}
+
 .nav-logo {
   height: 32px;
 }
 
-html:not(.dark) body {
-  background: #fcfaf8;
+/* --- Sidebar ------------------------------------------------------------- */
+/* Mirrors the Spree dashboard:
+     - the SECTION carries the grey pill when the open page lives inside it
+     - the active child is bold text only, no background
+     - children get a background on hover, inset rather than full width
+     - a hairline guide runs down the children of the open section
+   Mintlify marks the section holding the current page with
+   li[data-group-tag][data-active="true"], and the current page itself with
+   `bg-primary/10 text-primary` — both are repurposed below. */
+
+/* The top-level wrapper ("Develop" / "Manage") exists only because Mintlify
+   needs a non-empty group name to make its children collapsible. It carries no
+   meaning for the reader, so its header is hidden while the group still works. */
+#sidebar-content .sidebar-group-header {
+  display: none;
 }
 
-html:not(.dark) #navbar {
-  border-bottom: 1px solid #e2dfd8;
-}
-html:not(.dark) #navbar div {
-  background: #f7f5f2;
+#sidebar-content a,
+#sidebar-content button:not([class*="group/search"]) {
+  border-radius: var(--spree-sidebar-radius) !important;
+  padding-top: 0.3125rem !important;
+  padding-bottom: 0.3125rem !important;
 }
 
-html:not(.dark) #search-bar-entry,
-html:not(.dark) #assistant-entry {
-  background: #fff;
+/* Section rows: the primary level of the tree. Same size as their children,
+   but taller and more widely spaced, so the top level reads as navigation
+   rather than a list (the rhythm Vendure's sidebar uses). */
+#sidebar-content ul.sidebar-group > li > button,
+#sidebar-content ul.sidebar-group > li > a {
+  font-weight: 500;
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+}
+
+/* Breathing room between top-level sections. */
+#sidebar-content ul.sidebar-group > li + li {
+  margin-top: 0.25rem;
+}
+
+/* An open section's children sit closer to it than the next section does. */
+#sidebar-content li[data-group-tag] > ul {
+  margin-top: 0.125rem;
+  margin-bottom: 0.375rem;
+}
+
+/* Hover: a soft neutral wash, never the accent. */
+#sidebar-content a:hover,
+#sidebar-content button:not([class*="group/search"]):hover {
+  background-color: var(--spree-sidebar-hover) !important;
+}
+
+/* The section containing the current page wears the pill. */
+#sidebar-content li[data-group-tag][data-active="true"] > button,
+#sidebar-content li[data-group-tag][data-active="true"] > a {
+  background-color: var(--spree-sidebar-active) !important;
+  color: var(--spree-neutral-900) !important;
+  font-weight: 600 !important;
+}
+
+.dark #sidebar-content li[data-group-tag][data-active="true"] > button,
+.dark #sidebar-content li[data-group-tag][data-active="true"] > a {
+  color: #ffffff !important;
+}
+
+/* The current page itself: bold text, no fill. Mintlify's accent tint and the
+   faux-bold text-shadow it pairs with are both removed. */
+#sidebar-content a[class*="bg-primary/10"],
+#sidebar-content a[class*="bg-primary-light/10"] {
+  background-color: transparent !important;
+  color: var(--spree-neutral-900) !important;
+  font-weight: 600 !important;
+  text-shadow: none !important;
+}
+
+.dark #sidebar-content a[class*="bg-primary/10"],
+.dark #sidebar-content a[class*="bg-primary-light/10"] {
+  color: #ffffff !important;
+}
+
+/* ...but it still highlights on hover, like any other child. */
+#sidebar-content a[class*="bg-primary/10"]:hover,
+#sidebar-content a[class*="bg-primary-light/10"]:hover {
+  background-color: var(--spree-sidebar-hover) !important;
+}
+
+/* Child rows align with their section's *label*, not its icon: a section row
+   is 16px padding + a 16px icon + a 12px gap, so children need 44px to line up.
+   Mintlify's default 28px leaves them hanging 16px to the left. The right
+   margin keeps the hover pill inset rather than full-bleed. */
+#sidebar-content ul:not(.sidebar-group) > li > a,
+#sidebar-content ul:not(.sidebar-group) > li > button {
+  padding-left: 0.5rem !important;
+  margin-left: 2.25rem;
+  margin-right: 0.25rem;
+  width: calc(100% - 2.5rem) !important;
+}
+
+/* Third level: the whole row steps right by one indent, so its own guide line
+   clears the parent's instead of sitting on top of it. */
+#sidebar-content ul:not(.sidebar-group) ul:not(.sidebar-group) > li > a,
+#sidebar-content ul:not(.sidebar-group) ul:not(.sidebar-group) > li > button {
+  padding-left: 0.5rem !important;
+  margin-left: 3.75rem;
+  width: calc(100% - 4rem) !important;
+}
+
+/* Guide line down the open section's children, sitting under the section
+   icon. The list is a plain <ul> with no border of its own.
+
+   Every open group draws its own, each stepped right by one indent so the
+   levels read as a nested tree rather than overlapping into one stroke. */
+#sidebar-content li[data-group-tag] > ul {
+  position: relative;
+}
+
+#sidebar-content li[data-group-tag] > ul::before {
+  content: "";
+  position: absolute;
+  left: 1.75rem;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background-color: var(--spree-guide);
+}
+
+/* A nested group's line steps right by the same indent as its rows. */
+#sidebar-content li[data-group-tag] li[data-group-tag] > ul::before {
+  left: 3.25rem;
+}
+
+/* Section icons are mask-based SVGs tinted with a background utility (the
+   chevrons are stroke-based and must not be touched, hence the class match).
+   Tie them to the label colour so a row reads as one unit. */
+#sidebar-content button svg[class*="bg-gray-"],
+#sidebar-content a svg[class*="bg-gray-"] {
+  background-color: currentColor !important;
+  opacity: 0.6;
+}
+
+#sidebar-content button:hover svg[class*="bg-gray-"],
+#sidebar-content a:hover svg[class*="bg-gray-"],
+#sidebar-content li[data-group-tag][data-active="true"] > button svg[class*="bg-gray-"] {
+  opacity: 1;
+}
+
+/* The almond theme floats a rounded white panel on the shell; its default
+   border is a cool grey against our warm sand, which is what makes the header
+   and sidebar look like a different colour from the content. */
+#content-container {
+  border-color: var(--spree-border) !important;
+}
+
+.dark #content-container {
+  border-color: #3f3e3c !important;
+}
+
+/* --- Content width ------------------------------------------------------- */
+/* Mintlify caps the article at max-w-xl (576px) and then pads the wrapper by
+   another 48px, so on a wide screen most of the page is empty. Widen the
+   measure and reclaim the padding — tables, code blocks and the API reference
+   are what benefit. Capped rather than fluid so long prose stays readable. */
+
+@media (min-width: 1024px) {
+  /* The <main> pads by 64px on each side, then the inner wrapper adds another
+     48px on the left before the gap to the table of contents. */
+  #content-container {
+    padding-left: 3rem !important;
+    padding-right: 3rem !important;
+  }
+
+  #content-container > .flex.flex-row-reverse {
+    padding-left: 0 !important;
+    column-gap: 2.5rem !important;
+  }
+}
+
+/* The article itself is capped at max-w-xl (576px); a wider measure is what
+   actually gives tables, code blocks and API examples room. */
+#content-container .flex.flex-row-reverse > .max-w-xl {
+  max-width: 52rem;
+}
+
+/* --- Navbar --------------------------------------------------------------- */
+/* The header is transparent by default and only picks up a background once the
+   page scrolls — on the custom-mode homepage it never does, so the bar floats
+   over the content. Give it a solid surface and a hairline at all times. */
+
+/* The almond theme lays a 3% black wash (#almond-background-color) across the
+   viewport at -z-10. The header paints its own opaque background above it, so
+   it renders lighter than the sidebar, which sits on the washed body — the two
+   look like different colours despite computing identically. Drop the wash and
+   let the sand body show through everywhere. */
+#almond-background-color {
+  background-color: transparent !important;
+}
+
+#navbar {
+  background-color: var(--spree-sand-50);
+}
+
+.dark #navbar {
+  background-color: var(--spree-dark-sand-800);
+}
+
+/* Only the homepage needs the rule: docs pages already read as separated,
+   because the white content panel meets the sand header at its own edge.
+   Mintlify marks custom-mode pages on the header itself. */
+#navbar.is-custom {
+  border-bottom: 1px solid var(--spree-border);
+}
+
+.dark #navbar.is-custom {
+  border-bottom-color: #3f3e3c;
+}
+
+/* Mintlify fades its own backdrop layer in on scroll; with a solid bar behind
+   it that would double up, so keep it out of the way. */
+#navbar > .absolute.inset-0 {
+  display: none;
+}
+
+/* --- Homepage bands ------------------------------------------------------- */
+/* The homepage alternates white bands on the sand body. These are plain CSS
+   classes because utility classes passed through an MDX component prop are NOT
+   compiled by Mintlify (literal JSX classes are) — a dark: variant sent that
+   way silently produces no CSS. */
+
+.home-band {
+  background: #ffffff;
+}
+
+.dark .home-band {
+  background: var(--spree-dark-sand-700);
+}
+
+.home-band-end {
+  border-bottom: 1px solid rgb(233 229 221 / 0.8);
+}
+
+.dark .home-band-end {
+  border-bottom-color: #3f3e3c;
+}
+
+/* --- Accents ------------------------------------------------------------- */
+
+/* Body links: blue text, no rule beneath it. Mintlify styles `a.link` as dark
+   text with a 1px blue border-bottom, which reads as an underline. */
+/* Scoped to the article: the navbar tabs carry the same `.link` class and must
+   keep their own colours. */
+#content-container .link {
+  border-bottom: 0 !important;
+  color: var(--spree-accent) !important;
+  text-decoration: none !important;
+}
+
+#content-container .link:hover {
+  color: var(--spree-accent-strong) !important;
+}
+
+.dark #content-container .link {
+  color: #4d9fff !important;
+}
+
+.dark #content-container .link:hover {
+  color: #7fb8ff !important;
 }

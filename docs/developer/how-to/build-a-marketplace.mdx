@@ -1,0 +1,27 @@
+---
+title: Build a Multi-Vendor Marketplace
+description: Marketplace capabilities are part of Spree 6 core — sellers, order splitting, commissions and payouts, without a separate extension.
+---
+
+<Note>
+Marketplace features are a headline capability of the Spree 6.0 release and are documented here as they land. This guide covers the open-source core.
+</Note>
+
+Spree 6 brings multi-vendor marketplace support into the open-source core: sellers as first-class records, orders split per seller at completion, a commission engine, and a payout ledger with pluggable payout providers.
+
+## What you will build
+
+- **Sellers** — onboard sellers with an operator-configured requirements checklist, review submissions, and approve them for selling.
+- **Order splitting** — a customer checks out once; completion produces per-seller orders grouped under one purchase.
+- **Commissions** — the platform's cut computed per seller, with EU commission taxation handled.
+- **Payouts** — a transfer and payout ledger, with Stripe Connect payouts (Express onboarding, on-fulfillment transfers) shipping in the open-source monorepo.
+- **Seller operations** — sellers work through their own dedicated API surface, scoped so a seller only ever sees their own trade.
+
+## Outline
+
+1. Enable marketplace capabilities and configure the store
+2. Define seller onboarding requirements
+3. Invite and approve sellers
+4. Assign catalog to sellers and take a multi-seller order through checkout
+5. Configure commissions
+6. Connect Stripe for payouts

@@ -270,24 +270,12 @@ module Spree
     has_many :mappings    # Field mappings
     has_many :rows        # CSV rows to process
 
-    # State machine
-    state_machine initial: :pending do
-      event :start_mapping do
-        transition to: :mapping
-      end
-      event :complete_mapping do
-        transition from: :mapping, to: :completed_mapping
-      end
-      event :start_processing do
-        transition from: :completed_mapping, to: :processing
-      end
-      event :complete do
-        transition from: :processing, to: :completed
-      end
-      event :fail do
-        transition to: :failed
-      end
-    end
+    # Statuses. Each move between them is a workflow — Spree::Imports::
+    # StartMapping, CompleteMapping, StartProcessing, Complete and
+    # RetryFailedRows — so every step of the pipeline can be hooked.
+    include Spree::HasStatus
+    has_status :pending, :mapping, :completed_mapping, :processing, :completed, :failed,
+               default: :pending
 
     # Key methods
     def import_schema        # Returns schema class instance
