@@ -196,6 +196,85 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
     end
   end
 
+  path '/api/v3/store/company_addresses/{id}' do
+    parameter name: :id, in: :path, type: :string, required: true, description: 'Address book entry ID (caddr_...)'
+
+    patch 'Update an address book entry' do
+      tags 'Companies'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Renames a site or moves the default ship-to or bill-to flag to it. Only one entry per node holds each default.'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: 'Authorization', in: :header, type: :string, required: true
+      parameter name: :body, in: :body, schema: {
+        type: :object,
+        properties: {
+          label: { type: :string, example: 'Northern Warehouse' },
+          default_shipping: { type: :boolean, example: true }
+        }
+      }
+
+      response '200', 'address book entry updated' do
+        let!(:membership) { create(:company_membership, company: company, customer: user) }
+        let!(:entry) { create(:company_address, company: company, label: 'Headquarters') }
+        let(:id) { entry.prefixed_id }
+        let(:body) { { label: 'Northern Warehouse', default_shipping: true } }
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { "Bearer #{jwt_token}" }
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['label']).to eq('Northern Warehouse')
+        end
+      end
+    end
+
+    delete 'Remove an address book entry' do
+      tags 'Companies'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Takes the site out of the address book. Orders already placed to it keep their own copy of the address.'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: 'Authorization', in: :header, type: :string, required: true
+
+      response '204', 'address book entry removed' do
+        let!(:membership) { create(:company_membership, company: company, customer: user) }
+        let!(:entry) { create(:company_address, company: company, label: 'Headquarters') }
+        let(:id) { entry.prefixed_id }
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { "Bearer #{jwt_token}" }
+
+        run_test!
+      end
+    end
+  end
+
+  path '/api/v3/store/company_invitations/{id}' do
+    parameter name: :id, in: :path, type: :string, required: true, description: 'Invitation ID (cinv_...)'
+
+    delete 'Revoke an invitation' do
+      tags 'Companies'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Withdraws a pending invitation, spending its token. Any member with standing over the node may revoke.'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: 'Authorization', in: :header, type: :string, required: true
+
+      response '204', 'invitation revoked' do
+        let!(:membership) { create(:company_membership, company: company, customer: user) }
+        let!(:invitation) { create(:company_invitation, company: company, email: 'pending@acme.test') }
+        let(:id) { invitation.prefixed_id }
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { "Bearer #{jwt_token}" }
+
+        run_test!
+      end
+    end
+  end
+
   path '/api/v3/store/companies/{company_id}/orders' do
     parameter name: :company_id, in: :path, type: :string, required: true, description: 'Company node ID (comp_...)'
 
