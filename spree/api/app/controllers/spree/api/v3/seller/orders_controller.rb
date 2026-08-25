@@ -56,12 +56,13 @@ module Spree
             %w[index show]
           end
 
-          # A checkout still in flight is a draft carrying its cart; it is not
-          # yet anybody's order and must not appear in a seller's list.
+          # Only orders that were actually placed. A draft is either a
+          # checkout still in flight or the operator's own working document —
+          # neither is something this seller has sold, and the operator's is
+          # not theirs to read or cancel. The admin branch admits the
+          # cart-less ones deliberately; this branch must not.
           def scope
-            base = super
-
-            base.where(cart_id: nil).or(base.where.not(status: 'draft'))
+            super.where.not(status: 'draft')
           end
 
           def collection_includes

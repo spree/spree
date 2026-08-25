@@ -45,6 +45,33 @@ RSpec.describe Spree::Api::V3::Seller::OrdersController, type: :controller do
     end
   end
 
+  # A backoffice draft has no cart, so it passes the in-flight filter — but it
+  # is the operator's working document, not something the seller has sold.
+  describe 'operator drafts' do
+    let!(:backoffice_draft) do
+      create(:order, store: store, seller: seller, status: 'draft', cart: nil)
+    end
+
+    it 'are left out of the list' do
+      get :index, as: :json
+
+      expect(json_response['data'].map { |row| row['id'] }).
+        not_to include(backoffice_draft.prefixed_id)
+    end
+
+    it 'cannot be read directly' do
+      get :show, params: { id: backoffice_draft.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it 'cannot be canceled' do
+      patch :cancel, params: { id: backoffice_draft.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
   describe 'GET #show' do
     it 'renders what the seller needs to pack the parcel' do
       get :show, params: { id: mine.prefixed_id }, as: :json

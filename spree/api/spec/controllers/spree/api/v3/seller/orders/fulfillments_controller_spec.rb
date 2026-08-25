@@ -50,6 +50,28 @@ RSpec.describe Spree::Api::V3::Seller::Orders::FulfillmentsController, type: :co
       expect(fulfillment.tracking).to eq('TRACK-1')
     end
 
+    # A line the parcel does not hold cannot be shipped out of it, even when
+    # another parcel on the same order does hold it — the request is checked
+    # against this fulfillment alone, before anything is split or shipped.
+    it 'refuses a line this parcel does not hold' do
+      other = order.fulfillments.create!(stock_location: fulfillment.stock_location)
+      moved = fulfillment.fulfillment_items.first
+      moved.update!(fulfillment: other)
+
+      patch :fulfill,
+            params: {
+              order_id: order.prefixed_id,
+              id: fulfillment.prefixed_id,
+              items: [{ item_id: moved.line_item.prefixed_id, quantity: moved.quantity }]
+            },
+            as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(fulfillment.reload).not_to be_fulfilled
+      expect(other.reload).not_to be_fulfilled
+      expect(moved.reload.fulfillment_id).to eq(other.id)
+    end
+
     # Shipping through another seller's order must be unreachable whatever ids
     # are sent, since the fulfillment is only ever found through the order.
     it "404s on a fulfillment reached through someone else's order" do

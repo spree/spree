@@ -1,6 +1,5 @@
 import {
   AddressBlock,
-  Badge,
   Button,
   Card,
   CardAction,
@@ -30,7 +29,12 @@ export function OrderPage() {
   const confirm = useConfirm()
 
   const orderKey = ['seller', sellerId, 'order', orderId]
-  const { data: order, isLoading } = useQuery({
+  const {
+    data: order,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: orderKey,
     queryFn: () => sellerClient().orders.get(orderId),
   })
@@ -50,6 +54,18 @@ export function OrderPage() {
   })
 
   if (isLoading) return <CenteredMessage>{t('common.loading')}</CenteredMessage>
+  // A request that failed is not the same as an order that is not there —
+  // reporting the latter sends the seller looking for the wrong cause.
+  if (isError) {
+    return (
+      <CenteredMessage>
+        {t('common.error')}{' '}
+        <Button variant="outline" onClick={() => refetch()}>
+          {t('common.retry')}
+        </Button>
+      </CenteredMessage>
+    )
+  }
   if (!order) return <CenteredMessage>{t('orders.not_found')}</CenteredMessage>
 
   async function handleCancel() {
@@ -152,14 +168,18 @@ function FulfillmentCard({ orderId, fulfillment }: { orderId: string; fulfillmen
       }),
   })
 
-  const shipped = fulfillment.status !== 'unfulfilled'
+  // A canceled parcel never went out and never will, so it is neither
+  // shipped nor still fulfillable. Reading that off "not unfulfilled"
+  // badged it as a success and offered a tracking number for a parcel
+  // nobody is going to send.
+  const fulfillable = fulfillment.status === 'unfulfilled'
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>{fulfillment.number}</CardTitle>
         <CardAction>
-          <Badge variant={shipped ? 'success' : 'secondary'}>{fulfillment.status}</Badge>
+          <StatusBadge status={fulfillment.status} />
         </CardAction>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
@@ -176,7 +196,7 @@ function FulfillmentCard({ orderId, fulfillment }: { orderId: string; fulfillmen
           </div>
         ))}
 
-        {shipped ? (
+        {!fulfillable ? (
           fulfillment.tracking && (
             <p className="text-sm">{t('orders.tracking', { number: fulfillment.tracking })}</p>
           )
