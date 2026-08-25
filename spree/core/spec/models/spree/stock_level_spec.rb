@@ -488,6 +488,22 @@ describe Spree::StockLevel, type: :model do
       context 'released concurrently', if: ENV['DB'] == 'postgres' do
         self.use_transactional_tests = false
 
+        # Everything this context creates is COMMITTED, so whatever the after
+        # hook misses stays in the worker database for every later example in
+        # the run. The factory chain quietly commits side rows (a tax
+        # category, a delivery profile), and a leftover tax category is
+        # poison: the product factory takes TaxCategory.first, so every later
+        # tax example binds its rate to one category and its product to the
+        # other — included_tax_total 0, in whatever file happens to run next.
+        # Snapshot the side tables and delete exactly what this example added.
+        before do
+          @preexisting = {
+            Spree::TaxCategory => Spree::TaxCategory.ids,
+            Spree::DeliveryProfile => Spree::DeliveryProfile.ids,
+            Spree::OptionType => Spree::OptionType.ids
+          }
+        end
+
         let!(:concurrent_level) { create(:stock_level, adjust_count_on_hand: false) }
 
         after do
@@ -496,6 +512,7 @@ describe Spree::StockLevel, type: :model do
           Spree::StockMovement.where(stock_level_id: concurrent_level.id).delete_all
           location.really_destroy!
           product.really_destroy!
+          @preexisting.each { |model, ids| model.where.not(id: ids).delete_all }
         end
 
         it 'never withdraws more promise than the level holds' do
