@@ -20,7 +20,8 @@
     "error": "Something went wrong.",
     "loading": "Loading…",
     "retry": "Try again",
-    "save": "Save"
+    "save": "Save",
+    "saving": "Saving…"
   },
   "home": {
     "products": "Products",
@@ -48,6 +49,8 @@
   "nav": {
     "home": "Home",
     "onboarding": "Setup",
+    "orders": "Orders",
+    "products": "Products",
     "profile": "Profile",
     "settings": "Settings",
     "sign_out": "Sign out",
@@ -83,6 +86,61 @@
     "terms_accepted": "Terms accepted",
     "title": "Setup",
     "under_review": "The marketplace is reviewing your application. We will email you when there is news."
+  },
+  "orders": {
+    "cancel": "Cancel order",
+    "cancel_confirm": {
+      "message": "The customer is refunded and any stock goes back on the shelf. This cannot be undone.",
+      "title": "Cancel this order?"
+    },
+    "canceled": "Order canceled",
+    "columns": {
+      "fulfillment": "Fulfillment",
+      "number": "Order",
+      "payment": "Payment",
+      "placed": "Placed",
+      "total": "Total"
+    },
+    "empty": "No orders yet. They appear here as customers buy from you.",
+    "fulfill": "Mark as shipped",
+    "fulfilled": "Marked as shipped",
+    "fulfilling": "Marking…",
+    "items": "Items",
+    "not_found": "That order could not be found.",
+    "search_placeholder": "Search by order number…",
+    "shipping_address": "Ships to",
+    "ships_from": "Ships from {{name}}",
+    "title": "Orders",
+    "tracking": "Tracking {{number}}",
+    "tracking_label": "Tracking number",
+    "tracking_placeholder": "Optional"
+  },
+  "products": {
+    "add": "Add product",
+    "columns": {
+      "name": "Product",
+      "price": "Price",
+      "status": "Status"
+    },
+    "details": "Details",
+    "empty": "No products yet. Add one to start selling.",
+    "fields": {
+      "description": "Description",
+      "name": "Name",
+      "price": "Price",
+      "price_placeholder": "Leave blank to keep the current price",
+      "status": "Status"
+    },
+    "new_title": "New product",
+    "not_found": "That product could not be found.",
+    "saved": "Product saved",
+    "search_placeholder": "Search by name…",
+    "statuses": {
+      "active": "Active",
+      "archived": "Archived",
+      "draft": "Draft"
+    },
+    "title": "Products"
   },
   "profile": {
     "about": "About",

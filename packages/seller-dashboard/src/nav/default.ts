@@ -1,5 +1,12 @@
 import { hasVisibleSettingsEntries, i18n, nav } from '@spree/dashboard-core'
-import { ClipboardCheckIcon, HomeIcon, SettingsIcon, StoreIcon } from 'lucide-react'
+import {
+  ClipboardCheckIcon,
+  HomeIcon,
+  PackageIcon,
+  SettingsIcon,
+  StoreIcon,
+  TagIcon,
+} from 'lucide-react'
 import { OnboardingNavBadge } from '../components/onboarding-nav-badge'
 
 // The panel's built-in sidebar. Registered into the same registry a plugin
@@ -33,6 +40,24 @@ nav.add({
   position: 100,
   subject: 'seller_profile',
   badge: OnboardingNavBadge,
+})
+
+nav.add({
+  key: 'products',
+  label: i18n.t('nav.products'),
+  path: '/products',
+  icon: TagIcon,
+  position: 110,
+  subject: 'Spree::Product',
+})
+
+nav.add({
+  key: 'orders',
+  label: i18n.t('nav.orders'),
+  path: '/orders',
+  icon: PackageIcon,
+  position: 120,
+  subject: 'Spree::Order',
 })
 
 nav.add({

@@ -19,8 +19,13 @@ import { Route as SettingsRouteImport } from './routes/_authenticated/$sellerId/
 import { Route as ProfileRouteImport } from './routes/_authenticated/$sellerId/profile'
 import { Route as OnboardingRouteImport } from './routes/_authenticated/$sellerId/onboarding'
 import { Route as SettingsIndexRouteImport } from './routes/_authenticated/$sellerId/settings/index'
+import { Route as ProductsIndexRouteImport } from './routes/_authenticated/$sellerId/products/index'
+import { Route as OrdersIndexRouteImport } from './routes/_authenticated/$sellerId/orders/index'
 import { Route as SettingsTeamRouteImport } from './routes/_authenticated/$sellerId/settings/team'
 import { Route as SettingsStockLocationsRouteImport } from './routes/_authenticated/$sellerId/settings/stock-locations'
+import { Route as ProductsNewRouteImport } from './routes/_authenticated/$sellerId/products/new'
+import { Route as ProductsProductIdRouteImport } from './routes/_authenticated/$sellerId/products/$productId'
+import { Route as OrdersOrderIdRouteImport } from './routes/_authenticated/$sellerId/orders/$orderId'
 
 const loginRoute = loginRouteImport.update({
   id: '/login',
@@ -72,6 +77,16 @@ const SettingsIndexRoute = SettingsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => SettingsRoute,
 } as any)
+const ProductsIndexRoute = ProductsIndexRouteImport.update({
+  id: '/products/',
+  path: '/products/',
+  getParentRoute: () => authenticatedSellerIdRoute,
+} as any)
+const OrdersIndexRoute = OrdersIndexRouteImport.update({
+  id: '/orders/',
+  path: '/orders/',
+  getParentRoute: () => authenticatedSellerIdRoute,
+} as any)
 const SettingsTeamRoute = SettingsTeamRouteImport.update({
   id: '/team',
   path: '/team',
@@ -81,6 +96,21 @@ const SettingsStockLocationsRoute = SettingsStockLocationsRouteImport.update({
   id: '/stock-locations',
   path: '/stock-locations',
   getParentRoute: () => SettingsRoute,
+} as any)
+const ProductsNewRoute = ProductsNewRouteImport.update({
+  id: '/products/new',
+  path: '/products/new',
+  getParentRoute: () => authenticatedSellerIdRoute,
+} as any)
+const ProductsProductIdRoute = ProductsProductIdRouteImport.update({
+  id: '/products/$productId',
+  path: '/products/$productId',
+  getParentRoute: () => authenticatedSellerIdRoute,
+} as any)
+const OrdersOrderIdRoute = OrdersOrderIdRouteImport.update({
+  id: '/orders/$orderId',
+  path: '/orders/$orderId',
+  getParentRoute: () => authenticatedSellerIdRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -92,8 +122,13 @@ export interface FileRoutesByFullPath {
   '/$sellerId/profile': typeof ProfileRoute
   '/$sellerId/settings': typeof SettingsRouteWithChildren
   '/$sellerId/': typeof IndexRoute
+  '/$sellerId/orders/$orderId': typeof OrdersOrderIdRoute
+  '/$sellerId/products/$productId': typeof ProductsProductIdRoute
+  '/$sellerId/products/new': typeof ProductsNewRoute
   '/$sellerId/settings/stock-locations': typeof SettingsStockLocationsRoute
   '/$sellerId/settings/team': typeof SettingsTeamRoute
+  '/$sellerId/orders/': typeof OrdersIndexRoute
+  '/$sellerId/products/': typeof ProductsIndexRoute
   '/$sellerId/settings/': typeof SettingsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -103,8 +138,13 @@ export interface FileRoutesByTo {
   '/$sellerId/onboarding': typeof OnboardingRoute
   '/$sellerId/profile': typeof ProfileRoute
   '/$sellerId': typeof IndexRoute
+  '/$sellerId/orders/$orderId': typeof OrdersOrderIdRoute
+  '/$sellerId/products/$productId': typeof ProductsProductIdRoute
+  '/$sellerId/products/new': typeof ProductsNewRoute
   '/$sellerId/settings/stock-locations': typeof SettingsStockLocationsRoute
   '/$sellerId/settings/team': typeof SettingsTeamRoute
+  '/$sellerId/orders': typeof OrdersIndexRoute
+  '/$sellerId/products': typeof ProductsIndexRoute
   '/$sellerId/settings': typeof SettingsIndexRoute
 }
 export interface FileRoutesById {
@@ -118,8 +158,13 @@ export interface FileRoutesById {
   '/_authenticated/$sellerId/profile': typeof ProfileRoute
   '/_authenticated/$sellerId/settings': typeof SettingsRouteWithChildren
   '/_authenticated/$sellerId/': typeof IndexRoute
+  '/_authenticated/$sellerId/orders/$orderId': typeof OrdersOrderIdRoute
+  '/_authenticated/$sellerId/products/$productId': typeof ProductsProductIdRoute
+  '/_authenticated/$sellerId/products/new': typeof ProductsNewRoute
   '/_authenticated/$sellerId/settings/stock-locations': typeof SettingsStockLocationsRoute
   '/_authenticated/$sellerId/settings/team': typeof SettingsTeamRoute
+  '/_authenticated/$sellerId/orders/': typeof OrdersIndexRoute
+  '/_authenticated/$sellerId/products/': typeof ProductsIndexRoute
   '/_authenticated/$sellerId/settings/': typeof SettingsIndexRoute
 }
 export interface FileRouteTypes {
@@ -133,8 +178,13 @@ export interface FileRouteTypes {
     | '/$sellerId/profile'
     | '/$sellerId/settings'
     | '/$sellerId/'
+    | '/$sellerId/orders/$orderId'
+    | '/$sellerId/products/$productId'
+    | '/$sellerId/products/new'
     | '/$sellerId/settings/stock-locations'
     | '/$sellerId/settings/team'
+    | '/$sellerId/orders/'
+    | '/$sellerId/products/'
     | '/$sellerId/settings/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -144,8 +194,13 @@ export interface FileRouteTypes {
     | '/$sellerId/onboarding'
     | '/$sellerId/profile'
     | '/$sellerId'
+    | '/$sellerId/orders/$orderId'
+    | '/$sellerId/products/$productId'
+    | '/$sellerId/products/new'
     | '/$sellerId/settings/stock-locations'
     | '/$sellerId/settings/team'
+    | '/$sellerId/orders'
+    | '/$sellerId/products'
     | '/$sellerId/settings'
   id:
     | '__root__'
@@ -158,8 +213,13 @@ export interface FileRouteTypes {
     | '/_authenticated/$sellerId/profile'
     | '/_authenticated/$sellerId/settings'
     | '/_authenticated/$sellerId/'
+    | '/_authenticated/$sellerId/orders/$orderId'
+    | '/_authenticated/$sellerId/products/$productId'
+    | '/_authenticated/$sellerId/products/new'
     | '/_authenticated/$sellerId/settings/stock-locations'
     | '/_authenticated/$sellerId/settings/team'
+    | '/_authenticated/$sellerId/orders/'
+    | '/_authenticated/$sellerId/products/'
     | '/_authenticated/$sellerId/settings/'
   fileRoutesById: FileRoutesById
 }
@@ -241,6 +301,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsIndexRouteImport
       parentRoute: typeof SettingsRoute
     }
+    '/_authenticated/$sellerId/products/': {
+      id: '/_authenticated/$sellerId/products/'
+      path: '/products'
+      fullPath: '/$sellerId/products/'
+      preLoaderRoute: typeof ProductsIndexRouteImport
+      parentRoute: typeof authenticatedSellerIdRoute
+    }
+    '/_authenticated/$sellerId/orders/': {
+      id: '/_authenticated/$sellerId/orders/'
+      path: '/orders'
+      fullPath: '/$sellerId/orders/'
+      preLoaderRoute: typeof OrdersIndexRouteImport
+      parentRoute: typeof authenticatedSellerIdRoute
+    }
     '/_authenticated/$sellerId/settings/team': {
       id: '/_authenticated/$sellerId/settings/team'
       path: '/team'
@@ -254,6 +328,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/$sellerId/settings/stock-locations'
       preLoaderRoute: typeof SettingsStockLocationsRouteImport
       parentRoute: typeof SettingsRoute
+    }
+    '/_authenticated/$sellerId/products/new': {
+      id: '/_authenticated/$sellerId/products/new'
+      path: '/products/new'
+      fullPath: '/$sellerId/products/new'
+      preLoaderRoute: typeof ProductsNewRouteImport
+      parentRoute: typeof authenticatedSellerIdRoute
+    }
+    '/_authenticated/$sellerId/products/$productId': {
+      id: '/_authenticated/$sellerId/products/$productId'
+      path: '/products/$productId'
+      fullPath: '/$sellerId/products/$productId'
+      preLoaderRoute: typeof ProductsProductIdRouteImport
+      parentRoute: typeof authenticatedSellerIdRoute
+    }
+    '/_authenticated/$sellerId/orders/$orderId': {
+      id: '/_authenticated/$sellerId/orders/$orderId'
+      path: '/orders/$orderId'
+      fullPath: '/$sellerId/orders/$orderId'
+      preLoaderRoute: typeof OrdersOrderIdRouteImport
+      parentRoute: typeof authenticatedSellerIdRoute
     }
   }
 }
@@ -279,6 +374,11 @@ interface authenticatedSellerIdRouteChildren {
   ProfileRoute: typeof ProfileRoute
   SettingsRoute: typeof SettingsRouteWithChildren
   IndexRoute: typeof IndexRoute
+  OrdersOrderIdRoute: typeof OrdersOrderIdRoute
+  ProductsProductIdRoute: typeof ProductsProductIdRoute
+  ProductsNewRoute: typeof ProductsNewRoute
+  OrdersIndexRoute: typeof OrdersIndexRoute
+  ProductsIndexRoute: typeof ProductsIndexRoute
 }
 
 const authenticatedSellerIdRouteChildren: authenticatedSellerIdRouteChildren = {
@@ -286,6 +386,11 @@ const authenticatedSellerIdRouteChildren: authenticatedSellerIdRouteChildren = {
   ProfileRoute: ProfileRoute,
   SettingsRoute: SettingsRouteWithChildren,
   IndexRoute: IndexRoute,
+  OrdersOrderIdRoute: OrdersOrderIdRoute,
+  ProductsProductIdRoute: ProductsProductIdRoute,
+  ProductsNewRoute: ProductsNewRoute,
+  OrdersIndexRoute: OrdersIndexRoute,
+  ProductsIndexRoute: ProductsIndexRoute,
 }
 
 const authenticatedSellerIdRouteWithChildren =
