@@ -90,7 +90,7 @@ This is deliberate. Answering `403` for another seller's product would confirm t
 | `record_not_found` | 404 | The record does not belong to the acting seller |
 | `validation_error` | 422 | Model validation failed; see `details` |
 | `processing_error` | 422 | A workflow refused — for example, submitting for review with requirements outstanding |
-| `parameter_missing` | 400 | A required parameter was absent |
+| `parameter_missing` | 422 | A required parameter was absent — accepting an invitation without a password, for example |
 | `rate_limit_exceeded` | 429 | Too many requests to an auth endpoint |
 
 ## Handling errors with the SDK

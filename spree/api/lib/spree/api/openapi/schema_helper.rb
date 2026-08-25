@@ -97,15 +97,6 @@ module Spree
               },
               required: %w[allow actions subjects has_conditions]
             },
-            MeResponse: {
-              type: :object,
-              description: 'Current admin user profile and serialized permissions',
-              properties: {
-                user: { '$ref' => '#/components/schemas/AdminUser' },
-                permissions: { type: :array, items: { '$ref' => '#/components/schemas/PermissionRule' } }
-              },
-              required: %w[user permissions]
-            },
             ImportSchemaField: {
               type: :object,
               description: 'A canonical column of an import type, including per-store custom field columns',
@@ -220,6 +211,20 @@ module Spree
         # Get all admin schemas (Typelizer + common)
         def admin_schemas
           schemas = common_schemas
+
+          # Only here: it points at `AdminUser`, which no other branch
+          # publishes — the store has no such user and a seller's team member
+          # is `TeamMember`. Declared in the shared set it became an
+          # unresolvable `$ref` in both of their specs.
+          schemas[:MeResponse] = {
+            type: :object,
+            description: 'Current admin user profile and serialized permissions',
+            properties: {
+              user: { '$ref' => '#/components/schemas/AdminUser' },
+              permissions: { type: :array, items: { '$ref' => '#/components/schemas/PermissionRule' } }
+            },
+            required: %w[user permissions]
+          }
 
           # Override AuthResponse for admin: reference AdminUser, and drop refresh_token from the body
           # (admin sets the refresh token as an HttpOnly cookie, not in the JSON response).

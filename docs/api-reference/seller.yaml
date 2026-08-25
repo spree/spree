@@ -304,7 +304,7 @@ paths:
                   avatar_url:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 11
+                  name: Seller 13
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -376,8 +376,8 @@ paths:
                   avatar_url:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 20
-                  slug: seller-20
+                  name: Seller 22
+                  slug: seller-22
                   status: approved
                 permissions:
                 - allow: true
@@ -12212,6 +12212,16 @@ paths:
                 requirements: []
               schema:
                 "$ref": "#/components/schemas/SellerOnboardingResponse"
+        '422':
+          description: something required is still outstanding
+          content:
+            application/json:
+              example:
+                error:
+                  code: processing_error
+                  message: Requirements Accept terms is not complete
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/seller/requirements/{requirement_id}/submissions":
     parameters:
     - name: requirement_id
@@ -12374,8 +12384,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1233250
-                  slug: product-1233250
+                  name: Product 1303250
+                  slug: product-1303250
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -12612,8 +12622,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 1266710
-                slug: product-1266710
+                name: Product 1336710
+                slug: product-1336710
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -12689,7 +12699,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Hand-thrown mug, large
-                slug: product-1298212
+                slug: product-1368212
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -12799,8 +12809,8 @@ paths:
             application/json:
               example:
                 id: sel_UkLWZg9DAJ
-                name: Seller 33
-                slug: seller-33
+                name: Seller 41
+                slug: seller-41
                 about: ''
                 about_html: ''
                 logo_url:
@@ -12872,7 +12882,7 @@ paths:
               example:
                 id: sel_UkLWZg9DAJ
                 name: Acme Supplies
-                slug: seller-35
+                slug: seller-43
                 about: ''
                 about_html: ''
                 logo_url:
@@ -13620,10 +13630,10 @@ paths:
             application/json:
               example:
                 direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--c79d164b6cf3869619d5c5d61ce1ef2d5ffd7f10
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--f092f838b300123318549d358ad79ed4fe847bc3
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--acc69b8fc52bc6da57b08d7e981df3db825f5c5c
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f7c72e607e004ec1c416cf8fc1e7fa1b3e1ac63c
               schema:
                 "$ref": "#/components/schemas/DirectUploadResponse"
       requestBody:
@@ -13655,6 +13665,598 @@ paths:
                   - content_type
               required:
               - blob
+  "/api/v3/seller/orders/{order_id}/fulfillments":
+    parameters:
+    - name: order_id
+      in: path
+      description: Prefixed order ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: List fulfillments
+      tags:
+      - Fulfillments
+      security:
+      - bearer_auth: []
+      description: |
+        The parcels this seller owes on one order.
+
+        Reached through the order, which is itself fetched through the acting
+        seller — so a fulfillment on somebody else's order is unreachable
+        whatever ids are sent.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: fulfillments listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: ful_UkLWZg9DAJ
+                  number: R1001-F1
+                  status: unfulfilled
+                  tracking: U10000
+                  tracking_url:
+                  tracking_carrier:
+                  tracking_status:
+                  fulfilled_at:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  fulfillment_type: shipping
+                  delivery_method_name: UPS Ground
+                  stock_location_name: Vernie Lehner
+                  fulfillment_items:
+                  - id: fi_UkLWZg9DAJ
+                    quantity: 1
+                    line_item_id: li_UkLWZg9DAJ
+                    name: Product 1239315
+                    sku: SKU-155
+                    options_text: ''
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Fulfillment"
+                required:
+                - data
+  "/api/v3/seller/orders/{order_id}/fulfillments/{id}/fulfill":
+    parameters:
+    - name: order_id
+      in: path
+      description: Prefixed order ID
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      description: Prefixed fulfillment ID
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Fulfill (ship) a parcel
+      tags:
+      - Fulfillments
+      security:
+      - bearer_auth: []
+      description: |
+        Marks the parcel shipped.
+
+        This is the same workflow the marketplace operator runs, so the
+        customer's dispatch email, the label purchase and any extension hooks
+        happen exactly as they would had the operator shipped it.
+
+        `items` narrows the dispatch to part of what the fulfillment holds; the
+        remainder splits onto a new one. Omit it to ship the lot.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: parcel shipped
+          content:
+            application/json:
+              example:
+                id: ful_UkLWZg9DAJ
+                number: R1001-F1
+                status: fulfilled
+                tracking: TRACK-1
+                tracking_url:
+                tracking_carrier:
+                tracking_status:
+                fulfilled_at: '2026-01-15T12:00:00.000Z'
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                fulfillment_type: shipping
+                delivery_method_name: UPS Ground
+                stock_location_name: Mirta Herman
+                fulfillment_items:
+                - id: fi_UkLWZg9DAJ
+                  quantity: 1
+                  line_item_id: li_UkLWZg9DAJ
+                  name: Product 124961
+                  sku: SKU-156
+                  options_text: ''
+              schema:
+                "$ref": "#/components/schemas/Fulfillment"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tracking:
+                  type: string
+                  description: Carrier tracking number
+                tracking_carrier:
+                  type: string
+                  description: Carrier name
+                notify_customer:
+                  type: boolean
+                  description: Send the dispatch email (default true)
+                items:
+                  type: array
+                  description: Ship only these lines; the rest split onto a new fulfillment
+                  items:
+                    type: object
+                    properties:
+                      item_id:
+                        type: string
+                        description: Prefixed line item ID
+                      quantity:
+                        type: integer
+                    required:
+                    - item_id
+                    - quantity
+  "/api/v3/seller/orders":
+    get:
+      summary: List orders
+      tags:
+      - Orders
+      security:
+      - bearer_auth: []
+      description: |
+        What this seller has sold.
+
+        On a marketplace a basket spanning several sellers is split into one
+        order each, so these are the seller's own orders rather than a filtered
+        view of somebody else's — another seller's order is never reachable,
+        whatever id is sent.
+
+        Checkouts still in flight are left out: until one completes it is
+        nobody's order.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Records per page (max 100)
+        schema:
+          type: integer
+      - name: sort
+        in: query
+        required: false
+        description: Sort field; prefix with `-` for descending
+        schema:
+          type: string
+      responses:
+        '200':
+          description: orders listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: or_UkLWZg9DAJ
+                  number: R1001
+                  email: alisha.pouros@fahey.info
+                  customer_note:
+                  currency: USD
+                  total_quantity: 1
+                  status: placed
+                  fulfillment_status:
+                  payment_status:
+                  completed_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  item_total: '10.0'
+                  display_item_total: "$10.00"
+                  tax_total: '0.0'
+                  display_tax_total: "$0.00"
+                  total: '110.0'
+                  display_total: "$110.00"
+                  items:
+                  - id: li_UkLWZg9DAJ
+                    name: Product 12595
+                    options_text: ''
+                    quantity: 1
+                    currency: USD
+                    price: '10.0'
+                    display_price: "$10.00"
+                    total: '10.0'
+                    display_total: "$10.00"
+                    variant_id: variant_UkLWZg9DAJ
+                    sku: SKU-157
+                    thumbnail_url:
+                  fulfillments:
+                  - id: ful_UkLWZg9DAJ
+                    number: R1001-F1
+                    status: unfulfilled
+                    tracking: U10000
+                    tracking_url:
+                    tracking_carrier:
+                    tracking_status:
+                    fulfilled_at:
+                    created_at: '2026-01-15T12:00:00.000Z'
+                    updated_at: '2026-01-15T12:00:00.000Z'
+                    fulfillment_type: shipping
+                    delivery_method_name: UPS Ground
+                    stock_location_name: Roseline Roberts
+                    fulfillment_items:
+                    - id: fi_UkLWZg9DAJ
+                      quantity: 1
+                      line_item_id: li_UkLWZg9DAJ
+                      name: Product 12595
+                      sku: SKU-157
+                      options_text: ''
+                  shipping_address:
+                    id: addr_gbHJdmfrXB
+                    first_name: John
+                    last_name: Doe
+                    full_name: John Doe
+                    address1: 105 Lovely Street
+                    address2: Northwest
+                    postal_code: '10118'
+                    city: New York
+                    phone: 555-555-0199
+                    company: Company
+                    country_name: United States
+                    country_code: US
+                    state_text: NY
+                    state_code: NY
+                    quick_checkout: false
+                    is_default_billing: false
+                    is_default_shipping: false
+                    state_abbr: NY
+                    country_iso: US
+                    state_name: New York
+                  billing_address:
+                    id: addr_UkLWZg9DAJ
+                    first_name: John
+                    last_name: Doe
+                    full_name: John Doe
+                    address1: 104 Lovely Street
+                    address2: Northwest
+                    postal_code: '10118'
+                    city: New York
+                    phone: 555-555-0199
+                    company: Company
+                    country_name: United States
+                    country_code: US
+                    state_text: NY
+                    state_code: NY
+                    quick_checkout: false
+                    is_default_billing: false
+                    is_default_shipping: false
+                    state_abbr: NY
+                    country_iso: US
+                    state_name: New York
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Order"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+  "/api/v3/seller/orders/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: Prefixed order ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Get an order
+      tags:
+      - Orders
+      security:
+      - bearer_auth: []
+      description: |
+        One order, as the seller needs it to pack and post the parcel: the
+        lines with their SKUs, where it ships to, and a fulfillment per parcel.
+
+        How the customer paid the marketplace is deliberately absent — that is
+        between the buyer and the operator.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: order found
+          content:
+            application/json:
+              example:
+                id: or_UkLWZg9DAJ
+                number: R1001
+                email: ivette.nitzsche@feil.biz
+                customer_note:
+                currency: USD
+                total_quantity: 1
+                status: placed
+                fulfillment_status:
+                payment_status:
+                completed_at: '2026-01-15T12:00:00.000Z'
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                item_total: '10.0'
+                display_item_total: "$10.00"
+                tax_total: '0.0'
+                display_tax_total: "$0.00"
+                total: '110.0'
+                display_total: "$110.00"
+                items:
+                - id: li_UkLWZg9DAJ
+                  name: Product 1269755
+                  options_text: ''
+                  quantity: 1
+                  currency: USD
+                  price: '10.0'
+                  display_price: "$10.00"
+                  total: '10.0'
+                  display_total: "$10.00"
+                  variant_id: variant_UkLWZg9DAJ
+                  sku: SKU-158
+                  thumbnail_url:
+                fulfillments:
+                - id: ful_UkLWZg9DAJ
+                  number: R1001-F1
+                  status: unfulfilled
+                  tracking: U10000
+                  tracking_url:
+                  tracking_carrier:
+                  tracking_status:
+                  fulfilled_at:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  fulfillment_type: shipping
+                  delivery_method_name: UPS Ground
+                  stock_location_name: Woodrow Hand
+                  fulfillment_items:
+                  - id: fi_UkLWZg9DAJ
+                    quantity: 1
+                    line_item_id: li_UkLWZg9DAJ
+                    name: Product 1269755
+                    sku: SKU-158
+                    options_text: ''
+                shipping_address:
+                  id: addr_gbHJdmfrXB
+                  first_name: John
+                  last_name: Doe
+                  full_name: John Doe
+                  address1: 107 Lovely Street
+                  address2: Northwest
+                  postal_code: '10118'
+                  city: New York
+                  phone: 555-555-0199
+                  company: Company
+                  country_name: United States
+                  country_code: US
+                  state_text: NY
+                  state_code: NY
+                  quick_checkout: false
+                  is_default_billing: false
+                  is_default_shipping: false
+                  state_abbr: NY
+                  country_iso: US
+                  state_name: New York
+                billing_address:
+                  id: addr_UkLWZg9DAJ
+                  first_name: John
+                  last_name: Doe
+                  full_name: John Doe
+                  address1: 106 Lovely Street
+                  address2: Northwest
+                  postal_code: '10118'
+                  city: New York
+                  phone: 555-555-0199
+                  company: Company
+                  country_name: United States
+                  country_code: US
+                  state_text: NY
+                  state_code: NY
+                  quick_checkout: false
+                  is_default_billing: false
+                  is_default_shipping: false
+                  state_abbr: NY
+                  country_iso: US
+                  state_name: New York
+              schema:
+                "$ref": "#/components/schemas/Order"
+        '404':
+          description: another seller's order
+          content:
+            application/json:
+              example:
+                error:
+                  code: order_not_found
+                  message: Order not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/seller/orders/{id}/cancel":
+    parameters:
+    - name: id
+      in: path
+      description: Prefixed order ID
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Cancel an order
+      tags:
+      - Orders
+      security:
+      - bearer_auth: []
+      description: |
+        Withdraws from an order this seller cannot fulfil.
+
+        Restocking and any refund are the cancellation's own concern, so a
+        seller cannot cancel without the money and the stock following.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: order canceled
+          content:
+            application/json:
+              example:
+                id: or_UkLWZg9DAJ
+                number: R1001
+                email: jaqueline@koss.name
+                customer_note:
+                currency: USD
+                total_quantity: 1
+                status: canceled
+                fulfillment_status: canceled
+                payment_status: none
+                completed_at: '2026-01-15T12:00:00.000Z'
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                item_total: '10.0'
+                display_item_total: "$10.00"
+                tax_total: '0.0'
+                display_tax_total: "$0.00"
+                total: '110.0'
+                display_total: "$110.00"
+                items:
+                - id: li_UkLWZg9DAJ
+                  name: Product 1296554
+                  options_text: ''
+                  quantity: 1
+                  currency: USD
+                  price: '10.0'
+                  display_price: "$10.00"
+                  total: '10.0'
+                  display_total: "$10.00"
+                  variant_id: variant_UkLWZg9DAJ
+                  sku: SKU-161
+                  thumbnail_url:
+                fulfillments:
+                - id: ful_UkLWZg9DAJ
+                  number: R1001-F1
+                  status: canceled
+                  tracking: U10000
+                  tracking_url:
+                  tracking_carrier:
+                  tracking_status:
+                  fulfilled_at:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  fulfillment_type: shipping
+                  delivery_method_name: UPS Ground
+                  stock_location_name: Ricky Kutch
+                  fulfillment_items:
+                  - id: fi_UkLWZg9DAJ
+                    quantity: 1
+                    line_item_id: li_UkLWZg9DAJ
+                    name: Product 1296554
+                    sku: SKU-161
+                    options_text: ''
+                shipping_address:
+                  id: addr_gbHJdmfrXB
+                  first_name: John
+                  last_name: Doe
+                  full_name: John Doe
+                  address1: 113 Lovely Street
+                  address2: Northwest
+                  postal_code: '10118'
+                  city: New York
+                  phone: 555-555-0199
+                  company: Company
+                  country_name: United States
+                  country_code: US
+                  state_text: NY
+                  state_code: NY
+                  quick_checkout: false
+                  is_default_billing: false
+                  is_default_shipping: false
+                  state_abbr: NY
+                  country_iso: US
+                  state_name: New York
+                billing_address:
+                  id: addr_UkLWZg9DAJ
+                  first_name: John
+                  last_name: Doe
+                  full_name: John Doe
+                  address1: 112 Lovely Street
+                  address2: Northwest
+                  postal_code: '10118'
+                  city: New York
+                  phone: 555-555-0199
+                  company: Company
+                  country_name: United States
+                  country_code: US
+                  state_text: NY
+                  state_code: NY
+                  quick_checkout: false
+                  is_default_billing: false
+                  is_default_shipping: false
+                  state_abbr: NY
+                  country_iso: US
+                  state_name: New York
+              schema:
+                "$ref": "#/components/schemas/Order"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                notify_customer:
+                  type: boolean
+                  description: Email the customer about the cancellation
 servers:
 - url: http://{defaultHost}
   variables:
@@ -13818,19 +14420,6 @@ components:
       - actions
       - subjects
       - has_conditions
-    MeResponse:
-      type: object
-      description: Current admin user profile and serialized permissions
-      properties:
-        user:
-          "$ref": "#/components/schemas/AdminUser"
-        permissions:
-          type: array
-          items:
-            "$ref": "#/components/schemas/PermissionRule"
-      required:
-      - user
-      - permissions
     ImportSchemaField:
       type: object
       description: A canonical column of an import type, including per-store custom
@@ -14582,6 +15171,90 @@ components:
       - display_compare_at_amount
       - price_list_id
       x-typelizer: true
+    FulfillmentItem:
+      type: object
+      properties:
+        id:
+          type: string
+        quantity:
+          type: number
+        line_item_id:
+          type: string
+          nullable: true
+        name:
+          type: string
+          nullable: true
+        sku:
+          type: string
+          nullable: true
+        options_text:
+          type: string
+          nullable: true
+      required:
+      - id
+      - quantity
+      - line_item_id
+      - name
+      - sku
+      - options_text
+      x-typelizer: true
+    Fulfillment:
+      type: object
+      properties:
+        id:
+          type: string
+        number:
+          type: string
+        status:
+          type: string
+        tracking:
+          type: string
+          nullable: true
+        tracking_url:
+          type: string
+          nullable: true
+        tracking_carrier:
+          type: string
+          nullable: true
+        tracking_status:
+          type: string
+          nullable: true
+        fulfilled_at:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        fulfillment_type:
+          type: string
+          nullable: true
+        delivery_method_name:
+          type: string
+          nullable: true
+        stock_location_name:
+          type: string
+          nullable: true
+        fulfillment_items:
+          type: array
+          items:
+            "$ref": "#/components/schemas/FulfillmentItem"
+      required:
+      - id
+      - number
+      - status
+      - tracking
+      - tracking_url
+      - tracking_carrier
+      - tracking_status
+      - fulfilled_at
+      - created_at
+      - updated_at
+      - fulfillment_type
+      - delivery_method_name
+      - stock_location_name
+      - fulfillment_items
+      x-typelizer: true
     Invitation:
       type: object
       properties:
@@ -14609,6 +15282,140 @@ components:
       - accepted_at
       - status
       - acceptance_url
+      x-typelizer: true
+    OrderLineItem:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        options_text:
+          type: string
+          nullable: true
+        quantity:
+          type: number
+        currency:
+          type: string
+        price:
+          type: string
+          nullable: true
+        display_price:
+          type: string
+          nullable: true
+        total:
+          type: string
+          nullable: true
+        display_total:
+          type: string
+          nullable: true
+        variant_id:
+          type: string
+          nullable: true
+        sku:
+          type: string
+          nullable: true
+        thumbnail_url:
+          type: string
+          nullable: true
+      required:
+      - id
+      - name
+      - options_text
+      - quantity
+      - currency
+      - price
+      - display_price
+      - total
+      - display_total
+      - variant_id
+      - sku
+      - thumbnail_url
+      x-typelizer: true
+    Order:
+      type: object
+      properties:
+        id:
+          type: string
+        number:
+          type: string
+        email:
+          type: string
+          nullable: true
+        customer_note:
+          type: string
+          nullable: true
+        currency:
+          type: string
+        total_quantity:
+          type: number
+        status:
+          type: string
+        fulfillment_status:
+          type: string
+          nullable: true
+        payment_status:
+          type: string
+          nullable: true
+        completed_at:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        item_total:
+          type: string
+          nullable: true
+        display_item_total:
+          type: string
+          nullable: true
+        tax_total:
+          type: string
+          nullable: true
+        display_tax_total:
+          type: string
+          nullable: true
+        total:
+          type: string
+          nullable: true
+        display_total:
+          type: string
+          nullable: true
+        items:
+          type: array
+          items:
+            "$ref": "#/components/schemas/OrderLineItem"
+        fulfillments:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Fulfillment"
+        shipping_address:
+          "$ref": "#/components/schemas/Address"
+        billing_address:
+          "$ref": "#/components/schemas/Address"
+      required:
+      - id
+      - number
+      - email
+      - customer_note
+      - currency
+      - total_quantity
+      - status
+      - fulfillment_status
+      - payment_status
+      - completed_at
+      - created_at
+      - updated_at
+      - item_total
+      - display_item_total
+      - tax_total
+      - display_tax_total
+      - total
+      - display_total
+      - items
+      - fulfillments
+      - shipping_address
+      - billing_address
       x-typelizer: true
     Product:
       type: object

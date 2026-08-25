@@ -876,8 +876,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1576979
-                  slug: product-1576979
+                  name: Product 1646979
+                  slug: product-1646979
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1051,8 +1051,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 2029085
-                  slug: product-2029085
+                  name: Product 2099085
+                  slug: product-2099085
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1083,8 +1083,8 @@ paths:
                   original_price:
                   seller_id:
                 - id: prod_gbHJdmfrXB
-                  name: Product 2038209
-                  slug: product-2038209
+                  name: Product 2108209
+                  slug: product-2108209
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1212,8 +1212,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 2306885
-                slug: product-2306885
+                name: Product 2376885
+                slug: product-2376885
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -1562,8 +1562,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 131715
-                    slug: product-131715
+                    name: Product 138715
+                    slug: product-138715
                     options_text: ''
                     price: '10.0'
                     display_price: "$10.00"
@@ -1671,8 +1671,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 1322171
-                    slug: product-1322171
+                    name: Product 1392171
+                    slug: product-1392171
                     options_text: ''
                     price: '10.0'
                     display_price: "$10.00"
@@ -1964,7 +1964,7 @@ paths:
                 total_quantity: 0
                 warnings:
                 - code: line_item_removed
-                  message: Product 136307 was removed because it was sold out
+                  message: Product 143307 was removed because it was sold out
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                 coupon_code:
@@ -2172,8 +2172,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1373263
-                  slug: product-1373263
+                  name: Product 1443263
+                  slug: product-1443263
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -2448,8 +2448,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1398992
-                  slug: product-1398992
+                  name: Product 1468992
+                  slug: product-1468992
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -2479,7 +2479,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 136 Lovely Street
+                  address1: 150 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -2500,7 +2500,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 135 Lovely Street
+                  address1: 149 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -2652,8 +2652,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1424794
-                  slug: product-1424794
+                  name: Product 1494794
+                  slug: product-1494794
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -2786,7 +2786,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 142 Lovely Street
+                  address1: 156 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -2807,7 +2807,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 141 Lovely Street
+                  address1: 155 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -2981,8 +2981,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1684241
-                  slug: product-1684241
+                  name: Product 1754241
+                  slug: product-1754241
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3170,8 +3170,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1703461
-                  slug: product-1703461
+                  name: Product 1773461
+                  slug: product-1773461
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3347,8 +3347,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1728182
-                  slug: product-1728182
+                  name: Product 1798182
+                  slug: product-1798182
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3457,7 +3457,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 199 Lovely Street
+                  address1: 213 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3633,8 +3633,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1745702
-                  slug: product-1745702
+                  name: Product 1815702
+                  slug: product-1815702
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3877,8 +3877,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1789569
-                  slug: product-1789569
+                  name: Product 1859569
+                  slug: product-1859569
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -4025,10 +4025,10 @@ paths:
                 total_quantity: 2
                 warnings:
                 - code: delivery_unavailable
-                  message: Product 18163 cannot be delivered to the selected address
+                  message: Product 18863 cannot be delivered to the selected address
                   line_item_id: li_UkLWZg9DAJ
                 - code: delivery_unavailable
-                  message: Product 182298 cannot be delivered to the selected address
+                  message: Product 189298 cannot be delivered to the selected address
                   line_item_id: li_gbHJdmfrXB
                 coupon_code:
                 item_total: '29.99'
@@ -4082,8 +4082,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 18163
-                  slug: product-18163
+                  name: Product 18863
+                  slug: product-18863
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -4113,8 +4113,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 182298
-                  slug: product-182298
+                  name: Product 189298
+                  slug: product-189298
                   options_text: ''
                   price: '19.99'
                   display_price: "$19.99"
@@ -4333,8 +4333,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1889165
-                  slug: product-1889165
+                  name: Product 1959165
+                  slug: product-1959165
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5143,8 +5143,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2509789
-                  slug: product-2509789
+                  name: Product 2579789
+                  slug: product-2579789
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5351,8 +5351,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 252179
-                  slug: product-252179
+                  name: Product 259179
+                  slug: product-259179
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5516,8 +5516,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 192496
-                  slug: product-192496
+                  name: Product 199496
+                  slug: product-199496
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5625,7 +5625,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 255 Lovely Street
+                  address1: 269 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -5646,7 +5646,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 256 Lovely Street
+                  address1: 270 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -5751,7 +5751,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 100 Lovely Street
+                  address1: 114 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -5771,7 +5771,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 101 Lovely Street
+                  address1: 115 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -5791,7 +5791,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 102 Lovely Street
+                  address1: 116 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6047,7 +6047,7 @@ paths:
                 first_name: John
                 last_name: Doe
                 full_name: John Doe
-                address1: 114 Lovely Street
+                address1: 128 Lovely Street
                 address2: Northwest
                 postal_code: '10118'
                 city: New York
@@ -6128,7 +6128,7 @@ paths:
                 first_name: John
                 last_name: Doe
                 full_name: John Doe
-                address1: 120 Lovely Street
+                address1: 134 Lovely Street
                 address2: Northwest
                 postal_code: '10118'
                 city: Los Angeles
@@ -6616,8 +6616,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 1585270
-                    slug: product-1585270
+                    name: Product 1655270
+                    slug: product-1655270
                     options_text: ''
                     price: '10.0'
                     display_price: "$10.00"
@@ -6725,7 +6725,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 159 Lovely Street
+                    address1: 173 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -6746,7 +6746,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 160 Lovely Street
+                    address1: 174 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -6920,8 +6920,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1605633
-                  slug: product-1605633
+                  name: Product 1675633
+                  slug: product-1675633
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -7029,7 +7029,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 165 Lovely Street
+                  address1: 179 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7050,7 +7050,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 166 Lovely Street
+                  address1: 180 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7268,7 +7268,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 171 Lovely Street
+                  address1: 185 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7288,7 +7288,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 172 Lovely Street
+                  address1: 186 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7309,7 +7309,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 172 Lovely Street
+                  address1: 186 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7330,7 +7330,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 171 Lovely Street
+                  address1: 185 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7420,7 +7420,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 173 Lovely Street
+                  address1: 187 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7440,7 +7440,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 174 Lovely Street
+                  address1: 188 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7461,7 +7461,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 174 Lovely Street
+                  address1: 188 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7482,7 +7482,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 173 Lovely Street
+                  address1: 187 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -9278,7 +9278,7 @@ paths:
                 variant:
                   id: variant_gbHJdmfrXB
                   product_id: prod_gbHJdmfrXB
-                  sku: SKU-306
+                  sku: SKU-313
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -10355,19 +10355,6 @@ components:
       - actions
       - subjects
       - has_conditions
-    MeResponse:
-      type: object
-      description: Current admin user profile and serialized permissions
-      properties:
-        user:
-          "$ref": "#/components/schemas/AdminUser"
-        permissions:
-          type: array
-          items:
-            "$ref": "#/components/schemas/PermissionRule"
-      required:
-      - user
-      - permissions
     ImportSchemaField:
       type: object
       description: A canonical column of an import type, including per-store custom
