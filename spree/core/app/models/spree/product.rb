@@ -103,6 +103,8 @@ module Spree
 
     has_many :product_collections, class_name: 'Spree::ProductCollection', dependent: :destroy_async, inverse_of: :product
     has_many :collections, through: :product_collections
+    has_many :catalog_products, class_name: 'Spree::CatalogProduct', dependent: :destroy_async, inverse_of: :product
+    has_many :catalogs, through: :catalog_products
 
     # Dropped with the product so a deleted product stops excluding itself from
     # delivery methods. Destroyed inline rather than async — a product sits in

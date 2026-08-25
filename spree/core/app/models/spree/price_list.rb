@@ -14,6 +14,9 @@ module Spree
     has_many :price_rules, class_name: 'Spree::PriceRule', autosave: true, dependent: :destroy
     alias rules price_rules
     has_many :prices, class_name: 'Spree::Price', dependent: :destroy_async
+    # Catalogs that price through this list. Nullify: deleting the list turns
+    # them back into assortment-only catalogs.
+    has_many :catalogs, class_name: 'Spree::Catalog', dependent: :nullify
     has_many :variants, -> { distinct }, through: :prices, source: :variant
     has_many :products, -> { distinct }, through: :variants, source: :product
     alias price_list_products products

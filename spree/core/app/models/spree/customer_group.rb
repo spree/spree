@@ -12,6 +12,9 @@ module Spree
     belongs_to :store, class_name: 'Spree::Store', inverse_of: :customer_groups
     has_many :customer_group_users, class_name: 'Spree::CustomerGroupUser', dependent: :destroy
     has_many :users, through: :customer_group_users, source: :customer, source_type: Spree.customer_class.to_s
+    has_many :catalog_assignments, as: :assignable, class_name: 'Spree::CatalogAssignment',
+                                   dependent: :destroy
+    has_many :catalogs, through: :catalog_assignments, class_name: 'Spree::Catalog'
     # `customers` is the public name across the v3 API; declaring it as its
     # own association (rather than `alias_method`) is what lets `customer_ids=`
     # exist and what makes the `PrefixedId` auto-decoder in `assign_attributes`

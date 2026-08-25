@@ -67,6 +67,7 @@ module Spree
           def permitted_params
             params.permit(*model_additional_permitted_attributes, :name, :code, :active, :default, :preferred_order_routing_strategy,
                           :preferred_storefront_access, :preferred_guest_checkout,
+                          :default_catalog_id,
                           stock_location_ids: [])
           end
 
@@ -75,6 +76,16 @@ module Spree
           # resolution: a foreign location 404s.
           def assignable_params
             attributes = permitted_params.except(:stock_location_ids)
+
+            # An incidental lookup like any other: a foreign catalog 404s.
+            if attributes.key?(:default_catalog_id)
+              attributes[:default_catalog_id] =
+                if attributes[:default_catalog_id].present?
+                  current_store.catalogs.find_by_prefix_id!(attributes[:default_catalog_id]).id
+                else
+                  nil
+                end
+            end
 
             if params.key?(:stock_location_ids)
               attributes[:stock_locations] = Array(params[:stock_location_ids]).map do |id|

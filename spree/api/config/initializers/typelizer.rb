@@ -26,7 +26,6 @@ Rails.application.config.after_initialize do
       StockLevel StockMovement StockTransfer
       Report Export Import ImportRow
       TaxCategory Exchange ExchangeLineItem
-      Company
     ].to_set
 
     # Store SDK — no prefix, package provides namespace
