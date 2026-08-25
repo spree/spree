@@ -416,4 +416,47 @@ describe Spree::Seller do
       expect(seller.resolved_minimum_payout_amount).to eq(25)
     end
   end
+  # The seller's identity in the system that pays them — recorded where every
+  # other external identity is, rather than in a column of its own.
+  describe 'the payout account' do
+    let(:seller) { create(:seller, :approved, store: @default_store) }
+
+    it 'is stored as an external reference against the store’s provider' do
+      seller.payout_account_reference = 'acct_123'
+
+      reference = seller.external_references.reload.first
+      expect(reference.system).to eq('system')
+      expect(reference.external_id).to eq('acct_123')
+    end
+
+    it 'reads back what was written' do
+      seller.payout_account_reference = 'acct_123'
+
+      expect(seller.reload.payout_account_reference).to eq('acct_123')
+    end
+
+    it 'is nil for a seller who holds no account' do
+      expect(seller.payout_account_reference).to be_nil
+    end
+
+    it 'forgets the account when blanked' do
+      seller.payout_account_reference = 'acct_123'
+      seller.payout_account_reference = nil
+
+      expect(seller.reload.payout_account_reference).to be_nil
+    end
+
+    # What a provider webhook does: it knows the account, not the seller.
+    it 'finds the seller an account belongs to' do
+      seller.payout_account_reference = 'acct_123'
+
+      expect(Spree::Seller.with_payout_account(@default_store, 'acct_123')).to contain_exactly(seller)
+    end
+
+    it 'does not find a seller in another marketplace' do
+      seller.payout_account_reference = 'acct_123'
+
+      expect(Spree::Seller.with_payout_account(create(:store), 'acct_123')).to be_empty
+    end
+  end
 end

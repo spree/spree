@@ -23,6 +23,12 @@ module SpreeStripe
       'Stripe Connect'
     end
 
+    # Matches the Stripe gateway's own integration key, so a seller's Connect
+    # account is filed under the same name the rest of the gem uses.
+    def self.reference_system
+      'stripe'
+    end
+
     # A seller must hold a connected account before anything can be sent to
     # them, so core will not credit one who does not.
     def self.requires_payout_account?

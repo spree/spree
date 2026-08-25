@@ -18,6 +18,9 @@ module Spree
     include Spree::Metadata
     include Spree::MemoizedData
     include Spree::SanitizableRichText
+    # The seller's account with whichever provider pays them — see
+    # #payout_account_reference.
+    include Spree::HasExternalReferences
 
     MEMOIZED_METHODS = %w[onboarding_requirements onboarding_progress products_count returns_location].freeze
 
@@ -230,6 +233,36 @@ module Spree
       earned - settled
     end
 
+    # The seller's account with whichever provider pays them — a Stripe Connect
+    # `acct_…`, or whatever a SEPA or PayPal provider issues.
+    #
+    # Kept as an external reference rather than a column because that is
+    # exactly what it is: this seller's identity in somebody else's system.
+    # Keying it by the provider means a marketplace that migrates keeps the old
+    # account on the record instead of overwriting it, and the reverse lookup a
+    # webhook needs — "which seller is acct_123?" — is a uniquely indexed read
+    # rather than a scan.
+    #
+    # @return [String, nil]
+    def payout_account_reference
+      external_id_for(payout_reference_system)
+    end
+
+    # @param account_reference [String, nil] blank forgets the account
+    # @return [void]
+    def payout_account_reference=(account_reference)
+      set_external_id(payout_reference_system, account_reference)
+    end
+
+    # Sellers holding an account with the store's payout provider, for the
+    # reverse lookup a provider webhook does.
+    #
+    # @param account_reference [String]
+    # @return [ActiveRecord::Relation]
+    def self.with_payout_account(store, account_reference)
+      store.sellers.with_external_id(store.payout_provider_class.reference_system, account_reference)
+    end
+
     # Whether a provider says this seller may be sent money yet.
     #
     # A marketplace settling offline never asks, so a seller with no account
@@ -241,6 +274,15 @@ module Spree
       return true unless store.payout_provider_class.requires_payout_account?
 
       payouts_enabled_at.present?
+    end
+
+    # Which system a payout account reference belongs to. The provider's own
+    # key, so a marketplace that changes provider does not read the old
+    # account as if it were the new one.
+    #
+    # @return [String]
+    def payout_reference_system
+      store.payout_provider_class.reference_system
     end
 
     # What this seller's settlement schedule is, falling back to the store's.

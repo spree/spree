@@ -41,6 +41,19 @@ module Spree
         name
       end
 
+      # The key a seller's account with this provider is recorded under, as a
+      # {Spree::ExternalReference} system.
+      #
+      # Underscored rather than the class name, because a system key is a
+      # lowercase identifier by contract — and where a provider gem also ships
+      # a {Spree::Integration}, the convention is that the two agree, so a
+      # connector, its references and its settings page name the same thing.
+      #
+      # @return [String]
+      def self.reference_system
+        name.demodulize.underscore
+      end
+
       # Whether this provider can be selected for a store — an external one
       # overrides it to require connected credentials.
       #

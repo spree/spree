@@ -116,7 +116,7 @@ module SpreeStripe
       # must stop crediting them rather than promise money nothing can send.
       def handle_account_updated(event)
         account = event.data.object
-        seller = store.sellers.find_by(payout_account_reference: account.id)
+        seller = seller_for_account(account.id)
         return if seller.nil?
 
         became_payable = account.payouts_enabled && seller.payouts_enabled_at.nil?
@@ -136,7 +136,7 @@ module SpreeStripe
       # next one still owed — marking an unrelated payout paid.
       def handle_payout(event, status)
         object = event.data.object
-        seller = store.sellers.find_by(payout_account_reference: event.account)
+        seller = seller_for_account(event.account)
         return if seller.nil?
 
         payout = find_payout(seller, object)
@@ -147,6 +147,14 @@ module SpreeStripe
         else
           payout.fail!
         end
+      end
+
+      # Which seller Stripe is talking about. A uniquely indexed read of the
+      # account reference, scoped to this store's own sellers.
+      def seller_for_account(account_id)
+        return if account_id.blank?
+
+        Spree::Seller.with_payout_account(store, account_id).first
       end
 
       def find_payout(seller, object)
