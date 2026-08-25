@@ -1623,7 +1623,14 @@
               "label": "Użyj danych Spree"
             }
           },
-          "description": "Spree podaje ceny i stany magazynowe z własnych danych. Podłącz system ERP, PIM lub magazynowy, aby to on udzielał odpowiedzi."
+          "pricing": {
+            "title": "Źródło cen",
+            "description": "Podłącz system ERP lub cen kontraktowych, aby odpowiadał na ceny zamiast katalogu Spree."
+          },
+          "inventory": {
+            "title": "Źródło stanów magazynowych",
+            "description": "Podłącz system magazynowy lub ERP, aby odpowiadał na stany zamiast rekordów Spree."
+          }
         }
       },
       "store_credit": {
@@ -3186,8 +3193,7 @@
           "tab_payments": "Płatności",
           "tab_standards": "Standardy i formaty",
           "tab_storefront_access": "Dostęp do sklepu",
-          "title": "Ustawienia sklepu",
-          "tab_data_sources": "Źródła cen i stanów magazynowych"
+          "title": "Ustawienia sklepu"
         },
         "tax_categories": {
           "add_sheet_title": "Dodaj kategorię podatkową",

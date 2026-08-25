@@ -1607,7 +1607,14 @@
               "label": "Sprees eigene Zahlen verwenden"
             }
           },
-          "description": "Spree liefert Preise und Bestände aus den eigenen Datensätzen. Verbinden Sie ein ERP-, PIM- oder Lagersystem, damit dieses stattdessen antwortet."
+          "pricing": {
+            "title": "Preisquelle",
+            "description": "Verbinden Sie ein ERP- oder Vertragspreissystem, damit es statt des Spree-Katalogs die Preise beantwortet."
+          },
+          "inventory": {
+            "title": "Bestandsquelle",
+            "description": "Verbinden Sie ein Lager- oder ERP-System, damit es statt der Spree-Bestände den Lagerbestand beantwortet."
+          }
         }
       },
       "store_credit": {
@@ -3142,8 +3149,7 @@
           "tab_payments": "Zahlungen",
           "tab_standards": "Standards und Formate",
           "tab_storefront_access": "Storefront-Zugriff",
-          "title": "Shop-Einstellungen",
-          "tab_data_sources": "Preis- und Bestandsquellen"
+          "title": "Shop-Einstellungen"
         },
         "tax_categories": {
           "add_sheet_title": "Steuerkategorie hinzufügen",

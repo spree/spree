@@ -71,10 +71,8 @@ export const Route = createFileRoute('/_authenticated/$storeId/settings/store')(
   component: StoreSettingsPage,
 })
 
-const PRICING_PROVIDER_DOCS_URL =
-  'https://spreecommerce.org/docs/v6/developer/how-to/custom-pricing-provider'
-const INVENTORY_PROVIDER_DOCS_URL =
-  'https://spreecommerce.org/docs/v6/developer/how-to/custom-inventory-provider'
+const PRICING_PROVIDER_DOCS_URL = 'https://spreecommerce.org/docs/developer/providers/pim'
+const INVENTORY_PROVIDER_DOCS_URL = 'https://spreecommerce.org/docs/developer/providers/erp'
 
 function DocsLink({ href, children }: { href: string; children: ReactNode }) {
   return (
@@ -204,6 +202,12 @@ function StoreSettingsForm({ store }: { store: Store }) {
   // Once the counter has issued its first number the starting value is inert,
   // so the field says so rather than accepting a value that does nothing.
   const sequenceStarted = store.order_number_sequence_started ?? false
+  // The failure-policy selects only render for a provider that can fail —
+  // Spree's own records cannot, so 'internal' has no policy to choose.
+  const externalPricingSelected = form.watch('preferred_pricing_provider') !== INTERNAL_PROVIDER_KEY
+  const externalInventorySelected =
+    form.watch('preferred_inventory_provider') !== INTERNAL_PROVIDER_KEY
+
   const numberFormat = form.watch('preferred_document_number_format')
   const numberPrefix = form.watch('preferred_order_number_prefix')
   const numberSuffix = form.watch('preferred_order_number_suffix')
@@ -719,9 +723,9 @@ function StoreSettingsForm({ store }: { store: Store }) {
               </Card>
               <Card>
                 <CardHeader>
-                  <CardTitle>{t('admin.pages.settings.store.tab_data_sources')}</CardTitle>
+                  <CardTitle>{t('admin.fields.store.data_sources.pricing.title')}</CardTitle>
                   <CardDescription>
-                    {t('admin.fields.store.data_sources.description')}
+                    {t('admin.fields.store.data_sources.pricing.description')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -734,14 +738,36 @@ function StoreSettingsForm({ store }: { store: Store }) {
                       control={form.control}
                       options={providerOptions(dataSources?.pricing_providers)}
                     />
-                    <SelectField
-                      id="store-pricing-failure-policy"
-                      label={t('admin.fields.store.data_sources.pricing_failure_policy.label')}
-                      help={t('admin.fields.store.data_sources.pricing_failure_policy.help')}
-                      name="preferred_pricing_provider_failure_policy"
-                      control={form.control}
-                      options={failurePolicyOptions}
-                    />
+                    {/* Spree's own catalog cannot fail to answer, so there is
+                        no failure to have a policy about until an external
+                        provider is selected. */}
+                    {externalPricingSelected && (
+                      <SelectField
+                        id="store-pricing-failure-policy"
+                        label={t('admin.fields.store.data_sources.pricing_failure_policy.label')}
+                        help={t('admin.fields.store.data_sources.pricing_failure_policy.help')}
+                        name="preferred_pricing_provider_failure_policy"
+                        control={form.control}
+                        options={failurePolicyOptions}
+                      />
+                    )}
+                  </FieldGroup>
+                  <div className="mt-6 border-t pt-4">
+                    <DocsLink href={PRICING_PROVIDER_DOCS_URL}>
+                      {t('admin.fields.store.data_sources.pricing_provider.docs_link')}
+                    </DocsLink>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('admin.fields.store.data_sources.inventory.title')}</CardTitle>
+                  <CardDescription>
+                    {t('admin.fields.store.data_sources.inventory.description')}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <FieldGroup>
                     <SelectField
                       id="store-inventory-provider"
                       label={t('admin.fields.store.data_sources.inventory_provider.label')}
@@ -750,19 +776,18 @@ function StoreSettingsForm({ store }: { store: Store }) {
                       control={form.control}
                       options={providerOptions(dataSources?.inventory_providers)}
                     />
-                    <SelectField
-                      id="store-inventory-failure-policy"
-                      label={t('admin.fields.store.data_sources.inventory_failure_policy.label')}
-                      help={t('admin.fields.store.data_sources.inventory_failure_policy.help')}
-                      name="preferred_inventory_provider_failure_policy"
-                      control={form.control}
-                      options={failurePolicyOptions}
-                    />
+                    {externalInventorySelected && (
+                      <SelectField
+                        id="store-inventory-failure-policy"
+                        label={t('admin.fields.store.data_sources.inventory_failure_policy.label')}
+                        help={t('admin.fields.store.data_sources.inventory_failure_policy.help')}
+                        name="preferred_inventory_provider_failure_policy"
+                        control={form.control}
+                        options={failurePolicyOptions}
+                      />
+                    )}
                   </FieldGroup>
-                  <div className="mt-6 flex flex-col gap-2 border-t pt-4 sm:flex-row sm:gap-6">
-                    <DocsLink href={PRICING_PROVIDER_DOCS_URL}>
-                      {t('admin.fields.store.data_sources.pricing_provider.docs_link')}
-                    </DocsLink>
+                  <div className="mt-6 border-t pt-4">
                     <DocsLink href={INVENTORY_PROVIDER_DOCS_URL}>
                       {t('admin.fields.store.data_sources.inventory_provider.docs_link')}
                     </DocsLink>

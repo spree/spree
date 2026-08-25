@@ -1607,7 +1607,14 @@
               "label": "Utiliser les chiffres de Spree"
             }
           },
-          "description": "Spree fournit les prix et les stocks à partir de ses propres enregistrements. Connectez un ERP, un PIM ou un système d'entrepôt pour qu'il réponde à la place."
+          "pricing": {
+            "title": "Source des prix",
+            "description": "Connectez un ERP ou un système de prix contractuels pour répondre aux prix à la place du catalogue Spree."
+          },
+          "inventory": {
+            "title": "Source des stocks",
+            "description": "Connectez un système d'entrepôt ou un ERP pour répondre aux stocks à la place des enregistrements de Spree."
+          }
         }
       },
       "store_credit": {
@@ -3142,8 +3149,7 @@
           "tab_payments": "Paiements",
           "tab_standards": "Normes et formats",
           "tab_storefront_access": "Accès à la vitrine",
-          "title": "Paramètres de la boutique",
-          "tab_data_sources": "Sources de prix et de stock"
+          "title": "Paramètres de la boutique"
         },
         "tax_categories": {
           "add_sheet_title": "Ajouter une catégorie de taxe",

@@ -1607,7 +1607,14 @@
               "label": "Use Spree's own figures"
             }
           },
-          "description": "Spree serves prices and stock from its own records. Connect an ERP, PIM or warehouse system to have it answer instead."
+          "pricing": {
+            "title": "Pricing source",
+            "description": "Connect an ERP or contract-pricing system to answer prices instead of Spree's catalog."
+          },
+          "inventory": {
+            "title": "Inventory source",
+            "description": "Connect a warehouse or ERP system to answer stock instead of Spree's own records."
+          }
         }
       },
       "store_credit": {
@@ -3142,8 +3149,7 @@
           "tab_payments": "Payments",
           "tab_standards": "Standards and formats",
           "tab_storefront_access": "Storefront access",
-          "title": "Store settings",
-          "tab_data_sources": "Pricing and inventory sources"
+          "title": "Store settings"
         },
         "tax_categories": {
           "add_sheet_title": "Add tax category",

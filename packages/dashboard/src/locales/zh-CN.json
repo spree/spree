@@ -1604,7 +1604,14 @@
               "label": "使用 Spree 自己的数据"
             }
           },
-          "description": "Spree 使用自身记录提供价格和库存。连接 ERP、PIM 或仓储系统后，可改由其提供数据。"
+          "pricing": {
+            "title": "价格来源",
+            "description": "连接 ERP 或合同定价系统，由其代替 Spree 目录来提供价格。"
+          },
+          "inventory": {
+            "title": "库存来源",
+            "description": "连接仓储或 ERP 系统，由其代替 Spree 自身记录来提供库存。"
+          }
         }
       },
       "store_credit": {
@@ -3136,8 +3143,7 @@
           "tab_payments": "支付",
           "tab_standards": "标准与格式",
           "tab_storefront_access": "店铺访问权限",
-          "title": "店铺设置",
-          "tab_data_sources": "价格与库存来源"
+          "title": "店铺设置"
         },
         "tax_categories": {
           "add_sheet_title": "添加税收类别",
