@@ -73,14 +73,36 @@ module SpreeStripe
       seller_transfer
     end
 
-    # Records the settlement Stripe will make on its own schedule.
+    # Sends a settlement from the seller's connected account to their bank.
     #
-    # Nothing is sent here: money that has reached a connected account is paid
-    # out to the seller's bank by Stripe, on the schedule that account carries.
-    # The payout stays pending until the `payout.paid` webhook says it landed,
-    # which is the same shape as the built-in provider — an operator's bank
-    # transfer and Stripe's are both claims about the outside world.
+    # Spree decides when — connected accounts are created on a manual schedule
+    # precisely so Stripe is not also paying out on one of its own. Two clocks
+    # on one relationship do not compose: honour both and a monthly seller
+    # waits up to two months, honour neither and the operator's setting is a
+    # decoration.
+    #
+    # Made as the connected account rather than as the platform, because the
+    # money being moved is the seller's own balance. The payout stays pending
+    # until `payout.paid` says it reached the bank — a settlement is a claim
+    # about the outside world whoever makes it.
     def pay!(seller_payout)
+      seller = seller_payout.seller
+      gateway = gateway_for(seller.store)
+      account_id = seller.payout_account_reference(self.class)
+      raise Spree::Core::GatewayError, 'Seller holds no Stripe account' if account_id.blank?
+
+      payout = Stripe::Payout.create(
+        {
+          amount: minor_units(seller_payout),
+          currency: seller_payout.currency.downcase,
+          metadata: { spree_seller_payout_id: seller_payout.id }
+        },
+        gateway.api_options.merge(stripe_account: account_id, idempotency_key: idempotency_key(seller_payout))
+      )
+
+      # Stored now rather than waiting for the webhook, so the confirmation
+      # matches on Stripe's own id instead of guessing by amount.
+      seller_payout.update!(reference: payout.id)
       seller_payout
     end
 
@@ -102,8 +124,8 @@ module SpreeStripe
         raise(Spree::Core::GatewayError, 'No active Stripe payment method on this store')
     end
 
-    def minor_units(seller_transfer)
-      Spree::Money::Rounding.to_minor_units(seller_transfer.amount.abs, seller_transfer.currency)
+    def minor_units(record)
+      Spree::Money::Rounding.to_minor_units(record.amount.abs, record.currency)
     end
 
     # The charge that paid for this order, so Stripe can fund the transfer from

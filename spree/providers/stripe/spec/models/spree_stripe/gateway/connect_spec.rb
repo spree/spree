@@ -63,7 +63,7 @@ RSpec.describe SpreeStripe::Gateway::Connect do
     end
 
     context 'payout.paid' do
-      let!(:payout) { create(:seller_payout, seller: seller, currency: 'USD') }
+      let!(:payout) { create(:seller_payout, seller: seller, currency: 'USD', reference: 'po_1') }
 
       it 'completes the settlement the seller was owed' do
         allow(Stripe::Webhook).to receive(:construct_event).and_return(
@@ -76,21 +76,12 @@ RSpec.describe SpreeStripe::Gateway::Connect do
         expect(payout.reference).to eq('po_1')
       end
 
-      # Stripe batches a connected account's balance on its own schedule, so a
-      # payout of one amount says nothing about a settlement of another.
-      it 'leaves a settlement of a different amount alone' do
+      # Spree created the payout and stored Stripe's id for it, so an event
+      # naming an id we hold nothing for is about somebody else's payout —
+      # guessing which of ours it meant would complete the wrong one.
+      it 'leaves settlements alone when it names an id we do not hold' do
         allow(Stripe::Webhook).to receive(:construct_event).and_return(
-          stripe_event('payout.paid', { id: 'po_1', currency: 'usd', amount: 25_000 }, account: 'acct_seller')
-        )
-
-        gateway.handle_payout_webhook(raw_body, headers)
-
-        expect(payout.reload).to be_pending
-      end
-
-      it 'leaves a settlement in another currency alone' do
-        allow(Stripe::Webhook).to receive(:construct_event).and_return(
-          stripe_event('payout.paid', { id: 'po_1', currency: 'eur', amount: 2_000 }, account: 'acct_seller')
+          stripe_event('payout.paid', { id: 'po_elsewhere', currency: 'usd', amount: 2_000 }, account: 'acct_seller')
         )
 
         gateway.handle_payout_webhook(raw_body, headers)
@@ -100,7 +91,7 @@ RSpec.describe SpreeStripe::Gateway::Connect do
     end
 
     context 'payout.failed' do
-      let!(:payout) { create(:seller_payout, seller: seller, currency: 'USD') }
+      let!(:payout) { create(:seller_payout, seller: seller, currency: 'USD', reference: 'po_1') }
 
       before do
         allow(Stripe::Webhook).to receive(:construct_event).and_return(
@@ -131,8 +122,8 @@ RSpec.describe SpreeStripe::Gateway::Connect do
     # payout id, a second delivery would skip the settlement it already
     # completed and land on the next one still owed.
     context 'when payout.paid is delivered twice' do
-      let!(:first) { create(:seller_payout, seller: seller, currency: 'USD', amount: 40) }
-      let!(:second) { create(:seller_payout, seller: seller, currency: 'USD', amount: 40) }
+      let!(:first) { create(:seller_payout, seller: seller, currency: 'USD', amount: 40, reference: 'po_1') }
+      let!(:second) { create(:seller_payout, seller: seller, currency: 'USD', amount: 40, reference: 'po_2') }
 
       before do
         allow(Stripe::Webhook).to receive(:construct_event).and_return(
@@ -188,6 +179,72 @@ RSpec.describe SpreeStripe::Gateway::Connect do
       expect(Stripe::Account).not_to receive(:create)
 
       gateway.create_connect_account_link(seller: seller, refresh_url: 'https://s/r', return_url: 'https://s/d')
+    end
+  end
+
+  describe 'the account a seller is onboarded to' do
+    let(:new_seller) { create(:seller, :approved, store: store) }
+
+    before do
+      allow(Stripe::AccountLink).to receive(:create).
+        and_return(Stripe::StripeObject.construct_from(url: 'https://connect.stripe.com/setup/x'))
+      allow(Stripe::Account).to receive(:create).and_return(Stripe::StripeObject.construct_from(id: 'acct_new'))
+      store.update!(default_country_code: 'US')
+    end
+
+    def onboard(seller = new_seller)
+      gateway.create_connect_account_link(seller: seller, refresh_url: 'https://s/r', return_url: 'https://s/d')
+    end
+
+    # Spree decides when a seller is settled, so Stripe must not also be paying
+    # their balance out on a schedule of its own.
+    it 'never pays out on a schedule of its own' do
+      expect(Stripe::Account).to receive(:create).
+        with(hash_including(settings: { payouts: { schedule: { interval: 'manual' } } }), anything).
+        and_return(Stripe::StripeObject.construct_from(id: 'acct_new'))
+
+      onboard
+    end
+
+    # Stripe would otherwise assume the platform's country, and a seller ends
+    # up with an account no local bank can receive.
+    it 'is created where the seller trades' do
+      new_seller.update!(billing_address: create(:address, country_code: 'FR', state_code: nil))
+
+      expect(Stripe::Account).to receive(:create).
+        with(hash_including(country: 'FR'), anything).
+        and_return(Stripe::StripeObject.construct_from(id: 'acct_new'))
+
+      onboard
+    end
+
+    it 'falls back to the marketplace’s own country' do
+      expect(Stripe::Account).to receive(:create).
+        with(hash_including(country: 'US'), anything).
+        and_return(Stripe::StripeObject.construct_from(id: 'acct_new'))
+
+      onboard
+    end
+
+    # Paying a seller abroad is a different agreement, and without it Stripe
+    # refuses to create the account at all.
+    it 'accepts the recipient agreement for a seller abroad' do
+      new_seller.update!(billing_address: create(:address, country_code: 'FR', state_code: nil))
+
+      expect(Stripe::Account).to receive(:create).
+        with(hash_including(tos_acceptance: { service_agreement: 'recipient' }), anything).
+        and_return(Stripe::StripeObject.construct_from(id: 'acct_new'))
+
+      onboard
+    end
+
+    it 'does not ask for it at home' do
+      expect(Stripe::Account).to receive(:create) do |params, _options|
+        expect(params).not_to have_key(:tos_acceptance)
+        Stripe::StripeObject.construct_from(id: 'acct_new')
+      end
+
+      onboard
     end
   end
 

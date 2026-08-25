@@ -75,16 +75,56 @@ RSpec.describe SpreeStripe::PayoutProvider do
   end
 
   describe '#pay!' do
-    # Money on a connected account is settled by Stripe on that account's own
-    # schedule, so a payout is confirmed by webhook rather than sent here.
-    it 'sends nothing and leaves the settlement pending' do
-      payout = create(:seller_payout, seller: seller)
+    let(:payout) { create(:seller_payout, seller: seller, amount: 42.5, currency: 'USD') }
 
-      expect(Stripe::Payout).not_to receive(:create)
+    before do
+      allow(Stripe::Payout).to receive(:create).and_return(Stripe::StripeObject.construct_from(id: 'po_1'))
+    end
 
+    it 'sends the settlement to the seller’s bank' do
+      expect(Stripe::Payout).to receive(:create).
+        with(hash_including(amount: 4250, currency: 'usd'), anything).
+        and_return(Stripe::StripeObject.construct_from(id: 'po_1'))
+
+      described_class.new.pay!(payout)
+    end
+
+    # The money is the seller's own balance, so the payout is made as them.
+    it 'acts as the connected account' do
+      expect(Stripe::Payout).to receive(:create).
+        with(anything, hash_including(stripe_account: 'acct_seller')).
+        and_return(Stripe::StripeObject.construct_from(id: 'po_1'))
+
+      described_class.new.pay!(payout)
+    end
+
+    # Stored now, so the confirming webhook matches on Stripe's own id rather
+    # than guessing which settlement it meant.
+    it 'keeps Stripe’s id for the settlement' do
+      described_class.new.pay!(payout)
+
+      expect(payout.reload.reference).to eq('po_1')
+    end
+
+    # A settlement is a claim about the outside world whoever makes it.
+    it 'leaves it pending until the bank confirms' do
       described_class.new.pay!(payout)
 
       expect(payout.reload).to be_pending
+    end
+
+    it 'carries an idempotency key, so a retry finds the payout it made' do
+      expect(Stripe::Payout).to receive(:create).
+        with(anything, hash_including(:idempotency_key)).
+        and_return(Stripe::StripeObject.construct_from(id: 'po_1'))
+
+      described_class.new.pay!(payout)
+    end
+
+    it 'refuses a seller who holds no Stripe account' do
+      other = create(:seller_payout, seller: create(:seller, :approved, store: store))
+
+      expect { described_class.new.pay!(other) }.to raise_error(Spree::Core::GatewayError)
     end
   end
 

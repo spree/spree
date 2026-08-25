@@ -94,23 +94,55 @@ module SpreeStripe
 
       def create_connect_account(seller)
         Stripe::Account.create(
-          {
-            type: 'express',
-            email: seller.contact_email,
-            business_profile: { name: seller.name },
-            # The platform pays Stripe's fees and owns the dispute
-            # relationship, which is what makes this a marketplace rather than
-            # a referral.
-            controller: {
-              fees: { payer: 'application' },
-              losses: { payments: 'application' },
-              stripe_dashboard: { type: 'express' }
-            },
-            capabilities: { transfers: { requested: true } },
-            metadata: { spree_seller_id: seller.id }
-          },
+          connect_account_params(seller),
           api_options.merge(idempotency_key: "spree-seller-#{seller.prefixed_id}")
         ).id
+      end
+
+      def connect_account_params(seller)
+        country_code = seller_country_code(seller)
+
+        params = {
+          type: 'express',
+          country: country_code,
+          email: seller.contact_email,
+          business_profile: { name: seller.name },
+          # The platform pays Stripe's fees and owns the dispute relationship,
+          # which is what makes this a marketplace rather than a referral.
+          controller: {
+            fees: { payer: 'application' },
+            losses: { payments: 'application' },
+            stripe_dashboard: { type: 'express' }
+          },
+          capabilities: { transfers: { requested: true } },
+          # Spree decides when a seller is settled, so Stripe must not also be
+          # paying their balance out on a schedule of its own — two clocks on
+          # one relationship, and the seller's own setting would be the one
+          # that did nothing.
+          settings: { payouts: { schedule: { interval: 'manual' } } },
+          metadata: { spree_seller_id: seller.id }
+        }
+
+        # Paying a seller abroad is a different agreement, not a variation on
+        # the domestic one: Stripe requires the recipient service agreement,
+        # under which the seller may not accept card payments in their own
+        # right. Without it the account cannot be created at all.
+        params[:tos_acceptance] = { service_agreement: 'recipient' } if cross_border?(country_code)
+
+        params
+      end
+
+      # Where the seller trades, which decides what currency and bank details
+      # their account can hold. Falls back to the marketplace's own country —
+      # Stripe would otherwise assume it anyway, and assuming it silently is
+      # how a seller ends up with an account no local bank can receive.
+      def seller_country_code(seller)
+        seller.billing_address&.country_code.presence || store.default_country_code
+      end
+
+      def cross_border?(country_code)
+        country_code.present? && store.default_country_code.present? &&
+          country_code.to_s.upcase != store.default_country_code.to_s.upcase
       end
 
       # Whether Stripe will let this seller be paid. It can go back to false —
@@ -169,18 +201,12 @@ module SpreeStripe
         seller.payout_account_reference(SpreeStripe::PayoutProvider)
       end
 
-      # Stripe's own id first. The fallback is for a settlement recorded before
-      # Stripe named it, and it must match on amount as well as currency:
-      # Stripe batches a connected account's balance on its own schedule, so
-      # one payout of 250 does not mean the oldest settlement of 40 landed —
-      # completing that would debit the wrong figure and stamp Stripe's id
-      # where the settlement it really belongs to can no longer find it.
+      # By Stripe's own id alone. Spree creates the payout, so it stored that
+      # id when it did — an event naming an id we hold no settlement for is
+      # about a payout somebody made outside Spree, and guessing which of our
+      # settlements it meant would complete the wrong one.
       def find_payout(seller, object)
-        seller.seller_payouts.find_by(reference: object.id) ||
-          seller.seller_payouts.owed.
-            where(currency: object.currency.to_s.upcase, reference: nil).
-            where(amount: Spree::Money::Rounding.from_minor_units(object.amount, object.currency)).
-            order(:created_at).first
+        seller.seller_payouts.find_by(reference: object.id)
       end
 
       def verify_connect_webhook_signature(raw_body, headers)
