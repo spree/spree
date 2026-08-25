@@ -1,4 +1,4 @@
-import type { ListParams, ListResponse, RequestFn, RequestOptions } from '@spree/sdk-core'
+import type { ListParams, PaginatedResponse, RequestFn, RequestOptions } from '@spree/sdk-core'
 import { transformListParams } from '@spree/sdk-core'
 import type {
   AuthTokens,
@@ -202,8 +202,8 @@ export class SellerClient {
     list: (
       params?: ListParams & Record<string, unknown>,
       options?: RequestOptions,
-    ): Promise<ListResponse<Product>> =>
-      this.request<ListResponse<Product>>('GET', '/products', {
+    ): Promise<PaginatedResponse<Product>> =>
+      this.request<PaginatedResponse<Product>>('GET', '/products', {
         ...options,
         params: params ? transformListParams(params) : undefined,
       }),
@@ -230,8 +230,8 @@ export class SellerClient {
     list: (
       params?: ListParams & Record<string, unknown>,
       options?: RequestOptions,
-    ): Promise<ListResponse<Order>> =>
-      this.request<ListResponse<Order>>('GET', '/orders', {
+    ): Promise<PaginatedResponse<Order>> =>
+      this.request<PaginatedResponse<Order>>('GET', '/orders', {
         ...options,
         params: params ? transformListParams(params) : undefined,
       }),
@@ -304,8 +304,8 @@ export class SellerClient {
     list: (
       params?: ListParams & Record<string, unknown>,
       options?: RequestOptions,
-    ): Promise<ListResponse<StockLocation>> =>
-      this.request<ListResponse<StockLocation>>('GET', '/stock_locations', {
+    ): Promise<PaginatedResponse<StockLocation>> =>
+      this.request<PaginatedResponse<StockLocation>>('GET', '/stock_locations', {
         ...options,
         params: params ? transformListParams(params) : undefined,
       }),
