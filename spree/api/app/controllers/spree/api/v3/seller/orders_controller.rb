@@ -8,7 +8,9 @@ module Spree
         # order each, so a seller's orders are their own rows — not a filtered
         # view of somebody else's. The anchor roots `scope` in
         # `current_seller.orders`, so an id belonging to another seller reads
-        # as missing rather than denied.
+        # as missing rather than denied. Drafts are not this seller's either —
+        # neither an in-flight checkout nor the operator's working document —
+        # and are unreachable from every endpoint on this branch.
         #
         # Read and cancel only. Fulfilling is the fulfillments endpoint under
         # the order, and everything that settles money with the customer —
@@ -56,13 +58,11 @@ module Spree
             %w[index show]
           end
 
-          # Only orders that were actually placed. A draft is either a
-          # checkout still in flight or the operator's own working document —
-          # neither is something this seller has sold, and the operator's is
-          # not theirs to read or cancel. The admin branch admits the
-          # cart-less ones deliberately; this branch must not.
+          # The same exclusion the nested endpoints get from
+          # `current_seller_orders`, applied over the inherited scope so its
+          # includes and preloading survive.
           def scope
-            super.where.not(status: 'draft')
+            super.not_drafts
           end
 
           def collection_includes
