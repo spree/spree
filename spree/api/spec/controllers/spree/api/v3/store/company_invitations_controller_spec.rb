@@ -71,12 +71,24 @@ RSpec.describe Spree::Api::V3::Store::CompanyInvitationsController, type: :contr
     context 'authenticated' do
       before { request.headers.merge!(bearer_headers) }
 
-      it 'binds the invitation to the signed-in customer' do
+      it 'binds the invitation to the customer it was addressed to' do
+        invitation.update!(email: user.email)
+
         post :accept, params: { token: invitation.token }, as: :json
 
         expect(response).to have_http_status(:created)
         expect(invitation.reload.customer).to eq(user)
         expect(company.memberships.sole.customer).to eq(user)
+      end
+
+      # The token names one person: spending it from an unrelated signed-in
+      # account would hand that account standing over the company.
+      it 'refuses when the signed-in customer owns a different email' do
+        post :accept, params: { token: invitation.token }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(invitation.reload).to be_pending
+        expect(company.memberships.reload).to be_empty
       end
     end
 
