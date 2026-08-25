@@ -2,7 +2,9 @@ import type { ListParams, ListResponse, RequestFn, RequestOptions } from '@spree
 import { transformListParams } from '@spree/sdk-core'
 import type {
   AuthTokens,
+  Fulfillment,
   Invitation,
+  Order,
   Product,
   Profile,
   RequirementStatus,
@@ -217,6 +219,62 @@ export class SellerClient {
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/products/${id}`, options),
+  }
+
+  /**
+   * What this seller has sold. A basket spanning several sellers is split
+   * into one order each, so these are the seller's own orders rather than a
+   * filtered view of somebody else's.
+   */
+  readonly orders = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<ListResponse<Order>> =>
+      this.request<ListResponse<Order>>('GET', '/orders', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<Order> =>
+      this.request<Order>('GET', `/orders/${id}`, options),
+
+    /** Withdraws from an order this seller cannot fulfil. */
+    cancel: (
+      id: string,
+      params?: { notify_customer?: boolean },
+      options?: RequestOptions,
+    ): Promise<Order> =>
+      this.request<Order>('PATCH', `/orders/${id}/cancel`, { ...options, body: params }),
+
+    /** The parcels owed on one order. */
+    fulfillments: {
+      list: (orderId: string, options?: RequestOptions): Promise<{ data: Fulfillment[] }> =>
+        this.request<{ data: Fulfillment[] }>('GET', `/orders/${orderId}/fulfillments`, options),
+
+      get: (orderId: string, id: string, options?: RequestOptions): Promise<Fulfillment> =>
+        this.request<Fulfillment>('GET', `/orders/${orderId}/fulfillments/${id}`, options),
+
+      /**
+       * Ships the parcel. `items` narrows it to part of what the fulfillment
+       * holds, which splits the rest onto a new one.
+       */
+      fulfill: (
+        orderId: string,
+        id: string,
+        params?: {
+          tracking?: string
+          tracking_carrier?: string
+          notify_customer?: boolean
+          items?: Array<{ item_id: string; quantity: number }>
+        },
+        options?: RequestOptions,
+      ): Promise<Fulfillment> =>
+        this.request<Fulfillment>('PATCH', `/orders/${orderId}/fulfillments/${id}/fulfill`, {
+          ...options,
+          body: params,
+        }),
+    },
   }
 
   /**
