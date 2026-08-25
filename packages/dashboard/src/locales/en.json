@@ -87,6 +87,77 @@
       "tiered_flat_rate": "Tiered Flat Rate",
       "tiered_percent": "Tiered Percent"
     },
+    "catalogs": {
+      "add_cta": "Add catalog",
+      "add_sheet_title": "New catalog",
+      "assignable_types": {
+        "channel": "Channel",
+        "company": "Company",
+        "customer_group": "Customer group",
+        "market": "Market"
+      },
+      "assignments": {
+        "add_cta": "Assign",
+        "add_title": "Assign this catalog",
+        "audience_empty": "Nothing found",
+        "audience_label": "Audience",
+        "audience_placeholder": "Search…",
+        "company_subtree_help": "Assigning to a company covers its whole subtree.",
+        "dialog_description": "Who sees this catalog. A company assignment covers the node and everything below it.",
+        "empty": "Not assigned to any audience yet — nobody sees this catalog.",
+        "remove_confirm": {
+          "message": "{{name}} will stop seeing this catalog.",
+          "title": "Remove this assignment?"
+        },
+        "title": "Audiences",
+        "type_label": "Audience type"
+      },
+      "create_description": "A catalog narrows what an audience sees and, through a price list, what they pay. Add products and assign audiences once it exists.",
+      "create_label": "Create catalog",
+      "delete_confirm": {
+        "message": "This deletes {{name}} and its assignments. Products and price lists are not affected.",
+        "title": "Delete catalog?"
+      },
+      "detail": {
+        "delete_label": "Delete catalog",
+        "load_error": "Could not load this catalog",
+        "settings": "Catalog"
+      },
+      "empty": "No catalogs yet",
+      "messages": {
+        "assigned": "Catalog assigned",
+        "created": "Catalog created",
+        "deleted": "Catalog deleted",
+        "product_removed": "Product removed",
+        "products_added": "Products added",
+        "products_removed": "Products removed",
+        "unassigned": "Assignment removed",
+        "updated": "Catalog updated"
+      },
+      "products": {
+        "add_cta": "Add products",
+        "column_product": "Product",
+        "empty": "No products in this catalog yet.",
+        "filter_placeholder": "Filter products…",
+        "no_matches": "No products match your filter.",
+        "picker_description": "Search and select products to add to this catalog.",
+        "picker_title": "Add products to catalog",
+        "remove": "Remove from catalog",
+        "remove_confirm": {
+          "message_named": "Remove \"{{name}}\" from this catalog? This takes effect immediately. The product stays in your store.",
+          "message_one": "Remove {{count}} product from this catalog? This takes effect immediately. The products stay in your store.",
+          "message_other": "Remove {{count}} products from this catalog? This takes effect immediately. The products stay in your store.",
+          "title": "Remove from catalog"
+        },
+        "remove_selected": "Remove",
+        "search_placeholder": "Search products…",
+        "select_all": "Select all",
+        "select_row": "Select product",
+        "title": "Products"
+      },
+      "products_column": "Products",
+      "search_placeholder": "Search catalogs"
+    },
     "categories": {
       "add_cta": "New category",
       "collapse": "Collapse",
@@ -315,66 +386,96 @@
     "companies": {
       "add_cta": "Add company",
       "add_sheet_title": "New company",
-      "create_description": "Business customers buy through branches. You can add branches, tax registration and exemption certificates once the company exists.",
+      "collapse_node": "Collapse",
+      "create_description": "A company is the root of an organization tree. Add sub-units, members, addresses, tax registration and exemption certificates once it exists.",
       "create_label": "Create company",
       "delete_confirm": {
-        "message": "This deletes {{name}} along with its branches, buyers and certificates. This cannot be undone.",
+        "message": "This deletes {{name}} along with its whole subtree — sub-units, members, addresses and certificates. This cannot be undone.",
         "title": "Delete company?"
       },
       "detail": {
         "delete_label": "Delete company",
+        "division_tax_pointer": "A division holds no tax registrations of its own. Its purchases are taxed through its legal entity:",
         "load_error": "Could not load this company",
         "profile": "Company"
       },
       "empty": "No companies yet",
-      "locations_column": "Branches",
+      "expand_node": "Expand",
+      "kind": {
+        "company": "Company",
+        "division": "Division"
+      },
+      "load_more": "Show more…",
+      "members_count_one": "{{count}} member",
+      "members_count_other": "{{count}} members",
       "messages": {
         "created": "Company created",
         "deleted": "Company deleted",
         "updated": "Company updated"
       },
-      "search_placeholder": "Search companies"
+      "search_empty": "No companies match your search",
+      "search_placeholder": "Search companies",
+      "sub_units": {
+        "add_cta": "Add sub-unit",
+        "add_description": "A division is an organizational unit that shares its legal entity’s tax identity. A company is a legal entity of its own, with its own registrations.",
+        "add_title": "New sub-unit of {{name}}",
+        "empty": "No sub-units yet",
+        "title": "Sub-units"
+      }
     },
-    "company_contacts": {
-      "add_cta": "Add buyer",
-      "add_title": "Authorise a buyer",
-      "dialog_description": "A customer who buys for this branch. Someone who buys for exactly one branch has their orders attributed to it automatically.",
-      "empty": "No buyers authorised yet",
+    "company_addresses": {
+      "add_cta": "Add address",
+      "add_sheet_title": "New address",
+      "address_legend": "Address",
+      "default_billing": "Default billing",
+      "default_billing_label": "Use as default billing address",
+      "default_shipping": "Default shipping",
+      "default_shipping_label": "Use as default shipping address",
+      "edit_sheet_title": "Edit address",
+      "empty": "No addresses yet",
       "messages": {
-        "created": "Buyer added",
-        "deleted": "Buyer removed"
+        "created": "Address added",
+        "deleted": "Address removed",
+        "updated": "Address updated"
       },
-      "remove_action": "Remove buyer",
       "remove_confirm": {
-        "message": "{{email}} will no longer buy for this branch. Their customer account is not affected.",
-        "title": "Remove this buyer?"
+        "message": "{{label}} will be removed from the address book. This cannot be undone.",
+        "title": "Delete this address?"
       },
-      "roles_enterprise_help": "Buyers you add here can place orders for this branch. Roles, approval workflows and spending limits come with Spree Enterprise.",
-      "roles_enterprise_title": "Roles and approvals are an Enterprise feature",
-      "title": "Buyers"
+      "sheet_description": "A labeled ship-to or bill-to site for this node. At most one default of each kind; promoting an entry demotes the previous default.",
+      "title": "Address book"
     },
-    "company_locations": {
-      "add_cta": "Add branch",
-      "add_title": "New branch",
-      "addresses": "Addresses",
-      "billing_address": "Billing address",
-      "contacts_count_one": "{{count}} buyer",
-      "contacts_count_other": "{{count}} buyers",
-      "detail": {
-        "delete_label": "Delete branch",
-        "load_error": "Could not load this branch"
-      },
-      "dialog_description": "A branch is where the business is invoiced and where its orders ship. Addresses are optional, but a partial address needs a name and country.",
-      "edit_title": "Edit branch",
-      "empty": "No branches yet",
+    "company_invitations": {
       "messages": {
-        "created": "Branch created",
-        "deleted": "Branch deleted",
-        "updated": "Branch updated"
+        "revoked": "Invitation revoked"
       },
-      "shipping_address": "Shipping address",
-      "shipping_same_as_billing": "Shipping address is the same as billing",
-      "title": "Branches"
+      "pending_title": "Pending invitations",
+      "revoke_action": "Revoke invitation",
+      "revoke_confirm": {
+        "message": "The invitation sent to {{email}} will stop working.",
+        "title": "Revoke this invitation?"
+      },
+      "status": {
+        "pending": "Pending"
+      }
+    },
+    "company_memberships": {
+      "add_cta": "Add member",
+      "add_title": "Add a member",
+      "dialog_description": "Members can buy for this node and everything below it. An email without an account becomes an invitation.",
+      "empty": "No members yet",
+      "messages": {
+        "added": "Member added",
+        "removed": "Member removed"
+      },
+      "remove_action": "Remove member",
+      "remove_confirm": {
+        "message": "{{email}} will no longer buy for this company. Their customer account is not affected.",
+        "title": "Remove this member?"
+      },
+      "roles_enterprise_help": "Members you add here can buy for this company and manage its directory. Roles, approval workflows and spending limits come with Spree Enterprise.",
+      "roles_enterprise_title": "Roles and approvals are an Enterprise feature",
+      "title": "Members"
     },
     "components": {
       "adjustment_action_editor": {
@@ -770,6 +871,17 @@
           "label": "Scopes"
         }
       },
+      "catalog": {
+        "name": {
+          "placeholder": "Wholesale"
+        },
+        "price_list": {
+          "empty": "No price lists found",
+          "help": "Optional. Without one, the catalog only narrows the assortment and base prices apply.",
+          "label": "Price list",
+          "placeholder": "Base prices"
+        }
+      },
       "certificate_document": {
         "help": "PDF or image, up to 10 MB. Only staff can download it.",
         "label": "Certificate document"
@@ -890,21 +1002,30 @@
           "help": "Your own reference for this business, unique within the store.",
           "placeholder": "ACME-001"
         },
+        "kind": {
+          "help": "A company is a legal entity that can hold tax registrations. A division borrows its legal entity’s.",
+          "label": "Kind"
+        },
         "name": {
           "placeholder": "Acme Industries"
         }
       },
-      "company_contact": {
-        "role": {
-          "label": "Role"
+      "company_address": {
+        "label": {
+          "help": "How this site is referred to — \"Headquarters\", \"Plant 2 dock\".",
+          "label": "Label",
+          "placeholder": "Headquarters"
         }
       },
       "company_location": {
         "external_id": {
           "help": "Your own reference for this branch."
-        },
-        "name": {
-          "placeholder": "Head office"
+        }
+      },
+      "company_membership": {
+        "email": {
+          "help": "An existing customer joins immediately; anyone else gets an emailed invitation.",
+          "placeholder": "buyer@example.com"
         }
       },
       "country": {
@@ -2162,6 +2283,7 @@
     },
     "nav": {
       "account": "Account",
+      "catalogs": "Catalogs",
       "categories": "Categories",
       "claims": "Claims",
       "collections": "Collections",

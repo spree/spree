@@ -104,6 +104,13 @@ nav.add({
       position: 100,
     },
     {
+      key: 'products.catalogs',
+      labelKey: 'admin.nav.catalogs',
+      path: '/products/catalogs',
+      subject: Subject.Catalog,
+      position: 200,
+    },
+    {
       key: 'products.categories',
       labelKey: 'admin.nav.categories',
       path: '/products/categories',

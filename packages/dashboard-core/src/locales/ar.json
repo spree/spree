@@ -136,6 +136,7 @@
       "no_color": "بدون لون"
     },
     "common": {
+      "active": "نشط",
       "adjust_search_or_filters": "جرّب تعديل البحث أو عوامل التصفية",
       "all": "الكل",
       "and": "و",
@@ -147,6 +148,7 @@
       "delete_confirm_message": "هل أنت متأكد؟ لا يمكن التراجع عن هذا الإجراء.",
       "deleted": "تم الحذف",
       "empty_value": "—",
+      "inactive": "غير نشط",
       "loading": "جارٍ التحميل…",
       "next": "التالي",
       "no": "لا",
@@ -188,6 +190,8 @@
           "heading": "إنشاء",
           "label": "إنشاء {{noun}}",
           "nouns": {
+            "catalog": "كتالوج",
+            "catalog_plural": "كتالوجات",
             "category": "فئة",
             "category_plural": "الفئات",
             "collection": "مجموعة",

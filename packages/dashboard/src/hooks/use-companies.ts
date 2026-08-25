@@ -1,9 +1,10 @@
 import type {
   Company,
-  CompanyContact,
-  CompanyContactParams,
-  CompanyLocation,
-  CompanyLocationParams,
+  CompanyAddress,
+  CompanyAddressParams,
+  CompanyInvitation,
+  CompanyMembership,
+  CompanyMembershipCreateParams,
   CompanyParams,
   TaxExemptionCertificate,
   TaxExemptionCertificateParams,
@@ -24,6 +25,20 @@ export function useCompany(id: string | undefined) {
     queryKey: useResourceKey('companies', id ?? 'noop'),
     queryFn: () => adminClient.companies.get(id as string),
     enabled: !!id,
+  })
+}
+
+/** One level of the tree: roots when `parentId` is undefined, else children. */
+export function useCompanyChildren(parentId: string | undefined, page = 1, limit = 25) {
+  return useQuery({
+    queryKey: useResourceKey('companies', 'tree', parentId ?? 'roots', `${page}:${limit}`),
+    queryFn: () =>
+      adminClient.companies.list(
+        parentId
+          ? { page, limit, parent_id_eq: parentId, sort: 'name' }
+          : { page, limit, parent_id_null: 1, sort: 'name' },
+      ),
+    placeholderData: (previous) => previous,
   })
 }
 
@@ -61,98 +76,107 @@ export function useDeleteCompany() {
 }
 
 // ---------------------------------------------------------------------------
-// Locations — listed and created under their company, then addressed by id
+// Address book — entries listed and created under their node, addressed by id
 // ---------------------------------------------------------------------------
 
-export function useCompanyLocations(companyId: string | undefined, page = 1, limit = 25) {
+export function useCompanyAddresses(companyId: string | undefined, page = 1, limit = 25) {
   return useQuery({
-    queryKey: useResourceKey('companies', companyId ?? 'noop', 'locations', `${page}:${limit}`),
-    queryFn: () => adminClient.companies.locations.list(companyId as string, { page, limit }),
+    queryKey: useResourceKey('companies', companyId ?? 'noop', 'addresses', `${page}:${limit}`),
+    queryFn: () => adminClient.companies.addresses.list(companyId as string, { page, limit }),
     enabled: !!companyId,
     placeholderData: (previous) => previous,
   })
 }
 
-export function useCompanyLocation(id: string | undefined) {
-  return useQuery({
-    queryKey: useResourceKey('company-locations', id ?? 'noop'),
-    queryFn: () => adminClient.companyLocations.get(id as string),
-    enabled: !!id,
-  })
-}
-
-export function useCreateCompanyLocation(companyId: string) {
-  return useResourceMutation<CompanyLocation, Error, CompanyLocationParams>({
-    mutationFn: (params) => adminClient.companies.locations.create(companyId, params),
-    invalidate: [['companies', companyId, 'locations']],
-    successMessage: i18n.t('admin.company_locations.messages.created'),
+export function useCreateCompanyAddress(companyId: string) {
+  return useResourceMutation<CompanyAddress, Error, CompanyAddressParams>({
+    mutationFn: (params) => adminClient.companies.addresses.create(companyId, params),
+    invalidate: [['companies', companyId, 'addresses']],
+    successMessage: i18n.t('admin.company_addresses.messages.created'),
     errorMessage: i18n.t('admin.errors.failed_to_create'),
   })
 }
 
-export function useUpdateCompanyLocation(id: string, companyId?: string) {
-  return useResourceMutation<CompanyLocation, Error, CompanyLocationParams>({
-    mutationFn: (params) => adminClient.companyLocations.update(id, params),
-    invalidate: [
-      ['company-locations', id],
-      ...(companyId ? [['companies', companyId, 'locations']] : []),
-    ],
-    successMessage: i18n.t('admin.company_locations.messages.updated'),
+export function useUpdateCompanyAddress(companyId: string) {
+  return useResourceMutation<CompanyAddress, Error, { id: string; params: CompanyAddressParams }>({
+    mutationFn: ({ id, params }) => adminClient.companyAddresses.update(id, params),
+    invalidate: [['companies', companyId, 'addresses']],
+    successMessage: i18n.t('admin.company_addresses.messages.updated'),
     errorMessage: i18n.t('admin.errors.failed_to_update'),
   })
 }
 
-export function useDeleteCompanyLocation(companyId?: string) {
-  const queryClient = useQueryClient()
-  const buildKey = useResourceKeyBuilder()
-
+export function useDeleteCompanyAddress(companyId: string) {
   return useResourceMutation<void, Error, string>({
-    mutationFn: (id) => adminClient.companyLocations.delete(id),
-    invalidate: companyId ? [['companies', companyId, 'locations']] : [],
-    successMessage: i18n.t('admin.company_locations.messages.deleted'),
+    mutationFn: (id) => adminClient.companyAddresses.delete(id),
+    invalidate: [['companies', companyId, 'addresses']],
+    successMessage: i18n.t('admin.company_addresses.messages.deleted'),
     errorMessage: i18n.t('admin.errors.failed_to_delete'),
-    // Drop just this branch's cached detail; invalidating the whole
-    // `company-locations` prefix would refetch every branch visited this session.
-    onSuccess: (_data, id) => {
-      queryClient.removeQueries({ queryKey: buildKey('company-locations', id) })
-    },
   })
 }
 
 // ---------------------------------------------------------------------------
-// Contacts — the buyers authorised to purchase for a branch
+// Members — standing over the node and its subtree
 // ---------------------------------------------------------------------------
 
-export function useCompanyLocationContacts(locationId: string | undefined, page = 1, limit = 25) {
+export function useCompanyMemberships(companyId: string | undefined, page = 1, limit = 25) {
   return useQuery({
-    queryKey: useResourceKey(
-      'company-locations',
-      locationId ?? 'noop',
-      'contacts',
-      `${page}:${limit}`,
-    ),
-    queryFn: () =>
-      adminClient.companyLocations.contacts.list(locationId as string, { page, limit }),
-    enabled: !!locationId,
+    queryKey: useResourceKey('companies', companyId ?? 'noop', 'memberships', `${page}:${limit}`),
+    queryFn: () => adminClient.companies.memberships.list(companyId as string, { page, limit }),
+    enabled: !!companyId,
     placeholderData: (previous) => previous,
   })
 }
 
-export function useCreateCompanyContact(locationId: string) {
-  return useResourceMutation<CompanyContact, Error, CompanyContactParams>({
-    mutationFn: (params) => adminClient.companyLocations.contacts.create(locationId, params),
-    invalidate: [['company-locations', locationId]],
-    successMessage: i18n.t('admin.company_contacts.messages.created'),
+/**
+ * Adding by email does the right thing server-side — the result is a
+ * membership for an existing customer, an invitation otherwise. Both lists
+ * refresh because either may have grown.
+ */
+export function useAddCompanyMember(companyId: string) {
+  return useResourceMutation<
+    CompanyMembership | CompanyInvitation,
+    Error,
+    CompanyMembershipCreateParams
+  >({
+    mutationFn: (params) => adminClient.companies.memberships.create(companyId, params),
+    invalidate: [
+      ['companies', companyId, 'memberships'],
+      ['companies', companyId, 'invitations'],
+    ],
+    successMessage: i18n.t('admin.company_memberships.messages.added'),
     errorMessage: i18n.t('admin.errors.failed_to_create'),
   })
 }
 
-export function useDeleteCompanyContact(locationId: string) {
+export function useDeleteCompanyMembership(companyId: string) {
   return useResourceMutation<void, Error, string>({
-    mutationFn: (id) => adminClient.companyContacts.delete(id),
-    invalidate: [['company-locations', locationId]],
-    successMessage: i18n.t('admin.company_contacts.messages.deleted'),
+    mutationFn: (id) => adminClient.companyMemberships.delete(id),
+    invalidate: [['companies', companyId, 'memberships']],
+    successMessage: i18n.t('admin.company_memberships.messages.removed'),
     errorMessage: i18n.t('admin.errors.failed_to_delete'),
+  })
+}
+
+// ---------------------------------------------------------------------------
+// Invitations — the pending state for not-yet-registered emails
+// ---------------------------------------------------------------------------
+
+export function useCompanyInvitations(companyId: string | undefined, page = 1, limit = 25) {
+  return useQuery({
+    queryKey: useResourceKey('companies', companyId ?? 'noop', 'invitations', `${page}:${limit}`),
+    queryFn: () => adminClient.companies.invitations.list(companyId as string, { page, limit }),
+    enabled: !!companyId,
+    placeholderData: (previous) => previous,
+  })
+}
+
+export function useRevokeCompanyInvitation(companyId: string) {
+  return useResourceMutation<void, Error, string>({
+    mutationFn: (id) => adminClient.companyInvitations.delete(id),
+    invalidate: [['companies', companyId, 'invitations']],
+    successMessage: i18n.t('admin.company_invitations.messages.revoked'),
+    errorMessage: i18n.t('admin.errors.failed_to_update'),
   })
 }
 

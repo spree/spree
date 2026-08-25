@@ -87,6 +87,77 @@
       "tiered_flat_rate": "Gestaffelter Pauschalbetrag",
       "tiered_percent": "Gestaffelter Prozentsatz"
     },
+    "catalogs": {
+      "add_cta": "Katalog hinzufügen",
+      "add_sheet_title": "Neuer Katalog",
+      "assignable_types": {
+        "channel": "Kanal",
+        "company": "Unternehmen",
+        "customer_group": "Kundengruppe",
+        "market": "Markt"
+      },
+      "assignments": {
+        "add_cta": "Zuweisen",
+        "add_title": "Diesen Katalog zuweisen",
+        "audience_empty": "Nichts gefunden",
+        "audience_label": "Zielgruppe",
+        "audience_placeholder": "Suchen…",
+        "company_subtree_help": "Die Zuweisung an ein Unternehmen gilt für dessen gesamten Teilbaum.",
+        "dialog_description": "Wer diesen Katalog sieht. Eine Unternehmens-Zuweisung gilt für den Knoten und alles darunter.",
+        "empty": "Noch keiner Zielgruppe zugewiesen — niemand sieht diesen Katalog.",
+        "remove_confirm": {
+          "message": "{{name}} sieht diesen Katalog dann nicht mehr.",
+          "title": "Diese Zuweisung entfernen?"
+        },
+        "title": "Zielgruppen",
+        "type_label": "Zielgruppen-Typ"
+      },
+      "create_description": "Ein Katalog bestimmt, was eine Zielgruppe sieht und — über eine Preisliste — was sie zahlt. Produkte und Zielgruppen fügen Sie danach hinzu.",
+      "create_label": "Katalog erstellen",
+      "delete_confirm": {
+        "message": "Dies löscht {{name}} und seine Zuweisungen. Produkte und Preislisten bleiben unberührt.",
+        "title": "Katalog löschen?"
+      },
+      "detail": {
+        "delete_label": "Katalog löschen",
+        "load_error": "Katalog konnte nicht geladen werden",
+        "settings": "Katalog"
+      },
+      "empty": "Noch keine Kataloge",
+      "messages": {
+        "assigned": "Katalog zugewiesen",
+        "created": "Katalog erstellt",
+        "deleted": "Katalog gelöscht",
+        "product_removed": "Produkt entfernt",
+        "products_added": "Produkte hinzugefügt",
+        "products_removed": "Produkte entfernt",
+        "unassigned": "Zuweisung entfernt",
+        "updated": "Katalog aktualisiert"
+      },
+      "products": {
+        "add_cta": "Produkte hinzufügen",
+        "column_product": "Produkt",
+        "empty": "Noch keine Produkte in diesem Katalog.",
+        "filter_placeholder": "Produkte filtern…",
+        "no_matches": "Keine Produkte entsprechen Ihrem Filter.",
+        "picker_description": "Produkte suchen und auswählen, um sie diesem Katalog hinzuzufügen.",
+        "picker_title": "Produkte zum Katalog hinzufügen",
+        "remove": "Aus Katalog entfernen",
+        "remove_confirm": {
+          "message_named": "\"{{name}}\" aus diesem Katalog entfernen? Dies gilt sofort. Das Produkt bleibt in Ihrem Shop.",
+          "message_one": "{{count}} Produkt aus diesem Katalog entfernen? Dies gilt sofort. Die Produkte bleiben in Ihrem Shop.",
+          "message_other": "{{count}} Produkte aus diesem Katalog entfernen? Dies gilt sofort. Die Produkte bleiben in Ihrem Shop.",
+          "title": "Aus Katalog entfernen"
+        },
+        "remove_selected": "Entfernen",
+        "search_placeholder": "Produkte suchen…",
+        "select_all": "Alle auswählen",
+        "select_row": "Produkt auswählen",
+        "title": "Produkte"
+      },
+      "products_column": "Produkte",
+      "search_placeholder": "Kataloge suchen"
+    },
     "categories": {
       "add_cta": "Neue Kategorie",
       "collapse": "Zuklappen",
@@ -313,68 +384,98 @@
       "search_placeholder": "Nach Namen suchen…"
     },
     "companies": {
-      "add_cta": "Firma hinzufügen",
-      "add_sheet_title": "Neue Firma",
-      "create_description": "Geschäftskunden kaufen über Niederlassungen ein. Niederlassungen, Steuernummer und Freistellungsbescheinigungen können Sie hinzufügen, sobald die Firma angelegt ist.",
-      "create_label": "Firma anlegen",
+      "add_cta": "Unternehmen hinzufügen",
+      "add_sheet_title": "Neues Unternehmen",
+      "collapse_node": "Zuklappen",
+      "create_description": "Ein Unternehmen ist die Wurzel eines Organisationsbaums. Untereinheiten, Mitglieder, Adressen, Steuerregistrierung und Befreiungsnachweise fügen Sie danach hinzu.",
+      "create_label": "Unternehmen erstellen",
       "delete_confirm": {
-        "message": "Damit werden {{name}} sowie alle Niederlassungen, Einkäufer und Bescheinigungen gelöscht. Das lässt sich nicht rückgängig machen.",
-        "title": "Firma löschen?"
+        "message": "Dies löscht {{name}} mitsamt dem gesamten Teilbaum — Untereinheiten, Mitglieder, Adressen und Nachweise. Dies kann nicht rückgängig gemacht werden.",
+        "title": "Unternehmen löschen?"
       },
       "detail": {
-        "delete_label": "Firma löschen",
-        "load_error": "Diese Firma konnte nicht geladen werden",
-        "profile": "Firma"
+        "delete_label": "Unternehmen löschen",
+        "division_tax_pointer": "Eine Abteilung hält keine eigenen Steuerregistrierungen. Ihre Käufe werden über ihre juristische Einheit besteuert:",
+        "load_error": "Unternehmen konnte nicht geladen werden",
+        "profile": "Unternehmen"
       },
-      "empty": "Noch keine Firmen",
-      "locations_column": "Niederlassungen",
+      "empty": "Noch keine Unternehmen",
+      "expand_node": "Aufklappen",
+      "kind": {
+        "company": "Unternehmen",
+        "division": "Abteilung"
+      },
+      "load_more": "Mehr anzeigen…",
+      "members_count_one": "{{count}} Mitglied",
+      "members_count_other": "{{count}} Mitglieder",
       "messages": {
-        "created": "Firma angelegt",
-        "deleted": "Firma gelöscht",
-        "updated": "Firma aktualisiert"
+        "created": "Unternehmen erstellt",
+        "deleted": "Unternehmen gelöscht",
+        "updated": "Unternehmen aktualisiert"
       },
-      "search_placeholder": "Firmen suchen"
+      "search_empty": "Keine Unternehmen entsprechen Ihrer Suche",
+      "search_placeholder": "Unternehmen suchen",
+      "sub_units": {
+        "add_cta": "Untereinheit hinzufügen",
+        "add_description": "Eine Abteilung ist eine Organisationseinheit, die die Steueridentität ihrer juristischen Einheit teilt. Ein Unternehmen ist eine eigene juristische Einheit mit eigenen Registrierungen.",
+        "add_title": "Neue Untereinheit von {{name}}",
+        "empty": "Noch keine Untereinheiten",
+        "title": "Untereinheiten"
+      }
     },
-    "company_contacts": {
-      "add_cta": "Einkäufer hinzufügen",
-      "add_title": "Einkäufer berechtigen",
-      "dialog_description": "Ein Kunde, der für diese Niederlassung einkauft. Wer für genau eine Niederlassung einkauft, dessen Bestellungen werden ihr automatisch zugeordnet.",
-      "empty": "Noch keine Einkäufer berechtigt",
+    "company_addresses": {
+      "add_cta": "Adresse hinzufügen",
+      "add_sheet_title": "Neue Adresse",
+      "address_legend": "Adresse",
+      "default_billing": "Standard-Rechnung",
+      "default_billing_label": "Als Standard-Rechnungsadresse verwenden",
+      "default_shipping": "Standard-Lieferung",
+      "default_shipping_label": "Als Standard-Lieferadresse verwenden",
+      "edit_sheet_title": "Adresse bearbeiten",
+      "empty": "Noch keine Adressen",
       "messages": {
-        "created": "Einkäufer hinzugefügt",
-        "deleted": "Einkäufer entfernt"
+        "created": "Adresse hinzugefügt",
+        "deleted": "Adresse entfernt",
+        "updated": "Adresse aktualisiert"
       },
-      "remove_action": "Einkäufer entfernen",
       "remove_confirm": {
-        "message": "{{email}} kauft dann nicht mehr für diese Niederlassung ein. Das Kundenkonto bleibt bestehen.",
-        "title": "Diesen Einkäufer entfernen?"
+        "message": "{{label}} wird aus dem Adressbuch entfernt. Dies kann nicht rückgängig gemacht werden.",
+        "title": "Diese Adresse löschen?"
       },
-      "roles_enterprise_help": "Hier hinzugefügte Einkäufer können für diese Niederlassung bestellen. Rollen, Freigabeprozesse und Ausgabenlimits gehören zu Spree Enterprise.",
-      "roles_enterprise_title": "Rollen und Freigaben sind eine Enterprise-Funktion",
-      "title": "Einkäufer"
+      "sheet_description": "Ein benannter Liefer- oder Rechnungsstandort dieses Knotens. Höchstens ein Standard je Art; ein neuer Standard löst den vorherigen ab.",
+      "title": "Adressbuch"
     },
-    "company_locations": {
-      "add_cta": "Niederlassung hinzufügen",
-      "add_title": "Neue Niederlassung",
-      "addresses": "Adressen",
-      "billing_address": "Rechnungsadresse",
-      "contacts_count_one": "{{count}} Einkäufer",
-      "contacts_count_other": "{{count}} Einkäufer",
-      "detail": {
-        "delete_label": "Niederlassung löschen",
-        "load_error": "Diese Niederlassung konnte nicht geladen werden"
-      },
-      "dialog_description": "Eine Niederlassung ist der Ort, an den die Rechnung geht und an den geliefert wird. Adressen sind optional, benötigen aber Name und Land, sobald sie ausgefüllt werden.",
-      "edit_title": "Niederlassung bearbeiten",
-      "empty": "Noch keine Niederlassungen",
+    "company_invitations": {
       "messages": {
-        "created": "Niederlassung angelegt",
-        "deleted": "Niederlassung gelöscht",
-        "updated": "Niederlassung aktualisiert"
+        "revoked": "Einladung widerrufen"
       },
-      "shipping_address": "Lieferadresse",
-      "shipping_same_as_billing": "Lieferadresse entspricht der Rechnungsadresse",
-      "title": "Niederlassungen"
+      "pending_title": "Ausstehende Einladungen",
+      "revoke_action": "Einladung widerrufen",
+      "revoke_confirm": {
+        "message": "Die an {{email}} gesendete Einladung funktioniert dann nicht mehr.",
+        "title": "Diese Einladung widerrufen?"
+      },
+      "status": {
+        "pending": "Ausstehend"
+      }
+    },
+    "company_memberships": {
+      "add_cta": "Mitglied hinzufügen",
+      "add_title": "Mitglied hinzufügen",
+      "dialog_description": "Mitglieder können für diesen Knoten und alles darunter einkaufen. Eine E-Mail ohne Konto wird zur Einladung.",
+      "empty": "Noch keine Mitglieder",
+      "messages": {
+        "added": "Mitglied hinzugefügt",
+        "removed": "Mitglied entfernt"
+      },
+      "remove_action": "Mitglied entfernen",
+      "remove_confirm": {
+        "message": "{{email}} kann nicht mehr für dieses Unternehmen einkaufen. Das Kundenkonto bleibt unberührt.",
+        "title": "Dieses Mitglied entfernen?"
+      },
+      "roles_enterprise_help": "Hier hinzugefügte Mitglieder können für dieses Unternehmen einkaufen und sein Verzeichnis verwalten. Rollen, Freigabe-Workflows und Ausgabenlimits gibt es mit Spree Enterprise.",
+      "roles_enterprise_title": "Rollen und Freigaben sind ein Enterprise-Feature",
+      "title": "Mitglieder"
     },
     "components": {
       "adjustment_action_editor": {
@@ -770,6 +871,17 @@
           "label": "Geltungsbereiche"
         }
       },
+      "catalog": {
+        "name": {
+          "placeholder": "Großhandel"
+        },
+        "price_list": {
+          "empty": "Keine Preislisten gefunden",
+          "help": "Optional. Ohne Preisliste schränkt der Katalog nur das Sortiment ein; es gelten die Basispreise.",
+          "label": "Preisliste",
+          "placeholder": "Basispreise"
+        }
+      },
       "certificate_document": {
         "help": "PDF oder Bild, bis 10 MB. Nur Mitarbeiter können es herunterladen.",
         "label": "Dokument"
@@ -890,21 +1002,30 @@
           "help": "Ihre eigene Referenz für diese Firma, eindeutig innerhalb des Shops.",
           "placeholder": "ACME-001"
         },
+        "kind": {
+          "help": "Ein Unternehmen ist eine juristische Einheit mit eigenen Steuerregistrierungen. Eine Abteilung nutzt die ihrer juristischen Einheit.",
+          "label": "Art"
+        },
         "name": {
           "placeholder": "Acme Industries"
         }
       },
-      "company_contact": {
-        "role": {
-          "label": "Rolle"
+      "company_address": {
+        "label": {
+          "help": "Wie dieser Standort genannt wird — „Hauptsitz\", „Werk 2 Rampe\".",
+          "label": "Bezeichnung",
+          "placeholder": "Hauptsitz"
         }
       },
       "company_location": {
         "external_id": {
           "help": "Ihre eigene Referenz für diese Niederlassung."
-        },
-        "name": {
-          "placeholder": "Hauptsitz"
+        }
+      },
+      "company_membership": {
+        "email": {
+          "help": "Ein bestehender Kunde tritt sofort bei; alle anderen erhalten eine Einladung per E-Mail.",
+          "placeholder": "einkauf@beispiel.de"
         }
       },
       "country": {
@@ -2162,6 +2283,7 @@
     },
     "nav": {
       "account": "Konto",
+      "catalogs": "Kataloge",
       "categories": "Kategorien",
       "claims": "Reklamationen",
       "collections": "Kollektionen",

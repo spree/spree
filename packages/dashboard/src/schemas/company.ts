@@ -1,5 +1,5 @@
 import type {
-  CompanyLocationParams,
+  CompanyAddressParams,
   CompanyParams,
   TaxExemptionCertificateParams,
   TaxIdentifierParams,
@@ -7,6 +7,8 @@ import type {
 import { blankToNull } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
+
+export const COMPANY_KINDS = ['company', 'division'] as const
 
 export const companyFormSchema = z.object({
   name: z.string().min(1, { error: requiredMessage('name') }),
@@ -22,7 +24,18 @@ export function companyValuesToParams(values: CompanyFormValues): CompanyParams 
   }
 }
 
-const addressSchema = z.object({
+// A sub-unit is created in place under its parent: name + kind only — the
+// rest lives on its own page.
+export const companyChildFormSchema = z.object({
+  name: z.string().min(1, { error: requiredMessage('name') }),
+  kind: z.enum(COMPANY_KINDS),
+})
+
+export type CompanyChildFormValues = z.infer<typeof companyChildFormSchema>
+
+export const COMPANY_CHILD_DEFAULTS: CompanyChildFormValues = { name: '', kind: 'division' }
+
+const addressFieldsSchema = z.object({
   first_name: z.string().optional(),
   last_name: z.string().optional(),
   company: z.string().optional(),
@@ -33,86 +46,49 @@ const addressSchema = z.object({
   phone: z.string().optional(),
   country_code: z.string().optional(),
   state_code: z.string().optional(),
+  state_name: z.string().optional(),
 })
 
-export const companyLocationFormSchema = z.object({
-  name: z.string().min(1, { error: requiredMessage('name') }),
-  billing_address: addressSchema,
-  // Kept separate from billing rather than merged on submit, so a branch that
-  // ships somewhere other than it is invoiced stays expressible.
-  shipping_address: addressSchema,
-  // Form-only: when set, the billing address is copied over the shipping one
-  // on submit. Never sent to the API, which always takes both addresses.
-  shipping_same_as_billing: z.boolean(),
+export const companyAddressFormSchema = z.object({
+  label: z.string().optional(),
+  default_billing: z.boolean(),
+  default_shipping: z.boolean(),
+  address: addressFieldsSchema,
 })
 
-export type CompanyLocationFormValues = z.infer<typeof companyLocationFormSchema>
+export type CompanyAddressFormValues = z.infer<typeof companyAddressFormSchema>
 
-const EMPTY_ADDRESS = {
-  first_name: '',
-  last_name: '',
-  company: '',
-  address1: '',
-  address2: '',
-  city: '',
-  postal_code: '',
-  phone: '',
-  country_code: '',
-  state_code: '',
+export const COMPANY_ADDRESS_DEFAULTS: CompanyAddressFormValues = {
+  label: '',
+  default_billing: false,
+  default_shipping: false,
+  address: {
+    first_name: '',
+    last_name: '',
+    company: '',
+    address1: '',
+    address2: '',
+    city: '',
+    postal_code: '',
+    phone: '',
+    country_code: '',
+    state_code: '',
+    state_name: '',
+  },
 }
 
-export const COMPANY_LOCATION_DEFAULTS: CompanyLocationFormValues = {
-  name: '',
-  billing_address: { ...EMPTY_ADDRESS },
-  shipping_address: { ...EMPTY_ADDRESS },
-  shipping_same_as_billing: true,
-}
-
-export function companyLocationValuesToParams(
-  values: CompanyLocationFormValues,
-): CompanyLocationParams {
-  const billing = values.billing_address
-  const shipping = values.shipping_same_as_billing ? { ...billing } : values.shipping_address
-
+export function companyAddressValuesToParams(
+  values: CompanyAddressFormValues,
+): CompanyAddressParams {
   return {
-    name: values.name,
-    // A branch may have no address at all, but an address that exists must be
-    // complete — so an untouched fieldset is omitted rather than sent empty,
-    // which would fail the address record's own validations.
-    ...(isAddressBlank(billing) ? {} : { billing_address: billing }),
-    ...(isAddressBlank(shipping) ? {} : { shipping_address: shipping }),
+    label: blankToNull(values.label),
+    default_billing: values.default_billing,
+    default_shipping: values.default_shipping,
+    address: Object.fromEntries(
+      Object.entries(values.address).filter(([, value]) => value !== undefined),
+    ),
   }
 }
-
-function isAddressBlank(address: Record<string, string | undefined>): boolean {
-  return Object.values(address).every((value) => !value?.trim())
-}
-
-/**
- * Whether a saved branch's two addresses are the same, deciding how the edit
- * form opens. Compared field by field because they are separate records.
- */
-export function addressesMatch(
-  billing: Record<string, unknown> | null | undefined,
-  shipping: Record<string, unknown> | null | undefined,
-): boolean {
-  if (!billing || !shipping) return false
-
-  return ADDRESS_COMPARISON_KEYS.every((key) => (billing[key] ?? '') === (shipping[key] ?? ''))
-}
-
-const ADDRESS_COMPARISON_KEYS = [
-  'first_name',
-  'last_name',
-  'company',
-  'address1',
-  'address2',
-  'city',
-  'postal_code',
-  'phone',
-  'country_code',
-  'state_code',
-] as const
 
 export const taxIdentifierFormSchema = z.object({
   kind: z.string().min(1, { error: requiredMessage('tax_identifier.kind') }),

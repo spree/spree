@@ -136,6 +136,7 @@
       "no_color": "No color"
     },
     "common": {
+      "active": "Active",
       "adjust_search_or_filters": "Try adjusting your search or filters",
       "all": "All",
       "and": "and",
@@ -147,6 +148,7 @@
       "delete_confirm_message": "Are you sure? This action cannot be undone.",
       "deleted": "Deleted",
       "empty_value": "—",
+      "inactive": "Inactive",
       "loading": "Loading…",
       "next": "Next",
       "no": "No",
@@ -188,6 +190,8 @@
           "heading": "Create",
           "label": "New {{noun}}",
           "nouns": {
+            "catalog": "Catalog",
+            "catalog_plural": "Catalogs",
             "category": "Category",
             "category_plural": "Categories",
             "collection": "Collection",

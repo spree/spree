@@ -136,6 +136,7 @@
       "no_color": "Aucune couleur"
     },
     "common": {
+      "active": "Actif",
       "adjust_search_or_filters": "Essayez d’ajuster votre recherche ou vos filtres",
       "all": "Tout",
       "and": "et",
@@ -147,6 +148,7 @@
       "delete_confirm_message": "Êtes-vous sûr ? Cette action est irréversible.",
       "deleted": "Supprimé",
       "empty_value": "—",
+      "inactive": "Inactif",
       "loading": "Chargement…",
       "next": "Suivant",
       "no": "Non",
@@ -188,6 +190,8 @@
           "heading": "Créer",
           "label": "Créer : {{noun}}",
           "nouns": {
+            "catalog": "Catalogue",
+            "catalog_plural": "Catalogues",
             "category": "Catégorie",
             "category_plural": "Catégories",
             "collection": "Collection",

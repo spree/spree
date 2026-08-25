@@ -69,6 +69,7 @@ import { Route as SettingsDeliveryProfilesIndexRouteImport } from './routes/_aut
 import { Route as ProductsPriceListsIndexRouteImport } from './routes/_authenticated/$storeId/products/price-lists/index'
 import { Route as ProductsCollectionsIndexRouteImport } from './routes/_authenticated/$storeId/products/collections/index'
 import { Route as ProductsCategoriesIndexRouteImport } from './routes/_authenticated/$storeId/products/categories/index'
+import { Route as ProductsCatalogsIndexRouteImport } from './routes/_authenticated/$storeId/products/catalogs/index'
 import { Route as OrdersOrderIdIndexRouteImport } from './routes/_authenticated/$storeId/orders/$orderId/index'
 import { Route as SettingsWebhooksWebhookEndpointIdRouteImport } from './routes/_authenticated/$storeId/settings/webhooks/$webhookEndpointId'
 import { Route as ProductsPriceListsNewRouteImport } from './routes/_authenticated/$storeId/products/price-lists/new'
@@ -76,8 +77,8 @@ import { Route as ProductsCollectionsNewRouteImport } from './routes/_authentica
 import { Route as ProductsCollectionsCollectionIdRouteImport } from './routes/_authenticated/$storeId/products/collections/$collectionId'
 import { Route as ProductsCategoriesNewRouteImport } from './routes/_authenticated/$storeId/products/categories/new'
 import { Route as ProductsCategoriesCategoryIdRouteImport } from './routes/_authenticated/$storeId/products/categories/$categoryId'
+import { Route as ProductsCatalogsCatalogIdRouteImport } from './routes/_authenticated/$storeId/products/catalogs/$catalogId'
 import { Route as OrdersOrderIdEditRouteImport } from './routes/_authenticated/$storeId/orders/$orderId/edit'
-import { Route as CompaniesLocationsDotlocationIdRouteImport } from './routes/_authenticated/$storeId/companies/locations.$locationId'
 import { Route as SettingsDeliveryProfilesProfileIdIndexRouteImport } from './routes/_authenticated/$storeId/settings/delivery-profiles/$profileId/index'
 import { Route as ProductsPriceListsPriceListIdIndexRouteImport } from './routes/_authenticated/$storeId/products/price-lists/$priceListId/index'
 import { Route as SettingsDeliveryProfilesProfileIdMethodsNewRouteImport } from './routes/_authenticated/$storeId/settings/delivery-profiles/$profileId/methods/new'
@@ -387,6 +388,11 @@ const ProductsCategoriesIndexRoute = ProductsCategoriesIndexRouteImport.update({
   path: '/products/categories/',
   getParentRoute: () => authenticatedStoreIdRoute,
 } as any)
+const ProductsCatalogsIndexRoute = ProductsCatalogsIndexRouteImport.update({
+  id: '/products/catalogs/',
+  path: '/products/catalogs/',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
 const OrdersOrderIdIndexRoute = OrdersOrderIdIndexRouteImport.update({
   id: '/orders/$orderId/',
   path: '/orders/$orderId/',
@@ -425,17 +431,17 @@ const ProductsCategoriesCategoryIdRoute =
     path: '/products/categories/$categoryId',
     getParentRoute: () => authenticatedStoreIdRoute,
   } as any)
+const ProductsCatalogsCatalogIdRoute =
+  ProductsCatalogsCatalogIdRouteImport.update({
+    id: '/products/catalogs/$catalogId',
+    path: '/products/catalogs/$catalogId',
+    getParentRoute: () => authenticatedStoreIdRoute,
+  } as any)
 const OrdersOrderIdEditRoute = OrdersOrderIdEditRouteImport.update({
   id: '/orders/$orderId/edit',
   path: '/orders/$orderId/edit',
   getParentRoute: () => authenticatedStoreIdRoute,
 } as any)
-const CompaniesLocationsDotlocationIdRoute =
-  CompaniesLocationsDotlocationIdRouteImport.update({
-    id: '/companies/locations/$locationId',
-    path: '/companies/locations/$locationId',
-    getParentRoute: () => authenticatedStoreIdRoute,
-  } as any)
 const SettingsDeliveryProfilesProfileIdIndexRoute =
   SettingsDeliveryProfilesProfileIdIndexRouteImport.update({
     id: '/delivery-profiles/$profileId/',
@@ -515,8 +521,8 @@ export interface FileRoutesByFullPath {
   '/$storeId/promotions/': typeof PromotionsIndexRoute
   '/$storeId/sellers/': typeof SellersIndexRoute
   '/$storeId/settings/': typeof SettingsIndexRoute
-  '/$storeId/companies/locations/$locationId': typeof CompaniesLocationsDotlocationIdRoute
   '/$storeId/orders/$orderId/edit': typeof OrdersOrderIdEditRoute
+  '/$storeId/products/catalogs/$catalogId': typeof ProductsCatalogsCatalogIdRoute
   '/$storeId/products/categories/$categoryId': typeof ProductsCategoriesCategoryIdRoute
   '/$storeId/products/categories/new': typeof ProductsCategoriesNewRoute
   '/$storeId/products/collections/$collectionId': typeof ProductsCollectionsCollectionIdRoute
@@ -524,6 +530,7 @@ export interface FileRoutesByFullPath {
   '/$storeId/products/price-lists/new': typeof ProductsPriceListsNewRoute
   '/$storeId/settings/webhooks/$webhookEndpointId': typeof SettingsWebhooksWebhookEndpointIdRoute
   '/$storeId/orders/$orderId/': typeof OrdersOrderIdIndexRoute
+  '/$storeId/products/catalogs/': typeof ProductsCatalogsIndexRoute
   '/$storeId/products/categories/': typeof ProductsCategoriesIndexRoute
   '/$storeId/products/collections/': typeof ProductsCollectionsIndexRoute
   '/$storeId/products/price-lists/': typeof ProductsPriceListsIndexRoute
@@ -587,8 +594,8 @@ export interface FileRoutesByTo {
   '/$storeId/promotions': typeof PromotionsIndexRoute
   '/$storeId/sellers': typeof SellersIndexRoute
   '/$storeId/settings': typeof SettingsIndexRoute
-  '/$storeId/companies/locations/$locationId': typeof CompaniesLocationsDotlocationIdRoute
   '/$storeId/orders/$orderId/edit': typeof OrdersOrderIdEditRoute
+  '/$storeId/products/catalogs/$catalogId': typeof ProductsCatalogsCatalogIdRoute
   '/$storeId/products/categories/$categoryId': typeof ProductsCategoriesCategoryIdRoute
   '/$storeId/products/categories/new': typeof ProductsCategoriesNewRoute
   '/$storeId/products/collections/$collectionId': typeof ProductsCollectionsCollectionIdRoute
@@ -596,6 +603,7 @@ export interface FileRoutesByTo {
   '/$storeId/products/price-lists/new': typeof ProductsPriceListsNewRoute
   '/$storeId/settings/webhooks/$webhookEndpointId': typeof SettingsWebhooksWebhookEndpointIdRoute
   '/$storeId/orders/$orderId': typeof OrdersOrderIdIndexRoute
+  '/$storeId/products/catalogs': typeof ProductsCatalogsIndexRoute
   '/$storeId/products/categories': typeof ProductsCategoriesIndexRoute
   '/$storeId/products/collections': typeof ProductsCollectionsIndexRoute
   '/$storeId/products/price-lists': typeof ProductsPriceListsIndexRoute
@@ -663,8 +671,8 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/promotions/': typeof PromotionsIndexRoute
   '/_authenticated/$storeId/sellers/': typeof SellersIndexRoute
   '/_authenticated/$storeId/settings/': typeof SettingsIndexRoute
-  '/_authenticated/$storeId/companies/locations/$locationId': typeof CompaniesLocationsDotlocationIdRoute
   '/_authenticated/$storeId/orders/$orderId/edit': typeof OrdersOrderIdEditRoute
+  '/_authenticated/$storeId/products/catalogs/$catalogId': typeof ProductsCatalogsCatalogIdRoute
   '/_authenticated/$storeId/products/categories/$categoryId': typeof ProductsCategoriesCategoryIdRoute
   '/_authenticated/$storeId/products/categories/new': typeof ProductsCategoriesNewRoute
   '/_authenticated/$storeId/products/collections/$collectionId': typeof ProductsCollectionsCollectionIdRoute
@@ -672,6 +680,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/products/price-lists/new': typeof ProductsPriceListsNewRoute
   '/_authenticated/$storeId/settings/webhooks/$webhookEndpointId': typeof SettingsWebhooksWebhookEndpointIdRoute
   '/_authenticated/$storeId/orders/$orderId/': typeof OrdersOrderIdIndexRoute
+  '/_authenticated/$storeId/products/catalogs/': typeof ProductsCatalogsIndexRoute
   '/_authenticated/$storeId/products/categories/': typeof ProductsCategoriesIndexRoute
   '/_authenticated/$storeId/products/collections/': typeof ProductsCollectionsIndexRoute
   '/_authenticated/$storeId/products/price-lists/': typeof ProductsPriceListsIndexRoute
@@ -739,8 +748,8 @@ export interface FileRouteTypes {
     | '/$storeId/promotions/'
     | '/$storeId/sellers/'
     | '/$storeId/settings/'
-    | '/$storeId/companies/locations/$locationId'
     | '/$storeId/orders/$orderId/edit'
+    | '/$storeId/products/catalogs/$catalogId'
     | '/$storeId/products/categories/$categoryId'
     | '/$storeId/products/categories/new'
     | '/$storeId/products/collections/$collectionId'
@@ -748,6 +757,7 @@ export interface FileRouteTypes {
     | '/$storeId/products/price-lists/new'
     | '/$storeId/settings/webhooks/$webhookEndpointId'
     | '/$storeId/orders/$orderId/'
+    | '/$storeId/products/catalogs/'
     | '/$storeId/products/categories/'
     | '/$storeId/products/collections/'
     | '/$storeId/products/price-lists/'
@@ -811,8 +821,8 @@ export interface FileRouteTypes {
     | '/$storeId/promotions'
     | '/$storeId/sellers'
     | '/$storeId/settings'
-    | '/$storeId/companies/locations/$locationId'
     | '/$storeId/orders/$orderId/edit'
+    | '/$storeId/products/catalogs/$catalogId'
     | '/$storeId/products/categories/$categoryId'
     | '/$storeId/products/categories/new'
     | '/$storeId/products/collections/$collectionId'
@@ -820,6 +830,7 @@ export interface FileRouteTypes {
     | '/$storeId/products/price-lists/new'
     | '/$storeId/settings/webhooks/$webhookEndpointId'
     | '/$storeId/orders/$orderId'
+    | '/$storeId/products/catalogs'
     | '/$storeId/products/categories'
     | '/$storeId/products/collections'
     | '/$storeId/products/price-lists'
@@ -886,8 +897,8 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/promotions/'
     | '/_authenticated/$storeId/sellers/'
     | '/_authenticated/$storeId/settings/'
-    | '/_authenticated/$storeId/companies/locations/$locationId'
     | '/_authenticated/$storeId/orders/$orderId/edit'
+    | '/_authenticated/$storeId/products/catalogs/$catalogId'
     | '/_authenticated/$storeId/products/categories/$categoryId'
     | '/_authenticated/$storeId/products/categories/new'
     | '/_authenticated/$storeId/products/collections/$collectionId'
@@ -895,6 +906,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/products/price-lists/new'
     | '/_authenticated/$storeId/settings/webhooks/$webhookEndpointId'
     | '/_authenticated/$storeId/orders/$orderId/'
+    | '/_authenticated/$storeId/products/catalogs/'
     | '/_authenticated/$storeId/products/categories/'
     | '/_authenticated/$storeId/products/collections/'
     | '/_authenticated/$storeId/products/price-lists/'
@@ -1338,6 +1350,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductsCategoriesIndexRouteImport
       parentRoute: typeof authenticatedStoreIdRoute
     }
+    '/_authenticated/$storeId/products/catalogs/': {
+      id: '/_authenticated/$storeId/products/catalogs/'
+      path: '/products/catalogs'
+      fullPath: '/$storeId/products/catalogs/'
+      preLoaderRoute: typeof ProductsCatalogsIndexRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
+    }
     '/_authenticated/$storeId/orders/$orderId/': {
       id: '/_authenticated/$storeId/orders/$orderId/'
       path: '/orders/$orderId'
@@ -1387,18 +1406,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductsCategoriesCategoryIdRouteImport
       parentRoute: typeof authenticatedStoreIdRoute
     }
+    '/_authenticated/$storeId/products/catalogs/$catalogId': {
+      id: '/_authenticated/$storeId/products/catalogs/$catalogId'
+      path: '/products/catalogs/$catalogId'
+      fullPath: '/$storeId/products/catalogs/$catalogId'
+      preLoaderRoute: typeof ProductsCatalogsCatalogIdRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
+    }
     '/_authenticated/$storeId/orders/$orderId/edit': {
       id: '/_authenticated/$storeId/orders/$orderId/edit'
       path: '/orders/$orderId/edit'
       fullPath: '/$storeId/orders/$orderId/edit'
       preLoaderRoute: typeof OrdersOrderIdEditRouteImport
-      parentRoute: typeof authenticatedStoreIdRoute
-    }
-    '/_authenticated/$storeId/companies/locations/$locationId': {
-      id: '/_authenticated/$storeId/companies/locations/$locationId'
-      path: '/companies/locations/$locationId'
-      fullPath: '/$storeId/companies/locations/$locationId'
-      preLoaderRoute: typeof CompaniesLocationsDotlocationIdRouteImport
       parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/settings/delivery-profiles/$profileId/': {
@@ -1526,14 +1545,15 @@ interface authenticatedStoreIdRouteChildren {
   ProductsIndexRoute: typeof ProductsIndexRoute
   PromotionsIndexRoute: typeof PromotionsIndexRoute
   SellersIndexRoute: typeof SellersIndexRoute
-  CompaniesLocationsDotlocationIdRoute: typeof CompaniesLocationsDotlocationIdRoute
   OrdersOrderIdEditRoute: typeof OrdersOrderIdEditRoute
+  ProductsCatalogsCatalogIdRoute: typeof ProductsCatalogsCatalogIdRoute
   ProductsCategoriesCategoryIdRoute: typeof ProductsCategoriesCategoryIdRoute
   ProductsCategoriesNewRoute: typeof ProductsCategoriesNewRoute
   ProductsCollectionsCollectionIdRoute: typeof ProductsCollectionsCollectionIdRoute
   ProductsCollectionsNewRoute: typeof ProductsCollectionsNewRoute
   ProductsPriceListsNewRoute: typeof ProductsPriceListsNewRoute
   OrdersOrderIdIndexRoute: typeof OrdersOrderIdIndexRoute
+  ProductsCatalogsIndexRoute: typeof ProductsCatalogsIndexRoute
   ProductsCategoriesIndexRoute: typeof ProductsCategoriesIndexRoute
   ProductsCollectionsIndexRoute: typeof ProductsCollectionsIndexRoute
   ProductsPriceListsIndexRoute: typeof ProductsPriceListsIndexRoute
@@ -1568,14 +1588,15 @@ const authenticatedStoreIdRouteChildren: authenticatedStoreIdRouteChildren = {
   ProductsIndexRoute: ProductsIndexRoute,
   PromotionsIndexRoute: PromotionsIndexRoute,
   SellersIndexRoute: SellersIndexRoute,
-  CompaniesLocationsDotlocationIdRoute: CompaniesLocationsDotlocationIdRoute,
   OrdersOrderIdEditRoute: OrdersOrderIdEditRoute,
+  ProductsCatalogsCatalogIdRoute: ProductsCatalogsCatalogIdRoute,
   ProductsCategoriesCategoryIdRoute: ProductsCategoriesCategoryIdRoute,
   ProductsCategoriesNewRoute: ProductsCategoriesNewRoute,
   ProductsCollectionsCollectionIdRoute: ProductsCollectionsCollectionIdRoute,
   ProductsCollectionsNewRoute: ProductsCollectionsNewRoute,
   ProductsPriceListsNewRoute: ProductsPriceListsNewRoute,
   OrdersOrderIdIndexRoute: OrdersOrderIdIndexRoute,
+  ProductsCatalogsIndexRoute: ProductsCatalogsIndexRoute,
   ProductsCategoriesIndexRoute: ProductsCategoriesIndexRoute,
   ProductsCollectionsIndexRoute: ProductsCollectionsIndexRoute,
   ProductsPriceListsIndexRoute: ProductsPriceListsIndexRoute,
