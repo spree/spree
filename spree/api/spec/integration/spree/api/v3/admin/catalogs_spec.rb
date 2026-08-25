@@ -49,7 +49,7 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
           name: { type: :string, example: 'VIP Assortment' },
           active: { type: :boolean, example: true },
           price_list_id: { type: :string, nullable: true,
-                           description: 'Price list pricing this catalog; omit for assortment-only (base prices). Selecting a list on an empty catalog seeds the assortment from its products.',
+                           description: 'Price list pricing this catalog; omit for assortment-only (base prices). A catalog with an empty assortment prices without restricting visibility; import or curate products to make it restrictive.',
                            example: 'pl_86Rf07xd4z' }
         },
         required: ['name']

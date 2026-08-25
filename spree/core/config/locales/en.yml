@@ -695,6 +695,8 @@ en:
       out_of_stock: "%{li_name} was removed because it was sold out"
       pricing_unavailable: Prices could not be confirmed. Please try again.
       quantity_must_be_positive: Quantity must be at least 1. Use DELETE to remove the item.
+    catalogs:
+      no_price_list_to_import: This catalog has no price list to import products from.
     categories: Categories
     category: Category
     change: Change

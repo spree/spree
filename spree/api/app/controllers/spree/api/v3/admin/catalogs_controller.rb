@@ -8,7 +8,25 @@ module Spree
         class CatalogsController < ResourceController
           scoped_resource :products
 
-          before_action :set_resource, only: [:show, :update, :destroy, :assign]
+          before_action :set_resource, only: [:show, :update, :destroy, :assign, :import_products]
+
+          # POST /api/v3/admin/catalogs/:id/import_products — copies the
+          # attached price list's products into the assortment. Explicit by
+          # design: an empty assortment is a pricing-only overlay, so making
+          # a catalog restrictive is a deliberate act.
+          def import_products
+            authorize! :update, @resource
+
+            if @resource.price_list.nil?
+              return render_error(
+                code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:validation_error],
+                message: Spree.t('catalogs.no_price_list_to_import'),
+                status: :unprocessable_content
+              )
+            end
+
+            render json: { added_count: @resource.import_products_from_price_list }
+          end
 
           # POST /api/v3/admin/catalogs/:id/assign — { assignable_type, assignable_id }
           def assign

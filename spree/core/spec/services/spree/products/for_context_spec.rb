@@ -54,6 +54,27 @@ describe Spree::Products::ForContext do
 
       expect(resolve(customer: customer)).to contain_exactly(listed, also_listed)
     end
+
+    # An empty assortment means the whole channel range — a pricing-only
+    # overlay. Without this, "everyone sees the public store, this company
+    # just gets special prices" would be impossible to express, since giving
+    # the company any catalog would hide everything uncataloged.
+    it 'lifts the restriction when any effective catalog is uncurated' do
+      overlay = create(:catalog, store: store)
+      create(:catalog_assignment, catalog: overlay, assignable: company)
+
+      expect(resolve(company: company)).to contain_exactly(listed, also_listed)
+    end
+
+    it 'lets a division own overlay open up a parent-restricted range' do
+      division = create(:company, store: store, kind: 'division', parent: company)
+      overlay = create(:catalog, store: store)
+      create(:catalog_assignment, catalog: overlay, assignable: division)
+
+      expect(resolve(company: division)).to contain_exactly(listed, also_listed)
+      # The parent itself stays restricted to its curated catalog.
+      expect(resolve(company: company)).to contain_exactly(listed)
+    end
   end
 
   context 'with a customer group catalog' do

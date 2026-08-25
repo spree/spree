@@ -98,42 +98,31 @@ describe Spree::Catalog, type: :model do
     end
   end
 
-  describe 'seeding the assortment from a price list' do
+  describe '#import_products_from_price_list' do
     let(:product) { create(:product, store: store, price: 100) }
     let(:price_list) do
       create(:price_list, store: store).tap { |list| list.add_products([product.id]) }
     end
 
-    it 'imports the list products when the assortment is empty' do
+    it 'copies the list products into the assortment' do
+      catalog = create(:catalog, store: store, price_list: price_list)
+
+      expect(catalog.import_products_from_price_list).to eq(1)
+      expect(catalog.products.reload).to contain_exactly(product)
+    end
+
+    # Deliberately never automatic — an empty assortment is a pricing-only
+    # overlay, so restricting is an explicit act.
+    it 'does not run on price list selection' do
       catalog = create(:catalog, store: store)
 
       catalog.update!(price_list: price_list)
 
-      expect(catalog.products.reload).to contain_exactly(product)
+      expect(catalog.products.reload).to be_empty
     end
 
-    it 'seeds on create with a price list' do
-      catalog = create(:catalog, store: store, price_list: price_list)
-
-      expect(catalog.products.reload).to contain_exactly(product)
-    end
-
-    it 'never touches a curated assortment' do
-      catalog = create(:catalog, store: store)
-      curated = create(:product, store: store)
-      catalog.add_products([curated.id])
-
-      catalog.update!(price_list: price_list)
-
-      expect(catalog.products.reload).to contain_exactly(curated)
-    end
-
-    it 'removes nothing when the list is cleared' do
-      catalog = create(:catalog, store: store, price_list: price_list)
-
-      catalog.update!(price_list: nil)
-
-      expect(catalog.products.reload).to contain_exactly(product)
+    it 'answers zero without a price list' do
+      expect(create(:catalog, store: store).import_products_from_price_list).to eq(0)
     end
   end
 

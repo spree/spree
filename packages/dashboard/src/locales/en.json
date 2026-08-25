@@ -124,12 +124,14 @@
         "settings": "Catalog"
       },
       "empty": "No catalogs yet",
+      "import_from_price_list": "Import products from price list",
       "messages": {
         "assigned": "Catalog assigned",
         "created": "Catalog created",
         "deleted": "Catalog deleted",
         "product_removed": "Product removed",
         "products_added": "Products added",
+        "products_imported": "Products imported",
         "products_removed": "Products removed",
         "unassigned": "Assignment removed",
         "updated": "Catalog updated"
@@ -874,7 +876,7 @@
         },
         "price_list": {
           "empty": "No price lists found",
-          "help": "Optional. Without one, the catalog only narrows the assortment and base prices apply. Picking a list while the assortment is empty imports its products.",
+          "help": "Optional. Without one, the catalog only narrows the assortment and base prices apply. With an empty assortment, the catalog only prices — nothing is hidden; import or add products to restrict what this audience sees.",
           "label": "Price list",
           "placeholder": "Base prices"
         }

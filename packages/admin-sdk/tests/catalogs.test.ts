@@ -64,6 +64,21 @@ describe('catalogs', () => {
     expect(repositioned).toEqual({ new_position: 0 })
   })
 
+  it('imports the price list products into the assortment', async () => {
+    let imported = false
+    server.use(
+      http.post(`${API_PREFIX}/catalogs/cat_abc123/import_products`, () => {
+        imported = true
+        return HttpResponse.json({ added_count: 12 })
+      }),
+    )
+
+    const result = await createTestClient().catalogs.importProducts('cat_abc123')
+
+    expect(imported).toBe(true)
+    expect(result.added_count).toBe(12)
+  })
+
   it('assigns the catalog to an audience and withdraws it', async () => {
     let assigned: Record<string, unknown> | null = null
     let unassigned = false

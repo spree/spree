@@ -126,12 +126,14 @@
         "settings": "Katalog"
       },
       "empty": "Brak katalogów",
+      "import_from_price_list": "Importuj produkty z cennika",
       "messages": {
         "assigned": "Katalog przypisany",
         "created": "Katalog utworzony",
         "deleted": "Katalog usunięty",
         "product_removed": "Produkt usunięty",
         "products_added": "Produkty dodane",
+        "products_imported": "Produkty zaimportowane",
         "products_removed": "Produkty usunięte",
         "unassigned": "Przypisanie usunięte",
         "updated": "Katalog zaktualizowany"
@@ -892,7 +894,7 @@
         },
         "price_list": {
           "empty": "Nie znaleziono cenników",
-          "help": "Opcjonalny. Bez cennika katalog zawęża tylko asortyment i obowiązują ceny podstawowe. Wybór cennika przy pustym asortymencie importuje jego produkty.",
+          "help": "Opcjonalny. Bez cennika katalog zawęża tylko asortyment i obowiązują ceny podstawowe. Przy pustym asortymencie katalog tylko wycenia — nic nie jest ukrywane; zaimportuj lub dodaj produkty, aby ograniczyć widoczność dla tego odbiorcy.",
           "label": "Cennik",
           "placeholder": "Ceny podstawowe"
         }

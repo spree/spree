@@ -124,12 +124,14 @@
         "settings": "Catalogue"
       },
       "empty": "Aucun catalogue pour le moment",
+      "import_from_price_list": "Importer les produits de la liste de prix",
       "messages": {
         "assigned": "Catalogue affecté",
         "created": "Catalogue créé",
         "deleted": "Catalogue supprimé",
         "product_removed": "Produit retiré",
         "products_added": "Produits ajoutés",
+        "products_imported": "Produits importés",
         "products_removed": "Produits retirés",
         "unassigned": "Affectation retirée",
         "updated": "Catalogue mis à jour"
@@ -874,7 +876,7 @@
         },
         "price_list": {
           "empty": "Aucune liste de prix trouvée",
-          "help": "Optionnel. Sans liste, le catalogue ne restreint que l’assortiment et les prix de base s’appliquent. Choisir une liste quand l’assortiment est vide importe ses produits.",
+          "help": "Optionnel. Sans liste, le catalogue ne restreint que l’assortiment et les prix de base s’appliquent. Avec un assortiment vide, le catalogue ne fait que tarifer — rien n’est masqué ; importez ou ajoutez des produits pour restreindre ce que voit cette audience.",
           "label": "Liste de prix",
           "placeholder": "Prix de base"
         }

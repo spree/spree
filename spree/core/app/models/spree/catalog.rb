@@ -33,13 +33,6 @@ module Spree
     validates :name, presence: true
     validate :price_list_in_same_store
 
-    # Selecting a price list on an EMPTY catalog seeds the assortment from
-    # the list's products — the common flow is "the wholesale range is
-    # already priced, now make it a catalog". A curated assortment is never
-    # touched, and clearing the list removes nothing.
-    after_save :seed_assortment_from_price_list,
-               if: -> { saved_change_to_price_list_id? && price_list_id.present? }
-
     scope :active, -> { where(active: true) }
     scope :by_position, -> { order(position: :asc) }
 
@@ -91,13 +84,19 @@ module Spree
       product_ids.size
     end
 
-    private
-
-    def seed_assortment_from_price_list
-      return if catalog_products.exists?
+    # Copies the price list's products into the assortment — the explicit
+    # "the wholesale range is already priced" convenience. Deliberately never
+    # automatic: an empty assortment is a pricing-only overlay that hides
+    # nothing, so turning a catalog restrictive is a curation act.
+    #
+    # @return [Integer] how many products were added
+    def import_products_from_price_list
+      return 0 if price_list.nil?
 
       add_products(price_list.product_ids)
     end
+
+    private
 
     def price_list_in_same_store
       return if price_list.nil? || store_id.nil?

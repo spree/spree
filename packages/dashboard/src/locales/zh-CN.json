@@ -124,12 +124,14 @@
         "settings": "目录"
       },
       "empty": "暂无目录",
+      "import_from_price_list": "从价格表导入产品",
       "messages": {
         "assigned": "目录已分配",
         "created": "目录已创建",
         "deleted": "目录已删除",
         "product_removed": "产品已移除",
         "products_added": "产品已添加",
+        "products_imported": "产品已导入",
         "products_removed": "产品已移除",
         "unassigned": "分配已移除",
         "updated": "目录已更新"
@@ -869,7 +871,7 @@
         },
         "price_list": {
           "empty": "未找到价格表",
-          "help": "可选。不设置价格表时，目录仅限定商品范围，按基础价格计价。在商品范围为空时选择价格表会导入其产品。",
+          "help": "可选。不设置价格表时，目录仅限定商品范围，按基础价格计价。商品范围为空时，目录只定价——不隐藏任何商品；导入或添加产品可限制该受众所见范围。",
           "label": "价格表",
           "placeholder": "基础价格"
         }

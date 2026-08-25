@@ -3259,6 +3259,14 @@ export class AdminClient {
         }),
     },
 
+    /**
+     * Copies the attached price list's products into the assortment.
+     * Explicit by design — an empty assortment is a pricing-only overlay
+     * (nothing hidden), so making a catalog restrictive is deliberate.
+     */
+    importProducts: (id: string, options?: RequestOptions): Promise<{ added_count: number }> =>
+      this.request<{ added_count: number }>('POST', `/catalogs/${id}/import_products`, options),
+
     /** Shows the catalog to an audience. */
     assign: (
       id: string,

@@ -573,6 +573,7 @@ Spree::Core::Engine.add_routes do
         resources :catalogs do
           member do
             post :assign
+            post :import_products
           end
           # Manual assortment membership + ordering within the catalog.
           resources :products, controller: 'catalogs/products', only: [:index, :create, :destroy] do

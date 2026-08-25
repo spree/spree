@@ -116,6 +116,19 @@ export function useRepositionCatalogProduct(catalogId: string) {
   })
 }
 
+/**
+ * Copies the attached price list's products into the assortment — the
+ * explicit act that turns a pricing-only overlay into a restrictive catalog.
+ */
+export function useImportCatalogPriceListProducts(catalogId: string) {
+  return useResourceMutation<{ added_count: number }, Error, void>({
+    mutationFn: () => adminClient.catalogs.importProducts(catalogId),
+    invalidate: [['catalogs', catalogId]],
+    successMessage: i18n.t('admin.catalogs.messages.products_imported'),
+    errorMessage: i18n.t('admin.errors.failed_to_update'),
+  })
+}
+
 // ---------------------------------------------------------------------------
 // Assignments — who sees the catalog
 // ---------------------------------------------------------------------------

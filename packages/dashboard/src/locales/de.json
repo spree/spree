@@ -124,12 +124,14 @@
         "settings": "Katalog"
       },
       "empty": "Noch keine Kataloge",
+      "import_from_price_list": "Produkte aus Preisliste importieren",
       "messages": {
         "assigned": "Katalog zugewiesen",
         "created": "Katalog erstellt",
         "deleted": "Katalog gelöscht",
         "product_removed": "Produkt entfernt",
         "products_added": "Produkte hinzugefügt",
+        "products_imported": "Produkte importiert",
         "products_removed": "Produkte entfernt",
         "unassigned": "Zuweisung entfernt",
         "updated": "Katalog aktualisiert"
@@ -874,7 +876,7 @@
         },
         "price_list": {
           "empty": "Keine Preislisten gefunden",
-          "help": "Optional. Ohne Preisliste schränkt der Katalog nur das Sortiment ein; es gelten die Basispreise. Die Wahl einer Liste bei leerem Sortiment importiert deren Produkte.",
+          "help": "Optional. Ohne Preisliste schränkt der Katalog nur das Sortiment ein; es gelten die Basispreise. Bei leerem Sortiment bepreist der Katalog nur — nichts wird ausgeblendet; importieren oder fügen Sie Produkte hinzu, um die Sichtbarkeit einzuschränken.",
           "label": "Preisliste",
           "placeholder": "Basispreise"
         }

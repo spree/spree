@@ -33,8 +33,16 @@ module Spree
 
         return success(base) if catalogs.empty?
 
+        # An empty assortment means the whole channel range: such a catalog is
+        # a pricing-only overlay (its price list applies, nothing is hidden),
+        # so one in the effective set lifts the restriction entirely — the
+        # union includes "all". Only a set of curated catalogs narrows.
+        catalog_ids = catalogs.map(&:id)
+        curated_ids = Spree::CatalogProduct.where(catalog_id: catalog_ids).distinct.pluck(:catalog_id)
+        return success(base) if (catalog_ids - curated_ids).any?
+
         success(base.where(
-          id: Spree::CatalogProduct.where(catalog_id: catalogs.map(&:id)).select(:product_id)
+          id: Spree::CatalogProduct.where(catalog_id: catalog_ids).select(:product_id)
         ))
       end
 

@@ -50,6 +50,26 @@ RSpec.describe Spree::Api::V3::Admin::CatalogsController, type: :controller do
     end
   end
 
+  describe 'POST #import_products' do
+    it 'copies the price list products into the assortment' do
+      product = create(:product, store: store, price: 100)
+      price_list = create(:price_list, store: store).tap { |list| list.add_products([product.id]) }
+      catalog.update!(price_list: price_list)
+
+      post :import_products, params: { id: catalog.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['added_count']).to eq(1)
+      expect(catalog.products.reload).to contain_exactly(product)
+    end
+
+    it '422s without a price list' do
+      post :import_products, params: { id: catalog.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+  end
+
   describe 'POST #assign' do
     it 'assigns the catalog to a company node' do
       company = create(:company, store: store)

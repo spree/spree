@@ -52,6 +52,7 @@ import {
   useCatalog,
   useCatalogProducts,
   useDeleteCatalog,
+  useImportCatalogPriceListProducts,
   useRemoveCatalogProduct,
   useRemoveCatalogProducts,
   useRepositionCatalogProduct,
@@ -174,6 +175,7 @@ function CatalogProductsCard({ catalog, canEdit }: { catalog: Catalog; canEdit: 
 function CatalogSettingsCard({ catalog, canEdit }: { catalog: Catalog; canEdit: boolean }) {
   const { t } = useTranslation()
   const updateMutation = useUpdateCatalog(catalog.id)
+  const importMutation = useImportCatalogPriceListProducts(catalog.id)
 
   const form = useForm<CatalogFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -243,6 +245,21 @@ function CatalogSettingsCard({ catalog, canEdit }: { catalog: Catalog; canEdit: 
               )}
             />
             <FieldDescription>{t('admin.fields.catalog.price_list.help')}</FieldDescription>
+            {canEdit && catalog.price_list_id && (
+              <div>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  disabled={importMutation.isPending}
+                  onClick={() => importMutation.mutate()}
+                >
+                  {importMutation.isPending
+                    ? t('admin.actions.saving')
+                    : t('admin.catalogs.import_from_price_list')}
+                </Button>
+              </div>
+            )}
           </Field>
 
           <Controller
