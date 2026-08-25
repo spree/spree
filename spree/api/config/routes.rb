@@ -118,6 +118,29 @@ Spree::Core::Engine.add_routes do
           end
         end
 
+        # Company self-service — the buyer's organization directory
+        # (docs/plans/6.0-b2b-companies-and-catalogs.md). Authorization is
+        # standing + the storefront access policy, never roles.
+        get 'account/companies', to: 'account/companies#index'
+
+        resources :companies, only: [:show, :update] do
+          resources :addresses, only: [:index, :create], controller: 'companies/addresses'
+          # POST takes customer_email — a membership for an existing customer,
+          # an invitation otherwise.
+          resources :members, only: [:index, :create], controller: 'companies/members'
+          resources :invitations, only: [:index], controller: 'companies/invitations'
+          # Completed purchases across the node's subtree.
+          resources :orders, only: [:index], controller: 'companies/orders'
+        end
+
+        resources :company_addresses, only: [:update, :destroy]
+        resources :company_members, only: [:destroy]
+        # DELETE revokes (by prefixed id, member-authenticated); GET and
+        # accept are the unauthenticated token flow from the invite email.
+        resources :company_invitations, only: [:destroy]
+        get 'company_invitations/:token', to: 'company_invitations#show', as: :company_invitation_lookup
+        post 'company_invitations/:token/accept', to: 'company_invitations#accept'
+
         # Wishlists
         resources :wishlists do
           resources :items, only: [:create, :update, :destroy], controller: 'wishlist_items'
@@ -508,15 +531,17 @@ Spree::Core::Engine.add_routes do
         # everything an operator acts on lives on the orders inside it.
         resources :order_groups, only: [:index, :show]
 
-        # Business customers. Branches and their buyers are created under their
-        # parent and then addressed directly, so a caller holding a branch id
-        # does not have to know which company it belongs to.
+        # Business customers — a tree of company nodes. Nested collections are
+        # listed and created under their node and then addressed directly, so
+        # a caller holding an entry id does not have to know its company.
         resources :companies do
-          # Listed and created under the company you arrived from; read and
-          # written by their own id below, which has to exist anyway as the
-          # parent path for contacts (three levels of nesting is over the cap —
-          # docs/plans/6.0-admin-api.md).
-          resources :locations, controller: 'companies/locations', only: [:index, :create]
+          # The node's address book.
+          resources :addresses, controller: 'companies/addresses', only: [:index, :create]
+
+          # The people with standing over the node. Creation takes an email:
+          # a membership for an existing customer, an invitation otherwise.
+          resources :memberships, controller: 'companies/memberships', only: [:index, :create]
+          resources :invitations, controller: 'companies/invitations', only: [:index]
 
           # The business's own registration — the number on its invoices, which
           # outranks the buyer's own. Same shape as the customer's.
@@ -538,11 +563,25 @@ Spree::Core::Engine.add_routes do
           end
         end
 
-        resources :company_locations, only: [:show, :update, :destroy] do
-          resources :contacts, controller: 'company_locations/contacts', only: [:index, :create]
-        end
+        resources :company_addresses, only: [:show, :update, :destroy]
+        resources :company_memberships, only: [:show, :destroy]
+        # DELETE revokes the invitation rather than erasing the record.
+        resources :company_invitations, only: [:show, :destroy]
 
-        resources :company_contacts, only: [:show, :destroy]
+        # Catalogs — assortment + optional price list, assigned to an audience
+        # (channel, customer group, market, or company subtree).
+        resources :catalogs do
+          member do
+            post :assign
+          end
+          # Manual assortment membership + ordering within the catalog.
+          resources :products, controller: 'catalogs/products', only: [:index, :create, :destroy] do
+            member do
+              patch :reposition
+            end
+          end
+        end
+        resources :catalog_assignments, only: [:show, :destroy]
 
         # Price lists
         resources :price_lists do

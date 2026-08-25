@@ -192,7 +192,7 @@ module Spree
                 :email, :customer_id, :user_id,
                 :customer_note, :internal_note,
                 :currency, :locale, :market_id, :channel_id,
-                :preferred_stock_location_id, :company_location_id,
+                :preferred_stock_location_id, :company_id,
                 metadata: {},
                 tags: [],
                 shipping_address: address_permitted_keys,

@@ -15,6 +15,8 @@ export const CartSchema = z.object({
   market_id: z.string().nullable(),
   channel_id: z.string().nullable(),
   preferred_stock_location_id: z.string().nullable(),
+  company_id: z.string().nullable(),
+  company_name: z.string().nullable(),
   number: z.string(),
   token: z.string(),
   email: z.string().nullable(),

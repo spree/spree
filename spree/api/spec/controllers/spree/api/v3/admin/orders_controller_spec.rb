@@ -520,38 +520,37 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       end
     end
 
-    # Staff assigning the business an order is for — the only route to an
-    # exemption for a buyer who acts for several companies, until session-level
-    # selection is settled with channels and catalogs.
+    # Staff assigning the business an order is for. A buyer with several
+    # memberships names the node on their own cart; this is the back-office
+    # equivalent.
     context 'assigning the business the order is for' do
       let(:company) { create(:company, store: store) }
-      let(:location) { create(:company_location, company: company) }
 
-      it 'sets the branch and reports the company' do
-        patch :update, params: { id: order.prefixed_id, company_location_id: location.prefixed_id }, as: :json
+      it 'sets the node and reports it' do
+        patch :update, params: { id: order.prefixed_id, company_id: company.prefixed_id }, as: :json
 
         expect(response).to have_http_status(:ok)
-        expect(json_response['company_location_id']).to eq(location.prefixed_id)
         expect(json_response['company_id']).to eq(company.prefixed_id)
+        expect(json_response['company_name']).to eq(company.name)
         expect(order.reload.company).to eq(company)
       end
 
-      it 'refuses a branch belonging to another store' do
-        elsewhere = create(:company_location, company: create(:company, store: create(:store)))
+      it 'refuses a node belonging to another store' do
+        elsewhere = create(:company, store: create(:store))
 
-        patch :update, params: { id: order.prefixed_id, company_location_id: elsewhere.prefixed_id }, as: :json
+        patch :update, params: { id: order.prefixed_id, company_id: elsewhere.prefixed_id }, as: :json
 
         expect(response).to have_http_status(:unprocessable_content)
-        expect(order.reload.company_location_id).to be_nil
+        expect(order.reload.company_id).to be_nil
       end
 
-      it 'clears the branch when passed nothing' do
-        order.update!(company_location: location)
+      it 'clears the node when passed nothing' do
+        order.update!(company: company)
 
-        patch :update, params: { id: order.prefixed_id, company_location_id: nil }, as: :json
+        patch :update, params: { id: order.prefixed_id, company_id: nil }, as: :json
 
         expect(response).to have_http_status(:ok)
-        expect(order.reload.company_location_id).to be_nil
+        expect(order.reload.company_id).to be_nil
       end
     end
 

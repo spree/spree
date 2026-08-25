@@ -8,8 +8,8 @@ module Spree
           include Concerns::ExternalReferencesAttribute
 
 
-          typelize company_location_id: [:string, nullable: true],
-                   company_id: [:string, nullable: true],
+          typelize company_id: [:string, nullable: true],
+                   company_name: [:string, nullable: true],
                    seller_id: [:string, nullable: true],
                    order_group_id: [:string, nullable: true]
 
@@ -53,11 +53,15 @@ module Spree
             order.preferred_stock_location&.prefixed_id
           end
 
-          # Which business the order is for, so the dashboard can show and change
-          # it. Read back from the column rather than #resolved_company_location:
+          # Which company node the order is for, so the dashboard can show and
+          # change it. Read back from the column rather than #resolved_company:
           # a placed order must report what it was stamped with.
-          attribute :company_location_id do |order|
-            order.company_location&.prefixed_id
+          attribute :company_id do |order|
+            order.company&.prefixed_id
+          end
+
+          attribute :company_name do |order|
+            order.company&.name
           end
 
           # Whose sale this is — nil on the operator's own goods. The full
@@ -79,10 +83,6 @@ module Spree
           # /order_groups/:id, which is what that endpoint is for.
           attribute :order_group_id do |order|
             Spree::OrderGroup.prefixed_id_for(order.order_group_id)
-          end
-
-          attribute :company_id do |order|
-            order.company_location&.company&.prefixed_id
           end
 
           attribute :tags do |order|

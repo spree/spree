@@ -5,18 +5,32 @@ module Spree
         class CompanySerializer < V3::CompanySerializer
           include Concerns::ExternalReferencesAttribute
 
-          typelize locations_count: :number, metadata: 'Record<string, unknown> | null'
+          typelize children_count: :number, members_count: :number,
+                   metadata: 'Record<string, unknown> | null'
 
           attributes :metadata, created_at: :iso8601, updated_at: :iso8601
 
-          # Saves the dashboard a request per row just to say "3 branches".
-          attribute :locations_count do |company|
-            company.company_locations.size
+          # Saves the dashboard a request per row just to render the tree
+          # expander and "3 members".
+          attribute :children_count do |company|
+            company.children.size
           end
 
-          many :company_locations,
-               resource: proc { Spree.api.admin_company_location_serializer },
-               if: proc { expand?('company_locations') }
+          attribute :members_count do |company|
+            company.memberships.size
+          end
+
+          many :children,
+               resource: proc { Spree.api.admin_company_serializer },
+               if: proc { expand?('children') }
+
+          many :company_addresses, key: :addresses,
+               resource: proc { Spree.api.admin_company_address_serializer },
+               if: proc { expand?('addresses') }
+
+          many :memberships,
+               resource: proc { Spree.api.admin_company_membership_serializer },
+               if: proc { expand?('memberships') }
         end
       end
     end
