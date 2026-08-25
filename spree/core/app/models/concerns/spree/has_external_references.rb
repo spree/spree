@@ -80,7 +80,7 @@ module Spree
 
     # A reference belongs to the same store as the record it identifies.
     #
-    # Store-owning models answer directly (and CompanyLocation delegates);
+    # Store-owning models answer directly;
     # variants and stock levels carry no store of their own and reach it
     # through the product. Anything else is left nil here — the reference
     # includes {Spree::SingleStoreResource}, whose ensure_store callback

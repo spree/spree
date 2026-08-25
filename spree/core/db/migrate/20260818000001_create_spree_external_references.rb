@@ -27,12 +27,7 @@ class CreateSpreeExternalReferences < ActiveRecord::Migration[8.1]
     add_index :spree_external_references, [:resource_type, :resource_id],
               name: 'idx_external_references_on_resource_lookup'
 
-    # Company and location external ids move to the new table. Unreleased
-    # (6.0-dev only), so no data carry-over: dev databases re-key from their
-    # feed. Options given in full so the migration reverses cleanly.
-    remove_index :spree_companies, [:store_id, :external_id], unique: true,
-                 where: 'external_id IS NOT NULL', name: 'idx_companies_external_id'
-    remove_column :spree_companies, :external_id, :string
-    remove_column :spree_company_locations, :external_id, :string
+    # No column moves: the company tree migration (20260807000001) is born
+    # without external_id — ERP/CRM identity lives here from the start.
   end
 end

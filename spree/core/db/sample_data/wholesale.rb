@@ -76,8 +76,8 @@ Spree.price_list_activate_workflow.call(price_list: price_list) unless price_lis
 # (docs/plans/6.0-b2b-companies-and-catalogs.md).
 company = store.companies.find_or_create_by!(name: 'Acme Industrial') do |record|
   record.kind = 'company'
-  record.external_id = 'ACME-1'
 end
+company.set_external_id('erp', 'ACME-1') if company.external_id_for('erp').blank?
 
 division = store.companies.find_or_create_by!(name: 'Acme EMEA') do |record|
   record.kind = 'division'
