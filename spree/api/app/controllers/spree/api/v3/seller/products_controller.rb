@@ -42,15 +42,12 @@ module Spree
               prices: [:amount, :compare_at_amount, :currency]
             )
 
-            default_price_currency(attrs)
-          end
-
-          # A price with no currency is priced in the store's, not in whatever
-          # the client happened to assume. `Variant#prices=` passes the value
-          # through untouched and drops base prices for currencies absent from
-          # the payload, so a wrong guess does not merely add a stray price —
-          # it removes the right one.
-          def default_price_currency(attrs)
+            # A price the client did not name a currency for is priced in the
+            # store's. `Variant#prices=` matches base prices on the currency it
+            # is handed and drops the ones missing from the payload, so a
+            # guessed currency does not merely add a stray price — it removes
+            # the right one. Blank counts as unnamed: an empty form field would
+            # otherwise key a price on "".
             return attrs if attrs[:prices].blank?
 
             attrs[:prices] = attrs[:prices].map do |price|
