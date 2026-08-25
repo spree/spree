@@ -56,7 +56,7 @@ module SpreeStripe
         {
           amount: minor_units(seller_transfer),
           currency: seller_transfer.currency.downcase,
-          destination: seller.payout_account_reference,
+          destination: seller.payout_account_reference(self.class),
           # Funds the transfer from the customer's own charge, so it settles
           # with that charge rather than out of the platform's balance.
           source_transaction: source_charge_for(seller_transfer, gateway),

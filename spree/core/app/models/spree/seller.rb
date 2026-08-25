@@ -243,24 +243,33 @@ module Spree
     # webhook needs — "which seller is acct_123?" — is a uniquely indexed read
     # rather than a scan.
     #
+    # @param provider [Class] the payout provider whose account is wanted;
+    #   defaults to the one the store is configured to pay through
     # @return [String, nil]
-    def payout_account_reference
-      external_id_for(payout_reference_system)
+    def payout_account_reference(provider = store.payout_provider_class)
+      external_id_for(provider.reference_system)
     end
 
+    # Records the account a provider issued this seller.
+    #
+    # @param provider [Class] the provider that issued it — stated by the
+    #   caller rather than read from the store, since a gem writes the account
+    #   it minted whatever the store is currently configured to pay through
     # @param account_reference [String, nil] blank forgets the account
     # @return [void]
-    def payout_account_reference=(account_reference)
-      set_external_id(payout_reference_system, account_reference)
+    def set_payout_account_reference(provider, account_reference)
+      set_external_id(provider.reference_system, account_reference)
     end
 
-    # Sellers holding an account with the store's payout provider, for the
-    # reverse lookup a provider webhook does.
+    # Sellers holding an account with one provider, for the reverse lookup a
+    # provider webhook does — it knows the account, not the seller.
     #
+    # @param store [Spree::Store]
+    # @param provider [Class]
     # @param account_reference [String]
     # @return [ActiveRecord::Relation]
-    def self.with_payout_account(store, account_reference)
-      store.sellers.with_external_id(store.payout_provider_class.reference_system, account_reference)
+    def self.with_payout_account(store, provider, account_reference)
+      store.sellers.with_external_id(provider.reference_system, account_reference)
     end
 
     # Whether a provider says this seller may be sent money yet.
@@ -274,15 +283,6 @@ module Spree
       return true unless store.payout_provider_class.requires_payout_account?
 
       payouts_enabled_at.present?
-    end
-
-    # Which system a payout account reference belongs to. The provider's own
-    # key, so a marketplace that changes provider does not read the old
-    # account as if it were the new one.
-    #
-    # @return [String]
-    def payout_reference_system
-      store.payout_provider_class.reference_system
     end
 
     # What this seller's settlement schedule is, falling back to the store's.

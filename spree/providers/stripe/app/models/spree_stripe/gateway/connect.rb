@@ -63,11 +63,13 @@ module SpreeStripe
       # @param return_url [String] where Stripe sends them when they finish
       # @return [String] the onboarding URL
       def create_connect_account_link(seller:, refresh_url:, return_url:)
-        seller.update!(payout_account_reference: create_connect_account(seller)) if seller.payout_account_reference.blank?
+        account_id = payout_account_for(seller) || create_connect_account(seller).tap do |created|
+          seller.set_payout_account_reference(SpreeStripe::PayoutProvider, created)
+        end
 
         Stripe::AccountLink.create(
           {
-            account: seller.payout_account_reference,
+            account: account_id,
             refresh_url: refresh_url,
             return_url: return_url,
             type: 'account_onboarding'
@@ -151,15 +153,34 @@ module SpreeStripe
 
       # Which seller Stripe is talking about. A uniquely indexed read of the
       # account reference, scoped to this store's own sellers.
+      #
+      # Filed under this gem's own key rather than the store's configured
+      # payout provider: Stripe issued the account, so Stripe is what it
+      # belongs to, and a store still settling by hand must still be able to
+      # onboard sellers to Connect.
       def seller_for_account(account_id)
         return if account_id.blank?
 
-        Spree::Seller.with_payout_account(store, account_id).first
+        Spree::Seller.with_payout_account(store, SpreeStripe::PayoutProvider, account_id).first
       end
 
+      # @return [String, nil] the Connect account this seller already holds
+      def payout_account_for(seller)
+        seller.payout_account_reference(SpreeStripe::PayoutProvider)
+      end
+
+      # Stripe's own id first. The fallback is for a settlement recorded before
+      # Stripe named it, and it must match on amount as well as currency:
+      # Stripe batches a connected account's balance on its own schedule, so
+      # one payout of 250 does not mean the oldest settlement of 40 landed —
+      # completing that would debit the wrong figure and stamp Stripe's id
+      # where the settlement it really belongs to can no longer find it.
       def find_payout(seller, object)
         seller.seller_payouts.find_by(reference: object.id) ||
-          seller.seller_payouts.owed.where(currency: object.currency.to_s.upcase).order(:created_at).first
+          seller.seller_payouts.owed.
+            where(currency: object.currency.to_s.upcase, reference: nil).
+            where(amount: Spree::Money::Rounding.from_minor_units(object.amount, object.currency)).
+            order(:created_at).first
       end
 
       def verify_connect_webhook_signature(raw_body, headers)

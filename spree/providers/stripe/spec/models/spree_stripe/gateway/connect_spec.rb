@@ -3,7 +3,11 @@ require 'spec_helper'
 RSpec.describe SpreeStripe::Gateway::Connect do
   let(:store) { @default_store }
   let(:gateway) { create(:stripe_gateway, store: store) }
-  let(:seller) { create(:seller, :approved, store: store, payout_account_reference: 'acct_seller') }
+  let(:seller) do
+    create(:seller, :approved, store: store).tap do |record|
+      record.set_payout_account_reference(SpreeStripe::PayoutProvider, 'acct_seller')
+    end
+  end
   let(:headers) { { 'HTTP_STRIPE_SIGNATURE' => 'sig_test' } }
   let(:raw_body) { '{"id": "evt_test"}' }
 
@@ -63,7 +67,7 @@ RSpec.describe SpreeStripe::Gateway::Connect do
 
       it 'completes the settlement the seller was owed' do
         allow(Stripe::Webhook).to receive(:construct_event).and_return(
-          stripe_event('payout.paid', { id: 'po_1', currency: 'usd' }, account: 'acct_seller')
+          stripe_event('payout.paid', { id: 'po_1', currency: 'usd', amount: 2_000 }, account: 'acct_seller')
         )
 
         gateway.handle_payout_webhook(raw_body, headers)
@@ -72,9 +76,21 @@ RSpec.describe SpreeStripe::Gateway::Connect do
         expect(payout.reference).to eq('po_1')
       end
 
+      # Stripe batches a connected account's balance on its own schedule, so a
+      # payout of one amount says nothing about a settlement of another.
+      it 'leaves a settlement of a different amount alone' do
+        allow(Stripe::Webhook).to receive(:construct_event).and_return(
+          stripe_event('payout.paid', { id: 'po_1', currency: 'usd', amount: 25_000 }, account: 'acct_seller')
+        )
+
+        gateway.handle_payout_webhook(raw_body, headers)
+
+        expect(payout.reload).to be_pending
+      end
+
       it 'leaves a settlement in another currency alone' do
         allow(Stripe::Webhook).to receive(:construct_event).and_return(
-          stripe_event('payout.paid', { id: 'po_1', currency: 'eur' }, account: 'acct_seller')
+          stripe_event('payout.paid', { id: 'po_1', currency: 'eur', amount: 2_000 }, account: 'acct_seller')
         )
 
         gateway.handle_payout_webhook(raw_body, headers)
@@ -88,7 +104,7 @@ RSpec.describe SpreeStripe::Gateway::Connect do
 
       before do
         allow(Stripe::Webhook).to receive(:construct_event).and_return(
-          stripe_event('payout.failed', { id: 'po_1', currency: 'usd' }, account: 'acct_seller')
+          stripe_event('payout.failed', { id: 'po_1', currency: 'usd', amount: 2_000 }, account: 'acct_seller')
         )
       end
 
@@ -116,11 +132,11 @@ RSpec.describe SpreeStripe::Gateway::Connect do
     # completed and land on the next one still owed.
     context 'when payout.paid is delivered twice' do
       let!(:first) { create(:seller_payout, seller: seller, currency: 'USD', amount: 40) }
-      let!(:second) { create(:seller_payout, seller: seller, currency: 'USD', amount: 60) }
+      let!(:second) { create(:seller_payout, seller: seller, currency: 'USD', amount: 40) }
 
       before do
         allow(Stripe::Webhook).to receive(:construct_event).and_return(
-          stripe_event('payout.paid', { id: 'po_1', currency: 'usd' }, account: 'acct_seller')
+          stripe_event('payout.paid', { id: 'po_1', currency: 'usd', amount: 4_000 }, account: 'acct_seller')
         )
       end
 
@@ -154,7 +170,7 @@ RSpec.describe SpreeStripe::Gateway::Connect do
 
   describe '#create_connect_account_link' do
     it 'creates an Express account for a seller who has none, then links to onboarding' do
-      seller = create(:seller, :approved, store: store, payout_account_reference: nil)
+      seller = create(:seller, :approved, store: store)
       allow(Stripe::Account).to receive(:create).and_return(Stripe::StripeObject.construct_from(id: 'acct_new'))
       allow(Stripe::AccountLink).to receive(:create).
         and_return(Stripe::StripeObject.construct_from(url: 'https://connect.stripe.com/setup/x'))
@@ -162,7 +178,7 @@ RSpec.describe SpreeStripe::Gateway::Connect do
       url = gateway.create_connect_account_link(seller: seller, refresh_url: 'https://s/r', return_url: 'https://s/d')
 
       expect(url).to eq('https://connect.stripe.com/setup/x')
-      expect(seller.reload.payout_account_reference).to eq('acct_new')
+      expect(seller.reload.payout_account_reference(SpreeStripe::PayoutProvider)).to eq('acct_new')
     end
 
     it 'reuses the account a seller already holds' do

@@ -20,7 +20,11 @@ module Spree
 
         provider = seller.store.payout_provider_instance
 
-        seller.seller_transfers.pending.where(payout_id: nil).find_each do |transfer|
+        # `processing` as well as `pending`: a transfer whose provider call
+        # raised parks there, and without picking it up again a single network
+        # blip would strand that earning for good — it is counted in no
+        # balance and collected by no sweep.
+        seller.seller_transfers.where(status: %w[pending processing], payout_id: nil).find_each do |transfer|
           provider.transfer!(transfer)
         rescue StandardError => e
           # One seller's stuck earning must not stop the rest — the row stays

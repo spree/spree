@@ -84,7 +84,10 @@ module Spree
     def fail!
       transaction do
         release_transfers
-        update!(status: 'failed', amount: 0)
+        # The amount stays: an operator investigating a failed settlement has
+        # to see what was attempted, and the `owed` scope already excludes it
+        # from what is still to be sent.
+        update!(status: 'failed')
       end
     end
 

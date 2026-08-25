@@ -421,42 +421,61 @@ describe Spree::Seller do
   describe 'the payout account' do
     let(:seller) { create(:seller, :approved, store: @default_store) }
 
-    it 'is stored as an external reference against the store’s provider' do
-      seller.payout_account_reference = 'acct_123'
+    # A stand-in for a provider gem, which names itself when it files the
+    # account it minted.
+    let(:provider) do
+      Class.new(Spree::PayoutProvider::Base) do
+        def self.reference_system = 'acme_pay'
+      end
+    end
+
+    it 'is filed under the provider that issued it' do
+      seller.set_payout_account_reference(provider, 'acct_123')
 
       reference = seller.external_references.reload.first
-      expect(reference.system).to eq('system')
+      expect(reference.system).to eq('acme_pay')
       expect(reference.external_id).to eq('acct_123')
     end
 
     it 'reads back what was written' do
-      seller.payout_account_reference = 'acct_123'
+      seller.set_payout_account_reference(provider, 'acct_123')
 
-      expect(seller.reload.payout_account_reference).to eq('acct_123')
+      expect(seller.reload.payout_account_reference(provider)).to eq('acct_123')
     end
 
     it 'is nil for a seller who holds no account' do
-      expect(seller.payout_account_reference).to be_nil
+      expect(seller.payout_account_reference(provider)).to be_nil
     end
 
     it 'forgets the account when blanked' do
-      seller.payout_account_reference = 'acct_123'
-      seller.payout_account_reference = nil
+      seller.set_payout_account_reference(provider, 'acct_123')
+      seller.set_payout_account_reference(provider, nil)
 
-      expect(seller.reload.payout_account_reference).to be_nil
+      expect(seller.reload.payout_account_reference(provider)).to be_nil
+    end
+
+    # The whole point of keying by provider: a marketplace that changes
+    # provider keeps the old account rather than reading it as the new one.
+    it 'keeps one provider’s account out of another’s' do
+      other_provider = Class.new(Spree::PayoutProvider::Base) do
+        def self.reference_system = 'other_pay'
+      end
+      seller.set_payout_account_reference(provider, 'acct_123')
+
+      expect(seller.reload.payout_account_reference(other_provider)).to be_nil
     end
 
     # What a provider webhook does: it knows the account, not the seller.
     it 'finds the seller an account belongs to' do
-      seller.payout_account_reference = 'acct_123'
+      seller.set_payout_account_reference(provider, 'acct_123')
 
-      expect(Spree::Seller.with_payout_account(@default_store, 'acct_123')).to contain_exactly(seller)
+      expect(Spree::Seller.with_payout_account(@default_store, provider, 'acct_123')).to contain_exactly(seller)
     end
 
     it 'does not find a seller in another marketplace' do
-      seller.payout_account_reference = 'acct_123'
+      seller.set_payout_account_reference(provider, 'acct_123')
 
-      expect(Spree::Seller.with_payout_account(create(:store), 'acct_123')).to be_empty
+      expect(Spree::Seller.with_payout_account(create(:store), provider, 'acct_123')).to be_empty
     end
   end
 end

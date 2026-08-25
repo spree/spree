@@ -3,7 +3,11 @@ require 'spec_helper'
 RSpec.describe SpreeStripe::PayoutProvider do
   let(:store) { @default_store }
   let!(:gateway) { create(:stripe_gateway, store: store) }
-  let(:seller) { create(:seller, :approved, store: store, payout_account_reference: 'acct_seller') }
+  let(:seller) do
+    create(:seller, :approved, store: store).tap do |record|
+      record.set_payout_account_reference(SpreeStripe::PayoutProvider, 'acct_seller')
+    end
+  end
   let(:order) { create(:order, store: store, seller: seller, total: 100, currency: 'USD') }
   let(:seller_transfer) { create(:seller_transfer, seller: seller, order: order, amount: 42.5, currency: 'USD') }
 

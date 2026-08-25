@@ -12,16 +12,22 @@ module Spree
         class SellerPayoutsController < ResourceController
           scoped_resource :payouts
 
-          before_action :set_resource, only: [:complete]
-
           # PATCH /api/v3/admin/seller_payouts/:id/complete
           #
           # What the built-in provider waits for: the operator saying the bank
           # transfer went out, with the reference it went out under.
+          #
+          # Authorized as an update, like every other custom member action —
+          # naming the action itself would only pass while the ability grants
+          # `manage`, and a host narrowing that would get a 403 the scope gate
+          # had already allowed.
           def complete
+            @resource = find_resource
+            authorize! :update, @resource
+
             result = Spree.seller_payout_complete_workflow.call(
               seller_payout: @resource,
-              reference: params[:reference]
+              reference: params[:reference].to_s.presence
             )
 
             if result.success?
