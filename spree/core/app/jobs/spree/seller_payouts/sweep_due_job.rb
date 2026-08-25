@@ -14,20 +14,28 @@ module Spree
       queue_as Spree.queues.payouts
 
       def perform
-        # Preloaded because the schedule falls back to the store's default, so
-        # every seller would otherwise reload its own.
-        Spree::Seller.where(status: 'approved').includes(:store).find_each do |seller|
-          next if seller.resolved_payouts_schedule_interval == 'manual'
-
-          currencies_owed(seller).each do |currency|
-            next unless due?(seller, currency)
-
-            Spree.seller_payout_sweep_workflow.call(seller: seller, currency: currency)
-          end
+        # Store by store, so each seller is reached through the store that owns
+        # them — which is what makes the (store, status) index usable, and what
+        # the schedule falls back to anyway.
+        Spree::Store.find_each do |store|
+          store.sellers.approved.find_each { |seller| sweep_seller(seller) }
         end
       end
 
       private
+
+      # One seller's failure must not end the run for everyone behind them.
+      def sweep_seller(seller)
+        return if seller.resolved_payouts_schedule_interval == 'manual'
+
+        currencies_owed(seller).each do |currency|
+          next unless due?(seller, currency)
+
+          Spree.seller_payout_sweep_workflow.call(seller: seller, currency: currency)
+        end
+      rescue StandardError => e
+        Rails.error.report(e, handled: true, context: { seller_id: seller.id }, source: 'spree.core')
+      end
 
       # Whether enough time has passed since this seller was last settled in
       # this currency. A seller who has never been paid is due as soon as they

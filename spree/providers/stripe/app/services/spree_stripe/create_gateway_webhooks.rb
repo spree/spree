@@ -17,7 +17,17 @@ module SpreeStripe
       return if webhook_url.blank?
 
       api_options = { api_key: payment_method.preferred_secret_key }
-      existing = find_webhook(Stripe::WebhookEndpoint.list({}, api_options)[:data], webhook_url, events)
+      # Asked for in full rather than taking Stripe's default page of ten: an
+      # account holds at most sixteen endpoints, so one call sees them all, and
+      # a marketplace registers two per gateway. Missing our own is not a
+      # harmless miss — Stripe does not treat the URL as unique, so the caller
+      # would create a second endpoint beside it and every event would arrive
+      # twice, half of them signed with a secret we do not hold.
+      existing = find_webhook(
+        Stripe::WebhookEndpoint.list({ limit: 100 }, api_options)[:data],
+        webhook_url,
+        events
+      )
 
       # Stripe only returns the signing secret when the endpoint is created, so a
       # pre-existing endpoint whose secret we do not hold has to be replaced.

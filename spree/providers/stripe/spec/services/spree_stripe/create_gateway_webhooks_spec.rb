@@ -7,7 +7,7 @@ RSpec.describe SpreeStripe::CreateGatewayWebhooks do
   let(:payment_method) { create(:stripe_gateway, store: store) }
   let(:webhook_url) { 'https://spreecommerce.org/stripe/' }
 
-  let(:stripe_webhooks) { Stripe::WebhookEndpoint.list({}, payment_method.api_options)[:data] }
+  let(:stripe_webhooks) { Stripe::WebhookEndpoint.list({ limit: 100 }, payment_method.api_options)[:data] }
   let(:spree_webhook_endpoints) { stripe_webhooks.select { |webhook| webhook[:url] == webhook_url } }
   let(:stripe_webhook) { spree_webhook_endpoints.first }
 

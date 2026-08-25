@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://api.stripe.com/v1/webhook_endpoints
+    uri: https://api.stripe.com/v1/webhook_endpoints?limit=100
     body:
       encoding: US-ASCII
       string: ''
@@ -269,7 +269,7 @@ http_interactions:
   recorded_at: Fri, 08 May 2026 15:16:46 GMT
 - request:
     method: get
-    uri: https://api.stripe.com/v1/webhook_endpoints
+    uri: https://api.stripe.com/v1/webhook_endpoints?limit=100
     body:
       encoding: US-ASCII
       string: ''
