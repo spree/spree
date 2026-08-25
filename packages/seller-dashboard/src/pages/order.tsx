@@ -169,7 +169,7 @@ function FulfillmentCard({ orderId, fulfillment }: { orderId: string; fulfillmen
           </p>
         )}
 
-        {fulfillment.items?.map((item) => (
+        {fulfillment.fulfillment_items?.map((item) => (
           <div key={item.id} className="flex items-center justify-between gap-3 text-sm">
             <span className="truncate">{item.name}</span>
             <span className="text-muted-foreground">× {item.quantity}</span>

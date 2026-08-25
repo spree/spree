@@ -23,6 +23,9 @@ module Spree
                      :tracking_status,
                      fulfilled_at: :iso8601, created_at: :iso8601, updated_at: :iso8601
 
+          # Null until the parcel actually ships, which is most of its life.
+          typelize fulfilled_at: [:string, nullable: true]
+
           attribute :fulfillment_type do |fulfillment|
             fulfillment.fulfillment_type.presence || (fulfillment.digital? ? 'digital' : 'shipping')
           end
@@ -37,7 +40,11 @@ module Spree
             fulfillment.stock_location&.name
           end
 
-          many :fulfillment_items, key: :items,
+          # Deliberately not `items`: the store's fulfillment answers with a
+          # manifest under that name, and the shared OpenAPI patch rewrites it
+          # to that shape — a seller's rows would be documented as somebody
+          # else's. These are the persisted fulfillment items, so they say so.
+          many :fulfillment_items,
                resource: proc { Spree.api.seller_fulfillment_item_serializer }
         end
       end
