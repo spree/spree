@@ -1,6 +1,7 @@
 import { useAuth } from '@spree/dashboard-core'
 import { Button, Field, FieldError, FieldGroup, FieldLabel, Input } from '@spree/dashboard-ui'
 import { useQuery } from '@tanstack/react-query'
+import { useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -30,6 +31,7 @@ export function AcceptInvitationPage({
 }) {
   const { t } = useTranslation()
   const { acceptInvitation } = useAuth()
+  const navigate = useNavigate()
   const [error, setError] = useState<string | null>(null)
 
   const {
@@ -57,8 +59,12 @@ export function AcceptInvitationPage({
     setError(null)
     try {
       await acceptInvitation(invitationId, token ?? '', values)
-      // The index route decides where to go — it already knows how to skip
-      // the picker for someone who runs exactly one seller.
+      // The index route decides where to go from there — it already knows how
+      // to skip the picker for someone who runs exactly one seller. Without
+      // this the form simply sits there after a successful accept, and the
+      // obvious next move is to submit again, against an invitation that has
+      // now been consumed.
+      navigate({ to: '/', replace: true })
     } catch {
       setError(t('accept_invitation.failed'))
     }

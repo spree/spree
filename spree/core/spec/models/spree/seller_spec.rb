@@ -335,6 +335,18 @@ describe Spree::Seller do
       expect(seller.roles.count).to eq(1)
     end
 
+    # An invitation fills in its own default role, and the operator's invite
+    # workflow sends none — so the invitation, not the seller, is what creates
+    # the role first. Seeded there too, or whoever accepts holds nothing and
+    # every endpoint on their own panel refuses them.
+    it 'is seeded even when an invitation creates the role first' do
+      invitation = seller.invitations.create!(email: 'hired@example.com', inviter: create(:admin_user))
+
+      expect(invitation.role.permissions).
+        to match_array(Spree.permissions.grantable_keys(:seller))
+      expect(invitation.role).to eq(seller.default_user_role)
+    end
+
     # The operator's `sellers` key is not in the seller vocabulary, so holding
     # this role never lets a seller administer sellers — their own included.
     it 'does not let its holder manage the seller record' do
