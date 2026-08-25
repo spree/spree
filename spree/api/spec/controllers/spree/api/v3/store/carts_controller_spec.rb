@@ -635,6 +635,19 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         expect(order.reload.company_id).to be_nil
       end
 
+      # A guest holds only the cart token; company ids are not secrets, so a
+      # token-authorized cart must not be able to claim one.
+      it 'refuses a company on a guest cart' do
+        guest_cart = create(:cart_with_line_items, store: store, customer: nil)
+        request.headers['Authorization'] = nil
+        request.headers['X-Spree-Token'] = guest_cart.token
+
+        patch :update, params: { id: guest_cart.prefixed_id, company_id: company.prefixed_id }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(guest_cart.reload.company_id).to be_nil
+      end
+
       it '404s a node of another store' do
         foreign = create(:company, store: create(:store))
 

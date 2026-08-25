@@ -187,7 +187,7 @@ module Spree
           end
 
           def order_update_params
-            normalize_params(
+            permitted = normalize_params(
               params.permit(
                 :email, :customer_id, :user_id,
                 :customer_note, :internal_note,
@@ -200,6 +200,23 @@ module Spree
                 items: item_permitted_keys
               )
             )
+            resolve_company_param(permitted)
+          end
+
+          # An incidental lookup like any other: resolved through the store so
+          # another tenant's node 404s instead of surfacing as a validation
+          # error (which would confirm the id exists). Reads the raw param —
+          # normalize_params has already decoded the prefixed id.
+          def resolve_company_param(permitted)
+            return permitted unless permitted.key?(:company_id)
+
+            permitted[:company_id] =
+              if params[:company_id].present?
+                current_store.companies.find_by_prefix_id!(params[:company_id]).id
+              else
+                nil
+              end
+            permitted
           end
 
           def address_permitted_keys

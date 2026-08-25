@@ -54,7 +54,9 @@ module Spree
         end
 
         # Price lists reached through the buyer's effective catalogs, in
-        # catalog resolution order. A catalog-attached list applies because
+        # catalog resolution order — company subtree first, then customer
+        # groups, then the channel's default catalog (the same fallback
+        # chain visibility uses). A catalog-attached list applies because
         # the catalog applies — its own rules are not consulted, only its
         # status and dates.
         # @return [Array<Spree::PriceList>]
@@ -64,6 +66,9 @@ module Spree
             if catalogs.empty? && context.user && context.store
               groups = context.user.try(:customer_groups)&.where(store_id: context.store.id) || []
               catalogs = Spree::Catalog.effective_for_customer_groups(groups)
+            end
+            if catalogs.empty?
+              catalogs = [context.channel&.default_catalog].compact.select(&:active?)
             end
 
             catalogs.filter_map(&:price_list).uniq.select(&:currently_active?)
@@ -81,10 +86,13 @@ module Spree
                                       select { |list| list.applicable?(context) }
         end
 
+        # Only ACTIVE catalogs claim their list: an inactive catalog is off,
+        # and blacklisting its list would silently kill a rule-based list
+        # that was working before the catalog draft existed.
         def catalog_bound_price_list_ids
           @catalog_bound_price_list_ids ||=
             if context.store
-              Spree::Catalog.where(store_id: context.store.id).where.not(price_list_id: nil).
+              Spree::Catalog.active.where(store_id: context.store.id).where.not(price_list_id: nil).
                 distinct.pluck(:price_list_id).to_set
             else
               Set.new

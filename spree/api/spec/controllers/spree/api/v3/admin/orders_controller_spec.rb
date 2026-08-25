@@ -535,12 +535,14 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
         expect(order.reload.company).to eq(company)
       end
 
-      it 'refuses a node belonging to another store' do
+      # 404, not 422 — an existence answer for another tenant's id would be
+      # an oracle, and the standard scope-fetch already gives not-found.
+      it '404s a node belonging to another store' do
         elsewhere = create(:company, store: create(:store))
 
         patch :update, params: { id: order.prefixed_id, company_id: elsewhere.prefixed_id }, as: :json
 
-        expect(response).to have_http_status(:unprocessable_content)
+        expect(response).to have_http_status(:not_found)
         expect(order.reload.company_id).to be_nil
       end
 

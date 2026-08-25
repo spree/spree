@@ -68,4 +68,27 @@ describe 'catalog-aware pricing' do
 
     expect(resolve(company: company).amount).to eq(100)
   end
+
+  it 'prices through the channel default catalog when nothing narrower applies' do
+    catalog = create(:catalog, store: store, price_list: price_list_with_price(95))
+    channel = store.default_channel
+    channel.update!(default_catalog: catalog)
+
+    context = Spree::Pricing::Context.new(variant: variant, currency: 'USD', store: store,
+                                          channel: channel)
+
+    expect(Spree::Pricing::Resolver.new(context).resolve.amount).to eq(95)
+  end
+
+  # An inactive catalog is off: it must neither price its audience nor keep
+  # claiming its list away from the generic rule matcher — a rule-less list
+  # that worked before the catalog draft existed has to keep working.
+  it 'releases a price list back to rule matching while its catalog is inactive' do
+    price_list = price_list_with_price(80)
+    catalog = create(:catalog, store: store, price_list: price_list, active: false)
+    create(:catalog_assignment, catalog: catalog, assignable: company)
+
+    expect(resolve(company: company).amount).to eq(80)
+    expect(resolve.amount).to eq(80)
+  end
 end

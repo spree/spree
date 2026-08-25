@@ -174,6 +174,30 @@ describe Spree::Company, type: :model do
       expect(child).not_to be_valid
       expect(child.errors[:kind]).to be_present
     end
+
+    # Even without registrations of its own, a company node anchors the
+    # divisions below it — demoting it would silently re-resolve their
+    # legal_entity to a higher ancestor.
+    it 'refuses demoting a company that anchors division children' do
+      root = create(:company, store: store)
+      child = create(:company, store: store, parent: root)
+      create(:company, store: store, kind: 'division', parent: child)
+
+      child.kind = 'division'
+
+      expect(child).not_to be_valid
+      expect(child.errors[:kind]).to be_present
+    end
+
+    it 'allows demoting a company whose children are all companies' do
+      root = create(:company, store: store)
+      child = create(:company, store: store, parent: root)
+      create(:company, store: store, parent: child)
+
+      child.kind = 'division'
+
+      expect(child).to be_valid
+    end
   end
 
   describe 'default addresses' do

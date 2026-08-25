@@ -262,6 +262,7 @@ en:
         spree/company:
           attributes:
             kind:
+              anchors_descendant_divisions: cannot become a division while divisions below it anchor their tax identity here
               holds_tax_registrations: cannot become a division while holding tax registrations or exemption certificates
               root_must_be_legal_entity: must be company for a root node
             parent:

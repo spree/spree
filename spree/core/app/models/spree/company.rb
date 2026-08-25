@@ -223,12 +223,18 @@ module Spree
     end
 
     # A legal entity that holds registrations or certificates cannot become a
-    # division — its purchases would silently lose their tax identity.
+    # division — its purchases would silently lose their tax identity. Nor can
+    # one that anchors division children: their legal_entity would silently
+    # re-resolve to a higher ancestor, changing the registration and
+    # certificates applied to their future purchases.
     def kind_change_keeps_tax_anchor
       return unless persisted? && will_save_change_to_kind? && kind == 'division'
-      return unless tax_identifiers.exists? || tax_exemption_certificates.exists?
 
-      errors.add(:kind, :holds_tax_registrations)
+      if tax_identifiers.exists? || tax_exemption_certificates.exists?
+        errors.add(:kind, :holds_tax_registrations)
+      elsif children.where(kind: 'division').exists?
+        errors.add(:kind, :anchors_descendant_divisions)
+      end
     end
   end
 end

@@ -18,9 +18,13 @@ module Spree
         validate :company_belongs_to_store, if: :company_id_changing?
         # The storefront's write path is the cart; an order's company arrives
         # from completion (already validated on the cart) or from staff, whose
-        # authority is the admin credential rather than a membership.
+        # authority is the admin credential rather than a membership. A guest
+        # cart has no standing at all, so naming a company on one is refused
+        # outright — company ids are not secrets, and a token-authorized cart
+        # must not be able to claim another business's tax exemptions and
+        # catalog prices.
         validate :customer_has_standing_over_company,
-                 if: -> { is_a?(Spree::Cart) && company_id_changing? && customer_id.present? }
+                 if: -> { is_a?(Spree::Cart) && company_id_changing? }
       end
 
       # @return [Boolean] whether this sale is for a business customer
@@ -72,7 +76,7 @@ module Spree
 
       def customer_has_standing_over_company
         return if company.nil?
-        return if customer.standing_for?(company)
+        return if customer&.standing_for?(company)
 
         errors.add(:company, :invalid)
       end

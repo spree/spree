@@ -167,6 +167,17 @@ RSpec.describe Spree::Purchase::Company do
       expect(cart).not_to be_valid
     end
 
+    # Company ids are not secrets — they appear in responses and invite links
+    # — so a token-authorized guest cart must not be able to claim one and
+    # ride its tax exemptions and catalog prices through checkout.
+    it 'refuses a company on a guest cart' do
+      guest_cart = create(:cart, store: store, customer: nil)
+      guest_cart.company = company
+
+      expect(guest_cart).not_to be_valid
+      expect(guest_cart.errors[:company]).to be_present
+    end
+
     it 'does not re-run once the node is stamped' do
       create(:company_membership, company: company, customer: customer)
       cart.update!(company: company)
