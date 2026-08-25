@@ -876,8 +876,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1576979
-                  slug: product-1576979
+                  name: Product 1646979
+                  slug: product-1646979
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1051,8 +1051,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 2039085
-                  slug: product-2039085
+                  name: Product 2099085
+                  slug: product-2099085
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1083,8 +1083,8 @@ paths:
                   original_price:
                   seller_id:
                 - id: prod_gbHJdmfrXB
-                  name: Product 2048209
-                  slug: product-2048209
+                  name: Product 2108209
+                  slug: product-2108209
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1212,8 +1212,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 2316885
-                slug: product-2316885
+                name: Product 2376885
+                slug: product-2376885
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -1498,8 +1498,6 @@ paths:
                   market_id: mkt_UkLWZg9DAJ
                   channel_id: ch_UkLWZg9DAJ
                   preferred_stock_location_id:
-                  company_id:
-                  company_name:
                   number: cart_UkLWZg9DAJ
                   token: ckMf2iQ6r5adLceTPfKVH9BP
                   email:
@@ -1564,8 +1562,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 131715
-                    slug: product-131715
+                    name: Product 138715
+                    slug: product-138715
                     options_text: ''
                     price: '10.0'
                     display_price: "$10.00"
@@ -1609,8 +1607,6 @@ paths:
                   market_id: mkt_UkLWZg9DAJ
                   channel_id: ch_UkLWZg9DAJ
                   preferred_stock_location_id:
-                  company_id:
-                  company_name:
                   number: cart_gbHJdmfrXB
                   token: pvLw1ZWLLQNxh1uvSPUCdSmt
                   email:
@@ -1675,8 +1671,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 1322171
-                    slug: product-1322171
+                    name: Product 1392171
+                    slug: product-1392171
                     options_text: ''
                     price: '10.0'
                     display_price: "$10.00"
@@ -1791,8 +1787,6 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
-                company_id:
-                company_name:
                 number: cart_UkLWZg9DAJ
                 token: jBrNbC8FSNyavqebdqu7e3uL
                 email:
@@ -1961,8 +1955,6 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
-                company_id:
-                company_name:
                 number: cart_UkLWZg9DAJ
                 token: HnnryvFFwjfx9P6ykByF4Gg2
                 email:
@@ -1972,7 +1964,7 @@ paths:
                 total_quantity: 0
                 warnings:
                 - code: line_item_removed
-                  message: Product 136307 was removed because it was sold out
+                  message: Product 143307 was removed because it was sold out
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                 coupon_code:
@@ -2120,8 +2112,6 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
-                company_id:
-                company_name:
                 number: cart_UkLWZg9DAJ
                 token: PMVmxRAiLqMivU5QgJqfpQMD
                 email:
@@ -2182,8 +2172,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1373263
-                  slug: product-1373263
+                  name: Product 1443263
+                  slug: product-1443263
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -2401,8 +2391,6 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
-                company_id:
-                company_name:
                 number: cart_UkLWZg9DAJ
                 token: rrGvkDXx3KcQVwLVk8XiVCVk
                 email: tarah@tromp.com
@@ -2460,8 +2448,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1398992
-                  slug: product-1398992
+                  name: Product 1468992
+                  slug: product-1468992
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -2488,11 +2476,10 @@ paths:
                 payments: []
                 billing_address:
                   id: addr_gbHJdmfrXB
-                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 136 Lovely Street
+                  address1: 150 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -2510,11 +2497,10 @@ paths:
                   state_name: New York
                 shipping_address:
                   id: addr_UkLWZg9DAJ
-                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 135 Lovely Street
+                  address1: 149 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -2621,8 +2607,6 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 cart_id: cart_UkLWZg9DAJ
                 channel_id: ch_UkLWZg9DAJ
-                company_id:
-                company_name:
                 number: R1001
                 email: marvel@bruen.com
                 customer_note:
@@ -2668,8 +2652,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1424794
-                  slug: product-1424794
+                  name: Product 1494794
+                  slug: product-1494794
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -2799,11 +2783,10 @@ paths:
                     source_required: false
                 billing_address:
                   id: addr_uw2YK1rnl0
-                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 142 Lovely Street
+                  address1: 156 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -2821,11 +2804,10 @@ paths:
                   state_name: New York
                 shipping_address:
                   id: addr_OIJLhNcSbf
-                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 141 Lovely Street
+                  address1: 155 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -2936,8 +2918,6 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
-                company_id:
-                company_name:
                 number: cart_UkLWZg9DAJ
                 token: 4ryA4ms4Nim9TfxNW4fZi3au
                 email:
@@ -3001,8 +2981,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1694241
-                  slug: product-1694241
+                  name: Product 1754241
+                  slug: product-1754241
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3130,8 +3110,6 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
-                company_id:
-                company_name:
                 number: cart_UkLWZg9DAJ
                 token: gvr8TwNVJpxWf27uUHDj5Lj4
                 email:
@@ -3192,8 +3170,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1713461
-                  slug: product-1713461
+                  name: Product 1773461
+                  slug: product-1773461
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3315,8 +3293,6 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
-                company_id:
-                company_name:
                 number: cart_UkLWZg9DAJ
                 token: KLLfFWg9T6dGonBb65hHjaZr
                 email: donya@jacobsonkunze.biz
@@ -3371,8 +3347,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1738182
-                  slug: product-1738182
+                  name: Product 1798182
+                  slug: product-1798182
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3478,11 +3454,10 @@ paths:
                 billing_address:
                 shipping_address:
                   id: addr_EfhxLZ9ck8
-                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 226 Lovely Street
+                  address1: 213 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3602,8 +3577,6 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
-                company_id:
-                company_name:
                 number: cart_UkLWZg9DAJ
                 token: nZjAPYSKrNaHf2ZVT6eZfNJV
                 email:
@@ -3660,8 +3633,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1755702
-                  slug: product-1755702
+                  name: Product 1815702
+                  slug: product-1815702
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3844,8 +3817,6 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
-                company_id:
-                company_name:
                 number: cart_UkLWZg9DAJ
                 token: Wgq8NrLX3TUQLroJRYWFdQd5
                 email:
@@ -3906,8 +3877,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1799569
-                  slug: product-1799569
+                  name: Product 1859569
+                  slug: product-1859569
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -4045,8 +4016,6 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
-                company_id:
-                company_name:
                 number: cart_UkLWZg9DAJ
                 token: d12LXVnL3KtzGjXePqRawnPc
                 email:
@@ -4056,10 +4025,10 @@ paths:
                 total_quantity: 2
                 warnings:
                 - code: delivery_unavailable
-                  message: Product 18263 cannot be delivered to the selected address
+                  message: Product 18863 cannot be delivered to the selected address
                   line_item_id: li_UkLWZg9DAJ
                 - code: delivery_unavailable
-                  message: Product 183298 cannot be delivered to the selected address
+                  message: Product 189298 cannot be delivered to the selected address
                   line_item_id: li_gbHJdmfrXB
                 coupon_code:
                 item_total: '29.99'
@@ -4113,8 +4082,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 18263
-                  slug: product-18263
+                  name: Product 18863
+                  slug: product-18863
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -4144,8 +4113,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 183298
-                  slug: product-183298
+                  name: Product 189298
+                  slug: product-189298
                   options_text: ''
                   price: '19.99'
                   display_price: "$19.99"
@@ -4300,8 +4269,6 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
-                company_id:
-                company_name:
                 number: cart_UkLWZg9DAJ
                 token: Yq5XuZqq7KS7y7n2dMsChnZM
                 email:
@@ -4366,8 +4333,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1899165
-                  slug: product-1899165
+                  name: Product 1959165
+                  slug: product-1959165
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -4484,8 +4451,6 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
-                company_id:
-                company_name:
                 number: cart_UkLWZg9DAJ
                 token: arTvbVzmU1krWKLbRnWDZ3cL
                 email:
@@ -5122,8 +5087,6 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
-                company_id:
-                company_name:
                 number: cart_UkLWZg9DAJ
                 token: acfBZtWemHae74Y3g18LQg1f
                 email:
@@ -5180,8 +5143,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2519789
-                  slug: product-2519789
+                  name: Product 2579789
+                  slug: product-2579789
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5328,8 +5291,6 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 channel_id: ch_UkLWZg9DAJ
                 preferred_stock_location_id:
-                company_id:
-                company_name:
                 number: cart_UkLWZg9DAJ
                 token: BHWevnp2PQxC1jSWU3ZFLejT
                 email:
@@ -5390,8 +5351,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 253179
-                  slug: product-253179
+                  name: Product 259179
+                  slug: product-259179
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5510,8 +5471,6 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
-                company_id:
-                company_name:
                 number: R1001
                 email: guest@example.com
                 customer_note:
@@ -5557,8 +5516,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 193496
-                  slug: product-193496
+                  name: Product 199496
+                  slug: product-199496
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5663,11 +5622,10 @@ paths:
                 payments: []
                 billing_address:
                   id: addr_UkLWZg9DAJ
-                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 282 Lovely Street
+                  address1: 269 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -5685,11 +5643,10 @@ paths:
                   state_name: New York
                 shipping_address:
                   id: addr_gbHJdmfrXB
-                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 283 Lovely Street
+                  address1: 270 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -5791,11 +5748,10 @@ paths:
               example:
                 data:
                 - id: addr_UkLWZg9DAJ
-                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 100 Lovely Street
+                  address1: 114 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -5812,11 +5768,10 @@ paths:
                   country_iso: US
                   state_name: New York
                 - id: addr_gbHJdmfrXB
-                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 101 Lovely Street
+                  address1: 115 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -5833,11 +5788,10 @@ paths:
                   country_iso: US
                   state_name: New York
                 - id: addr_EfhxLZ9ck8
-                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 102 Lovely Street
+                  address1: 116 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -5934,7 +5888,6 @@ paths:
             application/json:
               example:
                 id: addr_VqXmZF31wY
-                label:
                 first_name: John
                 last_name: Doe
                 full_name: John Doe
@@ -6091,11 +6044,10 @@ paths:
             application/json:
               example:
                 id: addr_EfhxLZ9ck8
-                label:
                 first_name: John
                 last_name: Doe
                 full_name: John Doe
-                address1: 114 Lovely Street
+                address1: 128 Lovely Street
                 address2: Northwest
                 postal_code: '10118'
                 city: New York
@@ -6173,11 +6125,10 @@ paths:
             application/json:
               example:
                 id: addr_EfhxLZ9ck8
-                label:
                 first_name: John
                 last_name: Doe
                 full_name: John Doe
-                address1: 120 Lovely Street
+                address1: 134 Lovely Street
                 address2: Northwest
                 postal_code: '10118'
                 city: Los Angeles
@@ -6620,8 +6571,6 @@ paths:
                   market_id: mkt_UkLWZg9DAJ
                   cart_id:
                   channel_id: ch_UkLWZg9DAJ
-                  company_id:
-                  company_name:
                   number: R1001
                   email: idella.ratke@runolfsdottir.us
                   customer_note:
@@ -6667,8 +6616,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 1595270
-                    slug: product-1595270
+                    name: Product 1655270
+                    slug: product-1655270
                     options_text: ''
                     price: '10.0'
                     display_price: "$10.00"
@@ -6773,11 +6722,10 @@ paths:
                   payments: []
                   billing_address:
                     id: addr_EfhxLZ9ck8
-                    label:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 186 Lovely Street
+                    address1: 173 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -6795,11 +6743,10 @@ paths:
                     state_name: New York
                   shipping_address:
                     id: addr_VqXmZF31wY
-                    label:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 187 Lovely Street
+                    address1: 174 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -6928,8 +6875,6 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
-                company_id:
-                company_name:
                 number: R1001
                 email: whitney_homenick@leschwhite.co.uk
                 customer_note:
@@ -6975,8 +6920,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1615633
-                  slug: product-1615633
+                  name: Product 1675633
+                  slug: product-1675633
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -7081,11 +7026,10 @@ paths:
                 payments: []
                 billing_address:
                   id: addr_EfhxLZ9ck8
-                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 192 Lovely Street
+                  address1: 179 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7103,11 +7047,10 @@ paths:
                   state_name: New York
                 shipping_address:
                   id: addr_VqXmZF31wY
-                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 193 Lovely Street
+                  address1: 180 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7322,11 +7265,10 @@ paths:
                 display_available_store_credit_total: "$0.00"
                 addresses:
                 - id: addr_UkLWZg9DAJ
-                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 198 Lovely Street
+                  address1: 185 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7343,11 +7285,10 @@ paths:
                   country_iso: US
                   state_name: New York
                 - id: addr_gbHJdmfrXB
-                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 199 Lovely Street
+                  address1: 186 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7365,11 +7306,10 @@ paths:
                   state_name: New York
                 default_billing_address:
                   id: addr_gbHJdmfrXB
-                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 199 Lovely Street
+                  address1: 186 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7387,11 +7327,10 @@ paths:
                   state_name: New York
                 default_shipping_address:
                   id: addr_UkLWZg9DAJ
-                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 198 Lovely Street
+                  address1: 185 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7478,11 +7417,10 @@ paths:
                 display_available_store_credit_total: "$0.00"
                 addresses:
                 - id: addr_UkLWZg9DAJ
-                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 200 Lovely Street
+                  address1: 187 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7499,11 +7437,10 @@ paths:
                   country_iso: US
                   state_name: New York
                 - id: addr_gbHJdmfrXB
-                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 201 Lovely Street
+                  address1: 188 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7521,11 +7458,10 @@ paths:
                   state_name: New York
                 default_billing_address:
                   id: addr_gbHJdmfrXB
-                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 201 Lovely Street
+                  address1: 188 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7543,11 +7479,10 @@ paths:
                   state_name: New York
                 default_shipping_address:
                   id: addr_UkLWZg9DAJ
-                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 200 Lovely Street
+                  address1: 187 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -9343,7 +9278,7 @@ paths:
                 variant:
                   id: variant_gbHJdmfrXB
                   product_id: prod_gbHJdmfrXB
-                  sku: SKU-307
+                  sku: SKU-313
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -9992,848 +9927,6 @@ paths:
                   message: Valid API key required
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
-  "/api/v3/store/account/companies":
-    get:
-      summary: List my company memberships
-      tags:
-      - Companies
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |
-        Returns the authenticated customer's company memberships, each with the node it
-        is held on and the path of nodes above it. Standing covers the node and every
-        node below it, so a membership on a parent authorizes buying for its divisions.
-      x-codeSamples:
-      - lang: javascript
-        label: Spree SDK
-        source: |-
-          import { createClient } from '@spree/sdk'
-
-          const client = createClient({
-            baseUrl: 'https://your-store.com',
-            publishableKey: '<api-key>',
-          })
-
-          // The buyer's memberships, each carrying its node and the path above it.
-          const { data: memberships } = await client.account.companies({ token: '<token>' })
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: memberships listed
-          content:
-            application/json:
-              example:
-                data:
-                - id: cmem_UkLWZg9DAJ
-                  company_id: comp_UkLWZg9DAJ
-                  customer_id: cust_UkLWZg9DAJ
-                  email: pasty.koepp@farrell.name
-                  company:
-                    id: comp_UkLWZg9DAJ
-                    name: Acme Industrial
-                    kind: company
-                    parent_id:
-                    ancestors: []
-        '401':
-          description: not authenticated
-          content:
-            application/json:
-              example:
-                error:
-                  code: authentication_required
-                  message: Authentication required
-  "/api/v3/store/companies/{id}":
-    parameters:
-    - name: id
-      in: path
-      required: true
-      description: Company node ID (comp_...)
-      schema:
-        type: string
-    get:
-      summary: Get a company node
-      tags:
-      - Companies
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |
-        Returns one node of the buyer's organization. Requires standing — a membership on
-        the node or on one of its ancestors; any other node is not found rather than
-        refused, so its existence is not disclosed.
-      x-codeSamples:
-      - lang: javascript
-        label: Spree SDK
-        source: |-
-          import { createClient } from '@spree/sdk'
-
-          const client = createClient({
-            baseUrl: 'https://your-store.com',
-            publishableKey: '<api-key>',
-          })
-
-          const company = await client.companies.get('comp_86Rf07xd4z', { token: '<token>' })
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: company found
-          content:
-            application/json:
-              example:
-                id: comp_UkLWZg9DAJ
-                name: Acme Industrial
-                kind: company
-                parent_id:
-                ancestors: []
-        '404':
-          description: no standing over this node
-          content:
-            application/json:
-              example:
-                error:
-                  code: record_not_found
-                  message: Company not found
-    patch:
-      summary: Update a company node
-      tags:
-      - Companies
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: Renames the node. Structure — the parent and the kind — is managed
-        by the merchant, not by buyers.
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: company updated
-          content:
-            application/json:
-              example:
-                id: comp_UkLWZg9DAJ
-                name: Acme Industrial Group
-                kind: company
-                parent_id:
-                ancestors: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  example: Acme Industrial Group
-  "/api/v3/store/companies/{company_id}/members":
-    parameters:
-    - name: company_id
-      in: path
-      required: true
-      description: Company node ID (comp_...)
-      schema:
-        type: string
-    get:
-      summary: List company members
-      tags:
-      - Companies
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: The people with standing over this node. Within a company every
-        member may read and manage the directory.
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: members listed
-          content:
-            application/json:
-              example:
-                data:
-                - id: cmem_UkLWZg9DAJ
-                  company_id: comp_UkLWZg9DAJ
-                  customer_id: cust_UkLWZg9DAJ
-                  email: su_kuvalis@ward.biz
-                meta:
-                  page: 1
-                  limit: 25
-                  count: 1
-                  pages: 1
-                  from: 1
-                  to: 1
-                  in: 1
-                  previous:
-                  next:
-    post:
-      summary: Add a member by email
-      tags:
-      - Companies
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |
-        Adds a person to the node by email. An email that already belongs to a customer of
-        this store becomes a membership immediately (a `cmem_...` id); any other email
-        becomes an invitation (a `cinv_...` id) and the invite email goes out.
-      x-codeSamples:
-      - lang: javascript
-        label: Spree SDK
-        source: |-
-          import { createClient } from '@spree/sdk'
-
-          const client = createClient({
-            baseUrl: 'https://your-store.com',
-            publishableKey: '<api-key>',
-          })
-
-          // An existing customer joins immediately (cmem_…); anyone else is emailed an
-          // invitation (cinv_…).
-          const member = await client.companies.members.create(
-            'comp_86Rf07xd4z',
-            { customer_email: 'colleague@acme.test' },
-            { token: '<token>' },
-          )
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '201':
-          description: member added or invitation sent
-          content:
-            application/json:
-              example:
-                id: cmem_gbHJdmfrXB
-                company_id: comp_UkLWZg9DAJ
-                customer_id: cust_gbHJdmfrXB
-                email: colleague@acme.test
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                customer_email:
-                  type: string
-                  example: colleague@acme.test
-              required:
-              - customer_email
-  "/api/v3/store/companies/{company_id}/addresses":
-    parameters:
-    - name: company_id
-      in: path
-      required: true
-      description: Company node ID (comp_...)
-      schema:
-        type: string
-    get:
-      summary: List the company address book
-      tags:
-      - Companies
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: The labeled ship-to and bill-to sites this node owns. A node with
-        no default of its own falls back to its nearest ancestor when prefilling checkout.
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: addresses listed
-          content:
-            application/json:
-              example:
-                data:
-                - id: addr_EfhxLZ9ck8
-                  label: Headquarters
-                  first_name:
-                  last_name:
-                  full_name: ''
-                  address1: 159 Lovely Street
-                  address2: Northwest
-                  postal_code: '10118'
-                  city: New York
-                  phone: 555-555-0199
-                  company: Company
-                  country_name: United States
-                  country_code: US
-                  state_text: NY
-                  state_code: NY
-                  quick_checkout: false
-                  is_default_billing: false
-                  is_default_shipping: false
-                  state_abbr: NY
-                  country_iso: US
-                  state_name: New York
-                meta:
-                  page: 1
-                  limit: 25
-                  count: 1
-                  pages: 1
-                  from: 1
-                  to: 1
-                  in: 1
-                  previous:
-                  next:
-  "/api/v3/store/companies/{company_id}/addresses/{id}":
-    parameters:
-    - name: company_id
-      in: path
-      required: true
-      description: Company node ID (comp_...)
-      schema:
-        type: string
-    - name: id
-      in: path
-      required: true
-      description: Address ID (addr_...)
-      schema:
-        type: string
-    patch:
-      summary: Update an address book entry
-      tags:
-      - Companies
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: Renames a site or moves the default ship-to or bill-to flag to
-        it. Only one entry per node holds each default.
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: address book entry updated
-          content:
-            application/json:
-              example:
-                id: addr_EfhxLZ9ck8
-                label: Northern Warehouse
-                first_name:
-                last_name:
-                full_name: ''
-                address1: 162 Lovely Street
-                address2: Northwest
-                postal_code: '10118'
-                city: New York
-                phone: 555-555-0199
-                company: Company
-                country_name: United States
-                country_code: US
-                state_text: NY
-                state_code: NY
-                quick_checkout: false
-                is_default_billing: false
-                is_default_shipping: true
-                state_abbr: NY
-                country_iso: US
-                state_name: New York
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                label:
-                  type: string
-                  example: Northern Warehouse
-                default_shipping:
-                  type: boolean
-                  example: true
-    delete:
-      summary: Remove an address book entry
-      tags:
-      - Companies
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: Takes the site out of the address book. Orders already placed to
-        it keep their own copy of the address.
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '204':
-          description: address book entry removed
-  "/api/v3/store/companies/{company_id}/invitations/{id}":
-    parameters:
-    - name: company_id
-      in: path
-      required: true
-      description: Company node ID (comp_...)
-      schema:
-        type: string
-    - name: id
-      in: path
-      required: true
-      description: Invitation ID (cinv_...)
-      schema:
-        type: string
-    delete:
-      summary: Revoke an invitation
-      tags:
-      - Companies
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: Withdraws a pending invitation, spending its token. Any member
-        with standing over the node may revoke.
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '204':
-          description: invitation revoked
-  "/api/v3/store/companies/{company_id}/orders":
-    parameters:
-    - name: company_id
-      in: path
-      required: true
-      description: Company node ID (comp_...)
-      schema:
-        type: string
-    get:
-      summary: List the company purchases
-      tags:
-      - Companies
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: Completed orders placed for this node and every node below it,
-        so a parent sees what its divisions bought.
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: orders listed
-          content:
-            application/json:
-              example:
-                data:
-                - id: or_UkLWZg9DAJ
-                  market_id: mkt_UkLWZg9DAJ
-                  cart_id:
-                  channel_id: ch_UkLWZg9DAJ
-                  company_id: comp_UkLWZg9DAJ
-                  company_name: Acme Industrial
-                  number: R1001
-                  email: chanell_langosh@schamberger.info
-                  customer_note:
-                  currency: USD
-                  locale: en
-                  total_quantity: 1
-                  coupon_code:
-                  fulfillment_status:
-                  payment_status:
-                  completed_at: '2026-01-15T12:00:00.000Z'
-                  item_total: '10.0'
-                  display_item_total: "$10.00"
-                  adjustment_total: '0.0'
-                  display_adjustment_total: "$0.00"
-                  discount_total: '0.0'
-                  display_discount_total: "$0.00"
-                  tax_total: '0.0'
-                  display_tax_total: "$0.00"
-                  included_tax_total: '0.0'
-                  display_included_tax_total: "$0.00"
-                  additional_tax_total: '0.0'
-                  display_additional_tax_total: "$0.00"
-                  total: '110.0'
-                  display_total: "$110.00"
-                  gift_card_total: '0.0'
-                  display_gift_card_total: "$0.00"
-                  amount_due: '110.0'
-                  display_amount_due: "$110.00"
-                  delivery_total: '100.0'
-                  display_delivery_total: "$100.00"
-                  fee_total: '0.0'
-                  display_fee_total: "$0.00"
-                  store_credit_total: '0.0'
-                  display_store_credit_total: "$0.00"
-                  covered_by_store_credit: false
-                  discounts: []
-                  fees: []
-                  items:
-                  - id: li_UkLWZg9DAJ
-                    variant_id: variant_UkLWZg9DAJ
-                    seller_id:
-                    preorder: false
-                    preorder_ships_at:
-                    quantity: 1
-                    currency: USD
-                    name: Product 1585649
-                    slug: product-1585649
-                    options_text: ''
-                    price: '10.0'
-                    display_price: "$10.00"
-                    total: '10.0'
-                    display_total: "$10.00"
-                    adjustment_total: '0.0'
-                    display_adjustment_total: "$0.00"
-                    additional_tax_total: '0.0'
-                    display_additional_tax_total: "$0.00"
-                    included_tax_total: '0.0'
-                    display_included_tax_total: "$0.00"
-                    discount_total: '0.0'
-                    display_discount_total: "$0.00"
-                    pre_tax_amount: '10.0'
-                    display_pre_tax_amount: "$10.00"
-                    discounted_amount: '10.0'
-                    display_discounted_amount: "$10.00"
-                    display_compare_at_amount: "$0.00"
-                    compare_at_amount:
-                    thumbnail_url:
-                    option_values: []
-                    digital_links: []
-                  fulfillments:
-                  - id: ful_UkLWZg9DAJ
-                    number: R1001-F1
-                    tracking: U10000
-                    tracking_url:
-                    tracking_carrier:
-                    tracking_carrier_name:
-                    pickup_point_data:
-                    selected_delivery_rate_id: dr_gbHJdmfrXB
-                    cost: '100.0'
-                    display_cost: "$100.00"
-                    total: '100.0'
-                    display_total: "$100.00"
-                    discount_total: '0.0'
-                    display_discount_total: "$0.00"
-                    additional_tax_total: '0.0'
-                    display_additional_tax_total: "$0.00"
-                    included_tax_total: '0.0'
-                    display_included_tax_total: "$0.00"
-                    tax_total: '0.0'
-                    display_tax_total: "$0.00"
-                    status: unfulfilled
-                    fulfillment_type: shipping
-                    fulfilled_at:
-                    tracking_status:
-                    estimated_delivery_at:
-                    delivered_at:
-                    items:
-                    - item_id: li_UkLWZg9DAJ
-                      variant_id: variant_UkLWZg9DAJ
-                      quantity: 1
-                    delivery_method:
-                      id: dm_UkLWZg9DAJ
-                      name: UPS Ground
-                      code: UPS_GROUND
-                      estimated_transit_business_days_min:
-                      estimated_transit_business_days_max:
-                      digital: false
-                      pickup: false
-                      pickup_point: false
-                    stock_location:
-                      id: sloc_UkLWZg9DAJ
-                      name: Kali Pacocha
-                      address1: 1600 Pennsylvania Ave NW
-                      city: Washington
-                      zipcode: '20500'
-                      country_code: US
-                      country_name: United States
-                      state_code: AL
-                      state_text: AL
-                      pickup_ready_in_minutes:
-                      pickup_instructions:
-                    delivery_rates:
-                    - id: dr_gbHJdmfrXB
-                      delivery_method_id: dm_UkLWZg9DAJ
-                      name: UPS Ground
-                      selected: true
-                      cost: '10.0'
-                      total: '10.0'
-                      additional_tax_total: '0.0'
-                      included_tax_total: '0.0'
-                      tax_total: '0.0'
-                      carrier:
-                      service_level:
-                      estimated_delivery_date:
-                      display_cost: "$10.00"
-                      display_total: "$10.00"
-                      display_additional_tax_total: "$0.00"
-                      display_included_tax_total: "$0.00"
-                      display_tax_total: "$0.00"
-                      delivery_method:
-                        id: dm_UkLWZg9DAJ
-                        name: UPS Ground
-                        code: UPS_GROUND
-                        estimated_transit_business_days_min:
-                        estimated_transit_business_days_max:
-                        digital: false
-                        pickup: false
-                        pickup_point: false
-                  payments: []
-                  billing_address:
-                    id: addr_EfhxLZ9ck8
-                    label:
-                    first_name: John
-                    last_name: Doe
-                    full_name: John Doe
-                    address1: 170 Lovely Street
-                    address2: Northwest
-                    postal_code: '10118'
-                    city: New York
-                    phone: 555-555-0199
-                    company: Company
-                    country_name: United States
-                    country_code: US
-                    state_text: NY
-                    state_code: NY
-                    quick_checkout: false
-                    is_default_billing: false
-                    is_default_shipping: false
-                    state_abbr: NY
-                    country_iso: US
-                    state_name: New York
-                  shipping_address:
-                    id: addr_VqXmZF31wY
-                    label:
-                    first_name: John
-                    last_name: Doe
-                    full_name: John Doe
-                    address1: 171 Lovely Street
-                    address2: Northwest
-                    postal_code: '10118'
-                    city: New York
-                    phone: 555-555-0199
-                    company: Company
-                    country_name: United States
-                    country_code: US
-                    state_text: NY
-                    state_code: NY
-                    quick_checkout: false
-                    is_default_billing: false
-                    is_default_shipping: false
-                    state_abbr: NY
-                    country_iso: US
-                    state_name: New York
-                  gift_card:
-                  market:
-                    id: mkt_UkLWZg9DAJ
-                    name: United States
-                    currency: USD
-                    default_locale: en
-                    tax_inclusive: false
-                    default: true
-                    country_codes:
-                    - US
-                    supported_locales:
-                    - en
-                meta:
-                  page: 1
-                  limit: 25
-                  count: 1
-                  pages: 1
-                  from: 1
-                  to: 1
-                  in: 1
-                  previous:
-                  next:
-  "/api/v3/store/company_invitations/{token}":
-    parameters:
-    - name: token
-      in: path
-      required: true
-      description: Plaintext invitation token from the invite email
-      schema:
-        type: string
-    get:
-      summary: Look up an invitation
-      tags:
-      - Companies
-      security:
-      - api_key: []
-      description: |
-        Shows what is being joined, so the acceptance page can render before the invitee
-        has an account. Deliberately unauthenticated — the token from the email is the
-        credential. Spent, revoked and expired tokens are not found.
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: invitation found
-          content:
-            application/json:
-              example:
-                id: cinv_UkLWZg9DAJ
-                email: new@acme.test
-                expires_at: '2026-02-14T12:00:00.000Z'
-                company_id: comp_UkLWZg9DAJ
-                status: pending
-                company_name: Acme Industrial
-                store_name: Spree Test Store
-        '404':
-          description: token spent, revoked or expired
-          content:
-            application/json:
-              example:
-                error:
-                  code: record_not_found
-                  message: Company invitation not found
-  "/api/v3/store/company_invitations/{token}/accept":
-    parameters:
-    - name: token
-      in: path
-      required: true
-      description: Plaintext invitation token from the invite email
-      schema:
-        type: string
-    post:
-      summary: Accept an invitation
-      tags:
-      - Companies
-      security:
-      - api_key: []
-      description: |
-        Turns the invitation into a membership. Send a registration payload to create the
-        account — it is always created with the invited email — or call it authenticated as
-        the customer who owns that email to bind the invitation to the existing account.
-      x-codeSamples:
-      - lang: javascript
-        label: Spree SDK
-        source: |-
-          import { createClient } from '@spree/sdk'
-
-          const client = createClient({
-            baseUrl: 'https://your-store.com',
-            publishableKey: '<api-key>',
-          })
-
-          // Unauthenticated: the token from the invite email is the credential, and the
-          // registration payload creates the account with the invited address.
-          const membership = await client.companyInvitations.accept('<invitation-token>', {
-            first_name: 'Ada',
-            password: 'a-strong-password',
-            password_confirmation: 'a-strong-password',
-          })
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '201':
-          description: membership created
-          content:
-            application/json:
-              example:
-                id: cmem_UkLWZg9DAJ
-                company_id: comp_UkLWZg9DAJ
-                customer_id: cust_UkLWZg9DAJ
-                email: new@acme.test
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                first_name:
-                  type: string
-                  example: Ada
-                last_name:
-                  type: string
-                  example: Lovelace
-                password:
-                  type: string
-                  example: a-strong-password
-                password_confirmation:
-                  type: string
-                  example: a-strong-password
   "/api/v3/store/delivery_methods":
     get:
       summary: List delivery methods
@@ -11262,19 +10355,6 @@ components:
       - actions
       - subjects
       - has_conditions
-    MeResponse:
-      type: object
-      description: Current admin user profile and serialized permissions
-      properties:
-        user:
-          "$ref": "#/components/schemas/AdminUser"
-        permissions:
-          type: array
-          items:
-            "$ref": "#/components/schemas/PermissionRule"
-      required:
-      - user
-      - permissions
     ImportSchemaField:
       type: object
       description: A canonical column of an import type, including per-store custom
@@ -11464,9 +10544,6 @@ components:
       properties:
         id:
           type: string
-        label:
-          type: string
-          nullable: true
         first_name:
           type: string
           nullable: true
@@ -11519,7 +10596,6 @@ components:
           nullable: true
       required:
       - id
-      - label
       - first_name
       - last_name
       - full_name
@@ -11590,12 +10666,6 @@ components:
           type: string
           nullable: true
         preferred_stock_location_id:
-          type: string
-          nullable: true
-        company_id:
-          type: string
-          nullable: true
-        company_name:
           type: string
           nullable: true
         number:
@@ -11753,8 +10823,6 @@ components:
       - market_id
       - channel_id
       - preferred_stock_location_id
-      - company_id
-      - company_name
       - number
       - token
       - email
@@ -12067,66 +11135,6 @@ components:
       - description_html
       - image_url
       - square_image_url
-      x-typelizer: true
-    CompanyInvitation:
-      type: object
-      properties:
-        id:
-          type: string
-        email:
-          type: string
-        expires_at:
-          type: string
-          nullable: true
-        company_id:
-          type: string
-        status:
-          type: string
-      required:
-      - id
-      - email
-      - expires_at
-      - company_id
-      - status
-      x-typelizer: true
-    CompanyMembership:
-      type: object
-      properties:
-        id:
-          type: string
-        company_id:
-          type: string
-        customer_id:
-          type: string
-        email:
-          type: string
-          nullable: true
-      required:
-      - id
-      - company_id
-      - customer_id
-      - email
-      x-typelizer: true
-    Company:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        kind:
-          type: string
-        parent_id:
-          type: string
-          nullable: true
-        ancestors:
-          type: object
-      required:
-      - id
-      - name
-      - kind
-      - parent_id
-      - ancestors
       x-typelizer: true
     Country:
       type: object
@@ -13309,12 +12317,6 @@ components:
         channel_id:
           type: string
           nullable: true
-        company_id:
-          type: string
-          nullable: true
-        company_name:
-          type: string
-          nullable: true
         number:
           type: string
         email:
@@ -13456,8 +12458,6 @@ components:
       - market_id
       - cart_id
       - channel_id
-      - company_id
-      - company_name
       - number
       - email
       - customer_note
