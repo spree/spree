@@ -389,7 +389,6 @@
     "companies": {
       "add_cta": "إضافة شركة",
       "add_sheet_title": "شركة جديدة",
-      "collapse_node": "طي",
       "create_description": "الشركة هي جذر شجرة المؤسسة. يمكنك إضافة الوحدات الفرعية والأعضاء والعناوين والتسجيلات الضريبية وشهادات الإعفاء بعد إنشائها.",
       "create_label": "إنشاء شركة",
       "delete_confirm": {
@@ -403,12 +402,11 @@
         "profile": "الشركة"
       },
       "empty": "لا توجد شركات بعد",
-      "expand_node": "توسيع",
       "kind": {
         "company": "شركة",
         "division": "قسم"
       },
-      "load_more": "عرض المزيد…",
+      "members_column": "الأعضاء",
       "members_count_few": "{{count}} أعضاء",
       "members_count_many": "{{count}} عضوًا",
       "members_count_one": "عضو واحد",
@@ -419,7 +417,6 @@
         "deleted": "تم حذف الشركة",
         "updated": "تم تحديث الشركة"
       },
-      "search_empty": "لا توجد شركات مطابقة لبحثك",
       "search_placeholder": "البحث في الشركات",
       "sub_units": {
         "add_cta": "إضافة وحدة فرعية",

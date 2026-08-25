@@ -386,7 +386,6 @@
     "companies": {
       "add_cta": "Unternehmen hinzufügen",
       "add_sheet_title": "Neues Unternehmen",
-      "collapse_node": "Zuklappen",
       "create_description": "Ein Unternehmen ist die Wurzel eines Organisationsbaums. Untereinheiten, Mitglieder, Adressen, Steuerregistrierung und Befreiungsnachweise fügen Sie danach hinzu.",
       "create_label": "Unternehmen erstellen",
       "delete_confirm": {
@@ -400,12 +399,11 @@
         "profile": "Unternehmen"
       },
       "empty": "Noch keine Unternehmen",
-      "expand_node": "Aufklappen",
       "kind": {
         "company": "Unternehmen",
         "division": "Abteilung"
       },
-      "load_more": "Mehr anzeigen…",
+      "members_column": "Mitglieder",
       "members_count_one": "{{count}} Mitglied",
       "members_count_other": "{{count}} Mitglieder",
       "messages": {
@@ -413,7 +411,6 @@
         "deleted": "Unternehmen gelöscht",
         "updated": "Unternehmen aktualisiert"
       },
-      "search_empty": "Keine Unternehmen entsprechen Ihrer Suche",
       "search_placeholder": "Unternehmen suchen",
       "sub_units": {
         "add_cta": "Untereinheit hinzufügen",

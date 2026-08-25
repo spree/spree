@@ -386,7 +386,6 @@
     "companies": {
       "add_cta": "Ajouter une entreprise",
       "add_sheet_title": "Nouvelle entreprise",
-      "collapse_node": "Replier",
       "create_description": "Une entreprise est la racine d’un arbre organisationnel. Ajoutez ensuite sous-unités, membres, adresses, immatriculation fiscale et certificats d’exonération.",
       "create_label": "Créer l’entreprise",
       "delete_confirm": {
@@ -400,12 +399,11 @@
         "profile": "Entreprise"
       },
       "empty": "Aucune entreprise pour le moment",
-      "expand_node": "Déplier",
       "kind": {
         "company": "Entreprise",
         "division": "Division"
       },
-      "load_more": "Afficher plus…",
+      "members_column": "Membres",
       "members_count_one": "{{count}} membre",
       "members_count_other": "{{count}} membres",
       "messages": {
@@ -413,7 +411,6 @@
         "deleted": "Entreprise supprimée",
         "updated": "Entreprise mise à jour"
       },
-      "search_empty": "Aucune entreprise ne correspond à votre recherche",
       "search_placeholder": "Rechercher des entreprises",
       "sub_units": {
         "add_cta": "Ajouter une sous-unité",

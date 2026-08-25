@@ -394,7 +394,6 @@
     "companies": {
       "add_cta": "Dodaj firmę",
       "add_sheet_title": "Nowa firma",
-      "collapse_node": "Zwiń",
       "create_description": "Firma jest korzeniem drzewa organizacji. Jednostki podrzędne, członków, adresy, rejestracje podatkowe i certyfikaty zwolnień dodasz później.",
       "create_label": "Utwórz firmę",
       "delete_confirm": {
@@ -408,12 +407,11 @@
         "profile": "Firma"
       },
       "empty": "Brak firm",
-      "expand_node": "Rozwiń",
       "kind": {
         "company": "Firma",
         "division": "Oddział"
       },
-      "load_more": "Pokaż więcej…",
+      "members_column": "Członkowie",
       "members_count_few": "{{count}} członków",
       "members_count_many": "{{count}} członków",
       "members_count_one": "{{count}} członek",
@@ -423,7 +421,6 @@
         "deleted": "Firma usunięta",
         "updated": "Firma zaktualizowana"
       },
-      "search_empty": "Żadna firma nie pasuje do wyszukiwania",
       "search_placeholder": "Szukaj firm",
       "sub_units": {
         "add_cta": "Dodaj jednostkę",

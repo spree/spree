@@ -386,7 +386,6 @@
     "companies": {
       "add_cta": "Add company",
       "add_sheet_title": "New company",
-      "collapse_node": "Collapse",
       "create_description": "A company is the root of an organization tree. Add sub-units, members, addresses, tax registration and exemption certificates once it exists.",
       "create_label": "Create company",
       "delete_confirm": {
@@ -400,12 +399,11 @@
         "profile": "Company"
       },
       "empty": "No companies yet",
-      "expand_node": "Expand",
       "kind": {
         "company": "Company",
         "division": "Division"
       },
-      "load_more": "Show more…",
+      "members_column": "Members",
       "members_count_one": "{{count}} member",
       "members_count_other": "{{count}} members",
       "messages": {
@@ -413,7 +411,6 @@
         "deleted": "Company deleted",
         "updated": "Company updated"
       },
-      "search_empty": "No companies match your search",
       "search_placeholder": "Search companies",
       "sub_units": {
         "add_cta": "Add sub-unit",

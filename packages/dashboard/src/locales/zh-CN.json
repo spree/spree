@@ -385,7 +385,6 @@
     "companies": {
       "add_cta": "添加公司",
       "add_sheet_title": "新建公司",
-      "collapse_node": "折叠",
       "create_description": "公司是组织树的根节点。创建后可以添加子单位、成员、地址、税务登记和免税证书。",
       "create_label": "创建公司",
       "delete_confirm": {
@@ -399,19 +398,17 @@
         "profile": "公司"
       },
       "empty": "暂无公司",
-      "expand_node": "展开",
       "kind": {
         "company": "公司",
         "division": "部门"
       },
-      "load_more": "显示更多…",
+      "members_column": "成员",
       "members_count_other": "{{count}} 名成员",
       "messages": {
         "created": "公司已创建",
         "deleted": "公司已删除",
         "updated": "公司已更新"
       },
-      "search_empty": "没有匹配的公司",
       "search_placeholder": "搜索公司",
       "sub_units": {
         "add_cta": "添加子单位",
