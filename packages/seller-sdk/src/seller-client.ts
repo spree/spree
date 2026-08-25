@@ -301,8 +301,12 @@ export interface SellerCountry {
 export interface OnboardingResponse {
   /** The seller's lifecycle status, e.g. `onboarding`, `ready_for_review`. */
   status: string
-  /** Optional requirements included — this is how far along, not how close to approval. */
-  progress: { done: number; total: number; percentage: number }
+  /**
+   * Optional requirements included — this is how far along, not how close to
+   * approval. Just the two counts: a percentage is arithmetic over them, and a
+   * copy here would be a second definition of the same fact.
+   */
+  progress: { done: number; total: number }
   requirements: RequirementStatus[]
 }
 
