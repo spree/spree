@@ -1138,7 +1138,7 @@ Plan: `docs/plans/6.0-consolidate-metadata-columns.md`.
 ## 2026-08-07: The tax plan builds the minimal Company tree; the B2B release keeps Catalog
 
 Exemption certificates need an entity to hang off, and `Spree::Company` does not
-exist — `6.1-channels-catalogs-b2b.md` targets 6.1. Rather than leave the tax
+exist — `6.0-channels-catalogs-b2b.md` targets 6.1. Rather than leave the tax
 plan's last phase blocked behind a release, `6.0-tax-provider.md` Phase 7 builds
 **Company → CompanyLocation → CompanyContact** plus
 `Spree::TaxExemptionCertificate`, and the B2B release inherits those models
@@ -1159,7 +1159,7 @@ flag cannot say which jurisdiction it holds in or which lines it covers, and
 removing the boolean `exempt?` from the provider contract was the substance of
 the 2026-08-05 refinement — reintroducing it a layer down would undo it.
 Exemption is a certificate resolved into a typed `Spree::TaxExemption` entry.
-**`6.1-channels-catalogs-b2b.md` still needs this note added to its own Key
+**`6.0-channels-catalogs-b2b.md` still needs this note added to its own Key
 Decisions** — deliberately not edited yet, at the author's instruction.
 
 **Explicitly not pulled forward:** Catalog, CatalogProduct, CatalogAssignment,
@@ -3268,7 +3268,7 @@ plus the guest-token order-listing scope — live in
 engine — its "rules" were ownership conditions and token blocks, and CanCanCan
 block rules can't power `accessible_by`, so controllers carried both a scope
 AND an `authorize!` for the same fact. Second, the Enterprise B2B module
-(`6.1-channels-catalogs-b2b.md`) must extend storefront authority without
+(`6.0-channels-catalogs-b2b.md`) must extend storefront authority without
 decorating controllers, and a policy object is the right seam: **access
 widening** (approver sees company-location purchases) = subclass the policy and
 override `scope`/`readable?`/`writable?`; **action vetoes** (approvals,
@@ -3298,7 +3298,7 @@ which code-defined sets cannot provide. The policy protocol is generic
 (`readable?`/`writable?`/`scope` with an ownership default), so wishlists,
 newsletter subscriptions and any new resource route through the same seam
 with no wiring; `/customers/me/*` endpoints stay owner-scoped by definition.
-Full B2B architecture: `6.1-channels-catalogs-b2b.md` → "Company roles and
+Full B2B architecture: `6.0-channels-catalogs-b2b.md` → "Company roles and
 approvals".
 
 ## 2026-08-12 — OpenTelemetry: notifications in core, spans in an optional gem, traces only
@@ -3680,3 +3680,77 @@ customer internal notes. Both are the general shape: **a store-owned model
 whose rows can exist unattached needs `store_id` wherever tenancy was
 previously implied by a parent.**
 Plan: `6.0-media-library.md`.
+
+## 2026-08-25 — B2B moves into 6.0; the company model becomes a multi-level organization tree
+
+B2B is a 6.0 deliverable — customers are waiting on it. The Catalog + Company
+phase parked in 6.1 comes back into 6.0, and `6.1-channels-catalogs-b2b.md`
+is renamed back to `6.0-channels-catalogs-b2b.md`, its Catalog/Company phase
+superseded by the new `6.0-b2b-companies-and-catalogs.md`.
+
+The Company → CompanyLocation → CompanyContact tree that shipped with
+tax-provider Phase 7 is merged but **unreleased**, so it is replaced outright
+— no bridges, no data migration, migrations rewritten in place (the recorded
+exception to the bridges convention applies: unreleased code gets no bridge).
+The replacement is the from-scratch design, chosen over patching a
+`parent_id` onto the shipped shape: Shopify's `CompanyLocation` conflates
+org-unit, address pair, and terms anchor — the known weakness that forces one
+node per ship-to site. No competitor ships organization hierarchy in open
+source (flat models everywhere; depth is paid at Vendure/BigCommerce, absent
+at Shopify/Medusa) — that gap is exactly what Spree 6.0 fills.
+
+**The model.** One entity, one table: `Spree::Company` self-referential
+(`parent_id`, depth cap 5, cycle-checked, store-scoped), typed by `kind` —
+`company` (legal entity) | `division` (org unit), roots must be legal
+entities. If the kinds ever grow diverging behavior the path is STI on the
+same table, never a separate `Division` model (which would force dual-FK or
+polymorphic references on every consumer). `CompanyAddress` is an address
+book (labeled rows, at-most-one default billing/shipping) so ship-to count
+never dictates node count. `CompanyMembership` joins a customer to a node
+with **subtree standing** — membership at N authorizes N and everything
+below. Carts and orders carry `company_id` (any node, frozen at completion);
+`company_location_id` is gone.
+
+**`kind` is load-bearing for tax.** Identifiers and exemption certificates
+live only on `company` nodes; every purchase-side tax read goes through
+`Company#legal_entity` — nearest self-or-ancestor `company` node, where the
+walk **stops** whether or not it holds anything. A division is its legal
+entity; a subsidiary never borrows its parent's registration. Kept as a
+validation rather than schema so per-division foreign registrations can be
+allowed later by relaxing the validation alone.
+
+**Catalogs inherit down the tree.** `CatalogAssignment`'s assignable set is
+Channel, CustomerGroup, Market, Company; a company-node assignment applies to
+its subtree, effective catalogs are the union over `self_and_ancestors`,
+pricing takes the nearest node's assignment first, then catalog position.
+The sketched Company↔CustomerGroup link is dropped — it promised composition
+it couldn't deliver (a company "in" a group never put its buyers in that
+group); group-style targeting of companies arrives, if ever, as explicit
+rule kinds on the promotion/price-rule STI families.
+
+**OSS trusts every member; governance is Enterprise, and its plans live in
+`spree-enterprise-v2/docs/plans/`.** The Store API ships full directory
+self-service — node detail, addresses, members, subtree order history,
+writable cart `company_id` (sole standing as the default; explicit node for
+multi-node buyers, finally settling the "provisional — revisit" resolution
+question) — where **any member with standing can do everything**, including
+removing other members. That trade-off is deliberate: OSS ships no company
+roles and no member-vs-member permission logic anywhere; it ships injection
+points — the storefront access policy class and the `carts.complete.validate`
+hooks, both no-ops in OSS — which the Enterprise governance layer (roles,
+approvals, spend limits, terms, quotes) fills without OSS schema changes.
+Plan: `6.0-b2b-companies-and-catalogs.md`.
+
+**Addendum (same day):** member invitation for unregistered emails was
+briefly deferred, then folded in. Adding a member takes an email from either
+surface — dashboard or storefront — and converges: existing store customer →
+membership immediately; unknown email → `Spree::CompanyInvitation`
+(company-scoped, plaintext `has_secure_token` like the staff invitation and
+setup tokens, 30-day expiry, functional invite email in `spree/emails`,
+`company_invitation.*` events), whose unauthenticated token-accept runs
+`Customers::Create` — the single customer-creation workflow — and lands as a
+membership. Memberships stay always-active and customer-backed; pending
+state lives on the invitation, never as a nullable `customer_id` or status
+column on the membership. Invitations carry no role — Enterprise attaches
+its payload via the same dialog slot (stored in invitation `metadata` or its
+own referencing table) and applies it on `company_invitation.accepted`.
