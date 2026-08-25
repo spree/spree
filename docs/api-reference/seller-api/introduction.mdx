@@ -1,0 +1,98 @@
+---
+title: "Spree Seller API introduction and SDK quick start"
+sidebarTitle: "Introduction"
+description: "Overview of the Spree Seller API — the marketplace seller panel for managing a seller's own catalog, team, stock locations, and onboarding."
+---
+
+import { Since } from '/snippets/since.mdx';
+
+<Since version="6.0" />
+
+The Seller API is a REST API for the **marketplace seller panel** — where a seller runs their own shop inside someone else's marketplace. It powers a seller's catalog, their team, their stock locations, and the onboarding checklist the marketplace asks them to complete.
+
+All routes are prefixed with `/api/v3/seller`. During development the API is available under `http://localhost:3000/api/v3/seller`. For production, replace `http://localhost:3000` with your Spree application URL.
+
+## A branch of its own, not a narrowing of the Admin API
+
+Sellers never call the Admin API. Every Seller API endpoint is scoped server-side to the seller the request acts as, which makes cross-seller access impossible by construction rather than by rule: a product ID belonging to another seller answers `404`, not `403`.
+
+The store is **derived from the seller**, never sent alongside it, so no header a seller controls can widen what they reach.
+
+| | Seller API | Admin API |
+|---|---|---|
+| **Purpose** | Run one seller's shop | Run the whole marketplace |
+| **Audience** | Marketplace sellers and their staff | The marketplace operator's staff |
+| **Authentication** | Seller JWT only (`seller_api` audience) | Secret API key (`sk_…`) or admin JWT |
+| **Tenancy** | Scoped to the acting seller | Scoped to the store |
+| **Server-to-server credential** | None, by design | Secret API keys |
+
+The marketplace operator manages sellers — approving them, reviewing what they submit, setting commission — through the Admin API's own [seller endpoints](/api-reference/admin-api/introduction), not through this API.
+
+## Using the SDK
+
+We recommend `@spree/seller-sdk` for interacting with the Seller API. It provides typed clients, automatic retries, and handles the seller header for you.
+
+### Installation
+
+```bash
+npm install @spree/seller-sdk
+# or
+yarn add @spree/seller-sdk
+# or
+pnpm add @spree/seller-sdk
+```
+
+### Quick start
+
+```typescript
+import { createSellerClient } from '@spree/seller-sdk'
+
+const client = createSellerClient({
+  baseUrl: 'http://localhost:3000',
+})
+
+// Sign in, then pick which seller to act as
+const { token, sellers } = await client.auth.login({
+  email: 'seller@example.com',
+  password: 'password123',
+})
+
+client.setToken(token)
+client.setSeller(sellers[0].id)
+
+const { data: products } = await client.products.list({ limit: 25 })
+```
+
+## What a seller can do
+
+<CardGroup cols={2}>
+  <Card title="Catalog" icon="tag">
+    List, create, update, and delete the products they own outright.
+  </Card>
+  <Card title="Profile" icon="store">
+    Maintain presentation, contact details, addresses, and tax registration.
+  </Card>
+  <Card title="Team" icon="users">
+    Invite colleagues, list the team, and revoke access.
+  </Card>
+  <Card title="Onboarding" icon="list-check">
+    Read the marketplace's checklist and submit against each requirement.
+  </Card>
+  <Card title="Stock locations" icon="warehouse">
+    Manage where they keep stock, and so where returns are sent.
+  </Card>
+  <Card title="Uploads" icon="upload">
+    Presign direct uploads for the documents onboarding asks for.
+  </Card>
+</CardGroup>
+
+## What a seller cannot do
+
+Some fields are readable but never writable, because they belong to the marketplace rather than the seller:
+
+- **`status`** — the seller lifecycle belongs to the operator's workflows. A seller says they are ready via `POST /api/v3/seller/onboarding/submit_for_review`; the operator decides.
+- **`slug`** — renaming a storefront address would break every link pointing at it.
+- **Settlement and commission terms** — what the marketplace charges is the marketplace's to set.
+- **Tax category, delivery profile, and promotionability on products** — marketplace-wide merchandising settings.
+
+Sending these fields is not an error; they are simply ignored.

@@ -37,7 +37,7 @@ namespace :rswag do
       require 'spree/api/openapi/path_sorter'
 
       docs = File.expand_path('../../docs/api-reference', __dir__)
-      %w[admin.yaml store.yaml].each do |name|
+      %w[admin.yaml store.yaml seller.yaml].each do |name|
         path = File.join(docs, name)
         next unless File.exist?(path)
 

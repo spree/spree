@@ -1,0 +1,130 @@
+---
+title: "Seller API error responses, status codes, and handling"
+sidebarTitle: "Errors"
+description: "Reference for the Spree Seller API error response format, HTTP status codes, and what a 403 versus a 404 means on the seller branch."
+---
+
+The Seller API uses the same error format as the rest of the Spree v3 API. Every error response carries a machine-readable `code` and a human-readable `message`.
+
+## Error response format
+
+```json
+{
+  "error": {
+    "code": "record_not_found",
+    "message": "Product not found"
+  }
+}
+```
+
+Validation errors include a `details` field with per-field messages:
+
+```json
+{
+  "error": {
+    "code": "validation_error",
+    "message": "Validation failed",
+    "details": {
+      "name": ["can't be blank"]
+    }
+  }
+}
+```
+
+Permission errors name the key the caller was missing:
+
+```json
+{
+  "error": {
+    "code": "access_denied",
+    "message": "Missing permission: write_products",
+    "details": {
+      "required_permission": "write_products"
+    }
+  }
+}
+```
+
+## Status codes
+
+| Status | Meaning on the seller branch |
+|---|---|
+| `200` | Success |
+| `201` | Resource created |
+| `204` | Success, no body — deletes and logout |
+| `401` | No token, an expired one, or a token minted for another surface |
+| `403` | Authenticated, but no seller named — or the acting seller's role lacks the permission |
+| `404` | The record does not exist **for this seller** |
+| `422` | Validation failed, or a workflow refused the request |
+| `429` | Rate limit exceeded |
+
+## 403 versus 404 — the distinction that matters
+
+This is the most important thing to understand about the seller branch, because the two codes answer different questions.
+
+**`403` means "you have not told me who you are acting as, or you may not do this."** It comes from one of two places:
+
+- No `X-Spree-Seller-Id` header, or one naming a seller the caller has no role on.
+- The acting seller's role lacks the permission key the action requires.
+
+**`404` means "no such record, for you."** Every lookup is rooted in the acting seller, so an ID belonging to another seller — or to the marketplace operator — is simply not found.
+
+```json
+{
+  "error": {
+    "code": "record_not_found",
+    "message": "Product not found"
+  }
+}
+```
+
+This is deliberate. Answering `403` for another seller's product would confirm the record exists, which is how a seller could probe the marketplace's catalog one ID at a time. The seller is never told the difference between "this belongs to someone else" and "this does not exist".
+
+## Common error codes
+
+| Code | Status | When |
+|---|---|---|
+| `authentication_failed` | 401 | Bad credentials, or a user who runs no seller |
+| `invalid_refresh_token` | 401 | The refresh cookie is missing, expired, or for another audience |
+| `access_denied` | 403 | No seller named, or a missing permission key |
+| `record_not_found` | 404 | The record does not belong to the acting seller |
+| `validation_error` | 422 | Model validation failed; see `details` |
+| `processing_error` | 422 | A workflow refused — for example, submitting for review with requirements outstanding |
+| `parameter_missing` | 400 | A required parameter was absent |
+| `rate_limit_exceeded` | 429 | Too many requests to an auth endpoint |
+
+## Handling errors with the SDK
+
+The SDK throws a `SpreeError` carrying the code, status, and details:
+
+```typescript
+import { SpreeError } from '@spree/seller-sdk'
+
+try {
+  await client.products.create({ name: '' })
+} catch (error) {
+  if (error instanceof SpreeError) {
+    if (error.status === 422) {
+      // error.details → { name: ["can't be blank"] }
+      showFieldErrors(error.details)
+    } else if (error.status === 403) {
+      showMessage("You don't have permission to do that.")
+    }
+  }
+}
+```
+
+## Requirements that block submission
+
+Submitting for review with something required still outstanding returns `422` with a message naming what is blocking. The seller's status is unchanged — nothing partial happens.
+
+```json
+{
+  "error": {
+    "code": "processing_error",
+    "message": "Add a billing address"
+  }
+}
+```
+
+Read the checklist from `GET /api/v3/seller/onboarding` to see each requirement's `status` and whether it is `blocking`.

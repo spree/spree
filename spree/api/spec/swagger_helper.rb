@@ -202,6 +202,102 @@ RSpec.configure do |config|
         },
         schemas: Spree::Api::OpenAPI::SchemaHelper.admin_schemas
       }
+    },
+
+    # Seller API v3 - The marketplace seller panel
+    'api-reference/seller.yaml' => {
+      openapi: '3.0.3',
+      info: {
+        title: 'Seller API',
+        contact: {
+          name: 'Spree Commerce',
+          url: 'https://spreecommerce.org',
+          email: 'hello@spreecommerce.org',
+        },
+        description: <<~DESC,
+          Spree Seller API v3 - the marketplace seller panel, where a seller runs
+          their own shop inside someone else's marketplace.
+
+          This is a branch of its own, not a narrowing of the Admin API. Every
+          endpoint is scoped server-side to the seller the request acts as, which
+          is what makes cross-seller access impossible by construction rather
+          than by rule. Sellers never call the Admin API.
+
+          ## Authentication
+
+          Sign in at `POST /api/v3/seller/auth/login` and send the returned JWT as
+          `Authorization: Bearer <token>`. The token carries a `seller_api`
+          audience — a token minted for the storefront or the back office is not
+          accepted here, and vice versa.
+
+          There is deliberately **no secret API key** for this branch: a
+          credential that could act as a seller without a seller signing in is
+          exactly what the separate audience exists to prevent.
+
+          ### Choosing a seller
+
+          A user may run more than one seller. Login returns the list; send the
+          chosen seller's ID in the `X-Spree-Seller-Id` header on every
+          authenticated request. The store is derived from the seller — never
+          sent — so no header can widen what a seller reaches. A request that
+          names no seller the caller belongs to is rejected with `403`.
+
+          ## Response Format
+
+          All responses are JSON. List endpoints return paginated responses with
+          `data` and `meta` keys.
+
+          ## Error Handling
+
+          Errors return a consistent format:
+          ```json
+          {
+            "error": {
+              "code": "validation_error",
+              "message": "Validation failed",
+              "details": { "name": ["can't be blank"] }
+            }
+          }
+          ```
+        DESC
+        version: 'v3'
+      },
+      paths: {},
+      servers: [
+        {
+          url: 'http://{defaultHost}',
+          variables: {
+            defaultHost: {
+              default: 'localhost:3000'
+            }
+          }
+        }
+      ],
+      # Authentication first, the rest alphabetical — see the Admin API's
+      # note above: Mintlify renders one sidebar group per tag in this
+      # order, so every operation tag must be listed here.
+      tags: [
+        { name: 'Authentication', description: 'Seller sign-in, token refresh, logout, and invitation acceptance' },
+        { name: 'Account', description: 'The signed-in user, the sellers they may act for, and what they may do' },
+        { name: 'Countries', description: 'Country and state reference data for the panel\'s address forms' },
+        { name: 'Onboarding', description: 'The marketplace checklist a seller completes before admission, and what they submit against it' },
+        { name: 'Products', description: "The seller's own catalog" },
+        { name: 'Profile', description: "The seller's own record — presentation, contact details, addresses, and tax registration" },
+        { name: 'Stock Locations', description: 'Where the seller keeps stock, and so where their returns are sent' },
+        { name: 'Team', description: 'Who runs this seller, and the invitations nobody has accepted yet' },
+        { name: 'Uploads', description: 'Presigned direct uploads for the documents onboarding asks for' }
+      ],
+      components: {
+        securitySchemes: {
+          bearer_auth: {
+            type: :http,
+            scheme: :bearer,
+            bearerFormat: 'JWT',
+            description: 'JWT token for an authenticated seller session (`seller_api` audience)'
+          }
+        },
+        schemas: Spree::Api::OpenAPI::SchemaHelper.seller_schemas
+      }
     }
   }
 

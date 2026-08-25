@@ -241,6 +241,160 @@ module Spree
           schemas
         end
 
+        # Get all seller schemas (Typelizer + common).
+        #
+        # The seller branch has no API-key credential, so its AuthResponse is
+        # neither the store's nor the admin's: signing in returns the JWT, the
+        # team member who signed in, and the sellers they may act for — the
+        # panel cannot make another request until it has picked one.
+        def seller_schemas
+          schemas = common_schemas
+
+          schemas[:AuthResponse] = {
+            type: :object,
+            properties: {
+              token: { type: :string, description: 'JWT access token, `seller_api` audience' },
+              user: { '$ref' => '#/components/schemas/TeamMember' },
+              sellers: {
+                type: :array,
+                description: 'The sellers this user may act for. Pick one and send its `id` as `X-Spree-Seller-Id` on every subsequent request.',
+                items: { '$ref' => '#/components/schemas/SellerSummary' }
+              }
+            },
+            required: %w[token user sellers]
+          }
+
+          schemas.merge!(seller_common_schemas)
+
+          begin
+            schemas.merge!(typelizer_schemas(:seller))
+          rescue StandardError => e
+            Rails.logger.warn "Failed to load Typelizer seller schemas: #{e.message}"
+          end
+
+          schemas
+        end
+
+        # Hand-written shapes the seller branch answers with that no serializer
+        # produces — bespoke controller hashes rather than Alba output.
+        def seller_common_schemas
+          {
+            SellerSummary: {
+              type: :object,
+              description: 'A seller the signed-in user may act for',
+              properties: {
+                id: { type: :string, description: 'Prefixed seller ID — send as `X-Spree-Seller-Id`', example: 'sel_abc123' },
+                name: { type: :string, example: 'Acme Supplies' },
+                status: { type: :string, example: 'approved', description: 'Seller lifecycle status' }
+              },
+              required: %w[id name status]
+            },
+            SellerMeSummary: {
+              type: :object,
+              description: 'A seller the signed-in user may act for, as `/me` reports it — the login response carries the same fields without `slug`.',
+              properties: {
+                id: { type: :string, description: 'Prefixed seller ID — send as `X-Spree-Seller-Id`', example: 'sel_abc123' },
+                name: { type: :string, example: 'Acme Supplies' },
+                slug: { type: :string, example: 'acme-supplies' },
+                status: { type: :string, example: 'approved', description: 'Seller lifecycle status' }
+              },
+              required: %w[id name slug status]
+            },
+            SellerMeResponse: {
+              type: :object,
+              description: 'The signed-in user, the sellers they may act for, and what they may do on the selected one',
+              properties: {
+                user: { '$ref' => '#/components/schemas/TeamMember' },
+                sellers: { type: :array, items: { '$ref' => '#/components/schemas/SellerMeSummary' } },
+                permissions: { type: :array, items: { '$ref' => '#/components/schemas/PermissionRule' } },
+                permission_keys: {
+                  type: :array,
+                  items: { type: :string },
+                  description: 'Permission keys on the selected seller. Empty until `X-Spree-Seller-Id` names one — capability is per seller.',
+                  example: %w[read_products write_products]
+                }
+              },
+              required: %w[user sellers permissions permission_keys]
+            },
+            OnboardingProgress: {
+              type: :object,
+              description: <<~DESC,
+                How far along the checklist is — not how close to approval, since
+                optional requirements count towards it too.
+
+                Deliberately just the two counts. A percentage is arithmetic over
+                them, which a client can do and which would otherwise be a second
+                definition of the same fact.
+              DESC
+              properties: {
+                done: { type: :integer, example: 3 },
+                total: { type: :integer, example: 5 }
+              },
+              required: %w[done total]
+            },
+            SellerOnboardingResponse: {
+              type: :object,
+              description: "What the marketplace asks of this seller before it will admit them",
+              properties: {
+                status: { type: :string, example: 'onboarding', description: "The seller's lifecycle status" },
+                progress: { '$ref' => '#/components/schemas/OnboardingProgress' },
+                requirements: { type: :array, items: { '$ref' => '#/components/schemas/RequirementStatus' } }
+              },
+              required: %w[status progress requirements]
+            },
+            SellerCountry: {
+              type: :object,
+              description: "A country as the panel's address forms need it",
+              properties: {
+                iso: { type: :string, example: 'US' },
+                iso3: { type: :string, example: 'USA' },
+                name: { type: :string, example: 'United States' },
+                states_required: { type: :boolean, example: true },
+                zipcode_required: { type: :boolean, example: true },
+                states: {
+                  type: :array,
+                  items: {
+                    type: :object,
+                    properties: {
+                      abbr: { type: :string, example: 'CA' },
+                      name: { type: :string, example: 'California' }
+                    },
+                    required: %w[abbr name]
+                  }
+                }
+              },
+              required: %w[iso iso3 name]
+            },
+            DirectUploadResponse: {
+              type: :object,
+              description: 'A presigned upload target. PUT the file to `direct_upload.url` with the given headers, then send `signed_id` as the submission\'s `file`.',
+              properties: {
+                signed_id: { type: :string, description: 'Send this as a submission\'s `file`', example: 'eyJfcmFpbHMiOnsibWVzc2FnZSI6...' },
+                direct_upload: {
+                  type: :object,
+                  properties: {
+                    url: { type: :string, example: 'https://storage.example.com/uploads/abc123' },
+                    headers: { type: :object, additionalProperties: { type: :string } }
+                  },
+                  required: %w[url headers]
+                }
+              },
+              required: %w[signed_id direct_upload]
+            },
+            AuthProvidersResponse: {
+              type: :object,
+              description: 'Sign-in methods this marketplace offers sellers, for the login page',
+              properties: {
+                providers: {
+                  type: :array,
+                  items: { type: :object, additionalProperties: true }
+                }
+              },
+              required: %w[providers]
+            }
+          }
+        end
+
         private
 
         def typelizer_schemas(writer_name)
