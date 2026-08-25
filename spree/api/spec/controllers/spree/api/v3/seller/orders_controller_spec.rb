@@ -72,6 +72,17 @@ RSpec.describe Spree::Api::V3::Seller::OrdersController, type: :controller do
     end
   end
 
+  # An order is created by a shopper checking out, never by the seller. The
+  # branch routes no write verb at all, so widening `resources :orders` would
+  # have to trip this rather than silently hand sellers a draft to author.
+  describe 'writing an order' do
+    it 'is not routable' do
+      expect(post: '/api/v3/seller/orders').not_to be_routable
+      expect(patch: '/api/v3/seller/orders/ord_x').not_to be_routable
+      expect(delete: '/api/v3/seller/orders/ord_x').not_to be_routable
+    end
+  end
+
   describe 'GET #show' do
     it 'renders what the seller needs to pack the parcel' do
       get :show, params: { id: mine.prefixed_id }, as: :json

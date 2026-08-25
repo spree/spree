@@ -37,6 +37,17 @@ RSpec.describe Spree::Api::V3::Seller::Orders::FulfillmentsController, type: :co
 
       expect(response).to have_http_status(:not_found)
     end
+
+    # A draft is not an order this seller has sold, so it must be as
+    # unreachable here as it is on the orders endpoint itself — otherwise
+    # the nested route becomes a way around that filter.
+    it '404s on a draft' do
+      draft = create(:order, store: store, seller: seller, status: 'draft', cart: nil)
+
+      get :index, params: { order_id: draft.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
   end
 
   describe 'PATCH #fulfill' do

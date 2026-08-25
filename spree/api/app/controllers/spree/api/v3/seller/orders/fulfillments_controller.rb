@@ -5,7 +5,7 @@ module Spree
         module Orders
           # Dispatching what a seller owes on one of their orders.
           #
-          # Rooted at the order fetched through `current_seller.orders`, so a
+          # Rooted at the order fetched through `current_seller_orders`, so a
           # fulfillment on somebody else's order reads as missing rather than
           # denied — and a seller can never ship against an order that is not
           # theirs, whatever id they send.
@@ -62,7 +62,7 @@ module Spree
             private
 
             def set_order
-              @order = current_seller.orders.find_by_prefix_id!(params[:order_id])
+              @order = current_seller_orders.find_by_prefix_id!(params[:order_id])
               authorize! :show, @order
             end
 
