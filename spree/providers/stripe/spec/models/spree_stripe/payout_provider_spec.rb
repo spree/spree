@@ -128,6 +128,94 @@ RSpec.describe SpreeStripe::PayoutProvider do
     end
   end
 
+  describe '#onboarding_state' do
+    def account(payouts_enabled:, disabled_reason: nil, errors: [])
+      Stripe::StripeObject.construct_from(
+        id: 'acct_seller',
+        payouts_enabled: payouts_enabled,
+        requirements: { disabled_reason: disabled_reason, errors: errors }
+      )
+    end
+
+    def stub_account(**attrs)
+      allow(Stripe::Account).to receive(:retrieve).and_return(account(**attrs))
+    end
+
+    it 'has nothing to say about a seller who can be paid' do
+      stub_account(payouts_enabled: true)
+
+      expect(described_class.new.onboarding_state(seller)).to be_nil
+    end
+
+    it 'asks the seller to finish when Stripe is waiting on them' do
+      stub_account(payouts_enabled: false, disabled_reason: 'requirements.past_due')
+
+      expect(described_class.new.onboarding_state(seller)).to eq(:action)
+    end
+
+    # Nobody can hurry a review, so this must not read as "go and finish".
+    it 'reports a review in progress as pending' do
+      stub_account(payouts_enabled: false, disabled_reason: 'requirements.pending_verification')
+
+      expect(described_class.new.onboarding_state(seller)).to eq(:pending)
+    end
+
+    it 'reports an account under review as pending' do
+      stub_account(payouts_enabled: false, disabled_reason: 'under_review')
+
+      expect(described_class.new.onboarding_state(seller)).to eq(:pending)
+    end
+
+    it 'reports a refusal as rejected' do
+      stub_account(payouts_enabled: false, disabled_reason: 'rejected.fraud')
+
+      expect(described_class.new.onboarding_state(seller)).to eq(:rejected)
+    end
+
+    # A checklist asking why it is stuck must not take the page down because
+    # Stripe is unreachable.
+    it 'stays quiet when Stripe cannot be reached' do
+      allow(Stripe::Account).to receive(:retrieve).and_raise(Stripe::APIError.new('boom'))
+
+      expect(described_class.new.onboarding_state(seller)).to be_nil
+    end
+
+    it 'has nothing to say about a seller who holds no account' do
+      other = create(:seller, :approved, store: store)
+
+      expect(described_class.new.onboarding_state(other)).to be_nil
+    end
+  end
+
+  describe '#onboarding_message' do
+    it 'passes on what Stripe said, so the seller knows what to fix' do
+      allow(Stripe::Account).to receive(:retrieve).and_return(
+        Stripe::StripeObject.construct_from(
+          id: 'acct_seller',
+          payouts_enabled: false,
+          requirements: {
+            disabled_reason: 'requirements.past_due',
+            errors: [{ code: 'verification_document_not_readable', reason: 'The image supplied isn’t readable.' }]
+          }
+        )
+      )
+
+      expect(described_class.new.onboarding_message(seller)).to eq('The image supplied isn’t readable.')
+    end
+
+    # A field simply not provided yet has no error and nothing to say.
+    it 'says nothing when Stripe reported no failure' do
+      allow(Stripe::Account).to receive(:retrieve).and_return(
+        Stripe::StripeObject.construct_from(
+          id: 'acct_seller', payouts_enabled: false,
+          requirements: { disabled_reason: 'requirements.past_due', errors: [] }
+        )
+      )
+
+      expect(described_class.new.onboarding_message(seller)).to be_nil
+    end
+  end
+
   describe '.requires_payout_account?' do
     it 'is true — nothing can be sent to a seller without a connected account' do
       expect(described_class.requires_payout_account?).to be(true)

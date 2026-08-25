@@ -25,6 +25,16 @@ module Spree
         provider_for(seller).onboarded?(seller)
       end
 
+      # Asked of the provider, since only it knows — and its three answers
+      # want different words: go and finish, wait, or you have been refused.
+      def blocker(seller)
+        provider = provider_for(seller)
+        state = provider.onboarding_state(seller)
+        return nil if state.nil?
+
+        { state: state.to_s, message: provider.onboarding_message(seller) }
+      end
+
       private
 
       def provider_for(seller)

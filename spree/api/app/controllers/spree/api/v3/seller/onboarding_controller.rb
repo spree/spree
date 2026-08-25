@@ -51,11 +51,10 @@ module Spree
               return_url: params.require(:return_url)
             )
 
-            # No link means there is nowhere to send them — an operator paying
-            # by hand collects these details themselves.
-            return head :no_content if url.blank?
-
-            render json: { url: url }
+            # A null link rather than an empty response: the panel has to tell
+            # "this provider hosts nothing" from "the request failed", and a
+            # 204 makes the client infer that from an absence.
+            render json: { url: url.presence }
           rescue Spree::Core::GatewayError => e
             render_service_error(e.message)
           end

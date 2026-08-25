@@ -60,6 +60,9 @@
   "onboarding": {
     "accept_terms": "Accept the terms",
     "awaiting_review": "Waiting for the marketplace to review this.",
+    "connect_payout_account": "Set up how you get paid",
+    "payout_account_rejected": "Contact your payout provider",
+    "awaiting_payout_provider": "Waiting for your payout provider to finish checking your details.",
     "confirm": "Confirm",
     "document_help": "PDF or an image of the document.",
     "document_label": "Document",

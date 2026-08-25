@@ -216,6 +216,17 @@ module Spree
       nil
     end
 
+    # Why this line is not done, when the answer is somewhere the seller
+    # cannot see. Nil for every kind whose own description already says what
+    # is wanted, which is nearly all of them — a requirement asking for an
+    # address explains itself.
+    #
+    # @param _seller [Spree::Seller]
+    # @return [Hash, nil] `{ state:, message: }`
+    def blocker(_seller)
+      nil
+    end
+
     # The submission that decides this requirement's standing for a seller:
     # the most recent one. Earlier rows are the audit trail.
     #

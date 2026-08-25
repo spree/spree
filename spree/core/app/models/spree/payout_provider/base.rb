@@ -103,6 +103,45 @@ module Spree
         !self.class.requires_payout_account? || seller.payouts_enabled?
       end
 
+      # Why a seller is not payable yet, in terms any provider can answer.
+      #
+      # Deliberately a state rather than a list of outstanding fields. What
+      # each provider is missing is its own vocabulary — field paths, document
+      # codes, review case ids — and none of it survives translation into a
+      # shared one. The reference provider goes further and asks not to be
+      # enumerated at all: its guidance is to send the seller back to the
+      # hosted flow, which already knows what it wants, rather than to
+      # reimplement its form badly.
+      #
+      # What a seller actually needs from this is which of three things is
+      # true, because each deserves different words and a different button:
+      #
+      #   nil       — nothing to say; they are payable, or no provider asks
+      #   :action   — the provider wants something from them
+      #   :pending  — the provider is checking, and nobody can hurry it
+      #   :rejected — the provider has refused them
+      #
+      # A provider may add a sentence of its own through {#onboarding_message},
+      # which is best-effort and unlocalized.
+      #
+      # @param _seller [Spree::Seller]
+      # @return [Symbol, nil]
+      def onboarding_state(_seller)
+        nil
+      end
+
+      # A provider's own words about what is outstanding, when it has any.
+      #
+      # Best-effort and **unlocalized** — providers write these in English and
+      # say so. Shown as supporting detail beside copy the panel has
+      # translated, never as the only explanation a seller gets.
+      #
+      # @param _seller [Spree::Seller]
+      # @return [String, nil]
+      def onboarding_message(_seller)
+        nil
+      end
+
       # Credits a seller for one fulfilled order.
       #
       # @param seller_transfer [Spree::SellerTransfer]

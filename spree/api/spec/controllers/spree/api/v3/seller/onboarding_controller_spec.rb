@@ -98,10 +98,12 @@ RSpec.describe Spree::Api::V3::Seller::OnboardingController, type: :controller d
 
     # An operator settling by hand collects bank details themselves, so there
     # is nowhere to send the seller.
-    it 'answers with nothing when the provider hosts no onboarding' do
+    # The panel has to tell "hosts nothing" from "the request failed".
+    it 'answers with no link when the provider hosts no onboarding' do
       post :payout_account, params: urls, as: :json
 
-      expect(response).to have_http_status(:no_content)
+      expect(response).to have_http_status(:ok)
+      expect(json_response['url']).to be_nil
     end
 
     context 'with a provider that hosts its own onboarding' do

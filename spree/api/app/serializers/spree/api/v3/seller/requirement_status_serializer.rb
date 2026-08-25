@@ -10,10 +10,11 @@ module Spree
                    description: [:string, nullable: true],
                    required: :boolean, position: :number, status: :string,
                    blocking: :boolean, action_url: [:string, nullable: true],
+                   blocker: ['{ state: string; message: string | null } | null'],
                    accepts_submissions: :boolean, requires_file: :boolean,
                    accepted_content_types: [:string, multi: true]
 
-          attributes :id, :kind, :name, :description, :required, :position, :status, :action_url
+          attributes :id, :kind, :name, :description, :required, :position, :status, :action_url, :blocker
 
           attribute :blocking do |status|
             status.blocking?

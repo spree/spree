@@ -222,6 +222,29 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
       }),
   })
 
+  // Asked for at the moment the seller clicks, never earlier: a provider's
+  // hosted link is short-lived and single-use, so one fetched while drawing
+  // this page would often be dead by the time it was used. The seller comes
+  // back here — this page is where the checklist says what is outstanding.
+  const connectPayoutAccount = useMutation({
+    mutationFn: () => {
+      const here = window.location.href.split('?')[0]
+
+      return sellerClient().onboarding.payoutAccount({
+        refresh_url: here,
+        return_url: here,
+      })
+    },
+    onSuccess: ({ url }) => {
+      if (url) window.location.href = url
+    },
+    onError: (err) =>
+      toastManager.add({
+        type: 'error',
+        title: err instanceof Error ? err.message : t('common.error'),
+      }),
+  })
+
   // One submit for every kind that takes one — an attestation the seller
   // ticks, a document they upload, a manual check they say is ready. What
   // differs is which controls render above it, not what posting means.
@@ -392,6 +415,38 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
           address form. */}
       {requirement.kind === 'returns_address' && <SellerReturnsLocationCard headless />}
 
+      {/* The provider hosts the form, so this is a redirect rather than a
+          page: the seller gives their bank and identity details to whoever
+          is paying them, and the marketplace never handles either.
+
+          Three outcomes, three different things to say. Waiting on the
+          provider gets no button at all — offering one would invite the
+          seller round a flow that cannot move, and they would click it
+          repeatedly wondering why nothing changed. */}
+      {requirement.kind === 'payout_account' && (
+        <div className="flex flex-col items-start gap-2">
+          {requirement.blocker?.message && (
+            <p className="text-muted-foreground text-sm">{requirement.blocker.message}</p>
+          )}
+
+          {requirement.blocker?.state === 'pending' ? (
+            <p className="text-muted-foreground text-sm">
+              {t('onboarding.awaiting_payout_provider')}
+            </p>
+          ) : (
+            <Button
+              disabled={connectPayoutAccount.isPending}
+              onClick={() => connectPayoutAccount.mutate()}
+            >
+              {requirement.blocker?.state === 'rejected'
+                ? t('onboarding.payout_account_rejected')
+                : t('onboarding.connect_payout_account')}
+              <ExternalLinkIcon className="size-4" />
+            </Button>
+          )}
+        </div>
+      )}
+
       {/* Kinds whose work happens on a page this panel already has. The
           server cannot supply these: `action_url` is for somewhere it knows
           about (a provider's hosted flow), and it has no idea how this panel
@@ -409,16 +464,18 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
       )}
 
       {/* `accept_terms` renders its own link above, with different words. */}
-      {requirement.action_url && requirement.kind !== 'accept_terms' && (
-        <div className="flex justify-start">
-          <Button variant="outline" asChild>
-            <a href={requirement.action_url} target="_blank" rel="noreferrer">
-              {t('onboarding.go')}
-              <ExternalLinkIcon className="size-4" />
-            </a>
-          </Button>
-        </div>
-      )}
+      {requirement.action_url &&
+        requirement.kind !== 'accept_terms' &&
+        requirement.kind !== 'payout_account' && (
+          <div className="flex justify-start">
+            <Button variant="outline" asChild>
+              <a href={requirement.action_url} target="_blank" rel="noreferrer">
+                {t('onboarding.go')}
+                <ExternalLinkIcon className="size-4" />
+              </a>
+            </Button>
+          </div>
+        )}
     </>
   )
 }

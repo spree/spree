@@ -42,6 +42,49 @@ RSpec.describe Spree::SellerRequirements::PayoutAccount do
     end
   end
 
+  describe '#blocker' do
+    # Nothing to explain when the provider has no opinion.
+    it 'is silent under the record-only provider' do
+      expect(requirement.blocker(seller)).to be_nil
+    end
+
+    context 'with a provider that reports on its own onboarding' do
+      before do
+        allow_any_instance_of(Spree::PayoutProvider::System).to receive(:onboarding_state).and_return(state)
+        allow_any_instance_of(Spree::PayoutProvider::System).to receive(:onboarding_message).
+          and_return('We could not read the document you uploaded.')
+      end
+
+      context 'when the provider wants something from the seller' do
+        let(:state) { :action }
+
+        it 'says so, with the provider’s own words' do
+          expect(requirement.blocker(seller)).to eq(
+            state: 'action', message: 'We could not read the document you uploaded.'
+          )
+        end
+      end
+
+      # Nobody can hurry this, so the panel says wait rather than offering a
+      # button that would send the seller round a flow that cannot move.
+      context 'when the provider is still checking' do
+        let(:state) { :pending }
+
+        it 'reports that it is waiting' do
+          expect(requirement.blocker(seller)[:state]).to eq('pending')
+        end
+      end
+
+      context 'when the provider has refused the seller' do
+        let(:state) { :rejected }
+
+        it 'reports the refusal' do
+          expect(requirement.blocker(seller)[:state]).to eq('rejected')
+        end
+      end
+    end
+  end
+
   # A marketplace settling by hand should not have this forced on it.
   it 'is registered as a kind an operator may add' do
     expect(Spree.seller_requirements).to include(described_class)
