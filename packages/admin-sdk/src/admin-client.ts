@@ -100,6 +100,8 @@ import type {
   AllowedOriginUpdateParams,
   ApiKeyCreateParams,
   ApiKeyUpdateParams,
+  CatalogAssignParams,
+  CatalogParams,
   CategoryCreateParams,
   CategoryProductRepositionParams,
   CategoryRepositionParams,
@@ -115,8 +117,8 @@ import type {
   CommissionRateCreateParams,
   CommissionRateUpdateParams,
   CommissionRuleType,
-  CompanyContactParams,
-  CompanyLocationParams,
+  CompanyAddressParams,
+  CompanyMembershipCreateParams,
   CompanyParams,
   CustomerAddressParams,
   CustomerCreateParams,
@@ -249,6 +251,8 @@ import type {
   AdminUser,
   AllowedOrigin,
   ApiKey,
+  Catalog,
+  CatalogAssignment,
   Category,
   Channel,
   Claim,
@@ -257,8 +261,9 @@ import type {
   CommissionLine,
   CommissionRate,
   Company,
-  CompanyContact,
-  CompanyLocation,
+  CompanyAddress,
+  CompanyInvitation,
+  CompanyMembership,
   Country,
   CouponCode,
   CreditCard,
@@ -2867,15 +2872,19 @@ export class AdminClient {
   // ============================================
 
   /**
-   * Business customers, their branches and the buyers authorised to purchase
-   * for each. A company holds the tax registration that goes on its invoices
-   * and the exemption certificates that decide whether its purchases are
-   * taxed; a sale points at a branch, and the company follows from it.
+   * Business customers as an organization tree: self-referential company
+   * nodes (`kind: 'company' | 'division'`), each with an address book and
+   * members whose standing covers the node's subtree. A legal-entity node
+   * holds the tax registration that goes on its invoices and the exemption
+   * certificates that decide whether its purchases are taxed; a division
+   * reads both through its nearest legal-entity ancestor.
    *
-   * Branches and buyers are listed and created under their parent, then read
-   * and written by their own id via `companyLocations` and `companyContacts` —
-   * nesting a buyer under both a company and a branch would exceed the API's
-   * two-level limit.
+   * List roots with `{ parent_id_null: 1 }` and a node's children with
+   * `{ parent_id_eq: 'comp_…' }`. Deleting a node destroys its subtree.
+   *
+   * Address-book entries, memberships and invitations are listed and created
+   * under their node, then addressed by their own id via `companyAddresses`,
+   * `companyMemberships` and `companyInvitations`.
    */
   readonly companies = {
     list: (
@@ -2893,21 +2902,23 @@ export class AdminClient {
     create: (params: CompanyParams, options?: RequestOptions): Promise<Company> =>
       this.request<Company>('POST', '/companies', { ...options, body: params }),
 
+    /** Re-parenting is an ordinary update — depth, cycle and store revalidate. */
     update: (id: string, params: CompanyParams, options?: RequestOptions): Promise<Company> =>
       this.request<Company>('PATCH', `/companies/${id}`, { ...options, body: params }),
 
+    /** Destroys the node and its whole subtree. */
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/companies/${id}`, options),
 
-    locations: {
+    addresses: {
       list: (
         companyId: string,
         params?: ListParams & Record<string, unknown>,
         options?: RequestOptions,
-      ): Promise<PaginatedResponse<CompanyLocation>> =>
-        this.request<PaginatedResponse<CompanyLocation>>(
+      ): Promise<PaginatedResponse<CompanyAddress>> =>
+        this.request<PaginatedResponse<CompanyAddress>>(
           'GET',
-          `/companies/${companyId}/locations`,
+          `/companies/${companyId}/addresses`,
           {
             ...options,
             params: params ? transformListParams(params) : undefined,
@@ -2916,13 +2927,56 @@ export class AdminClient {
 
       create: (
         companyId: string,
-        params: CompanyLocationParams,
+        params: CompanyAddressParams,
         options?: RequestOptions,
-      ): Promise<CompanyLocation> =>
-        this.request<CompanyLocation>('POST', `/companies/${companyId}/locations`, {
+      ): Promise<CompanyAddress> =>
+        this.request<CompanyAddress>('POST', `/companies/${companyId}/addresses`, {
           ...options,
           body: params,
         }),
+    },
+
+    /**
+     * The people with standing over the node (and, through it, its subtree).
+     * `create` takes an email and does the right thing: a membership for an
+     * existing customer, a CompanyInvitation otherwise — check the returned
+     * id prefix (`cmem_` vs `cinv_`).
+     */
+    memberships: {
+      list: (
+        companyId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<CompanyMembership>> =>
+        this.request<PaginatedResponse<CompanyMembership>>(
+          'GET',
+          `/companies/${companyId}/memberships`,
+          { ...options, params: params ? transformListParams(params) : undefined },
+        ),
+
+      create: (
+        companyId: string,
+        params: CompanyMembershipCreateParams,
+        options?: RequestOptions,
+      ): Promise<CompanyMembership | CompanyInvitation> =>
+        this.request<CompanyMembership | CompanyInvitation>(
+          'POST',
+          `/companies/${companyId}/memberships`,
+          { ...options, body: params },
+        ),
+    },
+
+    invitations: {
+      list: (
+        companyId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<CompanyInvitation>> =>
+        this.request<PaginatedResponse<CompanyInvitation>>(
+          'GET',
+          `/companies/${companyId}/invitations`,
+          { ...options, params: params ? transformListParams(params) : undefined },
+        ),
     },
 
     /**
@@ -3093,73 +3147,134 @@ export class AdminClient {
     },
   }
 
-  /** Branches addressed by their own id, with the buyers who purchase for them. */
-  readonly companyLocations = {
-    get: (
-      id: string,
-      params?: { expand?: string[] },
-      options?: RequestOptions,
-    ): Promise<CompanyLocation> =>
-      this.request<CompanyLocation>('GET', `/company_locations/${id}`, {
-        ...options,
-        params: getParams(params),
-      }),
+  /** Address-book entries addressed by their own id. */
+  readonly companyAddresses = {
+    get: (id: string, options?: RequestOptions): Promise<CompanyAddress> =>
+      this.request<CompanyAddress>('GET', `/company_addresses/${id}`, options),
 
     /**
-     * Address fields sent here edit the branch's existing address in place, so
+     * Address fields sent here edit the entry's existing address in place, so
      * send only what changes.
      */
     update: (
       id: string,
-      params: CompanyLocationParams,
+      params: CompanyAddressParams,
       options?: RequestOptions,
-    ): Promise<CompanyLocation> =>
-      this.request<CompanyLocation>('PATCH', `/company_locations/${id}`, {
+    ): Promise<CompanyAddress> =>
+      this.request<CompanyAddress>('PATCH', `/company_addresses/${id}`, {
         ...options,
         body: params,
       }),
 
-    /** Removes the branch, its buyers and the addresses it owned. */
+    /** Removes the entry and the address row it owned. */
     delete: (id: string, options?: RequestOptions): Promise<void> =>
-      this.request<void>('DELETE', `/company_locations/${id}`, options),
-
-    contacts: {
-      list: (
-        companyLocationId: string,
-        params?: ListParams & Record<string, unknown>,
-        options?: RequestOptions,
-      ): Promise<PaginatedResponse<CompanyContact>> =>
-        this.request<PaginatedResponse<CompanyContact>>(
-          'GET',
-          `/company_locations/${companyLocationId}/contacts`,
-          { ...options, params: params ? transformListParams(params) : undefined },
-        ),
-
-      /**
-       * Authorises a customer to purchase for a branch. A customer acting for
-       * exactly one branch has their orders attributed to it automatically;
-       * one acting for several needs the branch set on the order, because
-       * guessing would invoice the wrong business.
-       */
-      create: (
-        companyLocationId: string,
-        params: CompanyContactParams,
-        options?: RequestOptions,
-      ): Promise<CompanyContact> =>
-        this.request<CompanyContact>('POST', `/company_locations/${companyLocationId}/contacts`, {
-          ...options,
-          body: params,
-        }),
-    },
+      this.request<void>('DELETE', `/company_addresses/${id}`, options),
   }
 
-  readonly companyContacts = {
-    get: (id: string, options?: RequestOptions): Promise<CompanyContact> =>
-      this.request<CompanyContact>('GET', `/company_contacts/${id}`, options),
+  readonly companyMemberships = {
+    get: (id: string, options?: RequestOptions): Promise<CompanyMembership> =>
+      this.request<CompanyMembership>('GET', `/company_memberships/${id}`, options),
 
-    /** Withdraws the buyer's authority. The customer account is untouched. */
+    /** Withdraws the member's standing. The customer account is untouched. */
     delete: (id: string, options?: RequestOptions): Promise<void> =>
-      this.request<void>('DELETE', `/company_contacts/${id}`, options),
+      this.request<void>('DELETE', `/company_memberships/${id}`, options),
+  }
+
+  readonly companyInvitations = {
+    get: (id: string, options?: RequestOptions): Promise<CompanyInvitation> =>
+      this.request<CompanyInvitation>('GET', `/company_invitations/${id}`, options),
+
+    /** Revokes a pending invitation; its token then stops resolving. */
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/company_invitations/${id}`, options),
+  }
+
+  // ============================================
+  // Catalogs (assortment + optional price list)
+  // ============================================
+
+  /**
+   * Catalogs narrow what an audience sees and, through an attached price
+   * list, what they pay. Audiences are assignments: a channel, a customer
+   * group, a market, or a company node (covering its subtree).
+   */
+  readonly catalogs = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Catalog>> =>
+      this.request<PaginatedResponse<Catalog>>('GET', '/catalogs', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, params?: { expand?: string[] }, options?: RequestOptions): Promise<Catalog> =>
+      this.request<Catalog>('GET', `/catalogs/${id}`, { ...options, params: getParams(params) }),
+
+    create: (params: CatalogParams, options?: RequestOptions): Promise<Catalog> =>
+      this.request<Catalog>('POST', '/catalogs', { ...options, body: params }),
+
+    update: (id: string, params: CatalogParams, options?: RequestOptions): Promise<Catalog> =>
+      this.request<Catalog>('PATCH', `/catalogs/${id}`, { ...options, body: params }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/catalogs/${id}`, options),
+
+    /** The catalog's assortment, in the merchant's manual order. */
+    products: {
+      list: (
+        catalogId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<Product>> =>
+        this.request<PaginatedResponse<Product>>('GET', `/catalogs/${catalogId}/products`, {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        }),
+
+      /** Bulk-adds products; already-present rows are skipped. */
+      create: (
+        catalogId: string,
+        productIds: string[],
+        options?: RequestOptions,
+      ): Promise<{ added_count: number }> =>
+        this.request<{ added_count: number }>('POST', `/catalogs/${catalogId}/products`, {
+          ...options,
+          body: { product_ids: productIds },
+        }),
+
+      delete: (catalogId: string, productId: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/catalogs/${catalogId}/products/${productId}`, options),
+
+      /** Persists a drag-to-reorder; `new_position` is a 0-based index. */
+      reposition: (
+        catalogId: string,
+        productId: string,
+        newPosition: number,
+        options?: RequestOptions,
+      ): Promise<void> =>
+        this.request<void>('PATCH', `/catalogs/${catalogId}/products/${productId}/reposition`, {
+          ...options,
+          body: { new_position: newPosition },
+        }),
+    },
+
+    /** Shows the catalog to an audience. */
+    assign: (
+      id: string,
+      params: CatalogAssignParams,
+      options?: RequestOptions,
+    ): Promise<CatalogAssignment> =>
+      this.request<CatalogAssignment>('POST', `/catalogs/${id}/assign`, {
+        ...options,
+        body: params,
+      }),
+  }
+
+  readonly catalogAssignments = {
+    /** Withdraws the catalog from an audience. */
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/catalog_assignments/${id}`, options),
   }
 
   // ============================================

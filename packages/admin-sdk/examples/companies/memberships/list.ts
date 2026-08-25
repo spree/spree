@@ -6,8 +6,8 @@ const client = createAdminClient({
 })
 
 // region:example
-const location = await client.companyLocations.get('cloc_UkLWZg9DAJ')
+const { data: members } = await client.companies.memberships.list('comp_86Rf07xd4z')
 
 // endregion:example
 
-export { location }
+export { members }

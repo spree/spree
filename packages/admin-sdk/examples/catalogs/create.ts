@@ -6,6 +6,11 @@ const client = createAdminClient({
 })
 
 // region:example
-// Withdraws the buyer's authority; the customer account is untouched.
-await client.companyContacts.delete('cc_UkLWZg9DAJ')
+const catalog = await client.catalogs.create({
+  name: 'VIP Assortment',
+  price_list_id: 'pl_86Rf07xd4z',
+})
+
 // endregion:example
+
+export { catalog }

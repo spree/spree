@@ -2401,12 +2401,19 @@ export interface DeliveryZoneParams {
 
 export interface CompanyParams {
   name?: string
+  /**
+   * `company` = legal entity (may hold tax registrations), `division` =
+   * organizational unit. Roots must be `company`.
+   */
+  kind?: 'company' | 'division'
+  /** The parent node (comp_...). Omit or null for a root. */
+  parent_id?: string | null
   external_references?: ExternalReferencesParams
   metadata?: Record<string, unknown>
 }
 
-/** Addresses are created inline and owned by the branch. */
-export interface CompanyLocationAddressParams {
+/** Address fields, created inline and owned by the address-book entry. */
+export interface CompanyAddressFieldsParams {
   first_name?: string
   last_name?: string
   company?: string
@@ -2422,18 +2429,41 @@ export interface CompanyLocationAddressParams {
   label?: string
 }
 
-export interface CompanyLocationParams {
-  name?: string
-  external_references?: ExternalReferencesParams
-  billing_address?: CompanyLocationAddressParams
-  shipping_address?: CompanyLocationAddressParams
+export interface CompanyAddressParams {
+  /** 'Headquarters', 'Plant 2 dock', ... */
+  label?: string | null
+  /** At most one default of each kind per node; promoting demotes the prior one. */
+  default_billing?: boolean
+  default_shipping?: boolean
+  /** Edits the entry's existing address in place — send only what changes. */
+  address?: CompanyAddressFieldsParams
+}
+
+export interface CompanyMembershipCreateParams {
+  /**
+   * The person's email. An existing customer becomes a member immediately;
+   * an unknown email becomes an invitation and the response is a
+   * CompanyInvitation instead of a CompanyMembership.
+   */
+  customer_email: string
+  /** Free-form label; carries no permissions. */
+  role?: string
   metadata?: Record<string, unknown>
 }
 
-export interface CompanyContactParams {
-  customer_id?: string
-  /** Free-form label; carries no permissions. */
-  role?: string
+export interface CatalogParams {
+  name?: string
+  active?: boolean
+  position?: number
+  /** Price list (pl_...) pricing this catalog; null = assortment-only, base prices. */
+  price_list_id?: string | null
+  metadata?: Record<string, unknown>
+}
+
+export interface CatalogAssignParams {
+  /** Who sees the catalog. A company assignment covers the node's subtree. */
+  assignable_type: 'channel' | 'customer_group' | 'market' | 'company'
+  assignable_id: string
 }
 
 export interface TaxIdentifierParams {

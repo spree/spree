@@ -18,6 +18,10 @@ import type {
   Claim,
   Collection,
   CollectionListParams,
+  Company,
+  CompanyAddress,
+  CompanyInvitation,
+  CompanyMembership,
   CompletePaymentSessionParams,
   CompletePaymentSetupSessionParams,
   Country,
@@ -1158,6 +1162,192 @@ export class StoreClient {
      */
     update: (token: string, params: ResetPasswordParams): Promise<AuthTokens> =>
       this.request<AuthTokens>('PATCH', `/password_resets/${token}`, { body: params }),
+  }
+
+  // ============================================
+  // Companies (B2B self-service)
+  // ============================================
+
+  /**
+   * The signed-in buyer's company directory. Every endpoint requires a
+   * customer JWT and standing over the node — a membership on it or an
+   * ancestor; within a company, any member may read and manage the directory
+   * (roles and approvals are an Enterprise layer).
+   */
+  readonly account = {
+    /** The buyer's memberships, each with its node and ancestor path. */
+    companies: (
+      options?: RequestOptions,
+    ): Promise<{ data: Array<CompanyMembership & { company: Company }> }> =>
+      this.request<{ data: Array<CompanyMembership & { company: Company }> }>(
+        'GET',
+        '/account/companies',
+        options,
+      ),
+  }
+
+  readonly companies = {
+    get: (id: string, options?: RequestOptions): Promise<Company> =>
+      this.request<Company>('GET', `/companies/${id}`, options),
+
+    update: (id: string, params: { name?: string }, options?: RequestOptions): Promise<Company> =>
+      this.request<Company>('PATCH', `/companies/${id}`, { ...options, body: params }),
+
+    addresses: {
+      list: (
+        companyId: string,
+        params?: ListParams,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<CompanyAddress>> =>
+        this.request<PaginatedResponse<CompanyAddress>>(
+          'GET',
+          `/companies/${companyId}/addresses`,
+          {
+            ...options,
+            params: transformListParams({ ...params }),
+          },
+        ),
+
+      create: (
+        companyId: string,
+        params: {
+          label?: string
+          default_billing?: boolean
+          default_shipping?: boolean
+          address?: Record<string, string>
+        },
+        options?: RequestOptions,
+      ): Promise<CompanyAddress> =>
+        this.request<CompanyAddress>('POST', `/companies/${companyId}/addresses`, {
+          ...options,
+          body: params,
+        }),
+    },
+
+    members: {
+      list: (
+        companyId: string,
+        params?: ListParams,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<CompanyMembership>> =>
+        this.request<PaginatedResponse<CompanyMembership>>(
+          'GET',
+          `/companies/${companyId}/members`,
+          {
+            ...options,
+            params: transformListParams({ ...params }),
+          },
+        ),
+
+      /**
+       * Adds a person by email: an existing customer becomes a member
+       * immediately, anyone else gets an emailed invitation — check the
+       * returned id prefix (`cmem_` vs `cinv_`).
+       */
+      create: (
+        companyId: string,
+        params: { customer_email: string },
+        options?: RequestOptions,
+      ): Promise<CompanyMembership | CompanyInvitation> =>
+        this.request<CompanyMembership | CompanyInvitation>(
+          'POST',
+          `/companies/${companyId}/members`,
+          { ...options, body: params },
+        ),
+    },
+
+    invitations: {
+      list: (
+        companyId: string,
+        params?: ListParams,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<CompanyInvitation>> =>
+        this.request<PaginatedResponse<CompanyInvitation>>(
+          'GET',
+          `/companies/${companyId}/invitations`,
+          { ...options, params: transformListParams({ ...params }) },
+        ),
+    },
+
+    /** Completed purchases across the node's subtree. */
+    orders: {
+      list: (
+        companyId: string,
+        params?: ListParams,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<Order>> =>
+        this.request<PaginatedResponse<Order>>('GET', `/companies/${companyId}/orders`, {
+          ...options,
+          params: transformListParams({ ...params }),
+        }),
+    },
+  }
+
+  readonly companyAddresses = {
+    update: (
+      id: string,
+      params: {
+        label?: string
+        default_billing?: boolean
+        default_shipping?: boolean
+        address?: Record<string, string>
+      },
+      options?: RequestOptions,
+    ): Promise<CompanyAddress> =>
+      this.request<CompanyAddress>('PATCH', `/company_addresses/${id}`, {
+        ...options,
+        body: params,
+      }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/company_addresses/${id}`, options),
+  }
+
+  readonly companyMembers = {
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/company_members/${id}`, options),
+  }
+
+  /**
+   * Invitations: members revoke by prefixed id; invitees look up and accept
+   * by the plaintext token from the invite email (no authentication needed —
+   * the token is the credential, and acceptance may register the account).
+   */
+  readonly companyInvitations = {
+    lookup: (
+      token: string,
+      options?: RequestOptions,
+    ): Promise<CompanyInvitation & { company_name: string; store_name: string }> =>
+      this.request<CompanyInvitation & { company_name: string; store_name: string }>(
+        'GET',
+        `/company_invitations/${token}`,
+        options,
+      ),
+
+    /**
+     * Accepts by token: pass a registration payload for a new account (it is
+     * created with the invited email), or call authenticated to bind the
+     * invitation to the signed-in customer. Returns the created membership.
+     */
+    accept: (
+      token: string,
+      params?: {
+        first_name?: string
+        last_name?: string
+        phone?: string
+        password?: string
+        password_confirmation?: string
+      },
+      options?: RequestOptions,
+    ): Promise<CompanyMembership> =>
+      this.request<CompanyMembership>('POST', `/company_invitations/${token}/accept`, {
+        ...options,
+        body: params ?? {},
+      }),
+
+    /** Revokes a pending invitation (member-authenticated, by prefixed id). */
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/company_invitations/${id}`, options),
   }
 
   // ============================================
