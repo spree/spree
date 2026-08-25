@@ -30,7 +30,7 @@ module Spree
       # Adding a column here is a decision that it describes the checkout
       # rather than one seller's part of it.
       CARRIED_TO_SIBLING = %w[
-        email currency locale market_id channel_id company_location_id
+        email currency locale market_id channel_id company_id
         customer_id token accept_marketing preferred_stock_location_id
         customer_note last_ip_address
       ].freeze

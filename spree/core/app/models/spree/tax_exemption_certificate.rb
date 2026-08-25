@@ -27,6 +27,11 @@ module Spree
     has_one_attached :document, service: Spree.private_storage_service_name
 
     validates :certificate_number, :reason_code, presence: true
+    # Certificates exist only on legal-entity nodes — a division's purchases
+    # read exemption through its legal entity. A validation rather than a
+    # schema difference, so a per-division registration can be allowed later
+    # by relaxing this alone.
+    validate :company_is_legal_entity
 
     # A certificate is a scanned form, not an archive. Bounded because the
     # download action reads the whole blob into memory to serve it, so an
@@ -81,5 +86,10 @@ module Spree
 
     private
 
+    def company_is_legal_entity
+      return if company.nil? || company.legal_entity?
+
+      errors.add(:company, :must_be_legal_entity)
+    end
   end
 end

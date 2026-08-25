@@ -1,0 +1,8 @@
+<%= render layout: 'spree/shared/mailer_hero' do %>
+  <h1><%= Spree.t('company_mailer.invitation_email.title', company: @company.name) %></h1>
+  <p class="greeting"><%= Spree.t('company_mailer.invitation_email.greeting') %></p>
+  <p><%= Spree.t('company_mailer.invitation_email.instructions', company: @company.name, store: current_store.name) %></p>
+  <%= render 'spree/shared/mailer_button', url: @accept_url, label: Spree.t('company_mailer.invitation_email.action') %>
+  <p class="sub"><%= Spree.t('company_mailer.invitation_email.expiry_notice') %></p>
+  <p class="sub"><%= Spree.t('company_mailer.invitation_email.ignore_notice') %></p>
+<% end %>

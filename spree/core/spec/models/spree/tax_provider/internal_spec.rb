@@ -157,9 +157,8 @@ describe Spree::TaxProvider::Internal, type: :model do
     context 'with a certificate the buyer company holds' do
       let!(:rate) { create(:tax_rate, country_code: country&.iso, amount: 0.1, tax_category: line_item.tax_category, included_in_price: false) }
       let(:company) { create(:company, store: @default_store) }
-      let(:location) { create(:company_location, company: company) }
 
-      before { order.update!(company_location: location) }
+      before { order.update!(company: company) }
 
       def resolved_exemptions
         Spree.tax_resolve_exemptions_service.new.call(order: order.reload).value

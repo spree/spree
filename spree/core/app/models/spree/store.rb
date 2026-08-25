@@ -248,6 +248,7 @@ module Spree
 
     has_many :companies, class_name: 'Spree::Company', dependent: :destroy, inverse_of: :store
     has_many :external_references, class_name: 'Spree::ExternalReference', dependent: :destroy, inverse_of: :store
+    has_many :catalogs, class_name: 'Spree::Catalog', dependent: :destroy, inverse_of: :store
 
     has_many :api_keys, class_name: 'Spree::ApiKey', dependent: :destroy
     has_many :allowed_origins, class_name: 'Spree::AllowedOrigin', dependent: :destroy

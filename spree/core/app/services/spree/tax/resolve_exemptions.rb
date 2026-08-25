@@ -22,7 +22,9 @@ module Spree
       # @param order [Spree::Cart, Spree::Order]
       # @return [Array<Spree::TaxExemption>]
       def call(order:)
-        company = order.company
+        # The legal entity, never the node itself: a division holds no
+        # certificates, and reading its own would silently lose the exemption.
+        company = order.company_legal_entity
         address = order.tax_address
         return success([]) if company.nil? || address.nil?
 

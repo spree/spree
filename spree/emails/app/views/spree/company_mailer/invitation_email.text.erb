@@ -1,0 +1,11 @@
+<%= Spree.t('company_mailer.invitation_email.greeting') %>
+
+<%= Spree.t('company_mailer.invitation_email.instructions', company: @company.name, store: current_store.name) %>
+
+<%= Spree.t('company_mailer.invitation_email.action') %>: <%= @accept_url %>
+
+<%= Spree.t('company_mailer.invitation_email.expiry_notice') %>
+
+<%= Spree.t('company_mailer.invitation_email.ignore_notice') %>
+
+<%= Spree.t('order_mailer.store_team', store_name: current_store.name) %>
