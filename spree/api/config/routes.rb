@@ -730,6 +730,21 @@ Spree::Core::Engine.add_routes do
 
         resources :products, only: [:index, :show, :create, :update, :destroy]
 
+        # What this seller has sold. Cancelling is a member action because it
+        # is a workflow with its own arguments, and fulfilling is nested: a
+        # parcel means nothing outside the order it belongs to.
+        resources :orders, only: [:index, :show] do
+          member do
+            patch :cancel
+          end
+
+          resources :fulfillments, only: [:index, :show], controller: 'orders/fulfillments' do
+            member do
+              patch :fulfill
+            end
+          end
+        end
+
         resources :direct_uploads, only: [:create]
 
         # No destroy: a location holds stock levels and is named on historical
