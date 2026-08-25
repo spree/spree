@@ -164,7 +164,7 @@ module Spree
     #
     # @return [Boolean]
     def can_be_deleted?
-      !Spree::Order.where(company_id: self_and_descendants.select(:id)).exists?
+      !store.orders.where(company_id: self_and_descendants.select(:id)).exists?
     end
 
     # The default billing/shipping rows for checkout prefill, falling back to
@@ -243,7 +243,7 @@ module Spree
       height = 0
       level = [self]
       while height < MAX_DEPTH
-        level = Spree::Company.where(parent_id: level.map(&:id)).to_a
+        level = store.companies.where(parent_id: level.map(&:id)).to_a
         break if level.empty?
 
         height += 1
