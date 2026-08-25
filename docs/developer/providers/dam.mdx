@@ -1,0 +1,16 @@
+---
+title: Product Media & DAM
+description: Media hosted in your DAM stays in your DAM — Spree stores the address, not a copy of the bytes, and renders it through the same pipeline as uploaded media.
+---
+
+<Note>
+This page documents functionality landing in an upcoming Spree 6.0 release. The interfaces described here may change before final release.
+</Note>
+
+If your media lives in a digital asset management system or a CDN you already operate, importing copies into Spree doubles your storage and guarantees drift. Externally hosted media makes the address the record: Spree stores a URL, renders it wherever uploaded media renders, and your DAM remains the source of truth for the asset itself.
+
+## What this covers
+
+- Product images and videos referenced by URL instead of uploaded bytes
+- Feeding media URLs through the same product feeds and imports as the rest of your catalog data
+- How externally hosted media behaves in the dashboard, the APIs and the storefront alongside uploaded media

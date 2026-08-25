@@ -1,9 +1,11 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "name": "Spree Commerce documentation",
-  "theme": "sequoia",
+  "theme": "almond",
   "colors": {
-    "primary": "#0177FF"
+    "primary": "#0077ff",
+    "light": "#4d9fff",
+    "dark": "#0060ce"
   },
   "fonts": {
     "body": {
@@ -22,7 +24,6 @@
   "favicon": "/favicon.png",
   "seo": {
     "metatags": {
-      "canonical": "https://spreecommerce.org/docs",
       "og:locale": "en_US",
       "twitter:site": "@spreecommerce"
     }
@@ -77,47 +78,47 @@
     },
     {
       "source": "/developer/tutorial/storefront",
-      "destination": "/developer/storefront/rails/storefront"
+      "destination": "/v5/developer/storefront/rails/storefront"
     },
     {
       "source": "/developer/tutorial/page-builder",
-      "destination": "/developer/storefront/rails/sections"
+      "destination": "/v5/developer/storefront/rails/sections"
     },
     {
       "source": "/developer/storefront/storefront",
-      "destination": "/developer/storefront/rails/storefront"
+      "destination": "/v5/developer/storefront/rails/storefront"
     },
     {
       "source": "/developer/storefront/themes",
-      "destination": "/developer/storefront/rails/themes"
+      "destination": "/v5/developer/storefront/rails/themes"
     },
     {
       "source": "/developer/storefront/sections",
-      "destination": "/developer/storefront/rails/sections"
+      "destination": "/v5/developer/storefront/rails/sections"
     },
     {
       "source": "/developer/storefront/blocks",
-      "destination": "/developer/storefront/rails/blocks"
+      "destination": "/v5/developer/storefront/rails/blocks"
     },
     {
       "source": "/developer/storefront/pages",
-      "destination": "/developer/storefront/rails/pages"
+      "destination": "/v5/developer/storefront/rails/pages"
     },
     {
       "source": "/developer/storefront/links",
-      "destination": "/developer/storefront/rails/links"
+      "destination": "/v5/developer/storefront/rails/links"
     },
     {
       "source": "/developer/storefront/helper-methods",
-      "destination": "/developer/storefront/rails/helper-methods"
+      "destination": "/v5/developer/storefront/rails/helper-methods"
     },
     {
       "source": "/developer/storefront/custom-css",
-      "destination": "/developer/storefront/rails/custom-css"
+      "destination": "/v5/developer/storefront/rails/custom-css"
     },
     {
       "source": "/developer/storefront/custom-javascript",
-      "destination": "/developer/storefront/rails/custom-javascript"
+      "destination": "/v5/developer/storefront/rails/custom-javascript"
     },
     {
       "source": "/api-reference/introduction",
@@ -129,11 +130,11 @@
     },
     {
       "source": "/developer/tutorial/file-uploads",
-      "destination": "/developer/tutorial/admin"
+      "destination": "/v5/developer/tutorial/admin"
     },
     {
       "source": "/developer/tutorial/store-api",
-      "destination": "/developer/tutorial/api"
+      "destination": "/v5/developer/tutorial/api"
     },
     {
       "source": "/developer/multi-store/quickstart",
@@ -146,6 +147,270 @@
     {
       "source": "/developer/multi-tenant/installation",
       "destination": "/developer/multi-tenant/quickstart"
+    },
+    {
+      "source": "/developer/storefront/rails/blocks",
+      "destination": "/v5/developer/storefront/rails/blocks"
+    },
+    {
+      "source": "/developer/storefront/rails/custom-css",
+      "destination": "/v5/developer/storefront/rails/custom-css"
+    },
+    {
+      "source": "/developer/storefront/rails/custom-javascript",
+      "destination": "/v5/developer/storefront/rails/custom-javascript"
+    },
+    {
+      "source": "/developer/storefront/rails/helper-methods",
+      "destination": "/v5/developer/storefront/rails/helper-methods"
+    },
+    {
+      "source": "/developer/storefront/rails/links",
+      "destination": "/v5/developer/storefront/rails/links"
+    },
+    {
+      "source": "/developer/storefront/rails/pages",
+      "destination": "/v5/developer/storefront/rails/pages"
+    },
+    {
+      "source": "/developer/storefront/rails/sections",
+      "destination": "/v5/developer/storefront/rails/sections"
+    },
+    {
+      "source": "/developer/storefront/rails/storefront",
+      "destination": "/v5/developer/storefront/rails/storefront"
+    },
+    {
+      "source": "/developer/storefront/rails/themes",
+      "destination": "/v5/developer/storefront/rails/themes"
+    },
+    {
+      "source": "/developer/admin/admin",
+      "destination": "/v5/developer/admin/admin"
+    },
+    {
+      "source": "/developer/admin/authentication",
+      "destination": "/v5/developer/admin/authentication"
+    },
+    {
+      "source": "/developer/admin/components",
+      "destination": "/v5/developer/admin/components"
+    },
+    {
+      "source": "/developer/admin/custom-css",
+      "destination": "/v5/developer/admin/custom-css"
+    },
+    {
+      "source": "/developer/admin/custom-javascript",
+      "destination": "/v5/developer/admin/custom-javascript"
+    },
+    {
+      "source": "/developer/admin/extending-ui",
+      "destination": "/v5/developer/admin/extending-ui"
+    },
+    {
+      "source": "/developer/admin/form-builder",
+      "destination": "/v5/developer/admin/form-builder"
+    },
+    {
+      "source": "/developer/admin/helper-methods",
+      "destination": "/v5/developer/admin/helper-methods"
+    },
+    {
+      "source": "/developer/admin/navigation",
+      "destination": "/v5/developer/admin/navigation"
+    },
+    {
+      "source": "/developer/admin/tables",
+      "destination": "/v5/developer/admin/tables"
+    },
+    {
+      "source": "/developer/tutorial/admin",
+      "destination": "/v5/developer/tutorial/admin"
+    },
+    {
+      "source": "/developer/tutorial/api",
+      "destination": "/v5/developer/tutorial/api"
+    },
+    {
+      "source": "/developer/tutorial/sdk",
+      "destination": "/v5/developer/tutorial/sdk"
+    },
+    {
+      "source": "/developer/tutorial/extending-models",
+      "destination": "/v5/developer/tutorial/extending-models"
+    },
+    {
+      "source": "/developer/upgrades/2.0-to-2.1",
+      "destination": "/v5/developer/upgrades/2.0-to-2.1"
+    },
+    {
+      "source": "/developer/upgrades/2.1-to-2.2",
+      "destination": "/v5/developer/upgrades/2.1-to-2.2"
+    },
+    {
+      "source": "/developer/upgrades/2.2-to-2.3",
+      "destination": "/v5/developer/upgrades/2.2-to-2.3"
+    },
+    {
+      "source": "/developer/upgrades/2.3-to-2.4",
+      "destination": "/v5/developer/upgrades/2.3-to-2.4"
+    },
+    {
+      "source": "/developer/upgrades/3.0-to-3.1",
+      "destination": "/v5/developer/upgrades/3.0-to-3.1"
+    },
+    {
+      "source": "/developer/upgrades/3.1-to-3.2",
+      "destination": "/v5/developer/upgrades/3.1-to-3.2"
+    },
+    {
+      "source": "/developer/upgrades/3.2-to-3.3",
+      "destination": "/v5/developer/upgrades/3.2-to-3.3"
+    },
+    {
+      "source": "/developer/upgrades/3.3-to-3.4",
+      "destination": "/v5/developer/upgrades/3.3-to-3.4"
+    },
+    {
+      "source": "/developer/upgrades/3.4-to-3.5",
+      "destination": "/v5/developer/upgrades/3.4-to-3.5"
+    },
+    {
+      "source": "/developer/upgrades/3.5-to-3.6",
+      "destination": "/v5/developer/upgrades/3.5-to-3.6"
+    },
+    {
+      "source": "/developer/upgrades/3.6-to-3.7",
+      "destination": "/v5/developer/upgrades/3.6-to-3.7"
+    },
+    {
+      "source": "/developer/upgrades/3.7-to-4.0",
+      "destination": "/v5/developer/upgrades/3.7-to-4.0"
+    },
+    {
+      "source": "/developer/upgrades/4.0-to-4.1",
+      "destination": "/v5/developer/upgrades/4.0-to-4.1"
+    },
+    {
+      "source": "/developer/upgrades/4.1-to-4.2",
+      "destination": "/v5/developer/upgrades/4.1-to-4.2"
+    },
+    {
+      "source": "/developer/upgrades/4.2-to-4.3",
+      "destination": "/v5/developer/upgrades/4.2-to-4.3"
+    },
+    {
+      "source": "/developer/upgrades/4.3-to-4.4",
+      "destination": "/v5/developer/upgrades/4.3-to-4.4"
+    },
+    {
+      "source": "/developer/upgrades/4.4-to-4.5",
+      "destination": "/v5/developer/upgrades/4.4-to-4.5"
+    },
+    {
+      "source": "/developer/upgrades/4.5-to-4.6",
+      "destination": "/v5/developer/upgrades/4.5-to-4.6"
+    },
+    {
+      "source": "/developer/upgrades/4.6-to-4.7",
+      "destination": "/v5/developer/upgrades/4.6-to-4.7"
+    },
+    {
+      "source": "/developer/upgrades/4.x-to-4.8",
+      "destination": "/v5/developer/upgrades/4.x-to-4.8"
+    },
+    {
+      "source": "/developer/upgrades/4.8-to-4.9",
+      "destination": "/v5/developer/upgrades/4.8-to-4.9"
+    },
+    {
+      "source": "/developer/upgrades/4.9-to-4.10",
+      "destination": "/v5/developer/upgrades/4.9-to-4.10"
+    },
+    {
+      "source": "/developer/upgrades/4.10-to-5.0",
+      "destination": "/v5/developer/upgrades/4.10-to-5.0"
+    },
+    {
+      "source": "/developer/upgrades/5.0-to-5.1",
+      "destination": "/v5/developer/upgrades/5.0-to-5.1"
+    },
+    {
+      "source": "/developer/upgrades/5.1-to-5.2",
+      "destination": "/v5/developer/upgrades/5.1-to-5.2"
+    },
+    {
+      "source": "/developer/upgrades/5.2-to-5.3",
+      "destination": "/v5/developer/upgrades/5.2-to-5.3"
+    },
+    {
+      "source": "/developer/upgrades/5.3-to-5.4",
+      "destination": "/v5/developer/upgrades/5.3-to-5.4"
+    },
+    {
+      "source": "/developer/upgrades/5.4-to-5.5",
+      "destination": "/v5/developer/upgrades/5.4-to-5.5"
+    },
+    {
+      "source": "/developer/upgrades/5.5-to-5.6",
+      "destination": "/v5/developer/upgrades/5.5-to-5.6"
+    },
+    {
+      "source": "/developer/customization/authentication",
+      "destination": "/v5/developer/customization/authentication"
+    },
+    {
+      "source": "/developer/customization/checkout",
+      "destination": "/v5/developer/customization/checkout"
+    },
+    {
+      "source": "/developer/customization/routes",
+      "destination": "/v5/developer/customization/routes"
+    },
+    {
+      "source": "/developer/customization/emails",
+      "destination": "/v5/developer/customization/emails"
+    },
+    {
+      "source": "/developer/core-concepts/adjustments",
+      "destination": "/developer/core-concepts/taxes-discounts-fees"
+    },
+    {
+      "source": "/developer/core-concepts/shipments",
+      "destination": "/developer/core-concepts/fulfillments"
+    },
+    {
+      "source": "/developer/core-concepts/reports",
+      "destination": "/v5/developer/core-concepts/reports"
+    },
+    {
+      "source": "/developer/multi-vendor/quickstart",
+      "destination": "/developer/how-to/build-a-marketplace"
+    },
+    {
+      "source": "/developer/multi-vendor/installation",
+      "destination": "/developer/how-to/build-a-marketplace"
+    },
+    {
+      "source": "/developer/advanced/adding_spree_to_rails_app",
+      "destination": "/v5/developer/advanced/adding_spree_to_rails_app"
+    },
+    {
+      "source": "/user/settings/checkout",
+      "destination": "/v5/user/settings/checkout"
+    },
+    {
+      "source": "/user/manage-products/product-properties",
+      "destination": "/v5/user/manage-products/product-properties"
+    },
+    {
+      "source": "/developer/deployment/telemetry",
+      "destination": "/developer/providers/observability"
+    },
+    {
+      "source": "/developer/multi-vendor",
+      "destination": "/developer/how-to/build-a-marketplace"
     }
   ],
   "contextual": {
@@ -162,251 +427,312 @@
   "navigation": {
     "versions": [
       {
-        "version": "v5.x",
+        "version": "v6.x",
         "default": true,
         "tabs": [
           {
-            "tab": "Guides",
-            "menu": [
+            "tab": "Documentation",
+            "groups": [
               {
-                "item": "Getting Started",
-                "icon": "rocket",
-                "description": "Quickstart guide and core concepts",
-                "groups": [
+                "group": "Develop",
+                "pages": [
                   {
-                    "group": "Getting started",
-                    "icon": "rocket",
+                    "group": "Getting Started",
                     "pages": [
-                      "developer/getting-started/quickstart"
-                    ]
+                      "developer/getting-started/quickstart",
+                      "developer/create-spree-app/quickstart",
+                      "developer/core-concepts/architecture"
+                    ],
+                    "icon": "rocket"
                   },
-                  {
-                    "group": "Platform",
-                    "icon": "settings",
-                    "pages": [
-                      "developer/core-concepts/architecture",
-                      "developer/core-concepts/stores",
-                      "developer/core-concepts/channels",
-                      "developer/core-concepts/markets",
-                      "developer/core-concepts/customers",
-                      "developer/core-concepts/staff-roles"
-                    ]
-                  },
-                  {
-                    "group": "Catalog",
-                    "icon": "package",
-                    "pages": [
-                      "developer/core-concepts/products",
-                      "developer/core-concepts/pricing",
-                      "developer/core-concepts/inventory",
-                      "developer/core-concepts/media",
-                      "developer/core-concepts/search-filtering"
-                    ]
-                  },
-                  {
-                    "group": "Cart & Checkout",
-                    "icon": "shopping-cart",
-                    "pages": [
-                      "developer/core-concepts/orders",
-                      "developer/core-concepts/payments",
-                      "developer/core-concepts/taxes",
-                      "developer/core-concepts/promotions",
-                      "developer/core-concepts/store-credits-gift-cards"
-                    ]
-                  },
-                  {
-                    "group": "Fulfillment",
-                    "icon": "truck",
-                    "pages": [
-                      "developer/core-concepts/shipments",
-                      "developer/core-concepts/addresses",
-                      "developer/core-concepts/adjustments",
-                      "developer/core-concepts/calculators"
-                    ]
-                  },
-                  {
-                    "group": "Extensibility",
-                    "icon": "plug",
-                    "pages": [
-                      "developer/core-concepts/events",
-                      "developer/core-concepts/webhooks",
-                      "developer/core-concepts/translations",
-                      "developer/core-concepts/slugs",
-                      "developer/core-concepts/metafields",
-                      "developer/core-concepts/reports",
-                      "developer/core-concepts/imports-exports"
-                    ]
-                  }
-                ]
-              },
-              {
-                "item": "Building a Storefront",
-                "icon": "store",
-                "description": "Next.js, custom frontend, or Rails engine",
-                "groups": [
-                  {
-                    "group": "Next.js Storefront",
-                    "pages": [
-                      "developer/storefront/nextjs/quickstart",
-                      "developer/storefront/nextjs/architecture",
-                      "developer/storefront/nextjs/multi-region",
-                      "developer/storefront/nextjs/customization",
-                      "developer/storefront/nextjs/emails",
-                      "developer/storefront/nextjs/wholesale",
-                      "developer/storefront/nextjs/wallet-payments",
-                      "developer/storefront/nextjs/testing",
-                      "developer/storefront/nextjs/environment-variables",
-                      "developer/storefront/nextjs/deployment"
-                    ]
-                  }
-                ]
-              },
-              {
-                "item": "Use Cases",
-                "icon": "book-open",
-                "description": "Multi-store/multi-tenant, and marketplace setups",
-                "groups": [
-                  {
-                    "group": "Multi-Tenant / Multi-Store",
-                    "pages": [
-                      "developer/multi-tenant/quickstart",
-                      "developer/multi-tenant/core-concepts",
-                      "developer/multi-tenant/configuration"
-                    ]
-                  },
-                  {
-                    "group": "Multi-Vendor Marketplace",
-                    "pages": [
-                      "developer/multi-vendor/quickstart",
-                      "developer/multi-vendor/installation"
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "tab": "Framework",
-            "menu": [
-              {
-                "item": "Extending",
-                "icon": "puzzle",
-                "description": "Customize admin panel, API, and business logic",
-                "groups": [
                   {
                     "group": "Tutorial",
-                    "icon": "graduation-cap",
                     "pages": [
                       "developer/tutorial/introduction",
                       "developer/tutorial/model",
-                      "developer/tutorial/admin",
-                      "developer/tutorial/extending-models",
-                      "developer/tutorial/api",
+                      "developer/tutorial/admin-api",
+                      "developer/tutorial/dashboard-plugin",
+                      "developer/tutorial/store-api",
+                      "developer/tutorial/storefront",
                       "developer/tutorial/events",
-                      "developer/tutorial/sdk",
                       "developer/tutorial/testing"
-                    ]
+                    ],
+                    "icon": "graduation-cap"
                   },
                   {
-                    "group": "Admin Panel",
-                    "icon": "gauge",
+                    "group": "AI-Assisted Development",
                     "pages": [
-                      "developer/admin/admin",
-                      "developer/admin/extending-ui",
-                      "developer/admin/navigation",
-                      "developer/admin/tables",
-                      "developer/admin/form-builder",
-                      "developer/admin/components",
-                      "developer/admin/helper-methods",
-                      "developer/admin/authentication",
-                      "developer/admin/custom-javascript",
-                      "developer/admin/custom-css"
-                    ]
+                      "developer/agentic/overview",
+                      "developer/agentic/agent-skills",
+                      "developer/agentic/mcp",
+                      "developer/agentic/llm-docs",
+                      "developer/cli/admin-api"
+                    ],
+                    "icon": "sparkles"
                   },
                   {
-                    "group": "Customization Reference",
-                    "icon": "wrench",
+                    "group": "Core Concepts",
+                    "pages": [
+                      {
+                        "group": "Platform",
+                        "pages": [
+                          "developer/core-concepts/stores",
+                          "developer/core-concepts/channels",
+                          "developer/core-concepts/markets",
+                          "developer/core-concepts/customers",
+                          "developer/core-concepts/staff-roles"
+                        ]
+                      },
+                      {
+                        "group": "Catalog",
+                        "pages": [
+                          "developer/core-concepts/products",
+                          "developer/core-concepts/pricing",
+                          "developer/core-concepts/inventory",
+                          "developer/core-concepts/media",
+                          "developer/core-concepts/search-filtering"
+                        ]
+                      },
+                      {
+                        "group": "Cart & Checkout",
+                        "pages": [
+                          "developer/core-concepts/carts",
+                          "developer/core-concepts/orders",
+                          "developer/core-concepts/payments",
+                          "developer/core-concepts/taxes",
+                          "developer/core-concepts/taxes-discounts-fees",
+                          "developer/core-concepts/promotions",
+                          "developer/core-concepts/store-credits-gift-cards"
+                        ]
+                      },
+                      {
+                        "group": "Fulfillment",
+                        "pages": [
+                          "developer/core-concepts/fulfillments",
+                          "developer/core-concepts/returns-exchanges-claims",
+                          "developer/core-concepts/addresses",
+                          "developer/core-concepts/calculators"
+                        ]
+                      },
+                      {
+                        "group": "Extensibility",
+                        "pages": [
+                          "developer/core-concepts/events",
+                          "developer/core-concepts/webhooks",
+                          "developer/core-concepts/translations",
+                          "developer/core-concepts/slugs",
+                          "developer/core-concepts/metafields",
+                          "developer/core-concepts/imports-exports"
+                        ]
+                      }
+                    ],
+                    "icon": "book-open"
+                  },
+                  {
+                    "group": "Providers & Integrations",
+                    "pages": [
+                      "developer/providers/overview",
+                      "integrations/integrations",
+                      {
+                        "group": "Connect Your Systems",
+                        "pages": [
+                          "developer/providers/erp",
+                          "developer/providers/pim",
+                          "developer/providers/dam"
+                        ]
+                      },
+                      {
+                        "group": "Shipping & WMS",
+                        "pages": [
+                          "developer/providers/fulfillment",
+                          "developer/how-to/custom-delivery-rate-provider"
+                        ]
+                      },
+                      {
+                        "group": "Payments",
+                        "pages": [
+                          "developer/how-to/custom-payment-method",
+                          "integrations/payments/stripe",
+                          "integrations/payments/adyen",
+                          "integrations/payments/paypal",
+                          "integrations/payments/razorpay"
+                        ]
+                      },
+                      {
+                        "group": "Tax",
+                        "pages": [
+                          "integrations/tax/avalara"
+                        ]
+                      },
+                      {
+                        "group": "Search",
+                        "pages": [
+                          "developer/how-to/custom-search-provider",
+                          "integrations/search/meilisearch"
+                        ]
+                      },
+                      {
+                        "group": "Identity & SSO",
+                        "pages": [
+                          "developer/providers/sso",
+                          "developer/how-to/custom-api-authentication"
+                        ]
+                      },
+                      {
+                        "group": "Observability",
+                        "pages": [
+                          "developer/providers/observability"
+                        ]
+                      },
+                      {
+                        "group": "Marketing & Analytics",
+                        "pages": [
+                          "integrations/analytics/google-analytics",
+                          "integrations/analytics/google-tag-manager",
+                          "integrations/marketing/klaviyo"
+                        ]
+                      }
+                    ],
+                    "icon": "plug"
+                  },
+                  {
+                    "group": "Admin Dashboard",
+                    "pages": [
+                      "developer/dashboard/overview",
+                      "developer/dashboard/concepts",
+                      {
+                        "group": "Customization",
+                        "pages": [
+                          "developer/dashboard/customization/quickstart",
+                          "developer/dashboard/customization/navigation",
+                          "developer/dashboard/customization/routes",
+                          "developer/dashboard/customization/slots",
+                          "developer/dashboard/customization/tables",
+                          "developer/dashboard/customization/translations",
+                          "developer/dashboard/customization/permissions",
+                          "developer/dashboard/customization/backend"
+                        ]
+                      },
+                      {
+                        "group": "Recipes",
+                        "pages": [
+                          "developer/dashboard/recipes/attribute-end-to-end",
+                          "developer/dashboard/recipes/custom-form-field",
+                          "developer/dashboard/recipes/page-action-button",
+                          "developer/dashboard/recipes/sidebar-widget"
+                        ]
+                      },
+                      {
+                        "group": "Plugins",
+                        "pages": [
+                          "developer/dashboard/plugins/overview",
+                          "developer/dashboard/plugins/scaffolding",
+                          "developer/dashboard/plugins/publishing",
+                          "developer/dashboard/plugins/distributing"
+                        ]
+                      },
+                      {
+                        "group": "Admin SDK",
+                        "pages": [
+                          "developer/sdk/admin/quickstart",
+                          "developer/sdk/admin/authentication",
+                          "developer/sdk/admin/resources",
+                          "developer/sdk/admin/querying-and-errors",
+                          "developer/sdk/admin/extending"
+                        ]
+                      },
+                      {
+                        "group": "Reference",
+                        "pages": [
+                          "developer/dashboard/public-api",
+                          "developer/dashboard/slots-catalog",
+                          "developer/dashboard/deployment"
+                        ]
+                      }
+                    ],
+                    "icon": "layout-dashboard"
+                  },
+                  {
+                    "group": "Building a Storefront",
+                    "pages": [
+                      {
+                        "group": "Store SDK",
+                        "pages": [
+                          "developer/sdk/quickstart",
+                          "developer/sdk/authentication",
+                          "developer/sdk/configuration",
+                          "developer/sdk/extending"
+                        ]
+                      },
+                      {
+                        "group": "Working with the Store API",
+                        "pages": [
+                          "developer/sdk/store/products",
+                          "developer/sdk/store/cart-checkout",
+                          "developer/sdk/store/payments",
+                          "developer/sdk/store/markets",
+                          "developer/sdk/store/account",
+                          "developer/sdk/store/wishlists"
+                        ]
+                      },
+                      {
+                        "group": "Next.js Starter",
+                        "pages": [
+                          "developer/storefront/nextjs/quickstart",
+                          "developer/storefront/nextjs/architecture",
+                          "developer/storefront/nextjs/multi-region",
+                          "developer/storefront/nextjs/customization",
+                          "developer/storefront/nextjs/emails",
+                          "developer/storefront/nextjs/wholesale",
+                          "developer/storefront/nextjs/wallet-payments",
+                          "developer/storefront/nextjs/testing",
+                          "developer/storefront/nextjs/environment-variables",
+                          "developer/storefront/nextjs/deployment"
+                        ]
+                      }
+                    ],
+                    "icon": "store"
+                  },
+                  {
+                    "group": "Extending the Backend",
                     "pages": [
                       "developer/customization/quickstart",
                       "developer/customization/configuration",
-                      "developer/customization/authentication",
-                      "developer/customization/checkout",
-                      "developer/customization/permissions",
                       "developer/customization/workflows",
+                      "developer/customization/validations",
                       "developer/customization/dependencies",
-                      "developer/customization/decorators",
                       "developer/customization/model-preferences",
                       "developer/customization/metadata",
-                      "developer/customization/routes",
-                      "developer/customization/api"
-                    ]
-                  }
-                ]
-              },
-              {
-                "item": "How-to Guides",
-                "icon": "book-open",
-                "description": "Step-by-step guides for common tasks",
-                "groups": [
-                  {
-                    "group": "Order Routing",
-                    "icon": "route",
-                    "pages": [
-                      "developer/how-to/custom-order-routing"
-                    ]
+                      "developer/customization/permissions",
+                      "developer/customization/api",
+                      "developer/customization/decorators"
+                    ],
+                    "icon": "code"
                   },
                   {
-                    "group": "Stock Splitters",
-                    "icon": "boxes-stacked",
+                    "group": "Guides",
                     "pages": [
+                      "developer/how-to/build-a-marketplace",
+                      "developer/how-to/build-a-b2b-store",
+                      "developer/how-to/sell-digital-products",
+                      {
+                        "group": "Multi-Tenant Platform",
+                        "pages": [
+                          "developer/multi-tenant/quickstart",
+                          "developer/multi-tenant/core-concepts",
+                          "developer/multi-tenant/configuration"
+                        ]
+                      },
+                      "developer/how-to/custom-promotion",
+                      "developer/how-to/custom-report",
+                      "developer/how-to/custom-document-numbers",
+                      "developer/how-to/custom-order-routing",
                       "developer/how-to/custom-stock-splitter"
-                    ]
+                    ],
+                    "icon": "compass"
                   },
-                  {
-                    "group": "Payments",
-                    "icon": "credit-card",
-                    "pages": [
-                      "developer/how-to/custom-payment-method"
-                    ]
-                  },
-                  {
-                    "group": "Promotions",
-                    "icon": "tag",
-                    "pages": [
-                      "developer/how-to/custom-promotion"
-                    ]
-                  },
-                  {
-                    "group": "Reports",
-                    "icon": "chart-bar",
-                    "pages": [
-                      "developer/how-to/custom-report"
-                    ]
-                  },
-                  {
-                    "group": "Search",
-                    "icon": "search",
-                    "pages": [
-                      "developer/how-to/custom-search-provider"
-                    ]
-                  },
-                  {
-                    "group": "Authentication",
-                    "icon": "key",
-                    "pages": [
-                      "developer/how-to/custom-api-authentication"
-                    ]
-                  }
-                ]
-              },
-              {
-                "item": "Operations",
-                "icon": "server",
-                "description": "Deploy, upgrade, and maintain your store",
-                "groups": [
                   {
                     "group": "Deployment",
-                    "icon": "server",
                     "pages": [
                       "developer/deployment/quickstart",
                       "developer/deployment/docker",
@@ -425,157 +751,37 @@
                       "developer/deployment/background_jobs",
                       "developer/deployment/caching",
                       "developer/deployment/database"
-                    ]
+                    ],
+                    "icon": "server"
                   },
                   {
-                    "group": "Upgrading",
-                    "icon": "circle-arrow-up",
-                    "pages": [
-                      "developer/upgrades/quickstart",
-                      {
-                        "group": "Upgrade Guides",
-                        "pages": [
-                          "developer/upgrades/5.5-to-5.6",
-                          "developer/upgrades/5.4-to-5.5",
-                          "developer/upgrades/5.3-to-5.4",
-                          "developer/upgrades/5.2-to-5.3",
-                          "developer/upgrades/5.1-to-5.2",
-                          "developer/upgrades/5.0-to-5.1",
-                          "developer/upgrades/4.10-to-5.0",
-                          "developer/upgrades/4.9-to-4.10",
-                          "developer/upgrades/4.8-to-4.9",
-                          "developer/upgrades/4.x-to-4.8",
-                          "developer/upgrades/4.6-to-4.7",
-                          "developer/upgrades/4.5-to-4.6",
-                          "developer/upgrades/4.4-to-4.5",
-                          "developer/upgrades/4.3-to-4.4",
-                          "developer/upgrades/4.2-to-4.3",
-                          "developer/upgrades/4.1-to-4.2",
-                          "developer/upgrades/4.0-to-4.1",
-                          "developer/upgrades/3.7-to-4.0",
-                          "developer/upgrades/3.6-to-3.7",
-                          "developer/upgrades/3.5-to-3.6",
-                          "developer/upgrades/3.4-to-3.5",
-                          "developer/upgrades/3.3-to-3.4",
-                          "developer/upgrades/3.2-to-3.3",
-                          "developer/upgrades/3.1-to-3.2",
-                          "developer/upgrades/3.0-to-3.1",
-                          "developer/upgrades/2.3-to-2.4",
-                          "developer/upgrades/2.2-to-2.3",
-                          "developer/upgrades/2.1-to-2.2",
-                          "developer/upgrades/2.0-to-2.1"
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "group": "Contributing",
-                    "icon": "heart",
-                    "pages": [
-                      "developer/contributing/quickstart",
-                      "developer/contributing/developing-spree",
-                      "developer/contributing/creating-an-extension"
-                    ]
-                  },
-                  {
-                    "group": "Security",
-                    "icon": "shield",
-                    "pages": [
-                      "developer/security/security_policy",
-                      "developer/security/pci_compliance"
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "tab": "SDK & Tools",
-            "menu": [
-              {
-                "item": "Store SDK",
-                "icon": "code",
-                "description": "TypeScript SDK for the Store API",
-                "groups": [
-                  {
-                    "group": "Getting Started",
-                    "pages": [
-                      "developer/sdk/quickstart",
-                      "developer/sdk/authentication",
-                      "developer/sdk/configuration",
-                      "developer/sdk/extending"
-                    ]
-                  },
-                  {
-                    "group": "Store API",
-                    "pages": [
-                      "developer/sdk/store/products",
-                      "developer/sdk/store/cart-checkout",
-                      "developer/sdk/store/payments",
-                      "developer/sdk/store/markets",
-                      "developer/sdk/store/account",
-                      "developer/sdk/store/wishlists"
-                    ]
-                  }
-                ]
-              },
-              {
-                "item": "Admin SDK",
-                "icon": "shield-check",
-                "description": "TypeScript SDK for the Admin API",
-                "groups": [
-                  {
-                    "group": "Admin SDK",
-                    "pages": [
-                      "developer/sdk/admin/quickstart",
-                      "developer/sdk/admin/authentication",
-                      "developer/sdk/admin/resources",
-                      "developer/sdk/admin/querying-and-errors",
-                      "developer/sdk/admin/extending"
-                    ]
-                  }
-                ]
-              },
-              {
-                "item": "CLI",
-                "icon": "square-terminal",
-                "description": "Command-line interface for Spree",
-                "groups": [
-                  {
-                    "group": "CLI",
+                    "group": "Operations",
                     "pages": [
                       "developer/cli/quickstart",
-                      "developer/cli/admin-api"
-                    ]
-                  }
-                ]
-              },
-              {
-                "item": "create-spree-app",
-                "icon": "rocket",
-                "description": "Scaffold a new Spree project",
-                "groups": [
-                  {
-                    "group": "create-spree-app",
-                    "pages": [
-                      "developer/create-spree-app/quickstart"
-                    ]
-                  }
-                ]
-              },
-              {
-                "item": "Agentic Development",
-                "icon": "bot",
-                "description": "Build Spree with AI coding agents",
-                "groups": [
-                  {
-                    "group": "Agentic Development",
-                    "pages": [
-                      "developer/agentic/overview",
-                      "developer/agentic/agent-skills",
-                      "developer/agentic/mcp",
-                      "developer/agentic/llm-docs"
-                    ]
+                      {
+                        "group": "Upgrading",
+                        "pages": [
+                          "developer/upgrades/quickstart",
+                          "developer/upgrades/5.6-to-6.0"
+                        ]
+                      },
+                      {
+                        "group": "Contributing",
+                        "pages": [
+                          "developer/contributing/quickstart",
+                          "developer/contributing/developing-spree",
+                          "developer/contributing/creating-an-extension"
+                        ]
+                      },
+                      {
+                        "group": "Security",
+                        "pages": [
+                          "developer/security/security_policy",
+                          "developer/security/pci_compliance"
+                        ]
+                      }
+                    ],
+                    "icon": "settings"
                   }
                 ]
               }
@@ -651,95 +857,6 @@
                     ]
                   }
                 ]
-              },
-              {
-                "item": "Legacy API v2",
-                "icon": "clock",
-                "description": "Previous-generation Storefront and Platform APIs",
-                "groups": [
-                  {
-                    "group": "API basics",
-                    "pages": [
-                      "api-reference/v2/introduction",
-                      "api-reference/v2/pagination",
-                      "api-reference/v2/filtering-and-sorting",
-                      "api-reference/v2/fetching-multiple-resources"
-                    ]
-                  },
-                  {
-                    "group": "Tutorials",
-                    "pages": [
-                      "api-reference/tutorials/quick-checkout-with-stripe",
-                      "api-reference/tutorials/adyen-integration-guide-for-android",
-                      "api-reference/tutorials/adyen-integration-guide-for-ios"
-                    ]
-                  },
-                  {
-                    "group": "Storefront API",
-                    "pages": [
-                      "api-reference/storefront/authentication"
-                    ],
-                    "openapi": {
-                      "source": "api-reference/storefront.yaml",
-                      "directory": "api-reference/storefront"
-                    }
-                  },
-                  {
-                    "group": "Platform API",
-                    "pages": [
-                      "api-reference/platform/authentication"
-                    ],
-                    "openapi": {
-                      "source": "api-reference/platform.yaml",
-                      "directory": "api-reference/platform"
-                    }
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "tab": "Integrations",
-            "groups": [
-              {
-                "group": "Integrations",
-                "pages": [
-                  "integrations/integrations"
-                ]
-              },
-              {
-                "group": "Payments",
-                "pages": [
-                  "integrations/payments/stripe",
-                  "integrations/payments/adyen",
-                  "integrations/payments/paypal",
-                  "integrations/payments/razorpay"
-                ]
-              },
-              {
-                "group": "Tax",
-                "pages": [
-                  "integrations/tax/avalara"
-                ]
-              },
-              {
-                "group": "Search",
-                "pages": [
-                  "integrations/search/meilisearch"
-                ]
-              },
-              {
-                "group": "Analytics",
-                "pages": [
-                  "integrations/analytics/google-analytics",
-                  "integrations/analytics/google-tag-manager"
-                ]
-              },
-              {
-                "group": "Marketing",
-                "pages": [
-                  "integrations/marketing/klaviyo"
-                ]
               }
             ]
           },
@@ -747,192 +864,158 @@
             "tab": "User Guide",
             "groups": [
               {
-                "group": "Introduction",
-                "pages": [
-                  "user/what-is-spree-commerce",
-                  "user/using-spree",
-                  "user/user-quickstart-guide"
-                ]
-              },
-              {
-                "group": "Migration",
-                "pages": [
-                  "user/migration/migrate-from-shopify"
-                ]
-              },
-              {
-                "group": "How-to Guides",
-                "pages": [
-                  "user/how-to/multi-currency-pricing",
-                  "user/how-to/multiple-languages",
-                  "user/how-to/multi-region-pricing",
-                  "user/how-to/wholesale-pricing",
-                  "user/how-to/volume-pricing",
-                  "user/how-to/regional-wholesale",
-                  "user/how-to/regional-volume",
-                  "user/how-to/schedule-sale-pricing"
-                ]
-              },
-              {
-                "group": "Products",
+                "group": "Manage",
                 "pages": [
                   {
-                    "group": "Create & Edit Products",
+                    "group": "Introduction",
+                    "icon": "book-open",
                     "pages": [
-                      "user/products/creating-products",
-                      "user/products/deleting-products",
-                      "user/products/editing-products",
-                      "user/products/editing-multi-variant-products",
-                      "user/products/cloning-products"
+                      "user/what-is-spree-commerce",
+                      "user/using-spree",
+                      "user/user-quickstart-guide"
                     ]
                   },
                   {
-                    "group": "Manage Products",
+                    "group": "Migration",
                     "pages": [
-                      "user/manage-products/search-products",
-                      "user/manage-products/bulk-product-operations",
-                      "user/manage-products/price-lists",
-                      "user/manage-products/export-products",
-                      "user/manage-products/import-products",
-                      "user/manage-products/multi-currency-import-export",
-                      "user/manage-products/product-import-file-template",
-                      "user/manage-products/translations",
-                      "user/manage-products/stock-levels",
-                      "user/manage-products/stock-transfers",
-                      "user/manage-products/product-taxonomies",
-                      "user/manage-products/product-options",
-                      "user/manage-products/product-metafields"
-                    ]
+                      "user/migration/migrate-from-shopify"
+                    ],
+                    "icon": "arrow-right-left"
+                  },
+                  {
+                    "group": "How-to Guides",
+                    "pages": [
+                      "user/how-to/multi-currency-pricing",
+                      "user/how-to/multiple-languages",
+                      "user/how-to/multi-region-pricing",
+                      "user/how-to/wholesale-pricing",
+                      "user/how-to/volume-pricing",
+                      "user/how-to/regional-wholesale",
+                      "user/how-to/regional-volume",
+                      "user/how-to/schedule-sale-pricing"
+                    ],
+                    "icon": "compass"
+                  },
+                  {
+                    "group": "Products",
+                    "pages": [
+                      {
+                        "group": "Create & Edit Products",
+                        "pages": [
+                          "user/products/creating-products",
+                          "user/products/deleting-products",
+                          "user/products/editing-products",
+                          "user/products/editing-multi-variant-products",
+                          "user/products/cloning-products"
+                        ]
+                      },
+                      {
+                        "group": "Manage Products",
+                        "pages": [
+                          "user/manage-products/search-products",
+                          "user/manage-products/bulk-product-operations",
+                          "user/manage-products/price-lists",
+                          "user/manage-products/export-products",
+                          "user/manage-products/import-products",
+                          "user/manage-products/multi-currency-import-export",
+                          "user/manage-products/product-import-file-template",
+                          "user/manage-products/translations",
+                          "user/manage-products/stock-levels",
+                          "user/manage-products/stock-transfers",
+                          "user/manage-products/product-taxonomies",
+                          "user/manage-products/product-options",
+                          "user/manage-products/product-metafields"
+                        ]
+                      }
+                    ],
+                    "icon": "package"
+                  },
+                  {
+                    "group": "Orders",
+                    "pages": [
+                      "user/orders/order-states",
+                      "user/orders/processing-orders",
+                      "user/orders/creating-orders",
+                      "user/orders/editing-orders",
+                      "user/orders/order-adjustments",
+                      "user/orders/exporting-orders",
+                      "user/orders/cancelling-orders",
+                      "user/orders/refunding-orders",
+                      "user/orders/searching-orders"
+                    ],
+                    "icon": "shopping-cart"
+                  },
+                  {
+                    "group": "Returns",
+                    "pages": [
+                      "user/settings/returns-configuration",
+                      "user/returns/returns-processing"
+                    ],
+                    "icon": "undo-2"
+                  },
+                  {
+                    "group": "Customers",
+                    "pages": [
+                      "user/customers/create-customer",
+                      "user/customers/customer-profile",
+                      "user/customers/edit-customer",
+                      "user/customers/issue-gift-card",
+                      "user/customers/assign-store-credits",
+                      "user/customers/searching-customers",
+                      "user/customers/exporting-customers",
+                      "user/customers/customer-groups"
+                    ],
+                    "icon": "users"
+                  },
+                  {
+                    "group": "Promotions",
+                    "pages": [
+                      "user/promotions/create-a-promotion",
+                      "user/promotions/promotion-rules",
+                      "user/promotions/promotion-actions",
+                      "user/promotions/gift-cards"
+                    ],
+                    "icon": "ticket-percent"
+                  },
+                  {
+                    "group": "Vendors",
+                    "pages": [
+                      "user/settings/marketplace",
+                      "user/vendors/vendor-onboarding-shopify",
+                      "user/vendors/vendor-onboarding-woocommerce",
+                      "user/vendors/vendor-onboarding-manual",
+                      "user/vendors/vendor-management",
+                      "user/vendors/commission-rates",
+                      "user/vendors/vendor-payouts",
+                      "user/vendors/multi-vendor-checkout"
+                    ],
+                    "icon": "store"
+                  },
+                  {
+                    "group": "Settings",
+                    "pages": [
+                      "user/settings/store-details",
+                      "user/settings/sales-channels",
+                      "user/settings/users",
+                      "user/settings/emails",
+                      "user/settings/policies",
+                      "user/settings/payments",
+                      "user/settings/markets",
+                      "user/settings/zones",
+                      "user/settings/shipping-methods",
+                      "user/settings/tax",
+                      "user/settings/locations",
+                      "user/settings/metafields"
+                    ],
+                    "icon": "settings"
+                  },
+                  {
+                    "group": "Security",
+                    "pages": [
+                      "user/security"
+                    ],
+                    "icon": "shield"
                   }
-                ]
-              },
-              {
-                "group": "Orders",
-                "pages": [
-                  "user/orders/order-states",
-                  "user/orders/processing-orders",
-                  "user/orders/creating-orders",
-                  "user/orders/editing-orders",
-                  "user/orders/order-adjustments",
-                  "user/orders/exporting-orders",
-                  "user/orders/cancelling-orders",
-                  "user/orders/refunding-orders",
-                  "user/orders/searching-orders"
-                ]
-              },
-              {
-                "group": "Returns",
-                "pages": [
-                  "user/settings/returns-configuration",
-                  "user/returns/returns-processing"
-                ]
-              },
-              {
-                "group": "Customers",
-                "pages": [
-                  "user/customers/create-customer",
-                  "user/customers/customer-profile",
-                  "user/customers/edit-customer",
-                  "user/customers/issue-gift-card",
-                  "user/customers/assign-store-credits",
-                  "user/customers/searching-customers",
-                  "user/customers/exporting-customers",
-                  "user/customers/customer-groups"
-                ]
-              },
-              {
-                "group": "Promotions",
-                "pages": [
-                  "user/promotions/create-a-promotion",
-                  "user/promotions/promotion-rules",
-                  "user/promotions/promotion-actions",
-                  "user/promotions/gift-cards"
-                ]
-              },
-              {
-                "group": "Vendors",
-                "pages": [
-                  "user/settings/marketplace",
-                  "user/vendors/vendor-onboarding-shopify",
-                  "user/vendors/vendor-onboarding-woocommerce",
-                  "user/vendors/vendor-onboarding-manual",
-                  "user/vendors/vendor-management",
-                  "user/vendors/commission-rates",
-                  "user/vendors/vendor-payouts",
-                  "user/vendors/multi-vendor-checkout"
-                ]
-              },
-              {
-                "group": "Settings",
-                "pages": [
-                  "user/settings/store-details",
-                  "user/settings/sales-channels",
-                  "user/settings/users",
-                  "user/settings/emails",
-                  "user/settings/policies",
-                  "user/settings/payments",
-                  "user/settings/markets",
-                  "user/settings/zones",
-                  "user/settings/shipping-methods",
-                  "user/settings/tax",
-                  "user/settings/locations",
-                  "user/settings/metafields"
-                ]
-              },
-              {
-                "group": "Security",
-                "pages": [
-                  "user/security"
-                ]
-              }
-            ]
-          },
-          {
-            "tab": "Solutions",
-            "groups": [
-              {
-                "group": "Overview",
-                "pages": [
-                  "use-case/overview"
-                ]
-              },
-              {
-                "group": "B2B Commerce",
-                "pages": [
-                  "use-case/b2b/b2b-commerce-model",
-                  "use-case/b2b/b2b-capabilities",
-                  "use-case/b2b/b2b-admin-capabilities",
-                  "use-case/b2b/b2b-buyer-capabilities"
-                ]
-              },
-              {
-                "group": "Digital Products",
-                "pages": [
-                  "use-case/digital-products/model",
-                  "use-case/digital-products/capabilities",
-                  "use-case/digital-products/admin-capabilities"
-                ]
-              },
-              {
-                "group": "Multi-Tenant Platform",
-                "pages": [
-                  "use-case/multi-tenant/multi-tenant-model",
-                  "use-case/multi-tenant/multi-tenant-capabilities",
-                  "use-case/multi-tenant/super-admin-capabilities",
-                  "use-case/multi-tenant/tenant-capabilities",
-                  "use-case/multi-tenant/franchises-and-reseller-networks",
-                  "use-case/multi-tenant/multi-brand-enterprise-model",
-                  "use-case/multi-tenant/white-label-saas"
-                ]
-              },
-              {
-                "group": "Multi-Vendor Marketplace",
-                "pages": [
-                  "use-case/marketplace/model",
-                  "use-case/marketplace/capabilities",
-                  "use-case/marketplace/admin-dashboard",
-                  "use-case/marketplace/vendor-dashboard",
-                  "use-case/marketplace/customer-ux"
                 ]
               }
             ]
@@ -940,8 +1023,7 @@
         ]
       },
       {
-        "version": "v6.x",
-        "tag": "beta",
+        "version": "v5.x",
         "tabs": [
           {
             "tab": "Guides",
@@ -955,65 +1037,64 @@
                     "group": "Getting started",
                     "icon": "rocket",
                     "pages": [
-                      "developer/getting-started/quickstart"
+                      "v5/developer/getting-started/quickstart"
                     ]
                   },
                   {
                     "group": "Platform",
                     "icon": "settings",
                     "pages": [
-                      "developer/core-concepts/architecture",
-                      "developer/core-concepts/stores",
-                      "developer/core-concepts/channels",
-                      "developer/core-concepts/markets",
-                      "developer/core-concepts/customers",
-                      "developer/core-concepts/staff-roles"
+                      "v5/developer/core-concepts/architecture",
+                      "v5/developer/core-concepts/stores",
+                      "v5/developer/core-concepts/channels",
+                      "v5/developer/core-concepts/markets",
+                      "v5/developer/core-concepts/customers",
+                      "v5/developer/core-concepts/staff-roles"
                     ]
                   },
                   {
                     "group": "Catalog",
                     "icon": "package",
                     "pages": [
-                      "developer/core-concepts/products",
-                      "developer/core-concepts/pricing",
-                      "developer/core-concepts/inventory",
-                      "developer/core-concepts/media",
-                      "developer/core-concepts/search-filtering"
+                      "v5/developer/core-concepts/products",
+                      "v5/developer/core-concepts/pricing",
+                      "v5/developer/core-concepts/inventory",
+                      "v5/developer/core-concepts/media",
+                      "v5/developer/core-concepts/search-filtering"
                     ]
                   },
                   {
                     "group": "Cart & Checkout",
                     "icon": "shopping-cart",
                     "pages": [
-                      "v6/developer/core-concepts/carts",
-                      "v6/developer/core-concepts/orders",
-                      "developer/core-concepts/payments",
-                      "developer/core-concepts/taxes",
-                      "v6/developer/core-concepts/taxes-discounts-fees",
-                      "v6/developer/core-concepts/promotions",
-                      "v6/developer/core-concepts/store-credits-gift-cards"
+                      "v5/developer/core-concepts/orders",
+                      "v5/developer/core-concepts/payments",
+                      "v5/developer/core-concepts/taxes",
+                      "v5/developer/core-concepts/promotions",
+                      "v5/developer/core-concepts/store-credits-gift-cards"
                     ]
                   },
                   {
                     "group": "Fulfillment",
                     "icon": "truck",
                     "pages": [
-                      "v6/developer/core-concepts/fulfillments",
-                      "v6/developer/core-concepts/returns-exchanges-claims",
-                      "developer/core-concepts/addresses",
-                      "developer/core-concepts/calculators"
+                      "v5/developer/core-concepts/shipments",
+                      "v5/developer/core-concepts/addresses",
+                      "v5/developer/core-concepts/adjustments",
+                      "v5/developer/core-concepts/calculators"
                     ]
                   },
                   {
                     "group": "Extensibility",
                     "icon": "plug",
                     "pages": [
-                      "developer/core-concepts/events",
-                      "developer/core-concepts/webhooks",
-                      "developer/core-concepts/translations",
-                      "developer/core-concepts/slugs",
-                      "developer/core-concepts/metafields",
-                      "v6/developer/core-concepts/imports-exports"
+                      "v5/developer/core-concepts/events",
+                      "v5/developer/core-concepts/webhooks",
+                      "v5/developer/core-concepts/translations",
+                      "v5/developer/core-concepts/slugs",
+                      "v5/developer/core-concepts/metafields",
+                      "v5/developer/core-concepts/reports",
+                      "v5/developer/core-concepts/imports-exports"
                     ]
                   }
                 ]
@@ -1026,16 +1107,16 @@
                   {
                     "group": "Next.js Storefront",
                     "pages": [
-                      "developer/storefront/nextjs/quickstart",
-                      "developer/storefront/nextjs/architecture",
-                      "developer/storefront/nextjs/multi-region",
-                      "developer/storefront/nextjs/customization",
-                      "developer/storefront/nextjs/emails",
-                      "developer/storefront/nextjs/wholesale",
-                      "developer/storefront/nextjs/wallet-payments",
-                      "developer/storefront/nextjs/testing",
-                      "developer/storefront/nextjs/environment-variables",
-                      "developer/storefront/nextjs/deployment"
+                      "v5/developer/storefront/nextjs/quickstart",
+                      "v5/developer/storefront/nextjs/architecture",
+                      "v5/developer/storefront/nextjs/multi-region",
+                      "v5/developer/storefront/nextjs/customization",
+                      "v5/developer/storefront/nextjs/emails",
+                      "v5/developer/storefront/nextjs/wholesale",
+                      "v5/developer/storefront/nextjs/wallet-payments",
+                      "v5/developer/storefront/nextjs/testing",
+                      "v5/developer/storefront/nextjs/environment-variables",
+                      "v5/developer/storefront/nextjs/deployment"
                     ]
                   }
                 ]
@@ -1048,16 +1129,16 @@
                   {
                     "group": "Multi-Tenant / Multi-Store",
                     "pages": [
-                      "developer/multi-tenant/quickstart",
-                      "developer/multi-tenant/core-concepts",
-                      "developer/multi-tenant/configuration"
+                      "v5/developer/multi-tenant/quickstart",
+                      "v5/developer/multi-tenant/core-concepts",
+                      "v5/developer/multi-tenant/configuration"
                     ]
                   },
                   {
                     "group": "Multi-Vendor Marketplace",
                     "pages": [
-                      "developer/multi-vendor/quickstart",
-                      "developer/multi-vendor/installation"
+                      "v5/developer/multi-vendor/quickstart",
+                      "v5/developer/multi-vendor/installation"
                     ]
                   }
                 ]
@@ -1070,36 +1151,54 @@
               {
                 "item": "Extending",
                 "icon": "puzzle",
-                "description": "Customize Checkout, API, and business logic",
+                "description": "Customize admin panel, API, and business logic",
                 "groups": [
                   {
                     "group": "Tutorial",
                     "icon": "graduation-cap",
                     "pages": [
-                      "developer/tutorial/introduction",
-                      "developer/tutorial/model",
-                      "developer/tutorial/admin",
-                      "developer/tutorial/extending-models",
-                      "developer/tutorial/api",
-                      "developer/tutorial/events",
-                      "developer/tutorial/sdk",
-                      "developer/tutorial/testing"
+                      "v5/developer/tutorial/introduction",
+                      "v5/developer/tutorial/model",
+                      "v5/developer/tutorial/admin",
+                      "v5/developer/tutorial/extending-models",
+                      "v5/developer/tutorial/api",
+                      "v5/developer/tutorial/events",
+                      "v5/developer/tutorial/sdk",
+                      "v5/developer/tutorial/testing"
                     ]
                   },
                   {
-                    "group": "Backend Customization",
+                    "group": "Admin Panel",
+                    "icon": "gauge",
+                    "pages": [
+                      "v5/developer/admin/admin",
+                      "v5/developer/admin/extending-ui",
+                      "v5/developer/admin/navigation",
+                      "v5/developer/admin/tables",
+                      "v5/developer/admin/form-builder",
+                      "v5/developer/admin/components",
+                      "v5/developer/admin/helper-methods",
+                      "v5/developer/admin/authentication",
+                      "v5/developer/admin/custom-javascript",
+                      "v5/developer/admin/custom-css"
+                    ]
+                  },
+                  {
+                    "group": "Customization Reference",
                     "icon": "wrench",
                     "pages": [
-                      "v6/developer/customization/quickstart",
-                      "v6/developer/customization/configuration",
-                      "v6/developer/customization/permissions",
-                      "developer/customization/workflows",
-                      "developer/customization/validations",
-                      "v6/developer/customization/api",
-                      "developer/customization/model-preferences",
-                      "developer/customization/metadata",
-                      "v6/developer/customization/dependencies",
-                      "developer/customization/decorators"
+                      "v5/developer/customization/quickstart",
+                      "v5/developer/customization/configuration",
+                      "v5/developer/customization/authentication",
+                      "v5/developer/customization/checkout",
+                      "v5/developer/customization/permissions",
+                      "v5/developer/customization/workflows",
+                      "v5/developer/customization/dependencies",
+                      "v5/developer/customization/decorators",
+                      "v5/developer/customization/model-preferences",
+                      "v5/developer/customization/metadata",
+                      "v5/developer/customization/routes",
+                      "v5/developer/customization/api"
                     ]
                   }
                 ]
@@ -1113,116 +1212,49 @@
                     "group": "Order Routing",
                     "icon": "route",
                     "pages": [
-                      "developer/how-to/custom-order-routing"
+                      "v5/developer/how-to/custom-order-routing"
                     ]
                   },
                   {
                     "group": "Stock Splitters",
                     "icon": "boxes-stacked",
                     "pages": [
-                      "developer/how-to/custom-stock-splitter"
+                      "v5/developer/how-to/custom-stock-splitter"
                     ]
                   },
                   {
                     "group": "Payments",
                     "icon": "credit-card",
                     "pages": [
-                      "developer/how-to/custom-payment-method"
+                      "v5/developer/how-to/custom-payment-method"
                     ]
                   },
                   {
                     "group": "Promotions",
                     "icon": "tag",
                     "pages": [
-                      "v6/developer/how-to/custom-promotion"
-                    ]
-                  },
-                  {
-                    "group": "Delivery",
-                    "icon": "truck",
-                    "pages": [
-                      "v6/developer/how-to/custom-delivery-rate-provider"
-                    ]
-                  },
-                  {
-                    "group": "Orders",
-                    "icon": "receipt",
-                    "pages": [
-                      "v6/developer/how-to/custom-document-numbers"
+                      "v5/developer/how-to/custom-promotion"
                     ]
                   },
                   {
                     "group": "Reports",
                     "icon": "chart-bar",
                     "pages": [
-                      "developer/how-to/custom-report"
+                      "v5/developer/how-to/custom-report"
                     ]
                   },
                   {
                     "group": "Search",
                     "icon": "search",
                     "pages": [
-                      "developer/how-to/custom-search-provider"
+                      "v5/developer/how-to/custom-search-provider"
                     ]
                   },
                   {
                     "group": "Authentication",
                     "icon": "key",
                     "pages": [
-                      "developer/how-to/custom-api-authentication"
-                    ]
-                  }
-                ]
-              },
-              {
-                "item": "Dashboard",
-                "icon": "gauge",
-                "description": "React dashboard",
-                "groups": [
-                  {
-                    "group": "Overview",
-                    "pages": [
-                      "developer/dashboard/overview",
-                      "developer/dashboard/concepts"
-                    ]
-                  },
-                  {
-                    "group": "Customization",
-                    "pages": [
-                      "developer/dashboard/customization/quickstart",
-                      "developer/dashboard/customization/navigation",
-                      "developer/dashboard/customization/routes",
-                      "developer/dashboard/customization/slots",
-                      "developer/dashboard/customization/tables",
-                      "developer/dashboard/customization/translations",
-                      "developer/dashboard/customization/permissions",
-                      "developer/dashboard/customization/backend"
-                    ]
-                  },
-                  {
-                    "group": "Recipes",
-                    "pages": [
-                      "developer/dashboard/recipes/attribute-end-to-end",
-                      "developer/dashboard/recipes/custom-form-field",
-                      "developer/dashboard/recipes/page-action-button",
-                      "developer/dashboard/recipes/sidebar-widget"
-                    ]
-                  },
-                  {
-                    "group": "Plugins",
-                    "pages": [
-                      "developer/dashboard/plugins/overview",
-                      "developer/dashboard/plugins/scaffolding",
-                      "developer/dashboard/plugins/publishing",
-                      "developer/dashboard/plugins/distributing"
-                    ]
-                  },
-                  {
-                    "group": "Reference",
-                    "pages": [
-                      "developer/dashboard/public-api",
-                      "developer/dashboard/slots-catalog",
-                      "developer/dashboard/deployment"
+                      "v5/developer/how-to/custom-api-authentication"
                     ]
                   }
                 ]
@@ -1236,63 +1268,62 @@
                     "group": "Deployment",
                     "icon": "server",
                     "pages": [
-                      "developer/deployment/quickstart",
-                      "developer/deployment/docker",
-                      "developer/deployment/environment_variables",
+                      "v5/developer/deployment/quickstart",
+                      "v5/developer/deployment/docker",
+                      "v5/developer/deployment/environment_variables",
                       {
                         "group": "AWS",
                         "pages": [
-                          "developer/deployment/aws",
-                          "developer/deployment/aws_ecs"
+                          "v5/developer/deployment/aws",
+                          "v5/developer/deployment/aws_ecs"
                         ]
                       },
-                      "developer/deployment/render",
-                      "developer/deployment/assets",
-                      "developer/deployment/emails",
-                      "developer/deployment/cdn",
-                      "developer/deployment/background_jobs",
-                      "developer/deployment/caching",
-                      "developer/deployment/database",
-                      "developer/deployment/telemetry"
+                      "v5/developer/deployment/render",
+                      "v5/developer/deployment/assets",
+                      "v5/developer/deployment/emails",
+                      "v5/developer/deployment/cdn",
+                      "v5/developer/deployment/background_jobs",
+                      "v5/developer/deployment/caching",
+                      "v5/developer/deployment/database"
                     ]
                   },
                   {
                     "group": "Upgrading",
                     "icon": "circle-arrow-up",
                     "pages": [
-                      "developer/upgrades/quickstart",
+                      "v5/developer/upgrades/quickstart",
                       {
                         "group": "Upgrade Guides",
                         "pages": [
-                          "developer/upgrades/5.5-to-5.6",
-                          "developer/upgrades/5.4-to-5.5",
-                          "developer/upgrades/5.3-to-5.4",
-                          "developer/upgrades/5.2-to-5.3",
-                          "developer/upgrades/5.1-to-5.2",
-                          "developer/upgrades/5.0-to-5.1",
-                          "developer/upgrades/4.10-to-5.0",
-                          "developer/upgrades/4.9-to-4.10",
-                          "developer/upgrades/4.8-to-4.9",
-                          "developer/upgrades/4.x-to-4.8",
-                          "developer/upgrades/4.6-to-4.7",
-                          "developer/upgrades/4.5-to-4.6",
-                          "developer/upgrades/4.4-to-4.5",
-                          "developer/upgrades/4.3-to-4.4",
-                          "developer/upgrades/4.2-to-4.3",
-                          "developer/upgrades/4.1-to-4.2",
-                          "developer/upgrades/4.0-to-4.1",
-                          "developer/upgrades/3.7-to-4.0",
-                          "developer/upgrades/3.6-to-3.7",
-                          "developer/upgrades/3.5-to-3.6",
-                          "developer/upgrades/3.4-to-3.5",
-                          "developer/upgrades/3.3-to-3.4",
-                          "developer/upgrades/3.2-to-3.3",
-                          "developer/upgrades/3.1-to-3.2",
-                          "developer/upgrades/3.0-to-3.1",
-                          "developer/upgrades/2.3-to-2.4",
-                          "developer/upgrades/2.2-to-2.3",
-                          "developer/upgrades/2.1-to-2.2",
-                          "developer/upgrades/2.0-to-2.1"
+                          "v5/developer/upgrades/5.5-to-5.6",
+                          "v5/developer/upgrades/5.4-to-5.5",
+                          "v5/developer/upgrades/5.3-to-5.4",
+                          "v5/developer/upgrades/5.2-to-5.3",
+                          "v5/developer/upgrades/5.1-to-5.2",
+                          "v5/developer/upgrades/5.0-to-5.1",
+                          "v5/developer/upgrades/4.10-to-5.0",
+                          "v5/developer/upgrades/4.9-to-4.10",
+                          "v5/developer/upgrades/4.8-to-4.9",
+                          "v5/developer/upgrades/4.x-to-4.8",
+                          "v5/developer/upgrades/4.6-to-4.7",
+                          "v5/developer/upgrades/4.5-to-4.6",
+                          "v5/developer/upgrades/4.4-to-4.5",
+                          "v5/developer/upgrades/4.3-to-4.4",
+                          "v5/developer/upgrades/4.2-to-4.3",
+                          "v5/developer/upgrades/4.1-to-4.2",
+                          "v5/developer/upgrades/4.0-to-4.1",
+                          "v5/developer/upgrades/3.7-to-4.0",
+                          "v5/developer/upgrades/3.6-to-3.7",
+                          "v5/developer/upgrades/3.5-to-3.6",
+                          "v5/developer/upgrades/3.4-to-3.5",
+                          "v5/developer/upgrades/3.3-to-3.4",
+                          "v5/developer/upgrades/3.2-to-3.3",
+                          "v5/developer/upgrades/3.1-to-3.2",
+                          "v5/developer/upgrades/3.0-to-3.1",
+                          "v5/developer/upgrades/2.3-to-2.4",
+                          "v5/developer/upgrades/2.2-to-2.3",
+                          "v5/developer/upgrades/2.1-to-2.2",
+                          "v5/developer/upgrades/2.0-to-2.1"
                         ]
                       }
                     ]
@@ -1301,17 +1332,17 @@
                     "group": "Contributing",
                     "icon": "heart",
                     "pages": [
-                      "developer/contributing/quickstart",
-                      "developer/contributing/developing-spree",
-                      "developer/contributing/creating-an-extension"
+                      "v5/developer/contributing/quickstart",
+                      "v5/developer/contributing/developing-spree",
+                      "v5/developer/contributing/creating-an-extension"
                     ]
                   },
                   {
                     "group": "Security",
                     "icon": "shield",
                     "pages": [
-                      "developer/security/security_policy",
-                      "developer/security/pci_compliance"
+                      "v5/developer/security/security_policy",
+                      "v5/developer/security/pci_compliance"
                     ]
                   }
                 ]
@@ -1329,21 +1360,21 @@
                   {
                     "group": "Getting Started",
                     "pages": [
-                      "developer/sdk/quickstart",
-                      "developer/sdk/authentication",
-                      "developer/sdk/configuration",
-                      "developer/sdk/extending"
+                      "v5/developer/sdk/quickstart",
+                      "v5/developer/sdk/authentication",
+                      "v5/developer/sdk/configuration",
+                      "v5/developer/sdk/extending"
                     ]
                   },
                   {
                     "group": "Store API",
                     "pages": [
-                      "developer/sdk/store/products",
-                      "developer/sdk/store/cart-checkout",
-                      "developer/sdk/store/payments",
-                      "developer/sdk/store/markets",
-                      "developer/sdk/store/account",
-                      "developer/sdk/store/wishlists"
+                      "v5/developer/sdk/store/products",
+                      "v5/developer/sdk/store/cart-checkout",
+                      "v5/developer/sdk/store/payments",
+                      "v5/developer/sdk/store/markets",
+                      "v5/developer/sdk/store/account",
+                      "v5/developer/sdk/store/wishlists"
                     ]
                   }
                 ]
@@ -1356,11 +1387,11 @@
                   {
                     "group": "Admin SDK",
                     "pages": [
-                      "developer/sdk/admin/quickstart",
-                      "developer/sdk/admin/authentication",
-                      "developer/sdk/admin/resources",
-                      "developer/sdk/admin/querying-and-errors",
-                      "developer/sdk/admin/extending"
+                      "v5/developer/sdk/admin/quickstart",
+                      "v5/developer/sdk/admin/authentication",
+                      "v5/developer/sdk/admin/resources",
+                      "v5/developer/sdk/admin/querying-and-errors",
+                      "v5/developer/sdk/admin/extending"
                     ]
                   }
                 ]
@@ -1373,8 +1404,8 @@
                   {
                     "group": "CLI",
                     "pages": [
-                      "developer/cli/quickstart",
-                      "developer/cli/admin-api"
+                      "v5/developer/cli/quickstart",
+                      "v5/developer/cli/admin-api"
                     ]
                   }
                 ]
@@ -1387,7 +1418,7 @@
                   {
                     "group": "create-spree-app",
                     "pages": [
-                      "developer/create-spree-app/quickstart"
+                      "v5/developer/create-spree-app/quickstart"
                     ]
                   }
                 ]
@@ -1400,10 +1431,10 @@
                   {
                     "group": "Agentic Development",
                     "pages": [
-                      "developer/agentic/overview",
-                      "developer/agentic/agent-skills",
-                      "developer/agentic/mcp",
-                      "developer/agentic/llm-docs"
+                      "v5/developer/agentic/overview",
+                      "v5/developer/agentic/agent-skills",
+                      "v5/developer/agentic/mcp",
+                      "v5/developer/agentic/llm-docs"
                     ]
                   }
                 ]
@@ -1578,28 +1609,28 @@
               {
                 "group": "Introduction",
                 "pages": [
-                  "user/what-is-spree-commerce",
-                  "user/using-spree",
-                  "user/user-quickstart-guide"
+                  "v5/user/what-is-spree-commerce",
+                  "v5/user/using-spree",
+                  "v5/user/user-quickstart-guide"
                 ]
               },
               {
                 "group": "Migration",
                 "pages": [
-                  "user/migration/migrate-from-shopify"
+                  "v5/user/migration/migrate-from-shopify"
                 ]
               },
               {
                 "group": "How-to Guides",
                 "pages": [
-                  "user/how-to/multi-currency-pricing",
-                  "user/how-to/multiple-languages",
-                  "user/how-to/multi-region-pricing",
-                  "user/how-to/wholesale-pricing",
-                  "user/how-to/volume-pricing",
-                  "user/how-to/regional-wholesale",
-                  "user/how-to/regional-volume",
-                  "user/how-to/schedule-sale-pricing"
+                  "v5/user/how-to/multi-currency-pricing",
+                  "v5/user/how-to/multiple-languages",
+                  "v5/user/how-to/multi-region-pricing",
+                  "v5/user/how-to/wholesale-pricing",
+                  "v5/user/how-to/volume-pricing",
+                  "v5/user/how-to/regional-wholesale",
+                  "v5/user/how-to/regional-volume",
+                  "v5/user/how-to/schedule-sale-pricing"
                 ]
               },
               {
@@ -1608,29 +1639,29 @@
                   {
                     "group": "Create & Edit Products",
                     "pages": [
-                      "user/products/creating-products",
-                      "user/products/deleting-products",
-                      "user/products/editing-products",
-                      "user/products/editing-multi-variant-products",
-                      "user/products/cloning-products"
+                      "v5/user/products/creating-products",
+                      "v5/user/products/deleting-products",
+                      "v5/user/products/editing-products",
+                      "v5/user/products/editing-multi-variant-products",
+                      "v5/user/products/cloning-products"
                     ]
                   },
                   {
                     "group": "Manage Products",
                     "pages": [
-                      "user/manage-products/search-products",
-                      "user/manage-products/bulk-product-operations",
-                      "user/manage-products/price-lists",
-                      "user/manage-products/export-products",
-                      "user/manage-products/import-products",
-                      "user/manage-products/multi-currency-import-export",
-                      "user/manage-products/product-import-file-template",
-                      "user/manage-products/translations",
-                      "user/manage-products/stock-levels",
-                      "user/manage-products/stock-transfers",
-                      "user/manage-products/product-taxonomies",
-                      "user/manage-products/product-options",
-                      "user/manage-products/product-metafields"
+                      "v5/user/manage-products/search-products",
+                      "v5/user/manage-products/bulk-product-operations",
+                      "v5/user/manage-products/price-lists",
+                      "v5/user/manage-products/export-products",
+                      "v5/user/manage-products/import-products",
+                      "v5/user/manage-products/multi-currency-import-export",
+                      "v5/user/manage-products/product-import-file-template",
+                      "v5/user/manage-products/translations",
+                      "v5/user/manage-products/stock-levels",
+                      "v5/user/manage-products/stock-transfers",
+                      "v5/user/manage-products/product-taxonomies",
+                      "v5/user/manage-products/product-options",
+                      "v5/user/manage-products/product-metafields"
                     ]
                   }
                 ]
@@ -1638,80 +1669,80 @@
               {
                 "group": "Orders",
                 "pages": [
-                  "user/orders/order-states",
-                  "user/orders/processing-orders",
-                  "user/orders/creating-orders",
-                  "user/orders/editing-orders",
-                  "user/orders/order-adjustments",
-                  "user/orders/exporting-orders",
-                  "user/orders/cancelling-orders",
-                  "user/orders/refunding-orders",
-                  "user/orders/searching-orders"
+                  "v5/user/orders/order-states",
+                  "v5/user/orders/processing-orders",
+                  "v5/user/orders/creating-orders",
+                  "v5/user/orders/editing-orders",
+                  "v5/user/orders/order-adjustments",
+                  "v5/user/orders/exporting-orders",
+                  "v5/user/orders/cancelling-orders",
+                  "v5/user/orders/refunding-orders",
+                  "v5/user/orders/searching-orders"
                 ]
               },
               {
                 "group": "Returns",
                 "pages": [
-                  "v6/user/settings/returns-configuration",
-                  "v6/user/returns/returns-processing"
+                  "v5/user/settings/returns-configuration",
+                  "v5/user/returns/returns-processing"
                 ]
               },
               {
                 "group": "Customers",
                 "pages": [
-                  "user/customers/create-customer",
-                  "user/customers/customer-profile",
-                  "user/customers/edit-customer",
-                  "user/customers/issue-gift-card",
-                  "user/customers/assign-store-credits",
-                  "user/customers/searching-customers",
-                  "user/customers/exporting-customers",
-                  "user/customers/customer-groups"
+                  "v5/user/customers/create-customer",
+                  "v5/user/customers/customer-profile",
+                  "v5/user/customers/edit-customer",
+                  "v5/user/customers/issue-gift-card",
+                  "v5/user/customers/assign-store-credits",
+                  "v5/user/customers/searching-customers",
+                  "v5/user/customers/exporting-customers",
+                  "v5/user/customers/customer-groups"
                 ]
               },
               {
                 "group": "Promotions",
                 "pages": [
-                  "user/promotions/create-a-promotion",
-                  "user/promotions/promotion-rules",
-                  "user/promotions/promotion-actions",
-                  "user/promotions/gift-cards"
+                  "v5/user/promotions/create-a-promotion",
+                  "v5/user/promotions/promotion-rules",
+                  "v5/user/promotions/promotion-actions",
+                  "v5/user/promotions/gift-cards"
                 ]
               },
               {
                 "group": "Vendors",
                 "pages": [
-                  "user/settings/marketplace",
-                  "user/vendors/vendor-onboarding-shopify",
-                  "user/vendors/vendor-onboarding-woocommerce",
-                  "user/vendors/vendor-onboarding-manual",
-                  "user/vendors/vendor-management",
-                  "user/vendors/commission-rates",
-                  "user/vendors/vendor-payouts",
-                  "user/vendors/multi-vendor-checkout"
+                  "v5/user/settings/marketplace",
+                  "v5/user/vendors/vendor-onboarding-shopify",
+                  "v5/user/vendors/vendor-onboarding-woocommerce",
+                  "v5/user/vendors/vendor-onboarding-manual",
+                  "v5/user/vendors/vendor-management",
+                  "v5/user/vendors/commission-rates",
+                  "v5/user/vendors/vendor-payouts",
+                  "v5/user/vendors/multi-vendor-checkout"
                 ]
               },
               {
                 "group": "Settings",
                 "pages": [
-                  "user/settings/store-details",
-                  "user/settings/sales-channels",
-                  "user/settings/users",
-                  "user/settings/emails",
-                  "user/settings/policies",
-                  "user/settings/payments",
-                  "user/settings/markets",
-                  "user/settings/zones",
-                  "user/settings/shipping-methods",
-                  "user/settings/tax",
-                  "user/settings/locations",
-                  "user/settings/metafields"
+                  "v5/user/settings/store-details",
+                  "v5/user/settings/sales-channels",
+                  "v5/user/settings/users",
+                  "v5/user/settings/emails",
+                  "v5/user/settings/policies",
+                  "v5/user/settings/payments",
+                  "v5/user/settings/markets",
+                  "v5/user/settings/zones",
+                  "v5/user/settings/shipping-methods",
+                  "v5/user/settings/tax",
+                  "v5/user/settings/locations",
+                  "v5/user/settings/metafields"
                 ]
               },
               {
                 "group": "Security",
                 "pages": [
-                  "user/security"
+                  "v5/user/security"
                 ]
               }
             ]

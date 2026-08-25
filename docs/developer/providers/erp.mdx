@@ -1,0 +1,33 @@
+---
+title: Connect Your ERP
+description: Keep your ERP as the source of truth for stock. Spree syncs inventory in, answers availability from its own snapshot, and asks your ERP live only at the moments that matter.
+---
+
+<Note>
+This page documents functionality landing in an upcoming Spree 6.0 release. The interfaces described here may change before final release.
+</Note>
+
+Your ERP owns inventory truth. Spree's job is to sell against it without keeping a copy that drifts — and without making every product page wait on an ERP round trip.
+
+## What syncs, what stays live
+
+Stock levels sync into Spree and availability renders from Spree's own records. Live calls to the inventory provider happen only at decision moments: add-to-cart, taking a hold, completing checkout. Anonymous browsing never waits on your ERP.
+
+## The inventory provider
+
+A provider answers stock questions with Spree's own stock record shape, so everything downstream — backorder limits, serializers, availability scopes — keeps working without knowing where the number came from. External answers are read-only and never written into the catalog. The default provider reads Spree's own stock records; connecting nothing changes nothing.
+
+## Feeding stock from your ERP
+
+Two ways in, both writing stock movements rather than overwriting numbers — so you can always see why a figure changed:
+
+- **Bulk stock endpoint** — batch updates addressed by Spree IDs or by the keys your ERP already uses.
+- **CSV stock import** — file-based feeds through the standard import pipeline.
+
+## Addressing records by your keys
+
+The same product is known to your ERP and your PIM under different keys. External references are store-scoped mappings that let any feed address a Spree record as `external:<system>:<id>` — a create that names a key Spree already knows updates that record instead of failing.
+
+## Checkout holds and failure policy
+
+Local checkout holds reduce availability against externally reported stock, matched by location, so reservations count correctly. When your ERP is unreachable, inventory falls back to the local snapshot — selling stock that turns out to be missing is recoverable; blocking every checkout is not.

@@ -1,0 +1,130 @@
+---
+title: Customization
+description: Customize and extend the Spree Next.js Storefront
+canonical: "https://spreecommerce.org/docs/developer/storefront/nextjs/customization"
+---
+
+The storefront is yours to modify — the code ships in your project so you can restyle it, swap components, and change the data layer directly. Scaffold a project with [`create-spree-app`](/v5/developer/storefront/nextjs/quickstart#installation), then edit the storefront under `apps/storefront/`.
+
+## Tracking Upstream Updates
+
+The storefront evolves upstream. To keep pulling improvements while you customize, own the code in your own Git repository (a fork of [spree/storefront](https://github.com/spree/storefront), or your own repo with the storefront as an upstream remote):
+
+```bash
+# Point an "upstream" remote at the official storefront
+git remote add upstream https://github.com/spree/storefront.git
+
+# Pull in the latest changes
+git fetch upstream
+git merge upstream/main
+```
+
+Resolve any conflicts in your customized files, then commit.
+
+## Styling
+
+The storefront uses Tailwind CSS 4, which replaces the traditional `tailwind.config.ts` with CSS-native configuration via the `@theme` directive in `src/app/globals.css`.
+
+### Theme Customization
+
+Edit the `@theme inline` block in `src/app/globals.css` to change colors, fonts, and other design tokens:
+
+```css
+@import "tailwindcss";
+
+:root {
+  --background: #fcfaf7;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist);
+
+  /* Replace with your brand colors */
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #0077ff;
+  --color-primary-600: #0066dd;
+  --color-primary-700: #0055bb;
+  --color-primary-800: #004499;
+  --color-primary-900: #003377;
+  --color-primary-950: #001d4d;
+}
+```
+
+Variables defined in `@theme inline` become Tailwind utilities automatically — for example, `--color-primary-500` maps to `bg-primary-500`, `text-primary-500`, etc.
+
+## Components
+
+All components live in `src/components/` and can be customized or replaced:
+
+```
+src/components/
+├── cart/            # CartDrawer
+├── checkout/        # AddressStep, DeliveryStep, PaymentStep, StripePaymentForm, etc.
+├── layout/          # Header, Footer, CountrySwitcher
+├── navigation/      # Breadcrumbs
+├── products/        # ProductCard, ProductGrid, ProductCarousel, Filters, MediaGallery, VariantPicker
+└── search/          # SearchBar
+```
+
+Components use standard React patterns — modify them directly or replace them entirely with your own implementations.
+
+## Data Layer
+
+To customize API behavior, modify the server actions in `src/lib/data/`. Each file handles a specific domain:
+
+| File | Purpose |
+|------|---------|
+| `products.ts` | Product listing and detail queries |
+| `cart.ts` | Cart operations (add, update, remove) |
+| `checkout.ts` | Checkout flow (addresses, shipping, completion) |
+| `customer.ts` | Authentication and profile management |
+| `addresses.ts` | Address CRUD |
+| `orders.ts` | Order history |
+| `payment.ts` | Payment sessions and processing |
+| `categories.ts` | Categories |
+| `countries.ts` | Country and region data |
+| `cookies.ts` | Auth check helper |
+| `store.ts` | Store configuration |
+| `credit-cards.ts` | Saved payment methods |
+| `gift-cards.ts` | Gift card management |
+| `utils.ts` | Shared helpers (error handling, fallbacks) |
+
+These server actions call `@spree/sdk` directly, using helpers in `src/lib/spree/` for auth cookies and locale resolution. You can add custom logic, caching strategies, or additional transformations as needed.
+
+## Adding New Pages
+
+Follow the existing App Router pattern with localized routes. Place pages under the `(storefront)` route group to inherit the shared header/footer layout:
+
+```
+src/app/[country]/[locale]/(storefront)/your-new-page/page.tsx
+```
+
+```typescript
+import { getProducts } from '@/lib/data/products';
+
+export default async function YourNewPage() {
+  const products = await getProducts({ limit: 6 });
+
+  return (
+    <div>
+      <h1>Your New Page</h1>
+      {/* Your content */}
+    </div>
+  );
+}
+```
+
+## Transactional Emails
+
+The storefront can render and send its own order, shipment, and account emails with react-email and Resend, driven by Spree webhooks. See the dedicated [Transactional Emails](/v5/developer/storefront/nextjs/emails) guide.
+
+## Building a Custom Storefront
+
+If you prefer to build from scratch instead of using the starter, you can use the `@spree/sdk` package directly in any Next.js application. The storefront's `src/lib/spree/` directory contains reusable helpers for cookie-based auth, locale resolution, middleware, and webhook verification that you can copy into your own project.

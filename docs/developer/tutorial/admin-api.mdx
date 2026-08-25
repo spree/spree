@@ -1,0 +1,13 @@
+---
+title: Admin API
+description: Add a ProductFaq endpoint to the Admin API — resource controller conventions, an admin serializer, and a permission catalog entry.
+---
+
+Staff manage FAQs through the Admin API — the same API the dashboard, integrations and scripts use. This chapter adds the endpoint following the conventions every Spree resource follows, which is what makes the dashboard plugin in the next chapter nearly free.
+
+## What this chapter covers
+
+- The resource controller: full CRUD from one small controller declaring its model, serializer and permitted attributes
+- The admin serializer and prefixed IDs
+- Registering the resource in the permission catalog so roles and API key scopes cover it
+- Exercising the endpoint with the Admin CLI

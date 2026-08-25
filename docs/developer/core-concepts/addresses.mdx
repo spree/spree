@@ -251,7 +251,7 @@ For countries without predefined states, addresses accept a free-text `state_nam
 
 ## Zones
 
-Zones group countries or states together for [tax](/developer/core-concepts/taxes) and [shipping](/developer/core-concepts/shipments) rules. A zone is either **country-based** or **state-based**.
+Zones group countries or states together for [tax](/developer/core-concepts/taxes) and [shipping](/developer/core-concepts/fulfillments) rules. A zone is either **country-based** or **state-based**.
 
 **Examples:**
 - **EU VAT** (country zone) — Germany, France, Italy, Spain, ... → applies EU VAT rates
@@ -260,7 +260,7 @@ Zones group countries or states together for [tax](/developer/core-concepts/taxe
 
 When a customer enters their address at checkout, Spree matches it against zones to determine:
 1. Which **tax rates** apply (see [Taxes](/developer/core-concepts/taxes))
-2. Which **shipping methods** are available (see [Shipments](/developer/core-concepts/shipments))
+2. Which **shipping methods** are available (see [Shipments](/developer/core-concepts/fulfillments))
 
 Zones are configured in the admin dashboard — storefront developers don't interact with them directly via the API.
 
@@ -283,7 +283,7 @@ Here's how geography flows through a typical checkout:
 
 - [Markets](/developer/core-concepts/markets) — Multi-region commerce with currency, locale, and country grouping
 - [Taxes](/developer/core-concepts/taxes) — How zones and addresses affect taxation
-- [Shipments](/developer/core-concepts/shipments) — How zones and addresses affect shipping availability
+- [Shipments](/developer/core-concepts/fulfillments) — How zones and addresses affect shipping availability
 - [Orders](/developer/core-concepts/orders) — Order billing and shipping addresses
 - [Account SDK guide](/developer/sdk/store/account) — Managing the logged-in customer's address book with `client.customer.addresses`
 - [Store API authentication](/api-reference/store-api/authentication) — How to obtain and send the customer JWT (`Authorization: Bearer` header)

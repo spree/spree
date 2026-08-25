@@ -1,0 +1,110 @@
+---
+title: AWS — EC2 + RDS
+sidebarTitle: EC2 + RDS
+description: The simplest production Spree on AWS — one EC2 instance and a managed database.
+canonical: "https://spreecommerce.org/docs/developer/deployment/aws"
+---
+
+The simplest way to run Spree on AWS is the [single-node topology](/v5/developer/deployment/quickstart#single-node-vs-distributed): **one EC2 instance running the Docker image, one RDS database**. No clusters, no load balancers, no task definitions — a complete production store for roughly the cost of a t3.small and a small RDS instance.
+
+Need auto-scaling, zero-downtime deploys, or CI/CD-driven infrastructure? That's the [ECS Fargate guide](/v5/developer/deployment/aws_ecs) — it runs the same Docker image, so you can start here and graduate later without rework.
+
+## What You'll Create
+
+| Resource | Purpose | Starting size |
+|---|---|---|
+| **EC2 instance** | Runs the Spree container (web + background jobs) | `t3.small` (2 GB) to start, `t3.medium` for comfort |
+| **RDS PostgreSQL** | The only backing service — data, jobs, cache | `db.t4g.small` |
+| **DNS record** | Your store's web address, e.g. `store.example.com`, pointing at the instance's Elastic IP (a free static IP — a plain EC2 IP changes on restart and would break the record) | — |
+| **S3 bucket** (recommended) | Uploaded files (product images) — they shouldn't live on the instance disk. See [Asset Storage](/v5/developer/deployment/assets) | — |
+
+## 1. Create the Database (RDS)
+
+Create an **RDS PostgreSQL** instance in the AWS console:
+
+- Same VPC as your EC2 instance will use
+- **Public access: no** — instead, allow inbound port `5432` from the EC2 instance's security group
+- Note the endpoint, username, and password — they become your `DATABASE_URL`
+
+Spree also runs on RDS MySQL/MariaDB and both Aurora flavors — see [Database Configuration](/v5/developer/deployment/database). RDS takes automated daily backups by default, so the database needs no extra care.
+
+## 2. Launch the Instance
+
+Launch an EC2 instance (Ubuntu 24.04 or Amazon Linux 2023) and open ports `80` and `443` in its security group. Give it a stable web address: associate an Elastic IP (so the instance's IP survives restarts) and create a DNS record for your domain — e.g. an `A` record for `store.example.com` — pointing at it. HTTPS depends on this: Caddy can only obtain a certificate once the domain resolves to the instance.
+
+Then install Docker:
+
+```bash
+curl -fsSL https://get.docker.com | sh
+```
+
+## 3. Run Spree
+
+Build [your project's image](/v5/developer/deployment/docker) and push it to a registry the instance can pull from (ECR or any other) — or use the stock `ghcr.io/spree/spree:latest` image to start. Then create a `docker-compose.yml` on the instance:
+
+```yaml docker-compose.yml
+services:
+  web:
+    image: your-registry/my-store:latest   # or ghcr.io/spree/spree:latest
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgres://spree:YOUR_PASSWORD@your-db.abc123.eu-west-1.rds.amazonaws.com:5432/spree_production
+      SECRET_KEY_BASE: generate-with-openssl-rand-hex-64
+      RAILS_HOST: store.example.com
+      # Uploads to S3 (recommended) — see /developer/deployment/assets
+      # AWS_REGION: eu-west-1
+      # AWS_BUCKET: my-store-uploads
+      # AWS_ACCESS_KEY_ID: ...
+      # AWS_SECRET_ACCESS_KEY: ...
+      # Email delivery — see /developer/deployment/emails
+      # SMTP_HOST: smtp.resend.com
+      # SMTP_USERNAME: resend
+      # SMTP_PASSWORD: ...
+      # SMTP_FROM_ADDRESS: orders@example.com
+
+  # Caddy terminates HTTPS with an automatic Let's Encrypt certificate
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    command: caddy reverse-proxy --from store.example.com --to web:3000
+    volumes:
+      - caddy_data:/data
+
+volumes:
+  caddy_data:
+```
+
+```bash
+docker compose up -d
+```
+
+The database is migrated automatically on boot. Once DNS resolves, your store is live at `https://store.example.com` — admin at `/admin`, background jobs running inside the web container ([combined mode](/v5/developer/deployment/quickstart#web-and-worker)).
+
+## Updating
+
+Deploying a new version is a pull and a restart:
+
+```bash
+docker compose pull && docker compose up -d
+```
+
+This restarts the container with a few seconds of downtime — the point at which that matters is a good signal to consider [ECS Fargate](/v5/developer/deployment/aws_ecs) and its rolling deploys.
+
+## Scaling on One Box
+
+Before reaching for a cluster:
+
+- **Bigger instance** — a `t3.medium` or `t3.large` carries substantial traffic; resizing is a stop/start
+- **Split the worker** — add a second service to the compose file with `command: bin/jobs`, and set `SOLID_QUEUE_IN_PUMA: "false"` on `web` ([split mode](/v5/developer/deployment/quickstart#web-and-worker))
+- **Scale the database** — RDS resizes independently, and read replicas are a console click
+
+## Next Steps
+
+- [Asset Storage](/v5/developer/deployment/assets) — store uploads in S3
+- [Set environment variables](/v5/developer/deployment/environment_variables) — SMTP, Sentry, etc.
+- [Configure CDN](/v5/developer/deployment/cdn) — CloudFront in front of your assets
+- [Deploy the storefront](/v5/developer/storefront/nextjs/deployment) — the Next.js storefront ships separately, typically to Vercel
+- [ECS Fargate](/v5/developer/deployment/aws_ecs) — when you outgrow one box

@@ -1,0 +1,13 @@
+---
+title: Store API
+description: Expose FAQs to customers — a read-only Store API endpoint with a serializer that shows only what shoppers should see.
+---
+
+Customers read FAQs through the Store API. This chapter adds the customer-facing endpoint — read-only, scoped to the current store, with a serializer deliberately smaller than the admin one.
+
+## What this chapter covers
+
+- The store resource controller: read-only by default, and why
+- The store serializer: public fields only — no timestamps, no internal data
+- Scoping: only FAQs for purchasable products of the current store
+- Nesting under the product endpoint

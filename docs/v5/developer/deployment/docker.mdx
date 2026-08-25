@@ -1,0 +1,126 @@
+---
+title: Docker
+description: Build a production Docker image of your Spree project, or run the official prebuilt image.
+canonical: "https://spreecommerce.org/docs/developer/deployment/docker"
+---
+
+## Building Your Project's Image
+
+Every [create-spree-app](/v5/developer/create-spree-app/quickstart) project builds into a single production image: the web server and background jobs run in one container, and the only dependency is a PostgreSQL database (the [single-node topology](/v5/developer/deployment/quickstart#single-node-vs-distributed)).
+
+If you haven't ejected yet, do that first:
+
+```bash
+spree eject
+```
+
+This generates the app source — including its production `Dockerfile` — in `backend/`. Make your customizations, then build:
+
+```bash
+spree build --production                                  # → <project>-spree:latest
+spree build --production --tag registry.example.com/my-store:v42
+```
+
+Or with plain Docker, from the project root:
+
+```bash
+docker build . -f backend/Dockerfile -t my-store
+```
+
+Both produce the same image — and it's exactly what Render and Railway build from your repository. Migrations run automatically on boot.
+
+## Running the Image
+
+One app container plus Postgres is a complete deployment:
+
+```yaml docker-compose.yml
+services:
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  web:
+    image: my-store   # or ghcr.io/spree/spree:latest for the stock image
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://postgres@postgres:5432/spree_production
+      SECRET_KEY_BASE: change-me-to-a-real-secret
+      RAILS_FORCE_SSL: "false"
+      RAILS_ASSUME_SSL: "false"
+      # Public host used in generated URLs (images/attachments in API
+      # responses, email links) — set to your domain or IP in production.
+      RAILS_HOST: localhost:3000
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: curl -f http://localhost:3000/up || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+volumes:
+  postgres_data:
+```
+
+Start everything:
+
+```bash
+docker compose up -d
+```
+
+The database is created and migrated on first boot. The app is available at [http://localhost:3000](http://localhost:3000).
+
+### Scaling out the worker
+
+Background jobs run inside the web container by default. When job load deserves its own process, split it out — same image, no rebuild: set `SOLID_QUEUE_IN_PUMA: "false"` on `web` and add a worker service:
+
+```yaml
+  worker:
+    image: my-store
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://postgres@postgres:5432/spree_production
+      SECRET_KEY_BASE: change-me-to-a-real-secret
+      RAILS_HOST: localhost:3000
+    command: bin/jobs
+```
+
+### Required Environment Variables
+
+| Variable | Description | Example |
+| --- | --- | --- |
+| `DATABASE_URL` | PostgreSQL connection URL | `postgres://user:pass@host:5432/spree` |
+| `SECRET_KEY_BASE` | Secret key for session encryption | Generate with `bin/rails secret` |
+| `RAILS_HOST` | Public host used in generated URLs — image/attachment URLs in API responses, email links | `store.example.com` |
+| `SOLID_QUEUE_IN_PUMA` | Run background jobs inside the web container (default `true`); set `false` when running a dedicated worker | `true` |
+
+See [Environment Variables](/v5/developer/deployment/environment_variables) for the full list.
+
+## Official Docker Image
+
+To run Spree without any customizations, pull the prebuilt multi-arch image (`linux/amd64` and `linux/arm64`) published to the GitHub Container Registry on every release:
+
+```bash
+docker pull ghcr.io/spree/spree:latest
+```
+
+| Tag | Description |
+|-----|-------------|
+| `latest` | Latest stable release |
+| `5.4.0` | Specific version |
+| `5.4` | Latest patch for a minor version |
+
+Browse all tags on the [GitHub Packages page](https://github.com/spree/spree/pkgs/container/spree). The image drops into the compose file above in place of your custom tag.

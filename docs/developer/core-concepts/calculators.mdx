@@ -45,7 +45,7 @@ erDiagram
 **Key relationships:**
 - **Calculator** computes amounts for various features
 - Used by **[Tax Rates](/developer/core-concepts/taxes)** to calculate tax amounts
-- Used by **[Shipping Methods](/developer/core-concepts/shipments)** to calculate shipping costs
+- Used by **[Shipping Methods](/developer/core-concepts/fulfillments)** to calculate shipping costs
 - Used by **[Promotion Actions](/developer/core-concepts/promotions)** to calculate discounts
 - Calculators store [preferences (rates, percentages, etc.)](/developer/customization/model-preferences) for their calculations
 
@@ -299,6 +299,6 @@ The module does not define `create_adjustment`, `update_adjustment`, or `compute
 
 ## Related Documentation
 
-- [Adjustments](/developer/core-concepts/adjustments) — the records calculators compute amounts for.
+- [Adjustments](/developer/core-concepts/taxes-discounts-fees) — the records calculators compute amounts for.
 - [Dependencies](/developer/customization/dependencies) — swap out calculators via the Dependencies system.
 

@@ -9,9 +9,9 @@ description: Use Spree decorators to add or modify behavior on core models, cont
   - **[Events & Subscribers](/developer/core-concepts/events)** - For reacting to model changes (after save, create, update, delete)
   - **[Webhooks](/developer/core-concepts/webhooks)** - For notifying external services when events occur
   - **[Dependencies](/developer/customization/dependencies)** - For swapping out services, serializers, and abilities
-  - **[Admin Navigation](/developer/admin/navigation)** - For adding menu items without controller decorators
-  - **[Admin Partials](/developer/admin/extending-ui)** - For extending admin UI without view decorators
-  - **[Admin Tables](/developer/admin/tables)** - For customizing admin list views
+  - **[Admin Navigation](/developer/dashboard/customization/navigation)** - For adding menu items without controller decorators
+  - **[Admin Partials](/developer/dashboard/customization/quickstart)** - For extending admin UI without view decorators
+  - **[Admin Tables](/developer/dashboard/customization/tables)** - For customizing admin list views
   - **[Ransack Configuration](/developer/core-concepts/search-filtering#extending-ransackable-configuration)** - For adding searchable/sortable fields without model decorators
 </Warning>
 
@@ -25,8 +25,8 @@ Before reaching for a decorator, check if your use case is better served by a mo
 | Notify external service on changes | Model decorator with callbacks | [Webhooks](/developer/core-concepts/webhooks) |
 | Custom add-to-cart logic | Service decorator | [Dependencies injection](/developer/customization/dependencies) |
 | Custom API responses | Serializer decorator | [Dependencies injection](/developer/customization/dependencies) |
-| Add admin menu item | Controller decorator | [Admin Navigation API](/developer/admin/navigation) |
-| Add section to admin form | View decorator/override | [Admin Partials injection](/developer/admin/extending-ui) |
+| Add admin menu item | Controller decorator | [Admin Navigation API](/developer/dashboard/customization/navigation) |
+| Add section to admin form | View decorator/override | [Admin Partials injection](/developer/dashboard/customization/quickstart) |
 | Add searchable/filterable field | Model decorator with `ransackable_attributes` | [Ransack configuration](/developer/core-concepts/search-filtering#extending-ransackable-configuration) |
 | Add association to core model | - | Decorator (still appropriate) |
 | Add validation to core model | - | Decorator (still appropriate) |
@@ -560,7 +560,7 @@ end
 - [Events](/developer/core-concepts/events) - Learn about Spree's event system
 - [Webhooks](/developer/core-concepts/webhooks) - HTTP callbacks for external integrations
 - [Dependencies](/developer/customization/dependencies) - Swap core services with your own
-- [Admin Navigation](/developer/admin/navigation) - Extend admin menu without decorators
-- [Admin Partials](/developer/admin/extending-ui) - Extend admin UI without view decorators
-- [Extending Core Models Tutorial](/developer/tutorial/extending-models) - Step-by-step guide to connecting custom models with Spree core
+- [Admin Navigation](/developer/dashboard/customization/navigation) - Extend admin menu without decorators
+- [Admin Partials](/developer/dashboard/customization/quickstart) - Extend admin UI without view decorators
+- [Extending Core Models Tutorial](/developer/tutorial/model) - Step-by-step guide to connecting custom models with Spree core
 - [Customization Overview](/developer/customization/quickstart) - General customization patterns

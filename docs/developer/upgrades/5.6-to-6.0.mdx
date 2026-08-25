@@ -5,7 +5,7 @@ hidden: true
 ---
 
 <Info>
-  Before proceeding to upgrade, please ensure you're at [Spree 5.6](/developer/upgrades/5.5-to-5.6). Spree 6.0 requires **Rails 8.1** and is the designated breaking-change window for the platform — read the behavioral changes section even if your upgrade runs clean.
+  Before proceeding to upgrade, please ensure you're at [Spree 5.6](/v5/developer/upgrades/5.5-to-5.6). Spree 6.0 requires **Rails 8.1** and is the designated breaking-change window for the platform — read the behavioral changes section even if your upgrade runs clean.
 </Info>
 
 Spree 6.0 is a major release. The headline changes:
@@ -450,7 +450,7 @@ buckets, and only the last needs this hook:
 
 | What you were adding | Where it goes in 6.0 |
 | --- | --- |
-| A merchant-managed field (text, number, dropdown) | [Custom Fields](/developer/core-concepts/custom-fields) — no code, and filterable/sortable |
+| A merchant-managed field (text, number, dropdown) | [Custom Fields](/developer/core-concepts/metafields) — no code, and filterable/sortable |
 | Config for an STI type you register (promotion rule, delivery method rule, …) | `additional_permitted_attributes` on that subclass, as before — unchanged |
 | A real database column your extension added to a core model | `additional_permitted_attributes` on the model |
 

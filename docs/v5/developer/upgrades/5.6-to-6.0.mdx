@@ -1,0 +1,653 @@
+---
+title: Upgrading to Spree 6.0
+description: Guide to upgrading a Spree 5.6 application to Spree 6.0
+hidden: true
+canonical: "https://spreecommerce.org/docs/developer/upgrades/5.6-to-6.0"
+---
+
+<Info>
+  Before proceeding to upgrade, please ensure you're at [Spree 5.6](/v5/developer/upgrades/5.5-to-5.6). Spree 6.0 requires **Rails 8.1** and is the designated breaking-change window for the platform — read the behavioral changes section even if your upgrade runs clean.
+</Info>
+
+Spree 6.0 is a major release. The headline changes:
+
+- **Cart and Order are separate models.** `Spree::Cart` owns shopping and checkout; completing checkout copies the cart into an immutable `Spree::Order`. The order state machine is gone.
+- **Checkout has no server-side state machine.** Steps are advisory metadata for your frontend; the backend enforces exactly one hard gate — completion.
+- **Adjustments are typed rows.** The polymorphic `Spree::Adjustment` is replaced by `Spree::TaxLine`, `Spree::Discount` and `Spree::Fee`.
+- **Master Variant** is gone, replaced by a `default_variant_id` foreign key on `Spree::Product`. There's no hidden/dummy Variant created now, the default variant is a real Variant with its own SKU, price, stock, etc.
+- **Fulfillment vocabulary.** `Shipment` → `Fulfillment`, `ShippingMethod` → `DeliveryMethod`, `Zone` → `DeliveryZone`, with a pluggable `FulfillmentProvider` strategy.
+- **Two-tier services.** Plain services in `app/services`, plus `Spree::Workflow` classes in `app/workflows` for the curated multi-step flows (completion, cancellation, recalculation) — with named steps, instrumentation and extension hooks.
+
+The upgrade is completed in four steps:
+
+1. **Update the Ruby gems**
+2. **Run database migrations**
+3. **Run data backfills** — convert your existing records into the new schema
+4. **Review behavioral changes** — this release changes runtime behavior, not just schema
+
+## How to upgrade
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree upgrade
+```
+
+```bash Without Spree CLI
+# cd backend if you're in the monorepo root
+bundle update
+bundle exec rake spree:install:migrations && bin/rails db:migrate
+bundle exec rake spree:upgrade
+```
+
+</CodeGroup>
+
+Skipping versions and re-running are both safe — `bundle exec rake spree:upgrade` figures out what still needs to happen and does nothing on data that's already migrated.
+
+## What the upgrade does
+
+Reference material — the data backfills `bundle exec rake spree:upgrade` executes. Every task is idempotent.
+
+### Convert incomplete orders into carts
+
+```bash
+bundle exec rake spree:migrate_incomplete_orders_to_carts
+```
+
+Every order that never completed and was never canceled becomes a `Spree::Cart` with the same token, so in-flight guest and customer checkouts survive the deploy. The cart re-owns the order's line items, fulfillments, payments, payment sessions, reservations and coupon codes; the hollow order row is deleted. Completed and canceled orders are untouched. Orders holding payment sessions convert last, so an interrupted run leaves the riskiest rows for the retry.
+
+### Convert legacy adjustments into typed rows
+
+```bash
+bundle exec rake spree:migrate_adjustments_to_typed_rows
+```
+
+Rebuilds `spree_adjustments` into `Spree::TaxLine`, `Spree::Discount` and `Spree::Fee` rows. Orders whose typed sums do not reconcile with the stored totals are left untouched and flagged (`private_metadata['typed_adjustments_frozen']`) for manual review instead of silently changing money.
+
+### Backfill fulfillment and delivery naming
+
+```bash
+bundle exec rake spree:migrate_shipping_to_delivery
+bundle exec rake spree:migrate_zones_to_delivery_zones
+bundle exec rake spree:migrate_calculator_bounds_to_delivery_method_rules
+```
+
+Moves stored strings, statuses and class names to the fulfillment/delivery vocabulary, converts delivery-referenced `Spree::Zone` records into `Spree::DeliveryZone` with typed members, and converts FlatRate calculator eligibility bounds into `Spree::DeliveryMethodRule` records.
+
+### Remove master variants
+
+```bash
+bundle exec rake spree:remove_master_variant
+```
+
+Products now carry a `default_variant_id` foreign key; `is_master` is gone from the models. (The physical column drop lands in 6.1.)
+
+### Categories and collections
+
+```bash
+bundle exec rake spree:migrate_taxons_to_categories_and_collections
+```
+
+Taxons become `Spree::Category` (hierarchy) and automatic taxons become `Spree::Collection` (flat, rule-based). `Spree::Taxon` remains as an alias for one release.
+
+### Move rich text out of Action Text
+
+```bash
+bundle exec rake spree:migrate_rich_text_to_columns
+```
+
+Category and collection descriptions, policy bodies, and order and customer internal notes move from `action_text_rich_texts` into text columns on their own tables. Per-locale rows land in the model's translation table.
+
+Run this **after** two earlier steps, both load-bearing: the categories step re-points the rows from `Spree::Taxon` to `Spree::Category` so this one can still find them, and the customers step populates `spree_customers` — a note is copied onto the customer row it belongs to, so running before those rows exist would treat every legacy customer note as orphaned and skip it for good. Following the manifest order handles this for you.
+
+Content is sanitized on the way in, and **the 6.0 allowlist is much narrower than 5.6's**: it permits only what the dashboard's editor emits — paragraphs, headings, `strong`/`em`/`s`/`u`/`code`, `pre`, `blockquote`, lists, `hr`, `br` and links. Tables, images, `div`/`span`, inline `style` and arbitrary `class` attributes are no longer permitted. Text inside a stripped tag survives; its formatting does not. The exceptions are `script` and `style`, which are removed along with their contents — a script body would otherwise reappear as visible text.
+
+If your descriptions rely on richer markup, permit it in an initializer **before** running the task and before saving anything under 6.0:
+
+```ruby
+# config/initializers/spree.rb
+Spree::RichTextSanitizer.allowed_tags += %w[table thead tbody tr th td img]
+Spree::RichTextSanitizer.allowed_attributes += %w[src alt colspan rowspan]
+```
+
+The Action Text rows are left in place as a rollback path and are dropped with the tables in 6.1.
+
+Once this has run, **Spree no longer loads Action Text.** `spree_core` dropped `require 'action_text/engine'` — along with `action_cable/engine`, which nothing in Spree used — and a fresh install no longer creates the tables. The rake task requires Action Text itself, so the upgrade works either way. If your own code uses `has_rich_text`, Action Text view helpers, or Action Cable, require what you need in `config/application.rb` (apps generated from the Spree starter already do):
+
+```ruby
+require 'action_text/engine'
+require 'action_cable/engine'
+```
+
+### Backfill order coupon codes
+
+```bash
+bundle exec rake spree:backfill_order_coupon_codes
+```
+
+`spree_orders` gains a `coupon_code` column (parity with carts). Historical placed orders applied coupons only through the promotion join tables — this fills the column from the attached coupon-code record (or the applied single-code promotion) so admin filtering and the serializer answer consistently for old orders.
+
+### Markets on orders
+
+```bash
+bundle exec rake spree:backfill_order_markets
+```
+
+Orders missing a market get the store default — `market` is required on carts and orders in 6.0.
+
+## The Cart/Order split
+
+The single biggest change. What used to be one `Spree::Order` living through checkout and beyond is now two models:
+
+- **`Spree::Cart`** (`spree_carts`, prefixed IDs `cart_...`) owns the shopping and checkout phase: line items, addresses, payments-in-progress, delivery proposals, promotions, stock reservations. Carts have **no status column** — `completed_at` is the only lifecycle marker.
+- **`Spree::Order`** is created *by completion* — the cart is copied into it (line items, fulfillments, addresses, typed money rows — **copies, never shared rows**). Orders carry `status` (`draft` / `placed` / `canceled`) and are money-frozen once placed.
+
+Consequences to review:
+
+- **Completed carts are read-only.** The cart is retained after completion (abandonment analytics, idempotent replay) but rejects every write. Post-checkout life belongs to the order.
+- **Completion is idempotent.** `Spree::Carts::Complete` guards with a unique `spree_orders.cart_id` index and a `completing_at` lock: a double-clicked Place Order returns the same order, a crashed completion replays safely, and a pre-capture payment failure rolls the draft order back and re-points payments to the cart.
+- **The guest token carries over** from cart to order, so confirmation pages keep working with the credential the guest already holds.
+- **Dual concrete FKs, not polymorphism.** Records owned by either side (`LineItem`, `Fulfillment`, `TaxLine`, `Discount`, `Fee`, `Payment`, `StockReservation`) carry nullable `cart_id` + `order_id` with an exactly-one rule and an `#owner` method. Code that assumed `line_item.order` is always present must read `line_item.owner`.
+- **Shared model surface** lives in `Spree::Purchase::*` concerns (addresses, taxation, store credits, gift cards, digital items, payment processing, market/channel/currency/locale resolution) — included by both Cart and Order. Decorators targeting `Spree::Order` methods that moved should decorate the concern or the new owner.
+
+## Checkout without a state machine
+
+`Spree::Order` no longer has a `state` column, a state machine, or the `checkout_flow` DSL. If your app customized checkout with `checkout_flow`, `go_to_state`, `insert_checkout_step`, `remove_checkout_step` or `remove_transition` — those APIs are gone (not deprecated: the machine they configured no longer exists).
+
+The replacement model:
+
+- **Steps are advisory.** `cart.checkout_steps`, `current_checkout_step` and `completed_checkout_steps` are *derived* from cart data — there is no stored step and no server-side sequencing. Clients may write any checkout field in any order. "Steps" are a grouping label telling your frontend which page an unmet requirement belongs to.
+- **One hard gate.** `Spree::Carts::Complete` is the only place checkout is enforced. It validates the full requirement battery (line items, email, addresses, delivery selection, payment coverage, per-item stock, discontinued products, guest policy) and returns structured `{ step, field, code, message }` errors.
+- **`Spree::Checkout::Registry` is the extension surface.** One declaration serves both the advisory feed and the completion gate:
+
+```ruby
+# config/initializers/spree.rb
+Rails.application.config.to_prepare do
+  Spree::Checkout::Registry.add_requirement(
+    step: :payment,
+    field: :po_number,
+    message: 'PO number is required',
+    satisfied: ->(cart) { cart.metadata['po_number'].present? },
+    applicable: ->(cart) { cart.customer.present? }
+  )
+end
+```
+
+  The requirement appears in the Cart API's `requirements` array (so a storefront rendering the feed generically needs zero changes) *and* blocks completion. `register_step` adds whole steps (spliced into `checkout_steps` at `before:`/`after:` anchors); built-in steps are customized through `Registry.base_steps` — an ordered `{ name => applicability }` hash you can mutate directly (`base_steps.delete('confirm')`).
+- **The API `requirements` array now carries a stable `code`** on every entry (`email_required`, `out_of_stock`, `guest_checkout_not_allowed`, ...). Additive change — existing consumers keep working.
+- **The delivery requirement is keyed `delivery_method`, not `shipping_method`.** Its entry is now `{ step: 'delivery', field: 'delivery_method', code: 'delivery_method_required' }`. A storefront that renders the feed generically needs no change; one that keys off the field or code to highlight a specific input must switch both tokens. The `Spree.t('checkout_requirements.shipping_method_required')` translation key was renamed to `checkout_requirements.delivery_method_required` — override it under the new key.
+- **"Logic between steps" has no backend home by design.** Side effects hang off data writes (workflow hooks such as `Carts::Complete`'s `before_finalize` and `Carts::AddItem`'s `after_item_added`) and events (`cart.updated`, `order.placed`) — not step transitions.
+
+## Statuses: derived, then persisted
+
+`payment_state` and `shipment_state` machine columns are replaced by `payment_status` and `fulfillment_status` — stored, indexed, and recomputed from payment/refund/fulfillment records by a single writer, `Spree::Orders::UpdateStatuses`. The legacy names remain as read aliases for one release.
+
+Behavior to review:
+
+- Nothing else writes these columns. If your code assigned `order.payment_state = 'paid'`, replace it with the underlying records (payments/refunds) and let the recompute derive.
+- The `payment_status` domain gains `overcharged` and `voided`; `fulfillment_status` includes `backorder`. Money comparisons are quantized to currency precision and refunds are netted before comparing.
+- A completed payment updates **only the payment side of the ledger** (`payment_total` + statuses). It never re-sums item or adjustment money.
+- Fulfillment is a fact: a fulfilled fulfillment is never downgraded by later payment-state changes.
+
+## Recalculation on write
+
+Transition-triggered recalculation is gone with the machine. Instead:
+
+- **`Spree::Carts::RecalculateTotals`** is the single totals seam: money inputs, typed-row regeneration (promotions via the winner-only adjuster, tax via `Spree.tax_provider`), folding and one persist. It runs on the writes that matter — item changes, address/market changes (which also re-price items and rebuild delivery proposals) — not on step transitions.
+- Promotion eligibility is evaluated against **current** totals in the same recalculation — a cart crossing a coupon threshold gets the discount on that recalculation, not the next one.
+- **Completed orders are money-frozen.** Typed rows are never regenerated post-placement; recalculation only re-sums them. Post-placement money edits go through the explicit admin services (`Orders::Discounts::*`, `Orders::Fees::*`), which write rows and re-sum.
+- `Spree::OrderUpdater` and `Spree::CartUpdater` remain as deprecated shells — every method warns and runs the full recalculation. Removed in 6.1.
+
+## Completion, in one workflow
+
+`Spree::Orders::Complete` is the one home for everything that happens when an order becomes placed — payment processing (when needed), fulfillment finalization, placement, coupon/gift-card redemption, digital auto-fulfillment, statuses, and the `order.placed` event. Checkout reaches it through `Carts::Complete`; admin/B2B draft completion calls it directly (`payment_pending: true` places without processing payments for invoice-later flows).
+
+- **`Order#finalize!` is deprecated** (removed in 6.1) and delegates to the workflow. Behavioral change: finalizing an **already-completed order is now a no-op** — the workflow halts idempotently instead of re-running side effects.
+- **Completion side effects moved out of the model.** Newsletter subscription, checkout account creation and risk assessment run in the synchronous `Spree::OrderPlacedSubscriber` on the `order.placed` event. Decorators that patched `finalize!` should become event subscribers or `before_finalize` hook handlers.
+- **`order.placed` is the completion event.** `order.completed` still fires as a deprecated alias for one release (webhook consumers should migrate; wildcard subscribers can dedupe on the `deprecated_alias_of` metadata marker).
+- `Order.register_update_hook` no longer runs during completion.
+
+## Addresses
+
+The full address surface is shared by Cart and Order through `Spree::Purchase::Addresses`, which means cart checkout regains behavior that 5.x orders had:
+
+- Address writes **deduplicate** against the customer's address book and **promote** checkout addresses to the customer's defaults (quick-checkout wallet addresses excluded).
+- `ship_address_id=` / `bill_address_id=` are **ownership-guarded**: an address not owned by the record's customer resolves to `nil`.
+- A signed-in customer entering checkout gets blank address slots **auto-filled from their saved defaults**.
+- **`use_billing` is deprecated** (removed in 6.1): the shipping address is canonical — use `use_shipping` to copy ship → bill.
+
+## Returns, exchanges and claims
+
+The `ReturnAuthorization → CustomerReturn → Reimbursement` chain is replaced by three first-class records that each belong directly to an order: **`Spree::Return`** (items come back, money goes back), **`Spree::Exchange`** (items come back, different items go out), and **`Spree::Claim`** (something went wrong in delivery — no items required back).
+
+The old classes are **gone with no bridge**, so calls raise `NameError`:
+
+| Removed | Use instead |
+|---|---|
+| `Spree::ReturnAuthorization` | `Spree::Return` or `Spree::Exchange` |
+| `Spree::CustomerReturn` | `Spree::Return` — receiving is a status on the same record |
+| `Spree::Reimbursement`, `Spree::ReimbursementType` | `Spree::Returns::Refund` (a workflow, not a model) |
+| `Spree::ReturnItem` | `Spree::ReturnLineItem` / `Spree::ExchangeLineItem` / `Spree::ClaimLineItem` |
+| `Spree::ReturnItem::EligibilityValidator::*` | the `validate` hook — see below |
+| `Spree::ReturnAuthorizationReason` | `Spree::ReturnReason` (constant alias kept until 6.1, with a warning) |
+
+<Note>
+  **The legacy tables are not dropped.** They stay through 6.1 as the data migration's source and rollback path. Run `spree:upgrade:migrate_returns` to copy the history onto the new models — it's resumable, and it aborts if any row fails so an upgrade can't silently proceed on partial history.
+</Note>
+
+### No state machines
+
+New records carry a plain `status` string with an inclusion validation. Every transition is a workflow — `Spree::Returns::Approve`, `Returns::Receive`, `Returns::Refund`, `Exchanges::Fulfill`, `Claims::Resolve`, and so on. **Nothing happens in a model callback or transition callback**, so code that hooked `before_transition` on the old machines has no equivalent; move it to a workflow hook or an event subscriber.
+
+Statuses are extensible but additive only, through `Spree::HasStatus`:
+
+```ruby
+Spree::Return.add_status('inspecting', after: 'received')
+```
+
+### Eligibility is a hook, not a validator chain
+
+`ReturnItem::EligibilityValidator::Default` chained five validators. Only one was policy; the rest were invariants, so they moved to different places:
+
+| Old validator | Where the rule lives now |
+|---|---|
+| `TimeSincePurchase` | `Spree::Returns::EligibilityValidator`, registered on the `validate` hook |
+| `OrderCompleted` | inline guard in `Returns::Create` |
+| `InventoryShipped` | structural — only fulfillment items can be returned, and quantities are checked against what shipped |
+| `NoReimbursements` | quantity math — prior return line items are subtracted, so units can't come back twice |
+| `RMARequired` | gone: the `Return` **is** the request, so there is nothing to require |
+
+Core ships exactly one policy rule — a return window read from `market.preferred_return_window_days` (default 30), per market because return windows are a regional legal matter. **Staff can override it**: when `created_by` is present the window is advisory, so a supervisor can accept a late return without a code change.
+
+<Warning>
+  Four returns settings are **deprecated and read by nothing** — they still exist so applications don't crash at boot, but they have no effect and now emit a deprecation warning when read or written:
+
+  | Deprecated setting | Use instead |
+  |---|---|
+  | `return_eligibility_number_of_days` | `preferred_return_window_days` on `Spree::Market`, or a `returns.create.validate` hook |
+  | `restock_inventory` | `Spree::ReturnLineItem#resellable`, decided per line item at receiving |
+  | `expedited_exchanges`, `expedited_exchanges_days_window` | `Spree::Exchange` and the `Exchanges::Fulfill` workflow |
+</Warning>
+
+Replace it by swapping the handler:
+
+```ruby
+Spree.hooks.unregister('returns.create.validate', 'Spree::Returns::EligibilityValidator')
+Spree.hooks.register('returns.create.validate', 'MyStore::ReturnPolicy')
+```
+
+A handler receives the workflow (so it can read `order`, `items`, `created_by`, `order.market`) and calls `workflow.reject!(message)` to veto. Every one of the fifteen transitions has a leading `validate` hook, so the same seam gates approving, receiving and refunding.
+
+<Warning>
+  `requires_manual_intervention?` has no equivalent. The old validators could mark an item eligible-but-flagged for manual review; a handler now either accepts or vetoes. If you relied on that middle state, model it explicitly — an added status, or a metafield your handler sets.
+</Warning>
+
+### Other behavioral changes
+
+- **`Return#refunded_total` counts store credits.** Store credit is a separate ledger and never creates a `Spree::Refund` row, so the old sum reported zero for a store-credit refund.
+- **`Order#outstanding_balance` dropped its reimbursement term** rather than replacing it — refunds already net out of `payment_total`, so that term was double-counting.
+- **The reimbursement email is now `Spree::ReturnMailer#refunded_email`**, sent on `return.refunded` (in the optional `spree_emails` gem, like the other transactional mail).
+- **`Refund#originator`** points at the new records.
+- Events are `return.requested` / `.approved` / `.received` / `.refunded` / `.canceled`, and the matching `exchange.*` and `claim.*` families.
+
+## Dependency injection changes
+
+6.0 introduces `*_workflow` keys for the flows that graduated to the workflow tier. The old `*_service` keys **stay settable and readable one release so applications don't crash at boot — but a legacy write is stashed, not applied**: a class written against the old service contract is not interchangeable with the workflow the new call sites consume. Reads return your stashed class (legacy code calling its own override keeps working), falling back to the workflow. Removed in 6.1.
+
+| Legacy key (stash-only) | 6.0 key | Resolves to |
+|---|---|---|
+| `cart_add_item_service` | `cart_add_item_workflow` | `Spree::Carts::AddItem` |
+| `cart_recalculate_service` | `cart_recalculate_workflow` | `Spree::Carts::Recalculate` |
+| `carts_complete_service` | `carts_complete_workflow` | `Spree::Carts::Complete` |
+| `order_cancel_service` | `order_cancel_workflow` | `Spree::Orders::Cancel` |
+| `order_complete_service` | `order_complete_workflow` | `Spree::Orders::Complete` |
+| `shipment_update_service` | `fulfillment_update_service` | `Spree::Fulfillments::Update` |
+
+New seams with no legacy counterpart:
+
+| Key | Resolves to | Purpose |
+|---|---|---|
+| `cart_recalculate_totals_workflow` | `Spree::Carts::RecalculateTotals` | the single totals seam |
+| `order_recalculate_totals_workflow` | `Spree::Orders::RecalculateTotals` | order twin (post-placement re-sum) |
+| `order_resume_workflow` | `Spree::Orders::Resume` | resume canceled orders |
+| `order_discount_create_service` | `Spree::Orders::Discounts::Create` | renamed from `order_add_manual_discount_service` (never released) |
+| `order_update_statuses_service` | `Spree::Orders::UpdateStatuses` | the sole status writer |
+
+Removed keys (their classes no longer exist): `carts_validate_service` (completion validation is `Spree::Checkout::Requirements` directly), plus the dead legacy `Spree::Cart::*` service namespace registrations.
+
+If you override a workflow seam, subclass the shipped workflow (or implement the same `perform` keyword contract) — workflow arguments are plain Ruby keywords, so a mismatch raises `ArgumentError` at call time, not silently.
+
+## Removed in 6.0
+
+These were deprecated in 5.x and are **gone now** — there is no bridge, so calls raise `NoMethodError`. Most were one-line delegations to a replacement that already exists.
+
+| Removed | Use instead |
+|---|---|
+| `Product#default_image`, `#featured_image`, `#primary_image` | `#primary_media` |
+| `Variant#default_image`, `#primary_image` | `#primary_media` |
+| `Address#user_default_billing?`, `#user_default_shipping?` | `#is_default_billing?`, `#is_default_shipping?` |
+| `OptionType#color?` | `#color_swatch?` |
+| `Category#set_store` | `#ensure_store` |
+| `Category.for_taxonomy` | `.for_store` |
+| `Store#admin_users` | `#users` |
+| `Store#supported_shipping_zones` | `#countries_with_shipping_coverage` |
+| `Spree.searcher_class` | `Spree.search_provider` |
+| `Spree.admin_user_class.spree_admin_created?` | `.spree_admin.exists?` |
+| `BaseMailer#set_email_locale` | wrap the action body in `with_store_locale(store) { ... }` |
+| `Asset#styles`, `ImageMethods#generate_url`, `#original_url` | Active Storage variants with `cdn_image_url` |
+| `Spree::ImageMethods`, `Spree::NumberAsParam` (concerns) | deleted — `NumberAsParam` was already a no-op; prefixed IDs come from `Spree::PrefixedId` |
+| `Product.with_option`, `.with`, `.in_name`, `.in_name_or_keywords`, `.in_name_or_description`, `.with_ids`, `.for_user` | `.with_option_value`, `.search`, `where(id: ids)` |
+| `Product.add_search_scope` | plain `scope :name, -> { ... }` |
+| `Spree::Image::Configuration::ActiveStorage` | deleted — an empty no-op module; all logic lives in `Spree::Asset` |
+| `Spree::OrderRouting::Strategy::Legacy` | `Spree::OrderRouting::Strategy::Rules` (see below) |
+| `private_metafields` association | read `custom_fields` and filter, or query `Spree::CustomField.admin_only` |
+
+### Custom fields replace metafields
+
+The metafields system is now custom fields: `Spree::CustomField` and `Spree::CustomFieldDefinition`, stored in `spree_custom_fields` and `spree_custom_field_definitions`. The legacy class names, the concern, and the reader methods all keep working for one release with a deprecation warning (see the table further down), so most applications need no code change to upgrade.
+
+Two things do change under you, both handled by `db:migrate`:
+
+- **Visibility is a boolean.** The tri-state `display_on` column collapses into `storefront_visible`. Definitions that were `back_end` become `storefront_visible: false`; everything else becomes `true`. The `front_end`-only value never meant hidden-from-staff and folds into `true`.
+- **Two columns are renamed.** `name` becomes `label`, and `metafield_type` becomes `field_type`. Reading `field_type` returns the API token (`short_text`) rather than the Ruby class name; use `field_type_class_name` when you need the class.
+- **Rich-text values leave Action Text.** `Spree::CustomFields::RichText` stores sanitized HTML in the same `value` column as every other type, so reading `value` returns a String rather than an `ActionText::RichText`. Existing bodies are copied across by the migration; the Action Text rows stay behind as a rollback path until 6.1. Code calling `custom_field.value.body` should read `value` directly.
+
+Two behavior notes for extension authors: `Spree::Metadata` no longer includes the custom-fields concern (metadata is the private, schemaless system — include `Spree::HasCustomFields` explicitly if a model needs both), and rich-text values are now sanitized on save, so markup outside the allowlist is stripped rather than stored.
+
+**BREAKING — product CSV.** Custom-field columns are now prefixed `custom_field.` instead of `metafield.` (for example `custom_field.custom.material`). Exports emit the new prefix and imports only recognise the new prefix, so update any saved import templates and any integration that reads the export. A file still using the old prefix imports without its custom-field values rather than failing.
+
+### The Legacy order-routing strategy is gone
+
+`Spree::OrderRouting::Strategy::Legacy` — the pre-5.5 escape hatch that delegated straight to `Spree::Stock::Coordinator` and consulted no routing rules — is removed and no longer registered in `Spree.order_routing.strategies`.
+
+A store or channel still carrying `preferred_order_routing_strategy: 'Spree::OrderRouting::Strategy::Legacy'` **keeps working**: `Order#order_routing_strategy` ignores unregistered classes, logs a warning, and falls back to `Strategy::Rules`. Clear the stale preference to silence the warning — note that saving such a record now fails validation, since the value is no longer in the registry.
+
+`Spree::Stock::Coordinator` itself stays — cart fulfillment building, exchanges, and claims still use it.
+
+### `belongs_to` is required by default
+
+Spree models followed Rails' pre-5 rule, where a `belongs_to` was optional
+unless you said otherwise. They now follow the modern default: a `belongs_to`
+is **required** unless it is declared `optional: true`.
+
+Two consequences for an application built on Spree:
+
+- **Your own models change with it.** Anything inheriting from `Spree::Base`
+  picks up the new default, so an association that is legitimately blank now
+  needs `optional: true` on it. A model that relied on the old behaviour will
+  start failing validation until you say which associations are optional.
+- **The message changed.** A missing association reports `"must exist"` rather
+  than `"can't be blank"`. Code that matches on the old wording — a test, or a
+  client reading `details` out of a 422 — needs updating.
+
+Setting a record's association to `nil` and saving it is the quickest way to
+tell whether an association is required.
+
+### `Store.default` no longer builds a store
+
+`Spree::Store.default` returned an **unpersisted** `Store.new(default: true)` when no default store existed. It now returns `nil`.
+
+This matters more than it looks: `Spree::Current.store` falls back to `Store.default`, and every `Spree::SingleStoreResource` model resolves its own `store` from `Spree::Current.store`. Without a default store, those records now fail validation with "Store must exist" instead of silently attaching to a throwaway store.
+
+Make sure a default store exists before creating store-scoped records, and set `Spree::Current.store` in jobs, rake tasks, and tests that run outside a request.
+
+### The `DefaultPrice` concern is gone — `price_in` / `set_price` is the interface
+
+`Spree::DefaultPrice` and the `enable_legacy_default_price` setting are removed, along with the `has_one :default_price` association on `Variant`. Prices live in `spree_prices`, one row per currency, and a price is always an **amount plus a currency** — there is no longer an implicit "the" price.
+
+The single-currency accessors are gone from both `Variant` and `Product`:
+
+| Removed | Use instead |
+|---|---|
+| `variant.price`, `product.price` | `variant.price_in(currency).amount` or `amount_in(currency)` |
+| `variant.price = x`, `product.price = x` | `variant.set_price(currency, x)` |
+| `variant.default_price` | `variant.price_in(currency)` |
+| `variant.currency`, `product.currency` | the currency is an argument now — pass the one you mean |
+| `display_price`, `display_amount` | `price_in(currency).display_amount` |
+| `compare_at_price=` | `set_price(currency, amount, compare_at_amount)` |
+| `display_compare_at_price` | `price_in(currency).display_compare_at_amount` |
+| `price_including_vat_for(opts)` | `price_in(currency).price_including_vat_for(opts)` |
+| `has_default_price?` | `prices.base_prices.exists?(currency: currency)` |
+
+The `compare_at_price` **reader** (which resolves against `cost_currency`) is unchanged on both `Variant` and `Product` — only the writer is gone. So are the `price_in` / `amount_in` / `compare_at_amount_in` readers.
+
+Also note:
+
+- **Ransack:** `default_price` is no longer a searchable association on `Variant`; query `prices` instead.
+- **Prices in permitted params:** the dead `:price` and `:compare_at_price` entries are gone. Prices were already written as nested `prices: [{ amount:, currency: }]` under variants — the top-level keys had no writer behind them. (`Spree::PermittedAttributes` itself is removed in 6.0 — see below.)
+- Localized number parsing still happens: `Spree::Price#amount=` runs `Spree::LocalizedNumber.parse`, so `set_price(currency, '1,599.99')` works as `price=` did.
+- The variant validation that inferred a missing price from the product's default variant is gone. Set prices explicitly (the product and variant factories already do).
+
+### `Spree::PermittedAttributes` is removed
+
+The global permitted-attributes registry is gone, with no deprecation bridge. It
+existed so the Rails admin and storefront could share one allowlist; both are
+removed in 6.0, and API v3 declares its attributes in the controller.
+
+Removed alongside it: `Spree::Core::ControllerHelpers::StrongParameters` (the
+`permitted_*_attributes` helper methods it mixed into controllers) and the
+fallback that inferred an attribute list from the model name.
+
+Attributes you pushed from an initializer are now declared on the model, and
+standard resource endpoints append them to their own allowlist — so one
+declaration still covers the model's create and update endpoints.
+
+#### How to migrate
+
+**1. Find every call site.** The constant and the helper methods are both gone,
+so a missed reference raises `NameError` or `NoMethodError` the first time that
+code runs — loudly, but not necessarily at boot:
+
+```bash
+grep -rn "PermittedAttributes" app config lib
+grep -rnE "permitted_[[:alnum:]_]+_attributes" app config lib
+```
+
+The second pattern is deliberately broad: the helper module generated one
+`permitted_*_attributes` method per registry key, so there were dozens of them.
+
+**2. Decide what each attribute actually is.** Most fall into one of three
+buckets, and only the last needs this hook:
+
+| What you were adding | Where it goes in 6.0 |
+| --- | --- |
+| A merchant-managed field (text, number, dropdown) | [Custom Fields](/developer/core-concepts/custom-fields) — no code, and filterable/sortable |
+| Config for an STI type you register (promotion rule, delivery method rule, …) | `additional_permitted_attributes` on that subclass, as before — unchanged |
+| A real database column your extension added to a core model | `additional_permitted_attributes` on the model |
+
+**3. Point each declaration at the model.** It stays in your initializer — only
+the receiver changes, from the global registry to the model itself:
+
+```ruby config/initializers/spree.rb
+# Before
+Spree::PermittedAttributes.product_attributes << :brand_id
+
+# After
+Spree::Product.additional_permitted_attributes += [:brand_id]
+```
+
+Use `+=`, not `=` — the list is per model, and assigning replaces whatever
+another extension already added. `<<` raises a `FrozenError`: the default is a
+frozen shared array, so mutating it in place would leak your attribute onto every
+other model.
+
+Declare only attributes of your own. Redeclaring a key the controller already
+permits (`metadata`, `prices`) does not widen it — strong parameters keeps the
+last filter for that key, so the controller's own would be replaced by yours.
+
+Entries are `params.permit` fragments, so collections and nested structures keep
+the shapes you already know: `[:brand_id, { region_ids: [] }]`.
+
+**4. Fix your own controllers.** If you subclassed a Spree v3 resource
+controller and relied on the attribute list being inferred from the model name,
+declare it now:
+
+```ruby
+class BrandsController < Spree::Api::V3::Admin::ResourceController
+  protected
+
+  def model_class
+    Spree::Brand
+  end
+
+  # Before: no such method — the base class inferred `brand_attributes`
+  # from the model name. Now you say what you accept.
+  def resource_permitted_attributes
+    [:name, :slug, :description]
+  end
+end
+```
+
+Declaring neither `resource_permitted_attributes` nor `permitted_params` raises
+`NotImplementedError` on the first write, so this surfaces in your test suite
+rather than silently permitting a stale list.
+
+**5. Verify a write actually persists.** A declaration that never reaches a
+controller fails silently — strong parameters drop the unpermitted key, the
+request still returns 200, and the column keeps its old value. Assert on the
+saved record, not the response status:
+
+```ruby
+patch "/api/v3/admin/products/#{product.prefixed_id}",
+      params: { brand_id: brand.id }, headers: headers
+
+expect(product.reload.brand_id).to eq(brand.id)
+```
+
+If that assertion fails, the endpoint is not consulting your declaration. Check
+whether the controller overrides `permitted_attributes` — that method is where
+the extension attributes are appended, so overriding it replaces them. Override
+`resource_permitted_attributes` instead.
+
+<Warning>
+  Two endpoints deliberately ignore the hook because their parameters are
+  authorization data rather than resource data: API keys (`scopes`, `key_type`)
+  and invitations (`role_id`). Adding attributes there needs a controller
+  decorator, not a model declaration.
+</Warning>
+
+STI types registered through a Spree registry (promotion rules and actions,
+delivery method rules, commission rules) already used
+`additional_permitted_attributes` and need no changes — the hook simply moved up
+to `Spree::Base`.
+
+### `StateChange` and `LogEntry` are gone
+
+`Spree::StateChange` and `Spree::LogEntry` are removed — the models, the `state_changes` associations on `Order`, `Payment` and `Fulfillment`, the `log_entries` associations on `Payment` and `Refund`, and everything that wrote to them. Both were write-only: nothing in Spree read the rows back, and the admin screens that displayed them are gone.
+
+**Events are the audit trail now.** Instead of querying state-change rows, subscribe to the lifecycle events that already fire on every meaningful transition: `order.placed`, `order.canceled`, `payment.completed`, `payment.voided`, `fulfillment.ready`, `fulfillment.fulfilled`, `fulfillment.canceled`, `fulfillment.resumed`, and the rest. If you need a persistent history, write it from a subscriber.
+
+**Gateway responses are no longer stored in your database.** `LogEntry` kept every gateway response as serialized YAML. For transaction forensics, use your payment provider's dashboard — `Payment#gateway_dashboard_payment_url` links straight to the transaction — or `Spree::PaymentSession`, which holds the gateway-side state for session-based providers.
+
+The `spree_state_changes` and `spree_log_entries` tables are **not dropped until 6.1**, so your existing rows survive the upgrade. If you want the history long-term, export it before upgrading to 6.1.
+
+## Deprecated in 6.0, removed in 6.1
+
+Every rename keeps the legacy name working for one release with a deprecation warning. The notable ones:
+
+| Deprecated | Use instead |
+|---|---|
+| `Order#finalize!` | `Spree.order_complete_workflow` |
+| `Order#updater`, `Spree::OrderUpdater`, `Spree::CartUpdater` | `#recalculate_totals!` / `#update_statuses!` |
+| `Order#shipping_discount` | `#fulfillment_discount` |
+| `Order#special_instructions` | `#customer_note` (column renamed) |
+| `Order#promo_total`, `#item_count`, `#ship_total` | `#discount_total`, `#total_quantity`, `#delivery_total` (columns renamed) |
+| `use_billing` / `clone_billing_address` | `use_shipping` (shipping address is canonical) |
+| `Fulfillment#ship`, `#ship!`, `#shipped?`, `#can_ship?`, `#shipping_method`, `#add_shipping_method` | `#fulfill`, `#fulfill!`, `#fulfilled?`, `#can_fulfill?`, `#delivery_method`, `#add_delivery_method` |
+| `LineItem#target_shipment` | `#target_fulfillment` |
+| `Order#create_proposed_shipments` / `#create_proposed_fulfillments` | `#rebuild_fulfillments!` (Cart ships with the new name only) |
+| `Order#remove_out_of_stock_items!` | cart-side only (`Spree::Carts::RemoveOutOfStockItems`) |
+| `Order#delivery_required?` | `#delivery_step_required?` — digital and pickup are deliveries too; this asks whether the customer must choose a delivery option |
+| `Order#requires_ship_address?` | `#shipping_address_required?` — decided by the selected delivery methods (`DeliveryMethod#requires_address?`); digital, pickup, and pickup-point deliveries need no customer address |
+| `requirements[].field` / `.code` `shipping_method` (Store API) | `delivery_method` / `delivery_method_required` — no bridge; clients keying off the delivery requirement must switch both tokens |
+| `Cart#number` (Store API field) | `id` — carts have no order-style number; the field mirrors the prefixed ID for one release |
+| `order.completed` event | `order.placed` |
+| Calling cart services with `order:` kwargs | `cart:` kwargs |
+| `OrderWalkthrough` (testing support) | factories: `:cart_ready_for_delivery`, `:cart_ready_to_complete`, `:completed_order_with_totals` |
+| `Spree::Metafield`, `Spree::MetafieldDefinition`, `Spree::Metafields::*` | `Spree::CustomField`, `Spree::CustomFieldDefinition`, `Spree::CustomFields::*` |
+| `include Spree::Metafields` | `include Spree::HasCustomFields` |
+| `#set_metafield`, `#get_metafield`, `#has_metafield?` | `#set_custom_field`, `#get_custom_field`, `#has_custom_field?` |
+| `metafields` / `public_metafields` associations | `custom_fields` / `storefront_custom_fields` |
+| `.with_metafield_key`, `.with_metafield_key_value` | `.with_custom_field_key`, `.with_custom_field_key_value` |
+| `Spree.metafields` | `Spree.custom_fields` |
+| `CustomFieldDefinition#name`, `#metafield_type`, `#display_on` | `#label`, `#field_type`, `#storefront_visible` (columns renamed) |
+| `Spree::SearchProvider::Meilisearch` | `SpreeMeilisearch::SearchProvider` (moved to the `spree_meilisearch` gem) |
+| `Spree::SearchProvider::ProductPresenter` | `SpreeMeilisearch::ProductPresenter` (moved to the `spree_meilisearch` gem) |
+
+## Meilisearch moved to its own gem
+
+Meilisearch is no longer part of `spree_core`. Stores using the Database provider (the default) need to do nothing.
+
+If you set `Spree.search_provider` to the Meilisearch provider, add the gem and update the class name:
+
+```ruby
+# Gemfile
+gem 'spree_meilisearch'
+
+# config/initializers/spree.rb
+Spree.search_provider = 'SpreeMeilisearch::SearchProvider'
+```
+
+Your `MEILISEARCH_URL` and `MEILISEARCH_API_KEY` settings are unchanged, and **no reindex is needed** — the documents have the same shape. Applications that subclassed the document presenter should inherit from `SpreeMeilisearch::ProductPresenter` instead.
+
+The old class names keep working for one release, so an application that only names them in an initializer boots with a deprecation warning rather than an error — but the gem must be installed either way, since the classes now live there.
+
+## Staff permissions: roles are data
+
+Permission sets are **removed with no bridge**. Staff roles now hold flat permission keys from one catalog — the same `read_<resource>` / `write_<resource>` vocabulary secret API keys use — and are managed as data: in the dashboard (Settings → Roles), through the Admin API (`/api/v3/admin/roles`), or in seeds. Code no longer defines what a role can do.
+
+| Removed | Use instead |
+|---|---|
+| `Spree::PermissionSets::*` (all classes) | catalog keys on the role row: `Spree::Role#permissions` |
+| `Spree.permissions.assign(:role, [sets])` | the role editor, `POST /api/v3/admin/roles`, or plain ActiveRecord in seeds |
+| Custom permission sets with record-level rules | Replace the ability class: `Spree::Dependencies.ability_class = 'MyApp::Ability'` |
+| `Spree::ApiKey::SCOPES` | `Spree::ApiKey.known_scopes` (derived from the catalog) |
+
+Old initializers fail loudly at boot: the set constants raise `NameError`, and `Spree.permissions.assign` raises with directions. **Recreate your custom roles before deploying** — a pre-existing role row comes up with no permissions, so staff holding it are locked out (fail closed) until its permissions are filled in:
+
+```ruby
+# db/seeds.rb — "roles as code" is plain ActiveRecord now
+Spree::Role.find_or_create_by!(name: 'support')
+  .update!(permissions: %w[read_orders read_customers])
+```
+
+Storefront customers are not part of this system: the old `:default` role and `DefaultCustomer` set are gone, customers never resolve roles, and the Store API no longer consults CanCanCan at all — customer authorization is ownership-scoped queries plus `Spree::Storefront::AccessPolicy` (swappable via `Spree::Dependencies.storefront_access_policy_class`). If an extension added storefront `can` rules, move them into an access-policy subclass or a checkout workflow `validate` hook. Extensions register their resources into the catalog once, which makes them grantable to roles **and** mintable as API-key scopes:
+
+```ruby
+Spree.permissions.register_resource(:reviews, group: :catalog, subjects: -> { [SpreeReviews::Review] })
+```
+
+Two enforcement changes on the Admin API:
+
+- **JWT staff pass the same per-controller key gate as secret keys.** A request whose principal lacks `<read|write>_<resource>` gets a 403 with `details.required_permission` naming the missing key.
+- **Staff endpoints moved out of the `settings` scope.** `/admin_users`, `/invitations`, and `/roles` now require the new `read_staff` / `write_staff` scopes; secret keys minted with `settings` before 6.0 lose those endpoints. `/countries` and `/locales` became scope-exempt reference data.
+
+### Rich-text fields read as plain text plus HTML
+
+**Writes are unchanged.** `description` and `internal_note` still take the value, and that value is still HTML — the same as 5.6, so no integration needs updating.
+
+Reads are where 6.0 differs. Every rich-text field now returns both shapes:
+
+| Resource | Plain text | HTML |
+| --- | --- | --- |
+| Product, Category, Collection | `description` | `description_html` |
+| Order, Customer | `internal_note` | `internal_note_html` |
+
+Two consequences worth checking in your own code:
+
+- **Hydrate editors from `*_html`.** The plain field is tag-stripped, so binding an editor to `description` and saving it back would flatten the markup on every save.
+- **The field holds HTML.** That is true of every writer — the Admin API, CSV import, the console — so send markup, not plain text with newlines in it.
+
+Both internal-note serializers now return the pair. Previously orders exposed only plain text and customers only HTML.
+
+Stored markup is also held to a narrower allowlist than 5.6 — see [the rich-text migration](#move-rich-text-out-of-action-text) for what is permitted and how to widen it.
+
+## For extension authors
+
+- **Don't reach for model business methods from services** — 6.0 code style writes behavior inline in service/workflow steps; models keep data, validations, predicates and persistence primitives. Extensions patching removed model methods (`finalize!` internals, updater hooks) should move to workflow hooks (`Spree.hooks.register('carts.complete.before_finalize') { |flow| ... }` — handlers receive the workflow instance) or event subscribers.
+- **Store-scoped data is single-owner.** `Product`, `Promotion` and `PaymentMethod` `belongs_to :store`; the `stores: [...]` writers are gone. Multi-store sharing lives in the `spree_multi_store` extension.
+- The Store API v3 contract is stable across the split — cart endpoints keep their shapes; `requirements` gains `code` (and renames the delivery entry's field/code to `delivery_method`, see above), and serializer `number` on carts is bridged as described above.
+
+<Warning>
+  This guide tracks the 6.0 development line and will grow until release. If a behavioral change you hit isn't documented here, treat it as a documentation bug and report it.
+</Warning>

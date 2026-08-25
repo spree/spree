@@ -37,7 +37,7 @@ erDiagram
 - **Tax Category** groups products for tax purposes (e.g., "Clothing", "Food", "Digital")
 - **Tax Rate** defines the percentage and rules for a Tax Category within a [Zone](/developer/core-concepts/addresses#zones)
 - **Zone** defines geographic regions (countries or states) where taxes apply
-- **[Adjustments](/developer/core-concepts/adjustments)** are created on orders/line items to apply taxes
+- **[Adjustments](/developer/core-concepts/taxes-discounts-fees)** are created on orders/line items to apply taxes
 
 ## Tax Categories
 
@@ -131,7 +131,7 @@ During checkout, taxes are calculated based on the shipping address:
 
 1. The customer's shipping address determines their [Zone](/developer/core-concepts/addresses#zones)
 2. Spree finds matching tax rates for that zone and the product's tax category
-3. Tax [Adjustments](/developer/core-concepts/adjustments) are created on line items
+3. Tax [Adjustments](/developer/core-concepts/taxes-discounts-fees) are created on line items
 4. The order total is updated
 
 <Note>
@@ -164,6 +164,6 @@ Tax categories and rates are managed in the Admin Panel under **Settings → Tax
 
 - [Markets](/developer/core-concepts/markets) — Tax-inclusive pricing per market
 - [Addresses](/developer/core-concepts/addresses) — Zones and address-based taxation
-- [Adjustments](/developer/core-concepts/adjustments) — Tax adjustments
+- [Adjustments](/developer/core-concepts/taxes-discounts-fees) — Tax adjustments
 - [Orders](/developer/core-concepts/orders) — How taxes affect order totals
 - [Avalara integration](/integrations/tax/avalara) — Automated tax calculation for complex jurisdictions

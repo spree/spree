@@ -1,0 +1,27 @@
+---
+title: Connect Your PIM
+description: Keep product data and pricing in your PIM. Spree syncs content in, renders from its own copy, and can price live from an external source at cart decision moments.
+---
+
+<Note>
+This page documents functionality landing in an upcoming Spree 6.0 release. The interfaces described here may change before final release.
+</Note>
+
+Your PIM owns product content — names, descriptions, attributes, associations, prices. Spree renders the shopper-facing copy and asks your systems live only where a stale answer would cost money.
+
+## Product data feeds
+
+Products, variants and prices flow in through the Admin API and CSV imports. Feeds address records by the keys your PIM already uses via external references (`external:<system>:<id>`), so an integration never has to store Spree IDs to update what it created.
+
+## The pricing provider
+
+For merchants whose prices are computed elsewhere — contract pricing from an ERP, a pricing service, a PIM-driven price feed — a pricing provider answers price questions at cart decision moments with Spree's own price record shape. Tax-inclusive restatement and serializers keep working without knowing the number's origin.
+
+Two properties of the contract matter for operations:
+
+- **A provider declares a cache lifetime** and can decline anonymous browsing contexts, sending catalog pages straight to the local price resolver.
+- **Pricing refuses on failure** rather than falling back — charging the wrong price is a dispute, not a retry.
+
+## Price imports
+
+Price lists and plain price updates load through CSV imports and the Admin API, writing history rather than silently overwriting — the audit trail shows what changed and when.
