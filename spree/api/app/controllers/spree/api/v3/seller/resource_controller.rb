@@ -25,6 +25,10 @@ module Spree
           # so subclasses name a `seller_association` and the root scope comes
           # from the seller itself. Tenancy is this fetch, not the ability:
           # authorizing without it reads store-wide.
+          #
+          # Tenancy is all this roots, though — it does not judge whether a
+          # record is the seller's business. A controller reaching orders must
+          # also exclude drafts, which `current_seller_orders` does.
           def scope
             return super if @parent.present?
 

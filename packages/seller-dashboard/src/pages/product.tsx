@@ -26,6 +26,7 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { sellerClient } from '../api-client'
 import { CenteredMessage } from '../components/centered-message'
+import { RetryableError } from '../components/retryable-error'
 
 const STATUSES = ['draft', 'active', 'archived'] as const
 
@@ -126,18 +127,7 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
   }
 
   if (mode === 'edit' && isLoading) return <CenteredMessage>{t('common.loading')}</CenteredMessage>
-  // Same distinction as the order page: a failed request is not a missing
-  // product, and only one of the two is worth retrying.
-  if (mode === 'edit' && isError) {
-    return (
-      <CenteredMessage>
-        {t('common.error')}{' '}
-        <Button variant="outline" onClick={() => refetch()}>
-          {t('common.retry')}
-        </Button>
-      </CenteredMessage>
-    )
-  }
+  if (mode === 'edit' && isError) return <RetryableError onRetry={() => refetch()} />
   if (mode === 'edit' && !product)
     return <CenteredMessage>{t('products.not_found')}</CenteredMessage>
 

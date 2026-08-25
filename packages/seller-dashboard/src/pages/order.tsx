@@ -20,6 +20,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { sellerClient } from '../api-client'
 import { CenteredMessage } from '../components/centered-message'
+import { RetryableError } from '../components/retryable-error'
 
 /** One order, as the seller needs it to pack and post the parcel. */
 export function OrderPage() {
@@ -54,18 +55,7 @@ export function OrderPage() {
   })
 
   if (isLoading) return <CenteredMessage>{t('common.loading')}</CenteredMessage>
-  // A request that failed is not the same as an order that is not there —
-  // reporting the latter sends the seller looking for the wrong cause.
-  if (isError) {
-    return (
-      <CenteredMessage>
-        {t('common.error')}{' '}
-        <Button variant="outline" onClick={() => refetch()}>
-          {t('common.retry')}
-        </Button>
-      </CenteredMessage>
-    )
-  }
+  if (isError) return <RetryableError onRetry={() => refetch()} />
   if (!order) return <CenteredMessage>{t('orders.not_found')}</CenteredMessage>
 
   async function handleCancel() {
