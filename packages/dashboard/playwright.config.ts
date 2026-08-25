@@ -4,6 +4,10 @@ import { defineConfig, devices } from '@playwright/test'
 // E2E run never clobbers a developer's running stack.
 const RAILS_PORT = process.env.E2E_RAILS_PORT || '3010'
 const VITE_PORT = process.env.E2E_VITE_PORT || '5174'
+// The marketplace seller panel is its own app on its own origin, so a flow
+// that spans both — an operator invites, the seller accepts — needs both
+// served. Same test Rails behind each.
+const SELLER_VITE_PORT = process.env.E2E_SELLER_VITE_PORT || '5175'
 
 // `E2E_PREVIEW=1` serves the built SPA (`vite preview`) instead of the dev
 // server. Every test gets a fresh browser context with an empty HTTP cache,
@@ -65,6 +69,21 @@ export default defineConfig({
         // same-origin with the proxy, exactly like dev. Setting
         // `VITE_SPREE_API_URL` here would flip the SDK to absolute URLs and
         // break the cookie path the refresh flow depends on.
+        VITE_API_PROXY_TARGET: `http://localhost:${RAILS_PORT}`,
+      },
+    },
+    {
+      // The seller panel, proxied to the same Rails. Specs reach it by
+      // absolute URL rather than `baseURL`, which stays the dashboard.
+      command: PREVIEW
+        ? `pnpm --filter @spree/seller-dashboard-starter preview --port ${SELLER_VITE_PORT} --strictPort`
+        : `pnpm --filter @spree/seller-dashboard-starter dev --port ${SELLER_VITE_PORT} --strictPort`,
+      url: `http://localhost:${SELLER_VITE_PORT}`,
+      reuseExistingServer: false,
+      timeout: 60_000,
+      stdout: 'ignore',
+      stderr: 'pipe',
+      env: {
         VITE_API_PROXY_TARGET: `http://localhost:${RAILS_PORT}`,
       },
     },

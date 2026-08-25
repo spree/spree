@@ -48,8 +48,9 @@ test.describe('sellers', () => {
     await expect(page.locator('#seller-name')).toHaveCount(0)
     await expect(page.locator('#minimum_payout_amount')).toHaveCount(0)
 
-    // Nobody has been invited yet, so inviting is the only move offered.
-    await expect(page.getByRole('button', { name: /^invite$/i })).toBeVisible()
+    // Nobody has been invited yet, so inviting is the only move offered. The
+    // team card offers its own Invite, so this names the header's.
+    await expect(page.getByRole('button', { name: /^invite$/i }).first()).toBeVisible()
     await expect(page.getByRole('button', { name: /^approve$/i })).toHaveCount(0)
   })
 
@@ -70,7 +71,10 @@ test.describe('sellers', () => {
     const name = `E2E Invite Seller ${Date.now()}`
     await createSeller(page, name)
 
-    await page.getByRole('button', { name: /^invite$/i }).click()
+    await page
+      .getByRole('button', { name: /^invite$/i })
+      .first()
+      .click()
     await expect(page.getByRole('heading', { name: /invite seller/i })).toBeVisible()
 
     await page.locator('#invite-email').fill(`seller-${Date.now()}@example.com`)
