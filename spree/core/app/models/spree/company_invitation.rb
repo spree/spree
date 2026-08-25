@@ -6,9 +6,9 @@ module Spree
   # already-authenticated one — and lands as a {Spree::CompanyMembership}.
   #
   # The token is plaintext, like the staff invitation and setup tokens. It
-  # grants exactly what a direct membership grants — no roles; Enterprise
-  # attaches its role payload through +metadata+ and applies it on the
-  # +company_invitation.accepted+ event.
+  # grants exactly what a direct membership grants — OSS has no company roles;
+  # Enterprise attaches its role payload through +metadata+ and applies it on
+  # the +company_invitation.accepted+ event.
   class CompanyInvitation < Spree.base_class
     has_prefix_id :cinv
 

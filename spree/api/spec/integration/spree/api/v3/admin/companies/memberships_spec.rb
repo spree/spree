@@ -52,10 +52,7 @@ RSpec.describe 'Admin Company Memberships API', type: :request, swagger_doc: 'ap
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
-          customer_email: { type: :string, example: 'buyer@example.com' },
-          role: { type: :string, nullable: true,
-                  description: 'Cosmetic label; carries no permissions.',
-                  example: 'buyer' }
+          customer_email: { type: :string, example: 'buyer@example.com' }
         },
         required: ['customer_email']
       }

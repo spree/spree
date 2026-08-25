@@ -47,7 +47,6 @@ class CreateSpreeCompanies < ActiveRecord::Migration[8.1]
     create_table :spree_company_memberships do |t|
       t.references :company, null: false
       t.references :customer, null: false
-      t.string :role                         # cosmetic label, no behavior in OSS
       t.timestamps
     end
 

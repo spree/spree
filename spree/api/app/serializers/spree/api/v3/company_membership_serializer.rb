@@ -5,10 +5,8 @@ module Spree
       # self-service surface lists them. Within a company OSS trusts every
       # member, so members see each other.
       class CompanyMembershipSerializer < BaseSerializer
-        typelize role: :string, company_id: :string, customer_id: :string,
+        typelize company_id: :string, customer_id: :string,
                  email: [:string, nullable: true]
-
-        attributes :role
 
         # Both associations are required, so these are never null and the
         # types above say so.

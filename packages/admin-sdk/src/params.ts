@@ -2446,8 +2446,6 @@ export interface CompanyMembershipCreateParams {
    * CompanyInvitation instead of a CompanyMembership.
    */
   customer_email: string
-  /** Free-form label; carries no permissions. */
-  role?: string
   metadata?: Record<string, unknown>
 }
 

@@ -18,8 +18,7 @@ module Spree
               result = Spree.company_add_member_service.call(
                 company: @parent,
                 email: params.require(:customer_email),
-                role: params[:role],
-                metadata: params[:metadata].respond_to?(:permit) ? params[:metadata].permit!.to_h : params[:metadata]
+                metadata: permitted_params[:metadata]
               )
 
               if result.success?
@@ -57,7 +56,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:customer_email, :role, metadata: {})
+              params.permit(:customer_email, metadata: {})
             end
           end
         end

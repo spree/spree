@@ -13,7 +13,6 @@ module Spree
       # @param company [Spree::Company]
       # @param email [String]
       # @param inviter [Object, nil] the inviting customer, nil when staff
-      # @param role [String, nil] cosmetic membership label
       # @param metadata [Hash, nil] extension payload — carried on the
       #   invitation only, where Enterprise reads it back on acceptance
       #   (memberships have no metadata column; a direct-membership payload is
@@ -21,15 +20,13 @@ module Spree
       #   contract, not stored here)
       # @return [Spree::ServiceModule::Result] value is the created
       #   Spree::CompanyMembership or Spree::CompanyInvitation
-      def call(company:, email:, inviter: nil, role: nil, metadata: nil)
+      def call(company:, email:, inviter: nil, metadata: nil)
         normalized_email = email.to_s.strip.downcase
         customer = Spree.customer_class.find_by(email: normalized_email)
 
         record =
           if customer
-            attributes = { customer: customer }
-            attributes[:role] = role if role.present?
-            company.memberships.new(attributes)
+            company.memberships.new(customer: customer)
           else
             company.invitations.new(email: normalized_email, inviter: inviter, metadata: metadata)
           end

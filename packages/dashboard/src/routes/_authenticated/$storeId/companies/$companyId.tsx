@@ -676,16 +676,12 @@ function MembersCard({ company, canEdit }: { company: Company; canEdit: boolean 
                   >
                     {membership.email ?? membership.customer_id}
                   </Link>
-                  {/* An extension owning roles renders the member's real role
-                      here; the fallback is the cosmetic label OSS stores. */}
+                  {/* Where the member's role renders once an extension owns
+                      one; OSS grants every member the same standing, so there
+                      is nothing to show without one. */}
                   <Slot
                     name="company_membership.row_meta"
                     context={{ membership, companyId: company.id, canEdit }}
-                    fallback={
-                      membership.role ? (
-                        <span className="text-muted-foreground text-xs">{membership.role}</span>
-                      ) : null
-                    }
                   />
                 </div>
                 {canEdit && (

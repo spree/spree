@@ -17,10 +17,6 @@ describe Spree::CompanyMembership, type: :model do
     expect(build(:company_membership, company: create(:company, store: store), customer: customer)).to be_valid
   end
 
-  it 'defaults the cosmetic role label' do
-    expect(described_class.new.role).to eq('buyer')
-  end
-
   it 'reaches the store through the company' do
     membership = create(:company_membership, company: company, customer: customer)
 
