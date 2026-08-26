@@ -11,8 +11,9 @@ module Spree
 
           protected
 
+
           def model_class
-            Spree::CompanyAddress
+            Spree::Address
           end
 
           def serializer_class
@@ -20,12 +21,9 @@ module Spree
           end
 
           def scope
-            Spree::CompanyAddress.where(company_id: current_store.companies.select(:id)).
+            Spree::Address.where(owner_type: 'Spree::Company',
+                                 owner_id: current_store.companies.select(:id)).
               accessible_by(current_ability, ability_action_for_request)
-          end
-
-          def collection_includes
-            [:address]
           end
         end
       end

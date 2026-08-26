@@ -14,7 +14,7 @@ RSpec.describe Spree::Api::V3::Store::Companies::AddressesController, type: :con
 
   describe 'GET #index' do
     it 'lists the node address book' do
-      create(:company_address, company: company, label: 'HQ')
+      create(:company_address, owner: company, label: 'HQ')
 
       get :index, params: { company_id: company.prefixed_id }, as: :json
 
@@ -30,18 +30,19 @@ RSpec.describe Spree::Api::V3::Store::Companies::AddressesController, type: :con
   end
 
   describe 'POST #create' do
-    it 'creates an entry with a nested address' do
+    it 'creates an owned address for the node' do
       post :create, params: {
         company_id: company.prefixed_id,
         label: 'Plant 2 dock', default_shipping: true,
-        address: { first_name: 'Ops', last_name: 'Team', address1: '1 Dock Rd',
-                   city: 'Springfield', postal_code: '62704', country_code: 'US', state_code: 'IL' }
+        first_name: 'Ops', last_name: 'Team', address1: '1 Dock Rd',
+        city: 'Springfield', postal_code: '62704', country_code: 'US', state_code: 'IL'
       }, as: :json
 
       expect(response).to have_http_status(:created)
       expect(json_response['label']).to eq('Plant 2 dock')
       expect(json_response['default_shipping']).to be(true)
-      expect(json_response['address']['city']).to eq('Springfield')
+      expect(json_response['city']).to eq('Springfield')
+      expect(company.reload.default_ship_address_id).to eq(company.addresses.sole.id)
     end
   end
 end

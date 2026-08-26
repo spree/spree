@@ -6,11 +6,14 @@ module Spree
         # caller's standing — an entry of a node they may not act for is a
         # 404.
         class CompanyAddressesController < ResourceController
+          include Spree::Api::V3::Store::Concerns::CompanyAddressDefaults
+
           prepend_before_action :require_authentication!
 
           # PATCH /api/v3/store/company_addresses/:id
           def update
             if @resource.update(permitted_params)
+              apply_default_flags!(@resource)
               render json: serialize_resource(@resource.reload)
             else
               render_validation_error(@resource.errors)
@@ -28,7 +31,7 @@ module Spree
           protected
 
           def model_class
-            Spree::CompanyAddress
+            Spree::Address
           end
 
           def serializer_class
@@ -36,15 +39,16 @@ module Spree
           end
 
           def scope
-            Spree::CompanyAddress.where(
-              company_id: storefront_access_policy.scope(current_store.companies).select(:id)
+            Spree::Address.where(
+              owner_type: 'Spree::Company',
+              owner_id: storefront_access_policy.scope(current_store.companies).select(:id)
             )
           end
 
           def permitted_params
-            params.permit(:label, :default_billing, :default_shipping,
-                          address: Companies::AddressesController::ADDRESS_KEYS)
+            params.permit(:label, *Spree::Api::V3::AddressParams::ADDRESS_KEYS)
           end
+
         end
       end
     end

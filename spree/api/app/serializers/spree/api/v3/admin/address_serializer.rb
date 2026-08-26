@@ -24,7 +24,7 @@ module Spree
           end
 
           attribute :customer_id do |address|
-            address.customer&.prefixed_id
+            address.customer_owner&.prefixed_id
           end
         end
       end

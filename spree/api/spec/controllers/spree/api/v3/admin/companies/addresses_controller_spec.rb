@@ -11,7 +11,7 @@ RSpec.describe Spree::Api::V3::Admin::Companies::AddressesController, type: :con
 
   describe 'GET #index' do
     it 'lists the node address book' do
-      entry = create(:company_address, company: company, label: 'HQ')
+      entry = create(:company_address, owner: company, label: 'HQ')
 
       get :index, params: { company_id: company.prefixed_id }, as: :json
 
@@ -19,7 +19,7 @@ RSpec.describe Spree::Api::V3::Admin::Companies::AddressesController, type: :con
       row = json_response['data'].first
       expect(row['id']).to eq(entry.prefixed_id)
       expect(row['label']).to eq('HQ')
-      expect(row['address']).to be_present
+      expect(row['address1']).to be_present
     end
 
     it '404s under another store company' do
@@ -30,33 +30,51 @@ RSpec.describe Spree::Api::V3::Admin::Companies::AddressesController, type: :con
   end
 
   describe 'POST #create' do
-    it 'creates an owned address row with a label and defaults' do
+    it 'creates an owned address with a label and defaults' do
       post :create, params: {
         company_id: company.prefixed_id,
         label: 'Plant 2 dock',
         default_shipping: true,
-        address: { first_name: 'Ops', last_name: 'Team', address1: '1 Dock Rd',
-                   city: 'Springfield', postal_code: '62704', country_code: 'US', state_code: 'IL' }
+        first_name: 'Ops', last_name: 'Team', address1: '1 Dock Rd',
+        city: 'Springfield', postal_code: '62704', country_code: 'US', state_code: 'IL'
       }, as: :json
 
       expect(response).to have_http_status(:created)
       expect(json_response['label']).to eq('Plant 2 dock')
       expect(json_response['default_shipping']).to be(true)
-      expect(company.company_addresses.sole.address.city).to eq('Springfield')
+      expect(company.addresses.sole.city).to eq('Springfield')
+      expect(company.reload.default_ship_address_id).to eq(company.addresses.sole.id)
     end
 
-    it 'demotes the previous default of the same kind' do
-      previous = create(:company_address, company: company, default_shipping: true)
+    # The node points at one address per kind, so promoting a new entry moves
+    # the pointer — there is no previous flag left to contradict it.
+    it 'moves the default to the new entry' do
+      previous = create(:company_address, owner: company)
+      company.update!(default_ship_address: previous)
 
       post :create, params: {
         company_id: company.prefixed_id,
         default_shipping: true,
-        address: { first_name: 'A', last_name: 'B', address1: '2 Way', city: 'Metropolis',
-                   postal_code: '10001', country_code: 'US', state_code: 'NY' }
+        first_name: 'A', last_name: 'B', address1: '2 Way', city: 'Metropolis',
+        postal_code: '10001', country_code: 'US', state_code: 'NY'
       }, as: :json
 
       expect(response).to have_http_status(:created)
-      expect(previous.reload.default_shipping).to be(false)
+      expect(company.reload.default_ship_address_id).not_to eq(previous.id)
+      expect(json_response['default_shipping']).to be(true)
+    end
+
+    # A company address names no person: the node names itself.
+    it 'accepts an entry with no contact name' do
+      post :create, params: {
+        company_id: company.prefixed_id,
+        label: 'Warehouse',
+        address1: '9 Depot Way', city: 'Springfield',
+        postal_code: '62704', country_code: 'US', state_code: 'IL'
+      }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(company.addresses.sole.first_name).to be_blank
     end
   end
 end

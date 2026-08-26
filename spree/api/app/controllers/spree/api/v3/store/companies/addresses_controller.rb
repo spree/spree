@@ -7,28 +7,23 @@ module Spree
           # deleting an entry are addressed directly
           # (Store::CompanyAddressesController).
           class AddressesController < BaseController
-            # Enumerated rather than borrowing a global list, which permits
-            # :id, :user_id and :deleted_at.
-            ADDRESS_KEYS = [
-              :first_name, :last_name, :company, :address1, :address2, :city,
-              :postal_code, :zipcode, :phone, :country_code, :state_code, :state_name, :label
-            ].freeze
-
+            include Spree::Api::V3::Store::Concerns::CompanyAddressDefaults
             # POST /api/v3/store/companies/:company_id/addresses
             def create
-              entry = @parent.company_addresses.new(permitted_params)
+              address = @parent.addresses.new(permitted_params)
 
-              if entry.save
-                render json: serialize_resource(entry), status: :created
+              if address.save
+                apply_default_flags!(address)
+                render json: serialize_resource(address), status: :created
               else
-                render_validation_error(entry.errors)
+                render_validation_error(address.errors)
               end
             end
 
             protected
 
             def model_class
-              Spree::CompanyAddress
+              Spree::Address
             end
 
             def serializer_class
@@ -36,19 +31,15 @@ module Spree
             end
 
             def scope
-              @parent.company_addresses
+              @parent.addresses
             end
 
             def parent_association
-              :company_addresses
-            end
-
-            def collection_includes
-              [:address]
+              :addresses
             end
 
             def permitted_params
-              params.permit(:label, :default_billing, :default_shipping, address: ADDRESS_KEYS)
+              params.permit(:label, *Spree::Api::V3::AddressParams::ADDRESS_KEYS)
             end
           end
         end

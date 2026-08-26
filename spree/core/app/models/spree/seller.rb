@@ -72,16 +72,25 @@ module Spree
     # go with it.
     accepts_nested_attributes_for :billing_address, update_only: true
 
+    # The address is validated through the association, so its owner has to be
+    # set before that runs — this is what tells the row it is a business
+    # address and so asks for no personal name.
+    before_validation :set_billing_address_owner
+
     # The API reads and writes this under one name, so the writer takes the
     # attributes a client sends as well as a record. Never an id: an address
     # carries no store of its own, so binding one by id would reach another
-    # store's rows. Either way the row is stamped as this seller's, which is
+    # store's rows. Either way the row is marked as this seller's, which is
     # what makes it read back with the business rules.
     def billing_address=(value)
       case value
       when Hash, ActionController::Parameters
-        super(Spree::Address.new(owner: self)) if billing_address.nil?
+        super(Spree::Address.new) if billing_address.nil?
         self.billing_address_attributes = value
+        # Set after the attributes are applied: nested assignment builds the
+        # row itself, and the owner is what tells it no personal name is
+        # wanted here.
+        billing_address.owner = self
       when Spree::Address
         value.owner = self
         super(value)
@@ -259,6 +268,10 @@ module Spree
     end
 
     private
+
+    def set_billing_address_owner
+      billing_address.owner = self if billing_address.present? && billing_address.owner != self
+    end
 
     def normalize_slug
       self.slug = (slug.presence || name).to_s.parameterize.presence

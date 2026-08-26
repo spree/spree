@@ -66,7 +66,7 @@ RSpec.describe Spree::Api::V3::Admin::CompaniesController, type: :controller do
     end
 
     it 'expands the address book and memberships on request' do
-      create(:company_address, company: company, label: 'HQ')
+      create(:company_address, owner: company, label: 'HQ')
       create(:company_membership, company: company)
 
       get :show, params: { id: company.prefixed_id, expand: 'addresses,memberships' }, as: :json

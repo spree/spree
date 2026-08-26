@@ -13,8 +13,9 @@ module Spree
 
             protected
 
+
             def model_class
-              Spree::CompanyAddress
+              Spree::Address
             end
 
             def serializer_class
@@ -22,15 +23,11 @@ module Spree
             end
 
             def scope
-              @parent.company_addresses
+              @parent.addresses
             end
 
             def parent_association
-              :company_addresses
-            end
-
-            def collection_includes
-              [:address]
+              :addresses
             end
           end
         end

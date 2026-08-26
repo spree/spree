@@ -5,19 +5,24 @@ module Spree
         # An entry in a company node's address book. Admin-only shape; the
         # storefront self-service surface serializes the same record through
         # its own class.
-        class CompanyAddressSerializer < V3::BaseSerializer
+        class CompanyAddressSerializer < Admin::AddressSerializer
           typelize label: [:string, nullable: true], company_id: :string,
                    default_billing: :boolean, default_shipping: :boolean
 
-          attributes :label, :default_billing, :default_shipping,
-                     created_at: :iso8601, updated_at: :iso8601
+          attributes :label
 
           # An entry always belongs to a company, so this is never null.
-          attribute :company_id do |entry|
-            entry.company.prefixed_id
+          attribute :company_id do |address|
+            address.owner.prefixed_id
           end
 
-          one :address, resource: proc { Spree.api.admin_address_serializer }
+          attribute :default_billing do |address|
+            address.owner.default_bill_address_id == address.id
+          end
+
+          attribute :default_shipping do |address|
+            address.owner.default_ship_address_id == address.id
+          end
         end
       end
     end

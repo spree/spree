@@ -184,7 +184,7 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
 
       response '200', 'addresses listed' do
         let!(:membership) { create(:company_membership, company: company, customer: user) }
-        let!(:entry) { create(:company_address, company: company, label: 'Headquarters') }
+        let!(:entry) { create(:company_address, owner: company, label: 'Headquarters') }
         let(:company_id) { company.prefixed_id }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
@@ -218,7 +218,7 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
 
       response '200', 'address book entry updated' do
         let!(:membership) { create(:company_membership, company: company, customer: user) }
-        let!(:entry) { create(:company_address, company: company, label: 'Headquarters') }
+        let!(:entry) { create(:company_address, owner: company, label: 'Headquarters') }
         let(:id) { entry.prefixed_id }
         let(:body) { { label: 'Northern Warehouse', default_shipping: true } }
         let(:'x-spree-api-key') { api_key.token }
@@ -241,7 +241,7 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
 
       response '204', 'address book entry removed' do
         let!(:membership) { create(:company_membership, company: company, customer: user) }
-        let!(:entry) { create(:company_address, company: company, label: 'Headquarters') }
+        let!(:entry) { create(:company_address, owner: company, label: 'Headquarters') }
         let(:id) { entry.prefixed_id }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
