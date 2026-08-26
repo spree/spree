@@ -97,8 +97,13 @@ module Spree
 
       # Scoped to this store's products, so an id from another tenant adds
       # nothing rather than being inserted past the row-level validation the
-      # bulk write skips.
-      new_ids = store.products.where(id: product_ids).ids - catalog_products.pluck(:product_id)
+      # bulk write skips. The caller's order is what the positions are numbered
+      # from, so the filtering keeps it — a database returns matching rows in
+      # whatever order it likes.
+      allowed_ids = store.products.where(id: product_ids).ids.to_set
+      taken_ids = catalog_products.pluck(:product_id).to_set
+
+      new_ids = product_ids.uniq.select { |id| allowed_ids.include?(id) && !taken_ids.include?(id) }
       return 0 if new_ids.empty?
 
       now = Time.current
