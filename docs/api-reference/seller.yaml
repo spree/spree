@@ -13896,7 +13896,6 @@ paths:
                 data:
                 - id: or_UkLWZg9DAJ
                   number: R1001
-                  email: alisha.pouros@fahey.info
                   customer_note:
                   currency: USD
                   total_quantity: 1
@@ -14046,7 +14045,6 @@ paths:
               example:
                 id: or_UkLWZg9DAJ
                 number: R1001
-                email: ivette.nitzsche@feil.biz
                 customer_note:
                 currency: USD
                 total_quantity: 1
@@ -14185,7 +14183,6 @@ paths:
               example:
                 id: or_UkLWZg9DAJ
                 number: R1001
-                email: jaqueline@koss.name
                 customer_note:
                 currency: USD
                 total_quantity: 1
@@ -15382,9 +15379,6 @@ components:
           type: string
         number:
           type: string
-        email:
-          type: string
-          nullable: true
         customer_note:
           type: string
           nullable: true
@@ -15439,7 +15433,6 @@ components:
       required:
       - id
       - number
-      - email
       - customer_note
       - currency
       - total_quantity

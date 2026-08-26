@@ -9,12 +9,18 @@ module Spree
         # how the customer paid the marketplace is not the seller's business,
         # and what they are owed is the commission ledger, not this.
         #
-        # The customer's contact details are here because the seller packs and
-        # posts the parcel, so they need the address and a way to reach the
-        # buyer about it.
+        # The addresses are here because the seller is merchant of record for
+        # their child order (docs/plans/6.0-multi-vendor-marketplace.md): the
+        # shipping address to post the parcel, the billing address because the
+        # invoice for that sale is theirs to issue. Both marketplace platforms
+        # we surveyed give a seller the same two.
+        #
+        # The buyer's email is not. A seller reaching the customer about a
+        # delivery has the phone on the shipping address; an email address is
+        # the one contact detail that lets a marketplace's customer be taken
+        # off it, and it is not needed to pack, post or invoice.
         class OrderSerializer < V3::BaseSerializer
           typelize number: :string,
-                   email: [:string, nullable: true],
                    customer_note: [:string, nullable: true],
                    currency: :string,
                    total_quantity: :number,
@@ -25,7 +31,7 @@ module Spree
                    tax_total: [:string, nullable: true], display_tax_total: [:string, nullable: true],
                    total: [:string, nullable: true], display_total: [:string, nullable: true]
 
-          attributes :number, :email, :customer_note, :currency, :total_quantity,
+          attributes :number, :customer_note, :currency, :total_quantity,
                      :status, :fulfillment_status, :payment_status,
                      completed_at: :iso8601, created_at: :iso8601, updated_at: :iso8601
 

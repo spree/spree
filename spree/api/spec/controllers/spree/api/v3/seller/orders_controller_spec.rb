@@ -95,6 +95,25 @@ RSpec.describe Spree::Api::V3::Seller::OrdersController, type: :controller do
       expect(json_response).not_to have_key('payments')
     end
 
+    # The seller is merchant of record for their child order, so they invoice
+    # the buyer and need the billing address to do it — both marketplace
+    # platforms we surveyed give a seller the same two addresses.
+    it 'carries the addresses the seller ships and invoices to' do
+      get :show, params: { id: mine.prefixed_id }, as: :json
+
+      expect(json_response).to include('shipping_address', 'billing_address')
+    end
+
+    # A phone on the shipping address is how a seller reaches a buyer about a
+    # delivery. An email is what takes a marketplace's customer off it, and
+    # packing, posting and invoicing need none.
+    it "withholds the buyer's email" do
+      get :show, params: { id: mine.prefixed_id }, as: :json
+
+      expect(json_response).not_to have_key('email')
+      expect(json_response['shipping_address']).to have_key('phone')
+    end
+
     it "404s on another seller's order" do
       get :show, params: { id: theirs.prefixed_id }, as: :json
 
