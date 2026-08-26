@@ -66,18 +66,16 @@ export function CompanyAddressSheet({
       label: entry.label ?? '',
       default_billing: entry.default_billing,
       default_shipping: entry.default_shipping,
-      address: {
-        first_name: entry.address?.first_name ?? '',
-        last_name: entry.address?.last_name ?? '',
-        company: entry.address?.company ?? '',
-        address1: entry.address?.address1 ?? '',
-        address2: entry.address?.address2 ?? '',
-        city: entry.address?.city ?? '',
-        postal_code: entry.address?.postal_code ?? '',
-        phone: entry.address?.phone ?? '',
-        country_code: entry.address?.country_code ?? '',
-        state_code: entry.address?.state_code ?? '',
-      },
+      first_name: entry.first_name ?? '',
+      last_name: entry.last_name ?? '',
+      company: entry.company ?? '',
+      address1: entry.address1 ?? '',
+      address2: entry.address2 ?? '',
+      city: entry.city ?? '',
+      postal_code: entry.postal_code ?? '',
+      phone: entry.phone ?? '',
+      country_code: entry.country_code ?? '',
+      state_code: entry.state_code ?? '',
     })
   }, [open, entry, form])
 
@@ -132,11 +130,7 @@ export function CompanyAddressSheet({
                 <FieldError errors={[errors.label]} />
               </Field>
 
-              <AddressFieldset
-                form={form}
-                prefix="address"
-                legend={t('admin.company_addresses.address_legend')}
-              />
+              <AddressFieldset form={form} legend={t('admin.company_addresses.address_legend')} />
 
               <Controller
                 control={form.control}

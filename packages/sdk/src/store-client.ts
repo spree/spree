@@ -1210,11 +1210,10 @@ export class StoreClient {
 
       create: (
         companyId: string,
-        params: {
+        params: Record<string, unknown> & {
           label?: string
           default_billing?: boolean
           default_shipping?: boolean
-          address?: Record<string, string>
         },
         options?: RequestOptions,
       ): Promise<CompanyAddress> =>
@@ -1286,11 +1285,10 @@ export class StoreClient {
   readonly companyAddresses = {
     update: (
       id: string,
-      params: {
+      params: Record<string, unknown> & {
         label?: string
         default_billing?: boolean
         default_shipping?: boolean
-        address?: Record<string, string>
       },
       options?: RequestOptions,
     ): Promise<CompanyAddress> =>

@@ -16,13 +16,11 @@ module Spree
             address.owner.prefixed_id
           end
 
-          attribute :default_billing do |address|
-            address.owner.default_bill_address_id == address.id
-          end
-
-          attribute :default_shipping do |address|
-            address.owner.default_ship_address_id == address.id
-          end
+          # The base serializer already reports these as is_default_billing /
+          # is_default_shipping; the book surface has always named them without
+          # the prefix, so both names answer the same predicate.
+          attribute :default_billing, &:is_default_billing?
+          attribute :default_shipping, &:is_default_shipping?
         end
       end
     end

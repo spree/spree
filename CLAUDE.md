@@ -203,6 +203,9 @@ Per-request context available in models, controllers, jobs, and services:
 - NEVER hardcode table names, always use `Model.table_name` in models, queries, scopes, etc.
 - ALWAYS use Arel, scopes and ActiveRecord helpers to build queries, only use raw SQL if cannot use Arel
 - ALWAYS use normalizes for normalization of attributes, DON'T use custom before_action callbacks
+- ALWAYS use insert_all/upsert_all when creating records in bulk, this relies on proper database uniqueness indexes. Special treatment for MySQL is needed though
+- ALWAYS put callbacks in private group
+- ALWAYS use existing vocabulary and naming patterns, avoid slang terms
 
 ```ruby
 class Spree::Product < Spree.base_class

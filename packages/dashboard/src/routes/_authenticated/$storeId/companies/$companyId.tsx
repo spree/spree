@@ -520,7 +520,7 @@ function AddressBookCard({ company, canEdit }: { company: Company; canEdit: bool
     const ok = await confirm({
       title: t('admin.company_addresses.remove_confirm.title'),
       message: t('admin.company_addresses.remove_confirm.message', {
-        label: entry.label || entry.address?.address1 || '',
+        label: entry.label || entry.address1 || '',
       }),
       variant: 'destructive',
       confirmLabel: t('admin.actions.delete'),
@@ -570,7 +570,7 @@ function AddressBookCard({ company, canEdit }: { company: Company; canEdit: bool
                     <Badge variant="outline">{t('admin.company_addresses.default_shipping')}</Badge>
                   )}
                 </span>
-                <AddressBlock address={entry.address} />
+                <AddressBlock address={entry} />
               </div>
               {canEdit && (
                 <span className="flex shrink-0 gap-1">

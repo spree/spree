@@ -10274,32 +10274,30 @@ paths:
             application/json:
               example:
                 data:
-                - id: caddr_UkLWZg9DAJ
+                - id: addr_EfhxLZ9ck8
+                  first_name:
+                  last_name:
+                  full_name: ''
+                  address1: 159 Lovely Street
+                  address2: Northwest
+                  postal_code: '10118'
+                  city: New York
+                  phone: 555-555-0199
+                  company: Company
+                  country_name: United States
+                  country_code: US
+                  state_text: NY
+                  state_code: NY
+                  quick_checkout: false
+                  is_default_billing: false
+                  is_default_shipping: false
+                  state_abbr: NY
+                  country_iso: US
+                  state_name: New York
                   label: Headquarters
+                  company_id: comp_UkLWZg9DAJ
                   default_billing: false
                   default_shipping: false
-                  company_id: comp_UkLWZg9DAJ
-                  address:
-                    id: addr_EfhxLZ9ck8
-                    first_name: John
-                    last_name: Doe
-                    full_name: John Doe
-                    address1: 159 Lovely Street
-                    address2: Northwest
-                    postal_code: '10118'
-                    city: New York
-                    phone: 555-555-0199
-                    company: Company
-                    country_name: United States
-                    country_code: US
-                    state_text: NY
-                    state_code: NY
-                    quick_checkout: false
-                    is_default_billing: false
-                    is_default_shipping: false
-                    state_abbr: NY
-                    country_iso: US
-                    state_name: New York
                 meta:
                   page: 1
                   limit: 25
@@ -10344,32 +10342,30 @@ paths:
           content:
             application/json:
               example:
-                id: caddr_UkLWZg9DAJ
+                id: addr_EfhxLZ9ck8
+                first_name:
+                last_name:
+                full_name: ''
+                address1: 162 Lovely Street
+                address2: Northwest
+                postal_code: '10118'
+                city: New York
+                phone: 555-555-0199
+                company: Company
+                country_name: United States
+                country_code: US
+                state_text: NY
+                state_code: NY
+                quick_checkout: false
+                is_default_billing: false
+                is_default_shipping: true
+                state_abbr: NY
+                country_iso: US
+                state_name: New York
                 label: Northern Warehouse
+                company_id: comp_UkLWZg9DAJ
                 default_billing: false
                 default_shipping: true
-                company_id: comp_UkLWZg9DAJ
-                address:
-                  id: addr_EfhxLZ9ck8
-                  first_name: John
-                  last_name: Doe
-                  full_name: John Doe
-                  address1: 162 Lovely Street
-                  address2: Northwest
-                  postal_code: '10118'
-                  city: New York
-                  phone: 555-555-0199
-                  company: Company
-                  country_name: United States
-                  country_code: US
-                  state_text: NY
-                  state_code: NY
-                  quick_checkout: false
-                  is_default_billing: false
-                  is_default_shipping: false
-                  state_abbr: NY
-                  country_iso: US
-                  state_name: New York
       requestBody:
         content:
           application/json:
@@ -12040,24 +12036,90 @@ components:
       properties:
         id:
           type: string
+        first_name:
+          type: string
+          nullable: true
+        last_name:
+          type: string
+          nullable: true
+        full_name:
+          type: string
+        address1:
+          type: string
+          nullable: true
+        address2:
+          type: string
+          nullable: true
+        postal_code:
+          type: string
+          nullable: true
+        city:
+          type: string
+          nullable: true
+        phone:
+          type: string
+          nullable: true
+        company:
+          type: string
+          nullable: true
+        country_name:
+          type: string
+        country_code:
+          type: string
+        state_text:
+          type: string
+          nullable: true
+        state_code:
+          type: string
+          nullable: true
+        quick_checkout:
+          type: boolean
+        is_default_billing:
+          type: boolean
+        is_default_shipping:
+          type: boolean
+        state_abbr:
+          type: string
+          nullable: true
+        country_iso:
+          type: string
+        state_name:
+          type: string
+          nullable: true
         label:
           type: string
           nullable: true
+        company_id:
+          type: string
         default_billing:
           type: boolean
         default_shipping:
           type: boolean
-        company_id:
-          type: string
-        address:
-          "$ref": "#/components/schemas/Address"
       required:
       - id
+      - first_name
+      - last_name
+      - full_name
+      - address1
+      - address2
+      - postal_code
+      - city
+      - phone
+      - company
+      - country_name
+      - country_code
+      - state_text
+      - state_code
+      - quick_checkout
+      - is_default_billing
+      - is_default_shipping
+      - state_abbr
+      - country_iso
+      - state_name
       - label
+      - company_id
       - default_billing
       - default_shipping
-      - company_id
-      - address
       x-typelizer: true
     CompanyInvitation:
       type: object

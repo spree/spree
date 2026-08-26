@@ -218,6 +218,16 @@ describe Spree::Company, type: :model do
       expect(division.default_shipping_address).to eq(inherited)
     end
 
+    # The address answers this for whichever owner holds it, so a company's
+    # entry reports its own node's choice rather than always false.
+    it 'reports the default on the address itself' do
+      own = create(:company_address, owner: division)
+      division.update!(default_bill_address: own)
+
+      expect(own.reload.is_default_billing?).to be(true)
+      expect(own.is_default_shipping?).to be(false)
+    end
+
     it 'is nil when nobody set one' do
       expect(division.default_billing_address).to be_nil
     end

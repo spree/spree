@@ -14,7 +14,8 @@ import { useTranslation } from 'react-i18next'
  * postal code, country/state pickers and phone.
  *
  * Generic over the form values so a page carrying an address under any key can
- * use it; `prefix` names that key.
+ * use it; `prefix` names that key. Omit it when the address fields sit at the
+ * top level of the form, as they do for a company's address book entry.
  *
  * **Reach for `AddressFormDialog` (dashboard-core) first** — it owns one
  * address end to end, with its own sheet, Zod validation and 422 mapping, and
@@ -33,15 +34,18 @@ export function AddressFieldset<TValues extends FieldValues>({
   legend,
 }: {
   form: UseFormReturn<TValues>
-  /** The form key holding the address block, e.g. `billing_address`. */
-  prefix: Path<TValues>
+  /**
+   * The form key holding the address block, e.g. `billing_address`. Omit when
+   * the fields live at the top level of the form.
+   */
+  prefix?: Path<TValues>
   legend?: string
 }) {
   const { t } = useTranslation()
   // Paths are composed as strings and cast once here: RHF cannot infer that
   // `${prefix}.city` is a key of TValues, and spelling every field out as a
   // generic parameter would make every caller declare its address shape twice.
-  const path = (field: string) => `${prefix}.${field}` as Path<TValues>
+  const path = (field: string) => (prefix ? `${prefix}.${field}` : field) as Path<TValues>
   const countryCode = form.watch(path('country_code')) as string | undefined
   const { states } = useCountryStates(countryCode)
 
@@ -49,7 +53,8 @@ export function AddressFieldset<TValues extends FieldValues>({
   // are registered at, so each one renders beside the input it belongs to
   // rather than as one banner the merchant has to map back themselves.
   const errorFor = (field: string): RhfFieldError | undefined => {
-    const block = form.formState.errors[prefix] as Record<string, RhfFieldError> | undefined
+    const errors = form.formState.errors as Record<string, unknown>
+    const block = (prefix ? errors[prefix] : errors) as Record<string, RhfFieldError> | undefined
 
     return block?.[field]
   }
@@ -60,51 +65,62 @@ export function AddressFieldset<TValues extends FieldValues>({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Field>
-          <FieldLabel htmlFor={`${prefix}-first-name`}>
+          <FieldLabel htmlFor={`${prefix ?? 'address'}-first-name`}>
             {t('admin.fields.first_name.label')}
           </FieldLabel>
-          <Input id={`${prefix}-first-name`} {...form.register(path('first_name'))} />
+          <Input id={`${prefix ?? 'address'}-first-name`} {...form.register(path('first_name'))} />
           <FieldError errors={[errorFor('first_name')]} />
         </Field>
         <Field>
-          <FieldLabel htmlFor={`${prefix}-last-name`}>
+          <FieldLabel htmlFor={`${prefix ?? 'address'}-last-name`}>
             {t('admin.fields.last_name.label')}
           </FieldLabel>
-          <Input id={`${prefix}-last-name`} {...form.register(path('last_name'))} />
+          <Input id={`${prefix ?? 'address'}-last-name`} {...form.register(path('last_name'))} />
           <FieldError errors={[errorFor('last_name')]} />
         </Field>
       </div>
 
       <Field>
-        <FieldLabel htmlFor={`${prefix}-address1`}>{t('admin.fields.address1.label')}</FieldLabel>
-        <Input id={`${prefix}-address1`} {...form.register(path('address1'))} />
+        <FieldLabel htmlFor={`${prefix ?? 'address'}-address1`}>
+          {t('admin.fields.address1.label')}
+        </FieldLabel>
+        <Input id={`${prefix ?? 'address'}-address1`} {...form.register(path('address1'))} />
         <FieldError errors={[errorFor('address1')]} />
       </Field>
 
       <Field>
-        <FieldLabel htmlFor={`${prefix}-address2`}>{t('admin.fields.address2.label')}</FieldLabel>
-        <Input id={`${prefix}-address2`} {...form.register(path('address2'))} />
+        <FieldLabel htmlFor={`${prefix ?? 'address'}-address2`}>
+          {t('admin.fields.address2.label')}
+        </FieldLabel>
+        <Input id={`${prefix ?? 'address'}-address2`} {...form.register(path('address2'))} />
         <FieldError errors={[errorFor('address2')]} />
       </Field>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Field>
-          <FieldLabel htmlFor={`${prefix}-city`}>{t('admin.fields.city.label')}</FieldLabel>
-          <Input id={`${prefix}-city`} {...form.register(path('city'))} />
+          <FieldLabel htmlFor={`${prefix ?? 'address'}-city`}>
+            {t('admin.fields.city.label')}
+          </FieldLabel>
+          <Input id={`${prefix ?? 'address'}-city`} {...form.register(path('city'))} />
           <FieldError errors={[errorFor('city')]} />
         </Field>
         <Field>
-          <FieldLabel htmlFor={`${prefix}-postal-code`}>
+          <FieldLabel htmlFor={`${prefix ?? 'address'}-postal-code`}>
             {t('admin.fields.postal_code.label')}
           </FieldLabel>
-          <Input id={`${prefix}-postal-code`} {...form.register(path('postal_code'))} />
+          <Input
+            id={`${prefix ?? 'address'}-postal-code`}
+            {...form.register(path('postal_code'))}
+          />
           <FieldError errors={[errorFor('postal_code')]} />
         </Field>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Field>
-          <FieldLabel htmlFor={`${prefix}-country`}>{t('admin.fields.country.label')}</FieldLabel>
+          <FieldLabel htmlFor={`${prefix ?? 'address'}-country`}>
+            {t('admin.fields.country.label')}
+          </FieldLabel>
           <Controller
             name={path('country_code')}
             control={form.control}
@@ -125,7 +141,9 @@ export function AddressFieldset<TValues extends FieldValues>({
             than vanishing — otherwise the address simply cannot be completed. */}
         {countryCode && states.length > 0 ? (
           <Field>
-            <FieldLabel htmlFor={`${prefix}-state`}>{t('admin.fields.state.label')}</FieldLabel>
+            <FieldLabel htmlFor={`${prefix ?? 'address'}-state`}>
+              {t('admin.fields.state.label')}
+            </FieldLabel>
             <Controller
               name={path('state_code')}
               control={form.control}
@@ -142,18 +160,23 @@ export function AddressFieldset<TValues extends FieldValues>({
           </Field>
         ) : (
           <Field>
-            <FieldLabel htmlFor={`${prefix}-state-name`}>
+            <FieldLabel htmlFor={`${prefix ?? 'address'}-state-name`}>
               {t('admin.fields.state_name.label')}
             </FieldLabel>
-            <Input id={`${prefix}-state-name`} {...form.register(path('state_name'))} />
+            <Input
+              id={`${prefix ?? 'address'}-state-name`}
+              {...form.register(path('state_name'))}
+            />
             <FieldError errors={[errorFor('state_name')]} />
           </Field>
         )}
       </div>
 
       <Field>
-        <FieldLabel htmlFor={`${prefix}-phone`}>{t('admin.fields.phone.label')}</FieldLabel>
-        <Input id={`${prefix}-phone`} {...form.register(path('phone'))} />
+        <FieldLabel htmlFor={`${prefix ?? 'address'}-phone`}>
+          {t('admin.fields.phone.label')}
+        </FieldLabel>
+        <Input id={`${prefix ?? 'address'}-phone`} {...form.register(path('phone'))} />
         <FieldError errors={[errorFor('phone')]} />
       </Field>
     </fieldset>

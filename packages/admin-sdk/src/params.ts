@@ -2426,17 +2426,18 @@ export interface CompanyAddressFieldsParams {
   country_code?: string
   state_code?: string
   state_name?: string
-  label?: string
 }
 
-export interface CompanyAddressParams {
+/**
+ * An address book entry is the address itself, so its fields sit alongside the
+ * label rather than under an `address` key. Send only what changes on update.
+ */
+export interface CompanyAddressParams extends CompanyAddressFieldsParams {
   /** 'Headquarters', 'Plant 2 dock', ... */
   label?: string | null
-  /** At most one default of each kind per node; promoting demotes the prior one. */
+  /** The node points at one address per kind, so promoting moves the pointer. */
   default_billing?: boolean
   default_shipping?: boolean
-  /** Edits the entry's existing address in place — send only what changes. */
-  address?: CompanyAddressFieldsParams
 }
 
 export interface CompanyMembershipCreateParams {

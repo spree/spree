@@ -49,11 +49,12 @@ const addressFieldsSchema = z.object({
   state_name: z.string().optional(),
 })
 
-export const companyAddressFormSchema = z.object({
+// The entry is the address itself, so the address fields sit alongside the
+// label and the two default flags rather than under an `address` key.
+export const companyAddressFormSchema = addressFieldsSchema.extend({
   label: z.string().optional(),
   default_billing: z.boolean(),
   default_shipping: z.boolean(),
-  address: addressFieldsSchema,
 })
 
 export type CompanyAddressFormValues = z.infer<typeof companyAddressFormSchema>
@@ -62,31 +63,29 @@ export const COMPANY_ADDRESS_DEFAULTS: CompanyAddressFormValues = {
   label: '',
   default_billing: false,
   default_shipping: false,
-  address: {
-    first_name: '',
-    last_name: '',
-    company: '',
-    address1: '',
-    address2: '',
-    city: '',
-    postal_code: '',
-    phone: '',
-    country_code: '',
-    state_code: '',
-    state_name: '',
-  },
+  first_name: '',
+  last_name: '',
+  company: '',
+  address1: '',
+  address2: '',
+  city: '',
+  postal_code: '',
+  phone: '',
+  country_code: '',
+  state_code: '',
+  state_name: '',
 }
 
 export function companyAddressValuesToParams(
   values: CompanyAddressFormValues,
 ): CompanyAddressParams {
+  const { label, default_billing, default_shipping, ...address } = values
+
   return {
-    label: blankToNull(values.label),
-    default_billing: values.default_billing,
-    default_shipping: values.default_shipping,
-    address: Object.fromEntries(
-      Object.entries(values.address).filter(([, value]) => value !== undefined),
-    ),
+    label: blankToNull(label),
+    default_billing,
+    default_shipping,
+    ...Object.fromEntries(Object.entries(address).filter(([, value]) => value !== undefined)),
   }
 }
 

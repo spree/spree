@@ -197,6 +197,16 @@ module Spree
       owner_type == Spree.customer_class.to_s
     end
 
+    # @param kind [Symbol] :bill or :ship
+    # @return [Integer, nil] the owner's chosen address of that kind
+    def default_address_id(kind)
+      return nil if owner.nil?
+      return owner.public_send(:"#{kind}_address_id") if customer_owned?
+      return owner.public_send(:"default_#{kind}_address_id") if owner.is_a?(Spree::Company)
+
+      nil
+    end
+
     # @deprecated The address's owner may be a customer, a company node or a
     #   seller, so {#owner} replaces the customer-only association. Removed in
     #   Spree 6.1.
@@ -236,15 +246,17 @@ module Spree
       owner.name if owner.is_a?(Spree::Company)
     end
 
-    # In 6.0 these become real columns on Address, replacing User#bill_address_id / ship_address_id.
-    # For now they delegate to the User FK so the API shape is stable.
+    # Whether the owner prefills with this address. Every owner keeps the
+    # pointer itself — a customer on bill_address_id / ship_address_id, a
+    # company node on its own two columns — so the answer is the same question
+    # asked of whichever one owns the row.
     def is_default_billing?
-      customer_owner.present? && id == customer_owner.bill_address_id
+      default_address_id(:bill) == id
     end
     alias_method :is_default_billing, :is_default_billing?
 
     def is_default_shipping?
-      customer_owner.present? && id == customer_owner.ship_address_id
+      default_address_id(:ship) == id
     end
     alias_method :is_default_shipping, :is_default_shipping?
 
