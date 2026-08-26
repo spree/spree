@@ -6,7 +6,10 @@ import { useTranslation } from 'react-i18next'
 import { composeOptionsText } from '../products/variants-matrix'
 import { currencyParts } from './currency-parts'
 import { normalizeMoneyInput } from './normalize-money'
-import { useFormOptionTypes as useOptionTypes } from './use-product-form-data'
+import {
+  useFormCurrencyLocale as useCurrencyLocale,
+  useFormOptionTypes as useOptionTypes,
+} from './use-product-form-data'
 
 interface Props {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -36,10 +39,7 @@ export function ProductBulkPriceEditor({ form, currency, productName }: Props) {
   const variants = useWatch({ control: form.control, name: 'variants' }) ?? []
   const { data: optionTypesData } = useOptionTypes()
   const optionTypes = useMemo(() => optionTypesData?.data ?? [], [optionTypesData])
-  // Formatting locale is the operator dashboard's market lookup; without it
-  // Intl falls back to the browser's, which is the right answer for a panel
-  // that has no markets to consult.
-  const localeForCurrency = (_currency?: string): string | undefined => undefined
+  const localeForCurrency = useCurrencyLocale()
 
   // Format the grid in the currency's market locale (e.g. EUR → `de`, comma
   // decimal). The same locale normalizes the merchant's input back to canonical

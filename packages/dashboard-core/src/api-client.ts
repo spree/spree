@@ -156,10 +156,27 @@ export interface PanelApiClient {
   tags?: {
     list(params?: Record<string, unknown>): Promise<{ data: Array<{ name: string }> }>
   }
+  /**
+   * Currency-to-locale pairs, which is what tells a money field whether
+   * `34,56` is thirty-four and a half or three thousand. The operator's
+   * markets answer it; a panel that registers none falls back to the UI
+   * language, the same answer the operator's hook gives for an unmatched
+   * currency.
+   */
+  markets?: {
+    list(params?: Record<string, unknown>): Promise<{ data: PanelMarket[] }>
+  }
 }
 
 export interface PanelDeliveryProfile extends PanelNamedRecord {
   default?: boolean
+}
+
+/** A market, as the money fields read it. */
+export interface PanelMarket {
+  id: string
+  currency?: string | null
+  default_locale?: string | null
 }
 
 /** A library file, as the picker lists it. */

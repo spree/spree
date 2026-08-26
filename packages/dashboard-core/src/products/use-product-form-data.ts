@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type {
   PanelCollection,
   PanelDeliveryProfile,
+  PanelMarket,
   PanelNamedRecord,
   PanelOptionType,
   PanelProductType,
@@ -204,5 +205,32 @@ export function collectionAutocompleteProps(queryKey: string) {
     hydrate: async (ids: string[]) =>
       (await client.collections?.list({ id_in: ids, limit: ids.length })) ?? { data: [] },
     getOptionLabel: (collection: PanelCollection) => collection.name ?? collection.id,
+  }
+}
+
+/**
+ * Resolves a currency to the locale its amounts are typed and shown in, so a
+ * EUR field accepts `1.234,56` and normalizes it to `1234.56`. Mirrors the
+ * operator dashboard's `useCurrencyLocale`, reading through the registered
+ * client so the shared price editor works in either panel; a panel with no
+ * markets answers undefined and callers fall back to the UI language.
+ */
+export function useFormCurrencyLocale(): (currency: string | undefined) => string | undefined {
+  const client = getApiClient()
+
+  const { data } = useQuery({
+    queryKey: useResourceKey('panel-form-markets'),
+    queryFn: async (): Promise<{ data: PanelMarket[] }> =>
+      (await client.markets?.list({ limit: 100 })) ?? { data: [] },
+    enabled: Boolean(client.markets),
+    staleTime: FIVE_MINUTES,
+  })
+
+  const markets = data?.data ?? []
+
+  return (currency) => {
+    if (!currency) return undefined
+
+    return markets.find((market) => market.currency === currency)?.default_locale ?? undefined
   }
 }
