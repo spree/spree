@@ -4,12 +4,7 @@ import { mapSpreeErrorsToForm } from '@spree/dashboard-core'
 import {
   Button,
   Checkbox,
-  Field,
-  FieldDescription,
-  FieldError,
   FieldGroup,
-  FieldLabel,
-  Input,
   Sheet,
   SheetContent,
   SheetDescription,
@@ -30,17 +25,18 @@ import {
 import { AddressFieldset } from './address-fieldset'
 
 /**
- * Creates an entry in a company node's address book, or edits one. The entry
- * owns its address row outright; promoting it to a default demotes the prior
- * default of the same kind.
+ * Creates an entry in a company node's address book, or edits one. The node
+ * owns the address outright, and points at one entry per kind as its default.
  */
 export function CompanyAddressSheet({
   companyId,
+  companyName,
   entry,
   open,
   onOpenChange,
 }: {
   companyId: string
+  companyName: string
   entry?: Address
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -115,22 +111,7 @@ export function CompanyAddressSheet({
                 </p>
               )}
 
-              <Field>
-                <FieldLabel htmlFor="company-address-label">
-                  {t('admin.fields.company_address.label.label')}
-                </FieldLabel>
-                <Input
-                  id="company-address-label"
-                  autoFocus
-                  placeholder={t('admin.fields.company_address.label.placeholder')}
-                  aria-invalid={!!errors.label || undefined}
-                  {...form.register('label')}
-                />
-                <FieldDescription>{t('admin.fields.company_address.label.help')}</FieldDescription>
-                <FieldError errors={[errors.label]} />
-              </Field>
-
-              <AddressFieldset form={form} legend={t('admin.company_addresses.address_legend')} />
+              <AddressFieldset form={form} companyName={companyName} withLabel />
 
               <Controller
                 control={form.control}

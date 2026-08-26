@@ -441,7 +441,7 @@
         "message": "{{label}} will be removed from the address book. This cannot be undone.",
         "title": "Delete this address?"
       },
-      "sheet_description": "A labeled ship-to or bill-to site for this node. At most one default of each kind; promoting an entry demotes the previous default.",
+      "sheet_description": "A labeled ship-to or bill-to site for this node. The node points at one address per kind as its default.",
       "title": "Address book"
     },
     "company_invitations": {
@@ -1001,10 +1001,12 @@
           "help": "Your own reference for this business, unique within the store.",
           "placeholder": "ACME-001"
         },
+        "help": "Taken from the company this address belongs to.",
         "kind": {
           "help": "A company is a legal entity that can hold tax registrations. A division borrows its legal entity’s.",
           "label": "Kind"
         },
+        "label": "Company",
         "name": {
           "placeholder": "Acme Industries"
         }

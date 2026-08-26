@@ -399,40 +399,42 @@ export function AddressFormDialog({
               {showDefaultFlags && (
                 <>
                   <Field>
-                    <div className="flex items-start justify-between gap-4">
-                      <FieldLabel htmlFor="addr-default-billing" className="cursor-pointer">
-                        {t('admin.fields.address.is_default_billing.label')}
-                      </FieldLabel>
-                      <Controller
-                        name="is_default_billing"
-                        control={form.control}
-                        render={({ field }) => (
+                    <Controller
+                      name="is_default_billing"
+                      control={form.control}
+                      render={({ field }) => (
+                        <label
+                          htmlFor="addr-default-billing"
+                          className="flex cursor-pointer items-center gap-2 text-sm"
+                        >
                           <Checkbox
                             id="addr-default-billing"
                             checked={!!field.value}
                             onCheckedChange={field.onChange}
                           />
-                        )}
-                      />
-                    </div>
+                          {t('admin.fields.address.is_default_billing.label')}
+                        </label>
+                      )}
+                    />
                   </Field>
                   <Field>
-                    <div className="flex items-start justify-between gap-4">
-                      <FieldLabel htmlFor="addr-default-shipping" className="cursor-pointer">
-                        {t('admin.fields.address.is_default_shipping.label')}
-                      </FieldLabel>
-                      <Controller
-                        name="is_default_shipping"
-                        control={form.control}
-                        render={({ field }) => (
+                    <Controller
+                      name="is_default_shipping"
+                      control={form.control}
+                      render={({ field }) => (
+                        <label
+                          htmlFor="addr-default-shipping"
+                          className="flex cursor-pointer items-center gap-2 text-sm"
+                        >
                           <Checkbox
                             id="addr-default-shipping"
                             checked={!!field.value}
                             onCheckedChange={field.onChange}
                           />
-                        )}
-                      />
-                    </div>
+                          {t('admin.fields.address.is_default_shipping.label')}
+                        </label>
+                      )}
+                    />
                   </Field>
                 </>
               )}

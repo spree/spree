@@ -441,7 +441,7 @@
         "message": "{{label}} sera retirée du carnet d’adresses. Cette action est irréversible.",
         "title": "Supprimer cette adresse ?"
       },
-      "sheet_description": "Un site de livraison ou de facturation nommé pour ce nœud. Au plus un défaut de chaque type ; en promouvoir un rétrograde le précédent.",
+      "sheet_description": "Un site de livraison ou de facturation nommé pour ce nœud. Le nœud désigne une adresse par défaut de chaque type.",
       "title": "Carnet d’adresses"
     },
     "company_invitations": {
@@ -1001,10 +1001,12 @@
           "help": "Votre propre référence pour cette entreprise, unique dans la boutique.",
           "placeholder": "ACME-001"
         },
+        "help": "Repris de l'entreprise à laquelle appartient cette adresse.",
         "kind": {
           "help": "Une entreprise est une entité juridique pouvant détenir des immatriculations fiscales. Une division utilise celles de son entité juridique.",
           "label": "Type"
         },
+        "label": "Entreprise",
         "name": {
           "placeholder": "Acme Industries"
         }

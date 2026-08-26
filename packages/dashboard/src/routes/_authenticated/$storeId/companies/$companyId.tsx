@@ -568,24 +568,27 @@ function AddressBookCard({ company, canEdit }: { company: Company; canEdit: bool
                 <AddressBlock address={entry} />
               </div>
               {canEdit && (
-                <span className="flex shrink-0 gap-1">
-                  <Button
-                    variant="ghost"
-                    size="icon-xs"
-                    onClick={() => setEditing(entry)}
-                    aria-label={t('admin.actions.edit')}
-                  >
-                    <PencilIcon className="size-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon-xs"
-                    onClick={() => handleRemove(entry)}
-                    aria-label={t('admin.actions.delete')}
-                  >
-                    <TrashIcon className="size-4" />
-                  </Button>
-                </span>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon-xs" className="shrink-0">
+                      <EllipsisVerticalIcon className="size-4" />
+                      <span className="sr-only">{t('admin.actions.actions_menu')}</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => setEditing(entry)}>
+                      <PencilIcon className="size-4" />
+                      {t('admin.actions.edit')}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="text-destructive focus:text-destructive"
+                      onClick={() => handleRemove(entry)}
+                    >
+                      <TrashIcon className="size-4" />
+                      {t('admin.actions.delete')}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               )}
             </div>
           ))}
@@ -596,6 +599,7 @@ function AddressBookCard({ company, canEdit }: { company: Company; canEdit: bool
       {editing && (
         <CompanyAddressSheet
           companyId={company.id}
+          companyName={company.name}
           entry={editing === 'new' ? undefined : editing}
           open
           onOpenChange={(open) => !open && setEditing(null)}

@@ -441,7 +441,7 @@
         "message": "{{label}} wird aus dem Adressbuch entfernt. Dies kann nicht rückgängig gemacht werden.",
         "title": "Diese Adresse löschen?"
       },
-      "sheet_description": "Ein benannter Liefer- oder Rechnungsstandort dieses Knotens. Höchstens ein Standard je Art; ein neuer Standard löst den vorherigen ab.",
+      "sheet_description": "Ein benannter Liefer- oder Rechnungsstandort für diesen Knoten. Der Knoten verweist je Art auf eine Standardadresse.",
       "title": "Adressbuch"
     },
     "company_invitations": {
@@ -1001,10 +1001,12 @@
           "help": "Ihre eigene Referenz für diese Firma, eindeutig innerhalb des Shops.",
           "placeholder": "ACME-001"
         },
+        "help": "Wird vom Unternehmen übernommen, zu dem diese Adresse gehört.",
         "kind": {
           "help": "Ein Unternehmen ist eine juristische Einheit mit eigenen Steuerregistrierungen. Eine Abteilung nutzt die ihrer juristischen Einheit.",
           "label": "Art"
         },
+        "label": "Unternehmen",
         "name": {
           "placeholder": "Acme Industries"
         }

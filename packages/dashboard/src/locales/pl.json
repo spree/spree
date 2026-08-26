@@ -451,7 +451,7 @@
         "message": "{{label}} zostanie usunięty z książki adresowej. Tej operacji nie można cofnąć.",
         "title": "Usunąć ten adres?"
       },
-      "sheet_description": "Nazwany adres dostawy lub rozliczeń tego węzła. Najwyżej jeden domyślny każdego rodzaju; nowy domyślny zastępuje poprzedni.",
+      "sheet_description": "Nazwana lokalizacja dostawy lub rozliczeń dla tego węzła. Węzeł wskazuje jeden adres domyślny każdego rodzaju.",
       "title": "Książka adresowa"
     },
     "company_invitations": {
@@ -1019,10 +1019,12 @@
           "help": "Twój własny identyfikator tej firmy, unikalny w sklepie.",
           "placeholder": "ACME-001"
         },
+        "help": "Pobrane z firmy, do której należy ten adres.",
         "kind": {
           "help": "Firma to podmiot prawny mogący posiadać rejestracje podatkowe. Oddział korzysta z rejestracji swojego podmiotu prawnego.",
           "label": "Rodzaj"
         },
+        "label": "Firma",
         "name": {
           "placeholder": "Acme Industries"
         }

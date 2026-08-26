@@ -1,5 +1,5 @@
 import { CountryCombobox, StateCombobox, useCountryStates } from '@spree/dashboard-core'
-import { Field, FieldError, FieldLabel, Input } from '@spree/dashboard-ui'
+import { Field, FieldDescription, FieldError, FieldLabel, Input } from '@spree/dashboard-ui'
 import {
   Controller,
   type FieldValues,
@@ -32,6 +32,8 @@ export function AddressFieldset<TValues extends FieldValues>({
   form,
   prefix,
   legend,
+  companyName,
+  withLabel = false,
 }: {
   form: UseFormReturn<TValues>
   /**
@@ -40,6 +42,17 @@ export function AddressFieldset<TValues extends FieldValues>({
    */
   prefix?: Path<TValues>
   legend?: string
+  /**
+   * The business this address belongs to, shown read-only above the contact
+   * name. Pass it where the owner already answers the question — a company
+   * node names itself, so there is nothing for the merchant to type.
+   */
+  companyName?: string
+  /**
+   * Renders the address-book label field. Only a form whose address is a book
+   * entry wants it; an order's or a seller's address has nothing to file.
+   */
+  withLabel?: boolean
 }) {
   const { t } = useTranslation()
   // Paths are composed as strings and cast once here: RHF cannot infer that
@@ -59,9 +72,41 @@ export function AddressFieldset<TValues extends FieldValues>({
     return block?.[field]
   }
 
+  // A form that is *only* an address needs no grouping chrome — the sheet
+  // heading already says what these fields are. The border and legend are for
+  // a form carrying several addresses at once.
+  const Wrapper = legend ? 'fieldset' : 'div'
+
   return (
-    <fieldset className="flex flex-col gap-4 rounded-md border p-4">
+    <Wrapper
+      className={legend ? 'flex flex-col gap-4 rounded-md border p-4' : 'flex flex-col gap-4'}
+    >
       {legend && <legend className="px-1 font-medium text-sm">{legend}</legend>}
+
+      {withLabel && (
+        <Field>
+          <FieldLabel htmlFor={`${prefix ?? 'address'}-label`}>
+            {t('admin.fields.company_address.label.label')}
+          </FieldLabel>
+          <Input
+            id={`${prefix ?? 'address'}-label`}
+            placeholder={t('admin.fields.company_address.label.placeholder')}
+            {...form.register(path('label'))}
+          />
+          <FieldDescription>{t('admin.fields.company_address.label.help')}</FieldDescription>
+          <FieldError errors={[errorFor('label')]} />
+        </Field>
+      )}
+
+      {companyName && (
+        <Field>
+          <FieldLabel htmlFor={`${prefix ?? 'address'}-company`}>
+            {t('admin.fields.company.label')}
+          </FieldLabel>
+          <Input id={`${prefix ?? 'address'}-company`} value={companyName} disabled readOnly />
+          <FieldDescription>{t('admin.fields.company.help')}</FieldDescription>
+        </Field>
+      )}
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Field>
@@ -179,6 +224,6 @@ export function AddressFieldset<TValues extends FieldValues>({
         <Input id={`${prefix ?? 'address'}-phone`} {...form.register(path('phone'))} />
         <FieldError errors={[errorFor('phone')]} />
       </Field>
-    </fieldset>
+    </Wrapper>
   )
 }

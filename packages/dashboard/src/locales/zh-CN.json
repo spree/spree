@@ -439,7 +439,7 @@
         "message": "{{label}} 将从地址簿中移除。此操作无法撤销。",
         "title": "删除该地址？"
       },
-      "sheet_description": "该节点的具名收货或账单地址。每种默认地址至多一个；设置新的默认地址会替换之前的。",
+      "sheet_description": "此节点的命名收货或账单地点。每个节点为每种类型指定一个默认地址。",
       "title": "地址簿"
     },
     "company_invitations": {
@@ -996,10 +996,12 @@
           "help": "您为该企业设定的编号，在本店内唯一。",
           "placeholder": "ACME-001"
         },
+        "help": "取自此地址所属的公司。",
         "kind": {
           "help": "公司是可持有税务登记的法律实体。部门使用其法律实体的登记。",
           "label": "类型"
         },
+        "label": "公司",
         "name": {
           "placeholder": "Acme Industries"
         }

@@ -59,10 +59,13 @@ export const companyAddressFormSchema = addressFieldsSchema.extend({
 
 export type CompanyAddressFormValues = z.infer<typeof companyAddressFormSchema>
 
+// A new entry is offered as both defaults: the node points at one address per
+// kind, so the common case — the first site a node gets — is the answer to
+// both, and there is no previous default for it to displace.
 export const COMPANY_ADDRESS_DEFAULTS: CompanyAddressFormValues = {
   label: '',
-  default_billing: false,
-  default_shipping: false,
+  default_billing: true,
+  default_shipping: true,
   first_name: '',
   last_name: '',
   company: '',
