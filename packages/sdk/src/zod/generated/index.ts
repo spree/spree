@@ -10,7 +10,6 @@ export { ClaimLineItemSchema, type ClaimLineItem } from './ClaimLineItem';
 export { ClaimReasonSchema, type ClaimReason } from './ClaimReason';
 export { CollectionSchema, type Collection } from './Collection';
 export { CompanySchema, type Company } from './Company';
-export { CompanyAddressSchema, type CompanyAddress } from './CompanyAddress';
 export { CompanyInvitationSchema, type CompanyInvitation } from './CompanyInvitation';
 export { CompanyMembershipSchema, type CompanyMembership } from './CompanyMembership';
 export { CountrySchema, type Country } from './Country';

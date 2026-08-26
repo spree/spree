@@ -16,7 +16,7 @@ RSpec.describe Spree::Api::V3::Admin::CompanyAddressesController, type: :control
 
       expect(response).to have_http_status(:ok)
       expect(json_response['label']).to eq('HQ')
-      expect(json_response['company_id']).to eq(company.prefixed_id)
+      expect(json_response['owner_id']).to eq(company.prefixed_id)
     end
 
     it '404s an entry of another store company' do
@@ -41,7 +41,7 @@ RSpec.describe Spree::Api::V3::Admin::CompanyAddressesController, type: :control
 
       expect(response).to have_http_status(:ok)
       expect(company.reload.default_bill_address_id).to eq(entry.id)
-      expect(json_response['default_billing']).to be(true)
+      expect(json_response['is_default_billing']).to be(true)
     end
   end
 

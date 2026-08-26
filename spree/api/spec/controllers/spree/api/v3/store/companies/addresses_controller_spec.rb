@@ -40,7 +40,7 @@ RSpec.describe Spree::Api::V3::Store::Companies::AddressesController, type: :con
 
       expect(response).to have_http_status(:created)
       expect(json_response['label']).to eq('Plant 2 dock')
-      expect(json_response['default_shipping']).to be(true)
+      expect(json_response['is_default_shipping']).to be(true)
       expect(json_response['city']).to eq('Springfield')
       expect(company.reload.default_ship_address_id).to eq(company.addresses.sole.id)
     end

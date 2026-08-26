@@ -25,7 +25,7 @@ module Spree
                if: proc { expand?('children') }
 
           many :addresses,
-               resource: proc { Spree.api.admin_company_address_serializer },
+               resource: proc { Spree.api.admin_address_serializer },
                if: proc { expand?('addresses') }
 
           many :memberships,

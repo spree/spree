@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 export const AddressSchema = z.object({
   id: z.string(),
+  label: z.string().nullable(),
   first_name: z.string().nullable(),
   last_name: z.string().nullable(),
   full_name: z.string(),

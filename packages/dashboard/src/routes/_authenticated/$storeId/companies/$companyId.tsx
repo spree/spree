@@ -1,10 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type {
-  Company,
-  CompanyAddress,
-  CompanyInvitation,
-  CompanyMembership,
-} from '@spree/admin-sdk'
+import type { Address, Company, CompanyInvitation, CompanyMembership } from '@spree/admin-sdk'
 import {
   adminClient,
   mapSpreeErrorsToForm,
@@ -511,12 +506,12 @@ function AddressBookCard({ company, canEdit }: { company: Company; canEdit: bool
   const [page, setPage] = useState(1)
   const { data, isLoading } = useCompanyAddresses(company.id, page)
   const deleteMutation = useDeleteCompanyAddress(company.id)
-  const [editing, setEditing] = useState<CompanyAddress | 'new' | null>(null)
+  const [editing, setEditing] = useState<Address | 'new' | null>(null)
 
   const entries = data?.data ?? []
   const meta = data?.meta
 
-  async function handleRemove(entry: CompanyAddress) {
+  async function handleRemove(entry: Address) {
     const ok = await confirm({
       title: t('admin.company_addresses.remove_confirm.title'),
       message: t('admin.company_addresses.remove_confirm.message', {
@@ -563,10 +558,10 @@ function AddressBookCard({ company, canEdit }: { company: Company; canEdit: bool
                   {entry.label && (
                     <span className="font-medium text-foreground text-sm">{entry.label}</span>
                   )}
-                  {entry.default_billing && (
+                  {entry.is_default_billing && (
                     <Badge variant="outline">{t('admin.company_addresses.default_billing')}</Badge>
                   )}
-                  {entry.default_shipping && (
+                  {entry.is_default_shipping && (
                     <Badge variant="outline">{t('admin.company_addresses.default_shipping')}</Badge>
                   )}
                 </span>

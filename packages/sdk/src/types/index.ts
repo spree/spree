@@ -12,7 +12,6 @@ export type {
   ClaimLineItem,
   Collection,
   Company,
-  CompanyAddress,
   CompanyInvitation,
   CompanyMembership,
   Country,

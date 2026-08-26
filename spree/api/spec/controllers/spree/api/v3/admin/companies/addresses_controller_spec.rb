@@ -41,7 +41,7 @@ RSpec.describe Spree::Api::V3::Admin::Companies::AddressesController, type: :con
 
       expect(response).to have_http_status(:created)
       expect(json_response['label']).to eq('Plant 2 dock')
-      expect(json_response['default_shipping']).to be(true)
+      expect(json_response['is_default_shipping']).to be(true)
       expect(company.addresses.sole.city).to eq('Springfield')
       expect(company.reload.default_ship_address_id).to eq(company.addresses.sole.id)
     end
@@ -61,7 +61,7 @@ RSpec.describe Spree::Api::V3::Admin::Companies::AddressesController, type: :con
 
       expect(response).to have_http_status(:created)
       expect(company.reload.default_ship_address_id).not_to eq(previous.id)
-      expect(json_response['default_shipping']).to be(true)
+      expect(json_response['is_default_shipping']).to be(true)
     end
 
     # A company address names no person: the node names itself.

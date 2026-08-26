@@ -2488,6 +2488,7 @@ paths:
                 payments: []
                 billing_address:
                   id: addr_gbHJdmfrXB
+                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
@@ -2509,6 +2510,7 @@ paths:
                   state_name: New York
                 shipping_address:
                   id: addr_UkLWZg9DAJ
+                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
@@ -2797,6 +2799,7 @@ paths:
                     source_required: false
                 billing_address:
                   id: addr_uw2YK1rnl0
+                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
@@ -2818,6 +2821,7 @@ paths:
                   state_name: New York
                 shipping_address:
                   id: addr_OIJLhNcSbf
+                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
@@ -3474,6 +3478,7 @@ paths:
                 billing_address:
                 shipping_address:
                   id: addr_EfhxLZ9ck8
+                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
@@ -5658,6 +5663,7 @@ paths:
                 payments: []
                 billing_address:
                   id: addr_UkLWZg9DAJ
+                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
@@ -5679,6 +5685,7 @@ paths:
                   state_name: New York
                 shipping_address:
                   id: addr_gbHJdmfrXB
+                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
@@ -5784,6 +5791,7 @@ paths:
               example:
                 data:
                 - id: addr_UkLWZg9DAJ
+                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
@@ -5804,6 +5812,7 @@ paths:
                   country_iso: US
                   state_name: New York
                 - id: addr_gbHJdmfrXB
+                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
@@ -5824,6 +5833,7 @@ paths:
                   country_iso: US
                   state_name: New York
                 - id: addr_EfhxLZ9ck8
+                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
@@ -5924,6 +5934,7 @@ paths:
             application/json:
               example:
                 id: addr_VqXmZF31wY
+                label:
                 first_name: John
                 last_name: Doe
                 full_name: John Doe
@@ -6080,6 +6091,7 @@ paths:
             application/json:
               example:
                 id: addr_EfhxLZ9ck8
+                label:
                 first_name: John
                 last_name: Doe
                 full_name: John Doe
@@ -6161,6 +6173,7 @@ paths:
             application/json:
               example:
                 id: addr_EfhxLZ9ck8
+                label:
                 first_name: John
                 last_name: Doe
                 full_name: John Doe
@@ -6760,6 +6773,7 @@ paths:
                   payments: []
                   billing_address:
                     id: addr_EfhxLZ9ck8
+                    label:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
@@ -6781,6 +6795,7 @@ paths:
                     state_name: New York
                   shipping_address:
                     id: addr_VqXmZF31wY
+                    label:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
@@ -7066,6 +7081,7 @@ paths:
                 payments: []
                 billing_address:
                   id: addr_EfhxLZ9ck8
+                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
@@ -7087,6 +7103,7 @@ paths:
                   state_name: New York
                 shipping_address:
                   id: addr_VqXmZF31wY
+                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
@@ -7305,6 +7322,7 @@ paths:
                 display_available_store_credit_total: "$0.00"
                 addresses:
                 - id: addr_UkLWZg9DAJ
+                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
@@ -7325,6 +7343,7 @@ paths:
                   country_iso: US
                   state_name: New York
                 - id: addr_gbHJdmfrXB
+                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
@@ -7346,6 +7365,7 @@ paths:
                   state_name: New York
                 default_billing_address:
                   id: addr_gbHJdmfrXB
+                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
@@ -7367,6 +7387,7 @@ paths:
                   state_name: New York
                 default_shipping_address:
                   id: addr_UkLWZg9DAJ
+                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
@@ -7457,6 +7478,7 @@ paths:
                 display_available_store_credit_total: "$0.00"
                 addresses:
                 - id: addr_UkLWZg9DAJ
+                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
@@ -7477,6 +7499,7 @@ paths:
                   country_iso: US
                   state_name: New York
                 - id: addr_gbHJdmfrXB
+                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
@@ -7498,6 +7521,7 @@ paths:
                   state_name: New York
                 default_billing_address:
                   id: addr_gbHJdmfrXB
+                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
@@ -7519,6 +7543,7 @@ paths:
                   state_name: New York
                 default_shipping_address:
                   id: addr_UkLWZg9DAJ
+                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
@@ -10275,6 +10300,7 @@ paths:
               example:
                 data:
                 - id: addr_EfhxLZ9ck8
+                  label: Headquarters
                   first_name:
                   last_name:
                   full_name: ''
@@ -10294,10 +10320,6 @@ paths:
                   state_abbr: NY
                   country_iso: US
                   state_name: New York
-                  label: Headquarters
-                  company_id: comp_UkLWZg9DAJ
-                  default_billing: false
-                  default_shipping: false
                 meta:
                   page: 1
                   limit: 25
@@ -10343,6 +10365,7 @@ paths:
             application/json:
               example:
                 id: addr_EfhxLZ9ck8
+                label: Northern Warehouse
                 first_name:
                 last_name:
                 full_name: ''
@@ -10362,10 +10385,6 @@ paths:
                 state_abbr: NY
                 country_iso: US
                 state_name: New York
-                label: Northern Warehouse
-                company_id: comp_UkLWZg9DAJ
-                default_billing: false
-                default_shipping: true
       requestBody:
         content:
           application/json:
@@ -10624,6 +10643,7 @@ paths:
                   payments: []
                   billing_address:
                     id: addr_EfhxLZ9ck8
+                    label:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
@@ -10645,6 +10665,7 @@ paths:
                     state_name: New York
                   shipping_address:
                     id: addr_VqXmZF31wY
+                    label:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
@@ -11431,6 +11452,9 @@ components:
       properties:
         id:
           type: string
+        label:
+          type: string
+          nullable: true
         first_name:
           type: string
           nullable: true
@@ -11483,6 +11507,7 @@ components:
           nullable: true
       required:
       - id
+      - label
       - first_name
       - last_name
       - full_name
@@ -12030,96 +12055,6 @@ components:
       - description_html
       - image_url
       - square_image_url
-      x-typelizer: true
-    CompanyAddress:
-      type: object
-      properties:
-        id:
-          type: string
-        first_name:
-          type: string
-          nullable: true
-        last_name:
-          type: string
-          nullable: true
-        full_name:
-          type: string
-        address1:
-          type: string
-          nullable: true
-        address2:
-          type: string
-          nullable: true
-        postal_code:
-          type: string
-          nullable: true
-        city:
-          type: string
-          nullable: true
-        phone:
-          type: string
-          nullable: true
-        company:
-          type: string
-          nullable: true
-        country_name:
-          type: string
-        country_code:
-          type: string
-        state_text:
-          type: string
-          nullable: true
-        state_code:
-          type: string
-          nullable: true
-        quick_checkout:
-          type: boolean
-        is_default_billing:
-          type: boolean
-        is_default_shipping:
-          type: boolean
-        state_abbr:
-          type: string
-          nullable: true
-        country_iso:
-          type: string
-        state_name:
-          type: string
-          nullable: true
-        label:
-          type: string
-          nullable: true
-        company_id:
-          type: string
-        default_billing:
-          type: boolean
-        default_shipping:
-          type: boolean
-      required:
-      - id
-      - first_name
-      - last_name
-      - full_name
-      - address1
-      - address2
-      - postal_code
-      - city
-      - phone
-      - company
-      - country_name
-      - country_code
-      - state_text
-      - state_code
-      - quick_checkout
-      - is_default_billing
-      - is_default_shipping
-      - state_abbr
-      - country_iso
-      - state_name
-      - label
-      - company_id
-      - default_billing
-      - default_shipping
       x-typelizer: true
     CompanyInvitation:
       type: object

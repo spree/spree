@@ -19,7 +19,6 @@ import type {
   Collection,
   CollectionListParams,
   Company,
-  CompanyAddress,
   CompanyInvitation,
   CompanyMembership,
   CompletePaymentSessionParams,
@@ -1198,15 +1197,11 @@ export class StoreClient {
         companyId: string,
         params?: ListParams,
         options?: RequestOptions,
-      ): Promise<PaginatedResponse<CompanyAddress>> =>
-        this.request<PaginatedResponse<CompanyAddress>>(
-          'GET',
-          `/companies/${companyId}/addresses`,
-          {
-            ...options,
-            params: transformListParams({ ...params }),
-          },
-        ),
+      ): Promise<PaginatedResponse<Address>> =>
+        this.request<PaginatedResponse<Address>>('GET', `/companies/${companyId}/addresses`, {
+          ...options,
+          params: transformListParams({ ...params }),
+        }),
 
       create: (
         companyId: string,
@@ -1216,8 +1211,8 @@ export class StoreClient {
           default_shipping?: boolean
         },
         options?: RequestOptions,
-      ): Promise<CompanyAddress> =>
-        this.request<CompanyAddress>('POST', `/companies/${companyId}/addresses`, {
+      ): Promise<Address> =>
+        this.request<Address>('POST', `/companies/${companyId}/addresses`, {
           ...options,
           body: params,
         }),
@@ -1291,8 +1286,8 @@ export class StoreClient {
         default_shipping?: boolean
       },
       options?: RequestOptions,
-    ): Promise<CompanyAddress> =>
-      this.request<CompanyAddress>('PATCH', `/company_addresses/${id}`, {
+    ): Promise<Address> =>
+      this.request<Address>('PATCH', `/company_addresses/${id}`, {
         ...options,
         body: params,
       }),

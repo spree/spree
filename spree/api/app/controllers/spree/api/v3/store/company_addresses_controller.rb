@@ -35,7 +35,7 @@ module Spree
           end
 
           def serializer_class
-            Spree.api.company_address_serializer
+            Spree.api.address_serializer
           end
 
           def scope

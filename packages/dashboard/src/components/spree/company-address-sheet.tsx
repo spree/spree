@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { CompanyAddress } from '@spree/admin-sdk'
+import type { Address } from '@spree/admin-sdk'
 import { mapSpreeErrorsToForm } from '@spree/dashboard-core'
 import {
   Button,
@@ -41,7 +41,7 @@ export function CompanyAddressSheet({
   onOpenChange,
 }: {
   companyId: string
-  entry?: CompanyAddress
+  entry?: Address
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
@@ -64,8 +64,8 @@ export function CompanyAddressSheet({
 
     form.reset({
       label: entry.label ?? '',
-      default_billing: entry.default_billing,
-      default_shipping: entry.default_shipping,
+      default_billing: entry.is_default_billing,
+      default_shipping: entry.is_default_shipping,
       first_name: entry.first_name ?? '',
       last_name: entry.last_name ?? '',
       company: entry.company ?? '',

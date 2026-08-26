@@ -5544,6 +5544,7 @@ paths:
               example:
                 data:
                 - id: addr_UkLWZg9DAJ
+                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
@@ -5563,13 +5564,14 @@ paths:
                   state_abbr: NY
                   country_iso: US
                   state_name: New York
-                  label:
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   latitude:
                   longitude:
                   customer_id: cust_UkLWZg9DAJ
+                  owner_id: cust_UkLWZg9DAJ
+                  owner_type: Spree::Customer
                 meta:
                   page: 1
                   limit: 25
@@ -5642,6 +5644,7 @@ paths:
             application/json:
               example:
                 id: addr_gbHJdmfrXB
+                label: Office
                 first_name: Jane
                 last_name: Doe
                 full_name: Jane Doe
@@ -5661,13 +5664,14 @@ paths:
                 state_abbr: NY
                 country_iso: US
                 state_name: New York
-                label: Office
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 latitude:
                 longitude:
                 customer_id: cust_UkLWZg9DAJ
+                owner_id: cust_UkLWZg9DAJ
+                owner_type: Spree::Customer
       requestBody:
         content:
           application/json:
@@ -5759,6 +5763,7 @@ paths:
             application/json:
               example:
                 id: addr_UkLWZg9DAJ
+                label:
                 first_name: John
                 last_name: Doe
                 full_name: John Doe
@@ -5778,13 +5783,14 @@ paths:
                 state_abbr: NY
                 country_iso: US
                 state_name: New York
-                label:
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 latitude:
                 longitude:
                 customer_id: cust_UkLWZg9DAJ
+                owner_id: cust_UkLWZg9DAJ
+                owner_type: Spree::Customer
       requestBody:
         content:
           application/json:
@@ -28917,12 +28923,12 @@ paths:
                   - key: normal_amount
                     type: decimal
                     default: 0
-                  - key: currency
-                    type: string
-                    default: USD
                   - key: discount_amount
                     type: decimal
                     default: 0
+                  - key: currency
+                    type: string
+                    default: USD
                 - type: Spree::Calculator::Shipping::DigitalDelivery
                   name: Digital Delivery
                   preference_schema:
@@ -31155,6 +31161,7 @@ paths:
                 registration_number:
                 billing_address:
                   id: addr_UkLWZg9DAJ
+                  label:
                   first_name:
                   last_name:
                   full_name: ''
@@ -31174,13 +31181,14 @@ paths:
                   state_abbr:
                   country_iso: GB
                   state_name:
-                  label:
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   latitude:
                   longitude:
                   customer_id:
+                  owner_id: sel_UkLWZg9DAJ
+                  owner_type: Spree::Seller
               schema:
                 "$ref": "#/components/schemas/Seller"
         '422':
@@ -32514,6 +32522,9 @@ components:
       properties:
         id:
           type: string
+        label:
+          type: string
+          nullable: true
         first_name:
           type: string
           nullable: true
@@ -32564,9 +32575,6 @@ components:
         state_name:
           type: string
           nullable: true
-        label:
-          type: string
-          nullable: true
         metadata:
           type: object
         created_at:
@@ -32582,8 +32590,15 @@ components:
         customer_id:
           type: string
           nullable: true
+        owner_id:
+          type: string
+          nullable: true
+        owner_type:
+          type: string
+          nullable: true
       required:
       - id
+      - label
       - first_name
       - last_name
       - full_name
@@ -32603,13 +32618,14 @@ components:
       - state_abbr
       - country_iso
       - state_name
-      - label
       - metadata
       - created_at
       - updated_at
       - latitude
       - longitude
       - customer_id
+      - owner_id
+      - owner_type
       x-typelizer: true
     AdminUser:
       type: object
@@ -33608,117 +33624,6 @@ components:
       - label
       - description
       x-typelizer: true
-    CompanyAddress:
-      type: object
-      properties:
-        id:
-          type: string
-        first_name:
-          type: string
-          nullable: true
-        last_name:
-          type: string
-          nullable: true
-        full_name:
-          type: string
-        address1:
-          type: string
-          nullable: true
-        address2:
-          type: string
-          nullable: true
-        postal_code:
-          type: string
-          nullable: true
-        city:
-          type: string
-          nullable: true
-        phone:
-          type: string
-          nullable: true
-        company:
-          type: string
-          nullable: true
-        country_name:
-          type: string
-        country_code:
-          type: string
-        state_text:
-          type: string
-          nullable: true
-        state_code:
-          type: string
-          nullable: true
-        quick_checkout:
-          type: boolean
-        is_default_billing:
-          type: boolean
-        is_default_shipping:
-          type: boolean
-        state_abbr:
-          type: string
-          nullable: true
-        country_iso:
-          type: string
-        state_name:
-          type: string
-          nullable: true
-        label:
-          type: string
-          nullable: true
-        metadata:
-          type: object
-        created_at:
-          type: string
-        updated_at:
-          type: string
-        latitude:
-          type: number
-          nullable: true
-        longitude:
-          type: number
-          nullable: true
-        customer_id:
-          type: string
-          nullable: true
-        company_id:
-          type: string
-        default_billing:
-          type: boolean
-        default_shipping:
-          type: boolean
-      required:
-      - id
-      - first_name
-      - last_name
-      - full_name
-      - address1
-      - address2
-      - postal_code
-      - city
-      - phone
-      - company
-      - country_name
-      - country_code
-      - state_text
-      - state_code
-      - quick_checkout
-      - is_default_billing
-      - is_default_shipping
-      - state_abbr
-      - country_iso
-      - state_name
-      - label
-      - metadata
-      - created_at
-      - updated_at
-      - latitude
-      - longitude
-      - customer_id
-      - company_id
-      - default_billing
-      - default_shipping
-      x-typelizer: true
     CompanyInvitation:
       type: object
       properties:
@@ -33812,7 +33717,7 @@ components:
         addresses:
           type: array
           items:
-            "$ref": "#/components/schemas/CompanyAddress"
+            "$ref": "#/components/schemas/Address"
         memberships:
           type: array
           items:

@@ -1,6 +1,6 @@
 import type {
+  Address,
   Company,
-  CompanyAddress,
   CompanyAddressParams,
   CompanyInvitation,
   CompanyMembership,
@@ -90,7 +90,7 @@ export function useCompanyAddresses(companyId: string | undefined, page = 1, lim
 
 /** Adds a labeled address to the node; the address row is owned by the entry. */
 export function useCreateCompanyAddress(companyId: string) {
-  return useResourceMutation<CompanyAddress, Error, CompanyAddressParams>({
+  return useResourceMutation<Address, Error, CompanyAddressParams>({
     mutationFn: (params) => adminClient.companies.addresses.create(companyId, params),
     invalidate: [['companies', companyId, 'addresses']],
     successMessage: i18n.t('admin.company_addresses.messages.created'),
@@ -100,7 +100,7 @@ export function useCreateCompanyAddress(companyId: string) {
 
 /** Edits an entry in place — the address row is updated, never replaced. */
 export function useUpdateCompanyAddress(companyId: string) {
-  return useResourceMutation<CompanyAddress, Error, { id: string; params: CompanyAddressParams }>({
+  return useResourceMutation<Address, Error, { id: string; params: CompanyAddressParams }>({
     mutationFn: ({ id, params }) => adminClient.companyAddresses.update(id, params),
     invalidate: [['companies', companyId, 'addresses']],
     successMessage: i18n.t('admin.company_addresses.messages.updated'),

@@ -14242,6 +14242,9 @@ components:
       properties:
         id:
           type: string
+        label:
+          type: string
+          nullable: true
         first_name:
           type: string
           nullable: true
@@ -14294,6 +14297,7 @@ components:
           nullable: true
       required:
       - id
+      - label
       - first_name
       - last_name
       - full_name

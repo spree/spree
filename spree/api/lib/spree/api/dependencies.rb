@@ -150,11 +150,9 @@ module Spree
         admin_tax_identifier_serializer: 'Spree::Api::V3::Admin::TaxIdentifierSerializer',
 
         company_serializer: 'Spree::Api::V3::CompanySerializer',
-        company_address_serializer: 'Spree::Api::V3::CompanyAddressSerializer',
         company_membership_serializer: 'Spree::Api::V3::CompanyMembershipSerializer',
         company_invitation_serializer: 'Spree::Api::V3::CompanyInvitationSerializer',
         admin_company_serializer: 'Spree::Api::V3::Admin::CompanySerializer',
-        admin_company_address_serializer: 'Spree::Api::V3::Admin::CompanyAddressSerializer',
         admin_company_membership_serializer: 'Spree::Api::V3::Admin::CompanyMembershipSerializer',
         admin_company_invitation_serializer: 'Spree::Api::V3::Admin::CompanyInvitationSerializer',
         admin_catalog_serializer: 'Spree::Api::V3::Admin::CatalogSerializer',

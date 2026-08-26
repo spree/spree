@@ -261,7 +261,6 @@ import type {
   CommissionLine,
   CommissionRate,
   Company,
-  CompanyAddress,
   CompanyInvitation,
   CompanyMembership,
   Country,
@@ -2915,22 +2914,18 @@ export class AdminClient {
         companyId: string,
         params?: ListParams & Record<string, unknown>,
         options?: RequestOptions,
-      ): Promise<PaginatedResponse<CompanyAddress>> =>
-        this.request<PaginatedResponse<CompanyAddress>>(
-          'GET',
-          `/companies/${companyId}/addresses`,
-          {
-            ...options,
-            params: params ? transformListParams(params) : undefined,
-          },
-        ),
+      ): Promise<PaginatedResponse<Address>> =>
+        this.request<PaginatedResponse<Address>>('GET', `/companies/${companyId}/addresses`, {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        }),
 
       create: (
         companyId: string,
         params: CompanyAddressParams,
         options?: RequestOptions,
-      ): Promise<CompanyAddress> =>
-        this.request<CompanyAddress>('POST', `/companies/${companyId}/addresses`, {
+      ): Promise<Address> =>
+        this.request<Address>('POST', `/companies/${companyId}/addresses`, {
           ...options,
           body: params,
         }),
@@ -3149,8 +3144,8 @@ export class AdminClient {
 
   /** Address-book entries addressed by their own id. */
   readonly companyAddresses = {
-    get: (id: string, options?: RequestOptions): Promise<CompanyAddress> =>
-      this.request<CompanyAddress>('GET', `/company_addresses/${id}`, options),
+    get: (id: string, options?: RequestOptions): Promise<Address> =>
+      this.request<Address>('GET', `/company_addresses/${id}`, options),
 
     /**
      * Address fields sent here edit the entry's existing address in place, so
@@ -3160,8 +3155,8 @@ export class AdminClient {
       id: string,
       params: CompanyAddressParams,
       options?: RequestOptions,
-    ): Promise<CompanyAddress> =>
-      this.request<CompanyAddress>('PATCH', `/company_addresses/${id}`, {
+    ): Promise<Address> =>
+      this.request<Address>('PATCH', `/company_addresses/${id}`, {
         ...options,
         body: params,
       }),
