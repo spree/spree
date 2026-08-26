@@ -81,6 +81,65 @@ RSpec.shared_examples 'an addresses host' do
 
       expect(guest_record.ship_address_id).to be_nil
     end
+
+    # A purchase for a company ships to that company's sites, so its address
+    # book is selectable alongside the buyer's own.
+    context 'when the purchase is for a company' do
+      let(:company) { create(:company, store: store) }
+      let(:division) { create(:company, store: store, kind: 'division', parent: company) }
+      let(:company_address) { create(:company_address, owner: company) }
+
+      before { create(:company_membership, company: company, customer: user) }
+
+      it 'accepts an address from the company book' do
+        record.company = company
+        record.ship_address_id = company_address.id
+
+        expect(record.ship_address_id).to eq(company_address.id)
+      end
+
+      # The same self-and-ancestors chain the node's default address is
+      # prefilled from: a division may ship to the headquarters it inherits.
+      it 'accepts an address from an ancestor of the purchase node' do
+        create(:company_membership, company: division, customer: user)
+        record.company = division
+        record.ship_address_id = company_address.id
+
+        expect(record.ship_address_id).to eq(company_address.id)
+      end
+
+      # Sole standing resolves the node without an explicit choice, so the
+      # book is selectable for a one-membership buyer who never picked.
+      it 'accepts the book of the sole standing company without an explicit choice' do
+        record.ship_address_id = company_address.id
+
+        expect(record.ship_address_id).to eq(company_address.id)
+      end
+
+      it 'refuses a company book to a buyer with no standing anywhere' do
+        outsider = create(:cart, store: store, customer: create(:user))
+        outsider.ship_address_id = company_address.id
+
+        expect(outsider.ship_address_id).to be_nil
+      end
+
+      it 'refuses the book of a company the purchase is not for' do
+        other = create(:company, store: store)
+        record.company = company
+        record.ship_address_id = create(:company_address, owner: other).id
+
+        expect(record.ship_address_id).to be_nil
+      end
+
+      # Ancestors, not descendants: a purchase for the parent has no claim on
+      # a division's own sites.
+      it 'refuses a descendant node address' do
+        record.company = company
+        record.ship_address_id = create(:company_address, owner: division).id
+
+        expect(record.ship_address_id).to be_nil
+      end
+    end
   end
 
   describe '#clone_shipping_address' do

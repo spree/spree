@@ -45,4 +45,19 @@ RSpec.describe Spree::Api::V3::Store::Companies::AddressesController, type: :con
       expect(company.reload.default_ship_address_id).to eq(company.addresses.sole.id)
     end
   end
+  # A division ships to what it inherits, so its book shows the ancestors'
+  # sites as well as its own — the chain checkout accepts an id from.
+  describe 'GET #index for a division' do
+    it 'includes the addresses it inherits from its ancestors' do
+      division = create(:company, store: store, kind: 'division', parent: company)
+      inherited = create(:company_address, owner: company, label: 'Headquarters')
+      own = create(:company_address, owner: division, label: 'Dock 4')
+
+      get :index, params: { company_id: division.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data'].map { |row| row['id'] }).
+        to contain_exactly(own.prefixed_id, inherited.prefixed_id)
+    end
+  end
 end

@@ -49,8 +49,12 @@ module Spree
               Spree.api.address_serializer
             end
 
+            # The node's own sites plus the ones it inherits: a division ships
+            # to its headquarters' addresses too, which is the same
+            # self-and-ancestors chain its default address is prefilled from
+            # and the same one checkout accepts an id from.
             def scope
-              @parent.addresses
+              Spree::Address.where(owner_type: 'Spree::Company', owner_id: @parent.self_and_ancestors.map(&:id))
             end
 
             def parent_association
