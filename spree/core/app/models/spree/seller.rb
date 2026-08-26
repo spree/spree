@@ -60,12 +60,12 @@ module Spree
     # Associations
     #
     belongs_to :store, class_name: 'Spree::Store'
-    # Typed as the subclass so a saved address is read back with the business
-    # rules — otherwise editing one field of it would fail on a personal name
-    # nobody was ever asked for. Not `dependent: :destroy`: a seller is
-    # paranoid, so destroy is a soft delete, and taking the address with it
-    # would hard-delete a row historical commission invoices still point at.
-    belongs_to :billing_address, class_name: 'Spree::BusinessAddress', optional: true
+    # The address knows it is a seller's from its owner, so it is read back
+    # with the business rules — no personal name insisted on, the company line
+    # required. Not `dependent: :destroy`: a seller is paranoid, so destroy is
+    # a soft delete, and taking the address with it would hard-delete a row
+    # historical commission invoices still point at.
+    belongs_to :billing_address, class_name: 'Spree::Address', optional: true
 
     # `update_only` edits the existing row rather than building a replacement
     # and orphaning it; the association carries the saving and validation that
@@ -75,16 +75,16 @@ module Spree
     # The API reads and writes this under one name, so the writer takes the
     # attributes a client sends as well as a record. Never an id: an address
     # carries no store of its own, so binding one by id would reach another
-    # store's rows. A plain Spree::Address is accepted too — the two share
-    # `spree_addresses` and differ only in which fields they insist on, so a
-    # valid row should not be refused over its Ruby class.
+    # store's rows. Either way the row is stamped as this seller's, which is
+    # what makes it read back with the business rules.
     def billing_address=(value)
       case value
       when Hash, ActionController::Parameters
-        super(Spree::BusinessAddress.new) if billing_address.nil?
+        super(Spree::Address.new(owner: self)) if billing_address.nil?
         self.billing_address_attributes = value
       when Spree::Address
-        super(value.becomes(Spree::BusinessAddress))
+        value.owner = self
+        super(value)
       else
         super
       end

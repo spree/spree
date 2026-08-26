@@ -11,9 +11,11 @@ FactoryBot.define do
     end
   end
 
-  factory :company_address, class: Spree::CompanyAddress do
-    company
-    address
+  # A company node's address book entry: an ordinary address the node owns.
+  factory :company_address, parent: :address do
+    association :owner, factory: :company
+    firstname { nil }
+    lastname  { nil }
     sequence(:label) { |n| "Site #{n}" }
   end
 

@@ -16,30 +16,15 @@ class CreateSpreeCompanies < ActiveRecord::Migration[8.1]
       else
         t.json :metadata
       end
+      # Which of the node's addresses to prefill with. The address book itself
+      # is ordinary spree_addresses rows owned by the node, so a default is a
+      # pointer at one of them — the same shape the customer
+      # (bill_address_id / ship_address_id) and the seller
+      # (billing_address_id) already use. Two columns cannot disagree about
+      # which row is default, so nothing has to demote a previous one.
+      t.bigint :default_bill_address_id
+      t.bigint :default_ship_address_id
       t.timestamps
-    end
-
-    # The address book: rows a node owns outright, never shared with a
-    # customer's own address book.
-    create_table :spree_company_addresses do |t|
-      t.references :company, null: false
-      t.references :address, null: false
-      t.string :label
-      t.boolean :default_billing, null: false, default: false
-      t.boolean :default_shipping, null: false, default: false
-      t.timestamps
-    end
-
-    # Partial unique indexes: at most one default of each kind per node.
-    # Supported on Postgres and SQLite; MySQL ignores +where:+, so the model
-    # demotes prior defaults before save (same shape as Channel#default).
-    unless ActiveRecord::Base.connection.adapter_name.match?(/mysql/i)
-      add_index :spree_company_addresses, :company_id, unique: true,
-                where: 'default_billing = TRUE',
-                name: 'idx_company_addresses_default_billing'
-      add_index :spree_company_addresses, :company_id, unique: true,
-                where: 'default_shipping = TRUE',
-                name: 'idx_company_addresses_default_shipping'
     end
 
     # Membership gives a customer standing over the node and its subtree.

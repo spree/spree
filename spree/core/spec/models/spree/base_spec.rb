@@ -59,7 +59,7 @@ describe Spree::Base do
   end
 
   describe '.json_api_permitted_attributes' do
-    it { expect(Spree::Address.json_api_permitted_attributes).to contain_exactly('firstname', 'lastname', 'address1', 'address2', 'city', 'zipcode', 'phone', 'country_code', 'state_code', 'state_name', 'alternative_phone', 'company', 'country_id', 'state_id', 'created_at', 'updated_at', 'customer_id', 'deleted_at', 'label', 'metadata', 'quick_checkout', 'latitude', 'longitude') }
+    it { expect(Spree::Address.json_api_permitted_attributes).to contain_exactly('firstname', 'lastname', 'address1', 'address2', 'city', 'zipcode', 'phone', 'country_code', 'state_code', 'state_name', 'alternative_phone', 'company', 'country_id', 'state_id', 'created_at', 'updated_at', 'owner_id', 'owner_type', 'deleted_at', 'label', 'metadata', 'quick_checkout', 'latitude', 'longitude') }
   end
 
   describe '.additional_permitted_attributes' do

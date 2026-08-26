@@ -32,7 +32,7 @@ module Spree
         address_changed = address_changes.any?
         if !address_changed && defaults_changed?(address, default_billing, default_shipping)
           assign_to_user_as_default(
-            user: address.customer,
+            user: address.customer_owner,
             address_id: address.id,
             default_billing: default_billing,
             default_shipping: default_shipping
@@ -44,9 +44,9 @@ module Spree
         if address.editable?
           address.update!(address_params)
 
-          if address.customer.present?
+          if address.customer_owner.present?
             assign_to_user_as_default(
-              user: address.customer,
+              user: address.customer_owner,
               address_id: address.id,
               default_billing: default_billing,
               default_shipping: default_shipping
@@ -60,12 +60,12 @@ module Spree
           old_address_id = address.id
           address.destroy!
 
-          if new_address.customer.present?
+          if new_address.customer_owner.present?
             default_billing = address.is_default_billing? || default_billing
             default_shipping = address.is_default_shipping || default_shipping
 
             assign_to_user_as_default(
-              user: new_address.customer,
+              user: new_address.customer_owner,
               address_id: new_address.id,
               default_billing: default_billing,
               default_shipping: default_shipping
@@ -83,19 +83,20 @@ module Spree
       # An update that names no country keeps the one already on the address —
       # the edit forms post a partial set of fields.
       def prepare_address_params!(address, address_params)
-        address_params[:customer_id] = address&.customer_id
+        address_params[:owner_type] = address&.owner_type
+        address_params[:owner_id] = address&.owner_id
         address_params[:country_code] ||= address.country_code
         address_params.transform_values!(&:presence)
       end
 
       def reassign_incomplete_orders(old_address_id, new_address)
-        orders = Spree::Order.incomplete.where(customer_id: new_address.customer_id)
+        orders = Spree::Order.incomplete.where(customer_id: new_address.owner_id)
         orders.where(ship_address_id: old_address_id).update_all(ship_address_id: new_address.id, updated_at: Time.current)
         orders.where(bill_address_id: old_address_id).update_all(bill_address_id: new_address.id, updated_at: Time.current)
       end
 
       def defaults_changed?(address, default_billing, default_shipping)
-        user = address.customer
+        user = address.customer_owner
 
         user.present? && (
           (default_billing.present? && user.bill_address != address) ||

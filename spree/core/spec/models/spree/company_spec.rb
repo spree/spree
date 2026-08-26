@@ -205,15 +205,17 @@ describe Spree::Company, type: :model do
     let(:division) { create(:company, store: store, kind: 'division', parent: root) }
 
     it 'reads its own default first' do
-      own = create(:company_address, company: division, default_billing: true)
+      own = create(:company_address, owner: division)
+      division.update!(default_bill_address: own)
 
-      expect(division.default_billing_address).to eq(own.address)
+      expect(division.default_billing_address).to eq(own)
     end
 
     it 'falls back to the nearest ancestor default' do
-      inherited = create(:company_address, company: root, default_shipping: true)
+      inherited = create(:company_address, owner: root)
+      root.update!(default_ship_address: inherited)
 
-      expect(division.default_shipping_address).to eq(inherited.address)
+      expect(division.default_shipping_address).to eq(inherited)
     end
 
     it 'is nil when nobody set one' do
@@ -265,11 +267,11 @@ describe Spree::Company, type: :model do
   it 'destroys its memberships, addresses and invitations' do
     company = create(:company, store: store)
     create(:company_membership, company: company)
-    create(:company_address, company: company)
+    create(:company_address, owner: company)
     create(:company_invitation, company: company)
 
     expect { company.destroy }.to change(Spree::CompanyMembership, :count).by(-1).
-      and change(Spree::CompanyAddress, :count).by(-1).
+      and change(Spree::Address, :count).by(-1).
       and change(Spree::CompanyInvitation, :count).by(-1)
   end
 end

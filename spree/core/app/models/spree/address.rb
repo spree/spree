@@ -26,7 +26,7 @@ module Spree
     # we're not freezing this on purpose so developers can extend and manage
     # those attributes depending of the logic of their applications
     ADDRESS_FIELDS = %w(firstname lastname company address1 address2 city state zipcode country phone)
-    EXCLUDED_KEYS_FOR_COMPARISON = %w(id updated_at created_at deleted_at label customer_id metadata)
+    EXCLUDED_KEYS_FOR_COMPARISON = %w(id updated_at created_at deleted_at label owner_type owner_id metadata)
     if defined?(Spree::Security::Addresses)
       include Spree::Security::Addresses
     end
@@ -53,20 +53,27 @@ module Spree
     alias_attribute :state_abbr, :state_code
     alias_attribute :country_iso, :country_code
 
-    # we need a safe operator here as Address is added to custom_field_enabled_resources in Engine
-    belongs_to :customer, class_name: Spree.customer_class&.name, optional: true, touch: true
-    include Spree::DeprecatedCustomerAlias
+    # Who the address belongs to: a customer's address book, a company node's,
+    # or a seller's billing address. One relationship with three cardinalities,
+    # so a further owner costs no schema change — and what the row requires
+    # follows from the owner rather than from a subclass.
+    #
+    # Order and cart addresses have no owner: completion copies the attributes
+    # onto a fresh row, and that snapshot belongs to the order, not to anyone's
+    # book.
+    belongs_to :owner, polymorphic: true, optional: true, touch: true
+
 
     has_many :fulfillments, class_name: 'Spree::Fulfillment', inverse_of: :address
     has_many :shipments, class_name: 'Spree::Fulfillment', foreign_key: :address_id, deprecated: true
 
-    after_initialize :set_default_values, if: -> { new_record? && customer.present? }
+    after_initialize :set_default_values, if: -> { new_record? && customer_owned? }
 
     before_validation :normalize_country
     before_validation :normalize_state
     before_validation :clear_invalid_state_entities, if: -> { country.present? }, on: :update
 
-    after_create :set_user_attributes, if: -> { customer.present? }
+    after_create :set_user_attributes, if: -> { customer_owned? }
 
     after_commit :async_geocode
 
@@ -83,7 +90,7 @@ module Spree
     validate :address_validators, on: [:create, :update]
 
     validates :label, uniqueness: { conditions: -> { where(deleted_at: nil) },
-                                    scope: :customer_id,
+                                    scope: [:owner_type, :owner_id],
                                     case_sensitive: false,
                                     allow_blank: true,
                                     allow_nil: true }
@@ -168,7 +175,7 @@ module Spree
     end
 
     self.whitelisted_ransackable_attributes = ADDRESS_FIELDS + %w[country_code state_code]
-    self.whitelisted_ransackable_associations = %w[customer]
+    self.whitelisted_ransackable_associations = %w[owner]
 
     def self.required_fields
       Spree::Address.validators.map do |v|
@@ -176,15 +183,68 @@ module Spree
       end.flatten
     end
 
+    # The owner when it is a customer, so customer-specific behaviour (the
+    # address book defaults, the profile back-fill) reads nil for a company's
+    # or a seller's row and simply does not apply.
+    #
+    # @return [Object, nil]
+    def customer_owner
+      owner if customer_owned?
+    end
+
+    # @return [Boolean]
+    def customer_owned?
+      owner_type == Spree.customer_class.to_s
+    end
+
+    # @deprecated The address's owner may be a customer, a company node or a
+    #   seller, so {#owner} replaces the customer-only association. Removed in
+    #   Spree 6.1.
+    def user
+      Spree::Deprecation.warn('Spree::Address#user is deprecated and will be removed in Spree 6.1. Use #owner instead.') if defined?(Spree::Deprecation)
+      customer_owner
+    end
+
+    def user=(value)
+      Spree::Deprecation.warn('Spree::Address#user= is deprecated and will be removed in Spree 6.1. Use #owner= instead.') if defined?(Spree::Deprecation)
+      self.owner = value
+    end
+
+    def user_id
+      Spree::Deprecation.warn('Spree::Address#user_id is deprecated and will be removed in Spree 6.1. Use #owner_id instead.') if defined?(Spree::Deprecation)
+      owner_id if customer_owned?
+    end
+
+    # A company node's or a seller's address: nobody is named on it, and the
+    # business is the part that cannot be left out.
+    #
+    # @return [Boolean]
+    def business_owned?
+      owner_type == 'Spree::Company' || owner_type == 'Spree::Seller'
+    end
+
+    # The company line. A stored value wins, so an order's copied address keeps
+    # what it was sent with even after the node is renamed, and a member can
+    # override the line for one site. An owned book entry with nothing stored
+    # tracks its node's current name.
+    #
+    # @return [String, nil]
+    def company
+      stored = read_attribute(:company)
+      return stored if stored.present?
+
+      owner.name if owner.is_a?(Spree::Company)
+    end
+
     # In 6.0 these become real columns on Address, replacing User#bill_address_id / ship_address_id.
     # For now they delegate to the User FK so the API shape is stable.
     def is_default_billing?
-      customer.present? && id == customer.bill_address_id
+      customer_owner.present? && id == customer_owner.bill_address_id
     end
     alias_method :is_default_billing, :is_default_billing?
 
     def is_default_shipping?
-      customer.present? && id == customer.ship_address_id
+      customer_owner.present? && id == customer_owner.ship_address_id
     end
     alias_method :is_default_shipping, :is_default_shipping?
 
@@ -262,14 +322,23 @@ module Spree
       !quick_checkout && (country ? country.zipcode_required? : true)
     end
 
+    # A business address names no person: a company site or a seller's billing
+    # address has no contact to insist on, which is why the owner decides this
+    # rather than a subclass.
     def require_name?
-      !quick_checkout
+      !quick_checkout && !business_owned?
     end
 
     def require_company?
+      return false if quick_checkout
+      # A company node names itself, so the line is always answerable; a
+      # seller's billing address is what a commission invoice is addressed to,
+      # and that is the part which cannot be left out.
+      return true if business_owned?
+
       # Only meaningful when the field is on the form at all — requiring a
       # value the customer is never shown would make checkout unfinishable.
-      !quick_checkout && show_company_address_field? && store_preference(:address_requires_company, false)
+      show_company_address_field? && store_preference(:address_requires_company, false)
     end
 
     def require_street?
@@ -277,6 +346,8 @@ module Spree
     end
 
     def show_company_address_field?
+      return true if business_owned?
+
       store_preference(:company_field_enabled, false)
     end
 
@@ -328,9 +399,9 @@ module Spree
     end
 
     def set_default_values
-      self.firstname ||= customer.first_name
-      self.lastname ||= customer.last_name
-      self.phone ||= customer.phone
+      self.firstname ||= customer_owner.first_name
+      self.lastname ||= customer_owner.last_name
+      self.phone ||= customer_owner.phone
     end
 
     # The ISO code is what the address stores; the association is kept in step
@@ -394,6 +465,7 @@ module Spree
     end
 
     def set_user_attributes
+      customer = customer_owner
       if customer.name.blank?
         customer.first_name = firstname
         customer.last_name = lastname
@@ -439,6 +511,7 @@ module Spree
     end
 
     def assign_new_default_address_to_user
+      customer = customer_owner
       return unless customer
 
       customer.reload
@@ -452,11 +525,11 @@ module Spree
     end
 
     def assign_new_default_address_to_user_scope
-      customer.addresses.not_quick_checkout.reorder(created_at: :desc)
+      customer_owner.addresses.not_quick_checkout.reorder(created_at: :desc)
     end
 
     def unassign_from_incomplete_orders
-      orders = Spree::Order.incomplete.where(customer_id: customer_id)
+      orders = Spree::Order.incomplete.where(customer_id: owner_id)
       orders.where(ship_address_id: id).update_all(ship_address_id: nil, updated_at: Time.current)
       orders.where(bill_address_id: id).update_all(bill_address_id: nil, updated_at: Time.current)
     end

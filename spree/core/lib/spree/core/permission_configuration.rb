@@ -323,7 +323,7 @@ module Spree
 
       register_resource(:customers, group: :customers, subjects: -> {
         [Spree.customer_class, Spree::Address, Spree::CreditCard, Spree::CustomerGroup,
-         Spree::Company, Spree::CompanyAddress, Spree::CompanyMembership,
+         Spree::Company, Spree::CompanyMembership,
          Spree::CompanyInvitation,
          Spree::TaxIdentifier, Spree::TaxExemptionCertificate,
          Spree::CustomField]

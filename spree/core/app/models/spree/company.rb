@@ -33,9 +33,12 @@ module Spree
     has_many :children, class_name: 'Spree::Company', foreign_key: :parent_id,
                         inverse_of: :parent, dependent: :destroy
 
-    has_many :company_addresses, class_name: 'Spree::CompanyAddress', dependent: :destroy,
-                                 inverse_of: :company
-    has_many :addresses, through: :company_addresses, class_name: 'Spree::Address'
+    # The address book: rows the node owns outright, labelled per site. A
+    # default is a pointer at one of them rather than a flag on the row, so
+    # two entries can never both claim the same default.
+    has_many :addresses, class_name: 'Spree::Address', as: :owner, dependent: :destroy
+    belongs_to :default_bill_address, class_name: 'Spree::Address', optional: true
+    belongs_to :default_ship_address, class_name: 'Spree::Address', optional: true
     has_many :memberships, class_name: 'Spree::CompanyMembership', dependent: :destroy,
                            inverse_of: :company
     has_many :customers, through: :memberships, class_name: Spree.customer_class.to_s
@@ -58,6 +61,7 @@ module Spree
     validate :no_ancestry_cycle
     validate :depth_within_cap
     validate :kind_change_keeps_tax_anchor
+    validate :defaults_are_own_addresses
 
     # prepend: `dependent: :destroy` on children registers its own
     # before_destroy when the association is declared, so without this the
@@ -173,12 +177,12 @@ module Spree
     #
     # @return [Spree::Address, nil]
     def default_billing_address
-      default_address(:default_billing)
+      default_address(:default_bill_address)
     end
 
     # @return [Spree::Address, nil]
     def default_shipping_address
-      default_address(:default_shipping)
+      default_address(:default_ship_address)
     end
 
     private
@@ -194,12 +198,24 @@ module Spree
       throw(:abort)
     end
 
-    def default_address(flag)
+    def default_address(attribute)
       self_and_ancestors.each do |node|
-        row = node.company_addresses.where(flag => true).first
-        return row.address if row
+        address = node.public_send(attribute)
+        return address if address
       end
       nil
+    end
+
+    # A default must point at an address this node owns — otherwise it would
+    # prefill checkout with another node's site.
+    def defaults_are_own_addresses
+      [:default_bill_address, :default_ship_address].each do |attribute|
+        address = public_send(attribute)
+        next if address.nil?
+        next if address.owner_type == 'Spree::Company' && address.owner_id == id
+
+        errors.add(attribute, :invalid)
+      end
     end
 
     def parent_in_same_store

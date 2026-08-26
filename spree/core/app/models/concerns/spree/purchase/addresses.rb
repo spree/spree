@@ -138,7 +138,7 @@ module Spree
 
         address = Spree::Address.find_by(id: id)
         # rubocop:disable Style/ConditionalAssignment
-        if address && customer_id.present? && address.customer_id == customer_id
+        if address && customer_id.present? && address.owner_id == customer_id && address.customer_owned?
           self['bill_address_id'] = address.id
         else
           self['bill_address_id'] = nil
@@ -165,7 +165,7 @@ module Spree
 
         address = Spree::Address.find_by(id: id)
         # rubocop:disable Style/ConditionalAssignment
-        if address && customer_id.present? && address.customer_id == customer_id
+        if address && customer_id.present? && address.owner_id == customer_id && address.customer_owned?
           self['ship_address_id'] = address.id
         else
           self['ship_address_id'] = nil
@@ -193,7 +193,7 @@ module Spree
         attributes.transform_values!(&:presence)
         attributes = attributes.to_h.symbolize_keys
 
-        default_address_scope = customer ? customer.addresses : ::Spree::Address.where(customer_id: nil)
+        default_address_scope = customer ? customer.addresses : ::Spree::Address.where(owner_id: nil)
         default_address = default_address_scope.find_by(id: attributes[:id])
 
         if default_address&.editable?
@@ -203,7 +203,7 @@ module Spree
         end
 
         attributes = attributes.except(:id, :updated_at, :created_at)
-        attributes[:customer_id] = customer&.id
+        attributes[:owner] = customer
 
         ::Spree::Address.find_duplicate(attributes) || ::Spree::Address.create(attributes)
       end
@@ -213,7 +213,7 @@ module Spree
       end
 
       def should_assign_user_default_address?(address)
-        customer.present? && address.present? && address.valid? && address.customer == customer && !address.quick_checkout?
+        customer.present? && address.present? && address.valid? && address.customer_owner == customer && !address.quick_checkout?
       end
     end
   end

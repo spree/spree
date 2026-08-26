@@ -10,7 +10,9 @@ class RenameUserIdToCustomerId < ActiveRecord::Migration[7.2]
     end
 
     rename_column :spree_orders, :user_id, :customer_id
-    rename_column :spree_addresses, :user_id, :customer_id
+    # spree_addresses is not renamed here: its owner becomes polymorphic
+    # (owner_type / owner_id) in AddOwnerToSpreeAddresses, so renaming the
+    # column first would be churn.
     rename_column :spree_credit_cards, :user_id, :customer_id
     rename_column :spree_store_credits, :user_id, :customer_id
     rename_column :spree_wishlists, :user_id, :customer_id

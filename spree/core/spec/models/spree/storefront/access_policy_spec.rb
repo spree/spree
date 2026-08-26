@@ -91,7 +91,7 @@ RSpec.describe Spree::Storefront::AccessPolicy, type: :model do
     end
 
     it 'denies unowned records to everyone' do
-      unowned = build(:address, customer_id: nil)
+      unowned = build(:address, owner: nil)
       expect(policy.readable?(unowned)).to be false
       expect(guest_policy.readable?(unowned)).to be false
     end

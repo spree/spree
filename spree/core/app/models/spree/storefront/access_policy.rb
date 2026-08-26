@@ -133,7 +133,7 @@ module Spree
       # Enterprise narrows this by overriding these entry points
       # (docs/plans/6.0-b2b-companies-and-catalogs.md).
       def company_record?(record)
-        record.is_a?(Spree::Company) || record.is_a?(Spree::CompanyAddress) ||
+        record.is_a?(Spree::Company) ||
           record.is_a?(Spree::CompanyMembership) || record.is_a?(Spree::CompanyInvitation)
       end
 
@@ -157,6 +157,11 @@ module Spree
       # user_id -> customer_id rename (a record with no such column is owned by
       # no one, so the check fails closed). Deliberately not the deprecated
       # `user_id` alias, which disappears with the shim in 6.1.
+      #
+      # A model whose owner is polymorphic (Address, whose row may belong to a
+      # customer, a company or a seller) answers `customer_id` for its own
+      # customer rows only, so a business-owned row is owned by no customer and
+      # the check fails closed there too.
       def owned?(record)
         user.present? && record.respond_to?(:customer_id) && record.customer_id == user.id
       end
@@ -164,7 +169,11 @@ module Spree
       def owned_scope(base)
         return base.none if user.blank?
 
-        base.where(customer_id: user.id)
+        if base.klass.column_names.include?('owner_id')
+          base.where(owner_type: Spree.customer_class.to_s, owner_id: user.id)
+        else
+          base.where(customer_id: user.id)
+        end
       end
     end
   end

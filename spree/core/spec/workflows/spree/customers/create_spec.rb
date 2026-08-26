@@ -108,7 +108,7 @@ RSpec.describe Spree::Customers::Create do
 
       expect(customer.ship_address).to eq(order.ship_address)
       expect(customer.bill_address).to eq(order.bill_address)
-      expect(order.bill_address.reload.customer_id).to eq(customer.id)
+      expect(order.bill_address.reload.owner_id).to eq(customer.id)
     end
 
     it 'links the order to the customer' do
@@ -119,11 +119,11 @@ RSpec.describe Spree::Customers::Create do
 
     it 'does not adopt an address that belongs to another customer' do
       other_customer = create(:user)
-      address.update_columns(customer_id: other_customer.id)
+      address.update_columns(owner_type: Spree.customer_class.to_s, owner_id: other_customer.id)
 
       customer = result.value
 
-      expect(address.reload.customer_id).to eq(other_customer.id)
+      expect(address.reload.owner_id).to eq(other_customer.id)
       expect(customer.bill_address_id).to be_nil
       expect(customer.ship_address_id).to be_nil
     end

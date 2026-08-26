@@ -233,16 +233,17 @@ describe Spree::Seller do
                                         city: 'London', postal_code: 'EC1A 1BB', country_code: 'GB' })
 
       reloaded = described_class.find(seller.id)
-      expect(reloaded.billing_address).to be_a(Spree::BusinessAddress)
+      expect(reloaded.billing_address.owner).to eq(seller)
+      expect(reloaded.billing_address.require_name?).to be(false)
       expect(reloaded.update(billing_address: { city: 'Manchester' })).to be(true)
     end
 
     # A seller is paranoid, so destroy is a soft delete. Taking the addresses
     # with it would hard-delete rows a restored seller still points at.
     it 'keeps its addresses when soft-deleted, and finds them again on restore' do
-      seller.update!(billing_address: Spree::BusinessAddress.create!(
-        company: 'Sparks Trading Ltd', address1: '1 Seller Way', city: 'London',
-        zipcode: 'EC1A 1BB', country_code: 'GB'
+      seller.update!(billing_address: Spree::Address.create!(
+        owner: seller, company: 'Sparks Trading Ltd', address1: '1 Seller Way',
+        city: 'London', zipcode: 'EC1A 1BB', country_code: 'GB'
       ))
       address_id = seller.billing_address_id
 
