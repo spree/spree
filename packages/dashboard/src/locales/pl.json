@@ -3752,6 +3752,18 @@
       "product_type_adds_options_one": "Ten typ dodaje {{options}} do nowych produktów.",
       "product_type_adds_options_other": "Ten typ dodaje {{options}} do nowych produktów.",
       "product_type_placeholder": "Brak typu produktu",
+      "review": {
+        "approve": "Zatwierdź",
+        "approve_confirm_message": "Trafi do sprzedaży zaraz po zatwierdzeniu.",
+        "approve_confirm_title": "Zatwierdzić ten produkt?",
+        "approved": "Produkt zatwierdzony",
+        "edit_reason": "Edytuj powód",
+        "reason_label": "Powód",
+        "reason_placeholder": "Co sprzedawca ma zmienić?",
+        "reject": "Odeślij",
+        "rejected": "Odesłano do sprzedawcy",
+        "send_back": "Odeślij"
+      },
       "save_label": "Zapisz produkt",
       "seo": {
         "meta_description_placeholder": "Opis SEO",

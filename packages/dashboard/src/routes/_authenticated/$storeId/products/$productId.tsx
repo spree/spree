@@ -40,6 +40,7 @@ import { useTranslation } from 'react-i18next'
 import { CustomFieldsInlineCard } from '../../../../components/spree/custom-fields/custom-fields-inline'
 import { MediaRichTextEditor } from '../../../../components/spree/media-rich-text-editor'
 import { ProductCustomFieldsProvider } from '../../../../components/spree/products/product-custom-fields-provider'
+import { ProductReviewActions } from '../../../../components/spree/products/product-review-actions'
 import { PublishingCard } from '../../../../components/spree/products/publishing-card'
 import { ResourceTranslationsCard } from '../../../../components/spree/translations/resource-translations-card'
 import { useDeleteProduct, useProduct, useUpdateProduct } from '../../../../hooks/use-product'
@@ -300,7 +301,12 @@ function ProductForm({ product }: { product: Product }) {
           }
           sidebar={
             <>
-              <StatusCard form={form} />
+              <StatusCard
+                form={form}
+                reviewActions={
+                  <ProductReviewActions productId={productId} status={product.status} />
+                }
+              />
               <PublishingCard form={form} />
               <CategorizationCard form={form} />
               <TaxCard form={form} />

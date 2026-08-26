@@ -1,3 +1,4 @@
+import type * as React from 'react'
 import type { Control, FieldValues, Path } from 'react-hook-form'
 import { Controller } from 'react-hook-form'
 import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card'
@@ -22,6 +23,7 @@ export function StatusCard<TFieldValues extends FieldValues>({
   options,
   disabled,
   description,
+  actions,
 }: {
   control: Control<TFieldValues>
   name: Path<TFieldValues>
@@ -30,6 +32,12 @@ export function StatusCard<TFieldValues extends FieldValues>({
   options: StatusOption[]
   disabled?: boolean
   description?: string
+  /**
+   * Rendered under the field. The moves out of a status this picker cannot
+   * assign live here — a review decision is a mutation, which the panel owns
+   * rather than the design system.
+   */
+  actions?: React.ReactNode
 }) {
   return (
     <Card>
@@ -64,6 +72,7 @@ export function StatusCard<TFieldValues extends FieldValues>({
           />
           {description && <p className="text-muted-foreground text-sm">{description}</p>}
         </Field>
+        {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
       </CardContent>
     </Card>
   )

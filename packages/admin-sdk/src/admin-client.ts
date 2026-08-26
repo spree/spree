@@ -769,6 +769,25 @@ export class AdminClient {
       this.request<Product>('POST', `/products/${id}/clone`, options),
 
     /**
+     * Accept a product a seller submitted, putting it on sale. Refuses
+     * anything not awaiting review — reaching `active` from elsewhere is an
+     * ordinary status write.
+     */
+    approve: (id: string, options?: RequestOptions): Promise<Product> =>
+      this.request<Product>('PATCH', `/products/${id}/approve`, options),
+
+    /**
+     * Turn a submission down. The reason is shown to the seller, so they know
+     * what to change before submitting again.
+     */
+    reject: (
+      id: string,
+      params?: { reason?: string },
+      options?: RequestOptions,
+    ): Promise<Product> =>
+      this.request<Product>('PATCH', `/products/${id}/reject`, { ...options, body: params }),
+
+    /**
      * Bulk-set `status` on a list of products. The server validates `status`
      * against the product status enum and reindexes affected products.
      */

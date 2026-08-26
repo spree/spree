@@ -3692,6 +3692,18 @@
       "product_type_adds_options_one": "Dieser Typ fügt neuen Produkten {{options}} hinzu.",
       "product_type_adds_options_other": "Dieser Typ fügt neuen Produkten {{options}} hinzu.",
       "product_type_placeholder": "Kein Produkttyp",
+      "review": {
+        "approve": "Freigeben",
+        "approve_confirm_message": "Es geht sofort nach der Freigabe in den Verkauf.",
+        "approve_confirm_title": "Dieses Produkt freigeben?",
+        "approved": "Produkt freigegeben",
+        "edit_reason": "Grund bearbeiten",
+        "reason_label": "Grund",
+        "reason_placeholder": "Was soll der Verkäufer ändern?",
+        "reject": "Zurücksenden",
+        "rejected": "An den Verkäufer zurückgesendet",
+        "send_back": "Zurücksenden"
+      },
       "save_label": "Produkt speichern",
       "seo": {
         "meta_description_placeholder": "SEO-Beschreibung",

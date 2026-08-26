@@ -844,19 +844,33 @@ export function SEOCard({ form, product }: FormCardProps & { product?: Product }
 
 const ASSIGNABLE_STATUSES = ['draft', 'active', 'archived']
 
-export function StatusCard({ form }: FormCardProps) {
+export function StatusCard({
+  form,
+  reviewActions,
+}: FormCardProps & {
+  /**
+   * Approve / Reject, supplied by the panel that can run them. Rendered only
+   * while the product is actually in review, so an ordinary product's card is
+   * unchanged.
+   */
+  reviewActions?: React.ReactNode
+}) {
   const { t } = useTranslation()
   const status = useWatch({ control: form.control, name: 'status' })
 
-  // A product awaiting or refused review sits on a status nobody assigns —
-  // it got there by a seller submitting or an operator deciding, and it
-  // leaves through Approve/Reject. Listing it anyway is what lets the picker
-  // render the product's actual state instead of a raw value with no matching
-  // option; the card is read-only while it is there, because the moves out of
-  // it are the review actions rather than this control
-  // (docs/plans/6.0-seller-product-submission.md).
-  const underReview = Boolean(status) && !ASSIGNABLE_STATUSES.includes(status as string)
-  const values = underReview ? [status as string, ...ASSIGNABLE_STATUSES] : ASSIGNABLE_STATUSES
+  // A product in a review status sits on one nobody assigns — it got there by
+  // a seller submitting or an operator deciding. Listing it anyway is what
+  // lets the picker render the product's actual state instead of a raw value
+  // with no matching option (docs/plans/6.0-seller-product-submission.md).
+  //
+  // Only `proposed` locks the control. That is a decision still to be made,
+  // and it is made with Approve or Reject. `rejected` is a decision already
+  // made, so the operator can move the product on from here like any other —
+  // overriding their own refusal is not a review action, and leaving the
+  // picker disabled there was a dead end with no way out.
+  const inReview = Boolean(status) && !ASSIGNABLE_STATUSES.includes(status as string)
+  const awaitingDecision = status === 'proposed'
+  const values = inReview ? [status as string, ...ASSIGNABLE_STATUSES] : ASSIGNABLE_STATUSES
 
   return (
     <SharedStatusCard<ProductFormValues>
@@ -864,8 +878,9 @@ export function StatusCard({ form }: FormCardProps) {
       name="status"
       title={t('admin.fields.status.label')}
       label={t('admin.fields.status.label')}
-      disabled={underReview}
-      description={underReview ? t('admin.pages.products.status_under_review') : undefined}
+      disabled={awaitingDecision}
+      description={awaitingDecision ? t('admin.pages.products.status_under_review') : undefined}
+      actions={inReview ? reviewActions : undefined}
       options={values.map((value) => ({
         value,
         label: t(`admin.pages.products.status_options.${value}`),
