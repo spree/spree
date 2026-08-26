@@ -3,22 +3,23 @@ module Spree
     module Helper
       private
 
-      # Points the customer's default billing/shipping slots at an address.
+      # Points an owner's default billing/shipping slots at an address.
       #
-      # Writes the columns directly: both callers have already established
-      # that the address is the customer's own — Create assigns the owner,
-      # Update pins it from the record being edited — so the ownership
-      # validation this skips cannot fail, and skipping it avoids re-running
-      # the customer's whole validation set to move one foreign key. The
-      # checkout path promotes defaults by plain assignment instead, because
-      # there the address ownership is exactly what is still in question.
-      def assign_to_user_as_default(user:, address_id:, default_billing: true, default_shipping: true)
-        attributes_to_update = {
-          ship_address_id: (address_id if default_shipping),
-          bill_address_id: (address_id if default_billing),
-        }.compact_blank
+      # Which columns those are is the owner's business — a customer and a
+      # company node name them differently — so the owner is asked rather
+      # than assumed. The checkout path promotes defaults by plain assignment
+      # instead, because there the address ownership is exactly what is still
+      # in question.
+      #
+      # @param owner [Object, nil] anything including Spree::HasAddressBook
+      def assign_owner_default(owner:, address_id:, default_billing: true, default_shipping: true)
+        return if owner.nil? || !owner.respond_to?(:assign_default_address)
 
-        user.update_columns(**attributes_to_update, updated_at: Time.current) if attributes_to_update.present?
+        owner.assign_default_address(
+          address_id: address_id,
+          billing: default_billing,
+          shipping: default_shipping
+        )
       end
     end
   end

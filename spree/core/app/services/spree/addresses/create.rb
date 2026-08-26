@@ -4,22 +4,28 @@ module Spree
       prepend Spree::ServiceModule::Base
       include Spree::Addresses::Helper
 
-      def call(address_params: {}, user: nil, **opts)
+      # @param owner [Object, nil] who keeps the address — a customer, a
+      #   company node, anything with an address book. +user:+ is the older
+      #   name for the same thing, from when only customers had one.
+      def call(address_params: {}, owner: nil, user: nil, **opts)
+        owner ||= user
         order = opts[:order]
         default_billing = address_params.key?(:is_default_billing) ? address_params.delete(:is_default_billing) : opts.fetch(:default_billing, false)
         default_shipping = address_params.key?(:is_default_shipping) ? address_params.delete(:is_default_shipping) : opts.fetch(:default_shipping, false)
 
         address = Spree::Address.new(address_params)
-        address.owner = user if user.present?
+        address.owner = owner if owner.present?
 
         ApplicationRecord.transaction do
           if address.save
-            if user.present?
-              if user.addresses.pluck(:id) == [address.id]
-                user.update(bill_address_id: address.id, ship_address_id: address.id)
+            if owner.present?
+              # The first address a book gets is its default of both kinds —
+              # there is nothing for it to displace.
+              if owner.addresses.pluck(:id) == [address.id]
+                assign_owner_default(owner: owner, address_id: address.id)
               else
-                assign_to_user_as_default(
-                  user: user,
+                assign_owner_default(
+                  owner: owner,
                   address_id: address.id,
                   default_billing: default_billing,
                   default_shipping: default_shipping

@@ -37,6 +37,9 @@ module Spree
     # default is a pointer at one of them rather than a flag on the row, so
     # two entries can never both claim the same default.
     has_many :addresses, class_name: 'Spree::Address', as: :owner, dependent: :destroy
+    include Spree::HasAddressBook
+    has_address_book bill: :default_bill_address_id, ship: :default_ship_address_id
+
     belongs_to :default_bill_address, class_name: 'Spree::Address', optional: true
     belongs_to :default_ship_address, class_name: 'Spree::Address', optional: true
     has_many :memberships, class_name: 'Spree::CompanyMembership', dependent: :destroy,

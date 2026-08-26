@@ -337,4 +337,29 @@ RSpec.describe Spree::Addresses::Update do
       end
     end
   end
+  # The service used to reach for the customer behind an address, so a company
+  # node's book reported success while its default pointer never moved.
+  describe 'a company book entry' do
+    let(:store) { @default_store }
+    let(:company) { create(:company, store: store) }
+    let!(:entry) { create(:company_address, owner: company, label: 'HQ') }
+
+    it 'promotes the entry to the node default' do
+      result = Spree.address_update_service.call(
+        address: entry, address_params: { city: 'Shelbyville' }, default_billing: true
+      )
+
+      expect(result).to be_success
+      expect(company.reload.default_bill_address_id).to eq(entry.id)
+    end
+
+    it 'moves only the pointer when nothing about the address changed' do
+      result = Spree.address_update_service.call(
+        address: entry, address_params: {}, default_shipping: true
+      )
+
+      expect(result).to be_success
+      expect(company.reload.default_ship_address_id).to eq(entry.id)
+    end
+  end
 end
