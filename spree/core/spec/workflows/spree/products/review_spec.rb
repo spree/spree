@@ -88,18 +88,30 @@ RSpec.describe 'Spree::Products review workflows' do
 
       expect(result).to be_success
       expect(product.reload).to be_rejected
-      expect(product.metadata['rejection_reason']).to eq('Photos are too dark')
+      expect(product.rejection_reason).to eq('Photos are too dark')
     end
 
     # The panel offers "Edit reason" on a product already turned down, so the
     # workflow has to accept one — correcting the note is not a new decision.
     it 'rewrites the reason on one already rejected' do
-      product.update!(status: 'rejected', metadata: { 'rejection_reason' => 'Too dark' })
+      product.update!(status: 'proposed')
+      Spree.product_reject_workflow.call(product: product, reason: 'Too dark')
 
       result = Spree.product_reject_workflow.call(product: product, reason: 'Needs a scale photo')
 
       expect(result).to be_success
-      expect(product.reload.metadata['rejection_reason']).to eq('Needs a scale photo')
+      expect(product.reload.rejection_reason).to eq('Needs a scale photo')
+    end
+
+    # The reason is the operator's, and the seller can write their own
+    # product's metadata — so it must not live anywhere the seller can reach.
+    it 'survives the seller rewriting their own metadata' do
+      product.update!(status: 'proposed')
+      Spree.product_reject_workflow.call(product: product, reason: 'Photos are too dark')
+
+      product.update!(metadata: { 'care' => 'wash cold' })
+
+      expect(product.reload.rejection_reason).to eq('Photos are too dark')
     end
 
     it 'refuses a product nobody submitted' do
@@ -107,6 +119,84 @@ RSpec.describe 'Spree::Products review workflows' do
 
       expect(result).not_to be_success
       expect(product.reload).to be_draft
+    end
+  end
+
+  # The trail is what answers "who decided this, and when" — the product's
+  # own status only says where it landed.
+  describe 'the submission trail' do
+    let(:staff) { create(:admin_user) }
+
+    it 'records who submitted and who decided' do
+      Spree.product_propose_workflow.call(product: product, submitted_by: staff)
+      Spree.product_approve_workflow.call(product: product, reviewer: staff)
+
+      submission = product.reload.latest_submission
+      expect(submission).to be_approved
+      expect(submission.submitted_by).to eq(staff)
+      expect(submission.reviewed_by).to eq(staff)
+      expect(submission.reviewed_at).to be_present
+    end
+
+    it 'keeps every decision rather than overwriting the last' do
+      Spree.product_propose_workflow.call(product: product)
+      Spree.product_reject_workflow.call(product: product, reason: 'Too dark')
+      Spree.product_propose_workflow.call(product: product)
+      Spree.product_approve_workflow.call(product: product)
+
+      expect(product.reload.submissions.count).to eq(2)
+      expect(product.submissions.latest_first.map(&:status)).to eq(%w[approved rejected])
+    end
+
+    # A blank reviewer must read as "this store does not review listings",
+    # never as a decision whose author we failed to record.
+    it 'marks an auto-approval as one' do
+      stub_store_preferences(store, auto_approve_seller_products: true)
+
+      Spree.product_propose_workflow.call(product: product)
+
+      submission = product.reload.latest_submission
+      expect(submission).to be_approved
+      expect(submission.reviewed_by).to be_nil
+      expect(submission).to be_auto_approved
+    end
+
+    # Otherwise a pending row means both "waiting on the marketplace" and
+    # "the seller lost interest", which are different questions.
+    it 'settles the open row when a seller takes the listing back' do
+      Spree.product_propose_workflow.call(product: product)
+      Spree.product_draft_workflow.call(product: product)
+
+      expect(product.reload.latest_submission).to be_withdrawn
+    end
+
+    it 'leaves a product nobody submitted alone' do
+      Spree.product_draft_workflow.call(product: product)
+
+      expect(product.reload.submissions).to be_empty
+    end
+  end
+
+  # Leaving review is a decision, and a decision has to record who made it.
+  # A plain status write would put a product on sale anonymously.
+  describe 'editing a product in review' do
+    it 'refuses to move its status' do
+      product.update!(status: 'proposed')
+
+      result = Spree.product_update_workflow.call(product: product, attributes: { status: 'active' })
+
+      expect(result).not_to be_success
+      expect(product.reload).to be_proposed
+    end
+
+    it 'still allows ordinary edits' do
+      product.update!(status: 'proposed')
+
+      result = Spree.product_update_workflow.call(product: product, attributes: { name: 'Revised' })
+
+      expect(result).to be_success
+      expect(product.reload.name).to eq('Revised')
+      expect(product).to be_proposed
     end
   end
 

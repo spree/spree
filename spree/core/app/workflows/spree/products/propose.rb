@@ -12,8 +12,9 @@ module Spree
       hooks :validate, :after_propose
 
       # @param product [Spree::Product]
+      # @param submitted_by [Spree.admin_user_class, nil] who asked
       # @return [Spree::ServiceModule::Result] value is the product
-      def perform(product:)
+      def perform(product:, submitted_by: nil)
         super
 
         # Only a listing that is being worked on can be submitted. Guarding
@@ -29,12 +30,13 @@ module Spree
 
         ApplicationRecord.transaction do
           step :mark_proposed
+          step :open_submission
           run_hooks :after_propose
         end
 
         product.publish_event('product.proposed')
 
-        return Spree.product_approve_workflow.call(product: product) if auto_approve?
+        return Spree.product_approve_workflow.call(product: product, auto: true) if auto_approve?
 
         success(product)
       end
@@ -43,6 +45,13 @@ module Spree
 
       def mark_proposed
         failure(product) unless product.update(status: 'proposed')
+      end
+
+      # A resubmission opens a fresh row rather than reopening the decided
+      # one: the trail is how many times this was asked for, and rewriting
+      # the last answer would erase that.
+      def open_submission
+        product.submissions.create!(status: 'pending', submitted_by: submitted_by)
       end
 
       def auto_approve?

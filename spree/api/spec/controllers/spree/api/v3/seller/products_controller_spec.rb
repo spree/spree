@@ -325,6 +325,28 @@ RSpec.describe Spree::Api::V3::Seller::ProductsController, type: :controller do
       expect(theirs.reload.name).to eq('Their Lamp')
     end
 
+    # The reason the marketplace gave lived in product metadata once, which
+    # the seller writes — so an ordinary save erased the operator's decision.
+    it 'cannot erase why the marketplace sent the product back' do
+      mine.update!(status: 'proposed')
+      Spree.product_reject_workflow.call(product: mine, reason: 'Photos are too dark')
+
+      patch :update, params: { id: mine.prefixed_id, metadata: { care: 'wash cold' } }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(mine.reload.rejection_reason).to eq('Photos are too dark')
+    end
+
+    # Reaching `active` is the marketplace's call, and a status sent in an
+    # update payload records nobody as having made it.
+    it 'cannot put its own product on sale through an update' do
+      mine.update!(status: 'proposed')
+
+      patch :update, params: { id: mine.prefixed_id, status: 'active' }, as: :json
+
+      expect(mine.reload).to be_proposed
+    end
+
     # Marketplace configuration stays with the operator.
     it 'ignores tax and delivery configuration' do
       other_tax = create(:tax_category)

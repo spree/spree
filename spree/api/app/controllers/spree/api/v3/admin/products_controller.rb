@@ -59,11 +59,23 @@ module Spree
               )
             end
 
-            count = bulk_collection.update_all(status: params[:status], updated_at: Time.current)
-            # `update_all` skips `after_commit`, so the search index won't refresh on its own.
-            bulk_collection.each(&:enqueue_search_index)
+            # Products in review are excluded rather than refused: a bulk
+            # activate over a mixed selection should still do the plain ones,
+            # and moving the rest is `approve`/`reject`, which records who
+            # decided (docs/plans/6.0-seller-product-submission.md).
+            movable = bulk_collection.where.not(status: Spree::Product::REVIEW_STATUSES)
+            skipped = bulk_collection.where(status: Spree::Product::REVIEW_STATUSES).count
 
-            render json: { product_count: count, status: params[:status] }
+            count = movable.update_all(status: params[:status], updated_at: Time.current)
+            # `update_all` skips `after_commit`, so the search index won't refresh on its own.
+            movable.each(&:enqueue_search_index)
+
+            payload = { product_count: count, status: params[:status] }
+            # Only when it happened: a key on every response would say
+            # "nothing was skipped" to clients that never skip anything.
+            payload[:skipped_in_review_count] = skipped if skipped.positive?
+
+            render json: payload
           end
 
           # POST /api/v3/admin/products/bulk_add_to_categories

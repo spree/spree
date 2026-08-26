@@ -1367,7 +1367,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
 
       expect(response).to have_http_status(:ok)
       expect(submitted.reload).to be_rejected
-      expect(submitted.metadata['rejection_reason']).to eq('Photos are too dark')
+      expect(submitted.rejection_reason).to eq('Photos are too dark')
     end
 
     it 'refuses to approve a product nobody submitted' do
@@ -1537,9 +1537,30 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       end
     end
 
-    Spree::Product.statuses.each do |from_status|
+    # Review statuses are excluded: leaving review is `approve`/`reject`,
+    # which records who decided, and a bulk write records nobody
+    # (docs/plans/6.0-seller-product-submission.md).
+    (Spree::Product.statuses - Spree::Product::REVIEW_STATUSES).each do |from_status|
       context "when product is in #{from_status} status" do
         it_behaves_like 'updates status to active', from_status
+      end
+    end
+
+    Spree::Product::REVIEW_STATUSES.each do |review_status|
+      context "when product is in #{review_status} status" do
+        it 'leaves it in review and reports it skipped' do
+          product.update!(status: review_status)
+
+          post :bulk_status_update, params: {
+            ids: [product.prefixed_id], status: 'active'
+          }, as: :json
+
+          expect(response).to have_http_status(:ok)
+          expect(product.reload.status).to eq(review_status)
+          expect(json_response).to include(
+            'product_count' => 0, 'skipped_in_review_count' => 1
+          )
+        end
       end
     end
   end

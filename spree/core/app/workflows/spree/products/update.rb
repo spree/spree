@@ -22,6 +22,7 @@ module Spree
         super
 
         step :assign_attributes
+        step :refuse_review_status_write
         run_hooks :validate
 
         ApplicationRecord.transaction do
@@ -47,6 +48,17 @@ module Spree
         @variants_params = attrs[:variants]
         @media_params = attrs[:media]
         product.assign_attributes(attrs.except(:variants, :media))
+      end
+
+      # Leaving review is a decision, and a decision belongs to Approve or
+      # Reject — they are what record who made it. A plain status write would
+      # put a product on sale with nobody's name against it, so it refuses
+      # (docs/plans/6.0-seller-product-submission.md).
+      def refuse_review_status_write
+        return unless product.status_changed?
+        return unless product.status_was.in?(Spree::Product::REVIEW_STATUSES)
+
+        reject!(I18n.t('activerecord.errors.models.spree/product.attributes.base.status_decided_by_review'))
       end
 
       def save_product

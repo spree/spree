@@ -35,7 +35,8 @@ module Spree
           #
           # Asking the marketplace to put this product on sale.
           def submit
-            run_status_workflow(Spree.product_propose_workflow)
+            run_status_workflow(Spree.product_propose_workflow,
+                                submitted_by: try_spree_current_user)
           end
 
           # PATCH /api/v3/seller/products/:id/draft
@@ -168,8 +169,8 @@ module Spree
             authorize!(:update, @resource)
           end
 
-          def run_status_workflow(workflow)
-            result = workflow.call(product: @resource)
+          def run_status_workflow(workflow, **arguments)
+            result = workflow.call(product: @resource, **arguments)
 
             if result.success?
               render json: serialize_resource(@resource.reload)

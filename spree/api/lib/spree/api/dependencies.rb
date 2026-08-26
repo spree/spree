@@ -176,6 +176,8 @@ module Spree
         seller_requirement_custom_field_serializer: 'Spree::Api::V3::Seller::RequirementCustomFieldSerializer',
         seller_tax_identifier_serializer: 'Spree::Api::V3::Seller::TaxIdentifierSerializer',
         seller_requirement_status_serializer: 'Spree::Api::V3::Seller::RequirementStatusSerializer',
+        product_submission_serializer: 'Spree::Api::V3::Seller::ProductSubmissionSerializer',
+        admin_product_submission_serializer: 'Spree::Api::V3::Admin::ProductSubmissionSerializer',
         seller_requirement_submission_serializer: 'Spree::Api::V3::Seller::RequirementSubmissionSerializer',
         admin_seller_serializer: 'Spree::Api::V3::Admin::SellerSerializer',
         admin_seller_requirement_serializer: 'Spree::Api::V3::Admin::SellerRequirementSerializer',

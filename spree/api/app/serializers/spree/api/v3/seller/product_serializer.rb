@@ -11,7 +11,8 @@ module Spree
         # tags) is the marketplace's own merchandising, so it is neither
         # written nor read here.
         class ProductSerializer < V3::ProductSerializer
-          typelize status: :string, metadata: 'Record<string, unknown>'
+          typelize status: :string, metadata: 'Record<string, unknown>',
+                   submission: ['ProductSubmission', nullable: true]
 
           attributes :status, :metadata, created_at: :iso8601, updated_at: :iso8601
 
@@ -31,6 +32,12 @@ module Spree
           many :option_types,
                resource: proc { Spree.api.option_type_serializer },
                if: proc { expand?('option_types') }
+
+          # Why the marketplace sent this back, so the panel can show it
+          # against a rejected listing without a second request.
+          one :latest_submission,
+              key: :submission,
+              resource: proc { Spree.api.product_submission_serializer }
         end
       end
     end

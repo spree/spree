@@ -15,6 +15,7 @@ module Spree
 
         ApplicationRecord.transaction do
           step :mark_draft
+          step :withdraw_submission
           run_hooks :after_draft
         end
 
@@ -25,6 +26,15 @@ module Spree
 
       def mark_draft
         failure(product) unless product.update(status: 'draft')
+      end
+
+      # Taking a listing back before the marketplace ruled on it settles the
+      # open row, so `pending` never means "abandoned". A product that was
+      # not in review has nothing to withdraw.
+      def withdraw_submission
+        return unless product.status_previously_was.in?(Spree::Product::REVIEW_STATUSES)
+
+        Spree::ProductSubmissions::Close.call(product: product, status: 'withdrawn')
       end
     end
   end

@@ -86,6 +86,31 @@ module Spree
     alias_attribute :classification_count, :categories_count
 
     # @deprecated Use #product_categories; removed in 6.1.
+    # The live row in the review trail, or nil for a product nobody submitted.
+    #
+    # @return [Spree::ProductSubmission, nil]
+    def latest_submission
+      submissions.latest_first.first
+    end
+
+    # Why the marketplace turned this listing down, for the seller to read.
+    # Answers nil once the product moves on, so a stale note never shows
+    # against a product that is no longer rejected.
+    #
+    # @return [String, nil]
+    def rejection_reason
+      return unless rejected?
+
+      latest_submission&.review_note
+    end
+
+    # Whether this product is waiting on, or has had, a marketplace decision.
+    #
+    # @return [Boolean]
+    def in_review?
+      REVIEW_STATUSES.include?(status)
+    end
+
     def classifications
       Spree::Deprecation.warn('Spree::Product#classifications is deprecated and will be removed in Spree 6.1. Use #product_categories instead.')
       product_categories
@@ -187,6 +212,10 @@ module Spree
     has_many :completed_orders, -> { reorder(nil).distinct.complete }, through: :line_items, source: :order
 
     has_many :media, -> { order(:position) }, as: :viewable, dependent: :destroy, class_name: 'Spree::Media'
+
+    # The review trail for a seller's listing. Append-only: the latest row is
+    # the live one (docs/plans/6.0-seller-product-submission.md).
+    has_many :submissions, class_name: 'Spree::ProductSubmission', dependent: :destroy, inverse_of: :product
 
     has_many :variant_images, -> { order(:position) }, source: :images, through: :variants
 

@@ -53,10 +53,13 @@ export function ProductStatusCard({ product, onDone }: { product: Product; onDon
 
         <p className="text-muted-foreground text-sm">{t(`products.status_help.${status}`)}</p>
 
-        {/* Why the operator turned it down, so the seller knows what to fix. */}
-        {status === 'rejected' && typeof product.metadata?.rejection_reason === 'string' && (
+        {/* Why the marketplace turned it down, so the seller knows what to
+            fix. It lives on the submission rather than the product: a note
+            the seller could overwrite by saving their own product was no
+            record of anything. */}
+        {status === 'rejected' && product.submission?.review_note && (
           <p className="text-sm">
-            {t('products.rejection_reason', { reason: product.metadata.rejection_reason })}
+            {t('products.rejection_reason', { reason: product.submission.review_note })}
           </p>
         )}
 

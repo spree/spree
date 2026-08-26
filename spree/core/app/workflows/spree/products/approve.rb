@@ -10,8 +10,10 @@ module Spree
 
       # @param product [Spree::Product]
       # @param reviewer [Spree.admin_user_class, nil] who decided
+      # @param note [String, nil] shown to the seller
+      # @param auto [Boolean] the store approves listings without review
       # @return [Spree::ServiceModule::Result] value is the product
-      def perform(product:, reviewer: nil)
+      def perform(product:, reviewer: nil, note: nil, auto: false)
         super
 
         reject!(I18n.t('activerecord.errors.models.spree/product.attributes.base.not_awaiting_review')) unless product.proposed?
@@ -20,6 +22,7 @@ module Spree
 
         ApplicationRecord.transaction do
           step :mark_active
+          step :close_submission
           run_hooks :after_approve
         end
 
@@ -31,6 +34,18 @@ module Spree
 
       def mark_active
         failure(product) unless product.update(status: 'active')
+      end
+
+      # An auto-approval says so on the row: a blank reviewer must read as
+      # "this store does not review listings", never as a lost name.
+      def close_submission
+        Spree::ProductSubmissions::Close.call(
+          product: product,
+          status: 'approved',
+          reviewed_by: reviewer,
+          review_note: note,
+          metadata: auto ? { 'auto_approved' => true } : {}
+        )
       end
     end
   end

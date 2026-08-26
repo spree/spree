@@ -2,9 +2,10 @@ module Spree
   module Products
     # The operator turning a submitted product down.
     #
-    # The reason rides in metadata rather than a column: it is a note back to
-    # the seller, not a queryable concept, and a table for one string would
-    # outlive its usefulness.
+    # The reason lands on the product's submission row, never on the product
+    # itself: a seller can write their own product's metadata, and an
+    # operator's decision must not be erasable by its subject
+    # (docs/plans/6.0-seller-product-submission.md).
     class Reject < Spree::Workflow
       hooks :validate, :after_reject
 
@@ -26,6 +27,7 @@ module Spree
 
         ApplicationRecord.transaction do
           step :mark_rejected
+          step :close_submission
           run_hooks :after_reject
         end
 
@@ -36,10 +38,16 @@ module Spree
       private
 
       def mark_rejected
-        attributes = { status: 'rejected' }
-        attributes[:metadata] = product.metadata.to_h.merge('rejection_reason' => reason) if reason.present?
+        failure(product) unless product.update(status: 'rejected')
+      end
 
-        failure(product) unless product.update(attributes)
+      def close_submission
+        Spree::ProductSubmissions::Close.call(
+          product: product,
+          status: 'rejected',
+          reviewed_by: reviewer,
+          review_note: reason
+        )
       end
     end
   end

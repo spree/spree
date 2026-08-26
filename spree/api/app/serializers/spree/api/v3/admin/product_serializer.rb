@@ -17,7 +17,8 @@ module Spree
                    seller_name: [:string, nullable: true],
                    price: ['Price', nullable: true],
                    deleted_at: [:string, nullable: true],
-                   metadata: 'Record<string, unknown>'
+                   metadata: 'Record<string, unknown>',
+                   submission: ['ProductSubmission', nullable: true]
 
           attributes :status,
                      :metadata, deleted_at: :iso8601,
@@ -26,6 +27,12 @@ module Spree
           attribute :delivery_profile_id do |product|
             product.delivery_profile&.prefixed_id
           end
+
+          # The live row in the review trail: who submitted, who decided,
+          # when, and what the seller was told.
+          one :latest_submission,
+              key: :submission,
+              resource: proc { Spree.api.admin_product_submission_serializer }
 
           # `seller_id` comes from the store serializer. The name rides along
           # so the products list can show who sells a row without expanding —
