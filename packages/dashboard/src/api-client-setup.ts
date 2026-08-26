@@ -31,6 +31,8 @@ setApiClient({
   // Reference data for the shared product form.
   optionTypes: {
     list: (params) => adminClient.optionTypes.list({ ...params, expand: ['option_values'] }),
+    create: (params) => adminClient.optionTypes.create(params as never),
+    update: (id, params) => adminClient.optionTypes.update(id, params as never),
   },
   categories: { list: (params) => adminClient.categories.list(params) },
   collections: { list: (params) => adminClient.collections.list(params) },

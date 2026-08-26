@@ -2,13 +2,10 @@ import type { ListParams, PaginatedResponse, RequestFn, RequestOptions } from '@
 import { transformListParams } from '@spree/sdk-core'
 import type {
   AuthTokens,
-  Category,
-  Collection,
   Fulfillment,
   Invitation,
   Order,
   Product,
-  ProductType,
   Profile,
   RequirementStatus,
   RequirementSubmission,
@@ -248,50 +245,6 @@ export class SellerClient {
   }
 
   /**
-   * The types a seller may list against, and the custom fields each asks
-   * them to fill in. Read only — defining a type is the operator's.
-   */
-  readonly productTypes = {
-    list: (
-      params?: ListParams & Record<string, unknown>,
-      options?: RequestOptions,
-    ): Promise<PaginatedResponse<ProductType>> =>
-      this.request<PaginatedResponse<ProductType>>('GET', '/product_types', {
-        ...options,
-        params: params ? transformListParams(params) : undefined,
-      }),
-
-    get: (id: string, options?: RequestOptions): Promise<ProductType> =>
-      this.request<ProductType>('GET', `/product_types/${id}`, options),
-  }
-
-  /**
-   * What a seller may file a product under. Read only — the marketplace owns
-   * its own taxonomy and merchandising.
-   */
-  readonly categories = {
-    list: (
-      params?: ListParams & Record<string, unknown>,
-      options?: RequestOptions,
-    ): Promise<PaginatedResponse<Category>> =>
-      this.request<PaginatedResponse<Category>>('GET', '/categories', {
-        ...options,
-        params: params ? transformListParams(params) : undefined,
-      }),
-  }
-
-  readonly collections = {
-    list: (
-      params?: ListParams & Record<string, unknown>,
-      options?: RequestOptions,
-    ): Promise<PaginatedResponse<Collection>> =>
-      this.request<PaginatedResponse<Collection>>('GET', '/collections', {
-        ...options,
-        params: params ? transformListParams(params) : undefined,
-      }),
-  }
-
-  /**
    * What this seller has sold. A basket spanning several sellers is split
    * into one order each, so these are the seller's own orders rather than a
    * filtered view of somebody else's.
@@ -454,12 +407,7 @@ export interface ProductParams {
   meta_title?: string
   meta_description?: string
   meta_keywords?: string
-  product_type_id?: string
-  tags?: string[]
-  category_ids?: string[]
-  collection_ids?: string[]
   metadata?: Record<string, unknown>
-  custom_fields?: Array<{ id?: string; custom_field_definition_id?: string; value?: unknown }>
   /**
    * The gallery, as a whole. A file absent from the list is removed, so send
    * every image the product should end up with. `signed_id` attaches a fresh

@@ -356,6 +356,9 @@ paths:
                 - write_store_credits
                 - read_products
                 - write_products
+                - read_product_types
+                - read_publishing
+                - write_publishing
                 - read_media
                 - write_media
                 - read_categories
@@ -481,6 +484,9 @@ paths:
                 - write_store_credits
                 - read_products
                 - write_products
+                - read_product_types
+                - read_publishing
+                - write_publishing
                 - read_media
                 - write_media
                 - read_categories
@@ -20016,14 +20022,14 @@ paths:
                   label: Country
                   description:
                   preference_schema:
-                  - key: country_code
-                    type: string
-                    default:
                   - key: country_codes
                     type: array
                     default: []
                   - key: country_id
                     type: integer
+                    default:
+                  - key: country_code
+                    type: string
                     default:
                 - type: currency
                   label: Currency
@@ -20051,18 +20057,18 @@ paths:
                   label: Item total
                   description:
                   preference_schema:
-                  - key: amount_min
-                    type: decimal
-                    default: 100.0
-                  - key: operator_min
-                    type: string
-                    default: ">"
                   - key: amount_max
                     type: decimal
                     default:
                   - key: operator_max
                     type: string
                     default: "<"
+                  - key: amount_min
+                    type: decimal
+                    default: 100.0
+                  - key: operator_min
+                    type: string
+                    default: ">"
                 - type: market
                   label: Market(s)
                   description:
@@ -22246,6 +22252,27 @@ paths:
                   group_label: Catalog
                   label: Products
                   description: Products, variants, options, prices and media
+                - key: read_product_types
+                  resource: product_types
+                  kind: read
+                  group: catalog
+                  group_label: Catalog
+                  label: Product types
+                  description: ''
+                - key: read_publishing
+                  resource: publishing
+                  kind: read
+                  group: catalog
+                  group_label: Catalog
+                  label: Publishing
+                  description: ''
+                - key: write_publishing
+                  resource: publishing
+                  kind: write
+                  group: catalog
+                  group_label: Catalog
+                  label: Publishing
+                  description: ''
                 - key: read_media
                   resource: media
                   kind: read
@@ -22450,7 +22477,7 @@ paths:
                   label: Analytics dashboard
                   description: Sales and performance analytics
                 meta:
-                  count: 43
+                  count: 46
   "/api/v3/admin/roles":
     get:
       summary: List roles
@@ -22516,6 +22543,9 @@ paths:
                   - write_store_credits
                   - read_products
                   - write_products
+                  - read_product_types
+                  - read_publishing
+                  - write_publishing
                   - read_media
                   - write_media
                   - read_categories
@@ -26647,10 +26677,10 @@ paths:
                   name: Sale value
                   description: Charges this rate only on sales within a value range
                   preference_schema:
-                  - key: min_amount
+                  - key: max_amount
                     type: decimal
                     default:
-                  - key: max_amount
+                  - key: min_amount
                     type: decimal
                     default:
                   association_fields: []
@@ -29102,15 +29132,15 @@ paths:
                 - type: Spree::Calculator::Shipping::PerItem
                   name: Flat rate per package item
                   preference_schema:
-                  - key: currency
-                    type: string
-                    default: USD
                   - key: amounts
                     type: hash
                     default: {}
                   - key: amount
                     type: decimal
                     default: 0
+                  - key: currency
+                    type: string
+                    default: USD
                 - type: Spree::Calculator::Shipping::PriceSack
                   name: Price sack
                   preference_schema:
@@ -29129,15 +29159,15 @@ paths:
                 - type: Spree::Calculator::Shipping::DigitalDelivery
                   name: Digital Delivery
                   preference_schema:
-                  - key: currency
-                    type: string
-                    default: USD
                   - key: amounts
                     type: hash
                     default: {}
                   - key: amount
                     type: decimal
                     default: 0
+                  - key: currency
+                    type: string
+                    default: USD
   "/api/v3/admin/delivery_zones":
     post:
       summary: Create delivery zone
@@ -30363,8 +30393,8 @@ paths:
                   name: Accept terms
                   description: The seller has accepted your marketplace terms
                   preferences:
-                    terms_effective_from:
                     terms_url:
+                    terms_effective_from:
                   custom_field_definition_ids: []
                   allow_multiple: false
                   accepts_submissions: false
@@ -30586,10 +30616,10 @@ paths:
                   accepted_content_types: []
                   association_fields: []
                   preference_schema:
-                  - key: terms_effective_from
+                  - key: terms_url
                     type: string
                     default:
-                  - key: terms_url
+                  - key: terms_effective_from
                     type: string
                     default:
                 - type: complete_profile

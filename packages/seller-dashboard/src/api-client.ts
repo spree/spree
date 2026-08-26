@@ -65,15 +65,10 @@ export function createSellerApiClient({
       create: (params) => sellerClient().stockLocations.create(params),
       update: (id, params) => sellerClient().stockLocations.update(id, params),
     },
-    // Reference data for the shared product form. No `optionTypes`: the
-    // Seller API has no such endpoint, and a seller names their own options
-    // on the variant rather than picking from the marketplace's list.
-    categories: { list: (params) => sellerClient().categories.list(params) },
-    collections: { list: (params) => sellerClient().collections.list(params) },
-    productTypes: {
-      list: (params) => sellerClient().productTypes.list(params),
-      get: (id) => sellerClient().productTypes.get(id),
-    },
+    // No catalog reference data is registered: how a product is filed — its
+    // type, categories, collections and tags — is the marketplace's own
+    // merchandising, so the shared form's Categorization card has nothing to
+    // read and hides (docs/plans/6.0-seller-product-submission.md).
   })
 
   return client

@@ -15,9 +15,17 @@ module Spree
         # master-catalog product are a separate surface (the shared catalog
         # phase) and do not belong to this seller through `products`.
         #
-        # What a seller may change is narrower than the operator's set:
-        # `tax_category_id` and `delivery_profile_id` are marketplace
-        # configuration and stay with the operator, as does `promotionable`.
+        # What a seller may change is narrower than the operator's set. Tax
+        # category, delivery profile and `promotionable` are marketplace
+        # configuration, and so is how a product is filed: its type,
+        # categories, collections and tags are the marketplace's own
+        # merchandising, set when the operator reviews the listing.
+        #
+        # Tags are the clearest case — they are tenanted to the store
+        # (`acts_as_taggable_tenant :store_id`), so a seller typing one would
+        # be writing into the marketplace's shared vocabulary rather than
+        # labelling their product
+        # (docs/plans/6.0-multi-vendor-marketplace.md).
         class ProductsController < Seller::ResourceController
           scoped_resource :products
 
@@ -75,22 +83,8 @@ module Spree
             attrs = params.permit(
               :name, :description, :slug,
               :meta_title, :meta_description, :meta_keywords,
-              :product_type_id,
-              # Filing a product into the marketplace's existing groupings is
-              # part of maintaining the product, which is why the operator's
-              # endpoint permits these under `write_products` too. Creating a
-              # category or collection remains the operator's.
-              #
-              # `tags` is deliberately absent: they are the store's own
-              # vocabulary (`acts_as_taggable_tenant :store_id`), so a seller
-              # typing a new one writes into the marketplace's namespace rather
-              # than onto their product
-              # (docs/plans/6.0-multi-vendor-marketplace.md).
-              category_ids: [],
-              collection_ids: [],
               metadata: {},
               prices: [:amount, :compare_at_amount, :currency],
-              custom_fields: [:id, :custom_field_definition_id, :value, { value: [] }, { value: {} }],
               # Inline media, the same shape the operator sends. `external_url`
               # stays out for the same reason it does there — it would make the
               # server fetch a URL the caller chose.

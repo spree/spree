@@ -14,7 +14,7 @@ import {
 import { CheckIcon, PencilIcon, PlusIcon, XIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import type { PanelOptionType as OptionType } from '../api-client'
+import { getApiClient, type PanelOptionType as OptionType } from '../api-client'
 import {
   useCreateOptionType,
   useFormOptionTypes as useOptionTypes,
@@ -205,6 +205,7 @@ function AddOptionForm({ availableTypes, allOptionTypes, onSave, onCancel }: Add
   const [pickedTypeId, setPickedTypeId] = useState<string>('')
   const [creatingType, setCreatingType] = useState(false)
   const createOptionType = useCreateOptionType()
+  const canCreateOptionType = Boolean(getApiClient().optionTypes?.create)
 
   const picked =
     allOptionTypes.find((ot) => ot.id === pickedTypeId) ??
@@ -247,11 +248,23 @@ function AddOptionForm({ availableTypes, allOptionTypes, onSave, onCancel }: Add
             </SelectContent>
           </Select>
         </Field>
-        <div className="flex items-center justify-between gap-2">
-          <Button type="button" variant="ghost" size="sm" onClick={() => setCreatingType(true)}>
-            <PlusIcon />
-            {t('admin.products.variants.create_option_type')}
-          </Button>
+        <div className="flex items-center justify-end gap-2">
+          {/* Option types are the store's own vocabulary, so only a panel whose
+              client can write them offers to add one. A seller picks from what
+              the marketplace already defines
+              (docs/plans/6.0-seller-product-submission.md). */}
+          {canCreateOptionType && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="mr-auto"
+              onClick={() => setCreatingType(true)}
+            >
+              <PlusIcon />
+              {t('admin.products.variants.create_option_type')}
+            </Button>
+          )}
           <Button type="button" variant="outline" size="sm" onClick={onCancel}>
             {t('admin.actions.cancel')}
           </Button>

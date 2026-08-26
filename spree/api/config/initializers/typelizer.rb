@@ -71,10 +71,12 @@ Rails.application.config.after_initialize do
     #
     # A name the seller branch declares itself must NOT be listed here: both
     # map to the same bare type name, so listing it emits the export twice and
-    # the package stops compiling. Category, Media, Variant and CustomField
-    # left this set when the seller branch grew its own.
+    # the package stops compiling. Media and Variant are declared on the seller
+    # branch; Category and CustomField are not, but the store product
+    # serializer this branch inherits references them, so their types still
+    # have to exist in the package.
     store_nested_for_seller = %w[
-      Address OptionType OptionValue Price PriceHistory Seller
+      Address Category CustomField OptionType OptionValue Price PriceHistory Seller
     ].to_set
 
     config.writer(:seller) do |c|

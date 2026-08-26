@@ -1,6 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
-  CategorizationCard,
   GeneralCard,
   InventoryCard,
   MediaCard,
@@ -27,7 +26,7 @@ import { ProductStatusCard } from '../components/product-status-card'
 import { RetryableError } from '../components/retryable-error'
 
 /** Everything the form edits, in one request. */
-const PRODUCT_EXPAND = 'variants,media,default_variant,custom_fields'
+const PRODUCT_EXPAND = 'variants,media,default_variant'
 
 /**
  * One product, created or edited.
@@ -90,10 +89,6 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
         slug: values.slug || undefined,
         meta_title: values.meta_title ?? undefined,
         meta_description: values.meta_description ?? undefined,
-        product_type_id: values.product_type_id ?? undefined,
-        category_ids: values.category_ids,
-        collection_ids: values.collection_ids,
-        custom_fields: values.custom_fields,
         // Both lists are the whole intent: anything the seller removed is
         // absent here, which is what tells the API to drop it.
         media: (values.media ?? []).map((item) => ({
@@ -203,7 +198,6 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
                   }}
                 />
               )}
-              <CategorizationCard form={form} />
             </>
           }
         />

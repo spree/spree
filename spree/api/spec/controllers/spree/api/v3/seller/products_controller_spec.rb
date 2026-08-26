@@ -163,20 +163,25 @@ RSpec.describe Spree::Api::V3::Seller::ProductsController, type: :controller do
   # The panel loads a product into a form and sends it back, so anything the
   # controller accepts must come back out — otherwise a save blanks it.
   it 'returns every field it accepts on write' do
-    category = create(:category, store: store)
-    product_type = create(:product_type, store: store)
-    mine.update!(product_type: product_type, categories: [category], metadata: { 'care' => 'wash cold' })
+    mine.update!(metadata: { 'care' => 'wash cold' })
 
     get :show, params: { id: mine.prefixed_id }, as: :json
 
     expect(json_response).to include(
       'name', 'description', 'slug',
-      'meta_title', 'meta_description', 'meta_keywords',
-      'product_type_id', 'category_ids', 'metadata'
+      'meta_title', 'meta_description', 'meta_keywords', 'metadata'
     )
-    expect(json_response['product_type_id']).to eq(product_type.prefixed_id)
-    expect(json_response['category_ids']).to eq([category.prefixed_id])
     expect(json_response['metadata']).to eq('care' => 'wash cold')
+  end
+
+  # How a product is filed is the marketplace's own merchandising, so the
+  # seller serializer adds none of it — a field a seller cannot change should
+  # not be shown as though they could. (`tags` rides in from the storefront
+  # serializer, where it is public product data; it is simply not writable.)
+  it 'withholds the marketplace merchandising fields' do
+    get :show, params: { id: mine.prefixed_id }, as: :json
+
+    expect(json_response).not_to include('product_type_id', 'category_ids', 'collection_ids')
   end
 
   # The form loads a product with everything it edits in one request, so each
@@ -184,11 +189,11 @@ RSpec.describe Spree::Api::V3::Seller::ProductsController, type: :controller do
   # than quietly omitting the key.
   it 'expands the collections the form edits' do
     get :show,
-        params: { id: mine.prefixed_id, expand: 'variants,media,custom_fields,default_variant' },
+        params: { id: mine.prefixed_id, expand: 'variants,media,default_variant' },
         as: :json
 
     expect(response).to have_http_status(:ok)
-    expect(json_response).to include('variants', 'media', 'custom_fields', 'default_variant', 'collection_ids')
+    expect(json_response).to include('variants', 'media', 'default_variant')
   end
 
   describe 'writing variants, media and memberships' do
@@ -231,11 +236,20 @@ RSpec.describe Spree::Api::V3::Seller::ProductsController, type: :controller do
       expect(mine.reload.tag_list).to be_empty
     end
 
-    it 'files the product under a category' do
+    it 'cannot file the product under a category' do
       patch :update, params: { id: mine.prefixed_id, category_ids: [category.prefixed_id] }, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(mine.reload.categories).to include(category)
+      expect(mine.reload.categories).to be_empty
+    end
+
+    it 'cannot set a product type' do
+      product_type = create(:product_type, store: store)
+
+      patch :update, params: { id: mine.prefixed_id, product_type_id: product_type.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(mine.reload.product_type).to be_nil
     end
 
     # Marketplace configuration, not a seller's: silently ignored rather than
