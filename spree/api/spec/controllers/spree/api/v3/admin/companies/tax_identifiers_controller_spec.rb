@@ -42,12 +42,22 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxIdentifiersController, type:
 
     it 'takes effect on a sale for that business' do
       create(:tax_identifier, owner: company, kind: 'eu_vat', value: 'DE222222222')
-      location = create(:company_location, company: company)
       customer = create(:customer)
+      create(:company_membership, company: company, customer: customer)
       create(:tax_identifier, owner: customer, kind: 'eu_vat', value: 'DE111111111')
-      cart = create(:cart, store: store, customer: customer, company_location: location)
+      cart = create(:cart, store: store, customer: customer, company: company)
 
       expect(cart.resolved_tax_identifier.value).to eq('DE222222222')
+    end
+
+    # The division's purchases read their registration through the legal
+    # entity; the division itself holds none.
+    it 'refuses a registration on a division node' do
+      division = create(:company, store: store, kind: 'division', parent: company)
+
+      post :create, params: { company_id: division.prefixed_id, kind: 'eu_vat', value: 'DE123456789' }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
     end
 
     it 'holds one registration per kind' do

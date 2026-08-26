@@ -1,9 +1,9 @@
 import type { Company } from '@spree/admin-sdk'
 import { defineTable } from '@spree/dashboard-core'
-import { RelativeTime } from '@spree/dashboard-ui'
-import { Link } from '@tanstack/react-router'
+import { RelativeTime, ResourceNameCell } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { Building2Icon } from 'lucide-react'
+import { CompanyKindBadge } from '../components/spree/company-kind-badge'
 
 defineTable<Company>('companies', {
   title: i18n.t('admin.nav.companies'),
@@ -20,29 +20,44 @@ defineTable<Company>('companies', {
       filterable: true,
       default: true,
       render: (company) => (
-        <Link
-          to={'/$storeId/companies/$companyId' as string}
-          params={{ companyId: company.id }}
-          className="font-medium text-foreground no-underline"
-        >
-          {company.name}
-        </Link>
+        <ResourceNameCell
+          id={company.id}
+          dataAttr="data-company-id"
+          name={company.name}
+          // The node's place in the tree — "Acme / EMEA" — so a flat,
+          // paginated list still reads hierarchically.
+          secondary={
+            company.ancestors.length > 0
+              ? company.ancestors.map((ancestor) => ancestor.name).join(' / ')
+              : undefined
+          }
+        />
       ),
     },
     {
-      key: 'locations_count',
-      label: i18n.t('admin.companies.locations_column'),
+      key: 'kind',
+      label: i18n.t('admin.fields.company.kind.label'),
+      sortable: true,
+      filterable: true,
+      filterType: 'enum',
+      filterOptions: [
+        { value: 'company', label: i18n.t('admin.companies.kind.company') },
+        { value: 'division', label: i18n.t('admin.companies.kind.division') },
+      ],
       default: true,
-      render: (company) => company.locations_count,
+      render: (company) => <CompanyKindBadge kind={company.kind} />,
     },
     {
-      // Off by default: only a merchant reconciling against an ERP or PIM
-      // wants a column of foreign keys, and they can switch it on.
-      key: 'external_references',
-      label: i18n.t('admin.fields.external_references.label'),
-      filterable: true,
-      default: false,
-      render: (company) => Object.values(company.external_references ?? {}).join(', ') || '—',
+      key: 'members_count',
+      label: i18n.t('admin.companies.members_column'),
+      default: true,
+      render: (company) => company.members_count,
+    },
+    {
+      key: 'children_count',
+      label: i18n.t('admin.companies.sub_units.title'),
+      default: true,
+      render: (company) => company.children_count,
     },
     {
       key: 'created_at',

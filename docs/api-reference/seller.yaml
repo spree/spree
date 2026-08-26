@@ -466,6 +466,27 @@ paths:
                   - read
                   - admin
                   subjects:
+                  - Spree::Catalog
+                  has_conditions: false
+                - allow: true
+                  actions:
+                  - read
+                  - admin
+                  subjects:
+                  - Spree::CatalogProduct
+                  has_conditions: false
+                - allow: true
+                  actions:
+                  - read
+                  - admin
+                  subjects:
+                  - Spree::CatalogAssignment
+                  has_conditions: false
+                - allow: true
+                  actions:
+                  - read
+                  - admin
+                  subjects:
                   - Spree::CustomField
                   has_conditions: false
                 - allow: true
@@ -521,6 +542,24 @@ paths:
                   - manage
                   subjects:
                   - Spree::ProductPublication
+                  has_conditions: false
+                - allow: true
+                  actions:
+                  - manage
+                  subjects:
+                  - Spree::Catalog
+                  has_conditions: false
+                - allow: true
+                  actions:
+                  - manage
+                  subjects:
+                  - Spree::CatalogProduct
+                  has_conditions: false
+                - allow: true
+                  actions:
+                  - manage
+                  subjects:
+                  - Spree::CatalogAssignment
                   has_conditions: false
                 - allow: true
                   actions:
@@ -13620,10 +13659,10 @@ paths:
             application/json:
               example:
                 direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--c79d164b6cf3869619d5c5d61ce1ef2d5ffd7f10
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--fdbe1a75f358754127c455cee8ce66702c8144f3
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--acc69b8fc52bc6da57b08d7e981df3db825f5c5c
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a5681cb43c90687cb8196cd4d58eee4dba579625
               schema:
                 "$ref": "#/components/schemas/DirectUploadResponse"
       requestBody:
@@ -14203,6 +14242,9 @@ components:
       properties:
         id:
           type: string
+        label:
+          type: string
+          nullable: true
         first_name:
           type: string
           nullable: true
@@ -14255,6 +14297,7 @@ components:
           nullable: true
       required:
       - id
+      - label
       - first_name
       - last_name
       - full_name

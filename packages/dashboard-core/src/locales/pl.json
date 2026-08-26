@@ -93,6 +93,12 @@
     "address": {
       "not_located_yet": "Mapa pojawi się, gdy adres zostanie zlokalizowany."
     },
+    "address_book": {
+      "default_billing": "Domyślny rozliczeniowy",
+      "default_shipping": "Domyślny wysyłkowy",
+      "set_default_billing": "Ustaw jako domyślny adres rozliczeniowy",
+      "set_default_shipping": "Ustaw jako domyślny adres wysyłkowy"
+    },
     "auth": {
       "back_to_login": "Powrót do logowania",
       "forgot_password": {
@@ -136,6 +142,7 @@
       "no_color": "Brak koloru"
     },
     "common": {
+      "active": "Aktywny",
       "adjust_search_or_filters": "Spróbuj dostosować wyszukiwanie lub filtry",
       "all": "Wszystkie",
       "and": "i",
@@ -147,6 +154,7 @@
       "delete_confirm_message": "Czy na pewno? Tej operacji nie można cofnąć.",
       "deleted": "Usunięto",
       "empty_value": "—",
+      "inactive": "Nieaktywny",
       "loading": "Ładowanie…",
       "next": "Następna",
       "no": "Nie",
@@ -188,6 +196,8 @@
           "heading": "Utwórz",
           "label": "Utwórz: {{noun}}",
           "nouns": {
+            "catalog": "Katalog",
+            "catalog_plural": "Katalogi",
             "category": "Kategoria",
             "category_plural": "Kategorie",
             "collection": "Kolekcja",

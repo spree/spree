@@ -221,20 +221,23 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, 'conflicting externa
   end
 end
 
-RSpec.describe Spree::Api::V3::Admin::CompanyLocationsController, type: :controller do
+RSpec.describe Spree::Api::V3::Admin::CompaniesController, type: :controller do
   render_views
 
   include_context 'API v3 Admin authenticated'
 
   before { request.headers.merge!(headers) }
 
-  it 'records the identity a connector sends for a branch' do
-    location = create(:company_location, company: create(:company, store: store))
+  # A division is a tree node like any other, so a connector can key it the
+  # same way it keys the legal entity.
+  it 'records the identity a connector sends for a division' do
+    company = create(:company, store: store)
+    division = create(:company, store: store, kind: 'division', parent: company)
 
-    patch :update, params: { id: location.prefixed_id,
-                             external_references: { crm: 'LOC-1' } }, as: :json
+    patch :update, params: { id: division.prefixed_id,
+                             external_references: { crm: 'DIV-1' } }, as: :json
 
     expect(response).to have_http_status(:ok)
-    expect(location.reload.external_id_for('crm')).to eq('LOC-1')
+    expect(division.reload.external_id_for('crm')).to eq('DIV-1')
   end
 end

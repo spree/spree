@@ -127,8 +127,10 @@ module Spree
         end
       end
 
+      # Read through the legal entity, never the node — a division holds no
+      # registrations of its own.
       def company_tax_identifier
-        best_of(company&.tax_identifiers)
+        best_of(company_legal_entity&.tax_identifiers)
       end
 
       def customer_tax_identifier

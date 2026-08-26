@@ -39,10 +39,13 @@ module Spree
 
         private
 
-        # Returns the price from applicable price lists
+        # Returns the price from applicable price lists. Catalog-attached
+        # lists come first — the catalog is the audience, resolved nearest
+        # node first — then the rule-matched lists, then the caller falls
+        # back to base.
         # @return [Spree::Price]
         def find_price_from_lists
-          applicable_price_lists.each do |price_list|
+          (catalog_price_lists + applicable_price_lists).each do |price_list|
             price = find_price_for_list(price_list)
             return price if price
           end
@@ -50,10 +53,53 @@ module Spree
           nil
         end
 
-        # Returns the price lists that are applicable to the context
+        # Price lists reached through the buyer's effective catalogs, in
+        # catalog resolution order — company subtree first, then customer
+        # groups, then the channel's default catalog (the same fallback
+        # chain visibility uses). A catalog-attached list applies because
+        # the catalog applies — its own rules are not consulted, only its
+        # status and dates.
+        # @return [Array<Spree::PriceList>]
+        def catalog_price_lists
+          @catalog_price_lists ||= begin
+            # Every lookup starts from the context's store, so a catalog is
+            # only ever reached through the tenant being priced for.
+            store = context.store
+            catalogs = store ? store.catalogs.for_company(context.company) : []
+            if catalogs.empty? && context.user && store
+              groups = context.user.try(:customer_groups)&.where(store_id: store.id) || []
+              catalogs = store.catalogs.for_customer_groups(groups)
+            end
+            if catalogs.empty?
+              catalogs = [context.channel&.default_catalog].compact.select(&:active?)
+            end
+
+            catalogs.filter_map(&:price_list).uniq.select(&:currently_active?)
+          end
+        end
+
+        # Returns the price lists that are applicable to the context.
+        # Catalog-attached lists are excluded here: they are audience-scoped
+        # by their catalog, and a rule-less list would otherwise apply to
+        # everyone.
         # @return [Array<Spree::PriceList>]
         def applicable_price_lists
-          @applicable_price_lists ||= price_lists_for_context.select { |list| list.applicable?(context) }
+          @applicable_price_lists ||= price_lists_for_context.
+                                      reject { |list| catalog_bound_price_list_ids.include?(list.id) }.
+                                      select { |list| list.applicable?(context) }
+        end
+
+        # Only ACTIVE catalogs claim their list: an inactive catalog is off,
+        # and blacklisting its list would silently kill a rule-based list
+        # that was working before the catalog draft existed.
+        def catalog_bound_price_list_ids
+          @catalog_bound_price_list_ids ||=
+            if context.store
+              Spree::Catalog.active.where(store_id: context.store.id).where.not(price_list_id: nil).
+                distinct.pluck(:price_list_id).to_set
+            else
+              Set.new
+            end
         end
 
         # Returns the price lists for the context's store

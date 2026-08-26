@@ -259,6 +259,17 @@ en:
           attributes:
             taxon_id:
               already_linked: is already linked to this product
+        spree/company:
+          attributes:
+            base:
+              cannot_destroy_with_orders: Cannot delete a company that has placed orders, or whose divisions have.
+            kind:
+              anchors_descendant_divisions: cannot become a division while divisions below it anchor their tax identity here
+              holds_tax_registrations: cannot become a division while holding tax registrations or exemption certificates
+              root_must_be_legal_entity: must be company for a root node
+            parent:
+              cycle: cannot be one of the node's own descendants
+              too_deep: would exceed the maximum tree depth
         spree/credit_card:
           attributes:
             base:
@@ -352,6 +363,14 @@ en:
             amount_used:
               cannot_be_greater_than_amount: Cannot be greater than amount.
               greater_than_zero_restrict_delete: is greater than zero. Can not delete store credit.
+        spree/tax_exemption_certificate:
+          attributes:
+            company:
+              must_be_legal_entity: must be a legal entity, not a division
+        spree/tax_identifier:
+          attributes:
+            company:
+              must_be_legal_entity: must be a legal entity, not a division
         spree/taxon_image:
           attributes:
             attachment:
@@ -678,6 +697,8 @@ en:
       out_of_stock: "%{li_name} was removed because it was sold out"
       pricing_unavailable: Prices could not be confirmed. Please try again.
       quantity_must_be_positive: Quantity must be at least 1. Use DELETE to remove the item.
+    catalogs:
+      no_price_list_to_import: This catalog has no price list to import products from.
     categories: Categories
     category: Category
     change: Change
@@ -726,7 +747,20 @@ en:
       seller_rule:
         description: Charges this rate only when the seller is one of the selected
         name: Seller
+    companies: Companies
     company: Company
+    company_invitations:
+      email_mismatch: This invitation was sent to a different email address.
+      not_pending: This invitation is no longer pending and cannot be revoked.
+    company_mailer:
+      invitation_email:
+        action: Accept invitation
+        expiry_notice: This invitation link will expire in 30 days.
+        greeting: Hi,
+        ignore_notice: If you were not expecting this invitation, you can safely ignore this email.
+        instructions: You have been invited to join %{company} on %{store}. Accept the invitation to start purchasing on the company's behalf.
+        subject: invitation to join %{company}
+        title: Join %{company}
     compare_at_amount: Compare at amount
     compare_at_price: Compare at price
     complete: complete

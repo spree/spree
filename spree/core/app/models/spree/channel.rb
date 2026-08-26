@@ -22,6 +22,12 @@ module Spree
     has_many :order_routing_rules, class_name: 'Spree::OrderRoutingRule', dependent: :destroy
     has_many :publications, class_name: 'Spree::ProductPublication', dependent: :destroy
     has_many :products, through: :publications, class_name: 'Spree::Product'
+    # When set, only the default catalog's products are visible on this
+    # channel; unset means all publications.
+    belongs_to :default_catalog, class_name: 'Spree::Catalog', optional: true
+    has_many :catalog_assignments, as: :assignable, class_name: 'Spree::CatalogAssignment',
+                                   dependent: :destroy
+    has_many :catalogs, through: :catalog_assignments, class_name: 'Spree::Catalog'
     has_many :api_keys, class_name: 'Spree::ApiKey', dependent: :nullify
     # Optional fulfillment-origin allowlist: no rows means every store
     # location serves this channel (docs/plans/6.0-channel-delivery.md).

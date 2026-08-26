@@ -14,14 +14,14 @@ module Spree
     #
     # This class is the storefront's extension seam: replace it via
     # `Spree::Dependencies.storefront_access_policy_class` when access must
-    # widen beyond the owner — e.g. B2B company accounts where an approver
-    # sees every purchase or shared wishlist of their company location
-    # (docs/plans/6.1-channels-catalogs-b2b.md). Override the entry points
-    # and fall through to `super`:
+    # widen or narrow beyond the owner — e.g. B2B company governance where
+    # only an approver sees the subtree's purchases
+    # (docs/plans/6.0-b2b-companies-and-catalogs.md). Override the entry
+    # points and fall through to `super`:
     #
     #   class Enterprise::CompanyAccessPolicy < Spree::Storefront::AccessPolicy
     #     def scope(base, token: nil)
-    #       return base.where(company_location_id: approver_location_ids) if
+    #       return base.where(company_id: standing_company_ids) if
     #         base.klass <= Spree::Order && approver?
     #
     #       super
@@ -52,6 +52,7 @@ module Spree
       # @return [Boolean]
       def readable?(record, token: nil)
         return purchase_readable?(record, token: token) if purchase?(record)
+        return company_standing?(record) if company_record?(record)
 
         owned?(record)
       end
@@ -64,6 +65,7 @@ module Spree
       # @return [Boolean]
       def writable?(record, token: nil)
         return purchase_writable?(record, token: token) if purchase?(record)
+        return company_standing?(record) if company_record?(record)
 
         owned?(record)
       end
@@ -78,6 +80,7 @@ module Spree
       # @return [ActiveRecord::Relation]
       def scope(base, token: nil)
         return purchases_scope(base, token: token) if purchase_class?(base.klass)
+        return company_scope(base) if base.klass <= Spree::Company
 
         owned_scope(base)
       end
@@ -123,12 +126,42 @@ module Spree
         klass <= Spree::Cart || klass <= Spree::Order || klass <= Spree::OrderGroup
       end
 
+      # --- the company directory: standing ---
+
+      # OSS ships no company roles: any member with standing over the record's
+      # node — a membership on it or an ancestor — may read and write it.
+      # Enterprise narrows this by overriding these entry points
+      # (docs/plans/6.0-b2b-companies-and-catalogs.md).
+      def company_record?(record)
+        record.is_a?(Spree::Company) ||
+          record.is_a?(Spree::CompanyMembership) || record.is_a?(Spree::CompanyInvitation)
+      end
+
+      def company_standing?(record)
+        return false if user.blank?
+
+        node = record.is_a?(Spree::Company) ? record : record.company
+        user.standing_for?(node)
+      end
+
+      # The nodes the caller may list: their standing within the store.
+      def company_scope(base)
+        return base.none if user.blank?
+
+        base.merge(user.company_standing(store: store))
+      end
+
       # --- everything else: ownership ---
 
       # Ownership keys on `customer_id`, the canonical column since the
       # user_id -> customer_id rename (a record with no such column is owned by
       # no one, so the check fails closed). Deliberately not the deprecated
       # `user_id` alias, which disappears with the shim in 6.1.
+      #
+      # A model whose owner is polymorphic (Address, whose row may belong to a
+      # customer, a company or a seller) answers `customer_id` for its own
+      # customer rows only, so a business-owned row is owned by no customer and
+      # the check fails closed there too.
       def owned?(record)
         user.present? && record.respond_to?(:customer_id) && record.customer_id == user.id
       end
@@ -136,7 +169,11 @@ module Spree
       def owned_scope(base)
         return base.none if user.blank?
 
-        base.where(customer_id: user.id)
+        if base.klass.column_names.include?('owner_id')
+          base.where(owner_type: Spree.customer_class.to_s, owner_id: user.id)
+        else
+          base.where(customer_id: user.id)
+        end
       end
     end
   end

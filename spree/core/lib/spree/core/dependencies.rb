@@ -155,6 +155,14 @@ module Spree
         # invitations
         invitation_accept_workflow: 'Spree::Invitations::Accept',
 
+        # companies — both member-adding surfaces (dashboard and storefront)
+        # converge on these
+        company_add_member_service: 'Spree::Companies::AddMember',
+        company_invitation_accept_service: 'Spree::CompanyInvitations::Accept',
+
+        # catalog-aware product visibility for a buyer
+        products_for_context_service: 'Spree::Products::ForContext',
+
         # imports — the CSV pipeline's steps
         import_start_mapping_workflow: 'Spree::Imports::StartMapping',
         import_complete_mapping_workflow: 'Spree::Imports::CompleteMapping',

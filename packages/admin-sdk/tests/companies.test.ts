@@ -7,21 +7,23 @@ const sampleCompany = {
   id: 'comp_abc123',
   name: 'Acme Industrial',
   external_references: { erp: 'ACME-1' },
-  locations_count: 2,
+  kind: 'company',
+  parent_id: null,
+  ancestors: [],
+  children_count: 1,
+  members_count: 2,
   metadata: {},
   created_at: '2026-08-01T00:00:00Z',
   updated_at: '2026-08-01T00:00:00Z',
 }
 
-const sampleLocation = {
-  id: 'cloc_abc123',
+const sampleAddress = {
+  id: 'caddr_abc123',
   company_id: 'comp_abc123',
-  name: 'Berlin',
-  external_references: {},
-  contacts_count: 1,
-  billing_address: null,
-  shipping_address: null,
-  metadata: {},
+  label: 'HQ',
+  default_billing: true,
+  default_shipping: false,
+  address: null,
   created_at: '2026-08-01T00:00:00Z',
   updated_at: '2026-08-01T00:00:00Z',
 }
@@ -96,65 +98,63 @@ describe('companies', () => {
     expect(deleted).toBe(true)
   })
 
-  describe('locations', () => {
-    it('lists and creates under the company', async () => {
+  describe('addresses', () => {
+    it('lists and creates under the node, edits and deletes by its own id', async () => {
       let body: Record<string, unknown> | null = null
-      server.use(
-        http.get(`${API_PREFIX}/companies/comp_abc123/locations`, () =>
-          HttpResponse.json(paginated([sampleLocation])),
-        ),
-        http.post(`${API_PREFIX}/companies/comp_abc123/locations`, async ({ request }) => {
-          body = (await request.json()) as Record<string, unknown>
-          return HttpResponse.json(sampleLocation, { status: 201 })
-        }),
-      )
-
-      const client = createTestClient()
-      const listed = await client.companies.locations.list('comp_abc123')
-      await client.companies.locations.create('comp_abc123', {
-        name: 'Hamburg',
-        billing_address: { city: 'Hamburg', country_code: 'DE' },
-      })
-
-      expect(listed.data[0]?.id).toBe('cloc_abc123')
-      expect(body).toEqual({
-        name: 'Hamburg',
-        billing_address: { city: 'Hamburg', country_code: 'DE' },
-      })
-    })
-
-    // Reads and member writes go by the branch's own id, not through the company.
-    it('reads, updates and deletes by its own id', async () => {
       let patched: Record<string, unknown> | null = null
       server.use(
-        http.get(`${API_PREFIX}/company_locations/cloc_abc123`, () =>
-          HttpResponse.json(sampleLocation),
+        http.get(`${API_PREFIX}/companies/comp_abc123/addresses`, () =>
+          HttpResponse.json(paginated([sampleAddress])),
         ),
-        http.patch(`${API_PREFIX}/company_locations/cloc_abc123`, async ({ request }) => {
-          patched = (await request.json()) as Record<string, unknown>
-          return HttpResponse.json(sampleLocation)
+        http.post(`${API_PREFIX}/companies/comp_abc123/addresses`, async ({ request }) => {
+          body = (await request.json()) as Record<string, unknown>
+          return HttpResponse.json(sampleAddress, { status: 201 })
         }),
+        http.patch(
+          `${API_PREFIX}/companies/comp_abc123/addresses/caddr_abc123`,
+          async ({ request }) => {
+            patched = (await request.json()) as Record<string, unknown>
+            return HttpResponse.json(sampleAddress)
+          },
+        ),
         http.delete(
-          `${API_PREFIX}/company_locations/cloc_abc123`,
+          `${API_PREFIX}/companies/comp_abc123/addresses/caddr_abc123`,
           () => new HttpResponse(null, { status: 204 }),
         ),
       )
 
       const client = createTestClient()
-      expect((await client.companyLocations.get('cloc_abc123')).name).toBe('Berlin')
-      await client.companyLocations.update('cloc_abc123', { billing_address: { city: 'Berlin' } })
-      await expect(client.companyLocations.delete('cloc_abc123')).resolves.toBeUndefined()
+      const listed = await client.companies.addresses.list('comp_abc123')
+      await client.companies.addresses.create('comp_abc123', {
+        label: 'Plant 2 dock',
+        default_shipping: true,
+        city: 'Hamburg',
+        country_code: 'DE',
+      })
+      await client.companies.addresses.update('comp_abc123', 'caddr_abc123', { city: 'Berlin' })
+      await expect(
+        client.companies.addresses.delete('comp_abc123', 'caddr_abc123'),
+      ).resolves.toBeUndefined()
 
-      expect(patched).toEqual({ billing_address: { city: 'Berlin' } })
+      expect(listed.data[0]?.id).toBe('caddr_abc123')
+      expect(body).toEqual({
+        label: 'Plant 2 dock',
+        default_shipping: true,
+        city: 'Hamburg',
+        country_code: 'DE',
+      })
+      expect(patched).toEqual({ city: 'Berlin' })
     })
   })
 
-  describe('contacts', () => {
-    it('lists and creates under the branch, deletes by its own id', async () => {
+  describe('memberships', () => {
+    // Adding by email does the right thing server-side: a membership for an
+    // existing customer, an invitation otherwise.
+    it('adds a member by email and removes standing by membership id', async () => {
       let body: Record<string, unknown> | null = null
-      const contact = {
-        id: 'cc_abc123',
-        company_location_id: 'cloc_abc123',
+      const membership = {
+        id: 'cmem_abc123',
+        company_id: 'comp_abc123',
         customer_id: 'cus_1',
         role: 'buyer',
         email: 'buyer@acme.test',
@@ -162,26 +162,63 @@ describe('companies', () => {
         updated_at: '',
       }
       server.use(
-        http.get(`${API_PREFIX}/company_locations/cloc_abc123/contacts`, () =>
-          HttpResponse.json(paginated([contact])),
+        http.get(`${API_PREFIX}/companies/comp_abc123/memberships`, () =>
+          HttpResponse.json(paginated([membership])),
         ),
-        http.post(`${API_PREFIX}/company_locations/cloc_abc123/contacts`, async ({ request }) => {
+        http.post(`${API_PREFIX}/companies/comp_abc123/memberships`, async ({ request }) => {
           body = (await request.json()) as Record<string, unknown>
-          return HttpResponse.json(contact, { status: 201 })
+          return HttpResponse.json(membership, { status: 201 })
         }),
         http.delete(
-          `${API_PREFIX}/company_contacts/cc_abc123`,
+          `${API_PREFIX}/companies/comp_abc123/memberships/cmem_abc123`,
           () => new HttpResponse(null, { status: 204 }),
         ),
       )
 
       const client = createTestClient()
-      const listed = await client.companyLocations.contacts.list('cloc_abc123')
-      await client.companyLocations.contacts.create('cloc_abc123', { customer_id: 'cus_1' })
-      await expect(client.companyContacts.delete('cc_abc123')).resolves.toBeUndefined()
+      const listed = await client.companies.memberships.list('comp_abc123')
+      await client.companies.memberships.create('comp_abc123', {
+        customer_email: 'buyer@acme.test',
+      })
+      await expect(
+        client.companies.memberships.delete('comp_abc123', 'cmem_abc123'),
+      ).resolves.toBeUndefined()
 
       expect(listed.data[0]?.email).toBe('buyer@acme.test')
-      expect(body).toEqual({ customer_id: 'cus_1' })
+      expect(body).toEqual({ customer_email: 'buyer@acme.test' })
+    })
+  })
+
+  describe('invitations', () => {
+    it('lists pending invitations and revokes by id', async () => {
+      const invitation = {
+        id: 'cinv_abc123',
+        company_id: 'comp_abc123',
+        email: 'new@acme.test',
+        status: 'pending',
+        expires_at: '2026-09-01T00:00:00Z',
+        accepted_at: null,
+        revoked_at: null,
+        created_at: '',
+        updated_at: '',
+      }
+      server.use(
+        http.get(`${API_PREFIX}/companies/comp_abc123/invitations`, () =>
+          HttpResponse.json(paginated([invitation])),
+        ),
+        http.delete(
+          `${API_PREFIX}/companies/comp_abc123/invitations/cinv_abc123`,
+          () => new HttpResponse(null, { status: 204 }),
+        ),
+      )
+
+      const client = createTestClient()
+      const listed = await client.companies.invitations.list('comp_abc123')
+      await expect(
+        client.companies.invitations.delete('comp_abc123', 'cinv_abc123'),
+      ).resolves.toBeUndefined()
+
+      expect(listed.data[0]?.status).toBe('pending')
     })
   })
 

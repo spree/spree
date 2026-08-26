@@ -71,9 +71,9 @@ module Spree
       # One per registration kind — a business can hold both an EU and a UK VAT number.
       has_many :tax_identifiers, class_name: 'Spree::TaxIdentifier', as: :owner,
                                  dependent: :destroy, inverse_of: :owner
-      has_many :company_contacts, class_name: 'Spree::CompanyContact', foreign_key: :customer_id,
-                                  dependent: :destroy, inverse_of: :customer
-      has_many :company_locations, through: :company_contacts
+      has_many :company_memberships, class_name: 'Spree::CompanyMembership', foreign_key: :customer_id,
+                                     dependent: :destroy, inverse_of: :customer
+      has_many :companies, through: :company_memberships, class_name: 'Spree::Company'
       belongs_to :ship_address, class_name: 'Spree::Address', optional: true
       belongs_to :bill_address, class_name: 'Spree::Address', optional: true
 
@@ -99,6 +99,29 @@ module Spree
       # Attributes
       #
       attr_accessor :confirm_email, :terms_of_service
+
+      # The company nodes this customer may act for within a store — their
+      # memberships on that store's trees, expanded by subtree. Customers are
+      # global while companies are store-scoped, so standing is always
+      # evaluated per store.
+      #
+      # @param store [Spree::Store]
+      # @return [ActiveRecord::Relation<Spree::Company>]
+      def company_standing(store:)
+        Spree::Company.subtree_of(companies.where(store_id: store.id))
+      end
+
+      # Whether this customer may act for the given node: a membership on the
+      # node or any of its ancestors. Always a subtree check, never an
+      # equality check on one node.
+      #
+      # @param company [Spree::Company]
+      # @return [Boolean]
+      def standing_for?(company)
+        return false if company.nil?
+
+        company_memberships.where(company_id: company.self_and_ancestors.map(&:id)).exists?
+      end
 
       def self.find_by_password_reset_token(token)
         find_by_token_for(:password_reset, token)

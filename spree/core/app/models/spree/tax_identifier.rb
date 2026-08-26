@@ -73,6 +73,11 @@ module Spree
     validates :validation_status, inclusion: { in: VALIDATION_STATUSES }, allow_nil: true
     validates :source, inclusion: { in: SOURCES }, allow_nil: true
     validate :value_format
+    # Registrations exist only on legal-entity nodes — a division's purchases
+    # read theirs through the legal entity. A validation rather than a schema
+    # difference, so a per-division foreign registration can be allowed later
+    # by relaxing this alone.
+    validate :company_is_legal_entity
 
     scope :for_kind, ->(kind) { where(kind: kind) }
     scope :verified, -> { where(validation_status: 'verified') }
@@ -143,6 +148,15 @@ module Spree
       return unless saved_changes.key?('value') || saved_changes.key?('kind')
 
       publish_event('tax_identifier.number_changed')
+    end
+
+    # Registrations exist only on legal-entity nodes — a division's purchases
+    # read theirs through the legal entity.
+    def company_is_legal_entity
+      return unless owner.is_a?(Spree::Company)
+      return if owner.legal_entity?
+
+      errors.add(:owner, :must_be_legal_entity)
     end
   end
 end

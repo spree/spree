@@ -14,6 +14,8 @@ export const OrderSchema = z.object({
   market_id: z.string().nullable(),
   cart_id: z.string().nullable(),
   channel_id: z.string().nullable(),
+  company_id: z.string().nullable(),
+  company_name: z.string().nullable(),
   number: z.string(),
   email: z.string(),
   customer_note: z.string().nullable(),

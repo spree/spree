@@ -276,7 +276,7 @@ module SpreeStripe
 
         # Countries are reference data now, not records — addresses name one by
         # ISO code rather than holding a foreign key.
-        owner.bill_address ||= Spree::Address.new(country_code: country.iso, customer: owner.customer)
+        owner.bill_address ||= Spree::Address.new(country_code: country.iso, owner: owner.customer)
         owner.bill_address.quick_checkout = true
 
         # Google Pay sometimes omits the name entirely.

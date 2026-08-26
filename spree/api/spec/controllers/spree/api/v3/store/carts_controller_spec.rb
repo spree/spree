@@ -614,6 +614,59 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       expect(order.reload.ship_address_id).to eq(existing_address.id)
     end
 
+    context 'naming the company the purchase is for' do
+      let(:company) { create(:company, store: store) }
+
+      it 'persists a node the buyer has standing over' do
+        create(:company_membership, company: company, customer: user)
+
+        patch :update, params: { id: order.prefixed_id, company_id: company.prefixed_id }
+
+        expect(response).to have_http_status(:ok)
+        expect(order.reload.company).to eq(company)
+        expect(json_response['company_id']).to eq(company.prefixed_id)
+        expect(json_response['company_name']).to eq(company.name)
+      end
+
+      it 'refuses a node the buyer has no standing over' do
+        patch :update, params: { id: order.prefixed_id, company_id: company.prefixed_id }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(order.reload.company_id).to be_nil
+      end
+
+      # A guest holds only the cart token; company ids are not secrets, so a
+      # token-authorized cart must not be able to claim one.
+      it 'refuses a company on a guest cart' do
+        guest_cart = create(:cart_with_line_items, store: store, customer: nil)
+        request.headers['Authorization'] = nil
+        request.headers['X-Spree-Token'] = guest_cart.token
+
+        patch :update, params: { id: guest_cart.prefixed_id, company_id: company.prefixed_id }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(guest_cart.reload.company_id).to be_nil
+      end
+
+      it '404s a node of another store' do
+        foreign = create(:company, store: create(:store))
+
+        patch :update, params: { id: order.prefixed_id, company_id: foreign.prefixed_id }
+
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it 'clears the node when passed nothing' do
+        create(:company_membership, company: company, customer: user)
+        order.update!(company: company)
+
+        patch :update, params: { id: order.prefixed_id, company_id: nil }
+
+        expect(response).to have_http_status(:ok)
+        expect(order.reload.company_id).to be_nil
+      end
+    end
+
     context 'selecting a pickup location' do
       let!(:pickup_location) { create(:stock_location, pickup_enabled: true, store: store) }
 

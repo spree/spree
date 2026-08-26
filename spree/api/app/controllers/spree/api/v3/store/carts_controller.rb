@@ -187,6 +187,7 @@ module Spree
               :shipping_address_id,
               :billing_address_id,
               :preferred_stock_location_id,
+              :company_id,
               :use_shipping,
               shipping_address: address_params,
               billing_address: address_params,

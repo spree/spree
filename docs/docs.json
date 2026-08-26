@@ -488,6 +488,7 @@
                         "pages": [
                           "developer/core-concepts/products",
                           "developer/core-concepts/pricing",
+                          "developer/core-concepts/companies-and-catalogs",
                           "developer/core-concepts/inventory",
                           "developer/core-concepts/media",
                           "developer/core-concepts/search-filtering"
@@ -1856,6 +1857,7 @@
                 "pages": [
                   "developer/core-concepts/products",
                   "developer/core-concepts/pricing",
+                  "developer/core-concepts/companies-and-catalogs",
                   "developer/core-concepts/inventory",
                   "developer/core-concepts/media",
                   "developer/core-concepts/search-filtering"

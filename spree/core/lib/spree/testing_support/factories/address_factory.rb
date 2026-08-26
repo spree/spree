@@ -14,6 +14,11 @@ FactoryBot.define do
     # plain codes; country/state stay as transient value objects so specs can
     # keep passing them (or country_code/state_code directly).
     transient do
+      # The owner is polymorphic; these keep the customer case readable, since
+      # a customer's address book is what most specs are building.
+      customer { nil }
+      user { nil }
+
       country { Spree::Country.by_iso('US') }
 
       # NY only when the country is actually the US — specs that pass a
@@ -38,12 +43,18 @@ FactoryBot.define do
     # one; the rest just need something the country accepts.
     zipcode { Spree::TestingSupport::CountryPool.postal_code_for(country&.iso) }
 
-    # An address addressed to a company rather than a person — a seller's
-    # billing address. Shares the table with its parent, so the only
-    # difference is which fields it asks for.
-    factory :business_address, class: Spree::BusinessAddress do
+    after(:build) do |address, evaluator|
+      owner = evaluator.customer || evaluator.user
+      address.owner = owner if owner
+    end
+
+    # An address addressed to a business rather than a person. What it asks
+    # for follows from its owner, so naming one is the whole difference.
+    factory :business_address do
+      association :owner, factory: :seller
       firstname { nil }
       lastname  { nil }
+      company   { 'Acme Industrial' }
     end
   end
 end

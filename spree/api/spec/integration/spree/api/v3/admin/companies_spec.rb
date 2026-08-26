@@ -39,7 +39,7 @@ RSpec.describe 'Admin Companies API', type: :request, swagger_doc: 'api-referenc
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Creates a business customer. Exemption certificates and tax registrations hang off it.'
+      description 'Creates a company node. A root node is a legal entity; pass parent_id and kind to build the organization tree. Exemption certificates and tax registrations hang off legal-entity nodes.'
       admin_scope :write, :customers
 
       admin_sdk_example 'companies/create'
@@ -50,6 +50,12 @@ RSpec.describe 'Admin Companies API', type: :request, swagger_doc: 'api-referenc
         type: :object,
         properties: {
           name: { type: :string, example: 'Globex Corporation' },
+          kind: { type: :string, enum: %w[company division],
+                  description: 'company = legal entity (may hold tax registrations), division = organizational unit. Roots must be company.',
+                  example: 'company' },
+          parent_id: { type: :string, nullable: true,
+                       description: 'The parent node. Omit for a root.',
+                       example: 'comp_86Rf07xd4z' },
           external_references: {
             type: :array,
             description: 'Identities this business has in your own systems. A system you do ' \

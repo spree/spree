@@ -72,6 +72,20 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxExemptionCertificatesControl
       expect(company.tax_exemption_certificates.sole.country_code).to eq(germany.iso)
     end
 
+    # A division's purchases read exemption through the legal entity; the
+    # division itself holds no certificates.
+    it 'refuses a certificate on a division node' do
+      division = create(:company, store: store, kind: 'division', parent: company)
+
+      post :create, params: {
+        company_id: division.prefixed_id,
+        certificate_number: 'DE-RESALE-8',
+        reason_code: 'resale'
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
     it 'attaches a document from a direct upload' do
       post :create, params: {
         company_id: company.prefixed_id,

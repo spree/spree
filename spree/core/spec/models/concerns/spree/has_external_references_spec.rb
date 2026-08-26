@@ -117,13 +117,6 @@ RSpec.describe Spree::HasExternalReferences do
 
       expect(variant.set_external_id('erp', 'V-1').store).to eq(store)
     end
-
-    it 'uses the company store for a company location' do
-      company = create(:company, store: store)
-      location = create(:company_location, company: company)
-
-      expect(location.set_external_id('erp', 'LOC-1').store).to eq(store)
-    end
   end
 
   describe 'lifecycle' do

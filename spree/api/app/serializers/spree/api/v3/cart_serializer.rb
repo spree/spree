@@ -9,6 +9,7 @@ module Spree
                  currency: :string, locale: [:string, nullable: true], total_quantity: :number,
                  coupon_code: [:string, nullable: true],
                  preferred_stock_location_id: [:string, nullable: true],
+                 company_id: [:string, nullable: true], company_name: [:string, nullable: true],
                  requirements: 'Array<{step: string, field: string, code: string, message: string}>',
                  item_total: [:string, nullable: true], display_item_total: [:string, nullable: true],
                  delivery_total: [:string, nullable: true], display_delivery_total: [:string, nullable: true],
@@ -42,6 +43,16 @@ module Spree
         # Pickup selection — mirrors the writable param on cart update.
         attribute :preferred_stock_location_id do |cart|
           cart.preferred_stock_location&.prefixed_id
+        end
+
+        # Which company node the purchase is for — mirrors the writable
+        # `company_id` param. Read from the column, never re-resolved.
+        attribute :company_id do |cart|
+          cart.company&.prefixed_id
+        end
+
+        attribute :company_name do |cart|
+          cart.company&.name
         end
 
         # @deprecated `number` mirrors `id` (carts have no order-style

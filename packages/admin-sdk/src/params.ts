@@ -2401,12 +2401,19 @@ export interface DeliveryZoneParams {
 
 export interface CompanyParams {
   name?: string
+  /**
+   * `company` = legal entity (may hold tax registrations), `division` =
+   * organizational unit. Roots must be `company`.
+   */
+  kind?: 'company' | 'division'
+  /** The parent node (comp_...). Omit or null for a root. */
+  parent_id?: string | null
   external_references?: ExternalReferencesParams
   metadata?: Record<string, unknown>
 }
 
-/** Addresses are created inline and owned by the branch. */
-export interface CompanyLocationAddressParams {
+/** Address fields, created inline and owned by the address-book entry. */
+export interface CompanyAddressFieldsParams {
   first_name?: string
   last_name?: string
   company?: string
@@ -2419,21 +2426,48 @@ export interface CompanyLocationAddressParams {
   country_code?: string
   state_code?: string
   state_name?: string
-  label?: string
 }
 
-export interface CompanyLocationParams {
-  name?: string
-  external_references?: ExternalReferencesParams
-  billing_address?: CompanyLocationAddressParams
-  shipping_address?: CompanyLocationAddressParams
+/**
+ * An address book entry is the address itself, so its fields sit alongside the
+ * label rather than under an `address` key. Send only what changes on update.
+ */
+export interface CompanyAddressParams extends CompanyAddressFieldsParams {
+  /** 'Headquarters', 'Plant 2 dock', ... */
+  label?: string | null
+  /** The node points at one address per kind, so promoting moves the pointer. */
+  default_billing?: boolean
+  default_shipping?: boolean
+}
+
+export interface CompanyMembershipCreateParams {
+  /**
+   * The person's email. An existing customer becomes a member immediately;
+   * an unknown email becomes an invitation and the response is a
+   * CompanyInvitation instead of a CompanyMembership.
+   */
+  customer_email: string
   metadata?: Record<string, unknown>
 }
 
-export interface CompanyContactParams {
-  customer_id?: string
-  /** Free-form label; carries no permissions. */
-  role?: string
+export interface CatalogParams {
+  name?: string
+  active?: boolean
+  position?: number
+  /**
+   * Price list (pl_...) pricing this catalog; null = assortment-only, base
+   * prices. A catalog with an EMPTY assortment is a pricing-only overlay —
+   * its list applies and nothing is hidden; curate products (or call
+   * importProducts) to make it restrictive.
+   */
+  price_list_id?: string | null
+  metadata?: Record<string, unknown>
+}
+
+export interface CatalogAssignParams {
+  /** Who sees the catalog. A company assignment covers the node's subtree. */
+  assignable_type: 'channel' | 'customer_group' | 'market' | 'company'
+  assignable_id: string
 }
 
 export interface TaxIdentifierParams {

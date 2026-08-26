@@ -10,7 +10,7 @@ module Spree
         default_shipping = address_params.key?(:is_default_shipping) ? address_params.delete(:is_default_shipping) : opts.fetch(:default_shipping, false)
 
         address = Spree::Address.new(address_params)
-        address.customer = user if user.present?
+        address.owner = user if user.present?
 
         ApplicationRecord.transaction do
           if address.save

@@ -48,7 +48,10 @@ export function PageTabs({ tabs, slotName = 'page.tabs', slotContext, className 
         const target =
           typeof tab.to === 'string'
             ? tab.to
-            : router.buildLocation({ to: tab.to, params: tab.params, search: tab.search }).pathname
+            : // Same literal-route caveat as the <Link> below: `to` is unknown
+              // at this generic call site.
+              router.buildLocation({ to: tab.to as never, params: tab.params, search: tab.search })
+                .pathname
         const active =
           tab.match === 'prefix'
             ? location.pathname.startsWith(target)

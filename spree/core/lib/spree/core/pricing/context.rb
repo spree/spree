@@ -1,7 +1,7 @@
 module Spree
   module Pricing
     class Context
-      attr_reader :variant, :currency, :store, :country, :market, :channel, :user, :quantity, :date, :order
+      attr_reader :variant, :currency, :store, :country, :market, :channel, :user, :quantity, :date, :order, :company
 
       # Initializes the context
       # @param variant [Spree::Variant]
@@ -14,7 +14,9 @@ module Spree
       # @param quantity [Integer]
       # @param date [Time]
       # @param order [Spree::Order]
-      def initialize(variant: nil, currency:, store: nil, country: nil, market: nil, channel: nil, user: nil, quantity: nil, date: nil, order: nil)
+      # @param company [Spree::Company] the purchase node — catalog-attached
+      #   price lists resolve through it, nearest node first
+      def initialize(variant: nil, currency:, store: nil, country: nil, market: nil, channel: nil, user: nil, quantity: nil, date: nil, order: nil, company: nil)
         @variant = variant
         @currency = currency
         @store = store || Spree::Current.store
@@ -25,6 +27,7 @@ module Spree
         @quantity = quantity
         @date = date || Time.current
         @order = order
+        @company = company
       end
 
       # The destination as a code. Rules compare against this rather than the
@@ -58,7 +61,8 @@ module Spree
           channel: order.channel,
           user: order.user,
           quantity: quantity || order.line_items.find_by(variant: variant)&.quantity,
-          order: order
+          order: order,
+          company: order.resolved_company
         )
       end
 
@@ -76,6 +80,7 @@ module Spree
           market&.id,
           channel&.id,
           user&.id,
+          company&.id,
           quantity,
           date&.to_i
         ].compact.join('/')

@@ -93,6 +93,12 @@
     "address": {
       "not_located_yet": "Die Karte erscheint, sobald diese Adresse gefunden wurde."
     },
+    "address_book": {
+      "default_billing": "Standard-Rechnung",
+      "default_shipping": "Standard-Versand",
+      "set_default_billing": "Als Standard-Rechnungsadresse festlegen",
+      "set_default_shipping": "Als Standard-Versandadresse festlegen"
+    },
     "auth": {
       "back_to_login": "Zurück zur Anmeldung",
       "forgot_password": {
@@ -136,6 +142,7 @@
       "no_color": "Keine Farbe"
     },
     "common": {
+      "active": "Aktiv",
       "adjust_search_or_filters": "Passen Sie Ihre Suche oder Filter an",
       "all": "Alle",
       "and": "und",
@@ -147,6 +154,7 @@
       "delete_confirm_message": "Sind Sie sicher? Diese Aktion kann nicht rückgängig gemacht werden.",
       "deleted": "Gelöscht",
       "empty_value": "—",
+      "inactive": "Inaktiv",
       "loading": "Wird geladen…",
       "next": "Weiter",
       "no": "Nein",
@@ -188,6 +196,8 @@
           "heading": "Erstellen",
           "label": "Neu: {{noun}}",
           "nouns": {
+            "catalog": "Katalog",
+            "catalog_plural": "Kataloge",
             "category": "Kategorie",
             "category_plural": "Kategorien",
             "collection": "Kollektion",

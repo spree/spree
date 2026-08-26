@@ -3,6 +3,7 @@ import {
   Button,
   Checkbox,
   Field,
+  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -152,6 +153,8 @@ export function AddressFormDialog({
   showLabel = false,
   showDefaultFlags = false,
   business = false,
+  companyReadOnly = false,
+  description,
 }: {
   address: EditableAddress | null | undefined
   open: boolean
@@ -163,6 +166,14 @@ export function AddressFormDialog({
   showDefaultFlags?: boolean
   /** Addressed to a company rather than a person — see the schemas above. */
   business?: boolean
+  /**
+   * Show the company line but do not let it be edited. For an address whose
+   * owner already answers the question — a company node names itself, so
+   * there is nothing for the merchant to type.
+   */
+  companyReadOnly?: boolean
+  /** Overrides the standard "update the address details" blurb. */
+  description?: string
 }) {
   const { t } = useTranslation()
   const resolvedTitle = title ?? t('admin.components.address_form_dialog.edit_title')
@@ -232,7 +243,7 @@ export function AddressFormDialog({
         <SheetHeader>
           <SheetTitle>{resolvedTitle}</SheetTitle>
           <SheetDescription>
-            {t('admin.components.address_form_dialog.description')}
+            {description ?? t('admin.components.address_form_dialog.description')}
           </SheetDescription>
         </SheetHeader>
         <form
@@ -260,8 +271,13 @@ export function AddressFormDialog({
                   <Input
                     id="addr-co"
                     aria-invalid={!!errors.company || undefined}
+                    disabled={companyReadOnly}
+                    readOnly={companyReadOnly}
                     {...form.register('company')}
                   />
+                  {companyReadOnly && (
+                    <FieldDescription>{t('admin.fields.company.help')}</FieldDescription>
+                  )}
                   <FieldError errors={[errors.company]} />
                 </Field>
               ) : (
@@ -399,40 +415,42 @@ export function AddressFormDialog({
               {showDefaultFlags && (
                 <>
                   <Field>
-                    <div className="flex items-start justify-between gap-4">
-                      <FieldLabel htmlFor="addr-default-billing" className="cursor-pointer">
-                        {t('admin.fields.address.is_default_billing.label')}
-                      </FieldLabel>
-                      <Controller
-                        name="is_default_billing"
-                        control={form.control}
-                        render={({ field }) => (
+                    <Controller
+                      name="is_default_billing"
+                      control={form.control}
+                      render={({ field }) => (
+                        <label
+                          htmlFor="addr-default-billing"
+                          className="flex cursor-pointer items-center gap-2 text-sm"
+                        >
                           <Checkbox
                             id="addr-default-billing"
                             checked={!!field.value}
                             onCheckedChange={field.onChange}
                           />
-                        )}
-                      />
-                    </div>
+                          {t('admin.fields.address.is_default_billing.label')}
+                        </label>
+                      )}
+                    />
                   </Field>
                   <Field>
-                    <div className="flex items-start justify-between gap-4">
-                      <FieldLabel htmlFor="addr-default-shipping" className="cursor-pointer">
-                        {t('admin.fields.address.is_default_shipping.label')}
-                      </FieldLabel>
-                      <Controller
-                        name="is_default_shipping"
-                        control={form.control}
-                        render={({ field }) => (
+                    <Controller
+                      name="is_default_shipping"
+                      control={form.control}
+                      render={({ field }) => (
+                        <label
+                          htmlFor="addr-default-shipping"
+                          className="flex cursor-pointer items-center gap-2 text-sm"
+                        >
                           <Checkbox
                             id="addr-default-shipping"
                             checked={!!field.value}
                             onCheckedChange={field.onChange}
                           />
-                        )}
-                      />
-                    </div>
+                          {t('admin.fields.address.is_default_shipping.label')}
+                        </label>
+                      )}
+                    />
                   </Field>
                 </>
               )}

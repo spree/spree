@@ -34,7 +34,7 @@ module Spree
         end
 
         def assign_address(user)
-          # Save user first so the address can FK to it via user_id (has_many :addresses).
+          # Save user first so the address can point at it through the polymorphic owner.
           user.save! if user.new_record?
 
           address = user.bill_address || user.addresses.build

@@ -93,6 +93,12 @@
     "address": {
       "not_located_yet": "定位完成后将显示地图。"
     },
+    "address_book": {
+      "default_billing": "默认账单",
+      "default_shipping": "默认收货",
+      "set_default_billing": "设为默认账单地址",
+      "set_default_shipping": "设为默认收货地址"
+    },
     "auth": {
       "back_to_login": "返回登录",
       "forgot_password": {
@@ -136,6 +142,7 @@
       "no_color": "无颜色"
     },
     "common": {
+      "active": "启用",
       "adjust_search_or_filters": "请尝试调整搜索或筛选条件",
       "all": "全部",
       "and": "和",
@@ -147,6 +154,7 @@
       "delete_confirm_message": "确定吗？此操作无法撤销。",
       "deleted": "已删除",
       "empty_value": "—",
+      "inactive": "停用",
       "loading": "加载中…",
       "next": "下一页",
       "no": "否",
@@ -188,6 +196,8 @@
           "heading": "创建",
           "label": "新建{{noun}}",
           "nouns": {
+            "catalog": "目录",
+            "catalog_plural": "目录",
             "category": "分类",
             "category_plural": "分类",
             "collection": "系列",

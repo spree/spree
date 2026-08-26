@@ -87,6 +87,78 @@
       "tiered_flat_rate": "阶梯固定费率",
       "tiered_percent": "阶梯百分比"
     },
+    "catalogs": {
+      "add_cta": "添加目录",
+      "add_sheet_title": "新建目录",
+      "assignable_types": {
+        "channel": "渠道",
+        "company": "公司",
+        "customer_group": "客户组",
+        "market": "市场"
+      },
+      "assignments": {
+        "add_cta": "分配",
+        "add_title": "分配该目录",
+        "audience_empty": "未找到结果",
+        "audience_label": "受众",
+        "audience_placeholder": "搜索…",
+        "company_subtree_help": "分配给公司将覆盖其整个子树。",
+        "dialog_description": "谁能看到该目录。分配给公司将覆盖该节点及其下所有单位。",
+        "empty": "尚未分配给任何受众——没有人能看到该目录。",
+        "remove_confirm": {
+          "message": "{{name}} 将不再看到该目录。",
+          "title": "移除该分配？"
+        },
+        "title": "受众",
+        "type_label": "受众类型"
+      },
+      "create_description": "目录限定某类受众能看到什么，并通过价格表决定其价格。创建后可添加产品和受众。",
+      "create_label": "创建目录",
+      "delete_confirm": {
+        "message": "这将删除 {{name}} 及其分配。产品和价格表不受影响。",
+        "title": "删除目录？"
+      },
+      "detail": {
+        "delete_label": "删除目录",
+        "load_error": "无法加载该目录",
+        "settings": "目录"
+      },
+      "empty": "暂无目录",
+      "import_from_price_list": "从价格表导入产品",
+      "messages": {
+        "assigned": "目录已分配",
+        "created": "目录已创建",
+        "deleted": "目录已删除",
+        "product_removed": "产品已移除",
+        "products_added": "产品已添加",
+        "products_imported": "产品已导入",
+        "products_removed": "产品已移除",
+        "unassigned": "分配已移除",
+        "updated": "目录已更新"
+      },
+      "products": {
+        "add_cta": "添加产品",
+        "column_product": "产品",
+        "empty": "该目录中暂无产品。",
+        "filter_placeholder": "筛选产品…",
+        "no_matches": "没有匹配筛选条件的产品。",
+        "picker_description": "搜索并选择要添加到该目录的产品。",
+        "picker_title": "向目录添加产品",
+        "remove": "从目录中移除",
+        "remove_confirm": {
+          "message_named": "将“{{name}}”从该目录中移除？立即生效。产品仍保留在您的商店中。",
+          "message_other": "将 {{count}} 个产品从该目录中移除？立即生效。产品仍保留在您的商店中。",
+          "title": "从目录中移除"
+        },
+        "remove_selected": "移除",
+        "search_placeholder": "搜索产品…",
+        "select_all": "全选",
+        "select_row": "选择产品",
+        "title": "产品"
+      },
+      "products_column": "产品",
+      "search_placeholder": "搜索目录"
+    },
     "categories": {
       "add_cta": "新建分类",
       "collapse": "收起",
@@ -313,68 +385,89 @@
       "search_placeholder": "按名称搜索…"
     },
     "companies": {
-      "add_cta": "添加企业",
-      "add_sheet_title": "新建企业",
-      "create_description": "企业客户通过分支机构下单。创建企业后即可添加分支机构、税务登记号和免税证明。",
-      "create_label": "创建企业",
+      "add_cta": "添加公司",
+      "add_sheet_title": "新建公司",
+      "create_description": "公司是组织树的根节点。创建后可以添加子单位、成员、地址、税务登记和免税证书。",
+      "create_label": "创建公司",
       "delete_confirm": {
-        "message": "将删除 {{name}} 及其所有分支机构、采购人和证明。此操作无法撤销。",
-        "title": "删除企业？"
+        "message": "这将删除 {{name}} 及其整个子树——子单位、成员、地址和证书。此操作无法撤销。",
+        "title": "删除公司？"
       },
       "detail": {
-        "delete_label": "删除企业",
-        "load_error": "无法加载该企业",
-        "profile": "企业"
+        "delete_label": "删除公司",
+        "division_tax_pointer": "部门没有自己的税务登记。其采购通过其法律实体计税：",
+        "load_error": "无法加载该公司",
+        "profile": "公司"
       },
-      "empty": "暂无企业",
-      "locations_column": "分支机构",
+      "empty": "暂无公司",
+      "kind": {
+        "company": "公司",
+        "division": "部门"
+      },
+      "members_column": "成员",
+      "members_count_other": "{{count}} 名成员",
       "messages": {
-        "created": "企业已创建",
-        "deleted": "企业已删除",
-        "updated": "企业已更新"
+        "created": "公司已创建",
+        "deleted": "公司已删除",
+        "updated": "公司已更新"
       },
-      "search_placeholder": "搜索企业"
+      "search_placeholder": "搜索公司",
+      "sub_units": {
+        "add_cta": "添加子单位",
+        "add_description": "部门是共享其法律实体税务身份的组织单位。公司则是拥有自己登记的独立法律实体。",
+        "add_title": "在 {{name}} 下新建子单位",
+        "empty": "暂无子单位",
+        "title": "子单位"
+      }
     },
-    "company_contacts": {
-      "add_cta": "添加采购人",
-      "add_title": "授权采购人",
-      "dialog_description": "为该分支机构下单的客户。若客户只为一个分支机构采购，其订单会自动归属该机构。",
-      "empty": "尚未授权任何采购人",
+    "company_addresses": {
+      "add_cta": "添加地址",
+      "add_sheet_title": "新建地址",
+      "edit_sheet_title": "编辑地址",
+      "empty": "暂无地址",
       "messages": {
-        "created": "采购人已添加",
-        "deleted": "采购人已移除"
+        "created": "地址已添加",
+        "deleted": "地址已移除",
+        "updated": "地址已更新"
       },
-      "remove_action": "移除采购人",
       "remove_confirm": {
-        "message": "{{email}} 将不再为该分支机构采购。其客户账户不受影响。",
-        "title": "移除该采购人？"
+        "message": "{{label}} 将从地址簿中移除。此操作无法撤销。",
+        "title": "删除该地址？"
       },
-      "roles_enterprise_help": "在此添加的采购人可为该分支机构下单。角色、审批流程和支出限额由 Spree Enterprise 提供。",
-      "roles_enterprise_title": "角色与审批为 Enterprise 功能",
-      "title": "采购人"
+      "sheet_description": "此节点的命名收货或账单地点。每个节点为每种类型指定一个默认地址。",
+      "title": "地址簿"
     },
-    "company_locations": {
-      "add_cta": "添加分支机构",
-      "add_title": "新建分支机构",
-      "addresses": "地址",
-      "billing_address": "账单地址",
-      "contacts_count_one": "{{count}} 位采购人",
-      "contacts_count_other": "{{count}} 位采购人",
-      "detail": {
-        "delete_label": "删除分支机构",
-        "load_error": "无法加载该分支机构"
-      },
-      "dialog_description": "分支机构是开具发票和收货的地点。地址为选填，但一旦填写则需要姓名和国家/地区。",
-      "edit_title": "编辑分支机构",
-      "empty": "暂无分支机构",
+    "company_invitations": {
       "messages": {
-        "created": "分支机构已创建",
-        "deleted": "分支机构已删除",
-        "updated": "分支机构已更新"
+        "revoked": "邀请已撤销"
       },
-      "shipping_address": "收货地址",
-      "shipping_same_as_billing": "收货地址与账单地址相同",
-      "title": "分支机构"
+      "pending_title": "待处理邀请",
+      "revoke_action": "撤销邀请",
+      "revoke_confirm": {
+        "message": "发送给 {{email}} 的邀请将失效。",
+        "title": "撤销该邀请？"
+      },
+      "status": {
+        "pending": "待处理"
+      }
+    },
+    "company_memberships": {
+      "add_cta": "添加成员",
+      "add_title": "添加成员",
+      "dialog_description": "成员可以为该节点及其下所有单位采购。没有账户的邮箱将收到邀请。",
+      "empty": "暂无成员",
+      "messages": {
+        "added": "成员已添加",
+        "removed": "成员已移除"
+      },
+      "remove_action": "移除成员",
+      "remove_confirm": {
+        "message": "{{email}} 将不能再为该公司采购。其客户账户不受影响。",
+        "title": "移除该成员？"
+      },
+      "roles_enterprise_help": "在此添加的成员可以为该公司采购并管理其目录。角色、审批流程和支出限额随 Spree Enterprise 提供。",
+      "roles_enterprise_title": "角色与审批是 Enterprise 功能",
+      "title": "成员"
     },
     "components": {
       "adjustment_action_editor": {
@@ -456,11 +549,7 @@
       },
       "detail": {
         "address": {
-          "default_billing": "默认账单地址",
-          "default_shipping": "默认收货地址",
-          "delete_confirm_message": "删除此地址？",
-          "set_default_billing": "设为默认账单地址",
-          "set_default_shipping": "设为默认收货地址"
+          "delete_confirm_message": "删除此地址？"
         },
         "customer_since": "注册时间",
         "delete_label": "删除客户",
@@ -767,6 +856,17 @@
           "label": "权限范围"
         }
       },
+      "catalog": {
+        "name": {
+          "placeholder": "批发"
+        },
+        "price_list": {
+          "empty": "未找到价格表",
+          "help": "可选。不设置价格表时，目录仅限定商品范围，按基础价格计价。商品范围为空时，目录只定价——不隐藏任何商品；导入或添加产品可限制该受众所见范围。",
+          "label": "价格表",
+          "placeholder": "基础价格"
+        }
+      },
       "certificate_document": {
         "help": "PDF 或图片，最大 10 MB。仅员工可下载。",
         "label": "证明文件"
@@ -887,21 +987,25 @@
           "help": "您为该企业设定的编号，在本店内唯一。",
           "placeholder": "ACME-001"
         },
+        "help": "取自此地址所属的公司。",
+        "kind": {
+          "help": "公司是可持有税务登记的法律实体。部门使用其法律实体的登记。",
+          "label": "类型"
+        },
+        "label": "公司",
         "name": {
           "placeholder": "Acme Industries"
-        }
-      },
-      "company_contact": {
-        "role": {
-          "label": "职务"
         }
       },
       "company_location": {
         "external_id": {
           "help": "您为该分支机构设定的编号。"
-        },
-        "name": {
-          "placeholder": "总部"
+        }
+      },
+      "company_membership": {
+        "email": {
+          "help": "已有客户会立即加入；其他人将收到电子邮件邀请。",
+          "placeholder": "buyer@example.com"
         }
       },
       "country": {
@@ -2157,6 +2261,7 @@
     },
     "nav": {
       "account": "账户",
+      "catalogs": "产品目录",
       "categories": "分类",
       "claims": "索赔",
       "collections": "系列",

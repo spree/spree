@@ -50,9 +50,14 @@ RSpec.shared_examples 'a taxation host' do
 
     context 'when the sale is for a business' do
       let(:company) { create(:company, store: store) }
-      let(:location) { create(:company_location, company: company) }
+      # The purchase points at a division; the registration resolves through
+      # its legal entity — the parent company node.
+      let(:division) { create(:company, store: store, kind: 'division', parent: company) }
 
-      before { record.update!(company_location: location) }
+      before do
+        create(:company_membership, company: division, customer: customer)
+        record.update!(company: division)
+      end
 
       # The invoice is addressed to the entity, so its registration wins.
       it 'prefers the company registration over the buyer own' do

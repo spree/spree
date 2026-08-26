@@ -293,7 +293,8 @@ module Spree
       register_resource(:products, group: :catalog, audiences: %i[seller], subjects: -> {
         [Spree::Product, Spree::ProductType, Spree::Variant, Spree::OptionType,
          Spree::OptionValue, Spree::Price, Spree::PriceList, Spree::PriceRule,
-         Spree::ProductPublication, Spree::CustomField]
+         Spree::ProductPublication, Spree::Catalog, Spree::CatalogProduct,
+         Spree::CatalogAssignment, Spree::CustomField]
       })
       # Media is its own resource because a file is no longer a product's
       # alone: one row can be placed on a category or collection, and the
@@ -322,7 +323,8 @@ module Spree
 
       register_resource(:customers, group: :customers, subjects: -> {
         [Spree.customer_class, Spree::Address, Spree::CreditCard, Spree::CustomerGroup,
-         Spree::Company, Spree::CompanyLocation, Spree::CompanyContact,
+         Spree::Company, Spree::CompanyMembership,
+         Spree::CompanyInvitation,
          Spree::TaxIdentifier, Spree::TaxExemptionCertificate,
          Spree::CustomField]
       })

@@ -40,11 +40,11 @@ describe Spree::Address, type: :model do
   end
 
   describe 'clone' do
-    it 'creates a copy of the address with the exception of the id, label, user_id, updated_at and created_at attributes' do
+    it 'creates a copy of the address with the exception of the id, label, owner, updated_at and created_at attributes' do
       state = create(:state)
       original = create(:address,
                         label: 'Home',
-                        user_id: 976,
+                        customer: create(:customer),
                         address1: FFaker::Address.street_address,
                         address2: FFaker::Address.secondary_address,
                         alternative_phone: FFaker::PhoneNumberAU.mobile_phone_number,

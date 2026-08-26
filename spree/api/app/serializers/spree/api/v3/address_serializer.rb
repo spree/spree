@@ -9,7 +9,12 @@ module Spree
                  state_abbr: [:string, nullable: true], state_name: [:string, nullable: true],
                  state_text: [:string, nullable: true], country_code: :string, country_iso: :string,
                  country_name: :string,
-                 quick_checkout: :boolean, is_default_billing: :boolean, is_default_shipping: :boolean
+                 quick_checkout: :boolean, is_default_billing: :boolean, is_default_shipping: :boolean,
+                 label: [:string, nullable: true]
+
+        # What the address is filed under in whichever book owns it — a
+        # customer's ("Home") or a company node's ("Northern Warehouse").
+        attributes :label
 
         attributes :first_name, :last_name, :full_name, :address1, :address2, :postal_code,
                    :city, :phone, :company, :country_name, :country_code, :state_text,

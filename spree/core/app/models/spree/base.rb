@@ -76,7 +76,9 @@ class Spree::Base < ApplicationRecord
   end
 
   def self.json_api_columns
-    column_names.reject { |c| c.match(/_id$|id|preferences|(.*)password|(.*)token|(.*)api_key|^original_(.*)/) }
+    # `_type` goes with `_id`: the two halves of a polymorphic reference name
+    # an internal class, which is no more public than the key beside it.
+    column_names.reject { |c| c.match(/_id$|id|_type$|preferences|(.*)password|(.*)token|(.*)api_key|^original_(.*)/) }
   end
 
   def self.json_api_permitted_attributes

@@ -89,6 +89,81 @@
       "tiered_flat_rate": "Progowa stawka ryczałtowa",
       "tiered_percent": "Procent progowy"
     },
+    "catalogs": {
+      "add_cta": "Dodaj katalog",
+      "add_sheet_title": "Nowy katalog",
+      "assignable_types": {
+        "channel": "Kanał",
+        "company": "Firma",
+        "customer_group": "Grupa klientów",
+        "market": "Rynek"
+      },
+      "assignments": {
+        "add_cta": "Przypisz",
+        "add_title": "Przypisz ten katalog",
+        "audience_empty": "Nic nie znaleziono",
+        "audience_label": "Odbiorca",
+        "audience_placeholder": "Szukaj…",
+        "company_subtree_help": "Przypisanie do firmy obejmuje całe jej poddrzewo.",
+        "dialog_description": "Kto widzi ten katalog. Przypisanie do firmy obejmuje węzeł i wszystko poniżej.",
+        "empty": "Nie przypisano do żadnego odbiorcy — nikt nie widzi tego katalogu.",
+        "remove_confirm": {
+          "message": "{{name}} przestanie widzieć ten katalog.",
+          "title": "Usunąć to przypisanie?"
+        },
+        "title": "Odbiorcy",
+        "type_label": "Typ odbiorcy"
+      },
+      "create_description": "Katalog zawęża, co widzi dana grupa odbiorców, a poprzez cennik — ile płaci. Produkty i odbiorców dodasz później.",
+      "create_label": "Utwórz katalog",
+      "delete_confirm": {
+        "message": "To usunie {{name}} wraz z przypisaniami. Produkty i cenniki pozostaną nietknięte.",
+        "title": "Usunąć katalog?"
+      },
+      "detail": {
+        "delete_label": "Usuń katalog",
+        "load_error": "Nie udało się wczytać tego katalogu",
+        "settings": "Katalog"
+      },
+      "empty": "Brak katalogów",
+      "import_from_price_list": "Importuj produkty z cennika",
+      "messages": {
+        "assigned": "Katalog przypisany",
+        "created": "Katalog utworzony",
+        "deleted": "Katalog usunięty",
+        "product_removed": "Produkt usunięty",
+        "products_added": "Produkty dodane",
+        "products_imported": "Produkty zaimportowane",
+        "products_removed": "Produkty usunięte",
+        "unassigned": "Przypisanie usunięte",
+        "updated": "Katalog zaktualizowany"
+      },
+      "products": {
+        "add_cta": "Dodaj produkty",
+        "column_product": "Produkt",
+        "empty": "Brak produktów w tym katalogu.",
+        "filter_placeholder": "Filtruj produkty…",
+        "no_matches": "Żaden produkt nie pasuje do filtra.",
+        "picker_description": "Wyszukaj i wybierz produkty do dodania do tego katalogu.",
+        "picker_title": "Dodaj produkty do katalogu",
+        "remove": "Usuń z katalogu",
+        "remove_confirm": {
+          "message_few": "Usunąć {{count}} produkty z tego katalogu? Zmiana działa natychmiast. Produkty pozostają w sklepie.",
+          "message_many": "Usunąć {{count}} produktów z tego katalogu? Zmiana działa natychmiast. Produkty pozostają w sklepie.",
+          "message_named": "Usunąć „{{name}}” z tego katalogu? Zmiana działa natychmiast. Produkt pozostaje w sklepie.",
+          "message_one": "Usunąć {{count}} produkt z tego katalogu? Zmiana działa natychmiast. Produkty pozostają w sklepie.",
+          "message_other": "Usunąć {{count}} produktów z tego katalogu? Zmiana działa natychmiast. Produkty pozostają w sklepie.",
+          "title": "Usuń z katalogu"
+        },
+        "remove_selected": "Usuń",
+        "search_placeholder": "Szukaj produktów…",
+        "select_all": "Zaznacz wszystko",
+        "select_row": "Zaznacz produkt",
+        "title": "Produkty"
+      },
+      "products_column": "Produkty",
+      "search_placeholder": "Szukaj katalogów"
+    },
     "categories": {
       "add_cta": "Nowa kategoria",
       "collapse": "Zwiń",
@@ -321,68 +396,90 @@
     "companies": {
       "add_cta": "Dodaj firmę",
       "add_sheet_title": "Nowa firma",
-      "create_description": "Klienci biznesowi kupują przez oddziały. Oddziały, numer podatkowy i certyfikaty zwolnienia dodasz po utworzeniu firmy.",
+      "create_description": "Firma jest korzeniem drzewa organizacji. Jednostki podrzędne, członków, adresy, rejestracje podatkowe i certyfikaty zwolnień dodasz później.",
       "create_label": "Utwórz firmę",
       "delete_confirm": {
-        "message": "Spowoduje to usunięcie {{name}} wraz z oddziałami, kupującymi i certyfikatami. Tej operacji nie można cofnąć.",
+        "message": "To usunie {{name}} wraz z całym poddrzewem — jednostkami, członkami, adresami i certyfikatami. Tej operacji nie można cofnąć.",
         "title": "Usunąć firmę?"
       },
       "detail": {
         "delete_label": "Usuń firmę",
+        "division_tax_pointer": "Oddział nie posiada własnych rejestracji podatkowych. Jego zakupy są opodatkowane przez jego podmiot prawny:",
         "load_error": "Nie udało się wczytać tej firmy",
         "profile": "Firma"
       },
-      "empty": "Nie ma jeszcze żadnych firm",
-      "locations_column": "Oddziały",
+      "empty": "Brak firm",
+      "kind": {
+        "company": "Firma",
+        "division": "Oddział"
+      },
+      "members_column": "Członkowie",
+      "members_count_few": "{{count}} członków",
+      "members_count_many": "{{count}} członków",
+      "members_count_one": "{{count}} członek",
+      "members_count_other": "{{count}} członków",
       "messages": {
         "created": "Firma utworzona",
         "deleted": "Firma usunięta",
         "updated": "Firma zaktualizowana"
       },
-      "search_placeholder": "Szukaj firm"
+      "search_placeholder": "Szukaj firm",
+      "sub_units": {
+        "add_cta": "Dodaj jednostkę",
+        "add_description": "Oddział to jednostka organizacyjna dzieląca tożsamość podatkową swojego podmiotu prawnego. Firma to osobny podmiot prawny z własnymi rejestracjami.",
+        "add_title": "Nowa jednostka w {{name}}",
+        "empty": "Brak jednostek podrzędnych",
+        "title": "Jednostki podrzędne"
+      }
     },
-    "company_contacts": {
-      "add_cta": "Dodaj kupującego",
-      "add_title": "Uprawnij kupującego",
-      "dialog_description": "Klient, który kupuje dla tego oddziału. Jeśli kupuje tylko dla jednego oddziału, jego zamówienia trafiają do niego automatycznie.",
-      "empty": "Nie uprawniono jeszcze żadnych kupujących",
+    "company_addresses": {
+      "add_cta": "Dodaj adres",
+      "add_sheet_title": "Nowy adres",
+      "edit_sheet_title": "Edytuj adres",
+      "empty": "Brak adresów",
       "messages": {
-        "created": "Kupujący dodany",
-        "deleted": "Kupujący usunięty"
+        "created": "Adres dodany",
+        "deleted": "Adres usunięty",
+        "updated": "Adres zaktualizowany"
       },
-      "remove_action": "Usuń kupującego",
       "remove_confirm": {
-        "message": "{{email}} nie będzie już kupować dla tego oddziału. Konto klienta pozostaje bez zmian.",
-        "title": "Usunąć tego kupującego?"
+        "message": "{{label}} zostanie usunięty z książki adresowej. Tej operacji nie można cofnąć.",
+        "title": "Usunąć ten adres?"
       },
-      "roles_enterprise_help": "Dodani tutaj kupujący mogą składać zamówienia dla tego oddziału. Role, procesy akceptacji i limity wydatków są częścią Spree Enterprise.",
-      "roles_enterprise_title": "Role i akceptacje to funkcja Enterprise",
-      "title": "Kupujący"
+      "sheet_description": "Nazwana lokalizacja dostawy lub rozliczeń dla tego węzła. Węzeł wskazuje jeden adres domyślny każdego rodzaju.",
+      "title": "Książka adresowa"
     },
-    "company_locations": {
-      "add_cta": "Dodaj oddział",
-      "add_title": "Nowy oddział",
-      "addresses": "Adresy",
-      "billing_address": "Adres rozliczeniowy",
-      "contacts_count_few": "{{count}} kupujących",
-      "contacts_count_many": "{{count}} kupujących",
-      "contacts_count_one": "{{count}} kupujący",
-      "contacts_count_other": "{{count}} kupujących",
-      "detail": {
-        "delete_label": "Usuń oddział",
-        "load_error": "Nie udało się wczytać tego oddziału"
-      },
-      "dialog_description": "Oddział to miejsce, na które wystawiana jest faktura i pod które trafia dostawa. Adresy są opcjonalne, ale wypełniony adres wymaga imienia, nazwiska i kraju.",
-      "edit_title": "Edytuj oddział",
-      "empty": "Nie ma jeszcze żadnych oddziałów",
+    "company_invitations": {
       "messages": {
-        "created": "Oddział utworzony",
-        "deleted": "Oddział usunięty",
-        "updated": "Oddział zaktualizowany"
+        "revoked": "Zaproszenie cofnięte"
       },
-      "shipping_address": "Adres dostawy",
-      "shipping_same_as_billing": "Adres dostawy taki sam jak rozliczeniowy",
-      "title": "Oddziały"
+      "pending_title": "Oczekujące zaproszenia",
+      "revoke_action": "Cofnij zaproszenie",
+      "revoke_confirm": {
+        "message": "Zaproszenie wysłane na {{email}} przestanie działać.",
+        "title": "Cofnąć to zaproszenie?"
+      },
+      "status": {
+        "pending": "Oczekujące"
+      }
+    },
+    "company_memberships": {
+      "add_cta": "Dodaj członka",
+      "add_title": "Dodaj członka",
+      "dialog_description": "Członkowie mogą kupować dla tego węzła i wszystkiego poniżej. E-mail bez konta stanie się zaproszeniem.",
+      "empty": "Brak członków",
+      "messages": {
+        "added": "Członek dodany",
+        "removed": "Członek usunięty"
+      },
+      "remove_action": "Usuń członka",
+      "remove_confirm": {
+        "message": "{{email}} nie będzie już kupować dla tej firmy. Konto klienta pozostaje nietknięte.",
+        "title": "Usunąć tego członka?"
+      },
+      "roles_enterprise_help": "Dodani tu członkowie mogą kupować dla tej firmy i zarządzać jej katalogiem osób. Role, ścieżki akceptacji i limity wydatków są dostępne w Spree Enterprise.",
+      "roles_enterprise_title": "Role i akceptacje to funkcja Enterprise",
+      "title": "Członkowie"
     },
     "components": {
       "adjustment_action_editor": {
@@ -464,11 +561,7 @@
       },
       "detail": {
         "address": {
-          "default_billing": "Domyślny adres rozliczeniowy",
-          "default_shipping": "Domyślny adres dostawy",
-          "delete_confirm_message": "Usunąć ten adres?",
-          "set_default_billing": "Ustaw jako domyślny adres rozliczeniowy",
-          "set_default_shipping": "Ustaw jako domyślny adres dostawy"
+          "delete_confirm_message": "Usunąć ten adres?"
         },
         "customer_since": "Klient od",
         "delete_label": "Usuń klienta",
@@ -786,6 +879,17 @@
           "label": "Zakresy"
         }
       },
+      "catalog": {
+        "name": {
+          "placeholder": "Hurt"
+        },
+        "price_list": {
+          "empty": "Nie znaleziono cenników",
+          "help": "Opcjonalny. Bez cennika katalog zawęża tylko asortyment i obowiązują ceny podstawowe. Przy pustym asortymencie katalog tylko wycenia — nic nie jest ukrywane; zaimportuj lub dodaj produkty, aby ograniczyć widoczność dla tego odbiorcy.",
+          "label": "Cennik",
+          "placeholder": "Ceny podstawowe"
+        }
+      },
       "certificate_document": {
         "help": "PDF lub obraz, do 10 MB. Pobrać go mogą tylko pracownicy.",
         "label": "Dokument"
@@ -906,21 +1010,25 @@
           "help": "Twój własny identyfikator tej firmy, unikalny w sklepie.",
           "placeholder": "ACME-001"
         },
+        "help": "Pobrane z firmy, do której należy ten adres.",
+        "kind": {
+          "help": "Firma to podmiot prawny mogący posiadać rejestracje podatkowe. Oddział korzysta z rejestracji swojego podmiotu prawnego.",
+          "label": "Rodzaj"
+        },
+        "label": "Firma",
         "name": {
           "placeholder": "Acme Industries"
-        }
-      },
-      "company_contact": {
-        "role": {
-          "label": "Rola"
         }
       },
       "company_location": {
         "external_id": {
           "help": "Twój własny identyfikator tego oddziału."
-        },
-        "name": {
-          "placeholder": "Siedziba główna"
+        }
+      },
+      "company_membership": {
+        "email": {
+          "help": "Istniejący klient dołącza od razu; pozostali otrzymują zaproszenie e-mailem.",
+          "placeholder": "kupiec@przyklad.pl"
         }
       },
       "country": {
@@ -2182,6 +2290,7 @@
     },
     "nav": {
       "account": "Konto",
+      "catalogs": "Katalogi",
       "categories": "Kategorie",
       "claims": "Reklamacje",
       "collections": "Kolekcje",

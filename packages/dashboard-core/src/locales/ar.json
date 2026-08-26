@@ -93,6 +93,12 @@
     "address": {
       "not_located_yet": "تظهر الخريطة بعد تحديد موقع هذا العنوان."
     },
+    "address_book": {
+      "default_billing": "الفوترة الافتراضية",
+      "default_shipping": "الشحن الافتراضي",
+      "set_default_billing": "تعيين كعنوان فوترة افتراضي",
+      "set_default_shipping": "تعيين كعنوان شحن افتراضي"
+    },
     "auth": {
       "back_to_login": "العودة إلى تسجيل الدخول",
       "forgot_password": {
@@ -136,6 +142,7 @@
       "no_color": "بدون لون"
     },
     "common": {
+      "active": "نشط",
       "adjust_search_or_filters": "جرّب تعديل البحث أو عوامل التصفية",
       "all": "الكل",
       "and": "و",
@@ -147,6 +154,7 @@
       "delete_confirm_message": "هل أنت متأكد؟ لا يمكن التراجع عن هذا الإجراء.",
       "deleted": "تم الحذف",
       "empty_value": "—",
+      "inactive": "غير نشط",
       "loading": "جارٍ التحميل…",
       "next": "التالي",
       "no": "لا",
@@ -188,6 +196,8 @@
           "heading": "إنشاء",
           "label": "إنشاء {{noun}}",
           "nouns": {
+            "catalog": "كتالوج",
+            "catalog_plural": "كتالوجات",
             "category": "فئة",
             "category_plural": "الفئات",
             "collection": "مجموعة",

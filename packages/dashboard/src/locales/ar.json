@@ -87,6 +87,82 @@
       "tiered_flat_rate": "Tiered Flat Rate",
       "tiered_percent": "Tiered Percent"
     },
+    "catalogs": {
+      "add_cta": "إضافة كتالوج",
+      "add_sheet_title": "كتالوج جديد",
+      "assignable_types": {
+        "channel": "قناة",
+        "company": "شركة",
+        "customer_group": "مجموعة عملاء",
+        "market": "سوق"
+      },
+      "assignments": {
+        "add_cta": "تعيين",
+        "add_title": "تعيين هذا الكتالوج",
+        "audience_empty": "لا نتائج",
+        "audience_label": "الجمهور",
+        "audience_placeholder": "بحث…",
+        "company_subtree_help": "تعيين شركة يشمل كامل شجرتها الفرعية.",
+        "dialog_description": "من يرى هذا الكتالوج. تعيين شركة يشمل العقدة وكل ما تحتها.",
+        "empty": "غير معين لأي جمهور — لا أحد يرى هذا الكتالوج.",
+        "remove_confirm": {
+          "message": "لن يعود {{name}} يرى هذا الكتالوج.",
+          "title": "إزالة هذا التعيين؟"
+        },
+        "title": "الجماهير",
+        "type_label": "نوع الجمهور"
+      },
+      "create_description": "يحدد الكتالوج ما يراه جمهور معين، وعبر قائمة الأسعار ما يدفعه. أضف المنتجات والجماهير بعد إنشائه.",
+      "create_label": "إنشاء كتالوج",
+      "delete_confirm": {
+        "message": "سيؤدي هذا إلى حذف {{name}} وتعييناته. لن تتأثر المنتجات وقوائم الأسعار.",
+        "title": "حذف الكتالوج؟"
+      },
+      "detail": {
+        "delete_label": "حذف الكتالوج",
+        "load_error": "تعذر تحميل هذا الكتالوج",
+        "settings": "الكتالوج"
+      },
+      "empty": "لا توجد كتالوجات بعد",
+      "import_from_price_list": "استيراد المنتجات من قائمة الأسعار",
+      "messages": {
+        "assigned": "تم تعيين الكتالوج",
+        "created": "تم إنشاء الكتالوج",
+        "deleted": "تم حذف الكتالوج",
+        "product_removed": "تمت إزالة المنتج",
+        "products_added": "تمت إضافة المنتجات",
+        "products_imported": "تم استيراد المنتجات",
+        "products_removed": "تمت إزالة المنتجات",
+        "unassigned": "تمت إزالة التعيين",
+        "updated": "تم تحديث الكتالوج"
+      },
+      "products": {
+        "add_cta": "إضافة منتجات",
+        "column_product": "المنتج",
+        "empty": "لا توجد منتجات في هذا الكتالوج بعد.",
+        "filter_placeholder": "تصفية المنتجات…",
+        "no_matches": "لا توجد منتجات مطابقة للتصفية.",
+        "picker_description": "ابحث واختر منتجات لإضافتها إلى هذا الكتالوج.",
+        "picker_title": "إضافة منتجات إلى الكتالوج",
+        "remove": "إزالة من الكتالوج",
+        "remove_confirm": {
+          "message_few": "إزالة {{count}} منتجات من هذا الكتالوج؟ يسري ذلك فورًا. تبقى المنتجات في متجرك.",
+          "message_many": "إزالة {{count}} منتجًا من هذا الكتالوج؟ يسري ذلك فورًا. تبقى المنتجات في متجرك.",
+          "message_named": "إزالة \"{{name}}\" من هذا الكتالوج؟ يسري ذلك فورًا. يبقى المنتج في متجرك.",
+          "message_one": "إزالة منتج واحد من هذا الكتالوج؟ يسري ذلك فورًا. تبقى المنتجات في متجرك.",
+          "message_other": "إزالة {{count}} منتج من هذا الكتالوج؟ يسري ذلك فورًا. تبقى المنتجات في متجرك.",
+          "message_two": "إزالة منتجين من هذا الكتالوج؟ يسري ذلك فورًا. تبقى المنتجات في متجرك.",
+          "title": "إزالة من الكتالوج"
+        },
+        "remove_selected": "إزالة",
+        "search_placeholder": "البحث في المنتجات…",
+        "select_all": "تحديد الكل",
+        "select_row": "تحديد المنتج",
+        "title": "المنتجات"
+      },
+      "products_column": "المنتجات",
+      "search_placeholder": "البحث في الكتالوجات"
+    },
     "categories": {
       "add_cta": "فئة جديدة",
       "collapse": "طي",
@@ -315,70 +391,91 @@
     "companies": {
       "add_cta": "إضافة شركة",
       "add_sheet_title": "شركة جديدة",
-      "create_description": "يشتري العملاء من الشركات عبر الفروع. يمكنك إضافة الفروع والرقم الضريبي وشهادات الإعفاء بعد إنشاء الشركة.",
-      "create_label": "إنشاء الشركة",
+      "create_description": "الشركة هي جذر شجرة المؤسسة. يمكنك إضافة الوحدات الفرعية والأعضاء والعناوين والتسجيلات الضريبية وشهادات الإعفاء بعد إنشائها.",
+      "create_label": "إنشاء شركة",
       "delete_confirm": {
-        "message": "سيؤدي هذا إلى حذف {{name}} مع فروعها ومشترييها وشهاداتها. لا يمكن التراجع عن هذا الإجراء.",
+        "message": "سيؤدي هذا إلى حذف {{name}} مع كامل شجرتها الفرعية — الوحدات والأعضاء والعناوين والشهادات. لا يمكن التراجع عن هذا.",
         "title": "حذف الشركة؟"
       },
       "detail": {
         "delete_label": "حذف الشركة",
+        "division_tax_pointer": "لا يملك القسم تسجيلات ضريبية خاصة به. تُفرض الضرائب على مشترياته عبر كيانه القانوني:",
         "load_error": "تعذر تحميل هذه الشركة",
         "profile": "الشركة"
       },
       "empty": "لا توجد شركات بعد",
-      "locations_column": "الفروع",
+      "kind": {
+        "company": "شركة",
+        "division": "قسم"
+      },
+      "members_column": "الأعضاء",
+      "members_count_few": "{{count}} أعضاء",
+      "members_count_many": "{{count}} عضوًا",
+      "members_count_one": "عضو واحد",
+      "members_count_other": "{{count}} عضو",
+      "members_count_two": "عضوان",
       "messages": {
         "created": "تم إنشاء الشركة",
         "deleted": "تم حذف الشركة",
         "updated": "تم تحديث الشركة"
       },
-      "search_placeholder": "البحث في الشركات"
+      "search_placeholder": "البحث في الشركات",
+      "sub_units": {
+        "add_cta": "إضافة وحدة فرعية",
+        "add_description": "القسم وحدة تنظيمية تشارك الهوية الضريبية لكيانها القانوني. أما الشركة فهي كيان قانوني مستقل بتسجيلاته الخاصة.",
+        "add_title": "وحدة فرعية جديدة في {{name}}",
+        "empty": "لا توجد وحدات فرعية بعد",
+        "title": "الوحدات الفرعية"
+      }
     },
-    "company_contacts": {
-      "add_cta": "إضافة مشترٍ",
-      "add_title": "تخويل مشترٍ",
-      "dialog_description": "عميل يشتري لهذا الفرع. من يشتري لفرع واحد فقط تُنسب طلباته إليه تلقائياً.",
-      "empty": "لم يتم تخويل أي مشترٍ بعد",
+    "company_addresses": {
+      "add_cta": "إضافة عنوان",
+      "add_sheet_title": "عنوان جديد",
+      "edit_sheet_title": "تعديل العنوان",
+      "empty": "لا توجد عناوين بعد",
       "messages": {
-        "created": "تمت إضافة المشتري",
-        "deleted": "تمت إزالة المشتري"
+        "created": "تمت إضافة العنوان",
+        "deleted": "تمت إزالة العنوان",
+        "updated": "تم تحديث العنوان"
       },
-      "remove_action": "إزالة المشتري",
       "remove_confirm": {
-        "message": "لن يعود {{email}} يشتري لهذا الفرع. لن يتأثر حساب العميل.",
-        "title": "إزالة هذا المشتري؟"
+        "message": "ستتم إزالة {{label}} من دفتر العناوين. لا يمكن التراجع عن هذا.",
+        "title": "حذف هذا العنوان؟"
       },
-      "roles_enterprise_help": "يمكن للمشترين المضافين هنا تقديم الطلبات لهذا الفرع. الأدوار ومسارات الموافقة وحدود الإنفاق تأتي مع Spree Enterprise.",
-      "roles_enterprise_title": "الأدوار والموافقات من مزايا Enterprise",
-      "title": "المشترون"
+      "sheet_description": "موقع شحن أو فوترة مُسمّى لهذه العقدة. تشير العقدة إلى عنوان افتراضي واحد لكل نوع.",
+      "title": "دفتر العناوين"
     },
-    "company_locations": {
-      "add_cta": "إضافة فرع",
-      "add_title": "فرع جديد",
-      "addresses": "العناوين",
-      "billing_address": "عنوان الفوترة",
-      "contacts_count_few": "{{count}} مشترين",
-      "contacts_count_many": "{{count}} مشترياً",
-      "contacts_count_one": "مشترٍ واحد",
-      "contacts_count_other": "{{count}} مشترٍ",
-      "contacts_count_two": "مشتريان",
-      "contacts_count_zero": "لا مشترين",
-      "detail": {
-        "delete_label": "حذف الفرع",
-        "load_error": "تعذر تحميل هذا الفرع"
-      },
-      "dialog_description": "الفرع هو الجهة التي تُصدر لها الفاتورة وتُشحن إليها الطلبات. العناوين اختيارية، لكن أي عنوان تبدأ بتعبئته يتطلب الاسم والدولة.",
-      "edit_title": "تعديل الفرع",
-      "empty": "لا توجد فروع بعد",
+    "company_invitations": {
       "messages": {
-        "created": "تم إنشاء الفرع",
-        "deleted": "تم حذف الفرع",
-        "updated": "تم تحديث الفرع"
+        "revoked": "تم إلغاء الدعوة"
       },
-      "shipping_address": "عنوان الشحن",
-      "shipping_same_as_billing": "عنوان الشحن هو نفسه عنوان الفوترة",
-      "title": "الفروع"
+      "pending_title": "الدعوات المعلقة",
+      "revoke_action": "إلغاء الدعوة",
+      "revoke_confirm": {
+        "message": "ستتوقف الدعوة المرسلة إلى {{email}} عن العمل.",
+        "title": "إلغاء هذه الدعوة؟"
+      },
+      "status": {
+        "pending": "معلقة"
+      }
+    },
+    "company_memberships": {
+      "add_cta": "إضافة عضو",
+      "add_title": "إضافة عضو",
+      "dialog_description": "يمكن للأعضاء الشراء لهذه العقدة وكل ما تحتها. البريد الإلكتروني بدون حساب يتحول إلى دعوة.",
+      "empty": "لا يوجد أعضاء بعد",
+      "messages": {
+        "added": "تمت إضافة العضو",
+        "removed": "تمت إزالة العضو"
+      },
+      "remove_action": "إزالة العضو",
+      "remove_confirm": {
+        "message": "لن يتمكن {{email}} من الشراء لهذه الشركة بعد الآن. لن يتأثر حساب العميل.",
+        "title": "إزالة هذا العضو؟"
+      },
+      "roles_enterprise_help": "الأعضاء المضافون هنا يمكنهم الشراء لهذه الشركة وإدارة دليلها. الأدوار ومسارات الموافقة وحدود الإنفاق تأتي مع Spree Enterprise.",
+      "roles_enterprise_title": "الأدوار والموافقات ميزة في نسخة Enterprise",
+      "title": "الأعضاء"
     },
     "components": {
       "adjustment_action_editor": {
@@ -460,11 +557,7 @@
       },
       "detail": {
         "address": {
-          "default_billing": "الفواتير الافتراضية",
-          "default_shipping": "الشحن الافتراضي",
-          "delete_confirm_message": "هل تريد حذف هذا العنوان؟",
-          "set_default_billing": "تعيين كفواتير افتراضية",
-          "set_default_shipping": "تعيين كشحن افتراضي"
+          "delete_confirm_message": "هل تريد حذف هذا العنوان؟"
         },
         "customer_since": "العميل منذ ذلك الحين",
         "delete_label": "حذف العميل",
@@ -785,6 +878,17 @@
           "label": "Scopes"
         }
       },
+      "catalog": {
+        "name": {
+          "placeholder": "البيع بالجملة"
+        },
+        "price_list": {
+          "empty": "لم يتم العثور على قوائم أسعار",
+          "help": "اختياري. بدون قائمة أسعار، يحدد الكتالوج التشكيلة فقط وتُطبق الأسعار الأساسية. مع تشكيلة فارغة، يقوم الكتالوج بالتسعير فقط — لا يُخفى شيء؛ استورد أو أضف منتجات لتقييد ما يراه هذا الجمهور.",
+          "label": "قائمة الأسعار",
+          "placeholder": "الأسعار الأساسية"
+        }
+      },
       "certificate_document": {
         "help": "ملف PDF أو صورة، حتى 10 ميغابايت. الموظفون وحدهم يمكنهم تنزيله.",
         "label": "مستند الشهادة"
@@ -905,21 +1009,25 @@
           "help": "مرجعك الخاص لهذه الشركة، فريد داخل المتجر.",
           "placeholder": "ACME-001"
         },
+        "help": "مأخوذ من الشركة التي ينتمي إليها هذا العنوان.",
+        "kind": {
+          "help": "الشركة كيان قانوني يمكنه حمل تسجيلات ضريبية. القسم يستخدم تسجيلات كيانه القانوني.",
+          "label": "النوع"
+        },
+        "label": "الشركة",
         "name": {
           "placeholder": "Acme Industries"
-        }
-      },
-      "company_contact": {
-        "role": {
-          "label": "الدور"
         }
       },
       "company_location": {
         "external_id": {
           "help": "مرجعك الخاص لهذا الفرع."
-        },
-        "name": {
-          "placeholder": "المقر الرئيسي"
+        }
+      },
+      "company_membership": {
+        "email": {
+          "help": "العميل الحالي ينضم فورًا؛ أي شخص آخر يتلقى دعوة بالبريد الإلكتروني.",
+          "placeholder": "buyer@example.com"
         }
       },
       "country": {
@@ -2177,6 +2285,7 @@
     },
     "nav": {
       "account": "الحساب",
+      "catalogs": "الكتالوجات",
       "categories": "الفئات",
       "claims": "المطالبات",
       "collections": "المجموعات",

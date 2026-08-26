@@ -69,3 +69,26 @@ if blank_prices.any?
 end
 
 Spree.price_list_activate_workflow.call(price_list: price_list) unless price_list.active?
+
+# A two-level organization tree so the demo walks the whole B2B story: the
+# buyer is a member of the EMEA division and buys for it, while the catalog is
+# assigned once at the root and covers the subtree
+# (docs/plans/6.0-b2b-companies-and-catalogs.md).
+company = store.companies.find_or_create_by!(name: 'Acme Industrial') do |record|
+  record.kind = 'company'
+end
+company.set_external_id('erp', 'ACME-1') if company.external_id_for('erp').blank?
+
+division = store.companies.find_or_create_by!(name: 'Acme EMEA') do |record|
+  record.kind = 'division'
+  record.parent = company
+end
+
+division.memberships.find_or_create_by!(customer: buyer)
+
+# The per-tree catalog: assigned to the root, so the division's buyers see it
+# too. Assortment-only — pricing keeps coming from the wholesale price list,
+# which shows the two axes composing.
+catalog = store.catalogs.find_or_create_by!(name: 'Wholesale Assortment')
+catalog.add_products(store.products.order(:id).limit(20).ids)
+catalog.catalog_assignments.find_or_create_by!(assignable: company)

@@ -87,6 +87,79 @@
       "tiered_flat_rate": "Tarif forfaitaire par paliers",
       "tiered_percent": "Pourcentage par paliers"
     },
+    "catalogs": {
+      "add_cta": "Ajouter un catalogue",
+      "add_sheet_title": "Nouveau catalogue",
+      "assignable_types": {
+        "channel": "Canal",
+        "company": "Entreprise",
+        "customer_group": "Groupe de clients",
+        "market": "Marché"
+      },
+      "assignments": {
+        "add_cta": "Affecter",
+        "add_title": "Affecter ce catalogue",
+        "audience_empty": "Rien trouvé",
+        "audience_label": "Audience",
+        "audience_placeholder": "Rechercher…",
+        "company_subtree_help": "L’affectation à une entreprise couvre tout son sous-arbre.",
+        "dialog_description": "Qui voit ce catalogue. Une affectation à une entreprise couvre le nœud et tout ce qui se trouve en dessous.",
+        "empty": "Affecté à aucune audience — personne ne voit ce catalogue.",
+        "remove_confirm": {
+          "message": "{{name}} ne verra plus ce catalogue.",
+          "title": "Retirer cette affectation ?"
+        },
+        "title": "Audiences",
+        "type_label": "Type d’audience"
+      },
+      "create_description": "Un catalogue restreint ce qu’une audience voit et, via une liste de prix, ce qu’elle paie. Ajoutez ensuite produits et audiences.",
+      "create_label": "Créer le catalogue",
+      "delete_confirm": {
+        "message": "Cela supprime {{name}} et ses affectations. Les produits et listes de prix ne sont pas affectés.",
+        "title": "Supprimer le catalogue ?"
+      },
+      "detail": {
+        "delete_label": "Supprimer le catalogue",
+        "load_error": "Impossible de charger ce catalogue",
+        "settings": "Catalogue"
+      },
+      "empty": "Aucun catalogue pour le moment",
+      "import_from_price_list": "Importer les produits de la liste de prix",
+      "messages": {
+        "assigned": "Catalogue affecté",
+        "created": "Catalogue créé",
+        "deleted": "Catalogue supprimé",
+        "product_removed": "Produit retiré",
+        "products_added": "Produits ajoutés",
+        "products_imported": "Produits importés",
+        "products_removed": "Produits retirés",
+        "unassigned": "Affectation retirée",
+        "updated": "Catalogue mis à jour"
+      },
+      "products": {
+        "add_cta": "Ajouter des produits",
+        "column_product": "Produit",
+        "empty": "Aucun produit dans ce catalogue pour le moment.",
+        "filter_placeholder": "Filtrer les produits…",
+        "no_matches": "Aucun produit ne correspond à votre filtre.",
+        "picker_description": "Recherchez et sélectionnez des produits à ajouter à ce catalogue.",
+        "picker_title": "Ajouter des produits au catalogue",
+        "remove": "Retirer du catalogue",
+        "remove_confirm": {
+          "message_named": "Retirer « {{name}} » de ce catalogue ? Effet immédiat. Le produit reste dans votre boutique.",
+          "message_one": "Retirer {{count}} produit de ce catalogue ? Effet immédiat. Les produits restent dans votre boutique.",
+          "message_other": "Retirer {{count}} produits de ce catalogue ? Effet immédiat. Les produits restent dans votre boutique.",
+          "title": "Retirer du catalogue"
+        },
+        "remove_selected": "Retirer",
+        "search_placeholder": "Rechercher des produits…",
+        "select_all": "Tout sélectionner",
+        "select_row": "Sélectionner le produit",
+        "title": "Produits"
+      },
+      "products_column": "Produits",
+      "search_placeholder": "Rechercher des catalogues"
+    },
     "categories": {
       "add_cta": "Nouvelle catégorie",
       "collapse": "Réduire",
@@ -315,66 +388,88 @@
     "companies": {
       "add_cta": "Ajouter une entreprise",
       "add_sheet_title": "Nouvelle entreprise",
-      "create_description": "Les clients professionnels achètent via des établissements. Vous pourrez ajouter des établissements, un numéro de TVA et des attestations d'exonération une fois l'entreprise créée.",
-      "create_label": "Créer l'entreprise",
+      "create_description": "Une entreprise est la racine d’un arbre organisationnel. Ajoutez ensuite sous-unités, membres, adresses, immatriculation fiscale et certificats d’exonération.",
+      "create_label": "Créer l’entreprise",
       "delete_confirm": {
-        "message": "Cela supprime {{name}} ainsi que ses établissements, ses acheteurs et ses attestations. Cette action est irréversible.",
-        "title": "Supprimer l'entreprise ?"
+        "message": "Cela supprime {{name}} et tout son sous-arbre — sous-unités, membres, adresses et certificats. Cette action est irréversible.",
+        "title": "Supprimer l’entreprise ?"
       },
       "detail": {
-        "delete_label": "Supprimer l'entreprise",
+        "delete_label": "Supprimer l’entreprise",
+        "division_tax_pointer": "Une division ne détient pas d’immatriculations fiscales propres. Ses achats sont taxés via son entité juridique :",
         "load_error": "Impossible de charger cette entreprise",
         "profile": "Entreprise"
       },
       "empty": "Aucune entreprise pour le moment",
-      "locations_column": "Établissements",
+      "kind": {
+        "company": "Entreprise",
+        "division": "Division"
+      },
+      "members_column": "Membres",
+      "members_count_one": "{{count}} membre",
+      "members_count_other": "{{count}} membres",
       "messages": {
         "created": "Entreprise créée",
         "deleted": "Entreprise supprimée",
         "updated": "Entreprise mise à jour"
       },
-      "search_placeholder": "Rechercher des entreprises"
+      "search_placeholder": "Rechercher des entreprises",
+      "sub_units": {
+        "add_cta": "Ajouter une sous-unité",
+        "add_description": "Une division est une unité organisationnelle qui partage l’identité fiscale de son entité juridique. Une entreprise est une entité juridique à part entière, avec ses propres immatriculations.",
+        "add_title": "Nouvelle sous-unité de {{name}}",
+        "empty": "Aucune sous-unité pour le moment",
+        "title": "Sous-unités"
+      }
     },
-    "company_contacts": {
-      "add_cta": "Ajouter un acheteur",
-      "add_title": "Autoriser un acheteur",
-      "dialog_description": "Un client qui achète pour cet établissement. Celui qui achète pour un seul établissement voit ses commandes rattachées automatiquement.",
-      "empty": "Aucun acheteur autorisé pour le moment",
+    "company_addresses": {
+      "add_cta": "Ajouter une adresse",
+      "add_sheet_title": "Nouvelle adresse",
+      "edit_sheet_title": "Modifier l’adresse",
+      "empty": "Aucune adresse pour le moment",
       "messages": {
-        "created": "Acheteur ajouté",
-        "deleted": "Acheteur retiré"
+        "created": "Adresse ajoutée",
+        "deleted": "Adresse supprimée",
+        "updated": "Adresse mise à jour"
       },
-      "remove_action": "Retirer l'acheteur",
       "remove_confirm": {
-        "message": "{{email}} n'achètera plus pour cet établissement. Son compte client n'est pas modifié.",
-        "title": "Retirer cet acheteur ?"
+        "message": "{{label}} sera retirée du carnet d’adresses. Cette action est irréversible.",
+        "title": "Supprimer cette adresse ?"
       },
-      "roles_enterprise_help": "Les acheteurs ajoutés ici peuvent commander pour cet établissement. Les rôles, circuits de validation et plafonds de dépenses font partie de Spree Enterprise.",
-      "roles_enterprise_title": "Les rôles et validations sont une fonctionnalité Enterprise",
-      "title": "Acheteurs"
+      "sheet_description": "Un site de livraison ou de facturation nommé pour ce nœud. Le nœud désigne une adresse par défaut de chaque type.",
+      "title": "Carnet d’adresses"
     },
-    "company_locations": {
-      "add_cta": "Ajouter un établissement",
-      "add_title": "Nouvel établissement",
-      "addresses": "Adresses",
-      "billing_address": "Adresse de facturation",
-      "contacts_count_one": "{{count}} acheteur",
-      "contacts_count_other": "{{count}} acheteurs",
-      "detail": {
-        "delete_label": "Supprimer l'établissement",
-        "load_error": "Impossible de charger cet établissement"
-      },
-      "dialog_description": "Un établissement est l'adresse de facturation et de livraison de l'entreprise. Les adresses sont facultatives, mais une adresse renseignée exige un nom et un pays.",
-      "edit_title": "Modifier l'établissement",
-      "empty": "Aucun établissement pour le moment",
+    "company_invitations": {
       "messages": {
-        "created": "Établissement créé",
-        "deleted": "Établissement supprimé",
-        "updated": "Établissement mis à jour"
+        "revoked": "Invitation révoquée"
       },
-      "shipping_address": "Adresse de livraison",
-      "shipping_same_as_billing": "L'adresse de livraison est identique à celle de facturation",
-      "title": "Établissements"
+      "pending_title": "Invitations en attente",
+      "revoke_action": "Révoquer l’invitation",
+      "revoke_confirm": {
+        "message": "L’invitation envoyée à {{email}} cessera de fonctionner.",
+        "title": "Révoquer cette invitation ?"
+      },
+      "status": {
+        "pending": "En attente"
+      }
+    },
+    "company_memberships": {
+      "add_cta": "Ajouter un membre",
+      "add_title": "Ajouter un membre",
+      "dialog_description": "Les membres peuvent acheter pour ce nœud et tout ce qui se trouve en dessous. Un e-mail sans compte devient une invitation.",
+      "empty": "Aucun membre pour le moment",
+      "messages": {
+        "added": "Membre ajouté",
+        "removed": "Membre retiré"
+      },
+      "remove_action": "Retirer le membre",
+      "remove_confirm": {
+        "message": "{{email}} ne pourra plus acheter pour cette entreprise. Son compte client n’est pas affecté.",
+        "title": "Retirer ce membre ?"
+      },
+      "roles_enterprise_help": "Les membres ajoutés ici peuvent acheter pour cette entreprise et gérer son annuaire. Rôles, circuits de validation et plafonds de dépense arrivent avec Spree Enterprise.",
+      "roles_enterprise_title": "Les rôles et validations sont une fonctionnalité Enterprise",
+      "title": "Membres"
     },
     "components": {
       "adjustment_action_editor": {
@@ -456,11 +551,7 @@
       },
       "detail": {
         "address": {
-          "default_billing": "Facturation par défaut",
-          "default_shipping": "Livraison par défaut",
-          "delete_confirm_message": "Supprimer cette adresse ?",
-          "set_default_billing": "Définir comme facturation par défaut",
-          "set_default_shipping": "Définir comme livraison par défaut"
+          "delete_confirm_message": "Supprimer cette adresse ?"
         },
         "customer_since": "Client depuis",
         "delete_label": "Supprimer le client",
@@ -770,6 +861,17 @@
           "label": "Portées"
         }
       },
+      "catalog": {
+        "name": {
+          "placeholder": "Grossiste"
+        },
+        "price_list": {
+          "empty": "Aucune liste de prix trouvée",
+          "help": "Optionnel. Sans liste, le catalogue ne restreint que l’assortiment et les prix de base s’appliquent. Avec un assortiment vide, le catalogue ne fait que tarifer — rien n’est masqué ; importez ou ajoutez des produits pour restreindre ce que voit cette audience.",
+          "label": "Liste de prix",
+          "placeholder": "Prix de base"
+        }
+      },
       "certificate_document": {
         "help": "PDF ou image, jusqu'à 10 Mo. Seul le personnel peut le télécharger.",
         "label": "Document"
@@ -890,21 +992,25 @@
           "help": "Votre propre référence pour cette entreprise, unique dans la boutique.",
           "placeholder": "ACME-001"
         },
+        "help": "Repris de l'entreprise à laquelle appartient cette adresse.",
+        "kind": {
+          "help": "Une entreprise est une entité juridique pouvant détenir des immatriculations fiscales. Une division utilise celles de son entité juridique.",
+          "label": "Type"
+        },
+        "label": "Entreprise",
         "name": {
           "placeholder": "Acme Industries"
-        }
-      },
-      "company_contact": {
-        "role": {
-          "label": "Rôle"
         }
       },
       "company_location": {
         "external_id": {
           "help": "Votre propre référence pour cet établissement."
-        },
-        "name": {
-          "placeholder": "Siège social"
+        }
+      },
+      "company_membership": {
+        "email": {
+          "help": "Un client existant rejoint immédiatement ; les autres reçoivent une invitation par e-mail.",
+          "placeholder": "acheteur@exemple.fr"
         }
       },
       "country": {
@@ -2162,6 +2268,7 @@
     },
     "nav": {
       "account": "Compte",
+      "catalogs": "Catalogues",
       "categories": "Catégories",
       "claims": "Réclamations",
       "collections": "Collections",

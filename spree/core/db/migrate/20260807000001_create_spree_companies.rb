@@ -2,9 +2,13 @@ class CreateSpreeCompanies < ActiveRecord::Migration[8.1]
   def change
     create_table :spree_companies do |t|
       t.references :store, null: false
+      t.references :parent                   # self-referential tree, nil = root
       t.string :name, null: false
-      t.string :external_id                  # ERP/CRM reference
-      # No tax_exempt boolean — exemption is a certificate scoped to a
+      # 'company' (legal entity) or 'division' (organizational unit). No DB
+      # default per the string-column rule; the model normalizes a blank kind.
+      t.string :kind, null: false
+      # No external_id column — ERP/CRM identity lives on
+      # Spree::ExternalReference. No tax_exempt boolean — exemption is a certificate scoped to a
       # jurisdiction, which a flag cannot express (docs/plans/decisions.md
       # 2026-08-07).
       if t.respond_to?(:jsonb)
@@ -12,20 +16,37 @@ class CreateSpreeCompanies < ActiveRecord::Migration[8.1]
       else
         t.json :metadata
       end
+      # Which of the node's addresses to prefill with. The address book itself
+      # is ordinary spree_addresses rows owned by the node, so a default is a
+      # pointer at one of them — the same shape the customer
+      # (bill_address_id / ship_address_id) and the seller
+      # (billing_address_id) already use. Two columns cannot disagree about
+      # which row is default, so nothing has to demote a previous one.
+      t.bigint :default_bill_address_id
+      t.bigint :default_ship_address_id
       t.timestamps
     end
 
-    add_index :spree_companies, [:store_id, :external_id], unique: true,
-              where: 'external_id IS NOT NULL', name: 'idx_companies_external_id'
-
-    # No store_id on the children: they reach the store through the company,
-    # matching spree_return_line_items.
-    create_table :spree_company_locations do |t|
+    # Membership gives a customer standing over the node and its subtree.
+    # Always customer-backed — the not-yet-registered case is an invitation.
+    create_table :spree_company_memberships do |t|
       t.references :company, null: false
-      t.references :billing_address
-      t.references :shipping_address
-      t.string :name, null: false
-      t.string :external_id
+      t.references :customer, null: false
+      t.timestamps
+    end
+
+    add_index :spree_company_memberships, [:company_id, :customer_id], unique: true,
+              name: 'idx_company_memberships_on_company_and_customer'
+
+    create_table :spree_company_invitations do |t|
+      t.references :company, null: false
+      t.references :inviter                  # customer who invited; nil = staff
+      t.references :customer                 # bound at acceptance
+      t.string :email, null: false
+      t.string :token, null: false           # plaintext, like the staff invitation token
+      t.datetime :expires_at, null: false
+      t.datetime :accepted_at
+      t.datetime :revoked_at
       if t.respond_to?(:jsonb)
         t.jsonb :metadata
       else
@@ -34,19 +55,12 @@ class CreateSpreeCompanies < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    create_table :spree_company_contacts do |t|
-      t.references :company_location, null: false
-      t.references :customer, null: false
-      t.string :role, null: false, default: 'buyer'   # no behavior attached in 6.0
-      t.timestamps
-    end
-
-    add_index :spree_company_contacts, [:company_location_id, :customer_id], unique: true,
-              name: 'idx_company_contacts_on_location_and_customer'
+    add_index :spree_company_invitations, :token, unique: true
+    add_index :spree_company_invitations, [:company_id, :email]
 
     # Both sides: exemption has to resolve while the buyer is still in
-    # checkout, and completion copies the branch onto the order.
-    add_reference :spree_carts, :company_location
-    add_reference :spree_orders, :company_location
+    # checkout, and completion copies the node onto the order.
+    add_reference :spree_carts, :company
+    add_reference :spree_orders, :company
   end
 end

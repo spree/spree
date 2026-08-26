@@ -137,11 +137,11 @@ module Spree
       # linkage the checkout accepted.
       def adopt_addresses
         addresses = { bill_address_id: order.bill_address, ship_address_id: order.ship_address }.
-          select { |_, address| address.present? && address.customer_id.nil? }
+          select { |_, address| address.present? && address.owner_id.nil? }
         return if addresses.empty?
 
         addresses.values.uniq.each do |address|
-          address.update_columns(customer_id: customer.id, updated_at: Time.current)
+          address.update_columns(owner_type: Spree.customer_class.to_s, owner_id: customer.id, updated_at: Time.current)
         end
 
         customer.update_columns(addresses.transform_values(&:id).merge(updated_at: Time.current))

@@ -13,12 +13,14 @@ describe Spree::Tax::ResolveExemptions do
   context 'for a business customer' do
     let(:store) { @default_store }
     let(:company) { create(:company, store: store) }
-    let(:location) { create(:company_location, company: company) }
+    # The purchase points at a division; certificates resolve through its
+    # legal entity — the parent company node.
+    let(:division) { create(:company, store: store, kind: 'division', parent: company) }
     let(:germany) { create(:country, iso: 'DE', name: 'Germany') }
     let(:berlin) { create(:state, country: germany, abbr: 'BE', name: 'Berlin') }
 
     before do
-      order.update!(company_location: location,
+      order.update!(company: division,
                     ship_address: create(:address, country: germany, state: berlin),
                     bill_address: create(:address, country: germany, state: berlin))
     end

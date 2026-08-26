@@ -1,5 +1,6 @@
 import { createActionRegistry, Subject } from '@spree/dashboard-core'
 import {
+  BookOpenIcon,
   BoxesIcon,
   Building2Icon,
   FolderTreeIcon,
@@ -102,6 +103,16 @@ createActionRegistry.add({
   subject: Subject.Company,
   position: 320,
   getRoute: (storeId) => ({ to: `/${storeId}/companies`, search: { new: true } }),
+})
+
+createActionRegistry.add({
+  key: 'catalog',
+  labelKey: noun('catalog'),
+  aliasKeys: [noun('catalog_plural')],
+  icon: BookOpenIcon,
+  subject: Subject.Catalog,
+  position: 325,
+  getRoute: (storeId) => ({ to: `/${storeId}/products/catalogs`, search: { new: true } }),
 })
 
 createActionRegistry.add({

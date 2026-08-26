@@ -9,7 +9,7 @@ RSpec.shared_examples 'an addresses host' do
   let(:user) { create(:user) }
 
   let(:address_attributes) do
-    attributes_for(:address).merge(user_id: nil)
+    attributes_for(:address).merge(owner: nil)
   end
 
   describe '#ship_address_attributes=' do
@@ -21,10 +21,10 @@ RSpec.shared_examples 'an addresses host' do
     end
 
     it 'reuses an identical existing address instead of creating a duplicate' do
-      existing = Spree::Address.create!(address_attributes.merge(user_id: user.id))
+      existing = Spree::Address.create!(address_attributes.merge(owner: user))
 
       expect do
-        record.ship_address_attributes = address_attributes.merge(user_id: user.id)
+        record.ship_address_attributes = address_attributes.merge(owner: user)
       end.not_to change(Spree::Address, :count)
 
       expect(record.ship_address).to eq(existing)

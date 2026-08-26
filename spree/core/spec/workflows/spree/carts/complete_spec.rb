@@ -192,31 +192,30 @@ module Spree
     describe 'business customer' do
       let(:customer) { create(:customer) }
       let(:company) { create(:company, store: store) }
-      let(:location) { create(:company_location, company: company) }
 
       before { ready_cart.update!(customer: customer) }
 
       # Without this the exemption applies during checkout and vanishes from the
       # placed order, so commit and refund work from different facts.
-      it 'carries the branch onto the order' do
-        ready_cart.update!(company_location: location)
+      it 'carries the node onto the order' do
+        create(:company_membership, company: company, customer: customer)
+        ready_cart.update!(company: company)
 
         order = described_class.call(cart: ready_cart).value
 
-        expect(order.company_location).to eq(location)
         expect(order.company).to eq(company)
       end
 
-      it 'carries a branch the buyer resolved to without naming it' do
-        create(:company_contact, company_location: location, customer: customer)
+      it 'carries a node the buyer resolved to without naming it' do
+        create(:company_membership, company: company, customer: customer)
 
         order = described_class.call(cart: ready_cart.reload).value
 
-        expect(order.company_location).to eq(location)
+        expect(order.company).to eq(company)
       end
 
-      it 'leaves a consumer order with no branch' do
-        expect(described_class.call(cart: ready_cart).value.company_location).to be_nil
+      it 'leaves a consumer order with no company' do
+        expect(described_class.call(cart: ready_cart).value.company).to be_nil
       end
     end
 
@@ -248,8 +247,8 @@ module Spree
 
       it 'stamps a company registration as such' do
         company = create(:company, store: store)
-        location = create(:company_location, company: company)
-        ready_cart.update!(company_location: location)
+        create(:company_membership, company: company, customer: customer)
+        ready_cart.update!(company: company)
         create(:tax_identifier, owner: company, kind: 'eu_vat', value: 'DE777777777')
 
         order = described_class.call(cart: ready_cart).value

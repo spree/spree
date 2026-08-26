@@ -24,6 +24,7 @@ import {
   SheetHeader,
   SheetTitle,
   useConfirm,
+  useRowClickBridge,
 } from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon } from 'lucide-react'
@@ -50,14 +51,18 @@ export const Route = createFileRoute('/_authenticated/$storeId/companies/')({
 
 function CompaniesPage() {
   const { t } = useTranslation()
-  const search = Route.useSearch() as z.infer<typeof companiesSearchSchema>
   const { storeId } = Route.useParams()
+  const search = Route.useSearch() as z.infer<typeof companiesSearchSchema>
   const navigate = useNavigate()
   const confirm = useConfirm()
   const deleteMutation = useDeleteCompany()
   const { permissions } = usePermissions()
 
   const isCreating = !!search.new
+
+  function openDetail(id: string) {
+    navigate({ to: '/$storeId/companies/$companyId', params: { storeId, companyId: id } })
+  }
 
   const closeSheet = () =>
     navigate({
@@ -69,6 +74,8 @@ function CompaniesPage() {
 
   const openCreate = () =>
     navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, new: true }) as never })
+
+  useRowClickBridge('data-company-id', openDetail)
 
   async function handleDelete(company: Company) {
     const ok = await confirm({
@@ -91,14 +98,7 @@ function CompaniesPage() {
         rowActions={(company) => (
           <RowActions
             actions={[
-              {
-                key: 'edit',
-                onSelect: () =>
-                  navigate({
-                    to: '/$storeId/companies/$companyId',
-                    params: { storeId, companyId: company.id },
-                  }),
-              },
+              { key: 'edit', onSelect: () => openDetail(company.id) },
               {
                 key: 'delete',
                 destructive: true,
@@ -141,8 +141,9 @@ function CreateCompanySheet({
     defaultValues: COMPANY_DEFAULTS,
   })
 
-  // A new company has no branches, registration or certificates yet, and all
-  // three live on its detail page — so that is where the merchant is headed.
+  // A new root is always a legal entity; sub-units are added from the node
+  // page, where the parent is unambiguous. Members, addresses and tax
+  // registrations also live there — so that is where the merchant is headed.
   async function onSubmit(values: CompanyFormValues) {
     try {
       const company = await createMutation.mutateAsync(companyValuesToParams(values))
@@ -176,7 +177,7 @@ function CreateCompanySheet({
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             <FieldGroup>
               {errors.root?.message && (
-                <p className="text-sm text-destructive" role="alert">
+                <p className="text-destructive text-sm" role="alert">
                   {errors.root.message}
                 </p>
               )}
