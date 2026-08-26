@@ -30,6 +30,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { CustomFieldsInlineCard } from '../../../../components/spree/custom-fields/custom-fields-inline'
+import { MediaRichTextEditor } from '../../../../components/spree/media-rich-text-editor'
 import { ProductCustomFieldsProvider } from '../../../../components/spree/products/product-custom-fields-provider'
 import { PublishingCard } from '../../../../components/spree/products/publishing-card'
 import { useCreateProduct } from '../../../../hooks/use-product'
@@ -177,7 +178,7 @@ function NewProductPage() {
           }
           main={
             <>
-              <GeneralCard form={form} />
+              <GeneralCard form={form} descriptionEditor={MediaRichTextEditor} />
               <VariantsCard form={form} seedFromType />
               {/* Form-backed media uploader — files are uploaded to ActiveStorage
                 pre-save and their signed_ids ride the product POST. */}

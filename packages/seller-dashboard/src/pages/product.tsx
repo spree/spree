@@ -110,7 +110,10 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
     },
     onSuccess: (saved) => {
       void queryClient.invalidateQueries({ queryKey: ['seller-products'] })
-      queryClient.setQueryData(['seller', sellerId, 'product', saved.id], saved)
+      // Invalidated, never seeded: the write's response carries no expands, so
+      // planting it would blank the variants and media the form is showing —
+      // the reset effect would read a product whose collections are undefined.
+      void queryClient.invalidateQueries({ queryKey: ['seller', sellerId, 'product', saved.id] })
       toastManager.add({ type: 'success', title: t('products.saved') })
       if (!productId) {
         navigate({

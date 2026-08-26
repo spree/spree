@@ -105,19 +105,50 @@ module Spree
               ]
             )
 
-            # A price the client did not name a currency for is priced in the
-            # store's. `Variant#prices=` matches base prices on the currency it
-            # is handed and drops the ones missing from the payload, so a
-            # guessed currency does not merely add a stray price — it removes
-            # the right one. Blank counts as unnamed: an empty form field would
-            # otherwise key a price on "".
-            return attrs if attrs[:prices].blank?
+            # Assigned only when present: writing a nil `prices` or
+            # `stock_levels` key reaches the association setter as nil, which
+            # raises rather than meaning "leave alone".
+            attrs[:prices] = default_price_currencies(attrs[:prices]) if attrs.key?(:prices)
 
-            attrs[:prices] = attrs[:prices].map do |price|
-              price[:currency].present? ? price : price.merge(currency: Spree::Current.currency)
+            attrs[:variants] = attrs[:variants]&.map do |variant|
+              variant = variant.merge(prices: default_price_currencies(variant[:prices])) if variant.key?(:prices)
+              variant = variant.merge(stock_levels: own_stock_levels(variant[:stock_levels])) if variant.key?(:stock_levels)
+              variant
             end
 
             attrs
+          end
+
+          # A price the client did not name a currency for is priced in the
+          # store's. `Variant#prices=` matches base prices on the currency it is
+          # handed and drops the ones missing from the payload, so a guessed
+          # currency does not merely add a stray price — it removes the right
+          # one. Blank counts as unnamed: an empty form field would otherwise
+          # key a price on "".
+          def default_price_currencies(prices)
+            return prices if prices.blank?
+
+            prices.map do |price|
+              price[:currency].present? ? price : price.merge(currency: Spree::Current.currency)
+            end
+          end
+
+          # Stock belongs to the warehouse it sits in, and a seller has their
+          # own. `Variant#stock_levels=` resolves a location against the
+          # product's *store*, which on a marketplace spans every seller — so a
+          # payload naming somebody else's warehouse would write into it. The
+          # ids are narrowed to this seller's here, where `current_seller` is
+          # known; an id from elsewhere is dropped, matching how the model
+          # already skips one it cannot resolve.
+          def own_stock_levels(stock_levels)
+            return stock_levels if stock_levels.blank?
+
+            own_ids = current_seller.stock_locations.pluck(:id).to_set
+
+            stock_levels.select do |level|
+              id = Spree::StockLocation.decode_own_prefixed_id(level[:stock_location_id])
+              id.present? && own_ids.include?(id)
+            end
           end
 
           def collection_includes

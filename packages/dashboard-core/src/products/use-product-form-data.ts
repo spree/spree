@@ -7,6 +7,7 @@ import type {
   PanelProductType,
 } from '../api-client'
 import { getApiClient } from '../api-client'
+import { useResourceKey } from '../lib/query-keys'
 
 /**
  * The reference data the product form's pickers read.
@@ -16,6 +17,11 @@ import { getApiClient } from '../api-client'
  * resource needs. These read through the registered panel client, so the same
  * cards work in a seller's panel against the Seller API — and answer empty
  * when a panel registers no such resource, which is how a card knows to hide.
+ *
+ * Keys go through `useResourceKey`, so they carry the tenant — the store on the
+ * operator's panel, the seller on a seller's. Flat keys would serve one
+ * tenant's categories to the next within the stale window, and a save from that
+ * form would write ids belonging to somebody else.
  */
 
 const FIVE_MINUTES = 1000 * 60 * 5
@@ -24,7 +30,7 @@ export function useFormOptionTypes(enabled = true) {
   const client = getApiClient()
 
   return useQuery({
-    queryKey: ['panel', 'form', 'option-types'],
+    queryKey: useResourceKey('panel-form-option-types'),
     queryFn: async (): Promise<{ data: PanelOptionType[] }> =>
       (await client.optionTypes?.list({ limit: 100 })) ?? { data: [] },
     enabled: enabled && Boolean(client.optionTypes),
@@ -36,7 +42,7 @@ export function useFormCategories(enabled = true) {
   const client = getApiClient()
 
   return useQuery({
-    queryKey: ['panel', 'form', 'categories'],
+    queryKey: useResourceKey('panel-form-categories'),
     queryFn: async (): Promise<{ data: PanelNamedRecord[] }> =>
       (await client.categories?.list({ limit: 100 })) ?? { data: [] },
     enabled: enabled && Boolean(client.categories),
@@ -48,7 +54,7 @@ export function useFormCollections(enabled = true) {
   const client = getApiClient()
 
   return useQuery({
-    queryKey: ['panel', 'form', 'collections'],
+    queryKey: useResourceKey('panel-form-collections'),
     queryFn: async (): Promise<{ data: PanelCollection[] }> =>
       (await client.collections?.list({ limit: 100 })) ?? { data: [] },
     enabled: enabled && Boolean(client.collections),
@@ -60,7 +66,7 @@ export function useFormProductTypes(enabled = true) {
   const client = getApiClient()
 
   return useQuery({
-    queryKey: ['panel', 'form', 'product-types'],
+    queryKey: useResourceKey('panel-form-product-types'),
     queryFn: async (): Promise<{ data: PanelProductType[] }> =>
       (await client.productTypes?.list({ limit: 100 })) ?? { data: [] },
     enabled: enabled && Boolean(client.productTypes),
@@ -73,7 +79,7 @@ export function useFormProductType(id?: string) {
   const client = getApiClient()
 
   return useQuery({
-    queryKey: ['panel', 'form', 'product-type', id],
+    queryKey: useResourceKey('panel-form-product-type', id),
     queryFn: () => client.productTypes?.get(id as string) as Promise<PanelProductType>,
     enabled: Boolean(id) && Boolean(client.productTypes),
     staleTime: FIVE_MINUTES,
@@ -101,7 +107,7 @@ export function useFormTaxCategories() {
   const client = getApiClient()
 
   return useQuery({
-    queryKey: ['panel', 'form', 'tax-categories'],
+    queryKey: useResourceKey('panel-form-tax-categories'),
     queryFn: async (): Promise<{ data: PanelNamedRecord[] }> =>
       (await client.taxCategories?.list({ limit: 100 })) ?? { data: [] },
     enabled: Boolean(client.taxCategories),
@@ -113,7 +119,7 @@ export function useFormDeliveryProfiles() {
   const client = getApiClient()
 
   return useQuery({
-    queryKey: ['panel', 'form', 'delivery-profiles'],
+    queryKey: useResourceKey('panel-form-delivery-profiles'),
     queryFn: async (): Promise<{ data: PanelDeliveryProfile[] }> =>
       (await client.deliveryProfiles?.list({ limit: 100 })) ?? { data: [] },
     enabled: Boolean(client.deliveryProfiles),
@@ -129,13 +135,15 @@ export function useFormDeliveryProfiles() {
 export function useFormDeleteProductMedia(productId: string) {
   const client = getApiClient()
   const queryClient = useQueryClient()
+  // Resolved here rather than in the callback: it is a hook.
+  const mediaKey = useResourceKey('panel-form-media', productId)
 
   return useMutation({
     mutationFn: async (mediaId: string) => {
       await client.deleteProductMedia?.(productId, mediaId)
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['panel', 'form', 'media', productId] })
+      void queryClient.invalidateQueries({ queryKey: mediaKey })
     },
   })
 }
@@ -143,12 +151,13 @@ export function useFormDeleteProductMedia(productId: string) {
 export function useCreateOptionType() {
   const client = getApiClient()
   const queryClient = useQueryClient()
+  const optionTypesKey = useResourceKey('panel-form-option-types')
 
   return useMutation({
     mutationFn: (params: Record<string, unknown>) =>
       client.optionTypes?.create?.(params) as Promise<PanelOptionType>,
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['panel', 'form', 'option-types'] })
+      void queryClient.invalidateQueries({ queryKey: optionTypesKey })
     },
   })
 }
@@ -156,12 +165,13 @@ export function useCreateOptionType() {
 export function useUpdateOptionType(id: string) {
   const client = getApiClient()
   const queryClient = useQueryClient()
+  const optionTypesKey = useResourceKey('panel-form-option-types')
 
   return useMutation({
     mutationFn: (params: Record<string, unknown>) =>
       client.optionTypes?.update?.(id, params) as Promise<PanelOptionType>,
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['panel', 'form', 'option-types'] })
+      void queryClient.invalidateQueries({ queryKey: optionTypesKey })
     },
   })
 }

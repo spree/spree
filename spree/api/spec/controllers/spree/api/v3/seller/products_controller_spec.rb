@@ -211,6 +211,46 @@ RSpec.describe Spree::Api::V3::Seller::ProductsController, type: :controller do
       expect(mine.reload.variants.map(&:sku)).to include('LAMP-1')
     end
 
+    # `Variant#stock_levels=` resolves a location against the product's store,
+    # which on a marketplace spans every seller — so the ids are narrowed to
+    # this seller's before the payload gets there.
+    it "cannot write stock into another seller's warehouse" do
+      rival = create(:seller, :approved, store: store)
+      rival_location = create(:stock_location, store: store, seller: rival)
+
+      patch :update,
+            params: {
+              id: mine.prefixed_id,
+              variants: [{
+                id: mine.default_variant.prefixed_id, options: [],
+                stock_levels: [{ stock_location_id: rival_location.prefixed_id, count_on_hand: 99 }]
+              }]
+            },
+            as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(Spree::StockLevel.find_by(stock_location: rival_location, variant: mine.default_variant)).to be_nil
+    end
+
+    it 'writes stock into its own warehouse' do
+      own_location = create(:stock_location, store: store, seller: seller)
+
+      patch :update,
+            params: {
+              id: mine.prefixed_id,
+              variants: [{
+                id: mine.default_variant.prefixed_id, options: [],
+                stock_levels: [{ stock_location_id: own_location.prefixed_id, count_on_hand: 7 }]
+              }]
+            },
+            as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(
+        Spree::StockLevel.find_by(stock_location: own_location, variant: mine.default_variant).count_on_hand
+      ).to eq(7)
+    end
+
     it 'attaches an uploaded image' do
       blob = ActiveStorage::Blob.create_and_upload!(
         io: File.open(Spree::Core::Engine.root.join('spec', 'fixtures', 'thinking-cat.jpg')),

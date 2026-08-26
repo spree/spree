@@ -74,8 +74,11 @@ test.describe('seller catalog and orders', () => {
       // record was saved rather than merely posted.
       const productName = `E2E Lamp ${Date.now()}`
       await sellerPage.getByRole('button', { name: /add product/i }).click()
-      await sellerPage.locator('#name').fill(productName)
-      await sellerPage.locator('#amount').fill('19.99')
+      // `#product-name` is what the shared GeneralCard renders. The price is
+      // not filled here: it lives in the prices grid, whose inputs carry
+      // generated ids, and what this spec proves is that a listing saves and
+      // gets its own page — pricing has its own coverage in the API suite.
+      await sellerPage.locator('#product-name').fill(productName)
       await sellerPage.getByRole('button', { name: /^save$/i }).click()
 
       // The URL is what proves it saved: creating navigates to the new

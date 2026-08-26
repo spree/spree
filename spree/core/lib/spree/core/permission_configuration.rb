@@ -40,12 +40,13 @@ module Spree
       # @param write [Boolean] whether a `write_<name>` key exists
       # @param audiences [Array<Symbol>] the non-staff audiences whose roles may
       #   hold this resource's keys
-      def initialize(name:, group:, subjects:, write: true, audiences: [])
+      def initialize(name:, group:, subjects:, write: true, audiences: [], read_only_for: [])
         @name = name.to_sym
         @group = group.to_sym
         @subjects = subjects
         @write = write
         @audiences = (Array(audiences).map(&:to_sym) | [STAFF_AUDIENCE]).freeze
+        @read_only_for = Array(read_only_for).map(&:to_sym).freeze
       end
 
       # @return [Boolean]
@@ -86,6 +87,18 @@ module Spree
       def keys
         [read_key, write_key].compact
       end
+
+      # The keys one audience may hold. A resource the operator writes can
+      # still be read-only for somebody else — product types are the case:
+      # staff define them, a seller only picks from them.
+      #
+      # @param audience [Symbol, String, nil]
+      # @return [Array<String>]
+      def keys_for(audience)
+        return [read_key] if @read_only_for.include?(audience.to_s.to_sym)
+
+        keys
+      end
     end
 
     def initialize
@@ -107,13 +120,14 @@ module Spree
     #   store's own staff, so it is a deliberate act. Never open `settings`,
     #   `staff` or `api_keys`.
     # @return [Resource]
-    def register_resource(name, group:, subjects:, write: true, audiences: [])
+    def register_resource(name, group:, subjects:, write: true, audiences: [], read_only_for: [])
       # `read_all` / `write_all` are the API-key wildcard aliases — a resource
       # named `all` would silently mint keys that grant the whole catalog.
       raise ArgumentError, "the permission resource name 'all' is reserved" if name.to_s == 'all'
 
       resource = Resource.new(
-        name: name, group: group, subjects: subjects, write: write, audiences: audiences
+        name: name, group: group, subjects: subjects, write: write,
+        audiences: audiences, read_only_for: read_only_for
       )
       @resources[resource.name] = resource
     end
@@ -180,7 +194,7 @@ module Spree
     # @param audience [Symbol, String]
     # @return [Array<String>] every key that audience may hold, in catalog order
     def grantable_keys(audience)
-      grantable_resources(audience).flat_map(&:keys)
+      grantable_resources(audience).flat_map { |resource| resource.keys_for(audience) }
     end
 
     # @return [Array<Entry>] every grantable key with metadata, in catalog order
@@ -296,11 +310,15 @@ module Spree
          Spree::Catalog, Spree::CatalogProduct,
          Spree::CatalogAssignment, Spree::CustomField]
       })
-      # A seller fills in a type's custom fields; they do not define the types.
-      # Read-only rather than absent, because the product form has to offer the
-      # picker (docs/plans/6.0-seller-product-submission.md).
-      register_resource(:product_types, group: :catalog, write: false,
-                                        audiences: %i[seller],
+      # Its own resource so a seller can be granted the read without the
+      # write, but the write key has to exist: the operator's endpoint serves
+      # create/update/destroy, and a resource declared `write: false` has no
+      # `write_product_types` for that gate to accept — every scoped key and
+      # every non-admin staff role would 403
+      # (docs/plans/6.0-seller-product-submission.md). Sellers hold the read
+      # alone; `grantable_keys` is what bounds them, not the catalog.
+      register_resource(:product_types, group: :catalog,
+                                        audiences: %i[seller], read_only_for: %i[seller],
                                         subjects: -> { [Spree::ProductType] })
       # Which channels carry a product is marketplace merchandising. Closed to
       # the seller audience: a seller lists, the marketplace distributes.

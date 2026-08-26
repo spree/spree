@@ -38,6 +38,7 @@ import { useEffect } from 'react'
 import { FormProvider, useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { CustomFieldsInlineCard } from '../../../../components/spree/custom-fields/custom-fields-inline'
+import { MediaRichTextEditor } from '../../../../components/spree/media-rich-text-editor'
 import { ProductCustomFieldsProvider } from '../../../../components/spree/products/product-custom-fields-provider'
 import { PublishingCard } from '../../../../components/spree/products/publishing-card'
 import { ResourceTranslationsCard } from '../../../../components/spree/translations/resource-translations-card'
@@ -275,7 +276,7 @@ function ProductForm({ product }: { product: Product }) {
           }
           main={
             <>
-              <GeneralCard form={form} />
+              <GeneralCard form={form} descriptionEditor={MediaRichTextEditor} />
               <VariantsCard form={form} />
               <MediaCard productId={productId} variants={assignableVariants} form={form} />
               <PricesCard form={form} productName={product.name} />
