@@ -1,10 +1,24 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { type ProductCreateParams, SpreeError } from '@spree/admin-sdk'
 import {
+  CategorizationCard,
   extensionFormValues,
   extensionSubmitValues,
+  GeneralCard,
+  InventoryCard,
+  isPlaceholderDefaultVariant,
+  MediaCard,
   mapSpreeErrorsToForm,
+  newProductFormDefaults,
   PageHeader,
+  PricesCard,
+  type ProductFormValues,
+  productFormSchema,
+  SEOCard,
+  StatusCard,
+  TaxCard,
+  VariantsCard,
+  variantToWirePayload,
 } from '@spree/dashboard-core'
 import {
   FormActions,
@@ -17,26 +31,8 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { CustomFieldsInlineCard } from '../../../../components/spree/custom-fields/custom-fields-inline'
 import { ProductCustomFieldsProvider } from '../../../../components/spree/products/product-custom-fields-provider'
-import {
-  CategorizationCard,
-  GeneralCard,
-  InventoryCard,
-  MediaCard,
-  PricesCard,
-  SEOCard,
-  StatusCard,
-  TaxCard,
-  VariantsCard,
-} from '../../../../components/spree/products/product-form-cards'
 import { PublishingCard } from '../../../../components/spree/products/publishing-card'
 import { useCreateProduct } from '../../../../hooks/use-product'
-import {
-  isPlaceholderDefaultVariant,
-  newProductFormDefaults,
-  type ProductFormValues,
-  productFormSchema,
-} from '../../../../schemas/product'
-import { variantToWirePayload } from './$productId'
 
 export const Route = createFileRoute('/_authenticated/$storeId/products/new')({
   component: NewProductPage,
@@ -190,7 +186,7 @@ function NewProductPage() {
                 form={form}
                 productName={form.watch('name') || t('admin.pages.products.new.title')}
               />
-              <InventoryCard form={form} storeId={storeId} />
+              <InventoryCard form={form} />
               <ProductCustomFieldsProvider
                 form={form}
                 productTypeId={form.watch('product_type_id')}

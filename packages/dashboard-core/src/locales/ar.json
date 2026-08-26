@@ -583,6 +583,15 @@
         "alt": {
           "label": "النص البديل",
           "placeholder": "صف الصورة لإمكانية الوصول و SEO"
+        },
+        "external_video_url": {
+          "help": "الصق رابط YouTube أو Vimeo.",
+          "label": "رابط الفيديو",
+          "placeholder": "https://www.youtube.com/watch?v=..."
+        },
+        "poster": {
+          "help": "الصورة الثابتة التي تظهر قبل تشغيل الفيديو. اتركها فارغة لاستخدام صورة المزود إن وُجدت.",
+          "label": "صورة الغلاف"
         }
       },
       "meta_description": {
@@ -691,6 +700,101 @@
       },
       "zipcode": {
         "label": "الرمز البريدي"
+      },
+      "product": {
+        "available_on": {
+          "label": "متاح في"
+        },
+        "category_ids": {
+          "label": "الفئات"
+        },
+        "channels": {
+          "label": "قنوات البيع"
+        },
+        "collection_ids": {
+          "help": "يمكن تحديد المجموعات اليدوية فقط هنا؛ أما التلقائية فتتبع قواعدها.",
+          "label": "المجموعات"
+        },
+        "delivery_profile_id": {
+          "help": "يحدد المناطق وطرق التوصيل التي تصل إلى هذا المنتج.",
+          "label": "ملف الشحن"
+        },
+        "description": {
+          "label": "الوصف",
+          "placeholder": "اكتب وصف المنتج…"
+        },
+        "discontinue_on": {
+          "label": "إيقاف في"
+        },
+        "make_active_at": {
+          "label": "تفعيل في"
+        },
+        "name": {
+          "label": "الاسم",
+          "placeholder": "اسم المنتج"
+        },
+        "product_type_id": {
+          "help": "يحدد خيارات التسليم المتاحة عند إتمام الشراء.",
+          "label": "نوع المنتج"
+        },
+        "seller": {
+          "label": "البائع"
+        },
+        "tags": {
+          "label": "Tags"
+        }
+      },
+      "variant": {
+        "backorder_limit": {
+          "help": "الحد الأقصى لعدد الوحدات المباعة بما يتجاوز المخزون المتاح — يحدّ الطلبات المتأخرة والطلبات المسبقة. اتركه فارغًا لعدد غير محدود.",
+          "label": "حد الطلبات المتأخرة",
+          "placeholder": "غير محدود"
+        },
+        "barcode": {
+          "label": "Barcode"
+        },
+        "country_of_origin": {
+          "label": "بلد المنشأ"
+        },
+        "customs_description": {
+          "label": "الوصف الجمركي",
+          "placeholder": "وصف بسيط للبضاعة"
+        },
+        "depth": {
+          "label": "العمق"
+        },
+        "dimensions_unit": {
+          "label": "الوحدة"
+        },
+        "height": {
+          "label": "الارتفاع"
+        },
+        "hs_code": {
+          "label": "رمز النظام المنسق",
+          "placeholder": "مثال: 640411"
+        },
+        "preorder_ships_at": {
+          "help": "موعد شحنك المتوقع للطلبات المسبقة. يظهر للعملاء كوعد بالتسليم؛ وينتهي الطلب المسبق بمجرد مرور هذا التاريخ.",
+          "label": "الشحن بحلول",
+          "placeholder": "اختر تاريخًا"
+        },
+        "preorderable": {
+          "help": "بِع هذا الخيار قبل توفره في المخزون. حدِّد العدد عبر حد الطلبات المتأخرة، أو أدخل المخزون الوارد ككمية، أو اتركه فارغًا لعدد غير محدود.",
+          "label": "متاح للطلب المسبق"
+        },
+        "sku": {
+          "label": "SKU",
+          "placeholder": "PRODUCT-RED-S"
+        },
+        "weight": {
+          "label": "الوزن"
+        },
+        "weight_unit": {
+          "label": "الوحدة"
+        },
+        "width": {
+          "label": "العرض"
+        }
       }
     },
     "image_upload": {
@@ -752,6 +856,241 @@
           "edit_sheet_title": "تحرير موقع المخزون",
           "search_placeholder": "البحث عن مواقع المخزون…"
         }
+      },
+      "products": {
+        "add_cta": "أضف المنتج",
+        "bulk": {
+          "add_categories_action": "أضف إلى الفئات…",
+          "add_channels_action": "أضف إلى قنوات البيع…",
+          "add_collections_action": "إضافة إلى مجموعات",
+          "add_tags_action": "إضافة علامات…",
+          "categories_add_description": "اختر الفئات التي تريد إضافة هذه المنتجات إليها.",
+          "categories_add_failed": "فشلت إضافة المنتجات إلى الفئات",
+          "categories_add_title": "أضف إلى الفئات",
+          "categories_added": "تمت إضافة منتجات {n} إلى الفئات",
+          "categories_remove_description": "اختر الفئات المراد إزالة هذه المنتجات منها.",
+          "categories_remove_failed": "فشلت إزالة المنتجات من الفئات",
+          "categories_remove_title": "إزالة من الفئات",
+          "categories_removed": "تمت إزالة منتجات {n} من الفئات",
+          "channels_add_description": "اختر قنوات البيع لإدراج هذه المنتجات عليها.",
+          "channels_add_failed": "فشل في إدراج المنتجات على قنوات البيع",
+          "channels_add_title": "أضف إلى قنوات البيع",
+          "channels_added": "إدراج منتجات {n} على قنوات البيع",
+          "channels_remove_description": "اختر قنوات المبيعات لإلغاء إدراج هذه المنتجات منها.",
+          "channels_remove_failed": "فشل في إلغاء إدراج المنتجات من قنوات البيع",
+          "channels_remove_title": "إزالة من قنوات البيع",
+          "channels_removed": "منتجات {n} غير مدرجة من قنوات البيع",
+          "collections_add_description": "تُضاف المنتجات المحددة إلى كل مجموعة تختارها.",
+          "collections_add_failed": "تعذرت إضافة المنتجات إلى المجموعات",
+          "collections_add_title": "إضافة إلى مجموعات",
+          "collections_added": "تمت إضافة المنتجات إلى المجموعات",
+          "collections_remove_description": "تُزال المنتجات المحددة من كل مجموعة تختارها.",
+          "collections_remove_failed": "تعذرت إزالة المنتجات من المجموعات",
+          "collections_remove_title": "إزالة من مجموعات",
+          "collections_removed": "تمت إزالة المنتجات من المجموعات",
+          "delete_confirm": {
+            "message": "ستتم إزالة المنتجات المحددة. لا يمكن التراجع عن هذا الإجراء.",
+            "title": "هل تريد حذف منتجات {n}؟"
+          },
+          "delete_failed": "فشل في حذف المنتجات",
+          "deleted": "منتجات {n} المحذوفة",
+          "remove_categories_action": "إزالة من الفئات…",
+          "remove_channels_action": "إزالة من قنوات البيع…",
+          "remove_collections_action": "إزالة من مجموعات",
+          "remove_tags_action": "إزالة العلامات…",
+          "set_status_action": "تعيين الحالة…",
+          "status_sheet_description": "اختر الحالة المراد تطبيقها على المنتجات المحددة.",
+          "status_sheet_title": "ضبط حالة المنتج",
+          "status_update_failed": "فشل في تحديث حالة المنتج",
+          "status_updated": "تحديث الحالة على منتجات {n}",
+          "tags_add_description": "اختر أو أنشئ علامات لإضافتها إلى هذه المنتجات.",
+          "tags_add_failed": "فشلت إضافة العلامات",
+          "tags_add_title": "إضافة العلامات",
+          "tags_added": "تمت إضافة العلامات إلى منتجات {n}",
+          "tags_remove_description": "اختر العلامات لإزالتها من هذه المنتجات.",
+          "tags_remove_failed": "فشلت إزالة العلامات",
+          "tags_remove_title": "إزالة العلامات",
+          "tags_removed": "تمت إزالة العلامات من منتجات {n}"
+        },
+        "clone_failed": "فشل في تكرار المنتج",
+        "clone_succeeded": "المنتج مكرر",
+        "delete_failed": "فشل في حذف المنتج",
+        "delete_succeeded": "تم حذف المنتج",
+        "edit": {
+          "bulk_prices": {
+            "no_variants": "أضف متغيرًا واحدًا على الأقل لبدء تعديل الأسعار."
+          }
+        },
+        "inventory": {
+          "in_stock": "{{count}} في المخزون",
+          "in_stock_short": "في المخزون",
+          "on_backorder": "على المؤجل",
+          "out_of_stock": "إنتهى من المخزن"
+        },
+        "media_empty": "لا توجد وسائل الإعلام بعد.",
+        "media_upload": "تحميل الوسائط",
+        "new": {
+          "create_failed": "فشل في إنشاء المنتج",
+          "create_succeeded": "تم إنشاء المنتج",
+          "description": "قم بإعداد منتجك — أضف المتغيرات والأسعار والمخزون والوسائط والحقول المخصصة",
+          "preview_slug_placeholder": "your-product-slug",
+          "save_label": "إنشاء المنتج",
+          "title": "منتج جديد"
+        },
+        "options": {
+          "add_value": "إضافة قيمة الخيار",
+          "sheet_title_create": "إنشاء نوع الخيار",
+          "sheet_title_edit": "تحرير نوع الخيار",
+          "table": {
+            "values": "قيم"
+          },
+          "values_empty": "لا توجد قيم بعد.",
+          "values_section": "قيم"
+        },
+        "price_lists": {
+          "activate": "فعل",
+          "activate_confirm": {
+            "message": "سيتم تطبيق \"{{name}}\" على المؤهلين custom على الفور وسيظل نشطًا حتى يتم إلغاء التنشيط يدويًا.",
+            "message_with_end": "سيتم تطبيق \"{{name}}\" على المؤهلين custom على الفور وسيظل نشطًا حتى يتم إلغاء التنشيط يدويًا أو تاريخ انتهائه ({{ends_at}}).",
+            "title": "تفعيل قائمة الأسعار؟"
+          },
+          "add_cta": "قائمة الأسعار الجديدة",
+          "add_products_cta": "أضف المنتجات",
+          "add_rule": "أضف القاعدة",
+          "add_rule_help": "اختر نوع القاعدة لتكوينه.",
+          "basics_section": "الأساسيات",
+          "deactivate": "إلغاء التنشيط",
+          "deactivate_confirm": {
+            "message": "سيتوقف تطبيق \"{{name}}\" على custom على الفور. الطلبات الحالية لن تتأثر.",
+            "title": "هل تريد إلغاء تفعيل قائمة الأسعار؟"
+          },
+          "delete_confirm": {
+            "message": "تؤدي إزالة \"{{name}}\" إلى حذف أسعارها. لا يمكن التراجع عن هذا.",
+            "title": "هل تريد حذف قائمة الأسعار؟"
+          },
+          "edit_prices": {
+            "add_products_link": "أضف المنتجات",
+            "columns": {
+              "compare_at_price": "Compare-at price",
+              "price": "سعر",
+              "product": "منتج",
+              "sku": "SKU",
+              "variant": "البديل"
+            },
+            "compare_at_aria": "Compare-at price لـ {{label}}",
+            "count_summary_one": "{{count}} السعر في {{currency}}",
+            "count_summary_other": "{{count}} الأسعار في {{currency}}",
+            "currency_label": "Currency",
+            "dirty_summary_one": "{{count}} تغيير غير محفوظ",
+            "dirty_summary_other": "{{count}} التغييرات غير المحفوظة",
+            "discard_confirm": {
+              "message_close_one": "لديك {{count}} سعر غير محفوظ. إغلاق سوف تجاهل ذلك.",
+              "message_close_other": "لديك {{count}} أسعار غير محفوظة. سيؤدي الإغلاق إلى تجاهلهم.",
+              "message_currency": "سيؤدي تبديل العملة إلى تجاهل الأسعار غير المحفوظة.",
+              "title": "هل تريد تجاهل الأسعار غير المحفوظة؟"
+            },
+            "empty": "لا توجد منتجات في هذه القائمة حتى الآن.",
+            "empty_no_base_prices": "لا توجد أسعار أساسية بعد.",
+            "empty_pick_products": "اختر المنتجات من قائمة الأسعار للبدء في تحديد الأسعار.",
+            "grid_aria": "أسعار متغيرة",
+            "no_matches_for_filters": "لا توجد أسعار تتطابق مع الفلاتر الحالية.",
+            "no_matches_for_search": "لا توجد أسعار تطابق \"{{search}}\".",
+            "price_aria": "سعر {{label}}",
+            "save_cta": "حفظ الأسعار",
+            "save_failed": "فشل في حفظ الأسعار",
+            "save_success_one": "تم الحفظ {{count}} السعر",
+            "save_success_other": "تم الحفظ {{count}} الأسعار",
+            "search_placeholder": "البحث حسب المنتج، SKU، أو الخيار…",
+            "title": "تعديل الأسعار — {{name}}",
+            "variant_default": "تقصير"
+          },
+          "edit_prices_cta": "تحرير الأسعار",
+          "no_changes": "لا توجد تغييرات للحفظ.",
+          "prices_help_one": "{{count}} تم تكوين السعر. افتح المحرر المجمع لتحديثه.",
+          "prices_help_other": "{{count}} الأسعار مضبوطة. افتح المحرر المجمع لتحديثها.",
+          "prices_help_zero": "اختر المنتجات أعلاه لتحديد أسعار العناصر النائبة، ثم افتح المحرر المجمع.",
+          "products_empty": "لا توجد منتجات حتى الآن — أضف منتجًا لبدء تعديل الأسعار.",
+          "products_empty_search": "لا توجد منتجات متطابقة",
+          "products_help": "اختر المنتجات التي تنطبق عليها هذه القائمة. يتم إنشاء أسعار العناصر النائبة عند الحفظ - املأها أدناه.",
+          "products_search_placeholder": "البحث عن المنتجات بالاسم…",
+          "products_section": "منتجات",
+          "products_selected_one": "{{count}} المنتج المحدد.",
+          "products_selected_other": "{{count}} منتجات المختارة.",
+          "remove_rule_confirm": {
+            "message": "تتم إزالة القاعدة عند حفظ قائمة الأسعار.",
+            "title": "هل تريد إزالة القاعدة؟"
+          },
+          "remove_selected": "إزالة المحدد",
+          "rule_click_to_configure": "انقر للتكوين",
+          "rule_default_description": "ضبط معلمات القاعدة.",
+          "rule_name_overflow": "{{names}} +{{count}} المزيد",
+          "rule_no_options": "لا تحتوي هذه القاعدة على خيارات قابلة للتكوين، فوجودها وحده يطبق القيد.",
+          "rule_types_all_used": "كل نوع قاعدة متاح موجود بالفعل في هذه القائمة.",
+          "rule_types_empty": "لم يتم تسجيل أي أنواع قواعد.",
+          "rules_empty": "لا توجد قواعد - تنطبق هذه القائمة على كل متسوق.",
+          "rules_help": "الشروط التي تقرر متى تنطبق هذه القائمة. استخدم \"الكل\" للمطالبة بكل قاعدة، و\"أي\" لأخذ المباراة الأولى.",
+          "rules_section": "قواعد",
+          "schedule": "جدول",
+          "schedule_confirm": {
+            "message": "سيتم بث \"{{name}}\" على {{starts_at}} وسيظل نشطًا حتى تاريخ انتهائه.",
+            "title": "جدولة قائمة الأسعار؟"
+          },
+          "schedule_section": "جدول",
+          "sheet_title_create": "إنشاء قائمة الأسعار",
+          "sheet_title_edit": "تعديل قائمة الأسعار",
+          "subtitle": "تسعير مستهدف لمجموعات العملاء أو المناطق أو شرائح الحجم.",
+          "title": "Price Lists",
+          "unschedule": "إلغاء الجدول الزمني",
+          "unschedule_confirm": {
+            "message": "لن يتم تفعيل \"{{name}}\" في الموعد المحدد له بعد الآن. ويمكنك إعادة جدولته أو تفعيله يدويًا لاحقًا.",
+            "title": "قائمة الأسعار غير المجدولة؟"
+          }
+        },
+        "publishing": {
+          "caption_hidden_after": "ينزل {{date}}",
+          "caption_live": "مرئي للعملاء الآن",
+          "caption_not_available": "مخفي — المنتج {{product_status}}",
+          "caption_scheduled": "يبدأ البث المباشر {{date}}",
+          "caption_unpublished": "كانت مخفية على {{date}}",
+          "caption_window": "مباشر {{start}} → {{end}}",
+          "empty": "لم يتم إدراجه في أي قناة مبيعات حتى الآن.",
+          "inactive_marker": "غير نشط",
+          "manage_cta": "يدير",
+          "manage_description": "اختر قنوات المبيعات التي تدرج هذا المنتج. قم بإيقاف تشغيل القناة لإلغاء إدراجها في كل مكان.",
+          "manage_title": "إدارة قنوات البيع",
+          "no_channels": "لا توجد قنوات مبيعات متاحة. قم بإنشاء واحدة في الإعدادات → قنوات المبيعات.",
+          "status_hidden": "مختفي",
+          "status_live": "يعيش",
+          "status_not_available": "غير متوفر",
+          "status_scheduled": "المقرر",
+          "title": "نشر"
+        },
+        "section_basics": "الأساسيات",
+        "section_categorization": "التصنيف",
+        "section_inventory": "جرد",
+        "section_media": "وسائط",
+        "section_organization": "منظمة",
+        "section_pricing": "التسعير",
+        "section_seo": "SEO",
+        "section_variants": "المتغيرات",
+        "status_options": {
+          "active": "نشط",
+          "archived": "مؤرشف",
+          "draft": "مسودة"
+        },
+        "transfers": {
+          "description_external": "الاستلام الخارجي إلى <strong>{{destination}}</strong>.",
+          "description_internal": "تم نقل المخزون من <strong>{{source}}</strong> إلى <strong>{{destination}}</strong>.",
+          "edit_sheet_title": "نقل {{number}}",
+          "items_empty": "لا توجد عناصر بعد.",
+          "section_from": "من",
+          "section_items": "أغراض",
+          "section_to": "ل",
+          "sheet_title": "نقل المخزون الجديد"
+        },
+        "variants_empty": "لا توجد متغيرات حتى الآن.",
+        "variants_one": "{{count}} البديل",
+        "variants_other": "{{count}} متغيرات"
       }
     },
     "resource_picker": {
@@ -851,6 +1190,249 @@
       "positive_number": "يجب أن يكون {{field}} أكبر من 0",
       "required": "{{field}} مطلوب",
       "store_name_required": "اسم المتجر مطلوب"
+    },
+    "products": {
+      "autocomplete": {
+        "empty": "لا توجد منتجات متطابقة",
+        "placeholder": "البحث عن المنتجات بالاسم…"
+      },
+      "category_search_placeholder": "فئات البحث…",
+      "collection_search_placeholder": "ابحث عن مجموعات…",
+      "columns": {
+        "in_stock": "In Stock",
+        "price": "سعر",
+        "sku": "SKU"
+      },
+      "delete_confirm": "هل أنت متأكد أنك تريد حذف هذا المنتج؟",
+      "delete_label": "حذف المنتج",
+      "inventory": {
+        "backorder_aria": "السماح بالطلب المؤجل عند {{location}}",
+        "columns": {
+          "backorder": "طلب متأخر",
+          "location": "موقع",
+          "on_hand": "في متناول اليد"
+        },
+        "empty_no_locations": "أضف موقع المخزون في الإعدادات لبدء تتبع المخزون.",
+        "empty_no_variants": "تتم إدارة مستويات المخزون لكل موقع المخزون. أضف متغيرًا لبدء تتبع المخزون.",
+        "on_hand_aria": "في متناول اليد في {{location}}",
+        "unknown_location": "موقع غير معروف"
+      },
+      "media": {
+        "add_from_library": "إضافة من المكتبة",
+        "add_video": "إضافة رابط فيديو",
+        "add_video_submit": "إضافة الفيديو",
+        "add_video_title": "إضافة رابط فيديو",
+        "assigned_variants_help": "اختر المتغيرات التي تمثلها هذه الصورة. اتركه فارغًا ليتم تطبيقه على كافة المتغيرات.",
+        "assigned_variants_label": "المتغيرات المخصصة",
+        "delete_confirm": "هل تريد حذف هذه الوسائط؟ لا يمكن التراجع عن هذا.",
+        "drop_hint": "قم بسحب وإفلات الوسائط هنا، أو انقر للتصفح",
+        "edit_title": "تحرير الوسائط",
+        "file_types_hint": "صور (PNG، JPG، WebP) وفيديو (MP4، WebM، MOV)",
+        "focal_point_help": "انقر على الصورة لتحديد الجزء الذي يبقى ظاهراً عند الاقتصاص.",
+        "focal_point_reset": "إعادة تعيين",
+        "unsupported_file": "لم تتم إضافة {{count}} ملف — الصور والفيديو فقط مدعومة.",
+        "upload_failed": "فشل تحميل {{name}}: {{message}}",
+        "upload_status_failed": "فشل",
+        "video_preview_title": "معاينة الفيديو",
+        "video_url_invalid": "أدخل رابط YouTube أو Vimeo."
+      },
+      "no_categories_found": "لم يتم العثور على فئات",
+      "no_collections_found": "لم يتم العثور على مجموعات",
+      "options": {
+        "add_cta": "إضافة نوع الخيار",
+        "count_one": "قيمة {{count}}",
+        "count_other": "{{count}} القيم",
+        "create_description": "حدد خيارًا يمكن للمتغيرات استخدامه (مثل الحجم واللون).",
+        "create_label": "إنشاء نوع الخيار",
+        "delete_confirm": {
+          "message": "سيؤدي هذا أيضًا إلى حذف جميع قيمه. ستفقدها المتغيرات التي تستخدم هذه القيم.",
+          "title": "هل تريد حذف نوع الخيار؟"
+        },
+        "edit_description": "تحرير نوع الخيار وقيمه.",
+        "image_upload_failed": "فشل تحميل الصورة",
+        "kinds": {
+          "buttons": "Buttons",
+          "color_swatch": "Color swatch",
+          "dropdown": "Dropdown"
+        },
+        "value_label_placeholder": "e.g. Small",
+        "value_name_placeholder": "e.g. small",
+        "values_help": "اسحب القيم لإعادة ترتيبها. القيمة الأولى هي القيمة الافتراضية للمتغيرات الجديدة."
+      },
+      "price_lists": {
+        "errors": {
+          "failed_to_activate": "فشل تفعيل قائمة الأسعار",
+          "failed_to_deactivate": "فشل في إلغاء تنشيط قائمة الأسعار"
+        },
+        "messages": {
+          "activated": "تم تفعيل قائمة الأسعار",
+          "created": "تم إنشاء قائمة الأسعار",
+          "deactivated": "تم إلغاء تفعيل قائمة الأسعار",
+          "deleted": "تم حذف قائمة الأسعار",
+          "updated": "تم تحديث قائمة الأسعار"
+        },
+        "validation": {
+          "ends_after_starts": "يجب أن يكون بعد تاريخ البدء."
+        }
+      },
+      "product_type_adds_options_one": "يضيف هذا النوع {{options}} إلى المنتجات الجديدة.",
+      "product_type_adds_options_other": "يضيف هذا النوع {{options}} إلى المنتجات الجديدة.",
+      "product_type_placeholder": "بدون نوع منتج",
+      "save_label": "حفظ المنتج",
+      "seo": {
+        "meta_description_placeholder": "SEO description",
+        "meta_title_placeholder": "SEO title",
+        "slug_placeholder": "product-url-handle"
+      },
+      "tax_category_placeholder": "Select tax category",
+      "transfers": {
+        "create_description": "انقل المخزون بين المواقع، أو استلم مخزونًا جديدًا من مورّد خارجي.",
+        "delete_confirm": {
+          "message": "سيتم عكس حركات المخزون الناتجة عن هذا النقل.",
+          "title": "هل تريد حذف هذا النقل؟"
+        },
+        "destination_placeholder": "حدد موقع الوجهة",
+        "details_card": "تفاصيل",
+        "different_locations_error": "يجب أن يختلف المصدر والوجهة.",
+        "external_label": "خارجي (استلام من مورّد)",
+        "fields": {
+          "created": "مخلوق",
+          "external_receive": "استلام خارجي",
+          "immutable_note": "عمليات نقل المخزون غير قابلة للتغيير بمجرد إنشائها.",
+          "internal": "داخلي",
+          "reference": "مرجع",
+          "type": "يكتب"
+        },
+        "items_table": {
+          "qty": "الكمية",
+          "sku": "SKU",
+          "variant": "البديل"
+        },
+        "new_cta": "نقل جديد",
+        "reference_label": "مرجع",
+        "reference_placeholder": "رقم أمر الشراء، فاتورة المورّد، …",
+        "review_description": "قم بمراجعة النقل قبل الإنشاء. لا يمكن تغيير العناصر بعد ذلك.",
+        "search_items_placeholder": "البحث بالاسم أو SKU (3+ أحرف) …"
+      },
+      "variants": {
+        "add_option": "إضافة خيار",
+        "bulk_edit": {
+          "grid_aria": "جدول التحرير الجماعي للمتغيرات",
+          "title": "تحرير المتغيرات جماعيًا",
+          "trigger": "تحرير جماعي",
+          "unset": "لا شيء"
+        },
+        "create_option_type": "إنشاء نوع خيار جديد",
+        "create_option_type_title": "نوع خيار جديد",
+        "create_value": "قيمة جديدة",
+        "create_value_title": "قيمة الخيار الجديدة",
+        "default_variant": "البديل الافتراضي",
+        "edit_row_aria": "تحرير {{name}}",
+        "edit_variant": "تعديل المتغير — {{name}}",
+        "errors": {
+          "failed_to_create_option_type": "فشل إنشاء نوع الخيار",
+          "failed_to_create_value": "فشل إنشاء القيمة"
+        },
+        "keep": "احتفظ بالكل",
+        "option_type_label": "نوع الخيار",
+        "option_type_placeholder": "اختر نوع الخيار",
+        "orphan_warning": "{{count}} ستتم إزالة المتغيرات الموجودة عند الحفظ:",
+        "orphan_warning_one": "{{count}} المتغير الحالي لم يعد يطابق الخيارات المحددة وستتم إزالته عند الحفظ:",
+        "orphan_warning_other": "{{count}} متغيرات الحالية لم تعد تتطابق مع الخيارات المحددة وستتم إزالتها عند الحفظ:",
+        "remove_row_aria": "إزالة {{name}}",
+        "sheet": {
+          "availability": "التوفر",
+          "customs": "الجمارك",
+          "customs_help": "يُستخدم في نماذج الجمارك عند شحن هذا المنتج عبر الحدود.",
+          "identity": "هوية",
+          "tax_category_placeholder": "ترث من المنتج"
+        },
+        "title": "المتغيرات",
+        "variant_label": "البديل"
+      }
+    },
+    "product_types": {
+      "add_cta": "إضافة نوع منتج",
+      "add_sheet_title": "نوع منتج جديد",
+      "affects_new_only": {
+        "description": "تعديل أنواع الخيارات والفئات يؤثر على المنتجات التي تُنشأ من الآن فصاعدًا. المنتجات التي تحمل هذا النوع تحتفظ بما لديها. الحقول المخصصة أدناه تظهر دائمًا في كل منتج من هذا النوع.",
+        "title": "التغييرات تنطبق على المنتجات الجديدة"
+      },
+      "apply_to_products": {
+        "confirm_label": "تطبيق",
+        "cta_few": "تطبيق على {{count}} منتجات حالية",
+        "cta_many": "تطبيق على {{count}} منتجًا حاليًا",
+        "cta_one": "تطبيق على منتج واحد حالي",
+        "cta_other": "تطبيق على {{count}} منتج حالي",
+        "cta_two": "تطبيق على منتجين حاليين",
+        "message_few": "سيضيف هذا أنواع الخيارات والفئات الناقصة إلى {{count}} منتجات. لن يُحذف شيء.",
+        "message_many": "سيضيف هذا أنواع الخيارات والفئات الناقصة إلى {{count}} منتجًا. لن يُحذف شيء.",
+        "message_one": "سيضيف هذا أنواع الخيارات والفئات الناقصة إلى منتج واحد. لن يُحذف شيء.",
+        "message_other": "سيضيف هذا أنواع الخيارات والفئات الناقصة إلى {{count}} منتج. لن يُحذف شيء.",
+        "message_two": "سيضيف هذا أنواع الخيارات والفئات الناقصة إلى منتجين. لن يُحذف شيء.",
+        "title": "تطبيق على المنتجات الحالية"
+      },
+      "create_description": "جمّع المنتجات وحدد طرق تسليمها.",
+      "create_label": "إنشاء نوع منتج",
+      "custom_delivery_profile": "مخصص",
+      "default_delivery_profile": "الملف الافتراضي للمتجر",
+      "delete_confirm": {
+        "message": "هل أنت متأكد من حذف “{{name}}”؟ لا يمكن حذف الأنواع التي لا تزال مستخدمة من قبل منتجات.",
+        "title": "حذف نوع المنتج"
+      },
+      "edit_description": "غيّر الاسم أو طرق تسليم منتجات هذا النوع.",
+      "edit_sheet_title": "تعديل نوع المنتج",
+      "empty": "لا توجد أنواع منتجات بعد",
+      "messages": {
+        "applied_to_products": "جارٍ التطبيق على المنتجات الحالية",
+        "created": "تم إنشاء نوع المنتج",
+        "deleted": "تم حذف نوع المنتج",
+        "updated": "تم تحديث نوع المنتج"
+      },
+      "no_categories": "لا توجد فئات بعد",
+      "no_option_types": "لا توجد أنواع خيارات بعد",
+      "option_type_search_placeholder": "البحث في أنواع الخيارات",
+      "search_placeholder": "ابحث في أنواع المنتجات"
+    },
+    "calculators": {
+      "default_refund_amount": "Default Refund Amount",
+      "default_tax": "Default Tax",
+      "digital_delivery": "Digital Delivery",
+      "flat_percent_item_total": "Flat Percent",
+      "flat_rate": "Flat Rate",
+      "flexi_rate": "Flexi Rate",
+      "per_item": "Per Item",
+      "percent_on_line_item": "Percent Per Line Item",
+      "price_sack": "Price Sack",
+      "tiered_flat_rate": "Tiered Flat Rate",
+      "tiered_percent": "Tiered Percent"
+    },
+    "stock_levels": {
+      "messages": {
+        "stock_level_deleted": "تم حذف مستوى المخزون",
+        "stock_updated": "تم تحديث المخزون"
+      }
+    },
+    "option_types": {
+      "columns": {
+        "values": "القيم"
+      },
+      "kinds": {
+        "buttons": "Buttons",
+        "color_swatch": "Color swatch",
+        "dropdown": "Dropdown"
+      },
+      "messages": {
+        "created": "تم إنشاء نوع الخيار",
+        "deleted": "تم حذف نوع الخيار",
+        "updated": "تم تحديث نوع الخيار"
+      },
+      "table": {
+        "empty": "لا توجد أنواع خيارات بعد",
+        "search_placeholder": "البحث بالاسم…"
+      },
+      "value_count_one": "{{count}} قيمة",
+      "value_count_other": "{{count}} قيم"
     }
   }
 }

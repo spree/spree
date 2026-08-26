@@ -1,3 +1,4 @@
+import { isSupportedVideoUrl } from '@spree/dashboard-core'
 import {
   Button,
   Dialog,
@@ -14,7 +15,6 @@ import {
 } from '@spree/dashboard-ui'
 import { type FormEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { isSupportedVideoUrl } from '../../../lib/video-url'
 
 interface Props {
   open: boolean

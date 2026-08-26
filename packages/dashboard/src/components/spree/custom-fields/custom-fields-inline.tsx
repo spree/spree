@@ -23,6 +23,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { CustomField, CustomFieldDefinition, CustomFieldOwnerType } from '@spree/admin-sdk'
+import type { CustomFieldFormValues } from '@spree/dashboard-core'
 import {
   customFieldComponents,
   mapSpreeErrorsToForm,
@@ -70,7 +71,6 @@ import {
   customFieldDefinitionSchema,
   customFieldDefinitionValuesToCreateParams,
 } from '../../../schemas/custom-field-definition'
-import type { CustomFieldFormValues } from '../../../schemas/product'
 import { DefinitionFormFields } from './definition-form'
 
 // ---------------------------------------------------------------------------

@@ -1,5 +1,5 @@
-import type { Variant } from '@spree/admin-sdk'
-import { ImageUploadField, useTranslation } from '@spree/dashboard-core'
+import type { ProductFormValues } from '@spree/dashboard-core'
+import { ImageUploadField, parseVideoUrl, useTranslation } from '@spree/dashboard-core'
 import {
   Button,
   Field,
@@ -17,8 +17,7 @@ import i18n from 'i18next'
 import { CheckIcon } from 'lucide-react'
 import { useCallback, useEffect, useRef } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
-import { parseVideoUrl } from '../../../lib/video-url'
-import type { ProductFormValues } from '../../../schemas/product'
+import type { PanelVariant as Variant } from './product-types'
 
 // The fields this sheet edits. Snapshot, cancel-restore and the type all derive
 // from this one list, so a new editable field can't reach the form and then be

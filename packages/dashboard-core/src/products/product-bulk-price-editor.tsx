@@ -1,13 +1,12 @@
+import type { ProductFormValues, VariantPriceFormValues } from '@spree/dashboard-core'
 import { type BulkPriceRow, BulkPriceTable } from '@spree/dashboard-ui'
 import { useCallback, useMemo } from 'react'
 import { type UseFormReturn, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { useCurrencyLocale } from '../../../hooks/use-currency-locale'
-import { useOptionTypes } from '../../../hooks/use-option-types'
-import type { ProductFormValues, VariantPriceFormValues } from '../../../schemas/product'
 import { composeOptionsText } from '../products/variants-matrix'
 import { currencyParts } from './currency-parts'
 import { normalizeMoneyInput } from './normalize-money'
+import { useFormOptionTypes as useOptionTypes } from './use-product-form-data'
 
 interface Props {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -35,9 +34,12 @@ interface Props {
 export function ProductBulkPriceEditor({ form, currency, productName }: Props) {
   const { t } = useTranslation()
   const variants = useWatch({ control: form.control, name: 'variants' }) ?? []
-  const { data: optionTypesData } = useOptionTypes({ limit: 100 })
+  const { data: optionTypesData } = useOptionTypes()
   const optionTypes = useMemo(() => optionTypesData?.data ?? [], [optionTypesData])
-  const localeForCurrency = useCurrencyLocale()
+  // Formatting locale is the operator dashboard's market lookup; without it
+  // Intl falls back to the browser's, which is the right answer for a panel
+  // that has no markets to consult.
+  const localeForCurrency = (_currency?: string): string | undefined => undefined
 
   // Format the grid in the currency's market locale (e.g. EUR → `de`, comma
   // decimal). The same locale normalizes the merchant's input back to canonical

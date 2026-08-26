@@ -1,13 +1,16 @@
 import type { PriceBulkUpsertRow } from '@spree/admin-sdk'
-import { adminClient, useResourceKey } from '@spree/dashboard-core'
+import {
+  adminClient,
+  currencyParts,
+  normalizeMoneyInput,
+  useResourceKey,
+} from '@spree/dashboard-core'
 import { type BulkPriceRow, BulkPriceTable, toastManager } from '@spree/dashboard-ui'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useDeferredValue, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useCurrencyLocale } from '../../../hooks/use-currency-locale'
 import { useBulkUpsertPrices } from '../../../hooks/use-prices'
-import { currencyParts } from './currency-parts'
-import { normalizeMoneyInput } from './normalize-money'
 
 const PAGE_SIZE = 50
 

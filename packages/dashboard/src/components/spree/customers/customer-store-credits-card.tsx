@@ -1,6 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Customer, StoreCredit } from '@spree/admin-sdk'
-import { CurrencySelect, mapSpreeErrorsToForm, useStore } from '@spree/dashboard-core'
+import {
+  CurrencySelect,
+  currencyParts,
+  mapSpreeErrorsToForm,
+  normalizeMoneyInput,
+  useStore,
+} from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -51,8 +57,6 @@ import {
   type IssueStoreCreditFormValues,
   issueStoreCreditFormSchema,
 } from '../../../schemas/store-credit'
-import { currencyParts } from '../bulk-price-editor/currency-parts'
-import { normalizeMoneyInput } from '../bulk-price-editor/normalize-money'
 
 export function CustomerStoreCreditsCard({ customer }: { customer: Customer }) {
   const { t } = useTranslation()

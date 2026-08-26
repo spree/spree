@@ -1,3 +1,4 @@
+import type { ProductFormValues, VariantFormValues } from '@spree/dashboard-core'
 import { CountryCombobox, StoreDatePicker } from '@spree/dashboard-core'
 import {
   Button,
@@ -20,10 +21,11 @@ import {
 import { useEffect, useRef } from 'react'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { useOptionTypes } from '../../../hooks/use-option-types'
-import { useTaxCategories } from '../../../hooks/use-tax-categories'
-import type { ProductFormValues, VariantFormValues } from '../../../schemas/product'
 import { normalizeCustomsDescription, normalizeHsCode } from './normalize-customs'
+import {
+  useFormOptionTypes as useOptionTypes,
+  useFormTaxCategories as useTaxCategories,
+} from './use-product-form-data'
 import { variantDisplayLabel } from './variants-matrix'
 
 const WEIGHT_UNITS = ['g', 'kg', 'lb', 'oz'] as const
@@ -46,7 +48,7 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
   const { data: taxCategoriesResponse } = useTaxCategories()
   const taxCategories = taxCategoriesResponse?.data ?? []
   const hasTaxCategories = taxCategories.length > 0
-  const { data: optionTypesData } = useOptionTypes({ limit: 100 })
+  const { data: optionTypesData } = useOptionTypes()
   const optionTypes = optionTypesData?.data ?? []
 
   // Snapshot the variant when the sheet opens so Cancel can restore it.

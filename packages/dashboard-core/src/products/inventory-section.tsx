@@ -1,3 +1,4 @@
+import type { ProductFormValues, StockLevelFormValues } from '@spree/dashboard-core'
 import { useStockLocations } from '@spree/dashboard-core'
 import {
   DataGrid,
@@ -6,14 +7,12 @@ import {
   ReadOnlyCell,
   SwitchCell,
 } from '@spree/dashboard-ui'
-import { Link } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
 import { ExternalLinkIcon } from 'lucide-react'
 import { useCallback, useMemo } from 'react'
 import { type UseFormReturn, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { useOptionTypes } from '../../../hooks/use-option-types'
-import type { ProductFormValues, StockLevelFormValues } from '../../../schemas/product'
+import { useFormOptionTypes as useOptionTypes } from './use-product-form-data'
 import { composeOptionsText } from './variants-matrix'
 
 interface InventoryRow {
@@ -39,10 +38,16 @@ const LOW_STOCK_THRESHOLD = 5
 interface InventorySectionProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   form: UseFormReturn<ProductFormValues, any, any>
-  storeId: string
+  /**
+   * Where a stock location is managed, if this panel has such a page. Built
+   * by the caller because each panel's router owns its own paths and the
+   * shared component cannot name a route that may not exist. Without one the
+   * location renders as plain text.
+   */
+  stockLocationHref?: (stockLocationId: string) => string
 }
 
-export function InventorySection({ form, storeId }: InventorySectionProps) {
+export function InventorySection({ form, stockLocationHref }: InventorySectionProps) {
   const { t } = useTranslation()
   // Subscribe to the array so the rows recompute when the user adds/removes
   // a variant or edits a stock item. Cell edits route through findOrCreate
@@ -50,7 +55,7 @@ export function InventorySection({ form, storeId }: InventorySectionProps) {
   const variants = useWatch({ control: form.control, name: 'variants' }) ?? []
   const { data: stockLocationsData, isLoading: stockLocationsLoading } = useStockLocations()
   const stockLocations = stockLocationsData?.data ?? []
-  const { data: optionTypesData } = useOptionTypes({ limit: 100 })
+  const { data: optionTypesData } = useOptionTypes()
   const optionTypes = useMemo(() => optionTypesData?.data ?? [], [optionTypesData])
 
   // Derive "this product has real variants" from live form state, not the
@@ -140,16 +145,14 @@ export function InventorySection({ form, storeId }: InventorySectionProps) {
           if (r.kind !== 'item') return null
           return (
             <ReadOnlyCell>
-              {r.stockLocationId ? (
-                <Link
-                  to="/$storeId/settings/stock-locations"
-                  params={{ storeId }}
-                  search={{ edit: r.stockLocationId }}
+              {r.stockLocationId && stockLocationHref ? (
+                <a
+                  href={stockLocationHref(r.stockLocationId)}
                   className="inline-flex items-center gap-1 hover:underline"
                 >
                   {r.stockLocationName}
                   <ExternalLinkIcon className="size-3 text-muted-foreground" />
-                </Link>
+                </a>
               ) : (
                 <span>{r.stockLocationName}</span>
               )}
@@ -217,7 +220,7 @@ export function InventorySection({ form, storeId }: InventorySectionProps) {
         },
       },
     ],
-    [patchStockLevel, storeId, t],
+    [patchStockLevel, stockLocationHref, t],
   )
 
   if (rows.length === 0) {

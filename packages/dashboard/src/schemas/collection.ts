@@ -1,7 +1,7 @@
 import type { Collection, CollectionRuleParam, CollectionSortOrder } from '@spree/admin-sdk'
+import { customFieldFormSchema } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
-import { customFieldFormSchema } from './product'
 
 /**
  * Canonical values only — labels are resolved at render time via

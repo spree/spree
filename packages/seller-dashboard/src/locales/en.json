@@ -19,6 +19,7 @@
     "cancel": "Cancel",
     "error": "Something went wrong.",
     "loading": "Loading…",
+    "remove": "Remove",
     "retry": "Try again",
     "save": "Save",
     "saving": "Saving…"
@@ -117,6 +118,8 @@
   },
   "products": {
     "add": "Add product",
+    "add_images": "Add images",
+    "add_variant": "Add variant",
     "archive": "Archive",
     "archive_confirm_description": "It comes off sale and out of your active listings.",
     "archive_confirm_title": "Archive this product?",
@@ -139,8 +142,27 @@
       "meta_description": "Meta description",
       "meta_keywords": "Meta keywords",
       "product_type": "Product type",
-      "product_type_placeholder": "Choose a type"
+      "product_type_placeholder": "Choose a type",
+      "alt": "Alt text",
+      "sku": "SKU",
+      "stock": "Stock",
+      "option": "Option",
+      "option_name": "Option",
+      "option_value": "Value",
+      "price_in": "Price ({{currency}})",
+      "weight": "Weight",
+      "hs_code": "HS code",
+      "hs_code_placeholder": "e.g. 9405.20",
+      "country_of_origin": "Country of origin",
+      "country_of_origin_placeholder": "e.g. PL",
+      "categories": "Categories",
+      "categories_placeholder": "Search categories…",
+      "collections": "Collections",
+      "collections_placeholder": "Search collections…"
     },
+    "media": "Media",
+    "media_remove_confirm_description": "It comes off the product when you save.",
+    "media_remove_confirm_title": "Remove this image?",
     "new_title": "New product",
     "not_found": "That product could not be found.",
     "organization": "Organisation",
@@ -148,6 +170,7 @@
     "saved": "Product saved",
     "search_placeholder": "Search by name…",
     "seo": "Search engine listing",
+    "shipping": "Shipping and customs",
     "status_help": {
       "draft": "Only you can see this. Submit it when you are ready for the marketplace to review it.",
       "proposed": "Waiting for the marketplace to review it. You can still make changes.",
@@ -167,7 +190,13 @@
     "take_down": "Take down",
     "take_down_confirm_description": "Shoppers will no longer see it. You can submit it again later.",
     "take_down_confirm_title": "Take this listing down?",
-    "title": "Products"
+    "title": "Products",
+    "uploading": "Uploading {{count}} file…",
+    "uploading_plural": "Uploading {{count}} files…",
+    "variant_remove_confirm_description": "It comes off the product when you save.",
+    "variant_remove_confirm_title": "Remove this variant?",
+    "variants": "Variants",
+    "variants_empty": "This product is sold as one item, at the price above. Add a variant to sell it in options such as size or colour."
   },
   "profile": {
     "about": "About",

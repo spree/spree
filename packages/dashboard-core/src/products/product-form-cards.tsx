@@ -13,14 +13,15 @@ import {
   useSortable,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import type { Media, Product, Variant } from '@spree/admin-sdk'
+import type { MediaType, ProductFormValues } from '@spree/dashboard-core'
 import {
-  adminClient,
+  getApiClient,
   MediaPickerSheet,
+  parseVideoUrl,
   ResourceMultiAutocomplete,
   TagCombobox,
   useDirectUpload,
-  useStore,
+  useOptionalStore,
 } from '@spree/dashboard-core'
 import {
   Button,
@@ -38,6 +39,7 @@ import {
   FieldError,
   FieldLabel,
   Input,
+  RichTextEditor,
   Select,
   SelectContent,
   SelectItem,
@@ -61,20 +63,27 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { type Control, Controller, type UseFormReturn, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { categoryAutocompleteProps, useCategories } from '../../../hooks/use-categories'
-import { collectionAutocompleteProps, useCollections } from '../../../hooks/use-collections'
-import { useDeliveryProfiles } from '../../../hooks/use-delivery-profiles'
-import { useOptionTypesByIds } from '../../../hooks/use-option-types'
-import { useDeleteProductMedia } from '../../../hooks/use-product-media'
-import { useProductType, useProductTypes } from '../../../hooks/use-product-types'
-import { useTaxCategories } from '../../../hooks/use-tax-categories'
-import { parseVideoUrl } from '../../../lib/video-url'
-import type { MediaType, ProductFormValues } from '../../../schemas/product'
-import { ProductBulkPriceEditor } from '../bulk-price-editor/product-bulk-price-editor'
-import { MediaRichTextEditor } from '../media-rich-text-editor'
 import { AddVideoDialog } from './add-video-dialog'
 import { InventorySection } from './inventory-section'
 import { MediaEditSheet } from './media-edit-sheet'
+import { ProductBulkPriceEditor } from './product-bulk-price-editor'
+import type {
+  PanelMedia as Media,
+  PanelProduct as Product,
+  PanelVariant as Variant,
+} from './product-types'
+import {
+  categoryAutocompleteProps,
+  collectionAutocompleteProps,
+  useFormCategories as useCategories,
+  useFormCollections as useCollections,
+  useFormDeleteProductMedia as useDeleteProductMedia,
+  useFormDeliveryProfiles as useDeliveryProfiles,
+  useFormOptionTypesByIds as useOptionTypesByIds,
+  useFormProductType as useProductType,
+  useFormProductTypes as useProductTypes,
+  useFormTaxCategories as useTaxCategories,
+} from './use-product-form-data'
 import { VariantsSection } from './variants-section'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -84,7 +93,26 @@ type FormCardProps = { form: UseFormReturn<ProductFormValues, any, any> }
 // General
 // ---------------------------------------------------------------------------
 
-export function GeneralCard({ form }: FormCardProps) {
+/**
+ * The description editor a panel supplies.
+ *
+ * The operator's dashboard passes its media-aware editor, so a merchant can
+ * embed a file from the library. A seller has no library to embed from, so
+ * they get the plain editor — which is the default, keeping the card usable
+ * without the injection.
+ */
+export type RichTextEditorComponent = React.ComponentType<{
+  id?: string
+  ariaLabel?: string
+  value?: string
+  onChange: (value: string) => void
+  placeholder?: string
+}>
+
+export function GeneralCard({
+  form,
+  descriptionEditor: DescriptionEditor = RichTextEditor,
+}: FormCardProps & { descriptionEditor?: RichTextEditorComponent }) {
   const { t } = useTranslation()
   const { errors } = form.formState
   return (
@@ -111,7 +139,7 @@ export function GeneralCard({ form }: FormCardProps) {
             name="description"
             control={form.control}
             render={({ field }) => (
-              <MediaRichTextEditor
+              <DescriptionEditor
                 id="product-description"
                 ariaLabel={t('admin.fields.description.label')}
                 value={field.value}
@@ -142,10 +170,30 @@ export function VariantsCard({ form, seedFromType }: FormCardProps & { seedFromT
 // already holds every currency's prices for every variant.
 // ---------------------------------------------------------------------------
 
-export function PricesCard({ form, productName }: FormCardProps & { productName: string }) {
+export function PricesCard({
+  form,
+  productName,
+  currencies: currenciesProp,
+  defaultCurrency: defaultCurrencyProp,
+}: FormCardProps & {
+  productName: string
+  /**
+   * A panel with no store context supplies these itself. The operator's has a
+   * StoreProvider; a seller's tenant is a seller and the store is derived
+   * server-side, so it passes the currencies its profile reports.
+   */
+  currencies?: string[]
+  defaultCurrency?: string
+}) {
   const { t } = useTranslation()
-  const { currencies, defaultCurrency } = useStore()
-  const [currency, setCurrency] = useState(defaultCurrency)
+  const store = useOptionalStore()
+  const currencies = currenciesProp ?? store?.currencies ?? []
+  const defaultCurrency = defaultCurrencyProp ?? store?.defaultCurrency ?? 'USD'
+  // Not `useState(defaultCurrency)` alone: the store (or the seller's profile)
+  // arrives after the first render, so a state seeded from the fallback would
+  // stick and price everything in the wrong currency.
+  const [selectedCurrency, setCurrency] = useState<string | null>(null)
+  const currency = selectedCurrency ?? defaultCurrency
 
   return (
     <Card>
@@ -225,6 +273,7 @@ export function MediaCard({
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
   const [addingVideo, setAddingVideo] = useState(false)
   const [pickingFromLibrary, setPickingFromLibrary] = useState(false)
+  const mediaLibrary = getApiClient().mediaLibrary
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const items = useWatch({ control: form.control, name: 'media' }) ?? []
@@ -522,10 +571,13 @@ export function MediaCard({
           />
 
           <div className="flex flex-wrap gap-2 self-start">
-            <Button type="button" variant="outline" onClick={() => setPickingFromLibrary(true)}>
-              <LibraryIcon />
-              {t('admin.products.media.add_from_library')}
-            </Button>
+            {/* Only a panel with a library to browse offers this. */}
+            {mediaLibrary && (
+              <Button type="button" variant="outline" onClick={() => setPickingFromLibrary(true)}>
+                <LibraryIcon />
+                {t('admin.products.media.add_from_library')}
+              </Button>
+            )}
 
             <Button type="button" variant="outline" onClick={() => setAddingVideo(true)}>
               <FilmIcon />
@@ -535,18 +587,22 @@ export function MediaCard({
         </CardContent>
       </Card>
       <AddVideoDialog open={addingVideo} onOpenChange={setAddingVideo} onAdd={handleAddVideo} />
-      <MediaPickerSheet<Media>
-        open={pickingFromLibrary}
-        onOpenChange={setPickingFromLibrary}
-        queryKey="product-media-library"
-        search={(query) =>
-          adminClient.media.list({
-            limit: 48,
-            ...(query ? { filename_cont: query } : {}),
-          })
-        }
-        onConfirm={handleAddFromLibrary}
-      />
+      {/* Not merely closed — the sheet reads the store context on mount, and
+          a panel without one has no library to pick from anyway. */}
+      {mediaLibrary && (
+        <MediaPickerSheet<Media>
+          open={pickingFromLibrary}
+          onOpenChange={setPickingFromLibrary}
+          queryKey="product-media-library"
+          search={async (query) =>
+            (await mediaLibrary?.list({
+              limit: 48,
+              ...(query ? { filename_cont: query } : {}),
+            })) ?? { data: [] }
+          }
+          onConfirm={handleAddFromLibrary}
+        />
+      )}
       {editingEntry && editingIndex !== null && (
         <MediaEditSheet
           form={form}
@@ -693,7 +749,10 @@ function SortableMediaThumbnail({
 // Inventory
 // ---------------------------------------------------------------------------
 
-export function InventoryCard({ form, storeId }: FormCardProps & { storeId: string }) {
+export function InventoryCard({
+  form,
+  stockLocationHref,
+}: FormCardProps & { stockLocationHref?: (id: string) => string }) {
   const { t } = useTranslation()
   return (
     <Card>
@@ -701,7 +760,7 @@ export function InventoryCard({ form, storeId }: FormCardProps & { storeId: stri
         <CardTitle>{t('admin.pages.products.section_inventory')}</CardTitle>
       </CardHeader>
       <CardContent>
-        <InventorySection form={form} storeId={storeId} />
+        <InventorySection form={form} stockLocationHref={stockLocationHref} />
       </CardContent>
     </Card>
   )
@@ -901,35 +960,40 @@ export function CategorizationCard({ form }: FormCardProps) {
           )}
         </Field>
 
-        <Field>
-          <FieldLabel>{t('admin.fields.product.delivery_profile_id.label')}</FieldLabel>
-          <Controller
-            name="delivery_profile_id"
-            control={form.control}
-            render={({ field }) => (
-              <Select
-                value={field.value ?? defaultDeliveryProfileId ?? ''}
-                onValueChange={(v) => field.onChange(v || null)}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue>
-                    {(v) => deliveryProfiles.find((profile) => profile.id === v)?.name ?? ''}
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  {deliveryProfiles.map((profile) => (
-                    <SelectItem key={profile.id} value={profile.id}>
-                      {profile.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          />
-          <span className="text-muted-foreground text-xs">
-            {t('admin.fields.product.delivery_profile_id.help')}
-          </span>
-        </Field>
+        {/* Marketplace configuration: a panel whose client registers no
+            delivery profiles cannot write one, so it does not offer the
+            field rather than showing an edit that goes nowhere. */}
+        {deliveryProfiles.length > 0 && (
+          <Field>
+            <FieldLabel>{t('admin.fields.product.delivery_profile_id.label')}</FieldLabel>
+            <Controller
+              name="delivery_profile_id"
+              control={form.control}
+              render={({ field }) => (
+                <Select
+                  value={field.value ?? defaultDeliveryProfileId ?? ''}
+                  onValueChange={(v) => field.onChange(v || null)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue>
+                      {(v) => deliveryProfiles.find((profile) => profile.id === v)?.name ?? ''}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {deliveryProfiles.map((profile) => (
+                      <SelectItem key={profile.id} value={profile.id}>
+                        {profile.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            <span className="text-muted-foreground text-xs">
+              {t('admin.fields.product.delivery_profile_id.help')}
+            </span>
+          </Field>
+        )}
 
         <Field>
           <FieldLabel>{t('admin.fields.product.category_ids.label')}</FieldLabel>

@@ -583,6 +583,15 @@
         "alt": {
           "label": "Alternativtext",
           "placeholder": "Beschreiben Sie das Bild für Barrierefreiheit und SEO"
+        },
+        "external_video_url": {
+          "help": "Fügen Sie einen YouTube- oder Vimeo-Link ein.",
+          "label": "Video-Link",
+          "placeholder": "https://www.youtube.com/watch?v=..."
+        },
+        "poster": {
+          "help": "Das Standbild, das vor dem Abspielen angezeigt wird. Leer lassen, um das Bild des Anbieters zu verwenden, sofern vorhanden.",
+          "label": "Vorschaubild"
         }
       },
       "meta_description": {
@@ -691,6 +700,101 @@
       },
       "zipcode": {
         "label": "Postleitzahl"
+      },
+      "product": {
+        "available_on": {
+          "label": "Verfügbar ab"
+        },
+        "category_ids": {
+          "label": "Kategorien"
+        },
+        "channels": {
+          "label": "Verkaufskanäle"
+        },
+        "collection_ids": {
+          "help": "Hier lassen sich nur manuelle Kollektionen setzen; automatische folgen ihren Regeln.",
+          "label": "Kollektionen"
+        },
+        "delivery_profile_id": {
+          "help": "Bestimmt, welche Zonen und Versandarten dieses Produkt erreichen.",
+          "label": "Versandprofil"
+        },
+        "description": {
+          "label": "Beschreibung",
+          "placeholder": "Schreiben Sie eine Produktbeschreibung…"
+        },
+        "discontinue_on": {
+          "label": "Einstellen am"
+        },
+        "make_active_at": {
+          "label": "Aktiv schalten am"
+        },
+        "name": {
+          "label": "Name",
+          "placeholder": "Produktname"
+        },
+        "product_type_id": {
+          "help": "Bestimmt, welche Lieferoptionen im Checkout angeboten werden.",
+          "label": "Produkttyp"
+        },
+        "seller": {
+          "label": "Verkäufer"
+        },
+        "tags": {
+          "label": "Tags"
+        }
+      },
+      "variant": {
+        "backorder_limit": {
+          "help": "Maximale Anzahl an Einheiten, die über den verfügbaren Bestand hinaus verkauft werden — begrenzt Nachbestellungen und Vorbestellungen. Leer lassen für unbegrenzt.",
+          "label": "Nachbestellungslimit",
+          "placeholder": "Unbegrenzt"
+        },
+        "barcode": {
+          "label": "Barcode"
+        },
+        "country_of_origin": {
+          "label": "Ursprungsland"
+        },
+        "customs_description": {
+          "label": "Zollbeschreibung",
+          "placeholder": "Einfache Beschreibung der Ware"
+        },
+        "depth": {
+          "label": "Tiefe"
+        },
+        "dimensions_unit": {
+          "label": "Einheit"
+        },
+        "height": {
+          "label": "Höhe"
+        },
+        "hs_code": {
+          "label": "HS-Code",
+          "placeholder": "z. B. 640411"
+        },
+        "preorder_ships_at": {
+          "help": "Wann du Vorbestellungen voraussichtlich versendest. Wird Kunden als Lieferversprechen angezeigt; die Vorbestellung endet, sobald dieses Datum verstreicht.",
+          "label": "Versand bis",
+          "placeholder": "Datum wählen"
+        },
+        "preorderable": {
+          "help": "Verkaufe diese Variante, bevor sie auf Lager ist. Begrenze die Menge mit dem Nachbestellungslimit, gib eingehenden Bestand als Lagerbestand ein oder lass es für unbegrenzt leer.",
+          "label": "Für Vorbestellung verfügbar"
+        },
+        "sku": {
+          "label": "SKU",
+          "placeholder": "PRODUCT-RED-S"
+        },
+        "weight": {
+          "label": "Gewicht"
+        },
+        "weight_unit": {
+          "label": "Einheit"
+        },
+        "width": {
+          "label": "Breite"
+        }
       }
     },
     "image_upload": {
@@ -752,6 +856,241 @@
           "edit_sheet_title": "Lagerstandort bearbeiten",
           "search_placeholder": "Lagerstandorte suchen…"
         }
+      },
+      "products": {
+        "add_cta": "Produkt hinzufügen",
+        "bulk": {
+          "add_categories_action": "Zu Kategorien hinzufügen…",
+          "add_channels_action": "Zu Verkaufskanälen hinzufügen…",
+          "add_collections_action": "Zu Kollektionen hinzufügen",
+          "add_tags_action": "Tags hinzufügen…",
+          "categories_add_description": "Wählen Sie die Kategorien, zu denen diese Produkte hinzugefügt werden sollen.",
+          "categories_add_failed": "Produkte konnten nicht zu Kategorien hinzugefügt werden",
+          "categories_add_title": "Zu Kategorien hinzufügen",
+          "categories_added": "{n} Produkte zu Kategorien hinzugefügt",
+          "categories_remove_description": "Wählen Sie die Kategorien, aus denen diese Produkte entfernt werden sollen.",
+          "categories_remove_failed": "Produkte konnten nicht aus Kategorien entfernt werden",
+          "categories_remove_title": "Aus Kategorien entfernen",
+          "categories_removed": "{n} Produkte aus Kategorien entfernt",
+          "channels_add_description": "Wählen Sie die Verkaufskanäle, auf denen diese Produkte gelistet werden sollen.",
+          "channels_add_failed": "Produkte konnten nicht auf Verkaufskanälen gelistet werden",
+          "channels_add_title": "Zu Verkaufskanälen hinzufügen",
+          "channels_added": "{n} Produkte auf Verkaufskanälen gelistet",
+          "channels_remove_description": "Wählen Sie die Verkaufskanäle, von denen diese Produkte ausgelistet werden sollen.",
+          "channels_remove_failed": "Produkte konnten nicht von Verkaufskanälen ausgelistet werden",
+          "channels_remove_title": "Aus Verkaufskanälen entfernen",
+          "channels_removed": "{n} Produkte von Verkaufskanälen ausgelistet",
+          "collections_add_description": "Die ausgewählten Produkte werden jeder gewählten Kollektion hinzugefügt.",
+          "collections_add_failed": "Produkte konnten nicht hinzugefügt werden",
+          "collections_add_title": "Zu Kollektionen hinzufügen",
+          "collections_added": "Produkte zu den Kollektionen hinzugefügt",
+          "collections_remove_description": "Die ausgewählten Produkte werden aus jeder gewählten Kollektion entfernt.",
+          "collections_remove_failed": "Produkte konnten nicht entfernt werden",
+          "collections_remove_title": "Aus Kollektionen entfernen",
+          "collections_removed": "Produkte aus den Kollektionen entfernt",
+          "delete_confirm": {
+            "message": "Ausgewählte Produkte werden entfernt. Diese Aktion kann nicht rückgängig gemacht werden.",
+            "title": "{n} Produkte löschen?"
+          },
+          "delete_failed": "Produkte konnten nicht gelöscht werden",
+          "deleted": "{n} Produkte gelöscht",
+          "remove_categories_action": "Aus Kategorien entfernen…",
+          "remove_channels_action": "Aus Verkaufskanälen entfernen…",
+          "remove_collections_action": "Aus Kollektionen entfernen",
+          "remove_tags_action": "Tags entfernen…",
+          "set_status_action": "Status festlegen…",
+          "status_sheet_description": "Wählen Sie den Status, der auf die ausgewählten Produkte angewendet werden soll.",
+          "status_sheet_title": "Produktstatus festlegen",
+          "status_update_failed": "Produktstatus konnte nicht aktualisiert werden",
+          "status_updated": "Status für {n} Produkte aktualisiert",
+          "tags_add_description": "Wählen oder erstellen Sie Tags, die zu diesen Produkten hinzugefügt werden sollen.",
+          "tags_add_failed": "Tags konnten nicht hinzugefügt werden",
+          "tags_add_title": "Tags hinzufügen",
+          "tags_added": "Tags zu {n} Produkten hinzugefügt",
+          "tags_remove_description": "Wählen Sie Tags, die von diesen Produkten entfernt werden sollen.",
+          "tags_remove_failed": "Tags konnten nicht entfernt werden",
+          "tags_remove_title": "Tags entfernen",
+          "tags_removed": "Tags von {n} Produkten entfernt"
+        },
+        "clone_failed": "Produkt konnte nicht dupliziert werden",
+        "clone_succeeded": "Produkt dupliziert",
+        "delete_failed": "Produkt konnte nicht gelöscht werden",
+        "delete_succeeded": "Produkt gelöscht",
+        "edit": {
+          "bulk_prices": {
+            "no_variants": "Fügen Sie mindestens eine Variante hinzu, um die Preisbearbeitung zu starten."
+          }
+        },
+        "inventory": {
+          "in_stock": "{{count}} auf Lager",
+          "in_stock_short": "Auf Lager",
+          "on_backorder": "Im Rückstand",
+          "out_of_stock": "Nicht auf Lager"
+        },
+        "media_empty": "Noch keine Medien.",
+        "media_upload": "Medien hochladen",
+        "new": {
+          "create_failed": "Produkt konnte nicht erstellt werden",
+          "create_succeeded": "Produkt erstellt",
+          "description": "Richten Sie Ihr Produkt ein — fügen Sie Varianten, Preise, Bestand, Medien und benutzerdefinierte Felder hinzu",
+          "preview_slug_placeholder": "ihr-produkt-slug",
+          "save_label": "Produkt erstellen",
+          "title": "Neues Produkt"
+        },
+        "options": {
+          "add_value": "Optionswert hinzufügen",
+          "sheet_title_create": "Optionstyp erstellen",
+          "sheet_title_edit": "Optionstyp bearbeiten",
+          "table": {
+            "values": "Werte"
+          },
+          "values_empty": "Noch keine Werte.",
+          "values_section": "Werte"
+        },
+        "price_lists": {
+          "activate": "Aktivieren",
+          "activate_confirm": {
+            "message": "\"{{name}}\" gilt ab sofort für berechtigte Kunden und bleibt aktiv, bis sie manuell deaktiviert wird.",
+            "message_with_end": "\"{{name}}\" gilt ab sofort für berechtigte Kunden und bleibt aktiv, bis sie manuell deaktiviert wird oder ihr Enddatum ({{ends_at}}) erreicht ist.",
+            "title": "Preisliste aktivieren?"
+          },
+          "add_cta": "Neue Preisliste",
+          "add_products_cta": "Produkte hinzufügen",
+          "add_rule": "Regel hinzufügen",
+          "add_rule_help": "Wählen Sie einen Regeltyp zum Konfigurieren.",
+          "basics_section": "Grunddaten",
+          "deactivate": "Deaktivieren",
+          "deactivate_confirm": {
+            "message": "\"{{name}}\" gilt ab sofort nicht mehr für Kunden. Bestehende Bestellungen sind nicht betroffen.",
+            "title": "Preisliste deaktivieren?"
+          },
+          "delete_confirm": {
+            "message": "Beim Entfernen von \"{{name}}\" werden ihre Preise gelöscht. Dies kann nicht rückgängig gemacht werden.",
+            "title": "Preisliste löschen?"
+          },
+          "edit_prices": {
+            "add_products_link": "Produkte hinzufügen",
+            "columns": {
+              "compare_at_price": "Vergleichspreis",
+              "price": "Preis",
+              "product": "Produkt",
+              "sku": "SKU",
+              "variant": "Variante"
+            },
+            "compare_at_aria": "Vergleichspreis für {{label}}",
+            "count_summary_one": "{{count}} Preis in {{currency}}",
+            "count_summary_other": "{{count}} Preise in {{currency}}",
+            "currency_label": "Währung",
+            "dirty_summary_one": "{{count}} ungespeicherte Änderung",
+            "dirty_summary_other": "{{count}} ungespeicherte Änderungen",
+            "discard_confirm": {
+              "message_close_one": "Sie haben {{count}} ungespeicherten Preis. Beim Schließen wird er verworfen.",
+              "message_close_other": "Sie haben {{count}} ungespeicherte Preise. Beim Schließen werden sie verworfen.",
+              "message_currency": "Beim Wechsel der Währung werden Ihre ungespeicherten Preise verworfen.",
+              "title": "Ungespeicherte Preise verwerfen?"
+            },
+            "empty": "Noch keine Produkte in dieser Liste.",
+            "empty_no_base_prices": "Noch keine Basispreise.",
+            "empty_pick_products": "Wählen Sie Produkte auf der Preisliste aus, um mit der Preisfestlegung zu beginnen.",
+            "grid_aria": "Variantenpreise",
+            "no_matches_for_filters": "Keine Preise entsprechen den aktuellen Filtern.",
+            "no_matches_for_search": "Keine Preise entsprechen \"{{search}}\".",
+            "price_aria": "Preis für {{label}}",
+            "save_cta": "Preise speichern",
+            "save_failed": "Preise konnten nicht gespeichert werden",
+            "save_success_one": "{{count}} Preis gespeichert",
+            "save_success_other": "{{count}} Preise gespeichert",
+            "search_placeholder": "Nach Produkt, SKU oder Option suchen…",
+            "title": "Preise bearbeiten — {{name}}",
+            "variant_default": "Standard"
+          },
+          "edit_prices_cta": "Preise bearbeiten",
+          "no_changes": "Keine Änderungen zum Speichern.",
+          "prices_help_one": "{{count}} Preis konfiguriert. Öffnen Sie den Mehrfacheditor, um ihn zu aktualisieren.",
+          "prices_help_other": "{{count}} Preise konfiguriert. Öffnen Sie den Mehrfacheditor, um sie zu aktualisieren.",
+          "prices_help_zero": "Wählen Sie oben Produkte aus, um Platzhalterpreise anzulegen, und öffnen Sie dann den Mehrfacheditor.",
+          "products_empty": "Noch keine Produkte — fügen Sie eins hinzu, um die Preisbearbeitung zu starten.",
+          "products_empty_search": "Keine passenden Produkte",
+          "products_help": "Wählen Sie die Produkte, für die diese Liste gilt. Platzhalterpreise werden beim Speichern erstellt — füllen Sie sie unten aus.",
+          "products_search_placeholder": "Produkte nach Namen suchen…",
+          "products_section": "Produkte",
+          "products_selected_one": "{{count}} Produkt ausgewählt.",
+          "products_selected_other": "{{count}} Produkte ausgewählt.",
+          "remove_rule_confirm": {
+            "message": "Die Regel wird entfernt, wenn Sie die Preisliste speichern.",
+            "title": "Regel entfernen?"
+          },
+          "remove_selected": "Auswahl entfernen",
+          "rule_click_to_configure": "Zum Konfigurieren klicken",
+          "rule_default_description": "Passen Sie die Parameter der Regel an.",
+          "rule_name_overflow": "{{names}} +{{count}} weitere",
+          "rule_no_options": "Diese Regel hat keine konfigurierbaren Optionen — ihre bloße Existenz wendet die Einschränkung an.",
+          "rule_types_all_used": "Jeder verfügbare Regeltyp befindet sich bereits auf dieser Liste.",
+          "rule_types_empty": "Keine Regeltypen registriert.",
+          "rules_empty": "Keine Regeln — diese Liste gilt für jeden Käufer.",
+          "rules_help": "Bedingungen, die festlegen, wann diese Liste angewendet wird. Verwenden Sie \"alle\", um jede Regel zu erfordern, \"beliebige\", um die erste Übereinstimmung zu nehmen.",
+          "rules_section": "Regeln",
+          "schedule": "Planen",
+          "schedule_confirm": {
+            "message": "\"{{name}}\" geht am {{starts_at}} live und bleibt bis zum Enddatum aktiv.",
+            "title": "Preisliste planen?"
+          },
+          "schedule_section": "Zeitplan",
+          "sheet_title_create": "Preisliste erstellen",
+          "sheet_title_edit": "Preisliste bearbeiten",
+          "subtitle": "Gezielte Preisgestaltung für Kundengruppen, Regionen oder Mengenstaffeln.",
+          "title": "Preislisten",
+          "unschedule": "Planung aufheben",
+          "unschedule_confirm": {
+            "message": "\"{{name}}\" wird am geplanten Datum nicht mehr aktiviert. Sie können sie später erneut planen oder manuell aktivieren.",
+            "title": "Planung der Preisliste aufheben?"
+          }
+        },
+        "publishing": {
+          "caption_hidden_after": "Wird am {{date}} ausgeblendet",
+          "caption_live": "Jetzt für Kunden sichtbar",
+          "caption_not_available": "Ausgeblendet — Produkt ist {{product_status}}",
+          "caption_scheduled": "Geht am {{date}} live",
+          "caption_unpublished": "Wurde am {{date}} ausgeblendet",
+          "caption_window": "Live {{start}} → {{end}}",
+          "empty": "Noch auf keinem Verkaufskanal gelistet.",
+          "inactive_marker": "Inaktiv",
+          "manage_cta": "Verwalten",
+          "manage_description": "Wählen Sie aus, welche Verkaufskanäle dieses Produkt listen. Deaktivieren Sie einen Kanal, um es überall auszulisten.",
+          "manage_title": "Verkaufskanäle verwalten",
+          "no_channels": "Keine Verkaufskanäle verfügbar. Erstellen Sie einen unter Einstellungen → Verkaufskanäle.",
+          "status_hidden": "Ausgeblendet",
+          "status_live": "Live",
+          "status_not_available": "Nicht verfügbar",
+          "status_scheduled": "Geplant",
+          "title": "Veröffentlichung"
+        },
+        "section_basics": "Grunddaten",
+        "section_categorization": "Kategorisierung",
+        "section_inventory": "Bestand",
+        "section_media": "Medien",
+        "section_organization": "Organisation",
+        "section_pricing": "Preisgestaltung",
+        "section_seo": "SEO",
+        "section_variants": "Varianten",
+        "status_options": {
+          "active": "Aktiv",
+          "archived": "Archiviert",
+          "draft": "Entwurf"
+        },
+        "transfers": {
+          "description_external": "Externer Wareneingang in <strong>{{destination}}</strong>.",
+          "description_internal": "Bestand verschoben von <strong>{{source}}</strong> nach <strong>{{destination}}</strong>.",
+          "edit_sheet_title": "Übertragung {{number}}",
+          "items_empty": "Noch keine Artikel.",
+          "section_from": "Von",
+          "section_items": "Artikel",
+          "section_to": "Nach",
+          "sheet_title": "Neue Bestandsübertragung"
+        },
+        "variants_empty": "Noch keine Varianten.",
+        "variants_one": "{{count}} Variante",
+        "variants_other": "{{count}} Varianten"
       }
     },
     "resource_picker": {
@@ -851,6 +1190,244 @@
       "positive_number": "{{field}} muss größer als 0 sein",
       "required": "{{field}} ist erforderlich",
       "store_name_required": "Shopname ist erforderlich"
+    },
+    "products": {
+      "autocomplete": {
+        "empty": "Keine passenden Produkte",
+        "placeholder": "Produkte nach Namen suchen…"
+      },
+      "category_search_placeholder": "Kategorien suchen…",
+      "collection_search_placeholder": "Kollektionen suchen…",
+      "columns": {
+        "in_stock": "Auf Lager",
+        "price": "Preis",
+        "sku": "SKU"
+      },
+      "delete_confirm": "Möchten Sie dieses Produkt wirklich löschen?",
+      "delete_label": "Produkt löschen",
+      "inventory": {
+        "backorder_aria": "Nachbestellung bei {{location}} zulassen",
+        "columns": {
+          "backorder": "Nachbestellung",
+          "location": "Standort",
+          "on_hand": "Verfügbar"
+        },
+        "empty_no_locations": "Fügen Sie in den Einstellungen einen Lagerstandort hinzu, um mit der Bestandsverfolgung zu beginnen.",
+        "empty_no_variants": "Lagerbestände werden pro Lagerstandort verwaltet. Fügen Sie eine Variante hinzu, um mit der Bestandsverfolgung zu beginnen.",
+        "on_hand_aria": "Verfügbar bei {{location}}",
+        "unknown_location": "Unbekannter Standort"
+      },
+      "media": {
+        "add_from_library": "Aus Bibliothek hinzufügen",
+        "add_video": "Videolink hinzufügen",
+        "add_video_submit": "Video hinzufügen",
+        "add_video_title": "Videolink hinzufügen",
+        "assigned_variants_help": "Wählen Sie die Varianten aus, die dieses Bild repräsentiert. Leer lassen, um es auf alle Varianten anzuwenden.",
+        "assigned_variants_label": "Zugeordnete Varianten",
+        "delete_confirm": "Dieses Medium löschen? Dies kann nicht rückgängig gemacht werden.",
+        "drop_hint": "Medien hierher ziehen und ablegen oder zum Durchsuchen klicken",
+        "edit_title": "Medium bearbeiten",
+        "file_types_hint": "Bilder (PNG, JPG, WebP) und Videos (MP4, WebM, MOV)",
+        "focal_point_help": "Klicken Sie auf das Bild, um festzulegen, was beim Zuschneiden sichtbar bleibt.",
+        "focal_point_reset": "Zurücksetzen",
+        "unsupported_file_one": "{{count}} Datei wurde nicht hinzugefügt — nur Bilder und Videos werden unterstützt.",
+        "unsupported_file_other": "{{count}} Dateien wurden nicht hinzugefügt — nur Bilder und Videos werden unterstützt.",
+        "upload_failed": "Hochladen von {{name}} fehlgeschlagen: {{message}}",
+        "upload_status_failed": "Fehlgeschlagen",
+        "video_preview_title": "Videovorschau",
+        "video_url_invalid": "Geben Sie einen YouTube- oder Vimeo-Link ein."
+      },
+      "no_categories_found": "Keine Kategorien gefunden",
+      "no_collections_found": "Keine Kollektionen gefunden",
+      "options": {
+        "add_cta": "Optionstyp hinzufügen",
+        "count_one": "{{count}} Wert",
+        "count_other": "{{count}} Werte",
+        "create_description": "Definieren Sie eine Option, die Varianten verwenden können (z. B. Größe, Farbe).",
+        "create_label": "Optionstyp erstellen",
+        "delete_confirm": {
+          "message": "Dadurch werden auch alle zugehörigen Werte gelöscht. Varianten, die diese Werte verwenden, verlieren sie.",
+          "title": "Optionstyp löschen?"
+        },
+        "edit_description": "Bearbeiten Sie den Optionstyp und seine Werte.",
+        "image_upload_failed": "Bild konnte nicht hochgeladen werden",
+        "kinds": {
+          "buttons": "Schaltflächen",
+          "color_swatch": "Farbmuster",
+          "dropdown": "Dropdown"
+        },
+        "value_label_placeholder": "z. B. Small",
+        "value_name_placeholder": "z. B. small",
+        "values_help": "Werte zum Neuordnen ziehen. Der erste Wert ist der Standard für neue Varianten."
+      },
+      "price_lists": {
+        "errors": {
+          "failed_to_activate": "Preisliste konnte nicht aktiviert werden",
+          "failed_to_deactivate": "Preisliste konnte nicht deaktiviert werden"
+        },
+        "messages": {
+          "activated": "Preisliste aktiviert",
+          "created": "Preisliste erstellt",
+          "deactivated": "Preisliste deaktiviert",
+          "deleted": "Preisliste gelöscht",
+          "updated": "Preisliste aktualisiert"
+        },
+        "validation": {
+          "ends_after_starts": "Muss nach dem Startdatum liegen."
+        }
+      },
+      "product_type_adds_options_one": "Dieser Typ fügt neuen Produkten {{options}} hinzu.",
+      "product_type_adds_options_other": "Dieser Typ fügt neuen Produkten {{options}} hinzu.",
+      "product_type_placeholder": "Kein Produkttyp",
+      "save_label": "Produkt speichern",
+      "seo": {
+        "meta_description_placeholder": "SEO-Beschreibung",
+        "meta_title_placeholder": "SEO-Titel",
+        "slug_placeholder": "produkt-url-handle"
+      },
+      "tax_category_placeholder": "Steuerkategorie auswählen",
+      "transfers": {
+        "create_description": "Bestand zwischen Lagern bewegen oder neuen Bestand von einem externen Lieferanten annehmen.",
+        "delete_confirm": {
+          "message": "Durch diesen Transfer erstellte Bestandsbewegungen werden rückgängig gemacht.",
+          "title": "Diesen Transfer löschen?"
+        },
+        "destination_placeholder": "Zielstandort auswählen",
+        "details_card": "Details",
+        "different_locations_error": "Quelle und Ziel müssen sich unterscheiden.",
+        "external_label": "Extern (Wareneingang vom Lieferanten)",
+        "fields": {
+          "created": "Erstellt",
+          "external_receive": "Externer Wareneingang",
+          "immutable_note": "Bestandstransfers sind nach dem Erstellen unveränderlich.",
+          "internal": "Intern",
+          "reference": "Referenz",
+          "type": "Typ"
+        },
+        "items_table": {
+          "qty": "Anz.",
+          "sku": "SKU",
+          "variant": "Variante"
+        },
+        "new_cta": "Neuer Transfer",
+        "reference_label": "Referenz",
+        "reference_placeholder": "Bestellnummer, Lieferantenrechnung, …",
+        "review_description": "Überprüfen Sie den Transfer vor dem Erstellen. Artikel können danach nicht mehr geändert werden.",
+        "search_items_placeholder": "Nach Name oder SKU suchen (3+ Zeichen)…"
+      },
+      "variants": {
+        "add_option": "Option hinzufügen",
+        "bulk_edit": {
+          "grid_aria": "Tabelle zur Massenbearbeitung der Varianten",
+          "title": "Varianten massenbearbeiten",
+          "trigger": "Massenbearbeitung",
+          "unset": "Keine"
+        },
+        "create_option_type": "Neuen Optionstyp erstellen",
+        "create_option_type_title": "Neuer Optionstyp",
+        "create_value": "Neuer Wert",
+        "create_value_title": "Neuer Optionswert",
+        "default_variant": "Standardvariante",
+        "edit_row_aria": "{{name}} bearbeiten",
+        "edit_variant": "Variante bearbeiten — {{name}}",
+        "errors": {
+          "failed_to_create_option_type": "Optionstyp konnte nicht erstellt werden",
+          "failed_to_create_value": "Wert konnte nicht erstellt werden"
+        },
+        "keep": "Alle behalten",
+        "option_type_label": "Optionstyp",
+        "option_type_placeholder": "Optionstyp auswählen",
+        "orphan_warning": "{{count}} vorhandene Variante(n) werden beim Speichern entfernt:",
+        "orphan_warning_one": "{{count}} vorhandene Variante entspricht nicht mehr den ausgewählten Optionen und wird beim Speichern entfernt:",
+        "orphan_warning_other": "{{count}} vorhandene Varianten entsprechen nicht mehr den ausgewählten Optionen und werden beim Speichern entfernt:",
+        "remove_row_aria": "{{name}} entfernen",
+        "sheet": {
+          "availability": "Verfügbarkeit",
+          "customs": "Zoll",
+          "customs_help": "Wird auf Zollformularen verwendet, wenn dieser Artikel eine Grenze überquert.",
+          "identity": "Identität",
+          "tax_category_placeholder": "Vom Produkt übernehmen"
+        },
+        "title": "Varianten",
+        "variant_label": "Variante"
+      }
+    },
+    "product_types": {
+      "add_cta": "Produkttyp hinzufügen",
+      "add_sheet_title": "Neuer Produkttyp",
+      "affects_new_only": {
+        "description": "Das Bearbeiten von Optionstypen und Kategorien wirkt sich auf ab jetzt erstellte Produkte aus. Produkte mit diesem Typ behalten, was sie haben. Die benutzerdefinierten Felder unten erscheinen immer bei allen Produkten dieses Typs.",
+        "title": "Änderungen gelten für neue Produkte"
+      },
+      "apply_to_products": {
+        "confirm_label": "Anwenden",
+        "cta_one": "Auf {{count}} bestehendes Produkt anwenden",
+        "cta_other": "Auf {{count}} bestehende Produkte anwenden",
+        "message_one": "Dies fügt {{count}} Produkt die fehlenden Optionstypen und Kategorien dieses Typs hinzu. Es wird nichts entfernt.",
+        "message_other": "Dies fügt {{count}} Produkten die fehlenden Optionstypen und Kategorien dieses Typs hinzu. Es wird nichts entfernt.",
+        "title": "Auf bestehende Produkte anwenden"
+      },
+      "create_description": "Produkte gruppieren und festlegen, wie sie geliefert werden können.",
+      "create_label": "Produkttyp erstellen",
+      "custom_delivery_profile": "Benutzerdefiniert",
+      "default_delivery_profile": "Standardprofil des Shops",
+      "delete_confirm": {
+        "message": "Möchten Sie „{{name}}“ wirklich löschen? Typen, die noch von Produkten verwendet werden, können nicht gelöscht werden.",
+        "title": "Produkttyp löschen"
+      },
+      "edit_description": "Namen oder Lieferarten der Produkte dieses Typs ändern.",
+      "edit_sheet_title": "Produkttyp bearbeiten",
+      "empty": "Noch keine Produkttypen",
+      "messages": {
+        "applied_to_products": "Wird auf bestehende Produkte angewendet",
+        "created": "Produkttyp erstellt",
+        "deleted": "Produkttyp gelöscht",
+        "updated": "Produkttyp aktualisiert"
+      },
+      "no_categories": "Noch keine Kategorien",
+      "no_option_types": "Noch keine Optionstypen",
+      "option_type_search_placeholder": "Optionstypen suchen",
+      "search_placeholder": "Produkttypen durchsuchen"
+    },
+    "calculators": {
+      "default_refund_amount": "Standard-Erstattungsbetrag",
+      "default_tax": "Standardsteuer",
+      "digital_delivery": "Digitale Lieferung",
+      "flat_percent_item_total": "Pauschaler Prozentsatz",
+      "flat_rate": "Pauschalbetrag",
+      "flexi_rate": "Flexibler Tarif",
+      "per_item": "Pro Artikel",
+      "percent_on_line_item": "Prozentsatz pro Position",
+      "price_sack": "Preisstaffel",
+      "tiered_flat_rate": "Gestaffelter Pauschalbetrag",
+      "tiered_percent": "Gestaffelter Prozentsatz"
+    },
+    "stock_levels": {
+      "messages": {
+        "stock_level_deleted": "Lagerbestand gelöscht",
+        "stock_updated": "Bestand aktualisiert"
+      }
+    },
+    "option_types": {
+      "columns": {
+        "values": "Werte"
+      },
+      "kinds": {
+        "buttons": "Schaltflächen",
+        "color_swatch": "Farbfeld",
+        "dropdown": "Dropdown"
+      },
+      "messages": {
+        "created": "Optionstyp erstellt",
+        "deleted": "Optionstyp gelöscht",
+        "updated": "Optionstyp aktualisiert"
+      },
+      "table": {
+        "empty": "Noch keine Optionstypen",
+        "search_placeholder": "Nach Name suchen…"
+      },
+      "value_count_one": "{{count}} Wert",
+      "value_count_other": "{{count}} Werte"
     }
   }
 }

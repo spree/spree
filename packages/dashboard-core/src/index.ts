@@ -99,6 +99,16 @@ export * from './pages/stock-locations'
 // Plugin facade — re-exported for convenience; same API as `/plugin` subpath
 // ---------------------------------------------------------------------------
 export * from './plugin'
+export * from './products/currency-parts'
+export * from './products/normalize-customs'
+export * from './products/normalize-money'
+export * from './products/product-form-cards'
+export * from './products/product-form-mapping'
+export * from './products/product-schema'
+export * from './products/product-types'
+export * from './products/use-product-form-data'
+export * from './products/variants-matrix'
+export * from './products/video-url'
 // ---------------------------------------------------------------------------
 // Providers — must be mounted by the consuming app shell
 // ---------------------------------------------------------------------------

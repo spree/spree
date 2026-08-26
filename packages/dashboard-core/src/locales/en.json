@@ -585,6 +585,15 @@
         "alt": {
           "label": "Alt text",
           "placeholder": "Describe the image for accessibility and SEO"
+        },
+        "external_video_url": {
+          "help": "Paste a YouTube or Vimeo link.",
+          "label": "Video link",
+          "placeholder": "https://www.youtube.com/watch?v=..."
+        },
+        "poster": {
+          "help": "The still shown before the video plays. Leave blank to use the provider’s own image where there is one.",
+          "label": "Poster image"
         }
       },
       "meta_description": {
@@ -693,6 +702,101 @@
       },
       "zipcode": {
         "label": "Postal code"
+      },
+      "product": {
+        "available_on": {
+          "label": "Available on"
+        },
+        "category_ids": {
+          "label": "Categories"
+        },
+        "channels": {
+          "label": "Sales channels"
+        },
+        "collection_ids": {
+          "help": "Only manual collections can be set here; automatic ones follow their rules.",
+          "label": "Collections"
+        },
+        "delivery_profile_id": {
+          "help": "Decides which zones and delivery methods reach this product.",
+          "label": "Shipping profile"
+        },
+        "description": {
+          "label": "Description",
+          "placeholder": "Write a product description…"
+        },
+        "discontinue_on": {
+          "label": "Discontinue on"
+        },
+        "make_active_at": {
+          "label": "Make active at"
+        },
+        "name": {
+          "label": "Name",
+          "placeholder": "Product name"
+        },
+        "product_type_id": {
+          "help": "Controls which delivery options are offered at checkout.",
+          "label": "Product type"
+        },
+        "seller": {
+          "label": "Seller"
+        },
+        "tags": {
+          "label": "Tags"
+        }
+      },
+      "variant": {
+        "backorder_limit": {
+          "help": "Maximum number of units sold beyond available stock — caps backorders and pre-orders. Leave blank for unlimited.",
+          "label": "Backorder limit",
+          "placeholder": "Unlimited"
+        },
+        "barcode": {
+          "label": "Barcode"
+        },
+        "country_of_origin": {
+          "label": "Country of origin"
+        },
+        "customs_description": {
+          "label": "Customs description",
+          "placeholder": "Plain description of the goods"
+        },
+        "depth": {
+          "label": "Depth"
+        },
+        "dimensions_unit": {
+          "label": "Unit"
+        },
+        "height": {
+          "label": "Height"
+        },
+        "hs_code": {
+          "label": "HS code",
+          "placeholder": "e.g. 640411"
+        },
+        "preorder_ships_at": {
+          "help": "When you expect to ship pre-orders. Shown to customers as the delivery promise; the pre-order ends once this date passes.",
+          "label": "Ships by",
+          "placeholder": "Select a date"
+        },
+        "preorderable": {
+          "help": "Sell this variant before it's in stock. Cap how many you'll take with the backorder limit, enter incoming stock as the count, or leave it blank for unlimited.",
+          "label": "Available for pre-order"
+        },
+        "sku": {
+          "label": "SKU",
+          "placeholder": "PRODUCT-RED-S"
+        },
+        "weight": {
+          "label": "Weight"
+        },
+        "weight_unit": {
+          "label": "Unit"
+        },
+        "width": {
+          "label": "Width"
+        }
       }
     },
     "image_upload": {
@@ -754,6 +858,241 @@
           "edit_sheet_title": "Edit stock location",
           "search_placeholder": "Search stock locations…"
         }
+      },
+      "products": {
+        "add_cta": "Add product",
+        "bulk": {
+          "add_categories_action": "Add to categories…",
+          "add_channels_action": "Add to sales channels…",
+          "add_collections_action": "Add to collections",
+          "add_tags_action": "Add tags…",
+          "categories_add_description": "Pick the categories to add these products to.",
+          "categories_add_failed": "Failed to add products to categories",
+          "categories_add_title": "Add to categories",
+          "categories_added": "Added {n} products to categories",
+          "categories_remove_description": "Pick the categories to remove these products from.",
+          "categories_remove_failed": "Failed to remove products from categories",
+          "categories_remove_title": "Remove from categories",
+          "categories_removed": "Removed {n} products from categories",
+          "channels_add_description": "Pick the sales channels to list these products on.",
+          "channels_add_failed": "Failed to list products on sales channels",
+          "channels_add_title": "Add to sales channels",
+          "channels_added": "Listed {n} products on sales channels",
+          "channels_remove_description": "Pick the sales channels to unlist these products from.",
+          "channels_remove_failed": "Failed to unlist products from sales channels",
+          "channels_remove_title": "Remove from sales channels",
+          "channels_removed": "Unlisted {n} products from sales channels",
+          "collections_add_description": "The selected products are added to every collection you choose.",
+          "collections_add_failed": "Could not add the products to the collections",
+          "collections_add_title": "Add to collections",
+          "collections_added": "Products added to the collections",
+          "collections_remove_description": "The selected products are removed from every collection you choose.",
+          "collections_remove_failed": "Could not remove the products from the collections",
+          "collections_remove_title": "Remove from collections",
+          "collections_removed": "Products removed from the collections",
+          "delete_confirm": {
+            "message": "Selected products will be removed. This action cannot be undone.",
+            "title": "Delete {n} products?"
+          },
+          "delete_failed": "Failed to delete products",
+          "deleted": "Deleted {n} products",
+          "remove_categories_action": "Remove from categories…",
+          "remove_channels_action": "Remove from sales channels…",
+          "remove_collections_action": "Remove from collections",
+          "remove_tags_action": "Remove tags…",
+          "set_status_action": "Set status…",
+          "status_sheet_description": "Pick the status to apply to the selected products.",
+          "status_sheet_title": "Set product status",
+          "status_update_failed": "Failed to update product status",
+          "status_updated": "Updated status on {n} products",
+          "tags_add_description": "Pick or create tags to add to these products.",
+          "tags_add_failed": "Failed to add tags",
+          "tags_add_title": "Add tags",
+          "tags_added": "Added tags to {n} products",
+          "tags_remove_description": "Pick tags to remove from these products.",
+          "tags_remove_failed": "Failed to remove tags",
+          "tags_remove_title": "Remove tags",
+          "tags_removed": "Removed tags from {n} products"
+        },
+        "clone_failed": "Failed to duplicate product",
+        "clone_succeeded": "Product duplicated",
+        "delete_failed": "Failed to delete product",
+        "delete_succeeded": "Product deleted",
+        "edit": {
+          "bulk_prices": {
+            "no_variants": "Add at least one variant to start editing prices."
+          }
+        },
+        "inventory": {
+          "in_stock": "{{count}} in stock",
+          "in_stock_short": "In stock",
+          "on_backorder": "On backorder",
+          "out_of_stock": "Out of stock"
+        },
+        "media_empty": "No media yet.",
+        "media_upload": "Upload media",
+        "new": {
+          "create_failed": "Failed to create product",
+          "create_succeeded": "Product created",
+          "description": "Set up your product — add variants, prices, inventory, media, and custom fields",
+          "preview_slug_placeholder": "your-product-slug",
+          "save_label": "Create product",
+          "title": "New product"
+        },
+        "options": {
+          "add_value": "Add option value",
+          "sheet_title_create": "Create option type",
+          "sheet_title_edit": "Edit option type",
+          "table": {
+            "values": "Values"
+          },
+          "values_empty": "No values yet.",
+          "values_section": "Values"
+        },
+        "price_lists": {
+          "activate": "Activate",
+          "activate_confirm": {
+            "message": "\"{{name}}\" will apply to qualifying customers immediately and stay active until manually deactivated.",
+            "message_with_end": "\"{{name}}\" will apply to qualifying customers immediately and stay active until manually deactivated or its end date ({{ends_at}}).",
+            "title": "Activate price list?"
+          },
+          "add_cta": "New price list",
+          "add_products_cta": "Add products",
+          "add_rule": "Add rule",
+          "add_rule_help": "Pick a rule type to configure.",
+          "basics_section": "Basics",
+          "deactivate": "Deactivate",
+          "deactivate_confirm": {
+            "message": "\"{{name}}\" will stop applying to customers immediately. Existing orders are unaffected.",
+            "title": "Deactivate price list?"
+          },
+          "delete_confirm": {
+            "message": "Removing \"{{name}}\" deletes its prices. This cannot be undone.",
+            "title": "Delete price list?"
+          },
+          "edit_prices": {
+            "add_products_link": "Add products",
+            "columns": {
+              "compare_at_price": "Compare-at price",
+              "price": "Price",
+              "product": "Product",
+              "sku": "SKU",
+              "variant": "Variant"
+            },
+            "compare_at_aria": "Compare-at price for {{label}}",
+            "count_summary_one": "{{count}} price in {{currency}}",
+            "count_summary_other": "{{count}} prices in {{currency}}",
+            "currency_label": "Currency",
+            "dirty_summary_one": "{{count}} unsaved change",
+            "dirty_summary_other": "{{count}} unsaved changes",
+            "discard_confirm": {
+              "message_close_one": "You have {{count}} unsaved price. Closing will discard it.",
+              "message_close_other": "You have {{count}} unsaved prices. Closing will discard them.",
+              "message_currency": "Switching currency will discard your unsaved prices.",
+              "title": "Discard unsaved prices?"
+            },
+            "empty": "No products in this list yet.",
+            "empty_no_base_prices": "No base prices yet.",
+            "empty_pick_products": "Pick products on the price list to start setting prices.",
+            "grid_aria": "Variant prices",
+            "no_matches_for_filters": "No prices match the current filters.",
+            "no_matches_for_search": "No prices match \"{{search}}\".",
+            "price_aria": "Price for {{label}}",
+            "save_cta": "Save prices",
+            "save_failed": "Failed to save prices",
+            "save_success_one": "Saved {{count}} price",
+            "save_success_other": "Saved {{count}} prices",
+            "search_placeholder": "Search by product, SKU, or option…",
+            "title": "Edit prices — {{name}}",
+            "variant_default": "Default"
+          },
+          "edit_prices_cta": "Edit prices",
+          "no_changes": "No changes to save.",
+          "prices_help_one": "{{count}} price configured. Open the bulk editor to update it.",
+          "prices_help_other": "{{count}} prices configured. Open the bulk editor to update them.",
+          "prices_help_zero": "Pick products above to seed placeholder prices, then open the bulk editor.",
+          "products_empty": "No products yet — add one to start editing prices.",
+          "products_empty_search": "No products match",
+          "products_help": "Pick the products this list applies to. Placeholder prices are created on save — fill them in below.",
+          "products_search_placeholder": "Search products by name…",
+          "products_section": "Products",
+          "products_selected_one": "{{count}} product selected.",
+          "products_selected_other": "{{count}} products selected.",
+          "remove_rule_confirm": {
+            "message": "The rule is removed when you save the price list.",
+            "title": "Remove rule?"
+          },
+          "remove_selected": "Remove selected",
+          "rule_click_to_configure": "Click to configure",
+          "rule_default_description": "Tune the rule's parameters.",
+          "rule_name_overflow": "{{names}} +{{count}} more",
+          "rule_no_options": "This rule has no configurable options — its presence alone applies the constraint.",
+          "rule_types_all_used": "Every available rule type is already on this list.",
+          "rule_types_empty": "No rule types registered.",
+          "rules_empty": "No rules — this list applies to every shopper.",
+          "rules_help": "Conditions that decide when this list applies. Use \"all\" to require every rule, \"any\" to take the first match.",
+          "rules_section": "Rules",
+          "schedule": "Schedule",
+          "schedule_confirm": {
+            "message": "\"{{name}}\" will go live on {{starts_at}} and stay active until its end date.",
+            "title": "Schedule price list?"
+          },
+          "schedule_section": "Schedule",
+          "sheet_title_create": "Create price list",
+          "sheet_title_edit": "Edit price list",
+          "subtitle": "Targeted pricing for customer groups, regions, or volume tiers.",
+          "title": "Price Lists",
+          "unschedule": "Unschedule",
+          "unschedule_confirm": {
+            "message": "\"{{name}}\" will no longer activate on its scheduled date. You can re-schedule or activate it manually later.",
+            "title": "Unschedule price list?"
+          }
+        },
+        "publishing": {
+          "caption_hidden_after": "Comes down {{date}}",
+          "caption_live": "Visible to customers now",
+          "caption_not_available": "Hidden — product is {{product_status}}",
+          "caption_scheduled": "Goes live {{date}}",
+          "caption_unpublished": "Was hidden on {{date}}",
+          "caption_window": "Live {{start}} → {{end}}",
+          "empty": "Not listed on any sales channel yet.",
+          "inactive_marker": "Inactive",
+          "manage_cta": "Manage",
+          "manage_description": "Pick which sales channels list this product. Toggle a channel off to unlist it everywhere.",
+          "manage_title": "Manage sales channels",
+          "no_channels": "No sales channels available. Create one in Settings → Sales channels.",
+          "status_hidden": "Hidden",
+          "status_live": "Live",
+          "status_not_available": "Not available",
+          "status_scheduled": "Scheduled",
+          "title": "Publishing"
+        },
+        "section_basics": "Basics",
+        "section_categorization": "Categorization",
+        "section_inventory": "Inventory",
+        "section_media": "Media",
+        "section_organization": "Organization",
+        "section_pricing": "Pricing",
+        "section_seo": "SEO",
+        "section_variants": "Variants",
+        "status_options": {
+          "active": "Active",
+          "archived": "Archived",
+          "draft": "Draft"
+        },
+        "transfers": {
+          "description_external": "External receive into <strong>{{destination}}</strong>.",
+          "description_internal": "Inventory moved from <strong>{{source}}</strong> to <strong>{{destination}}</strong>.",
+          "edit_sheet_title": "Transfer {{number}}",
+          "items_empty": "No items yet.",
+          "section_from": "From",
+          "section_items": "Items",
+          "section_to": "To",
+          "sheet_title": "New stock transfer"
+        },
+        "variants_empty": "No variants yet.",
+        "variants_one": "{{count}} variant",
+        "variants_other": "{{count}} variants"
       }
     },
     "resource_picker": {
@@ -853,6 +1192,244 @@
       "positive_number": "{{field}} must be greater than 0",
       "required": "{{field}} is required",
       "store_name_required": "Store name is required"
+    },
+    "products": {
+      "autocomplete": {
+        "empty": "No products match",
+        "placeholder": "Search products by name…"
+      },
+      "category_search_placeholder": "Search categories…",
+      "collection_search_placeholder": "Search collections…",
+      "columns": {
+        "in_stock": "In Stock",
+        "price": "Price",
+        "sku": "SKU"
+      },
+      "delete_confirm": "Are you sure you want to delete this product?",
+      "delete_label": "Delete product",
+      "inventory": {
+        "backorder_aria": "Allow backorder at {{location}}",
+        "columns": {
+          "backorder": "Backorder",
+          "location": "Location",
+          "on_hand": "On hand"
+        },
+        "empty_no_locations": "Add a stock location in Settings to start tracking inventory.",
+        "empty_no_variants": "Stock levels are managed per stock location. Add a variant to start tracking inventory.",
+        "on_hand_aria": "On hand at {{location}}",
+        "unknown_location": "Unknown location"
+      },
+      "media": {
+        "add_from_library": "Add from library",
+        "add_video": "Add video link",
+        "add_video_submit": "Add video",
+        "add_video_title": "Add a video link",
+        "assigned_variants_help": "Pick the variants this image represents. Leave blank to apply to all variants.",
+        "assigned_variants_label": "Assigned variants",
+        "delete_confirm": "Delete this media? This cannot be undone.",
+        "drop_hint": "Drag & drop media here, or click to browse",
+        "edit_title": "Edit media",
+        "file_types_hint": "Images (PNG, JPG, WebP) and video (MP4, WebM, MOV)",
+        "focal_point_help": "Click the image to set what stays in frame when it is cropped.",
+        "focal_point_reset": "Reset",
+        "unsupported_file_one": "{{count}} file was not added — only images and video are supported.",
+        "unsupported_file_other": "{{count}} files were not added — only images and video are supported.",
+        "upload_failed": "Failed to upload {{name}}: {{message}}",
+        "upload_status_failed": "Failed",
+        "video_preview_title": "Video preview",
+        "video_url_invalid": "Enter a YouTube or Vimeo link."
+      },
+      "no_categories_found": "No categories found",
+      "no_collections_found": "No collections found",
+      "options": {
+        "add_cta": "Add option type",
+        "count_one": "{{count}} value",
+        "count_other": "{{count}} values",
+        "create_description": "Define an option that variants can use (e.g. size, color).",
+        "create_label": "Create option type",
+        "delete_confirm": {
+          "message": "This will also delete all of its values. Variants using these values will lose them.",
+          "title": "Delete option type?"
+        },
+        "edit_description": "Edit the option type and its values.",
+        "image_upload_failed": "Failed to upload image",
+        "kinds": {
+          "buttons": "Buttons",
+          "color_swatch": "Color swatch",
+          "dropdown": "Dropdown"
+        },
+        "value_label_placeholder": "e.g. Small",
+        "value_name_placeholder": "e.g. small",
+        "values_help": "Drag values to reorder. The first value is the default for new variants."
+      },
+      "price_lists": {
+        "errors": {
+          "failed_to_activate": "Failed to activate price list",
+          "failed_to_deactivate": "Failed to deactivate price list"
+        },
+        "messages": {
+          "activated": "Price list activated",
+          "created": "Price list created",
+          "deactivated": "Price list deactivated",
+          "deleted": "Price list deleted",
+          "updated": "Price list updated"
+        },
+        "validation": {
+          "ends_after_starts": "Must be after start date."
+        }
+      },
+      "product_type_adds_options_one": "This type adds {{options}} to new products.",
+      "product_type_adds_options_other": "This type adds {{options}} to new products.",
+      "product_type_placeholder": "No product type",
+      "save_label": "Save product",
+      "seo": {
+        "meta_description_placeholder": "SEO description",
+        "meta_title_placeholder": "SEO title",
+        "slug_placeholder": "product-url-handle"
+      },
+      "tax_category_placeholder": "Select tax category",
+      "transfers": {
+        "create_description": "Move stock between locations, or receive new stock from an external supplier.",
+        "delete_confirm": {
+          "message": "Stock movements created by this transfer will be reversed.",
+          "title": "Delete this transfer?"
+        },
+        "destination_placeholder": "Select destination location",
+        "details_card": "Details",
+        "different_locations_error": "Source and destination must differ.",
+        "external_label": "External (supplier receive)",
+        "fields": {
+          "created": "Created",
+          "external_receive": "External receive",
+          "immutable_note": "Stock transfers are immutable once created.",
+          "internal": "Internal",
+          "reference": "Reference",
+          "type": "Type"
+        },
+        "items_table": {
+          "qty": "Qty",
+          "sku": "SKU",
+          "variant": "Variant"
+        },
+        "new_cta": "New transfer",
+        "reference_label": "Reference",
+        "reference_placeholder": "PO number, supplier invoice, …",
+        "review_description": "Review the transfer before creating. Items can't be changed afterwards.",
+        "search_items_placeholder": "Search by name or SKU (3+ chars)…"
+      },
+      "variants": {
+        "add_option": "Add option",
+        "bulk_edit": {
+          "grid_aria": "Variant bulk edit spreadsheet",
+          "title": "Bulk edit variants",
+          "trigger": "Bulk edit",
+          "unset": "None"
+        },
+        "create_option_type": "Create new option type",
+        "create_option_type_title": "New option type",
+        "create_value": "New value",
+        "create_value_title": "New option value",
+        "default_variant": "Default variant",
+        "edit_row_aria": "Edit {{name}}",
+        "edit_variant": "Edit variant — {{name}}",
+        "errors": {
+          "failed_to_create_option_type": "Failed to create option type",
+          "failed_to_create_value": "Failed to create value"
+        },
+        "keep": "Keep all",
+        "option_type_label": "Option type",
+        "option_type_placeholder": "Pick an option type",
+        "orphan_warning": "{{count}} existing variant(s) will be removed on save:",
+        "orphan_warning_one": "{{count}} existing variant no longer matches the selected options and will be removed on save:",
+        "orphan_warning_other": "{{count}} existing variants no longer match the selected options and will be removed on save:",
+        "remove_row_aria": "Remove {{name}}",
+        "sheet": {
+          "availability": "Availability",
+          "customs": "Customs",
+          "customs_help": "Used on customs forms when this item ships across a border.",
+          "identity": "Identity",
+          "tax_category_placeholder": "Inherit from product"
+        },
+        "title": "Variants",
+        "variant_label": "Variant"
+      }
+    },
+    "product_types": {
+      "add_cta": "Add product type",
+      "add_sheet_title": "New product type",
+      "affects_new_only": {
+        "description": "Editing option types and categories shapes products created from now on. Products that already have this type keep what they have. The custom fields below always show on every product of this type.",
+        "title": "Changes apply to new products"
+      },
+      "apply_to_products": {
+        "confirm_label": "Apply",
+        "cta_one": "Apply to {{count}} existing product",
+        "cta_other": "Apply to {{count}} existing products",
+        "message_one": "This adds this type’s missing option types and categories to {{count}} product. Nothing is removed.",
+        "message_other": "This adds this type’s missing option types and categories to {{count}} products. Nothing is removed.",
+        "title": "Apply to existing products"
+      },
+      "create_description": "Group products and define how they can be delivered.",
+      "create_label": "Create product type",
+      "custom_delivery_profile": "Custom",
+      "default_delivery_profile": "Store default profile",
+      "delete_confirm": {
+        "message": "Are you sure you want to delete “{{name}}”? Types still used by products cannot be deleted.",
+        "title": "Delete product type"
+      },
+      "edit_description": "Change the name or the ways products of this type are delivered.",
+      "edit_sheet_title": "Edit product type",
+      "empty": "No product types yet",
+      "messages": {
+        "applied_to_products": "Applying to existing products",
+        "created": "Product type created",
+        "deleted": "Product type deleted",
+        "updated": "Product type updated"
+      },
+      "no_categories": "No categories yet",
+      "no_option_types": "No option types yet",
+      "option_type_search_placeholder": "Search option types",
+      "search_placeholder": "Search product types"
+    },
+    "calculators": {
+      "default_refund_amount": "Default Refund Amount",
+      "default_tax": "Default Tax",
+      "digital_delivery": "Digital Delivery",
+      "flat_percent_item_total": "Flat Percent",
+      "flat_rate": "Flat Rate",
+      "flexi_rate": "Flexi Rate",
+      "per_item": "Per Item",
+      "percent_on_line_item": "Percent Per Line Item",
+      "price_sack": "Price Sack",
+      "tiered_flat_rate": "Tiered Flat Rate",
+      "tiered_percent": "Tiered Percent"
+    },
+    "stock_levels": {
+      "messages": {
+        "stock_level_deleted": "Stock level deleted",
+        "stock_updated": "Stock updated"
+      }
+    },
+    "option_types": {
+      "columns": {
+        "values": "Values"
+      },
+      "kinds": {
+        "buttons": "Buttons",
+        "color_swatch": "Color swatch",
+        "dropdown": "Dropdown"
+      },
+      "messages": {
+        "created": "Option type created",
+        "deleted": "Option type deleted",
+        "updated": "Option type updated"
+      },
+      "table": {
+        "empty": "No option types yet",
+        "search_placeholder": "Search by name…"
+      },
+      "value_count_one": "{{count}} value",
+      "value_count_other": "{{count}} values"
     }
   }
 }

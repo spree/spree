@@ -583,6 +583,15 @@
         "alt": {
           "label": "替代文本",
           "placeholder": "为无障碍访问和 SEO 描述该图片"
+        },
+        "external_video_url": {
+          "help": "粘贴 YouTube 或 Vimeo 链接。",
+          "label": "视频链接",
+          "placeholder": "https://www.youtube.com/watch?v=..."
+        },
+        "poster": {
+          "help": "播放前显示的静态图片。留空则使用视频平台自带的封面（如果有）。",
+          "label": "视频封面"
         }
       },
       "meta_description": {
@@ -691,6 +700,101 @@
       },
       "zipcode": {
         "label": "邮政编码"
+      },
+      "product": {
+        "available_on": {
+          "label": "上架日期"
+        },
+        "category_ids": {
+          "label": "分类"
+        },
+        "channels": {
+          "label": "销售渠道"
+        },
+        "collection_ids": {
+          "help": "此处仅可设置手动系列；自动系列由其规则决定。",
+          "label": "系列"
+        },
+        "delivery_profile_id": {
+          "help": "决定哪些区域和配送方式适用于该商品。",
+          "label": "配送配置方案"
+        },
+        "description": {
+          "label": "描述",
+          "placeholder": "撰写产品描述…"
+        },
+        "discontinue_on": {
+          "label": "下架日期"
+        },
+        "make_active_at": {
+          "label": "激活日期"
+        },
+        "name": {
+          "label": "名称",
+          "placeholder": "产品名称"
+        },
+        "product_type_id": {
+          "help": "决定结账时提供哪些配送选项。",
+          "label": "商品类型"
+        },
+        "seller": {
+          "label": "卖家"
+        },
+        "tags": {
+          "label": "标签"
+        }
+      },
+      "variant": {
+        "backorder_limit": {
+          "help": "超出可用库存销售的最大数量——用于限制缺货下单和预购。留空表示无限量。",
+          "label": "缺货下单上限",
+          "placeholder": "无限量"
+        },
+        "barcode": {
+          "label": "条形码"
+        },
+        "country_of_origin": {
+          "label": "原产国"
+        },
+        "customs_description": {
+          "label": "海关申报描述",
+          "placeholder": "货物的简明描述"
+        },
+        "depth": {
+          "label": "深度"
+        },
+        "dimensions_unit": {
+          "label": "单位"
+        },
+        "height": {
+          "label": "高度"
+        },
+        "hs_code": {
+          "label": "HS 编码",
+          "placeholder": "例如 640411"
+        },
+        "preorder_ships_at": {
+          "help": "你预计发出预购订单的时间。作为交付承诺向顾客展示；该日期过后预购结束。",
+          "label": "发货时间",
+          "placeholder": "选择日期"
+        },
+        "preorderable": {
+          "help": "在有货之前销售此变体。用缺货下单上限来限制数量，将到货数量填入库存，或留空表示无限量。",
+          "label": "可预购"
+        },
+        "sku": {
+          "label": "SKU",
+          "placeholder": "PRODUCT-RED-S"
+        },
+        "weight": {
+          "label": "重量"
+        },
+        "weight_unit": {
+          "label": "单位"
+        },
+        "width": {
+          "label": "宽度"
+        }
       }
     },
     "image_upload": {
@@ -752,6 +856,241 @@
           "edit_sheet_title": "编辑库存位置",
           "search_placeholder": "搜索库存位置…"
         }
+      },
+      "products": {
+        "add_cta": "添加商品",
+        "bulk": {
+          "add_categories_action": "添加到分类…",
+          "add_channels_action": "添加到销售渠道…",
+          "add_collections_action": "添加到系列",
+          "add_tags_action": "添加标签…",
+          "categories_add_description": "选择要将这些商品添加到的分类。",
+          "categories_add_failed": "将商品添加到分类失败",
+          "categories_add_title": "添加到分类",
+          "categories_added": "已将 {n} 个商品添加到分类",
+          "categories_remove_description": "选择要将这些商品从中移除的分类。",
+          "categories_remove_failed": "将商品从分类中移除失败",
+          "categories_remove_title": "从分类中移除",
+          "categories_removed": "已将 {n} 个商品从分类中移除",
+          "channels_add_description": "选择要上架这些商品的销售渠道。",
+          "channels_add_failed": "在销售渠道上架商品失败",
+          "channels_add_title": "添加到销售渠道",
+          "channels_added": "已在销售渠道上架 {n} 个商品",
+          "channels_remove_description": "选择要将这些商品下架的销售渠道。",
+          "channels_remove_failed": "将商品从销售渠道下架失败",
+          "channels_remove_title": "从销售渠道中移除",
+          "channels_removed": "已将 {n} 个商品从销售渠道下架",
+          "collections_add_description": "所选商品将被添加到您选择的每个系列。",
+          "collections_add_failed": "无法将商品添加到系列",
+          "collections_add_title": "添加到系列",
+          "collections_added": "商品已添加到系列",
+          "collections_remove_description": "所选商品将从您选择的每个系列中移除。",
+          "collections_remove_failed": "无法从系列中移除商品",
+          "collections_remove_title": "从系列中移除",
+          "collections_removed": "商品已从系列中移除",
+          "delete_confirm": {
+            "message": "所选商品将被移除。此操作无法撤销。",
+            "title": "删除 {n} 个商品？"
+          },
+          "delete_failed": "删除商品失败",
+          "deleted": "已删除 {n} 个商品",
+          "remove_categories_action": "从分类中移除…",
+          "remove_channels_action": "从销售渠道中移除…",
+          "remove_collections_action": "从系列中移除",
+          "remove_tags_action": "移除标签…",
+          "set_status_action": "设置状态…",
+          "status_sheet_description": "选择要应用到所选商品的状态。",
+          "status_sheet_title": "设置商品状态",
+          "status_update_failed": "更新商品状态失败",
+          "status_updated": "已更新 {n} 个商品的状态",
+          "tags_add_description": "选择或创建要添加到这些商品的标签。",
+          "tags_add_failed": "添加标签失败",
+          "tags_add_title": "添加标签",
+          "tags_added": "已为 {n} 个商品添加标签",
+          "tags_remove_description": "选择要从这些商品移除的标签。",
+          "tags_remove_failed": "移除标签失败",
+          "tags_remove_title": "移除标签",
+          "tags_removed": "已从 {n} 个商品移除标签"
+        },
+        "clone_failed": "复制商品失败",
+        "clone_succeeded": "商品已复制",
+        "delete_failed": "删除商品失败",
+        "delete_succeeded": "商品已删除",
+        "edit": {
+          "bulk_prices": {
+            "no_variants": "至少添加一个变体以开始编辑价格。"
+          }
+        },
+        "inventory": {
+          "in_stock": "库存 {{count}} 件",
+          "in_stock_short": "有库存",
+          "on_backorder": "可延期交货",
+          "out_of_stock": "缺货"
+        },
+        "media_empty": "暂无媒体。",
+        "media_upload": "上传媒体",
+        "new": {
+          "create_failed": "创建商品失败",
+          "create_succeeded": "商品已创建",
+          "description": "设置您的商品 — 添加变体、价格、库存、媒体和自定义字段",
+          "preview_slug_placeholder": "your-product-slug",
+          "save_label": "创建商品",
+          "title": "新建商品"
+        },
+        "options": {
+          "add_value": "添加选项值",
+          "sheet_title_create": "创建选项类型",
+          "sheet_title_edit": "编辑选项类型",
+          "table": {
+            "values": "值"
+          },
+          "values_empty": "暂无值。",
+          "values_section": "值"
+        },
+        "price_lists": {
+          "activate": "启用",
+          "activate_confirm": {
+            "message": "“{{name}}”将立即应用于符合条件的客户，并保持有效，直至手动停用。",
+            "message_with_end": "“{{name}}”将立即应用于符合条件的客户，并保持有效，直至手动停用或到达结束日期（{{ends_at}}）。",
+            "title": "激活价格列表？"
+          },
+          "add_cta": "新建价格表",
+          "add_products_cta": "添加商品",
+          "add_rule": "添加规则",
+          "add_rule_help": "选择要配置的规则类型。",
+          "basics_section": "基本信息",
+          "deactivate": "停用",
+          "deactivate_confirm": {
+            "message": "\"{{name}}\" 将立即对客户停止生效。已有订单不受影响。",
+            "title": "停用价格表？"
+          },
+          "delete_confirm": {
+            "message": "移除\"{{name}}\"将删除其价格。此操作无法撤销。",
+            "title": "删除价目表？"
+          },
+          "edit_prices": {
+            "add_products_link": "添加商品",
+            "columns": {
+              "compare_at_price": "对比价",
+              "price": "价格",
+              "product": "商品",
+              "sku": "SKU",
+              "variant": "变体"
+            },
+            "compare_at_aria": "{{label}} 的对比价",
+            "count_summary_one": "{{count}} 个 {{currency}} 价格",
+            "count_summary_other": "{{count}} 个 {{currency}} 价格",
+            "currency_label": "货币",
+            "dirty_summary_one": "{{count}} 项未保存的更改",
+            "dirty_summary_other": "{{count}} 项未保存的更改",
+            "discard_confirm": {
+              "message_close_one": "您有 {{count}} 个未保存的价格。关闭将放弃它。",
+              "message_close_other": "您有 {{count}} 个未保存的价格。关闭将放弃它们。",
+              "message_currency": "切换货币将放弃您未保存的价格。",
+              "title": "放弃未保存的价格？"
+            },
+            "empty": "此列表中暂无商品。",
+            "empty_no_base_prices": "暂无基础价格。",
+            "empty_pick_products": "在价目表中选择商品以开始设置价格。",
+            "grid_aria": "变体价格",
+            "no_matches_for_filters": "没有价格符合当前筛选条件。",
+            "no_matches_for_search": "没有价格匹配 \"{{search}}\"。",
+            "price_aria": "{{label}} 的价格",
+            "save_cta": "保存价格",
+            "save_failed": "保存价格失败",
+            "save_success_one": "已保存 {{count}} 个价格",
+            "save_success_other": "已保存 {{count}} 个价格",
+            "search_placeholder": "按商品、SKU 或选项搜索…",
+            "title": "编辑价格 — {{name}}",
+            "variant_default": "默认"
+          },
+          "edit_prices_cta": "编辑价格",
+          "no_changes": "没有需要保存的更改。",
+          "prices_help_one": "已配置 {{count}} 个价格。打开批量编辑器进行更新。",
+          "prices_help_other": "已配置 {{count}} 个价格。打开批量编辑器进行更新。",
+          "prices_help_zero": "在上方选择商品以生成占位价格，然后打开批量编辑器。",
+          "products_empty": "暂无商品——添加一个以开始编辑价格。",
+          "products_empty_search": "没有匹配的商品",
+          "products_help": "选择此价格表适用的商品。保存时会创建占位价格——请在下方填写。",
+          "products_search_placeholder": "按名称搜索商品…",
+          "products_section": "商品",
+          "products_selected_one": "已选择 {{count}} 个商品。",
+          "products_selected_other": "已选择 {{count}} 个商品。",
+          "remove_rule_confirm": {
+            "message": "保存价格列表时将移除该规则。",
+            "title": "移除规则？"
+          },
+          "remove_selected": "移除所选",
+          "rule_click_to_configure": "点击进行配置",
+          "rule_default_description": "调整该规则的参数。",
+          "rule_name_overflow": "{{names}} 等 {{count}} 项",
+          "rule_no_options": "此规则没有可配置选项——只要存在即应用该约束。",
+          "rule_types_all_used": "所有可用的规则类型均已添加到此价格表。",
+          "rule_types_empty": "未注册任何规则类型。",
+          "rules_empty": "暂无规则——此价格表适用于所有购物者。",
+          "rules_help": "决定此价格表何时生效的条件。使用“全部”要求满足每条规则，使用“任意”取第一个匹配项。",
+          "rules_section": "规则",
+          "schedule": "安排",
+          "schedule_confirm": {
+            "message": "\"{{name}}\" 将于 {{starts_at}} 上线，并持续生效至其结束日期。",
+            "title": "排定价目表上线时间？"
+          },
+          "schedule_section": "安排",
+          "sheet_title_create": "创建价格表",
+          "sheet_title_edit": "编辑价格表",
+          "subtitle": "针对客户群体、地区或批量层级的定向定价。",
+          "title": "价格表",
+          "unschedule": "取消安排",
+          "unschedule_confirm": {
+            "message": "\"{{name}}\" 将不再在其排定的日期激活。您可以稍后重新排期或手动激活它。",
+            "title": "取消价格表的排期？"
+          }
+        },
+        "publishing": {
+          "caption_hidden_after": "将于 {{date}} 下架",
+          "caption_live": "现在对客户可见",
+          "caption_not_available": "已隐藏 — 产品状态为 {{product_status}}",
+          "caption_scheduled": "将于 {{date}} 上线",
+          "caption_unpublished": "已于 {{date}} 隐藏",
+          "caption_window": "上线时间 {{start}} → {{end}}",
+          "empty": "尚未在任何销售渠道上展示。",
+          "inactive_marker": "未启用",
+          "manage_cta": "管理",
+          "manage_description": "选择哪些销售渠道展示此产品。关闭某个渠道即可在所有位置下架。",
+          "manage_title": "管理销售渠道",
+          "no_channels": "暂无可用的销售渠道。请在 设置 → 销售渠道 中创建。",
+          "status_hidden": "已隐藏",
+          "status_live": "已上线",
+          "status_not_available": "不可用",
+          "status_scheduled": "已排期",
+          "title": "发布"
+        },
+        "section_basics": "基本信息",
+        "section_categorization": "分类",
+        "section_inventory": "库存",
+        "section_media": "媒体",
+        "section_organization": "组织",
+        "section_pricing": "价格",
+        "section_seo": "SEO",
+        "section_variants": "变体",
+        "status_options": {
+          "active": "启用",
+          "archived": "已归档",
+          "draft": "草稿"
+        },
+        "transfers": {
+          "description_external": "外部收货至 <strong>{{destination}}</strong>。",
+          "description_internal": "库存从 <strong>{{source}}</strong> 调拨至 <strong>{{destination}}</strong>。",
+          "edit_sheet_title": "调拨 {{number}}",
+          "items_empty": "暂无商品。",
+          "section_from": "从",
+          "section_items": "商品",
+          "section_to": "至",
+          "sheet_title": "新建库存调拨"
+        },
+        "variants_empty": "暂无变体。",
+        "variants_one": "{{count}} 个变体",
+        "variants_other": "{{count}} 个变体"
       }
     },
     "resource_picker": {
@@ -851,6 +1190,243 @@
       "positive_number": "{{field}} 必须大于 0",
       "required": "{{field}} 为必填项",
       "store_name_required": "商店名称为必填项"
+    },
+    "products": {
+      "autocomplete": {
+        "empty": "没有匹配的商品",
+        "placeholder": "按名称搜索商品…"
+      },
+      "category_search_placeholder": "搜索分类…",
+      "collection_search_placeholder": "搜索系列…",
+      "columns": {
+        "in_stock": "库存",
+        "price": "价格",
+        "sku": "SKU"
+      },
+      "delete_confirm": "确定要删除此产品吗？",
+      "delete_label": "删除产品",
+      "inventory": {
+        "backorder_aria": "允许在 {{location}} 延期交货",
+        "columns": {
+          "backorder": "延期交货",
+          "location": "库存地点",
+          "on_hand": "现有库存"
+        },
+        "empty_no_locations": "在「设置」中添加库存地点以开始跟踪库存。",
+        "empty_no_variants": "库存水平按库存地点管理。添加一个变体以开始跟踪库存。",
+        "on_hand_aria": "{{location}} 的现有库存",
+        "unknown_location": "未知位置"
+      },
+      "media": {
+        "add_from_library": "从媒体库添加",
+        "add_video": "添加视频链接",
+        "add_video_submit": "添加视频",
+        "add_video_title": "添加视频链接",
+        "assigned_variants_help": "选择此图片所代表的变体。留空则应用于所有变体。",
+        "assigned_variants_label": "关联的变体",
+        "delete_confirm": "删除此媒体？此操作无法撤销。",
+        "drop_hint": "将媒体拖放到此处，或点击浏览",
+        "edit_title": "编辑媒体",
+        "file_types_hint": "图片（PNG、JPG、WebP）和视频（MP4、WebM、MOV）",
+        "focal_point_help": "点击图片，设置裁剪时需要保留的画面位置。",
+        "focal_point_reset": "重置",
+        "unsupported_file": "有 {{count}} 个文件未添加 — 仅支持图片和视频。",
+        "upload_failed": "上传 {{name}} 失败：{{message}}",
+        "upload_status_failed": "失败",
+        "video_preview_title": "视频预览",
+        "video_url_invalid": "请输入 YouTube 或 Vimeo 链接。"
+      },
+      "no_categories_found": "未找到分类",
+      "no_collections_found": "未找到系列",
+      "options": {
+        "add_cta": "添加选项类型",
+        "count_one": "{{count}} 个值",
+        "count_other": "{{count}} 个值",
+        "create_description": "定义变体可使用的选项（例如尺寸、颜色）。",
+        "create_label": "创建选项类型",
+        "delete_confirm": {
+          "message": "此操作还将删除其所有值。使用这些值的变体将失去这些值。",
+          "title": "删除选项类型？"
+        },
+        "edit_description": "编辑选项类型及其值。",
+        "image_upload_failed": "图片上传失败",
+        "kinds": {
+          "buttons": "按钮",
+          "color_swatch": "颜色色板",
+          "dropdown": "下拉菜单"
+        },
+        "value_label_placeholder": "例如 Small",
+        "value_name_placeholder": "例如 small",
+        "values_help": "拖动值以重新排序。第一个值是新变体的默认值。"
+      },
+      "price_lists": {
+        "errors": {
+          "failed_to_activate": "启用价目表失败",
+          "failed_to_deactivate": "停用价目表失败"
+        },
+        "messages": {
+          "activated": "价目表已启用",
+          "created": "价目表已创建",
+          "deactivated": "价目表已停用",
+          "deleted": "价目表已删除",
+          "updated": "价目表已更新"
+        },
+        "validation": {
+          "ends_after_starts": "必须晚于开始日期。"
+        }
+      },
+      "product_type_adds_options_one": "此类型会为新商品添加{{options}}。",
+      "product_type_adds_options_other": "此类型会为新商品添加{{options}}。",
+      "product_type_placeholder": "无商品类型",
+      "save_label": "保存产品",
+      "seo": {
+        "meta_description_placeholder": "SEO 描述",
+        "meta_title_placeholder": "SEO 标题",
+        "slug_placeholder": "product-url-handle"
+      },
+      "tax_category_placeholder": "选择税务类别",
+      "transfers": {
+        "create_description": "在库存地点之间调拨库存，或从外部供应商收货。",
+        "delete_confirm": {
+          "message": "此调拨创建的库存变动将被撤销。",
+          "title": "删除此调拨？"
+        },
+        "destination_placeholder": "选择目标地点",
+        "details_card": "详情",
+        "different_locations_error": "来源地点和目标地点必须不同。",
+        "external_label": "外部（供应商收货）",
+        "fields": {
+          "created": "创建时间",
+          "external_receive": "外部接收",
+          "immutable_note": "库存调拨一经创建即不可更改。",
+          "internal": "内部",
+          "reference": "参考编号",
+          "type": "类型"
+        },
+        "items_table": {
+          "qty": "数量",
+          "sku": "SKU",
+          "variant": "变体"
+        },
+        "new_cta": "新建调拨",
+        "reference_label": "参考编号",
+        "reference_placeholder": "采购单号、供应商发票……",
+        "review_description": "创建前请检查此调拨。创建后将无法更改商品项。",
+        "search_items_placeholder": "按名称或 SKU 搜索（3 个以上字符）…"
+      },
+      "variants": {
+        "add_option": "添加选项",
+        "bulk_edit": {
+          "grid_aria": "变体批量编辑表格",
+          "title": "批量编辑变体",
+          "trigger": "批量编辑",
+          "unset": "无"
+        },
+        "create_option_type": "新建选项类型",
+        "create_option_type_title": "新选项类型",
+        "create_value": "新值",
+        "create_value_title": "新选项值",
+        "default_variant": "默认变体",
+        "edit_row_aria": "编辑 {{name}}",
+        "edit_variant": "编辑变体 — {{name}}",
+        "errors": {
+          "failed_to_create_option_type": "创建选项类型失败",
+          "failed_to_create_value": "创建值失败"
+        },
+        "keep": "全部保留",
+        "option_type_label": "选项类型",
+        "option_type_placeholder": "请选择选项类型",
+        "orphan_warning": "有 {{count}} 个现有变体将在保存时被移除：",
+        "orphan_warning_one": "有 {{count}} 个现有变体不再与所选选项匹配，将在保存时被移除：",
+        "orphan_warning_other": "有 {{count}} 个现有变体不再与所选选项匹配，将在保存时被移除：",
+        "remove_row_aria": "移除 {{name}}",
+        "sheet": {
+          "availability": "可用性",
+          "customs": "海关",
+          "customs_help": "当该商品跨境运输时用于海关申报单。",
+          "identity": "标识",
+          "tax_category_placeholder": "继承自商品"
+        },
+        "title": "变体",
+        "variant_label": "变体"
+      }
+    },
+    "product_types": {
+      "add_cta": "添加商品类型",
+      "add_sheet_title": "新建商品类型",
+      "affects_new_only": {
+        "description": "编辑选项类型和分类只影响今后创建的商品。已使用此类型的商品保持不变。下方的自定义字段始终显示在此类型的每个商品上。",
+        "title": "更改仅影响新商品"
+      },
+      "apply_to_products": {
+        "confirm_label": "应用",
+        "cta_one": "应用到 {{count}} 个现有商品",
+        "cta_other": "应用到 {{count}} 个现有商品",
+        "message_one": "这将为 {{count}} 个商品添加此类型缺失的选项类型和分类。不会删除任何内容。",
+        "message_other": "这将为 {{count}} 个商品添加此类型缺失的选项类型和分类。不会删除任何内容。",
+        "title": "应用到现有商品"
+      },
+      "create_description": "将商品分组并定义其交付方式。",
+      "create_label": "创建商品类型",
+      "custom_delivery_profile": "自定义",
+      "default_delivery_profile": "店铺默认配置方案",
+      "delete_confirm": {
+        "message": "确定要删除“{{name}}”吗?仍被商品使用的类型无法删除。",
+        "title": "删除商品类型"
+      },
+      "edit_description": "修改名称或此类型商品的交付方式。",
+      "edit_sheet_title": "编辑商品类型",
+      "empty": "暂无商品类型",
+      "messages": {
+        "applied_to_products": "正在应用到现有商品",
+        "created": "商品类型已创建",
+        "deleted": "商品类型已删除",
+        "updated": "商品类型已更新"
+      },
+      "no_categories": "暂无分类",
+      "no_option_types": "暂无选项类型",
+      "option_type_search_placeholder": "搜索选项类型",
+      "search_placeholder": "搜索商品类型"
+    },
+    "calculators": {
+      "default_refund_amount": "默认退款金额",
+      "default_tax": "默认税费",
+      "digital_delivery": "数字交付",
+      "flat_percent_item_total": "固定百分比",
+      "flat_rate": "固定费率",
+      "flexi_rate": "弹性费率",
+      "per_item": "按件计费",
+      "percent_on_line_item": "按订单项百分比",
+      "price_sack": "价格袋",
+      "tiered_flat_rate": "阶梯固定费率",
+      "tiered_percent": "阶梯百分比"
+    },
+    "stock_levels": {
+      "messages": {
+        "stock_level_deleted": "库存水平已删除",
+        "stock_updated": "库存已更新"
+      }
+    },
+    "option_types": {
+      "columns": {
+        "values": "值"
+      },
+      "kinds": {
+        "buttons": "按钮",
+        "color_swatch": "颜色样本",
+        "dropdown": "下拉菜单"
+      },
+      "messages": {
+        "created": "选项类型已创建",
+        "deleted": "选项类型已删除",
+        "updated": "选项类型已更新"
+      },
+      "table": {
+        "empty": "暂无选项类型",
+        "search_placeholder": "按名称搜索…"
+      },
+      "value_count_one": "{{count}} 个值",
+      "value_count_other": "{{count}} 个值"
     }
   }
 }

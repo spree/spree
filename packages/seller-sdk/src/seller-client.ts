@@ -211,8 +211,15 @@ export class SellerClient {
         params: params ? transformListParams(params) : undefined,
       }),
 
-    get: (id: string, options?: RequestOptions): Promise<Product> =>
-      this.request<Product>('GET', `/products/${id}`, options),
+    /**
+     * @param expand associations to include — the product form asks for
+     *   `variants,media,default_variant`, which is everything it edits.
+     */
+    get: (id: string, expand?: string, options?: RequestOptions): Promise<Product> =>
+      this.request<Product>('GET', `/products/${id}`, {
+        ...options,
+        params: expand ? { expand } : undefined,
+      }),
 
     create: (params: ProductParams, options?: RequestOptions): Promise<Product> =>
       this.request<Product>('POST', '/products', { ...options, body: params }),

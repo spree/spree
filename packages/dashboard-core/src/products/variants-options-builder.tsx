@@ -1,4 +1,3 @@
-import type { OptionType } from '@spree/admin-sdk'
 import {
   Badge,
   Button,
@@ -15,11 +14,12 @@ import {
 import { CheckIcon, PencilIcon, PlusIcon, XIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import type { PanelOptionType as OptionType } from '../api-client'
 import {
   useCreateOptionType,
-  useOptionTypes,
+  useFormOptionTypes as useOptionTypes,
   useUpdateOptionType,
-} from '../../../hooks/use-option-types'
+} from './use-product-form-data'
 import { autoExpandIndex, type SelectedOptionType } from './variants-matrix'
 
 interface Props {
@@ -39,7 +39,7 @@ interface Props {
 // reconcile step that turns this state into RHF variant rows.
 export function VariantsOptionsBuilder({ selected, onChange, extraOptionTypes }: Props) {
   const { t } = useTranslation()
-  const { data: optionTypesData } = useOptionTypes({ limit: 100 })
+  const { data: optionTypesData } = useOptionTypes()
   const allOptionTypes = useMemo(() => {
     const paged = optionTypesData?.data ?? []
     if (!extraOptionTypes?.length) return paged

@@ -1,69 +1,42 @@
-import { mapSpreeErrorsToForm } from '@spree/dashboard-core'
+import { zodResolver } from '@hookform/resolvers/zod'
 import {
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-  Input,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  StatusBadge,
-  Textarea,
-  toastManager,
-} from '@spree/dashboard-ui'
+  CategorizationCard,
+  GeneralCard,
+  InventoryCard,
+  MediaCard,
+  mapSpreeErrorsToForm,
+  PageHeader,
+  type PanelProduct,
+  PricesCard,
+  type ProductFormValues,
+  productFormSchema,
+  productToFormValues,
+  VariantsCard,
+  variantToWirePayload,
+} from '@spree/dashboard-core'
+import { FormActions, ResourceLayout, StatusBadge, toastManager } from '@spree/dashboard-ui'
 import type { ProductParams } from '@spree/seller-sdk'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { sellerClient } from '../api-client'
 import { CenteredMessage } from '../components/centered-message'
-import { ProductCustomFields } from '../components/product-custom-fields'
 import { ProductStatusCard } from '../components/product-status-card'
 import { RetryableError } from '../components/retryable-error'
 
-interface ProductFormValues {
-  name: string
-  description: string
-  amount: string
-  slug: string
-  meta_title: string
-  meta_description: string
-  meta_keywords: string
-  product_type_id: string
-  custom_fields: Record<string, string>
-}
-
-const EMPTY_VALUES: ProductFormValues = {
-  name: '',
-  description: '',
-  amount: '',
-  slug: '',
-  meta_title: '',
-  meta_description: '',
-  meta_keywords: '',
-  product_type_id: '',
-  custom_fields: {},
-}
+/** Everything the form edits, in one request. */
+const PRODUCT_EXPAND = 'variants,media,default_variant,custom_fields'
 
 /**
  * One product, created or edited.
  *
- * The same form either way: a seller filling in a new listing and a seller
- * correcting an old one are doing the same thing, and two screens would drift.
- *
- * Status is deliberately absent from the form. A seller does not choose
- * whether their product is on sale — they submit it and the marketplace
- * decides, which is what the status card does instead
+ * The same cards the operator's dashboard renders, in the same order, from
+ * `@spree/dashboard-core` — the two forms are one form, and the differences
+ * are only what a seller may not do. Publishing to channels and tax category
+ * are absent because they are marketplace configuration, and status is not a
+ * field here at all: a seller submits for review and the marketplace decides
  * (docs/plans/6.0-seller-product-submission.md).
  */
 export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
@@ -82,39 +55,32 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
     refetch,
   } = useQuery({
     queryKey: productKey,
-    queryFn: () => sellerClient().products.get(productId as string),
+    queryFn: () => sellerClient().products.get(productId as string, PRODUCT_EXPAND),
     enabled: !!productId,
   })
 
-  // The types a seller may list against, with the custom fields each asks for.
-  const { data: productTypes } = useQuery({
-    queryKey: ['seller', sellerId, 'product-types'],
-    queryFn: () => sellerClient().productTypes.list({ per_page: 100 }),
+  // The seller panel has no StoreProvider — its tenant is a seller and the
+  // store is derived server-side — so the currencies the price cards need
+  // come from the profile, which reports the store's.
+  const { data: profile } = useQuery({
+    queryKey: ['seller', sellerId, 'profile'],
+    queryFn: () => sellerClient().profile.get(),
   })
 
-  const form = useForm<ProductFormValues>({ defaultValues: EMPTY_VALUES })
+  const form = useForm<ProductFormValues>({
+    // Cast for the same reason the operator's form does: `z.coerce.number()`
+    // infers `unknown` input, which the resolver's generic will not accept.
+    resolver: zodResolver(productFormSchema) as any,
+    defaultValues: productToFormValues({ id: '', name: '' }),
+  })
 
   // Reset once the record arrives, so the inputs show what was last saved
   // rather than the blank defaults the form mounted with.
   useEffect(() => {
     if (!product) return
 
-    form.reset({
-      ...EMPTY_VALUES,
-      name: product.name ?? '',
-      description: product.description ?? '',
-      amount: product.price?.amount ?? '',
-      slug: product.slug ?? '',
-      meta_title: product.meta_title ?? '',
-      meta_description: product.meta_description ?? '',
-      meta_keywords: product.meta_keywords ?? '',
-      product_type_id: product.product_type_id ?? '',
-      custom_fields: (product.metadata ?? {}) as Record<string, string>,
-    })
+    form.reset(productToFormValues(product as PanelProduct, product.media))
   }, [product, form])
-
-  const selectedTypeId = form.watch('product_type_id')
-  const selectedType = productTypes?.data.find((type) => type.id === selectedTypeId)
 
   const save = useMutation({
     mutationFn: (values: ProductFormValues) => {
@@ -122,20 +88,26 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
         name: values.name,
         description: values.description,
         slug: values.slug || undefined,
-        meta_title: values.meta_title,
-        meta_description: values.meta_description,
-        meta_keywords: values.meta_keywords,
-        product_type_id: values.product_type_id || undefined,
-        metadata: values.custom_fields,
-      }
-      // Only sent when the seller typed one: an empty box means "leave the
-      // price alone", not "price this at nothing".
-      if (values.amount.trim()) {
-        // No currency on a new listing: the server prices it in the store's,
-        // which is the only place that knows it. Guessing here can persist a
-        // price in the wrong currency and drop the right one.
-        const currency = product?.price?.currency
-        payload.prices = [{ amount: values.amount.trim(), ...(currency ? { currency } : {}) }]
+        meta_title: values.meta_title ?? undefined,
+        meta_description: values.meta_description ?? undefined,
+        product_type_id: values.product_type_id ?? undefined,
+        category_ids: values.category_ids,
+        collection_ids: values.collection_ids,
+        tags: values.tags,
+        custom_fields: values.custom_fields,
+        // Both lists are the whole intent: anything the seller removed is
+        // absent here, which is what tells the API to drop it.
+        media: (values.media ?? []).map((item) => ({
+          id: item.id,
+          signed_id: item.signed_id ?? undefined,
+          alt: item.alt ?? undefined,
+          position: item.position,
+          media_type: item.media_type,
+          variant_ids: item.variant_ids,
+        })),
+        variants: (values.variants ?? []).map((variant, index) =>
+          variantToWirePayload(variant, index),
+        ) as ProductParams['variants'],
       }
 
       return productId
@@ -173,158 +145,70 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
   if (mode === 'edit' && !product)
     return <CenteredMessage>{t('products.not_found')}</CenteredMessage>
 
-  const { errors, isSubmitting } = form.formState
-
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <h1 className="font-medium text-2xl">
-            {productId ? product?.name : t('products.new_title')}
-          </h1>
-          {product?.status && (
-            <StatusBadge status={product.status} label={t(`products.statuses.${product.status}`)} />
-          )}
-        </div>
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? t('common.saving') : t('common.save')}
-        </Button>
-      </div>
-
-      {errors.root?.message && (
-        <p className="text-destructive text-sm" role="alert">
-          {errors.root.message}
-        </p>
-      )}
-
-      <div className="grid gap-4 lg:grid-cols-3">
-        <div className="flex flex-col gap-4 lg:col-span-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('products.details')}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <FieldGroup>
-                <Field>
-                  <FieldLabel htmlFor="name">{t('products.fields.name')}</FieldLabel>
-                  <Input
-                    id="name"
-                    aria-invalid={!!errors.name || undefined}
-                    {...form.register('name', { required: true })}
+    <FormProvider {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit, (errors) => {
+          // A schema rejection otherwise does nothing visible: the fields at
+          // fault may be in a card the seller cannot see.
+          toastManager.add({
+            type: 'error',
+            title: t('common.error'),
+            description: Object.keys(errors).join(', '),
+          })
+        })}
+      >
+        {form.formState.errors.root?.message && (
+          <p className="text-destructive text-sm" role="alert">
+            {form.formState.errors.root.message}
+          </p>
+        )}
+        <ResourceLayout
+          header={
+            <PageHeader
+              title={product?.name ?? t('products.new_title')}
+              backTo="products"
+              badges={
+                product?.status ? (
+                  <StatusBadge
+                    status={product.status}
+                    label={t(`products.statuses.${product.status}`)}
                   />
-                  <FieldError errors={[errors.name]} />
-                </Field>
-
-                <Field>
-                  <FieldLabel htmlFor="description">{t('products.fields.description')}</FieldLabel>
-                  <Textarea id="description" rows={6} {...form.register('description')} />
-                  <FieldError errors={[errors.description]} />
-                </Field>
-
-                <Field>
-                  <FieldLabel htmlFor="amount">{t('products.fields.price')}</FieldLabel>
-                  <Input
-                    id="amount"
-                    inputMode="decimal"
-                    placeholder={t('products.fields.price_placeholder')}
-                    {...form.register('amount')}
-                  />
-                  <FieldError errors={[errors.amount]} />
-                </Field>
-              </FieldGroup>
-            </CardContent>
-          </Card>
-
-          {selectedType && (
-            <ProductCustomFields
-              definitions={selectedType.custom_field_definitions ?? []}
-              register={form.register}
-              control={form.control}
+                ) : undefined
+              }
+              actions={<FormActions form={form} saveLabel={t('common.save')} />}
             />
-          )}
-
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('products.seo')}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <FieldGroup>
-                <Field>
-                  <FieldLabel htmlFor="slug">{t('products.fields.slug')}</FieldLabel>
-                  <Input id="slug" {...form.register('slug')} />
-                  <FieldError errors={[errors.slug]} />
-                </Field>
-
-                <Field>
-                  <FieldLabel htmlFor="meta_title">{t('products.fields.meta_title')}</FieldLabel>
-                  <Input id="meta_title" {...form.register('meta_title')} />
-                </Field>
-
-                <Field>
-                  <FieldLabel htmlFor="meta_description">
-                    {t('products.fields.meta_description')}
-                  </FieldLabel>
-                  <Textarea id="meta_description" rows={3} {...form.register('meta_description')} />
-                </Field>
-
-                <Field>
-                  <FieldLabel htmlFor="meta_keywords">
-                    {t('products.fields.meta_keywords')}
-                  </FieldLabel>
-                  <Input id="meta_keywords" {...form.register('meta_keywords')} />
-                </Field>
-              </FieldGroup>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="flex flex-col gap-4">
-          {productId && product && (
-            <ProductStatusCard
-              product={product}
-              onDone={() => {
-                void queryClient.invalidateQueries({ queryKey: productKey })
-                void queryClient.invalidateQueries({ queryKey: ['seller-products'] })
-              }}
-            />
-          )}
-
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('products.organization')}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Field>
-                <FieldLabel htmlFor="product_type_id">
-                  {t('products.fields.product_type')}
-                </FieldLabel>
-                <Select
-                  value={selectedTypeId}
-                  onValueChange={(value) =>
-                    form.setValue('product_type_id', value, { shouldDirty: true })
-                  }
-                >
-                  <SelectTrigger id="product_type_id">
-                    <SelectValue placeholder={t('products.fields.product_type_placeholder')}>
-                      {(value) =>
-                        productTypes?.data.find((type) => type.id === value)?.name ??
-                        t('products.fields.product_type_placeholder')
-                      }
-                    </SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    {productTypes?.data.map((type) => (
-                      <SelectItem key={type.id} value={type.id}>
-                        {type.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </Field>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    </form>
+          }
+          main={
+            <>
+              <GeneralCard form={form} />
+              <VariantsCard form={form} />
+              <MediaCard productId={productId} variants={product?.variants ?? []} form={form} />
+              <PricesCard
+                form={form}
+                productName={product?.name ?? ''}
+                currencies={profile?.supported_currencies}
+                defaultCurrency={profile?.default_currency}
+              />
+              <InventoryCard form={form} />
+            </>
+          }
+          sidebar={
+            <>
+              {productId && product && (
+                <ProductStatusCard
+                  product={product}
+                  onDone={() => {
+                    void queryClient.invalidateQueries({ queryKey: productKey })
+                    void queryClient.invalidateQueries({ queryKey: ['seller-products'] })
+                  }}
+                />
+              )}
+              <CategorizationCard form={form} />
+            </>
+          }
+        />
+      </form>
+    </FormProvider>
   )
 }
