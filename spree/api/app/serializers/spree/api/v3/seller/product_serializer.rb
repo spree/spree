@@ -34,10 +34,13 @@ module Spree
                if: proc { expand?('option_types') }
 
           # Why the marketplace sent this back, so the panel can show it
-          # against a rejected listing without a second request.
+          # against a rejected listing without a second request. Expanded
+          # rather than always sent — it is a per-product query, and the
+          # products list has no use for it.
           one :latest_submission,
               key: :submission,
-              resource: proc { Spree.api.product_submission_serializer }
+              resource: proc { Spree.api.product_submission_serializer },
+              if: proc { expand?('submission') }
         end
       end
     end

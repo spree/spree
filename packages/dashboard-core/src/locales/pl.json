@@ -1457,6 +1457,9 @@
       "value_count_many": "{{count}} wartości",
       "value_count_one": "{{count}} wartość",
       "value_count_other": "{{count}} wartości"
+    },
+    "media_library": {
+      "download": "Pobierz"
     }
   }
 }

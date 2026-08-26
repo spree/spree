@@ -1430,6 +1430,9 @@
       },
       "value_count_one": "{{count}} 个值",
       "value_count_other": "{{count}} 个值"
+    },
+    "media_library": {
+      "download": "下载"
     }
   }
 }

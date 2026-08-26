@@ -1433,6 +1433,9 @@
       },
       "value_count_one": "{{count}} value",
       "value_count_other": "{{count}} values"
+    },
+    "media_library": {
+      "download": "Download"
     }
   }
 }

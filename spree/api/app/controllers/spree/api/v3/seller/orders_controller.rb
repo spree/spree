@@ -25,9 +25,12 @@ module Spree
 
           # PATCH /api/v3/seller/orders/:id/cancel
           #
-          # A seller withdrawing from an order they cannot fulfil. Restocking
-          # and any refund are the workflow's own concern, so a seller cannot
-          # cancel without the money and stock following.
+          # A seller withdrawing from an order they cannot fulfil.
+          #
+          # Restocking and refunding are not asked for here, matching the
+          # operator's own cancel endpoint: the marketplace owns the money and
+          # settles with the customer separately, and a seller must not be the
+          # one deciding a refund.
           def cancel
             with_order_lock do
               result = Spree.order_cancel_workflow.call(

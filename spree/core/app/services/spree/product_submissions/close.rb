@@ -24,8 +24,11 @@ module Spree
       # @param metadata [Hash] merged onto the row
       # @return [Spree::ServiceModule::Result] value is the submission
       def call(product:, status:, reviewed_by: nil, review_note: nil, metadata: {})
-        submission = product.submissions.latest_first.detect(&:pending?) ||
-                     product.submissions.new(status: 'pending')
+        # The head of the trail, and only if it is still open: scanning the
+        # whole history for any pending row could settle a stale one from an
+        # earlier cycle instead of the decision actually in front of us.
+        latest = product.submissions.latest_first.first
+        submission = latest&.pending? ? latest : product.submissions.new(status: 'pending')
 
         attributes = { status: status, reviewed_at: Time.current, reviewed_by: reviewed_by }
         # A decision with no note must not wipe the note the row already

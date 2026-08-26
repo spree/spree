@@ -29,10 +29,12 @@ module Spree
           end
 
           # The live row in the review trail: who submitted, who decided,
-          # when, and what the seller was told.
+          # when, and what the seller was told. Expanded rather than always
+          # sent — it is a per-product query that the index has no use for.
           one :latest_submission,
               key: :submission,
-              resource: proc { Spree.api.admin_product_submission_serializer }
+              resource: proc { Spree.api.admin_product_submission_serializer },
+              if: proc { expand?('submission') }
 
           # `seller_id` comes from the store serializer. The name rides along
           # so the products list can show who sells a row without expanding —

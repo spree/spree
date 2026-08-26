@@ -175,6 +175,19 @@ RSpec.describe 'Spree::Products review workflows' do
 
       expect(product.reload.submissions).to be_empty
     end
+
+    # A rejection has already been decided. Inventing a `withdrawn` row for
+    # it would bury the real decision under an entry nobody made.
+    it 'does not withdraw a decision that was already made' do
+      Spree.product_propose_workflow.call(product: product)
+      Spree.product_reject_workflow.call(product: product, reason: 'Too dark')
+
+      Spree.product_archive_workflow.call(product: product)
+
+      expect(product.reload.submissions.count).to eq(1)
+      expect(product.latest_submission).to be_rejected
+      expect(product.latest_submission.review_note).to eq('Too dark')
+    end
   end
 
   # Leaving review is a decision, and a decision has to record who made it.
@@ -197,6 +210,19 @@ RSpec.describe 'Spree::Products review workflows' do
       expect(result).to be_success
       expect(product.reload.name).to eq('Revised')
       expect(product).to be_proposed
+    end
+
+    # The CSV importer assigns attributes itself and hands the workflow an
+    # already-dirty record. Reading the record rather than the payload
+    # refused every re-imported row whose product happened to be in review.
+    it 'allows a caller that assigned the status itself' do
+      product.update!(status: 'proposed')
+      product.status = 'active'
+
+      result = Spree.product_update_workflow.call(product: product)
+
+      expect(result).to be_success
+      expect(product.reload).to be_active
     end
   end
 

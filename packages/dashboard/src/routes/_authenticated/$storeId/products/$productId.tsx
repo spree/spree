@@ -115,6 +115,7 @@ function ProductForm({ product }: { product: Product }) {
   // intersecting against the live form `variants` ids. Newly-added variants
   // without a server id are unassignable until save (no id to send).
   const liveVariants = useWatch({ control: form.control, name: 'variants' })
+  const formStatus = useWatch({ control: form.control, name: 'status' }) ?? product?.status
   const liveVariantIds = new Set(
     (liveVariants ?? []).map((v) => v.id).filter((id): id is string => !!id),
   )
@@ -306,7 +307,11 @@ function ProductForm({ product }: { product: Product }) {
               <StatusCard
                 form={form}
                 reviewActions={
-                  <ProductReviewActions productId={productId} status={product.status} />
+                  // The form's status, not the record's: StatusCard decides
+                  // whether to render these from the same value, and reading
+                  // a different one left the buttons up against a product
+                  // that had already been approved.
+                  <ProductReviewActions productId={productId} status={formStatus ?? ''} />
                 }
               />
               <PublishingCard form={form} />

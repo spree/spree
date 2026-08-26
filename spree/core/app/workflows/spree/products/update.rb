@@ -41,6 +41,7 @@ module Spree
         # host apps and importers, and a missed key would send the nested
         # payload to the ActiveRecord collection setter instead.
         attrs = attributes.to_h.with_indifferent_access
+        @status_in_payload = attrs.key?(:status)
 
         # Held back: variants and media are reconciled after the save, so a
         # :validate handler reads `product.changes` describing the edit itself
@@ -54,7 +55,13 @@ module Spree
       # Reject — they are what record who made it. A plain status write would
       # put a product on sale with nobody's name against it, so it refuses
       # (docs/plans/6.0-seller-product-submission.md).
+      #
+      # Only what this call asked for: the CSV importer assigns attributes
+      # itself and hands over an already-dirty record, so reading the record
+      # rather than the payload would refuse every re-imported row whose
+      # product happens to be in review.
       def refuse_review_status_write
+        return unless @status_in_payload
         return unless product.status_changed?
         return unless product.status_was.in?(Spree::Product::REVIEW_STATUSES)
 

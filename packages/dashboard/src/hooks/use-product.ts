@@ -34,6 +34,8 @@ export function useProduct(id: string) {
           // says. One record on a detail page, so the expand is cheap here in
           // a way it would not be on the list.
           'seller',
+          // Who decided this listing's fate and what they told the seller.
+          'submission',
         ],
       }),
     enabled: !!id,

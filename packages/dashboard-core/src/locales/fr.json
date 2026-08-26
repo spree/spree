@@ -1431,6 +1431,9 @@
       },
       "value_count_one": "{{count}} valeur",
       "value_count_other": "{{count}} valeurs"
+    },
+    "media_library": {
+      "download": "Télécharger"
     }
   }
 }

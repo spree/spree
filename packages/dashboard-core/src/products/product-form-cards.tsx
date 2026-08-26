@@ -195,6 +195,11 @@ export function PricesCard({
   const [selectedCurrency, setCurrency] = useState<string | null>(null)
   const currency = selectedCurrency ?? defaultCurrency
 
+  // Until the real default arrives there is no currency to price in, and an
+  // amount typed against the `USD` fallback would be saved under it — the
+  // header then flips to the true currency while the wrong row rides along.
+  const currencyResolved = Boolean(defaultCurrencyProp ?? store?.defaultCurrency)
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between gap-3 space-y-0">
@@ -215,7 +220,11 @@ export function PricesCard({
         )}
       </CardHeader>
       <CardContent>
-        <ProductBulkPriceEditor form={form} currency={currency} productName={productName} />
+        {currencyResolved ? (
+          <ProductBulkPriceEditor form={form} currency={currency} productName={productName} />
+        ) : (
+          <div className="h-24 w-full animate-pulse rounded-md bg-muted" />
+        )}
       </CardContent>
     </Card>
   )

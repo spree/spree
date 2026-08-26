@@ -29,10 +29,13 @@ module Spree
       end
 
       # Taking a listing back before the marketplace ruled on it settles the
-      # open row, so `pending` never means "abandoned". A product that was
-      # not in review has nothing to withdraw.
+      # open row, so `pending` never means "abandoned".
+      #
+      # Only an open row: a rejected product has already been decided, and
+      # inventing a `withdrawn` row for it would bury that decision under an
+      # entry nobody made.
       def withdraw_submission
-        return unless product.status_previously_was.in?(Spree::Product::REVIEW_STATUSES)
+        return unless product.submissions.latest_first.first&.pending?
 
         Spree::ProductSubmissions::Close.call(product: product, status: 'withdrawn')
       end

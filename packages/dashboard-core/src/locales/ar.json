@@ -1436,6 +1436,9 @@
       },
       "value_count_one": "{{count}} قيمة",
       "value_count_other": "{{count}} قيم"
+    },
+    "media_library": {
+      "download": "تنزيل"
     }
   }
 }

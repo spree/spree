@@ -12447,7 +12447,6 @@ paths:
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  submission:
                 meta:
                   page: 1
                   limit: 25
@@ -12533,7 +12532,6 @@ paths:
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                submission:
               schema:
                 "$ref": "#/components/schemas/Product"
         '422':
@@ -12684,7 +12682,6 @@ paths:
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                submission:
               schema:
                 "$ref": "#/components/schemas/Product"
         '404':
@@ -12758,7 +12755,6 @@ paths:
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                submission:
               schema:
                 "$ref": "#/components/schemas/Product"
       requestBody:
@@ -15594,7 +15590,6 @@ components:
       - metadata
       - created_at
       - updated_at
-      - submission
       x-typelizer: true
     ProductSubmission:
       type: object

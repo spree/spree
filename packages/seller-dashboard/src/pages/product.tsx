@@ -4,6 +4,7 @@ import {
   InventoryCard,
   MediaCard,
   mapSpreeErrorsToForm,
+  newProductFormDefaults,
   PageHeader,
   type PanelProduct,
   PricesCard,
@@ -26,7 +27,7 @@ import { ProductStatusCard } from '../components/product-status-card'
 import { RetryableError } from '../components/retryable-error'
 
 /** Everything the form edits, in one request. */
-const PRODUCT_EXPAND = 'variants,media,default_variant'
+const PRODUCT_EXPAND = 'variants,media,default_variant,submission'
 
 /**
  * One product, created or edited.
@@ -70,13 +71,22 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
     // Cast for the same reason the operator's form does: `z.coerce.number()`
     // infers `unknown` input, which the resolver's generic will not accept.
     resolver: zodResolver(productFormSchema) as any,
-    defaultValues: productToFormValues({ id: '', name: '' }),
+    // The operator's defaults, which seed one placeholder variant — without
+    // it the Prices and Inventory cards render no row, so a seller could not
+    // price or stock a new listing at all.
+    defaultValues: newProductFormDefaults(),
   })
 
   // Reset once the record arrives, so the inputs show what was last saved
   // rather than the blank defaults the form mounted with.
+  //
+  // Never over unsaved work: submitting for review invalidates this query,
+  // and an unguarded reset would throw away whatever the seller had typed
+  // but not saved. After a save RHF has already cleared isDirty, so the
+  // round-trip still re-hydrates.
   useEffect(() => {
     if (!product) return
+    if (form.formState.isDirty) return
 
     form.reset(productToFormValues(product as PanelProduct, product.media))
   }, [product, form])
@@ -91,12 +101,19 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
         meta_description: values.meta_description ?? undefined,
         // Both lists are the whole intent: anything the seller removed is
         // absent here, which is what tells the API to drop it.
+        // The video address and the focal point ride along because the
+        // cards offer both — an allow-list that omitted them let a seller
+        // set a crop or paste a video URL and watch it vanish on save.
         media: (values.media ?? []).map((item) => ({
           id: item.id,
           signed_id: item.signed_id ?? undefined,
+          poster_signed_id: item.poster_signed_id ?? undefined,
           alt: item.alt ?? undefined,
           position: item.position,
           media_type: item.media_type,
+          external_video_url: item.external_video_url ?? undefined,
+          focal_point_x: item.focal_point_x ?? undefined,
+          focal_point_y: item.focal_point_y ?? undefined,
           variant_ids: item.variant_ids,
         })),
         variants: (values.variants ?? []).map((variant, index) =>
