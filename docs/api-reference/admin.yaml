@@ -357,6 +357,7 @@ paths:
                 - read_products
                 - write_products
                 - read_product_types
+                - write_product_types
                 - read_publishing
                 - write_publishing
                 - read_media
@@ -485,6 +486,7 @@ paths:
                 - read_products
                 - write_products
                 - read_product_types
+                - write_product_types
                 - read_publishing
                 - write_publishing
                 - read_media
@@ -3792,6 +3794,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   stock_location_ids: []
+                  default_catalog_id:
                 - id: ch_gbHJdmfrXB
                   name: Wholesale
                   code: wholesale
@@ -3805,6 +3808,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   stock_location_ids: []
+                  default_catalog_id:
                 meta:
                   page: 1
                   limit: 25
@@ -3892,6 +3896,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 stock_location_ids: []
+                default_catalog_id:
       requestBody:
         content:
           application/json:
@@ -3992,6 +3997,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 stock_location_ids: []
+                default_catalog_id:
     patch:
       summary: Update a channel
       tags:
@@ -4048,6 +4054,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 stock_location_ids: []
+                default_catalog_id:
       requestBody:
         content:
           application/json:
@@ -5545,6 +5552,7 @@ paths:
               example:
                 data:
                 - id: addr_UkLWZg9DAJ
+                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
@@ -5564,13 +5572,14 @@ paths:
                   state_abbr: NY
                   country_iso: US
                   state_name: New York
-                  label:
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   latitude:
                   longitude:
                   customer_id: cust_UkLWZg9DAJ
+                  owner_id: cust_UkLWZg9DAJ
+                  owner_type: Spree::Customer
                 meta:
                   page: 1
                   limit: 25
@@ -5643,6 +5652,7 @@ paths:
             application/json:
               example:
                 id: addr_gbHJdmfrXB
+                label: Office
                 first_name: Jane
                 last_name: Doe
                 full_name: Jane Doe
@@ -5662,13 +5672,14 @@ paths:
                 state_abbr: NY
                 country_iso: US
                 state_name: New York
-                label: Office
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 latitude:
                 longitude:
                 customer_id: cust_UkLWZg9DAJ
+                owner_id: cust_UkLWZg9DAJ
+                owner_type: Spree::Customer
       requestBody:
         content:
           application/json:
@@ -5760,6 +5771,7 @@ paths:
             application/json:
               example:
                 id: addr_UkLWZg9DAJ
+                label:
                 first_name: John
                 last_name: Doe
                 full_name: John Doe
@@ -5779,13 +5791,14 @@ paths:
                 state_abbr: NY
                 country_iso: US
                 state_name: New York
-                label:
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 latitude:
                 longitude:
                 customer_id: cust_UkLWZg9DAJ
+                owner_id: cust_UkLWZg9DAJ
+                owner_type: Spree::Customer
       requestBody:
         content:
           application/json:
@@ -12976,6 +12989,8 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
+                company_id:
+                company_name:
                 number: R1001
                 email: ghislaine_labadie@carroll.info
                 customer_note:
@@ -13040,10 +13055,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 preferred_stock_location_id:
-                company_location_id:
                 seller_id:
                 order_group_id:
-                company_id:
                 tags: []
                 internal_note:
                 internal_note_html:
@@ -13221,6 +13234,8 @@ paths:
                   market_id: mkt_UkLWZg9DAJ
                   cart_id:
                   channel_id: ch_UkLWZg9DAJ
+                  company_id:
+                  company_name:
                   number: R1001
                   email: viki_reichel@moorecummerata.us
                   customer_note:
@@ -13285,10 +13300,8 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   preferred_stock_location_id:
-                  company_location_id:
                   seller_id:
                   order_group_id:
-                  company_id:
                   tags: []
                   internal_note:
                   internal_note_html:
@@ -13443,6 +13456,8 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
+                company_id:
+                company_name:
                 number: R1002
                 email: pinned@example.com
                 customer_note:
@@ -13507,10 +13522,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 preferred_stock_location_id: sloc_UkLWZg9DAJ
-                company_location_id:
                 seller_id:
                 order_group_id:
-                company_id:
                 tags: []
                 internal_note:
                 internal_note_html:
@@ -13698,6 +13711,8 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
+                company_id:
+                company_name:
                 number: R1001
                 email: angelic@ogaromaguera.co.uk
                 customer_note:
@@ -13762,10 +13777,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 preferred_stock_location_id:
-                company_location_id:
                 seller_id:
                 order_group_id:
-                company_id:
                 tags: []
                 internal_note:
                 internal_note_html:
@@ -13841,6 +13854,8 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
+                company_id:
+                company_name:
                 number: R1001
                 email: updated@example.com
                 customer_note:
@@ -13905,10 +13920,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 preferred_stock_location_id:
-                company_location_id:
                 seller_id:
                 order_group_id:
-                company_id:
                 tags: []
                 internal_note:
                 internal_note_html:
@@ -14096,6 +14109,8 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
+                company_id:
+                company_name:
                 number: R1001
                 email: lisandra.blanda@grahamryan.biz
                 customer_note:
@@ -14160,10 +14175,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 preferred_stock_location_id:
-                company_location_id:
                 seller_id:
                 order_group_id:
-                company_id:
                 tags: []
                 internal_note:
                 internal_note_html:
@@ -14251,6 +14264,8 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
+                company_id:
+                company_name:
                 number: R1001
                 email: eleanor@zulaufdavis.com
                 customer_note:
@@ -14315,10 +14330,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 preferred_stock_location_id:
-                company_location_id:
                 seller_id:
                 order_group_id:
-                company_id:
                 tags: []
                 internal_note:
                 internal_note_html:
@@ -14390,6 +14403,8 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
+                company_id:
+                company_name:
                 number: R1001
                 email: del@bashirian.us
                 customer_note:
@@ -14454,10 +14469,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 preferred_stock_location_id:
-                company_location_id:
                 seller_id:
                 order_group_id:
-                company_id:
                 tags: []
                 internal_note:
                 internal_note_html:
@@ -14520,6 +14533,8 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
+                company_id:
+                company_name:
                 number: R1001
                 email: maire@prosaccodeckow.co.uk
                 customer_note:
@@ -14584,10 +14599,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 preferred_stock_location_id:
-                company_location_id:
                 seller_id:
                 order_group_id:
-                company_id:
                 tags: []
                 internal_note:
                 internal_note_html:
@@ -14650,6 +14663,8 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
+                company_id:
+                company_name:
                 number: R1001
                 email: michal.cartwright@hintzdeckow.info
                 customer_note:
@@ -14714,10 +14729,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 preferred_stock_location_id:
-                company_location_id:
                 seller_id:
                 order_group_id:
-                company_id:
                 tags: []
                 internal_note:
                 internal_note_html:
@@ -14860,12 +14873,12 @@ paths:
                   label: Bogus
                   description:
                   preference_schema:
-                  - key: dummy_key
-                    type: string
-                    default: PUBLICKEY123
                   - key: dummy_secret_key
                     type: password
                     default:
+                  - key: dummy_key
+                    type: string
+                    default: PUBLICKEY123
                 - type: custom_payment_source_method
                   label: Custom Payment Source Method
                   description:
@@ -20057,18 +20070,18 @@ paths:
                   label: Item total
                   description:
                   preference_schema:
-                  - key: amount_max
-                    type: decimal
-                    default:
-                  - key: operator_max
-                    type: string
-                    default: "<"
                   - key: amount_min
                     type: decimal
                     default: 100.0
                   - key: operator_min
                     type: string
                     default: ">"
+                  - key: amount_max
+                    type: decimal
+                    default:
+                  - key: operator_max
+                    type: string
+                    default: "<"
                 - type: market
                   label: Market(s)
                   description:
@@ -22259,6 +22272,13 @@ paths:
                   group_label: Catalog
                   label: Product types
                   description: ''
+                - key: write_product_types
+                  resource: product_types
+                  kind: write
+                  group: catalog
+                  group_label: Catalog
+                  label: Product types
+                  description: ''
                 - key: read_publishing
                   resource: publishing
                   kind: read
@@ -22477,7 +22497,7 @@ paths:
                   label: Analytics dashboard
                   description: Sales and performance analytics
                 meta:
-                  count: 46
+                  count: 47
   "/api/v3/admin/roles":
     get:
       summary: List roles
@@ -22544,6 +22564,7 @@ paths:
                   - read_products
                   - write_products
                   - read_product_types
+                  - write_product_types
                   - read_publishing
                   - write_publishing
                   - read_media
@@ -25349,6 +25370,236 @@ paths:
                 reason:
                   type: string
                   example: Investigating elevated 5xx rate
+  "/api/v3/admin/catalogs":
+    get:
+      summary: List catalogs
+      tags:
+      - Catalogs
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns the store catalogs — product assortments with an optional price list, shown to audiences through assignments.
+
+        **Required scope:** `read_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: catalogs } = await client.catalogs.list({ active_eq: true })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /catalogs -d '{"active_eq":true}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: catalogs found
+          content:
+            application/json:
+              example:
+                data:
+                - id: cat_UkLWZg9DAJ
+                  name: Wholesale
+                  active: true
+                  position: 1
+                  metadata: {}
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  price_list_id:
+                  products_count: 0
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+    post:
+      summary: Create a catalog
+      tags:
+      - Catalogs
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Creates a catalog. Add products and assign audiences (channel, customer group, market, or company subtree) afterwards.
+
+        **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const catalog = await client.catalogs.create({
+            name: 'VIP Assortment',
+            price_list_id: 'pl_86Rf07xd4z',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /catalogs -d '{"name":"VIP Assortment","price_list_id":"pl_86Rf07xd4z"}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: catalog created
+          content:
+            application/json:
+              example:
+                id: cat_gbHJdmfrXB
+                name: VIP Assortment
+                active: true
+                position: 2
+                metadata: {}
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                price_list_id:
+                products_count: 0
+        '422':
+          description: invalid request
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Name can't be blank
+                  details:
+                    name:
+                    - can't be blank
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: VIP Assortment
+                active:
+                  type: boolean
+                  example: true
+                price_list_id:
+                  type: string
+                  nullable: true
+                  description: Price list pricing this catalog; omit for assortment-only
+                    (base prices). A catalog with an empty assortment prices without
+                    restricting visibility; import or curate products to make it restrictive.
+                  example: pl_86Rf07xd4z
+              required:
+              - name
+  "/api/v3/admin/catalogs/{id}/assign":
+    post:
+      summary: Assign a catalog to an audience
+      tags:
+      - Catalogs
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Shows the catalog to an audience. A company assignment covers the node and its whole subtree.
+
+        **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // A company assignment covers the node and its whole subtree.
+          const assignment = await client.catalogs.assign('cat_86Rf07xd4z', {
+            assignable_type: 'company',
+            assignable_id: 'comp_86Rf07xd4z',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /catalogs/{id}/assign -d '{"assignable_type":"company","assignable_id":"comp_86Rf07xd4z"}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: catalog assigned
+          content:
+            application/json:
+              example:
+                id: cata_UkLWZg9DAJ
+                created_at: '2026-01-15T12:00:00.000Z'
+                catalog_id: cat_UkLWZg9DAJ
+                assignable_type: company
+                assignable_id: comp_UkLWZg9DAJ
+                assignable_name: Acme Corp 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                assignable_type:
+                  type: string
+                  enum:
+                  - channel
+                  - customer_group
+                  - market
+                  - company
+                  example: company
+                assignable_id:
+                  type: string
+                  example: comp_86Rf07xd4z
+              required:
+              - assignable_type
+              - assignable_id
   "/api/v3/admin/collections":
     get:
       summary: List collections
@@ -26677,10 +26928,10 @@ paths:
                   name: Sale value
                   description: Charges this rate only on sales within a value range
                   preference_schema:
-                  - key: max_amount
+                  - key: min_amount
                     type: decimal
                     default:
-                  - key: min_amount
+                  - key: max_amount
                     type: decimal
                     default:
                   association_fields: []
@@ -26940,217 +27191,7 @@ paths:
       responses:
         '204':
           description: commission rate deleted
-  "/api/v3/admin/companies/{company_id}/locations":
-    get:
-      summary: List company locations
-      tags:
-      - Companies
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Returns the branches of a business customer. Each branch owns its own addresses and the buyers authorised to purchase for it.
-
-        **Required scope:** `read_customers` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const { data: locations } = await client.companies.locations.list('comp_UkLWZg9DAJ')
-      - lang: bash
-        label: Spree CLI
-        source: spree api get /companies/{company_id}/locations
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: company_id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: locations found
-          content:
-            application/json:
-              example:
-                data:
-                - id: cloc_UkLWZg9DAJ
-                  external_references: {}
-                  name: Berlin
-                  metadata: {}
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
-                  company_id: comp_UkLWZg9DAJ
-                  contacts_count: 0
-                  billing_address:
-                  shipping_address:
-                meta:
-                  page: 1
-                  limit: 25
-                  count: 1
-                  pages: 1
-                  from: 1
-                  to: 1
-                  in: 1
-                  previous:
-                  next:
-    post:
-      summary: Create a company location
-      tags:
-      - Companies
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Creates a branch. Addresses are supplied inline and belong to the branch, so editing one later changes the branch's own record rather than an address the buyer also uses.
-
-        **Required scope:** `write_customers` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const location = await client.companies.locations.create('comp_UkLWZg9DAJ', {
-            name: 'Hamburg warehouse',
-            billing_address: {
-              first_name: 'Anna',
-              last_name: 'Muller',
-              address1: 'Hafenstr 1',
-              city: 'Hamburg',
-              postal_code: '20095',
-              country_code: 'DE',
-            },
-          })
-      - lang: bash
-        label: Spree CLI
-        source: spree api post /companies/{company_id}/locations -d '{"name":"Hamburg
-          warehouse","billing_address":{"first_name":"Anna","last_name":"Muller","address1":"Hafenstr
-          1","city":"Hamburg","postal_code":"20095","country_code":"DE"}}'
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: company_id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        '201':
-          description: location created
-          content:
-            application/json:
-              example:
-                id: cloc_gbHJdmfrXB
-                external_references: {}
-                name: Hamburg warehouse
-                metadata: {}
-                created_at: '2026-01-15T12:00:00.000Z'
-                updated_at: '2026-01-15T12:00:00.000Z'
-                company_id: comp_UkLWZg9DAJ
-                contacts_count: 0
-                billing_address:
-                  id: addr_UkLWZg9DAJ
-                  first_name: Anna
-                  last_name: Muller
-                  full_name: Anna Muller
-                  address1: Hafenstr 1
-                  address2:
-                  postal_code: '20095'
-                  city: Hamburg
-                  phone:
-                  company:
-                  country_name: Germany
-                  country_code: DE
-                  state_text:
-                  state_code:
-                  quick_checkout: false
-                  is_default_billing: false
-                  is_default_shipping: false
-                  state_abbr:
-                  country_iso: DE
-                  state_name:
-                  label:
-                  metadata: {}
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
-                  latitude:
-                  longitude:
-                  customer_id:
-                shipping_address:
-        '422':
-          description: invalid request
-          content:
-            application/json:
-              example:
-                error:
-                  code: validation_error
-                  message: Name can't be blank
-                  details:
-                    name:
-                    - can't be blank
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  example: Hamburg warehouse
-                external_id:
-                  type: string
-                  nullable: true
-                  example: HAM-01
-                billing_address:
-                  type: object
-                  description: Created inline and owned by the branch.
-                  properties:
-                    first_name:
-                      type: string
-                    last_name:
-                      type: string
-                    address1:
-                      type: string
-                    city:
-                      type: string
-                    postal_code:
-                      type: string
-                    country_code:
-                      type: string
-                      example: DE
-              required:
-              - name
-  "/api/v3/admin/company_locations/{id}":
+  "/api/v3/admin/companies/{company_id}/memberships":
     parameters:
     - name: x-spree-api-key
       in: header
@@ -27162,20 +27203,20 @@ paths:
       required: true
       schema:
         type: string
-    - name: id
+    - name: company_id
       in: path
       required: true
       schema:
         type: string
     get:
-      summary: Get a company location
+      summary: List company members
       tags:
       - Companies
       security:
       - api_key: []
         bearer_auth: []
       description: |-
-        Branches are addressed by their own id once you hold one — the company id is not needed.
+        Returns the people with standing over this node. Standing covers the node and everything below it in the tree.
 
         **Required scope:** `read_customers` (for API-key authentication).
       x-codeSamples:
@@ -27189,35 +27230,45 @@ paths:
             secretKey: 'sk_xxx',
           })
 
-          const location = await client.companyLocations.get('cloc_UkLWZg9DAJ')
+          const { data: members } = await client.companies.memberships.list('comp_86Rf07xd4z')
       - lang: bash
         label: Spree CLI
-        source: spree api get /company_locations/{id}
+        source: spree api get /companies/{company_id}/memberships
       responses:
         '200':
-          description: location found
+          description: members found
           content:
             application/json:
               example:
-                id: cloc_UkLWZg9DAJ
-                external_references: {}
-                name: Berlin
-                metadata: {}
-                created_at: '2026-01-15T12:00:00.000Z'
-                updated_at: '2026-01-15T12:00:00.000Z'
-                company_id: comp_UkLWZg9DAJ
-                contacts_count: 0
-                billing_address:
-                shipping_address:
-    patch:
-      summary: Update a company location
+                data:
+                - id: cmem_UkLWZg9DAJ
+                  company_id: comp_UkLWZg9DAJ
+                  customer_id: cust_UkLWZg9DAJ
+                  email: ezequiel.monahan@heller.ca
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+    post:
+      summary: Add a member by email
       tags:
       - Companies
       security:
       - api_key: []
         bearer_auth: []
       description: |-
-        Address fields sent here edit the branch's existing address in place; send only what changes.
+        Adds a person to the node by email. An email matching an existing customer becomes a
+        membership immediately (a `cmem_…` id); an unknown email becomes an invitation
+        (a `cinv_…` id) and the invite email goes out.
+
 
         **Required scope:** `write_customers` (for API-key authentication).
       x-codeSamples:
@@ -27231,74 +27282,38 @@ paths:
             secretKey: 'sk_xxx',
           })
 
-          // Address fields edit the branch's existing address in place.
-          const location = await client.companyLocations.update('cloc_UkLWZg9DAJ', {
-            name: 'Berlin Mitte',
-            billing_address: { city: 'Berlin' },
+          // An existing customer becomes a member immediately; an unknown email
+          // becomes an invitation (check the returned id prefix: cmem_ vs cinv_).
+          const member = await client.companies.memberships.create('comp_86Rf07xd4z', {
+            customer_email: 'buyer@example.com',
           })
       - lang: bash
         label: Spree CLI
-        source: spree api patch /company_locations/{id} -d '{"name":"Berlin Mitte","billing_address":{"city":"Berlin"}}'
+        source: spree api post /companies/{company_id}/memberships -d '{"customer_email":"buyer@example.com"}'
       parameters: []
       responses:
-        '200':
-          description: location updated
+        '201':
+          description: member added
           content:
             application/json:
               example:
-                id: cloc_UkLWZg9DAJ
-                external_references: {}
-                name: Berlin Mitte
-                metadata: {}
+                id: cmem_UkLWZg9DAJ
+                company_id: comp_UkLWZg9DAJ
+                customer_id: cust_UkLWZg9DAJ
+                email: buyer@example.com
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                company_id: comp_UkLWZg9DAJ
-                contacts_count: 0
-                billing_address:
-                shipping_address:
       requestBody:
         content:
           application/json:
             schema:
               type: object
               properties:
-                name:
+                customer_email:
                   type: string
-                  example: Berlin Mitte
-                billing_address:
-                  type: object
-                  properties:
-                    city:
-                      type: string
-    delete:
-      summary: Delete a company location
-      tags:
-      - Companies
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Removes the branch, its buyers and the addresses it owned.
-
-        **Required scope:** `write_customers` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          await client.companyLocations.delete('cloc_UkLWZg9DAJ')
-      - lang: bash
-        label: Spree CLI
-        source: spree api delete /company_locations/{id}
-      responses:
-        '204':
-          description: location deleted
+                  example: buyer@example.com
+              required:
+              - customer_email
   "/api/v3/admin/companies/{company_id}/tax_exemption_certificates":
     parameters:
     - name: x-spree-api-key
@@ -27990,12 +28005,16 @@ paths:
                 data:
                 - id: comp_UkLWZg9DAJ
                   name: Acme Industrial
+                  kind: company
+                  parent_id:
+                  ancestors: []
                   external_references:
                     erp: ACME-1
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  locations_count: 0
+                  children_count: 0
+                  members_count: 0
                 meta:
                   page: 1
                   limit: 25
@@ -28014,7 +28033,7 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |-
-        Creates a business customer. Exemption certificates and tax registrations hang off it.
+        Creates a company node. A root node is a legal entity; pass parent_id and kind to build the organization tree. Exemption certificates and tax registrations hang off legal-entity nodes.
 
         **Required scope:** `write_customers` (for API-key authentication).
       x-codeSamples:
@@ -28054,12 +28073,16 @@ paths:
               example:
                 id: comp_gbHJdmfrXB
                 name: Globex Corporation
+                kind: company
+                parent_id:
+                ancestors: []
                 external_references:
                   erp: GLBX-42
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                locations_count: 0
+                children_count: 0
+                members_count: 0
         '422':
           description: invalid request
           content:
@@ -28080,6 +28103,19 @@ paths:
                 name:
                   type: string
                   example: Globex Corporation
+                kind:
+                  type: string
+                  enum:
+                  - company
+                  - division
+                  description: company = legal entity (may hold tax registrations),
+                    division = organizational unit. Roots must be company.
+                  example: company
+                parent_id:
+                  type: string
+                  nullable: true
+                  description: The parent node. Omit for a root.
+                  example: comp_86Rf07xd4z
                 external_references:
                   type: array
                   description: Identities this business has in your own systems. A
@@ -28100,229 +28136,6 @@ paths:
                     - external_id
               required:
               - name
-  "/api/v3/admin/company_locations/{company_location_id}/contacts":
-    parameters:
-    - name: x-spree-api-key
-      in: header
-      required: true
-      schema:
-        type: string
-    - name: Authorization
-      in: header
-      required: true
-      schema:
-        type: string
-    - name: company_location_id
-      in: path
-      required: true
-      schema:
-        type: string
-    get:
-      summary: List company contacts
-      tags:
-      - Companies
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Returns the customers authorised to purchase for a branch. A customer may act for more than one branch.
-
-        **Required scope:** `read_customers` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const { data: contacts } = await client.companyLocations.contacts.list('cloc_UkLWZg9DAJ')
-      - lang: bash
-        label: Spree CLI
-        source: spree api get /company_locations/{company_location_id}/contacts
-      responses:
-        '200':
-          description: contacts found
-          content:
-            application/json:
-              example:
-                data:
-                - id: cc_UkLWZg9DAJ
-                  role: buyer
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
-                  company_location_id: cloc_UkLWZg9DAJ
-                  customer_id: cust_UkLWZg9DAJ
-                  email: buyer@acme.test
-                meta:
-                  page: 1
-                  limit: 25
-                  count: 1
-                  pages: 1
-                  from: 1
-                  to: 1
-                  in: 1
-                  previous:
-                  next:
-    post:
-      summary: Create a company contact
-      tags:
-      - Companies
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Authorises a customer to purchase for a branch. A customer who acts for exactly one branch has
-        their orders attributed to it automatically; one who acts for several needs the branch set on
-        the order, because guessing would invoice the wrong business.
-
-
-        **Required scope:** `write_customers` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const contact = await client.companyLocations.contacts.create('cloc_UkLWZg9DAJ', {
-            customer_id: 'cus_UkLWZg9DAJ',
-            role: 'buyer',
-          })
-      - lang: bash
-        label: Spree CLI
-        source: spree api post /company_locations/{company_location_id}/contacts -d
-          '{"customer_id":"cus_UkLWZg9DAJ","role":"buyer"}'
-      parameters: []
-      responses:
-        '201':
-          description: contact created
-          content:
-            application/json:
-              example:
-                id: cc_gbHJdmfrXB
-                role: admin
-                created_at: '2026-01-15T12:00:00.000Z'
-                updated_at: '2026-01-15T12:00:00.000Z'
-                company_location_id: cloc_UkLWZg9DAJ
-                customer_id: cust_gbHJdmfrXB
-                email: gita.gerhold@schultzmarquardt.com
-        '422':
-          description: invalid request
-          content:
-            application/json:
-              example:
-                error:
-                  code: validation_error
-                  message: Customer has already been taken
-                  details:
-                    customer_id:
-                    - has already been taken
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                customer_id:
-                  type: string
-                  example: cus_UkLWZg9DAJ
-                role:
-                  type: string
-                  description: Free-form label; carries no permissions in 6.0.
-                  example: buyer
-              required:
-              - customer_id
-  "/api/v3/admin/company_contacts/{id}":
-    parameters:
-    - name: x-spree-api-key
-      in: header
-      required: true
-      schema:
-        type: string
-    - name: Authorization
-      in: header
-      required: true
-      schema:
-        type: string
-    - name: id
-      in: path
-      required: true
-      schema:
-        type: string
-    get:
-      summary: Get a company contact
-      tags:
-      - Companies
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: "**Required scope:** `read_customers` (for API-key authentication)."
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const contact = await client.companyContacts.get('cc_UkLWZg9DAJ')
-      - lang: bash
-        label: Spree CLI
-        source: spree api get /company_contacts/{id}
-      responses:
-        '200':
-          description: contact found
-          content:
-            application/json:
-              example:
-                id: cc_UkLWZg9DAJ
-                role: buyer
-                created_at: '2026-01-15T12:00:00.000Z'
-                updated_at: '2026-01-15T12:00:00.000Z'
-                company_location_id: cloc_UkLWZg9DAJ
-                customer_id: cust_UkLWZg9DAJ
-                email: buyer@acme.test
-    delete:
-      summary: Delete a company contact
-      tags:
-      - Companies
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Withdraws the customer's authority to purchase for the branch. The customer account itself is untouched.
-
-        **Required scope:** `write_customers` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          // Withdraws the buyer's authority; the customer account is untouched.
-          await client.companyContacts.delete('cc_UkLWZg9DAJ')
-      - lang: bash
-        label: Spree CLI
-        source: spree api delete /company_contacts/{id}
-      responses:
-        '204':
-          description: contact deleted
   "/api/v3/admin/custom_field_definitions/resource_types":
     get:
       summary: List what custom fields can be attached to
@@ -28909,9 +28722,9 @@ paths:
                   stock_location_ids: []
                   calculator_type: Spree::Calculator::Shipping::FlatRate
                   calculator_preferences:
+                    currency: USD
                     amounts: {}
                     amount: '10.0'
-                    currency: USD
                 meta:
                   page: 1
                   limit: 25
@@ -28998,9 +28811,9 @@ paths:
                 stock_location_ids: []
                 calculator_type: Spree::Calculator::Shipping::FlatRate
                 calculator_preferences:
+                  currency: USD
                   amounts: {}
                   amount: '12.5'
-                  currency: USD
       requestBody:
         content:
           application/json:
@@ -29105,18 +28918,21 @@ paths:
                 - type: Spree::Calculator::Shipping::FlatRate
                   name: Flat rate
                   preference_schema:
+                  - key: currency
+                    type: string
+                    default: USD
                   - key: amounts
                     type: hash
                     default: {}
                   - key: amount
                     type: decimal
                     default: 0
-                  - key: currency
-                    type: string
-                    default: USD
                 - type: Spree::Calculator::Shipping::FlexiRate
                   name: Flexible Rate per package item
                   preference_schema:
+                  - key: currency
+                    type: string
+                    default: USD
                   - key: first_item
                     type: decimal
                     default: 0.0
@@ -29126,48 +28942,45 @@ paths:
                   - key: max_items
                     type: integer
                     default: 0
-                  - key: currency
-                    type: string
-                    default: USD
                 - type: Spree::Calculator::Shipping::PerItem
                   name: Flat rate per package item
                   preference_schema:
+                  - key: currency
+                    type: string
+                    default: USD
                   - key: amounts
                     type: hash
                     default: {}
                   - key: amount
                     type: decimal
                     default: 0
-                  - key: currency
-                    type: string
-                    default: USD
                 - type: Spree::Calculator::Shipping::PriceSack
                   name: Price sack
                   preference_schema:
-                  - key: minimal_amount
-                    type: decimal
-                    default: 0
-                  - key: normal_amount
-                    type: decimal
-                    default: 0
                   - key: discount_amount
                     type: decimal
                     default: 0
                   - key: currency
                     type: string
                     default: USD
+                  - key: minimal_amount
+                    type: decimal
+                    default: 0
+                  - key: normal_amount
+                    type: decimal
+                    default: 0
                 - type: Spree::Calculator::Shipping::DigitalDelivery
                   name: Digital Delivery
                   preference_schema:
+                  - key: currency
+                    type: string
+                    default: USD
                   - key: amounts
                     type: hash
                     default: {}
                   - key: amount
                     type: decimal
                     default: 0
-                  - key: currency
-                    type: string
-                    default: USD
   "/api/v3/admin/delivery_zones":
     post:
       summary: Create delivery zone
@@ -29621,13 +29434,13 @@ paths:
                   video_embed_url:
                   video_url:
                   poster_url:
-                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f7c72e607e004ec1c416cf8fc1e7fa1b3e1ac63c/thinking-cat.jpg
-                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f7c72e607e004ec1c416cf8fc1e7fa1b3e1ac63c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--7544d06f435fcd91048a3b428b19cb402164abd2/thinking-cat.jpg
-                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f7c72e607e004ec1c416cf8fc1e7fa1b3e1ac63c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--ec2d205a8ced5496a5773dec99085cc90e7b895c/thinking-cat.jpg
-                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f7c72e607e004ec1c416cf8fc1e7fa1b3e1ac63c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--25d18d98539309d37b8714d8d9df27342338ec7f/thinking-cat.jpg
-                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f7c72e607e004ec1c416cf8fc1e7fa1b3e1ac63c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--8676714585280068218627e75c754414565fb8e9/thinking-cat.jpg
-                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f7c72e607e004ec1c416cf8fc1e7fa1b3e1ac63c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--b935dbaa44916e735f77a4803468bfd29fb6dcfb/thinking-cat.jpg
-                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f7c72e607e004ec1c416cf8fc1e7fa1b3e1ac63c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--9b4e4dc0c21818c5dca0ffce0094e85a52cb9cc2/thinking-cat.jpg
+                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a62df0231aa4afd7897b7778a7a95c76c6d8cc71/thinking-cat.jpg
+                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a62df0231aa4afd7897b7778a7a95c76c6d8cc71/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--4cad8f49242d2c21a365555e838bdc82cf25a41d/thinking-cat.jpg
+                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a62df0231aa4afd7897b7778a7a95c76c6d8cc71/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--05d207a21d84c878b5a26d36e37c9077d07603af/thinking-cat.jpg
+                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a62df0231aa4afd7897b7778a7a95c76c6d8cc71/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--0e980ec6cddee1e9c97663c9e8010d3827067f84/thinking-cat.jpg
+                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a62df0231aa4afd7897b7778a7a95c76c6d8cc71/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--affcf61ada88def0d6fcb6c90b75ac2d37d38ab1/thinking-cat.jpg
+                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a62df0231aa4afd7897b7778a7a95c76c6d8cc71/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--f6dafa7062c03005300bf2a2d10c377ac6ad97a0/thinking-cat.jpg
+                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a62df0231aa4afd7897b7778a7a95c76c6d8cc71/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--6a22740457f1962474736c32eb74bf1aa82382d2/thinking-cat.jpg
                   external_references: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -29635,10 +29448,10 @@ paths:
                   filename: thinking-cat.jpg
                   content_type: image/jpeg
                   byte_size: 18090
-                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f7c72e607e004ec1c416cf8fc1e7fa1b3e1ac63c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--dfdac7a75bc407fd9592bfa897b27a63b495e283/thinking-cat.jpg
-                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f7c72e607e004ec1c416cf8fc1e7fa1b3e1ac63c
+                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a62df0231aa4afd7897b7778a7a95c76c6d8cc71/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--3624c5cacbb3836079df60f3930f4b3ae666f760/thinking-cat.jpg
+                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a62df0231aa4afd7897b7778a7a95c76c6d8cc71
                   viewable_id: prod_UkLWZg9DAJ
-                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f7c72e607e004ec1c416cf8fc1e7fa1b3e1ac63c/thinking-cat.jpg?disposition=attachment
+                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a62df0231aa4afd7897b7778a7a95c76c6d8cc71/thinking-cat.jpg?disposition=attachment
                   metadata: {}
                   viewable_type: product
                 meta:
@@ -29709,13 +29522,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--5505c68b41e01fb088abeeffb215b0e6a2dfb168/library-upload.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--5505c68b41e01fb088abeeffb215b0e6a2dfb168/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--7544d06f435fcd91048a3b428b19cb402164abd2/library-upload.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--5505c68b41e01fb088abeeffb215b0e6a2dfb168/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--ec2d205a8ced5496a5773dec99085cc90e7b895c/library-upload.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--5505c68b41e01fb088abeeffb215b0e6a2dfb168/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--25d18d98539309d37b8714d8d9df27342338ec7f/library-upload.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--5505c68b41e01fb088abeeffb215b0e6a2dfb168/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--8676714585280068218627e75c754414565fb8e9/library-upload.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--5505c68b41e01fb088abeeffb215b0e6a2dfb168/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--b935dbaa44916e735f77a4803468bfd29fb6dcfb/library-upload.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--5505c68b41e01fb088abeeffb215b0e6a2dfb168/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--9b4e4dc0c21818c5dca0ffce0094e85a52cb9cc2/library-upload.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--fcad0707604805ba46fa7b655ddf78f75032e07f/library-upload.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--fcad0707604805ba46fa7b655ddf78f75032e07f/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--4cad8f49242d2c21a365555e838bdc82cf25a41d/library-upload.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--fcad0707604805ba46fa7b655ddf78f75032e07f/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--05d207a21d84c878b5a26d36e37c9077d07603af/library-upload.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--fcad0707604805ba46fa7b655ddf78f75032e07f/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--0e980ec6cddee1e9c97663c9e8010d3827067f84/library-upload.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--fcad0707604805ba46fa7b655ddf78f75032e07f/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--affcf61ada88def0d6fcb6c90b75ac2d37d38ab1/library-upload.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--fcad0707604805ba46fa7b655ddf78f75032e07f/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--f6dafa7062c03005300bf2a2d10c377ac6ad97a0/library-upload.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--fcad0707604805ba46fa7b655ddf78f75032e07f/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--6a22740457f1962474736c32eb74bf1aa82382d2/library-upload.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -29723,10 +29536,10 @@ paths:
                 filename: library-upload.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--5505c68b41e01fb088abeeffb215b0e6a2dfb168/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--dfdac7a75bc407fd9592bfa897b27a63b495e283/library-upload.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--5505c68b41e01fb088abeeffb215b0e6a2dfb168
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--fcad0707604805ba46fa7b655ddf78f75032e07f/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--3624c5cacbb3836079df60f3930f4b3ae666f760/library-upload.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--fcad0707604805ba46fa7b655ddf78f75032e07f
                 viewable_id:
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--5505c68b41e01fb088abeeffb215b0e6a2dfb168/library-upload.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--fcad0707604805ba46fa7b655ddf78f75032e07f/library-upload.jpg?disposition=attachment
                 metadata: {}
                 viewable_type:
               schema:
@@ -29883,13 +29696,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f7c72e607e004ec1c416cf8fc1e7fa1b3e1ac63c/thinking-cat.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f7c72e607e004ec1c416cf8fc1e7fa1b3e1ac63c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--7544d06f435fcd91048a3b428b19cb402164abd2/thinking-cat.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f7c72e607e004ec1c416cf8fc1e7fa1b3e1ac63c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--ec2d205a8ced5496a5773dec99085cc90e7b895c/thinking-cat.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f7c72e607e004ec1c416cf8fc1e7fa1b3e1ac63c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--25d18d98539309d37b8714d8d9df27342338ec7f/thinking-cat.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f7c72e607e004ec1c416cf8fc1e7fa1b3e1ac63c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--8676714585280068218627e75c754414565fb8e9/thinking-cat.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f7c72e607e004ec1c416cf8fc1e7fa1b3e1ac63c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--b935dbaa44916e735f77a4803468bfd29fb6dcfb/thinking-cat.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f7c72e607e004ec1c416cf8fc1e7fa1b3e1ac63c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--9b4e4dc0c21818c5dca0ffce0094e85a52cb9cc2/thinking-cat.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a62df0231aa4afd7897b7778a7a95c76c6d8cc71/thinking-cat.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a62df0231aa4afd7897b7778a7a95c76c6d8cc71/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--4cad8f49242d2c21a365555e838bdc82cf25a41d/thinking-cat.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a62df0231aa4afd7897b7778a7a95c76c6d8cc71/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--05d207a21d84c878b5a26d36e37c9077d07603af/thinking-cat.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a62df0231aa4afd7897b7778a7a95c76c6d8cc71/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--0e980ec6cddee1e9c97663c9e8010d3827067f84/thinking-cat.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a62df0231aa4afd7897b7778a7a95c76c6d8cc71/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--affcf61ada88def0d6fcb6c90b75ac2d37d38ab1/thinking-cat.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a62df0231aa4afd7897b7778a7a95c76c6d8cc71/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--f6dafa7062c03005300bf2a2d10c377ac6ad97a0/thinking-cat.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a62df0231aa4afd7897b7778a7a95c76c6d8cc71/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--6a22740457f1962474736c32eb74bf1aa82382d2/thinking-cat.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -29897,10 +29710,10 @@ paths:
                 filename: thinking-cat.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f7c72e607e004ec1c416cf8fc1e7fa1b3e1ac63c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--dfdac7a75bc407fd9592bfa897b27a63b495e283/thinking-cat.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f7c72e607e004ec1c416cf8fc1e7fa1b3e1ac63c
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a62df0231aa4afd7897b7778a7a95c76c6d8cc71/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--3624c5cacbb3836079df60f3930f4b3ae666f760/thinking-cat.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a62df0231aa4afd7897b7778a7a95c76c6d8cc71
                 viewable_id: prod_gbHJdmfrXB
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f7c72e607e004ec1c416cf8fc1e7fa1b3e1ac63c/thinking-cat.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a62df0231aa4afd7897b7778a7a95c76c6d8cc71/thinking-cat.jpg?disposition=attachment
                 metadata: {}
                 viewable_type: product
               schema:
@@ -30393,8 +30206,8 @@ paths:
                   name: Accept terms
                   description: The seller has accepted your marketplace terms
                   preferences:
-                    terms_url:
                     terms_effective_from:
+                    terms_url:
                   custom_field_definition_ids: []
                   allow_multiple: false
                   accepts_submissions: false
@@ -30616,10 +30429,10 @@ paths:
                   accepted_content_types: []
                   association_fields: []
                   preference_schema:
-                  - key: terms_url
+                  - key: terms_effective_from
                     type: string
                     default:
-                  - key: terms_effective_from
+                  - key: terms_url
                     type: string
                     default:
                 - type: complete_profile
@@ -31388,6 +31201,7 @@ paths:
                 registration_number:
                 billing_address:
                   id: addr_UkLWZg9DAJ
+                  label:
                   first_name:
                   last_name:
                   full_name: ''
@@ -31407,13 +31221,14 @@ paths:
                   state_abbr:
                   country_iso: GB
                   state_name:
-                  label:
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   latitude:
                   longitude:
                   customer_id:
+                  owner_id: sel_UkLWZg9DAJ
+                  owner_type: Spree::Seller
               schema:
                 "$ref": "#/components/schemas/Seller"
         '422':
@@ -32747,6 +32562,9 @@ components:
       properties:
         id:
           type: string
+        label:
+          type: string
+          nullable: true
         first_name:
           type: string
           nullable: true
@@ -32797,9 +32615,6 @@ components:
         state_name:
           type: string
           nullable: true
-        label:
-          type: string
-          nullable: true
         metadata:
           type: object
         created_at:
@@ -32815,8 +32630,15 @@ components:
         customer_id:
           type: string
           nullable: true
+        owner_id:
+          type: string
+          nullable: true
+        owner_type:
+          type: string
+          nullable: true
       required:
       - id
+      - label
       - first_name
       - last_name
       - full_name
@@ -32836,13 +32658,14 @@ components:
       - state_abbr
       - country_iso
       - state_name
-      - label
       - metadata
       - created_at
       - updated_at
       - latitude
       - longitude
       - customer_id
+      - owner_id
+      - owner_type
       x-typelizer: true
     AdminUser:
       type: object
@@ -33005,6 +32828,12 @@ components:
         preferred_stock_location_id:
           type: string
           nullable: true
+        company_id:
+          type: string
+          nullable: true
+        company_name:
+          type: string
+          nullable: true
         number:
           type: string
         token:
@@ -33147,6 +32976,8 @@ components:
       - market_id
       - channel_id
       - preferred_stock_location_id
+      - company_id
+      - company_name
       - number
       - token
       - email
@@ -33193,6 +33024,69 @@ components:
       - created_at
       - updated_at
       - applied_promotions
+      x-typelizer: true
+    CatalogAssignment:
+      type: object
+      properties:
+        id:
+          type: string
+        created_at:
+          type: string
+        catalog_id:
+          type: string
+        assignable_type:
+          type: string
+        assignable_id:
+          type: string
+        assignable_name:
+          type: string
+          nullable: true
+      required:
+      - id
+      - created_at
+      - catalog_id
+      - assignable_type
+      - assignable_id
+      - assignable_name
+      x-typelizer: true
+    Catalog:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        active:
+          type: boolean
+        position:
+          type: number
+          nullable: true
+        metadata:
+          type: object
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        price_list_id:
+          type: string
+          nullable: true
+        products_count:
+          type: number
+        assignments:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CatalogAssignment"
+      required:
+      - id
+      - name
+      - active
+      - position
+      - metadata
+      - created_at
+      - updated_at
+      - price_list_id
+      - products_count
       x-typelizer: true
     Category:
       type: object
@@ -33330,6 +33224,9 @@ components:
           type: array
           items:
             type: string
+        default_catalog_id:
+          type: string
+          nullable: true
       required:
       - id
       - name
@@ -33344,6 +33241,7 @@ components:
       - created_at
       - updated_at
       - stock_location_ids
+      - default_catalog_id
       x-typelizer: true
     ClaimLineItem:
       type: object
@@ -33766,72 +33664,64 @@ components:
       - label
       - description
       x-typelizer: true
-    CompanyContact:
+    CompanyInvitation:
       type: object
       properties:
         id:
           type: string
-        role:
+        email:
           type: string
+        expires_at:
+          type: string
+          nullable: true
+        company_id:
+          type: string
+        status:
+          type: string
+        accepted_at:
+          type: string
+          nullable: true
+        revoked_at:
+          type: string
+          nullable: true
         created_at:
           type: string
         updated_at:
           type: string
-        company_location_id:
+      required:
+      - id
+      - email
+      - expires_at
+      - company_id
+      - status
+      - accepted_at
+      - revoked_at
+      - created_at
+      - updated_at
+      x-typelizer: true
+    CompanyMembership:
+      type: object
+      properties:
+        id:
+          type: string
+        company_id:
           type: string
         customer_id:
           type: string
         email:
           type: string
           nullable: true
-      required:
-      - id
-      - role
-      - created_at
-      - updated_at
-      - company_location_id
-      - customer_id
-      - email
-      x-typelizer: true
-    CompanyLocation:
-      type: object
-      properties:
-        id:
-          type: string
-        external_references:
-          type: object
-        name:
-          type: string
-        metadata:
-          type: object
-          nullable: true
         created_at:
           type: string
         updated_at:
           type: string
-        company_id:
-          type: string
-        contacts_count:
-          type: number
-        billing_address:
-          "$ref": "#/components/schemas/Address"
-        shipping_address:
-          "$ref": "#/components/schemas/Address"
-        company_contacts:
-          type: array
-          items:
-            "$ref": "#/components/schemas/CompanyContact"
       required:
       - id
-      - external_references
-      - name
-      - metadata
+      - company_id
+      - customer_id
+      - email
       - created_at
       - updated_at
-      - company_id
-      - contacts_count
-      - billing_address
-      - shipping_address
       x-typelizer: true
     Company:
       type: object
@@ -33840,6 +33730,13 @@ components:
           type: string
         name:
           type: string
+        kind:
+          type: string
+        parent_id:
+          type: string
+          nullable: true
+        ancestors:
+          type: object
         external_references:
           type: object
         metadata:
@@ -33849,20 +33746,34 @@ components:
           type: string
         updated_at:
           type: string
-        locations_count:
+        children_count:
           type: number
-        company_locations:
+        members_count:
+          type: number
+        children:
           type: array
           items:
-            "$ref": "#/components/schemas/CompanyLocation"
+            "$ref": "#/components/schemas/Company"
+        addresses:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Address"
+        memberships:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CompanyMembership"
       required:
       - id
       - name
+      - kind
+      - parent_id
+      - ancestors
       - external_references
       - metadata
       - created_at
       - updated_at
-      - locations_count
+      - children_count
+      - members_count
       x-typelizer: true
     Country:
       type: object
@@ -35985,6 +35896,12 @@ components:
         channel_id:
           type: string
           nullable: true
+        company_id:
+          type: string
+          nullable: true
+        company_name:
+          type: string
+          nullable: true
         number:
           type: string
         email:
@@ -36121,18 +36038,12 @@ components:
         preferred_stock_location_id:
           type: string
           nullable: true
-        company_location_id:
-          type: string
-          nullable: true
         seller_id:
           type: string
           nullable: true
         seller:
           "$ref": "#/components/schemas/Seller"
         order_group_id:
-          type: string
-          nullable: true
-        company_id:
           type: string
           nullable: true
         tags:
@@ -36196,6 +36107,8 @@ components:
       - market_id
       - cart_id
       - channel_id
+      - company_id
+      - company_name
       - number
       - email
       - customer_note
@@ -36247,10 +36160,8 @@ components:
       - created_at
       - updated_at
       - preferred_stock_location_id
-      - company_location_id
       - seller_id
       - order_group_id
-      - company_id
       - tags
       - internal_note
       - internal_note_html

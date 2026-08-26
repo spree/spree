@@ -452,6 +452,27 @@ paths:
                   - read
                   - admin
                   subjects:
+                  - Spree::Catalog
+                  has_conditions: false
+                - allow: true
+                  actions:
+                  - read
+                  - admin
+                  subjects:
+                  - Spree::CatalogProduct
+                  has_conditions: false
+                - allow: true
+                  actions:
+                  - read
+                  - admin
+                  subjects:
+                  - Spree::CatalogAssignment
+                  has_conditions: false
+                - allow: true
+                  actions:
+                  - read
+                  - admin
+                  subjects:
                   - Spree::CustomField
                   has_conditions: false
                 - allow: true
@@ -495,6 +516,24 @@ paths:
                   - manage
                   subjects:
                   - Spree::PriceRule
+                  has_conditions: false
+                - allow: true
+                  actions:
+                  - manage
+                  subjects:
+                  - Spree::Catalog
+                  has_conditions: false
+                - allow: true
+                  actions:
+                  - manage
+                  subjects:
+                  - Spree::CatalogProduct
+                  has_conditions: false
+                - allow: true
+                  actions:
+                  - manage
+                  subjects:
+                  - Spree::CatalogAssignment
                   has_conditions: false
                 - allow: true
                   actions:
@@ -13618,10 +13657,10 @@ paths:
             application/json:
               example:
                 direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--f092f838b300123318549d358ad79ed4fe847bc3
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--18f157b21094b49f98478883653fcebaedd8ad67
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f7c72e607e004ec1c416cf8fc1e7fa1b3e1ac63c
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a62df0231aa4afd7897b7778a7a95c76c6d8cc71
               schema:
                 "$ref": "#/components/schemas/DirectUploadResponse"
       requestBody:
@@ -13909,6 +13948,7 @@ paths:
                       options_text: ''
                   shipping_address:
                     id: addr_gbHJdmfrXB
+                    label:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
@@ -13930,6 +13970,7 @@ paths:
                     state_name: New York
                   billing_address:
                     id: addr_UkLWZg9DAJ
+                    label:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
@@ -14057,6 +14098,7 @@ paths:
                     options_text: ''
                 shipping_address:
                   id: addr_gbHJdmfrXB
+                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
@@ -14078,6 +14120,7 @@ paths:
                   state_name: New York
                 billing_address:
                   id: addr_UkLWZg9DAJ
+                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
@@ -14194,6 +14237,7 @@ paths:
                     options_text: ''
                 shipping_address:
                   id: addr_gbHJdmfrXB
+                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
@@ -14215,6 +14259,7 @@ paths:
                   state_name: New York
                 billing_address:
                   id: addr_UkLWZg9DAJ
+                  label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
@@ -14780,6 +14825,9 @@ components:
       properties:
         id:
           type: string
+        label:
+          type: string
+          nullable: true
         first_name:
           type: string
           nullable: true
@@ -14832,6 +14880,7 @@ components:
           nullable: true
       required:
       - id
+      - label
       - first_name
       - last_name
       - full_name
