@@ -42,7 +42,18 @@ module Spree
                           primary_category buy_box_variants resolved_delivery_profile
                           purchasable? in_stock? backorderable? digital?]
 
+    # Statuses an operator sets directly. `bulk_status_update` validates
+    # against this, which is why the review statuses are not in it: reaching
+    # `proposed` is a seller submitting and reaching `rejected` is an operator
+    # deciding, and neither is a value to assign in bulk.
     STATUSES = %w[draft active archived].freeze
+
+    # Where a product sits in the marketplace review lifecycle. Only the
+    # workflows (Products::Propose, ::Approve, ::Reject) move a product in or
+    # out of these; see docs/plans/6.0-seller-product-submission.md.
+    REVIEW_STATUSES = %w[proposed rejected].freeze
+
+    ALL_STATUSES = (STATUSES + REVIEW_STATUSES).freeze
 
     TRANSLATABLE_FIELDS = %i[name description slug meta_description meta_title].freeze
     RICH_TEXT_TRANSLATABLE_FIELDS = %i[description].freeze
@@ -347,7 +358,7 @@ module Spree
     # model already owns: `Product.active` stays the currency-aware scope from
     # Spree::ProductScopes rather than a plain status lookup.
     include Spree::HasStatus
-    has_status(*STATUSES, default: :draft)
+    has_status(*ALL_STATUSES, default: :draft)
 
     # @deprecated Call Spree.product_activate_workflow — removed in 6.1.
     def activate!

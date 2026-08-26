@@ -107,6 +107,59 @@ RSpec.describe Spree::Api::V3::Seller::ProductsController, type: :controller do
     end
   end
 
+  # A seller lists; the marketplace decides what goes on sale. These are the
+  # two halves of that: status is not an attribute they can send, and the
+  # actions that do move it never reach `active`.
+  describe 'status' do
+    # The factory ships products `active`, so a draft is stated explicitly
+    # wherever the case needs one.
+    let!(:unlisted) { create(:product, name: 'Unlisted', seller: seller, store: store, status: 'draft') }
+
+    it 'is not writable through update' do
+      patch :update, params: { id: unlisted.prefixed_id, status: 'active' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(unlisted.reload).to be_draft
+    end
+
+    it 'submits for review' do
+      patch :submit, params: { id: unlisted.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(unlisted.reload).to be_proposed
+    end
+
+    it 'takes a listing back down' do
+      patch :draft, params: { id: mine.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(mine.reload).to be_draft
+    end
+
+    it 'archives a listing' do
+      patch :archive, params: { id: mine.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(mine.reload).to be_archived
+    end
+
+    it "cannot submit another seller's product" do
+      other_draft = create(:product, seller: other_seller, store: store, status: 'draft')
+
+      patch :submit, params: { id: other_draft.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(other_draft.reload).to be_draft
+    end
+
+    it 'refuses to submit a product already on sale' do
+      patch :submit, params: { id: mine.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(mine.reload).to be_active
+    end
+  end
+
   describe 'PATCH #update' do
     it 'edits their own product' do
       patch :update, params: { id: mine.prefixed_id, name: 'Renamed Lamp' }, as: :json

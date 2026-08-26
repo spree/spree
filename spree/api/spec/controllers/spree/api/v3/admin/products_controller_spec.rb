@@ -1348,6 +1348,38 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     end
   end
 
+  # Closing a review a seller opened
+  # (docs/plans/6.0-seller-product-submission.md).
+  describe 'reviewing a submitted product' do
+    let(:submitted) { create(:product, store: store, status: 'proposed') }
+
+    before { request.headers.merge!(headers) }
+
+    it 'approves it onto sale' do
+      patch :approve, params: { id: submitted.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(submitted.reload).to be_active
+    end
+
+    it 'rejects it with a reason the seller can read' do
+      patch :reject, params: { id: submitted.prefixed_id, reason: 'Photos are too dark' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(submitted.reload).to be_rejected
+      expect(submitted.metadata['rejection_reason']).to eq('Photos are too dark')
+    end
+
+    it 'refuses to approve a product nobody submitted' do
+      draft = create(:product, store: store, status: 'draft')
+
+      patch :approve, params: { id: draft.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(draft.reload).to be_draft
+    end
+  end
+
   describe 'POST #clone' do
     subject { post :clone, params: { id: product.prefixed_id }, as: :json }
 

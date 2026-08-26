@@ -338,6 +338,8 @@ en:
           attributes:
             base:
               cannot_destroy_if_attached_to_line_items: Cannot delete Products that are added to placed Orders. In such cases, please discontinue them.
+              cannot_propose: This product is already on sale.
+              not_awaiting_review: This product is not awaiting review.
             discontinue_on:
               invalid_date_range: must be later than available date
         spree/product_publication:

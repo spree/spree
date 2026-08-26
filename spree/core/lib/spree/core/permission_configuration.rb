@@ -291,10 +291,21 @@ module Spree
       register_resource(:store_credits, group: :orders, subjects: -> { [Spree::StoreCredit] })
 
       register_resource(:products, group: :catalog, audiences: %i[seller], subjects: -> {
-        [Spree::Product, Spree::ProductType, Spree::Variant, Spree::OptionType,
+        [Spree::Product, Spree::Variant, Spree::OptionType,
          Spree::OptionValue, Spree::Price, Spree::PriceList, Spree::PriceRule,
-         Spree::ProductPublication, Spree::Catalog, Spree::CatalogProduct,
+         Spree::Catalog, Spree::CatalogProduct,
          Spree::CatalogAssignment, Spree::CustomField]
+      })
+      # A seller fills in a type's custom fields; they do not define the types.
+      # Read-only rather than absent, because the product form has to offer the
+      # picker (docs/plans/6.0-seller-product-submission.md).
+      register_resource(:product_types, group: :catalog, write: false,
+                                        audiences: %i[seller],
+                                        subjects: -> { [Spree::ProductType] })
+      # Which channels carry a product is marketplace merchandising. Closed to
+      # the seller audience: a seller lists, the marketplace distributes.
+      register_resource(:publishing, group: :catalog, subjects: -> {
+        [Spree::ProductPublication]
       })
       # Media is its own resource because a file is no longer a product's
       # alone: one row can be placed on a category or collection, and the

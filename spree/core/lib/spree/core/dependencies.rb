@@ -146,6 +146,12 @@ module Spree
         product_archive_workflow: 'Spree::Products::Archive',
         product_draft_workflow: 'Spree::Products::Draft',
 
+        # marketplace review — a seller submits, the operator decides
+        # (docs/plans/6.0-seller-product-submission.md)
+        product_propose_workflow: 'Spree::Products::Propose',
+        product_approve_workflow: 'Spree::Products::Approve',
+        product_reject_workflow: 'Spree::Products::Reject',
+
         # price lists
         price_list_create_workflow: 'Spree::PriceLists::Create',
         price_list_update_workflow: 'Spree::PriceLists::Update',

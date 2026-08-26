@@ -21,6 +21,28 @@ module Spree
         class ProductsController < Seller::ResourceController
           scoped_resource :products
 
+          before_action :set_status_resource, only: [:submit, :draft, :archive]
+
+          # PATCH /api/v3/seller/products/:id/submit
+          #
+          # Asking the marketplace to put this product on sale.
+          def submit
+            run_status_workflow(Spree.product_propose_workflow)
+          end
+
+          # PATCH /api/v3/seller/products/:id/draft
+          #
+          # Taking a listing back down. Withdrawing your own product is not a
+          # review decision, so it needs nobody's approval.
+          def draft
+            run_status_workflow(Spree.product_draft_workflow)
+          end
+
+          # PATCH /api/v3/seller/products/:id/archive
+          def archive
+            run_status_workflow(Spree.product_archive_workflow)
+          end
+
           protected
 
           def model_class
@@ -33,7 +55,7 @@ module Spree
 
           def permitted_params
             attrs = params.permit(
-              :name, :description, :slug, :status,
+              :name, :description, :slug,
               :meta_title, :meta_description, :meta_keywords,
               :product_type_id,
               tags: [],
@@ -59,6 +81,29 @@ module Spree
 
           def collection_includes
             [:default_variant, :primary_media]
+          end
+
+          private
+
+          # Named apart from the base class's own resource lookup: overriding
+          # that one changes every action, and these three are the only ones
+          # that move a status.
+          def set_status_resource
+            @resource = find_resource
+            # A status move is a change to the product, so it needs the write
+            # key rather than one of its own — a read-only seller role cannot
+            # submit, take down or archive.
+            authorize!(:update, @resource)
+          end
+
+          def run_status_workflow(workflow)
+            result = workflow.call(product: @resource)
+
+            if result.success?
+              render json: serialize_resource(@resource.reload)
+            else
+              render_service_error(@resource.errors.presence || result.error)
+            end
           end
         end
       end

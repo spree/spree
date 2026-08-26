@@ -165,6 +165,8 @@ module Spree
         seller_team_member_serializer: 'Spree::Api::V3::Seller::TeamMemberSerializer',
         seller_invitation_serializer: 'Spree::Api::V3::Seller::InvitationSerializer',
         seller_product_serializer: 'Spree::Api::V3::Seller::ProductSerializer',
+        seller_product_type_serializer: 'Spree::Api::V3::Seller::ProductTypeSerializer',
+        seller_product_type_custom_field_definition_serializer: 'Spree::Api::V3::Seller::ProductTypeCustomFieldDefinitionSerializer',
         seller_order_serializer: 'Spree::Api::V3::Seller::OrderSerializer',
         seller_order_line_item_serializer: 'Spree::Api::V3::Seller::OrderLineItemSerializer',
         seller_fulfillment_serializer: 'Spree::Api::V3::Seller::FulfillmentSerializer',

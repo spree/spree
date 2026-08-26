@@ -32,6 +32,20 @@ module Spree
             end
           end
 
+          # PATCH /api/v3/admin/products/:id/approve
+          #
+          # Accepting a product a seller submitted, putting it on sale.
+          def approve
+            run_review_workflow(Spree.product_approve_workflow)
+          end
+
+          # PATCH /api/v3/admin/products/:id/reject
+          #
+          # Turning a submission down. The reason goes back to the seller.
+          def reject
+            run_review_workflow(Spree.product_reject_workflow, reason: params[:reason])
+          end
+
           # POST /api/v3/admin/products/bulk_status_update
           # Body: { ids: [...], status: 'draft' | 'active' | 'archived' }
           def bulk_status_update
@@ -238,6 +252,21 @@ module Spree
           end
 
           private
+
+          # Approving and rejecting are edits to the catalog, so they answer to
+          # the same key as any other product write.
+          def run_review_workflow(workflow, **arguments)
+            @resource = find_resource
+            authorize!(:update, @resource)
+
+            result = workflow.call(product: @resource, reviewer: try_spree_current_user, **arguments)
+
+            if result.success?
+              render json: serialize_resource(@resource.reload)
+            else
+              render_service_error(@resource.errors.presence || result.error)
+            end
+          end
 
           def search_provider
             @search_provider ||= Spree::SearchProvider::Database.new(current_store)
