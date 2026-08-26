@@ -231,6 +231,12 @@ export interface UpdateCartParams {
   use_shipping?: boolean
   /** Items to upsert (sets quantity for existing, creates new) */
   items?: LineItemInput[]
+  /**
+   * The company node this purchase is for. The buyer must have standing over
+   * it; null clears it, and with it the company's catalog, pricing and tax
+   * anchoring.
+   */
+  company_id?: string | null
 }
 
 // Payments
@@ -333,4 +339,15 @@ export interface ProductFiltersResponse {
 export interface ProductFiltersParams {
   category_id?: string
   q?: Record<string, unknown>
+}
+
+/**
+ * An address book entry for a company node: address fields, plus the two
+ * things only a book entry has — what it is filed under, and which defaults
+ * it holds for its node.
+ */
+export type CompanyAddressParams = AddressParams & {
+  label?: string
+  default_billing?: boolean
+  default_shipping?: boolean
 }
