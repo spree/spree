@@ -93,6 +93,12 @@
     "address": {
       "not_located_yet": "La carte apparaît une fois cette adresse localisée."
     },
+    "address_book": {
+      "default_billing": "Facturation par défaut",
+      "default_shipping": "Livraison par défaut",
+      "set_default_billing": "Définir comme adresse de facturation par défaut",
+      "set_default_shipping": "Définir comme adresse de livraison par défaut"
+    },
     "auth": {
       "back_to_login": "Retour à la connexion",
       "forgot_password": {

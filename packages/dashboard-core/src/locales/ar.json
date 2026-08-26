@@ -93,6 +93,12 @@
     "address": {
       "not_located_yet": "تظهر الخريطة بعد تحديد موقع هذا العنوان."
     },
+    "address_book": {
+      "default_billing": "الفوترة الافتراضية",
+      "default_shipping": "الشحن الافتراضي",
+      "set_default_billing": "تعيين كعنوان فوترة افتراضي",
+      "set_default_shipping": "تعيين كعنوان شحن افتراضي"
+    },
     "auth": {
       "back_to_login": "العودة إلى تسجيل الدخول",
       "forgot_password": {

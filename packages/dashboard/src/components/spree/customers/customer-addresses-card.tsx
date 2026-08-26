@@ -1,6 +1,7 @@
 import type { Address, Customer } from '@spree/admin-sdk'
 import { AddressFormDialog, type AddressParams, useCountries } from '@spree/dashboard-core'
 import {
+  AddressBookRow,
   Badge,
   Button,
   Card,
@@ -8,13 +9,9 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { EllipsisVerticalIcon, PencilIcon, PlusIcon, TrashIcon } from 'lucide-react'
+import { PlusIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -71,80 +68,24 @@ export function CustomerAddressesCard({ customer }: { customer: Customer }) {
         ) : (
           <CardContent className="flex flex-col gap-3">
             {addresses.map((addr) => (
-              <div
+              <AddressBookRow
                 key={addr.id}
-                className="flex items-start justify-between gap-2 rounded-md border p-3"
-              >
-                <div className="text-sm">
-                  <div className="font-medium">
-                    {addr.full_name ?? '—'}
-                    <span className="ml-2 inline-flex gap-1">
-                      {addr.is_default_billing && (
-                        <Badge variant="outline">
-                          {t('admin.customers.detail.address.default_billing')}
-                        </Badge>
-                      )}
-                      {addr.is_default_shipping && (
-                        <Badge variant="outline">
-                          {t('admin.customers.detail.address.default_shipping')}
-                        </Badge>
-                      )}
-                    </span>
-                  </div>
-                  <div className="text-muted-foreground">{addr.address1}</div>
-                  {addr.address2 && <div className="text-muted-foreground">{addr.address2}</div>}
-                  <div className="text-muted-foreground">
-                    {[addr.city, addr.state_code, addr.postal_code].filter(Boolean).join(', ')} ·{' '}
-                    {addr.country_code}
-                  </div>
-                  {addr.phone && <div className="text-muted-foreground">{addr.phone}</div>}
-                </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon-xs">
-                      <EllipsisVerticalIcon className="size-4" />
-                      <span className="sr-only">{t('admin.actions.actions_menu')}</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => setEditing(addr)}>
-                      <PencilIcon className="size-4" />
-                      {t('admin.actions.edit')}
-                    </DropdownMenuItem>
-                    {!addr.is_default_billing && (
-                      <DropdownMenuItem
-                        onClick={() => setDefault({ id: addr.id, kind: 'billing' })}
-                      >
-                        {t('admin.customers.detail.address.set_default_billing')}
-                      </DropdownMenuItem>
-                    )}
-                    {!addr.is_default_shipping && (
-                      <DropdownMenuItem
-                        onClick={() => setDefault({ id: addr.id, kind: 'shipping' })}
-                      >
-                        {t('admin.customers.detail.address.set_default_shipping')}
-                      </DropdownMenuItem>
-                    )}
-                    <DropdownMenuItem
-                      className="text-destructive focus:text-destructive"
-                      onClick={async () => {
-                        if (
-                          await confirm({
-                            message: t('admin.customers.detail.address.delete_confirm_message'),
-                            variant: 'destructive',
-                            confirmLabel: t('admin.actions.delete'),
-                          })
-                        ) {
-                          deleteMutation.mutate(addr.id)
-                        }
-                      }}
-                    >
-                      <TrashIcon className="size-4" />
-                      {t('admin.actions.delete')}
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
+                address={addr}
+                onEdit={() => setEditing(addr)}
+                onSetDefaultBilling={() => setDefault({ id: addr.id, kind: 'billing' })}
+                onSetDefaultShipping={() => setDefault({ id: addr.id, kind: 'shipping' })}
+                onRemove={async () => {
+                  if (
+                    await confirm({
+                      message: t('admin.customers.detail.address.delete_confirm_message'),
+                      variant: 'destructive',
+                      confirmLabel: t('admin.actions.delete'),
+                    })
+                  ) {
+                    deleteMutation.mutate(addr.id)
+                  }
+                }}
+              />
             ))}
           </CardContent>
         )}

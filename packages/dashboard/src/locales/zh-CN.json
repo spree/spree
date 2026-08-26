@@ -423,8 +423,6 @@
     "company_addresses": {
       "add_cta": "添加地址",
       "add_sheet_title": "新建地址",
-      "default_billing": "默认账单",
-      "default_shipping": "默认收货",
       "edit_sheet_title": "编辑地址",
       "empty": "暂无地址",
       "messages": {
@@ -551,11 +549,7 @@
       },
       "detail": {
         "address": {
-          "default_billing": "默认账单地址",
-          "default_shipping": "默认收货地址",
-          "delete_confirm_message": "删除此地址？",
-          "set_default_billing": "设为默认账单地址",
-          "set_default_shipping": "设为默认收货地址"
+          "delete_confirm_message": "删除此地址？"
         },
         "customer_since": "注册时间",
         "delete_label": "删除客户",

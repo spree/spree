@@ -425,8 +425,6 @@
     "company_addresses": {
       "add_cta": "Add address",
       "add_sheet_title": "New address",
-      "default_billing": "Default billing",
-      "default_shipping": "Default shipping",
       "edit_sheet_title": "Edit address",
       "empty": "No addresses yet",
       "messages": {
@@ -553,11 +551,7 @@
       },
       "detail": {
         "address": {
-          "default_billing": "Default billing",
-          "default_shipping": "Default shipping",
-          "delete_confirm_message": "Delete this address?",
-          "set_default_billing": "Set as default billing",
-          "set_default_shipping": "Set as default shipping"
+          "delete_confirm_message": "Delete this address?"
         },
         "customer_since": "Customer since",
         "delete_label": "Delete customer",

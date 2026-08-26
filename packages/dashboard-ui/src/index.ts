@@ -24,6 +24,7 @@ export { requiredMessage } from './lib/validation-messages'
 // Spree composed components — headless, accept data via props
 // ---------------------------------------------------------------------------
 export * from './spree/address-block'
+export * from './spree/address-book-row'
 export * from './spree/address-map'
 export * from './spree/back-button'
 export * from './spree/bulk-dialog'

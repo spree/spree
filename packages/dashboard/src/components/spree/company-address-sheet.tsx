@@ -1,5 +1,6 @@
 import type { Address } from '@spree/admin-sdk'
 import { AddressFormDialog } from '@spree/dashboard-core'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useCreateCompanyAddress, useUpdateCompanyAddress } from '../../hooks/use-companies'
 
@@ -31,11 +32,18 @@ export function CompanyAddressSheet({
   // kind, so the first site it gets is the answer to both, and there is no
   // previous default for it to displace. The company line comes from the node,
   // so a new entry is born carrying it.
-  const address = entry ?? {
-    company: companyName,
-    is_default_billing: true,
-    is_default_shipping: true,
-  }
+  //
+  // Memoized because the dialog re-seeds its form when this changes identity —
+  // a fresh literal each render would wipe what the merchant had typed.
+  const address = useMemo(
+    () =>
+      entry ?? {
+        company: companyName,
+        is_default_billing: true,
+        is_default_shipping: true,
+      },
+    [entry, companyName],
+  )
 
   return (
     <AddressFormDialog

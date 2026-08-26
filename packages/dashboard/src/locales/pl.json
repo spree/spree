@@ -435,8 +435,6 @@
     "company_addresses": {
       "add_cta": "Dodaj adres",
       "add_sheet_title": "Nowy adres",
-      "default_billing": "Domyślny rozliczeniowy",
-      "default_shipping": "Domyślny dostawy",
       "edit_sheet_title": "Edytuj adres",
       "empty": "Brak adresów",
       "messages": {
@@ -563,11 +561,7 @@
       },
       "detail": {
         "address": {
-          "default_billing": "Domyślny adres rozliczeniowy",
-          "default_shipping": "Domyślny adres dostawy",
-          "delete_confirm_message": "Usunąć ten adres?",
-          "set_default_billing": "Ustaw jako domyślny adres rozliczeniowy",
-          "set_default_shipping": "Ustaw jako domyślny adres dostawy"
+          "delete_confirm_message": "Usunąć ten adres?"
         },
         "customer_since": "Klient od",
         "delete_label": "Usuń klienta",

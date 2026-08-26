@@ -93,6 +93,12 @@
     "address": {
       "not_located_yet": "定位完成后将显示地图。"
     },
+    "address_book": {
+      "default_billing": "默认账单",
+      "default_shipping": "默认收货",
+      "set_default_billing": "设为默认账单地址",
+      "set_default_shipping": "设为默认收货地址"
+    },
     "auth": {
       "back_to_login": "返回登录",
       "forgot_password": {

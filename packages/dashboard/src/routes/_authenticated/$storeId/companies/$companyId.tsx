@@ -9,7 +9,7 @@ import {
   usePermissions,
 } from '@spree/dashboard-core'
 import {
-  AddressBlock,
+  AddressBookRow,
   Badge,
   Button,
   Card,
@@ -45,7 +45,7 @@ import {
   useConfirm,
 } from '@spree/dashboard-ui'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { EllipsisVerticalIcon, PencilIcon, PlusIcon, TrashIcon } from 'lucide-react'
+import { EllipsisVerticalIcon, PlusIcon, TrashIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -71,6 +71,7 @@ import {
   useDeleteCompanyTaxIdentifier,
   useRevokeCompanyInvitation,
   useUpdateCompany,
+  useUpdateCompanyAddress,
   useUpdateCompanyTaxIdentifier,
   useValidateCompanyTaxIdentifier,
 } from '../../../../hooks/use-companies'
@@ -506,7 +507,17 @@ function AddressBookCard({ company, canEdit }: { company: Company; canEdit: bool
   const [page, setPage] = useState(1)
   const { data, isLoading } = useCompanyAddresses(company.id, page)
   const deleteMutation = useDeleteCompanyAddress(company.id)
+  const updateMutation = useUpdateCompanyAddress(company.id)
   const [editing, setEditing] = useState<Address | 'new' | null>(null)
+
+  // The node points at one address per kind, so promoting simply moves the
+  // pointer — nothing to demote.
+  function setDefault(id: string, kind: 'billing' | 'shipping') {
+    return updateMutation.mutate({
+      id,
+      params: { [kind === 'billing' ? 'default_billing' : 'default_shipping']: true },
+    })
+  }
 
   const entries = data?.data ?? []
   const meta = data?.meta
@@ -552,45 +563,15 @@ function AddressBookCard({ company, canEdit }: { company: Company; canEdit: bool
       ) : (
         <CardContent className="flex flex-col gap-4">
           {entries.map((entry) => (
-            <div key={entry.id} className="flex items-start justify-between gap-2">
-              <div className="flex min-w-0 flex-col gap-1">
-                <span className="flex items-center gap-2">
-                  {entry.label && (
-                    <span className="font-medium text-foreground text-sm">{entry.label}</span>
-                  )}
-                  {entry.is_default_billing && (
-                    <Badge variant="outline">{t('admin.company_addresses.default_billing')}</Badge>
-                  )}
-                  {entry.is_default_shipping && (
-                    <Badge variant="outline">{t('admin.company_addresses.default_shipping')}</Badge>
-                  )}
-                </span>
-                <AddressBlock address={entry} />
-              </div>
-              {canEdit && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon-xs" className="shrink-0">
-                      <EllipsisVerticalIcon className="size-4" />
-                      <span className="sr-only">{t('admin.actions.actions_menu')}</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => setEditing(entry)}>
-                      <PencilIcon className="size-4" />
-                      {t('admin.actions.edit')}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className="text-destructive focus:text-destructive"
-                      onClick={() => handleRemove(entry)}
-                    >
-                      <TrashIcon className="size-4" />
-                      {t('admin.actions.delete')}
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
-            </div>
+            <AddressBookRow
+              key={entry.id}
+              address={entry}
+              canEdit={canEdit}
+              onEdit={() => setEditing(entry)}
+              onSetDefaultBilling={() => setDefault(entry.id, 'billing')}
+              onSetDefaultShipping={() => setDefault(entry.id, 'shipping')}
+              onRemove={() => handleRemove(entry)}
+            />
           ))}
           {meta && meta.pages > 1 && <Pagination meta={meta} onPageChange={setPage} />}
         </CardContent>

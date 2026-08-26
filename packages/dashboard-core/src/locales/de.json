@@ -93,6 +93,12 @@
     "address": {
       "not_located_yet": "Die Karte erscheint, sobald diese Adresse gefunden wurde."
     },
+    "address_book": {
+      "default_billing": "Standard-Rechnung",
+      "default_shipping": "Standard-Versand",
+      "set_default_billing": "Als Standard-Rechnungsadresse festlegen",
+      "set_default_shipping": "Als Standard-Versandadresse festlegen"
+    },
     "auth": {
       "back_to_login": "Zurück zur Anmeldung",
       "forgot_password": {

@@ -93,6 +93,12 @@
     "address": {
       "not_located_yet": "The map appears once this address has been located."
     },
+    "address_book": {
+      "default_billing": "Default billing",
+      "default_shipping": "Default shipping",
+      "set_default_billing": "Set as default billing",
+      "set_default_shipping": "Set as default shipping"
+    },
     "auth": {
       "back_to_login": "Back to sign in",
       "forgot_password": {

@@ -431,8 +431,6 @@
     "company_addresses": {
       "add_cta": "إضافة عنوان",
       "add_sheet_title": "عنوان جديد",
-      "default_billing": "الفوترة الافتراضية",
-      "default_shipping": "الشحن الافتراضي",
       "edit_sheet_title": "تعديل العنوان",
       "empty": "لا توجد عناوين بعد",
       "messages": {
@@ -559,11 +557,7 @@
       },
       "detail": {
         "address": {
-          "default_billing": "الفواتير الافتراضية",
-          "default_shipping": "الشحن الافتراضي",
-          "delete_confirm_message": "هل تريد حذف هذا العنوان؟",
-          "set_default_billing": "تعيين كفواتير افتراضية",
-          "set_default_shipping": "تعيين كشحن افتراضي"
+          "delete_confirm_message": "هل تريد حذف هذا العنوان؟"
         },
         "customer_since": "العميل منذ ذلك الحين",
         "delete_label": "حذف العميل",

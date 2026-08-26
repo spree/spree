@@ -425,8 +425,6 @@
     "company_addresses": {
       "add_cta": "Adresse hinzufügen",
       "add_sheet_title": "Neue Adresse",
-      "default_billing": "Standard-Rechnung",
-      "default_shipping": "Standard-Lieferung",
       "edit_sheet_title": "Adresse bearbeiten",
       "empty": "Noch keine Adressen",
       "messages": {
@@ -553,11 +551,7 @@
       },
       "detail": {
         "address": {
-          "default_billing": "Standard-Rechnungsadresse",
-          "default_shipping": "Standard-Lieferadresse",
-          "delete_confirm_message": "Diese Adresse löschen?",
-          "set_default_billing": "Als Standard-Rechnungsadresse festlegen",
-          "set_default_shipping": "Als Standard-Lieferadresse festlegen"
+          "delete_confirm_message": "Diese Adresse löschen?"
         },
         "customer_since": "Kunde seit",
         "delete_label": "Kunde löschen",
