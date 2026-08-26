@@ -29,16 +29,28 @@ module Spree
     # fail, and skipping it avoids re-running a whole validation set to move
     # one foreign key.
     #
+    # Each flag has three meanings, and they are all different: true promotes
+    # this address, false gives up the slot — but only when this address is
+    # what currently holds it, since another entry's default is not this
+    # caller's business — and nil leaves the slot alone.
+    #
     # @param address_id [Integer]
-    # @param billing [Boolean] promote to the default billing slot
-    # @param shipping [Boolean] promote to the default shipping slot
+    # @param billing [Boolean, nil] promote to, or release, the billing slot
+    # @param shipping [Boolean, nil] promote to, or release, the shipping slot
     def assign_default_address(address_id:, billing: true, shipping: true)
-      attributes = {
-        default_address_columns[:bill] => (address_id if billing),
-        default_address_columns[:ship] => (address_id if shipping)
-      }.compact_blank
+      attributes = {}
 
-      return if attributes.blank?
+      { bill: billing, ship: shipping }.each do |kind, flag|
+        column = default_address_columns[kind]
+
+        if flag
+          attributes[column] = address_id
+        elsif flag == false && default_address_id(kind) == address_id
+          attributes[column] = nil
+        end
+      end
+
+      return if attributes.empty?
 
       update_columns(**attributes, updated_at: Time.current)
     end

@@ -32,29 +32,17 @@ module Spree
               end
             end
 
-            # Promotion goes through the owner, which knows where its own
-            # default slots live. Clearing stays here: it is an admin edit with
-            # no counterpart on the customer's book, and it only unsets the
-            # pointer when this row is the one holding it — another entry's
-            # default is not this request's business.
+            # The owner knows where its own default slots live, and what each
+            # of the three flag states means — promote, give up, leave alone.
             def apply_default_flags!(address)
               company = address.owner
               return if company.nil?
 
-              billing = flag_param(:default_billing)
-              shipping = flag_param(:default_shipping)
-
-              if billing || shipping
-                company.assign_default_address(address_id: address.id, billing: !!billing, shipping: !!shipping)
-              end
-
-              cleared = {}
-              cleared[:default_bill_address_id] = nil if billing == false &&
-                                                         company.default_address_id(:bill) == address.id
-              cleared[:default_ship_address_id] = nil if shipping == false &&
-                                                         company.default_address_id(:ship) == address.id
-
-              company.update!(cleared) if cleared.any?
+              company.assign_default_address(
+                address_id: address.id,
+                billing: flag_param(:default_billing),
+                shipping: flag_param(:default_shipping)
+              )
             end
 
             # @return [Boolean, nil] nil when the client said nothing about it

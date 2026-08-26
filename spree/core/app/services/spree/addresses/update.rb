@@ -15,8 +15,10 @@ module Spree
       private
 
       def perform(address:, address_params:, **opts)
-        default_billing = address_params.key?(:is_default_billing) ? address_params.delete(:is_default_billing) : opts.fetch(:default_billing, false)
-        default_shipping = address_params.key?(:is_default_shipping) ? address_params.delete(:is_default_shipping) : opts.fetch(:default_shipping, false)
+        # nil, not false: saying nothing about a flag leaves the owner's slot
+        # where it is, while false is a request to give it up.
+        default_billing = address_params.key?(:is_default_billing) ? address_params.delete(:is_default_billing) : opts.fetch(:default_billing, nil)
+        default_shipping = address_params.key?(:is_default_shipping) ? address_params.delete(:is_default_shipping) : opts.fetch(:default_shipping, nil)
         address_changes_except = opts.fetch(:address_changes_except, [])
 
         prepare_address_params!(address, address_params)
@@ -103,12 +105,22 @@ module Spree
 
       # Whether this edit only moves the owner's default pointers, leaving the
       # address itself untouched — asked of whichever owner keeps the book.
+      #
+      # A flag of false is a request in its own right ("stop defaulting to
+      # this one"), so what matters is whether the slot would end up somewhere
+      # different, not whether the flag is truthy.
       def defaults_changed?(address, default_billing, default_shipping)
         owner = address.owner
         return false unless owner.respond_to?(:default_address_id)
 
-        (default_billing.present? && owner.default_address_id(:bill) != address.id) ||
-          (default_shipping.present? && owner.default_address_id(:ship) != address.id)
+        default_moves?(owner, :bill, default_billing, address) ||
+          default_moves?(owner, :ship, default_shipping, address)
+      end
+
+      def default_moves?(owner, kind, flag, address)
+        held = owner.default_address_id(kind) == address.id
+
+        flag ? !held : (flag == false && held)
       end
 
       def new_address(address_params = {})

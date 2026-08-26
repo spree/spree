@@ -10,8 +10,10 @@ module Spree
       def call(address_params: {}, owner: nil, user: nil, **opts)
         owner ||= user
         order = opts[:order]
-        default_billing = address_params.key?(:is_default_billing) ? address_params.delete(:is_default_billing) : opts.fetch(:default_billing, false)
-        default_shipping = address_params.key?(:is_default_shipping) ? address_params.delete(:is_default_shipping) : opts.fetch(:default_shipping, false)
+        # nil, not false — the same three-state contract Update keeps, so
+        # silence means the same thing on both.
+        default_billing = address_params.key?(:is_default_billing) ? address_params.delete(:is_default_billing) : opts.fetch(:default_billing, nil)
+        default_shipping = address_params.key?(:is_default_shipping) ? address_params.delete(:is_default_shipping) : opts.fetch(:default_shipping, nil)
 
         address = Spree::Address.new(address_params)
         address.owner = owner if owner.present?
