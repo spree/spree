@@ -179,6 +179,73 @@ RSpec.describe Spree::Api::V3::Seller::ProductsController, type: :controller do
     expect(json_response['metadata']).to eq('care' => 'wash cold')
   end
 
+  # The form loads a product with everything it edits in one request, so each
+  # of these has to resolve — a missing seller-side serializer raises rather
+  # than quietly omitting the key.
+  it 'expands the collections the form edits' do
+    get :show,
+        params: { id: mine.prefixed_id, expand: 'variants,media,custom_fields,default_variant' },
+        as: :json
+
+    expect(response).to have_http_status(:ok)
+    expect(json_response).to include('variants', 'media', 'custom_fields', 'default_variant', 'collection_ids')
+  end
+
+  describe 'writing variants, media and memberships' do
+    let(:category) { create(:category, store: store) }
+
+    it 'saves a variant the payload carries' do
+      patch :update,
+            params: {
+              id: mine.prefixed_id,
+              variants: [{ sku: 'LAMP-1', barcode: '5060', options: [] }]
+            },
+            as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(mine.reload.variants.map(&:sku)).to include('LAMP-1')
+    end
+
+    it 'attaches an uploaded image' do
+      blob = ActiveStorage::Blob.create_and_upload!(
+        io: File.open(Spree::Core::Engine.root.join('spec', 'fixtures', 'thinking-cat.jpg')),
+        filename: 'lamp.jpg',
+        content_type: 'image/jpeg'
+      )
+
+      patch :update,
+            params: { id: mine.prefixed_id, media: [{ signed_id: blob.signed_id, alt: 'A lamp' }] },
+            as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(mine.reload.media.map(&:alt)).to include('A lamp')
+    end
+
+    it 'files the product under a category' do
+      patch :update, params: { id: mine.prefixed_id, category_ids: [category.prefixed_id] }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(mine.reload.categories).to include(category)
+    end
+
+    # Marketplace configuration, not a seller's: silently ignored rather than
+    # refused, the same way tax and delivery already are on this endpoint.
+    # Asserted on the column, since the reader falls back to the store default.
+    it 'ignores a tax category on a variant' do
+      tax_category = create(:tax_category, store: store)
+
+      patch :update,
+            params: {
+              id: mine.prefixed_id,
+              variants: [{ sku: 'LAMP-2', tax_category_id: tax_category.prefixed_id, options: [] }]
+            },
+            as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(mine.reload.variants.find_by(sku: 'LAMP-2')[:tax_category_id]).to be_nil
+    end
+  end
+
   describe 'PATCH #update' do
     it 'edits their own product' do
       patch :update, params: { id: mine.prefixed_id, name: 'Renamed Lamp' }, as: :json

@@ -15,6 +15,7 @@ module Spree
           typelize status: :string,
                    product_type_id: [:string, nullable: true],
                    category_ids: [:string, multi: true],
+                   collection_ids: [:string, multi: true],
                    metadata: 'Record<string, unknown>'
 
           attributes :status, :metadata, created_at: :iso8601, updated_at: :iso8601
@@ -29,6 +30,31 @@ module Spree
               category.prefixed_id if store_id.nil? || category.store_id == store_id
             end
           end
+
+          attribute :collection_ids do |product|
+            product.collections.map(&:prefixed_id)
+          end
+
+          many :variants,
+               resource: proc { Spree.api.seller_variant_serializer },
+               if: proc { expand?('variants') }
+
+          one :default_variant,
+              resource: proc { Spree.api.seller_variant_serializer },
+              if: proc { expand?('default_variant') }
+
+          many :gallery_media,
+               key: :media,
+               resource: proc { Spree.api.seller_media_serializer },
+               if: proc { expand?('media') }
+
+          many :option_types,
+               resource: proc { Spree.api.option_type_serializer },
+               if: proc { expand?('option_types') }
+
+          many :custom_fields,
+               resource: proc { Spree.api.seller_custom_field_serializer },
+               if: proc { expand?('custom_fields') }
         end
       end
     end

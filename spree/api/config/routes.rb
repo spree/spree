@@ -746,6 +746,11 @@ Spree::Core::Engine.add_routes do
         # only — defining either is the operator's.
         resources :product_types, only: [:index, :show]
 
+        # What a seller may file a product under. Read only for the same
+        # reason: the marketplace owns its own taxonomy and merchandising.
+        resources :categories, only: [:index]
+        resources :collections, only: [:index]
+
         # What this seller has sold. Cancelling is a member action because it
         # is a workflow with its own arguments, and fulfilling is nested: a
         # parcel means nothing outside the order it belongs to.

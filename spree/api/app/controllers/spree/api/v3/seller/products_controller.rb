@@ -53,6 +53,24 @@ module Spree
             Spree.api.seller_product_serializer
           end
 
+          # The same workflows the operator's endpoint runs, so a seller's write
+          # gets the nested variant and media handling and the validate hooks
+          # rather than a bare assign_attributes.
+          def create_workflow
+            Spree.product_create_workflow
+          end
+
+          def update_workflow
+            Spree.product_update_workflow
+          end
+
+          # The workflow builds its own product, which would leave a seller's
+          # listing unowned. Handing it one built through `current_seller.products`
+          # keeps the seller on the record, whatever the payload claims.
+          def create_workflow_arguments
+            super.merge(record: build_resource)
+          end
+
           def permitted_params
             attrs = params.permit(
               :name, :description, :slug,
@@ -60,8 +78,28 @@ module Spree
               :product_type_id,
               tags: [],
               category_ids: [],
+              collection_ids: [],
               metadata: {},
-              prices: [:amount, :compare_at_amount, :currency]
+              prices: [:amount, :compare_at_amount, :currency],
+              custom_fields: [:id, :custom_field_definition_id, :value, { value: [] }, { value: {} }],
+              # Inline media, the same shape the operator sends. `external_url`
+              # stays out for the same reason it does there — it would make the
+              # server fetch a URL the caller chose.
+              media: [*Spree::Media::WRITABLE_ATTRIBUTES, :id, :signed_id, { variant_ids: [] }],
+              # A seller's variants. Narrower than the operator's set:
+              # `seller_id` would let a payload hand a variant to somebody else,
+              # and `tax_category_id`/`delivery_profile_id` are marketplace
+              # configuration.
+              variants: [
+                :id, :sku, :barcode,
+                :cost_price, :cost_currency,
+                :weight, :height, :width, :depth, :weight_unit, :dimensions_unit,
+                :hs_code, :country_of_origin, :customs_description,
+                :track_inventory, :preorderable, :preorder_ships_at, :backorder_limit, :position,
+                options: [:name, :value],
+                prices: [:amount, :compare_at_amount, :currency],
+                stock_levels: [:id, :stock_location_id, :count_on_hand, :backorderable]
+              ]
             )
 
             # A price the client did not name a currency for is priced in the

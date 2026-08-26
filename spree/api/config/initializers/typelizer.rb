@@ -68,9 +68,13 @@ Rails.application.config.after_initialize do
     # Store-level names are emitted only when a seller serializer reaches
     # them — the `store_nested_for_seller` set — so this package does not
     # grow into a second copy of the whole store SDK.
+    #
+    # A name the seller branch declares itself must NOT be listed here: both
+    # map to the same bare type name, so listing it emits the export twice and
+    # the package stops compiling. Category, Media, Variant and CustomField
+    # left this set when the seller branch grew its own.
     store_nested_for_seller = %w[
-      Address Category CustomField Media OptionType OptionValue
-      Price PriceHistory Seller Variant
+      Address OptionType OptionValue Price PriceHistory Seller
     ].to_set
 
     config.writer(:seller) do |c|
