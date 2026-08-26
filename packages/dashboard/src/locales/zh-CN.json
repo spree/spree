@@ -3086,8 +3086,11 @@
         "status_options": {
           "active": "启用",
           "archived": "已归档",
-          "draft": "草稿"
+          "draft": "草稿",
+          "proposed": "审核中",
+          "rejected": "需要修改"
         },
+        "status_under_review": "此商品正在审核中。请使用“批准”或“拒绝”做出决定。",
         "transfers": {
           "description_external": "外部收货至 <strong>{{destination}}</strong>。",
           "description_internal": "库存从 <strong>{{source}}</strong> 调拨至 <strong>{{destination}}</strong>。",

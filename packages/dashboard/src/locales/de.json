@@ -3094,8 +3094,11 @@
         "status_options": {
           "active": "Aktiv",
           "archived": "Archiviert",
-          "draft": "Entwurf"
+          "draft": "Entwurf",
+          "proposed": "In Prüfung",
+          "rejected": "Änderungen erforderlich"
         },
+        "status_under_review": "Dieses Produkt wird geprüft. Nutze Freigeben oder Ablehnen, um zu entscheiden.",
         "transfers": {
           "description_external": "Externer Wareneingang in <strong>{{destination}}</strong>.",
           "description_internal": "Bestand verschoben von <strong>{{source}}</strong> nach <strong>{{destination}}</strong>.",

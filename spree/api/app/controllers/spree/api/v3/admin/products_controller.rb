@@ -248,7 +248,17 @@ module Spree
                 prices: [:amount, :compare_at_amount, :currency],
                 stock_levels: [:id, :stock_location_id, :count_on_hand, :backorderable]
               ]
-            )
+            ).tap { |attrs| attrs.delete(:status) if review_status?(attrs[:status]) }
+          end
+
+          # A review status is an outcome, not a value to assign: `proposed`
+          # means a seller asked, and `rejected` means somebody decided. Both
+          # are reached through the workflows behind `approve`/`reject`, so a
+          # status naming one here is dropped rather than written — the same
+          # reason `bulk_status_update` validates against `STATUSES` and not
+          # the full list (docs/plans/6.0-seller-product-submission.md).
+          def review_status?(status)
+            status.present? && Spree::Product::REVIEW_STATUSES.include?(status.to_s)
           end
 
           private

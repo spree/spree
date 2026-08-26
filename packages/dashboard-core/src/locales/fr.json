@@ -1076,8 +1076,11 @@
         "status_options": {
           "active": "Actif",
           "archived": "Archivé",
-          "draft": "Brouillon"
+          "draft": "Brouillon",
+          "proposed": "En cours de revue",
+          "rejected": "Modifications requises"
         },
+        "status_under_review": "Ce produit est en cours de revue. Utilisez Approuver ou Rejeter pour décider.",
         "transfers": {
           "description_external": "Réception externe dans <strong>{{destination}}</strong>.",
           "description_internal": "Stock déplacé de <strong>{{source}}</strong> vers <strong>{{destination}}</strong>.",

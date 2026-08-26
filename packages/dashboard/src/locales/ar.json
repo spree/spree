@@ -3110,8 +3110,11 @@
         "status_options": {
           "active": "نشط",
           "archived": "مؤرشف",
-          "draft": "مسودة"
+          "draft": "مسودة",
+          "proposed": "قيد المراجعة",
+          "rejected": "يتطلب تعديلات"
         },
+        "status_under_review": "هذا المنتج قيد المراجعة. استخدم الموافقة أو الرفض لاتخاذ القرار.",
         "transfers": {
           "description_external": "الاستلام الخارجي إلى <strong>{{destination}}</strong>.",
           "description_internal": "تم نقل المخزون من <strong>{{source}}</strong> إلى <strong>{{destination}}</strong>.",

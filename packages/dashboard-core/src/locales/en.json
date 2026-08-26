@@ -1078,8 +1078,11 @@
         "status_options": {
           "active": "Active",
           "archived": "Archived",
-          "draft": "Draft"
+          "draft": "Draft",
+          "proposed": "In review",
+          "rejected": "Changes needed"
         },
+        "status_under_review": "This product is in review. Use Approve or Reject to decide.",
         "transfers": {
           "description_external": "External receive into <strong>{{destination}}</strong>.",
           "description_internal": "Inventory moved from <strong>{{source}}</strong> to <strong>{{destination}}</strong>.",

@@ -1380,6 +1380,37 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     end
   end
 
+  # `proposed` and `rejected` are review outcomes, reached through the
+  # approve/reject workflows. A status naming one in an ordinary update is
+  # dropped rather than written, so a product cannot be pushed into or out of
+  # review by editing a field.
+  describe 'assigning a review status directly' do
+    let!(:draft_product) { create(:product, store: store, status: 'draft') }
+
+    before { request.headers.merge!(headers) }
+
+    it 'ignores proposed' do
+      patch :update, params: { id: draft_product.prefixed_id, status: 'proposed' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(draft_product.reload).to be_draft
+    end
+
+    it 'ignores rejected' do
+      patch :update, params: { id: draft_product.prefixed_id, status: 'rejected' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(draft_product.reload).to be_draft
+    end
+
+    it 'still writes the statuses an operator does assign' do
+      patch :update, params: { id: draft_product.prefixed_id, status: 'active' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(draft_product.reload).to be_active
+    end
+  end
+
   describe 'POST #clone' do
     subject { post :clone, params: { id: product.prefixed_id }, as: :json }
 

@@ -842,8 +842,21 @@ export function SEOCard({ form, product }: FormCardProps & { product?: Product }
 // Status
 // ---------------------------------------------------------------------------
 
+const ASSIGNABLE_STATUSES = ['draft', 'active', 'archived']
+
 export function StatusCard({ form }: FormCardProps) {
   const { t } = useTranslation()
+  const status = useWatch({ control: form.control, name: 'status' })
+
+  // A product awaiting or refused review sits on a status nobody assigns —
+  // it got there by a seller submitting or an operator deciding, and it
+  // leaves through Approve/Reject. Listing it anyway is what lets the picker
+  // render the product's actual state instead of a raw value with no matching
+  // option; the card is read-only while it is there, because the moves out of
+  // it are the review actions rather than this control
+  // (docs/plans/6.0-seller-product-submission.md).
+  const underReview = Boolean(status) && !ASSIGNABLE_STATUSES.includes(status as string)
+  const values = underReview ? [status as string, ...ASSIGNABLE_STATUSES] : ASSIGNABLE_STATUSES
 
   return (
     <SharedStatusCard<ProductFormValues>
@@ -851,7 +864,9 @@ export function StatusCard({ form }: FormCardProps) {
       name="status"
       title={t('admin.fields.status.label')}
       label={t('admin.fields.status.label')}
-      options={['draft', 'active', 'archived'].map((value) => ({
+      disabled={underReview}
+      description={underReview ? t('admin.pages.products.status_under_review') : undefined}
+      options={values.map((value) => ({
         value,
         label: t(`admin.pages.products.status_options.${value}`),
       }))}

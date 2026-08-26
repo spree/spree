@@ -3138,8 +3138,11 @@
         "status_options": {
           "active": "Aktywne",
           "archived": "Zarchiwizowany",
-          "draft": "Wersja robocza"
+          "draft": "Wersja robocza",
+          "proposed": "W recenzji",
+          "rejected": "Wymaga zmian"
         },
+        "status_under_review": "Ten produkt jest w recenzji. Użyj Zatwierdź lub Odrzuć, aby zdecydować.",
         "transfers": {
           "description_external": "Przyjęcie zewnętrzne do <strong>{{destination}}</strong>.",
           "description_internal": "Stan magazynowy przeniesiony z <strong>{{source}}</strong> do <strong>{{destination}}</strong>.",
