@@ -110,12 +110,15 @@ describe('companies', () => {
           body = (await request.json()) as Record<string, unknown>
           return HttpResponse.json(sampleAddress, { status: 201 })
         }),
-        http.patch(`${API_PREFIX}/company_addresses/caddr_abc123`, async ({ request }) => {
-          patched = (await request.json()) as Record<string, unknown>
-          return HttpResponse.json(sampleAddress)
-        }),
+        http.patch(
+          `${API_PREFIX}/companies/comp_abc123/addresses/caddr_abc123`,
+          async ({ request }) => {
+            patched = (await request.json()) as Record<string, unknown>
+            return HttpResponse.json(sampleAddress)
+          },
+        ),
         http.delete(
-          `${API_PREFIX}/company_addresses/caddr_abc123`,
+          `${API_PREFIX}/companies/comp_abc123/addresses/caddr_abc123`,
           () => new HttpResponse(null, { status: 204 }),
         ),
       )
@@ -125,18 +128,22 @@ describe('companies', () => {
       await client.companies.addresses.create('comp_abc123', {
         label: 'Plant 2 dock',
         default_shipping: true,
-        address: { city: 'Hamburg', country_code: 'DE' },
+        city: 'Hamburg',
+        country_code: 'DE',
       })
-      await client.companyAddresses.update('caddr_abc123', { address: { city: 'Berlin' } })
-      await expect(client.companyAddresses.delete('caddr_abc123')).resolves.toBeUndefined()
+      await client.companies.addresses.update('comp_abc123', 'caddr_abc123', { city: 'Berlin' })
+      await expect(
+        client.companies.addresses.delete('comp_abc123', 'caddr_abc123'),
+      ).resolves.toBeUndefined()
 
       expect(listed.data[0]?.id).toBe('caddr_abc123')
       expect(body).toEqual({
         label: 'Plant 2 dock',
         default_shipping: true,
-        address: { city: 'Hamburg', country_code: 'DE' },
+        city: 'Hamburg',
+        country_code: 'DE',
       })
-      expect(patched).toEqual({ address: { city: 'Berlin' } })
+      expect(patched).toEqual({ city: 'Berlin' })
     })
   })
 
@@ -163,7 +170,7 @@ describe('companies', () => {
           return HttpResponse.json(membership, { status: 201 })
         }),
         http.delete(
-          `${API_PREFIX}/company_memberships/cmem_abc123`,
+          `${API_PREFIX}/companies/comp_abc123/memberships/cmem_abc123`,
           () => new HttpResponse(null, { status: 204 }),
         ),
       )
@@ -173,7 +180,9 @@ describe('companies', () => {
       await client.companies.memberships.create('comp_abc123', {
         customer_email: 'buyer@acme.test',
       })
-      await expect(client.companyMemberships.delete('cmem_abc123')).resolves.toBeUndefined()
+      await expect(
+        client.companies.memberships.delete('comp_abc123', 'cmem_abc123'),
+      ).resolves.toBeUndefined()
 
       expect(listed.data[0]?.email).toBe('buyer@acme.test')
       expect(body).toEqual({ customer_email: 'buyer@acme.test' })
@@ -198,14 +207,16 @@ describe('companies', () => {
           HttpResponse.json(paginated([invitation])),
         ),
         http.delete(
-          `${API_PREFIX}/company_invitations/cinv_abc123`,
+          `${API_PREFIX}/companies/comp_abc123/invitations/cinv_abc123`,
           () => new HttpResponse(null, { status: 204 }),
         ),
       )
 
       const client = createTestClient()
       const listed = await client.companies.invitations.list('comp_abc123')
-      await expect(client.companyInvitations.delete('cinv_abc123')).resolves.toBeUndefined()
+      await expect(
+        client.companies.invitations.delete('comp_abc123', 'cinv_abc123'),
+      ).resolves.toBeUndefined()
 
       expect(listed.data[0]?.status).toBe('pending')
     })

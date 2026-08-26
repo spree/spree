@@ -10330,12 +10330,18 @@ paths:
                   in: 1
                   previous:
                   next:
-  "/api/v3/store/company_addresses/{id}":
+  "/api/v3/store/companies/{company_id}/addresses/{id}":
     parameters:
+    - name: company_id
+      in: path
+      required: true
+      description: Company node ID (comp_...)
+      schema:
+        type: string
     - name: id
       in: path
       required: true
-      description: Address book entry ID (caddr_...)
+      description: Address ID (addr_...)
       schema:
         type: string
     patch:
@@ -10420,8 +10426,14 @@ paths:
       responses:
         '204':
           description: address book entry removed
-  "/api/v3/store/company_invitations/{id}":
+  "/api/v3/store/companies/{company_id}/invitations/{id}":
     parameters:
+    - name: company_id
+      in: path
+      required: true
+      description: Company node ID (comp_...)
+      schema:
+        type: string
     - name: id
       in: path
       required: true

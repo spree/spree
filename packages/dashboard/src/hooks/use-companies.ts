@@ -101,7 +101,7 @@ export function useCreateCompanyAddress(companyId: string) {
 /** Edits an entry in place — the address row is updated, never replaced. */
 export function useUpdateCompanyAddress(companyId: string) {
   return useResourceMutation<Address, Error, { id: string; params: CompanyAddressParams }>({
-    mutationFn: ({ id, params }) => adminClient.companyAddresses.update(id, params),
+    mutationFn: ({ id, params }) => adminClient.companies.addresses.update(companyId, id, params),
     invalidate: [['companies', companyId, 'addresses']],
     successMessage: i18n.t('admin.company_addresses.messages.updated'),
     errorMessage: i18n.t('admin.errors.failed_to_update'),
@@ -111,7 +111,7 @@ export function useUpdateCompanyAddress(companyId: string) {
 /** Removes an entry and the address row it owned. */
 export function useDeleteCompanyAddress(companyId: string) {
   return useResourceMutation<void, Error, string>({
-    mutationFn: (id) => adminClient.companyAddresses.delete(id),
+    mutationFn: (id) => adminClient.companies.addresses.delete(companyId, id),
     invalidate: [['companies', companyId, 'addresses']],
     successMessage: i18n.t('admin.company_addresses.messages.deleted'),
     errorMessage: i18n.t('admin.errors.failed_to_delete'),
@@ -155,7 +155,7 @@ export function useAddCompanyMember(companyId: string) {
 /** Withdraws a member's standing; the customer account is untouched. */
 export function useDeleteCompanyMembership(companyId: string) {
   return useResourceMutation<void, Error, string>({
-    mutationFn: (id) => adminClient.companyMemberships.delete(id),
+    mutationFn: (id) => adminClient.companies.memberships.delete(companyId, id),
     invalidate: [['companies', companyId, 'memberships']],
     successMessage: i18n.t('admin.company_memberships.messages.removed'),
     errorMessage: i18n.t('admin.errors.failed_to_delete'),
@@ -178,7 +178,7 @@ export function useCompanyInvitations(companyId: string | undefined, page = 1, l
 /** Revokes a pending invitation, so its emailed token stops resolving. */
 export function useRevokeCompanyInvitation(companyId: string) {
   return useResourceMutation<void, Error, string>({
-    mutationFn: (id) => adminClient.companyInvitations.delete(id),
+    mutationFn: (id) => adminClient.companies.invitations.delete(companyId, id),
     invalidate: [['companies', companyId, 'invitations']],
     successMessage: i18n.t('admin.company_invitations.messages.revoked'),
     errorMessage: i18n.t('admin.errors.failed_to_update'),

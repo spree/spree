@@ -2,24 +2,20 @@ module Spree
   module Api
     module V3
       module Store
-        # Invitations addressed directly. Two audiences share this
-        # controller:
+        # The invitee's side of an invitation: look up and accept by plaintext
+        # token, unauthenticated. The token from the invite email IS the
+        # credential, and the acceptance page must load before the invitee has
+        # an account, even on a login-gated store — which is why this is the
+        # one part of the company surface not reached through a node.
         #
-        # - Members revoke by prefixed id (DELETE — authenticated, standing
-        #   scoped).
-        # - Invitees look up and accept by plaintext token (GET/POST —
-        #   unauthenticated: the token from the invite email IS the
-        #   credential, and the acceptance page must load before the invitee
-        #   has an account, even on a login-gated store).
+        # Members revoke through the node
+        # (Store::Companies::InvitationsController).
         class CompanyInvitationsController < ResourceController
           allow_guest_storefront_access!
 
-          prepend_before_action :require_authentication!, only: [:destroy]
-
-          # `show` is the token lookup, not a prefixed-id read — the standing
-          # scope would 404 the unauthenticated invitee.
+          # Both actions are token lookups, not prefixed-id reads — the
+          # standing scope would 404 the unauthenticated invitee.
           skip_before_action :set_resource
-          before_action :set_resource, only: [:destroy]
 
           # GET /api/v3/store/company_invitations/:token — what is being
           # joined. Expired and revoked tokens 404.
@@ -62,19 +58,6 @@ module Spree
             end
           end
 
-          # DELETE /api/v3/store/company_invitations/:id — revoke, by any
-          # member with standing.
-          def destroy
-            if @resource.revoke!
-              head :no_content
-            else
-              render_error(
-                code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:validation_error],
-                message: Spree.t('company_invitations.not_pending'),
-                status: :unprocessable_content
-              )
-            end
-          end
 
           protected
 
@@ -86,12 +69,6 @@ module Spree
             Spree.api.company_invitation_serializer
           end
 
-          # For revocation: invitations of nodes the caller has standing over.
-          def scope
-            Spree::CompanyInvitation.where(
-              company_id: storefront_access_policy.scope(current_store.companies).select(:id)
-            )
-          end
 
           private
 

@@ -29,6 +29,14 @@ module Spree
               end
             end
 
+            # DELETE /api/v3/store/companies/:company_id/members/:id
+            def destroy
+              @resource.destroy!
+              head :no_content
+            rescue ActiveRecord::RecordNotDestroyed => e
+              render_validation_error(e.record.errors.presence || e.message)
+            end
+
             protected
 
             def model_class

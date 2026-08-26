@@ -29,4 +29,32 @@ RSpec.describe Spree::Api::V3::Store::Companies::InvitationsController, type: :c
       expect(response).to have_http_status(:not_found)
     end
   end
+  describe 'DELETE #destroy' do
+    it 'lets a member revoke rather than erase' do
+      create(:company_membership, company: company, customer: user)
+      invitation = create(:company_invitation, company: company)
+
+      delete :destroy, params: { company_id: company.prefixed_id, id: invitation.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:no_content)
+      expect(invitation.reload).to be_revoked
+    end
+
+    it 'refuses on an already spent invitation' do
+      create(:company_membership, company: company, customer: user)
+      invitation = create(:company_invitation, company: company, accepted_at: Time.current)
+
+      delete :destroy, params: { company_id: company.prefixed_id, id: invitation.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it '404s without standing' do
+      invitation = create(:company_invitation, company: company)
+
+      delete :destroy, params: { company_id: company.prefixed_id, id: invitation.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
 end

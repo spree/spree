@@ -58,4 +58,24 @@ RSpec.describe Spree::Api::V3::Store::Companies::MembersController, type: :contr
       expect(response).to have_http_status(:created)
     end
   end
+  describe 'DELETE #destroy' do
+    # OSS ships no company roles: any member may manage the directory.
+    it 'lets any member remove another member' do
+      other = create(:company_membership, company: company)
+
+      delete :destroy, params: { company_id: company.prefixed_id, id: other.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:no_content)
+      expect(Spree::CompanyMembership.find_by(id: other.id)).to be_nil
+    end
+
+    it '404s a member of a node the caller has no standing over' do
+      other_company = create(:company, store: store)
+      other = create(:company_membership, company: other_company)
+
+      delete :destroy, params: { company_id: other_company.prefixed_id, id: other.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
 end

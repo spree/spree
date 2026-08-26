@@ -196,8 +196,9 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
     end
   end
 
-  path '/api/v3/store/company_addresses/{id}' do
-    parameter name: :id, in: :path, type: :string, required: true, description: 'Address book entry ID (caddr_...)'
+  path '/api/v3/store/companies/{company_id}/addresses/{id}' do
+    parameter name: :company_id, in: :path, type: :string, required: true, description: 'Company node ID (comp_...)'
+    parameter name: :id, in: :path, type: :string, required: true, description: 'Address ID (addr_...)'
 
     patch 'Update an address book entry' do
       tags 'Companies'
@@ -219,6 +220,7 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
       response '200', 'address book entry updated' do
         let!(:membership) { create(:company_membership, company: company, customer: user) }
         let!(:entry) { create(:company_address, owner: company, label: 'Headquarters') }
+        let(:company_id) { company.prefixed_id }
         let(:id) { entry.prefixed_id }
         let(:body) { { label: 'Northern Warehouse', default_shipping: true } }
         let(:'x-spree-api-key') { api_key.token }
@@ -242,6 +244,7 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
       response '204', 'address book entry removed' do
         let!(:membership) { create(:company_membership, company: company, customer: user) }
         let!(:entry) { create(:company_address, owner: company, label: 'Headquarters') }
+        let(:company_id) { company.prefixed_id }
         let(:id) { entry.prefixed_id }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
@@ -251,7 +254,8 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
     end
   end
 
-  path '/api/v3/store/company_invitations/{id}' do
+  path '/api/v3/store/companies/{company_id}/invitations/{id}' do
+    parameter name: :company_id, in: :path, type: :string, required: true, description: 'Company node ID (comp_...)'
     parameter name: :id, in: :path, type: :string, required: true, description: 'Invitation ID (cinv_...)'
 
     delete 'Revoke an invitation' do
@@ -266,6 +270,7 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
       response '204', 'invitation revoked' do
         let!(:membership) { create(:company_membership, company: company, customer: user) }
         let!(:invitation) { create(:company_invitation, company: company, email: 'pending@acme.test') }
+        let(:company_id) { company.prefixed_id }
         let(:id) { invitation.prefixed_id }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }

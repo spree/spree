@@ -102,31 +102,4 @@ RSpec.describe Spree::Api::V3::Store::CompanyInvitationsController, type: :contr
     end
   end
 
-  describe 'DELETE #destroy (revoke)' do
-    it 'lets a member with standing revoke' do
-      create(:company_membership, company: company, customer: user)
-      request.headers.merge!(bearer_headers)
-
-      delete :destroy, params: { id: invitation.prefixed_id }, as: :json
-
-      expect(response).to have_http_status(:no_content)
-      expect(invitation.reload).to be_revoked
-    end
-
-    it '404s without standing' do
-      request.headers.merge!(bearer_headers)
-
-      delete :destroy, params: { id: invitation.prefixed_id }, as: :json
-
-      expect(response).to have_http_status(:not_found)
-    end
-
-    it '401s a guest' do
-      request.headers.merge!(api_key_headers)
-
-      delete :destroy, params: { id: invitation.prefixed_id }, as: :json
-
-      expect(response).to have_http_status(:unauthorized)
-    end
-  end
 end

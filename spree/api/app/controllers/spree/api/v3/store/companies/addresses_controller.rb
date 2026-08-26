@@ -3,11 +3,12 @@ module Spree
     module V3
       module Store
         module Companies
-          # The node's address book, managed by its members. Editing and
-          # deleting an entry are addressed directly
-          # (Store::CompanyAddressesController).
+          # The node's address book, managed by its members. Every entry is
+          # reached through its node, so standing over that node is the only
+          # thing that authorizes reading or writing one.
           class AddressesController < BaseController
             include Spree::Api::V3::Store::Concerns::CompanyAddressDefaults
+
             # POST /api/v3/store/companies/:company_id/addresses
             def create
               address = @parent.addresses.new(permitted_params)
@@ -18,6 +19,24 @@ module Spree
               else
                 render_validation_error(address.errors)
               end
+            end
+
+            # PATCH /api/v3/store/companies/:company_id/addresses/:id
+            def update
+              if @resource.update(permitted_params)
+                apply_default_flags!(@resource)
+                render json: serialize_resource(@resource.reload)
+              else
+                render_validation_error(@resource.errors)
+              end
+            end
+
+            # DELETE /api/v3/store/companies/:company_id/addresses/:id
+            def destroy
+              @resource.destroy!
+              head :no_content
+            rescue ActiveRecord::RecordNotDestroyed => e
+              render_validation_error(e.record.errors.presence || e.message)
             end
 
             protected

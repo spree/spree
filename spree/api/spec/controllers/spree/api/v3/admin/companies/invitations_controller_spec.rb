@@ -33,4 +33,43 @@ RSpec.describe Spree::Api::V3::Admin::Companies::InvitationsController, type: :c
       expect(response).to have_http_status(:not_found)
     end
   end
+  describe 'GET #show' do
+    it 'returns the invitation without its token' do
+      invitation = create(:company_invitation, company: company)
+
+      get :show, params: { company_id: company.prefixed_id, id: invitation.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['status']).to eq('pending')
+      expect(json_response).not_to have_key('token')
+    end
+  end
+
+  describe 'DELETE #destroy' do
+    it 'revokes rather than erases' do
+      invitation = create(:company_invitation, company: company)
+
+      delete :destroy, params: { company_id: company.prefixed_id, id: invitation.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:no_content)
+      expect(invitation.reload).to be_revoked
+    end
+
+    it 'refuses on an already spent invitation' do
+      invitation = create(:company_invitation, company: company, accepted_at: Time.current)
+
+      delete :destroy, params: { company_id: company.prefixed_id, id: invitation.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it '404s an invitation of another store company' do
+      foreign_company = create(:company, store: create(:store))
+      foreign = create(:company_invitation, company: foreign_company)
+
+      delete :destroy, params: { company_id: foreign_company.prefixed_id, id: foreign.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
 end

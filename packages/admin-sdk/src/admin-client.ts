@@ -2881,9 +2881,8 @@ export class AdminClient {
    * List roots with `{ parent_id_null: 1 }` and a node's children with
    * `{ parent_id_eq: 'comp_…' }`. Deleting a node destroys its subtree.
    *
-   * Address-book entries, memberships and invitations are listed and created
-   * under their node, then addressed by their own id via `companyAddresses`,
-   * `companyMemberships` and `companyInvitations`.
+   * Address-book entries, memberships and invitations all belong to a node,
+   * so every one of them is reached through it.
    */
   readonly companies = {
     list: (
@@ -2929,6 +2928,24 @@ export class AdminClient {
           ...options,
           body: params,
         }),
+
+      get: (companyId: string, id: string, options?: RequestOptions): Promise<Address> =>
+        this.request<Address>('GET', `/companies/${companyId}/addresses/${id}`, options),
+
+      /** Address fields edit the entry in place, so send only what changes. */
+      update: (
+        companyId: string,
+        id: string,
+        params: CompanyAddressParams,
+        options?: RequestOptions,
+      ): Promise<Address> =>
+        this.request<Address>('PATCH', `/companies/${companyId}/addresses/${id}`, {
+          ...options,
+          body: params,
+        }),
+
+      delete: (companyId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/companies/${companyId}/addresses/${id}`, options),
     },
 
     /**
@@ -2959,6 +2976,17 @@ export class AdminClient {
           `/companies/${companyId}/memberships`,
           { ...options, body: params },
         ),
+
+      get: (companyId: string, id: string, options?: RequestOptions): Promise<CompanyMembership> =>
+        this.request<CompanyMembership>(
+          'GET',
+          `/companies/${companyId}/memberships/${id}`,
+          options,
+        ),
+
+      /** Withdraws the member's standing. The customer account is untouched. */
+      delete: (companyId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/companies/${companyId}/memberships/${id}`, options),
     },
 
     invitations: {
@@ -2972,6 +3000,17 @@ export class AdminClient {
           `/companies/${companyId}/invitations`,
           { ...options, params: params ? transformListParams(params) : undefined },
         ),
+
+      get: (companyId: string, id: string, options?: RequestOptions): Promise<CompanyInvitation> =>
+        this.request<CompanyInvitation>(
+          'GET',
+          `/companies/${companyId}/invitations/${id}`,
+          options,
+        ),
+
+      /** Revokes a pending invitation; its token then stops resolving. */
+      delete: (companyId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/companies/${companyId}/invitations/${id}`, options),
     },
 
     /**
@@ -3140,48 +3179,6 @@ export class AdminClient {
           options,
         ),
     },
-  }
-
-  /** Address-book entries addressed by their own id. */
-  readonly companyAddresses = {
-    get: (id: string, options?: RequestOptions): Promise<Address> =>
-      this.request<Address>('GET', `/company_addresses/${id}`, options),
-
-    /**
-     * Address fields sent here edit the entry's existing address in place, so
-     * send only what changes.
-     */
-    update: (
-      id: string,
-      params: CompanyAddressParams,
-      options?: RequestOptions,
-    ): Promise<Address> =>
-      this.request<Address>('PATCH', `/company_addresses/${id}`, {
-        ...options,
-        body: params,
-      }),
-
-    /** Removes the entry and the address row it owned. */
-    delete: (id: string, options?: RequestOptions): Promise<void> =>
-      this.request<void>('DELETE', `/company_addresses/${id}`, options),
-  }
-
-  readonly companyMemberships = {
-    get: (id: string, options?: RequestOptions): Promise<CompanyMembership> =>
-      this.request<CompanyMembership>('GET', `/company_memberships/${id}`, options),
-
-    /** Withdraws the member's standing. The customer account is untouched. */
-    delete: (id: string, options?: RequestOptions): Promise<void> =>
-      this.request<void>('DELETE', `/company_memberships/${id}`, options),
-  }
-
-  readonly companyInvitations = {
-    get: (id: string, options?: RequestOptions): Promise<CompanyInvitation> =>
-      this.request<CompanyInvitation>('GET', `/company_invitations/${id}`, options),
-
-    /** Revokes a pending invitation; its token then stops resolving. */
-    delete: (id: string, options?: RequestOptions): Promise<void> =>
-      this.request<void>('DELETE', `/company_invitations/${id}`, options),
   }
 
   // ============================================

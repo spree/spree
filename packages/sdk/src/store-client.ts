@@ -1216,6 +1216,24 @@ export class StoreClient {
           ...options,
           body: params,
         }),
+
+      update: (
+        companyId: string,
+        id: string,
+        params: Record<string, unknown> & {
+          label?: string
+          default_billing?: boolean
+          default_shipping?: boolean
+        },
+        options?: RequestOptions,
+      ): Promise<Address> =>
+        this.request<Address>('PATCH', `/companies/${companyId}/addresses/${id}`, {
+          ...options,
+          body: params,
+        }),
+
+      delete: (companyId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/companies/${companyId}/addresses/${id}`, options),
     },
 
     members: {
@@ -1248,6 +1266,10 @@ export class StoreClient {
           `/companies/${companyId}/members`,
           { ...options, body: params },
         ),
+
+      /** Withdraws the member's standing. The customer account is untouched. */
+      delete: (companyId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/companies/${companyId}/members/${id}`, options),
     },
 
     invitations: {
@@ -1261,6 +1283,10 @@ export class StoreClient {
           `/companies/${companyId}/invitations`,
           { ...options, params: transformListParams({ ...params }) },
         ),
+
+      /** Revokes a pending invitation; its token then stops resolving. */
+      delete: (companyId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/companies/${companyId}/invitations/${id}`, options),
     },
 
     /** Completed purchases across the node's subtree. */
@@ -1275,30 +1301,6 @@ export class StoreClient {
           params: transformListParams({ ...params }),
         }),
     },
-  }
-
-  readonly companyAddresses = {
-    update: (
-      id: string,
-      params: Record<string, unknown> & {
-        label?: string
-        default_billing?: boolean
-        default_shipping?: boolean
-      },
-      options?: RequestOptions,
-    ): Promise<Address> =>
-      this.request<Address>('PATCH', `/company_addresses/${id}`, {
-        ...options,
-        body: params,
-      }),
-
-    delete: (id: string, options?: RequestOptions): Promise<void> =>
-      this.request<void>('DELETE', `/company_addresses/${id}`, options),
-  }
-
-  readonly companyMembers = {
-    delete: (id: string, options?: RequestOptions): Promise<void> =>
-      this.request<void>('DELETE', `/company_members/${id}`, options),
   }
 
   /**

@@ -124,20 +124,20 @@ Spree::Core::Engine.add_routes do
         get 'account/companies', to: 'account/companies#index'
 
         resources :companies, only: [:show, :update] do
-          resources :addresses, only: [:index, :create], controller: 'companies/addresses'
+          resources :addresses, only: [:index, :create, :update, :destroy],
+                                controller: 'companies/addresses'
           # POST takes customer_email — a membership for an existing customer,
           # an invitation otherwise.
-          resources :members, only: [:index, :create], controller: 'companies/members'
-          resources :invitations, only: [:index], controller: 'companies/invitations'
+          resources :members, only: [:index, :create, :destroy], controller: 'companies/members'
+          # DELETE revokes the invitation rather than erasing the record.
+          resources :invitations, only: [:index, :destroy], controller: 'companies/invitations'
           # Completed purchases across the node's subtree.
           resources :orders, only: [:index], controller: 'companies/orders'
         end
 
-        resources :company_addresses, only: [:update, :destroy]
-        resources :company_members, only: [:destroy]
-        # DELETE revokes (by prefixed id, member-authenticated); GET and
-        # accept are the unauthenticated token flow from the invite email.
-        resources :company_invitations, only: [:destroy]
+        # The invitee has no company yet — and no account — so the token flow
+        # is deliberately top-level and unauthenticated, unlike everything
+        # else about a company, which is reached through the node.
         get 'company_invitations/:token', to: 'company_invitations#show', as: :company_invitation_lookup
         post 'company_invitations/:token/accept', to: 'company_invitations#accept'
 
@@ -536,12 +536,15 @@ Spree::Core::Engine.add_routes do
         # a caller holding an entry id does not have to know its company.
         resources :companies do
           # The node's address book.
-          resources :addresses, controller: 'companies/addresses', only: [:index, :create]
+          resources :addresses, controller: 'companies/addresses'
 
           # The people with standing over the node. Creation takes an email:
           # a membership for an existing customer, an invitation otherwise.
-          resources :memberships, controller: 'companies/memberships', only: [:index, :create]
-          resources :invitations, controller: 'companies/invitations', only: [:index]
+          resources :memberships, controller: 'companies/memberships',
+                                  only: [:index, :show, :create, :destroy]
+          # DELETE revokes the invitation rather than erasing the record.
+          resources :invitations, controller: 'companies/invitations',
+                                  only: [:index, :show, :destroy]
 
           # The business's own registration — the number on its invoices, which
           # outranks the buyer's own. Same shape as the customer's.
@@ -563,10 +566,6 @@ Spree::Core::Engine.add_routes do
           end
         end
 
-        resources :company_addresses, only: [:show, :update, :destroy]
-        resources :company_memberships, only: [:show, :destroy]
-        # DELETE revokes the invitation rather than erasing the record.
-        resources :company_invitations, only: [:show, :destroy]
 
         # Catalogs — assortment + optional price list, assigned to an audience
         # (channel, customer group, market, or company subtree).
