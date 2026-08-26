@@ -30,7 +30,12 @@ defineTable<Product>('seller-products', {
       label: i18n.t('products.columns.status'),
       sortable: true,
       default: true,
-      render: (product) => <StatusBadge status={product.status} />,
+      render: (product) => (
+        <StatusBadge
+          status={product.status}
+          label={i18n.t(`products.statuses.${product.status}`)}
+        />
+      ),
     },
     {
       key: 'price',

@@ -49,7 +49,7 @@ export function ProductStatusCard({ product, onDone }: { product: Product; onDon
         <CardTitle>{t('products.fields.status')}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col items-start gap-3">
-        <StatusBadge status={status} />
+        <StatusBadge status={status} label={t(`products.statuses.${status}`)} />
 
         <p className="text-muted-foreground text-sm">{t(`products.status_help.${status}`)}</p>
 

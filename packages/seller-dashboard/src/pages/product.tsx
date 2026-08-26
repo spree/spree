@@ -182,7 +182,9 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
           <h1 className="font-medium text-2xl">
             {productId ? product?.name : t('products.new_title')}
           </h1>
-          {product?.status && <StatusBadge status={product.status} />}
+          {product?.status && (
+            <StatusBadge status={product.status} label={t(`products.statuses.${product.status}`)} />
+          )}
         </div>
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? t('common.saving') : t('common.save')}
