@@ -72,31 +72,28 @@ module Spree
     # go with it.
     accepts_nested_attributes_for :billing_address, update_only: true
 
-    # The address is validated through the association, so its owner has to be
-    # set before that runs — this is what tells the row it is a business
-    # address and so asks for no personal name.
-    before_validation :set_billing_address_owner
-
     # The API reads and writes this under one name, so the writer takes the
     # attributes a client sends as well as a record. Never an id: an address
     # carries no store of its own, so binding one by id would reach another
-    # store's rows. Either way the row is marked as this seller's, which is
-    # what makes it read back with the business rules.
+    # store's rows.
     def billing_address=(value)
       case value
       when Hash, ActionController::Parameters
-        super(Spree::Address.new) if billing_address.nil?
         self.billing_address_attributes = value
-        # Set after the attributes are applied: nested assignment builds the
-        # row itself, and the owner is what tells it no personal name is
-        # wanted here.
-        billing_address.owner = self
       when Spree::Address
-        value.owner = self
-        super(value)
+        super(value.tap { |address| address.owner = self })
       else
         super
       end
+    end
+
+    # The seller holds the foreign key, so nothing on the address side says
+    # whose it is — an association cannot declare that for us. This is the one
+    # path Rails builds the row on, so it is where the row is told, and what
+    # it asks for follows: no personal name, the company line required.
+    def billing_address_attributes=(attributes)
+      super
+      billing_address&.owner = self
     end
 
     # Where this seller keeps stock, and so where their returns land. Released
@@ -269,9 +266,6 @@ module Spree
 
     private
 
-    def set_billing_address_owner
-      billing_address.owner = self if billing_address.present? && billing_address.owner != self
-    end
 
     def normalize_slug
       self.slug = (slug.presence || name).to_s.parameterize.presence
