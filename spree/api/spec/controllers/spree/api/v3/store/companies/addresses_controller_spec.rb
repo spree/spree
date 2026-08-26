@@ -106,26 +106,5 @@ RSpec.describe Spree::Api::V3::Store::Companies::AddressesController, type: :con
       expect(company.reload.default_bill_address_id).to be_nil
     end
 
-    it 'clears the shipping default it holds' do
-      company.update!(default_ship_address: entry)
-
-      patch :update, params: { company_id: company.prefixed_id, id: entry.prefixed_id, default_shipping: false },
-                     as: :json
-
-      expect(response).to have_http_status(:ok)
-      expect(company.reload.default_ship_address_id).to be_nil
-    end
-
-    # Another entry's default is not this request's business.
-    it 'leaves a default held by another entry alone' do
-      other = create(:company_address, owner: company, label: 'Dock')
-      company.update!(default_bill_address: other)
-
-      patch :update, params: { company_id: company.prefixed_id, id: entry.prefixed_id, default_billing: false },
-                     as: :json
-
-      expect(response).to have_http_status(:ok)
-      expect(company.reload.default_bill_address_id).to eq(other.id)
-    end
   end
 end

@@ -54,7 +54,9 @@ module Spree
       promote_default_columns(promoted)
       release_default_columns(released, address_id)
 
-      reload if persisted? && (promoted.any? || released.any?)
+      # Promotion writes the in-memory attributes on its way through; a
+      # release goes around them, so only that leaves this instance stale.
+      reload if persisted? && released.any?
     end
 
     # @param kind [Symbol] :bill or :ship

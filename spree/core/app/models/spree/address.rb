@@ -200,11 +200,9 @@ module Spree
     # @param kind [Symbol] :bill or :ship
     # @return [Integer, nil] the owner's chosen address of that kind
     def default_address_id(kind)
-      return nil if owner.nil?
-      return owner.public_send(:"#{kind}_address_id") if customer_owned?
-      return owner.public_send(:"default_#{kind}_address_id") if owner.is_a?(Spree::Company)
+      return nil unless owner.respond_to?(:default_address_id)
 
-      nil
+      owner.default_address_id(kind)
     end
 
     # @deprecated The address's owner may be a customer, a company node or a
