@@ -74,7 +74,10 @@ module Spree
     validates :value, length: { maximum: 64 }
     validates :validation_status, inclusion: { in: VALIDATION_STATUSES }, allow_nil: true
     validates :source, inclusion: { in: SOURCES }, allow_nil: true
-    validate :value_format
+    # An order's snapshot is a copy of a number already accepted, so a rule
+    # tightened since — or a country leaving the VAT area — must not fail the
+    # order it was placed on.
+    validate :value_format, unless: :order_owned?
     # Registrations exist only on legal-entity nodes — a division's purchases
     # read theirs through the legal entity. A validation rather than a schema
     # difference, so a per-division foreign registration can be allowed later
@@ -107,7 +110,7 @@ module Spree
     def validatable?
       return false if order_owned?
 
-      validator_class(kind)&.checks_registry? || false
+      validator_class&.checks_registry? || false
     end
 
     private
@@ -127,20 +130,14 @@ module Spree
       # mistake helps nobody.
       return if value.blank?
 
-      # An order's snapshot is a copy of a number that was already accepted,
-      # taken at completion. Re-checking it would let a rule tightened since
-      # the buyer saved it — or a registration whose country has left the VAT
-      # area — fail checkout over history rather than over anything they typed.
-      return if order_owned?
-
-      validator = validator_class(kind)
+      validator = validator_class
       return if validator.nil?
       return if validator.valid_format?(value)
 
       errors.add(:value, :invalid)
     end
 
-    # The class registered for a kind, or nil when nothing is registered and
+    # The class registered for this kind, or nil when nothing is registered and
     # when what is registered cannot be loaded.
     #
     # A registry entry naming a class that is gone — an initializer left behind
@@ -148,13 +145,8 @@ module Spree
     # only asked whether the key existed. It is read on every save and on every
     # admin serialization, so letting it raise would take out the whole tax
     # identifier listing over one stale line of configuration.
-    def validator_class(kind)
-      registered = Spree.tax_identifier_validators[kind]
-      return if registered.blank?
-
-      registered.to_s.constantize
-    rescue NameError
-      nil
+    def validator_class
+      Spree.tax_identifier_validators[kind].presence&.to_s&.safe_constantize
     end
 
     def number_changing?

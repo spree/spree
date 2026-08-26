@@ -6,7 +6,7 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxIdentifiersController, type:
   include_context 'API v3 Admin authenticated'
 
   let!(:company) { create(:company, store: store) }
-  let(:vat_number) { Spree::TestingSupport::VatNumberPool.at(0) }
+  let(:vat_number) { eu_vat_number(0) }
 
   before { request.headers.merge!(headers) }
 
@@ -42,11 +42,11 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxIdentifiersController, type:
     end
 
     it 'takes effect on a sale for that business' do
-      company_vat_number = Spree::TestingSupport::VatNumberPool.at(1)
+      company_vat_number = eu_vat_number(1)
       create(:tax_identifier, owner: company, kind: 'eu_vat', value: company_vat_number)
       customer = create(:customer)
       create(:company_membership, company: company, customer: customer)
-      create(:tax_identifier, owner: customer, kind: 'eu_vat', value: Spree::TestingSupport::VatNumberPool.at(2))
+      create(:tax_identifier, owner: customer, kind: 'eu_vat', value: eu_vat_number(2))
       cart = create(:cart, store: store, customer: customer, company: company)
 
       expect(cart.resolved_tax_identifier.value).to eq(company_vat_number)
@@ -66,7 +66,7 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxIdentifiersController, type:
       create(:tax_identifier, owner: company, kind: 'eu_vat')
 
       post :create, params: { company_id: company.prefixed_id, kind: 'eu_vat',
-                              value: Spree::TestingSupport::VatNumberPool.at(1) }, as: :json
+                              value: eu_vat_number(1) }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
     end
@@ -95,7 +95,7 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxIdentifiersController, type:
 
   describe 'PATCH #update' do
     it 'corrects the number' do
-      corrected_vat_number = Spree::TestingSupport::VatNumberPool.at(1)
+      corrected_vat_number = eu_vat_number(1)
       identifier = create(:tax_identifier, owner: company, kind: 'eu_vat', value: vat_number)
 
       patch :update, params: { company_id: company.prefixed_id, id: identifier.prefixed_id,

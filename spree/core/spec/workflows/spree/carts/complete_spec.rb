@@ -223,9 +223,9 @@ module Spree
       let(:customer) { create(:user) }
       # Distinct numbers so the assertion proves which registration won, and
       # real ones because eu_vat is format-checked.
-      let(:customer_vat) { Spree::TestingSupport::VatNumberPool.at(0) }
-      let(:override_vat) { Spree::TestingSupport::VatNumberPool.at(1) }
-      let(:company_vat) { Spree::TestingSupport::VatNumberPool.at(2) }
+      let(:customer_vat) { eu_vat_number(0) }
+      let(:override_vat) { eu_vat_number(1) }
+      let(:company_vat) { eu_vat_number(2) }
 
       before { ready_cart.update!(customer: customer) }
 

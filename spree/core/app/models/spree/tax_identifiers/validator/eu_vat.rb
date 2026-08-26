@@ -1,3 +1,10 @@
+# Loaded here rather than with core's other gems: valvat's entry point pulls in
+# its VIES lookup client, and with it REXML and net/http — around 90ms and a
+# hundred files, on every boot, for a SOAP service this validator never calls.
+# Deferring it to the first EU VAT check keeps that off installs that never do
+# one, and off every rake task and console.
+require 'valvat'
+
 module Spree
   module TaxIdentifiers
     module Validator
@@ -22,17 +29,6 @@ module Spree
       # number is not a typo. Registration is what +verified+ means, and only a
       # registry can say it.
       class EuVat < Base
-        # Member states by ISO code, which is what valvat reports for a number's
-        # issuer. Not the VAT prefix: Greece issues +EL+ numbers while its ISO
-        # code is +GR+, so matching prefixes against this list would refuse
-        # every Greek registration.
-        ISO_COUNTRY_CODES = Valvat::Utils::EU_MEMBER_STATES.freeze
-
-        # Northern Ireland keeps EU VAT treatment for goods under the Windsor
-        # Framework and issues +XI+ numbers. It has no ISO code of its own —
-        # valvat reports +GB+ — so it is matched on the prefix instead.
-        NORTHERN_IRELAND_PREFIX = 'XI'.freeze
-
         # No registry client here, so core never enqueues a check for a number
         # of this kind. Verdicts stay blank rather than reading +unavailable+,
         # which is the honest answer: nobody was asked.
@@ -46,29 +42,25 @@ module Spree
         # it.
         #
         # Checksums are applied for the 24 member states valvat has an algorithm
-        # for and syntax alone decides Czechia, Latvia and Slovakia, which is
-        # what +Valvat::Checksum.validate+ already does. That fallback is the
-        # point: refusing every number we cannot fully verify would turn away
-        # real customers in those three to catch a typo, and turning away a
-        # paying business is the more expensive mistake.
+        # for and syntax alone decides Czechia, Latvia and Slovakia. That
+        # fallback is the point: refusing every number we cannot fully verify
+        # would turn away real customers in those three to catch a typo, and
+        # turning away a paying business is the more expensive mistake.
+        #
+        # valvat recognises the 27 member states and Great Britain, and nothing
+        # else — so excluding Great Britain is the whole of the area check.
+        # Northern Ireland kept EU VAT treatment for goods under the Windsor
+        # Framework and is the reason that exclusion reads on the prefix: its
+        # +XI+ numbers report +GB+ as their country.
         #
         # @param value [String] already normalized (whitespace stripped, upcased)
         # @return [Boolean]
         def self.valid_format?(value)
           vat = Valvat.new(value.to_s)
-          return false unless in_vat_area?(vat)
+          return false if vat.iso_country_code == 'GB' && vat.vat_country_code != 'XI'
 
           Valvat::Checksum.validate(vat)
         end
-
-        # @param vat [Valvat]
-        # @return [Boolean]
-        def self.in_vat_area?(vat)
-          return true if vat.vat_country_code == NORTHERN_IRELAND_PREFIX
-
-          ISO_COUNTRY_CODES.include?(vat.iso_country_code)
-        end
-        private_class_method :in_vat_area?
       end
     end
   end

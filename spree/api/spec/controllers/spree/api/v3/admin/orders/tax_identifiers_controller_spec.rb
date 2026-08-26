@@ -6,7 +6,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::TaxIdentifiersController, type: :c
   include_context 'API v3 Admin authenticated'
 
   let!(:order) { create(:completed_order_with_totals, store: store) }
-  let(:vat_number) { Spree::TestingSupport::VatNumberPool.at(0) }
+  let(:vat_number) { eu_vat_number(0) }
 
   before { request.headers.merge!(headers) }
 
@@ -44,7 +44,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::TaxIdentifiersController, type: :c
 
   it 'does not route a write — the snapshot is what the invoice says' do
     expect {
-      patch :update, params: { order_id: order.prefixed_id, value: Spree::TestingSupport::VatNumberPool.at(1) },
+      patch :update, params: { order_id: order.prefixed_id, value: eu_vat_number(1) },
                      as: :json
     }.to raise_error(ActionController::UrlGenerationError)
   end

@@ -5,8 +5,8 @@ RSpec.describe Spree::Api::V3::Store::Customer::TaxIdentifiersController, type: 
 
   include_context 'API v3 Store'
 
-  let(:eu_vat_number) { Spree::TestingSupport::VatNumberPool.at(0) }
-  let!(:eu) { create(:tax_identifier, owner: user, kind: 'eu_vat', value: eu_vat_number) }
+  let(:vat_number) { eu_vat_number(0) }
+  let!(:eu) { create(:tax_identifier, owner: user, kind: 'eu_vat', value: vat_number) }
   let!(:gb) { create(:tax_identifier, owner: user, kind: 'gb_vat', value: 'GB123456789') }
 
   before do
@@ -22,11 +22,11 @@ RSpec.describe Spree::Api::V3::Store::Customer::TaxIdentifiersController, type: 
 
       expect(response).to have_http_status(:ok)
       expect(json_response['data'].map { |row| row['kind'] }).to contain_exactly('eu_vat', 'gb_vat')
-      expect(json_response['data'].map { |row| row['value'] }).to contain_exactly(eu_vat_number, 'GB123456789')
+      expect(json_response['data'].map { |row| row['value'] }).to contain_exactly(vat_number, 'GB123456789')
     end
 
     it 'lists nobody else\'s' do
-      other_vat_number = Spree::TestingSupport::VatNumberPool.at(1)
+      other_vat_number = eu_vat_number(1)
       create(:tax_identifier, owner: create(:user), kind: 'eu_vat', value: other_vat_number)
 
       get :index

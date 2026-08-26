@@ -4,8 +4,8 @@ RSpec.describe 'Store tax identifiers', type: :request do
   include_context 'API v3 Store authenticated'
 
   describe 'the customer own registration' do
-    let(:vat_number) { Spree::TestingSupport::VatNumberPool.at(0) }
-    let(:corrected_vat_number) { Spree::TestingSupport::VatNumberPool.at(1) }
+    let(:vat_number) { eu_vat_number(0) }
+    let(:corrected_vat_number) { eu_vat_number(1) }
 
     it 'is upserted, read back and removed' do
       # Typed as a human would: grouped with spaces and in lower case.
@@ -55,9 +55,9 @@ RSpec.describe 'Store tax identifiers', type: :request do
 
   describe 'a checkout override on the cart' do
     let(:cart) { create(:cart_with_line_items, line_items_count: 1, store: store, customer: user) }
-    let(:profile_vat_number) { Spree::TestingSupport::VatNumberPool.at(2) }
-    let(:override_vat_number) { Spree::TestingSupport::VatNumberPool.at(3) }
-    let(:entered_vat_number) { Spree::TestingSupport::VatNumberPool.at(4) }
+    let(:profile_vat_number) { eu_vat_number(2) }
+    let(:override_vat_number) { eu_vat_number(3) }
+    let(:entered_vat_number) { eu_vat_number(4) }
 
     it 'reads the customer registration when the cart has no override' do
       create(:tax_identifier, owner: user, kind: 'eu_vat', value: profile_vat_number)
@@ -188,7 +188,7 @@ RSpec.describe 'Store tax identifiers', type: :request do
 
   describe 'the snapshot on a placed order' do
     let(:order) { create(:completed_order_with_totals, store: store, customer: user) }
-    let(:snapshot_vat_number) { Spree::TestingSupport::VatNumberPool.at(5) }
+    let(:snapshot_vat_number) { eu_vat_number(5) }
 
     it 'is readable and cannot be written' do
       create(:tax_identifier, :on_order, owner: order, value: snapshot_vat_number)
@@ -199,7 +199,7 @@ RSpec.describe 'Store tax identifiers', type: :request do
       expect(JSON.parse(response.body)['value']).to eq(snapshot_vat_number)
 
       put "/api/v3/store/orders/#{order.prefixed_id}/tax_identifier",
-          params: { kind: 'eu_vat', value: Spree::TestingSupport::VatNumberPool.at(6) },
+          params: { kind: 'eu_vat', value: eu_vat_number(6) },
           headers: headers, as: :json
       expect(response).to have_http_status(:not_found)
       expect(order.reload.tax_identifier.value).to eq(snapshot_vat_number)

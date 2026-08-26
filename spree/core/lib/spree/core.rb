@@ -33,7 +33,6 @@ require 'geocoder'
 require 'safely_block'
 require 'ar_lazy_preload'
 require 'sqids'
-require 'valvat'
 
 module Spree
   mattr_accessor :base_class, :customer_class, :admin_user_class,

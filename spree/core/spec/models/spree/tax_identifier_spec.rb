@@ -30,7 +30,7 @@ describe Spree::TaxIdentifier, type: :model do
       expect(snapshot).to be_readonly
       # A valid number, so it is the readonly guard that refuses the write and
       # not the format check standing in front of it.
-      expect { snapshot.update!(value: Spree::TestingSupport::VatNumberPool.at(9)) }.to(
+      expect { snapshot.update!(value: eu_vat_number(9)) }.to(
         raise_error(ActiveRecord::ReadOnlyRecord)
       )
     end
@@ -100,7 +100,7 @@ describe Spree::TaxIdentifier, type: :model do
     it 'accepts a well-formed one' do
       expect(
         build(:tax_identifier, owner: customer, kind: 'eu_vat',
-                               value: Spree::TestingSupport::VatNumberPool.at(0))
+                               value: eu_vat_number(0))
       ).to be_valid
     end
 
@@ -175,7 +175,7 @@ describe Spree::TaxIdentifier, type: :model do
     it 'is queued again when the number changes' do
       identifier = create(:tax_identifier, owner: customer, kind: 'eu_vat')
 
-      expect { identifier.update!(value: Spree::TestingSupport::VatNumberPool.at(5)) }.to(
+      expect { identifier.update!(value: eu_vat_number(5)) }.to(
         have_enqueued_job(Spree::TaxIdentifiers::ValidateJob)
       )
     end
@@ -208,7 +208,7 @@ describe Spree::TaxIdentifier, type: :model do
       identifier = create(:tax_identifier, owner: customer, kind: 'eu_vat')
       identifier.update_columns(validation_status: 'verified', validated_at: Time.current)
 
-      identifier.update!(value: Spree::TestingSupport::VatNumberPool.at(7))
+      identifier.update!(value: eu_vat_number(7))
 
       expect(identifier.validation_status).to eq('pending')
       expect(identifier.validated_at).to be_nil
@@ -266,7 +266,7 @@ describe Spree::TaxIdentifier, type: :model do
 
     it 'is a valid owner' do
       identifier = described_class.new(owner: seller, kind: 'eu_vat',
-                                       value: Spree::TestingSupport::VatNumberPool.at(0))
+                                       value: eu_vat_number(0))
 
       expect(identifier).to be_valid
       expect(identifier.owner).to eq(seller)
@@ -274,9 +274,9 @@ describe Spree::TaxIdentifier, type: :model do
 
     it 'holds one registration per kind' do
       described_class.create!(owner: seller, kind: 'eu_vat',
-                              value: Spree::TestingSupport::VatNumberPool.at(0))
+                              value: eu_vat_number(0))
       duplicate = described_class.new(owner: seller, kind: 'eu_vat',
-                                      value: Spree::TestingSupport::VatNumberPool.at(1))
+                                      value: eu_vat_number(1))
 
       expect(duplicate).not_to be_valid
     end

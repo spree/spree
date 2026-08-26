@@ -2,8 +2,8 @@ FactoryBot.define do
   factory :tax_identifier, class: Spree::TaxIdentifier do
     owner factory: :customer
     kind { 'eu_vat' }
-    # Real enough to survive the format check core now applies to eu_vat.
-    sequence(:value) { |n| Spree::TestingSupport::VatNumberPool.at(n) }
+    # Real enough to survive the format check core applies to eu_vat.
+    sequence(:value) { |n| TaxIdentifierValidatorHelpers.eu_vat_number(n) }
 
     trait :verified do
       validation_status { 'verified' }

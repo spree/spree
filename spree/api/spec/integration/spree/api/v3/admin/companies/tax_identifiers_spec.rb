@@ -7,7 +7,7 @@ RSpec.describe 'Admin Company Tax Identifiers API', type: :request, swagger_doc:
 
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
   let!(:company) { create(:company, store: store) }
-  let(:vat_number) { Spree::TestingSupport::VatNumberPool.at(0) }
+  let(:vat_number) { eu_vat_number(0) }
   let!(:tax_identifier) do
     create(:tax_identifier, owner: company, kind: 'eu_vat', value: vat_number)
   end
@@ -74,7 +74,7 @@ RSpec.describe 'Admin Company Tax Identifiers API', type: :request, swagger_doc:
 
       response '422', 'invalid request' do
         # One registration per kind.
-        let(:body) { { kind: 'eu_vat', value: Spree::TestingSupport::VatNumberPool.at(1) } }
+        let(:body) { { kind: 'eu_vat', value: eu_vat_number(1) } }
 
         run_test!
       end

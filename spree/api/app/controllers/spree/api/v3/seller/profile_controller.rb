@@ -38,19 +38,16 @@ module Spree
 
             tax_identifier = attributes.delete(:tax_identifier)
 
-            unless current_seller.update(attributes)
-              return render_validation_error(current_seller.errors)
-            end
-
-            if tax_identifier.present?
-              identifier = upsert_tax_identifier(tax_identifier)
-              # A registration core cannot make sense of has to be said out
-              # loud. Rendering the profile regardless would answer 200 to a
-              # number that was never stored.
-              return render_validation_error(identifier.errors) if identifier&.errors&.any?
+            # One save, so a refused registration does not leave the rest of the
+            # form committed behind a 422 the seller reads as "nothing saved".
+            ApplicationRecord.transaction do
+              current_seller.update!(attributes)
+              upsert_tax_identifier!(tax_identifier) if tax_identifier.present?
             end
 
             render json: serialize_seller
+          rescue ActiveRecord::RecordInvalid => error
+            render_validation_error(error.record.errors)
           end
 
           protected
@@ -90,21 +87,17 @@ module Spree
           # A changed number drops its verdict — the validator's answer was
           # about the old one, and carrying it over would show a number as
           # verified that nobody has checked.
-          # @return [Spree::TaxIdentifier, nil] the row as it stands after the
-          #   write, carrying its errors when the number was refused
-          def upsert_tax_identifier(attributes)
+          # Raises rather than reporting, so a number core cannot make sense of
+          # rolls the whole save back instead of answering 200 to a
+          # registration that was never stored.
+          def upsert_tax_identifier!(attributes)
             kind = attributes[:kind].presence
             return if kind.blank?
 
             value = attributes[:value]
-            if value.blank?
-              current_seller.tax_identifiers.find_by(kind: kind)&.destroy
-              return
-            end
+            return current_seller.tax_identifiers.find_by(kind: kind)&.destroy if value.blank?
 
-            identifier = current_seller.tax_identifiers.find_or_initialize_by(kind: kind)
-            identifier.update(value: value)
-            identifier
+            current_seller.tax_identifiers.find_or_initialize_by(kind: kind).update!(value: value)
           end
 
           # Narrowed to the definitions this marketplace's onboarding actually

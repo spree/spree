@@ -6,7 +6,7 @@ RSpec.describe Spree::Api::V3::Admin::Customers::TaxIdentifiersController, type:
   include_context 'API v3 Admin authenticated'
 
   let!(:customer) { create(:user) }
-  let(:vat_number) { Spree::TestingSupport::VatNumberPool.at(0) }
+  let(:vat_number) { eu_vat_number(0) }
   let!(:tax_identifier) { create(:tax_identifier, :verified, owner: customer, kind: 'eu_vat', value: vat_number) }
 
   before { request.headers.merge!(headers) }
@@ -50,7 +50,7 @@ RSpec.describe Spree::Api::V3::Admin::Customers::TaxIdentifiersController, type:
   end
 
   describe 'PATCH #update' do
-    let(:corrected_vat_number) { Spree::TestingSupport::VatNumberPool.at(1) }
+    let(:corrected_vat_number) { eu_vat_number(1) }
 
     it 'updates the number' do
       patch :update, params: { customer_id: customer.prefixed_id, id: tax_identifier.prefixed_id,

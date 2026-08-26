@@ -228,8 +228,8 @@ RSpec.describe Spree::Api::V3::Seller::ProfileController, type: :controller do
       expect(seller.registration_number).to eq('01234567')
     end
 
-    let(:vat_number) { Spree::TestingSupport::VatNumberPool.at(0) }
-    let(:corrected_vat_number) { Spree::TestingSupport::VatNumberPool.at(1) }
+    let(:vat_number) { eu_vat_number(0) }
+    let(:corrected_vat_number) { eu_vat_number(1) }
 
     it 'records a tax registration' do
       patch :update, params: { tax_identifier: { kind: 'eu_vat', value: vat_number } }, as: :json
@@ -257,6 +257,17 @@ RSpec.describe Spree::Api::V3::Seller::ProfileController, type: :controller do
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(seller.reload.tax_identifiers.where(kind: 'eu_vat')).to be_empty
+    end
+
+    # A 422 the seller reads as "nothing saved" must mean it.
+    it 'keeps the rest of the form out of the database when the number is refused' do
+      original_name = seller.name
+
+      patch :update, params: { name: 'Renamed Seller',
+                               tax_identifier: { kind: 'eu_vat', value: 'DE123' } }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(seller.reload.name).to eq(original_name)
     end
 
     it 'removes it when the seller clears the number' do
