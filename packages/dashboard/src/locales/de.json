@@ -425,11 +425,8 @@
     "company_addresses": {
       "add_cta": "Adresse hinzufügen",
       "add_sheet_title": "Neue Adresse",
-      "address_legend": "Adresse",
       "default_billing": "Standard-Rechnung",
-      "default_billing_label": "Als Standard-Rechnungsadresse verwenden",
       "default_shipping": "Standard-Lieferung",
-      "default_shipping_label": "Als Standard-Lieferadresse verwenden",
       "edit_sheet_title": "Adresse bearbeiten",
       "empty": "Noch keine Adressen",
       "messages": {
@@ -1009,13 +1006,6 @@
         "label": "Unternehmen",
         "name": {
           "placeholder": "Acme Industries"
-        }
-      },
-      "company_address": {
-        "label": {
-          "help": "Wie dieser Standort genannt wird — „Hauptsitz\", „Werk 2 Rampe\".",
-          "label": "Bezeichnung",
-          "placeholder": "Hauptsitz"
         }
       },
       "company_location": {

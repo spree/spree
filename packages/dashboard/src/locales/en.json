@@ -425,11 +425,8 @@
     "company_addresses": {
       "add_cta": "Add address",
       "add_sheet_title": "New address",
-      "address_legend": "Address",
       "default_billing": "Default billing",
-      "default_billing_label": "Use as default billing address",
       "default_shipping": "Default shipping",
-      "default_shipping_label": "Use as default shipping address",
       "edit_sheet_title": "Edit address",
       "empty": "No addresses yet",
       "messages": {
@@ -1009,13 +1006,6 @@
         "label": "Company",
         "name": {
           "placeholder": "Acme Industries"
-        }
-      },
-      "company_address": {
-        "label": {
-          "help": "How this site is referred to — \"Headquarters\", \"Plant 2 dock\".",
-          "label": "Label",
-          "placeholder": "Headquarters"
         }
       },
       "company_location": {

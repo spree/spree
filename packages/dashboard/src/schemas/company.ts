@@ -1,5 +1,4 @@
 import type {
-  CompanyAddressParams,
   CompanyParams,
   TaxExemptionCertificateParams,
   TaxIdentifierParams,
@@ -34,63 +33,6 @@ export const companyChildFormSchema = z.object({
 export type CompanyChildFormValues = z.infer<typeof companyChildFormSchema>
 
 export const COMPANY_CHILD_DEFAULTS: CompanyChildFormValues = { name: '', kind: 'division' }
-
-const addressFieldsSchema = z.object({
-  first_name: z.string().optional(),
-  last_name: z.string().optional(),
-  company: z.string().optional(),
-  address1: z.string().optional(),
-  address2: z.string().optional(),
-  city: z.string().optional(),
-  postal_code: z.string().optional(),
-  phone: z.string().optional(),
-  country_code: z.string().optional(),
-  state_code: z.string().optional(),
-  state_name: z.string().optional(),
-})
-
-// The entry is the address itself, so the address fields sit alongside the
-// label and the two default flags rather than under an `address` key.
-export const companyAddressFormSchema = addressFieldsSchema.extend({
-  label: z.string().optional(),
-  default_billing: z.boolean(),
-  default_shipping: z.boolean(),
-})
-
-export type CompanyAddressFormValues = z.infer<typeof companyAddressFormSchema>
-
-// A new entry is offered as both defaults: the node points at one address per
-// kind, so the common case — the first site a node gets — is the answer to
-// both, and there is no previous default for it to displace.
-export const COMPANY_ADDRESS_DEFAULTS: CompanyAddressFormValues = {
-  label: '',
-  default_billing: true,
-  default_shipping: true,
-  first_name: '',
-  last_name: '',
-  company: '',
-  address1: '',
-  address2: '',
-  city: '',
-  postal_code: '',
-  phone: '',
-  country_code: '',
-  state_code: '',
-  state_name: '',
-}
-
-export function companyAddressValuesToParams(
-  values: CompanyAddressFormValues,
-): CompanyAddressParams {
-  const { label, default_billing, default_shipping, ...address } = values
-
-  return {
-    label: blankToNull(label),
-    default_billing,
-    default_shipping,
-    ...Object.fromEntries(Object.entries(address).filter(([, value]) => value !== undefined)),
-  }
-}
 
 export const taxIdentifierFormSchema = z.object({
   kind: z.string().min(1, { error: requiredMessage('tax_identifier.kind') }),

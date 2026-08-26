@@ -435,11 +435,8 @@
     "company_addresses": {
       "add_cta": "Dodaj adres",
       "add_sheet_title": "Nowy adres",
-      "address_legend": "Adres",
       "default_billing": "Domyślny rozliczeniowy",
-      "default_billing_label": "Ustaw jako domyślny adres rozliczeniowy",
       "default_shipping": "Domyślny dostawy",
-      "default_shipping_label": "Ustaw jako domyślny adres dostawy",
       "edit_sheet_title": "Edytuj adres",
       "empty": "Brak adresów",
       "messages": {
@@ -1027,13 +1024,6 @@
         "label": "Firma",
         "name": {
           "placeholder": "Acme Industries"
-        }
-      },
-      "company_address": {
-        "label": {
-          "help": "Jak nazywany jest ten adres — „Siedziba główna\", „Rampa zakładu 2\".",
-          "label": "Etykieta",
-          "placeholder": "Siedziba główna"
         }
       },
       "company_location": {

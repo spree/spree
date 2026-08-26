@@ -423,11 +423,8 @@
     "company_addresses": {
       "add_cta": "添加地址",
       "add_sheet_title": "新建地址",
-      "address_legend": "地址",
       "default_billing": "默认账单",
-      "default_billing_label": "设为默认账单地址",
       "default_shipping": "默认收货",
-      "default_shipping_label": "设为默认收货地址",
       "edit_sheet_title": "编辑地址",
       "empty": "暂无地址",
       "messages": {
@@ -1004,13 +1001,6 @@
         "label": "公司",
         "name": {
           "placeholder": "Acme Industries"
-        }
-      },
-      "company_address": {
-        "label": {
-          "help": "该地点的称呼——“总部”、“2 号厂区装卸口”。",
-          "label": "标签",
-          "placeholder": "总部"
         }
       },
       "company_location": {

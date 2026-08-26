@@ -425,11 +425,8 @@
     "company_addresses": {
       "add_cta": "Ajouter une adresse",
       "add_sheet_title": "Nouvelle adresse",
-      "address_legend": "Adresse",
       "default_billing": "Facturation par défaut",
-      "default_billing_label": "Utiliser comme adresse de facturation par défaut",
       "default_shipping": "Livraison par défaut",
-      "default_shipping_label": "Utiliser comme adresse de livraison par défaut",
       "edit_sheet_title": "Modifier l’adresse",
       "empty": "Aucune adresse pour le moment",
       "messages": {
@@ -1009,13 +1006,6 @@
         "label": "Entreprise",
         "name": {
           "placeholder": "Acme Industries"
-        }
-      },
-      "company_address": {
-        "label": {
-          "help": "Comment ce site est désigné — « Siège social », « Quai usine 2 ».",
-          "label": "Libellé",
-          "placeholder": "Siège social"
         }
       },
       "company_location": {

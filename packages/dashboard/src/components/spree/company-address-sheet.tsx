@@ -1,32 +1,14 @@
-import { zodResolver } from '@hookform/resolvers/zod'
 import type { Address } from '@spree/admin-sdk'
-import { mapSpreeErrorsToForm } from '@spree/dashboard-core'
-import {
-  Button,
-  Checkbox,
-  FieldGroup,
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from '@spree/dashboard-ui'
-import { useEffect } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { AddressFormDialog } from '@spree/dashboard-core'
 import { useTranslation } from 'react-i18next'
 import { useCreateCompanyAddress, useUpdateCompanyAddress } from '../../hooks/use-companies'
-import {
-  COMPANY_ADDRESS_DEFAULTS,
-  type CompanyAddressFormValues,
-  companyAddressFormSchema,
-  companyAddressValuesToParams,
-} from '../../schemas/company'
-import { AddressFieldset } from './address-fieldset'
 
 /**
  * Creates an entry in a company node's address book, or edits one. The node
  * owns the address outright, and points at one entry per kind as its default.
+ *
+ * A thin wrapper over the shared dialog: a book entry is an ordinary address
+ * addressed to the company, which is exactly what `business` mode asks for.
  */
 export function CompanyAddressSheet({
   companyId,
@@ -45,125 +27,51 @@ export function CompanyAddressSheet({
   const createMutation = useCreateCompanyAddress(companyId)
   const updateMutation = useUpdateCompanyAddress(companyId)
 
-  const form = useForm<CompanyAddressFormValues>({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(companyAddressFormSchema) as any,
-    defaultValues: COMPANY_ADDRESS_DEFAULTS,
-  })
-
-  useEffect(() => {
-    if (!open) return
-    if (!entry) {
-      form.reset(COMPANY_ADDRESS_DEFAULTS)
-      return
-    }
-
-    form.reset({
-      label: entry.label ?? '',
-      default_billing: entry.is_default_billing,
-      default_shipping: entry.is_default_shipping,
-      first_name: entry.first_name ?? '',
-      last_name: entry.last_name ?? '',
-      company: entry.company ?? '',
-      address1: entry.address1 ?? '',
-      address2: entry.address2 ?? '',
-      city: entry.city ?? '',
-      postal_code: entry.postal_code ?? '',
-      phone: entry.phone ?? '',
-      country_code: entry.country_code ?? '',
-      state_code: entry.state_code ?? '',
-    })
-  }, [open, entry, form])
-
-  async function onSubmit(values: CompanyAddressFormValues) {
-    try {
-      const params = companyAddressValuesToParams(values)
-      if (entry) {
-        await updateMutation.mutateAsync({ id: entry.id, params })
-      } else {
-        await createMutation.mutateAsync(params)
-      }
-      onOpenChange(false)
-    } catch (err) {
-      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
-    }
+  // A new entry is offered as both defaults: the node points at one address per
+  // kind, so the first site it gets is the answer to both, and there is no
+  // previous default for it to displace. The company line comes from the node,
+  // so a new entry is born carrying it.
+  const address = entry ?? {
+    company: companyName,
+    is_default_billing: true,
+    is_default_shipping: true,
   }
 
-  const { errors } = form.formState
-
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="sm:max-w-xl">
-        <SheetHeader>
-          <SheetTitle>
-            {entry
-              ? t('admin.company_addresses.edit_sheet_title')
-              : t('admin.company_addresses.add_sheet_title')}
-          </SheetTitle>
-          <SheetDescription>{t('admin.company_addresses.sheet_description')}</SheetDescription>
-        </SheetHeader>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
-          <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
-            <FieldGroup>
-              {errors.root?.message && (
-                <p className="text-destructive text-sm" role="alert">
-                  {errors.root.message}
-                </p>
-              )}
+    <AddressFormDialog
+      title={
+        entry
+          ? t('admin.company_addresses.edit_sheet_title')
+          : t('admin.company_addresses.add_sheet_title')
+      }
+      description={t('admin.company_addresses.sheet_description')}
+      address={address}
+      open={open}
+      onOpenChange={onOpenChange}
+      // Addressed to the company, so no contact name is asked for and the
+      // company line is what cannot be left out.
+      business
+      companyReadOnly
+      showLabel
+      showDefaultFlags
+      onSave={async (values) => {
+        // The dialog speaks the customer address book's names for these; the
+        // company endpoints take them without the prefix.
+        const { is_default_billing, is_default_shipping, ...address } = values
+        const params = {
+          ...address,
+          default_billing: is_default_billing,
+          default_shipping: is_default_shipping,
+        }
 
-              <AddressFieldset form={form} companyName={companyName} withLabel />
-
-              <Controller
-                control={form.control}
-                name="default_billing"
-                render={({ field }) => (
-                  <label
-                    htmlFor="company-address-default-billing"
-                    className="flex items-center gap-2 text-sm"
-                  >
-                    <Checkbox
-                      id="company-address-default-billing"
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                    {t('admin.company_addresses.default_billing_label')}
-                  </label>
-                )}
-              />
-              <Controller
-                control={form.control}
-                name="default_shipping"
-                render={({ field }) => (
-                  <label
-                    htmlFor="company-address-default-shipping"
-                    className="flex items-center gap-2 text-sm"
-                  >
-                    <Checkbox
-                      id="company-address-default-shipping"
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                    {t('admin.company_addresses.default_shipping_label')}
-                  </label>
-                )}
-              />
-            </FieldGroup>
-          </div>
-          <SheetFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              disabled={form.formState.isSubmitting}
-            >
-              {t('admin.actions.cancel')}
-            </Button>
-            <Button type="submit" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
-            </Button>
-          </SheetFooter>
-        </form>
-      </SheetContent>
-    </Sheet>
+        if (entry) {
+          await updateMutation.mutateAsync({ id: entry.id, params })
+        } else {
+          await createMutation.mutateAsync(params)
+        }
+        onOpenChange(false)
+      }}
+      isPending={createMutation.isPending || updateMutation.isPending}
+    />
   )
 }

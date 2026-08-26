@@ -431,11 +431,8 @@
     "company_addresses": {
       "add_cta": "إضافة عنوان",
       "add_sheet_title": "عنوان جديد",
-      "address_legend": "العنوان",
       "default_billing": "الفوترة الافتراضية",
-      "default_billing_label": "استخدام كعنوان الفوترة الافتراضي",
       "default_shipping": "الشحن الافتراضي",
-      "default_shipping_label": "استخدام كعنوان الشحن الافتراضي",
       "edit_sheet_title": "تعديل العنوان",
       "empty": "لا توجد عناوين بعد",
       "messages": {
@@ -1026,13 +1023,6 @@
         "label": "الشركة",
         "name": {
           "placeholder": "Acme Industries"
-        }
-      },
-      "company_address": {
-        "label": {
-          "help": "كيف يُشار إلى هذا الموقع — \"المقر الرئيسي\"، \"رصيف المصنع 2\".",
-          "label": "التسمية",
-          "placeholder": "المقر الرئيسي"
         }
       },
       "company_location": {

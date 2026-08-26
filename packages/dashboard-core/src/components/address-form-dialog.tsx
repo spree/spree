@@ -3,6 +3,7 @@ import {
   Button,
   Checkbox,
   Field,
+  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -152,6 +153,8 @@ export function AddressFormDialog({
   showLabel = false,
   showDefaultFlags = false,
   business = false,
+  companyReadOnly = false,
+  description,
 }: {
   address: EditableAddress | null | undefined
   open: boolean
@@ -163,6 +166,14 @@ export function AddressFormDialog({
   showDefaultFlags?: boolean
   /** Addressed to a company rather than a person — see the schemas above. */
   business?: boolean
+  /**
+   * Show the company line but do not let it be edited. For an address whose
+   * owner already answers the question — a company node names itself, so
+   * there is nothing for the merchant to type.
+   */
+  companyReadOnly?: boolean
+  /** Overrides the standard "update the address details" blurb. */
+  description?: string
 }) {
   const { t } = useTranslation()
   const resolvedTitle = title ?? t('admin.components.address_form_dialog.edit_title')
@@ -232,7 +243,7 @@ export function AddressFormDialog({
         <SheetHeader>
           <SheetTitle>{resolvedTitle}</SheetTitle>
           <SheetDescription>
-            {t('admin.components.address_form_dialog.description')}
+            {description ?? t('admin.components.address_form_dialog.description')}
           </SheetDescription>
         </SheetHeader>
         <form
@@ -260,8 +271,13 @@ export function AddressFormDialog({
                   <Input
                     id="addr-co"
                     aria-invalid={!!errors.company || undefined}
+                    disabled={companyReadOnly}
+                    readOnly={companyReadOnly}
                     {...form.register('company')}
                   />
+                  {companyReadOnly && (
+                    <FieldDescription>{t('admin.fields.company.help')}</FieldDescription>
+                  )}
                   <FieldError errors={[errors.company]} />
                 </Field>
               ) : (
