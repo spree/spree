@@ -56,5 +56,17 @@ module Spree
     def store
       product&.store
     end
+
+    # Named explicitly rather than left to the `Spree::Api::V3::` convention:
+    # a serializer at that level is picked up by the Store API's generated
+    # types and OpenAPI document, and a review decision is not something the
+    # storefront has any business describing. The seller's own view is the
+    # right shape for an event — it already withholds who decided, which a
+    # webhook payload leaving the marketplace should not carry.
+    #
+    # @return [Class]
+    def event_serializer_class
+      Spree::Api::V3::Seller::ProductSubmissionSerializer
+    end
   end
 end

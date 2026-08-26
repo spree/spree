@@ -15606,12 +15606,15 @@ components:
           nullable: true
         created_at:
           type: string
+        product_id:
+          type: string
       required:
       - id
       - status
       - review_note
       - reviewed_at
       - created_at
+      - product_id
       x-typelizer: true
     Profile:
       type: object

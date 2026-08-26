@@ -1,8 +1,7 @@
 module Spree
   module Products
     # Returns a product to draft, hiding it from the storefront while it is
-    # worked on. Replaces the `draft` state machine event, which published no
-    # event of its own — the `after_draft` hook is the extension point.
+    # worked on. Replaces the `draft` state machine event.
     class Draft < Spree::Workflow
       hooks :validate, :after_draft
 
@@ -18,6 +17,12 @@ module Spree
           step :withdraw_submission
           run_hooks :after_draft
         end
+
+        # Its siblings (Activate, Archive, Propose, Approve, Reject) all
+        # announce themselves, and this one now carries a marketplace meaning
+        # too: taking a listing back withdraws an open submission, which a
+        # seller's integration has the same reason to hear about.
+        product.publish_event('product.drafted')
 
         success(product)
       end

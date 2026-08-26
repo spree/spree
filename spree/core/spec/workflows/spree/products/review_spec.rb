@@ -170,6 +170,15 @@ RSpec.describe 'Spree::Products review workflows' do
       expect(product.reload.latest_submission).to be_withdrawn
     end
 
+    it 'announces a withdrawal like every other transition' do
+      Spree.product_propose_workflow.call(product: product)
+
+      allow(product).to receive(:publish_event).with(anything)
+      expect(product).to receive(:publish_event).with('product.drafted')
+
+      Spree.product_draft_workflow.call(product: product)
+    end
+
     it 'leaves a product nobody submitted alone' do
       Spree.product_draft_workflow.call(product: product)
 

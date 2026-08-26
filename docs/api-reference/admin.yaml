@@ -36787,6 +36787,8 @@ components:
           nullable: true
         created_at:
           type: string
+        product_id:
+          type: string
         metadata:
           type: object
           nullable: true
@@ -36809,6 +36811,7 @@ components:
       - review_note
       - reviewed_at
       - created_at
+      - product_id
       - metadata
       - updated_at
       - submitted_by_id
