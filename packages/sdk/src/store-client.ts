@@ -1217,7 +1217,7 @@ export class StoreClient {
       update: (
         companyId: string,
         id: string,
-        params: CompanyAddressParams,
+        params: Partial<CompanyAddressParams>,
         options?: RequestOptions,
       ): Promise<Address> =>
         this.request<Address>('PATCH', `/companies/${companyId}/addresses/${id}`, {

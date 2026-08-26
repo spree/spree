@@ -49,11 +49,21 @@ module Spree
               Spree.api.address_serializer
             end
 
-            # The node's own sites plus the ones it inherits: a division ships
-            # to its headquarters' addresses too, which is the same
-            # self-and-ancestors chain its default address is prefilled from
-            # and the same one checkout accepts an id from.
+            # Reading a book and keeping one are different rights.
+            #
+            # Listing shows the node's own sites plus the ones it inherits —
+            # the same self-and-ancestors chain its default address is
+            # prefilled from, and the same one checkout accepts an id from, so
+            # a division ships to its headquarters' addresses.
+            #
+            # Writing stays with the node that owns the row. Standing over a
+            # division is not standing over its parent, and the Store API
+            # authorizes purely by what this scope returns — so widening it for
+            # every action would let a division member rename, delete, or
+            # re-point the defaults of the company above them.
             def scope
+              return @parent.addresses unless action_name == 'index'
+
               Spree::Address.where(owner_type: 'Spree::Company', owner_id: @parent.self_and_ancestors.map(&:id))
             end
 

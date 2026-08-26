@@ -60,4 +60,35 @@ RSpec.describe Spree::Api::V3::Store::Companies::AddressesController, type: :con
         to contain_exactly(own.prefixed_id, inherited.prefixed_id)
     end
   end
+  # Reading what you inherit is not the same as editing it. A division member
+  # ships to the headquarters address but has no standing over the node that
+  # keeps it, so the entry itself — and the defaults it holds — stay the
+  # parent's to change.
+  describe 'writing an inherited address' do
+    let(:division) { create(:company, store: store, kind: 'division', parent: company) }
+    let!(:inherited) { create(:company_address, owner: company, label: 'Headquarters') }
+
+    it 'refuses to edit an ancestor entry through the division' do
+      patch :update, params: { company_id: division.prefixed_id, id: inherited.prefixed_id, label: 'Hijacked' },
+                     as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(inherited.reload.label).to eq('Headquarters')
+    end
+
+    it 'refuses to delete an ancestor entry through the division' do
+      delete :destroy, params: { company_id: division.prefixed_id, id: inherited.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(inherited.reload).to be_persisted
+    end
+
+    it 'refuses to move an ancestor default through the division' do
+      patch :update, params: { company_id: division.prefixed_id, id: inherited.prefixed_id, default_billing: true },
+                     as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(company.reload.default_bill_address_id).to be_nil
+    end
+  end
 end
