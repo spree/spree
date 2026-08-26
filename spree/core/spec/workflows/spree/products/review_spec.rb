@@ -91,12 +91,33 @@ RSpec.describe 'Spree::Products review workflows' do
       expect(product.metadata['rejection_reason']).to eq('Photos are too dark')
     end
 
+    # The panel offers "Edit reason" on a product already turned down, so the
+    # workflow has to accept one — correcting the note is not a new decision.
+    it 'rewrites the reason on one already rejected' do
+      product.update!(status: 'rejected', metadata: { 'rejection_reason' => 'Too dark' })
+
+      result = Spree.product_reject_workflow.call(product: product, reason: 'Needs a scale photo')
+
+      expect(result).to be_success
+      expect(product.reload.metadata['rejection_reason']).to eq('Needs a scale photo')
+    end
+
     it 'refuses a product nobody submitted' do
       result = Spree.product_reject_workflow.call(product: product)
 
       expect(result).not_to be_success
       expect(product.reload).to be_draft
     end
+  end
+
+  # These messages are shown to an operator, so a missing key does not fail
+  # quietly — it renders `translation_missing` markup into the toast.
+  it 'refuses with a real message rather than a missing-translation key' do
+    result = Spree.product_approve_workflow.call(product: product)
+
+    message = result.error.value.full_messages.join
+    expect(message).not_to include('translation missing', 'translation_missing')
+    expect(message).to include('not awaiting review')
   end
 
   # A product under review is not on sale. The storefront scope keys off

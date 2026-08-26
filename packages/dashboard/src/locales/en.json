@@ -3705,6 +3705,9 @@
         "send_back": "Send back"
       },
       "save_label": "Save product",
+      "seller": {
+        "title": "Seller"
+      },
       "seo": {
         "meta_description_placeholder": "SEO description",
         "meta_title_placeholder": "SEO title",

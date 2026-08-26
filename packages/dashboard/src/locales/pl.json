@@ -3765,6 +3765,9 @@
         "send_back": "Odeślij"
       },
       "save_label": "Zapisz produkt",
+      "seller": {
+        "title": "Sprzedawca"
+      },
       "seo": {
         "meta_description_placeholder": "Opis SEO",
         "meta_title_placeholder": "Tytuł SEO",

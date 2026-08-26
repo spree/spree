@@ -3705,6 +3705,9 @@
         "send_back": "Zurücksenden"
       },
       "save_label": "Produkt speichern",
+      "seller": {
+        "title": "Verkäufer"
+      },
       "seo": {
         "meta_description_placeholder": "SEO-Beschreibung",
         "meta_title_placeholder": "SEO-Titel",

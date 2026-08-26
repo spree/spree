@@ -3696,6 +3696,9 @@
         "send_back": "退回"
       },
       "save_label": "保存产品",
+      "seller": {
+        "title": "卖家"
+      },
       "seo": {
         "meta_description_placeholder": "SEO 描述",
         "meta_title_placeholder": "SEO 标题",

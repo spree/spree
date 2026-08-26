@@ -22,7 +22,7 @@ module Spree
         # without anybody reviewing it. Re-submitting one already in review
         # is equally meaningless.
         unless product.draft? || product.rejected?
-          reject!(Spree.t('activerecord.errors.models.spree/product.attributes.base.cannot_propose'))
+          reject!(I18n.t('activerecord.errors.models.spree/product.attributes.base.cannot_propose'))
         end
 
         run_hooks :validate

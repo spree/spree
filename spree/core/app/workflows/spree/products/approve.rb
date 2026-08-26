@@ -14,7 +14,7 @@ module Spree
       def perform(product:, reviewer: nil)
         super
 
-        reject!(Spree.t('activerecord.errors.models.spree/product.attributes.base.not_awaiting_review')) unless product.proposed?
+        reject!(I18n.t('activerecord.errors.models.spree/product.attributes.base.not_awaiting_review')) unless product.proposed?
 
         run_hooks :validate
 

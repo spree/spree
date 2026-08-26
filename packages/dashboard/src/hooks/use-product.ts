@@ -29,6 +29,11 @@ export function useProduct(id: string) {
           'product_publications',
           'channels',
           'custom_fields',
+          // The seller card shows their standing alongside the name: a product
+          // from a suspended seller is not on sale whatever its own status
+          // says. One record on a detail page, so the expand is cheap here in
+          // a way it would not be on the list.
+          'seller',
         ],
       }),
     enabled: !!id,

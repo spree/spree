@@ -41,6 +41,7 @@ import { CustomFieldsInlineCard } from '../../../../components/spree/custom-fiel
 import { MediaRichTextEditor } from '../../../../components/spree/media-rich-text-editor'
 import { ProductCustomFieldsProvider } from '../../../../components/spree/products/product-custom-fields-provider'
 import { ProductReviewActions } from '../../../../components/spree/products/product-review-actions'
+import { ProductSellerCard } from '../../../../components/spree/products/product-seller-card'
 import { PublishingCard } from '../../../../components/spree/products/publishing-card'
 import { ResourceTranslationsCard } from '../../../../components/spree/translations/resource-translations-card'
 import { useDeleteProduct, useProduct, useUpdateProduct } from '../../../../hooks/use-product'
@@ -301,6 +302,7 @@ function ProductForm({ product }: { product: Product }) {
           }
           sidebar={
             <>
+              <ProductSellerCard product={product} />
               <StatusCard
                 form={form}
                 reviewActions={
