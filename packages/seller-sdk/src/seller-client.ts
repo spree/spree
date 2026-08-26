@@ -6,6 +6,7 @@ import type {
   Invitation,
   Order,
   Product,
+  ProductType,
   Profile,
   RequirementStatus,
   RequirementSubmission,
@@ -219,6 +220,40 @@ export class SellerClient {
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/products/${id}`, options),
+
+    /**
+     * Ask the marketplace to put this product on sale.
+     *
+     * Status is not an attribute a seller can send: whether a listing goes
+     * live is the operator's decision, so it moves through these actions.
+     */
+    submit: (id: string, options?: RequestOptions): Promise<Product> =>
+      this.request<Product>('PATCH', `/products/${id}/submit`, options),
+
+    /** Take a listing back down. Withdrawing your own needs nobody's approval. */
+    draft: (id: string, options?: RequestOptions): Promise<Product> =>
+      this.request<Product>('PATCH', `/products/${id}/draft`, options),
+
+    archive: (id: string, options?: RequestOptions): Promise<Product> =>
+      this.request<Product>('PATCH', `/products/${id}/archive`, options),
+  }
+
+  /**
+   * The types a seller may list against, and the custom fields each asks
+   * them to fill in. Read only — defining a type is the operator's.
+   */
+  readonly productTypes = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<ProductType>> =>
+      this.request<PaginatedResponse<ProductType>>('GET', '/product_types', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<ProductType> =>
+      this.request<ProductType>('GET', `/product_types/${id}`, options),
   }
 
   /**
@@ -381,7 +416,6 @@ export interface ProductParams {
   name?: string
   description?: string
   slug?: string
-  status?: string
   meta_title?: string
   meta_description?: string
   meta_keywords?: string

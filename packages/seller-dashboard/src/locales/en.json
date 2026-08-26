@@ -117,11 +117,15 @@
   },
   "products": {
     "add": "Add product",
+    "archive": "Archive",
+    "archive_confirm_description": "It comes off sale and out of your active listings.",
+    "archive_confirm_title": "Archive this product?",
     "columns": {
       "name": "Product",
       "price": "Price",
       "status": "Status"
     },
+    "custom_fields": "Product details",
     "details": "Details",
     "empty": "No products yet. Add one to start selling.",
     "fields": {
@@ -129,17 +133,40 @@
       "name": "Name",
       "price": "Price",
       "price_placeholder": "Leave blank to keep the current price",
-      "status": "Status"
+      "status": "Status",
+      "slug": "URL handle",
+      "meta_title": "Page title",
+      "meta_description": "Meta description",
+      "meta_keywords": "Meta keywords",
+      "product_type": "Product type",
+      "product_type_placeholder": "Choose a type"
     },
     "new_title": "New product",
     "not_found": "That product could not be found.",
+    "organization": "Organisation",
+    "rejection_reason": "Reason: {{reason}}",
     "saved": "Product saved",
     "search_placeholder": "Search by name…",
+    "seo": "Search engine listing",
+    "status_help": {
+      "draft": "Only you can see this. Submit it when you are ready for the marketplace to review it.",
+      "proposed": "Waiting for the marketplace to review it. You can still make changes.",
+      "active": "On sale and visible to shoppers.",
+      "rejected": "The marketplace asked for changes. Edit it, then submit it again.",
+      "archived": "Off sale and out of your active listings."
+    },
+    "status_updated": "Status updated",
     "statuses": {
       "active": "Active",
       "archived": "Archived",
-      "draft": "Draft"
+      "draft": "Draft",
+      "proposed": "In review",
+      "rejected": "Changes needed"
     },
+    "submit_for_review": "Submit for review",
+    "take_down": "Take down",
+    "take_down_confirm_description": "Shoppers will no longer see it. You can submit it again later.",
+    "take_down_confirm_title": "Take this listing down?",
     "title": "Products"
   },
   "profile": {

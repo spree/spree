@@ -160,6 +160,25 @@ RSpec.describe Spree::Api::V3::Seller::ProductsController, type: :controller do
     end
   end
 
+  # The panel loads a product into a form and sends it back, so anything the
+  # controller accepts must come back out — otherwise a save blanks it.
+  it 'returns every field it accepts on write' do
+    category = create(:category, store: store)
+    product_type = create(:product_type, store: store)
+    mine.update!(product_type: product_type, categories: [category], metadata: { 'care' => 'wash cold' })
+
+    get :show, params: { id: mine.prefixed_id }, as: :json
+
+    expect(json_response).to include(
+      'name', 'description', 'slug',
+      'meta_title', 'meta_description', 'meta_keywords',
+      'product_type_id', 'category_ids', 'metadata'
+    )
+    expect(json_response['product_type_id']).to eq(product_type.prefixed_id)
+    expect(json_response['category_ids']).to eq([category.prefixed_id])
+    expect(json_response['metadata']).to eq('care' => 'wash cold')
+  end
+
   describe 'PATCH #update' do
     it 'edits their own product' do
       patch :update, params: { id: mine.prefixed_id, name: 'Renamed Lamp' }, as: :json

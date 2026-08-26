@@ -43,6 +43,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  StatusCard as SharedStatusCard,
   Textarea,
   toastManager,
   useConfirm,
@@ -58,7 +59,7 @@ import {
   TrashIcon,
 } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Controller, type UseFormReturn, useWatch } from 'react-hook-form'
+import { type Control, Controller, type UseFormReturn, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { categoryAutocompleteProps, useCategories } from '../../../hooks/use-categories'
 import { collectionAutocompleteProps, useCollections } from '../../../hooks/use-collections'
@@ -784,44 +785,18 @@ export function SEOCard({ form, product }: FormCardProps & { product?: Product }
 
 export function StatusCard({ form }: FormCardProps) {
   const { t } = useTranslation()
-  const statusItems = [
-    { value: 'draft', label: t('admin.pages.products.status_options.draft') },
-    { value: 'active', label: t('admin.pages.products.status_options.active') },
-    { value: 'archived', label: t('admin.pages.products.status_options.archived') },
-  ]
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.fields.status.label')}</CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        <Field>
-          <FieldLabel>{t('admin.fields.status.label')}</FieldLabel>
-          <Controller
-            name="status"
-            control={form.control}
-            render={({ field }) => (
-              <Select
-                items={statusItems as never}
-                value={field.value}
-                onValueChange={field.onChange}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {statusItems.map((o) => (
-                    <SelectItem key={o.value} value={o.value}>
-                      {o.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          />
-        </Field>
-      </CardContent>
-    </Card>
+    <SharedStatusCard<ProductFormValues>
+      control={form.control as Control<ProductFormValues>}
+      name="status"
+      title={t('admin.fields.status.label')}
+      label={t('admin.fields.status.label')}
+      options={['draft', 'active', 'archived'].map((value) => ({
+        value,
+        label: t(`admin.pages.products.status_options.${value}`),
+      }))}
+    />
   )
 }
 
