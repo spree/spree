@@ -24,6 +24,23 @@ RSpec.describe 'Spree::Products review workflows' do
       expect(product.reload).to be_active
     end
 
+    # Auto-approval makes this the sharp one: without the guard an archived
+    # listing went straight back on sale with nobody reviewing it.
+    it 'refuses an archived product' do
+      product.update!(status: 'archived')
+
+      result = Spree.product_propose_workflow.call(product: product)
+
+      expect(result).not_to be_success
+      expect(product.reload).to be_archived
+    end
+
+    it 'refuses one already awaiting review' do
+      product.update!(status: 'proposed')
+
+      expect(Spree.product_propose_workflow.call(product: product)).not_to be_success
+    end
+
     it 'resubmits a rejected product' do
       product.update!(status: 'rejected')
 

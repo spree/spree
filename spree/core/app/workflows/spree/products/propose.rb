@@ -16,7 +16,14 @@ module Spree
       def perform(product:)
         super
 
-        reject!(Spree.t('activerecord.errors.models.spree/product.attributes.base.cannot_propose')) if product.active?
+        # Only a listing that is being worked on can be submitted. Guarding
+        # `active?` alone let an archived product through — and with
+        # auto-approval on, a withdrawn listing went straight back on sale
+        # without anybody reviewing it. Re-submitting one already in review
+        # is equally meaningless.
+        unless product.draft? || product.rejected?
+          reject!(Spree.t('activerecord.errors.models.spree/product.attributes.base.cannot_propose'))
+        end
 
         run_hooks :validate
 

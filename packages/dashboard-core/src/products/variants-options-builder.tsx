@@ -305,6 +305,10 @@ interface OptionPickerProps {
 function OptionPicker({ optionType, initialValues, onSave, onCancel }: OptionPickerProps) {
   const { t } = useTranslation()
   const updateOptionType = useUpdateOptionType(optionType.id)
+  // Adding a value to an option type edits the store's own vocabulary, so it
+  // needs the write the create button needs — a panel that can list types but
+  // not update them would render an action whose mutation has nowhere to go.
+  const canAddValue = Boolean(getApiClient().optionTypes?.update)
   const [pickedNames, setPickedNames] = useState<Set<string>>(
     () => new Set(initialValues.map((v) => v.name)),
   )
@@ -388,14 +392,16 @@ function OptionPicker({ optionType, initialValues, onSave, onCancel }: OptionPic
             </button>
           )
         })}
-        <button
-          type="button"
-          onClick={() => setCreatingValue(true)}
-          className="inline-flex items-center gap-1.5 rounded-full border border-dashed border-border bg-background px-3 py-1 text-xs hover:bg-muted"
-        >
-          <PlusIcon className="size-3" />
-          {t('admin.products.variants.create_value')}
-        </button>
+        {canAddValue && (
+          <button
+            type="button"
+            onClick={() => setCreatingValue(true)}
+            className="inline-flex items-center gap-1.5 rounded-full border border-dashed border-border bg-background px-3 py-1 text-xs hover:bg-muted"
+          >
+            <PlusIcon className="size-3" />
+            {t('admin.products.variants.create_value')}
+          </button>
+        )}
       </div>
       <div className="flex items-center justify-end gap-2">
         <Button type="button" variant="outline" size="sm" onClick={onCancel}>

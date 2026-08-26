@@ -103,7 +103,9 @@ test.describe('seller catalog and orders', () => {
       await expect(sellerPage.getByRole('heading', { name: /orders/i })).toBeVisible({
         timeout: 20_000,
       })
-      await expect(sellerPage.getByText(/something went wrong/i)).toHaveCount(0)
+      // The empty state itself, not merely the absence of an error: a blank
+      // page would satisfy "no error" just as well as a working one.
+      await expect(sellerPage.getByText(/no orders yet/i)).toBeVisible({ timeout: 20_000 })
     } finally {
       await context.close()
     }
