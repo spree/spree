@@ -90,6 +90,20 @@ describe Spree::TaxIdentifiers::Validate do
     end
   end
 
+  # A gem dropped while a check was already queued. Nobody asked a registry, so
+  # this is not an outage and must not be recorded as one.
+  context 'when the registered validator no longer loads' do
+    it 'records unsupported rather than unavailable' do
+      tax_identifier
+
+      with_tax_identifier_validator('eu_vat', 'NoSuchValidatorConstant') do
+        described_class.call(tax_identifier: tax_identifier)
+      end
+
+      expect(tax_identifier.reload.validation_status).to eq('unsupported')
+    end
+  end
+
   # Core registers one of these for eu_vat, so this is the ordinary case rather
   # than an edge one: the row must come out marked, not crash the job.
   context 'when the registered validator only checks format' do

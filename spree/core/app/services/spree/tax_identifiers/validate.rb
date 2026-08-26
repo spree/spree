@@ -15,18 +15,16 @@ module Spree
         # written over the new one — see #persist.
         @checked = tax_identifier.slice(:kind, :value)
 
-        validator = Spree.tax_identifier_validators[tax_identifier.kind]
-
-        # Narrow race: the validator was deregistered between enqueue and run.
-        return persist(tax_identifier, unsupported_result) if validator.blank?
-
-        validator_class = validator.to_s.constantize
+        # Absent, or named by an entry that no longer loads — a gem dropped
+        # while a check was already queued. Both mean the same thing here as a
+        # deregistration does, and neither is a registry that failed to answer,
+        # so they must not be recorded as an outage.
+        validator_class = Spree.tax_identifier_validators[tax_identifier.kind].presence&.to_s&.safe_constantize
+        return persist(tax_identifier, unsupported_result) if validator_class.nil?
 
         # Nothing should enqueue a check for a format-only validator, since
         # TaxIdentifier#validatable? reports false for one. Belt and braces all
-        # the same: a registry that does not exist is the same situation as the
-        # validator having been deregistered, and it must not surface as a job
-        # that crashes.
+        # the same: it must not surface as a job that crashes.
         return persist(tax_identifier, unsupported_result) unless validator_class.checks_registry?
 
         result = validator_class.new.call(tax_identifier: tax_identifier)
