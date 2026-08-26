@@ -3,30 +3,21 @@ module Spree
     module V3
       module Store
         module Concerns
-          # An address-book entry's "is this the default" flags are pointers on
-          # the node rather than columns on the row, so they are applied after
-          # the address itself is saved. Shared by the two places the storefront
-          # writes one: nested creation under a company, and direct edits.
+          # The address book surface names its default flags without the
+          # `is_` the address services use, so the two are translated here —
+          # and only where the client actually said something, since silence
+          # means "leave the pointer alone" rather than "clear it".
           module CompanyAddressDefaults
             extend ActiveSupport::Concern
 
             protected
 
-            def apply_default_flags!(address)
-              company = address.owner
-              return if company.nil?
-
-              attributes = {}
-              attributes[:default_bill_address_id] = address.id if flag_param(:default_billing) == true
-              attributes[:default_ship_address_id] = address.id if flag_param(:default_shipping) == true
-              # Clearing a flag only unsets it when this row is the one holding
-              # it — another entry's default is not this request's business.
-              attributes[:default_bill_address_id] = nil if flag_param(:default_billing) == false &&
-                                                            company.default_bill_address_id == address.id
-              attributes[:default_ship_address_id] = nil if flag_param(:default_shipping) == false &&
-                                                           company.default_ship_address_id == address.id
-
-              company.update!(attributes) if attributes.any?
+            # @return [Hash] keywords for Spree::Addresses::Create / Update
+            def default_flags
+              flags = {}
+              flags[:default_billing] = flag_param(:default_billing) unless flag_param(:default_billing).nil?
+              flags[:default_shipping] = flag_param(:default_shipping) unless flag_param(:default_shipping).nil?
+              flags
             end
 
             # @return [Boolean, nil] nil when the client said nothing about it

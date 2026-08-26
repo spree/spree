@@ -11,23 +11,31 @@ module Spree
 
             # POST /api/v3/store/companies/:company_id/addresses
             def create
-              address = @parent.addresses.new(permitted_params)
+              result = Spree.address_create_service.call(
+                address_params: permitted_params,
+                owner: @parent,
+                **default_flags
+              )
 
-              if address.save
-                apply_default_flags!(address)
-                render json: serialize_resource(address), status: :created
+              if result.success?
+                render json: serialize_resource(result.value), status: :created
               else
-                render_validation_error(address.errors)
+                render_validation_error(result.value.errors)
               end
             end
 
             # PATCH /api/v3/store/companies/:company_id/addresses/:id
             def update
-              if @resource.update(permitted_params)
-                apply_default_flags!(@resource)
-                render json: serialize_resource(@resource.reload)
+              result = Spree.address_update_service.call(
+                address: @resource,
+                address_params: permitted_params,
+                **default_flags
+              )
+
+              if result.success?
+                render json: serialize_resource(result.value)
               else
-                render_validation_error(@resource.errors)
+                render_validation_error(result.value.errors)
               end
             end
 
