@@ -27,7 +27,7 @@ module Spree
         base ||= store.products.for_channel(channel)
         company ||= sole_standing_company(store, customer)
 
-        catalogs = Spree::Catalog.effective_for_company(company)
+        catalogs = store.catalogs.for_company(company)
         catalogs = customer_group_catalogs(store, customer) if catalogs.empty?
         catalogs = [channel&.default_catalog].compact.select(&:active?) if catalogs.empty?
 
@@ -74,7 +74,7 @@ module Spree
         return [] if customer.nil?
 
         groups = customer.customer_groups.where(store_id: store.id)
-        Spree::Catalog.effective_for_customer_groups(groups, store: store)
+        store.catalogs.for_customer_groups(groups)
       end
     end
   end

@@ -43,19 +43,22 @@ module Spree
     # ties within a node. A parent's assignment covers the whole subtree, so a
     # branch adds its own extra catalog without re-assigning the shared one.
     #
+    # Always call this through the store — +current_store.catalogs.for_company+
+    # — so the tenant comes from the caller rather than from the argument.
+    #
     # @param company [Spree::Company, nil]
     # @return [Array<Spree::Catalog>]
-    def self.effective_for_company(company)
+    def self.for_company(company)
       return [] if company.nil?
 
       nodes = company.self_and_ancestors
-      # Constrained to the company's own store as well as its nodes: the
-      # assignment validates same-store on write, but a read that trusts the
-      # write path would hand another tenant's catalog to this buyer if a row
-      # ever arrived past it (raw SQL, an import, a bypass).
+      # Constrained to the receiving relation as well as the company's nodes:
+      # the assignment validates same-store on write, but a read that trusts
+      # the write path would hand another tenant's catalog to this buyer if a
+      # row ever arrived past it (raw SQL, an import, a bypass).
       assignments = Spree::CatalogAssignment.
                     where(assignable_type: 'Spree::Company', assignable_id: nodes.map(&:id)).
-                    where(catalog_id: for_store(company.store).select(:id)).
+                    where(catalog_id: all.select(:id)).
                     includes(:catalog).
                     group_by(&:assignable_id)
 
@@ -66,34 +69,63 @@ module Spree
 
     # The catalogs assigned to any of the given customer groups, by position.
     #
+    # Always call this through the store —
+    # +current_store.catalogs.for_customer_groups+ — so the tenant comes from
+    # the caller rather than from the argument.
+    #
     # @param customer_groups [Enumerable<Spree::CustomerGroup>]
-    # @param store [Spree::Store, nil] narrows to that store's catalogs;
-    #   defaults to the groups' own store, which is the same thing whenever
-    #   the caller passed one store's groups
     # @return [Array<Spree::Catalog>]
-    def self.effective_for_customer_groups(customer_groups, store: nil)
-      groups = Array(customer_groups)
-      ids = groups.map(&:id)
+    def self.for_customer_groups(customer_groups)
+      ids = Array(customer_groups).map(&:id)
       return [] if ids.empty?
-
-      store ||= groups.first.store
 
       Spree::CatalogAssignment.
         where(assignable_type: 'Spree::CustomerGroup', assignable_id: ids).
-        where(catalog_id: for_store(store).select(:id)).
+        where(catalog_id: all.select(:id)).
         includes(:catalog).
         map(&:catalog).select(&:active?).sort_by { |catalog| catalog.position.to_i }.uniq
     end
 
     # Adds products to the assortment, appending to the manual order and
-    # skipping ones already present.
+    # skipping ones already present. Written in one statement, so importing a
+    # whole price list is a single insert rather than a row per product.
     #
     # @param product_ids [Array<Integer>] raw product PKs
     # @return [Integer] how many were added
     def add_products(product_ids)
-      product_ids = store.products.where(id: product_ids).ids - catalog_products.pluck(:product_id)
-      product_ids.each { |product_id| catalog_products.create!(product_id: product_id) }
-      product_ids.size
+      return 0 if product_ids.blank?
+
+      # Scoped to this store's products, so an id from another tenant adds
+      # nothing rather than being inserted past the row-level validation the
+      # bulk write skips.
+      new_ids = store.products.where(id: product_ids).ids - catalog_products.pluck(:product_id)
+      return 0 if new_ids.empty?
+
+      now = Time.current
+      next_position = (catalog_products.maximum(:position) || 0) + 1
+
+      rows = new_ids.map.with_index do |product_id, index|
+        {
+          catalog_id: id,
+          product_id: product_id,
+          position: next_position + index,
+          created_at: now,
+          updated_at: now
+        }
+      end
+
+      # `acts_as_list` assigns positions in a callback the bulk write skips,
+      # so they are numbered above; :skip keeps a concurrent add from raising
+      # on the unique (catalog_id, product_id) index.
+      opts = { on_duplicate: :skip }
+      # MySQL infers the conflict target from the table's unique constraints
+      # and rejects an explicit +unique_by+; PostgreSQL/SQLite require it.
+      opts[:unique_by] = %i[catalog_id product_id] unless mysql_adapter?
+
+      Spree::CatalogProduct.upsert_all(rows, **opts)
+      touch
+
+      new_ids.size
     end
 
     # Copies the price list's products into the assortment — the explicit

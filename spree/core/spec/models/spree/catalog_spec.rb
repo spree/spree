@@ -27,14 +27,38 @@ describe Spree::Catalog, type: :model do
       expect(catalog.add_products([product.id])).to eq(0)
       expect(catalog.products.reload).to contain_exactly(product)
     end
+
+    # `acts_as_list` numbers rows in a callback the bulk insert skips, so the
+    # appended positions are assigned by hand and worth asserting.
+    it 'appends after the existing assortment in one statement' do
+      first = create(:product, store: store)
+      catalog.add_products([first.id])
+      later = create_list(:product, 2, store: store)
+
+      expect { catalog.add_products(later.map(&:id)) }.
+        to change { catalog.catalog_products.count }.by(2)
+
+      positions = catalog.catalog_products.reload.order(:position).pluck(:product_id, :position)
+      expect(positions.map(&:first)).to eq([first.id, *later.map(&:id)])
+      expect(positions.map(&:last)).to eq([1, 2, 3])
+    end
+
+    it 'adds a batch alongside an existing row without raising on the duplicate' do
+      existing = create(:product, store: store)
+      fresh = create(:product, store: store)
+      catalog.add_products([existing.id])
+
+      expect(catalog.add_products([existing.id, fresh.id])).to eq(1)
+      expect(catalog.products.reload).to contain_exactly(existing, fresh)
+    end
   end
 
-  describe '.effective_for_company' do
+  describe '.for_company' do
     let(:root) { create(:company, store: store) }
     let(:division) { create(:company, store: store, kind: 'division', parent: root) }
 
     it 'is empty with no node' do
-      expect(described_class.effective_for_company(nil)).to eq([])
+      expect(store.catalogs.for_company(nil)).to eq([])
     end
 
     it 'collects assignments up the ancestor chain, nearest node first' do
@@ -43,9 +67,9 @@ describe Spree::Catalog, type: :model do
       create(:catalog_assignment, catalog: parent_catalog, assignable: root)
       create(:catalog_assignment, catalog: own_catalog, assignable: division)
 
-      expect(described_class.effective_for_company(division)).to eq([own_catalog, parent_catalog])
+      expect(store.catalogs.for_company(division)).to eq([own_catalog, parent_catalog])
       # The parent's own resolution sees only its own assignment.
-      expect(described_class.effective_for_company(root)).to eq([parent_catalog])
+      expect(store.catalogs.for_company(root)).to eq([parent_catalog])
     end
 
     it 'ignores inactive catalogs and sibling assignments' do
@@ -54,7 +78,7 @@ describe Spree::Catalog, type: :model do
       sibling = create(:company, store: store, kind: 'division', parent: root)
       create(:catalog_assignment, catalog: create(:catalog, store: store), assignable: sibling)
 
-      expect(described_class.effective_for_company(division)).to eq([])
+      expect(store.catalogs.for_company(division)).to eq([])
     end
 
     it 'orders several catalogs on one node by position' do
@@ -65,7 +89,7 @@ describe Spree::Catalog, type: :model do
       create(:catalog_assignment, catalog: second, assignable: division)
       create(:catalog_assignment, catalog: first, assignable: division)
 
-      expect(described_class.effective_for_company(division)).to eq([first, second])
+      expect(store.catalogs.for_company(division)).to eq([first, second])
     end
   end
 
@@ -107,7 +131,7 @@ describe Spree::Catalog, type: :model do
       foreign_catalog = create(:catalog, store: create(:store))
       Spree::CatalogAssignment.new(catalog: foreign_catalog, assignable: company).save(validate: false)
 
-      expect(described_class.effective_for_company(company)).to eq([])
+      expect(store.catalogs.for_company(company)).to eq([])
     end
 
     it 'ignores a foreign catalog assigned to a customer group' do
@@ -115,7 +139,20 @@ describe Spree::Catalog, type: :model do
       foreign_catalog = create(:catalog, store: create(:store))
       Spree::CatalogAssignment.new(catalog: foreign_catalog, assignable: group).save(validate: false)
 
-      expect(described_class.effective_for_customer_groups([group], store: store)).to eq([])
+      expect(store.catalogs.for_customer_groups([group])).to eq([])
+    end
+
+    # The tenant comes from the relation the caller starts at, never from the
+    # company handed in — so asking one store about another store's node
+    # resolves nothing, whatever that node is assigned.
+    it 'resolves against the receiving store rather than the company own store' do
+      other_store = create(:store)
+      company = create(:company, store: other_store)
+      catalog = create(:catalog, store: other_store)
+      create(:catalog_assignment, catalog: catalog, assignable: company)
+
+      expect(other_store.catalogs.for_company(company)).to eq([catalog])
+      expect(store.catalogs.for_company(company)).to eq([])
     end
   end
 

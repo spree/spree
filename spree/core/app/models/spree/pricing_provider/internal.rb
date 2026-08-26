@@ -62,10 +62,13 @@ module Spree
         # @return [Array<Spree::PriceList>]
         def catalog_price_lists
           @catalog_price_lists ||= begin
-            catalogs = Spree::Catalog.effective_for_company(context.company)
-            if catalogs.empty? && context.user && context.store
-              groups = context.user.try(:customer_groups)&.where(store_id: context.store.id) || []
-              catalogs = Spree::Catalog.effective_for_customer_groups(groups)
+            # Every lookup starts from the context's store, so a catalog is
+            # only ever reached through the tenant being priced for.
+            store = context.store
+            catalogs = store ? store.catalogs.for_company(context.company) : []
+            if catalogs.empty? && context.user && store
+              groups = context.user.try(:customer_groups)&.where(store_id: store.id) || []
+              catalogs = store.catalogs.for_customer_groups(groups)
             end
             if catalogs.empty?
               catalogs = [context.channel&.default_catalog].compact.select(&:active?)
