@@ -320,8 +320,17 @@ module Spree
       register_resource(:product_types, group: :catalog,
                                         audiences: %i[seller], read_only_for: %i[seller],
                                         subjects: -> { [Spree::ProductType] })
-      # Which channels carry a product is marketplace merchandising. Closed to
-      # the seller audience: a seller lists, the marketplace distributes.
+      # Which channels carry a product is marketplace merchandising, so this
+      # is closed to the seller audience entirely — a seller lists, the
+      # marketplace distributes, and the seller branch serializes no
+      # publication at all.
+      #
+      # Publishing is written through the products endpoint rather than one of
+      # its own, so `write_publishing` gates nothing today; what this
+      # registration does is take `ProductPublication` out of the `products`
+      # subject list, which is what a seller's role would otherwise reach. A
+      # staff role that manages publications needs this key alongside
+      # `write_products`.
       register_resource(:publishing, group: :catalog, subjects: -> {
         [Spree::ProductPublication]
       })

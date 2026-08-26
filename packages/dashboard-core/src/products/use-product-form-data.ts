@@ -155,7 +155,7 @@ export function useCreateOptionType() {
   const optionTypesKey = useResourceKey('panel-form-option-types')
 
   return useMutation({
-    mutationFn: (params: Record<string, unknown>) =>
+    mutationFn: (params: { name: string; label: string } & Record<string, unknown>) =>
       client.optionTypes?.create?.(params) as Promise<PanelOptionType>,
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: optionTypesKey })
@@ -169,8 +169,9 @@ export function useUpdateOptionType(id: string) {
   const optionTypesKey = useResourceKey('panel-form-option-types')
 
   return useMutation({
-    mutationFn: (params: Record<string, unknown>) =>
-      client.optionTypes?.update?.(id, params) as Promise<PanelOptionType>,
+    mutationFn: (
+      params: { option_values?: Array<{ name: string; label: string }> } & Record<string, unknown>,
+    ) => client.optionTypes?.update?.(id, params) as Promise<PanelOptionType>,
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: optionTypesKey })
     },

@@ -113,9 +113,18 @@ export interface PanelApiClient {
      * Naming a new option (Size, Colour) while building a variant matrix.
      * Operator-only: a seller names options inline on the variant instead,
      * so their client leaves these out and the builder hides.
+     *
+     * `name` and `label` are named rather than left to a loose record — they
+     * are what the API requires, and a contract that did not say so would
+     * push the check to a cast at the registration site.
      */
-    create?(params: Record<string, unknown>): Promise<PanelOptionType>
-    update?(id: string, params: Record<string, unknown>): Promise<PanelOptionType>
+    create?(
+      params: { name: string; label: string } & Record<string, unknown>,
+    ): Promise<PanelOptionType>
+    update?(
+      id: string,
+      params: { option_values?: Array<{ name: string; label: string }> } & Record<string, unknown>,
+    ): Promise<PanelOptionType>
   }
   categories?: {
     list(params?: Record<string, unknown>): Promise<{ data: PanelNamedRecord[] }>
