@@ -221,6 +221,16 @@ RSpec.describe Spree::Api::V3::Seller::ProductsController, type: :controller do
       expect(mine.reload.media.map(&:alt)).to include('A lamp')
     end
 
+    # Tags are tenanted to the store, so a seller writing one would be adding
+    # a term to the marketplace's own vocabulary rather than labelling their
+    # product (docs/plans/6.0-multi-vendor-marketplace.md).
+    it 'ignores tags' do
+      patch :update, params: { id: mine.prefixed_id, tags: ['seller-coined'] }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(mine.reload.tag_list).to be_empty
+    end
+
     it 'files the product under a category' do
       patch :update, params: { id: mine.prefixed_id, category_ids: [category.prefixed_id] }, as: :json
 

@@ -42,4 +42,7 @@ setApiClient({
   deliveryProfiles: { list: (params) => adminClient.deliveryProfiles.list(params) },
   deleteProductMedia: (productId, mediaId) => adminClient.products.media.delete(productId, mediaId),
   mediaLibrary: { list: (params) => adminClient.media.list(params) },
+  tags: {
+    list: (params) => adminClient.tags.list(params as { taggable_type: string; q?: string }),
+  },
 })

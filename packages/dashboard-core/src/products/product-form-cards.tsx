@@ -1030,20 +1030,24 @@ export function CategorizationCard({ form }: FormCardProps) {
           </span>
         </Field>
 
-        <Field>
-          <FieldLabel>{t('admin.fields.product.tags.label')}</FieldLabel>
-          <Controller
-            name="tags"
-            control={form.control}
-            render={({ field }) => (
-              <TagCombobox
-                taggableType="Spree::Product"
-                value={field.value ?? []}
-                onChange={field.onChange}
-              />
-            )}
-          />
-        </Field>
+        {/* Tags are the store's own vocabulary, so only a panel that manages
+            it offers the field (docs/plans/6.0-multi-vendor-marketplace.md). */}
+        {getApiClient().tags && (
+          <Field>
+            <FieldLabel>{t('admin.fields.product.tags.label')}</FieldLabel>
+            <Controller
+              name="tags"
+              control={form.control}
+              render={({ field }) => (
+                <TagCombobox
+                  taggableType="Spree::Product"
+                  value={field.value ?? []}
+                  onChange={field.onChange}
+                />
+              )}
+            />
+          </Field>
+        )}
       </CardContent>
     </Card>
   )

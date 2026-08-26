@@ -93,7 +93,6 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
         product_type_id: values.product_type_id ?? undefined,
         category_ids: values.category_ids,
         collection_ids: values.collection_ids,
-        tags: values.tags,
         custom_fields: values.custom_fields,
         // Both lists are the whole intent: anything the seller removed is
         // absent here, which is what tells the API to drop it.

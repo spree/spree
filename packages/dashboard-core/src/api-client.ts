@@ -148,6 +148,14 @@ export interface PanelApiClient {
   mediaLibrary?: {
     list(params?: Record<string, unknown>): Promise<{ data: PanelMediaRecord[] }>
   }
+  /**
+   * The store's tag vocabulary. Operator-only: tags are tenanted to the store
+   * (`acts_as_taggable_tenant :store_id`), so a seller typing a new one would
+   * be writing into the marketplace's own namespace.
+   */
+  tags?: {
+    list(params?: Record<string, unknown>): Promise<{ data: Array<{ name: string }> }>
+  }
 }
 
 export interface PanelDeliveryProfile extends PanelNamedRecord {

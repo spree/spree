@@ -13,7 +13,7 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { adminClient } from '../client'
+import { getApiClient } from '../api-client'
 import { useAuth } from '../hooks/use-auth'
 import type { TaggableType } from '../lib/table-registry'
 
@@ -36,10 +36,14 @@ export function TagCombobox({
   const [inputValue, setInputValue] = useState('')
   const { isAuthenticated } = useAuth()
 
+  // Through the registered client, so a panel without a tag vocabulary
+  // simply has none rather than calling an API it holds no key for.
+  const tagsClient = getApiClient().tags
+
   const { data } = useQuery({
-    queryKey: ['admin-tags', taggableType],
-    queryFn: () => adminClient.tags.list({ taggable_type: taggableType }),
-    enabled: isAuthenticated,
+    queryKey: ['panel-tags', taggableType],
+    queryFn: () => tagsClient?.list({ taggable_type: taggableType }),
+    enabled: isAuthenticated && Boolean(tagsClient),
     staleTime: 60_000,
   })
 

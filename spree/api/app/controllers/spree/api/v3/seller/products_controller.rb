@@ -76,7 +76,16 @@ module Spree
               :name, :description, :slug,
               :meta_title, :meta_description, :meta_keywords,
               :product_type_id,
-              tags: [],
+              # Filing a product into the marketplace's existing groupings is
+              # part of maintaining the product, which is why the operator's
+              # endpoint permits these under `write_products` too. Creating a
+              # category or collection remains the operator's.
+              #
+              # `tags` is deliberately absent: they are the store's own
+              # vocabulary (`acts_as_taggable_tenant :store_id`), so a seller
+              # typing a new one writes into the marketplace's namespace rather
+              # than onto their product
+              # (docs/plans/6.0-multi-vendor-marketplace.md).
               category_ids: [],
               collection_ids: [],
               metadata: {},
