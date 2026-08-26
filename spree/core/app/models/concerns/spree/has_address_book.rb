@@ -38,27 +38,50 @@ module Spree
     # @param billing [Boolean, nil] promote to, or release, the billing slot
     # @param shipping [Boolean, nil] promote to, or release, the shipping slot
     def assign_default_address(address_id:, billing: true, shipping: true)
-      attributes = {}
+      promoted = {}
+      released = []
 
       { bill: billing, ship: shipping }.each do |kind, flag|
         column = default_address_columns[kind]
 
         if flag
-          attributes[column] = address_id
-        elsif flag == false && default_address_id(kind) == address_id
-          attributes[column] = nil
+          promoted[column] = address_id
+        elsif flag == false
+          released << column
         end
       end
 
-      return if attributes.empty?
+      promote_default_columns(promoted)
+      release_default_columns(released, address_id)
 
-      update_columns(**attributes, updated_at: Time.current)
+      reload if persisted? && (promoted.any? || released.any?)
     end
 
     # @param kind [Symbol] :bill or :ship
     # @return [Integer, nil] the address this owner prefills that slot with
     def default_address_id(kind)
       public_send(default_address_columns.fetch(kind))
+    end
+
+    private
+
+    def promote_default_columns(columns)
+      return if columns.empty?
+
+      update_columns(**columns, updated_at: Time.current)
+    end
+
+    # Released in one conditional statement rather than read-then-write: a
+    # request giving up a slot must not undo a promotion that landed between
+    # the two. The WHERE clause is the check, so a slot already moved on is
+    # simply not matched.
+    def release_default_columns(columns, address_id)
+      return if columns.empty?
+
+      columns.each do |column|
+        self.class.where(id: id, column => address_id).
+          update_all(column => nil, updated_at: Time.current)
+      end
     end
   end
 end

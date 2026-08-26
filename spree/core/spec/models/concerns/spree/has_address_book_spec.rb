@@ -37,6 +37,22 @@ RSpec.describe Spree::HasAddressBook do
       expect(owner.default_address_id(:bill)).to eq(other_address.id)
     end
 
+    # The release is a conditional update, not a read-then-write: a promotion
+    # that lands between the two must survive. Simulated by moving the slot
+    # behind this instance's back, which is exactly what the other request
+    # would have done.
+    it 'does not undo a promotion that landed after it read the slot' do
+      owner.assign_default_address(address_id: address.id)
+      owner.default_address_id(:bill) # the stale read this request would hold
+
+      owner.class.where(id: owner.id).
+        update_all(owner.default_address_columns[:bill] => other_address.id)
+
+      owner.assign_default_address(address_id: address.id, billing: false, shipping: nil)
+
+      expect(owner.reload.default_address_id(:bill)).to eq(other_address.id)
+    end
+
     it 'leaves a slot alone when the flag is nil' do
       owner.assign_default_address(address_id: other_address.id)
       owner.assign_default_address(address_id: address.id, billing: nil, shipping: nil)
