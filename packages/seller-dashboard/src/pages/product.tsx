@@ -188,17 +188,16 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
             </>
           }
           sidebar={
-            <>
-              {productId && product && (
-                <ProductStatusCard
-                  product={product}
-                  onDone={() => {
-                    void queryClient.invalidateQueries({ queryKey: productKey })
-                    void queryClient.invalidateQueries({ queryKey: ['seller-products'] })
-                  }}
-                />
-              )}
-            </>
+            productId &&
+            product && (
+              <ProductStatusCard
+                product={product}
+                onDone={() => {
+                  void queryClient.invalidateQueries({ queryKey: productKey })
+                  void queryClient.invalidateQueries({ queryKey: ['seller-products'] })
+                }}
+              />
+            )
           }
         />
       </form>
