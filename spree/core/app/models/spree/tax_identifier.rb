@@ -20,13 +20,15 @@ module Spree
   # Which registration this is — an EU VAT number, a UK one, an Australian
   # business number. Any string is accepted, and nothing here narrows it: the
   # kinds that exist are the ones somebody has a validator or a provider for,
-  # and core ships neither.
+  # and core ships one, the format check for +eu_vat+.
   #
   # It does have to match the key that validator is registered under in
   # {Spree.tax_identifier_validators}, because that lookup is by exact string. A kind
   # nothing is registered for is stored and used as entered — never
   # format-checked, never sent to a registry — and {#validatable?} reports as
-  # much. So a misspelled kind fails silently rather than loudly.
+  # much. So a misspelled kind fails silently rather than loudly, and a VAT
+  # number filed under +vat+ rather than +eu_vat+ skips the check core does
+  # ship.
   #
   # The kinds in circulation read as a region or country prefix plus the tax's
   # name: +eu_vat+, +gb_vat+, +ch_vat+, +au_abn+. Matching that spares a
@@ -92,13 +94,20 @@ module Spree
       validation_status == 'verified'
     end
 
-    # Whether this installation can check a number of this kind at all. What
+    # Whether a registry can be asked about a number of this kind here. What
     # tells the admin apart the two reasons a row has no verdict: not attempted
     # yet, or nothing here knows how to ask.
     #
+    # A format-only validator does not count. Core registers one for +eu_vat+,
+    # so a stock install rejects a mistyped VAT number on save and still leaves
+    # the verdict blank — the shape being right is not evidence that the
+    # business is registered, and only a registry can supply that.
+    #
     # @return [Boolean]
     def validatable?
-      !order_owned? && Spree.tax_identifier_validators.key?(kind)
+      return false if order_owned?
+
+      validator_class(kind)&.checks_registry? || false
     end
 
     private
@@ -109,17 +118,43 @@ module Spree
       owner_type == 'Spree::Order'
     end
 
-    # Format knowledge lives entirely in the registered validator. Core asserts
-    # nothing about the shape of a number whose rules live in someone else's
-    # statute book: a rule spanning every tax regime on earth would be a guess,
-    # and its failure mode is turning away a real business customer. Kinds with
-    # no validator are accepted as entered.
+    # Format knowledge lives entirely in the registered validator, so a kind
+    # with none is accepted as entered: a single rule spanning every tax regime
+    # on earth would be a guess, and its failure mode is turning away a real
+    # business customer.
     def value_format
-      validator = Spree.tax_identifier_validators[kind]
-      return if validator.blank?
-      return if validator.to_s.constantize.valid_format?(value)
+      # Blank is the presence validation's business; saying it twice for one
+      # mistake helps nobody.
+      return if value.blank?
+
+      # An order's snapshot is a copy of a number that was already accepted,
+      # taken at completion. Re-checking it would let a rule tightened since
+      # the buyer saved it — or a registration whose country has left the VAT
+      # area — fail checkout over history rather than over anything they typed.
+      return if order_owned?
+
+      validator = validator_class(kind)
+      return if validator.nil?
+      return if validator.valid_format?(value)
 
       errors.add(:value, :invalid)
+    end
+
+    # The class registered for a kind, or nil when nothing is registered and
+    # when what is registered cannot be loaded.
+    #
+    # A registry entry naming a class that is gone — an initializer left behind
+    # after its gem was dropped, or a typo — used to be inert, since the lookup
+    # only asked whether the key existed. It is read on every save and on every
+    # admin serialization, so letting it raise would take out the whole tax
+    # identifier listing over one stale line of configuration.
+    def validator_class(kind)
+      registered = Spree.tax_identifier_validators[kind]
+      return if registered.blank?
+
+      registered.to_s.constantize
+    rescue NameError
+      nil
     end
 
     def number_changing?

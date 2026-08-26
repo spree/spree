@@ -5,7 +5,8 @@ RSpec.describe Spree::Api::V3::Store::Customer::TaxIdentifiersController, type: 
 
   include_context 'API v3 Store'
 
-  let!(:eu) { create(:tax_identifier, owner: user, kind: 'eu_vat', value: 'DE123456789') }
+  let(:eu_vat_number) { Spree::TestingSupport::VatNumberPool.at(0) }
+  let!(:eu) { create(:tax_identifier, owner: user, kind: 'eu_vat', value: eu_vat_number) }
   let!(:gb) { create(:tax_identifier, owner: user, kind: 'gb_vat', value: 'GB123456789') }
 
   before do
@@ -21,15 +22,16 @@ RSpec.describe Spree::Api::V3::Store::Customer::TaxIdentifiersController, type: 
 
       expect(response).to have_http_status(:ok)
       expect(json_response['data'].map { |row| row['kind'] }).to contain_exactly('eu_vat', 'gb_vat')
-      expect(json_response['data'].map { |row| row['value'] }).to contain_exactly('DE123456789', 'GB123456789')
+      expect(json_response['data'].map { |row| row['value'] }).to contain_exactly(eu_vat_number, 'GB123456789')
     end
 
     it 'lists nobody else\'s' do
-      create(:tax_identifier, owner: create(:user), kind: 'eu_vat', value: 'FR999999999')
+      other_vat_number = Spree::TestingSupport::VatNumberPool.at(1)
+      create(:tax_identifier, owner: create(:user), kind: 'eu_vat', value: other_vat_number)
 
       get :index
 
-      expect(json_response['data'].map { |row| row['value'] }).not_to include('FR999999999')
+      expect(json_response['data'].map { |row| row['value'] }).not_to include(other_vat_number)
     end
 
     it 'returns an empty list for a buyer with none' do

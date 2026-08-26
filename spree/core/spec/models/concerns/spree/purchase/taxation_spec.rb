@@ -61,9 +61,8 @@ RSpec.shared_examples 'a taxation host' do
 
       # The invoice is addressed to the entity, so its registration wins.
       it 'prefers the company registration over the buyer own' do
-        create(:tax_identifier, owner: customer, kind: 'eu_vat', value: 'DE111111111')
-        company_identifier = create(:tax_identifier, owner: company,
-                                                     kind: 'eu_vat', value: 'DE222222222')
+        create(:tax_identifier, owner: customer, kind: 'eu_vat')
+        company_identifier = create(:tax_identifier, owner: company, kind: 'eu_vat')
 
         expect(record.resolved_tax_identifier).to eq(company_identifier)
       end
@@ -84,7 +83,7 @@ RSpec.shared_examples 'a taxation host' do
 
     it 'prefers the record own override over the customer registration' do
       create(:tax_identifier, owner: customer)
-      override = create(:tax_identifier, kind: 'eu_vat', value: 'DE555555555', owner: record)
+      override = create(:tax_identifier, kind: 'eu_vat', owner: record)
 
       expect(record.resolved_tax_identifier).to eq(override)
     end

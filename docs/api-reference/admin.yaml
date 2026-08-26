@@ -28274,7 +28274,7 @@ paths:
                 data:
                 - id: txi_UkLWZg9DAJ
                   kind: eu_vat
-                  value: DE123456789
+                  value: DE100000008
                   validation_status:
                   validation_evidence:
                   source:
@@ -28323,11 +28323,11 @@ paths:
           // A business registration outranks the buyer's own when the sale is for that business.
           const registration = await client.companies.taxIdentifiers.create('comp_UkLWZg9DAJ', {
             kind: 'eu_vat',
-            value: 'DE123456789',
+            value: 'DE100000008',
           })
       - lang: bash
         label: Spree CLI
-        source: spree api post /companies/{company_id}/tax_identifiers -d '{"kind":"eu_vat","value":"DE123456789"}'
+        source: spree api post /companies/{company_id}/tax_identifiers -d '{"kind":"eu_vat","value":"DE100000008"}'
       parameters: []
       responses:
         '201':
@@ -28440,7 +28440,8 @@ paths:
               example:
                 error:
                   code: tax_id_not_validatable
-                  message: No validator is registered for tax identifier kind 'eu_vat'
+                  message: No registry validator is installed for tax identifier kind
+                    'eu_vat'
   "/api/v3/admin/companies":
     get:
       summary: List companies

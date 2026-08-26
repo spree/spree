@@ -2,7 +2,9 @@ require 'spec_helper'
 
 describe Spree::TaxIdentifiers::Validate do
   let(:customer) { create(:user) }
-  let(:tax_identifier) { create(:tax_identifier, owner: customer, kind: 'eu_vat', value: 'DE123456789') }
+  # Built before a stub validator is registered in some examples, so it has to
+  # survive the format check core ships for eu_vat.
+  let(:tax_identifier) { create(:tax_identifier, owner: customer, kind: 'eu_vat') }
 
   def register(validator_class)
     stub_const('SpecRegistryValidator', validator_class)
@@ -40,7 +42,9 @@ describe Spree::TaxIdentifiers::Validate do
     it 'leaves the number as the buyer entered it' do
       described_class.call(tax_identifier: tax_identifier)
 
-      expect(tax_identifier.reload.value).to eq('DE123456789')
+      entered = tax_identifier.value
+
+      expect(tax_identifier.reload.value).to eq(entered)
     end
 
     it 'does not queue itself again' do
@@ -74,6 +78,22 @@ describe Spree::TaxIdentifiers::Validate do
 
   context 'when the validator disappeared between enqueue and run' do
     it 'records unsupported' do
+      # The row has to exist while the validator still does, since creating it
+      # is what the format check runs on.
+      tax_identifier
+      # Deregistered outright, which the surrounding `around` puts back.
+      Spree.tax_identifier_validators.delete('eu_vat')
+
+      described_class.call(tax_identifier: tax_identifier)
+
+      expect(tax_identifier.reload.validation_status).to eq('unsupported')
+    end
+  end
+
+  # Core registers one of these for eu_vat, so this is the ordinary case rather
+  # than an edge one: the row must come out marked, not crash the job.
+  context 'when the registered validator only checks format' do
+    it 'records unsupported without asking anything' do
       described_class.call(tax_identifier: tax_identifier)
 
       expect(tax_identifier.reload.validation_status).to eq('unsupported')

@@ -16,10 +16,13 @@ module Spree
             def validate
               authorize_resource!(@resource, :update)
 
+              # A kind can be format-checked here and still have no registry to
+              # ask — core ships exactly that for EU VAT — so the message says
+              # what is missing rather than claiming nothing is registered.
               unless @resource.validatable?
                 render_error(
                   code: 'tax_id_not_validatable',
-                  message: "No validator is registered for tax identifier kind '#{@resource.kind}'",
+                  message: "No registry validator is installed for tax identifier kind '#{@resource.kind}'",
                   status: :unprocessable_content
                 )
                 return

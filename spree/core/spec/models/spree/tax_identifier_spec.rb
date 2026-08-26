@@ -28,7 +28,11 @@ describe Spree::TaxIdentifier, type: :model do
       snapshot = create(:tax_identifier, :on_order, owner: order)
 
       expect(snapshot).to be_readonly
-      expect { snapshot.update!(value: 'DE999999999') }.to raise_error(ActiveRecord::ReadOnlyRecord)
+      # A valid number, so it is the readonly guard that refuses the write and
+      # not the format check standing in front of it.
+      expect { snapshot.update!(value: Spree::TestingSupport::VatNumberPool.at(9)) }.to(
+        raise_error(ActiveRecord::ReadOnlyRecord)
+      )
     end
 
     it 'is writable while unsaved' do
@@ -84,6 +88,68 @@ describe Spree::TaxIdentifier, type: :model do
     end
   end
 
+  # No stubbed validator here on purpose: this is what a stock install does.
+  describe 'the EU VAT format check core ships' do
+    it 'rejects a mistyped VAT number' do
+      identifier = build(:tax_identifier, owner: customer, kind: 'eu_vat', value: 'DE123')
+
+      expect(identifier).not_to be_valid
+      expect(identifier.errors[:value]).to be_present
+    end
+
+    it 'accepts a well-formed one' do
+      expect(
+        build(:tax_identifier, owner: customer, kind: 'eu_vat',
+                               value: Spree::TestingSupport::VatNumberPool.at(0))
+      ).to be_valid
+    end
+
+    it 'reports one problem, not two, for a blank number' do
+      identifier = build(:tax_identifier, owner: customer, kind: 'eu_vat', value: '')
+
+      expect(identifier).not_to be_valid
+      expect(identifier.errors[:value]).to eq(identifier.errors[:value].uniq)
+      expect(identifier.errors[:value].size).to eq(1)
+    end
+
+    # A registration accepted before a rule tightened — or one whose country
+    # has since left the VAT area — must not fail the order it was placed on.
+    it 'does not re-check a number frozen onto an order' do
+      snapshot = build(:tax_identifier, owner: create(:order), kind: 'eu_vat',
+                                        value: 'GB123456789', source: 'customer')
+
+      expect(snapshot).to be_valid
+    end
+
+    # An initializer left behind after its gem was dropped names a class that
+    # no longer loads. That used to be inert, and it is read on every save and
+    # every admin serialization.
+    it 'treats an unloadable registered validator as absent' do
+      with_tax_identifier_validator('eu_vat', 'NoSuchValidatorConstant') do
+        identifier = build(:tax_identifier, owner: customer, kind: 'eu_vat', value: 'anything')
+
+        expect { identifier.valid? }.not_to raise_error
+        expect(identifier).to be_valid
+        expect { identifier.validatable? }.not_to raise_error
+        expect(identifier).not_to be_validatable
+      end
+    end
+
+    # Being well-formed is not evidence that the business is registered, and
+    # only a registry can supply that — so a stock install leaves the verdict
+    # blank rather than queueing a check nobody here can answer.
+    it 'records no verdict and queues nothing', events: true do
+      identifier = nil
+
+      expect { identifier = create(:tax_identifier, owner: customer, kind: 'eu_vat') }.not_to(
+        have_enqueued_job(Spree::TaxIdentifiers::ValidateJob)
+      )
+
+      expect(identifier.validation_status).to be_nil
+      expect(identifier).not_to be_validatable
+    end
+  end
+
   # The check now runs from Spree::TaxIdentifierValidationSubscriber, so these
   # need the event bus the suite disables by default.
   describe 'the registry check', events: true do
@@ -109,7 +175,9 @@ describe Spree::TaxIdentifier, type: :model do
     it 'is queued again when the number changes' do
       identifier = create(:tax_identifier, owner: customer, kind: 'eu_vat')
 
-      expect { identifier.update!(value: 'DE987654321') }.to have_enqueued_job(Spree::TaxIdentifiers::ValidateJob)
+      expect { identifier.update!(value: Spree::TestingSupport::VatNumberPool.at(5)) }.to(
+        have_enqueued_job(Spree::TaxIdentifiers::ValidateJob)
+      )
     end
 
     # The stamp is part of the write, not the subscriber's doing: the response to
@@ -140,7 +208,7 @@ describe Spree::TaxIdentifier, type: :model do
       identifier = create(:tax_identifier, owner: customer, kind: 'eu_vat')
       identifier.update_columns(validation_status: 'verified', validated_at: Time.current)
 
-      identifier.update!(value: 'DE987654321')
+      identifier.update!(value: Spree::TestingSupport::VatNumberPool.at(7))
 
       expect(identifier.validation_status).to eq('pending')
       expect(identifier.validated_at).to be_nil
@@ -197,15 +265,18 @@ describe Spree::TaxIdentifier, type: :model do
     let(:seller) { create(:seller) }
 
     it 'is a valid owner' do
-      identifier = described_class.new(owner: seller, kind: 'eu_vat', value: 'GB123456789')
+      identifier = described_class.new(owner: seller, kind: 'eu_vat',
+                                       value: Spree::TestingSupport::VatNumberPool.at(0))
 
       expect(identifier).to be_valid
       expect(identifier.owner).to eq(seller)
     end
 
     it 'holds one registration per kind' do
-      described_class.create!(owner: seller, kind: 'eu_vat', value: 'GB123456789')
-      duplicate = described_class.new(owner: seller, kind: 'eu_vat', value: 'GB987654321')
+      described_class.create!(owner: seller, kind: 'eu_vat',
+                              value: Spree::TestingSupport::VatNumberPool.at(0))
+      duplicate = described_class.new(owner: seller, kind: 'eu_vat',
+                                      value: Spree::TestingSupport::VatNumberPool.at(1))
 
       expect(duplicate).not_to be_valid
     end

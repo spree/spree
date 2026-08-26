@@ -50,6 +50,7 @@ require 'spree/testing_support/factories'
 require 'spree/testing_support/jobs'
 require 'spree/testing_support/store'
 require 'spree/testing_support/preferences'
+require 'spree/testing_support/tax_identifier_validators'
 require 'spree/testing_support/image_helpers'
 
 require 'spree/api/testing_support/v3/base'

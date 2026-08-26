@@ -20,7 +20,16 @@ module Spree
         # Narrow race: the validator was deregistered between enqueue and run.
         return persist(tax_identifier, unsupported_result) if validator.blank?
 
-        result = validator.to_s.constantize.new.call(tax_identifier: tax_identifier)
+        validator_class = validator.to_s.constantize
+
+        # Nothing should enqueue a check for a format-only validator, since
+        # TaxIdentifier#validatable? reports false for one. Belt and braces all
+        # the same: a registry that does not exist is the same situation as the
+        # validator having been deregistered, and it must not surface as a job
+        # that crashes.
+        return persist(tax_identifier, unsupported_result) unless validator_class.checks_registry?
+
+        result = validator_class.new.call(tax_identifier: tax_identifier)
         persist(tax_identifier, result)
       rescue StandardError => error
         # A number nobody could check is not a number known to be wrong, so it

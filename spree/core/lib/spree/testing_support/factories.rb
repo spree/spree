@@ -1,5 +1,6 @@
 require 'factory_bot'
 require 'spree/testing_support/country_pool'
+require 'spree/testing_support/vat_number_pool'
 
 Dir["#{File.dirname(__FILE__)}/factories/**"].each do |f|
   load File.expand_path(f)
