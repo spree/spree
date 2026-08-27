@@ -242,6 +242,36 @@ export class SellerClient {
 
     archive: (id: string, options?: RequestOptions): Promise<Product> =>
       this.request<Product>('PATCH', `/products/${id}/archive`, options),
+
+    /**
+     * Submit a selection for review.
+     *
+     * Only a draft or a rejected listing can be submitted, so a mixed
+     * selection moves what it can: `product_count` is what was submitted and
+     * `skipped_count` — present only when something was skipped — is what was
+     * already on sale, already in review, or archived.
+     */
+    bulkSubmit: (params: { ids: string[] }, options?: RequestOptions): Promise<BulkProductResult> =>
+      this.request('POST', '/products/bulk_submit', { ...options, body: params }),
+
+    /**
+     * Move a selection to `draft` or `archived`.
+     *
+     * There is no bulk route onto `active`: a listing goes on sale when the
+     * marketplace approves it, one at a time.
+     */
+    bulkStatusUpdate: (
+      params: { ids: string[]; status: 'draft' | 'archived' },
+      options?: RequestOptions,
+    ): Promise<BulkProductResult> =>
+      this.request('POST', '/products/bulk_status_update', { ...options, body: params }),
+
+    /** Delete a selection. Ids outside this seller's catalog are ignored. */
+    bulkDestroy: (
+      params: { ids: string[] },
+      options?: RequestOptions,
+    ): Promise<BulkProductResult> =>
+      this.request('DELETE', '/products/bulk_destroy', { ...options, body: params }),
   }
 
   /**
@@ -400,6 +430,16 @@ export interface RequirementSubmissionParams {
 }
 
 /** The fields a seller may set on their own product. */
+/**
+ * What a bulk product action did. `skipped_count` is present only when the
+ * action left something alone — a key on every response would tell a caller
+ * that never skips anything that nothing was skipped.
+ */
+export interface BulkProductResult {
+  product_count: number
+  skipped_count?: number
+}
+
 export interface ProductParams {
   name?: string
   description?: string

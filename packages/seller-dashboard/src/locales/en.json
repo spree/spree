@@ -16,7 +16,9 @@
     "name": "Seller panel"
   },
   "common": {
+    "apply": "Apply",
     "cancel": "Cancel",
+    "delete": "Delete",
     "error": "Something went wrong.",
     "loading": "Loading…",
     "remove": "Remove",
@@ -123,6 +125,25 @@
     "archive": "Archive",
     "archive_confirm_description": "It comes off sale and out of your active listings.",
     "archive_confirm_title": "Archive this product?",
+    "bulk": {
+      "delete_confirm_description": "This removes {n} from your catalogue. Shoppers will no longer see them.",
+      "delete_confirm_title": "Delete the selected products?",
+      "delete_failed": "Those products could not be deleted.",
+      "deleted": "Deleted {n} products",
+      "set_status_action": "Set status",
+      "skipped_one": "{{count}} was left alone. {{message}}",
+      "skipped_other": "{{count}} were left alone. {{message}}",
+      "skipped_refused": "The marketplace would not let them move. Open one to see why.",
+      "skipped_submit": "Only draft listings and ones the marketplace asked you to change can be submitted.",
+      "status_dialog_description": "Take these listings down while you work on them, or archive them for good. Putting a product on sale is the marketplace’s decision — submit it for review instead.",
+      "status_dialog_title": "Set status",
+      "status_update_failed": "Those products could not be updated.",
+      "status_updated": "Updated {n} products",
+      "submit_confirm_description": "The marketplace will review {n} products and decide whether to put them on sale.",
+      "submit_confirm_title": "Submit the selected products for review?",
+      "submit_failed": "Those products could not be submitted.",
+      "submitted": "Submitted {n} products for review"
+    },
     "columns": {
       "name": "Product",
       "price": "Price",
