@@ -12,6 +12,7 @@ import {
   ComboboxItem,
   ComboboxList,
   Field,
+  FieldError,
   FieldLabel,
   Input,
   Sheet,
@@ -42,6 +43,17 @@ const DEFAULT_KIND = 'eu_vat'
 
 type KindOption = { value: string; label: string }
 
+/** A 422 from the API, whose `details` name the attributes that were refused. */
+function isSpreeValidationError(
+  error: unknown,
+): error is Error & { details?: Record<string, string[]> } {
+  return error instanceof Error && 'details' in error
+}
+
+function errorMessage(error: unknown, fallback: string) {
+  return error instanceof Error && error.message ? error.message : fallback
+}
+
 /**
  * The business behind the seller, as the marketplace's commission invoice
  * must address it: legal name, registration number, and the VAT number that
@@ -66,14 +78,32 @@ export function SellerBusinessCard({ profile }: { profile: Profile }) {
   const [registrationNumber, setRegistrationNumber] = useState(profile.registration_number ?? '')
   const [vatNumber, setVatNumber] = useState(vat?.value ?? '')
   const [vatKind, setVatKind] = useState(vat?.kind ?? DEFAULT_KIND)
+  // Shown in the sheet rather than as a toast: the toast stack deliberately
+  // sits below the sheet overlay, so a rejection raised here would be hidden
+  // behind the very form that caused it.
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({})
+  const [formError, setFormError] = useState<string | null>(null)
+
+  // Reopening the sheet is the seller starting over, so a rejection from the
+  // last attempt must not still be sitting there.
+  function setSheetOpen(open: boolean) {
+    if (open) {
+      setFieldErrors({})
+      setFormError(null)
+    }
+    setEditing(open)
+  }
 
   const save = useMutation({
-    mutationFn: () =>
-      sellerClient().profile.update({
+    mutationFn: () => {
+      setFieldErrors({})
+      setFormError(null)
+      return sellerClient().profile.update({
         legal_name: legalName || null,
         registration_number: registrationNumber || null,
         tax_identifier: { kind: vatKind, value: vatNumber },
-      }),
+      })
+    },
     onSuccess: (updated) => {
       queryClient.setQueryData(['seller', sellerId, 'profile'], updated)
       // A checklist kind may read these, so it has to re-evaluate.
@@ -81,11 +111,13 @@ export function SellerBusinessCard({ profile }: { profile: Profile }) {
       setEditing(false)
       toastManager.add({ type: 'success', title: t('profile.saved') })
     },
-    onError: (err) =>
-      toastManager.add({
-        type: 'error',
-        title: err instanceof Error ? err.message : t('common.error'),
-      }),
+    onError: (err) => {
+      const details = isSpreeValidationError(err) ? err.details : undefined
+      setFieldErrors(details ?? {})
+      // A per-field message already sits under its own input, so the banner is
+      // only for what has nowhere else to go.
+      setFormError(details?.value?.length ? null : errorMessage(err, t('common.error')))
+    },
   })
 
   const kindOptions: KindOption[] = TAX_IDENTIFIER_KINDS.map((kind) => ({
@@ -115,7 +147,7 @@ export function SellerBusinessCard({ profile }: { profile: Profile }) {
         <CardHeader>
           <CardTitle>{t('profile.business_details')}</CardTitle>
           <CardAction>
-            <Button variant="outline" size="sm" onClick={() => setEditing(true)}>
+            <Button variant="outline" size="sm" onClick={() => setSheetOpen(true)}>
               <PencilIcon className="size-4" />
               {t('profile.edit')}
             </Button>
@@ -140,12 +172,17 @@ export function SellerBusinessCard({ profile }: { profile: Profile }) {
         </CardContent>
       </Card>
 
-      <Sheet open={editing} onOpenChange={setEditing}>
+      <Sheet open={editing} onOpenChange={setSheetOpen}>
         <SheetContent>
           <SheetHeader>
             <SheetTitle>{t('profile.business_details')}</SheetTitle>
           </SheetHeader>
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+            {formError && (
+              <p role="alert" className="text-destructive text-sm">
+                {formError}
+              </p>
+            )}
             <Field>
               <FieldLabel htmlFor="legal-name">{t('profile.legal_name')}</FieldLabel>
               <Input
@@ -195,9 +232,11 @@ export function SellerBusinessCard({ profile }: { profile: Profile }) {
               <FieldLabel htmlFor="vat-number">{t('profile.vat_number')}</FieldLabel>
               <Input
                 id="vat-number"
+                aria-invalid={fieldErrors.value?.length ? true : undefined}
                 value={vatNumber}
                 onChange={(event) => setVatNumber(event.target.value)}
               />
+              <FieldError errors={fieldErrors.value?.map((message) => ({ message }))} />
             </Field>
           </div>
           <SheetFooter>
