@@ -88,7 +88,15 @@ module SpreeStripe
       # after Stripe withdrew it. Recording the answer keeps the workflows
       # that gate money on the column honest without their asking.
       stamp = account.payouts_enabled ? (seller.payouts_enabled_at || Time.current) : nil
-      seller.update!(payouts_enabled_at: stamp) if seller.payouts_enabled_at != stamp
+
+      if seller.payouts_enabled_at != stamp
+        became_payable = stamp.present?
+        seller.update!(payouts_enabled_at: stamp)
+        # Whatever they earned while we believed they could not be paid. The
+        # webhook normally does this; noticing here covers the case where it
+        # never arrived, which is otherwise money sitting pending forever.
+        Spree::SellerTransfers::ExecutePendingJob.perform_later(seller.id) if became_payable
+      end
 
       account.payouts_enabled
     end

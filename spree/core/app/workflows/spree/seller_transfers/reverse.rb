@@ -118,8 +118,16 @@ module Spree
         failure(reversal, e.message)
       end
 
+      # The provider that made the earning, not whichever one the store uses
+      # now. A marketplace that changes provider still has money sitting with
+      # the old one, and asking the new one to reverse a transfer it never
+      # made leaves the original standing — the seller keeps a refunded sale.
       def provider
-        @provider ||= order.store.payout_provider_instance
+        @provider ||= begin
+          configured = Spree.payout_providers.find { |candidate| candidate.to_s == @earning.provider }
+
+          (configured || order.store.payout_provider_class).new
+        end
       end
     end
   end

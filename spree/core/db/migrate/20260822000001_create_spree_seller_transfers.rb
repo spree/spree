@@ -82,7 +82,12 @@ class CreateSpreeSellerTransfers < ActiveRecord::Migration[8.1]
                                                                  where: 'reference IS NOT NULL',
                                                                  name: 'index_seller_transfers_on_provider_reference'
     else
-      add_index :spree_seller_transfers, [:provider, :reference],
+      # Unique here too. MySQL and MariaDB have no partial index, but they do
+      # treat every NULL as distinct from every other — so the rows that carry
+      # no reference (the built-in provider writes none) sit alongside each
+      # other freely while a provider's own id stays unrepeatable, which is
+      # what stops a retry recording the same movement twice.
+      add_index :spree_seller_transfers, [:provider, :reference], unique: true,
                 name: 'index_seller_transfers_on_provider_reference'
     end
   end

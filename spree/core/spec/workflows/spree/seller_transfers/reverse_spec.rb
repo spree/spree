@@ -121,6 +121,37 @@ RSpec.describe Spree::SellerTransfers::Reverse do
     end
   end
 
+  # Money sits with whoever moved it. A marketplace that changes provider
+  # still has to reverse the old one's transfer through the old one — asking
+  # the new provider to undo something it never did leaves the original
+  # standing, and the seller keeps a refunded sale.
+  describe 'when the store changed provider after the earning' do
+    let(:previous) do
+      Class.new(Spree::PayoutProvider::Base) do
+        def self.name = 'TestPreviousPayoutProvider'
+
+        def reverse!(seller_transfer)
+          seller_transfer.update!(status: 'completed', reference: 'reversed-by-previous')
+          seller_transfer
+        end
+      end
+    end
+
+    before do
+      stub_const('TestPreviousPayoutProvider', previous)
+      allow(Spree).to receive(:payout_providers).and_return([Spree::PayoutProvider::System, previous])
+    end
+
+    it 'reverses through the provider that made the earning' do
+      create(:seller_transfer, :completed, seller: seller, order: order, amount: 80,
+                                           provider: 'TestPreviousPayoutProvider')
+
+      reversal = described_class.call(order: order, amount: 30).value
+
+      expect(reversal.reference).to eq('reversed-by-previous')
+    end
+  end
+
   # A settlement that has happened is never rewritten: the reversal is simply
   # unsettled, so the next sweep nets it off what comes after.
   describe 'when the earning was already settled' do
