@@ -5,48 +5,83 @@ description: Manage Spree admin users, roles, invitations, and permissions — c
 
 ## Overview
 
-Admin users manage the store via the Admin Panel. They have roles that control what they can access.
+Staff manage a store through the dashboard and the Admin API. What each person can do is decided by the **roles** they hold.
 
 ```mermaid
 erDiagram
-    AdminUser ||--o{ RoleUser : "has many"
-    RoleUser }o--|| Role : "belongs to"
-    RoleUser }o--|| Store : "scoped to"
-    AdminUser ||--o{ Invitation : "invites"
-
-    AdminUser {
-        string id
-        string email
-    }
-
-    RoleUser {
-        string role_id
-        string resource_type
-        string resource_id
-    }
+    Store ||--o{ Role : "owns"
+    Seller ||--o{ Role : "owns"
+    Role ||--o{ RoleUser : "assigned through"
+    AdminUser ||--o{ RoleUser : "holds"
+    Role ||--o{ Invitation : "offered by"
 
     Role {
         string name
+        string description
+        json permissions
+        boolean mutable
     }
-
+    RoleUser {
+        string role_id
+        string user_id
+    }
     Invitation {
         string email
         string status
-        string token
         datetime expires_at
     }
 ```
 
-## Roles
+Two things about that shape matter:
 
-Admin users can have different roles that control their permissions:
+**A role belongs to what it governs.** Every role names its owner — a Store for back-office staff, a [Seller](/developer/core-concepts/sellers) for a marketplace seller's own team. The owner is both who the role belongs to and who it applies to, so a role on a Store is a staff role by construction. Assigning someone a role therefore grants access to that owner and nothing else, which is what keeps one store's staff out of another's data.
 
-| Role | Description |
-|------|-------------|
-| `admin` | Full access to all Admin Panel features |
+Because roles are scoped to their owner, two stores can each define a "Manager" without colliding.
+
+**A role carries its permissions directly.** The role holds a plain list of permission keys, so what a role can do is visible on the role itself rather than assembled from something else at runtime.
+
+## Roles and permissions
+
+A permission key is a verb and a resource — `read_orders`, `write_products`. Roles hold a list of them:
+
+```typescript Admin SDK
+const role = await adminClient.roles.create({
+  name: 'Fulfillment staff',
+  description: 'Can see orders and ship them, nothing else',
+  permissions: ['read_orders', 'write_fulfillments', 'read_products'],
+})
+```
+
+Every grantable key is discoverable, so a permission picker never needs a hardcoded list:
+
+```typescript Admin SDK
+const { data: permissions } = await adminClient.permissions.list()
+```
+
+Keys are grouped so they can be presented sensibly — orders, catalog, marketing, customers, settings, access and analytics.
+
+| Group | Covers |
+|---|---|
+| Orders | Orders, payments, fulfillments, refunds, gift cards, store credit |
+| Catalog | Products, media, categories, collections, stock, publishing |
+| Marketing | Promotions |
+| Customers | Customer accounts and groups |
+| Settings | Store settings, webhooks, integrations |
+| Access | API keys, staff, sellers, commissions |
+| Analytics | The dashboard |
+
+<Note>
+**The same vocabulary gates API keys.** A secret key's scopes come from this catalog too, so "what may this integration do" and "what may this person do" are described the same way — there is no second permission system to keep in step.
+</Note>
+
+### The admin role
+
+Each store gets one protected `admin` role meaning *everything in this store*. It can't be renamed, edited or deleted, and it isn't shared between stores — each owner has its own.
+
+A role is deletable only when nothing depends on it: staff assignments and pending invitations have to be moved first, so nobody silently loses access.
 
 <Info>
-You can create custom roles with specific permissions. See the [Customize Permissions guide](/developer/customization/permissions) for details.
+Roles are pure data. They're created through the dashboard, the Admin API, or seeds — there's no code-level role definition to keep in sync. For record-level rules beyond what keys express, see [Customize Permissions](/developer/customization/permissions).
 </Info>
 
 ## Creating Admin Users

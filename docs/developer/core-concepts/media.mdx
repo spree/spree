@@ -1,14 +1,90 @@
 ---
 title: Media
 sidebarTitle: "Media"
-description: Manage product media in Spree — images, hosted and external video, named variants, focal points, and how media is uploaded, resized, and served via the Store API.
+description: The store-wide media library — uploading once and reusing everywhere, images and video, focal points, and how files are resized and served.
 ---
 
 ## Overview
 
-Spree handles uploads, processing, and delivery for product media. Images are automatically converted to WebP format and preprocessed into multiple sizes for optimal performance.
+Spree handles uploading, processing and serving the images and video a store shows. Files are converted to WebP and preprocessed into several sizes, so a listing page isn't downloading full-resolution photographs.
 
-## Product Media
+Files live in a **store-wide media library**. A file is uploaded once and can then be placed wherever it's needed — on a product, on a category, inside a description — without being uploaded again.
+
+```mermaid
+flowchart LR
+    Upload["Upload once"] --> Library["Media library"]
+    Library --> P["On a product"]
+    Library --> C["On a category"]
+    Library --> D["Inside a description"]
+```
+
+## The media library
+
+Every file in a store is in the library, whether or not it's currently placed on anything. That means a file can be uploaded ahead of time, browsed, searched, and reused.
+
+```typescript Admin SDK
+// Browse everything in the store
+const { data: media } = await adminClient.media.list()
+
+// Where is this file being used?
+const { data: usage } = await adminClient.media.usage('med_xxx')
+```
+
+| Field | What it tells you |
+|---|---|
+| `attached` | Whether the file is placed on anything yet |
+| `filename`, `content_type`, `byte_size` | What the file actually is |
+| `viewable_type` / `viewable_id` | What it's placed on, if anything |
+| `media_type` | `image`, `video` or `external_video` |
+| `alt` | Alt text, for accessibility and SEO |
+| `position` | Order within a gallery |
+
+### Reuse shares the file, not the record
+
+Placing a library file on a product creates a **new media row that shares the same underlying file**:
+
+```typescript Admin SDK
+await adminClient.products.media.create('prod_xxx', {
+  source_media_id: 'med_xxx',
+  alt: 'Worn over a navy jumper',
+  position: 2,
+})
+```
+
+The copy gets its own alt text, its own position, and its own variant links — because the same photograph might be the third image on one product and the hero on another, with different alt text describing what matters in each context. What it doesn't get is a second copy of the bytes.
+
+<Note>
+This is why there's no single "shared asset" record to manage. Each placement is independently editable, while storage is shared. Detaching a photo from one product has no effect on any other.
+</Note>
+
+### Deleting, safely
+
+A file in use can't be deleted by accident:
+
+```typescript Admin SDK
+// Returns 422 with the list of places it's used
+await adminClient.media.delete('med_xxx')
+
+// Remove it from everywhere, then delete
+await adminClient.media.delete('med_xxx', { detach: true })
+```
+
+The dashboard shows you the usage list and asks before doing the second one. Check `usage` before offering a delete in your own tooling.
+
+## What can carry media
+
+| Owner | Typical use |
+|---|---|
+| **Product** | The main gallery |
+| **Variant** | Images specific to one colour or size |
+| **Category** | A banner or tile for a navigation page |
+| **Collection** | The same, for a merchandising group |
+
+Categories and collections also have simple `image` and `square_image` slots. Setting one places the file; clearing it **removes the placement but keeps the file in the library**, so nothing is destroyed by tidying up a page.
+
+Sellers and stores keep their branding as plain attachments — a logo isn't merchandising, and it doesn't belong in a library people browse for product photos.
+
+## Product media
 
 A media record carries:
 
@@ -19,9 +95,9 @@ A media record carries:
 - **Preprocessed named variants** for fast delivery
 - **`variant_ids`** — which product variants the media represents. An empty array means it represents the product as a whole.
 
-### Product-level Gallery
+### Product-level gallery
 
-In Spree 5.5 the **product** is the default owner of media. Before 5.5, every image was pinned to a specific variant (usually the master), and sharing the same image across variants meant re-uploading the file. From 5.5 onward, an image lives on the product, and any subset of variants can reference it through `variant_ids` — without duplicating the underlying file.
+Media belongs to the **product**, and any subset of its variants can reference the same file through `variant_ids` — so one photograph can represent three colourways without being uploaded three times.
 
 #### Uploading a product-level image
 
@@ -341,9 +417,52 @@ curl 'https://api.mystore.com/api/v3/store/products/spree-tote?expand=media,vari
 | `poster_url` | string \| null | Still frame for a video |
 | `original_url` | string \| null | Full-size image URL (inline disposition) |
 | `mini_url` ... `xlarge_url` | string \| null | Named variant URLs |
-| `download_url` | string \| null | Same blob as `original_url` but with `Content-Disposition: attachment`. Admin API only. |
 
-## Image Processing
+The Admin API adds the fields the library needs:
+
+| Field | Type | Description |
+|---|---|---|
+| `attached` | boolean | Whether the file is placed on anything, or sitting unused in the library |
+| `viewable_type` / `viewable_id` | string \| null | What it's placed on — `product`, `variant`, `category`, `collection` |
+| `filename`, `content_type`, `byte_size` | | What the file actually is |
+| `embed_url` | string \| null | The rendition used inside rich text — sized to fit, not cropped |
+| `signed_id` | string \| null | Lets a plain attachment field adopt this file without re-uploading |
+| `download_url` | string \| null | The same file with `Content-Disposition: attachment` |
+
+<Note>
+Two behaviours to expect when rendering a gallery:
+
+**`original_url` is null for any playable video** — there's no still image to size. Use `poster_url`.
+
+**A video's sized URLs come from its poster.** If a video has a poster, every `*_url` resolves from that frame, so a grid of mixed images and video renders uniformly.
+</Note>
+
+## Images in descriptions
+
+Rich text fields — a product description, a category's copy — can carry embedded images. In the dashboard, the editor opens the media library so a merchant picks an existing file or uploads a new one.
+
+Embedded images use their own rendition, sized to fit rather than cropped to a square. A size chart or a diagram keeps its proportions, where a gallery thumbnail would have had its edges cut off.
+
+<Warning>
+An embedded image is a plain image URL in the HTML — nothing records which description uses which file.
+
+Spree's usage check does its best by searching descriptions for the file, but it can't be exhaustive. Deleting a library file can leave a broken image in a description, so treat the usage list as a warning rather than proof a file is unused.
+</Warning>
+
+## Who can manage media
+
+Media is its own permission, separate from products:
+
+| Action | Requires |
+|---|---|
+| A product's own gallery — add, reorder, remove | Permission to edit **products** |
+| Browsing the library, checking usage, deleting a file outright | **Media** permission |
+
+The reasoning: reaching a file through a product you can already edit isn't the same as enumerating every file in the store. Someone who manages one product's photos shouldn't automatically be able to browse — or delete — everything the business has ever uploaded.
+
+Note the asymmetry that follows. Removing an image from a product removes the *placement* and needs only product permission; deleting the file everywhere is a library action and needs the media key.
+
+## Image processing
 
 Spree uses [libvips](https://www.libvips.org/) for image processing. Images are automatically:
 

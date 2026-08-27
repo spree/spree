@@ -18,7 +18,6 @@ Please read our [Code of Conduct](../CODE_OF_CONDUCT.md) before contributing.
   - [Spree namespace](#spree-namespace)
   - [Running engine tests](#running-engine-tests)
   - [Running tests in parallel](#running-tests-in-parallel)
-  - [Integration tests (legacy Rails admin)](#integration-tests-legacy-rails-admin)
   - [Performance in development mode](#performance-in-development-mode)
 - [TypeScript Development](#typescript-development)
   - [Packages](#packages)
@@ -49,7 +48,8 @@ git clone --filter=blob:none https://github.com/spree/spree.git
 
 ### Prerequisites
 
-You need **Node.js 20+** to run the workspace scripts (including `pnpm server:setup`, which both backend and TypeScript contributors use). Install it via [nvm](https://github.com/nvm-sh/nvm), [mise](https://mise.jdx.dev), [fnm](https://github.com/Schniz/fnm), or your package manager (`brew install node` on macOS).
+- Docker (eg. [Docker Desktop for MacOS](https://www.docker.com/products/docker-desktop/))
+- Node 24 ([Install instructions](https://nodejs.org/en/download))
 
 `pnpm` is provisioned automatically via [Corepack](https://nodejs.org/api/corepack.html) (bundled with Node) — the repository pins its version in `package.json`, and the first `pnpm` command will fetch the matching release. If Corepack is disabled in your environment, run `corepack enable` once.
 
@@ -57,22 +57,35 @@ You need **Node.js 20+** to run the workspace scripts (including `pnpm server:se
 
 Spree is a monorepo with three main areas:
 
-- **`spree/`** — Ruby gems (core, api, admin, emails) distributed as separate packages via RubyGems
-- **`packages/`** — TypeScript packages (SDKs, CLI, project scaffolding, docs, React dashboard)
+- **`spree/`** — Ruby gems (core, api, emails, providers) distributed as separate packages via RubyGems
+- **`packages/`** — TypeScript packages (Admin Dashboard, Seller Panel, SDKs, CLI, project scaffolding, docs)
 - **`server/`** — A Rails application cloned from [spree-starter](https://github.com/spree/spree-starter) that mounts the local Spree gems (not checked in — `pnpm server:setup` creates it)
 
 ### Setup
 
-A single command bootstraps the whole monorepo for both backend and frontend work. You need **Docker** running locally (Docker Desktop, OrbStack, or any compatible runtime) — no Ruby, Postgres, or Redis on your host.
+A single command bootstraps the whole monorepo for both backend and frontend work. You need **Docker** running locally (Docker Desktop, OrbStack, or any compatible runtime) — no Ruby, Postgres on your host.
 
 ```bash
 pnpm install        # workspace dependencies
 pnpm server:setup   # ~5–10 min on first run; idempotent
 ```
 
-`pnpm server:setup` clones [spree-starter](https://github.com/spree/spree-starter) into `./server/`, wires it to load Spree gems from the monorepo via a Docker compose overlay, builds the dev image, starts the stack (Postgres + Redis + Meilisearch + Rails `web` + Sidekiq `worker`), and prepares the database. The full sequence lives in `scripts/server-setup.sh`.
+`pnpm server:setup` clones [spree-starter](https://github.com/spree/spree-starter) into `./server/`, wires it to load Spree gems from the monorepo via a Docker compose overlay, builds the dev image, starts the stack (Postgres +  Rails + Mailpit), and prepares the database. The full sequence lives in `scripts/server-setup.sh`.
 
-When it's done, the backend is up at [http://localhost:3000](http://localhost:3000) and the admin is at [http://localhost:3000/admin](http://localhost:3000/admin). Sign in with the seed admin: **`spree@example.com`** / **`spree123`** (override at seed time with `ADMIN_EMAIL` / `ADMIN_PASSWORD` env vars — see `spree/core/app/services/spree/seeds/admin_user.rb`).
+When it's done, the backend is up at [http://localhost:3000](http://localhost:3000). The React dashboard and seller panel are **not** served by Rails in development (that hosted mode is a production topology whose static build would go stale on every `git pull`) — run them as their own dev servers:
+
+```bash
+pnpm dashboard:dev   # admin dashboard → http://localhost:5173 (proxies /api to :3000)
+pnpm seller:dev      # seller panel    → http://localhost:5174
+```
+
+The setup command finishes by printing a **one-time setup link** (`http://localhost:5173/setup?token=…`) — with `pnpm dashboard:dev` running, open it to create the first admin account. If you lose the link, print it again with:
+
+```bash
+SPREE_PATH="$PWD" docker compose -f server/docker-compose.dev.yml -f scripts/docker-compose.edge.yml exec web bin/rails spree:setup:token
+```
+
+To skip the setup screen entirely, set `ADMIN_EMAIL` / `ADMIN_PASSWORD` env vars at seed time — the seed then creates that admin account directly (see `spree/core/app/services/spree/seeds/admin_user.rb`).
 
 Optionally load sample products, taxonomies, and option types:
 
@@ -80,21 +93,22 @@ Optionally load sample products, taxonomies, and option types:
 pnpm server:load_sample_data
 ```
 
-### Running a backend day-to-day
+### Running server day-to-day
 
 After the one-time setup, use these to bring the stack up and down:
 
 ```bash
-pnpm server:dev     # run the stack in the foreground — streams web + worker logs, Ctrl+C stops them
-pnpm server:stop    # full teardown (also stops postgres / redis / meilisearch)
-pnpm server:restart # restart web + worker in place
-pnpm server:logs    # follow web container logs (when the stack runs detached)
-pnpm server:console # open a Rails console inside the container
-pnpm server:seed    # re-run database seeds
-pnpm server:build   # rebuild the dev image (only after Dockerfile / .ruby-version changes)
+pnpm server:dev      # run the stack in the foreground — streams Rails logs, Ctrl+C stops them
+pnpm server:stop     # stop all containers (also postgres) — database and volumes survive
+pnpm server:teardown # remove everything: containers, volumes (database!), and the server/ directory
+pnpm server:restart  # restart web + worker in place
+pnpm server:logs     # follow web container logs (when the stack runs detached)
+pnpm server:console  # open a Rails console inside the container
+pnpm server:seed     # re-run database seeds
+pnpm server:build    # rebuild the dev image (only after Dockerfile / .ruby-version changes)
 ```
 
-`server:dev` behaves like any TS dev server (`vite dev`, the dashboard's `pnpm dev`): it runs in the foreground and Ctrl+C stops the app containers. Postgres, Redis, and Meilisearch keep running for a fast next boot — `pnpm server:stop` shuts everything down.
+`server:dev` behaves like any TS dev server (`vite dev`, the dashboard's `pnpm dev`): it runs in the foreground and Ctrl+C stops the app containers. Postgres  keep running for a fast next boot — `pnpm server:stop` shuts everything down while keeping your data. To get rid of the backend entirely (or start over from scratch), `pnpm server:teardown` removes the containers, the volumes, and the `server/` directory.
 
 Run any CLI command against the running backend from `server/`:
 
@@ -103,36 +117,38 @@ cd server
 pnpm exec spree migrate
 pnpm exec spree generate model Brand name:string
 pnpm exec spree upgrade --plan
-```
+``
 
 See the [`@spree/cli` README](../packages/cli/README.md) for the full command surface.
 
 Which command after which change:
 
 | What changed | What to run |
-|---|---|
+| --- | --- |
 | Ruby code in `spree/*` gems | Nothing — gems are bind-mounted; code reloads on the next request |
 | A new migration in a gem | Nothing — the next `pnpm server:dev` boot applies it (or `cd server && pnpm exec spree migrate` while the stack runs) |
-| Gem dependencies (gemspec / Gemfile / lock drift after `git pull`) | Nothing — the next `pnpm server:dev` boot self-heals via `bundle check || bundle install` (or `cd server && pnpm exec spree bundle install` while the stack runs) |
+| Gem dependencies (gemspec / Gemfile / lock drift after `git pull`) | Nothing — the next `pnpm server:dev` boot self-heals via `bundle check | | bundle install` (or `cd server && pnpm exec spree bundle install` while the stack runs) |
 | Compose files / `server/.env` | `pnpm server:dev` (force-recreates the containers) |
 | `server/Dockerfile` / `.ruby-version` / starter update that breaks the image build ("lockfile can't be updated because frozen") | `pnpm server:build`, then `pnpm server:dev` — the build script handles the edge-rewritten `Gemfile.lock` automatically |
 | Meilisearch image bump ("database version … is incompatible") | Remove the `server_meilisearch_data` volume, boot, then reindex (`pnpm exec spree rake spree:search:reindex`) — the index is derived data |
 | Broken beyond repair | `pnpm server:setup` (full reset — wipes the database and volumes) |
 
-Re-run `pnpm server:setup` **only** to fully reset — it does `docker compose down -v` + `rm -rf ./server`, wiping all DB data.
+Re-run `pnpm server:setup` **only** to fully reset — it starts with the same teardown as `pnpm server:teardown` (`docker compose down -v` + `rm -rf ./server`), wiping all DB data.
 
 ### Native Ruby (advanced)
 
-If you prefer the fastest possible inner loop and don't mind installing Ruby, Postgres, Redis, and Meilisearch on your host directly, you can skip Docker:
+If you prefer the fastest possible inner loop and don't mind installing Ruby and Postgres on your host directly, you can skip Docker:
 
 ```bash
 pnpm server:create   # clones spree-starter, writes server/.env with SPREE_PATH=..
 cd server
-bin/setup            # installs Ruby (via mise), Postgres/Redis/Meilisearch (via brew bundle on macOS), gems, prepares the database
-bin/dev              # starts Rails + Sidekiq + CSS watchers via Foreman
+bin/setup            # installs Ruby (via mise), Postgres (via brew bundle on macOS), gems, prepares the database
+bin/dev              # starts Rails
 ```
 
 This path is faster per request but means more on your host. It also runs against your installed system services, not a sandboxed Docker stack.
+
+The first-admin flow is the same as on Docker: seeding prints a one-time setup link, and `bin/rails spree:setup:token` (from `server/`) prints it again.
 
 ## Backend Development (Ruby)
 
@@ -141,10 +157,10 @@ This path is faster per request but means more on your host. It also runs agains
 The Spree [Rails engines](https://guides.rubyonrails.org/engines.html) live inside `spree/` and are distributed as separate gems (Ruby packages installed via Bundler):
 
 | Engine | Gem | Description |
-|---|---|---|
+| --- | --- | --- |
 | `core` | `spree_core` | Models, services, business logic |
 | `api` | `spree_api` | REST APIs |
-| `dashboard` | `spree_dashboard` | Hosts the React admin dashboard |
+| `dashboard` | `spree_dashboard` | Hosts/proxies the React admin dashboard |
 | `emails` | `spree_emails` | Transactional emails |
 
 ### Spree namespace
@@ -167,7 +183,7 @@ bundle exec rake test_app
 bundle exec rspec
 ```
 
-Replace `core` with `api`, `admin`, or `emails` to test other engines.
+Replace `core` with `api` or `emails` to test other engines.
 
 By default engine tests run against SQLite3. To run against PostgreSQL, set the `DB` environment variable:
 
@@ -215,18 +231,6 @@ bundle exec parallel_rspec -n 4 spec
 
 After schema changes, re-run `bundle exec rake parallel_setup` to update the worker databases.
 
-### Integration tests (legacy Rails admin)
-
-The legacy Rails admin (`spree/admin`) ships feature specs that run in a real browser via chromedriver. You only need this if you're touching the legacy admin UI.
-
-Install chromedriver on macOS:
-
-```bash
-brew install chromedriver
-```
-
-The 6.0 React dashboard (`packages/dashboard`) has its own end-to-end test suite running on Playwright against a real Rails backend — see [Dashboard E2E tests](#dashboard-e2e-tests) under TypeScript Development.
-
 ### Performance in development mode
 
 Spree runs slower in development because caching is disabled and code reloads on each request. To turn on caching:
@@ -244,7 +248,7 @@ The backend setup is the same as for Ruby work — see [Setup](#setup) above. Wi
 ### Packages
 
 | Package | Path | Published | Description |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `@spree/sdk` | `packages/sdk` | yes | TypeScript SDK for the Spree Store API |
 | `@spree/admin-sdk` | `packages/admin-sdk` | yes | TypeScript SDK for the Spree Admin API |
 | `@spree/cli` | `packages/cli` | yes | CLI for managing Spree Commerce projects |
@@ -260,7 +264,7 @@ The backend setup is the same as for Ruby work — see [Setup](#setup) above. Wi
 Run from the repository root — [Turborepo](https://turbo.build/) orchestrates tasks across all packages:
 
 | Command | Description |
-|---|---|
+| --- | --- |
 | `pnpm dev` | Watch mode for all packages (does not boot the backend — use `pnpm server:dev` for that) |
 | `pnpm build` | Build all packages (Turbo resolves dependency order) |
 | `pnpm test` | Run tests in all packages |
@@ -282,22 +286,37 @@ Tests use [Vitest](https://vitest.dev/) with [MSW](https://mswjs.io/) for API mo
 
 ### Working on the React dashboard
 
-The dashboard runs as a Vite dev server (port 5173) that proxies `/api/*` to the Rails backend on port 3000 — required for the auth refresh cookie to work over plain HTTP.
+The dashboard runs as a Vite dev server (port 5173) that proxies `/api/*` to the Rails backend on port 3000 — required for the auth refresh cookie to work over plain HTTP. The dev host is `packages/dashboard-starter` (the same app `spree add dashboard` scaffolds), which hot-reloads `@spree/dashboard`, `-core`, and `-ui` source through the workspace:
 
 ```bash
 # Terminal 1: backend
 pnpm server:dev
 
 # Terminal 2: dashboard
-cd packages/dashboard
-pnpm dev   # http://localhost:5173
+pnpm dashboard:dev   # http://localhost:5173
 ```
 
-Sign in with `spree@example.com` / `spree123`. To point at a non-default backend, set `VITE_SPREE_API_URL` (also needs to be set at build time for production bundles, not just dev):
+Sign in with the admin account you created through the setup link (or seeded via `ADMIN_EMAIL` / `ADMIN_PASSWORD` — see [Setup](#setup)).
+
+The marketplace **seller panel** works the same way from `packages/seller-dashboard-starter`:
 
 ```bash
-VITE_SPREE_API_URL=https://my-spree.example.com pnpm dev
+pnpm seller:dev      # http://localhost:5174
 ```
+
+Seed a seller account to sign in as (`seller@example.com` / `spree123`):
+
+```bash
+cd server && pnpm exec spree task sellers:sample_data
+```
+
+To point the dev server at a non-default backend, set `VITE_API_PROXY_TARGET` — the SDK keeps using same-origin URLs and the Vite proxy forwards them:
+
+```bash
+VITE_API_PROXY_TARGET=https://my-spree.example.com pnpm dashboard:dev
+```
+
+Don't use `VITE_SPREE_API_URL` in dev — it switches the SDK to absolute cross-origin URLs, bypassing the proxy (and breaking the auth refresh cookie). It's a build-time setting for production bundles only.
 
 **Gotcha:** the dashboard imports `@spree/admin-sdk` from its **built** `dist/`, not source. If you edit `admin-sdk` (or `sdk-core`, or `sdk`) and want the dashboard to see the changes, run `pnpm build` from the monorepo root first (Turbo-cached). Editing dashboard code alone doesn't need this.
 
@@ -475,6 +494,6 @@ The MCP server URL for quick setup:
 https://spreecommerce.org/docs/mcp
 ```
 
-## That's a wrap!
+## That's a wrap
 
 Thank you for participating in Open Source and improving Spree - you're awesome!

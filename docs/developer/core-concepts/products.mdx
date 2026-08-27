@@ -5,12 +5,14 @@ description: How Spree models products, variants, option types, images, prices, 
 
 ## Overview
 
-A product represents something you sell. Each product has one or more **variants** — the actual purchasable items with their own SKU, price, and inventory. For example, a "T-Shirt" product might have variants for each size and color combination.
+A product is the listing a customer browses. A **variant** is the thing they actually buy.
 
-Products are organized into **categories** — a flexible hierarchy for grouping products. Categories can be filtered, sorted, and searched via the Store API.
+That split runs through everything on this page. The product holds what's shared — name, description, images, which categories it's filed under. Each variant holds what differs — its SKU, its price, its stock. A T-shirt is one product; small navy is a variant.
+
+**Every product has at least one variant**, even when there's nothing to choose. A book with no size or colour still has a single variant carrying its SKU, price and stock; you just never render a picker.
 
 <Info>
-Product names, descriptions, slugs, and SEO fields are [translatable](/developer/core-concepts/translations#resource-translations).
+Product names, descriptions, slugs and SEO fields are [translatable](/developer/core-concepts/translations#resource-translations).
 </Info>
 
 ```mermaid
@@ -61,21 +63,26 @@ erDiagram
 ## Product Attributes
 
 | Attribute | Description | Translatable |
-|-----------|-------------|:---:|
+|---|---|:---:|
 | `name` | Product name | Yes |
-| `description` | Full product description | Yes |
-| `slug` | URL-friendly identifier (e.g., `spree-tote`) | Yes |
-| `status` | `draft`, `active`, or `archived`. A marketplace adds `proposed` and `rejected` — see Seller submissions below | No |
-| `available_on` | Date the product becomes available for sale | No |
-| `discontinue_on` | Date the product is no longer available | No |
-| `meta_title` | Custom SEO title | Yes |
-| `meta_description` | SEO description | Yes |
-| `meta_keywords` | SEO keywords | Yes |
-| `purchasable` | Whether the product can be added to cart | No |
-| `in_stock` | Whether any variant has stock available | No |
-| `price` | Default variant's price in the current currency | No |
-| `thumbnail_url` | URL to the product's first image — always returned, no expand needed | No |
-| `tags` | Array of tag strings for filtering | No |
+| `description` / `description_html` | Description as plain text and as formatted HTML | Yes |
+| `slug` | URL identifier, e.g. `spree-tote` | Yes |
+| `status` | `draft`, `active` or `archived`. A marketplace adds `proposed` and `rejected` — see [Seller submissions](#seller-submissions) | No |
+| `available_on` | When it goes on sale | No |
+| `discontinue_on` | When it comes off | No |
+| `meta_title` / `meta_description` / `meta_keywords` | SEO fields | Yes |
+| `purchasable` | Whether it can be added to a cart | No |
+| `in_stock` | Whether any variant has stock | No |
+| `backorderable` | Whether it can be ordered while out of stock | No |
+| `preorder` / `preorder_ships_at` | Whether it's sold ahead of availability, and when it ships | No |
+| `available` | Whether it's on sale right now, by date and status | No |
+| `price` / `original_price` | The [default variant's](#the-default-variant) price, and its compare-at price | No |
+| `default_variant_id` | Which variant represents the product | No |
+| `variant_count` | How many variants it has | No |
+| `thumbnail_url` | First image — always returned, no expand needed | No |
+| `tags` | Tags, for filtering | No |
+
+The Admin API adds the operational fields on top: `product_type_id`, `delivery_profile_id`, `tax_category_id`, `seller_id`, `metadata`, `created_at` / `updated_at` / `deleted_at`.
 
 ## Listing Products
 
@@ -166,19 +173,21 @@ Pass `expand` to include related resources in a single response — see [expand 
 
 The examples above use the **Store API** (publishable key, read-only, customer-facing). To **create and manage** products, use the [Admin API](/api-reference/admin-api/introduction) — via the [Admin SDK](/developer/sdk/admin/quickstart) or the [Spree CLI](/developer/cli/admin-api).
 
-A product's purchasable attributes (SKU, prices, stock) live on its **variants**, which you can create inline:
+A product's purchasable attributes (SKU, prices, stock) live on its **variants**, which you can create inline.
+
+For a product with options, send the variants:
 
 <CodeGroup>
 
 ```typescript Admin SDK
 import { createAdminClient } from '@spree/admin-sdk'
 
-const client = createAdminClient({
+const adminClient = createAdminClient({
   baseUrl: 'https://store.example.com',
   secretKey: 'sk_xxx',
 })
 
-const product = await client.products.create({
+const product = await adminClient.products.create({
   name: 'Premium T-Shirt',
   description: 'Soft, organic cotton.',
   status: 'active',
@@ -190,7 +199,7 @@ const product = await client.products.create({
         { name: 'color', value: 'navy' },
       ],
       prices: [{ currency: 'USD', amount: '29.99' }],
-      stock_items: [{ stock_location_id: 'sloc_xxx', count_on_hand: 50 }],
+      stock_levels: [{ stock_location_id: 'sloc_xxx', count_on_hand: 50 }],
     },
   ],
 })
@@ -209,6 +218,18 @@ spree api post /products -d '{
 ```
 
 </CodeGroup>
+
+For something with no options at all, send prices directly and skip the variants array — Spree forwards them to the product's single variant:
+
+```typescript Admin SDK
+await adminClient.products.create({
+  name: 'The Spree Handbook',
+  status: 'active',
+  prices: [{ currency: 'USD', amount: '19.99' }],
+})
+```
+
+Don't pass both.
 
 Update, clone, or archive a product (deleting soft-deletes it):
 
@@ -421,29 +442,56 @@ curl 'https://api.mystore.com/api/v3/store/products/filters?category_id=ctg_xxx'
 
 ## Variants
 
-Variants are the purchasable units of a product. Each variant has its own SKU, price, inventory, and images, and is defined by a unique combination of option values.
+**A product is not the thing you buy — a variant is.** The product is the listing; the variant is the actual item with a SKU, a price and stock.
+
+That distinction is worth holding onto, because everything purchasable lives on the variant:
 
 | Attribute | Description |
-|-----------|-------------|
-| `sku` | Unique stock keeping unit |
-| `barcode` | Barcode (UPC, EAN, etc.) |
+|---|---|
+| `sku` | Stock keeping unit |
+| `barcode` | Barcode — UPC, EAN and so on |
 | `price` | Price in the current currency |
-| `original_price` | Compare-at price for showing discounts |
-| `weight`, `height`, `width`, `depth` | Dimensions for shipping calculations |
-| `in_stock` | Whether stock is available |
-| `backorderable` | Whether the variant can be ordered when out of stock |
-| `option_values` | The option values that define this variant (e.g., Size: Small, Color: Red) |
+| `original_price` | Compare-at price, for showing a reduction |
+| `weight`, `height`, `width`, `depth` | Used for delivery rates and labels |
+| `in_stock` / `purchasable` | Whether it can be bought right now |
+| `backorderable` | Whether it can be ordered while out of stock |
+| `preorder` / `preorder_ships_at` | Whether it's sold ahead of availability |
+| `option_values` | What distinguishes it — Size: Small, Colour: Red |
+| `options_text` | Those values as one readable string |
+| `track_inventory` | Whether stock is counted at all |
 
-### Master Variant
+Variants also carry the customs attributes — `hs_code`, `country_of_origin`, `customs_description` — used when a parcel crosses a border. See [Fees](/developer/core-concepts/fees#customs-classification).
 
-Every product has a **master variant** that holds default pricing and inventory. If a product has no option types (e.g., a book with no size/color), the master variant is the only purchasable variant.
+### Every product has at least one variant
 
-### Regular Variants
+There's no such thing as a product without one. A book with no size or colour still has a single variant holding its SKU, price and stock — you simply never show a picker for it.
 
-When a product has option types, each unique combination of option values creates a variant. For example, a T-shirt with sizes (S, M, L) and colors (Red, Green) has 6 variants:
+<Note>
+Earlier versions of Spree had a special "master variant" alongside the real ones, which meant every query had to remember to exclude it. **That concept is gone.** A product's variants are all real, all purchasable, and all the same kind of thing.
+</Note>
 
-| SKU | Size | Color |
-|-----|------|-------|
+### The default variant
+
+`default_variant_id` names the variant that represents the product — the price shown on a listing page, and what "add to cart" means before anyone picks anything.
+
+```typescript Store SDK
+const product = await client.products.get('spree-tote')
+
+product.default_variant_id // "var_xxx"
+product.price              // that variant's price
+product.variant_count      // 6
+```
+
+For a single-variant product that's the only variant. For a product with options it's the first one, unless you say otherwise. If the default is ever removed, another is promoted automatically — a product is never left without one.
+
+Products can also carry `buy_box_variant_id`, naming the variant a marketplace has chosen to feature when several sellers offer the same listing.
+
+### Options make variants
+
+A product with option types has one variant per combination. A T-shirt in three sizes and two colours is six variants:
+
+| SKU | Size | Colour |
+|---|---|---|
 | `TEE-S-R` | Small | Red |
 | `TEE-S-G` | Small | Green |
 | `TEE-M-R` | Medium | Red |
@@ -451,21 +499,19 @@ When a product has option types, each unique combination of option values create
 | `TEE-L-R` | Large | Red |
 | `TEE-L-G` | Large | Green |
 
-The product's `default_variant_id` points to the first non-master variant (or the master variant if none exist).
-
-Add a variant to an existing product via the Admin API (SKU, prices, and stock all live on the variant):
+Adding one to an existing product:
 
 <CodeGroup>
 
 ```typescript Admin SDK
-const variant = await client.products.variants.create('prod_xxx', {
+await adminClient.products.variants.create('prod_xxx', {
   sku: 'TEE-L-R',
   options: [
     { name: 'size', value: 'Large' },
     { name: 'color', value: 'Red' },
   ],
   prices: [{ currency: 'USD', amount: '24.99' }],
-  stock_items: [{ stock_location_id: 'sloc_xxx', count_on_hand: 30 }],
+  stock_levels: [{ stock_location_id: 'sloc_xxx', count_on_hand: 30 }],
 })
 ```
 
@@ -478,6 +524,8 @@ spree api post /products/prod_xxx/variants -d '{
 ```
 
 </CodeGroup>
+
+Options are named by value rather than by ID, so you don't have to look up an option value before creating a variant that uses it.
 
 ## Option Types and Option Values
 
@@ -549,9 +597,80 @@ spree api post /option_types -d '{
 
 </CodeGroup>
 
+## Product Types
+
+Merchants who sell more than one kind of thing end up repeating themselves. Every pair of shoes needs Size and Colour, belongs under Footwear, and wants a Material field. Every book needs an ISBN and an author.
+
+A **product type** captures that once. Creating a product from a type gives it the right option types, the right categories, the right delivery profile, and a form asking for the fields that kind of product actually needs.
+
+```mermaid
+erDiagram
+    ProductType ||--o{ Product : "creates"
+    ProductType }o--o{ OptionType : "seeds"
+    ProductType }o--o{ Category : "seeds"
+    ProductType }o--o{ CustomFieldDefinition : "asks for"
+    ProductType }o--o| DeliveryProfile : "ships by"
+
+    ProductType {
+        string name
+        integer products_count
+    }
+```
+
+```typescript Admin SDK
+const shoes = await adminClient.productTypes.create({
+  name: 'Footwear',
+  option_type_ids: ['optt_size', 'optt_color'],
+  category_ids: ['ctg_footwear'],
+  delivery_profile_id: 'dp_standard',
+  custom_field_definitions: [
+    { id: 'cfdef_material', required: true, sort_order: 0 },
+  ],
+})
+
+await adminClient.products.create({
+  name: 'Trail Runner',
+  product_type_id: shoes.id,
+  status: 'draft',
+})
+```
+
+### A type is a template, not a controller
+
+This is the part that determines how you should think about them.
+
+<Warning>
+**Editing a product type never rewrites existing products.** Add an option type to Footwear next month and the shoes you created last month are untouched.
+</Warning>
+
+That's deliberate. A merchant who adds a field to a type is describing what *new* products should look like — not asking Spree to silently restructure a live catalogue, invalidate URLs, or change what customers can pick.
+
+So the pieces behave in two distinct ways:
+
+| Part of the type | Behaviour |
+|---|---|
+| Option types, categories, delivery profile | **Stamped at creation.** Copied onto the product, then independent |
+| Custom field definitions | **Live by reference.** The form always reflects the type as it is now |
+
+Seeding is also **additive** — it adds what's missing and never removes what a product already has. Reassigning a product's type is therefore safe: it seeds the new type's option types and categories alongside whatever was already there.
+
+If you *do* want an edited type to reach the products already using it, that's an explicit action:
+
+```typescript Admin SDK
+const { products_count } = await adminClient.productTypes.applyToProducts('pt_xxx')
+```
+
+It runs in the background and is additive like the rest — never a side effect of saving a type.
+
+<Info>
+`required` on a type's custom field is **advisory** — it marks the field in the dashboard but isn't enforced on write, since Spree saves the product and its fields in two steps. Validate in your own tooling if you need it enforced.
+</Info>
+
+A type in use can't be deleted; its products would lose the structure they were built from.
+
 ## Media
 
-Media can be attached to the product (via the master variant) or to individual variants. When displaying a product, show the images for the selected variant, falling back to the product-level images.
+Media can be attached to a product or to individual variants. When displaying a product, show the images for the selected variant, falling back to the product's own.
 
 ### Thumbnails
 
@@ -597,7 +716,7 @@ const product = await client.products.get('spree-tote', {
   expand: ['media', 'variants'],
 })
 
-// Product-level images (from master variant)
+// The product's own images
 product.media // [{ original_url: "https://cdn.../tote-front.jpg", position: 1 }, ...]
 
 // Each variant has its own thumbnail and media_count

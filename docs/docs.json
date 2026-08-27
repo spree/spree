@@ -33,6 +33,10 @@
   },
   "redirects": [
     {
+      "source": "/developer/core-concepts/companies-and-catalogs",
+      "destination": "/developer/core-concepts/companies"
+    },
+    {
       "source": "/developer/core-concepts/taxes-discounts-fees",
       "destination": "/developer/core-concepts/order-totals"
     },
@@ -484,6 +488,8 @@
                           "developer/core-concepts/channels",
                           "developer/core-concepts/markets",
                           "developer/core-concepts/customers",
+                          "developer/core-concepts/companies",
+                          "developer/core-concepts/sellers",
                           "developer/core-concepts/staff-roles"
                         ]
                       },
@@ -492,7 +498,7 @@
                         "pages": [
                           "developer/core-concepts/products",
                           "developer/core-concepts/pricing",
-                          "developer/core-concepts/companies-and-catalogs",
+                          "developer/core-concepts/catalogs",
                           "developer/core-concepts/inventory",
                           "developer/core-concepts/media",
                           "developer/core-concepts/search-filtering"
@@ -508,6 +514,7 @@
                           "developer/core-concepts/taxes",
                           "developer/core-concepts/discounts",
                           "developer/core-concepts/fees",
+                          "developer/core-concepts/commissions",
                           "developer/core-concepts/promotions",
                           "developer/core-concepts/store-credits-gift-cards"
                         ]
@@ -1854,6 +1861,8 @@
                   "developer/core-concepts/channels",
                   "developer/core-concepts/markets",
                   "developer/core-concepts/customers",
+                  "developer/core-concepts/companies",
+                  "developer/core-concepts/sellers",
                   "developer/core-concepts/staff-roles"
                 ]
               },
@@ -1863,7 +1872,7 @@
                 "pages": [
                   "developer/core-concepts/products",
                   "developer/core-concepts/pricing",
-                  "developer/core-concepts/companies-and-catalogs",
+                  "developer/core-concepts/catalogs",
                   "developer/core-concepts/inventory",
                   "developer/core-concepts/media",
                   "developer/core-concepts/search-filtering"
@@ -1880,6 +1889,7 @@
                   "developer/core-concepts/taxes",
                   "developer/core-concepts/discounts",
                   "developer/core-concepts/fees",
+                  "developer/core-concepts/commissions",
                   "developer/core-concepts/promotions",
                   "developer/core-concepts/store-credits-gift-cards"
                 ]

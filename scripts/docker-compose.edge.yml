@@ -24,15 +24,16 @@ services:
     # SPREE_PATH (e.g. `..` for the native bin/dev flow); the overlay-set
     # value here wins because `environment:` beats `env_file:` in Compose.
     #
-    # SPREE_DASHBOARD_DIST_PATH: the monorepo mount already contains the
-    # dashboard-starter's build output, so the spree_dashboard gem serves it
-    # at /dashboard (single-node topology) with zero copying — run
-    # `pnpm server:dashboard` to (re)build the dist; changes are served
-    # immediately (the gem reads files per request, no restart). Until a
-    # build exists the directory is absent and /dashboard responds 404.
+    # The React dashboard and seller panel are NOT served through Rails in
+    # this flow — the spree_dashboard gem's dist hosting is a production
+    # (single-node) topology, and a static build goes stale on every git
+    # pull. Run them as their own dev servers instead: `pnpm dashboard:dev`
+    # and `pnpm seller:dev` (both proxy /api to localhost:3000 by default).
+    # To test the hosted path deliberately, build a dist (`pnpm
+    # server:dashboard` / `pnpm server:seller`) and set
+    # SPREE_DASHBOARD_DIST_PATH / SPREE_SELLER_PANEL_DIST_PATH here yourself.
     environment:
       SPREE_PATH: ${SPREE_PATH}
-      SPREE_DASHBOARD_DIST_PATH: ${SPREE_PATH}/packages/dashboard-starter/dist
     volumes:
       - ${SPREE_PATH}:${SPREE_PATH}
     # Hard-bypass the starter's bin/docker-entrypoint, which auto-runs

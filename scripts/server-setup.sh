@@ -3,16 +3,14 @@
 # load Spree gems from the monorepo (edge mode).
 #
 # Sequence:
-#   1. Tear down any prior stack + volumes (clean slate, even after a failed run)
-#   2. Force-remove ./server/ if it exists (Docker bind-mounted files end up
-#      owned by UID 1000 inside the container; on macOS Docker Desktop maps
-#      this to the host user, but we still need elevated rm if a prior run
-#      left files in odd states).
-#   3. Clone spree-starter into server/
-#   4. Write server/.env with SPREE_PATH=.. (for the native bin/dev path —
+#   1. Tear down any prior stack + volumes and remove ./server/ (via
+#      server-teardown.sh — clean slate, even after a failed run; also
+#      available standalone as `pnpm server:teardown`)
+#   2. Clone spree-starter into server/
+#   3. Write server/.env with SPREE_PATH=.. (for the native bin/dev path —
 #      Docker edge flow overrides via compose env) + a fresh SECRET_KEY_BASE
-#   5. Build @spree/cli so `pnpm exec spree …` works in server/
-#   6. Start the edge stack and wait for it to finish booting. The edge web
+#   4. Build @spree/cli so `pnpm exec spree …` works in server/
+#   5. Start the edge stack and wait for it to finish booting. The edge web
 #      boot command (scripts/docker-compose.edge.yml) does the heavy lifting
 #      itself — bundle install against the monorepo gems (rewrites
 #      Gemfile.lock with the PATH block), spree:install:migrations, and
@@ -36,17 +34,7 @@ SERVER_DIR="$ROOT/server"
 
 step() { printf '\n→ %s\n' "$1"; }
 
-step "Tearing down any prior stack (this also wipes the dev volumes)"
-# Reference the project by name (-p server) rather than via compose files,
-# so this works even after a prior run deleted ./server/. Orphan volumes
-# from a partially-failed prior run (server_bundle_cache, etc.) cause
-# `failed to mkdir /var/lib/docker/volumes/.../ruby: file exists` on the
-# next `up` if we don't wipe them here.
-docker compose -p server down -v --remove-orphans 2>/dev/null || true
-
-step "Removing any prior $SERVER_DIR"
-# Volumes are now released; bind-mounted files are accessible to rm again.
-rm -rf "$SERVER_DIR"
+bash "$ROOT/scripts/server-teardown.sh" --no-hint
 
 step "Cloning spree-starter into server/ (branch: ${SPREE_STARTER_BRANCH:-6-0-dev})"
 git clone --depth 1 --branch "${SPREE_STARTER_BRANCH:-6-0-dev}" https://github.com/spree/spree-starter.git "$SERVER_DIR"
@@ -57,15 +45,6 @@ printf 'SPREE_PATH=..\nSECRET_KEY_BASE=%s\n' "$(openssl rand -hex 64)" > "$SERVE
 
 step "Building @spree/cli (so node ../packages/cli/dist/index.js works)"
 pnpm --filter @spree/cli build
-
-step "Building the React Dashboard (served at /dashboard via spree_dashboard)"
-# The edge overlay points SPREE_DASHBOARD_DIST_PATH at this build output
-# through the monorepo mount — no copying, and rebuilds (`pnpm
-# server:dashboard`) are served immediately. Non-fatal: the backend works
-# without it (/dashboard just 404s until a build exists).
-if ! VITE_BASE_PATH=/dashboard/ pnpm --dir "$ROOT/packages/dashboard-starter" build; then
-  echo "  ⚠ dashboard build failed — continuing; run 'pnpm server:dashboard' later."
-fi
 
 step "Starting the edge stack"
 # Detached on purpose — `pnpm server:dev` runs the stack in the foreground
@@ -97,4 +76,21 @@ until code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 2 http://localho
   elapsed=$((elapsed + 3))
 done
 
-printf '\nServer ready: http://localhost:3000\nAdmin:         http://localhost:3000/admin\nDashboard:     http://localhost:3000/dashboard\n\n'
+step "Fetching the one-time first-run setup link"
+# The seed announces the setup URL, but during this flow that lands in the
+# detached container's logs where nobody sees it. Ask the running app to
+# print it again. The task refuses once an admin account exists (e.g.
+# ADMIN_EMAIL/ADMIN_PASSWORD were set at seed time), so an empty result is
+# informational, not an error.
+SETUP_URL="$(SPREE_PATH="$ROOT" docker compose -f "$DEV_COMPOSE" -f "$EDGE_OVERLAY" exec -T web bin/rails spree:setup:token 2>/dev/null | tr -d '\r' | grep -oE 'https?://[^[:space:]]+' | tail -1 || true)"
+
+printf '\nBackend ready: http://localhost:3000\n\n'
+printf 'The React dashboard and seller panel run as their own dev servers:\n'
+printf '  pnpm dashboard:dev   # admin dashboard → http://localhost:5173\n'
+printf '  pnpm seller:dev      # seller panel    → http://localhost:5174\n\n'
+if [ -n "$SETUP_URL" ]; then
+  printf 'Then create the first admin account (one-time link, needs dashboard:dev running):\n  %s\n\n' "$SETUP_URL"
+  printf 'Print it again later with:\n  SPREE_PATH="$PWD" docker compose -f %s -f %s exec web bin/rails spree:setup:token\n\n' "$DEV_COMPOSE" "$EDGE_OVERLAY"
+else
+  printf 'No first-run setup link — an admin account already exists. Sign in at the dashboard.\n\n'
+fi

@@ -681,6 +681,13 @@ export interface ProductCreateParams {
   slug?: string
   status?: 'draft' | 'active' | 'archived'
   tax_category_id?: string
+  /**
+   * Product type this product is created from (pt_...). A creation-time
+   * template: its option types and categories seed onto the product and its
+   * custom-field definitions drive the product's form. Editing the type later
+   * never rewrites existing products.
+   */
+  product_type_id?: string | null
   /** Fulfillment profile deciding how this product ships (fp_...); null falls back to the store default. */
   delivery_profile_id?: string | null
   category_ids?: Array<string>
@@ -712,6 +719,8 @@ export interface ProductUpdateParams {
   slug?: string
   status?: 'draft' | 'active' | 'archived'
   tax_category_id?: string
+  /** See `ProductCreateParams.product_type_id`. Reassigning is non-destructive. */
+  product_type_id?: string | null
   /** See `ProductCreateParams.delivery_profile_id`. */
   delivery_profile_id?: string | null
   category_ids?: Array<string>

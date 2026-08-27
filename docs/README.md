@@ -15,13 +15,19 @@ To run the documentation locally, you will need to install the Mintlify CLI.
 npm i -g mint
 ```
 
-Then you can run the documentation locally with the following command:
+Then you can run the documentation locally. From the repository root:
 
 ```bash
-mint dev
+pnpm docs:dev
 ```
 
-This will start the documentation server on port 4000. You can then view the documentation at [http://localhost:4000](http://localhost:4000).
+This serves the documentation at [http://localhost:3333](http://localhost:3333).
+
+The port is pinned deliberately. Running `mint dev` on its own picks port 3000 and silently moves to 3001, 3002 and so on when that is taken — which, in a checkout that also runs a Rails server and a dashboard, means the docs land somewhere different each time. If you do run `mint dev` directly, pass the port yourself:
+
+```bash
+cd docs && mint dev --port 3333
+```
 
 ## License
 

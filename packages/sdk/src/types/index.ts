@@ -233,8 +233,8 @@ export interface UpdateCartParams {
   items?: LineItemInput[]
   /**
    * The company node this purchase is for. The buyer must have standing over
-   * it; null clears it, and with it the company's catalog, pricing and tax
-   * anchoring.
+   * it — a membership on that node or one of its ancestors. Null clears it,
+   * and with it the company's catalog, pricing and tax anchoring.
    */
   company_id?: string | null
 }
