@@ -837,7 +837,7 @@
       },
       "delete_description": "„{{name}}“ kann von niemandem mehr heruntergeladen werden, der sie gekauft hat. Dies wirkt sofort.",
       "delete_title": "Diese Datei löschen?",
-      "description": "Dateien, die Käufer nach dem Kauf herunterladen können. Fügen Sie sie einem digitalen Produkt hinzu oder einem physischen, um eine Anleitung oder Garantie mitzuliefern.",
+      "description": "Dateien, die Käufer nach dem Kauf herunterladen können. Fügen Sie sie einem digitalen Produkt hinzu oder einem physischen Produkt, um eine Anleitung oder Garantie mitzuliefern.",
       "download": "Herunterladen",
       "drop_hint": "Dateien hierher ziehen und ablegen oder zum Durchsuchen klicken",
       "empty": "Noch keine Dateien",
