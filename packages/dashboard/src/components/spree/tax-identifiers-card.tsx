@@ -259,6 +259,10 @@ function TaxIdentifierSheet({
   }
 
   const { errors } = form.formState
+  // The mapper always seeds `root` with the server's summary, as a safety net
+  // for errors whose field is not on screen. Here both fields are, so showing
+  // it as well repeats the same sentence twice in one small form.
+  const rootIsRepeated = Boolean(errors.kind || errors.value)
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -282,7 +286,7 @@ function TaxIdentifierSheet({
         >
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             <FieldGroup>
-              {errors.root?.message && (
+              {errors.root?.message && !rootIsRepeated && (
                 <p className="text-destructive text-sm" role="alert">
                   {errors.root.message}
                 </p>

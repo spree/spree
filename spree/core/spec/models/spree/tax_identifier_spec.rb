@@ -104,6 +104,18 @@ describe Spree::TaxIdentifier, type: :model do
       ).to be_valid
     end
 
+    # "is invalid" on a field labelled Number tells a merchant nothing they can
+    # act on, and the attribute name is not what the form calls it.
+    it 'says which regime the number failed as' do
+      identifier = build(:tax_identifier, owner: customer, kind: 'eu_vat', value: 'DE123')
+      identifier.valid?
+
+      expect(identifier.errors[:value]).to eq(['does not look like a valid EU VAT registration'])
+      expect(identifier.errors.full_messages).to eq(
+        ['Number does not look like a valid EU VAT registration']
+      )
+    end
+
     it 'reports one problem, not two, for a blank number' do
       identifier = build(:tax_identifier, owner: customer, kind: 'eu_vat', value: '')
 

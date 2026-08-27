@@ -141,7 +141,16 @@ module Spree
       return if validator.nil?
       return if validator.valid_format?(value)
 
-      errors.add(:value, :invalid)
+      # Named after the regime the buyer picked rather than left generic: "is
+      # invalid" on a field labelled Number tells them nothing they can act on,
+      # and the same validation speaks for every kind an extension registers.
+      errors.add(:value, :invalid, kind: kind_label)
+    end
+
+    # The kind as the dashboard shows it, falling back to the raw key so an
+    # extension's kind reads as itself rather than blank.
+    def kind_label
+      Spree.t("tax_identifier_kinds.#{kind}", default: kind.to_s.humanize)
     end
 
     # The class registered for this kind, or nil when nothing is registered and

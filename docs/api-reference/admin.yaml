@@ -28355,7 +28355,7 @@ paths:
               example:
                 error:
                   code: validation_error
-                  message: Kind has already been taken
+                  message: Registration type has already been taken
                   details:
                     kind:
                     - has already been taken

@@ -195,6 +195,9 @@ en:
       spree/tax_category:
         description: Description
         name: Name
+      spree/tax_identifier:
+        kind: Registration type
+        value: Number
       spree/tax_rate:
         amount: Rate
         included_in_price: Included in Price
@@ -379,6 +382,8 @@ en:
           attributes:
             company:
               must_be_legal_entity: must be a legal entity, not a division
+            value:
+              invalid: does not look like a valid %{kind} registration
         spree/taxon_image:
           attributes:
             attachment:
@@ -1762,6 +1767,12 @@ en:
         label: US local tax
     tax_category: Tax Category
     tax_code: Tax Code
+    tax_identifier_kinds:
+      au_abn: Australian Business Number
+      ch_vat: Swiss VAT
+      eu_vat: EU VAT
+      gb_vat: UK VAT
+      us_ein: US EIN
     tax_inclusive: Tax inclusive
     tax_rates: Tax Rates
     taxes: Taxes
