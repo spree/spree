@@ -56,13 +56,18 @@ class CreateSpreeSellerTransfers < ActiveRecord::Migration[8.1]
     else
       # MySQL and MariaDB have no partial index, and functional indexes are
       # MySQL-only — MariaDB rejects the expression outright. A stored
-      # generated column is the one spelling both accept: it holds the order
-      # for an earning and the row's own id otherwise, so earnings collide on
-      # the order while reversals never collide at all.
+      # generated column is the one spelling both accept.
+      #
+      # Null for anything that is not an earning, because null is what a
+      # unique index treats as distinct from every other null: earnings
+      # collide on their order, and any number of reversals sit alongside
+      # them without colliding at all. Deliberately not the row's own id for
+      # the other kinds — MySQL refuses a generated column that reads the
+      # auto-increment key, which is what CI found.
       execute <<~SQL.squish
         ALTER TABLE spree_seller_transfers
         ADD COLUMN earning_key BIGINT
-        AS (CASE WHEN kind = 'earning' THEN order_id ELSE -id END) STORED
+        AS (CASE WHEN kind = 'earning' THEN order_id ELSE NULL END) STORED
       SQL
 
       add_index :spree_seller_transfers, :earning_key, unique: true,
