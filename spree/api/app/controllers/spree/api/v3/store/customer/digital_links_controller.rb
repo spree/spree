@@ -27,8 +27,15 @@ module Spree
               :digital_links
             end
 
+            # The `digital_links` association reaches links through orders and
+            # line items, so it carries a DISTINCT and inherits an ORDER BY on
+            # the line items' table. PostgreSQL rejects DISTINCT combined with
+            # an ORDER BY column outside the select list, so reorder by the
+            # links' own table — SQLite tolerates the inherited order, so this
+            # only surfaces on a real deployment.
             def scope
-              super.where(spree_orders: { store_id: current_store.id }).order(created_at: :desc)
+              super.where(spree_orders: { store_id: current_store.id })
+                   .reorder("#{Spree::DigitalLink.table_name}.created_at": :desc)
             end
 
             # The serializer asks each link whether it is still authorizable,
