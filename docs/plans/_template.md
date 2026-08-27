@@ -1,10 +1,18 @@
 # [Feature Name]
 
-**Status:** Draft | Design Finalized | In Progress | Complete
+**Status:** Draft | In Progress | Implemented | Superseded
 **Target:** Spree X.Y
 **Depends on:** (other plans or features)
 **Author:** (who drove the design)
 **Last updated:** YYYY-MM-DD
+
+<!-- Status is exactly one of the four labels, with detail after an em dash:
+     Draft       — designed, nothing built
+     In Progress — some of it is in; name what remains for the target release
+     Implemented — everything for the target release is in; anything left is
+                   explicitly a later release
+     Superseded  — replaced by another plan; name it
+     Never name a branch: once merged, work is Implemented. -->
 
 ## Summary
 One paragraph explaining what this is and why.
