@@ -34,18 +34,24 @@ module TaxIdentifierValidatorHelpers
   # @param index [Integer] any counter; wraps around the fixture
   # @return [String]
   def eu_vat_number(index)
-    EU_VAT_NUMBERS[index.to_i % EU_VAT_NUMBERS.size]
+    numbers = TaxIdentifierValidatorHelpers.eu_vat_numbers
+    numbers[index.to_i % numbers.size]
   end
   # Callable on the module too, for the factory — FactoryBot blocks run outside
   # RSpec example scope, so they cannot reach an included helper.
   module_function :eu_vat_number
   public :eu_vat_number
 
-  EU_VAT_NUMBERS = Spree::Core::Engine.root
-                                      .join('spec', 'fixtures', 'files', 'eu_vat_numbers.txt')
-                                      .readlines(chomp: true)
-                                      .grep_v(/\A\s*(#|\z)/)
-                                      .freeze
+  # Read lazily rather than at load: the fixture ships in the gem, but a
+  # consumer that vendors only lib/ would otherwise take down the whole
+  # spec_helper on require instead of just the specs that need a number.
+  def self.eu_vat_numbers
+    @eu_vat_numbers ||= Spree::Core::Engine.root
+                                           .join('spec', 'fixtures', 'files', 'eu_vat_numbers.txt')
+                                           .readlines(chomp: true)
+                                           .grep_v(/\A\s*(#|\z)/)
+                                           .freeze
+  end
 end
 
 RSpec.configure do |config|

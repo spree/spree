@@ -84,10 +84,16 @@ export function SellerBusinessCard({ profile }: { profile: Profile }) {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({})
   const [formError, setFormError] = useState<string | null>(null)
 
-  // Reopening the sheet is the seller starting over, so a rejection from the
-  // last attempt must not still be sitting there.
+  // Opening the sheet is the seller starting over, so it shows what is on file
+  // rather than whatever they last typed. Without this the card never remounts:
+  // abandoned edits survive a close, and an emptied VAT field would be sent as
+  // a deliberate clear the next time they save anything at all.
   function setSheetOpen(open: boolean) {
     if (open) {
+      setLegalName(profile.legal_name ?? '')
+      setRegistrationNumber(profile.registration_number ?? '')
+      setVatNumber(vat?.value ?? '')
+      setVatKind(vat?.kind ?? DEFAULT_KIND)
       setFieldErrors({})
       setFormError(null)
     }
@@ -240,7 +246,7 @@ export function SellerBusinessCard({ profile }: { profile: Profile }) {
             </Field>
           </div>
           <SheetFooter>
-            <Button variant="outline" size="sm" onClick={() => setEditing(false)}>
+            <Button variant="outline" size="sm" onClick={() => setSheetOpen(false)}>
               {t('common.cancel')}
             </Button>
             <Button size="sm" disabled={save.isPending} onClick={() => save.mutate()}>

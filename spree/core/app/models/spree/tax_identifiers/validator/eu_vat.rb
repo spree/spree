@@ -1,8 +1,9 @@
 # Loaded here rather than with core's other gems: valvat's entry point pulls in
 # its VIES lookup client, and with it REXML and net/http — around 90ms and a
-# hundred files, on every boot, for a SOAP service this validator never calls.
-# Deferring it to the first EU VAT check keeps that off installs that never do
-# one, and off every rake task and console.
+# hundred files for a SOAP service this validator never calls. Loading it with
+# the class keeps that off anything that never resolves this constant, which in
+# development and test is most rake tasks and consoles. An eager-loading
+# production boot resolves it like every other model and pays it once.
 require 'valvat'
 
 module Spree
@@ -56,7 +57,15 @@ module Spree
         # @param value [String] already normalized (whitespace stripped, upcased)
         # @return [Boolean]
         def self.valid_format?(value)
-          vat = Valvat.new(value.to_s)
+          entered = value.to_s
+          # valvat strips punctuation before checking, while Spree keeps what
+          # the buyer typed — punctuation is part of the canonical number in
+          # other regimes. An EU VAT number has none, so anything valvat had to
+          # remove would be stored in a spelling no registry will match, and is
+          # a typo rather than a house style.
+          return false unless entered == Valvat::Utils.normalize(entered)
+
+          vat = Valvat.new(entered)
           return false if vat.iso_country_code == 'GB' && vat.vat_country_code != 'XI'
 
           Valvat::Checksum.validate(vat)

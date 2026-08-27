@@ -24,8 +24,11 @@ module Spree
 
         # Nothing should enqueue a check for a format-only validator, since
         # TaxIdentifier#validatable? reports false for one. Belt and braces all
-        # the same: it must not surface as a job that crashes.
-        return persist(tax_identifier, unsupported_result) unless validator_class.checks_registry?
+        # the same: it must not surface as a job that crashes. A validator
+        # predating the predicate is assumed to ask, as it always did.
+        if validator_class.respond_to?(:checks_registry?) && !validator_class.checks_registry?
+          return persist(tax_identifier, unsupported_result)
+        end
 
         result = validator_class.new.call(tax_identifier: tax_identifier)
         persist(tax_identifier, result)

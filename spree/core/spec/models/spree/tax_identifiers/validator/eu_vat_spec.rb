@@ -62,6 +62,14 @@ RSpec.describe Spree::TaxIdentifiers::Validator::EuVat do
       expect(described_class.valid_format?('CHE116281710')).to be(false)
     end
 
+    # Spree stores what the buyer typed, so a number accepted with punctuation
+    # would be kept in a spelling no registry can match. EU VAT numbers carry
+    # none, so punctuation here is a typo rather than a house style.
+    it 'rejects a number written with punctuation' do
+      expect(described_class.valid_format?('D-E100000008')).to be(false)
+      expect(described_class.valid_format?('DE-100.000.008')).to be(false)
+    end
+
     it 'rejects a value that is not a VAT number at all' do
       ['', '123456789', 'NOTAVAT', nil].each do |value|
         expect(described_class.valid_format?(value)).to be(false), "expected #{value.inspect} to be rejected"

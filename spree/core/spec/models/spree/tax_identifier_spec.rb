@@ -135,6 +135,23 @@ describe Spree::TaxIdentifier, type: :model do
       end
     end
 
+    # The registry takes any class name, so a validator written before
+    # checks_registry? existed has no such method. Raising here would break the
+    # save outright, since this is read from a validation.
+    it 'treats a validator predating the predicate as able to ask' do
+      legacy = Class.new do
+        def self.valid_format?(_value) = true
+      end
+      stub_const('LegacyRegistryValidator', legacy)
+
+      with_tax_identifier_validator('eu_vat', 'LegacyRegistryValidator') do
+        identifier = build(:tax_identifier, owner: customer, kind: 'eu_vat', value: 'anything')
+
+        expect { identifier.valid? }.not_to raise_error
+        expect(identifier).to be_validatable
+      end
+    end
+
     # Being well-formed is not evidence that the business is registered, and
     # only a registry can supply that — so a stock install leaves the verdict
     # blank rather than queueing a check nobody here can answer.

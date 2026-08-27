@@ -282,6 +282,16 @@ RSpec.describe Spree::Api::V3::Seller::ProfileController, type: :controller do
       expect(seller.reload.name).to eq(original_name)
     end
 
+    # A stale form field must not erase a registration the seller never touched.
+    it 'clears only the kind the blank was sent for' do
+      seller.tax_identifiers.create!(kind: 'gb_vat', value: 'GB123456789')
+
+      patch :update, params: { tax_identifier: { kind: 'eu_vat', value: '' } }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(seller.reload.tax_identifiers.map(&:kind)).to contain_exactly('gb_vat')
+    end
+
     it 'removes it when the seller clears the number' do
       patch :update, params: { tax_identifier: { kind: 'eu_vat', value: vat_number } }, as: :json
       patch :update, params: { tax_identifier: { kind: 'eu_vat', value: '' } }, as: :json

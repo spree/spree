@@ -110,7 +110,14 @@ module Spree
     def validatable?
       return false if order_owned?
 
-      validator_class&.checks_registry? || false
+      validator = validator_class
+      return false if validator.nil?
+      # A validator predating the predicate, or one not built on Base at all —
+      # the registry takes any class name. Assume it can ask, which is what
+      # every validator did before the predicate existed.
+      return true unless validator.respond_to?(:checks_registry?)
+
+      validator.checks_registry?
     end
 
     private
@@ -145,6 +152,10 @@ module Spree
     # only asked whether the key existed. It is read on every save and on every
     # admin serialization, so letting it raise would take out the whole tax
     # identifier listing over one stale line of configuration.
+    # Deliberately not memoized: the registry is mutable configuration, and a
+    # cached class would go on answering for a validator that has since been
+    # swapped. The lookup costs microseconds against a request that also hits
+    # the database.
     def validator_class
       Spree.tax_identifier_validators[kind].presence&.to_s&.safe_constantize
     end
