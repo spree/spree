@@ -27,9 +27,20 @@ module Spree
         # labelling their product
         # (docs/plans/6.0-multi-vendor-marketplace.md).
         class ProductsController < Seller::ResourceController
+          # The statuses a seller may move a selection to, each paired with the
+          # workflow that gets it there. A map rather than a status list
+          # because these moves are not attribute writes: taking a listing down
+          # settles the submission the seller had open, which `update_all`
+          # would leave sitting as `pending` forever.
+          SELLER_BULK_STATUS_WORKFLOWS = {
+            'draft' => -> { Spree.product_draft_workflow },
+            'archived' => -> { Spree.product_archive_workflow }
+          }.freeze
+
           scoped_resource :products
 
           before_action :set_status_resource, only: [:submit, :draft, :archive]
+          before_action :require_ids!, only: [:bulk_submit, :bulk_status_update, :bulk_destroy]
 
           # PATCH /api/v3/seller/products/:id/submit
           #
@@ -50,6 +61,75 @@ module Spree
           # PATCH /api/v3/seller/products/:id/archive
           def archive
             run_status_workflow(Spree.product_archive_workflow)
+          end
+
+          # POST /api/v3/seller/products/bulk_submit
+          # Body: { ids: [...] }
+          #
+          # Asking the marketplace to review a selection.
+          def bulk_submit
+            authorize! :update, model_class
+
+            # Judged on whether the product moved, not on the result: where a
+            # store auto-approves, Propose commits the submission and then
+            # chains into Approve, returning *its* result. A product that went
+            # into review and then failed to go on sale was still submitted,
+            # and counting it as skipped would tell the seller their draft was
+            # not eligible when it is now sitting in review.
+            render json: run_bulk(seller_bulk_scope(:update)) { |product|
+              was = product.status
+
+              Spree.product_propose_workflow.call(product: product,
+                                                  submitted_by: try_spree_current_user)
+
+              # A product Propose refused is untouched; one it accepted is in
+              # review or already through it.
+              product.reload.status != was
+            }
+          end
+
+          # POST /api/v3/seller/products/bulk_status_update
+          # Body: { ids: [...], status: 'draft' | 'archived' }
+          #
+          # The two moves a seller makes alone. `active` is absent by design:
+          # a listing goes on sale when the operator approves it, so there is
+          # no status a seller can assign that reaches it
+          # (docs/plans/6.0-seller-product-submission.md).
+          def bulk_status_update
+            authorize! :update, model_class
+
+            resolve_workflow = SELLER_BULK_STATUS_WORKFLOWS[params[:status].to_s]
+
+            if resolve_workflow.nil?
+              return render_error(
+                code: 'invalid_status',
+                message: Spree.t(:invalid_status, scope: 'errors.messages', default: 'Invalid status'),
+                status: :unprocessable_content
+              )
+            end
+
+            # Resolved at call time, not at load: the workflow is a
+            # configurable dependency, so a host that swaps it must be honoured
+            # rather than frozen into the constant at boot.
+            run_bulk_workflow(resolve_workflow.call)
+          end
+
+          # DELETE /api/v3/seller/products/bulk_destroy
+          # Body: { ids: [...] }
+          def bulk_destroy
+            authorize! :destroy, model_class
+
+            # Scoped by `:destroy` rather than reusing `bulk_collection`,
+            # which is `:update`-scoped: a seller who may edit their catalog
+            # but not delete from it must not delete through the bulk route.
+            #
+            # `Products::Destroy` exists so a store can refuse a deletion, so
+            # this reports refusals like the status actions do — a product that
+            # survives while the response says it was deleted is the one
+            # outcome a merchant must never be shown.
+            render json: run_bulk(seller_bulk_scope(:destroy)) { |product|
+              Spree.product_destroy_workflow.call(product: product)
+            }
           end
 
           protected
@@ -157,6 +237,107 @@ module Spree
           end
 
           private
+
+          # 422s when the caller omits `ids` entirely, matching the operator's
+          # bulk endpoints. An explicit empty array is a no-op, which is what a
+          # UI whose selection was cleared between render and submit sends.
+          def require_ids!
+            return if params.key?(:ids)
+
+            render_error(
+              code: 'missing_ids',
+              message: 'ids is required (send an empty array to no-op).',
+              status: :unprocessable_content
+            )
+          end
+
+          # The selection, rooted in this seller's own catalog.
+          #
+          # Deliberately not the shared `BulkOperations#bulk_collection`, which
+          # roots at `for_store(current_store)` — on a marketplace that is
+          # every seller's catalog, so one seller's ids param would reach
+          # another's products. Ids outside this seller's rows are dropped
+          # silently, exactly as the operator's endpoints drop ids from
+          # another store.
+          #
+          # @param action [Symbol] the ability action to scope by
+          # @return [ActiveRecord::Relation]
+          def seller_bulk_scope(action)
+            current_seller.products.accessible_by(current_ability, action).
+              where(id: decode_bulk_ids(params[:ids]))
+          end
+
+          # Runs a status workflow over the selection, one record at a time.
+          #
+          # A loop rather than `update_all`: each of these moves has side
+          # effects the column write does not carry — settling an open
+          # submission, announcing the change — and every workflow refuses a
+          # product it cannot legally move. A refusal is skipped rather than
+          # fatal, so a mixed selection still moves the rows that can move and
+          # the response says how many did not
+          # (docs/plans/6.0-seller-product-submission.md).
+          def run_bulk_workflow(workflow, **arguments)
+            render json: run_bulk(seller_bulk_scope(:update)) { |product|
+              workflow.call(product: product, **arguments)
+            }
+          end
+
+          # Runs a per-record operation over a selection and counts what
+          # happened.
+          #
+          # Each record is rescued on its own. Every one of these workflows
+          # opens its own transaction, so a raise partway through leaves the
+          # records before it committed — letting it escape would answer a
+          # half-done batch with "none of them worked", which is the one
+          # description of the outcome that is certainly false. A record that
+          # raises is counted as skipped, exactly like one that refused.
+          #
+          # @return [Hash] the response payload
+          def run_bulk(records)
+            done = 0
+            skipped = 0
+
+            records.each do |record|
+              begin
+                bulk_succeeded?(yield(record)) ? done += 1 : skipped += 1
+              rescue StandardError => error
+                # Surfaced rather than swallowed: a raise here is a bug or a
+                # host hook misbehaving, and the count alone would never lead
+                # anyone to it.
+                Rails.error.report(error, handled: true, context: { product_id: record.id })
+                skipped += 1
+              end
+            end
+
+            payload = { product_count: done }
+            # Only when it happened: a key on every response would tell clients
+            # that never skip anything that nothing was skipped.
+            payload[:skipped_count] = skipped if skipped.positive?
+            payload
+          end
+
+          # A block may answer with the workflow's own Result, or with a plain
+          # boolean where the caller decides what counts as done by looking at
+          # the record rather than the result.
+          def bulk_succeeded?(outcome)
+            outcome.respond_to?(:success?) ? outcome.success? : !!outcome
+          end
+
+          # Inbound ids are a mix of prefixed (`prod_…`) and raw.
+          #
+          # Decoded through the model rather than `PrefixedId` directly, so the
+          # prefix class is checked: a `variant_…` id decodes to a bare integer
+          # that would otherwise match whichever product happens to carry it.
+          # A mismatched prefix drops out and matches nothing, which is what a
+          # mistyped id should do. Raw ids pass through for callers that send
+          # them.
+          def decode_bulk_ids(ids)
+            Array(ids).filter_map do |id|
+              next id unless Spree::PrefixedId.prefixed_id?(id)
+
+              model_class.decode_own_prefixed_id(id)
+            end
+          end
 
           # Named apart from the base class's own resource lookup: overriding
           # that one changes every action, and these three are the only ones

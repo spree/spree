@@ -7,6 +7,7 @@ export { SpreeError } from '@spree/sdk-core'
 export type { Client, Client as SellerApiClient, SellerClientConfig } from './client'
 export { createSellerClient } from './client'
 export type {
+  BulkProductResult,
   MeResponse,
   OnboardingResponse,
   PermissionRule,

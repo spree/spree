@@ -32,6 +32,25 @@ export interface BulkActionFormProps<TFormValues = unknown> {
 }
 
 /**
+ * What a bulk action actually did, when that differs from what was selected.
+ *
+ * `count` is the number of records the action really affected. Reporting the
+ * selection size instead is wrong wherever the server skips rows it cannot
+ * move: the merchant is told fifteen products were submitted while a second
+ * toast says twelve were left alone.
+ */
+export interface BulkActionOutcome {
+  count: number
+}
+
+function outcomeCount(result: unknown): number | null {
+  if (typeof result !== 'object' || result === null) return null
+
+  const count = (result as BulkActionOutcome).count
+  return typeof count === 'number' ? count : null
+}
+
+/**
  * Declarative bulk action passed to `<ResourceTable>`. Three shapes:
  *
  * 1. Immediate — `run` is called as soon as the button is clicked. Use for
@@ -62,7 +81,19 @@ export interface BulkAction<TFormValues = unknown> {
   }
   /** Render-prop for actions that need to collect form values before running. */
   form?: (props: BulkActionFormProps<TFormValues>) => ReactNode
-  /** The mutation. Resolves with anything; errors surface a toast. */
+  /**
+   * The mutation. Errors surface a toast.
+   *
+   * Resolve with a `BulkActionOutcome` when the server may act on fewer rows
+   * than were selected — a bulk endpoint that skips what it cannot move
+   * returns its own count, and `{n}` in `successMessage` is then that count
+   * rather than the size of the selection. Resolving with anything else (the
+   * common case) leaves `{n}` as the number of selected rows.
+   *
+   * Typed `unknown` rather than the union, which a narrower type cannot
+   * express: most actions resolve with their raw mutation payload, so the
+   * outcome shape is recognised at runtime, not enforced here.
+   */
   run: (ctx: BulkActionRunContext<TFormValues>) => Promise<unknown>
   /**
    * Extra query keys to invalidate after `run` succeeds. The table's own
@@ -127,7 +158,7 @@ export function BulkActionBar({ selectedIds, actions, onDone }: BulkActionBarPro
   async function execute(action: BulkAction<any>, formValues?: unknown) {
     setRunning(true)
     try {
-      await action.run({ ids: selectedIds, formValues })
+      const result = await action.run({ ids: selectedIds, formValues })
       // Invalidate the action's declared cross-resource keys BEFORE `onDone`
       // (which invalidates the host table's own key). Without this, pages
       // like Customer Groups that cache `customers_count` won't refresh
@@ -140,7 +171,8 @@ export function BulkActionBar({ selectedIds, actions, onDone }: BulkActionBarPro
         type: 'success',
         title: interpolate(
           action.successMessage ?? t('admin.components.bulk_action_bar.default_success'),
-          count,
+          // What the server did, when it said — otherwise what was selected.
+          outcomeCount(result) ?? count,
         ),
       })
       onDone()

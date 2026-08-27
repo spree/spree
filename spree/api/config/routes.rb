@@ -746,6 +746,15 @@ Spree::Core::Engine.add_routes do
             patch :draft
             patch :archive
           end
+
+          # The same three moves over a selection. Only the ones a seller may
+          # make alone: there is no bulk route onto `active`, because reaching
+          # it is the operator's decision on one listing at a time.
+          collection do
+            post :bulk_submit
+            post :bulk_status_update
+            delete :bulk_destroy
+          end
         end
 
 
