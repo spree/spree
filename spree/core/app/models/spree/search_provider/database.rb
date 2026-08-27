@@ -127,8 +127,87 @@ module Spree
             end
           }.join(',')
 
-          scope.ransack(s: ransack_sort).result
+          translatable_fields = translatable_sort_fields(sort)
+          fallback_sort_expressions = {}
+          if translatable_fields.any?
+            # Mobility orders translated fields from the translations table. When
+            # the relation is DISTINCT, PostgreSQL requires those ordered fields
+            # to be present in the SELECT list as well.
+            scope = scope.for_ordering_with_translations(Spree::Product, translatable_fields)
+            scope, fallback_sort_expressions = apply_translation_sort_fallbacks(scope, translatable_fields)
+          end
+
+          search = scope.ransack(s: ransack_sort)
+          result = search.result
+          apply_translation_sort_order(result, search, fallback_sort_expressions)
         end
+      end
+
+      def translatable_sort_fields(sort)
+        return [] unless Spree.use_translations?
+
+        fields = sort.split(',').map { |field| field.delete_prefix('-') }
+        public_fields = Spree::Product.public_translatable_fields.map(&:to_s)
+        public_fields.select { |field| fields.include?(field) }
+      end
+
+      # Build SQL expressions that match Mobility's reader fallback chain. The
+      # active-locale translation is preferred, followed by the store's content
+      # locale. Product's column fallback is handled by the backend itself, so
+      # the second node may be the base product column rather than another join.
+      def apply_translation_sort_fallbacks(scope, fields)
+        fallback_locale = store.default_locale.presence || Spree::Current.content_locale
+        return [scope, {}] if fallback_locale.blank? || same_locale?(fallback_locale, Mobility.locale)
+
+        fallback_locale = fallback_locale.to_sym
+        expressions = {}
+        fields.each do |field|
+          backend = Spree::Product.mobility_backend_class(field)
+          active_node = backend.build_node(field, Mobility.locale)
+          fallback_node = backend.build_node(field, fallback_locale)
+          scope = backend.apply_scope(scope, fallback_node, fallback_locale)
+
+          expression = Arel::Nodes::NamedFunction.new(
+            'COALESCE',
+            [null_if_blank(active_node), null_if_blank(fallback_node)]
+          )
+          # The fallback expression is also used in ORDER BY, so project it
+          # explicitly for PostgreSQL's DISTINCT ordering rules.
+          scope = scope.select(expression.as("spree_sort_#{field}"))
+          expressions[field] = expression
+        end
+
+        [scope, expressions]
+      end
+
+      def apply_translation_sort_order(scope, search, fallback_sort_expressions)
+        return scope if fallback_sort_expressions.empty?
+
+        sorts = search.sorts
+        return scope if sorts.empty?
+
+        sort_offset = [scope.order_values.length - sorts.length, 0].max
+        order_values = scope.order_values.each_with_index.map do |order_value, index|
+          sort = sorts[index - sort_offset] if index >= sort_offset
+          field = sort&.attr_name.to_s
+          expression = fallback_sort_expressions[field]
+
+          if expression
+            expression.public_send(sort.dir == 'desc' ? :desc : :asc)
+          else
+            order_value
+          end
+        end
+
+        scope.reorder(*order_values)
+      end
+
+      def null_if_blank(node)
+        Arel::Nodes::NamedFunction.new('NULLIF', [node, Arel::Nodes.build_quoted('')])
+      end
+
+      def same_locale?(left, right)
+        Mobility.normalize_locale(left) == Mobility.normalize_locale(right)
       end
 
       # Which grouping a 'manual' sort orders within, inferred from the filter that

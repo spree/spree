@@ -351,6 +351,59 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
         expect(names).to eq(names.sort)
       end
 
+      context 'with translated names', if: Spree::Product.include?(Spree::TranslatableResource) do
+        before do
+          allow(store).to receive(:supported_locales_list).and_return(%w[en fr])
+          allow(store).to receive(:default_locale).and_return('en')
+          request.headers['x-spree-locale'] = 'fr'
+
+          Mobility.with_locale(:fr) do
+            product.update!(name: 'Zèbre')
+            product2.update!(name: 'Alpha')
+            cheap_product.update!(name: 'Beta')
+            expensive_product.update!(name: 'Gamma')
+          end
+        end
+
+        it 'sorts by translated name ascending' do
+          get :index, params: { sort: 'name' }
+
+          expect(response).to have_http_status(:ok)
+          names = json_response['data'].map { |p| p['name'] }
+          expect(names).to eq(%w[Alpha Beta Gamma Zèbre])
+        end
+
+        it 'sorts by translated name descending' do
+          get :index, params: { sort: '-name' }
+
+          expect(response).to have_http_status(:ok)
+          names = json_response['data'].map { |p| p['name'] }
+          expect(names).to eq(%w[Zèbre Gamma Beta Alpha])
+        end
+
+        context 'when a product has no translation in the requested locale' do
+          let!(:fallback_product) do
+            Mobility.with_locale(:en) { create(:product, status: 'active', name: 'Aardvark') }
+          end
+
+          it 'sorts by the displayed fallback name ascending' do
+            get :index, params: { sort: 'name' }
+
+            expect(response).to have_http_status(:ok)
+            names = json_response['data'].map { |p| p['name'] }
+            expect(names).to eq(%w[Aardvark Alpha Beta Gamma Zèbre])
+          end
+
+          it 'sorts by the displayed fallback name descending' do
+            get :index, params: { sort: '-name' }
+
+            expect(response).to have_http_status(:ok)
+            names = json_response['data'].map { |p| p['name'] }
+            expect(names).to eq(%w[Zèbre Gamma Beta Alpha Aardvark])
+          end
+        end
+      end
+
       # Regression test: combining in_stock filter with price sorting caused
       # PG::UndefinedTable due to table alias conflicts on spree_variants
       it 'sorts by price while filtering in_stock' do
