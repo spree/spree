@@ -30624,7 +30624,7 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   kind: accept_terms
                   name: Accept terms
-                  description: The seller has accepted your marketplace terms
+                  description: Read and accept the marketplace terms
                   preferences:
                     terms_effective_from:
                     terms_url:
@@ -30725,7 +30725,7 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 kind: document
                 name: Business registration
-                description: A file the seller uploads and you review
+                description: Upload this document for the marketplace to review
                 preferences: {}
                 custom_field_definition_ids: []
                 allow_multiple: true
@@ -30840,7 +30840,7 @@ paths:
                 data:
                 - type: accept_terms
                   name: Accept terms
-                  description: The seller has accepted your marketplace terms
+                  description: Read and accept the marketplace terms
                   allow_multiple: false
                   accepts_submissions: false
                   reviewed_by_operator: false
@@ -30857,7 +30857,7 @@ paths:
                     default:
                 - type: complete_profile
                   name: Complete profile
-                  description: The seller has filled in their public profile
+                  description: Fill in the public profile shoppers see
                   allow_multiple: false
                   accepts_submissions: false
                   reviewed_by_operator: false
@@ -30880,7 +30880,7 @@ paths:
                     default: true
                 - type: billing_address
                   name: Billing address
-                  description: The seller has given a billing address
+                  description: The address your payouts are billed from
                   allow_multiple: false
                   accepts_submissions: false
                   reviewed_by_operator: false
@@ -30891,7 +30891,7 @@ paths:
                   preference_schema: []
                 - type: returns_address
                   name: Returns address
-                  description: The seller has given an address for customer returns
+                  description: The address customer returns are sent to
                   allow_multiple: false
                   accepts_submissions: false
                   reviewed_by_operator: false
@@ -30902,7 +30902,7 @@ paths:
                   preference_schema: []
                 - type: minimum_products
                   name: Minimum products
-                  description: The seller has listed at least this many products
+                  description: List at least this many products
                   allow_multiple: false
                   accepts_submissions: false
                   reviewed_by_operator: false
@@ -30916,8 +30916,7 @@ paths:
                     default: 1
                 - type: required_custom_fields
                   name: Required custom fields
-                  description: The seller has filled in the custom fields you ask
-                    for
+                  description: Fill in the details the marketplace asks for
                   allow_multiple: false
                   accepts_submissions: false
                   reviewed_by_operator: false
@@ -30929,8 +30928,7 @@ paths:
                   preference_schema: []
                 - type: policy
                   name: Seller policy
-                  description: The seller has published a policy with this name. Add
-                    one for each document you ask for.
+                  description: Publish a policy with this name
                   allow_multiple: true
                   accepts_submissions: false
                   reviewed_by_operator: false
@@ -30941,7 +30939,7 @@ paths:
                   preference_schema: []
                 - type: attestation
                   name: Seller confirmation
-                  description: Something you ask the seller to confirm themselves
+                  description: Confirm this yourself before you are approved
                   allow_multiple: true
                   accepts_submissions: true
                   reviewed_by_operator: false
@@ -30952,7 +30950,8 @@ paths:
                   preference_schema: []
                 - type: operator_review
                   name: Manual check
-                  description: Something you check by hand before admitting the seller
+                  description: The marketplace checks this by hand before approving
+                    you
                   allow_multiple: true
                   accepts_submissions: true
                   reviewed_by_operator: true
@@ -30963,7 +30962,7 @@ paths:
                   preference_schema: []
                 - type: document
                   name: Document
-                  description: A file the seller uploads and you review
+                  description: Upload this document for the marketplace to review
                   allow_multiple: true
                   accepts_submissions: true
                   reviewed_by_operator: true
@@ -31086,7 +31085,7 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 kind: minimum_products
                 name: Minimum products
-                description: The seller has listed at least this many products
+                description: List at least this many products
                 preferences:
                   minimum_count: 3
                 custom_field_definition_ids: []
@@ -37883,8 +37882,13 @@ components:
           nullable: true
         blocking:
           type: boolean
+        required_policy_name:
+          type: string
+          nullable: true
         submission:
           "$ref": "#/components/schemas/SellerRequirementSubmission"
+        published_policy:
+          "$ref": "#/components/schemas/Policy"
       required:
       - id
       - kind
@@ -37895,6 +37899,7 @@ components:
       - status
       - action_url
       - blocking
+      - required_policy_name
       x-typelizer: true
     SellerRequirementSubmission:
       type: object

@@ -4322,6 +4322,8 @@
         },
         "all_done": "اكتمل كل شيء 🎉",
         "download": "تنزيل الملف",
+        "policy_empty": "لا يوجد محتوى لهذه السياسة بعد.",
+        "policy_updated": "آخر تحديث في {{date}}",
         "progress": "اكتمل {{done}} من {{total}}",
         "reject_confirm": {
           "message": "سيُطلب من البائع «{{name}}» مرة أخرى.",
@@ -4336,6 +4338,7 @@
           "rejected": "أُعيد"
         },
         "title": "الإعداد",
+        "view_policy": "عرض السياسة",
         "waive_confirm": {
           "message": "سيُعدّ «{{name}}» مستوفىً لهذا البائع فقط.",
           "title": "إعفاء من هذا المتطلب؟"

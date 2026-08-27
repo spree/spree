@@ -4301,6 +4301,8 @@
         },
         "all_done": "Tout est fait 🎉",
         "download": "Télécharger le fichier",
+        "policy_empty": "Cette politique n'a pas encore de contenu.",
+        "policy_updated": "Dernière mise à jour le {{date}}",
         "progress": "{{done}} sur {{total}} terminé",
         "reject_confirm": {
           "message": "Le vendeur devra fournir « {{name}} » à nouveau.",
@@ -4315,6 +4317,7 @@
           "rejected": "Renvoyé"
         },
         "title": "Configuration",
+        "view_policy": "Voir la politique",
         "waive_confirm": {
           "message": "« {{name}} » comptera comme remplie pour ce vendeur uniquement.",
           "title": "Lever cette exigence ?"

@@ -4301,6 +4301,8 @@
         },
         "all_done": "All done 🎉",
         "download": "Download file",
+        "policy_empty": "This policy has no content yet.",
+        "policy_updated": "Last updated {{date}}",
         "progress": "{{done}} of {{total}} done",
         "reject_confirm": {
           "message": "The seller will be asked for \"{{name}}\" again.",
@@ -4315,6 +4317,7 @@
           "rejected": "Sent back"
         },
         "title": "Onboarding",
+        "view_policy": "View policy",
         "waive_confirm": {
           "message": "\"{{name}}\" will count as met for this seller only.",
           "title": "Waive this requirement?"

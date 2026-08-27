@@ -4301,6 +4301,8 @@
         },
         "all_done": "Alles erledigt 🎉",
         "download": "Datei herunterladen",
+        "policy_empty": "Diese Richtlinie hat noch keinen Inhalt.",
+        "policy_updated": "Zuletzt aktualisiert am {{date}}",
         "progress": "{{done}} von {{total}} erledigt",
         "reject_confirm": {
           "message": "Der Verkäufer wird erneut nach „{{name}}\" gefragt.",
@@ -4315,6 +4317,7 @@
           "rejected": "Zurückgeschickt"
         },
         "title": "Einrichtung",
+        "view_policy": "Richtlinie ansehen",
         "waive_confirm": {
           "message": "„{{name}}\" gilt nur für diesen Verkäufer als erfüllt.",
           "title": "Anforderung erlassen?"

@@ -274,13 +274,10 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
     </p>
   )
 
+  // Nothing to do on a finished line. The header already carries the tick and
+  // the Done badge, so a sentence saying the same thing a third time is noise.
   if (requirement.status === 'complete') {
-    return (
-      <>
-        {rejection}
-        <p className="text-muted-foreground text-sm">{t('onboarding.done')}</p>
-      </>
-    )
+    return rejection
   }
 
   if (requirement.status === 'pending') {

@@ -4363,6 +4363,8 @@
         },
         "all_done": "Wszystko gotowe 🎉",
         "download": "Pobierz plik",
+        "policy_empty": "Ta polityka nie ma jeszcze treści.",
+        "policy_updated": "Ostatnia aktualizacja: {{date}}",
         "progress": "Ukończono {{done}} z {{total}}",
         "reject_confirm": {
           "message": "Sprzedawca zostanie ponownie poproszony o „{{name}}\".",
@@ -4377,6 +4379,7 @@
           "rejected": "Odesłane"
         },
         "title": "Wdrożenie",
+        "view_policy": "Zobacz politykę",
         "waive_confirm": {
           "message": "„{{name}}\" będzie uznane za spełnione tylko dla tego sprzedawcy.",
           "title": "Odstąpić od wymagania?"

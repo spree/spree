@@ -4292,6 +4292,8 @@
         },
         "all_done": "全部完成 🎉",
         "download": "下载文件",
+        "policy_empty": "该政策尚无内容。",
+        "policy_updated": "最后更新于 {{date}}",
         "progress": "已完成 {{done}} / {{total}}",
         "reject_confirm": {
           "message": "将再次向卖家索取“{{name}}”。",
@@ -4306,6 +4308,7 @@
           "rejected": "已退回"
         },
         "title": "入驻",
+        "view_policy": "查看政策",
         "waive_confirm": {
           "message": "“{{name}}”将仅对该卖家视为已满足。",
           "title": "豁免此要求？"
