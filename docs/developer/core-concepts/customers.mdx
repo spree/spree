@@ -3,8 +3,6 @@ title: Customers
 description: How Spree models customer accounts — registration, authentication, addresses, order history, store credits, and guest checkout behavior.
 ---
 
-import { Since } from '/snippets/since.mdx';
-
 ## Overview
 
 Customers interact with your store through the Store API. They can register, log in, manage their profile, and view order history.
@@ -204,8 +202,6 @@ curl -X PATCH 'https://api.mystore.com/api/v3/store/password_resets/RESET_TOKEN'
 On success, the user is automatically logged in and a JWT token is returned. The reset token expires after 15 minutes (configurable via `Spree::Config.customer_password_reset_expires_in`) and is single-use (changing the password invalidates it).
 
 ## Newsletter Subscriptions
-
-<Since version="5.5" />
 
 Headless storefronts often need to collect newsletter signups before account creation (footer forms, popup overlays). The Store API exposes a double opt-in subscription flow that mirrors the password reset webhook pattern.
 

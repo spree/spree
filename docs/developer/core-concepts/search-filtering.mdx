@@ -3,13 +3,11 @@ title: Search & Filtering
 description: "Use Ransack-style query parameters to search, filter, sort, and paginate products, taxons, and other resources through the Spree Store API."
 ---
 
-import { Since } from '/snippets/since.mdx';
-
 ## Overview
 
 Spree provides powerful search, filtering, and sorting capabilities for products and other resources. The Store API supports:
 
-- Full-text search across product names, SKUs, and searchable product metafields
+- Full-text search across product names, SKUs, and searchable custom fields
 - Attribute-based filtering (price range, availability, stock status)
 - Category and taxon filtering
 - Faceted search with filter counts
@@ -294,7 +292,7 @@ curl 'https://api.mystore.com/api/v3/store/products?page=1&limit=24' \
 
 See [Querying](/api-reference/store-api/querying) for the full list of filtering, sorting, and pagination options.
 
-## Search Providers <Since version="5.4" />
+## Search Providers
 
 Spree uses a pluggable search provider architecture. The default provider uses SQL (ILIKE + Ransack). For production catalogs with 1,000+ products, we recommend switching to [Meilisearch](/integrations/search/meilisearch) for typo tolerance, relevance ranking, and faster faceted search.
 

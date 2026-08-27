@@ -3,10 +3,6 @@ title: Webhooks
 description: Send real-time HTTP notifications to external services when events occur in your store.
 ---
 
-import { Since } from '/snippets/since.mdx';
-
-<Since version="5.3" />
-
 ## Overview
 
 Webhooks allow your Spree store to send real-time HTTP POST notifications to external services when events occur. When an order is completed, a product is updated, or inventory changes, Spree can automatically notify your CRM, fulfillment service, analytics platform, or any other system.
@@ -45,7 +41,7 @@ flowchart LR
     end
 ```
 
-1. An event is published (e.g., `order.completed`)
+1. An event is published (e.g., `order.placed`)
 2. The `WebhookEventSubscriber` receives all events
 3. It finds active webhook endpoints subscribed to that event
 4. For each endpoint, it creates a `WebhookDelivery` record and queues a job
@@ -113,13 +109,13 @@ The `subscriptions` attribute controls which events trigger webhooks to this end
 
 ```typescript Admin SDK
 await client.webhookEndpoints.update('whe_xxx', {
-  subscriptions: ['order.completed', 'order.canceled'],
+  subscriptions: ['order.placed', 'order.canceled'],
 })
 ```
 
 ```bash CLI
 spree api patch /webhook_endpoints/whe_xxx \
-  -d '{"subscriptions": ["order.completed", "order.canceled"]}'
+  -d '{"subscriptions": ["order.placed", "order.canceled"]}'
 ```
 
 </CodeGroup>
@@ -128,7 +124,7 @@ The `subscriptions` array accepts exact event names and wildcard patterns:
 
 | `subscriptions` value | Receives |
 |---|---|
-| `['order.completed', 'order.canceled']` | Only those two events |
+| `['order.placed', 'order.canceled']` | Only those two events |
 | `['order.*']` | All order events |
 | `['*.created']` | All creation events |
 | `['order.*', 'payment.*', 'shipment.shipped']` | Multiple patterns |
@@ -141,7 +137,7 @@ Each webhook delivery sends a JSON payload with the following structure. The `da
 ```json
 {
   "id": "550e8400-e29b-41d4-a716-446655440000",
-  "name": "order.completed",
+  "name": "order.placed",
   "created_at": "2025-01-15T10:30:00Z",
   "data": {
     "id": "or_m3Rp9wXz",
@@ -165,7 +161,7 @@ Each webhook delivery sends a JSON payload with the following structure. The `da
 | Field | Description |
 |-------|-------------|
 | `id` | Unique UUID for this event |
-| `name` | Event name (e.g., `order.completed`) |
+| `name` | Event name (e.g., `order.placed`) |
 | `created_at` | ISO8601 timestamp when event occurred |
 | `data` | Serialized resource data (V3 API format with [prefixed IDs](/api-reference/introduction)) |
 | `metadata` | Additional context including Spree version |
@@ -182,7 +178,7 @@ Each webhook request includes these headers:
 |--------|-------------|
 | `Content-Type` | `application/json` |
 | `User-Agent` | `Spree-Webhooks/1.0` |
-| `X-Spree-Webhook-Event` | Event name (e.g., `order.completed`) |
+| `X-Spree-Webhook-Event` | Event name (e.g., `order.placed`) |
 | `X-Spree-Webhook-Signature` | HMAC-SHA256 signature for verification |
 | `X-Spree-Webhook-Timestamp` | Unix timestamp (seconds) generated at send time; included in the HMAC-SHA256 signed string as `{timestamp}.{payload}` and required to verify `X-Spree-Webhook-Signature` |
 
@@ -234,7 +230,7 @@ class WebhooksController < ApplicationController
     event = JSON.parse(request.body.read)
 
     case event['name']
-    when 'order.completed'
+    when 'order.placed'
       handle_order_completed(event['data'])
     when 'product.updated'
       handle_product_updated(event['data'])
@@ -279,7 +275,7 @@ await client.webhookEndpoints.deliveries.redeliver('whe_xxx', 'whd_xxx')
 ```
 
 ```bash CLI
-spree api get /webhook_endpoints/whe_xxx/deliveries -q event_name_eq=order.completed
+spree api get /webhook_endpoints/whe_xxx/deliveries -q event_name_eq=order.placed
 spree api post /webhook_endpoints/whe_xxx/deliveries/whd_xxx/redeliver
 ```
 
@@ -301,24 +297,9 @@ spree api post /webhook_endpoints/whe_xxx/deliveries/whd_xxx/redeliver
 
 ## Configuration
 
-### Enabling/Disabling Webhooks
+Webhooks are on by default and can be switched off installation-wide.
 
-Webhooks are enabled by default. To disable globally:
-
-```ruby
-# config/initializers/spree.rb
-Spree::Api::Config.webhooks_enabled = false
-```
-
-### SSL Verification
-
-SSL verification is enabled by default in production. In development, it's disabled to allow testing with self-signed certificates:
-
-```ruby
-# config/initializers/spree.rb
-Spree::Api::Config.webhooks_verify_ssl = true  # Force SSL verification
-Spree::Api::Config.webhooks_verify_ssl = false # Disable (not recommended for production)
-```
+SSL certificates are verified in production, and not in development — so you can point an endpoint at a local tunnel with a self-signed certificate while building. Both are configurable if your environment needs something different.
 
 ## Available Events
 
@@ -328,14 +309,16 @@ Common webhook events include:
 
 | Event | Description |
 |-------|-------------|
-| `order.completed` | Order checkout finished |
-| `order.canceled` | Order was canceled |
-| `order.paid` | Order is fully paid |
-| `shipment.shipped` | Shipment was shipped |
-| `payment.paid` | Payment was completed |
-| `product.created` | New product created |
-| `product.updated` | Product was modified |
-| `user.created` | New customer/user registered (the admin user class emits `admin.created`) |
+| `order.placed` | A customer completed checkout |
+| `order.paid` | The order is fully paid |
+| `order.canceled` | The order was canceled |
+| `order.shipped` | Everything on the order has shipped |
+| `fulfillment.shipped` | One parcel went out |
+| `payment.completed` | A payment succeeded |
+| `product.created` / `product.updated` | Catalog changes |
+| `product.out_of_stock` / `product.back_in_stock` | Availability flipped |
+| `customer.created` | A new customer registered |
+| `return.received` | A return arrived |
 
 ## Testing Webhooks
 
@@ -369,24 +352,6 @@ spree api post /webhook_endpoints/whe_xxx/send_test
 
 `send_test` delivers a synthetic `webhook.test` event so you can verify the endpoint is reachable and your signature-verification code works, without having to trigger a real order.
 
-### In Tests
-
-```ruby
-RSpec.describe 'Webhook delivery' do
-  let(:store) { create(:store) }
-  let(:endpoint) { create(:webhook_endpoint, store: store, subscriptions: ['order.completed']) }
-  let(:order) { create(:completed_order_with_totals, store: store) }
-
-  it 'delivers webhook when order completes' do
-    stub_request(:post, endpoint.url).to_return(status: 200)
-
-    expect {
-      order.publish_event('order.completed')
-    }.to have_enqueued_job(Spree::WebhookDeliveryJob)
-  end
-end
-```
-
 ## Best Practices
 
 <CardGroup cols={2}>
@@ -411,10 +376,10 @@ end
 
 ### Webhooks Not Delivering
 
-1. Check that webhooks are enabled: `Spree::Api::Config.webhooks_enabled`
-2. Verify the endpoint is active: `endpoint.active?`
-3. Confirm the endpoint subscribes to the event: `endpoint.subscribed_to?('order.completed')`
-4. Check the event has a `store_id` matching the endpoint's store
+1. Check that webhooks are enabled installation-wide
+2. Verify the endpoint is marked active
+3. Confirm the endpoint actually subscribes to the event you expect
+4. Check the event belongs to the same store as the endpoint
 
 ### Signature Verification Failing
 

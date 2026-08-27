@@ -1,155 +1,133 @@
 ---
-title: Metafields
-description: Add custom structured data to products, orders, and other resources with type-safe metafields
+title: Custom Fields
+description: Add your own structured, typed data to products, orders and other records — searchable, filterable, and editable in the dashboard.
 ---
-
-import { Since } from '/snippets/since.mdx';
-
-<Since version="5.2" />
 
 ## Overview
 
-Metafields provide a flexible, type-safe system for adding custom structured attributes to Spree models. Unlike [metadata](/developer/customization/metadata) which is simple JSON storage, metafields are schema-defined with strong typing, validation, and visibility controls.
+Sooner or later you need to store something Spree doesn't have a field for. A fabric composition. A care instruction. A gift message. An ID from the system you sync with.
 
-Use metafields for:
+Custom fields are how you do that without changing the database. You declare a field once — its name, its type, who can see it — and from then on it can be set on any record of that kind, edited in the dashboard, returned by the API, and searched or filtered like any built-in field.
 
-- Product specifications (manufacturer, material, dimensions)
-- Custom business logic fields
-- Integration data from external systems
-- Order-specific custom attributes
+<Note>
+Custom fields were called **metafields** before Spree 6.0. The API and SDK have always called them custom fields; now the rest of Spree does too.
+</Note>
 
-## Architecture
+## Definitions and values
+
+There are two halves, and it helps to keep them straight:
 
 ```mermaid
 erDiagram
-    MetafieldDefinition ||--o{ Metafield : "defines schema for"
-    Product ||--o{ Metafield : "has many"
-    Variant ||--o{ Metafield : "has many"
-    Order ||--o{ Metafield : "has many"
+    CustomFieldDefinition ||--o{ CustomField : "gives shape to"
+    Product ||--o{ CustomField : "has values"
+    Order ||--o{ CustomField : "has values"
+    Customer ||--o{ CustomField : "has values"
 
-    MetafieldDefinition {
+    CustomFieldDefinition {
         string namespace
         string key
-        string name
-        string metafield_type
+        string label
+        string field_type
         string resource_type
-        string display_on
+        boolean storefront_visible
         boolean searchable
         boolean sortable
     }
 
-    Metafield {
-        string type
-        text value
-        string resource_type
+    CustomField {
+        string key
+        string label
+        string field_type
+        any value
     }
 ```
 
-```mermaid
-flowchart LR
-    subgraph Definition
-        A[MetafieldDefinition] --> B["namespace: properties"]
-        A --> C["key: manufacturer"]
-        A --> D["type: ShortText"]
-        A --> E["resource_type: Product"]
-        A --> F["display_on: both"]
-    end
+- A **definition** is the declaration: "products have a Material, it is short text, shoppers may see it." You create it once.
+- A **custom field** is one record's answer: this product's material is `100% Cotton`.
 
-    subgraph Instance
-        G[Metafield] --> H["value: Wilson"]
-        G --> I["resource: Product #1"]
-    end
+Because the definition carries the type and the label, the dashboard can build an editing form for it automatically, and your storefront gets a value it can trust the shape of.
 
-    A -.->|"defines schema"| G
+## Field types
+
+| Type | For | Example |
+|---|---|---|
+| `short_text` | A word or a line | `Wilson`, `100% Cotton` |
+| `long_text` | A paragraph | Care instructions |
+| `rich_text` | Formatted HTML | A spec sheet with lists and bold |
+| `number` | A quantity or measure | `3.5`, `120` |
+| `boolean` | A yes or no | Requires a signature |
+| `json` | Structured data | A sizing chart |
+
+## Who can see it
+
+`storefront_visible` decides whether a field ever leaves the back office:
+
+| `storefront_visible` | Store API | Admin API | Use it for |
+|---|:---:|:---:|---|
+| `true` | Yes | Yes | Anything a shopper should see — materials, specs |
+| `false` | No | Yes | Internal notes, supplier codes, sync IDs |
+
+<Warning>
+`storefront_visible: false` genuinely withholds the field from the Store API — it is not hidden in the response, it is absent. Treat it as the boundary between what a customer may read and what only staff may.
+</Warning>
+
+## Declaring a field
+
+<CodeGroup>
+
+```typescript Admin SDK
+const definition = await adminClient.customFieldDefinitions.create({
+  resource_type: 'Spree::Product',
+  namespace: 'properties',
+  key: 'material',
+  label: 'Material',
+  field_type: 'short_text',
+  storefront_visible: true,
+  searchable: true,
+})
 ```
 
-- **MetafieldDefinition** — the blueprint that defines the data type, target resource, and visibility
-- **Metafield** — stores the actual value for a specific resource instance
-
-## Data Types
-
-| Type | Description | Example Values |
-|------|-------------|----------------|
-| Short Text | Brief text fields | SKU codes, brand names, tags |
-| Long Text | Longer text content | Care instructions, notes |
-| Rich Text | Formatted HTML content | Product descriptions with formatting |
-| Number | Numeric values | Weight, quantity, ratings |
-| Boolean | True/false flags | Is featured, requires signature |
-| JSON | Structured data | Configuration, complex objects |
-
-## Visibility Control
-
-Metafields support two visibility levels via the `display_on` attribute:
-
-| Visibility | Store API | Admin API | Use Case |
-|------------|:---------:|:---------:|----------|
-| `both` | Yes | Yes | Public product specifications |
-| `back_end` | No | Yes | Internal notes, integration IDs |
-
-## Search, sort & filter
-
-Product metafield definitions can opt into SearchProvider participation:
-
-| Flag | Effect | Allowed field types |
-|------|--------|---------------------|
-| `searchable` | Values are included in product text search | `short_text`, `long_text`, `number` |
-| `sortable` | Listings can sort with `sort=cf_{namespace}_{key}` (prefix `-` for descending), e.g. `cf_custom_label` | `short_text`, `number` |
-
-Both default to `false`. Set them on the definition (Admin UI, Admin API, or seeds). For an existing catalog with Meilisearch, run `rake spree:search:reindex` after toggling flags so index settings and product documents pick up new `cf_*` fields.
-
-### Filtering
-
-Any definition with either flag set also becomes filterable on product listings, using its `cf_*` key as a Ransack predicate. The Store and Admin APIs accept the same keys and the same `sort` values:
-
-```
-GET /api/v3/store/products?q[cf_custom_material_i_cont]=wool
-GET /api/v3/admin/products?q[cf_custom_weight_gteq]=3.5
-GET /api/v3/store/products?sort=-cf_custom_weight
+```bash CLI
+spree api post /custom_field_definitions -d '{
+  "resource_type": "Spree::Product",
+  "namespace": "properties",
+  "key": "material",
+  "label": "Material",
+  "field_type": "short_text",
+  "storefront_visible": true,
+  "searchable": true
+}'
 ```
 
-| Field type | Predicates |
-|------------|------------|
-| `short_text`, `long_text` | `i_cont`, `cont`, `eq`, `not_eq`, `start`, `end`, `present`, `blank` |
-| `number` | `eq`, `gt`, `gteq`, `lt`, `lteq`, `present`, `blank` |
+</CodeGroup>
 
-Use `i_cont` for case-insensitive matching — plain `cont` is case-sensitive on PostgreSQL.
+`namespace` keeps groups of fields apart, so an integration's `product_id` never collides with yours. Together they form the key you'll see in responses: `properties.material`. Both are normalized to snake_case.
 
-Predicates that don't match the definition's field type are ignored rather than rejected, as are keys matching no definition. Meilisearch supports the equality, range, and `present`/`blank` predicates; substring predicates (`i_cont`, `cont`, `start`, `end`) apply only to the database provider.
+Definitions can also be managed in the dashboard under **Settings → Custom Fields**, which is where merchants usually add them.
 
-CSV exports honor the same predicates, so exporting a filtered product list matches what the admin sees.
+## Setting and reading values
 
-In the admin dashboard, these fields appear in the products table's column selector, Sort dropdown, and filter panel — hidden by default, so admins opt in per column.
+<CodeGroup>
 
-## Supported Resources
+```typescript Admin SDK
+// Set a value on a product
+await adminClient.products.customFields.create('prod_xxx', {
+  custom_field_definition_id: definition.id,
+  value: '100% Cotton',
+})
+```
 
-Metafields can be attached to most Spree resources including Products, Variants, Orders, Line Items, Taxons, Payments, Shipments, Gift Cards, Store Credits, and more.
+```bash CLI
+spree api post /products/prod_xxx/custom_fields -d '{
+  "custom_field_definition_id": "cfdef_xxx",
+  "value": "100% Cotton"
+}'
+```
 
-<Info>
-Custom resources can also support metafields. See the [Customization Quickstart](/developer/customization/quickstart) for details.
-</Info>
+</CodeGroup>
 
-## Namespaces
-
-Namespaces organize metafields into logical groups and prevent key conflicts:
-
-| Namespace | Example Keys | Purpose |
-|-----------|-------------|---------|
-| `properties` | `manufacturer`, `material`, `fit` | Product specifications |
-| `shopify` | `product_id`, `variant_id` | Integration data |
-| `flags` | `featured`, `requires_approval` | Feature flags |
-| `custom` | `gift_message`, `delivery_notes` | Business-specific fields |
-
-<Info>
-Namespace and key are automatically normalized to snake_case.
-</Info>
-
-## Store API
-
-Metafields with `display_on` set to `both` are included in Store API responses when you [request the `custom_fields` expand](/api-reference/store-api/relations):
-
-<Info>
-  Metafields in API are called Custom Fields as we plan to rename Metafields to Custom Fields completely in Spree 6.0.
-</Info>
+Reading them from a storefront is an expand on whatever you already fetch:
 
 <CodeGroup>
 
@@ -158,45 +136,30 @@ const product = await client.products.get('spree-tote', {
   expand: ['custom_fields'],
 })
 
-product.custom_fields?.forEach(field => {
-  console.log(field.key)   // "properties.manufacturer"
-  console.log(field.label) // "Manufacturer"
-  console.log(field.value)      // "Wilson"
-  console.log(field.field_type) // "short_text"
-})
-```
-
-```typescript Admin SDK
-const product = await adminClient.products.get('prod_86Rf07xd4z', {
-  expand: ['custom_fields'],
+product.custom_fields?.forEach((field) => {
+  field.key        // "properties.material"
+  field.label      // "Material"
+  field.value      // "100% Cotton"
+  field.field_type // "short_text"
 })
 ```
 
 ```bash cURL
 curl 'https://api.mystore.com/api/v3/store/products/spree-tote?expand=custom_fields' \
-  -H 'X-Spree-Api-Key: pk_xxx'
+  -H 'X-Spree-API-Key: pk_xxx'
 ```
 
 </CodeGroup>
 
-**Response:**
-
-```json
+```json Response
 {
   "id": "prod_86Rf07xd4z",
-  "name": "Spree T-Shirt",
+  "name": "Spree Tote",
   "custom_fields": [
     {
       "id": "cf_k5nR8xLq",
-      "label": "Manufacturer",
-      "key": "properties.manufacturer",
-      "field_type": "short_text",
-      "value": "Wilson"
-    },
-    {
-      "id": "cf_m3Rp9wXz",
-      "label": "Material",
       "key": "properties.material",
+      "label": "Material",
       "field_type": "short_text",
       "value": "100% Cotton"
     }
@@ -204,104 +167,59 @@ curl 'https://api.mystore.com/api/v3/store/products/spree-tote?expand=custom_fie
 }
 ```
 
-<Note>
-The `display_on` attribute is intentionally excluded from Store API responses for security.
-</Note>
+Each value arrives with its own label and type, so you can render a spec table straight from the array without hardcoding which fields exist.
 
-## Admin Management
+## Searching, sorting and filtering
 
-### Managing Definitions
+A custom field can take part in product listings — but only if you ask, because indexing everything by default would be wasteful.
 
-Navigate to **Settings → Metafield Definitions** in the Admin Panel to create and manage metafield definitions. Select the resource type, enter namespace and key, choose the data type, and set visibility.
+| Flag | What it enables | Works with |
+|---|---|---|
+| `searchable` | The value is matched by product text search | `short_text`, `long_text`, `number` |
+| `sortable` | Listings can be ordered by it | `short_text`, `number` |
 
-Definitions are also [managed via the Admin API](/api-reference/admin-api/endpoints). `storefront_visible: true` is equivalent to `display_on: both` — it exposes the field to the Store API:
+Setting either flag also makes the field **filterable**. Filter and sort with the field's `cf_` key, on both APIs:
 
-<CodeGroup>
-
-```typescript Admin SDK
-import { createAdminClient } from '@spree/admin-sdk'
-
-const client = createAdminClient({
-  baseUrl: 'https://store.example.com',
-  secretKey: 'sk_xxx',
-})
-
-const definition = await client.customFieldDefinitions.create({
-  resource_type: 'Spree::Product',
-  namespace: 'properties',
-  key: 'manufacturer',
-  label: 'Manufacturer',
-  field_type: 'short_text',
-  storefront_visible: true,
-})
-
-await client.customFieldDefinitions.update(definition.id, { storefront_visible: false })
-await client.customFieldDefinitions.delete(definition.id)
+```
+GET /api/v3/store/products?q[cf_properties_material_i_cont]=wool
+GET /api/v3/store/products?sort=-cf_properties_weight
+GET /api/v3/admin/products?q[cf_properties_weight_gteq]=3.5
 ```
 
-```bash CLI
-spree api post /custom_field_definitions -d '{
-  "resource_type": "Spree::Product",
-  "namespace": "properties",
-  "key": "manufacturer",
-  "label": "Manufacturer",
-  "field_type": "short_text",
-  "storefront_visible": true
-}'
-```
+| Field type | Comparisons available |
+|---|---|
+| `short_text`, `long_text` | `i_cont`, `cont`, `eq`, `not_eq`, `start`, `end`, `present`, `blank` |
+| `number` | `eq`, `gt`, `gteq`, `lt`, `lteq`, `present`, `blank` |
 
-</CodeGroup>
+Use `i_cont` for case-insensitive matching. A comparison that doesn't suit the field's type is ignored rather than rejected, so a stale filter in a saved view can't break a page.
 
-### Managing Values
+<Info>
+If you use Meilisearch, re-index after changing these flags so the new fields are picked up. Substring matching (`i_cont`, `cont`, `start`, `end`) is a database-provider feature; Meilisearch handles equality, ranges and presence. See [Search & Filtering](/developer/core-concepts/search-filtering).
+</Info>
 
-When editing a resource (e.g., a product), metafields appear in a dedicated section. The admin panel automatically builds forms for all defined metafields.
+In the dashboard, fields with these flags become available in the product table's column picker, sort menu and filter panel — off by default, so merchants opt in per column.
 
-To set a value programmatically, use the resource's nested `customFields` accessor (parent ID first):
+## What can carry custom fields
 
-<CodeGroup>
+Most things you'd want to annotate: products, variants, orders, line items, customers, categories, payments, fulfillments, gift cards and store credits, among others.
 
-```typescript Admin SDK
-await client.products.customFields.create('prod_xxx', {
-  custom_field_definition_id: 'cfdef_xxx',
-  value: 'Wilson',
-})
-```
+## Custom fields or metadata?
 
-```bash CLI
-spree api post /products/prod_xxx/custom_fields -d '{
-  "custom_field_definition_id": "cfdef_xxx",
-  "value": "Wilson"
-}'
-```
+Spree has two ways to store your own data, and they are not competing — they solve different problems.
 
-</CodeGroup>
+| | Custom fields | [Metadata](/developer/customization/metadata) |
+|---|---|---|
+| **For** | Data a merchant curates | Data your code keeps |
+| **Shape** | Declared and typed | Any JSON, no declaration |
+| **Dashboard** | Proper edit forms | Raw JSON |
+| **Visibility** | Configurable per field | Never read by the Store API |
+| **Searchable** | Yes, opt in | Not through the product search |
 
-## Metafields vs Metadata
+Put it simply: **custom fields are for people, metadata is for machines.** If a merchant should type it, define a custom field. If it is a sync token or an external ID that only your integration reads, use metadata.
 
-Spree has two permanent, complementary systems for custom data — **metadata for machines, metafields for humans**. They serve different purposes and are not interchangeable. Neither is going away.
+## Related
 
-| Feature | Metafields | [Metadata](/developer/customization/metadata) |
-|---------|-----------|----------|
-| **Purpose** | Merchant-defined structured attributes | Developer escape hatch — integration IDs, sync state |
-| **Schema** | Defined via MetafieldDefinitions | Schemaless JSON — no definition required |
-| **Validation** | Type-specific (text, number, boolean, etc.) | None — accepts any JSON-serializable data |
-| **Visibility** | Configurable (admin-only or public) | Write-only in Store API, readable in Admin API |
-| **Admin UI** | Dedicated management forms | JSON preview |
-| **Data Types** | 6 specific types | Any JSON value |
-| **Organization** | Namespaced (`namespace.key`) | Flat key-value structure |
-| **Queryable** | Via SQL joins, Ransack scopes, search providers | Via JSONB operators (PostgreSQL) |
-
-**Use Metafields** when you need type validation, visibility control, admin UI forms, or organized namespacing.
-
-**Use [Metadata](/developer/customization/metadata)** for external system IDs, tracking attribution, syncing with integrations, or simple write-and-forget data that only backend systems need to read.
-
-<Warning>
-Product Properties are deprecated and will be removed in Spree 6.0. For new projects, always use Metafields. For existing projects, plan to migrate using the [migration guide](/v5/developer/upgrades/5.1-to-5.2#migrate-to-metafields-or-keep-using-product-properties).
-</Warning>
-
-## Related Documentation
-
-- [Metadata](/developer/customization/metadata) — Simple key-value metadata
-- [Products](/developer/core-concepts/products) — Product catalog
-- [Events](/developer/core-concepts/events) — Subscribe to metafield events
-- [Admin SDK](/developer/sdk/admin/resources) — Manage definitions and values from TypeScript
+- [Metadata](/developer/customization/metadata) — the machine-readable alternative
+- [Products](/developer/core-concepts/products) — the most common place for custom fields
+- [Search & Filtering](/developer/core-concepts/search-filtering) — how filters and search work
+- [Admin SDK](/developer/sdk/admin/resources) — managing definitions and values in TypeScript

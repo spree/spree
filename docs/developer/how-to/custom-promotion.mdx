@@ -8,7 +8,7 @@ description: Step-by-step guide to creating custom promotion rules, discount act
 Spree's promotion system has three extension points:
 
 - **Rules** — conditions that decide when a promotion applies
-- **Actions** — what an applied promotion does, usually writing [Discount](/developer/core-concepts/taxes-discounts-fees#discounts) rows
+- **Actions** — what an applied promotion does, usually writing [Discount](/developer/core-concepts/discounts) rows
 - **Adjusters** — for discounts and fees that aren't promotions at all (loyalty pricing, gift wrap fees, payment surcharges)
 
 Spree ships with a comprehensive set of [built-in rules and actions](/developer/core-concepts/promotions#rules). This guide shows how to build your own of each kind.
@@ -242,7 +242,7 @@ Like rules, registered actions surface automatically in the dashboard's promotio
 
 ## Custom Adjusters
 
-Not every charge or reduction is a promotion. A gift wrap fee, a payment surcharge, or loyalty pricing has no rules, no coupon codes, and no competition — it just needs to be on the order whenever it applies. That's an **adjuster**: a class invoked on every recalculation that owns a family of [Fee or Discount](/developer/core-concepts/taxes-discounts-fees) rows.
+Not every charge or reduction is a promotion. A gift wrap fee, a payment surcharge, or loyalty pricing has no rules, no coupon codes, and no competition — it just needs to be on the order whenever it applies. That's an **adjuster**: a class invoked on every recalculation that owns a family of [Fee](/developer/core-concepts/fees) or [Discount](/developer/core-concepts/discounts) rows.
 
 ```ruby app/models/my_app/adjusters/gift_wrap.rb
 module MyApp
@@ -333,6 +333,6 @@ end
 ## Related Documentation
 
 - [Promotions](/developer/core-concepts/promotions) — promotion architecture and built-in rules and actions
-- [Taxes, Discounts & Fees](/developer/core-concepts/taxes-discounts-fees) — the typed rows actions and adjusters write
+- [Discounts](/developer/core-concepts/discounts) and [Fees](/developer/core-concepts/fees) — the rows actions and adjusters write
 - [Calculators](/developer/core-concepts/calculators) — available calculator types for promotion actions
 - [Events](/developer/core-concepts/events) — subscribe to promotion events

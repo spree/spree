@@ -1,98 +1,79 @@
 ---
 title: Translations
-description: Translate Spree products, taxons, and other store content into multiple languages using Mobility-backed translations and locale-aware APIs.
+description: Selling in more than one language — translating product content, and translating the interface around it.
 ---
 
 ## Overview
 
-Spree supports two types of translations:
+Two different things need translating, and they're handled separately because they belong to different people.
 
-1. **Resource Translations** — translatable content fields on models like Products, Taxons, and Stores (e.g., product name, description, slug)
-2. **UI Translations** — interface strings used in the admin panel (e.g., button labels, flash messages)
+**Your content** — product names, descriptions, category names — is written by whoever runs the store. Spree stores a version of each field per language.
 
-For configuring which locales and currencies are available in your store, see [Markets](/developer/core-concepts/markets). Markets control locale and currency assignment per geographic region.
+**The interface** — button labels, error messages, email wording — is written by Spree, and is already translated into dozens of languages by the community.
 
-## Resource Translations
+<Info>
+Which languages a region gets is decided by its [Market](/developer/core-concepts/markets). A market sets the default locale alongside the currency, so a visitor from France lands on French prices and French copy without choosing anything.
+</Info>
 
-Resources with user-facing content fields have built-in support for translations. Each translatable resource has a corresponding translations table in the database — for example, product translations are stored in `spree_product_translations`.
+## Translating content
+
+Every translatable record keeps one row per language, so a product genuinely has a French name rather than a French name pasted over the English one.
 
 ```mermaid
 erDiagram
-    Product ||--o{ ProductTranslation : "has many"
-    Taxon ||--o{ TaxonTranslation : "has many"
-    Store ||--o{ StoreTranslation : "has many"
+    Product ||--o{ ProductTranslation : "one per locale"
 
     Product {
-        string id PK
         string status
+        string sku
     }
-
     ProductTranslation {
-        string id PK
-        string product_id FK
         string locale
         string name
-        text description
+        string description
         string slug
         string meta_title
-        string meta_description
-    }
-
-    TaxonTranslation {
-        string id PK
-        string taxon_id FK
-        string locale
-        string name
-        text description
-        string permalink
     }
 ```
 
-### Translatable Fields
+### What can be translated
 
-| Resource         | Translatable Fields                                                                                                                                                                 |
-| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Product          | `name`, `description`, `slug`, `meta_description`, `meta_title`                                                                                                             |
-| Taxon            | `name`, `description`, `permalink`                                                                                                                                                        |
-| Taxonomy         | `name`                                                                                                                                                                                |
-| Option Type      | `presentation`                                                                                                                                                                  |
-| Option Value     | `presentation`                                                                                                                                                                  |
-| Property         | `presentation`                                                                                                                                                   |
-| Product Property | `value`                                                                                                                                                                 |
-| Store            | `name`, `meta_description`, `meta_keywords`, `seo_title`, `customer_support_email`, `address`, `contact_phone` |
+| Resource | Fields |
+|---|---|
+| Product | `name`, `description`, `slug`, `meta_title`, `meta_description` |
+| Category | `name`, `description`, `permalink` |
+| Collection | `name`, `description`, `permalink` |
+| Product type | `name` |
+| Option type | `presentation` |
+| Option value | `presentation` |
+| Store | `name`, `seo_title`, `meta_description`, `meta_keywords`, and support contact details |
+| Policy | `name`, `body` |
+| Seller | `name`, `about` |
 
-### Store API
+Note that **slugs are translated too**. A French page can live at `/produits/sac-spree` rather than at the English slug with French words on it — which is what search engines actually reward. See [Slugs](/developer/core-concepts/slugs#internationalization).
 
-To retrieve translated content, pass the locale via the [`X-Spree-Locale` header](/api-reference/store-api/localization) or the SDK `locale` option:
+## Reading translated content
+
+Ask for a locale and you get that language back. Nothing else about the request changes:
 
 <CodeGroup>
 
 ```typescript Store SDK
-// Fetch product in French
-const product = await client.products.get('spree-tote', {}, {
-  locale: 'fr',
-})
+const product = await client.products.get('spree-tote', {}, { locale: 'fr' })
 
 product.name        // "Sac Spree"
-product.description // "Un sac fourre-tout élégant..."
+product.description // "Un sac fourre-tout élégant…"
 product.slug        // "sac-spree"
 
-// List categories in German
-const { data: categories } = await client.categories.list({}, {
-  locale: 'de',
-})
+const { data: categories } = await client.categories.list({}, { locale: 'de' })
 ```
 
 ```typescript Admin SDK
-// Pass the locale as a request option to get translated content.
-// The Admin API resolves by prefixed ID only — slugs are not accepted.
+// The Admin API resolves by ID only — slugs are not accepted here
 const product = await adminClient.products.get('prod_86Rf07xd4z', {}, { locale: 'fr' })
-
-const { data: categories } = await adminClient.categories.list({}, { locale: 'de' })
 ```
 
 ```bash cURL
-# Fetch product in French
 curl 'https://api.mystore.com/api/v3/store/products/spree-tote' \
   -H 'X-Spree-API-Key: pk_xxx' \
   -H 'X-Spree-Locale: fr'
@@ -100,41 +81,57 @@ curl 'https://api.mystore.com/api/v3/store/products/spree-tote' \
 
 </CodeGroup>
 
-Slugs are also localized — a product can have different slugs per locale. See [Slugs](/developer/core-concepts/slugs#internationalization) for details.
+If a field has no translation for the requested locale, you get the default-language value rather than an empty string — a half-translated catalogue still renders as a usable page.
 
-### Managing Translations
+<Note>
+Responses vary by locale, so if you cache them, include the locale in the cache key. Spree sets `Vary` headers for you, which is enough for a CDN but not for a hand-rolled in-memory cache.
+</Note>
 
-Translations are managed in the Admin Panel. When editing a product, taxon, or other translatable resource, switch the locale selector to enter content in each language.
+## Writing translations
 
-Translations can also be [managed via the Admin API](/developer/sdk/admin/quickstart).
+Merchants translate in the dashboard, switching locale on the record they're editing. For bulk work — handing a catalogue to a translation agency — export to CSV, translate, and import it back.
 
-## UI Translations
+Translations can also be written through the Admin API, which is what you'd use to sync from an external translation service:
 
-Spree stores UI translation strings in a separate project: [Spree I18n](https://github.com/spree-contrib/spree_i18n). This is a community-maintained project with locale files for 43+ languages.
+```typescript Admin SDK
+await adminClient.products.update('prod_xxx', {
+  translations: {
+    fr: { name: 'Sac Spree', description: 'Un sac fourre-tout élégant…' },
+    de: { name: 'Spree Tasche' },
+  },
+})
 
-To install UI translations:
+// Which resources and fields accept translations
+const { data: resources } = await adminClient.translatableResources.list()
+```
+
+Asking the API which resources are translatable means a translation tool doesn't need a hardcoded list that goes stale.
+
+## Translating the interface
+
+Spree's own strings — everything in the dashboard and in transactional emails — come from a community-maintained project covering 40+ languages.
 
 <CodeGroup>
 
-```bash Spree CLI (Docker)
+```bash Spree CLI
 spree bundle add spree_i18n
 ```
 
-```bash Without Spree CLI
+```bash Bundler
 bundle add spree_i18n
 ```
 
 </CodeGroup>
 
-Once installed, all translation files are available automatically — no need to copy any files.
+That's the whole installation. Locales are picked up automatically; nothing needs copying into your app.
 
 <Info>
-The full list of supported locales is available in the [Spree I18n GitHub repository](https://github.com/spree-contrib/spree_i18n/tree/main/config/locales).
+See the [supported locales](https://github.com/spree-contrib/spree_i18n/tree/main/config/locales) in the Spree I18n repository. Contributions are welcome if yours is incomplete.
 </Info>
 
-## Related Documentation
+## Related
 
-- [Markets](/developer/core-concepts/markets) — Locale and currency configuration per geographic region
-- [Localization](/api-reference/store-api/localization) — Locale, currency, and country headers in API requests
-- [Slugs](/developer/core-concepts/slugs) — Localized slugs and URL identifiers
-- [Products](/developer/core-concepts/products) — Product translations
+- [Markets](/developer/core-concepts/markets) — which locale and currency a region gets
+- [Slugs](/developer/core-concepts/slugs) — localized URLs
+- [Custom Fields](/developer/core-concepts/metafields) — translating your own fields
+- [Localization](/api-reference/store-api/localization) — the locale, currency and country headers

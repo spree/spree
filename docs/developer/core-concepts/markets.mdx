@@ -3,10 +3,6 @@ title: Markets
 description: Configure Spree Markets to bundle geography, currency, and locale into distinct selling regions and run multi-region commerce from a single store.
 ---
 
-import { Since } from '/snippets/since.mdx';
-
-<Since version="5.4" />
-
 ## Overview
 
 Markets let you segment a single [Store](/developer/core-concepts/stores) into distinct geographic regions, each with its own currency, locale, and set of countries. For example, an international store might define:
@@ -51,14 +47,14 @@ erDiagram
 | `supported_locales` | All locales available in this market | `["en", "es"]` |
 | `tax_inclusive` | Whether prices include tax (affects display and checkout calculation) | `false` |
 | `default` | Whether this is the fallback market when no country match is found | `true` |
-| `countries` | List of countries in this market | `[{ iso: "US" }, { iso: "CA" }]` |
+| `country_codes` | Countries in this market, as ISO codes | `["US", "CA"]` |
 
 ## How Markets Work
 
 When a customer visits your store, their country determines which market applies. The market then sets the currency, locale, and tax behavior for that session.
 
 ```
-Customer's Country → Market → Currency + Locale + Tax Zone
+Customer's Country → Market → Currency + Locale + Tax treatment
 ```
 
 The resolution chain:
@@ -66,7 +62,7 @@ The resolution chain:
 1. Customer's country is detected (from URL, geolocation, `X-Spree-Country` header, or manual selection)
 2. Spree finds the market containing that country
 3. The market's currency and locale become the defaults for the session
-4. The market's tax zone determines whether prices are shown with or without tax
+4. The market's tax setting determines whether prices are shown with or without tax
 
 If no market matches the customer's country, the store's **default market** is used.
 
@@ -226,9 +222,9 @@ The `tax_inclusive` flag on a market controls how prices are displayed and calcu
 - **`tax_inclusive: true`** (common in Europe) — the price shown to the customer already includes tax
 - **`tax_inclusive: false`** (common in the US) — tax is added at checkout on top of the displayed price
 
-Each market also resolves a **tax zone** from its default country. This zone determines which tax rates apply when browsing products — before the customer enters a shipping address. Once the customer provides an address at checkout, the actual shipping address takes over for tax calculation.
+This matters because prices are shown long before anyone knows where the shopper lives. The market's own country supplies the assumed rate for browsing; once a shipping address is entered at checkout, that address takes over and the real rate applies.
 
-See [Taxes](/developer/core-concepts/taxes) for details on tax zones and rates.
+A market also chooses **which tax provider works out its numbers** — Spree's own rate tables in a simple market, an external tax service in a complicated one. See [Taxes](/developer/core-concepts/taxes).
 
 ## Pricing Integration
 
@@ -259,7 +255,7 @@ const northAmerica = await client.markets.create({
   name: 'North America',
   currency: 'USD',
   default_locale: 'en',
-  country_isos: ['US', 'CA'],
+  country_codes: ['US', 'CA'],
   default: true,
 })
 
@@ -270,7 +266,7 @@ const europe = await client.markets.create({
   default_locale: 'de',
   supported_locales: ['de', 'en', 'fr'],
   tax_inclusive: true,
-  country_isos: ['DE', 'FR', 'AT', 'NL'],
+  country_codes: ['DE', 'FR', 'AT', 'NL'],
 })
 ```
 
@@ -279,7 +275,7 @@ spree api post /markets -d '{
   "name": "North America",
   "currency": "USD",
   "default_locale": "en",
-  "country_isos": ["US", "CA"],
+  "country_codes": ["US", "CA"],
   "default": true
 }'
 ```
@@ -306,6 +302,6 @@ spree api delete /markets/market_xxx
 
 - [Markets (Store SDK)](/developer/sdk/store/markets) — Listing, resolving, and reading markets from the Store SDK
 - [Pricing](/developer/core-concepts/pricing) — Price Lists, Price Rules, and the Pricing Context
-- [Addresses](/developer/core-concepts/addresses) — Countries, States, and Zones
+- [Addresses](/developer/core-concepts/addresses) — Countries, states, and address forms
 - [Localization](/api-reference/store-api/localization) — Locale, currency, and country headers in API requests
 - [Translations](/developer/core-concepts/translations) — Resource and UI translations

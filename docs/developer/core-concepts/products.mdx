@@ -3,8 +3,6 @@ title: Products
 description: How Spree models products, variants, option types, images, prices, and categories — the building blocks of every catalog and storefront.
 ---
 
-import { Since } from '/snippets/since.mdx';
-
 ## Overview
 
 A product represents something you sell. Each product has one or more **variants** — the actual purchasable items with their own SKU, price, and inventory. For example, a "T-Shirt" product might have variants for each size and color combination.
@@ -18,15 +16,16 @@ Product names, descriptions, slugs, and SEO fields are [translatable](/developer
 ```mermaid
 erDiagram
     Product ||--o{ Variant : "has many"
-    Product }o--o{ OptionType : "has many"
-    Product ||--o{ Classification : "has many"
-    Variant ||--o{ Price : "has many"
-    Variant ||--o{ StockItem : "has many"
-    Variant ||--o{ Image : "has many"
-    Variant }o--o{ OptionValue : "has many"
+    Product }o--o{ OptionType : "varies by"
+    Product }o--o{ Category : "filed under"
+    Product }o--o{ Collection : "grouped into"
+    Product ||--o{ Media : "images and video"
+    Product }o--|| DeliveryProfile : "ships by"
+    Variant ||--o{ Price : "one per currency"
+    Variant ||--o{ StockLevel : "stocked per location"
+    Variant }o--o{ OptionValue : "identified by"
     OptionType ||--o{ OptionValue : "has many"
-    Taxon ||--o{ Classification : "has many"
-    Taxonomy ||--o{ Taxon : "has many"
+    Category ||--o{ Category : "nests under"
 
     Product {
         string name
@@ -38,7 +37,7 @@ erDiagram
 
     Variant {
         string sku
-        boolean is_master
+        string barcode
         decimal weight
     }
 
@@ -233,7 +232,7 @@ spree api delete /products/prod_xxx
 Operating on many products at once? The Admin API has bulk actions — `bulkStatusUpdate`, `bulkAddToCategories`, `bulkAddTags`, `bulkDestroy`, and more. See the [Admin API endpoint index](/api-reference/admin-api/endpoints).
 </Tip>
 
-## Seller submissions <Since version="6.0" />
+## Seller submissions
 
 On a marketplace, a seller lists a product but does not publish one. They submit it, and the marketplace decides. This adds two statuses to the three above — both hidden from the storefront, since only `active` is visible.
 
@@ -644,14 +643,19 @@ See the [Pricing](/developer/core-concepts/pricing) guide for details on Price L
 
 ## Categories
 
-Categories provide a flexible way to organize products into hierarchical trees. Internally, Spree uses Taxonomies (category trees) and Taxons (nodes within those trees), but the Store API exposes them simply as **Categories**.
+There are two ways to group products, and they answer different questions.
 
-For example:
-- **Categories** → Clothing → T-Shirts, Dresses
-- **Brands** → Nike, Adidas, Puma
-- **Collections** → Summer 2025, Best Sellers
+**Categories** are a hierarchy — the navigation tree a shopper browses. Clothing contains T-Shirts, which contains Long Sleeve. A product can sit in several categories, and each one has a permalink built from its path.
 
-Products can belong to multiple categories.
+**Collections** are flat groupings — "Summer 2025", "Best Sellers", "Under $50". A collection can be curated by hand, or defined by rules so products join and leave it on their own as their price, tags or stock change.
+
+| | Categories | Collections |
+|---|---|---|
+| Shape | Nested tree | Flat list |
+| Membership | You assign it | Assigned, or matched by rules |
+| Typical use | Site navigation | Merchandising and campaigns |
+
+A brand is usually best modelled as one or the other rather than as a separate concept — a category if you want it in the navigation tree, a collection if it's a landing page.
 
 <CodeGroup>
 
@@ -692,7 +696,19 @@ curl 'https://api.mystore.com/api/v3/store/categories/clothing/shirts/products?l
 Category `name` and `description` fields are translatable.
 </Info>
 
-## Publications and Sales Channels <Since version="5.5" />
+Collections work the same way from a storefront's point of view:
+
+```typescript Store SDK
+const { data: collections } = await client.collections.list()
+
+const { data: products } = await client.collections.products.list('summer-2025', {
+  limit: 12,
+})
+```
+
+A rule-based collection is defined once and maintains itself — set it to match everything tagged `sale` and under $50, and products appear and disappear as those facts change. Ordering can be manual or by a rule such as newest first.
+
+## Publications and Sales Channels
 
 A product is visible on a [Channel](/developer/core-concepts/channels) only when a `ProductPublication` record joins the two. Publications carry an optional time window so a product can be scheduled to go live and come down without code or manual toggles.
 

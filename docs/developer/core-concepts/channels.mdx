@@ -3,10 +3,6 @@ title: Channels
 description: Per-store distribution surfaces — online storefront, POS, marketplace, wholesale — each with its own product catalog and order attribution.
 ---
 
-import { Since } from '/snippets/since.mdx';
-
-<Since version="5.5" />
-
 ## Overview
 
 Channels segment a single [Store](/developer/core-concepts/stores) into distinct selling surfaces. A channel represents *where* an order originates from — the online storefront, an in-person point-of-sale till, a marketplace integration (Amazon, eBay), a B2B wholesale portal, a mobile app — and *which* subset of the store's products is available there.
@@ -95,8 +91,6 @@ Every order is attributed to one channel. The channel is set from the `X-Spree-C
 This attribution drives reporting (best-selling by channel, revenue per channel) and per-channel order routing — see [Order Routing](/developer/core-concepts/fulfillments#order-routing).
 
 ### Storefront Access Gating
-
-<Since version="5.6" />
 
 A channel's `storefront_access` decides what an **anonymous** visitor — a request with no authenticated customer — may see. Logged-in customers are never gated. The posture is one of three values:
 

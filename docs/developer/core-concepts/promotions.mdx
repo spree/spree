@@ -5,7 +5,9 @@ description: Build percentage and fixed-amount discounts, free shipping, BOGO of
 
 ## Overview
 
-Promotions give money off an order — a percentage off, free shipping, or free items added to the cart. A promotion is a campaign definition: **rules** decide when it applies, **actions** decide what it does. When a promotion applies, its actions write [Discount](/developer/core-concepts/taxes-discounts-fees#discounts) rows on the order.
+A promotion is a campaign: a percentage off, free shipping, or free items in the cart. **Rules** decide when it applies, **actions** decide what it does.
+
+A promotion is a *rule that exists on its own*, set up in advance and lasting across many orders. What lands on any one order is a [Discount](/developer/core-concepts/discounts) — the record of money actually coming off. The promotion is the campaign; the discount is what a particular customer got.
 
 ```mermaid
 erDiagram
@@ -52,14 +54,13 @@ Promotions can be activated in two ways:
 - **Automatic promotions** — applied on their own when the rules are met (e.g. free shipping on orders over $50)
 - **Coupon code promotions** — applied when a customer enters a valid code during checkout
 
-### How discounts are recorded
+### When promotions compete
 
-Each applied promotion becomes one or more Discount rows on the order — on a specific line item or on a fulfillment, never a loose adjustment. Each row keeps a copy of the coupon code and the configured value ("10% off"), so the order still tells the whole story even if the promotion is deleted later.
+Several promotions can qualify for the same item at once. Spree applies **only the one that saves the customer the most**, and records just that one.
 
-Two things follow from this design:
+Losing candidates aren't stored or tracked — they're simply reconsidered on every cart change. So a promotion that loses today can win tomorrow, when the basket changes, without any bookkeeping to keep straight.
 
-- **Only winners are stored.** When several promotions compete for the same item, Spree picks the one that saves the customer the most and writes only that one. Losing candidates are recomputed on every cart change, so a promotion that loses today can win tomorrow without any bookkeeping.
-- **A discount on the whole order is shared out across the items.** If a customer later returns one item, Spree knows exactly how much of the discount belonged to it.
+What an applied promotion leaves behind on the order is a [Discount](/developer/core-concepts/discounts) — a permanent record that survives the promotion being edited or deleted.
 
 ## Promotion Attributes
 
@@ -112,7 +113,7 @@ You can also [build your own rules](/developer/how-to/custom-promotion) for busi
 
 Actions define what happens when a promotion applies.
 
-### CreateAdjustment
+### Order discount (`CreateAdjustment`)
 
 A discount on the whole order. The amount is distributed proportionally across the line items — there is no single order-level row, so per-item reporting and partial returns always know their share.
 
@@ -120,7 +121,7 @@ A discount on the whole order. The amount is distributed proportionally across t
 
 **Use case:** "10% off your order", "$20 off orders over $100".
 
-### CreateItemAdjustments
+### Item discount (`CreateItemAdjustments`)
 
 A discount on individual line items. Only items that match the promotion's rules receive it — if a Category rule says "Electronics", only electronics are discounted.
 
@@ -128,13 +129,13 @@ A discount on individual line items. Only items that match the promotion's rules
 
 **Use case:** "15% off shoes", "Buy 2+ shirts get 10% off each".
 
-### FreeShipping
+### Free shipping (`FreeShipping`)
 
 Writes a discount on each fulfillment covering its delivery cost. The row is kept even when the cost is zero — its presence is what marks the order as having free shipping.
 
 **Use case:** "Free shipping on orders over $75", "Free shipping with code FREESHIP".
 
-### CreateLineItems
+### Free items (`CreateLineItems`)
 
 Adds specified products to the cart when the promotion is eligible, checking stock first. Items are not removed automatically if eligibility is lost — customers remove them manually.
 
@@ -253,7 +254,7 @@ Automatic promotions need no customer action at all — they are evaluated on ev
 
 ## Related Documentation
 
-- [Taxes, Discounts & Fees](/developer/core-concepts/taxes-discounts-fees) — the Discount rows promotions write, and manual discounts
+- [Discounts](/developer/core-concepts/discounts) — the rows promotions write, and manual discounts
 - [Build Custom Promotion Rules & Actions](/developer/how-to/custom-promotion) — step-by-step guide to custom rules, actions and adjusters
 - [Calculators](/developer/core-concepts/calculators) — promotion calculators
 - [Carts](/developer/core-concepts/carts) — the cart lifecycle promotions act on

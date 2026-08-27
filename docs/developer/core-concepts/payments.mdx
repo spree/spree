@@ -1,5 +1,6 @@
 ---
 title: Payments
+description: Taking money — payment methods, payment sessions, saved cards, refunds, and how a payment finishes reliably even when a customer closes the tab.
 ---
 
 ## Overview
@@ -98,7 +99,7 @@ erDiagram
     CreditCard }o--|| Customer : "belongs to"
     StoreCredit }o--|| Customer : "belongs to"
     Refund }o--|| Payment : "belongs to"
-    Refund }o--|| Reimbursement : "belongs to"
+    Refund }o--o| Return : "may come from"
 ```
 
 **Key relationships:**
@@ -696,22 +697,20 @@ See [Events](/developer/core-concepts/events) for more details on subscribing to
 
 - [Payments (Store SDK)](/developer/sdk/store/payments) - SDK how-to for payment sessions, payments, and setup sessions
 - [Build a Custom Payment Method](/developer/how-to/custom-payment-method) - Step-by-step guide to creating your own payment gateway integration
-- [Orders](/developer/core-concepts/orders) - Order management and state machine
+- [Orders](/developer/core-concepts/orders) - Order lifecycle, payment and fulfillment status
 - [Checkout Customization](/developer/core-concepts/carts) - Customizing the checkout flow
 - [Events](/developer/core-concepts/events) - Subscribe to payment events
 
-## Key Services
+## Two paths to a completed order
 
-| Service | Description |
-|---------|-------------|
-| `Spree::Carts::Complete` | Completes the order — validates, processes payments (if not already done), advances state machine. Used by both the `POST /carts/:id/complete` endpoint and the webhook handler. |
-| `Spree::Payments::HandleWebhook` | Processes a normalized webhook event — creates Payment, marks session completed, calls `Carts::Complete`. |
-| `Spree::Payments::HandleWebhookJob` | Background job that wraps `HandleWebhook` — enqueued by the webhook controller for async processing. |
+A payment can finish in two places, and both have to end at the same result.
 
-Both `Carts::Complete` and `HandleWebhook` are registered in `Spree::Dependencies` and can be replaced with custom implementations:
+The customer's browser confirms the payment and your storefront completes the cart. Or the provider's own webhook arrives first — sometimes seconds later, sometimes because the customer closed the tab mid-redirect.
 
-```ruby
-# config/initializers/spree.rb
-Spree::Dependencies.carts_complete_service = 'MyApp::CustomCartComplete'
-Spree::Dependencies.payments_handle_webhook_service = 'MyApp::CustomWebhookHandler'
-```
+Whichever arrives first completes the order; the other finds the work already done and does nothing. That is what makes a closed tab or a flaky connection recoverable rather than a lost sale with a real charge attached.
+
+<Warning>
+Never treat the browser returning from a redirect as proof of payment. The provider's webhook is the authoritative signal — a customer can close the tab, and a browser response can be forged.
+</Warning>
+
+Both paths can be replaced if your integration needs different behaviour — see [Dependencies](/developer/customization/dependencies).

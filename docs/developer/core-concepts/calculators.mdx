@@ -1,304 +1,118 @@
 ---
 title: Calculators
+description: The small pieces of arithmetic behind delivery charges and promotion discounts — what each one does and how to choose between them.
 ---
 
 ## Overview
 
-### Calculator Model Diagram
+A calculator works out an amount. "Charge $5 per item." "Take 15% off." "Free over $50, otherwise $7."
 
-```mermaid
-erDiagram
-    Calculator {
-        string type
-        string calculable_type
-        text preferences
-    }
+They exist because the rule and the number are different questions. A promotion decides *whether* a discount applies; a calculator decides *how much*. Keeping them apart means a merchant can change "10% off" to "$10 off" without touching the conditions that decide who qualifies.
 
-    TaxRate {
-        string name
-        decimal amount
-        boolean included_in_price
-    }
+Two things use calculators:
 
-    ShippingMethod {
-        string name
-        string display_on
-    }
+- **[Delivery methods](/developer/core-concepts/fulfillments)** — what delivery costs
+- **[Promotions](/developer/core-concepts/promotions)** — how big a discount is
 
-    PromotionAction {
-        string type
-    }
+<Info>
+Tax does **not** use calculators. Tax is worked out by a [tax provider](/developer/core-concepts/taxes), which can be Spree's own rate tables or an external service.
+</Info>
 
-    Adjustment {
-        decimal amount
-        string label
-    }
+## Choosing a calculator
 
-    TaxRate ||--|| Calculator : "has one"
-    ShippingMethod ||--|| Calculator : "has one"
-    PromotionAction ||--|| Calculator : "has one"
-    TaxRate ||--o{ Adjustment : "creates"
-    ShippingMethod ||--o{ ShippingRate : "calculates"
-    PromotionAction ||--o{ Adjustment : "creates"
+Each calculator takes a few settings — the amount, the percentage, the threshold. A merchant picks one and fills in the settings when setting up a delivery method or a promotion.
+
+### For delivery charges
+
+| Calculator | What it charges | Settings |
+|---|---|---|
+| **Flat rate** | The same amount every time | `amount`, `currency` |
+| **Per item** | An amount for each item in the parcel | `amount`, `currency` |
+| **Percent of item total** | A percentage of what's in the parcel | `flat_percent` |
+| **Price sack** | One amount above a threshold, another below — the usual "free delivery over $50" | `minimal_amount`, `discount_amount`, `normal_amount` |
+| **Flexi rate** | A charge for the first item, less for each one after | `first_item`, `additional_item`, `max_items` |
+| **Digital delivery** | Nothing, for downloads | — |
+
+### For promotion discounts
+
+| Calculator | What it takes off | Settings |
+|---|---|---|
+| **Flat rate** | A fixed amount | `amount`, `currency` |
+| **Percent of item total** | A percentage of the order | `flat_percent` |
+| **Percent on line item** | A percentage of one item | `percent` |
+| **Flexi rate** | A sliding amount by quantity | `first_item`, `additional_item`, `max_items` |
+| **Tiered percent** | A percentage that grows with order value | tiers |
+| **Tiered flat rate** | A fixed amount that grows with order value | tiers |
+
+## Worked examples
+
+<AccordionGroup>
+  <Accordion title="Free delivery over $50, otherwise $7">
+    **Price sack**, with `minimal_amount: 50`, `discount_amount: 0`, `normal_amount: 7`.
+
+    A $60 basket pays nothing. A $20 basket pays $7.
+  </Accordion>
+  <Accordion title="$3 to ship the first item, $1 for each extra">
+    **Flexi rate**, with `first_item: 3`, `additional_item: 1`.
+
+    Four items cost `$3 + (3 × $1)` = **$6**. Set `max_items` to stop charging beyond a point.
+  </Accordion>
+  <Accordion title="10% off the order">
+    **Percent of item total**, with `flat_percent: 10`.
+
+    A $31 order gets **$3.10** off.
+  </Accordion>
+  <Accordion title="Spend more, save more">
+    **Tiered percent** — 5% over $100, 10% over $250, 15% over $500.
+
+    The order total picks the tier. One promotion covers the whole ladder instead of three competing ones.
+  </Accordion>
+</AccordionGroup>
+
+## Setting one up
+
+Calculators are configured as part of the thing that uses them. The available calculators for each are discoverable, so a dashboard or a script can present the real list rather than a hardcoded one:
+
+<CodeGroup>
+
+```typescript Admin SDK
+// What can price a delivery method?
+const calculators = await adminClient.deliveryMethods.calculators()
+
+// Set up a delivery method with a flat rate
+await adminClient.deliveryMethods.create({
+  name: 'Standard shipping',
+  delivery_zone_id: 'dz_xxx',
+  calculator_type: 'Spree::Calculator::Shipping::FlatRate',
+  calculator_attributes: {
+    preferences: { amount: '7.00', currency: 'USD' },
+  },
+})
 ```
 
-**Key relationships:**
-- **Calculator** computes amounts for various features
-- Used by **[Tax Rates](/developer/core-concepts/taxes)** to calculate tax amounts
-- Used by **[Shipping Methods](/developer/core-concepts/fulfillments)** to calculate shipping costs
-- Used by **[Promotion Actions](/developer/core-concepts/promotions)** to calculate discounts
-- Calculators store [preferences (rates, percentages, etc.)](/developer/customization/model-preferences) for their calculations
-
-Spree makes extensive use of the `Spree::Calculator` model and there are several subclasses provided to deal with various types of calculations flat rate, percentage discount, sales tax, VAT, etc. All calculators extend the `Spree::Calculator` class and must provide the following methods:
-
-```ruby
-def self.description
-  # Human readable description of the calculator
-end
-
-def compute(object=nil)
-  # Returns the value after performing the required calculation
-end
+```bash CLI
+spree api get /delivery_methods/calculators
 ```
 
-Calculators link to a `calculable` object, which are typically one of `Spree::ShippingMethod`, `Spree::TaxRate`, or `Spree::Promotion::Actions::CreateAdjustment`. These three classes use the `Spree::CalculatedAdjustments` module described below to provide an easy way to calculate adjustments for their objects.
+</CodeGroup>
 
-## Available Calculators
+Each calculator declares which settings it takes, so a form can be built for it without knowing the calculator in advance — which is how the dashboard renders these.
 
-The following are descriptions of the currently available calculators in Spree. If you would like to add your own, please see the [Creating a New Calculator](#creating-a-new-calculator) section.
+<Warning>
+A calculator with an `amount` also has a **currency**. If it doesn't match the order's currency, the calculator contributes nothing rather than converting. Set up one calculator per currency you sell in, or a promotion will silently do nothing for some customers.
+</Warning>
 
-### Default Tax
+## Writing your own
 
-For information about this calculator, please read the [Taxes](/developer/core-concepts/taxes) guide.
+When none of the built-in calculators expresses your pricing — dimensional weight, a contract rate card, a rule your finance team invented — you can add one. A calculator is a small class with a name and a method that returns an amount, registered so it appears alongside the built-in options.
 
-### Flat Percent Per Item Total
+For delivery specifically, consider whether you want a calculator or a **delivery rate provider**. A calculator computes a number from what's in the parcel. A provider asks a carrier for real, live rates. If you want what UPS would actually charge today, that's a provider.
 
-This calculator has one preference: `flat_percent` and can be set like this:
+See [Custom promotions](/developer/how-to/custom-promotion) and [Providers](/developer/providers/overview).
 
-```ruby
-calculator.preferred_flat_percent = 10
-```
+## Related
 
-This calculator takes an order and calculates an amount using this calculation:
-
-```ruby
-[item total] x [flat percentage]
-```
-
-For example, if an order had an item total of `$31` and the calculator was configured to have a flat percent amount of `10`, the discount would be `$3.10`, because `$31 x 10% = $3.10`.
-
-### Flat Rate
-
-This calculator can be used to provide a flat rate discount.
-
-This calculator has two preferences: `amount` and `currency`. These can be set like this:
-
-```ruby
-calculator.preferred_amount = 10
-calculator.preferred_currency = "USD"
-```
-
-The currency for this calculator is used to check to see if a shipping method is available for an order. If an order's currency does not match the shipping method's currency, then that shipping method will not be displayed on the frontend.
-
-This calculator can take any object and will return simply the preferred amount.
-
-### Flexi Rate
-
-This calculator is typically used for promotional discounts when you want a specific discount for the first product, and then subsequent discounts for other products, up to a certain amount.
-
-This calculator takes three preferences:
-
-* `first_item`: The discounted price of the first items.
-* `additional_item`: The discounted price of subsequent items.
-* `max_items`: The maximum number of items this discount applies to.
-
-The calculator computes based on this:
-
-```text
-[first item discount] + (([items_count*] - 1) x [additional item discount])
-```
-
-* up to the `max_items`
-
-Thus, if you have ten items in your shopping cart, your `first_item` preference is set to `$10`, your `additional_items` preference is set to `$5`, and your `max_items` preference is set to `4`, the total discount would be `$25`:
-
-* `$10` for the first item
-* `$5` for each of the `3` subsequent items: `$5 \* 3 = $15`
-* `$0` for the remaining `6` items
-
-### Per Item
-
-The Per Item calculator (`Spree::Calculator::Shipping::PerItem`) is a shipping calculator that charges a flat amount for every item in a shipment.
-
-This calculator takes two preferences:
-
-* `amount`: The flat amount charged per item.
-* `currency`: The currency for this calculator.
-
-It computes a flat rate per item by multiplying the `amount` preference by the total item quantity in the shipment package:
-
-```text
-[amount] x [total item quantity in package]
-```
-
-For example, with an `amount` of `5` and a package containing `3` items in total, the calculator computes an amount of `15` (`5 x 3`).
-
-### Percent Per Item
-
-The Percent Per Item calculator (`Spree::Calculator::PercentOnLineItem`) applies a percentage discount to a single line item. It takes two preferences:
-
-* `percent`: The percentage to apply to the line item's amount.
-* `apply_only_on_full_priced_items`: When enabled, skips line items that are already on sale.
-
-For each line item, the calculator computes `line item amount` x `percent` / `100`, capped at the line item's amount so a promotion adjustment never pushes the total negative.
-
-For example, a `$30` line item at `10%` yields a `$3` discount (`$30 x 10% = $3`).
-
-### Price Sack
-
-The Price Sack calculator is useful for when you want to provide a discount for an order which is over a certain price. The calculator has four preferences:
-
-* `minimal_amount`: The minimum amount for the line items total to trigger the calculator.
-* `discount_amount`: The amount to discount from the order if the line items total is equal to or greater than the `minimal_amount`.
-* `normal_amount`: The amount to discount from the order if the line items total is less than the `minimal_amount`.
-* `currency`: The currency for this calculator. Defaults to the store currency
-
-Suppose you have a Price Sack calculator with a `minimal_amount` preference of `$50`, a `normal_amount` preference of `$2`, and a `discount_amount` of `$5`. An order with a line items total of `$60` would result in a discount of `$5` for the whole order. An order of `$20` would result in a discount of `$2`.
-
-## Creating a New Calculator
-
-To create a new calculator for Spree, you need to do two things. The first is to inherit from the `Spree::Calculator` class and define `description` and `compute` methods on that class:
-
-```ruby
-class CustomCalculator < Spree::Calculator
-  def self.description
-    # Human readable description of the calculator
-  end
-
-  def compute(object=nil)
-    # Returns the value after performing the required calculation
-  end
-end
-```
-
-If you are creating a new calculator for shipping methods, please be aware that you need to inherit from `Spree::ShippingCalculator` instead, and define a `compute_package` method:
-
-```ruby
-class CustomCalculator < Spree::ShippingCalculator
-  def self.description
-    # Human readable description of the calculator
-  end
-
-  def compute_package(package)
-    # Returns the value after performing the required calculation
-  end
-end
-```
-
-The second thing is to register this calculator as a tax, shipping, or promotion adjustment calculator by calling code like this at the end of `config/initializers/spree.rb` inside your application `config` variable defined for brevity:
-
-<Tabs>
-  <Tab title="Spree 5.2+">
-    ```ruby config/initializers/spree.rb
-    Rails.application.config.after_initialize do
-      Spree.calculators.tax_rates << CustomCalculator
-      Spree.calculators.shipping_methods << CustomCalculator
-      Spree.calculators.promotion_actions_create_adjustments << CustomCalculator
-    end
-    ```
-  </Tab>
-  <Tab title="Spree 5.1 and below">
-    ```ruby config/initializers/spree.rb
-    Rails.application.config.spree.calculators.tax_rates << CustomCalculator
-    Rails.application.config.spree.calculators.shipping_methods << CustomCalculator
-    Rails.application.config.spree.calculators.promotion_actions_create_adjustments << CustomCalculator
-    ```
-  </Tab>
-</Tabs>
-
-For example if your calculator is placed in `app/models/spree/calculator/shipping/my_own_calculator.rb` you should call:
-
-<Tabs>
-  <Tab title="Spree 5.2+">
-    ```ruby config/initializers/spree.rb
-    Rails.application.config.after_initialize do
-      Spree.calculators.shipping_methods << Spree::Calculator::Shipping::MyOwnCalculator
-    end
-    ```
-  </Tab>
-  <Tab title="Spree 5.1 and below">
-    ```ruby config/initializers/spree.rb
-    Rails.application.config.spree.calculators.shipping_methods << Spree::Calculator::Shipping::MyOwnCalculator
-    ```
-  </Tab>
-</Tabs>
-
-### Determining Availability
-
-By default, all shipping method calculators are available at all times. If you wish to make this dependent on something from the order, you can re-define the `available?` method inside your calculator:
-
-```ruby app/models/custom_calculator.rb
-class CustomCalculator < Spree::Calculator
-  def available?(object)
-    object.currency == "USD"
-  end
-end
-```
-
-## Calculated Adjustments
-
-If you wish to use Spree's calculator functionality for your own application, you can include the `Spree::CalculatedAdjustments` module into a model of your choosing.
-
-```ruby app/models/plan.rb
-class Plan < ActiveRecord::Base
-  include Spree::CalculatedAdjustments
-end
-```
-
-To have calculators available for this class, you will need to register them. `Spree.calculators` is a fixed-member struct (`SpreeCalculators`, defined in `spree/core/lib/spree/core/engine.rb`) that exposes only the four built-in buckets:
-
-* `shipping_methods`
-* `tax_rates`
-* `promotion_actions_create_adjustments`
-* `promotion_actions_create_item_adjustments`
-
-`Plan.calculators` internally calls `Spree.calculators.send(:plans)` (the tableized model name), so both registration and lookup raise `NoMethodError` until you extend the struct to add a matching `plans` member. Ruby structs cannot gain members at runtime, so this means redefining the `SpreeCalculators` struct (or reassigning `Spree.calculators` to an object that responds to `plans`) before you register anything onto it.
-
-Once the struct exposes a `plans` member you can register calculators:
-
-<Tabs>
-  <Tab title="Spree 5.2+">
-    ```ruby config/initializers/spree.rb
-    Rails.application.config.after_initialize do
-      Spree.calculators.plans << CustomCalculator
-    end
-    ```
-  </Tab>
-  <Tab title="Spree 5.1 and below">
-    ```ruby config/initializers/spree.rb
-    Rails.application.config.spree.calculators.plans << CustomCalculator
-    ```
-  </Tab>
-</Tabs>
-
-Then you can access these calculators by calling this method:
-
-```ruby
-Plan.calculators
-```
-
-Using this method, you can then display the calculators as you please. Each object for this new class will need to have a calculator associated so that adjustments can be calculated on them.
-
-`Spree::CalculatedAdjustments` provides a `has_one :calculator` association (with `accepts_nested_attributes_for` and a presence validation), delegates `compute` to that calculator, exposes a `with_calculator` scope, `calculator_type` / `calculator_type=` accessors, and the `Plan.calculators` registry shown above. To work out what the calculator would compute an amount to be, call `compute` on an instance:
-
-```ruby
-plan.compute(<calculable object>)
-```
-
-The module does not define `create_adjustment`, `update_adjustment`, or `compute_amount`. If you also need to build adjustments, include `Spree::AdjustmentSource`, which adds `create_adjustment(order, adjustable, included = false)`. That method calls a `compute_amount` you define on the including model (as `Spree::TaxRate` and the `Spree::Promotion::Actions` classes do). There is no `update_adjustment` method in core.
-
-## Related Documentation
-
-- [Adjustments](/developer/core-concepts/taxes-discounts-fees) — the records calculators compute amounts for.
-- [Dependencies](/developer/customization/dependencies) — swap out calculators via the Dependencies system.
-
+- [Fulfillments](/developer/core-concepts/fulfillments) — delivery methods and rates
+- [Promotions](/developer/core-concepts/promotions) — the rules that decide when a discount applies
+- [Discounts](/developer/core-concepts/discounts) — the rows a promotion produces
+- [Taxes](/developer/core-concepts/taxes) — worked out by providers, not calculators

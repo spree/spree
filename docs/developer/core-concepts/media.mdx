@@ -4,8 +4,6 @@ sidebarTitle: "Media"
 description: Manage product media in Spree — images, hosted and external video, named variants, focal points, and how media is uploaded, resized, and served via the Store API.
 ---
 
-import { Since } from '/snippets/since.mdx';
-
 ## Overview
 
 Spree handles uploads, processing, and delivery for product media. Images are automatically converted to WebP format and preprocessed into multiple sizes for optimal performance.
@@ -21,7 +19,7 @@ A media record carries:
 - **Preprocessed named variants** for fast delivery
 - **`variant_ids`** — which product variants the media represents. An empty array means it represents the product as a whole.
 
-### Product-level Gallery <Since version="5.5" />
+### Product-level Gallery
 
 In Spree 5.5 the **product** is the default owner of media. Before 5.5, every image was pinned to a specific variant (usually the master), and sharing the same image across variants meant re-uploading the file. From 5.5 onward, an image lives on the product, and any subset of variants can reference it through `variant_ids` — without duplicating the underlying file.
 
@@ -114,7 +112,7 @@ The Store API's `media` field on a product returns its gallery — product-level
 
 This dual rendering means existing storefronts keep working during the upgrade; new uploads attach to the product, and you opt into a [one-shot migration](/v5/developer/upgrades/5.4-to-5.5) to re-home legacy variant-pinned data when convenient.
 
-### Video <Since version="6.0" />
+### Video
 
 A product gallery can hold video as well as images. Spree supports both ways merchants usually have it:
 
@@ -198,7 +196,7 @@ Where the poster comes from, in order:
 
 Spree does not extract a frame from an uploaded video, so give hosted video and Vimeo links a poster if you want them to show a still.
 
-### Focal Point <Since version="6.0" />
+### Focal Point
 
 `focal_point_x` and `focal_point_y` mark the part of an image that must stay in frame when a storefront crops it to a different shape. Both are fractions between 0 and 1, measured from the top left, so `{ x: 0.5, y: 0.5 }` is dead centre — which is also what a storefront should assume when they are null.
 
@@ -211,7 +209,7 @@ await client.products.media.update('prod_86Rf07xd4z', 'media_k5nR8xLq', {
 
 Spree stores the focal point and serves it; the cropping itself is the storefront's decision, since only it knows the shape it needs.
 
-### Named Variant Sizes <Since version="5.3" />
+### Named Variant Sizes
 
 When an image is uploaded, Spree automatically generates optimized versions in the background:
 
@@ -337,13 +335,13 @@ curl 'https://api.mystore.com/api/v3/store/products/spree-tote?expand=media,vari
 | `focal_point_x` | number \| null | Horizontal focal point (0.0–1.0) |
 | `focal_point_y` | number \| null | Vertical focal point (0.0–1.0) |
 | `external_video_url` | string \| null | External video URL (YouTube/Vimeo) |
-| `video_provider` | string \| null | `youtube` or `vimeo`, derived from the link <Since version="6.0" /> |
-| `video_embed_url` | string \| null | Embeddable player URL, derived from the link <Since version="6.0" /> |
-| `video_url` | string \| null | Uploaded video file URL <Since version="6.0" /> |
-| `poster_url` | string \| null | Still frame for a video <Since version="6.0" /> |
+| `video_provider` | string \| null | `youtube` or `vimeo`, derived from the link |
+| `video_embed_url` | string \| null | Embeddable player URL, derived from the link |
+| `video_url` | string \| null | Uploaded video file URL |
+| `poster_url` | string \| null | Still frame for a video |
 | `original_url` | string \| null | Full-size image URL (inline disposition) |
 | `mini_url` ... `xlarge_url` | string \| null | Named variant URLs |
-| `download_url` | string \| null | Same blob as `original_url` but with `Content-Disposition: attachment`. Admin API only. <Since version="5.5" /> |
+| `download_url` | string \| null | Same blob as `original_url` but with `Content-Disposition: attachment`. Admin API only. |
 
 ## Image Processing
 

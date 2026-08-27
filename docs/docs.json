@@ -33,6 +33,10 @@
   },
   "redirects": [
     {
+      "source": "/developer/core-concepts/taxes-discounts-fees",
+      "destination": "/developer/core-concepts/order-totals"
+    },
+    {
       "source": "/developer/storefront/images",
       "destination": "/developer/core-concepts/media"
     },
@@ -499,9 +503,11 @@
                         "pages": [
                           "developer/core-concepts/carts",
                           "developer/core-concepts/orders",
+                          "developer/core-concepts/order-totals",
                           "developer/core-concepts/payments",
                           "developer/core-concepts/taxes",
-                          "developer/core-concepts/taxes-discounts-fees",
+                          "developer/core-concepts/discounts",
+                          "developer/core-concepts/fees",
                           "developer/core-concepts/promotions",
                           "developer/core-concepts/store-credits-gift-cards"
                         ]
@@ -1867,9 +1873,13 @@
                 "group": "Cart & Checkout",
                 "icon": "shopping-cart",
                 "pages": [
+                  "developer/core-concepts/carts",
                   "developer/core-concepts/orders",
+                  "developer/core-concepts/order-totals",
                   "developer/core-concepts/payments",
                   "developer/core-concepts/taxes",
+                  "developer/core-concepts/discounts",
+                  "developer/core-concepts/fees",
                   "developer/core-concepts/promotions",
                   "developer/core-concepts/store-credits-gift-cards"
                 ]
@@ -1878,9 +1888,9 @@
                 "group": "Fulfillment",
                 "icon": "truck",
                 "pages": [
-                  "developer/core-concepts/shipments",
+                  "developer/core-concepts/fulfillments",
+                  "developer/core-concepts/returns-exchanges-claims",
                   "developer/core-concepts/addresses",
-                  "developer/core-concepts/adjustments",
                   "developer/core-concepts/calculators"
                 ]
               },
@@ -1893,7 +1903,6 @@
                   "developer/core-concepts/translations",
                   "developer/core-concepts/slugs",
                   "developer/core-concepts/metafields",
-                  "developer/core-concepts/reports",
                   "developer/core-concepts/imports-exports"
                 ]
               }

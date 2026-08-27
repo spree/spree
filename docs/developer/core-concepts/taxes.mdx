@@ -1,169 +1,176 @@
 ---
 title: Taxes
-description: Tax categories, tax rates, zones, and how Spree calculates taxes at checkout
+description: How Spree works out tax — tax categories and rates, inclusive versus added-on pricing, and connecting an external tax service.
 ---
 
 ## Overview
 
-Spree uses Tax Categories and Tax Rates to calculate taxes for orders. Products are assigned to tax categories, and tax rates define the percentage charged within specific geographic [Zones](/developer/core-concepts/addresses#zones).
+Tax is the part of commerce most likely to differ from what you assumed. A US shopper expects `$17.99` on the shelf and a little more at the till. A German shopper expects `€17.99` to be the whole story, VAT already inside it. Both are correct, and a store selling to both has to do both.
+
+Spree handles this by keeping three things separate:
+
+- **What is being sold** — a [tax category](#tax-categories) groups products taxed the same way
+- **Where the customer is** — their [market](/developer/core-concepts/markets) and shipping address
+- **Who works out the number** — Spree's own rates, or an external tax service
+
+The result of all this is a set of **tax lines** on the order — one per charge, recording what was taxed and at what rate. This page is about how they get their numbers.
 
 ```mermaid
-erDiagram
-    TaxCategory ||--o{ TaxRate : "has many"
-    TaxCategory ||--o{ Product : "has many"
-    TaxRate }o--|| Zone : "applies in"
-    TaxRate ||--o{ Adjustment : "creates"
-    Zone ||--o{ ZoneMember : "has many"
-
-    TaxCategory {
-        string name
-        boolean is_default
-        string tax_code
-    }
-
-    TaxRate {
-        string name
-        decimal amount
-        boolean included_in_price
-    }
-
-    Zone {
-        string name
-        string kind
-    }
+flowchart LR
+    Product -->|"has a"| TaxCategory
+    Address -->|"determines"| Market
+    Market -->|"selects"| Provider["Tax provider"]
+    TaxCategory --> Provider
+    Provider -->|"writes"| TaxLine["Tax lines on the order"]
 ```
 
-**Key relationships:**
-- **Tax Category** groups products for tax purposes (e.g., "Clothing", "Food", "Digital")
-- **Tax Rate** defines the percentage and rules for a Tax Category within a [Zone](/developer/core-concepts/addresses#zones)
-- **Zone** defines geographic regions (countries or states) where taxes apply
-- **[Adjustments](/developer/core-concepts/taxes-discounts-fees)** are created on orders/line items to apply taxes
+## Tax categories
 
-## Tax Categories
+A tax category is how you say "these things are taxed alike". Children's clothing, books and hot food are treated differently from general goods in many countries, and a tax category is where that distinction lives.
 
-Tax categories group products by how they're taxed. Common examples:
+Every product carries one. If you don't choose, the default is used.
 
-- **Clothing** — standard tax rate
-- **Food** — reduced or exempt rate
-- **Digital** — different rules per jurisdiction
-
-Each product is assigned a tax category. One category can be set as the default for products that don't have an explicit assignment.
-
-| Attribute | Description | Example |
-|-----------|-------------|---------|
-| `name` | Category name | `Clothing` |
-| `is_default` | Whether this is the default category | `true` |
-| `tax_code` | Code from your tax provider (e.g., Stripe, Avalara) | `1257L` |
-
-Manage tax categories via the [Admin API](/api-reference/admin-api/introduction), using the [Admin SDK resource clients](/developer/sdk/admin/resources):
-
-<CodeGroup>
+| Field | Description | Example |
+|---|---|---|
+| `name` | What it's called | `Standard`, `Reduced`, `Digital` |
+| `is_default` | Used by products that don't pick one | `true` |
+| `tax_code` | The code your tax service knows it by | `1257L` |
 
 ```typescript Admin SDK
-import { createAdminClient } from '@spree/admin-sdk'
-
-const client = createAdminClient({
-  baseUrl: 'https://store.example.com',
-  secretKey: 'sk_xxx',
-})
-
-const clothing = await client.taxCategories.create({
-  name: 'Clothing',
+const reduced = await adminClient.taxCategories.create({
+  name: 'Reduced rate',
   tax_code: '1257L',
-  is_default: true,
 })
-
-await client.taxCategories.update('taxcat_xxx', { is_default: false })
-await client.taxCategories.delete('taxcat_xxx')
 ```
 
-```bash CLI
-spree api post /tax_categories -d '{"name": "Clothing", "tax_code": "1257L", "is_default": true}'
-spree api get /tax_categories
+`tax_code` matters once you connect an external service — it is how you tell that service what kind of thing this is, in the vocabulary it already uses.
+
+## Tax rates
+
+A tax rate is the number itself, plus where it applies and whether it's already in the price.
+
+| Field | Description | Example |
+|---|---|---|
+| `name` | What appears on the invoice | `VAT 20%` |
+| `amount` | The rate as a decimal | `0.2` for 20% |
+| `included_in_price` | Whether the price already contains it | `true` in the EU |
+| `country_code` / `state_code` | Where it applies | `DE`, or `US` + `CA` |
+| `tax_category` | What it applies to | `Standard` |
+
+```typescript Admin SDK
+const { data: rates } = await adminClient.taxRates.list()
+
+await adminClient.taxRates.create({
+  name: 'VAT 20%',
+  amount: '0.2',
+  included_in_price: true,
+  country_code: 'GB',
+  tax_category_id: 'taxcat_xxx',
+})
 ```
 
-</CodeGroup>
+Rates name their country and state by **ISO code**, not by an ID — `DE`, `US` + `CA`. There's no separate region record to create first.
 
-## Tax Rates
+## Included or added on
 
-Tax rates define the percentage charged for a specific tax category within a geographic zone.
+`included_in_price` is the single most consequential setting here, so it's worth being precise about what it does.
 
-| Attribute | Description | Example |
-|-----------|-------------|---------|
-| `name` | Rate name | `California Sales Tax` |
-| `amount` | Tax percentage as a decimal | `0.08` (8%) |
-| `included_in_price` | Whether tax is included in the displayed price | `false` |
-| `zone` | Geographic region where this rate applies | `US` |
-| `tax_category` | Products this rate applies to | `Clothing` |
+<Tabs>
+  <Tab title="Added on (US style)">
+    The shelf price is what the product costs. Tax is worked out at checkout, once the address is known, and added.
 
-## Tax Types
+    A $17.99 item at 5%:
 
-### Sales Tax (tax-exclusive)
+    | | |
+    |---|---|
+    | Price shown | **$17.99** |
+    | Tax added | $0.90 |
+    | Customer pays | **$18.89** |
 
-Common in the United States. The displayed price does **not** include tax — tax is added at checkout based on the shipping address.
+    Set `included_in_price: false`.
+  </Tab>
+  <Tab title="Included (EU style)">
+    The shelf price is the whole price. The tax inside it is shown for information — the customer pays the number they saw.
 
-**Example:** A $17.99 item with 5% sales tax:
-- Displayed price: **$17.99**
-- Tax at checkout: **$0.90**
-- Order total: **$18.89**
+    A £17.99 item at 20% VAT:
 
-### Value Added Tax / VAT (tax-inclusive)
+    | | |
+    |---|---|
+    | Price shown | **£17.99** |
+    | VAT inside it | £3.00 |
+    | Customer pays | **£17.99** |
 
-Common in Europe and many other countries. The displayed price **already includes** tax. When shipping outside the tax zone, the tax is removed from the price.
+    Set `included_in_price: true`.
+  </Tab>
+</Tabs>
 
-**Example:** A £17.99 item with 5% VAT included:
-- Displayed price: **£17.99** (includes £0.86 VAT)
-- If shipped outside VAT zone: price reduces to **£17.13**
+<Warning>
+When building an order summary, add `additional_tax_total` only. `included_tax_total` is **already inside** the item prices — adding it counts the tax twice. This is the most common bug in a European storefront.
+</Warning>
 
-<Info>
-The `tax_inclusive` setting on [Markets](/developer/core-concepts/markets) controls whether prices are displayed with or without tax for each geographic region.
-</Info>
+Because prices are shown before anyone knows where the shopper lives, each [Market](/developer/core-concepts/markets) declares whether its prices are quoted with tax included. That's what lets a catalogue page show honest prices to a German visitor and a US visitor at the same time.
 
-## Default Tax Zone
+## Tax lines
 
-Spree uses a default tax zone to estimate taxes before the customer enters a shipping address. This is important for stores with tax-inclusive pricing (VAT) — it determines which tax rate is assumed in the displayed price.
+Whatever works out the tax, the record is the same: a tax line per charge, saying what was taxed and how.
 
-If the customer's shipping address is outside the default tax zone, the assumed tax is removed and the correct rate for their zone is applied.
+| Attribute | Description |
+|---|---|
+| `label` | What the customer sees — `VAT 20%` |
+| `rate` | The rate applied — `"0.2"` |
+| `included` | Whether the tax was already inside the displayed price |
+| `amount` / `display_amount` | The tax charged |
+| `line_item_id` / `fulfillment_id` / `fee_id` | What was taxed — exactly one is set |
 
-## Tax Calculation at Checkout
+```typescript Admin SDK
+const { data: taxLines } = await adminClient.orders.taxLines.list('or_xxx')
+```
 
-During checkout, taxes are calculated based on the shipping address:
+Tax lines attach to a line item, a [fulfillment](/developer/core-concepts/fulfillments), or a [fee](/developer/core-concepts/fees) — so tax on goods and tax on delivery stay separately visible, which is what a tax return needs.
 
-1. The customer's shipping address determines their [Zone](/developer/core-concepts/addresses#zones)
-2. Spree finds matching tax rates for that zone and the product's tax category
-3. Tax [Adjustments](/developer/core-concepts/taxes-discounts-fees) are created on line items
-4. The order total is updated
+Each line also keeps its own copy of the rate and label. If someone edits that tax rate next year, the order still says what the customer was actually charged.
 
-<Note>
-For complex tax requirements (interstate US sales, international VAT), consider using automated tax calculation. The [Stripe Tax integration](/integrations/payments/stripe) handles this automatically.
-</Note>
+You never create tax lines yourself; they're written whenever the total is worked out.
 
-## Managing Taxes
+## When tax is worked out
 
-Tax categories and rates are managed in the Admin Panel under **Settings → Taxes**, or via the Admin API.
+Tax is recalculated whenever the answer could have changed — an item added, an address entered, a delivery option chosen. Every one of those requests returns the updated cart, so a storefront never needs a separate "refresh the tax" call.
 
-### Common Configurations
+<Steps>
+  <Step title="Before an address is known">
+    Prices are shown using the market's tax treatment. For an inclusive market the displayed price is the real one; for an added-on market tax simply hasn't been worked out yet.
+  </Step>
+  <Step title="Once the shipping address is entered">
+    The address decides the real rate. Tax lines are written against each item, the delivery charge, and any taxable fee.
+  </Step>
+  <Step title="At completion">
+    Whatever the tax is at that moment is what's charged, and the order keeps it. A rate change next month does not rewrite an order from last month.
+  </Step>
+</Steps>
 
-**US store with state-level sales tax:**
-- Create zones for each taxable state
-- Create tax rates per zone (e.g., 8.25% for California, 6.25% for Texas)
-- Set `included_in_price: false`
+## Connecting a tax service
 
-**EU store with VAT:**
-- Create a zone for EU countries
-- Create tax rates per country (e.g., 19% Germany, 20% France)
-- Set `included_in_price: true`
-- Set the EU zone as the default tax zone
+Spree's built-in rate tables are fine when the rules are simple — one country, or a handful of clearly-defined rates. They become a liability where the rules are not: US sales tax varies by city and changes constantly, and cross-border EU VAT has thresholds that shift with your turnover.
 
-**Digital products in the EU:**
-- Create a "Digital" tax category
-- Add tax rates for each EU country using the customer's country VAT rate
-- Physical products use the seller's country VAT rate
+For those, connect a real tax service. **The provider is chosen per [Market](/developer/core-concepts/markets)**, which means one store can use its own rates in a simple market and an external service in a complicated one.
 
-## Related Documentation
+```typescript Admin SDK
+const { data: providers } = await adminClient.taxProviders.list()
+```
 
-- [Markets](/developer/core-concepts/markets) — Tax-inclusive pricing per market
-- [Addresses](/developer/core-concepts/addresses) — Zones and address-based taxation
-- [Adjustments](/developer/core-concepts/taxes-discounts-fees) — Tax adjustments
-- [Orders](/developer/core-concepts/orders) — How taxes affect order totals
-- [Avalara integration](/integrations/tax/avalara) — Automated tax calculation for complex jurisdictions
+A provider declares up front what it cannot do — no US local tax, no reverse charge — so the dashboard can warn a merchant who pairs it with a market that needs it, rather than quietly under-collecting.
+
+Whichever provider is in use, the result is the same: tax lines on the order, in the same shape. Your storefront code doesn't change.
+
+## Tax-exempt customers
+
+Business customers are often exempt, and the paperwork is real. Spree records a customer's or company's **tax identifier** — a VAT number, an ABN — and can validate it. Companies can also hold exemption certificates, scoped to the country or state that issued them.
+
+Exemption is decided when tax is worked out, not stored as a flag on the customer, so an expired certificate stops applying by itself. See [Companies & Catalogs](/developer/core-concepts/companies-and-catalogs).
+
+## Related
+
+- [Order totals](/developer/core-concepts/order-totals) — how tax rolls into what a customer pays
+- [Markets](/developer/core-concepts/markets) — where tax treatment and provider are chosen
+- [Addresses](/developer/core-concepts/addresses) — what determines the rate
+- [Companies & Catalogs](/developer/core-concepts/companies-and-catalogs) — B2B tax identifiers and exemptions

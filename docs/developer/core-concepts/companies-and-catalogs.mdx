@@ -54,7 +54,7 @@ Memberships stay always-active and always customer-backed: the pending state liv
 
 Carts and orders carry a `company_id` pointing at any node — buying *for* a division means pointing at it. A buyer with exactly one membership resolves to it automatically; a buyer with several names the node on their cart (the `company_id` param on cart update, validated against their standing). The node is frozen onto the order at completion, like every other order attribute, so a placed order's tax treatment stays explainable no matter how the tree changes later.
 
-Exemption certificates and the company's tax registration always resolve through `company.legal_entity` — see [Taxes, Discounts & Fees](/docs/developer/core-concepts/taxes-discounts-fees) for how they reach the tax provider.
+Exemption certificates and the company's tax registration always resolve through `company.legal_entity` — see [Taxes](/developer/core-concepts/taxes) for how they reach the tax provider.
 
 ## Catalogs
 

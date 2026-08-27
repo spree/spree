@@ -1,180 +1,168 @@
 ---
 title: Architecture
-description: Explore how Spree's core models, APIs, and gems fit together — catalog, shopping, checkout, fulfillment, and pricing — for headless or embedded commerce.
+description: How Spree fits together — the catalog, the cart, the order, and fulfillment — and the two APIs you build against.
 ---
 
 ## Overview
 
-Spree is a commerce engine built around interconnected models that represent the core concepts of commerce: products, orders, payments, and shipments. It adapts to your stack — use it as a headless API for any frontend, embed it into an existing application, or scale it from a single storefront to a global multi-vendor marketplace.
+Spree is a commerce engine you drive through a REST API. It holds the catalog, works out what a customer owes, takes the money, and tracks what was sent. You build the storefront, the mobile app, or the internal tool on top of it.
 
-<Info>
-  Spree supports PostgreSQL, MySQL, and SQLite. PostgreSQL is recommended for production. [Learn more about database configuration](/developer/deployment/database).
-</Info>
+There is no built-in storefront you have to accept. Everything a customer-facing app needs is on the Store API, and everything a back office needs is on the Admin API. Both ship as typed TypeScript clients.
 
-## Core Commerce Flow
+## The shape of a purchase
 
-The following diagram shows how the main models interact during a typical customer purchase:
+Four things carry a purchase from browsing to delivery. Each one has a job the others don't:
+
+<CardGroup cols={2}>
+  <Card title="Product" icon="package" href="/developer/core-concepts/products">
+    What you sell. A product has variants — the actual buyable items, each with its own price and stock.
+  </Card>
+  <Card title="Cart" icon="shopping-cart" href="/developer/core-concepts/carts">
+    What a customer is assembling. It changes constantly and is usually abandoned.
+  </Card>
+  <Card title="Order" icon="receipt" href="/developer/core-concepts/orders">
+    What they committed to. A permanent financial record that must not change quietly.
+  </Card>
+  <Card title="Fulfillment" icon="truck" href="/developer/core-concepts/fulfillments">
+    What actually ships. One parcel, from one location, with one tracking number.
+  </Card>
+</CardGroup>
 
 ```mermaid
-flowchart TB
-    subgraph Catalog["Catalog"]
-        Product --> Variant
-        Variant --> Price
-        Variant --> StockItem
-        StockItem --> StockLocation
-    end
+flowchart LR
+    Product --> Variant
+    Variant --> Cart
+    Cart -->|complete| Order
+    Order --> Fulfillment
+    Order --> Payment
 
-    subgraph Shopping["Shopping"]
-        User --> Order
-        Order --> LineItem
-        LineItem --> Variant
-    end
-
-    subgraph Checkout["Checkout"]
-        Order --> Address
-        Order --> Shipment
-        Order --> Payment
-        Shipment --> ShippingMethod
-        Payment --> PaymentMethod
-    end
-
-    subgraph Fulfillment["Fulfillment"]
-        Shipment --> InventoryUnit
-        InventoryUnit --> Variant
-        StockLocation --> Shipment
-    end
-
-    subgraph Pricing["Pricing & Adjustments"]
-        Order --> Adjustment
-        LineItem --> Adjustment
-        Shipment --> Adjustment
-        TaxRate --> Adjustment
-        Promotion --> Adjustment
-    end
+    style Cart fill:#e3f2fd,stroke:#0077ff
+    style Order fill:#e8f5e9,stroke:#2e7d32
 ```
 
-**How it works:**
+**A cart and an order are separate records**, and that distinction shapes most of the API. A cart tolerates half-finished states — no address yet, no payment chosen. An order has to keep saying what the customer actually agreed to pay, so once it exists, today's prices and promotions can't quietly rewrite it. Completing a cart creates the order.
 
-1. **Catalog** — [Products](/developer/core-concepts/products) have [Variants](/developer/core-concepts/products#variants) (SKUs) with prices and inventory tracked at [Stock Locations](/developer/core-concepts/inventory#stock-locations)
-
-2. **Shopping** — Customers add Variants to their cart, creating an [Order](/developer/core-concepts/orders) with Line Items
-
-3. **Checkout** — The Order collects [Addresses](/developer/core-concepts/addresses), calculates [Shipping](/developer/core-concepts/fulfillments) options, and processes [Payments](/developer/core-concepts/payments)
-
-4. **Fulfillment** — [Shipments](/developer/core-concepts/fulfillments) are created from Stock Locations, tracking individual [Inventory Units](/developer/core-concepts/inventory#inventory-units)
-
-5. **Pricing & Adjustments** — [Taxes](/developer/core-concepts/taxes) and [Promotions](/developer/core-concepts/promotions) create [Adjustments](/developer/core-concepts/taxes-discounts-fees) that modify order totals
-
-## Core Model Relationships
-
-This diagram shows the key database relationships between Spree's main models:
+## How the pieces relate
 
 ```mermaid
 erDiagram
-    Store ||--o{ Order : "has many"
-    Store ||--o{ Product : "has many"
+    Store ||--o{ Product : "sells"
+    Store ||--o{ Order : "records"
 
     Product ||--o{ Variant : "has many"
-    Product }o--|| TaxCategory : "belongs to"
-    Product }o--|| ShippingCategory : "belongs to"
-    Product }o--o{ Taxon : "categorized by"
+    Product }o--o{ Category : "filed under"
+    Product }o--|| DeliveryProfile : "ships by"
 
-    Variant ||--o{ Price : "has many"
-    Variant ||--o{ StockItem : "has many"
-    Variant ||--o{ LineItem : "has many"
+    Variant ||--o{ Price : "priced in each currency"
+    Variant ||--o{ StockLevel : "stocked at locations"
+    StockLevel }o--|| StockLocation : "held at"
+
+    Cart ||--o{ LineItem : "has many"
+    Cart ||--o| Order : "completes into"
+    LineItem }o--|| Variant : "of"
 
     Order ||--o{ LineItem : "has many"
-    Order ||--o{ Shipment : "has many"
-    Order ||--o{ Payment : "has many"
-    Order ||--o{ Adjustment : "has many"
-    Order }o--|| User : "belongs to"
-    Order }o--|| Address : "ship address"
-    Order }o--|| Address : "bill address"
+    Order ||--o{ Fulfillment : "shipped as"
+    Order ||--o{ Payment : "paid by"
+    Order ||--o{ TaxLine : "taxed by"
+    Order ||--o{ Discount : "reduced by"
+    Order ||--o{ Fee : "surcharged by"
+    Order }o--|| Customer : "placed by"
 
-    Shipment ||--o{ InventoryUnit : "has many"
-    Shipment }o--|| StockLocation : "ships from"
-    Shipment }o--|| ShippingMethod : "via"
-
+    Fulfillment }o--|| DeliveryMethod : "via"
+    Fulfillment }o--|| StockLocation : "ships from"
     Payment }o--|| PaymentMethod : "via"
-
-    StockLocation ||--o{ StockItem : "has many"
-
-    TaxRate }o--|| TaxCategory : "belongs to"
-    TaxRate }o--|| Zone : "applies to"
-    TaxRate ||--o{ Adjustment : "creates"
-
-    Promotion ||--o{ Adjustment : "creates"
 ```
 
-## APIs
+Three things in that diagram are worth calling out, because they're where Spree differs from what you might expect:
 
-Spree exposes two REST APIs:
+**Money added or removed is never one mixed list.** Tax, discounts and fees are three separate kinds of row. "What tax did we charge?" is a direct question with a direct answer instead of a filter over a mixed pile. See [Order totals](/developer/core-concepts/order-totals).
 
-| API | Purpose | Authentication |
-|-----|---------|----------------|
-| [**Store API**](/api-reference/store-api/introduction) | Customer-facing — cart, checkout, products, account | [Publishable API key + JWT](/api-reference/store-api/authentication) |
-| [**Admin API**](/api-reference/admin-api/introduction) | Operational — manage products, orders, customers, settings | [Secret API key](/api-reference/admin-api/authentication) + JWT |
+**Delivery is described by a profile, not a category.** A [delivery profile](/developer/core-concepts/fulfillments) says how a product travels — physically shipped, or digital — and which locations and methods serve it.
 
-Both APIs share the same list shapes, filtering, querying, and pagination, and offer fully typed TypeScript clients — [@spree/sdk](/developer/sdk/quickstart) for the Store API and [@spree/admin-sdk](/developer/sdk/admin/quickstart) for the Admin API.
+**Stock lives per location.** A variant has a stock level at each [stock location](/developer/core-concepts/inventory), so availability is a real question about real warehouses rather than a single number.
 
-Events from both APIs can trigger [Webhooks](/developer/core-concepts/webhooks) to notify external systems in real time.
+## The two APIs
 
-## Multi-Store Architecture
+```mermaid
+flowchart TB
+    Storefront["Storefront / mobile app"] -->|"@spree/sdk"| StoreAPI["Store API"]
+    BackOffice["Dashboard / integrations"] -->|"@spree/admin-sdk"| AdminAPI["Admin API"]
+    StoreAPI --> Spree[(Spree)]
+    AdminAPI --> Spree
+    Spree --> Webhooks["Webhooks & events"]
+    Webhooks --> External["Your systems"]
+```
 
-Spree supports running [multiple storefronts](/developer/multi-tenant/quickstart) from a single installation. Each Store can have:
+| API | For | Authentication |
+|---|---|---|
+| [**Store API**](/api-reference/store-api/introduction) | Anything a customer touches — browsing, cart, checkout, their account | [Publishable key](/api-reference/store-api/authentication), plus a customer token once signed in |
+| [**Admin API**](/api-reference/admin-api/introduction) | Anything staff or systems touch — catalog, orders, settings | [Secret key](/api-reference/admin-api/authentication) with scopes, or a staff token |
 
-- Its own domain and branding
-- Different currencies and locales
-- Separate product catalogs
-- Independent payment and shipping methods
-- Isolated orders and customers
+The split is about exposure, not convenience. A publishable key is safe in browser code because it can only reach what a shopper is allowed to see. A secret key never belongs in a browser.
 
-This makes Spree suitable for multi-brand retailers, international expansion, or B2B/B2C hybrid setups.
+Both APIs share the same filtering, pagination and error shapes, so what you learn on one carries to the other. Both return **prefixed IDs** — `prod_86Rf07xd4z`, `cart_k5nR8xLq` — so an ID tells you what it points at.
 
-## Extension Points
+<Note>
+Money is always a **string**: `"135.60"`, never `135.60`. JavaScript can't represent every decimal exactly — `0.1 + 0.2` gives `0.30000000000000004` — which is not something you want inside a price. Every amount also comes formatted for its currency as `display_total`, `display_price` and so on. Render the `display_` one.
+</Note>
 
-Spree is designed to be customized without modifying core code. The main extension mechanisms are:
+## Building on top
 
-| Mechanism | Use Case | Documentation |
-|-----------|----------|---------------|
-| **Events & Subscribers** | React to order completion, payment, shipment events | [Events Guide](/developer/core-concepts/events) |
-| **Webhooks** | Notify external systems of changes | [Webhooks Guide](/developer/core-concepts/webhooks) |
-| **Dependencies** | Swap out services (tax calculation, shipping estimation) | [Dependencies Guide](/developer/customization/dependencies) |
-| **Decorators** | Modify existing core models & classes behavior (use sparingly) | [Decorators Guide](/developer/customization/decorators) |
+Spree assumes you'll extend it, and gives you three ways in that survive an upgrade:
+
+| Approach | Use it for | Guide |
+|---|---|---|
+| **Webhooks** | Telling another system something happened — an ERP, a warehouse, an email tool | [Webhooks](/developer/core-concepts/webhooks) |
+| **Custom fields** | Storing your own data on a product, order or customer without changing the schema | [Custom Fields](/developer/core-concepts/metafields) |
+| **Providers** | Plugging in a real service for tax, delivery rates, payments or search | [Providers](/developer/providers/overview) |
+
+For merchant-managed data, reach for [custom fields](/developer/core-concepts/metafields) before anything heavier — they're queryable and editable in the dashboard without touching code.
+
+## Multi-store, multi-market, multi-seller
+
+One Spree installation can run more than one business:
+
+- **[Stores](/developer/core-concepts/stores)** are separate businesses — their own catalog, orders, customers and settings. Data does not cross between them.
+- **[Channels](/developer/core-concepts/channels)** are the ways one store sells: a website, a mobile app, a retail till.
+- **[Markets](/developer/core-concepts/markets)** are the regions a store sells into, each with its currency, locale and tax treatment.
+- **[Sellers](/developer/core-concepts/products#seller-submissions)** let one store list goods from many vendors, for a marketplace.
+
+## What you install
+
+| Package | What it is |
+|---|---|
+| `spree` | The engine — catalog, checkout, payments, both APIs |
+| `spree_emails` | Transactional email, if you don't send your own |
+| `spree_dashboard` | The back-office dashboard |
+
+Providers for search, delivery rates, tax and payments install separately, so you only carry what you use.
+
+**TypeScript:**
+
+| Package | What it is |
+|---|---|
+| [`@spree/sdk`](/developer/sdk/quickstart) | Store API client — for your storefront |
+| [`@spree/admin-sdk`](/developer/sdk/admin/quickstart) | Admin API client — for back-office and integrations |
+| [`@spree/cli`](/developer/cli/quickstart) | Command line for local setup and calling the Admin API |
 
 <Info>
-For most customizations, prefer **Events** and **Dependencies** over Decorators. They're easier to maintain and won't break during upgrades.
+Spree runs on PostgreSQL, MySQL or SQLite. PostgreSQL is recommended for production — [database configuration](/developer/deployment/database).
 </Info>
 
-## Packages
+## Where to go next
 
-Spree is distributed as a set of packages:
-
-**Core (required):**
-
-| Package | Purpose |
-|---------|---------|
-| `spree` | Models, services, business logic, Store API, Admin API, and Webhooks |
-
-**Optional:**
-
-| Package | Purpose |
-|---------|---------|
-| `spree_admin` | Admin dashboard for managing your store |
-| `spree_emails` | Transactional email templates (order confirmation, shipping, etc.) |
-
-**TypeScript packages:**
-
-| Package | Purpose |
-|---------|---------|
-| [`@spree/sdk`](/developer/sdk/quickstart) | TypeScript SDK for the Store API |
-| [`@spree/admin-sdk`](/developer/sdk/admin/quickstart) | TypeScript SDK for the Admin API |
-| [`@spree/cli`](/developer/cli/quickstart) | Command line interface for managing local environment and using the Admin API from the terminal |
-
-## Related Documentation
-
-- [Products](/developer/core-concepts/products) — Product catalog and variants
-- [Orders](/developer/core-concepts/orders) — Order lifecycle and state machine
-- [Payments](/developer/core-concepts/payments) — Payment processing
-- [Shipments](/developer/core-concepts/fulfillments) — Shipping and fulfillment
-- [Customization Quickstart](/developer/customization/quickstart) — How to extend Spree
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/developer/getting-started/quickstart">
+    Get an installation running.
+  </Card>
+  <Card title="Store SDK" icon="code" href="/developer/sdk/quickstart">
+    Build a storefront against the Store API.
+  </Card>
+  <Card title="Products" icon="package" href="/developer/core-concepts/products">
+    How the catalog is modelled.
+  </Card>
+  <Card title="Carts" icon="shopping-cart" href="/developer/core-concepts/carts">
+    Cart, checkout, and what completion guarantees.
+  </Card>
+</CardGroup>
