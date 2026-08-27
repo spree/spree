@@ -1,5 +1,5 @@
 import { setApiClient } from '@spree/dashboard-core'
-import type { SellerApiClient } from '@spree/seller-sdk'
+import type { SellerApiClient, SellerExportCreateParams } from '@spree/seller-sdk'
 import { createSellerClient } from '@spree/seller-sdk'
 
 /**
@@ -56,6 +56,22 @@ export function createSellerApiClient({
     // so it works in a panel that has no admin credential.
     listCountries: () => sellerClient().countries.list(),
     createDirectUpload: (params) => sellerClient().directUploads.create(params),
+    // A file download is a bare fetch, so it does not go through the client
+    // and picks up none of its headers. Without the seller header the Seller
+    // API refuses the request before the action runs, so an export would
+    // generate fine and then fail to download.
+    downloadHeaders: (): Record<string, string> => {
+      const sellerId = rememberedSeller()
+
+      return sellerId ? { 'X-Spree-Seller-Id': sellerId } : {}
+    },
+    // Backs the shared export dialog, the same one the operator's dashboard
+    // renders. The Seller API narrows what may be exported to records that
+    // can be scoped to one seller, and refuses anything else.
+    exports: {
+      create: (params) => sellerClient().exports.create(params as SellerExportCreateParams),
+      get: (id) => sellerClient().exports.get(id),
+    },
     // Backs the shared stock-locations page. No `delete`: a location holds
     // stock levels and is named on historical fulfillments, so the Seller API
     // does not offer it and the page hides the action accordingly.

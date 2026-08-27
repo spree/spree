@@ -78,6 +78,95 @@ RSpec.describe Spree::Export, :job, type: :model do
     end
   end
 
+  describe '#scope' do
+    let(:seller) { create(:seller, :approved, store: store) }
+    let(:other_seller) { create(:seller, :approved, store: store) }
+
+    context 'when the export belongs to a seller' do
+      let(:export) { build(:order_export, store: store, seller: seller, user: nil) }
+
+      let!(:mine) { create(:completed_order_with_totals, store: store, seller: seller) }
+      let!(:theirs) { create(:completed_order_with_totals, store: store, seller: other_seller) }
+
+      it "narrows to that seller's own records" do
+        expect(export.scope).to include(mine)
+        expect(export.scope).not_to include(theirs)
+      end
+
+      it 'leaves out drafts' do
+        draft = create(:order, store: store, seller: seller, status: 'draft', cart: nil)
+
+        expect(export.scope).not_to include(draft)
+      end
+
+      # The ability grants the model class, never a subset, so a seller export
+      # of something with no `for_seller` would quietly span the marketplace.
+      it 'refuses a model it cannot narrow' do
+        export = build(:customer_export, store: store, seller: seller, user: nil)
+
+        expect { export.scope }.to raise_error(Spree::Export::SellerScopeUnavailable)
+      end
+    end
+
+    context 'when the export has no seller' do
+      let(:export) { build(:order_export, store: store, user: nil) }
+
+      let!(:sellers_order) { create(:completed_order_with_totals, store: store, seller: seller) }
+
+      it 'spans the store' do
+        expect(export.scope).to include(sellers_order)
+      end
+    end
+  end
+
+  # The buyer's email is withheld from every seller-facing surface; a bulk CSV
+  # is the one most likely to leave the building.
+  describe 'a seller export of orders' do
+    let(:seller) { create(:seller, :approved, store: store) }
+    let!(:order) { create(:completed_order_with_totals, store: store, seller: seller) }
+
+    let(:seller_export) { create(:order_export, store: store, seller: seller, user: nil) }
+    let(:operator_export) { create(:order_export, store: store, user: nil) }
+
+    def rows_for(export)
+      export.generate
+      ::CSV.parse(export.attachment.download, headers: true)
+    end
+
+    it 'leaves the buyer email out of the headers' do
+      expect(seller_export.csv_headers).not_to include('Email')
+    end
+
+    it "does not write the buyer's email anywhere in the file" do
+      seller_export.generate
+
+      expect(seller_export.attachment.download).not_to include(order.email)
+    end
+
+    # The row and the header list are filtered separately, so a mismatch would
+    # shift every later value into the wrong column while still looking valid.
+    it 'keeps the remaining columns aligned with their headers' do
+      row = rows_for(seller_export).first
+
+      expect(row['Number']).to eq(order.number)
+      expect(row['Shipping Name']).to eq(order.ship_address.full_name)
+      expect(row['Billing Name']).to eq(order.bill_address.full_name)
+    end
+
+    it 'still gives the seller the addresses they ship and invoice against' do
+      headers = seller_export.csv_headers
+
+      expect(headers).to include('Shipping Address 1', 'Shipping Phone')
+      expect(headers).to include('Billing Address 1')
+      expect(headers).to include('Notes')
+    end
+
+    it "leaves the operator's own export untouched" do
+      expect(operator_export.csv_headers).to include('Email')
+      expect(rows_for(operator_export).first['Email']).to eq(order.email)
+    end
+  end
+
   describe '#records_to_export' do
     let!(:matching_products) { create_list(:product, 3, name: 'test') }
     let!(:non_matching_products) { create_list(:product, 3, name: 'something else') }

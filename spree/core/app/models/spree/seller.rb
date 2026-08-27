@@ -134,6 +134,11 @@ module Spree
     has_many :orders, class_name: 'Spree::Order', dependent: nil
     has_many :payment_splits, through: :orders, class_name: 'Spree::PaymentSplit', source: :payment_splits
 
+    # CSV files this seller asked for. Destroyed with the seller: an export is
+    # a copy of records held elsewhere, so nothing is lost by dropping it, and
+    # a file of one seller's orders should not outlive them.
+    has_many :exports, class_name: 'Spree::Export', dependent: :destroy_async, inverse_of: :seller
+
     # What this seller has done about the marketplace's requirements — their
     # attestations, the documents they uploaded, what the operator made of
     # them. Goes with the seller, since it means nothing without them.

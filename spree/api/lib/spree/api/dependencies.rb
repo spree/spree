@@ -181,6 +181,7 @@ module Spree
         product_submission_serializer: 'Spree::Api::V3::Seller::ProductSubmissionSerializer',
         admin_product_submission_serializer: 'Spree::Api::V3::Admin::ProductSubmissionSerializer',
         seller_requirement_submission_serializer: 'Spree::Api::V3::Seller::RequirementSubmissionSerializer',
+        seller_export_serializer: 'Spree::Api::V3::Seller::ExportSerializer',
         admin_seller_serializer: 'Spree::Api::V3::Admin::SellerSerializer',
         admin_seller_requirement_serializer: 'Spree::Api::V3::Admin::SellerRequirementSerializer',
         admin_seller_requirement_submission_serializer: 'Spree::Api::V3::Admin::SellerRequirementSubmissionSerializer',

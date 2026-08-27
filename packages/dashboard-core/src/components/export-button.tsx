@@ -1,4 +1,3 @@
-import type { ExportType } from '@spree/admin-sdk'
 import {
   Button,
   Dialog,
@@ -25,8 +24,12 @@ import { filtersToRansack } from '../lib/filters-to-ransack'
 import type { ResourceActionsContext } from './resource-table'
 
 interface ExportButtonProps extends ResourceActionsContext {
-  /** Which dataset to export. Server validates against `Spree::Export.available_types`. */
-  type: ExportType
+  /**
+   * Which dataset to export. A plain string rather than either SDK's union:
+   * the operator's registry and a seller's allowlist are different sets, and
+   * the server is what validates the value in both panels.
+   */
+  type: string
   /** Label shown on the button. Defaults to the translated "Export" action. */
   label?: string
 }
@@ -59,6 +62,13 @@ export function ExportButton({
       type,
       record_selection: selection,
       search_params: selection === 'filtered' ? search_params : undefined,
+      // Where the done email sends the user back to, for an export too slow to
+      // wait on. Read off the live location rather than built from a
+      // configured host: a panel may be mounted under a path (`/sellers`,
+      // `/dashboard`) as easily as on a host of its own, and only the page
+      // itself knows which. The store's allowed origins decide whether the
+      // server trusts it.
+      results_url: window.location.href,
     })
     setOpen(false)
   }

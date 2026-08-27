@@ -304,7 +304,7 @@ paths:
                   avatar_url:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 13
+                  name: Seller 17
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -420,7 +420,7 @@ paths:
                   avatar_url:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 34
+                  name: Seller 38
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -489,8 +489,8 @@ paths:
                   avatar_url:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 22
-                  slug: seller-22
+                  name: Seller 26
+                  slug: seller-26
                   status: approved
                 permissions:
                 - allow: true
@@ -12465,226 +12465,6 @@ paths:
             application/octet-stream:
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
-  "/api/v3/seller/policies":
-    get:
-      summary: List policies
-      tags:
-      - Policies
-      security:
-      - bearer_auth: []
-      description: |
-        This seller's own policy documents.
-
-        Rooted in the acting seller, so the marketplace operator's store
-        policies and every other seller's are invisible here. A seller starts
-        with none: what they are expected to publish is decided by the
-        marketplace's onboarding checklist.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: page
-        in: query
-        required: false
-        description: Page number
-        schema:
-          type: integer
-      - name: limit
-        in: query
-        required: false
-        description: Records per page (max 100)
-        schema:
-          type: integer
-      responses:
-        '200':
-          description: policies listed
-          content:
-            application/json:
-              example:
-                data:
-                - id: pol_uw2YK1rnl0
-                  name: Returns Policy
-                  slug: returns-policy
-                  body: Send anything back within 30 days.
-                  body_html: "<p>Send anything back within 30 days.</p>"
-                  updated_at: '2026-01-15T12:00:00.000Z'
-                  created_at: '2026-01-15T12:00:00.000Z'
-                meta:
-                  page: 1
-                  limit: 25
-                  count: 1
-                  pages: 1
-                  from: 1
-                  to: 1
-                  in: 1
-                  previous:
-                  next:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      "$ref": "#/components/schemas/Policy"
-                  meta:
-                    "$ref": "#/components/schemas/PaginationMeta"
-                required:
-                - data
-                - meta
-    post:
-      summary: Create a policy
-      tags:
-      - Policies
-      security:
-      - bearer_auth: []
-      description: |
-        Publishes one of this seller's policies. `body` accepts HTML and is
-        sanitized before it is stored.
-
-        When the marketplace requires a named policy, use that exact name —
-        the onboarding check matches on it.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '201':
-          description: policy created
-          content:
-            application/json:
-              example:
-                id: pol_OIJLhNcSbf
-                name: Shipping Policy
-                slug: shipping-policy
-                body: Orders leave the workshop within two working days.
-                body_html: "<p>Orders leave the workshop within two working days.</p>"
-                updated_at: '2026-01-15T12:00:00.000Z'
-                created_at: '2026-01-15T12:00:00.000Z'
-              schema:
-                "$ref": "#/components/schemas/Policy"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  example: Shipping Policy
-                slug:
-                  type: string
-                  example: shipping-policy
-                body:
-                  type: string
-                  example: "<p>Orders leave the workshop within two working days.</p>"
-              required:
-              - name
-  "/api/v3/seller/policies/{id}":
-    parameters:
-    - name: id
-      in: path
-      required: true
-      description: Policy prefixed ID or slug
-      schema:
-        type: string
-    get:
-      summary: Get a policy
-      tags:
-      - Policies
-      security:
-      - bearer_auth: []
-      description: Returns one of this seller's policies, by prefixed ID or slug.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: policy found
-          content:
-            application/json:
-              example:
-                id: pol_uw2YK1rnl0
-                name: Returns Policy
-                slug: returns-policy
-                body: Send anything back within 30 days.
-                body_html: "<p>Send anything back within 30 days.</p>"
-                updated_at: '2026-01-15T12:00:00.000Z'
-                created_at: '2026-01-15T12:00:00.000Z'
-              schema:
-                "$ref": "#/components/schemas/Policy"
-        '404':
-          description: policy not found
-          content:
-            application/json:
-              example:
-                error:
-                  code: record_not_found
-                  message: Policy not found
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-    patch:
-      summary: Update a policy
-      tags:
-      - Policies
-      security:
-      - bearer_auth: []
-      description: Rewrites one of this seller's policies.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: policy updated
-          content:
-            application/json:
-              example:
-                id: pol_uw2YK1rnl0
-                name: Returns Policy
-                slug: returns-policy
-                body: Send anything back within 60 days.
-                body_html: "<p>Send anything back within 60 days.</p>"
-                updated_at: '2026-01-15T12:00:00.000Z'
-                created_at: '2026-01-15T12:00:00.000Z'
-              schema:
-                "$ref": "#/components/schemas/Policy"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                slug:
-                  type: string
-                body:
-                  type: string
-    delete:
-      summary: Delete a policy
-      tags:
-      - Policies
-      security:
-      - bearer_auth: []
-      description: Withdraws one of this seller's policies.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '204':
-          description: policy deleted
   "/api/v3/seller/products":
     get:
       summary: List products
@@ -12730,8 +12510,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1303250
-                  slug: product-1303250
+                  name: Product 1343250
+                  slug: product-1343250
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -12970,8 +12750,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 1336710
-                slug: product-1336710
+                name: Product 1376710
+                slug: product-1376710
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -13048,7 +12828,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Hand-thrown mug, large
-                slug: product-1368212
+                slug: product-1408212
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -13159,8 +12939,8 @@ paths:
             application/json:
               example:
                 id: sel_UkLWZg9DAJ
-                name: Seller 49
-                slug: seller-49
+                name: Seller 47
+                slug: seller-47
                 about: ''
                 about_html: ''
                 logo_url:
@@ -13237,7 +13017,7 @@ paths:
               example:
                 id: sel_UkLWZg9DAJ
                 name: Acme Supplies
-                slug: seller-51
+                slug: seller-49
                 about: ''
                 about_html: ''
                 logo_url:
@@ -13990,10 +13770,10 @@ paths:
             application/json:
               example:
                 direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--311a89dbec20c3fe56e7a6c41ab308c4c2b97da1
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--910b502b8faef29c846d4b8f7b8531aada27d88f
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--b38bec91ebe8d3e7adb4b91a2d3fc6beb8e2be1c
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--40c0ad29afdc31e2451355bafe4420079bd5c4ed
               schema:
                 "$ref": "#/components/schemas/DirectUploadResponse"
       requestBody:
@@ -14025,6 +13805,167 @@ paths:
                   - content_type
               required:
               - blob
+  "/api/v3/seller/exports":
+    post:
+      summary: Create an export
+      tags:
+      - Exports
+      security:
+      - bearer_auth: []
+      description: |
+        Queues a CSV of this seller's own records.
+
+        Only datasets that can be narrowed to a single seller are offered, so
+        an export can never contain another seller's rows however it is
+        filtered. The seller and the store come from the request context
+        whatever the payload says.
+
+        Generation runs in the background: poll `GET /api/v3/seller/exports/{id}`
+        until `done` is true, then fetch `download_url`.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: export queued
+          content:
+            application/json:
+              example:
+                id: exp_UkLWZg9DAJ
+                number: EF1001
+                format: csv
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                type: orders
+                user_id: adm_UkLWZg9DAJ
+                done: false
+                filename:
+                byte_size:
+                download_url:
+              schema:
+                "$ref": "#/components/schemas/Export"
+        '422':
+          description: type cannot be scoped to one seller
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: 'Unsupported export type. Supported types: orders, products'
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  enum:
+                  - orders
+                  - products
+                  description: Which dataset to export.
+                record_selection:
+                  type: string
+                  enum:
+                  - filtered
+                  - all
+                  description: "`filtered` (default) honours `search_params`; `all`
+                    exports everything this seller owns."
+                search_params:
+                  type: object
+                  description: Ransack predicates, the same shape the list endpoints
+                    take. Ignored when `record_selection` is `all`.
+                  additionalProperties: true
+                results_url:
+                  type: string
+                  description: Panel URL the export-done email links back to. Honoured
+                    only when it matches one of the store's allowed origins.
+              required:
+              - type
+  "/api/v3/seller/exports/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: Export ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Get an export
+      tags:
+      - Exports
+      security:
+      - bearer_auth: []
+      description: |
+        Reads one of this seller's exports. Poll this until `done` is true,
+        then fetch `download_url`.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: export found
+          content:
+            application/json:
+              example:
+                id: exp_UkLWZg9DAJ
+                number: EF1001
+                format: csv
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                type: orders
+                user_id: adm_UkLWZg9DAJ
+                done: false
+                filename:
+                byte_size:
+                download_url:
+              schema:
+                "$ref": "#/components/schemas/Export"
+  "/api/v3/seller/exports/{id}/download":
+    parameters:
+    - name: id
+      in: path
+      description: Export ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Download an export
+      tags:
+      - Exports
+      security:
+      - bearer_auth: []
+      description: |
+        Streams the finished CSV.
+
+        The bytes are served by this endpoint rather than through a redirect,
+        so the seller's own session authorizes every download.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '422':
+          description: export is still being written
+          content:
+            application/json:
+              example:
+                error:
+                  code: export_not_ready
+                  message: Export is not ready yet
+            text/csv:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/seller/orders/{order_id}/fulfillments":
     parameters:
     - name: order_id
@@ -14075,8 +14016,8 @@ paths:
                   - id: fi_UkLWZg9DAJ
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
-                    name: Product 1239315
-                    sku: SKU-155
+                    name: Product 1279315
+                    sku: SKU-159
                     options_text: ''
               schema:
                 type: object
@@ -14145,8 +14086,8 @@ paths:
                 - id: fi_UkLWZg9DAJ
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
-                  name: Product 124961
-                  sku: SKU-156
+                  name: Product 128961
+                  sku: SKU-160
                   options_text: ''
               schema:
                 "$ref": "#/components/schemas/Fulfillment"
@@ -14246,7 +14187,7 @@ paths:
                   display_total: "$110.00"
                   items:
                   - id: li_UkLWZg9DAJ
-                    name: Product 12595
+                    name: Product 12995
                     options_text: ''
                     quantity: 1
                     currency: USD
@@ -14255,7 +14196,7 @@ paths:
                     total: '10.0'
                     display_total: "$10.00"
                     variant_id: variant_UkLWZg9DAJ
-                    sku: SKU-157
+                    sku: SKU-161
                     thumbnail_url:
                   fulfillments:
                   - id: ful_UkLWZg9DAJ
@@ -14275,8 +14216,8 @@ paths:
                     - id: fi_UkLWZg9DAJ
                       quantity: 1
                       line_item_id: li_UkLWZg9DAJ
-                      name: Product 12595
-                      sku: SKU-157
+                      name: Product 12995
+                      sku: SKU-161
                       options_text: ''
                   shipping_address:
                     id: addr_gbHJdmfrXB
@@ -14284,7 +14225,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 105 Lovely Street
+                    address1: 113 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -14306,7 +14247,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 104 Lovely Street
+                    address1: 112 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -14395,7 +14336,7 @@ paths:
                 display_total: "$110.00"
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1269755
+                  name: Product 1309755
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -14404,7 +14345,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-158
+                  sku: SKU-162
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -14424,8 +14365,8 @@ paths:
                   - id: fi_UkLWZg9DAJ
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
-                    name: Product 1269755
-                    sku: SKU-158
+                    name: Product 1309755
+                    sku: SKU-162
                     options_text: ''
                 shipping_address:
                   id: addr_gbHJdmfrXB
@@ -14433,7 +14374,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 107 Lovely Street
+                  address1: 115 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -14455,7 +14396,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 106 Lovely Street
+                  address1: 114 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -14533,7 +14474,7 @@ paths:
                 display_total: "$110.00"
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1296554
+                  name: Product 1336554
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -14542,7 +14483,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-161
+                  sku: SKU-165
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -14562,8 +14503,8 @@ paths:
                   - id: fi_UkLWZg9DAJ
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
-                    name: Product 1296554
-                    sku: SKU-161
+                    name: Product 1336554
+                    sku: SKU-165
                     options_text: ''
                 shipping_address:
                   id: addr_gbHJdmfrXB
@@ -14571,7 +14512,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 113 Lovely Street
+                  address1: 121 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -14593,7 +14534,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 112 Lovely Street
+                  address1: 120 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -14636,8 +14577,6 @@ tags:
 - name: Onboarding
   description: The marketplace checklist a seller completes before admission, and
     what they submit against it
-- name: Policies
-  description: The seller's own legal documents, as the marketplace asks them to publish
 - name: Products
   description: The seller's own catalog
 - name: Profile
@@ -15457,6 +15396,50 @@ components:
       - display_compare_at_amount
       - price_list_id
       x-typelizer: true
+    Export:
+      type: object
+      properties:
+        id:
+          type: string
+        number:
+          type: string
+        format:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        type:
+          type: string
+          nullable: true
+        user_id:
+          type: string
+          nullable: true
+        done:
+          type: boolean
+        filename:
+          type: string
+          nullable: true
+        byte_size:
+          type: number
+          nullable: true
+        download_url:
+          type: string
+          nullable: true
+      required:
+      - id
+      - number
+      - format
+      - created_at
+      - updated_at
+      - type
+      - user_id
+      - done
+      - filename
+      - byte_size
+      - download_url
+      x-typelizer: true
     FulfillmentItem:
       type: object
       properties:
@@ -15788,34 +15771,6 @@ components:
       - shipping_address
       - billing_address
       x-typelizer: true
-    Policy:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        slug:
-          type: string
-        body:
-          type: string
-          nullable: true
-        body_html:
-          type: string
-          nullable: true
-        updated_at:
-          type: string
-        created_at:
-          type: string
-      required:
-      - id
-      - name
-      - slug
-      - body
-      - body_html
-      - updated_at
-      - created_at
-      x-typelizer: true
     Product:
       type: object
       properties:
@@ -16031,10 +15986,6 @@ components:
         minimum_payout_amount:
           type: string
           nullable: true
-        policies:
-          type: array
-          items:
-            "$ref": "#/components/schemas/Policy"
         on_holiday:
           type: boolean
         sellable:
@@ -16140,9 +16091,6 @@ components:
           type: array
           items:
             type: string
-        required_policy_name:
-          type: string
-          nullable: true
         submission:
           "$ref": "#/components/schemas/RequirementSubmission"
         custom_fields:
@@ -16162,7 +16110,6 @@ components:
       - accepts_submissions
       - requires_file
       - accepted_content_types
-      - required_policy_name
       x-typelizer: true
     RequirementSubmission:
       type: object
@@ -16553,10 +16500,6 @@ components:
         cover_photo_url:
           type: string
           nullable: true
-        policies:
-          type: array
-          items:
-            "$ref": "#/components/schemas/Policy"
       required:
       - id
       - name

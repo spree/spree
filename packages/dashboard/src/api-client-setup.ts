@@ -40,6 +40,14 @@ setApiClient({
     list: (params) => adminClient.productTypes.list(params),
     get: (id) => adminClient.productTypes.get(id),
   },
+  // Backs the shared export dialog. `type` is widened to a string by the
+  // contract, since a seller's allowlist is a different set from the
+  // operator's registry — the API validates it either way.
+  exports: {
+    create: (params) =>
+      adminClient.exports.create(params as Parameters<typeof adminClient.exports.create>[0]),
+    get: (id) => adminClient.exports.get(id),
+  },
   taxCategories: { list: (params) => adminClient.taxCategories.list(params) },
   deliveryProfiles: { list: (params) => adminClient.deliveryProfiles.list(params) },
   deleteProductMedia: (productId, mediaId) => adminClient.products.media.delete(productId, mediaId),
