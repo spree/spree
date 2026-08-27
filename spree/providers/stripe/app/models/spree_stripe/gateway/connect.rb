@@ -29,8 +29,10 @@ module SpreeStripe
       ].freeze
 
       included do
-        preference :connect_webhook_signing_secret, :password
-        preference :connect_webhook_endpoint_id, :string
+        # As with the payment endpoint's pair: Spree registers the endpoint and
+        # stores what Stripe hands back.
+        preference :connect_webhook_signing_secret, :password, internal: true
+        preference :connect_webhook_endpoint_id, :string, internal: true
 
         after_commit :create_connect_webhook_endpoint_async, on: %i[create update]
       end

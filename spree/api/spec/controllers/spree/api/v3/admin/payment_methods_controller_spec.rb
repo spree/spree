@@ -157,6 +157,25 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
         expect(payment_method.reload.preferred_dummy_secret_key).to eq('sk_live_existing_secret')
       end
 
+      # Spree writes these itself — a secret the provider issued, an id it
+      # gave back. They are absent from the schema so no form offers them,
+      # and ignored here so a client cannot write one anyway and break the
+      # signature check that depends on it.
+      it 'ignores a preference the system owns' do
+        allow_any_instance_of(Spree::Gateway::Bogus).to receive(:preference_internal).
+          and_wrap_original { |original, name| name == :dummy_secret_key || original.call(name) }
+
+        patch :update,
+              params: {
+                id: payment_method.prefixed_id,
+                preferences: { dummy_secret_key: 'sk_live_written_by_a_client' }
+              },
+              as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(payment_method.reload.preferred_dummy_secret_key).to eq('sk_live_existing_secret')
+      end
+
       it 'replaces the secret when the submitted value is a new plaintext' do
         patch :update,
               params: {

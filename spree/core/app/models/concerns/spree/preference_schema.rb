@@ -42,7 +42,8 @@ module Spree
 
     class_methods do
       # Returns `[{ key:, type:, default: }]` for every preference declared
-      # on this class (and its ancestors). Skips deprecated preferences.
+      # on this class (and its ancestors). Skips deprecated and internal
+      # preferences.
       #
       # Memoized at class load — the schema is derived from the static
       # `preference :name, :type` declarations, so it can never change at
@@ -82,6 +83,11 @@ module Spree
         instance = new
         instance.defined_preferences.filter_map do |pref|
           next if instance.preference_deprecated(pref)
+          # Written by Spree, not supplied by the operator — a value a
+          # provider hands back after we register something with it. Offering
+          # it as a field invites somebody to type over a secret that
+          # signature verification depends on.
+          next if instance.preference_internal(pref)
 
           {
             key: pref,

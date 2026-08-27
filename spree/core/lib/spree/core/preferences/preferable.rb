@@ -67,6 +67,14 @@ module Spree::Preferences::Preferable
     send(self.class.preference_deprecated_getter_method(name))
   end
 
+  # Whether this preference is written by Spree rather than supplied by the
+  # operator — a webhook secret a provider issues, say. Kept out of the
+  # schema, so nothing offers it as a field to fill in.
+  def preference_internal(name)
+    has_preference! name
+    send(self.class.preference_internal_getter_method(name))
+  end
+
   def has_preference!(name)
     raise NoMethodError, "#{name} preference not defined" unless has_preference? name
   end

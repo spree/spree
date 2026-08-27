@@ -1130,4 +1130,22 @@ RSpec.describe SpreeStripe::Gateway do
       end
     end
   end
+  # Stripe issues these when Spree registers an endpoint, and only reveals a
+  # signing secret at creation. An operator has nothing to type, and a value
+  # typed over one would break the signature check it exists to satisfy.
+  describe 'the credentials an operator supplies' do
+    it 'asks for the two keys only' do
+      keys = described_class.serialized_preference_schema.map { |field| field[:key] }
+
+      expect(keys).to contain_exactly(:publishable_key, :secret_key)
+    end
+
+    it 'still holds what Stripe hands back' do
+      gateway.preferred_webhook_signing_secret = 'whsec_payments'
+      gateway.preferred_connect_webhook_signing_secret = 'whsec_connect'
+
+      expect(gateway.preferred_webhook_signing_secret).to eq('whsec_payments')
+      expect(gateway.preferred_connect_webhook_signing_secret).to eq('whsec_connect')
+    end
+  end
 end

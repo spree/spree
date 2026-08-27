@@ -337,4 +337,37 @@ describe Spree::PaymentMethod, type: :model do
       ActiveSupport::Notifications.unsubscribe(subscription)
     end
   end
+  # A preference the system writes rather than the operator supplies — a
+  # secret a provider issues, an id it gives back.
+  describe 'internal preferences' do
+    let(:gateway_class) do
+      Class.new(Spree::Gateway) do
+        def self.name = 'TestInternalGateway'
+
+        preference :api_key, :password
+        preference :issued_secret, :password, internal: true
+      end
+    end
+
+    it 'keeps them out of the schema, so no form offers them' do
+      keys = gateway_class.serialized_preference_schema.map { |field| field[:key] }
+
+      expect(keys).to include(:api_key)
+      expect(keys).not_to include(:issued_secret)
+    end
+
+    it 'still stores and reads one, since the system depends on the value' do
+      gateway = gateway_class.new
+      gateway.preferred_issued_secret = 'whsec_abc'
+
+      expect(gateway.preferred_issued_secret).to eq('whsec_abc')
+    end
+
+    it 'reports which preferences are internal' do
+      gateway = gateway_class.new
+
+      expect(gateway.preference_internal(:issued_secret)).to be(true)
+      expect(gateway.preference_internal(:api_key)).to be_nil
+    end
+  end
 end
