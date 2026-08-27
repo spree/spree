@@ -60,14 +60,16 @@ export function PoliciesPage({ search }: { search: ResourceSearch }) {
     queryFn: () => sellerClient().onboarding.get(),
   })
 
-  // Deduped by name: two requirements may ask for the same document, and the
-  // seller owes it once.
+  // One requirement row per document, so an outstanding line is simply an
+  // incomplete policy requirement. Deduped by name in case a marketplace
+  // configured the same document twice — the seller owes it once.
   const outstanding = Array.from(
     new Map(
       (onboarding.data?.requirements ?? [])
-        .flatMap((requirement) => requirement.required_policies ?? [])
-        .filter((required) => !required.published)
-        .map((required) => [required.name, required]),
+        .filter((requirement) => requirement.status !== 'complete')
+        .map((requirement) => requirement.required_policy_name)
+        .filter((name): name is string => !!name)
+        .map((name) => [name, name]),
     ).values(),
   )
 
@@ -111,17 +113,13 @@ export function PoliciesPage({ search }: { search: ResourceSearch }) {
           <CardContent className="flex flex-col gap-3">
             <p className="text-muted-foreground text-sm">{t('policies.required.description')}</p>
             <ul className="flex flex-col gap-2">
-              {outstanding.map((required) => (
+              {outstanding.map((name) => (
                 <li
-                  key={required.name}
+                  key={name}
                   className="flex items-center justify-between gap-4 rounded-md border border-border px-3 py-2"
                 >
-                  <span className="font-medium text-sm">{required.name}</span>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setCreatingName(required.name)}
-                  >
+                  <span className="font-medium text-sm">{name}</span>
+                  <Button size="sm" variant="outline" onClick={() => setCreatingName(name)}>
                     {t('policies.required.write')}
                   </Button>
                 </li>

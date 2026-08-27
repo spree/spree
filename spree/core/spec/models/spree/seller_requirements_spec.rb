@@ -123,7 +123,7 @@ RSpec.describe 'seller requirement kinds', type: :model do
   describe Spree::SellerRequirements::Policy do
     let(:requirement) { create(:policy_requirement, store: store) }
 
-    it 'is met once the seller publishes the policy asked for' do
+    it 'is met once the seller publishes the document it names' do
       expect(requirement.satisfied?(seller)).to be false
 
       create(:policy, owner: seller, name: 'Returns Policy', body: '<p>Send it back.</p>')
@@ -143,18 +143,10 @@ RSpec.describe 'seller requirement kinds', type: :model do
       expect(requirement.satisfied?(seller.reload)).to be true
     end
 
-    it 'asks for every policy the operator listed' do
-      requirement.update!(preferred_required_policies: ['Returns Policy', 'Shipping Policy'])
-      create(:policy, owner: seller, name: 'Returns Policy', body: '<p>Send it back.</p>')
+    it 'ignores a policy that is not the one it asks for' do
+      create(:policy, owner: seller, name: 'Shipping Policy', body: '<p>Two days.</p>')
 
       expect(requirement.satisfied?(seller.reload)).to be false
-      expect(requirement.missing_policies_for(seller.reload)).to eq(['Shipping Policy'])
-    end
-
-    it 'asks for nothing when the operator listed nothing' do
-      requirement.update!(preferred_required_policies: [])
-
-      expect(requirement.satisfied?(seller)).to be true
     end
 
     it 'ignores another seller’s policies' do
@@ -162,6 +154,22 @@ RSpec.describe 'seller requirement kinds', type: :model do
       create(:policy, owner: other_seller, name: 'Returns Policy', body: '<p>Send it back.</p>')
 
       expect(requirement.satisfied?(seller.reload)).to be false
+    end
+
+    # One row per document, so a marketplace asking for two tracks them apart
+    # and a seller who has written one sees that line go green.
+    it 'tracks each requested document separately' do
+      shipping = create(:policy_requirement, store: store, name: 'Shipping Policy')
+      create(:policy, owner: seller, name: 'Returns Policy', body: '<p>Send it back.</p>')
+      seller.reload
+
+      expect(requirement.satisfied?(seller)).to be true
+      expect(shipping.satisfied?(seller)).to be false
+    end
+
+    it 'may be added more than once' do
+      expect(described_class.allow_multiple?).to be true
+      expect { create(:policy_requirement, store: store, name: 'Shipping Policy') }.not_to raise_error
     end
   end
 

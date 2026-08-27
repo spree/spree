@@ -3879,10 +3879,16 @@ policies", which is the correct behavior.
 `Seller has_many :policies, as: :owner`, no seeding (stores keep their four
 seeded defaults; sellers start empty). What a seller must provide is
 expressed by a new computed requirement kind,
-`Spree::SellerRequirements::Policy`, configured with an array preference of
-policy *names* matched through the locale-aware `with_matching_name` scope
-plus a non-blank body; the seller panel pre-fills required names on create,
-so matching holds by construction. Not in `DEFAULT_KINDS`. Seller-branch
+`Spree::SellerRequirements::Policy` — **one row per document**. The kind is
+`allow_multiple?`, so the base already demands a per-row `name`, and that
+name is the document required; a marketplace asking for two policies adds
+the kind twice and the seller sees two lines that go complete separately.
+An array-of-names preference was tried first and rejected the same day: it
+rendered as the generic comma-separated text box (documented as being for
+IDs and short tokens, not human-authored names), made progress
+all-or-nothing, and set up a second vocabulary beside the row's own name.
+The seller panel pre-fills the required name on create, so matching holds
+by construction. Not in `DEFAULT_KINDS`. Seller-branch
 CRUD rides `scoped_resource :seller_profile`; the Admin API manages
 store-owned policies only. On the Store API, a seller's policies load
 behind the standard `?expand=policies` guard on the seller serializer.

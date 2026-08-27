@@ -69,24 +69,18 @@ module Spree
       end
     end
 
-    # The legal documents this line asks for, each paired with whether the
-    # seller has published it — empty for every kind that asks for none.
+    # The legal document this line asks for, when its kind asks for one —
+    # nil for every other kind.
     #
     # Same job as {#custom_fields}: the value object answers "what does this
-    # requirement want and where does the seller stand", so the onboarding
-    # card can name the missing document instead of saying something is
-    # missing.
+    # requirement want", so the seller panel can offer to create that exact
+    # document rather than making the seller retype its name.
     #
-    # @return [Array<Hash>] `{ name:, published: }` pairs
-    def required_policies
-      return @required_policies if defined?(@required_policies)
-      return @required_policies = [] if seller.nil? || !requirement.respond_to?(:missing_policies_for)
+    # @return [String, nil]
+    def required_policy_name
+      return nil unless requirement.respond_to?(:required_policy_name)
 
-      missing = requirement.missing_policies_for(seller)
-
-      @required_policies = requirement.preferred_required_policies.map do |name|
-        { name: name, published: missing.exclude?(name) }
-      end
+      requirement.required_policy_name.presence
     end
 
     # ActiveModel::Attributes gives readers, not predicates.

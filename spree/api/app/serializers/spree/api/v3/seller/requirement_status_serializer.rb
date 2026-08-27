@@ -12,7 +12,7 @@ module Spree
                    blocking: :boolean, action_url: [:string, nullable: true],
                    accepts_submissions: :boolean, requires_file: :boolean,
                    accepted_content_types: [:string, multi: true],
-                   required_policies: 'Array<{ name: string; published: boolean }>'
+                   required_policy_name: [:string, nullable: true]
 
           attributes :id, :kind, :name, :description, :required, :position, :status, :action_url
 
@@ -32,11 +32,10 @@ module Spree
             status.requirement.accepted_content_types
           end
 
-          # Which documents this line asks for and which the seller has
-          # published — so the panel names what is still owed rather than
-          # saying the requirement is unmet. Empty for every other kind.
-          attribute :required_policies, if: proc { |status| status.required_policies.any? } do |status|
-            status.required_policies
+          # The document this line asks for, so the panel can offer to create
+          # exactly that policy. Null for every other kind.
+          attribute :required_policy_name do |status|
+            status.required_policy_name
           end
 
           one :submission,

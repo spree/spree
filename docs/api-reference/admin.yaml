@@ -20455,15 +20455,15 @@ paths:
                   label: Country
                   description:
                   preference_schema:
-                  - key: country_codes
-                    type: array
-                    default: []
                   - key: country_id
                     type: integer
                     default:
                   - key: country_code
                     type: string
                     default:
+                  - key: country_codes
+                    type: array
+                    default: []
                 - type: currency
                   label: Currency
                   description:
@@ -20490,9 +20490,6 @@ paths:
                   label: Item total
                   description:
                   preference_schema:
-                  - key: amount_max
-                    type: decimal
-                    default:
                   - key: operator_max
                     type: string
                     default: "<"
@@ -20502,6 +20499,9 @@ paths:
                   - key: operator_min
                     type: string
                     default: ">"
+                  - key: amount_max
+                    type: decimal
+                    default:
                 - type: market
                   label: Market(s)
                   description:
@@ -30928,19 +30928,17 @@ paths:
                   - custom_field_definition_ids
                   preference_schema: []
                 - type: policy
-                  name: Seller policies
-                  description: The seller has published the policies you ask for
-                  allow_multiple: false
+                  name: Seller policy
+                  description: The seller has published a policy with this name. Add
+                    one for each document you ask for.
+                  allow_multiple: true
                   accepts_submissions: false
                   reviewed_by_operator: false
                   configured: false
                   addable: true
                   accepted_content_types: []
                   association_fields: []
-                  preference_schema:
-                  - key: required_policies
-                    type: array
-                    default: []
+                  preference_schema: []
                 - type: attestation
                   name: Seller confirmation
                   description: Something you ask the seller to confirm themselves

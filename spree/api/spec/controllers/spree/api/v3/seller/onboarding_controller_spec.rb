@@ -55,6 +55,32 @@ RSpec.describe Spree::Api::V3::Seller::OnboardingController, type: :controller d
       expect(json_response['requirements'].first['id']).to eq(requirement.prefixed_id)
     end
 
+    # One requirement row per document, so the panel can offer to create
+    # exactly the policy asked for rather than making the seller retype it.
+    it 'names the document a policy requirement asks for' do
+      create(:policy_requirement, store: store, name: 'Shipping Policy')
+
+      get :show, as: :json
+
+      line = json_response['requirements'].find { |r| r['kind'] == 'policy' }
+      expect(line['name']).to eq('Shipping Policy')
+      expect(line['required_policy_name']).to eq('Shipping Policy')
+      expect(line['status']).to eq('incomplete')
+    end
+
+    it 'tracks two required documents as two separate lines' do
+      create(:policy_requirement, store: store, name: 'Shipping Policy')
+      create(:policy_requirement, store: store, name: 'Returns Policy')
+      seller.policies.create!(name: 'Returns Policy', body: '<p>Send it back.</p>')
+
+      get :show, as: :json
+
+      lines = json_response['requirements'].select { |r| r['kind'] == 'policy' }
+      expect(lines.map { |l| [l['required_policy_name'], l['status']] }).to contain_exactly(
+        ['Shipping Policy', 'incomplete'], ['Returns Policy', 'complete']
+      )
+    end
+
     # Naming a seller they do not belong to resolves no `current_seller` at
     # all, so the request is refused before any checklist is read — there is
     # no path here that reads another seller's requirements.

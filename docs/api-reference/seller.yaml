@@ -16027,8 +16027,9 @@ components:
           type: array
           items:
             type: string
-        required_policies:
-          type: object
+        required_policy_name:
+          type: string
+          nullable: true
         submission:
           "$ref": "#/components/schemas/RequirementSubmission"
         custom_fields:
@@ -16048,6 +16049,7 @@ components:
       - accepts_submissions
       - requires_file
       - accepted_content_types
+      - required_policy_name
       x-typelizer: true
     RequirementSubmission:
       type: object
