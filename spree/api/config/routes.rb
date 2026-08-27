@@ -717,6 +717,12 @@ Spree::Core::Engine.add_routes do
         get 'auth/invitations/:id/lookup', to: 'invitation_acceptances#lookup'
         post 'auth/invitations/:id/accept', to: 'invitation_acceptances#accept'
 
+        # Public password reset — unauthenticated; the emailed token is the
+        # credential. Under `auth/` so the refresh cookie issued on success
+        # shares its path with `/auth/refresh`.
+        post 'auth/password_resets', to: 'password_resets#create'
+        patch 'auth/password_resets/:id', to: 'password_resets#update'
+
         get 'me', to: 'me#show'
 
         # Singular: the seller in play is always `current_seller`.

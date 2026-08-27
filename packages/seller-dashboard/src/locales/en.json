@@ -24,6 +24,17 @@
     "save": "Save",
     "saving": "Saving…"
   },
+  "forgot_password": {
+    "back_to_login": "Back to sign in",
+    "email": "Email",
+    "failed": "That request could not be sent. Try again in a moment.",
+    "sent_subtitle": "If that address belongs to a seller account, a reset link is on its way. The link expires shortly.",
+    "sent_title": "Check your email",
+    "submit": "Send reset link",
+    "submitting": "Sending…",
+    "subtitle": "Enter your email and we will send you a link to choose a new one.",
+    "title": "Forgot your password?"
+  },
   "home": {
     "products": "Products",
     "selling_no": "Your products are not on sale yet.",
@@ -40,6 +51,7 @@
   "login": {
     "email": "Email",
     "failed": "That email and password did not match a seller account.",
+    "forgot_password": "Forgot your password?",
     "no_seller": "This account does not run a seller on this marketplace.",
     "password": "Password",
     "submit": "Sign in",
@@ -249,6 +261,18 @@
       "unsupported": "This number is recorded as entered; we cannot check it automatically.",
       "unverified": "This number could not be verified."
     }
+  },
+  "reset_password": {
+    "failed": "That link could not be used. It may have expired, or the password was not accepted.",
+    "invalid_link": "This link is missing its token. Open the link from your reset email.",
+    "mismatch": "Both passwords must match.",
+    "password": "New password",
+    "password_confirmation": "Confirm new password",
+    "request_new_link": "Request a new link",
+    "submit": "Change password",
+    "submitting": "Saving…",
+    "subtitle": "Choose a new password to finish signing in.",
+    "title": "Choose a new password"
   },
   "seller_picker": {
     "status": "Status",
