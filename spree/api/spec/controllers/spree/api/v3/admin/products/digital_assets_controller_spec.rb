@@ -104,6 +104,9 @@ RSpec.describe Spree::Api::V3::Admin::Products::DigitalAssetsController, type: :
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(Spree::DigitalAsset.count).to eq(0)
+      # The refusal carries a real, translated message rather than a missing
+      # translation placeholder.
+      expect(response.parsed_body.dig('error', 'message')).to match(/private storage/)
     end
 
     it 'rejects a non-positive limit' do

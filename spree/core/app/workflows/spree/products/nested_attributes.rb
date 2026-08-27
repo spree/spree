@@ -186,11 +186,14 @@ module Spree
       end
 
       # Attaches downloadable files a product write ships inline, so a new
-      # product can carry its digital files in the same request. Create-only,
-      # additive: each entry carries a `signed_id` (an uploaded file) or a
+      # product can carry its digital files in the same request. Additive, like
+      # {#apply_media}: each entry carries a `signed_id` (an uploaded file) or a
       # `provider_type` (a provider-backed asset), and attaches to the default
-      # variant unless `variant_id` names another. Edits and deletes go through
-      # the nested digital_assets endpoints.
+      # variant unless `variant_id` names another. An entry carrying an `id`
+      # patches that asset rather than building a duplicate — so a client
+      # replaying a product's existing digital_assets list on update does not
+      # accumulate copies. Omitting an entry leaves it alone; removal is the
+      # nested digital_assets DELETE endpoint's job.
       #
       # @param product [Spree::Product]
       # @param digital_assets_params [Array<Hash>, nil]
@@ -201,18 +204,31 @@ module Spree
         digital_assets_params.each do |raw|
           attrs = (raw.respond_to?(:to_h) ? raw.to_h : raw).with_indifferent_access
 
+          asset_id = attrs.delete(:id)
           signed_id = attrs.delete(:signed_id)
           variant_id = attrs.delete(:variant_id)
-          target = variant_id.present? ? product.variants.find_by_param!(variant_id) : product.default_variant
-          next unless target
 
-          asset = target.digital_assets.build(attrs.except(:id))
+          # An id patches an existing asset; without one this is a new asset on
+          # the named variant (or the default). A patch for an asset that is
+          # gone is skipped rather than recreated.
+          if asset_id.present?
+            asset = product.digital_assets.find_by_param(asset_id) || next
+          else
+            target = variant_id.present? ? product.variants.find_by_param!(variant_id) : product.default_variant
+            next unless target
+
+            asset = target.digital_assets.build
+          end
+
+          asset.assign_attributes(attrs)
+
           if signed_id.present?
             # Attaching never moves a blob between storage services, so a file
             # uploaded to the public bucket would stay publicly readable. Refuse
             # it rather than attaching it wrongly.
             blob = ActiveStorage::Blob.find_signed(signed_id)
             unless blob && blob.service_name.to_s == Spree.private_storage_service_name.to_s
+              asset.errors.add(:attachment, Spree.t(:digital_assets_attachment_must_be_private))
               raise ActiveRecord::RecordInvalid.new(asset)
             end
 

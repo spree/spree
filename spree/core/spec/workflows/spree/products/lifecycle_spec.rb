@@ -137,7 +137,7 @@ module Spree
                 store: store,
                 attributes: { name: 'Wrong bucket', digital_assets: [{ signed_id: public_blob.signed_id }] }
               )
-            end.to raise_error(ActiveRecord::RecordInvalid)
+            end.to raise_error(ActiveRecord::RecordInvalid, /private storage/)
           end.to change(Spree::Product, :count).by(0).and change(Spree::DigitalAsset, :count).by(0)
         end
       end
@@ -182,6 +182,24 @@ module Spree
 
         expect(result).to be_failure
         expect(product.reload.name).to eq('Original')
+      end
+
+      # A client replaying the product's own digital_assets list (importer, host
+      # app, direct PATCH) must not accumulate copies: an entry carrying an id
+      # patches that asset in place rather than building a duplicate.
+      context 'with an inline digital_assets entry carrying an id' do
+        let!(:asset) { create(:digital_asset, variant: product.default_variant, authorized_clicks: 2) }
+
+        it 'patches the existing asset instead of duplicating it' do
+          expect do
+            described_class.call(
+              product: product,
+              attributes: { digital_assets: [{ id: asset.prefixed_id, authorized_clicks: 9 }] }
+            )
+          end.not_to change(Spree::DigitalAsset, :count)
+
+          expect(asset.reload.authorized_clicks).to eq(9)
+        end
       end
     end
 

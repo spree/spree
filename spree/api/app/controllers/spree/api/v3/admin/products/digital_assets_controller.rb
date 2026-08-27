@@ -129,7 +129,7 @@ module Spree
             end
 
             def render_private_storage_error
-              render_validation_error(Spree.t('digital_assets.attachment_must_be_private'))
+              render_validation_error(Spree.t(:digital_assets_attachment_must_be_private))
             end
           end
         end
