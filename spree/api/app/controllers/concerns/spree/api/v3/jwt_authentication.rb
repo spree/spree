@@ -72,8 +72,12 @@ module Spree
           header = request.headers['Authorization']
           return header.split(' ').last if header.present? && header.start_with?('Bearer ')
 
-          # Restricted fallback: only for digital download endpoints
-          params[:token] if controller_name == 'digital_links'
+          # Restricted fallback: only the storefront tokenized download
+          # endpoint, which carries its link token in the query string. The
+          # customer library and admin grant endpoints share the controller
+          # name but authenticate by header, so matching on the name alone
+          # would let their bearer JWTs travel in the URL (logs, history).
+          params[:token] if controller_path == 'spree/api/v3/store/digital_links'
         end
 
         def decode_jwt(token)

@@ -242,7 +242,9 @@ module Spree
       # wants used. Removed in 6.1.
       LEGACY_SERIALIZER_KEYS = {
         stock_item_serializer: :stock_level_serializer,
-        admin_stock_item_serializer: :admin_stock_level_serializer
+        admin_stock_item_serializer: :admin_stock_level_serializer,
+        digital_serializer: :digital_asset_serializer,
+        admin_digital_serializer: :admin_digital_asset_serializer
       }.freeze
 
       LEGACY_SERIALIZER_KEYS.each do |legacy, current|
