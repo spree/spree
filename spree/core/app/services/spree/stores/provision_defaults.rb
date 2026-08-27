@@ -125,6 +125,11 @@ module Spree
                    where(name: Spree.t(:default_stock_location_name)).first_or_initialize
         location.propagate_all_variants = false if location.new_record?
         location.country_code = country.iso
+        if location.persisted? && location.will_save_change_to_country_code?
+          location.assign_attributes(address1: nil, address2: nil, city: nil,
+                                     state_code: nil, state_name: nil,
+                                     zipcode: nil, phone: nil)
+        end
         location.active = true
         location.default = true
         location.save!
