@@ -15,8 +15,10 @@ module Spree
       private
 
       def perform(address:, address_params:, **opts)
-        default_billing = address_params.key?(:is_default_billing) ? address_params.delete(:is_default_billing) : opts.fetch(:default_billing, false)
-        default_shipping = address_params.key?(:is_default_shipping) ? address_params.delete(:is_default_shipping) : opts.fetch(:default_shipping, false)
+        # nil, not false: saying nothing about a flag leaves the owner's slot
+        # where it is, while false is a request to give it up.
+        default_billing = address_params.key?(:is_default_billing) ? address_params.delete(:is_default_billing) : opts.fetch(:default_billing, nil)
+        default_shipping = address_params.key?(:is_default_shipping) ? address_params.delete(:is_default_shipping) : opts.fetch(:default_shipping, nil)
         address_changes_except = opts.fetch(:address_changes_except, [])
 
         prepare_address_params!(address, address_params)
@@ -31,8 +33,8 @@ module Spree
 
         address_changed = address_changes.any?
         if !address_changed && defaults_changed?(address, default_billing, default_shipping)
-          assign_to_user_as_default(
-            user: address.customer_owner,
+          assign_owner_default(
+            owner: address.owner,
             address_id: address.id,
             default_billing: default_billing,
             default_shipping: default_shipping
@@ -44,14 +46,12 @@ module Spree
         if address.editable?
           address.update!(address_params)
 
-          if address.customer_owner.present?
-            assign_to_user_as_default(
-              user: address.customer_owner,
-              address_id: address.id,
-              default_billing: default_billing,
-              default_shipping: default_shipping
-            )
-          end
+          assign_owner_default(
+            owner: address.owner,
+            address_id: address.id,
+            default_billing: default_billing,
+            default_shipping: default_shipping
+          )
 
           reassign_incomplete_orders(address.id, address)
 
@@ -60,12 +60,14 @@ module Spree
           old_address_id = address.id
           address.destroy!
 
-          if new_address.customer_owner.present?
+          if new_address.owner.present?
+            # A replacement inherits whatever the row it replaces was default
+            # for, so the owner keeps prefilling with the same site.
             default_billing = address.is_default_billing? || default_billing
-            default_shipping = address.is_default_shipping || default_shipping
+            default_shipping = address.is_default_shipping? || default_shipping
 
-            assign_to_user_as_default(
-              user: new_address.customer_owner,
+            assign_owner_default(
+              owner: new_address.owner,
               address_id: new_address.id,
               default_billing: default_billing,
               default_shipping: default_shipping
@@ -89,19 +91,36 @@ module Spree
         address_params.transform_values!(&:presence)
       end
 
+      # Keyed on the customer who started the order — which for a guest is no
+      # customer at all, so a guest's carts are matched by the same nil. A
+      # company book's entries are skipped: an order belongs to the person who
+      # placed it, never to the organization's address book.
       def reassign_incomplete_orders(old_address_id, new_address)
+        return if new_address.business_owned?
+
         orders = Spree::Order.incomplete.where(customer_id: new_address.owner_id)
         orders.where(ship_address_id: old_address_id).update_all(ship_address_id: new_address.id, updated_at: Time.current)
         orders.where(bill_address_id: old_address_id).update_all(bill_address_id: new_address.id, updated_at: Time.current)
       end
 
+      # Whether this edit only moves the owner's default pointers, leaving the
+      # address itself untouched — asked of whichever owner keeps the book.
+      #
+      # A flag of false is a request in its own right ("stop defaulting to
+      # this one"), so what matters is whether the slot would end up somewhere
+      # different, not whether the flag is truthy.
       def defaults_changed?(address, default_billing, default_shipping)
-        user = address.customer_owner
+        owner = address.owner
+        return false unless owner.respond_to?(:default_address_id)
 
-        user.present? && (
-          (default_billing.present? && user.bill_address != address) ||
-          (default_shipping.present? && user.ship_address != address)
-        )
+        default_moves?(owner, :bill, default_billing, address) ||
+          default_moves?(owner, :ship, default_shipping, address)
+      end
+
+      def default_moves?(owner, kind, flag, address)
+        held = owner.default_address_id(kind) == address.id
+
+        flag ? !held : (flag == false && held)
       end
 
       def new_address(address_params = {})

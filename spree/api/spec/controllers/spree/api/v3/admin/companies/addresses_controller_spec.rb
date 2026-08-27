@@ -77,4 +77,27 @@ RSpec.describe Spree::Api::V3::Admin::Companies::AddressesController, type: :con
       expect(company.addresses.sole.first_name).to be_blank
     end
   end
+  describe 'PATCH #update' do
+    let!(:entry) { create(:company_address, owner: company, label: 'HQ') }
+
+    it 'promotes an entry to the node default' do
+      patch :update, params: { company_id: company.prefixed_id, id: entry.prefixed_id, default_billing: true },
+                     as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(company.reload.default_bill_address_id).to eq(entry.id)
+    end
+
+    # The three-state rule itself is proved once, against both owner types,
+    # in the HasAddressBook spec; this only shows the flag reaches the model.
+    it 'clears the default it holds' do
+      company.update!(default_bill_address: entry)
+
+      patch :update, params: { company_id: company.prefixed_id, id: entry.prefixed_id, default_billing: false },
+                     as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(company.reload.default_bill_address_id).to be_nil
+    end
+  end
 end

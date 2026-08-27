@@ -3,6 +3,9 @@ module Spree
     extend ActiveSupport::Concern
 
     included do
+      include Spree::HasAddressBook
+      has_address_book bill: :bill_address_id, ship: :ship_address_id
+
       belongs_to :bill_address, foreign_key: :bill_address_id, class_name: 'Spree::Address',
                                 optional: true
       alias_method :billing_address, :bill_address

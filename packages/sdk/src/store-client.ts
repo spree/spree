@@ -19,6 +19,7 @@ import type {
   Collection,
   CollectionListParams,
   Company,
+  CompanyAddressParams,
   CompanyInvitation,
   CompanyMembership,
   CompletePaymentSessionParams,
@@ -1205,11 +1206,7 @@ export class StoreClient {
 
       create: (
         companyId: string,
-        params: Record<string, unknown> & {
-          label?: string
-          default_billing?: boolean
-          default_shipping?: boolean
-        },
+        params: CompanyAddressParams,
         options?: RequestOptions,
       ): Promise<Address> =>
         this.request<Address>('POST', `/companies/${companyId}/addresses`, {
@@ -1220,11 +1217,7 @@ export class StoreClient {
       update: (
         companyId: string,
         id: string,
-        params: Record<string, unknown> & {
-          label?: string
-          default_billing?: boolean
-          default_shipping?: boolean
-        },
+        params: Partial<CompanyAddressParams>,
         options?: RequestOptions,
       ): Promise<Address> =>
         this.request<Address>('PATCH', `/companies/${companyId}/addresses/${id}`, {

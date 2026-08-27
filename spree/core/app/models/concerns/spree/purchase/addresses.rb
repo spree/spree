@@ -128,22 +128,16 @@ module Spree
         true
       end
 
-      # Ownership-guarded writer: the id is applied only when the address
-      # belongs to the record's customer; anything else — including any id on
-      # a guest record — resolves to nil.
+      # Ownership-guarded writer: the id is applied only when the address is
+      # one this purchase may ship to — the buyer's own book, or the book of
+      # the company it is for. Anything else, including any id on a guest
+      # record, resolves to nil.
       #
       # @param id [Integer, String, nil]
       def bill_address_id=(id)
         return if bill_address_id == id
 
-        address = Spree::Address.find_by(id: id)
-        # rubocop:disable Style/ConditionalAssignment
-        if address && customer_id.present? && address.owner_id == customer_id && address.customer_owned?
-          self['bill_address_id'] = address.id
-        else
-          self['bill_address_id'] = nil
-        end
-        # rubocop:enable Style/ConditionalAssignment
+        self['bill_address_id'] = selectable_address(id)&.id
         reset_bill_address
       end
 
@@ -163,14 +157,7 @@ module Spree
       def ship_address_id=(id)
         return if ship_address_id == id
 
-        address = Spree::Address.find_by(id: id)
-        # rubocop:disable Style/ConditionalAssignment
-        if address && customer_id.present? && address.owner_id == customer_id && address.customer_owned?
-          self['ship_address_id'] = address.id
-        else
-          self['ship_address_id'] = nil
-        end
-        # rubocop:enable Style/ConditionalAssignment
+        self['ship_address_id'] = selectable_address(id)&.id
         reset_ship_address
       end
 
@@ -186,6 +173,33 @@ module Spree
       end
 
       private
+
+      # The address behind an id a client may select, or nil when the id names
+      # one this purchase has no business shipping to.
+      #
+      # Two books qualify. The buyer's own is the ordinary case. The company's
+      # is the B2B one: a purchase for a node ships to that node's sites, and
+      # to its ancestors' — the same self-and-ancestors chain the node's
+      # default address is prefilled from, so a division can pick the
+      # headquarters address it already inherits.
+      #
+      # Standing is not re-checked here: a cart cannot name a company its
+      # customer lacks standing over, so reaching this point already means the
+      # buyer may act for the node.
+      #
+      # @param id [Integer, String, nil]
+      # @return [Spree::Address, nil]
+      def selectable_address(id)
+        address = ::Spree::Address.find_by(id: id)
+        return nil if address.nil?
+
+        return address if customer_id.present? && address.customer_owned? && address.owner_id == customer_id
+
+        company = resolved_company
+        return nil if company.nil? || address.owner_type != 'Spree::Company'
+
+        company.self_and_ancestors.any? { |node| node.id == address.owner_id } ? address : nil
+      end
 
       def update_or_create_address(attributes = {})
         return if attributes.blank?
