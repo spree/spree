@@ -34,10 +34,10 @@ export interface PanelApiClient {
     logout(): Promise<void>
     /**
      * Optional sign-in flows, because not every panel offers all of them.
-     * Both panels accept invitations — each against its own API, so the
-     * session that comes back carries the right audience. Password reset and
-     * first-run setup remain the marketplace's own, so a seller's client
-     * leaves them undefined.
+     * Both panels accept invitations and reset passwords — each against its
+     * own API, so the session that comes back carries the right audience and
+     * the emailed link opens the right panel. First-run setup remains the
+     * marketplace's own, so a seller's client leaves it undefined.
      */
     acceptInvitation?(id: string, token: string, params: unknown): Promise<PanelSession>
     resetPassword?(token: string, params: unknown): Promise<PanelSession>

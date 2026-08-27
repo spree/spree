@@ -720,6 +720,12 @@ Spree::Core::Engine.add_routes do
         get 'auth/invitations/:id/lookup', to: 'invitation_acceptances#lookup'
         post 'auth/invitations/:id/accept', to: 'invitation_acceptances#accept'
 
+        # Public password reset — unauthenticated; the emailed token is the
+        # credential. Under `auth/` so the refresh cookie issued on success
+        # shares its path with `/auth/refresh`.
+        post 'auth/password_resets', to: 'password_resets#create'
+        patch 'auth/password_resets/:id', to: 'password_resets#update'
+
         get 'me', to: 'me#show'
 
         # Singular: the seller in play is always `current_seller`.
@@ -742,6 +748,15 @@ Spree::Core::Engine.add_routes do
             patch :submit
             patch :draft
             patch :archive
+          end
+
+          # The same three moves over a selection. Only the ones a seller may
+          # make alone: there is no bulk route onto `active`, because reaching
+          # it is the operator's decision on one listing at a time.
+          collection do
+            post :bulk_submit
+            post :bulk_status_update
+            delete :bulk_destroy
           end
         end
 

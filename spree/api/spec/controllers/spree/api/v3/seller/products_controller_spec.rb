@@ -384,4 +384,205 @@ RSpec.describe Spree::Api::V3::Seller::ProductsController, type: :controller do
       expect(response).to have_http_status(:forbidden)
     end
   end
+
+  describe 'bulk actions' do
+    let!(:unlisted) { create(:product, name: 'Unlisted', seller: seller, store: store, status: 'draft') }
+    let!(:theirs_draft) { create(:product, seller: other_seller, store: store, status: 'draft') }
+
+    describe 'POST #bulk_submit' do
+      it 'submits the selection for review' do
+        post :bulk_submit, params: { ids: [unlisted.prefixed_id] }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['product_count']).to eq(1)
+        expect(unlisted.reload).to be_proposed
+      end
+
+      # The point of skipping rather than refusing: a merchant selecting a
+      # page of products should still submit the ones that can move.
+      it 'skips products it cannot submit and reports how many' do
+        post :bulk_submit, params: { ids: [unlisted.prefixed_id, mine.prefixed_id] }, as: :json
+
+        expect(json_response['product_count']).to eq(1)
+        expect(json_response['skipped_count']).to eq(1)
+        expect(unlisted.reload).to be_proposed
+        expect(mine.reload).to be_active
+      end
+
+      it 'omits the skipped count when everything moved' do
+        post :bulk_submit, params: { ids: [unlisted.prefixed_id] }, as: :json
+
+        expect(json_response).not_to have_key('skipped_count')
+      end
+
+      # The whole reason this endpoint cannot reuse the shared
+      # `bulk_collection`: on a marketplace that relation spans every seller.
+      it "ignores another seller's ids" do
+        post :bulk_submit, params: { ids: [theirs_draft.prefixed_id] }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['product_count']).to eq(0)
+        expect(theirs_draft.reload).to be_draft
+      end
+
+      it 'ignores the marketplace\'s own products' do
+        first_party.update!(status: 'draft')
+
+        post :bulk_submit, params: { ids: [first_party.prefixed_id] }, as: :json
+
+        expect(json_response['product_count']).to eq(0)
+        expect(first_party.reload).to be_draft
+      end
+
+      it '422s when ids is missing entirely' do
+        post :bulk_submit, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+
+      # A prefixed id names its own class. Decoding one from another model
+      # yields a bare integer that would otherwise match whichever product
+      # happens to carry it.
+      it "ignores an id from another model that decodes onto a product's row" do
+        variant_id = Spree::Variant.new(id: unlisted.id).prefixed_id
+
+        post :bulk_submit, params: { ids: [variant_id] }, as: :json
+
+        expect(json_response['product_count']).to eq(0)
+        expect(unlisted.reload).to be_draft
+      end
+
+      it 'accepts an empty selection as a no-op' do
+        post :bulk_submit, params: { ids: [] }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['product_count']).to eq(0)
+      end
+
+      # Each workflow opens its own transaction, so a raise partway through
+      # leaves the products before it committed. Reporting the whole batch as
+      # failed would be the one description of that outcome that is false.
+      it 'keeps counting after a product raises' do
+        second = create(:product, seller: seller, store: store, status: 'draft')
+        allow(Spree.product_propose_workflow).to receive(:call).and_call_original
+        allow(Spree.product_propose_workflow).to receive(:call).
+          with(hash_including(product: second)).and_raise(StandardError, 'boom')
+
+        post :bulk_submit, params: { ids: [unlisted.prefixed_id, second.prefixed_id] }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['product_count']).to eq(1)
+        expect(json_response['skipped_count']).to eq(1)
+        expect(unlisted.reload).to be_proposed
+      end
+
+      # With auto-approval on, Propose commits the submission and then chains
+      # into Approve, returning *its* result. A product that reached review
+      # was submitted, whatever happened next.
+      context 'when the store approves seller products automatically' do
+        before { stub_store_preferences(store, auto_approve_seller_products: true) }
+
+        it 'counts a product whose approval failed as submitted' do
+          allow(Spree.product_approve_workflow).to receive(:call).
+            and_return(Spree::ServiceModule::Result.new(false, unlisted, 'nope'))
+
+          post :bulk_submit, params: { ids: [unlisted.prefixed_id] }, as: :json
+
+          expect(json_response['product_count']).to eq(1)
+          expect(json_response).not_to have_key('skipped_count')
+          expect(unlisted.reload).to be_proposed
+        end
+      end
+    end
+
+    describe 'POST #bulk_status_update' do
+      it 'takes listings back down' do
+        post :bulk_status_update, params: { ids: [mine.prefixed_id], status: 'draft' }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(mine.reload).to be_draft
+      end
+
+      it 'archives listings' do
+        post :bulk_status_update, params: { ids: [mine.prefixed_id], status: 'archived' }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(mine.reload).to be_archived
+      end
+
+      # Reaching `active` is the operator's decision on one listing at a time,
+      # so there is no seller-side bulk route onto it.
+      it 'refuses active' do
+        post :bulk_status_update, params: { ids: [unlisted.prefixed_id], status: 'active' }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(unlisted.reload).to be_draft
+      end
+
+      it 'refuses the review statuses' do
+        post :bulk_status_update, params: { ids: [unlisted.prefixed_id], status: 'proposed' }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(unlisted.reload).to be_draft
+      end
+
+      it "ignores another seller's ids" do
+        post :bulk_status_update, params: { ids: [theirs_draft.prefixed_id], status: 'archived' }, as: :json
+
+        expect(json_response['product_count']).to eq(0)
+        expect(theirs_draft.reload).to be_draft
+      end
+
+      # Taking a listing down settles the submission the seller had open —
+      # the reason this loops the workflow instead of writing the column.
+      it 'withdraws an open submission' do
+        unlisted.update!(status: 'proposed')
+        submission = unlisted.submissions.create!(status: 'pending')
+
+        post :bulk_status_update, params: { ids: [unlisted.prefixed_id], status: 'draft' }, as: :json
+
+        expect(unlisted.reload).to be_draft
+        expect(submission.reload).not_to be_pending
+      end
+    end
+
+    describe 'DELETE #bulk_destroy' do
+      it 'deletes the selection' do
+        delete :bulk_destroy, params: { ids: [mine.prefixed_id, unlisted.prefixed_id] }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['product_count']).to eq(2)
+        expect(Spree::Product.where(id: [mine.id, unlisted.id])).to be_empty
+      end
+
+      it "leaves another seller's products alone" do
+        delete :bulk_destroy, params: { ids: [theirs_draft.prefixed_id] }, as: :json
+
+        expect(json_response['product_count']).to eq(0)
+        expect(theirs_draft.reload).to be_persisted
+      end
+
+      it '422s when ids is missing entirely' do
+        delete :bulk_destroy, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+
+      # `Products::Destroy` exists so a store can refuse a deletion. A product
+      # that survives while the response says it was deleted is the one
+      # outcome a merchant must never be shown.
+      it 'reports a refused deletion as skipped' do
+        allow(Spree.product_destroy_workflow).to receive(:call).and_call_original
+        allow(Spree.product_destroy_workflow).to receive(:call).
+          with(hash_including(product: mine)).
+          and_return(Spree::ServiceModule::Result.new(false, mine, 'nope'))
+
+        delete :bulk_destroy, params: { ids: [mine.prefixed_id, unlisted.prefixed_id] }, as: :json
+
+        expect(json_response['product_count']).to eq(1)
+        expect(json_response['skipped_count']).to eq(1)
+        expect(mine.reload).to be_persisted
+      end
+    end
+  end
 end

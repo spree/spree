@@ -571,6 +571,7 @@ module Spree
           Spree::InvitationEmailSubscriber,
           Spree::SellerOnboardingSubscriber,
           Spree::AdminUserEmailSubscriber,
+          Spree::SellerUserEmailSubscriber,
           Spree::ProductMetricsSubscriber,
           Spree::TaxIdentifierValidationSubscriber
         ]

@@ -83,6 +83,35 @@ export class SellerClient {
         params: { token },
         body: params,
       }),
+
+    /**
+     * Asks for a password reset email. Always resolves (202) whether or not the
+     * address matches a seller, so this cannot be used to discover which
+     * accounts exist. The emailed link opens the seller panel — `redirect_url`
+     * when it passes the store's allowed-origin check, otherwise the panel
+     * origin the server resolves for itself.
+     */
+    requestPasswordReset: (
+      params: { email: string; redirect_url?: string },
+      options?: RequestOptions,
+    ): Promise<void> =>
+      this.request<void>('POST', '/auth/password_resets', { ...options, body: params }),
+
+    /**
+     * Spends a reset token: sets the new password and returns a signed-in
+     * seller session, so they land in the panel rather than on a login form.
+     * The token is single-use, and resetting revokes every other session the
+     * account holds.
+     */
+    resetPassword: (
+      token: string,
+      params: { password: string; password_confirmation: string },
+      options?: RequestOptions,
+    ): Promise<AuthTokens> =>
+      this.request<AuthTokens>('PATCH', `/auth/password_resets/${encodeURIComponent(token)}`, {
+        ...options,
+        body: params,
+      }),
   }
 
   /**
@@ -243,6 +272,36 @@ export class SellerClient {
 
     archive: (id: string, options?: RequestOptions): Promise<Product> =>
       this.request<Product>('PATCH', `/products/${id}/archive`, options),
+
+    /**
+     * Submit a selection for review.
+     *
+     * Only a draft or a rejected listing can be submitted, so a mixed
+     * selection moves what it can: `product_count` is what was submitted and
+     * `skipped_count` — present only when something was skipped — is what was
+     * already on sale, already in review, or archived.
+     */
+    bulkSubmit: (params: { ids: string[] }, options?: RequestOptions): Promise<BulkProductResult> =>
+      this.request('POST', '/products/bulk_submit', { ...options, body: params }),
+
+    /**
+     * Move a selection to `draft` or `archived`.
+     *
+     * There is no bulk route onto `active`: a listing goes on sale when the
+     * marketplace approves it, one at a time.
+     */
+    bulkStatusUpdate: (
+      params: { ids: string[]; status: 'draft' | 'archived' },
+      options?: RequestOptions,
+    ): Promise<BulkProductResult> =>
+      this.request('POST', '/products/bulk_status_update', { ...options, body: params }),
+
+    /** Delete a selection. Ids outside this seller's catalog are ignored. */
+    bulkDestroy: (
+      params: { ids: string[] },
+      options?: RequestOptions,
+    ): Promise<BulkProductResult> =>
+      this.request('DELETE', '/products/bulk_destroy', { ...options, body: params }),
   }
 
   /**
@@ -454,6 +513,16 @@ export interface RequirementSubmissionParams {
 }
 
 /** The fields a seller may set on their own product. */
+/**
+ * What a bulk product action did. `skipped_count` is present only when the
+ * action left something alone — a key on every response would tell a caller
+ * that never skips anything that nothing was skipped.
+ */
+export interface BulkProductResult {
+  product_count: number
+  skipped_count?: number
+}
+
 export interface ProductParams {
   name?: string
   description?: string
