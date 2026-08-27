@@ -37,10 +37,25 @@ setup_storefront() {
 
 echo "▸ Provisioning worktree '$(branch_slug)' (db: $(db_name))"
 
+primary_root=$(git worktree list --porcelain | head -1 | sed 's/^worktree //')
+
 if [ ! -d server ]; then
   echo "▸ Cloning spree-starter into server/"
   git clone --depth 1 --branch 6-0-dev https://github.com/spree/spree-starter.git server
   rm -rf server/.git server/.gitignore
+
+  # Adopt the primary checkout's migration set (and its schema snapshot) before
+  # the first migrate. `spree:install:migrations` stamps newly-copied gem
+  # migrations with the current time, so a fresh clone would give any gem
+  # migration the starter has not committed yet a version the template database
+  # (built from the primary's server) has never seen — and db:migrate would
+  # re-run it against tables the template already has. Copying the primary's
+  # files keeps the versions identical; migrations this branch adds on top are
+  # still installed and run normally below.
+  if [ "$primary_root" != "$(pwd)" ] && [ -d "$primary_root/server/db/migrate" ]; then
+    rsync -a --delete "$primary_root/server/db/migrate/" server/db/migrate/
+    [ -f "$primary_root/server/db/schema.rb" ] && cp "$primary_root/server/db/schema.rb" server/db/schema.rb
+  fi
 fi
 
 if [ ! -f server/.env ]; then
@@ -101,7 +116,6 @@ if ! db_exists "$(db_name)"; then
 fi
 
 # Warm boot caches from the primary checkout's server, if it has any.
-primary_root=$(git worktree list --porcelain | head -1 | sed 's/^worktree //')
 if [ -d "$primary_root/server/tmp/cache/bootsnap" ] && [ ! -d server/tmp/cache/bootsnap ]; then
   mkdir -p server/tmp/cache
   cp -R "$primary_root/server/tmp/cache/bootsnap" server/tmp/cache/
