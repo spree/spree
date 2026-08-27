@@ -1,14 +1,15 @@
-import { adminClient, i18n, useResourceMutation, useStore } from '@spree/dashboard-core'
+import { adminClient, i18n, useResourceKey, useResourceMutation } from '@spree/dashboard-core'
 import { useQuery } from '@tanstack/react-query'
 
 type DigitalAssetCreateParams = Parameters<typeof adminClient.products.digitalAssets.create>[1]
 type DigitalAssetUpdateParams = Parameters<typeof adminClient.products.digitalAssets.update>[2]
 
-export function useDigitalAssets(productId: string, page = 1, enabled = true) {
-  const { storeId } = useStore()
+// The logical invalidation key (tenant id auto-injected by useResourceMutation).
+const digitalAssetsKey = (productId: string) => ['products', productId, 'digital-assets']
 
+export function useDigitalAssets(productId: string, page = 1, enabled = true) {
   return useQuery({
-    queryKey: [storeId, 'products', productId, 'digital-assets', page],
+    queryKey: useResourceKey('products', productId, 'digital-assets', page),
     queryFn: () => adminClient.products.digitalAssets.list(productId, { page, per_page: 25 }),
     enabled: enabled && Boolean(productId),
   })
@@ -18,10 +19,8 @@ export function useDigitalAssets(productId: string, page = 1, enabled = true) {
 // so a host with no extra provider gets a one-entry list and the card keeps its
 // plain "Add file" button.
 export function useDigitalAssetProviders(productId: string, enabled = true) {
-  const { storeId } = useStore()
-
   return useQuery({
-    queryKey: [storeId, 'products', productId, 'digital-asset-providers'],
+    queryKey: useResourceKey('products', productId, 'digital-asset-providers'),
     queryFn: () => adminClient.products.digitalAssets.providers(productId),
     enabled: enabled && Boolean(productId),
     staleTime: Number.POSITIVE_INFINITY, // the registry doesn't change at runtime
@@ -29,33 +28,27 @@ export function useDigitalAssetProviders(productId: string, enabled = true) {
 }
 
 export function useCreateDigitalAsset(productId: string) {
-  const { storeId } = useStore()
-
   return useResourceMutation({
     mutationFn: (params: DigitalAssetCreateParams) =>
       adminClient.products.digitalAssets.create(productId, params),
-    invalidate: [[storeId, 'products', productId, 'digital-assets']],
+    invalidate: [digitalAssetsKey(productId)],
     successMessage: i18n.t('admin.messages.digital_asset_saved'),
   })
 }
 
 export function useUpdateDigitalAsset(productId: string) {
-  const { storeId } = useStore()
-
   return useResourceMutation({
     mutationFn: ({ id, ...params }: DigitalAssetUpdateParams & { id: string }) =>
       adminClient.products.digitalAssets.update(productId, id, params),
-    invalidate: [[storeId, 'products', productId, 'digital-assets']],
+    invalidate: [digitalAssetsKey(productId)],
     successMessage: i18n.t('admin.messages.digital_asset_saved'),
   })
 }
 
 export function useDeleteDigitalAsset(productId: string) {
-  const { storeId } = useStore()
-
   return useResourceMutation({
     mutationFn: (id: string) => adminClient.products.digitalAssets.delete(productId, id),
-    invalidate: [[storeId, 'products', productId, 'digital-assets']],
+    invalidate: [digitalAssetsKey(productId)],
     successMessage: i18n.t('admin.messages.digital_asset_removed'),
   })
 }
@@ -68,11 +61,9 @@ export function useResendDigitalLinks(orderId: string) {
 }
 
 export function useResetDigitalLink(orderId: string) {
-  const { storeId } = useStore()
-
   return useResourceMutation({
     mutationFn: (id: string) => adminClient.digitalLinks.reset(id),
-    invalidate: [[storeId, 'orders', orderId]],
+    invalidate: [['orders', orderId]],
     successMessage: i18n.t('admin.messages.digital_link_reset'),
   })
 }

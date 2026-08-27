@@ -81,9 +81,12 @@ export function DigitalFilesFormCard({
   )
 
   function handleFileInput(event: React.ChangeEvent<HTMLInputElement>) {
-    const files = event.target.files
+    // `event.target.files` is a live FileList — clearing the input's value
+    // empties it, so snapshot to a real array before resetting the input
+    // (the reset lets the same file be re-selected later).
+    const files = Array.from(event.target.files ?? [])
     event.target.value = ''
-    if (files) void handleFiles(files)
+    if (files.length > 0) void handleFiles(files)
   }
 
   function handleDrop(event: React.DragEvent) {
