@@ -233,6 +233,7 @@ import type {
   StockTransferCreateParams,
   StoreCreditApplyParams,
   StoreDataSources,
+  StorePayoutProvider,
   StoreUpdateParams,
   TaxCategoryCreateParams,
   TaxCategoryUpdateParams,
@@ -2952,6 +2953,19 @@ export class AdminClient {
   readonly taxProviders = {
     list: (options?: RequestOptions): Promise<PaginatedResponse<Record<string, unknown>>> =>
       this.request<PaginatedResponse<Record<string, unknown>>>('GET', '/tax_providers', options),
+  }
+
+  /**
+   * How this installation can pay its sellers. Discovery only — which one a
+   * store uses is a store preference, so there is nothing here to create.
+   *
+   * Each says whether it is usable by this store today, and whether it needs
+   * sellers to hold an account with it: choosing one changes what the
+   * marketplace has to ask of its sellers before it can pay them.
+   */
+  readonly payoutProviders = {
+    list: (options?: RequestOptions): Promise<PaginatedResponse<StorePayoutProvider>> =>
+      this.request<PaginatedResponse<StorePayoutProvider>>('GET', '/payout_providers', options),
   }
 
   // ============================================

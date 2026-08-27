@@ -80,6 +80,11 @@ module Spree
     # so a marketplace that has connected nothing still keeps a correct ledger
     # and settles by hand.
     preference :payout_provider, :string, default: nil
+    # Refused at write time rather than silently falling back at read time: an
+    # operator who mistypes a provider would otherwise get a bookkeeping-only
+    # ledger and no indication anywhere that their choice was ignored.
+    validates :preferred_payout_provider,
+              inclusion: { in: ->(_store) { Spree.payout_providers.map(&:to_s) } }, allow_blank: true
     # How often sellers are settled, unless one carries its own schedule.
     # Monthly by default because it is the interval that needs least of an
     # operator paying by hand, which is what the built-in provider expects.

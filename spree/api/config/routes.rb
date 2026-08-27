@@ -368,6 +368,9 @@ Spree::Core::Engine.add_routes do
 
         # Selectable tax engines and their declared limits (discovery only)
         resources :tax_providers, only: [:index]
+        # How sellers get paid. Discovery only — the choice itself is a store
+        # preference, so there is nothing here to create.
+        resources :payout_providers, only: [:index]
 
         # Return / claim / refund reasons (dropdowns + settings management)
         resources :return_reasons

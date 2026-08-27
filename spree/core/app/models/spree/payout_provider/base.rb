@@ -49,6 +49,22 @@ module Spree
       # a {Spree::Integration}, the convention is that the two agree, so a
       # connector, its references and its settings page name the same thing.
       #
+      # How a provider describes itself to the settings picker, so an operator
+      # chooses from what is actually installed and can see which of them this
+      # store could use today.
+      #
+      # @param store [Spree::Store]
+      # @return [Hash]
+      def self.to_api_hash(store)
+        {
+          id: name,
+          name: display_name,
+          available: available_for_store?(store),
+          requires_payout_account: requires_payout_account?,
+          default: name == Spree.default_payout_provider.to_s
+        }
+      end
+
       # @return [String]
       def self.reference_system
         name.demodulize.underscore
