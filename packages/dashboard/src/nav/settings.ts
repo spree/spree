@@ -1,5 +1,6 @@
 import { Subject, settingsNav } from '@spree/dashboard-core'
 import {
+  BanknoteIcon,
   ClipboardCheckIcon,
   CreditCardIcon,
   GlobeIcon,
@@ -43,8 +44,8 @@ settingsNav.addGroup({
   position: 300,
 })
 settingsNav.addGroup({
-  key: 'post_sale',
-  labelKey: 'admin.settings_nav.groups.post_sale',
+  key: 'marketplace',
+  labelKey: 'admin.settings_nav.groups.marketplace',
   position: 400,
 })
 settingsNav.addGroup({ key: 'team', labelKey: 'admin.settings_nav.groups.team', position: 500 })
@@ -165,7 +166,7 @@ settingsNav.add({
   keywords: ['apps', 'providers', 'credentials', 'easypost', 'avalara'],
   path: '/integrations',
   icon: PlugIcon,
-  group: 'selling',
+  group: 'store',
   position: 500,
   subject: Subject.Integration,
 })
@@ -217,9 +218,21 @@ settingsNav.add({
   keywords: ['returns', 'refunds', 'claims', 'rma', 'reason'],
   path: '/reasons',
   icon: RotateCcwIcon,
-  group: 'post_sale',
-  position: 100,
+  group: 'shipping',
+  position: 400,
   subject: Subject.ReturnReason,
+})
+
+settingsNav.add({
+  key: 'settings.payouts',
+  labelKey: 'admin.settings_nav.items.payouts',
+  descriptionKey: 'admin.settings_nav.descriptions.payouts',
+  keywords: ['marketplace', 'sellers', 'payouts', 'stripe', 'schedule'],
+  path: '/payouts',
+  icon: BanknoteIcon,
+  group: 'marketplace',
+  position: 100,
+  subject: Subject.SellerPayout,
 })
 
 settingsNav.add({
@@ -229,7 +242,7 @@ settingsNav.add({
   keywords: ['marketplace', 'sellers', 'payouts', 'fees'],
   path: '/commission-rates',
   icon: HandCoinsIcon,
-  group: 'post_sale',
+  group: 'marketplace',
   position: 200,
   subject: Subject.CommissionRate,
 })
@@ -241,7 +254,7 @@ settingsNav.add({
   keywords: ['marketplace', 'onboarding', 'approval', 'checklist'],
   path: '/seller-requirements',
   icon: ClipboardCheckIcon,
-  group: 'post_sale',
+  group: 'marketplace',
   position: 300,
   subject: Subject.Seller,
 })

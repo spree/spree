@@ -29,6 +29,21 @@ export function useStoreDataSources() {
   })
 }
 
+/**
+ * How this marketplace can pay its sellers.
+ *
+ * Its own query rather than part of the data sources: a payout provider is
+ * not a source of catalog data, and choosing one changes what sellers must
+ * do before they can be paid.
+ */
+export function usePayoutProviders() {
+  return useQuery({
+    queryKey: useResourceKey(STORE_QUERY_RESOURCE, 'payout-providers'),
+    queryFn: () => adminClient.payoutProviders.list(),
+    staleTime: 5 * 60 * 1000,
+  })
+}
+
 export function useUpdateStoreSettings() {
   return useResourceMutation<unknown, Error, StoreUpdateParams>({
     mutationFn: (params) => adminClient.store.update(params),

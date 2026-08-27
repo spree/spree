@@ -1862,6 +1862,32 @@
         "track_price_history": {
           "help": "Frühere Preise speichern, damit der Shop den niedrigsten Preis der letzten 30 Tage anzeigen kann, wie es EU-Regeln verlangen.",
           "label": "Preisverlauf aufzeichnen"
+        },
+        "payouts": {
+          "title": "Auszahlungen an Verkäufer",
+          "description": "Wie dieser Marktplatz die Verkäufer bezahlt, die auf ihm handeln.",
+          "provider": {
+            "label": "Bezahlt über",
+            "help": "Wer das Geld bewegt. Bei eigener Buchführung überweisen Sie selbst und markieren jede Zahlung als erledigt.",
+            "requires_account": "Verkäufer müssen bei diesem Anbieter ein Konto einrichten, bevor er sie bezahlt."
+          },
+          "provider_none": "Eigene Buchführung",
+          "provider_unavailable": "Verbinden Sie diesen Anbieter, bevor Sie darüber bezahlen können",
+          "schedule": {
+            "label": "Verkäufer abrechnen",
+            "help": "Wie oft Einnahmen zu einer Zahlung gebündelt werden. Ein Verkäufer kann einen eigenen Rhythmus haben."
+          },
+          "schedule_intervals": {
+            "daily": "Täglich",
+            "weekly": "Wöchentlich",
+            "biweekly": "Alle zwei Wochen",
+            "monthly": "Monatlich",
+            "manual": "Nur auf Ihre Anweisung"
+          },
+          "minimum": {
+            "label": "Mindestauszahlung",
+            "help": "Darunter wird das Guthaben in die nächste Periode übertragen statt ausgezahlt. Null zahlt jeden offenen Betrag."
+          }
         }
       },
       "store_credit": {
@@ -3404,6 +3430,10 @@
             "url": "URL"
           },
           "title": "Webhooks"
+        },
+        "payouts": {
+          "title": "Auszahlungen",
+          "subtitle": "Wie und wann dieser Marktplatz seine Verkäufer bezahlt."
         }
       },
       "staff": {
@@ -4392,17 +4422,18 @@
         "store": "Shopname, Zeitzone, Einheiten und regionale Standards",
         "tax_categories": "Steuerklassen für Produkte",
         "tax_rates": "Sätze pro Markt und Region",
-        "webhooks": "Endpunkte, die bei Ereignissen benachrichtigt werden"
+        "webhooks": "Endpunkte, die bei Ereignissen benachrichtigt werden",
+        "payouts": "Wer Ihre Verkäufer bezahlt, wie oft und ab welchem Betrag"
       },
       "groups": {
         "audit": "Audit",
         "developer": "Entwickler",
         "payments": "Zahlungen & Steuern",
-        "post_sale": "Retouren & Verkäufer",
         "selling": "Verkauf",
         "shipping": "Versand & Lieferung",
         "store": "Shop",
-        "team": "Benutzer & Berechtigungen"
+        "team": "Benutzer & Berechtigungen",
+        "marketplace": "Marktplatz"
       },
       "items": {
         "allowed_origins": "Zugelassene Ursprünge",
@@ -4426,7 +4457,8 @@
         "store": "Shop",
         "tax_categories": "Steuerkategorien",
         "tax_rates": "Steuersätze",
-        "webhooks": "Webhooks"
+        "webhooks": "Webhooks",
+        "payouts": "Auszahlungen"
       }
     },
     "setup": {

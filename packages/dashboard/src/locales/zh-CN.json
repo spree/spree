@@ -1857,6 +1857,32 @@
         "track_price_history": {
           "help": "保留历史价格，以便店铺按欧盟规定显示最近 30 天的最低价。",
           "label": "记录价格历史"
+        },
+        "payouts": {
+          "title": "卖家付款",
+          "description": "本平台如何向在此交易的卖家付款。",
+          "provider": {
+            "label": "付款方式",
+            "help": "由谁转移资金。自行记账时，由你自己转账并逐笔标记为已付。",
+            "requires_account": "卖家需先在该服务商开设账户，才能收到款项。"
+          },
+          "provider_none": "自行记账",
+          "provider_unavailable": "请先连接该服务商，然后才能通过它付款",
+          "schedule": {
+            "label": "结算卖家",
+            "help": "收益多久汇总为一笔付款。卖家也可以使用自己的周期。"
+          },
+          "schedule_intervals": {
+            "daily": "每天",
+            "weekly": "每周",
+            "biweekly": "每两周",
+            "monthly": "每月",
+            "manual": "仅在你指定时"
+          },
+          "minimum": {
+            "label": "最低付款额",
+            "help": "低于此金额时，卖家余额结转至下一周期而不发放。设为零则支付所有应付款项。"
+          }
         }
       },
       "store_credit": {
@@ -3396,6 +3422,10 @@
             "url": "URL"
           },
           "title": "Webhooks"
+        },
+        "payouts": {
+          "title": "付款",
+          "subtitle": "本平台如何以及何时向卖家付款。"
         }
       },
       "staff": {
@@ -4383,17 +4413,18 @@
         "store": "店铺名称、时区、单位与区域默认值",
         "tax_categories": "分配给商品的税务类别",
         "tax_rates": "按市场和地区适用的税率",
-        "webhooks": "事件发生时接收通知的端点"
+        "webhooks": "事件发生时接收通知的端点",
+        "payouts": "由谁向卖家付款、多久一次，以及值得发放的最低金额"
       },
       "groups": {
         "audit": "审计",
         "developer": "开发者",
         "payments": "支付与税务",
-        "post_sale": "退货与卖家",
         "selling": "销售",
         "shipping": "配送与物流",
         "store": "店铺",
-        "team": "用户与权限"
+        "team": "用户与权限",
+        "marketplace": "平台"
       },
       "items": {
         "allowed_origins": "允许的来源",
@@ -4417,7 +4448,8 @@
         "store": "店铺",
         "tax_categories": "税收类别",
         "tax_rates": "税率",
-        "webhooks": "Webhooks"
+        "webhooks": "Webhooks",
+        "payouts": "付款"
       }
     },
     "setup": {

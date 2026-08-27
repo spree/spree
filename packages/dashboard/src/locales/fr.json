@@ -1862,6 +1862,32 @@
         "track_price_history": {
           "help": "Conserver les anciens prix afin d’afficher le prix le plus bas des 30 derniers jours, comme l’exige la réglementation européenne.",
           "label": "Enregistrer l’historique des prix"
+        },
+        "payouts": {
+          "title": "Paiements aux vendeurs",
+          "description": "Comment cette marketplace paie les vendeurs qui y vendent.",
+          "provider": {
+            "label": "Payé via",
+            "help": "Qui déplace l’argent. Avec vos propres comptes, vous effectuez les virements et marquez chacun comme payé.",
+            "requires_account": "Les vendeurs doivent créer un compte chez ce prestataire avant d’être payés."
+          },
+          "provider_none": "Vos propres comptes",
+          "provider_unavailable": "Connectez ce prestataire avant de pouvoir payer par son intermédiaire",
+          "schedule": {
+            "label": "Régler les vendeurs",
+            "help": "À quelle fréquence les gains sont regroupés en un paiement. Un vendeur peut avoir son propre rythme."
+          },
+          "schedule_intervals": {
+            "daily": "Chaque jour",
+            "weekly": "Chaque semaine",
+            "biweekly": "Toutes les deux semaines",
+            "monthly": "Chaque mois",
+            "manual": "Uniquement sur votre demande"
+          },
+          "minimum": {
+            "label": "Paiement minimum",
+            "help": "En dessous, le solde du vendeur est reporté à la période suivante. Zéro paie tout ce qui est dû."
+          }
         }
       },
       "store_credit": {
@@ -3404,6 +3430,10 @@
             "url": "URL"
           },
           "title": "Webhooks"
+        },
+        "payouts": {
+          "title": "Paiements",
+          "subtitle": "Comment et quand cette marketplace paie ses vendeurs."
         }
       },
       "staff": {
@@ -4392,17 +4422,18 @@
         "store": "Nom de la boutique, fuseau horaire, unités et valeurs régionales",
         "tax_categories": "Classes de taxe attribuées aux produits",
         "tax_rates": "Taux appliqués par marché et région",
-        "webhooks": "Points de terminaison notifiés lors d'événements"
+        "webhooks": "Points de terminaison notifiés lors d'événements",
+        "payouts": "Qui paie vos vendeurs, à quelle fréquence et à partir de quel montant"
       },
       "groups": {
         "audit": "Audit",
         "developer": "Développeur",
         "payments": "Paiements et taxes",
-        "post_sale": "Retours et vendeurs",
         "selling": "Vente",
         "shipping": "Expédition et livraison",
         "store": "Boutique",
-        "team": "Utilisateurs et autorisations"
+        "team": "Utilisateurs et autorisations",
+        "marketplace": "Marketplace"
       },
       "items": {
         "allowed_origins": "Origines autorisées",
@@ -4426,7 +4457,8 @@
         "store": "Boutique",
         "tax_categories": "Catégories de taxe",
         "tax_rates": "Taux de taxe",
-        "webhooks": "Webhooks"
+        "webhooks": "Webhooks",
+        "payouts": "Paiements"
       }
     },
     "setup": {
