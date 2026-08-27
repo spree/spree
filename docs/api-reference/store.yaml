@@ -1033,7 +1033,7 @@ paths:
         in: query
         required: false
         description: Comma-separated associations to expand (variants, media, categories,
-          option_types, seller)
+          option_types, seller, seller.policies)
         schema:
           type: string
       - name: fields
@@ -1194,8 +1194,9 @@ paths:
         in: query
         required: false
         description: Comma-separated associations to expand (variants, media, categories,
-          option_types, prior_price, seller). On a marketplace, `seller` embeds the
-          seller public profile; `seller_id` is present without it.
+          option_types, prior_price, seller, seller.policies). On a marketplace, `seller`
+          embeds the seller public profile and `seller.policies` adds their published
+          legal documents; `seller_id` is present without either.
         schema:
           type: string
       - name: fields
@@ -10999,6 +11000,13 @@ paths:
         description: Filter by name
         schema:
           type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (`policies`). A seller's
+          policies are their own published legal documents.
+        schema:
+          type: string
       - name: fields
         in: query
         required: false
@@ -11071,6 +11079,13 @@ paths:
         in: path
         required: true
         description: Seller slug (e.g., sparks-audio) or prefixed ID (e.g., sel_abc123)
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (`policies`). A seller's
+          policies are their own published legal documents.
         schema:
           type: string
       - name: fields

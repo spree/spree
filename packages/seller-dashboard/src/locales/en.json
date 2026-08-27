@@ -138,6 +138,10 @@
       "name": "Name",
       "body": "Content"
     },
+    "messages": {
+      "deleted": "Policy deleted",
+      "saved": "Policy saved"
+    },
     "required": {
       "title": "Asked of you",
       "description": "This marketplace requires these policies before it will approve you.",

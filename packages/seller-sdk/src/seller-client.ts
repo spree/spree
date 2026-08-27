@@ -370,10 +370,14 @@ export class SellerClient {
     get: (idOrSlug: string, options?: RequestOptions): Promise<Policy> =>
       this.request<Policy>('GET', `/policies/${idOrSlug}`, options),
 
-    create: (params: PolicyParams, options?: RequestOptions): Promise<Policy> =>
+    create: (params: PolicyCreateParams, options?: RequestOptions): Promise<Policy> =>
       this.request<Policy>('POST', '/policies', { ...options, body: params }),
 
-    update: (idOrSlug: string, params: PolicyParams, options?: RequestOptions): Promise<Policy> =>
+    update: (
+      idOrSlug: string,
+      params: PolicyUpdateParams,
+      options?: RequestOptions,
+    ): Promise<Policy> =>
       this.request<Policy>('PATCH', `/policies/${idOrSlug}`, { ...options, body: params }),
 
     delete: (idOrSlug: string, options?: RequestOptions): Promise<void> =>
@@ -382,12 +386,20 @@ export class SellerClient {
 }
 
 /**
- * What a seller may write on one of their policies.
+ * What a seller may write when publishing a policy. `name` is required — it is
+ * how the marketplace's onboarding check finds the document.
  *
  * `body` takes HTML and is sanitized server-side; `body_html` is the
  * read-only rendering of what was stored.
  */
-export interface PolicyParams {
+export interface PolicyCreateParams {
+  name: string
+  slug?: string
+  body?: string | null
+}
+
+/** What a seller may change on a policy they already published. */
+export interface PolicyUpdateParams {
   name?: string
   slug?: string
   body?: string | null

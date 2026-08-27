@@ -1,4 +1,9 @@
-import { type ResourceSearch, ResourceTable } from '@spree/dashboard-core'
+import {
+  type ResourceSearch,
+  ResourceTable,
+  useResourceKey,
+  useResourceKeyBuilder,
+} from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -17,6 +22,7 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
+  toastManager,
   useConfirm,
   useRowClickBridge,
 } from '@spree/dashboard-ui'
@@ -73,8 +79,12 @@ export function PoliciesPage({ search }: { search: ResourceSearch }) {
     ).values(),
   )
 
+  // Built through the same tenant-scoped helper `ResourceTable` uses, so the
+  // list this page renders and the keys it invalidates are the same keys.
+  const buildKey = useResourceKeyBuilder()
+
   const invalidate = () => {
-    queryClient.invalidateQueries({ queryKey: ['seller-policies'] })
+    queryClient.invalidateQueries({ queryKey: buildKey('seller-policies') })
     // A published policy can satisfy an onboarding requirement, so the
     // checklist is no longer what it was.
     queryClient.invalidateQueries({ queryKey: ['seller', sellerId, 'onboarding'] })
@@ -82,7 +92,15 @@ export function PoliciesPage({ search }: { search: ResourceSearch }) {
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => sellerClient().policies.delete(id),
-    onSuccess: invalidate,
+    onSuccess: () => {
+      toastManager.add({ type: 'success', title: t('policies.messages.deleted') })
+      invalidate()
+    },
+    onError: (err) =>
+      toastManager.add({
+        type: 'error',
+        title: err instanceof Error ? err.message : t('common.error'),
+      }),
   })
 
   useRowClickBridge('data-policy-id', setEditingId)
@@ -185,7 +203,9 @@ function PolicySheet({
   // Fetched rather than passed down: the row the table rendered carries the
   // list payload, and editing needs the record itself.
   const { data: policy } = useQuery({
-    queryKey: ['seller-policies', policyId],
+    // Seller-scoped like every other key here: an unscoped one would serve
+    // one seller's policy body to the next after a seller switch.
+    queryKey: useResourceKey('seller-policies', policyId ?? 'new'),
     queryFn: () => sellerClient().policies.get(policyId as string),
     enabled: !!policyId,
   })
@@ -204,9 +224,17 @@ function PolicySheet({
         ? sellerClient().policies.update(policyId, values)
         : sellerClient().policies.create(values),
     onSuccess: () => {
+      toastManager.add({ type: 'success', title: t('policies.messages.saved') })
       onSaved()
       onClose()
     },
+    // The sheet stays open on failure — closing it would discard what the
+    // seller wrote along with the error that explains why it did not save.
+    onError: (err) =>
+      toastManager.add({
+        type: 'error',
+        title: err instanceof Error ? err.message : t('common.error'),
+      }),
   })
 
   const { errors } = form.formState
