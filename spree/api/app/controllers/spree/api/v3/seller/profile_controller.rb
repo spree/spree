@@ -94,9 +94,15 @@ module Spree
             kind = attributes[:kind].presence
             return if kind.blank?
 
+            # A seller has one business registration, and the panel shows one.
+            # Clearing the number removes it whatever regime it was under, and
+            # moving between regimes replaces rather than accumulates — or a
+            # number the seller believes they replaced stays behind, deciding
+            # how the marketplace's commission invoice is taxed.
             value = attributes[:value]
-            return current_seller.tax_identifiers.find_by(kind: kind)&.destroy if value.blank?
+            return current_seller.tax_identifiers.destroy_all if value.blank?
 
+            current_seller.tax_identifiers.where.not(kind: kind).destroy_all
             current_seller.tax_identifiers.find_or_initialize_by(kind: kind).update!(value: value)
           end
 

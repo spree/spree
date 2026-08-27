@@ -30,6 +30,7 @@
     "delete": "Delete",
     "error": "Something went wrong.",
     "loading": "Loading…",
+    "no_results": "No results",
     "remove": "Remove",
     "retry": "Try again",
     "save": "Save",
@@ -307,6 +308,7 @@
     "section_contact": "Contact",
     "section_settlement": "Payouts and tax",
     "section_standing": "Standing",
+    "select_tax_identifier_kind": "Select or type a registration type",
     "status_help": {
       "approved": "You are approved and can sell on this marketplace.",
       "canceled": "This seller account is closed.",
@@ -318,6 +320,14 @@
       "suspended": "Selling is paused. Contact the marketplace to find out more."
     },
     "subtitle": "How your storefront presents you, and how the marketplace reaches you.",
+    "tax_identifier_kind": "Registration type",
+    "tax_identifier_kinds": {
+      "eu_vat": "EU VAT",
+      "gb_vat": "UK VAT",
+      "ch_vat": "Swiss VAT",
+      "au_abn": "Australian Business Number",
+      "us_ein": "US EIN"
+    },
     "tax_remittance": "Tax remitted by",
     "team_count": "Team members",
     "vat_number": "VAT number",

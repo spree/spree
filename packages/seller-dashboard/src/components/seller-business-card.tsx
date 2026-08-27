@@ -5,6 +5,12 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
   Field,
   FieldLabel,
   Input,
@@ -23,8 +29,18 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { sellerClient } from '../api-client'
 
-/** The registration kind this panel collects. */
-const VAT_KIND = 'eu_vat'
+/**
+ * The registration kinds Spree ships strings for. Any string is accepted — a
+ * kind means whatever the validator registered for it decides — so the list
+ * seeds the picker rather than closing it, and a seller in a regime not listed
+ * here can type their own.
+ */
+const TAX_IDENTIFIER_KINDS = ['eu_vat', 'gb_vat', 'ch_vat', 'au_abn', 'us_ein'] as const
+
+/** What a seller with no registration on file starts on. */
+const DEFAULT_KIND = 'eu_vat'
+
+type KindOption = { value: string; label: string }
 
 /**
  * The business behind the seller, as the marketplace's commission invoice
@@ -41,18 +57,22 @@ export function SellerBusinessCard({ profile }: { profile: Profile }) {
   const queryClient = useQueryClient()
   const [editing, setEditing] = useState(false)
 
-  const vat = profile.tax_identifiers?.find((identifier) => identifier.kind === VAT_KIND)
+  // Whichever registration the seller holds, not whichever one is European:
+  // core format-checks eu_vat, so pinning the kind here would hand a British
+  // or Swiss seller a rejection with no way to say what their number is.
+  const vat = profile.tax_identifiers?.[0]
 
   const [legalName, setLegalName] = useState(profile.legal_name ?? '')
   const [registrationNumber, setRegistrationNumber] = useState(profile.registration_number ?? '')
   const [vatNumber, setVatNumber] = useState(vat?.value ?? '')
+  const [vatKind, setVatKind] = useState(vat?.kind ?? DEFAULT_KIND)
 
   const save = useMutation({
     mutationFn: () =>
       sellerClient().profile.update({
         legal_name: legalName || null,
         registration_number: registrationNumber || null,
-        tax_identifier: { kind: VAT_KIND, value: vatNumber },
+        tax_identifier: { kind: vatKind, value: vatNumber },
       }),
     onSuccess: (updated) => {
       queryClient.setQueryData(['seller', sellerId, 'profile'], updated)
@@ -68,10 +88,25 @@ export function SellerBusinessCard({ profile }: { profile: Profile }) {
       }),
   })
 
+  const kindOptions: KindOption[] = TAX_IDENTIFIER_KINDS.map((kind) => ({
+    value: kind,
+    label: t(`profile.tax_identifier_kinds.${kind}`, { defaultValue: kind }),
+  }))
+  // A kind the seller typed themselves is not in the list, so it is offered back
+  // as its own option rather than reading as an empty field.
+  const selectedKind =
+    kindOptions.find((option) => option.value === vatKind) ??
+    (vatKind ? { value: vatKind, label: vatKind } : null)
+
   const rows = [
     { label: t('profile.legal_name'), value: profile.legal_name },
     { label: t('profile.registration_number'), value: profile.registration_number },
-    { label: t('profile.vat_number'), value: vat?.value },
+    {
+      label: vat
+        ? t(`profile.tax_identifier_kinds.${vat.kind}`, { defaultValue: vat.kind })
+        : t('profile.vat_number'),
+      value: vat?.value,
+    },
   ]
 
   return (
@@ -128,6 +163,33 @@ export function SellerBusinessCard({ profile }: { profile: Profile }) {
                 value={registrationNumber}
                 onChange={(event) => setRegistrationNumber(event.target.value)}
               />
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="vat-kind">{t('profile.tax_identifier_kind')}</FieldLabel>
+              {/* Combobox rather than Select: the kind is free text at the API,
+                  so a seller whose regime is not listed can still type it. */}
+              <Combobox
+                items={kindOptions}
+                value={selectedKind}
+                onValueChange={(option: KindOption | null) => setVatKind(option?.value ?? '')}
+                itemToStringLabel={(option: KindOption | null) => option?.label ?? ''}
+                itemToStringValue={(option: KindOption | null) => option?.value ?? ''}
+              >
+                <ComboboxInput
+                  id="vat-kind"
+                  placeholder={t('profile.select_tax_identifier_kind')}
+                />
+                <ComboboxContent>
+                  <ComboboxEmpty>{t('common.no_results')}</ComboboxEmpty>
+                  <ComboboxList>
+                    {(option: KindOption) => (
+                      <ComboboxItem key={option.value} value={option}>
+                        {option.label}
+                      </ComboboxItem>
+                    )}
+                  </ComboboxList>
+                </ComboboxContent>
+              </Combobox>
             </Field>
             <Field>
               <FieldLabel htmlFor="vat-number">{t('profile.vat_number')}</FieldLabel>

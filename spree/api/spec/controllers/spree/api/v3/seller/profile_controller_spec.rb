@@ -251,6 +251,18 @@ RSpec.describe Spree::Api::V3::Seller::ProfileController, type: :controller do
       expect(identifiers.first.value).to eq(corrected_vat_number)
     end
 
+    # The seller panel lets the kind change, so a seller moving from one regime
+    # to another must end up holding the new registration and not both.
+    it 'replaces the registration when the seller changes its kind' do
+      patch :update, params: { tax_identifier: { kind: 'eu_vat', value: vat_number } }, as: :json
+      patch :update, params: { tax_identifier: { kind: 'gb_vat', value: 'GB123456789' } }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      identifiers = seller.reload.tax_identifiers
+      expect(identifiers.map(&:kind)).to contain_exactly('gb_vat')
+      expect(identifiers.first.value).to eq('GB123456789')
+    end
+
     # Silently dropping it would answer 200 to a number that was never stored.
     it 'refuses a malformed number rather than discarding it quietly' do
       patch :update, params: { tax_identifier: { kind: 'eu_vat', value: 'DE123' } }, as: :json
