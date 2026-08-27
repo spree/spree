@@ -28,8 +28,14 @@ module Spree
             Spree.api.admin_digital_link_serializer
           end
 
+          # `digital_links` reaches links through line items, so the query
+          # carries a DISTINCT and inherits an ORDER BY on the line items'
+          # table. PostgreSQL rejects DISTINCT combined with an ORDER BY column
+          # outside the select list, so reorder by the links' own table —
+          # SQLite tolerates the inherited order, so this only surfaces on a
+          # real deployment.
           def scope
-            current_store.digital_links
+            current_store.digital_links.reorder("#{Spree::DigitalLink.table_name}.created_at": :desc)
           end
 
           def scope_includes
