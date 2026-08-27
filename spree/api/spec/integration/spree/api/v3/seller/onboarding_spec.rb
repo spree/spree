@@ -86,6 +86,22 @@ RSpec.describe 'Seller Onboarding API', type: :request, swagger_doc: 'api-refere
           expect(JSON.parse(response.body)['status']).to eq('ready_for_review')
         end
       end
+
+      # The description promises this refusal, so the reference has to carry it
+      # — a client cannot handle a status the published contract omits.
+      response '422', 'something required is still outstanding' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:seller) { create(:seller, :onboarding, store: store) }
+
+        before { create(:accept_terms_requirement, store: store, required: true) }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test! do
+          expect(seller.reload.status).to eq('onboarding')
+        end
+      end
     end
   end
 end

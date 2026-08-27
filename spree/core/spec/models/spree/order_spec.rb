@@ -99,7 +99,10 @@ describe Spree::Order, type: :model do
         expect(described_class.search('don ro')).to eq([order_1])
         expect(described_class.search('ane gon')).to eq([order_2])
         expect(described_class.search('mary moe')).to eq([order_3])
-        expect(described_class.search('jane moe')).to eq([order_2, order_3])
+        # `match_array`, not `eq`: the scope carries no ORDER BY, so PostgreSQL
+        # is free to return these two rows either way round and an ordered
+        # comparison fails intermittently on the same records transposed.
+        expect(described_class.search('jane moe')).to match_array([order_2, order_3])
         expect(described_class.search('greg smith')).to eq([])
       end
     end

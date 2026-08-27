@@ -3110,8 +3110,11 @@
         "status_options": {
           "active": "نشط",
           "archived": "مؤرشف",
-          "draft": "مسودة"
+          "draft": "مسودة",
+          "proposed": "قيد المراجعة",
+          "rejected": "يتطلب تعديلات"
         },
+        "status_under_review": "هذا المنتج قيد المراجعة. استخدم الموافقة أو الرفض لاتخاذ القرار.",
         "transfers": {
           "description_external": "الاستلام الخارجي إلى <strong>{{destination}}</strong>.",
           "description_internal": "تم نقل المخزون من <strong>{{source}}</strong> إلى <strong>{{destination}}</strong>.",
@@ -3710,7 +3713,22 @@
       "product_type_adds_options_one": "يضيف هذا النوع {{options}} إلى المنتجات الجديدة.",
       "product_type_adds_options_other": "يضيف هذا النوع {{options}} إلى المنتجات الجديدة.",
       "product_type_placeholder": "بدون نوع منتج",
+      "review": {
+        "approve": "الموافقة",
+        "approve_confirm_message": "سيُعرض للبيع فور الموافقة عليه.",
+        "approve_confirm_title": "الموافقة على هذا المنتج؟",
+        "approved": "تمت الموافقة على المنتج",
+        "edit_reason": "تعديل السبب",
+        "reason_label": "السبب",
+        "reason_placeholder": "ما الذي ينبغي أن يغيّره البائع؟",
+        "reject": "إعادة للبائع",
+        "rejected": "أُعيد إلى البائع",
+        "send_back": "إعادة للبائع"
+      },
       "save_label": "حفظ المنتج",
+      "seller": {
+        "title": "البائع"
+      },
       "seo": {
         "meta_description_placeholder": "SEO description",
         "meta_title_placeholder": "SEO title",

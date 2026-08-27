@@ -125,6 +125,7 @@ module Spree
     validates :status, inclusion: { in: STATUSES }
 
     scope :drafts,         -> { where(status: 'draft') }
+    scope :not_drafts,     -> { where.not(status: 'draft') }
     scope :placed_orders,  -> { where(status: 'placed') }
     scope :canceled_orders, -> { where(status: 'canceled') }
 

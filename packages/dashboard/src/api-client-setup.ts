@@ -28,4 +28,24 @@ setApiClient({
     update: (id, params) => adminClient.stockLocations.update(id, params),
     delete: (id) => adminClient.stockLocations.delete(id),
   },
+  // Reference data for the shared product form.
+  optionTypes: {
+    list: (params) => adminClient.optionTypes.list({ ...params, expand: ['option_values'] }),
+    create: (params) => adminClient.optionTypes.create(params),
+    update: (id, params) => adminClient.optionTypes.update(id, params),
+  },
+  categories: { list: (params) => adminClient.categories.list(params) },
+  collections: { list: (params) => adminClient.collections.list(params) },
+  productTypes: {
+    list: (params) => adminClient.productTypes.list(params),
+    get: (id) => adminClient.productTypes.get(id),
+  },
+  taxCategories: { list: (params) => adminClient.taxCategories.list(params) },
+  deliveryProfiles: { list: (params) => adminClient.deliveryProfiles.list(params) },
+  deleteProductMedia: (productId, mediaId) => adminClient.products.media.delete(productId, mediaId),
+  mediaLibrary: { list: (params) => adminClient.media.list(params) },
+  markets: { list: (params) => adminClient.markets.list(params) },
+  tags: {
+    list: (params) => adminClient.tags.list(params as { taggable_type: string; q?: string }),
+  },
 })

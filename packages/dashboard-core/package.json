@@ -60,6 +60,7 @@
     "@spree/admin-sdk": ">=0.7.0 <2",
     "@spree/dashboard-ui": ">=0.10.0 <2",
     "@tanstack/react-hotkeys": "^0.10.0",
+    "@tanstack/react-table": "^8.21.3",
     "@tanstack/react-query": "^5.100.9",
     "@tanstack/react-router": "^1.169.2",
     "i18next": "^26.2.0",

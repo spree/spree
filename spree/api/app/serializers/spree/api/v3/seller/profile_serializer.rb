@@ -14,7 +14,9 @@ module Spree
                    holiday_mode_until: [:string, nullable: true],
                    terms_accepted_at: [:string, nullable: true],
                    on_holiday: :boolean, sellable: :boolean,
-                   products_count: :number
+                   products_count: :number,
+                   default_currency: :string,
+                   supported_currencies: [:string, multi: true]
 
           attributes :status, :legal_name, :registration_number,
                      :contact_email, :billing_email,
@@ -33,6 +35,17 @@ module Spree
 
           attribute :sellable do |seller|
             seller.sellable?
+          end
+
+          # What this seller prices in. Theirs by way of the marketplace: a
+          # seller has no currency of their own, so the store's is the answer
+          # to "what does this amount mean".
+          attribute :default_currency do |seller|
+            seller.store&.default_currency
+          end
+
+          attribute :supported_currencies do |seller|
+            seller.store&.supported_currencies_list&.map(&:iso_code) || []
           end
 
           attribute :products_count do |seller|

@@ -1,4 +1,3 @@
-import type { OptionType } from '@spree/admin-sdk'
 import {
   Badge,
   Button,
@@ -15,11 +14,12 @@ import {
 import { CheckIcon, PencilIcon, PlusIcon, XIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { getApiClient, type PanelOptionType as OptionType } from '../api-client'
 import {
   useCreateOptionType,
-  useOptionTypes,
+  useFormOptionTypes as useOptionTypes,
   useUpdateOptionType,
-} from '../../../hooks/use-option-types'
+} from './use-product-form-data'
 import { autoExpandIndex, type SelectedOptionType } from './variants-matrix'
 
 interface Props {
@@ -39,7 +39,7 @@ interface Props {
 // reconcile step that turns this state into RHF variant rows.
 export function VariantsOptionsBuilder({ selected, onChange, extraOptionTypes }: Props) {
   const { t } = useTranslation()
-  const { data: optionTypesData } = useOptionTypes({ limit: 100 })
+  const { data: optionTypesData } = useOptionTypes()
   const allOptionTypes = useMemo(() => {
     const paged = optionTypesData?.data ?? []
     if (!extraOptionTypes?.length) return paged
@@ -205,6 +205,7 @@ function AddOptionForm({ availableTypes, allOptionTypes, onSave, onCancel }: Add
   const [pickedTypeId, setPickedTypeId] = useState<string>('')
   const [creatingType, setCreatingType] = useState(false)
   const createOptionType = useCreateOptionType()
+  const canCreateOptionType = Boolean(getApiClient().optionTypes?.create)
 
   const picked =
     allOptionTypes.find((ot) => ot.id === pickedTypeId) ??
@@ -247,11 +248,23 @@ function AddOptionForm({ availableTypes, allOptionTypes, onSave, onCancel }: Add
             </SelectContent>
           </Select>
         </Field>
-        <div className="flex items-center justify-between gap-2">
-          <Button type="button" variant="ghost" size="sm" onClick={() => setCreatingType(true)}>
-            <PlusIcon />
-            {t('admin.products.variants.create_option_type')}
-          </Button>
+        <div className="flex items-center justify-end gap-2">
+          {/* Option types are the store's own vocabulary, so only a panel whose
+              client can write them offers to add one. A seller picks from what
+              the marketplace already defines
+              (docs/plans/6.0-seller-product-submission.md). */}
+          {canCreateOptionType && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="mr-auto"
+              onClick={() => setCreatingType(true)}
+            >
+              <PlusIcon />
+              {t('admin.products.variants.create_option_type')}
+            </Button>
+          )}
           <Button type="button" variant="outline" size="sm" onClick={onCancel}>
             {t('admin.actions.cancel')}
           </Button>
@@ -292,6 +305,10 @@ interface OptionPickerProps {
 function OptionPicker({ optionType, initialValues, onSave, onCancel }: OptionPickerProps) {
   const { t } = useTranslation()
   const updateOptionType = useUpdateOptionType(optionType.id)
+  // Adding a value to an option type edits the store's own vocabulary, so it
+  // needs the write the create button needs — a panel that can list types but
+  // not update them would render an action whose mutation has nowhere to go.
+  const canAddValue = Boolean(getApiClient().optionTypes?.update)
   const [pickedNames, setPickedNames] = useState<Set<string>>(
     () => new Set(initialValues.map((v) => v.name)),
   )
@@ -375,14 +392,16 @@ function OptionPicker({ optionType, initialValues, onSave, onCancel }: OptionPic
             </button>
           )
         })}
-        <button
-          type="button"
-          onClick={() => setCreatingValue(true)}
-          className="inline-flex items-center gap-1.5 rounded-full border border-dashed border-border bg-background px-3 py-1 text-xs hover:bg-muted"
-        >
-          <PlusIcon className="size-3" />
-          {t('admin.products.variants.create_value')}
-        </button>
+        {canAddValue && (
+          <button
+            type="button"
+            onClick={() => setCreatingValue(true)}
+            className="inline-flex items-center gap-1.5 rounded-full border border-dashed border-border bg-background px-3 py-1 text-xs hover:bg-muted"
+          >
+            <PlusIcon className="size-3" />
+            {t('admin.products.variants.create_value')}
+          </button>
+        )}
       </div>
       <div className="flex items-center justify-end gap-2">
         <Button type="button" variant="outline" size="sm" onClick={onCancel}>

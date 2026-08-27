@@ -72,6 +72,10 @@ module Spree
     # under its name, and letting that happen by omission is the wrong
     # default for the operator who never thought about it.
     preference :auto_approve_sellers, :boolean, default: false
+    # Put a seller's product on sale the moment they submit it. Off for the
+    # same reason as auto_approve_sellers: what the marketplace lists is what
+    # it vouches for.
+    preference :auto_approve_seller_products, :boolean, default: false
     # Checkout preferences
     # Store-level fallback for the channel-owned `guest_checkout` preference
     # (see Spree::Channel::Gating). Retained so existing accessors keep working.

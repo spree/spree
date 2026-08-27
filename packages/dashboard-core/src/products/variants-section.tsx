@@ -14,7 +14,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import type { OptionType } from '@spree/admin-sdk'
+import type { ProductFormValues, VariantFormValues } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -35,10 +35,13 @@ import { PencilIcon, XIcon } from 'lucide-react'
 import { type CSSProperties, useEffect, useMemo, useState } from 'react'
 import { type UseFormReturn, useFieldArray, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { useOptionTypes, useOptionTypesByIds } from '../../../hooks/use-option-types'
-import { useProductType } from '../../../hooks/use-product-types'
-import type { ProductFormValues, VariantFormValues } from '../../../schemas/product'
+import type { PanelOptionType as OptionType } from '../api-client'
 import { BulkVariantsDialog } from './bulk-variants-dialog'
+import {
+  useFormOptionTypes as useOptionTypes,
+  useFormOptionTypesByIds as useOptionTypesByIds,
+  useFormProductType as useProductType,
+} from './use-product-form-data'
 import { VariantEditSheet } from './variant-edit-sheet'
 import {
   generateVariantCombinations,
@@ -121,7 +124,7 @@ function seedFromProductType(
 
 export function VariantsSection({ form, seedFromType = false }: Props) {
   const { t } = useTranslation()
-  const { data: optionTypesData } = useOptionTypes({ limit: 100 })
+  const { data: optionTypesData } = useOptionTypes()
   const allOptionTypes = useMemo(() => optionTypesData?.data ?? [], [optionTypesData])
   const productTypeId = form.watch('product_type_id') as string | null | undefined
   const { data: productType } = useProductType(productTypeId ?? undefined)

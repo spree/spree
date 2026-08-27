@@ -58,6 +58,18 @@ module Spree
             current_seller&.store || Spree::Store.default
           end
 
+          # The orders this seller has actually sold.
+          #
+          # A draft is either a checkout still in flight or the operator's own
+          # working document. Neither is this seller's, so neither is reachable
+          # from any endpoint on this branch — including the nested ones, which
+          # is why this lives here rather than in one controller's `scope`.
+          #
+          # @return [ActiveRecord::Relation]
+          def current_seller_orders
+            current_seller.orders.not_drafts
+          end
+
           private
 
           def set_current_seller_context

@@ -1,3 +1,4 @@
+import type { ProductFormValues, VariantFormValues } from '@spree/dashboard-core'
 import { useCountries, useCountryDisplayName } from '@spree/dashboard-core'
 import {
   type BulkVariantsChange,
@@ -13,10 +14,11 @@ import {
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { type UseFormReturn, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { useOptionTypes } from '../../../hooks/use-option-types'
-import { useTaxCategories } from '../../../hooks/use-tax-categories'
-import type { ProductFormValues, VariantFormValues } from '../../../schemas/product'
 import { normalizeCustomsDescription, normalizeHsCode } from './normalize-customs'
+import {
+  useFormOptionTypes as useOptionTypes,
+  useFormTaxCategories as useTaxCategories,
+} from './use-product-form-data'
 import { composeOptionsText } from './variants-matrix'
 
 const WEIGHT_UNITS = ['g', 'kg', 'lb', 'oz'] as const
@@ -44,7 +46,7 @@ interface Props {
 export function BulkVariantsDialog({ form, open, onOpenChange }: Props) {
   const { t } = useTranslation()
   const variants = useWatch({ control: form.control, name: 'variants' }) ?? []
-  const { data: optionTypesData } = useOptionTypes({ limit: 100 })
+  const { data: optionTypesData } = useOptionTypes()
   const optionTypes = useMemo(() => optionTypesData?.data ?? [], [optionTypesData])
   const { data: taxCategoriesResponse } = useTaxCategories()
   const taxCategories = taxCategoriesResponse?.data ?? []

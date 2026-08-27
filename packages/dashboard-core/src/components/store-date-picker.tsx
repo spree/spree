@@ -1,5 +1,5 @@
 import { DatePicker, type DatePickerProps } from '@spree/dashboard-ui'
-import { useStore } from '../providers/store-provider'
+import { useOptionalStore } from '../providers/store-provider'
 
 /**
  * Drop-in `<DatePicker>` that pulls the timezone from `<StoreProvider>` so
@@ -11,7 +11,11 @@ import { useStore } from '../providers/store-provider'
  * timezone explicitly (rare).
  */
 function StoreDatePicker(props: Omit<DatePickerProps, 'timezone'>) {
-  const { timezone } = useStore()
+  // Optional: a panel with no store context (a seller's) falls back to the
+  // browser's zone rather than refusing to render a date field.
+  const store = useOptionalStore()
+  const timezone = store?.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone ?? 'UTC'
+
   return <DatePicker {...props} timezone={timezone} />
 }
 

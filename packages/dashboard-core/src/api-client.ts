@@ -97,6 +97,145 @@ export interface PanelApiClient {
     update(id: string, params: PanelStockLocationParams): Promise<PanelStockLocation>
     delete?(id: string): Promise<void>
   }
+  /**
+   * The reference data the shared product form reads: the option types a
+   * variant is built from, and the categories, collections and product types
+   * a product is filed under.
+   *
+   * Registered for the same reason as everything above — the form is one set
+   * of cards serving both panels, and reaching for `adminClient` inside them
+   * would leave a seller with empty pickers. Each is optional: a panel that
+   * offers no such picker simply does not register it, and the card hides.
+   */
+  optionTypes?: {
+    list(params?: Record<string, unknown>): Promise<{ data: PanelOptionType[] }>
+    /**
+     * Naming a new option (Size, Colour) while building a variant matrix.
+     * Operator-only: a seller names options inline on the variant instead,
+     * so their client leaves these out and the builder hides.
+     *
+     * `name` and `label` are named rather than left to a loose record — they
+     * are what the API requires, and a contract that did not say so would
+     * push the check to a cast at the registration site.
+     */
+    create?(
+      params: { name: string; label: string } & Record<string, unknown>,
+    ): Promise<PanelOptionType>
+    update?(
+      id: string,
+      params: { option_values?: Array<{ name: string; label: string }> } & Record<string, unknown>,
+    ): Promise<PanelOptionType>
+  }
+  categories?: {
+    list(params?: Record<string, unknown>): Promise<{ data: PanelNamedRecord[] }>
+  }
+  collections?: {
+    list(params?: Record<string, unknown>): Promise<{ data: PanelCollection[] }>
+  }
+  productTypes?: {
+    list(params?: Record<string, unknown>): Promise<{ data: PanelProductType[] }>
+    get(id: string): Promise<PanelProductType>
+  }
+  /**
+   * Marketplace configuration a seller does not write, so a seller's client
+   * registers neither and the cards that read them hide.
+   */
+  taxCategories?: {
+    list(params?: Record<string, unknown>): Promise<{ data: PanelNamedRecord[] }>
+  }
+  deliveryProfiles?: {
+    list(params?: Record<string, unknown>): Promise<{ data: PanelDeliveryProfile[] }>
+  }
+  /** Removing a file already on a product. */
+  deleteProductMedia?(productId: string, mediaId: string): Promise<void>
+  /**
+   * The store-wide media library, for placing a file already uploaded onto
+   * another product. Operator-only: a seller sees their own product's files,
+   * never the marketplace's library, so their client registers none and the
+   * "add from library" affordance hides.
+   */
+  mediaLibrary?: {
+    list(params?: Record<string, unknown>): Promise<{ data: PanelMediaRecord[] }>
+  }
+  /**
+   * The store's tag vocabulary. Operator-only: tags are tenanted to the store
+   * (`acts_as_taggable_tenant :store_id`), so a seller typing a new one would
+   * be writing into the marketplace's own namespace.
+   */
+  tags?: {
+    list(params?: Record<string, unknown>): Promise<{ data: Array<{ name: string }> }>
+  }
+  /**
+   * Currency-to-locale pairs, which is what tells a money field whether
+   * `34,56` is thirty-four and a half or three thousand. The operator's
+   * markets answer it; a panel that registers none falls back to the UI
+   * language, the same answer the operator's hook gives for an unmatched
+   * currency.
+   */
+  markets?: {
+    list(params?: Record<string, unknown>): Promise<{ data: PanelMarket[] }>
+  }
+}
+
+export interface PanelDeliveryProfile extends PanelNamedRecord {
+  default?: boolean
+}
+
+/** A market, as the money fields read it. */
+export interface PanelMarket {
+  id: string
+  currency?: string | null
+  default_locale?: string | null
+}
+
+/** A library file, as the picker lists it. */
+export interface PanelMediaRecord {
+  id: string
+  alt?: string | null
+  small_url?: string | null
+  original_url?: string | null
+}
+
+/** Anything the form lists by name in a picker. */
+export interface PanelNamedRecord {
+  id: string
+  name: string
+}
+
+/**
+ * A rule-based collection fills itself, so the form offers only manual ones
+ * to pick from.
+ */
+export interface PanelCollection extends PanelNamedRecord {
+  automatic?: boolean
+}
+
+/**
+ * An option type as the variants builder reads it. Structural, like
+ * PanelStockLocation: both serializers carry the name and its values, and
+ * what only one of them adds is not the form's business.
+ */
+export interface PanelOptionType {
+  id: string
+  name: string
+  label: string
+  kind?: string
+  position?: number
+  option_values?: Array<{
+    id: string
+    name: string
+    label: string
+    position?: number
+    color_code?: string | null
+  }>
+}
+
+export interface PanelProductType {
+  id: string
+  name: string
+  option_type_ids?: string[]
+  category_ids?: string[]
+  custom_field_definitions?: unknown[]
 }
 
 /**

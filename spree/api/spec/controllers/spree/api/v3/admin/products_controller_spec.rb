@@ -1348,6 +1348,69 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     end
   end
 
+  # Closing a review a seller opened
+  # (docs/plans/6.0-seller-product-submission.md).
+  describe 'reviewing a submitted product' do
+    let(:submitted) { create(:product, store: store, status: 'proposed') }
+
+    before { request.headers.merge!(headers) }
+
+    it 'approves it onto sale' do
+      patch :approve, params: { id: submitted.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(submitted.reload).to be_active
+    end
+
+    it 'rejects it with a reason the seller can read' do
+      patch :reject, params: { id: submitted.prefixed_id, reason: 'Photos are too dark' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(submitted.reload).to be_rejected
+      expect(submitted.rejection_reason).to eq('Photos are too dark')
+    end
+
+    it 'refuses to approve a product nobody submitted' do
+      draft = create(:product, store: store, status: 'draft')
+
+      patch :approve, params: { id: draft.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(draft.reload).to be_draft
+    end
+  end
+
+  # `proposed` and `rejected` are review outcomes, reached through the
+  # approve/reject workflows. A status naming one in an ordinary update is
+  # dropped rather than written, so a product cannot be pushed into or out of
+  # review by editing a field.
+  describe 'assigning a review status directly' do
+    let!(:draft_product) { create(:product, store: store, status: 'draft') }
+
+    before { request.headers.merge!(headers) }
+
+    it 'ignores proposed' do
+      patch :update, params: { id: draft_product.prefixed_id, status: 'proposed' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(draft_product.reload).to be_draft
+    end
+
+    it 'ignores rejected' do
+      patch :update, params: { id: draft_product.prefixed_id, status: 'rejected' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(draft_product.reload).to be_draft
+    end
+
+    it 'still writes the statuses an operator does assign' do
+      patch :update, params: { id: draft_product.prefixed_id, status: 'active' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(draft_product.reload).to be_active
+    end
+  end
+
   describe 'POST #clone' do
     subject { post :clone, params: { id: product.prefixed_id }, as: :json }
 
@@ -1474,9 +1537,30 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       end
     end
 
-    Spree::Product.statuses.each do |from_status|
+    # Review statuses are excluded: leaving review is `approve`/`reject`,
+    # which records who decided, and a bulk write records nobody
+    # (docs/plans/6.0-seller-product-submission.md).
+    (Spree::Product.statuses - Spree::Product::REVIEW_STATUSES).each do |from_status|
       context "when product is in #{from_status} status" do
         it_behaves_like 'updates status to active', from_status
+      end
+    end
+
+    Spree::Product::REVIEW_STATUSES.each do |review_status|
+      context "when product is in #{review_status} status" do
+        it 'leaves it in review and reports it skipped' do
+          product.update!(status: review_status)
+
+          post :bulk_status_update, params: {
+            ids: [product.prefixed_id], status: 'active'
+          }, as: :json
+
+          expect(response).to have_http_status(:ok)
+          expect(product.reload.status).to eq(review_status)
+          expect(json_response).to include(
+            'product_count' => 0, 'skipped_in_review_count' => 1
+          )
+        end
       end
     end
   end

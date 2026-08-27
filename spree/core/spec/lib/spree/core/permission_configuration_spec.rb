@@ -239,4 +239,21 @@ RSpec.describe Spree::PermissionConfiguration do
       expect(Spree.permissions.resource_for_subject(Spree::Seller).name).to eq(:sellers)
     end
   end
+
+  # Product types are the worked example of a resource the operator writes and
+  # another audience only reads. The write key has to exist — the operator's
+  # endpoint serves create/update/destroy and its gate looks the key up — while
+  # staying out of what a seller may be granted.
+  describe 'a resource that is read-only for one audience' do
+    it 'gives staff both keys' do
+      expect(Spree.permissions.grantable_keys(:store)).to include('read_product_types', 'write_product_types')
+    end
+
+    it 'gives the seller audience the read alone' do
+      keys = Spree.permissions.grantable_keys(:seller)
+
+      expect(keys).to include('read_product_types')
+      expect(keys).not_to include('write_product_types')
+    end
+  end
 end

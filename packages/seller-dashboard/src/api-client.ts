@@ -65,6 +65,10 @@ export function createSellerApiClient({
       create: (params) => sellerClient().stockLocations.create(params),
       update: (id, params) => sellerClient().stockLocations.update(id, params),
     },
+    // No catalog reference data is registered: how a product is filed — its
+    // type, categories, collections and tags — is the marketplace's own
+    // merchandising, so the shared form's Categorization card has nothing to
+    // read and hides (docs/plans/6.0-seller-product-submission.md).
   })
 
   return client

@@ -22,6 +22,7 @@ module Spree
         super
 
         step :assign_attributes
+        step :refuse_review_status_write
         run_hooks :validate
 
         ApplicationRecord.transaction do
@@ -40,6 +41,7 @@ module Spree
         # host apps and importers, and a missed key would send the nested
         # payload to the ActiveRecord collection setter instead.
         attrs = attributes.to_h.with_indifferent_access
+        @status_in_payload = attrs.key?(:status)
 
         # Held back: variants and media are reconciled after the save, so a
         # :validate handler reads `product.changes` describing the edit itself
@@ -47,6 +49,23 @@ module Spree
         @variants_params = attrs[:variants]
         @media_params = attrs[:media]
         product.assign_attributes(attrs.except(:variants, :media))
+      end
+
+      # Leaving review is a decision, and a decision belongs to Approve or
+      # Reject — they are what record who made it. A plain status write would
+      # put a product on sale with nobody's name against it, so it refuses
+      # (docs/plans/6.0-seller-product-submission.md).
+      #
+      # Only what this call asked for: the CSV importer assigns attributes
+      # itself and hands over an already-dirty record, so reading the record
+      # rather than the payload would refuse every re-imported row whose
+      # product happens to be in review.
+      def refuse_review_status_write
+        return unless @status_in_payload
+        return unless product.status_changed?
+        return unless product.status_was.in?(Spree::Product::REVIEW_STATUSES)
+
+        reject!(I18n.t('activerecord.errors.models.spree/product.attributes.base.status_decided_by_review'))
       end
 
       def save_product

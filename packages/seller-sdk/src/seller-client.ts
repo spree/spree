@@ -1,8 +1,10 @@
-import type { ListParams, ListResponse, RequestFn, RequestOptions } from '@spree/sdk-core'
+import type { ListParams, PaginatedResponse, RequestFn, RequestOptions } from '@spree/sdk-core'
 import { transformListParams } from '@spree/sdk-core'
 import type {
   AuthTokens,
+  Fulfillment,
   Invitation,
+  Order,
   Product,
   Profile,
   RequirementStatus,
@@ -200,14 +202,21 @@ export class SellerClient {
     list: (
       params?: ListParams & Record<string, unknown>,
       options?: RequestOptions,
-    ): Promise<ListResponse<Product>> =>
-      this.request<ListResponse<Product>>('GET', '/products', {
+    ): Promise<PaginatedResponse<Product>> =>
+      this.request<PaginatedResponse<Product>>('GET', '/products', {
         ...options,
         params: params ? transformListParams(params) : undefined,
       }),
 
-    get: (id: string, options?: RequestOptions): Promise<Product> =>
-      this.request<Product>('GET', `/products/${id}`, options),
+    /**
+     * @param expand associations to include — the product form asks for
+     *   `variants,media,default_variant`, which is everything it edits.
+     */
+    get: (id: string, expand?: string, options?: RequestOptions): Promise<Product> =>
+      this.request<Product>('GET', `/products/${id}`, {
+        ...options,
+        params: expand ? { expand } : undefined,
+      }),
 
     create: (params: ProductParams, options?: RequestOptions): Promise<Product> =>
       this.request<Product>('POST', '/products', { ...options, body: params }),
@@ -217,6 +226,78 @@ export class SellerClient {
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/products/${id}`, options),
+
+    /**
+     * Ask the marketplace to put this product on sale.
+     *
+     * Status is not an attribute a seller can send: whether a listing goes
+     * live is the operator's decision, so it moves through these actions.
+     */
+    submit: (id: string, options?: RequestOptions): Promise<Product> =>
+      this.request<Product>('PATCH', `/products/${id}/submit`, options),
+
+    /** Take a listing back down. Withdrawing your own needs nobody's approval. */
+    draft: (id: string, options?: RequestOptions): Promise<Product> =>
+      this.request<Product>('PATCH', `/products/${id}/draft`, options),
+
+    archive: (id: string, options?: RequestOptions): Promise<Product> =>
+      this.request<Product>('PATCH', `/products/${id}/archive`, options),
+  }
+
+  /**
+   * What this seller has sold. A basket spanning several sellers is split
+   * into one order each, so these are the seller's own orders rather than a
+   * filtered view of somebody else's.
+   */
+  readonly orders = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Order>> =>
+      this.request<PaginatedResponse<Order>>('GET', '/orders', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<Order> =>
+      this.request<Order>('GET', `/orders/${id}`, options),
+
+    /** Withdraws from an order this seller cannot fulfil. */
+    cancel: (
+      id: string,
+      params?: { notify_customer?: boolean },
+      options?: RequestOptions,
+    ): Promise<Order> =>
+      this.request<Order>('PATCH', `/orders/${id}/cancel`, { ...options, body: params }),
+
+    /** The parcels owed on one order. */
+    fulfillments: {
+      list: (orderId: string, options?: RequestOptions): Promise<{ data: Fulfillment[] }> =>
+        this.request<{ data: Fulfillment[] }>('GET', `/orders/${orderId}/fulfillments`, options),
+
+      get: (orderId: string, id: string, options?: RequestOptions): Promise<Fulfillment> =>
+        this.request<Fulfillment>('GET', `/orders/${orderId}/fulfillments/${id}`, options),
+
+      /**
+       * Ships the parcel. `items` narrows it to part of what the fulfillment
+       * holds, which splits the rest onto a new one.
+       */
+      fulfill: (
+        orderId: string,
+        id: string,
+        params?: {
+          tracking?: string
+          tracking_carrier?: string
+          notify_customer?: boolean
+          items?: Array<{ item_id: string; quantity: number }>
+        },
+        options?: RequestOptions,
+      ): Promise<Fulfillment> =>
+        this.request<Fulfillment>('PATCH', `/orders/${orderId}/fulfillments/${id}/fulfill`, {
+          ...options,
+          body: params,
+        }),
+    },
   }
 
   /**
@@ -246,8 +327,8 @@ export class SellerClient {
     list: (
       params?: ListParams & Record<string, unknown>,
       options?: RequestOptions,
-    ): Promise<ListResponse<StockLocation>> =>
-      this.request<ListResponse<StockLocation>>('GET', '/stock_locations', {
+    ): Promise<PaginatedResponse<StockLocation>> =>
+      this.request<PaginatedResponse<StockLocation>>('GET', '/stock_locations', {
         ...options,
         params: params ? transformListParams(params) : undefined,
       }),
@@ -323,15 +404,73 @@ export interface ProductParams {
   name?: string
   description?: string
   slug?: string
-  status?: string
   meta_title?: string
   meta_description?: string
   meta_keywords?: string
-  product_type_id?: string
-  tags?: string[]
-  category_ids?: string[]
   metadata?: Record<string, unknown>
-  prices?: Array<{ amount: string | number; compare_at_amount?: string | number; currency: string }>
+  /**
+   * The gallery, as a whole. A file absent from the list is removed, so send
+   * every image the product should end up with. `signed_id` attaches a fresh
+   * upload; `id` patches one already there.
+   */
+  media?: Array<{
+    id?: string
+    signed_id?: string
+    alt?: string | null
+    position?: number
+    media_type?: string
+    external_video_url?: string | null
+    focal_point_x?: number | null
+    focal_point_y?: number | null
+    variant_ids?: string[]
+  }>
+  /**
+   * The variants, as a whole — one absent from the list is removed. Tax
+   * category and delivery profile are deliberately absent: they are
+   * marketplace configuration and the API ignores them here.
+   */
+  variants?: Array<{
+    id?: string
+    sku?: string
+    barcode?: string | null
+    cost_price?: string | number | null
+    cost_currency?: string | null
+    weight?: string | number | null
+    height?: string | number | null
+    width?: string | number | null
+    depth?: string | number | null
+    weight_unit?: string | null
+    dimensions_unit?: string | null
+    hs_code?: string | null
+    country_of_origin?: string | null
+    customs_description?: string | null
+    track_inventory?: boolean
+    preorderable?: boolean
+    preorder_ships_at?: string | null
+    backorder_limit?: number | null
+    position?: number
+    options?: Array<{ name: string; value: string }>
+    prices?: Array<{
+      amount: string | number
+      compare_at_amount?: string | number
+      currency?: string
+    }>
+    stock_levels?: Array<{
+      id?: string
+      stock_location_id?: string
+      count_on_hand?: number
+      backorderable?: boolean
+    }>
+  }>
+  /**
+   * Omit `currency` and the price is recorded in the store's, which is the
+   * only place that knows it. A seller has no currency of their own to read.
+   */
+  prices?: Array<{
+    amount: string | number
+    compare_at_amount?: string | number
+    currency?: string
+  }>
 }
 
 /** What `/seller/me` answers. */

@@ -1,10 +1,24 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { type ProductCreateParams, SpreeError } from '@spree/admin-sdk'
 import {
+  CategorizationCard,
   extensionFormValues,
   extensionSubmitValues,
+  GeneralCard,
+  InventoryCard,
+  isPlaceholderDefaultVariant,
+  MediaCard,
   mapSpreeErrorsToForm,
+  newProductFormDefaults,
   PageHeader,
+  PricesCard,
+  type ProductFormValues,
+  productFormSchema,
+  SEOCard,
+  StatusCard,
+  TaxCard,
+  VariantsCard,
+  variantToWirePayload,
 } from '@spree/dashboard-core'
 import {
   FormActions,
@@ -16,27 +30,10 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { CustomFieldsInlineCard } from '../../../../components/spree/custom-fields/custom-fields-inline'
+import { MediaRichTextEditor } from '../../../../components/spree/media-rich-text-editor'
 import { ProductCustomFieldsProvider } from '../../../../components/spree/products/product-custom-fields-provider'
-import {
-  CategorizationCard,
-  GeneralCard,
-  InventoryCard,
-  MediaCard,
-  PricesCard,
-  SEOCard,
-  StatusCard,
-  TaxCard,
-  VariantsCard,
-} from '../../../../components/spree/products/product-form-cards'
 import { PublishingCard } from '../../../../components/spree/products/publishing-card'
 import { useCreateProduct } from '../../../../hooks/use-product'
-import {
-  isPlaceholderDefaultVariant,
-  newProductFormDefaults,
-  type ProductFormValues,
-  productFormSchema,
-} from '../../../../schemas/product'
-import { variantToWirePayload } from './$productId'
 
 export const Route = createFileRoute('/_authenticated/$storeId/products/new')({
   component: NewProductPage,
@@ -181,7 +178,7 @@ function NewProductPage() {
           }
           main={
             <>
-              <GeneralCard form={form} />
+              <GeneralCard form={form} descriptionEditor={MediaRichTextEditor} />
               <VariantsCard form={form} seedFromType />
               {/* Form-backed media uploader — files are uploaded to ActiveStorage
                 pre-save and their signed_ids ride the product POST. */}
@@ -190,7 +187,7 @@ function NewProductPage() {
                 form={form}
                 productName={form.watch('name') || t('admin.pages.products.new.title')}
               />
-              <InventoryCard form={form} storeId={storeId} />
+              <InventoryCard form={form} />
               <ProductCustomFieldsProvider
                 form={form}
                 productTypeId={form.watch('product_type_id')}

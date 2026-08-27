@@ -3094,8 +3094,11 @@
         "status_options": {
           "active": "Active",
           "archived": "Archived",
-          "draft": "Draft"
+          "draft": "Draft",
+          "proposed": "In review",
+          "rejected": "Changes needed"
         },
+        "status_under_review": "This product is in review. Use Approve or Reject to decide.",
         "transfers": {
           "description_external": "External receive into <strong>{{destination}}</strong>.",
           "description_internal": "Inventory moved from <strong>{{source}}</strong> to <strong>{{destination}}</strong>.",
@@ -3689,7 +3692,22 @@
       "product_type_adds_options_one": "This type adds {{options}} to new products.",
       "product_type_adds_options_other": "This type adds {{options}} to new products.",
       "product_type_placeholder": "No product type",
+      "review": {
+        "approve": "Approve",
+        "approve_confirm_message": "It goes on sale as soon as you approve it.",
+        "approve_confirm_title": "Approve this product?",
+        "approved": "Product approved",
+        "edit_reason": "Edit reason",
+        "reason_label": "Reason",
+        "reason_placeholder": "What should the seller change?",
+        "reject": "Send back",
+        "rejected": "Sent back to the seller",
+        "send_back": "Send back"
+      },
       "save_label": "Save product",
+      "seller": {
+        "title": "Seller"
+      },
       "seo": {
         "meta_description_placeholder": "SEO description",
         "meta_title_placeholder": "SEO title",

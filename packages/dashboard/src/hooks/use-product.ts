@@ -29,6 +29,13 @@ export function useProduct(id: string) {
           'product_publications',
           'channels',
           'custom_fields',
+          // The seller card shows their standing alongside the name: a product
+          // from a suspended seller is not on sale whatever its own status
+          // says. One record on a detail page, so the expand is cheap here in
+          // a way it would not be on the list.
+          'seller',
+          // Who decided this listing's fate and what they told the seller.
+          'submission',
         ],
       }),
     enabled: !!id,
@@ -51,6 +58,40 @@ export function useUpdateProduct() {
 
   return useResourceMutation<Product, Error, { id: string } & ProductUpdateParams>({
     mutationFn: ({ id, ...params }) => adminClient.products.update(id, params),
+    invalidate: [['products']],
+    successMessage: false,
+    errorMessage: false,
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: buildKey('products', variables.id) })
+    },
+  })
+}
+
+/**
+ * Closing a review a seller opened. Both refresh the product itself as well
+ * as the list, since the status they write is what the list shows.
+ */
+export function useApproveProduct() {
+  const queryClient = useQueryClient()
+  const buildKey = useResourceKeyBuilder()
+
+  return useResourceMutation<Product, Error, string>({
+    mutationFn: (id) => adminClient.products.approve(id),
+    invalidate: [['products']],
+    successMessage: false,
+    errorMessage: false,
+    onSuccess: (_data, id) => {
+      queryClient.invalidateQueries({ queryKey: buildKey('products', id) })
+    },
+  })
+}
+
+export function useRejectProduct() {
+  const queryClient = useQueryClient()
+  const buildKey = useResourceKeyBuilder()
+
+  return useResourceMutation<Product, Error, { id: string; reason?: string }>({
+    mutationFn: ({ id, reason }) => adminClient.products.reject(id, { reason }),
     invalidate: [['products']],
     successMessage: false,
     errorMessage: false,

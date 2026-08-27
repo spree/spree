@@ -4,8 +4,8 @@
 // resulting cartesian product as RHF form state. These helpers stay pure
 // (no React) so they can evolve independently of the UI shell.
 
-import type { OptionType } from '@spree/admin-sdk'
-import type { VariantFormValues } from '../../../schemas/product'
+import type { VariantFormValues } from '@spree/dashboard-core'
+import type { PanelOptionType as OptionType } from '../api-client'
 
 export interface SelectedOptionValue {
   name: string

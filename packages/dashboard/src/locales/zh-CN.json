@@ -3086,8 +3086,11 @@
         "status_options": {
           "active": "启用",
           "archived": "已归档",
-          "draft": "草稿"
+          "draft": "草稿",
+          "proposed": "审核中",
+          "rejected": "需要修改"
         },
+        "status_under_review": "此商品正在审核中。请使用“批准”或“拒绝”做出决定。",
         "transfers": {
           "description_external": "外部收货至 <strong>{{destination}}</strong>。",
           "description_internal": "库存从 <strong>{{source}}</strong> 调拨至 <strong>{{destination}}</strong>。",
@@ -3680,7 +3683,22 @@
       "product_type_adds_options_one": "此类型会为新商品添加{{options}}。",
       "product_type_adds_options_other": "此类型会为新商品添加{{options}}。",
       "product_type_placeholder": "无商品类型",
+      "review": {
+        "approve": "批准",
+        "approve_confirm_message": "批准后将立即上架销售。",
+        "approve_confirm_title": "批准此商品？",
+        "approved": "商品已批准",
+        "edit_reason": "修改原因",
+        "reason_label": "原因",
+        "reason_placeholder": "卖家需要修改什么？",
+        "reject": "退回",
+        "rejected": "已退回给卖家",
+        "send_back": "退回"
+      },
       "save_label": "保存产品",
+      "seller": {
+        "title": "卖家"
+      },
       "seo": {
         "meta_description_placeholder": "SEO 描述",
         "meta_title_placeholder": "SEO 标题",

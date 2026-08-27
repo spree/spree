@@ -293,6 +293,10 @@ Spree::Core::Engine.add_routes do
         resources :products, concerns: [:custom_fieldable, :translatable] do
           member do
             post :clone
+            # Closing a review a seller opened
+            # (docs/plans/6.0-seller-product-submission.md).
+            patch :approve
+            patch :reject
           end
           collection do
             post :bulk_status_update
@@ -728,7 +732,31 @@ Spree::Core::Engine.add_routes do
           end
         end
 
-        resources :products, only: [:index, :show, :create, :update, :destroy]
+        resources :products, only: [:index, :show, :create, :update, :destroy] do
+          # Status moves are actions, not an attribute: putting a product on
+          # sale is the marketplace's call, so a seller asks rather than sets.
+          member do
+            patch :submit
+            patch :draft
+            patch :archive
+          end
+        end
+
+
+        # What this seller has sold. Cancelling is a member action because it
+        # is a workflow with its own arguments, and fulfilling is nested: a
+        # parcel means nothing outside the order it belongs to.
+        resources :orders, only: [:index, :show] do
+          member do
+            patch :cancel
+          end
+
+          resources :fulfillments, only: [:index, :show], controller: 'orders/fulfillments' do
+            member do
+              patch :fulfill
+            end
+          end
+        end
 
         resources :direct_uploads, only: [:create]
 

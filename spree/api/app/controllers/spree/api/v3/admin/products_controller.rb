@@ -32,6 +32,20 @@ module Spree
             end
           end
 
+          # PATCH /api/v3/admin/products/:id/approve
+          #
+          # Accepting a product a seller submitted, putting it on sale.
+          def approve
+            run_review_workflow(Spree.product_approve_workflow)
+          end
+
+          # PATCH /api/v3/admin/products/:id/reject
+          #
+          # Turning a submission down. The reason goes back to the seller.
+          def reject
+            run_review_workflow(Spree.product_reject_workflow, reason: params[:reason])
+          end
+
           # POST /api/v3/admin/products/bulk_status_update
           # Body: { ids: [...], status: 'draft' | 'active' | 'archived' }
           def bulk_status_update
@@ -45,11 +59,23 @@ module Spree
               )
             end
 
-            count = bulk_collection.update_all(status: params[:status], updated_at: Time.current)
-            # `update_all` skips `after_commit`, so the search index won't refresh on its own.
-            bulk_collection.each(&:enqueue_search_index)
+            # Products in review are excluded rather than refused: a bulk
+            # activate over a mixed selection should still do the plain ones,
+            # and moving the rest is `approve`/`reject`, which records who
+            # decided (docs/plans/6.0-seller-product-submission.md).
+            movable = bulk_collection.where.not(status: Spree::Product::REVIEW_STATUSES)
+            skipped = bulk_collection.where(status: Spree::Product::REVIEW_STATUSES).count
 
-            render json: { product_count: count, status: params[:status] }
+            count = movable.update_all(status: params[:status], updated_at: Time.current)
+            # `update_all` skips `after_commit`, so the search index won't refresh on its own.
+            movable.each(&:enqueue_search_index)
+
+            payload = { product_count: count, status: params[:status] }
+            # Only when it happened: a key on every response would say
+            # "nothing was skipped" to clients that never skip anything.
+            payload[:skipped_in_review_count] = skipped if skipped.positive?
+
+            render json: payload
           end
 
           # POST /api/v3/admin/products/bulk_add_to_categories
@@ -234,10 +260,35 @@ module Spree
                 prices: [:amount, :compare_at_amount, :currency],
                 stock_levels: [:id, :stock_location_id, :count_on_hand, :backorderable]
               ]
-            )
+            ).tap { |attrs| attrs.delete(:status) if review_status?(attrs[:status]) }
+          end
+
+          # A review status is an outcome, not a value to assign: `proposed`
+          # means a seller asked, and `rejected` means somebody decided. Both
+          # are reached through the workflows behind `approve`/`reject`, so a
+          # status naming one here is dropped rather than written — the same
+          # reason `bulk_status_update` validates against `STATUSES` and not
+          # the full list (docs/plans/6.0-seller-product-submission.md).
+          def review_status?(status)
+            status.present? && Spree::Product::REVIEW_STATUSES.include?(status.to_s)
           end
 
           private
+
+          # Approving and rejecting are edits to the catalog, so they answer to
+          # the same key as any other product write.
+          def run_review_workflow(workflow, **arguments)
+            @resource = find_resource
+            authorize!(:update, @resource)
+
+            result = workflow.call(product: @resource, reviewer: try_spree_current_user, **arguments)
+
+            if result.success?
+              render json: serialize_resource(@resource.reload)
+            else
+              render_service_error(@resource.errors.presence || result.error)
+            end
+          end
 
           def search_provider
             @search_provider ||= Spree::SearchProvider::Database.new(current_store)

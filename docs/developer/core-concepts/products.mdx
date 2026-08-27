@@ -66,7 +66,7 @@ erDiagram
 | `name` | Product name | Yes |
 | `description` | Full product description | Yes |
 | `slug` | URL-friendly identifier (e.g., `spree-tote`) | Yes |
-| `status` | `draft`, `active`, or `archived` | No |
+| `status` | `draft`, `active`, or `archived`. A marketplace adds `proposed` and `rejected` — see Seller submissions below | No |
 | `available_on` | Date the product becomes available for sale | No |
 | `discontinue_on` | Date the product is no longer available | No |
 | `meta_title` | Custom SEO title | Yes |
@@ -232,6 +232,154 @@ spree api delete /products/prod_xxx
 <Tip>
 Operating on many products at once? The Admin API has bulk actions — `bulkStatusUpdate`, `bulkAddToCategories`, `bulkAddTags`, `bulkDestroy`, and more. See the [Admin API endpoint index](/api-reference/admin-api/endpoints).
 </Tip>
+
+## Seller submissions <Since version="6.0" />
+
+On a marketplace, a seller lists a product but does not publish one. They submit it, and the marketplace decides. This adds two statuses to the three above — both hidden from the storefront, since only `active` is visible.
+
+<Info>
+This applies to products that belong to a seller. A marketplace's own catalog is unaffected: an operator publishing their own product sets `status` directly and answers to nobody.
+</Info>
+
+### The lifecycle
+
+```mermaid
+stateDiagram-v2
+    [*] --> draft
+    draft --> proposed : seller submits
+    proposed --> active : operator approves
+    proposed --> rejected : operator sends back
+    rejected --> proposed : seller revises and resubmits
+    proposed --> draft : seller withdraws
+    proposed --> archived : seller withdraws
+    active --> draft : seller takes it down
+    active --> archived : seller withdraws it
+```
+
+Withdrawing a submission before anyone has ruled on it closes the open row as `withdrawn`, so a `pending` row always means the marketplace still owes an answer. A product that was already rejected keeps that decision at the head of its trail instead.
+
+| Status | Meaning | Storefront |
+|---|---|:---:|
+| `draft` | The seller is still working on it | Hidden |
+| `proposed` | Submitted, waiting on the marketplace | Hidden |
+| `rejected` | Sent back with a reason, awaiting changes | Hidden |
+| `active` | Approved and on sale | **Visible** |
+| `archived` | Withdrawn | Hidden |
+
+A seller can always take their own listing down — that is not a review decision. Putting one up is.
+
+### The submission record
+
+Each submission and each decision on it is a `Spree::ProductSubmission` row. The product's `status` stays the operational truth; these rows are how it got there.
+
+```mermaid
+erDiagram
+    Product ||--o{ ProductSubmission : "has many"
+    AdminUser ||--o{ ProductSubmission : "submitted"
+    AdminUser ||--o{ ProductSubmission : "reviewed"
+
+    ProductSubmission {
+        string status
+        bigint product_id
+        bigint submitted_by_id
+        bigint reviewed_by_id
+        datetime reviewed_at
+        text review_note
+        json metadata
+    }
+```
+
+| Column | Description |
+|---|---|
+| `status` | `pending`, `approved`, `rejected`, or `withdrawn` |
+| `submitted_by_id` | The seller's staff member who asked |
+| `reviewed_by_id` | The marketplace's staff member who decided |
+| `reviewed_at` | When the decision was made |
+| `review_note` | Why it was sent back — this is what the seller reads |
+
+Rows accumulate rather than overwrite, so a seller sent back three times leaves three rows. The latest row for a product is the live one; the ones before it are the trail.
+
+<Warning>
+Never store a rejection reason on the product itself. A seller can write their own product's `metadata`, so a note kept there is erased the next time they save.
+</Warning>
+
+An approval with no `reviewed_by_id` and `metadata.auto_approved` set means the store approves listings automatically — never a decision whose author was lost. Turn that on with the `auto_approve_seller_products` store preference.
+
+### Submitting, as a seller
+
+Status is not writable on the seller branch. A seller moves a product with an explicit action:
+
+<CodeGroup>
+
+```typescript Seller SDK
+import { createSellerClient } from '@spree/seller-sdk'
+
+const client = createSellerClient({
+  baseUrl: 'https://marketplace.example.com',
+  sellerId: 'sel_xxx',
+})
+
+await client.products.submit('prod_xxx')   // draft or rejected → proposed
+await client.products.draft('prod_xxx')    // take it back down
+await client.products.archive('prod_xxx')  // withdraw it
+
+// Why it was sent back
+const product = await client.products.get('prod_xxx', 'submission')
+product.submission?.review_note
+```
+
+```bash CLI
+spree api patch /seller/products/prod_xxx/submit
+spree api patch /seller/products/prod_xxx/draft
+spree api patch /seller/products/prod_xxx/archive
+```
+
+</CodeGroup>
+
+### Deciding, as the marketplace
+
+<CodeGroup>
+
+```typescript Admin SDK
+await client.products.approve('prod_xxx')
+await client.products.reject('prod_xxx', { reason: 'Please add a photo showing scale.' })
+
+// The review queue
+const pending = await client.products.list({ filter: { status_eq: 'proposed' } })
+
+// Who decided, and when
+const product = await client.products.get('prod_xxx', { expand: ['submission'] })
+product.submission?.reviewed_by_name
+```
+
+```bash CLI
+spree api patch /products/prod_xxx/approve
+spree api patch /products/prod_xxx/reject -d '{"reason": "Please add a photo showing scale."}'
+```
+
+</CodeGroup>
+
+<Note>
+The seller sees the note and when the decision was made, but never who made it.
+</Note>
+
+### Leaving review is a decision
+
+A product in `proposed` or `rejected` cannot have its status changed by an ordinary update — that would put it on sale with nobody's name against it. The refusal lives in the product update workflow, so every caller inherits it, and bulk status updates skip those products and report how many they left behind.
+
+### Events
+
+Each transition publishes an event you can subscribe to:
+
+| Event | Published when |
+|---|---|
+| `product.proposed` | A seller submits for review |
+| `product.approved` | The marketplace accepts it |
+| `product.rejected` | The marketplace sends it back |
+| `product.drafted` | A seller takes a listing down |
+| `product.archived` | A seller withdraws it |
+
+The submission row itself also publishes `product_submission.created` and `product_submission.updated`, carrying the status, the note and the product. See [Events](/developer/core-concepts/events).
 
 ## Product Filters
 

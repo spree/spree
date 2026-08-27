@@ -1,6 +1,6 @@
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
-import { isSupportedVideoUrl } from '../lib/video-url'
+import { isSupportedVideoUrl } from './video-url'
 
 export const stockLevelFormSchema = z.object({
   id: z.string().optional(),
@@ -135,7 +135,11 @@ export const productFormSchema = z.object({
   description: z.string().optional(),
 
   // Status
-  status: z.enum(['draft', 'active', 'archived']).optional(),
+  // Every status the API may answer, not just the ones a form sets. A
+  // marketplace product also comes back `proposed` or `rejected`, and a schema
+  // that rejects those makes the whole form unsavable rather than flagging a
+  // field (docs/plans/6.0-seller-product-submission.md).
+  status: z.enum(['draft', 'active', 'archived', 'proposed', 'rejected']).optional(),
 
   // Categorization
   category_ids: z.array(z.string()).optional(),

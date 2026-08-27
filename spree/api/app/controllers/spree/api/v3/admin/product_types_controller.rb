@@ -9,7 +9,7 @@ module Spree
         # custom field list is read live when a product form renders. The one
         # path from a type edit to existing products is `apply_to_products`.
         class ProductTypesController < ResourceController
-          scoped_resource :products
+          scoped_resource :product_types
 
           # Backfills this type's option types and categories onto the products
           # that already carry it. Additive and idempotent — nothing is removed.
