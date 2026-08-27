@@ -6,7 +6,7 @@ FactoryBot.define do
     amount { BigDecimal(20) }
     currency { 'USD' }
     kind { 'earning' }
-    provider { 'system' }
+    provider { Spree::PayoutProvider::System.provider_key }
     status { 'pending' }
 
     trait :completed do

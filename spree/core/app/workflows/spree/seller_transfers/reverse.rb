@@ -126,7 +126,16 @@ module Spree
         @provider ||= begin
           configured = Spree.payout_providers.find { |candidate| candidate.to_s == @earning.provider }
 
-          (configured || order.store.payout_provider_class).new
+          # No silent fallback to whatever the store uses now. A provider that
+          # is no longer installed still holds the transfer this reverses, and
+          # handing the job to a different one would mark the row reversed
+          # while the money stayed where it was. An operator has to know.
+          if configured.nil?
+            raise Spree::Core::GatewayError,
+                  "Payout provider #{@earning.provider} is not registered, so its transfer cannot be reversed"
+          end
+
+          configured.new
         end
       end
     end

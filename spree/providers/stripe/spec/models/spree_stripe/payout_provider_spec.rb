@@ -64,9 +64,13 @@ RSpec.describe SpreeStripe::PayoutProvider do
     context 'when the customer paid by card' do
       # Funds the transfer from that charge, so it settles with the charge
       # rather than out of the marketplace's own balance.
+      # Stripe funds a transfer from a charge. `response_code` holds the
+      # payment intent that produced it, which Stripe cannot use here — the
+      # charge is recorded on the payment when its session completes.
       it 'names the charge as the funding source' do
         create(:payment, order: order, payment_method: gateway, status: 'completed',
-                         response_code: 'ch_123', amount: 100)
+                         response_code: 'pi_123', amount: 100,
+                         metadata: { 'stripe_charge_id' => 'ch_123' })
 
         expect(Stripe::Transfer).to receive(:create).
           with(hash_including(source_transaction: 'ch_123'), anything).

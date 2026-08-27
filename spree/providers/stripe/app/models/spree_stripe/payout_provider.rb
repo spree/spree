@@ -255,11 +255,15 @@ module SpreeStripe
     # The charge that paid for this order, so Stripe can fund the transfer from
     # it. Nil when the order was not paid by card — a store-credit sale has no
     # charge to draw on, and Stripe then funds from the platform balance.
+    # Stripe funds a transfer from a *charge*, and `response_code` holds the
+    # payment intent rather than the charge it produced — sending that would
+    # fail every card-funded transfer on an id Stripe cannot use. The charge
+    # is recorded on the payment when its session completes.
     def source_charge_for(seller_transfer, gateway)
       payment = seller_transfer.order.settlement_payments.valid.completed.
                 find { |candidate| candidate.payment_method_id == gateway.id }
 
-      payment&.response_code
+      payment&.metadata&.dig('stripe_charge_id')
     end
   end
 end

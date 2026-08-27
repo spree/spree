@@ -152,6 +152,29 @@ RSpec.describe Spree::SellerTransfers::Reverse do
     end
   end
 
+  # A provider that is no longer installed still holds the transfer. Handing
+  # the reversal to whichever one the store uses now would mark the row
+  # reversed while the money stayed where it was.
+  describe 'when the provider that made the earning is gone' do
+    it 'refuses rather than reversing through somebody else' do
+      create(:seller_transfer, :completed, seller: seller, order: order, amount: 80,
+                                           provider: 'SpreeGone::PayoutProvider')
+
+      result = described_class.call(order: order, amount: 30)
+
+      expect(result).to be_failure
+    end
+
+    it 'leaves the row for an operator to see' do
+      create(:seller_transfer, :completed, seller: seller, order: order, amount: 80,
+                                           provider: 'SpreeGone::PayoutProvider')
+
+      described_class.call(order: order, amount: 30)
+
+      expect(Spree::SellerTransfer.reversals_only.last).to be_processing
+    end
+  end
+
   # A settlement that has happened is never rewritten: the reversal is simply
   # unsettled, so the next sweep nets it off what comes after.
   describe 'when the earning was already settled' do
