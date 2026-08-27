@@ -106,6 +106,19 @@ RSpec.describe 'Seller Exports API', type: :request, swagger_doc: 'api-reference
 
         run_test!
       end
+
+      response '404', "another seller's export" do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:id) do
+          create(:order_export, store: store, seller: create(:seller, :approved, store: store)).
+            prefixed_id
+        end
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
     end
   end
 
@@ -130,6 +143,19 @@ RSpec.describe 'Seller Exports API', type: :request, swagger_doc: 'api-reference
         let(:'X-Spree-Seller-Id') { seller.prefixed_id }
         let(:export) { create(:order_export, store: store, seller: seller, user: seller_user) }
         let(:id) { export.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+
+      response '404', "another seller's export" do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:id) do
+          create(:order_export, store: store, seller: create(:seller, :approved, store: store)).
+            prefixed_id
+        end
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 

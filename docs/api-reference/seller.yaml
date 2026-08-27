@@ -304,7 +304,7 @@ paths:
                   avatar_url:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 17
+                  name: Seller 21
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -420,7 +420,7 @@ paths:
                   avatar_url:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 38
+                  name: Seller 42
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -489,8 +489,8 @@ paths:
                   avatar_url:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 26
-                  slug: seller-26
+                  name: Seller 30
+                  slug: seller-30
                   status: approved
                 permissions:
                 - allow: true
@@ -12510,8 +12510,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1343250
-                  slug: product-1343250
+                  name: Product 1363250
+                  slug: product-1363250
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -12750,8 +12750,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 1376710
-                slug: product-1376710
+                name: Product 1396710
+                slug: product-1396710
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -12828,7 +12828,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Hand-thrown mug, large
-                slug: product-1408212
+                slug: product-1428212
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -12939,8 +12939,8 @@ paths:
             application/json:
               example:
                 id: sel_UkLWZg9DAJ
-                name: Seller 47
-                slug: seller-47
+                name: Seller 51
+                slug: seller-51
                 about: ''
                 about_html: ''
                 logo_url:
@@ -13017,7 +13017,7 @@ paths:
               example:
                 id: sel_UkLWZg9DAJ
                 name: Acme Supplies
-                slug: seller-49
+                slug: seller-53
                 about: ''
                 about_html: ''
                 logo_url:
@@ -13770,10 +13770,10 @@ paths:
             application/json:
               example:
                 direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--910b502b8faef29c846d4b8f7b8531aada27d88f
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--1a67dce364913c893af88919a482e7691bc61236
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--40c0ad29afdc31e2451355bafe4420079bd5c4ed
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f8686dcffb11a03bae769ba42c3555067de06721
               schema:
                 "$ref": "#/components/schemas/DirectUploadResponse"
       requestBody:
@@ -13929,6 +13929,16 @@ paths:
                 download_url:
               schema:
                 "$ref": "#/components/schemas/Export"
+        '404':
+          description: another seller's export
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Export not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/seller/exports/{id}/download":
     parameters:
     - name: id
@@ -13963,6 +13973,17 @@ paths:
                 error:
                   code: export_not_ready
                   message: Export is not ready yet
+            text/csv:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        '404':
+          description: another seller's export
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Export not found
             text/csv:
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
@@ -14016,8 +14037,8 @@ paths:
                   - id: fi_UkLWZg9DAJ
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
-                    name: Product 1279315
-                    sku: SKU-159
+                    name: Product 1299315
+                    sku: SKU-161
                     options_text: ''
               schema:
                 type: object
@@ -14086,8 +14107,8 @@ paths:
                 - id: fi_UkLWZg9DAJ
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
-                  name: Product 128961
-                  sku: SKU-160
+                  name: Product 130961
+                  sku: SKU-162
                   options_text: ''
               schema:
                 "$ref": "#/components/schemas/Fulfillment"
@@ -14187,7 +14208,7 @@ paths:
                   display_total: "$110.00"
                   items:
                   - id: li_UkLWZg9DAJ
-                    name: Product 12995
+                    name: Product 13195
                     options_text: ''
                     quantity: 1
                     currency: USD
@@ -14196,7 +14217,7 @@ paths:
                     total: '10.0'
                     display_total: "$10.00"
                     variant_id: variant_UkLWZg9DAJ
-                    sku: SKU-161
+                    sku: SKU-163
                     thumbnail_url:
                   fulfillments:
                   - id: ful_UkLWZg9DAJ
@@ -14216,8 +14237,8 @@ paths:
                     - id: fi_UkLWZg9DAJ
                       quantity: 1
                       line_item_id: li_UkLWZg9DAJ
-                      name: Product 12995
-                      sku: SKU-161
+                      name: Product 13195
+                      sku: SKU-163
                       options_text: ''
                   shipping_address:
                     id: addr_gbHJdmfrXB
@@ -14225,7 +14246,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 113 Lovely Street
+                    address1: 117 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -14247,7 +14268,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 112 Lovely Street
+                    address1: 116 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -14336,7 +14357,7 @@ paths:
                 display_total: "$110.00"
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1309755
+                  name: Product 1329755
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -14345,7 +14366,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-162
+                  sku: SKU-164
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -14365,8 +14386,8 @@ paths:
                   - id: fi_UkLWZg9DAJ
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
-                    name: Product 1309755
-                    sku: SKU-162
+                    name: Product 1329755
+                    sku: SKU-164
                     options_text: ''
                 shipping_address:
                   id: addr_gbHJdmfrXB
@@ -14374,7 +14395,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 115 Lovely Street
+                  address1: 119 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -14396,7 +14417,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 114 Lovely Street
+                  address1: 118 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -14474,7 +14495,7 @@ paths:
                 display_total: "$110.00"
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1336554
+                  name: Product 1356554
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -14483,7 +14504,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-165
+                  sku: SKU-167
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -14503,8 +14524,8 @@ paths:
                   - id: fi_UkLWZg9DAJ
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
-                    name: Product 1336554
-                    sku: SKU-165
+                    name: Product 1356554
+                    sku: SKU-167
                     options_text: ''
                 shipping_address:
                   id: addr_gbHJdmfrXB
@@ -14512,7 +14533,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 121 Lovely Street
+                  address1: 125 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -14534,7 +14555,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 120 Lovely Street
+                  address1: 124 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
