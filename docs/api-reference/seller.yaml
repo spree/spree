@@ -590,6 +590,20 @@ paths:
                   has_conditions: false
                 - allow: true
                   actions:
+                  - read
+                  - admin
+                  subjects:
+                  - Spree::Import
+                  has_conditions: false
+                - allow: true
+                  actions:
+                  - read
+                  - admin
+                  subjects:
+                  - Spree::ImportRow
+                  has_conditions: false
+                - allow: true
+                  actions:
                   - manage
                   subjects:
                   - Spree::Product
@@ -653,6 +667,18 @@ paths:
                   - manage
                   subjects:
                   - Spree::CustomField
+                  has_conditions: false
+                - allow: true
+                  actions:
+                  - manage
+                  subjects:
+                  - Spree::Import
+                  has_conditions: false
+                - allow: true
+                  actions:
+                  - manage
+                  subjects:
+                  - Spree::ImportRow
                   has_conditions: false
                 permission_keys:
                 - read_products
@@ -15766,6 +15792,153 @@ components:
       - delivery_method_name
       - stock_location_name
       - fulfillment_items
+      x-typelizer: true
+    ImportMapping:
+      type: object
+      properties:
+        id:
+          type: string
+        schema_field:
+          type: string
+        file_column:
+          type: string
+          nullable: true
+        required:
+          type: boolean
+      required:
+      - id
+      - schema_field
+      - file_column
+      - required
+      x-typelizer: true
+    ImportRow:
+      type: object
+      properties:
+        id:
+          type: string
+        row_number:
+          type: number
+        status:
+          type: string
+        validation_errors:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        import_id:
+          type: string
+          nullable: true
+        item_type:
+          type: string
+          nullable: true
+        item_id:
+          type: string
+          nullable: true
+        data:
+          type: object
+      required:
+      - id
+      - row_number
+      - status
+      - validation_errors
+      - created_at
+      - updated_at
+      - import_id
+      - item_type
+      - item_id
+      - data
+      x-typelizer: true
+    Import:
+      type: object
+      properties:
+        id:
+          type: string
+        number:
+          type: string
+        rows_count:
+          type: number
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        type:
+          type: string
+          nullable: true
+        status:
+          type: string
+        store_id:
+          type: string
+          nullable: true
+        seller_id:
+          type: string
+          nullable: true
+        owner_type:
+          type: string
+          nullable: true
+        owner_id:
+          type: string
+          nullable: true
+        user_id:
+          type: string
+          nullable: true
+        processing_errors:
+          type: string
+          nullable: true
+        preferred_delimiter:
+          type: string
+        original_filename:
+          type: string
+          nullable: true
+        original_byte_size:
+          type: number
+          nullable: true
+        original_file_url:
+          type: string
+          nullable: true
+        completed_rows_count:
+          type: number
+        failed_rows_count:
+          type: number
+        schema_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/ImportSchemaField"
+        csv_headers:
+          type: array
+          items:
+            type: string
+        sample_row:
+          type: object
+        mappings:
+          type: array
+          items:
+            "$ref": "#/components/schemas/ImportMapping"
+      required:
+      - id
+      - number
+      - rows_count
+      - created_at
+      - updated_at
+      - type
+      - status
+      - store_id
+      - seller_id
+      - owner_type
+      - owner_id
+      - user_id
+      - processing_errors
+      - preferred_delimiter
+      - original_filename
+      - original_byte_size
+      - original_file_url
+      - completed_rows_count
+      - failed_rows_count
+      - schema_fields
+      - csv_headers
+      - sample_row
+      - mappings
       x-typelizer: true
     Invitation:
       type: object

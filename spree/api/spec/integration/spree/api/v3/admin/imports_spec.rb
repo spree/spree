@@ -7,7 +7,7 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
 
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
 
-  let!(:product_import) { create(:product_import, owner: store, user: admin_user) }
+  let!(:product_import) { create(:product_import, store: store, user: admin_user) }
 
   def csv_blob(content)
     ActiveStorage::Blob.create_and_upload!(
@@ -252,7 +252,7 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
 
   path '/api/v3/admin/imports/{id}/complete_mapping' do
     let(:import_in_mapping) do
-      create(:product_import, owner: store, user: admin_user).tap { |imp| Spree.import_start_mapping_workflow.call(import: imp) }
+      create(:product_import, store: store, user: admin_user).tap { |imp| Spree.import_start_mapping_workflow.call(import: imp) }
     end
     let(:id) { import_in_mapping.prefixed_id }
 
@@ -304,7 +304,7 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
 
   path '/api/v3/admin/imports/{id}/retry_failed_rows' do
     let(:completed_import) do
-      create(:product_import, owner: store, user: admin_user).tap do |imp|
+      create(:product_import, store: store, user: admin_user).tap do |imp|
         imp.update_columns(status: 'completed')
         create(:import_row, import: imp, row_number: 1, status: 'failed', validation_errors: 'boom')
       end

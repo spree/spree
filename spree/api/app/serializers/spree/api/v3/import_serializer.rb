@@ -6,6 +6,7 @@ module Spree
       class ImportSerializer < BaseSerializer
         typelize number: :string, type: [:string, nullable: true], status: :string,
                  owner_type: [:string, nullable: true], owner_id: [:string, nullable: true],
+                 store_id: [:string, nullable: true], seller_id: [:string, nullable: true],
                  user_id: [:string, nullable: true], rows_count: :number
 
         attributes :number, :rows_count,
@@ -23,13 +24,25 @@ module Spree
           import.status.to_s
         end
 
-        # `"store"` / `"seller"`, not the polymorphic class name.
+        # Which marketplace this import belongs to, and — when a seller ran it —
+        # whose it is. A null `seller_id` means the operator's own.
+        attribute :store_id do |import|
+          import.store&.prefixed_id
+        end
+
+        attribute :seller_id do |import|
+          import.seller&.prefixed_id
+        end
+
+        # @deprecated Read `store_id` / `seller_id` — removed in 6.1. Emitted
+        #   from the pair above rather than the dropped columns, so a client
+        #   still reading them sees the same answer.
         attribute :owner_type do |import|
-          Spree::Base.polymorphic_api_type(import.owner_type)
+          Spree::Base.polymorphic_api_type(import.seller_id.present? ? 'Spree::Seller' : 'Spree::Store')
         end
 
         attribute :owner_id do |import|
-          import.owner&.prefixed_id
+          (import.seller || import.store)&.prefixed_id
         end
 
         attribute :user_id do |import|

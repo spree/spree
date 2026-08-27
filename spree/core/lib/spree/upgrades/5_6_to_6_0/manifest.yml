@@ -542,3 +542,24 @@ steps:
       secret and rejects incoming webhooks. Idempotent — gateways that already
       hold a secret are skipped, and the legacy tables stay in place as a
       rollback path until they are dropped in 6.1.
+
+  - id: backfill_import_export_tenancy
+    name: "Place every import in a store, and a seller where one ran it"
+    task: "spree:upgrade:backfill_import_export_tenancy"
+    notes: |
+      An import used to carry a polymorphic owner that was either a Store or a
+      Seller, never both, so a seller-owned import had no store on it at all.
+      Spree 6.0 gives imports the same tenancy pair exports already had — an
+      always-present store_id, plus a seller_id that is null for the operator's
+      own — which is what lets a marketplace's list include the imports its
+      sellers ran.
+
+      Until this runs, imports created before the upgrade carry no store and
+      are invisible to every scoped query, including the admin list.
+
+      The owner_type/owner_id columns stay in place as this step's source and
+      its rollback path; they are dropped in 6.1, along with the deprecated
+      Import#owner reader. Exports need no data step — they have always had a
+      store, and their seller_id column is new for everyone.
+
+      Idempotent — imports that already carry a store are skipped.

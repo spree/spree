@@ -304,11 +304,22 @@ module Spree
       })
       register_resource(:store_credits, group: :orders, subjects: -> { [Spree::StoreCredit] })
 
+      # `Spree::Import` and its rows are subjects here because a CSV import is
+      # a bulk product write and nothing else — which is the same reasoning
+      # that makes `write_<resource>` the key gating every import endpoint
+      # (see Spree::Import.required_scope). Without them CanCanCan denies a
+      # principal whose capability comes from catalog keys alone, which is
+      # every seller: the key gate would pass on `write_products` and the
+      # `authorize!` immediately behind it would refuse.
+      #
+      # An operator is unaffected either way — the `admin` role grants
+      # `can :manage, :all` and never consults this list.
       register_resource(:products, group: :catalog, audiences: %i[seller], subjects: -> {
         [Spree::Product, Spree::Variant, Spree::OptionType,
          Spree::OptionValue, Spree::Price, Spree::PriceList, Spree::PriceRule,
          Spree::Catalog, Spree::CatalogProduct,
-         Spree::CatalogAssignment, Spree::CustomField]
+         Spree::CatalogAssignment, Spree::CustomField,
+         Spree::Import, Spree::ImportRow]
       })
       # Its own resource so a seller can be granted the read without the
       # write, but the write key has to exist: the operator's endpoint serves

@@ -2082,70 +2082,6 @@
         "search_placeholder": "Szukaj według kodu…"
       }
     },
-    "imports": {
-      "download_original": "Pobierz oryginalny plik",
-      "failed": {
-        "description": "Nie udało się przetworzyć pliku.",
-        "title": "Import nieudany"
-      },
-      "failed_rows": {
-        "error": "Błąd",
-        "hide_data": "Ukryj dane wiersza",
-        "next_page": "Następna strona",
-        "prev_page": "Poprzednia strona",
-        "row_number": "Wiersz",
-        "title": "Nieudane wiersze",
-        "view_data": "Pokaż dane wiersza"
-      },
-      "load_failed": "Nie udało się wczytać importu.",
-      "mapping": {
-        "description": "Dopasuj kolumny z pliku do pól: {{type}}.",
-        "field": "Pole",
-        "file_column": "Kolumna pliku",
-        "missing_required": "Aby kontynuować, dopasuj wymagane pola: {{fields}}",
-        "not_mapped": "Niedopasowane",
-        "required": "Wymagane",
-        "sample": "Przykład",
-        "start": "Rozpocznij import",
-        "starting": "Rozpoczynanie…",
-        "title": "Dopasuj kolumny"
-      },
-      "processing": {
-        "failed_count": "{{failed}} nieudanych",
-        "note": "Możesz opuścić tę stronę — import będzie kontynuowany w tle.",
-        "preparing": "Przygotowywanie wierszy…",
-        "progress": "Przetworzono {{processed}} z {{total}} wierszy",
-        "retrying": "Ponawianie nieudanych wierszy · pozostało {{remaining}}",
-        "title": "Przetwarzanie wierszy"
-      },
-      "results": {
-        "completed_title": "Import zakończony",
-        "retry_failed": "Ponów nieudane wiersze ({{failed}})",
-        "retrying": "Ponawianie…",
-        "summary": "Zaimportowano {{completed}} wierszy · {{failed}} nieudanych",
-        "view_records": "Zobacz: {{type}}"
-      },
-      "status": {
-        "completed": "Zakończony",
-        "completed_mapping": "W kolejce",
-        "failed": "Nieudany",
-        "mapping": "Dopasowywanie",
-        "pending": "Oczekujący",
-        "processing": "Przetwarzanie"
-      },
-      "steps": {
-        "complete": "Gotowe",
-        "map_fields": "Dopasuj pola",
-        "process_rows": "Przetwórz wiersze"
-      },
-      "try_again": "Spróbuj ponownie",
-      "types": {
-        "customers": "Klienci",
-        "product_translations": "Tłumaczenia produktów",
-        "products": "Produkty"
-      },
-      "wizard_title": "Import"
-    },
     "integrations": {
       "active_toggle": {
         "help": "Aktywacja weryfikuje połączenie i udostępnia integrację dostawcom.",
@@ -3291,8 +3227,10 @@
           "search_placeholder": "Szukaj po numerze…",
           "table": {
             "failed_count": "{{failed}} nieudanych",
+            "first_party": "Ty",
             "number": "Numer",
             "rows": "Wiersze",
+            "seller": "Sprzedawca",
             "status": "Status",
             "type": "Typ"
           },

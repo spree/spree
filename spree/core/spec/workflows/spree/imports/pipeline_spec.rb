@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe 'Spree::Imports pipeline workflows' do
   let(:store) { Spree::Store.default }
-  let(:import) { create(:product_import, owner: store) }
+  let(:import) { create(:product_import, store: store) }
 
   describe Spree::Imports::StartMapping do
     it 'moves the import into mapping and builds a mapping per schema field' do
@@ -113,7 +113,7 @@ end
 # itself as done.
 RSpec.describe 'Spree::Imports status guards' do
   let(:store) { Spree::Store.default }
-  let(:import) { create(:product_import, owner: store) }
+  let(:import) { create(:product_import, store: store) }
 
   it 'refuses to complete an import that is not processing' do
     import.update!(status: 'failed')

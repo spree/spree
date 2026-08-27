@@ -7,7 +7,7 @@ RSpec.describe Spree::Api::V3::Admin::ImportRowsController, type: :controller do
 
   before { request.headers.merge!(headers) }
 
-  let(:import) { create(:product_import, owner: store, user: admin_user) }
+  let(:import) { create(:product_import, store: store, user: admin_user) }
 
   let!(:completed_row) { create(:import_row, import: import, row_number: 1, status: 'completed') }
   let!(:failed_row) do
@@ -42,7 +42,7 @@ RSpec.describe Spree::Api::V3::Admin::ImportRowsController, type: :controller do
     end
 
     it 'returns 404 for an import owned by another store' do
-      other_import = create(:product_import, owner: create(:store), user: admin_user)
+      other_import = create(:product_import, store: create(:store), user: admin_user)
 
       get :index, params: { import_id: other_import.prefixed_id }, as: :json
 

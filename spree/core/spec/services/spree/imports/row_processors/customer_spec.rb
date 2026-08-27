@@ -4,7 +4,7 @@ RSpec.describe Spree::Imports::RowProcessors::Customer, type: :service do
   subject { described_class.new(row) }
 
   let(:store) { Spree::Store.default }
-  let(:import) { create(:customer_import, owner: store) }
+  let(:import) { create(:customer_import, store: store) }
   let(:row) { create(:import_row, import: import, data: row_data.to_json) }
   let(:csv_row_headers) { Spree::ImportSchemas::Customers.new.headers }
 

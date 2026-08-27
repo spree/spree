@@ -15,7 +15,7 @@ RSpec.describe Spree::Imports::ProcessJob, type: :job do
     end
 
     let!(:import) do
-      create(:import, user: user, owner: store, type: 'Spree::Imports::Products', status: :completed_mapping)
+      create(:import, user: user, store: store, type: 'Spree::Imports::Products', status: :completed_mapping)
     end
 
     before do
@@ -93,7 +93,7 @@ RSpec.describe Spree::Imports::ProcessJob, type: :job do
   describe 'group dispatch (skip_row_creation: true)' do
     describe 'grouped import (Products)' do
       let!(:import) do
-        create(:import, owner: store, type: 'Spree::Imports::Products', status: :processing)
+        create(:import, store: store, type: 'Spree::Imports::Products', status: :processing)
       end
 
       before do
@@ -184,7 +184,7 @@ RSpec.describe Spree::Imports::ProcessJob, type: :job do
 
     describe 'batched import (Customers — no group_column)' do
       let!(:import) do
-        create(:import, owner: store, type: 'Spree::Imports::Customers', status: :processing)
+        create(:import, store: store, type: 'Spree::Imports::Customers', status: :processing)
       end
 
       let!(:rows) do

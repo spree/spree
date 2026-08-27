@@ -50,6 +50,7 @@ module Spree
     # Not `on: :create`: an export born without a seller passes, and assigning
     # one afterwards would reach the same raise.
     validate :seller_scope_must_be_available, if: -> { seller_id.present? }
+    validate :ensure_seller_belongs_to_store
 
     #
     # Enums
@@ -60,6 +61,18 @@ module Spree
     # Ransack configuration
     #
     self.whitelisted_ransackable_attributes = %w[number type format seller_id]
+    # Lets an operator filter their list by who ran the job — the seller's
+    # name, not an id they would have to look up first.
+    self.whitelisted_ransackable_associations = %w[seller]
+
+    #
+    # Scopes
+    #
+    # `for_store` comes from Spree::SingleStoreResource and includes a store's
+    # sellers' exports, which is what puts them in the operator's list.
+    scope :for_seller, ->(seller) { where(seller_id: seller) }
+    # The operator's own, as opposed to those their sellers ran.
+    scope :first_party, -> { where(seller_id: nil) }
 
     #
     # Preferences
@@ -334,6 +347,15 @@ module Spree
     rescue NameError
       # An unresolvable `type` is the presence/registry validation's business.
       nil
+    end
+
+    # A seller can only export the marketplace they belong to. Mirrors the
+    # Spree::Import twin — the two models carry the same tenancy pair.
+    def ensure_seller_belongs_to_store
+      return if seller.blank? || store.blank?
+      return if seller.store_id == store_id
+
+      errors.add(:seller, :invalid)
     end
 
     def set_default_format

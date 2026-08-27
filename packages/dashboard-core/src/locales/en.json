@@ -806,6 +806,70 @@
       "upload_failed": "Image upload failed",
       "uploading": "Uploading…"
     },
+    "imports": {
+      "download_original": "Download original file",
+      "failed": {
+        "description": "The file could not be processed.",
+        "title": "Import failed"
+      },
+      "failed_rows": {
+        "error": "Error",
+        "hide_data": "Hide row data",
+        "next_page": "Next page",
+        "prev_page": "Previous page",
+        "row_number": "Row",
+        "title": "Failed rows",
+        "view_data": "View row data"
+      },
+      "load_failed": "Could not load the import.",
+      "mapping": {
+        "description": "Match the columns from your file to {{type}} fields.",
+        "field": "Field",
+        "file_column": "File column",
+        "missing_required": "Map the required fields to continue: {{fields}}",
+        "not_mapped": "Not mapped",
+        "required": "Required",
+        "sample": "Example",
+        "start": "Start import",
+        "starting": "Starting…",
+        "title": "Map columns"
+      },
+      "processing": {
+        "failed_count": "{{failed}} failed",
+        "note": "You can leave this page — the import continues in the background.",
+        "preparing": "Preparing rows…",
+        "progress": "{{processed}} of {{total}} rows processed",
+        "retrying": "Retrying failed rows · {{remaining}} remaining",
+        "title": "Processing rows"
+      },
+      "results": {
+        "completed_title": "Import completed",
+        "retry_failed": "Retry failed rows ({{failed}})",
+        "retrying": "Retrying…",
+        "summary": "{{completed}} rows imported · {{failed}} failed",
+        "view_records": "View {{type}}"
+      },
+      "status": {
+        "completed": "Completed",
+        "completed_mapping": "Queued",
+        "failed": "Failed",
+        "mapping": "Mapping",
+        "pending": "Pending",
+        "processing": "Processing"
+      },
+      "steps": {
+        "complete": "Complete",
+        "map_fields": "Map fields",
+        "process_rows": "Process rows"
+      },
+      "try_again": "Try again",
+      "types": {
+        "customers": "Customers",
+        "product_translations": "Product translations",
+        "products": "Products"
+      },
+      "wizard_title": "Import"
+    },
     "media_picker": {
       "confirm": "Add selected",
       "description": "Pick files already in your library, or upload new ones.",

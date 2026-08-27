@@ -39,6 +39,19 @@ defineTable<Import>('imports', {
       ),
     },
     {
+      // Marketplaces only: a store with no sellers renders an em dash on every
+      // row, so the column is available but off by default.
+      key: 'seller_name',
+      label: i18n.t('admin.pages.settings.imports.table.seller'),
+      filterable: true,
+      render: (imp) =>
+        imp.seller_name ?? (
+          <span className="text-muted-foreground">
+            {i18n.t('admin.pages.settings.imports.table.first_party')}
+          </span>
+        ),
+    },
+    {
       key: 'rows',
       label: i18n.t('admin.pages.settings.imports.table.rows'),
       default: true,

@@ -101,6 +101,8 @@ module Spree
             @resource = find_resource
             authorize_resource!(@resource, :update)
 
+            return if refuse_seller_owned!
+
             result = Spree.import_retry_failed_rows_workflow.call(import: @resource)
 
             if result.success?
@@ -188,6 +190,19 @@ module Spree
             redirect_to url, allow_other_host: true, status: :found
           end
 
+          # DELETE /api/v3/admin/imports/:id
+          #
+          # An operator deletes their own imports. A seller's is theirs to
+          # remove — see `refuse_seller_owned!`.
+          def destroy
+            @resource = find_resource
+            authorize_resource!(@resource, :destroy)
+
+            return if refuse_seller_owned!
+
+            super
+          end
+
           protected
 
           def model_class
@@ -232,7 +247,7 @@ module Spree
           def build_resource
             klass = resolve_import_type(permitted_params[:type]) || Spree::Import
             attrs = permitted_params.except(:type).merge(
-              owner: current_store,
+              store: current_store,
               user: acting_admin_user
             )
             # The done email links back to results_url — allowed origins only.
@@ -262,6 +277,30 @@ module Spree
           end
 
           private
+
+          # Refuses a write against an import one of this store's sellers ran,
+          # rendering 422 and answering true so the caller returns.
+          #
+          # An operator can see every import in their marketplace — that is the
+          # point of the store-scoped list, and it is what makes a seller's
+          # failed rows debuggable. Acting on one is different: a retry re-runs
+          # writes into the seller's own catalog, and nothing on the import
+          # would record that the operator, rather than the seller, caused
+          # them. So reads span the store and writes stay with whoever owns the
+          # row.
+          #
+          # @return [Boolean]
+          def refuse_seller_owned!
+            return false if @resource.seller_id.blank?
+
+            render_error(
+              code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:validation_error],
+              message: Spree.t(:cannot_modify_seller_import, scope: 'api',
+                               default: "This import belongs to a seller. It can be viewed here, but only the seller can retry or delete it."),
+              status: :unprocessable_content
+            )
+            true
+          end
 
           # Imports require a user: row processors resolve records through
           # `import.current_ability`. JWT requests use the signed-in admin;

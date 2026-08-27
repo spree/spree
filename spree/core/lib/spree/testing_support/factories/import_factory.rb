@@ -1,8 +1,15 @@
 FactoryBot.define do
   factory :import, class: 'Spree::Import' do
-    owner { Spree::Store.default || create(:store) }
+    store { Spree::Store.default || create(:store) }
     association :user, factory: :admin_user
     type { 'Spree::Imports::Products' }
+
+    # A marketplace seller's import. The seller is built in this import's own
+    # store, since an import can only belong to the marketplace its seller
+    # trades in.
+    trait :for_seller do
+      seller { create(:seller, store: store) }
+    end
 
     factory :product_import, class: 'Spree::Imports::Products', parent: :import do
       type { 'Spree::Imports::Products' }

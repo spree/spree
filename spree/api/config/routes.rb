@@ -787,6 +787,23 @@ Spree::Core::Engine.add_routes do
           end
         end
 
+        # Bulk-listing a catalog by CSV. The operator's pipeline, narrowed to
+        # this seller: rows may only resolve onto their own products, and the
+        # products they create are theirs and land as drafts for review
+        # (docs/plans/5.6-admin-spa-csv-import.md).
+        resources :imports, only: [:index, :show, :create, :destroy] do
+          collection do
+            get :template
+            get :example
+          end
+          member do
+            patch :complete_mapping
+            patch :retry_failed_rows
+            get :download
+          end
+          resources :rows, only: [:index], controller: 'import_rows'
+        end
+
         # No destroy: a location holds stock levels and is named on historical
         # fulfillments, so a seller retires one by deactivating it.
         resources :stock_locations, only: [:index, :show, :create, :update]

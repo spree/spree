@@ -19,7 +19,7 @@ RSpec.describe Spree::ImportEmailSubscriber do
     let(:store) { @default_store }
     let(:user) { create(:admin_user) }
     let(:subscriber) { described_class.new }
-    let(:import) { create(:product_import, owner: store, user: user) }
+    let(:import) { create(:product_import, store: store, user: user) }
 
     def event_for(id)
       Spree::Event.new(name: 'import.completed', payload: { 'id' => id })

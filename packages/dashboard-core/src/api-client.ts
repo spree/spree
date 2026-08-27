@@ -184,6 +184,40 @@ export interface PanelApiClient {
     list(params?: Record<string, unknown>): Promise<{ data: PanelMediaRecord[] }>
   }
   /**
+   * CSV imports, for whichever catalog this panel manages.
+   *
+   * Registered rather than imported for the same reason as everything else
+   * here: the wizard is one component serving both panels, and reaching for
+   * `adminClient` inside it would leave a seller uploading against an API
+   * they hold no key for.
+   *
+   * Structural, not either SDK's type — the two branches serve the same
+   * payload from parallel serializers, and the wizard reads only what both
+   * carry. `templateUrl` and `exampleUrl` are functions rather than fixed
+   * strings because each panel's endpoints live under its own branch, and the
+   * download helpers take a URL rather than a resource method (they stream
+   * with the caller's JWT).
+   */
+  imports?: {
+    list(params?: Record<string, unknown>): Promise<{ data: PanelImport[]; meta?: PanelPageMeta }>
+    get(id: string): Promise<PanelImport>
+    create(params: PanelImportCreateParams): Promise<PanelImport>
+    completeMapping(id: string, params?: PanelImportCompleteMappingParams): Promise<PanelImport>
+    retryFailedRows(id: string): Promise<PanelImport>
+    delete(id: string): Promise<void>
+    rows: {
+      list(
+        importId: string,
+        params?: Record<string, unknown>,
+      ): Promise<{ data: PanelImportRow[]; meta?: PanelPageMeta }>
+    }
+    /** Which datasets this panel may import — the wizard offers no others. */
+    types: readonly string[]
+    templateUrl(type: string): string
+    exampleUrl(type: string): string
+    downloadUrl(id: string): string
+  }
+  /**
    * The store's tag vocabulary. Operator-only: tags are tenanted to the store
    * (`acts_as_taggable_tenant :store_id`), so a seller typing a new one would
    * be writing into the marketplace's own namespace.
@@ -205,6 +239,70 @@ export interface PanelApiClient {
 
 export interface PanelDeliveryProfile extends PanelNamedRecord {
   default?: boolean
+}
+
+/**
+ * One CSV import, as the shared wizard reads it: the mapping payload while
+ * `mapping`, the poll counters once processing starts.
+ */
+export interface PanelImport {
+  id: string
+  /** Human-facing identifier shown in the wizard header (`IM1001`). */
+  number: string
+  type: string | null
+  status: string
+  rows_count: number
+  completed_rows_count: number
+  failed_rows_count: number
+  processing_errors?: string | null
+  preferred_delimiter?: string
+  schema_fields: Array<{ name: string; label: string; required: boolean }>
+  csv_headers: string[]
+  sample_row: Record<string, string | null>
+  mappings: Array<{ schema_field: string; file_column: string | null; required: boolean }>
+  original_filename?: string | null
+  original_byte_size?: number | null
+  original_file_url?: string | null
+  created_at?: string
+  updated_at?: string
+}
+
+/**
+ * Pagination meta, as both APIs answer it. Structural for the same reason the
+ * records are: the two branches serve one shape and the shared UI reads only
+ * what both carry.
+ */
+export interface PanelPageMeta {
+  count: number
+  page: number
+  pages: number
+  from?: number
+  to?: number
+}
+
+/** One row of an import — the failure report's unit. */
+export interface PanelImportRow {
+  id: string
+  row_number: number
+  status: string
+  validation_errors?: string | null
+  data?: Record<string, string | null>
+}
+
+export interface PanelImportCreateParams {
+  type: string
+  /** Signed blob id of the already direct-uploaded CSV. */
+  attachment: string
+  /** CSV column separator — the four both APIs accept. */
+  preferred_delimiter?: PanelImportDelimiter
+  results_url?: string
+}
+
+/** The column separators the import upload form offers. */
+export type PanelImportDelimiter = ',' | ';' | '|' | '\t'
+
+export interface PanelImportCompleteMappingParams {
+  mappings?: Array<{ schema_field: string; file_column: string | null }>
 }
 
 /** A market, as the money fields read it. */

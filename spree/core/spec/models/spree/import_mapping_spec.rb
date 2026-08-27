@@ -3,7 +3,7 @@ require 'spec_helper'
 RSpec.describe Spree::ImportMapping, type: :model do
   let(:store) { @default_store }
   let(:user) { create(:admin_user) }
-  let(:import) { create(:product_import, owner: store, user: user) }
+  let(:import) { create(:product_import, store: store, user: user) }
 
   describe 'Validations' do
     describe 'presence validations' do
@@ -30,7 +30,7 @@ RSpec.describe Spree::ImportMapping, type: :model do
       end
 
       it 'allows same schema_field for different imports' do
-        other_import = create(:product_import, owner: store, user: user)
+        other_import = create(:product_import, store: store, user: user)
         duplicate_mapping = build(:import_mapping, import: other_import, schema_field: 'slug')
         expect(duplicate_mapping).to be_valid
       end
@@ -48,7 +48,7 @@ RSpec.describe Spree::ImportMapping, type: :model do
       end
 
       it 'allows same file_column for different imports' do
-        other_import = create(:product_import, owner: store, user: user)
+        other_import = create(:product_import, store: store, user: user)
         mapping = build(:import_mapping, import: other_import, schema_field: 'sku', file_column: 'name')
         expect(mapping).to be_valid
       end
