@@ -199,7 +199,8 @@ RSpec.describe Spree::Api::V3::Admin::SetupController, type: :controller do
       before do
         Spree::Stores::ProvisionDefaults.call(store: @default_store, country: Spree::Country.by_iso('US'))
         @default_store.stock_locations.find_by(default: true).update!(
-          address1: '417 Montgomery St', city: 'San Francisco', state_code: 'CA', zipcode: '94104'
+          address1: '417 Montgomery St', city: 'San Francisco',
+          state_code: 'CA', state_name: 'California', zipcode: '94104'
         )
       end
 
@@ -225,6 +226,7 @@ RSpec.describe Spree::Api::V3::Admin::SetupController, type: :controller do
         location = store.stock_locations.find_by(default: true)
         expect(location.country_code).to eq('GB')
         expect(location.state_code).to be_nil
+        expect(location.state_name).to be_nil
         expect(location.address1).to be_nil
       end
 

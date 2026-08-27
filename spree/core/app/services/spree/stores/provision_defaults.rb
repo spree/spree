@@ -127,7 +127,8 @@ module Spree
         location.country_code = country.iso
         if location.persisted? && location.will_save_change_to_country_code?
           location.assign_attributes(address1: nil, address2: nil, city: nil,
-                                     state_code: nil, zipcode: nil, phone: nil)
+                                     state_code: nil, state_name: nil,
+                                     zipcode: nil, phone: nil)
         end
         location.active = true
         location.default = true
