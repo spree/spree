@@ -85,9 +85,10 @@ step "Fetching the one-time first-run setup link"
 SETUP_URL="$(SPREE_PATH="$ROOT" docker compose -f "$DEV_COMPOSE" -f "$EDGE_OVERLAY" exec -T web bin/rails spree:setup:token 2>/dev/null | tr -d '\r' | grep -oE 'https?://[^[:space:]]+' | tail -1 || true)"
 
 printf '\nBackend ready: http://localhost:3000\n\n'
-printf 'The React dashboard and seller panel run as their own dev servers:\n'
+printf 'The React dashboard, seller panel and storefront run as their own dev servers:\n'
 printf '  pnpm dashboard:dev   # admin dashboard → http://localhost:5173\n'
-printf '  pnpm seller:dev      # seller panel    → http://localhost:5174\n\n'
+printf '  pnpm seller:dev      # seller panel    → http://localhost:5174\n'
+printf '  pnpm storefront:dev  # storefront      → http://localhost:3001\n\n'
 if [ -n "$SETUP_URL" ]; then
   printf 'Then create the first admin account (one-time link, needs dashboard:dev running):\n  %s\n\n' "$SETUP_URL"
   printf 'Print it again later with:\n  SPREE_PATH="$PWD" docker compose -f %s -f %s exec web bin/rails spree:setup:token\n\n' "$DEV_COMPOSE" "$EDGE_OVERLAY"

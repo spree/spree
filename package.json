@@ -26,6 +26,7 @@
     "server:load_sample_data": "cd server && spree task load_sample_data",
     "dashboard:dev": "turbo build --filter='@spree/dashboard-starter^...' && pnpm --dir packages/dashboard-starter dev --port 5173 --strictPort",
     "seller:dev": "turbo build --filter='@spree/seller-dashboard-starter^...' && pnpm --dir packages/seller-dashboard-starter dev --port 5174 --strictPort",
+    "storefront:dev": "bash scripts/storefront-dev.sh",
     "wt:setup": "scripts/worktree/setup.sh",
     "wt:template": "scripts/worktree/make-template.sh",
     "wt:dev": "scripts/worktree/dev.sh",

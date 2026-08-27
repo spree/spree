@@ -24,6 +24,7 @@ Please read our [Code of Conduct](../CODE_OF_CONDUCT.md) before contributing.
   - [Common commands](#common-commands)
   - [Package-specific commands](#package-specific-commands)
   - [Working on the React dashboard](#working-on-the-react-dashboard)
+  - [Working on the storefront](#working-on-the-storefront)
   - [Dashboard E2E tests](#dashboard-e2e-tests)
   - [Type generation](#type-generation)
   - [Releasing packages](#releasing-packages)
@@ -77,7 +78,10 @@ When it's done, the backend is up at [http://localhost:3000](http://localhost:30
 ```bash
 pnpm dashboard:dev   # admin dashboard → http://localhost:5173 (proxies /api to :3000)
 pnpm seller:dev      # seller panel    → http://localhost:5174
+pnpm storefront:dev  # Next.js storefront → http://localhost:3001
 ```
+
+`pnpm storefront:dev` clones the [Next.js storefront](https://github.com/spree/storefront) into `storefront/` on first run and wires it to this checkout — see [Working on the storefront](#working-on-the-storefront).
 
 The setup command finishes by printing a **one-time setup link** (`http://localhost:5173/setup?token=…`) — with `pnpm dashboard:dev` running, open it to create the first admin account. If you lose the link, print it again with:
 
@@ -117,7 +121,7 @@ cd server
 pnpm exec spree migrate
 pnpm exec spree generate model Brand name:string
 pnpm exec spree upgrade --plan
-``
+```
 
 See the [`@spree/cli` README](../packages/cli/README.md) for the full command surface.
 
@@ -130,7 +134,6 @@ Which command after which change:
 | Gem dependencies (gemspec / Gemfile / lock drift after `git pull`) | Nothing — the next `pnpm server:dev` boot self-heals via `bundle check | | bundle install` (or `cd server && pnpm exec spree bundle install` while the stack runs) |
 | Compose files / `server/.env` | `pnpm server:dev` (force-recreates the containers) |
 | `server/Dockerfile` / `.ruby-version` / starter update that breaks the image build ("lockfile can't be updated because frozen") | `pnpm server:build`, then `pnpm server:dev` — the build script handles the edge-rewritten `Gemfile.lock` automatically |
-| Meilisearch image bump ("database version … is incompatible") | Remove the `server_meilisearch_data` volume, boot, then reindex (`pnpm exec spree rake spree:search:reindex`) — the index is derived data |
 | Broken beyond repair | `pnpm server:setup` (full reset — wipes the database and volumes) |
 
 Re-run `pnpm server:setup` **only** to fully reset — it starts with the same teardown as `pnpm server:teardown` (`docker compose down -v` + `rm -rf ./server`), wiping all DB data.
@@ -321,6 +324,27 @@ Don't use `VITE_SPREE_API_URL` in dev — it switches the SDK to absolute cross-
 **Gotcha:** the dashboard imports `@spree/admin-sdk` from its **built** `dist/`, not source. If you edit `admin-sdk` (or `sdk-core`, or `sdk`) and want the dashboard to see the changes, run `pnpm build` from the monorepo root first (Turbo-cached). Editing dashboard code alone doesn't need this.
 
 See `packages/dashboard/README.md` for the full architecture (auth, permissions, extension points, the three-package split between `dashboard`, `dashboard-core`, and `dashboard-ui`).
+
+### Working on the storefront
+
+The [Next.js storefront](https://github.com/spree/storefront) is a separate repository. `pnpm storefront:dev` clones it into `storefront/` (gitignored) on first run, on its **`6-0-dev`** branch — `main` targets the released Store API and won't work against this monorepo's backend. Unlike `server/`, the clone keeps its `.git`: commit and push storefront changes from inside `storefront/`.
+
+```bash
+# Terminal 1: backend
+pnpm server:dev
+
+# Terminal 2: storefront
+pnpm storefront:dev   # http://localhost:3001
+```
+
+Load sample data first (`pnpm server:load_sample_data`) so the storefront has products to show.
+
+Every boot regenerates `storefront/.env.local` with the backend URL and the seeded publishable key (anything you add below the marker line is preserved), rebuilds `@spree/sdk` from this checkout's `packages/sdk`, and installs it into the storefront. Two consequences:
+
+- The SDK is **copied**, not linked — after changing SDK code (or regenerating its types from serializers), re-run `pnpm storefront:dev` to pick the changes up.
+- The install rewrites `storefront/pnpm-lock.yaml` to point at the local SDK. Restore it before committing inside the clone: `git -C storefront checkout pnpm-lock.yaml`.
+
+`pnpm server:teardown` leaves `storefront/` alone — it only removes the backend.
 
 ### Dashboard E2E tests
 
