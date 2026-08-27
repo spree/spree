@@ -17,6 +17,7 @@
   },
   "common": {
     "cancel": "Cancel",
+    "delete": "Delete",
     "error": "Something went wrong.",
     "loading": "Loading…",
     "remove": "Remove",
@@ -49,8 +50,10 @@
   },
   "nav": {
     "home": "Home",
+    "legal": "Legal",
     "onboarding": "Setup",
     "orders": "Orders",
+    "policies": "Policies",
     "products": "Products",
     "profile": "Profile",
     "settings": "Settings",
@@ -115,6 +118,37 @@
     "tracking": "Tracking {{number}}",
     "tracking_label": "Tracking number",
     "tracking_placeholder": "Optional"
+  },
+  "policies": {
+    "add": "Add policy",
+    "columns": {
+      "name": "Name",
+      "updated": "Updated"
+    },
+    "delete_confirm": {
+      "title": "Delete policy?",
+      "message": "{{name}} will be removed. If the marketplace requires it, your onboarding will show it as outstanding again."
+    },
+    "description": "The legal documents shoppers see on your storefront.",
+    "empty": {
+      "title": "No policies yet",
+      "description": "Publish the documents this marketplace asks you for."
+    },
+    "fields": {
+      "name": "Name",
+      "body": "Content"
+    },
+    "required": {
+      "title": "Asked of you",
+      "description": "This marketplace requires these policies before it will approve you.",
+      "write": "Write it"
+    },
+    "search_placeholder": "Search by name…",
+    "sheet": {
+      "new_title": "New policy",
+      "description": "Shoppers read this on your storefront page."
+    },
+    "title": "Policies"
   },
   "products": {
     "add": "Add product",

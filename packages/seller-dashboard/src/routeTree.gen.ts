@@ -23,6 +23,7 @@ import { Route as ProductsIndexRouteImport } from './routes/_authenticated/$sell
 import { Route as OrdersIndexRouteImport } from './routes/_authenticated/$sellerId/orders/index'
 import { Route as SettingsTeamRouteImport } from './routes/_authenticated/$sellerId/settings/team'
 import { Route as SettingsStockLocationsRouteImport } from './routes/_authenticated/$sellerId/settings/stock-locations'
+import { Route as SettingsPoliciesRouteImport } from './routes/_authenticated/$sellerId/settings/policies'
 import { Route as ProductsNewRouteImport } from './routes/_authenticated/$sellerId/products/new'
 import { Route as ProductsProductIdRouteImport } from './routes/_authenticated/$sellerId/products/$productId'
 import { Route as OrdersOrderIdRouteImport } from './routes/_authenticated/$sellerId/orders/$orderId'
@@ -97,6 +98,11 @@ const SettingsStockLocationsRoute = SettingsStockLocationsRouteImport.update({
   path: '/stock-locations',
   getParentRoute: () => SettingsRoute,
 } as any)
+const SettingsPoliciesRoute = SettingsPoliciesRouteImport.update({
+  id: '/policies',
+  path: '/policies',
+  getParentRoute: () => SettingsRoute,
+} as any)
 const ProductsNewRoute = ProductsNewRouteImport.update({
   id: '/products/new',
   path: '/products/new',
@@ -125,6 +131,7 @@ export interface FileRoutesByFullPath {
   '/$sellerId/orders/$orderId': typeof OrdersOrderIdRoute
   '/$sellerId/products/$productId': typeof ProductsProductIdRoute
   '/$sellerId/products/new': typeof ProductsNewRoute
+  '/$sellerId/settings/policies': typeof SettingsPoliciesRoute
   '/$sellerId/settings/stock-locations': typeof SettingsStockLocationsRoute
   '/$sellerId/settings/team': typeof SettingsTeamRoute
   '/$sellerId/orders/': typeof OrdersIndexRoute
@@ -141,6 +148,7 @@ export interface FileRoutesByTo {
   '/$sellerId/orders/$orderId': typeof OrdersOrderIdRoute
   '/$sellerId/products/$productId': typeof ProductsProductIdRoute
   '/$sellerId/products/new': typeof ProductsNewRoute
+  '/$sellerId/settings/policies': typeof SettingsPoliciesRoute
   '/$sellerId/settings/stock-locations': typeof SettingsStockLocationsRoute
   '/$sellerId/settings/team': typeof SettingsTeamRoute
   '/$sellerId/orders': typeof OrdersIndexRoute
@@ -161,6 +169,7 @@ export interface FileRoutesById {
   '/_authenticated/$sellerId/orders/$orderId': typeof OrdersOrderIdRoute
   '/_authenticated/$sellerId/products/$productId': typeof ProductsProductIdRoute
   '/_authenticated/$sellerId/products/new': typeof ProductsNewRoute
+  '/_authenticated/$sellerId/settings/policies': typeof SettingsPoliciesRoute
   '/_authenticated/$sellerId/settings/stock-locations': typeof SettingsStockLocationsRoute
   '/_authenticated/$sellerId/settings/team': typeof SettingsTeamRoute
   '/_authenticated/$sellerId/orders/': typeof OrdersIndexRoute
@@ -181,6 +190,7 @@ export interface FileRouteTypes {
     | '/$sellerId/orders/$orderId'
     | '/$sellerId/products/$productId'
     | '/$sellerId/products/new'
+    | '/$sellerId/settings/policies'
     | '/$sellerId/settings/stock-locations'
     | '/$sellerId/settings/team'
     | '/$sellerId/orders/'
@@ -197,6 +207,7 @@ export interface FileRouteTypes {
     | '/$sellerId/orders/$orderId'
     | '/$sellerId/products/$productId'
     | '/$sellerId/products/new'
+    | '/$sellerId/settings/policies'
     | '/$sellerId/settings/stock-locations'
     | '/$sellerId/settings/team'
     | '/$sellerId/orders'
@@ -216,6 +227,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$sellerId/orders/$orderId'
     | '/_authenticated/$sellerId/products/$productId'
     | '/_authenticated/$sellerId/products/new'
+    | '/_authenticated/$sellerId/settings/policies'
     | '/_authenticated/$sellerId/settings/stock-locations'
     | '/_authenticated/$sellerId/settings/team'
     | '/_authenticated/$sellerId/orders/'
@@ -329,6 +341,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsStockLocationsRouteImport
       parentRoute: typeof SettingsRoute
     }
+    '/_authenticated/$sellerId/settings/policies': {
+      id: '/_authenticated/$sellerId/settings/policies'
+      path: '/policies'
+      fullPath: '/$sellerId/settings/policies'
+      preLoaderRoute: typeof SettingsPoliciesRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/_authenticated/$sellerId/products/new': {
       id: '/_authenticated/$sellerId/products/new'
       path: '/products/new'
@@ -354,12 +373,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface SettingsRouteChildren {
+  SettingsPoliciesRoute: typeof SettingsPoliciesRoute
   SettingsStockLocationsRoute: typeof SettingsStockLocationsRoute
   SettingsTeamRoute: typeof SettingsTeamRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
 }
 
 const SettingsRouteChildren: SettingsRouteChildren = {
+  SettingsPoliciesRoute: SettingsPoliciesRoute,
   SettingsStockLocationsRoute: SettingsStockLocationsRoute,
   SettingsTeamRoute: SettingsTeamRoute,
   SettingsIndexRoute: SettingsIndexRoute,

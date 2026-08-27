@@ -46,6 +46,25 @@ RSpec.describe Spree::Api::V3::Store::PoliciesController, type: :controller do
       slugs = json_response['data'].map { |p| p['slug'] }
       expect(slugs).not_to include('other-policy')
     end
+
+    # A seller's policies belong to the seller, and are read through the
+    # seller — never mixed into the store's own list.
+    it 'does not return a seller’s policies' do
+      seller = create(:seller, store: store)
+      create(:policy, owner: seller, name: 'Seller Returns', slug: 'seller-returns')
+
+      get :index
+
+      slugs = json_response['data'].map { |p| p['slug'] }
+      expect(slugs).not_to include('seller-returns')
+    end
+
+    it 'exposes when the policy was last updated' do
+      get :index
+
+      policy = json_response['data'].find { |p| p['slug'] == 'return-policy' }
+      expect(policy['updated_at']).to be_present
+    end
   end
 
   describe 'GET #show' do

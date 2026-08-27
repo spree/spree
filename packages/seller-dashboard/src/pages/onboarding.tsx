@@ -408,6 +408,21 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
         </div>
       )}
 
+      {/* Which documents are still owed. The generic link below says where to
+          go; without this the seller would arrive not knowing what to write. */}
+      {requirement.required_policies && requirement.required_policies.length > 0 && (
+        <ul className="flex flex-col gap-1">
+          {requirement.required_policies.map((required) => (
+            <li key={required.name} className="flex items-center gap-2 text-sm">
+              <StatusIcon status={required.published ? 'complete' : 'incomplete'} />
+              <span className={required.published ? 'text-muted-foreground' : undefined}>
+                {required.name}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+
       {/* `accept_terms` renders its own link above, with different words. */}
       {requirement.action_url && requirement.kind !== 'accept_terms' && (
         <div className="flex justify-start">
@@ -440,6 +455,8 @@ function panelRoute(kind: string): string | undefined {
   switch (kind) {
     case 'complete_profile':
       return '/$sellerId/profile'
+    case 'policy':
+      return '/$sellerId/settings/policies'
     // `required_custom_fields` is not here: it renders its own fields inline,
     // so a link away would offer a second, worse route to the same thing.
     //

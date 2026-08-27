@@ -9764,31 +9764,37 @@ paths:
                   slug: privacy-policy
                   body: ''
                   body_html: ''
+                  updated_at: '2026-01-15T12:00:00.000Z'
                 - id: pol_OIJLhNcSbf
                   name: Privacy Policy
                   slug: privacy-policy-f4e5666d-52c2-4d89-aec5-cc55d69c7174
                   body: We respect your privacy.
                   body_html: We respect your privacy.
+                  updated_at: '2026-01-15T12:00:00.000Z'
                 - id: pol_uw2YK1rnl0
                   name: Return Policy
                   slug: return-policy
                   body: You can return items within 30 days.
                   body_html: You can return items within 30 days.
+                  updated_at: '2026-01-15T12:00:00.000Z'
                 - id: pol_EfhxLZ9ck8
                   name: Returns Policy
                   slug: returns-policy
                   body: ''
                   body_html: ''
+                  updated_at: '2026-01-15T12:00:00.000Z'
                 - id: pol_VqXmZF31wY
                   name: Shipping Policy
                   slug: shipping-policy
                   body: ''
                   body_html: ''
+                  updated_at: '2026-01-15T12:00:00.000Z'
                 - id: pol_UkLWZg9DAJ
                   name: Terms of Service
                   slug: terms-of-service
                   body: ''
                   body_html: ''
+                  updated_at: '2026-01-15T12:00:00.000Z'
                 meta:
                   page: 1
                   limit: 25
@@ -9868,6 +9874,7 @@ paths:
                 slug: return-policy
                 body: You can return items within 30 days.
                 body_html: You can return items within 30 days.
+                updated_at: '2026-01-15T12:00:00.000Z'
               schema:
                 "$ref": "#/components/schemas/Policy"
         '404':
@@ -13680,12 +13687,15 @@ components:
         body_html:
           type: string
           nullable: true
+        updated_at:
+          type: string
       required:
       - id
       - name
       - slug
       - body
       - body_html
+      - updated_at
       x-typelizer: true
     PriceHistory:
       type: object
@@ -14257,6 +14267,10 @@ components:
         cover_photo_url:
           type: string
           nullable: true
+        policies:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Policy"
       required:
       - id
       - name

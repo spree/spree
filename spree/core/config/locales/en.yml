@@ -1594,6 +1594,9 @@ en:
       operator_review:
         description: Something you check by hand before admitting the seller
         name: Manual check
+      policy:
+        description: The seller has published the policies you ask for
+        name: Seller policies
       required_custom_fields:
         description: The seller has filled in the custom fields you ask for
         name: Required custom fields

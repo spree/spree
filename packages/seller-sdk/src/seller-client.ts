@@ -5,6 +5,7 @@ import type {
   Fulfillment,
   Invitation,
   Order,
+  Policy,
   Product,
   Profile,
   RequirementStatus,
@@ -349,6 +350,47 @@ export class SellerClient {
         body: params,
       }),
   }
+
+  /**
+   * This seller's own policy documents — their returns policy, shipping
+   * policy, whatever the marketplace asks them to publish.
+   *
+   * Addressable by slug as well as prefixed id, matching the storefront.
+   */
+  readonly policies = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Policy>> =>
+      this.request<PaginatedResponse<Policy>>('GET', '/policies', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (idOrSlug: string, options?: RequestOptions): Promise<Policy> =>
+      this.request<Policy>('GET', `/policies/${idOrSlug}`, options),
+
+    create: (params: PolicyParams, options?: RequestOptions): Promise<Policy> =>
+      this.request<Policy>('POST', '/policies', { ...options, body: params }),
+
+    update: (idOrSlug: string, params: PolicyParams, options?: RequestOptions): Promise<Policy> =>
+      this.request<Policy>('PATCH', `/policies/${idOrSlug}`, { ...options, body: params }),
+
+    delete: (idOrSlug: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/policies/${idOrSlug}`, options),
+  }
+}
+
+/**
+ * What a seller may write on one of their policies.
+ *
+ * `body` takes HTML and is sanitized server-side; `body_html` is the
+ * read-only rendering of what was stored.
+ */
+export interface PolicyParams {
+  name?: string
+  slug?: string
+  body?: string | null
 }
 
 /** What a seller may write on one of their stock locations. */

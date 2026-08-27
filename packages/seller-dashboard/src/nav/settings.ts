@@ -1,5 +1,5 @@
 import { i18n, settingsNav } from '@spree/dashboard-core'
-import { UsersRoundIcon, WarehouseIcon } from 'lucide-react'
+import { ScrollTextIcon, UsersRoundIcon, WarehouseIcon } from 'lucide-react'
 
 // The panel's settings rail, registered into the same registry the operator's
 // dashboard writes to — so a marketplace adds, removes or reorders entries
@@ -13,6 +13,12 @@ settingsNav.addGroup({
   key: 'fulfillment',
   labelKey: 'admin.settings_nav.groups.fulfillment',
   position: 200,
+})
+
+settingsNav.addGroup({
+  key: 'legal',
+  label: i18n.t('nav.legal'),
+  position: 250,
 })
 
 settingsNav.addGroup({
@@ -42,6 +48,21 @@ settingsNav.add({
   path: '/team',
   icon: UsersRoundIcon,
   group: 'team',
+  position: 100,
+  subject: 'seller_profile',
+  action: 'update',
+})
+
+// The seller's own legal documents. Under settings because publishing them is
+// configuration a seller does once, not day-to-day selling — and because what
+// they must publish is the marketplace's onboarding checklist, which links
+// here.
+settingsNav.add({
+  key: 'settings.policies',
+  label: i18n.t('nav.policies'),
+  path: '/policies',
+  icon: ScrollTextIcon,
+  group: 'legal',
   position: 100,
   subject: 'seller_profile',
   action: 'update',

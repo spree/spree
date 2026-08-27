@@ -29,6 +29,15 @@ module Spree
             seller.minimum_payout_amount&.to_s
           end
 
+          # Rebound from the inherited store declaration to this branch's own
+          # serializer: a seller reading their own profile gets the seller
+          # shape of a policy (with `created_at`), which is what the seller
+          # SDK's generated type and this branch's OpenAPI schema promise.
+          _attributes.delete(:policies)
+          many :policies,
+               resource: proc { Spree.api.seller_policy_serializer },
+               if: proc { expand?('policies') }
+
           attribute :on_holiday do |seller|
             seller.on_holiday?
           end

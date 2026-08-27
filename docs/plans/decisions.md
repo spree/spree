@@ -3859,3 +3859,46 @@ state lives on the invitation, never as a nullable `customer_id` or status
 column on the membership. Invitations carry no role — Enterprise attaches
 its payload via the same dialog slot (stored in invitation `metadata` or its
 own referencing table) and applies it on `company_invitation.accepted`.
+
+## 2026-08-27 — Policies read through their owner, and sellers get their own
+
+**The `Policy.for_store` override is deleted.** It returned the store's
+policies *plus every policy not owned by a store* — a deliberate widening
+that becomes a cross-tenant leak the moment any other owner type gets
+policies. With the override gone, the generic `Spree::Base.for_store`
+resolves to `store.policies`, and all policy reads go through the owner
+association (`store.policies`, `seller.policies`) — never a class-level
+scope. This deletion is a prerequisite for seller-owned policies, not a
+cleanup afterwards: under the old override, the first seller-created policy
+would have appeared in `GET /api/v3/store/policies` for every store on the
+installation. It also tightens the guarded reflective callers (translations
+batch, exports) from "all non-store policies globally" to "this store's
+policies", which is the correct behavior.
+
+**Sellers own policies through the existing polymorphic `owner`** —
+`Seller has_many :policies, as: :owner`, no seeding (stores keep their four
+seeded defaults; sellers start empty). What a seller must provide is
+expressed by a new computed requirement kind,
+`Spree::SellerRequirements::Policy`, configured with an array preference of
+policy *names* matched through the locale-aware `with_matching_name` scope
+plus a non-blank body; the seller panel pre-fills required names on create,
+so matching holds by construction. Not in `DEFAULT_KINDS`. Seller-branch
+CRUD rides `scoped_resource :seller_profile`; the Admin API manages
+store-owned policies only. On the Store API, a seller's policies load
+behind the standard `?expand=policies` guard on the seller serializer.
+
+**Rich-text writes go to the plain attribute, not `*_html`.** Both
+`6.0-admin-api.md` and `6.0-rich-text-descriptions.md` carried a line saying
+writes accept `description_html`/`body_html` with HTML under the plain name
+rejected 422. That was never implemented and contradicts the rich-text plan's
+own summary: `Spree::SanitizableRichText` defines `field_html` as a read-only
+reader and sanitizes writes made to the plain attribute, which is what every
+shipped controller permits (`Admin::CategoriesController` takes
+`:description`). Both plans are corrected; the plain attribute is the write
+target until a bridge actually exists.
+
+**One recorded serializer exception:** the store policy serializer exposes
+`updated_at` — when a legal document last changed is customer-facing
+information, not operational leakage. `created_at` stays admin-only.
+Checkout consent capture (persisting acceptance) stays out of scope, parked
+with `5.4-6.0-eu-legal-compliance.md`. Plan: `6.0-store-policies.md`.

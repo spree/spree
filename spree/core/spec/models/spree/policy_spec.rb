@@ -119,17 +119,13 @@ RSpec.describe Spree::Policy, type: :model do
         expect(result).not_to include(store2_policy)
       end
 
-      context 'for policies with a different owner type' do
-        let(:user_policy) { create(:policy, owner: create(:user)) }
+      # A policy is reachable only through its owner. Anything else is a
+      # cross-tenant leak: a seller's policy would otherwise surface on every
+      # store's public policies endpoint.
+      it 'excludes policies owned by anything other than the store' do
+        seller_policy = create(:policy, owner: create(:seller, store: store))
 
-        it 'returns policies for the store and the user policy' do
-          result = described_class.for_store(store)
-
-          expect(result).to include(store1_policy)
-          expect(result).to include(user_policy)
-
-          expect(result).not_to include(store2_policy)
-        end
+        expect(described_class.for_store(store)).not_to include(seller_policy)
       end
     end
 

@@ -360,6 +360,9 @@ Spree::Core::Engine.add_routes do
         # Option Types (with nested option_values in payload)
         resources :option_types, concerns: [:custom_fieldable, :translatable]
 
+        # Store policies (terms of service, privacy, returns, shipping, …)
+        resources :policies, concerns: [:translatable]
+
         # Tax Categories
         resources :tax_categories
 
@@ -765,6 +768,9 @@ Spree::Core::Engine.add_routes do
         resources :stock_locations, only: [:index, :show, :create, :update]
 
         resources :countries, only: [:index]
+
+        # The seller's own policy documents.
+        resources :policies
 
         # Singular: the checklist is always `current_seller`'s.
         resource :onboarding, only: [:show], controller: 'onboarding' do

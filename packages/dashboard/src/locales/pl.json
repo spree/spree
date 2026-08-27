@@ -1372,6 +1372,18 @@
           "placeholder": "Wybierz dostawcę"
         }
       },
+      "policy": {
+        "body": {
+          "label": "Treść"
+        },
+        "name": {
+          "placeholder": "Polityka zwrotów"
+        },
+        "slug": {
+          "help": "Adres tej polityki w sklepie. Pozostawiony pusty, tworzony jest z nazwy.",
+          "placeholder": "polityka-zwrotow"
+        }
+      },
       "postal_code": {
         "label": "Kod pocztowy"
       },
@@ -3294,6 +3306,10 @@
           "add_sheet_title": "Dodaj metodę płatności",
           "edit_sheet_title": "Edytuj metodę płatności"
         },
+        "policies": {
+          "add_sheet_title": "Dodaj politykę",
+          "edit_sheet_title": "Edytuj politykę"
+        },
         "stock_locations": {
           "add_sheet_title": "Dodaj lokalizację magazynową",
           "edit_sheet_title": "Edytuj lokalizację magazynową",
@@ -3579,6 +3595,24 @@
         "store_credits": "Środki w sklepie",
         "webhooks": "Webhooki"
       }
+    },
+    "policies": {
+      "add_cta": "Dodaj politykę",
+      "create_description": "Opublikuj dokument prawny, który klienci przeczytają w Twoim sklepie.",
+      "create_label": "Utwórz politykę",
+      "delete_confirm": {
+        "message": "{{name}} zostanie usunięta, a jej strona w sklepie przestanie działać.",
+        "title": "Usunąć politykę?"
+      },
+      "edit_description": "Napisz dokument, który klienci zobaczą w Twoim sklepie.",
+      "empty": "Brak polityk",
+      "messages": {
+        "created": "Polityka utworzona",
+        "deleted": "Polityka usunięta",
+        "updated": "Polityka zaktualizowana"
+      },
+      "no_content": "Nic jeszcze nie napisano",
+      "search_placeholder": "Szukaj po nazwie…"
     },
     "post_sale": {
       "claims_empty": "Brak reklamacji.",
@@ -4445,6 +4479,7 @@
         "integrations": "Podłącz dostawców wysyłki, podatków i innych usług",
         "markets": "Kraje, do których sprzedajesz, i ich waluty",
         "payment_methods": "Bramki płatnicze i sposób pobierania płatności",
+        "policies": "Regulamin, prywatność, zwroty i wysyłka",
         "product_types": "Szablony wstępnie wypełniające nowe produkty",
         "reasons": "Powody zwrotów, refundacji i reklamacji",
         "roles": "Zestawy uprawnień przypisywane pracownikom",
@@ -4478,6 +4513,7 @@
         "integrations": "Integracje",
         "markets": "Rynki",
         "payment_methods": "Metody płatności",
+        "policies": "Polityki",
         "product_types": "Typy produktów",
         "profile": "Profil",
         "reasons": "Zwroty i powody",

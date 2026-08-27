@@ -1354,6 +1354,18 @@
           "placeholder": "Anbieter auswählen"
         }
       },
+      "policy": {
+        "body": {
+          "label": "Inhalt"
+        },
+        "name": {
+          "placeholder": "Rückgaberichtlinie"
+        },
+        "slug": {
+          "help": "Die Shop-Adresse dieser Richtlinie. Leer gelassen, folgt sie dem Namen.",
+          "placeholder": "rueckgaberichtlinie"
+        }
+      },
       "postal_code": {
         "label": "Postleitzahl"
       },
@@ -3248,6 +3260,10 @@
           "add_sheet_title": "Zahlungsmethode hinzufügen",
           "edit_sheet_title": "Zahlungsmethode bearbeiten"
         },
+        "policies": {
+          "add_sheet_title": "Richtlinie hinzufügen",
+          "edit_sheet_title": "Richtlinie bearbeiten"
+        },
         "stock_locations": {
           "add_sheet_title": "Lagerstandort hinzufügen",
           "edit_sheet_title": "Lagerstandort bearbeiten",
@@ -3527,6 +3543,24 @@
         "store_credits": "Guthaben",
         "webhooks": "Webhooks"
       }
+    },
+    "policies": {
+      "add_cta": "Richtlinie hinzufügen",
+      "create_description": "Veröffentlichen Sie ein rechtliches Dokument, das Kunden in Ihrem Shop lesen können.",
+      "create_label": "Richtlinie erstellen",
+      "delete_confirm": {
+        "message": "{{name}} wird entfernt und die zugehörige Shop-Seite funktioniert nicht mehr.",
+        "title": "Richtlinie löschen?"
+      },
+      "edit_description": "Verfassen Sie das Dokument, das Kunden in Ihrem Shop sehen.",
+      "empty": "Noch keine Richtlinien",
+      "messages": {
+        "created": "Richtlinie erstellt",
+        "deleted": "Richtlinie gelöscht",
+        "updated": "Richtlinie aktualisiert"
+      },
+      "no_content": "Noch nichts verfasst",
+      "search_placeholder": "Nach Namen suchen…"
     },
     "post_sale": {
       "claims_empty": "Noch keine Reklamationen.",
@@ -4383,6 +4417,7 @@
         "integrations": "Versand-, Steuer- und andere Anbieter verbinden",
         "markets": "Länder, in die Sie verkaufen, und ihre Währungen",
         "payment_methods": "Zahlungsanbieter und wie Zahlungen eingezogen werden",
+        "policies": "AGB, Datenschutz, Rückgabe und Versand",
         "product_types": "Vorlagen, die neue Produkte vorbefüllen",
         "reasons": "Gründe für Retouren, Rückerstattungen und Reklamationen",
         "roles": "Berechtigungssätze, die Sie Mitarbeitenden zuweisen",
@@ -4416,6 +4451,7 @@
         "integrations": "Integrationen",
         "markets": "Märkte",
         "payment_methods": "Zahlungsmethoden",
+        "policies": "Richtlinien",
         "product_types": "Produkttypen",
         "profile": "Profil",
         "reasons": "Rücksendungen & Gründe",

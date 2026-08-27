@@ -29,6 +29,11 @@ FactoryBot.define do
       type { 'Spree::SellerRequirements::RequiredCustomFields' }
     end
 
+    factory :policy_requirement, class: Spree::SellerRequirements::Policy do
+      type { 'Spree::SellerRequirements::Policy' }
+      preferred_required_policies { ['Returns Policy'] }
+    end
+
     factory :attestation_requirement, class: Spree::SellerRequirements::Attestation do
       type { 'Spree::SellerRequirements::Attestation' }
       sequence(:name) { |n| "Confirm something #{n}" }
