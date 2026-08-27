@@ -106,6 +106,20 @@ RSpec.describe Spree::Export, :job, type: :model do
 
         expect { export.scope }.to raise_error(Spree::Export::SellerScopeUnavailable)
       end
+
+      # Caught at create so the caller reads a 422, rather than in the job
+      # where the raise goes unrecorded and the export never becomes `done`.
+      it 'is refused before it can be queued' do
+        export = build(:customer_export, store: store, seller: seller, user: nil)
+
+        expect(export).not_to be_valid
+        expect(export.errors[:type]).to be_present
+      end
+
+      it 'allows a model it can narrow' do
+        expect(build(:order_export, store: store, seller: seller, user: nil)).to be_valid
+        expect(build(:product_export, store: store, seller: seller, user: nil)).to be_valid
+      end
     end
 
     context 'when the export has no seller' do

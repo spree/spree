@@ -15,6 +15,18 @@ const SELLER_STORAGE_KEY = 'spree.seller.id'
 let client: SellerApiClient | null = null
 
 /**
+ * The seller the client is currently sending, mirrored here because the SDK
+ * keeps it in a closure with no reader.
+ *
+ * Not the same thing as the stored choice: a browser that blocks storage
+ * (private mode, sandboxed iframe) still runs the panel perfectly well, and
+ * `rememberSeller` sets the client either way. Reading `localStorage` to
+ * answer "who are we acting as" would come back empty in exactly those
+ * sessions and drop the header off every file download.
+ */
+let activeSellerId: string | null = null
+
+/**
  * Builds the Seller API client and registers it with the shared framework.
  *
  * The host calls this once at boot, before rendering. `@spree/dashboard-core`
@@ -34,7 +46,7 @@ export function createSellerApiClient({
   client = createSellerClient({ baseUrl })
 
   const remembered = rememberedSeller()
-  if (remembered) client.setSeller(remembered)
+  if (remembered) setActiveSeller(remembered)
 
   setApiClient({
     auth: client.auth,
@@ -60,11 +72,8 @@ export function createSellerApiClient({
     // and picks up none of its headers. Without the seller header the Seller
     // API refuses the request before the action runs, so an export would
     // generate fine and then fail to download.
-    downloadHeaders: (): Record<string, string> => {
-      const sellerId = rememberedSeller()
-
-      return sellerId ? { 'X-Spree-Seller-Id': sellerId } : {}
-    },
+    downloadHeaders: (): Record<string, string> =>
+      activeSellerId ? { 'X-Spree-Seller-Id': activeSellerId } : {},
     // Backs the shared export dialog, the same one the operator's dashboard
     // renders. The Seller API narrows what may be exported to records that
     // can be scoped to one seller, and refuses anything else.
@@ -110,6 +119,7 @@ export function sellerClient(): SellerApiClient {
 
 /** Points subsequent requests at a seller, without persisting the choice. */
 export function setActiveSeller(sellerId: string): void {
+  activeSellerId = sellerId
   sellerClient().setSeller(sellerId)
 }
 
@@ -137,6 +147,7 @@ export function forgetSeller(): void {
   } catch {
     // Nothing to forget; clearing the header below is what matters for logout.
   }
+  activeSellerId = null
   client?.setSeller('')
 }
 

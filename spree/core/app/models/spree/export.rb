@@ -41,6 +41,12 @@ module Spree
     # Validations
     #
     validates :format, :type, presence: true
+    # Refuse at create rather than at generate. `scope` raises for a
+    # seller-owned export of a model it cannot narrow, and that raise would
+    # otherwise land inside the background job, where nothing records it — the
+    # export simply never becomes `done` and the caller waits out its poll. A
+    # validation makes it a 422 the caller reads straight away.
+    validate :seller_scope_must_be_available, on: :create, if: -> { seller_id.present? }
 
     #
     # Enums
@@ -317,6 +323,16 @@ module Spree
     end
 
     private
+
+    def seller_scope_must_be_available
+      return if model_class.respond_to?(:for_seller)
+
+      errors.add(:type, :seller_scope_unavailable,
+                 default: "#{model_class} cannot be narrowed to a single seller")
+    rescue NameError
+      # An unresolvable `type` is the presence/registry validation's business.
+      nil
+    end
 
     def set_default_format
       self.format = SUPPORTED_FILE_FORMATS.first if format.blank?
