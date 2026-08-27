@@ -90,8 +90,7 @@ function NewProductPage() {
     // server's Product#digital_assets= attaches them to the default variant
     // after the product is created.
     if (digital_assets && digital_assets.length > 0) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ;(payload as any).digital_assets = digital_assets.map(({ signed_id }) => ({ signed_id }))
+      payload.digital_assets = digital_assets.map(({ signed_id }) => ({ signed_id }))
     }
 
     // For simple products (single variant with no options) the merchant

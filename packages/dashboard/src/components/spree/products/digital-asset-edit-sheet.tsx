@@ -82,14 +82,21 @@ export function DigitalAssetEditSheet({
       return
     }
 
-    await updateAsset.mutateAsync({
-      id: asset!.id,
-      authorized_clicks: parsedClicks,
-      authorized_days: parsedDays,
-      ...(hasVariants && variantId ? { variant_id: variantId } : {}),
-      ...(settingsSchema.length > 0 ? { provider_settings: settings } : {}),
-    })
-    onOpenChange(false)
+    setError(null)
+    try {
+      await updateAsset.mutateAsync({
+        id: asset!.id,
+        authorized_clicks: parsedClicks,
+        authorized_days: parsedDays,
+        ...(hasVariants && variantId ? { variant_id: variantId } : {}),
+        ...(settingsSchema.length > 0 ? { provider_settings: settings } : {}),
+      })
+      onOpenChange(false)
+    } catch (err) {
+      // useResourceMutation suppresses the toast for a 422, so surface the
+      // reason inline and keep the sheet open with the entered values.
+      setError(err instanceof Error ? err.message : t('admin.errors.unexpected'))
+    }
   }
 
   return (

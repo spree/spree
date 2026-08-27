@@ -79,9 +79,17 @@ export function ProviderSettingsFields({ schema, values, onChange }: Props) {
               id={id}
               type={field.type === 'number' ? 'number' : 'text'}
               value={value == null ? '' : String(value)}
-              onChange={(e) =>
-                set(field.key, field.type === 'number' ? e.target.valueAsNumber : e.target.value)
-              }
+              onChange={(e) => {
+                if (field.type !== 'number') {
+                  set(field.key, e.target.value)
+                  return
+                }
+                // An empty or invalid number input yields NaN, which would
+                // serialize to null and silently clear the setting. Keep it
+                // unset instead of writing a bogus value.
+                const parsed = e.target.valueAsNumber
+                set(field.key, Number.isFinite(parsed) ? parsed : undefined)
+              }}
             />
           </Field>
         )

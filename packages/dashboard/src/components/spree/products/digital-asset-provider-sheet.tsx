@@ -29,21 +29,32 @@ export function DigitalAssetProviderSheet({ productId, provider, onOpenChange, o
   const { t } = useTranslation()
   const createAsset = useCreateDigitalAsset(productId)
   const [values, setValues] = useState<Record<string, unknown>>({})
+  const [error, setError] = useState<string | null>(null)
 
   // Re-seed with the provider's defaults each time a source is picked.
   useEffect(() => {
-    if (provider) setValues(defaultProviderSettings(provider.settings_schema))
+    if (provider) {
+      setValues(defaultProviderSettings(provider.settings_schema))
+      setError(null)
+    }
   }, [provider])
 
   if (!provider) return null
 
   async function handleCreate() {
-    await createAsset.mutateAsync({
-      provider_type: provider!.type,
-      provider_settings: values,
-    })
-    onCreated()
-    onOpenChange(false)
+    setError(null)
+    try {
+      await createAsset.mutateAsync({
+        provider_type: provider!.type,
+        provider_settings: values,
+      })
+      onCreated()
+      onOpenChange(false)
+    } catch (err) {
+      // useResourceMutation suppresses the toast for a 422, so surface the
+      // reason inline and keep the sheet open with the entered values.
+      setError(err instanceof Error ? err.message : t('admin.errors.unexpected'))
+    }
   }
 
   return (
@@ -59,6 +70,8 @@ export function DigitalAssetProviderSheet({ productId, provider, onOpenChange, o
             values={values}
             onChange={setValues}
           />
+
+          {error && <p className="text-destructive text-sm">{error}</p>}
         </div>
 
         <SheetFooter>
