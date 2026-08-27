@@ -152,10 +152,11 @@ RSpec.describe Spree::SampleData::Loader, type: :service, without_global_store: 
         expect(price_list.prices.where(currency: currency).pluck(:variant_id)).to match_array(eligible_variant_ids)
       end
 
-      wholesale_price = price_list.prices.where(currency: 'EUR').where.not(amount: nil).first
+      wholesale_price = price_list.prices.where.not(amount: nil).first
       expect(wholesale_price).to be_present
 
-      base_price = Spree::Price.find_by(price_list_id: nil, variant_id: wholesale_price.variant_id, currency: 'EUR')
+      base_price = Spree::Price.find_by(price_list_id: nil, variant_id: wholesale_price.variant_id,
+                                        currency: wholesale_price.currency)
       expect(wholesale_price.amount).to eq((base_price.amount * 0.6).round(2))
     end
 

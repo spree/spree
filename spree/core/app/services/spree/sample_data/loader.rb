@@ -14,9 +14,6 @@ module Spree
               puts 'Loading sample configuration data...'
               load_configuration_data
 
-              puts 'Loading sample markets...'
-              load_ruby_file('markets')
-
               puts 'Loading sample channels...'
               load_ruby_file('channels')
 
