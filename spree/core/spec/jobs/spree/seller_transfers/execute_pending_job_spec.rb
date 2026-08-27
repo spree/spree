@@ -48,6 +48,23 @@ RSpec.describe Spree::SellerTransfers::ExecutePendingJob do
     expect(second.reload).to be_completed
   end
 
+  # A reversal parks in `processing` the same way an earning does, and its
+  # amount is negative — sending one would pay the seller the money it exists
+  # to take back.
+  it 'never sends a reversal as a payment' do
+    earning = create(:seller_transfer, :completed, seller: seller, amount: 40,
+                                                   order: create(:order, store: store, seller: seller))
+    reversal = create(:seller_transfer, seller: seller, amount: -15, kind: 'refund_reversal',
+                                        status: 'processing', reversed_from: earning,
+                                        order: create(:order, store: store, seller: seller))
+
+    expect_any_instance_of(Spree::PayoutProvider::System).not_to receive(:transfer!).with(reversal)
+
+    described_class.perform_now(seller.id)
+
+    expect(reversal.reload).to be_processing
+  end
+
   it 'does nothing for a seller the provider still will not accept' do
     allow(Spree::PayoutProvider::System).to receive(:requires_payout_account?).and_return(true)
     seller.update!(payouts_enabled_at: nil)

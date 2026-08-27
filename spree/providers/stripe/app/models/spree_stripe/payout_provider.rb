@@ -82,6 +82,14 @@ module SpreeStripe
       account = retrieve_account(seller)
       return seller.payouts_enabled? if account.nil?
 
+      # What Stripe says, written down. The stamp is a cache of a webhook that
+      # can fail to arrive in either direction — a seller left looking at an
+      # unfinished checklist they have finished, or one still counted payable
+      # after Stripe withdrew it. Recording the answer keeps the workflows
+      # that gate money on the column honest without their asking.
+      stamp = account.payouts_enabled ? (seller.payouts_enabled_at || Time.current) : nil
+      seller.update!(payouts_enabled_at: stamp) if seller.payouts_enabled_at != stamp
+
       account.payouts_enabled
     end
 
@@ -164,7 +172,7 @@ module SpreeStripe
           currency: seller_payout.currency.downcase,
           metadata: { spree_seller_payout_id: seller_payout.id }
         },
-        gateway.api_options.merge(stripe_account: account_id, idempotency_key: idempotency_key(seller_payout))
+        gateway.api_options.merge(stripe_account: account_id, idempotency_key: payout_idempotency_key(seller_payout))
       )
 
       # Stored now rather than waiting for the webhook, so the confirmation
@@ -185,6 +193,22 @@ module SpreeStripe
     end
 
     private
+
+    # Keyed to the earnings being settled, not to the settlement row.
+    #
+    # A payout that times out is marked failed and releases its earnings, so
+    # the next sweep assembles a *new* row for the same money — and a key
+    # derived from that row would be a new key, which is Stripe's cue to send
+    # the money a second time. The transfers are what the two attempts have in
+    # common, so they are what identifies the operation.
+    def payout_idempotency_key(seller_payout)
+      transfer_ids = seller_payout.transfers.order(:id).pluck(:id)
+      digest = Digest::SHA256.hexdigest(
+        "#{seller_payout.seller_id}-#{seller_payout.currency}-#{transfer_ids.join(',')}"
+      )
+
+      "spree-payout-#{digest[0, 32]}"
+    end
 
     # Nil rather than raising: a checklist row asking why it is incomplete
     # must not take the page down because Stripe is unreachable.

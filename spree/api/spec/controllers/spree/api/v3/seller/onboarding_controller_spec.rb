@@ -119,13 +119,32 @@ RSpec.describe Spree::Api::V3::Seller::OnboardingController, type: :controller d
         expect(json_response['url']).to eq('https://provider.example/setup/abc')
       end
 
-      # The panel says where to come back to — core does not know its routes.
-      it 'sends the panel’s own return addresses to the provider' do
+      # The panel says where to come back to, within its own origin.
+      it 'sends back an address the panel actually serves' do
+        panel = Spree::Sellers::PanelUrl.call(store: store)
+
         expect_any_instance_of(Spree::PayoutProvider::System).to receive(:onboarding_url).
-          with(anything, hash_including(refresh_url: urls[:refresh_url], return_url: urls[:return_url])).
+          with(anything, hash_including(return_url: "#{panel}/onboarding")).
           and_return('https://provider.example/setup/abc')
 
-        post :payout_account, params: urls, as: :json
+        post :payout_account,
+             params: { refresh_url: "#{panel}/onboarding", return_url: "#{panel}/onboarding" },
+             as: :json
+      end
+
+      # A seller could otherwise turn the marketplace's genuine provider flow
+      # into a redirect to a page of their choosing, which is a convincing
+      # place to ask somebody for their details.
+      it 'refuses to send the seller somewhere else entirely' do
+        panel = Spree::Sellers::PanelUrl.call(store: store)
+
+        expect_any_instance_of(Spree::PayoutProvider::System).to receive(:onboarding_url).
+          with(anything, hash_including(return_url: panel)).
+          and_return('https://provider.example/setup/abc')
+
+        post :payout_account,
+             params: { refresh_url: 'https://evil.test/steal', return_url: 'https://evil.test/steal' },
+             as: :json
       end
 
       it 'reports a provider that refuses rather than raising' do

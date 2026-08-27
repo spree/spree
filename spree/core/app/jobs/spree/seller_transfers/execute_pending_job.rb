@@ -24,7 +24,11 @@ module Spree
         # raised parks there, and without picking it up again a single network
         # blip would strand that earning for good — it is counted in no
         # balance and collected by no sweep.
-        seller.seller_transfers.where(status: %w[pending processing], payout_id: nil).find_each do |transfer|
+        # Earnings only. A reversal parks in `processing` the same way when its
+        # own provider call raises, but sending one through `transfer!` would
+        # pay the seller the amount it exists to take back — the row is
+        # negative and the amount sent is its absolute value.
+        seller.seller_transfers.earnings.where(status: %w[pending processing], payout_id: nil).find_each do |transfer|
           provider.transfer!(transfer)
         rescue StandardError => e
           # One seller's stuck earning must not stop the rest — the row stays

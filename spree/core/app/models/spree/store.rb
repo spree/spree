@@ -401,13 +401,20 @@ module Spree
     #
     # Who moves money to this store's sellers.
     #
-    # Memoized per record, not per process: a store reloaded after an operator
-    # changes the setting resolves afresh, so a marketplace that connects a
-    # provider mid-process still starts using it without a restart.
+    # Memoized per record, and cleared on reload — `reload` leaves plain
+    # instance variables alone, so without that a provider holding its own
+    # cache (Stripe's account lookups do) would answer from a snapshot taken
+    # arbitrarily long ago, and an operator changing the setting would not be
+    # picked up by a store object already in hand.
     #
     # @return [Spree::PayoutProvider::Base]
     def payout_provider_instance
       @payout_provider_instance ||= payout_provider_class.new
+    end
+
+    def reload(*)
+      @payout_provider_instance = nil
+      super
     end
 
     # The class alone, for the questions that are about the provider rather

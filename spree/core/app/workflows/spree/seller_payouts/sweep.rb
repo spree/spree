@@ -102,8 +102,15 @@ module Spree
         discard_empty_payout if @payout.amount <= 0 || @payout.amount < seller.resolved_minimum_payout_amount
       end
 
+      # Both the figure and the period: a settlement whose window covers
+      # earnings that ended up in a different payout answers the
+      # reconciliation question wrongly, which is the only question the
+      # period fields exist for.
       def restate_amount
-        @payout.update!(amount: @payout.transfers_total)
+        @payout.update!(
+          amount: @payout.transfers_total,
+          period_start: @payout.transfers.minimum(:created_at) || @payout.period_start
+        )
       end
 
       # Nothing was claimed, so there is nothing to release and nothing to

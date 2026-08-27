@@ -47,8 +47,8 @@ module Spree
             provider = current_store.payout_provider_instance
             url = provider.onboarding_url(
               current_seller,
-              refresh_url: params.require(:refresh_url),
-              return_url: params.require(:return_url)
+              refresh_url: panel_url(params.require(:refresh_url)),
+              return_url: panel_url(params.require(:return_url))
             )
 
             # A null link rather than an empty response: the panel has to tell
@@ -57,6 +57,26 @@ module Spree
             render json: { url: url.presence }
           rescue Spree::Core::GatewayError => e
             render_service_error(e.message)
+          end
+
+          # Where a provider may send the seller back to.
+          #
+          # Checked against the panel's own origin rather than echoed: a seller
+          # could otherwise name any address and turn the marketplace's genuine
+          # provider flow into a redirect to a page of their choosing, which is
+          # a convincing place to ask somebody for credentials. Anything else
+          # falls back to the panel's own root.
+          def panel_url(candidate)
+            panel = Spree::Sellers::PanelUrl.call(store: current_store)
+            return panel if candidate.blank?
+
+            uri = URI.parse(candidate.to_s)
+            allowed = URI.parse(panel)
+
+            same_origin = uri.scheme == allowed.scheme && uri.host == allowed.host && uri.port == allowed.port
+            same_origin ? candidate.to_s : panel
+          rescue URI::InvalidURIError
+            panel
           end
 
           protected
