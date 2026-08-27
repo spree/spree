@@ -1011,6 +1011,20 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect(product.reload.categories).to include(category1)
         expect(product.reload.categories).not_to include(foreign_category)
       end
+
+      it 'patches an inline digital asset by id without duplicating it' do
+        asset = create(:digital_asset, variant: product.default_variant, authorized_clicks: 2)
+
+        expect {
+          patch :update, params: {
+            id: product.prefixed_id,
+            digital_assets: [{ id: asset.prefixed_id, authorized_clicks: 9 }]
+          }, as: :json
+        }.not_to change(Spree::DigitalAsset, :count)
+
+        expect(response).to have_http_status(:ok)
+        expect(asset.reload.authorized_clicks).to eq(9)
+      end
     end
 
     context 'with tags' do

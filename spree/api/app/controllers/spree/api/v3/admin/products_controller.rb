@@ -249,11 +249,13 @@ module Spree
               # importers rather than to a request body.
               media: [*Spree::Media::WRITABLE_ATTRIBUTES, :id, :signed_id, :source_media_id, { variant_ids: [] }],
               # Inline digital files, so a new product ships its downloadable
-              # files in the same request. Create-only: entries carry a
+              # files in the same request. Additive: an entry carries a
               # `signed_id` (uploaded file) or a `provider_type` (provider-backed
-              # asset). Edits and deletes use the nested digital_assets endpoints.
-              # See `Spree::Product#digital_assets=`.
-              digital_assets: [:signed_id, :variant_id, :provider_type, :authorized_clicks, :authorized_days, provider_settings: {}],
+              # asset), and an `id` patches that asset in place rather than
+              # building a duplicate — so replaying a product's list on update
+              # does not accumulate copies. Removal uses the nested
+              # digital_assets endpoint. See `Spree::Product#digital_assets=`.
+              digital_assets: [:id, :signed_id, :variant_id, :provider_type, :authorized_clicks, :authorized_days, provider_settings: {}],
               product_publications: [:id, :channel_id, :published_at, :unpublished_at],
               variants: [
                 :id, :sku, :barcode,
