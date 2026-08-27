@@ -48,7 +48,12 @@ module Spree
       # — a monthly seller paid early in dollars would have their euro balance
       # skipped for another month.
       def due?(seller, currency)
-        settled_at = seller.seller_payouts.where(currency: currency).maximum(:created_at)
+        # Failed payouts are excluded: one releases its earnings back to the
+        # next sweep, so counting it as a settlement would block the very
+        # retry it exists to allow — for a whole interval, with the money
+        # sitting owed and unsent.
+        settled_at = seller.seller_payouts.where(currency: currency).
+                     where.not(status: 'failed').maximum(:created_at)
         return true if settled_at.nil?
 
         settled_at <= interval_ago(seller.resolved_payouts_schedule_interval)

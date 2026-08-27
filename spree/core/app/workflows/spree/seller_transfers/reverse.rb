@@ -62,6 +62,11 @@ module Spree
         @reversal = write_reversal
         halt!(order) if @reversal.nil?
       rescue ActiveRecord::RecordNotUnique
+        # Only a refund-keyed reversal can collide, since that index is what
+        # makes it unique. Re-raising anything else keeps the real error
+        # visible rather than replacing it with a lookup that cannot succeed.
+        raise if refund.nil?
+
         halt!(Spree::SellerTransfer.reversals_only.find_by!(refund_id: refund.id))
       end
 

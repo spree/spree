@@ -46,8 +46,13 @@ module Spree
           rescue ActiveRecord::RecordNotFound
             head :not_found
           rescue StandardError => e
+            # 500, unlike the payments endpoint beside this one — that hands
+            # its work to a job, so accepting the delivery is honest. This acts
+            # inline, so answering 200 for work that failed tells the provider
+            # the settlement was recorded when it was not, and nothing will
+            # redeliver it. A retry is the only thing that recovers it.
             Rails.error.report(e, source: 'spree.webhooks.payouts')
-            head :ok
+            head :internal_server_error
           end
         end
       end

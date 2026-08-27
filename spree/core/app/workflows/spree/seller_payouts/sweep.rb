@@ -12,8 +12,10 @@ module Spree
     # transfers with no payout — so a batch can never be swept twice, and a
     # re-run after a crash finds nothing left to take.
     #
-    # A failed send leaves the transfers stamped: the retry re-sends *this*
-    # payout rather than sweeping the same earnings into a second one.
+    # A failed send releases them again, because a payout is created here and
+    # nowhere else: transfers left stamped to a failed one would be invisible
+    # to every later sweep while the balance still reported them owed. The
+    # next sweep is the retry.
     class Sweep < Spree::Workflow
       hooks :validate, :after_sweep
 
@@ -93,7 +95,11 @@ module Spree
         # restated payout can even come to nothing — which must not be sent: a
         # provider asked to move zero either errors or moves nothing, and
         # either way it is not a settlement.
-        discard_empty_payout if @payout.amount <= 0
+        # Re-checked, not just tested against zero: a concurrent sweep taking
+        # some of the rows changes the figure the threshold was weighed
+        # against, and a restated payout can fall below a minimum the original
+        # amount cleared.
+        discard_empty_payout if @payout.amount <= 0 || @payout.amount < seller.resolved_minimum_payout_amount
       end
 
       def restate_amount

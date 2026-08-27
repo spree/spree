@@ -60,6 +60,22 @@ RSpec.describe Spree::SellerPayouts::SweepDueJob do
     expect(other_seller.seller_payouts.count).to eq(1)
   end
 
+  # A failed payout released its earnings back to the next sweep, so counting
+  # it as a settlement would block the retry it exists to allow.
+  it 'retries a seller whose last settlement failed' do
+    earn(40)
+    create(:seller_payout, seller: seller, currency: 'USD', status: 'failed', amount: 0)
+
+    expect { described_class.perform_now }.to change { Spree::SellerPayout.where(status: 'pending').count }.by(1)
+  end
+
+  it 'still waits when the last settlement went out' do
+    earn(40)
+    create(:seller_payout, seller: seller, currency: 'USD', status: 'completed', amount: 40)
+
+    expect { described_class.perform_now }.not_to change { Spree::SellerPayout.count }
+  end
+
   # One stuck seller must not end the run for everyone behind them.
   it 'carries on past a seller whose settlement fails' do
     other_seller = create(:seller, :approved, store: store)

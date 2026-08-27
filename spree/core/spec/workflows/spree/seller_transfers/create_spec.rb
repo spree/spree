@@ -6,7 +6,7 @@ RSpec.describe Spree::SellerTransfers::Create do
 
   # A shipped seller order worth 100, on which the marketplace charged 12
   # including the VAT it charges the seller on its fee.
-  def shipped_order(total: 100, commission: 12, tax_remittance: 'seller', tax: 0)
+  def shipped_order(total: 100, commission: 12, tax_remittance: 'seller', tax: 0, included_tax: 0)
     order = create(:order, store: store, seller: seller)
     line_item = create(:line_item, order: order)
     create(:fulfillment, order: order, cart: nil, status: 'fulfilled')
@@ -20,8 +20,8 @@ RSpec.describe Spree::SellerTransfers::Create do
     # Written last and directly: the workflow reads the order's own totals, and
     # letting recalculation derive them from the factory's line items would be
     # testing the totals workflow rather than the ledger.
-    order.update_columns(total: total, additional_tax_total: tax, status: 'placed',
-                         completed_at: Time.current)
+    order.update_columns(total: total, additional_tax_total: tax, included_tax_total: included_tax,
+                         status: 'placed', completed_at: Time.current)
 
     order.reload
   end
@@ -44,6 +44,17 @@ RSpec.describe Spree::SellerTransfers::Create do
     # never the seller's to receive.
     it 'withholds consumer tax from a platform-remitted seller' do
       result = described_class.call(order: shipped_order(total: 100, commission: 12, tax_remittance: 'platform', tax: 20))
+
+      expect(result.value.amount).to eq(68)
+    end
+
+    # A market quoting gross prices keeps the tax inside the order total
+    # rather than adding it on top, so subtracting only the added half would
+    # pay the seller VAT the marketplace is about to remit.
+    it 'withholds tax that was included in the price, not added to it' do
+      result = described_class.call(
+        order: shipped_order(total: 100, commission: 12, tax_remittance: 'platform', included_tax: 20)
+      )
 
       expect(result.value.amount).to eq(68)
     end

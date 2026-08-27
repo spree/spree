@@ -94,7 +94,12 @@ module Spree
       # since the marketplace files it (Decision 9).
       def earned_amount
         base = order.total.to_d
-        base -= order.additional_tax_total.to_d if order.seller.tax_remittance == 'platform'
+        # Both halves of the consumer tax, because a market decides which one
+        # it uses: added on top where prices are quoted net, folded into the
+        # price where they are quoted gross. A marketplace that remits the tax
+        # and only subtracts the added half pays a tax-inclusive seller the VAT
+        # as well as paying it to the tax authority.
+        base -= order.tax_total.to_d if order.seller.tax_remittance == 'platform'
 
         [base - order.commission_lines.sum(:total).to_d, 0].max
       end
