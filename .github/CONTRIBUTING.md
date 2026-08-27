@@ -11,7 +11,8 @@ Please read our [Code of Conduct](../CODE_OF_CONDUCT.md) before contributing.
   - [Prerequisites](#prerequisites)
   - [Spree codebase](#spree-codebase)
   - [Setup](#setup)
-  - [Running a backend day-to-day](#running-a-backend-day-to-day)
+  - [Running server day-to-day](#running-server-day-to-day)
+  - [Emails in development](#emails-in-development)
   - [Native Ruby (advanced)](#native-ruby-advanced)
 - [Backend Development (Ruby)](#backend-development-ruby)
   - [Engines overview](#engines-overview)
@@ -138,6 +139,16 @@ Which command after which change:
 
 Re-run `pnpm server:setup` **only** to fully reset — it starts with the same teardown as `pnpm server:teardown` (`docker compose down -v` + `rm -rf ./server`), wiping all DB data.
 
+### Emails in development
+
+Every email the backend sends — staff and seller invitations, order confirmations, fulfillment notifications, password resets — is captured by [Mailpit](https://mailpit.axllent.org/), which runs as part of the Docker stack. Nothing is ever delivered to a real address.
+
+Read captured mail at [http://localhost:8025](http://localhost:8025).
+
+Links inside emails that lead into the admin (e.g. the invitation acceptance page) point at the dashboard dev server (`http://localhost:5173`), so have `pnpm dashboard:dev` running before clicking through.
+
+To deliver through a real SMTP provider instead, set `SMTP_HOST` (and `SMTP_PORT` / `SMTP_USERNAME` / `SMTP_PASSWORD` as needed) in `server/.env` — unset, they default to the in-stack Mailpit.
+
 ### Native Ruby (advanced)
 
 If you prefer the fastest possible inner loop and don't mind installing Ruby and Postgres on your host directly, you can skip Docker:
@@ -152,6 +163,8 @@ bin/dev              # starts Rails
 This path is faster per request but means more on your host. It also runs against your installed system services, not a sandboxed Docker stack.
 
 The first-admin flow is the same as on Docker: seeding prints a one-time setup link, and `bin/rails spree:setup:token` (from `server/`) prints it again.
+
+On this path Mailpit is not provided by Docker — run it on your host (`brew install mailpit && brew services start mailpit`) and set `SMTP_HOST=localhost` in `server/.env`. Without `SMTP_HOST` set, emails are only written to the Rails log (`delivery_method = :logger`), so there is nothing to open and no links to click.
 
 ## Backend Development (Ruby)
 
