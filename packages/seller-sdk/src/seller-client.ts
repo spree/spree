@@ -82,6 +82,35 @@ export class SellerClient {
         params: { token },
         body: params,
       }),
+
+    /**
+     * Asks for a password reset email. Always resolves (202) whether or not the
+     * address matches a seller, so this cannot be used to discover which
+     * accounts exist. The emailed link opens the seller panel — `redirect_url`
+     * when it passes the store's allowed-origin check, otherwise the panel
+     * origin the server resolves for itself.
+     */
+    requestPasswordReset: (
+      params: { email: string; redirect_url?: string },
+      options?: RequestOptions,
+    ): Promise<void> =>
+      this.request<void>('POST', '/auth/password_resets', { ...options, body: params }),
+
+    /**
+     * Spends a reset token: sets the new password and returns a signed-in
+     * seller session, so they land in the panel rather than on a login form.
+     * The token is single-use, and resetting revokes every other session the
+     * account holds.
+     */
+    resetPassword: (
+      token: string,
+      params: { password: string; password_confirmation: string },
+      options?: RequestOptions,
+    ): Promise<AuthTokens> =>
+      this.request<AuthTokens>('PATCH', `/auth/password_resets/${encodeURIComponent(token)}`, {
+        ...options,
+        body: params,
+      }),
   }
 
   /**

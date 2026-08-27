@@ -336,6 +336,119 @@ paths:
                 last_name:
                   type: string
                   example: Ellis
+  "/api/v3/seller/auth/password_resets":
+    post:
+      summary: Request password reset
+      tags:
+      - Authentication
+      description: |
+        Requests a password reset email for a seller.
+
+        Unauthenticated. Always answers `202`, whether or not the address
+        belongs to a seller, so this cannot be used to discover which accounts
+        exist. A store staff member who runs no seller is treated as no match:
+        they have no seller panel to be sent to.
+
+        `redirect_url` is where the emailed link should point, with the reset
+        token appended as a `token` query param. It is honoured only when it
+        matches one of the store's allowed origins; otherwise it is silently
+        ignored and the server resolves the seller panel origin itself. The
+        email is delivered by Spree via the
+        `seller_user.password_reset_requested` event, which is never forwarded
+        to webhook endpoints.
+      parameters: []
+      responses:
+        '202':
+          description: reset requested
+          content:
+            application/json:
+              example:
+                message: If an account exists for that email, password reset instructions
+                  have been sent.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: seller@acme.test
+                redirect_url:
+                  type: string
+                  example: https://sellers.your-store.com/reset-password
+                  description: Must match an allowed origin of the store; ignored
+                    otherwise.
+              required:
+              - email
+  "/api/v3/seller/auth/password_resets/{id}":
+    patch:
+      summary: Reset password
+      tags:
+      - Authentication
+      description: |
+        Spends a password reset token (the `token` query param from the emailed
+        link), sets the new password and signs the seller in: the response
+        carries a seller JWT and the rotatable refresh token is set in an
+        HttpOnly cookie, so they land in the panel rather than on a login form.
+
+        The token is single-use, and resetting revokes every other session the
+        account holds. A token whose seller membership has since been revoked is
+        refused exactly as an expired one.
+      parameters:
+      - name: id
+        in: path
+        description: The reset token from the emailed link
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: password reset
+          content:
+            application/json:
+              example:
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6ImJjMDM3NTNhLTEzN2MtNGM1Zi1hMzM2LWUzMjBlZTNiMjQ5YyIsImlzcyI6InNwcmVlIiwiYXVkIjoic2VsbGVyX2FwaSIsImV4cCI6MTc2ODQ3ODcwMH0.EASrzbGpJVyAl10SJyzs8na68Wmvedkm7G66wTBq_0k
+                user:
+                  id: adm_UkLWZg9DAJ
+                  email: lon@veum.us
+                  first_name: Ariana
+                  last_name: Wiza
+                  full_name: Ariana Wiza
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  avatar_url:
+                sellers:
+                - id: sel_UkLWZg9DAJ
+                  name: Seller 34
+                  status: approved
+              schema:
+                "$ref": "#/components/schemas/AuthResponse"
+        '422':
+          description: invalid or expired token
+          content:
+            application/json:
+              example:
+                error:
+                  code: password_reset_token_invalid
+                  message: Password reset token is invalid or has expired.
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  example: new-password-123
+                password_confirmation:
+                  type: string
+                  example: new-password-123
+              required:
+              - password
+              - password_confirmation
   "/api/v3/seller/me":
     get:
       summary: Current user
@@ -12826,8 +12939,8 @@ paths:
             application/json:
               example:
                 id: sel_UkLWZg9DAJ
-                name: Seller 41
-                slug: seller-41
+                name: Seller 43
+                slug: seller-43
                 about: ''
                 about_html: ''
                 logo_url:
@@ -12904,7 +13017,7 @@ paths:
               example:
                 id: sel_UkLWZg9DAJ
                 name: Acme Supplies
-                slug: seller-43
+                slug: seller-45
                 about: ''
                 about_html: ''
                 logo_url:
@@ -13657,10 +13770,10 @@ paths:
             application/json:
               example:
                 direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--897bd6eaca845284e2c28b2c3ceb093da93e052f
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--30faf1d39ba989134d7fe027e953533e52e21ebc
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e997276f575254f6208378baeb704195aea876e
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--944daf99a3cc3cf9ec8207d8aca9beebf253cc22
               schema:
                 "$ref": "#/components/schemas/DirectUploadResponse"
       requestBody:
