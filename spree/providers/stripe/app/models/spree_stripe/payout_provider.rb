@@ -61,6 +61,28 @@ module SpreeStripe
         refresh_url: refresh_url,
         return_url: return_url
       )
+    rescue Stripe::StripeError => e
+      # Core knows nothing about Stripe's exceptions, and a seller asking to
+      # set up their payouts should be told what went wrong rather than shown
+      # a crash. The provider contract speaks GatewayError.
+      raise Spree::Core::GatewayError, e.message
+    end
+
+    # Asked of Stripe rather than read from `payouts_enabled_at`.
+    #
+    # That column is a cache of what a webhook last told us, and a webhook is
+    # a thing that can fail to arrive — an endpoint not yet registered, a
+    # delivery dropped, a local tunnel that was not running. A seller who has
+    # finished onboarding then sits looking at a checklist that says they have
+    # not, while Stripe has been ready to pay them for hours.
+    #
+    # The account is fetched once per instance either way, since answering why
+    # a row is incomplete needs it too.
+    def onboarded?(seller)
+      account = retrieve_account(seller)
+      return seller.payouts_enabled? if account.nil?
+
+      account.payouts_enabled
     end
 
     # Which of the three things is true, read off the account itself.

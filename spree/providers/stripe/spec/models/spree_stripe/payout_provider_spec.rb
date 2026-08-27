@@ -128,6 +128,42 @@ RSpec.describe SpreeStripe::PayoutProvider do
     end
   end
 
+  # The column is a cache of what a webhook last said, and a webhook can fail
+  # to arrive — an endpoint never registered, a delivery dropped. A seller who
+  # has finished onboarding must not be left looking at a checklist that says
+  # they have not while Stripe is ready to pay them.
+  describe '#onboarded?' do
+    def stub_account(payouts_enabled:)
+      allow(Stripe::Account).to receive(:retrieve).and_return(
+        Stripe::StripeObject.construct_from(
+          id: 'acct_seller', payouts_enabled: payouts_enabled, requirements: { disabled_reason: nil, errors: [] }
+        )
+      )
+    end
+
+    it 'believes Stripe over a column no webhook has written' do
+      seller.update!(payouts_enabled_at: nil)
+      stub_account(payouts_enabled: true)
+
+      expect(described_class.new.onboarded?(seller)).to be(true)
+    end
+
+    it 'believes Stripe when it withdraws the capability' do
+      seller.update!(payouts_enabled_at: Time.current)
+      stub_account(payouts_enabled: false)
+
+      expect(described_class.new.onboarded?(seller)).to be(false)
+    end
+
+    # Stripe being unreachable must not read as "this seller cannot be paid".
+    it 'falls back to what we were last told when Stripe cannot be reached' do
+      seller.update!(payouts_enabled_at: Time.current)
+      allow(Stripe::Account).to receive(:retrieve).and_raise(Stripe::APIError.new('boom'))
+
+      expect(described_class.new.onboarded?(seller)).to be(true)
+    end
+  end
+
   describe '#onboarding_state' do
     def account(payouts_enabled:, disabled_reason: nil, errors: [])
       Stripe::StripeObject.construct_from(

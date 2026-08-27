@@ -226,21 +226,26 @@ RSpec.describe SpreeStripe::Gateway::Connect do
       onboard
     end
 
-    # Paying a seller abroad is a different agreement, and without it Stripe
-    # refuses to create the account at all.
-    it 'accepts the recipient agreement for a seller abroad' do
+    # Which service agreement a seller abroad needs depends on which payouts
+    # product the marketplace is on, which a country code cannot tell us — so
+    # core sends none and lets Stripe apply its own default.
+    it 'states no service agreement' do
       new_seller.update!(billing_address: create(:address, country_code: 'FR', state_code: nil))
 
-      expect(Stripe::Account).to receive(:create).
-        with(hash_including(tos_acceptance: { service_agreement: 'recipient' }), anything).
-        and_return(Stripe::StripeObject.construct_from(id: 'acct_new'))
+      expect(Stripe::Account).to receive(:create) do |params, _options|
+        expect(params).not_to have_key(:tos_acceptance)
+        Stripe::StripeObject.construct_from(id: 'acct_new')
+      end
 
       onboard
     end
 
-    it 'does not ask for it at home' do
+    # Mutually exclusive with `controller`, and deprecated besides — sending
+    # both is a 400 that stops any seller onboarding at all.
+    it 'states the controller properties rather than an account type' do
       expect(Stripe::Account).to receive(:create) do |params, _options|
-        expect(params).not_to have_key(:tos_acceptance)
+        expect(params).not_to have_key(:type)
+        expect(params[:controller]).to include(stripe_dashboard: { type: 'express' })
         Stripe::StripeObject.construct_from(id: 'acct_new')
       end
 

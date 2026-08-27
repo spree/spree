@@ -65,6 +65,14 @@ module SpreeStripe
       # @param return_url [String] where Stripe sends them when they finish
       # @return [String] the onboarding URL
       def create_connect_account_link(seller:, refresh_url:, return_url:)
+        # A marketplace usually connects Stripe long before it has any sellers,
+        # and the endpoint is registered when the gateway is saved — so by the
+        # time the first seller onboards there may be nothing listening, and
+        # the `account.updated` that says they can be paid never arrives.
+        # Asked for here because this is the moment it starts to matter.
+        ensure_connect_webhook_endpoint
+
+
         account_id = payout_account_for(seller) || create_connect_account(seller).tap do |created|
           seller.set_payout_account_reference(SpreeStripe::PayoutProvider, created)
         end
@@ -97,7 +105,7 @@ module SpreeStripe
       def create_connect_account(seller)
         Stripe::Account.create(
           connect_account_params(seller),
-          api_options.merge(idempotency_key: "spree-seller-#{seller.prefixed_id}")
+          api_options.merge(idempotency_key: account_idempotency_key(seller))
         ).id
       end
 
@@ -105,12 +113,24 @@ module SpreeStripe
         country_code = seller_country_code(seller)
 
         params = {
-          type: 'express',
           country: country_code,
           email: seller.contact_email,
           business_profile: { name: seller.name },
-          # The platform pays Stripe's fees and owns the dispute relationship,
-          # which is what makes this a marketplace rather than a referral.
+          # What kind of account this is, stated as the three things that
+          # actually differ rather than as a preset: the platform pays Stripe's
+          # fees and owns the dispute relationship, which is what makes this a
+          # marketplace rather than a referral, and the seller gets Stripe's
+          # own hosted dashboard.
+          #
+          # Deliberately no `type: 'express'` beside it. The two are mutually
+          # exclusive — Stripe refuses a request carrying both — and `type` is
+          # deprecated in favour of stating the properties. One consequence
+          # worth knowing: the account reads back as `type: "none"`, so nothing
+          # may branch on that field.
+          #
+          # `requirement_collection` is left unset, which defaults to `stripe`
+          # — Stripe collects what it needs through its hosted onboarding, and
+          # `application` is not even allowed alongside an Express dashboard.
           controller: {
             fees: { payer: 'application' },
             losses: { payments: 'application' },
@@ -125,26 +145,41 @@ module SpreeStripe
           metadata: { spree_seller_id: seller.id }
         }
 
-        # Paying a seller abroad is a different agreement, not a variation on
-        # the domestic one: Stripe requires the recipient service agreement,
-        # under which the seller may not accept card payments in their own
-        # right. Without it the account cannot be created at all.
-        params[:tos_acceptance] = { service_agreement: 'recipient' } if cross_border?(country_code)
-
         params
+      end
+
+      # Identifies one attempt at creating this seller's account, not the seller.
+      #
+      # Two clicks a second apart must not open two Connect accounts, which is
+      # what an idempotency key is for. But Stripe caches a failed response
+      # against the key for a day, and refuses a retry whose parameters have
+      # changed — so a key that never moves means a seller who hit a bad
+      # request stays broken until tomorrow, and sees a confusing complaint
+      # about mismatched parameters rather than the real problem.
+      #
+      # Rolling on the day keeps double-submit protection where it matters
+      # while letting a fix take effect. `updated_at` moves whenever the
+      # seller record is touched, which a failed attempt does.
+      def account_idempotency_key(seller)
+        stamp = seller.updated_at.to_i
+
+        "spree-seller-#{seller.prefixed_id}-#{stamp}"
       end
 
       # Where the seller trades, which decides what currency and bank details
       # their account can hold. Falls back to the marketplace's own country —
       # Stripe would otherwise assume it anyway, and assuming it silently is
       # how a seller ends up with an account no local bank can receive.
+      #
+      # No service agreement is sent with it. A seller abroad needs the
+      # recipient agreement only under Stripe's Global payouts product;
+      # marketplaces on Connect's own cross-border payouts need the standard
+      # one, and sending recipient there would wrongly bar the seller from
+      # taking card payments. Which product a marketplace is on cannot be read
+      # off a country code, so core sends neither and lets Stripe apply the
+      # right default.
       def seller_country_code(seller)
         seller.billing_address&.country_code.presence || store.default_country_code
-      end
-
-      def cross_border?(country_code)
-        country_code.present? && store.default_country_code.present? &&
-          country_code.to_s.upcase != store.default_country_code.to_s.upcase
       end
 
       # Whether Stripe will let this seller be paid. It can go back to false —
@@ -241,6 +276,12 @@ module SpreeStripe
       # nothing about creating a seller saves the gateway — so that guard meant
       # the endpoint was never registered at all, and `account.updated` never
       # arrived to say who could be paid.
+      def ensure_connect_webhook_endpoint
+        return if preferred_connect_webhook_signing_secret.present?
+
+        SpreeStripe::CreateWebhookEndpointJob.perform_later(id, connect: true)
+      end
+
       def create_connect_webhook_endpoint_async
         return if preferred_connect_webhook_signing_secret.present?
 
