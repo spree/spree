@@ -124,6 +124,11 @@ module SpreeStripe
 
     # Moves one seller's earning to their connected account.
     def transfer!(seller_transfer)
+      # Nothing to move. A seller whose commission met their sale earns zero,
+      # which is a true ledger row and an amount Stripe refuses — asking it to
+      # would park the row and have the retry job ask again forever.
+      return complete_without_sending(seller_transfer) if minor_units(seller_transfer).zero?
+
       seller = seller_transfer.seller
       gateway = gateway_for(seller.store)
 
@@ -193,6 +198,11 @@ module SpreeStripe
     end
 
     private
+
+    def complete_without_sending(seller_transfer)
+      seller_transfer.update!(status: 'completed')
+      seller_transfer
+    end
 
     # Keyed to the earnings being settled, not to the settlement row.
     #

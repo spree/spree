@@ -409,7 +409,15 @@ module Spree
     #
     # @return [Spree::PayoutProvider::Base]
     def payout_provider_instance
-      @payout_provider_instance ||= payout_provider_class.new
+      resolved = payout_provider_class
+      # Keyed by the class it was built from, so changing the setting on a
+      # store already in hand cannot keep answering with the old provider —
+      # which would route real money through whoever was configured before.
+      if @payout_provider_instance.nil? || @payout_provider_instance.class != resolved
+        @payout_provider_instance = resolved.new
+      end
+
+      @payout_provider_instance
     end
 
     def reload(*)

@@ -31,7 +31,14 @@ module Spree
 
           # How many earnings this settlement covers, so a list answers "what
           # is in this deposit" without loading every transfer.
-          attribute(:transfers_count) { |payout| payout.transfers.count }
+          #
+          # Read from a count the controller made for the whole page when there
+          # is one; a single payout read falls back to asking for its own.
+          attribute(:transfers_count) do |payout, params|
+            counts = params && params[:transfer_counts]
+
+            counts ? counts.fetch(payout.id, 0) : payout.transfers.count
+          end
         end
       end
     end

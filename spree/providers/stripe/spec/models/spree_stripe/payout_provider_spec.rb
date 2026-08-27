@@ -41,6 +41,20 @@ RSpec.describe SpreeStripe::PayoutProvider do
       described_class.new.transfer!(seller_transfer)
     end
 
+    # A seller whose commission met their sale earns nothing. The row is
+    # true, and Stripe refuses the amount — asking it would park the row and
+    # have the retry job ask again forever.
+    it 'sends nothing when there is nothing to send' do
+      nothing = create(:seller_transfer, seller: seller, amount: 0, currency: 'USD',
+                                         order: create(:order, store: store, seller: seller))
+
+      expect(Stripe::Transfer).not_to receive(:create)
+
+      described_class.new.transfer!(nothing)
+
+      expect(nothing.reload).to be_completed
+    end
+
     it 'refuses when the store has no Stripe payment method to pay from' do
       gateway.update!(active: false)
 

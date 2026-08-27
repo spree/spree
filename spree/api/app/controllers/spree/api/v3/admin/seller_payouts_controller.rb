@@ -56,6 +56,18 @@ module Spree
           def collection_includes
             [:seller]
           end
+
+          # One grouped count for the page, handed to the serializer — asking
+          # each row for its own would be a query per settlement, and a
+          # counter column cannot work here because the sweep claims transfers
+          # with `update_all`, which no callback sees.
+          def serializer_params
+            super.merge(transfer_counts: transfer_counts)
+          end
+
+          def transfer_counts
+            @transfer_counts ||= Spree::SellerTransfer.where(payout_id: collection.map(&:id)).group(:payout_id).count
+          end
         end
       end
     end
