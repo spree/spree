@@ -43,8 +43,23 @@ rm -rf "$SERVER_DIR/.git" "$SERVER_DIR/.gitignore"
 step "Writing server/.env (SPREE_PATH + SECRET_KEY_BASE)"
 printf 'SPREE_PATH=..\nSECRET_KEY_BASE=%s\n' "$(openssl rand -hex 64)" > "$SERVER_DIR/.env"
 
-step "Building @spree/cli (so node ../packages/cli/dist/index.js works)"
-pnpm --filter @spree/cli build
+step "Building @spree/cli (so the spree CLI works in server/)"
+# Through turbo, which builds workspace deps first (build dependsOn ^build) —
+# a bare `pnpm --filter @spree/cli build` fails on a clean clone with
+# `Could not resolve "@spree/admin-sdk"` because packages/admin-sdk/dist
+# doesn't exist yet.
+pnpm turbo build --filter=@spree/cli
+
+# On a clean clone `pnpm install` runs before the CLI is ever built, and pnpm
+# only links a workspace bin whose target file exists — so the `spree` shim
+# is silently skipped, and a later `pnpm install` (even --force) does not
+# recreate it. Link it ourselves now that the build exists; dist/index.js
+# carries a node shebang and is executable, so a plain symlink works.
+if [ ! -e "$ROOT/node_modules/.bin/spree" ]; then
+  step "Linking the missing spree bin shim"
+  mkdir -p "$ROOT/node_modules/.bin"
+  ln -sf ../../packages/cli/dist/index.js "$ROOT/node_modules/.bin/spree"
+fi
 
 step "Starting the edge stack"
 # Detached on purpose — `pnpm server:dev` runs the stack in the foreground
