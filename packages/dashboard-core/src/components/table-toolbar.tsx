@@ -41,7 +41,8 @@ import {
   parseFilterIds,
   type SortOption,
 } from '../lib/table-registry'
-import { useStore } from '../providers/store-provider'
+import { useOptionalStore } from '../providers/store-provider'
+import { useTenantId } from '../providers/tenant-provider'
 import { ResourceMultiAutocomplete } from './resource-multi-autocomplete'
 import { StoreDatePicker } from './store-date-picker'
 import { TagCombobox } from './tag-combobox'
@@ -144,6 +145,10 @@ function getOperatorLabelKey(type: string, operator: string) {
 }
 
 const noValueOperators = ['present', 'blank']
+
+/** Stable empty list, so a panel with no store doesn't rebuild `items` (and
+ *  re-emit Base UI Select state) on every render. */
+const noCurrencies: string[] = []
 
 // ============================================================================
 // TableToolbar
@@ -372,13 +377,13 @@ function ResourceFilterValue({
   value: string
   config: NonNullable<ColumnDef['filterResource']>
 }) {
-  const { storeId } = useStore()
+  const tenantId = useTenantId()
   const ids = useMemo(() => parseFilterIds(value), [value])
 
   const { data } = useQuery({
-    // Store-scope the cache key so chips don't resolve against another store's
-    // hydrate results after a store switch.
-    queryKey: ['filter-chip', config.queryKey, storeId, ids],
+    // Tenant-scope the cache key so chips don't resolve against another
+    // tenant's hydrate results after a store or seller switch.
+    queryKey: ['filter-chip', config.queryKey, tenantId, ids],
     queryFn: () => config.hydrate(ids),
     enabled: ids.length > 0,
     staleTime: 60_000,
@@ -410,7 +415,10 @@ function CurrencyFilterPicker({
   onChange: (next: string) => void
 }) {
   const { t } = useTranslation()
-  const { currencies } = useStore()
+  // `filterType: 'currency'` is only declared by tables in the operator's
+  // dashboard, which always has a store. Reading the store optionally keeps
+  // the panel mountable in a panel that has none.
+  const currencies = useOptionalStore()?.currencies ?? noCurrencies
   const items = useMemo(
     () => currencies.map((code) => ({ value: code, label: code })),
     [currencies],
@@ -633,7 +641,7 @@ function FilterPanel({
   onClose: () => void
 }) {
   const { t } = useTranslation()
-  const { storeId } = useStore()
+  const tenantId = useTenantId()
   const [draft, setDraft] = useState<FilterRule[]>(initialFilters)
   const booleanItems = useMemo(
     () => [
@@ -752,9 +760,9 @@ function FilterPanel({
                 (col?.filterType === 'resource' && col.filterResource ? (
                   <div className="flex-1 min-w-0">
                     <ResourceMultiAutocomplete
-                      // Store-scope the cache key so a store switch can't reuse
-                      // the previous store's search/hydrate results.
-                      queryKey={`${col.filterResource.queryKey}-${storeId}`}
+                      // Tenant-scope the cache key so a store or seller switch
+                      // can't reuse the previous tenant's search results.
+                      queryKey={`${col.filterResource.queryKey}-${tenantId}`}
                       value={parseFilterIds(filter.value)}
                       onChange={(ids) => updateFilter(filter.id, { value: ids.join(',') })}
                       search={col.filterResource.search}
