@@ -87,6 +87,9 @@ module Spree
       variant.primary_media || product.primary_media
     end
     delegate :digital?, :can_supply?, to: :variant
+    # A line item's store is its owner's — an order's or a cart's, whichever it
+    # belongs to.
+    delegate :store, to: :owner
 
     scope :with_digital_assets, -> { joins(:variant).merge(Spree::Variant.with_digital_assets) }
 
@@ -409,8 +412,8 @@ module Spree
     # itself returns early unless the order is completed.
     #
     # No digitality gate: digital items get fulfillment items too (the
-    # Digital provider issues one link per unit), and stock-limited digitals
-    # — licences, seats, tickets — must decrement like anything else.
+    # Digital provider issues one link per unit), and stock-limited digital
+    # items — licences, seats, tickets — must decrement like anything else.
     # Tracking is decided per variant by should_track_inventory?.
     def update_inventory
       if (saved_changes? || target_fulfillment.present?) && order.present?

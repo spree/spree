@@ -7,6 +7,7 @@ export const DigitalLinkSchema = z.object({
   filename: z.string(),
   content_type: z.string(),
   download_url: z.string(),
+  expires_at: z.string().nullable(),
   authorizable: z.boolean(),
   expired: z.boolean(),
   access_limit_exceeded: z.boolean(),

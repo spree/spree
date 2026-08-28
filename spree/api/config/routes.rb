@@ -111,6 +111,7 @@ Spree::Core::Engine.add_routes do
           # upserting one kind without knowing whether it exists yet.
           resources :tax_identifiers, only: [:index], controller: 'tax_identifiers'
           resource :tax_identifier, only: [:show, :update, :destroy], controller: 'tax_identifiers'
+          resources :digital_links, only: [:index, :show]
           resources :payment_setup_sessions, only: [:create, :show] do
             member do
               patch :complete
@@ -148,7 +149,9 @@ Spree::Core::Engine.add_routes do
 
         # Digital Downloads
         # Access via token in URL
-        get 'digitals/:token', to: 'digitals#show', as: :digital_download
+        get 'digital_links/:token', to: 'digital_links#show', as: :digital_link_download
+        # Legacy path — emailed and bookmarked URLs outlive the rename. Removed in 6.1.
+        get 'digitals/:token', to: 'digital_links#show', as: :digital_download
 
         # Data Feeds (public, no auth required)
         resources :feeds, only: [:show], controller: 'data_feeds', param: :slug
@@ -314,6 +317,20 @@ Spree::Core::Engine.add_routes do
             resources :media, controller: 'media', only: [:index, :create, :update, :destroy]
           end
           resources :media, controller: 'media', only: [:index, :create, :update, :destroy]
+          resources :digital_assets, controller: 'products/digital_assets',
+                                     only: [:index, :create, :show, :update, :destroy] do
+            collection do
+              get :providers
+            end
+          end
+        end
+
+        # Digital download grants — read and reset only; they are created by
+        # order completion, never by hand.
+        resources :digital_links, only: [:index, :show] do
+          member do
+            patch :reset
+          end
         end
 
         # Media library — every file in the store, placed or not. Files are put
@@ -648,6 +665,7 @@ Spree::Core::Engine.add_routes do
             patch :approve
             patch :resume
             post :resend_confirmation
+            post :resend_digital_links
           end
 
           resources :items, only: [:index, :show, :create, :update, :destroy], controller: 'orders/items'

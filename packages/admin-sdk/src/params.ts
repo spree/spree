@@ -72,6 +72,14 @@ export interface StoreUpdateParams {
   preferred_order_number_suffix?: string
   /** First sequential order number. Only applies before the store's first order. */
   preferred_order_number_sequence_start?: number
+  /** When false, buyers can download their files as often as they like. */
+  preferred_limit_digital_download_count?: boolean
+  /** Downloads allowed per purchased file, unless the file overrides it. */
+  preferred_digital_asset_authorized_clicks?: number
+  /** When false, download links never expire. */
+  preferred_limit_digital_download_days?: boolean
+  /** Days a download link stays valid, unless the file overrides it. */
+  preferred_digital_asset_authorized_days?: number
   /** Sender address used on all transactional emails (required by the model). */
   mail_from_address?: string
   /** Customer-facing reply-to address shown in the storefront/email footer. */
@@ -581,6 +589,12 @@ export interface DirectUploadCreateParams {
     checksum: string
     content_type: string
   }
+  /**
+   * Upload to private storage rather than the public bucket. Needed for files
+   * only ever served through a signed link (digital assets) — attaching a blob
+   * never moves it between services, so this is decided at upload time.
+   */
+  private?: boolean
 }
 
 export type MediaType = 'image' | 'video' | 'external_video'
@@ -654,6 +668,52 @@ export interface ProductMediaInput {
   variant_ids?: Array<string>
 }
 
+/** One per-asset configuration field a provider declares. */
+export interface DigitalAssetProviderSettingField {
+  key: string
+  type: 'string' | 'number' | 'boolean' | 'select'
+  default?: unknown
+  /** Allowed values for a `select` field. */
+  in?: string[]
+}
+
+/** A selectable digital-asset source, from the `providers` discovery endpoint. */
+export interface DigitalAssetProvider {
+  /** Class name to send as `provider_type`. */
+  type: string
+  /** Human-readable label. */
+  name: string
+  /** Whether picking this source requires uploading a file. */
+  requires_attachment: boolean
+  /** Per-asset fields to render as a form when this source is picked. */
+  settings_schema: DigitalAssetProviderSettingField[]
+}
+
+export interface DigitalAssetCreateParams {
+  /** Signed blob id from a `private: true` direct upload. Required for a file
+   *  asset (the default source); omitted for a provider-backed asset. */
+  signed_id?: string
+  /** Provider class name. Omit for an uploaded file (the default source). */
+  provider_type?: string
+  /** Values for the provider's `settings_schema`, keyed by field name. */
+  provider_settings?: Record<string, unknown>
+  /** Defaults to the product's default variant when omitted. */
+  variant_id?: string
+  /** Null (or omitted) means the store's download settings apply. */
+  authorized_clicks?: number | null
+  authorized_days?: number | null
+}
+
+export interface DigitalAssetUpdateParams {
+  /** Replaces the file for everyone who already bought it. */
+  signed_id?: string
+  provider_type?: string
+  provider_settings?: Record<string, unknown>
+  variant_id?: string
+  authorized_clicks?: number | null
+  authorized_days?: number | null
+}
+
 export interface MediaUpdateParams {
   alt?: string
   position?: number
@@ -708,6 +768,12 @@ export interface ProductCreateParams {
   variants?: ProductVariantInput[]
   /** Media created alongside the product — see {@link ProductMediaInput}. */
   media?: ProductMediaInput[]
+  /** Downloadable files shipped inline with the product (create-time). Each
+   *  entry carries a `signed_id` (an uploaded file, to private storage) or a
+   *  `provider_type` (a provider-backed asset); it attaches to the default
+   *  variant unless `variant_id` is given. Edits/deletes use the nested
+   *  `products.digitalAssets` endpoints. */
+  digital_assets?: DigitalAssetCreateParams[]
   product_publications?: ProductPublicationInput[]
 }
 
@@ -732,6 +798,8 @@ export interface ProductUpdateParams {
   variants?: ProductVariantInput[]
   /** See {@link ProductMediaInput}. */
   media?: ProductMediaInput[]
+  /** See `ProductCreateParams.digital_assets`. */
+  digital_assets?: DigitalAssetCreateParams[]
   product_publications?: ProductPublicationInput[]
 }
 

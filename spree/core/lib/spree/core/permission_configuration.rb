@@ -294,7 +294,7 @@ module Spree
       register_resource(:orders, group: :orders, audiences: %i[seller], subjects: -> {
         [Spree::Order, Spree::OrderGroup, Spree::LineItem, Spree::TaxLine, Spree::Discount, Spree::Fee,
          Spree::Return, Spree::Exchange, Spree::Claim, Spree::TaxIdentifier,
-         Spree::CustomField]
+         Spree::CustomField, Spree::DigitalLink]
       })
       register_resource(:payments, group: :orders, subjects: -> { [Spree::Payment, Spree::PaymentSplit] })
       register_resource(:fulfillments, group: :orders, audiences: %i[seller], subjects: -> { [Spree::Fulfillment] })
@@ -318,7 +318,7 @@ module Spree
         [Spree::Product, Spree::Variant, Spree::OptionType,
          Spree::OptionValue, Spree::Price, Spree::PriceList, Spree::PriceRule,
          Spree::Catalog, Spree::CatalogProduct,
-         Spree::CatalogAssignment, Spree::CustomField,
+         Spree::CatalogAssignment, Spree::CustomField, Spree::DigitalAsset,
          Spree::Import, Spree::ImportRow]
       })
       # Its own resource so a seller can be granted the read without the

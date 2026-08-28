@@ -129,7 +129,7 @@ module Spree
         return unless order.with_digital_assets?
 
         provider = Spree::FulfillmentProvider::Digital.new
-        order.digital_line_items.where.not(id: @auto_fulfilled_line_item_ids).includes(variant: :digitals).each do |line_item|
+        order.digital_line_items.where.not(id: @auto_fulfilled_line_item_ids).includes(variant: :digital_assets).each do |line_item|
           provider.ensure_links_for(line_item)
         end
       end

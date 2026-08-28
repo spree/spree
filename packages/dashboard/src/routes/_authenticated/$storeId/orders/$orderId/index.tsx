@@ -6,6 +6,7 @@ import {
   CustomFieldsInlineCard,
   EditableApiCustomFieldsProvider,
 } from '../../../../../components/spree/custom-fields/custom-fields-inline'
+import { OrderDigitalLinksCard } from '../../../../../components/spree/order-digital-links-card'
 import {
   OrderClaimsCard,
   OrderExchangesCard,
@@ -58,6 +59,7 @@ function OrderDetailPage() {
       main={
         <>
           <FulfillmentsCard order={order} />
+          <OrderDigitalLinksCard order={order} />
           <OrderReturnsCard order={order} />
           <OrderExchangesCard order={order} />
           <OrderClaimsCard order={order} />

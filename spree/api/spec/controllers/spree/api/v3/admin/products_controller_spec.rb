@@ -639,6 +639,48 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect(created.variants.count).to eq(1)
       end
 
+      it 'attaches inline digital files to the new product' do
+        blob = ActiveStorage::Blob.create_and_upload!(
+          io: File.open(Spree::Core::Engine.root.join('spec', 'fixtures', 'thinking-cat.jpg')),
+          filename: 'manual.pdf',
+          content_type: 'application/pdf',
+          service_name: Spree.private_storage_service_name
+        )
+
+        expect {
+          post :create, params: {
+            name: 'downloadable product',
+            status: 'active',
+            digital_assets: [{ signed_id: blob.signed_id, authorized_clicks: 5 }]
+          }, as: :json
+        }.to change(Spree::Product, :count).by(1).and change(Spree::DigitalAsset, :count).by(1)
+
+        expect(response).to have_http_status(:created)
+        created = Spree::Product.find_by(name: 'downloadable product')
+        asset = created.digital_assets.last
+        expect(asset.variant).to eq(created.default_variant)
+        expect(asset.attachment).to be_attached
+        expect(asset.authorized_clicks).to eq(5)
+      end
+
+      it 'refuses an inline digital file uploaded to public storage' do
+        public_blob = ActiveStorage::Blob.create_and_upload!(
+          io: File.open(Spree::Core::Engine.root.join('spec', 'fixtures', 'thinking-cat.jpg')),
+          filename: 'manual.pdf',
+          content_type: 'application/pdf'
+        )
+        allow(Spree).to receive(:private_storage_service_name).and_return(:private_bucket)
+
+        expect {
+          post :create, params: {
+            name: 'wrong bucket product',
+            digital_assets: [{ signed_id: public_blob.signed_id }]
+          }, as: :json
+        }.not_to change(Spree::DigitalAsset, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+
       it 'returns 422 with field-level details for an unknown custom_field_definition_id' do
         expect {
           post :create, params: {
@@ -968,6 +1010,20 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect(response).to have_http_status(:ok)
         expect(product.reload.categories).to include(category1)
         expect(product.reload.categories).not_to include(foreign_category)
+      end
+
+      it 'patches an inline digital asset by id without duplicating it' do
+        asset = create(:digital_asset, variant: product.default_variant, authorized_clicks: 2)
+
+        expect {
+          patch :update, params: {
+            id: product.prefixed_id,
+            digital_assets: [{ id: asset.prefixed_id, authorized_clicks: 9 }]
+          }, as: :json
+        }.not_to change(Spree::DigitalAsset, :count)
+
+        expect(response).to have_http_status(:ok)
+        expect(asset.reload.authorized_clicks).to eq(9)
       end
     end
 

@@ -74,6 +74,74 @@ module Spree
         expect(result.value.variants.map(&:sku)).to include('WV-1')
       end
 
+      context 'with inline digital files' do
+        let(:blob) do
+          ActiveStorage::Blob.create_and_upload!(
+            io: File.open(Spree::Core::Engine.root.join('spec', 'fixtures', 'thinking-cat.jpg')),
+            filename: 'manual.pdf',
+            content_type: 'application/pdf',
+            service_name: Spree.private_storage_service_name
+          )
+        end
+
+        it 'attaches an uploaded file to the new product default variant' do
+          result = described_class.call(
+            store: store,
+            attributes: { name: 'Downloadable', digital_assets: [{ signed_id: blob.signed_id, authorized_clicks: 3 }] }
+          )
+
+          expect(result).to be_success
+          asset = result.value.digital_assets.last
+          expect(asset.variant).to eq(result.value.default_variant)
+          expect(asset.attachment).to be_attached
+          expect(asset.authorized_clicks).to eq(3)
+        end
+
+        it 'attaches a provider-backed asset with no file' do
+          stub_provider = Class.new(Spree::DigitalAssetProvider::Base) do
+            def self.requires_attachment? = false
+          end
+          stub_const('Spree::DigitalAssetProvider::Stub', stub_provider)
+          Spree.digital_asset_providers << stub_provider
+
+          result = described_class.call(
+            store: store,
+            attributes: {
+              name: 'Provider backed',
+              digital_assets: [{ provider_type: 'Spree::DigitalAssetProvider::Stub', provider_settings: { 'pool' => 'winter' } }]
+            }
+          )
+
+          expect(result).to be_success
+          asset = result.value.digital_assets.last
+          expect(asset.provider_type).to eq('Spree::DigitalAssetProvider::Stub')
+          expect(asset.provider_settings).to eq('pool' => 'winter')
+        ensure
+          Spree.digital_asset_providers.delete(stub_provider)
+        end
+
+        # A file on the wrong bucket is refused the same way an invalid variant
+        # is — the nested step raises, the transaction rolls back, and the API
+        # layer turns it into a 422. Nothing is left behind.
+        it 'refuses a file uploaded to public storage' do
+          public_blob = ActiveStorage::Blob.create_and_upload!(
+            io: File.open(Spree::Core::Engine.root.join('spec', 'fixtures', 'thinking-cat.jpg')),
+            filename: 'manual.pdf',
+            content_type: 'application/pdf'
+          )
+          allow(Spree).to receive(:private_storage_service_name).and_return(:private_bucket)
+
+          expect do
+            expect do
+              described_class.call(
+                store: store,
+                attributes: { name: 'Wrong bucket', digital_assets: [{ signed_id: public_blob.signed_id }] }
+              )
+            end.to raise_error(ActiveRecord::RecordInvalid, /private storage/)
+          end.to change(Spree::Product, :count).by(0).and change(Spree::DigitalAsset, :count).by(0)
+        end
+      end
+
       # The CSV importer assigns attributes across several steps and hands over
       # the record rather than a hash.
       it 'accepts an already-built product' do
@@ -114,6 +182,24 @@ module Spree
 
         expect(result).to be_failure
         expect(product.reload.name).to eq('Original')
+      end
+
+      # A client replaying the product's own digital_assets list (importer, host
+      # app, direct PATCH) must not accumulate copies: an entry carrying an id
+      # patches that asset in place rather than building a duplicate.
+      context 'with an inline digital_assets entry carrying an id' do
+        let!(:asset) { create(:digital_asset, variant: product.default_variant, authorized_clicks: 2) }
+
+        it 'patches the existing asset instead of duplicating it' do
+          expect do
+            described_class.call(
+              product: product,
+              attributes: { digital_assets: [{ id: asset.prefixed_id, authorized_clicks: 9 }] }
+            )
+          end.not_to change(Spree::DigitalAsset, :count)
+
+          expect(asset.reload.authorized_clicks).to eq(9)
+        end
       end
     end
 

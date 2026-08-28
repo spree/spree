@@ -137,6 +137,9 @@ import type {
   DeliveryOriginGroupParams,
   DeliveryProfileParams,
   DeliveryZoneParams,
+  DigitalAssetCreateParams,
+  DigitalAssetProvider,
+  DigitalAssetUpdateParams,
   DirectUploadCreateParams,
   ExchangeCreateParams,
   ExchangeFulfillParams,
@@ -278,6 +281,8 @@ import type {
   DeliveryProfile,
   DeliveryRateProviderOption,
   DeliveryZone,
+  DigitalAsset,
+  DigitalLink,
   Discount,
   Exchange,
   Export,
@@ -900,6 +905,61 @@ export class AdminClient {
         this.request<void>('DELETE', `/products/${productId}/media/${id}`, options),
     },
 
+    digitalAssets: {
+      list: (
+        productId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<DigitalAsset>> =>
+        this.request<PaginatedResponse<DigitalAsset>>(
+          'GET',
+          `/products/${productId}/digital_assets`,
+          {
+            ...options,
+            params: params ? transformListParams(params) : undefined,
+          },
+        ),
+
+      create: (
+        productId: string,
+        params: DigitalAssetCreateParams,
+        options?: RequestOptions,
+      ): Promise<DigitalAsset> =>
+        this.request<DigitalAsset>('POST', `/products/${productId}/digital_assets`, {
+          ...options,
+          body: params,
+        }),
+
+      update: (
+        productId: string,
+        id: string,
+        params: DigitalAssetUpdateParams,
+        options?: RequestOptions,
+      ): Promise<DigitalAsset> =>
+        this.request<DigitalAsset>('PATCH', `/products/${productId}/digital_assets/${id}`, {
+          ...options,
+          body: params,
+        }),
+
+      delete: (productId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/products/${productId}/digital_assets/${id}`, options),
+
+      /**
+       * The sources a merchant can pick for a new asset: the uploaded-file
+       * default plus any host-registered provider. A host with only the default
+       * gets a single-entry list.
+       */
+      providers: (
+        productId: string,
+        options?: RequestOptions,
+      ): Promise<{ data: DigitalAssetProvider[] }> =>
+        this.request<{ data: DigitalAssetProvider[] }>(
+          'GET',
+          `/products/${productId}/digital_assets/providers`,
+          options,
+        ),
+    },
+
     variants: {
       list: (
         productId: string,
@@ -1005,6 +1065,31 @@ export class AdminClient {
   }
 
   // ============================================
+  // Digital links
+  // ============================================
+
+  /**
+   * Download grants issued to customers when an order is placed. They are never
+   * created by hand — `reset` gives a customer their allowance back.
+   */
+  readonly digitalLinks = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<DigitalLink>> =>
+      this.request<PaginatedResponse<DigitalLink>>('GET', '/digital_links', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    retrieve: (id: string, options?: RequestOptions): Promise<DigitalLink> =>
+      this.request<DigitalLink>('GET', `/digital_links/${id}`, options),
+
+    reset: (id: string, options?: RequestOptions): Promise<DigitalLink> =>
+      this.request<DigitalLink>('PATCH', `/digital_links/${id}/reset`, options),
+  }
+
+  // ============================================
   // Orders
   // ============================================
 
@@ -1055,6 +1140,10 @@ export class AdminClient {
 
     resendConfirmation: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('POST', `/orders/${id}/resend_confirmation`, options),
+
+    /** Re-sends the "your files are ready" email. No-op when the order has no downloads. */
+    resendDigitalLinks: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('POST', `/orders/${id}/resend_digital_links`, options),
 
     giftCards: {
       apply: (

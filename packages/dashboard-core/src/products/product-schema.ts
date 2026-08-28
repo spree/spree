@@ -120,6 +120,18 @@ export const mediaFormSchema = z
 
 export type MediaFormValues = z.infer<typeof mediaFormSchema>
 
+// A downloadable file staged on the new-product form. Create-time only: each
+// entry is an upload (signed_id) buffered until the product POST. UI-only
+// fields (filename, byteSize, uploadId) are stripped at submit.
+export const digitalFileFormSchema = z.object({
+  signed_id: z.string(),
+  filename: z.string().nullable().optional(),
+  byteSize: z.number().nullable().optional(),
+  uploadId: z.string().optional(),
+})
+
+export type DigitalFileFormValues = z.infer<typeof digitalFileFormSchema>
+
 export const productPublicationFormSchema = z.object({
   id: z.string().optional(),
   channel_id: z.string(),
@@ -178,6 +190,11 @@ export const productFormSchema = z.object({
   // new uploads ride the same product PATCH.
   media: z.array(mediaFormSchema).optional(),
 
+  // Downloadable files, staged pre-save on the new product page and shipped in
+  // the product POST. Edit uses the live API-driven card instead, so this stays
+  // empty there.
+  digital_assets: z.array(digitalFileFormSchema).optional(),
+
   product_publications: z.array(productPublicationFormSchema).optional(),
 })
 
@@ -222,6 +239,7 @@ export function newProductFormDefaults(): ProductFormValues {
     ],
     custom_fields: [],
     media: [],
+    digital_assets: [],
     product_publications: [],
   }
 }

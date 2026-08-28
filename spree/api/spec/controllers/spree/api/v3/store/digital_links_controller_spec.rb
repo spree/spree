@@ -1,0 +1,210 @@
+require 'spec_helper'
+
+RSpec.describe Spree::Api::V3::Store::DigitalLinksController, type: :controller do
+  render_views
+
+  include_context 'API v3 Store'
+
+  let(:order) { create(:order_with_line_items, store: store, customer: user) }
+  let(:line_item) { order.line_items.first }
+  let(:digital_asset) { create(:digital_asset, variant: line_item.variant) }
+  let!(:digital_link) { create(:digital_link, digital_asset: digital_asset, line_item: line_item) }
+
+  describe 'GET #show' do
+    it 'redirects to a download URL for a valid token' do
+      get :show, params: { token: digital_link.token }
+
+      expect(response).to have_http_status(:found)
+      expect(response.location).to be_present
+    end
+
+    it 'increments the access counter' do
+      expect {
+        get :show, params: { token: digital_link.token }
+      }.to change { digital_link.reload.access_counter }.by(1)
+    end
+
+    it 'publishes a downloaded event' do
+      expect_any_instance_of(Spree::DigitalLink).to receive(:publish_event).with('digital_link.downloaded')
+
+      get :show, params: { token: digital_link.token }
+    end
+
+    context 'when link is expired' do
+      before do
+        store.update!(
+          preferred_limit_digital_download_days: true,
+          preferred_digital_asset_authorized_days: 1
+        )
+        digital_link.update_column(:created_at, 2.days.ago)
+      end
+
+      it 'returns forbidden with digital_link_expired code' do
+        get :show, params: { token: digital_link.token }
+
+        expect(response).to have_http_status(:forbidden)
+        expect(json_response['error']['code']).to eq('digital_link_expired')
+        expect(json_response['error']['message']).to be_present
+      end
+    end
+
+    context 'when download limit is exceeded' do
+      before do
+        store.update!(
+          preferred_limit_digital_download_count: true,
+          preferred_digital_asset_authorized_clicks: 3
+        )
+        digital_link.update_column(:access_counter, 3)
+      end
+
+      it 'returns forbidden with digital_link_expired code' do
+        get :show, params: { token: digital_link.token }
+
+        expect(response).to have_http_status(:forbidden)
+        expect(json_response['error']['code']).to eq('digital_link_expired')
+      end
+    end
+
+    # The per-asset override wins over the store setting, so an asset marked
+    # freely re-downloadable stays available past the store's click cap.
+    context 'when the asset overrides the store click limit' do
+      before do
+        store.update!(
+          preferred_limit_digital_download_count: true,
+          preferred_digital_asset_authorized_clicks: 3
+        )
+        digital_asset.update!(authorized_clicks: 10)
+        digital_link.update_column(:access_counter, 3)
+      end
+
+      it 'still authorizes the download' do
+        get :show, params: { token: digital_link.token }
+
+        expect(response).to have_http_status(:found)
+      end
+    end
+
+    # The signed URL is a bearer credential; it must not outlive the link.
+    context 'when the link lapses sooner than the store download window' do
+      before do
+        store.update!(
+          preferred_limit_digital_download_days: true,
+          preferred_digital_asset_authorized_days: 1,
+          preferred_digital_asset_link_expire_time: 3600
+        )
+      end
+
+      it 'clamps the signed URL to the link expiry' do
+        digital_link.update_column(:created_at, (1.day - 30.seconds).ago)
+
+        expect_any_instance_of(Spree::DigitalAsset).to receive(:deliver) do |_asset, _link, expires_in:|
+          expect(expires_in).to be <= 30.seconds
+          Spree::DigitalDelivery.new(redirect_url: 'https://storage.example.com/signed')
+        end
+
+        get :show, params: { token: digital_link.token }
+
+        expect(response).to have_http_status(:found)
+      end
+    end
+
+    context 'when the asset has no file to serve' do
+      before { digital_asset.attachment.purge }
+
+      it 'returns forbidden without spending a download allowance' do
+        expect {
+          get :show, params: { token: digital_link.token }
+        }.not_to change { digital_link.reload.access_counter }
+
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
+
+    context 'when the provider returns an inline value (a license key)' do
+      before do
+        allow_any_instance_of(Spree::DigitalAsset).to receive(:deliver).and_return(
+          Spree::DigitalDelivery.new(inline_value: 'KEY-ABC-123', content_type: 'text/plain')
+        )
+      end
+
+      it 'renders the value as the body, not a redirect' do
+        get :show, params: { token: digital_link.token }
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to eq('KEY-ABC-123')
+        expect(response.media_type).to eq('text/plain')
+      end
+
+      it 'spends exactly one download' do
+        expect {
+          get :show, params: { token: digital_link.token }
+        }.to change { digital_link.reload.access_counter }.by(1)
+      end
+    end
+
+    context 'when the provider raises' do
+      before do
+        allow_any_instance_of(Spree::DigitalAsset).to receive(:deliver).and_raise(StandardError, 'upstream down')
+      end
+
+      it 'refuses cleanly without spending a download' do
+        expect {
+          get :show, params: { token: digital_link.token }
+        }.not_to change { digital_link.reload.access_counter }
+
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
+
+    context 'with invalid token' do
+      it 'returns not found' do
+        get :show, params: { token: 'invalid_token' }
+
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
+    # An emailed download link carries no publishable key, so the request has
+    # no store credential — the globally unique token is the credential, and the
+    # store is derived from the link's own order. A link therefore resolves
+    # regardless of which store the request would otherwise resolve to.
+    context 'with a token whose order belongs to another store' do
+      let(:other_store) { create(:store) }
+      let(:other_order) { create(:order_with_line_items, store: other_store) }
+      let(:other_line_item) { other_order.line_items.first }
+      let(:other_digital_asset) { create(:digital_asset, variant: other_line_item.variant) }
+      let(:other_digital_link) { create(:digital_link, digital_asset: other_digital_asset, line_item: other_line_item) }
+
+      it 'resolves the link through its token and serves the download' do
+        get :show, params: { token: other_digital_link.token }
+
+        expect(response).to have_http_status(:found)
+      end
+    end
+
+    context 'without API key' do
+      before { request.headers['X-Spree-Api-Key'] = nil }
+
+      it 'still allows access (token is the authentication)' do
+        get :show, params: { token: digital_link.token }
+
+        expect(response).to have_http_status(:found)
+      end
+    end
+
+    # The shared 'API v3 Store' context stubs current_store on the base
+    # controllers, which hides this controller's own current_store override. A
+    # real emailed link carries no publishable key, so the override runs and
+    # derives the store from the link itself. Exercise the real override
+    # directly — reading the store off the link — so a regression (e.g. the
+    # store method going private) is caught here rather than only in production.
+    describe '#current_store (real override, unstubbed)' do
+      it 'derives the store from the link when no key resolves one' do
+        real_controller = described_class.new
+        real_controller.instance_variable_set(:@resource, digital_link)
+
+        expect(real_controller.send(:current_store)).to eq(order.store)
+      end
+    end
+  end
+end

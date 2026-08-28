@@ -1,0 +1,135 @@
+---
+title: Build a Custom Digital Asset Provider
+description: Resolve a digital product's deliverable from your own systems — a license server, an entitlement API, an external file host — instead of an uploaded file.
+---
+
+## Overview
+
+A digital asset provider decides **how a digital asset's deliverable is produced** at download time. Spree ships with one built-in provider, `Spree::DigitalAssetProvider::File`, which serves an uploaded file from private storage through a short-lived signed URL. That is the default: every asset with a blank `provider_type` uses it, so an uploaded file is simply the provider each asset already had.
+
+A custom provider replaces that upload with something you produce on demand — a license key minted by your billing system, an entitlement granted by internal software, a signed link to a file that lives on your own host. The customer's download flows through the same authorized, counted grant either way; only the last step, "hand something over", changes.
+
+Reach for a provider when the deliverable comes from outside Spree. If you only need to serve a file that a merchant uploads, the built-in `File` provider already does that — you don't need to build anything.
+
+## What you will build
+
+Two pieces:
+
+| Piece | Responsibility |
+|---|---|
+| `Spree::DigitalAssetProvider::Base` subclass | Produces the deliverable for one authorized download |
+| An initializer | Registers the provider so admins can select it as an asset source |
+
+Unlike delivery-rate or tax providers, a digital asset provider does **not** resolve credentials through a `Spree::Integration`. It is host-app glue into your own software and owns its own configuration — an environment variable, an internal endpoint, a shared credential. The base gives it only the asset.
+
+## 1. Implement the provider
+
+Subclass `Spree::DigitalAssetProvider::Base` and implement `#deliver`. It receives the authorized `Spree::DigitalLink` (the customer's download grant) and returns a `Spree::DigitalDelivery`.
+
+```ruby app/models/spree/digital_asset_provider/license_key.rb
+module Spree
+  module DigitalAssetProvider
+    class LicenseKey < Base
+      # This asset carries no uploaded file — its deliverable is minted on
+      # demand — so no attachment is required or validated.
+      def self.requires_attachment?
+        false
+      end
+
+      # Per-asset configuration the dashboard renders as a form when a
+      # merchant adds an asset backed by this provider. See "Per-asset
+      # settings" below.
+      setting :pool_name, :string
+      setting :region, :select, in: %w[us eu], default: 'us'
+
+      def deliver(digital_link, expires_in:)
+        key = LicenseServer.issue(
+          pool: digital_asset.provider_settings['pool_name'],
+          region: digital_asset.provider_settings['region'],
+          order_number: digital_link.line_item.order.number
+        )
+        return if key.blank?
+
+        Spree::DigitalDelivery.new(inline_value: key, content_type: 'text/plain')
+      end
+    end
+  end
+end
+```
+
+A `Spree::DigitalDelivery` carries exactly one of two shapes:
+
+- **A redirect** — set `redirect_url`. The customer is sent to it (an external file host, a signed storage URL). This is what `File` returns.
+- **An inline body** — set `inline_value` and `content_type`. The value is rendered directly as the response body — a license key as `text/plain`, a code image as `image/png`.
+
+Return a blank delivery (or `nil`) to mean "nothing to hand over". The download controller treats that as a failure and refuses the download **without spending the customer's allowance** — see [The download contract](#the-download-contract) below.
+
+<Warning>
+`#deliver` must be safe to call before the download is charged. It runs while the grant is only *checked*, not yet *spent*, so a provider that raises or returns blank costs the customer nothing. Do any fallible work — the API call, the mint — inside `#deliver`, not after.
+</Warning>
+
+## Per-asset settings
+
+Some providers need a value that differs from one asset to the next — which license pool this asset draws from, which external product it maps to. Declare each as a `setting`, and the dashboard renders a small form when the merchant adds an asset backed by this provider:
+
+```ruby
+setting :pool_name, :string
+setting :region, :select, in: %w[us eu], default: 'us'
+setting :auto_revoke, :boolean, default: false
+```
+
+Field types are `:string`, `:number`, `:boolean`, and `:select` (pass `in:` for the choices). The merchant's answers are stored on the asset and read back through `digital_asset.provider_settings`, a plain hash keyed by the setting name:
+
+```ruby
+digital_asset.provider_settings['pool_name'] # => "winter-sale"
+```
+
+A provider that declares no settings skips the form entirely — adding it is a single click. Settings are for per-asset values only; a credential or endpoint shared across every asset belongs in the provider's own configuration (an environment variable, Rails credentials), not a setting.
+
+## 2. Register the provider
+
+```ruby config/initializers/spree.rb
+Rails.application.config.after_initialize do
+  Spree.digital_asset_providers << 'Spree::DigitalAssetProvider::LicenseKey'
+end
+```
+
+Once registered, the provider appears as a source on the product's **Digital files** card: the **Add** button becomes a menu offering **Upload a file** alongside each registered provider. Picking your provider creates an asset with its `provider_type` set and no file attached.
+
+## The download contract
+
+Every download follows the same order, and a provider only participates in the last step:
+
+1. **Check the grant** — is it still authorizable (attempts left, not reset)?
+2. **Check the window** — is the signed-URL lifetime still positive?
+3. **Produce the deliverable** — call your `#deliver`. This is fallible and must not charge anything.
+4. **Charge the grant** — increment the download counter under a lock.
+5. **Deliver** — redirect, or render the inline body.
+
+The order is deliberate: the deliverable is produced *before* the click is spent, so a provider outage or an exhausted external quota returns an honest error and the customer keeps their download. Keep `#deliver` free of side effects that assume the download will succeed.
+
+## Provider contract reference
+
+| Method | Required | Description |
+|--------|----------|-------------|
+| `#deliver(digital_link, expires_in:)` | Yes | Produce the deliverable for one authorized download. Return a `Spree::DigitalDelivery`, or blank/`nil` for "nothing to hand over". |
+| `self.requires_attachment?` | No | Return `true` if an asset backed by this provider must carry an uploaded file. Defaults to `false`. Drives conditional validation and the admin create form. |
+| `self.setting(key, type, default:, in:)` | No | Declare a per-asset config field the dashboard renders as a form. Types: `:string`, `:number`, `:boolean`, `:select`. Read the merchant's answers via `digital_asset.provider_settings`. |
+| `self.provider_name` | No | Human-readable name for admin UIs. Defaults to a titleized class name, or the outer module for a `SpreeAcme::LicenseProvider`-style gem. |
+
+### DigitalDelivery
+
+```ruby
+# A redirect (external host, signed storage URL)
+Spree::DigitalDelivery.new(redirect_url: 'https://files.example.com/signed/...')
+
+# An inline body (license key, code image)
+Spree::DigitalDelivery.new(inline_value: 'ABCD-1234-EFGH', content_type: 'text/plain')
+```
+
+`expires_in` is the lifetime the store allows for any signed URL you build. It is already clamped to the store's cap, so pass it straight through to whatever signs your link — never widen it.
+
+## Related documentation
+
+- [Digital products](/use-case/digital-products/capabilities) — what the feature does for merchants
+- [Build a Custom Delivery Rate Provider](/v6/developer/how-to/custom-delivery-rate-provider) — a provider strategy that *does* use an integration, for contrast

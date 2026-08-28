@@ -825,6 +825,55 @@
       "to_placeholder": "Bis",
       "toggle_states": "Bundesländer von {{country}} anzeigen"
     },
+    "digital_assets": {
+      "add": "Hinzufügen",
+      "all_variants": "Alle Varianten",
+      "columns": {
+        "file": "Datei",
+        "variant": "Variante",
+        "size": "Größe",
+        "downloads": "Downloads",
+        "days": "Tage"
+      },
+      "delete_description": "„{{name}}“ kann von niemandem mehr heruntergeladen werden, der sie gekauft hat. Dies wirkt sofort.",
+      "delete_title": "Diese Datei löschen?",
+      "description": "Dateien, die Käufer nach dem Kauf herunterladen können. Fügen Sie sie einem digitalen Produkt hinzu oder einem physischen Produkt, um eine Anleitung oder Garantie mitzuliefern.",
+      "download": "Herunterladen",
+      "drop_hint": "Dateien hierher ziehen und ablegen oder zum Durchsuchen klicken",
+      "empty": "Noch keine Dateien",
+      "limit_invalid": "Limits müssen ganze Zahlen ab 1 sein oder leer bleiben.",
+      "limits_help": "Lassen Sie die Download- und Tageslimits leer, um die Einstellungen des Shops zu verwenden.",
+      "source": {
+        "upload": "Datei hochladen"
+      },
+      "store_default": "{{count}} (Shop-Standard)",
+      "title": "Digitale Dateien",
+      "untitled": "Unbenannte Datei",
+      "upload": "Datei hinzufügen",
+      "upload_failed": "Hochladen von {{name}} fehlgeschlagen: {{message}}",
+      "uploading": "{{name}} wird hochgeladen…",
+      "uploading_short": "Wird hochgeladen…"
+    },
+    "digital_links": {
+      "columns": {
+        "file": "Datei",
+        "item": "Position",
+        "downloads": "Genutzte Downloads",
+        "expires": "Läuft ab",
+        "status": "Status"
+      },
+      "never_expires": "Kein Ablauf",
+      "resend_email": "E-Mail erneut senden",
+      "reset": "Zurücksetzen",
+      "reset_description": "Der Kunde erhält neue Downloads für „{{name}}“ und die Ablauffrist beginnt von vorn.",
+      "reset_title": "Download-Zugriff wiederherstellen?",
+      "status": {
+        "available": "Verfügbar",
+        "expired": "Abgelaufen",
+        "used_up": "Keine Downloads übrig"
+      },
+      "title": "Downloads"
+    },
     "enterprise": {
       "learn_more": "Mehr über Spree Enterprise erfahren"
     },
@@ -1880,6 +1929,20 @@
         "track_price_history": {
           "help": "Frühere Preise speichern, damit der Shop den niedrigsten Preis der letzten 30 Tage anzeigen kann, wie es EU-Regeln verlangen.",
           "label": "Preisverlauf aufzeichnen"
+        },
+        "limit_digital_download_count": {
+          "help": "Aus bedeutet, dass Käufer beliebig oft herunterladen können.",
+          "label": "Anzahl der Downloads begrenzen"
+        },
+        "digital_asset_authorized_clicks": {
+          "label": "Erlaubte Downloads"
+        },
+        "limit_digital_download_days": {
+          "help": "Aus bedeutet, dass Download-Links nie ablaufen.",
+          "label": "Download-Zeitraum begrenzen"
+        },
+        "digital_asset_authorized_days": {
+          "label": "Verfügbare Tage"
         }
       },
       "store_credit": {
@@ -3225,7 +3288,9 @@
           "tab_payments": "Zahlungen",
           "tab_standards": "Standards und Formate",
           "tab_storefront_access": "Storefront-Zugriff",
-          "title": "Shop-Einstellungen"
+          "title": "Shop-Einstellungen",
+          "tab_downloads": "Digitale Downloads",
+          "downloads_help": "Wie lange ein Download-Link gültig ist und wie oft er verwendet werden kann. Einzelne Dateien können diese Werte überschreiben."
         },
         "tax_categories": {
           "add_sheet_title": "Steuerkategorie hinzufügen",

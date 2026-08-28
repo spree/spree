@@ -825,6 +825,55 @@
       "to_placeholder": "To",
       "toggle_states": "Show states of {{country}}"
     },
+    "digital_assets": {
+      "add": "Add",
+      "all_variants": "All variants",
+      "columns": {
+        "file": "File",
+        "variant": "Variant",
+        "size": "Size",
+        "downloads": "Downloads",
+        "days": "Days"
+      },
+      "delete_description": "\"{{name}}\" will no longer be downloadable by anyone who bought it. This takes effect immediately.",
+      "delete_title": "Delete this file?",
+      "description": "Files buyers can download after purchase. Attach them to a digital product, or to a physical one to deliver a manual or warranty alongside the goods.",
+      "download": "Download",
+      "drop_hint": "Drag & drop files here, or click to browse",
+      "empty": "No files yet",
+      "limit_invalid": "Limits must be whole numbers of 1 or more, or blank.",
+      "limits_help": "Leave the download and day limits blank to use the store's settings.",
+      "source": {
+        "upload": "Upload a file"
+      },
+      "store_default": "{{count}} (store default)",
+      "title": "Digital files",
+      "untitled": "Untitled file",
+      "upload": "Add file",
+      "upload_failed": "Failed to upload {{name}}: {{message}}",
+      "uploading": "Uploading {{name}}…",
+      "uploading_short": "Uploading…"
+    },
+    "digital_links": {
+      "columns": {
+        "file": "File",
+        "item": "Item",
+        "downloads": "Downloads used",
+        "expires": "Expires",
+        "status": "Status"
+      },
+      "never_expires": "No expiry",
+      "resend_email": "Resend email",
+      "reset": "Reset",
+      "reset_description": "The customer gets a fresh set of downloads for \"{{name}}\" and the expiry clock restarts.",
+      "reset_title": "Restore download access?",
+      "status": {
+        "available": "Available",
+        "expired": "Expired",
+        "used_up": "No downloads left"
+      },
+      "title": "Downloads"
+    },
     "enterprise": {
       "learn_more": "Learn about Spree Enterprise"
     },
@@ -1880,6 +1929,20 @@
         "track_price_history": {
           "help": "Keep past prices so the storefront can show the lowest price of the last 30 days, as EU rules require.",
           "label": "Record price history"
+        },
+        "limit_digital_download_count": {
+          "help": "Off means buyers can download as often as they like.",
+          "label": "Limit number of downloads"
+        },
+        "digital_asset_authorized_clicks": {
+          "label": "Downloads allowed"
+        },
+        "limit_digital_download_days": {
+          "help": "Off means download links never expire.",
+          "label": "Limit download period"
+        },
+        "digital_asset_authorized_days": {
+          "label": "Days available"
         }
       },
       "store_credit": {
@@ -3225,7 +3288,9 @@
           "tab_payments": "Payments",
           "tab_standards": "Standards and formats",
           "tab_storefront_access": "Storefront access",
-          "title": "Store settings"
+          "title": "Store settings",
+          "tab_downloads": "Digital downloads",
+          "downloads_help": "How long a download link works and how many times it can be used. Individual files can override these numbers."
         },
         "tax_categories": {
           "add_sheet_title": "Add tax category",

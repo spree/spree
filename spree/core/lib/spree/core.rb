@@ -462,6 +462,19 @@ module Spree
     Rails.application.config.spree.delivery_rate_providers = value
   end
 
+  # Strategies selectable as a digital asset's source. Core registers the
+  # uploaded-file default; host apps append providers that resolve a
+  # deliverable elsewhere (a licensing system, a code pool).
+  #
+  # @return [Array<Class>]
+  def self.digital_asset_providers
+    Rails.application.config.spree.digital_asset_providers
+  end
+
+  def self.digital_asset_providers=(value)
+    Rails.application.config.spree.digital_asset_providers = value
+  end
+
   # Fulfillment profile kinds selectable when creating a profile.
   #
   # @return [Array<Class>]
