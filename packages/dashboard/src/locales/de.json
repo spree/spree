@@ -2090,70 +2090,6 @@
         "search_placeholder": "Nach Code suchen…"
       }
     },
-    "imports": {
-      "download_original": "Originaldatei herunterladen",
-      "failed": {
-        "description": "Die Datei konnte nicht verarbeitet werden.",
-        "title": "Import fehlgeschlagen"
-      },
-      "failed_rows": {
-        "error": "Fehler",
-        "hide_data": "Zeilendaten ausblenden",
-        "next_page": "Nächste Seite",
-        "prev_page": "Vorherige Seite",
-        "row_number": "Zeile",
-        "title": "Fehlgeschlagene Zeilen",
-        "view_data": "Zeilendaten anzeigen"
-      },
-      "load_failed": "Der Import konnte nicht geladen werden.",
-      "mapping": {
-        "description": "Ordnen Sie die Spalten Ihrer Datei den Feldern für {{type}} zu.",
-        "field": "Feld",
-        "file_column": "Dateispalte",
-        "missing_required": "Ordnen Sie die erforderlichen Felder zu, um fortzufahren: {{fields}}",
-        "not_mapped": "Nicht zugeordnet",
-        "required": "Erforderlich",
-        "sample": "Beispiel",
-        "start": "Import starten",
-        "starting": "Wird gestartet…",
-        "title": "Spalten zuordnen"
-      },
-      "processing": {
-        "failed_count": "{{failed}} fehlgeschlagen",
-        "note": "Sie können diese Seite verlassen — der Import läuft im Hintergrund weiter.",
-        "preparing": "Zeilen werden vorbereitet…",
-        "progress": "{{processed}} von {{total}} Zeilen verarbeitet",
-        "retrying": "Fehlgeschlagene Zeilen werden wiederholt · {{remaining}} verbleibend",
-        "title": "Zeilen werden verarbeitet"
-      },
-      "results": {
-        "completed_title": "Import abgeschlossen",
-        "retry_failed": "Fehlgeschlagene Zeilen wiederholen ({{failed}})",
-        "retrying": "Wird wiederholt…",
-        "summary": "{{completed}} Zeilen importiert · {{failed}} fehlgeschlagen",
-        "view_records": "{{type}} anzeigen"
-      },
-      "status": {
-        "completed": "Abgeschlossen",
-        "completed_mapping": "In Warteschlange",
-        "failed": "Fehlgeschlagen",
-        "mapping": "Zuordnung",
-        "pending": "Ausstehend",
-        "processing": "In Bearbeitung"
-      },
-      "steps": {
-        "complete": "Fertig",
-        "map_fields": "Felder zuordnen",
-        "process_rows": "Zeilen verarbeiten"
-      },
-      "try_again": "Erneut versuchen",
-      "types": {
-        "customers": "Kunden",
-        "product_translations": "Produktübersetzungen",
-        "products": "Produkte"
-      },
-      "wizard_title": "Import"
-    },
     "integrations": {
       "active_toggle": {
         "help": "Die Aktivierung prüft die Verbindung und stellt die Integration den Anbietern zur Verfügung.",
@@ -3271,8 +3207,10 @@
           "search_placeholder": "Nach Nummer suchen…",
           "table": {
             "failed_count": "{{failed}} fehlgeschlagen",
+            "first_party": "Sie",
             "number": "Nummer",
             "rows": "Zeilen",
+            "seller": "Verkäufer",
             "status": "Status",
             "type": "Typ"
           },

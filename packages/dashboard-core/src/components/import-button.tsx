@@ -1,4 +1,3 @@
-import type { Import, ImportType } from '@spree/admin-sdk'
 import {
   Button,
   Field,
@@ -19,6 +18,7 @@ import {
 import { DownloadIcon, FileSpreadsheetIcon, UploadIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import type { PanelImport } from '../api-client'
 import {
   useCreateImport,
   useDownloadImportExample,
@@ -40,7 +40,7 @@ type Delimiter = (typeof DELIMITERS)[number]['value']
 
 interface ImportButtonProps {
   /** Which dataset to import. Server validates against `Spree::Import.available_types`. */
-  type: ImportType
+  type: string
   /**
    * CanCanCan subject gating the button — the *imported resource*
    * (e.g. `Subject.Product`), mirroring the server's `write_<resource>`
@@ -52,13 +52,19 @@ interface ImportButtonProps {
    * wizard — typically a full-window dialog driven by an `?import=` search
    * param.
    */
-  onCreated: (imp: Import) => void
+  onCreated: (imp: PanelImport) => void
   /** Label shown on the button. Defaults to the translated "Import" action. */
   label?: string
   /** Optional variant for the button. Defaults to "outline". */
   variant?: 'default' | 'outline' | 'ghost'
   /** Optional size for the button. Defaults to "sm". */
   size?: 'sm' | 'default' | 'lg'
+  /**
+   * Path the import-done email links back to, relative to this panel's origin.
+   * Defaults to the operator dashboard's imports view under the current
+   * tenant; a panel filing that page elsewhere passes its own.
+   */
+  resultsPath?: string
 }
 
 /**
@@ -74,6 +80,7 @@ export function ImportButton({
   label,
   variant,
   size,
+  resultsPath,
 }: ImportButtonProps) {
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
@@ -98,7 +105,7 @@ export function ImportButton({
     if (!file.signedId || createImport.isPending) return
 
     createImport.mutate(
-      { type, signedId: file.signedId, preferredDelimiter: delimiter },
+      { type, signedId: file.signedId, preferredDelimiter: delimiter, resultsPath },
       {
         onSuccess: (imp) => {
           handleOpenChange(false)

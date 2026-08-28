@@ -4,7 +4,13 @@ import type {
   BulkActionOutcome,
   ResourceSearch,
 } from '@spree/dashboard-core'
-import { ExportButton, ResourceTable, Subject } from '@spree/dashboard-core'
+import {
+  ExportButton,
+  ImportButton,
+  ImportWizardDialog,
+  ResourceTable,
+  Subject,
+} from '@spree/dashboard-core'
 import {
   BulkDialog,
   Button,
@@ -39,7 +45,7 @@ type BulkStatus = (typeof BULK_STATUSES)[number]
 type StatusFormValues = { status: BulkStatus }
 
 /** This seller's own catalog. */
-export function ProductsPage({ search }: { search: ResourceSearch }) {
+export function ProductsPage({ search }: { search: ResourceSearch & { import?: string } }) {
   const { t } = useTranslation()
   const { sellerId } = useParams({ from: '/_authenticated/$sellerId' })
   const navigate = useNavigate()
@@ -126,6 +132,19 @@ export function ProductsPage({ search }: { search: ResourceSearch }) {
     return [submitAction, statusAction, deleteAction] as BulkAction<unknown>[]
   }, [t])
 
+  // The wizard is driven by an `?import=` param rather than component state,
+  // so a refresh (or the link in the import-done email) reopens it.
+  const openImportWizard = (id: string) =>
+    navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, import: id }) as never })
+
+  const closeImportWizard = () =>
+    navigate({
+      search: (prev: Record<string, unknown>) => {
+        const { import: _i, ...rest } = prev
+        return rest as never
+      },
+    })
+
   return (
     <div className="flex flex-col gap-4">
       <h1 className="font-medium text-2xl">{t('products.title')}</h1>
@@ -138,6 +157,12 @@ export function ProductsPage({ search }: { search: ResourceSearch }) {
         bulkActions={bulkActions}
         actions={(ctx) => (
           <>
+            <ImportButton
+              type="products"
+              subject={Subject.Product}
+              onCreated={(imp) => openImportWizard(imp.id)}
+              resultsPath={`/${sellerId}/products`}
+            />
             <ExportButton type="products" {...ctx} />
             <Button
               onClick={() => navigate({ to: '/$sellerId/products/new', params: { sellerId } })}
@@ -147,6 +172,14 @@ export function ProductsPage({ search }: { search: ResourceSearch }) {
             </Button>
           </>
         )}
+      />
+
+      <ImportWizardDialog
+        importId={search.import ?? null}
+        onClose={closeImportWizard}
+        // Imported products land as drafts awaiting review, so "view records"
+        // returns to this very list — where the seller submits them.
+        onViewRecords={() => navigate({ to: '/$sellerId/products', params: { sellerId } })}
       />
     </div>
   )

@@ -2085,70 +2085,6 @@
         "search_placeholder": "按代码搜索…"
       }
     },
-    "imports": {
-      "download_original": "下载原始文件",
-      "failed": {
-        "description": "无法处理该文件。",
-        "title": "导入失败"
-      },
-      "failed_rows": {
-        "error": "错误",
-        "hide_data": "隐藏行数据",
-        "next_page": "下一页",
-        "prev_page": "上一页",
-        "row_number": "行号",
-        "title": "失败的行",
-        "view_data": "查看行数据"
-      },
-      "load_failed": "无法加载导入。",
-      "mapping": {
-        "description": "将文件中的列与{{type}}字段进行匹配。",
-        "field": "字段",
-        "file_column": "文件列",
-        "missing_required": "请先匹配必填字段：{{fields}}",
-        "not_mapped": "未匹配",
-        "required": "必填",
-        "sample": "示例",
-        "start": "开始导入",
-        "starting": "正在开始…",
-        "title": "匹配列"
-      },
-      "processing": {
-        "failed_count": "{{failed}} 条失败",
-        "note": "您可以离开此页面——导入将在后台继续进行。",
-        "preparing": "正在准备行…",
-        "progress": "已处理 {{processed}} / {{total}} 行",
-        "retrying": "正在重试失败的行 · 剩余 {{remaining}} 条",
-        "title": "正在处理行"
-      },
-      "results": {
-        "completed_title": "导入完成",
-        "retry_failed": "重试失败的行（{{failed}}）",
-        "retrying": "正在重试…",
-        "summary": "已导入 {{completed}} 行 · {{failed}} 条失败",
-        "view_records": "查看{{type}}"
-      },
-      "status": {
-        "completed": "已完成",
-        "completed_mapping": "已排队",
-        "failed": "失败",
-        "mapping": "匹配中",
-        "pending": "待处理",
-        "processing": "处理中"
-      },
-      "steps": {
-        "complete": "完成",
-        "map_fields": "匹配字段",
-        "process_rows": "处理行"
-      },
-      "try_again": "重试",
-      "types": {
-        "customers": "客户",
-        "product_translations": "产品翻译",
-        "products": "产品"
-      },
-      "wizard_title": "导入"
-    },
     "integrations": {
       "active_toggle": {
         "help": "启用会验证连接,并使该集成可供提供方使用。",
@@ -3263,8 +3199,10 @@
           "search_placeholder": "按编号搜索…",
           "table": {
             "failed_count": "{{failed}} 条失败",
+            "first_party": "您",
             "number": "编号",
             "rows": "行数",
+            "seller": "卖家",
             "status": "状态",
             "type": "类型"
           },

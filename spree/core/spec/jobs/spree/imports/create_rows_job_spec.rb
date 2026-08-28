@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Imports::CreateRowsJob, type: :job do
-  let(:import) { create(:import, owner: @default_store, type: 'Spree::Imports::Products', status: :completed_mapping) }
+  let(:import) { create(:import, store: @default_store, type: 'Spree::Imports::Products', status: :completed_mapping) }
 
   it 'warns and delegates to ProcessJob' do
     expect(Spree::Deprecation).to receive(:warn).with(/CreateRowsJob is deprecated/)

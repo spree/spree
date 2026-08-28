@@ -3,7 +3,7 @@ require 'spec_helper'
 RSpec.describe Spree::ImportMailer, type: :mailer do
   let(:store) { @default_store }
   let(:user) { create(:admin_user) }
-  let(:import) { create(:product_import, owner: store, user: user) }
+  let(:import) { create(:product_import, store: store, user: user) }
 
   before do
     import.update_columns(status: 'completed')

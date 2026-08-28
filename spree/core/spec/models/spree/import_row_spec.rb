@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe Spree::ImportRow, :job, type: :model do
   let(:store) { @default_store }
-  let(:import) { create(:product_import, owner: store) }
+  let(:import) { create(:product_import, store: store) }
   let(:import_row) { build(:import_row, import: import, row_number: 1, data: '{"slug": "test-product", "name": "Test Product", "price": "10.00"}') }
 
   let(:csv_content) { File.read(File.join(Spree::Core::Engine.root, 'spec/fixtures/files', 'products_import.csv')) }
@@ -32,7 +32,7 @@ RSpec.describe Spree::ImportRow, :job, type: :model do
       end
 
       it 'allows same row_number for different imports' do
-        other_import = create(:product_import, owner: store)
+        other_import = create(:product_import, store: store)
         other_row = build(:import_row, import: other_import, row_number: 1)
         expect(other_row).to be_valid
       end

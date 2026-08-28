@@ -4,8 +4,9 @@ import { useTranslation } from 'react-i18next'
 
 interface BackButtonProps {
   /**
-   * Fallback path segment under the current store when there is no history to go back to.
-   * Example: "products" → navigates to `/$storeId/products`
+   * Fallback path segment under the current tenant when there is no history to
+   * go back to. Example: "products" → navigates to `/$storeId/products` in the
+   * operator's dashboard, `/$sellerId/products` in a seller's panel.
    */
   fallback: string
   className?: string
@@ -13,22 +14,26 @@ interface BackButtonProps {
 
 /**
  * Back button that goes to the previous page in history (preserving that page's
- * state — filters, column selection, etc.), falling back to `/$storeId/{fallback}`
- * when there's nothing to go back to (e.g. deep-link, new tab).
+ * state — filters, column selection, etc.), falling back to the tenant's list
+ * page when there's nothing to go back to (e.g. deep-link, new tab).
  */
 export function BackButton({ fallback, className }: BackButtonProps) {
   const { t } = useTranslation()
   const router = useRouter()
-  const { storeId } = useParams({ strict: false }) as { storeId?: string }
+  // Whichever tenant this panel routes under. Reading `storeId` alone sent a
+  // seller to `/undefined/...`, since their routes are keyed `$sellerId` —
+  // this component is shared, so it cannot assume the operator's param name.
+  const params = useParams({ strict: false }) as { storeId?: string; sellerId?: string }
+  const tenantId = params.storeId ?? params.sellerId
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault()
     // If there's history within the app, go back to preserve previous state
     if (window.history.length > 1 && document.referrer.includes(window.location.host)) {
       router.history.back()
-    } else {
+    } else if (tenantId) {
       // Fallback to the list page
-      router.navigate({ to: `/${storeId}/${fallback}` as string })
+      router.navigate({ to: `/${tenantId}/${fallback}` as string })
     }
   }
 

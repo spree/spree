@@ -20,6 +20,22 @@ setApiClient({
   },
   listCountries: () => adminClient.countries.list({ expand: ['states'] }),
   createDirectUpload: (params) => adminClient.directUploads.create(params),
+  // Backs the shared CSV import wizard, which both panels render. The
+  // operator imports every registered dataset; a seller's client narrows
+  // `types` to their own.
+  imports: {
+    list: (params) => adminClient.imports.list(params),
+    get: (id) => adminClient.imports.get(id),
+    create: (params) => adminClient.imports.create(params),
+    completeMapping: (id, params) => adminClient.imports.completeMapping(id, params),
+    retryFailedRows: (id) => adminClient.imports.retryFailedRows(id),
+    delete: (id) => adminClient.imports.delete(id),
+    rows: { list: (importId, params) => adminClient.imports.rows.list(importId, params) },
+    types: ['products', 'customers', 'product_translations'],
+    templateUrl: (type) => `/api/v3/admin/imports/template?type=${encodeURIComponent(type)}`,
+    exampleUrl: (type) => `/api/v3/admin/imports/example?type=${encodeURIComponent(type)}`,
+    downloadUrl: (id) => `/api/v3/admin/imports/${id}/download`,
+  },
   // Backs the shared stock-locations page, which both panels render.
   stockLocations: {
     list: (params) => adminClient.stockLocations.list(params),

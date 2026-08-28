@@ -15,7 +15,7 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
     ).signed_id
   end
 
-  let!(:product_import) { create(:product_import, owner: store, user: admin_user) }
+  let!(:product_import) { create(:product_import, store: store, user: admin_user) }
 
   describe 'GET #index' do
     subject { get :index, as: :json }
@@ -27,7 +27,7 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
     end
 
     it 'omits imports owned by other stores' do
-      other_import = create(:product_import, owner: create(:store), user: admin_user)
+      other_import = create(:product_import, store: create(:store), user: admin_user)
 
       subject
       ids = json_response['data'].map { |i| i['id'] }
@@ -200,7 +200,7 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
 
   describe 'PATCH #complete_mapping' do
     let(:import) do
-      create(:product_import, owner: store, user: admin_user).tap do |imp|
+      create(:product_import, store: store, user: admin_user).tap do |imp|
         imp.attachment.attach(
           io: StringIO.new(csv_content), filename: 'import.csv', content_type: 'text/csv'
         )
@@ -267,6 +267,48 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
       patch :complete_mapping, params: { id: product_import.prefixed_id }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
+    end
+  end
+
+  # Operators see every import in their marketplace, including the ones their
+  # sellers ran — that is what makes a failed seller upload debuggable without
+  # impersonating them. Acting on one is a different question.
+  describe 'a seller\'s import' do
+    let(:seller) { create(:seller, store: store) }
+    let!(:seller_import) { create(:product_import, store: store, seller: seller, user: admin_user) }
+
+    it 'appears in the operator\'s list' do
+      get :index, as: :json
+
+      expect(json_response['data'].pluck('id')).to include(seller_import.prefixed_id)
+    end
+
+    it 'names the seller, so the list can say whose it is' do
+      get :show, params: { id: seller_import.prefixed_id }, as: :json
+
+      expect(json_response['seller_id']).to eq(seller.prefixed_id)
+      expect(json_response['seller_name']).to eq(seller.name)
+    end
+
+    it 'is readable in full' do
+      get :show, params: { id: seller_import.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    # A retry re-runs writes into the seller's own catalog, and nothing on the
+    # import would record that the operator caused them.
+    it 'cannot be retried by the operator' do
+      patch :retry_failed_rows, params: { id: seller_import.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it 'cannot be deleted by the operator' do
+      delete :destroy, params: { id: seller_import.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(seller_import.reload).to be_persisted
     end
   end
 
@@ -417,7 +459,7 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
       end
 
       it 'filters the index to import types the key can write' do
-        customers_import = create(:customer_import, owner: store, user: admin_user)
+        customers_import = create(:customer_import, store: store, user: admin_user)
 
         get :index, as: :json
 
@@ -427,7 +469,7 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
       end
 
       it 'hides imports of unwritable types from member actions' do
-        customers_import = create(:customer_import, owner: store, user: admin_user)
+        customers_import = create(:customer_import, store: store, user: admin_user)
 
         get :show, params: { id: customers_import.prefixed_id }, as: :json
 

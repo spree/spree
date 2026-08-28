@@ -81,6 +81,32 @@ export function createSellerApiClient({
       create: (params) => sellerClient().exports.create(params as SellerExportCreateParams),
       get: (id) => sellerClient().exports.get(id),
     },
+    // Backs the shared CSV import wizard. Products only: customers belong to
+    // the marketplace and translations of catalog copy are its merchandising,
+    // so the Seller API refuses both and the wizard offers neither.
+    imports: {
+      list: (params) => sellerClient().imports.list(params),
+      get: (id) => sellerClient().imports.get(id),
+      create: (params) =>
+        sellerClient().imports.create({
+          ...params,
+          // Narrowed by the API too — this only keeps the SDK's own type
+          // honest about what this branch accepts.
+          type: params.type as 'products',
+        }),
+      completeMapping: (id, params) => sellerClient().imports.completeMapping(id, params),
+      retryFailedRows: (id) => sellerClient().imports.retryFailedRows(id),
+      delete: (id) => sellerClient().imports.delete(id),
+      rows: { list: (importId, params) => sellerClient().imports.rows.list(importId, params) },
+      types: ['products'],
+      // This panel's product list is keyed `seller-products`, so core's
+      // default `products` invalidation would miss it and the list would sit
+      // on its pre-import cache.
+      invalidateKeys: ['seller-products'],
+      templateUrl: (type) => `/api/v3/seller/imports/template?type=${encodeURIComponent(type)}`,
+      exampleUrl: (type) => `/api/v3/seller/imports/example?type=${encodeURIComponent(type)}`,
+      downloadUrl: (id) => `/api/v3/seller/imports/${id}/download`,
+    },
     // Backs the shared stock-locations page. No `delete`: a location holds
     // stock levels and is named on historical fulfillments, so the Seller API
     // does not offer it and the page hides the action accordingly.

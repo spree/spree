@@ -22,10 +22,19 @@ module Spree
     # This ensures Spree::Imports::Products publishes 'import.create' not 'products.create'
     self.event_prefix = 'import'
 
+    include Spree::SingleStoreResource
+
     #
     # Associations
     #
-    belongs_to :owner, polymorphic: true # Store, Seller, etc.
+    # Which marketplace this import belongs to, and — when a seller ran it —
+    # whose it is. A null seller means the operator's own, which is what lets
+    # one store-scoped list carry both (see `Spree::Export`, the same pair).
+    #
+    # `with_deleted` because a seller is soft-deleted and their import history
+    # has to stay readable afterwards; an operator debugging a departed
+    # seller's catalog is exactly when it matters.
+    belongs_to :seller, -> { with_deleted }, class_name: 'Spree::Seller', optional: true
     belongs_to :user, class_name: Spree.admin_user_class.to_s, optional: true
     has_many :mappings, class_name: 'Spree::ImportMapping', dependent: :destroy, inverse_of: :import
     alias import_mappings mappings
@@ -35,20 +44,28 @@ module Spree
     #
     # Validations
     #
-    validates :owner, :user, :type, presence: true
+    validates :user, :type, presence: true
     validates :attachment, presence: true, unless: -> { Rails.env.test? }
     validate :ensure_whitelisted_type
     validate :ensure_attachment_content_type
+    validate :ensure_seller_belongs_to_store
 
     #
     # Ransack configuration
     #
-    self.whitelisted_ransackable_attributes = %w[number type status]
+    self.whitelisted_ransackable_attributes = %w[number type status seller_id]
+    # Lets an operator filter their list by who ran the job — the seller's
+    # name, not an id they would have to look up first.
+    self.whitelisted_ransackable_associations = %w[seller]
 
     #
     # Scopes
     #
-    scope :for_store, ->(store) { where(owner: store) }
+    # `for_store` comes from Spree::SingleStoreResource and now includes a
+    # store's sellers' imports, which is what puts them in the operator's list.
+    scope :for_seller, ->(seller) { where(seller_id: seller) }
+    # The operator's own, as opposed to those their sellers ran.
+    scope :first_party, -> { where(seller_id: nil) }
 
     #
     # Attachments
@@ -334,20 +351,41 @@ module Spree
       @attachment_file_content ||= attachment.attached? ? attachment.blob.download&.force_encoding('UTF-8') : nil
     end
 
-    # Returns the store for the import
-    # @return [Spree::Store]
-    def store
-      if owner.is_a?(Spree::Store)
-        owner
+    # Who ran this import — the seller when one did, otherwise the store.
+    #
+    # @deprecated Read `seller` and `store` — removed in 6.1. Kept because the
+    #   polymorphic `owner` shipped in 5.6 and the v3 serializer still emits
+    #   `owner_type`/`owner_id` from it.
+    # @return [Spree::Seller, Spree::Store]
+    def owner
+      seller || store
+    end
+
+    # @deprecated Assign `seller:` or `store:` — removed in 6.1.
+    def owner=(record)
+      Spree::Deprecation.warn('Spree::Import#owner= is deprecated and will be removed in Spree 6.1. Assign seller: or store: instead.')
+
+      case record
+      when Spree::Seller
+        self.seller = record
+        self.store = record.store
       else
-        owner.respond_to?(:store) ? owner.store : Spree::Store.default
+        self.seller = nil
+        self.store = record
       end
     end
 
-    # Returns the current ability for the import
+    # The ability the row processors scope-fetch through.
+    #
+    # Built against whoever ran the import, because that is where the importing
+    # user holds their roles: a marketplace seller's staff hold theirs on the
+    # `Spree::Seller`, never on the store, so an ability resolved against the
+    # store compiles no rules at all and every scope-fetch through it comes
+    # back empty.
+    #
     # @return [Spree::Ability]
     def current_ability
-      @current_ability ||= Spree.ability_class.new(user, { store: store })
+      @current_ability ||= Spree.ability_class.new(user, { store: store, resource: seller || store })
     end
 
     # Per-instance cache shared by row processors within a single processing job.
@@ -452,6 +490,16 @@ module Spree
       end
 
       true
+    end
+
+    # A seller can only run imports for the marketplace they belong to. Without
+    # this a payload naming another store's seller would file the import under
+    # a store that seller has no standing in.
+    def ensure_seller_belongs_to_store
+      return if seller.blank? || store.blank?
+      return if seller.store_id == store_id
+
+      errors.add(:seller, :invalid)
     end
 
     def ensure_whitelisted_type

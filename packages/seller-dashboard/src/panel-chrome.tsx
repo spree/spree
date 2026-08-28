@@ -78,7 +78,11 @@ function PanelShell({
         <div className="flex min-w-0 flex-1 flex-col">
           {/* The account menu carries sign-out, so the sidebar footer no
               longer does. */}
-          <header className="flex h-14 shrink-0 items-center gap-2 border-border-subtle border-b px-4">
+          {/* Matches the shared TopBar's contract: `sticky top-0` and exactly
+              `header-height` tall. The table's pinned header offsets itself by
+              that same variable, so a header of another height — or one that
+              scrolls away — leaves the column titles floating mid-table. */}
+          <header className="sticky top-0 z-40 flex h-header-height shrink-0 items-center gap-2 border-border-subtle border-b bg-background/90 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/75">
             <SidebarTrigger />
             <div className="ml-auto flex items-center gap-2">
               <TopBarUser />
