@@ -123,7 +123,12 @@ function ImportWizard({
           )}
         </div>
         <div className="flex items-center gap-1">
-          {imp?.original_file_url && (
+          {/* Keyed on the filename rather than the URL: a client that serves
+              the file from its own endpoint may send no `original_file_url`
+              (the download hook falls back to `imports().downloadUrl`), but an
+              import with nothing attached must still not offer a download —
+              that endpoint answers 422. */}
+          {imp?.original_filename && (
             <Button
               type="button"
               size="icon-sm"

@@ -225,6 +225,16 @@ export interface PanelApiClient {
      * import that silently did nothing.
      */
     invalidateKeys?: readonly string[]
+    /**
+     * Paths to this panel's import endpoints, relative to the API origin.
+     *
+     * Root-relative on purpose: `downloadFromApi` resolves them against
+     * `VITE_SPREE_API_URL` and sends the JWT only when the result is that
+     * origin, so a panel pointed at a different API host must set that
+     * variable too (both starters feed the client and the download path from
+     * it). An absolute URL to another host is safe but pointless — the token
+     * is withheld and the request will not authenticate.
+     */
     templateUrl(type: string): string
     exampleUrl(type: string): string
     downloadUrl(id: string): string

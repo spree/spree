@@ -50,6 +50,18 @@ RSpec.describe 'spree:upgrade:backfill_import_export_tenancy' do
     expect(import.reload.store).to eq(store)
   end
 
+  # A dangling store id would otherwise be written as-is, leaving store_id
+  # non-NULL but pointing nowhere — invisible to every scoped query, and
+  # skipped by the orphan sweep that would have rescued it.
+  it 'places an import whose store is gone in the default store' do
+    import = legacy_import(store)
+    import.update_columns(owner_id: 0)
+
+    expect { run! }.to output(/1 orphaned import/).to_stdout
+
+    expect(import.reload.store).to eq(store)
+  end
+
   it 'is idempotent' do
     legacy_import(seller)
     run!

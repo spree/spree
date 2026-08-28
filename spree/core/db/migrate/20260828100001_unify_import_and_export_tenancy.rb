@@ -1,5 +1,11 @@
 class UnifyImportAndExportTenancy < ActiveRecord::Migration[8.1]
-  def change
+  # Split rather than `change`: reversing this automatically would restore
+  # NOT NULL on the legacy owner columns before dropping the new ones, and by
+  # then every import written since carries a null owner — the rollback would
+  # raise partway through. Going down we rebuild the pair from the columns
+  # that replaced it, so the legacy shape is whole before the constraint
+  # returns.
+  def up
     # Imports and exports are the same kind of record — a bulk job over a
     # store's data, optionally run by one of its sellers — but they had drifted
     # into two different shapes. An export carried `store_id` (plus a
@@ -35,5 +41,38 @@ class UnifyImportAndExportTenancy < ActiveRecord::Migration[8.1]
     # so leaving it would make every new import fail to insert.
     change_column_null :spree_imports, :owner_type, true
     change_column_null :spree_imports, :owner_id, true
+  end
+
+  def down
+    # Rebuild the polymorphic owner from the pair that replaced it: a seller's
+    # import was owned by that seller, everything else by its store.
+    execute(<<~SQL.squish)
+      UPDATE spree_imports
+      SET owner_type = 'Spree::Seller', owner_id = seller_id
+      WHERE owner_id IS NULL AND seller_id IS NOT NULL
+    SQL
+    execute(<<~SQL.squish)
+      UPDATE spree_imports
+      SET owner_type = 'Spree::Store', owner_id = store_id
+      WHERE owner_id IS NULL AND store_id IS NOT NULL
+    SQL
+
+    # An import with neither cannot be expressed in the old shape at all, and
+    # silently dropping rows in a rollback is worse than refusing.
+    orphaned = select_value('SELECT COUNT(*) FROM spree_imports WHERE owner_id IS NULL').to_i
+    if orphaned.positive?
+      raise ActiveRecord::IrreversibleMigration,
+            "#{orphaned} import(s) have neither a store nor a seller, so the polymorphic " \
+            'owner cannot be reconstructed. Delete them or assign a store, then retry.'
+    end
+
+    change_column_null :spree_imports, :owner_type, false
+    change_column_null :spree_imports, :owner_id, false
+
+    remove_index :spree_exports, [:store_id, :seller_id]
+    remove_index :spree_imports, [:store_id, :seller_id]
+    remove_reference :spree_exports, :seller
+    remove_reference :spree_imports, :seller
+    remove_reference :spree_imports, :store
   end
 end

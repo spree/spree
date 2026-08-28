@@ -42,6 +42,19 @@ RSpec.describe 'import and export tenancy' do
       expect(import.errors[:seller]).to be_present
     end
 
+    # The operator's list filters by who ran the job. Without the association
+    # whitelisted, Ransack drops the predicate silently and the filter appears
+    # to work while returning everything.
+    it 'filters by the seller name' do
+      theirs = create(:product_import, store: store, seller: seller, user: user)
+      mine = create(:product_import, store: store, user: user)
+
+      matched = Spree::Import.ransack(seller_name_cont: seller.name).result
+
+      expect(matched).to include(theirs)
+      expect(matched).not_to include(mine)
+    end
+
     # `owner` shipped in 5.6 and the v3 serializer still emits it.
     describe 'the deprecated owner bridge' do
       it 'answers the seller when one ran it' do
@@ -69,6 +82,16 @@ RSpec.describe 'import and export tenancy' do
     # raised PG::UndefinedColumn until the column landed.
     it 'can be filtered by seller' do
       expect { Spree::Export.ransack(seller_id_eq: seller.id).result.to_a }.not_to raise_error
+    end
+
+    it 'filters by the seller name' do
+      theirs = create(:export, store: store, seller: seller, user: user)
+      mine = create(:export, store: store, user: user)
+
+      matched = Spree::Export.ransack(seller_name_cont: seller.name).result
+
+      expect(matched).to include(theirs)
+      expect(matched).not_to include(mine)
     end
 
     it 'refuses a seller from another marketplace' do

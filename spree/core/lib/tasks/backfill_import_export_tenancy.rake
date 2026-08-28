@@ -25,6 +25,7 @@ namespace :spree do
     task backfill_import_export_tenancy: :environment do
       imports_table = Spree::Import.table_name
       sellers_table = Spree::Seller.table_name
+      stores_table = Spree::Store.table_name
 
       pending = Spree::Import.where(store_id: nil).count
       if pending.zero?
@@ -37,11 +38,20 @@ namespace :spree do
       # Set-based updates rather than row-by-row: both answers are already a
       # single join away, and an installation that seeded a catalog by CSV can
       # have a lot of these.
+      # The EXISTS guard matters as much here as on the seller branch below: a
+      # store that has since been deleted leaves a dangling id, and writing it
+      # would make store_id non-NULL without pointing anywhere — which the
+      # orphan sweep at the end then skips, leaving the row invisible to every
+      # scoped query with no second chance to place it.
       from_stores = Spree::Import.connection.update(<<~SQL.squish)
         UPDATE #{imports_table}
         SET store_id = owner_id
         WHERE store_id IS NULL
           AND owner_type = 'Spree::Store'
+          AND EXISTS (
+            SELECT 1 FROM #{stores_table}
+            WHERE #{stores_table}.id = #{imports_table}.owner_id
+          )
       SQL
 
       # A seller's import takes the seller, and its store comes from that
