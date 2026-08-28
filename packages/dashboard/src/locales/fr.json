@@ -895,7 +895,7 @@
         },
         "default_catalog": {
           "empty": "Aucun catalogue trouvé",
-          "help": "Ce que voient les acheteurs qui ne sont couverts par aucun catalogue d’entreprise ou de groupe de clients. Laissez vide pour afficher tous les produits publiés sur ce canal.",
+          "help": "Ce que voient les acheteurs auxquels aucun catalogue d’entreprise ou de groupe de clients ne s’applique. Laissez vide pour afficher tous les produits publiés sur ce canal.",
           "label": "Catalogue par défaut",
           "placeholder": "Tous les produits publiés"
         },

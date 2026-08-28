@@ -489,12 +489,15 @@ function DefaultCatalogField({ form }: { form: UseFormReturn<ChannelFormValues> 
 
   return (
     <Field>
-      <FieldLabel>{t('admin.fields.channel.default_catalog.label')}</FieldLabel>
+      <FieldLabel htmlFor="channel-default-catalog">
+        {t('admin.fields.channel.default_catalog.label')}
+      </FieldLabel>
       <Controller
         name="default_catalog_id"
         control={form.control}
         render={({ field }) => (
           <ResourceCombobox<Catalog>
+            id="channel-default-catalog"
             queryKey="channel-default-catalogs"
             search={(q) => adminClient.catalogs.list({ name_cont: q, limit: 10 })}
             hydrate={(ids) => adminClient.catalogs.list({ id_in: ids, limit: ids.length })}

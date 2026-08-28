@@ -56,6 +56,11 @@ export const CHANNEL_DEFAULTS: ChannelFormValues = {
   stock_location_ids: [],
 }
 
+/**
+ * Maps form values to the Admin API payload. Every blank override is sent as
+ * null rather than omitted: clearing a field on an existing channel has to
+ * restore the inherited behavior, which an omitted key would not do.
+ */
 export function channelValuesToParams(
   v: ChannelFormValues,
 ): ChannelCreateParams & ChannelUpdateParams {

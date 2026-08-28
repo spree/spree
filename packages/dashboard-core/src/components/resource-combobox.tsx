@@ -20,6 +20,7 @@ export interface ResourceComboboxProps<T extends ComboboxOption>
     | 'placeholder'
     | 'emptyText'
     | 'disabled'
+    | 'id'
   > {
   /**
    * Server-side search. Called as the user types (debounced via React's
@@ -69,6 +70,7 @@ export function ResourceCombobox<T extends ComboboxOption>({
   emptyText,
   disabled,
   filterOption,
+  id,
 }: ResourceComboboxProps<T>) {
   const { t } = useTranslation()
   const placeholderLabel = placeholder ?? t('admin.common.search_placeholder')
@@ -125,6 +127,7 @@ export function ResourceCombobox<T extends ComboboxOption>({
       placeholder={placeholderLabel}
       emptyText={emptyLabel}
       disabled={disabled}
+      id={id}
     />
   )
 }
