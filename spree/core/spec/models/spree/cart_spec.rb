@@ -6,6 +6,10 @@ describe Spree::Cart, type: :model do
   let(:store) { @default_store }
   let(:customer) { create(:user) }
 
+  it_behaves_like 'a purchase constrained to channel-served markets' do
+    let(:purchase_factory) { :cart }
+  end
+
   describe 'Validations' do
     describe '#email' do
       it 'allows a blank email — presence during checkout is a Requirements concern' do

@@ -18,6 +18,10 @@ describe Spree::Order, type: :model do
   it_behaves_like 'metadata'
   it_behaves_like 'a purchase carrying a PO reference', factory: :order
 
+  it_behaves_like 'a purchase constrained to channel-served markets' do
+    let(:purchase_factory) { :order }
+  end
+
   describe 'Validations' do
     describe '#email' do
       it 'is not required on drafts' do

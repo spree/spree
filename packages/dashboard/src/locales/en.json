@@ -1063,6 +1063,11 @@
           "label": "Default catalog",
           "placeholder": "All published products"
         },
+        "default_market": {
+          "derived": "Automatic (store default)",
+          "help": "Where a shopper lands when their country matches none of this channel’s markets.",
+          "label": "Default market"
+        },
         "fulfillment_locations": {
           "all": "All locations",
           "help": "Which warehouses and pickup counters fulfill orders placed on this sales channel.",
@@ -1078,6 +1083,14 @@
             "false": "Not allowed",
             "true": "Allowed"
           }
+        },
+        "markets": {
+          "all": "All markets",
+          "help": "Which markets this channel sells into. Shoppers elsewhere see its default market.",
+          "label": "Markets",
+          "none": "This store has no markets yet.",
+          "none_selected_hint": "Select at least one market, or choose \"All markets\".",
+          "selected": "Selected markets"
         },
         "name": {
           "placeholder": "e.g. POS, Wholesale, Meta Shop"
