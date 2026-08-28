@@ -71,7 +71,8 @@ class UnifyImportAndExportTenancy < ActiveRecord::Migration[8.1]
 
     remove_index :spree_exports, [:store_id, :seller_id]
     remove_index :spree_imports, [:store_id, :seller_id]
-    remove_reference :spree_exports, :seller
+    # `spree_exports.seller_id` belongs to AddSellerToSpreeExports — dropping
+    # it here would undo a migration this one does not own.
     remove_reference :spree_imports, :seller
     remove_reference :spree_imports, :store
   end
