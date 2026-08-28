@@ -1976,11 +1976,13 @@
       "tax_identifier": {
         "kind": {
           "help": "Which registration this is. It has to match the validator registered for it, so spelling matters.",
-          "label": "Kind"
+          "label": "Kind",
+          "required": "Choose or type a registration type"
         },
         "value": {
           "label": "Number",
-          "placeholder": "DE123456789"
+          "placeholder": "DE123456789",
+          "required": "Enter the registration number"
         }
       },
       "tax_rate": {

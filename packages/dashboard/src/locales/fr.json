@@ -1976,11 +1976,13 @@
       "tax_identifier": {
         "kind": {
           "help": "De quel numéro il s'agit. Il doit correspondre à la vérification configurée, l'orthographe compte donc.",
-          "label": "Type"
+          "label": "Type",
+          "required": "Choisissez ou saisissez un type d'enregistrement"
         },
         "value": {
           "label": "Numéro",
-          "placeholder": "FR12345678901"
+          "placeholder": "FR12345678901",
+          "required": "Saisissez le numéro d'enregistrement"
         }
       },
       "tax_rate": {

@@ -63,6 +63,7 @@ export * from './spree/search-input'
 export * from './spree/secret-input'
 export * from './spree/storefront-visible-switch'
 export * from './spree/tag-list'
+export * from './spree/tax-identifiers-card'
 export * from './spree/theme-provider'
 export * from './spree/theme-toggle'
 // ---------------------------------------------------------------------------

@@ -36,14 +36,7 @@ module Spree
                 requested_custom_fields(attributes.delete(:custom_fields_attributes))
             end
 
-            tax_identifier = attributes.delete(:tax_identifier)
-
-            # One save, so a refused registration does not leave the rest of the
-            # form committed behind a 422 the seller reads as "nothing saved".
-            ApplicationRecord.transaction do
-              current_seller.update!(attributes)
-              upsert_tax_identifier!(tax_identifier) if tax_identifier.present?
-            end
+            current_seller.update!(attributes)
 
             render json: serialize_seller
           rescue ActiveRecord::RecordInvalid => error
@@ -87,29 +80,6 @@ module Spree
           # A changed number drops its verdict — the validator's answer was
           # about the old one, and carrying it over would show a number as
           # verified that nobody has checked.
-          # Raises rather than reporting, so a number core cannot make sense of
-          # rolls the whole save back instead of answering 200 to a
-          # registration that was never stored.
-          def upsert_tax_identifier!(attributes)
-            kind = attributes[:kind].presence
-            return if kind.blank?
-
-            # A seller has one business registration and the panel shows one, so
-            # moving between regimes replaces rather than accumulates — a number
-            # the seller believes they replaced must not stay behind deciding how
-            # the marketplace's commission invoice is taxed.
-            #
-            # A blank value clears only the kind it was sent for. Deleting every
-            # registration on any blank would let a stale form field erase one
-            # the seller never touched, and losing a registration is not
-            # something they can undo from here.
-            value = attributes[:value]
-            return current_seller.tax_identifiers.where(kind: kind).destroy_all if value.blank?
-
-            current_seller.tax_identifiers.where.not(kind: kind).destroy_all
-            current_seller.tax_identifiers.find_or_initialize_by(kind: kind).update!(value: value)
-          end
-
           # Narrowed to the definitions this marketplace's onboarding actually
           # asks this seller for.
           #
@@ -138,7 +108,6 @@ module Spree
               params.permit(:name, :contact_email, :billing_email, :about,
                             :legal_name, :registration_number,
                             :logo, :square_logo, :cover_photo,
-                            tax_identifier: [:kind, :value],
                             billing_address: Spree::Api::V3::AddressParams::ADDRESS_KEYS,
                             custom_fields: [:id, :custom_field_definition_id, :value,
                                             { value: [] }, { value: {} }])

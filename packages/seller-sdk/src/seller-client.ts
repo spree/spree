@@ -15,6 +15,7 @@ import type {
   RequirementSubmission,
   SellerSummary,
   StockLocation,
+  TaxIdentifier,
   TeamMember,
 } from './types'
 
@@ -139,6 +140,39 @@ export class SellerClient {
      */
     update: (params: ProfileUpdateParams, options?: RequestOptions): Promise<Profile> =>
       this.request<Profile>('PATCH', '/profile', { ...options, body: params }),
+  }
+
+  /**
+   * The seller's own tax registrations — the numbers the marketplace's
+   * commission invoice is made out to. A collection, like a company's: a
+   * business trading in several regimes holds a registration in each.
+   */
+  readonly taxIdentifiers = {
+    list: (options?: RequestOptions): Promise<{ data: TaxIdentifier[] }> =>
+      this.request<{ data: TaxIdentifier[] }>('GET', '/tax_identifiers', options),
+
+    create: (params: SellerTaxIdentifierParams, options?: RequestOptions): Promise<TaxIdentifier> =>
+      this.request<TaxIdentifier>('POST', '/tax_identifiers', { ...options, body: params }),
+
+    update: (
+      id: string,
+      params: SellerTaxIdentifierParams,
+      options?: RequestOptions,
+    ): Promise<TaxIdentifier> =>
+      this.request<TaxIdentifier>('PATCH', `/tax_identifiers/${id}`, {
+        ...options,
+        body: params,
+      }),
+
+    remove: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/tax_identifiers/${id}`, options),
+
+    /**
+     * Asks the registry whether the number is still registered. A verdict
+     * answers "valid now", so a number verified last year may have lapsed.
+     */
+    validate: (id: string, options?: RequestOptions): Promise<TaxIdentifier> =>
+      this.request<TaxIdentifier>('POST', `/tax_identifiers/${id}/validate`, options),
   }
 
   /** Who runs this seller. */
@@ -634,6 +668,12 @@ export interface SellerExportCreateParams {
   results_url?: string
 }
 
+/** What a seller sends when recording a registration. */
+export interface SellerTaxIdentifierParams {
+  kind: string
+  value: string
+}
+
 /** A country as the address form needs it. */
 export interface SellerCountry {
   iso: string
@@ -793,7 +833,6 @@ export interface ProfileUpdateParams {
    * the number, and an empty value removes it. A changed number drops its
    * validation verdict, since that answer was about the old one.
    */
-  tax_identifier?: { kind: string; value: string }
   billing_address?: SellerAddressParams
   returns_address?: SellerAddressParams
   /**

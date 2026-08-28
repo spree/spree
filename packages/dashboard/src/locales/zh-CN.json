@@ -1972,11 +1972,13 @@
       "tax_identifier": {
         "kind": {
           "help": "该号码的类型。必须与配置的校验方式一致，因此拼写很重要。",
-          "label": "类型"
+          "label": "类型",
+          "required": "请选择或输入登记类型"
         },
         "value": {
           "label": "号码",
-          "placeholder": "DE123456789"
+          "placeholder": "DE123456789",
+          "required": "请输入登记号码"
         }
       },
       "tax_rate": {

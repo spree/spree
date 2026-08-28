@@ -593,13 +593,6 @@ paths:
                   - read
                   - admin
                   subjects:
-                  - Spree::DigitalAsset
-                  has_conditions: false
-                - allow: true
-                  actions:
-                  - read
-                  - admin
-                  subjects:
                   - Spree::Import
                   has_conditions: false
                 - allow: true
@@ -674,12 +667,6 @@ paths:
                   - manage
                   subjects:
                   - Spree::CustomField
-                  has_conditions: false
-                - allow: true
-                  actions:
-                  - manage
-                  subjects:
-                  - Spree::DigitalAsset
                   has_conditions: false
                 - allow: true
                   actions:
@@ -12769,8 +12756,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1353250
-                  slug: product-1353250
+                  name: Product 1363250
+                  slug: product-1363250
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -13009,8 +12996,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 1386710
-                slug: product-1386710
+                name: Product 1396710
+                slug: product-1396710
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -13087,7 +13074,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Hand-thrown mug, large
-                slug: product-1418212
+                slug: product-1428212
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -13224,7 +13211,6 @@ paths:
                 - EUR
                 - GBP
                 products_count: 0
-                tax_identifiers: []
               schema:
                 "$ref": "#/components/schemas/Profile"
         '403':
@@ -13250,10 +13236,6 @@ paths:
         to the marketplace operator's workflows — the settlement terms, and
         `slug`, since a seller renaming their own storefront address would break
         every link pointing at it.
-
-        `tax_identifier` holds one registration per kind: re-sending a kind
-        corrects the number, and an empty value removes it. A changed number
-        drops its validation verdict, because that answer was about the old one.
 
         `accept_terms: true` stamps the moment the seller accepted the
         marketplace's terms, which is what the matching onboarding requirement
@@ -13301,7 +13283,6 @@ paths:
                 - EUR
                 - GBP
                 products_count: 0
-                tax_identifiers: []
               schema:
                 "$ref": "#/components/schemas/Profile"
         '422':
@@ -13360,15 +13341,6 @@ paths:
                 accept_terms:
                   type: boolean
                   description: Stamps acceptance of the marketplace terms
-                tax_identifier:
-                  type: object
-                  properties:
-                    kind:
-                      type: string
-                      example: eu_vat
-                    value:
-                      type: string
-                      example: PL1234567890
                 billing_address:
                   type: object
                   additionalProperties: true
@@ -14029,10 +14001,10 @@ paths:
             application/json:
               example:
                 direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--4739345b3df1958ee78bbd4119ff0e6d4f7c0a79
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--bf8a41dc29f8396b3ebf2ae14501542ec66fd07f
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f728cc8f2cc6dc935156331dc163f31d2e271174
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--168e4aaabf66b575b282727886561cdfc96ab680
               schema:
                 "$ref": "#/components/schemas/DirectUploadResponse"
       requestBody:
@@ -14296,8 +14268,8 @@ paths:
                   - id: fi_UkLWZg9DAJ
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
-                    name: Product 1289315
-                    sku: SKU-160
+                    name: Product 1299315
+                    sku: SKU-161
                     options_text: ''
               schema:
                 type: object
@@ -14366,8 +14338,8 @@ paths:
                 - id: fi_UkLWZg9DAJ
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
-                  name: Product 129961
-                  sku: SKU-161
+                  name: Product 130961
+                  sku: SKU-162
                   options_text: ''
               schema:
                 "$ref": "#/components/schemas/Fulfillment"
@@ -14467,7 +14439,7 @@ paths:
                   display_total: "$110.00"
                   items:
                   - id: li_UkLWZg9DAJ
-                    name: Product 13095
+                    name: Product 13195
                     options_text: ''
                     quantity: 1
                     currency: USD
@@ -14476,7 +14448,7 @@ paths:
                     total: '10.0'
                     display_total: "$10.00"
                     variant_id: variant_UkLWZg9DAJ
-                    sku: SKU-162
+                    sku: SKU-163
                     thumbnail_url:
                   fulfillments:
                   - id: ful_UkLWZg9DAJ
@@ -14496,8 +14468,8 @@ paths:
                     - id: fi_UkLWZg9DAJ
                       quantity: 1
                       line_item_id: li_UkLWZg9DAJ
-                      name: Product 13095
-                      sku: SKU-162
+                      name: Product 13195
+                      sku: SKU-163
                       options_text: ''
                   shipping_address:
                     id: addr_gbHJdmfrXB
@@ -14616,7 +14588,7 @@ paths:
                 display_total: "$110.00"
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1319755
+                  name: Product 1329755
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -14625,7 +14597,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-163
+                  sku: SKU-164
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -14645,8 +14617,8 @@ paths:
                   - id: fi_UkLWZg9DAJ
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
-                    name: Product 1319755
-                    sku: SKU-163
+                    name: Product 1329755
+                    sku: SKU-164
                     options_text: ''
                 shipping_address:
                   id: addr_gbHJdmfrXB
@@ -14754,7 +14726,7 @@ paths:
                 display_total: "$110.00"
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1346554
+                  name: Product 1356554
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -14763,7 +14735,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-166
+                  sku: SKU-167
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -14783,8 +14755,8 @@ paths:
                   - id: fi_UkLWZg9DAJ
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
-                    name: Product 1346554
-                    sku: SKU-166
+                    name: Product 1356554
+                    sku: SKU-167
                     options_text: ''
                 shipping_address:
                   id: addr_gbHJdmfrXB
@@ -14841,6 +14813,201 @@ paths:
                 notify_customer:
                   type: boolean
                   description: Email the customer about the cancellation
+  "/api/v3/seller/tax_identifiers":
+    get:
+      summary: List tax registrations
+      tags:
+      - Tax Identifiers
+      security:
+      - bearer_auth: []
+      description: |
+        The seller's own registrations — the numbers the marketplace's
+        commission invoice is made out to, and what makes EU reverse charge on
+        that fee possible.
+
+        A collection rather than a single field: a business trading in more
+        than one regime holds a registration in each, and they are not
+        alternatives. One per kind.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: registrations returned
+          content:
+            application/json:
+              example:
+                data:
+                - id: txi_UkLWZg9DAJ
+                  kind: eu_vat
+                  value: DE100000008
+                  validation_status:
+                  validated_at:
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+    post:
+      summary: Add a tax registration
+      tags:
+      - Tax Identifiers
+      security:
+      - bearer_auth: []
+      description: |
+        `kind` names the regime — `eu_vat`, `gb_vat`, and whatever else a
+        validator is registered for. Any string is accepted; what a kind means
+        is decided by its validator, and a kind nothing is registered for is
+        stored and used as entered.
+
+        A number a registered validator refuses is rejected outright rather
+        than stored, so a typo cannot reach an invoice.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: registration recorded
+          content:
+            application/json:
+              example:
+                id: txi_UkLWZg9DAJ
+                kind: eu_vat
+                value: DE100000008
+                validation_status:
+                validated_at:
+        '422':
+          description: the number is not valid for its regime
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Number does not look like a valid EU VAT registration
+                  details:
+                    value:
+                    - does not look like a valid EU VAT registration
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                kind:
+                  type: string
+                  example: eu_vat
+                value:
+                  type: string
+                  example: DE100000008
+              required:
+              - kind
+              - value
+  "/api/v3/seller/tax_identifiers/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Correct a tax registration
+      tags:
+      - Tax Identifiers
+      security:
+      - bearer_auth: []
+      description: |
+        A changed number drops its validation verdict, because that answer was
+        about the old one.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: registration corrected
+          content:
+            application/json:
+              example:
+                id: txi_UkLWZg9DAJ
+                kind: eu_vat
+                value: DE100000016
+                validation_status:
+                validated_at:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                kind:
+                  type: string
+                  example: eu_vat
+                value:
+                  type: string
+                  example: DE100000016
+    delete:
+      summary: Remove a tax registration
+      tags:
+      - Tax Identifiers
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: registration removed
+  "/api/v3/seller/tax_identifiers/{id}/validate":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    post:
+      summary: Re-check a registration against its registry
+      tags:
+      - Tax Identifiers
+      security:
+      - bearer_auth: []
+      description: |
+        A registry answers "valid now", so a number verified last year may have
+        been deregistered since. Refused when no registry validator is
+        installed for the kind — core format-checks EU VAT numbers but asks no
+        registry, so a stock install answers 422 here rather than queueing a
+        check nobody can answer.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '422':
+          description: no registry validator is installed for this kind
+          content:
+            application/json:
+              example:
+                error:
+                  code: tax_id_not_validatable
+                  message: No registry validator is installed for tax identifier kind
+                    'eu_vat'
 servers:
 - url: http://{defaultHost}
   variables:
@@ -16459,10 +16626,6 @@ components:
             type: string
         products_count:
           type: number
-        tax_identifiers:
-          type: array
-          items:
-            "$ref": "#/components/schemas/TaxIdentifier"
         billing_address:
           "$ref": "#/components/schemas/Address"
         returns_address:
@@ -16492,7 +16655,6 @@ components:
       - default_currency
       - supported_currencies
       - products_count
-      - tax_identifiers
       x-typelizer: true
     RequirementCustomField:
       type: object
