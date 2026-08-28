@@ -164,6 +164,26 @@ RSpec.describe Spree::Api::V3::Store::MarketsController, type: :controller do
         expect(response).to have_http_status(:ok)
         expect(json_response['name']).to eq('Europe')
       end
+
+      # Currency and locale derive from the resolved market, and their
+      # callbacks run before the channel one. Rejecting an unserved market
+      # therefore has to write the channel's own default rather than fall
+      # through to Spree::Current, whose channel is still the store default
+      # at that point — otherwise a narrowed channel prices in the wrong
+      # currency (docs/plans/6.0-channel-markets.md).
+      it 'puts a shopper from an unserved country on the channel default market' do
+        seen = nil
+        allow(Spree.api.market_serializer).to receive(:new).and_wrap_original do |original, *args, **kwargs|
+          seen ||= [Spree::Current.market, Spree::Current.currency]
+          original.call(*args, **kwargs)
+        end
+
+        request.headers['x-spree-country'] = 'US'
+        get :index
+
+        expect(seen.first).to eq(eu_market)
+        expect(seen.last).to eq('EUR')
+      end
     end
   end
 end
