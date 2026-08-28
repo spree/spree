@@ -80,7 +80,18 @@ module Spree
       end
 
       def compute_preference_schema
-        instance = new
+        # Only instantiation is guarded. `new` touches the database to read
+        # the column list, so it fails whenever the schema is asked for before
+        # a connection exists — at boot, or in a rake task on an empty
+        # database. Describing the preferences themselves is pure Ruby, so an
+        # error there is a real bug: left inside the rescue it would return an
+        # empty schema and quietly strip every field from the admin form.
+        instance = begin
+          new
+        rescue StandardError
+          return []
+        end
+
         instance.defined_preferences.filter_map do |pref|
           next if instance.preference_deprecated(pref)
           # Written by Spree, not supplied by the operator — a value a
@@ -96,8 +107,6 @@ module Spree
             default: safe_preference_default(instance, pref)
           }.freeze
         end
-      rescue StandardError
-        []
       end
 
       # Builds a `parse_on_set:` lambda for `preference :foo_ids, :array`
