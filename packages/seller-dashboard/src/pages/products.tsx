@@ -4,7 +4,7 @@ import type {
   BulkActionOutcome,
   ResourceSearch,
 } from '@spree/dashboard-core'
-import { ResourceTable, Subject } from '@spree/dashboard-core'
+import { ExportButton, ResourceTable, Subject } from '@spree/dashboard-core'
 import {
   BulkDialog,
   Button,
@@ -136,12 +136,17 @@ export function ProductsPage({ search }: { search: ResourceSearch }) {
         queryFn={(params) => sellerClient().products.list(params)}
         searchParams={search}
         bulkActions={bulkActions}
-        actions={
-          <Button onClick={() => navigate({ to: '/$sellerId/products/new', params: { sellerId } })}>
-            <PlusIcon className="size-4" />
-            {t('products.add')}
-          </Button>
-        }
+        actions={(ctx) => (
+          <>
+            <ExportButton type="products" {...ctx} />
+            <Button
+              onClick={() => navigate({ to: '/$sellerId/products/new', params: { sellerId } })}
+            >
+              <PlusIcon className="size-4" />
+              {t('products.add')}
+            </Button>
+          </>
+        )}
       />
     </div>
   )

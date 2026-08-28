@@ -287,6 +287,10 @@ en:
           attributes:
             new_variant:
               must_differ_from_original: must be different from the item being returned
+        spree/export:
+          attributes:
+            type:
+              seller_scope_unavailable: cannot be narrowed to a single seller
         spree/gift_card:
           attributes:
             base:

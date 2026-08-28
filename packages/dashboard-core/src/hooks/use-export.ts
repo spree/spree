@@ -1,10 +1,29 @@
-import type { Export, ExportCreateParams } from '@spree/admin-sdk'
 import { toastManager } from '@spree/dashboard-ui'
 import { useMutation } from '@tanstack/react-query'
-import { adminClient } from '../client'
+import { getApiClient, type PanelExport, type PanelExportCreateParams } from '../api-client'
 import { downloadFromApi } from '../lib/download'
 import { i18n } from '../lib/i18n'
 import { useAuth } from './use-auth'
+
+/**
+ * The registered client's export methods.
+ *
+ * Throws rather than returning undefined: reaching here means a panel rendered
+ * the export dialog without registering the methods behind it, and every call
+ * would otherwise fail further away with a less useful message.
+ */
+function exportsApi() {
+  const api = getApiClient().exports
+
+  if (!api) {
+    throw new Error(
+      '@spree/dashboard-core: this panel registered no `exports` on its API client, so it ' +
+        'cannot queue an export. Register one, or do not render <ExportButton>.',
+    )
+  }
+
+  return api
+}
 
 const POLL_INTERVAL_MS = 2000
 const POLL_TIMEOUT_MS = 5 * 60 * 1000
@@ -16,11 +35,11 @@ class ExportTimeoutError extends Error {
   }
 }
 
-async function pollUntilDone(id: string): Promise<Export> {
+async function pollUntilDone(id: string): Promise<PanelExport> {
   const deadline = Date.now() + POLL_TIMEOUT_MS
 
   while (Date.now() < deadline) {
-    const exp = await adminClient.exports.get(id)
+    const exp = await exportsApi().get(id)
     if (exp.done) return exp
     await new Promise<void>((resolve) => setTimeout(resolve, POLL_INTERVAL_MS))
   }
@@ -28,10 +47,15 @@ async function pollUntilDone(id: string): Promise<Export> {
   throw new ExportTimeoutError()
 }
 
-async function downloadExportFile(exp: Export, token: string | null): Promise<void> {
+async function downloadExportFile(exp: PanelExport, token: string | null): Promise<void> {
   if (!exp.download_url) throw new Error('Export has no download_url')
 
-  await downloadFromApi(token, exp.download_url, exp.filename ?? 'export.csv')
+  await downloadFromApi(
+    token,
+    exp.download_url,
+    exp.filename ?? 'export.csv',
+    getApiClient().downloadHeaders?.() ?? {},
+  )
 }
 
 /**
@@ -43,7 +67,7 @@ export function useExport() {
   const { token } = useAuth()
 
   return useMutation({
-    mutationFn: async (params: ExportCreateParams) => {
+    mutationFn: async (params: PanelExportCreateParams) => {
       // Per-invocation id so concurrent exports don't collide on a single
       // sticky toast.
       const toastId = `export-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
@@ -54,7 +78,7 @@ export function useExport() {
       })
 
       try {
-        const created = await adminClient.exports.create(params)
+        const created = await exportsApi().create(params)
         const finished = await pollUntilDone(created.id)
         await downloadExportFile(finished, token)
         toastManager.add({

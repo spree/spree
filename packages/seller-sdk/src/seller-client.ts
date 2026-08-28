@@ -2,6 +2,7 @@ import type { ListParams, PaginatedResponse, RequestFn, RequestOptions } from '@
 import { transformListParams } from '@spree/sdk-core'
 import type {
   AuthTokens,
+  Export,
   Fulfillment,
   Invitation,
   Order,
@@ -378,6 +379,24 @@ export class SellerClient {
   }
 
   /**
+   * CSV of this seller's own records — what they sold, or their catalogue.
+   *
+   * Created, polled until `done`, then downloaded. There is no list: a seller
+   * has no export history page, and no delete: how long a file is kept is the
+   * marketplace's business.
+   *
+   * Scoped server-side to the acting seller, so an export can only ever
+   * contain their own rows however the request is filtered.
+   */
+  readonly exports = {
+    create: (params: SellerExportCreateParams, options?: RequestOptions): Promise<Export> =>
+      this.request<Export>('POST', '/exports', { ...options, body: params }),
+
+    get: (id: string, options?: RequestOptions): Promise<Export> =>
+      this.request<Export>('GET', `/exports/${id}`, options),
+  }
+
+  /**
    * Where this seller keeps stock, and so where their returns are sent.
    *
    * No delete: a location holds stock levels and is named on historical
@@ -479,6 +498,39 @@ export interface StockLocationParams {
   active?: boolean
   default?: boolean
   kind?: string
+}
+
+/**
+ * The datasets a seller may export.
+ *
+ * Deliberately narrower than the operator's list: only records that can be
+ * narrowed to one seller are offered, since that narrowing is what keeps one
+ * seller's file free of another's rows.
+ */
+export type SellerExportType = 'orders' | 'products'
+
+export interface SellerExportCreateParams {
+  type: SellerExportType
+  /**
+   * Ransack query hash, the same predicate shape the list endpoints take
+   * (`{ number_cont: 'R12' }`). Ignored when `record_selection` is `'all'`.
+   */
+  search_params?: Record<string, unknown>
+  /**
+   * `'filtered'` (default) keeps `search_params`; `'all'` clears them on the
+   * server and exports everything this seller owns.
+   */
+  record_selection?: 'filtered' | 'all'
+  /**
+   * Absolute URL of the panel view to send the seller back to; the
+   * export-done email uses it as the download button's target. Honored only
+   * when it matches one of the store's allowed origins.
+   *
+   * Passed by the panel rather than derived server-side, because only the
+   * panel knows where it is mounted — a seller panel is served from a path
+   * under the store as often as from a host of its own.
+   */
+  results_url?: string
 }
 
 /** A country as the address form needs it. */

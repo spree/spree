@@ -12,6 +12,15 @@
     "subtitle": "You were invited as {{email}}. Set a password to finish.",
     "title": "Join the team"
   },
+  "admin": {
+    "components": {
+      "export_button": {
+        "all": {
+          "description": "Ignore filters and export all of your records."
+        }
+      }
+    }
+  },
   "app": {
     "name": "Seller panel"
   },

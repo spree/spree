@@ -778,6 +778,15 @@ Spree::Core::Engine.add_routes do
 
         resources :direct_uploads, only: [:create]
 
+        # CSV of what this seller sold, or of their catalogue. Created, polled
+        # and downloaded — no index, since a seller has no history page to
+        # list, and no destroy, since retention is the marketplace's business.
+        resources :exports, only: [:create, :show] do
+          member do
+            get :download
+          end
+        end
+
         # No destroy: a location holds stock levels and is named on historical
         # fulfillments, so a seller retires one by deactivating it.
         resources :stock_locations, only: [:index, :show, :create, :update]
