@@ -21,6 +21,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  toastManager,
   useConfirm,
 } from '@spree/dashboard-ui'
 import { ChevronDownIcon, DownloadIcon, FileIcon, PlusIcon, UploadIcon } from 'lucide-react'
@@ -75,8 +76,19 @@ export function DigitalAssetsCard({
     setUploading(true)
     try {
       for (const file of list) {
-        const { signedId } = await directUpload.mutateAsync(file)
-        await createAsset.mutateAsync({ signed_id: signedId })
+        try {
+          const { signedId } = await directUpload.mutateAsync(file)
+          await createAsset.mutateAsync({ signed_id: signedId })
+        } catch (err) {
+          // The create mutation suppresses its own toast for validation
+          // errors, so surface the failure here — otherwise a rejected upload
+          // is silent.
+          const message = err instanceof Error ? err.message : t('admin.errors.unexpected')
+          toastManager.add({
+            type: 'error',
+            title: t('admin.digital_assets.upload_failed', { name: file.name, message }),
+          })
+        }
       }
       setPage(1)
     } finally {
@@ -105,8 +117,17 @@ export function DigitalAssetsCard({
       setConfiguring(provider)
       return
     }
-    await createAsset.mutateAsync({ provider_type: provider.type })
-    setPage(1)
+    try {
+      await createAsset.mutateAsync({ provider_type: provider.type })
+      setPage(1)
+    } catch (err) {
+      // The create mutation suppresses its own toast for validation errors.
+      const message = err instanceof Error ? err.message : t('admin.errors.unexpected')
+      toastManager.add({
+        type: 'error',
+        title: t('admin.digital_assets.upload_failed', { name: provider.name, message }),
+      })
+    }
   }
 
   async function handleDelete(asset: DigitalAsset) {
