@@ -213,6 +213,18 @@ export interface PanelApiClient {
     }
     /** Which datasets this panel may import — the wizard offers no others. */
     types: readonly string[]
+    /**
+     * Query-key roots a finished import should mark stale, on top of the
+     * defaults core invalidates.
+     *
+     * The pipeline writes records server-side, outside any tracked mutation,
+     * so nothing else ever marks those lists stale — and each panel names its
+     * lists differently (the operator's products table is keyed `products`,
+     * a seller's `seller-products`). A panel that does not name its own keys
+     * gets a list still serving its pre-import cache, which reads as an
+     * import that silently did nothing.
+     */
+    invalidateKeys?: readonly string[]
     templateUrl(type: string): string
     exampleUrl(type: string): string
     downloadUrl(id: string): string

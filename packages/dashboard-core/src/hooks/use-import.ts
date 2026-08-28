@@ -22,6 +22,9 @@ const ROWS_POLL_INTERVAL_MS = 5000
 // status column). Deliberately not per-type — imports are rare, so a few
 // extra refetches beat maintaining a type → resource map (product rows alone
 // fan out to option types/values and categories created on the fly).
+//
+// These are the operator dashboard's key names; a panel that names its lists
+// differently adds its own through the client's `invalidateKeys`.
 const IMPORT_TOUCHED_RESOURCES = ['products', 'option-types', 'categories', 'customers', 'imports']
 
 /** Whether the import's pipeline is still running (the poll's continue predicate). */
@@ -114,12 +117,13 @@ export function useImport(id: string) {
   // already-finished import refires it; harmless, invalidation is idempotent.
   const status = query.data?.status
   const finished = status === 'completed' || status === 'failed'
+  const extraKeys = getApiClient().imports?.invalidateKeys
   useEffect(() => {
     if (!finished) return
-    for (const resource of IMPORT_TOUCHED_RESOURCES) {
+    for (const resource of new Set([...IMPORT_TOUCHED_RESOURCES, ...(extraKeys ?? [])])) {
       queryClient.invalidateQueries({ queryKey: buildKey(resource) })
     }
-  }, [finished, queryClient, buildKey])
+  }, [finished, queryClient, buildKey, extraKeys])
 
   return query
 }
