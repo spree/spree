@@ -88,6 +88,50 @@ RSpec.describe SpreeStripe::Gateway::Connect do
 
         expect(payout.reload).to be_pending
       end
+
+      # When the answer to the create call was lost, Stripe's id was never
+      # stored — and that is the settlement most in need of this event, since
+      # nothing else can say whether the money moved. Stripe echoes back the id
+      # we sent, so the row is still identifiable.
+      context 'when the settlement never recorded Stripe’s id' do
+        let!(:unresolved) do
+          create(:seller_payout, seller: seller, currency: 'USD', reference: nil, status: 'unresolved')
+        end
+
+        before do
+          allow(Stripe::Webhook).to receive(:construct_event).and_return(
+            stripe_event(
+              'payout.paid',
+              { id: 'po_lost', currency: 'usd', amount: 2_000,
+                metadata: { 'spree_seller_payout_id' => unresolved.id.to_s } },
+              account: 'acct_seller'
+            )
+          )
+        end
+
+        it 'finds it by the id we sent and completes it' do
+          gateway.handle_payout_webhook(raw_body, headers)
+
+          expect(unresolved.reload).to be_completed
+        end
+
+        it 'writes down the id Stripe assigned it' do
+          gateway.handle_payout_webhook(raw_body, headers)
+
+          expect(unresolved.reload.reference).to eq('po_lost')
+        end
+
+        # The fallback exists for rows that never got an id. One that has a
+        # different id is a different settlement, and matching it by metadata
+        # would complete the wrong one.
+        it 'leaves a settlement that already holds another id alone' do
+          unresolved.update!(reference: 'po_other')
+
+          gateway.handle_payout_webhook(raw_body, headers)
+
+          expect(unresolved.reload).not_to be_completed
+        end
+      end
     end
 
     context 'payout.failed' do
@@ -115,6 +159,24 @@ RSpec.describe SpreeStripe::Gateway::Connect do
         gateway.handle_payout_webhook(raw_body, headers)
 
         expect(seller.seller_transfers.unsettled.sum(:amount)).to eq(40)
+      end
+
+      # The settlement whose outcome was never known has been holding its
+      # earnings precisely so nothing could send them twice. Stripe saying the
+      # money did not move is the definite answer that frees them.
+      context 'for a settlement nobody knew the outcome of' do
+        let!(:payout) do
+          create(:seller_payout, seller: seller, currency: 'USD', reference: 'po_1', status: 'unresolved')
+        end
+
+        it 'releases the earnings it was holding' do
+          create(:seller_transfer, :completed, seller: seller, payout: payout, amount: 40,
+                                               order: create(:order, store: store, seller: seller))
+
+          gateway.handle_payout_webhook(raw_body, headers)
+
+          expect(seller.seller_transfers.unsettled.sum(:amount)).to eq(40)
+        end
       end
     end
 

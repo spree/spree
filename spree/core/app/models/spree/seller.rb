@@ -234,6 +234,11 @@ module Spree
     # the rows. Per currency because nothing is ever converted — a seller
     # trading in two currencies accrues two balances and is paid twice.
     #
+    # Only settlements known to have completed count against it, so one whose
+    # outcome was never established still reads as owed. That is the honest
+    # answer while nobody knows, and it cannot be paid twice by mistake: those
+    # earnings stay claimed by the settlement holding them until it resolves.
+    #
     # @param currency [String]
     # @return [BigDecimal]
     def balance(currency)

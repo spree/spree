@@ -124,6 +124,13 @@ module Spree
 
       def execute_payout
         provider.pay!(payout)
+      rescue Spree::Core::AmbiguousGatewayError => e
+        # The provider could not say whether the money moved. Its earnings stay
+        # claimed so no later sweep can send them again, and the row waits for
+        # a person or a webhook to say which way it went.
+        payout.unresolve!
+        Rails.error.report(e, handled: true, context: { seller_payout_id: payout.id }, source: 'spree.core')
+        failure(payout, e.message)
       rescue StandardError => e
         payout.fail!
         Rails.error.report(e, handled: true, context: { seller_payout_id: payout.id }, source: 'spree.core')

@@ -795,6 +795,14 @@ module Spree
 
   module Core
     class GatewayError < RuntimeError; end
+
+    # The call may or may not have taken effect — a timeout, a dropped
+    # connection, anything that leaves the answer at the provider rather than
+    # in the response. Distinct from its parent because the safe reaction is
+    # the opposite one: a definite failure can be retried, while an unknown
+    # outcome must not be, since retrying is how the same money moves twice.
+    class AmbiguousGatewayError < GatewayError; end
+
     class DestroyWithOrdersError < StandardError; end
   end
 end

@@ -242,8 +242,25 @@ module SpreeStripe
       # id when it did — an event naming an id we hold no settlement for is
       # about a payout somebody made outside Spree, and guessing which of our
       # settlements it meant would complete the wrong one.
+      # By Stripe's id first, then by the one we sent with the request.
+      #
+      # The reference is normally stored the moment the payout is created, but
+      # not when the answer to that call was lost — which is exactly the case
+      # that most needs the webhook, since nothing else will tell the operator
+      # whether the money moved. Stripe echoes our metadata back, so the id we
+      # sent identifies the row when the id it assigned is not on file.
       def find_payout(seller, object)
-        seller.seller_payouts.find_by(reference: object.id)
+        by_reference = seller.seller_payouts.find_by(reference: object.id)
+        return by_reference if by_reference
+
+        # A Stripe object raises for a key it does not carry rather than
+        # answering nil, and an older payout has no metadata at all.
+        return nil unless object.respond_to?(:metadata)
+
+        payout_id = object.metadata['spree_seller_payout_id']
+        return nil if payout_id.blank?
+
+        seller.seller_payouts.find_by(id: payout_id, reference: nil)
       end
 
       def verify_connect_webhook_signature(raw_body, headers)

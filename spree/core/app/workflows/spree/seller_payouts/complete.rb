@@ -46,7 +46,9 @@ module Spree
         attributes = { status: 'completed', updated_at: Time.current }
         attributes[:reference] = reference if reference.present?
 
-        claimed = Spree::SellerPayout.where(id: seller_payout.id, status: %w[pending processing]).
+        # `unresolved` is claimable too: it is the settlement whose outcome was
+        # never known, and this is the answer it was waiting for.
+        claimed = Spree::SellerPayout.where(id: seller_payout.id, status: %w[pending processing unresolved]).
                   update_all(attributes)
 
         halt!(seller_payout.reload) if claimed.zero?

@@ -150,6 +150,50 @@ RSpec.describe Spree::SellerPayouts::Sweep do
     end
   end
 
+  # A timeout is not a refusal: the provider may have moved the money before
+  # the answer was lost. Releasing the earnings here is what would let a later
+  # sweep pay them a second time, since an idempotency key only holds for as
+  # long as the provider keeps its record.
+  describe 'when nobody knows whether the money moved' do
+    before do
+      earn(40)
+      allow_any_instance_of(Spree::PayoutProvider::System).to receive(:pay!).
+        and_raise(Spree::Core::AmbiguousGatewayError, 'connection timed out')
+    end
+
+    it 'reports the failure' do
+      expect(described_class.call(seller: seller, currency: 'USD')).to be_failure
+    end
+
+    it 'holds the earnings rather than letting them fall into another payout' do
+      described_class.call(seller: seller, currency: 'USD')
+
+      expect(seller.seller_transfers.unsettled).to be_empty
+    end
+
+    it 'sends nothing on the next sweep' do
+      described_class.call(seller: seller, currency: 'USD')
+      allow_any_instance_of(Spree::PayoutProvider::System).to receive(:pay!).and_call_original
+
+      expect { described_class.call(seller: seller.reload, currency: 'USD') }.
+        not_to change { Spree::SellerPayout.count }
+    end
+
+    it 'leaves the settlement waiting to be resolved' do
+      described_class.call(seller: seller, currency: 'USD')
+
+      expect(Spree::SellerPayout.last).to be_unresolved
+    end
+
+    # It is not owed — it may already have been sent — and it is not settled
+    # either, so it belongs in neither queue until somebody says which.
+    it 'stops counting it as money still to send' do
+      described_class.call(seller: seller, currency: 'USD')
+
+      expect(Spree::SellerPayout.owed).to be_empty
+    end
+  end
+
   # A concurrent sweep can claim rows this one counted, leaving it holding
   # nothing. Asking a provider to move zero is not a settlement.
   describe 'when another sweep claimed everything first' do

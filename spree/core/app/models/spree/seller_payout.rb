@@ -49,7 +49,7 @@ module Spree
     # transition graph.
     #
     include Spree::HasStatus
-    has_status :pending, :processing, :completed, :failed, default: :pending
+    has_status :pending, :processing, :completed, :failed, :unresolved, default: :pending
 
     #
     # Scopes
@@ -89,6 +89,20 @@ module Spree
         # from what is still to be sent.
         update!(status: 'failed')
       end
+    end
+
+    # Records that nobody knows whether this settlement happened, and
+    # deliberately keeps its earnings claimed.
+    #
+    # The opposite of {#fail!} in the one way that matters. Releasing here
+    # would let the next sweep assemble the same earnings into a second
+    # payout, and a provider's idempotency key only protects a retry for as
+    # long as the provider keeps the record — Stripe prunes after a day, so a
+    # monthly sweep is well past it. Held instead, the earnings stay out of
+    # every later sweep until a person or a webhook settles what actually
+    # happened.
+    def unresolve!
+      update!(status: 'unresolved')
     end
 
     # Hands the earnings back to the next sweep without recording a failure —

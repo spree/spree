@@ -192,6 +192,13 @@ module SpreeStripe
       # matches on Stripe's own id instead of guessing by amount.
       seller_payout.update!(reference: payout.id)
       seller_payout
+    rescue Stripe::APIConnectionError, Stripe::IdempotencyError => e
+      # Nobody knows whether the money moved. The request may have reached
+      # Stripe and created the payout before the answer was lost, so core must
+      # not put these earnings back on the pile — the idempotency key stops a
+      # retry only while Stripe keeps the record, which is a day, and sweeps
+      # run on a merchant's schedule rather than inside one.
+      raise Spree::Core::AmbiguousGatewayError, e.message
     end
 
     # Pulls a seller's money back after a refund.

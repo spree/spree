@@ -144,6 +144,35 @@ RSpec.describe SpreeStripe::PayoutProvider do
 
       expect { described_class.new.pay!(other) }.to raise_error(Spree::Core::GatewayError)
     end
+
+    # Stripe may have created the payout before the answer was lost. Core has
+    # to hear that the outcome is unknown, because its reaction is the opposite
+    # of the one a refusal deserves.
+    context 'when the answer is lost on the way back' do
+      it 'says so, rather than reporting a refusal' do
+        allow(Stripe::Payout).to receive(:create).and_raise(Stripe::APIConnectionError, 'timed out')
+
+        expect { described_class.new.pay!(payout) }.
+          to raise_error(Spree::Core::AmbiguousGatewayError)
+      end
+
+      # Reusing a key with different parameters means Stripe already holds a
+      # payout under it — so something moved, whatever this call thought.
+      it 'says the same when Stripe rejects a reused key' do
+        allow(Stripe::Payout).to receive(:create).and_raise(Stripe::IdempotencyError, 'key reused')
+
+        expect { described_class.new.pay!(payout) }.
+          to raise_error(Spree::Core::AmbiguousGatewayError)
+      end
+    end
+
+    # A refusal is definite, and core is right to release the earnings for it.
+    it 'reports an outright refusal as an ordinary failure' do
+      allow(Stripe::Payout).to receive(:create).
+        and_raise(Stripe::InvalidRequestError.new('insufficient funds', 'amount'))
+
+      expect { described_class.new.pay!(payout) }.to raise_error(Stripe::InvalidRequestError)
+    end
   end
 
   # The column is a cache of what a webhook last said, and a webhook can fail
