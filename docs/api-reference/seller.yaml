@@ -593,6 +593,13 @@ paths:
                   - read
                   - admin
                   subjects:
+                  - Spree::DigitalAsset
+                  has_conditions: false
+                - allow: true
+                  actions:
+                  - read
+                  - admin
+                  subjects:
                   - Spree::Import
                   has_conditions: false
                 - allow: true
@@ -667,6 +674,12 @@ paths:
                   - manage
                   subjects:
                   - Spree::CustomField
+                  has_conditions: false
+                - allow: true
+                  actions:
+                  - manage
+                  subjects:
+                  - Spree::DigitalAsset
                   has_conditions: false
                 - allow: true
                   actions:
@@ -14001,10 +14014,10 @@ paths:
             application/json:
               example:
                 direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--bf8a41dc29f8396b3ebf2ae14501542ec66fd07f
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--ec01546e3fc6ebad1b6d0564981d279619e5b061
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--168e4aaabf66b575b282727886561cdfc96ab680
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--389837f16b7b8cde04c6aea7d0e8d4bc3ac5e2e7
               schema:
                 "$ref": "#/components/schemas/DirectUploadResponse"
       requestBody:
