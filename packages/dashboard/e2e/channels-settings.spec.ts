@@ -105,6 +105,35 @@ test.describe('settings / channels', () => {
     await expect(picker).toHaveAttribute('placeholder', /all published products/i)
   })
 
+  test('narrows a channel to selected markets and pins its default', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, CHANNELS_PATH(creds.store_id), ADD_CTA)
+
+    const name = `E2E Channel Markets ${Date.now()}`
+    await createChannel(page, { name })
+    await expect(rowButton(page, name)).toBeVisible({ timeout: 15_000 })
+
+    await rowButton(page, name).click()
+    await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 15_000 })
+
+    // A channel sells into every market until the merchant narrows it, so the
+    // default-market picker offers only what the allowlist allows.
+    await page.getByRole('radio', { name: /^selected markets$/i }).check()
+    await page.getByRole('checkbox', { name: 'Europe' }).check()
+
+    await page.getByLabel(/^default market$/i).click()
+    await page.getByRole('option', { name: 'Europe' }).click()
+
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(rowButton(page, name)).toBeVisible({ timeout: 15_000 })
+
+    // Reopen: the sheet must come back on the branch it was saved in.
+    await rowButton(page, name).click()
+    await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByRole('radio', { name: /^selected markets$/i })).toBeChecked()
+    await expect(page.getByRole('checkbox', { name: 'Europe' })).toBeChecked()
+  })
+
   test('manages order routing rules on a channel', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, CHANNELS_PATH(creds.store_id), ADD_CTA)

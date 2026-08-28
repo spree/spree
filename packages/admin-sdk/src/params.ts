@@ -1636,6 +1636,14 @@ export interface ChannelCreateParams {
   default_catalog_id?: string | null
   /** Fulfillment-origin allowlist (sloc_...); replaces the full set. Empty means every store location serves this channel. */
   stock_location_ids?: string[]
+  /** Market allowlist (mkt_...); replaces the full set. Empty means the channel sells into every market of the store. */
+  market_ids?: string[]
+  /**
+   * Market (mkt_...) a visitor lands in when their country resolves to none
+   * this channel serves. `null` derives it — the store default when served,
+   * else the first allowed market.
+   */
+  default_market_id?: string | null
 }
 
 export interface ChannelUpdateParams {
@@ -1661,6 +1669,14 @@ export interface ChannelUpdateParams {
   default_catalog_id?: string | null
   /** Fulfillment-origin allowlist (sloc_...); replaces the full set. Empty means every store location serves this channel. */
   stock_location_ids?: string[]
+  /** Market allowlist (mkt_...); replaces the full set. Empty means the channel sells into every market of the store. */
+  market_ids?: string[]
+  /**
+   * Market (mkt_...) a visitor lands in when their country resolves to none
+   * this channel serves. `null` derives it — the store default when served,
+   * else the first allowed market.
+   */
+  default_market_id?: string | null
 }
 
 export interface CustomerGroupUpdateParams {

@@ -27,10 +27,13 @@ module Spree
       super || (self.channel = store&.default_channel)
     end
 
-    # Returns the current market, falling back to the store's default market.
+    # Returns the current market, falling back to the channel's default and
+    # then the store's. The channel branch only diverges from the store's own
+    # default once a channel restricts its markets or pins an explicit one
+    # (docs/plans/6.0-channel-markets.md).
     # @return [Spree::Market, nil]
     def market
-      super || store&.default_market
+      super || channel&.resolved_default_market || store&.default_market
     end
 
     # Returns the current currency.

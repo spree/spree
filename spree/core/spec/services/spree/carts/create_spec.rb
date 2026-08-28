@@ -149,5 +149,28 @@ module Spree
         expect(execute.value.line_items.first.quantity).to eq(1)
       end
     end
+
+    # The ambient market follows the shopper's country and may be one the
+    # channel does not sell into; forcing it past the concern's resolution
+    # would make the cart fail its own validation
+    # (docs/plans/6.0-channel-markets.md).
+    context 'when the channel does not serve the ambient market' do
+      let!(:channel) { create(:channel, store: store) }
+      let!(:served) { create(:market, store: store, name: 'Served', currency: 'EUR') }
+
+      before do
+        channel.markets << served
+        Spree::Current.market = store.default_market
+      end
+
+      after { Spree::Current.market = nil }
+
+      it 'falls back to a market the channel serves' do
+        result = subject.call(params: { store: store, channel: channel })
+
+        expect(result).to be_success
+        expect(channel.serves_market?(result.value.market)).to be true
+      end
+    end
   end
 end

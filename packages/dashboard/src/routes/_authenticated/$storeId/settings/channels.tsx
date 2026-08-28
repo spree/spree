@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { Catalog, Channel, ChannelCreateParams } from '@spree/admin-sdk'
+import type { Catalog, Channel, ChannelCreateParams, Market } from '@spree/admin-sdk'
 import {
   adminClient,
   Can,
@@ -49,6 +49,7 @@ import {
   useDeleteChannel,
   useUpdateChannel,
 } from '../../../../hooks/use-channels'
+import { useMarkets } from '../../../../hooks/use-markets'
 import { slugify } from '../../../../lib/slugify'
 import {
   CHANNEL_DEFAULTS,
@@ -259,6 +260,8 @@ function EditChannelSheet({
           channel.preferred_guest_checkout == null ? '' : String(channel.preferred_guest_checkout),
         default_catalog_id: channel.default_catalog_id ?? '',
         stock_location_ids: channel.stock_location_ids ?? [],
+        market_ids: channel.market_ids ?? [],
+        default_market_id: channel.default_market_id ?? '',
       })
     }
   }, [channel, form])
@@ -472,6 +475,8 @@ function ChannelFormFields({ form }: { form: UseFormReturn<ChannelFormValues> })
 
       <DefaultCatalogField form={form} />
 
+      <MarketsField form={form} />
+
       <FulfillmentLocationsField form={form} />
     </FieldGroup>
   )
@@ -513,6 +518,111 @@ function DefaultCatalogField({ form }: { form: UseFormReturn<ChannelFormValues> 
         {t('admin.fields.channel.default_catalog.help')}
       </span>
     </Field>
+  )
+}
+
+/**
+ * Which markets this channel sells into, and where a visitor lands when their
+ * country matches none of them. Narrowing is the exception — a channel serves
+ * every market of the store until the merchant says otherwise, which is how
+ * the API reads an empty array.
+ */
+function MarketsField({ form }: { form: UseFormReturn<ChannelFormValues> }) {
+  const { t } = useTranslation()
+  const { data: marketsData } = useMarkets()
+
+  const markets = marketsData?.data ?? []
+  const selectedIds = form.watch('market_ids') ?? []
+
+  // The radio reads the field rather than holding a second source of truth, so
+  // a saved channel reopens on the branch it was left in.
+  const [scope, setScope] = useState<'all' | 'selected'>(
+    selectedIds.length > 0 ? 'selected' : 'all',
+  )
+  useEffect(() => {
+    if (selectedIds.length > 0) setScope('selected')
+  }, [selectedIds.length])
+
+  // Pinning a market the channel no longer sells into would strand traffic,
+  // so the choices track the allowlist and clearing it drops a stale pin.
+  const allowed: Market[] =
+    selectedIds.length > 0 ? markets.filter((market) => selectedIds.includes(market.id)) : markets
+
+  return (
+    <>
+      <Field>
+        <FieldLabel>{t('admin.fields.channel.markets.label')}</FieldLabel>
+        <span className="text-xs text-muted-foreground">
+          {t('admin.fields.channel.markets.help')}
+        </span>
+        <Controller
+          name="market_ids"
+          control={form.control}
+          render={({ field }) => (
+            <StockLocationScopeField
+              idPrefix="channel-markets"
+              scope={scope}
+              onScopeChange={(next) => {
+                setScope(next)
+                if (next === 'all') field.onChange([])
+              }}
+              locations={markets}
+              selectedIds={field.value ?? []}
+              onSelectedIdsChange={(ids) => {
+                field.onChange(ids)
+                // Drop a pinned default the channel would stop serving.
+                const pinned = form.getValues('default_market_id')
+                if (pinned && ids.length > 0 && !ids.includes(pinned)) {
+                  form.setValue('default_market_id', '', { shouldDirty: true })
+                }
+              }}
+              allLabel={t('admin.fields.channel.markets.all')}
+              selectedLabel={t('admin.fields.channel.markets.selected')}
+              emptyLabel={t('admin.fields.channel.markets.none')}
+            />
+          )}
+        />
+      </Field>
+
+      {scope === 'selected' && selectedIds.length === 0 && (
+        <p className="text-muted-foreground text-xs">
+          {t('admin.fields.channel.markets.none_selected_hint')}
+        </p>
+      )}
+
+      <Field>
+        <FieldLabel htmlFor="channel-default-market">
+          {t('admin.fields.channel.default_market.label')}
+        </FieldLabel>
+        <Controller
+          name="default_market_id"
+          control={form.control}
+          render={({ field }) => {
+            const options = [
+              { value: '', label: t('admin.fields.channel.default_market.derived') },
+              ...allowed.map((market) => ({ value: market.id, label: market.name })),
+            ]
+            return (
+              <Select items={options} value={field.value ?? ''} onValueChange={field.onChange}>
+                <SelectTrigger id="channel-default-market" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {options.map((option) => (
+                    <SelectItem key={option.value || 'derived'} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )
+          }}
+        />
+        <span className="text-xs text-muted-foreground">
+          {t('admin.fields.channel.default_market.help')}
+        </span>
+      </Field>
+    </>
   )
 }
 

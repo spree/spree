@@ -8,7 +8,9 @@ module Spree
                    preferred_storefront_access: [:string, nullable: true],
                    preferred_guest_checkout: [:boolean, nullable: true],
                    stock_location_ids: [:string, multi: true],
-                   default_catalog_id: [:string, nullable: true]
+                   default_catalog_id: [:string, nullable: true],
+                   market_ids: [:string, multi: true],
+                   default_market_id: [:string, nullable: true]
 
           attributes :preferred_order_routing_strategy,
                      :preferred_storefront_access,
@@ -25,6 +27,18 @@ module Spree
           # channel; unset means every publication.
           attribute :default_catalog_id do |record|
             record.default_catalog&.prefixed_id
+          end
+
+          # Market allowlist; empty means the channel sells into every market
+          # of the store.
+          attribute :market_ids do |record|
+            record.markets.map(&:prefixed_id)
+          end
+
+          # The pinned default market, if any. Null means it is derived —
+          # read `resolved_default_market` for the effective value.
+          attribute :default_market_id do |record|
+            record.default_market&.prefixed_id
           end
         end
       end

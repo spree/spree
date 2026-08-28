@@ -360,4 +360,48 @@ RSpec.describe Spree::Api::V3::Admin::ChannelsController, type: :controller do
       expect(channel.reload.default_catalog).to be_nil
     end
   end
+
+  describe 'market allowlist' do
+    let!(:channel) { create(:channel, store: store) }
+    let!(:eu) { create(:market, store: store, name: 'EU', currency: 'EUR') }
+
+    it 'replaces the allowlist and serializes prefixed ids' do
+      patch :update, params: { id: channel.prefixed_id, market_ids: [eu.prefixed_id] }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['market_ids']).to eq([eu.prefixed_id])
+
+      patch :update, params: { id: channel.prefixed_id, market_ids: [] }, as: :json
+      expect(json_response['market_ids']).to eq([])
+    end
+
+    it 'rejects a cross-store market with 404' do
+      foreign = create(:market, store: create(:store))
+
+      patch :update, params: { id: channel.prefixed_id, market_ids: [foreign.prefixed_id] }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it 'sets and clears the default market' do
+      patch :update, params: { id: channel.prefixed_id, default_market_id: eu.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['default_market_id']).to eq(eu.prefixed_id)
+
+      patch :update, params: { id: channel.prefixed_id, default_market_id: nil }, as: :json
+
+      expect(json_response['default_market_id']).to be_nil
+      expect(channel.reload.default_market).to be_nil
+    end
+
+    it 'rejects a cross-store default market with 404' do
+      foreign = create(:market, store: create(:store))
+
+      patch :update, params: { id: channel.prefixed_id, default_market_id: foreign.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(channel.reload.default_market).to be_nil
+    end
+  end
 end

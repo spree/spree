@@ -179,6 +179,17 @@ module Spree
 
           market = current_store&.market_for_country(country)
           return unless market
+          # A channel that does not sell into this market leaves the visitor
+          # on its default market, exactly like a country with no market at
+          # all — browsing never 422s (docs/plans/6.0-channel-markets.md).
+          #
+          # +current_channel+ is called rather than read from
+          # +Spree::Current+: this callback is registered by V3::BaseController
+          # and runs several slots before Store::BaseController's
+          # +set_current_channel+, so the memoized method is what resolves it
+          # here. Matches how HttpCaching reaches the channel.
+          channel = current_channel if respond_to?(:current_channel, true)
+          return if channel && !channel.serves_market?(market)
 
           Spree::Current.market = market
         end

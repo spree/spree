@@ -3751,6 +3751,8 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   stock_location_ids: []
                   default_catalog_id:
+                  market_ids: []
+                  default_market_id:
                 - id: ch_gbHJdmfrXB
                   name: Wholesale
                   code: wholesale
@@ -3765,6 +3767,8 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   stock_location_ids: []
                   default_catalog_id:
+                  market_ids: []
+                  default_market_id:
                 meta:
                   page: 1
                   limit: 25
@@ -3853,6 +3857,8 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 stock_location_ids: []
                 default_catalog_id:
+                market_ids: []
+                default_market_id:
       requestBody:
         content:
           application/json:
@@ -3954,6 +3960,8 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 stock_location_ids: []
                 default_catalog_id:
+                market_ids: []
+                default_market_id:
     patch:
       summary: Update a channel
       tags:
@@ -4011,6 +4019,8 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 stock_location_ids: []
                 default_catalog_id:
+                market_ids: []
+                default_market_id:
       requestBody:
         content:
           application/json:
@@ -36528,6 +36538,13 @@ components:
         default_catalog_id:
           type: string
           nullable: true
+        market_ids:
+          type: array
+          items:
+            type: string
+        default_market_id:
+          type: string
+          nullable: true
       required:
       - id
       - name
@@ -36543,6 +36560,8 @@ components:
       - updated_at
       - stock_location_ids
       - default_catalog_id
+      - market_ids
+      - default_market_id
       x-typelizer: true
     ClaimLineItem:
       type: object

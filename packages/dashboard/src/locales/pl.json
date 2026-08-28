@@ -1077,6 +1077,11 @@
           "label": "Katalog domyślny",
           "placeholder": "Wszystkie opublikowane produkty"
         },
+        "default_market": {
+          "derived": "Automatycznie (domyślny sklepu)",
+          "help": "Gdzie trafia kupujący, którego kraj nie pasuje do żadnego rynku tego kanału.",
+          "label": "Rynek domyślny"
+        },
         "fulfillment_locations": {
           "all": "Wszystkie lokalizacje",
           "help": "Które magazyny i punkty odbioru realizują zamówienia z tego kanału sprzedaży.",
@@ -1092,6 +1097,14 @@
             "false": "Niedozwolone",
             "true": "Dozwolone"
           }
+        },
+        "markets": {
+          "all": "Wszystkie rynki",
+          "help": "Na których rynkach sprzedaje ten kanał. Kupujący z innych miejsc widzą jego rynek domyślny.",
+          "label": "Rynki",
+          "none": "Ten sklep nie ma jeszcze rynków.",
+          "none_selected_hint": "Wybierz co najmniej jeden rynek lub opcję „Wszystkie rynki”.",
+          "selected": "Wybrane rynki"
         },
         "name": {
           "placeholder": "np. POS, Hurt, Sklep Meta"

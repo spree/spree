@@ -27,8 +27,12 @@ module Spree
 
             private
 
+            # Scoped to the markets this channel sells into, so an unserved
+            # market's countries 404 like the market itself
+            # (docs/plans/6.0-channel-markets.md).
             def load_market
-              @market = current_store.markets.find_by_prefix_id!(params[:market_id])
+              scope = current_channel&.allowed_markets || current_store.markets
+              @market = scope.find_by_prefix_id!(params[:market_id])
             end
 
             def serialize_country(country)
