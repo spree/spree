@@ -49,6 +49,7 @@ export * from './spree/form-actions'
 
 export * from './spree/language-menu-items'
 export * from './spree/metadata/metadata-card'
+export * from './spree/product-membership-list'
 export * from './spree/products/status-card'
 export * from './spree/relative-time'
 export * from './spree/resource-combobox'

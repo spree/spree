@@ -97,9 +97,7 @@ module Spree
 
       # Scoped to this store's products, so an id from another tenant adds
       # nothing rather than being inserted past the row-level validation the
-      # bulk write skips. The caller's order is what the positions are numbered
-      # from, so the filtering keeps it — a database returns matching rows in
-      # whatever order it likes.
+      # bulk write skips.
       allowed_ids = store.products.where(id: product_ids).ids.to_set
       taken_ids = catalog_products.pluck(:product_id).to_set
 
@@ -107,21 +105,18 @@ module Spree
       return 0 if new_ids.empty?
 
       now = Time.current
-      next_position = (catalog_products.maximum(:position) || 0) + 1
 
-      rows = new_ids.map.with_index do |product_id, index|
+      rows = new_ids.map do |product_id|
         {
           catalog_id: id,
           product_id: product_id,
-          position: next_position + index,
           created_at: now,
           updated_at: now
         }
       end
 
-      # `acts_as_list` assigns positions in a callback the bulk write skips,
-      # so they are numbered above; :skip keeps a concurrent add from raising
-      # on the unique (catalog_id, product_id) index.
+      # :skip keeps a concurrent add from raising on the unique
+      # (catalog_id, product_id) index.
       opts = { on_duplicate: :skip }
       # MySQL infers the conflict target from the table's unique constraints
       # and rejects an explicit +unique_by+; PostgreSQL/SQLite require it.

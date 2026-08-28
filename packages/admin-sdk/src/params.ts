@@ -885,8 +885,8 @@ export interface CategoryRepositionParams {
   new_position: number
 }
 
-export interface CategoryProductRepositionParams {
-  /** 0-based index among the category's products. */
+export interface ProductMembershipRepositionParams {
+  /** 0-based index among the parent's products. */
   new_position: number
 }
 
@@ -979,11 +979,6 @@ export interface CollectionUpdateParams {
    * any existing rule left out of the array is removed.
    */
   rules?: CollectionRuleParam[]
-}
-
-export interface CollectionProductRepositionParams {
-  /** 0-based index among the collection's products. */
-  new_position: number
 }
 
 export interface VariantOptionPair {
@@ -1934,21 +1929,13 @@ export interface PriceListCreateParams {
   /** `all` — every rule must match. `any` — first match wins. */
   match_policy?: 'all' | 'any'
   position?: number
-  /**
-   * Admin UI shape. Prefixed product ids to seed the list with —
-   * placeholder prices (`amount: null`) are inserted for each variant
-   * × supported currency. The spreadsheet editor then fills them in.
-   *
-   * Prefer `prices` for server-to-server use: it lets you create the
-   * list and ship the exact per-variant amounts in one request.
-   */
-  product_ids?: string[]
   /** Optional nested rules — reconciled on save. */
   rules?: PriceListRuleDraft[]
   /**
-   * Server-to-server alternative to `product_ids`. Each row upserts on
+   * Server-to-server shape. Each row upserts on
    * `(variant_id, currency, price_list_id)`, so variants in this array
    * implicitly become part of the list with the supplied amount.
+   * Curating whole products goes through `client.priceLists.products`.
    */
   prices?: PriceListPriceOverrideParams[]
 }
@@ -1960,19 +1947,12 @@ export interface PriceListUpdateParams {
   ends_at?: string | null
   match_policy?: 'all' | 'any'
   position?: number
-  /**
-   * Reconciles list membership: every id in the array is kept (placeholder
-   * prices created if missing); every id currently in the list but not in
-   * the array is dropped. Send the desired full set on every update —
-   * the server diffs it against the current state.
-   */
-  product_ids?: string[]
   rules?: PriceListRuleDraft[]
   /**
    * Inline spreadsheet payload. Only ship the rows whose `amount` /
    * `compare_at_amount` actually changed — the server skips unchanged
-   * cells, but a smaller body is still nicer. Runs in `after_save` so
-   * it picks up rows created by `product_ids=` in the same request.
+   * cells, but a smaller body is still nicer. Product membership is
+   * managed through `client.priceLists.products` instead.
    */
   prices?: PriceListPriceOverrideParams[]
 }

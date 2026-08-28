@@ -55,7 +55,7 @@ export function useDeleteCatalog() {
 }
 
 // ---------------------------------------------------------------------------
-// Assortment — the ProductMembershipHooks shape ProductMembershipCard expects
+// Assortment
 // ---------------------------------------------------------------------------
 
 export function useCatalogProducts(catalogId: string | undefined, page = 1) {
@@ -67,51 +67,33 @@ export function useCatalogProducts(catalogId: string | undefined, page = 1) {
   })
 }
 
-export function useAddCatalogProducts(catalogId: string) {
-  return useResourceMutation<{ added_count: number }, Error, string[]>({
-    mutationFn: (productIds) => adminClient.catalogs.products.create(catalogId, productIds),
-    invalidate: [
-      ['catalogs', catalogId, 'products'],
-      ['catalogs', catalogId],
-    ],
-    successMessage: i18n.t('admin.catalogs.messages.products_added'),
-    errorMessage: i18n.t('admin.errors.failed_to_update'),
-  })
+export interface CatalogSavePayload {
+  /** Settings PATCH body; omitted when the form is clean. */
+  attributes?: CatalogParams
+  /** Staged assortment additions, flushed on Save. */
+  addProductIds?: string[]
+  /** Staged assortment removals, flushed on Save. */
+  removeProductIds?: string[]
 }
 
-export function useRemoveCatalogProduct(catalogId: string) {
-  return useResourceMutation<void, Error, string>({
-    mutationFn: (productId) => adminClient.catalogs.products.delete(catalogId, productId),
-    invalidate: [
-      ['catalogs', catalogId, 'products'],
-      ['catalogs', catalogId],
-    ],
-    successMessage: i18n.t('admin.catalogs.messages.product_removed'),
-    errorMessage: i18n.t('admin.errors.failed_to_update'),
-  })
-}
-
-export function useRemoveCatalogProducts(catalogId: string) {
-  return useResourceMutation<unknown, Error, string[]>({
-    mutationFn: (productIds) =>
-      Promise.all(
-        productIds.map((productId) => adminClient.catalogs.products.delete(catalogId, productId)),
-      ),
-    invalidate: [
-      ['catalogs', catalogId, 'products'],
-      ['catalogs', catalogId],
-    ],
-    successMessage: i18n.t('admin.catalogs.messages.products_removed'),
-    errorMessage: i18n.t('admin.errors.failed_to_update'),
-  })
-}
-
-export function useRepositionCatalogProduct(catalogId: string) {
-  return useResourceMutation<void, Error, { productId: string; new_position: number }>({
-    mutationFn: ({ productId, new_position }) =>
-      adminClient.catalogs.products.reposition(catalogId, productId, new_position),
-    invalidate: [['catalogs', catalogId, 'products']],
-    successMessage: false,
+/**
+ * One-shot save for the catalog page: settings plus the staged membership
+ * changes, in one mutation with one toast. Settings go first so a
+ * validation failure aborts before any membership write.
+ */
+export function useSaveCatalog(catalogId: string) {
+  return useResourceMutation<void, Error, CatalogSavePayload>({
+    mutationFn: async ({ attributes, addProductIds = [], removeProductIds = [] }) => {
+      if (attributes) await adminClient.catalogs.update(catalogId, attributes)
+      if (removeProductIds.length > 0) {
+        await adminClient.catalogs.products.delete(catalogId, removeProductIds)
+      }
+      if (addProductIds.length > 0) {
+        await adminClient.catalogs.products.create(catalogId, addProductIds)
+      }
+    },
+    invalidate: [['catalogs'], ['catalogs', catalogId], ['catalogs', catalogId, 'products']],
+    successMessage: i18n.t('admin.catalogs.messages.updated'),
     errorMessage: i18n.t('admin.errors.failed_to_update'),
   })
 }
@@ -123,7 +105,10 @@ export function useRepositionCatalogProduct(catalogId: string) {
 export function useImportCatalogPriceListProducts(catalogId: string) {
   return useResourceMutation<{ added_count: number }, Error, void>({
     mutationFn: () => adminClient.catalogs.importProducts(catalogId),
-    invalidate: [['catalogs', catalogId]],
+    invalidate: [
+      ['catalogs', catalogId],
+      ['catalogs', catalogId, 'products'],
+    ],
     successMessage: i18n.t('admin.catalogs.messages.products_imported'),
     errorMessage: i18n.t('admin.errors.failed_to_update'),
   })

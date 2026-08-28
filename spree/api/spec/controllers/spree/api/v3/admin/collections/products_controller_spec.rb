@@ -57,56 +57,35 @@ RSpec.describe Spree::Api::V3::Admin::Collections::ProductsController, type: :co
     end
   end
 
-  describe 'POST #create' do
+  it_behaves_like 'a product membership surface' do
+    let(:parent_route_params) { { collection_id: collection.prefixed_id } }
+    let(:foreign_parent_route_params) do
+      { collection_id: create(:collection, store: create(:store)).prefixed_id }
+    end
+
+    def seed_member(product)
+      Spree::Collections::AddProducts.call(collections: [collection], products: [product])
+    end
+
+    def member_products
+      collection.products.reload.to_a
+    end
+  end
+
+  describe 'automatic collections' do
     let!(:product) { create(:product, store: store) }
+    let(:automatic) { create(:automatic_collection, store: store) }
 
-    it 'adds the product to the collection' do
-      post :create, params: { collection_id: collection.prefixed_id, product_id: product.prefixed_id }, as: :json
-
-      expect(response).to have_http_status(:created)
-      expect(member_ids).to include(product.id)
-    end
-
-    it '404s for a product outside the store' do
-      other = create(:product, store: create(:store))
-      post :create, params: { collection_id: collection.prefixed_id, product_id: other.prefixed_id }, as: :json
-
-      expect(response).to have_http_status(:not_found)
-    end
-
-    it 'rejects adding to an automatic collection (rule-managed, not curated)' do
-      automatic = create(:automatic_collection, store: store)
-      post :create, params: { collection_id: automatic.prefixed_id, product_id: product.prefixed_id }, as: :json
+    it 'rejects adding (rule-managed, not curated)' do
+      post :create, params: { collection_id: automatic.prefixed_id, product_ids: [product.prefixed_id] }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(json_response['error']['code']).to eq('validation_error')
       expect(json_response['error']['message']).to eq(Spree.t('api.errors.automatic_collection_curation'))
-      expect(member_ids).not_to include(product.id)
-    end
-  end
-
-  describe 'DELETE #destroy' do
-    let!(:product) { create(:product, store: store) }
-
-    before { Spree::ProductCollection.create!(collection: collection, product: product, position: 1) }
-
-    it 'removes the product from the collection' do
-      delete :destroy, params: { collection_id: collection.prefixed_id, id: product.prefixed_id }, as: :json
-
-      expect(response).to have_http_status(:no_content)
-      expect(member_ids).not_to include(product.id)
     end
 
-    it '404s for a product not in the collection' do
-      stray = create(:product, store: store)
-      delete :destroy, params: { collection_id: collection.prefixed_id, id: stray.prefixed_id }, as: :json
-
-      expect(response).to have_http_status(:not_found)
-    end
-
-    it 'rejects removing from an automatic collection before looking up the product' do
-      automatic = create(:automatic_collection, store: store)
-      delete :destroy, params: { collection_id: automatic.prefixed_id, id: product.prefixed_id }, as: :json
+    it 'rejects removing before looking up the products' do
+      delete :destroy, params: { collection_id: automatic.prefixed_id, product_ids: [product.prefixed_id] }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(json_response['error']['code']).to eq('validation_error')

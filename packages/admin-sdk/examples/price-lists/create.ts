@@ -9,8 +9,8 @@ const client = createAdminClient({
 // Server-to-server one-shot create. Ship the rules that gate the list
 // and the exact per-variant prices in a single request — variants in
 // `prices` implicitly become part of the list (upserted on the unique
-// key `(variant_id, currency, price_list_id)`), so there's no need to
-// pre-declare `product_ids` separately.
+// key `(variant_id, currency, price_list_id)`). Curating whole products
+// goes through `client.priceLists.products` instead.
 const priceList = await client.priceLists.create({
   name: 'EU wholesale',
   description: 'Tiered pricing for verified B2B customers',

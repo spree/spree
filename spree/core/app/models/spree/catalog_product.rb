@@ -1,9 +1,7 @@
 module Spree
-  # Membership of one product in a catalog's assortment, manually ordered.
+  # Membership of one product in a catalog's assortment.
   class CatalogProduct < Spree.base_class
     has_prefix_id :catp
-
-    acts_as_list scope: :catalog_id
 
     belongs_to :catalog, class_name: 'Spree::Catalog', touch: true, inverse_of: :catalog_products
     belongs_to :product, class_name: 'Spree::Product'

@@ -17,8 +17,7 @@ module Spree
                    match_policy: :string,
                    currently_active: :boolean,
                    products_count: :number,
-                   prices_count: :number,
-                   product_ids: [:string, multi: true]
+                   prices_count: :number
 
           attributes :name, :description, :status, :position, :match_policy,
                      starts_at: :iso8601, ends_at: :iso8601, deleted_at: :iso8601,
@@ -35,11 +34,6 @@ module Spree
           attribute :prices_count do |pl|
             pl.prices.count
           end
-
-          # Prefixed product ids in the list — drives the SPA's
-          # Products picker pre-fill, and is the same payload the
-          # client ships back on PATCH to reconcile membership.
-          attribute :product_ids, &:product_prefixed_ids
 
           many :price_rules,
                resource: proc { Spree.api.admin_price_rule_serializer },

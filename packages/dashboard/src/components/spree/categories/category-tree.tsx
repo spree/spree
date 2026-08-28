@@ -143,7 +143,7 @@ export function CategoryTree({
             <TableHead className="w-12" />
           </TableRow>
         </TableHeader>
-        <TableBody className="border-t border-border">
+        <TableBody>
           {flattened.length === 0 ? (
             <TableEmpty colSpan={4}>{t('admin.categories.empty')}</TableEmpty>
           ) : (

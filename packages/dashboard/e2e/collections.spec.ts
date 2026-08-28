@@ -101,20 +101,25 @@ test.describe('collections management', () => {
     const productRow = page.getByRole('row', { name: new RegExp(FIXTURE_PROMO_PRODUCT, 'i') })
     await expect(productRow).toBeVisible({ timeout: 15_000 })
 
-    // Remove it via the per-row remove button.
+    // Staged, not yet written — the badge says so, and Save is what persists.
+    await expect(productRow.getByText(/^new$/i)).toBeVisible()
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(productRow.getByText(/^new$/i)).toHaveCount(0, { timeout: 15_000 })
+
+    await page.reload()
+    await expect(productRow).toBeVisible({ timeout: 15_000 })
+
+    // Removing stages too — no confirm, because Save is the confirmation.
     await productRow.getByRole('button', { name: /remove from collection/i }).click()
-    // Removing writes through immediately, so it confirms first. Scope to the
-    // dialog — the row button matches /remove/ too.
-    await page
-      .getByRole('dialog')
-      .getByRole('button', { name: /^remove$/i })
-      .click()
+    await expect(productRow.getByRole('button', { name: /restore/i })).toBeVisible()
+
+    await page.getByRole('button', { name: /^save$/i }).click()
     await expect(page.getByText(/no products in this collection yet/i)).toBeVisible({
       timeout: 15_000,
     })
   })
 
-  test('bulk-removes selected products behind a confirm', async ({ page }) => {
+  test('bulk-removes selected products on Save, discardable until then', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, COLLECTIONS_PATH(creds.store_id), CTA)
 
@@ -134,27 +139,24 @@ test.describe('collections management', () => {
 
     const productRow = page.getByRole('row', { name: new RegExp(FIXTURE_PROMO_PRODUCT, 'i') })
     await expect(productRow).toBeVisible({ timeout: 15_000 })
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(productRow.getByText(/^new$/i)).toHaveCount(0, { timeout: 15_000 })
 
     // Selecting a row swaps the "Add products" CTA for the bulk remove button.
-    // Scope it to the card — once the dialog opens, its confirm button carries
-    // the same accessible name.
     const card = page.locator('#root')
     await productRow.getByRole('checkbox').check()
     await card.getByRole('button', { name: /^remove$/i }).click()
 
-    // Cancelling leaves the product in place — the bulk write is confirmed, and
-    // it persists immediately rather than waiting for the page's Save.
-    const dialog = page.getByRole('dialog')
-    await expect(dialog.getByText(/takes effect immediately/i)).toBeVisible()
-    await dialog.getByRole('button', { name: /^cancel$/i }).click()
+    // Staged, not written: Discard rolls it back with the rest of the form.
+    await expect(productRow.getByRole('button', { name: /restore/i })).toBeVisible()
+    await page.getByRole('button', { name: /^discard$/i }).click()
+    await expect(productRow.getByRole('button', { name: /restore/i })).toHaveCount(0)
     await expect(productRow).toBeVisible()
 
-    // Confirming removes it.
+    // Staging it again and saving is what actually removes it.
+    await productRow.getByRole('checkbox').check()
     await card.getByRole('button', { name: /^remove$/i }).click()
-    await page
-      .getByRole('dialog')
-      .getByRole('button', { name: /^remove$/i })
-      .click()
+    await page.getByRole('button', { name: /^save$/i }).click()
     await expect(page.getByText(/no products in this collection yet/i)).toBeVisible({
       timeout: 15_000,
     })
