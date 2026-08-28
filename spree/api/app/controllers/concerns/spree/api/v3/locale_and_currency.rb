@@ -62,7 +62,34 @@ module Spree
         #
         # @return [Array<String>] supported locale codes
         def supported_locales
-          @supported_locales ||= current_store&.supported_locales_list
+          @supported_locales ||= begin
+            # Only a NARROWED channel changes the answer: with no allowlist
+            # the store's own list stands, which is what every non-market
+            # store relies on. A narrowed channel sells only its markets'
+            # languages, so accepting a header for a market it does not serve
+            # would answer in a locale it cannot price
+            # (docs/plans/6.0-channel-markets.md).
+            markets = narrowed_channel_markets
+            if markets
+              markets.flat_map(&:supported_locales_list).uniq.sort
+            else
+              current_store&.supported_locales_list
+            end
+          end
+        end
+
+        # The markets a narrowed channel sells into, or nil when the channel
+        # places no restriction — callers then fall back to the store's own
+        # configuration rather than deriving it from every market.
+        #
+        # @return [Array<Spree::Market>, nil]
+        def narrowed_channel_markets
+          return nil unless respond_to?(:current_channel, true)
+
+          channel = current_channel
+          return nil if channel.nil? || channel.served_market_ids.empty?
+
+          channel.allowed_markets.to_a.presence
         end
 
         # Checks if the given locale is supported by the current store.
@@ -81,7 +108,17 @@ module Spree
         #
         # @return [Array<Money::Currency>] supported currencies
         def supported_currencies
-          @supported_currencies ||= current_store&.supported_currencies_list
+          @supported_currencies ||= begin
+            # Same reasoning as +supported_locales+: a narrowed channel's
+            # markets are the sellable set, so a currency outside them is not
+            # on offer.
+            markets = narrowed_channel_markets
+            if markets
+              markets.filter_map { |market| ::Money::Currency.find(market.currency) }.uniq
+            else
+              current_store&.supported_currencies_list
+            end
+          end
         end
 
         # Checks if the given currency ISO code is supported by the current store.

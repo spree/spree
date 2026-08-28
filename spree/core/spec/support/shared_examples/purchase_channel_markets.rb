@@ -32,6 +32,15 @@ RSpec.shared_examples 'a purchase constrained to channel-served markets' do
     expect(purchase).to be_valid
   end
 
+  it 'refuses a market belonging to another store' do
+    foreign = create(:market, store: create(:store))
+
+    purchase = build(purchase_factory, store: store, channel: channel, market: foreign)
+
+    expect(purchase).not_to be_valid
+    expect(purchase.errors[:market]).to be_present
+  end
+
   # Jobs and imports build purchases without channel context; the guard must
   # not turn those into validation failures.
   it 'skips the check when there is no channel' do

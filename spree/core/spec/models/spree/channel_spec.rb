@@ -311,6 +311,15 @@ RSpec.describe Spree::Channel, type: :model do
       it 'is false for nil' do
         expect(channel.serves_market?(nil)).to be false
       end
+
+      # Purchase validation trusts this predicate, so it carries the tenancy
+      # check itself rather than assuming the caller made it — an unrestricted
+      # channel must not wave through another store's market.
+      it 'is false for a market from another store, even unrestricted' do
+        foreign = create(:market, store: create(:store))
+
+        expect(channel.serves_market?(foreign)).to be false
+      end
     end
 
     describe '#allowed_markets' do

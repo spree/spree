@@ -1064,7 +1064,7 @@
           "placeholder": "All published products"
         },
         "default_market": {
-          "derived": "Automatic (store default)",
+          "derived": "Automatic (from this channel’s markets)",
           "help": "Where a shopper lands when their country matches none of this channel’s markets.",
           "label": "Default market"
         },

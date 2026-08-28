@@ -184,6 +184,17 @@ RSpec.describe Spree::Api::V3::Store::MarketsController, type: :controller do
         expect(seen.first).to eq(eu_market)
         expect(seen.last).to eq('EUR')
       end
+
+      # The channel's markets are the sellable set, so a currency header for a
+      # market it does not serve is not on offer and must be refused rather
+      # than accepted as the request currency.
+      it 'refuses a currency header outside the channel markets' do
+        request.headers['x-spree-currency'] = 'USD'
+        get :index
+
+        expect(controller.send(:supported_currency?, 'USD')).to be false
+        expect(controller.send(:supported_currency?, 'EUR')).to be true
+      end
     end
   end
 end
