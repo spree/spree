@@ -72,7 +72,13 @@ module Spree::Preferences::Preferable
   # schema, so nothing offers it as a field to fill in.
   def preference_internal(name)
     has_preference! name
-    send(self.class.preference_internal_getter_method(name))
+    getter = self.class.preference_internal_getter_method(name)
+    # A preference declared before this option existed has no such reader.
+    # Treated as not internal rather than raising, so one old declaration
+    # cannot take a whole class's preference schema down with it.
+    return false unless respond_to?(getter)
+
+    send(getter)
   end
 
   def has_preference!(name)

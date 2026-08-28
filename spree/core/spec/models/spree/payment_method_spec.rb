@@ -369,5 +369,18 @@ describe Spree::PaymentMethod, type: :model do
       expect(gateway.preference_internal(:issued_secret)).to be(true)
       expect(gateway.preference_internal(:api_key)).to be_nil
     end
+
+    # A gateway loaded from a build that predates this option has no such
+    # reader. Schema computation rescues everything into an empty list, so
+    # without a guard one old declaration would strip every field from the
+    # class — including the password ones the admin form relies on.
+    it 'still describes a class whose declarations predate the option' do
+      gateway_class.send(:undef_method, :preferred_issued_secret_internal)
+      gateway_class.instance_variable_set(:@preference_schema, nil)
+
+      keys = gateway_class.preference_schema.map { |field| field[:key] }
+
+      expect(keys).to include(:api_key, :issued_secret)
+    end
   end
 end
