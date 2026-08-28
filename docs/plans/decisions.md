@@ -4109,6 +4109,58 @@ dropped kinds were always inert (the inclusion validation runs on the
 assignment row, which nothing re-saves), so they are left to lie. Plan
 amended: `6.0-b2b-companies-and-catalogs.md`.
 
+## 2026-08-28 — Channel→Markets allowlist design finalized; per-channel default market becomes a persisted column
+
+A full review of `6.0-channel-markets.md` (drafted 2026-07-23) against
+post-catalogs main found the design intact — nothing shipped since
+contradicts it, `6.0-channel-delivery.md` already treats its empty-allowlist
+convention as established, and the 2026-08-28 catalog-assignment narrowing
+removed the only competing channel↔market path. Three corrections and both
+open questions were settled; status moves to ready-to-implement.
+
+**Corrections from verifying the wiring points:**
+
+1. **The market filter reads the channel lazily.** Empirically, on
+   `Store::MarketsController` `set_market_from_country` registers at
+   before_action index 2 (`V3::BaseController` → `LocaleAndCurrency`) while
+   `set_current_channel` registers at index 7 (`Store::BaseController` →
+   `ChannelResolution`). Rather than restructure a callback chain with
+   documented ordering constraints, the filter calls the memoized
+   `current_channel` method — the same lazy pattern
+   `HttpCaching#cache_channel_fragment` already uses. The key-vs-header 422
+   check still runs at its own slot.
+2. **Purchase-level validation, both hosts.** Order-market wiring moved into
+   the shared `Spree::Purchase::Market` concern (Cart + Order) after the
+   draft was written; the "market must be served by its channel" validation
+   and channel-aware resolution go there, with a shared-example battery run
+   against both hosts.
+3. **`resolve` is a third leak path.** The draft scoped `/store/markets`
+   index and nested countries but missed `GET /store/markets/resolve`, which
+   calls `market_for_country` directly. All three actions scope through
+   `current_channel.allowed_markets`; an unserved resolution is a 404,
+   indistinguishable from a country with no market. HTTP caching needs no
+   work — ETags already fold `current_channel&.id` and `Vary` carries
+   `x-spree-channel`.
+
+**Resolved questions:**
+
+- **Ship-to addresses are gated by delivery zones, never by markets.** An
+  uncovered address gets zero delivery options at the delivery step; a
+  covered one checks out in the channel-default market experience. A
+  market-based address rejection would be a third geography gate —
+  `MarketCountry#country_covered_by_shipping_zone` already guarantees served
+  markets are deliverable, and zone coverage already decides deliverability.
+  Merchants whose zones deliberately deliver wider than their market list
+  keep working.
+- **Per-channel default market is a persisted nullable
+  `spree_channels.default_market_id`** (reverses the draft's derived-only
+  stance and its "no market columns on spree_channels" constraint). Null =
+  derived (store default when served, else first allowed by position). Read
+  through `Channel#resolved_default_market` — the raw association can go
+  stale against the allowlist, and only the resolver guards that (explicit
+  default honored while still served). Market deletion nullifies the column.
+
+Plan updated: `6.0-channel-markets.md`.
 ## 2026-08-30 — Wholesale shipping ships in 6.0: PackageType, unpriced rates, collected deposits; lot-level inventory joins inventory-operations
 
 Merchant feedback (wholesale carton/pallet/container shipping) turned into
