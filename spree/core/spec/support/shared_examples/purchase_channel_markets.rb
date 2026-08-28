@@ -46,4 +46,15 @@ RSpec.shared_examples 'a purchase constrained to channel-served markets' do
 
     expect(channel.serves_market?(purchase.market)).to be true
   end
+
+  # Changing currency re-resolves the market; the candidates must come from
+  # the allowlist, or the purchase would resolve into a market its own
+  # validation rejects.
+  it 'resolves a currency change within the served markets' do
+    purchase = create(purchase_factory, store: store, channel: channel, market: served)
+
+    purchase.update(currency: unserved.currency)
+
+    expect(purchase.market).to eq(served)
+  end
 end
