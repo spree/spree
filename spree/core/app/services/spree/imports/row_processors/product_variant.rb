@@ -7,10 +7,11 @@ module Spree
         def initialize(row, **)
           super
           @store = row.store
+          @seller = import.seller
           @product = ensure_product_exists
         end
 
-        attr_reader :product, :store
+        attr_reader :product, :store, :seller
 
         def process!
           variant = if attributes['sku'].present?
@@ -48,7 +49,11 @@ module Spree
           end
 
           if attributes['inventory_count'].present?
-            variant.set_stock(attributes['inventory_count'].to_i, attributes['inventory_backorderable']&.to_b)
+            variant.set_stock(
+              attributes['inventory_count'].to_i,
+              attributes['inventory_backorderable']&.to_b,
+              import_stock_location
+            )
           end
 
           handle_images(variant)
@@ -108,8 +113,18 @@ module Spree
           end
         end
 
+        # Which products this import may resolve an existing row onto.
+        #
+        # A seller's import reaches only that seller's own products. The
+        # ability cannot answer this: it grants capability, never tenancy —
+        # a seller holding `write_products` gets `can :manage, Spree::Product`,
+        # the whole class (see Spree::Ability). On the API that is safe because
+        # the controller scope-fetches through `current_seller`; a background
+        # row processor has no controller, so the narrowing has to happen here
+        # or a CSV naming another seller's slug would edit their product.
         def product_scope
-          Spree::Product.accessible_by(import.current_ability, :manage)
+          scope = Spree::Product.accessible_by(import.current_ability, :manage)
+          seller.present? ? scope.where(seller_id: seller.id) : scope
         end
 
         # Imported rows pass the same :validate hook dashboard edits do — one
@@ -145,6 +160,10 @@ module Spree
             product.slug = attributes['slug']
             product.sku = attributes['sku'] if attributes['sku'].present? && options.empty?
             product.store = store
+            # A seller's import creates the seller's products. Without this the
+            # rows would land unowned — belonging to the store, invisible in the
+            # seller's own panel and unattributable at commission time.
+            product.seller = seller if seller.present?
             # Publish to the store's default channel so imported products surface
             # in the storefront.
             product.channels << store.default_channel if store.default_channel && product.channels.empty?
@@ -155,7 +174,16 @@ module Spree
           product.meta_title = attributes['meta_title'] if attributes['meta_title'].present?
           product.meta_description = attributes['meta_description'] if attributes['meta_description'].present?
           product.meta_keywords = attributes['meta_keywords'] if attributes['meta_keywords'].present?
-          product.status = to_spree_status(attributes['status']) if attributes['status'].present?
+          # A seller never reaches `active` by their own hand, so the CSV's
+          # status column is ignored on a seller's import — otherwise
+          # `status,active` would publish to the marketplace catalog with
+          # nobody having looked at it, which is the hole the JSON endpoint
+          # already closed (docs/plans/6.0-seller-product-submission.md).
+          # Imported products land as `draft`; the seller submits each for
+          # review afterwards.
+          if attributes['status'].present? && seller.blank?
+            product.status = to_spree_status(attributes['status'])
+          end
 
           if options.empty?
             if attributes['product_type'].present?
@@ -170,8 +198,14 @@ module Spree
         def prepare_product_type
           product_type_name = attributes['product_type'].strip
           cached_lookup(:product_type, product_type_name) do
-            Spree::ProductType.where(store_id: store.id).find_by(name: product_type_name) ||
-              Spree::ProductType.create!(name: product_type_name, store_id: store.id)
+            existing = Spree::ProductType.where(store_id: store.id).find_by(name: product_type_name)
+            # A seller fills in a type's fields; they do not define types
+            # (`product_types` is read-only for the seller audience). An
+            # unknown name is ignored rather than created, so a CSV cannot
+            # extend the marketplace's own vocabulary.
+            next existing if seller.present?
+
+            existing || Spree::ProductType.create!(name: product_type_name, store_id: store.id)
           end
         end
 
@@ -179,6 +213,25 @@ module Spree
           tax_category_name = attributes['tax_category'].strip
           cached_lookup(:tax_category, tax_category_name) do
             Spree::TaxCategory.find_by(name: tax_category_name)
+          end
+        end
+
+        # Where an imported row's stock lands.
+        #
+        # Nil for an operator's import, which leaves `set_stock` to pick the
+        # store's default. A seller's stock belongs in their own warehouse:
+        # `Variant#default_stock_location` answers the *store's*, so without
+        # this a seller's `inventory_count` would deposit their goods in the
+        # marketplace's location — the same mistake the seller products
+        # endpoint narrows `stock_levels` to prevent.
+        #
+        # A seller with no location of their own falls back to the store's
+        # rather than dropping the count on the floor.
+        def import_stock_location
+          return nil if seller.blank?
+
+          cached_lookup(:seller_stock_location, seller.id) do
+            seller.stock_locations.active.order_default.first
           end
         end
 
@@ -342,13 +395,23 @@ module Spree
           product.update!(custom_fields_attributes: nested_attrs) unless nested_attrs.empty?
         end
 
+        # Tags are tenanted to the store (`acts_as_taggable_tenant :store_id`),
+        # so a seller typing one adds a term to the marketplace's shared
+        # vocabulary rather than labelling their own product — which is why the
+        # seller products endpoint does not permit them either.
         def handle_tags(product)
+          return if seller.present?
           return Spree::Imports::AssignTagsJob.perform_now(product.id, attributes['tags']) if import.preferred_inline
 
           Spree::Imports::AssignTagsJob.perform_later(product.id, attributes['tags'])
         end
 
+        # How a product is filed is the marketplace's own merchandising, and
+        # this job *creates* the categories it cannot find. `categories` has no
+        # seller audience in the permission catalog at all.
         def handle_categories(product)
+          return if seller.present?
+
           names = prepare_taxon_pretty_names
           return Spree::Imports::CreateCategoriesJob.perform_now(product.id, store.id, names) if import.preferred_inline
 

@@ -2064,70 +2064,6 @@
         "search_placeholder": "Rechercher par code…"
       }
     },
-    "imports": {
-      "download_original": "Télécharger le fichier d'origine",
-      "failed": {
-        "description": "Le fichier n'a pas pu être traité.",
-        "title": "Échec de l'import"
-      },
-      "failed_rows": {
-        "error": "Erreur",
-        "hide_data": "Masquer les données",
-        "next_page": "Page suivante",
-        "prev_page": "Page précédente",
-        "row_number": "Ligne",
-        "title": "Lignes en échec",
-        "view_data": "Voir les données"
-      },
-      "load_failed": "Impossible de charger l'import.",
-      "mapping": {
-        "description": "Associez les colonnes de votre fichier aux champs {{type}}.",
-        "field": "Champ",
-        "file_column": "Colonne du fichier",
-        "missing_required": "Associez les champs requis pour continuer : {{fields}}",
-        "not_mapped": "Non associée",
-        "required": "Requis",
-        "sample": "Exemple",
-        "start": "Lancer l'import",
-        "starting": "Lancement…",
-        "title": "Associer les colonnes"
-      },
-      "processing": {
-        "failed_count": "{{failed}} en échec",
-        "note": "Vous pouvez quitter cette page — l'import continue en arrière-plan.",
-        "preparing": "Préparation des lignes…",
-        "progress": "{{processed}} lignes traitées sur {{total}}",
-        "retrying": "Nouvelle tentative des lignes en échec · {{remaining}} restantes",
-        "title": "Traitement des lignes"
-      },
-      "results": {
-        "completed_title": "Import terminé",
-        "retry_failed": "Réessayer les lignes en échec ({{failed}})",
-        "retrying": "Nouvelle tentative…",
-        "summary": "{{completed}} lignes importées · {{failed}} en échec",
-        "view_records": "Voir {{type}}"
-      },
-      "status": {
-        "completed": "Terminé",
-        "completed_mapping": "En file",
-        "failed": "Échoué",
-        "mapping": "Association",
-        "pending": "En attente",
-        "processing": "En cours"
-      },
-      "steps": {
-        "complete": "Terminé",
-        "map_fields": "Associer les champs",
-        "process_rows": "Traiter les lignes"
-      },
-      "try_again": "Réessayer",
-      "types": {
-        "customers": "Clients",
-        "product_translations": "Traductions de produits",
-        "products": "Produits"
-      },
-      "wizard_title": "Import"
-    },
     "integrations": {
       "active_toggle": {
         "help": "L'activation vérifie la connexion et rend l'intégration disponible pour les fournisseurs.",
@@ -3245,8 +3181,10 @@
           "search_placeholder": "Rechercher par numéro…",
           "table": {
             "failed_count": "{{failed}} en échec",
+            "first_party": "Vous",
             "number": "Numéro",
             "rows": "Lignes",
+            "seller": "Vendeur",
             "status": "Statut",
             "type": "Type"
           },

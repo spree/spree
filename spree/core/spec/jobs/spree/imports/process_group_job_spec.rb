@@ -4,7 +4,7 @@ RSpec.describe Spree::Imports::ProcessGroupJob, type: :job do
   let(:store) { @default_store }
 
   let!(:import) do
-    create(:import, owner: store, type: 'Spree::Imports::Products', status: :processing,
+    create(:import, store: store, type: 'Spree::Imports::Products', status: :processing,
            processing_groups_count: 1, completed_groups_count: 0)
   end
 

@@ -4,6 +4,8 @@ import type {
   AuthTokens,
   Export,
   Fulfillment,
+  Import,
+  ImportRow,
   Invitation,
   Order,
   Policy,
@@ -461,6 +463,67 @@ export class SellerClient {
     delete: (idOrSlug: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/policies/${idOrSlug}`, options),
   }
+
+  /**
+   * Bulk-listing this seller's catalog from a CSV.
+   *
+   * The flow is the operator's: upload the file with `directUploads.create()`,
+   * `create()` the import from the returned `signed_id`, and the response
+   * comes back in the `mapping` state carrying `schema_fields`, `csv_headers`,
+   * a `sample_row` and the auto-assigned `mappings`. Adjust those and call
+   * `completeMapping(id)` to start processing, then poll `get(id)` while
+   * `status` is `completed_mapping`/`processing` (`completed`/`failed` are
+   * terminal). Failed rows are listed via
+   * `rows.list(id, { status_eq: 'failed' })` and re-run with
+   * `retryFailedRows(id)`.
+   *
+   * Products only, and what an import creates is a draft: a seller reaches
+   * `active` through review, never by uploading.
+   */
+  readonly imports = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Import>> =>
+      this.request<PaginatedResponse<Import>>('GET', '/imports', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<Import> =>
+      this.request<Import>('GET', `/imports/${id}`, options),
+
+    create: (params: ImportCreateParams, options?: RequestOptions): Promise<Import> =>
+      this.request<Import>('POST', '/imports', { ...options, body: params }),
+
+    completeMapping: (
+      id: string,
+      params?: ImportCompleteMappingParams,
+      options?: RequestOptions,
+    ): Promise<Import> =>
+      this.request<Import>('PATCH', `/imports/${id}/complete_mapping`, {
+        ...options,
+        body: params ?? {},
+      }),
+
+    retryFailedRows: (id: string, options?: RequestOptions): Promise<Import> =>
+      this.request<Import>('PATCH', `/imports/${id}/retry_failed_rows`, options),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/imports/${id}`, options),
+
+    rows: {
+      list: (
+        importId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<ImportRow>> =>
+        this.request<PaginatedResponse<ImportRow>>('GET', `/imports/${importId}/rows`, {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        }),
+    },
+  }
 }
 
 /**
@@ -481,6 +544,44 @@ export interface PolicyUpdateParams {
   name?: string
   slug?: string
   body?: string | null
+}
+
+/**
+ * API shorthand for an import type, not the Ruby class name.
+ *
+ * One member today: products are the only dataset a seller owns. Customers
+ * belong to the marketplace, and translations of catalog copy are its
+ * merchandising — the Seller API refuses both.
+ */
+export type SellerImportType = 'products'
+
+export interface ImportCreateParams {
+  type: SellerImportType
+  /**
+   * ActiveStorage signed blob id of the uploaded CSV, from
+   * `directUploads.create()`.
+   */
+  attachment: string
+  /** CSV column separator. Defaults to a comma on the server. */
+  preferred_delimiter?: ',' | ';' | '|' | '\t'
+  /**
+   * Absolute URL of the panel's imports view; the import-done email links back
+   * to it with `?import=<id>` appended. Honored only when it matches one of
+   * the store's configured allowed origins.
+   */
+  results_url?: string
+}
+
+export interface ImportMappingParam {
+  /** Canonical schema field name (see `Import.schema_fields[].name`). */
+  schema_field: string
+  /** CSV header to read the field from; `null` unmaps the field. */
+  file_column: string | null
+}
+
+export interface ImportCompleteMappingParams {
+  /** Column assignments to apply before processing starts. */
+  mappings?: ImportMappingParam[]
 }
 
 /** What a seller may write on one of their stock locations. */

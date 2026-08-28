@@ -12,9 +12,28 @@ module Spree
           typelize done: :boolean,
                    download_url: [:string, nullable: true],
                    filename: [:string, nullable: true],
-                   byte_size: [:number, nullable: true]
+                   byte_size: [:number, nullable: true],
+                   store_id: [:string, nullable: true],
+                   seller_id: [:string, nullable: true],
+                   seller_name: [:string, nullable: true]
 
           attribute(:done) { |export| export.done? }
+
+          # Which marketplace this export belongs to, and — when a seller ran
+          # it — whose it is. A null `seller_id` means the operator's own.
+          # The name rides along so the list can show who without a second
+          # request per row.
+          attribute :store_id do |export|
+            export.store&.prefixed_id
+          end
+
+          attribute :seller_id do |export|
+            export.seller&.prefixed_id
+          end
+
+          attribute :seller_name do |export|
+            export.seller&.name
+          end
 
           # Safe-nav on `blob` — `attachment.attached?` can stay true while a
           # background job purges the underlying blob (e.g. retention sweeps).

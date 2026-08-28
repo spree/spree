@@ -804,6 +804,70 @@
       "upload_failed": "فشل رفع الصورة",
       "uploading": "جارٍ الرفع…"
     },
+    "imports": {
+      "download_original": "تنزيل الملف الأصلي",
+      "failed": {
+        "description": "تعذّرت معالجة الملف.",
+        "title": "فشل الاستيراد"
+      },
+      "failed_rows": {
+        "error": "الخطأ",
+        "hide_data": "إخفاء بيانات الصف",
+        "next_page": "الصفحة التالية",
+        "prev_page": "الصفحة السابقة",
+        "row_number": "الصف",
+        "title": "الصفوف الفاشلة",
+        "view_data": "عرض بيانات الصف"
+      },
+      "load_failed": "تعذّر تحميل الاستيراد.",
+      "mapping": {
+        "description": "طابق أعمدة ملفك مع حقول {{type}}.",
+        "field": "الحقل",
+        "file_column": "عمود الملف",
+        "missing_required": "طابق الحقول المطلوبة للمتابعة: {{fields}}",
+        "not_mapped": "غير مطابق",
+        "required": "مطلوب",
+        "sample": "مثال",
+        "start": "بدء الاستيراد",
+        "starting": "جارٍ البدء…",
+        "title": "مطابقة الأعمدة"
+      },
+      "processing": {
+        "failed_count": "{{failed}} فشلت",
+        "note": "يمكنك مغادرة هذه الصفحة — سيستمر الاستيراد في الخلفية.",
+        "preparing": "جارٍ تجهيز الصفوف…",
+        "progress": "تمت معالجة {{processed}} من {{total}} صفًا",
+        "retrying": "إعادة محاولة الصفوف الفاشلة · {{remaining}} متبقية",
+        "title": "جارٍ معالجة الصفوف"
+      },
+      "results": {
+        "completed_title": "اكتمل الاستيراد",
+        "retry_failed": "إعادة محاولة الصفوف الفاشلة ({{failed}})",
+        "retrying": "جارٍ إعادة المحاولة…",
+        "summary": "تم استيراد {{completed}} صفًا · {{failed}} فشلت",
+        "view_records": "عرض {{type}}"
+      },
+      "status": {
+        "completed": "مكتمل",
+        "completed_mapping": "في قائمة الانتظار",
+        "failed": "فشل",
+        "mapping": "المطابقة",
+        "pending": "قيد الانتظار",
+        "processing": "قيد المعالجة"
+      },
+      "steps": {
+        "complete": "اكتمل",
+        "map_fields": "مطابقة الحقول",
+        "process_rows": "معالجة الصفوف"
+      },
+      "try_again": "حاول مرة أخرى",
+      "types": {
+        "customers": "العملاء",
+        "product_translations": "ترجمات المنتجات",
+        "products": "المنتجات"
+      },
+      "wizard_title": "الاستيراد"
+    },
     "media_picker": {
       "confirm": "إضافة المحدد",
       "description": "اختر ملفات موجودة في مكتبتك، أو ارفع ملفات جديدة.",

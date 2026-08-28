@@ -7202,6 +7202,9 @@ paths:
                   type: products
                   user_id: adm_UkLWZg9DAJ
                   done: false
+                  store_id: store_UkLWZg9DAJ
+                  seller_id:
+                  seller_name:
                   filename:
                   byte_size:
                   download_url:
@@ -7276,6 +7279,9 @@ paths:
                 type: products
                 user_id: adm_UkLWZg9DAJ
                 done: false
+                store_id: store_UkLWZg9DAJ
+                seller_id:
+                seller_name:
                 filename:
                 byte_size:
                 download_url:
@@ -7376,6 +7382,9 @@ paths:
                 type: products
                 user_id: adm_UkLWZg9DAJ
                 done: false
+                store_id: store_UkLWZg9DAJ
+                seller_id:
+                seller_name:
                 filename:
                 byte_size:
                 download_url:
@@ -9470,11 +9479,14 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   type: products
                   status: pending
+                  store_id: store_UkLWZg9DAJ
+                  seller_id:
                   owner_type: store
                   owner_id: store_UkLWZg9DAJ
                   user_id: adm_UkLWZg9DAJ
                   processing_errors:
                   preferred_delimiter: ","
+                  seller_name:
                   original_filename: products_import.csv
                   original_byte_size: 3627
                   original_file_url: "/api/v3/admin/imports/imp_UkLWZg9DAJ/download"
@@ -9658,11 +9670,14 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 type: products
                 status: mapping
+                store_id: store_UkLWZg9DAJ
+                seller_id:
                 owner_type: store
                 owner_id: store_UkLWZg9DAJ
                 user_id: adm_UkLWZg9DAJ
                 processing_errors:
                 preferred_delimiter: ","
+                seller_name:
                 original_filename: import.csv
                 original_byte_size: 44
                 original_file_url: "/api/v3/admin/imports/imp_gbHJdmfrXB/download"
@@ -10117,11 +10132,14 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 type: products
                 status: pending
+                store_id: store_UkLWZg9DAJ
+                seller_id:
                 owner_type: store
                 owner_id: store_UkLWZg9DAJ
                 user_id: adm_UkLWZg9DAJ
                 processing_errors:
                 preferred_delimiter: ","
+                seller_name:
                 original_filename: products_import.csv
                 original_byte_size: 3627
                 original_file_url: "/api/v3/admin/imports/imp_UkLWZg9DAJ/download"
@@ -10363,11 +10381,14 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 type: products
                 status: completed_mapping
+                store_id: store_UkLWZg9DAJ
+                seller_id:
                 owner_type: store
                 owner_id: store_UkLWZg9DAJ
                 user_id: adm_UkLWZg9DAJ
                 processing_errors:
                 preferred_delimiter: ","
+                seller_name:
                 original_filename: products_import.csv
                 original_byte_size: 3627
                 original_file_url: "/api/v3/admin/imports/imp_gbHJdmfrXB/download"
@@ -10720,11 +10741,14 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 type: products
                 status: processing
+                store_id: store_UkLWZg9DAJ
+                seller_id:
                 owner_type: store
                 owner_id: store_UkLWZg9DAJ
                 user_id: adm_UkLWZg9DAJ
                 processing_errors:
                 preferred_delimiter: ","
+                seller_name:
                 original_filename: products_import.csv
                 original_byte_size: 3627
                 original_file_url: "/api/v3/admin/imports/imp_gbHJdmfrXB/download"
@@ -35204,6 +35228,15 @@ components:
           nullable: true
         done:
           type: boolean
+        store_id:
+          type: string
+          nullable: true
+        seller_id:
+          type: string
+          nullable: true
+        seller_name:
+          type: string
+          nullable: true
         filename:
           type: string
           nullable: true
@@ -35222,6 +35255,9 @@ components:
       - type
       - user_id
       - done
+      - store_id
+      - seller_id
+      - seller_name
       - filename
       - byte_size
       - download_url
@@ -35631,6 +35667,12 @@ components:
           nullable: true
         status:
           type: string
+        store_id:
+          type: string
+          nullable: true
+        seller_id:
+          type: string
+          nullable: true
         owner_type:
           type: string
           nullable: true
@@ -35645,6 +35687,9 @@ components:
           nullable: true
         preferred_delimiter:
           type: string
+        seller_name:
+          type: string
+          nullable: true
         original_filename:
           type: string
           nullable: true
@@ -35680,11 +35725,14 @@ components:
       - updated_at
       - type
       - status
+      - store_id
+      - seller_id
       - owner_type
       - owner_id
       - user_id
       - processing_errors
       - preferred_delimiter
+      - seller_name
       - original_filename
       - original_byte_size
       - original_file_url

@@ -13,7 +13,7 @@ module Spree
 
         raise 'No admin user found for the store. Complete first-run setup, or seed with ADMIN_EMAIL/ADMIN_PASSWORD set.' unless user
 
-        import = import_class.new(owner: store, user: user)
+        import = import_class.new(store: store, user: user)
         # Persisted before save: the processing jobs reload the record, so these
         # have to travel with it rather than live on the instance.
         import.preferred_inline = inline

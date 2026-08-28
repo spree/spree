@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe Spree::Imports::Customers, type: :model do
   let(:store) { Spree::Store.default }
-  let(:import) { create(:customer_import, owner: store) }
+  let(:import) { create(:customer_import, store: store) }
 
   describe '#row_processor_class' do
     it 'returns Customer row processor' do

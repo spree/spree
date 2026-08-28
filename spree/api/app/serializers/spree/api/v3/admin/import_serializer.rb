@@ -5,7 +5,8 @@ module Spree
         # Admin API serializer for {Spree::Import} — drives the SPA import
         # wizard: mapping payload while `mapping`, poll counters afterwards.
         class ImportSerializer < V3::ImportSerializer
-          typelize completed_rows_count: :number,
+          typelize seller_name: [:string, nullable: true],
+                   completed_rows_count: :number,
                    failed_rows_count: :number,
                    processing_errors: [:string, nullable: true],
                    preferred_delimiter: :string,
@@ -17,6 +18,12 @@ module Spree
                    original_file_url: [:string, nullable: true]
 
           attributes :processing_errors, :preferred_delimiter
+
+          # Who ran it, for the operator's list — `seller_id` is on the base,
+          # and the name rides along so the column needs no second request.
+          attribute :seller_name do |import|
+            import.seller&.name
+          end
 
           # The originally uploaded file — the audit trail. `original_file_url`
           # is our own streaming endpoint (JWT-authenticated), not a signed

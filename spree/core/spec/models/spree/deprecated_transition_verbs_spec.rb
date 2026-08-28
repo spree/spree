@@ -118,7 +118,7 @@ RSpec.describe 'deprecated transition verbs' do
   end
 
   describe Spree::Import do
-    let(:import) { create(:product_import, owner: store) }
+    let(:import) { create(:product_import, store: store) }
 
     it 'start_mapping! delegates to the workflow' do
       expect { import.start_mapping! }.to change { import.reload.status }.from('pending').to('mapping')
@@ -133,7 +133,7 @@ RSpec.describe 'deprecated transition verbs' do
   end
 
   describe Spree::ImportRow do
-    let(:import) { create(:product_import, owner: store) }
+    let(:import) { create(:product_import, store: store) }
     let(:row) { create(:import_row, import: import) }
 
     it 'complete! writes the status and publishes' do

@@ -5,7 +5,7 @@ RSpec.describe Spree::Import, :job, type: :model do
   let(:user) { create(:admin_user) }
 
   let(:csv_content) { File.read(File.join(Spree::Core::Engine.root, 'spec/fixtures/files', 'products_import.csv')) }
-  let(:import) { build(:product_import, owner: store, user: user) }
+  let(:import) { build(:product_import, store: store, user: user) }
 
   it_behaves_like 'lifecycle events', factory: :product_import
 
