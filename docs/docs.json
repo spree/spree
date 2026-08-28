@@ -729,6 +729,7 @@
                       "developer/how-to/build-a-marketplace",
                       "developer/how-to/build-a-b2b-store",
                       "developer/how-to/sell-digital-products",
+                      "developer/how-to/custom-digital-asset-provider",
                       {
                         "group": "Multi-Tenant Platform",
                         "pages": [

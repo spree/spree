@@ -6,7 +6,7 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { useDeferredValue, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useStore } from '../providers/store-provider'
+import { useTenantId } from '../providers/tenant-provider'
 
 export type { ComboboxOption } from '@spree/dashboard-ui'
 
@@ -20,6 +20,7 @@ export interface ResourceComboboxProps<T extends ComboboxOption>
     | 'placeholder'
     | 'emptyText'
     | 'disabled'
+    | 'id'
   > {
   /**
    * Server-side search. Called as the user types (debounced via React's
@@ -69,6 +70,7 @@ export function ResourceCombobox<T extends ComboboxOption>({
   emptyText,
   disabled,
   filterOption,
+  id,
 }: ResourceComboboxProps<T>) {
   const { t } = useTranslation()
   const placeholderLabel = placeholder ?? t('admin.common.search_placeholder')
@@ -79,9 +81,10 @@ export function ResourceCombobox<T extends ComboboxOption>({
   // `onInputChange` on the Root rather than controlling
   // `<ComboboxInput value>` directly — controlling the input blocks Base UI
   // from updating it on selection.
-  // Scoped here, not at the call site: results are store-specific, and a caller
-  // passing a constant key would otherwise serve one store's records in another.
-  const { storeId } = useStore()
+  // Scoped here, not at the call site: results are tenant-specific (a store in
+  // the dashboard, a seller in the seller panel), and a caller passing a
+  // constant key would otherwise serve one tenant's records in another.
+  const tenantId = useTenantId()
   const [input, setInput] = useState('')
   // Defer the search query so a fast typist doesn't fire one request per
   // keystroke — React batches the search to the next idle paint.
@@ -89,7 +92,7 @@ export function ResourceCombobox<T extends ComboboxOption>({
   const trimmedQuery = deferredInput.trim()
 
   const { data: searchData } = useQuery({
-    queryKey: [queryKey, storeId, 'search', trimmedQuery],
+    queryKey: [queryKey, tenantId, 'search', trimmedQuery],
     queryFn: () => search(trimmedQuery),
     staleTime: 30_000,
   })
@@ -99,7 +102,7 @@ export function ResourceCombobox<T extends ComboboxOption>({
   // Skipped when the search results already include the ID.
   const searchHasValue = !!(value && searchData?.data.some((r) => r.id === value))
   const { data: hydratedData } = useQuery({
-    queryKey: [queryKey, storeId, 'hydrate', value],
+    queryKey: [queryKey, tenantId, 'hydrate', value],
     queryFn: () => hydrate([value as string]),
     enabled: !!value && !searchHasValue,
     staleTime: 60_000,
@@ -125,6 +128,7 @@ export function ResourceCombobox<T extends ComboboxOption>({
       placeholder={placeholderLabel}
       emptyText={emptyLabel}
       disabled={disabled}
+      id={id}
     />
   )
 }

@@ -91,10 +91,8 @@
       "add_cta": "添加目录",
       "add_sheet_title": "新建目录",
       "assignable_types": {
-        "channel": "渠道",
         "company": "公司",
-        "customer_group": "客户组",
-        "market": "市场"
+        "customer_group": "客户组"
       },
       "assignments": {
         "add_cta": "分配",
@@ -820,6 +818,55 @@
       "to_placeholder": "止",
       "toggle_states": "显示 {{country}} 的省/州"
     },
+    "digital_assets": {
+      "add": "添加",
+      "all_variants": "所有变体",
+      "columns": {
+        "file": "文件",
+        "variant": "变体",
+        "size": "大小",
+        "downloads": "下载次数",
+        "days": "天数"
+      },
+      "delete_description": "购买过“{{name}}”的人将无法再下载它。此操作立即生效。",
+      "delete_title": "删除此文件？",
+      "description": "买家购买后可下载的文件。可附加到数字商品，也可附加到实体商品以随货提供说明书或保修卡。",
+      "download": "下载",
+      "drop_hint": "将文件拖放到此处，或点击浏览",
+      "empty": "暂无文件",
+      "limit_invalid": "限制必须是不小于 1 的整数，或留空。",
+      "limits_help": "将下载次数和天数限制留空即可使用商店设置。",
+      "source": {
+        "upload": "上传文件"
+      },
+      "store_default": "{{count}}（商店默认）",
+      "title": "数字文件",
+      "untitled": "未命名文件",
+      "upload": "添加文件",
+      "upload_failed": "上传 {{name}} 失败：{{message}}",
+      "uploading": "正在上传 {{name}}…",
+      "uploading_short": "上传中…"
+    },
+    "digital_links": {
+      "columns": {
+        "file": "文件",
+        "item": "商品",
+        "downloads": "已用下载次数",
+        "expires": "到期时间",
+        "status": "状态"
+      },
+      "never_expires": "不过期",
+      "resend_email": "重新发送邮件",
+      "reset": "重置",
+      "reset_description": "客户将获得“{{name}}”的全新下载次数，过期时间重新开始计算。",
+      "reset_title": "恢复下载权限？",
+      "status": {
+        "available": "可用",
+        "expired": "已过期",
+        "used_up": "下载次数已用完"
+      },
+      "title": "下载"
+    },
     "enterprise": {
       "learn_more": "了解 Spree Enterprise"
     },
@@ -887,6 +934,12 @@
         "default": {
           "help": "每个商店有且仅有一个默认渠道。在未选择渠道时用作回退，并作为新产品的自动发布目标。",
           "label": "默认渠道"
+        },
+        "default_catalog": {
+          "empty": "未找到目录",
+          "help": "不属于任何公司或客户组目录的买家所看到的内容。留空则显示此渠道上发布的所有商品。",
+          "label": "默认目录",
+          "placeholder": "所有已发布商品"
         },
         "fulfillment_locations": {
           "all": "所有地点",
@@ -1895,6 +1948,20 @@
             "label": "最低付款额",
             "help": "低于此金额时，卖家余额结转至下一周期而不发放。设为零则支付所有应付款项。"
           }
+        },
+        "limit_digital_download_count": {
+          "help": "关闭后，买家可以不限次数下载。",
+          "label": "限制下载次数"
+        },
+        "digital_asset_authorized_clicks": {
+          "label": "允许的下载次数"
+        },
+        "limit_digital_download_days": {
+          "help": "关闭后，下载链接永不过期。",
+          "label": "限制下载期限"
+        },
+        "digital_asset_authorized_days": {
+          "label": "可用天数"
         }
       },
       "store_credit": {
@@ -3237,7 +3304,9 @@
           "tab_payments": "支付",
           "tab_standards": "标准与格式",
           "tab_storefront_access": "店铺访问权限",
-          "title": "店铺设置"
+          "title": "店铺设置",
+          "tab_downloads": "数字下载",
+          "downloads_help": "下载链接的有效期以及可使用的次数。单个文件可覆盖这些数值。"
         },
         "tax_categories": {
           "add_sheet_title": "添加税收类别",

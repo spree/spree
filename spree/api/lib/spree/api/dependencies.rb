@@ -78,7 +78,7 @@ module Spree
         claim_line_item_serializer: 'Spree::Api::V3::ClaimLineItemSerializer',
         return_reason_serializer: 'Spree::Api::V3::ReturnReasonSerializer',
         claim_reason_serializer: 'Spree::Api::V3::ClaimReasonSerializer',
-        digital_serializer: 'Spree::Api::V3::DigitalSerializer',
+        digital_asset_serializer: 'Spree::Api::V3::DigitalAssetSerializer',
         export_serializer: 'Spree::Api::V3::ExportSerializer',
         gift_card_batch_serializer: 'Spree::Api::V3::GiftCardBatchSerializer',
         import_serializer: 'Spree::Api::V3::ImportSerializer',
@@ -211,6 +211,7 @@ module Spree
         admin_store_credit_serializer: 'Spree::Api::V3::Admin::StoreCreditSerializer',
         admin_customer_group_serializer: 'Spree::Api::V3::Admin::CustomerGroupSerializer',
         admin_payment_source_serializer: 'Spree::Api::V3::Admin::PaymentSourceSerializer',
+        admin_digital_asset_serializer: 'Spree::Api::V3::Admin::DigitalAssetSerializer',
         admin_digital_link_serializer: 'Spree::Api::V3::Admin::DigitalLinkSerializer',
         admin_store_serializer: 'Spree::Api::V3::Admin::StoreSerializer',
         admin_setup_task_serializer: 'Spree::Api::V3::Admin::SetupTaskSerializer',
@@ -243,7 +244,9 @@ module Spree
       # wants used. Removed in 6.1.
       LEGACY_SERIALIZER_KEYS = {
         stock_item_serializer: :stock_level_serializer,
-        admin_stock_item_serializer: :admin_stock_level_serializer
+        admin_stock_item_serializer: :admin_stock_level_serializer,
+        digital_serializer: :digital_asset_serializer,
+        admin_digital_serializer: :admin_digital_asset_serializer
       }.freeze
 
       LEGACY_SERIALIZER_KEYS.each do |legacy, current|

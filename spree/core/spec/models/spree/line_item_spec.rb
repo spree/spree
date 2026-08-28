@@ -136,7 +136,7 @@ describe Spree::LineItem, type: :model do
     let(:licence_variant) do
       licence_product.default_variant.tap do |variant|
         variant.update!(track_inventory: true)
-        variant.digitals << create(:digital, variant: variant)
+        variant.digital_assets << create(:digital_asset, variant: variant)
       end
     end
     let(:order) { create(:completed_order_with_totals, store: store) }

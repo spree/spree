@@ -91,10 +91,8 @@
       "add_cta": "Ajouter un catalogue",
       "add_sheet_title": "Nouveau catalogue",
       "assignable_types": {
-        "channel": "Canal",
         "company": "Entreprise",
-        "customer_group": "Groupe de clients",
-        "market": "Marché"
+        "customer_group": "Groupe de clients"
       },
       "assignments": {
         "add_cta": "Affecter",
@@ -825,6 +823,55 @@
       "to_placeholder": "À",
       "toggle_states": "Afficher les régions de {{country}}"
     },
+    "digital_assets": {
+      "add": "Ajouter",
+      "all_variants": "Toutes les variantes",
+      "columns": {
+        "file": "Fichier",
+        "variant": "Variante",
+        "size": "Taille",
+        "downloads": "Téléchargements",
+        "days": "Jours"
+      },
+      "delete_description": "« {{name}} » ne sera plus téléchargeable par les personnes qui l'ont acheté. Effet immédiat.",
+      "delete_title": "Supprimer ce fichier ?",
+      "description": "Fichiers que les acheteurs peuvent télécharger après l'achat. Associez-les à un produit numérique, ou à un produit physique pour livrer un manuel ou une garantie.",
+      "download": "Télécharger",
+      "drop_hint": "Glissez-déposez des fichiers ici, ou cliquez pour parcourir",
+      "empty": "Aucun fichier pour le moment",
+      "limit_invalid": "Les limites doivent être des entiers supérieurs ou égaux à 1, ou vides.",
+      "limits_help": "Laissez les limites de téléchargements et de jours vides pour utiliser les paramètres de la boutique.",
+      "source": {
+        "upload": "Téléverser un fichier"
+      },
+      "store_default": "{{count}} (par défaut)",
+      "title": "Fichiers numériques",
+      "untitled": "Fichier sans nom",
+      "upload": "Ajouter un fichier",
+      "upload_failed": "Échec du téléversement de {{name}} : {{message}}",
+      "uploading": "Téléversement de {{name}}…",
+      "uploading_short": "Téléversement…"
+    },
+    "digital_links": {
+      "columns": {
+        "file": "Fichier",
+        "item": "Article",
+        "downloads": "Téléchargements utilisés",
+        "expires": "Expire le",
+        "status": "Statut"
+      },
+      "never_expires": "Pas d'expiration",
+      "resend_email": "Renvoyer l'e-mail",
+      "reset": "Réinitialiser",
+      "reset_description": "Le client obtient de nouveaux téléchargements pour « {{name}} » et le délai d'expiration repart à zéro.",
+      "reset_title": "Rétablir l'accès au téléchargement ?",
+      "status": {
+        "available": "Disponible",
+        "expired": "Expiré",
+        "used_up": "Plus de téléchargements"
+      },
+      "title": "Téléchargements"
+    },
     "enterprise": {
       "learn_more": "En savoir plus sur Spree Enterprise"
     },
@@ -892,6 +939,12 @@
         "default": {
           "help": "Exactement un canal par boutique est défini par défaut. Utilisé comme solution de repli lorsqu'aucun canal n'est sélectionné et comme cible de publication automatique pour les nouveaux produits.",
           "label": "Canal par défaut"
+        },
+        "default_catalog": {
+          "empty": "Aucun catalogue trouvé",
+          "help": "Ce que voient les acheteurs auxquels aucun catalogue d’entreprise ou de groupe de clients ne s’applique. Laissez vide pour afficher tous les produits publiés sur ce canal.",
+          "label": "Catalogue par défaut",
+          "placeholder": "Tous les produits publiés"
         },
         "fulfillment_locations": {
           "all": "Tous les sites",
@@ -1900,6 +1953,20 @@
             "label": "Paiement minimum",
             "help": "En dessous, le solde du vendeur est reporté à la période suivante. Zéro paie tout ce qui est dû."
           }
+        },
+        "limit_digital_download_count": {
+          "help": "Désactivé, les acheteurs peuvent télécharger autant de fois qu'ils le souhaitent.",
+          "label": "Limiter le nombre de téléchargements"
+        },
+        "digital_asset_authorized_clicks": {
+          "label": "Téléchargements autorisés"
+        },
+        "limit_digital_download_days": {
+          "help": "Désactivé, les liens de téléchargement n'expirent jamais.",
+          "label": "Limiter la période de téléchargement"
+        },
+        "digital_asset_authorized_days": {
+          "label": "Jours de disponibilité"
         }
       },
       "store_credit": {
@@ -3245,7 +3312,9 @@
           "tab_payments": "Paiements",
           "tab_standards": "Normes et formats",
           "tab_storefront_access": "Accès à la vitrine",
-          "title": "Paramètres de la boutique"
+          "title": "Paramètres de la boutique",
+          "tab_downloads": "Téléchargements numériques",
+          "downloads_help": "Durée de validité d'un lien de téléchargement et nombre d'utilisations possibles. Chaque fichier peut remplacer ces valeurs."
         },
         "tax_categories": {
           "add_sheet_title": "Ajouter une catégorie de taxe",

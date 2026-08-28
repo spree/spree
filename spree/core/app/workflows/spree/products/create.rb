@@ -64,7 +64,8 @@ module Spree
         # against a product that has an id.
         @variants_params = attrs[:variants]
         @media_params = attrs[:media]
-        @product.assign_attributes(attrs.except(:variants, :media))
+        @digital_assets_params = attrs[:digital_assets]
+        @product.assign_attributes(attrs.except(:variants, :media, :digital_assets))
       end
 
       def save_product
@@ -74,6 +75,7 @@ module Spree
       def apply_nested_attributes
         apply_variants(product, @variants_params)
         apply_media(product, @media_params)
+        apply_digital_assets(product, @digital_assets_params)
       end
     end
   end

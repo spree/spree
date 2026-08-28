@@ -29,6 +29,9 @@ module Spree
               puts 'Loading sample products...'
               load_products
 
+              puts 'Attaching the sample digital product file...'
+              load_ruby_file('digital_products')
+
               puts 'Publishing sample products on the default channel...'
               publish_sample_products(Spree::Store.default)
 

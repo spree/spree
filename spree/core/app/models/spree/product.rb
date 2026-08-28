@@ -224,7 +224,8 @@ module Spree
     has_many :option_value_variants, class_name: 'Spree::OptionValueVariant', through: :variants
     has_many :option_values, class_name: 'Spree::OptionValue', through: :variants
 
-    has_many :digitals, through: :variants
+    has_many :digital_assets, through: :variants, class_name: 'Spree::DigitalAsset'
+    has_many :digitals, through: :variants, class_name: 'Spree::DigitalAsset', source: :digital_assets, deprecated: true
 
     after_initialize :assign_default_tax_category
     # The type's profile is a creation-time template: stamped here, never

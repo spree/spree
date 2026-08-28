@@ -706,6 +706,90 @@ context is the only place that changes.
 context, not stored jurisdiction, and addresses and markets still speak in
 countries. The rule this entry sets is about what a row *persists*.
 
+## 2026-08-12: Provider-backed digital assets ship in 6.0 as wave 6 of the digital-assets plan
+
+Plan: `6.0-digital-assets.md` wave 6. **No `kind` column — the provider is the
+discriminator.** Every asset always has a provider; an uploaded file is just the
+default one (`Spree::DigitalAssetProvider::File`). A single nullable `provider_type`
+class-name string: blank resolves to `File`, a class name to that provider —
+exactly how `DeliveryMethod#provider_class` works (`fulfillment_provider.presence
+|| DEFAULT`). A separate `kind` string would be redundant with `provider_type`,
+and the download flow calls `provider.deliver` with no branch. The things that
+genuinely differ by type — record validation, the file-metadata columns, the
+admin create form — key off the provider class, which declares `requires_attachment?`.
+
+**No `Spree::Integration` binding** (deliberately unlike delivery-rate/tax
+providers). Those resolve credentials through a store integration because they
+connect to *marketplace* services (EasyPost, Avalara) a merchant self-connects.
+A digital-asset provider here is bespoke glue into one company's internal/legacy
+software, written once in the host app — so it owns its own configuration (env
+var, endpoint, credential) and Spree imposes no integration abstraction. No
+`integration_id` column, no `requires_integration?`, no integration picker.
+
+`DigitalAsset#download_url` generalizes to `deliver`, returning a
+`Spree::DigitalDelivery` value object carrying EITHER a `redirect_url` (302, as
+today) OR an `inline_value` + `content_type` (a 200 body — a license key to
+show, not a link to follow). Registered via `Spree.digital_asset_providers`;
+core ships only the `File` provider.
+
+**Why 6.0 and not 6.1:** the first prospective customer is a licensing business
+whose products are entitlements granted by their own system, not files, and they
+want to launch on 6.0. The 6.0 model was built for this — the download flow
+already routes through `downloadable?`/`download_url` and the controller already
+redirects `allow_other_host: true` — so it is a `provider_type` column plus a
+small strategy, not a rewrite.
+
+**Decisions:** provider-as-discriminator, no `kind` column (initial sketch had
+one; dropped as redundant); no `Integration` credential surface (the provider is
+internal glue, not a marketplace connector — it self-configures); only the `File`
+provider in core (seam + authoring docs, like delivery-rate/tax providers began —
+the licensing provider lives in the host app); `external_url` deferred and needs
+no schema when wanted (just another provider class); link-per-unit with
+resolve-on-download (no `on_fulfillment` hook, whose failure would land after
+money is taken); a provider exception is caught and returns the existing 403
+without spending the click.
+
+**Consequences:** nothing outside `DigitalAsset` may assume an attachment is
+present — reach for `deliver`/`downloadable?`. Download-flow code treats the
+deliverable as opaque. The store download endpoint now has two response shapes
+(302 or a 200 body); a storefront consuming the token URL must handle both. Do
+NOT add an `Integration` FK or credential surface to `DigitalAsset`.
+
+## 2026-08-12: License-code pools ship in 6.0 (open source) as wave 7 of the digital-assets plan
+
+Plan: `6.0-digital-assets.md` wave 7. The open-source "sell game keys / gift
+codes" feature: a merchant CSV-imports a finite batch of codes and Spree hands
+one out per purchase. Built as a `LicensePool` provider **on the wave-6 seam**,
+so it reuses `deliver` / `Spree::DigitalDelivery` whole — including the text
+(inline value) vs image (redirect) split, which is exactly what code selling
+needs (a key string, or a scan/photo of a card). Unlike the wave-6 licensing
+provider, this ships in core: it needs no external system, Spree owns the codes.
+
+**Model:** `spree_license_codes` — `belongs_to :digital_asset`, a `value` string
+OR an attached scan, and a **nullable `digital_link_id`** that IS the redeemed
+state (null = available, set = redeemed by that purchase's link). "Remaining" is
+one query; "who got it" is the link's order. No separate flag.
+
+**Decisions:** claim-once-pin-to-link — the first authorized download claims a
+code and pins it to the link, every later view re-shows the SAME code (the click
+limit caps views, never burns a second code); this forks the download flow from
+the file case and is the behaviour most worth testing. CSV import reuses
+`Spree::Import` (a `LicenseCodesRowProcessor`), text codes only — images can't
+ride a CSV row and upload individually. **Pool count IS the variant's stock**
+(the sharpest decision): a pool variant tracks inventory with `count_on_hand`
+synced to `codes.available.count`, so the existing `can_supply?`/add-to-cart path
+makes it sell out and forbids the "paid but got no code" oversell — no new
+checkout code. This is a real integration with `Stock::Quantifier` (a digital
+variant returns `INFINITY` on-hand today; a pool variant must return its finite
+code count), not a flag.
+
+**Consequences:** keep `count_on_hand` and the unredeemed-code count in sync
+**transactionally** on both import and redeem — a drift blocks sellable stock or
+permits an oversell; never compute one from the other lazily in the checkout
+path. The stock sync is the one delicate piece of wave 7 and lands with its own
+tests. Wave 7 depends on wave 6 (the provider seam + `DigitalDelivery`), so it
+is built after it.
+
 ## 2026-08-12: The label leads, fulfilled follows (amends the Phase 7 fulfill flow)
 
 A warehouse prints the label, sticks it on the box, hands the box over — and
@@ -1101,6 +1185,42 @@ carrying real webhook signing secrets (the sensitive-data filters covered
 request keys but not response bodies) and were redacted; cassettes now default
 to `record: :none`, since record-by-default turns renaming a `:vcr` example
 into a live API call.
+
+## 2026-08-10: `Spree::Digital` → `Spree::DigitalAsset`; digital assets get an admin surface, delivery mailer, and per-asset limit fallback
+
+Plan: `6.0-digital-assets.md`. Full rename at 6.0 — class, `spree_digitals` →
+`spree_digital_assets` table, and `digital_id` → `digital_asset_id` FK — with
+the standard one-release bridges (constant alias, deprecated twin
+associations, dual-emitted `digital.*`/`digital_asset.*` events).
+`Spree::DigitalLink` keeps its name. The plan also builds the missing
+management surface (Admin API v3 + dashboard, catalog placement: assets under
+`:products`, link reset under `:orders`), a dedicated
+`Spree::DigitalAssetMailer` (never a section in the order confirmation), a
+customer `GET /store/account/digital_links` endpoint, a
+`digital_link.downloaded` domain event, and signed-URL download transport
+(the previously dead `digital_asset_link_expire_time` preference becomes the
+signed-URL TTL instead of being deleted).
+
+**Why:** the engine shipped in 6.0's fulfillment rework is complete but has
+no admin API, no dashboard page, no delivery email and no download
+visibility; the model name `Digital` never matched the docs, the
+`digital_asset_*` preferences, or the deleted legacy admin's vocabulary.
+Renaming before the admin endpoints exist is the cheap moment.
+
+**Recorded exception:** digital assets carry nullable `authorized_clicks` /
+`authorized_days` that fall back to the store's download settings at read
+time. This is a deliberate, documented exception to the
+`6.0-store-scoped-configuration.md` "store preference is authoritative, no
+runtime fallback" rule — the fallback is record → its store's setting only,
+never a chain through global `Spree::Config`, and the store setting remains
+the authoritative default.
+
+**Consequences:** new code uses `DigitalAsset`/`digital_assets` names only;
+admin controllers for these models land with their permission catalog
+entries; nothing outside the model may assume an attachment is always
+present (external/provider-backed asset kinds and license-key pools are
+groomed for 6.1); emailed download URLs must keep resolving across renames
+for at least one release.
 
 ## 2026-08-09: Metadata consolidated to one column — `public_metadata` dropped, `private_metadata` renamed
 
@@ -3908,3 +4028,39 @@ target until a bridge actually exists.
 information, not operational leakage. `created_at` stays admin-only.
 Checkout consent capture (persisting acceptance) stays out of scope, parked
 with `5.4-6.0-eu-legal-compliance.md`. Plan: `6.0-store-policies.md`.
+
+## 2026-08-28 — Catalog assignments narrow to buyer audiences; Channel and Market drop out of the vocabulary
+
+`CatalogAssignment.ASSIGNABLE_TYPES` shrinks from
+Channel/CustomerGroup/Market/Company to **CustomerGroup and Company**. The
+dropped pair was write-only from the day it shipped: resolution
+(`Products::ForContext`) and pricing (`PricingProvider::Internal`) read only
+company-subtree assignments, customer-group assignments, and the channel's
+`default_catalog_id` — a channel or market assignment created an inert row,
+and the assign dialog offered the gesture anyway. 6.0 is unreleased, so the
+narrowing is free now and a breaking `assignable_type`-enum change after GA.
+
+**Channel is dropped for good.** The channel↔catalog connection already has
+a shipped mechanism with the semantics a sales surface wants:
+`default_catalog_id` is a *fallback* that buyer-specific catalogs override,
+where an assignment means "this audience sees this instead". Wiring a reader
+to channel assignments would create a second mechanism with no defined
+precedence against the first.
+
+**Market is deferred, not judged.** Per-market assortment is a real feature
+(the hosted leader's catalogs power per-market availability; the original
+`6.0-channels-catalogs-b2b.md` sketch gave a Market a "regional assortment"
+catalog) but its open questions — where it sits in `ForContext` precedence,
+whether it intersects or overrides buyer catalogs, whether it also gates
+pricing — have no answers yet. The type returns only in the same change as
+the resolution code that reads it, plausibly alongside the
+`6.0-channel-markets.md` allowlist work.
+
+Each axis keeps exactly one mechanism: assignments answer *who is this
+buyer* (Company subtree, CustomerGroup); `default_catalog_id` answers *what
+does this surface show when the buyer is nobody in particular*; price-list
+rules (`PriceRules::ChannelRule`/`MarketRule`, both shipped) answer *what
+does this context pay*. No cleanup migration: any pre-release rows of the
+dropped kinds were always inert (the inclusion validation runs on the
+assignment row, which nothing re-saves), so they are left to lie. Plan
+amended: `6.0-b2b-companies-and-catalogs.md`.

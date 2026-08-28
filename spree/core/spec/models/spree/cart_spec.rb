@@ -255,6 +255,26 @@ describe Spree::Cart, type: :model do
     end
   end
 
+  describe '#name' do
+    it 'returns the billing address full name' do
+      bill_address = create(:address, firstname: 'John', lastname: 'Doe')
+      cart = create(:cart, store: store, bill_address: bill_address)
+
+      expect(cart.name).to eq('John Doe')
+    end
+
+    it 'falls back to the shipping address when billing is blank' do
+      ship_address = create(:address, firstname: 'Jane', lastname: 'Roe')
+      cart = create(:cart, store: store, bill_address: nil, ship_address: ship_address)
+
+      expect(cart.name).to eq('Jane Roe')
+    end
+
+    it 'is nil with no addresses' do
+      expect(build(:cart, store: store, bill_address: nil, ship_address: nil).name).to be_nil
+    end
+  end
+
   describe '#preferred_stock_location' do
     let(:cart) { create(:cart, store: store) }
     let(:pickup_location) { create(:stock_location, pickup_enabled: true) }

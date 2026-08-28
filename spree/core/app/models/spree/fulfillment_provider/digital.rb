@@ -28,14 +28,14 @@ module Spree
         true
       end
 
-      # Tops the line item up to one link per digital per unit of quantity.
+      # Tops the line item up to one link per asset per unit of quantity.
       # Also used at order completion for physical items carrying digital
-      # assets (e.g. vinyl + download code) that ship through other providers.
+      # assets (e.g. a manual with a device) that ship through other providers.
       def ensure_links_for(line_item)
-        line_item.variant.digitals.each do |digital|
-          existing = line_item.digital_links.where(digital: digital).count
+        line_item.variant.digital_assets.each do |digital_asset|
+          existing = line_item.digital_links.where(digital_asset: digital_asset).count
           (line_item.quantity - existing).times do
-            line_item.digital_links.create!(digital: digital)
+            line_item.digital_links.create!(digital_asset: digital_asset)
           end
         end
       end

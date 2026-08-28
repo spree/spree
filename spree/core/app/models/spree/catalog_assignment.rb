@@ -1,14 +1,19 @@
 module Spree
   # Who gets a catalog. Polymorphic, but the assignable set is small and
-  # closed: Channel, CustomerGroup, Market, Company. A company-node assignment
-  # applies to the node's subtree.
+  # closed: CustomerGroup and Company — buyer audiences only. A company-node
+  # assignment applies to the node's subtree.
+  #
+  # Channel and Market were assignable in the 6.0 pre-release but never read
+  # (decisions.md 2026-08-28): a channel's catalog is its `default_catalog`,
+  # and a market catalog waits for the regional-assortment design. A future
+  # type joins this list together with the resolution code that reads it.
   #
   # The assignment direction is "who gets this catalog", not "what catalogs
   # does this entity have" — resolution queries by catalog.
   class CatalogAssignment < Spree.base_class
     has_prefix_id :cata
 
-    ASSIGNABLE_TYPES = %w[Spree::Channel Spree::CustomerGroup Spree::Market Spree::Company].freeze
+    ASSIGNABLE_TYPES = %w[Spree::CustomerGroup Spree::Company].freeze
 
     belongs_to :catalog, class_name: 'Spree::Catalog', inverse_of: :catalog_assignments
     belongs_to :assignable, polymorphic: true

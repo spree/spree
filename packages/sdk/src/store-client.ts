@@ -33,6 +33,7 @@ import type {
   Currency,
   Customer,
   DeliveryMethod,
+  DigitalLink,
   GiftCard,
   Locale,
   LoginCredentials,
@@ -1065,6 +1066,34 @@ export class StoreClient {
        */
       get: (id: string, options?: RequestOptions): Promise<StoreCredit> =>
         this.request<StoreCredit>('GET', `/customers/me/store_credits/${id}`, options),
+    },
+
+    /**
+     * Nested resource: Digital Links
+     *
+     * Everything the signed-in customer can download, across all their
+     * completed orders — the data behind a "my downloads" page.
+     */
+    digitalLinks: {
+      /**
+       * List the customer's downloads, newest first.
+       */
+      list: (
+        params?: ListParams,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<DigitalLink>> =>
+        this.request<PaginatedResponse<DigitalLink>>('GET', '/customers/me/digital_links', {
+          ...options,
+          params: transformListParams({ ...params }),
+        }),
+
+      /**
+       * Get one download by ID. Each record carries a `download_url` — point the
+       * browser at it; the response redirects to short-lived storage, so follow
+       * redirects rather than reading the body.
+       */
+      get: (id: string, options?: RequestOptions): Promise<DigitalLink> =>
+        this.request<DigitalLink>('GET', `/customers/me/digital_links/${id}`, options),
     },
 
     /**

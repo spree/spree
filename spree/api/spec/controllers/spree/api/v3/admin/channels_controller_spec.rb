@@ -330,4 +330,34 @@ RSpec.describe Spree::Api::V3::Admin::ChannelsController, type: :controller do
     end
   end
 
+  describe 'default catalog' do
+    let!(:catalog) { create(:catalog, store: store) }
+
+    it 'sets the default catalog and serializes its prefixed id' do
+      patch :update, params: { id: channel.prefixed_id, default_catalog_id: catalog.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['default_catalog_id']).to eq(catalog.prefixed_id)
+      expect(channel.reload.default_catalog).to eq(catalog)
+    end
+
+    it 'clears the default catalog when set to null, restoring every published product' do
+      channel.update!(default_catalog: catalog)
+
+      patch :update, params: { id: channel.prefixed_id, default_catalog_id: nil }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['default_catalog_id']).to be_nil
+      expect(channel.reload.default_catalog).to be_nil
+    end
+
+    it 'rejects a cross-store catalog with 404' do
+      foreign = create(:catalog, store: create(:store))
+
+      patch :update, params: { id: channel.prefixed_id, default_catalog_id: foreign.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(channel.reload.default_catalog).to be_nil
+    end
+  end
 end

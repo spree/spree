@@ -12,9 +12,6 @@ module Spree
     #
     belongs_to :store, class_name: 'Spree::Store', touch: true, inverse_of: :markets
     has_many :market_countries, class_name: 'Spree::MarketCountry', dependent: :destroy, autosave: true
-    has_many :catalog_assignments, as: :assignable, class_name: 'Spree::CatalogAssignment',
-                                   dependent: :destroy
-    has_many :catalogs, through: :catalog_assignments, class_name: 'Spree::Catalog'
 
     # Countries are reference data, so this reads the join rows' codes back
     # through the registry rather than being a has_many :through.

@@ -205,3 +205,30 @@ warn_unless_mailpit() {
   echo "  ! Mailpit is not running — email will fail to deliver."
   echo "    brew install mailpit && brew services start mailpit"
 }
+
+# Versions the template database has recorded but the primary checkout has no
+# migration file for. Any output means the two have drifted apart.
+#
+# The 6.0 migrations still live in the monorepo gems rather than the starter, and
+# `spree:install:migrations` stamps each copy with the time it runs — Rails' own
+# behaviour, and the right one while those migrations are unreleased and still
+# being reshaped in place. The consequence is that re-creating server/ renumbers
+# every gem migration, so a template built before that renumbering records
+# versions nobody can produce a file for any more. A worktree copied from it then
+# re-runs those migrations under their new numbers against tables they already
+# created, and fails on a duplicate table minutes into provisioning.
+#
+# Compares the primary's files, not the calling worktree's: setup.sh syncs the
+# primary's migrate directory into every new worktree, so the primary is the one
+# that has to agree with the template.
+template_drift() {
+  local primary_root="$1"
+
+  db_exists "$TEMPLATE_DB" || return 0
+  [ -d "$primary_root/server/db/migrate" ] || return 0
+
+  comm -23 \
+    <(psql "${PG_ARGS[@]}" -d "$TEMPLATE_DB" -tAc \
+        "SELECT version FROM schema_migrations ORDER BY 1" 2>/dev/null | tr -d '[:blank:]\r' | grep . | sort) \
+    <(ls "$primary_root/server/db/migrate" | cut -d_ -f1 | sort)
+}

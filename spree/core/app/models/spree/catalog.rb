@@ -2,8 +2,8 @@ module Spree
   # A product assortment with an optional pricing override, shown to a
   # specific audience — a B2B tier, a VIP group, a regional selection.
   #
-  # Who sees it is a {Spree::CatalogAssignment} (Channel, CustomerGroup,
-  # Market, or Company — where it covers the node's subtree). Visibility
+  # Who sees it is a {Spree::CatalogAssignment} (CustomerGroup or Company —
+  # where it covers the node's subtree). Visibility
   # across several applicable catalogs is their union; pricing takes the
   # attached price list of the nearest assignment first
   # (docs/plans/6.0-b2b-companies-and-catalogs.md).

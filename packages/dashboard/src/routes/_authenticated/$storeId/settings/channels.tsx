@@ -1,9 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { Channel, ChannelCreateParams } from '@spree/admin-sdk'
+import type { Catalog, Channel, ChannelCreateParams } from '@spree/admin-sdk'
 import {
   adminClient,
   Can,
   mapSpreeErrorsToForm,
+  ResourceCombobox,
   ResourceTable,
   resourceSearchSchema,
   Subject,
@@ -256,6 +257,7 @@ function EditChannelSheet({
         preferred_storefront_access: channel.preferred_storefront_access ?? '',
         preferred_guest_checkout:
           channel.preferred_guest_checkout == null ? '' : String(channel.preferred_guest_checkout),
+        default_catalog_id: channel.default_catalog_id ?? '',
         stock_location_ids: channel.stock_location_ids ?? [],
       })
     }
@@ -468,8 +470,49 @@ function ChannelFormFields({ form }: { form: UseFormReturn<ChannelFormValues> })
         values={GUEST_CHECKOUT_VALUES}
       />
 
+      <DefaultCatalogField form={form} />
+
       <FulfillmentLocationsField form={form} />
     </FieldGroup>
+  )
+}
+
+/**
+ * What shoppers outside any company or customer-group catalog see on this
+ * channel — the last branch of the visibility precedence, so a company buyer
+ * sees their own catalogs instead of this one. A curated catalog here makes
+ * the rest of the channel's range private; one with an empty assortment
+ * prices only and hides nothing.
+ */
+function DefaultCatalogField({ form }: { form: UseFormReturn<ChannelFormValues> }) {
+  const { t } = useTranslation()
+
+  return (
+    <Field>
+      <FieldLabel htmlFor="channel-default-catalog">
+        {t('admin.fields.channel.default_catalog.label')}
+      </FieldLabel>
+      <Controller
+        name="default_catalog_id"
+        control={form.control}
+        render={({ field }) => (
+          <ResourceCombobox<Catalog>
+            id="channel-default-catalog"
+            queryKey="channel-default-catalogs"
+            search={(q) => adminClient.catalogs.list({ name_cont: q, limit: 10 })}
+            hydrate={(ids) => adminClient.catalogs.list({ id_in: ids, limit: ids.length })}
+            getOptionLabel={(catalog) => catalog.name}
+            placeholder={t('admin.fields.channel.default_catalog.placeholder')}
+            emptyText={t('admin.fields.channel.default_catalog.empty')}
+            value={field.value || undefined}
+            onChange={(id) => field.onChange(id ?? '')}
+          />
+        )}
+      />
+      <span className="text-xs text-muted-foreground">
+        {t('admin.fields.channel.default_catalog.help')}
+      </span>
+    </Field>
   )
 }
 

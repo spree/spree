@@ -74,6 +74,18 @@ export const storeSettingsFormSchema = z.object({
     .max(10)
     .regex(NUMBER_AFFIX_PATTERN, { error: 'admin.fields.store.order_number_suffix.invalid' }),
   preferred_order_number_sequence_start: z.coerce.number().int().min(1),
+  // Store-wide download allowances. Individual files can override the numbers;
+  // switching a limit off here removes it for the whole store.
+  preferred_limit_digital_download_count: z.boolean(),
+  preferred_digital_asset_authorized_clicks: z.coerce
+    .number()
+    .int()
+    .min(1, { error: requiredMessage('store.preferred_digital_asset_authorized_clicks') }),
+  preferred_limit_digital_download_days: z.boolean(),
+  preferred_digital_asset_authorized_days: z.coerce
+    .number()
+    .int()
+    .min(1, { error: requiredMessage('store.preferred_digital_asset_authorized_days') }),
 })
 
 export type StoreSettingsFormValues = z.infer<typeof storeSettingsFormSchema>

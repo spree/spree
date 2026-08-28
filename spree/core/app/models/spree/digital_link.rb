@@ -14,30 +14,44 @@ module Spree
       include Spree::Security::DigitalLinks
     end
 
-    belongs_to :digital
-    belongs_to :line_item
+    belongs_to :digital_asset, class_name: 'Spree::DigitalAsset'
+    belongs_to :line_item, class_name: 'Spree::LineItem'
 
     before_validation :set_defaults, on: :create
     validates :access_counter, numericality: { greater_than_or_equal_to: 0 }
 
-    delegate :filename, :content_type, to: :digital
+    delegate :filename, :content_type, to: :digital_asset
+    # The order's store is authoritative for both the download-limit flags and,
+    # passed into the asset, the limit values — so one store answers the whole
+    # check. Public so the keyless download endpoint can derive store context
+    # from the link (emailed links carry no publishable key).
+    delegate :store, to: :line_item
     delegate :order, to: :line_item
+
+    # @deprecated Use {#digital_asset}; removed in 6.1.
+    def digital
+      Spree::Deprecation.warn('Spree::DigitalLink#digital is deprecated and will be removed in Spree 6.1. Use #digital_asset instead.')
+      digital_asset
+    end
+
+    # @deprecated Use {#digital_asset=}; removed in 6.1.
+    def digital=(value)
+      Spree::Deprecation.warn('Spree::DigitalLink#digital= is deprecated and will be removed in Spree 6.1. Use #digital_asset= instead.')
+      self.digital_asset = value
+    end
 
     def authorizable?
       !(expired? || access_limit_exceeded?)
     end
 
     def expired?
-      if line_item.order.store.preferred_limit_digital_download_days
-        created_at <= line_item.order.store.preferred_digital_asset_authorized_days.day.ago
-      else
-        false
-      end
+      expiry = expires_at
+      expiry.present? && expiry <= Time.current
     end
 
     def access_limit_exceeded?
-      if line_item.order.store.preferred_limit_digital_download_count
-        access_counter >= line_item.order.store.preferred_digital_asset_authorized_clicks
+      if store.preferred_limit_digital_download_count
+        access_counter >= digital_asset.effective_authorized_clicks(store)
       else
         false
       end
@@ -61,6 +75,13 @@ module Spree
       self.access_counter = 0
       self.created_at = Time.current
       save!
+    end
+
+    # @return [Time, nil] when access lapses, or nil when day limits are off
+    def expires_at
+      return unless store.preferred_limit_digital_download_days
+
+      created_at + digital_asset.effective_authorized_days(store).days
     end
 
     private
