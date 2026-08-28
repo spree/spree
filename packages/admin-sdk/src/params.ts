@@ -1411,6 +1411,22 @@ export interface ProductTypeApplyToProductsResponse {
   products_count: number
 }
 
+/**
+ * A policy document. `body` takes HTML and is sanitized server-side; the
+ * `body_html` on reads is the rendering of what was stored.
+ */
+export interface PolicyCreateParams {
+  name: string
+  slug?: string
+  body?: string | null
+}
+
+export interface PolicyUpdateParams {
+  name?: string
+  slug?: string
+  body?: string | null
+}
+
 export interface TaxCategoryCreateParams {
   name: string
   tax_code?: string | null

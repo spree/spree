@@ -120,6 +120,59 @@ RSpec.describe 'seller requirement kinds', type: :model do
     end
   end
 
+  describe Spree::SellerRequirements::Policy do
+    let(:requirement) { create(:policy_requirement, store: store) }
+
+    it 'is met once the seller publishes the document it names' do
+      expect(requirement.satisfied?(seller)).to be false
+
+      create(:policy, owner: seller, name: 'Returns Policy', body: '<p>Send it back.</p>')
+
+      expect(requirement.satisfied?(seller.reload)).to be true
+    end
+
+    it 'does not count a policy with nothing written in it' do
+      create(:policy, owner: seller, name: 'Returns Policy', body: '')
+
+      expect(requirement.satisfied?(seller.reload)).to be false
+    end
+
+    it 'matches the name regardless of case or surrounding space' do
+      create(:policy, owner: seller, name: '  returns policy ', body: '<p>Send it back.</p>')
+
+      expect(requirement.satisfied?(seller.reload)).to be true
+    end
+
+    it 'ignores a policy that is not the one it asks for' do
+      create(:policy, owner: seller, name: 'Shipping Policy', body: '<p>Two days.</p>')
+
+      expect(requirement.satisfied?(seller.reload)).to be false
+    end
+
+    it 'ignores another seller’s policies' do
+      other_seller = create(:seller, store: store)
+      create(:policy, owner: other_seller, name: 'Returns Policy', body: '<p>Send it back.</p>')
+
+      expect(requirement.satisfied?(seller.reload)).to be false
+    end
+
+    # One row per document, so a marketplace asking for two tracks them apart
+    # and a seller who has written one sees that line go green.
+    it 'tracks each requested document separately' do
+      shipping = create(:policy_requirement, store: store, name: 'Shipping Policy')
+      create(:policy, owner: seller, name: 'Returns Policy', body: '<p>Send it back.</p>')
+      seller.reload
+
+      expect(requirement.satisfied?(seller)).to be true
+      expect(shipping.satisfied?(seller)).to be false
+    end
+
+    it 'may be added more than once' do
+      expect(described_class.allow_multiple?).to be true
+      expect { create(:policy_requirement, store: store, name: 'Shipping Policy') }.not_to raise_error
+    end
+  end
+
   describe Spree::SellerRequirements::MinimumProducts do
     let(:requirement) { create(:minimum_products_requirement, store: store) }
 

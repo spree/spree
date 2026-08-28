@@ -18,15 +18,27 @@ function resolveApiUrl(urlOrPath: string): { url: string; sameOrigin: boolean } 
  * origin get the `Authorization` header and cookies, so the token can't leak
  * to a third-party host (e.g. a URL echoed back by the server). The filename
  * comes from `Content-Disposition` when present, else `fallbackName`.
+ *
+ * `extraHeaders` carries whatever else the panel's API needs to identify the
+ * request — the seller panel's `X-Spree-Seller-Id`, without which every Seller
+ * API request is refused before the action runs. Prefer
+ * `useDownloadHeaders()`, which reads them off the registered client.
  */
 export async function downloadFromApi(
   token: string | null,
   urlOrPath: string,
   fallbackName: string,
+  extraHeaders: Record<string, string> = {},
 ): Promise<void> {
   const { url, sameOrigin } = resolveApiUrl(urlOrPath)
   const headers: Record<string, string> = {}
-  if (sameOrigin && token) headers.Authorization = `Bearer ${token}`
+  if (sameOrigin && token) {
+    headers.Authorization = `Bearer ${token}`
+    // Tenant headers ride only to the API origin, for the same reason the
+    // token does — a URL echoed back by the server must not carry them
+    // anywhere else.
+    Object.assign(headers, extraHeaders)
+  }
 
   const response = await fetch(url, {
     headers,

@@ -13,6 +13,44 @@ RSpec.describe Spree::Api::V3::Admin::SellersController, 'onboarding', type: :co
   end
 
   describe 'GET #onboarding' do
+    # The operator approves or sends back a seller on the strength of what
+    # they published — a line reading "Done" with no way to read the document
+    # is not something anyone can approve on.
+    it 'embeds the policy a seller published, so the operator can read it' do
+      create(:policy_requirement, store: store, name: 'Returns Policy')
+      seller.policies.create!(name: 'Returns Policy', body: '<p>Send it back within 30 days.</p>')
+
+      get :onboarding, params: { id: seller.prefixed_id }, as: :json
+
+      row = json_response['requirements'].find { |r| r['kind'] == 'policy' }
+      expect(row['status']).to eq('complete')
+      expect(row['required_policy_name']).to eq('Returns Policy')
+      expect(row['published_policy']['body_html']).to include('within 30 days')
+    end
+
+    it 'names the document without embedding one while it is still owed' do
+      create(:policy_requirement, store: store, name: 'Shipping Policy')
+
+      get :onboarding, params: { id: seller.prefixed_id }, as: :json
+
+      row = json_response['requirements'].find { |r| r['kind'] == 'policy' }
+      expect(row['status']).to eq('incomplete')
+      expect(row['required_policy_name']).to eq('Shipping Policy')
+      expect(row).not_to have_key('published_policy')
+    end
+
+    it "does not reach another seller's policy of the same name" do
+      create(:policy_requirement, store: store, name: 'Returns Policy')
+      other = create(:seller, store: store)
+      other.policies.create!(name: 'Returns Policy', body: '<p>Not theirs.</p>')
+
+      get :onboarding, params: { id: seller.prefixed_id }, as: :json
+
+      row = json_response['requirements'].find { |r| r['kind'] == 'policy' }
+      expect(row['status']).to eq('incomplete')
+      expect(row).not_to have_key('published_policy')
+    end
+
     it 'shows where the seller stands, in the operator’s order' do
       create(:accept_terms_requirement, store: store)
       create(:billing_address_requirement, store: store, required: false)

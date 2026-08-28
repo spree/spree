@@ -1,5 +1,6 @@
 import { useAuth } from '@spree/dashboard-core'
 import { Button, Field, FieldError, FieldGroup, FieldLabel, Input } from '@spree/dashboard-ui'
+import { Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -81,6 +82,10 @@ export function LoginPage() {
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? t('login.submitting') : t('login.submit')}
             </Button>
+
+            <Link to="/forgot-password" className="text-sm underline underline-offset-4">
+              {t('login.forgot_password')}
+            </Link>
           </FieldGroup>
         </form>
       </div>

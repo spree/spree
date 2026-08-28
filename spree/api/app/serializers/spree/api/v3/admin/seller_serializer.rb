@@ -30,6 +30,13 @@ module Spree
                      updated_at: :iso8601,
                      deleted_at: :iso8601
 
+          # A seller's policies are the seller's own, managed on the seller
+          # branch — the operator neither edits nor lists them in 6.0. The
+          # inherited declaration is dropped rather than shadowed, since
+          # keeping it would render a store serializer inside an admin
+          # response.
+          _attributes.delete(:policies)
+
           attribute :minimum_payout_amount do |seller|
             seller.minimum_payout_amount&.to_s
           end

@@ -12,17 +12,39 @@
     "subtitle": "You were invited as {{email}}. Set a password to finish.",
     "title": "Join the team"
   },
+  "admin": {
+    "components": {
+      "export_button": {
+        "all": {
+          "description": "Ignore filters and export all of your records."
+        }
+      }
+    }
+  },
   "app": {
     "name": "Seller panel"
   },
   "common": {
+    "apply": "Apply",
     "cancel": "Cancel",
+    "delete": "Delete",
     "error": "Something went wrong.",
     "loading": "Loading…",
     "remove": "Remove",
     "retry": "Try again",
     "save": "Save",
     "saving": "Saving…"
+  },
+  "forgot_password": {
+    "back_to_login": "Back to sign in",
+    "email": "Email",
+    "failed": "That request could not be sent. Try again in a moment.",
+    "sent_subtitle": "If that address belongs to a seller account, a reset link is on its way. The link expires shortly.",
+    "sent_title": "Check your email",
+    "submit": "Send reset link",
+    "submitting": "Sending…",
+    "subtitle": "Enter your email and we will send you a link to choose a new one.",
+    "title": "Forgot your password?"
   },
   "home": {
     "products": "Products",
@@ -40,6 +62,7 @@
   "login": {
     "email": "Email",
     "failed": "That email and password did not match a seller account.",
+    "forgot_password": "Forgot your password?",
     "no_seller": "This account does not run a seller on this marketplace.",
     "password": "Password",
     "submit": "Sign in",
@@ -49,8 +72,10 @@
   },
   "nav": {
     "home": "Home",
+    "legal": "Legal",
     "onboarding": "Setup",
     "orders": "Orders",
+    "policies": "Policies",
     "products": "Products",
     "profile": "Profile",
     "settings": "Settings",
@@ -66,7 +91,6 @@
     "confirm": "Confirm",
     "document_help": "PDF or an image of the document.",
     "document_label": "Document",
-    "done": "This one is done.",
     "go": "Go there",
     "note_placeholder": "Anything the marketplace should know (optional)",
     "optional": "Optional",
@@ -119,6 +143,41 @@
     "tracking_label": "Tracking number",
     "tracking_placeholder": "Optional"
   },
+  "policies": {
+    "add": "Add policy",
+    "columns": {
+      "name": "Name",
+      "updated": "Updated"
+    },
+    "delete_confirm": {
+      "title": "Delete policy?",
+      "message": "{{name}} will be removed. If the marketplace requires it, your onboarding will show it as outstanding again."
+    },
+    "description": "The legal documents shoppers see on your storefront.",
+    "empty": {
+      "title": "No policies yet",
+      "description": "Publish the documents this marketplace asks you for."
+    },
+    "fields": {
+      "name": "Name",
+      "body": "Content"
+    },
+    "messages": {
+      "deleted": "Policy deleted",
+      "saved": "Policy saved"
+    },
+    "required": {
+      "title": "Asked of you",
+      "description": "This marketplace requires these policies before it will approve you.",
+      "write": "Write it"
+    },
+    "search_placeholder": "Search by name…",
+    "sheet": {
+      "new_title": "New policy",
+      "description": "Shoppers read this on your storefront page."
+    },
+    "title": "Policies"
+  },
   "products": {
     "add": "Add product",
     "add_images": "Add images",
@@ -126,6 +185,25 @@
     "archive": "Archive",
     "archive_confirm_description": "It comes off sale and out of your active listings.",
     "archive_confirm_title": "Archive this product?",
+    "bulk": {
+      "delete_confirm_description": "This removes {n} from your catalogue. Shoppers will no longer see them.",
+      "delete_confirm_title": "Delete the selected products?",
+      "delete_failed": "Those products could not be deleted.",
+      "deleted": "Deleted {n} products",
+      "set_status_action": "Set status",
+      "skipped_one": "{{count}} was left alone. {{message}}",
+      "skipped_other": "{{count}} were left alone. {{message}}",
+      "skipped_refused": "The marketplace would not let them move. Open one to see why.",
+      "skipped_submit": "Only draft listings and ones the marketplace asked you to change can be submitted.",
+      "status_dialog_description": "Take these listings down while you work on them, or archive them for good. Putting a product on sale is the marketplace’s decision — submit it for review instead.",
+      "status_dialog_title": "Set status",
+      "status_update_failed": "Those products could not be updated.",
+      "status_updated": "Updated {n} products",
+      "submit_confirm_description": "The marketplace will review {n} products and decide whether to put them on sale.",
+      "submit_confirm_title": "Submit the selected products for review?",
+      "submit_failed": "Those products could not be submitted.",
+      "submitted": "Submitted {n} products for review"
+    },
     "columns": {
       "name": "Product",
       "price": "Price",
@@ -252,6 +330,18 @@
       "unsupported": "This number is recorded as entered; we cannot check it automatically.",
       "unverified": "This number could not be verified."
     }
+  },
+  "reset_password": {
+    "failed": "That link could not be used. It may have expired, or the password was not accepted.",
+    "invalid_link": "This link is missing its token. Open the link from your reset email.",
+    "mismatch": "Both passwords must match.",
+    "password": "New password",
+    "password_confirmation": "Confirm new password",
+    "request_new_link": "Request a new link",
+    "submit": "Change password",
+    "submitting": "Saving…",
+    "subtitle": "Choose a new password to finish signing in.",
+    "title": "Choose a new password"
   },
   "seller_picker": {
     "status": "Status",

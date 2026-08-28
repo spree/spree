@@ -259,6 +259,10 @@ module Spree
     validate :discontinue_on_must_be_later_than_make_active_at, if: -> { make_active_at && discontinue_on }
 
     scope :for_store, ->(store) { where(store_id: store.id) }
+    # Products belonging to the given seller. Passing nil selects the
+    # operator's own catalog, which on a store with no sellers is everything.
+    # The same answer `Seller#products` gives, as a scope a bulk read can chain.
+    scope :for_seller, ->(seller) { where(seller_id: seller.respond_to?(:id) ? seller.id : seller) }
     scope :not_archived, -> { where.not(status: 'archived') }
     scope :on_sale, lambda { |currency = nil|
                       currency ||= Spree::Store.default.default_currency

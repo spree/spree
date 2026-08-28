@@ -6,6 +6,16 @@ module Spree
 
     SUPPORTED_FILE_FORMATS = %i[csv].freeze
 
+    # Raised when a seller-owned export names a model that cannot be narrowed
+    # to one seller. Failing loudly beats writing a file that silently spans
+    # the whole marketplace.
+    class SellerScopeUnavailable < StandardError
+      def initialize(model_class)
+        super("#{model_class} does not define `for_seller`, so a seller-scoped export of it " \
+              'would contain every seller\'s records.')
+      end
+    end
+
     include Spree::SingleStoreResource
     include Spree::NumberIdentifier
 
@@ -31,6 +41,15 @@ module Spree
     # Validations
     #
     validates :format, :type, presence: true
+    # Refuse before the job runs rather than at generate. `scope` raises for a
+    # seller-owned export of a model it cannot narrow, and that raise would
+    # otherwise land inside the background job, where nothing records it — the
+    # export simply never becomes `done` and the caller waits out its poll. A
+    # validation makes it a 422 the caller reads straight away.
+    #
+    # Not `on: :create`: an export born without a seller passes, and assigning
+    # one afterwards would reach the same raise.
+    validate :seller_scope_must_be_available, if: -> { seller_id.present? }
 
     #
     # Enums
@@ -93,11 +112,11 @@ module Spree
         records_to_export.includes(scope_includes).find_in_batches do |batch|
           batch.each do |record|
             if multi_line_csv?
-              record.to_csv(store).each do |line|
+              record.to_csv(store, **to_csv_options).each do |line|
                 csv << Spree::CSV::FormulaSanitizer.row(line)
               end
             else
-              csv << Spree::CSV::FormulaSanitizer.row(record.to_csv(store))
+              csv << Spree::CSV::FormulaSanitizer.row(record.to_csv(store, **to_csv_options))
             end
           end
         end
@@ -106,6 +125,15 @@ module Spree
 
     def multi_line_csv?
       false
+    end
+
+    # Keyword arguments passed to each record's `to_csv`. Subclasses override
+    # to narrow what a particular export writes — see Spree::Exports::Orders,
+    # which drops columns a seller may not read.
+    #
+    # @return [Hash]
+    def to_csv_options
+      {}
     end
 
     def csv_headers
@@ -129,10 +157,26 @@ module Spree
       ::File.delete(export_tmp_file_path) if ::File.exist?(export_tmp_file_path)
     end
 
+    # The records this export may contain.
+    #
+    # Tenancy is these scope narrowings, never the ability: a seller holding
+    # `read_orders` is granted the model class, not their own subset (see
+    # Spree::Ability), so dropping `for_seller` here would put every seller's
+    # rows in one seller's file.
     def scope
       scope = model_class
       scope = scope.for_store(store) if model_class.respond_to?(:for_store)
-      scope = scope.for_seller(seller) if model_class.respond_to?(:for_seller) && seller.present?
+
+      if seller.present?
+        raise SellerScopeUnavailable, model_class unless model_class.respond_to?(:for_seller)
+
+        scope = scope.for_seller(seller)
+        # A draft is either a checkout in flight or the operator's working
+        # document, and is not this seller's sale — the same exclusion every
+        # endpoint on the seller branch applies.
+        scope = scope.not_drafts if model_class.respond_to?(:not_drafts)
+      end
+
       # A staff-created export only contains what its creator may read; a
       # userless export (console, system jobs) is unfiltered.
       scope = scope.accessible_by(current_ability) if user.present?
@@ -211,8 +255,11 @@ module Spree
       end
     end
 
+    # Capability is read against whatever granted it: a seller's roles are held
+    # on the seller, not the store, so an ability built from the store alone
+    # would answer "no rules" and empty the file.
     def current_ability
-      @current_ability ||= Spree.ability_class.new(user, { store: store })
+      @current_ability ||= Spree.ability_class.new(user, { store: store, resource: seller || store })
     end
 
     # eg. Spree::Exports::Products => products-store-my-store-code-20241030133348.csv
@@ -279,6 +326,15 @@ module Spree
     end
 
     private
+
+    def seller_scope_must_be_available
+      return if model_class.respond_to?(:for_seller)
+
+      errors.add(:type, :seller_scope_unavailable)
+    rescue NameError
+      # An unresolvable `type` is the presence/registry validation's business.
+      nil
+    end
 
     def set_default_format
       self.format = SUPPORTED_FILE_FORMATS.first if format.blank?

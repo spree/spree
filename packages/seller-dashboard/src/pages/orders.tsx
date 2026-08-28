@@ -1,4 +1,4 @@
-import { type ResourceSearch, ResourceTable } from '@spree/dashboard-core'
+import { ExportButton, type ResourceSearch, ResourceTable } from '@spree/dashboard-core'
 import { useRowClickBridge } from '@spree/dashboard-ui'
 import type { Order } from '@spree/seller-sdk'
 import { useNavigate, useParams } from '@tanstack/react-router'
@@ -25,6 +25,7 @@ export function OrdersPage({ search }: { search: ResourceSearch }) {
         queryKey="seller-orders"
         queryFn={(params) => sellerClient().orders.list(params)}
         searchParams={search}
+        actions={(ctx) => <ExportButton type="orders" {...ctx} />}
       />
     </div>
   )

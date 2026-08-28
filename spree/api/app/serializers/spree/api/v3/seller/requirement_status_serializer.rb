@@ -12,7 +12,8 @@ module Spree
                    blocking: :boolean, action_url: [:string, nullable: true],
                    blocker: ['{ state: string; message: string | null } | null'],
                    accepts_submissions: :boolean, requires_file: :boolean,
-                   accepted_content_types: [:string, multi: true]
+                   accepted_content_types: [:string, multi: true],
+                   required_policy_name: [:string, nullable: true]
 
           attributes :id, :kind, :name, :description, :required, :position, :status, :action_url, :blocker
 
@@ -30,6 +31,12 @@ module Spree
 
           attribute :accepted_content_types do |status|
             status.requirement.accepted_content_types
+          end
+
+          # The document this line asks for, so the panel can offer to create
+          # exactly that policy. Null for every other kind.
+          attribute :required_policy_name do |status|
+            status.required_policy_name
           end
 
           one :submission,

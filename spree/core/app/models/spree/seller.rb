@@ -143,12 +143,22 @@ module Spree
     # the past.
     has_many :seller_transfers, class_name: 'Spree::SellerTransfer', dependent: nil
     has_many :seller_payouts, class_name: 'Spree::SellerPayout', dependent: nil
+    # CSV files this seller asked for. Destroyed with the seller: an export is
+    # a copy of records held elsewhere, so nothing is lost by dropping it, and
+    # a file of one seller's orders should not outlive them.
+    has_many :exports, class_name: 'Spree::Export', dependent: :destroy_async, inverse_of: :seller
 
     # What this seller has done about the marketplace's requirements — their
     # attestations, the documents they uploaded, what the operator made of
     # them. Goes with the seller, since it means nothing without them.
     has_many :requirement_submissions, class_name: 'Spree::SellerRequirementSubmission',
                                        dependent: :destroy, inverse_of: :seller
+
+    # This seller's own legal documents — shipping, returns, whatever the
+    # marketplace asks of them. Unlike a store, a seller is born with none:
+    # what they must publish is a `SellerRequirements::Policy` decision, not
+    # a set of empty rows every seller carries whether or not it applies.
+    has_many :policies, class_name: 'Spree::Policy', dependent: :destroy, as: :owner
 
     #
     # Attachments

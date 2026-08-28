@@ -364,6 +364,7 @@ module Spree
           Spree::SellerRequirements::MinimumProducts,
           Spree::SellerRequirements::PayoutAccount,
           Spree::SellerRequirements::RequiredCustomFields,
+          Spree::SellerRequirements::Policy,
           Spree::SellerRequirements::Attestation,
           Spree::SellerRequirements::OperatorReview,
           Spree::SellerRequirements::Document
@@ -588,6 +589,7 @@ module Spree
           Spree::InvitationEmailSubscriber,
           Spree::SellerOnboardingSubscriber,
           Spree::AdminUserEmailSubscriber,
+          Spree::SellerUserEmailSubscriber,
           Spree::ProductMetricsSubscriber,
           Spree::TaxIdentifierValidationSubscriber
         ]

@@ -297,13 +297,10 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
     </p>
   )
 
+  // Nothing to do on a finished line. The header already carries the tick and
+  // the Done badge, so a sentence saying the same thing a third time is noise.
   if (requirement.status === 'complete') {
-    return (
-      <>
-        {rejection}
-        <p className="text-muted-foreground text-sm">{t('onboarding.done')}</p>
-      </>
-    )
+    return rejection
   }
 
   if (requirement.status === 'pending') {
@@ -463,6 +460,8 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
         </div>
       )}
 
+      {/* Which documents are still owed. The generic link below says where to
+          go; without this the seller would arrive not knowing what to write. */}
       {/* `accept_terms` renders its own link above, with different words. */}
       {requirement.action_url &&
         requirement.kind !== 'accept_terms' &&
@@ -497,6 +496,8 @@ function panelRoute(kind: string): string | undefined {
   switch (kind) {
     case 'complete_profile':
       return '/$sellerId/profile'
+    case 'policy':
+      return '/$sellerId/settings/policies'
     // `required_custom_fields` is not here: it renders its own fields inline,
     // so a link away would offer a second, worse route to the same thing.
     //

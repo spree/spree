@@ -46,6 +46,16 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
 
       expect(json_response['seller_id']).to be_nil
     end
+
+    # What a product detail page asks for: the seller's policies alongside
+    # their profile, in one request.
+    it 'reaches the seller’s policies through a nested expand' do
+      create(:policy, owner: seller, name: 'Returns', body: '<p>Thirty days.</p>')
+
+      get :show, params: { id: seller_product.slug, expand: 'seller.policies' }, as: :json
+
+      expect(json_response['seller']['policies'].pluck('name')).to include('Returns')
+    end
   end
 
   describe 'catalog narrowing' do

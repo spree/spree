@@ -124,6 +124,10 @@ module Spree
     attribute :status, :string, default: 'draft'
     validates :status, inclusion: { in: STATUSES }
 
+    # Orders belonging to the given seller. Passing nil selects the
+    # operator's own sales, which on a store with no sellers is every order.
+    scope :for_seller, ->(seller) { where(seller_id: seller.respond_to?(:id) ? seller.id : seller) }
+
     scope :drafts,         -> { where(status: 'draft') }
     scope :not_drafts,     -> { where.not(status: 'draft') }
     scope :placed_orders,  -> { where(status: 'placed') }
@@ -1062,14 +1066,19 @@ module Spree
       discounts.promotion.for_fulfillments.exists?
     end
 
-    def to_csv(_store = nil)
+    # @param omit_headers [Array<String>] columns to leave out, named by their
+    #   header. A seller's export drops the buyer's email this way — see
+    #   Spree::Exports::Orders.
+    def to_csv(_store = nil, omit_headers: [])
       custom_fields_for_csv ||= Spree::CustomFieldDefinition.for_resource_type('Spree::Order').order(:namespace, :key).map do |mf_def|
         custom_fields.find { |mf| mf.custom_field_definition_id == mf_def.id }&.csv_value
       end
 
       csv_lines = []
       line_items.each_with_index do |line_item, index|
-        csv_lines << Spree::CSV::OrderLineItemPresenter.new(self, line_item, index, custom_fields_for_csv).call
+        csv_lines << Spree::CSV::OrderLineItemPresenter.new(
+          self, line_item, index, custom_fields_for_csv, omit_headers: omit_headers
+        ).call
       end
       csv_lines
     end

@@ -1,5 +1,5 @@
 import { setApiClient } from '@spree/dashboard-core'
-import type { SellerApiClient } from '@spree/seller-sdk'
+import type { SellerApiClient, SellerExportCreateParams } from '@spree/seller-sdk'
 import { createSellerClient } from '@spree/seller-sdk'
 
 /**
@@ -13,6 +13,18 @@ import { createSellerClient } from '@spree/seller-sdk'
 const SELLER_STORAGE_KEY = 'spree.seller.id'
 
 let client: SellerApiClient | null = null
+
+/**
+ * The seller the client is currently sending, mirrored here because the SDK
+ * keeps it in a closure with no reader.
+ *
+ * Not the same thing as the stored choice: a browser that blocks storage
+ * (private mode, sandboxed iframe) still runs the panel perfectly well, and
+ * `rememberSeller` sets the client either way. Reading `localStorage` to
+ * answer "who are we acting as" would come back empty in exactly those
+ * sessions and drop the header off every file download.
+ */
+let activeSellerId: string | null = null
 
 /**
  * Builds the Seller API client and registers it with the shared framework.
@@ -34,7 +46,7 @@ export function createSellerApiClient({
   client = createSellerClient({ baseUrl })
 
   const remembered = rememberedSeller()
-  if (remembered) client.setSeller(remembered)
+  if (remembered) setActiveSeller(remembered)
 
   setApiClient({
     auth: client.auth,
@@ -56,6 +68,19 @@ export function createSellerApiClient({
     // so it works in a panel that has no admin credential.
     listCountries: () => sellerClient().countries.list(),
     createDirectUpload: (params) => sellerClient().directUploads.create(params),
+    // A file download is a bare fetch, so it does not go through the client
+    // and picks up none of its headers. Without the seller header the Seller
+    // API refuses the request before the action runs, so an export would
+    // generate fine and then fail to download.
+    downloadHeaders: (): Record<string, string> =>
+      activeSellerId ? { 'X-Spree-Seller-Id': activeSellerId } : {},
+    // Backs the shared export dialog, the same one the operator's dashboard
+    // renders. The Seller API narrows what may be exported to records that
+    // can be scoped to one seller, and refuses anything else.
+    exports: {
+      create: (params) => sellerClient().exports.create(params as SellerExportCreateParams),
+      get: (id) => sellerClient().exports.get(id),
+    },
     // Backs the shared stock-locations page. No `delete`: a location holds
     // stock levels and is named on historical fulfillments, so the Seller API
     // does not offer it and the page hides the action accordingly.
@@ -94,6 +119,7 @@ export function sellerClient(): SellerApiClient {
 
 /** Points subsequent requests at a seller, without persisting the choice. */
 export function setActiveSeller(sellerId: string): void {
+  activeSellerId = sellerId
   sellerClient().setSeller(sellerId)
 }
 
@@ -121,6 +147,7 @@ export function forgetSeller(): void {
   } catch {
     // Nothing to forget; clearing the header below is what matters for logout.
   }
+  activeSellerId = null
   client?.setSeller('')
 }
 

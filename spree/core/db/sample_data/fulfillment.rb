@@ -1,7 +1,7 @@
-# The whole demo fulfillment setup in one place: a rate-ready origin, a
-# realistic parcel, and Shopify-style delivery methods on the Domestic and
-# International zones. The free international method showcases
-# delivery-method rules — free above a spend threshold, hidden below it.
+# The whole demo fulfillment setup in one place: a realistic parcel and
+# Shopify-style delivery methods on the Domestic and International zones.
+# The free international method showcases delivery-method rules — free
+# above a spend threshold, hidden below it.
 store = Spree::Store.default
 
 # The zones are created from the store's country at first-run setup, so an
@@ -15,26 +15,6 @@ if store.delivery_zones.where(name: %w[Domestic International]).count < 2
     locale: store.default_locale
   )
   store.reload
-end
-
-# Carrier rate providers (EasyPost) cannot quote without a complete origin
-# address — a country-only stock location makes every carrier method silently
-# disappear from checkout. Demo data only: the production seed deliberately
-# leaves the address blank rather than invent an origin real rates would be
-# quoted from.
-stock_location = store.stock_locations.find_by(default: true) || store.stock_locations.first
-
-# Any missing field leaves the origin unquotable, so completeness — not just a
-# blank street — decides whether the demo address applies.
-if stock_location&.country_code == 'US' &&
-   [stock_location.address1, stock_location.city, stock_location.state_code, stock_location.zipcode].any?(&:blank?)
-  stock_location.update!(
-    address1: '417 Montgomery St',
-    city: 'San Francisco',
-    state_code: 'CA',
-    zipcode: '94104',
-    phone: '415-555-0100'
-  )
 end
 
 # A realistic shipping box (imperial units — the demo store is US): its weight

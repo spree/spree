@@ -1354,6 +1354,18 @@
           "placeholder": "Sélectionner un fournisseur"
         }
       },
+      "policy": {
+        "body": {
+          "label": "Contenu"
+        },
+        "name": {
+          "placeholder": "Politique de retour"
+        },
+        "slug": {
+          "help": "L'adresse de cette politique sur la boutique. Laissée vide, elle suit le nom.",
+          "placeholder": "politique-de-retour"
+        }
+      },
       "postal_code": {
         "label": "Code postal"
       },
@@ -3274,6 +3286,10 @@
           "add_sheet_title": "Ajouter un mode de paiement",
           "edit_sheet_title": "Modifier le mode de paiement"
         },
+        "policies": {
+          "add_sheet_title": "Ajouter une politique",
+          "edit_sheet_title": "Modifier la politique"
+        },
         "stock_locations": {
           "add_sheet_title": "Ajouter un emplacement de stock",
           "edit_sheet_title": "Modifier l'emplacement de stock",
@@ -3557,6 +3573,24 @@
         "store_credits": "Avoirs en boutique",
         "webhooks": "Webhooks"
       }
+    },
+    "policies": {
+      "add_cta": "Ajouter une politique",
+      "create_description": "Publiez un document légal que les clients peuvent lire sur votre boutique.",
+      "create_label": "Créer la politique",
+      "delete_confirm": {
+        "message": "{{name}} sera supprimée et la page correspondante de la boutique cessera de fonctionner.",
+        "title": "Supprimer la politique ?"
+      },
+      "edit_description": "Rédigez le document que les clients voient sur votre boutique.",
+      "empty": "Aucune politique pour le moment",
+      "messages": {
+        "created": "Politique créée",
+        "deleted": "Politique supprimée",
+        "updated": "Politique mise à jour"
+      },
+      "no_content": "Rien de rédigé pour le moment",
+      "search_placeholder": "Rechercher par nom…"
     },
     "post_sale": {
       "claims_empty": "Aucune réclamation pour l’instant.",
@@ -4297,6 +4331,8 @@
         },
         "all_done": "Tout est fait 🎉",
         "download": "Télécharger le fichier",
+        "policy_empty": "Cette politique n'a pas encore de contenu.",
+        "policy_updated": "Dernière mise à jour le {{date}}",
         "progress": "{{done}} sur {{total}} terminé",
         "reject_confirm": {
           "message": "Le vendeur devra fournir « {{name}} » à nouveau.",
@@ -4311,6 +4347,7 @@
           "rejected": "Renvoyé"
         },
         "title": "Configuration",
+        "view_policy": "Voir la politique",
         "waive_confirm": {
           "message": "« {{name}} » comptera comme remplie pour ce vendeur uniquement.",
           "title": "Lever cette exigence ?"
@@ -4413,6 +4450,7 @@
         "integrations": "Connecter des prestataires d'expédition, de taxe et autres",
         "markets": "Pays où vous vendez et leurs devises",
         "payment_methods": "Passerelles de paiement et mode de capture",
+        "policies": "Conditions, confidentialité, retours et livraison",
         "product_types": "Modèles qui préremplissent les nouveaux produits",
         "reasons": "Motifs proposés pour retours, remboursements et réclamations",
         "roles": "Ensembles d'autorisations attribués au personnel",
@@ -4447,6 +4485,7 @@
         "integrations": "Intégrations",
         "markets": "Marchés",
         "payment_methods": "Modes de paiement",
+        "policies": "Politiques",
         "product_types": "Types de produit",
         "profile": "Profil",
         "reasons": "Retours et motifs",

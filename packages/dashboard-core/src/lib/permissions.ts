@@ -28,6 +28,7 @@ export const Subject = {
   Collection: 'Spree::Collection',
   OptionType: 'Spree::OptionType',
   OptionValue: 'Spree::OptionValue',
+  Policy: 'Spree::Policy',
   TaxCategory: 'Spree::TaxCategory',
   TaxRate: 'Spree::TaxRate',
   TaxIdentifier: 'Spree::TaxIdentifier',

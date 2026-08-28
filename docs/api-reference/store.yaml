@@ -1033,7 +1033,7 @@ paths:
         in: query
         required: false
         description: Comma-separated associations to expand (variants, media, categories,
-          option_types, seller)
+          option_types, seller, seller.policies)
         schema:
           type: string
       - name: fields
@@ -1194,8 +1194,9 @@ paths:
         in: query
         required: false
         description: Comma-separated associations to expand (variants, media, categories,
-          option_types, prior_price, seller). On a marketplace, `seller` embeds the
-          seller public profile; `seller_id` is present without it.
+          option_types, prior_price, seller, seller.policies). On a marketplace, `seller`
+          embeds the seller public profile and `seller.policies` adds their published
+          legal documents; `seller_id` is present without either.
         schema:
           type: string
       - name: fields
@@ -9764,31 +9765,37 @@ paths:
                   slug: privacy-policy
                   body: ''
                   body_html: ''
+                  updated_at: '2026-01-15T12:00:00.000Z'
                 - id: pol_OIJLhNcSbf
                   name: Privacy Policy
                   slug: privacy-policy-f4e5666d-52c2-4d89-aec5-cc55d69c7174
                   body: We respect your privacy.
                   body_html: We respect your privacy.
+                  updated_at: '2026-01-15T12:00:00.000Z'
                 - id: pol_uw2YK1rnl0
                   name: Return Policy
                   slug: return-policy
                   body: You can return items within 30 days.
                   body_html: You can return items within 30 days.
+                  updated_at: '2026-01-15T12:00:00.000Z'
                 - id: pol_EfhxLZ9ck8
                   name: Returns Policy
                   slug: returns-policy
                   body: ''
                   body_html: ''
+                  updated_at: '2026-01-15T12:00:00.000Z'
                 - id: pol_VqXmZF31wY
                   name: Shipping Policy
                   slug: shipping-policy
                   body: ''
                   body_html: ''
+                  updated_at: '2026-01-15T12:00:00.000Z'
                 - id: pol_UkLWZg9DAJ
                   name: Terms of Service
                   slug: terms-of-service
                   body: ''
                   body_html: ''
+                  updated_at: '2026-01-15T12:00:00.000Z'
                 meta:
                   page: 1
                   limit: 25
@@ -9868,6 +9875,7 @@ paths:
                 slug: return-policy
                 body: You can return items within 30 days.
                 body_html: You can return items within 30 days.
+                updated_at: '2026-01-15T12:00:00.000Z'
               schema:
                 "$ref": "#/components/schemas/Policy"
         '404':
@@ -10992,6 +11000,13 @@ paths:
         description: Filter by name
         schema:
           type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (`policies`). A seller's
+          policies are their own published legal documents.
+        schema:
+          type: string
       - name: fields
         in: query
         required: false
@@ -11064,6 +11079,13 @@ paths:
         in: path
         required: true
         description: Seller slug (e.g., sparks-audio) or prefixed ID (e.g., sel_abc123)
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (`policies`). A seller's
+          policies are their own published legal documents.
         schema:
           type: string
       - name: fields
@@ -13680,12 +13702,15 @@ components:
         body_html:
           type: string
           nullable: true
+        updated_at:
+          type: string
       required:
       - id
       - name
       - slug
       - body
       - body_html
+      - updated_at
       x-typelizer: true
     PriceHistory:
       type: object
@@ -14257,6 +14282,10 @@ components:
         cover_photo_url:
           type: string
           nullable: true
+        policies:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Policy"
       required:
       - id
       - name

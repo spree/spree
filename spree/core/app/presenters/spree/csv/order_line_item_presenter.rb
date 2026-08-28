@@ -59,14 +59,36 @@ module Spree
         'Notes'
       ].freeze
 
-      def initialize(order, line_item, index, custom_fields = [])
+      # Columns a caller may leave out, and the headers naming them.
+      #
+      # Filtering both the header list and the row through the same names is
+      # what keeps them aligned: dropping a cell by hand would silently shift
+      # every value after it into the wrong column.
+      #
+      # @param order [Spree::Order]
+      # @param line_item [Spree::LineItem]
+      # @param index [Integer] position within the order's line items; only
+      #   the first row carries the order-level values
+      # @param custom_fields [Array]
+      # @param omit_headers [Array<String>] headers to leave out of this row
+      def initialize(order, line_item, index, custom_fields = [], omit_headers: [])
         @order = order
         @line_item = line_item
         @index = index
         @custom_fields = custom_fields
+        @omit_headers = Array(omit_headers)
       end
 
       attr_accessor :order, :line_item, :index, :custom_fields
+      attr_reader :omit_headers
+
+      # The headers this presenter emits, minus the omitted ones.
+      #
+      # @param omit_headers [Array<String>]
+      # @return [Array<String>]
+      def self.headers(omit_headers: [])
+        HEADERS - Array(omit_headers)
+      end
 
       def call
         csv = [
@@ -127,6 +149,8 @@ module Spree
           index.zero? ? order.customer_note : nil
         ]
 
+        csv = reject_omitted(csv)
+
         if index.zero?
           csv += custom_fields
         end
@@ -135,6 +159,14 @@ module Spree
       end
 
       private
+
+      # Drops the cells whose headers were omitted, matching each value to its
+      # header by position so the row and the header list stay aligned.
+      def reject_omitted(csv)
+        return csv if omit_headers.empty?
+
+        csv.reject.with_index { |_value, position| omit_headers.include?(HEADERS[position]) }
+      end
 
       def taxon_dict(taxon)
         return [] if taxon.blank?

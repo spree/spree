@@ -2,9 +2,11 @@ import type { ListParams, PaginatedResponse, RequestFn, RequestOptions } from '@
 import { transformListParams } from '@spree/sdk-core'
 import type {
   AuthTokens,
+  Export,
   Fulfillment,
   Invitation,
   Order,
+  Policy,
   Product,
   Profile,
   RequirementStatus,
@@ -80,6 +82,35 @@ export class SellerClient {
       this.request<AuthTokens>('POST', `/auth/invitations/${invitationId}/accept`, {
         ...options,
         params: { token },
+        body: params,
+      }),
+
+    /**
+     * Asks for a password reset email. Always resolves (202) whether or not the
+     * address matches a seller, so this cannot be used to discover which
+     * accounts exist. The emailed link opens the seller panel — `redirect_url`
+     * when it passes the store's allowed-origin check, otherwise the panel
+     * origin the server resolves for itself.
+     */
+    requestPasswordReset: (
+      params: { email: string; redirect_url?: string },
+      options?: RequestOptions,
+    ): Promise<void> =>
+      this.request<void>('POST', '/auth/password_resets', { ...options, body: params }),
+
+    /**
+     * Spends a reset token: sets the new password and returns a signed-in
+     * seller session, so they land in the panel rather than on a login form.
+     * The token is single-use, and resetting revokes every other session the
+     * account holds.
+     */
+    resetPassword: (
+      token: string,
+      params: { password: string; password_confirmation: string },
+      options?: RequestOptions,
+    ): Promise<AuthTokens> =>
+      this.request<AuthTokens>('PATCH', `/auth/password_resets/${encodeURIComponent(token)}`, {
+        ...options,
         body: params,
       }),
   }
@@ -261,6 +292,36 @@ export class SellerClient {
 
     archive: (id: string, options?: RequestOptions): Promise<Product> =>
       this.request<Product>('PATCH', `/products/${id}/archive`, options),
+
+    /**
+     * Submit a selection for review.
+     *
+     * Only a draft or a rejected listing can be submitted, so a mixed
+     * selection moves what it can: `product_count` is what was submitted and
+     * `skipped_count` — present only when something was skipped — is what was
+     * already on sale, already in review, or archived.
+     */
+    bulkSubmit: (params: { ids: string[] }, options?: RequestOptions): Promise<BulkProductResult> =>
+      this.request('POST', '/products/bulk_submit', { ...options, body: params }),
+
+    /**
+     * Move a selection to `draft` or `archived`.
+     *
+     * There is no bulk route onto `active`: a listing goes on sale when the
+     * marketplace approves it, one at a time.
+     */
+    bulkStatusUpdate: (
+      params: { ids: string[]; status: 'draft' | 'archived' },
+      options?: RequestOptions,
+    ): Promise<BulkProductResult> =>
+      this.request('POST', '/products/bulk_status_update', { ...options, body: params }),
+
+    /** Delete a selection. Ids outside this seller's catalog are ignored. */
+    bulkDestroy: (
+      params: { ids: string[] },
+      options?: RequestOptions,
+    ): Promise<BulkProductResult> =>
+      this.request('DELETE', '/products/bulk_destroy', { ...options, body: params }),
   }
 
   /**
@@ -337,6 +398,24 @@ export class SellerClient {
   }
 
   /**
+   * CSV of this seller's own records — what they sold, or their catalogue.
+   *
+   * Created, polled until `done`, then downloaded. There is no list: a seller
+   * has no export history page, and no delete: how long a file is kept is the
+   * marketplace's business.
+   *
+   * Scoped server-side to the acting seller, so an export can only ever
+   * contain their own rows however the request is filtered.
+   */
+  readonly exports = {
+    create: (params: SellerExportCreateParams, options?: RequestOptions): Promise<Export> =>
+      this.request<Export>('POST', '/exports', { ...options, body: params }),
+
+    get: (id: string, options?: RequestOptions): Promise<Export> =>
+      this.request<Export>('GET', `/exports/${id}`, options),
+  }
+
+  /**
    * Where this seller keeps stock, and so where their returns are sent.
    *
    * No delete: a location holds stock levels and is named on historical
@@ -368,6 +447,59 @@ export class SellerClient {
         body: params,
       }),
   }
+
+  /**
+   * This seller's own policy documents — their returns policy, shipping
+   * policy, whatever the marketplace asks them to publish.
+   *
+   * Addressable by slug as well as prefixed id, matching the storefront.
+   */
+  readonly policies = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Policy>> =>
+      this.request<PaginatedResponse<Policy>>('GET', '/policies', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (idOrSlug: string, options?: RequestOptions): Promise<Policy> =>
+      this.request<Policy>('GET', `/policies/${idOrSlug}`, options),
+
+    create: (params: PolicyCreateParams, options?: RequestOptions): Promise<Policy> =>
+      this.request<Policy>('POST', '/policies', { ...options, body: params }),
+
+    update: (
+      idOrSlug: string,
+      params: PolicyUpdateParams,
+      options?: RequestOptions,
+    ): Promise<Policy> =>
+      this.request<Policy>('PATCH', `/policies/${idOrSlug}`, { ...options, body: params }),
+
+    delete: (idOrSlug: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/policies/${idOrSlug}`, options),
+  }
+}
+
+/**
+ * What a seller may write when publishing a policy. `name` is required — it is
+ * how the marketplace's onboarding check finds the document.
+ *
+ * `body` takes HTML and is sanitized server-side; `body_html` is the
+ * read-only rendering of what was stored.
+ */
+export interface PolicyCreateParams {
+  name: string
+  slug?: string
+  body?: string | null
+}
+
+/** What a seller may change on a policy they already published. */
+export interface PolicyUpdateParams {
+  name?: string
+  slug?: string
+  body?: string | null
 }
 
 /** What a seller may write on one of their stock locations. */
@@ -385,6 +517,39 @@ export interface StockLocationParams {
   active?: boolean
   default?: boolean
   kind?: string
+}
+
+/**
+ * The datasets a seller may export.
+ *
+ * Deliberately narrower than the operator's list: only records that can be
+ * narrowed to one seller are offered, since that narrowing is what keeps one
+ * seller's file free of another's rows.
+ */
+export type SellerExportType = 'orders' | 'products'
+
+export interface SellerExportCreateParams {
+  type: SellerExportType
+  /**
+   * Ransack query hash, the same predicate shape the list endpoints take
+   * (`{ number_cont: 'R12' }`). Ignored when `record_selection` is `'all'`.
+   */
+  search_params?: Record<string, unknown>
+  /**
+   * `'filtered'` (default) keeps `search_params`; `'all'` clears them on the
+   * server and exports everything this seller owns.
+   */
+  record_selection?: 'filtered' | 'all'
+  /**
+   * Absolute URL of the panel view to send the seller back to; the
+   * export-done email uses it as the download button's target. Honored only
+   * when it matches one of the store's allowed origins.
+   *
+   * Passed by the panel rather than derived server-side, because only the
+   * panel knows where it is mounted — a seller panel is served from a path
+   * under the store as often as from a host of its own.
+   */
+  results_url?: string
 }
 
 /** A country as the address form needs it. */
@@ -425,6 +590,16 @@ export interface RequirementSubmissionParams {
 }
 
 /** The fields a seller may set on their own product. */
+/**
+ * What a bulk product action did. `skipped_count` is present only when the
+ * action left something alone — a key on every response would tell a caller
+ * that never skips anything that nothing was skipped.
+ */
+export interface BulkProductResult {
+  product_count: number
+  skipped_count?: number
+}
+
 export interface ProductParams {
   name?: string
   description?: string

@@ -55,7 +55,8 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
       parameter name: 'q[in_stock]', in: :query, type: :boolean, required: false,
                 description: 'Filter to only in-stock products'
       parameter name: :expand, in: :query, type: :string, required: false,
-                description: 'Comma-separated associations to expand (variants, media, categories, option_types, seller)'
+                description: 'Comma-separated associations to expand (variants, media, categories, ' \
+                             'option_types, seller, seller.policies)'
       parameter name: :fields, in: :query, type: :string, required: false,
                 description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 
@@ -104,8 +105,9 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
                 description: 'Product slug (e.g., spree-tote) or prefix ID (e.g., product_abc123)'
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations to expand (variants, media, categories, ' \
-                             'option_types, prior_price, seller). On a marketplace, `seller` embeds ' \
-                             'the seller public profile; `seller_id` is present without it.'
+                             'option_types, prior_price, seller, seller.policies). On a marketplace, ' \
+                             '`seller` embeds the seller public profile and `seller.policies` adds ' \
+                             'their published legal documents; `seller_id` is present without either.'
       parameter name: :fields, in: :query, type: :string, required: false,
                 description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 

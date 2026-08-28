@@ -132,8 +132,17 @@ module Spree
 
           def serialize_seller
             Spree.api.seller_profile_serializer.new(
-              current_seller.reload, params: { store: current_store }
+              current_seller.reload,
+              params: { store: current_store, expand: expand_list }
             ).to_h
+          end
+
+          # This controller is not a ResourceController, so it does not get the
+          # shared `expand` plumbing — without this the serializer's optional
+          # associations (the seller's policies) are unreachable here whatever
+          # the client asks for.
+          def expand_list
+            params[:expand].to_s.split(',').map(&:strip)
           end
         end
       end

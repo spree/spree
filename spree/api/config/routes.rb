@@ -360,6 +360,9 @@ Spree::Core::Engine.add_routes do
         # Option Types (with nested option_values in payload)
         resources :option_types, concerns: [:custom_fieldable, :translatable]
 
+        # Store policies (terms of service, privacy, returns, shipping, …)
+        resources :policies, concerns: [:translatable]
+
         # Tax Categories
         resources :tax_categories
 
@@ -732,6 +735,12 @@ Spree::Core::Engine.add_routes do
         get 'auth/invitations/:id/lookup', to: 'invitation_acceptances#lookup'
         post 'auth/invitations/:id/accept', to: 'invitation_acceptances#accept'
 
+        # Public password reset — unauthenticated; the emailed token is the
+        # credential. Under `auth/` so the refresh cookie issued on success
+        # shares its path with `/auth/refresh`.
+        post 'auth/password_resets', to: 'password_resets#create'
+        patch 'auth/password_resets/:id', to: 'password_resets#update'
+
         get 'me', to: 'me#show'
 
         # Singular: the seller in play is always `current_seller`.
@@ -755,6 +764,15 @@ Spree::Core::Engine.add_routes do
             patch :draft
             patch :archive
           end
+
+          # The same three moves over a selection. Only the ones a seller may
+          # make alone: there is no bulk route onto `active`, because reaching
+          # it is the operator's decision on one listing at a time.
+          collection do
+            post :bulk_submit
+            post :bulk_status_update
+            delete :bulk_destroy
+          end
         end
 
 
@@ -775,11 +793,23 @@ Spree::Core::Engine.add_routes do
 
         resources :direct_uploads, only: [:create]
 
+        # CSV of what this seller sold, or of their catalogue. Created, polled
+        # and downloaded — no index, since a seller has no history page to
+        # list, and no destroy, since retention is the marketplace's business.
+        resources :exports, only: [:create, :show] do
+          member do
+            get :download
+          end
+        end
+
         # No destroy: a location holds stock levels and is named on historical
         # fulfillments, so a seller retires one by deactivating it.
         resources :stock_locations, only: [:index, :show, :create, :update]
 
         resources :countries, only: [:index]
+
+        # The seller's own policy documents.
+        resources :policies
 
         # Singular: the checklist is always `current_seller`'s.
         resource :onboarding, only: [:show], controller: 'onboarding' do

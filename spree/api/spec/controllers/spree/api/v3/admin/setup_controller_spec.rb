@@ -193,6 +193,55 @@ RSpec.describe Spree::Api::V3::Admin::SetupController, type: :controller do
       end
     end
 
+    # The store is always provisioned for US by default; choosing a different
+    # country at setup must move everything, not just work on a bare store.
+    context 'when changing the country and currency' do
+      before do
+        Spree::Stores::ProvisionDefaults.call(store: @default_store, country: Spree::Country.by_iso('US'))
+        @default_store.stock_locations.find_by(default: true).update!(
+          address1: '417 Montgomery St', city: 'San Francisco',
+          state_code: 'CA', state_name: 'California', zipcode: '94104'
+        )
+      end
+
+      it 'moves the whole store to the newly chosen country and currency' do
+        post :create, params: valid_params.merge(country_code: 'GB'), as: :json
+
+        expect(response).to have_http_status(:ok)
+
+        store = @default_store.reload
+        expect(store.default_country_code).to eq('GB')
+        expect(store.default_currency).to eq('GBP')
+        expect(store.default_market.country_codes).to eq(['GB'])
+        expect(store.default_market.currency).to eq('GBP')
+
+        domestic = store.delivery_zones.find_by(name: 'Domestic')
+        international = store.delivery_zones.find_by(name: 'International')
+        expect(domestic.members.pluck(:country_code)).to eq(['GB'])
+        expect(international.members.where(country_code: 'US')).to exist
+        expect(international.members.where(country_code: 'GB')).not_to exist
+
+        expect(store.delivery_methods.find_by(name: 'Standard').calculator.preferred_currency).to eq('GBP')
+
+        location = store.stock_locations.find_by(default: true)
+        expect(location.country_code).to eq('GB')
+        expect(location.state_code).to be_nil
+        expect(location.state_name).to be_nil
+        expect(location.address1).to be_nil
+      end
+
+      it 'keeps the warehouse address when the chosen country matches it' do
+        post :create, params: valid_params, as: :json
+
+        expect(response).to have_http_status(:ok)
+
+        location = @default_store.reload.stock_locations.find_by(default: true)
+        expect(location.country_code).to eq('US')
+        expect(location.state_code).to eq('CA')
+        expect(location.address1).to eq('417 Montgomery St')
+      end
+    end
+
     context 'with an invalid token' do
       it 'returns 404 without creating anything' do
         post :create, params: valid_params.merge(setup_token: 'wrong'), as: :json

@@ -183,6 +183,8 @@ import type {
   PaymentMethodCreateParams,
   PaymentMethodType,
   PaymentMethodUpdateParams,
+  PolicyCreateParams,
+  PolicyUpdateParams,
   PreferenceField,
   PriceBulkUpsertRow,
   PriceCreateParams,
@@ -299,6 +301,7 @@ import type {
   Payment,
   PaymentMethod,
   Permission,
+  Policy,
   Price,
   PriceList,
   Product,
@@ -4062,6 +4065,44 @@ export class AdminClient {
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/tax_categories/${id}`, options),
+  }
+
+  // ============================================
+  // Policies — the store's legal documents
+  // ============================================
+
+  /**
+   * The store's own policy documents: terms of service, privacy, returns,
+   * shipping, and anything else the merchant publishes.
+   *
+   * Addressable by slug as well as prefixed id. A marketplace seller's
+   * policies are theirs and live on the seller API, not here.
+   */
+  readonly policies = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Policy>> =>
+      this.request<PaginatedResponse<Policy>>('GET', '/policies', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (idOrSlug: string, options?: RequestOptions): Promise<Policy> =>
+      this.request<Policy>('GET', `/policies/${idOrSlug}`, options),
+
+    create: (params: PolicyCreateParams, options?: RequestOptions): Promise<Policy> =>
+      this.request<Policy>('POST', '/policies', { ...options, body: params }),
+
+    update: (
+      idOrSlug: string,
+      params: PolicyUpdateParams,
+      options?: RequestOptions,
+    ): Promise<Policy> =>
+      this.request<Policy>('PATCH', `/policies/${idOrSlug}`, { ...options, body: params }),
+
+    delete: (idOrSlug: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/policies/${idOrSlug}`, options),
   }
 
   // ============================================

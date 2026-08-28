@@ -17,12 +17,15 @@ require_current_starter
 # rebuilds from scratch, so a config that ignored it would destroy the
 # developer's own spree_development database. Needs the bundle above, and
 # keeps stderr so a boot failure reports itself instead of looking like a
-# resolution mismatch.
+# resolution mismatch. Boot can print its own lines to stdout (Spree's
+# missing-migration warnings on a fresh clone), so the name is fenced with a
+# marker rather than taken as the whole output.
 resolved=$(cd server && DATABASE_NAME="$TEMPLATE_DB" \
-  bin/rails runner 'print ActiveRecord::Base.connection_db_config.database') || {
+  bin/rails runner 'print "\n__RESOLVED__#{ActiveRecord::Base.connection_db_config.database}"') || {
   echo "Could not read the database configuration from server/ — see the error above." >&2
   exit 1
 }
+resolved="${resolved##*__RESOLVED__}"
 if [ "$resolved" != "$TEMPLATE_DB" ]; then
   echo "Rails resolved the development database to '$resolved', not '$TEMPLATE_DB'." >&2
   echo "Refusing to rebuild — check server/config/database.yml and server/.env." >&2

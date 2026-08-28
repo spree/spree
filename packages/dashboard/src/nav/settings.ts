@@ -13,6 +13,7 @@ import {
   RadioTowerIcon,
   ReceiptTextIcon,
   RotateCcwIcon,
+  ScrollTextIcon,
   ShapesIcon,
   ShieldCheckIcon,
   StoreIcon,
@@ -83,6 +84,18 @@ settingsNav.add({
   position: 200,
   subject: Subject.Store,
   action: 'update',
+})
+
+settingsNav.add({
+  key: 'settings.policies',
+  labelKey: 'admin.settings_nav.items.policies',
+  descriptionKey: 'admin.settings_nav.descriptions.policies',
+  keywords: ['legal', 'terms', 'privacy', 'returns', 'refund', 'shipping policy'],
+  path: '/policies',
+  icon: ScrollTextIcon,
+  group: 'store',
+  position: 250,
+  subject: Subject.Policy,
 })
 
 settingsNav.add({

@@ -9,9 +9,9 @@
  * builds its own and registers it here at boot.
  *
  * Only the surface both panels share is typed. Anything admin-only
- * (`customFieldDefinitions`, `exports`, `imports`, store switching) stays on
- * the admin client, imported directly by the code that needs it — typing it
- * here would promise the seller panel methods its API does not have.
+ * (`customFieldDefinitions`, `imports`, store switching) stays on the admin
+ * client, imported directly by the code that needs it — typing it here would
+ * promise the seller panel methods its API does not have.
  */
 
 import type { PermissionRule } from '@spree/admin-sdk'
@@ -34,10 +34,10 @@ export interface PanelApiClient {
     logout(): Promise<void>
     /**
      * Optional sign-in flows, because not every panel offers all of them.
-     * Both panels accept invitations — each against its own API, so the
-     * session that comes back carries the right audience. Password reset and
-     * first-run setup remain the marketplace's own, so a seller's client
-     * leaves them undefined.
+     * Both panels accept invitations and reset passwords — each against its
+     * own API, so the session that comes back carries the right audience and
+     * the emailed link opens the right panel. First-run setup remains the
+     * marketplace's own, so a seller's client leaves it undefined.
      */
     acceptInvitation?(id: string, token: string, params: unknown): Promise<PanelSession>
     resetPassword?(token: string, params: unknown): Promise<PanelSession>
@@ -146,6 +146,32 @@ export interface PanelApiClient {
   deliveryProfiles?: {
     list(params?: Record<string, unknown>): Promise<{ data: PanelDeliveryProfile[] }>
   }
+  /**
+   * Headers a file download must carry beyond the bearer token.
+   *
+   * A download is a bare `fetch`, not an SDK call, so it bypasses whatever
+   * the client normally attaches — which on the seller panel is
+   * `X-Spree-Seller-Id`, and without it every Seller API request is refused
+   * before the action runs. The admin panel needs none, so it registers none.
+   */
+  downloadHeaders?(): Record<string, string>
+  /**
+   * Queuing a CSV export and reading it back.
+   *
+   * Registered rather than imported for the same reason as everything else
+   * here: the export dialog is one component serving both panels, and
+   * reaching for `adminClient` inside it would make a seller's export request
+   * go out against an API they hold no key for.
+   *
+   * Which datasets may be exported is the API's business, not this
+   * contract's — each panel offers its own list, and the server refuses the
+   * rest. A panel that offers no export simply registers none, and the button
+   * hides.
+   */
+  exports?: {
+    create(params: PanelExportCreateParams): Promise<PanelExport>
+    get(id: string): Promise<PanelExport>
+  }
   /** Removing a file already on a product. */
   deleteProductMedia?(productId: string, mediaId: string): Promise<void>
   /**
@@ -186,6 +212,31 @@ export interface PanelMarket {
   id: string
   currency?: string | null
   default_locale?: string | null
+}
+
+/**
+ * What either panel sends to queue an export.
+ *
+ * `type` stays a plain string: the operator's registry and a seller's
+ * allowlist are different sets, and each SDK narrows it to its own.
+ */
+export interface PanelExportCreateParams {
+  type: string
+  search_params?: Record<string, unknown>
+  record_selection?: 'filtered' | 'all'
+  results_url?: string
+}
+
+/**
+ * An export as the dialog polls it. Structural rather than either SDK's
+ * type — both serializers carry exactly this, and what only one of them adds
+ * is not the dialog's business.
+ */
+export interface PanelExport {
+  id: string
+  done: boolean
+  download_url?: string | null
+  filename?: string | null
 }
 
 /** A library file, as the picker lists it. */

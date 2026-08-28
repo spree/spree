@@ -81,6 +81,39 @@ module Spree
       end
     end
 
+    # The legal document this line asks for, when its kind asks for one —
+    # nil for every other kind.
+    #
+    # Same job as {#custom_fields}: the value object answers "what does this
+    # requirement want", so the seller panel can offer to create that exact
+    # document rather than making the seller retype its name.
+    #
+    # @return [String, nil]
+    def required_policy_name
+      return nil unless requirement.respond_to?(:required_policy_name)
+
+      requirement.required_policy_name.presence
+    end
+
+    # The policy the seller actually published against this line, when they
+    # have — nil for every other kind, and nil while the document is still
+    # owed.
+    #
+    # What the operator reads before approving: a line that says "Done"
+    # without showing what was written is not something anyone can approve on.
+    #
+    # @return [Spree::Policy, nil]
+    def published_policy
+      return @published_policy if defined?(@published_policy)
+
+      name = required_policy_name
+      return @published_policy = nil if name.nil? || seller.nil?
+
+      @published_policy = seller.policies.detect do |policy|
+        policy.name.to_s.strip.casecmp?(name) && policy.with_body?
+      end
+    end
+
     # ActiveModel::Attributes gives readers, not predicates.
     def required?
       !!required
