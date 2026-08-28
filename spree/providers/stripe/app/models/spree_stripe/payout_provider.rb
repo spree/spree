@@ -16,8 +16,11 @@ module SpreeStripe
   # is going to do, and a webhook confirms when it did.
   #
   # Every call carries an idempotency key derived from the ledger row, so a
-  # retry after a timeout finds the movement it already made instead of making
-  # a second.
+  # retry finds the movement it already made instead of making a second. That
+  # holds only while Stripe keeps the record, which is a day — so a call whose
+  # answer was lost is reported as ambiguous rather than failed, and core
+  # holds the settlement instead of retrying it later on a key that has since
+  # expired.
   class PayoutProvider < Spree::PayoutProvider::Base
     # Stripe is looking at the account, and there is nothing the seller can do
     # about it — different words and no button, rather than an invitation to
@@ -221,11 +224,16 @@ module SpreeStripe
 
     # Keyed to the earnings being settled, not to the settlement row.
     #
-    # A payout that times out is marked failed and releases its earnings, so
-    # the next sweep assembles a *new* row for the same money — and a key
-    # derived from that row would be a new key, which is Stripe's cue to send
-    # the money a second time. The transfers are what the two attempts have in
-    # common, so they are what identifies the operation.
+    # A refused payout releases its earnings, so the next sweep assembles a
+    # *new* row for the same money — and a key derived from that row would be
+    # a new key, which is Stripe's cue to send the money a second time. The
+    # transfers are what the two attempts have in common, so they are what
+    # identifies the operation.
+    #
+    # This protects a retry only while Stripe keeps the record, which is a
+    # day. It is why a payout whose outcome was never established is held
+    # rather than retried at all: past that window the key is no defence, so
+    # core keeps those earnings claimed instead of relying on one.
     def payout_idempotency_key(seller_payout)
       transfer_ids = seller_payout.transfers.order(:id).pluck(:id)
       digest = Digest::SHA256.hexdigest(

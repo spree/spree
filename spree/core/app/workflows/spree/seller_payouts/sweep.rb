@@ -12,10 +12,14 @@ module Spree
     # transfers with no payout — so a batch can never be swept twice, and a
     # re-run after a crash finds nothing left to take.
     #
-    # A failed send releases them again, because a payout is created here and
+    # A refused send releases them again, because a payout is created here and
     # nowhere else: transfers left stamped to a failed one would be invisible
     # to every later sweep while the balance still reported them owed. The
     # next sweep is the retry.
+    #
+    # A send whose outcome nobody knows is the exception, and keeps them. The
+    # money may already have gone, so releasing them is how the same earnings
+    # get sent twice — they wait with the settlement until it resolves.
     class Sweep < Spree::Workflow
       hooks :validate, :after_sweep
 
