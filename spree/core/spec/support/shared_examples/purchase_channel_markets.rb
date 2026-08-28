@@ -32,6 +32,18 @@ RSpec.shared_examples 'a purchase constrained to channel-served markets' do
     expect(purchase).to be_valid
   end
 
+  # A channel is a surface of one store, so an explicitly supplied foreign
+  # channel must be refused at the model rather than by whichever service
+  # happened to build the record.
+  it 'refuses a channel belonging to another store' do
+    foreign_channel = create(:channel, store: create(:store))
+
+    purchase = build(purchase_factory, store: store, channel: foreign_channel)
+
+    expect(purchase).not_to be_valid
+    expect(purchase.errors[:channel]).to be_present
+  end
+
   it 'refuses a market belonging to another store' do
     foreign = create(:market, store: create(:store))
 
