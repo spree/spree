@@ -203,8 +203,12 @@ describe Spree::TaxIdentifier, type: :model do
 
     it 'is queued again when the number changes' do
       identifier = create(:tax_identifier, owner: customer, kind: 'eu_vat')
+      # Derived from the row rather than a fixed index: the factory sequence is
+      # global and never resets, so a fixed one eventually IS the number already
+      # on the row, and a write that changes nothing enqueues nothing.
+      replacement = eu_vat_numbers.find { |number| number != identifier.value }
 
-      expect { identifier.update!(value: eu_vat_number(5)) }.to(
+      expect { identifier.update!(value: replacement) }.to(
         have_enqueued_job(Spree::TaxIdentifiers::ValidateJob)
       )
     end
@@ -237,7 +241,7 @@ describe Spree::TaxIdentifier, type: :model do
       identifier = create(:tax_identifier, owner: customer, kind: 'eu_vat')
       identifier.update_columns(validation_status: 'verified', validated_at: Time.current)
 
-      identifier.update!(value: eu_vat_number(7))
+      identifier.update!(value: eu_vat_numbers.find { |number| number != identifier.value })
 
       expect(identifier.validation_status).to eq('pending')
       expect(identifier.validated_at).to be_nil

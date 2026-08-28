@@ -4708,7 +4708,7 @@
         "validation_failed": "Could not check the number",
         "validation_requested": "Checking the number with the registry"
       },
-      "not_validatable": "No validator is set up for this kind, so the number is used as entered.",
+      "not_validatable": "No registry to check this kind against, so the number is recorded as entered.",
       "select_kind": "Select a kind",
       "title": "Tax registration",
       "validate_action": "Check with registry",

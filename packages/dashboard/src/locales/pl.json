@@ -4760,7 +4760,7 @@
         "validation_failed": "Nie udało się sprawdzić numeru",
         "validation_requested": "Trwa sprawdzanie numeru w rejestrze"
       },
-      "not_validatable": "Dla tego rodzaju nie skonfigurowano weryfikacji, numer jest używany tak, jak go wpisano.",
+      "not_validatable": "Dla tego rodzaju nie ma rejestru do sprawdzenia, numer jest zapisywany tak, jak go wpisano.",
       "select_kind": "Wybierz rodzaj",
       "title": "Numer podatkowy",
       "validate_action": "Sprawdź w rejestrze",

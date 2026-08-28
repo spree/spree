@@ -34,8 +34,17 @@ module TaxIdentifierValidatorHelpers
   # @param index [Integer] any counter; wraps around the fixture
   # @return [String]
   def eu_vat_number(index)
-    numbers = TaxIdentifierValidatorHelpers.eu_vat_numbers
+    numbers = eu_vat_numbers
     numbers[index.to_i % numbers.size]
+  end
+
+  # The whole fixture, for a spec that needs a number DIFFERENT from one it
+  # already holds — the factory sequence is global and never resets, so a fixed
+  # index eventually collides with whatever the factory just produced.
+  #
+  # @return [Array<String>]
+  def eu_vat_numbers
+    TaxIdentifierValidatorHelpers.eu_vat_numbers
   end
   # Callable on the module too, for the factory — FactoryBot blocks run outside
   # RSpec example scope, so they cannot reach an included helper.
