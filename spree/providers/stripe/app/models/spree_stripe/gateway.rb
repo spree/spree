@@ -124,7 +124,8 @@ module SpreeStripe
       end
     end
 
-    # @param customer [Spree::Customer]
+    # @param order [Spree::Cart, Spree::Order, nil]
+    # @param customer [Spree::Customer, nil]
     # @return [Spree::GatewayCustomer, nil]
     def fetch_or_create_customer(order: nil, customer: nil)
       customer ||= order&.customer
@@ -259,10 +260,13 @@ module SpreeStripe
       errors.add(:base, 'Something went wrong with Stripe. Try again later.')
     end
 
+    # Checkout owns payment sessions on the cart, so `order` is a Cart or an
+    # Order. Cart has no `#name` (that helper is Order-only); both share
+    # bill/ship addresses, which is what Order#name reads anyway.
     def build_customer_payload(order: nil, customer: nil)
       customer ||= order&.customer
       address = order&.bill_address || customer&.bill_address
-      name = order&.name || customer&.full_name
+      name = (order&.bill_address || order&.ship_address)&.full_name || customer&.full_name
       email = order&.email || customer&.email
 
       SpreeStripe::CustomerPresenter.new(name: name, email: email, address: address).call
