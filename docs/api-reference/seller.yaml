@@ -12465,6 +12465,226 @@ paths:
             application/octet-stream:
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/seller/policies":
+    get:
+      summary: List policies
+      tags:
+      - Policies
+      security:
+      - bearer_auth: []
+      description: |
+        This seller's own policy documents.
+
+        Rooted in the acting seller, so the marketplace operator's store
+        policies and every other seller's are invisible here. A seller starts
+        with none: what they are expected to publish is decided by the
+        marketplace's onboarding checklist.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Records per page (max 100)
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: policies listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: pol_uw2YK1rnl0
+                  name: Returns Policy
+                  slug: returns-policy
+                  body: Send anything back within 30 days.
+                  body_html: "<p>Send anything back within 30 days.</p>"
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-01-15T12:00:00.000Z'
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Policy"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+    post:
+      summary: Create a policy
+      tags:
+      - Policies
+      security:
+      - bearer_auth: []
+      description: |
+        Publishes one of this seller's policies. `body` accepts HTML and is
+        sanitized before it is stored.
+
+        When the marketplace requires a named policy, use that exact name —
+        the onboarding check matches on it.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: policy created
+          content:
+            application/json:
+              example:
+                id: pol_OIJLhNcSbf
+                name: Shipping Policy
+                slug: shipping-policy
+                body: Orders leave the workshop within two working days.
+                body_html: "<p>Orders leave the workshop within two working days.</p>"
+                updated_at: '2026-01-15T12:00:00.000Z'
+                created_at: '2026-01-15T12:00:00.000Z'
+              schema:
+                "$ref": "#/components/schemas/Policy"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Shipping Policy
+                slug:
+                  type: string
+                  example: shipping-policy
+                body:
+                  type: string
+                  example: "<p>Orders leave the workshop within two working days.</p>"
+              required:
+              - name
+  "/api/v3/seller/policies/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Policy prefixed ID or slug
+      schema:
+        type: string
+    get:
+      summary: Get a policy
+      tags:
+      - Policies
+      security:
+      - bearer_auth: []
+      description: Returns one of this seller's policies, by prefixed ID or slug.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: policy found
+          content:
+            application/json:
+              example:
+                id: pol_uw2YK1rnl0
+                name: Returns Policy
+                slug: returns-policy
+                body: Send anything back within 30 days.
+                body_html: "<p>Send anything back within 30 days.</p>"
+                updated_at: '2026-01-15T12:00:00.000Z'
+                created_at: '2026-01-15T12:00:00.000Z'
+              schema:
+                "$ref": "#/components/schemas/Policy"
+        '404':
+          description: policy not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Policy not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    patch:
+      summary: Update a policy
+      tags:
+      - Policies
+      security:
+      - bearer_auth: []
+      description: Rewrites one of this seller's policies.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: policy updated
+          content:
+            application/json:
+              example:
+                id: pol_uw2YK1rnl0
+                name: Returns Policy
+                slug: returns-policy
+                body: Send anything back within 60 days.
+                body_html: "<p>Send anything back within 60 days.</p>"
+                updated_at: '2026-01-15T12:00:00.000Z'
+                created_at: '2026-01-15T12:00:00.000Z'
+              schema:
+                "$ref": "#/components/schemas/Policy"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                slug:
+                  type: string
+                body:
+                  type: string
+    delete:
+      summary: Delete a policy
+      tags:
+      - Policies
+      security:
+      - bearer_auth: []
+      description: Withdraws one of this seller's policies.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: policy deleted
   "/api/v3/seller/products":
     get:
       summary: List products
@@ -12939,8 +13159,8 @@ paths:
             application/json:
               example:
                 id: sel_UkLWZg9DAJ
-                name: Seller 51
-                slug: seller-51
+                name: Seller 57
+                slug: seller-57
                 about: ''
                 about_html: ''
                 logo_url:
@@ -13017,7 +13237,7 @@ paths:
               example:
                 id: sel_UkLWZg9DAJ
                 name: Acme Supplies
-                slug: seller-53
+                slug: seller-59
                 about: ''
                 about_html: ''
                 logo_url:
@@ -13770,10 +13990,10 @@ paths:
             application/json:
               example:
                 direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--1a67dce364913c893af88919a482e7691bc61236
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--2a4d3e0e073bd846d1357c13814cf6ff08840d7b
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f8686dcffb11a03bae769ba42c3555067de06721
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--b53f9c256f3c52381fe08a385048b9020f2ee9fa
               schema:
                 "$ref": "#/components/schemas/DirectUploadResponse"
       requestBody:
@@ -14598,6 +14818,8 @@ tags:
 - name: Onboarding
   description: The marketplace checklist a seller completes before admission, and
     what they submit against it
+- name: Policies
+  description: The seller's own legal documents, as the marketplace asks them to publish
 - name: Products
   description: The seller's own catalog
 - name: Profile
@@ -15792,6 +16014,34 @@ components:
       - shipping_address
       - billing_address
       x-typelizer: true
+    Policy:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        body:
+          type: string
+          nullable: true
+        body_html:
+          type: string
+          nullable: true
+        updated_at:
+          type: string
+        created_at:
+          type: string
+      required:
+      - id
+      - name
+      - slug
+      - body
+      - body_html
+      - updated_at
+      - created_at
+      x-typelizer: true
     Product:
       type: object
       properties:
@@ -16007,6 +16257,10 @@ components:
         minimum_payout_amount:
           type: string
           nullable: true
+        policies:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Policy"
         on_holiday:
           type: boolean
         sellable:
@@ -16112,6 +16366,9 @@ components:
           type: array
           items:
             type: string
+        required_policy_name:
+          type: string
+          nullable: true
         submission:
           "$ref": "#/components/schemas/RequirementSubmission"
         custom_fields:
@@ -16131,6 +16388,7 @@ components:
       - accepts_submissions
       - requires_file
       - accepted_content_types
+      - required_policy_name
       x-typelizer: true
     RequirementSubmission:
       type: object
@@ -16521,6 +16779,10 @@ components:
         cover_photo_url:
           type: string
           nullable: true
+        policies:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Policy"
       required:
       - id
       - name
