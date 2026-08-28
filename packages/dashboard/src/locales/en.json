@@ -893,6 +893,12 @@
           "help": "Exactly one channel per store is the default. Used as the fallback when no channel is selected and as the auto-publish target for new products.",
           "label": "Default channel"
         },
+        "default_catalog": {
+          "empty": "No catalogs found",
+          "help": "What shoppers outside any company or customer group catalog see. Leave blank to show every product published on this channel.",
+          "label": "Default catalog",
+          "placeholder": "All published products"
+        },
         "fulfillment_locations": {
           "all": "All locations",
           "help": "Which warehouses and pickup counters fulfill orders placed on this sales channel.",

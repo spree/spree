@@ -893,6 +893,12 @@
           "help": "Pro Store ist genau ein Kanal der Standard. Wird als Fallback verwendet, wenn kein Kanal ausgewählt ist, und als Auto-Veröffentlichungsziel für neue Produkte.",
           "label": "Standardkanal"
         },
+        "default_catalog": {
+          "empty": "Keine Kataloge gefunden",
+          "help": "Was Käufer sehen, die keinem Unternehmens- oder Kundengruppenkatalog zugeordnet sind. Leer lassen, um alle auf diesem Kanal veröffentlichten Produkte anzuzeigen.",
+          "label": "Standardkatalog",
+          "placeholder": "Alle veröffentlichten Produkte"
+        },
         "fulfillment_locations": {
           "all": "Alle Standorte",
           "help": "Welche Lager und Abholstationen Bestellungen aus diesem Verkaufskanal erfüllen.",

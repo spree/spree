@@ -50,6 +50,12 @@ export interface ResourceComboboxProps<T extends ComboboxOption> {
   /** Empty state text shown in the dropdown when items is empty. */
   emptyText?: string
   disabled?: boolean
+
+  /**
+   * Applied to the search input, so a sibling `<FieldLabel htmlFor>` names the
+   * field for screen readers.
+   */
+  id?: string
 }
 
 /**
@@ -73,6 +79,7 @@ export function ResourceCombobox<T extends ComboboxOption>({
   placeholder,
   emptyText,
   disabled,
+  id,
 }: ResourceComboboxProps<T>) {
   const selected = items.find((r) => r.id === value) ?? null
 
@@ -92,7 +99,7 @@ export function ResourceCombobox<T extends ComboboxOption>({
       // dropdown trigger + selection mechanics, not just the input.
       disabled={disabled}
     >
-      <ComboboxInput placeholder={placeholder} disabled={disabled} showClear />
+      <ComboboxInput id={id} placeholder={placeholder} disabled={disabled} showClear />
       <ComboboxContent>
         <ComboboxEmpty>{emptyText}</ComboboxEmpty>
         <ComboboxList>

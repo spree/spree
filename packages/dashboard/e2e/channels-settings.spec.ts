@@ -90,6 +90,21 @@ test.describe('settings / channels', () => {
     await expect(rowButton(page, updated)).toBeVisible({ timeout: 15_000 })
   })
 
+  test('names the default catalog picker for assistive technology', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, CHANNELS_PATH(creds.store_id), ADD_CTA)
+
+    await page.getByRole('button', { name: ADD_CTA }).click()
+    await expect(page.getByRole('heading', { name: /add sales channel/i })).toBeVisible()
+
+    // Resolving the combobox by its visible label is the whole point: the
+    // picker is a custom widget, so without the label wired to the input a
+    // screen reader announces an unnamed field.
+    const picker = page.getByLabel(/^default catalog$/i)
+    await expect(picker).toBeVisible()
+    await expect(picker).toHaveAttribute('placeholder', /all published products/i)
+  })
+
   test('manages order routing rules on a channel', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, CHANNELS_PATH(creds.store_id), ADD_CTA)
