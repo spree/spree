@@ -12,7 +12,7 @@ import { useQuery } from '@tanstack/react-query'
 import { CheckIcon, ImageIcon, Loader2Icon, PlayIcon, UploadIcon } from 'lucide-react'
 import { useDeferredValue, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useStore } from '../providers/store-provider'
+import { useTenantId } from '../providers/tenant-provider'
 
 /** The shape the picker needs; a full Media record satisfies it. */
 export interface MediaPickerOption {
@@ -73,7 +73,7 @@ export function MediaPickerSheet<T extends MediaPickerOption>({
   onConfirmError,
 }: MediaPickerSheetProps<T>) {
   const { t } = useTranslation()
-  const { storeId } = useStore()
+  const tenantId = useTenantId()
 
   const [input, setInput] = useState('')
   const deferredInput = useDeferredValue(input)
@@ -87,11 +87,11 @@ export function MediaPickerSheet<T extends MediaPickerOption>({
   // would otherwise still set the field the merchant cancelled.
   const sessionRef = useRef(0)
 
-  // The store id is part of the key: a library is one store's, and without it
-  // reopening the picker after a store switch serves the previous store's
-  // files from cache — whose ids the new store's API would then reject.
+  // The tenant id is part of the key: a library is one tenant's, and without
+  // it reopening the picker after a store or seller switch serves the previous
+  // tenant's files from cache — whose ids the new tenant's API would reject.
   const { data, isFetching, refetch } = useQuery({
-    queryKey: [queryKey, 'media-picker', storeId, trimmedQuery],
+    queryKey: [queryKey, 'media-picker', tenantId, trimmedQuery],
     queryFn: () => search(trimmedQuery),
     enabled: open,
     staleTime: 30_000,
