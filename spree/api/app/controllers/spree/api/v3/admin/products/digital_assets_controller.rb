@@ -13,10 +13,19 @@ module Spree
             def update
               return render_private_storage_error unless uploaded_blob_private?
 
-              @resource.variant = requested_variant if params[:variant_id].present?
-              attach_uploaded_file(@resource)
+              # The asset already exists, so attaching a replacement blob writes
+              # to the database immediately, while the update below renders a 422
+              # without raising when it fails. Wrap both so a failed update rolls
+              # the new attachment back rather than leaving the file swapped but
+              # the record unchanged.
+              model_class.transaction do
+                @resource.variant = requested_variant if params[:variant_id].present?
+                attach_uploaded_file(@resource)
 
-              super
+                super
+
+                raise ActiveRecord::Rollback if @resource.errors.any?
+              end
             end
 
             # POST /api/v3/admin/products/:product_id/digital_assets

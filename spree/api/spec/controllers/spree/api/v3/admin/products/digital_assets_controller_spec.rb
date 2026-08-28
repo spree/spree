@@ -149,6 +149,23 @@ RSpec.describe Spree::Api::V3::Admin::Products::DigitalAssetsController, type: :
       expect(response).to have_http_status(:ok)
       expect(json_response['authorized_clicks']).to be_nil
     end
+
+    # Attaching the replacement writes immediately, so a validation failure in
+    # the same request must roll it back — otherwise the file would be swapped
+    # while the update reports 422.
+    it 'rolls the replaced file back when the update is invalid' do
+      original_filename = digital_asset.attachment.filename.to_s
+
+      patch :update, params: {
+        product_id: product.prefixed_id,
+        id: digital_asset.prefixed_id,
+        signed_id: blob.signed_id,
+        authorized_clicks: 0
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(digital_asset.reload.attachment.filename.to_s).to eq(original_filename)
+    end
   end
 
   describe 'DELETE #destroy' do
