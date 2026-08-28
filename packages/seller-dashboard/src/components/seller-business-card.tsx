@@ -215,6 +215,15 @@ export function SellerBusinessCard({ profile }: { profile: Profile }) {
                 items={kindOptions}
                 value={selectedKind}
                 onValueChange={(option: KindOption | null) => setVatKind(option?.value ?? '')}
+                // Typing is how a seller records a regime this build has no
+                // string for. The input is tracked separately from the
+                // selection, so without this a kind matching no item is never
+                // read and the previous one is saved instead. Only genuine
+                // typing counts: picking an option also rewrites the input,
+                // to the option's label, which is not what the API stores.
+                onInputValueChange={(input: string, details: { reason?: string }) => {
+                  if (details.reason === 'input-change') setVatKind(input)
+                }}
                 itemToStringLabel={(option: KindOption | null) => option?.label ?? ''}
                 itemToStringValue={(option: KindOption | null) => option?.value ?? ''}
               >

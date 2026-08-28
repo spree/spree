@@ -318,6 +318,13 @@ function TaxIdentifierSheet({
                         onValueChange={(option: KindOption | null) =>
                           field.onChange(option?.value ?? '')
                         }
+                        // The list seeds the picker rather than closing it, so
+                        // a kind matching no item has to be read from the input
+                        // itself. Only genuine typing: picking an option also
+                        // rewrites the input, to the label rather than the key.
+                        onInputValueChange={(input: string, details: { reason?: string }) => {
+                          if (details.reason === 'input-change') field.onChange(input)
+                        }}
                         itemToStringLabel={(option: KindOption | null) => option?.label ?? ''}
                         itemToStringValue={(option: KindOption | null) => option?.value ?? ''}
                       >
