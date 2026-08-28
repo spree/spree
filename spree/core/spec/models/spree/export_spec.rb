@@ -120,6 +120,15 @@ RSpec.describe Spree::Export, :job, type: :model do
         expect(build(:order_export, store: store, seller: seller, user: nil)).to be_valid
         expect(build(:product_export, store: store, seller: seller, user: nil)).to be_valid
       end
+
+      # Not `on: :create` — an export born without a seller passes, and
+      # assigning one afterwards reaches the same raise in the job.
+      it 'is refused when a seller is assigned to an existing export' do
+        export = create(:customer_export, store: store, user: nil)
+
+        expect { export.update!(seller: seller) }.
+          to raise_error(ActiveRecord::RecordInvalid, /single seller/)
+      end
     end
 
     context 'when the export has no seller' do
