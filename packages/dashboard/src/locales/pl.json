@@ -1078,7 +1078,7 @@
           "placeholder": "Wszystkie opublikowane produkty"
         },
         "default_market": {
-          "derived": "Automatycznie (domyślny sklepu)",
+          "derived": "Automatycznie (na podstawie rynków tego kanału)",
           "help": "Gdzie trafia kupujący, którego kraj nie pasuje do żadnego rynku tego kanału.",
           "label": "Rynek domyślny"
         },

@@ -1064,7 +1064,7 @@
           "placeholder": "Alle veröffentlichten Produkte"
         },
         "default_market": {
-          "derived": "Automatisch (Store-Standard)",
+          "derived": "Automatisch (nach den Märkten dieses Kanals)",
           "help": "Wo ein Käufer landet, dessen Land zu keinem Markt dieses Kanals passt.",
           "label": "Standardmarkt"
         },

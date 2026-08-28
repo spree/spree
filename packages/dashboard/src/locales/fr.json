@@ -1064,8 +1064,8 @@
           "placeholder": "Tous les produits publiés"
         },
         "default_market": {
-          "derived": "Automatique (défaut de la boutique)",
-          "help": "Où arrive un acheteur dont le pays ne correspond à aucun marché de ce canal.",
+          "derived": "Automatique (selon les marchés de ce canal)",
+          "help": "Marché utilisé lorsqu’un acheteur se trouve dans un pays qui ne correspond à aucun marché de ce canal.",
           "label": "Marché par défaut"
         },
         "fulfillment_locations": {

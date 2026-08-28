@@ -173,6 +173,10 @@ module Spree
     # @return [Boolean]
     def serves_market?(market)
       return false if market.nil?
+      # A market from another store is never served, allowlist or not — this
+      # predicate is what purchase validation trusts, so it has to carry the
+      # tenancy check rather than assume the caller made it.
+      return false unless market.store_id == store_id
       return true if served_market_ids.empty?
 
       served_market_ids.include?(market.id)
