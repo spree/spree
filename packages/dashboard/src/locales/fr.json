@@ -893,6 +893,12 @@
           "help": "Exactement un canal par boutique est défini par défaut. Utilisé comme solution de repli lorsqu'aucun canal n'est sélectionné et comme cible de publication automatique pour les nouveaux produits.",
           "label": "Canal par défaut"
         },
+        "default_catalog": {
+          "empty": "Aucun catalogue trouvé",
+          "help": "Ce que voient les acheteurs qui ne sont couverts par aucun catalogue d’entreprise ou de groupe de clients. Laissez vide pour afficher tous les produits publiés sur ce canal.",
+          "label": "Catalogue par défaut",
+          "placeholder": "Tous les produits publiés"
+        },
         "fulfillment_locations": {
           "all": "Tous les sites",
           "help": "Quels entrepôts et points de retrait traitent les commandes passées sur ce canal de vente.",

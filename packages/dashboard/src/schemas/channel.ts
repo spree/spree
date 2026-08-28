@@ -34,6 +34,9 @@ export const channelFormSchema = z.object({
   preferred_order_routing_strategy: z.string(),
   preferred_storefront_access: z.string(),
   preferred_guest_checkout: z.string(),
+  // Empty means shoppers outside any assigned catalog see every product
+  // published on the channel.
+  default_catalog_id: z.string(),
   // Empty means every location of the store serves this channel, which is how
   // the API reads an empty array.
   stock_location_ids: z.array(z.string()),
@@ -49,6 +52,7 @@ export const CHANNEL_DEFAULTS: ChannelFormValues = {
   preferred_order_routing_strategy: '',
   preferred_storefront_access: '',
   preferred_guest_checkout: '',
+  default_catalog_id: '',
   stock_location_ids: [],
 }
 
@@ -65,6 +69,9 @@ export function channelValuesToParams(
     // '' → inherit (null); otherwise an explicit boolean.
     preferred_guest_checkout:
       v.preferred_guest_checkout === '' ? null : v.preferred_guest_checkout === 'true',
+    // '' → no default catalog: shoppers outside any assigned catalog see
+    // every product published on the channel.
+    default_catalog_id: v.default_catalog_id || null,
     // Replace-set: an empty array clears the narrowing, so every location
     // serves the channel again.
     stock_location_ids: v.stock_location_ids,

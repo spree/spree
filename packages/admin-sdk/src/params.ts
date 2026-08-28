@@ -1499,6 +1499,11 @@ export interface ChannelCreateParams {
    * store-level preference.
    */
   preferred_guest_checkout?: boolean | null
+  /**
+   * Catalog (cat_...) shown to shoppers not covered by a company or customer
+   * group catalog. `null` means every product published on the channel.
+   */
+  default_catalog_id?: string | null
   /** Fulfillment-origin allowlist (sloc_...); replaces the full set. Empty means every store location serves this channel. */
   stock_location_ids?: string[]
 }
@@ -1519,6 +1524,11 @@ export interface ChannelUpdateParams {
    * store-level preference.
    */
   preferred_guest_checkout?: boolean | null
+  /**
+   * Catalog (cat_...) shown to shoppers not covered by a company or customer
+   * group catalog. `null` means every product published on the channel.
+   */
+  default_catalog_id?: string | null
   /** Fulfillment-origin allowlist (sloc_...); replaces the full set. Empty means every store location serves this channel. */
   stock_location_ids?: string[]
 }

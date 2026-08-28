@@ -911,6 +911,12 @@
           "help": "Dokładnie jeden kanał na sklep jest domyślny. Używany jako rozwiązanie zastępcze, gdy nie wybrano żadnego kanału, oraz jako cel automatycznej publikacji nowych produktów.",
           "label": "Kanał domyślny"
         },
+        "default_catalog": {
+          "empty": "Nie znaleziono katalogów",
+          "help": "To, co widzą kupujący nieobjęci żadnym katalogiem firmy ani grupy klientów. Pozostaw puste, aby pokazać wszystkie produkty opublikowane w tym kanale.",
+          "label": "Katalog domyślny",
+          "placeholder": "Wszystkie opublikowane produkty"
+        },
         "fulfillment_locations": {
           "all": "Wszystkie lokalizacje",
           "help": "Które magazyny i punkty odbioru realizują zamówienia z tego kanału sprzedaży.",
