@@ -2568,8 +2568,11 @@ export interface CatalogParams {
 }
 
 export interface CatalogAssignParams {
-  /** Who sees the catalog. A company assignment covers the node's subtree. */
-  assignable_type: 'channel' | 'customer_group' | 'market' | 'company'
+  /**
+   * Who sees the catalog — buyer audiences only. A company assignment covers
+   * the node's subtree; a channel's catalog is its `default_catalog_id`.
+   */
+  assignable_type: 'customer_group' | 'company'
   assignable_id: string
 }
 

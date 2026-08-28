@@ -91,10 +91,8 @@
       "add_cta": "إضافة كتالوج",
       "add_sheet_title": "كتالوج جديد",
       "assignable_types": {
-        "channel": "قناة",
         "company": "شركة",
-        "customer_group": "مجموعة عملاء",
-        "market": "سوق"
+        "customer_group": "مجموعة عملاء"
       },
       "assignments": {
         "add_cta": "تعيين",

@@ -91,10 +91,8 @@
       "add_cta": "Add catalog",
       "add_sheet_title": "New catalog",
       "assignable_types": {
-        "channel": "Channel",
         "company": "Company",
-        "customer_group": "Customer group",
-        "market": "Market"
+        "customer_group": "Customer group"
       },
       "assignments": {
         "add_cta": "Assign",

@@ -297,7 +297,7 @@ function CatalogSettingsCard({ catalog, canEdit }: { catalog: Catalog; canEdit: 
   )
 }
 
-const ASSIGNABLE_TYPES = ['company', 'customer_group', 'market', 'channel'] as const
+const ASSIGNABLE_TYPES = ['company', 'customer_group'] as const
 type AssignableType = (typeof ASSIGNABLE_TYPES)[number]
 
 function CatalogAssignmentsCard({ catalog, canEdit }: { catalog: Catalog; canEdit: boolean }) {
@@ -388,16 +388,6 @@ function assignableSearch(type: AssignableType) {
         search: (q: string) => adminClient.customerGroups.list({ name_cont: q, limit: 10 }),
         hydrate: (ids: string[]) =>
           adminClient.customerGroups.list({ id_in: ids, limit: ids.length }),
-      }
-    case 'market':
-      return {
-        search: (q: string) => adminClient.markets.list({ name_cont: q, limit: 10 }),
-        hydrate: (ids: string[]) => adminClient.markets.list({ id_in: ids, limit: ids.length }),
-      }
-    case 'channel':
-      return {
-        search: (q: string) => adminClient.channels.list({ name_cont: q, limit: 10 }),
-        hydrate: (ids: string[]) => adminClient.channels.list({ id_in: ids, limit: ids.length }),
       }
   }
 }

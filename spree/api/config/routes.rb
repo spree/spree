@@ -591,8 +591,8 @@ Spree::Core::Engine.add_routes do
         end
 
 
-        # Catalogs — assortment + optional price list, assigned to an audience
-        # (channel, customer group, market, or company subtree).
+        # Catalogs — assortment + optional price list, assigned to a buyer
+        # audience (customer group, or company subtree).
         resources :catalogs do
           member do
             post :assign

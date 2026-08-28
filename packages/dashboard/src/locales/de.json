@@ -91,10 +91,8 @@
       "add_cta": "Katalog hinzufügen",
       "add_sheet_title": "Neuer Katalog",
       "assignable_types": {
-        "channel": "Kanal",
         "company": "Unternehmen",
-        "customer_group": "Kundengruppe",
-        "market": "Markt"
+        "customer_group": "Kundengruppe"
       },
       "assignments": {
         "add_cta": "Zuweisen",

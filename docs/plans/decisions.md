@@ -4028,3 +4028,39 @@ target until a bridge actually exists.
 information, not operational leakage. `created_at` stays admin-only.
 Checkout consent capture (persisting acceptance) stays out of scope, parked
 with `5.4-6.0-eu-legal-compliance.md`. Plan: `6.0-store-policies.md`.
+
+## 2026-08-28 — Catalog assignments narrow to buyer audiences; Channel and Market drop out of the vocabulary
+
+`CatalogAssignment.ASSIGNABLE_TYPES` shrinks from
+Channel/CustomerGroup/Market/Company to **CustomerGroup and Company**. The
+dropped pair was write-only from the day it shipped: resolution
+(`Products::ForContext`) and pricing (`PricingProvider::Internal`) read only
+company-subtree assignments, customer-group assignments, and the channel's
+`default_catalog_id` — a channel or market assignment created an inert row,
+and the assign dialog offered the gesture anyway. 6.0 is unreleased, so the
+narrowing is free now and a breaking `assignable_type`-enum change after GA.
+
+**Channel is dropped for good.** The channel↔catalog connection already has
+a shipped mechanism with the semantics a sales surface wants:
+`default_catalog_id` is a *fallback* that buyer-specific catalogs override,
+where an assignment means "this audience sees this instead". Wiring a reader
+to channel assignments would create a second mechanism with no defined
+precedence against the first.
+
+**Market is deferred, not judged.** Per-market assortment is a real feature
+(the hosted leader's catalogs power per-market availability; the original
+`6.0-channels-catalogs-b2b.md` sketch gave a Market a "regional assortment"
+catalog) but its open questions — where it sits in `ForContext` precedence,
+whether it intersects or overrides buyer catalogs, whether it also gates
+pricing — have no answers yet. The type returns only in the same change as
+the resolution code that reads it, plausibly alongside the
+`6.0-channel-markets.md` allowlist work.
+
+Each axis keeps exactly one mechanism: assignments answer *who is this
+buyer* (Company subtree, CustomerGroup); `default_catalog_id` answers *what
+does this surface show when the buyer is nobody in particular*; price-list
+rules (`PriceRules::ChannelRule`/`MarketRule`, both shipped) answer *what
+does this context pay*. No cleanup migration: any pre-release rows of the
+dropped kinds were always inert (the inclusion validation runs on the
+assignment row, which nothing re-saves), so they are left to lie. Plan
+amended: `6.0-b2b-companies-and-catalogs.md`.

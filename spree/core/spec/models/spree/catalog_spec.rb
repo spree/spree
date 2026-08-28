@@ -96,16 +96,19 @@ describe Spree::Catalog, type: :model do
   describe 'assignments' do
     let(:catalog) { create(:catalog, store: store) }
 
-    it 'accepts the four assignable types' do
+    it 'accepts the buyer-audience assignable types' do
       expect(build(:catalog_assignment, catalog: catalog,
                                         assignable: create(:company, store: store))).to be_valid
       expect(build(:catalog_assignment, catalog: catalog,
                                         assignable: create(:customer_group, store: store))).to be_valid
-      expect(build(:catalog_assignment, catalog: catalog, assignable: store.default_market)).to be_valid
-      expect(build(:catalog_assignment, catalog: catalog, assignable: store.default_channel)).to be_valid
     end
 
-    it 'refuses anything else' do
+    # Channel and Market were assignable in the 6.0 pre-release but never
+    # read (decisions.md 2026-08-28) — a channel's catalog is its
+    # default_catalog, a market catalog waits for its reader.
+    it 'refuses anything else, the retired channel and market types included' do
+      expect(build(:catalog_assignment, catalog: catalog, assignable: store.default_channel)).not_to be_valid
+      expect(build(:catalog_assignment, catalog: catalog, assignable: store.default_market)).not_to be_valid
       expect(build(:catalog_assignment, catalog: catalog, assignable: create(:product, store: store))).not_to be_valid
     end
 

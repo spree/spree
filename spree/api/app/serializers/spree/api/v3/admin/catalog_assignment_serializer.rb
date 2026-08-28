@@ -12,8 +12,8 @@ module Spree
             assignment.catalog.prefixed_id
           end
 
-          # The client-facing type vocabulary: 'company', 'channel',
-          # 'customer_group', 'market' — never Ruby class names.
+          # The client-facing type vocabulary: 'company', 'customer_group' —
+          # never Ruby class names.
           attribute :assignable_type do |assignment|
             assignment.assignable_type.demodulize.underscore
           end

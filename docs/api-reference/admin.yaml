@@ -25894,7 +25894,7 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |-
-        Creates a catalog. Add products and assign audiences (channel, customer group, market, or company subtree) afterwards.
+        Creates a catalog. Add products and assign audiences (customer group, or company subtree) afterwards.
 
         **Required scope:** `write_products` (for API-key authentication).
       x-codeSamples:
@@ -26041,9 +26041,7 @@ paths:
                 assignable_type:
                   type: string
                   enum:
-                  - channel
                   - customer_group
-                  - market
                   - company
                   example: company
                 assignable_id:
