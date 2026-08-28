@@ -16,7 +16,7 @@ module Spree
         cart = store.carts.create!(
           user: @params.delete(:user),
           market: @params.delete(:market),
-          channel: @params.delete(:channel) || Spree::Current.channel,
+          channel: @params.delete(:channel) || channel_for(store),
           currency: @params.delete(:currency) || store.default_currency,
           locale: @params.delete(:locale) || Spree::Current.locale
         )
@@ -38,6 +38,22 @@ module Spree
         raise
       rescue StandardError => e
         failure(nil, e.message)
+      end
+
+      private
+
+      # The ambient channel belongs to whichever store the request resolved,
+      # which is not necessarily the one this cart is being created in — a
+      # cart must never carry another store's channel, and its market
+      # validation would reject the pairing anyway.
+      #
+      # @param store [Spree::Store]
+      # @return [Spree::Channel, nil]
+      def channel_for(store)
+        ambient = Spree::Current.channel
+        return ambient if ambient && ambient.store_id == store.id
+
+        store.default_channel
       end
     end
   end
