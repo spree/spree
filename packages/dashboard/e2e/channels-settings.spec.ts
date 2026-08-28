@@ -132,6 +132,9 @@ test.describe('settings / channels', () => {
     await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 15_000 })
     await expect(page.getByRole('radio', { name: /^selected markets$/i })).toBeChecked()
     await expect(page.getByRole('checkbox', { name: 'Europe' })).toBeChecked()
+    // The pin is what decides where an off-market shopper lands, so it has to
+    // survive the round trip too — not just the allowlist that bounds it.
+    await expect(page.getByLabel(/^default market$/i)).toHaveText(/europe/i)
   })
 
   test('manages order routing rules on a channel', async ({ page }) => {
