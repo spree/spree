@@ -87,6 +87,9 @@ module Spree
       variant.primary_media || product.primary_media
     end
     delegate :digital?, :can_supply?, to: :variant
+    # A line item's store is its owner's — an order's or a cart's, whichever it
+    # belongs to.
+    delegate :store, to: :owner
 
     scope :with_digital_assets, -> { joins(:variant).merge(Spree::Variant.with_digital_assets) }
 

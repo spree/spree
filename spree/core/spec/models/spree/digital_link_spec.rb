@@ -34,6 +34,23 @@ describe Spree::DigitalLink, type: :model do
     end
   end
 
+  describe '#store' do
+    let(:order) { create(:order, store: store) }
+    let(:line_item) { create(:line_item, order: order, variant: variant) }
+    let(:digital_link) { create(:digital_link, digital_asset: digital_asset, line_item: line_item) }
+
+    # The keyless download endpoint derives store context from the link, so
+    # this must be callable from outside the model — a private method would
+    # raise NoMethodError there.
+    it 'is public' do
+      expect(digital_link.public_methods).to include(:store)
+    end
+
+    it 'returns the owning order store' do
+      expect(digital_link.store).to eq(order.store)
+    end
+  end
+
   describe '#reset!' do
     let!(:digital_link) { create(:digital_link, access_counter: 5) }
 

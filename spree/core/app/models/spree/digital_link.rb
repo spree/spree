@@ -21,6 +21,11 @@ module Spree
     validates :access_counter, numericality: { greater_than_or_equal_to: 0 }
 
     delegate :filename, :content_type, to: :digital_asset
+    # The order's store is authoritative for both the download-limit flags and,
+    # passed into the asset, the limit values — so one store answers the whole
+    # check. Public so the keyless download endpoint can derive store context
+    # from the link (emailed links carry no publishable key).
+    delegate :store, to: :line_item
     delegate :order, to: :line_item
 
     # @deprecated Use {#digital_asset}; removed in 6.1.
@@ -80,12 +85,6 @@ module Spree
     end
 
     private
-
-    # The order's store is authoritative for both the limit flags and, passed
-    # into the asset, the limit values — so one store answers the whole check.
-    def store
-      @store ||= line_item.order.store
-    end
 
     def set_defaults
       self.access_counter ||= 0

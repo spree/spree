@@ -191,5 +191,20 @@ RSpec.describe Spree::Api::V3::Store::DigitalLinksController, type: :controller 
         expect(response).to have_http_status(:found)
       end
     end
+
+    # The shared 'API v3 Store' context stubs current_store on the base
+    # controllers, which hides this controller's own current_store override. A
+    # real emailed link carries no publishable key, so the override runs and
+    # derives the store from the link itself. Exercise the real override
+    # directly — reading the store off the link — so a regression (e.g. the
+    # store method going private) is caught here rather than only in production.
+    describe '#current_store (real override, unstubbed)' do
+      it 'derives the store from the link when no key resolves one' do
+        real_controller = described_class.new
+        real_controller.instance_variable_set(:@resource, digital_link)
+
+        expect(real_controller.send(:current_store)).to eq(order.store)
+      end
+    end
   end
 end
