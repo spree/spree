@@ -22,8 +22,11 @@ module Spree
     # and provider-backed assets (which carry no file) are exempt.
     DEFAULT_PROVIDER = 'Spree::DigitalAssetProvider::File'.freeze
 
-    validates :attachment, attached: true, if: -> { provider_class.requires_attachment? }
     validate :provider_type_is_registered, if: -> { provider_type.present? }
+    # Only ask a valid provider whether it needs a file — an unregistered
+    # provider_type is already rejected above, and calling requires_attachment?
+    # on a class that is not a provider would 500 instead.
+    validates :attachment, attached: true, if: -> { provider_registered? && provider_class.requires_attachment? }
     validates :authorized_clicks, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
     validates :authorized_days, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
 
@@ -105,9 +108,16 @@ module Spree
     # A provider_type must name a registered provider — a stale class name from
     # a removed gem, or a typo, is rejected rather than blowing up at download.
     def provider_type_is_registered
-      return if Spree.digital_asset_providers.map(&:to_s).include?(provider_type)
+      return if provider_registered?
 
       errors.add(:provider_type, :not_registered)
+    end
+
+    # A blank provider_type is the File default (always registered); otherwise
+    # it must name a registered provider. Guards the attachment validation so it
+    # never calls requires_attachment? on a class that is not a provider.
+    def provider_registered?
+      provider_type.blank? || Spree.digital_asset_providers.map(&:to_s).include?(provider_type)
     end
 
     # The legacy digital.* events are dual-emitted for one release

@@ -61,6 +61,17 @@ describe Spree::DigitalAsset, type: :model do
       expect(asset.errors[:provider_type]).to be_present
     end
 
+    # A provider_type naming a real class that is not a provider must fail
+    # validation cleanly rather than raising when the attachment validation
+    # asks it whether it requires a file.
+    it 'rejects a provider_type that names a non-provider class without raising' do
+      asset = described_class.new(variant: variant, provider_type: 'Spree::Product')
+
+      expect { asset.valid? }.not_to raise_error
+      expect(asset).not_to be_valid
+      expect(asset.errors[:provider_type]).to be_present
+    end
+
     it 'stores provider settings under one key in metadata' do
       asset = described_class.new
       asset.provider_settings = { 'pool_name' => 'winter' }
