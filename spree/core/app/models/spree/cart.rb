@@ -115,6 +115,15 @@ module Spree
       prefixed_id
     end
 
+    # Billed or shipped name, matching {Spree::Order#name}.
+    #
+    # @return [String, nil]
+    def name
+      if (address = bill_address || ship_address)
+        address.full_name
+      end
+    end
+
     # A completed cart is an immutable audit record — post-checkout life
     # belongs to the order. Blocks save/update_columns/touch/destroy at the
     # model level; the completion write itself passes because it fires while

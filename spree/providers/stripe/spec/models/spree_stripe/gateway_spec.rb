@@ -778,6 +778,31 @@ RSpec.describe SpreeStripe::Gateway do
         VCR.use_cassette('create_customer_based_on_user') { subject }
       end
     end
+
+    context 'when the purchase is a cart' do
+      let(:order) do
+        create(:cart, store: store, customer: customer, email: 'test@example.com', bill_address: bill_address)
+      end
+
+      before do
+        allow(Stripe::Customer).to receive(:create).and_return(double(id: 'cus_cart_123'))
+      end
+
+      it 'creates a Stripe customer from the cart' do
+        expect { subject }.to change(Spree::GatewayCustomer, :count).by(1)
+        expect(subject.customer).to eq(customer)
+        expect(subject.profile_id).to eq('cus_cart_123')
+        expect(subject.persisted?).to be(true)
+      end
+
+      it 'builds the Stripe payload from the cart' do
+        expect(SpreeStripe::CustomerPresenter).to receive(:new).with(
+          name: order.name, email: order.email, address: bill_address
+        ).and_call_original
+
+        subject
+      end
+    end
   end
 
   describe '#update_customer' do

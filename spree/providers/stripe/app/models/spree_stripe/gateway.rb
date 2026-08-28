@@ -124,7 +124,8 @@ module SpreeStripe
       end
     end
 
-    # @param customer [Spree::Customer]
+    # @param order [Spree::Cart, Spree::Order, nil]
+    # @param customer [Spree::Customer, nil]
     # @return [Spree::GatewayCustomer, nil]
     def fetch_or_create_customer(order: nil, customer: nil)
       customer ||= order&.customer
