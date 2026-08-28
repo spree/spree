@@ -38,6 +38,7 @@ setup_storefront() {
 echo "▸ Provisioning worktree '$(branch_slug)' (db: $(db_name))"
 
 primary_root=$(git worktree list --porcelain | head -1 | sed 's/^worktree //')
+created_primary_server=0
 
 if [ ! -d server ]; then
   echo "▸ Cloning spree-starter into server/"
@@ -55,6 +56,12 @@ if [ ! -d server ]; then
   if [ "$primary_root" != "$(pwd)" ] && [ -d "$primary_root/server/db/migrate" ]; then
     rsync -a --delete "$primary_root/server/db/migrate/" server/db/migrate/
     [ -f "$primary_root/server/db/schema.rb" ] && cp "$primary_root/server/db/schema.rb" server/db/schema.rb
+  else
+    # This IS the primary's server/, freshly cloned, so the renumbering above
+    # has just happened to the migration set every other worktree copies. Any
+    # existing template was built against the old numbers and is now unusable;
+    # mark it so, and let the rebuild below replace it.
+    created_primary_server=1
   fi
 fi
 
@@ -105,6 +112,26 @@ if ! grep -q '^SPREE_SELLER_PANEL_URL=' server/.env; then
 fi
 
 require_current_starter
+
+# Never copy a template that no longer matches the migrations this worktree is
+# about to run: the mismatch would otherwise surface as a duplicate-table error
+# from db:migrate several minutes in, long after the database, the gems and the
+# node modules have been installed.
+drifted=$(template_drift "$primary_root")
+if [ -n "$drifted" ] && ! db_exists "$(db_name)"; then
+  if [ "$created_primary_server" = 1 ]; then
+    # We caused the drift moments ago by re-cloning this checkout's server/, so
+    # rebuild rather than sending the developer away to run a script we could
+    # have run ourselves.
+    echo "▸ server/ was re-created, so $TEMPLATE_DB no longer matches — rebuilding it"
+    "$(dirname "${BASH_SOURCE[0]}")/make-template.sh"
+  else
+    echo "Template database '$TEMPLATE_DB' is out of date: it records $(echo "$drifted" | grep -c .) migrations that no longer exist in $primary_root/server/db/migrate." >&2
+    echo "This happens when that checkout's server/ is re-created, which renumbers the gem migrations." >&2
+    echo "Rebuild it, then re-run this script:  pnpm wt:template" >&2
+    exit 1
+  fi
+fi
 
 if ! db_exists "$(db_name)"; then
   if ! db_exists "$TEMPLATE_DB"; then

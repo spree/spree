@@ -32,15 +32,25 @@ if [ "$resolved" != "$TEMPLATE_DB" ]; then
   exit 1
 fi
 
-echo "▸ Rebuilding $TEMPLATE_DB (migrations + seeds, ~2-3 min)"
+echo "▸ Rebuilding $TEMPLATE_DB (full migration run + seeds, ~4-5 min)"
 
 # db:drop/db:create rather than dropdb/createdb: Rails connects using the config
 # just verified, so the destructive step cannot reach a different host or port
 # than the name check covered.
+#
+# db:migrate, not db:prepare. The starter commits a db/schema.rb, so db:prepare
+# would load that snapshot into the empty database and then run only the
+# migrations newer than its version — meaning the starter's own migrations never
+# execute here, and the 6.0 migrations still living in the monorepo gems are the
+# only ones actually exercised. Migrating from empty runs the whole set in order,
+# so a migration that is broken, mis-ordered or depends on something an earlier
+# one no longer creates fails while building the template rather than during
+# somebody's upgrade.
+#
 # ADMIN_EMAIL/ADMIN_PASSWORD are required explicitly since 6.0 — the seed no
 # longer ships dummy defaults. These are the documented worktree credentials.
 (cd server && DATABASE_NAME="$TEMPLATE_DB" DATABASE_NAME_TEST="$TEMPLATE_DB" \
   ADMIN_EMAIL="spree@example.com" ADMIN_PASSWORD="spree123" \
-  bin/rails db:drop db:create spree:install:migrations db:prepare)
+  bin/rails db:drop db:create spree:install:migrations db:migrate db:seed)
 
 echo "✓ $TEMPLATE_DB ready — new worktrees copy it via createdb -T"

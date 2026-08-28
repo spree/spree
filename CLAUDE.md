@@ -140,6 +140,7 @@ One-time machine setup: Homebrew `postgresql@18` running on :5432 (with a `postg
 |---|---|
 | Ruby code in `spree/*` gems | Nothing — path gems, reloads on next request |
 | New migration in a gem | `cd server && bin/rails spree:install:migrations db:migrate`; then `pnpm wt:template` once so future worktrees inherit it |
+| Deleted and re-cloned `server/` | `pnpm wt:template` — the 6.0 migrations still ship from the gems, so re-cloning renumbers them and the old template no longer matches. `wt:setup` refuses to provision from a mismatched template and rebuilds it automatically when it re-created `server/` itself |
 | Gem dependencies | `cd server && bundle install` (the gem home is shared across worktrees, so this is fast) |
 | Need sample data (products + images) | `cd server && bin/rails spree:load_sample_data` — per worktree, on demand; takes minutes and hits the network |
 | Rails console / database | `cd server && bin/rails console`; the DB is `spree_dev_<branch>` on `localhost:5432` |
