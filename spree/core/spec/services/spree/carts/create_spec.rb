@@ -162,6 +162,14 @@ module Spree
       expect(result.value.channel&.store_id).to eq(store.id)
     end
 
+    it 'refuses an explicitly supplied channel from another store' do
+      foreign_channel = create(:channel, store: create(:store))
+
+      result = subject.call(params: { store: store, channel: foreign_channel })
+
+      expect(result).to be_failure
+    end
+
     # The ambient market follows the shopper's country and may be one the
     # channel does not sell into; forcing it past the concern's resolution
     # would make the cart fail its own validation
