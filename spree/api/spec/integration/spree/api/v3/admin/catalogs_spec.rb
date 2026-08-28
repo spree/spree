@@ -36,7 +36,7 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Creates a catalog. Add products and assign audiences (channel, customer group, market, or company subtree) afterwards.'
+      description 'Creates a catalog. Add products and assign audiences (customer group, or company subtree) afterwards.'
       admin_scope :write, :products
 
       admin_sdk_example 'catalogs/create'
@@ -90,7 +90,7 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
-          assignable_type: { type: :string, enum: %w[channel customer_group market company],
+          assignable_type: { type: :string, enum: %w[customer_group company],
                              example: 'company' },
           assignable_id: { type: :string, example: 'comp_86Rf07xd4z' }
         },

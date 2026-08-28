@@ -81,9 +81,7 @@ module Spree
           # store so another tenant's record is a 404, never an assignment.
           ASSIGNABLE_SCOPES = {
             'company' => ->(store) { store.companies },
-            'channel' => ->(store) { store.channels },
-            'customer_group' => ->(store) { Spree::CustomerGroup.for_store(store) },
-            'market' => ->(store) { store.markets }
+            'customer_group' => ->(store) { Spree::CustomerGroup.for_store(store) }
           }.freeze
 
           # Scoped by the store AND by what this caller may see: a role that

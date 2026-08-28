@@ -91,10 +91,8 @@
       "add_cta": "添加目录",
       "add_sheet_title": "新建目录",
       "assignable_types": {
-        "channel": "渠道",
         "company": "公司",
-        "customer_group": "客户组",
-        "market": "市场"
+        "customer_group": "客户组"
       },
       "assignments": {
         "add_cta": "分配",

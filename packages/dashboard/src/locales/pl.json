@@ -93,10 +93,8 @@
       "add_cta": "Dodaj katalog",
       "add_sheet_title": "Nowy katalog",
       "assignable_types": {
-        "channel": "Kanał",
         "company": "Firma",
-        "customer_group": "Grupa klientów",
-        "market": "Rynek"
+        "customer_group": "Grupa klientów"
       },
       "assignments": {
         "add_cta": "Przypisz",
