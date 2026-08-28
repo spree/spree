@@ -1371,6 +1371,18 @@
           "placeholder": "اختر مزودًا"
         }
       },
+      "policy": {
+        "body": {
+          "label": "المحتوى"
+        },
+        "name": {
+          "placeholder": "سياسة الإرجاع"
+        },
+        "slug": {
+          "help": "عنوان هذه السياسة في المتجر. إذا تُرك فارغاً فسيُشتق من الاسم.",
+          "placeholder": "returns-policy"
+        }
+      },
       "postal_code": {
         "label": "الرمز البريدي"
       },
@@ -3264,6 +3276,10 @@
           "add_sheet_title": "أضف طريقة الدفع",
           "edit_sheet_title": "تعديل طريقة الدفع"
         },
+        "policies": {
+          "add_sheet_title": "إضافة سياسة",
+          "edit_sheet_title": "تعديل السياسة"
+        },
         "stock_locations": {
           "add_sheet_title": "إضافة موقع المخزون",
           "edit_sheet_title": "تحرير موقع المخزون",
@@ -3543,6 +3559,24 @@
         "store_credits": "Store credits",
         "webhooks": "Webhooks"
       }
+    },
+    "policies": {
+      "add_cta": "إضافة سياسة",
+      "create_description": "انشر مستنداً قانونياً يمكن للعملاء قراءته في متجرك.",
+      "create_label": "إنشاء السياسة",
+      "delete_confirm": {
+        "message": "ستتم إزالة {{name}} وستتوقف صفحتها في المتجر عن العمل.",
+        "title": "حذف السياسة؟"
+      },
+      "edit_description": "اكتب المستند الذي يراه العملاء في متجرك.",
+      "empty": "لا توجد سياسات بعد",
+      "messages": {
+        "created": "تم إنشاء السياسة",
+        "deleted": "تم حذف السياسة",
+        "updated": "تم تحديث السياسة"
+      },
+      "no_content": "لم يُكتب شيء بعد",
+      "search_placeholder": "البحث بالاسم…"
     },
     "post_sale": {
       "claims_empty": "لا توجد مطالبات بعد.",
@@ -4288,6 +4322,8 @@
         },
         "all_done": "اكتمل كل شيء 🎉",
         "download": "تنزيل الملف",
+        "policy_empty": "لا يوجد محتوى لهذه السياسة بعد.",
+        "policy_updated": "آخر تحديث في {{date}}",
         "progress": "اكتمل {{done}} من {{total}}",
         "reject_confirm": {
           "message": "سيُطلب من البائع «{{name}}» مرة أخرى.",
@@ -4302,6 +4338,7 @@
           "rejected": "أُعيد"
         },
         "title": "الإعداد",
+        "view_policy": "عرض السياسة",
         "waive_confirm": {
           "message": "سيُعدّ «{{name}}» مستوفىً لهذا البائع فقط.",
           "title": "إعفاء من هذا المتطلب؟"
@@ -4404,6 +4441,7 @@
         "integrations": "اربط مزوّدي الشحن والضرائب وغيرهم",
         "markets": "البلدان التي تبيع إليها وعملاتها",
         "payment_methods": "بوابات الدفع وطريقة تحصيل المدفوعات",
+        "policies": "الشروط والخصوصية والإرجاع والشحن",
         "product_types": "قوالب تملأ المنتجات الجديدة مسبقًا",
         "reasons": "أسباب المرتجعات والمبالغ المستردة والمطالبات",
         "roles": "مجموعات الأذونات التي تسندها إلى الموظفين",
@@ -4437,6 +4475,7 @@
         "integrations": "التكاملات",
         "markets": "الأسواق",
         "payment_methods": "طرق الدفع",
+        "policies": "السياسات",
         "product_types": "أنواع المنتجات",
         "profile": "الملف الشخصي",
         "reasons": "المرتجعات والأسباب",

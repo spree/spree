@@ -36,6 +36,14 @@ module Spree
         attribute :cover_photo_url do |seller|
           image_url_for(seller.cover_photo)
         end
+
+        # The seller's published policies, on request. Behind the expand guard
+        # because a policy body is a whole legal document: a marketplace's
+        # seller listing would otherwise carry every seller's full text on
+        # every page. A product page reaches them as `expand=seller.policies`.
+        many :policies,
+             resource: proc { Spree.api.policy_serializer },
+             if: proc { expand?('policies') }
       end
     end
   end

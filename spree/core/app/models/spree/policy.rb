@@ -65,12 +65,6 @@ module Spree
 
     before_destroy :really_destroy_slugs!
 
-    # For policies, store.policies returns all policies owned by the store
-    # We don't want to filter out other policies in requests that use `for_store` when they have a different owner type
-    def self.for_store(store)
-      store.policies.or(where.not(owner_type: 'Spree::Store'))
-    end
-
     def with_body?
       body.present?
     end

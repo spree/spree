@@ -15,6 +15,11 @@ module Spree
           policy.body_html
         end
 
+        # The one timestamp a store serializer carries. When a legal document
+        # last changed is what a shopper is entitled to see on the page —
+        # "last updated" is the convention for policies — not operational
+        # detail. `created_at` stays admin-only.
+        attributes updated_at: :iso8601
       end
     end
   end

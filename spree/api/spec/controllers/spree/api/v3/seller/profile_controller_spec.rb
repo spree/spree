@@ -266,4 +266,20 @@ RSpec.describe Spree::Api::V3::Seller::ProfileController, type: :controller do
     end
   end
 
+  # The profile inherits its policies association from the store serializer,
+  # which renders a policy without `created_at` — a shape the seller SDK's
+  # generated type and this branch's OpenAPI schema both say is wrong.
+  describe 'policies' do
+    it 'renders them in the seller shape, with timestamps' do
+      seller.policies.create!(name: 'Returns Policy', body: '<p>Thirty days.</p>')
+
+      get :show, params: { expand: 'policies' }, as: :json
+
+      policy = json_response['policies'].first
+      expect(policy['name']).to eq('Returns Policy')
+      expect(policy['created_at']).to be_present
+      expect(policy['updated_at']).to be_present
+    end
+  end
+
 end

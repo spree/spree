@@ -29,6 +29,12 @@ FactoryBot.define do
       type { 'Spree::SellerRequirements::RequiredCustomFields' }
     end
 
+    # `allow_multiple?`, so the row's own name is the document it asks for.
+    factory :policy_requirement, class: Spree::SellerRequirements::Policy do
+      type { 'Spree::SellerRequirements::Policy' }
+      name { 'Returns Policy' }
+    end
+
     factory :attestation_requirement, class: Spree::SellerRequirements::Attestation do
       type { 'Spree::SellerRequirements::Attestation' }
       sequence(:name) { |n| "Confirm something #{n}" }

@@ -1354,6 +1354,18 @@
           "placeholder": "Select a provider"
         }
       },
+      "policy": {
+        "body": {
+          "label": "Content"
+        },
+        "name": {
+          "placeholder": "Returns Policy"
+        },
+        "slug": {
+          "help": "The storefront address for this policy. Left blank, it follows the name.",
+          "placeholder": "returns-policy"
+        }
+      },
       "postal_code": {
         "label": "Postal code"
       },
@@ -3248,6 +3260,10 @@
           "add_sheet_title": "Add payment method",
           "edit_sheet_title": "Edit payment method"
         },
+        "policies": {
+          "add_sheet_title": "Add policy",
+          "edit_sheet_title": "Edit policy"
+        },
         "stock_locations": {
           "add_sheet_title": "Add stock location",
           "edit_sheet_title": "Edit stock location",
@@ -3527,6 +3543,24 @@
         "store_credits": "Store credits",
         "webhooks": "Webhooks"
       }
+    },
+    "policies": {
+      "add_cta": "Add policy",
+      "create_description": "Publish a legal document customers can read on your storefront.",
+      "create_label": "Create policy",
+      "delete_confirm": {
+        "message": "{{name}} will be removed, and the storefront page for it will stop working.",
+        "title": "Delete policy?"
+      },
+      "edit_description": "Write the document customers see on your storefront.",
+      "empty": "No policies yet",
+      "messages": {
+        "created": "Policy created",
+        "deleted": "Policy deleted",
+        "updated": "Policy updated"
+      },
+      "no_content": "Nothing written yet",
+      "search_placeholder": "Search by name…"
     },
     "post_sale": {
       "claims_empty": "No claims yet.",
@@ -4267,6 +4301,8 @@
         },
         "all_done": "All done 🎉",
         "download": "Download file",
+        "policy_empty": "This policy has no content yet.",
+        "policy_updated": "Last updated {{date}}",
         "progress": "{{done}} of {{total}} done",
         "reject_confirm": {
           "message": "The seller will be asked for \"{{name}}\" again.",
@@ -4281,6 +4317,7 @@
           "rejected": "Sent back"
         },
         "title": "Onboarding",
+        "view_policy": "View policy",
         "waive_confirm": {
           "message": "\"{{name}}\" will count as met for this seller only.",
           "title": "Waive this requirement?"
@@ -4383,6 +4420,7 @@
         "integrations": "Connect shipping, tax and other providers",
         "markets": "Countries you sell to and their currencies",
         "payment_methods": "Payment gateways and how payments are captured",
+        "policies": "Terms, privacy, returns and shipping documents",
         "product_types": "Templates that pre-fill new products",
         "reasons": "Reasons offered for returns, refunds and claims",
         "roles": "Permission sets you assign to staff",
@@ -4416,6 +4454,7 @@
         "integrations": "Integrations",
         "markets": "Markets",
         "payment_methods": "Payment methods",
+        "policies": "Policies",
         "product_types": "Product types",
         "profile": "Profile",
         "reasons": "Returns & reasons",

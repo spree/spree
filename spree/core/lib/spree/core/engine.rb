@@ -348,6 +348,7 @@ module Spree
           Spree::SellerRequirements::ReturnsAddress,
           Spree::SellerRequirements::MinimumProducts,
           Spree::SellerRequirements::RequiredCustomFields,
+          Spree::SellerRequirements::Policy,
           Spree::SellerRequirements::Attestation,
           Spree::SellerRequirements::OperatorReview,
           Spree::SellerRequirements::Document

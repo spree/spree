@@ -13,6 +13,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   Progress,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
   useConfirm,
 } from '@spree/dashboard-ui'
 import {
@@ -22,8 +27,10 @@ import {
   ClockIcon,
   DownloadIcon,
   EllipsisVerticalIcon,
+  FileTextIcon,
   XCircleIcon,
 } from 'lucide-react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   useAcceptSellerRequirementSubmission,
@@ -106,6 +113,7 @@ function RequirementRow({
 }) {
   const { t } = useTranslation()
   const confirm = useConfirm()
+  const [policyOpen, setPolicyOpen] = useState(false)
   const acceptMutation = useAcceptSellerRequirementSubmission(sellerId)
   const rejectMutation = useRejectSellerRequirementSubmission(sellerId)
   const waiveMutation = useWaiveSellerRequirement(sellerId)
@@ -138,6 +146,8 @@ function RequirementRow({
     await waiveMutation.mutateAsync({ requirement_id: requirement.id }).catch(() => undefined)
   }
 
+  const policy = requirement.published_policy
+
   return (
     <li className="flex items-start justify-between gap-3 py-3 first:pt-0 last:pb-0">
       <div className="flex min-w-0 items-start gap-2">
@@ -161,6 +171,16 @@ function RequirementRow({
             <span className="text-muted-foreground text-xs">
               {t('admin.sellers.onboarding.review_note', { note: submission.review_note })}
             </span>
+          )}
+          {requirement.published_policy && (
+            <button
+              type="button"
+              className="flex items-center gap-1 self-start text-primary text-xs hover:underline"
+              onClick={() => setPolicyOpen(true)}
+            >
+              <FileTextIcon className="size-3" />
+              {t('admin.sellers.onboarding.view_policy')}
+            </button>
           )}
           {submission?.file_url && (
             <a
@@ -210,6 +230,38 @@ function RequirementRow({
           </DropdownMenu>
         )}
       </div>
+
+      {/* Read-only: the operator approves or sends back a seller, they do not
+          rewrite the seller's legal text. Rendered as sanitized markup, the
+          same way the storefront serves it. */}
+      {policy && (
+        <Sheet open={policyOpen} onOpenChange={setPolicyOpen}>
+          <SheetContent className="data-[side=right]:max-w-[860px]">
+            <SheetHeader>
+              <SheetTitle>{policy.name}</SheetTitle>
+              <SheetDescription>
+                {t('admin.sellers.onboarding.policy_updated', {
+                  date: new Date(policy.updated_at).toLocaleDateString(),
+                })}
+              </SheetDescription>
+            </SheetHeader>
+            <div className="min-h-0 flex-1 overflow-y-auto p-4">
+              {policy.body_html ? (
+                <div
+                  className="prose prose-sm dark:prose-invert max-w-none"
+                  // Sanitized server-side by Spree::RichTextSanitizer.
+                  // biome-ignore lint/security/noDangerouslySetInnerHtml: sanitized on write
+                  dangerouslySetInnerHTML={{ __html: policy.body_html }}
+                />
+              ) : (
+                <p className="text-muted-foreground text-sm">
+                  {t('admin.sellers.onboarding.policy_empty')}
+                </p>
+              )}
+            </div>
+          </SheetContent>
+        </Sheet>
+      )}
     </li>
   )
 }

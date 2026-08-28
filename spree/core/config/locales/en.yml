@@ -1574,31 +1574,34 @@ en:
     seller_membership_required: This account does not belong to any seller.
     seller_requirement_types:
       accept_terms:
-        description: The seller has accepted your marketplace terms
+        description: Read and accept the marketplace terms
         name: Accept terms
       attestation:
-        description: Something you ask the seller to confirm themselves
+        description: Confirm this yourself before you are approved
         name: Seller confirmation
       billing_address:
-        description: The seller has given a billing address
+        description: The address your payouts are billed from
         name: Billing address
       complete_profile:
-        description: The seller has filled in their public profile
+        description: Fill in the public profile shoppers see
         name: Complete profile
       document:
-        description: A file the seller uploads and you review
+        description: Upload this document for the marketplace to review
         name: Document
       minimum_products:
-        description: The seller has listed at least this many products
+        description: List at least this many products
         name: Minimum products
       operator_review:
-        description: Something you check by hand before admitting the seller
+        description: The marketplace checks this by hand before approving you
         name: Manual check
+      policy:
+        description: Publish a policy with this name
+        name: Seller policy
       required_custom_fields:
-        description: The seller has filled in the custom fields you ask for
+        description: Fill in the details the marketplace asks for
         name: Required custom fields
       returns_address:
-        description: The seller has given an address for customer returns
+        description: The address customer returns are sent to
         name: Returns address
     seller_requirements:
       file_required: A file is required for this requirement

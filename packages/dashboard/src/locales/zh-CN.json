@@ -1349,6 +1349,18 @@
           "placeholder": "选择服务商"
         }
       },
+      "policy": {
+        "body": {
+          "label": "内容"
+        },
+        "name": {
+          "placeholder": "退货政策"
+        },
+        "slug": {
+          "help": "该政策在店铺中的网址。留空时将根据名称生成。",
+          "placeholder": "returns-policy"
+        }
+      },
       "postal_code": {
         "label": "邮政编码"
       },
@@ -3240,6 +3252,10 @@
           "add_sheet_title": "添加支付方式",
           "edit_sheet_title": "编辑支付方式"
         },
+        "policies": {
+          "add_sheet_title": "添加政策",
+          "edit_sheet_title": "编辑政策"
+        },
         "stock_locations": {
           "add_sheet_title": "添加库存位置",
           "edit_sheet_title": "编辑库存位置",
@@ -3519,6 +3535,24 @@
         "store_credits": "店铺信用",
         "webhooks": "Webhooks"
       }
+    },
+    "policies": {
+      "add_cta": "添加政策",
+      "create_description": "发布一份顾客可以在您店铺中阅读的法律文件。",
+      "create_label": "创建政策",
+      "delete_confirm": {
+        "message": "{{name}} 将被移除，其店铺页面将无法访问。",
+        "title": "删除该政策？"
+      },
+      "edit_description": "撰写顾客将在您店铺中看到的文件。",
+      "empty": "暂无政策",
+      "messages": {
+        "created": "政策已创建",
+        "deleted": "政策已删除",
+        "updated": "政策已更新"
+      },
+      "no_content": "尚未撰写内容",
+      "search_placeholder": "按名称搜索…"
     },
     "post_sale": {
       "claims_empty": "暂无索赔。",
@@ -4258,6 +4292,8 @@
         },
         "all_done": "全部完成 🎉",
         "download": "下载文件",
+        "policy_empty": "该政策尚无内容。",
+        "policy_updated": "最后更新于 {{date}}",
         "progress": "已完成 {{done}} / {{total}}",
         "reject_confirm": {
           "message": "将再次向卖家索取“{{name}}”。",
@@ -4272,6 +4308,7 @@
           "rejected": "已退回"
         },
         "title": "入驻",
+        "view_policy": "查看政策",
         "waive_confirm": {
           "message": "“{{name}}”将仅对该卖家视为已满足。",
           "title": "豁免此要求？"
@@ -4374,6 +4411,7 @@
         "integrations": "连接物流、税务及其他服务商",
         "markets": "销售的国家/地区及其货币",
         "payment_methods": "支付网关与收款方式",
+        "policies": "条款、隐私、退货与配送文件",
         "product_types": "用于预填新商品的模板",
         "reasons": "退货、退款与索赔的可选原因",
         "roles": "分配给员工的权限组",
@@ -4407,6 +4445,7 @@
         "integrations": "集成",
         "markets": "市场",
         "payment_methods": "支付方式",
+        "policies": "政策",
         "product_types": "商品类型",
         "profile": "个人资料",
         "reasons": "退货与原因",

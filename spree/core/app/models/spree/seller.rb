@@ -140,6 +140,12 @@ module Spree
     has_many :requirement_submissions, class_name: 'Spree::SellerRequirementSubmission',
                                        dependent: :destroy, inverse_of: :seller
 
+    # This seller's own legal documents — shipping, returns, whatever the
+    # marketplace asks of them. Unlike a store, a seller is born with none:
+    # what they must publish is a `SellerRequirements::Policy` decision, not
+    # a set of empty rows every seller carries whether or not it applies.
+    has_many :policies, class_name: 'Spree::Policy', dependent: :destroy, as: :owner
+
     #
     # Attachments
     #
