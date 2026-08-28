@@ -202,7 +202,7 @@ export function TableToolbar({
         {/* One row at every width, controls pinned to the end. Import and
             Export drop their labels on a phone so the row still fits; the
             title truncates ahead of them rather than pushing them off. */}
-        <div className="ml-auto flex shrink-0 items-center gap-2">
+        <div className="ml-auto lg:ml-0 flex shrink-0 items-center gap-2">
           {/* Filter button */}
           {filterableColumns.length > 0 && (
             <Popover open={filterOpen} onOpenChange={setFilterOpen}>
