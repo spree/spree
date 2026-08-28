@@ -150,6 +150,18 @@ module Spree
       end
     end
 
+    # Spree::Current.channel is whichever store the request resolved, which
+    # need not be the store the cart is created in.
+    it 'ignores an ambient channel belonging to another store' do
+      foreign_channel = create(:channel, store: create(:store))
+      allow(Spree::Current).to receive(:channel).and_return(foreign_channel)
+
+      result = subject.call(params: { store: store })
+
+      expect(result).to be_success
+      expect(result.value.channel&.store_id).to eq(store.id)
+    end
+
     # The ambient market follows the shopper's country and may be one the
     # channel does not sell into; forcing it past the concern's resolution
     # would make the cart fail its own validation
