@@ -42,22 +42,19 @@ import {
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon, TrashIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { ProductMembershipCard } from '../../../../../components/spree/product-membership-card'
+import { DeferredProductMembershipCard } from '../../../../../components/spree/deferred-product-membership-card'
+import { ProductMembershipStagingProvider } from '../../../../../components/spree/product-membership-staging'
 import { ResourceDetailSkeleton } from '../../../../../components/spree/route-pending'
 import {
-  useAddCatalogProducts,
   useAssignCatalog,
   useCatalog,
   useCatalogProducts,
   useDeleteCatalog,
   useImportCatalogPriceListProducts,
-  useRemoveCatalogProduct,
-  useRemoveCatalogProducts,
-  useRepositionCatalogProduct,
+  useSaveCatalog,
   useUnassignCatalog,
-  useUpdateCatalog,
 } from '../../../../../hooks/use-catalogs'
 import { spreeJsonLinkResolver } from '../../../../../lib/json-link-resolver'
 import {
@@ -91,92 +88,21 @@ function CatalogDetailPage() {
   return <CatalogBody key={catalog.id} catalog={catalog} />
 }
 
+/**
+ * The whole page is one form, saved from the header: catalog settings and
+ * the staged assortment changes flush together, so removing a product is
+ * not final until Save — the same model as the price list editor.
+ * Assignments stay immediate (their dialog is its own explicit commit).
+ */
 function CatalogBody({ catalog }: { catalog: Catalog }) {
   const { t } = useTranslation()
   const { storeId } = Route.useParams()
   const navigate = useNavigate()
   const { permissions } = usePermissions()
   const deleteMutation = useDeleteCatalog()
+  const saveMutation = useSaveCatalog(catalog.id)
 
   const canEdit = permissions.can('update', Subject.Catalog)
-
-  async function handleDelete() {
-    await deleteMutation.mutateAsync(catalog.id)
-    navigate({ to: '/$storeId/products/catalogs', params: { storeId } })
-  }
-
-  return (
-    <ResourceLayout
-      header={
-        <PageHeader
-          title={catalog.name}
-          badges={
-            catalog.active ? undefined : (
-              <Badge variant="secondary">{t('admin.common.inactive')}</Badge>
-            )
-          }
-          backTo="products/catalogs"
-          resource={{ id: catalog.id }}
-          jsonPreview={{
-            title: `Catalog ${catalog.name}`,
-            fetch: () => adminClient.catalogs.get(catalog.id, { expand: ['assignments'] }),
-            endpoint: `/api/v3/admin/catalogs/${catalog.id}`,
-            resolveLink: spreeJsonLinkResolver(storeId),
-          }}
-          onDelete={permissions.can('destroy', Subject.Catalog) ? handleDelete : undefined}
-          deleteLabel={t('admin.catalogs.detail.delete_label')}
-        />
-      }
-      main={<CatalogProductsCard catalog={catalog} canEdit={canEdit} />}
-      sidebar={
-        <>
-          <CatalogSettingsCard catalog={catalog} canEdit={canEdit} />
-          <CatalogAssignmentsCard catalog={catalog} canEdit={canEdit} />
-        </>
-      }
-    />
-  )
-}
-
-// Adapters shaping the catalog mutations to the ProductMembershipHooks
-// contract — custom hooks, so the rules of hooks stay satisfied.
-function useRemoveOneCatalogProductAdapter(catalogId: string) {
-  const mutation = useRemoveCatalogProduct(catalogId)
-  return { mutate: (productId: string) => mutation.mutate(productId) }
-}
-
-function useRepositionCatalogProductAdapter(catalogId: string) {
-  const mutation = useRepositionCatalogProduct(catalogId)
-  return {
-    mutate: (vars: { productId: string; new_position: number }, opts?: { onError?: () => void }) =>
-      mutation.mutate(vars, opts),
-  }
-}
-
-function CatalogProductsCard({ catalog, canEdit }: { catalog: Catalog; canEdit: boolean }) {
-  const { storeId } = Route.useParams()
-
-  return (
-    <ProductMembershipCard
-      parentId={catalog.id}
-      storeId={storeId}
-      translationNamespace="admin.catalogs"
-      readOnly={!canEdit}
-      hooks={{
-        useProducts: useCatalogProducts,
-        useAdd: useAddCatalogProducts,
-        useRemoveOne: useRemoveOneCatalogProductAdapter,
-        useRemoveMany: useRemoveCatalogProducts,
-        useReposition: useRepositionCatalogProductAdapter,
-      }}
-    />
-  )
-}
-
-function CatalogSettingsCard({ catalog, canEdit }: { catalog: Catalog; canEdit: boolean }) {
-  const { t } = useTranslation()
-  const updateMutation = useUpdateCatalog(catalog.id)
-  const importMutation = useImportCatalogPriceListProducts(catalog.id)
 
   const form = useForm<CatalogFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -184,22 +110,116 @@ function CatalogSettingsCard({ catalog, canEdit }: { catalog: Catalog; canEdit: 
     defaultValues: CATALOG_DEFAULTS,
   })
 
+  // Hydrate (and re-baseline after save) from the source row, unless the
+  // merchant has unsaved edits in flight: importing from the price list
+  // refetches the catalog mid-edit, and an unguarded reset would drop both
+  // the settings being typed and any staged product changes.
   useEffect(() => {
+    if (form.formState.isDirty) return
     form.reset({
       name: catalog.name,
       active: catalog.active,
       price_list_id: catalog.price_list_id ?? '',
+      staged_products: { adds: [], removes: [] },
     })
   }, [catalog, form])
 
-  async function onSubmit(values: CatalogFormValues) {
+  async function handleDelete() {
+    await deleteMutation.mutateAsync(catalog.id)
+    navigate({ to: '/$storeId/products/catalogs', params: { storeId } })
+  }
+
+  async function handleSave(values: CatalogFormValues) {
     try {
-      await updateMutation.mutateAsync(catalogValuesToParams(values))
-      form.reset(values)
+      await saveMutation.mutateAsync({
+        attributes: catalogValuesToParams(values),
+        addProductIds: values.staged_products.adds.map((product) => product.id),
+        removeProductIds: values.staged_products.removes,
+      })
+      form.reset({ ...values, staged_products: { adds: [], removes: [] } })
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) throw err
     }
   }
+
+  return (
+    <ProductMembershipStagingProvider form={form} name="staged_products">
+      <form onSubmit={form.handleSubmit(handleSave)}>
+        <ResourceLayout
+          header={
+            <PageHeader
+              title={catalog.name}
+              badges={
+                catalog.active ? undefined : (
+                  <Badge variant="secondary">{t('admin.common.inactive')}</Badge>
+                )
+              }
+              backTo="products/catalogs"
+              resource={{ id: catalog.id }}
+              jsonPreview={{
+                title: `Catalog ${catalog.name}`,
+                fetch: () => adminClient.catalogs.get(catalog.id, { expand: ['assignments'] }),
+                endpoint: `/api/v3/admin/catalogs/${catalog.id}`,
+                resolveLink: spreeJsonLinkResolver(storeId),
+              }}
+              onDelete={permissions.can('destroy', Subject.Catalog) ? handleDelete : undefined}
+              deleteLabel={t('admin.catalogs.detail.delete_label')}
+              actions={
+                canEdit ? (
+                  <Button
+                    type="submit"
+                    disabled={form.formState.isSubmitting || !form.formState.isDirty}
+                  >
+                    {form.formState.isSubmitting
+                      ? t('admin.actions.saving')
+                      : t('admin.actions.save')}
+                  </Button>
+                ) : undefined
+              }
+            />
+          }
+          main={
+            <>
+              {form.formState.errors.root?.message && (
+                <p
+                  className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive"
+                  role="alert"
+                >
+                  {form.formState.errors.root.message}
+                </p>
+              )}
+              <DeferredProductMembershipCard
+                parentId={catalog.id}
+                storeId={storeId}
+                canEdit={canEdit}
+                useProducts={useCatalogProducts}
+                translationNamespace="admin.catalogs"
+              />
+            </>
+          }
+          sidebar={
+            <>
+              <CatalogSettingsCard catalog={catalog} form={form} canEdit={canEdit} />
+              <CatalogAssignmentsCard catalog={catalog} canEdit={canEdit} />
+            </>
+          }
+        />
+      </form>
+    </ProductMembershipStagingProvider>
+  )
+}
+
+function CatalogSettingsCard({
+  catalog,
+  form,
+  canEdit,
+}: {
+  catalog: Catalog
+  form: UseFormReturn<CatalogFormValues>
+  canEdit: boolean
+}) {
+  const { t } = useTranslation()
+  const importMutation = useImportCatalogPriceListProducts(catalog.id)
 
   const { errors } = form.formState
 
@@ -210,11 +230,6 @@ function CatalogSettingsCard({ catalog, canEdit }: { catalog: Catalog; canEdit: 
       </CardHeader>
       <CardContent>
         <FieldGroup>
-          {errors.root?.message && (
-            <p className="text-destructive text-sm" role="alert">
-              {errors.root.message}
-            </p>
-          )}
           <Field>
             <FieldLabel htmlFor="catalog-name">{t('admin.fields.name.label')}</FieldLabel>
             <Input
@@ -278,19 +293,6 @@ function CatalogSettingsCard({ catalog, canEdit }: { catalog: Catalog; canEdit: 
               </label>
             )}
           />
-
-          {canEdit && (
-            <div className="flex justify-end">
-              <Button
-                type="button"
-                size="sm"
-                disabled={form.formState.isSubmitting || !form.formState.isDirty}
-                onClick={form.handleSubmit(onSubmit)}
-              >
-                {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
-              </Button>
-            </div>
-          )}
         </FieldGroup>
       </CardContent>
     </Card>
@@ -327,7 +329,7 @@ function CatalogAssignmentsCard({ catalog, canEdit }: { catalog: Catalog; canEdi
         <CardTitle>{t('admin.catalogs.assignments.title')}</CardTitle>
         {canEdit && (
           <CardAction>
-            <Button size="sm" variant="outline" onClick={() => setAddOpen(true)}>
+            <Button size="sm" variant="outline" type="button" onClick={() => setAddOpen(true)}>
               <PlusIcon className="size-4" />
               {t('admin.catalogs.assignments.add_cta')}
             </Button>
@@ -353,6 +355,7 @@ function CatalogAssignmentsCard({ catalog, canEdit }: { catalog: Catalog; canEdi
                   <Button
                     variant="ghost"
                     size="icon-xs"
+                    type="button"
                     onClick={() => handleUnassign(assignment)}
                     aria-label={t('admin.actions.delete')}
                   >

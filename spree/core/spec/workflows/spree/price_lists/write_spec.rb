@@ -14,16 +14,8 @@ RSpec.describe 'Spree::PriceLists write workflows' do
       expect(result.value.status).to eq('draft')
     end
 
-    it 'applies the product membership it was created with' do
-      result = described_class.call(
-        store: store, attributes: { name: 'Wholesale', product_ids: [product.id] }
-      )
-
-      expect(result.value.product_ids).to eq([product.id])
-    end
-
-    it 'fails on an invalid list without applying membership' do
-      result = described_class.call(store: store, attributes: { product_ids: [product.id] })
+    it 'fails on an invalid list' do
+      result = described_class.call(store: store, attributes: {})
 
       expect(result).not_to be_success
     end
@@ -46,65 +38,8 @@ RSpec.describe 'Spree::PriceLists write workflows' do
       expect(price_list.reload.name).to eq('StringKeys')
     end
 
-    # Prefixed ids arrive from the console and legacy callers; comparing them
-    # against integer primary keys would read as "remove everything".
-    it 'accepts prefixed product ids' do
-      described_class.call(price_list: price_list, attributes: { product_ids: [product.prefixed_id] })
-
-      expect(price_list.product_ids).to eq([product.id])
-    end
-
-    # A prefix only encodes a number, so a variant's id decodes to an integer
-    # that names a product just as readily. Resolving through the store's own
-    # products is what stops one standing in for the other.
-    it 'ignores an id that does not name a product in this store' do
-      Spree.price_list_update_workflow.call(price_list: price_list, attributes: { product_ids: [product.id] })
-      foreign = create(:product, store: create(:store))
-
-      described_class.call(price_list: price_list, attributes: { product_ids: [product.id, foreign.id] })
-
-      expect(price_list.reload.product_ids).to eq([product.id])
-    end
-
-    # Array(nil) is [], so without a guard a nil payload reads as the empty
-    # array that means "clear the list".
-    it 'leaves membership alone when product_ids is nil' do
-      Spree.price_list_update_workflow.call(price_list: price_list, attributes: { product_ids: [product.id] })
-
-      described_class.call(price_list: price_list, attributes: { product_ids: nil })
-
-      expect(price_list.reload.product_ids).to eq([product.id])
-    end
-
-    # Malformed input is not the same instruction as an empty array.
-    it 'leaves membership alone when every id is blank' do
-      Spree.price_list_update_workflow.call(price_list: price_list, attributes: { product_ids: [product.id] })
-
-      described_class.call(price_list: price_list, attributes: { product_ids: ['', '  ', nil] })
-
-      expect(price_list.reload.product_ids).to eq([product.id])
-    end
-
-    it 'clears membership when given an empty array' do
-      Spree.price_list_update_workflow.call(price_list: price_list, attributes: { product_ids: [product.id] })
-
-      described_class.call(price_list: price_list, attributes: { product_ids: [] })
-
-      expect(price_list.reload.product_ids).to be_empty
-    end
-
-    it 'adds and removes products' do
-      other = create(:product, store: store)
-
-      described_class.call(price_list: price_list, attributes: { product_ids: [product.id, other.id] })
-      expect(price_list.product_ids).to match_array([product.id, other.id])
-
-      described_class.call(price_list: price_list, attributes: { product_ids: [product.id] })
-      expect(price_list.product_ids).to eq([product.id])
-    end
-
     it 'upserts the price overrides it is given' do
-      described_class.call(price_list: price_list, attributes: { product_ids: [product.id] })
+      price_list.add_products([product.id])
 
       described_class.call(
         price_list: price_list,
@@ -118,7 +53,7 @@ RSpec.describe 'Spree::PriceLists write workflows' do
     # An empty array means "clear every override", which is a different
     # instruction from sending no prices at all.
     it 'clears every override when given an empty prices array' do
-      described_class.call(price_list: price_list, attributes: { product_ids: [product.id] })
+      price_list.add_products([product.id])
       described_class.call(
         price_list: price_list,
         attributes: { prices: [{ variant_id: variant.id, currency: 'USD', amount: 5 }] }
@@ -130,7 +65,7 @@ RSpec.describe 'Spree::PriceLists write workflows' do
     end
 
     it 'leaves prices alone when the payload carries none' do
-      described_class.call(price_list: price_list, attributes: { product_ids: [product.id] })
+      price_list.add_products([product.id])
       described_class.call(
         price_list: price_list,
         attributes: { prices: [{ variant_id: variant.id, currency: 'USD', amount: 5 }] }

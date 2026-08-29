@@ -1,16 +1,16 @@
 module Spree
   module PriceLists
-    # Creates a price list. The bulk payloads a list can arrive with — which
-    # products it covers, and their price overrides — are applied by
-    # Spree::PriceLists::Update once the row exists, since both paths reconcile
-    # them the same way and membership has to settle before prices.
+    # Creates a price list. A `prices` payload the list arrives with is
+    # applied by Spree::PriceLists::Update once the row exists, since both
+    # paths reconcile it the same way. Product membership is not part of
+    # this payload — it lives on the uniform nested products surface.
     class Create < Spree::Workflow
       hooks :validate, :after_create
 
       attr_reader :price_list
 
       # @param store [Spree::Store]
-      # @param attributes [Hash] may carry `product_ids` and `prices`
+      # @param attributes [Hash] may carry `prices`
       # @return [Spree::ServiceModule::Result] value is the price list
       def perform(store:, attributes: {})
         super
@@ -30,13 +30,13 @@ module Spree
       private
 
       # Held back from the new record so it saves as a plain row; the
-      # collections are reconciled once it has an id.
+      # rows are reconciled once it has an id.
       def build_price_list
         # See Spree::PriceLists::Update on the indifferent access.
         attrs = attributes.to_h.with_indifferent_access
 
-        @bulk_payloads = attrs.slice(:product_ids, :prices)
-        @price_list = store.price_lists.new(attrs.except(:product_ids, :prices))
+        @bulk_payloads = attrs.slice(:prices)
+        @price_list = store.price_lists.new(attrs.except(:prices))
       end
 
       def save_price_list

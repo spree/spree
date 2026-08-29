@@ -2,6 +2,7 @@ import type { Collection, CollectionRuleParam, CollectionSortOrder } from '@spre
 import { customFieldFormSchema } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
+import type { ProductMembershipStagingValue } from '../components/spree/product-membership-staging'
 
 /**
  * Canonical values only — labels are resolved at render time via
@@ -94,6 +95,15 @@ const collectionRuleSchema = z.object({
 export type CollectionRuleFormValues = z.infer<typeof collectionRuleSchema>
 
 export const collectionFormSchema = z.object({
+  /**
+   * Staged product membership, applied on Save through the nested products
+   * endpoints. Deliberately opaque: it holds SDK `Product` records so a
+   * staged addition can render before it exists server-side, and RHF's
+   * `Path<T>` must not walk that object graph (see the note on
+   * `RuleEmbedRecord` in schemas/price-list.ts). Never sent to the API —
+   * `collectionToParams` drops it.
+   */
+  staged_products: z.custom<ProductMembershipStagingValue>(() => true),
   name: z.string().min(1, { error: requiredMessage('name') }),
   description: z.string(),
   permalink: z.string(),
@@ -119,6 +129,7 @@ const IMAGE_DEFAULTS = {
 } satisfies Partial<CollectionFormValues>
 
 export const COLLECTION_DEFAULTS: CollectionFormValues = {
+  staged_products: { adds: [], removes: [] },
   name: '',
   description: '',
   permalink: '',
@@ -164,6 +175,9 @@ export function collectionToForm(collection: Collection): CollectionFormValues {
         custom_field_definition_id: cf.custom_field_definition_id,
         value: cf.value,
       })) ?? [],
+    // Membership starts unstaged on every hydrate — a reset re-baselines the
+    // form, and anything staged has either been flushed or discarded.
+    staged_products: { adds: [], removes: [] },
     ...IMAGE_DEFAULTS,
   }
 }

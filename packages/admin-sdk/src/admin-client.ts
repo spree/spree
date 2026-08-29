@@ -103,7 +103,6 @@ import type {
   CatalogAssignParams,
   CatalogParams,
   CategoryCreateParams,
-  CategoryProductRepositionParams,
   CategoryRepositionParams,
   CategoryUpdateParams,
   ChannelCreateParams,
@@ -112,7 +111,6 @@ import type {
   ClaimResolveParams,
   ClaimUpdateParams,
   CollectionCreateParams,
-  CollectionProductRepositionParams,
   CollectionUpdateParams,
   CommissionRateCreateParams,
   CommissionRateUpdateParams,
@@ -195,6 +193,7 @@ import type {
   PriceListUpdateParams,
   PriceUpdateParams,
   ProductCreateParams,
+  ProductMembershipRepositionParams,
   ProductTypeApplyToProductsResponse,
   ProductTypeCreateParams,
   ProductTypeUpdateParams,
@@ -457,6 +456,72 @@ export class AdminClient {
           `${basePath}/${parentId}/translations`,
           options,
         ).then((r) => r.data),
+    }
+  }
+
+  /**
+   * The uniform nested products surface every product-curating parent
+   * exposes — categories, collections, catalogs and price lists all speak
+   * the same protocol. Both writes are bulk: one request adds or removes
+   * any number of products, and the counts report what actually changed
+   * (already-present ids don't fail an add, non-members don't fail a
+   * remove).
+   */
+  private productMembership(basePath: string) {
+    return {
+      list: (
+        parentId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<Product>> =>
+        this.request<PaginatedResponse<Product>>('GET', `${basePath}/${parentId}/products`, {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        }),
+
+      /** Bulk-adds products; already-present rows are skipped. */
+      create: (
+        parentId: string,
+        productIds: string[],
+        options?: RequestOptions,
+      ): Promise<{ added_count: number }> =>
+        this.request<{ added_count: number }>('POST', `${basePath}/${parentId}/products`, {
+          ...options,
+          body: { product_ids: productIds },
+        }),
+
+      /** Bulk-removes products; ids that aren't members are ignored. */
+      delete: (
+        parentId: string,
+        productIds: string[],
+        options?: RequestOptions,
+      ): Promise<{ removed_count: number }> =>
+        this.request<{ removed_count: number }>('DELETE', `${basePath}/${parentId}/products`, {
+          ...options,
+          body: { product_ids: productIds },
+        }),
+    }
+  }
+
+  /**
+   * `productMembership` plus per-member reposition, for the parents whose
+   * membership carries a manual order (categories, collections).
+   */
+  private positionedProductMembership(basePath: string) {
+    return {
+      ...this.productMembership(basePath),
+
+      /** Persists a drag-to-reorder; `new_position` is a 0-based index. */
+      reposition: (
+        parentId: string,
+        productId: string,
+        params: ProductMembershipRepositionParams,
+        options?: RequestOptions,
+      ): Promise<void> =>
+        this.request<void>('PATCH', `${basePath}/${parentId}/products/${productId}/reposition`, {
+          ...options,
+          body: params,
+        }),
     }
   }
 
@@ -2211,6 +2276,11 @@ export class AdminClient {
       this.request<void>('DELETE', `/price_lists/${id}`, options),
 
     /** draft|inactive → active (or → scheduled if `starts_at` is in the future). */
+    /** Which products the list prices — the same nested surface categories,
+     * collections and catalogs expose. Adding materializes placeholder
+     * prices per variant × currency; removing hard-deletes the rows. */
+    products: this.productMembership('/price_lists'),
+
     activate: (id: string, options?: RequestOptions): Promise<PriceList> =>
       this.request<PriceList>('PATCH', `/price_lists/${id}/activate`, options),
 
@@ -3324,43 +3394,7 @@ export class AdminClient {
       this.request<void>('DELETE', `/catalogs/${id}`, options),
 
     /** The catalog's assortment, in the merchant's manual order. */
-    products: {
-      list: (
-        catalogId: string,
-        params?: ListParams & Record<string, unknown>,
-        options?: RequestOptions,
-      ): Promise<PaginatedResponse<Product>> =>
-        this.request<PaginatedResponse<Product>>('GET', `/catalogs/${catalogId}/products`, {
-          ...options,
-          params: params ? transformListParams(params) : undefined,
-        }),
-
-      /** Bulk-adds products; already-present rows are skipped. */
-      create: (
-        catalogId: string,
-        productIds: string[],
-        options?: RequestOptions,
-      ): Promise<{ added_count: number }> =>
-        this.request<{ added_count: number }>('POST', `/catalogs/${catalogId}/products`, {
-          ...options,
-          body: { product_ids: productIds },
-        }),
-
-      delete: (catalogId: string, productId: string, options?: RequestOptions): Promise<void> =>
-        this.request<void>('DELETE', `/catalogs/${catalogId}/products/${productId}`, options),
-
-      /** Persists a drag-to-reorder; `new_position` is a 0-based index. */
-      reposition: (
-        catalogId: string,
-        productId: string,
-        newPosition: number,
-        options?: RequestOptions,
-      ): Promise<void> =>
-        this.request<void>('PATCH', `/catalogs/${catalogId}/products/${productId}/reposition`, {
-          ...options,
-          body: { new_position: newPosition },
-        }),
-    },
+    products: this.productMembership('/catalogs'),
 
     /**
      * Copies the attached price list's products into the assortment.
@@ -3838,37 +3872,7 @@ export class AdminClient {
       this.request<Category>('PATCH', `/categories/${id}/reposition`, { ...options, body: params }),
 
     /** Manual product membership + ordering within a category. */
-    products: {
-      list: (
-        categoryId: string,
-        params?: ListParams & Record<string, unknown>,
-        options?: RequestOptions,
-      ): Promise<PaginatedResponse<Product>> =>
-        this.request<PaginatedResponse<Product>>('GET', `/categories/${categoryId}/products`, {
-          ...options,
-          params: params ? transformListParams(params) : undefined,
-        }),
-
-      add: (categoryId: string, productId: string, options?: RequestOptions): Promise<Product> =>
-        this.request<Product>('POST', `/categories/${categoryId}/products`, {
-          ...options,
-          body: { product_id: productId },
-        }),
-
-      remove: (categoryId: string, productId: string, options?: RequestOptions): Promise<void> =>
-        this.request<void>('DELETE', `/categories/${categoryId}/products/${productId}`, options),
-
-      reposition: (
-        categoryId: string,
-        productId: string,
-        params: CategoryProductRepositionParams,
-        options?: RequestOptions,
-      ): Promise<void> =>
-        this.request<void>('PATCH', `/categories/${categoryId}/products/${productId}/reposition`, {
-          ...options,
-          body: params,
-        }),
-    },
+    products: this.positionedProductMembership('/categories'),
 
     customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS['Spree::Category']),
 
@@ -3922,38 +3926,7 @@ export class AdminClient {
      * and `reposition` are rejected on an automatic collection, whose members
      * are materialized from its rules; `list` works on both.
      */
-    products: {
-      list: (
-        collectionId: string,
-        params?: ListParams & Record<string, unknown>,
-        options?: RequestOptions,
-      ): Promise<PaginatedResponse<Product>> =>
-        this.request<PaginatedResponse<Product>>('GET', `/collections/${collectionId}/products`, {
-          ...options,
-          params: params ? transformListParams(params) : undefined,
-        }),
-
-      add: (collectionId: string, productId: string, options?: RequestOptions): Promise<Product> =>
-        this.request<Product>('POST', `/collections/${collectionId}/products`, {
-          ...options,
-          body: { product_id: productId },
-        }),
-
-      remove: (collectionId: string, productId: string, options?: RequestOptions): Promise<void> =>
-        this.request<void>('DELETE', `/collections/${collectionId}/products/${productId}`, options),
-
-      reposition: (
-        collectionId: string,
-        productId: string,
-        params: CollectionProductRepositionParams,
-        options?: RequestOptions,
-      ): Promise<void> =>
-        this.request<void>(
-          'PATCH',
-          `/collections/${collectionId}/products/${productId}/reposition`,
-          { ...options, body: params },
-        ),
-    },
+    products: this.positionedProductMembership('/collections'),
 
     customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS['Spree::Collection']),
 

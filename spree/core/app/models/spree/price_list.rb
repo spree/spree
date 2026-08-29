@@ -23,13 +23,6 @@ module Spree
 
     after_save :apply_pending_rules
 
-    # @return [Array<String>] prefixed product ids in this list,
-    #   encoded inline to avoid hydrating N Product records.
-    def product_prefixed_ids
-      prefix = Spree::Product._prefix_id_prefix
-      product_ids.sort.map { |pk| "#{prefix}_#{Spree::PrefixedId::SQIDS.encode([pk])}" }
-    end
-
     # Flat-payload writer for `rules`. See
     # {Spree::TypedAssociations#assign_typed_association}.
     def rules=(rows)

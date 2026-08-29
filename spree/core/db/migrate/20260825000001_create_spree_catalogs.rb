@@ -14,10 +14,11 @@ class CreateSpreeCatalogs < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
+    # Membership only: a catalog decides what a buyer sees, never the order
+    # they see it in, so there is no position here.
     create_table :spree_catalog_products do |t|
       t.references :catalog, null: false
       t.references :product, null: false
-      t.integer :position
       t.timestamps
     end
 

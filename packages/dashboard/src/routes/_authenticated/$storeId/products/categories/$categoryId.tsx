@@ -7,6 +7,7 @@ import {
   mapSpreeErrorsToForm,
   PageHeader,
   Slot,
+  useResourceKey,
 } from '@spree/dashboard-core'
 import {
   ErrorState,
@@ -17,6 +18,7 @@ import {
   useConfirm,
   useFormSubmitShortcut,
 } from '@spree/dashboard-ui'
+import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -26,8 +28,14 @@ import {
   CategorySidebar,
 } from '../../../../../components/spree/categories/category-form'
 import {
+  flushProductMembership,
+  ProductMembershipStagingProvider,
+} from '../../../../../components/spree/product-membership-staging'
+import {
+  useAddCategoryProducts,
   useCategory,
   useDeleteCategory,
+  useRemoveCategoryProducts,
   useUpdateCategory,
 } from '../../../../../hooks/use-categories'
 import {
@@ -68,6 +76,10 @@ function CategoryDetail({ categoryId, storeId }: { categoryId: string; storeId: 
   const { data: category } = useCategory(categoryId)
   const updateCategory = useUpdateCategory(categoryId)
   const deleteCategory = useDeleteCategory()
+  const queryClient = useQueryClient()
+  const productsKey = useResourceKey('categories', categoryId, 'products')
+  const addProducts = useAddCategoryProducts(categoryId)
+  const removeProducts = useRemoveCategoryProducts(categoryId)
 
   const form = useForm<CategoryFormValues>({
     resolver: zodResolver(categoryFormSchema),
@@ -87,12 +99,23 @@ function CategoryDetail({ categoryId, storeId }: { categoryId: string; storeId: 
     const extensionValues = extensionSubmitValues('category', form)
     try {
       await updateCategory.mutateAsync({ ...categoryToParams(values), ...extensionValues })
+      // Membership flushes after the row saves, so a validation failure aborts
+      // before any membership write. It ends by refreshing the products list —
+      // the only refresh of the whole Save.
+      await flushProductMembership({
+        staging: values.staged_products,
+        add: (ids) => addProducts.mutateAsync(ids),
+        remove: (ids) => removeProducts.mutateAsync(ids),
+        queryClient,
+        productsKey,
+      })
       // Re-baseline so isDirty flips false before the refetch lands; drop the
       // consumed signed_ids + clear flags so a second save can't re-send a
       // stale upload/purge (the refetch hydrates the persisted image state).
       form.reset({
         ...values,
         ...extensionValues,
+        staged_products: { adds: [], removes: [] },
         image_signed_id: null,
         image_cleared: false,
         square_image_signed_id: null,
@@ -124,37 +147,39 @@ function CategoryDetail({ categoryId, storeId }: { categoryId: string; storeId: 
 
   return (
     <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        {form.formState.errors.root?.message && (
-          <p className="text-sm text-destructive" role="alert">
-            {form.formState.errors.root.message}
-          </p>
-        )}
-        <ResourceLayout
-          header={
-            <PageHeader
-              title={category?.name ?? ''}
-              backTo="products/categories"
-              actions={<FormActions form={form} saveLabel={t('admin.actions.save')} />}
-              resource={category ? { id: category.id } : undefined}
-              onDelete={handleDelete}
-              deleteLabel={t('admin.categories.delete_label')}
-              jsonPreview={{
-                title: `Category ${category?.name ?? ''}`,
-                fetch: () => adminClient.categories.get(categoryId),
-                endpoint: `/api/v3/admin/categories/${categoryId}`,
-              }}
-            />
-          }
-          main={<CategoryMain form={form} category={category} />}
-          sidebar={
-            <>
-              <CategorySidebar form={form} category={category} />
-              <Slot name="category.form_sidebar" context={{ category }} />
-            </>
-          }
-        />
-      </form>
+      <ProductMembershipStagingProvider form={form} name="staged_products">
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          {form.formState.errors.root?.message && (
+            <p className="text-sm text-destructive" role="alert">
+              {form.formState.errors.root.message}
+            </p>
+          )}
+          <ResourceLayout
+            header={
+              <PageHeader
+                title={category?.name ?? ''}
+                backTo="products/categories"
+                actions={<FormActions form={form} saveLabel={t('admin.actions.save')} />}
+                resource={category ? { id: category.id } : undefined}
+                onDelete={handleDelete}
+                deleteLabel={t('admin.categories.delete_label')}
+                jsonPreview={{
+                  title: `Category ${category?.name ?? ''}`,
+                  fetch: () => adminClient.categories.get(categoryId),
+                  endpoint: `/api/v3/admin/categories/${categoryId}`,
+                }}
+              />
+            }
+            main={<CategoryMain form={form} category={category} />}
+            sidebar={
+              <>
+                <CategorySidebar form={form} category={category} />
+                <Slot name="category.form_sidebar" context={{ category }} />
+              </>
+            }
+          />
+        </form>
+      </ProductMembershipStagingProvider>
     </FormProvider>
   )
 }

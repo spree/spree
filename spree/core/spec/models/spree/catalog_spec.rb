@@ -28,9 +28,7 @@ describe Spree::Catalog, type: :model do
       expect(catalog.products.reload).to contain_exactly(product)
     end
 
-    # `acts_as_list` numbers rows in a callback the bulk insert skips, so the
-    # appended positions are assigned by hand and worth asserting.
-    it 'appends after the existing assortment in one statement' do
+    it 'appends to the existing assortment in one statement' do
       first = create(:product, store: store)
       catalog.add_products([first.id])
       later = create_list(:product, 2, store: store)
@@ -38,9 +36,7 @@ describe Spree::Catalog, type: :model do
       expect { catalog.add_products(later.map(&:id)) }.
         to change { catalog.catalog_products.count }.by(2)
 
-      positions = catalog.catalog_products.reload.order(:position).pluck(:product_id, :position)
-      expect(positions.map(&:first)).to eq([first.id, *later.map(&:id)])
-      expect(positions.map(&:last)).to eq([1, 2, 3])
+      expect(catalog.products.reload).to contain_exactly(first, *later)
     end
 
     it 'adds a batch alongside an existing row without raising on the duplicate' do

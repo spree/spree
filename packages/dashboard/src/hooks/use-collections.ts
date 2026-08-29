@@ -48,7 +48,12 @@ export function useCreateCollection() {
 export function useUpdateCollection(id: string) {
   return useResourceMutation<Collection, Error, CollectionUpdateParams>({
     mutationFn: (params) => adminClient.collections.update(id, params),
+    // The nested products list is held back: it prefix-matches
+    // `['collections', id]`, and this update runs before the membership flush
+    // inside the page's Save — refreshing it there paints the pre-save rows
+    // for a frame. The flush refreshes it once, at the end.
     invalidate: [['collections'], ['collections', id]],
+    doNotInvalidate: ['products'],
     successMessage: i18n.t('admin.collections.messages.updated'),
     errorMessage: i18n.t('admin.errors.failed_to_update'),
   })
@@ -111,20 +116,15 @@ export function useCollectionProducts(collectionId: string | undefined, page = 1
 /** Add one or many products to a manual collection in a single request. */
 export function useAddCollectionProducts(collectionId: string) {
   return useResourceMutation<unknown, Error, string[]>({
-    mutationFn: (productIds) =>
-      adminClient.products.bulkAddToCollections({
-        ids: productIds,
-        collection_ids: [collectionId],
-      }),
-    invalidate: [collectionProductsKey(collectionId), ['collections']],
-    errorMessage: i18n.t('admin.errors.failed_to_update'),
-  })
-}
-
-export function useRemoveCollectionProduct(collectionId: string) {
-  return useResourceMutation<void, Error, string>({
-    mutationFn: (productId) => adminClient.collections.products.remove(collectionId, productId),
-    invalidate: [collectionProductsKey(collectionId), ['collections']],
+    mutationFn: (productIds) => adminClient.collections.products.create(collectionId, productIds),
+    // No invalidate: this runs inside the page's Save, and the parent's own
+    // update mutation already invalidates `['collections']`, which prefix-matches
+    // the products list. Invalidating here too refetches mid-flush — once
+    // before the membership is written — which renders the pre-save list for a
+    // frame before the final state lands.
+    // Silent: this runs inside the page's Save, whose own mutation reports
+    // the outcome — a second toast per flush would stack on it.
+    successMessage: false,
     errorMessage: i18n.t('admin.errors.failed_to_update'),
   })
 }
@@ -132,12 +132,15 @@ export function useRemoveCollectionProduct(collectionId: string) {
 /** Remove many products from a collection in one request. */
 export function useRemoveCollectionProducts(collectionId: string) {
   return useResourceMutation<unknown, Error, string[]>({
-    mutationFn: (productIds) =>
-      adminClient.products.bulkRemoveFromCollections({
-        ids: productIds,
-        collection_ids: [collectionId],
-      }),
-    invalidate: [collectionProductsKey(collectionId), ['collections']],
+    mutationFn: (productIds) => adminClient.collections.products.delete(collectionId, productIds),
+    // No invalidate: this runs inside the page's Save, and the parent's own
+    // update mutation already invalidates `['collections']`, which prefix-matches
+    // the products list. Invalidating here too refetches mid-flush — once
+    // before the membership is written — which renders the pre-save list for a
+    // frame before the final state lands.
+    // Silent: this runs inside the page's Save, whose own mutation reports
+    // the outcome — a second toast per flush would stack on it.
+    successMessage: false,
     errorMessage: i18n.t('admin.errors.failed_to_update'),
   })
 }

@@ -111,4 +111,87 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
       end
     end
   end
+  path '/api/v3/admin/catalogs/{catalog_id}/products' do
+    get 'List catalog products' do
+      tags 'Catalogs'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description "The catalog's curated assortment, listed by product name — membership carries no order."
+      admin_scope :read, :products
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :catalog_id, in: :path, type: :string, required: true
+
+      response '200', 'products found' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:catalog_id) { catalog.prefixed_id }
+
+        schema SwaggerSchemaHelpers.paginated('Product')
+
+        run_test!
+      end
+    end
+
+    post 'Add products to a catalog' do
+      tags 'Catalogs'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Curates products into the assortment in bulk. Already-present products are skipped; the count reports what was added.'
+      admin_scope :write, :products
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :catalog_id, in: :path, type: :string, required: true
+      parameter name: :body, in: :body, schema: {
+        type: :object,
+        properties: { product_ids: { type: :array, items: { type: :string }, example: ['prod_abc123'] } },
+        required: %w[product_ids]
+      }
+
+      response '201', 'products added' do
+        let!(:product) { create(:product, store: store) }
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:catalog_id) { catalog.prefixed_id }
+        let(:body) { { product_ids: [product.prefixed_id] } }
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['added_count']).to eq(1)
+        end
+      end
+    end
+
+    delete 'Remove products from a catalog' do
+      tags 'Catalogs'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Removes products from the assortment in bulk. Ids that are not members are ignored; the count reports what was removed.'
+      admin_scope :write, :products
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :catalog_id, in: :path, type: :string, required: true
+      parameter name: :body, in: :body, schema: {
+        type: :object,
+        properties: { product_ids: { type: :array, items: { type: :string }, example: ['prod_abc123'] } },
+        required: %w[product_ids]
+      }
+
+      response '200', 'products removed' do
+        let!(:product) { create(:product, store: store) }
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:catalog_id) { catalog.prefixed_id }
+        let(:body) { { product_ids: [product.prefixed_id] } }
+
+        before { catalog.add_products([product.id]) }
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['removed_count']).to eq(1)
+        end
+      end
+    end
+  end
+
 end

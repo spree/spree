@@ -71,23 +71,38 @@ async function saveForm(page: Page) {
     .click()
 }
 
-// Pick a product from the Products card's `<ResourceMultiAutocomplete>`.
-// Unlike the promotions spec's helper, the picker lives on the page (not
-// inside a dialog), so we scope to `main` to skip any open Sheet/Dialog.
+// Add a product through the Products card's picker sheet (the same shared
+// membership panel categories/collections/catalogs use). Membership lives in
+// form state, so the row appears immediately but persists only on Save.
 async function pickProductOnPage(page: Page, optionLabel: string) {
-  const input = page.locator('main').getByPlaceholder(/search products by name/i)
-  await input.fill(optionLabel)
   await page
-    .getByRole('option', { name: new RegExp(optionLabel, 'i') })
-    .first()
+    .locator('main')
+    .getByRole('button', { name: /^add products$/i })
     .click()
-  // Close the listbox so the next focus (the bulk-prices button) lands cleanly.
-  await input.press('Escape')
+  const picker = page.getByRole('dialog')
+  await expect(picker.getByRole('heading', { name: /add products to price list/i })).toBeVisible()
+
+  // Search is debounced + async; wait for the matching option to render
+  // before selecting it.
+  await picker.getByRole('searchbox').fill(optionLabel)
+  const option = picker.getByRole('button', { name: new RegExp(optionLabel, 'i') }).first()
+  await expect(option).toBeVisible({ timeout: 15_000 })
+  await option.click()
+
+  const confirm = picker.getByRole('button', { name: /^add 1$/i })
+  await expect(confirm).toBeEnabled({ timeout: 15_000 })
+  await confirm.click()
+  await expect(picker).toBeHidden({ timeout: 15_000 })
+
+  // The staged product renders as a row in the membership table.
+  await expect(page.getByRole('row', { name: new RegExp(optionLabel, 'i') }).first()).toBeVisible({
+    timeout: 15_000,
+  })
 }
 
 async function openBulkPriceEditor(page: Page) {
-  // Single "Edit prices" button on both surfaces (price-list PricesCard
-  // and product PageHeader).
+  // Single "Edit prices" button on both surfaces — the price list's page
+  // header and the product PageHeader.
   await page.getByRole('button', { name: /^edit prices$/i }).click()
   await expect(page.getByRole('dialog')).toBeVisible({ timeout: 15_000 })
   await expect(page.getByRole('heading', { name: /^edit prices —/i })).toBeVisible()
@@ -299,13 +314,14 @@ test.describe('price lists', () => {
     // Attach a seeded product so the bulk editor has a row to edit.
     // Saving creates a placeholder price the editor can fill in.
     await pickProductOnPage(page, FIXTURE_PROMO_PRODUCT)
-    await expect(page.getByText(/1 product selected/i)).toBeVisible({ timeout: 5_000 })
     await saveForm(page)
-    // Card-counter help text updates once placeholder prices exist. A
-    // multi-currency store creates one placeholder per currency, so the
-    // count is "N prices configured" (singular when the store has one
-    // currency) — match either form.
-    await expect(page.getByText(/\d+ price(s)? configured/i)).toBeVisible({ timeout: 15_000 })
+    // The Products card's description picks up the price count once
+    // placeholder prices exist. A multi-currency store creates one
+    // placeholder per currency, so the copy is singular or plural depending
+    // on the store — match either form.
+    await expect(page.getByText(/\d+ price(s)? (is|are) configured/i)).toBeVisible({
+      timeout: 15_000,
+    })
 
     await openBulkPriceEditor(page)
 
@@ -358,9 +374,10 @@ test.describe('price lists', () => {
     await submitCreate(page, name)
 
     await pickProductOnPage(page, FIXTURE_PROMO_PRODUCT)
-    await expect(page.getByText(/1 product selected/i)).toBeVisible({ timeout: 5_000 })
     await saveForm(page)
-    await expect(page.getByText(/\d+ price(s)? configured/i)).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByText(/\d+ price(s)? (is|are) configured/i)).toBeVisible({
+      timeout: 15_000,
+    })
 
     await openBulkPriceEditor(page)
     const dialog = page.getByRole('dialog')

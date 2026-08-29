@@ -130,7 +130,7 @@ export function TaxLinesCard({ order }: { order: Order }) {
               </TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody className="border-t border-border">
+          <TableBody>
             {[...taxGroups.values()].map((group) => (
               <TableRow key={group.label}>
                 <TableCell>{group.label}</TableCell>
@@ -207,7 +207,7 @@ export function OrderDiscountsCard({ order }: { order: Order }) {
               <TableHead className="w-10" />
             </TableRow>
           </TableHeader>
-          <TableBody className="border-t border-border">
+          <TableBody>
             {discountRows.map((row) => (
               <TableRow key={row.id}>
                 <TableCell>{row.label}</TableCell>
@@ -290,7 +290,7 @@ export function FeesCard({ order }: { order: Order }) {
               <TableHead className="w-10" />
             </TableRow>
           </TableHeader>
-          <TableBody className="border-t border-border">
+          <TableBody>
             {feeRows.map((row) => (
               <TableRow key={row.id}>
                 <TableCell>{row.label}</TableCell>

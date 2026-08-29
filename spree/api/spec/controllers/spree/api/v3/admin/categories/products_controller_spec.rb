@@ -48,41 +48,18 @@ RSpec.describe Spree::Api::V3::Admin::Categories::ProductsController, type: :con
     end
   end
 
-  describe 'POST #create' do
-    let!(:product) { create(:product, store: store) }
-
-    it 'adds the product to the category' do
-      post :create, params: { category_id: category.prefixed_id, product_id: product.prefixed_id }, as: :json
-
-      expect(response).to have_http_status(:created)
-      expect(classified_ids).to include(product.id)
+  it_behaves_like 'a product membership surface' do
+    let(:parent_route_params) { { category_id: category.prefixed_id } }
+    let(:foreign_parent_route_params) do
+      { category_id: create(:category, store: create(:store)).prefixed_id }
     end
 
-    it '404s for a product outside the store' do
-      other = create(:product, store: create(:store))
-      post :create, params: { category_id: category.prefixed_id, product_id: other.prefixed_id }, as: :json
-
-      expect(response).to have_http_status(:not_found)
-    end
-  end
-
-  describe 'DELETE #destroy' do
-    let!(:product) { create(:product, store: store) }
-
-    before { create(:product_category, category: category, product: product, position: 1) }
-
-    it 'removes the product from the category' do
-      delete :destroy, params: { category_id: category.prefixed_id, id: product.prefixed_id }, as: :json
-
-      expect(response).to have_http_status(:no_content)
-      expect(classified_ids).not_to include(product.id)
+    def seed_member(product)
+      Spree::Categories::AddProducts.call(categories: [category], products: [product])
     end
 
-    it '404s for a product not in the category' do
-      stray = create(:product, store: store)
-      delete :destroy, params: { category_id: category.prefixed_id, id: stray.prefixed_id }, as: :json
-
-      expect(response).to have_http_status(:not_found)
+    def member_products
+      category.products.reload.to_a
     end
   end
 

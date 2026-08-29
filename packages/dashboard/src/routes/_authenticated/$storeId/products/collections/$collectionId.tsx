@@ -7,6 +7,7 @@ import {
   mapSpreeErrorsToForm,
   PageHeader,
   Slot,
+  useResourceKey,
 } from '@spree/dashboard-core'
 import {
   ErrorState,
@@ -17,6 +18,7 @@ import {
   useConfirm,
   useFormSubmitShortcut,
 } from '@spree/dashboard-ui'
+import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -26,8 +28,15 @@ import {
   CollectionSidebar,
 } from '../../../../../components/spree/collections/collection-form'
 import {
+  EMPTY_STAGING,
+  flushProductMembership,
+  ProductMembershipStagingProvider,
+} from '../../../../../components/spree/product-membership-staging'
+import {
+  useAddCollectionProducts,
   useCollection,
   useDeleteCollection,
+  useRemoveCollectionProducts,
   useUpdateCollection,
 } from '../../../../../hooks/use-collections'
 import {
@@ -70,6 +79,10 @@ function CollectionDetail({ collectionId, storeId }: { collectionId: string; sto
   const { data: collection } = useCollection(collectionId)
   const updateCollection = useUpdateCollection(collectionId)
   const deleteCollection = useDeleteCollection()
+  const queryClient = useQueryClient()
+  const productsKey = useResourceKey('collections', collectionId, 'products')
+  const addProducts = useAddCollectionProducts(collectionId)
+  const removeProducts = useRemoveCollectionProducts(collectionId)
 
   const form = useForm<CollectionFormValues>({
     resolver: zodResolver(collectionFormSchema),
@@ -92,12 +105,31 @@ function CollectionDetail({ collectionId, storeId }: { collectionId: string; sto
     const extensionValues = extensionSubmitValues('collection', form)
     try {
       await updateCollection.mutateAsync({ ...collectionToParams(values), ...extensionValues })
+      // Membership flushes after the row saves, so a validation failure aborts
+      // before any membership write. It ends by refreshing the products list —
+      // the only refresh of the whole Save.
+      //
+      // Skipped once the collection is automatic: staging survives the manual →
+      // automatic toggle in form state, and the API rejects curating a
+      // rule-driven collection — flushing it would fail the Save after the
+      // collection itself already persisted. Rules own membership from here.
+      // Defensive rather than reachable today: toggling `automatic` on
+      // requires at least one rule, so the merchant cannot save straight from
+      // the toggle with products still staged.
+      await flushProductMembership({
+        staging: values.automatic ? EMPTY_STAGING : values.staged_products,
+        add: (ids) => addProducts.mutateAsync(ids),
+        remove: (ids) => removeProducts.mutateAsync(ids),
+        queryClient,
+        productsKey,
+      })
       // Re-baseline so isDirty flips false before the refetch lands; drop the
       // consumed signed_ids + clear flags so a second save can't re-send a
       // stale upload/purge (the refetch hydrates the persisted image state).
       form.reset({
         ...values,
         ...extensionValues,
+        staged_products: { adds: [], removes: [] },
         image_signed_id: null,
         image_cleared: false,
         square_image_signed_id: null,
@@ -129,37 +161,39 @@ function CollectionDetail({ collectionId, storeId }: { collectionId: string; sto
 
   return (
     <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        {form.formState.errors.root?.message && (
-          <p className="text-sm text-destructive" role="alert">
-            {form.formState.errors.root.message}
-          </p>
-        )}
-        <ResourceLayout
-          header={
-            <PageHeader
-              title={collection?.name ?? ''}
-              backTo="products/collections"
-              actions={<FormActions form={form} saveLabel={t('admin.actions.save')} />}
-              resource={collection ? { id: collection.id } : undefined}
-              onDelete={handleDelete}
-              deleteLabel={t('admin.collections.delete_label')}
-              jsonPreview={{
-                title: `Collection ${collection?.name ?? ''}`,
-                fetch: () => adminClient.collections.get(collectionId),
-                endpoint: `/api/v3/admin/collections/${collectionId}`,
-              }}
-            />
-          }
-          main={<CollectionMain form={form} collection={collection} />}
-          sidebar={
-            <>
-              <CollectionSidebar form={form} collection={collection} />
-              <Slot name="collection.form_sidebar" context={{ collection }} />
-            </>
-          }
-        />
-      </form>
+      <ProductMembershipStagingProvider form={form} name="staged_products">
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          {form.formState.errors.root?.message && (
+            <p className="text-sm text-destructive" role="alert">
+              {form.formState.errors.root.message}
+            </p>
+          )}
+          <ResourceLayout
+            header={
+              <PageHeader
+                title={collection?.name ?? ''}
+                backTo="products/collections"
+                actions={<FormActions form={form} saveLabel={t('admin.actions.save')} />}
+                resource={collection ? { id: collection.id } : undefined}
+                onDelete={handleDelete}
+                deleteLabel={t('admin.collections.delete_label')}
+                jsonPreview={{
+                  title: `Collection ${collection?.name ?? ''}`,
+                  fetch: () => adminClient.collections.get(collectionId),
+                  endpoint: `/api/v3/admin/collections/${collectionId}`,
+                }}
+              />
+            }
+            main={<CollectionMain form={form} collection={collection} />}
+            sidebar={
+              <>
+                <CollectionSidebar form={form} collection={collection} />
+                <Slot name="collection.form_sidebar" context={{ collection }} />
+              </>
+            }
+          />
+        </form>
+      </ProductMembershipStagingProvider>
     </FormProvider>
   )
 }

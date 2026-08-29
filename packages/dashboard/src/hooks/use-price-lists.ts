@@ -29,7 +29,12 @@ export function useCreatePriceList() {
 export function useUpdatePriceList(id: string) {
   return useResourceMutation<PriceList, Error, PriceListUpdateParams>({
     mutationFn: (params) => adminClient.priceLists.update(id, params),
+    // The nested products list is held back: it prefix-matches
+    // `['price-lists', id]`, and this update runs before the membership flush
+    // inside the page's Save — refreshing it there paints the pre-save rows
+    // for a frame. The flush refreshes it once, at the end.
     invalidate: [['price-lists'], ['price-lists', id]],
+    doNotInvalidate: ['products'],
     successMessage: i18n.t('admin.products.price_lists.messages.updated'),
     errorMessage: i18n.t('admin.errors.failed_to_update'),
   })
@@ -65,6 +70,41 @@ export function useDeactivatePriceList(id: string) {
     invalidate: [['price-lists'], ['price-lists', id]],
     successMessage: i18n.t('admin.products.price_lists.messages.deactivated'),
     errorMessage: i18n.t('admin.products.price_lists.errors.failed_to_deactivate'),
+  })
+}
+
+// ---------------------------------------------------------------------------
+// Product membership — the uniform nested surface, staged in the editor and
+// flushed on Save (deferred card).
+// ---------------------------------------------------------------------------
+
+export function usePriceListProducts(priceListId: string | undefined, page = 1) {
+  return useQuery({
+    queryKey: useResourceKey('price-lists', priceListId ?? 'noop', 'products', `${page}`),
+    queryFn: () => adminClient.priceLists.products.list(priceListId as string, { page, limit: 25 }),
+    enabled: !!priceListId,
+    placeholderData: (previous) => previous,
+  })
+}
+
+// Both flush mutations stay silent — they run inside the editor's Save,
+// whose update mutation already reports the outcome.
+
+export function useAddPriceListProducts(priceListId: string) {
+  return useResourceMutation<{ added_count: number }, Error, string[]>({
+    mutationFn: (productIds) => adminClient.priceLists.products.create(priceListId, productIds),
+    // No invalidate: the flush refreshes the list once, after every write.
+    successMessage: false,
+    errorMessage: i18n.t('admin.errors.failed_to_update'),
+  })
+}
+
+export function useRemovePriceListProducts(priceListId: string) {
+  return useResourceMutation<{ removed_count: number }, Error, string[]>({
+    mutationFn: (productIds) => adminClient.priceLists.products.delete(priceListId, productIds),
+    // No invalidate: the flush refreshes the list once, after every write.
+    successMessage: false,
+    errorMessage: i18n.t('admin.errors.failed_to_update'),
   })
 }
 

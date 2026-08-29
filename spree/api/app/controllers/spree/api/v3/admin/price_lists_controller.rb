@@ -6,13 +6,12 @@ module Spree
         # (`activate` / `deactivate`) and the spreadsheet's data feed
         # (`prices`).
         #
-        # Everything writable on the list — name, schedule, match policy,
-        # product membership (`product_ids: [...]`), nested rules
-        # (`rules: [...]`), and individual price overrides
-        # (`prices: [...]`) — flows through the regular PATCH payload, so
-        # the SPA saves the entire editor in one round-trip. No separate
-        # add_products / remove_products / add_rule / bulk_update_prices
-        # endpoints.
+        # Everything writable on the list itself — name, schedule, match
+        # policy, nested rules (`rules: [...]`), and individual price
+        # overrides (`prices: [...]`) — flows through the regular PATCH
+        # payload. Product membership lives on the uniform nested surface
+        # (PriceLists::ProductsController), the same protocol categories,
+        # collections and catalogs use.
         #
         # Scoped under the `products` API-key scope — price lists are a
         # product/pricing concern; we don't introduce a separate
@@ -119,24 +118,18 @@ module Spree
               params.permit(
                 :name, :description, :position,
                 :starts_at, :ends_at, :match_policy,
-                product_ids: [],
                 rules: [:id, :type, { preferences: {} }],
                 prices: [:id, :variant_id, :currency, :amount, :compare_at_amount]
               )
             )
-            reject_foreign_membership(attrs)
+            reject_foreign_variants(attrs)
           end
 
-          # The PriceList model setters (`product_ids=`, `prices=`) resolve
-          # member ids with no store scoping, so a list in this store could
-          # otherwise be populated with another store's products/variants.
-          # Drop any id that isn't in the current store before assignment.
-          def reject_foreign_membership(attrs)
-            if attrs[:product_ids].present?
-              store_product_ids = current_store.products.where(id: attrs[:product_ids]).pluck(:id).map(&:to_s).to_set
-              attrs[:product_ids] = Array(attrs[:product_ids]).select { |id| store_product_ids.include?(id.to_s) }
-            end
-
+          # The price rows resolve variant ids with no store scoping, so a
+          # list in this store could otherwise be populated with another
+          # store's variants. Drop any id that isn't in the current store
+          # before assignment.
+          def reject_foreign_variants(attrs)
             if attrs[:prices].present?
               incoming = Array(attrs[:prices])
               store_variant_ids = current_store.variants.where(id: incoming.map { |r| r[:variant_id] }.compact).
