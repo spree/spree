@@ -1976,11 +1976,13 @@
       "tax_identifier": {
         "kind": {
           "help": "De quel numéro il s'agit. Il doit correspondre à la vérification configurée, l'orthographe compte donc.",
-          "label": "Type"
+          "label": "Type",
+          "required": "Choisissez ou saisissez un type d'enregistrement"
         },
         "value": {
           "label": "Numéro",
-          "placeholder": "FR12345678901"
+          "placeholder": "FR12345678901",
+          "required": "Saisissez le numéro d'enregistrement"
         }
       },
       "tax_rate": {
@@ -4708,7 +4710,7 @@
         "validation_failed": "Impossible de vérifier le numéro",
         "validation_requested": "Vérification du numéro auprès du registre"
       },
-      "not_validatable": "Aucune vérification n'est configurée pour ce type, le numéro est utilisé tel qu'il a été saisi.",
+      "not_validatable": "Aucun registre ne permet de vérifier ce type, le numéro est enregistré tel qu'il a été saisi.",
       "select_kind": "Choisir un type",
       "title": "Numéro de TVA",
       "validate_action": "Vérifier auprès du registre",

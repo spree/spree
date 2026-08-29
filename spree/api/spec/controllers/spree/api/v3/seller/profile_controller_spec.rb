@@ -228,42 +228,6 @@ RSpec.describe Spree::Api::V3::Seller::ProfileController, type: :controller do
       expect(seller.registration_number).to eq('01234567')
     end
 
-    it 'records a tax registration' do
-      patch :update, params: { tax_identifier: { kind: 'eu_vat', value: 'GB123456789' } }, as: :json
-
-      expect(response).to have_http_status(:ok)
-      identifier = seller.reload.tax_identifiers.find_by(kind: 'eu_vat')
-      expect(identifier.value).to eq('GB123456789')
-    end
-
-    # One per kind, so correcting the number replaces it rather than stacking
-    # a second row the model would refuse.
-    it 'corrects a registration rather than adding a second' do
-      patch :update, params: { tax_identifier: { kind: 'eu_vat', value: 'GB111' } }, as: :json
-      patch :update, params: { tax_identifier: { kind: 'eu_vat', value: 'GB222' } }, as: :json
-
-      expect(response).to have_http_status(:ok)
-      identifiers = seller.reload.tax_identifiers.where(kind: 'eu_vat')
-      expect(identifiers.count).to eq(1)
-      expect(identifiers.first.value).to eq('GB222')
-    end
-
-    it 'removes it when the seller clears the number' do
-      patch :update, params: { tax_identifier: { kind: 'eu_vat', value: 'GB111' } }, as: :json
-      patch :update, params: { tax_identifier: { kind: 'eu_vat', value: '' } }, as: :json
-
-      expect(seller.reload.tax_identifiers.where(kind: 'eu_vat')).to be_empty
-    end
-
-    it 'serializes them back' do
-      seller.tax_identifiers.create!(kind: 'eu_vat', value: 'GB123456789')
-
-      get :show, as: :json
-
-      expect(json_response['tax_identifiers'].first).to include(
-        'kind' => 'eu_vat', 'value' => 'GB123456789'
-      )
-    end
   end
 
   # The profile inherits its policies association from the store serializer,

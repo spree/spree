@@ -6,12 +6,13 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxIdentifiersController, type:
   include_context 'API v3 Admin authenticated'
 
   let!(:company) { create(:company, store: store) }
+  let(:vat_number) { eu_vat_number(0) }
 
   before { request.headers.merge!(headers) }
 
   describe 'GET #index' do
     it 'lists the business registrations' do
-      create(:tax_identifier, owner: company, kind: 'eu_vat', value: 'DE123456789')
+      create(:tax_identifier, owner: company, kind: 'eu_vat', value: vat_number)
 
       get :index, params: { company_id: company.prefixed_id }, as: :json
 
@@ -19,7 +20,7 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxIdentifiersController, type:
       row = json_response['data'].first
       expect(row['id']).to start_with('txi_')
       expect(row['kind']).to eq('eu_vat')
-      expect(row['value']).to eq('DE123456789')
+      expect(row['value']).to eq(vat_number)
     end
 
     it '404s under another store company' do
@@ -33,21 +34,22 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxIdentifiersController, type:
     # Phase 3 made a business registration outrank the buyer's; without this
     # endpoint that behaviour was only reachable from a console.
     it 'registers a number against the business' do
-      post :create, params: { company_id: company.prefixed_id, kind: 'eu_vat', value: 'DE123456789' }, as: :json
+      post :create, params: { company_id: company.prefixed_id, kind: 'eu_vat', value: vat_number }, as: :json
 
       expect(response).to have_http_status(:created)
-      expect(json_response['value']).to eq('DE123456789')
+      expect(json_response['value']).to eq(vat_number)
       expect(company.tax_identifiers.sole.kind).to eq('eu_vat')
     end
 
     it 'takes effect on a sale for that business' do
-      create(:tax_identifier, owner: company, kind: 'eu_vat', value: 'DE222222222')
+      company_vat_number = eu_vat_number(1)
+      create(:tax_identifier, owner: company, kind: 'eu_vat', value: company_vat_number)
       customer = create(:customer)
       create(:company_membership, company: company, customer: customer)
-      create(:tax_identifier, owner: customer, kind: 'eu_vat', value: 'DE111111111')
+      create(:tax_identifier, owner: customer, kind: 'eu_vat', value: eu_vat_number(2))
       cart = create(:cart, store: store, customer: customer, company: company)
 
-      expect(cart.resolved_tax_identifier.value).to eq('DE222222222')
+      expect(cart.resolved_tax_identifier.value).to eq(company_vat_number)
     end
 
     # The division's purchases read their registration through the legal
@@ -55,15 +57,16 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxIdentifiersController, type:
     it 'refuses a registration on a division node' do
       division = create(:company, store: store, kind: 'division', parent: company)
 
-      post :create, params: { company_id: division.prefixed_id, kind: 'eu_vat', value: 'DE123456789' }, as: :json
+      post :create, params: { company_id: division.prefixed_id, kind: 'eu_vat', value: vat_number }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
     end
 
     it 'holds one registration per kind' do
-      create(:tax_identifier, owner: company, kind: 'eu_vat', value: 'DE123456789')
+      create(:tax_identifier, owner: company, kind: 'eu_vat')
 
-      post :create, params: { company_id: company.prefixed_id, kind: 'eu_vat', value: 'DE999999999' }, as: :json
+      post :create, params: { company_id: company.prefixed_id, kind: 'eu_vat',
+                              value: eu_vat_number(1) }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
     end
@@ -81,24 +84,25 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxIdentifiersController, type:
         def self.valid_format?(value) = value.to_s.start_with?('DE')
       end
       stub_const('SpecEuVatValidator', validator)
-      Spree.tax_identifier_validators['eu_vat'] = 'SpecEuVatValidator'
 
-      post :create, params: { company_id: company.prefixed_id, kind: 'eu_vat', value: '!!' }, as: :json
+      with_tax_identifier_validator('eu_vat', 'SpecEuVatValidator') do
+        post :create, params: { company_id: company.prefixed_id, kind: 'eu_vat', value: '!!' }, as: :json
+      end
 
       expect(response).to have_http_status(:unprocessable_content)
-    ensure
-      Spree.tax_identifier_validators.delete('eu_vat')
     end
   end
 
   describe 'PATCH #update' do
     it 'corrects the number' do
-      identifier = create(:tax_identifier, owner: company, kind: 'eu_vat', value: 'DE123456789')
+      corrected_vat_number = eu_vat_number(1)
+      identifier = create(:tax_identifier, owner: company, kind: 'eu_vat', value: vat_number)
 
-      patch :update, params: { company_id: company.prefixed_id, id: identifier.prefixed_id, value: 'DE987654321' }, as: :json
+      patch :update, params: { company_id: company.prefixed_id, id: identifier.prefixed_id,
+                               value: corrected_vat_number }, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(identifier.reload.value).to eq('DE987654321')
+      expect(identifier.reload.value).to eq(corrected_vat_number)
     end
   end
 

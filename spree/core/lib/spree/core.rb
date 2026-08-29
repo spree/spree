@@ -160,11 +160,19 @@ module Spree
     @@search_provider = value.to_s
   end
 
-  # Tax ID validators, keyed by registration kind. Empty by default: core ships
-  # no registry client, because VAT number rules live in 27 different statute
-  # books and a guess would reject real business customers.
+  # Tax ID validators, keyed by registration kind.
   #
+  # Core ships one, for +eu_vat+, and it checks format only — the shape of an EU
+  # VAT number is arithmetic, so it costs nothing and needs no credentials.
+  # Core ships **no registry client** for any jurisdiction: asking whether a
+  # number is actually registered means a network call to somebody's government,
+  # and that belongs to the extension that wants it.
+  #
+  #   # Take over both halves of eu_vat, format and registry alike.
   #   Spree.tax_identifier_validators['eu_vat'] = 'SpreeEuVat::TaxIdentifierValidator'
+  #
+  #   # Or cover a kind nothing here knows about.
+  #   Spree.tax_identifier_validators['au_abn'] = 'SpreeAuAbn::TaxIdentifierValidator'
   #
   # Class names are stored as strings and constantized at call time, so an
   # initializer can register a validator before its class is autoloaded.
@@ -173,7 +181,7 @@ module Spree
   #
   # @return [Hash{String => String}]
   def self.tax_identifier_validators
-    @@tax_identifier_validators ||= {}
+    @@tax_identifier_validators ||= { 'eu_vat' => 'Spree::TaxIdentifiers::Validator::EuVat' }
   end
 
   # Returns the events adapter class used for publishing and subscribing to events.

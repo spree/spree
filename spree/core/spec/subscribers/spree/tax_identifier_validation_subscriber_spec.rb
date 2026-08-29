@@ -8,11 +8,11 @@ RSpec.describe Spree::TaxIdentifierValidationSubscriber do
   let(:store) { @default_store }
   let(:customer) { create(:customer) }
 
+  # Base checks a registry as far as the subscriber is concerned, which is what
+  # makes the enqueue happen; core's own eu_vat validator deliberately does not.
+  # Restored through the helper rather than deleted, or the default goes with it.
   around do |example|
-    Spree.tax_identifier_validators['eu_vat'] = 'Spree::TaxIdentifiers::Validator::Base'
-    example.run
-  ensure
-    Spree.tax_identifier_validators.delete('eu_vat')
+    with_tax_identifier_validator('eu_vat', 'Spree::TaxIdentifiers::Validator::Base') { example.run }
   end
 
   describe '.subscription_patterns' do

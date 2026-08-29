@@ -22,6 +22,17 @@ module Spree
           true
         end
 
+        # Whether this validator can ask a registry at all. False for a
+        # format-only validator such as {EuVat}, and what stops core enqueueing
+        # a check nobody is going to answer — an unasked question is not an
+        # unavailable registry, and recording it as one would fill the admin
+        # with failures that mean nothing.
+        #
+        # @return [Boolean]
+        def self.checks_registry?
+          true
+        end
+
         # Asks the registry whether the number is registered. Runs in
         # {Spree::TaxIdentifiers::ValidateJob}.
         #

@@ -1972,11 +1972,13 @@
       "tax_identifier": {
         "kind": {
           "help": "该号码的类型。必须与配置的校验方式一致，因此拼写很重要。",
-          "label": "类型"
+          "label": "类型",
+          "required": "请选择或输入登记类型"
         },
         "value": {
           "label": "号码",
-          "placeholder": "DE123456789"
+          "placeholder": "DE123456789",
+          "required": "请输入登记号码"
         }
       },
       "tax_rate": {
@@ -4700,7 +4702,7 @@
         "validation_failed": "无法核验该号码",
         "validation_requested": "正在向登记机构核验该号码"
       },
-      "not_validatable": "该类型未配置校验方式，将按填写的内容直接使用。",
+      "not_validatable": "该类型没有可核对的登记机构，号码将按填写的内容记录。",
       "select_kind": "选择类型",
       "title": "税务登记号",
       "validate_action": "向登记机构核验",

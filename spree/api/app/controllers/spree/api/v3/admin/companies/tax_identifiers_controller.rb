@@ -10,7 +10,7 @@ module Spree
           # re-validation: a registry answers only "valid now", so a number
           # verified last year may have been deregistered since.
           class TaxIdentifiersController < BaseController
-            include Spree::Api::V3::Admin::Concerns::TaxIdentifierValidation
+            include Spree::Api::V3::TaxIdentifierValidation
 
             before_action :authorize_parent_access!
             # Re-declaring the filter replaces the inherited options, so the

@@ -20,13 +20,15 @@ module Spree
   # Which registration this is — an EU VAT number, a UK one, an Australian
   # business number. Any string is accepted, and nothing here narrows it: the
   # kinds that exist are the ones somebody has a validator or a provider for,
-  # and core ships neither.
+  # and core ships one, the format check for +eu_vat+.
   #
   # It does have to match the key that validator is registered under in
   # {Spree.tax_identifier_validators}, because that lookup is by exact string. A kind
   # nothing is registered for is stored and used as entered — never
   # format-checked, never sent to a registry — and {#validatable?} reports as
-  # much. So a misspelled kind fails silently rather than loudly.
+  # much. So a misspelled kind fails silently rather than loudly, and a VAT
+  # number filed under +vat+ rather than +eu_vat+ skips the check core does
+  # ship.
   #
   # The kinds in circulation read as a region or country prefix plus the tax's
   # name: +eu_vat+, +gb_vat+, +ch_vat+, +au_abn+. Matching that spares a
@@ -72,7 +74,10 @@ module Spree
     validates :value, length: { maximum: 64 }
     validates :validation_status, inclusion: { in: VALIDATION_STATUSES }, allow_nil: true
     validates :source, inclusion: { in: SOURCES }, allow_nil: true
-    validate :value_format
+    # An order's snapshot is a copy of a number already accepted, so a rule
+    # tightened since — or a country leaving the VAT area — must not fail the
+    # order it was placed on.
+    validate :value_format, unless: :order_owned?
     # Registrations exist only on legal-entity nodes — a division's purchases
     # read theirs through the legal entity. A validation rather than a schema
     # difference, so a per-division foreign registration can be allowed later
@@ -92,13 +97,27 @@ module Spree
       validation_status == 'verified'
     end
 
-    # Whether this installation can check a number of this kind at all. What
+    # Whether a registry can be asked about a number of this kind here. What
     # tells the admin apart the two reasons a row has no verdict: not attempted
     # yet, or nothing here knows how to ask.
     #
+    # A format-only validator does not count. Core registers one for +eu_vat+,
+    # so a stock install rejects a mistyped VAT number on save and still leaves
+    # the verdict blank — the shape being right is not evidence that the
+    # business is registered, and only a registry can supply that.
+    #
     # @return [Boolean]
     def validatable?
-      !order_owned? && Spree.tax_identifier_validators.key?(kind)
+      return false if order_owned?
+
+      validator = validator_class
+      return false if validator.nil?
+      # A validator predating the predicate, or one not built on Base at all —
+      # the registry takes any class name. Assume it can ask, which is what
+      # every validator did before the predicate existed.
+      return true unless validator.respond_to?(:checks_registry?)
+
+      validator.checks_registry?
     end
 
     private
@@ -109,17 +128,45 @@ module Spree
       owner_type == 'Spree::Order'
     end
 
-    # Format knowledge lives entirely in the registered validator. Core asserts
-    # nothing about the shape of a number whose rules live in someone else's
-    # statute book: a rule spanning every tax regime on earth would be a guess,
-    # and its failure mode is turning away a real business customer. Kinds with
-    # no validator are accepted as entered.
+    # Format knowledge lives entirely in the registered validator, so a kind
+    # with none is accepted as entered: a single rule spanning every tax regime
+    # on earth would be a guess, and its failure mode is turning away a real
+    # business customer.
     def value_format
-      validator = Spree.tax_identifier_validators[kind]
-      return if validator.blank?
-      return if validator.to_s.constantize.valid_format?(value)
+      # Blank is the presence validation's business; saying it twice for one
+      # mistake helps nobody.
+      return if value.blank?
 
-      errors.add(:value, :invalid)
+      validator = validator_class
+      return if validator.nil?
+      return if validator.valid_format?(value)
+
+      # Named after the regime the buyer picked rather than left generic: "is
+      # invalid" on a field labelled Number tells them nothing they can act on,
+      # and the same validation speaks for every kind an extension registers.
+      errors.add(:value, :invalid, kind: kind_label)
+    end
+
+    # The kind as the dashboard shows it, falling back to the raw key so an
+    # extension's kind reads as itself rather than blank.
+    def kind_label
+      Spree.t("tax_identifier_kinds.#{kind}", default: kind.to_s.humanize)
+    end
+
+    # The class registered for this kind, or nil when nothing is registered and
+    # when what is registered cannot be loaded.
+    #
+    # A registry entry naming a class that is gone — an initializer left behind
+    # after its gem was dropped, or a typo — used to be inert, since the lookup
+    # only asked whether the key existed. It is read on every save and on every
+    # admin serialization, so letting it raise would take out the whole tax
+    # identifier listing over one stale line of configuration.
+    # Deliberately not memoized: the registry is mutable configuration, and a
+    # cached class would go on answering for a validator that has since been
+    # swapped. The lookup costs microseconds against a request that also hits
+    # the database.
+    def validator_class
+      Spree.tax_identifier_validators[kind].presence&.to_s&.safe_constantize
     end
 
     def number_changing?

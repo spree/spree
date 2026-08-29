@@ -6,18 +6,19 @@ RSpec.describe Spree::Api::V3::Admin::Orders::TaxIdentifiersController, type: :c
   include_context 'API v3 Admin authenticated'
 
   let!(:order) { create(:completed_order_with_totals, store: store) }
+  let(:vat_number) { eu_vat_number(0) }
 
   before { request.headers.merge!(headers) }
 
   describe 'GET #show' do
     it 'returns the snapshot with the verdict and the evidence behind it' do
-      create(:tax_identifier, :on_order, :verified, owner: order, kind: 'eu_vat', value: 'DE123456789')
+      create(:tax_identifier, :on_order, :verified, owner: order, kind: 'eu_vat', value: vat_number)
 
       get :show, params: { order_id: order.prefixed_id }, as: :json
 
       expect(response).to have_http_status(:ok)
       expect(json_response['kind']).to eq('eu_vat')
-      expect(json_response['value']).to eq('DE123456789')
+      expect(json_response['value']).to eq(vat_number)
       # The fields the store serializer withholds — why staff come here.
       expect(json_response['validation_status']).to eq('verified')
       expect(json_response['validation_evidence']['registry']).to eq('vies')
@@ -43,7 +44,8 @@ RSpec.describe Spree::Api::V3::Admin::Orders::TaxIdentifiersController, type: :c
 
   it 'does not route a write — the snapshot is what the invoice says' do
     expect {
-      patch :update, params: { order_id: order.prefixed_id, value: 'DE999999999' }, as: :json
+      patch :update, params: { order_id: order.prefixed_id, value: eu_vat_number(1) },
+                     as: :json
     }.to raise_error(ActionController::UrlGenerationError)
   end
 end

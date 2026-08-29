@@ -753,6 +753,15 @@ Spree::Core::Engine.add_routes do
         # Singular: the seller in play is always `current_seller`.
         resource :profile, only: [:show, :update], controller: 'profile'
 
+        # The seller's own registrations — a collection, like a company's: a
+        # business trading in several regimes holds one in each.
+        resources :tax_identifiers, only: [:index, :create, :update, :destroy],
+                                    controller: 'tax_identifiers' do
+          member do
+            post :validate
+          end
+        end
+
         resources :team, only: [:index, :create, :destroy], controller: 'team'
 
         # Creating an invitation is hiring, so it lives on `team`; chasing or

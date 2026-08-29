@@ -221,27 +221,44 @@ module Spree
 
     describe 'tax identifier snapshot' do
       let(:customer) { create(:user) }
+      # Distinct numbers so the assertion proves which registration won, and
+      # real ones because eu_vat is format-checked.
+      let(:customer_vat) { eu_vat_number(0) }
+      let(:override_vat) { eu_vat_number(1) }
+      let(:company_vat) { eu_vat_number(2) }
 
       before { ready_cart.update!(customer: customer) }
 
       it 'freezes the customer registration onto the order' do
-        create(:tax_identifier, owner: customer, kind: 'eu_vat', value: 'DE123456789')
+        create(:tax_identifier, owner: customer, kind: 'eu_vat', value: customer_vat)
 
         order = described_class.call(cart: ready_cart).value
 
         snapshot = order.tax_identifier
-        expect(snapshot.value).to eq('DE123456789')
+        expect(snapshot.value).to eq(customer_vat)
         expect(snapshot.source).to eq('customer')
         expect(snapshot).to be_readonly
       end
 
+      # A number stored before the format rule tightened, or one whose country
+      # has since left the VAT area, must not turn into a failed checkout.
+      it 'completes even when the stored number would no longer be accepted' do
+        identifier = create(:tax_identifier, owner: customer, kind: 'eu_vat')
+        identifier.update_columns(value: 'GB123456789')
+
+        result = described_class.call(cart: ready_cart)
+
+        expect(result).to be_success
+        expect(result.value.tax_identifier.value).to eq('GB123456789')
+      end
+
       it 'records a checkout override as such' do
-        create(:tax_identifier, owner: customer, kind: 'eu_vat', value: 'DE123456789')
-        create(:tax_identifier, owner: ready_cart, kind: 'eu_vat', value: 'DE999999999')
+        create(:tax_identifier, owner: customer, kind: 'eu_vat', value: customer_vat)
+        create(:tax_identifier, owner: ready_cart, kind: 'eu_vat', value: override_vat)
 
         order = described_class.call(cart: ready_cart).value
 
-        expect(order.tax_identifier.value).to eq('DE999999999')
+        expect(order.tax_identifier.value).to eq(override_vat)
         expect(order.tax_identifier.source).to eq('override')
       end
 
@@ -249,11 +266,11 @@ module Spree
         company = create(:company, store: store)
         create(:company_membership, company: company, customer: customer)
         ready_cart.update!(company: company)
-        create(:tax_identifier, owner: company, kind: 'eu_vat', value: 'DE777777777')
+        create(:tax_identifier, owner: company, kind: 'eu_vat', value: company_vat)
 
         order = described_class.call(cart: ready_cart).value
 
-        expect(order.tax_identifier.value).to eq('DE777777777')
+        expect(order.tax_identifier.value).to eq(company_vat)
         expect(order.tax_identifier.source).to eq('company')
         # The copy belongs to the order, not the company it was resolved from.
         expect(order.tax_identifier.owner).to eq(order)
