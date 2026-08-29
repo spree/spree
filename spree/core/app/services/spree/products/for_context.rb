@@ -27,9 +27,7 @@ module Spree
         base ||= store.products.for_channel(channel)
         company ||= sole_standing_company(store, customer)
 
-        catalogs = store.catalogs.for_company(company)
-        catalogs = customer_group_catalogs(store, customer) if catalogs.empty?
-        catalogs = [channel&.default_catalog].compact.select(&:active?) if catalogs.empty?
+        catalogs = Spree::Catalog.for_context(store: store, company: company, user: customer, channel: channel)
 
         return success(base) if catalogs.empty?
 
@@ -68,13 +66,6 @@ module Spree
                     map(&:company).uniq
 
         companies.one? ? companies.first : nil
-      end
-
-      def customer_group_catalogs(store, customer)
-        return [] if customer.nil?
-
-        groups = customer.customer_groups.where(store_id: store.id)
-        store.catalogs.for_customer_groups(groups)
       end
     end
   end

@@ -33,6 +33,13 @@ module Spree
     validates :name, presence: true
     validate :price_list_in_same_store
 
+    # Request-scoped catalog memoization must not keep a set that a write
+    # in the same request has already superseded.
+    after_commit -> {
+      Spree::Current.applicable_catalogs = nil
+      Spree::Current.catalog_bound_price_list_ids = nil
+    }
+
     scope :active, -> { where(active: true) }
     scope :by_position, -> { order(position: :asc) }
 
@@ -84,6 +91,46 @@ module Spree
         where(catalog_id: all.select(:id)).
         includes(:catalog).
         map(&:catalog).select(&:active?).sort_by { |catalog| catalog.position.to_i }.uniq
+    end
+
+    # Catalogs that apply to a buyer: the company subtree first, then the
+    # customer's groups, then the channel's default catalog — the one
+    # resolution chain both visibility ({Spree::Products::ForContext}) and
+    # pricing use. Pricing asks it once per request buyer via
+    # {Spree::Current#catalogs_for}.
+    #
+    # @param store [Spree::Store, nil]
+    # @param company [Spree::Company, nil]
+    # @param user [Object, nil]
+    # @param channel [Spree::Channel, nil]
+    # @return [Array<Spree::Catalog>]
+    def self.for_context(store:, company: nil, user: nil, channel: nil)
+      return [] if store.nil?
+
+      catalogs = store.catalogs.for_company(company)
+      if catalogs.empty? && user
+        groups = user.try(:customer_groups)&.where(store_id: store.id) || []
+        catalogs = store.catalogs.for_customer_groups(groups)
+      end
+      catalogs = [channel&.default_catalog].compact.select(&:active?) if catalogs.empty?
+      # Pricing reads each catalog's price list; without this the walk is one
+      # query per catalog again.
+      ActiveRecord::Associations::Preloader.new(records: catalogs, associations: :price_list).call if catalogs.any?
+      catalogs
+    end
+
+    # Price-list ids claimed by an active catalog of the store. Only ACTIVE
+    # catalogs claim their list: an inactive catalog is off, and blacklisting
+    # its list would silently kill a rule-based list that was working before
+    # the catalog draft existed.
+    #
+    # @param store [Spree::Store, nil]
+    # @return [Set<Integer>]
+    def self.bound_price_list_ids(store)
+      return Set.new if store.nil?
+
+      active.where(store_id: store.id).where.not(price_list_id: nil).
+        distinct.pluck(:price_list_id).to_set
     end
 
     # Adds products to the assortment, appending to the manual order and
