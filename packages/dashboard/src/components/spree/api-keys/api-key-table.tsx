@@ -18,6 +18,7 @@ import {
   RelativeTime,
   RowActions,
   Skeleton,
+  StatusBadge,
   Table,
   TableBody,
   TableCell,
@@ -236,7 +237,7 @@ function ApiKeyRow({
       <TableCell>
         <div className="flex items-center gap-2">
           <span className="font-medium">{apiKey.name}</span>
-          {isRevoked && <Badge variant="destructive">{t('admin.api_keys.badge.revoked')}</Badge>}
+          {isRevoked && <StatusBadge status="revoked" label={t('admin.api_keys.badge.revoked')} />}
         </div>
       </TableCell>
       <TableCell>

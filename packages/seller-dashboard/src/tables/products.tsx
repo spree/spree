@@ -4,6 +4,9 @@ import type { Product } from '@spree/seller-sdk'
 import i18n from 'i18next'
 import { PackageIcon } from 'lucide-react'
 
+/** Mirrors the operator dashboard's product statuses. */
+const PRODUCT_STATUSES = ['active', 'draft', 'proposed', 'rejected', 'archived'] as const
+
 defineTable<Product>('seller-products', {
   title: i18n.t('products.title'),
   searchParam: 'name_cont',
@@ -16,7 +19,6 @@ defineTable<Product>('seller-products', {
       key: 'name',
       label: i18n.t('products.columns.name'),
       sortable: true,
-      filterable: true,
       default: true,
       render: (product) => (
         <div className="flex items-center gap-3">
@@ -29,6 +31,13 @@ defineTable<Product>('seller-products', {
       key: 'status',
       label: i18n.t('products.columns.status'),
       sortable: true,
+      filterable: true,
+      filterType: 'enum',
+      filterOptions: PRODUCT_STATUSES.map((status) => ({
+        value: status,
+        label: i18n.t(`products.statuses.${status}`),
+      })),
+      quickFilter: true,
       default: true,
       render: (product) => (
         <StatusBadge

@@ -71,6 +71,7 @@ export * from './lib/create-action-registry'
 // settings-nav, form fields, custom field components)
 // ---------------------------------------------------------------------------
 export * from './lib/custom-field-components'
+export * from './lib/date-presets'
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------

@@ -6,6 +6,7 @@ import {
   CopyToClipboardButton,
   RelativeTime,
   ResourceNameCell,
+  StatusBadge,
 } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { WebhookIcon } from 'lucide-react'
@@ -37,7 +38,6 @@ defineTable<WebhookEndpoint>('webhook-endpoints', {
       key: 'url',
       label: i18n.t('admin.pages.settings.webhooks.table.url'),
       sortable: true,
-      filterable: true,
       default: true,
       render: (endpoint) => (
         <span className="inline-flex items-center gap-1.5">
@@ -82,9 +82,10 @@ defineTable<WebhookEndpoint>('webhook-endpoints', {
         // than the regular inactive outline so admins can spot it at a glance.
         if (endpoint.disabled_at) {
           return (
-            <Badge variant="destructive">
-              {i18n.t('admin.pages.settings.webhooks.status.disabled')}
-            </Badge>
+            <StatusBadge
+              status="suspended"
+              label={i18n.t('admin.pages.settings.webhooks.status.disabled')}
+            />
           )
         }
         return (

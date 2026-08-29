@@ -13,6 +13,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   Progress,
+  StatusBadge as SharedStatusBadge,
   Sheet,
   SheetContent,
   SheetDescription,
@@ -65,7 +66,7 @@ export function SellerOnboardingCard({ seller, canEdit }: { seller: Seller; canE
         <CollapsibleTrigger className="group flex w-full cursor-pointer items-center gap-3 p-4 text-left hover:bg-muted/50 border-border-subtle">
           <CardTitle>{t('admin.sellers.onboarding.title')}</CardTitle>
           {seller.onboarding_complete ? (
-            <Badge variant="success">{t('admin.sellers.onboarding.all_done')}</Badge>
+            <SharedStatusBadge status="complete" label={t('admin.sellers.onboarding.all_done')} />
           ) : (
             <Badge variant="secondary">
               {t('admin.sellers.onboarding.progress', {
@@ -279,22 +280,36 @@ function RequirementRow({
 function StatusBadge({ status, waived }: { status: string; waived: boolean }) {
   const { t } = useTranslation()
 
+  // Only the wording is local — the colour comes from the shared status map,
+  // so this checklist agrees with every other surface showing the same states.
   if (status === 'complete') {
     return (
-      <Badge variant="success">
-        {waived
-          ? t('admin.sellers.onboarding.waived')
-          : t('admin.sellers.onboarding.status.complete')}
-      </Badge>
+      <SharedStatusBadge
+        status="complete"
+        label={
+          waived
+            ? t('admin.sellers.onboarding.waived')
+            : t('admin.sellers.onboarding.status.complete')
+        }
+      />
     )
   }
   if (status === 'pending') {
-    return <Badge variant="secondary">{t('admin.sellers.onboarding.status.pending')}</Badge>
+    return (
+      <SharedStatusBadge status="pending" label={t('admin.sellers.onboarding.status.pending')} />
+    )
   }
   if (status === 'rejected') {
-    return <Badge variant="destructive">{t('admin.sellers.onboarding.status.rejected')}</Badge>
+    return (
+      <SharedStatusBadge status="rejected" label={t('admin.sellers.onboarding.status.rejected')} />
+    )
   }
-  return <Badge variant="outline">{t('admin.sellers.onboarding.status.incomplete')}</Badge>
+  return (
+    <SharedStatusBadge
+      status="incomplete"
+      label={t('admin.sellers.onboarding.status.incomplete')}
+    />
+  )
 }
 
 function StatusIcon({ status }: { status: string }) {

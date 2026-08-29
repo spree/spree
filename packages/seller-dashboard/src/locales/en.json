@@ -196,8 +196,23 @@
     "fulfill": "Mark as shipped",
     "fulfilled": "Marked as shipped",
     "fulfilling": "Marking…",
+    "fulfillment_statuses": {
+      "backorder": "Backorder",
+      "canceled": "Canceled",
+      "delivered": "Delivered",
+      "fulfilled": "Fulfilled",
+      "partial": "Partial",
+      "unfulfilled": "Unfulfilled"
+    },
     "items": "Items",
     "not_found": "That order could not be found.",
+    "payment_statuses": {
+      "balance_due": "Balance due",
+      "credit_owed": "Credit owed",
+      "failed": "Failed",
+      "paid": "Paid",
+      "void": "Void"
+    },
     "search_placeholder": "Search by order number…",
     "shipping_address": "Ships to",
     "ships_from": "Ships from {{name}}",

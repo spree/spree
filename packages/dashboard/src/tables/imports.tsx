@@ -17,7 +17,6 @@ defineTable<Import>('imports', {
       key: 'number',
       label: i18n.t('admin.pages.settings.imports.table.number'),
       sortable: true,
-      filterable: true,
       default: true,
       render: (imp) => <ResourceNameCell id={imp.id} dataAttr="data-import-id" name={imp.number} />,
     },

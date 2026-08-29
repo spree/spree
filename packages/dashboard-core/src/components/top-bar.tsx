@@ -261,7 +261,7 @@ export function TopBarUser({
           {t('admin.account.contact_support')}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={logout} variant="destructive">
+        <DropdownMenuItem onClick={logout}>
           <LogOutIcon className="size-4" />
           {t('admin.account.log_out')}
         </DropdownMenuItem>

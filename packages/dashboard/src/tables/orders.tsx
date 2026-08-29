@@ -29,7 +29,6 @@ defineTable('orders', {
       key: 'number',
       label: i18n.t('admin.orders.columns.number'),
       sortable: true,
-      filterable: true,
       default: true,
       render: (order) => (
         <Link
@@ -45,8 +44,10 @@ defineTable('orders', {
       key: 'completed_at',
       label: i18n.t('admin.orders.columns.date'),
       sortable: true,
+      filterable: true,
       default: true,
       filterType: 'date',
+      quickFilter: true,
       className: 'text-sm text-muted-foreground whitespace-nowrap',
       render: (order) => <RelativeTime iso={order.completed_at} />,
     },
@@ -85,6 +86,7 @@ defineTable('orders', {
         { value: 'paid', label: i18n.t('admin.orders.payment_statuses.paid') },
         { value: 'void', label: i18n.t('admin.orders.payment_statuses.void') },
       ],
+      quickFilter: true,
       render: (order) =>
         order.payment_status ? (
           <StatusBadge
@@ -110,6 +112,7 @@ defineTable('orders', {
         { value: 'fulfilled', label: i18n.t('admin.orders.fulfillment_statuses.fulfilled') },
         { value: 'delivered', label: i18n.t('admin.orders.fulfillment_statuses.delivered') },
       ],
+      quickFilter: true,
       render: (order) =>
         order.fulfillment_status ? (
           <StatusBadge
@@ -185,7 +188,10 @@ defineTable('orders', {
     {
       key: 'order_group',
       label: i18n.t('admin.fields.order.order_group.label'),
-      filterable: true,
+      // Not filterable by hand: the value is an opaque id, so the panel's text
+      // operators ("contains", "starts with") match it by substring and find
+      // nothing useful. The column is reached by clicking through from an
+      // order, which builds the `eq` rule this actually needs.
       ransackAttribute: 'order_group_id',
       default: false,
       className: 'text-sm text-muted-foreground',
@@ -202,22 +208,11 @@ defineTable('orders', {
           '—'
         ),
     },
-    {
-      key: 'status',
-      label: i18n.t('admin.fields.status.label'),
-      sortable: true,
-      filterable: true,
-      default: false,
-      filterType: 'enum',
-      filterOptions: [
-        { value: 'draft', label: i18n.t('admin.orders.statuses.draft') },
-        { value: 'placed', label: i18n.t('admin.orders.statuses.placed') },
-        { value: 'canceled', label: i18n.t('admin.orders.statuses.canceled') },
-      ],
-      render: (order) => (
-        <StatusBadge status={order.status} label={statusLabel('statuses', order.status)} />
-      ),
-    },
+    // No `status` column: its three values are already answered elsewhere.
+    // Draft orders have their own page (scoped server-side by `incomplete`),
+    // and cancellation reads off `fulfillment_status`. A filter offering
+    // "draft" on a list that has already been split by that distinction only
+    // invites the operator to wonder which of the two they are looking at.
     {
       key: 'tags',
       label: i18n.t('admin.orders.columns.tags'),

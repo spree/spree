@@ -16,7 +16,6 @@ defineTable<Promotion>('promotions', {
       key: 'name',
       label: i18n.t('admin.fields.name.label'),
       sortable: true,
-      filterable: true,
       default: true,
       render: (p) => (
         <ResourceNameCell
@@ -31,7 +30,6 @@ defineTable<Promotion>('promotions', {
       key: 'code',
       label: i18n.t('admin.fields.code.label'),
       sortable: true,
-      filterable: true,
       default: true,
       render: (p) => {
         if (p.kind === 'automatic')

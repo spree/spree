@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next'
 import { getApiClient } from '../api-client'
 import { useAuth } from '../hooks/use-auth'
 import type { TaggableType } from '../lib/table-registry'
+import { useTenantId } from '../providers/tenant-provider'
 
 export type { TaggableType }
 
@@ -35,13 +36,16 @@ export function TagCombobox({
   const anchorRef = useComboboxAnchor()
   const [inputValue, setInputValue] = useState('')
   const { isAuthenticated } = useAuth()
+  const tenantId = useTenantId()
 
   // Through the registered client, so a panel without a tag vocabulary
   // simply has none rather than calling an API it holds no key for.
   const tagsClient = getApiClient().tags
 
   const { data } = useQuery({
-    queryKey: ['panel-tags', taggableType],
+    // Tenant-scoped: tag vocabularies are per-store, so a shared key would
+    // serve one store's tags to the next for as long as the result stays fresh.
+    queryKey: ['panel-tags', tenantId, taggableType],
     queryFn: () => tagsClient?.list({ taggable_type: taggableType }),
     enabled: isAuthenticated && Boolean(tagsClient),
     staleTime: 60_000,

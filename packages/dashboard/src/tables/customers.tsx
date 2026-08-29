@@ -17,7 +17,6 @@ defineTable('customers', {
       key: 'email',
       label: i18n.t('admin.fields.email.label'),
       sortable: true,
-      filterable: true,
       default: true,
       render: (c) => (
         <Link
@@ -33,7 +32,6 @@ defineTable('customers', {
       key: 'first_name',
       label: i18n.t('admin.fields.name.label'),
       sortable: true,
-      filterable: true,
       default: true,
       render: (c) => c.full_name ?? ([c.first_name, c.last_name].filter(Boolean).join(' ') || '—'),
     },
@@ -41,6 +39,9 @@ defineTable('customers', {
       key: 'phone',
       label: i18n.t('admin.fields.phone.label'),
       sortable: true,
+      // Kept filterable where email and name are not: the search scope matches
+      // those two but never `phone`, so this is the only way to look a customer
+      // up by number.
       filterable: true,
       default: false,
       render: (c) => c.phone ?? '—',

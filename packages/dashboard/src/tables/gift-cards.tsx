@@ -1,6 +1,6 @@
 import type { GiftCard } from '@spree/admin-sdk'
 import { defineTable } from '@spree/dashboard-core'
-import { Badge, RelativeTime, ResourceNameCell } from '@spree/dashboard-ui'
+import { Badge, RelativeTime, ResourceNameCell, StatusBadge } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { GiftIcon } from 'lucide-react'
 import { adminUserAutocompleteProps } from '../hooks/use-admin-users'
@@ -17,17 +17,6 @@ const STATUS_OPTIONS = [
   { value: 'redeemed', label: i18n.t('admin.gift_cards.statuses.redeemed') },
   { value: 'canceled', label: i18n.t('admin.gift_cards.statuses.canceled') },
 ] as const
-
-const STATUS_VARIANT: Record<
-  string,
-  'success' | 'destructive' | 'secondary' | 'default' | 'outline'
-> = {
-  active: 'success',
-  partially_redeemed: 'default',
-  redeemed: 'secondary',
-  canceled: 'destructive',
-  expired: 'destructive',
-}
 
 function statusLabel(value: string): string {
   return i18n.exists(`admin.gift_cards.statuses.${value}`)
@@ -47,7 +36,6 @@ defineTable<GiftCard>('gift-cards', {
       key: 'code',
       label: i18n.t('admin.fields.gift_card.code.label'),
       sortable: true,
-      filterable: true,
       default: true,
       render: (g) => (
         <ResourceNameCell
@@ -69,10 +57,11 @@ defineTable<GiftCard>('gift-cards', {
       filterType: 'enum',
       // Spread to narrow the readonly type into ColumnDef's mutable shape.
       filterOptions: STATUS_OPTIONS.map(({ value, label }) => ({ value, label })),
+      quickFilter: true,
       default: true,
       render: (g) => {
         const status = g.status ?? 'active'
-        return <Badge variant={STATUS_VARIANT[status] ?? 'secondary'}>{statusLabel(status)}</Badge>
+        return <StatusBadge status={status} label={statusLabel(status)} />
       },
     },
     {

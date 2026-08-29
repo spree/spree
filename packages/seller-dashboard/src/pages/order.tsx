@@ -83,7 +83,14 @@ export function OrderPage() {
         title={order.number}
         backTo="orders"
         subtitle={order.completed_at ? new Date(order.completed_at).toLocaleString() : undefined}
-        badges={order.fulfillment_status && <StatusBadge status={order.fulfillment_status} />}
+        badges={
+          order.fulfillment_status && (
+            <StatusBadge
+              status={order.fulfillment_status}
+              label={t(`orders.fulfillment_statuses.${order.fulfillment_status}`)}
+            />
+          )
+        }
         resource={{ id: order.id, number: order.number }}
         destructiveItems={
           cancelable ? (
@@ -177,7 +184,10 @@ function FulfillmentCard({ orderId, fulfillment }: { orderId: string; fulfillmen
       <CardHeader>
         <CardTitle>{fulfillment.number}</CardTitle>
         <CardAction>
-          <StatusBadge status={fulfillment.status} />
+          <StatusBadge
+            status={fulfillment.status}
+            label={t(`orders.fulfillment_statuses.${fulfillment.status}`)}
+          />
         </CardAction>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
