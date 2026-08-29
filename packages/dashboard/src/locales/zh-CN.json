@@ -2778,6 +2778,9 @@
               "resolve_refund": "以退款解决",
               "resolve_replacement": "以换货解决"
             },
+            "confirm": {
+              "deny": "拒绝此索赔？客户将不会收到退款或补发商品。"
+            },
             "create_title": "新建索赔",
             "empty": "此订单暂无索赔。",
             "refund_amount": "退款金额",

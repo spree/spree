@@ -291,6 +291,10 @@ function ApiKeyRow({
               icon: <BanIcon className="size-4" />,
               visible: !isRevoked,
               disabled: revokeMutation.isPending,
+              // Revoking kills a live credential, and its confirm is already
+              // destructive — the row should say so before the click, not only
+              // in the dialog after it.
+              destructive: true,
               onSelect: handleRevoke,
             },
             {

@@ -84,10 +84,7 @@ export function AddressBookRow({
                 {t('admin.address_book.set_default_shipping')}
               </DropdownMenuItem>
             )}
-            <DropdownMenuItem
-              className="text-destructive focus:text-destructive"
-              onClick={onRemove}
-            >
+            <DropdownMenuItem variant="destructive" onClick={onRemove}>
               <TrashIcon className="size-4" />
               {t('admin.actions.delete')}
             </DropdownMenuItem>

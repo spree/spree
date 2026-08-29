@@ -131,7 +131,7 @@ export function OrderExchangesCard({ order }: { order: Order }) {
                         <>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
-                            className="text-destructive focus:text-destructive"
+                            variant="destructive"
                             onClick={async () => {
                               if (
                                 await confirm({
@@ -264,17 +264,30 @@ export function OrderClaimsCard({ order }: { order: Order }) {
                           {t('admin.pages.orders.detail.claims.actions.resolve')}
                         </DropdownMenuItem>
                       )}
+                      {['open', 'approved'].includes(claim.status) && <DropdownMenuSeparator />}
                       {claim.status === 'open' && (
-                        <DropdownMenuItem onClick={() => deny.mutate({ claimId: claim.id })}>
+                        <DropdownMenuItem
+                          variant="destructive"
+                          onClick={async () => {
+                            if (
+                              await confirm({
+                                message: t('admin.pages.orders.detail.claims.confirm.deny'),
+                                variant: 'destructive',
+                                confirmLabel: t('admin.pages.orders.detail.claims.actions.deny'),
+                              })
+                            ) {
+                              deny.mutate({ claimId: claim.id })
+                            }
+                          }}
+                        >
                           <XCircleIcon className="size-4" />
                           {t('admin.pages.orders.detail.claims.actions.deny')}
                         </DropdownMenuItem>
                       )}
                       {['open', 'approved'].includes(claim.status) && (
                         <>
-                          <DropdownMenuSeparator />
                           <DropdownMenuItem
-                            className="text-destructive focus:text-destructive"
+                            variant="destructive"
                             onClick={async () => {
                               if (
                                 await confirm({

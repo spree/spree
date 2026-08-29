@@ -309,7 +309,12 @@ function ComboboxChip({
         // Height comes from the content rather than a fixed 21px: the old value
         // was shorter than the remove button inside it, and left the label with
         // no vertical breathing room at any screen size.
-        'flex min-h-8 w-fit max-w-full items-center justify-center gap-1 rounded-md bg-muted py-1 pl-2.5 pr-2 text-sm font-medium text-foreground has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-disabled:opacity-50 has-data-[slot=combobox-chip-remove]:pr-1',
+        //
+        // Fill matches the highlighted row in the list below (`bg-accent`): a
+        // chip and a selected option are the same thing at two moments, so they
+        // read as the same thing. `bg-muted` sat within 1.03:1 of the field it
+        // sits on, which left the chips barely visible.
+        'flex min-h-8 w-fit max-w-full items-center justify-center gap-1 rounded-md bg-accent py-1 pl-2.5 pr-2 text-sm font-medium text-foreground has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-disabled:opacity-50 has-data-[slot=combobox-chip-remove]:pr-1',
         className,
       )}
       {...props}

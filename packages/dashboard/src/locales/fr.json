@@ -2785,6 +2785,9 @@
               "resolve_refund": "Résoudre par remboursement",
               "resolve_replacement": "Résoudre par remplacement"
             },
+            "confirm": {
+              "deny": "Refuser cette réclamation ? Le client ne recevra ni remboursement ni remplacement."
+            },
             "create_title": "Nouvelle réclamation",
             "empty": "Aucune réclamation pour cette commande.",
             "refund_amount": "Montant du remboursement",

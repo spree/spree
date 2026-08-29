@@ -201,10 +201,10 @@ export function PriceListForm({
               }
               backTo="products/price-lists"
               badges={priceList && <PriceListStatusBadge priceList={priceList} />}
-              // `dropdownItems` rather than `onDelete`: the caller already runs
+              // `destructiveItems` rather than `onDelete`: the caller already runs
               // its own confirm, naming the price list being deleted, and
               // `onDelete` would stack the header's generic prompt in front of it.
-              dropdownItems={
+              destructiveItems={
                 mode === 'edit' && onDelete && canDelete ? (
                   <DropdownMenuItem
                     variant="destructive"
@@ -663,13 +663,7 @@ function RuleRow({
       </button>
       <Can I="destroy" a={Subject.PriceRule}>
         <div className="flex items-center pr-1.5">
-          <Button
-            type="button"
-            size="icon-xs"
-            variant="ghost"
-            onClick={handleRemove}
-            className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-          >
+          <Button type="button" size="icon-xs" variant="destructive-ghost" onClick={handleRemove}>
             <TrashIcon className="size-4" />
             {/* "Remove rule", not "Remove": the confirm dialog this opens has
                 its own Remove button, and two identical names in one view is

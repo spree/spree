@@ -78,10 +78,7 @@ function AdjustmentDeleteCell({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem
-              className="text-destructive focus:text-destructive"
-              onClick={onDelete}
-            >
+            <DropdownMenuItem variant="destructive" onClick={onDelete}>
               <TrashIcon className="size-4" />
               {i18n.t('admin.actions.delete')}
             </DropdownMenuItem>

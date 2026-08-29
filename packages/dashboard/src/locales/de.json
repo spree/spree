@@ -2785,6 +2785,9 @@
               "resolve_refund": "Mit Erstattung lösen",
               "resolve_replacement": "Mit Ersatz lösen"
             },
+            "confirm": {
+              "deny": "Diese Reklamation ablehnen? Die Kundin oder der Kunde erhält weder eine Rückerstattung noch Ersatz."
+            },
             "create_title": "Neue Reklamation",
             "empty": "Keine Reklamationen für diese Bestellung.",
             "refund_amount": "Erstattungsbetrag",

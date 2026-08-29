@@ -680,7 +680,7 @@ function MembersCard({ company, canEdit }: { company: Company; canEdit: boolean 
                         context={{ membership, companyId: company.id }}
                       />
                       <DropdownMenuItem
-                        className="text-destructive focus:text-destructive"
+                        variant="destructive"
                         onClick={() => handleRemove(membership)}
                       >
                         <TrashIcon className="size-4" />

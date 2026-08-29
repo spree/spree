@@ -1,4 +1,5 @@
 import {
+  PageHeader,
   type ResourceSearch,
   ResourceTable,
   useResourceKey,
@@ -118,10 +119,7 @@ export function PoliciesPage({ search }: { search: ResourceSearch }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="font-medium text-2xl">{t('policies.title')}</h1>
-        <p className="text-muted-foreground text-sm">{t('policies.description')}</p>
-      </div>
+      <PageHeader title={t('policies.title')} subtitle={t('policies.description')} />
 
       {outstanding.length > 0 && (
         <Card>
