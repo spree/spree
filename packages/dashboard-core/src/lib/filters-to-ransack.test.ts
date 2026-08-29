@@ -23,7 +23,7 @@ describe('filtersToRansack', () => {
     // midnight — "up to the 29th" would drop everything that happened on the
     // 29th, which is usually the very rows the operator is looking for.
     expect(filtersToRansack([rule({})], columns)).toEqual({
-      completed_at_lteq: '2026-08-29 23:59:59',
+      completed_at_lteq: '2026-08-29 23:59:59.999999',
     })
   })
 
@@ -40,7 +40,7 @@ describe('filtersToRansack', () => {
     ]
     expect(filtersToRansack(filters, columns)).toEqual({
       completed_at_gteq: '2026-08-01',
-      completed_at_lteq: '2026-08-29 23:59:59',
+      completed_at_lteq: '2026-08-29 23:59:59.999999',
     })
   })
 
