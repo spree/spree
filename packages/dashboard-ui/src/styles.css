@@ -245,6 +245,7 @@
      — including the `calc(var(--radius-2xl) - 1px)` a card header derives its
      own corner from, which would drift out of alignment if the components
      were each edited by hand instead. */
+  --radius-sm: 0.4rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.625rem;
   --radius-xl: 0.875rem;

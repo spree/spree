@@ -28,6 +28,7 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import {
   ArrowUpDownIcon,
+  CheckIcon,
   ChevronDownIcon,
   ChevronRightIcon,
   Columns3Icon,
@@ -732,52 +733,137 @@ function QuickDateFilter({
   const from = filters.find((f) => f.field === column.key && f.operator === 'gteq')
   const to = filters.find((f) => f.field === column.key && f.operator === 'lteq')
   const active = matchDatePreset({ from: from?.value ?? null, to: to?.value ?? null }, timezone)
+  // Seeded from what is applied, so reopening on a hand-picked range shows the
+  // dates it is filtering by rather than an empty form.
+  const [custom, setCustom] = useState<{ from: string; to: string } | null>(null)
+  const [open, setOpen] = useState(false)
 
-  const apply = useCallback(
-    (preset: DatePresetKey) => {
-      const range = resolveDatePreset(preset, timezone)
+  /** Replace this column's bounds. Either end may be null for an open range. */
+  const applyRange = useCallback(
+    (rangeFrom: string | null, rangeTo: string | null) => {
       const others = filters.filter(
         (f) => !(f.field === column.key && (f.operator === 'gteq' || f.operator === 'lteq')),
       )
       const next: FilterRule[] = [...others]
-      if (range.from) {
+      if (rangeFrom) {
         next.push({
           id: crypto.randomUUID(),
           field: column.key,
           operator: 'gteq',
-          value: range.from,
+          value: rangeFrom,
         })
       }
-      if (range.to) {
-        next.push({ id: crypto.randomUUID(), field: column.key, operator: 'lteq', value: range.to })
+      if (rangeTo) {
+        next.push({ id: crypto.randomUUID(), field: column.key, operator: 'lteq', value: rangeTo })
       }
       onFiltersChange(next)
     },
-    [filters, column.key, timezone, onFiltersChange],
+    [filters, column.key, onFiltersChange],
   )
 
+  const apply = useCallback(
+    (preset: DatePresetKey) => {
+      const range = resolveDatePreset(preset, timezone)
+      applyRange(range.from, range.to)
+    },
+    [timezone, applyRange],
+  )
+
+  // A Popover rather than a DropdownMenu: the custom branch holds date pickers
+  // and a submit, which a menu's roving focus fights.
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+    <Popover
+      open={open}
+      onOpenChange={(next) => {
+        setOpen(next)
+        // Reopening starts on the preset list unless a custom range is what is
+        // applied — then it opens on the range, so the dates stay editable.
+        if (next) {
+          setCustom(active === 'custom' ? { from: from?.value ?? '', to: to?.value ?? '' } : null)
+        }
+      }}
+    >
+      <PopoverTrigger asChild>
         <Button variant="outline" size="sm" className="h-11 gap-1.5 lg:h-[2.125rem]">
           <span className="text-muted-foreground">{column.label}</span>
           <span>{t(`admin.components.table_toolbar.date_presets.${active}`)}</span>
           <ChevronDownIcon className="size-3.5 text-muted-foreground" />
         </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="min-w-48">
-        <DropdownMenuRadioGroup
-          value={active}
-          onValueChange={(value) => apply(value as DatePresetKey)}
-        >
-          {DATE_PRESET_KEYS.map((preset) => (
-            <DropdownMenuRadioItem key={preset} value={preset}>
-              {t(`admin.components.table_toolbar.date_presets.${preset}`)}
-            </DropdownMenuRadioItem>
-          ))}
-        </DropdownMenuRadioGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </PopoverTrigger>
+      <PopoverContent align="start" className="w-[min(320px,calc(100vw-1rem))] p-1">
+        {custom ? (
+          <div className="flex flex-col gap-2 p-2">
+            <div className="flex flex-col gap-1">
+              <span className="text-xs text-muted-foreground">
+                {t('admin.components.table_toolbar.date_range_start')}
+              </span>
+              <StoreDatePicker
+                value={custom.from || null}
+                onChange={(next) => setCustom({ ...custom, from: next ?? '' })}
+                placeholder={t('admin.components.table_toolbar.filter_date_placeholder')}
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-xs text-muted-foreground">
+                {t('admin.components.table_toolbar.date_range_end')}
+              </span>
+              <StoreDatePicker
+                value={custom.to || null}
+                onChange={(next) => setCustom({ ...custom, to: next ?? '' })}
+                placeholder={t('admin.components.table_toolbar.filter_date_placeholder')}
+              />
+            </div>
+            <div className="flex justify-end gap-1.5">
+              <Button variant="ghost" size="sm" onClick={() => setCustom(null)}>
+                {t('admin.actions.back')}
+              </Button>
+              <Button
+                size="sm"
+                // Either bound alone is a valid filter — "everything since
+                // March" is a question people ask.
+                disabled={!custom.from && !custom.to}
+                onClick={() => {
+                  applyRange(custom.from || null, custom.to || null)
+                  setOpen(false)
+                }}
+              >
+                {t('admin.actions.apply')}
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-col">
+            {DATE_PRESET_KEYS.map((preset) => (
+              <button
+                key={preset}
+                type="button"
+                className="flex w-full items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-left text-sm transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+                onClick={() => {
+                  apply(preset)
+                  setOpen(false)
+                }}
+              >
+                {t(`admin.components.table_toolbar.date_presets.${preset}`)}
+                {active === preset && <CheckIcon className="size-3.5 shrink-0" />}
+              </button>
+            ))}
+            {/* Without this the quick control is the only route to a date
+                filter on tables whose every filterable column is a quick one —
+                and it offers presets only, so a hand-picked range would be
+                unreachable, and one restored from a URL would show as neither
+                selected nor removable. */}
+            <button
+              type="button"
+              className="flex w-full items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-left text-sm transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+              onClick={() => setCustom({ from: from?.value ?? '', to: to?.value ?? '' })}
+            >
+              {t('admin.components.table_toolbar.date_presets.custom')}
+              <ChevronRightIcon className="size-3.5 shrink-0 text-muted-foreground" />
+            </button>
+          </div>
+        )}
+      </PopoverContent>
+    </Popover>
   )
 }
 

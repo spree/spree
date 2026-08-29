@@ -123,15 +123,14 @@ defineTable('products', {
       default: false,
       render: (product) => <TagList tags={product.tags} />,
     },
-    {
-      key: 'in_stock',
-      label: i18n.t('admin.products.columns.in_stock'),
-      filterable: true,
-      filterType: 'boolean',
-      quickFilter: true,
-      displayable: false,
-      default: false,
-    },
+    // No `in_stock` filter. `in_stock` is a Ransack *scope* on Spree::Product,
+    // not a ransackable attribute, so any `in_stock_*` predicate is dropped
+    // server-side without error — the list comes back unfiltered while the
+    // control says otherwise. The scope also cannot express the negative:
+    // `in_stock('0')` returns everything, and "out of stock" is a second,
+    // separate scope. Restoring this needs `filtersToRansack` to learn how to
+    // emit a bare scope key, which is a change to the filter contract rather
+    // than a column flag.
     // Filter-only — Ransack joins through `products.taxons`, so the predicate
     // emitted is `taxons_id_in`. We don't render a categories cell on the
     // index to avoid expanding categories on every list refetch; users can
