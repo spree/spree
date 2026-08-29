@@ -89,6 +89,26 @@ describe Spree::Catalog, type: :model do
     end
   end
 
+  describe '.for_context' do
+    let(:company) { create(:company, store: store) }
+
+    it 'returns company catalogs and ignores ones that do not apply' do
+      assigned = create(:catalog, store: store)
+      create(:catalog, store: store)
+      create(:catalog_assignment, catalog: assigned, assignable: company)
+
+      expect(described_class.for_context(store: store, company: company)).to eq([assigned])
+    end
+
+    it 'falls back to the channel default catalog when nothing narrower applies' do
+      catalog = create(:catalog, store: store)
+      channel = store.default_channel
+      channel.update!(default_catalog: catalog)
+
+      expect(described_class.for_context(store: store, channel: channel)).to eq([catalog])
+    end
+  end
+
   describe 'assignments' do
     let(:catalog) { create(:catalog, store: store) }
 

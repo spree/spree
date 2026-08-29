@@ -61,21 +61,7 @@ module Spree
         # status and dates.
         # @return [Array<Spree::PriceList>]
         def catalog_price_lists
-          @catalog_price_lists ||= begin
-            # Every lookup starts from the context's store, so a catalog is
-            # only ever reached through the tenant being priced for.
-            store = context.store
-            catalogs = store ? store.catalogs.for_company(context.company) : []
-            if catalogs.empty? && context.user && store
-              groups = context.user.try(:customer_groups)&.where(store_id: store.id) || []
-              catalogs = store.catalogs.for_customer_groups(groups)
-            end
-            if catalogs.empty?
-              catalogs = [context.channel&.default_catalog].compact.select(&:active?)
-            end
-
-            catalogs.filter_map(&:price_list).uniq.select(&:currently_active?)
-          end
+          @catalog_price_lists ||= catalogs_for_context.filter_map(&:price_list).uniq.select(&:currently_active?)
         end
 
         # Returns the price lists that are applicable to the context.
@@ -94,12 +80,25 @@ module Spree
         # that was working before the catalog draft existed.
         def catalog_bound_price_list_ids
           @catalog_bound_price_list_ids ||=
-            if context.store
-              Spree::Catalog.active.where(store_id: context.store.id).where.not(price_list_id: nil).
-                distinct.pluck(:price_list_id).to_set
+            if context.store == Spree::Current.store
+              Spree::Current.catalog_bound_price_list_ids
             else
-              Set.new
+              Spree::Catalog.bound_price_list_ids(context.store)
             end
+        end
+
+        # Catalogs that apply to this buyer. Reused from {Spree::Current}
+        # when the context is the current store, so a product listing does
+        # not re-resolve the same company / group / channel set per variant.
+        # @return [Array<Spree::Catalog>]
+        def catalogs_for_context
+          if context.store == Spree::Current.store
+            Spree::Current.catalogs_for(company: context.company, user: context.user, channel: context.channel)
+          else
+            Spree::Catalog.for_context(
+              store: context.store, company: context.company, user: context.user, channel: context.channel
+            )
+          end
         end
 
         # Returns the price lists for the context's store
