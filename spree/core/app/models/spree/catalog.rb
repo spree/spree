@@ -33,6 +33,13 @@ module Spree
     validates :name, presence: true
     validate :price_list_in_same_store
 
+    # Request-scoped catalog memoization must not keep a set that a write
+    # in the same request has already superseded.
+    after_commit -> {
+      Spree::Current.applicable_catalogs = nil
+      Spree::Current.catalog_bound_price_list_ids = nil
+    }
+
     scope :active, -> { where(active: true) }
     scope :by_position, -> { order(position: :asc) }
 
@@ -84,6 +91,33 @@ module Spree
         where(catalog_id: all.select(:id)).
         includes(:catalog).
         map(&:catalog).select(&:active?).sort_by { |catalog| catalog.position.to_i }.uniq
+    end
+
+    # Catalogs that apply to a buyer: the company subtree first, then the
+    # customer's groups, then the channel's default catalog. Pricing asks
+    # this once per request context via {Spree::Current#catalogs_for}.
+    #
+    # @param store [Spree::Store, nil]
+    # @param company [Spree::Company, nil]
+    # @param user [Object, nil]
+    # @param channel [Spree::Channel, nil]
+    # @return [Array<Spree::Catalog>]
+    def self.for_context(store:, company: nil, user: nil, channel: nil)
+      return [] if store.nil?
+
+      catalogs = store.catalogs.for_company(company)
+      if catalogs.empty? && user
+        groups = user.try(:customer_groups)
+        groups = if groups.respond_to?(:where)
+                   groups.where(store_id: store.id)
+                 else
+                   Array(groups).select { |group| group.store_id == store.id }
+                 end
+        catalogs = store.catalogs.for_customer_groups(groups)
+      end
+      catalogs = [channel&.default_catalog].compact.select(&:active?) if catalogs.empty?
+      ActiveRecord::Associations::Preloader.new(records: catalogs, associations: :price_list).call if catalogs.any?
+      catalogs
     end
 
     # Adds products to the assortment, appending to the manual order and

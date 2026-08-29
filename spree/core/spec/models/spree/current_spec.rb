@@ -243,6 +243,66 @@ RSpec.describe Spree::Current do
     end
   end
 
+  describe '#catalogs_for' do
+    let!(:store) { create(:store, default: true) }
+    let!(:company) { create(:company, store: store) }
+    let!(:assigned_catalog) { create(:catalog, store: store) }
+    let!(:other_catalog) { create(:catalog, store: store) }
+
+    before do
+      create(:catalog_assignment, catalog: assigned_catalog, assignable: company)
+      described_class.store = store
+    end
+
+    it 'returns only catalogs that apply to the buyer, not every catalog in the store' do
+      expect(described_class.catalogs_for(company: company)).to eq([assigned_catalog])
+      expect(described_class.catalogs_for(company: company)).not_to include(other_catalog)
+    end
+
+    it 'memoizes the applicable set for the same buyer' do
+      first = described_class.catalogs_for(company: company)
+      second = described_class.catalogs_for(company: company)
+      expect(first).to be(second)
+    end
+
+    it 'does not reuse one buyer set for another' do
+      other_company = create(:company, store: store)
+      other_assigned = create(:catalog, store: store)
+      create(:catalog_assignment, catalog: other_assigned, assignable: other_company)
+
+      expect(described_class.catalogs_for(company: company)).to eq([assigned_catalog])
+      expect(described_class.catalogs_for(company: other_company)).to eq([other_assigned])
+    end
+
+    it 'drops the memoized set when a catalog is written' do
+      expect(described_class.catalogs_for(company: company)).to eq([assigned_catalog])
+
+      created = create(:catalog, store: store)
+      create(:catalog_assignment, catalog: created, assignable: company)
+
+      expect(described_class.catalogs_for(company: company)).to contain_exactly(assigned_catalog, created)
+    end
+  end
+
+  describe '#catalog_bound_price_list_ids' do
+    let!(:store) { create(:store, default: true) }
+    let!(:price_list) { create(:price_list, :active, store: store) }
+
+    before { described_class.store = store }
+
+    it 'includes price lists claimed by an active catalog' do
+      create(:catalog, store: store, price_list: price_list)
+
+      expect(described_class.catalog_bound_price_list_ids).to include(price_list.id)
+    end
+
+    it 'memoizes the id set' do
+      first = described_class.catalog_bound_price_list_ids
+      second = described_class.catalog_bound_price_list_ids
+      expect(first).to be(second)
+    end
+  end
+
   describe '.reset' do
     let(:store) { create(:store) }
     let(:country) { create(:country) }
@@ -275,6 +335,22 @@ RSpec.describe Spree::Current do
 
       # After reset, price_lists should be fetched fresh
       expect(described_class.instance_variable_get(:@price_lists)).to be_nil
+    end
+
+    it 'clears memoized applicable catalogs' do
+      described_class.catalogs_for
+
+      described_class.reset
+
+      expect(described_class.instance_variable_get(:@applicable_catalogs)).to be_nil
+    end
+
+    it 'clears memoized catalog_bound_price_list_ids' do
+      described_class.catalog_bound_price_list_ids
+
+      described_class.reset
+
+      expect(described_class.instance_variable_get(:@catalog_bound_price_list_ids)).to be_nil
     end
 
     it 'clears memoized global_pricing_context' do
