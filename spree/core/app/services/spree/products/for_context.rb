@@ -27,7 +27,15 @@ module Spree
         base ||= store.products.for_channel(channel)
         company ||= sole_standing_company(store, customer)
 
-        catalogs = Spree::Catalog.for_context(store: store, company: company, user: customer, channel: channel)
+        # Reuses the request-scoped set when resolving for the current store,
+        # so a listing that prices its variants right after does not resolve
+        # the same buyer's catalogs twice in one request.
+        catalogs =
+          if store == Spree::Current.store
+            Spree::Current.catalogs_for(company: company, user: customer, channel: channel)
+          else
+            Spree::Catalog.for_context(store: store, company: company, user: customer, channel: channel)
+          end
 
         return success(base) if catalogs.empty?
 
