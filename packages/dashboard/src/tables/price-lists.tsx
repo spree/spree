@@ -41,6 +41,12 @@ defineTable<PriceList>('price-lists', {
       ],
       quickFilter: true,
       default: true,
+      // Filters the stored `status`, which is the only thing the API can
+      // filter on — `currently_active?` is a Ruby predicate, not a ransackable
+      // attribute. The badge shows a `scheduled` list that is within its dates
+      // as Active, so filtering by Active omits those rows. Closing that gap
+      // needs an effective-status scope server-side; until then the filter
+      // names the stored value and the badge names the effective one.
       render: (list) => <PriceListStatusBadge priceList={list} />,
     },
     {

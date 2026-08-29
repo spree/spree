@@ -67,10 +67,14 @@ function Badge({
  */
 type StatusTone = 'success' | 'warning' | 'destructive' | 'info' | 'neutral'
 
-// Maps order/payment/etc. status strings to a tone. Kept as one table because
-// the same status codes surface in tables, cards, page headers and filter
-// menus — a local copy in any one of those is how two surfaces end up
-// disagreeing about what "pending" looks like.
+/**
+ * Maps an order/payment/product status code to its semantic tone.
+ *
+ * Kept as one table because the same codes surface in tables, cards, page
+ * headers and filter menus — a local copy in any one of those is how two
+ * surfaces end up disagreeing about what "pending" looks like. Extend it
+ * rather than branching on status at a call site.
+ */
 const statusToneMap: Record<string, StatusTone> = {
   active: 'success',
   authorized: 'info',

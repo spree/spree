@@ -973,7 +973,10 @@ function InlineValueList({
   // Tags arrive as one list and are filtered client-side; resources are
   // searched server-side, since their vocabulary is unbounded.
   const tags = useQuery({
-    queryKey: ['panel-tags', column.taggableType],
+    // Tenant-scoped like the resource query below: tag vocabularies are
+    // per-store, and a shared key would serve one store's tags to the next for
+    // as long as the result stays fresh.
+    queryKey: ['panel-tags', tenantId, column.taggableType],
     queryFn: () => tagsClient?.list({ taggable_type: column.taggableType as TaggableType }),
     enabled: isTags && isAuthenticated && Boolean(tagsClient),
     staleTime: 60_000,
@@ -1171,12 +1174,22 @@ function FilterPanel({
     setQuery('')
   }
 
-  /** Add this filter to the ones already applied and close. */
+  /**
+   * Apply this filter and close.
+   *
+   * Replaces any rule already set on the same field and operator rather than
+   * adding a second: picking "Status is Active", then reopening and picking
+   * "Status is Draft", would otherwise leave two `eq` rules that the server
+   * ANDs together into nothing. Rules on the same field with a *different*
+   * operator survive — `created_at after X` and `created_at before Y` are a
+   * range, not a contradiction.
+   */
   function commit(nextValue: string, nextOperator = operator) {
     if (!field) return
     if (!noValueOperators.includes(nextOperator) && nextValue.trim() === '') return
+    const others = filters.filter((f) => !(f.field === field && f.operator === nextOperator))
     onApply([
-      ...filters,
+      ...others,
       { id: crypto.randomUUID(), field, operator: nextOperator, value: nextValue },
     ])
   }

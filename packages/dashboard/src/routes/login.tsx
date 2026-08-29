@@ -160,18 +160,13 @@ function PasswordLoginForm() {
         <div className="grid gap-2">
           <div className="flex items-center justify-between">
             <Label htmlFor="password">{t('admin.fields.password.label')}</Label>
-            <Link
-              tabIndex={-1}
-              to="/forgot-password"
-              className="text-sm underline-offset-4 hover:underline"
-            >
+            <Link to="/forgot-password" className="text-sm underline-offset-4 hover:underline">
               {t('admin.auth.forgot_password.link')}
             </Link>
           </div>
           <Input
             id="password"
             type="password"
-            tabIndex={0}
             aria-invalid={!!errors.password || undefined}
             {...form.register('password')}
           />

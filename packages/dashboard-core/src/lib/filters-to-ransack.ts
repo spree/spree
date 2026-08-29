@@ -39,6 +39,13 @@ export function filtersToRansack(
     if (ARRAY_OPERATORS.has(filter.operator)) {
       const ids = parseFilterIds(filter.value)
       if (ids.length > 0) out[key] = ids
+    } else if (col?.filterType === 'date' && filter.operator === 'lteq') {
+      // A date filter's upper bound is a whole day, but the columns it targets
+      // are datetimes: Ransack casts `2026-08-29` to midnight, so "up to the
+      // 29th" would drop everything that happened during the 29th. Carry the
+      // day's last instant instead. The lower bound needs no such treatment —
+      // midnight is already the start of its day.
+      out[key] = `${filter.value} 23:59:59`
     } else {
       out[key] = filter.value
     }
