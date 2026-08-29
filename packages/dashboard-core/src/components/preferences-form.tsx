@@ -389,10 +389,9 @@ function TierRow({
       <Button
         type="button"
         size="icon-sm"
-        variant="ghost"
+        variant="destructive-ghost"
         onClick={onRemove}
         aria-label={t('admin.components.preferences_form.tiers.remove_tier')}
-        className="text-destructive hover:bg-destructive/10 hover:text-destructive"
       >
         <TrashIcon className="size-4" />
       </Button>

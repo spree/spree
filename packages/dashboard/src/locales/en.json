@@ -2785,6 +2785,9 @@
               "resolve_refund": "Resolve with refund",
               "resolve_replacement": "Resolve with replacement"
             },
+            "confirm": {
+              "deny": "Deny this claim? The customer will not receive a refund or replacement."
+            },
             "create_title": "New claim",
             "empty": "No claims for this order.",
             "refund_amount": "Refund amount",

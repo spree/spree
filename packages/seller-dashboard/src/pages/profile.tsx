@@ -1,3 +1,4 @@
+import { PageHeader } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -81,12 +82,7 @@ export function ProfilePage() {
   return (
     <>
       <ResourceLayout
-        header={
-          <div>
-            <h1 className="font-medium text-2xl">{profile.name}</h1>
-            <p className="text-muted-foreground text-sm">{t('profile.subtitle')}</p>
-          </div>
-        }
+        header={<PageHeader title={profile.name} subtitle={t('profile.subtitle')} />}
         main={<BrandCard profile={profile} onEdit={() => setEditing(true)} />}
         sidebar={
           <>

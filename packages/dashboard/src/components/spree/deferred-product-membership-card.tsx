@@ -163,9 +163,8 @@ export function DeferredProductMembershipCard({
           (selected.length > 0 ? (
             <Button
               type="button"
-              variant="outline"
+              variant="destructive"
               size="sm"
-              className="text-destructive hover:text-destructive"
               onClick={() => stageRemove(selected)}
             >
               <Trash2Icon className="size-4" />

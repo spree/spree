@@ -2811,6 +2811,9 @@
               "resolve_refund": "Rozwiąż zwrotem płatności",
               "resolve_replacement": "Rozwiąż zamiennikiem"
             },
+            "confirm": {
+              "deny": "Odrzucić to zgłoszenie? Klient nie otrzyma zwrotu pieniędzy ani wymiany."
+            },
             "create_title": "Nowa reklamacja",
             "empty": "Brak reklamacji dla tego zamówienia.",
             "refund_amount": "Kwota zwrotu",

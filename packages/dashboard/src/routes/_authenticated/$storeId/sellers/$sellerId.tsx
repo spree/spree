@@ -198,20 +198,27 @@ function SellerBody({ seller }: { seller: Seller }) {
 
   const dropdownItems = canEdit ? (
     <>
-      {canSuspend && (
-        <DropdownMenuItem onClick={handleSuspend}>
-          <PauseIcon className="size-4" />
-          {t('admin.sellers.actions.suspend')}
-        </DropdownMenuItem>
-      )}
       {status === 'ready_for_review' && (
         <DropdownMenuItem onClick={handleReopenOnboarding}>
           <UndoIcon className="size-4" />
           {t('admin.sellers.actions.reopen_onboarding')}
         </DropdownMenuItem>
       )}
+    </>
+  ) : null
+
+  // Suspend and Reject both confirm destructively, so they read as destructive
+  // in the menu too rather than as plain rows above the standard actions.
+  const destructiveItems = canEdit ? (
+    <>
+      {canSuspend && (
+        <DropdownMenuItem variant="destructive" onClick={handleSuspend}>
+          <PauseIcon className="size-4" />
+          {t('admin.sellers.actions.suspend')}
+        </DropdownMenuItem>
+      )}
       {canReject && (
-        <DropdownMenuItem onClick={handleReject}>
+        <DropdownMenuItem variant="destructive" onClick={handleReject}>
           <BanIcon className="size-4" />
           {t('admin.sellers.actions.reject')}
         </DropdownMenuItem>
@@ -242,6 +249,7 @@ function SellerBody({ seller }: { seller: Seller }) {
             }
             actions={primaryAction}
             dropdownItems={dropdownItems}
+            destructiveItems={destructiveItems}
             resource={{ id: seller.id }}
             jsonPreview={{
               title: `Seller ${seller.name}`,

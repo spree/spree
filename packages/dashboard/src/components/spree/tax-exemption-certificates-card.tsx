@@ -297,7 +297,7 @@ export function TaxExemptionCertificatesCard({
                   )}
                   {canEdit && certificate.status !== 'revoked' && (
                     <DropdownMenuItem
-                      className="text-destructive focus:text-destructive"
+                      variant="destructive"
                       disabled={revokeMutation.isPending}
                       onClick={() => handleRevoke(certificate)}
                     >
@@ -307,7 +307,7 @@ export function TaxExemptionCertificatesCard({
                   )}
                   {canEdit && certificate.can_be_deleted && (
                     <DropdownMenuItem
-                      className="text-destructive focus:text-destructive"
+                      variant="destructive"
                       onClick={() => handleDelete(certificate)}
                     >
                       <TrashIcon className="size-4" />

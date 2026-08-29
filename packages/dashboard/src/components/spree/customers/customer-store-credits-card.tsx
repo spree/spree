@@ -127,7 +127,7 @@ export function CustomerStoreCreditsCard({ customer }: { customer: Customer }) {
                             {t('admin.actions.edit')}
                           </DropdownMenuItem>
                           <DropdownMenuItem
-                            className="text-destructive focus:text-destructive"
+                            variant="destructive"
                             onClick={async () => {
                               if (
                                 await confirm({

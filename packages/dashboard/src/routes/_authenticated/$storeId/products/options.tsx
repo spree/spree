@@ -695,12 +695,11 @@ function SortableOptionValueRow({
       <TableCell className="w-10 text-right">
         <Button
           type="button"
-          variant="ghost"
+          variant="destructive-ghost"
           size="icon-sm"
           aria-label={t('admin.a11y.remove_value')}
           onPointerDown={(e) => e.stopPropagation()}
           onClick={onRemove}
-          className="text-destructive hover:bg-destructive/10 hover:text-destructive"
         >
           <Trash2Icon className="size-4" />
         </Button>

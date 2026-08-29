@@ -2,6 +2,7 @@ import {
   EMPTY_FILE_UPLOAD_VALUE,
   FileUploadField,
   type FileUploadValue,
+  PageHeader,
   progressPercentage,
 } from '@spree/dashboard-core'
 import {
@@ -82,10 +83,7 @@ export function OnboardingPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="font-medium text-2xl">{t('onboarding.title')}</h1>
-        <p className="text-muted-foreground text-sm">{t('onboarding.subtitle')}</p>
-      </div>
+      <PageHeader title={t('onboarding.title')} subtitle={t('onboarding.subtitle')} />
 
       <Card>
         <CardHeader className="flex-row items-center justify-between gap-4">

@@ -1,4 +1,4 @@
-import { Can, getInitials, Slot } from '@spree/dashboard-core'
+import { Can, getInitials, PageHeader, Slot } from '@spree/dashboard-core'
 import {
   Avatar,
   AvatarFallback,
@@ -86,26 +86,26 @@ export function TeamPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="font-medium text-2xl">{t('team.title')}</h1>
-          <p className="text-muted-foreground text-sm">{t('team.subtitle')}</p>
-        </div>
-        {/* Purely a UX gate — the API refuses the write regardless. Same
-            `<Can>` the operator's dashboard uses, reading the CanCanCan rules
-            the seller `/me` serializes. */}
-        <div className="flex items-center gap-2">
-          {/* A marketplace adds its own actions here via
-              `defineDashboardPlugin({ slots: { 'seller.team.actions': [...] } })`. */}
-          <Slot name="seller.team.actions" context={{ sellerId }} />
-          <Can I="update" a="seller_profile">
-            <Button size="sm" onClick={() => setInviteOpen(true)}>
-              <PlusIcon className="size-4" />
-              {t('team.invite_cta')}
-            </Button>
-          </Can>
-        </div>
-      </div>
+      <PageHeader
+        title={t('team.title')}
+        subtitle={t('team.subtitle')}
+        actions={
+          <>
+            {/* A marketplace adds its own actions here via
+                `defineDashboardPlugin({ slots: { 'seller.team.actions': [...] } })`. */}
+            <Slot name="seller.team.actions" context={{ sellerId }} />
+            {/* Purely a UX gate — the API refuses the write regardless. Same
+                `<Can>` the operator's dashboard uses, reading the CanCanCan rules
+                the seller `/me` serializes. */}
+            <Can I="update" a="seller_profile">
+              <Button size="sm" onClick={() => setInviteOpen(true)}>
+                <PlusIcon className="size-4" />
+                {t('team.invite_cta')}
+              </Button>
+            </Can>
+          </>
+        }
+      />
 
       <MembersCard members={members.data?.data ?? []} loading={members.isLoading} />
 

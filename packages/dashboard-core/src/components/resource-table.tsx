@@ -483,7 +483,7 @@ export function ResourceTable<T extends Record<string, any>>({
     // the gutter the page container applies, and the frame drops to a plain
     // surface — background only, no border, radius or shadow. Scoped to this
     // card so every other card on the page keeps its frame.
-    <Card className="-mx-4 rounded-none border-0 bg-transparent sm:bg-card shadow-none sm:mx-0 sm:rounded-xl sm:border sm:shadow-sm">
+    <Card className="-mx-4 rounded-none border-0 bg-transparent sm:bg-card sm:mx-0 sm:rounded-xl sm:border">
       <TableToolbar
         columns={displayableColumns}
         visibleColumns={visibleColumnKeys}
@@ -815,7 +815,7 @@ function SortableRow<T extends Record<string, any>>({
       ref={setNodeRef}
       style={style}
       className={cn(
-        'group/row hover:bg-accent/60 last:*:border-b-0',
+        'group/row hover:bg-accent/25 last:*:border-b-0',
         isDragging && 'relative z-10 opacity-70',
       )}
     >

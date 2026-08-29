@@ -188,7 +188,7 @@ export function TaxIdentifiersCard({
                       {t('admin.actions.edit')}
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                      className="text-destructive focus:text-destructive"
+                      variant="destructive"
                       onClick={() => handleDelete(identifier)}
                     >
                       <TrashIcon className="size-4" />
