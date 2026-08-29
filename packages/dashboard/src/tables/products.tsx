@@ -21,7 +21,6 @@ defineTable('products', {
       key: 'name',
       label: i18n.t('admin.fields.name.label'),
       sortable: true,
-      filterable: true,
       default: true,
       render: (product) => (
         <Link
@@ -43,6 +42,7 @@ defineTable('products', {
       filterable: true,
       default: true,
       filterType: 'enum',
+      quickFilter: true,
       filterOptions: [
         { value: 'draft', label: i18n.t('admin.pages.products.status_options.draft') },
         { value: 'active', label: i18n.t('admin.fields.active.label') },
@@ -95,9 +95,10 @@ defineTable('products', {
       key: 'sku',
       label: i18n.t('admin.products.columns.sku'),
       sortable: false,
-      filterable: true,
+      // Not filterable: the search box already matches SKUs, and matches them
+      // better — it searches every variant's, where this filtered only the
+      // default variant's.
       default: false,
-      ransackAttribute: 'master_sku',
       className: 'text-sm text-muted-foreground',
       render: (product) => product.sku ?? '—',
     },
@@ -127,6 +128,7 @@ defineTable('products', {
       label: i18n.t('admin.products.columns.in_stock'),
       filterable: true,
       filterType: 'boolean',
+      quickFilter: true,
       displayable: false,
       default: false,
     },

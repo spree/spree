@@ -16,6 +16,7 @@ import {
   FieldLabel,
   Input,
   Progress,
+  StatusBadge as SharedStatusBadge,
   Textarea,
   toastManager,
 } from '@spree/dashboard-ui'
@@ -466,10 +467,12 @@ function StatusIcon({ status }: { status: string }) {
 function StatusBadge({ status }: { status: string }) {
   const { t } = useTranslation()
 
+  // Only the wording is local — the colour comes from the shared status map.
   if (status === 'complete')
-    return <Badge variant="success">{t('onboarding.status.complete')}</Badge>
-  if (status === 'pending') return <Badge variant="warning">{t('onboarding.status.pending')}</Badge>
+    return <SharedStatusBadge status="complete" label={t('onboarding.status.complete')} />
+  if (status === 'pending')
+    return <SharedStatusBadge status="pending" label={t('onboarding.status.pending')} />
   if (status === 'rejected')
-    return <Badge variant="destructive">{t('onboarding.status.rejected')}</Badge>
+    return <SharedStatusBadge status="rejected" label={t('onboarding.status.rejected')} />
   return null
 }

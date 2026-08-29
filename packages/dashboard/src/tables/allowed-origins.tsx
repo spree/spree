@@ -16,7 +16,6 @@ defineTable<AllowedOrigin>('allowed-origins', {
       key: 'origin',
       label: i18n.t('admin.fields.allowed_origin.origin.label'),
       sortable: true,
-      filterable: true,
       default: true,
       render: (origin) => (
         <ResourceNameCell id={origin.id} dataAttr="data-allowed-origin-id" name={origin.origin} />

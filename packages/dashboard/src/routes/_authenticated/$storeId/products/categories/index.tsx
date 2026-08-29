@@ -73,7 +73,7 @@ function CategoriesPage() {
   return (
     <>
       <Card className="overflow-hidden rounded-xl">
-        <div className="flex flex-col items-start justify-between gap-2 border-b border-border p-3 lg:flex-row lg:items-center">
+        <div className="flex flex-col items-start justify-between gap-2 border-b border-subtle p-3 lg:flex-row lg:items-center">
           <CardTitle>{t('admin.categories.title')}</CardTitle>
           <div className="flex items-center gap-2">
             <InputGroup className="lg:w-[300px]">

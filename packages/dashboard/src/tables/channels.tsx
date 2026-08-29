@@ -16,7 +16,6 @@ defineTable<Channel>('channels', {
       key: 'name',
       label: i18n.t('admin.fields.name.label'),
       sortable: true,
-      filterable: true,
       default: true,
       render: (channel) => (
         <ResourceNameCell
@@ -31,7 +30,6 @@ defineTable<Channel>('channels', {
       key: 'code',
       label: i18n.t('admin.fields.channel.code.label'),
       sortable: true,
-      filterable: true,
       default: true,
       className: 'text-sm text-muted-foreground',
       render: (channel) => channel.code,

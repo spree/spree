@@ -17,7 +17,6 @@ defineTable<PriceList>('price-lists', {
       key: 'name',
       label: i18n.t('admin.fields.name.label'),
       sortable: true,
-      filterable: true,
       default: true,
       render: (list) => (
         <ResourceNameCell
@@ -40,6 +39,7 @@ defineTable<PriceList>('price-lists', {
         { value: 'scheduled', label: i18n.t('admin.fields.price_list.status.scheduled') },
         { value: 'inactive', label: i18n.t('admin.fields.price_list.status.inactive') },
       ],
+      quickFilter: true,
       default: true,
       render: (list) => <PriceListStatusBadge priceList={list} />,
     },

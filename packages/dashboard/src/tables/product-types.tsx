@@ -16,7 +16,6 @@ defineTable<ProductType>('product-types', {
       key: 'name',
       label: i18n.t('admin.fields.name.label'),
       sortable: true,
-      filterable: true,
       default: true,
       render: (productType) => (
         <ResourceNameCell

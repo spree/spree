@@ -16,7 +16,6 @@ defineTable<StockTransfer>('stock-transfers', {
       key: 'number',
       label: i18n.t('admin.stock_transfers.columns.number'),
       sortable: true,
-      filterable: true,
       default: true,
       render: (st) => (
         <ResourceNameCell

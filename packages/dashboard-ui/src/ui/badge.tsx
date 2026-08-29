@@ -1,5 +1,4 @@
 import { cva, type VariantProps } from 'class-variance-authority'
-import { CheckIcon } from 'lucide-react'
 import * as React from 'react'
 import { useTranslation } from 'react-i18next'
 import { cn } from '../lib/utils'
@@ -61,11 +60,18 @@ function Badge({
   )
 }
 
-// Maps order/payment/etc. status strings to one of the canonical Badge
-// variants. Success-y states ("active", "paid", "shipped", …) route through
-// the `success` variant so the UI stays color-coded; everything else leans
-// on the canonical shadcn variants with shape + label carrying meaning.
-const statusVariantMap: Record<string, VariantProps<typeof badgeVariants>['variant']> = {
+/**
+ * Semantic tone of a status, independent of how it is drawn. `StatusBadge`
+ * renders it as a coloured dot, `Badge` as a tinted pill — same vocabulary,
+ * two presentations.
+ */
+type StatusTone = 'success' | 'warning' | 'destructive' | 'info' | 'neutral'
+
+// Maps order/payment/etc. status strings to a tone. Kept as one table because
+// the same status codes surface in tables, cards, page headers and filter
+// menus — a local copy in any one of those is how two surfaces end up
+// disagreeing about what "pending" looks like.
+const statusToneMap: Record<string, StatusTone> = {
   active: 'success',
   authorized: 'info',
   complete: 'success',
@@ -79,20 +85,20 @@ const statusVariantMap: Record<string, VariantProps<typeof badgeVariants>['varia
   approved: 'success',
   verified: 'success',
   unverified: 'destructive',
-  unavailable: 'secondary',
-  unsupported: 'secondary',
+  unavailable: 'neutral',
+  unsupported: 'neutral',
   revoked: 'destructive',
   expired: 'destructive',
   ready: 'warning',
   available: 'success',
-  draft: 'outline',
+  draft: 'neutral',
   pending: 'warning',
   processing: 'warning',
-  inactive: 'secondary',
-  confirm: 'outline',
-  resumed: 'secondary',
+  inactive: 'neutral',
+  confirm: 'neutral',
+  resumed: 'neutral',
   partial: 'info',
-  archived: 'secondary',
+  archived: 'neutral',
   returned: 'success',
   backorder: 'warning',
   balance_due: 'warning',
@@ -101,18 +107,74 @@ const statusVariantMap: Record<string, VariantProps<typeof badgeVariants>['varia
   suspended: 'destructive',
   invited: 'info',
   onboarding: 'warning',
+  incomplete: 'neutral',
   ready_for_review: 'warning',
   failed: 'destructive',
   void: 'destructive',
   error: 'destructive',
   rejected: 'destructive',
   used_up: 'destructive',
+  // Returns, exchanges and claims: amber while the merchant still owes an
+  // action, green once settled, muted when it went nowhere.
+  requested: 'warning',
+  open: 'warning',
+  received: 'warning',
+  refunded: 'success',
+  resolved: 'success',
+  denied: 'destructive',
+  // Gift cards.
+  partially_redeemed: 'info',
+  redeemed: 'neutral',
+  // Price lists — `scheduled` is live-but-not-yet, which is the same shape as
+  // any other "waiting on the clock" state.
+  scheduled: 'info',
+  // Boolean filter values. A yes/no pair is a state like any other — "in
+  // stock: no" is the row an operator is looking for, and reading it in the
+  // same green/red the rest of the app uses saves them parsing the word.
+  true: 'success',
+  false: 'destructive',
+}
+
+// Dot fills, by tone. These read the same `--status-*` ramps the tinted Badge
+// variants use, but take the *reading* step rather than the fill step: a 6px
+// dot needs the saturated end of the ramp to register at all, where a pill can
+// rely on area.
+const dotToneClasses: Record<StatusTone, string> = {
+  success: 'bg-success',
+  warning: 'bg-warning',
+  destructive: 'bg-danger',
+  info: 'bg-info',
+  neutral: 'bg-muted-foreground/50',
 }
 
 /**
- * Status pill whose color is derived from the raw status code. Stays headless:
- * pass a translated `label` from the app layer; without one it humanizes the
- * code itself (`balance_due` → `balance due`) as a best-effort fallback.
+ * Bare status dot. Decorative by construction — it carries no accessible name,
+ * so it must always sit beside text that says the same thing. Use it to align
+ * a status with its label in a menu or list; use `StatusBadge` when you want
+ * the dot and its label together.
+ */
+function StatusDot({ status, className }: { status: string; className?: string }) {
+  const tone = statusToneMap[status] ?? 'neutral'
+  return (
+    <span
+      aria-hidden
+      className={cn('inline-block size-1.5 shrink-0 rounded-full', dotToneClasses[tone], className)}
+    />
+  )
+}
+
+/**
+ * Status indicator: a coloured dot beside the label, rather than a tinted pill.
+ *
+ * A table column of pills reads as a column of coloured blocks — the eye lands
+ * on the fills instead of the words, and a row where three statuses sit side by
+ * side becomes a bar chart of nothing. A dot puts the colour where it belongs:
+ * a small mark that the label does the talking for. Colour is never the only
+ * channel, since the label is always rendered.
+ *
+ * Stays headless: pass a translated `label` from the app layer; without one it
+ * humanizes the code itself (`balance_due` → `balance due`) as a best-effort
+ * fallback.
  */
 function StatusBadge({
   status,
@@ -123,11 +185,18 @@ function StatusBadge({
   label?: string
   className?: string
 }) {
-  const variant = statusVariantMap[status] ?? 'outline'
   return (
-    <Badge variant={variant} className={cn('capitalize', className)}>
+    <span
+      data-slot="status-badge"
+      data-status={status}
+      className={cn(
+        'inline-flex w-fit shrink-0 items-center gap-1.5 whitespace-nowrap text-sm capitalize',
+        className,
+      )}
+    >
+      <StatusDot status={status} />
       {label ?? status.replace(/_/g, ' ')}
-    </Badge>
+    </span>
   )
 }
 
@@ -164,22 +233,21 @@ function ActiveBadge({
   const { t } = useTranslation()
   const resolvedActiveLabel = activeLabel ?? t('admin.common.yes')
   const resolvedInactiveLabel = inactiveLabel ?? t('admin.common.no')
-  if (active) {
-    return (
-      <Badge variant="success" className={className}>
-        <CheckIcon />
-        {resolvedActiveLabel}
-      </Badge>
-    )
-  }
-  if (dashWhenInactive) {
+  if (dashWhenInactive && !active) {
     return <span className={cn('text-muted-foreground', className)}>—</span>
   }
+  // Boolean states read through the same map as every other status, so an
+  // "Active / Inactive" column and a "Paid / Failed" one agree on what green
+  // and red mean. The tick the active case used to carry is redundant beside
+  // a dot that already says the same thing.
   return (
-    <Badge variant="outline" className={className}>
-      {resolvedInactiveLabel}
-    </Badge>
+    <StatusBadge
+      status={active ? 'true' : 'false'}
+      label={active ? resolvedActiveLabel : resolvedInactiveLabel}
+      className={className}
+    />
   )
 }
 
-export { ActiveBadge, Badge, badgeVariants, StatusBadge }
+export type { StatusTone }
+export { ActiveBadge, Badge, badgeVariants, StatusBadge, StatusDot, statusToneMap }

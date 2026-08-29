@@ -16,7 +16,6 @@ defineTable<DeliveryProfile>('delivery-profiles', {
       key: 'name',
       label: i18n.t('admin.fields.name.label'),
       sortable: true,
-      filterable: true,
       default: true,
       render: (profile) => (
         <div className="flex items-center gap-2">

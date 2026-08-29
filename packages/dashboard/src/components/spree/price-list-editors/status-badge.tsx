@@ -1,21 +1,17 @@
 import type { PriceList } from '@spree/admin-sdk'
-import { Badge } from '@spree/dashboard-ui'
+import { StatusBadge } from '@spree/dashboard-ui'
 import { useTranslation } from 'react-i18next'
 
-// `scheduled` collapses into the active treatment whenever the date
-// range puts it live now — mirrors the legacy admin's
-// `price_list_status_badge` helper.
-const STATUS_STYLES = {
-  active: { variant: 'success' as const },
-  scheduled: { variant: 'info' as const },
-  inactive: { variant: 'secondary' as const },
-  draft: { variant: 'outline' as const },
-} as const
+// Colour comes from the shared status map; this component owns only the
+// question of *which* status a price list is actually in.
+const PRICE_LIST_STATUSES = ['active', 'scheduled', 'inactive', 'draft'] as const
 
-type PriceListStatus = keyof typeof STATUS_STYLES
+type PriceListStatus = (typeof PRICE_LIST_STATUSES)[number]
 
 function normalizeStatus(value: unknown): PriceListStatus {
-  return typeof value === 'string' && value in STATUS_STYLES ? (value as PriceListStatus) : 'draft'
+  return typeof value === 'string' && (PRICE_LIST_STATUSES as readonly string[]).includes(value)
+    ? (value as PriceListStatus)
+    : 'draft'
 }
 
 export function PriceListStatusBadge({ priceList }: { priceList: PriceList }) {
@@ -26,9 +22,5 @@ export function PriceListStatusBadge({ priceList }: { priceList: PriceList }) {
   // reports a stale `currently_active: true`.
   const status: PriceListStatus = priceList.currently_active && raw !== 'inactive' ? 'active' : raw
 
-  return (
-    <Badge variant={STATUS_STYLES[status].variant}>
-      {t(`admin.fields.price_list.status.${status}`)}
-    </Badge>
-  )
+  return <StatusBadge status={status} label={t(`admin.fields.price_list.status.${status}`)} />
 }

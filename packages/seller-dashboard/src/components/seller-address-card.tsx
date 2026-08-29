@@ -8,6 +8,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  StatusBadge,
   toastManager,
 } from '@spree/dashboard-ui'
 import type { Profile, SellerAddressParams } from '@spree/seller-sdk'
@@ -107,7 +108,7 @@ export function SellerAddressCard({
           <CardTitle>
             {title}
             {address ? (
-              <Badge variant="success">{t('profile.address_filled')}</Badge>
+              <StatusBadge status="complete" label={t('profile.address_filled')} />
             ) : (
               <Badge variant="outline">{t('profile.address_missing')}</Badge>
             )}

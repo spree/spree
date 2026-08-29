@@ -194,9 +194,10 @@ export function TaxExemptionCertificatesCard({
                     })}
                   />
                   {certificate.lapsed && certificate.status !== 'expired' && (
-                    <Badge variant="destructive">
-                      {t('admin.tax_exemption_certificates.lapsed')}
-                    </Badge>
+                    <StatusBadge
+                      status="expired"
+                      label={t('admin.tax_exemption_certificates.lapsed')}
+                    />
                   )}
                 </div>
                 <span className="text-muted-foreground text-xs">
