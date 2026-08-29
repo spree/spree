@@ -20735,6 +20735,7 @@ paths:
                 preferred_storefront_url:
                 default_currency: USD
                 default_locale: en
+                default_country_code: US
                 mail_from_address: no-reply@example.com
                 customer_support_email: support@example.com
                 new_order_notifications_email: store-owner@example.com
@@ -21060,6 +21061,7 @@ paths:
                 preferred_storefront_url:
                 default_currency: USD
                 default_locale: en
+                default_country_code: US
                 mail_from_address: no-reply@example.com
                 customer_support_email: support@example.com
                 new_order_notifications_email: store-owner@example.com
@@ -38759,6 +38761,9 @@ components:
           type: string
         default_locale:
           type: string
+        default_country_code:
+          type: string
+          nullable: true
         mail_from_address:
           type: string
           nullable: true
@@ -38877,6 +38882,7 @@ components:
       - preferred_storefront_url
       - default_currency
       - default_locale
+      - default_country_code
       - mail_from_address
       - customer_support_email
       - new_order_notifications_email
