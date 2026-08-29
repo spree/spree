@@ -45,6 +45,11 @@ export function filtersToRansack(
       // 29th" would drop everything that happened during the 29th. Carry the
       // day's last instant instead. The lower bound needs no such treatment —
       // midnight is already the start of its day.
+      //
+      // Both ends are read in the server's zone, so a store trading far from
+      // it sees the same edge-of-day skew its other date filters already have.
+      // Fixing that means sending zoned bounds, which is a change to the
+      // filter wire format rather than to this conversion.
       out[key] = `${filter.value} 23:59:59`
     } else {
       out[key] = filter.value
